@@ -80,7 +80,6 @@ public class AFocusPoint extends APosition {
             if (pos == null) return false;
 //            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
             return !pos.isPositionVisible() || Select.our().inRadius(3.5, pos).empty();
-//            return true; // @Temp
         }
     }
 

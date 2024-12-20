@@ -25,6 +25,8 @@ public class ProduceDragoon {
         if (dragoons <= 6) return produceDragoon();
         if (againstEarlyProtossRush()) return produceDragoon();
 
+        if (dragoons <= 15 && Count.basesWithUnfinished() >= 2) return produceDragoon();
+
 //        if (A.hasGas(50) && A.supplyUsed() <= 38) return produceDragoon();
 
         if ((!A.hasMinerals(200) || !A.hasGas(100))) return false;
@@ -51,8 +53,8 @@ public class ProduceDragoon {
 
     private static boolean againstEarlyProtossRush() {
         return Enemy.protoss()
-            && OurArmy.strength() <= 90
-            && A.seconds() <= 500;
+            && (OurArmy.strength() <= 95 || OurArmy.strengthWithoutCB() <= 80)
+            && A.seconds() <= 12 * 60;
     }
 
     private static boolean noProperBuildings() {

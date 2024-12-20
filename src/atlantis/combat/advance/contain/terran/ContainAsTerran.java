@@ -1,7 +1,7 @@
 package atlantis.combat.advance.contain.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;

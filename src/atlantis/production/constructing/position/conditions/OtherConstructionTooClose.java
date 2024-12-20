@@ -22,7 +22,7 @@ public class OtherConstructionTooClose {
         boolean isPylon = building.isPylon();
 
         // Compare against planned construction places
-        for (Construction otherConstr : ConstructionRequests.notCompleted()) {
+        for (Construction otherConstr : ConstructionRequests.notStarted()) {
             HasPosition otherPosition = otherConstr.buildPosition();
 
             if (position != null && otherPosition != null) {
@@ -31,6 +31,12 @@ public class OtherConstructionTooClose {
 //                if (building.isCannon()) {
 //                    System.err.println(building + " Other cons: " + otherConstr.buildingType() + ", dist: " + A.digit(distance));
 //                }
+
+                if (building.isGateway()) {
+                    if (distance < 3.5) {
+                        return failed("Gateway too close to other building(" + building + ", dist: " + distance + ")");
+                    }
+                }
 
                 if (distance >= 2) {
                     if (We.protoss() && building.isCannon()) {
@@ -44,7 +50,10 @@ public class OtherConstructionTooClose {
                         return false;
                 }
 
-                if (distance >= 2.2 && building.isGateway()) return false;
+                if (We.protoss() && building.isForge()) {
+                    if (otherConstr.buildingType().isForge()) return false;
+                    if (otherConstr.buildingType().isGateway()) return false;
+                }
 
                 // Look for two positions that could overlap one another
                 if (distance <= (building.canHaveAddon() ? 4 : (building.isPylon() ? 2.4 : 3.1))) {
@@ -62,7 +71,7 @@ public class OtherConstructionTooClose {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

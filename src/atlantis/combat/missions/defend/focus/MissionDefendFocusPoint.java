@@ -2,13 +2,16 @@ package atlantis.combat.missions.defend.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
 import atlantis.combat.missions.defend.protoss.ProtossStickCombatToMainBaseEarly;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.map.base.Bases;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -16,6 +19,7 @@ import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -45,8 +49,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // =========================================================
 
                 if (OurStrategy.get().isExpansion()) {
-                    if (A.s <= 400 && (focus = aroundCombatBuilding()) != null) return focus;
                     if ((focus = atThirdBase()) != null) return focus;
+                    if (A.s <= 60 * 8 && (focus = aroundCombatBuilding()) != null) return focus;
                 }
 
                 // =========================================================
@@ -54,6 +58,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if ((focus = stickToMain()) != null) return focus;
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
                 if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
+                if ((focus = stickToCannon()) != null) return focus;
 
                 // === Path to enemy =============================================
 
@@ -145,13 +150,17 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             AUnit main = Select.main();
             if (main == null) return null;
 
-            if (main.enemiesNear().inRadius(5, main).notEmpty()) return null;
+            if (Count.dragoons() >= 2 || OurArmy.strength() >= 140) return null;
+
+            if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
 
             AChoke mainChoke = Chokes.mainChoke();
             if (mainChoke == null) return null;
 
+            HasPosition position = main;
+
             return new AFocusPoint(
-                main.translateTilesTowards(2.7, mainChoke),
+                position.translateTilesTowards(-3, mainChoke),
 //                main.translateTilesTowards(1, Select.minerals().nearestTo(main)),
                 main,
                 "NearMain"
@@ -159,6 +168,29 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         }
 
         return null;
+    }
+
+    private AFocusPoint stickToCannon() {
+        if (
+            !We.protoss()
+                || !OurStrategy.get().isExpansion()
+                || !Missions.isGlobalMissionDefend()
+                || Count.cannonsWithUnfinished() <= 0
+        ) return null;
+
+        AUnit cannon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Photon_Cannon).mostDistantTo(Select.main());
+        if (cannon == null) return null;
+
+        HasPosition goTo = cannon;
+
+        AChoke choke = Chokes.natural();
+        if (choke != null) goTo = goTo.translateTilesTowards(1, choke);
+
+        return new AFocusPoint(
+            goTo,
+            cannon,
+            "HugCannon"
+        );
     }
 
     private AFocusPoint atLastBase() {
@@ -202,7 +234,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private static AFocusPoint aroundCombatBuilding() {
-        if (We.protoss() && Count.ourCombatUnits() >= 13) return null;
+//        if (We.protoss()) {
+//            if (Count.ourCombatUnits() >= 13) return null;
+//            if (Count.bases() >= 2 && OurArmy.strength() >= 80) return null;
+//        }
 
 //        if (We.protoss() && Count.basesWithUnfinished() <= 1) return null;
 
@@ -217,9 +252,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         AUnit combatBuilding = Select
             .ourOfTypeWithUnfinished(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
 //            .ourOfType(AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND)
-            .mostDistantTo(main);
+            .groundFarthestTo(main);
 
         if (combatBuilding == null) return null;
+        if (combatBuilding.distTo(main) <= 10 && Bases.natural() != null) return null;
 
         return new AFocusPoint(
             combatBuilding.translateTilesTowards(main, 1),
@@ -298,8 +334,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private static AFocusPoint enemyWhoBreachedBase() {
+        if (A.supplyUsed() >= 160 || A.hasMinerals(2000)) return null;
+
         AUnit enemyInBase = EnemyUnitBreachedBase.get();
-        if (enemyInBase != null && enemyInBase.effVisible() && enemyInBase.hp() > 0) {
+        if (enemyInBase != null && enemyInBase.hasPosition() && enemyInBase.effVisible() && enemyInBase.hp() > 0) {
             return new AFocusPoint(
                 enemyInBase,
                 "EnemyBreachedBase"

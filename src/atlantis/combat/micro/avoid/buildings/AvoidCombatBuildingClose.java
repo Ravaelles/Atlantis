@@ -41,7 +41,9 @@ public class AvoidCombatBuildingClose extends Manager {
 
         friends = combatBuilding.enemiesNear().combatUnits();
 
-//        if (fiercelyEngageEnemyThirdOrExpansions()) return false;
+        if (unit.woundPercent() <= 5 && unit.enemiesNear().inRadius(7.5, unit).notEmpty()) return false;
+
+        if (fiercelyEngageEnemyThirdOrExpansions()) return false;
         if (allowBattleDueToAdvantage()) return false;
 
         if (ifLurkersUndetectedNearbyAvoidTheBuilding()) return true;
@@ -52,7 +54,7 @@ public class AvoidCombatBuildingClose extends Manager {
     private boolean asSpecialUnitDontAvoid() {
         if (unit.isReaver()) {
             Decision decision = ReaverDontAvoidCB.decision(unit, combatBuilding);
-            if (decision.isTrue()) return true;
+            if (decision.notIndifferent()) return decision.toBoolean();
         }
 
         return false;
@@ -60,17 +62,22 @@ public class AvoidCombatBuildingClose extends Manager {
 
 
     private boolean allowBattleDueToAdvantage() {
-        if (unit.combatEvalRelative() >= 5) return debug("CombatEval5");
-        if (A.supplyUsed() >= 190 || unit.friendsNear().combatUnits().atLeast(28)) return debug("HugeBattle");
-        if (unit.combatEvalRelative() >= 4 && unit.friendsNear().combatUnits().atLeast(10)) return debug("ManyGuys");
+        if (unit.combatEvalRelative() >= 6) return allowBattle("CombatEval5");
+        if (A.supplyUsed() >= 190 || unit.friendsNear().combatUnits().atLeast(28)) return allowBattle("HugeBattle");
+        if (unit.combatEvalRelative() >= 4 && unit.friendsNear().combatUnits().atLeast(10))
+            return allowBattle("ManyGuys");
+        if (
+            unit.friendsNear().combatUnits().atLeast(10)
+                && combatBuilding.friendsNear().combatBuildings(false).empty()
+        ) return allowBattle("OnlyOneCB");
 
         boolean a = A.supplyUsed() >= 196;
-        boolean b = (A.hasMinerals(3000) && A.supplyUsed() >= 180);
+        boolean b = (A.hasMinerals(1500) && A.supplyUsed() >= 170);
         if (a && b) {
             if (
                 friends.atLeast(30)
                     || (friends.count() * 16 >= unit.enemiesNear().combatBuildingsAnti(unit).count())
-            ) return debug(a ? "MassiveSupply" : "MassiveResources");
+            ) return allowBattle(a ? "MassiveSupply" : "MassiveResources");
         }
 
 //        if (friends.inRadius(10, unit).count() >= atMost(8)) return true;
@@ -78,7 +85,7 @@ public class AvoidCombatBuildingClose extends Manager {
         return false;
     }
 
-    private boolean debug(String reason) {
+    private boolean allowBattle(String reason) {
 //        ErrorLog.printErrorOnce(A.minSec() + " ### ABC ### " + reason);
         unit.addLog(reason);
 //        ErrorLog.printErrorOnce(A.minSec() + " ### " + reason + " ###");
@@ -112,10 +119,11 @@ public class AvoidCombatBuildingClose extends Manager {
         APosition enemyThird = EnemyThirdLocation.get();
         if (enemyThird == null) return false;
 
-        if (combatBuilding.friendsNear().combatBuildingsAnti(unit).atLeast(1)) return false;
+        if (combatBuilding.friendsNear().combatBuildingsAnti(unit).atLeast(A.supplyUsed() <= 140 ? 1 : 2)) return false;
 
         return combatBuilding.groundDist(enemyThird) <= 10
-            && unit.friendsNear().atLeast(3);
+            && unit.friendsNear().atLeast(3)
+            && combatBuilding.friendsNear().combatUnits().countInRadius(10, combatBuilding) <= 5;
 
 //        APosition enemyNatural = EnemyInfo.enemyNatural();
 //        if (enemyNatural == null) return false;
@@ -133,8 +141,8 @@ public class AvoidCombatBuildingClose extends Manager {
     }
 
     private boolean ifLurkersUndetectedNearbyAvoidTheBuilding() {
-        return (A.supplyUsed() <= 150 || OurArmy.strength() <= 160 || Count.observers() <= 0)
-            && unit.enemiesNear().lurkers().effUndetected().inRadius(8.4, unit).notEmpty();
+        return (A.supplyUsed() <= 150 || OurArmy.strength() <= 180 || Count.observers() <= 0)
+            && unit.enemiesNear().lurkers().burrowed().effUndetected().inRadius(8.4, unit).notEmpty();
 //            && unit.friendsNear().detectors().inRadius(6, unit).empty();
     }
 

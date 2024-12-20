@@ -7,8 +7,7 @@ import atlantis.units.select.Select;
 import bwapi.TilePosition;
 import bwem.Base;
 
-public class ABaseLocation implements HasPosition {
-
+public class ABaseLocation implements HasPosition, Comparable<ABaseLocation> {
     private Base base = null;
     private APosition position = null;
 
@@ -60,9 +59,30 @@ public class ABaseLocation implements HasPosition {
 
     @Override
     public String toString() {
-        return "BaseLocation at " + position + " ("
+        return "BaseLocation at " + position() + " ("
             + (isStartLocation() ? "start_loc" : "non_start_loc")
             + ")";
+    }
+
+    // =========================================================
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ABaseLocation)) return false;
+
+        ABaseLocation location = (ABaseLocation) o;
+        return position().equals(location.position());
+    }
+
+    @Override
+    public int hashCode() {
+        return position().hashCode();
+    }
+
+    @Override
+    public int compareTo(ABaseLocation o) {
+        return position().compareTo(o);
     }
 
     // =========================================================
@@ -76,8 +96,6 @@ public class ABaseLocation implements HasPosition {
 //    }
 
     public boolean isStartLocation() {
-        return base.isStartingLocation();
+        return base != null && base.isStartingLocation();
     }
-
-
 }

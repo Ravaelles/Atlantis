@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 
 public class ShouldFightInsteadAvoidAsRanged extends Manager {

@@ -27,7 +27,7 @@ public class ProtossTooCloseToRegionBoundaries {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

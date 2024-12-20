@@ -7,9 +7,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingCrucial extends ATargeting {
-
-    public ATargetingCrucial(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
-        super(unit, enemyUnits, enemyBuildings);
+    public ATargetingCrucial(AUnit unit) {
+        super(unit);
     }
 
     public AUnit target() {
@@ -116,13 +115,14 @@ public class ATargetingCrucial extends ATargeting {
         // =========================================================
         // MELEE should attack CLOSE targets if too clustered
 
-        if (unit.isMelee()) {
-            Selection NearEnemies = enemyUnits.inRadius(0.9, unit);
-            if (NearEnemies.atLeast(2)) {
-                debug("CR6 = " + target);
-                return NearEnemies.mostWounded();
-            }
-        }
+//        if (unit.isMelee()) {
+//            Selection NearEnemies = enemyUnits.inRadius(0.9, unit);
+//            if (NearEnemies.atLeast(2)) {
+//                target = NearEnemies.mostWounded();
+//                debug("CR6 = " + target);
+//                if (target != null) return target;
+//            }
+//        }
 
         return null;
     }

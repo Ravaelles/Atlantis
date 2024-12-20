@@ -1,8 +1,6 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.production.dynamic.DynamicCommanderHelpers;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -19,7 +17,7 @@ public class ProduceCitadelOfAdun {
         if (Have.a(type())) return false;
         if (Count.ofType(Protoss_Observatory) == 0) return false;
 
-        if (A.supplyUsed() >= 140 && A.hasGas(180) && A.fr % 41 == 0 && Have.notEvenPlanned(type())) {
+        if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now % 41 == 0 && Have.notEvenPlanned(type())) {
             A.errPrintln("TEMP Citadel of Adun at " + A.s);
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }

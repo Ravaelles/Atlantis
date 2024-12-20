@@ -1,10 +1,13 @@
 package atlantis.production.orders.production.queue;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.production.constructing.ConstructionRequests;
 
 public class ReservedResources {
     public static final int MAX_VALUE = 500;
+    public static final int MAX_VALUE_WITHOUT_BASE = 300;
 
     private static int minerals = 0;
     private static int gas = 0;
@@ -24,8 +27,18 @@ public class ReservedResources {
     public static void reserveMinerals(int minerals, String whatFor) {
         ReservedResources.minerals += minerals;
 
-//        if (ReservedResources.minerals >= MAX_VALUE) ReservedResources.minerals = MAX_VALUE;
-//        if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
+        if (ReservedResources.minerals >= MAX_VALUE) {
+            ReservedResources.minerals = MAX_VALUE;
+        }
+
+        if (
+            ReservedResources.minerals > MAX_VALUE_WITHOUT_BASE
+                && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.BASE) == 0
+        ) {
+            ReservedResources.minerals = MAX_VALUE_WITHOUT_BASE;
+        }
+
+        if (ReservedResources.minerals < 0) ReservedResources.minerals = 0;
 
 //        A.errPrintln("        Reserved MINERALS = " + minerals + " - " + whatFor);
 

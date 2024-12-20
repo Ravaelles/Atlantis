@@ -1,9 +1,7 @@
 package atlantis.map.base;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.AMap;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.base.define.EnemyNaturalBase;
 import atlantis.map.base.define.EnemyThirdLocation;
@@ -16,7 +14,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import jbweb.Stations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,6 +85,16 @@ public class BaseLocations {
      * Returns nearest free base location where we don't have base built yet.
      */
     public static ABaseLocation expansionFreeBaseLocationNearestTo(HasPosition nearestTo) {
+        System.out.println("A2a");
+        List<ABaseLocation> bases = expansionFreeBaseLocationNearestTo(nearestTo, 1);
+
+        return bases.isEmpty() ? null : bases.get(0);
+    }
+
+    /**
+     * Returns nearest free base location where we don't have base built yet.
+     */
+    public static List<ABaseLocation> expansionFreeBaseLocationNearestTo(HasPosition nearestTo, int n) {
 
         // Get list of all base locations
         Positions<ABaseLocation> baseLocations = new Positions<>();
@@ -98,25 +105,19 @@ public class BaseLocations {
             baseLocations.sortByGroundDistanceTo(nearestTo, true);
         }
 
+        List<ABaseLocation> result = new ArrayList<>();
+
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
             if (baseLocationLooksFree(baseLocation) && !baseLocation.isPositionVisible()) {
+                // Watch out: if hasBaseMinerals is used, then unexplored/invisible minerals are treated as "no min"
 //                if (hasBaseMinerals(baseLocation)) {
-                return baseLocation;
+                result.add(baseLocation);
 //                }
             }
         }
 
-        // For every location...
-        for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocationLooksFree(baseLocation) && !baseLocation.isExplored()) {
-//                if (hasBaseMinerals(baseLocation)) {
-                return baseLocation;
-//                }
-            }
-        }
-
-        return null;
+        return result;
     }
 
 //    public static boolean hasBaseMinerals(HasPosition baseLocation) {
@@ -161,10 +162,7 @@ public class BaseLocations {
         return (List<ABaseLocation>) cache.get(
             "baseLocations",
             -1,
-            () -> Stations.allBases()
-                .stream()
-                .map(base -> ABaseLocation.create(base.getBWEMBase()))
-                .collect(Collectors.toList())
+            () -> AllBaseLocations.get()
 
 //                () -> AMap.getMap()
 //                        .getBases()
@@ -180,10 +178,10 @@ public class BaseLocations {
         return (List<ABaseLocation>) cache.get(
             "nonStartingLocations",
             10,
-            () -> AMap.getMap()
-                .getStartingLocations()
+            () -> startingLocations()
                 .stream()
-                .map(tilePosition -> ABaseLocation.create(tilePosition))
+                .filter(base -> !base.isStartLocation())
+//                .map(tilePosition -> ABaseLocation.create(tilePosition))
                 .collect(Collectors.toList())
         );
     }
@@ -199,10 +197,9 @@ public class BaseLocations {
         return (List<ABaseLocation>) cache.get(
             "startingLocations:" + excludeOurStartLocation,
             -1,
-            () -> AMap.getMap()
-                .getStartingLocations()
+            () -> startingLocations()
                 .stream()
-                .map(tilePosition -> ABaseLocation.create(tilePosition))
+//                .map(tilePosition -> ABaseLocation.create(tilePosition))
                 .filter(base -> !excludeOurStartLocation || base.distToMoreThan(mainBase, 10))
                 .collect(Collectors.toList())
         );
@@ -226,6 +223,18 @@ public class BaseLocations {
 //        );
     }
 
+    public static List<ABaseLocation> startingLocations() {
+        return (List<ABaseLocation>) cache.get(
+            "startingLocations",
+            -1,
+            () -> baseLocations()
+                .stream()
+                .filter(base -> base.isStartLocation())
+                .collect(Collectors.toList())
+        );
+//        return AMap.getMap().getStartingLocations();
+    }
+
     /**
      * Returns true if given base location is free from units, meaning it's a good place for expansion.
      * <p>
@@ -237,7 +246,7 @@ public class BaseLocations {
     public static boolean baseLocationLooksFree(ABaseLocation baseLocation) {
 
         // If there's any existing, alive, non-lifted base, then it's not free.
-        int existingBases = Select.ourBasesWithUnfinished()
+        int existingBases = Select.all().bases()
             .inRadius(7, baseLocation.position())
             .havingAtLeastHp(1)
             .notLifted()
@@ -319,5 +328,30 @@ public class BaseLocations {
         return startingLocations(false)
             .stream()
             .anyMatch(startingLocation -> startingLocation.distTo(position) <= 5);
+    }
+
+    public static APosition natural() {
+        return DefineNaturalBase.natural();
+    }
+
+    public static ABaseLocation main() {
+        return (ABaseLocation) cache.get(
+            "main",
+            -1,
+            () -> {
+                for (ABaseLocation baseLocation : startingLocations(false)) {
+                    if (baseLocation.distToLessThan(Select.main(), 5)) return baseLocation;
+                }
+
+                return null;
+            }
+        );
+    }
+
+    public static ABaseLocation nearestTo(HasPosition position) {
+        return baseLocations()
+            .stream()
+            .min((base1, base2) -> Double.compare(base1.distTo(position), base2.distTo(position)))
+            .orElse(null);
     }
 }

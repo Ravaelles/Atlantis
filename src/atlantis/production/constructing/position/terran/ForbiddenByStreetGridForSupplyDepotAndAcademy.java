@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position.terran;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
@@ -49,7 +48,7 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

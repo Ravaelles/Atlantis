@@ -16,6 +16,7 @@ public class UnfreezeGeneric extends Manager {
         if (unit.isDragoon()) return false;
         if (unit.isReaver()) return false;
         if (unit.hasCooldown()) return false;
+        if (unit.lastAttackFrameLessThanAgo(40)) return false;
         if (unit.lastPositionChangedLessThanAgo(72)) return false;
 //        if (unit.lastActionLessThanAgo(52)) return false;
 

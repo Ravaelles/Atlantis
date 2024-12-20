@@ -1,6 +1,7 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -20,19 +21,6 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     private boolean shouldNotFight() {
         if (WorkerDoNotFight.doNotFight(unit)) return true;
-
-        if (Count.ourCombatUnits() >= 2) {
-            if (unit.hp() <= 29 || unit.friendsNear().combatUnits().inRadius(4.5, unit).empty()) return true;
-        }
-
-        if (unit.isBuilder() || unit.isConstructing()) return true;
-
-        Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
-        if (!Enemy.protoss()) {
-            if (enemiesNear.atMost(1) && (unit.id() % 2 != 1 || unit.shieldWounded())) return true;
-//            if (A.s <= 400 && enemiesNear.atMost(2) && unit.friendsNear().combatUnits().atLeast(5)) return true;
-        }
-
 //        // Don't go too far from combat units
 //        if (
 //            Count.ourCombatUnits() >= 2

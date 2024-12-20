@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.QueueLastStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,18 +41,22 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
 
         if (!orders.contains(item)) {
             orders.add(index, item);
+            QueueLastStatus.updateStatusOk(item.toString());
             return true;
         }
 
+        QueueLastStatus.updateStatusFailed("AlreadyInQueue", item.toString());
         return false;
     }
 
     public boolean add(ProductionOrder item) {
         if (!orders.contains(item)) {
             orders.add(item);
+            QueueLastStatus.updateStatusOk(item.toString());
             return true;
         }
 
+        QueueLastStatus.updateStatusFailed("AlreadyInQueue", item.toString());
         return false;
     }
 

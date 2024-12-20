@@ -1,5 +1,9 @@
 package tests.unit;
 
+import atlantis.architecture.Manager;
+import atlantis.combat.retreating.protoss.ProtossRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossShouldNotRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
@@ -11,6 +15,43 @@ import static org.junit.Assert.assertEquals;
 
 public class ProtossRetreatTest extends AbstractTestWithUnits {
     public MockedStatic<AGame> aGame;
+
+    @Test
+    public void retreatGoonsVsHydras() {
+        FakeUnit our;
+//        FakeUnit friend1, friend2;
+        FakeUnit[] ours = fakeOurs(
+//            fake(AUnitType.Protoss_Dragoon, 8),
+//            fake(AUnitType.Protoss_Dragoon, 8.1),
+            our = fake(AUnitType.Protoss_Dragoon, 8.2)
+        );
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Hydralisk, 10)
+//            fake(AUnitType.Zerg_Hydralisk, 10.1)
+//            fake(AUnitType.Zerg_Hydralisk, 10.2)
+        );
+
+        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+//            Selection friends = our.friendsNear();
+//            Selection enemies = our.friendsNear();
+
+//            ProtossSmallScaleRetreat.shouldSmallScaleRetreat(our, friends, enemies);
+
+            System.out.println("----");
+            System.out.println((new ProtossShouldRetreat(our).applies()));
+            our.managerLogs().print();
+
+            System.out.println("----");
+            System.out.println((new ProtossShouldNotRetreat(our).applies()));
+            our.managerLogs().print();
+
+            System.out.println("----");
+            Manager manager = (new ProtossRetreat(our)).forceHandle();
+
+//            assertEquals(true, (new ProtossShouldRetreat(our).forceHandle());
+        });
+    }
 
     @Test
     public void retreatWhenNoMeleeAdvantage() {

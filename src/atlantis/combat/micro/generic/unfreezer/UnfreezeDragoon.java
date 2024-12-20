@@ -17,17 +17,30 @@ public class UnfreezeDragoon extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        return unit.isDragoon()
-//            && !unit.isAttacking()
-            && unit.noCooldown()
+        if (!unit.isDragoon()) return false;
+
+        boolean underAttackRecently = unit.lastUnderAttackLessThanAgo(15);
+        if (!underAttackRecently) return false;
+
+        boolean movedVeryRecently = unit.lastPositionChangedLessThanAgo(30);
+        if (movedVeryRecently) return false;
+
+        return unit.noCooldown()
 //            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
 //            && !unit.isHoldingPosition()
-            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop) || unit.lastPositionChangedMoreThanAgo(120))
+            && (
+//            unit.isStopped()
+//                || unit.u().getOrder().equals(Order.Stop)
+//            unit.lastPositionChangedMoreThanAgo(120)
+//                ||
+            (underAttackRecently && !movedVeryRecently)
+        )
+            && (underAttackRecently || unit.lastPositionChangedMoreThanAgo(80));
 //            && unit.u().isSt
 //            && (unit.isStopped() || unit.isHoldingPosition())
 //            && unit.lastActionMoreThanAgo(20, Actions.STOP)
 //            && (unit.isMoving() || unit.isStopped())
-            && unit.lastPositionChangedMoreThanAgo(70);
+//            && (!unit.isLeader() || unit.lastPositionChangedMoreThanAgo(30 * 6));
 //            && unit.noCooldown();
 //            && unit.lastActionMoreThanAgo(20, Actions.HOLD_POSITION);
     }
@@ -53,7 +66,8 @@ public class UnfreezeDragoon extends Manager {
 //            return usedManager(this, "UnfreezeGoonA");
 //        }
 
-        return usedManager(this, "UnfreezeGoonC");
+        return null;
+//        return usedManager(this, "UnfreezeGoonC");
 
 //        if (unit.lastActionMoreThanAgo(11, Actions.HOLD_POSITION)) {
 //            if (unit.holdPosition("Hold")) return usedManager(this);

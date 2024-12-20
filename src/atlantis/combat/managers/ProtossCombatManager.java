@@ -2,7 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.protoss.ProtossDragoonCombatManager;
+import atlantis.protoss.dragoon.ProtossDragoonCombatManager;
 import atlantis.protoss.ProtossZealotCombatManager;
 import atlantis.protoss.ht.ProtossHTCombatManager;
 import atlantis.protoss.reaver.ProtossReaver;
@@ -24,7 +24,6 @@ public class ProtossCombatManager extends MobileDetector {
         return new Class[]{
             //            ProtossDontEngageWhenCombatBuildings.class,
 //            ProtossTooLonelyGetCloser.class,
-//            ProtossCohesion.class, @Temp?
 
             ProtossDragoonCombatManager.class,
             ProtossZealotCombatManager.class,

@@ -17,7 +17,7 @@ public class ProtossStickCombatToMainBaseEarly {
         if (!Enemy.zerg()) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.cannons() > 0) return false;
-        if (Count.bases() > 0) return false;
+        if (Count.bases() >= 2) return false;
 
         int combatUnits = Count.ourCombatUnits();
 

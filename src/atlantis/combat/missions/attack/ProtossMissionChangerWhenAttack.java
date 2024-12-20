@@ -9,7 +9,9 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.map.base.define.EnemyThirdLocation;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
@@ -35,6 +37,11 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return false;
         }
 
+        if (A.s <= 60 * 6 && Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0 && Count.dragoons() <= 0) {
+            if (DEBUG) reason = "Invested in Goons";
+            return true;
+        }
+
         if (Enemy.zerg()) {
             if (defendVsZerg()) return true;
         }
@@ -44,7 +51,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             if (dontDefendVsProtoss()) return false;
         }
 
-        if (ArmyStrength.ourArmyRelativeStrength() <= 120 && EnemyUnits.combatUnits() >= 2) {
+//        if (OurArmy.strengthWithoutCB() <= 120 && EnemyUnits.combatUnits() >= 2) {
+        if (OurArmy.strength() <= 140 && EnemyUnits.combatUnits() >= 2) {
             if (DEBUG) reason = "Hm, we are weaker (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
         }
@@ -67,12 +75,20 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     private boolean defendVsZerg() {
         int combatUnits = Count.ourCombatUnits();
 
-        if (OurStrategy.get().isRushOrCheese() && OurArmy.strength() >= 95) {
+        int hydras = EnemyUnits.hydras();
+        int goons = Count.dragoons();
+
+        if (goons >= 2 && hydras >= 2 && OurArmy.strengthWithoutCB() <= 145 && !ResearchSingularityCharge.isResearched()) {
+            if (DEBUG) reason = "Hydras and no goon range(" + OurArmy.strength() + "%)";
+            return forceMissionSpartaOrDefend(reason);
+        }
+
+        if (OurStrategy.get().isRushOrCheese() && OurArmy.strengthWithoutCB() >= 95) {
             if (DEBUG) reason = "Rush-or-cheese attack";
             return false;
         }
 
-        if (!OurStrategy.get().isRushOrCheese() && Count.dragoons() <= 3 && OurArmy.strength() <= 120 && (
+        if (!OurStrategy.get().isRushOrCheese() && goons <= 3 && OurArmy.strength() <= 120 && (
             combatUnits <= 7 || (combatUnits <= 8 && EnemyUnits.discovered().combatUnits().atLeast(11))
         )) {
             if (DEBUG) reason = "Wait for more army";
@@ -84,12 +100,12 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            return true;
 //        }
 
-        if (Count.dragoons() <= 1 && defendAgainstMassZerglings()) {
+        if (goons <= 1 && defendAgainstMassZerglings()) {
             return forceMissionSpartaOrDefend(reason = "Mass zerglings E");
         }
 
-        if (EnemyUnits.hydras() >= 4 && OurArmy.strength() <= 136 && !ResearchSingularityCharge.isResearched()) {
-            if (DEBUG) reason = "Hydras and no goon range(" + OurArmy.strength() + "%)";
+        if (hydras > 0 && goons <= 6 && hydras * 2.5 >= goons && OurArmy.strengthWithoutCB() <= 190) {
+            if (DEBUG) reason = "Hydras and weaker army";
             return true;
         }
 
@@ -107,7 +123,15 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     private boolean defendVsProtoss() {
         int strength = OurArmy.strength();
 
-        if (Count.dragoons() == 0 && strength <= 700) {
+        int goons = Count.dragoons();
+        int enemyGoons = EnemyUnits.dragoons();
+
+        if (goons < enemyGoons && OurArmy.strength() <= 115) {
+            if (DEBUG) reason = "Enemy has more Goons";
+            return true;
+        }
+
+        if (goons == 0 && strength <= 700) {
             int enemyZealots = EnemyUnits.discovered().zealots().count();
             if (enemyZealots > Math.min(10, Count.zealots())) {
                 if (DEBUG) reason = "Enemy has too many Zealots: " + enemyZealots;
@@ -115,8 +139,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             }
         }
 
-        if (EnemyUnits.discovered().dragoons().count() > Count.dragoons()) {
-            if (Count.dragoons() <= 2 && OurArmy.strength() <= 300) {
+        if (EnemyUnits.discovered().dragoons().count() > goons) {
+            if (goons <= 2 && OurArmy.strength() <= 300) {
                 if (DEBUG) reason = "Enemy has more Dragoons";
                 return true;
             }
@@ -134,7 +158,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
-        if (A.seconds() >= 450 && (strength <= 150 && Count.dragoons() <= 4)) {
+        if (A.seconds() >= 450 && (strength <= 150 && goons <= 4)) {
             if (DEBUG) reason = "Wait for more Dragoons";
             return true;
         }

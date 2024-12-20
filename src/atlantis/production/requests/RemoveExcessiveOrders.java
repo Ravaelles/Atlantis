@@ -16,17 +16,17 @@ import static atlantis.units.AUnitType.*;
 public class RemoveExcessiveOrders {
     public static void removeExcessive(AUnitType type) {
         if (We.protoss()) {
-            limitToMaxAtOnce(type, limitFor(type));
+            limitToMaxAtOnce(type, maxBuildingsAtATime(type));
         }
         else if (We.terran()) {
-            limitToMaxAtOnce(type, limitFor(type));
+            limitToMaxAtOnce(type, maxBuildingsAtATime(type));
         }
     }
 
-    private static int limitFor(AUnitType type) {
+    private static int maxBuildingsAtATime(AUnitType type) {
         if (type.isProtoss()) {
-            if (Protoss_Pylon.equals(type)) return 2 + A.minerals() >= 500 ? 1 : (A.supplyUsed(60) ? 1 : 0);
-            if (Protoss_Assimilator.equals(type)) return 2;
+            if (Protoss_Pylon.equals(type)) return maxPylonsAtATime();
+            if (Protoss_Assimilator.equals(type)) return A.minerals() >= 550 ? 3 : 2;
             if (Protoss_Nexus.equals(type)) return 1 + (A.hasMinerals(700) ? 1 : 0);
             if (Protoss_Observatory.equals(type)) return 1;
             if (Protoss_Observer.equals(type)) return 4;
@@ -37,6 +37,15 @@ public class RemoveExcessiveOrders {
         }
 
         return 9;
+    }
+
+    private static int maxPylonsAtATime() {
+        if (A.supplyUsed() <= 25) {
+            return A.minerals() >= 300 ? 2 : 1;
+        }
+
+        return 2
+            + (A.minerals() >= 350 ? 2 : (A.supplyUsed(60) ? 1 : 0));
     }
 
     private static boolean limitToMaxAtOnce(AUnitType type, int max) {

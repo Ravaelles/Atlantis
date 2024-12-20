@@ -14,7 +14,7 @@ import atlantis.util.We;
 public class DynamicBuildingsCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.hasMinerals(450) || Queue.get().nonCompletedNext30().buildings().size() <= 1;
+        return A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

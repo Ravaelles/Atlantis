@@ -19,9 +19,9 @@ public class ProtossReaver extends Manager {
             ReaverProduceScarab.class,
             ReaverIsLoaded.class,
 
-            ReaverContinueAttack.class,
-
             ReaverUseTransport.class,
+
+            ReaverContinueAttack.class,
 
             ReaverHoldToAttack.class,
             ReaverAlwaysAttack.class,

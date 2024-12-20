@@ -9,8 +9,11 @@ import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class SquadCohesion extends HasSquad {
+    private final int size;
+
     public SquadCohesion(Squad squad) {
         super(squad);
+        this.size = squad.size();
     }
 
     public boolean isSquadCohesionOkay() {
@@ -18,19 +21,15 @@ public class SquadCohesion extends HasSquad {
         if (squad == null || squadCenter == null) return true;
 
         int cohesionPercent = squad.cohesionPercent();
+        System.err.println("cohesionPercent = " + cohesionPercent);
         return cohesionPercent >= minCohesion();
     }
 
     private int minCohesion() {
-        if (GamePhase.isEarlyGame()) {
-            if (A.supplyUsed() <= 25) {
-                return 85;
-            }
+//        if (size <= 4) return 73;
+//        if (size <= 6) return 76;
 
-            return 76;
-        }
-
-        return 70;
+        return 73;
     }
 
     public double squadMaxRadius() {

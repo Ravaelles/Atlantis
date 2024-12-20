@@ -54,7 +54,7 @@ public class ProduceZergUnit {
             return morphBuildingFromTo(AUnitType.Zerg_Spire, type, order);
         }
 
-        return NewConstructionRequest.requestConstructionOf(order);
+        return NewConstructionRequest.requestConstructionOf(order) != null;
     }
 
     private static boolean morphBuildingFromTo(AUnitType from, AUnitType into, ProductionOrder order) {

@@ -1,7 +1,12 @@
-- Extra Probe should be scouting bases after 90 Supply to find enemy new bases and these should be prioritized, most ground distant from enemy main
+- SecureBases not even invoked...
 
-- Dont produce Psionic/HT
-- Robotics not produced
+- EnemyUnitsUpdater.weDiscoveredEnemyUnit bug - always returns just 1 or no change at all
+
+
+
+
+
+-------------
 
 
 - Enemy Natural wrongly identified as expansion: MISSION @3:57 TO Attack: Enemy is expanding, engage him

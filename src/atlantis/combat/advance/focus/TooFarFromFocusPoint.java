@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.log.ErrorLog;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public TooFarFromFocusPoint(AUnit unit) {
@@ -17,6 +18,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     public boolean applies() {
         if (!unit.isLeader()) return false;
         if (focusPoint == null || !focusPoint.isValid()) return false;
+        if (unit.enemiesNear().canAttack(unit, 2.5).notEmpty()) return false;
 
         if (
             focusPoint.distTo(unit) >= 11
@@ -64,11 +66,14 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (goTo != null) {
 //            if (unit.isDragoon()) A.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
 
+            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5);
+            if (goTo == null) return false;
+
             if (goTo.isWalkable()) {
                 if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) return true;
             }
             else {
-                A.errPrintln("Unwalkable focus " + focusPoint + " for " + unit);
+                ErrorLog.printMaxOncePerMinute("Unwalkable focus " + focusPoint + " for " + unit);
             }
         }
 

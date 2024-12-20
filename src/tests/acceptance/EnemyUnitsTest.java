@@ -57,10 +57,13 @@ public class EnemyUnitsTest extends AbstractTestFakingGame {
 
     private void firstFrame() {
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone1);
+        EnemyUnits.discovered().print("Discovered 4");
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone2);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone3);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurkerEgg);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(larva);
+
+        EnemyUnits.discovered().print("Discovered 5");
     }
 
     private void secondFrame() {

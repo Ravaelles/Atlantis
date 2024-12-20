@@ -26,7 +26,7 @@ public class AttackEnemyThird {
         if (A.s <= 220) return false;
 
         if (Enemy.zerg()) {
-            if (!enemyThirdVisible && lastSeenSecondsAgo() >= (A.supplyUsed() <= 70 ? 30 : 45)) return true;
+            if (!enemyThirdVisible && lastSeenSecondsAgo() >= (A.supplyUsed() <= 70 ? 40 : 35)) return true;
             if (!enemyThird.isExplored()) return true;
         }
 
@@ -70,7 +70,7 @@ public class AttackEnemyThird {
 
     public AFocusPoint enemyThird() {
         APosition enemyThird = BaseLocations.enemyThird();
-        if (enemyThird == null) return null;
+        if (enemyThird == null || !enemyThird.hasPosition()) return null;
 
         if (
             enemyThird.isPositionVisible()

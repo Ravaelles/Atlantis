@@ -42,7 +42,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
         else {
             criticalDist += SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC
-                + ourMovementBonus(defender)
+                + ourNotMovingPenalty(defender)
                 + (1.2 * enemyMovementBonus(attacker))
 //                    + SafetyMargin.enemyMovementBonus(attacker)
 //                    + (defender.hasCooldown() ? enemyMovementBonus(attacker) : 0)
@@ -93,7 +93,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         return 0;
     }
 
-    protected double ourMovementBonus(AUnit defender) {
+    protected double ourNotMovingPenalty(AUnit defender) {
         return defender.isMoving() ? -0.2 : +0.3;
     }
 

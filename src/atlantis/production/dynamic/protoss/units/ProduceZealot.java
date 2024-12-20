@@ -30,7 +30,6 @@ public class ProduceZealot {
         if (freeGateways == 0) return false;
 
         if (produceLateGameWithLotsOfMinerals()) return produceZealot();
-
         zealots = Count.zealotsWithUnfinished();
 
         if (zealots <= 1 && !A.hasGas(17) && A.hasMinerals(300)) return produceZealot();
@@ -127,7 +126,12 @@ public class ProduceZealot {
     }
 
     public static boolean notEnoughZealots() {
-        if (A.s >= 350 && OurArmy.strength() >= 126 && EnemyInfo.enemyUnitInMainBase() == null) return false;
+        if (
+            zealots >= 1
+                && A.s >= 350
+                && OurArmy.strength() >= 126
+                && EnemyInfo.enemyUnitInMainBase() == null
+        ) return false;
 
         if (Count.zealots() < minZealots()) return true;
 
@@ -147,6 +151,15 @@ public class ProduceZealot {
     }
 
     public static double minZealots() {
+        if (Enemy.terran()) return minZealotsVsTerran();
+        return minZealotsVsZergOrProtoss();
+    }
+
+    private static double minZealotsVsTerran() {
+        return 1;
+    }
+
+    private static double minZealotsVsZergOrProtoss() {
         if (A.hasGas(1) && Count.cannons() >= 2) return 2;
 
         boolean core = Have.cyberneticsCore();

@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
@@ -16,7 +17,13 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.distTo(main);
-        if (distToMain <= 4) return false;
+        if (distToMain <= 2.4) return false;
+
+        if (!A.isUms() && unit.hp() >= 41 && Count.ourCombatUnits() <= 7) {
+            if (!unit.isRanged() || !Enemy.protoss() || unit.rangedEnemiesCount(8) > 0) return true;
+        }
+
+        if (forbidAsManyEnemiesNear(unit)) return false;
 
         if (Enemy.protoss()) {
             if (
@@ -91,6 +98,17 @@ public class ShouldRunTowardsBase {
 //
 //        return unit.distTo(mainOrAnyBuilding) >= 20
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
+    }
+
+    private static boolean forbidAsManyEnemiesNear(AUnit unit) {
+        if (!We.protoss()) return false;
+
+        int minEnemiesToForbid = unit.hp() <= 80 ? 2 : 4;
+        double radius = 1.5 + unit.woundPercent() / 25.0;
+
+        if (unit.enemiesNear().canAttack(unit, radius).count() >= minEnemiesToForbid) return true;
+
+        return false;
     }
 
     public static AUnit position() {

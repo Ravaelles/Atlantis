@@ -14,6 +14,10 @@ import bwapi.TilePosition;
 import bwapi.WalkPosition;
 import bwem.ChokePoint;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 /**
  * Atlantis uses wrapper for BWAPI  classes which can't extended due to private constructors.
  * <br /><br />
@@ -27,39 +31,45 @@ import bwem.ChokePoint;
  * <b>Notice:</b> whenever possible, try to use APosition in place of Position.
  */
 //public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
-public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>> {
-
-    private final Position p;
+public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>>, Serializable {
+    //    private transient Position p;
+    private Position p;
 
     // =========================================================
 
+//    public APosition() {
+//        // For serialization only!
+//        this(0, 0);
+////        this.p = new Position(0, 0);
+//    }
+
     public APosition(APosition position) {
-        super(position.x(), position.y(), 1);
-//        this.p = position.p;
-//        this.p = this;
-        this.p = new Position(position.x(), position.y());
+        this(position.x(), position.y());
     }
 
     private APosition(HasPosition p) {
-        super(p.x(), p.y(), 1);
-//        this.p = p.position();
-//        this.p = this;
-        this.p = new Position(p.x(), p.y());
+        this(p.x(), p.y());
+    }
+
+    private APosition(Position p) {
+        this(p.x, p.y);
     }
 
     public APosition(int pixelX, int pixelY) {
         super(pixelX, pixelY, 1);
-//        this.p = new Position(pixelX, pixelY);
-//        this.p = this;
         this.p = new Position(pixelX, pixelY);
     }
 
-    private APosition(Position p) {
-        super(p.getX(), p.getY(), 1);
-//        this.p = p;
-//        this.p = this;
-        this.p = new Position(p.getX(), p.getY());
+    // =========================================================
+
+    private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+        System.out.println("Hahaha!");
+
+        ois.defaultReadObject();
+        Integer houseNumber = (Integer) ois.readObject();
     }
+
+    // =========================================================
 
     /**
      * <b>Notice:</b> whenever possible, use APosition instead of Position.
@@ -69,6 +79,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
      * you can create them here or reference original Position class via p() method.
      */
     public static APosition create(Object p) {
+        if (p == null) return null;
+
 //        if (instances.containsKey(p)) {
 //            return instances.get(p);
 //        }
@@ -313,7 +325,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     @Override
     public String toString() {
-        return "(" + tx() + ", " + ty() + ")";
+        return "[" + tx() + "," + ty() + "]";
     }
 
     @Override
@@ -321,7 +333,6 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         return this.p.hashCode();
     }
 
-    //    public int compareTo(Position o) {
     @Override
     public int compareTo(Point o) {
         int compare = Integer.compare(x, y);

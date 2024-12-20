@@ -1,6 +1,8 @@
 package atlantis.combat.running;
 
-import atlantis.combat.running.show_back.RunShowBackToEnemy;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
+import atlantis.combat.running.fallback.RunAttackFallback;
+import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -13,14 +15,14 @@ public class ARunningManager {
     public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
     public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
 
-
     protected final AUnit unit;
     protected HasPosition runTo = null;
     protected AUnit runningFromUnit = null;
     protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
+    protected String method = "Init";
 
-    protected final RunShowBackToEnemy showBackToEnemy = new RunShowBackToEnemy(this);
+    protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
     protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
     protected final ReasonableRunToPosition reasonableRunToPosition = new ReasonableRunToPosition(this);
     protected final RunToPositionFinder runPositionFinder = new RunToPositionFinder(this);
@@ -44,6 +46,8 @@ public class ARunningManager {
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
         if (unit.lastStartedRunningLessThanAgo(1)) return true;
+
+        method = "Undefined";
 
         if (runFrom instanceof AUnit) {
             runningFromUnit = (AUnit) runFrom;
@@ -70,18 +74,29 @@ public class ARunningManager {
             return makeUnitRun(action);
         }
 
-//        System.err.println(
-//            "=== RUN ERROR ================= run:"
-//                + (runTo != null ? runTo.toStringPixels() : "-")
-//                + " / unit:" + unit.position().toStringPixels()
-//        );
+        if (A.isUms() && !unit.isObserver()) System.err.println(
+            "=== RUN ERROR ================= run:"
+                + (runTo != null ? runTo.toStringPixels() : "-")
+                + " / unit:" + unit.position().toStringPixels()
+                + " / method:" + method
+        );
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
 //        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
+        return actWhenCantRun();
+    }
+
+    private boolean actWhenCantRun() {
         unit.addLog("CantRun");
+
+        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+            unit.setManagerUsed(new RunAttackFallback(unit));
+            return true;
+        }
+
         return false;
     }
 
@@ -182,7 +197,6 @@ public class ARunningManager {
         else {
             if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
                 // Update last time run order was issued
-//                if (!unit.isRunning()) unit._lastStartedRunning = A.now();
                 if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
 
                 // Make all other units very close to it run as well
@@ -263,7 +277,7 @@ public class ARunningManager {
 
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
-        unit._lastRunningPositionChange = A.fr;
+        unit._lastRunningPositionChange = A.now;
         return runTo;
     }
 }

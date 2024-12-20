@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.QueueLastStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -23,13 +24,35 @@ public class PreventDuplicateOrders {
 
         assert type != null;
 
-        if (onlyOneAllowed(type, position)) return true;
-        if (excessivePylon(type, position)) return true;
-        if (justRequestedThisType(type)) return true;
-        if (tooManyOrdersOfThisType(type, position)) return true;
-        if (tooManyOrdersInGeneral(type)) return true;
+        if (onlyOneAllowed(type, position)) {
+            QueueLastStatus.updateStatusFailed("OnlyOneAllowed", type.toString());
+            return true;
+        }
 
-        if (forProtossEnforceHavingAPylonFirst(type)) return true;
+        if (excessivePylon(type, position)) {
+            QueueLastStatus.updateStatusFailed("ExcessivePylon", type.toString());
+            return true;
+        }
+
+        if (justRequestedThisType(type)) {
+            QueueLastStatus.updateStatusFailed("JustRequested", type.toString());
+            return true;
+        }
+
+        if (tooManyOrdersOfThisType(type, position)) {
+            QueueLastStatus.updateStatusFailed("TooManySuchOrders", type.toString());
+            return true;
+        }
+
+        if (tooManyOrdersInGeneral(type)) {
+            QueueLastStatus.updateStatusFailed("tooManyOrders", type.toString());
+            return true;
+        }
+
+        if (forProtossEnforceHavingAPylonFirst(type)) {
+            QueueLastStatus.updateStatusFailed("EnforcePylonFirst", type.toString());
+            return true;
+        }
 
         return false;
     }
@@ -76,6 +99,11 @@ public class PreventDuplicateOrders {
 
     private static boolean excessivePylon(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
+
+        if (A.supplyUsed() <= 27 && A.supplyFree() >= 4) return true;
+        if (A.supplyUsed() <= 36 && A.supplyFree() >= 5) return true;
+        if (A.supplyUsed() <= 50 && A.supplyFree() >= 6) return true;
+        if (A.supplyUsed() <= 65 && A.supplyFree() >= 7) return true;
 
         return A.hasFreeSupply(10);
     }
@@ -129,7 +157,7 @@ public class PreventDuplicateOrders {
     private static boolean tooManyPylons(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
 
-        if (CountInQueue.count(AUnitType.Protoss_Pylon) >= 2) {
+        if (CountInQueue.count(AUnitType.Protoss_Pylon) >= (A.supplyTotal() >= 60 && A.supplyFree() <= 0 ? 4 : 2)) {
             ErrorLog.printMaxOncePerMinute(
                 "Exceeded PYLON allowed: " + CountInQueue.count(AUnitType.Protoss_Pylon)
             );

@@ -8,7 +8,6 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import bwapi.Color;
 
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 public class RunInAnyDirection {
     public static int ANY_DIRECTION_RADIUS_DEFAULT = 4;
-    public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
+    public static int ANY_DIRECTION_RADIUS_DRAGOON = 9;
     public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 5;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
@@ -61,6 +60,12 @@ public class RunInAnyDirection {
         return runningManager.runTo();
     }
 
+    private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom) {
+        return 1.3 * position.distTo(runAwayFrom)
+            - position.distTo(unit)
+            - Select.all().inRadius(1.0, position).exclude(unit).count() * 0.5;
+    }
+
     private boolean handleInvalidCaseWhenRunToIsTooClose() {
         if (
             runningManager.runTo() != null
@@ -95,6 +100,7 @@ public class RunInAnyDirection {
      */
     public APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
         HasPosition runTo = runningManager.runTo();
+        runAwayFrom = runAwayFrom.position();
 
         if (
             runTo != null
@@ -104,8 +110,23 @@ public class RunInAnyDirection {
             return runTo.position();
         }
 
-        int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
+        int BASE_RADIUS = 4;
+        int radius = BASE_RADIUS;
+        APosition position = null;
 
+        if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
+            position = findPositionWithRadius(runAwayFrom, radius);
+            if (position != null) return position;
+        }
+
+        radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
+        position = findPositionWithRadius(runAwayFrom, radius);
+        if (position != null) return position;
+
+        return null;
+    }
+
+    private APosition findPositionWithRadius(HasPosition runAwayFrom, int radius) {
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
@@ -122,7 +143,7 @@ public class RunInAnyDirection {
             // Score is calculated as:
             // - being most distant to enemy we're running from,
             // - not close to ground friends,
-            double positionScore = calculatePositionScore(unit, position, runAwayFrom);
+            double positionScore = evalPosition(unit, position, runAwayFrom);
 
             boolean isNewBest = bestPosition == null || positionScore >= bestScore;
             if (isNewBest) {
@@ -145,12 +166,6 @@ public class RunInAnyDirection {
 //        System.out.println("-------------------------");
 
         return bestPosition;
-    }
-
-    private static double calculatePositionScore(AUnit unit, APosition position, HasPosition runAwayFrom) {
-        return position.distTo(runAwayFrom)
-            - position.distTo(unit)
-            - Select.all().inRadius(1.2, position).exclude(unit).count() * 0.5;
     }
 
     private void positionSearchLoop(int radius, ArrayList<APosition> potentialPositionsList) {
@@ -193,7 +208,7 @@ public class RunInAnyDirection {
         else if (unit.isDragoon()) {
             return ANY_DIRECTION_RADIUS_DRAGOON;
         }
-        else if (unit.isInfantry()) {
+        else if (unit.isTerran() && unit.isInfantry()) {
             return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
         }
 

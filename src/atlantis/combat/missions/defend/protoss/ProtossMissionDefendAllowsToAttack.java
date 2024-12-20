@@ -34,6 +34,14 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (protossDontAttackWhenAlmostDead()) return false;
 
+        if (
+            ProtossStickCombatToMainBaseEarly.should()
+                && Select.ourBuildingsWithUnfinished().countInRadius(5, unit) == 0
+                && (unit.hasCooldown() || !unit.isTargetInWeaponRangeAccordingToGame(enemy))
+        ) {
+            return false;
+        }
+
         if (A.s >= 60 * 9) return true;
 
         boolean lowCooldown = unit.cooldown() <= 9;
@@ -109,7 +117,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         }
 
         return unit.hp() <= 34
-            && unit.shotRecently(5)
+            && unit.shotSecondsAgo(5)
             && unit.enemiesThatCanAttackMe(3 + unit.woundPercent() / 100.0).notEmpty();
     }
 

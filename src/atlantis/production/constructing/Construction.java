@@ -9,7 +9,9 @@ import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.units.workers.GatherResources;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -70,11 +72,17 @@ public class Construction implements Comparable<Construction> {
      */
     protected void assignRandomBuilderForNow() {
         if (near != null) {
-            builder = FreeWorkers.get().nearestTo(near);
+            builder = Select.ourWorkers().nearestTo(near);
         }
         else {
-            builder = FreeWorkers.get().first();
+            builder = Select.ourWorkers().first();
         }
+//        if (near != null) {
+//            builder = FreeWorkers.get().nearestTo(near);
+//        }
+//        else {
+//            builder = FreeWorkers.get().first();
+//        }
     }
 
     /**
@@ -83,9 +91,17 @@ public class Construction implements Comparable<Construction> {
      * @return AUnit for convenience it returns
      */
     public AUnit assignOptimalBuilder() {
+        AUnit oldBuilder = builder;
+
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
-        if (optimalBuilder != null) builder = optimalBuilder;
+        if (optimalBuilder != null) {
+            builder = optimalBuilder;
+            if (oldBuilder != null && !oldBuilder.equals(optimalBuilder)) {
+                oldBuilder.stop("OldBuilder");
+                (new GatherResources(oldBuilder)).forceHandle();
+            }
+        }
         else ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
 
         return builder;
@@ -188,6 +204,11 @@ public class Construction implements Comparable<Construction> {
 
         if (status.equals(ConstructionOrderStatus.IN_PROGRESS)) {
             timeBecameInProgress = A.now();
+        }
+
+        if (!status.equals(ConstructionOrderStatus.NOT_STARTED)) {
+            AUnit building = buildingUnit();
+            if (building != null && building.isProtoss()) setBuilder(null);
         }
     }
 

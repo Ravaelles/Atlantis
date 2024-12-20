@@ -6,7 +6,6 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.listeners.*;
-import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -232,7 +231,7 @@ public class Atlantis implements BWEventListener {
     }
 
     public void exitGame() {
-        if (!Env.isTesting()) gameSummary();
+        if (!Env.isTesting()) GameSummary.print();
         killProcesses();
     }
 
@@ -245,25 +244,6 @@ public class Atlantis implements BWEventListener {
 
         A.println("Exit...");
         System.exit(0);
-    }
-
-    private void gameSummary() {
-        if (Atlantis.game() == null) {
-            return;
-        }
-
-        int resourcesBalance = AGame.killsLossesResourceBalance();
-        A.println(
-            "\n### Total time: " + AGame.timeSeconds() + " seconds. ###\r\n" +
-                "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\r\n" +
-                "### Resource killed/lost: " + (resourcesBalance > 0 ? "+" + resourcesBalance : resourcesBalance) + " ###"
-        );
-
-        if (A.isUms()) {
-            UnitsArchive.paintLostUnits();
-            UnitsArchive.paintKilledUnits();
-        }
-        UnitsArchive.paintKillLossResources();
     }
 
     /**

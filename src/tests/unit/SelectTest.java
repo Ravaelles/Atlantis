@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -81,6 +82,11 @@ public class SelectTest extends AbstractTestWithUnits {
             assertEquals(
                 GROUND_UNITS,
                 Select.enemyRealUnits(true, false, false).size()
+            );
+
+            assertEquals(
+                REAL_UNITS + COMBAT_BUILDINGS,
+                Select.enemy().realUnitsAndCombatBuildings().size()
             );
 
             assertEquals(

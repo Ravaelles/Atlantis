@@ -1,6 +1,8 @@
 package atlantis.production.constructing.position.conditions;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -12,9 +14,11 @@ import atlantis.util.We;
 
 public class IsProbablyInAnotherRegion {
     public static boolean differentRegion(AUnit builder, AUnitType building, APosition position, HasPosition nearTo) {
+        if (building.isBase()) return false;
         if (handleIsBadRegionForFirstBunker(building, position)) return true;
 
-        if (building.isBase()) return false;
+        if (Env.isTesting()) return apprxForTesting(builder, building, position, nearTo);
+
         if (building.isPylon() && A.supplyTotal() >= 60) return false;
 
 //        if (
@@ -47,7 +51,7 @@ public class IsProbablyInAnotherRegion {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 
@@ -65,5 +69,10 @@ public class IsProbablyInAnotherRegion {
 //        System.out.println("position.regionsMatch(MainRegion.mainRegion()) = " + position.regionsMatch(MainRegion.mainRegion()));
 
         return false;
+    }
+
+    private static boolean apprxForTesting(AUnit builder, AUnitType building, APosition position, HasPosition nearTo) {
+        return !BaseLocations.nearestTo(position).equals(BaseLocations.nearestTo(nearTo))
+            && failed("Approx for testing IsProbablyInAnotherRegion");
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
 
@@ -57,13 +58,12 @@ public class UnitStateManager extends Manager {
 
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = timeNow;
+
+            if (unit.isUnderAttack(2)) {
+                unit.increaseHitCount();
+//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UNDER ATTACK - " + unit.hitCount());
+            }
         }
-
-//            AUnit enemy = Select.enemy().nearestTo(unit);
-//        if (unit.id() == Select.ourCombatUnits().first().getID()) {
-
-//                    + unit._lastAttackOrder + " // " + unit._lastAttackFrame + " // " + unit._lastStartingAttack);
-//        }
 
         return null;
     }
@@ -71,9 +71,9 @@ public class UnitStateManager extends Manager {
     private void rememberLastPositionAndLastPositionChange() {
         if (unit._lastX != unit.x() || unit._lastY != unit.y()) {
             unit._lastPositionChanged = timeNow;
-        }
 
-        unit._lastX = unit.x();
-        unit._lastY = unit.y();
+            unit._lastX = unit.x();
+            unit._lastY = unit.y();
+        }
     }
 }

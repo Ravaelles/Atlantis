@@ -1,12 +1,9 @@
 package atlantis.production.constructing.position.terran;
 
-import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.APosition;
-import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -23,7 +20,7 @@ public class TooCloseToBunker {
         for (AUnit bunker : Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Bunker).list()) {
             double distToBunker = bunker.distTo(position);
             if (distToBunker <= minDist) {
-                AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to bunker (" + distToBunker + ")";
+                AbstractPositionFinder._STATUS = "Too close to bunker (" + distToBunker + ")";
                 return true;
             }
         }
@@ -32,7 +29,7 @@ public class TooCloseToBunker {
 //        if (nextBunker != null && nextBunker.distToLessThan(position, 5)) return true;
 
         if (ConstructionRequests.hasNotStartedNear(AUnitType.Terran_Bunker, position, 5)) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Has close bunker nearby";
+            AbstractPositionFinder._STATUS = "Has close bunker nearby";
             return true;
         }
 

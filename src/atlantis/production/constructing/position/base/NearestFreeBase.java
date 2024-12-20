@@ -77,9 +77,7 @@ public class NearestFreeBase {
     }
 
     private static HasPosition nearToNearestFree() {
-        AUnit mainBase = Select.mainOrAnyBuilding();
-
-        return BaseLocations.expansionFreeBaseLocationNearestTo(mainBase != null ? mainBase.position() : null);
+        return BaseLocations.expansionFreeBaseLocationNearestTo(Select.mainOrAnyBuildingPosition());
     }
 
     private static HasPosition nearToMostDistantToEnemy() {

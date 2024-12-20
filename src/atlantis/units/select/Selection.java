@@ -279,6 +279,13 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection carriers() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isCarrier()),
+            "carriers"
+        );
+    }
+
     public Selection marines() {
         return cloneByRemovingIf(
             (unit -> !unit.isMarine()),
@@ -304,6 +311,13 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Protoss_Zealot)),
             "zealots"
+        );
+    }
+
+    public Selection overlords() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Overlord)),
+            "overlords"
         );
     }
 
@@ -444,6 +458,12 @@ public class Selection extends BaseSelection {
     public Selection realUnitsAndBuildings() {
         return cloneByRemovingIf(
             (unit -> !unit.isRealUnitOrBuilding()), "realUnitsAndBuildings"
+        );
+    }
+
+    public Selection realUnitsAndCombatBuildings() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isRealUnitOrCombatBuilding()), "realUnitsAndCombatBuildings"
         );
     }
 
@@ -727,6 +747,12 @@ public class Selection extends BaseSelection {
     public Selection notRepairing() {
         return cloneByRemovingIf(
             (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "notRepairing"
+        );
+    }
+
+    public Selection repairing() {
+        return cloneByRemovingIf(
+            (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "repairing"
         );
     }
 
@@ -1119,8 +1145,11 @@ public class Selection extends BaseSelection {
     }
 
     public AUnit randomWithSeed(int seed) {
+        if (data.isEmpty()) return null;
+        if (data.size() == 1) return data.get(0);
+
         Random rand = new Random(seed);
-        return data.isEmpty() ? null : (AUnit) data.get(rand.nextInt(data.size()));
+        return data.get(rand.nextInt(data.size()));
     }
 
     /**

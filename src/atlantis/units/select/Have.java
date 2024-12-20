@@ -135,6 +135,10 @@ public class Have {
         return Count.ofType(AUnitType.Protoss_Cybernetics_Core) > 0;
     }
 
+    public static boolean cyberneticsCoreWithUnfinished() {
+        return Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0;
+    }
+
     public static boolean main() {
         return base();
     }
@@ -153,6 +157,10 @@ public class Have {
 
     public static boolean roboticsFacility() {
         return have(AUnitType.Protoss_Robotics_Facility);
+    }
+
+    public static boolean roboticsSupportBay() {
+        return have(AUnitType.Protoss_Robotics_Support_Bay);
     }
 
     public static boolean forge() {

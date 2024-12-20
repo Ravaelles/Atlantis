@@ -42,7 +42,7 @@ public class TerranHasEnoughSidesFreeFromOtherBuildings {
     }
 
     private static boolean forbidden(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return false;
     }
 }

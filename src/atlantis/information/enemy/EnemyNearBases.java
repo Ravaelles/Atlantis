@@ -33,7 +33,7 @@ public class EnemyNearBases {
                 AUnit nearCritical = Select.enemy().ofType(
                     AUnitType.Protoss_Dark_Templar, AUnitType.Protoss_Reaver, AUnitType.Protoss_Archon,
                     AUnitType.Zerg_Lurker
-                ).inRadius(8, Select.ourBuildings()).nearestTo(main);
+                ).visibleOnMap().inRadius(8, Select.ourBuildings()).nearestTo(main);
 
                 if (nearCritical != null) return nearCritical;
 

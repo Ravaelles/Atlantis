@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=11
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=24
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=26
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
@@ -20,16 +20,8 @@
 8 - Pylon - @NATURAL_CHOKE
 11 - Forge - @NATURAL_CHOKE
 12 - Cannon - @NATURAL_CHOKE
-14 - Cannon - @NATURAL_CHOKE
-15 - Nexus
-15 - Gateway - @NATURAL_CHOKE
+13 - Cannon - @NATURAL_CHOKE
+14 - Gateway - @NATURAL_CHOKE
 16 - Pylon - @MAIN
-//17 - Cybernetics Core
-//18 - Assimilator
-//20 - Zealot
-//22 - Zealot
+16 - Nexus
 22 - Pylon
-//55 - Robotics Facility
-//62 - Robotics Support Bay
-//68 - Reaver
-//74 - Shuttle

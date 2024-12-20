@@ -20,13 +20,17 @@ public class ProduceShuttle {
         if (!Have.roboticsFacility()) return false;
         if (!Have.observer() && EnemyInfo.hasHiddenUnits()) return false;
 
-        if (Count.reavers() > 0 && Count.shuttles() == 0) return produceShuttle();
+        int shuttles = Count.shuttles();
+        if (shuttles == 0 && A.hasMinerals(650)) return produceShuttle();
 
-        if (A.supplyUsed() <= 100) {
-            if (
-                Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility)
-                    || Count.ofType(AUnitType.Protoss_Reaver) >= Count.ofType(AUnitType.Protoss_Shuttle)
-            ) {
+        int reavers = Count.reavers();
+        if (reavers == 0) return false;
+
+        if (reavers < shuttles) return false;
+        if (shuttles == 0 && A.hasMinerals(580)) return produceShuttle();
+
+        if (A.supplyUsed() >= 100) {
+            if (reavers > shuttles) {
                 return produceShuttle();
             }
         }

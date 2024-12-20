@@ -1,7 +1,6 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.game.A;
-import atlantis.map.base.Bases;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -20,16 +19,17 @@ import static atlantis.units.AUnitType.Protoss_Pylon;
 
 public class FindPositionForCannon {
     public static APosition find(HasPosition nearTo, AUnit builder, Construction construction) {
-//        System.err.println("Natural= " + DefineNaturalBase.natural() + " / Main= " + Select.main());
-//        System.err.println("PRE nearTo = " + nearTo);
         nearTo = validateNearTo(nearTo);
-//        System.err.println("POST nearTo = " + nearTo);
-//        System.err.println("Existing CN = " + Select.ourOfType(Protoss_Photon_Cannon).first());
         builder = validateBuilder(builder, nearTo);
 
-        if (noPylonNearby(nearTo)) {
-            A.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
-            requestPylonToBeAbleToBuildCannon(nearTo);
+        boolean hasExistingPylon = noExistingPylonNearby(nearTo);
+        if (!hasExistingPylon) {
+            if (!noPlannedPylonNearby(nearTo)) {
+                if (A.supplyUsed() >= 35) {
+                    requestPylonToBeAbleToBuildCannon(nearTo);
+                    A.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
+                }
+            }
             return null;
         }
 
@@ -47,10 +47,16 @@ public class FindPositionForCannon {
         return FreeWorkers.get().nearestTo(nearTo);
     }
 
-    private static boolean noPylonNearby(HasPosition nearTo) {
+    private static boolean noExistingPylonNearby(HasPosition nearTo) {
         int radius = 8;
 
-        return Select.ourWithUnfinished(Protoss_Pylon).inRadius(radius, nearTo).empty()
+        return Select.ourOfType(Protoss_Pylon).inRadius(radius, nearTo).empty();
+    }
+
+    private static boolean noPlannedPylonNearby(HasPosition nearTo) {
+        int radius = 8;
+
+        return Select.ourUnfinished().ofType(Protoss_Pylon).inRadius(radius, nearTo).empty()
             && !ConstructionRequests.hasNotStartedNear(Protoss_Pylon, nearTo, radius);
     }
 

@@ -35,7 +35,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
             "focusPoint",
-            61,
+            23,
             () -> defineFocusPoint()
         );
     }
@@ -215,10 +215,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private static AFocusPoint enemyWhoBreachedBase() {
-        if (A.supplyUsed() <= 160) {
+        if (A.supplyUsed() <= 160 && !A.hasMinerals(2000)) {
             AUnit enemyInBase = EnemyUnitBreachedBase.get();
             if (
                 enemyInBase != null
+                    && enemyInBase.hasPosition()
+                    && enemyInBase.hp() > 0
                     && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())
                     && !enemyInBase.effUndetected()
             ) {

@@ -19,8 +19,9 @@ public class ProtossShuttleWithReaver extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ProtossShuttleAvoidAA.class,
             ProtossShuttleWithReaverRun.class,
-            ProtossShuttleEmpty.class,
+
             ProtossShuttleWithReaverEngage.class,
 
             ProtossShuttleAvoidEnemies.class,

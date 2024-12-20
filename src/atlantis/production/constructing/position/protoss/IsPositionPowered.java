@@ -4,7 +4,6 @@ import atlantis.Atlantis;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class IsPositionPowered {
@@ -24,7 +23,7 @@ public class IsPositionPowered {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

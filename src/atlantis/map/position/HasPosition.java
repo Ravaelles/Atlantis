@@ -1,7 +1,9 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
+import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.region.ARegion;
@@ -10,6 +12,9 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
 import bwapi.Color;
+import bwapi.Point;
+import bwapi.Position;
+import bwapi.TilePosition;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
@@ -31,6 +36,8 @@ public interface HasPosition {
      * Returns new position which is moved e.g. 15% in direction of the natural base (for bunker placement).
      */
     default APosition translatePercentTowards(HasPosition towards, int percentTowards) {
+        if (towards == null) return position();
+
         return translatePercentTowards(percentTowards, towards);
     }
 
@@ -76,6 +83,8 @@ public interface HasPosition {
     }
 
     default APosition makeBuildable(int maxRadius) {
+        if (Env.isTesting()) return position();
+
         APosition position = this.position();
         if (position.isBuildable()) {
             return position;
@@ -104,6 +113,8 @@ public interface HasPosition {
     }
 
     default APosition makeBuildableFarFromBounds(int atLeastTilesAwayFromBounds) {
+        if (Env.isTesting()) return position();
+
         APosition position = this.position();
         if (position.isBuildable()) {
             return position;
@@ -132,6 +143,8 @@ public interface HasPosition {
     }
 
     default APosition makeWalkable(int maxRadius) {
+        if (Env.isTesting()) return position();
+
         APosition position = this.position();
         if (position.isWalkable()) {
             return position;
@@ -160,6 +173,8 @@ public interface HasPosition {
     }
 
     default APosition makeLandableFor(AUnit building) {
+        if (Env.isTesting()) return position();
+
         int currentRadius = 0;
         int maxRadius = 8;
         while (currentRadius <= maxRadius) {
@@ -210,6 +225,8 @@ public interface HasPosition {
 //    }
 
     default APosition makeWalkableAndFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
+        if (Env.isTesting()) return position();
+
         double currentRadius = 0;
         double closenessMargin = 0.15;
         Selection our = Select.our().groundUnits().inRadius(maxRadius + 1, this);
@@ -276,23 +293,37 @@ public interface HasPosition {
     }
 
     default boolean isWalkable() {
+        if (Env.isTesting()) return true;
+
         return Atlantis.game().isWalkable(position().p().toWalkPosition());
     }
 
     default boolean isExplored() {
+        if (Env.isTesting()) return true;
+
         return Atlantis.game().isExplored(position().p().toTilePosition());
     }
 
     default boolean isPositionVisible() {
+        if (Env.isTesting()) return true;
+
         return Atlantis.game().isVisible(position().p().toTilePosition());
     }
 
     default boolean isBuildable() {
+        if (Env.isTesting()) return Select.all().countInRadius(1.98, this) == 0;
+
         return Atlantis.game().isBuildable(position().p().toTilePosition());
     }
 
     default boolean isConnected() {
-        return Atlantis.game().isVisible(position().p().toTilePosition());
+        APosition position = position();
+        if (position == null) return false;
+
+        Position p = position.p();
+        if (p == null) return false;
+
+        return Atlantis.game().isVisible(p.toTilePosition());
     }
 
     default boolean hasPosition() {
@@ -392,5 +423,34 @@ public interface HasPosition {
 
     default void paintTextCentered(HasPosition position, String text, Color color) {
         AAdvancedPainter.paintTextCentered(position, text, color, false);
+    }
+
+    default void paintTextCentered(String text, Color color) {
+        AAdvancedPainter.paintTextCentered(this, text, color, false);
+    }
+
+    default void paintTextCentered(String text, Color color, int tyOffset) {
+        AAdvancedPainter.paintTextCentered(this.translateByTiles(0, tyOffset), text, color, false);
+    }
+
+    default String digitDistTo(HasPosition to) {
+        return "(" + A.digit(distTo(to)) + ")";
+    }
+
+    default boolean equals(HasPosition obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+
+        int otherX = obj.x();
+        int otherY = obj.y();
+        return this.x() == otherX && this.y() == otherY;
+    }
+
+    default int compareTo(HasPosition o) {
+        int compare = Integer.compare(x(), y());
+        if (compare == 0) {
+            compare = Integer.compare(x(), y());
+        }
+        return compare;
     }
 }

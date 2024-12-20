@@ -18,7 +18,10 @@ public class ProcessAvoid extends Manager {
 
     @Override
     public boolean applies() {
-        return !unit.isABuilding() && !unit.effUndetected();
+        if (unit.isABuilding()) return false;
+        if (unit.effUndetected()) return false;
+
+        return true;
     }
 
     public Manager singleUnit(AUnit enemy) {

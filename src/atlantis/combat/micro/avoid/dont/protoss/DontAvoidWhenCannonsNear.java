@@ -5,6 +5,8 @@ import atlantis.units.select.Count;
 
 public class DontAvoidWhenCannonsNear {
     public static boolean check(AUnit unit) {
+        if (unit.cooldown() >= 6) return false;
+
         if (Count.cannons() > 0) {
             if (unit.isRanged() && unit.cooldown() >= 6) return false;
 

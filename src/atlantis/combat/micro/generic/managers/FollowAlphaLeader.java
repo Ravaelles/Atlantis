@@ -19,17 +19,16 @@ public class FollowAlphaLeader extends Manager {
     public boolean applies() {
         followPoint = followPoint();
 
-        if (followPoint != null && followPoint.distTo(unit) < 20) {
+        if (followPoint != null && followPoint.hasPosition() && followPoint.distTo(unit) < 20 && followPoint.isWalkable()) {
             return true;
         }
 
-        return followPoint != null;
+        return false;
     }
 
     private HasPosition followPoint() {
         AUnit leader = Alpha.get().leader();
-
-        if (leader == null) return null;
+        if (leader == null || leader.isDead()) return null;
 
         HasPosition basePoint = leader;
         AFocusPoint focus = leader.mission().focusPoint();

@@ -11,6 +11,8 @@ import atlantis.units.Units;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
+import java.lang.reflect.ParameterizedType;
+
 public class AvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
@@ -31,6 +33,8 @@ public class AvoidEnemies extends Manager {
     @Override
     public boolean applies() {
         if (unit.effUndetected()) return false;
+
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - ...");
 
 //        if (unit.isMissionSparta() && unit.isHealthy()) return false;
 //        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
@@ -56,10 +60,27 @@ public class AvoidEnemies extends Manager {
     public Manager avoidEnemies() {
         if (!applies()) return null;
 
-        if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {
-//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - AVOID ENEMIES " + unit.runningManager().runningFromUnit());
-            return usedManager(unit.manager());
+        Units enemies = enemiesDangerouslyClose();
+
+        if (wantsToAvoid.unitOrUnits(enemies) != null) {
+//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - ##### AVOID ##### " + unit.runningManager().runningFromUnit());
+//            return usedManager(unit.manager());
+            return usedManager(this);
         }
+
+        if (unit.isRunning()) {
+            unit.runningManager().stopRunning();
+            unit.addLog("StopAvoiding");
+            unit.stop("StopAvoiding");
+            return null;
+        }
+
+//        if (unit.isWounded() && unit.meleeEnemiesNearCount(2.5) > 0) {
+//            System.err.println("@@@@@@@@@@ HELL? ");
+//            enemies.print("ENEMIES - " + enemies.size());
+//            unit.managerLogs().print();
+//            unit.manager().printParentsStack();
+//        }
 
         return null;
     }

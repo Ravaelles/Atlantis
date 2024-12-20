@@ -17,13 +17,14 @@ public class ScoutState {
 
     //    public boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = true;
     public static boolean MAKE_CAMERA_FOLLOW_unit_AROUND_BASE = false;
-    
+
     public static Positions<ARegionBoundary> scoutingAroundBasePoints = new Positions<>();
     public static int scoutsKilledCount = 0;
-    protected static int unitingAroundBaseNextPolygonIndex = -1;
-    protected static HasPosition unitingAroundBaseLastPolygonPoint = null;
-    protected static boolean scoutingAroundBaseWasInterrupted = false;
-    protected static boolean unitingAroundBaseDirectionClockwise = true;
-    protected static HasPosition nextPositionToScout = null;
-    protected static ARegion enemyBaseRegion = null;
+    public static int unitingAroundBaseNextPolygonIndex = -1;
+    public static HasPosition unitingAroundBaseLastPolygonPoint = null;
+    public static boolean scoutingAroundBaseWasInterrupted = false;
+    public static boolean unitingAroundBaseDirectionClockwise = true;
+    public static HasPosition nextPositionToScout = null;
+    public static HasPosition nextPositionToScout2 = null;
+    public static ARegion enemyBaseRegion = null;
 }

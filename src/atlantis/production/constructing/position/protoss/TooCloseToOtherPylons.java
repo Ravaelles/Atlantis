@@ -14,32 +14,28 @@ public class TooCloseToOtherPylons {
 
         if (A.supplyUsed() % 3 != 0) return false;
 
-        int pylonsNear;
+        int radius;
         if (AGame.supplyUsed() < 25) {
-            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(8, position).count();
-        }
-        else if (AGame.supplyUsed() < 35) {
-            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.5, position).count();
+            radius = 6;
         }
         else if (AGame.supplyUsed() < 70) {
-            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(4.5, position).count();
+            radius = 4;
         }
-        else if (AGame.supplyUsed() < 100) {
-            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(3.2, position).count();
-        }
-        else if (AGame.supplyUsed() < 140) {
-            pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(2, position).count();
-        }
+//        else if (AGame.supplyUsed() < 150) {
+//            radius = 4;
+//        }
         else {
-            pylonsNear = -1;
+            radius = 3;
         }
 
-        return pylonsNear >= (A.supplyTotal() <= 40 ? 1 : 2)
+        int pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(radius, position).count();
+
+        return pylonsNear >= (A.supplyTotal() <= 90 && A.supplyFree() >= 3 ? 1 : 2)
             && failed("Pylon too close to other pylons (" + pylonsNear + ")");
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

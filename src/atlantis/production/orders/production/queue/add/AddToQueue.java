@@ -6,6 +6,7 @@ import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.ClearCountCache;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.QueueLastStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
@@ -109,7 +110,9 @@ public class AddToQueue {
         AUnitType type, HasPosition position, int index, ProductionOrderPriority priority
     ) {
         if (priority != ProductionOrderPriority.TOP) {
-            if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+            if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) {
+                return null;
+            }
         }
 
         if (A.supplyTotal() >= 30 && type.isPylon()) {
@@ -190,7 +193,9 @@ public class AddToQueue {
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
         else {
-            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
+            if (type.isCannon() && Count.ourOfTypeUnfinished(AUnitType.Protoss_Photon_Cannon) >= 3) {
+                ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue, status: " + QueueLastStatus.status());
+            }
         }
 
         return productionOrder;

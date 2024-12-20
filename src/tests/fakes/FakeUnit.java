@@ -17,8 +17,9 @@ import starengine.sc_logic.AttackState;
 import starengine.units.state.EngineUnitState;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class FakeUnit extends AUnit {
+public class FakeUnit extends AUnit implements Serializable {
     public static int firstFreeId = 10;
     public int id;
     public AUnitType rawType;
@@ -35,6 +36,7 @@ public class FakeUnit extends AUnit {
 
     public double angle = 0;
     public boolean burrowed = false;
+    public boolean morphing = false;
     public boolean busy = false;
     public boolean cloaked = false;
     public boolean completed = true;
@@ -107,12 +109,12 @@ public class FakeUnit extends AUnit {
 
     @Override
     public int x() {
-        return position.x;
+        return position.x();
     }
 
     @Override
     public int y() {
-        return position.y;
+        return position.y();
     }
 
     @Override
@@ -513,6 +515,11 @@ public class FakeUnit extends AUnit {
     @Override
     public boolean isBurrowed() {
         return burrowed;
+    }
+
+    @Override
+    public boolean isMorphing() {
+        return morphing;
     }
 
     @Override

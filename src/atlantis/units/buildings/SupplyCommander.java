@@ -52,14 +52,14 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (isSupplyVeryLow()) {
-//            ErrorLog.printMaxOncePerMinute(
-//                "Supply free is very low, force additional ("
-//                    + A.supplyUsed() + "/" + A.supplyTotal() + ")"
-//            );
-            requestAdditionalSupply();
-            return;
-        }
+//        if (isSupplyVeryLow()) {
+////            ErrorLog.printMaxOncePerMinute(
+////                "Supply free is very low, force additional ("
+////                    + A.supplyUsed() + "/" + A.supplyTotal() + ")"
+////            );
+//            requestAdditionalSupply();
+//            return;
+//        }
 
         if (tooFewSupplyLeftAsForGateways()) {
             requestAdditionalSupply();
@@ -88,12 +88,12 @@ public class SupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 36) {
-                if (supplyFree <= 4 && noSuppliesBeingBuilt || supplyFree <= 1) {
+                if (supplyFree <= 4 && noSuppliesBeingBuilt || supplyFree <= 0) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 46) {
-                if (supplyFree <= 6 && noSuppliesBeingBuilt || supplyFree <= 1) {
+                if (supplyFree <= 6 && noSuppliesBeingBuilt || supplyFree <= 0) {
                     requestAdditionalSupply();
                 }
             }
@@ -203,15 +203,22 @@ public class SupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
-//        System.out.println("A= " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-//        System.out.println("B = " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
+//        System.err.println("A = " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
+//        System.err.println("B = " + CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)2);
         return Math.max(
-//            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
-//            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
-            Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY)
+            CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)
         );
+
+//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
+//        System.out.println("A= " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
+//        System.out.println("B = " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
+//        return Math.max(
+////            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
+//            ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
+////            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
+//            Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY)
+//        );
 //        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
 
 //        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);

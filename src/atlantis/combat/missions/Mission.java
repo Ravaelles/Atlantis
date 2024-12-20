@@ -25,7 +25,7 @@ public abstract class Mission extends MissionHelper {
     // =========================================================
 
     public Manager handleManagerClass(AUnit unit) {
-        return managerClass(unit).invokeFrom(this);
+        return managerClass(unit).invokeFrom(null);
     }
 
     // =========================================================

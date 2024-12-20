@@ -36,9 +36,9 @@ public class AdvanceAsAlphaLeader extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            LeaderToOther.class,
+//            LeaderToOther.class,
             HandleFocusPointPositioning.class,
-            LeaderTooLowCohesion.class,
+//            LeaderTooLowCohesion.class,
 //            LeaderWait.class,
 
 //            LeaderProgressFlagToNextFocusChoke.class,

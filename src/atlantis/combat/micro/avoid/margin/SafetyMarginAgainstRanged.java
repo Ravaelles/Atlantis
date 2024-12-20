@@ -1,11 +1,13 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.combat.micro.avoid.margin.protoss.DragoonSafetyMarginAgainstRanged;
 import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
 
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 import bwapi.Color;
 
 public class SafetyMarginAgainstRanged extends SafetyMargin {
@@ -25,14 +27,21 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
         if (defender.isGroundUnit()) {
             criticalDist = forGroundUnit(attacker);
 
-            if (defender.isGhost()) {
-                criticalDist += bonusForGhost(attacker);
+            if (We.protoss()) {
+                if (defender.isDragoon()) {
+                    return (new DragoonSafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
+                }
             }
-            else if (defender.isWraith()) {
-                criticalDist += BonusForWraith.bonusForWraith(attacker, defender);
-            }
-            else if (defender.isScienceVessel()) {
-                criticalDist += 1 + defender.woundPercent() / 25.0;
+            else if (We.terran()) {
+                if (defender.isGhost()) {
+                    criticalDist += bonusForGhost(attacker);
+                }
+                else if (defender.isWraith()) {
+                    criticalDist += BonusForWraith.bonusForWraith(attacker, defender);
+                }
+                else if (defender.isScienceVessel()) {
+                    criticalDist += 1 + defender.woundPercent() / 25.0;
+                }
             }
         }
 
@@ -77,7 +86,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + lurkerBonus(attacker)
             + woundedBonus(attacker)
             + ourUnitsNearBonus(defender)
-            + ourMovementBonus(defender)
+            + ourNotMovingPenalty(defender)
             + enemyMovementBonus(attacker)
             + scoutBonus(attacker)
 //            + combatEvalBonus(attacker)
@@ -89,7 +98,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + enemyWeaponRange(attacker)
             + woundedBonus(attacker)
             + specialAirUnitBonus(defender)
-            + ourMovementBonus(defender)
+            + ourNotMovingPenalty(defender)
             + enemyMovementBonus(attacker);
 //        return applyAirUnitTweaks(attacker);
     }

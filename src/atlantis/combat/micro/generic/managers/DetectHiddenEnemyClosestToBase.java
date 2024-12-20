@@ -3,6 +3,7 @@ package atlantis.combat.micro.generic.managers;
 import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -21,11 +22,18 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
         dangerousInvisibleEnemy = enemyHiddenUnitCloseToBase();
 
         return dangerousInvisibleEnemy != null
-            && dangerousInvisibleEnemy.friendsNear().exclude(unit).notEmpty();
+            && dangerousInvisibleEnemy.friendsNear().groundUnits().exclude(unit).notEmpty();
     }
 
     public Manager handle() {
-        return usedManager(this);
+        double dist = unit.distTo(dangerousInvisibleEnemy);
+
+        if (dist >= 6.5) {
+            unit.move(dangerousInvisibleEnemy, Actions.MOVE_REVEAL, "MoveToEnemy");
+            return usedManager(this);
+        }
+
+        return null;
     }
 
     private boolean isUnitAssignedForThisTask() {

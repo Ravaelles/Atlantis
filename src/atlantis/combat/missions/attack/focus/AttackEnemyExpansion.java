@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
@@ -21,9 +22,9 @@ public class AttackEnemyExpansion {
 
     public AFocusPoint expansion() {
         HasPosition expansion = EnemyExistingExpansion.get();
-        if (expansion == null) return null;
+        if (expansion == null || !expansion.hasPosition()) return null;
 
-        if (!expansion.isWalkable()) {
+        if (!expansion.isWalkable() && !(expansion instanceof AUnit)) {
             ErrorLog.printMaxOncePerMinute("Enemy expansion is not walkable: " + expansion);
             return null;
         }

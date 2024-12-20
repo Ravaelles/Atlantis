@@ -34,7 +34,6 @@ public class DetectUnitsNotRunning extends Manager {
 ////            if (new AttackNearbyEnemies(unit).invoked(this)) {
 //            if (new ForceAttackNearestEnemy(unit).forceHandle() != null) {
 ////                System.err.println("ATTTT @ " + A.now() + " - " + unit.typeWithUnitId()
-////                    + " - \nAAAAAAAAAAAAAAAAAAA"
 ////                    + " - \n" + unit.target()
 ////                );
 //                return usedManager(this);

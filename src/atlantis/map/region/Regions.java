@@ -1,5 +1,6 @@
 package atlantis.map.region;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
@@ -8,12 +9,12 @@ import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwem.Area;
+import tests.fakes.FakeRegion;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Regions {
-
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
@@ -131,6 +132,8 @@ public class Regions {
         try {
             if (position.getX() >= 32000) return null;
 
+            if (Env.isTesting()) return FakeRegion.getByTxTy(position.getX() / 32, position.getY() / 32);
+
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {
@@ -139,5 +142,9 @@ public class Regions {
         }
 
         return null;
+    }
+
+    public static Cache<Object> getCache() {
+        return cache;
     }
 }

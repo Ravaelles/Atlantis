@@ -54,11 +54,12 @@ public abstract class ABuildOrder {
     }
 
     public void print() {
-        System.out.println("--- Full production order list ---");
+        System.out.println("--- Using Build Order: \n    " + getName() + "\n");
+        System.out.println("--- Full production orders ---");
         for (ProductionOrder productionOrder : productionOrders()) {
             System.out.println("   - " + productionOrder.toString());
         }
-        System.out.println("--- END OF production order list ---\n");
+        System.out.println("--- END OF production orders ---\n");
     }
 
     // === Getters =============================================

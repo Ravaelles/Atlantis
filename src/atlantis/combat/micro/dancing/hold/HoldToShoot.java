@@ -19,6 +19,8 @@ public class HoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (!unit.isRanged()) return false;
 
         target = unit.target();

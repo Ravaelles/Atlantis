@@ -31,10 +31,11 @@ public class EnemyUnits {
             () -> {
                 //        return Select.from(Select.enemy(), "")
                 return Select.enemy()
+//                    .print("visible")
                     .notDeadMan()
-//            .print("visibleAndFogged")
+//                    .print("not dead")
                     .add(rawUnitsDiscovered())
-//            .print("now with enemy")
+//                    .print("now with enemy")
                     .removeDuplicates()
 //            .print("after removing duplicates")
                     .havingPosition();
@@ -119,6 +120,10 @@ public class EnemyUnits {
         return discovered().dragoons().count();
     }
 
+    public static int darkTemplars() {
+        return discovered().ofType(AUnitType.Protoss_Dark_Templar).count();
+    }
+
     public static int hydras() {
         return discovered().hydras().count();
     }
@@ -133,6 +138,10 @@ public class EnemyUnits {
 
     public static int zerglings() {
         return discovered().zerglings().count();
+    }
+
+    public static int vultures() {
+        return discovered().ofType(AUnitType.Terran_Vulture).count();
     }
 
     public static int combatUnits() {

@@ -14,7 +14,7 @@ public abstract class ReinforceBasesWithCombatBuildings extends Commander {
 
     public static ReinforceBasesWithCombatBuildings get() {
         return null;
-//        if (We.protoss()) return new ProtossReinforceBaseWithCannons();
+//        if (We.protoss()) return new ProtossSecureBaseWithCannons();
 //        if (We.terran()) return new TerranReinforceBasesWithCombatBuildings();
 //
 //        return new ReinforceBasesWithCombatBuildings() {

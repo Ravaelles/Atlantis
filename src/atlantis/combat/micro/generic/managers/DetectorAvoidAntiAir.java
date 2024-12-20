@@ -10,6 +10,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class DetectorAvoidAntiAir extends Manager {
 
@@ -24,15 +25,26 @@ public class DetectorAvoidAntiAir extends Manager {
         if (!Enemy.zerg() && unit.shieldHealthy()) return false;
 
         enemyAAPosition = enemyAntiAirInRange(unit);
-        if (enemyAAPosition == null) return false;
+        if (enemyAAPosition == null || !enemyAAPosition.hasPosition()) return false;
 
         return true;
     }
 
     public Manager handle() {
+        if (We.protoss() && goToCannon()) return usedManager(this);
+
         if (unit.moveAwayFrom(enemyAAPosition, 5, Actions.MOVE_FORMATION, "ObserverAvoidAA")) return usedManager(this);
 
         return null;
+    }
+
+    private boolean goToCannon() {
+        AUnit cannon = Select.our().ofType(AUnitType.Protoss_Photon_Cannon).nearestTo(unit);
+        if (cannon == null || cannon.distTo(unit) >= 25) return false;
+
+        if (unit.move(cannon, Actions.MOVE_AVOID, "ObserverGoToCannon")) return true;
+
+        return false;
     }
 
     private HasPosition enemyAntiAirInRange(AUnit unit) {

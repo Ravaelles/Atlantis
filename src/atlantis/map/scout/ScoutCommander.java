@@ -98,7 +98,8 @@ public class ScoutCommander extends Commander {
     }
 
     private int scoutsNeeded() {
-        return A.supplyUsed() >= 70 ? 2 : 1;
+        return 1;
+//        return A.supplyUsed() >= 70 ? 2 : 1;
     }
 
     private static boolean assignScout() {

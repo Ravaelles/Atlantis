@@ -5,6 +5,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import org.junit.Test;
+import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
 import static junit.framework.TestCase.assertEquals;
@@ -18,10 +19,13 @@ public class ChokeTest extends AbstractTestWithUnits {
         FakeUnit zealotA = fake(AUnitType.Protoss_Zealot, 10, 10);
         FakeUnit zealotB = fake(AUnitType.Protoss_Zealot, 13, 10);
 
-        double distToChoke = zealotA.distTo(choke);
+//        double distToChoke = zealotA.distTo(choke);
 //        System.err.println("choke = " + choke + " / tx:" + choke.tx() + ", ty:" + choke.ty());
 //        System.err.println("zealotA = " + zealotA);
 //        System.out.println(distToChoke);
+
+        assertEquals(zealotA.distTo(choke), zealotA.distToNearestChoke());
+        assertEquals(zealotB.distTo(choke), zealotB.distToNearestChoke());
 
         assertEquals(2.0, zealotA.distTo(choke));
         assertEquals(-1.0, zealotB.distTo(choke));
@@ -34,40 +38,6 @@ public class ChokeTest extends AbstractTestWithUnits {
 
         assertEquals(false, zealotA.isWithinChoke());
         assertEquals(true, zealotB.isWithinChoke());
-    }
-}
-
-class FakeChoke extends AChoke {
-    private APosition position;
-    private int width;
-
-    public FakeChoke(APosition position, int width) {
-        this.position = position;
-        this.width = width;
-    }
-
-    @Override
-    public APosition position() {
-        return position;
-    }
-
-    @Override
-    public int x() {
-        return position.x();
-    }
-
-    @Override
-    public int y() {
-        return position.y();
-    }
-
-    @Override
-    public APosition center() {
-        return position;
-    }
-
-    @Override
-    public int width() {
-        return width;
+        assertEquals(3.0, zealotA.distTo(zealotB));
     }
 }

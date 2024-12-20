@@ -13,10 +13,21 @@ public class OurArmy {
         return ArmyStrength.ourArmyRelativeStrength();
     }
 
-    public static double calculate() {
+    public static int strengthWithoutCB() {
+        return ArmyStrength.ourArmyRelativeStrengthWithoutCB();
+    }
+
+    protected static double calculate() {
+        return calculateFrom(Select.ourCombatUnits());
+    }
+
+    protected static double calculateWithoutCB() {
+        return calculateFrom(Select.ourCombatUnits().nonBuildings());
+    }
+
+    protected static double calculateFrom(Selection combatUnits) {
         double total = 0;
 
-        Selection combatUnits = Select.ourCombatUnits();
         total += combatUnits.totalHp();
         total += combatUnits.melee().count() * 10;
         total += combatUnits.ranged().count() * 30;

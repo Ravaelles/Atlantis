@@ -9,7 +9,6 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnitType;
@@ -22,16 +21,16 @@ public class NewConstructionRequest {
     /**
      * Issues request of constructing new building. It will automatically find position and builder unit for it.
      */
-    public static boolean requestConstructionOf(AUnitType building) {
+    public static Construction requestConstructionOf(AUnitType building) {
         return requestConstructionOf(building, null, null);
     }
 
-    public static boolean requestConstructionOf(AUnitType building, HasPosition near) {
+    public static Construction requestConstructionOf(AUnitType building, HasPosition near) {
         return requestConstructionOf(building, near, null);
     }
 
-    public static boolean requestConstructionOf(ProductionOrder order) {
-        return requestConstructionOf(order.unitType(), order.atPosition(), order);
+    public static Construction requestConstructionOf(ProductionOrder order) {
+        return requestConstructionOf(order.unitType(), order.aroundPosition(), order);
     }
 
     /**
@@ -39,7 +38,7 @@ public class NewConstructionRequest {
      * <p>
      * WARNING: passed order parameter can later override nearTo parameter.
      */
-    public static boolean requestConstructionOf(AUnitType building, HasPosition near, ProductionOrder order) {
+    public static Construction requestConstructionOf(AUnitType building, HasPosition near, ProductionOrder order) {
 
         // Validate
         if (!building.isABuilding()) {
@@ -51,14 +50,15 @@ public class NewConstructionRequest {
 //            return false;
 //        }
 
-        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) return true;
+        if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order) != null) return order.construction();
 
 //        System.err.println("Requested CONSTRUCTION:");
 //        System.err.println(building + " / " + near + " / " + order);
 
         if (!Requirements.hasRequirements(building)) {
 //            System.err.println("------- NO REQUIREMENTS");
-            return handleRequirementMissingFor(building);
+            handleRequirementMissingFor(building);
+            return null;
         }
 
         // =========================================================
@@ -66,6 +66,15 @@ public class NewConstructionRequest {
 
 //        if (building.isBase()) {
 //            A.printStackTrace("Requested BASE");
+//        }
+
+//        if (near == null) {
+//            near = DefineNearTo.defineNearTo(building, null);
+//        }
+
+//        if (near == null) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("NearTo is null for " + order + ", god damn it!");
+//            return false;
 //        }
 
         Construction newConstruction = new Construction(building);
@@ -76,9 +85,9 @@ public class NewConstructionRequest {
 
         if (newConstruction.builder() == null) {
             if (AGame.supplyUsed() >= 7 && Count.bases() > 0 && Count.workers() > 0) {
-                ErrorLog.printMaxOncePerMinute("Builder is null, got damn it!");
+                ErrorLog.printMaxOncePerMinute("Builder is null, god damn it!");
             }
-            return false;
+            return null;
         }
 
         // =========================================================
@@ -92,7 +101,8 @@ public class NewConstructionRequest {
 
         // Couldn't find place for building! That's bad, print descriptive explanation.
         if (positionToBuild == null) {
-            return invalidNullPositionSoQuit(building, order, newConstruction);
+            invalidNullPositionSoQuit(building, order, newConstruction);
+            return null;
         }
 
         // =========================================================
@@ -116,7 +126,7 @@ public class NewConstructionRequest {
             newConstruction.cancel();
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
 //            }
-            return false;
+            return null;
         }
         else {
             // Add to list of pending orders
@@ -133,14 +143,14 @@ public class NewConstructionRequest {
 
 //        System.err.println(building + " OK! " + newConstruction.status());
 
-        return true;
+        return newConstruction;
     }
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
         ErrorLog.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
-        if (AbstractPositionFinder._CONDITION_THAT_FAILED != null) {
-            ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._CONDITION_THAT_FAILED + ")");
+        if (AbstractPositionFinder._STATUS != null) {
+            ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
         }
         else {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");

@@ -1,9 +1,12 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 import atlantis.util.log.ErrorLog;
 
@@ -20,14 +23,26 @@ public class ReaverUseTransport extends Manager {
 //        if (true) return false;
 
         if (unit.scarabCount() == 0 && unit.enemiesNear().canAttack(unit, 2).notEmpty()) return true;
-        if (unit.lastActionLessThanAgo(6, Actions.LOAD)) return true;
+        if (unit.lastActionLessThanAgo(20, Actions.LOAD)) return true;
 
-        if (unit.isAttacking()) return false;
+        if (unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)) return true;
+        if (unit.cooldown() >= 5 && unit.lastAttackFrameLessThanAgo(30)) return true;
+
         if (unit.isAttackFrame()) return false;
         if (unit.isStartingAttack()) return false;
+
+        if (unit.isRunning() || unit.isAction(Actions.MOVE_AVOID)) return true;
+        if (againstTerranSiegeTanksImmediatelyPickUpAfterShot()) return true;
+        if (surroundedByEnemiesGetTheFuckOuttaHere()) return true;
+
         if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
-        
-        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return true;
+
+        if (
+            unit.noCooldown()
+                && unit.shotSecondsAgo() <= 4
+                && unit.friendsInRadiusCount(3) >= 5
+                && unit.shieldWound() <= 40
+        ) return false;
 
         if (safeAgainstEnemiesAndHasTargets()) return false;
 
@@ -47,6 +62,23 @@ public class ReaverUseTransport extends Manager {
             .nearestTo(unit);
 
         return shuttle != null;
+    }
+
+    private boolean againstTerranSiegeTanksImmediatelyPickUpAfterShot() {
+        return Enemy.terran()
+            && unit.shotSecondsAgo() <= 3
+            && (unit.shieldWound() >= 35 || EnemyUnits.discovered().tanks().inRadius(15, unit).notEmpty());
+    }
+
+    private boolean surroundedByEnemiesGetTheFuckOuttaHere() {
+        Selection enemiesSuperNear = unit.enemiesNear().canAttack(unit, 2);
+
+        return enemiesSuperNear.melee().atLeast(unit.hp() <= 180 ? 1 : 3)
+            || enemiesSuperNear.ranged().canAttack(unit, rangedEnemiesMargin()).atLeast(1);
+    }
+
+    private double rangedEnemiesMargin() {
+        return 0.7 + unit.woundPercent() / 40.0;
     }
 
     private boolean safeAgainstEnemiesAndHasTargets() {

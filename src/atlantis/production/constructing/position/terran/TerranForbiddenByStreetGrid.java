@@ -1,6 +1,5 @@
 package atlantis.production.constructing.position.terran;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
@@ -97,7 +96,7 @@ public class TerranForbiddenByStreetGrid {
     }
 
     private static boolean fail(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 
@@ -112,7 +111,7 @@ public class TerranForbiddenByStreetGrid {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

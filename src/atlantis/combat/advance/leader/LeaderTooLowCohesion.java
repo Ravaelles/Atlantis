@@ -1,17 +1,13 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.generic.OurArmy;
-import atlantis.map.choke.AChoke;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class LeaderTooLowCohesion extends MissionManager {
     //    private AChoke focusPoint;
@@ -44,7 +40,7 @@ public class LeaderTooLowCohesion extends MissionManager {
         if (unit.distTo(goTo) >= 20) return null;
 
         if (
-            (unit.isMoving() && A.fr % 10 != 0) || unit.move(goTo, Actions.MOVE_FORMATION, "LeaderCohesion")
+            (unit.isMoving() && A.now % 10 != 0) || unit.move(goTo, Actions.MOVE_FORMATION, "LeaderCohesion")
         ) return usedManager(this);
 
         return null;

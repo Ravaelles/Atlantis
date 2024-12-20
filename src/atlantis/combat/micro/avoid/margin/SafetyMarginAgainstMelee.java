@@ -1,12 +1,14 @@
 package atlantis.combat.micro.avoid.margin;
 
+import atlantis.combat.micro.avoid.margin.protoss.DragoonSafetyMarginAgainstRanged;
 import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
+import atlantis.combat.micro.avoid.margin.protoss.ZealotSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.interrupt.ContinueShotAnimation;
 import atlantis.util.We;
-import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
@@ -34,6 +36,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Protoss ===============================================
 
         if (defender.isProtoss()) {
+            if (We.protoss()) {
+                if (defender.isZealot()) {
+                    double margin = (new ZealotSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
+                    if (margin > -1) return margin;
+                }
+            }
+
             criticalDist = (new ProtossSafetyMarginAgainstMelee(defender)).handle(attacker);
         }
 
@@ -58,7 +67,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 + beastBonus(attacker)
                 + ourUnitsNearBonus(defender)
                 + workerBonus(attacker)
-                + ourMovementBonus(defender)
+                + ourNotMovingPenalty(defender)
                 + quicknessBonus(attacker)
                 + enemyMovementBonus(attacker);
 
@@ -74,22 +83,28 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = 2.3;
         }
 
-//        System.err.println("@" + A.fr + " safetyMargin = " + criticalDist);
+//        if (defender.isActiveManager(ContinueShotAnimation.class) && defender.lastAttackFrameMoreThanAgo(24)) {
+//            A.printStackTrace("How comes we wanna avoid?");
+//            defender.manager().printParentsStack();
+//        }
+
+//        System.err.println("@" + A.now + " safetyMargin = " + criticalDist + " " + defender.digitDistTo(attacker));
 
         return criticalDist;
     }
 
     protected double enemyFacingThisUnitBonus(AUnit attacker) {
-        if (defender.isWounded() || !defender.hasMedicInRange()) {
+        if (defender.isWounded() || (We.terran() && !defender.hasMedicInRange())) {
             if (attacker.isTarget(defender)) {
 //                defender.paintCircleFilled(12, Color.Red);
 //                System.out.println(A.fr + " DefenderTargetted ");
-                return 2.6;
+                return 2.5;
+//                return 3.2;
             }
 
             if (defender.isOtherUnitFacingThisUnit(attacker)) {
 //                defender.paintCircleFilled(12, Color.Orange);
-                return 0.9;
+                return 1.4;
             }
         }
 

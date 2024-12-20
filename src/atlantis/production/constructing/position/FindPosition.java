@@ -11,7 +11,6 @@ import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.production.constructing.position.protoss.FindPositionForCannon;
 import atlantis.production.constructing.position.terran.SupplyDepotPositionFinder;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -40,17 +39,17 @@ public class FindPosition {
     private static APosition findForBuildingRaw(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = null;
-
-        nearTo = DefineNearTo.defineNearTo(building, nearTo);
+        AbstractPositionFinder._STATUS = null;
 
         // =========================================================
 
-        if (builder == null) builder = FreeWorkers.get().first();
-        if (builder == null) builder = Select.ourWorkers().first();
+        nearTo = DefineNearTo.defineNearTo(building, nearTo);
+
+        if (builder == null) builder = defineBuilder();
 
         if (maxDistance <= 5 && building.isBunker()) maxDistance = 10;
         if (maxDistance < 0) maxDistance = MaxBuildingDist.MAX_DIST;
+
         if (construction != null) construction.setMaxDistance(maxDistance);
 
         // === GAS extracting buildings ============================
@@ -101,27 +100,18 @@ public class FindPosition {
         }
 
         // =========================================================
-        // STANDARD BUILDINGS
-
-        // If we didn't specify location where to build, build somewhere near the main base
-//        nearTo = DefineNearTo.defineNearTo(nearTo);
-
-        // =========================================================
-        // Standard place
+        // Standard building
 
         APosition standardPosition = APositionFinder.findStandardPosition(builder, building, nearTo, maxDistance);
 
-        if (
-            standardPosition == null
-                && Count.workers() >= 4
-                && (!We.protoss() || Count.pylons() >= 1)
-        ) {
+        if (standardPosition == null && !ignorePositionNotFoundException(building, standardPosition)) {
             ErrorLog.printMaxOncePerMinute(
-                "findStandardPosition returned null at " + A.s + "s"
-                    + "\n    / reason:" + AbstractPositionFinder._CONDITION_THAT_FAILED
+                "findStandardPosition returned null at " + A.minSec()
+                    + "\n    / reason:" + AbstractPositionFinder._STATUS
                     + "\n    / building:" + building
                     + "\n    / near:" + nearTo
                     + "\n    / freeSupply:" + AGame.supplyFree()
+                    + " (" + AGame.supplyUsed() + "/" + AGame.supplyTotal() + ")"
                     + "\n    / minerals:" + A.minerals()
                     + "\n    / builder:" + builder
                     + "\n    / max:" + maxDistance
@@ -129,11 +119,35 @@ public class FindPosition {
         }
 
         APositionFinder.clearCache();
-
-        ProductionOrder order = construction != null ? construction.productionOrder() : null;
-//        System.err.println("position for " + building + " / " + order + " = " + standardPosition);
-
         return standardPosition;
+    }
+
+    private static AUnit defineBuilder() {
+        AUnit builder = FreeWorkers.get().first();
+        if (builder != null) return builder;
+
+        return Select.ourWorkers().first();
+    }
+
+    private static boolean ignorePositionNotFoundException(AUnitType building, APosition standardPosition) {
+        if (We.protoss() && !building.needsPower()) return false;
+
+        if (A.supplyFree() >= 3) {
+            if (building.isPylon()) return true;
+            if (!"OK".equals(AbstractPositionFinder._STATUS)) {
+                if ("Can't physically build here".equals(AbstractPositionFinder._STATUS)) return true;
+                if (AbstractPositionFinder._STATUS.contains(" modulo ")) return true;
+            }
+        }
+
+        if (standardPosition == null
+            && Count.workers() >= 4
+            && (!We.protoss() || Count.pylons() >= 1)
+        ) return true;
+
+        if (We.protoss() && (Count.pylons() - 1) <= Count.forgeWithUnfinished()) return true;
+
+        return false;
     }
 
     private static APosition forCombatBuilding(

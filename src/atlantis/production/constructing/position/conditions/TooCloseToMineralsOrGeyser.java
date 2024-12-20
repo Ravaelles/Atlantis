@@ -12,7 +12,7 @@ public class TooCloseToMineralsOrGeyser {
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
         if (building.isMissileTurret()) return false;
         if (building.isBase()) return false;
-        if (building.isCombatBuilding() && !building.isBunker()) return false;
+        if (building.isCombatBuilding()) return false;
         if (Select.main() == null) return false;
 
         // We have problem only if building is both close to base and to minerals or to geyser
@@ -37,7 +37,7 @@ public class TooCloseToMineralsOrGeyser {
 
     private static double minDistToGeyser() {
         if (We.protoss()) {
-            return A.supplyTotal() >= 15 ? 1.1 : 4;
+            return A.supplyUsed() >= 15 ? 1.1 : 4;
         }
 
         else if (We.terran()) {
@@ -48,7 +48,7 @@ public class TooCloseToMineralsOrGeyser {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 

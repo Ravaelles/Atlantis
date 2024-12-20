@@ -5,9 +5,11 @@ import atlantis.combat.missions.Missions;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.OurArmy;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
 import atlantis.util.Enemy;
@@ -38,17 +40,28 @@ public class ResearchSingularityCharge extends Commander {
             return false;
         }
 
-        dragoons = Count.dragoons();
+        dragoons = Count.dragoonsWithUnfinished();
 
         Decision decision;
 
         if ((decision = againstProtoss()).notIndifferent()) return decision.toBoolean();
 
-        if (dragoons >= 4 || (A.hasGas(150) && (A.hasGas(260) || dragoons >= 3))) return true;
+        if ((decision = forForgeExpand()).notIndifferent()) return decision.toBoolean();
 
-        if (!A.hasMinerals(300) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
+        if (!A.hasMinerals(240) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
+
+        if (dragoons >= 5 || (A.hasGas(80) && (A.hasGas(180) || dragoons >= 3))) return true;
+        if (dragoons >= 2 && A.supplyUsed() >= 38 && OurArmy.strength() >= 120 && A.hasMinerals(240)) return true;
 
         return false;
+    }
+
+    private Decision forForgeExpand() {
+        if (Count.cannons() >= 2 && Count.dragoonsWithUnfinished() > 0) {
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
     }
 
     private Decision againstProtoss() {
@@ -64,6 +77,8 @@ public class ResearchSingularityCharge extends Commander {
 
     @Override
     protected void handle() {
+        AddToQueue.upgrade(what());
+
         if (ResearchNow.research(what())) {
             enqueued = true;
         }

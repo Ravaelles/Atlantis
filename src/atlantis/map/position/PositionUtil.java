@@ -145,6 +145,13 @@ public class PositionUtil {
         }
 
         // =========================================================
+        // Make sure to always start calculating distance from unit, to include unit-to-unit distance
+
+        if (fromUnit == null) {
+
+        }
+
+        // =========================================================
 
         // From is UNIT
         if (fromUnit != null) {

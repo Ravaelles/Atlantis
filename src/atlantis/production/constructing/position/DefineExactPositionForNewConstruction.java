@@ -1,7 +1,5 @@
 package atlantis.production.constructing.position;
 
-import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
-import atlantis.game.CameraCommander;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.modifier.PositionModifier;
@@ -23,9 +21,9 @@ public class DefineExactPositionForNewConstruction {
         // =========================================================
 
 //        if (order.isUsingExactPosition() && order.atPosition() != null) {
-        if (order != null && order.isUsingExactPosition() && order.atPosition() != null) {
+        if (order != null && order.isUsingExactPosition() && order.aroundPosition() != null) {
             //            System.err.println("Using exact position for " + building + " - " + order);
-            positionToBuild = APosition.create(order.atPosition());
+            positionToBuild = APosition.create(order.aroundPosition());
             //            CameraCommander.centerCameraOn(positionToBuild);
         }
         else {
@@ -47,14 +45,14 @@ public class DefineExactPositionForNewConstruction {
 //        System.err.println("isUsingExactPosition = " + order.isUsingExactPosition());
 //        System.err.println("------------------------------------ ");
 
-        if (order.getModifier() != null && order.atPosition() == null) {
+        if (order.getModifier() != null && order.aroundPosition() == null) {
             APosition position = definePosition(building, order, newConstructionOrder);
 //            System.err.println("DEFINE BUNKER position = " + position + " / " + order.getModifier());
 
-            order.forceSetPosition(position);
+            order.setAroundPosition(position);
         }
 
-        if (order.atPosition() != null && order.isUsingExactPosition()) {
+        if (order.aroundPosition() != null && order.isUsingExactPosition()) {
             order.markAsUsingExactPosition();
 //            System.err.println("@@@@@@@@@@@@@@@@@@@@@ OK, RETURN EXACT " + order.atPosition());
             return;
@@ -72,7 +70,7 @@ public class DefineExactPositionForNewConstruction {
 //            }
 //        }
 
-        if (order.atPosition() != null) order.markAsUsingExactPosition();
+        if (order.aroundPosition() != null) order.markAsUsingExactPosition();
 
 //        System.err.println("=== POST ========================= ");
 //        System.err.println("order    = " + order);
@@ -83,8 +81,8 @@ public class DefineExactPositionForNewConstruction {
     }
 
     private static APosition definePosition(AUnitType building, ProductionOrder order, Construction newConstructionOrder) {
-        if (order.atPosition() != null && order.isUsingExactPosition()) {
-            return APosition.create(order.atPosition());
+        if (order.aroundPosition() != null && order.isUsingExactPosition()) {
+            return APosition.create(order.aroundPosition());
         }
 
         return PositionModifier.toPosition(

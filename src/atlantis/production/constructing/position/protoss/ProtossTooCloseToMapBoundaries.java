@@ -3,8 +3,6 @@ package atlantis.production.constructing.position.protoss;
 import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
-import atlantis.map.region.ARegion;
-import atlantis.map.region.ARegionBoundary;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -12,8 +10,10 @@ import atlantis.util.We;
 public class ProtossTooCloseToMapBoundaries {
     public static boolean isTooClose(AUnitType building, APosition position) {
         if (We.protoss() && !building.isGateway() && !building.isPylon()) return false;
-        
+
         double margin = 1.3;
+
+        if (A.supplyUsed() <= 30 && building.isPylon()) margin = 8;
 
         int tx = position.tx();
         int ty = position.ty();
@@ -41,7 +41,7 @@ public class ProtossTooCloseToMapBoundaries {
     }
 
     private static boolean failed(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

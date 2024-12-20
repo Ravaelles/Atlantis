@@ -6,8 +6,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingImportant extends ATargeting {
-    public ATargetingImportant(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
-        super(unit, enemyUnits, enemyBuildings);
+    public ATargetingImportant(AUnit unit) {
+        super(unit);
     }
 
     public AUnit target() {
@@ -183,8 +183,11 @@ public class ATargetingImportant extends ATargeting {
         }
 
         // Target repairers
-        AUnit repairer = enemyUnits.workers().notGathering().inRadius(2, target)
-            .canBeAttackedBy(target, 1.7).nearestTo(target);
+        AUnit repairer = enemyUnits.workers()
+            .repairing()
+            .inRadius(2, target)
+            .canBeAttackedBy(target, 2.1)
+            .nearestTo(target);
         if (repairer != null) {
             debug("C0a = " + repairer);
             return repairer;
@@ -196,6 +199,33 @@ public class ATargetingImportant extends ATargeting {
 
     private AUnit targetOutsideShootingRange() {
         AUnit target;
+
+        // =========================================================
+        // Enemy units in range
+
+        if (unit.isMelee()) {
+            Selection enemiesInRange = enemyUnits.excludeMedics().inShootRangeOf(unit);
+            target = enemiesInRange.mostWounded();
+            if (target != null && (target.isWounded() || unit.cooldown() <= 3)) {
+                debug("C3_wnd_in = " + target);
+                return target;
+            }
+
+//            double outBonus = unit.meleeEnemiesNearCount(1.5) <= 2 ? 2 : 0.8;
+            double outBonus = 1.4;
+            enemiesInRange = enemyUnits.excludeMedics().canBeAttackedBy(unit, outBonus);
+            target = enemiesInRange.mostWounded();
+            if (target != null && target.isWounded()) {
+                debug("C3_wnd_out = " + target);
+                return target;
+            }
+
+            target = leaderEnemies().excludeMedics().nearestTo(unit);
+            if (target != null) {
+                debug("C3_near = " + target);
+                return target;
+            }
+        }
 
         // =========================================================
         // Target COMBAT UNITS IN RANGE
@@ -252,6 +282,18 @@ public class ATargetingImportant extends ATargeting {
 
         if (target != null) {
             debug("C5a = " + target);
+            return target;
+        }
+
+        // === WORKERS in RANGE ======================================================
+
+        target = enemyUnits
+            .workers()
+            .inRadius(unit.isMelee() ? 1 : 3.6, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5bWork = " + target);
             return target;
         }
 

@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -17,6 +16,7 @@ import starengine.StarEngineLauncher;
 import starengine.events.OnStarEngineFrameEnd;
 import tests.unit.AbstractTestWithUnits;
 import tests.fakes.FakeUnit;
+import tests.unit.MockEverything;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +51,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
             baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
 
-            mockEverything();
+            (new MockEverything(this)).mockEverything();
 
             runnable.run();
         }
@@ -115,10 +115,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
             Collections.addAll(allUnits, neutral);
             baseSelect.when(BaseSelect::allUnits).thenReturn(allUnits);
 
-            mockAtlantisConfig();
-            mockGameObject();
-            mockAGameObject();
-            mockOtherStaticClasses();
+//            (new MockEverything(this)).mockEverything();
 
             beforeTestLogic();
 
@@ -134,7 +131,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
     private void onFrameStart(Runnable onFrame, int framesNow, boolean usingEngine) {
         A.s = framesNow / 30;
-        A.fr = framesNow;
+        A.now = framesNow;
     }
 
     private int onFrameEnd(Runnable onFrame, int framesNow, boolean usingEngine) {

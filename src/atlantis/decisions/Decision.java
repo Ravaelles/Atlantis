@@ -27,6 +27,10 @@ public class Decision {
 
     // =========================================================
 
+    public static Decision fromBoolean(boolean b) {
+        return b ? TRUE : FALSE;
+    }
+
     public Decision getResetted() {
         if (initialValue == 0) return Decision.INDIFFERENT;
         if (initialValue == 1) return Decision.ALLOWED;

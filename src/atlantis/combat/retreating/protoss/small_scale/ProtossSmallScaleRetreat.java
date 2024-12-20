@@ -6,6 +6,7 @@ import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
 
@@ -22,7 +23,31 @@ public class ProtossSmallScaleRetreat extends Manager {
 
     @Override
     public boolean applies() {
+//        if (
+//            unit.hp() <= (unit.meleeEnemiesNearCount(1.6) <= 1 ? 23 : 36)
+//                && unit.friendsNear().combatUnits().havingAntiGroundWeapon().countInRadius(3, unit) == 0
+//        ) return true;
+
+        if (allowPendingAttackToContinue()) return false;
+
         return shouldSmallScaleRetreat();
+    }
+
+    private boolean allowPendingAttackToContinue() {
+        if (unit.hp() >= 26) {
+            if (
+                unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)
+                    && (unit.lastAttackFrameMoreThanAgo(20) || unit.cooldown() <= 5)
+            ) return true;
+
+            if (
+                unit.lastAttackFrameMoreThanAgo(40)
+                    && unit.lastUnderAttackLessThanAgo(35)
+                    && unit.cooldown() <= 8
+            ) return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -105,7 +130,7 @@ public class ProtossSmallScaleRetreat extends Manager {
     }
 
     protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
-        if (unit.cooldown() <= 12) return false;
+//        if (unit.cooldown() <= 12) return false;
 
         if (enemies.onlyMelee()) {
             if (unit.shieldDamageAtMost(30)) return false;

@@ -1,23 +1,31 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.We;
 
 public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
-        if (unit.lastActionMoreThanAgo(81, Actions.STOP)) {
-            unit.stop("UnfreezeA");
+        if (
+            unit.isHoldingPosition()
+                && unit.manager().getClass().getSimpleName().contains("Unfreeze")
+        ) {
+            return A.s % 3 == 0;
+        }
+
+        if (A.s % 4 <= 1) {
+            if (unit.moveToLeader(Actions.SPECIAL, "UnfreezeC")) return true;
+        }
+
+        if (A.s % 15 <= 3 && unit.lastActionMoreThanAgo(131, Actions.HOLD_POSITION)) {
+            unit.holdPosition("UnfreezeA");
             return true;
         }
 
-        int sign = A.fr % 4 <= 1 ? 1 : -1;
-
+        int sign = A.s % 2 == 0 ? 1 : -1;
         APosition moveTo = unit.position().translateByPixels(4 * sign, 4 * sign);
         if (moveTo == null || !moveTo.isWalkable()) return false;
 

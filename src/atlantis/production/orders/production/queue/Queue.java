@@ -76,6 +76,14 @@ public class Queue extends AbstractQueue {
         );
     }
 
+    public Orders notStarted() {
+        return cache.get(
+            "notStarted",
+            CACHE_FOR_FRAMES,
+            orders::notStarted
+        );
+    }
+
     public Orders nonCompleted() {
         return cache.get(
             "nonCompleted",

@@ -1,11 +1,14 @@
 package atlantis.map.base.define;
 
+import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 public class DefineNaturalBase {
     private static Cache<Object> cache = new Cache<>();
@@ -18,9 +21,11 @@ public class DefineNaturalBase {
             "natural",
             -1,
             () -> {
-                if (Select.main() == null) return null;
+                ABaseLocation naturalLocation = naturalIfMainIsAt(Select.mainOrAnyBuildingPosition());
 
-                ABaseLocation naturalLocation = naturalIfMainIsAt(Select.main().position());
+                if (naturalLocation == null && !A.isUms()) {
+                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Natural base can not be determined");
+                }
 
                 return naturalLocation != null ? naturalLocation.position() : null;
             }
@@ -34,7 +39,7 @@ public class DefineNaturalBase {
         if (nearestTo == null) return null;
 
         return (ABaseLocation) cache.get(
-            "natural:" + nearestTo,
+            "naturalIfMainIsAt:" + nearestTo,
             -1,
             () -> {
                 // Get all base locations, sort by being closest to given nearestTo position
@@ -42,11 +47,8 @@ public class DefineNaturalBase {
                 baseLocations.addPositions(BaseLocations.baseLocations());
                 baseLocations.sortByGroundDistanceTo(nearestTo, true);
 
-//                AUnit main = Select.mainOrAnyBuilding();
-
                 for (ABaseLocation baseLocation : baseLocations.list()) {
-//            if (baseLocation.isStartLocation() || !nearestTo.hasPathTo(baseLocation.position())) {
-                    if (nearestTo.distTo(baseLocation) <= 6 || !nearestTo.hasPathTo(baseLocation.position())) {
+                    if (nearestTo.distTo(baseLocation) <= 6 || !isConnected(nearestTo, baseLocation)) {
                         continue;
                     }
 //                    if (!Chokes.fullfillsConditionsForNatural(choke, Chokes.mainChoke())) continue;
@@ -57,5 +59,11 @@ public class DefineNaturalBase {
                 return null;
             }
         );
+    }
+
+    private static boolean isConnected(APosition nearestTo, ABaseLocation baseLocation) {
+        if (Env.isTesting()) return true;
+
+        return baseLocation.position().hasPathTo(nearestTo);
     }
 }
