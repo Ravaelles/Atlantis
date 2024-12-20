@@ -14,7 +14,7 @@ public class ProduceRoboticsSupportBay {
     public static boolean produce() {
 //        if (true) return false;
 
-        if (Enemy.zerg()) return false;
+//        if (Enemy.zerg()) return false;
         if (!A.supplyUsed(atSupply())) return false;
 //        if (Have.notEvenPlanned(Protoss_Robotics_Facility) || Have.a(Protoss_Robotics_Support_Bay)) return;
 
@@ -39,7 +39,7 @@ public class ProduceRoboticsSupportBay {
 
             if (A.supplyUsed() >= 100 && A.hasMinerals(600)) return A.supplyUsed();
 
-            return 130;
+            return 110;
         }
 
         if (Enemy.protoss()) return 130;

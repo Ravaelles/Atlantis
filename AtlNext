@@ -1,10 +1,7 @@
-- Disable Atransport for Protoss
-- Send Shuttle to nearest Reaver if no cargo
-- Dont unload Reaver when enemies near
-
-
-
 - Extra Probe should be scouting bases after 90 Supply to find enemy new bases and these should be prioritized, most ground distant from enemy main
+
+- Dont produce Psionic/HT
+- Robotics not produced
 
 
 - Enemy Natural wrongly identified as expansion: MISSION @3:57 TO Attack: Enemy is expanding, engage him

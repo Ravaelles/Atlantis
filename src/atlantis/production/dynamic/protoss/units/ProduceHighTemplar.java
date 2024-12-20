@@ -9,6 +9,8 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceHighTemplar {
     public static boolean ht() {
+        if (true) return false; // Always disabled
+
         if (Have.no(requiredBuilding())) return false;
 
         int maxHT = haveThisManyHT();

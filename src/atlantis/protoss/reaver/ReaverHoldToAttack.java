@@ -38,12 +38,12 @@ public class ReaverHoldToAttack extends Manager {
 
 //        if (dist <= 6.78 && !unit.isRunning() && unit.lastPositionChangedLessThanAgo(120)) {
         if (dist <= 6.78) {
-            A.errPrintln("@ " + A.now() + " - force hold " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
-            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
-            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame());
-            A.errPrintln("EN = " + unit.target().isTargetInWeaponRangeAccordingToGame());
-            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0));
-            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0.5));
+//            A.errPrintln("@ " + A.now() + " - force hold " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
+//            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
+//            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame());
+//            A.errPrintln("EN = " + unit.target().isTargetInWeaponRangeAccordingToGame());
+//            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0));
+//            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0.5));
             return true;
         }
 
@@ -53,7 +53,7 @@ public class ReaverHoldToAttack extends Manager {
 
     @Override
     public Manager handle() {
-        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - HoldToAttack");
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - HoldToAttack");
         unit.holdPosition("HoldToAttack");
         return usedManager(this);
     }

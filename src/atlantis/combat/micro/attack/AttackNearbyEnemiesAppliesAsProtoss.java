@@ -58,15 +58,15 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         AFocusPoint focus = unit.focusPoint();
         if (focus == null) return false;
 
-        if (A.supplyUsed() <= 130) return false;
-        if (unit.combatEvalRelative() >= 3) return false;
+        if (A.supplyUsed() <= 100) return false;
+        if (unit.combatEvalRelative() >= 4) return false;
 
         if (focus.groundDistanceTo(unit) >= 15 && focus.nameContains("Third", "Expansion")) {
-            if (
-                unit.cooldown() <= 5
-                    && unit.combatEvalRelative() >= 1.5
-                    && unit.enemiesNear().canBeAttackedBy(unit, -0.1).notEmpty()
-            ) return false;
+//            if (
+//                unit.cooldown() <= 5
+////                    && unit.combatEvalRelative() >= 1.5
+//                    && unit.enemiesNear().canBeAttackedBy(unit, -0.1).notEmpty()
+//            ) return false;
 
 //            if (unit.isMelee()) return true;
 //            return unit.cooldown() <= 2 && unit.canA

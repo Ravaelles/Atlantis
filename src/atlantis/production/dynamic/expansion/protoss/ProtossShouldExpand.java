@@ -28,10 +28,6 @@ public class ProtossShouldExpand {
     private static int basesInProduction;
 
     public static boolean shouldExpand() {
-//        return cache.get(
-//            "shouldExpand",
-//            91,
-//            () -> {
         if (A.minerals() < 300) return false;
 
         Count.clearCache();
@@ -49,8 +45,6 @@ public class ProtossShouldExpand {
         // =========================================================
 
         return forThirdAndLaterBases();
-//            }
-//        );
     }
 
     private static boolean tooManyInProgress() {
@@ -58,7 +52,7 @@ public class ProtossShouldExpand {
 
         int minerals = A.minerals();
 
-        return (double) (minerals / (400 * basesInProduction)) <= 1.33;
+        return (double) (minerals / (400 * basesInProduction)) <= 1.15;
     }
 
     private static boolean forThirdAndLaterBases() {

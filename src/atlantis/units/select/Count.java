@@ -435,4 +435,8 @@ public class Count {
     public static int reavers() {
         return ofType(AUnitType.Protoss_Reaver);
     }
+
+    public static int shuttles() {
+        return ofType(AUnitType.Protoss_Shuttle);
+    }
 }

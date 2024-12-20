@@ -26,7 +26,8 @@ public class ReaverUseTransport extends Manager {
         if (unit.isAttackFrame()) return false;
         if (unit.isStartingAttack()) return false;
         if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
-        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
+        
+        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return true;
 
         if (safeAgainstEnemiesAndHasTargets()) return false;
 

@@ -13,7 +13,8 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceTemplarArchives {
     public static boolean produce() {
-//        if (true) return false;
+        if (true) return false; // Always disabled
+
         if (Have.a(type())) return false;
 
         if (Enemy.zerg() && A.supplyUsed() < 180) return false;

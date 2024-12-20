@@ -90,7 +90,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceScarabs.scarabs();
         ProduceObserver.observers();
         ProduceArbiters.arbiters();
-        ProduceShuttles.shuttles();
+        ProduceShuttle.shuttles();
         ProduceReavers.reavers();
         ProduceDarkTemplar.dt();
         ProduceHighTemplar.ht();

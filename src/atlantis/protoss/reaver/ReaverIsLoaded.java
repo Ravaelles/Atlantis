@@ -11,7 +11,8 @@ public class ReaverIsLoaded extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isLoaded();
+        return false;
+//        return unit.isLoaded();
     }
 
     @Override

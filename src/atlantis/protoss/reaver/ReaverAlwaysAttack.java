@@ -14,7 +14,7 @@ public class ReaverAlwaysAttack extends Manager {
 
     @Override
     public boolean applies() {
-//        if (unit.cooldownRemaining() >= 10) return false;
+        if (unit.cooldownRemaining() >= 10) return false;
 
         enemies = enemies();
 
@@ -59,7 +59,7 @@ public class ReaverAlwaysAttack extends Manager {
         }
 
         // Attack the one most distant
-        if ((enemy = enemies.canBeAttackedBy(unit, 4).nearestTo(unit)) != null) {
+        if ((enemy = enemies.canBeAttackedBy(unit, 5).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Fancy" + enemy.name());
             return usedManager(this);
@@ -80,7 +80,7 @@ public class ReaverAlwaysAttack extends Manager {
             .groundUnits()
             .excludeEggsAndLarvae()
             .effVisible()
-            .canBeAttackedBy(unit, 4)
+            .canBeAttackedBy(unit, 6)
             .notDeadMan();
 
         if (enemies.empty()) {

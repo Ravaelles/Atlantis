@@ -25,6 +25,7 @@ public class ProtossDragoonSeparateFromRangedEnemies extends Manager {
 
         if (!We.protoss()) return false;
         if (!unit.isDragoon()) return false;
+        if (unit.isMoving() && unit.lastActionLessThanAgo(15, Actions.RUN_ENEMY)) return false;
 
 //        return unit.cooldown() <= 24
 //            && unit.cooldown() >= (unit.shieldWound() <= 7 ? 9 : 0)
@@ -57,7 +58,7 @@ public class ProtossDragoonSeparateFromRangedEnemies extends Manager {
 
         if (unit.shieldWounded()) return true;
 
-        return unit.shotSecondsAgo() <= 5;
+        return unit.shotSecondsAgo() <= 6;
     }
 
     @Override
@@ -108,6 +109,8 @@ public class ProtossDragoonSeparateFromRangedEnemies extends Manager {
     }
 
     private Selection rangedEnemiesNear() {
+        double healthRadiusBonus = unit.woundPercent() / (unit.combatEvalRelative() <= 1.6 ? 45.0 : 90.0);
+
         return unit.enemiesNear()
             .ranged()
             .havingPosition()
@@ -116,7 +119,7 @@ public class ProtossDragoonSeparateFromRangedEnemies extends Manager {
 //            .havingSmallerRange(unit)
 //            .facing(unit)
             .notShowingBackToUs(unit)
-            .inRadius(OurDragoonRange.range() - 0.05 + unit.woundPercent() / 100.0, unit);
+            .inRadius(OurDragoonRange.range() - 0.05 + healthRadiusBonus, unit);
 //            .canAttack(unit, 0.8 + unit.woundPercent() / 80.0);
     }
 }

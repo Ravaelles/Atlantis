@@ -30,7 +30,7 @@ public class ResearchSingularityCharge extends Commander {
         if (enqueued) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
 
-        if (CountInQueue.count(what(), 20) > 0) return false;
+//        if (CountInQueue.count(what(), 20) > 0) return false;
 
         if (ATech.isResearched(what())) {
             OurDragoonRange.onSingularityChargeResearched();
@@ -44,9 +44,9 @@ public class ResearchSingularityCharge extends Commander {
 
         if ((decision = againstProtoss()).notIndifferent()) return decision.toBoolean();
 
-        if (!A.hasMinerals(300) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
+        if (dragoons >= 4 || (A.hasGas(150) && (A.hasGas(260) || dragoons >= 3))) return true;
 
-        if (A.hasGas(150) && (A.hasGas(260) || dragoons >= 3)) return true;
+        if (!A.hasMinerals(300) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
 
         return false;
     }

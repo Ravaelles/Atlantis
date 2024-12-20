@@ -1,4 +1,4 @@
-package atlantis.combat.squad.beta;
+package atlantis.combat.squad.bravo;
 
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -37,10 +37,11 @@ public class Bravo extends Squad {
 
     @Override
     public boolean shouldHaveThisSquad() {
-        if (true) return false;
+//        if (true) return false;
 
         return Alpha.count() >= ALPHA_COUNT_THRESHOLD
-            || (FoundEnemyExposedExpansion.getItFound() != null && Alpha.count() >= 17);
+            || (FoundEnemyExposedExpansion.getItFound() != null && A.supplyUsed(120));
+//            || (FoundEnemyExposedExpansion.getItFound() != null && Alpha.count() >= 17);
     }
 
     @Override

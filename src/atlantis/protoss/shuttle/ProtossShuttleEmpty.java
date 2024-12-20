@@ -28,10 +28,14 @@ public class ProtossShuttleEmpty extends Manager {
     }
 
     private AUnit definePotentialTargetToLift() {
-        Selection targets = unit.friendsNear().reavers().notLoaded().notDeadMan();
+        Selection targets = unit.friendsNear().reavers().notLoaded();
 
         if (targets.empty()) {
-            targets = Select.ourOfType(Protoss_Reaver).notLoaded().notDeadMan();
+            targets = Select.ourOfType(Protoss_Reaver).notLoaded();
+        }
+
+        if (targets.empty()) {
+            targets = Select.ourOfType(Protoss_Reaver);
         }
 
         return targets.nearestTo(unit);

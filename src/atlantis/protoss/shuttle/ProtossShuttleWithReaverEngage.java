@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_Reaver;
 import static atlantis.units.AUnitType.Protoss_Shuttle;
@@ -24,7 +25,11 @@ public class ProtossShuttleWithReaverEngage extends Manager {
 
     @Override
     public boolean applies() {
+        unit.paintCircleFilled(14, Color.Red);
+
         if (unit.loadedUnits().isEmpty()) return false;
+
+        unit.paintCircleFilled(14, Color.Green);
 
         reaver = unit.loadedUnitsGet(Protoss_Reaver);
         if (reaver == null) return false;
@@ -46,7 +51,10 @@ public class ProtossShuttleWithReaverEngage extends Manager {
 
     @Override
     public Manager handle() {
-        AUnit cb = reaver.enemiesNear().combatBuildingsAntiLand().inRadius(8.1, reaver).nearestTo(reaver);
+        AUnit cb = reaver.enemiesNear()
+            .combatBuildingsAntiLand()
+            .inRadius(7.7, reaver)
+            .nearestTo(reaver);
 
         if (cb != null) {
             reaver.setTooltip("Dont land - CB");
@@ -54,7 +62,7 @@ public class ProtossShuttleWithReaverEngage extends Manager {
             return usedManager(this);
         }
 
-        if (dist <= 8.3) {
+        if (dist <= 8.2) {
             if (unloadHere()) return usedManager(this, "DELIVERY");
         }
         else {

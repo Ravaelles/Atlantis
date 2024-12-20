@@ -11,7 +11,9 @@ public class RunError extends Manager {
     }
 
     protected Manager handleErrorRun(AUnit unit) {
-        if (A.isUms()) A.errPrintln(A.now() + " ERROR_RUN for " + unit.nameWithId());
+        if (A.isUms()) {
+            if (!unit.isObserver()) A.errPrintln(A.now() + " ERROR_RUN for " + unit.nameWithId());
+        }
         unit.addLog("RUN-ERROR");
 
         if (unit.noCooldown()) {

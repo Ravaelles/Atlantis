@@ -25,7 +25,7 @@ public class ProtossShuttleWithReaverRun extends Manager {
             return false;
         }
 
-        reaverEnemies = reaver.enemiesNear().canAttack(unit, 3);
+        reaverEnemies = reaver.enemiesNear().canAttack(unit, 3.5 + unit.woundPercent() / 23.0);
 
         if (reaverEnemies.combatBuildingsAntiLand().inRadius(9, unit).notEmpty()) return true;
 
@@ -34,8 +34,16 @@ public class ProtossShuttleWithReaverRun extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.runningManager().runFrom(reaverEnemies.center(), 4, Actions.MOVE_AVOID, false)) {
+        if (unit.moveAwayFrom(reaverEnemies.center(), 8, Actions.MOVE_AVOID, null)) {
+            return usedManager(this, "ShuttleMoveAway");
+        }
+        else if (unit.runningManager().runFrom(reaverEnemies.center(), 8, Actions.MOVE_AVOID, false)) {
             return usedManager(this, "ShuttleAvoid");
+        }
+        else {
+            if (unit.runningManager().runFrom(reaverEnemies.center(), 3, Actions.MOVE_AVOID, false)) {
+                return usedManager(this, "ShuttleAvoidFallback");
+            }
         }
 
         return null;
