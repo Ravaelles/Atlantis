@@ -9,6 +9,7 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.DefineExactPositionForNewConstruction;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.Requirements;
 import atlantis.units.AUnitType;
@@ -52,13 +53,17 @@ public class NewConstructionRequest {
 
         if (SpecificConstructionRequests.handledAsSpecialBuilding(building, order)) return true;
 
-        if (!Requirements.hasRequirements(building)) return handleRequirementMissingFor(building);
+//        System.err.println("Requested CONSTRUCTION:");
+//        System.err.println(building + " / " + near + " / " + order);
+
+        if (!Requirements.hasRequirements(building)) {
+//            System.err.println("------- NO REQUIREMENTS");
+            return handleRequirementMissingFor(building);
+        }
 
         // =========================================================
         // Create ConstructionOrder object, assign random worker for the time being
 
-//        System.err.println("Requested CONSTRUCTION:");
-//        System.err.println( building + " / " + near + " / " + order);
 //        if (building.isBase()) {
 //            A.printStackTrace("Requested BASE");
 //        }
@@ -107,7 +112,7 @@ public class NewConstructionRequest {
         }
 
         if (ConstructionRequests.alreadyExists(newConstruction, true)) {
-//            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
+            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
             newConstruction.cancel();
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
 //            }
@@ -126,6 +131,8 @@ public class NewConstructionRequest {
 //        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
         Queue.get().refresh();
 
+//        System.err.println(building + " OK! " + newConstruction.status());
+
         return true;
     }
 
@@ -139,15 +146,26 @@ public class NewConstructionRequest {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
         }
 
-        if (
-            building.isSupplyDepot()
-                && A.supplyTotal() > 10
+        boolean cancelled = false;
+
+        if (building.isSupplyDepot()) {
+            if (A.supplyTotal() > 10
                 && order != null
-                && (
-                CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2
-                    || AGame.supplyFree() >= 3
-            )
-        ) order.cancel();
+                && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
+            ) {
+                cancelled = true;
+                order.cancel();
+            }
+        }
+        else if (!building.isPylon()) {
+            if (A.s >= 70 && A.supplyUsed() >= 11) {
+                cancelled = true;
+                order.cancel();
+                A.errPrintln(A.s + "s: Cancelled order: " + order);
+            }
+        }
+
+        // =========================================================
 
 //        ErrorLog.printMaxOncePerMinute("(Construction: " + newConstruction + ")");
 
@@ -162,7 +180,19 @@ public class NewConstructionRequest {
 
 //        if (order != null) order.cancel();
         AbstractPositionFinder.clearCache();
-//        newConstruction.findPositionForNewBuilding();
+
+        if (!cancelled) {
+            newConstruction.findPositionForNewBuilding();
+        }
+
+        // =========================================================
+
+//        if (building.isGasBuilding() && Count.existing(building) <= 1 && Count.bases() >= 2) {
+//            ProductionOrder newOrder = AddToQueue.withStandardPriority(building);
+//            newOrder.setMinSupply(A.supplyUsed() + 3);
+//        }
+
+        // =========================================================
 
         return false;
     }

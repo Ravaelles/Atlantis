@@ -1,5 +1,6 @@
 package atlantis.combat.targeting;
 
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
@@ -12,11 +13,10 @@ public class ATransportTargeting extends HasUnit {
 
     public AUnit target() {
         AUnit nearTransport = Select.enemy()
-                .transports(true)
-                .canBeAttackedBy(unit, 1)
-                .inRadius(13, unit)
-                .nearestTo(unit);
-
+            .transports(true)
+            .canBeAttackedBy(unit, 1)
+            .inRadius(13, unit)
+            .nearestTo(unit);
 
 
 //                .transports(true));

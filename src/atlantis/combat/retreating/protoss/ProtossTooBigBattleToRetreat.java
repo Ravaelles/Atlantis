@@ -4,19 +4,31 @@ import atlantis.units.AUnit;
 
 public class ProtossTooBigBattleToRetreat {
     public static boolean PvP_doNotRetreat(AUnit unit) {
+        if (unit.friendsNear().atMost(3)) return false;
+
         if (unit.isDragoon()) {
-            if (unit.isHealthy()) return true;
+            if (
+                unit.hpPercent() >= 25
+//                    && unit.cooldown() <= 9
+                    && unit.meleeEnemiesNearCount(1.8 + unit.woundPercent() / 50.0) == 0
+            ) return true;
 
-            if (unit.hp() <= 40) return false;
-            if (unit.cooldown() >= 10 && unit.meleeEnemiesNearCount(1.6) > 0) return false;
-            if (dragoonInDangerOfRanged(unit)) return false;
+            if (unit.hp() <= 40 && unit.enemiesNear().ranged().inRadius(7, unit).notEmpty()) return false;
 
-            if (unit.enemiesNear().inRadius(3.7, unit).empty()) return true;
+            return false;
+//            if (true) return true;
 
-            if (unit.friendsNear().combatUnits().inRadius(8, unit).atMost(2)) return false;
-
-//            if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return true;
-            if (unit.shields() >= 40 && unit.enemiesNear().inRadius(3.2, unit).empty()) return true;
+//            if (unit.enemiesNear().inRadius(3.5, unit).empty()) return true;
+//
+//            if (unit.cooldown() >= 10) {
+//                if (unit.meleeEnemiesNearCount(1.6) > 0) return false;
+//                if (dragoonInDangerOfRanged(unit)) return false;
+//            }
+//
+//            if (unit.friendsNear().combatUnits().inRadius(8, unit).atMost(2)) return false;
+//
+////            if (unit.lastAttackFrameMoreThanAgo(30 * 3)) return true;
+//            if (unit.shields() >= 40 && unit.enemiesNear().inRadius(3.2, unit).empty()) return true;
         }
 
         if (unit.isZealot()) {

@@ -17,6 +17,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.Enemy;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.*;
@@ -41,10 +42,20 @@ public class AutoProduceWorkersCommander extends Commander {
 
         if (earlyGameOptimize()) return true;
 
+        int workers = Count.workers();
+
         if (
-            A.supplyUsed() <= 40 && Count.workers() >= 25 && (
+            A.supplyUsed() <= 40 && workers >= 25 && (
                 (!A.hasMinerals(150) && A.minerals() < A.reservedMinerals() + 50))
         ) return dont("FollowBO");
+
+        // === Protoss ===========================================
+
+        if (We.protoss()) {
+            if (
+                Enemy.zerg() && workers >= 20 && !A.hasMinerals(175)
+            ) return dont("MineralsMargin");
+        }
 
         // === Terran ===========================================
 
@@ -56,7 +67,6 @@ public class AutoProduceWorkersCommander extends Commander {
 
         // =========================================================
 
-        int workers = Select.ourWorkers().count();
         if (workers <= 20 && A.seconds() >= 600) return true;
 
         // === Zerg ===========================================
@@ -66,7 +76,7 @@ public class AutoProduceWorkersCommander extends Commander {
             if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return false;
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
-                if (order != null && order.supplyRequirementFulfilled()) {
+                if (order != null && order.supplyRequirementFulfilled(0)) {
                     return dont("Not250Min");
                 }
             }
@@ -155,6 +165,8 @@ public class AutoProduceWorkersCommander extends Commander {
     public static boolean isAutoProduceWorkersActive(int workers) {
         int autoProduceMinWorkers = BuildOrderSettings.autoProduceWorkersMinWorkers();
         if (A.supplyUsed() < autoProduceMinWorkers) return false;
+
+        if (A.supplyUsed() <= 150) return true;
 
         int autoProduceMaxWorkers = BuildOrderSettings.autoProduceWorkersMaxWorkers();
         return workers < autoProduceMaxWorkers;

@@ -66,8 +66,8 @@ public class DynamicCommanderHelpers extends Commander {
         buildNow(type, onlyOneAtTime);
     }
 
-    public static void buildNow(AUnitType type) {
-        buildNow(type, false);
+    public static boolean buildNow(AUnitType type) {
+        return buildNow(type, false);
     }
 
     public static boolean buildNow(AUnitType type, boolean onlyOneAtTime) {

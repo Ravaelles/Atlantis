@@ -28,7 +28,7 @@ public class RepairerSafety extends Manager {
         unit.setTooltipTactical("FuckThisJob");
         RepairAssignments.removeRepairer(unit);
 
-        (new AvoidEnemies(unit)).avoidEnemiesIfNeeded();
+        (new AvoidEnemies(unit)).avoidEnemies();
 
         return null;
 

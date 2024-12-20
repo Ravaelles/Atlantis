@@ -3,14 +3,12 @@ package atlantis.combat.squad.positioning.protoss;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import atlantis.util.We;
 
 public class ProtossTooFarFromLeader extends Manager {
     private double distToLeader;
@@ -22,35 +20,47 @@ public class ProtossTooFarFromLeader extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
+        if (true) return false;
 
-        if (!previousApplies()) return false;
+//        if (!previousApplies()) return false;
 
 //        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
-        if (EnemyWhoBreachedBase.notNull()) return false;
+        if (EnemyUnitBreachedBase.notNull()) return false;
         if (unit.squad().isLeader(unit)) return false;
+        if (unit.isRunning()) return false;
+        if (unit.lastStartedRunningLessThanAgo(20)) return false;
+        if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
+
+        this.leader = unit.squadLeader();
+        if (this.leader == null) return false;
 
         if (A.supplyUsed() >= 170 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
         )) return false;
 
-        leader = unit.squad().leader();
-        if (leader == null) return false;
-
         if (unit.isMissionSparta()) return false;
+
+        if (
+            unit.lastAttackFrameMoreThanAgo(30 * 10)
+                && unit.enemiesThatCanAttackMe(4).empty()
+        ) return false;
+
+        distToLeader = unit.distTo(this.leader);
+        boolean wayTooFarFromLeader = wayTooFarFromLeader();
+
+//        if (distToLeader >= 30 && unit.isMissionDefend()) return false;
+        if (wayTooFarFromLeader) return true;
+
+        if (isDangerousToGoToLeaderAndWeArentRetreating()) return false;
+
         if (
             unit.enemiesNear().atLeast(9)
                 || unit.enemiesNear().inRadius(5, unit).atLeast(2)
         ) return false;
 
-        if (unit.isDragoon() && unit.hp() <= 40) return false;
+//        if (unit.isDragoon() && unit.hp() <= 40) return false;
 
-        distToLeader = unit.distTo(leader);
-        boolean wayTooFarFromLeader = wayTooFarFromLeader();
-
-        if (wayTooFarFromLeader) return true;
-
-        if (unit.distToNearestChokeLessThan(5)) return false;
+        if (unit.distToNearestChokeLessThan(4)) return false;
 
         if (distToLeader >= 5 && unit.lastPositionChangedMoreThanAgo(30)) return true;
 
@@ -60,10 +70,20 @@ public class ProtossTooFarFromLeader extends Manager {
         return tooFarFromLeader();
     }
 
+    private boolean isDangerousToGoToLeaderAndWeArentRetreating() {
+        return leader != null
+            && (leader.isRunning() || leader.isRetreating())
+            && (
+            unit.enemiesThatCanAttackMe(5).count() >= 3
+                || leader.enemiesThatCanAttackMe(5).count() >= 3
+        );
+    }
+
     private boolean previousApplies() {
         return (A.supplyUsed() <= 100 || EnemyInfo.hasDiscoveredAnyBuilding())
-            && (A.isUms() || EnemyWhoBreachedBase.noone())
-            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
+            && (A.isUms() || EnemyUnitBreachedBase.noone())
+//            && (!unit.isMissionDefendOrSparta() || unit.distToBase() <= 30)
+            && unit.distToBase() <= 25
             && (unit.noCooldown() || unit.looksIdle() || unit.distToBase() >= 30)
 //            && !unit.hasCooldown()
             && unit.isGroundUnit()
@@ -121,9 +141,9 @@ public class ProtossTooFarFromLeader extends Manager {
     }
 
     private double maxDistFromLeader() {
-        if (unit.squadSize() >= 30) return 20;
+        if (unit.squadSize() >= 30) return 15;
 
-        return Math.min(7, 4 + unit.squadSize() / 4);
+        return Math.min(7, 3 + unit.squadSize() / 4);
     }
 
     protected Manager handle() {

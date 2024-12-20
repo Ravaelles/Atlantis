@@ -35,9 +35,9 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
             .notRunning()
             .realUnits()
             .exclude(unit)
-            .inRadius(NOTIFY_UNITS_IN_RADIUS, unit);
+            .inRadius(unit.isDragoon() ? 0.6 : NOTIFY_UNITS_IN_RADIUS, unit);
 
-        if (friendsTooClose.count() <= 1) return false;
+        if (unit.friendsNear().groundUnits().inRadius(1, unit).atMost(1)) return false;
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {

@@ -39,6 +39,10 @@ public class SquadCenter {
             this::defineLeader
         );
 
+        if (leader != null && We.protoss() && leader.isZealot() && Count.dragoons() > 0) {
+            leader = null;
+        }
+
 //        if (leader != null && leader.isAlive() && !leader.isRunning()) {
         if (leader != null && leader.isAlive()) {
             return _prevLeader = leader;
@@ -60,7 +64,7 @@ public class SquadCenter {
         APosition nearestToPosition = nearestToPosition();
         AUnit unit;
 
-        if (candidates.ranged().atLeast(2)) {
+        if (candidates.ranged().atLeast(1)) {
             if ((unit = candidates.ranged().nearestTo(nearestToPosition)) != null) {
                 return unit;
             }

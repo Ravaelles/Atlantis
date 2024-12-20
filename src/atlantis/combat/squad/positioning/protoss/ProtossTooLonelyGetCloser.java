@@ -15,11 +15,14 @@ public class ProtossTooLonelyGetCloser extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
 //        if (unit.lastStartedAttackLessThanAgo(40)) return false;
 //        if (unit.isLeader()) return false;
 
         return unit.noCooldown()
             && unit.enemiesNear().notEmpty()
+            && unit.enemiesNear().ranged().notEmpty()
             && unit.squadSize() >= 2
             && unit.lastStoppedRunningMoreThanAgo(20)
             && (unit.shieldDamageAtLeast(20) || unit.lastUnderAttackMoreThanAgo(30 * 3))

@@ -34,7 +34,7 @@ public class ZergMissionChangerWhenContain extends MissionChanger {
         }
 
         if (defendAgainstMassZerglings()) {
-            if (DEBUG) reason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings F";
             return true;
         }
 

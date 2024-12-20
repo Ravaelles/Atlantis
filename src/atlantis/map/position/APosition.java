@@ -2,7 +2,6 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.region.ARegion;
@@ -200,7 +199,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
      * Ensures that position's [x,y] are valid map coordinates.
      */
 //    @Override
-    public APosition makeValid() {
+    public APosition makeValidGroundPosition() {
 //        p = p.makeValid();
 
         boolean somethingChanged = false;
@@ -226,57 +225,66 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         }
 
         if (somethingChanged) {
-            return new APosition(px, py);
+            APosition newPosition = new APosition(px, py);
+            return newPosition.makeWalkable(8);
         }
         else {
             return this;
         }
     }
 
-    public APosition makeValidFarFromBounds() {
-        return makeValidFarFromBounds(PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
+    public APosition makeBuildableGroundPositionFarFromBounds() {
+        return makeBuildableFarFromBounds(PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }
 
     /**
      * Ensures that position's [x,y] are valid map coordinates and are "quite" far from map boundaries.
      */
-    public APosition makeValidFarFromBounds(int maxPixelsAwayFromEdges) {
-        boolean somethingChanged = false;
-        int px = p.getX();
-        int py = p.getY();
+//    public APosition makeBuildableGroundPositionFarFromBounds(int minPixelsAwayFromEdges) {
+//        boolean somethingChanged = false;
+//        int px = p.getX();
+//        int py = p.getY();
 
-        // =========================================================
+    // =========================================================
 
-        if (px < maxPixelsAwayFromEdges) {
-            px = maxPixelsAwayFromEdges;
-            somethingChanged = true;
-        }
-        else if (px > (32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges)) {
-            px = 32 * AMap.getMapWidthInTiles() - maxPixelsAwayFromEdges;
-            somethingChanged = true;
-        }
+//        int tilesRadius = 0;
+//        while (tilesRadius <= 32 * minPixelsAwayFromEdges) {
+//
+//            tilesRadius += 32;
+//        }
+//
+//        if (px < minPixelsAwayFromEdges) {
+//            px = minPixelsAwayFromEdges;
+//            somethingChanged = true;
+//        }
+//        else if (px > (32 * AMap.getMapWidthInTiles() - minPixelsAwayFromEdges)) {
+//            px = 32 * AMap.getMapWidthInTiles() - minPixelsAwayFromEdges;
+//            somethingChanged = true;
+//        }
+//
+//        if (py < minPixelsAwayFromEdges) {
+//            py = minPixelsAwayFromEdges;
+//            somethingChanged = true;
+//        }
+//        else if (py > (32 * AMap.getMapHeightInTiles() - minPixelsAwayFromEdges)) {
+//            py = 32 * AMap.getMapHeightInTiles() - minPixelsAwayFromEdges;
+//            somethingChanged = true;
+//        }
 
-        if (py < maxPixelsAwayFromEdges) {
-            py = maxPixelsAwayFromEdges;
-            somethingChanged = true;
-        }
-        else if (py > (32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges)) {
-            py = 32 * AMap.getMapHeightInTiles() - maxPixelsAwayFromEdges;
-            somethingChanged = true;
-        }
+//        return this.makeBuildableFarFromBounds(minPixelsAwayFromEdges / 32);
 
-        // =========================================================
-
-        if (somethingChanged) {
-            return new APosition(px, py);
-        }
-        else {
-            return this;
-        }
-    }
+//        // =========================================================
+//
+//        if (somethingChanged) {
+//            APosition newPosition = new APosition(px, py);
+//            return newPosition.makeBuildable(8);
+//        }
+//        else {
+//            return this;
+//        }
+//    }
 
     // === From JBWAPI =============================================
-
     @Override
     public Position subtract(Position position) {
         System.err.println("APosition - subtract - not used");
@@ -355,15 +363,16 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
     }
 
-    public boolean isCloseToMapBounds(int txAwayFromEdge) {
+    public boolean isCloseToMapBounds(int tilesAwayFromEdge) {
         int px = p.getX();
         int py = p.getY();
+        int allowedPixelsAway = tilesAwayFromEdge * 32;
 
-        if (px < txAwayFromEdge * 32) return true;
-        else if (px >= (32 * AMap.getMapWidthInTiles() - txAwayFromEdge * 32)) return true;
+        if (px <= allowedPixelsAway) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - allowedPixelsAway)) return true;
 
-        if (py < txAwayFromEdge * 32) return true;
-        else return py >= (32 * AMap.getMapHeightInTiles() - txAwayFromEdge * 32);
+        if (py <= allowedPixelsAway) return true;
+        else return py >= (32 * AMap.getMapHeightInTiles() - allowedPixelsAway);
     }
 
     public double distToMapBorders() {
@@ -377,7 +386,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
         return APosition.create(
             tx() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles)),
             ty() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles))
-        ).makeValid();
+        ).makeValidGroundPosition();
     }
 
     /**

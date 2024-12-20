@@ -1,10 +1,12 @@
 package atlantis.production.constructing.commanders;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -29,18 +31,25 @@ public class ConstructionThatLooksBugged extends Commander {
         if (constr.status() != ConstructionOrderStatus.NOT_STARTED) return;
         if (constr.buildingUnit() != null) return;
 
-        AUnitType type = constr.buildingType();
-        if (constr.builder() == null) {
+        AUnitType buildingType = constr.buildingType();
+        AUnitType type = buildingType;
+        if (constr.builder() == null || constr.builder().isDead()) {
             if (constr.status() != ConstructionOrderStatus.NOT_STARTED) {
-                constr.setBuilder(FreeWorkers.getOne());
+                constr.assignOptimalBuilder();
             }
-            else {
-                if (Count.workers() >= 3) {
-                    ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
-                }
+
+            if (constr.builder() == null || constr.buildPosition() == null) {
+                ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
                 constr.productionOrder().cancel();
-                return;
             }
+
+//            else {
+//                if (Count.workers() >= 3) {
+//                    ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
+//                }
+//                constr.productionOrder().cancel();
+//                return;
+//            }
         }
 
         AUnit main = Select.main();
@@ -52,7 +61,7 @@ public class ConstructionThatLooksBugged extends Commander {
         );
 
         if (!type.isCombatBuilding() && !type.producesLandUnits()) {
-            timeout += 30 * 40;
+            timeout += 30 * 18;
         }
 
         if (AGame.now() - constr.timeOrdered() > timeout) {
@@ -61,8 +70,20 @@ public class ConstructionThatLooksBugged extends Commander {
                 "Cancel constr of " + type
                     + " (Took too long)"
                     + " buildable:" + constr.buildPosition().isBuildable()
+                    + " (Supply " + A.supplyUsed() + "/" + A.supplyTotal() + ")"
             );
             constr.cancel();
+
+            constructionCancelledRequestAgainBecauseItsImportant(buildingType);
+        }
+    }
+
+    private void constructionCancelledRequestAgainBecauseItsImportant(AUnitType type) {
+        if (We.protoss()) {
+            if (type.isRoboticsFacility() || type.isObservatory() || type.isForge()) {
+                ErrorLog.printMaxOncePerMinute("### IMPORTANT ### Requesting again " + type + " as it got cancelled");
+                AddToQueue.withHighPriority(type);
+            }
         }
     }
 }

@@ -2,13 +2,12 @@ package atlantis.combat.squad;
 
 import java.util.ArrayList;
 
-public class AllSquads
-{
+public class AllSquads {
     /**
      * "Alpha" - main army, the first one.
-     *
-     * "Beta" - created after some time, its mission is to defend main + natural.
-     *
+     * <p>
+     * "Omega" - created after some time, its mission is to defend main + natural.
+     * <p>
      * "Delta" - all air units go there by default.
      */
     protected static ArrayList<Squad> allSquads = new ArrayList<>();

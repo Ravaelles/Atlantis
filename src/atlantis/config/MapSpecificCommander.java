@@ -2,7 +2,6 @@ package atlantis.config;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.advance.Advance;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
@@ -30,14 +29,14 @@ public class MapSpecificCommander extends Commander {
 //            if (A.now() <= 1) {
 //                GameSpeed.changeSpeedTo(30);
 //                GameSpeed.changeFrameSkipTo(0);
-//                CameraCommander.centerCameraNowOnSquadCenter();
+//                CameraCommander.focusCameraOnInterestingCombatUnit();
 //            }
 //        }
 
         // =========================================================
 
         if (ActiveMap.isMap("Bullet")) {
-//            CameraCommander.centerCameraNowOnSquadCenter();
+//            CameraCommander.focusCameraOnInterestingCombatUnit();
 
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
@@ -54,12 +53,32 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
+        else if (ActiveMap.isMap("ZealDrag_v_")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.focusCameraOnInterestingCombatUnit();
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("v_Sunkens")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.focusCameraOnInterestingCombatUnit();
+            }
+        }
+
+        // =========================================================
+
         else if (ActiveMap.isMap("1DragWounded_v_1Zeal")) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedToNormal();
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
-            CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================
@@ -68,31 +87,49 @@ public class MapSpecificCommander extends Commander {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedToNormal();
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
-                CameraCommander.centerCameraNowOnSquadCenter();
+                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
-        }
-
-        // =========================================================
-
-        else if (ActiveMap.isMap("1Drag_v_1Zeal.")) {
-            if (A.now() <= 1) {
-                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
-                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
-            }
-            CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================
 
         else if (
-            ActiveMap.isMap("/Drag_v_")
+            ActiveMap.isMap("1Drag_v_1Zeal.")
+                || ActiveMap.isMap("2Drag_v_3Zeal")
+                || ActiveMap.isMap("Drag_v_3Drag")
+                || ActiveMap.isMap("Drag_v_4Drag")
+                || ActiveMap.isMap("Drag_v_8Drag")
+        ) {
+            if (A.now() <= 1) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+                CameraCommander.focusCameraOnInterestingCombatUnit();
+            }
+        }
+
+        // =========================================================
+
+        else if (
+            ActiveMap.isMap("1Drag_v_1Drag")
+        ) {
+            if (A.now() <= 1) {
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+                CameraCommander.focusCameraOnInterestingCombatUnit();
+            }
+        }
+
+        // =========================================================
+
+        else if (
+            ActiveMap.isMap("Drag_v_")
                 || ActiveMap.isMap("/Zeal_v_")
         ) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
-            if (A.now() <= 1) CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================
@@ -179,8 +216,8 @@ public class MapSpecificCommander extends Commander {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedTo(1);
                 GameSpeed.changeFrameSkipTo(0);
+                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
-            CameraCommander.centerCameraNowOnSquadCenter();
         }
 
         // =========================================================
@@ -203,7 +240,7 @@ public class MapSpecificCommander extends Commander {
                 APainter.disablePainting();
                 GameSpeed.changeSpeedTo(30);
                 GameSpeed.changeFrameSkipTo(0);
-                CameraCommander.centerCameraNowOnSquadCenter();
+                CameraCommander.focusCameraOnInterestingCombatUnit();
 //                GameSpeed.unpauseGame();
             }
         }
@@ -232,7 +269,7 @@ public class MapSpecificCommander extends Commander {
         else if (ActiveMap.isMap("M&M_v_Zealots")) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
-//                CameraCommander.centerCameraNowOnSquadCenter();
+//                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
         }
     }

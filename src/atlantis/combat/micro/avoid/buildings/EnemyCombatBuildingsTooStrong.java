@@ -21,7 +21,7 @@ public class EnemyCombatBuildingsTooStrong {
         int basePenalty = unit.squadSize() <= 25 ? 4 : 1;
 
         AUnit squadLeader = unit.squadLeader();
-        if (squadLeader != null) basePenalty += squadLeader.lastRetreatedAgo() <= 30 * 15 ? 2 : 0;
+        if (squadLeader != null) basePenalty += squadLeader.lastRetreatedAgo() <= 30 * 3 ? 2 : 0;
 
         return basePenalty + combatBuildings.inRadius(17, unit).count() / 1.5;
     }

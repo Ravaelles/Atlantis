@@ -18,7 +18,7 @@ public class ScoutAvoidCombatBuildings extends Manager {
     }
 
     public Manager handle() {
-        if (unit.moveToMain(Actions.MOVE_AVOID)) {
+        if (unit.moveToSafety(Actions.MOVE_AVOID)) {
             return usedManager(this, "ScoutAvoidsBuilding");
         }
 

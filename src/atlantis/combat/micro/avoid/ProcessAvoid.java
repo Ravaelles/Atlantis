@@ -57,7 +57,16 @@ public class ProcessAvoid extends Manager {
     // =========================================================
 
     private HasPosition defineRunFromForGroupOfUnits(Units enemiesDangerouslyClose) {
-        Selection enemies = enemiesDangerouslyClose.selection().havingPosition();
+        Selection enemies = enemiesDangerouslyClose
+            .selection()
+            .havingPosition()
+            .sortByNearestTo(unit)
+            .limit(2);
+
+//        enemies.print("Enemies to run from");
+//        for (AUnit enemy : enemies.list()) {
+//            System.out.println("Enemy: " + enemy + ", dist:" + unit.distTo(enemy));
+//        }
 
 //        int takeOnly = unit.isDragoon() ? 2 : 3;
 //        if (enemies.size() >= takeOnly) {

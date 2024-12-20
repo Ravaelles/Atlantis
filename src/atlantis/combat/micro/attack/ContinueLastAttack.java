@@ -17,11 +17,11 @@ public class ContinueLastAttack extends Manager {
 
 //        if (ShouldRetreat.shouldRetreat(unit)) return false;
 
-        if (!unit.isAttacking()) return false;
+        if (!unit.isAttackingRecently()) return false;
         if (unit.lastActionMoreThanAgo(5)) return false;
 
         if (unit.isDragoon()) return asDragoon();
-        
+
         if (continueRecentAttackNearbyEnemies()) return true;
 
 //        if (!unit.isAttackingOrMovingToAttack()) return false;
@@ -43,7 +43,8 @@ public class ContinueLastAttack extends Manager {
     private boolean asDragoon() {
         return unit.isDragoon()
             && unit.isAttacking()
-            && unit.lastActionLessThanAgo(10, Actions.ATTACK_UNIT);
+            && unit.lastActionLessThanAgo(10, Actions.ATTACK_UNIT)
+            && unit.isTargetInWeaponRangeAccordingToGame();
 //            && unit.lastAttackFrameMoreThanAgo(20);
     }
 

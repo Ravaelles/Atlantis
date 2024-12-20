@@ -103,6 +103,34 @@ public interface HasPosition {
         return null;
     }
 
+    default APosition makeBuildableFarFromBounds(int atLeastTilesAwayFromBounds) {
+        APosition position = this.position();
+        if (position.isBuildable()) {
+            return position;
+        }
+
+        int currentRadius = 0;
+        while (currentRadius <= atLeastTilesAwayFromBounds) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        position = this.translateByTiles(dtx, dty);
+                        if (position.isBuildable() && !position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
     default APosition makeWalkable(int maxRadius) {
         APosition position = this.position();
         if (position.isWalkable()) {
@@ -181,10 +209,10 @@ public interface HasPosition {
 //        return null;
 //    }
 
-    default APosition makeFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
+    default APosition makeWalkableAndFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
         double currentRadius = 0;
         double closenessMargin = 0.15;
-        Selection our = Select.our().groundUnits();
+        Selection our = Select.our().groundUnits().inRadius(maxRadius + 1, this);
 
         while (currentRadius <= maxRadius) {
             for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
@@ -300,7 +328,7 @@ public interface HasPosition {
     }
 
     default boolean nearMapEdge(double maxTilesAwayFromMapEdges) {
-        return !position().makeValidFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
+        return !position().makeBuildableFarFromBounds((int) (maxTilesAwayFromMapEdges * 32)).equals(position());
     }
 
     default boolean distToNearestChokeLessThan(double dist) {

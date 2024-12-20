@@ -4,9 +4,11 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.Counter;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
@@ -56,6 +58,13 @@ public class Requirements {
 //                Select.ourOfType(requiredType).print();
 //                Select.our().print();
 //                A.errPrintln("--------------------------");
+                if (type.isCannon()) {
+                    AUnit forge = Select.ourWithUnfinished(AUnitType.Protoss_Forge).first();
+                    if (forge == null) return false;
+
+                    if (forge.remainingTrainTime() <= 10) return true;
+                }
+
                 return false;
             }
         }

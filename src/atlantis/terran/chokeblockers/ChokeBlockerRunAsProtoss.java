@@ -26,7 +26,7 @@ public class ChokeBlockerRunAsProtoss extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.moveToMain(Actions.RUN_ENEMY, "BlockerToMain")) return usedManager(this);
+        if (unit.moveToSafety(Actions.RUN_ENEMY, "BlockerToMain")) return usedManager(this);
 
         return null;
     }

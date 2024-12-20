@@ -3,7 +3,7 @@ package atlantis.combat.squad.positioning;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -24,7 +24,7 @@ public class MakeSpaceForNearbyWorkers extends Manager {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if ((nearWorker = Select.ourWorkers().notGathering().inRadius(1.9, unit).first()) == null) return false;
         if (unit.enemiesNear().inRadius(12, unit).havingWeapon().notEmpty()) return false;
-        if (unit.isMissionDefend() && EnemyWhoBreachedBase.notNull()) return false;
+        if (unit.isMissionDefend() && EnemyUnitBreachedBase.notNull()) return false;
         if (unit.friendsNear().groundUnits().nonBuildings().countInRadius(1, unit) <= 1) return false;
         if (unit.friendsNear().workers().inRadius(4, unit).empty()) return false;
         if (unit.enemiesNearInRadius(12) > 0) return false;

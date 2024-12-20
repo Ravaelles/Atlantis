@@ -1,6 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.ConstructionRequests;
 
@@ -11,6 +12,9 @@ import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+
+import static atlantis.units.AUnitType.Terran_Refinery;
+import static atlantis.units.AUnitType.Zerg_Extractor;
 
 /**
  * Quick auxiliary class for counting our units.
@@ -104,24 +108,27 @@ public class Count {
     }
 
     public static int inProduction(AUnitType type) {
-        if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
-            return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
+        if (We.zerg()) {
+            if (type.equals(AUnitType.Zerg_Sunken_Colony)) {
+                return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
+                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count()
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Sunken_Colony);
+            }
+            else if (type.equals(AUnitType.Zerg_Spore_Colony)) {
+                return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
+                    + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
+            }
+            else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
+                return Select.ourWithUnfinished().ofType(type).count()
+                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
+                    + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
+            }
         }
-        else if (type.equals(AUnitType.Zerg_Spore_Colony)) {
-            return Select.ourUnfinished().ofType(AUnitType.Zerg_Creep_Colony).count()
-                + Select.ourUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Creep_Colony)
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Spore_Colony);
-        }
-        else if (type.equals(AUnitType.Zerg_Creep_Colony)) {
-            return Select.ourWithUnfinished().ofType(type).count()
-                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
-                + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
-        }
-        else if (type.isPrimaryBase()) {
+
+        if (type.isPrimaryBase()) {
             return Select.ourUnfinished().bases().count()
                 + ConstructionRequests.countNotStartedOfType(type)
                 + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
@@ -206,6 +213,18 @@ public class Count {
 
     public static int zealots() {
         return ofType(AUnitType.Protoss_Zealot);
+    }
+
+    public static int zealotsWithUnfinished() {
+        return ofType(AUnitType.Protoss_Zealot) + countUnitsBeingProduced(AUnitType.Protoss_Zealot);
+    }
+
+    public static int countUnitsBeingProduced(AUnitType type) {
+        return Select.ourOfType(type.whatBuildsIt()).producing(type).count();
+    }
+
+    public static int zealotsAndDragoons() {
+        return ofType(AUnitType.Protoss_Zealot) + ofType(AUnitType.Protoss_Dragoon);
     }
 
     public static int zerglings() {
@@ -325,6 +344,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
     }
 
+    public static int corsairs() {
+        return Select.countOurOfType(AUnitType.Protoss_Corsair);
+    }
+
     public static int cannonsWithUnfinished() {
         return Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).count();
     }
@@ -385,7 +408,35 @@ public class Count {
         return ourWithUnfinished(AUnitType.Protoss_Gateway);
     }
 
-    public static int zealotsWithUnfinished() {
-        return ourWithUnfinished(AUnitType.Protoss_Zealot);
+//    public static int zealotsWithUnfinished() {
+//        return ourWithUnfinished(AUnitType.Protoss_Zealot);
+//    }
+
+    public static int gasBuildings() {
+        return ofType(AUnitType.Protoss_Assimilator)
+            + ofType(Zerg_Extractor)
+            + ofType(Terran_Refinery);
+    }
+
+    public static int gasBuildingsWithUnfinished() {
+        return ourWithUnfinished(AUnitType.Protoss_Assimilator)
+            + ourWithUnfinished(Zerg_Extractor)
+            + ourWithUnfinished(Terran_Refinery);
+    }
+
+    public static int enemyCombatUnits() {
+        return EnemyUnits.discovered().combatUnits().count();
+    }
+
+    public static int ht() {
+        return ofType(AUnitType.Protoss_High_Templar);
+    }
+
+    public static int reavers() {
+        return ofType(AUnitType.Protoss_Reaver);
+    }
+
+    public static int shuttles() {
+        return ofType(AUnitType.Protoss_Shuttle);
     }
 }

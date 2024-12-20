@@ -41,10 +41,7 @@ public class AddToQueue {
     }
 
     public static ProductionOrder withHighPriority(AUnitType type) {
-        return withHighPriority(
-            type,
-            null
-        );
+        return withHighPriority(type, null);
     }
 
     public static ProductionOrder withHighPriority(AUnitType type, HasPosition position) {
@@ -82,9 +79,10 @@ public class AddToQueue {
             return false;
         }
 
-        ProductionOrder productionOrder = new ProductionOrder(tech, A.supplyUsed());
+        ProductionOrder productionOrder = new ProductionOrder(tech, A.supplyUsed() - 10);
 
         if (tech.equals(TechType.Tank_Siege_Mode)) productionOrder.setPriority(ProductionOrderPriority.TOP);
+        if (tech.equals(TechType.Psionic_Storm)) productionOrder.setPriority(ProductionOrderPriority.TOP);
 
         Queue.get().addNew(0, productionOrder);
         return true;
@@ -117,10 +115,10 @@ public class AddToQueue {
         if (A.supplyTotal() >= 30 && type.isPylon()) {
             int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
 
-            if (inQueue >= 2) {
-                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
-                    inQueue);
-            }
+//            if (inQueue >= 2) {
+//                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
+//                    inQueue);
+//            }
 
             if (inQueue >= 4) {
 //                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
@@ -142,6 +140,10 @@ public class AddToQueue {
 
 //            if (type.isBunker()) {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
+//            }
+
+//            if (type.isGasBuilding()) {
+//                A.printStackTrace(A.now() + ": Adding GAS to queue at " + position);
 //            }
 
 //            if (type.is(AUnitType.Protoss_Robotics_Facility)) {
@@ -188,7 +190,7 @@ public class AddToQueue {
 //            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
         else {
-//            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
+            ErrorLog.printMaxOncePerMinute("Could not add " + type + " to queue");
         }
 
         return productionOrder;
@@ -212,6 +214,10 @@ public class AddToQueue {
         if (nextOrders.isEmpty()) {
             return currentMin1;
 //            return 0;
+        }
+
+        if (type.isGasBuilding()) {
+            return Count.gasBuildingsWithUnfinished() + 1;
         }
 
 //        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));

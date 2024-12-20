@@ -18,27 +18,10 @@ public class Bullets {
 //        System.out.println("UPDATE KNOWN BULLETS @" + A.now());
         addNewRawBullets();
         defineValidBullets();
-
-//        System.err.println(
-//            AGame.get().getBullets().size()
-//                + " / allRawBullets= " + A.keysToString(allRawBullets.keySet())
-//                + " / valid= " + A.keysToString(validBullets.keySet())
-//        );
-
-//        System.err.println("B visibleBullets = " + bulletsAtUnits.size() + " / " + AGame.get().getBullets().size());
-
-//        if (validBullets.values().size() > 0) {
-//            ABullet b = validBullets.values().stream().findFirst().get();
-//            System.err.println(
-//                b.distToTargetPosition()
-////                    + " / ID " + b.id()
-//                    + " / VIS " + b.b().isVisible()
-//                    + " / hp:" + b.target().hp()
-//            );
-//        }
     }
 
     private static void addNewRawBullets() {
+//        System.out.println("newMissingRawBullets() = " + newMissingRawBullets().size());
         for (ABullet bullet : newMissingRawBullets()) {
             allRawBullets.put(bullet.id(), bullet);
         }
@@ -63,7 +46,7 @@ public class Bullets {
         List<Integer> removeBullets = new ArrayList<>();
 
         for (ABullet bullet : allRawBullets.values()) {
-            if (bullet.b() == null || !bullet.b().exists()) {
+            if ((bullet.b() == null || !bullet.b().exists()) && !Env.isTesting()) {
                 removeBullets.add(bullet.id());
                 continue;
             }
@@ -76,7 +59,6 @@ public class Bullets {
             }
 
             validBullets.put(bullet.id(), bullet);
-//            knownBullets.put(bullet.id(), bullet);
         }
 
         if (!removeBullets.isEmpty()) {

@@ -95,7 +95,11 @@ public class AtlantisJfap {
     }
 
     public static boolean isValidUnit(AUnit unit) {
-        return unit.notImmobilized() && unit.hasPosition() && unit.isCompleted() && (
+        return unit.notImmobilized()
+            && unit.hasPosition()
+            && unit.isCompleted()
+            && !unit.isOverlord()
+            && (
             unit.u() != null || unit instanceof FakeUnit || unit instanceof AbstractFoggedUnit
         );
     }
@@ -106,8 +110,6 @@ public class AtlantisJfap {
 
     private double calculateToRelativeScoreIfNeeded(double ourScore, double enemyScore, boolean relativeToEnemy) {
         if (relativeToEnemy) {
-
-
             if (enemyScore < -9000) {
                 return Math.abs(enemyScore);
             }

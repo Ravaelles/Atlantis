@@ -1,20 +1,21 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.OurArmy;
+import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.constructing.ConstructionRequests;
-import atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealot;
+import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
-import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
-import static atlantis.units.AUnitType.Protoss_Gateway;
+import static atlantis.units.AUnitType.*;
 
 public class ProduceGateway {
-
-    private static int allGateways;
     private static int unfinishedGateways;
     private static int freeGateways;
     private static int existingGateways;
@@ -23,21 +24,34 @@ public class ProduceGateway {
     public static boolean produce() {
         minerals = A.minerals();
 
-        if (minerals <= 100) return false;
+        if (minerals <= 105) return false;
 
-        existingGateways = Count.gateways();
+//        A.errPrintln(A.minSec() + " GATEWAY CHECK");
 
-        if (!A.hasMinerals(330) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
-
-        if (
-            !A.hasMinerals(176)
-                && existingGateways >= 4
-                && A.isInRange(50, ReservedResources.minerals(), 350)
-        ) return false;
-
+        existingGateways = Count.gatewaysWithUnfinished();
         freeGateways = Count.freeGateways();
 
-        if (minerals >= 290 && freeGateways <= 1) return produceGateway();
+        if (againstZergProduceEarly()) return produceGateway();
+
+        if (minerals <= 330 && enemyGoesHiddenUnitsAndNotPrepared()) return false;
+
+        if (minerals >= 660 && freeGateways <= 2) return produceGateway();
+        if (minerals >= 460 && existingGateways <= 8 && freeGateways <= 2) return produceGateway();
+        if (minerals >= 200 && existingGateways <= 5 && Count.bases() >= 2) return produceGateway();
+        if (minerals >= 210 && freeGateways <= 0) return produceGateway();
+
+        if (
+            !A.hasMinerals(186)
+                && freeGateways >= 1
+                && existingGateways >= (2 + 3 * Count.basesWithUnfinished())
+                && Count.basesWithUnfinished() >= 2
+//                && A.isInRange(50, ReservedResources.minerals(), 350)
+        ) return false;
+
+        if (!A.hasMinerals(290) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
+
+        if (minerals >= 210 && freeGateways <= 1) return produceGateway();
+        if (minerals >= 590 && freeGateways <= 2) return produceGateway();
 
         // =========================================================
 
@@ -47,7 +61,7 @@ public class ProduceGateway {
         if (ReservedResources.minerals() >= 250 && !A.hasMinerals(230)) return false;
 
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
-        allGateways = existingGateways + unfinishedGateways;
+//        allGateways = existingGateways + unfinishedGateways;
 
         if (freeGateways >= 2) {
             if (tooManyGatewaysForNow()) return false;
@@ -63,8 +77,31 @@ public class ProduceGateway {
         if (unfinishedGateways >= 2 && !A.hasMinerals(550)) return false;
 //        }
 
-
         if (continuousGatewayProduction()) return produceGateway();
+
+        return false;
+    }
+
+    private static boolean againstZergProduceEarly() {
+        return Enemy.zerg()
+            && existingGateways <= 2
+            && freeGateways == 0
+            && A.hasMinerals(184)
+            && OurArmy.strength() <= 180;
+    }
+
+    private static boolean enemyGoesHiddenUnitsAndNotPrepared() {
+        if (
+            EnemyStrategy.get().isGoingHiddenUnits()
+                || (Enemy.protoss() && EnemyInfo.goesTemplarArchives())
+        ) {
+            if (
+                Count.ourWithUnfinished(Protoss_Photon_Cannon) <= 1
+                    && Count.ourWithUnfinished(Protoss_Observer) <= 1
+            ) {
+                return !A.canAfford(310, 34);
+            }
+        }
 
         return false;
     }
@@ -73,7 +110,7 @@ public class ProduceGateway {
         return !Have.cyberneticsCore()
             && !A.hasMinerals(300)
             && Have.notEvenPlanned(Protoss_Cybernetics_Core)
-            && DragoonInsteadZealot.dragoonInsteadOfZealot();
+            && ProduceDragoonInsteadZealot.dragoonInsteadOfZealot();
     }
 
     private static boolean continuousGatewayProduction() {
@@ -81,7 +118,10 @@ public class ProduceGateway {
     }
 
     private static boolean produceGateway() {
-        AddToQueue.withStandardPriority(Protoss_Gateway);
+        ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
+        if (order != null) order.setMinSupply(A.supplyUsed());
+//        A.println("******** At " + A.supplyUsed() + "supply produce Gateway (" + Count.gatewaysWithUnfinished() + "):"
+//            + " " + order);
 //        A.printStackTrace("Produce Gateway");
         return true;
     }

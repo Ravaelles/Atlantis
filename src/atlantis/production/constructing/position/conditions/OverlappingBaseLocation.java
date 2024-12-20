@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
@@ -40,6 +41,8 @@ public class OverlappingBaseLocation {
 
     private static boolean forNonBaseBuilding(APosition position, AUnitType building) {
         double minDist = building.isBunker() ? 4 : 6;
+
+        if (We.protoss() && A.supplyUsed() <= 40) minDist = 5;
 
 //        if (building.isBunker()) System.err.println("@ " + A.now() + " - bunker ");
 

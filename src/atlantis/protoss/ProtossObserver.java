@@ -3,10 +3,7 @@ package atlantis.protoss;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
-import atlantis.combat.micro.generic.managers.FollowAlphaScout;
-import atlantis.combat.micro.generic.managers.FollowArmy;
-import atlantis.combat.micro.generic.managers.SpreadOutDetectors;
+import atlantis.combat.micro.generic.managers.*;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -23,10 +20,11 @@ public class ProtossObserver extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            DetectorAvoidAntiAir.class,
             AvoidEnemies.class,
             DetectHiddenEnemyClosestToBase.class,
             SpreadOutDetectors.class,
-            FollowAlphaScout.class,
+            FollowAlphaLeader.class,
             FollowArmy.class,
         };
     }

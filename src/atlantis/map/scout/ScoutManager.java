@@ -3,7 +3,6 @@ package atlantis.map.scout;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.workers.WorkerAvoidManager;
 
 public class ScoutManager extends Manager {
     public ScoutManager(AUnit unit) {
@@ -18,14 +17,23 @@ public class ScoutManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ScoutSeparateFromCloseEnemies.class,
+//            ScoutSafetyAvoidTooCloseEnemies.class,
             AvoidEnemies.class,
             ScoutAvoidCombatBuildings.class,
-            ScoutSafetyFarFromEnemy.class,
-            ScoutFreeBases.class,
-            ScoutRoaming.class,
-            WorkerAvoidManager.class,
+
             ScoutTryFindingEnemy.class,
+
             RoamAroundEnemyBase.class,
+
+            ScoutEnemyThird.class,
+            ScoutUnexploredBasesNearEnemy.class,
+            ScoutPotentialEnemyBases.class,
+
+            ScoutFreeBases.class,
+
+//            ScoutRoaming.class,
+//            WorkerAvoidManager.class,
 //            TestRoamingAroundBase.class,
         };
     }

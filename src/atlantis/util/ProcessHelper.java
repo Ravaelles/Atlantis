@@ -9,9 +9,11 @@ public class ProcessHelper {
 
     public static void killStarcraftProcess() {
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
+//        destroyInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
 
     public static void killChaosLauncherProcess() {
+//        destroyInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
 //        executeInCommandLine("taskkill /IM Chaoslauncher - MultiInstance.exe /T /F");
     }
@@ -40,5 +42,4 @@ public class ProcessHelper {
             err.printStackTrace();
         }
     }
-
 }

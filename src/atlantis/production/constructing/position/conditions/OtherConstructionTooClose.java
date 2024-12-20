@@ -8,6 +8,7 @@ import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 
 public class OtherConstructionTooClose {
     /**
@@ -21,19 +22,32 @@ public class OtherConstructionTooClose {
         boolean isPylon = building.isPylon();
 
         // Compare against planned construction places
-        for (Construction order : ConstructionRequests.all()) {
-            HasPosition constructionPosition = order.buildPosition();
+        for (Construction otherConstr : ConstructionRequests.notCompleted()) {
+            HasPosition otherPosition = otherConstr.buildPosition();
 
-            if (position != null && constructionPosition != null) {
-                double distance = position.distTo(constructionPosition);
+            if (position != null && otherPosition != null) {
+                double distance = position.distTo(otherPosition);
+
+//                if (building.isCannon()) {
+//                    System.err.println(building + " Other cons: " + otherConstr.buildingType() + ", dist: " + A.digit(distance));
+//                }
 
                 if (distance >= 2) {
-                    if (building.isCannon() && order.buildingType().isCannon()) return false;
-                    if (building.isSunkenOrCreep() && order.buildingType().isSunkenOrCreep()) return false;
+                    if (We.protoss() && building.isCannon()) {
+                        if (otherConstr.buildingType().isCannon()) return false;
+                        if (otherConstr.buildingType().isGateway() && otherConstr.notStarted()) {
+                            return false;
+                        }
+                    }
+
+                    if (We.zerg() && building.isSunkenOrCreep() && otherConstr.buildingType().isSunkenOrCreep())
+                        return false;
                 }
 
+                if (distance >= 2.2 && building.isGateway()) return false;
+
                 // Look for two positions that could overlap one another
-                if (distance <= (building.canHaveAddon() ? 4 : building.isPylon() ? 2 : 2.8)) {
+                if (distance <= (building.canHaveAddon() ? 4 : (building.isPylon() ? 2.4 : 3.1))) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
                 }
 

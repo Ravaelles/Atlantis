@@ -4,6 +4,7 @@ import atlantis.game.AGame;
 import atlantis.game.APlayer;
 import atlantis.game.race.EnemyRace;
 import atlantis.util.cache.Cache;
+import bwapi.Race;
 
 import java.util.ArrayList;
 
@@ -12,6 +13,10 @@ public class Enemy {
     private static Cache<Object> cache = new Cache<>();
 
     // =========================================================
+
+    public static Race race() {
+        return EnemyRace.enemyRace();
+    }
 
     public static boolean terran() {
         return EnemyRace.isEnemyTerran();

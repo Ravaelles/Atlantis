@@ -1,16 +1,18 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
+import atlantis.util.We;
 
 public class IsReadyToProduceOrder {
-    protected static boolean isReadyToProduce(ProductionOrder order) {
+    public static boolean check(ProductionOrder order) {
         if (order.isStatus(OrderStatus.COMPLETED)) {
 //            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
             return false;
@@ -34,15 +36,18 @@ public class IsReadyToProduceOrder {
 
         // Prioritize combat unit production when base is under attack
         if (order.isBuilding() && order.unitType().isBase()) {
-            if (EnemyWhoBreachedBase.get() != null) return false;
+            if (EnemyUnitBreachedBase.get() != null) return false;
         }
 
+        boolean isFarFromMainBaseSoTravelEarly = !isFarFromMainBaseSoTravelEarly(order);
         boolean notEnoughResources, notEnoughSupplyResources, noRequirement = false;
         if (
-            (notEnoughSupplyResources = !order.supplyRequirementFulfilled())
-                || (notEnoughResources = !hasEnoughResourcesFor(order))
+            (notEnoughSupplyResources = !order.supplyRequirementFulfilled(isFarFromMainBaseSoTravelEarly ? 1 : 0))
+//            (notEnoughSupplyResources = !order.supplyRequirementFulfilled(0))
+                || (notEnoughResources = !hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly))
                 || (noRequirement = !order.checkIfHasWhatRequired())
         ) {
+//            if (noRequirement || !isFarFromMainBaseSoTravelEarly) return false;
             return false;
         }
 
@@ -51,23 +56,49 @@ public class IsReadyToProduceOrder {
         return true;
     }
 
-    private static boolean hasEnoughResourcesFor(ProductionOrder order) {
+    private static boolean isFarFromMainBaseSoTravelEarly(ProductionOrder order) {
+        if (order.atPosition() == null) return false;
+
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null) return false;
+
+        return order.atPosition().distTo(main) >= 17;
+    }
+
+    private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
         AUnitType unitType = order.unitType();
 
         if (unitType == null) return true;
         if (unitType.isBase()) return A.hasMinerals(310);
+        if (isFarFromMainBaseSoTravelEarly) return true;
 
 //        System.err.println("      SUP?!? = " + (A.supplyUsed() + 3 >= order.minSupply()));
 //        System.err.println("      unitType.mineralPrice() = " + unitType.mineralPrice());
 //        System.err.println("      mineralBonusToHave(unitType) = " + mineralBonusToHave(unitType));
 //        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
+//        return A.supplyUsed() + 3 >= order.minSupply()
         return A.supplyUsed() + 3 >= order.minSupply()
 //            && (order.isUnit() && unitType.isResource())
-            && A.canAffordWithReserved(
+            && (applySpecialPriority(unitType) || canAffordWithReserved(unitType));
+//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
+    }
+
+    private static boolean applySpecialPriority(AUnitType unitType) {
+        if (We.protoss()) {
+            return unitType.is(
+                AUnitType.Protoss_Cybernetics_Core,
+                AUnitType.Protoss_Assimilator
+            );
+        }
+
+        return false;
+    }
+
+    private static boolean canAffordWithReserved(AUnitType unitType) {
+        return A.canAffordWithReserved(
             unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
         );
-//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
     }
 
     private static int mineralBonusToHave(AUnitType type) {

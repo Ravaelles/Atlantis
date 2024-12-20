@@ -81,7 +81,7 @@ public class FlyingBuildingScoutManager extends Manager {
             double distToFocusPoint = focusPoint.distTo(unit);
 
             if (distToFocusPoint > 0.5) {
-                unit.moveStrategic(focusPoint, Actions.SPECIAL, "Fly baby!");
+                unit.move(focusPoint, Actions.SPECIAL, "Fly baby!");
                 return true;
             }
         }

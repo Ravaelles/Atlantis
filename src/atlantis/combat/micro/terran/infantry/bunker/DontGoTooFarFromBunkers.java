@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -15,7 +15,7 @@ public class DontGoTooFarFromBunkers extends Manager {
 
     @Override
     public boolean applies() {
-        if (EnemyWhoBreachedBase.get() != null) return false;
+        if (EnemyUnitBreachedBase.get() != null) return false;
 
         if (unit.isMissionDefend() && GamePhase.isEarlyGame() && Count.bunkers() > 0) {
             if (unit.meleeEnemiesNearCount(3.3) >= 1) return false;

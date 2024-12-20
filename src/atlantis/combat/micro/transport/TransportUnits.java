@@ -17,6 +17,8 @@ public class TransportUnits extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isReaver()) return false;
+
         return unit.isCombatUnit() &&
             (unit.isMoving() && !unit.isAttackingOrMovingToAttack());
     }

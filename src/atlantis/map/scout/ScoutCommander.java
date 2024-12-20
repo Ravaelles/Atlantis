@@ -2,6 +2,7 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.base.define.DefineNaturalBase;
@@ -28,15 +29,11 @@ public class ScoutCommander extends Commander {
     public void handle() {
         // CodeProfiler.startMeasuring(this);
 
-        // === Handle UMS ==========================================
-
-        if (AGame.isUms()) {
-            return;
-        }
+        if (AGame.isUms() && Count.bases() == 0) return;
 
         // === Act with every scout ================================
 
-        manageScoutAssigned();
+        manageScoutsAssigned();
 
         try {
             for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
@@ -75,44 +72,54 @@ public class ScoutCommander extends Commander {
     /**
      * If we have no scout unit assigned, make one of our units a scout.
      */
-    private void manageScoutAssigned() {
+    private void manageScoutsAssigned() {
         removeDeadScouts();
         removeOverlordsAsScouts();
         removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
-        if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker())
-
+        if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker()) {
             if (We.zerg()) {
             }
 
             // =========================================================
             // TERRAN + PROTOSS
 
-            else if (ScoutState.scouts.isEmpty()) {
+            else if (ScoutState.scouts.size() < scoutsNeeded()) {
 //                if (ScoutState.scoutsKilledCount >= 2) return;
 //
 //                if (ScoutState.scoutsKilledCount <= 1 && OurStrategy.get().isRushOrCheese()) {
 //                    return;
 //                }
 
-                for (AUnit scout : candidates()) {
-                    if (
-                        scout.isBuilder()
-                            || scout.isRepairerOfAnyKind()
-                            || scout.isBuilder()
-                            || scout.lastActionLessThanAgo(50, Actions.SPECIAL)
-                    ) {
-                        ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
-                        continue;
-                    }
-
-                    if (ScoutState.scouts.isEmpty()) {
-                        addScout(scout);
-                        return;
-                    }
-                }
+                assignScout();
             }
+        }
+    }
+
+    private int scoutsNeeded() {
+        return A.supplyUsed() >= 70 ? 2 : 1;
+    }
+
+    private static boolean assignScout() {
+        for (AUnit scout : candidates()) {
+            if (
+                scout.isBuilder()
+                    || scout.isRepairerOfAnyKind()
+                    || scout.isBuilder()
+                    || scout.lastActionLessThanAgo(90, Actions.SPECIAL)
+            ) {
+                ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
+                continue;
+            }
+
+//            if (ScoutState.scouts.isEmpty()) {
+            addScout(scout);
+            return true;
+//            }
+        }
+
+        return false;
     }
 
     private static void addScout(AUnit newScout) {
@@ -125,8 +132,10 @@ public class ScoutCommander extends Commander {
     }
 
     private void removeExcessiveScouts() {
-        if (ScoutState.scouts.size() > 1) {
-            AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - 1);
+        int scoutsNeeded = scoutsNeeded();
+
+        if (ScoutState.scouts.size() > scoutsNeeded) {
+            AUnit leaveThisScout = ScoutState.scouts.get(ScoutState.scouts.size() - scoutsNeeded);
             removeAllScouts();
 
             addScout(leaveThisScout);

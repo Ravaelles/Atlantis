@@ -1,9 +1,7 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
-import atlantis.protoss.reaver.ReaverAlwaysAttack;
 import atlantis.units.AUnit;
-import atlantis.units.select.Selection;
 
 public class ProtossReaver extends Manager {
     public ProtossReaver(AUnit unit) {
@@ -18,8 +16,18 @@ public class ProtossReaver extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ReaverProduceScarab.class,
+            ReaverIsLoaded.class,
+
+            ReaverContinueAttack.class,
+
+            ReaverUseTransport.class,
+
+            ReaverHoldToAttack.class,
             ReaverAlwaysAttack.class,
+
             ReaverControlEnemyDistance.class,
+            ReaverAlwaysFollowAlphaLeader.class,
         };
     }
 }

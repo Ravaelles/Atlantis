@@ -132,7 +132,11 @@ public class Construction implements Comparable<Construction> {
 
     public boolean sameAs(Construction other) {
         return this.buildingType.equals(other.buildingType)
-            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild));
+            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild))
+            && (
+            this.productionOrder().minSupply() == other.productionOrder().minSupply()
+                || (!this.buildingType.isCannon() && !other.buildingType.isCannon())
+        );
     }
 
     @Override
@@ -258,6 +262,10 @@ public class Construction implements Comparable<Construction> {
         if (!A.canAfford(buildingType)) return false;
 
         return A.ago(timeOrdered) > 30 * 22;
+    }
+
+    public int startedSecondsAgo() {
+        return A.ago(timeOrdered) / 30;
     }
 
     public int progressPercent() {

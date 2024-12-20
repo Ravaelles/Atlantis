@@ -9,7 +9,7 @@ import atlantis.util.We;
 
 public class IsPositionPowered {
     public static boolean isNotPowered(AUnitType building, APosition position) {
-        if (true) return false;
+        if (true) return false; // Terribly broken for some reason. Not needed, CanBuildHere is enough.
 
         if (!We.protoss()) return false;
         if (!building.needsPower()) return false;
@@ -18,9 +18,9 @@ public class IsPositionPowered {
     }
 
     private static boolean isNotPowered(APosition position) {
-//        return !Atlantis.game().hasPower(position.toTilePosition());
+        return !Atlantis.game().hasPower(position.toTilePosition());
 
-        return Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.8, position).empty();
+//        return Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(6.8, position).empty();
     }
 
     private static boolean failed(String reason) {

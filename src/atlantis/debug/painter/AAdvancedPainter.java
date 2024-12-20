@@ -2,6 +2,8 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
+import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.combat.advance.focus.AFocusPoint;
@@ -21,11 +23,12 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.DefineNaturalBase;
+import atlantis.map.base.define.*;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.ARegionBoundary;
 import atlantis.map.scout.ScoutCommander;
@@ -131,7 +134,7 @@ public class AAdvancedPainter extends APainter {
 //        paintUnitTypes();
         paintRegions();
 //        paintMineralDistance();
-        paintChokepoints();
+//        paintChokepoints();
         paintImportantPlaces();
         paintBases();
         paintStrategicLocations();
@@ -282,6 +285,8 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintManagerLogs(AUnit unit) {
+        if (unit.isShuttle()) return;
+
         int baseOffset = 13;
         int counter = 0;
 
@@ -428,7 +433,7 @@ public class AAdvancedPainter extends APainter {
         else {
             color = Color.Orange;
         }
-        paintSideMessage("Global mission: " + mission.name() + " (" + Missions.counter() + ")", color);
+        paintSideMessage("Global mission: " + mission.name() + " (" + Missions.historyCount() + ")", color);
 
         mission = Alpha.get().mission();
         if (mission.isMissionDefend()) {
@@ -441,6 +446,7 @@ public class AAdvancedPainter extends APainter {
             color = Color.Orange;
         }
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
+        paintSideMessage("Reason: " + MissionChanger.reason, Grey);
 
 
         String shouldExpand = ShouldExpand.shouldExpand() ? "YES" : "NO";
@@ -829,7 +835,7 @@ public class AAdvancedPainter extends APainter {
                     case IN_PROGRESS:
                         color = Color.Blue;
                         break;
-                    case FINISHED:
+                    case COMPLETED:
                         color = Color.Teal;
                         break;
                     default:
@@ -1158,7 +1164,7 @@ public class AAdvancedPainter extends APainter {
         setTextSizeLarge();
         for (AUnit building : Select.ourBuildings().list()) {
             if (building.isBase()) {
-                int workers = WorkerRepository.countWorkersHarvestingNear(building, false);
+                int workers = WorkerRepository.countWorkersHarvestingMineralsNear(building, false);
                 if (workers > 0) {
                     String workersAssigned = workers + "";
                     paintTextCentered(building.translateByPixels(-5, -36), workersAssigned, Color.Grey);
@@ -1598,9 +1604,11 @@ public class AAdvancedPainter extends APainter {
         HasPosition natural = DefineNaturalBase.natural();
         paintBase(natural, "Our natural", Color.Grey, 0);
 
-        // Enemy base
-        APosition enemyBase = BaseLocations.enemyNatural();
-        paintBase(enemyBase, "Enemy natural", Color.Orange, 0);
+        // Enemy MAIN base
+        paintBase(EnemyMainBase.get(), "Enemy MAIN", Color.Orange, 0);
+
+        // Enemy NATURAL
+        paintBase(EnemyNaturalBase.get(), "Enemy NATURAL", Color.Orange, 0);
 
         // Our natural choke
         AChoke naturalChoke = Chokes.natural();
@@ -1616,13 +1624,20 @@ public class AAdvancedPainter extends APainter {
         AChoke enemyNaturalChoke = Chokes.enemyNaturalChoke();
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
-        // First Pylon
-//        paintBuildingPosition(
-//            PylonPosition.positionForFirstPylon(), AUnitType.Protoss_Pylon, "First pylon", Color.Green
-//        );
+        // Base locations near enemy - potential enemy expansions
+        Positions<ABaseLocation> baseLocationsNearEnemy = BaseLocationsNearEnemy.get();
+        int count = 1;
+        for (ABaseLocation baseLocation : baseLocationsNearEnemy.list()) {
+            paintBase(baseLocation, "Enemy near base #" + count++, Cyan, 0);
+        }
 
-        // Bunker
-//        TerranBunkerPositionFinder.findPosition(Select.ourWorkers().first(), null);
+        // Enemy THIRD
+        paintBase(EnemyThirdLocation.get(), "Enemy THIRD location", Color.Orange, 0);
+
+        // Enemy EXPANSION
+        paintBase(EnemyExistingExpansion.get(), "Enemy EXPANSION", Color.Orange, 0);
+
+        // =========================================================
 
         // Sunken
         if (We.zerg()) {

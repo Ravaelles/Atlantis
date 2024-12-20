@@ -18,16 +18,24 @@ public class ProtossShieldBattery extends Manager {
     }
 
     protected Manager handle() {
-        AUnit battery = Select.ourWithUnfinished(AUnitType.Protoss_Shield_Battery)
-            .havingEnergy(40)
-            .nearestTo(unit);
-        if (
-            battery != null && battery.distToMoreThan(unit, 6)
-                && unit.move(battery, Actions.SPECIAL, "ToBattery", false)
-        ) {
-            return usedManager(this);
-        }
+        if (moveHealableUnitsToBattery()) return usedManager(this);
 
         return null;
+    }
+
+    private boolean moveHealableUnitsToBattery() {
+        AUnit friend = unit.friendsNear().ofType(AUnitType.Protoss_Shield_Battery)
+            .havingEnergy(40)
+            .havingSeriousShieldWound()
+            .notAttacking()
+            .nearestTo(unit);
+        
+        if (
+            friend != null && friend.distToMoreThan(unit, 7)
+                && unit.move(friend, Actions.SPECIAL, "ToBattery", false)
+        ) {
+            return true;
+        }
+        return false;
     }
 }

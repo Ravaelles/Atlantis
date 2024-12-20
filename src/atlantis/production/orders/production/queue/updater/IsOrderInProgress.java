@@ -52,12 +52,6 @@ public class IsOrderInProgress {
         int ordersBeingProduced = Count.inProduction(order.unitType());
         int ordersInProgress = ordersBeingProduced - earlierOrdersOfTheSameType;
 
-//        if (order.unitType() != null && order.unitType().is(AUnitType.Terran_Barracks)) {
-//            System.err.println("--- @" + A.now() + " ---------------");
-//            System.err.println(order);
-//            System.err.println("ordersInProgress = " + ordersInProgress + " / Barracks");
-//        }
-
         return ordersInProgress > 0;
     }
 

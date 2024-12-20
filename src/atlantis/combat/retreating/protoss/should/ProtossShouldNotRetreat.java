@@ -2,7 +2,11 @@ package atlantis.combat.retreating.protoss.should;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
+import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
+import atlantis.units.select.Selection;
 
 public class ProtossShouldNotRetreat extends Manager {
     public ProtossShouldNotRetreat(AUnit unit) {
@@ -23,8 +27,18 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     public boolean shouldNotRetreat() {
+        if (A.supplyUsed() >= 188) {
+            unit.addLog("HugeSupply");
+            return true;
+        }
+
         if (unit.hp() >= 35 && unit.isMelee() && (unit.distToBase() <= 8 || unit.distToMain() <= 20)) {
             unit.addLog("NoRunNearBase");
+            return true;
+        }
+
+        if (DontAvoidWhenCannonsNear.check(unit)) {
+            unit.addLog("DontRetreatSupportCannon");
             return true;
         }
 
@@ -54,8 +68,9 @@ public class ProtossShouldNotRetreat extends Manager {
     }
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
-        return unit.isMissionDefend()
-            && unit.isMelee()
+        if (!unit.isMissionDefend()) return false;
+
+        return unit.isMelee()
             && unit.hp() >= 35
             && unit.cooldown() <= 10
             && unit.combatEvalRelative() >= 0.7

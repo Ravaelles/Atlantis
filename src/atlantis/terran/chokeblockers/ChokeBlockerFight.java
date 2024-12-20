@@ -2,7 +2,7 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
@@ -57,7 +57,7 @@ public class ChokeBlockerFight extends Manager {
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(nearestEnemy)) return usedManager(this);
         }
 
-        AUnit breachedBase = EnemyWhoBreachedBase.get();
+        AUnit breachedBase = EnemyUnitBreachedBase.get();
         if (breachedBase != null && breachedBase.isDetected() && unit.canAttackTarget(breachedBase)) {
             System.err.println("breachedBase = " + breachedBase);
             if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(breachedBase)) return usedManager(this);

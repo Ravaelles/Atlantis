@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran.units;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.decisions.terran.TerranDecisions;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -30,12 +30,12 @@ public class ProduceMarines {
         if (freeBarracks <= 0) return false;
 //        freeBarracks < CountInQueue.count(Terran_Marine)
 
-        if (A.hasMinerals(100) && EnemyWhoBreachedBase.get() != null) return forceProduceMarine();
+        if (A.hasMinerals(100) && EnemyUnitBreachedBase.get() != null) return forceProduceMarine();
 
         marines = Count.marines();
 
         if (marines <= 3 && A.hasMinerals(100)) return forceProduceMarine();
-        
+
         if (marines >= 5 && !A.hasMinerals(100)) return false;
         if (!A.canAffordWithReserved(55, 0)) return false;
 

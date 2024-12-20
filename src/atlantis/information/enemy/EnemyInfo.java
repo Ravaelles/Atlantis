@@ -5,13 +5,16 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Enemy;
@@ -42,7 +45,7 @@ public class EnemyInfo {
     public static boolean hasDiscoveredAnyBuilding() {
         return cacheBoolean.get(
             "hasDiscoveredAnyBuilding",
-            50,
+            53,
             () -> {
                 for (AUnit enemyUnit : EnemyUnits.discovered().list()) {
                     if (enemyUnit.isABuilding() && !UnitsArchive.isDestroyed(enemyUnit)) {
@@ -154,9 +157,9 @@ public class EnemyInfo {
     public static boolean hasDefensiveLandBuilding(boolean onlyCompleted) {
         return cacheBoolean.get(
             "hasDefensiveLandBuilding:" + onlyCompleted,
-            30,
+            33,
             () -> {
-                Selection selection = EnemyUnits.foggedUnits()
+                Selection selection = EnemyUnits.discovered()
                     .combatBuildings(false)
                     .excludeTypes(AUnitType.Zerg_Spore_Colony, AUnitType.Zerg_Creep_Colony);
 
@@ -175,7 +178,7 @@ public class EnemyInfo {
             return null;
         }
 
-        return Select.enemyCombatUnits().inRadius(20, main).nearestTo(main);
+        return Select.enemyCombatUnits().havingAntiGroundWeapon().inRadius(15, main).nearestTo(main);
     }
 
     public static boolean isProxyBuilding(AUnit enemyBuilding) {
@@ -238,5 +241,35 @@ public class EnemyInfo {
         if (enemyNatural == null) return false;
 
         return EnemyUnits.buildings().inRadius(5, enemyNatural).atLeast(1);
+    }
+
+    public static APosition enemyMain() {
+        return (APosition) cache.getIfValid(
+            "enemyMain",
+            271,
+            () -> {
+                Positions<ABaseLocation> startingLocations = new Positions<>(BaseLocations.startingLocations(true));
+
+                for (AUnit enemyBase : EnemyUnits.discovered().bases().list()) {
+                    ABaseLocation location = startingLocations.nearestTo(enemyBase);
+                    if (location != null && location.distTo(enemyBase) <= 10) return location.position();
+                }
+
+                return null;
+            }
+        );
+    }
+
+    public static APosition enemyNatural() {
+        return BaseLocations.enemyNatural();
+    }
+
+    public static boolean goesTemplarArchives() {
+        return EnemyUnits.discovered().ofType(AUnitType.Protoss_Templar_Archives).notEmpty()
+            || (Count.ourCombatUnits() <= 10 && EnemyUnits.discovered().ofType(AUnitType.Protoss_Citadel_of_Adun).notEmpty());
+    }
+
+    public static double ourCombatUnitsToEnemyRatio() {
+        return (double) Count.ourCombatUnits() / EnemyUnits.combatUnits();
     }
 }

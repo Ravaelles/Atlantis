@@ -3,6 +3,7 @@ package atlantis.combat.micro.zerg.overlord;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -18,7 +19,7 @@ public class FollowArmy extends Manager {
     }
 
     protected Manager handle() {
-        APosition medianUnitPosition = Alpha.get().center();
+        HasPosition medianUnitPosition = Alpha.get().center();
         if (medianUnitPosition != null) {
             if (
                 unit.distTo(medianUnitPosition) > 2.5

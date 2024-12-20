@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=10
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=27
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
@@ -68,11 +68,6 @@ Assimilator - @NATURAL
 //..Constant Zealot production[10]
 MISSION=ATTACK
 //Templar Archive
-*/
-
-// === Build order for Atlantis =======================================
-
-@ - Name - Modifier
 //8 - Pylon - @NATURAL
 //14 - Nexus - @NATURAL
 //16 - Forge - @NATURAL
@@ -80,15 +75,27 @@ MISSION=ATTACK
 //18 - Photon Cannon - @NATURAL
 //16 - Gateway - @NATURAL
 //18 - Pylon - @NATURAL
-9 - Pylon
-10 - Forge
+//10 - Forge
 //14 - Nexus - @NATURAL
-14 - Photon Cannon
-16 - Pylon
-16 - Gateway
-16 - Assimilator - @MAIN
+//14 - Photon Cannon
+
+32 - Pylon
+37 - Pylon
+42 - Pylon - @NATURAL_CHOKE
+46 - Cybernetics Core
+49 - Assimilator
+64 - Forge
+68 - Photon Cannon - @NATURAL_CHOKE
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon
+11 - Gateway
+13 - Gateway
+15 - Pylon
 18 - Zealot
-21 - Cybernetics Core
-24 - Protoss Ground Weapons
-24 - Pylon - @MAIN
-27 - Citadel of Adun - @MAIN
+21 - Pylon
+25 - Gateway
+27 - Pylon

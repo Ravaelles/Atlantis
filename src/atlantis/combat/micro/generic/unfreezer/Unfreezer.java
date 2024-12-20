@@ -17,11 +17,18 @@ public class Unfreezer extends Manager {
 
         if (!unit.isCombatUnit()) return false;
         if (unit.hasCooldown()) return false;
-        if (unit.lastPositionChangedLessThanAgo(50)) return false;
+        if (unit.lastAttackFrameLessThanAgo(30)) return false;
+//        if (unit.isStartingAttack()) return false;
+//        if (unit.isAttackFrame()) return false;
+//        if (unit.hasCooldown()) return false;
+//        if (unit.isMoving()) return false;
+//        if (unit.lastActionLessThanAgo(55)) return false;
+//        if (unit.lastPositionChangedLessThanAgo(unit.isMissionDefend() ? 30 * 5 : 45)) return false;
+        if (A.s <= 1) return false;
 
 //        if (unit.hasNotMovedInAWhile() && unit.lastActionMoreThanAgo(50)) return true;
 
-        return A.now() % 2 == 1;
+        return true;
 
 //        if (unit.isSpecialAction()) return false;
 //        if (unit.lastPositionChangedMoreThanAgo(50) && unit.isStopped() && unit.noCooldown()) return true;
@@ -54,7 +61,7 @@ public class Unfreezer extends Manager {
             UnfreezeDragoon.class,
             UnfreezeGeneric.class,
 //            UnfreezeAttackOrMove.class,
-            UnfreezeRun.class,
+//            UnfreezeRun.class,
 //            UnfreezeRunA.class,
 //            UnfreezeRunB.class,
         };

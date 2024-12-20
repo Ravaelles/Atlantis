@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
@@ -16,7 +17,7 @@ import java.util.Collection;
 public class NumberOfGasWorkersCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(7);
+        return A.everyNthGameFrame(9);
     }
 
     @Override
@@ -25,10 +26,10 @@ public class NumberOfGasWorkersCommander extends Commander {
         int expectedGasWorkers = expectedGasWorkers();
 
         for (AUnit gasBuilding : gasBuildings) {
-            boolean noBaseIsNearThisGasBuilding = Select.ourBases().inRadius(12, gasBuilding).count() == 0;
+            boolean shouldHaveNoWorkersAssigned = shouldHaveNoWorkersAssigned(gasBuilding);
 
             int realCount = CountGasWorkers.countWorkersGatheringGasFor(gasBuilding);
-            int expectedCount = noBaseIsNearThisGasBuilding ? 0 : expectedGasWorkers;
+            int expectedCount = shouldHaveNoWorkersAssigned ? 0 : expectedGasWorkers;
 
             // Fewer workers gathering gas than optimal
             if (realCount < expectedCount) {
@@ -41,12 +42,27 @@ public class NumberOfGasWorkersCommander extends Commander {
                 AUnit worker = WorkerRepository.getRandomWorkerAssignedTo(gasBuilding);
                 if (worker != null && worker.isGatheringGas()) {
 //                    System.out.println("FIRE GAS WORKER = " + worker + " / " + worker.getLastCommand());
-                    worker.stop("Fired!");
-                    (new GatherResources(worker)).invokeFrom(this);
+//                    worker.stop("Fired!");
+//                    (new GatherResources(worker)).invokeFrom(this);
+
+                    // Send worker to the last base
+                    AUnit lastBase = Select.ourBases().last();
+                    if (lastBase != null) {
+                        worker.move(lastBase, Actions.MOVE_TRANSFER, "FiredFromGas&Transfer");
+                    }
+                    else {
+                        worker.setTooltip("FiredFromGas");
+                        (new GatherResources(worker)).invokeFrom(this);
+                    }
                 }
                 break; // Only one worker per execution - prevent weird runs
             }
         }
+    }
+
+    private static boolean shouldHaveNoWorkersAssigned(AUnit gasBuilding) {
+        return Select.ourBases().inRadius(12, gasBuilding).count() == 0
+            || gasBuilding.u().getResources() <= 1;
     }
 
     // =========================================================
@@ -145,7 +161,10 @@ public class NumberOfGasWorkersCommander extends Commander {
     }
 
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
-        return FreeWorkers.get().gatheringMinerals(true).nearestTo(gasBuilding);
+        return FreeWorkers.get()
+            .inRadius(15, gasBuilding)
+            .gatheringMinerals(true)
+            .nearestTo(gasBuilding);
     }
 
     private static int expectedGasWorkers() {

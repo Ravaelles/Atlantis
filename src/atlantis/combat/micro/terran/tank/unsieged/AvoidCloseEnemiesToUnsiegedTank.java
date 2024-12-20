@@ -30,7 +30,7 @@ public class AvoidCloseEnemiesToUnsiegedTank extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.moveToMain(Actions.MOVE_AVOID, "CloseEnemies")) return usedManager(this);
+        if (unit.moveToSafety(Actions.MOVE_AVOID, "CloseEnemies")) return usedManager(this);
 
 //        unit.runningManager().runFrom(
 //            enemies.nearestTo(unit), 2, Actions.MOVE_AVOID, false

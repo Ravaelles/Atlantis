@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.tank.unsieging;
 
 import atlantis.architecture.Manager;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.Enemy;
@@ -16,7 +16,7 @@ public class DontThinkAboutUnsieging extends Manager {
         if (!unit.isTankSieged()) return false;
         if (Enemy.terran()) return false;
 
-        AUnit enemyBreachedBase = EnemyWhoBreachedBase.get();
+        AUnit enemyBreachedBase = EnemyUnitBreachedBase.get();
 
         if (enemyBreachedBase != null && enemyBreachedBase.distTo(unit) >= 10.5) return false;
 

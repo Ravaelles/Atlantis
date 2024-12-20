@@ -3,13 +3,14 @@ package atlantis.combat.squad.positioning.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class TerranTooFarFromSquadCenter extends MissionManager {
-    private APosition center;
+    private HasPosition center;
     private AUnit nearestFriend;
 
     public TerranTooFarFromSquadCenter(AUnit unit) {

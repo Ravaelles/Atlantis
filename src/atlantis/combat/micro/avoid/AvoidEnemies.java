@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
 import atlantis.decisions.Decision;
@@ -29,27 +30,30 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.effUndetected()) return false;
+
 //        if (unit.isMissionSparta() && unit.isHealthy()) return false;
 //        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
 
         if (We.protoss()) {
+            if ((new ProtossAlwaysAvoidEnemy(unit)).applies()) return true;
+
             Decision decision;
             if ((decision = ObserverDontAvoidEnemy.shouldAvoid(unit)).notIndifferent()) return decision.toBoolean();
         }
 
-        return
-//            !(new ShouldNotAvoid(unit, enemiesDangerouslyClose())).shouldNotAvoid()
-            !(new DontAvoidEnemy(unit)).applies();
+
+        return !(new DontAvoidEnemy(unit)).applies();
     }
 
     @Override
     protected Manager handle() {
 //        if (unit.isDragoon()) System.err.println("@ " + A.now() + " - AVOID ENEMIES " + unit.typeWithUnitId() + " - ");
 
-        return avoidEnemiesIfNeeded();
+        return avoidEnemies();
     }
 
-    public Manager avoidEnemiesIfNeeded() {
+    public Manager avoidEnemies() {
         if (!applies()) return null;
 
         if (wantsToAvoid.unitOrUnits(enemiesDangerouslyClose()) != null) {

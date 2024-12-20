@@ -13,8 +13,11 @@ public class DetectUnitsNotRunning extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         return (unit.isRunning() || unit.action().name().startsWith("RUN_"))
-            && (!unit.isMoving() || unit.isStopped());
+            && (!unit.isMoving() || unit.isStopped())
+            && unit.lastStartedRunningMoreThanAgo(6);
     }
 
     @Override

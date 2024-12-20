@@ -12,7 +12,7 @@ public class ProduceAddon {
         assert parentBuilding != null;
 
         for (AUnit building : Select.ourFree(parentBuilding).list()) {
-            if (!building.hasAddon() && A.canAfford(addonType)) {
+            if (building != null && !building.hasAddon() && A.canAfford(addonType)) {
                 building.buildAddon(addonType);
                 return true;
             }

@@ -78,7 +78,9 @@ public class AFocusPoint extends APosition {
         else {
             APosition pos = this.position();
             if (pos == null) return false;
-            return !pos.isPositionVisible() || Select.our().inRadius(3, pos).empty();
+//            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
+            return !pos.isPositionVisible() || Select.our().inRadius(3.5, pos).empty();
+//            return true; // @Temp
         }
     }
 
@@ -89,6 +91,7 @@ public class AFocusPoint extends APosition {
         return "Focus{" +
             "name='" + name + '\'' +
             ", unit=" + unit +
+            ", pos=" + position +
 //            ", from=" + fromSide +
 //            ", choke=" + choke +
             '}';
@@ -112,6 +115,10 @@ public class AFocusPoint extends APosition {
         return choke != null;
     }
 
+    public boolean isUnit() {
+        return unit != null;
+    }
+
     public String name() {
         return name;
     }
@@ -123,6 +130,16 @@ public class AFocusPoint extends APosition {
 
     public int chokeWidthOr(int fallback) {
         return choke != null ? choke.width() : fallback;
+    }
+
+    public boolean nameContains(String... substring) {
+        if (name == null) return false;
+
+        for (String s : substring) {
+            if (name.contains(s)) return true;
+        }
+
+        return false;
     }
 
 //    @Override

@@ -60,11 +60,11 @@ public class Queue1Test extends NonAbstractTestFakingGame {
     }
 
     public void initSupply() {
-        int supplyFree = 2;
-        int supplyUsed = options.getIntOr("supplyUsed", 49);
+        currentSupplyUsed = options.getIntOr("supplyUsed", 49);
+        currentSupplyTotal = currentSupplyUsed + 2;
 
-        aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
-        aGame.when(AGame::supplyFree).thenReturn(supplyFree);
-        aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + supplyFree);
+        aGame.when(AGame::supplyUsed).thenAnswer(invocation -> currentSupplyUsed());
+        aGame.when(AGame::supplyTotal).thenAnswer(invocation -> currentSupplyTotal());
+        aGame.when(AGame::supplyFree).thenAnswer(invocation -> currentSupplyFree());
     }
 }

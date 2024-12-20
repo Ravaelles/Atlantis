@@ -61,6 +61,14 @@ public abstract class Squad extends Units {
 
     // =========================================================
 
+    public abstract boolean shouldHaveThisSquad();
+
+    public boolean allowsSideQuests() {
+        return false;
+    }
+
+    // =========================================================
+
     /**
      * Returns median <b>position</b> of all units. It's better than the average, because the outliners
      * don't affect the end result so badly.
@@ -94,12 +102,19 @@ public abstract class Squad extends Units {
     /**
      * Center of this squad.
      */
-    public APosition center() {
+    public HasPosition center() {
         if (size() <= 0) return null;
 
-        if (squadCenter.isInvalid(_leader)) _leader = squadCenter.leader();
+        APosition median = median();
+        if (median == null) return leader();
 
-        return _leader != null ? _leader.position() : null;
+        AUnit medianUnit = units().groundUnits().nearestTo(median);
+
+        return medianUnit != null ? medianUnit : leader();
+
+//        if (squadCenter.isInvalid(_leader)) _leader = squadCenter.leader();
+//
+//        return _leader != null ? _leader.position() : null;
     }
 
     // =========================================================
@@ -234,7 +249,7 @@ public abstract class Squad extends Units {
             "distToCenter",
             5,
             () -> {
-                APosition center = center();
+                HasPosition center = center();
                 if (center == null) {
                     return 0.0;
                 }
@@ -289,16 +304,14 @@ public abstract class Squad extends Units {
             "cohesionPercent",
             3,
             () -> {
-                APosition center = center();
+                HasPosition center = center();
                 if (size() <= 1 || center == null) {
                     return 100;
                 }
 
-                int withinSquadRadius = selection()
-                    .inRadius(radius(), center)
-                    .count();
+                double withinSquadRadius = selection().inRadius(radius(), center).count();
 
-                return (100 * withinSquadRadius / size());
+                return (int) (100 * withinSquadRadius / size());
             }
         );
     }
@@ -342,5 +355,9 @@ public abstract class Squad extends Units {
     public boolean isRetreating() {
         AUnit leader = leader();
         return leader != null && leader.isRetreating();
+    }
+
+    public boolean isAlpha() {
+        return Alpha.get().equals(this);
     }
 }

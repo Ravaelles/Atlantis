@@ -5,7 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
-public class FakeBullet extends ABullet {
+public class FakeBullet extends ABullet implements Comparable<FakeBullet> {
     private static int firstFreeId = 1;
 
     protected int id;
@@ -28,5 +28,10 @@ public class FakeBullet extends ABullet {
     @Override
     public int id() {
         return id;
+    }
+
+    @Override
+    public int compareTo(FakeBullet o) {
+        return Integer.compare(this.id, o.id);
     }
 }

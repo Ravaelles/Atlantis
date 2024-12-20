@@ -38,10 +38,10 @@ public class DetectHiddenEnemyClosestToBase extends Manager {
         AUnit enemy = null;
 
         for (AUnit undetected : undetectedEnemies.list()) {
-            if (undetected.friendsNear().detectors().inRadius(9, undetected).isEmpty()) {
-                enemy = undetected;
-                break;
-            }
+//            if (undetected.friendsNear().detectors().inRadius(9, undetected).isEmpty()) {
+            enemy = undetected;
+//                break;
+//            }
         }
 
         if (enemy == null) return null;

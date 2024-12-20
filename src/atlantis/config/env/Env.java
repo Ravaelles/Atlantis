@@ -3,7 +3,9 @@ package atlantis.config.env;
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.decisions.terran.GGForEnemy;
+import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
+import atlantis.information.decisions.GGForEnemy;
+import atlantis.util.log.ErrorLog;
 
 import java.io.File;
 
@@ -43,16 +45,7 @@ public class Env {
             }
             String value = line[1];
 
-            switch (key) {
-                case "LOCAL":
-                    isLocal = trueFalse(value);
-                case "BWAPI_DATA_PATH":
-                    AtlantisIgniter.setBwapiDataPath(value);
-                case "CHAOS_LAUNCHER_PATH":
-                    AtlantisIgniter.setChaosLauncherPath(value);
-                case "FORCE_GG_FOR_ENEMY":
-                    GGForEnemy.allowed = "true".equals(value);
-            }
+            applyKeyAndValueAsFlag(key, value);
         }
 
         if (mainArgsContains("--param-tweaker", mainArgs)) {
@@ -61,6 +54,27 @@ public class Env {
         if (mainArgsContains("--counter=", mainArgs) && !mainArgsEquals("--counter=1", mainArgs)) {
             firstRun = false;
         }
+    }
+
+    private static boolean applyKeyAndValueAsFlag(String key, String value) {
+        switch (key) {
+            case "LOCAL":
+                isLocal = trueFalse(value);
+                return true;
+            case "BWAPI_DATA_PATH":
+                AtlantisIgniter.setBwapiDataPath(value);
+                return true;
+            case "CHAOS_LAUNCHER_PATH":
+                AtlantisIgniter.setChaosLauncherPath(value);
+                return true;
+            case "FORCE_GG_FOR_ENEMY":
+                GGForEnemy.allowed = "true".equals(value);
+                return true;
+            case "FORCE_END_GAME_AFTER_REAL_SECONDS":
+                ForceExitLocallyAfterRealSeconds.realSecondsLimit = toInt(value);
+                return true;
+        }
+        return false;
     }
 
     private static String envFilePath() {
@@ -93,6 +107,19 @@ public class Env {
 
     private static boolean trueFalse(String value) {
         return value != null && value.equals("true");
+    }
+
+    private static int toInt(String value) {
+        if (value == null || value.isEmpty()) {
+            return -1;
+        }
+
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            ErrorLog.printErrorOnce("Error parsing ENV file. Value=" + value + " / " + e.getMessage() + "\n");
+            return -1;
+        }
     }
 
     /**

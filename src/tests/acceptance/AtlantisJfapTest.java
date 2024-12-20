@@ -5,6 +5,7 @@ import org.junit.Test;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Terran_Marine;
+import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +53,7 @@ public class AtlantisJfapTest extends NonAbstractTestFakingGame {
             fake(Terran_Marine, 10.3)
 //            fake(Terran_Siege_Tank_Tank_Mode, 11),
 //            fake(Terran_Siege_Tank_Tank_Mode, 12),
-//            fake(Terran_Siege_Tank_Tank_Mode, 12),
+//            fake(Terran_Siege_Tank_Tank_Mode, 13)
 //            fake(Terran_Siege_Tank_Tank_Mode, 14),
 //            fake(Terran_Siege_Tank_Tank_Mode, 14.1),
 //            fake(Terran_Siege_Tank_Tank_Mode, 14.2),

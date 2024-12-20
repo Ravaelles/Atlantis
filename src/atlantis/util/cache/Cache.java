@@ -7,15 +7,17 @@ import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
 
 /**
- * V is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
+ * T is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
  */
-public class Cache<V> {
+public class Cache<T> {
 
-    protected final TreeMap<String, V> data = new TreeMap<>();
+    protected final TreeMap<String, T> data = new TreeMap<>();
     protected final TreeMap<String, Integer> cachedUntil = new TreeMap<>();
 
     // =========================================================
@@ -23,7 +25,7 @@ public class Cache<V> {
     /**
      * Get cached value or return null.
      */
-    public V get(String cacheKey) {
+    public T get(String cacheKey) {
         if (cacheKey != null && data.containsKey(cacheKey) && isCacheStillValid(cacheKey)) {
             return data.get(cacheKey);
         }
@@ -41,12 +43,12 @@ public class Cache<V> {
     /**
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
      */
-    public V get(String cacheKey, int cacheForFrames, Callback callback) {
+    public T get(String cacheKey, int cacheForFrames, Callback callback) {
 //        if (cacheKey == "completedOrders")
 //            System.err.println("cacheKey = " + cacheKey + " / data_size = " + data.size());
 
         if (cacheKey == null) {
-            return (V) callback.run();
+            return (T) callback.run();
         }
 
         if (!data.containsKey(cacheKey) || !isCacheStillValid(cacheKey)) {
@@ -54,17 +56,17 @@ public class Cache<V> {
             set(cacheKey, cacheForFrames, callback);
         }
 
-        V result = data.get(cacheKey);
+        T result = data.get(cacheKey);
         if (result instanceof Selection) {
-            return (V) ((Selection) result).clone();
+            return (T) ((Selection) result).clone();
         }
         else {
             return result;
         }
     }
 
-    public V getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
-        V value = get(cacheKey, cacheForFrames, callback);
+    public T getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
+        T value = get(cacheKey, cacheForFrames, callback);
         if (value != null) {
             if (value instanceof AFocusPoint) {
                 if (((AFocusPoint) value).isValid()) {
@@ -79,7 +81,7 @@ public class Cache<V> {
             }
         }
 
-        @SuppressWarnings("unchecked") V newValue = (V) callback.run();
+        @SuppressWarnings("unchecked") T newValue = (T) callback.run();
         set(cacheKey, cacheForFrames, newValue);
 
 //        if (newValue != null) {
@@ -108,19 +110,29 @@ public class Cache<V> {
 //        return (V) callback.run();
     }
 
-    public V set(String cacheKey, int cacheForFrames, Callback callback) {
+    public List<T> allValid() {
+        List<T> valid = new ArrayList<>();
+        for (String key : data.keySet()) {
+            if (isCacheStillValid(key)) {
+                valid.add(data.get(key));
+            }
+        }
+        return valid;
+    }
+
+    public T set(String cacheKey, int cacheForFrames, Callback callback) {
         if (cacheKey == null || cacheKey.length() <= 1) {
             throw new RuntimeException("Invalid cacheKey = /" + cacheKey + "/");
         }
 
-        V value = (V) callback.run();
+        T value = (T) callback.run();
         data.put(cacheKey, value);
         addCachedUntilEntry(cacheKey, cacheForFrames);
 
         return value;
     }
 
-    public void set(String cacheKey, int cacheForFrames, V value) {
+    public void set(String cacheKey, int cacheForFrames, T value) {
         if (cacheKey == null) {
             return;
         }
@@ -186,7 +198,7 @@ public class Cache<V> {
 
     // =========================================================
 
-    public Collection<V> values() {
+    public Collection<T> values() {
         return data.values();
     }
 
@@ -194,7 +206,7 @@ public class Cache<V> {
         return data.size();
     }
 
-    public TreeMap<String, V> rawCacheData() {
+    public TreeMap<String, T> rawCacheData() {
         return data;
     }
 

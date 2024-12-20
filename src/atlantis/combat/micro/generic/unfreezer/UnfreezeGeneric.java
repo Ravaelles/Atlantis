@@ -14,7 +14,9 @@ public class UnfreezeGeneric extends Manager {
     public boolean applies() {
         if (unit.hasCooldown()) return false;
         if (unit.isDragoon()) return false;
-        if (unit.lastPositionChangedLessThanAgo(52)) return false;
+        if (unit.isReaver()) return false;
+        if (unit.hasCooldown()) return false;
+        if (unit.lastPositionChangedLessThanAgo(72)) return false;
 //        if (unit.lastActionLessThanAgo(52)) return false;
 
 //        if (true) return false;
@@ -31,36 +33,36 @@ public class UnfreezeGeneric extends Manager {
 //        if (unit.lastStartedAttackLessThanAgo(20)) return false;
 //        if (unit.lastActionLessThanAgo(20, Actions.MOVE_DANCE_AWAY)) return false;
 
-        if (isDragoonDuringSpartaMission()) return false;
-        else if (isDuringSpartaMission()) return false;
-        else if (isDuringMissionAttack()) return false;
+//        if (isDragoonDuringSpartaMission()) return false;
+//        else if (isDuringSpartaMission()) return false;
+//        else if (isDuringMissionAttack()) return false;
 
         return true;
     }
 
-    private boolean isDuringMissionAttack() {
-        return unit.isMissionAttack()
-            && unit.noCooldown()
-            && unit.lastPositionChangedMoreThanAgo(52);
-    }
-
-    private boolean isDuringSpartaMission() {
-        return unit.isMissionSparta()
-            && unit.distToOr999(ChokeToBlock.get()) <= 3;
-    }
-
-    private boolean isDragoonDuringSpartaMission() {
-        return unit.isDragoon()
-            && unit.isMissionSparta()
-            && unit.noCooldown()
-            && unit.lastPositionChangedMoreThanAgo(50)
-            && unit.distToOr999(ChokeToBlock.get()) <= 3
-            && unit.enemiesNear().zealots().inRadius(1, unit).notEmpty()
-            && (
-            unit.lastAttackFrameLessThanAgo(30)
-                || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()
-        );
-    }
+//    private boolean isDuringMissionAttack() {
+//        return unit.isMissionAttack()
+//            && unit.noCooldown()
+//            && unit.lastPositionChangedMoreThanAgo(52);
+//    }
+//
+//    private boolean isDuringSpartaMission() {
+//        return unit.isMissionSparta()
+//            && unit.distToOr999(ChokeToBlock.get()) <= 3;
+//    }
+//
+//    private boolean isDragoonDuringSpartaMission() {
+//        return unit.isDragoon()
+//            && unit.isMissionSparta()
+//            && unit.noCooldown()
+//            && unit.lastPositionChangedMoreThanAgo(50)
+//            && unit.distToOr999(ChokeToBlock.get()) <= 3
+//            && unit.enemiesNear().zealots().inRadius(1, unit).notEmpty()
+//            && (
+//            unit.lastAttackFrameLessThanAgo(30)
+//                || unit.friendsNear().zealots().inRadius(5, unit).notEmpty()
+//        );
+//    }
 
     @Override
     public Manager handle() {

@@ -12,7 +12,7 @@ public class FindHighGround {
 
         for (int tx = current.tx() - radius; tx <= current.tx() + radius; tx++) {
             for (int ty = current.ty() - radius; ty <= current.ty() + radius; ty++) {
-                position = APosition.create(tx, ty).makeValid();
+                position = APosition.create(tx, ty).makeValidGroundPosition();
 //                System.err.println("tx " + tx + " ty " + ty + " / " + Atlantis.game().getGroundHeight(tx, ty));
 
                 if (isPositionGoodHighGround(position, near)) {

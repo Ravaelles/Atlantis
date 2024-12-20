@@ -1,6 +1,7 @@
 package atlantis.production.requests.protoss;
 
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.position.protoss.FindPositionForCannon;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -36,7 +37,7 @@ public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
 
     @Override
     public HasPosition nextPosition(HasPosition nearTo) {
-        HasPosition standard = super.nextPosition(nearTo);
+        HasPosition standard = FindPositionForCannon.find(nearTo, null, null);
 
         if (standard == null) {
             return null;

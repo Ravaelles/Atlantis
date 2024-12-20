@@ -30,13 +30,26 @@ public class ConstructionStatusChanger extends Commander {
     }
 
     private void checkForOverdueConstructions(Construction construction) {
-        if (A.everyNthGameFrame(31) && construction.isOverdue()) {
+//        if (A.supplyUsed() <= 20) return;
+        if (!A.everyNthGameFrame(31)) return;
+
+        if (construction.isOverdue()) {
             AUnitType building = construction.buildingType();
+
+//            System.err.println("Construction is overdue: " + building + " / started s ago: " + construction.startedSecondsAgo());
 
             construction.setBuilder(null);
 
-            TravelToConstruct.refreshConstructionPositionIfNeeded(construction, building);
-            construction.assignOptimalBuilder();
+            if (building.isPylon() || building.isBase() || building.isGasBuilding()) {
+                A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
+                construction.cancel();
+            }
+            else {
+                TravelToConstruct.refreshConstructionPositionIfNeeded(construction);
+                if (construction.builder() == null || construction.builder().isDead()) {
+                    construction.assignOptimalBuilder();
+                }
+            }
         }
     }
 
@@ -50,7 +63,7 @@ public class ConstructionStatusChanger extends Commander {
                 && (building == null || !building.isAlive())
         ) {
             construction.cancel();
-            A.println("Building destroyed - cancel construction");
+            A.errPrintln("Building destroyed - cancel construction");
             return;
         }
 
@@ -88,11 +101,11 @@ public class ConstructionStatusChanger extends Commander {
         }
 
         // If building exists
-        if (building != null) {
+        if (building != null && !building.isNeutral()) {
 
             // Finished: building is completed, remove the construction object
             if (building.isCompleted()) {
-                construction.setStatus(ConstructionOrderStatus.FINISHED);
+                construction.setStatus(ConstructionOrderStatus.COMPLETED);
                 ConstructionRequests.removeOrder(construction);
             }
             // In progress

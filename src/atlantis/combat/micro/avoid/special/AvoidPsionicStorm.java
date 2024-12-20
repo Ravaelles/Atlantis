@@ -2,9 +2,6 @@ package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.game.A;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.bullets.BulletsOnMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
@@ -75,6 +72,6 @@ public class AvoidPsionicStorm extends Manager {
             if (bullet.isVisible()) positions.addPosition(APosition.create(bullet.getPosition()));
         }
 
-        return positions.isEmpty() ? null : positions.average();
+        return positions.empty() ? null : positions.average();
     }
 }

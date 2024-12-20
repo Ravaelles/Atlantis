@@ -1,7 +1,7 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.OurArmy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
@@ -44,7 +44,7 @@ public class ProtossHasEnoughSidesFreeFromOtherBuildings {
     }
 
     private static boolean preventEnemyInBaseSituation() {
-        return A.supplyUsed() <= 50 && EnemyWhoBreachedBase.notNull();
+        return A.supplyUsed() <= 50 && EnemyUnitBreachedBase.notNull();
     }
 
     private static boolean forbidden(String reason) {

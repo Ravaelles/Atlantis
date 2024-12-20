@@ -1,9 +1,11 @@
 package atlantis.map.choke;
 
 import atlantis.game.A;
+import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
+import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import atlantis.util.Vector;
 import atlantis.util.Vectors;
@@ -99,7 +101,7 @@ public class AChoke implements HasPosition {
     public String toString() {
         return "Choke{" +
             "width=" + A.digit(width()) +
-//                ",center=" + center +
+            ",center=" + center.toString() +
             '}';
     }
 
@@ -153,6 +155,23 @@ public class AChoke implements HasPosition {
 
         pointA = center().translateByVector(vector.rotate(Angle.degreesToRadians(90)));
         pointB = center().translateByVector(vector.rotate(Angle.degreesToRadians(270)));
+    }
+
+    // =========================================================
+
+    public HasPosition groundTranslateTowardsMain(double dist) {
+        HasPosition main = Select.mainOrAnyBuilding();
+        if (main == null) return null;
+
+        double distAToMain = pointA.groundDist(main);
+        double distBToMain = pointB.groundDist(main);
+
+        APosition closerPoint = distAToMain < distBToMain ? pointA : pointB;
+
+        AChoke oneChokeCloserToMain = PathToEnemyBase.oneChokeCloserToMain(closerPoint);
+        if (oneChokeCloserToMain == null) return null;
+
+        return closerPoint.translateTilesTowards(oneChokeCloserToMain, dist);
     }
 
     // =========================================================

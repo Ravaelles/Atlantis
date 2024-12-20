@@ -225,4 +225,8 @@ public class AStrategy {
 
     public void applyDecisions() {
     }
+
+    public boolean nameContains(String substring) {
+        return name.toLowerCase().contains(substring.toLowerCase());
+    }
 }

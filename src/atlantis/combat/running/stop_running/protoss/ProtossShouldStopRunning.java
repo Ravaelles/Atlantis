@@ -19,8 +19,10 @@ public class ProtossShouldStopRunning extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ProtossShouldStopRetreat.class,
             ProtossShouldStopRunningMelee.class,
             ShouldStopRunningDragoon.class,
+            ShouldStopRunningZealot.class,
             ShouldStopRunningProtossAir.class,
             ShouldStopRunningProbe.class,
         };

@@ -26,6 +26,8 @@ public class ShouldRunTowardsBase {
             ) return false;
         }
 
+        if (Enemy.zerg() && unit.isDragoon() && unit.combatEvalRelative() <= 0.6) return false;
+
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
 
@@ -38,7 +40,7 @@ public class ShouldRunTowardsBase {
 
         if (unit.isDragoon() && (Alpha.count() <= 25 || unit.shields() <= 40)) return false;
 
-        if (unit.isSquadScout()) return true;
+        if (unit.isSquadScout() && A.seconds() <= 500) return true;
 
         if (A.seconds() >= 550) return false;
 

@@ -50,7 +50,7 @@ public class WeakestOfType {
 //        return targets.nearestTo(relativeTo);
     }
 
-    protected static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
+    public static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
 //        A.errPrintln("@ " + A.now() + " enemy A = " + enemy);

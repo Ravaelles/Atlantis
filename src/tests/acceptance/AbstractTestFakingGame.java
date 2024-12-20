@@ -1,5 +1,6 @@
 package tests.acceptance;
 
+import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -84,7 +85,7 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
         try {
             our = generateOur != null ? (FakeUnit[]) generateOur.call() : generateOur();
-            ourFirst = our[0];
+            ourFirst = our != null && our.length > 0 ? our[0] : null;
             enemies = generateEnemies != null ? (FakeUnit[]) generateEnemies.call() : generateEnemies();
             neutral = generateNeutral();
         } catch (Exception e) {
@@ -123,11 +124,17 @@ public abstract class AbstractTestFakingGame extends AbstractTestWithUnits {
 
             int framesNow = 1;
             while (framesNow <= proceedUntilFrameReached) {
+                onFrameStart(onFrame, framesNow, usingEngine);
                 framesNow = onFrameEnd(onFrame, framesNow, usingEngine);
             }
         }
 
         if (usingEngine) A.sleep(1000 * 30);
+    }
+
+    private void onFrameStart(Runnable onFrame, int framesNow, boolean usingEngine) {
+        A.s = framesNow / 30;
+        A.fr = framesNow;
     }
 
     private int onFrameEnd(Runnable onFrame, int framesNow, boolean usingEngine) {

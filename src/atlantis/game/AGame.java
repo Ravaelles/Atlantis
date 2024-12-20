@@ -165,9 +165,17 @@ public class AGame {
      */
     public static APlayer enemy() {
         if (_enemy == null) {
-            _enemy = new APlayer(Atlantis.game().enemies().iterator().next());
+            _enemy = new APlayer(rawPlayer());
         }
         return _enemy;
+    }
+
+    public static Player rawPlayer() {
+        return game().enemies().iterator().next();
+    }
+
+    public static String enemyName() {
+        return rawPlayer().getName();
     }
 
     /**

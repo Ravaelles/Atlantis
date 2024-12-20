@@ -1,7 +1,9 @@
 package atlantis.combat.squad.alpha;
 
+import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
+import atlantis.game.A;
 
 /**
  * Alpha is battle squad that is the main battle squad. Most new units arrive here (handled by NewUnitsToSquadsAssigner)
@@ -24,6 +26,26 @@ public class Alpha extends Squad {
         }
 
         return alpha;
+    }
+
+    // =========================================================
+
+    @Override
+    public boolean shouldHaveThisSquad() {
+        return true;
+    }
+
+    @Override
+    public boolean allowsSideQuests() {
+        return true;
+//        return count() >= 14;
+    }
+
+    @Override
+    public Mission mission() {
+        if (A.isUms()) return Missions.ATTACK;
+
+        return super.mission();
     }
 
     // =========================================================

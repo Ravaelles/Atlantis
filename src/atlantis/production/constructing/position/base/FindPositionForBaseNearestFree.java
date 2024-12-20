@@ -24,6 +24,8 @@ public class FindPositionForBaseNearestFree {
             "findPositionForBase:" + null + "," + (construction != null ? construction.id() : "-"),
             113,
             () -> {
+                FindPositionForBase.cache.clear();
+                
                 APosition position = null;
                 String modifier = modifier(construction);
 

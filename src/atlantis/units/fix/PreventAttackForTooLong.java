@@ -33,6 +33,6 @@ public class PreventAttackForTooLong extends Manager {
     public Manager handle() {
 //        System.err.println("PreventAttackForTooLong for " + unit.idWithType() + " / isAttacking:" + unit.isAttacking());
 
-        return DoPreventFreezesLogic.handle(unit) ? usedManager(this) : null;
+        return DoPreventFreezesLogic.handle(this, unit) ? usedManager(this) : null;
     }
 }

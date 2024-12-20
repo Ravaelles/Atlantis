@@ -7,34 +7,61 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.protoss.buildings.*;
+import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
         return We.protoss()
-            && AGame.everyNthGameFrame(7)
-//            && A.hasMinerals(550)
-            && (A.hasMinerals(450) || A.canAffordWithReserved(170, 0))
-            && A.supplyUsed(20);
+            && AGame.everyNthGameFrame(17)
+            && (
+//            A.supplyUsed() <= 30
+//                || A.supplyUsed(31)
+//                || A.hasMinerals(410)
+//                || A.canAffordWithReserved(100, 0)
+            A.canAffordWithReserved(92, 0)
+        );
     }
 
     @Override
     protected void handle() {
+        if (A.hasMinerals(600)) ProduceGateway.produce();
+
         if (ProduceCyberneticsCore.produce()) return;
 
-        ProduceFirstAssimilator.produce();
-        ProduceCannon.produce();
-        ProduceForge.produce();
+        boolean gatewaysEarly = A.supplyUsed() <= 30 || Count.gatewaysWithUnfinished() <= 1;
+//        if (gatewaysEarly) {
+//            ProduceGateway.produce();
+//        }
+
+        if (
+            ProduceFirstAssimilator.produce()
+//                || ProduceCannon.produce()
+                || ProduceCannonAtNatural.produce()
+                || ProduceForge.produce()
+                || (gatewaysEarly && ProduceGateway.produce())
+                || ProducePylonNearEveryBase.produce()
+                || ProduceTemplarArchives.produce()
+                || ProduceCitadelOfAdun.produce()
+        ) return;
+
+        if (A.minerals() <= 500 && Queue.get().readyToProduceOrders().size() <= 1) return;
 
         if (isItSafeToAddTechBuildings()) {
-            ProduceArbiterTribunal.produce();
-            ProduceStargate.produce();
-            ProduceObservatory.produce();
-            ProduceRoboticsSupportBay.produce();
-            ProduceRoboticsFacility.produce();
-            ProduceShieldBattery.produce();
+            if (
+//                ProduceCitadelOfAdun.produce()
+                ProduceObservatory.produce()
+//                    || ProduceTemplarArchives.produce()
+                    || ProduceRoboticsFacility.produce()
+                    || ProduceStargate.produce()
+                    || ProduceRoboticsSupportBay.produce()
+                    || ProduceArbiterTribunal.produce()
+                    || ProduceShieldBattery.produce()
+            ) return;
         }
 
         ProduceGateway.produce();

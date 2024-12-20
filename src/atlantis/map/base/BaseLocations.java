@@ -1,8 +1,12 @@
 package atlantis.map.base;
 
+import atlantis.config.AtlantisRaceConfig;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.base.define.DefineNaturalBase;
+import atlantis.map.base.define.EnemyNaturalBase;
+import atlantis.map.base.define.EnemyThirdLocation;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -28,24 +32,22 @@ public class BaseLocations {
      * fog of war).
      */
     public static APosition nearestUnexploredStartingLocation(HasPosition nearestTo) {
-        if (nearestTo == null) {
-            return null;
-        }
+        if (nearestTo == null) return null;
 
         // Get list of all starting locations
-        Positions<ABaseLocation> startingLocations = new Positions<>();
-        startingLocations.addPositions(startingLocations(true));
+        Positions<ABaseLocation> startingLocations = new Positions<>(startingLocations(true));
 
-        // Sort them all by closest to given nearestTo position
-        startingLocations.sortByGroundDistanceTo(nearestTo, true);
+        ABaseLocation location = startingLocations.unexplored().groundNearestTo(nearestTo);
+        return location != null ? location.position() : null;
+    }
 
-        // For every location...
-        for (ABaseLocation baseLocationPosition : startingLocations.list()) {
-            if (!baseLocationPosition.position().isExplored()) {
-                return APosition.create(baseLocationPosition);
-            }
-        }
-        return null;
+    public static HasPosition nearestUnexploredBaseLocation(HasPosition nearestTo) {
+        if (nearestTo == null) return null;
+
+        // Get list of all starting locations
+        Positions<ABaseLocation> baseLocations = new Positions<>(baseLocations());
+
+        return baseLocations.unexplored().groundNearestTo(nearestTo);
     }
 
     public static APosition randomInvisibleStartingLocation() {
@@ -98,7 +100,7 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationSeeminglyFree(baseLocation) && !baseLocation.isExplored()) {
+            if (baseLocationLooksFree(baseLocation) && !baseLocation.isPositionVisible()) {
 //                if (hasBaseMinerals(baseLocation)) {
                 return baseLocation;
 //                }
@@ -107,7 +109,7 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationSeeminglyFree(baseLocation) && !baseLocation.isPositionVisible()) {
+            if (baseLocationLooksFree(baseLocation) && !baseLocation.isExplored()) {
 //                if (hasBaseMinerals(baseLocation)) {
                 return baseLocation;
 //                }
@@ -144,7 +146,7 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (isBaseLocationSeeminglyFree(baseLocation)) {
+            if (baseLocationLooksFree(baseLocation)) {
                 return baseLocation;
             }
         }
@@ -201,7 +203,7 @@ public class BaseLocations {
                 .getStartingLocations()
                 .stream()
                 .map(tilePosition -> ABaseLocation.create(tilePosition))
-                .filter(base -> base.distToMoreThan(mainBase, 10))
+                .filter(base -> !excludeOurStartLocation || base.distToMoreThan(mainBase, 10))
                 .collect(Collectors.toList())
         );
 //                    ArrayList<ABaseLocation> startingLocations = new ArrayList<>();
@@ -232,24 +234,29 @@ public class BaseLocations {
      * - any enemy units
      * - planned constructions
      */
-    public static boolean isBaseLocationSeeminglyFree(ABaseLocation baseLocation) {
+    public static boolean baseLocationLooksFree(ABaseLocation baseLocation) {
 
-        // If we have any base, FALSE.
-//        List<AUnit> ourUnits = Select.ourBuildingsWithUnfinished()
-        List<AUnit> ourUnits = Select.ourBasesWithUnfinished()
-            .inRadius(7, baseLocation.position()).list();
-        for (AUnit our : ourUnits) {
-            if (!our.isLifted()) return false;
-        }
+        // If there's any existing, alive, non-lifted base, then it's not free.
+        int existingBases = Select.ourBasesWithUnfinished()
+            .inRadius(7, baseLocation.position())
+            .havingAtLeastHp(1)
+            .notLifted()
+            .count();
+
+        if (existingBases > 0) return false;
 
         // If any enemy unit is Near
         if (Select.enemyRealUnitsWithBuildings().inRadius(8, baseLocation.position()).effVisible().count() >= 2)
             return false;
 
         // Check for planned constructions
-        for (Construction construction : ConstructionRequests.all()) {
+        for (Construction construction : ConstructionRequests.notStartedOfType(AtlantisRaceConfig.BASE)) {
             APosition constructionPlace = construction.positionToBuildCenter();
-            if (constructionPlace != null && constructionPlace.distTo(baseLocation.position()) < 8) return false;
+            if (
+                constructionPlace != null
+                    && constructionPlace.distTo(baseLocation.position()) <= 5
+                    && construction.startedSecondsAgo() <= 30 * 28
+            ) return false;
         }
 
         // All conditions have been fulfilled.
@@ -257,60 +264,11 @@ public class BaseLocations {
     }
 
     public static APosition enemyNatural() {
-        return (APosition) cache.get(
-            "enemyNatural",
-            60,
-            () -> {
-                AUnit enemyBase = EnemyUnits.enemyBase();
-                if (enemyBase == null) {
-                    return null;
-                }
-
-                ABaseLocation baseLocation = DefineNaturalBase.naturalIfMainIsAt(enemyBase.position());
-                if (baseLocation != null) {
-                    return baseLocation.position().translateByTiles(2, 0);
-                }
-
-                return null;
-            }
-        );
+        return EnemyNaturalBase.get();
     }
 
     public static APosition enemyThird() {
-        return (APosition) cache.getIfValid(
-            "enemyThird",
-            30 * 11,
-            () -> {
-                AUnit enemyBase = EnemyUnits.enemyBase();
-                if (enemyBase == null) return null;
-
-                APosition enemyNatural = BaseLocations.enemyNatural();
-                if (enemyNatural == null) return null;
-
-                double bestDist = 9999;
-                ABaseLocation bestBase = null;
-
-                for (ABaseLocation baseLocation : BaseLocations.baseLocations()) {
-                    double distToMain = enemyBase.groundDist(baseLocation);
-                    double distToNatural = enemyNatural.groundDist(baseLocation);
-                    if (
-                        distToMain < bestDist
-                            && distToMain >= 12
-                            && distToNatural >= 12
-                    ) {
-                        bestDist = distToMain;
-                        bestBase = baseLocation;
-                    }
-                }
-
-//                ABaseLocation baseLocation = DefineNaturalBase.naturalIfMainIsAt(enemyBase.position());
-//                if (baseLocation != null) {
-//                    return baseLocation.position().translateByTiles(2, 0);
-//                }
-
-                return bestBase.position();
-            }
-        );
+        return EnemyThirdLocation.get();
     }
 
     public static boolean hasBaseAtNatural() {
@@ -339,5 +297,27 @@ public class BaseLocations {
                     .nearestTo(natural);
             }
         );
+    }
+
+    public static HasPosition randomFree() {
+        return (HasPosition) cache.get(
+            "randomFree",
+            129,
+            () -> {
+                for (ABaseLocation baseLocation : baseLocations()) {
+                    if (baseLocationLooksFree(baseLocation) && !baseLocation.isPositionVisible()) {
+                        return baseLocation;
+                    }
+                }
+
+                return null;
+            }
+        );
+    }
+
+    public static boolean isPositionInStartingLocation(HasPosition position) {
+        return startingLocations(false)
+            .stream()
+            .anyMatch(startingLocation -> startingLocation.distTo(position) <= 5);
     }
 }

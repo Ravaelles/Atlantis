@@ -34,7 +34,8 @@ public class TooCloseToOtherPylons {
             pylonsNear = -1;
         }
 
-        return pylonsNear > 0 ? failed("Pylon too close to other pylons (" + pylonsNear + ")") : false;
+        return pylonsNear >= (A.supplyTotal() <= 40 ? 1 : 2)
+            && failed("Pylon too close to other pylons (" + pylonsNear + ")");
     }
 
     private static boolean failed(String reason) {

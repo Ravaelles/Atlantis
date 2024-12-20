@@ -5,6 +5,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.OurArmy;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
@@ -22,22 +23,26 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     }
 
     private static boolean freeToSpendResources() {
+        if (!A.hasMinerals(500) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
         if (A.hasMinerals(550)) return decision(true, "Minerals++");
+
+        if (A.supplyUsed() >= 25) {
+            int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
+            int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
+//            int reservedGas = ReservedResources.gas();
+//            int gasMargin = A.supplyUsed() < 40 ? 50 : 125;
+
+            if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
+                return decision(false, "MissingMinerals");
+//            if (reservedGas > 0 && !A.hasGas(gasMargin + reservedMinerals))
+//                return decision(false, "MissingGas");
+        }
+
         if (hasTooFewUnits()) return decision(true, "TooFewUnits");
         if (manyBasesAndHasMinerals()) return decision(true, "ConstStream");
         if (inEarlyGamePhaseMakeSureNotToBeTooWeak()) return decision(true, "PreventWeak");
 
         if (keepSomeResourcesInLaterGamePhases()) return decision(false, "KeepResources");
-
-        int reservedMinerals = ReservedResources.minerals();
-        int reservedGas = ReservedResources.gas();
-        int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
-        int gasMargin = A.supplyUsed() < 40 ? 100 : 150;
-
-        if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
-            return decision(false, "MissingMinerals");
-        if (reservedGas > 0 && !A.hasGas(gasMargin + reservedMinerals))
-            return decision(false, "MissingGas");
 
 //        System.err.println(A.now() + " 2dyna produce: " + A.minerals() + "/" + reservedMinerals);
 
@@ -85,9 +90,11 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceScarabs.scarabs();
         ProduceObserver.observers();
         ProduceArbiters.arbiters();
-        ProduceCorsairs.corsairs();
-        ProduceShuttles.shuttles();
+        ProduceShuttle.shuttles();
         ProduceReavers.reavers();
+        ProduceDarkTemplar.dt();
+        ProduceHighTemplar.ht();
+        ProduceCorsairs.corsairs();
 
         ProduceDragoon.dragoon();
         ProduceZealot.zealot();

@@ -5,7 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
@@ -40,7 +40,7 @@ public class NeedChokeBlockers {
 //        if (A.supplyUsed() >= 45) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.basesWithUnfinished() >= 2) return false;
-        if (EnemyWhoBreachedBase.notNull()) return false;
+        if (EnemyUnitBreachedBase.notNull()) return false;
 
         if (Enemy.protoss()) {
             if (OurArmy.strength() >= 210) return false;

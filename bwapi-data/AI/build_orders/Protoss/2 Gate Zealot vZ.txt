@@ -56,8 +56,8 @@ Probe x2
 49 - Robotics Support Bay
 //50 - MISSION=ATTACK
 50 - Observatory
-52 - Reaver
+//52 - Reaver
 55 - Observer
-60 - Shuttle
+//60 - Shuttle
 62 - Nexus
 63 - Observer

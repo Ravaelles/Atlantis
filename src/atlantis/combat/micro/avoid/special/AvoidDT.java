@@ -4,6 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 
 public class AvoidDT extends Manager {
     public AvoidDT(AUnit unit) {
@@ -12,24 +14,27 @@ public class AvoidDT extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit() && !unit.isABuilding();
+        return Enemy.protoss() && unit.isGroundUnit() && !unit.isABuilding();
     }
 
     @Override
     protected Manager handle() {
+        Selection enemyDts = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar);
+        if (enemyDts.empty()) return null;
+
         if (unit.isMoving()) {
-            if (unit.isRunning()) return null;
+            if (unit.isRunning() && (unit.runningFromUnit() != null && unit.runningFromUnit().isDT())) return null;
             if (unit.lastActionLessThanAgo(6, Actions.RUN_ENEMY)) return null;
         }
 
-        AUnit dt = unit.enemiesNear().ofType(AUnitType.Protoss_Dark_Templar)
-            .inRadius(2.4 + unit.woundPercent() / 110.0, unit)
+        AUnit dt = enemyDts
+            .inRadius(2.6 + unit.woundPercent() / 80.0, unit)
             .effUndetected()
             .nearestTo(unit);
-
         if (dt == null) return null;
 
-        unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!");
-        return usedManager(this);
+        if (unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!")) return usedManager(this);
+
+        return null;
     }
 }

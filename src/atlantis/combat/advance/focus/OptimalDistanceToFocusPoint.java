@@ -1,48 +1,78 @@
 package atlantis.combat.advance.focus;
 
-import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.Enemy;
+import atlantis.util.We;
 
 public class OptimalDistanceToFocusPoint {
-    public static double forUnit(AUnit unit) {
-        if (unit.isProtoss()) return asProtoss(unit);
+    public static double forUnit(AUnit unit, AFocusPoint focusPoint) {
+        if (unit.isProtoss()) return asProtoss(unit, focusPoint);
+        if (unit.isTerran()) return asTerran(unit, focusPoint);
+        if (unit.isZerg()) return asZerg(unit, focusPoint);
 
-        if (unit.isMedic()) return 0.5;
-        if (unit.isMelee()) return 2;
 //        return 4;
         return 0.5;
     }
 
-    private static double asProtoss(AUnit unit) {
-        if (Alpha.count() <= 3) return 2;
+    private static double asProtoss(AUnit unit, AFocusPoint focusPoint) {
+        if (Alpha.count() <= 3) return 1.5;
 
-        AFocusPoint focusPoint = unit.focusPoint();
-        int base = (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
-            ? 6 : 4;
+        double rangedBonus = (unit.isMissionDefend() && unit.isRanged() ? 1.3 : 0);
 
-        return base + (unit.isMelee() ? 0.6 : 0);
+        if (unit.isMissionDefend()) return 4 + rangedBonus;
 
-//        if (Enemy.zerg()) return 5;
-//
-//        if (unit.isDragoon()) {
-//            return ChokeToBlock.BASE_DIST_FROM_CHOKE_CENTER
-//                + 0.3
-//                + (unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.5, unit).notEmpty() ? 1.0 : 0);
-//        }
-//
-//        int count = Alpha.count();
-//        return count >= 6 ? (2 + count / 4.0) : 1;
+        return (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
+            ? (8 + rangedBonus)
+            : (7 + rangedBonus);
     }
 
-    public static double toFocus(AUnit unit, AFocusPoint focusPoint) {
-        if (focusPoint.isAroundChoke() && !Missions.isGlobalMissionSparta()) {
-            return 15 - (unit.isMelee() ? 1.5 : 0);
+    // =========================================================
+
+    private static double asZerg(AUnit unit, AFocusPoint focusPoint) {
+        if (unit.isMelee()) return 2;
+
+        double base = 3;
+
+        if (focusPoint.isAroundChoke()) {
+            base += (focusPoint.choke().width() <= 3) ? 3.5 : 0;
         }
 
-        return 0;
+        return base;
     }
+
+    // =========================================================
+
+    private static double asTerran(AUnit unit, AFocusPoint focusPoint) {
+        double base = 0.0;
+
+        if (unit.isMedic()) return 0.5;
+        if (unit.isMelee()) return 2;
+
+        if (We.zerg() && Enemy.protoss()) {
+            base = 0.6;
+        }
+
+        if (unit.isTerran()) {
+            base += (unit.isTank() ? 2.5 : 0)
+                + (unit.isMedic() ? -2.5 : 0)
+                + (unit.isFirebat() ? -1.5 : 0)
+                + (unit.isRanged() ? 1 : 0)
+                + Math.min(4, (Select.our().combatUnits().inRadius(8, unit).count() / 6));
+        }
+
+        return base;
+    }
+
+    // =========================================================
+
+//    public static double toFocus(AUnit unit, AFocusPoint focusPoint) {
+//        if (focusPoint.isAroundChoke() && !Missions.isGlobalMissionSparta()) {
+////            return 15 - (unit.isMelee() ? 1.5 : 0);
+//            return 15 - (unit.isMelee() ? 1.5 : 0);
+//        }
+//
+//        return 0;
+//    }
 }

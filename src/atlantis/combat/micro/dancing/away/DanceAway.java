@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.away.protoss.DanceAwayAsDragoon;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -49,7 +49,7 @@ public class DanceAway extends Manager {
             return true;
         }
 
-        if (unit.isMissionSparta() && EnemyWhoBreachedBase.noone()) return false;
+        if (unit.isMissionSparta() && EnemyUnitBreachedBase.noone()) return false;
 
         decision = (new DanceAwayAsDragoon(unit, enemy)).applies();
         if (decision.notIndifferent()) return decision.toBoolean();
@@ -159,7 +159,7 @@ public class DanceAway extends Manager {
 //        System.err.println("@@@@@@@@@@@@ " + A.now() + " - " + unit.id() + " - DANCE AWAY ERROR " + enemy);
 
         if (unit.hasCooldown()) {
-            unit.moveToMain(Actions.MOVE_DANCE_AWAY, "DanceAwayError");
+            unit.moveToSafety(Actions.MOVE_DANCE_AWAY, "DanceAwayError");
             return usedManager(this);
         }
 

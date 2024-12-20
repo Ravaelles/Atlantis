@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,11 @@ public class ATransportManager extends Manager {
 
     @Override
     public boolean applies() {
+        if (We.protoss() && unit.isShuttle()) {
+            if (unit.lastActionLessThanAgo(100)) return false;
+            if (unit.loadedUnitsGet(AUnitType.Protoss_Reaver) != null) return false;
+        }
+
         return unit.type().isTransportExcludeOverlords();
     }
 
@@ -63,7 +69,7 @@ public class ATransportManager extends Manager {
             AUnitType.Protoss_Reaver,
             AUnitType.Terran_Siege_Tank_Tank_Mode,
             AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).unloaded().inRadius(35, unit).randomWithSeed(unit.id());
+        ).notLoaded().inRadius(35, unit).randomWithSeed(unit.id());
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
             makeAssignment(crucialBaby);
@@ -74,7 +80,7 @@ public class ATransportManager extends Manager {
             AUnitType.Protoss_Reaver,
             AUnitType.Terran_Siege_Tank_Tank_Mode,
             AUnitType.Terran_Siege_Tank_Siege_Mode
-        ).unloaded().nearestTo(unit);
+        ).notLoaded().nearestTo(unit);
 
         if (crucialBaby != null && !hasTransportAssigned(crucialBaby)) {
             makeAssignment(crucialBaby);

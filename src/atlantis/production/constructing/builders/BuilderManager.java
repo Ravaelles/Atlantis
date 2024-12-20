@@ -51,6 +51,11 @@ public class BuilderManager extends Manager {
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
+                AUnit builder = construction.builder();
+                if (builder != null && builder.isStuck() && A.fr % 96 == 0) {
+                    construction.assignOptimalBuilder();
+                }
+
                 return (new TravelToConstruct(unit)).travelWhenReady(construction);
             }
 //            else if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {

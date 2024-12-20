@@ -6,10 +6,11 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
-import atlantis.game.events.OnStart;
+import atlantis.game.listeners.OnStart;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.tech.ATech;
@@ -27,7 +28,6 @@ import bwapi.Game;
 import bwapi.Race;
 import bwapi.TechType;
 import bwapi.WalkPosition;
-import main.Main;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -47,8 +47,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class AbstractTestWithUnits extends UnitTestHelper {
-
     public Game game;
+
+    protected int currentMinerals = 0;
+    protected int currentGas = 0;
+    protected int currentSupplyUsed = 0;
+    protected int currentSupplyTotal = 0;
 
     public MockedStatic<Env> env;
     public MockedStatic<AGame> aGame;
@@ -86,12 +90,18 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 //        HeuristicCombatEvaluator.clearCache();
     }
 
+    public Race initRace() {
+        return Race.Terran;
+    }
+
     protected void beforeTestLogic() {
+        AtlantisRaceConfig.MY_RACE = initRace();
+
         if (AtlantisRaceConfig.MY_RACE == null) {
             AtlantisRaceConfig.MY_RACE = Race.Terran;
         }
 
-        initBuildOrder();
+        setUpBuildOrder();
         setUpStrategy();
     }
 
@@ -136,6 +146,26 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         mockOtherStaticClasses();
     }
 
+    protected int currentMinerals() {
+        return currentMinerals;
+    }
+
+    protected int currentGas() {
+        return currentGas;
+    }
+
+    protected int currentSupplyUsed() {
+        return currentSupplyUsed;
+    }
+
+    protected int currentSupplyTotal() {
+        return currentSupplyTotal;
+    }
+
+    protected int currentSupplyFree() {
+        return currentSupplyTotal - currentSupplyUsed;
+    }
+
     /**
      * You have to define static mocks as public field of this class, so they can be automatically reset on test end.
      */
@@ -164,7 +194,11 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 //            });
     }
 
-    protected void initBuildOrder() {
+    public AStrategy initBuildOrder() {
+        return TerranStrategies.TERRAN_Tests;
+    }
+
+    protected void setUpBuildOrder() {
         OnStart.initializeAllStrategies();
 
         try {
@@ -202,27 +236,17 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     protected void mockAGameObject() {
         aGame = Mockito.mockStatic(AGame.class);
 
-        boolean optionSupplyUsed = options != null && options.has("supplyUsed");
-        boolean optionSupplyTotal = options != null && options.has("supplyTotal");
+        currentSupplyUsed = options == null ? 0 : options.getIntOr("supplyUsed", 0);
+        currentSupplyTotal = options == null ? 4 : options.getIntOr("supplyTotal", 4);
 
-        if (optionSupplyUsed) {
-            int supplyUsed = options.getInt("supplyUsed");
-            aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
-            if (!optionSupplyTotal) {
-                aGame.when(AGame::supplyTotal).thenReturn(supplyUsed + 4);
-                aGame.when(AGame::supplyFree).thenReturn(4);
-            }
-        }
-        if (optionSupplyTotal) {
-            int supplyTotal = options.getInt("supplyTotal");
-            aGame.when(AGame::supplyTotal).thenReturn(supplyTotal);
-            aGame.when(AGame::supplyFree).thenReturn(4);
-        }
+        aGame.when(AGame::supplyUsed).thenAnswer(invocation -> currentSupplyUsed());
+        aGame.when(AGame::supplyTotal).thenAnswer(invocation -> currentSupplyTotal());
+        aGame.when(AGame::supplyFree).thenAnswer(invocation -> currentSupplyFree());
 
-        aGame.when(AGame::minerals).thenReturn(888);
-        aGame.when(AGame::gas).thenReturn(777);
+        aGame.when(AGame::minerals).thenAnswer(invocation -> currentMinerals());
+        aGame.when(AGame::gas).thenAnswer(invocation -> currentGas());
 
-        Main.OUR_RACE = "Terran";
+//        Main.OUR_RACE = initRace;
         enemyRace = Mockito.mockStatic(EnemyRace.class);
         enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(true);
         enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(false);
@@ -230,7 +254,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     protected void setUpStrategy() {
-        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
+        OurStrategy.setTo(initBuildOrder());
     }
 
     // =========================================================

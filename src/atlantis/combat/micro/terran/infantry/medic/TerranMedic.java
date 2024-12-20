@@ -39,7 +39,7 @@ public class TerranMedic extends Manager {
             UnitTooCloseToBunker.class,
             TooFarFromNearestInfantry.class,
             MoveAwayMedicFromTanks.class,
-            StickToAssignments.class,
+            GlueToAssignments.class,
             AvoidEnemies.class,
         };
     }

@@ -11,20 +11,28 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
     @Override
     public double marginAgainst(AUnit attacker) {
+        if (!attacker.hasBiggerWeaponRangeThan(defender)) return -1;
+
 //        double base = 2.3
-        double base = (defender.woundHp() >= 10 ? 3.0 : 1.1)
+        double base = (defender.woundHp() >= 9 ? 3.0 : 1.1)
 
             + (defender.hp() <= 40 ? +0.5 : 0)
-            + (defender.hp() <= 17 ? +0.5 : 0)
+            + (defender.hp() <= 17 ? +0.7 : 0)
             + (defender.woundPercent() / 80.0)
-            + (defender.isMoving() ? -0.2 : 0)
-            + (defender.isAccelerating() ? -0.1 : 0)
-            + (defender.lastAttackFrameMoreThanAgo(30 * 4) ? -1 : 0)
-            + (defender.lastAttackFrameMoreThanAgo(30 * 6) ? -1 : 0)
+
+//            + (defender.isMoving() ? -0.2 : 0)
+            + ourMovementBonus(defender)
+
+            + enemyFacingThisUnitBonus(attacker)
+            + enemyMovementBonus(attacker)
+            + (attacker.isMoving() ? 0 : -1.4);
+
+//            + (defender.isAccelerating() ? -0.1 : 0)
+//            + (defender.lastAttackFrameMoreThanAgo(30 * 4) ? -1 : 0)
+//            + (defender.lastAttackFrameMoreThanAgo(30 * 6) ? -1 : 0)
 
 //            + (attacker.isProtoss() ? +0.5 : 0)
-            + (attacker.isMoving() ? +0.5 : 0)
-            + ((attacker.hasTargetted(defender) || attacker.isFacing(defender)) ? 0.8 : -0.2);
+//            + ((attacker.hasTargetted(defender) || attacker.isFacing(defender)) ? 0.8 : -0.2);
 //            + defender.woundPercent() / 300.0;
 
         if (!attacker.isDT()) {
@@ -51,7 +59,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         }
 
         if (defender.shieldDamageAtLeast(19)) {
-            double minStillWhenCooldown = 2.6;
+            double minStillWhenCooldown = 2.9;
             if (base <= minStillWhenCooldown && defender.cooldown() >= 10) base = minStillWhenCooldown;
         }
 

@@ -7,6 +7,7 @@ import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class ActWithSquadsCommander extends Commander {
 
@@ -16,12 +17,15 @@ public class ActWithSquadsCommander extends Commander {
 
         // Act with every squad (which contains combat units)
         for (Squad squad : allSquads) {
+//            if (!Objects.equals(squad.letter(), "A") && squad.size() > 0) {
+//                System.out.println("ActWithSquadsCommander.handle() - squad: " + squad.name() + " / " + squad.size());
+//            }
             handleSquad(squad);
         }
     }
 
     private void handleSquad(Squad squad) {
-        if (A.everyNthGameFrame(11)) {
+        if (A.everyNthGameFrame(17)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 

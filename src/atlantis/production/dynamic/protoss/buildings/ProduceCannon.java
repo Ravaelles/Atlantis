@@ -5,7 +5,8 @@ import atlantis.units.select.Count;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ProduceCannon {
-    public static void produce() {
+    public static boolean produce() {
+        return false;
 //        if (shouldProduce())
     }
 

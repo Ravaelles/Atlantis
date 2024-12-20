@@ -1,12 +1,11 @@
 package atlantis.units;
 
 import atlantis.units.range.EnemyDragoonWeaponRange;
-import atlantis.units.range.OurDragoonWeaponRange;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
 import atlantis.util.Counter;
 import atlantis.util.cache.Cache;
 import bwapi.*;
-import net.bytebuddy.dynamic.Nexus;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -625,6 +624,10 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Reaver);
     }
 
+    public boolean isShuttle() {
+        return is(Protoss_Shuttle);
+    }
+
     public boolean isHighTemplar() {
         return is(Protoss_High_Templar);
     }
@@ -637,12 +640,20 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Photon_Cannon);
     }
 
+    public boolean isForge() {
+        return is(Protoss_Forge);
+    }
+
     public boolean isSupplyDepot() {
         return is(Terran_Supply_Depot);
     }
 
     public boolean isAcademy() {
         return is(Terran_Academy);
+    }
+
+    public boolean isAssimilator() {
+        return is(Protoss_Assimilator);
     }
 
     public boolean isCarrier() {
@@ -1141,7 +1152,7 @@ public class AUnitType implements Comparable<Object> {
                 }
                 if (isDragoon()) {
                     if (anotherUnit.isEnemy()) {
-                        return OurDragoonWeaponRange.range();
+                        return OurDragoonRange.range();
                     }
                     return EnemyDragoonWeaponRange.range();
                 }
@@ -1350,12 +1361,16 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
-    private boolean isObserver() {
+    public boolean isObserver() {
         return (boolean) cache.get(
             "isObserver",
             -1,
             () -> is(Protoss_Observer)
         );
+    }
+
+    public boolean isObservatory() {
+        return is(Protoss_Observatory);
     }
 
     public boolean isUnknown() {

@@ -43,7 +43,7 @@ public class ContainAsProtoss extends Manager {
                     unit.holdPosition("ContainHold");
                 }
                 else {
-                    unit.moveToMain(Actions.MOVE_FORMATION, "ContainOut");
+                    unit.moveToSafety(Actions.MOVE_FORMATION, "ContainOut");
                 }
                 return true;
             }

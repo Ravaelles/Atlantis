@@ -30,7 +30,7 @@ public class ProtossMissionChangerWhenContain extends MissionChangerWhenContain 
         }
 
         if (defendAgainstMassZerglings()) {
-            if (DEBUG) reason = "Mass zerglings";
+            if (DEBUG) reason = "Mass zerglings E2";
             return true;
         }
 

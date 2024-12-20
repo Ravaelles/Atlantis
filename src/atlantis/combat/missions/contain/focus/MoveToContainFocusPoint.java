@@ -1,10 +1,9 @@
 package atlantis.combat.missions.contain.focus;
 
-import atlantis.combat.advance.Advance;
+import atlantis.combat.advance.old.OldAdvance;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 
-public class MoveToContainFocusPoint extends Advance {
+public class MoveToContainFocusPoint extends OldAdvance {
     public MoveToContainFocusPoint(AUnit unit) {
         super(unit);
     }

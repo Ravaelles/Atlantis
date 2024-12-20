@@ -25,8 +25,9 @@ public class RemoveExcessiveOrders {
 
     private static int limitFor(AUnitType type) {
         if (type.isProtoss()) {
-            if (Protoss_Pylon.equals(type)) return 2;
-            if (Protoss_Nexus.equals(type)) return 1;
+            if (Protoss_Pylon.equals(type)) return 2 + A.minerals() >= 500 ? 1 : (A.supplyUsed(60) ? 1 : 0);
+            if (Protoss_Assimilator.equals(type)) return 2;
+            if (Protoss_Nexus.equals(type)) return 1 + (A.hasMinerals(700) ? 1 : 0);
             if (Protoss_Observatory.equals(type)) return 1;
             if (Protoss_Observer.equals(type)) return 4;
         }
@@ -52,7 +53,7 @@ public class RemoveExcessiveOrders {
 //                }
 
                 orders.get(i).cancel();
-                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
+//                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
 
             }
             return true;

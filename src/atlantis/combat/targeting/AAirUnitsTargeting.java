@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.combat.targeting.air.AAirUnitAirTargets;
+import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

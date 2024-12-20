@@ -22,6 +22,12 @@ public class NearestFreeBase {
             builder, building, nearTo, maxDistance
         );
 
+        if (nearestBase == null) {
+            HasPosition nearestFree = nearToNearestFree();
+
+            if (nearestFree != null) nearestBase = nearestFree.position();
+        }
+
         if (nearestBase == null && Select.ourBases().notEmpty()) {
             ErrorLog.printMaxOncePerMinute(
                 "Could not find nearest base."
@@ -45,13 +51,17 @@ public class NearestFreeBase {
         HasPosition nearTo = null;
         int ourBasesCount = Count.basesWithUnfinished();
 
-        if (A.seconds() <= 1000 && ourBasesCount <= 1) {
+        if (A.seconds() <= 1500 && ourBasesCount <= 1) {
             nearTo = nearToNatural();
         }
 
         if (nearTo == null) {
-//            nearTo = nearToNearestFree();
-            nearTo = nearToMostDistantToEnemy();
+            nearTo = nearToNearestFree();
+
+            if (nearTo == null) {
+                A.errPrintln("@@@@@@@@@@@ findPositionForBase_nearestFreeBase is null, FALLBACK to most distant");
+                nearTo = nearToMostDistantToEnemy();
+            }
         }
 
         // =========================================================
@@ -73,7 +83,7 @@ public class NearestFreeBase {
     }
 
     private static HasPosition nearToMostDistantToEnemy() {
-        AUnit mainBase = Select.mainOrAnyBuilding();
+//        AUnit mainBase = Select.mainOrAnyBuilding();
 
         return BaseLocations.expansionBaseLocationMostDistantToEnemy();
     }

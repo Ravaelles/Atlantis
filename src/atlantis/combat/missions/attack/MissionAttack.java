@@ -3,8 +3,11 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.attack.focus.MissionAttackFocusPoint;
+import atlantis.combat.missions.attack.protoss.ProtossMissionAttackAllowsToAttack;
+import atlantis.combat.missions.defend.protoss.ProtossMissionDefendAllowsToAttack;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 /**
  * This is the mission object that is used by battle squads and it indicates that we should attack
@@ -39,6 +42,8 @@ public class MissionAttack extends Mission {
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {
+        if (We.protoss()) return (new ProtossMissionAttackAllowsToAttack(unit)).allowsToAttackEnemyUnit(enemy);
+
         return (new MissionAttackAllowsToAttack(unit)).allowsToAttackEnemyUnit(enemy);
     }
 

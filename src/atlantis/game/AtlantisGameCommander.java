@@ -26,10 +26,10 @@ public class AtlantisGameCommander extends Commander {
     public static Class<? extends Commander>[] topLevelSubcommanders() {
         return new Class[]{
             SpecialActionsCommander.class,
+            ScoutCommander.class,
             WorkerCommander.class,
             CombatCommander.class,
             ProductionCommander.class,
-            ScoutCommander.class,
             BuildingsCommander.class,
             ConstructionsCommander.class,
 

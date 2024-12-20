@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.game.AGame;
+import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.production.orders.build.ABuildOrder;
@@ -25,16 +26,19 @@ public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
     }
 
     public void initSupply() {
-        int supplyUsed = options.getIntOr("supplyUsed", 49);
-        int supplyTotal = options.getIntOr("supplyTotal", supplyUsed + 2);
+        currentSupplyUsed = options.getIntOr("supplyUsed", 49);
+        currentSupplyTotal = options.getIntOr("supplyTotal", currentSupplyUsed + 2);
 
-        initSupply(supplyUsed, supplyTotal);
+        initSupply(currentSupplyUsed, currentSupplyTotal);
     }
 
     public void initSupply(int supplyUsed, int supplyTotal) {
-        aGame.when(AGame::supplyUsed).thenReturn(supplyUsed);
-        aGame.when(AGame::supplyTotal).thenReturn(supplyTotal);
-        aGame.when(AGame::supplyFree).thenReturn(supplyTotal - supplyUsed);
+        currentSupplyUsed = supplyUsed;
+        currentSupplyTotal = supplyTotal;
+
+        aGame.when(AGame::supplyUsed).thenAnswer(invocation -> currentSupplyUsed());
+        aGame.when(AGame::supplyTotal).thenAnswer(invocation -> currentSupplyTotal());
+        aGame.when(AGame::supplyFree).thenAnswer(invocation -> currentSupplyFree());
     }
 
     protected FakeUnit[] fakeExampleOurs() {
@@ -70,10 +74,13 @@ public class NonAbstractTestFakingGame extends AbstractTestFakingGame {
     protected Queue initQueue(int minerals, int gas) {
         if (Queue.get() != null) Queue.get().clearCache();
 
-        aGame.when(AGame::minerals).thenReturn(minerals);
-        aGame.when(AGame::gas).thenReturn(gas);
-        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
+        currentMinerals = minerals;
+        currentGas = gas;
 
+        aGame.when(AGame::minerals).thenAnswer(invocation -> currentMinerals());
+        aGame.when(AGame::gas).thenAnswer(invocation -> currentGas());
+
+        OurStrategy.setTo(initBuildOrder());
         buildOrder = OurStrategy.get().buildOrder();
         initSupply();
 

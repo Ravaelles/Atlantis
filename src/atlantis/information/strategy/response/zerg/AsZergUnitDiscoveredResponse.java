@@ -109,7 +109,9 @@ public class AsZergUnitDiscoveredResponse {
     private static void handleHiddenUnitDetected(AUnit enemyUnit) {
         if (!enemyUnit.isCloaked()
             && !enemyUnit.isLurker()
-            && !enemyUnit.isDT() && !enemyUnit.is(AUnitType.Protoss_Templar_Archives)
+            && !enemyUnit.isLurkerEgg()
+            && !enemyUnit.isDT()
+            && !enemyUnit.is(AUnitType.Protoss_Templar_Archives)
         ) {
             return;
         }

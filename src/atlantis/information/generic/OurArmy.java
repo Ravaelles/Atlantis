@@ -21,6 +21,9 @@ public class OurArmy {
         total += combatUnits.melee().count() * 10;
         total += combatUnits.ranged().count() * 30;
 
+        total -= combatUnits.combatBuildings(true).count() * 50;
+        total -= combatUnits.bases().count() * 100;
+
         return Math.max(1, total);
     }
 }

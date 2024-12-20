@@ -4,7 +4,8 @@ import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
-import atlantis.game.events.*;
+import atlantis.game.event.AutoRegisterEventListeners;
+import atlantis.game.listeners.*;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
@@ -52,11 +53,13 @@ public class Atlantis implements BWEventListener {
      * How many units we have killed.
      */
     public static int KILLED = 0;
+    public static int KILLED_BUILDINGS = 0;
 
     /**
      * How many units we have lost.
      */
     public static int LOST = 0;
+    public static int LOST_BUILDINGS = 0;
 
     /**
      * How many resources (minerals+gas) units we have killed were worth.
@@ -330,7 +333,9 @@ public class Atlantis implements BWEventListener {
     public static Atlantis getInstance() {
         if (instance == null) {
             instance = new Atlantis();
+            AutoRegisterEventListeners.initializeListeners();
         }
+
         return instance;
     }
 

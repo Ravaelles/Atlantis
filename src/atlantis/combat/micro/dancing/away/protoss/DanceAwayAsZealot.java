@@ -19,11 +19,14 @@ public class DanceAwayAsZealot extends Manager {
         if (unit.cooldown() <= 10) return false;
         if (unit.isMissionSparta()) return false;
         if (unit.shieldDamageAtMost(19)) return false;
+//        if (dontApplyWhenOnlyRangedNear()) return false;
+        if (dontApplyWhenRangedEnemiesNear()) return false;
+        if (dontApplyWhenAttackingRangedEnemy()) return false;
 
+        if (unit.cooldown() >= 4 && unit.hp() <= 60) return true;
         if (unit.moreMeleeEnemiesThanOurUnits()) return true;
 
         if (unit.hp() >= 35) return false;
-        if (dontApplyWhenRangedEnemiesNear()) return false;
 
         boolean fairlyWounded = unit.hp() <= 38;
 
@@ -32,12 +35,22 @@ public class DanceAwayAsZealot extends Manager {
             && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60));
     }
 
+    private boolean dontApplyWhenAttackingRangedEnemy() {
+        return unit.isAttacking()
+            && unit.hasValidTarget()
+            && unit.target().isRanged();
+    }
+
+    private boolean dontApplyWhenOnlyRangedNear() {
+        return unit.enemiesNear().inRadius(3.5, unit).onlyRanged();
+    }
+
     private boolean dontApplyWhenRangedEnemiesNear() {
         Selection rangedEnemies = unit.enemiesNear().ranged();
 
         if (rangedEnemies.empty()) return false;
 
-        return unit.hp() >= 32 || rangedEnemies.inRadius(3, unit).notEmpty();
+        return unit.hp() >= 32 || rangedEnemies.canAttack(unit, 1.5).notEmpty();
     }
 
     private int minMeleeEnemiesNear() {
@@ -58,7 +71,7 @@ public class DanceAwayAsZealot extends Manager {
 
     private boolean danceAwayFrom(AUnit enemy) {
         return unit.runningManager().runFrom(
-            enemy.position(), 1, Actions.MOVE_DANCE_AWAY, false
+            enemy.position(), 1.5, Actions.MOVE_DANCE_AWAY, false
         );
     }
 

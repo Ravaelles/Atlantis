@@ -21,7 +21,7 @@ public class ProduceWorker {
     }
 
     private static AUnit baseToProduceWorker() {
-        for (AUnit base : Select.ourBases().free().notLifted().list()) {
+        for (AUnit base : Select.ourBases().reverse().free().notLifted().list()) {
             if (!isSafeToProduceWorkerAt(base)) continue;
             if (isBaseMinedOut(base)) continue;
 

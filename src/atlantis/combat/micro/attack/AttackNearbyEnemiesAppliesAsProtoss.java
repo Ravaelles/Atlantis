@@ -1,12 +1,16 @@
 package atlantis.combat.micro.attack;
 
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 
 public class AttackNearbyEnemiesAppliesAsProtoss {
     public static Decision decision(AUnit unit) {
+        if (dontAttackNearEnemyBaseIfFocusPointIsExpansion(unit)) return Decision.FORBIDDEN;
+
         if (unit.isDragoon()) {
             if (unit.shieldDamageAtLeast(14)) {
                 return unit.cooldown() <= 12 ? Decision.ALLOWED : Decision.FORBIDDEN;
@@ -22,6 +26,8 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
 
             return Decision.ALLOWED;
         }
+
+        if (unit.isReaver()) return Decision.FORBIDDEN;
 
         if (Alpha.count() <= 5) {
             if (unit.isMelee() && unit.shieldDamageAtLeast(11)) {
@@ -45,5 +51,29 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         ) return Decision.FORBIDDEN;
 
         return Decision.INDIFFERENT;
+    }
+
+    // Broken!!!
+    private static boolean dontAttackNearEnemyBaseIfFocusPointIsExpansion(AUnit unit) {
+        AFocusPoint focus = unit.focusPoint();
+        if (focus == null) return false;
+
+        if (A.supplyUsed() <= 100) return false;
+        if (unit.combatEvalRelative() >= 4) return false;
+
+        if (focus.groundDistanceTo(unit) >= 15 && focus.nameContains("Third", "Expansion")) {
+//            if (
+//                unit.cooldown() <= 5
+////                    && unit.combatEvalRelative() >= 1.5
+//                    && unit.enemiesNear().canBeAttackedBy(unit, -0.1).notEmpty()
+//            ) return false;
+
+//            if (unit.isMelee()) return true;
+//            return unit.cooldown() <= 2 && unit.canA
+            unit.setTooltip("PreferExpansionMoveThere");
+            return true;
+        }
+
+        return false;
     }
 }

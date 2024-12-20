@@ -39,7 +39,7 @@ public class TerranMarineDontAvoidEnemy extends Manager {
     }
 
     private boolean longDidntShootHydra() {
-        return unit.lastAttackFrameMoreThanAgo(30 * 7) && unit.enemiesNear().hydralisks().notEmpty();
+        return unit.lastAttackFrameMoreThanAgo(30 * 7) && unit.enemiesNear().hydras().notEmpty();
     }
 
     private boolean protectTanksNearby() {

@@ -987,6 +987,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return selectedUnits;
     }
 
+    public static Selection ourWorkersMiningMinerals(boolean onlyNotCarryingAnything) {
+        Selection selectedUnits = Select.our();
+        selectedUnits.list().removeIf(unit ->
+            !unit.isWorker() || !unit.isGatheringMinerals()
+                || (onlyNotCarryingAnything && (unit.isCarryingGas() || unit.isCarryingMinerals()))
+        );
+        return selectedUnits;
+    }
+
     public static Selection ourFree(AUnitType type) {
         return cache.get(
             "ourFree:" + type.id(),

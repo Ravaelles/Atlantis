@@ -58,7 +58,7 @@ public class MissionContain extends Mission {
         if (unit.isStimmed()) return true;
 
         // @Temp
-        if (unit.distToLessThan(enemy, 8)) return true;
+//        if (unit.distToLessThan(enemy, 8)) return true;
         if (unit.hasWeaponRangeToAttack(enemy, enemy.isMelee() ? 4 : 2.1)) return true;
 
         AFocusPoint focusPoint = focusPoint();

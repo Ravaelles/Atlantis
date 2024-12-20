@@ -64,7 +64,7 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (runTo != null && unit.distTo(runTo.position()) >= 0.05) {
+        if (runTo != null && runTo.isWalkable() && unit.distTo(runTo.position()) >= 0.05) {
             dist = unit.distTo(runTo);
             unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
             return makeUnitRun(action);
@@ -204,7 +204,7 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
-        if (runTo != null && unit.distTo(runTo) >= 0.2) {
+        if (runTo != null && unit.distTo(runTo) >= 0.04) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;
@@ -215,14 +215,24 @@ public class ARunningManager {
         }
 
 //        stopRunning();
-        return false;
+        return unit.isMoving()
+            && unit().action().isRunning()
+            && unit.distTo(unit.targetPosition()) >= 0.04;
+//        return false;
     }
 
     public void stopRunning() {
+        if (unit.isRunning()) {
+            unit._lastStoppedRunning = A.now();
+//            System.out.println("Stopped running at " + A.now());
+//            A.printStackTrace("StoppedRunning at " + A.now());
+        }
+
         runTo = null;
         runningFromPosition = null;
         runningFromUnit = null;
-        unit._lastStoppedRunning = A.now();
+
+//        A.printStackTrace("StoppedRunning");
     }
 
     public AUnit unit() {

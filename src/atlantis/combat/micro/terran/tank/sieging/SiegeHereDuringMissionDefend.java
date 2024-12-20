@@ -3,7 +3,7 @@ package atlantis.combat.micro.terran.tank.sieging;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
-import atlantis.information.enemy.EnemyWhoBreachedBase;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.util.Enemy;
 
@@ -43,7 +43,7 @@ public class SiegeHereDuringMissionDefend extends Manager {
     }
 
     private boolean preventNotAttackingEnemyWhoBreachedBase() {
-        AUnit enemy = EnemyWhoBreachedBase.get();
+        AUnit enemy = EnemyUnitBreachedBase.get();
         if (enemy == null) return false;
 
         if (enemy.distTo(unit) > 12) {

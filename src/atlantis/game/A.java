@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.Enemy;
 import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 import bwapi.TechType;
@@ -408,7 +409,7 @@ public class A {
     /**
      * Returns string like 21:12:59
      */
-    private static String getCurrentTimeAsString() {
+    public static String getCurrentTimeAsString() {
         GregorianCalendar today = new GregorianCalendar();
         String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
         return (hour.length() < 2 ? ("0" + hour) : hour) + ":" + today.get(GregorianCalendar.MINUTE) + ":"
@@ -1133,7 +1134,7 @@ public class A {
     }
 
     public static double secondsAgo(int frame) {
-        return (A.now() - frame) / 30;
+        return (A.now() - frame) / 30.0;
     }
 
     public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {
@@ -1207,6 +1208,10 @@ public class A {
 
     public static int supplyUsed() {
         return AGame.supplyUsed();
+    }
+
+    public static int supplyFree() {
+        return AGame.supplyFree();
     }
 
     public static int supplyTotal() {
@@ -1357,8 +1362,9 @@ public class A {
         return true;
     }
 
-    public static void errPrintln(Object string) {
+    public static boolean errPrintln(Object string) {
         (System.err).println(string);
+        return true;
     }
 
     public static void print(Object string) {
@@ -1424,5 +1430,24 @@ public class A {
         }
         toString.append("]");
         return toString.toString();
+    }
+
+    public static int whenEnemyProtossTerranZerg(int ifEnemyProtoss, int ifEnemyTerran, int ifEnemyZerg) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+        if (Enemy.terran()) return ifEnemyTerran;
+        return ifEnemyZerg;
+    }
+
+    public static double whenEnemyProtossTerranZerg(double ifEnemyProtoss, double ifEnemyTerran, double ifEnemyZerg) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+        if (Enemy.terran()) return ifEnemyTerran;
+        return ifEnemyZerg;
+    }
+
+    public static String minSec() {
+        int minutes = A.s / 60;
+        int seconds = A.s % 60;
+
+        return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 }

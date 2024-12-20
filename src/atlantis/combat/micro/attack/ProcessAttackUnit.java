@@ -86,9 +86,9 @@ public class ProcessAttackUnit extends Manager {
 
     private boolean comeCloserToBuildingsWhenAttackingThem(AUnit target) {
         return target.isABuilding()
-            && unit.cooldown() >= 5
+            && unit.cooldown() >= 6
             && !target.isCombatBuilding()
-            && unit.distToMoreThan(target, 1.7);
+            && unit.distToMoreThan(target, 1.5);
     }
 
     //    private  double distBonus(AUnit target) {
