@@ -24,12 +24,12 @@ public class ProduceBuilding {
         else {
             validatePosition(order, type);
 
-            return NewConstructionRequest.requestConstructionOf(order);
+            return NewConstructionRequest.requestConstructionOf(order) != null;
         }
     }
 
     private static void validatePosition(ProductionOrder order, AUnitType type) {
-        HasPosition atPosition = order.atPosition();
+        HasPosition atPosition = order.aroundPosition();
         if (atPosition == null) return;
 
         if (type.isBase() || type.isGasBuilding()) return;
@@ -39,7 +39,7 @@ public class ProduceBuilding {
         );
 
         if (newPosition != null) {
-            order.forceSetPosition(newPosition);
+            order.setAroundPosition(newPosition);
         }
         else {
             A.errPrintln("^^^^^^^^^^^^^^^^^^^ CAN'T FIND POSITION FOR " + type + " at " + atPosition);

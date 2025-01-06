@@ -10,6 +10,7 @@ import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.builders.TravelToConstruct;
 import atlantis.production.constructing.position.APositionFinder;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -42,7 +43,11 @@ public class ConstructionStatusChanger extends Commander {
 
             if (building.isPylon() || building.isBase() || building.isGasBuilding()) {
                 A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
+
+                APosition oldPosition = construction.buildPosition();
                 construction.cancel();
+
+                AddToQueue.withHighPriority(building, oldPosition);
             }
             else {
                 TravelToConstruct.refreshConstructionPositionIfNeeded(construction);

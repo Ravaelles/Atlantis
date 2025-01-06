@@ -19,10 +19,20 @@ public class AvoidLurkers extends Manager {
     public boolean applies() {
         if (!unit.isGroundUnit() || unit.isABuilding()) return false;
 
-        lurker = unit.enemiesNear().lurkers().effUndetected().inRadius(radius(), unit).nearestTo(unit);
+        if (beMoreBraveWithBigProtossArmy()) return false;
+
+        lurker = unit.enemiesNear().lurkers().effUndetected().notHavingHp(1).inRadius(radius(), unit).nearestTo(unit);
         if (lurker == null) return false;
 
         if (Count.cannons() >= 1 && lurker.enemiesNear().buildings().cannons().countInRadius(6.4, lurker) > 0) {
+            return false;
+        }
+
+        if (
+            unit.hp() >= 80
+                && unit.friendsNear().atLeast(10)
+                && unit.enemiesNear().lurkers().inRadius(12, unit).count() <= 1
+        ) {
             return false;
         }
 
@@ -32,6 +42,17 @@ public class AvoidLurkers extends Manager {
             || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
 //        return unit.woundPercent() >= 10
 //            || lurker.enemiesNear().combatUnits().inRadius(12, unit).atMost(dontEngageWhenAtMostFriendsNearby());
+    }
+
+    private boolean beMoreBraveWithBigProtossArmy() {
+        if (!We.protoss()) return false;
+        if (Count.observers() <= 1) return false;
+        if (unit.shields() <= 5) return false;
+        if (unit.friendsNear().combatUnits().atLeast(14)) return false;
+
+        if (unit.friendsNear().observers().inRadius(13, unit).atLeast(2)) return true;
+
+        return false;
     }
 
     private int dontEngageWhenAtMostFriendsNearby() {

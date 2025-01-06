@@ -19,14 +19,14 @@ public class ProtossNewGasBuildingCommander extends Commander {
     @Override
     public boolean applies() {
         return We.protoss()
+            && A.supplyUsed() >= 40
             && Count.bases() >= 2
-            && A.supplyUsed() >= 55
-            && A.everyNthGameFrame(85)
+            && A.everyNthGameFrame(75)
             && (A.gas() < A.minerals() && A.minerals() >= 105)
             && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
             && Count.bases() > Count.gasBuildingsWithUnfinished()
-            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals() || A.minerals() >= 300)
-            && Have.existingOrUnfinished(Protoss_Cybernetics_Core);
+            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 200 <= A.minerals() || A.minerals() >= 300)
+            && (A.minerals() >= 400 || Have.existingOrUnfinished(Protoss_Cybernetics_Core));
 //            && !tooEarlyForAnotherGasBuilding()
     }
 

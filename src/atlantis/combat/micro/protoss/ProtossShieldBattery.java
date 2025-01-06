@@ -28,10 +28,11 @@ public class ProtossShieldBattery extends Manager {
             .havingEnergy(40)
             .havingSeriousShieldWound()
             .notAttacking()
+            .notRunning()
             .nearestTo(unit);
-        
+
         if (
-            friend != null && friend.distToMoreThan(unit, 7)
+            friend != null && friend.distToMoreThan(unit, 11)
                 && unit.move(friend, Actions.SPECIAL, "ToBattery", false)
         ) {
             return true;

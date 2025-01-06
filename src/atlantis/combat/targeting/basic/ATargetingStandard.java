@@ -6,8 +6,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
-    public ATargetingStandard(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
-        super(unit, enemyUnits, enemyBuildings);
+    public ATargetingStandard(AUnit unit) {
+        super(unit);
     }
 
     public AUnit target() {
@@ -26,7 +26,7 @@ public class ATargetingStandard extends ATargeting {
 
         Selection workersInRange = enemyUnits.workers().inShootRangeOf(unit);
         if (unit.isMelee()) {
-            target = workersInRange.nearestTo(unit);
+            target = workersInRange.mostWounded();
         }
         else {
             target = workersInRange.randomWithSeed(unit.id());
@@ -119,7 +119,7 @@ public class ATargetingStandard extends ATargeting {
         // Okay, try targeting any-fuckin-thing
 
         // Non medics nearby
-        target = unit.enemiesNear()
+        target = enemyUnits
             .nonBuildings()
             .excludeMedics()
             .canBeAttackedBy(unit, 15)
@@ -131,7 +131,7 @@ public class ATargetingStandard extends ATargeting {
 
         // =========================================================
 
-        target = unit.enemiesNear()
+        target = enemyUnits
             .havingPosition()
             .canBeAttackedBy(unit, 150)
             .nearestTo(unit);

@@ -40,16 +40,16 @@ public class ProtossTooFarFromLeader extends Manager {
 
         if (unit.isMissionSparta()) return false;
 
-        if (
-            unit.lastAttackFrameMoreThanAgo(30 * 10)
-                && unit.enemiesThatCanAttackMe(4).empty()
-        ) return false;
-
         distToLeader = unit.distTo(this.leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
 
 //        if (distToLeader >= 30 && unit.isMissionDefend()) return false;
         if (wayTooFarFromLeader) return true;
+
+        if (
+            unit.lastAttackFrameMoreThanAgo(30 * 10)
+                && unit.enemiesThatCanAttackMe(4).empty()
+        ) return false;
 
         if (isDangerousToGoToLeaderAndWeArentRetreating()) return false;
 

@@ -612,6 +612,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isRoboticsSupportBay() {
+        return (boolean) cache.get(
+            "isRoboticsSupportBay",
+            -1,
+            () -> is(Protoss_Robotics_Support_Bay)
+        );
+    }
+
     public boolean isPylon() {
         return (boolean) cache.get(
             "isPylon",
@@ -755,6 +763,14 @@ public class AUnitType implements Comparable<Object> {
 
     public WeaponType airWeapon() {
         return ut.airWeapon();
+    }
+
+    public boolean hasAirWeapon() {
+        return airWeapon() != WeaponType.None;
+    }
+
+    public boolean hasGroundWeapon() {
+        return groundWeapon() != WeaponType.None;
     }
 
     public boolean isABuilding() {
@@ -1302,6 +1318,14 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isRealUnitOrCombatBuilding() {
+        return (boolean) cache.get(
+            "isRealUnitOrCombatBuilding",
+            -1,
+            () -> !isNeutral() && (!isNotRealUnit() || isCombatBuilding())
+        );
+    }
+
     /**
      * Not that we're racist, but spider mines and larvas aren't really units...
      */
@@ -1310,7 +1334,7 @@ public class AUnitType implements Comparable<Object> {
             "isNotRealUnit",
             -1,
             () -> isLarvaOrEgg() || isMineralField() || isInvincible()
-                || isGeyser() || isSpell() || isMine() || isFlagOrBeacon()
+                || isGeyser() || isSpell() || isFlagOrBeacon()
         );
     }
 
@@ -1371,6 +1395,10 @@ public class AUnitType implements Comparable<Object> {
 
     public boolean isObservatory() {
         return is(Protoss_Observatory);
+    }
+
+    public boolean isFleetBeacon() {
+        return is(Protoss_Fleet_Beacon);
     }
 
     public boolean isUnknown() {
@@ -1573,11 +1601,12 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public boolean isProtoss() {
-        return (boolean) cache.get(
-            "isProtoss",
-            -1,
-            () -> ut.getRace().equals(Race.Protoss)
-        );
+        return ut.getRace().equals(Race.Protoss);
+//        return (boolean) cache.get(
+//            "isProtoss",
+//            -1,
+//            () -> ut.getRace().equals(Race.Protoss)
+//        );
     }
 
     public boolean isZerg() {

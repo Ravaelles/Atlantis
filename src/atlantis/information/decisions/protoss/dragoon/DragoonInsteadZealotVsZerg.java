@@ -16,6 +16,8 @@ public class DragoonInsteadZealotVsZerg {
         if (A.gas() >= 50) return true;
         if (transitionToDragoonsDueToMutas()) return true;
 
+        if (A.hasGas(30) && Count.cannonsWithUnfinished() >= 3) return true;
+
         if (ProduceZealot.notEnoughZealots()) return false;
         if (ProduceZealot.enoughZealots()) return false;
 

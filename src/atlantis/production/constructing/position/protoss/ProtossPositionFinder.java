@@ -7,7 +7,6 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 
 public class ProtossPositionFinder extends AbstractPositionFinder {
 
@@ -18,12 +17,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _CONDITION_THAT_FAILED = null;
+        _STATUS = null;
 
         // =========================================================
 
         if (builder == null) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "NO BUILDER ASSIGNED";
+            AbstractPositionFinder._STATUS = "NO BUILDER ASSIGNED";
             return null;
         }
 
@@ -37,6 +36,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         int xMapMax = AMap.getMapWidthInTiles() - 1;
         int yMapMax = AMap.getMapHeightInTiles() - 1;
+
+//        System.err.println("maxDistance = " + maxDistance);
 
         while (searchRadius < maxDistance) {
             int xMin = Math.max(0, nearTo.tx() - searchRadius);
@@ -61,6 +62,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                                 }
                             }
 
+                            AbstractPositionFinder._STATUS = "OK";
+//                            System.err.println("@@@@@@@@@@@@@@@@@@@ " + constructionPosition);
                             return constructionPosition;
                         }
                     }

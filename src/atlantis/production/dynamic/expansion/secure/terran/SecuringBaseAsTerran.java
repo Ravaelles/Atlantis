@@ -86,7 +86,7 @@ public class SecuringBaseAsTerran {
         }
 
         order.markAsUsingExactPosition();
-        order.forceSetPosition(bunkerPosition);
+        order.setAroundPosition(bunkerPosition);
 
 //            System.err.println("@ " + A.now() + " - ");
 //            System.err.println("Count.existingOrPlannedBuildingsNear = "

@@ -15,9 +15,12 @@ public class Unfreezer extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        if (unit.isAir()) return false;
         if (!unit.isCombatUnit()) return false;
+        if (unit.isABuilding()) return false;
         if (unit.hasCooldown()) return false;
-        if (unit.lastAttackFrameLessThanAgo(30)) return false;
+        if (unit.lastAttackFrameLessThanAgo(45)) return false;
+        if (unit.lastPositionChangedLessThanAgo(29)) return false;
 //        if (unit.isStartingAttack()) return false;
 //        if (unit.isAttackFrame()) return false;
 //        if (unit.hasCooldown()) return false;

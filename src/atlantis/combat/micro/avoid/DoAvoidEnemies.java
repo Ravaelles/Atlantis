@@ -2,20 +2,18 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.PauseAndCenter;
-import bwapi.Color;
 
 public class DoAvoidEnemies extends Manager {
     private ProcessAvoid avoid;
     private Units enemies;
 
-    public DoAvoidEnemies(AUnit unit) {
+    public DoAvoidEnemies(AUnit unit, Units enemies) {
         super(unit);
         avoid = new ProcessAvoid(unit);
-        enemies = defineEnemies(unit);
+
+        this.enemies = enemies;
     }
 
     private static Units defineEnemies(AUnit unit) {
@@ -31,7 +29,7 @@ public class DoAvoidEnemies extends Manager {
 
     @Override
     public Manager handle() {
-//        if (enemies.size() == 1) {
+        if (enemies == null) this.enemies = defineEnemies(unit);
 
 //        unit.paintCircle(15, Color.Purple);
 //        unit.paintCircle(16, Color.Purple);
@@ -50,10 +48,8 @@ public class DoAvoidEnemies extends Manager {
         ) {
             return avoid.singleUnit(enemies.first());
         }
-        else if (enemies.size() >= 2) {
+        else {
             return avoid.groupOfUnits(enemies);
         }
-
-        return null;
     }
 }

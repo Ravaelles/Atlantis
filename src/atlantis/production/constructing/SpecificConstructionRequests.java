@@ -15,10 +15,13 @@ public class SpecificConstructionRequests {
     /**
      * Some buildings like Zerg SUnken Colony need special treatment.
      */
-    protected static boolean handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
-        if (handledTerranSpecialBuilding(building, order)) return true;
+    protected static ProductionOrder handledAsSpecialBuilding(AUnitType building, ProductionOrder order) {
+        if (We.protoss()) return null;
 
-        return handledZergSpecialBuilding(building, order);
+        if (handledTerranSpecialBuilding(building, order)) return order;
+        if (handledZergSpecialBuilding(building, order)) return order;
+
+        return null;
     }
 
     // === Terran ========================================

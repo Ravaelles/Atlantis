@@ -1,7 +1,6 @@
 package atlantis.production.constructing.position.zerg;
 
 import atlantis.Atlantis;
-import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
@@ -24,7 +23,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _CONDITION_THAT_FAILED = null;
+        _STATUS = null;
 
         if (nearTo == null) {
             ErrorLog.printMaxOncePerMinute("@@@ NULL nearTo for findStandardPositionFor " + building);
@@ -67,15 +66,15 @@ public class ZergPositionFinder extends AbstractPositionFinder {
     public static boolean doesPositionFulfillAllConditions(AUnit builder, AUnitType building, APosition position) {
 //        APainter.paintCircle(position, 10, Color.Red);
 
-        if (building.isBunker()) {
-            CameraCommander.centerCameraOn(position);
-            GameSpeed.changeSpeedTo(100);
-        }
+//        if (building.isBunker()) {
+//            CameraCommander.centerCameraOn(position);
+//            GameSpeed.changeSpeedTo(100);
+//        }
 //        CameraCommander.centerCameraOn(position);
 
         // Check for CREEP
         if (!isCreepConditionFulfilled(building, position)) {
-            _CONDITION_THAT_FAILED = "No CREEP";
+            _STATUS = "No CREEP";
             return false;
         }
 
@@ -83,7 +82,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         // If it's not physically possible to build here (e.g. rocks, other buildings etc)
         if (!CanPhysicallyBuildHere.check(builder, building, position)) {
 
-            _CONDITION_THAT_FAILED = "CAN'T PHYSICALLY BUILD";
+            _STATUS = "CAN'T PHYSICALLY BUILD";
             return false;
         }
 
@@ -91,18 +90,18 @@ public class ZergPositionFinder extends AbstractPositionFinder {
 
         // If other buildings too close
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) {
-            _CONDITION_THAT_FAILED = "BUILDINGS TOO CLOSE";
+            _STATUS = "BUILDINGS TOO CLOSE";
             return false;
         }
 
         // Can't be too close to minerals or to geyser, because would slow down production
         if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) {
-            _CONDITION_THAT_FAILED = "TOO CLOSE TO MINERALS OR GEYSER";
+            _STATUS = "TOO CLOSE TO MINERALS OR GEYSER";
             return false;
         }
 
         // All conditions are fullfilled, return this position
-        _CONDITION_THAT_FAILED = null;
+        _STATUS = null;
         return true;
     }
 

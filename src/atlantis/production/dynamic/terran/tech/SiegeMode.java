@@ -36,7 +36,7 @@ public class SiegeMode extends Commander {
     private static boolean shouldResearchAgainstTerran() {
         int tanks = Count.tanks();
 
-        return (tanks >= 3 || A.seconds() >= 440) && OurArmy.calculate() >= 200;
+        return (tanks >= 3 || A.seconds() >= 440) && OurArmy.strength() >= 200;
     }
 
     @Override

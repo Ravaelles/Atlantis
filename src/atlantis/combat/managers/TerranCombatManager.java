@@ -3,11 +3,7 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.buildings.TerranDontEngageWhenCombatBuildings;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.protoss.ProtossDragoonCombatManager;
-import atlantis.protoss.ProtossZealotCombatManager;
-import atlantis.protoss.ht.ProtossHTCombatManager;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class TerranCombatManager extends MobileDetector {

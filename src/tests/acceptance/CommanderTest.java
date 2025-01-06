@@ -1,10 +1,9 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatCommander;
-import atlantis.production.ProductionCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import org.junit.Test;
-import tests.unit.UnitTestHelper;
+import tests.unit.UnitTest;
 
 import static org.junit.Assert.assertTrue;
 
@@ -36,8 +35,8 @@ public class CommanderTest extends NonAbstractTestFakingGame {
 
                 assertTrue(true);
             },
-            () -> UnitTestHelper.randomOurs(),
-            () -> UnitTestHelper.randomEnemies()
+            () -> UnitTest.randomOurs(),
+            () -> UnitTest.randomEnemies()
         );
     }
 }

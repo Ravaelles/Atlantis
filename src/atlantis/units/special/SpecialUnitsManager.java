@@ -12,8 +12,10 @@ import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
 import atlantis.protoss.ProtossCorsair;
 import atlantis.protoss.ht.ProtossHighTemplar;
-import atlantis.protoss.ProtossObserver;
+import atlantis.protoss.observer.ProtossObserver;
 import atlantis.protoss.reaver.ProtossReaver;
+import atlantis.protoss.shuttle.ProtossShuttle;
+import atlantis.protoss.shuttle.ProtossShuttleEmpty;
 import atlantis.protoss.shuttle.ProtossShuttleWithReaver;
 import atlantis.units.AUnit;
 
@@ -37,7 +39,9 @@ public class SpecialUnitsManager extends Manager {
         }
         else if (unit.isProtoss()) {
             raceSpecific = new Class[]{
+                ProtossShuttle.class,
                 ProtossShuttleWithReaver.class,
+                ProtossShuttleEmpty.class,
                 ProtossCorsair.class,
                 ProtossHighTemplar.class,
                 ProtossObserver.class,

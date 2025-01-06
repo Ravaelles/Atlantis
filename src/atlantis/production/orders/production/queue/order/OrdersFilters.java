@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.order;
 
+import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -35,6 +36,14 @@ public interface OrdersFilters {
             list().stream()
 //                .filter(o -> o != null && o.isInProgress())
                 .filter(ProductionOrder::isInProgress)
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders notStarted() {
+        return new Orders(
+            list().stream()
+                .filter(order -> order.isStatus(OrderStatus.NOT_READY))
                 .collect(Collectors.toList())
         );
     }

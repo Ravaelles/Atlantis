@@ -1,7 +1,7 @@
 package atlantis.combat.generic.under_attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

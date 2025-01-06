@@ -8,8 +8,9 @@ import atlantis.util.Enemy;
 public class ProtossStrategies extends AStrategy {
     public static AStrategy protossChooseStrategy() {
         if (Enemy.protoss()) {
-            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
-//            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP; // <--
+//            return ProtossStrategies.PROTOSS_Forge_FE_vP;
+//            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
+            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_5_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
@@ -18,17 +19,17 @@ public class ProtossStrategies extends AStrategy {
         }
 
         else if (Enemy.terran()) {
-            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
+            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
         }
 
         else if (Enemy.zerg()) {
-            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
+//            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot_vZ;
 //            return ProtossStrategies.PROTOSS_Speedzealot;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
-//            return ProtossStrategies.PROTOSS_ZZZZ_Core;
+            return ProtossStrategies.PROTOSS_ZZZZ_Core;
         }
 
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
@@ -65,6 +66,7 @@ public class ProtossStrategies extends AStrategy {
     // Expansion
     public static final AStrategy PROTOSS_12_Nexus = protossStrategy();
     public static final AStrategy PROTOSS_Forge_FE_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_Forge_FE_vP = protossStrategy();
 
     // Tech
     public static final AStrategy PROTOSS_Dragoon_First = protossStrategy();
@@ -106,6 +108,7 @@ public class ProtossStrategies extends AStrategy {
 
         PROTOSS_12_Nexus.setName("12 Nexus").setGoingExpansion();
         PROTOSS_Forge_FE_vZ.setName("Forge FE vZ").setGoingExpansion();
+        PROTOSS_Forge_FE_vP.setName("Forge FE vP").setGoingExpansion();
 
         // === Tech ==========================================
 

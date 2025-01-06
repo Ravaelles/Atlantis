@@ -31,7 +31,7 @@ public class LeaderToOther extends MissionManager {
     private double dist() {
         if (unit.enemiesNear().combatUnits().havingWeapon().notEmpty()) return 0.75;
 
-        return 3 + unit.squadSize() / 4.0 + (OurArmy.strength() >= 200 ? 2 : 0);
+        return 2 + unit.squadSize() / 4.0 + (OurArmy.strength() >= 200 ? 1 : 0);
     }
 
     @Override
@@ -39,7 +39,15 @@ public class LeaderToOther extends MissionManager {
         if (unit.isOvercrowded()) return null;
         if (!otherFriend.isWalkable()) return null;
 
-        if (unit.move(otherFriend, Actions.MOVE_FORMATION, "LeaderToOther")) return usedManager(this);
+        if (A.s % 3 <= 1) {
+            if (unit.move(otherFriend, Actions.MOVE_FORMATION, "LeaderToOther")) return usedManager(this);
+        }
+        else {
+            if (!unit.isHoldingPosition() && !unit.isAttacking()) {
+                unit.holdPosition("LeaderHold");
+            }
+            return usedManager(this);
+        }
 
         return null;
     }

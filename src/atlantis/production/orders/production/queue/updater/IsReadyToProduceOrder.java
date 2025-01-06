@@ -57,37 +57,40 @@ public class IsReadyToProduceOrder {
     }
 
     private static boolean isFarFromMainBaseSoTravelEarly(ProductionOrder order) {
-        if (order.atPosition() == null) return false;
+        if (order.aroundPosition() == null) return false;
 
         AUnit main = Select.mainOrAnyBuilding();
         if (main == null) return false;
 
-        return order.atPosition().distTo(main) >= 17;
+        return order.aroundPosition().distTo(main) >= 17;
     }
 
     private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
-        AUnitType unitType = order.unitType();
+        AUnitType type = order.unitType();
 
-        if (unitType == null) return true;
-        if (unitType.isBase()) return A.hasMinerals(310);
+        if (type == null) return true;
+        if (type.isBase()) return A.hasMinerals(310);
         if (isFarFromMainBaseSoTravelEarly) return true;
 
+        if (type.isForge() && A.supplyUsed() == 9) return true;
+
 //        System.err.println("      SUP?!? = " + (A.supplyUsed() + 3 >= order.minSupply()));
-//        System.err.println("      unitType.mineralPrice() = " + unitType.mineralPrice());
-//        System.err.println("      mineralBonusToHave(unitType) = " + mineralBonusToHave(unitType));
+//        System.err.println("      type.mineralPrice() = " + type.mineralPrice());
+//        System.err.println("      mineralBonusToHave(type) = " + mineralBonusToHave(type));
 //        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
 //        return A.supplyUsed() + 3 >= order.minSupply()
-        return A.supplyUsed() + 3 >= order.minSupply()
-//            && (order.isUnit() && unitType.isResource())
-            && (applySpecialPriority(unitType) || canAffordWithReserved(unitType));
-//            && A.canAfford(unitType.mineralPrice() + 100, unitType.gasPrice() > 0 ? unitType.gasPrice() + 50 : 0);
+        return A.supplyUsed() + (A.supplyUsed() >= 18 ? 3 : 1) >= order.minSupply()
+//            && (order.isUnit() && type.isResource())
+            && (applySpecialPriority(type) || canAffordWithReserved(type));
+//            && A.canAfford(type.mineralPrice() + 100, type.gasPrice() > 0 ? type.gasPrice() + 50 : 0);
     }
 
     private static boolean applySpecialPriority(AUnitType unitType) {
         if (We.protoss()) {
             return unitType.is(
                 AUnitType.Protoss_Cybernetics_Core,
+                AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Protoss_Assimilator
             );
         }

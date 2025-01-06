@@ -17,15 +17,14 @@ public class Commander extends BaseCommander {
     }
 
     public void invokeCommander() {
-        if (A.now() == lastFrameInvoked) return;
-        lastFrameInvoked = A.now();
+        if (A.now == lastFrameInvoked) return;
+
+        lastFrameInvoked = A.now;
 
         CodeProfiler.startMeasuring(this);
 
         if (applies()) {
             handle();
-
-            handleSubcommanders();
         }
 
         CodeProfiler.endMeasuring(this);

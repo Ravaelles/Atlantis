@@ -4,14 +4,16 @@ import atlantis.architecture.Manager;
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.game.A;
+import atlantis.protoss.dragoon.ProtossDragoonCombatManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.special.ManualOverrideManager;
+import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.SpecialUnitsManager;
 import org.junit.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ManagerTest extends NonAbstractTestFakingGame {
     @Test
@@ -98,5 +100,34 @@ public class ManagerTest extends NonAbstractTestFakingGame {
             () -> our,
             () -> enemies
         );
+    }
+
+    @Test
+    public void managersParentStack() {
+        FakeUnit unit;
+        FakeUnit[] our = fakeOurs(
+            unit = new FakeUnit(AUnitType.Protoss_Dragoon, 10, 11)
+        );
+
+        ManualOverrideManager manager1 = new ManualOverrideManager(unit);
+        ProtossDragoonCombatManager manager2 = new ProtossDragoonCombatManager(unit);
+        RemoveDeadUnitsManager manager3 = new RemoveDeadUnitsManager(unit);
+
+        createWorld(1, () -> {
+                assertEquals("", manager1.parentsStack());
+                assertEquals("", manager2.parentsStack());
+                assertEquals("", manager3.parentsStack());
+
+                manager2.invokeFrom(manager1);
+                manager3.invokeFrom(manager2);
+
+                assertEquals("", manager1.parentsStack());
+                assertEquals("ManualOverrideManager > ", manager2.parentsStack());
+                assertEquals("ManualOverrideManager > ProtossDragoonCombatManager > ", manager3.parentsStack());
+            },
+            () -> our,
+            () -> fakeEnemies()
+        );
+
     }
 }

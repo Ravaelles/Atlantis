@@ -1,13 +1,10 @@
 package atlantis.combat.micro.avoid.margin;
 
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
-import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.Enemy;
-import bwapi.Color;
 
 public class SafetyMargin {
 
@@ -65,11 +62,11 @@ public class SafetyMargin {
     }
 
     protected double enemyMovementBonus(AUnit attacker) {
-//         || defender.isOtherUnitFacingThisUnit(attacker)
+        if (attacker == null || attacker.hp() <= 0) return 0;
 
 //        System.err.println("TargetedBy= " + defender.isTargetedBy(attacker) + " / AttMoving= " + attacker.isMoving());
-        if (attacker.isMoving()) {
-            return 1.6;
+        if (attacker.isMoving() || attacker.isAttacking()) {
+            return 0.6;
 //            boolean doingWell = defender.woundPercent() < 33 && defender.lastUnderAttackMoreThanAgo((int) (30 * (5 + defender.woundPercent())));
 //            return defender.isTargetedBy(attacker) ? 1.3 : -0.2;
 //            return defender.isTargetedBy(attacker)
@@ -109,7 +106,7 @@ public class SafetyMargin {
 //        }
     }
 
-    protected double ourMovementBonus(AUnit defender) {
+    protected double ourNotMovingPenalty(AUnit defender) {
         return defender.isMoving() ? (defender.isRunning() ? -0.1 : 0) : 1.2;
     }
 

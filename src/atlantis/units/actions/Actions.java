@@ -37,6 +37,7 @@ public class Actions {
     public static final Action MOVE_HEAL = new Action().setName("MOVE_HEAL");
     public static final Action MOVE_MACRO = new Action().setName("MOVE_MACRO");
     public static final Action MOVE_REPAIR = new Action().setName("MOVE_REPAIR");
+    public static final Action MOVE_REVEAL = new Action().setName("MOVE_REVEAL");
     public static final Action MOVE_SAFETY = new Action().setName("MOVE_SAFETY");
     public static final Action MOVE_SCOUT = new Action().setName("MOVE_SCOUT");
     public static final Action MOVE_TRANSFER = new Action().setName("MOVE_TRANSFER");

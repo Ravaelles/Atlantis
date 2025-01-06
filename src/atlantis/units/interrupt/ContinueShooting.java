@@ -18,15 +18,17 @@ public class ContinueShooting extends Manager {
 
         if (We.terran()) return false;
 
-        if (unit.isStartingAttack()) return true;
-        if (unit.isAttackFrame()) return true;
+        if (unit.isDragoon()) return false;
+
+//        if (unit.isStartingAttack()) return true;
+//        if (unit.isAttackFrame()) return true;
 
         if (!unit.hasValidTarget()) return false;
         if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
-        if (unit.isAttacking() && unit.lastActionLessThanAgo(unit.isRanged() ? 7 : 9)) return true;
+        if (!unit.canAttackTargetWithBonus(unit.target(), 0.1)) return false;
 
-        if (!unit.canAttackTargetWithBonus(unit.target(), 0.6)) return false;
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(unit.isRanged() ? 7 : 9)) return true;
 
         Decision decision;
 

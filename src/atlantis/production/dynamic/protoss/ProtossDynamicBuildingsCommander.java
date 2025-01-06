@@ -42,6 +42,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
             ProduceFirstAssimilator.produce()
 //                || ProduceCannon.produce()
                 || ProduceCannonAtNatural.produce()
+                || ProduceShieldBatteryAtNatural.produce()
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())
                 || ProducePylonNearEveryBase.produce()
@@ -56,9 +57,9 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //                ProduceCitadelOfAdun.produce()
                 ProduceObservatory.produce()
 //                    || ProduceTemplarArchives.produce()
+                    || ProduceRoboticsSupportBay.produce()
                     || ProduceRoboticsFacility.produce()
                     || ProduceStargate.produce()
-                    || ProduceRoboticsSupportBay.produce()
                     || ProduceArbiterTribunal.produce()
                     || ProduceShieldBattery.produce()
             ) return;
@@ -70,7 +71,9 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     // =========================================================
 
     protected static boolean isItSafeToAddTechBuildings() {
-        if (EnemyStrategy.get().isRushOrCheese()) {
+        if (A.s >= 500) return true;
+
+        if (EnemyStrategy.get().isRushOrCheese() && A.s <= 400) {
             if (ArmyStrength.ourArmyRelativeStrength() <= 80 && !A.hasMinerals(200)) return false;
         }
 

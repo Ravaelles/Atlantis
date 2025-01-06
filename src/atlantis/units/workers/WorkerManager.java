@@ -2,6 +2,7 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.production.constructing.builders.BuilderManager;
@@ -27,8 +28,9 @@ public class WorkerManager extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AvoidSpellsAndMines.class,
-
             AvoidCriticalUnits.class,
+            AvoidCombatBuildingClose.class,
+
             WorkerDefenceManager.class,
             WorkerAvoidManager.class,
             AvoidEnemies.class,

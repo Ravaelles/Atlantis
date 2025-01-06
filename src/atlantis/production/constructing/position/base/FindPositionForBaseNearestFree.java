@@ -3,7 +3,9 @@ package atlantis.production.constructing.position.base;
 import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
+import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.APositionFinder;
@@ -11,6 +13,7 @@ import atlantis.production.constructing.position.ASpecialPositionFinder;
 import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -25,7 +28,7 @@ public class FindPositionForBaseNearestFree {
             113,
             () -> {
                 FindPositionForBase.cache.clear();
-                
+
                 APosition position = null;
                 String modifier = modifier(construction);
 
@@ -45,7 +48,16 @@ public class FindPositionForBaseNearestFree {
                     }
                 }
 
-                APosition result = NearestFreeBase.find(building, builder, construction);
+                APosition result = null;
+
+                result = returnNatural(result);
+
+                if (result == null) {
+//                    System.out.println("### NEAREST");
+                    result = OurNextFreeExpansionMostDistantToEnemy.find();
+                }
+
+//                APosition result = NearestFreeBase.find(building, builder, construction);
 //                System.err.println("result = " + result);
 //                System.err.println("Bases.natural() = " + Bases.natural());
 
@@ -65,6 +77,18 @@ public class FindPositionForBaseNearestFree {
                 return result;
             }
         );
+    }
+
+    private static APosition returnNatural(APosition result) {
+        APosition natural = BaseLocations.natural();
+
+//                if (A.s <= 600 && Count.basesWithUnfinished() <= 1) {
+        if (Select.ourBasesWithUnfinished().countInRadius(10, natural) == 0) {
+//            System.out.println("---- USE NATURAL");
+            result = BaseLocations.natural();
+        }
+
+        return result;
     }
 
     private static APosition positionIfHasModifier(AUnitType building, AUnit builder, Construction construction, String modifier) {

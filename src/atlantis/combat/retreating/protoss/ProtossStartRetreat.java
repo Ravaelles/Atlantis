@@ -112,6 +112,8 @@ public class ProtossStartRetreat extends HasUnit {
     private boolean shouldForceRetreatDirectlyFromEnemy() {
 //        if (unit.woundHp() <= 20) return false;
 
+        if (unit.enemiesThatCanAttackMe(2 + unit.woundPercent() / 40.0).count() >= 4) return true;
+
         if (unit.meleeEnemiesNearCount(6) >= 4) return false;
         if (unit.enemiesNear().groundUnits().inRadius(5, unit).atLeast(3)) return false;
 

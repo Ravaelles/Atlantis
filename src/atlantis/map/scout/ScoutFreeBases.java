@@ -7,9 +7,8 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-import static atlantis.map.scout.ScoutState.nextPositionToScout;
-
 public class ScoutFreeBases extends Manager {
+    private HasPosition nextPosition;
 
     public ScoutFreeBases(AUnit unit) {
         super(unit);
@@ -28,13 +27,13 @@ public class ScoutFreeBases extends Manager {
 //        if (A.s >= 300) return true;
 
         return (unit.hasNotMovedInAWhile() || (unit.hasNotMovedInAWhile() && unit.looksIdle()))
-            && (nextPositionToScout = defineValidPosition()) != null;
+            && (nextPosition = defineValidPosition()) != null;
     }
 
     @Override
     protected Manager handle() {
         if (unit.move(
-            nextPositionToScout, Actions.MOVE_SCOUT, "ScoutBases" + A.now(), true
+            nextPosition, Actions.MOVE_SCOUT, "ScoutBases" + A.now(), true
         )) return usedManager(this);
 
         return null;
@@ -42,25 +41,25 @@ public class ScoutFreeBases extends Manager {
 
     private HasPosition defineValidPosition() {
         if (
-            nextPositionToScout == null
-                || nextPositionToScout.isPositionVisible()
+            nextPosition == null
+                || nextPosition.isPositionVisible()
                 || isNextPositionTooClose()
         ) {
-            nextPositionToScout = BaseLocations.nearestUnexploredBaseLocation(unit);
+            nextPosition = BaseLocations.nearestUnexploredBaseLocation(unit);
 
-            if (nextPositionToScout == null) {
-                nextPositionToScout = BaseLocations.randomInvisibleStartingLocation();
+            if (nextPosition == null) {
+                nextPosition = BaseLocations.randomInvisibleStartingLocation();
             }
 
-            if (nextPositionToScout == null) {
-                nextPositionToScout = BaseLocations.randomFree();
+            if (nextPosition == null) {
+                nextPosition = BaseLocations.randomFree();
             }
         }
 
-        return isNextPositionTooClose() ? null : nextPositionToScout;
+        return isNextPositionTooClose() ? null : nextPosition;
     }
 
     private boolean isNextPositionTooClose() {
-        return nextPositionToScout == null || nextPositionToScout.distTo(unit) < 6;
+        return nextPosition == null || nextPosition.distTo(unit) < 6;
     }
 }

@@ -25,7 +25,7 @@ public class AChoke implements HasPosition {
 
     private ChokePoint choke;
     private Position[] sides;
-    private APosition center;
+    protected APosition center;
     private APosition pointA;
     private APosition pointB;
     private double width;
@@ -99,10 +99,10 @@ public class AChoke implements HasPosition {
 
     @Override
     public String toString() {
-        return "Choke{" +
-            "width=" + A.digit(width()) +
-            ",center=" + center.toString() +
-            '}';
+        return "Choke{"
+            + (center() == null ? "null" : ("[" + center().tx() + "," + center().ty() + "]"))
+            + ", width=" + ((int) width())
+            + "}";
     }
 
     // =========================================================

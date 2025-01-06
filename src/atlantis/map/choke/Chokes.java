@@ -1,10 +1,7 @@
 package atlantis.map.choke;
 
-import atlantis.config.ActiveMap;
-import atlantis.config.env.Env;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.map.AMap;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
@@ -14,7 +11,6 @@ import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
-import bwem.ChokePoint;
 import jbweb.JBWEB;
 
 import java.util.ArrayList;
@@ -26,6 +22,22 @@ public class Chokes {
 //    protected final Set<AChoke> disabledChokes = new HashSet<>();
 //    protected static AChoke cached_basesToChokepoints = null;
 
+    // =========================================================
+
+    /**
+     * Returns list of all choke points i.e. places where suddenly it gets extra tight and fighting there
+     * usually prefers ranged units. They are perfect places for terran bunkers.
+     */
+    public static List<AChoke> chokes() {
+        return (List<AChoke>) cache.get(
+            "chokes",
+            -1,
+            () -> AllChokes.get()
+        );
+    }
+
+    // =========================================================
+
     /**
      * Every starting location in BroodWar AI tournament has exactly one critical choke point to defend. This
      * method returns this choke point. It's perfect position to defend (because it's *choke* point).
@@ -34,45 +46,18 @@ public class Chokes {
         return (AChoke) cache.get(
             "mainChoke",
             -1,
-            () -> AChoke.from(JBWEB.getMainChoke())
-//            () -> {
-//                    AUnit main = Select.main();
-//                    if (main == null) {
-//                        return null;
-//                    }
-//
-//                    // Define region where our main base is
-//                    ARegion mainRegion = MainRegion.mainRegion();
-//                    if (mainRegion == null) {
-//                        return null;
-//                    }
-//
-//                    // Define localization of the second base to expand
-//                    APosition natural = natural();
-//                    if (natural == null) {
-//                        return null;
-//                    }
-//
-//                    // Define region of the second base
-//                    ARegion naturalRegion = natural.getRegion();
-//                    if (naturalRegion == null) {
-//                        return null;
-//                    }
-//
-//                    // Try to match choke points between the two regions
-//                    for (AChoke mainRegionChoke : mainRegion.chokes()) {
-//                        // + (mainRegionChoke.getFirstRegion()) + " / " + (mainRegionChoke.getSecondRegion()));
-//                        if (naturalRegion.equals(mainRegionChoke.getFirstRegion())
-//                                || naturalRegion.equals(mainRegionChoke.getSecondRegion())) {
-//                            return mainRegionChoke;
-//                        }
-//                    }
-//
-////                    if (cached_mainBaseChoke == null) {
-//                    return mainRegion.chokes().iterator().next();
-////                    }
-//                }
+//            () -> mainChokeFromJbweb()
+            () -> {
+                AChoke mainChoke = mainChokeFromJbweb();
+                if (mainChoke != null) return mainChoke;
+
+                return MainChokeCustom.get();
+            }
         );
+    }
+
+    private static AChoke mainChokeFromJbweb() {
+        return AChoke.from(JBWEB.getMainChoke());
     }
 
     /**
@@ -190,31 +175,6 @@ public class Chokes {
                 return nearest;
             }
         );
-    }
-
-    /**
-     * Returns list of all choke points i.e. places where suddenly it gets extra tight and fighting there
-     * usually prefers ranged units. They are perfect places for terran bunkers.
-     */
-    public static List<AChoke> chokes() {
-        return (List<AChoke>) cache.get(
-            "chokes",
-            -1,
-            () -> {
-                List<AChoke> chokes = new ArrayList<>();
-                for (ChokePoint chokePoint : AMap.getMap().chokes()) {
-                    AChoke choke = AChoke.from(chokePoint);
-                    if (isOk(choke)) {
-                        chokes.add(choke);
-                    }
-                }
-                return chokes;
-            }
-        );
-    }
-
-    private static boolean isOk(AChoke choke) {
-        return choke.width() >= 1;
     }
 
     public static AChoke enemyMainChoke() {

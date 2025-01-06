@@ -211,6 +211,10 @@ public class Count {
         return ofType(AUnitType.Protoss_Dragoon);
     }
 
+    public static int dragoonsWithUnfinished() {
+        return ourOfTypeUnfinished(AUnitType.Protoss_Dragoon);
+    }
+
     public static int zealots() {
         return ofType(AUnitType.Protoss_Zealot);
     }
@@ -241,6 +245,10 @@ public class Count {
 
     public static int pylons() {
         return Select.countOurOfType(AUnitType.Protoss_Pylon);
+    }
+
+    public static int forgeWithUnfinished() {
+        return Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Forge);
     }
 
     public static int bases() {
@@ -340,6 +348,10 @@ public class Count {
         return Select.countOurOfType(AUnitType.Terran_Bunker);
     }
 
+    public static int shieldBatteriesWithUnfinished() {
+        return Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Shield_Battery);
+    }
+
     public static int cannons() {
         return Select.countOurOfType(AUnitType.Protoss_Photon_Cannon);
     }
@@ -370,6 +382,10 @@ public class Count {
 
     public static int ghosts() {
         return Count.ofType(AUnitType.Terran_Ghost);
+    }
+
+    public static int roboticsFacilities() {
+        return Count.ofType(AUnitType.Protoss_Robotics_Facility);
     }
 
     public static int observers() {
@@ -438,5 +454,9 @@ public class Count {
 
     public static int shuttles() {
         return ofType(AUnitType.Protoss_Shuttle);
+    }
+
+    public static int notFinishedConstructions(AUnitType type, int radius, HasPosition position) {
+        return ConstructionRequests.countNotFinishedOfTypeInRadius(type, radius, position);
     }
 }

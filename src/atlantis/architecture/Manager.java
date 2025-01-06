@@ -37,18 +37,14 @@ public abstract class Manager extends BaseManager {
         return true;
     }
 
-    private Manager invokeFromParent(Object parent) {
+    private Manager invokeFromParent(Manager parent) {
         if (!applies()) return null;
 
 //        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
 //            System.err.println("@ " + A.now() + " - " + this.getClass() + " - ");
 //        }
 
-        if (A.now() > parentsLastTimestamp) parents.clear();
-        this.parentsLastTimestamp = A.now();
-
-        if (parent != null) this.parents.add(parentToString(parent));
-        else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
+        updateParentsStack(parent);
 
         Manager manager = handle();
         if (manager != null) {
@@ -58,21 +54,48 @@ public abstract class Manager extends BaseManager {
         return handleSubmanagers();
     }
 
-    public Manager invokeFrom(Object parent) {
-        return invokeFromParent(parentToString(parent));
+    private void updateParentsStack(Manager parent) {
+        setParent(parent);
+
+        if (parent != null) this.parentsLastTimestamp = parent.parentsLastTimestamp;
+        if (A.now() > parentsLastTimestamp) parents.clear();
+        this.parentsLastTimestamp = A.now();
+
+        if (parent != null) {
+            String parentToString = parent.parentsStack() + parentToString(parent);
+
+            this.parents.add(parentToString);
+        }
+//        else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
     }
 
-    public boolean invokedFrom(Object parent) {
-        return invokeFromParent(parentToString(parent)) != null;
+    public Manager invokeFrom(Manager parent) {
+        return invokeFromParent(parent);
     }
 
-    private String parentToString(Object parent) {
-        if (parent instanceof String) return (String) parent;
-        if (parent instanceof Class) return ((Class) parent).getSimpleName();
+    public Manager invokeFrom(Object nonManagerObject) {
+        if (nonManagerObject != null) {
+            this.parents.add(nonManagerObject.getClass().getSimpleName());
+        }
+
+        return invokeFromParent(null);
+    }
+
+    public boolean invokedFrom(Manager parent) {
+        return invokeFromParent(parent) != null;
+    }
+
+    private String parentToString(Manager parent) {
+//        if (parent instanceof String) return (String) parent;
+//        if (parent instanceof Class) return ((Class) parent).getSimpleName();
 
         return parent != null
             ? parent.getClass().getSimpleName()
             : null;
+    }
+
+    public void printParentsStack() {
+        System.err.println("Parents stack for " + this + ": " + parentsStack());
     }
 
 //    public Manager invoke(Commander parent) {
@@ -101,9 +124,6 @@ public abstract class Manager extends BaseManager {
 
     protected Manager handleSubmanagers() {
         for (Manager submanager : submanagerObjects) {
-//            if (this.getClass().getSimpleName().contains("OldAdvance"))
-//                System.out.println("Adv - " + submanager.getClass().getSimpleName());
-
             if (submanager.invokeFromParent(this) != null) {
                 return submanager;
             }
@@ -150,9 +170,10 @@ public abstract class Manager extends BaseManager {
     public Manager usedManager(Manager manager, String message) {
         if (manager == null) return null;
 
-//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
+        if (unit.isLeader() && unit.isDragoon() && A.now() >= 1) {
 //            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName());
-//        }
+//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName() + " / " + parentsStack());
+        }
 
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);

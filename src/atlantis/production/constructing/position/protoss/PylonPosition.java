@@ -27,7 +27,7 @@ public class PylonPosition {
     }
 
     private static AUnit defineNearTo() {
-        if (Count.bases() >= 2) {
+        if (Count.pylons() >= 4 && Count.bases() >= 2) {
             return Select.ourBases().random();
         }
 
@@ -53,8 +53,8 @@ public class PylonPosition {
             return fallback();
         }
 
-        position = base.translateTilesTowards(-1, centerOfResources);
-        position = position.makeBuildableFarFromBounds(32 * 9);
+        position = base.translateTilesTowards(-4, centerOfResources);
+        position = position.makeBuildableFarFromBounds(5);
 
         return position;
     }

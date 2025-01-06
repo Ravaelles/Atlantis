@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.Enemy;
 import bwapi.Color;
 
 public class DanceAwayAsZealot extends Manager {
@@ -16,13 +17,29 @@ public class DanceAwayAsZealot extends Manager {
 //        if (true) return false;
 
         if (!unit.isZealot()) return false;
-        if (unit.cooldown() <= 10) return false;
+
+        if (unit.hp() >= 36) return false;
+
         if (unit.isMissionSparta()) return false;
-        if (unit.shieldDamageAtMost(19)) return false;
-//        if (dontApplyWhenOnlyRangedNear()) return false;
+        int cooldownThresholdToApply = cooldownThresholdToApply();
+        if (unit.cooldown() < cooldownThresholdToApply) return false;
+        if (unit.hp() >= 21 && unit.lastUnderAttackMoreThanAgo(15)) return false;
+
+        if (Enemy.zerg()) {
+            if (unit.shieldWound() <= 4 && unit.lastUnderAttackMoreThanAgo(20)) return false;
+            if (unit.hp() >= 70 && unit.lastUnderAttackMoreThanAgo(45)) return false;
+        }
+
         if (dontApplyWhenRangedEnemiesNear()) return false;
         if (dontApplyWhenAttackingRangedEnemy()) return false;
 
+        if (
+            unit.hp() <= 35
+                && unit.lastUnderAttackLessThanAgo(40)
+                && unit.lastAttackFrameLessThanAgo(30)
+        ) return true;
+
+        if (unit.cooldown() >= cooldownThresholdToApply) return true;
         if (unit.cooldown() >= 4 && unit.hp() <= 60) return true;
         if (unit.moreMeleeEnemiesThanOurUnits()) return true;
 
@@ -33,6 +50,13 @@ public class DanceAwayAsZealot extends Manager {
         // @ToDo Tweak these values
         return unit.cooldown() >= (fairlyWounded ? 4 : 16)
             && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60));
+    }
+
+    private int cooldownThresholdToApply() {
+//        if (Enemy.zerg()) return 3;
+        if (Enemy.protoss()) return unit.hp() <= 34 ? 1 : 7;
+
+        return 3;
     }
 
     private boolean dontApplyWhenAttackingRangedEnemy() {
@@ -64,7 +88,7 @@ public class DanceAwayAsZealot extends Manager {
         AUnit enemy = nearestMeleeEnemy();
         if (enemy == null) return null;
 
-        unit.paintCircleFilled(26, Color.Yellow);
+        unit.paintCircleFilled(7, Color.Yellow);
 
         return danceAwayFrom(enemy) ? usedManager(this) : null;
     }

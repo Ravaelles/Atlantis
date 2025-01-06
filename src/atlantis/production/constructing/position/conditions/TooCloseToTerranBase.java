@@ -27,7 +27,7 @@ public class TooCloseToTerranBase {
             base.translateByTiles(3, 1).distTo(position) <= minDistToBase
                 || base.distTo(position) <= minDistToBase
         ) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Too close to base";
+            AbstractPositionFinder._STATUS = "Too close to base";
             return true;
         }
 

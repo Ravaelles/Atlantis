@@ -29,12 +29,12 @@ public class DragoonHoldToShoot extends Manager {
         if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) return false;
 
         if (!unit.isMoving()) return false;
+        if (unit.cooldown() >= 10) return false;
 
         target = unit.target();
         if (target == null || !unit.hasValidTarget()) return false;
 
 //        System.err.println("unit.cooldown() = " + unit.cooldown());
-        if (unit.cooldown() >= 14) return false;
 
         if (!target.isMoving() || unit.isOtherUnitShowingBackToUs(target)) return false;
 //        if (target.isMoving() && unit.isOtherUnitShowingBackToUs(target)) return false;
@@ -101,7 +101,7 @@ public class DragoonHoldToShoot extends Manager {
     }
 
     private boolean attackedEnemy() {
-        System.out.println(A.fr + " Within real range - ATTACK " + target);
+        System.out.println(A.now + " Within real range - ATTACK " + target);
         if (target == null) return false;
 
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(target)) return true;
@@ -117,7 +117,7 @@ public class DragoonHoldToShoot extends Manager {
 
         if (unit.isAttacking())
             if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) {
-                System.out.println(A.fr + " Still hold / target = " + unit.target());
+                System.out.println(A.now + " Still hold / target = " + unit.target());
                 return true;
             }
 

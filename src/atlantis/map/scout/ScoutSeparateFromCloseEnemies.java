@@ -23,21 +23,27 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 
 
     private double safetyMargin() {
-        return 3.1
+        return 2.6
             + (Enemy.zerg() ? 2.9 : 0)
             + (unit.lastUnderAttackLessThanAgo(30 * 5) ? 2.5 : 0)
-            + unit.woundPercent() / 25.0;
+            + unit.woundPercent() / 22.0;
     }
 
     @Override
     public Manager handle() {
 //        if (unit.moveAwayFrom(center, 14, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
-        Manager manager = (new DoAvoidEnemies(unit)).handle();
+        if (
+            unit.distToMain() <= 35 && unit.moveToSafety(Actions.MOVE_SAFETY)
+        ) return usedManager(this, "Scout2Safety");
+
+        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
+
+        Manager manager = (new DoAvoidEnemies(unit, null)).handle();
         if (manager != null) return usedManager(this, "ScoutSeparateB");
 
 //        if (unit.enemiesThatCanAttackMe(2.4 + unit.woundPercent() / 30.0).empty()) {
-        if (unit.moveToSafety(Actions.MOVE_SAFETY, "ScoutSeparateB")) return usedManager(this);
+//        if (unit.moveToSafety(Actions.MOVE_SAFETY, "ScoutSeparateB")) return usedManager(this);
 //        }
 
         return null;

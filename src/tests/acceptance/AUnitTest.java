@@ -1,14 +1,18 @@
 package tests.acceptance;
 
 import atlantis.combat.targeting.basic.ATargeting;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
+import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import org.junit.Test;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
+import static atlantis.units.AUnitType.Zerg_Creep_Colony;
 import static org.junit.Assert.*;
 
 public class AUnitTest extends AbstractTestFakingGame {
@@ -70,6 +74,28 @@ public class AUnitTest extends AbstractTestFakingGame {
             assertEquals(2, cannon.friendsNear().count());
         });
     }
+
+//    @Test
+//    public void baseDistance() {
+//        FakeUnit base;
+//
+//        base = fake(AUnitType.Protoss_Nexus, 40, 40).setCompleted(false);
+//
+//        createWorld(1, () -> {
+//                //            Select.our().print("Our");
+//                Select.ourWithUnfinished().print("Our with UNF");
+//
+//                APosition pos42 = APosition.create(42, 40);
+//
+//                System.err.println(A.digit(base.distTo(pos42)));
+//                assertEquals("2.0", A.digit(base.distTo(pos42)));
+//            },
+//            () -> fakeOurs(
+//                base
+//            ),
+//            () -> fakeEnemies()
+//        );
+//    }
 
     @Test
     public void canNotAttackNotDetectedUnits() {
@@ -266,6 +292,21 @@ public class AUnitTest extends AbstractTestFakingGame {
 
             assertTrue(null == underAttack.lastBy());
             assertTrue(99999 == underAttack.lastAgo());
+        });
+    }
+
+    @Test
+    public void real() {
+        createWorld(1, () -> {
+            assertTrue(fake(AUnitType.Terran_Marine).isRealUnit());
+            assertTrue(fake(AUnitType.Terran_Vulture_Spider_Mine).isRealUnit());
+            assertTrue(fake(AUnitType.Protoss_Zealot).isRealUnit());
+            assertTrue(fake(Protoss_Photon_Cannon).isRealUnit());
+            assertTrue(fake(Zerg_Creep_Colony).isRealUnit());
+
+            assertFalse(fake(AUnitType.Protoss_Scarab).isRealUnit());
+            assertFalse(fake(AUnitType.Zerg_Egg).isRealUnit());
+            assertFalse(fake(AUnitType.Zerg_Lurker_Egg).isRealUnit());
         });
     }
 

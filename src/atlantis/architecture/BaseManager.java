@@ -16,12 +16,14 @@ public abstract class BaseManager {
     protected final AUnit unit;
     protected final Squad squad;
 
+    private Manager parent;
     protected List<String> parents = new ArrayList<>(); // Useful for debugging
-    protected int parentsLastTimestamp = -1;
+    protected int parentsLastTimestamp;
 
     public BaseManager(AUnit unit) {
         this.unit = unit;
         this.squad = (unit != null ? unit.squad() : null);
+        parentsLastTimestamp = -1;
 
         initializeManagerInstances();
     }
@@ -100,5 +102,13 @@ public abstract class BaseManager {
 
     protected boolean hasSubmanagers() {
         return submanagerObjects.length > 0;
+    }
+
+    public Manager getParent() {
+        return parent;
+    }
+
+    protected void setParent(Manager parent) {
+        this.parent = parent;
     }
 }

@@ -17,7 +17,7 @@ public class DontAvoidEnemy extends Manager {
     public boolean applies() {
 //        if (unit.lastOrderMinFramesAgo(1)) return true;
 //        System.out.println("-------------- " + unit.lastActionAgo(Actions.ATTACK_UNIT));
-        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
+//        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
 
         if (We.protoss()) return (new ProtossDontAvoidEnemy(unit)).applies();
         if (We.terran()) return (new TerranDontAvoidEnemy(unit)).anySubmanagerApplies() != null;
@@ -26,23 +26,23 @@ public class DontAvoidEnemy extends Manager {
 //        return anySubmanagerApplies() != null;
     }
 
-    protected boolean enemyCombatBuildingNearAndWeAreStacked() {
-        return unit.isGroundUnit()
-            && unit.friendsNear().groundUnits().combatUnits().inRadius(5, unit).atLeast(14)
-            && unit.enemiesNear()
-            .combatBuildings(false)
-            .inRadius(8, unit)
-            .notEmpty()
-            && (unit.woundHp() <= 16 || unit.meleeEnemiesNearCount(2.5) == 0);
-    }
+//    protected boolean enemyCombatBuildingNearAndWeAreStacked() {
+//        return unit.isGroundUnit()
+//            && unit.friendsNear().groundUnits().combatUnits().inRadius(5, unit).atLeast(14)
+//            && unit.enemiesNear()
+//            .combatBuildings(false)
+//            .inRadius(8, unit)
+//            .notEmpty()
+//            && (unit.woundHp() <= 16 || unit.meleeEnemiesNearCount(2.5) == 0);
+//    }
 
-    protected boolean enemyAirUnitsAreNearAndWeShouldEngage() {
-        return unit.enemiesNear()
-            .ofType(AUnitType.Terran_Wraith, AUnitType.Protoss_Scout).inRadius(5, unit)
-            .effVisible()
-            .notEmpty()
-            && unit.meleeEnemiesNearCount(2.5) == 0;
-    }
+//    protected boolean enemyAirUnitsAreNearAndWeShouldEngage() {
+//        return unit.enemiesNear()
+//            .ofType(AUnitType.Terran_Wraith, AUnitType.Protoss_Scout).inRadius(5, unit)
+//            .effVisible()
+//            .notEmpty()
+//            && unit.meleeEnemiesNearCount(2.5) == 0;
+//    }
 
 //    @Override
 //    protected Class<? extends Manager>[] managers() {

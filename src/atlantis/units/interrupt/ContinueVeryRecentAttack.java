@@ -12,7 +12,7 @@ public class ContinueVeryRecentAttack extends Manager {
 
     @Override
     public boolean applies() {
-        if (We.terran()) return false;
+        if (!We.protoss()) return false;
 
 //        if (unit.isMarine()) {
 //            return false;
@@ -21,6 +21,7 @@ public class ContinueVeryRecentAttack extends Manager {
 //        }
 
         if (!unit.isAttacking()) return false;
+        if (!unit.isAction(Actions.ATTACK_UNIT)) return false;
 
         AUnit target = unit.target();
 

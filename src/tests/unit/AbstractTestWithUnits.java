@@ -14,6 +14,10 @@ import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.tech.ATech;
+import atlantis.map.base.AllBaseLocations;
+import atlantis.map.choke.AllChokes;
+import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -26,8 +30,6 @@ import atlantis.util.Enemy;
 import atlantis.util.Options;
 import bwapi.Game;
 import bwapi.Race;
-import bwapi.TechType;
-import bwapi.WalkPosition;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
@@ -46,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class AbstractTestWithUnits extends UnitTestHelper {
+public class AbstractTestWithUnits extends UnitTest {
     public Game game;
 
     protected int currentMinerals = 0;
@@ -59,6 +61,8 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     public MockedStatic<ATech> aTech;
     public MockedStatic<Enemy> enemy;
     public MockedStatic<EnemyRace> enemyRace;
+    public MockedStatic<AllBaseLocations> allBaseLocations;
+    public MockedStatic<AllChokes> allChokes;
 
     protected Options options = new Options();
 
@@ -74,7 +78,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
             useFakeTime(0); // This needs to be 0 so every modulo division returns 0
         }
 
-        mockAtlantisConfig();
+        (new MockEverything(this)).mockEverything();
 
         APainter.disablePainting();
 
@@ -91,14 +95,14 @@ public class AbstractTestWithUnits extends UnitTestHelper {
     }
 
     public Race initRace() {
-        return Race.Terran;
+        return MockEverything.defaultRaceForTests();
     }
 
     protected void beforeTestLogic() {
-        AtlantisRaceConfig.MY_RACE = initRace();
+        AtlantisRaceConfig.MY_RACE = MockEverything.defaultRaceForTests();
 
         if (AtlantisRaceConfig.MY_RACE == null) {
-            AtlantisRaceConfig.MY_RACE = Race.Terran;
+            AtlantisRaceConfig.MY_RACE = MockEverything.defaultRaceForTests();
         }
 
         setUpBuildOrder();
@@ -114,6 +118,12 @@ public class AbstractTestWithUnits extends UnitTestHelper {
      * PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
      */
     protected void cleanUp() {
+//        Select.clearCache();
+//        BaseSelect.clearCache();
+//        EnemyUnits.clearCache();
+//        EnemyInfo.clearCache();
+        AbstractPositionFinder._STATUS = "Init";
+        ConstructionRequests.constructions.clear();
 
         // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK
         for (Field field : getClass().getFields()) {
@@ -139,13 +149,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
 
     // =========================================================
 
-    protected void mockEverything() {
-        mockAtlantisConfig();
-        mockGameObject();
-        mockAGameObject();
-        mockOtherStaticClasses();
-    }
-
     protected int currentMinerals() {
         return currentMinerals;
     }
@@ -166,34 +169,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         return currentSupplyTotal - currentSupplyUsed;
     }
 
-    /**
-     * You have to define static mocks as public field of this class, so they can be automatically reset on test end.
-     */
-    protected void mockOtherStaticClasses() {
-        env = Mockito.mockStatic(Env.class);
-        env.when(Env::isTesting).thenReturn(true);
-
-        aTech = Mockito.mockStatic(ATech.class);
-        aTech.when(() -> ATech.isResearched(TechType.Lockdown)).thenReturn(true);
-        aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
-        aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
-
-        enemy = Mockito.mockStatic(Enemy.class);
-        enemy.when(() -> Enemy.terran()).thenReturn(false);
-        enemy.when(() -> Enemy.protoss()).thenReturn(true);
-        enemy.when(() -> Enemy.zerg()).thenReturn(false);
-
-        // This is not needed for green tests and was causing standard AUnit::distTo(AUnit) to return 0
-//        positionUtil = Mockito.mockStatic(PositionUtil.class);
-//        positionUtil.when(() -> PositionUtil.groundDistanceTo(any(Position.class), any(Position.class)))
-//            .thenAnswer((InvocationOnMock invocationOnMock) -> {
-//                Position p1 = invocationOnMock.getArgument(0);
-//                Position p2 = invocationOnMock.getArgument(1);
-//                System.err.println("positionUtil groundDistanceTo A = " + p1 + " / B = " + p2);
-//                return p1.getDistance(p2) / 32.0;
-//            });
-    }
-
     public AStrategy initBuildOrder() {
         return TerranStrategies.TERRAN_Tests;
     }
@@ -206,51 +181,6 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         } catch (RuntimeException e) {
             // Ignore
         }
-    }
-
-    protected void mockAtlantisConfig() {
-        AtlantisRaceConfig.MY_RACE = Race.Terran;
-        AtlantisRaceConfig.BASE = AUnitType.Terran_Command_Center;
-        AtlantisRaceConfig.GAS_BUILDING = AUnitType.Terran_Refinery;
-        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
-        AtlantisRaceConfig.WORKER = AUnitType.Terran_SCV;
-        AtlantisRaceConfig.BARRACKS = AUnitType.Terran_Barracks;
-        AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_AIR = AUnitType.Terran_Missile_Turret;
-        AtlantisRaceConfig.DEFENSIVE_BUILDING_ANTI_LAND = AUnitType.Terran_Bunker;
-    }
-
-    protected void mockGameObject() {
-        if ((game = Atlantis.game()) == null) {
-            game = Mockito.mock(Game.class);
-            Atlantis.getInstance().setGame(game);
-        }
-
-        // Map dimensions
-        when(game.mapWidth()).thenReturn(20);
-        when(game.mapHeight()).thenReturn(20);
-
-        // Walkability
-        when(game.isWalkable(any(WalkPosition.class))).thenReturn(true);
-    }
-
-    protected void mockAGameObject() {
-        aGame = Mockito.mockStatic(AGame.class);
-
-        currentSupplyUsed = options == null ? 0 : options.getIntOr("supplyUsed", 0);
-        currentSupplyTotal = options == null ? 4 : options.getIntOr("supplyTotal", 4);
-
-        aGame.when(AGame::supplyUsed).thenAnswer(invocation -> currentSupplyUsed());
-        aGame.when(AGame::supplyTotal).thenAnswer(invocation -> currentSupplyTotal());
-        aGame.when(AGame::supplyFree).thenAnswer(invocation -> currentSupplyFree());
-
-        aGame.when(AGame::minerals).thenAnswer(invocation -> currentMinerals());
-        aGame.when(AGame::gas).thenAnswer(invocation -> currentGas());
-
-//        Main.OUR_RACE = initRace;
-        enemyRace = Mockito.mockStatic(EnemyRace.class);
-        enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(true);
-        enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(false);
-        enemyRace.when(EnemyRace::isEnemyZerg).thenReturn(false);
     }
 
     protected void setUpStrategy() {
@@ -315,7 +245,7 @@ public class AbstractTestWithUnits extends UnitTestHelper {
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
         try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            mockEverything();
+//            (new MockEverything(this)).mockEverything();
 
             baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
             baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));

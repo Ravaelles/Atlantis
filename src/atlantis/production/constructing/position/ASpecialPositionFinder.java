@@ -8,6 +8,8 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.base.FindPositionForBase;
 import atlantis.production.constructing.position.base.FindPositionForBaseNearestFree;
+import atlantis.production.constructing.position.modifier.PositionAtMainChoke;
+import atlantis.production.constructing.position.modifier.PositionAtNaturalChoke;
 import atlantis.production.constructing.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -42,17 +44,14 @@ public class ASpecialPositionFinder {
         }
 
         if (modifier.equals(PositionModifier.MAIN_CHOKE)) {
-            AChoke mainChoke = Chokes.mainChoke();
-            if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.3);
-            }
+            return PositionAtMainChoke.atMainChoke(construction);
+//            AChoke mainChoke = Chokes.mainChoke();
+//            if (mainChoke != null) {
+//                return APosition.create(mainChoke.center()).translateTilesTowards(Select.main(), 3.3);
+//            }
         }
         else if (modifier.equals(PositionModifier.NATURAL_CHOKE)) {
-            AChoke chokepointForNatural = Chokes.natural();
-            if (chokepointForNatural != null && Select.main() != null) {
-                ABaseLocation natural = DefineNaturalBase.naturalIfMainIsAt(Select.main().position());
-                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
-            }
+            return PositionAtNaturalChoke.atNaturalChoke(construction);
         }
 
         return null;

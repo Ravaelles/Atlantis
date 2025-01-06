@@ -19,32 +19,18 @@ public class ProtossShuttleEmpty extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isShuttle()) return false;
         if (!unit.loadedUnits().isEmpty()) return false;
-
-        target = definePotentialTargetToLift();
-        if (target == null) return false;
 
         return true;
     }
 
-    private AUnit definePotentialTargetToLift() {
-        Selection targets = unit.friendsNear().reavers().notLoaded();
-
-        if (targets.empty()) {
-            targets = Select.ourOfType(Protoss_Reaver).notLoaded();
-        }
-
-        if (targets.empty()) {
-            targets = Select.ourOfType(Protoss_Reaver);
-        }
-
-        return targets.nearestTo(unit);
-    }
-
     @Override
-    public Manager handle() {
-        if (unit.move(target, Actions.MOVE_FOLLOW, "BackupForReava")) return usedManager(this);
-
-        return null;
+    protected Class<? extends Manager>[] managers() {
+        return new Class[]{
+            ProtossShuttleAvoidAA.class,
+            ProtossShuttleEmptyGoToReaver.class,
+            ProtossShuttleEmptyAvoidEnemies.class,
+        };
     }
 }

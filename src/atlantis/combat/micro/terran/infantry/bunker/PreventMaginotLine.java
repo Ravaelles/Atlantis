@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;

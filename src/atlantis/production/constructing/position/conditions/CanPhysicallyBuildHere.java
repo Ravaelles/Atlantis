@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.Atlantis;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -17,11 +18,11 @@ public class CanPhysicallyBuildHere {
      */
     public static boolean check(AUnit builder, AUnitType building, APosition position) {
         if (position == null) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "POSITION IS NULL";
+            AbstractPositionFinder._STATUS = "POSITION IS NULL";
             return false;
         }
         if (builder == null) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "BUILDER IS NULL";
+            AbstractPositionFinder._STATUS = "BUILDER IS NULL";
             return false;
         }
 
@@ -37,64 +38,56 @@ public class CanPhysicallyBuildHere {
                 && (!position.isExplored() || !position.isPositionVisible())
         ) return true;
 
-//        if (!position.isExplored() && position.regionsMatch(MainRegion.mainRegion())) return true;
-
-//        if (
-//            (!position.isExplored() || !position.isPositionVisible())
-//                &&
-//                (building.isBase() || building.isCombatBuilding())
-//        ) return true;
-
-//        if (!We.zerg() && Atlantis.game().hasCreep(position.toTilePosition())) {
-//            AbstractPositionFinder._CONDITION_THAT_FAILED = "Ugly creep on it";
-//            return false;
-//        }
-
-        if (!Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u())) {
+        if (!isCanBuildHere(builder, building, position)) {
             if (positionUnexploredAndNotVisibleLetsDoit(position, building)) return true;
+            if (allowEarlyForgeAndGatewayDuringForgeExpand(building, position)) return true;
 
-            if (We.protoss() && A.supplyUsed() <= 12 && (building.isForge() || building.isGateway())) {
-//                System.err.println("---------------------- ");
-//                System.err.println("position = " + position);
-//                System.err.println("Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).inRadius(4.8, position).atLeast(1) = " + Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).inRadius(4.8, position).atLeast(1));
-                HasPosition pylon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).nearestTo(position);
-//                System.err.println("pylon A = " + pylon);
-                if (pylon == null) {
-                    pylon = ConstructionRequests.nearestOfTypeTo(AUnitType.Protoss_Pylon, position, 10);
-//                    System.err.println("pylon B = " + pylon);
-//                    System.err.println("requests = " + ConstructionRequests.all());
-                }
-
-//                System.err.println("pylon C = " + pylon);
-//                if (pylon != null) {
-//                    System.err.println("AAA = " + pylon.distTo(position));
-//                }
-
-                // Fix for early building, place it just below pylon
-//                if (pylon == null) {
-//                    APosition pylonConstr = ConstructionRequests.nearestOfTypeTo(AUnitType.Protoss_Pylon, position, 100);
-//                    System.err.println("pylonConstr = " + pylonConstr);
-//                    if (pylonConstr != null) {
-//                        position = pylonConstr.translateByTiles(0, 2);
-//                        System.err.println("FIX position = " + position);
-//                    }
-//                }
-
-                if (
-                    pylon != null
-                        && position.isBuildable()
-//                        && position.translateByTiles(building.getTileWidth() / 2, building.getTileHeight() / 2).isBuildable()
-                        && position.distTo(pylon) <= 4.9
-                ) {
-                    return true;
-                }
-            }
-
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Can't physically build here";
+            if (!Env.isTesting()) AbstractPositionFinder._STATUS = "Can't physically build here";
             return false;
         }
 
         return true;
+    }
+
+    private static boolean isCanBuildHere(AUnit builder, AUnitType building, APosition position) {
+        if (Env.isTesting()) {
+            if (!apprxForTesting(building, position)) {
+                return false;
+            }
+            return true;
+        }
+
+        return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+    }
+
+    private static boolean allowEarlyForgeAndGatewayDuringForgeExpand(AUnitType building, APosition position) {
+        if (We.protoss() && A.supplyUsed() <= 13 && (building.isForge() || building.isGateway())) {
+            HasPosition pylon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).nearestTo(position);
+            if (pylon == null) {
+                pylon = ConstructionRequests.nearestOfTypeTo(AUnitType.Protoss_Pylon, position, 10);
+            }
+
+//            if (building.isForge())
+//                System.err.println("pylon = " + pylon
+//                    + " / " + Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).size()
+//                    + " / " + ConstructionRequests.nearestOfTypeTo(AUnitType.Protoss_Pylon, position, 10)
+//                    + " / " + ConstructionRequests.notStartedOfType(AUnitType.Protoss_Pylon).size()
+//                );
+
+            if (
+//                pylon != null
+//                    && position.isPositionVisible()
+                position.isBuildable()
+                    && position.isExplored()
+//                    && position.translateByTiles(1, 0).isBuildable()
+//                    && position.translateByTiles(0, 1).isBuildable()
+                    && Select.ourBuildingsWithUnfinished().countInRadius(2.5, position) == 0
+                    && (pylon == null || position.distTo(pylon) <= 5)
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean positionUnexploredAndNotVisibleLetsDoit(APosition position, AUnitType building) {
@@ -102,5 +95,36 @@ public class CanPhysicallyBuildHere {
             && !position.isExplored()
             && !position.isPositionVisible()
             && !building.isCombatBuilding();
+    }
+
+    private static boolean apprxForTesting(AUnitType building, APosition position) {
+//        System.err.println(Select.ourBasesWithUnfinished().distToNearest(position));
+
+        if (We.protoss() && building.needsPower()) {
+            if (Select.ourOfType(AUnitType.Protoss_Pylon).countInRadius(5.98, position) == 0) {
+                AbstractPositionFinder._STATUS = "[Testing] No power";
+                return false;
+            }
+        }
+
+        if (!position.isBuildable()) {
+            AbstractPositionFinder._STATUS = "[Testing] Not buildable";
+            return false;
+        }
+
+        int countNearBuildings = Select.ourBuildingsWithUnfinished().inRadius(2.95, position).count();
+        if (
+//            Select.ourBasesWithUnfinished().countInRadius(4.02, position) == 0
+//                && Select.ourBuildingsWithUnfinished().countInRadius(3.02, position) == 0
+            countNearBuildings == 0
+        ) {
+//            System.err.println("------- NOTHING " + position + " -------");
+            return true;
+        }
+
+//        System.err.println("countNearBuildings = " + countNearBuildings);
+
+        AbstractPositionFinder._STATUS = "[Testing] Can't physically build here";
+        return false;
     }
 }

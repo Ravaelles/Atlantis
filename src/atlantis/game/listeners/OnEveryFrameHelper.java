@@ -1,11 +1,15 @@
 package atlantis.game.listeners;
 
+import atlantis.Atlantis;
 import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
+import atlantis.map.AMap;
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -16,6 +20,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
+import atlantis.map.region.Regions;
 import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
 import atlantis.production.constructing.Construction;
@@ -30,6 +35,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
 import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
@@ -37,6 +43,9 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.Vector;
+import atlantis.util.object.Accessibility;
+import atlantis.util.object.NamespaceAccessibility;
+import atlantis.util.object.ObjectToFile;
 import bwapi.Bullet;
 import bwapi.Color;
 import jbweb.Block;
@@ -51,6 +60,21 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
+//        paintShowingInOurDirection();
+
+//        APosition next = OurNextFreeExpansionMostDistantToEnemy.find();
+//        System.out.println("next = " + next);
+//        System.out.println("natural = " + BaseLocations.natural());
+//        if (next != null) {
+//            AAdvancedPainter.paintCircleFilled(next, 20, Color.Orange);
+//        }
+
+//        printChokesForTests();
+//        printBaseLocationsDistancesForTests();
+//        serializeMapDataLikeRegionsToAFile();
+
+//        paintBasePositionAndBuildCoordinates();
+
 //        AUnit hydra = Select.enemies(AUnitType.Zerg_Hydralisk).first();
 //        AUnit goon = Select.ourOfType(AUnitType.Protoss_Dragoon).first();
 //        System.out.println("Goon SMALLER = " + goon.weaponRangeAgainst(hydra));
@@ -121,6 +145,93 @@ public class OnEveryFrameHelper {
 //        paintUnitSpeeding();
     }
 
+    private static void paintShowingInOurDirection() {
+        AUnit enemy = Select.enemy().first();
+        AUnit our = Select.ourCombatUnits().first();
+
+        enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+
+//        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
+    }
+
+    private static void paintBasePositionAndBuildCoordinates() {
+        ABaseLocation base = BaseLocations.main();
+        AUnit main = Select.main();
+        APosition mainPosition = Select.mainOrAnyBuildingPosition();
+
+        System.err.println("A = " + mainPosition.translateByTiles(2, 0).distTo(mainPosition));
+        System.err.println("B = " + mainPosition.translateByTiles(2, 0).distTo(main));
+        System.err.println("C = " + mainPosition.distTo(mainPosition.translateByTiles(2, 0)));
+        System.err.println("D = " + main.distTo(mainPosition.translateByTiles(2, 0)));
+
+        AAdvancedPainter.paintCircle(base, 10, Color.Orange);
+        AAdvancedPainter.paintCircle(base.position(), 8, Color.Red);
+        AAdvancedPainter.paintCircle(main, 6, Color.Green);
+        AAdvancedPainter.paintCircle(main.position(), 4, Color.Blue);
+
+        System.err.println("base = " + base);
+        System.err.println("main = " + main);
+        System.err.println("mainPosition = " + mainPosition);
+    }
+
+    private static void serializeMapDataLikeRegionsToAFile() {
+        if (true) return;
+
+        if (A.now() == 10) {
+            Selection selection = Select.all();
+
+            // Make all classes in the "bwapi" namespace accessible
+            NamespaceAccessibility.makeAllAccessibleForNamespace(bwapi.Game.class);
+
+            ObjectToFile.saveToFile(Chokes.chokes());
+//            ObjectToFile.saveToFile(selection);
+//            ObjectToFile.saveToFile(AMap.bwem());
+//            ObjectToFile.saveToFile(Regions.regions());
+            A.quit();
+        }
+    }
+
+    private static void printBaseLocationsDistancesForTests() {
+        BaseLocations.main().paintTextCentered("Main BAZE", Color.Orange, 1);
+
+        ABaseLocation mainBase = BaseLocations.main();
+        System.out.println("mainBase = " + mainBase);
+        for (ABaseLocation location : BaseLocations.baseLocations()) {
+//            System.err.println("location = " + location);
+//            System.err.println("locationPos = " + location.position());
+            System.out.println(
+                location.tx() + ", " + location.ty() + ": "
+                    + ", GD: " + A.digit(location.groundDist(mainBase))
+            );
+//                + ", DI: " + A.digit(location.distTo(mainBase))
+//                + ", " + location.isStartLocation());
+//            System.out.println(location
+//                + ", GD: " + A.digit(location.groundDist(mainBase))
+//                + ", DI: " + A.digit(location.distTo(mainBase))
+//                + ", " + location.isStartLocation());
+        }
+        System.out.println("-------------------");
+
+        A.quit();
+    }
+
+    private static void printChokesForTests() {
+//        BaseLocations.main().paintTextCentered("Main BAZE", Color.Orange, 1);
+
+//        ABaseLocation mainBase = BaseLocations.main();
+//        System.out.println("mainBase = " + mainBase);
+        for (AChoke choke : Chokes.chokes()) {
+//            System.err.println("c hoke = " + choke);
+//            System.err.println("l ocationPos = " + choke.position());
+//            System.err.println(choke.tx() + ", " + choke.ty() + ", " + choke.width()
+//                + ", GD: " + A.digit(choke.groundDist(mainBase))
+//                + ", DI: " + A.digit(choke.distTo(mainBase))
+//                + ", " + choke.isStartLocation()
+//            );
+        }
+        System.err.println("-----------------");
+    }
+
     private static void paintOverUnits() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
             unit.paintTextCentered(unit, A.digit(unit.combatEvalRelative()), Color.Orange);
@@ -128,16 +239,16 @@ public class OnEveryFrameHelper {
     }
 
     private static void paintUnitTargets() {
-        for (AUnit unit : Select.ourCombatUnits().list()) {
-            if (unit.target() != null) {
-                unit.paintLine(unit.target(), Color.Orange);
-                System.out.println("Target = " + unit.target());
-            }
-            else if (unit.targetPosition() != null) {
-                unit.paintLine(unit.target(), Color.Cyan);
-                System.out.println("TargetPOS = " + unit.targetPosition() + " / " + A.digit(unit.distTo(unit.targetPosition())));
-            }
-        }
+//        for (AUnit unit : Select.ourCombatUnits().list()) {
+//            if (unit.target() != null) {
+//                unit.paintLine(unit.target(), Color.Orange);
+//                System.out.println("Target = " + unit.target());
+//            }
+//            else if (unit.targetPosition() != null) {
+//                unit.paintLine(unit.target(), Color.Cyan);
+//                System.out.println("TargetPOS = " + unit.targetPosition() + " / " + A.digit(unit.distTo(unit.targetPosition())));
+//            }
+//        }
     }
 
     private static void paintUnitSpeeding() {

@@ -10,22 +10,24 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ProduceCannonAtNatural {
-
     private static APosition bestPosition;
 
     public static boolean produce() {
+        if (true) return false;
+
         if ((bestPosition = shouldProduceAt()) == null) return false;
 
         if (!Have.forge()) {
             AddToQueue.withTopPriority(Protoss_Forge);
         }
 
-        A.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
+//        A.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
 
         return requestAtBestPosition();
     }
@@ -69,7 +71,7 @@ public class ProduceCannonAtNatural {
     }
 
     private static int max() {
-        return 1;
+        return Enemy.zerg() ? 2 : 1;
     }
 
     private static APosition bestPosition(HasPosition naturalBase) {

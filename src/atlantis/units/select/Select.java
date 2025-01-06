@@ -162,15 +162,16 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourBasesWithUnfinished",
             1,
             () -> {
-                if (We.zerg()) {
-                    return ourWithUnfinished().ofType(
-                        AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
-                        AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
-                    );
-                }
-                else {
-                    return ourWithUnfinishedOfType(AtlantisRaceConfig.BASE);
-                }
+//                if (We.zerg()) {
+                return ourWithUnfinished().ofType(
+                    AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
+                );
+//                }
+//                else {
+//                    System.err.println("AtlantisRaceConfig.BASE = " + AtlantisRaceConfig.BASE);
+//                    return ourWithUnfinishedOfType(AtlantisRaceConfig.BASE);
+//                }
             }
         );
     }

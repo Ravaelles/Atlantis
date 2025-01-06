@@ -1,18 +1,18 @@
 package atlantis.combat.targeting.basic;
 
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.targeting.*;
+import atlantis.combat.targeting.air.DontAttackOverlords;
 import atlantis.combat.targeting.tanks.ATankTargeting;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
-import atlantis.units.AliveEnemies;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
+import atlantis.util.Enemy;
 
 public class ATargeting extends HasUnit {
     //    protected static final boolean DEBUG = true;
@@ -20,16 +20,57 @@ public class ATargeting extends HasUnit {
 
     protected Selection enemyBuildings;
     protected Selection enemyUnits;
+    private Selection leaderEnemies = null;
 
     public ATargeting(AUnit unit) {
         super(unit);
+
+        double maxDistFromEnemy = 678;
+
+        defineEnemyUnits(unit, maxDistFromEnemy);
+        defineEnemyBuildings(unit, maxDistFromEnemy);
     }
 
-    public ATargeting(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
-        super(unit);
-        this.enemyUnits = enemyUnits;
-        this.enemyBuildings = enemyBuildings;
+    private void defineEnemyUnits(AUnit unit, double maxDistFromEnemy) {
+        enemyUnits = unit.enemiesNear()
+            .visibleOnMap()
+            .realUnitsAndBuildings()
+            .nonBuildingsButAllowCombatBuildings()
+            .inRadius(maxDistFromEnemy, unit)
+            .maxGroundDist(maxDistFromEnemy, unit)
+            .havingAtLeastHp(1)
+            .havingPosition()
+            .effVisibleOrFoggedWithKnownPosition()
+            .canBeAttackedBy(unit, maxDistFromEnemy)
+            .excludeOverlords();
+
+//        if (Enemy.zerg() && DontAttackOverlords.forbidden(unit)) {
+//            enemyUnits = enemyUnits.excludeOverlords();
+//        }
     }
+
+    private void defineEnemyBuildings(AUnit unit, double maxDistFromEnemy) {
+        enemyBuildings = Select.enemyRealUnits(true, false, true)
+            .buildings()
+            .inRadius(maxDistFromEnemy, unit)
+            .canBeAttackedBy(unit, maxDistFromEnemy);
+
+//        enemyBuildings.print("F");
+
+        // If early in the game, don't attack regular buildings, storm into the base and kill workers/bases
+        if (shouldOnlyAttackBases(unit)) {
+            enemyBuildings = enemyBuildings.bases();
+        }
+    }
+
+//    public ATargeting(AUnit unit, Selection enemyUnits, Selection enemyBuildings) {
+//        super(unit);
+//        this.enemyUnits = enemyUnits;
+//        this.enemyBuildings = enemyBuildings;
+////        enemyUnits = possibleEnemyUnitsToAttack(unit, maxDistFromEnemy);
+//    }
+
+    // =========================================================
 
     public static AUnit defineBestEnemyToAttack(AUnit unit) {
         return (new ATargeting(unit)).defineBestEnemyToAttack(AttackNearbyEnemies.maxDistToAttack(unit));
@@ -48,31 +89,37 @@ public class ATargeting extends HasUnit {
 
         // === Last squad target ===================================
 
-        enemy = ASquadTargeting.useSquadTargetIfPossible(unit);
-//        if (enemy != null && enemy.effVisible()) return enemy;
-        if (
-            enemy != null
-                && enemy.effVisible()
-                && enemy.isTargetInWeaponRangeAccordingToGame()
-                && !enemy.isDeadMan()
-        ) return enemy;
+        boolean longNotAttacked = unit.lastAttackFrameMoreThanAgo(30 * 6);
+//        if (longNotAttacked && unit.friendsNear().combatUnits().inRadius(3, unit).notEmpty()) {
+//        if (longNotAttacked && unit.shieldWound() <= 5) {
+//            enemy = ASquadTargeting.useSquadTargetIfPossible(unit);
+//            if (
+//                enemy != null
+//                    && enemy.effVisible()
+//                    && enemy.isTargetInWeaponRangeAccordingToGame()
+//                    && !enemy.isDeadMan()
+//            ) return enemy;
+//        }
 
 //        System.err.println("Last=" + enemy + " / Can=" + (enemy != null ? unit.hasWeaponRangeToAttack(enemy, 4) : '-'));
 
         // =========================================================
 
-//        if (true) return ClosestEnemyTargeting.nearestTarget(unit, maxDistFromEnemy);
+//        enemyUnits.print("ALL");
+//        enemyUnits.excludeOverlords().print("NO Overlords");
 
-        if (unit.isMissionDefendOrSparta() || unit.lastAttackFrameMoreThanAgo(30 * 3)) {
-//        if (true) {
-            return ClosestEnemyTargeting.nearestTarget(unit, maxDistFromEnemy);
-        }
+//        if (
+//            unit.shotSecondsAgo() >= 7
+//                || (longNotAttacked && A.s >= 30)
+//        ) {
+//            return (new ClosestEnemyTargeting(enemyUnits)).nearestTarget(unit, maxDistFromEnemy);
+//        }
 
         enemy = defineTarget(unit, maxDistFromEnemy);
 
 //        if (enemy != null) System.err.println("@@@@ " + unit.typeWithUnitId() + " / " + unit.hp());
 
-        if (DEBUG) A.println("A enemy = " + enemy);
+//        if (DEBUG) A.println("A enemy = " + enemy);
 
 //        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
@@ -80,7 +127,7 @@ public class ATargeting extends HasUnit {
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-            if (DEBUG) A.println("B enemy = " + enemy);
+//            if (DEBUG) A.println("B enemy = " + enemy);
 
             return enemy;
 //            if (
@@ -110,15 +157,10 @@ public class ATargeting extends HasUnit {
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
         AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
-//        System.out.println("BASE enemy = " + enemy + " / " +maxDistFromEnemy);
+//        System.out.println("BASE enemy = " + enemy + " / " + maxDistFromEnemy);
 
         if (enemy == null && maxDistFromEnemy >= 8) {
-            enemy = unit.enemiesNear()
-                .realUnitsAndBuildings()
-                .visibleOnMap()
-                .effVisible()
-                .havingAtLeastHp(1)
-                .havingPosition()
+            enemy = enemyUnits
                 .canBeAttackedBy(unit, 0)
                 .nearestTo(unit);
 //            if (enemy != null && !unit.isAir()) {
@@ -130,23 +172,12 @@ public class ATargeting extends HasUnit {
 //            }
         }
 
-//        if (enemy == null) {
-//            Selection possible = unit.enemiesNear().visibleOnMap().havingAtLeastHp(1).effVisible().groundUnits();
-//            if (possible.atLeast(1) && unit.canAttackGroundUnits()) {
-//                System.err.println(unit + " return NULL target WTF");
-//                possible.print("These could be targetted");
-//                System.err.println("RemoveExcessiveOrders a fix return: " + possible.nearestTo(unit));
-//                return possible.nearestTo(unit);
-//            }
-//            return null;
-//        }
 
         if (enemy == null) {
             return null;
         }
 
-        if (unit.enemiesNear().inRadius(9, unit).empty()) return enemy;
-//        if (true) return enemy;
+        if (enemyUnits.inRadius(9, unit).empty()) return enemy;
 
 //        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
         AUnit weakestEnemy = WeakestOfType.selectWeakestEnemyOfType(enemy.type(), unit);
@@ -154,23 +185,6 @@ public class ATargeting extends HasUnit {
 
         return weakestEnemy != null ? weakestEnemy : enemy;
     }
-
-    // =========================================================
-
-//    private AUnit handleTanksSpecially(AUnit unit, AUnit weakestEnemy) {
-//        if (weakestEnemy.enemiesNear().inRadius(2, unit).notEmpty()) {
-//            AUnit tankTarget = unit.enemiesNear()
-//                .combatUnits()
-//                .effVisible()
-//                .canBeAttackedBy(unit, 0)
-//                .mostDistantTo(unit);
-//            if (tankTarget != null) {
-//                return tankTarget;
-//            }
-//        }
-//
-//        return null;
-//    }
 
     // =========================================================
 
@@ -189,21 +203,7 @@ public class ATargeting extends HasUnit {
 //            .canBeAttackedBy(unit, maxDistFromEnemy);
 ////            .print("E");
 
-        enemyBuildings = Select.enemyRealUnits(true, false, true)
-            .buildings()
-            .inRadius(maxDistFromEnemy, unit)
-            .canBeAttackedBy(unit, maxDistFromEnemy);
-
-//        enemyBuildings.print("F");
-
-        // If early in the game, don't attack regular buildings, storm into the base and kill workers/bases
-        if (shouldOnlyAttackBases(unit)) {
-            enemyBuildings = enemyBuildings.bases();
-        }
-
 //        enemyBuildings.print("G");
-
-        enemyUnits = possibleEnemyUnitsToAttack(unit, maxDistFromEnemy);
 
 //        System.err.println("enemyBuildings = " + enemyBuildings.size());
 //        System.err.println("enemyUnits = " + enemyUnits.size());
@@ -232,21 +232,21 @@ public class ATargeting extends HasUnit {
 
         // === Crucial units =======================================
 
-        if ((target = (new ATargetingCrucial(unit, enemyUnits, enemyBuildings)).target()) != null) {
+        if ((target = (new ATargetingCrucial(unit)).target()) != null) {
 //            debug("B = "+ target);
             return target;
         }
 
         // === Important units =====================================
 
-        if ((target = (new ATargetingImportant(unit, enemyUnits, enemyBuildings)).target()) != null) {
+        if ((target = (new ATargetingImportant(unit)).target()) != null) {
 //            debug("C = " + target);
             return target;
         }
 
         // === Standard targets ====================================
 
-        if ((target = (new ATargetingStandard(unit, enemyUnits, enemyBuildings)).target()) != null) {
+        if ((target = (new ATargetingStandard(unit)).target()) != null) {
 //            debug("D = "+ target);
             return target;
         }
@@ -254,22 +254,6 @@ public class ATargeting extends HasUnit {
         // =====
 
         return target;
-    }
-
-    public static Selection possibleEnemyUnitsToAttack(AUnit unit, double maxDistFromEnemy) {
-        Selection enemies = AliveEnemies.get()
-            .realUnitsAndBuildings()
-            .nonBuildingsButAllowCombatBuildings()
-            .inRadius(maxDistFromEnemy, unit)
-            .maxGroundDist(maxDistFromEnemy, unit)
-            .effVisibleOrFoggedWithKnownPosition()
-            .canBeAttackedBy(unit, maxDistFromEnemy);
-
-        if (We.zerg() && unit.enemiesNear().combatUnits().notEmpty() && unit.shotSecondsAgo() <= 6) {
-            enemies = enemies.excludeOverlords();
-        }
-
-        return enemies;
     }
 
     private static boolean shouldOnlyAttackBases(AUnit unit) {
@@ -286,4 +270,11 @@ public class ATargeting extends HasUnit {
         }
     }
 
+    protected Selection leaderEnemies() {
+        if (leaderEnemies != null) return leaderEnemies;
+        AUnit leader = unit.squadLeader();
+        if (leader == null) return enemyUnits;
+
+        return leaderEnemies = (new ATargeting(leader)).enemyUnits;
+    }
 }

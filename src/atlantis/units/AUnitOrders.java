@@ -7,11 +7,13 @@ import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.Construction;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
 import tests.fakes.FakeUnitData;
@@ -35,6 +37,9 @@ public interface AUnitOrders {
     // =========================================================
 
     default boolean attackUnit(AUnit target) {
+//        System.err.println("@" + A.now() + " - " + unit() + ": Attack (" + unit().cooldown() + ")");
+//        if (true) return u().attack(target.u());
+
 //        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
 
 //                    "@ @" + A.now() + " ATTACK  / " +
@@ -47,7 +52,8 @@ public interface AUnitOrders {
 //        }
 
         if (target == null) {
-            System.err.println("Null attack unit target for " + this.unit().typeWithHash());
+//            System.err.println("Null attack unit target for " + this.unit().typeWithHash());
+            ErrorLog.printMaxOncePerMinute("Null attack unit target for " + this.unit().typeWithHash());
             return false;
         }
 
@@ -108,9 +114,13 @@ public interface AUnitOrders {
 
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
+
+        // @Debug
+//        System.err.println("A = " + unit().isCommand(UnitCommandType.Attack_Unit));
+//        System.err.println("B = " + target.equals(unit().target()));
         if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
-            unit().setTooltipTactical("Attacking...");
-            if (A.everyFrameExceptNthFrame(16)) return true;
+            return true;
+//            if (A.everyFrameExceptNthFrame(16)) return true;
         }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
@@ -128,7 +138,6 @@ public interface AUnitOrders {
         unit().setTooltipTactical("ATTACK-UNIT");
         unit().setAction(Actions.ATTACK_UNIT);
         return u().attack(target.u());
-//        return true;
     }
 
     // To avoid confusion: NEVER USE IT.
@@ -185,13 +194,19 @@ public interface AUnitOrders {
         return false;
     }
 
-    default boolean build(AUnitType buildingType, TilePosition buildTilePosition) {
+    default boolean build(AUnitType buildingType, TilePosition buildTilePosition, Construction construction) {
         unit().setAction(Actions.BUILD);
         boolean result = u().build(buildingType.ut(), buildTilePosition);
 
         String resultString = "";
         if (!result) {
             resultString = " ErRoR:" + (APosition.create(buildTilePosition).isBuildable() ? "b" : "NB");
+
+//            if (construction != null) {
+//                ErrorLog.printMaxOncePerMinute("Failed to build " + buildingType + ", refresh it!");
+//                construction.setPositionToBuild(construction.findPositionForNewBuilding());
+//                resultString = " ErRoR_FiX!";
+//            }
         }
 
         unit().setTooltipTactical("Construct " + buildingType.name() + resultString);
@@ -227,11 +242,17 @@ public interface AUnitOrders {
 //        return move(target, unitAction, tooltip, false);
 //    }
 
+    default boolean move(HasPosition target, Action unitAction) {
+        return move(target, unitAction, null, false);
+    }
+
     default boolean move(HasPosition target, Action unitAction, String tooltip) {
         return move(target, unitAction, tooltip, false);
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
+//        if (true) return u().move(target.position().p());
+
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
             return false;
@@ -274,14 +295,16 @@ public interface AUnitOrders {
 
 //        String actionName = unit().action().name();
 //        int lastActionFramesAgo = unit().lastActionFramesAgo();
-        int lastActionFramesAgo = unit().lastActionFramesAgo();
-        if (
-            lastActionFramesAgo <= 1
-                || (lastActionFramesAgo <= 3 && unit().isMoving())
-//                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
-        ) {
-//            System.err.println("Ignore excessive move order");
-            if (A.fr % 16 != 0) return true;
+        if (unit().isMoving()) {
+            int lastActionFramesAgo = unit().lastActionFramesAgo();
+            if (
+                lastActionFramesAgo <= 1
+                //                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
+            ) {
+                // Prevent units from getting stuck by getting too quick move orders
+//                System.err.println("@ " + A.now() + " - " + unit() + " - PREVENT EXCESSIVE MOVING");
+                return true;
+            }
         }
 
         // =========================================================
@@ -301,29 +324,31 @@ public interface AUnitOrders {
 //        if (!unit().isMoving() || A.now() % 4 != 0) {
 //        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
 
-//        APosition currentTarget = unit().targetPosition();
-        APosition currentTarget = target.position();
+        AUnit currentTarget = unit().target();
+//        APosition currentTarget = target.position();
 
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
-//                System.out.println(unit().nameWithId() + " @" + A.now() + " MOVE / to:" + target + " / " + tooltip);
-                A.println(
-                    "@" + A.now() + "  " + unit().typeWithUnitId() + "  MOVE / to:" + target
-                );
-//                A.printStackTrace(unit().idWithHash() + " MOVE @" + A.now());
-            }
-        }
+//        System.err.println("isDifferentTarget = " + isDifferentTarget + " / " + target);
+//            currentTarget != null && (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6));
 
-        if (currentTarget == null || (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6))) {
-            if (unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
+//        boolean executeOrder = currentTarget == null || !target.equals(currentTarget);
+        boolean executeOrder = !unit().isMoving() || !target.equals(currentTarget);
+//        boolean executeOrder = true;
+
+        if (executeOrder) {
+            if (We.terran() && unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
                 unit().unsiege();
                 return true;
             }
 
-//            if (unit().isFirstCombatUnit()) {
+            if (unit().isGroundUnit() && !target.isWalkable()) {
+                if (!(target instanceof FoggedUnit) || !((FoggedUnit) target).isAir()) {
+                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unwalkable target " + target);
+                }
+            }
 
-//            }
-
+            if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+                A.println("@" + A.now() + ": " + unit().typeWithUnitId() + "  MOVE / to:" + target);
+            }
             u().move(target.position().p());
 
             unit().setLastActionReceivedNow()

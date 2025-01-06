@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.air.RunForYourLife;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

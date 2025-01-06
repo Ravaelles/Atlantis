@@ -2,7 +2,6 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.MaxBuildingDist;
@@ -367,7 +366,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return Requirements.hasRequirements(this);
     }
 
-    public HasPosition atPosition() {
+    public HasPosition aroundPosition() {
         return position;
     }
 
@@ -480,7 +479,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return usingExactPosition;
     }
 
-    public void forceSetPosition(APosition position) {
+    public void setAroundPosition(HasPosition position) {
         this.position = position;
     }
 

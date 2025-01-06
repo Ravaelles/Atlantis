@@ -71,7 +71,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Gosu bots - advanced single player cheating bots ====
@@ -102,6 +102,7 @@ public class Main {
         // vs Terran
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_BunkerEmpty.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
 
@@ -114,6 +115,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
 //        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1ZealZoo.scm";
 //        if (true) return "ums/rav/protoss/1DragWounded_v_1Zeal.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealDead.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
@@ -131,7 +133,7 @@ public class Main {
 
 //        if (true) return "ums/rav/protoss/3Zeal_v_3Zeal.scm";
 //        if (true) return "ums/rav/protoss/4Zeal_v_4Zeal.scm";
-//        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
+        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
@@ -148,9 +150,6 @@ public class Main {
 //@        if (true) return "ums/rav/P_v_Buildings.scx"; // Zealots+Dragoons vs Units+Buildings
 
         // -------------------- vs Zerg --------------------
-//        if (true) return "ums/rav/protoss/P_v_Z.scx";
-//        if (true) return "ums/rav/protoss/P_v_Lurkers.scx";
-//        if (true) return "ums/rav/protoss/P_v_Z2.scm"; // D+Z v Lings+Hydra
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens.scm";
 //        if (true) return "ums/rav/protoss/Drag&Zeal_v_Sunkens_2.scm";
 
@@ -158,9 +157,22 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens2.scm"; // Reaver & Shuttle  vs  Sunkens
 //        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens3.scx";
 
+//        if (true) return "ums/rav/protoss/P_v_Z.scx";
+//        if (true) return "ums/rav/protoss/P_v_Lurkers.scx";
+//        if (true) return "ums/rav/protoss/P_v_Z2.scm"; // D+Z v Lings+Hydra
+//        if (true) return "ums/rav/protoss/1Zeal_v_2Ling.scm";
+//        if (true) return "ums/rav/protoss/1Zeal_v_LingUp.scm";
+//        if (true) return "ums/rav/protoss/2Zeal_v_LingUp.scm";
+//        if (true) return "ums/rav/protoss/8Zeal_v_LingUp.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
-        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
+//        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
+//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_2Ling.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_2LingUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
@@ -238,7 +250,7 @@ public class Main {
 
         // === Generic =================================================================================================
 
-        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
+//        if (true) return "ums/dragoons_v_map.scx"; // 4 Dragoons attacking Zealots
 //        if (true) return "ums/training-PvT.scx"; // Dragoons & Zealots v. Vultures & Tanks + slowly Hi-Templars & Archons
 //        if (true) return "ums/dragoon_sweeping_mines.scm"; // 5 dragoons v. mines
 //        if (true) return "ums/mar_v_zea.scx"; // Marines & Medics v. Zealots on quite small map

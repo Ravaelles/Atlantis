@@ -3,8 +3,7 @@ package atlantis.units.special;
 import atlantis.architecture.Manager;
 import atlantis.architecture.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -43,7 +42,7 @@ public class FixIdleUnits extends Manager {
 //            && unit.lastStoppedRunningMoreThanAgo(12)
 //            unit.lastOrderWasFramesAgo() >= 30 * 4
             unit.lastActionMoreThanAgo(60)
-                && A.fr % 19 == 0;
+                && A.now % 19 == 0;
 //            && unit.isActiveManager(DoNothing.class)
 //            && unit.enemiesNear().ranged().countInRadius(6, unit) == 0
 //            && (!unit.isRanged() || unit.enemiesNear().inRadius(4, unit).empty());

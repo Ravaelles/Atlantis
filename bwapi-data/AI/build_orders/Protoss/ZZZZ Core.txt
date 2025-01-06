@@ -24,6 +24,6 @@
 14 - Zealot
 16 - Pylon
 20 - Zealot
+22 - Cybernetics Core
 23 - Zealot
-25 - Cybernetics Core
-26 - Assimilator
+24 - Assimilator

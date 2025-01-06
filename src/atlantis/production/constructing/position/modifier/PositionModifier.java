@@ -3,9 +3,7 @@ package atlantis.production.constructing.position.modifier;
 import atlantis.combat.micro.terran.bunker.position.BunkerEstimatePositionAtNatural;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.*;
-import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -76,16 +74,6 @@ public class PositionModifier {
             return FindPositionForBase.findPositionForBase_nearMainBase(building, builder, construction);
         }
         else if (modifier.equals(NATURAL)) {
-//            double maxDist = construction.maxDistance();
-//
-//            if (construction == null || construction.maxDistance() < 0) {
-//                maxDist = 30;
-//            }
-//
-//            if (building.isBase()) {
-//                maxDist = 1;
-//            }
-
             return FindPositionForBase.findPositionForBase_natural(building, builder);
         }
         else if (modifier.equals(ENEMY_NATURAL)) {
@@ -136,29 +124,10 @@ public class PositionModifier {
         // === Chokes ===========================================
 
         if (modifier.equals(MAIN_CHOKE)) {
-            if (construction != null) {
-                construction.setMaxDistance(9);
-            }
-            AChoke mainChoke = Chokes.mainChoke();
-            if (mainChoke != null) {
-                return APosition.create(mainChoke.center()).translateTilesTowards(
-                    main,
-                    1.2
-//                    (mainChoke.width() <= 4 ? 1.7 : )
-//                    2.8 + (mainChoke.width() <= 4 ? 1.7 : 0)
-                );
-            }
+            return PositionAtMainChoke.atMainChoke(construction);
         }
         else if (modifier.equals(NATURAL_CHOKE)) {
-            if (construction != null) {
-                construction.setMaxDistance(9);
-            }
-            AChoke chokepointForNatural = Chokes.natural();
-            if (chokepointForNatural != null && main != null) {
-                ABaseLocation natural = DefineNaturalBase.naturalIfMainIsAt(main.position());
-//                return APosition.create(chokepointForNatural.center()).translateTilesTowards(natural, 5);
-                return natural.translateTilesTowards(chokepointForNatural.center(), 8);
-            }
+            return PositionAtNaturalChoke.atNaturalChoke(construction);
         }
 
         return null;

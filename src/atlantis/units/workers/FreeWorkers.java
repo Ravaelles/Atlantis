@@ -11,8 +11,8 @@ public class FreeWorkers {
             .notCarrying()
             .notGatheringGas()
             .notScout()
-            .notRepairing()
             .notConstructing()
+            .notRepairing()
             .notProtectors()
             .notSpecialAction();
     }

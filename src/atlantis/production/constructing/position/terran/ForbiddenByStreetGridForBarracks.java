@@ -1,14 +1,9 @@
 package atlantis.production.constructing.position.terran;
 
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-
-import static atlantis.units.AUnitType.Terran_Barracks;
-import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
 public class ForbiddenByStreetGridForBarracks {
     private static int X1 = 5;
@@ -22,7 +17,7 @@ public class ForbiddenByStreetGridForBarracks {
         int GRID_SIZE = TerranForbiddenByStreetGrid.GRID_VALUE_X;
 
         if (!gridMatches(position, GRID_SIZE)) {
-            AbstractPositionFinder._CONDITION_THAT_FAILED = "Barracks grid does NOT allow it";
+            AbstractPositionFinder._STATUS = "Barracks grid does NOT allow it";
             return true;
         }
 

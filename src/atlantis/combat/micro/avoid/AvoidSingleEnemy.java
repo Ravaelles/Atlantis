@@ -2,9 +2,11 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
+import atlantis.combat.micro.avoid.terran.ShouldNotAvoidSingleEnemyBunker;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.log.ErrorLog;
 
 public class AvoidSingleEnemy extends Manager {
     protected final RunError runError;
@@ -16,34 +18,36 @@ public class AvoidSingleEnemy extends Manager {
         runError = new RunError(unit);
     }
 
+    //    public Manager avoid() {
     public Manager avoid() {
-        if (this.enemy == null) return processDontAvoid();
+        if (this.enemy == null) {
+//            ErrorLog.printMaxOncePerMinute("AvoidSingleEnemy - enemy is NULL for " + unit);
+            return processDontAvoid();
+        }
 
-        if (!enemy.hasBiggerWeaponRangeThan(unit)) {
-            unit.addLog("NoAvoidEnemyLilRange");
+        if (enemy.hasBiggerWeaponRangeThan(unit)) {
+            unit.addLog("EnemyHasLongerDick");
             return null;
         }
 
-        if (doNotAvoid()) return processDontAvoid();
-
-//        System.err.println("!!!!!!!!!!!!! AVOID PARENTS = " + parentsStack());
-//        if (true) return null;
-
-//        if (enemy.isCombatBuilding()) {
-//            return (new AvoidCombatBuilding(unit, enemy)).invoke(this);
-//        }
-
-//        if (unit.isDragoon()) A.printStackTrace("AvoidSingleEnemy");
-
-        if (unit.runningManager().runFrom(
-            enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, false
-        )) {
-            return usedManager(this);
+        if (ShouldNotAvoidSingleEnemyBunker.check(unit, enemy)) {
+            unit.addLog("SafeOwningBunker");
+            return null;
         }
 
-//        System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - @D@ Avoiding single " + enemy);
+
+        if (unit.runningManager().runFrom(
+            enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
+        )) {
+            return this;
+        }
 
         return runError.handleErrorRun(unit);
+    }
+
+    private boolean allowedToNotifyNearUnitsToMakeSpace() {
+        return unit.isDragoon() && unit.hp() <= 61;
     }
 
     private Manager processDontAvoid() {

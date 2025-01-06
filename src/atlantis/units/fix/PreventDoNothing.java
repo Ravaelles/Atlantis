@@ -1,8 +1,8 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -39,6 +39,15 @@ public class PreventDoNothing extends Manager {
 //            AttackNearbyEnemies manager = new AttackNearbyEnemies(unit);
 //            if (manager.invoked(this)) return usedManager(this);
 //        }
+
+        if (!unit.isLeader() && unit.moveToLeader(Actions.MOVE_FORMATION, "PreventNothingMove2Leader")) {
+            return usedManager(this);
+        }
+
+        APosition center = unit.friendsNear().groundUnits().center();
+        if (center != null && unit.move(center, Actions.MOVE_FORMATION, "PreventNothingMove2Center")) {
+            return usedManager(this);
+        }
 
         if (DoPreventFreezesLogic.handle(this, unit)) return usedManager(this);
 

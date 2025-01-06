@@ -3,6 +3,7 @@ package atlantis.combat.targeting;
 import atlantis.architecture.Manager;
 import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.units.AUnit;
+import atlantis.units.AliveEnemies;
 import bwapi.Color;
 
 public class TargetingWhenDefendingAroundFocus extends Manager {
@@ -18,7 +19,7 @@ public class TargetingWhenDefendingAroundFocus extends Manager {
     }
 
     public AUnit targetToAttack() {
-        AUnit target = ATargeting.possibleEnemyUnitsToAttack(unit, 12).nearestTo(unit);
+        AUnit target = AliveEnemies.get().canBeAttackedBy(unit, 15).nearestTo(unit);
 
         if (target != null) {
             unit.paintLineDouble(target, Color.Green);

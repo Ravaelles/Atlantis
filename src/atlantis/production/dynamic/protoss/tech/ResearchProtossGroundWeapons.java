@@ -43,7 +43,7 @@ public class ResearchProtossGroundWeapons extends Commander {
         int upgradeLevel = getCurrentUpgradeLevel();
         if (upgradeLevel >= 3) return true;
 
-        return A.canAfford(600, 400);
+        return !A.canAfford(550, 300);
     }
 
     private static int getCurrentUpgradeLevel() {

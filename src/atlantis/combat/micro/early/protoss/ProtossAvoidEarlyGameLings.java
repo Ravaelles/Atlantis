@@ -21,6 +21,7 @@ public class ProtossAvoidEarlyGameLings extends Manager {
             && Enemy.zerg()
             && Count.ourCombatUnits() <= 7
             && unit.isMelee()
+            && unit.cooldown() >= 4
             && (Enemy.zerg() || Enemy.protoss())
             && unit.shieldWound() >= 4
             && unit.combatEvalRelative() <= 1.1

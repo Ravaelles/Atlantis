@@ -15,6 +15,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
@@ -43,6 +44,23 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return forceMissionAttack(reason);
         }
 
+        if (Count.dragoons() >= 20) {
+            if (DEBUG) reason = "Goon-attack";
+            return true;
+        }
+
+        if (Enemy.zerg()) {
+            if (pressureZergWithLittleEarlyLings()) {
+                return true;
+            }
+        }
+
+        if (Enemy.terran()) {
+            if (pressureTerranEarly()) {
+                return true;
+            }
+        }
+
         if (A.s <= 30 * 6 && Count.dragoons() <= 1 && Count.cannons() >= 2) {
             if (DEBUG) reason = "Wait for Goon with Cannons";
             return false;
@@ -52,11 +70,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return forceMissionAttack(reason);
         }
 
-        double changedAgo = Missions.lastMissionChangedSecondsAgo();
-        if (changedAgo <= 3) {
-            if (DEBUG) reason = "Mission just changed (" + (int) changedAgo + "s)";
-            return false;
-        }
+//        double changedAgo = Missions.lastMissionChangedSecondsAgo();
+//        if (changedAgo <= 3) {
+//            if (DEBUG) reason = "Mission just changed (" + (int) changedAgo + "s)";
+//            return false;
+//        }
 
 ////        if (A.supplyUsed() <= 110 && EnemyInfo.isEnemyNearAnyOurBase()) return false;
 //        if (A.supplyUsed() <= 100 && OurArmy.strength() <= 145 && EnemyExistingExpansion.notFound()) {
@@ -119,8 +137,35 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         return false;
     }
 
+    private boolean pressureTerranEarly() {
+        if (
+            A.s <= 60 * 7 && (Count.dragoons() >= 1 || Count.cannons() >= 1) && OurArmy.strength() >= 90
+        ) {
+            if (DEBUG) reason = "Pressure Terran early";
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean pressureZergWithLittleEarlyLings() {
+        if (
+            A.s <= 60 * 7
+                && EnemyUnits.zerglings() <= 4
+                && EnemyUnits.hydras() <= 0
+                && Count.ourCombatUnits() >= 2
+                && OurArmy.strengthWithoutCB() >= 140
+                && !Have.cyberneticsCoreWithUnfinished() && Count.dragoons() <= 1
+        ) {
+            if (DEBUG) reason = "Pressure zerg with little lings";
+            return true;
+        }
+
+        return false;
+    }
+
     private boolean rushAllowsAttack() {
-        if (OurStrategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2) {
+        if (OurStrategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2 && OurArmy.strengthWithoutCB() >= 160) {
             if (DEBUG) reason = "Rush allows it";
             return true;
         }

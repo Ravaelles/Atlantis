@@ -1,9 +1,12 @@
 package atlantis.protoss.shuttle;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.alpha.Alpha;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -18,6 +21,7 @@ public class ProtossShuttleWithReaverEngage extends Manager {
     private AUnit target;
     private double dist;
     private AUnit reaver;
+    private AUnit centerUnit;
 
     public ProtossShuttleWithReaverEngage(AUnit unit) {
         super(unit);
@@ -25,23 +29,13 @@ public class ProtossShuttleWithReaverEngage extends Manager {
 
     @Override
     public boolean applies() {
-        unit.paintCircleFilled(14, Color.Red);
-
         if (unit.loadedUnits().isEmpty()) return false;
-
-        unit.paintCircleFilled(14, Color.Green);
 
         reaver = unit.loadedUnitsGet(Protoss_Reaver);
         if (reaver == null) return false;
 
-        targets = unit.enemiesNear().groundUnits().notDeadMan();
-//        System.err.println("targets = " + targets.size());
-
-        if (targets.notEmpty()) target = targets.nearestTo(unit);
-        else target = EnemyUnits.discovered().groundUnits().notDeadMan().nearestTo(unit);
-
+        target = defineTarget();
         if (target == null) return false;
-
 
         dist = unit.distTo(target);
 //        System.err.println("dist = " + dist);
@@ -49,8 +43,23 @@ public class ProtossShuttleWithReaverEngage extends Manager {
         return true;
     }
 
+    private AUnit defineTarget() {
+        centerUnit = Alpha.get().leader();
+        if (centerUnit == null) centerUnit = unit;
+
+        targets = centerUnit.enemiesNear().groundUnits().realUnitsAndCombatBuildings().notDeadMan();
+//        System.err.println("targets = " + targets.size());
+
+        if (targets.notEmpty()) return targets.nearestTo(reaver);
+        else return EnemyUnits.discovered().groundUnits().realUnitsAndCombatBuildings().notDeadMan().nearestTo(reaver);
+    }
+
     @Override
     public Manager handle() {
+        if (unit.distTo(centerUnit) >= 6 || (A.s % 8 <= 1)) {
+            if (unit.move(centerUnit, Actions.MOVE_ENGAGE, "ShuttleEngageLeader")) return usedManager(this);
+        }
+
         AUnit cb = reaver.enemiesNear()
             .combatBuildingsAntiLand()
             .inRadius(7.7, reaver)
@@ -62,7 +71,7 @@ public class ProtossShuttleWithReaverEngage extends Manager {
             return usedManager(this);
         }
 
-        if (dist <= 8.2) {
+        if (dist <= 8.9 + (unit.shotSecondsAgo() >= 5 ? 2 : 0)) {
             if (unloadHere()) return usedManager(this, "DELIVERY");
         }
         else {
@@ -73,9 +82,11 @@ public class ProtossShuttleWithReaverEngage extends Manager {
     }
 
     private boolean unloadHere() {
-
         APosition walkable = unit.position().makeWalkable(0);
         if (walkable == null) return false;
+
+        ARegion region = walkable.region();
+        if (region == null || !region.isConnected()) return false;
 
         return unit.unload(reaver);
     }

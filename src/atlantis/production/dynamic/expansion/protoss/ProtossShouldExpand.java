@@ -19,7 +19,6 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.Enemy;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 
 public class ProtossShouldExpand {
     private static Cache<Boolean> cache = new Cache<>();
@@ -57,6 +56,8 @@ public class ProtossShouldExpand {
 
     private static boolean forThirdAndLaterBases() {
         int workers = Count.workers();
+
+        if (forThirdTooFewGateways()) return no("TooFewGateways");
 
         if (genericThird()) return yes("Get3rd");
         if (thirdBecauseEnemyHasLotsOfCb()) return yes("Get3rd");
@@ -108,6 +109,14 @@ public class ProtossShouldExpand {
         return result;
     }
 
+    private static boolean forThirdTooFewGateways() {
+        return (
+            (Count.gatewaysWithUnfinished() * 2 < Count.basesWithUnfinished())
+                || (Count.freeGateways() <= 0)
+        )
+            && OurArmy.strengthWithoutCB() <= 135;
+    }
+
     private static boolean thirdBecauseEnemyHasLotsOfCb() {
         if (EnemyInfo.combatBuildingsAntiLand() >= 2) {
             return OurArmy.strength() >= 95 && Count.basesWithPlanned() <= 2;
@@ -133,19 +142,20 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = OurArmy.strength();
 
+        if (seconds >= 10.5 * 60) return yes("GettingLate");
+
+        if (cautionAgainstZealotRush()) return no("CautiosZealots");
+        if (cautionAgainstZergArmy()) return no("CautiosZerg");
+
         if (enemyGoesCombatBuildingsEarly()) return yes("EnemyManyEarlyCB");
 
         if (notEnoughGateways()) return no("NotEnoughGates");
         if (tooFewArmy()) return no("TooFewUnits");
         if (mainChokeOverwhelmed()) return no("MainChokeOverwhelm");
-        if (cautionAgainstZealotRush()) return no("CautiosZealots");
-        if (cautionAgainstZergArmy()) return no("CautiosZerg");
 
         if (
             !A.hasMinerals(500) && !Have.existingOrUnfinished(AUnitType.Protoss_Cybernetics_Core)
         ) return no("CoreFirst");
-
-        if (seconds >= 650) return yes("GettingLate");
 
         if (armyStrength <= 90) return no("TooWeak");
         if (seconds <= 500 && OurStrategy.get().isRushOrCheese()) no("RushPlan");
@@ -187,7 +197,7 @@ public class ProtossShouldExpand {
 
         if (A.hasMinerals(500)) return false;
 
-        return OurArmy.strength() <= 130 && Count.ourCombatUnits() <= 13;
+        return OurArmy.strength() <= 140 && Count.ourCombatUnits() <= 13;
     }
 
     private static boolean notEnoughGateways() {

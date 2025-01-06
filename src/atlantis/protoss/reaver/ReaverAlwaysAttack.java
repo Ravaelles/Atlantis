@@ -26,13 +26,13 @@ public class ReaverAlwaysAttack extends Manager {
         AUnit enemy;
 
         // First attack very close enemies
-        if ((enemy = enemies.inRadius(2, unit).nearestTo(unit)) != null) {
+        if ((enemy = enemies.inRadius(3, unit).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Closest" + enemy.name());
             return usedManager(this);
         }
 
-        if ((enemy = enemies.inRadius(4, unit).mostDistantTo(unit)) != null) {
+        if ((enemy = enemies.inRadius(6, unit).mostDistantTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Near" + enemy.name());
             return usedManager(this);
@@ -46,7 +46,7 @@ public class ReaverAlwaysAttack extends Manager {
         }
 
         // Attack CB
-        Selection CBs = enemies.inRadius(9, unit).combatBuildings(true);
+        Selection CBs = enemies.inRadius(8.1, unit).combatBuildings(true);
         if ((enemy = CBs.inRadius(7.8, unit).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Juicy" + enemy.name());
@@ -78,15 +78,15 @@ public class ReaverAlwaysAttack extends Manager {
     private Selection enemies() {
         enemies = unit.enemiesNear()
             .groundUnits()
-            .excludeEggsAndLarvae()
+            .realUnitsAndCombatBuildings()
             .effVisible()
-            .canBeAttackedBy(unit, 6)
+            .canBeAttackedBy(unit, -0.1)
             .notDeadMan();
 
         if (enemies.empty()) {
             enemies = EnemyUnits.discovered()
                 .groundUnits()
-                .excludeEggsAndLarvae()
+                .realUnitsAndCombatBuildings()
                 .effVisible()
                 .canBeAttackedBy(unit, 999)
                 .notDeadMan();

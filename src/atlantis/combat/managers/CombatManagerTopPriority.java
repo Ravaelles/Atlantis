@@ -2,6 +2,8 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
+import atlantis.combat.micro.attack.AttackParamountUnitsInRange;
+import atlantis.combat.micro.attack.expansion.OverrideAndAttackEnemyExpansion;
 import atlantis.combat.micro.avoid.ContinueRunning;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
@@ -14,11 +16,10 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.squad.positioning.Cohesion;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.ContinueCurrentAction;
 import atlantis.units.interrupt.ContinueShooting;
 import atlantis.units.interrupt.ContinueShotAnimation;
 import atlantis.units.special.FixIdleUnits;
-import atlantis.units.special.RemoveDeadUnits;
+import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.special.ums.FixInvalidTargets;
 
@@ -36,31 +37,38 @@ public class CombatManagerTopPriority extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ManualOverrideManager.class,
-            RemoveDeadUnits.class,
+            RemoveDeadUnitsManager.class,
+
+            FixPerformanceForBigSupply.class,
+
+            Unfreezer.class,
 
             AvoidCombatBuildingClose.class,
 
             ContinueShotAnimation.class,
 
-            Unfreezer.class,
-//            DetectUnitsNotRunning.class,
-            FixPerformanceForBigSupply.class,
+            DanceAwayAsMelee.class,
+            DanceAfterShoot.class,
 
-            FixInvalidTargets.class,
-            FixIdleUnits.class,
+            HoldToShoot.class,
+            ContinueShooting.class,
+//            ContinueCurrentAction.class,
+
+            AttackParamountUnitsInRange.class,
+            ProtossEarlyGame.class,
+
+            OverrideAndAttackEnemyExpansion.class,
 
             ProtossCombatManager.class,
             TerranCombatManager.class,
 
-            HoldToShoot.class,
-            ContinueShooting.class,
-            ContinueCurrentAction.class,
-
             AvoidCriticalUnits.class,
+
+            FixInvalidTargets.class,
+            FixIdleUnits.class,
 
             ContinueRunning.class,
 
-            ProtossEarlyGame.class,
 //            AvoidCombatBuilding.class,
 
             Cohesion.class,
@@ -73,8 +81,6 @@ public class CombatManagerTopPriority extends Manager {
 //            PreventAttackNull.class,
 //            PreventAttackForTooLong.class,
 
-            DanceAwayAsMelee.class,
-            DanceAfterShoot.class,
 //            ContinueShooting.class,
             TransportUnits.class,
         };

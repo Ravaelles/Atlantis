@@ -23,7 +23,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     }
 
     private static boolean freeToSpendResources() {
-        if (!A.hasMinerals(500) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
+        if (!A.hasMinerals(450) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
         if (A.hasMinerals(550)) return decision(true, "Minerals++");
 
         if (A.supplyUsed() >= 25) {
@@ -31,6 +31,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
             int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
 //            int reservedGas = ReservedResources.gas();
 //            int gasMargin = A.supplyUsed() < 40 ? 50 : 125;
+
+            if (
+                Count.ourCombatUnits() < 15 && Count.basesWithUnfinished() >= 2 && A.hasMinerals(180)
+            ) return decision(true, "DoCombatUnits");
 
             if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
                 return decision(false, "MissingMinerals");
@@ -88,10 +92,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         if (!AGame.everyNthGameFrame(7)) return;
 
         ProduceScarabs.scarabs();
+        ProduceReavers.reavers();
         ProduceObserver.observers();
         ProduceArbiters.arbiters();
         ProduceShuttle.shuttles();
-        ProduceReavers.reavers();
         ProduceDarkTemplar.dt();
         ProduceHighTemplar.ht();
         ProduceCorsairs.corsairs();

@@ -19,7 +19,6 @@ import java.util.ArrayList;
  * next base or returning important choke point near the main base.
  */
 public class AMap {
-
     protected static BWEM bwem = null;
 //    private static final BWTA bwta = null;
 
@@ -46,11 +45,11 @@ public class AMap {
 
         // Init BWEM - Terran analysis tool
         bwem = new BWEM(Atlantis.game());
-        bwem.initialize();
-        bwem.getMap().assignStartingLocationsToSuitableBases();
 
         // Init JBWEB - needed for calculating ground distance
         try {
+            bwem.initialize();
+            bwem.getMap().assignStartingLocationsToSuitableBases();
             InitJBWEB.init();
         } catch (Exception e) {
             A.errPrintln("JBWEB exception, but dont worry. We can continue.");
@@ -66,6 +65,11 @@ public class AMap {
     public static BWMap getMap() {
         return bwem.getMap();
     }
+
+    public static BWEM bwem() {
+        return bwem;
+    }
+
 //    public static BWTA getMap() {
 //        return bwta;
 //    }
@@ -236,5 +240,7 @@ public class AMap {
 //
 //        return true;
 //    }
-
+    public static void setBWEM(BWEM bwem) {
+        AMap.bwem = bwem;
+    }
 }

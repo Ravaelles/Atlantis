@@ -1,6 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
+import atlantis.decisions.Decision;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -32,7 +33,7 @@ import java.util.regex.Pattern;
  */
 public class A {
     public static int s; // Seconds - real time
-    public static int fr; // Frames - game frames (~30 = 1s)
+    public static int now; // Frames - game frames (~30 = 1s)
 
     /**
      * <b>Random</b> object that can be used in any part of code.
@@ -1442,6 +1443,18 @@ public class A {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return ifEnemyTerran;
         return ifEnemyZerg;
+    }
+
+    public static Decision whenEnemyProtossTerranZerg(
+        Callable ifEnemyProtoss, Callable ifEnemyTerran, Callable ifEnemyZerg
+    ) {
+        try {
+            if (Enemy.protoss()) return (Decision) ifEnemyProtoss.call();
+            if (Enemy.terran()) return (Decision) ifEnemyTerran.call();
+            return (Decision) ifEnemyZerg.call();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static String minSec() {

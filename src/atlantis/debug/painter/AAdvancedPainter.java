@@ -202,7 +202,8 @@ public class AAdvancedPainter extends APainter {
             // === Paint life bars bars over wounded units
             // =========================================================
 
-            paintLifeBar(unit);
+            paintHealthBar(unit);
+            paintCooldownBar(unit);
 
             // =========================================================
             // === Paint if enemy units is dangerously close
@@ -373,7 +374,7 @@ public class AAdvancedPainter extends APainter {
             if (!enemy.isAlive()) continue;
 
             paintCombatEval(enemy);
-            paintLifeBar(enemy);
+            paintHealthBar(enemy);
 //            paintCooldown(enemy);
 //            paintEnemyTargets(enemy);
             paintTextCentered(enemy, enemy.idWithHash(), Color.Grey, 0, 1);
@@ -1467,11 +1468,11 @@ public class AAdvancedPainter extends APainter {
             if (centerUnit != null) {
                 int maxDist = (int) squad.radius();
 
-                paintCircle(centerUnit, maxDist + 1, Grey);
-                paintCircle(centerUnit, maxDist, Grey);
+//                paintCircle(centerUnit, maxDist + 1, Grey);
+//                paintCircle(centerUnit, maxDist, Grey);
 
                 setTextSizeMedium();
-                paintTextCentered(centerUnit, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
+//                paintTextCentered(centerUnit, squad.cohesionPercent() + "%", Color.Teal, 0, -(maxDist / 32.0) + 0.12);
             }
         }
     }
@@ -1502,13 +1503,22 @@ public class AAdvancedPainter extends APainter {
 //        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
 //    }
 
-    private static void paintLifeBar(AUnit unit) {
+    private static void paintHealthBar(AUnit unit) {
         Color color = unit.isOur() ? Green : Yellow;
 
 //        if (unit.isWounded()) {
         paintUnitProgressBar(unit, 10, 100, Color.Red);
         paintUnitProgressBar(unit, 10, unit.hpPercent(), color);
 //        }
+    }
+
+    private static void paintCooldownBar(AUnit unit) {
+        int progress = 100;
+        if (unit.cooldown() <= 12) {
+            progress = unit.cooldown() * 9;
+        }
+
+        paintUnitProgressBar(unit, -20, progress, Grey);
     }
 
     private static void paintUnitProgressBar(AUnit unit, int dpy, int progressPercent, Color barColor) {

@@ -1,8 +1,6 @@
 package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -27,7 +25,7 @@ public class ShouldStopRunningDragoon extends Manager {
 
         Selection enemies = unit.enemiesNear();
         Selection meleeEnemies = enemies.melee();
-        if (meleeEnemies.inRadius(3.5, unit).notEmpty()) return false;
+        if (meleeEnemies.inRadius(3.7, unit).notEmpty()) return false;
 
 //        unit.paintCircleFilled(10, Color.Yellow);
 

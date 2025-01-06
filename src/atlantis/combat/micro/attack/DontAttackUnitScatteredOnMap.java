@@ -29,8 +29,8 @@ public class DontAttackUnitScatteredOnMap {
     private static boolean dontChaseLonelyZerglings(AUnit unit, AUnit enemy) {
         return Enemy.zerg()
             && enemy.isZergling()
-            && !unit.canAttackTargetWithBonus(enemy, 0.1)
-            && enemy.friendsNear().groundUnits().inRadius(4, unit).atMost(1);
+            && !unit.canAttackTargetWithBonus(enemy, 0)
+            && enemy.friendsNear().groundUnits().inRadius(3, unit).atMost(1);
     }
 
     private static boolean preventChasingEarlyWorkerScout(AUnit unit, AUnit enemy) {

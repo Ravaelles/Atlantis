@@ -1,16 +1,18 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
+import atlantis.map.choke.AChoke;
+import atlantis.units.AUnit;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * This class is wrapper for ArrayList<Position>. It allows some helpful methods to be executed upon squad of
- * positions like sorting etc. TODO: check whether using PositionedObject instead of Positions yields correct
- * behavior
+ * positions like sorting etc.
  */
 //public class Positions<T extends Point<Position>> {
-public class Positions<T extends HasPosition> {
+public class Positions<T extends HasPosition> implements Serializable {
 
     private final ArrayList<T> positions = new ArrayList<>();
 
@@ -28,6 +30,15 @@ public class Positions<T extends HasPosition> {
 
     public Positions(Collection<T> positionsToAdd) {
         addPositions(positionsToAdd);
+    }
+
+    // =====================================================================
+
+    //    public static T nearestToFrom(HasPosition nearestTo, List<T extends HasPosition> positionsList) {
+    public static HasPosition nearestToFrom(HasPosition nearestTo, List<? extends HasPosition> positionsList) {
+        Positions positions = new Positions();
+        positions.addPositions(positionsList);
+        return positions.nearestTo(nearestTo);
     }
 
     // =====================================================================
@@ -76,7 +87,7 @@ public class Positions<T extends HasPosition> {
 
     public Positions<T> limit(int n) {
         if (positions.size() > n) {
-            return new Positions<>(positions.subList(n, positions.size()));
+            return new Positions<>(positions.subList(0, n));
         }
 
         return this;
@@ -304,7 +315,7 @@ public class Positions<T extends HasPosition> {
         return closest;
     }
 
-    public int getLastIndex() {
+    public int getLastIndexForScout() {
         return _lastIndex;
     }
 

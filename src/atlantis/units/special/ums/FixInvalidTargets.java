@@ -1,10 +1,8 @@
 package atlantis.units.special.ums;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.AttackNearbyEnemies;
-import atlantis.combat.squad.positioning.Cohesion;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 
 public class FixInvalidTargets extends Manager {
     public FixInvalidTargets(AUnit unit) {
@@ -25,16 +23,9 @@ public class FixInvalidTargets extends Manager {
 
     @Override
     public Manager handle() {
-//        unit.paintCircleFilled(16, Color.Teal);
+        AttackNearbyEnemies.clearCache();
 
         if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
-
-//        if ((new Cohesion(unit)).invokeFrom(this) != null) return usedManager(this);
-//
-//        if (unit.lastActionMoreThanAgo(11, Actions.HOLD_POSITION)) {
-//            unit.holdPosition("FixStopped&Hold");
-//            return usedManager(this);
-//        }
 
         return null;
     }

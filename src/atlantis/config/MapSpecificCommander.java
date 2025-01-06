@@ -123,7 +123,7 @@ public class MapSpecificCommander extends Commander {
 
         else if (
             ActiveMap.isMap("Drag_v_")
-                || ActiveMap.isMap("/Zeal_v_")
+                || ActiveMap.isMap("Zeal_v_")
         ) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;

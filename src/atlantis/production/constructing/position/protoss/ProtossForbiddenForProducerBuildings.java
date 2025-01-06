@@ -38,7 +38,7 @@ public class ProtossForbiddenForProducerBuildings {
     }
 
     private static boolean fail(String reason) {
-        AbstractPositionFinder._CONDITION_THAT_FAILED = reason;
+        AbstractPositionFinder._STATUS = reason;
         return true;
     }
 }

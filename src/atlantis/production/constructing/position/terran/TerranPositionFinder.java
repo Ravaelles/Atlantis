@@ -52,7 +52,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             builder = FreeWorkers.get().first();
         }
         if (nearTo == null) {
-            ErrorLog.printMaxOncePerMinute("nearTo is null for " + building + ", fallback to any building");
+            ErrorLog.printMaxOncePerMinute("Your nearTo is null for " + building + ", fallback to any building");
         }
 
         HasPosition finalNearTo = nearTo != null ? nearTo : Select.mainOrAnyBuilding();
@@ -73,7 +73,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     }
 
     private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _CONDITION_THAT_FAILED = null;
+        _STATUS = null;
 
 //        System.err.println("building = " + building);
 //        System.err.println("nearTo = " + nearTo);
@@ -141,7 +141,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
                 && !building.isBase()
                 && !CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(2, 0))
         ) {
-            _CONDITION_THAT_FAILED = "MY_ADDON_COULDNT_BE_BUILT_HERE";
+            _STATUS = "MY_ADDON_COULDNT_BE_BUILT_HERE";
             return true;
         }
 
@@ -151,7 +151,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         for (AUnit otherBuilding : Select.ourBuildingsWithUnfinished().inRadius(8, position).list()) {
             if (otherBuilding.canHaveAddon()) {
                 if (!CanPhysicallyBuildHere.check(builder, building, position.translateByTiles(-2, 0))) {
-                    _CONDITION_THAT_FAILED = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
+                    _STATUS = "WOULD_COLLIDE_WITH_ANOTHER_BUILDING_ADDON";
                     return true;
                 }
             }
