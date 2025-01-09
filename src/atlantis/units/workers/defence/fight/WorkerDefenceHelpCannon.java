@@ -6,8 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.units.workers.GatherResources;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class WorkerDefenceHelpCannon extends Manager {
@@ -22,10 +21,10 @@ public class WorkerDefenceHelpCannon extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.isWorker()
-            && unit.woundHp() <= 8
+            && unit.hp() >= 19
             && (cannon = defineCannon()) != null
             && (enemiesNearCannon = cannon.enemiesNear().inRadius(7.8, cannon)).notEmpty()
-            && enemiesNearCannon.countInRadius(6.8, cannon) >= 3
+            && enemiesNearCannon.countInRadius(7.8, cannon) >= 3
             && laterInGameAgainstRangedEnemiesJustIgnore()
             && ourCombatUnitsTooWeak();
     }
@@ -34,7 +33,7 @@ public class WorkerDefenceHelpCannon extends Manager {
         if (A.s >= 9.5 * 60) return true;
         if (Enemy.terran()) return false;
 
-        return cannon.enemiesNear().ranged().atLeast(5)
+        return cannon.enemiesNear().ranged().atLeast(6)
             || cannon.enemiesNear().ranged().inRadius(10, cannon).atLeast(5);
     }
 

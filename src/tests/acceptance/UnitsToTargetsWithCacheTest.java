@@ -2,13 +2,13 @@ package tests.acceptance;
 
 import atlantis.combat.micro.terran.infantry.TerranGhost;
 import atlantis.game.A;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UnitsToTargetsWithCacheTest extends AbstractTestFakingGame {
+public class UnitsToTargetsWithCacheTest extends AbstractTestWithWorld {
 
     private FakeUnit ghost1;
     private FakeUnit ghost2;

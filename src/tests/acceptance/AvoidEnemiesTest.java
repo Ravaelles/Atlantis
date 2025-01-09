@@ -7,11 +7,11 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.util.Angle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.fakes.FakeUnit;
 
-public class AvoidEnemiesTest extends NonAbstractTestFakingGame {
+public class AvoidEnemiesTest extends WorldStubForTests {
     public MockedStatic<AGame> aGame;
 
     @Test

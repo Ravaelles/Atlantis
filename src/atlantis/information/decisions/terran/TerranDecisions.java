@@ -6,10 +6,10 @@ import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
@@ -36,7 +36,7 @@ public class TerranDecisions extends Decisions {
             "haveFactories",
             91,
             () -> {
-                return OurStrategy.get().goingBio();
+                return Strategy.get().goingBio();
             }
         );
     }

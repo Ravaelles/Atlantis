@@ -2,7 +2,7 @@ package atlantis.combat.micro.attack;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class CanAttackAsMelee {

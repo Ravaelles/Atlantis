@@ -3,24 +3,22 @@ package tests.unit;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.ProtossStrategies;
-import atlantis.production.constructing.builders.TravelToConstruct;
+import atlantis.production.constructions.builders.TravelToConstruct;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
-import atlantis.util.Options;
 import bwapi.Race;
-import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
 
-public class TravelToConstructTest extends NonAbstractTestFakingGame {
+public class TravelToConstructTest extends WorldStubForTests {
     @Override
     public Race initRace() {
         return Race.Protoss;
@@ -100,7 +98,7 @@ public class TravelToConstructTest extends NonAbstractTestFakingGame {
                 System.err.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
 //                ProductionOrder gatewayOrder = CurrentBuildOrder.get().productionOrders().get(0);
-                Orders nextOrders = Queue.get().nonCompletedNext30();
+                Orders nextOrders = Queue.get().notFinishedNext30();
                 nextOrders.print("Next orders assuming we have Pylon and Forge");
 
                 ProductionOrder gatewayOrder = nextOrders.ofType(Protoss_Gateway).first();

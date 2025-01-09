@@ -1,9 +1,8 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
+import atlantis.combat.squad.Squad;
 import atlantis.game.AGame;
-import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
     private int timeNow;
@@ -50,18 +49,31 @@ public class UnitStateManager extends Manager {
             unit._lastStartedAttack = timeNow;
         }
 
-        AUnit _oldLastTargetToAttack = unit._lastTargetToAttack;
-        unit._lastTargetToAttack = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+        AUnit _oldLastTargetToAttack = unit._lastTarget;
+        unit._lastTarget = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+
         if (unit.target() != null && !unit.target().equals(_oldLastTargetToAttack)) {
             unit._lastTargetToAttackAcquired = timeNow;
+            unit._lastTargetType = unit.target().type();
         }
+
+        Squad squad = unit.squad();
 
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = timeNow;
+            if (squad != null) {
+                squad.markLastUnderAttackNow();
+            }
 
             if (unit.isUnderAttack(2)) {
                 unit.increaseHitCount();
 //                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UNDER ATTACK - " + unit.hitCount());
+            }
+        }
+
+        if (unit.isAttacking()) {
+            if (squad != null) {
+                squad.markLastAttackedNow();
             }
         }
 

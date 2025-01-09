@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.Army;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -18,7 +19,8 @@ public class ProduceShuttle {
 //        if (true) return false;
 
         if (!Have.roboticsFacility()) return false;
-        if (!Have.observer() && EnemyInfo.hasHiddenUnits()) return false;
+        if (!Have.observer() && EnemyInfo.goesOrHasHiddenUnits()) return false;
+        if (Army.strength() <= 120 && Count.ourCombatUnits() <= 10) return false;
 
         int shuttles = Count.shuttles();
         if (shuttles == 0 && A.hasMinerals(650)) return produceShuttle();

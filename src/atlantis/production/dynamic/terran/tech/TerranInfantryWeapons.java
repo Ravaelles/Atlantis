@@ -2,27 +2,27 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.tech.ATech;
-import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.dynamic.protoss.tech.ResearchNow;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 public class TerranInfantryWeapons extends Commander {
     @Override
     public boolean applies() {
+        if (Count.basesWithUnfinished() <= 1) return false;
         if (!A.canAfford(550 + delayBonus(), 250)) return false;
 
-        if (OurStrategy.get().goingBio() && Count.infantry() >= 8) {
+        if (Strategy.get().goingBio() && Count.infantry() >= 8) {
             int currentUpgradeLevel = upgradeLevel();
             int minInfantry = 12 + currentUpgradeLevel * 9;
             if (
                 currentUpgradeLevel <= 2
                     && Count.infantry() >= minInfantry
             ) {
-                if (ATech.isNotResearchedOrPlanned(UpgradeType.Terran_Infantry_Weapons)) {
+                if (ATech.isNotResearchedOrPlanned(what())) {
                     return true;
                 }
             }
@@ -36,13 +36,18 @@ public class TerranInfantryWeapons extends Commander {
     }
 
     public static int upgradeLevel() {
-        return ATech.getUpgradeLevel(UpgradeType.Terran_Infantry_Weapons);
+        return ATech.getUpgradeLevel(what());
     }
 
     @Override
     protected void handle() {
         if (upgradeLevel() <= 2) {
-            AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
+            ResearchNow.research(what());
+//            AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
         }
+    }
+
+    public static UpgradeType what() {
+        return UpgradeType.Terran_Infantry_Weapons;
     }
 }

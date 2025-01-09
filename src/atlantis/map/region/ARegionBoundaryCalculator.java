@@ -43,7 +43,7 @@ public class ARegionBoundaryCalculator {
         do {
             position = center.translateByVector(vector).makeBuildableGroundPositionFarFromBounds();
 
-            if (position != null && position.isBuildable()) {
+            if (position != null && position.isBuildableIncludeBuildings()) {
                 lastBuildable = position;
             }
 

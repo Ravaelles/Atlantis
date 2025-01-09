@@ -7,12 +7,12 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.Vector;
 import atlantis.util.We;
 
@@ -43,7 +43,7 @@ public class NeedChokeBlockers {
         if (EnemyUnitBreachedBase.notNull()) return false;
 
         if (Enemy.protoss()) {
-            if (OurArmy.strength() >= 210) return false;
+            if (Army.strength() >= 210) return false;
         }
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
@@ -58,7 +58,7 @@ public class NeedChokeBlockers {
     }
 
     private static boolean forTerran() {
-        if (OurStrategy.get().isRushOrCheese()) return false;
+        if (Strategy.get().isRushOrCheese()) return false;
 
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;

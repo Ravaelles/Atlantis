@@ -4,27 +4,27 @@ import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.running.fallback.RunAttackFallback;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.game.A;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLog;
+import bwapi.Color;
 
 public class ARunningManager {
-    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
-    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
+//    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
+//    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
 
     protected final AUnit unit;
     protected HasPosition runTo = null;
     protected AUnit runningFromUnit = null;
     protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
-    protected String method = "Init";
+    protected String _lastRunMode = "Init";
 
     protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
-    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
-    protected final ReasonableRunToPosition reasonableRunToPosition = new ReasonableRunToPosition(this);
+    //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
     protected final RunToPositionFinder runPositionFinder = new RunToPositionFinder(this);
 
     // =========================================================
@@ -47,7 +47,7 @@ public class ARunningManager {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
         if (unit.lastStartedRunningLessThanAgo(1)) return true;
 
-        method = "Undefined";
+//        _lastRunMode = "Undefined";
 
         if (runFrom instanceof AUnit) {
             runningFromUnit = (AUnit) runFrom;
@@ -68,18 +68,23 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (runTo != null && runTo.isWalkable() && unit.distTo(runTo.position()) >= 0.05) {
-            dist = unit.distTo(runTo);
-            unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
-            return makeUnitRun(action);
+        if (validateAndRun(action, 1, false)) return makeUnitRun(action);
+
+        if (A.isUms() && !unit.isObserver()) {
+//            System.err.println(
+//                "=== RUN ERROR ================= run:"
+//                    + (runTo != null ? runTo.toStringPixels() : "-")
+//                    + " / unit:" + unit.position().toStringPixels()
+//                    + " / dist:" + (runTo != null ? runTo.distToDigit(unit) : "-")
+//                    + " / walkable:" + (runTo != null && runTo.isWalkable() ? "Y" : "N")
+//                    + " / method:" + method
+//            );
+//            CameraCommander.centerCameraOn(unit);
+            unit.paintCircleFilled(8, Color.Red);
+//            PauseAndCenter.on(unit);
         }
 
-        if (A.isUms() && !unit.isObserver()) System.err.println(
-            "=== RUN ERROR ================= run:"
-                + (runTo != null ? runTo.toStringPixels() : "-")
-                + " / unit:" + unit.position().toStringPixels()
-                + " / method:" + method
-        );
+        if (validateAndRun(action, 1, true)) return makeUnitRun(action);
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
@@ -89,12 +94,33 @@ public class ARunningManager {
         return actWhenCantRun();
     }
 
+    private boolean validateAndRun(Action action, double minDist, boolean prioritizeMoving) {
+        if (
+            runTo != null
+                && runTo.isWalkable()
+                && unit.distTo(runTo.position()) >= 0.05
+                && ((prioritizeMoving && unit.isMoving()) || unit.distTo(runTo.position()) >= minDist)
+        ) {
+            double dist = unit.distTo(runTo);
+            unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
+            return true;
+        }
+
+//        System.err.println("runTo.isWalkable() = " + runTo.isWalkable());
+//        System.err.println("unit.distTo(runTo.position()) = " + unit.distTo(runTo.position()));
+
+        return false;
+    }
+
     private boolean actWhenCantRun() {
         unit.addLog("CantRun");
 
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
-            unit.setManagerUsed(new RunAttackFallback(unit));
-            return true;
+        if (unit.hp() >= 80) {
+            if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+                unit.setTooltip("CantRun-Attack");
+                unit.setManagerUsed(new RunAttackFallback(unit));
+                return true;
+            }
         }
 
         return false;
@@ -119,75 +145,21 @@ public class ARunningManager {
 
     // =========================================================
 
-    /**
-     * Returns true if given run position is traversable, land-connected and not very, very far
-     */
-    public boolean isReasonablePositionToRun(
-        AUnit unit, APosition position
-    ) {
-        return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position);
-    }
-
-    public boolean isReasonablePositionToRun(
-        AUnit unit, APosition position, boolean includeNearWalkability, String charForIsOk, String charForNotOk
-    ) {
-        return reasonableRunToPosition.isPossibleAndReasonablePosition(unit, position, includeNearWalkability, charForIsOk, charForNotOk);
-    }
-
-//    private boolean handleOnlyCombatBuildingsAreDangerouslyClose(AUnit unit) {
-//        if (unit.isRunning()) {
-//            return false;
-//        }
-//
-//        // Check if only combat buildings are dangerously close. If so, don't run in any direction.
-//        Units dangerous = AvoidEnemies.unitsToAvoid(unit, true);
-//
-//        if (dangerous.isEmpty()) {
-//            return false;
-//        }
-//
-//        Selection combatBuildings = Select.from(dangerous).combatBuildings(false);
-//        if (dangerous.size() == combatBuildings.size() && unit.enemiesNear().combatUnits().atMost(1)) {
-//            double minDist = unit.isGhost() ? 9.5 : 7.5;
-//            AUnit combatBuilding = combatBuildings.nearestTo(unit);
-//
-//            if (combatBuilding.distToLessThan(unit, minDist)) {
-//                if (unit.isHoldingPosition() && unit.lastActionMoreThanAgo(30)) {
-//                    if (unit.moveAwayFrom(combatBuilding, 0.3, "Careful", Actions.RUN_ENEMY)) {
-//                        return true;
-//                    }
-//                }
-//                else if (unit.isMoving() && unit.isAction(Actions.RUN_ENEMY)) {
-//                    unit.holdPosition("Steady");
-//                    return true;
-//                }
-//            }
-//        }
-//
-//        return false;
-//    }
-
-//    private boolean distToNearestRegionBoundaryIsOkay(APosition position) {
-//        ARegion region = position.region();
-//        if (region != null) {
-//            return true;
-//        }
-//
-//        for (ARegionBoundary boundary : region.boundaries()) {
-//            if (boundary.distToLessThan(unit, MIN_DIST_TO_REGION_BOUNDARY)) {
-//                return false;
-//            }
-//        }
-//
-//        return true;
+//    public boolean isReasonablePositionToRun(AUnit unit, APosition position) {
+//        return IsReasonablePositionToRunTo.isPossibleAndReasonablePosition(
+//            unit, position, runningFromPosition, true, null, null
+//        );
 //    }
 
     private boolean makeUnitRun(Action action) {
-        if (unit == null) return false;
+        if (unit == null) {
+            ErrorLog.printMaxOncePerMinute("Unit is null in makeUnitRun");
+            return false;
+        }
 
         if (runTo == null) {
             stopRunning();
-            System.err.println("RunTo should not be null!");
+            ErrorLog.printMaxOncePerMinute("RunTo should not be null!");
             unit.setTooltip("Fuck!", false);
             return true;
         }
@@ -201,7 +173,7 @@ public class ARunningManager {
 
                 // Make all other units very close to it run as well
                 if (allowedToNotifyNearUnitsToMakeSpace) {
-                    (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits();
+                    (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits(this.runningFromPosition());
                 }
 
                 return true;
@@ -246,6 +218,8 @@ public class ARunningManager {
         runningFromPosition = null;
         runningFromUnit = null;
 
+        if (unit.isMoving() && unit.lastActionMoreThanAgo(1)) unit.holdToShoot();
+
 //        A.printStackTrace("StoppedRunning");
     }
 
@@ -279,5 +253,9 @@ public class ARunningManager {
         this.runTo = runTo;
         unit._lastRunningPositionChange = A.now;
         return runTo;
+    }
+
+    public String lastRunMode() {
+        return _lastRunMode;
     }
 }

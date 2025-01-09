@@ -3,7 +3,6 @@ package atlantis.terran.repair;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 
 public class DynamicRepairsNearby extends Manager {
     public DynamicRepairsNearby(AUnit unit) {
@@ -26,7 +25,10 @@ public class DynamicRepairsNearby extends Manager {
     }
 
     private boolean check() {
-        if (!A.hasMinerals(15)) return false;
+        if (!A.hasMinerals(15)) {
+            removeRepairer();
+            return false;
+        }
 
         AUnit repairable = repairable();
 
@@ -38,9 +40,10 @@ public class DynamicRepairsNearby extends Manager {
             RepairAssignments.addRepairer(unit, repairable);
             if (!unit.isRepairing()) {
                 unit.repair(repairable, "DynaRepair");
+                return true;
             }
 
-            if (repairable.looksIdle()) {
+            if (repairable.isABuilding() || repairable.looksIdle()) {
                 if (repairable.isScv()) {
                     repairable.repair(unit, "LoveBack");
                     return true;
@@ -53,12 +56,27 @@ public class DynamicRepairsNearby extends Manager {
             }
         }
 
+//        if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
         if (!unit.isRepairing() && !unit.hasNotMovedInAWhile()) {
-            RepairAssignments.removeRepairer(unit);
-            return false;
+            if (!canRemoveRepairer(repairable)) {
+                removeRepairer();
+                return false;
+            }
         }
 
         return false;
+    }
+
+    private void removeRepairer() {
+        RepairAssignments.removeRepairer(unit);
+        RepairAssignments.removeProtector(unit);
+    }
+
+    private boolean canRemoveRepairer(AUnit target) {
+        if (target == null || target.hp() <= 0) return false;
+        if (unit.isProtector()) return false;
+
+        return target.enemiesNear().havingWeapon().countInRadius(7, target) >= 2;
     }
 
     private AUnit repairable() {

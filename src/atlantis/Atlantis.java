@@ -2,10 +2,10 @@ package atlantis;
 
 import atlantis.config.AtlantisConfig;
 import atlantis.config.env.Env;
-import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.listeners.*;
+import atlantis.game.util.GameSummary;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -89,7 +89,7 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
 
-        OnStart.execute();
+        OnGameStarted.execute();
     }
 
     private void setBwapiFlags() {
@@ -125,7 +125,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        OnUnitCompleted.onUnitCompleted(u);
+        OnUnitCompleted.update(u);
     }
 
     /**
@@ -209,29 +209,10 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onEnd(boolean winner) {
-        if (Env.isTesting()) {
-            exitGame();
-            return;
-        }
-
-        String result = "#####################################\n";
-        result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
-        result += "############ Lost: " + Atlantis.LOST + " ################\n";
-        result += "########## Killed: " + Atlantis.KILLED + " ################\n";
-        result += "#####################################\n";
-
-        LongFrames.printSummary();
-
-        A.println(result);
-
         OnGameEnd.execute(winner);
-
-        if (Env.isLocal()) exitGame();
-        else game.leaveGame();
     }
 
-    public void exitGame() {
-        if (!Env.isTesting()) GameSummary.print();
+    public void exitGame(boolean winner) {
         killProcesses();
     }
 

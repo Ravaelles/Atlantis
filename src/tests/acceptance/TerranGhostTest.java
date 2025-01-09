@@ -1,13 +1,13 @@
 package tests.acceptance;
 
 import atlantis.combat.micro.terran.infantry.TerranGhost;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TerranGhostTest extends AbstractTestFakingGame {
+public class TerranGhostTest extends AbstractTestWithWorld {
 
     protected FakeUnit ghost1;
     protected FakeUnit ghost2;

@@ -2,9 +2,9 @@ package tests.unit;
 
 import atlantis.game.event.Events;
 import atlantis.game.event.Listener;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EventTest extends AbstractTestWithUnits {
     public static String state = "-";

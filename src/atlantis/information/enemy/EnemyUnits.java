@@ -1,5 +1,7 @@
 package atlantis.information.enemy;
 
+import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.HasPosition;
@@ -15,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EnemyUnits {
-
     protected static Map<Integer, AbstractFoggedUnit> enemyUnitsDiscovered = new HashMap<>();
     protected static Cache<Object> cache = new Cache<>();
 
@@ -25,24 +26,28 @@ public class EnemyUnits {
      * Both visible units and those behind fog of war.
      */
     public static Selection discovered() {
+        if (Env.isTesting()) return freshDiscovered();
+
         return (Selection) cache.get(
             "discovered",
             0,
-            () -> {
-                //        return Select.from(Select.enemy(), "")
-                return Select.enemy()
+            EnemyUnits::freshDiscovered
+        );
+    }
+
+    private static Selection freshDiscovered() {
+        //        return Select.from(Select.enemy(), "")
+        return Select.enemy()
 //                    .print("visible")
-                    .notDeadMan()
+            .notDeadMan()
 //                    .print("not dead")
-                    .add(rawUnitsDiscovered())
+            .add(rawUnitsDiscovered())
 //                    .print("now with enemy")
-                    .removeDuplicates()
+            .removeDuplicates()
 //            .print("after removing duplicates")
-                    .havingPosition();
+            .havingPosition();
 //            .beingVisibleUnitOrNotVisibleFoggedUnit();
 //            .print("and having position");
-            }
-        );
     }
 
     // =========================================================
@@ -128,6 +133,10 @@ public class EnemyUnits {
         return discovered().hydras().count();
     }
 
+    public static int lurkers() {
+        return discovered().lurkers().count();
+    }
+
     public static int mutas() {
         return discovered().mutalisks().count();
     }
@@ -137,6 +146,10 @@ public class EnemyUnits {
     }
 
     public static int zerglings() {
+        return discovered().zerglings().count();
+    }
+
+    public static int lings() {
         return discovered().zerglings().count();
     }
 
@@ -150,5 +163,9 @@ public class EnemyUnits {
 
     public static Selection buildings() {
         return discovered().buildings();
+    }
+
+    public static int ranged() {
+        return discovered().ranged().combatUnits().count();
     }
 }

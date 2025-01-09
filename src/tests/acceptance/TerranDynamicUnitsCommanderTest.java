@@ -6,15 +6,15 @@ import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitData;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TerranDynamicUnitsCommanderTest extends NonAbstractTestFakingGame {
+public class TerranDynamicUnitsCommanderTest extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test

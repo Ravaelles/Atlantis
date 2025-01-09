@@ -5,10 +5,10 @@ import atlantis.information.decisions.FocusOnProducingUnits;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ShouldMakeTerranBio {
 
@@ -29,7 +29,7 @@ public class ShouldMakeTerranBio {
             return true;
         }
 
-        if (OurStrategy.get().goingBio()) {
+        if (Strategy.get().goingBio()) {
             if (infantry <= 30) {
                 reason = "infantry <= 30";
                 return wantsToReturnTrue();
@@ -61,7 +61,7 @@ public class ShouldMakeTerranBio {
         }
 
 //        if (
-//            OurStrategy.get().goingBio()
+//            Strategy.get().goingBio()
 //                && (infantry <= 18 || AGame.canAffordWithReserved(50, 0))
 //        ) {
 //            return wantsToReturnTrue();

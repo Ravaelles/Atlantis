@@ -1,27 +1,32 @@
 package atlantis.combat.running.any_direction;
 
 import atlantis.combat.running.ARunningManager;
+import atlantis.combat.running.IsReasonablePositionToRunTo;
 import atlantis.combat.running.RunToPositionFinder;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import bwapi.Color;
 
 import java.util.ArrayList;
 
 public class RunInAnyDirection {
-    public static int ANY_DIRECTION_RADIUS_DEFAULT = 4;
-    public static int ANY_DIRECTION_RADIUS_DRAGOON = 9;
+    public static int ANY_DIRECTION_RADIUS_DEFAULT = 5;
+    public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
+    public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
+    //    public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
+//    public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
     public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 5;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
     private AUnit unit = null;
     private ARunningManager runningManager;
     private RunToPositionFinder positionFinder;
+    private HasPosition runAwayFrom;
 
     public RunInAnyDirection(RunToPositionFinder positionFinder) {
         this.positionFinder = positionFinder;
@@ -30,51 +35,53 @@ public class RunInAnyDirection {
     public HasPosition runInAnyDirection(HasPosition runAwayFrom) {
         this.runningManager = positionFinder.running();
         this.unit = runningManager.unit();
+        this.runAwayFrom = runAwayFrom;
 
         // =========================================================
 
-        runningManager.setRunTo(findRunPositionInAnyDirection(runAwayFrom));
-
-//        System.err.println("findRunPositionInAnyDirection(runAwayFrom) = " + findRunPositionInAnyDirection(runAwayFrom));
-//        System.err.println("runAwayFrom = " + runAwayFrom);
-//        System.err.println("unit = " + unit);
-//        System.err.println("-----------------");
+        runningManager.setRunTo(findRunPositionInAnyDirection(runAwayFrom, true));
+        if (runningManager.runTo() == null) {
+            runningManager.setRunTo(findRunPositionInAnyDirection(runAwayFrom, false));
+        }
 
         // =============================================================================
 
-        if (runningManager.runTo() != null) {
-            Color color = Color.Purple;
-            APainter.paintLine(unit, runningManager.runTo(), color);
-            APainter.paintLine(
-                unit.translateByPixels(0, 1),
-                runningManager.runTo().translateByPixels(0, 1),
-                color
-            );
-        }
+//        if (runningManager.runTo() != null) {
+//            Color color = Color.Purple;
+//            APainter.paintLine(unit, runningManager.runTo(), color);
+//            APainter.paintLine(
+//                unit.translateByPixels(0, 1),
+//                runningManager.runTo().translateByPixels(0, 1),
+//                color
+//            );
+//        }
 
         if (handleInvalidCaseWhenRunToIsTooClose()) return runningManager.setRunTo(null);
 
         // =============================================================================
 
-//        System.err.println("Invalid run_any_dir NULL");
         return runningManager.runTo();
     }
 
-    private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom) {
+    private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom, boolean considerOtherUnitsInGoToPlace) {
+        Selection allUnitsToConsider = considerOtherUnitsInGoToPlace ? Select.all() : Select.mineralsAndGeysers();
+
         return 1.3 * position.distTo(runAwayFrom)
             - position.distTo(unit)
-            - Select.all().inRadius(1.0, position).exclude(unit).count() * 0.5;
+            - allUnitsToConsider.inRadius(0.4, position).exclude(unit).count() * 0.5;
     }
 
     private boolean handleInvalidCaseWhenRunToIsTooClose() {
         if (
             runningManager.runTo() != null
-                && unit.distTo(runningManager.runTo().position()) <= 0.05
-//                && isPossibleAndReasonablePosition(unit, runningManager.runTo().position(), true)
+                && isDistTooClose(runningManager.runTo())
+                && (wayTooShortRunTo() || stillInRangeOfRangedEnemy())
         ) {
             // Info: This is a known issue, I couldn't debug this, but it shouldn't be a huge problem...
-            System.err.println("Invalid run_any_dir TOO_SHORT, dist = " + unit.distTo(runningManager.runTo()));
-            AAdvancedPainter.paintCircleFilled(unit, 7, Color.Red);
+            if (A.isUms()) {
+                System.err.println("Invalid run_any_dir TOO_SHORT, dist = " + unit.distTo(runningManager.runTo()));
+                AAdvancedPainter.paintCircleFilled(unit, 7, Color.Red);
+            }
 //            CameraCommander.centerCameraOn(unit);
 
 //            runningManager.setRunTo(findRunPositionInAnyDirection(runAwayFrom));
@@ -94,39 +101,58 @@ public class RunInAnyDirection {
         return false;
     }
 
+    private boolean isDistTooClose(HasPosition position) {
+        return unit.distTo(position) < 0.5;
+    }
+
+    private boolean stillInRangeOfRangedEnemy() {
+        Selection rangedEnemies = unit.enemiesNear().ranged();
+        AUnit rangedEnemy = rangedEnemies.nearestTo(unit);
+        if (rangedEnemy == null) return false;
+
+        return rangedEnemies.inRadius(rangedEnemy.groundWeaponRange(), runningManager.runTo()).count() > 0;
+    }
+
+    private boolean wayTooShortRunTo() {
+        return unit.distTo(runningManager.runTo().position()) <= 0.05;
+    }
+
     /**
      * Returns a place where run to, searching in all directions, which is walkable, inbounds and most distant
      * to given runAwayFrom position.
      */
-    public APosition findRunPositionInAnyDirection(HasPosition runAwayFrom) {
+    public APosition findRunPositionInAnyDirection(HasPosition runAwayFrom, boolean considerOtherUnitsInGoToPlace) {
         HasPosition runTo = runningManager.runTo();
         runAwayFrom = runAwayFrom.position();
 
         if (
             runTo != null
-                && unit.distTo(runTo) > 1.5
-                && unit.lastStartedRunningLessThanAgo(6)
+                && isDistTooClose(runTo)
+                && unit.lastStartedRunningLessThanAgo(12)
         ) {
             return runTo.position();
         }
 
-        int BASE_RADIUS = 4;
-        int radius = BASE_RADIUS;
+        int radius;
         APosition position = null;
 
-        if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
-            position = findPositionWithRadius(runAwayFrom, radius);
-            if (position != null) return position;
-        }
+//        int BASE_RADIUS = 4;
+//        int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
+//        APosition position = null;
+//
+//        if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
+//            position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
+//            if (position != null) return position;
+//        }
 
-        radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
-        position = findPositionWithRadius(runAwayFrom, radius);
+        radius = runAnyDirectionRadius(unit, runAwayFrom);
+        position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
         if (position != null) return position;
 
         return null;
     }
 
-    private APosition findPositionWithRadius(HasPosition runAwayFrom, int radius) {
+    private APosition findPositionWithRadius(HasPosition runAwayFrom, int radius, boolean considerOtherUnitsInGoToPlace) {
         // Build list of possible run positions, basically around the clock
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
@@ -143,15 +169,13 @@ public class RunInAnyDirection {
             // Score is calculated as:
             // - being most distant to enemy we're running from,
             // - not close to ground friends,
-            double positionScore = evalPosition(unit, position, runAwayFrom);
+            double positionScore = evalPosition(unit, position, runAwayFrom, considerOtherUnitsInGoToPlace);
+
+//            if (Select.mineralsAndGeysers().countInRadius(unit.isNotLarge() ? 2 : 6, position) > 0) continue;
 
             boolean isNewBest = bestPosition == null || positionScore >= bestScore;
             if (isNewBest) {
-                boolean targetPositionHasObstacles = unit.groundDist(position) >= 1.6 * unit.distTo(position);
-//                System.out.println("unit.groundDist(position) = " + unit.groundDist(position));
-//                System.out.println("unit.distTo(position) = " + unit.distTo(position));
-//                if (targetPositionHasObstacles) System.out.println("targetPositionHasObstacles!!!");
-//                System.out.println("--- ");
+                boolean targetPositionHasObstacles = unit.groundDist(position) >= 2.2 * unit.distTo(position);
                 if (targetPositionHasObstacles) continue;
                 bestPosition = position;
                 bestScore = positionScore;
@@ -180,19 +204,12 @@ public class RunInAnyDirection {
                 APosition potentialPosition = unit.translateByTiles(dtx, dty);
 
                 // If has path to given point, add it to the list of potential points
-//                APainter.paintLine(unitPosition, potentialPosition, Color.Purple);
-//                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
                 if (
-                    positionFinder.isPossibleAndReasonablePosition(
-                        unit,
-                        potentialPosition,
-                        false,
-                        null,
-                        null
-//                        "O",
-//                        "x"
+                    IsReasonablePositionToRunTo.check(
+                        unit, potentialPosition, runAwayFrom
+//                        "O", "x"
                     )
-                        && potentialPosition.distTo(unit) >= 0.5
+                        && potentialPosition.distTo(unit) >= 0.4
                         && !potentialPosition.isCloseToMapBounds()
                 ) {
                     potentialPositionsList.add(potentialPosition);
@@ -201,15 +218,18 @@ public class RunInAnyDirection {
         }
     }
 
-    int runAnyDirectionInitialRadius(AUnit unit, HasPosition runFrom) {
+    int runAnyDirectionRadius(AUnit unit, HasPosition runFrom) {
         if (unit.isVulture()) {
             return ANY_DIRECTION_RADIUS_VULTURE;
         }
         else if (unit.isDragoon()) {
-            return ANY_DIRECTION_RADIUS_DRAGOON;
+            return unit.nearestEnemyDist() <= 3.4
+                ? ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE
+                : ANY_DIRECTION_RADIUS_DRAGOON;
         }
         else if (unit.isTerran() && unit.isInfantry()) {
-            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
+//            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
+            return ANY_DIRECTION_RADIUS_TERRAN_INFANTRY;
         }
 
         return ANY_DIRECTION_RADIUS_DEFAULT;

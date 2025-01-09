@@ -5,7 +5,7 @@ import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -41,7 +41,7 @@ public class ProtossRangedAttackEnemiesInRange extends Manager {
 
         return (
 //            unit.lastAttackFrameMoreThanAgo(30 * 3)
-            (unit.shieldDamageAtMost(unit.combatEvalRelative() > 1.2 ? (Enemy.zerg() ? 18 : 68) : 8))
+            (unit.shieldDamageAtMost(unit.eval() > 1.2 ? (Enemy.zerg() ? 18 : 68) : 8))
         )
 //            && unit.lastAttackFrameMoreThanAgo(50)
 //            && unit.lastUnderAttackMoreThanAgo(30 * 6)

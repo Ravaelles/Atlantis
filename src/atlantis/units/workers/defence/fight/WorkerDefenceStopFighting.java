@@ -12,7 +12,7 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isAttacking() || unit.action().isAttacking()) {
+        if (unit.isAttacking() || unit.action().isAttacking() || unit.lastAttackFrameLessThanAgo(60)) {
             return WorkerDoNotFight.doNotFight(unit);
         }
 
@@ -21,8 +21,14 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     protected Manager handle() {
-        if ((new GatherResources(unit)).invokedFrom(this)) return usedManager(this);
-        if (unit.moveToSafety(Actions.MOVE_SAFETY, "StopFighting")) return usedManager(this);
+//        if (unit.hp() >= 19) {
+//            if ((new GatherResources(unit)).forceHandle() != null) return usedManager(this);
+//        }
+
+        AUnit enemy = unit.nearestEnemy();
+        if (enemy != null) {
+            if (unit.runOrMoveAway(enemy, 6)) return usedManager(this);
+        }
 
         return null;
     }

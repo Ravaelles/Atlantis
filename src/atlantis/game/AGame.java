@@ -5,6 +5,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
 
+import atlantis.game.player.APlayer;
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -46,7 +47,7 @@ public class AGame {
      */
     public static void exit(String message) {
         A.println(message);
-        Atlantis.getInstance().exitGame();
+        Atlantis.getInstance().exitGame(false);
     }
 
     public static void changeDisableUI(boolean disableUI) {
@@ -227,7 +228,7 @@ public class AGame {
     }
 
     public static void calcSeconds() {
-        _secondsNow = Atlantis.game().getFrameCount() / 30;
+        _secondsNow = (int) (Atlantis.game().getFrameCount() / 23.81);
         A.s = _secondsNow;
         A.now = _framesNow;
     }

@@ -7,13 +7,13 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
-public class ResearchProtossGroundWeapons extends Commander {
-    public static UpgradeType what() {
+public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
+    public UpgradeType what() {
         return Protoss_Ground_Weapons;
     }
 
@@ -24,7 +24,7 @@ public class ResearchProtossGroundWeapons extends Commander {
         if (Count.ourCombatUnits() <= 10) return false;
         if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
-        if (CountInQueue.count(what(), 10) > 0) return false;
+        if (CountInQueue.count(what(), 4) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
         if (A.hasGas(150 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(290)) {
@@ -36,8 +36,8 @@ public class ResearchProtossGroundWeapons extends Commander {
         return false;
     }
 
-    private static boolean isResearched() {
-        boolean isResearched = ATech.isResearched(what());
+    public static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(Protoss_Ground_Weapons);
         if (!isResearched) return false;
 
         int upgradeLevel = getCurrentUpgradeLevel();
@@ -47,14 +47,11 @@ public class ResearchProtossGroundWeapons extends Commander {
     }
 
     private static int getCurrentUpgradeLevel() {
-        return ATech.getUpgradeLevel(what());
+        return ATech.getUpgradeLevel(Protoss_Ground_Weapons);
     }
 
     @Override
     protected void handle() {
-//        if (AddToQueue.upgrade(what())) {
-//            Queue.get().history().addNow(what().name());
-//        }
         ResearchNow.research(what());
     }
 

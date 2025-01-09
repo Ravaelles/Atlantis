@@ -1,7 +1,7 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Manager;
-import atlantis.architecture.generic.DoNothing;
+import atlantis.combat.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.game.A;
@@ -54,12 +54,12 @@ public class FixIdleUnits extends Manager {
 //            if (attackEnemies()) return usedManager(this, "FixIdleByAttack");
 //        }
 
-//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
+//        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(this) != null) return usedManager(this);
 
         moveToLeader(); // Move, but don't return that we used this manager.
 
 //        if (moveToLeader()) return usedManager(this);
-//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
+//        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(this) != null) return usedManager(this);
 //        if (movedToFocusPoint()) return usedManager(this);
 
         return null;
@@ -69,7 +69,7 @@ public class FixIdleUnits extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
 
-        if (unit.distTo(leader) >= 2.5) {
+        if (unit.distTo(leader) >= 2.5 && unit.distTo(leader) <= 60 && leader.isWalkable()) {
             if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleByLeader")) {
 //                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
 //                    " / " + unit.action());

@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import java.util.List;
 
@@ -35,8 +35,20 @@ public class WorkerDefenceRun extends Manager {
     public Manager handle() {
         if (runFromMassZealots()) return usedManager(this);
         else if (runFromReaver()) return usedManager(this);
+        else if (runFromMutas()) return usedManager(this);
 
         return null;
+    }
+
+    private boolean runFromMutas() {
+        if (!Enemy.zerg()) return false;
+
+        Selection mutas = unit.enemiesNear().mutalisks();
+        if (mutas.countInRadius(7, unit) >= 2) {
+            return runFromEnemyToAnotherRegion(unit, mutas.first());
+        }
+
+        return false;
     }
 
     private boolean runFromMassZealots() {

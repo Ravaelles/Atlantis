@@ -16,6 +16,7 @@ public class OnTheWayAttackEnemiesInRange extends Manager {
     @Override
     public boolean applies() {
         if (unit.woundPercent() >= 40 && unit.shotSecondsAgo(5)) return false;
+        if (unit.enemiesThatCanAttackMe(2.6).count() > 0) return false;
 
         return unit.cooldown() <= 0
             && (enemy = enemy()) != null;

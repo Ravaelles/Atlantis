@@ -2,7 +2,7 @@ package atlantis.combat.retreating.protoss.small_scale;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossSmallScaleEvaluate {
     public static final double RADIUS_LG = 3.5;

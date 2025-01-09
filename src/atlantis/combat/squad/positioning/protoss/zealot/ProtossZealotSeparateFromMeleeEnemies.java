@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     private Selection enemiesNear;
@@ -18,17 +18,24 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isZealot()) return false;
+//        if (!Enemy.protoss()) return false;
+        if (unit.cooldown() <= 5) return false;
+        if (unit.cooldown() >= 5 && unit.shieldWounded()) return false;
+
+        if (unit.lastStartedRunningLessThanAgo(3)) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 3)) return false;
+        if (unit.isMissionSparta()) return false;
+        if (unit.shotSecondsAgo() >= 3) return false;
 
         if (
-            unit.isMissionDefendOrSparta()
+            unit.isMissionDefend()
                 && unit.shieldWounded()
                 && unit.cooldown() >= 7
         ) return true;
 
         seriousWound = unit.woundPercent() >= 10;
         if (
-            (unit.shieldWounded() || unit.isMissionDefend() || unit.combatEvalRelative() <= 1)
+            (unit.shieldWounded() || unit.isMissionDefend() || unit.eval() <= 1)
                 && (meleeEnemiesNear = unit.meleeEnemiesNearCount(distToEnemies())) >= minEnemies()
                 && unit.friendsNear().nonBuildings().inRadius(1.5, unit).atMost(2)
         ) {
@@ -51,7 +58,11 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     protected Manager handle() {
         if (unit.enemiesNear().notEmpty()) {
             if (movedAway()) {
-                return usedManager(this);
+                return usedManager(this, "ZealotSeparateA");
+            }
+
+            if (unit.moveToSafety(Actions.MOVE_AVOID)) {
+                return usedManager(this, "ZealotSeparateB");
             }
         }
 
@@ -66,12 +77,17 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
 //
 ////        return unit.moveAwayFrom(centerOfEnemies, moveDist, Actions.RUN_ENEMY, "ZealotSeparate");
 
-        if (unit.distToMain() >= 3) {
-            return unit.moveToSafety(Actions.MOVE_AVOID, "ZealotSeparate");
+//        if (unit.distToMain() >= 3) {
+//            return unit.moveToSafety(Actions.MOVE_AVOID, "ZealotSeparate");
+//        }
+
+        AUnit runFrom = unit.enemiesNear().combatUnits().melee().nearestTo(unit);
+        if (runFrom == null) {
+            return false;
         }
 
         return unit.runningManager().runFrom(
-            unit.enemiesNear().nearestTo(unit), 3, Actions.RUN_ENEMY, unit.isMissionDefend()
+            runFrom, 4, Actions.RUN_ENEMY, unit.isMissionDefend()
         );
     }
 }

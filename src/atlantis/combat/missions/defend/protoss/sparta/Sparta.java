@@ -11,7 +11,7 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 /**
@@ -28,12 +28,18 @@ public class Sparta extends MissionDefend {
     // =========================================================
 
     public static boolean canUseSpartaMission() {
+        if (Count.ourCombatUnits() >= 3) return false;
+
 //        if (true) return false;
-        if (true) return false;
+//        if (true) return false;
+
+        if (We.protoss()) {
+            if (!Enemy.zerg()) return false;
+        }
 
         if (We.terran()) return false;
         if (We.zerg() && Enemy.protoss()) return false;
-        if (A.s >= 310) return false;
+        if (A.s >= 330) return false;
 
         return Count.basesWithUnfinished() <= 1 && focusPointIsValidForSparta();
 //        return MissionHistory.numOfChanges() <= 1 &&;

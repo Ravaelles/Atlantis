@@ -34,13 +34,12 @@ public class AttackEnemyExpansion {
         if (
             expansion.isPositionVisible()
                 && (
-                Select.enemy().buildings().inRadius(15, expansion).empty()
+                Select.enemy().buildings().inRadius(AUnit.NEAR_DIST, expansion).empty()
             )
         ) return null;
 
         return new AFocusPoint(
             expansion,
-            Select.mainOrAnyBuilding(),
             "AttackExpansion"
         );
     }

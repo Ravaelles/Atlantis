@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.production.orders.build.CurrentBuildOrder;
+import cherryvis.ACherryVis;
 
 public class OnEveryFrame {
     public static void update() {
@@ -26,6 +27,9 @@ public class OnEveryFrame {
         try {
             AGame.calcSeconds();
             AGame.cacheFrameNow();
+
+            if (ACherryVis.isEnabled()) ACherryVis.update();
+
             Atlantis.getInstance().getGameCommander().invokeCommander();
         }
 

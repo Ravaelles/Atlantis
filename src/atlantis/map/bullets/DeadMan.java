@@ -22,6 +22,7 @@ public class DeadMan {
 
     private static boolean willBeDeadMan(AUnit unit) {
 //        if (Bullets.knownBullets().size() <= 1) return false;
+        if (unit.isFoggedUnitWithKnownPosition()) return false;
 
         bulletsAgainst = Bullets.against(unit);
         if (bulletsAgainst.isEmpty()) return false;

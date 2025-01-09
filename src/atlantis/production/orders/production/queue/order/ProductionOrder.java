@@ -2,14 +2,17 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.position.MaxBuildingDist;
-import atlantis.production.orders.production.Requirements;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.position.MaxBuildingDist;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -138,36 +141,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (unitOrBuilding != null && otherOrder.unitOrBuilding != null) {
             if (otherOrder.minSupply == this.minSupply) {
-//                if (unitOrBuilding.isSupplyDepot() && otherOrder.unitOrBuilding.isSupplyDepot()) return true;
                 if (unitOrBuilding.isCombatBuilding() && otherOrder.unitOrBuilding.isCombatBuilding()) return true;
             }
         }
-
-//        if (unitOrBuilding != null) {
-//            if (otherOrder.minSupply == this.minSupply) {
-//    //            if (isBuilding() && this.unitType().equals(otherOrder.unitType())) return true;
-//                if (
-//                    this.unitType().equals(otherOrder.unitType())
-//                    && (this.isDynamic() && otherOrder.isDynamic())
-//                ) return true;
-//            }
-//        }
-
-//        if (otherOrder.minSupply == minSupply) {
-//            if (unitOrBuilding != null && unitOrBuilding.equals(otherOrder.unitOrBuilding)) return true;
-//
-////            if (
-//////                    && otherOrder.status().equals(status())
-//////                otherOrder.isCompleted()
-////                unitOrBuilding != null
-////                    && unitOrBuilding.equals(otherOrder.unitOrBuilding)
-//////                    && unitOrBuilding.isABuilding()
-//////                    && otherOrder.unitType().equals(unitOrBuilding)
-////            ) return true;
-//
-//            if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
-//            if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
-//        }
 
         return false;
     }
@@ -222,7 +198,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         if (isStatus(OrderStatus.NOT_READY)) return "";
         else if (isStatus(OrderStatus.IN_PROGRESS)) return "(IN_PROGRESS)";
         else if (isStatus(OrderStatus.READY_TO_PRODUCE)) return "(READY_TO_PRODUCE)";
-        else if (isStatus(OrderStatus.COMPLETED)) return "(COMPLETED)";
+        else if (isStatus(OrderStatus.FINISHED)) return "(FINISHED)";
         else return "UNKNOWN";
     }
 
@@ -264,19 +240,49 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //    }
 
     public boolean supplyRequirementFulfilled(int extraEarlyBonus) {
-        int bonus = unitOrBuilding != null && A.supplyUsed() >= 9 && unitOrBuilding.isABuilding() ? 2 : 0;
+        int supplyUsed = A.supplyUsed();
+
+        if (unitOrBuilding != null && is(AUnitType.Protoss_Pylon)) {
+            if (supplyUsed < minSupply && !A.canAffordWithReserved(100, 0)) return false;
+        }
+
+        int allBonuses = 0;
+
+        if (unitOrBuilding == null || !unitOrBuilding.isGasBuilding()) {
+            int bonus = supplyEarlierBonusToConsiderReady();
+            int penaltyReservedMinerals = penaltyReservedMinerals();
+            allBonuses = bonus - penaltyReservedMinerals + extraEarlyBonus;
+        }
+
+//        if (penaltyReservedMinerals > 0) {
+//            System.err.println("PENALTY RESERVED MINERALS: " + penaltyReservedMinerals + " for " + unitOrBuilding);
+//        }
 
 //        if (unitOrBuilding != null && unitOrBuilding.equals(AUnitType.Protoss_Cybernetics_Core)) {
 //            bonus = 2;
 //        }
 
-        return A.supplyUsed() + bonus + extraEarlyBonus >= minSupply;
+        return supplyUsed + allBonuses >= minSupply;
     }
 
-    public void cancel() {
-//        A.errPrintln("At " + A.s + "s cancelling order " + this);
+    private int penaltyReservedMinerals() {
+        if (A.supplyUsed() < minSupply) {
+            if (ReservedResources.minerals() >= 100 && !is(AUnitType.Protoss_Pylon)) return 1;
+        }
 
-        if (construction() != null) construction().cancel();
+        return 0;
+    }
+
+    private int supplyEarlierBonusToConsiderReady() {
+        return unitOrBuilding != null
+            && A.supplyUsed() >= 9
+            && unitOrBuilding.isABuilding() ? (Strategy.get().isExpansion() ? 2 : 1) : 0;
+    }
+
+    public void cancel(String reason) {
+        ErrorLog.debug("Cancel order " + this + " at " + A.minSec() + ": " + reason);
+
+        if (construction() != null) construction().cancel(reason);
 
         releasedReservedResources();
 
@@ -386,8 +392,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return isStatus(OrderStatus.IN_PROGRESS);
     }
 
-    public boolean isCompleted() {
-        return isStatus(OrderStatus.COMPLETED);
+    public boolean isFinished() {
+        return isStatus(OrderStatus.FINISHED);
     }
 
     public boolean isReadyToProduce() {
@@ -432,7 +438,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         if (this.status != newStatus) {
             this.status = newStatus;
 
-            OrderStatusWasChanged.update(this, newStatus);
+            OrderStatusWasChanged.update(this);
         }
 
         return status;
@@ -525,5 +531,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int requestedAgo() {
         return A.ago(requestedAt);
+    }
+
+    public boolean is(AUnitType type) {
+        return unitOrBuilding != null && unitOrBuilding.equals(type);
     }
 }

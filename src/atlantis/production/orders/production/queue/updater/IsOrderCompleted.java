@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.information.tech.ATech;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -10,15 +11,20 @@ public class IsOrderCompleted {
     protected static boolean isCompleted(ProductionOrder order, Counter<AUnitType> existingCounter) {
         // === Unit
 
-        if (order.unitType() != null) {
-            if (order.construction() == null) return false;
-            
-            return !checkIfWeHaveLessUnitsThanExpected(order, existingCounter);
-        }
+        // For units this will happen in OnOurUnitCompleted
+//        if (order.unitType() != null) {
+//            if (order.construction() == null) return false;
+//            if (order.construction().buildingUnit() == null) return false;
+//            if (!order.construction().buildingUnit().isCompleted()) return false;
+//
+//            System.err.println(order + " construction unit = " + order.construction().buildingUnit());
+//
+//            return !checkIfWeHaveLessUnitsThanExpected(order, existingCounter);
+//        }
 
         // === Tech
 
-        else if (order.tech() != null) {
+        if (order.tech() != null) {
             return ATech.isResearchedWithOrder(order.tech(), order);
         }
 
@@ -30,7 +36,7 @@ public class IsOrderCompleted {
 
         // === Unknown
 
-//        A.errPrintln("Unknown order type: " + order);
+//        ErrorLog.printMaxOncePerMinute("@@@@@@@@@@@ Unknown order type: " + order);
         return false;
     }
 
@@ -38,25 +44,31 @@ public class IsOrderCompleted {
         AUnitType type = order.unitType();
         expectedCounter.incrementValueFor(type);
 
-        int existingUnits = existingUnitsCount(type);
+        int existingUnits = existingCompletedUnitsCount(type);
+        if (existingUnits == 0) return false;
+
         int expectedUnits = expectedUnitsCount(type, expectedCounter);
 
-        // If we don't have this unit, add it to the current production queue.
-//        if (type.is(AUnitType.Terran_Academy)) {
-//            System.err.println("@" + A.now() + " EXIZ/EXPEC = " + existingUnits + " / " + expectedUnits);
-//            Select.our().print("Ourz");
-//            Select.ourOfType(AUnitType.Terran_Academy).print("Academies");
+//        if (type.is(AUnitType.Protoss_Pylon)) {
+//            System.err.println(A.minSec() + " EXIZ/EXPEC = " + existingUnits + " / " + expectedUnits);
+//
+////            Queue.get().completedOrders().print("Completed orders at supply: " + A.supplyUsed());
+////            Select.our().print("Ourz");
+////            Select.ourOfType(AUnitType.Protoss_Pylon).print("Ourssssssss");
 //        }
 
+        // If we don't have this unit, add it to the current production queue.
         return existingUnits < expectedUnits;
     }
 
     private static int expectedUnitsCount(AUnitType type, Counter<AUnitType> expectedCounter) {
-        return ThisManyUnitsByDefault.numOfUnits(expectedCounter, type);
+//        return ThisManyUnitsByDefault.numOfUnits(type) + expectedCounter.getValueFor(type);
+        return ThisManyUnitsByDefault.numOfUnits(type)
+            + Queue.get().finishedOrInProgress().size();
     }
 
-    private static int existingUnitsCount(AUnitType type) {
-        return Select.countOurOfType(type);
+    private static int existingCompletedUnitsCount(AUnitType type) {
+        return Select.countOurOfTypeWithUnfinished(type);
     }
 //
 //    private static int existingOrInProgressUnitsCount(AUnitType type) {

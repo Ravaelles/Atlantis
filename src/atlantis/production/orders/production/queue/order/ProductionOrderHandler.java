@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
@@ -24,7 +25,8 @@ public class ProductionOrderHandler extends Commander {
     protected void handle() {
         if (isAlreadyConsumed()) {
 //            A.errPrintln("Order " + order + " is already consumed!");
-            order.setStatus(OrderStatus.COMPLETED);
+//            System.err.println("Order " + order + " is already consumed, SET TO COMPLETED!");
+//            order.setStatus(OrderStatus.COMPLETED);
             return;
         }
 
@@ -41,8 +43,9 @@ public class ProductionOrderHandler extends Commander {
 
             if (unitType.isABuilding()) {
                 if (ProduceBuilding.produceBuilding(unitType, order)) {
+//                    System.err.println("!!!!!!!!!!! BUILD " + order.unitType() + " at " + A.supplyUsed() + " / " + ProduceBuilding._lastConstruction);
                     order.consume();
-                    order.setStatus(OrderStatus.IN_PROGRESS);
+//                    order.setStatus(OrderStatus.IN_PROGRESS);
                 }
             }
             else {
@@ -62,7 +65,7 @@ public class ProductionOrderHandler extends Commander {
                 order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
 
-                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(upgrade);
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(upgrade, "Only one upgrade at a time");
             }
         }
 
@@ -75,7 +78,7 @@ public class ProductionOrderHandler extends Commander {
                 order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
 
-                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(tech);
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(tech, "Only one tech at a time");
             }
         }
 

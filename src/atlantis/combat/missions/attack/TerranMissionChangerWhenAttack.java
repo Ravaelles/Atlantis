@@ -3,18 +3,22 @@ package atlantis.combat.missions.attack;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.defend.terran.ShouldForceAttack;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
+import atlantis.production.dynamic.terran.tech.ResearchStimpacks;
+import atlantis.production.dynamic.terran.tech.ResearchU238;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
@@ -23,7 +27,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (A.supplyUsed() >= 174) return false;
 
-//        if (OurStrategy.get().goingBio()) {
+//        if (Strategy.get().goingBio()) {
         if (!ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
@@ -36,13 +40,15 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     public boolean shouldChangeMissionToDefend() {
         if (A.isUms()) return false;
 
-        if (Enemy.protoss()) {
-            if (defendVsProtoss()) return true;
-        }
+        if (ShouldForceAttack.check()) return false;
 
         if (MissionDecisions.baseUnderSeriousAttack()) {
             if (DEBUG) reason = "Protect base";
             return true;
+        }
+
+        if (Enemy.protoss()) {
+            if (defendVsProtoss()) return true;
         }
 
         if (enemyHasHiddenUnitsAndWeDontHaveEnoughDetection()) {
@@ -51,17 +57,17 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         }
 
         if (
-            OurStrategy.get().isRushOrCheese()
+            Strategy.get().isRushOrCheese()
                 && ArmyStrength.ourArmyRelativeStrength() >= 95
                 && A.seconds() <= 400
-                && (!OurStrategy.get().goingBio() || Count.medics() >= 2)
+                && (!Strategy.get().goingBio() || Count.medics() >= 2)
         ) {
             if (DEBUG) reason = "Rush or cheese and strength still ok";
             return false;
         }
 
         if (armyStrengthTooWeak()) {
-            if (DEBUG) reason = "Army too weak (" + ArmyStrength.ourArmyRelativeStrength() + ")";
+            if (DEBUG) reason = "Army too weak (" + Army.strengthWithoutCB() + "%)";
             return true;
         }
 
@@ -69,7 +75,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            return false;
 //        }
 
-        if (enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
+        if (EnemyInfo.hasMutas() && enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
             if (DEBUG) reason = "Not enough tanks to break defences";
             return true;
         }
@@ -116,12 +122,24 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
+        if (waitForTechOrTanksBeforeEngagingGoons()) {
+            if (DEBUG) reason = "Wait for tech or tanks before engaging goons";
+            return true;
+        }
+
         if (Missions.historyCount() >= 1 && Count.ourCombatUnits() <= 30) {
             if (DEBUG) reason = "Not enough terran units";
             return true;
         }
 
         return false;
+    }
+
+    private static boolean waitForTechOrTanksBeforeEngagingGoons() {
+        return !ResearchStimpacks.isResearched()
+            && !ResearchU238.isResearched()
+            && EnemyUnits.dragoons() >= 2
+            && Count.tanks() <= 5;
     }
 
     private boolean armyStrengthTooWeak() {
@@ -163,7 +181,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             )
         ) {
             return true;
-//            if (Count.tanks() <= 3 || !SiegeMode.isResearched()) return true;
+//            if (Count.tanks() <= 3 || !ResearchSiegeMode.isResearched()) return true;
         }
 
         return false;

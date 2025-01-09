@@ -1,6 +1,6 @@
 package atlantis.production.orders.zerg;
 
-import atlantis.production.constructing.NewConstructionRequest;
+import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

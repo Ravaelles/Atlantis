@@ -1,8 +1,8 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
@@ -10,6 +10,8 @@ import atlantis.units.select.Select;
 import java.util.Collection;
 
 public class WorkerTransferCommander extends Commander {
+    private static int _lastTransfer = -999;
+
     private int maxAtOnceBonus = 8;
 
     /**
@@ -49,7 +51,7 @@ public class WorkerTransferCommander extends Commander {
             if (
                 base.isLifted()
                     || base.lastUnderAttackLessThanAgo(30 * 10)
-                    || base.enemiesNear().combatUnits().inRadius(10, base).atLeast(1)
+                    || base.enemiesNear().combatUnits().inRadius(AUnit.NEAR_DIST, base).atLeast(1)
             ) {
                 continue;
             }
@@ -100,11 +102,11 @@ public class WorkerTransferCommander extends Commander {
 
     private boolean handleTransferWorkers(AUnit baseWithMostWorkers, AUnit baseWithFewestWorkers, double workerRatioDiff) {
         boolean result = false;
-        int n = workerRatioDiff > 2.0 ? 6 : 2;
+        int n = allowBigTransfer(workerRatioDiff) ? 6 : 2;
 
         for (int i = 0; i < n; i++) {
             AUnit worker = Select.ourWorkersMiningMinerals(true)
-                .inRadius(15, baseWithMostWorkers)
+                .inRadius(AUnit.NEAR_DIST, baseWithMostWorkers)
                 .groundNearestTo(baseWithFewestWorkers);
 
 //        System.err.println(
@@ -115,10 +117,15 @@ public class WorkerTransferCommander extends Commander {
             if (worker != null) {
                 transferWorkerTo(worker, baseWithFewestWorkers);
                 result = true;
+                _lastTransfer = A.now;
             }
         }
 
         return result;
+    }
+
+    private static boolean allowBigTransfer(double workerRatioDiff) {
+        return (workerRatioDiff > 2.0) || (A.ago(_lastTransfer) > 30 * 20);
     }
 
     /**

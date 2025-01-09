@@ -3,7 +3,6 @@ package atlantis.combat.advance.focus;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -46,6 +45,8 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     protected Manager handle() {
+        if (focusPoint == null) return null;
+
         if (act()) return usedManager(this);
 
         return null;
@@ -87,7 +88,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (unit.distToFocusPoint() <= 2.6) {
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
-            if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
+            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.HOLD_POSITION, "DragoonTooCloseA");
 //            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
             else goAway();
         }

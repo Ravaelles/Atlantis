@@ -1,16 +1,12 @@
 package atlantis.units.select;
 
-import atlantis.config.AtlantisRaceConfig;
-import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.builders.BuilderManager;
+import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.util.log.ErrorLog;
 
 import java.util.*;
 
@@ -333,21 +329,21 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Counts our completed units of given type.
      */
     public static int countOurOfType(AUnitType type) {
-        return cacheInt.get(
-            "countOurOfType:" + type.id(),
-            type.isABuilding() ? 0 : 37,
-            () -> {
-                int total = 0;
+//        return cacheInt.get(
+//            "countOurOfType:" + type.id(),
+//            type.isABuilding() ? 0 : 37,
+//            () -> {
+        int total = 0;
 
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.is(type)) {
-                        total++;
-                    }
-                }
-
-                return total;
+        for (AUnit unit : ourUnitsWithUnfinishedList()) {
+            if (unit.isCompleted() && unit.is(type)) {
+                total++;
             }
-        );
+        }
+
+        return total;
+//            }
+//        );
     }
 
     public static int countOurOfTypes(AUnitType... types) {
@@ -369,47 +365,50 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static int countOurOfTypesWithUnfinished(AUnitType... types) {
-        return cacheInt.get(
-            "countOurOfTypesWithUnfinished:" + AUnitType.arrayToIds(types),
-            0,
-            () -> {
-                int total = 0;
+//        return cacheInt.get(
+//            "countOurOfTypesWithUnfinished:" + AUnitType.arrayToIds(types),
+//            0,
+//            () -> {
+        int total = 0;
 
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.is(types)) {
-                        total++;
-                    }
-                }
-
-                return total;
+        for (AUnit unit : ourUnitsWithUnfinishedList()) {
+            if (unit.is(types)) {
+                total++;
             }
-        );
+        }
+
+        return total;
+//            }
+//        );
     }
 
     /**
      * Counts our units of given type.
      */
     public static int countOurOfTypeWithUnfinished(AUnitType type) {
-        return cacheInt.get(
-            "countOurOfTypeWithUnfinished:" + type.name(),
-            microCacheForFrames,
-            () -> {
-                int total = 0;
+//        return cacheInt.get(
+//            "countOurOfTypeWithUnfinished:" + type.name(),
+//            0,
+//            () -> {
+        int total = 0;
 
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.is(type)) total++;
-                }
+        for (AUnit unit : ourUnitsWithUnfinishedList()) {
+            if (unit.is(type)) total++;
+        }
 
-                if (!type.isABuilding()) {
-                    AUnitType producer = type.whatBuildsIt();
-                    for (AUnit producingUnit : Select.ourOfType(producer).list()) {
-                        if (producingUnit.buildUnit() != null && producingUnit.buildUnit().type().is(type)) total++;
-                    }
-                }
-
-                return total;
+        if (!type.isABuilding()) {
+            AUnitType producer = type.whatBuildsIt();
+            for (AUnit producingUnit : Select.ourOfType(producer).list()) {
+                if (producingUnit.buildUnit() != null && producingUnit.buildUnit().type().is(type)) total++;
             }
-        );
+        }
+//        else {
+//            total += ConstructionRequests.notStartedOfType(type).size();
+//        }
+
+        return total;
+//            }
+//        );
     }
 
     public static int countOurUnfinishedOfType(AUnitType type) {
@@ -641,8 +640,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 List<AUnit> data = new ArrayList<>(enemyUnits());
                 data.removeIf(
                     u -> (
-                        !u.isCompleted()
-                            || (!u.isABuilding() && !u.isRealUnit())
+//                        !u.isCompleted()
+                        (!u.isABuilding() && !u.isRealUnit())
                             || (!includeBuildings && u.isABuilding())
                             || (!includeGroundUnits && u.isGroundUnit())
                             || (!includeAirUnits && u.isAir())
@@ -821,7 +820,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "naturalOrMain",
             0,
             () -> {
-                List<? extends AUnit> bases = Select.ourBases().list();
+                List<? extends AUnit> bases = Select.ourBases().notLifted().list();
 
                 if (bases.size() >= 2) {
                     return bases.get(1);
@@ -941,6 +940,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourBuildings",
             microCacheForFrames,
             () -> our().buildings()
+        );
+    }
+
+    public static Selection enemyBuildings() {
+        String cachePath;
+        return cache.get(
+            cachePath = "enemyBuildings",
+            microCacheForFrames,
+            () -> enemy().buildings()
         );
     }
 

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SiegeAgainstEnemyTanks extends Manager {
     public SiegeAgainstEnemyTanks(AUnit unit) {

@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.zerg;
 
 import atlantis.game.A;
-import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -15,6 +14,7 @@ public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.zerg();
     }
+
     @Override
     protected void handle() {
         hydraDen();
@@ -23,7 +23,7 @@ public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
     // =========================================================
 
     private static void hydraDen() {
-        if (Have.a(Zerg_Hydralisk_Den) || Have.unfinishedOrPlanned(Zerg_Hydralisk_Den)) {
+        if (Have.a(Zerg_Hydralisk_Den) || Have.existingUnfinishedOrPlanned(Zerg_Hydralisk_Den)) {
             return;
         }
 

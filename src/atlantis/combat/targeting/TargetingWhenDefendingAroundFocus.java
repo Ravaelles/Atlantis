@@ -1,7 +1,6 @@
 package atlantis.combat.targeting;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AliveEnemies;
 import bwapi.Color;
@@ -12,9 +11,11 @@ public class TargetingWhenDefendingAroundFocus extends Manager {
     }
 
     public boolean applies() {
+        if (true) return false;
+
         return unit.isMissionDefendOrSparta()
             && unit.mission().focusPoint().isAroundChoke()
-            && unit.distToNearestChoke() <= 4;
+            && unit.distTo(unit.mission().focusPoint()) <= 4;
 //            && unit.lastAttackFrameMoreThanAgo(60);
     }
 

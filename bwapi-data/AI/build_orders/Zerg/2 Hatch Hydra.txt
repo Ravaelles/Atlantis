@@ -24,9 +24,10 @@ Move out at when you have 12 Hydralisks.
 @ - Name - Modifier
 9 - Overlord
 //12 - Hatchery - NATURAL
-9 - Spawning Pool
-12 - Extractor
-13 - Sunken Colony
+8 - Spawning Pool
+10 - Zergling
+12 - Zergling
+14 - Extractor
 14 - Hydralisk Den
 16 - Hydralisk
 //18 - Hatchery - MAIN

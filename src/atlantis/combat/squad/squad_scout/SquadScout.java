@@ -3,7 +3,7 @@ package atlantis.combat.squad.squad_scout;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SquadScout extends Manager {
     public SquadScout(AUnit unit) {

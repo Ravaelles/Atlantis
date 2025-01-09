@@ -11,6 +11,12 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
     public static Decision decision(AUnit unit) {
         if (dontAttackNearEnemyBaseIfFocusPointIsExpansion(unit)) return Decision.FORBIDDEN;
 
+        if (unit.isReaver()) return Decision.FORBIDDEN;
+
+        if (unit.enemiesNear().buildings().nearestToDistMore(unit, 20)) {
+            return Decision.FORBIDDEN;
+        }
+
         if (unit.isDragoon()) {
             if (unit.shieldDamageAtLeast(14)) {
                 return unit.cooldown() <= 12 ? Decision.ALLOWED : Decision.FORBIDDEN;
@@ -26,8 +32,6 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
 
             return Decision.ALLOWED;
         }
-
-        if (unit.isReaver()) return Decision.FORBIDDEN;
 
         if (Alpha.count() <= 5) {
             if (unit.isMelee() && unit.shieldDamageAtLeast(11)) {
@@ -59,7 +63,7 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         if (focus == null) return false;
 
         if (A.supplyUsed() <= 60) return false;
-        if (unit.combatEvalRelative() >= 4) return false;
+        if (unit.eval() >= 4) return false;
         if (unit.cooldown() == 0 && unit.enemiesNear().inRadius(6, unit).atLeast(1)) return false;
 
         if (focus.groundDistanceTo(unit) >= 15 && focus.nameContains("Third", "Expansion")) {

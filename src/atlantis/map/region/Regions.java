@@ -130,14 +130,16 @@ public class Regions {
         }
 
         try {
-            if (position.getX() >= 32000) return null;
+            if (position.getX() >= 31000) return null;
 
             if (Env.isTesting()) return FakeRegion.getByTxTy(position.getX() / 32, position.getY() / 32);
 
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {
-            ErrorLog.printErrorOnce("Failed trying to get region for " + position);
+            ErrorLog.printErrorOnce("Failed trying to get region for " + position + " / " + e.getMessage());
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Region get fail");
+//            if (A.isUms()) e.printStackTrace();
 //            A.printStackTrace();
         }
 

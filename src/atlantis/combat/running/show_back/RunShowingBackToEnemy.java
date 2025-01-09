@@ -1,19 +1,17 @@
 package atlantis.combat.running.show_back;
 
 import atlantis.combat.running.ARunningManager;
-import atlantis.debug.painter.APainter;
+import atlantis.combat.running.IsReasonablePositionToRunTo;
+import atlantis.combat.running.SeparateEarlyFromFriends;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
 import atlantis.util.Vector;
-import bwapi.Color;
 
 public class RunShowingBackToEnemy {
     public static final double SHOW_BACK_DIST_DEFAULT = 4;
     public static final double SHOW_BACK_DIST_DRAGOON = 6;
-    public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 3;
+    public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 5;
     public static final double SHOW_BACK_DIST_VULTURE = 5;
 
     private final ARunningManager running;
@@ -30,21 +28,7 @@ public class RunShowingBackToEnemy {
     public boolean shouldRunByShowingBackToEnemy() {
         this.unit = running.unit();
 
-//        if (true) return false;
-//        if (true) return true;
-
-        if (unit.isFlying()) return true;
-        if (unit.meleeEnemiesNearCount(2.2) >= 2) return true;
-
-        if (Count.ourCombatUnits() <= 11) return false;
-        if (unit.lastActionLessThanAgo(30, Actions.RUN_IN_ANY_DIRECTION)) return false;
-        if (unit.hp() <= 18 || unit.lastUnderAttackLessThanAgo(40)) return false;
-        if (!unit.isWorker() && !unit.isDragoon()) return false;
-        if (unit.friendsNear().combatUnits().atMost(12)) return false;
-
-        if (unit.meleeEnemiesNearCount(3) >= 4) return true;
-
-        return false;
+        return ShouldRunByShowingBackToEnemy.check(unit, running.runningFromUnit());
     }
 
     // =========================================================
@@ -64,8 +48,15 @@ public class RunShowingBackToEnemy {
                 && unit.distTo(runTo) > 1
                 && running.unit().lastStartedRunningLessThanAgo(8)
         ) {
-            running.setRunTo(runTo);
-            return true;
+            runTo = SeparateEarlyFromFriends.modifyPositionSlightly(runTo, runAwayFrom, running);
+
+            if (IsReasonablePositionToRunTo.check(unit, runTo, runAwayFrom)) {
+                running.setRunTo(runTo);
+                return true;
+            }
+            else {
+                runTo = null;
+            }
         }
 
 //        if (runTo == null || running.unit().lastStartedRunningLessThanAgo(8)) {
@@ -76,8 +67,8 @@ public class RunShowingBackToEnemy {
         running.setRunTo(runTo);
 
         if (runTo != null) {
-            APainter.paintCircleFilled(runTo, 3, Color.Brown);
-            APainter.paintLine(running.unit(), runTo, Color.Brown);
+//            APainter.paintCircleFilled(runTo, 3, Color.Brown);
+//            APainter.paintLine(running.unit(), runTo, Color.Brown);
             running.unit().setTooltip("ShowBack");
         }
 
@@ -147,9 +138,9 @@ public class RunShowingBackToEnemy {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (running.isReasonablePositionToRun(
-//            running.unit(), runTo, true, "O", "X"
-            running.unit(), runTo, true, null, null
+        if (IsReasonablePositionToRunTo.check(
+            running.unit(), runTo, runAwayFrom
+//            "O", "X"
         )) {
 //        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
 //            APainter.paintLine(unit.position(), runTo, Color.Purple);

@@ -2,13 +2,13 @@ package starengine.events;
 
 import atlantis.game.A;
 import starengine.sc_logic.UpdateUnits;
-import tests.acceptance.AbstractTestFakingGame;
+import tests.acceptance.AbstractWorldCreatingTest;
 import tests.fakes.FakeUnit;
 
 public class OnStarEngineFrameEnd {
     public static double UNIT_SPEED_MODIFIER_PER_FRAME = 1;
 
-    public static void onFrameEnd(AbstractTestFakingGame test) {
+    public static void onFrameEnd(AbstractWorldCreatingTest test) {
 //        for (FakeUnit unit : test.our) {
 //            updatePosition(unit);
 //        }

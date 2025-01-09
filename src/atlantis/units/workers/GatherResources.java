@@ -29,7 +29,9 @@ public class GatherResources extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.lastPositionChangedLessThanAgo(10)) return null;
+        if (!unit.isStopped()) {
+            if (unit.lastPositionChangedLessThanAgo(10)) return null;
+        }
 
         if (itIsNotSafeToGather()) return null;
 
@@ -39,8 +41,7 @@ public class GatherResources extends Manager {
     }
 
     private boolean itIsNotSafeToGather() {
-        return unit.lastStartedRunningLessThanAgo(100)
-            || unit.enemiesNear().combatUnits().inRadius(2 + unit.woundPercent() / 30.0, unit).notEmpty();
+        return unit.enemiesNear().combatUnits().inRadius(2 + unit.woundPercent() / 30.0, unit).notEmpty();
     }
 
     /**

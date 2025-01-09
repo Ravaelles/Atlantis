@@ -7,7 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 
 public abstract class MoveToFocusPoint extends MissionManager {
-    protected static final double MARGIN = 0.4;
+//    protected static final double MARGIN = 0.4;
 
     protected DistFromFocus distFromFocus;
     protected double optimalDist;

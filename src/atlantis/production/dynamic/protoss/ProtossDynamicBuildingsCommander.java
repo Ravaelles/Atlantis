@@ -6,8 +6,9 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.buildings.*;
-import atlantis.production.orders.build.CurrentBuildOrder;
+import atlantis.production.dynamic.supply.ProduceFallbackPylonWhenSupplyLow;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -18,20 +19,35 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
-            && (
-//            A.supplyUsed() <= 30
-//                || A.supplyUsed(31)
-//                || A.hasMinerals(410)
-//                || A.canAffordWithReserved(100, 0)
-            A.canAffordWithReserved(92, 0)
-        );
+            && applyForStandardCases();
+    }
+
+    private static boolean applyForStandardCases() {
+        return A.hasMinerals(550)
+            || A.canAffordWithReserved(92, 0)
+            || (A.hasMinerals(260) && !ShouldExpand.shouldExpand());
+    }
+
+    private static boolean topPriority() {
+        if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) return true;
+
+        if (
+            ProduceCyberneticsCore.produce()
+                || ProduceFirstAssimilator.produce()
+                || ProduceObservatory.produce()
+                || ProduceRoboticsFacility.produce()
+        ) return true;
+
+        return false;
     }
 
     @Override
     protected void handle() {
-        if (A.hasMinerals(600)) ProduceGateway.produce();
+        if (topPriority()) return;
 
-        if (ProduceCyberneticsCore.produce()) return;
+        if (!applyForStandardCases()) return;
+
+        if (A.hasMinerals(470)) ProduceGateway.produce();
 
         boolean gatewaysEarly = A.supplyUsed() <= 30 || Count.gatewaysWithUnfinished() <= 1;
 //        if (gatewaysEarly) {
@@ -39,10 +55,9 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //        }
 
         if (
-            ProduceFirstAssimilator.produce()
 //                || ProduceCannon.produce()
-                || ProduceCannonAtNatural.produce()
-                || ProduceShieldBatteryAtNatural.produce()
+//                || ProduceCannonAtNatural.produce()
+                ProduceShieldBatteryAtNatural.produce()
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())
                 || ProducePylonNearEveryBase.produce()
@@ -55,10 +70,8 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (isItSafeToAddTechBuildings()) {
             if (
 //                ProduceCitadelOfAdun.produce()
-                ProduceObservatory.produce()
+                 ProduceRoboticsSupportBay.produce()
 //                    || ProduceTemplarArchives.produce()
-                    || ProduceRoboticsSupportBay.produce()
-                    || ProduceRoboticsFacility.produce()
                     || ProduceStargate.produce()
                     || ProduceArbiterTribunal.produce()
                     || ProduceShieldBattery.produce()

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class DontThinkAboutUnsieging extends Manager {
     public DontThinkAboutUnsieging(AUnit unit) {

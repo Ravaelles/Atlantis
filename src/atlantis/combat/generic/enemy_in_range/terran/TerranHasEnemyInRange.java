@@ -5,7 +5,7 @@ import atlantis.combat.generic.enemy_in_range.protoss.ProtossGetEnemyInRange;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class TerranHasEnemyInRange extends Manager {
@@ -26,7 +26,7 @@ public class TerranHasEnemyInRange extends Manager {
         if (
             unit.isInfantry()
                 && unit.hp() >= 40
-                && (unit.lastAttackFrameMoreThanAgo(30 * 6) || unit.combatEvalRelative() >= 1.6)
+                && (unit.lastAttackFrameMoreThanAgo(30 * 6) || unit.eval() >= 1.6)
         ) return true;
 
         if (A.supplyUsed() <= 130 && unit.distToLeader() >= 10) return false;

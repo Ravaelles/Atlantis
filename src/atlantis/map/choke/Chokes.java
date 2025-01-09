@@ -7,9 +7,11 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import jbweb.JBWEB;
 
@@ -47,17 +49,15 @@ public class Chokes {
             "mainChoke",
             -1,
 //            () -> mainChokeFromJbweb()
-            () -> {
-                AChoke mainChoke = mainChokeFromJbweb();
-                if (mainChoke != null) return mainChoke;
-
-                return MainChokeCustom.get();
-            }
+            () -> DefineMainChoke.define()
         );
     }
 
-    private static AChoke mainChokeFromJbweb() {
-        return AChoke.from(JBWEB.getMainChoke());
+    public static HasPosition naturalOrAnyBuilding() {
+        AChoke natural = natural();
+        if (natural != null) return natural;
+
+        return Select.mainOrAnyBuilding();
     }
 
     /**
@@ -67,31 +67,7 @@ public class Chokes {
         return (AChoke) cache.getIfValid(
             "natural",
             -1,
-            () -> {
-                if (mainChoke() == null) return null;
-
-//                if (!ActiveMap.isMap("7th")) {
-//                    AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
-//                    System.err.println("@@@@ naturalFromJbweb = " + naturalFromJbweb);
-//                    if (naturalFromJbweb != null) return naturalFromJbweb;
-//                }
-//
-//                if (!ActiveMap.isMap("7th")) {
-//                    AChoke choke = AChoke.from(JBWEB.getNaturalChoke());
-//                    System.err.println("@@@@ CHOKE B = " + choke);
-//                    if (fullfillsConditionsForNatural(choke, "NATURAL")) {
-//                        //                        System.err.println("choke.position() = " + choke.position());
-//                        //                        System.err.println("AMap.getMapHeightInTiles() = " + AMap.getMapHeightInTiles());
-//                        return choke;
-//                    }
-//                }
-//
-                APosition naturalBase = DefineNaturalBase.natural();
-//                System.err.println("@@@@ naturalBase = " + naturalBase);
-//                System.err.println("@@@@ CHOKE C = " + nearestChoke(naturalBase, "MAIN"));
-
-                return nearestChoke(naturalBase, "MAIN");
-            }
+            () -> DefineNaturalChoke.define()
         );
     }
 
@@ -240,5 +216,20 @@ public class Chokes {
                 return chokes;
             }
         );
+    }
+
+    public static Positions enemyMainAndNaturalChokes() {
+        AChoke enemyMainChoke = enemyMainChoke();
+        AChoke enemyNaturalChoke = enemyNaturalChoke();
+        Positions positions = new Positions();
+
+        if (enemyMainChoke != null) {
+            positions.addPosition(enemyMainChoke.center());
+        }
+        if (enemyNaturalChoke != null) {
+            positions.addPosition(enemyNaturalChoke.center());
+        }
+
+        return positions;
     }
 }

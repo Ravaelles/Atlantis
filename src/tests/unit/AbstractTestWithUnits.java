@@ -1,51 +1,44 @@
 package tests.unit;
 
 import atlantis.Atlantis;
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
 import atlantis.game.AGame;
-import atlantis.game.listeners.OnStart;
+import atlantis.game.listeners.OnGameStarted;
+import atlantis.game.player.Enemy;
 import atlantis.game.race.EnemyRace;
-import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.AStrategy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.AbstractPositionFinder;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.orders.production.queue.ReservedResources;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import atlantis.util.Options;
+import atlantis.util.cache.Cache;
 import bwapi.Game;
 import bwapi.Race;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
-import tests.acceptance.AbstractTestFakingGame;
-import tests.fakes.FakeBullets;
+import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class AbstractTestWithUnits extends UnitTest {
@@ -56,49 +49,49 @@ public class AbstractTestWithUnits extends UnitTest {
     protected int currentSupplyUsed = 0;
     protected int currentSupplyTotal = 0;
 
-    public MockedStatic<Env> env;
-    public MockedStatic<AGame> aGame;
-    public MockedStatic<ATech> aTech;
-    public MockedStatic<Enemy> enemy;
-    public MockedStatic<EnemyRace> enemyRace;
-    public MockedStatic<AllBaseLocations> allBaseLocations;
-    public MockedStatic<AllChokes> allChokes;
+    public static MockedStatic<Env> env;
+    public static MockedStatic<AGame> aGame;
+    public static MockedStatic<ATech> aTech;
+    public static MockedStatic<Enemy> enemy;
+    public static MockedStatic<EnemyRace> enemyRace;
+    public static MockedStatic<AllBaseLocations> allBaseLocations;
+    public static MockedStatic<AllChokes> allChokes;
 
     protected Options options = new Options();
 
     // =========================================================
 
-    @Before
-    public void before() {
+    @BeforeEach
+    public void setUp() {
         Env.markIsTesting(true);
-
         Env.readEnvFile(new String[]{});
 
-        if (!(this instanceof AbstractTestFakingGame)) {
+        clearCaches();
+
+        if (!(this instanceof AbstractTestWithWorld)) {
             useFakeTime(0); // This needs to be 0 so every modulo division returns 0
         }
 
         (new MockEverything(this)).mockEverything();
+//        HeuristicCombatEvaluator.clearCache();
 
+        init();
+    }
+
+    public void init() {
+    }
+
+    private static void clearCaches() {
         APainter.disablePainting();
 
-        AbstractFoggedUnit.clearCache();
-        AvoidEnemies.clearCache();
-        BaseSelect.clearCache();
-        Count.clearCache();
-        EnemyInfo.clearCache();
-        EnemyUnits.clearCache();
-        FakeBullets.allBullets.clear();
-        ReservedResources.reset();
-        Select.clearCache();
-//        HeuristicCombatEvaluator.clearCache();
+        ClearAllCaches.clearAll();
     }
 
     public Race initRace() {
         return MockEverything.defaultRaceForTests();
     }
 
-    protected void beforeTestLogic() {
+    protected void setUpTestLogic() {
         AtlantisRaceConfig.MY_RACE = MockEverything.defaultRaceForTests();
 
         if (AtlantisRaceConfig.MY_RACE == null) {
@@ -109,8 +102,8 @@ public class AbstractTestWithUnits extends UnitTest {
         setUpStrategy();
     }
 
-    @After
-    public void after() {
+    @AfterEach
+    public void tearDown() {
         cleanUp();
     }
 
@@ -118,10 +111,6 @@ public class AbstractTestWithUnits extends UnitTest {
      * PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
      */
     protected void cleanUp() {
-//        Select.clearCache();
-//        BaseSelect.clearCache();
-//        EnemyUnits.clearCache();
-//        EnemyInfo.clearCache();
         AbstractPositionFinder._STATUS = "Init";
         ConstructionRequests.constructions.clear();
 
@@ -131,7 +120,7 @@ public class AbstractTestWithUnits extends UnitTest {
                 try {
                     Object object = field.get(this);
                     if (object != null) {
-                        ((MockedStatic) object).close();
+                        ((MockedStatic) object).reset();
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Something went wrong here");
@@ -140,6 +129,8 @@ public class AbstractTestWithUnits extends UnitTest {
                 }
             }
         }
+
+        Cache.nukeAllCaches();
 
         ReservedResources.reset();
 
@@ -174,17 +165,17 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     protected void setUpBuildOrder() {
-        OnStart.initializeAllStrategies();
+        OnGameStarted.initializeAllStrategies();
 
         try {
-            OnStart.initStrategyAndBuildOrder();
+            OnGameStarted.initStrategyAndBuildOrder();
         } catch (RuntimeException e) {
             // Ignore
         }
     }
 
     protected void setUpStrategy() {
-        OurStrategy.setTo(initBuildOrder());
+        Strategy.setTo(initBuildOrder());
     }
 
     // =========================================================
@@ -200,40 +191,33 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     protected void usingFakeOurs(Runnable runnable) {
-        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
-
-            runnable.run();
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
         }
+        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
+
+        runnable.run();
     }
 
     protected void usingFakeEnemy(Runnable runnable) {
-        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-            baseSelect.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
-
-            runnable.run();
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
         }
+        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
+
+        runnable.run();
     }
 
     protected void usingFakeNeutral(Runnable runnable) {
-//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-//            baseSelect.when(BaseSelect::neutralUnits).thenReturn(mockNeutralUnits());
-//
-//            runnable.run();
-//        }
-
-        List<AUnit> neutral = mockNeutralUnits();
+        List<FakeUnit> neutral = mockNeutralUnits();
         usingFakeOursEnemiesAndNeutral(new FakeUnit[]{}, new FakeUnit[]{}, neutral.toArray(new FakeUnit[0]), runnable);
     }
 
-    protected void usingFakeOursAndFakeEnemies(FakeUnit[] ours, FakeUnit[] enemies, Runnable runnable) {
-//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-//            baseSelect.when(BaseSelect::ourUnits).thenReturn(Arrays.asList(ours));
-//            baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
-//
-//            runnable.run();
-//        }
-
+    public void usingFakeOursAndFakeEnemies(FakeUnit[] ours, FakeUnit[] enemies, Runnable runnable) {
         usingFakeOursEnemiesAndNeutral(ours, enemies, new FakeUnit[]{}, runnable);
     }
 
@@ -244,33 +228,43 @@ public class AbstractTestWithUnits extends UnitTest {
     protected void usingFakeOursEnemiesAndNeutral(
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
-        try (MockedStatic<BaseSelect> baseSelect = AbstractTestFakingGame.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
-//            (new MockEverything(this)).mockEverything();
+        setUp();
 
-            baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
-            baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
-            baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
-
-            beforeTestLogic();
-
-            runnable.run();
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
         }
+        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
+
+//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
+
+        setUpTestLogic();
+
+        runnable.run();
+//        }
     }
 
-    protected static FakeUnit fake(AUnitType type) {
+    public static FakeUnit fake(AUnitType type) {
         return new FakeUnit(type, 10, 10);
     }
 
-    protected static FakeUnit fake(AUnitType type, double x) {
-        return new FakeUnit(type, x, 10);
+    public static FakeUnit fake(AUnitType type, double tx) {
+        return new FakeUnit(type, tx, 10);
     }
 
-    protected static FakeUnit fakeEnemy(AUnitType type, double x) {
-        return new FakeUnit(type, x, 10).setEnemy();
+    public static FakeUnit fakeEnemy(AUnitType type, double tx) {
+        return new FakeUnit(type, tx, 10).setEnemy();
     }
 
-    protected static FakeUnit fake(AUnitType type, double x, double y) {
-        return new FakeUnit(type, x, y);
+    public static FakeUnit fakeEnemy(AUnitType type, double tx, double ty) {
+        return new FakeUnit(type, tx, ty).setEnemy();
+    }
+
+    public static FakeUnit fake(AUnitType type, double tx, double ty) {
+        return new FakeUnit(type, tx, ty);
     }
 
     public static FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {

@@ -6,12 +6,12 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AdvanceTest extends NonAbstractTestFakingGame {
+public class AdvanceTest extends WorldStubForTests {
     private FakeUnit unit;
 
     @Test
@@ -48,7 +48,7 @@ public class AdvanceTest extends NonAbstractTestFakingGame {
                             + " -       " + unit.tooltip()
                             + "\n   Type    : " + unit
                             + "\n   Manager : " + unit.manager()
-                            + "\n   Eval    : " + unit.combatEvalRelativeDigit()
+                            + "\n   Eval    : " + unit.evalDigit()
 //                            + "\n   Squad   : " + unit.squad().toString()
                         //                    + "\n   Managers: " + unit.managerLogs().toString()
                         //                    + "\n   Command : " + unit.lastCommand()

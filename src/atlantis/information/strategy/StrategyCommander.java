@@ -3,10 +3,10 @@ package atlantis.information.strategy;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.strategy.response.AStrategyResponseFactory;
+import atlantis.information.strategy.response.RaceStrategyResponseFactory;
 
 import atlantis.information.strategy.terran.TerranStrategies;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class StrategyCommander extends Commander {
 
@@ -29,7 +29,7 @@ public class StrategyCommander extends Commander {
             }
         }
 
-        AStrategyResponseFactory.forOurRace().update();
+//        RaceStrategyResponseFactory.forOurRace().update();
 
         // CodeProfiler.endMeasuring(this);
     }
@@ -64,7 +64,7 @@ public class StrategyCommander extends Commander {
             AGame.sendMessage("Enemy strategy detected at " + A.seconds() + "s: " + strategy);
         }
         EnemyStrategy.setEnemyStrategy(strategy);
-        AStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();
+        RaceStrategyResponseFactory.forOurRace().updateEnemyStrategyChanged();
     }
 
 }

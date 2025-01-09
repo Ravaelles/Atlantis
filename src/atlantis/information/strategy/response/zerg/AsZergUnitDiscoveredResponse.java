@@ -1,16 +1,16 @@
 package atlantis.information.strategy.response.zerg;
 
 import atlantis.combat.missions.MissionChanger;
-import atlantis.information.decisions.OurStrategicBuildings;
+
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.production.constructing.position.modifier.PositionModifier;
+import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.ProductionRequests;
@@ -21,7 +21,7 @@ import atlantis.util.We;
 
 public class AsZergUnitDiscoveredResponse {
     public static void updateEnemyUnitDiscovered(AUnit enemyUnit) {
-        if (OurStrategy.get().isRushOrCheese()) {
+        if (Strategy.get().isRushOrCheese()) {
             whenRushOrCheese(enemyUnit);
         }
 
@@ -39,10 +39,10 @@ public class AsZergUnitDiscoveredResponse {
 //            }
         }
 
-        if (GamePhase.isEarlyGame()) {
+        if (GamePhase.isEarlyGame() && !Strategy.get().isRushOrCheese()) {
             if (enemyUnit.isZergling()) {
                 if (EnemyUnits.count(AUnitType.Zerg_Zergling) >= 6) {
-                    MissionChanger.forceMissionSpartaOrDefend("LotsOfZerglings");
+                    MissionChanger.forceMissionSpartaOrDefend("LotsOfZerglingsZ");
                 }
             }
 
@@ -71,7 +71,7 @@ public class AsZergUnitDiscoveredResponse {
             EnemyUnits.has(AUnitType.Protoss_Dragoon)
                 && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1)
         ) {
-            MissionChanger.forceMissionSpartaOrDefend("Enemy dragoons & not enough power");
+            MissionChanger.forceMissionSpartaOrDefend("Foe dragoons & not enough power");
             return true;
         }
 
@@ -124,8 +124,6 @@ public class AsZergUnitDiscoveredResponse {
 
 //        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar)) {
         if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker, AUnitType.Zerg_Lurker_Egg)) {
-            OurStrategicBuildings.setDetectorsNeeded(2);
-
             ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
 //            ProductionRequests.getInstance().requestDetectorQuick(

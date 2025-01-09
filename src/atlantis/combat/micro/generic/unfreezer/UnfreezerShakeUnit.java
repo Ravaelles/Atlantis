@@ -9,41 +9,43 @@ import atlantis.units.actions.Actions;
 
 public class UnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
-        if (
-            unit.isHoldingPosition()
-                && unit.manager().getClass().getSimpleName().contains("Unfreeze")
-        ) {
-            return A.s % 3 == 0;
-        }
+        int framesModulo = A.now % 50;
 
-        if (A.s % 4 <= 1) {
-            if (unit.moveToLeader(Actions.SPECIAL, "UnfreezeC")) return true;
-        }
-
-        if (A.s % 15 <= 3 && unit.lastActionMoreThanAgo(131, Actions.HOLD_POSITION)) {
-            unit.holdPosition("UnfreezeA");
+        if (framesModulo <= 19) {
+            if (framesModulo % 3 == 0) unit.stop("UnfreezeC");
             return true;
         }
 
+        if (framesModulo <= 26) {
+            if (!unit.isHoldingPosition()) return unit.holdPosition(Actions.HOLD_POSITION, "UnfreezeHold");
+            return true;
+        }
+
+        if (framesModulo <= 31) {
+            if (framesModulo % 3 == 0 && unit.moveToLeader(Actions.SPECIAL, "UnfreezeC")) return true;
+            return true;
+        }
+
+        if (framesModulo <= 35) {
+            if (framesModulo % 3 == 0 && unfreezeByTakingSmallStep(unit)) return true;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean unfreezeByTakingSmallStep(AUnit unit) {
         int sign = A.s % 2 == 0 ? 1 : -1;
         APosition moveTo = unit.position().translateByPixels(4 * sign, 4 * sign);
         if (moveTo == null || !moveTo.isWalkable()) return false;
 
         if (unit.move(
-            moveTo, Actions.MOVE_UNFREEZE, "UnfreezeB"
+            moveTo, Actions.MOVE_UNFREEZE, "UnfreezeStep"
         )) {
             return true;
         }
 
-//        if (unit.lastActionMoreThanAgo(91, Actions.HOLD_POSITION)) {
-//            unit.holdPosition("HoldB");
-//            return usedManager(this, "UnfreezeGoonA");
-//        }
-
-        unit.setTooltip("UnfreezeC");
-        return true;
-
-//        if (shouldNotDoAnythingButContinue(unit)) return true;
+        return false;
     }
 
     private static boolean goToFocus(AUnit unit) {

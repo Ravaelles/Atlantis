@@ -1,14 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.dragoon;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
-import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.range.OurDragoonRange;
-import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import atlantis.util.We;
 
 public class ProtossDragoonSeparate extends Manager {
     public ProtossDragoonSeparate(AUnit unit) {

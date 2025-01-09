@@ -3,7 +3,7 @@ package atlantis.production.orders.production.queue;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 
 public class ReservedResources {
     public static final int MAX_VALUE = 500;

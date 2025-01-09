@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.util.cache.Cache;
+import bwapi.Pair;
 import bwem.Area;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ARegion implements HasPosition {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(HasPosition o) {
         if (this == o) return true;
         if (!(o instanceof ARegion)) return false;
         if (area == null) {
@@ -106,6 +107,10 @@ public class ARegion implements HasPosition {
                 (area.getTopLeft().x + area.getBottomRight().x) / 2,
                 (area.getTopLeft().y + area.getBottomRight().y) / 2
             );
+
+            if (!center.isWalkable()) {
+                center = center.makeWalkable(8, this);
+            }
         }
 
         return center;
@@ -131,4 +136,22 @@ public class ARegion implements HasPosition {
         return area.getAccessibleNeighbors().stream().map(ARegion::create).collect(Collectors.toList());
     }
 
+    public AChoke chokeBetween(ARegion otherRegion) {
+        if (otherRegion == null) {
+            return null;
+        }
+
+        List<AChoke> chokes = chokes();
+        for (AChoke choke : chokes) {
+            Pair<ARegion, ARegion> regions = choke.regions();
+            if (
+                (regions.first == this || regions.second == otherRegion)
+                    && (regions.first == otherRegion || regions.second == otherRegion)
+            ) {
+                return choke;
+            }
+        }
+
+        return null;
+    }
 }

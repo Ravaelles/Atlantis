@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
@@ -35,7 +36,7 @@ public class DefineNaturalBase {
     /**
      * Returns nearest base location (by the actual ground distance) to the given base location.
      */
-    public static ABaseLocation naturalIfMainIsAt(APosition nearestTo) {
+    public static ABaseLocation naturalIfMainIsAt(HasPosition nearestTo) {
         if (nearestTo == null) return null;
 
         return (ABaseLocation) cache.get(
@@ -61,7 +62,7 @@ public class DefineNaturalBase {
         );
     }
 
-    private static boolean isConnected(APosition nearestTo, ABaseLocation baseLocation) {
+    private static boolean isConnected(HasPosition nearestTo, ABaseLocation baseLocation) {
         if (Env.isTesting()) return true;
 
         return baseLocation.position().hasPathTo(nearestTo);

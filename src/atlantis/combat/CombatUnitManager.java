@@ -19,10 +19,7 @@ public class CombatUnitManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidSpellsAndMines.class,
-            SpecialUnitsManager.class,
             CombatManagerTopPriority.class,
-//            ImproveCombatPerformance.class,
             CombatManagerMediumPriority.class,
             CombatManagerLowPriority.class,
         };

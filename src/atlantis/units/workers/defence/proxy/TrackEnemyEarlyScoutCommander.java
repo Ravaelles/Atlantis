@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.GatherResources;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TrackEnemyEarlyScoutCommander extends Commander {
     private static AUnit enemyScout = null;
@@ -60,6 +60,10 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
 //            enemyScout = Select.enemy().workers().inRadius(30, main).nearestTo(main);
             enemyScout = Select.enemy().inRadius(30, main).nearestTo(main);
+
+            if (enemyScout != null && enemyScout.friendsNear().workers().countInRadius(7, enemyScout) > 0) {
+                enemyScout = null;
+            }
 
 //            if (enemyScout != null) {
 //                System.err.println("Enemy scout detected: " + enemyScout);

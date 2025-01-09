@@ -1,6 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.MissionManager;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
@@ -29,7 +30,7 @@ public class LeaderProgressFlagToNextFocusChoke extends MissionManager {
             && unit.lastStartedRunningMoreThanAgo(30 * 6)
             && unit.lastRetreatedAgo() >= 30 * 9
             && unit.noCooldown()
-            && unit.combatEvalRelative() >= 2
+            && unit.eval() >= 2
             && !lastProgressedTooRecently()
             && squadIsHere();
     }

@@ -2,14 +2,18 @@ package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
-import atlantis.map.position.HasPosition;
+import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
+
+import java.util.List;
 
 public class LeaderToOther extends MissionManager {
     private AUnit otherFriend;
@@ -20,18 +24,46 @@ public class LeaderToOther extends MissionManager {
 
     @Override
     public boolean applies() {
+//        if (We.protoss() && Enemy.zerg() && Count.ourCombatUnits() <= 10) return false;
+
+        if (
+            We.protoss()
+//                && !Enemy.protoss()
+                && !EnemyInfo.hasRanged()
+                && unit.enemiesNearInRadius(9) == 0
+        ) return false;
+
         otherFriend = otherFriend();
         if (otherFriend == null) return false;
-
         double distToOther = otherFriend.distTo(unit);
+
+        if (asProtossShouldBeCautiosAgainstProtossEarly(distToOther)) return true;
+
+        if (We.terran()) {
+            if (unit.enemiesNear().canAttack(unit, 5.1).notEmpty()) return false;
+        }
+        else if (We.protoss()) {
+            if (unit.enemiesNear().canAttack(unit, unit.shieldWound() >= 9 ? 6.1 : 4.1).notEmpty()) return false;
+        }
 
         return distToOther <= 20 && distToOther > dist();
     }
 
-    private double dist() {
-        if (unit.enemiesNear().combatUnits().havingWeapon().notEmpty()) return 0.75;
+    private boolean asProtossShouldBeCautiosAgainstProtossEarly(double distToOther) {
+        if (!Enemy.protoss()) return false;
+        if (!We.protoss()) return false;
 
-        return 2 + unit.squadSize() / 4.0 + (OurArmy.strength() >= 200 ? 1 : 0);
+        int dragoons = Count.dragoons();
+
+        return (dragoons <= 5 || AGame.killsLossesResourceBalance() < -50)
+            && distToOther >= 4
+            && dragoons <= 12;
+    }
+
+    private double dist() {
+        if (unit.enemiesNear().combatUnits().havingWeapon().empty()) return 5;
+
+        return 1.6 + unit.squadSize() / 5.0 + (Army.strength() >= 300 ? 1.5 : 0);
     }
 
     @Override
@@ -44,7 +76,7 @@ public class LeaderToOther extends MissionManager {
         }
         else {
             if (!unit.isHoldingPosition() && !unit.isAttacking()) {
-                unit.holdPosition("LeaderHold");
+                unit.holdPosition(Actions.HOLD_POSITION, "LeaderHold");
             }
             return usedManager(this);
         }
@@ -53,6 +85,12 @@ public class LeaderToOther extends MissionManager {
     }
 
     private AUnit otherFriend() {
-        return unit.squad().units().groundUnits().exclude(unit).combatUnits().nearestTo(unit);
+//        return unit.squad().units().groundUnits().exclude(unit).combatUnits().nearestTo(unit);
+        Selection friends = unit.squad().units().groundUnits().exclude(unit).combatUnits();
+
+        List<AUnit> sorted = friends.sortDataByGroundDistanceTo(unit, true);
+        if (sorted.isEmpty()) return null;
+
+        return sorted.get(sorted.size() / 2);
     }
 }

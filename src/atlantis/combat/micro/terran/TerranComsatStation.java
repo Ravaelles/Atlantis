@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.TechType;
@@ -48,12 +49,17 @@ public class TerranComsatStation extends Manager {
     }
 
     private boolean shouldScanThisLurker(AUnit lurker) {
+        if (!unit.energy(50)) return false;
         if (unit.energy(190)) return true;
 
+        if (noMobileDetectionAndNotCloseToExistingBunker(lurker)) return false;
+
+        Selection ourBuildingsClose = Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker);
         if (
-            unit.energy(50)
-                && Select.ourBuildingsWithUnfinished().inRadius(6.5, lurker).isNotEmpty()
-                && lurker.friendsNear().canAttack(lurker, 7).atLeast(2)
+            ourBuildingsClose.isNotEmpty() && (
+                ourBuildingsClose.bunkers().notEmpty()
+                    || lurker.friendsNear().canAttack(lurker, 7).atLeast(2)
+            )
         ) {
             return true;
         }
@@ -66,26 +72,39 @@ public class TerranComsatStation extends Manager {
             .atLeast(minUnitsNear);
     }
 
+    private boolean noMobileDetectionAndNotCloseToExistingBunker(AUnit enemy) {
+        return Count.scienceVessels() == 0
+            && Count.bunkers() > 0
+            && Select.ourOfType(AUnitType.Terran_Bunker).countInRadius(6.5, enemy) == 0;
+    }
+
     // =========================================================
     // vs Protoss
 
     private boolean scanDarkTemplars() {
         for (AUnit dt : Select.enemy().effUndetected().ofType(AUnitType.Protoss_Dark_Templar).list()) {
-            Selection ourCombatUnits = Select.ourCombatUnits();
-
-            int minOurUnitsNear = unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7;
-            if (A.seconds() <= 320) minOurUnitsNear = 2;
-
-            if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt).atLeast(minOurUnitsNear)) {
-                if (
-                    ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
-                        || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
-                ) {
-                    return scan(dt);
-                }
-            }
+            if (shouldScanThisDT(dt)) return scan(dt);
         }
 
+        return false;
+    }
+
+    private boolean shouldScanThisDT(AUnit dt) {
+        if (noMobileDetectionAndNotCloseToExistingBunker(dt)) return false;
+
+        Selection ourCombatUnits = Select.ourCombatUnits();
+
+        int minOurUnitsNear = unit.energy(150) ? (unit.energy(190) ? 2 : 4) : 7;
+        if (A.seconds() <= 320) minOurUnitsNear = 2;
+
+        if (ourCombatUnits.excludeTypes(AUnitType.Terran_Medic).inRadius(8, dt).atLeast(minOurUnitsNear)) {
+            if (
+                ourCombatUnits.nearestTo(dt).distToLessThan(dt, 6)
+                    || ourCombatUnits.tanks().inRadius(12, dt).notEmpty()
+            ) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -105,7 +124,7 @@ public class TerranComsatStation extends Manager {
         if (Select.ourRealUnits().inRadius(9, observer).havingAntiAirWeapon().atLeast(6)) return true;
 
         if (
-            Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
+            Select.enemies(AUnitType.Protoss_Carrier).inRadius(AUnit.NEAR_DIST, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
         ) return true;
 

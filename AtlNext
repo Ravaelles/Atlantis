@@ -1,1 +1,40 @@
-- EnemyUnitsUpdater.weDiscoveredEnemyUnit bug - always returns just 1 or no change at all
+Look into HoldDragoon, only if enemy facing and moving, test on minimaps
+
+
+- Make Corsairs attack as top priority Mutas nearest to Alpha, all mutas on map, so even close to main will count
+
+- Pylons still stuck at 140. 
+
+game_results still overridden!!!!!!!!!!!!!!!!!!!!!
+
+- Dragoon running from main and then to main, being kjilled by 2 zeal super easily
+
+- Beta didn't attack 1CB expansion when there were 10+ Goons
+
+- Splitting army in two caused loss; most likely
+
+
+
+- Consider moving to middle map choke instead of forever containing
+
+
+
+- When two big squads of Zerg, when engaging expansions it always results in a loss. Dont get surrounded. When big enemy squad is ground closer to our main than alpha, always attack it first not to get surr
+
+
+
+
+
+
+BananaBuildvT:
+8 - Pylon
+9 - Gateway
+9 - Gateway
+13 - Pylon
+24 - Pylon
+25 - Assimilator (can be later)
+26 - Core
+28 - Singularity Charge
+41 - Nexus (dynamic?)
+at 8 goons attack (58 sup)
+29 - Pylon

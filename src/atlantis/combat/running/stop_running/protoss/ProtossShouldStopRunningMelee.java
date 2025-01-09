@@ -11,13 +11,13 @@ public class ProtossShouldStopRunningMelee extends Manager {
     @Override
     public boolean applies() {
         return unit.isMelee()
-            && unit.combatEvalRelative() >= 2;
+            && unit.eval() >= 2;
     }
 
     @Override
     public Manager handle() {
         ProtossShouldStopRunning.decisionStopRunning(unit);
-        
+
         if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
         return null;

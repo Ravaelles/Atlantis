@@ -4,8 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.race.MyRace;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -155,7 +154,7 @@ public class TerranSupplyCommander extends Commander {
             return;
         }
 
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
+        if (Queue.get().notFinished().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
 //            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
@@ -167,7 +166,7 @@ public class TerranSupplyCommander extends Commander {
         }
 
         // Zerg handles supply a bit differently
-        if (MyRace.isPlayingAsZerg()) {
+        if (We.zerg()) {
             ProduceZergUnit.produceZergUnit(
                 AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
             );
@@ -201,9 +200,6 @@ public class TerranSupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
-//        System.out.println("A= " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-//        System.out.println("B = " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
         return Math.max(
 //            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),

@@ -3,10 +3,8 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.combat.micro.avoid.terran.ShouldNotAvoidSingleEnemyBunker;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.log.ErrorLog;
 
 public class AvoidSingleEnemy extends Manager {
     protected final RunError runError;
@@ -43,7 +41,7 @@ public class AvoidSingleEnemy extends Manager {
             return this;
         }
 
-        return runError.handleErrorRun(unit);
+        return runError.handleErrorRun(unit, -345);
     }
 
     private boolean allowedToNotifyNearUnitsToMakeSpace() {
@@ -52,7 +50,7 @@ public class AvoidSingleEnemy extends Manager {
 
     private Manager processDontAvoid() {
         unit.runningManager().stopRunning();
-        if (unit.isMoving()) unit.holdPosition("AvoidHold");
+        if (unit.isMoving()) unit.holdPosition(Actions.HOLD_POSITION, "AvoidHold");
 
         return null;
     }

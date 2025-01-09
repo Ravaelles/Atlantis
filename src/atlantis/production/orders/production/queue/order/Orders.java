@@ -60,10 +60,12 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         return false;
     }
 
-    public void addAll(Collection<ProductionOrder> items) {
+    public Orders addAll(Collection<ProductionOrder> items) {
         for (ProductionOrder item : items) {
             add(item);
         }
+
+        return this;
     }
 
     // === Remove ==============================================
@@ -115,9 +117,9 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         return orders.get(index);
     }
 
-    public void cancelAll() {
+    public void cancelAll(String reason) {
         for (ProductionOrder order : orders) {
-            order.cancel();
+            order.cancel(reason);
         }
     }
 }

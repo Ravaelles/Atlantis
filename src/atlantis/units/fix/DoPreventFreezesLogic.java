@@ -2,7 +2,6 @@ package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -26,7 +25,7 @@ public class DoPreventFreezesLogic {
 //            return true;
 //        }
 
-//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(parent) != null) {
+//        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(parent) != null) {
 //            return true;
 //        }
 

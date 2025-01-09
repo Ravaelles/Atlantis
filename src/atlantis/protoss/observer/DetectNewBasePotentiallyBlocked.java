@@ -1,14 +1,16 @@
 package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import java.util.ArrayList;
 
@@ -22,13 +24,29 @@ public class DetectNewBasePotentiallyBlocked extends Manager {
     @Override
     public boolean applies() {
         if (Enemy.protoss()) return false;
+        if (shouldNotLeaveAlphaSquad()) return false;
 
         ArrayList<Construction> basesNotStarted = ConstructionRequests.notStartedOfType(AUnitType.Protoss_Nexus);
-        if (!basesNotStarted.isEmpty()) {
-            baseConstruction = basesNotStarted.get(0).buildPosition();
+        if (basesNotStarted.isEmpty()) {
+            return false;
         }
 
-        return baseConstruction != null && isNearestObserverToConstructionPosition();
+        baseConstruction = basesNotStarted.get(0).buildPosition();
+
+        return baseConstruction != null
+            && baseConstruction.hasPosition()
+            && Select.ourBasesWithUnfinished().countInRadius(8, baseConstruction) == 0
+            && isNearestObserverToConstructionPosition();
+    }
+
+    private boolean shouldNotLeaveAlphaSquad() {
+        if (Count.observers() <= 1) return true;
+
+        AUnit leader = Alpha.alphaLeader();
+        if (leader == null) return false;
+
+        return leader.friendsNear().detectors().empty()
+            && leader.enemiesNear().effUndetected().notEmpty();
     }
 
     private boolean isNearestObserverToConstructionPosition() {

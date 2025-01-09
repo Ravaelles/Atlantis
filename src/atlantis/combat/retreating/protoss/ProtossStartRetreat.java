@@ -1,6 +1,10 @@
 package atlantis.combat.retreating.protoss;
 
+import atlantis.combat.running.to_building.ShouldRunTowardsBase;
+import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
+import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -8,6 +12,9 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import atlantis.util.PauseAndCenter;
+import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
 
@@ -26,6 +33,8 @@ public class ProtossStartRetreat extends HasUnit {
 
     protected boolean handleRetreat() {
         if (enemy == null) return false;
+
+        if (Env.isTesting()) return true;
 
 //        A.printStackTrace("Start retreat " + unit);
 
@@ -49,19 +58,36 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
+//        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
+        if (shouldRetreatTowardsBase(unit) && unit.moveToSafety(RUN_RETREAT, "RetreatTowardsBase")) {
+//            unit.paintLineDouble(unit.runningManager().runTo(), Color.Red);
+            unitStartedRetreating(runAwayFrom);
+            return true;
+        }
+
+        if (A.isUms()) return false;
+
         if (shouldForceRetreatDirectlyFromEnemy() && retreatByRunningFromEnemy(runAwayFrom)) {
             unitStartedRetreating(runAwayFrom);
-//            unit.paintLine(unit.runningManager().runTo(), Color.Orange);
+            PauseAndCenter.on(unit);
+            unit.paintLine(unit.runningManager().runTo(), Color.Purple);
             return true;
         }
 
-        if (retreatByRunningTowardsBase(unit)) {
-            unitStartedRetreating(runAwayFrom);
-            return true;
-        }
+//        if (retreatTowardsLeaderForBetterCohesion()) {
+//            unitStartedRetreating(runAwayFrom);
+////            unit.paintLine(unit.runningManager().runTo(), Color.White);
+//            return true;
+//        }
 
-        if (retreatTowardsLeaderForBetterCohesion()) {
+//        if (shouldRetreatTowardsBase(unit)) {
+//            unitStartedRetreating(runAwayFrom);
+//            return true;
+//        }
+
+        if (unit.moveAwayFrom(runAwayFrom, 8, RUN_RETREAT, "AnyhowRetreat")) {
             unitStartedRetreating(runAwayFrom);
+            unit.paintLine(unit.runningManager().runTo(), Color.Blue);
             return true;
         }
 
@@ -126,15 +152,25 @@ public class ProtossStartRetreat extends HasUnit {
         }
 
         if (unit.isRanged()) {
-            if (unit.meleeEnemiesNearCount(2.2) >= 3) return true;
+            if (unit.meleeEnemiesNearCount(2.2) >= Enemy.protossElse(2, 3)) return true;
             if (unit.rangedEnemiesCount(1.2) >= 2) return true;
         }
 
         return false;
     }
 
-    private static boolean retreatByRunningTowardsBase(AUnit unit) {
+    private static boolean shouldRetreatTowardsBase(AUnit unit) {
 //        if (Count.ourCombatUnits() >= 12) return false;
+
+        if (Select.ourBases().empty()) return false;
+
+        if (Enemy.zerg() && Count.ourCombatUnits() <= 15) return true;
+        double groundDistToMain = unit.groundDistToMain();
+        if (groundDistToMain <= 7) return false;
+        if (groundDistToMain <= 40) return true;
+        if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
+
+        if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
 
         AUnit goTo = Select.mainOrAnyBuilding();
         if (goTo == null) return false;
@@ -142,7 +178,7 @@ public class ProtossStartRetreat extends HasUnit {
 
 //        if (Count.ourCombatUnits() <= 11) return false;
 
-        if (unit.groundDistToMain() <= 20) return true;
+        if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(3)) return false;
 
         if (unit.meleeEnemiesNearCount(2.4) >= 3) {
             if (unit.distToNearestChokeCenter() >= 2.6) return true;
@@ -158,7 +194,7 @@ public class ProtossStartRetreat extends HasUnit {
             return false;
         }
 
-//        if (OurArmy.strength() >= 400) return false;
+//        if (Army.strength() >= 400) return false;
 //        if (notSafeToRunTowardsMainOrMainChoke()) return false;
 
         return unit.moveToSafety(RUN_RETREAT, "RetreatTowardsBase")
@@ -167,22 +203,41 @@ public class ProtossStartRetreat extends HasUnit {
 
     private static boolean notifyNearbyUnitsToRetreat(AUnit unit) {
         for (AUnit friend : unit.friendsNear().inRadius(1.5, unit).list()) {
+            if (friend == null || friend.hp() <= 0) continue;
+
             if (
-                friend.isRetreating() || friend.isRunning() || friend.isAction(RUN_RETREAT) || friend.id() < unit.id()
+                friend.isRetreating()
+                    || friend.isRunning()
+                    || friend.isAction(RUN_RETREAT)
+                    || friend.id() < unit.id()
             ) continue;
 
+            if (!canIgnoreNotifyRetreatCallAndFinishShooting(friend, unit)) continue;
+
 //            friend.move(unit, Actions.RUN_RETREAT, "RetreatTowardsBase");
-            retreatByRunningTowardsBase(friend);
+            shouldRetreatTowardsBase(friend);
         }
 
         return true;
+    }
+
+    private static boolean canIgnoreNotifyRetreatCallAndFinishShooting(AUnit friend, AUnit caller) {
+        if (friend == null) return true;
+
+        if (friend.isStartingAttack() || friend.isAttackFrame()) {
+            if (friend.eval() <= 0.7) return false;
+            if (friend.shields() <= 20) return false;
+            if (caller.shields() <= 20) return false;
+        }
+
+        return false;
     }
 
 //    private boolean retreatTowardsMainChoke() {
 //        HasPosition goTo = mainChokeDefencePoint();
 //        if (goTo == null || unit.distTo(goTo) <= 3) return false;
 //
-//        if (OurArmy.strength() >= 400) return false;
+//        if (Army.strength() >= 400) return false;
 //
 //        if (unit.enemiesNear().buildings().empty()) {
 //            if (notSafeToRunTowardsMainOrMainChoke()) return false;
@@ -214,6 +269,11 @@ public class ProtossStartRetreat extends HasUnit {
 
     private boolean retreatByRunningFromEnemy(HasPosition runAwayFrom) {
         double dist = unit.friendsNear().inRadius(2, unit).atLeast(1) ? 2.4 : 4;
+
+        Selection enemies = unit.enemiesNear().canAttack(unit, 3);
+        runAwayFrom = enemies.center();
+        if (runAwayFrom == null) runAwayFrom = enemies.nearestTo(unit);
+        if (runAwayFrom == null) return false;
 
         return unit.runningManager().runFrom(runAwayFrom, dist, RUN_RETREAT, true)
             && notifyNearbyUnitsToRetreat(unit);

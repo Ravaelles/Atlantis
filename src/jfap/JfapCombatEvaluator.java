@@ -2,6 +2,7 @@ package jfap;
 
 import atlantis.Atlantis;
 import atlantis.combat.eval.AtlantisJfap;
+import atlantis.debug.tweaker.Param;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import tests.fakes.FakeUnit;
@@ -11,7 +12,7 @@ import tests.fakes.FakeUnit;
  */
 public class JfapCombatEvaluator {
     private static final boolean PRINT_DEBUG = false;
-//    private static final boolean PRINT_DEBUG = true;
+    //    private static final boolean PRINT_DEBUG = true;
 
 //    public static boolean wouldLose(AUnit unit) {
 //        if (unit.enemiesNear().empty()) {
@@ -52,7 +53,8 @@ public class JfapCombatEvaluator {
 
         MutablePair<Integer, Integer> preSimScores = simulator.playerScores(); // We can get each player scores before the simulation starts
         int preSimFriendlyUnitCount = simulator.getState().first.size(); // Friendly unit count introduced to JFAP before the simulation starts
-        simulator.simulate(50); // Starts simulating the combat, number of frames to simulate is passed by parameters, default is 96 frames
+
+        simulator.simulate(AtlantisJfap.NUM_OF_FRAMES_TO_SIMULATE); // Starts simulating the combat, number of frames to simulate is passed by parameters, default is 96 frames
 
         // After the simulation we can get the post battle score and the number of units that died for each player
         // You can use this info to know if the combat will be favourable for you or not
@@ -83,6 +85,9 @@ public class JfapCombatEvaluator {
                 if (AtlantisJfap.isValidUnit(friend)) {
                     simulator.addUnitPlayer1(new JFAPUnit(friend));
                 }
+//                else {
+//                    System.err.println("Invalid /" + friend + "/ as friend for " + unit);
+//                }
             }
         }
     }

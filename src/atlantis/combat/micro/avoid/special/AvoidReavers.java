@@ -6,6 +6,9 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class AvoidReavers extends Manager {
+    public static final double BASE_AVOID_RANGE = 10.4;
+    private AUnit reaver;
+
     public AvoidReavers(AUnit unit) {
         super(unit);
     }
@@ -14,19 +17,35 @@ public class AvoidReavers extends Manager {
     public boolean applies() {
         return unit.isGroundUnit()
             && !unit.isABuilding()
-            && !unit.isTank()
-            && !unit.isZealot()
-            && !unit.isDragoon()
-            && !unit.isMissionDefend();
+            && !unit.isABuilding()
+            && !ignoreType()
+            && (reaver = enemyReaver()) != null
+            && unit.eval() <= 2
+            && !muchMoreOurThanEnemies();
+//            && !unit.isZealot()
+//            && !unit.isDragoon()
+//            && !unit.isMissionDefend();
+    }
+
+    private AUnit enemyReaver() {
+        return unit.enemiesNear().reavers().inRadius(BASE_AVOID_RANGE + distBonus(), unit).nearestTo(unit);
+    }
+
+    private boolean muchMoreOurThanEnemies() {
+        int ours = 1 + unit.friendsNear().combatUnits().inRadius(8, unit).size();
+        int enemies = reaver.friendsNear().combatUnits().countInRadius(6, reaver);
+
+        if (ours >= 2 && enemies <= 1) return true;
+
+        return ours >= 6 && ((double) ours / enemies) >= 2.6;
+    }
+
+    private boolean ignoreType() {
+        return unit.isTank();
     }
 
     @Override
     protected Manager handle() {
-        AUnit reaver = unit.enemiesNear().reavers().inRadius(10.2 + distBonus(), unit).nearestTo(unit);
-        if (reaver == null) {
-            return null;
-        }
-
         if (enoughForcesNotToRunFromReaver(reaver)) return null;
 
         if (unit.isCombatUnit()) {
@@ -43,7 +62,10 @@ public class AvoidReavers extends Manager {
     }
 
     private double distBonus() {
-        return unit.isWorker() ? 1.5 : 0;
+//        if (unit.isWorker()) return 1.5;
+        if (unit.hp() <= 101) return 1.5;
+
+        return 0;
     }
 
     private boolean enoughForcesNotToRunFromReaver(AUnit reaver) {

@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
+import atlantis.util.We;
 
 public class TerranComeCloser extends MissionManager {
     public TerranComeCloser(AUnit unit) {
@@ -11,6 +12,7 @@ public class TerranComeCloser extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (!We.terran()) return false;
         if (unit.isDT()) return false;
 
         if (unit.isGroundUnit() && focusPoint != null && (

@@ -24,15 +24,15 @@ public class CountInQueue {
     }
 
     public static int countOrdersWithPriorityAtLeast(ProductionOrderPriority priority) {
-        return Queue.get().nonCompleted().priorityAtLeast(priority).size();
+        return Queue.get().notFinished().priorityAtLeast(priority).size();
     }
 
     public static int countDynamicBuildingsOrders() {
-        return Queue.get().nonCompleted().dynamic().buildings().size();
+        return Queue.get().notFinished().dynamic().buildings().size();
     }
 
     public static int countDynamicUnitsOrders() {
-        return Queue.get().nonCompleted().dynamic().units().size();
+        return Queue.get().notFinished().dynamic().units().size();
     }
 
     public static int countNextOrdersWithSupplyRequirementFilled(int supply) {

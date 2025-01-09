@@ -3,3 +3,5 @@ BWAPI_DATA_PATH=C:\\Program Files (x86)\\Starcraft\\
 CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher - MultiInstance.exe
 FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
+MODIFY_BWAPI_INI=true
+POSTGAME_COPY_CHERRYVIS_TO=

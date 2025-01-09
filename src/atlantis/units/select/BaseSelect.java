@@ -2,9 +2,9 @@ package atlantis.units.select;
 
 import atlantis.Atlantis;
 import atlantis.game.AGame;
-import atlantis.game.APlayer;
+import atlantis.game.player.APlayer;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 import bwapi.Unit;
 

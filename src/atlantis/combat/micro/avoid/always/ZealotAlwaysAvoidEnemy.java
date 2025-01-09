@@ -2,11 +2,9 @@ package atlantis.combat.micro.avoid.always;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ZealotAlwaysAvoidEnemy extends Manager {
     public ZealotAlwaysAvoidEnemy(AUnit unit) {
@@ -33,8 +31,8 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
             && Count.cannons() >= 1
             && unit.shieldWound() >= 3
             && A.s <= 60 * 6
-//            && OurArmy.strength() <= 135
-            && unit.friendsNear().cannons().inRadius(15, unit).notEmpty()
+//            && Army.strength() <= 135
+            && unit.friendsNear().cannons().inRadius(AUnit.NEAR_DIST, unit).notEmpty()
             && unit.friendsNear().cannons().inRadius(2.3, unit).empty();
     }
 }

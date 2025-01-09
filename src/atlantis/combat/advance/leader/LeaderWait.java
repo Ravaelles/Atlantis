@@ -1,6 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
@@ -116,7 +117,7 @@ public class LeaderWait extends MissionManager {
 
         if (!unit.squad().isCohesionPercentOkay() && A.seconds() % 4 <= 1) {
             if (unit.friendsNear().inRadius(5, unit).atLeast(5)) {
-                unit.holdPosition("LeaderWaiting");
+                unit.holdPosition(Actions.HOLD_POSITION, "LeaderWaiting");
                 return true;
             }
             else {

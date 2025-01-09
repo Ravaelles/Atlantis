@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranFightInsteadAvoidAsStandard extends Manager {
     public TerranFightInsteadAvoidAsStandard(AUnit unit) {
@@ -16,7 +16,7 @@ public class TerranFightInsteadAvoidAsStandard extends Manager {
             && unit.hasAnyWeapon()
             && unit.noCooldown()
             && unit.lastStartedRunningAgo() < unit.lastAttackFrameAgo()
-            && unit.combatEvalRelative() >= 0.6;
+            && unit.eval() >= 0.6;
     }
 
     @Override

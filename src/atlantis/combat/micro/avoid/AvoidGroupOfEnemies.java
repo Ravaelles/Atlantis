@@ -47,18 +47,25 @@ public class AvoidGroupOfEnemies extends Manager {
 //            return usedManager(this);
 //        }
 
+        if (
+            (unit.distToMain() >= 15 || unit.hp() >= 41)
+                && unit.moveToSafety(RUN_ENEMY, "AvoidGroupToSafety")
+        ) {
+            return usedManager(this);
+        }
+
         if (unit.runningManager().runFrom(
             centerOfEnemies, calculateRunDistance(), RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
         )) {
             return usedManager(this);
         }
 
-        if (A.isUms() && !unit.isObserver()) System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
-        return runError.handleErrorRun(unit);
+//        if (A.isUms() && !unit.isObserver()) System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
+        return runError.handleErrorRun(unit, -234);
     }
 
     private boolean allowedToNotifyNearUnitsToMakeSpace() {
-        return (unit.isDragoon() && unit.hp() <= 81) || unit.distToNearestChokeCenter() <= 4;
+        return (unit.isDragoon() && unit.hp() <= 121) || unit.distToNearestChokeCenter() <= 4;
     }
 
     private Manager processDontAvoid() {
@@ -71,7 +78,9 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
-        if ((new DontAvoidEnemy(unit)).applies()) return true;
+        if (unit.isMissionDefendOrSparta()) {
+            if ((new DontAvoidEnemy(unit)).applies()) return true;
+        }
 
         return false;
     }

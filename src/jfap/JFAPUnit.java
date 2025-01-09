@@ -1,7 +1,6 @@
 package jfap;
 
-import atlantis.game.A;
-import atlantis.game.APlayer;
+import atlantis.game.player.APlayer;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.Vector;

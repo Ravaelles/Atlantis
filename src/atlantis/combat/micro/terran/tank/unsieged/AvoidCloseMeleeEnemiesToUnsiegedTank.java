@@ -14,7 +14,7 @@ public class AvoidCloseMeleeEnemiesToUnsiegedTank extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.noCooldown() || unit.hp() >= 140) return false;
+        if (unit.cooldown() <= 2 || unit.hp() >= 140) return false;
 
         enemies = unit.enemiesNear().melee().inRadius(3.5 + unit.woundPercent() / 40.0, unit);
 
@@ -22,12 +22,19 @@ public class AvoidCloseMeleeEnemiesToUnsiegedTank extends Manager {
     }
 
     protected Manager handle() {
-        if (unit.moveAwayFrom(
+        if (unit.runningManager().runFrom(
             enemies.nearestTo(unit),
-            1,
+            3,
             Actions.MOVE_AVOID,
-            "CloseMelee"
-        )) return usedManager(this);
+            true
+        )) return usedManager(this, "CloseMelee");
+
+//        if (unit.moveAwayFrom(
+//            enemies.nearestTo(unit),
+//            3,
+//            Actions.MOVE_AVOID,
+//            "CloseMelee"
+//        )) return usedManager(this);
 
         return null;
     }

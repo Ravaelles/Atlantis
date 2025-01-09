@@ -1,7 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
+import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
@@ -36,14 +36,13 @@ public class AdvanceAsAlphaLeader extends MissionManager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            LeaderToOther.class,
-            HandleFocusPointPositioning.class,
+            LeaderToOther.class,
+            HandleUnitPositioningOnMap.class,
 //            LeaderTooLowCohesion.class,
 //            LeaderWait.class,
 
 //            LeaderProgressFlagToNextFocusChoke.class,
 //            LeaderGoToCurrentFocusChoke.class,
-
         };
     }
 

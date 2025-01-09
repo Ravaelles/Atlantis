@@ -1,16 +1,19 @@
 package atlantis.combat.micro.avoid.terran.fight;
 
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class MarineCanAttackNearEnemy {
     public static boolean allowedForThisUnit(AUnit unit) {
-        if (unit.cooldown() >= 2) return false;
+        if (unit.cooldown() >= 5) return false;
 
-        return (
-                unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 55.0) <= 0
-            || healthyAndHasMedic(unit)
-        );
+        return (unit.hp() >= 17 || healthyAndHasMedic(unit));
+//        return (unit.hp() <= 12 || healthyAndHasMedic(unit));
+
+//        return (
+//                unit.meleeEnemiesNearCount(2.2 + unit.woundPercent() / 55.0) <= 0
+//            || healthyAndHasMedic(unit)
+//        );
     }
 
     private static boolean healthyAndHasMedic(AUnit unit) {

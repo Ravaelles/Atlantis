@@ -1,23 +1,39 @@
 package atlantis.combat.eval.protoss;
 
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossEvaluateAgainstCombatBuildings {
-    public static boolean chancesLookGood(AUnit unit, HasPosition position) {
+    public static boolean chancesLookGood(AUnit unit, AUnit enemy) {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
-        return unit.combatEvalRelative() >= 1.7
-            || ourCombatUnits(unit).count() >= 13
-            || ourUnitsStrength(unit) >= enemyStrength(unit, position);
+//        return unit.eval() >= 1.2
+
+        if (A.supplyUsed() >= 185 && A.minerals() >= 700) return true;
+//        if (unit.eval() <= 1.2) return false;
+
+        return (
+            moreOurUnitsThanBuildings(unit, enemy)
+                || (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
+        ) && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.5;
     }
 
 //    public static boolean looksGoodAgainstThirdOrLaterEnemyBase(AUnit unit, APosition enemyBase) {
 //        return unit.combatEvalRelative() >= 1.5
 //            || ourUnitsStrength(unit) <= enemyStrength(unit, enemyBase);
 //    }
+
+    // =========================================================
+
+    private static boolean moreOurUnitsThanBuildings(AUnit unit, AUnit enemy) {
+        int ourCombat = ourCombatUnits(unit).count();
+
+        return (A.s >= 60 * 8 || ourCombat >= 10)
+            && ourCombat * 7 >= enemy.enemiesNear().combatBuildingsAnti(enemy).count();
+    }
 
     // =========================================================
 

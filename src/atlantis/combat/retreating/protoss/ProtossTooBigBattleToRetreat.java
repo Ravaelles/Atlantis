@@ -51,7 +51,7 @@ public class ProtossTooBigBattleToRetreat {
     }
 
     private static boolean zealotShouldSupportDragoons(AUnit unit) {
-        return unit.combatEvalRelative() > 0.85
+        return unit.eval() > 0.85
             && unit.friendsNear().dragoons().inRadius(4, unit).atLeast(1);
     }
 }

@@ -4,19 +4,19 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.order.ProductionOrderHandler;
+import atlantis.production.requests.produce.ProduceOrdersFromQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 public class ProductionOrdersCommander extends Commander {
     @Override
     public boolean applies() {
+        if (A.isUms() && !A.hasMinerals(350)) return false;
+
         return Count.workers() > 0 && Select.ourBuildings().notEmpty();
     }
 
@@ -30,18 +30,7 @@ public class ProductionOrdersCommander extends Commander {
         for (ProductionOrder order : Queue.get().readyToProduceOrders().list()) {
             if (newBaseInProgressAndCantAffordThisOrder(order)) return;
 
-            handleProductionOrder(order);
-        }
-    }
-
-    private static void handleProductionOrder(ProductionOrder order) {
-        try {
-            (new ProductionOrderHandler(order)).invokeCommander();
-        } catch (Exception e) {
-            order.setStatus(OrderStatus.COMPLETED);
-//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was: " + e.getClass());
-            ErrorLog.printMaxOncePerMinute("Cancelled " + order + " as there was: " + e.getClass());
-            e.printStackTrace();
+            ProduceOrdersFromQueue.handleProductionOrder(order);
         }
     }
 

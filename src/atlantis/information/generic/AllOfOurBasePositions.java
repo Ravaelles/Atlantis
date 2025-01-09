@@ -3,8 +3,8 @@ package atlantis.information.generic;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.PendingNextBase;
 import atlantis.units.select.Select;
 

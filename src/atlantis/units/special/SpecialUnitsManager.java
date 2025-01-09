@@ -1,7 +1,6 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.protoss.ProtossShieldBattery;
 import atlantis.combat.micro.terran.TerranCloakableManager;
 import atlantis.combat.micro.terran.vessel.TerranScienceVessel;
 import atlantis.combat.micro.terran.TerranVulture;
@@ -10,13 +9,14 @@ import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
-import atlantis.protoss.ProtossCorsair;
+import atlantis.protoss.corsair.ProtossCorsair;
+import atlantis.protoss.ProtossShieldBattery;
 import atlantis.protoss.ht.ProtossHighTemplar;
 import atlantis.protoss.observer.ProtossObserver;
 import atlantis.protoss.reaver.ProtossReaver;
 import atlantis.protoss.shuttle.ProtossShuttle;
 import atlantis.protoss.shuttle.ProtossShuttleEmpty;
-import atlantis.protoss.shuttle.ProtossShuttleWithReaver;
+import atlantis.protoss.reaver.reaver_with_shuttle.ProtossShuttleWithReaver;
 import atlantis.units.AUnit;
 
 public class SpecialUnitsManager extends Manager {

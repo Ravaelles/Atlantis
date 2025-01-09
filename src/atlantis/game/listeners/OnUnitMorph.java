@@ -7,10 +7,10 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.strategy.response.protoss.AsProtossUnitDiscoveredResponse;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionOrderStatus;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.protoss.ProtossWarping;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 
@@ -37,6 +37,7 @@ public class OnUnitMorph {
         if (unit.isOur()) {
             updateGasBuildingSpecialCaseWhereGeyserMorphsIntoAGasBuilding(unit);
             ProtossWarping.updateNewBuildingJustWarped(unit);
+            updateConstructionStatus(unit);
             releaseReservedResources(unit);
 
             // =========================================================
@@ -59,12 +60,21 @@ public class OnUnitMorph {
         }
     }
 
+    private static void updateConstructionStatus(AUnit unit) {
+        if (!unit.isABuilding()) return;
+
+        Construction construction = unit.construction();
+        if (construction == null) return;
+
+        construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+    }
+
     private static void updateGasBuildingSpecialCaseWhereGeyserMorphsIntoAGasBuilding(AUnit unit) {
         if (unit.type().isGasBuilding()) {
             for (Construction order : ConstructionRequests.all()) {
                 if (order.buildingType().equals(AtlantisRaceConfig.GAS_BUILDING)
                     && order.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-                    order.setBuild(unit);
+                    order.setBuildingUnit(unit);
                     break;
                 }
             }
@@ -74,7 +84,7 @@ public class OnUnitMorph {
     private static void releaseReservedResources(AUnit unit) {
         Construction construction = unit.construction();
         if (construction == null && unit.isABuilding() && !unit.type().isAddon()) {
-            A.errPrintln("No construction for " + unit);
+            if (!unit.type().isGasBuilding()) A.errPrintln("No construction for " + unit);
         }
         if (construction != null) {
             construction.releaseReservedResources();

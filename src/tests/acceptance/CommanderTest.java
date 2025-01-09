@@ -2,12 +2,12 @@ package tests.acceptance;
 
 import atlantis.combat.CombatCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.UnitTest;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CommanderTest extends NonAbstractTestFakingGame {
+public class CommanderTest extends WorldStubForTests {
     @Test
     public void noExceptionIsThrown() {
         boolean status = false;

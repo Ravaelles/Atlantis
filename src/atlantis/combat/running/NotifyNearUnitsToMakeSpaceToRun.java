@@ -2,6 +2,7 @@ package atlantis.combat.running;
 
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
@@ -20,46 +21,44 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
     /**
      * Tell other units that might be blocking our escape route to move.
      */
-    public boolean notifyNearUnits() {
-        if (We.protoss() && unit.friendsNear().inRadius(0.35, unit).atMost(1)) return false;
-
+    public boolean notifyNearUnits(HasPosition runFrom) {
+        if (runFrom == null || !runFrom.hasPosition()) return false;
+        if (We.protoss() && unit.friendsNear().inRadius(0.4, unit).atMost(1)) return false;
         if (unit.isFlying() || unit.isLoaded()) return false;
-
-//        if (unit.enemiesNear().melee().inRadius(4, unit).empty()) {
-//            return false;
-//        }
 
         Selection friendsTooClose = unit
             .friendsNear()
             .groundUnits()
+            .nonBuildings()
             .notRunning()
             .realUnits()
             .exclude(unit)
-            .inRadius(unit.isDragoon() ? 0.6 : NOTIFY_UNITS_IN_RADIUS, unit);
+            .inRadius(unit.isNotLarge() ? NOTIFY_UNITS_IN_RADIUS : 0.6, unit);
 
         if (unit.friendsNear().groundUnits().inRadius(1, unit).atMost(1)) return false;
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
-                AUnit runFrom = otherUnit.enemiesNear().nearestTo(otherUnit);
-                if (runFrom == null || !runFrom.hasPosition()) {
-                    continue;
+//                A.errPrintln(A.minSec() + " Notify: " + unit + " is notifying " + otherUnit + " to make space");
+                if (otherUnit.moveAwayFrom(runFrom, 0.5, Actions.MOVE_SPACE)) {
+                    APainter.paintCircleFilled(unit, 10, Color.Yellow);
+                    APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
+                    otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
                 }
-
-//                System.err.println(otherUnit + " // notified by " + unit + " (" + unit.hp() + ")");
-
-                otherUnit.runningManager().runFrom(runFrom, NOTIFY_UNITS_MAKE_SPACE, Actions.MOVE_SPACE, true);
-                APainter.paintCircleFilled(unit, 10, Color.Yellow);
-                APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
-                otherUnit.setTooltip("MakeSpace" + A.dist(otherUnit, unit), false);
             }
         }
+
         return true;
     }
 
     private boolean canBeNotifiedToMakeSpace(AUnit unit) {
-        return !unit.isRunning()
-            && unit.isGroundUnit()
+        if (unit.isRunning() || unit.isGroundUnit()) return false;
+        if (unit.lastCommandIssuedAgo() <= 1) return false;
+
+        if (unit.isTerranInfantry()) return true;
+
+        return !unit.isStartingAttack()
+            && !unit.isAttackFrame()
             && unit.lastStartedRunningMoreThanAgo(3)
             && !unit.isTankSieged()
             && !unit.type().isReaver();

@@ -1,32 +1,29 @@
 package atlantis.terran.repair.protect;
 
 import atlantis.architecture.Commander;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.terran.repair.CanAbandonUnitAssignedToRepair;
 import atlantis.terran.repair.NewRepairer;
-import atlantis.terran.repair.OptimalNumOfBunkerRepairers;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import bwapi.Color;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class ProtectorCommander extends Commander {
-    private static final int MAX_PROTECTORS = 9;
+    private static final int HARD_MAX_PROTECTORS = 9;
 
     // =========================================================
 
     @Override
     protected void handle() {
         if (AGame.everyNthGameFrame(5)) {
-            assignBunkerProtectorsIfNeeded();
+            AssignNewBunkerProtectors.assignBunkerProtectorsIfNeeded();
         }
         if (AGame.everyNthGameFrame(13)) {
             assignUnitsProtectorsIfNeeded();
@@ -41,35 +38,7 @@ public class ProtectorCommander extends Commander {
 
     // =========================================================
 
-    protected static boolean assignBunkerProtectorsIfNeeded() {
-        for (AUnit bunker : Select.ourOfType(AUnitType.Terran_Bunker).list()) {
-
-            // No enemies + bunker healthy
-            ArrayList<AUnit> existingProtectors = RepairAssignments.protectorsFor(bunker);
-            int desiredBunkerProtectors = OptimalNumOfBunkerRepairers.forBunker(bunker);
-            int howMany = desiredBunkerProtectors - existingProtectors.size();
-
-//            System.out.println("@ " + A.now() + " - protectors = " + desiredBunkerProtectors + " / HOW=" + howMany);
-
-            // Remove some (or all) existing protectors
-            if (howMany < 0) {
-                removeExcessiveProtectors(existingProtectors, -howMany);
-            }
-
-            // Bunker damaged or enemies nearby
-            else if (howMany > 0) {
-                AAdvancedPainter.paintTextCentered(bunker, howMany + "", Color.Orange);
-                addProtectorsForUnit(bunker, howMany);
-            }
-
-            Color color = howMany > 0 ? Color.Orange : Color.Grey;
-            AAdvancedPainter.paintTextCentered(bunker, howMany + "", color);
-        }
-
-        return true;
-    }
-
-    private static void removeExcessiveProtectors(ArrayList<AUnit> existingProtectors, int howMany) {
+    protected static void removeExcessiveProtectors(ArrayList<AUnit> existingProtectors, int howMany) {
         ArrayList<AUnit> toRemove = new ArrayList<>();
         int protectorsToRemove = Math.min(howMany, existingProtectors.size());
         for (int i = 0; i < protectorsToRemove; i++) {
@@ -77,18 +46,22 @@ public class ProtectorCommander extends Commander {
         }
 
         for (AUnit protector : toRemove) {
-            RepairAssignments.removeRepairer(protector);
+            RepairAssignments.removeProtector(protector);
         }
     }
 
-    private static int maxProtectors() {
+    protected static int maxProtectors() {
         int workers = Count.workers();
 
-        if (workers <= 10 && !A.hasMinerals(100)) return 0;
+        if (workers <= 10 && !A.hasMinerals(13)) return 0;
         if (workers <= 10) return 1;
 
-        if (!A.hasMinerals(0)) {
+        if (!A.hasMinerals(3)) {
             return workers >= 20 ? 4 : 1;
+        }
+
+        if (!A.hasMinerals(20)) {
+            return workers >= 14 ? 3 : 2;
         }
 
         if (workers <= 20) {
@@ -100,10 +73,12 @@ public class ProtectorCommander extends Commander {
 //            }
         }
 
-        return (int) Math.min(workers / 2.5, MAX_PROTECTORS);
+        return (int) Math.min(workers / 2.3, HARD_MAX_PROTECTORS);
     }
 
     protected static boolean assignUnitsProtectorsIfNeeded() {
+        if (Count.protectors() > maxProtectors()) return false;
+
         int maxProtectors = maxProtectors();
         int totalProtectors = RepairAssignments.countTotalProtectors();
         if (totalProtectors >= maxProtectors) return false;
@@ -153,8 +128,10 @@ public class ProtectorCommander extends Commander {
 
     private static boolean removeProtectorsIfNeeded() {
         int maxProtectors = maxProtectors();
-        if (RepairAssignments.countTotalProtectors() > maxProtectors) {
-            for (int i = 0; i < RepairAssignments.countTotalProtectors() - maxProtectors; i++) {
+        int protectorsToRemove = RepairAssignments.countTotalProtectors() - maxProtectors;
+
+        if (protectorsToRemove > 0) {
+            for (int i = 0; i < protectorsToRemove; i++) {
                 AUnit protector = RepairAssignments.getProtectors().get(RepairAssignments.getProtectors().size() - 1);
                 if (CanAbandonUnitAssignedToRepair.check(protector)) {
 //                    System.err.println("Remove repairer / protector");

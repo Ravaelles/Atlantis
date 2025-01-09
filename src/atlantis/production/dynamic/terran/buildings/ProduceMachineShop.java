@@ -11,10 +11,12 @@ import static atlantis.units.AUnitType.*;
 public class ProduceMachineShop {
     /**
      * If there are buildings without addons, build them.
+     *
+     * @return
      */
-    public static void produce() {
-        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isTrue()) return;
-        if (!Have.factory()) return;
+    public static boolean produce() {
+        if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isTrue()) return false;
+        if (!Have.factory()) return false;
 
 //        if (AreWeGoingBio.check() && AreWeGoingBio.doNotFocusOnTanksForNow()) {
 //            return;
@@ -24,9 +26,8 @@ public class ProduceMachineShop {
             if (Count.inProductionOrInQueue(Terran_Machine_Shop) == 0) {
 //                AddToQueue.maxAtATime(Terran_Machine_Shop, 1, ProductionOrderPriority.HIGH);
                 if (A.canAfford(Terran_Machine_Shop)) {
-                    produceMachineShop();
+                    return produceMachineShop();
                 }
-                return;
             }
         }
 
@@ -37,6 +38,7 @@ public class ProduceMachineShop {
 //                        || A.supplyUsed(70)
 //        ) {
 
+        return false;
     }
 
     private static boolean produceMachineShop() {

@@ -14,7 +14,7 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
     public static boolean shouldChangeToDefend(Squad squad) {
         if (true) return false;
 
-        if (squad.leader().combatEvalRelative() >= 1.15) return false;
+        if (squad.leader().eval() >= 1.15) return false;
         if (ArmyStrength.ourArmyRelativeStrength() >= 170) return false;
 
         boolean offensiveRole = squad.hasMostlyOffensiveRole();
@@ -102,8 +102,8 @@ public class ChangeSquadToDefend extends SquadMissionChanger {
         AUnit unit = squad.leader();
         if (unit == null) return false;
 
-        if (unit.combatEvalRelative() < 0.7) {
-            return changeMissionToDefend(squad, "Weaker than enemy (" + unit.combatEvalRelative() + ")");
+        if (unit.eval() < 0.7) {
+            return changeMissionToDefend(squad, "Weaker than enemy (" + unit.eval() + ")");
         }
 
         return false;

@@ -36,7 +36,9 @@ public class WorkerAvoidManager extends Manager {
             return usedManager(this);
         }
 
-        return moveAwayFromEnemy();
+        unit.runningManager().stopRunning();
+        (new GatherResources(unit)).invokeFrom(this);
+        return null;
     }
 
     private Manager moveAwayFromEnemy() {

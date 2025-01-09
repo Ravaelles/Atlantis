@@ -1,11 +1,9 @@
 package atlantis.production.orders.production.queue.order;
 
-import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,18 +46,18 @@ public interface OrdersFilters {
         );
     }
 
-    default Orders nonCompleted() {
+    default Orders notFinished() {
         return new Orders(
             list().stream()
-                .filter(order -> !order.isCompleted())
+                .filter(order -> !order.isFinished())
                 .collect(Collectors.toList())
         );
     }
 
-    default Orders nonCompletedNext30() {
+    default Orders nonFinishedNext30() {
         return new Orders(
             list().stream()
-                .filter(order -> !order.isCompleted())
+                .filter(order -> !order.isFinished())
                 .limit(30)
                 .collect(Collectors.toList())
         );
@@ -73,10 +71,10 @@ public interface OrdersFilters {
         );
     }
 
-    default Orders completed() {
+    default Orders finished() {
         return new Orders(
             list().stream()
-                .filter(ProductionOrder::isCompleted)
+                .filter(ProductionOrder::isFinished)
                 .collect(Collectors.toList())
         );
     }
@@ -124,7 +122,7 @@ public interface OrdersFilters {
     default Orders next(int n) {
         return new Orders(
             list().stream()
-                .filter(order -> (!order.isCompleted() && !order.shouldIgnore() && !order.isInProgress()))
+                .filter(order -> (!order.isFinished() && !order.shouldIgnore() && !order.isInProgress()))
                 .limit(n)
                 .collect(Collectors.toList())
         );

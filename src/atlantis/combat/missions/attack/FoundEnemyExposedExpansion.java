@@ -3,7 +3,9 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
+import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
@@ -11,10 +13,10 @@ import atlantis.util.cache.Cache;
 public class FoundEnemyExposedExpansion {
     private static Cache<AFocusPoint> cache = new Cache<>();
 
-    public static AFocusPoint getItFound() {
+    public static AFocusPoint getIfFound() {
         return cache.getIfValid(
             "enemyExpansion",
-            247,
+            57,
             () -> {
                 APosition enemyMain = EnemyInfo.enemyMain();
                 if (enemyMain == null) return null;
@@ -24,12 +26,13 @@ public class FoundEnemyExposedExpansion {
                         base != null
                             && base.hasPosition()
                             && base.isAlive()
-                            && base.groundDist(enemyMain) >= 33
+                            && (!base.isPositionVisible() || Select.enemyBuildings().countInRadius(7, base) >= 1)
+//                            && base.groundDist(enemyMain) >= 33
+                            && BaseLocations.groundDistToNearestStartLocation(base) >= 33
                     ) {
                         return new AFocusPoint(
                             base,
-                            Select.mainOrAnyBuilding(),
-                            "AttackEnemyExpansion(" + base.distTo(Select.mainOrAnyBuilding()) + ")"
+                            "AttackEnemyExpansion(" + (int) base.distTo(Select.mainOrAnyBuilding()) + ")"
                         );
                     }
                 }

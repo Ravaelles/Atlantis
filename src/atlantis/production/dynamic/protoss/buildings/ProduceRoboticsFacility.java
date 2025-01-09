@@ -3,7 +3,7 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.production.dynamic.protoss.units.ProduceObserver;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
@@ -25,11 +25,11 @@ public class ProduceRoboticsFacility {
     public static boolean shouldBuild() {
         if (!Have.forge()) return false;
         if (Count.workers() <= 17) return false;
-        if (A.seconds() <= 390 && OurArmy.strength() <= 90) return false;
+        if (A.seconds() <= 390 && Army.strength() <= 90) return false;
         if (Count.withPlanned(Protoss_Robotics_Facility) > 0) return false;
         if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;
         if (A.supplyUsed() <= 70 && Have.cannon() && !EnemyInfo.hasHiddenUnits()) return false;
-        
+
         if (!ProduceObserver.earlyGamePressureDontInvest()) return false;
 
         int n = Count.roboticsFacilities();

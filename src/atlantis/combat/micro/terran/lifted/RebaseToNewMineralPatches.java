@@ -13,13 +13,15 @@ import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class RebaseToNewMineralPatches extends Manager {
+    private static ABaseLocation rebaseTo = null;
+
     public RebaseToNewMineralPatches(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        if (AGame.notNthGameFrame(37)) return false;
+        if (AGame.notNthGameFrame(47)) return false;
 
         return unit.isCommandCenter() && (unit.isLifted() || isBaseMinedOut(unit));
     }
@@ -36,20 +38,27 @@ public class RebaseToNewMineralPatches extends Manager {
     private boolean flyToNewMineralPatches() {
         if (Env.isTesting()) return false;
 
-        ABaseLocation newBase = defineNewBaseLocation();
+        if (newBaseIsDefinedAndFree() && unit.isMoving() && unit.lastActionLessThanAgo(30 * 15)) return true;
+        rebaseTo = defineNewBaseLocation();
 
-        if (newBase == null) {
+        if (rebaseTo == null) {
             ErrorLog.printErrorOnce("Null newBase");
             return false;
         }
 
-        if (flyToRebase(newBase)) return true;
+        if (flyAndRebase(rebaseTo)) return true;
 
         return false;
     }
 
+    private boolean newBaseIsDefinedAndFree() {
+        return rebaseTo != null && Select.all().buildings().countInRadius(5, rebaseTo) == 0;
+    }
+
     private ABaseLocation defineNewBaseLocation() {
-        ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(unit);
+        AUnit oldestUnit = Select.ourWorkers().first();
+
+        ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(oldestUnit);
 
         if (baseLocation == null && !Env.isTesting()) {
             ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
@@ -59,13 +68,11 @@ public class RebaseToNewMineralPatches extends Manager {
         return baseLocation;
     }
 
-    private boolean flyToRebase(ABaseLocation baseLocation) {
+    private boolean flyAndRebase(ABaseLocation baseLocation) {
         if (liftToFlyFirst(baseLocation)) return true;
 
         double dist = baseLocation.distTo(unit);
-
-
-        if (dist >= 7) {
+        if (dist >= 6) {
             return moveToRebase(baseLocation);
         }
         else {

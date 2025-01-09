@@ -42,8 +42,8 @@ public class DoAvoidEnemies extends Manager {
 
         if (
             enemies.size() == 1
-                ||
-                (unit.isDragoon() && enemies.onlyRanged())
+//                ||
+//                (unit.isDragoon() && enemies.onlyRanged())
                 || unit.isScout()
         ) {
             return avoid.singleUnit(enemies.first());

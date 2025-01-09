@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.missions.defend.protoss.sparta.ProtossSpartaSpecific;
 import atlantis.combat.squad.positioning.AllowTimeToReposition;
@@ -22,6 +23,8 @@ public class MissionDefendManager extends MissionManager {
             AdvanceToDefendFocusPoint.class,
 
 //            OldAdvance.class,
+
+            AttackNearbyEnemies.class,
         };
     }
 }

@@ -17,6 +17,7 @@ public class AttackTargetInRange extends Manager {
 
     protected Manager handle() {
         Selection targets = unit.enemiesNear()
+            .nonRanged()
             .canBeAttackedBy(unit, -0.3);
 
         if (!notAllowedToAttackBuildings()) targets = targets.nonBuildings();

@@ -7,7 +7,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 
 public class ProtossShuttleAvoidAA extends Manager {
     private Selection deadlyEnemies;

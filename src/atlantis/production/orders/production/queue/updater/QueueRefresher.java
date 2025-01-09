@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.updater;
 
+import atlantis.combat.missions.from_build_order.EnforceBuildOrderMissionsCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -17,17 +18,18 @@ public class QueueRefresher {
     }
 
     public void refresh() {
-        for (ProductionOrder order : queue.nonCompleted().list()) {
+        for (ProductionOrder order : queue.notFinished().list()) {
             if (order.shouldIgnore()) continue;
 
             updateOrderStatus(order);
         }
+
+        (new EnforceBuildOrderMissionsCommander()).invokeCommander();
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
         if (IsOrderCompleted.isCompleted(order, existingCounter)) return markAsComplete(order);
-
-        if (IsOrderInProgress.check(order)) return markAsInProgress(order);
+        if (IsOrderInProgress.isInProgress(order)) return markAsInProgress(order);
 
         return tryChangingStatusToReady(order);
     }
@@ -36,7 +38,7 @@ public class QueueRefresher {
 //        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
         // Ready to produce
-        if (IsReadyToProduceOrder.check(order)) return markAsReadyToProduce(order);
+        if (IsReadyToProduceOrder.isReady(order)) return markAsReadyToProduce(order);
 
 //        if (
 //            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)
@@ -65,14 +67,14 @@ public class QueueRefresher {
 //            A.errPrintln("########################### Gas building completed: " + order.construction());
 //        }
 
-        order.setStatus(OrderStatus.COMPLETED);
+        order.setStatus(OrderStatus.FINISHED);
 //        order.setUnitType(null);
 //        order.setModifier(null);
 //        order.forceSetPosition(null);
 
         if (Queue.get() != null) Queue.get().clearCache();
 
-        return OrderStatus.COMPLETED;
+        return OrderStatus.FINISHED;
 
 //        OrderStatus status = order.status();
 //        order.cancel();

@@ -1,7 +1,7 @@
 package atlantis.combat.micro.avoid.zerg;
 
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 public class ShouldFightInsteadAvoidAsZerg {
@@ -13,7 +13,7 @@ public class ShouldFightInsteadAvoidAsZerg {
             1,
             () -> {
                 if (!unit.isZerg()) return false;
-                if (unit.combatEvalRelative() <= 0.7) return false;
+                if (unit.eval() <= 0.7) return false;
                 if (unit.isWounded() && unit.lastStartedRunningLessThanAgo(40)) return false;
 
                 if (asHydra(unit)) return true;

@@ -6,22 +6,32 @@ import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 
 public class OrderStatusWasChanged {
-    public static void update(ProductionOrder order, OrderStatus status) {
-//        A.errPrintln("OrderStatusWasChanged(" + order + ", " + status + ")");
+    public static void update(ProductionOrder order) {
+        OrderStatus status = order.status();
 
-        if (status.ready()) order.makeSureResourcesAreReserved();
-        else if (status.inProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
-//        else order.makeSureToClearReservedResources();
+//        if (order.is(AUnitType.Protoss_Pylon)) {
+//            A.errPrintln(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
+////            A.printStackTrace(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
+//        }
 
-        removeSameTechFromQueue(order);
-
-        if (order.isCompleted() && order.isUnit() && Queue.get() != null) {
+        if (status.isReady()) order.makeSureResourcesAreReserved();
+        else if (status.isInProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
+        else if (status.isFinished() && order.isUnit() && Queue.get() != null) {
             Queue.get().markAsProducedAndForget(order.unitType());
+        }
+
+        if (status.isInProgress()) {
+            removeSameTechFromQueue(order, status);
+        }
+        if (status.isFinished()) {
+            removeSameTechFromQueue(order, status);
         }
     }
 
-    private static void removeSameTechFromQueue(ProductionOrder order) {
-        if (order.tech() != null) markAllAsCompleted(sameTypeTech(order));
+    private static void removeSameTechFromQueue(ProductionOrder order, OrderStatus newStatus) {
+        if (order.tech() != null) markAllAs(sameTypeTech(order), newStatus);
+        else if (order.upgrade() != null) markAllAs(sameTypeUpgrade(order), newStatus);
+//        if (order.tech() != null) markAllAsCompleted(sameTypeTech(order));
 //        if (order.upgrade() != null) markAllAsCompleted(sameTypeUpgrade(order));
     }
 
@@ -32,12 +42,14 @@ public class OrderStatusWasChanged {
     }
 
     private static Orders sameTypeUpgrade(ProductionOrder order) {
+        if (Queue.get() == null) return new Orders();
+
         return Queue.get().allOrders().upgradeType(order.upgrade()).exclude(order);
     }
 
-    private static void markAllAsCompleted(Orders orders) {
+    private static void markAllAs(Orders orders, OrderStatus newStatus) {
         for (ProductionOrder order : orders.list()) {
-            order.setStatus(OrderStatus.COMPLETED);
+            order.setStatus(newStatus);
         }
     }
 }

@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 //import atlantis.combat.squad.positioning.protoss.ProtossSquadCohesion;
 import atlantis.combat.advance.AdvanceToAttackFocusPoint;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.units.AUnit;
 
@@ -23,6 +24,7 @@ public class MissionAttackManager extends Manager {
 //            TerranAdvance.class,
 
             AsAirAttackAnyone.class,
+            AttackNearbyEnemies.class,
 
             AdvanceToAttackFocusPoint.class,
 

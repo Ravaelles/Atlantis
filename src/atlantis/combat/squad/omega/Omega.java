@@ -6,7 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 /**
  * Omega is battle squad that ALWAYS DEFENDS the main base and natural.

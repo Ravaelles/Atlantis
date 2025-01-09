@@ -1,5 +1,6 @@
 package atlantis.terran.repair;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.GatherResources;
@@ -60,12 +61,15 @@ public class RepairAssignments {
     }
 
     public static void removeRepairer(AUnit repairer) {
-//        if (repairer.target() != null && repairer.target().isAlive()) {
-//            A.printStackTrace(A.now() + " REMOVED REPAIRER");
-//        }
-
         AUnit unitToRepair = repairersToUnit.get(repairer);
         if (unitToRepair != null && unitsToRepairers.containsKey(unitToRepair)) {
+
+//            if (repairer.target() != null && repairer.target().isAlive()) {
+//                // =========================================================
+//                A.printStackTrace(A.now() + " REMOVED REPAIRER");
+//                // =========================================================
+//            }
+
             if (CanAbandonUnitAssignedToRepair.check(repairer)) {
 //                System.err.println("Remove PROTECTOR for " + unitsToRepairers);
                 unitsToRepairers.get(unitToRepair).remove(repairer);
@@ -169,5 +173,10 @@ public class RepairAssignments {
 
     public static ArrayList<AUnit> protectorsFor(AUnit unit) {
         return unitsToRepairers.containsKey(unit) ? unitsToRepairers.get(unit) : new ArrayList<>();
+    }
+
+    public static void removeProtector(AUnit protector) {
+        removeRepairer(protector);
+        repairersToModes.remove(protector);
     }
 }

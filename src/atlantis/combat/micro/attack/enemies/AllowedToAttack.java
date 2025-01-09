@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
 
 public class AllowedToAttack {
@@ -119,10 +119,10 @@ public class AllowedToAttack {
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
         if (target == null || target.position() == null || target.hp() <= 0) return false;
         if (!CanAttackCombatBuilding.isAllowed(unit, target)) return false;
-        if (unit.isZergling() && target.combatEvalRelative() > 1.7) return false;
+        if (unit.isZergling() && target.eval() > 1.7) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
-            AttackNearbyEnemies.reasonNotToAttack = "MissionForbids" + target.name();
+            AttackNearbyEnemies.reasonNotToAttack = "MissionAForbids" + target.name();
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
             return false;

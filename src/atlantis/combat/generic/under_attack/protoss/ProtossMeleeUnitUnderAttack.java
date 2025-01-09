@@ -6,7 +6,7 @@ import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.decisions.Decision;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossMeleeUnitUnderAttack extends Manager {
     public ProtossMeleeUnitUnderAttack(AUnit unit) {
@@ -46,7 +46,7 @@ public class ProtossMeleeUnitUnderAttack extends Manager {
     private boolean preventForZealot() {
         return unit.isZealot()
             && unit.lastAttackFrameLessThanAgo(30 * 3)
-            && (unit.lastAttackFrameLessThanAgo(30 * 20) && unit.combatEvalRelative() <= 0.7);
+            && (unit.lastAttackFrameLessThanAgo(30 * 20) && unit.eval() <= 0.7);
     }
 
     private Decision appliesForDragoon() {

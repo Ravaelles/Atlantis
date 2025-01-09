@@ -26,7 +26,7 @@ public class FindHighGround {
 
     private static boolean isPositionGoodHighGround(APosition position, HasPosition near) {
         return position.isWalkable()
-            && position.isBuildable()
+            && position.isBuildableNotIncludingBuildings()
             && position.isHighGround()
             && position.groundDistanceTo(near.position()) <= 15;
     }

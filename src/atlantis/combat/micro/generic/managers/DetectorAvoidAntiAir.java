@@ -9,7 +9,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class DetectorAvoidAntiAir extends Manager {
@@ -26,6 +26,16 @@ public class DetectorAvoidAntiAir extends Manager {
 
         enemyAAPosition = enemyAntiAirInRange(unit);
         if (enemyAAPosition == null || !enemyAAPosition.hasPosition()) return false;
+
+        if (
+            unit.enemiesNear().effUndetected().notEmpty()
+                && unit.shields() >= 9
+                && unit.friendsNear().cannons().countInRadius(2, unit) == 0
+        ) return false;
+
+        if (preventRunningFromScourgeIndefinitely()) {
+            return false;
+        }
 
         return true;
     }
@@ -78,5 +88,16 @@ public class DetectorAvoidAntiAir extends Manager {
             .ofType(AUnitType.Zerg_Scourge)
             .inRadius(7 + (unit.idIsOdd() ? 2 : 0), unit)
             .nearestTo(unit);
+    }
+
+    private boolean preventRunningFromScourgeIndefinitely() {
+        if (!Enemy.zerg()) return false;
+        if (unit.enemiesNear().ofType(AUnitType.Zerg_Scourge).empty()) return false;
+        if (
+            unit.enemiesNear().detectors().empty()
+                && unit.enemiesNear().groundUnits().combatUnits().empty()
+        ) return false;
+
+        return true;
     }
 }

@@ -1,11 +1,11 @@
 package atlantis.information.strategy.services;
 
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 
 public class AreWeGoingBio {
     public static boolean check() {
-        return OurStrategy.get().goingBio();
+        return Strategy.get().goingBio();
     }
 
     public static boolean doNotFocusOnTanksForNow() {
