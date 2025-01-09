@@ -7,13 +7,13 @@ import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.OurBuildingUnderAttack;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
     private AUnit enemy;
@@ -25,19 +25,50 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
         this.enemy = enemy;
-
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
+
+        if (Enemy.zerg()) {
+            if (whenSmallSquadVsZerg(enemy)) return false;
+            if (forbidChasingEarlyWorker(enemy)) return false;
+        }
+
+        if (
+            focusPoint != null
+//                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
+                && enemy.enemiesNear().buildings().countInRadius(6, enemy) == 0
+                && enemy.groundDistToMain() > focusPoint.groundDistToMain()
+        ) {
+            return false;
+        }
+
+        double distToEnemy = unit.distTo(enemy);
+
+        if (A.s <= 220 && enemy.isWorker()) {
+            if (distToEnemy <= 1.05) return true;
+            if (enemy.enemiesNear().buildings().countInRadius(AUnit.NEAR_DIST, unit) == 0) return false;
+        }
+
+        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.1) return false;
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null && leader.isMelee()) {
+            if (unit.distTo(leader) >= 2) return false;
+//            if (enemy.distTo(leader) >= 7) return false;
+        }
+
+        if (enemy.enemiesNear().buildings().countInRadius(enemy.isMelee() ? 5 : 6, unit) > 0) return true;
 
         if (DontAvoidWhenCannonsNear.check(unit) && (unit.hp() >= 42 || unit.cooldown() <= 6)) {
             return true;
         }
 
+        if (dontAttackOnYourOwn()) return false;
         if (protossDontAttackWhenAlmostDead()) return false;
 
         if (
             ProtossStickCombatToMainBaseEarly.should()
                 && Select.ourBuildingsWithUnfinished().countInRadius(5, unit) == 0
-                && (unit.hasCooldown() || !unit.isTargetInWeaponRangeAccordingToGame(enemy))
+                && (unit.hasCooldown() || !unit.canAttackTargetWithBonus(enemy, 0.5))
         ) {
             return false;
         }
@@ -45,7 +76,6 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         if (A.s >= 60 * 9) return true;
 
         boolean lowCooldown = unit.cooldown() <= 9;
-        double distToEnemy = unit.distTo(enemy);
 
         if (Enemy.zerg()) {
             if (lowCooldown && enemyVeryCloseToBuilding()) return true;
@@ -76,6 +106,22 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         return true;
     }
 
+    private boolean forbidChasingEarlyWorker(AUnit enemy) {
+        if (!enemy.isWorker()) return false;
+
+        if (
+            enemy.distTo(focusPoint) >= 3 && !unit.canAttackTargetWithBonus(enemy, 1.6)
+        ) return true;
+
+        return false;
+    }
+
+    private boolean whenSmallSquadVsZerg(AUnit enemy) {
+        return unit.squadIsAlpha()
+            && unit.squadSize() <= 7
+            && enemy.distToFocusPoint() >= (unit.eval() <= 3 ? 6.5 : 10);
+    }
+
     private boolean enemyVeryCloseToBuilding() {
 //        if (Count.cannons() == 0) {
         return enemy.enemiesNear().buildings().inRadius(enemy.isMelee() ? 3 : 5.2, unit).notEmpty();
@@ -84,14 +130,14 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
     private boolean closeToBuildingsRelativelyAliveAndHaventAttackedRecently() {
         if (unit.hp() <= 30) return false;
-        if (unit.combatEvalRelative() <= 0.8) return false;
+        if (unit.eval() <= 0.8) return false;
         if (unit.friendsNear().buildings().inRadius(2.6, unit).empty()) return false;
 
         return unit.lastAttackFrameMoreThanAgo(30 * 3);
     }
 
     private boolean asRangedAttackTargetsInRange() {
-        return (unit.isRanged() || unit.combatEvalRelative() >= 1.2)
+        return (unit.isRanged() || unit.eval() >= 1.2)
             && unit.isTargetInWeaponRangeAccordingToGame(enemy);
     }
 
@@ -106,7 +152,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
 
     private boolean protossDontAttackWhenAlmostDead() {
-        if (unit.combatEvalRelative() >= 2 && unit.didntShootRecently(4)) return false;
+        if (unit.eval() >= 2 && unit.didntShootRecently(4)) return false;
 
         if (unit.isMelee()) {
             if (unit.hp() <= 25) return true; // Dont, avoid instead
@@ -122,17 +168,18 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     }
 
     private boolean dontAttackOnYourOwn() {
-        return unit.squadSize() >= 3
-            && unit.friendsNear().inRadius(2.8, unit).empty()
+        return unit.squadSize() <= 5
+            && (unit.isMelee() || EnemyInfo.hasRanged())
+            && ((unit.shieldWound() >= 15 || unit.cooldown() >= 6) || unit.friendsNear().inRadius(1.2, unit).empty())
             && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
-            && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty()
-            && unit.distToBase() >= 10;
+            && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty();
+//            && unit.distToBase() >= 12;
     }
 
     private boolean forbidden_earlyGameVsStrongZergStickToMainBase() {
         if (!ProtossStickCombatToMainBaseEarly.should()) return false;
         if (unit.isRanged() && EnemyInfo.noRanged() && unit.hp() >= 35 && unit.noCooldown()) return false;
-        if (unit.combatEvalRelative() >= 1.5) return false;
+        if (unit.eval() >= 1.5) return false;
 
         if (OurBuildingUnderAttack.notNull()) return false;
         if (unit.friendsNear().workers().inRadius(2.4, unit).notEmpty()) return false;
@@ -186,7 +233,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (
             Count.ourCombatUnits() <= 8
-                && (Count.dragoons() <= 2 && OurArmy.strength() <= 170)
+                && (Count.dragoons() <= 2 && Army.strength() <= 170)
 //                && unit.distToBase() >= (16 + unit.hpPercent() / 7.0)
                 && unit.distToFocusPoint() >= 7
         ) return true;
@@ -214,7 +261,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (
             unit.isMelee()
-                && sunkens.inRadius(15, enemy).notEmpty()
+                && sunkens.inRadius(AUnit.NEAR_DIST, enemy).notEmpty()
                 && sunkens.inRadius(7, enemy).empty()
         ) return false;
 
@@ -234,7 +281,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         // =========================================================
 
-        return (friends >= 2 && unit.combatEvalRelative() >= 2.5)
+        return (friends >= 2 && unit.eval() >= 2.5)
             || (friends >= 5 && unit.woundPercentMax(15));
     }
 }

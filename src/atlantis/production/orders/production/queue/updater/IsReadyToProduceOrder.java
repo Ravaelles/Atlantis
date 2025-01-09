@@ -2,8 +2,11 @@ package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.production.constructions.Construction;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
+import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -12,15 +15,20 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class IsReadyToProduceOrder {
-    public static boolean check(ProductionOrder order) {
-        if (order.isStatus(OrderStatus.COMPLETED)) {
+    public static boolean isReady(ProductionOrder order) {
+        if (order.isStatus(OrderStatus.FINISHED)) {
 //            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
+            return false;
+        }
+
+        Construction construction = order.construction();
+        if (construction != null && construction.buildingUnit() != null && construction.buildingUnit().hp() > 0) {
             return false;
         }
 
 //        if (order.unitType() == AUnitType.Terran_Machine_Shop) {
 //        if (order.tech() == TechType.Stim_Packs) {
-//        if (order.upgrade() == U238.upgradeType()) {
+//        if (order.upgrade() == ResearchU238.upgradeType()) {
 //        A.errPrintln("----------- Order: " + order + " / now: " + A.now());
 //        A.errPrintln(
 //            "supplyRequirementFulfilled: " + order.supplyRequirementFulfilled() + "\r\n"
@@ -71,8 +79,12 @@ public class IsReadyToProduceOrder {
         if (type == null) return true;
         if (type.isBase()) return A.hasMinerals(310);
         if (isFarFromMainBaseSoTravelEarly) return true;
-
         if (type.isForge() && A.supplyUsed() == 9) return true;
+
+        boolean canAffordNow = A.canAffordWithReserved(Math.min(220, type.mineralPrice()), type.gasPrice());
+
+        if (A.supplyUsed() >= order.minSupply()) return canAffordNow;
+        else if (!canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())) return false;
 
 //        System.err.println("      SUP?!? = " + (A.supplyUsed() + 3 >= order.minSupply()));
 //        System.err.println("      type.mineralPrice() = " + type.mineralPrice());
@@ -80,9 +92,9 @@ public class IsReadyToProduceOrder {
 //        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
 //        return A.supplyUsed() + 3 >= order.minSupply()
-        return A.supplyUsed() + (A.supplyUsed() >= 18 ? 3 : 1) >= order.minSupply()
+        return A.supplyUsed() + (A.supplyUsed() >= 19 ? 3 : 1) >= order.minSupply()
 //            && (order.isUnit() && type.isResource())
-            && (applySpecialPriority(type) || canAffordWithReserved(type));
+            && (canAffordNow || applySpecialPriority(type));
 //            && A.canAfford(type.mineralPrice() + 100, type.gasPrice() > 0 ? type.gasPrice() + 50 : 0);
     }
 
@@ -98,10 +110,26 @@ public class IsReadyToProduceOrder {
         return false;
     }
 
-    private static boolean canAffordWithReserved(AUnitType unitType) {
-        return A.canAffordWithReserved(
-            unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
-        );
+    private static boolean canAffordWithReserved(ProductionOrder order, int minerals, int gas) {
+        int reservedMinerals = 0;
+        int reservedGas = 0;
+
+        Orders otherEarlierOrders = Queue.get().readyToProduceOrders().exclude(order);
+        for (ProductionOrder o : otherEarlierOrders.list()) {
+            reservedMinerals += o.reservations().minerals();
+            reservedGas += o.reservations().gas();
+//            reservedMinerals += o.reservations().minerals();
+//            reservedGas += o.reservations().gas();
+        }
+
+//        if (reservedMinerals > 0)
+//            System.err.println("At supply " + A.supplyUsed() + " reservedMinerals = " + reservedMinerals);
+
+        return A.canAffordWithReserved(minerals + reservedMinerals, gas + reservedGas);
+
+//        return A.canAffordWithReserved(
+//            unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
+//        );
     }
 
     private static int mineralBonusToHave(AUnitType type) {

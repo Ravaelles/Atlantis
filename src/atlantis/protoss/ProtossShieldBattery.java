@@ -23,24 +23,24 @@ public class ProtossShieldBattery extends Manager {
 
         if (shieldBattery.energy() >= 40 && shieldBattery.isPowered()) {
             shieldBattery.removeTooltip();
-            for (AUnit unit : Select.ourRealUnits().inRadius(MAX_DIST, shieldBattery).list()) {
-                if (unit.shieldDamageAtLeast(25) || (unit.isWorker() && unit.shieldDamageAtLeast(10))) {
-//                    if (Select.enemyRealUnits().combatUnits().inRadius(7, unit).isNotEmpty()) {
+            for (AUnit friend : unit.friendsNear().nonBuildings().inRadius(MAX_DIST, shieldBattery).list()) {
+                if (friend.shieldDamageAtLeast(25) || (friend.isWorker() && friend.shieldDamageAtLeast(10))) {
+//                    if (Select.enemyRealUnits().combatUnits().inRadius(7, friend).isNotEmpty()) {
 //                        return false;
 //                    }
 
-                    if (unit.enemiesNear().inRadius(3, unit).notEmpty()) {
+                    if (friend.enemiesNear().inRadius(3, friend).notEmpty()) {
                         continue;
                     }
 
-//                    if (!shieldBattery.equals(unit.target()) || A.chance(2)) {
-                    if (!shieldBattery.equals(unit.target())) {
-                        unit.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
+//                    if (!shieldBattery.equals(friend.target()) || A.chance(2)) {
+                    if (!shieldBattery.equals(friend.target())) {
+                        friend.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
 
                     String t = "Recharge";
-                    shieldBattery.setTooltipTactical(t + ":" + unit.name());
-                    unit.addLog(t);
+                    shieldBattery.setTooltipTactical(t + ":" + friend.name());
+                    friend.addLog(t);
                     return usedManager(this);
                 }
             }

@@ -7,16 +7,13 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.squad_scout.DefineSquadScout;
-import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.combat.squad.transfers.SquadReinforcements;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 /**
@@ -50,6 +47,8 @@ public abstract class Squad extends Units {
 
     private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
+    private int _lastAttacked = -76543;
+    private int _lastUnderAttack = -87654;
 
     // =========================================================
 
@@ -198,6 +197,20 @@ public abstract class Squad extends Units {
     // =========================================================
 
     @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Squad)) return false;
+
+        Squad squad = (Squad) o;
+        return ID == squad.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return ID;
+    }
+
+    @Override
     public String toString() {
         return "Squad " + name + " (" + size() + " units)";
     }
@@ -230,6 +243,10 @@ public abstract class Squad extends Units {
 
     public AUnit leader() {
         return squadCenter.leader();
+    }
+
+    public void changeLeader() {
+        squadCenter.refreshLeader(leader());
     }
 
 //    public HasPosition tankMedian() {
@@ -359,5 +376,21 @@ public abstract class Squad extends Units {
 
     public boolean isAlpha() {
         return Alpha.get().equals(this);
+    }
+
+    public boolean lastUnderAttackLessThanAgo(int threshold) {
+        return A.ago(_lastUnderAttack) <= threshold;
+    }
+
+    public boolean lastAttackedLessThanAgo(int threshold) {
+        return A.ago(_lastAttacked) <= threshold;
+    }
+
+    public void markLastUnderAttackNow() {
+        _lastUnderAttack = A.now;
+    }
+
+    public void markLastAttackedNow() {
+        _lastAttacked = A.now;
     }
 }

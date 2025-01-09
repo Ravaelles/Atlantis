@@ -1,20 +1,19 @@
 package tests.acceptance;
 
 import atlantis.game.A;
-import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnitType;
-import atlantis.units.StateCommander;
+import atlantis.units.UnitStateCommander;
 import atlantis.units.attacked_by.Bullets;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeBullet;
 import tests.fakes.FakeBullets;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Dragoon;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DeadManTest extends AbstractTestFakingGame {
+public class DeadManTest extends AbstractTestWithWorld {
     private FakeUnit hydra;
     private FakeUnit marine;
     private FakeUnit dragoon;
@@ -25,7 +24,7 @@ public class DeadManTest extends AbstractTestFakingGame {
     @Test
     public void isDeadMan_dragoon() {
         createWorld(5, () -> {
-                (new StateCommander()).invokeCommander();
+                (new UnitStateCommander()).invokeCommander();
 
                 createBullet(dragoon, zergling);
                 createBullet(dragoon, marine);

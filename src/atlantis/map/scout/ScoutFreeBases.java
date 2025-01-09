@@ -16,7 +16,7 @@ public class ScoutFreeBases extends Manager {
 
     @Override
     public boolean applies() {
-        if (!unit.isScout()) return false;
+        if (!unit.isScout() && !unit.isAir()) return false;
 
 //        if (
 //            unit.enemiesNear()

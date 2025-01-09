@@ -32,6 +32,8 @@ import java.io.Serializable;
  */
 //public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
 public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>>, Serializable {
+    public static boolean TESTING_EXPLORED = false;
+
     //    private transient Position p;
     private Position p;
 
@@ -238,7 +240,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
         if (somethingChanged) {
             APosition newPosition = new APosition(px, py);
-            return newPosition.makeWalkable(8);
+            return newPosition.makeWalkable(8, null);
         }
         else {
             return this;
@@ -355,42 +357,12 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
     /**
      * Returns true if given position has land connection to given position.
      */
-    public boolean hasPathTo(APosition position) {
-        return Atlantis.game().hasPath(this.p(), position.p());
+    public boolean hasPathTo(HasPosition position) {
+        return Atlantis.game().hasPath(this.p(), position.position().p());
     }
 
     public TilePosition toTilePosition() {
         return p().toTilePosition();
-    }
-
-    public boolean isCloseToMapBounds() {
-        int px = p.getX();
-        int py = p.getY();
-
-        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
-        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) return true;
-
-        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
-        else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
-    }
-
-    public boolean isCloseToMapBounds(int tilesAwayFromEdge) {
-        int px = p.getX();
-        int py = p.getY();
-        int allowedPixelsAway = tilesAwayFromEdge * 32;
-
-        if (px <= allowedPixelsAway) return true;
-        else if (px >= (32 * AMap.getMapWidthInTiles() - allowedPixelsAway)) return true;
-
-        if (py <= allowedPixelsAway) return true;
-        else return py >= (32 * AMap.getMapHeightInTiles() - allowedPixelsAway);
-    }
-
-    public double distToMapBorders() {
-        return Math.min(
-            Math.min(tx(), ty()),
-            Math.min((AMap.getMapWidthInTiles() - tx()), (AMap.getMapHeightInTiles() - ty()))
-        );
     }
 
     public APosition randomizePosition(int maxTiles) {

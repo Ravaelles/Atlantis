@@ -1,6 +1,7 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.special.AvoidLurkers;
 import atlantis.units.AUnit;
 
 public class ProtossReaver extends Manager {
@@ -20,6 +21,7 @@ public class ProtossReaver extends Manager {
             ReaverIsLoaded.class,
 
             ReaverUseTransport.class,
+            AvoidLurkers.class,
 
             ReaverContinueAttack.class,
 

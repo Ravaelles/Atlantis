@@ -4,8 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.race.MyRace;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -18,7 +17,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.TimeMoment;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
     private TimeMoment lastAdded = new TimeMoment(0);
@@ -37,8 +35,8 @@ public class SupplyCommander extends Commander {
         supplyFree = AGame.supplyFree();
 
         if (supplyTotal >= 200) return;
-        if (supplyFree >= 9) return;
-        if (lastAdded.lessThanSecondsAgo(7)) return;
+        if (supplyFree >= 12) return;
+        if (lastAdded.lessThanSecondsAgo(5)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
@@ -98,23 +96,43 @@ public class SupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 70) {
-                if (supplyFree <= 9 && suppliesBeingBuilt <= 1 || supplyFree <= 1) {
+                if (
+                    (supplyFree <= 9 && suppliesBeingBuilt <= 1)
+                        || (supplyFree <= 1 && suppliesBeingBuilt <= (1 + A.minerals() / 400))
+                ) {
                     requestAdditionalSupply();
                 }
             }
-            else if (supplyTotal <= 120) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 3) {
+            else {
+                if (supplyFree <= 3 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
+                    return;
                 }
-            }
-            else if (supplyTotal <= 170) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 4) {
+
+                if (supplyFree <= 6 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
+                    return;
                 }
-            }
-            else if (supplyTotal <= 200) {
-                if (supplyFree <= 19 && suppliesBeingBuilt <= 1) {
+
+                if (supplyFree <= 8 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
+                    return;
+                }
+
+                if (supplyTotal <= 120) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= (12 / Math.max(1, suppliesBeingBuilt))) {
+                        requestAdditionalSupply();
+                    }
+                }
+                else if (supplyTotal <= 170) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 12 || suppliesBeingBuilt <= (A.minerals() / 300)) {
+                        requestAdditionalSupply();
+                    }
+                }
+                else if (supplyTotal <= 200) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 19) {
+                        requestAdditionalSupply();
+                    }
                 }
             }
         }
@@ -123,7 +141,7 @@ public class SupplyCommander extends Commander {
     private boolean tooFewSupplyLeftAsForGateways() {
         return We.protoss()
             && A.supplyTotal() >= 30
-            && !A.hasFreeSupply(2 + Count.gateways());
+            && !A.hasFreeSupply((A.hasMinerals(120) ? 1 : 0) + 2 * Count.gateways());
     }
 
     private boolean isSupplyVeryLow() {
@@ -157,7 +175,7 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
+        if (Queue.get().notFinished().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
 //            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
@@ -169,7 +187,7 @@ public class SupplyCommander extends Commander {
         }
 
         // Zerg handles supply a bit differently
-        if (MyRace.isPlayingAsZerg()) {
+        if (We.zerg()) {
             ProduceZergUnit.produceZergUnit(
                 AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
             );
@@ -192,7 +210,12 @@ public class SupplyCommander extends Commander {
 
     private boolean tooManyNotStartedConstructions() {
         if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 38) return true;
-        if (requestedConstructionsOfSupply >= (A.supplyUsed() >= 70 ? 4 : 3)) return true;
+
+        int limit = (A.supplyUsed() >= 70 ? 3 : 2)
+            + A.minerals() / 300
+            + A.supplyFree() <= 1 ? 1 : 0;
+
+        if (requestedConstructionsOfSupply >= limit) return true;
 
         return false;
     }
@@ -203,26 +226,11 @@ public class SupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-//        System.err.println("A = " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
-//        System.err.println("B = " + CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)2);
         return Math.max(
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
             CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)
         );
 
-//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
-//        System.out.println("A= " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
-//        System.out.println("B = " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-//        return Math.max(
-////            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
-//            ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
-////            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
-//            Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY)
-//        );
-//        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
-
-//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);
-//
 //        // =========================================================
 //        // Terran + Protoss
 //        else {

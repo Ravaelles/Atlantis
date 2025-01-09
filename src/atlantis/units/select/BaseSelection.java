@@ -59,6 +59,10 @@ public class BaseSelection {
     public Selection cloneByAdding(Collection<? extends AUnit> addThese, String cachePathSuffix) {
         List<AUnit> newData = new ArrayList<>(data);
         newData.addAll(addThese);
+
+        // Remove duplicates from newData list
+//        newData = new ArrayList<>(newData);
+        
         return new Selection(newData, null);
     }
 

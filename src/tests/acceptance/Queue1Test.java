@@ -3,17 +3,17 @@ package tests.acceptance;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class Queue1Test extends NonAbstractTestFakingGame {
+public class Queue1Test extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test
@@ -34,8 +34,8 @@ public class Queue1Test extends NonAbstractTestFakingGame {
                 assertEquals(buildOrder.productionOrders().size(), queue.allOrders().size());
                 assertEquals(0, queue.inProgressOrders().size());
 //                assertEquals(0, queue.readyToProduceOrders().size());
-                assertEquals(0, queue.completedOrders().size());
-                assertEquals(true, !queue.nonCompleted().isEmpty());
+                assertEquals(0, queue.finishedOrders().size());
+                assertEquals(true, !queue.notFinished().isEmpty());
             },
             () -> ourInitialUnits(),
             () -> fakeExampleEnemies(),

@@ -2,12 +2,16 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.map.base.define.EnemyThirdLocation;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class ScoutEnemyThird extends Manager {
+    private static boolean noLongerScoutAsBaseFound = false;
     private static int lastSeenAtFrame = -1;
 
     private APosition enemyThird;
@@ -18,13 +22,16 @@ public class ScoutEnemyThird extends Manager {
 
     @Override
     public boolean applies() {
-        enemyThird = EnemyThirdLocation.get();
+        if (noLongerScoutAsBaseFound) return false;
+
+        if (!Enemy.zerg() && EnemyUnits.combatUnits() <= 2) return false;
+
+        enemyThird = EnemyThirdBase.get();
         if (enemyThird == null) return false;
 
         if (!enemyThird.isExplored()) return true;
 
         updateLastSeenAtFrame();
-
         return A.secondsAgo(lastSeenAtFrame) >= 34;
     }
 
@@ -40,6 +47,10 @@ public class ScoutEnemyThird extends Manager {
     private void updateLastSeenAtFrame() {
         if (enemyThird.isPositionVisible()) {
             lastSeenAtFrame = A.now();
+
+            if (Select.enemy().buildings().countInRadius(10, enemyThird) >= 1) {
+                noLongerScoutAsBaseFound = true;
+            }
         }
     }
 }

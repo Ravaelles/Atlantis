@@ -4,11 +4,11 @@ import atlantis.combat.running.RunToPositionFinder;
 import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.fakes.FakeUnit;
 
-public class RunInAnyDirectionTest extends NonAbstractTestFakingGame {
+public class RunInAnyDirectionTest extends WorldStubForTests {
     public MockedStatic<AGame> aGame;
 
     @Test

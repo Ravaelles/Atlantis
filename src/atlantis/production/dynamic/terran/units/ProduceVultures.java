@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProduceVultures {
     public static boolean vultures() {
@@ -54,7 +54,7 @@ public class ProduceVultures {
     private static boolean prioritizeTanks() {
         if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isFalse()) return false;
 
-        return (A.hasGas(150) || Have.unfinishedOrPlanned(AUnitType.Terran_Machine_Shop))
+        return (A.hasGas(150) || Have.existingUnfinishedOrPlanned(AUnitType.Terran_Machine_Shop))
             && Count.freeFactories() < 2;
     }
 }

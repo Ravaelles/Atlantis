@@ -3,7 +3,7 @@ package atlantis.combat.advance.old;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.terran.TerranAdvance;
 import atlantis.combat.advance.contain.ContainEnemy;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
+import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
 import atlantis.combat.micro.zerg.overlord.WeDontKnowEnemyLocation;
@@ -37,7 +37,7 @@ public class OldAdvance extends MissionManager {
 
             AsAirAttackAnyone.class,
 
-            HandleFocusPointPositioning.class,
+            HandleUnitPositioningOnMap.class,
             OldAdvanceAsALeader.class,
 //            OldAdvanceStandard.class,
 

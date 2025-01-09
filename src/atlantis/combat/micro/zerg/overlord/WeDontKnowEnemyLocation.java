@@ -12,7 +12,7 @@ public class WeDontKnowEnemyLocation extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isStopped()
+        return (unit.isStopped() || unit.isHoldingPosition())
             && !EnemyInfo.weKnowAboutAnyRealUnit()
             && !EnemyInfo.hasDiscoveredAnyBuilding();
     }
@@ -21,6 +21,8 @@ public class WeDontKnowEnemyLocation extends Manager {
         unit.setTooltipTactical("Find enemy");
 //        if (true) throw new RuntimeException("wut / " + this.parentsStack());
 
-        return (new ScoutManager(unit)).invokeFrom(this);
+        if ((new ScoutManager(unit)).forceHandle() != null) return usedManager(this);
+
+        return null;
     }
 }

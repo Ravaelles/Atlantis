@@ -3,7 +3,7 @@ package atlantis.combat.advance.contain.protoss;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -67,7 +67,7 @@ public class AppliesContainForProtoss {
         if (A.minerals() > 2500) return true;
 
         if (
-            (OurArmy.strength() >= 800 || Alpha.count() >= 32)
+            (Army.strength() >= 800 || Alpha.count() >= 32)
                 && unit.friendsNear().combatUnits().atLeast(18)
         ) return true;
 

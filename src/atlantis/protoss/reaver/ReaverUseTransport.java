@@ -1,13 +1,12 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
 
 public class ReaverUseTransport extends Manager {
@@ -22,11 +21,17 @@ public class ReaverUseTransport extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (unit.scarabCount() == 0 && unit.enemiesNear().canAttack(unit, 2).notEmpty()) return true;
+        if (unit.scarabCount() == 0 && unit.enemiesNear().combatUnits().canAttack(unit, 2).notEmpty()) return true;
+
+        if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
+
         if (unit.lastActionLessThanAgo(20, Actions.LOAD)) return true;
 
+        if (unit.hp() >= 120 && unit.shotSecondsAgo() >= 10) return false;
+
+        if (unit.lastUnderAttackLessThanAgo(50)) return true;
         if (unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)) return true;
-        if (unit.cooldown() >= 5 && unit.lastAttackFrameLessThanAgo(30)) return true;
+        if (justShootAndShouldEvacuate()) return true;
 
         if (unit.isAttackFrame()) return false;
         if (unit.isStartingAttack()) return false;
@@ -46,7 +51,6 @@ public class ReaverUseTransport extends Manager {
 
         if (safeAgainstEnemiesAndHasTargets()) return false;
 
-//        System.err.println(unit.lastActionAgo(Actions.UNLOAD));
         if (unit.hp() >= 80 && unit.lastActionLessThanAgo(15, Actions.ATTACK_UNIT)) return false;
 
         if (
@@ -55,19 +59,20 @@ public class ReaverUseTransport extends Manager {
                 && unit.enemiesNearInRadius(10) > 0
         ) return false;
 
-        shuttle = unit.friendsNear()
-            .ofType(AUnitType.Protoss_Shuttle)
-            .havingAtLeastHp(30)
-            .havingSpaceFree(2)
-            .nearestTo(unit);
+        return true;
+    }
 
-        return shuttle != null;
+    private boolean justShootAndShouldEvacuate() {
+        return unit.cooldown() >= 10
+            && unit.shieldWound() >= 11
+            && unit.lastAttackFrameLessThanAgo(30)
+            && unit.enemiesNear().canAttack(unit, 1.1 + unit.woundPercent() / 30.0).atLeast(1);
     }
 
     private boolean againstTerranSiegeTanksImmediatelyPickUpAfterShot() {
         return Enemy.terran()
             && unit.shotSecondsAgo() <= 3
-            && (unit.shieldWound() >= 35 || EnemyUnits.discovered().tanks().inRadius(15, unit).notEmpty());
+            && (unit.shieldWound() >= 35 || EnemyUnits.discovered().tanks().inRadius(AUnit.NEAR_DIST, unit).notEmpty());
     }
 
     private boolean surroundedByEnemiesGetTheFuckOuttaHere() {
@@ -89,6 +94,12 @@ public class ReaverUseTransport extends Manager {
 
     @Override
     public Manager handle() {
+        shuttle = unit.friendsNear()
+            .ofType(AUnitType.Protoss_Shuttle)
+            .havingAtLeastHp(30)
+            .havingSpaceFree(2)
+            .nearestTo(unit);
+
         if (shuttle == null) {
 //            ErrorLog.printMaxOncePerMinute("ReaverUseTransport: shuttle is null");
             return null;

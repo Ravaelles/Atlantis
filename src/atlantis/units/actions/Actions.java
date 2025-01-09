@@ -18,6 +18,7 @@ public class Actions {
     public static final Action INVALID = new Action().setName("INVALID");
     public static final Action HEAL = new Action().setName("HEAL");
     public static final Action HOLD_POSITION = new Action().setName("HOLD_POSITION");
+    public static final Action HOLD_TO_SHOOT = new Action().setName("HOLD_TO_SHOOT");
     public static final Action LAND = new Action().setName("LAND");
     public static final Action LIFT = new Action().setName("LIFT");
     public static final Action LOAD = new Action().setName("LOAD");
@@ -37,6 +38,7 @@ public class Actions {
     public static final Action MOVE_HEAL = new Action().setName("MOVE_HEAL");
     public static final Action MOVE_MACRO = new Action().setName("MOVE_MACRO");
     public static final Action MOVE_REPAIR = new Action().setName("MOVE_REPAIR");
+    public static final Action MOVE_PROTECT = new Action().setName("MOVE_PROTECT");
     public static final Action MOVE_REVEAL = new Action().setName("MOVE_REVEAL");
     public static final Action MOVE_SAFETY = new Action().setName("MOVE_SAFETY");
     public static final Action MOVE_SCOUT = new Action().setName("MOVE_SCOUT");

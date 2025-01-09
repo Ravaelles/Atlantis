@@ -15,7 +15,7 @@ public class AvoidMines extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isGroundUnit();
+        return unit.isGroundUnit() && !unit.isWorker();
     }
 
     @Override

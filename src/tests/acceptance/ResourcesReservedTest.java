@@ -8,15 +8,15 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ResourcesReservedTest extends NonAbstractTestFakingGame {
+public class ResourcesReservedTest extends WorldStubForTests {
     private Queue queue = null;
     private Orders readyToProduceOrders;
     private int initialReservedMinerals;
@@ -62,7 +62,7 @@ public class ResourcesReservedTest extends NonAbstractTestFakingGame {
 
                 assertEquals(afterInProgressMinerals, ReservedResources.minerals());
 
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(OrderStatus.FINISHED);
 
 //                Queue.get().allOrders().print("After completed");
 

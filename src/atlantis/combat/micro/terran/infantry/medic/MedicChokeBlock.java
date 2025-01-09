@@ -7,7 +7,6 @@ import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.terran.chokeblockers.ChokeBlockerPosition;
-import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
 import atlantis.terran.chokeblockers.NeedChokeBlockers;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -41,7 +40,7 @@ public class MedicChokeBlock extends Manager {
             }
         }
         else {
-            unit.holdPosition("ChokeBlock");
+            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
         }
         unit.setAction(Actions.SPECIAL);
 

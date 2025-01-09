@@ -2,10 +2,10 @@ package tests.acceptance;
 
 import atlantis.production.BuildingsCommander;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-public class BuildingsCommanderTest extends AbstractTestFakingGame {
+public class BuildingsCommanderTest extends AbstractTestWithWorld {
     @Test
     public void iteratesOverBuildings() {
         createWorld(1, () -> {

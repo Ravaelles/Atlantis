@@ -1,11 +1,13 @@
 package atlantis.terran.repair;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class CanAbandonUnitAssignedToRepair {
     public static boolean check(AUnit unit) {
         if (!unit.isAlive()) return true;
+        if (!A.hasMinerals(4)) return true;
 
         AUnit target = RepairAssignments.unitToRepairForSCV(unit);
         if (target == null) {

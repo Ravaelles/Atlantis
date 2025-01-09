@@ -11,15 +11,14 @@ import atlantis.units.select.Have;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceScienceVessels {
-    public static void scienceVessels() {
-        if (dontHaveRequirements()) return;
+    public static boolean scienceVessels() {
+        if (dontHaveRequirements()) return false;
 
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) {
-            produceScienceVessel();
-            return;
+            return produceScienceVessel();
         }
 
-        produceScienceVessels();
+        return produceScienceVessels();
     }
 
     private static boolean produceScienceVessel() {

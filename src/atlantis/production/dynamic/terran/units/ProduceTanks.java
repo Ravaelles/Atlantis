@@ -2,20 +2,30 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
-import atlantis.production.dynamic.terran.tech.SiegeMode;
-import atlantis.units.AUnit;
+import atlantis.production.dynamic.terran.tech.ResearchSiegeMode;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.units.select.Selection;
+import atlantis.game.player.Enemy;
 
 public class ProduceTanks {
-    public static boolean tanks(AUnit factory) {
+
+    private static int tanks;
+
+    public static boolean tanks() {
         if (TerranDecisions.DONT_PRODUCE_TANKS_AT_ALL.isTrue()) return false;
         if (!Have.machineShop() || !Have.factory()) return false;
 
-        int tanks = Select.ourWithUnfinished().tanks().count();
+        if (!A.canAfford(150, 100)) return false;
+
+        Selection freeFactory = Select.ourFree(AUnitType.Terran_Factory);
+        if (freeFactory == null) return false;
+
+        tanks = Select.ourWithUnfinished().tanks().count();
+        if (tanks <= 2) return produceTank();
+
         boolean canAffordWithReserved = canAffordWithReserved();
 
         if (!Enemy.terran() && tanks >= 8) {
@@ -30,7 +40,7 @@ public class ProduceTanks {
 //            return canAffordWithReserved;
 //        }
 
-        if (Enemy.terran() && tanks >= 1 && !SiegeMode.isResearched()) {
+        if (Enemy.terran() && tanks >= 1 && !ResearchSiegeMode.isResearched()) {
             if (!canAffordWithReserved) return false;
         }
 

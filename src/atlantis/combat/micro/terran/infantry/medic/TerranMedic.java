@@ -2,6 +2,8 @@ package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.squad.positioning.terran.TerranTooFarFromSquadCenter;
 import atlantis.units.AUnit;
 
 import java.util.HashMap;
@@ -30,6 +32,8 @@ public class TerranMedic extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidCriticalUnits.class,
+            MedicAvoidWhenAttacked.class,
             ContinueHeal.class,
             HealMostWoundedInRange.class,
             HealAnyWoundedNear.class,
@@ -37,6 +41,7 @@ public class TerranMedic extends Manager {
             MedicChokeBlock.class,
             MedicBodyBlock.class,
             UnitTooCloseToBunker.class,
+            TerranTooFarFromSquadCenter.class,
             TooFarFromNearestInfantry.class,
             MoveAwayMedicFromTanks.class,
             GlueToAssignments.class,

@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -18,7 +18,7 @@ public class ProduceShieldBatteryAtNatural {
         int shieldBatteries = Count.withPlanned(type());
         if (!A.hasMinerals(170 * shieldBatteries)) return false;
         if (shieldBatteries >= Math.ceil(A.supplyTotal() / 70.0)) return false;
-        if (OurArmy.strength() >= 180 && !A.hasMinerals(300)) return false;
+        if (Army.strength() >= 180 && !A.hasMinerals(300)) return false;
 
         return request();
     }

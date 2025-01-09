@@ -374,6 +374,12 @@ public class Units {
         return list.isEmpty();
     }
 
+    public boolean onlyGround() {
+        ArrayList<AUnit> list = new ArrayList<>(this.units);
+        list.removeIf(u -> !u.isGroundUnit());
+        return list.isEmpty();
+    }
+
     // =========================================================
     // Override methods
 

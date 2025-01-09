@@ -35,7 +35,7 @@ public class ChokeBlockerMoveToBlock extends Manager {
             }
         }
         else {
-            unit.holdPosition("ChokeBlocker");
+            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlocker");
 //            unit.repair(ChokeBlockersAssignments.get().otherBlocker(unit), "Hold!");
         }
         unit.setAction(Actions.SPECIAL);

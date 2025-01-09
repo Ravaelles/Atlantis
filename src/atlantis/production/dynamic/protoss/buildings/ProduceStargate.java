@@ -3,16 +3,21 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.information.generic.Army;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Fleet_Beacon;
 import static atlantis.units.AUnitType.Protoss_Stargate;
 
 public class ProduceStargate {
     public static boolean produce() {
+        if (Count.ofType(Protoss_Stargate) > 0) return false;
+        if (ConstructionRequests.isBeingBuilt(Protoss_Stargate)) return false;
+
         Decision decision = A.whenEnemyProtossTerranZerg(
             ProduceStargate::produceAgainstProtoss,
             ProduceStargate::produceAgainstTerran,
@@ -47,6 +52,8 @@ public class ProduceStargate {
     private static Decision produceAgainstZerg() {
         if (!Enemy.zerg()) return Decision.INDIFFERENT;
         if (A.supplyUsed() <= 60) return Decision.FORBIDDEN;
+
+        if (A.supplyUsed() >= 70 && Army.strength() >= 95 && EnemyUnits.lurkers() <= 2) return Decision.TRUE;
 
         Selection enemies = EnemyUnits.discovered();
 

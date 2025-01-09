@@ -3,24 +3,27 @@ package atlantis.combat.managers;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.attack.AttackParamountUnitsInRange;
-import atlantis.combat.micro.attack.expansion.OverrideAndAttackEnemyExpansion;
-import atlantis.combat.micro.avoid.ContinueRunning;
+import atlantis.combat.micro.attack.tanks.AttackTanksInRange;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
+import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.hold.HoldToShoot;
-import atlantis.combat.micro.dancing.away.DanceAwayAsMelee;
 import atlantis.combat.micro.early.protoss.ProtossEarlyGame;
-import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
-import atlantis.combat.squad.positioning.Cohesion;
+import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.squad.positioning.protoss.cluster.ProtossForceUnitsCloserToLeader;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
+import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.ContinueShooting;
 import atlantis.units.interrupt.ContinueShotAnimation;
 import atlantis.units.special.FixIdleUnits;
 import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.ManualOverrideManager;
+import atlantis.units.special.SpecialUnitsManager;
 import atlantis.units.special.ums.FixInvalidTargets;
 
 public class CombatManagerTopPriority extends Manager {
@@ -36,46 +39,75 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            // === Non-actions ===============================================
+
             ManualOverrideManager.class,
             RemoveDeadUnitsManager.class,
+            AttackStateDeterminingManager.class,
 
+            AvoidSpellsAndMines.class,
+            SpecialUnitsManager.class,
+
+            DontIssueOrdersOneFrameAfterCommand.class,
             FixPerformanceForBigSupply.class,
 
-            Unfreezer.class,
+            // === Crucial actions ===========================================
+
+//            Unfreezer.class,
 
             AvoidCombatBuildingClose.class,
-
-            ContinueShotAnimation.class,
-
-            DanceAwayAsMelee.class,
-            DanceAfterShoot.class,
-
-            HoldToShoot.class,
-            ContinueShooting.class,
-//            ContinueCurrentAction.class,
+            AvoidCriticalUnits.class,
 
             AttackParamountUnitsInRange.class,
-            ProtossEarlyGame.class,
 
-            OverrideAndAttackEnemyExpansion.class,
+            // === Very important actions ====================================
 
-            ProtossCombatManager.class,
-            TerranCombatManager.class,
+            RetreatManager.class,
 
-            AvoidCriticalUnits.class,
+            HoldToShoot.class,
+            ContinueShotAnimation.class,
+//            ForceRunAfterShot.class,
+
+            ProtossFormation.class,
+            ProtossForceUnitsCloserToLeader.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,
 
-            ContinueRunning.class,
+            ShouldStopRunning.class,
+
+            ProtossTopCombatManager.class,
+
+            AttackTanksInRange.class,
+//            ContinueShooting.class,
+
+            // === Important actions ========================================
+
+            AvoidAsUndetected.class,
+            AvoidEnemies.class,
+
+            DanceAfterShoot.class,
+//            ContinueCurrentAction.class,
+
+            ProtossEarlyGame.class,
+
+            ProtossCombatManager.class,
+            TerranCombatManager.class,
+
+//            ProtossForceStickToMainDuringDefend.class,
+
+//            ContinueRunning.class,
 
 //            AvoidCombatBuilding.class,
 
-            Cohesion.class,
+//            Cohesion.class,
 
 //            FixStoppedUnits.class,
 
-            RetreatManager.class,
+//            RetreatManager.class,
+
+//            FixInvalidTargets.class,
+//            FixIdleUnits.class,
 
 //            PreventDoNothing.class,
 //            PreventAttackNull.class,

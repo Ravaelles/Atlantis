@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -10,7 +9,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
@@ -19,8 +18,6 @@ public class ProduceCannonAtNatural {
     private static APosition bestPosition;
 
     public static boolean produce() {
-        if (true) return false;
-
         if ((bestPosition = shouldProduceAt()) == null) return false;
 
         if (!Have.forge()) {
@@ -37,8 +34,8 @@ public class ProduceCannonAtNatural {
     }
 
     private static APosition shouldProduceAt() {
-        if (A.everyFrameExceptNthFrame(53)) return null;
-        if (Count.basesWithUnfinished() <= 1) return null;
+//        if (A.everyFrameExceptNthFrame(53)) return null;
+//        if (Count.basesWithUnfinished() <= 1) return null;
 
 //        if (Count.inProduction(Protoss_Photon_Cannon) >= 2) return false;
 
@@ -53,7 +50,7 @@ public class ProduceCannonAtNatural {
 //        System.err.println("--------------- naturalLocation = " + DefineNaturalBase.natural());
 
         if (naturalChoke == null) return null;
-        if (Count.inProductionOrInQueue(type()) >= 3) return null;
+        if (Count.inProductionOrInQueue(type()) >= (A.hasMinerals(1000) ? 6 : 3)) return null;
 
         APosition atPosition = bestPosition(naturalChoke);
         if (
@@ -71,15 +68,20 @@ public class ProduceCannonAtNatural {
     }
 
     private static int max() {
-        return Enemy.zerg() ? 2 : 1;
+        return (Enemy.zerg() ? 2 : 1)
+            + (A.supplyTotal() >= 100 ? 1 : 0)
+            + (A.minerals() / 750);
     }
 
     private static APosition bestPosition(HasPosition naturalBase) {
         AChoke naturalChoke = Chokes.natural();
-//        System.err.println("==================== naturalChoke = " + naturalChoke);
-        if (naturalChoke == null) return naturalBase.position();
+        if (naturalChoke == null) {
+            return naturalBase.position();
+        }
 
-        return naturalChoke.translateTilesTowards(5, naturalBase);
+        return naturalBase
+            .translateTilesTowards(5, naturalChoke)
+            .translatePercentTowards(20, naturalChoke);
     }
 
     private static AUnitType type() {

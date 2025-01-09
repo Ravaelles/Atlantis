@@ -3,14 +3,10 @@ package atlantis.production.dynamic;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.AGame;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
@@ -24,7 +20,8 @@ public class NewGasBuildingCommander extends Commander {
             && A.everyNthGameFrame(23)
             && !tooEarlyForAnotherGasBuilding()
             && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10);
+            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
+            && (We.zerg() || Count.gasBuildingsWithUnfinished() < Count.basesWithUnfinished());
 //            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
     }
 

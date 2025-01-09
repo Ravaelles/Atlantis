@@ -1,26 +1,16 @@
 package atlantis.information.strategy.response.protoss;
 
-import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
 import atlantis.production.orders.production.queue.add.AddToQueueToHave;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class RequestProtossDetection {
     public static boolean needDetectionAgainst(AUnit enemy) {
-//        OurStrategicBuildings.setDetectorsNeeded(2);
-//        ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
-
-//        return requestAtLeastOneObserver();
-
         if (requestCannons() && requestAtLeastOneObserver()) {
-//            if (OurArmy.strength() <= 120) {
-//                Missions.forceGlobalMissionDefend("Prepare for detection");
-//            }
             return true;
         }
 

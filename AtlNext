@@ -1,1 +1,43 @@
-- EnemyUnitsUpdater.weDiscoveredEnemyUnit bug - always returns just 1 or no change at all
+- Zealots can roam 5 tiles from army to attack lonely, forbid that!
+- Either all melee attack or either all retreat, no single unit attacking
+
+
+
+- Always avoid when close to unwalkable and melee near
+
+
+- Forbid separating Goons. They always have to be 0.5 distance from each other. And also in group. In radius of 1 there has to be at least 2 goons!
+- When running and further than 1, force them to fire at min cooldown.
+- Make GOons way braver, avoid only when cooldown really high and overall prioritize shooting. Also use formation more often, don't engage, stand in line and contain.
+
+
+- Check if StopRetreat actually stops all units or just one
+
+
+
+- Build cannons at NATURAL CHOKE, not in main. There was no main, but after 6 min of game, do it. Why did it happen?
+
+
+- Dragoons should not run far from other goons in early game, cause lings arte faster and cheaper in any numbers and it takes 2 goons to kill them
+
+Dont go into range of shot of sunkens
+Look into HoldDragoon, only if enemy facing and moving, test on minimaps
+
+
+
+
+
+
+
+BananaBuildvT:
+8 - Pylon
+9 - Gateway
+9 - Gateway
+13 - Pylon
+24 - Pylon
+25 - Assimilator (can be later)
+26 - Core
+28 - Singularity Charge
+41 - Nexus (dynamic?)
+at 8 goons attack (58 sup)
+29 - Pylon

@@ -1,12 +1,12 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
+public class CombatEvaluatorMeleeTest extends AbstractTestWithWorld {
 
     @Test
     public void evaluatesMeleeUnits() {
@@ -40,8 +40,8 @@ public class CombatEvaluatorMeleeTest extends AbstractTestFakingGame {
                 assertTrue(ourEval < enemyEval);
             }
 
-            ourEval = our.combatEvalRelative();
-            enemyEval = enemy.combatEvalRelative();
+            ourEval = our.eval();
+            enemyEval = enemy.eval();
 
 //            System.err.println("ourEval = " + ourEval);
 //            System.err.println("enemyEval = " + enemyEval);

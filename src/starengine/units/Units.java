@@ -1,6 +1,6 @@
 package starengine.units;
 
-import starengine.Map;
+import starengine.assets.Map;
 import starengine.StarEngine;
 
 public abstract class Units {

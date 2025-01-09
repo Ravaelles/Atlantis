@@ -486,10 +486,10 @@ public class AUnitType implements Comparable<Object> {
 //        return Integer.compare(ID, o.ID);
     }
 //    public int compareTo(AUnitType o) {
-////        return this.ut.toString().compareTo(o.toString());
+
+    /// /        return this.ut.toString().compareTo(o.toString());
 //        return Integer.compare(ID, o.ID);
 //    }
-
     @Override
     public String toString() {
         return name();
@@ -588,12 +588,20 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isEngineeringBay() {
+        return is(Terran_Engineering_Bay);
+    }
+
     public boolean isGateway() {
         return (boolean) cache.get(
             "isGateway",
             -1,
             () -> is(Protoss_Gateway)
         );
+    }
+
+    public boolean isCyberneticsCore() {
+        return is(Protoss_Cybernetics_Core);
     }
 
     public boolean isStargate() {
@@ -725,7 +733,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isGasBuilding",
             0,
-            () -> is(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor)
+            () -> is(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor, Resource_Vespene_Geyser)
         );
     }
 
@@ -797,16 +805,20 @@ public class AUnitType implements Comparable<Object> {
         return ut.requiredTech();
     }
 
-    public int getTileWidth() {
+    public int getTilesWidth() {
         return ut.tileWidth();
     }
 
-    public int getTileHeight() {
+    public int getTilesHeights() {
         return ut.tileHeight();
     }
 
     public int maxHp() {
         return ut.maxHitPoints();
+    }
+
+    public int maxShields() {
+        return ut.maxShields();
     }
 
     public boolean isWorker() {
@@ -896,6 +908,21 @@ public class AUnitType implements Comparable<Object> {
     public boolean isCombatBuilding() {
         return (boolean) cache.get(
             "isCombatBuilding",
+            -1,
+            () -> is(
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret,
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Zerg_Creep_Colony,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Spore_Colony
+            )
+        );
+    }
+
+    public boolean isCombatBuildingWithoutCreepColonies() {
+        return (boolean) cache.get(
+            "isCombatBuildingWithoutCreepColonies",
             -1,
             () -> is(
                 AUnitType.Terran_Bunker,
@@ -1333,7 +1360,8 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isNotRealUnit",
             -1,
-            () -> isLarvaOrEgg() || isMineralField() || isInvincible()
+            () -> (isABuilding() && !isCombatBuilding())
+                || isLarvaOrEgg() || isMineralField() || isInvincible()
                 || isGeyser() || isSpell() || isFlagOrBeacon()
         );
     }
@@ -1380,7 +1408,8 @@ public class AUnitType implements Comparable<Object> {
                 && !isInvincible()
                 && !isMine()
                 && !isObserver()
-                && (!isABuilding() || isCombatBuilding() || isSunkenOrCreep())
+                && (!isABuilding() || isCombatBuilding())
+//                && !isABuilding()
                 && !isOverlord()
         );
     }
@@ -1682,5 +1711,24 @@ public class AUnitType implements Comparable<Object> {
                 Terran_Barracks, Terran_Factory, Terran_Command_Center
             )
         );
+    }
+
+    public boolean createsBullets() {
+        return (boolean) cache.get(
+            "createsBullets",
+            -1,
+            () -> is(
+                Protoss_Dragoon, Protoss_Reaver, Protoss_Arbiter,
+                Terran_Vulture, Terran_Goliath
+            )
+        );
+    }
+
+    public double widthInTiles() {
+        return (ut.dimensionLeft() + ut.dimensionRight()) / 32.0;
+    }
+
+    public double heightInTiles() {
+        return (ut.dimensionUp() + ut.dimensionDown()) / 32.0;
     }
 }

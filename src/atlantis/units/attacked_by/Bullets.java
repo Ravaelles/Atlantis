@@ -34,7 +34,7 @@ public class Bullets {
             .stream()
             .filter(b -> b.getTarget() != null && !allRawBullets.containsKey(b.getID()))
 //            .peek(b -> System.out.println("b.getID()=" + b.getID() + " / allRaw=" + A.keysToString(allRawBullets.keySet())))
-            .map(b -> ABullet.fromBullet(b))
+            .map(ABullet::fromBullet)
 //            .filter(b -> b != null && !b.isConsumed())
             .filter(b -> b != null)
 //            .collect(Collectors.toMap(ABullet::id, b -> b));

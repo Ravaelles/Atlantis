@@ -3,7 +3,7 @@ package atlantis.combat.advance.focus;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class OptimalDistanceToFocusPoint {
@@ -21,7 +21,7 @@ public class OptimalDistanceToFocusPoint {
 
         double rangedBonus = (unit.isMissionDefend() && unit.isRanged() ? 1.3 : 0);
 
-        if (unit.isMissionDefend()) return 4 + rangedBonus;
+        if (unit.isMissionDefend()) return 6 + rangedBonus;
 
         return (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
             ? (8 + rangedBonus)

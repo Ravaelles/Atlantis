@@ -1,28 +1,26 @@
 package tests.acceptance;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.dynamic.DynamicProductionCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.BaseSelect;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Counter;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
+import tests.unit.helpers.ClearAllCaches;
 
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
+public class DynamicProductionCommanderTest extends WorldStubForTests {
     private int nextX = 20;
     private ArrayList<FakeUnit> newUnits = new ArrayList<>();
 
@@ -96,10 +94,7 @@ public class DynamicProductionCommanderTest extends NonAbstractTestFakingGame {
         ArrayList<FakeUnit> ourUnits = FakeUnitHelper.fakeUnitsToArrayList(ourInitialUnits());
         ourUnits.addAll(newUnits);
 
-        BaseSelect.clearCache();
-        Select.clearCache();
-        Count.clearCache();
-        Queue.get().clearCache();
+        ClearAllCaches.clearAll();
 
         int supplyTotal = 10 + 8 * Select.ourOfType(Terran_Supply_Depot).size();
         int supplyUsed = supplyTotal * 2 / 3;

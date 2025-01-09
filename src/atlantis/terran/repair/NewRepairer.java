@@ -1,14 +1,8 @@
 package atlantis.terran.repair;
 
-import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.util.log.ErrorLog;
-
-import java.util.Collection;
-import java.util.Iterator;
 
 public class NewRepairer {
     public static AUnit repairerFor(AUnit unitToRepair, boolean criticallyImportant) {
@@ -16,7 +10,7 @@ public class NewRepairer {
 
 //        if (criticallyImportant) {
         Selection candidates = FreeWorkers.get();
-//            if (!OurStrategy.get().isRush()) {
+//            if (!Strategy.get().isRush()) {
 //                candidates = Select.ourWorkers()
 //                    .notSpecialAction()
 //                    .notRepairing()

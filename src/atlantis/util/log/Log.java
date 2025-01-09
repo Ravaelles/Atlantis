@@ -2,6 +2,8 @@ package atlantis.util.log;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import cherryvis.ACherryVis;
+import cherryvis.ACherryVisLogUnit;
 
 import java.util.ArrayList;
 
@@ -18,8 +20,8 @@ public class Log {
     public static boolean logUnitActionChanges = false;
 //    public static boolean logUnitActionChanges = true;
 
-    public static final int UNIT_LOG_SIZE = 3;
-    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 4;
+    public static final int UNIT_LOG_SIZE = 8;
+    public static final int UNIT_LOG_EXPIRE_AFTER_FRAMES = 10;
 
     private ArrayList<LogMessage> messages = new ArrayList<>();
     private int expireAfterFrames;
@@ -40,6 +42,10 @@ public class Log {
         if (SAVE_UNIT_LOGS_TO_FILES > 0) LogUnitsToFiles.saveUnitLogToFile(message, unit);
 
         if (messages.size() > limit) messages.remove(0);
+
+        if (ACherryVis.isEnabled()) {
+            ACherryVisLogUnit.logUnitData(unit, message);
+        }
     }
 
     public ArrayList<LogMessage> messages() {
@@ -96,10 +102,18 @@ public class Log {
     // =========================================================
 
     private void removeOldMessages() {
+        if (expireAfterFrames == -1) return;
+
         messages.removeIf(LogMessage::expired);
     }
 
     public void print() {
+        print(null);
+    }
+
+    public void print(String string) {
+        if (string != null) System.out.println("--- " + string + " ---");
+
         for (LogMessage message : messages) {
             System.out.println(message.messageWithTime());
         }

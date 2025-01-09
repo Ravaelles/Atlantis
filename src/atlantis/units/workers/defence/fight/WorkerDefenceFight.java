@@ -11,9 +11,9 @@ public class WorkerDefenceFight extends Manager {
 
     @Override
     public boolean applies() {
-        return (We.protoss() || !unit.isBuilder())
+        return !unit.isBuilder()
             && unit.enemiesNear().notEmpty()
-            && !unit.isRepairerOfAnyKind()
+            && (!We.terran() || !unit.isRepairerOfAnyKind())
             && !unit.isSpecialAction();
     }
 

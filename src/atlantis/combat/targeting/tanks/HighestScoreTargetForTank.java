@@ -2,7 +2,6 @@ package atlantis.combat.targeting.tanks;
 
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
-import atlantis.util.Enemy;
 
 import java.util.ArrayList;
 import java.util.Collections;

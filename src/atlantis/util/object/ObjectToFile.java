@@ -1,16 +1,14 @@
 package atlantis.util.object;
 
-import atlantis.units.AUnit;
-import atlantis.units.select.Selection;
+import atlantis.util.object.not_needed.BwapiAccessibility;
+import atlantis.util.object.not_needed.SerializedObjects;
 import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 import java.io.*;
-import java.util.Collection;
 
 public class ObjectToFile {
     private static Kryo setupKryo(Class<?> clazz) {

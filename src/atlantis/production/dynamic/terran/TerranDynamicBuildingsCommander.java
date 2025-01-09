@@ -1,50 +1,53 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
+import atlantis.production.dynamic.supply.ProduceFallbackDepotWhenSupplyLow;
 import atlantis.production.dynamic.reinforce.terran.turrets.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.util.We;
 
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
-        return We.terran() && CountInQueue.countDynamicBuildingsOrders() <= 6;
+        return We.terran()
+            && AGame.everyNthGameFrame(17)
+            && (
+            A.canAffordWithReserved(92, 0) || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
+        );
     }
 
     @Override
     protected void handle() {
-//        if (true) return;
+        if ((new ProduceFallbackDepotWhenSupplyLow()).produceIfNeeded()) return;
 
-//        ReinforceBasesWithCombatBuildings.get().invoke(this);
+        if (
+            ProduceBunker.produce()
+                || ProduceTurretForBunker.produce()
+                || ProduceEngineeringBay.engBay()
+
+                || ProduceScienceFacility.scienceFacilities()
+                || ProduceStarport.starport()
+                || ProduceComsatStation.comsats()
+                || ProduceControlTower.controlTowers()
+
+                || ProduceArmory.armory()
+                || ProduceAcademy.academy()
+
+                || ProduceMachineShop.produce()
+                || ProduceFactory.factory()
+
+                || ProduceBarracks.barracks()
+        ) return;
+//        }
 
         // Turrets
 //        (new ReinforceBunkersWithTurrets()).invoke(this);
-        if (A.everyNthGameFrame(59)) {
-            (new OffensiveTurretsCommander()).invokeCommander();
-        }
+//        if (A.everyNthGameFrame(59)) {
+        (new OffensiveTurretsCommander()).invokeCommander();
+//        }
 
-        if (A.everyNthGameFrame(57)) {
-            ProduceScienceFacility.scienceFacilities();
-            ProduceStarport.starport();
-            ProduceEngBay.engBay();
-        }
-
-        if (A.everyNthGameFrame(13)) {
-            ProduceComsatStation.comsats();
-            ProduceControlTower.controlTowers();
-            ProduceBarracks.barracks();
-        }
-
-        if (A.everyNthGameFrame(33)) {
-            ProduceArmory.armory();
-            ProduceAcademy.academy();
-        }
-
-        if (A.everyNthGameFrame(37)) {
-            ProduceMachineShop.produce();
-            ProduceFactory.factory();
-        }
     }
 }

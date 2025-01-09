@@ -2,22 +2,24 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.race.MyRace;
+import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class ProtossShouldExpand {
@@ -29,13 +31,15 @@ public class ProtossShouldExpand {
     public static boolean shouldExpand() {
         if (A.minerals() < 300) return false;
 
-        Count.clearCache();
-
         bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
         basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
+        // =========================================================
+
+        if (A.hasMinerals(777) && Count.basesWithPlanned() <= 3) return yes("LimitedBases");
+
+        if (!A.hasMinerals(384) && defendRush()) return no("DefendRush");
         if (tooManyInProgress()) return no("HaveInProgress");
-        if (bases >= 7) return no("TooManyBases");
 
         // === Second base ===========================================
 
@@ -43,7 +47,46 @@ public class ProtossShouldExpand {
 
         // =========================================================
 
+        if (bases >= 7) return no("TooManyBases");
+
+        // =========================================================
+
         return forThirdAndLaterBases();
+    }
+
+    // =========================================================
+
+    private static boolean defendRush() {
+        if (defendVsProtossRush()) return true;
+        if (defendVsTerranRush()) return true;
+        if (defendVsZergRush()) return true;
+
+        return false;
+    }
+
+    private static boolean defendVsTerranRush() {
+        if (!Enemy.terran()) return false;
+        if (A.s >= 9 * 60) return false;
+        if (Army.strength() <= 115) return true;
+
+        return false;
+    }
+
+    private static boolean defendVsProtossRush() {
+        if (!Enemy.protoss()) return false;
+        if (A.s >= 9 * 60) return false;
+        if (Army.strength() <= 115) return true;
+
+        return false;
+    }
+
+    private static boolean defendVsZergRush() {
+        if (!Enemy.zerg()) return false;
+        if (A.s >= 9 * 60) return false;
+
+        if (Army.strength() <= 115) return true;
+
+        return false;
     }
 
     private static boolean tooManyInProgress() {
@@ -59,6 +102,8 @@ public class ProtossShouldExpand {
 
         if (forThirdTooFewGateways()) return no("TooFewGateways");
 
+        if (thirdAndLaterVsTerran()) return true;
+
         if (genericThird()) return yes("Get3rd");
         if (thirdBecauseEnemyHasLotsOfCb()) return yes("Get3rd");
 
@@ -73,7 +118,7 @@ public class ProtossShouldExpand {
         if (genericThirdLotsOfMinerals()) return yes("SuperbMinerals");
 
 //        boolean hasPlentyOfMinerals = AGame.hasMinerals(580);
-        int minMinerals = 100 + (MyRace.isPlayingAsZerg() ? 268 : 356);
+        int minMinerals = 100 + (We.zerg() ? 268 : 356);
 
         // It makes sense to think about expansion only if we have a lot of minerals.
         if (!A.canAffordWithReserved(minMinerals, 0)) return no("CannotAfford");
@@ -109,17 +154,27 @@ public class ProtossShouldExpand {
         return result;
     }
 
+    private static boolean thirdAndLaterVsTerran() {
+        if (!Enemy.terran()) return false;
+
+        if (AGame.killsLossesResourceBalance() >= 400 && bases <= 2 && basesInProduction == 0 && A.s <= 9 * 60) {
+            return yes("GoodVsTerran");
+        }
+
+        return false;
+    }
+
     private static boolean forThirdTooFewGateways() {
         return (
             (Count.gatewaysWithUnfinished() * 2 < Count.basesWithUnfinished())
                 || (Count.freeGateways() <= 0)
         )
-            && OurArmy.strengthWithoutCB() <= 135;
+            && Army.strengthWithoutCB() <= 135;
     }
 
     private static boolean thirdBecauseEnemyHasLotsOfCb() {
         if (EnemyInfo.combatBuildingsAntiLand() >= 2) {
-            return OurArmy.strength() >= 95 && Count.basesWithPlanned() <= 2;
+            return Army.strength() >= 95 && Count.basesWithPlanned() <= 2;
         }
 
         return false;
@@ -134,20 +189,33 @@ public class ProtossShouldExpand {
 
     private static boolean genericThird() {
         return A.supplyUsed() >= 120
-            && OurArmy.strength() >= A.supplyUsed()
+            && Army.strength() >= A.supplyUsed()
             && Count.basesWithPlanned() <= 2;
     }
 
     private static boolean forSecondBase() {
         int seconds = A.seconds();
-        int armyStrength = OurArmy.strength();
+        int armyStrength = Army.strength();
+
+        if (enemyWentHiddenUnitsAndWeHaveNoObservers()) return no("NoObservers");
 
         if (seconds >= 10.5 * 60) return yes("GettingLate");
-
-        if (cautionAgainstZealotRush()) return no("CautiosZealots");
-        if (cautionAgainstZergArmy()) return no("CautiosZerg");
-
         if (enemyGoesCombatBuildingsEarly()) return yes("EnemyManyEarlyCB");
+
+        if (cautionAgainstZealotRush()) return no("CautionZealots");
+        if (cautionAgainstZergArmy()) return no("CautionZerg");
+
+        if (bases <= 1 && basesInProduction <= 0) {
+            int minNeeded = (Count.ourCombatUnits() <= 14 ? 442 : 360)
+                + (Army.strength() <= 150 ? 80 : 0);
+
+            if (A.hasMinerals(minNeeded) && Count.workers() >= 18 && CountInQueue.bases() == 0) {
+                Count.clearCache();
+                if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {
+                    return yes("ManyMinerals");
+                }
+            }
+        }
 
         if (notEnoughGateways()) return no("NotEnoughGates");
         if (tooFewArmy()) return no("TooFewUnits");
@@ -158,18 +226,12 @@ public class ProtossShouldExpand {
         ) return no("CoreFirst");
 
         if (armyStrength <= 90) return no("TooWeak");
-        if (seconds <= 500 && OurStrategy.get().isRushOrCheese()) no("RushPlan");
+        if (seconds <= 500 && Strategy.get().isRushOrCheese()) no("RushPlan");
         if (enemyHasNoCombatBuilding()) return no("NoEnemyCB");
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
 
         if (bases <= 1 && basesInProduction <= 0) {
-            if (A.hasMinerals(350) && Count.workers() >= 18 && CountInQueue.bases() == 0) {
-                Count.clearCache();
-                if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {
-                    return yes("ManyMinerals");
-                }
-            }
             if (Count.workers() >= 24) {
                 Count.clearCache();
                 if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {
@@ -192,12 +254,18 @@ public class ProtossShouldExpand {
         return no("JustDont");
     }
 
+    private static boolean enemyWentHiddenUnitsAndWeHaveNoObservers() {
+        if (Count.observers() > 0) return false;
+
+        return EnemyInfo.goesOrHasHiddenUnits();
+    }
+
     private static boolean cautionAgainstZergArmy() {
         if (!Enemy.zerg()) return false;
 
         if (A.hasMinerals(500)) return false;
 
-        return OurArmy.strength() <= 140 && Count.ourCombatUnits() <= 13;
+        return Army.strength() <= 140 && Count.ourCombatUnits() <= 13;
     }
 
     private static boolean notEnoughGateways() {
@@ -205,14 +273,14 @@ public class ProtossShouldExpand {
 
         if (Enemy.protoss()) {
             if (EnemyInfo.combatBuildingsAntiLand() == 0) {
-                return gateways <= 6 || OurArmy.strength() >= 140;
+                return gateways <= 6 || Army.strength() >= 140;
             }
 
             return gateways <= 1;
         }
 
         if (Enemy.zerg()) {
-            return gateways <= 4 && OurArmy.strength() < 170 && !A.hasMinerals(344);
+            return gateways <= 4 && Army.strength() < 170 && !A.hasMinerals(344);
         }
 
         return gateways <= 1;
@@ -222,15 +290,19 @@ public class ProtossShouldExpand {
         int secondLimit = 420;
 
         if (Enemy.terran()) {
-            return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 2;
-        }
-
-        else if (Enemy.protoss()) {
             return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 1;
         }
 
+        else if (Enemy.protoss()) {
+            return A.s <= secondLimit
+                && EnemyInfo.combatBuildingsAntiLand() >= 2
+                && !EnemyInfo.goesOrHasHiddenUnits();
+        }
+
         else if (Enemy.zerg()) {
-            return A.s <= secondLimit && EnemyInfo.combatBuildingsAntiLand() >= 2;
+            return A.s <= secondLimit
+                && EnemyInfo.combatBuildingsAntiLand() >= 3
+                && !EnemyInfo.goesOrHasHiddenUnits();
         }
 
         return false;
@@ -254,7 +326,7 @@ public class ProtossShouldExpand {
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) return false;
 
-        return EnemyUnits.discovered().inRadius(15, mainChoke).atLeast(4);
+        return EnemyUnits.discovered().inRadius(AUnit.NEAR_DIST, mainChoke).atLeast(4);
     }
 
     private static boolean enemyHasNoCombatBuilding() {
@@ -262,7 +334,7 @@ public class ProtossShouldExpand {
     }
 
     private static boolean manyGateways() {
-        return A.hasMinerals(230 + (OurStrategy.get().isRushOrCheese() ? 120 : 0))
+        return A.hasMinerals(230 + (Strategy.get().isRushOrCheese() ? 120 : 0))
             && Count.gateways() >= 3;
     }
 

@@ -1,9 +1,11 @@
 package atlantis.units.actions.move;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
+import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class MoveAway {
@@ -32,29 +34,55 @@ public class MoveAway {
         }
 
         if (unit.isGroundUnit() && !newPosition.isWalkable()) {
-//            ErrorLog.printErrorOnce("MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")");
+            if (!unit.isWorker()) {
+                ErrorLog.printErrorOnce(
+                    "MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")"
+                );
+            }
             return false;
         }
 
-        if (
-            unit.runningManager().isReasonablePositionToRun(unit, newPosition)
-                && unit.move(newPosition, action, "Move away", false)
-//                && (unit().isAir() || Select.all().groundUnits().inRadius(0.05, newPosition).empty())
-        ) {
-            double distTo = unit.distTo(newPosition);
-            if (distTo >= 1.9 && distTo > 3 * moveDistance) {
-                if (moveDistance != 2.5) return unit.moveAwayFrom(from, 2.5, action, tooltip);
+        double distTo = unit.distTo(newPosition);
+        boolean positionOk = (distTo >= 0.02 || distTo <= 3 * moveDistance);
+//            boolean positionOk = (moveDistance <= 2 && distTo >= 0.02)
+//                || (distTo >= 1.9 && distTo > 3 * moveDistance && !unit.isWorker());
 
-                ErrorLog.printMaxOncePerMinute(
-                    unit.typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo
-                        + " / " + "moveDistance: " + moveDistance
-                );
-                return false;
+        if (
+//            unit.runningManager().isReasonablePositionToRun(unit, newPosition)
+            positionOk
+        ) {
+//            if (from instanceof AUnit && Select.enemy().bunkers().countInRadius(0.5, from) > 0) {
+//                A.printStackTrace("Why running from bunker?");
+//            }
+
+//                if (moveDistance < 2.5) return unit.moveAwayFrom(from, 2.5, action, tooltip);
+//                return unit.moveAwayFrom(from, 2.5, action, tooltip);
+
+//                ErrorLog.printMaxOncePerMinute(
+//                    unit.typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo
+//                        + " / " + "moveDistance: " + moveDistance
+//                );
+//                return false;
+
+            if (unit.move(newPosition, action, "Move away", false)) {
+                return true;
+            }
+            else {
+                if (A.isUms() && !unit.isABuilding()) {
+                    System.err.println(
+                        "MoveAway failed, dist: " + distTo + " / prefered:" + moveDistance + " / " + unit
+                    );
+                }
+                return true;
             }
         }
-        unit.setTooltip(tooltip, false);
+        else {
+            System.err.println(
+                "MoveAway: not ok " + unit.distTo(newPosition) + " / " + newPosition.isWalkable() + " / " + unit
+            );
+        }
 
-        return true;
+        return false;
 
 //        this.setTooltip("CantMoveAway", false);
 //        APainter.paintCircle(this, 3, Color.Red);

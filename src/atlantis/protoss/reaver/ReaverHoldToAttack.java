@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Selection;
 import bwapi.Color;
 
 public class ReaverHoldToAttack extends Manager {
@@ -54,7 +53,7 @@ public class ReaverHoldToAttack extends Manager {
     @Override
     public Manager handle() {
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - HoldToAttack");
-        unit.holdPosition("HoldToAttack");
+        unit.holdPosition(Actions.HOLD_POSITION, "HoldToAttack");
         return usedManager(this);
     }
 }

@@ -16,6 +16,7 @@ public class UnitsArchive {
     protected static Counter<AUnitType> ourLostResourcesPerUnitTypes = new Counter<>();
     protected static Counter<AUnitType> ourKillCountersPerUnitTypes = new Counter<>();
 
+    protected static int enemyBasesDestroyed = 0;
     protected static int lastTimeOurCombatUnitDied = -9999;
 
     // =========================================================
@@ -116,6 +117,8 @@ public class UnitsArchive {
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }
+
+        if (enemy.isBase()) enemyBasesDestroyed++;
     }
 
     public static boolean isDestroyed(AUnit unit) {
@@ -138,5 +141,9 @@ public class UnitsArchive {
 
     public static boolean lastTimeOurCombatUnitDiedMoreThanAgo(int frames) {
         return A.ago(lastTimeOurCombatUnitDied) > frames;
+    }
+
+    public static int enemyBasesDestroyed() {
+        return enemyBasesDestroyed;
     }
 }

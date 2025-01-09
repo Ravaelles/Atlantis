@@ -1,13 +1,22 @@
 package atlantis.information.strategy.response.zerg;
 
 import atlantis.combat.missions.Missions;
-import atlantis.information.decisions.OurStrategicBuildings;
+
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.response.AStrategyResponse;
+import atlantis.information.strategy.response.RaceStrategyResponse;
+import atlantis.units.AUnit;
 
-public class ZergStrategyResponse extends AStrategyResponse {
+public class ZergStrategyResponse extends RaceStrategyResponse {
+    @Override
+    public boolean requestDetection(AUnit enemyUnit) {
+        return true;
+    }
+
+    @Override
+    public void onEnemyGoesHiddenUnits() {
+    }
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
@@ -19,13 +28,11 @@ public class ZergStrategyResponse extends AStrategyResponse {
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
-        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return 0;
-//        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
 
 }

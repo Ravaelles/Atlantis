@@ -3,6 +3,7 @@ package atlantis.combat.micro.dancing.hold;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -24,30 +25,45 @@ public class DragoonHoldToShoot extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isDragoon()) return false;
-
-//        if (unit.lastActionLessThanAgo(15, Actions.HOLD_POSITION)) return true;
-        if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) return false;
-
+        if (unit.cooldown() >= 8) return false;
         if (!unit.isMoving()) return false;
-        if (unit.cooldown() >= 10) return false;
+//        if (unit.lastPositionChangedAgo() >= 2) return false;
+        if (unit.enemiesNear().countInRadius(8, unit) == 0) return false;
+        if (unit.meleeEnemiesNearCount(3.3) > 0) return false;
+        if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
+        if (unit.enemiesThatCanAttackMe(1.85).count() >= 2) return false;
 
         target = unit.target();
         if (target == null || !unit.hasValidTarget()) return false;
+//        if (unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
 //        System.err.println("unit.cooldown() = " + unit.cooldown());
 
-        if (!target.isMoving() || unit.isOtherUnitShowingBackToUs(target)) return false;
+//        if (!target.isMoving() || unit.isOtherUnitShowingBackToUs(target)) return false;
+        if (unit.isOtherUnitShowingBackToUs(target)) return false;
 //        if (target.isMoving() && unit.isOtherUnitShowingBackToUs(target)) return false;
 //        if (!unit.isFacing(target)) return false;
 
         return true;
     }
 
+    private double minDistToHold() {
+//        System.err.println("unit.speed() = " + unit.speed());
+        double minDist = unitWeaponRange
+            + (!unit.hasBiggerWeaponRangeThan(target) ? -1.2 : 0)
+            + enemyMovementModifiers()
+            + ourMovementModifiers();
+//        System.err.println("   " + unit.idWithHash() + " minDist = " + minDist + " (" + distToTarget + ")");
+
+        return minDist;
+    }
+
     @Override
     protected Manager handle() {
-        if (target == null) {
-            target = unit.lastTarget();
-        }
+//        System.err.println("@ " + A.now() + " HOLD?");
+//        if (target == null) {
+//            target = unit.lastTarget();
+//        }
         if (target == null) {
             return null;
         }
@@ -69,10 +85,10 @@ public class DragoonHoldToShoot extends Manager {
 
         // HOLD
         if (shouldHold()) {
-            if (!unit.isHoldingPosition() && !unit.isAttacking()) {
-//                System.err.println("@ " + A.now() + " HOLD! ");
+            if (!unit.isHoldingPosition()) {
+//                System.err.println("@ " + A.now() + " HOLD!!!!!! DIST = " + unit.distToTargetDigit());
 
-                unit.holdPosition("HoldToShoot");
+                unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToShoot");
             }
 //            else {
 //                System.err.println("@ " + A.now() + " non-hold! ");
@@ -115,11 +131,12 @@ public class DragoonHoldToShoot extends Manager {
     private boolean shouldHold() {
 //        System.out.println("M:" + unit.isMoving() + " / A:" + unit.isAttacking() + " / H:" + unit.isHoldingPosition());
 
-        if (unit.isAttacking())
-            if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) {
-                System.out.println(A.now + " Still hold / target = " + unit.target());
-                return true;
-            }
+//        if (unit.isAttacking()) {
+//            if (unit.lastActionLessThanAgo(1, Actions.HOLD_POSITION)) {
+//                System.out.println(A.now + " Still hold / target = " + unit.target());
+//                return true;
+//            }
+//        }
 
 //        if (unit.isAttacking() && !unit.isMoving()) return false;
 //        if (!unit.isMoving() && unit.lastActionLessThanAgo(30, Actions.HOLD_POSITION)) return false;
@@ -156,19 +173,22 @@ public class DragoonHoldToShoot extends Manager {
 //            && (c4 = unit.lastStartedAttackMoreThanAgo(10));
     }
 
-    private double enemyMovementModifiers() {
-        return (target.isMoving() ? 1.2 : 0);
-    }
-
     private double ourMovementModifiers() {
-        return (unit.isMoving() ? 1.0 : 0);
+//        if (Enemy.zerg()) return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+
+//        if (Enemy.protoss()) {
+//            return (unit.isMoving() ? unit.maxSpeed() / 4.0 : 0);
+//        }
+
+//        return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+        return (unit.isMoving() ? unit.speed() / 5.5 : 0);
     }
 
-    private double minDistToHold() {
-        double minDist = unitWeaponRange + enemyMovementModifiers() + ourMovementModifiers();
-//        System.err.println("   " + unit.idWithHash() + " minDist = " + minDist + " (" + distToTarget + ")");
+    private double enemyMovementModifiers() {
+        if (Enemy.zerg()) return (target.isMoving() ? unit.maxSpeed() / 4.0 : 0);
 
-        return minDist;
+//        return (target.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+        return (target.isMoving() ? unit.maxSpeed() / 5.5 : 0);
     }
 
     private boolean shouldSkip() {
@@ -199,9 +219,5 @@ public class DragoonHoldToShoot extends Manager {
         return (target != null && target.isMoving() && !target.isFacing(unit))
             &&
             (unit.isFacing(target));
-    }
-
-    private boolean enemyIsWithinRealRange() {
-        return unit.isTargetInWeaponRangeAccordingToGame(target);
     }
 }

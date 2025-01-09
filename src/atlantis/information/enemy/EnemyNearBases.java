@@ -1,20 +1,25 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class EnemyNearBases {
+    public static final int DIST_CONSIDERED_CLOSE_TO_BASE = 8;
     private static Cache<Object> cache = new Cache<>();
     private static int maxDist;
 
     public static AUnit enemyNearAnyOurBase(int maxDistToBase) {
+        if (Count.bases() == 0) return null;
+
         if (maxDistToBase < 0) {
-            maxDistToBase = 7;
+            maxDistToBase = DIST_CONSIDERED_CLOSE_TO_BASE;
         }
         maxDist = maxDistToBase;
 
@@ -39,7 +44,7 @@ public class EnemyNearBases {
 
                 AUnit enemy;
                 for (AUnit base : Select.ourBases().list()) {
-                    if ((enemy = isNearBase(base)) != null) {
+                    if ((enemy = isNearBase(base)) != null && verifyEnemy(enemy)) {
                         return enemy;
                     }
                 }
@@ -49,18 +54,24 @@ public class EnemyNearBases {
         );
     }
 
+    private static boolean verifyEnemy(AUnit enemy) {
+        if (enemy.isZergling() && enemy.friendsNear().countInRadius(8, enemy) == 0) return false;
+
+        return true;
+    }
+
     private static AUnit isNearBase(AUnit base) {
         if (base == null) return null;
 
         AUnit nearestEnemy = potentialRegularEnemies().nearestTo(base);
 
         return nearestEnemy != null
-            && nearestEnemy.distToLessThan(base, maxDist)
+            && nearestEnemy.groundDist(base) <= maxDist
             ? nearestEnemy : null;
     }
 
     private static Selection potentialRegularEnemies() {
-        Selection enemies = Select.enemyRealUnits().havingAntiGroundWeapon();
+        Selection enemies = Select.enemyRealUnits().combatUnits().havingAntiGroundWeapon();
 
         if (A.supplyUsed() >= 140) {
             enemies = enemies.excludeTypes(

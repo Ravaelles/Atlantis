@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
  * https://github.com/dgant/PurpleWave/blob/5ba03a56dd21a3cbd41899efc992d6c7d2ddb5d5/src/ProxyBwapi/UnitClasses/UnitClass.scala
  */
 public class UnitAttackWaitFrames {
+    public static final int DRAGOON = 24;
 
 //    public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {
 //        return unit.isAttackingOrMovingToAttack()
@@ -18,7 +19,6 @@ public class UnitAttackWaitFrames {
 //    }
 
     public static boolean waitedLongEnoughForAttackFrameToFinish(AUnit unit) {
-//        return unit.lastAttackFrameAgo() > attackAnimationFrames(unit.type());
         return unit.lastAttackFrameAgo()
             >
             (attackAnimationFrames(unit.type()) + effectiveStopFrames(unit.type()));
@@ -34,10 +34,6 @@ public class UnitAttackWaitFrames {
 //                && unit.hasValidTarget()
 //                && unit.lastFrameOfStartingAttackAgo() < (unit.cooldownAbsolute() / 3)
 //                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
-
-//        System.err.println("A = " + unit.lastFrameOfStartingAttackAgo());
-//        System.err.println("B = " + unit.lastFrameOfAttackFrameAgo());
-//        System.err.println("C = " + effectiveStopFrames(unit.type()));
 
         // @Check Interesting - this works for Dragoons (when it's disabled)
 //        if (unit.lastFrameOfStartingAttackAgo() <= effectiveStopFrames(unit.type())) return true;

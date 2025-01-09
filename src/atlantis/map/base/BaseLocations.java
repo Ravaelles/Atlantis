@@ -1,15 +1,16 @@
 package atlantis.map.base;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.base.define.EnemyNaturalBase;
-import atlantis.map.base.define.EnemyThirdLocation;
+import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -29,12 +30,26 @@ public class BaseLocations {
      * fog of war).
      */
     public static APosition nearestUnexploredStartingLocation(HasPosition nearestTo) {
+        if (nearestTo == null) nearestTo = Select.mainOrAnyBuilding();
         if (nearestTo == null) return null;
 
         // Get list of all starting locations
         Positions<ABaseLocation> startingLocations = new Positions<>(startingLocations(true));
 
         ABaseLocation location = startingLocations.unexplored().groundNearestTo(nearestTo);
+
+        return location != null ? location.position() : null;
+    }
+
+    public static APosition nearestInvisibleStartingLocation(HasPosition nearestTo) {
+        if (nearestTo == null) nearestTo = Select.mainOrAnyBuilding();
+        if (nearestTo == null) return null;
+
+        // Get list of all starting locations
+        Positions<ABaseLocation> startingLocations = new Positions<>(startingLocations(true));
+
+        ABaseLocation location = startingLocations.notVisible().groundNearestTo(nearestTo);
+
         return location != null ? location.position() : null;
     }
 
@@ -85,7 +100,6 @@ public class BaseLocations {
      * Returns nearest free base location where we don't have base built yet.
      */
     public static ABaseLocation expansionFreeBaseLocationNearestTo(HasPosition nearestTo) {
-        System.out.println("A2a");
         List<ABaseLocation> bases = expansionFreeBaseLocationNearestTo(nearestTo, 1);
 
         return bases.isEmpty() ? null : bases.get(0);
@@ -109,7 +123,7 @@ public class BaseLocations {
 
         // For every location...
         for (ABaseLocation baseLocation : baseLocations.list()) {
-            if (baseLocationLooksFree(baseLocation) && !baseLocation.isPositionVisible()) {
+            if (baseLocationLooksFree(baseLocation) || !baseLocation.isPositionVisible()) {
                 // Watch out: if hasBaseMinerals is used, then unexplored/invisible minerals are treated as "no min"
 //                if (hasBaseMinerals(baseLocation)) {
                 result.add(baseLocation);
@@ -255,7 +269,7 @@ public class BaseLocations {
         if (existingBases > 0) return false;
 
         // If any enemy unit is Near
-        if (Select.enemyRealUnitsWithBuildings().inRadius(8, baseLocation.position()).effVisible().count() >= 2)
+        if (Select.enemyRealUnitsWithBuildings().inRadius(14, baseLocation.position()).effVisible().count() >= 2)
             return false;
 
         // Check for planned constructions
@@ -277,7 +291,7 @@ public class BaseLocations {
     }
 
     public static APosition enemyThird() {
-        return EnemyThirdLocation.get();
+        return EnemyThirdBase.get();
     }
 
     public static boolean hasBaseAtNatural() {
@@ -353,5 +367,9 @@ public class BaseLocations {
             .stream()
             .min((base1, base2) -> Double.compare(base1.distTo(position), base2.distTo(position)))
             .orElse(null);
+    }
+
+    public static HasPosition enemyMain() {
+        return EnemyInfo.enemyMain();
     }
 }

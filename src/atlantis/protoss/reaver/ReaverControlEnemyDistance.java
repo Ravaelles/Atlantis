@@ -19,8 +19,6 @@ public class ReaverControlEnemyDistance extends Manager {
         if (unit.shotSecondsAgo() > 2.6) return false;
         if (unit.lastActionLessThanAgo(15, Actions.ATTACK_UNIT)) return false;
 
-//        System.out.println(unit.lastActionAgo(Actions.UNLOAD));
-
         return (unit.cooldown() >= 6 && unit.lastActionMoreThanAgo(40, Actions.UNLOAD))
             || unit.lastUnderAttackLessThanAgo(90);
     }

@@ -9,8 +9,7 @@ import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
-import atlantis.information.generic.OurArmy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.base.Bases;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
@@ -23,7 +22,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -45,20 +44,36 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 // === AliveEnemies that breached into base ===========================
 
                 if ((focus = buildingUnderAttack()) != null) return focus;
+                if ((focus = enemyWhoBreachedBase()) != null) return focus;
+                if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
+                if ((focus = stickToCannon()) != null) return focus;
+
+                // === Stick to main base early ============================
+
+                if (ProtossStickCombatToMainBaseEarly.should()) {
+                    if ((focus = stickToMain()) != null) return focus;
+                }
 
                 // =========================================================
 
-                if (OurStrategy.get().isExpansion()) {
+                if (Strategy.get().isExpansion()) {
                     if ((focus = atThirdBase()) != null) return focus;
                     if (A.s <= 60 * 8 && (focus = aroundCombatBuilding()) != null) return focus;
                 }
 
                 // =========================================================
 
-                if ((focus = stickToMain()) != null) return focus;
-                if ((focus = enemyWhoBreachedBase()) != null) return focus;
-                if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
-                if ((focus = stickToCannon()) != null) return focus;
+                if (
+                    A.s >= 60 * 5
+                        && (Enemy.zerg() || !EnemyInfo.hasHiddenUnits())
+                        && Count.ourCombatUnits() >= 6
+                ) {
+                    if ((focus = atNaturalChoke()) != null) return focus;
+                }
+
+                // =========================================================
+
+                if ((focus = mostDistantBunker()) != null) return focus;
 
                 // === Path to enemy =============================================
 
@@ -69,6 +84,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 if (EnemyInfo.hasHiddenUnits() && !OurInfo.hasMobileDetection()) {
                     if ((focus = aroundCombatBuilding()) != null) return focus;
+                }
+
+                // === Main choke ================================================
+
+                if (We.protoss() && Count.ourCombatUnits() <= 3 && Count.basesWithUnfinished() <= 1) {
+                    if ((focus = atMainChoke()) != null) return focus;
                 }
 
                 // === Natural choke if weak ================================================
@@ -134,6 +155,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     private AFocusPoint buildingUnderAttack() {
         AUnit ourBuildingUnderAttack = OurBuildingUnderAttack.get();
+
         if (ourBuildingUnderAttack != null) {
             return new AFocusPoint(
                 ourBuildingUnderAttack,
@@ -146,34 +168,26 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint stickToMain() {
-        if (ProtossStickCombatToMainBaseEarly.should()) {
-            AUnit main = Select.main();
-            if (main == null) return null;
+        AUnit main = Select.main();
+        if (main == null) return null;
 
-            if (Count.dragoons() >= 2 || OurArmy.strength() >= 140) return null;
+        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
 
-            if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) return null;
 
-            AChoke mainChoke = Chokes.mainChoke();
-            if (mainChoke == null) return null;
-
-            HasPosition position = main;
-
-            return new AFocusPoint(
-                position.translateTilesTowards(-3, mainChoke),
+        return new AFocusPoint(
+            main.translateTilesTowards(3, mainChoke),
 //                main.translateTilesTowards(1, Select.minerals().nearestTo(main)),
-                main,
-                "NearMain"
-            );
-        }
-
-        return null;
+            main,
+            "StickToMain"
+        );
     }
 
     private AFocusPoint stickToCannon() {
         if (
             !We.protoss()
-                || !OurStrategy.get().isExpansion()
+                || !Strategy.get().isExpansion()
                 || !Missions.isGlobalMissionDefend()
                 || Count.cannonsWithUnfinished() <= 0
         ) return null;
@@ -190,6 +204,21 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             goTo,
             cannon,
             "HugCannon"
+        );
+    }
+
+    private AFocusPoint mostDistantBunker() {
+        if (!We.terran()) return null;
+        if (Count.basesWithUnfinished() >= 2) return null;
+
+        AUnit main = Select.mainOrAnyBuilding();
+        AUnit bunker = Select.ourOfTypeWithUnfinished(AUnitType.Terran_Bunker).groundFarthestTo(main);
+        if (bunker == null) return null;
+
+        return new AFocusPoint(
+            bunker,
+            main,
+            "HugBunker"
         );
     }
 
@@ -236,7 +265,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     private static AFocusPoint aroundCombatBuilding() {
 //        if (We.protoss()) {
 //            if (Count.ourCombatUnits() >= 13) return null;
-//            if (Count.bases() >= 2 && OurArmy.strength() >= 80) return null;
+//            if (Count.bases() >= 2 && Army.strength() >= 80) return null;
 //        }
 
 //        if (We.protoss() && Count.basesWithUnfinished() <= 1) return null;
@@ -307,40 +336,45 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         return null;
     }
 
-    private AFocusPoint somewhereAtNaturalBaseOrNaturalChoke() {
-        AFocusPoint focus;
-
-        Selection bases = Select.ourWithUnfinished().bases();
-        if (bases.count() == 2) {
-            AChoke naturalChoke = Chokes.natural();
-            AUnit naturalBase = bases.last();
-
-            if (naturalChoke != null) {
-                return new AFocusPoint(
-                    naturalChoke,
-                    naturalBase,
-                    "NaturalChoke"
-                );
-            }
-
-            return new AFocusPoint(
-                naturalBase,
-                Select.main(),
-                "NaturalBase"
-            );
-        }
-
-        return null;
-    }
+//    private AFocusPoint somewhereAtNaturalBaseOrNaturalChoke() {
+//        AFocusPoint focus;
+//
+//        Selection bases = Select.ourWithUnfinished().bases();
+//        if (bases.count() == 2) {
+//            AChoke naturalChoke = Chokes.natural();
+//            AUnit naturalBase = bases.last();
+//
+//            if (naturalChoke != null) {
+//                return new AFocusPoint(
+//                    naturalChoke,
+//                    naturalBase,
+//                    "NaturalChoke"
+//                );
+//            }
+//
+//            return new AFocusPoint(
+//                naturalBase,
+//                Select.main(),
+//                "NaturalBase"
+//            );
+//        }
+//
+//        return null;
+//    }
 
     private static AFocusPoint enemyWhoBreachedBase() {
         if (A.supplyUsed() >= 160 || A.hasMinerals(2000)) return null;
 
         AUnit enemyInBase = EnemyUnitBreachedBase.get();
-        if (enemyInBase != null && enemyInBase.hasPosition() && enemyInBase.effVisible() && enemyInBase.hp() > 0) {
+        if (
+            enemyInBase != null
+                && enemyInBase.hasPosition()
+                && enemyInBase.effVisible()
+                && enemyInBase.hp() > 0
+        ) {
             return new AFocusPoint(
                 enemyInBase,
-                "EnemyBreachedBase"
+                "EnemyBreachedBase_D"
             );
         }
         return null;
@@ -348,7 +382,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
     private static AFocusPoint enemyCloserToBaseThanAlpha() {
         AUnit enemyTooCloseToBase = EnemyCloserToBaseThanAlpha.get();
-        if (enemyTooCloseToBase != null && enemyTooCloseToBase.hp() > 0) {
+
+        if (
+            enemyTooCloseToBase != null
+                && enemyTooCloseToBase.isVisibleUnitOnMap()
+                && enemyTooCloseToBase.hp() > 0
+        ) {
             return new AFocusPoint(
                 enemyTooCloseToBase,
                 "EnemyCloseToBase"
@@ -412,8 +451,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint atNaturalChoke() {
-        int minUnitsToHave = We.protoss() ? 6 : 8;
-        if (Count.ourCombatUnits() < minUnitsToHave) return null;
+        int maxUnitsToHave = We.protoss() ? 6 : 8;
+
+        if (We.protoss() && Enemy.zerg()) maxUnitsToHave = 14;
+
+        if (Count.ourCombatUnits() < maxUnitsToHave) return null;
 //        if (Count.basesWithUnfinished() <= 1) return null;
 
 //        AChoke choke = Chokes.nearestChoke(lastBase);
@@ -432,7 +474,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         APosition natural = DefineNaturalBase.natural();
         return new AFocusPoint(
-            naturalChoke,
+            naturalChoke.translateTilesTowards(5, natural),
+//            naturalChoke,
 //            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural,
             "NaturalChoke"

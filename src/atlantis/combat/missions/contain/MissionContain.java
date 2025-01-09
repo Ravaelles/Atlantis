@@ -63,10 +63,10 @@ public class MissionContain extends Mission {
 
         if (enemy.hasWeaponRangeToAttack(unit, unit.isMelee() ? 0.3 : 2.1)) return true;
 
-        if (unit.lastUnderAttackMoreThanAgo(30 * 5) && unit.combatEvalRelative() >= 3) return true;
+        if (unit.lastUnderAttackMoreThanAgo(30 * 5) && unit.eval() >= 3) return true;
 
         if (enemy.friendsNear().combatBuildingsAntiLand().inRadius(7.6, unit).atLeast(1)) {
-            if (enemy.combatEvalRelative() >= 0.5) return false;
+            if (enemy.eval() >= 0.5) return false;
         }
 
         if (!enemy.distToNearestChokeLessThan(5)) return true;

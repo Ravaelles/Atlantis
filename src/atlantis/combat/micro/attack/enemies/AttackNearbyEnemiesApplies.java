@@ -19,9 +19,18 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 //        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
 //        if (unit.cooldown() >= 10) return false;
         if (unit.enemiesNear().empty()) return false;
-        if (unit.isMissionAttack() && unit.leaderIsRetreating()) return false;
-        if (unit.isSpecialMission() && unit.isMelee()) return false;
+
+        if (unit.isMissionAttack()) {
+            if (unit.leaderIsRetreating()) return false;
+            if (
+                unit.eval() < 4
+                    && unit.distToLeader() >= 10
+                    && unit.friendsInRadiusCount(2) <= 5
+            ) return false;
+        }
+
         if (!unit.hasAnyWeapon()) return false;
+        if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
 
         if (We.protoss()) {

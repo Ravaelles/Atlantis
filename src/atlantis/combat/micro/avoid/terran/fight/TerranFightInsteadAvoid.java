@@ -39,7 +39,7 @@ public class TerranFightInsteadAvoid extends HasUnit {
             if (unit.enemiesNear().combatBuildingsAntiLand().inRadius(8, unit).notEmpty()) return false;
         }
 
-        double combatEval = unit.combatEvalRelative();
+        double combatEval = unit.eval();
 
         if (unit.friendsNear().combatUnits().count() < unit.enemiesNear().hydras().count()) {
             unit.setTooltipTactical("TooManyHydras");

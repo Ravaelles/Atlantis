@@ -2,15 +2,15 @@ package tests.acceptance;
 
 import atlantis.map.bullets.BulletDamageAgainst;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeBullet;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.Protoss_Dragoon;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BulletDamageAgainstTest extends AbstractTestFakingGame {
+public class BulletDamageAgainstTest extends AbstractTestWithWorld {
     private FakeUnit hydra;
     private FakeUnit marine;
     private FakeUnit dragoon;

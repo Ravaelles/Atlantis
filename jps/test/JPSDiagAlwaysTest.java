@@ -3,7 +3,7 @@ package jps.test;
 import jps.main.java.jps.Graph;
 import jps.main.java.jps.Tile;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;

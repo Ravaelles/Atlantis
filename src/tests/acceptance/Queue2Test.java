@@ -7,7 +7,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Select;
 import atlantis.util.Options;
 import bwapi.TechType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
@@ -15,9 +15,9 @@ import tests.fakes.FakeUnitHelper;
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Queue2Test extends NonAbstractTestFakingGame {
+public class Queue2Test extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test
@@ -47,14 +47,14 @@ public class Queue2Test extends NonAbstractTestFakingGame {
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());
         assertEquals(6, queue.readyToProduceOrders().size());
-        assertEquals(0, queue.completedOrders().size());
+        assertEquals(0, queue.finishedOrders().size());
 
         Queue.get().refresh(); // Refresh with no changes shouldn't change anything
 
         assertEquals(allOrders.size(), queue.allOrders().size());
         assertEquals(0, queue.inProgressOrders().size());
         assertEquals(6, queue.readyToProduceOrders().size());
-        assertEquals(0, queue.completedOrders().size());
+        assertEquals(0, queue.finishedOrders().size());
     }
 
     private void frame2_completedOrdersAreDetected() {
@@ -68,7 +68,7 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 
         assertEquals(0, queue.inProgressOrders().size());
         assertEquals(5, queue.readyToProduceOrders().size());
-        assertEquals(1, queue.completedOrders().size());
+        assertEquals(1, queue.finishedOrders().size());
     }
 
     private void frame3_inProgressOrdersAreDetected() {
@@ -85,7 +85,7 @@ public class Queue2Test extends NonAbstractTestFakingGame {
         assertEquals(1, queue.inProgressOrders().ofType(Terran_Barracks).size());
         assertEquals(2, queue.inProgressOrders().size());
         assertEquals(4, queue.readyToProduceOrders().size());
-        assertEquals(1, queue.completedOrders().size());
+        assertEquals(1, queue.finishedOrders().size());
     }
 
     private void frame4() {
@@ -108,7 +108,7 @@ public class Queue2Test extends NonAbstractTestFakingGame {
 //        Queue.get().refresh();
 //        queue.allOrders().print("\nFrame 4");
 
-        assertEquals(5, queue.completedOrders().size());
+        assertEquals(5, queue.finishedOrders().size());
         assertEquals(0, queue.inProgressOrders().ofType(Terran_Barracks).size());
         assertEquals(0, queue.inProgressOrders().size());
 

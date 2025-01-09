@@ -40,10 +40,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
      * If so, change it, because it means we don't know where it is.
      */
     private static void updatedFoggedUnitEvenIfNotVisible(AbstractFoggedUnit foggedUnit) {
-        if (
-            foggedUnit.hasPosition()
-                && foggedUnit.position().isPositionVisible()
-        ) {
+        if (foggedUnit.hasPosition() && foggedUnit.position().isPositionVisible()) {
             foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
     }
@@ -59,7 +56,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
     public static void addFoggedUnit(AUnit enemyUnit) {
         int id = enemyUnit.id();
 
-//        System.err.println("enemyUnit = " + enemyUnit);
+//        System.err.println("addFoggedUnit = " + enemyUnit);
         if (!enemyUnitsDiscovered.containsKey(id)) {
             AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
 
@@ -68,21 +65,25 @@ public class EnemyUnitsUpdater extends EnemyUnits {
         }
     }
 
-    public static void removeFoggedUnit(AUnit enemyUnit) {
-        AbstractFoggedUnit foggedUnit = enemyUnitsDiscovered.get(enemyUnit.id());
+    public static void removeFoggedUnit(AUnit unit) {
+//        if (unit.isABuilding() && !unit.type().isGasBuilding()) {
+//            A.printStackTrace("Why remove building? " + unit + " / enemy? " + unit.isEnemy());
+//        }
+
+        AbstractFoggedUnit foggedUnit = enemyUnitsDiscovered.get(unit.id());
 
         if (foggedUnit != null) {
             foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
 
-        enemyUnitsDiscovered.remove(enemyUnit.id());
+        enemyUnitsDiscovered.remove(unit.id());
         cache.clear();
 
-//        if (enemyUnit.isBuilding()) {
+//        if (unit.isBuilding()) {
 ////            A.printStackTrace(
 //            System.err.println(
-//                "REMOVE enemyBuilding = " + enemyUnit + " / " + enemyUnit.id()
-//                + " / " + enemyUnit.isVisibleUnitOnMap() + " / " + enemyUnit.isPositionVisible()
+//                "REMOVE enemyBuilding = " + unit + " / " + unit.id()
+//                + " / " + unit.isVisibleUnitOnMap() + " / " + unit.isPositionVisible()
 //            );
 //        }
     }

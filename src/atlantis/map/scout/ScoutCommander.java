@@ -88,7 +88,7 @@ public class ScoutCommander extends Commander {
             else if (ScoutState.scouts.size() < scoutsNeeded()) {
 //                if (ScoutState.scoutsKilledCount >= 2) return;
 //
-//                if (ScoutState.scoutsKilledCount <= 1 && OurStrategy.get().isRushOrCheese()) {
+//                if (ScoutState.scoutsKilledCount <= 1 && Strategy.get().isRushOrCheese()) {
 //                    return;
 //                }
 

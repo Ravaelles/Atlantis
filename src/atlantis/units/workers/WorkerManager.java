@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
-import atlantis.production.constructing.builders.BuilderManager;
+import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.terran.repair.DynamicRepairsNearby;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;

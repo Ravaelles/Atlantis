@@ -4,7 +4,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ZergRetreating {
     public static Decision decision(AUnit unit) {

@@ -2,13 +2,13 @@ package atlantis.production.dynamic.expansion.decision;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.constructing.Construction;
+import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
 public class CancelNotStartedBases {
-    public static void cancelNotStartedOrEarlyBases(AUnit unit) {
+    public static void cancelNotStartedOrEarlyBases(AUnit worker, String reason) {
         if (A.seconds() >= 700 || Count.bases() >= 3) return;
 
 //        if (CountInQueue.bases() > 0) {
@@ -27,11 +27,11 @@ public class CancelNotStartedBases {
 //            }
 //        }
 
-        Queue.get().nonCompleted().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
+        Queue.get().notFinished().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
-            if (shouldCancelBase(construction, unit)) {
+            if (shouldCancelBase(construction, worker)) {
                 A.errPrintln(A.now() + " Cancelling pending base " + order + " as other just finished!");
-                order.cancel();
+                order.cancel(reason);
                 return;
             }
         });

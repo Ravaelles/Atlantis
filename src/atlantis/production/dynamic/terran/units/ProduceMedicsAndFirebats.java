@@ -3,30 +3,35 @@ package atlantis.production.dynamic.terran.units;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.TerranArmyComposition;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
 public class ProduceMedicsAndFirebats {
     public static boolean medics() {
         if (!A.hasGas(1)) return false;
+        if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
+
+        boolean goingBio = Strategy.get().goingBio();
 
         int medics = Count.medics();
+        if (medics == 0) return produceMedic();
 
-        if (medics >= 2 && (!Have.machineShop() || !A.hasGas(125))) return false;
-
-        if (Count.ofType(AUnitType.Terran_Academy) == 0) return false;
+        if (medics >= 2 && !goingBio && (!Have.machineShop() || !A.hasGas(125))) return false;
 
         int medicsUnfinished = Count.ourUnfinishedOfType(Terran_Medic);
         int marines = Count.marines();
         int infantry = Count.infantry();
         boolean medicsRatioTooLow = medicsUnfinished <= 1 && TerranArmyComposition.medicsToInfantryRatioTooLow();
+
+        if (medics <= 2 && goingBio && marines >= 4) return produceMedic();
 
         if (medics <= 1 && (medicsUnfinished <= 1 || medics == 0)) return produceMedic();
 

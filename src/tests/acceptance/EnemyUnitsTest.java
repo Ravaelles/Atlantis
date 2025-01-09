@@ -8,13 +8,13 @@ import atlantis.game.listeners.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class EnemyUnitsTest extends AbstractTestFakingGame {
+public class EnemyUnitsTest extends AbstractTestWithWorld {
     private AtlantisGameCommander gameCommander;
     private FakeUnit drone1;
     private FakeUnit drone2;

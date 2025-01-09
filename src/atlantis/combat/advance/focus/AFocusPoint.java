@@ -1,5 +1,6 @@
 package atlantis.combat.advance.focus;
 
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -20,6 +21,8 @@ public class AFocusPoint extends APosition {
     private HasPosition position = null;
     private String name = null;
 
+    private static String _prev = "";
+
     // =========================================================
 
 //    public AFocusPoint(HasPosition position) {
@@ -38,13 +41,21 @@ public class AFocusPoint extends APosition {
 //        this.position = unit.position();
     }
 
+    public AFocusPoint(HasPosition unit, String name) {
+        this(unit.position(), Select.mainOrAnyBuilding(), name);
+    }
+
     public AFocusPoint(AUnit unit, HasPosition fromSide, String name) {
         this(unit.position(), fromSide, name);
 //        this(unit, fromSide, name);
         this.unit = unit;
         this.fromSide = fromSide;
         this.name = name;
+
+        if (!_prev.equals(name)) System.err.println(A.minSec() + " - New FP: " + name);
 //        this.position = unit.position();
+
+        _prev = name;
     }
 
 //    public AFocusPoint(HasPosition position, String name) {
@@ -79,9 +90,20 @@ public class AFocusPoint extends APosition {
             APosition pos = this.position();
             if (pos == null) return false;
 //            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
-            return !pos.isPositionVisible() || Select.our().inRadius(3.5, pos).empty();
+            return !pos.isPositionVisible() || Select.our().inRadius(4.7, pos).empty();
         }
     }
+
+    // =========================================================
+
+//    @Override
+//    public APosition position() {
+//        if (unit != null && unit.hasPosition()) return unit.position();
+//        if (choke != null) return choke.center();
+//        if (position != null) return position.position();
+//
+//        return null;
+//    }
 
     // =========================================================
 
@@ -89,10 +111,10 @@ public class AFocusPoint extends APosition {
     public String toString() {
         return "Focus{" +
             "name='" + name + '\'' +
-            ", unit=" + unit +
-            ", pos=" + position +
+            (unit == null ? "" : ", unit=" + unit) +
+            (position == null ? "" : ", pos=" + position) +
 //            ", from=" + fromSide +
-//            ", choke=" + choke +
+            (choke == null ? "" : ", choke=" + choke) +
             '}';
     }
 

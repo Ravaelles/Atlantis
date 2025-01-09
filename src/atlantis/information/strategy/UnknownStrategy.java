@@ -1,6 +1,6 @@
 package atlantis.information.strategy;
 
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class UnknownStrategy extends AStrategy {
 

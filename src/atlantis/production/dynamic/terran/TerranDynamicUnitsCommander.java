@@ -2,15 +2,16 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.HasReason;
 import atlantis.util.We;
 
@@ -22,7 +23,7 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     @Override
     public boolean applies() {
         if (!We.terran()) return false;
-        if (OurStrategy.get().isRushOrCheese()) return true;
+        if (Strategy.get().isRushOrCheese()) return true;
         if (Count.basesWithUnfinished() >= 2) return true;
 
         if (shouldProduceUnitsBeforeSecondBase()) return true;
@@ -40,7 +41,10 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     }
 
     private boolean shouldProduceUnitsBeforeSecondBase() {
-        return Count.marines() <= 3 || Count.medics() <= 3 || ArmyStrength.weAreWeaker();
+        return Count.marines() <= 3
+            || Count.medics() <= 3
+            || ArmyStrength.weAreWeaker()
+            || (Strategy.get().isRushOrCheese() && Army.strength() <= 200);
     }
 
     private static boolean saveForBase() {
@@ -49,7 +53,10 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
 
     @Override
     protected void handle() {
-        ProduceScienceVessels.scienceVessels();
+        if (
+            ProduceScienceVessels.scienceVessels()
+                || ProduceTanks.tanks()
+        ) return;
 
         if (dynamicOrders <= 3 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
             if (

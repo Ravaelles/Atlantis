@@ -1,7 +1,8 @@
 package atlantis.production;
 
 import atlantis.architecture.Commander;
-import atlantis.production.constructing.ConstructionsCommander;
+import atlantis.game.A;
+import atlantis.production.constructions.ConstructionsCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
 import atlantis.units.buildings.SupplyCommander;
 import atlantis.units.select.Count;
@@ -24,6 +25,8 @@ public class ProductionCommander extends Commander {
 
     @Override
     public boolean applies() {
+        if (A.isUms() && !A.hasMinerals(350)) return false;
+
         return (Have.base() && Count.workers() >= 4);
     }
 }

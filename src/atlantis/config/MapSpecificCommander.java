@@ -20,7 +20,7 @@ public class MapSpecificCommander extends Commander {
 
     @Override
     protected void handle() {
-        if (!Env.isLocal() || Env.isParamTweaker()) return;
+        if (!Env.isLocal() || Env.isBenchmark() || Env.isParamTweaker()) return;
 
         // =========================================================
         // Marines & Medics v. Zealots
@@ -48,6 +48,16 @@ public class MapSpecificCommander extends Commander {
 
             if (Select.ourCombatUnits().first().lastUnderAttackLessThanAgo(2)) {
                 GameSpeed.changeSpeedTo(GameSpeed.NORMAL_SPEED);
+            }
+        }
+
+        // =========================================================
+
+        else if (ActiveMap.isMap("M_v_") || ActiveMap.isMap("Tanks_v_")) {
+            if (A.now() <= 1) {
+                GameSpeed.changeSpeedToNormal();
+                AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
+                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
         }
 
@@ -99,6 +109,8 @@ public class MapSpecificCommander extends Commander {
                 || ActiveMap.isMap("Drag_v_3Drag")
                 || ActiveMap.isMap("Drag_v_4Drag")
                 || ActiveMap.isMap("Drag_v_8Drag")
+                || ActiveMap.isMap("Goon_v_")
+                || ActiveMap.isMap("Dragoons_v_")
         ) {
             if (A.now() <= 1) {
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
@@ -123,6 +135,7 @@ public class MapSpecificCommander extends Commander {
 
         else if (
             ActiveMap.isMap("Drag_v_")
+                || ActiveMap.isMap("DragUpg_v_")
                 || ActiveMap.isMap("Zeal_v_")
         ) {
             if (A.now() <= 1) {
@@ -284,6 +297,6 @@ public class MapSpecificCommander extends Commander {
             "ums/rav/vsGosuRav.scx"
         };
 
-        return Arrays.asList(umsMapsTreatedAsNormal).contains(ActiveMap.activeMap());
+        return Arrays.asList(umsMapsTreatedAsNormal).contains(ActiveMap.name());
     }
 }

@@ -3,13 +3,13 @@ package atlantis.combat.micro.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.terran.tank.sieging.ForceSiege;
-import atlantis.production.dynamic.terran.tech.SiegeMode;
+import atlantis.production.dynamic.terran.tech.ResearchSiegeMode;
 import atlantis.units.AUnit;
 
 public class ProcessAttackUnitAsTank {
     public static boolean forTank(Manager manager, AUnit unit, AUnit target) {
         if (!unit.isTankUnsieged()) return false;
-        if (!SiegeMode.isResearched()) return false;
+        if (!ResearchSiegeMode.isResearched()) return false;
 
         double distTo = unit.distTo(target);
 

@@ -1,11 +1,10 @@
 package atlantis.util.cache;
 
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.Construction;
+import atlantis.production.constructions.Construction;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;

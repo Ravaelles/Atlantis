@@ -1,12 +1,12 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 
@@ -17,7 +17,7 @@ public class ProduceTemplarArchives {
         if (Have.a(type())) return false;
 
         if (Enemy.zerg() && A.supplyUsed() < 180) return false;
-        if (OurArmy.strength() <= 120) return false;
+        if (Army.strength() <= 120) return false;
         if (Count.bases() <= 1) return false;
         if (Count.ourCombatUnits() <= 19 && !A.canAfford(150, 150)) return false;
 

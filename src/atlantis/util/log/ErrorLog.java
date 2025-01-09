@@ -14,6 +14,10 @@ public class ErrorLog {
      */
     private static Map<String, Integer> errorTimestamps = new TreeMap<>();
 
+    public static void debug(String message) {
+        A.errPrintln(message);
+    }
+
     public static void printErrorOnce(String message) {
         if (!theSameErrorHasBeenLogged(message)) {
             print(message);

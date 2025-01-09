@@ -1,26 +1,26 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.IsAnyBuildingResearching;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.select.Count;
-
-import java.util.ArrayList;
-import java.util.List;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 
 public class IsOrderInProgress {
-    public static boolean check(ProductionOrder order) {
+    public static boolean isInProgress(ProductionOrder order) {
         // === Unit
 
-        if (order.unitType() != null) {
-            return forUnit(order);
-        }
+        // For units this will happen in OnOurUnitCreated
+
+//        if (order.unitType() != null) {
+//            return forUnit(order);
+//        }
 
         // === Tech
 
-        else if (order.tech() != null) {
+        if (order.tech() != null) {
             return forTech(order);
         }
 
@@ -36,35 +36,49 @@ public class IsOrderInProgress {
         return false;
     }
 
-    private static boolean forUnit(ProductionOrder order) {
-        List<ProductionOrder> ordersOfTheSameType = otherUnitOrdersOfTheSameType(order);
-        int earlierOrdersOfTheSameType = 0;
-        for (ProductionOrder otherOrder : ordersOfTheSameType) {
-            if (otherOrder.minSupply() < order.minSupply()) earlierOrdersOfTheSameType++;
-        }
+    // @Deprecated
+//    private static boolean forUnit(ProductionOrder order) {
+//        int other = countOtherOfTheSameType(order);
+//        int existing = countExisting(order.unitType());
+//        int inProgress = existing - other;
+//
+//        return inProgress > 0;
+//    }
 
-//        if (earlierOrdersOfTheSameType > 0) {
-//            if (order.unitType() != null && order.unitType().is(AUnitType.Terran_Barracks)) {
-//                System.err.println("earlierOrdersOfTheSameType = " + earlierOrdersOfTheSameType + " / " + order.unitType());
-//            }
+    private static int countOtherOfTheSameType(ProductionOrder order) {
+        return otherUnitOrdersOfTheSameType(order).size();
+
+//        Orders ordersOfTheSameType = otherUnitOrdersOfTheSameType(order);
+//
+//        int earlierOrdersOfTheSameType = 0;
+//        for (ProductionOrder otherOrder : ordersOfTheSameType.list()) {
+//            if (otherOrder.minSupply() < order.minSupply()) earlierOrdersOfTheSameType++;
 //        }
-
-        int ordersBeingProduced = Count.inProduction(order.unitType());
-        int ordersInProgress = ordersBeingProduced - earlierOrdersOfTheSameType;
-
-        return ordersInProgress > 0;
+//
+////        if (earlierOrdersOfTheSameType > 0) {
+////            if (order.unitType() != null && order.unitType().is(AUnitType.Terran_Barracks)) {
+////                System.err.println("earlierOrdersOfTheSameType = " + earlierOrdersOfTheSameType + " / " + order.unitType());
+////            }
+////        }
+//        return earlierOrdersOfTheSameType;
     }
 
-    private static List<ProductionOrder> otherUnitOrdersOfTheSameType(ProductionOrder order) {
-        if (order.unitType() == null) return new ArrayList<>();
-        Queue queue = Queue.get();
-        if (queue == null) return new ArrayList<>();
+    private static int countExisting(AUnitType type) {
+        return Select.countOurOfTypeWithUnfinished(type);
+    }
 
-        List<ProductionOrder> list = queue.inProgressOrders().ofType(order.unitType()).exclude(order).list();
+    private static Orders otherUnitOrdersOfTheSameType(ProductionOrder order) {
+        if (order.unitType() == null) return new Orders();
+        Queue queue = Queue.get();
+        if (queue == null) return new Orders();
 
         queue.clearCache();
 
-        return list;
+        Orders orders = queue.finishedOrInProgress().ofType(order.unitType()).exclude(order);
+
+//        if (!orders.isEmpty()) System.err.println(order.unitType() + " / list.size = " + orders.size());
+
+        return orders;
     }
 
     private static boolean forTech(ProductionOrder order) {

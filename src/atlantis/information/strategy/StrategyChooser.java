@@ -26,6 +26,6 @@ public class StrategyChooser {
             strategy = null;
         }
 
-        OurStrategy.setTo(strategy);
+        Strategy.setTo(strategy);
     }
 }

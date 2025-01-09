@@ -51,7 +51,7 @@ public class MissionAttackVsCombatBuildings extends HasUnit {
 
         if (unit.friendsInRadiusCount(1.5) <= 0 || unit.friendsInRadiusCount(4) <= 6) return true;
 
-        if (distTo >= 5 && unit.combatEvalRelative() <= 1.2) return true;
+        if (distTo >= 5 && unit.eval() <= 1.2) return true;
 
         return false;
     }

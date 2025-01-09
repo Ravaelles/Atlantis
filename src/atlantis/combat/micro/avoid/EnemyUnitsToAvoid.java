@@ -1,12 +1,10 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.combat.micro.avoid.margin.SafetyMargin;
-import atlantis.debug.painter.APainter;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.Units;
 import atlantis.util.cache.Cache;
-import bwapi.Color;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,11 +25,11 @@ public class EnemyUnitsToAvoid extends HasUnit {
     public Units unitsToAvoid(boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            2,
+            1,
             () -> {
                 enemies = new Units();
 
-                for (AUnit enemy : enemyUnitsToPotentiallyAvoid()) {
+                for (AUnit enemy : potentialEnemies()) {
                     double safetyMargin = (new SafetyMargin(unit)).marginAgainst(enemy);
 //                    System.err.println(
 //                        enemy + " // " + String.format("%.2f", safetyMargin) + " // " + A.dist(enemy.distTo(unit))
@@ -65,12 +63,13 @@ public class EnemyUnitsToAvoid extends HasUnit {
         );
     }
 
-    protected List<? extends AUnit> enemyUnitsToPotentiallyAvoid() {
+    protected List<? extends AUnit> potentialEnemies() {
         return unit.enemiesNear()
-            .removeDuplicates()
             .onlyCompleted()
+            .nonBuildings()
+            .removeDuplicates()
             .havingWeapon()
-            .canAttack(unit, true, true, 4.5)
+            .canAttack(unit, true, true, 5)
             .havingPosition()
             .list();
     }

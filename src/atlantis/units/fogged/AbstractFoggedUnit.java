@@ -2,7 +2,7 @@ package atlantis.units.fogged;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.APlayer;
+import atlantis.game.player.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -15,7 +15,6 @@ import java.util.TreeMap;
  * Stores information about units in order to retrieve them when they are out of sight
  */
 public class AbstractFoggedUnit extends AUnit {
-
     protected final static TreeMap<Integer, AbstractFoggedUnit> all = new TreeMap<>();
 
     protected AUnit _lastAUnit = null;
@@ -99,7 +98,8 @@ public class AbstractFoggedUnit extends AUnit {
 //        _lastPosition = unit == null ? null : APosition.create(_lastAUnit.position());
 //        if (unit.isBuilding() && _lastPosition != null) System.err.println("PRE " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
 
-        _lastPosition = APosition.create(unit.position());
+        _lastPosition = new APosition(unit.x(), unit.y());
+//        if (unit.isABuilding()) System.err.println(A.minSec() + " - updated pos of " + unit + " to " + _lastPosition);
         cacheInt.set("lastPositionUpdated", -1, A.now());
 
 //        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
@@ -188,19 +188,9 @@ public class AbstractFoggedUnit extends AUnit {
 //    }
 
     public void foggedUnitNoLongerWhereItWasBefore() {
-//        _lastPosition = null;
-//        _lastPosition = _lastAUnit == null ? null : APosition.create(_lastAUnit.position());
-
-//        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-
-
-//        }
+//        if (_lastType != null && _lastType.isABuilding()) return;
 
         updateLastPosition(_lastAUnit);
-
-//        if (_lastAUnit != null && _lastAUnit.isBuilding()) {
-//            System.err.println("#" + id() + " _lastPosition = " + _lastPosition + "\n");
-//        }
     }
 
     public int lastPositionUpdated() {

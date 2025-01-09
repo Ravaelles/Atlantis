@@ -1,13 +1,11 @@
 package atlantis.game.listeners;
 
-import atlantis.Atlantis;
-import atlantis.combat.advance.leader.CurrentFocusChoke;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
-import atlantis.map.AMap;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
@@ -20,31 +18,27 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.MainRegion;
-import atlantis.map.region.Regions;
 import atlantis.map.wall.GetWallIn;
 import atlantis.map.wall.Structure;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.position.PositionFulfillsAllConditions;
-import atlantis.production.constructing.position.base.NextBasePosition;
-import atlantis.production.constructing.position.protoss.GatewayPosition;
-import atlantis.production.constructing.position.protoss.PylonPosition;
-import atlantis.production.constructing.position.terran.BarracksPosition;
-import atlantis.production.constructing.position.terran.TerranPositionFinder;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.position.PositionFulfillsAllConditions;
+import atlantis.production.constructions.position.base.NextBasePosition;
+import atlantis.production.constructions.position.protoss.GatewayPosition;
+import atlantis.production.constructions.position.protoss.PylonPosition;
+import atlantis.production.constructions.position.terran.BarracksPosition;
+import atlantis.production.constructions.position.terran.TerranPositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.Units;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
-import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.Vector;
-import atlantis.util.object.Accessibility;
-import atlantis.util.object.NamespaceAccessibility;
+import atlantis.util.object.not_needed.NamespaceAccessibility;
 import atlantis.util.object.ObjectToFile;
 import bwapi.Bullet;
 import bwapi.Color;
@@ -60,7 +54,37 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
-//        paintShowingInOurDirection();
+//        AUnit unit = Select.ourCombatUnits().second();
+//        System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
+
+//        paintUnitTargets();
+
+//        updateTooltips();
+
+//        paintAllUnitEvals();
+
+//        AAdvancedPainter.togglePainting();
+//        AAdvancedPainter.paintConstructionPlaces();
+//        AAdvancedPainter.togglePainting();
+
+//        UnitStateHelper.identifyUnitBrakingDistance(Select.our().groundUnits().first());
+//
+//        paintEnemiesFacingOurDirection();
+//        paintEnemiesTargets();
+
+//        int counter = 0;
+//        for (AUnit unit : Select.ourCombatUnits().havingWeapon().list()) {
+////            unit.addLog(unit.cooldown() + ".");
+////            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.cooldown() + " / AF:" + unit.isAttackFrame() + " / SA:" + unit.isStartingAttack());
+////            if (counter++ > 0) continue;
+//            AUnit enemy = unit.nearestEnemy();
+//
+//            String dist = A.dist(unit, enemy);
+//            unit.setTooltip(dist);
+//            System.out.println(unit.combatEvalRelative());
+//
+////            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + dist + " / " + unit.action());
+//        }
 
 //        APosition next = OurNextFreeExpansionMostDistantToEnemy.find();
 //        System.out.println("next = " + next);
@@ -145,11 +169,48 @@ public class OnEveryFrameHelper {
 //        paintUnitSpeeding();
     }
 
-    private static void paintShowingInOurDirection() {
-        AUnit enemy = Select.enemy().first();
-        AUnit our = Select.ourCombatUnits().first();
+    private static void updateTooltips() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            unit.paintTextCentered(unit.runningManager().lastRunMode(), Color.Orange, -1);
+        }
+    }
 
-        enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+    private static void paintAllUnitEvals() {
+        for (AUnit unit : Select.enemyUnits()) {
+            unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Orange);
+        }
+        for (AUnit unit : Select.our().list()) {
+            unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Blue);
+        }
+    }
+
+    private static void paintEnemiesTargets() {
+        AUnit our = Select.ourCombatUnits().first();
+        if (our == null) return;
+
+        if (our.isAttacking()) {
+            our.paintLine(our.target(), Color.Orange);
+        }
+
+//        System.err.println("ORDER : " + our.orderTarget());
+//        System.err.println("TARGET: " + our.target());
+
+        for (AUnit enemy : our.enemiesNear().list()) {
+            enemy.paintTextCentered(enemy.idWithHash() + " (" + enemy.hp() + ")", Color.Orange, -1);
+        }
+
+//        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
+    }
+
+    private static void paintEnemiesFacingOurDirection() {
+        AUnit our = Select.ourCombatUnits().first();
+        if (our == null) return;
+
+        our.paintCircle(our.groundWeaponRange() * 32, 1, Color.Orange);
+
+        for (AUnit enemy : our.enemiesNear().list()) {
+            enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+        }
 
 //        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
     }
@@ -158,11 +219,6 @@ public class OnEveryFrameHelper {
         ABaseLocation base = BaseLocations.main();
         AUnit main = Select.main();
         APosition mainPosition = Select.mainOrAnyBuildingPosition();
-
-        System.err.println("A = " + mainPosition.translateByTiles(2, 0).distTo(mainPosition));
-        System.err.println("B = " + mainPosition.translateByTiles(2, 0).distTo(main));
-        System.err.println("C = " + mainPosition.distTo(mainPosition.translateByTiles(2, 0)));
-        System.err.println("D = " + main.distTo(mainPosition.translateByTiles(2, 0)));
 
         AAdvancedPainter.paintCircle(base, 10, Color.Orange);
         AAdvancedPainter.paintCircle(base.position(), 8, Color.Red);
@@ -234,21 +290,21 @@ public class OnEveryFrameHelper {
 
     private static void paintOverUnits() {
         for (AUnit unit : Select.ourCombatUnits().list()) {
-            unit.paintTextCentered(unit, A.digit(unit.combatEvalRelative()), Color.Orange);
+            unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Orange);
         }
     }
 
     private static void paintUnitTargets() {
-//        for (AUnit unit : Select.ourCombatUnits().list()) {
-//            if (unit.target() != null) {
-//                unit.paintLine(unit.target(), Color.Orange);
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.target() != null) {
+                unit.paintLine(unit.target(), Color.Orange);
 //                System.out.println("Target = " + unit.target());
-//            }
-//            else if (unit.targetPosition() != null) {
-//                unit.paintLine(unit.target(), Color.Cyan);
+            }
+            else if (unit.targetPosition() != null) {
+                unit.paintLine(unit.target(), Color.Cyan);
 //                System.out.println("TargetPOS = " + unit.targetPosition() + " / " + A.digit(unit.distTo(unit.targetPosition())));
-//            }
-//        }
+            }
+        }
     }
 
     private static void paintUnitSpeeding() {
@@ -435,8 +491,8 @@ public class OnEveryFrameHelper {
 
     private static void printMarineManagers() {
         for (AUnit unit : Select.ourOfType(AUnitType.Terran_Marine).list()) {
-            System.out.println("@ " + A.now() + " - Marine#" + unit.id() + " - " + unit.manager());
-            System.out.println(unit.managerLogs().toString());
+//            System.out.println("@ " + A.now() + " - Marine#" + unit.id() + " - " + unit.manager());
+//            System.out.println(unit.managerLogs().toString());
 //            System.out.println(unit.target());
         }
     }
@@ -463,13 +519,13 @@ public class OnEveryFrameHelper {
 //            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
 //        }
 
-        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
-            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
-        }
+//        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
+//            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
+//        }
     }
 
 //    private static void validateNextDepotPosition() {
@@ -568,7 +624,7 @@ public class OnEveryFrameHelper {
         AUnit first = Select.ourCombatUnits().nonBuildings().first();
         if (first == null) return;
 
-        A.println(first.typeWithHash() + " / " + first.manager() + " / " + first.combatEvalRelative());
+        A.println(first.typeWithHash() + " / " + first.manager() + " / " + first.eval());
 
 //        if (first.combatEvalRelative() < 1 && first.isActiveManager(AttackNearbyEnemies.class)) {
 //            A.printStackTrace("Why is this unit attacking?");

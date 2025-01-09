@@ -11,6 +11,8 @@ public class Decision {
     private final int initialValue;
     private final boolean currentValue;
 
+    private String reason = null;
+
     // =========================================================
 
     public Decision(boolean initialValue) {
@@ -29,6 +31,18 @@ public class Decision {
 
     public static Decision fromBoolean(boolean b) {
         return b ? TRUE : FALSE;
+    }
+
+    public static Decision FALSE(String reason) {
+        Decision decision = FALSE;
+        decision.reason = reason;
+        return decision;
+    }
+
+    public static Decision TRUE(String reason) {
+        Decision decision = TRUE;
+        decision.reason = reason;
+        return decision;
     }
 
     public Decision getResetted() {
@@ -126,5 +140,9 @@ public class Decision {
         assert !isIndifferent;
 
         return currentValue;
+    }
+
+    public String reason() {
+        return reason;
     }
 }

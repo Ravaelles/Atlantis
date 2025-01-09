@@ -21,7 +21,7 @@ public class OnUnitRenegade {
 
         // New unit for us e.g. some UMS maps give units
         if (unit.isOur()) {
-            OnUnitCompleted.ourNewUnit(unit);
+            OnOurNewUnitCompleted.ourNewUnitCompleted(unit);
 
             if (!unit.type().isGasBuildingOrGeyser() && !unit.type().isMineralField()) {
 

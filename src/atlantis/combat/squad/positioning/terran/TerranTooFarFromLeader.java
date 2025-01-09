@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class TerranTooFarFromLeader extends Manager {
@@ -22,26 +22,30 @@ public class TerranTooFarFromLeader extends Manager {
 
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
+        if (unit.isMissionDefendOrSparta()) return false;
 //        if (A.seconds() % 4 <= 1) return false;
 
-        if (We.terran() && !Enemy.terran() && A.seconds() <= 220) return false;
-//        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
-        if (unit.squad().isLeader(unit)) return false;
+        leader = unit.squad().leader();
+        if (leader == null) return false;
+
+        if (unit.enemiesNear().countInRadius(Enemy.terran() ? 13 : 9, unit) > 0) return false;
 
         if (A.supplyUsed() >= 170 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)
         )) return false;
 
-        leader = unit.squad().leader();
-        if (leader == null) return false;
-
-        if (leaderIsOvercrowded()) return false;
-        if (unitIsOvercrowded()) return false;
+        if (unit.eval() >= 1.1 && unit.friendsNear().countInRadius(6, unit) >= 10) return false;
 
         distToLeader = unit.distTo(leader);
         boolean wayTooFarFromLeader = wayTooFarFromLeader();
-
         if (wayTooFarFromLeader) return true;
+
+        if (We.terran() && !Enemy.terran() && A.seconds() <= 220) return false;
+//        if (unit.enemiesNear().inRadius(6, unit).notEmpty()) return false;
+        if (unit.squad().isLeader(unit)) return false;
+
+        if (leaderIsOvercrowded()) return false;
+        if (unitIsOvercrowded()) return false;
 
         if (unit.distToNearestChokeLessThan(5)) return false;
 
@@ -49,7 +53,7 @@ public class TerranTooFarFromLeader extends Manager {
     }
 
     private boolean wayTooFarFromLeader() {
-        int maxDistance = We.protoss() ? 9 : 8;
+        int maxDistance = unit.squadSize() <= 10 ? 4 : 7;
 
         return distToLeader >= maxDistance;
     }

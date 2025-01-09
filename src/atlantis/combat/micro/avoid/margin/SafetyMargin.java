@@ -4,7 +4,7 @@ import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstSpecial;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SafetyMargin {
 
@@ -146,7 +146,7 @@ public class SafetyMargin {
 //        return Math.min(0, (quicknessDifference > 0 ? -quicknessDifference / 3 : quicknessDifference / 1.5));
     }
 
-    protected double workerBonus(AUnit attacker) {
+    protected double asWorkerBonus(AUnit attacker) {
         if (defender.isWorker()) {
             double base = 2.9 + defender.woundPercent() / 44.0;
 

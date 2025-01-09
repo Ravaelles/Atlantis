@@ -4,10 +4,10 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnitType;
 import net.bytebuddy.dynamic.Nexus;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PositionUtilTest extends AbstractTestWithUnits {
     @Test

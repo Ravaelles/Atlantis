@@ -12,6 +12,7 @@ public class ProduceWraiths {
     public static int totalQueued = 0;
 
     public static boolean wraiths() {
+        if (A.supplyUsed() <= 185 && !A.canAfford(600, 300)) return false;
         if (Count.ofType(AUnitType.Terran_Starport) == 0) return false;
         if (prioritizeScienceFacility()) return false;
         if (Count.inProductionOrInQueue(AUnitType.Terran_Wraith) >= 2) return false;

@@ -3,10 +3,10 @@ package tests.acceptance;
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-public class RunningAgainstHydrasTest extends AbstractTestFakingGame {
+public class RunningAgainstHydrasTest extends AbstractTestWithWorld {
 
     @Test
     public void runsFromHydras() {

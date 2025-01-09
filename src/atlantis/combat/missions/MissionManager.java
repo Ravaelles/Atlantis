@@ -2,11 +2,10 @@ package atlantis.combat.missions;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.combat.missions.attack.FoundEnemyExposedExpansion;
-import atlantis.map.choke.AChoke;
+import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 public class MissionManager extends Manager {
     protected Mission mission;
@@ -14,11 +13,20 @@ public class MissionManager extends Manager {
 
     public MissionManager(AUnit unit) {
         super(unit);
-        mission = unit != null ? unit.mission() : null;
-        focusPoint = defineFocusPoint();
+        if (unit != null) {
+            mission = unit != null ? unit.mission() : null;
+            focusPoint = defineFocusPoint();
+        }
     }
 
     private AFocusPoint defineFocusPoint() {
+        if (mission == null) {
+            ErrorLog.printMaxOncePerMinute(
+                "MissionManager.defineFocusPoint() - mission is null for " + unit
+            );
+            return null;
+        }
+
         if (sideQuestsAreAllowedForThisUnit() && mission.isMissionAttackOrContain()) {
             AFocusPoint focus = FoundEnemyExposedExpansion.getItFound();
             if (focus != null) return focus;
@@ -39,6 +47,9 @@ public class MissionManager extends Manager {
     }
 
     private boolean sideQuestsAreAllowedForThisUnit() {
-        return unit.squad().allowsSideQuests();
+        Squad squad = unit.squad();
+        if (squad == null) return false;
+
+        return squad.allowsSideQuests();
     }
 }

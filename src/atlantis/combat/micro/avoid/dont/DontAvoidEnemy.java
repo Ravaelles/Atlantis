@@ -1,11 +1,13 @@
 package atlantis.combat.micro.avoid.dont;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
+import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.terran.TerranDontAvoidEnemy;
+import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidEnemy;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class DontAvoidEnemy extends Manager {
@@ -15,45 +17,30 @@ public class DontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-//        if (unit.lastOrderMinFramesAgo(1)) return true;
-//        System.out.println("-------------- " + unit.lastActionAgo(Actions.ATTACK_UNIT));
-//        if (unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)) return false;
+        if (unit.effUndetected()) return false;
 
-        if (We.protoss()) return (new ProtossDontAvoidEnemy(unit)).applies();
-        if (We.terran()) return (new TerranDontAvoidEnemy(unit)).anySubmanagerApplies() != null;
+        // === Protoss ===========================================
+
+        if (We.protoss()) {
+            if ((new ProtossAlwaysAvoidEnemy(unit)).applies()) return false;
+
+            Decision decision;
+            if ((decision = ObserverDontAvoidEnemy.dontAvoid(unit)).notIndifferent()) return decision.toBoolean();
+
+//            if (true) return false;
+            return (new ProtossDontAvoidEnemy(unit)).dontAvoid();
+        }
+
+        // === Terran ===========================================
+
+        if (We.terran()) {
+            if ((new TerranAlwaysAvoidEnemy(unit)).applies()) return false;
+
+            return (new TerranDontAvoidEnemy(unit)).anySubmanagerApplies() != null;
+        }
+
+        // =========================================================
 
         return false;
-//        return anySubmanagerApplies() != null;
     }
-
-//    protected boolean enemyCombatBuildingNearAndWeAreStacked() {
-//        return unit.isGroundUnit()
-//            && unit.friendsNear().groundUnits().combatUnits().inRadius(5, unit).atLeast(14)
-//            && unit.enemiesNear()
-//            .combatBuildings(false)
-//            .inRadius(8, unit)
-//            .notEmpty()
-//            && (unit.woundHp() <= 16 || unit.meleeEnemiesNearCount(2.5) == 0);
-//    }
-
-//    protected boolean enemyAirUnitsAreNearAndWeShouldEngage() {
-//        return unit.enemiesNear()
-//            .ofType(AUnitType.Terran_Wraith, AUnitType.Protoss_Scout).inRadius(5, unit)
-//            .effVisible()
-//            .notEmpty()
-//            && unit.meleeEnemiesNearCount(2.5) == 0;
-//    }
-
-//    @Override
-//    protected Class<? extends Manager>[] managers() {
-//        return new Class[]{
-//            ProtossDontAvoidEnemy.class,
-//            TerranDontAvoidEnemy.class,
-//        };
-//    }
-
-//    @Override
-//    public Manager handle() {
-//        return handleSubmanagers();
-//    }
 }

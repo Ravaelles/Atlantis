@@ -4,18 +4,15 @@ import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.position.APositionFinder;
-import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
@@ -37,7 +34,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     public boolean shouldBuildNew() {
 //        System.err.println("Expected: " + expected()  + "(" + existingWithUnfinished() + ")");
         int expected = expected();
-        
+
         return expected > 0 && existingWithUnfinished() < expected;
     }
 
@@ -102,7 +99,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     private boolean addRequirement(AUnitType buildType) {
         if (buildType.isCannon()) {
             if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
-                Queue.get().nonCompleted().ofType(Protoss_Forge).cancelAll();
+                Queue.get().notFinished().ofType(Protoss_Forge).cancelAll("Cancel other Forges");
                 AddToQueue.withTopPriority(Protoss_Forge);
                 return true;
             }

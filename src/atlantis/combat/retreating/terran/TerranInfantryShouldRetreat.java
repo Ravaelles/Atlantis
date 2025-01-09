@@ -3,10 +3,10 @@ package atlantis.combat.retreating.terran;
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranInfantryShouldRetreat extends Manager {
     public TerranInfantryShouldRetreat(AUnit unit) {
@@ -30,7 +30,7 @@ public class TerranInfantryShouldRetreat extends Manager {
         if (!unit.mission().isMissionDefend()) {
             if (
                 unit.enemiesNear().ranged().notEmpty()
-                    && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2.7
+                    && unit.friendsNear().atMost(4) && unit.eval() <= 2.7
             ) {
                 unit.setTooltipTactical("BewareRanged");
                 return Decision.TRUE;
@@ -62,7 +62,7 @@ public class TerranInfantryShouldRetreat extends Manager {
     private boolean shouldEarlyGameRetreat() {
         return unit.isMissionAttack()
             && A.seconds() <= 350
-            && OurArmy.strength() <= 94;
+            && Army.strength() <= 94;
     }
 
     private boolean shouldRetreatFromCombatBuildings() {

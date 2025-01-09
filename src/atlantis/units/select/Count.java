@@ -3,9 +3,10 @@ package atlantis.units.select;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -13,8 +14,7 @@ import atlantis.util.cache.Cache;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import static atlantis.units.AUnitType.Terran_Refinery;
-import static atlantis.units.AUnitType.Zerg_Extractor;
+import static atlantis.units.AUnitType.*;
 
 /**
  * Quick auxiliary class for counting our units.
@@ -44,7 +44,7 @@ public class Count {
     }
 
     public static int ofTypeFree(AUnitType type) {
-        return Select.ourOfType(type).free().count();
+        return Select.ourOfType(type).free().notLifted().count();
     }
 
     /**
@@ -235,6 +235,10 @@ public class Count {
         return ofType(AUnitType.Zerg_Zergling);
     }
 
+    public static int zerglingsWithUnfinished() {
+        return ofType(AUnitType.Zerg_Zergling) + countUnitsBeingProduced(AUnitType.Zerg_Zergling);
+    }
+
     public static int hydralisks() {
         return ofType(AUnitType.Zerg_Hydralisk);
     }
@@ -245,6 +249,10 @@ public class Count {
 
     public static int pylons() {
         return Select.countOurOfType(AUnitType.Protoss_Pylon);
+    }
+
+    public static int pylonsWithUnfinished() {
+        return ourWithUnfinished(Protoss_Pylon);
     }
 
     public static int forgeWithUnfinished() {
@@ -408,6 +416,10 @@ public class Count {
         return ofTypeFree(AUnitType.Terran_Starport);
     }
 
+    public static int freeRoboticsFacility() {
+        return ofTypeFree(Protoss_Robotics_Facility);
+    }
+
     public static int freeBarracks() {
         return ofTypeFree(AUnitType.Terran_Barracks);
     }
@@ -456,7 +468,11 @@ public class Count {
         return ofType(AUnitType.Protoss_Shuttle);
     }
 
-    public static int notFinishedConstructions(AUnitType type, int radius, HasPosition position) {
+    public static int notFinishedConstructions(AUnitType type, double radius, HasPosition position) {
         return ConstructionRequests.countNotFinishedOfTypeInRadius(type, radius, position);
+    }
+
+    public static int protectors() {
+        return RepairAssignments.countTotalProtectors();
     }
 }

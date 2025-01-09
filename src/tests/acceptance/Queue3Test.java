@@ -6,7 +6,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.Options;
 import bwapi.TechType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
@@ -16,9 +16,9 @@ import java.util.ArrayList;
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class Queue3Test extends NonAbstractTestFakingGame {
+public class Queue3Test extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;
 
     @Test

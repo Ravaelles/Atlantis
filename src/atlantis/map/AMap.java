@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -46,14 +47,27 @@ public class AMap {
         // Init BWEM - Terran analysis tool
         bwem = new BWEM(Atlantis.game());
 
-        // Init JBWEB - needed for calculating ground distance
         try {
             bwem.initialize();
             bwem.getMap().assignStartingLocationsToSuitableBases();
-            InitJBWEB.init();
+
+            // Init JBWEB - needed for calculating ground distance
+            try {
+                InitJBWEB.init();
+    //            InitBWEB.init();
+            } catch (Exception e) {
+                A.errPrintln(
+                    "JBWEB exception: " + e.getMessage() + "\n"
+                    + "but dont worry. We will continue."
+                );
+                if (!A.isUms()) e.printStackTrace();
+            }
         } catch (Exception e) {
-            A.errPrintln("JBWEB exception, but dont worry. We can continue.");
-//            e.printStackTrace();
+            A.errPrintln(
+                "BWEM exception: " + e.getMessage() + "\n"
+                + "but dont worry. We will continue."
+            );
+            if (!A.isUms()) e.printStackTrace();
         }
     }
 
@@ -103,7 +117,7 @@ public class AMap {
             if (
                 position != null
                     && position.isWalkable()
-                    && position.isBuildable()
+                    && position.isBuildableNotIncludingBuildings()
                     && !position.isPositionVisible()
                     && unit.hasPathTo(position)
                     && unit.position().groundDistanceTo(position) <= 100
@@ -115,6 +129,8 @@ public class AMap {
     }
 
     public static APosition randomUnexploredPosition(HasPosition startPoint) {
+        if (startPoint == null) return null;
+
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
@@ -125,7 +141,7 @@ public class AMap {
             if (
                 position != null
                     && position.isWalkable()
-                    && position.isBuildable()
+                    && position.isBuildableNotIncludingBuildings()
                     && !position.isExplored()
 //                            && position.translateByTiles(-1, 0).isWalkable()
 //                            && position.translateByTiles(1, 0).isWalkable()
@@ -242,5 +258,19 @@ public class AMap {
 //    }
     public static void setBWEM(BWEM bwem) {
         AMap.bwem = bwem;
+    }
+
+    public static String mapFileNameWithoutPath() {
+        // Remove everything before the last slash
+        String name = ActiveMap.name();
+
+        if (name == null) return "# Invalid map name #";
+
+        int lastSlashIndex = name.lastIndexOf('/');
+        if (lastSlashIndex != -1) {
+            name = name.substring(lastSlashIndex + 1);
+        }
+
+        return name;
     }
 }

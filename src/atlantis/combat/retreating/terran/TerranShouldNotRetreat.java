@@ -2,47 +2,75 @@ package atlantis.combat.retreating.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class TerranShouldNotRetreat extends Manager {
+import static atlantis.units.AUnitType.Zerg_Hydralisk;
+
+public class TerranShouldNotRetreat extends HasUnit {
+    private Decision decision;
+
     public TerranShouldNotRetreat(AUnit unit) {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        if (!We.terran()) return false;
-        if (unit.isTank() && (unit.isWounded() || unit.enemiesNear().inRadius(4, unit).notEmpty())) return false;
+//    @Override
+//    public boolean applies() {
+//        if (!We.terran()) return false;
+//
+//        return shouldNotRetreat();
+////        return unit.enemiesNear().visibleOnMap().notEmpty();
+//    }
 
-        return unit.enemiesNear().visibleOnMap().notEmpty();
-    }
-
-    @Override
-    protected Manager handle() {
-        if (shouldNotRetreat()) {
-            if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) {
-                return this;
-            }
-        }
-
-        return null;
-    }
+//    @Override
+//    protected Manager handle() {
+//        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+//            return this;
+//        }
+//
+//        return null;
+//    }
 
     public boolean shouldNotRetreat() {
-        if (shouldNotRunInMissionDefend(unit)) {
-            unit.addLog("NoRunInDefend");
+        if ((decision = whenNoEnemyRanged()).notIndifferent()) {
+            if (decision.isTrue()) {
+                unit.addLog("NoEnemyRanged");
+                return true;
+            }
+            return decision.toBoolean();
+        }
+
+        if ((decision = asTank()).notIndifferent()) {
+            if (decision.isTrue()) unit.addLog("BraveTank");
+            return decision.toBoolean();
+        }
+
+        if (doNotRetreatNearBase(unit)) {
+            unit.addLog("FightNearBase");
             return false;
         }
 
-        if (unit.isTank() && unit.woundPercentMax(20) && unit.cooldownRemaining() <= 0) {
-            unit.addLog("BraveTank");
-            return true;
+        if (doNotRetreatNearBunker(unit)) {
+            unit.addLog("FightNearBunker");
+            return false;
+        }
+
+        if (dontAgainstHydras(unit)) {
+            unit.addLog("FightHydras");
+            return false;
+        }
+
+        if (shouldNotRunInMissionDefend(unit)) {
+            unit.addLog("NoRunInDefend");
+            return false;
         }
 
         if (unit.kitingUnit() && unit.isHealthy() && unit.meleeEnemiesNearCount(1.8) <= 0) {
@@ -63,6 +91,64 @@ public class TerranShouldNotRetreat extends Manager {
         return false;
     }
 
+    private Decision whenNoEnemyRanged() {
+        if (
+            unit.eval() >= 0.6
+                && unit.enemiesNear().ranged().inRadius(13.5, unit).isEmpty()
+                && (!A.isUms() || Select.ourBuildings().notEmpty())
+        ) {
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
+    }
+
+    private Decision asTank() {
+        if (!unit.isTank()) return Decision.INDIFFERENT;
+
+        if (
+            unit.woundPercentMax(20)
+//            && unit.cooldownRemaining() <= 2
+                && unit.enemiesNear().inRadius(6.5, unit).atMost(1)
+        ) return Decision.TRUE;
+
+        return Decision.FALSE;
+    }
+
+    private boolean dontAgainstHydras(AUnit unit) {
+        if (!unit.isInfantry()) return false;
+        if (unit.hp() <= 27) return false;
+
+        if (!unit.nearestEnemyIs(Zerg_Hydralisk)) return false;
+
+        return unit.eval() >= 0.7 || (unit.hp() >= 23 && unit.hasMedicInRange());
+    }
+
+    private boolean doNotRetreatNearBunker(AUnit unit) {
+        if (
+//            unit.hp() >= 17
+            unit.friendsNear().bunkers().inRadius(6, unit).notEmpty()
+                && unit.cooldown() <= 7
+                && unit.meleeEnemiesNearCount(3.2) <= 1
+                && !unit.isAction(Actions.LOAD)
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean doNotRetreatNearBase(AUnit unit) {
+        if (
+            unit.hp() >= 30
+                && unit.friendsNear().bases().inRadius(4.5, unit).notEmpty()
+                && unit.meleeEnemiesNearCount(3) <= 1
+        ) {
+            return true;
+        }
+
+        return false;
+    }
 
     private static boolean shouldNotRunInMissionDefend(AUnit unit) {
         return unit.isMissionDefend()
@@ -97,7 +183,7 @@ public class TerranShouldNotRetreat extends Manager {
         }
 
         if (
-            OurStrategy.get().isRushOrCheese()
+            Strategy.get().isRushOrCheese()
                 && A.seconds() <= 400
                 && unit.isGroundUnit()
                 && unit.enemiesNear().ranged().empty()
@@ -125,7 +211,7 @@ public class TerranShouldNotRetreat extends Manager {
     public boolean shouldRetreat() {
         if (unit.isTerranInfantry()) {
             if (!unit.mission().isMissionDefend()) {
-                if (unit.enemiesNear().ranged().notEmpty() && unit.friendsNear().atMost(4) && unit.combatEvalRelative() <= 2) {
+                if (unit.enemiesNear().ranged().notEmpty() && unit.friendsNear().atMost(4) && unit.eval() <= 2) {
                     unit.setTooltipTactical("BewareRanged");
                     return true;
                 }

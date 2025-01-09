@@ -3,21 +3,21 @@ package atlantis.combat.micro.avoid;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.fight.ShouldAlwaysFightInsteadAvoid;
-import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.zerg.ShouldAlwaysAvoidAsZerg;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class FightInsteadAvoid extends Manager {
-    private TerranAlwaysAvoidAsTerran shouldAlwaysAvoidAsTerran;
+    private TerranAlwaysAvoidEnemy shouldAlwaysAvoidAsTerran;
     private ShouldAlwaysAvoidAsZerg shouldAlwaysAvoidAsZerg;
     private final Units enemies;
 
     public FightInsteadAvoid(AUnit unit, Units enemies) {
         super(unit);
-        shouldAlwaysAvoidAsTerran = new TerranAlwaysAvoidAsTerran(unit);
+        shouldAlwaysAvoidAsTerran = new TerranAlwaysAvoidEnemy(unit);
         shouldAlwaysAvoidAsZerg = new ShouldAlwaysAvoidAsZerg(unit);
         this.enemies = enemies;
     }
@@ -27,7 +27,7 @@ public class FightInsteadAvoid extends Manager {
         if (unit.isDragoon()) return false; // @Remove
 
         if (!unit.hasAnyWeapon()) return false;
-        if (unit.combatEvalRelative() <= 0.6) return false;
+        if (unit.eval() <= 0.6) return false;
 
 //        System.err.println(
 //            "### " + unit.type() + "(" + unit.idWithHash() + ").combatEvalRelative() = " + unit.combatEvalRelative()
@@ -38,7 +38,7 @@ public class FightInsteadAvoid extends Manager {
             return true;
         }
 
-        if (unit.combatEvalRelative() < 0.6) return false;
+        if (unit.eval() < 0.6) return false;
         if (shouldAlwaysAvoidAsTerran.shouldAlwaysAvoid()) return false;
         if (shouldAlwaysAvoidAsZerg.shouldAlwaysAvoid()) return false;
 

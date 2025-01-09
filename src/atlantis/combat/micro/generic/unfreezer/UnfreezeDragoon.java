@@ -1,12 +1,13 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
+import atlantis.util.CenterCamera;
+import atlantis.util.PauseAndCenter;
 import bwapi.Color;
-import bwapi.Order;
 
 public class UnfreezeDragoon extends Manager {
     public UnfreezeDragoon(AUnit unit) {
@@ -15,9 +16,9 @@ public class UnfreezeDragoon extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
-
         if (!unit.isDragoon()) return false;
+        if (unit.hasCooldown()) return false;
+        if (unit.lastAttackFrameLessThanAgo(40)) return false;
 
         boolean underAttackRecently = unit.lastUnderAttackLessThanAgo(15);
         if (!underAttackRecently) return false;
@@ -25,72 +26,29 @@ public class UnfreezeDragoon extends Manager {
         boolean movedVeryRecently = unit.lastPositionChangedLessThanAgo(30);
         if (movedVeryRecently) return false;
 
-        return unit.noCooldown()
-//            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
-//            && !unit.isHoldingPosition()
-            && (
-//            unit.isStopped()
-//                || unit.u().getOrder().equals(Order.Stop)
-//            unit.lastPositionChangedMoreThanAgo(120)
-//                ||
-            (underAttackRecently && !movedVeryRecently)
-        )
-            && (underAttackRecently || unit.lastPositionChangedMoreThanAgo(80));
-//            && unit.u().isSt
-//            && (unit.isStopped() || unit.isHoldingPosition())
-//            && unit.lastActionMoreThanAgo(20, Actions.STOP)
-//            && (unit.isMoving() || unit.isStopped())
-//            && (!unit.isLeader() || unit.lastPositionChangedMoreThanAgo(30 * 6));
-//            && unit.noCooldown();
-//            && unit.lastActionMoreThanAgo(20, Actions.HOLD_POSITION);
+        if (unit.isLeader()) {
+            Squad squad = unit.squad();
+            if (squad != null) squad.changeLeader();
+        }
+
+        return true;
     }
 
     @Override
     public Manager handle() {
-//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UnfreezeDragoon");
+        if (A.isUms()) {
+//            unit.commandHistory().print("UnfreezeDragoon#" + unit.id() + " command history (now: " + A.now + ")");
+//            PauseAndCenter.on(unit, true);
+        }
+
+//        CenterCamera.on(unit, true, Color.Blue);
+//        GameSpeed.changeSpeedTo(70);
 //        unit.paintCircleFilled(10, Color.Blue);
+
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UnfreezeDragoon");
 
         if (UnfreezerShakeUnit.shake(unit)) return usedManager(this);
 
-//        if (unit.lastActionMoreThanAgo(81, Actions.STOP)) {
-//            unit.stop("StopA");
-//            return usedManager(this, "UnfreezeGoonA");
-//        }
-//
-//        if (unit.move(unit.position().translateByPixels(4, 4), Actions.MOVE_UNFREEZE, "UnfreezeGoonB")) {
-//            return usedManager(this);
-//        }
-
-//        if (unit.lastActionMoreThanAgo(91, Actions.HOLD_POSITION)) {
-//            unit.holdPosition("HoldB");
-//            return usedManager(this, "UnfreezeGoonA");
-//        }
-
         return null;
-//        return usedManager(this, "UnfreezeGoonC");
-
-//        if (unit.lastActionMoreThanAgo(11, Actions.HOLD_POSITION)) {
-//            if (unit.holdPosition("Hold")) return usedManager(this);
-//        }
-//        else {
-//            return usedManager(this);
-//        }
-
-//        if (moveToLeader()) return usedManager(this);
-//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
-    }
-
-    private boolean moveToLeader() {
-        AUnit leader = unit.squadLeader();
-        if (leader == null) return false;
-
-        if (unit.distTo(leader) >= 2.5) {
-            if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleByLeader")) {
-//                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
-//                    " / " + unit.action());
-                return true;
-            }
-        }
-        return false;
     }
 }

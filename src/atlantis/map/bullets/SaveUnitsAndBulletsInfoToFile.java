@@ -18,7 +18,6 @@ public class SaveUnitsAndBulletsInfoToFile {
         String currentUnits = unitsString();
         String currentBullets = bulletsString();
 
-//        System.err.println("A / B / C = " + (previous.equals(currentUnits)) + " / " + previous + " / " + currentUnits);
         content += "@" + A.now() + "--------------\n";
 
         if (!previousUnits.equals(currentUnits)) {

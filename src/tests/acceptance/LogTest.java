@@ -2,12 +2,12 @@ package tests.acceptance;
 
 import atlantis.units.AUnitType;
 import atlantis.util.log.Log;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class LogTest extends NonAbstractTestFakingGame {
+public class LogTest extends WorldStubForTests {
     @Test
     public void testAddMessage() {
         FakeUnit unit = fakeUnit();

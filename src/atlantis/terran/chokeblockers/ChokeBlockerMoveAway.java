@@ -81,7 +81,7 @@ public class ChokeBlockerMoveAway extends Manager {
             }
         }
         else {
-            unit.holdPosition("ChokeBlock");
+            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
         }
         unit.setAction(Actions.SPECIAL);
 

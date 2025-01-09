@@ -3,12 +3,8 @@ package atlantis.combat.micro.early.protoss.stick;
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.OurBuildingUnderAttack;
-import atlantis.information.generic.OurArmy;
-import atlantis.map.base.BaseLocations;
+import atlantis.information.generic.Army;
 import atlantis.map.choke.Chokes;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.AUnit;
@@ -17,7 +13,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
     private AUnit cannon;
@@ -35,7 +31,7 @@ public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
         int supplyUsed = A.supplyUsed();
         if (supplyUsed >= 80) return false;
         int goons = Count.dragoons();
-        int strength = OurArmy.strengthWithoutCB();
+        int strength = Army.strengthWithoutCB();
         if (goons >= 1 || supplyUsed >= 45) {
             if (ResearchSingularityCharge.isResearched()) return false;
             if (goons >= 8) return false;
@@ -175,7 +171,7 @@ public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
         if (unit.shieldWound() >= 20) return false;
 
         return unit.enemiesThatCanAttackMe(0.9).atMost(1)
-            && unit.enemiesNear().ranged().countInRadius(15, unit) <= 2;
+            && unit.enemiesNear().ranged().countInRadius(AUnit.NEAR_DIST, unit) <= 2;
     }
 
     @Override
@@ -189,7 +185,7 @@ public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
         Selection cannons = Select.ourOfType(AUnitType.Protoss_Photon_Cannon);
 
         HasPosition natural = Chokes.natural();
-        if (natural != null) cannons = cannons.inRadius(15, natural);
+        if (natural != null) cannons = cannons.inRadius(AUnit.NEAR_DIST, natural);
 
         return cannons.groundFarthestTo(Select.mainOrAnyBuilding());
     }

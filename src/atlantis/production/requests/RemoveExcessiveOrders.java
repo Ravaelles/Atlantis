@@ -1,8 +1,8 @@
 package atlantis.production.requests;
 
 import atlantis.game.A;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -53,7 +53,7 @@ public class RemoveExcessiveOrders {
     }
 
     private static boolean limitUnitsToMax(AUnitType type, int max) {
-        List<ProductionOrder> orders = Queue.get().nonCompleted().ofType(type).list();
+        List<ProductionOrder> orders = Queue.get().notFinished().ofType(type).list();
 
         if (orders.size() > max) {
             for (int i = orders.size() - 1; i >= 0; i--) {
@@ -61,7 +61,7 @@ public class RemoveExcessiveOrders {
 //                    A.printStackTrace("Observer excessive");
 //                }
 
-                orders.get(i).cancel();
+                orders.get(i).cancel("Producing many " + type + " at once (" + orders.size() + ">" + max + ")");
 //                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
 
             }
@@ -76,8 +76,8 @@ public class RemoveExcessiveOrders {
 
         if (constructions.size() > max) {
             for (int i = constructions.size() - 1; i >= 0; i--) {
-                constructions.get(i).productionOrder().cancel();
-                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE BUILDING " + type);
+                constructions.get(i).productionOrder().cancel("Too many " + type + " at once (" + constructions.size() + ">" + max + ")");
+                A.errPrintln(A.minSec() + " - CANCEL EXCESSIVE BUILDING " + type);
             }
             return true;
         }

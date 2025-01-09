@@ -1,8 +1,5 @@
 package atlantis.combat.micro.avoid.always;
 
-import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.dont.protoss.DragoonDontAvoidEnemy;
-import atlantis.combat.micro.avoid.dont.protoss.ZealotDontAvoidEnemy;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 

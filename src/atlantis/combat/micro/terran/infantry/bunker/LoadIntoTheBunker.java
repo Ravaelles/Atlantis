@@ -9,9 +9,12 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class LoadIntoTheBunker extends Manager {
+
+    private AUnit bunker;
+
     public LoadIntoTheBunker(AUnit unit) {
         super(unit);
     }
@@ -19,6 +22,8 @@ public class LoadIntoTheBunker extends Manager {
     @Override
     public boolean applies() {
         if (unit.isLoaded()) return false;
+        if (Count.bunkers() == 0) return false;
+
         if (wouldOverstack()) return false;
 
         if (Enemy.terran()) {
@@ -41,6 +46,14 @@ public class LoadIntoTheBunker extends Manager {
         return true;
     }
 
+    private boolean leaveOneMarineOut() {
+        if (unit.hp() <= 28) return false;
+        if (bunker.spaceRemaining() >= 4) return false;
+        if (bunker.enemiesNear().countInRadius(6, unit) > 0) return false;
+
+        return bunker.friendsNear().marines().countInRadius(3, unit) == 0;
+    }
+
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
@@ -50,8 +63,10 @@ public class LoadIntoTheBunker extends Manager {
 
     @Override
     protected Manager handle() {
-        AUnit bunker = bunkerToLoadTo();
-//        double maxDistanceToLoad = Missions.isGlobalMissionDefend() ? 5.2 : 8.2;
+        bunker = bunkerToLoadTo();
+        if (bunker == null) return null;
+
+        if (leaveOneMarineOut()) return null;
 
         if (
             unit.hp() >= (Enemy.protoss() ? 18 : 6)
@@ -89,6 +104,7 @@ public class LoadIntoTheBunker extends Manager {
     private boolean hasSpaceForThisUnit(AUnit unit, AUnit bunker) {
         if (!bunker.hasFreeSpaceFor(unit)) return false;
 
+        if (unit.distTo(bunker) <= 0.8) return true;
         if (unit.meleeEnemiesNearCount(4) == 0) return true;
 
         return bunker.loadedUnits().size() <= 2
@@ -119,7 +135,7 @@ public class LoadIntoTheBunker extends Manager {
 
     private AUnit bunkerToLoadTo() {
         return Select.ourOfType(AUnitType.Terran_Bunker)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .havingSpaceFree(unit.spaceRequired())
             .nearestTo(unit);
     }

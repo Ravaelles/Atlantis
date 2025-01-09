@@ -7,9 +7,11 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import jbweb.JBWEB;
 
@@ -58,6 +60,13 @@ public class Chokes {
 
     private static AChoke mainChokeFromJbweb() {
         return AChoke.from(JBWEB.getMainChoke());
+    }
+
+    public static HasPosition naturalOrAnyBuilding() {
+        AChoke natural = natural();
+        if (natural != null) return natural;
+
+        return Select.mainOrAnyBuilding();
     }
 
     /**
@@ -240,5 +249,20 @@ public class Chokes {
                 return chokes;
             }
         );
+    }
+
+    public static Positions enemyMainAndNaturalChokes() {
+        AChoke enemyMainChoke = enemyMainChoke();
+        AChoke enemyNaturalChoke = enemyNaturalChoke();
+        Positions positions = new Positions();
+
+        if (enemyMainChoke != null) {
+            positions.addPosition(enemyMainChoke.center());
+        }
+        if (enemyNaturalChoke != null) {
+            positions.addPosition(enemyNaturalChoke.center());
+        }
+
+        return positions;
     }
 }

@@ -2,37 +2,55 @@ package atlantis.combat.retreating.protoss.big_scale;
 
 import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
 import atlantis.combat.squad.Squad;
+import atlantis.config.env.Env;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossShouldFullRetreat {
     private static AUnit unit;
+    private static double eval;
 
     public static boolean shouldFullRetreat(AUnit unit) {
-        if (A.isUms() && Count.bases() == 0) return false;
-
         ProtossShouldFullRetreat.unit = unit;
 
-        if (!unit.isMissionAttack()) return false;
-        if (DontAvoidWhenCannonsNear.check(unit)) return false;
-
-//        if (true) return false;
-
-        Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 13 : 9, unit);
+        Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 14 : 10, unit);
         if (enemies.empty()) return false;
-        if (enemies.atMost(1)) return false;
-        if (OurArmy.strength() >= 600 || A.minerals() >= 2000) return false;
 
+        AUnit leader = unit.squadLeader();
+        if (leader != null && !unit.isLeader()) {
+//            if (leader.isRetreating()) return true;
+            return leader.isRetreating();
+        }
+
+        eval = unit.eval();
+
+        Decision decision;
+        if ((decision = ProtossRetreatFromSunken.decision(unit)).notIndifferent()) return decision.toBoolean();
+
+        if (retreatDuringMissionAttack(unit)) return true;
+
+        if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
+
+        if (DontAvoidWhenCannonsNear.check(unit)) return false;
         if (combatEvalIsTooHighToRetreat()) return false;
         if (dontRunNearOurCombatBuildings()) return false;
-        if (unit.distToBase() <= 7) return false;
-        if (unit.cooldown() <= 4 && unit.combatEvalRelative() >= 0.75 && unit.ourNearestBuildingDist() <= 3)
-            return false;
+
+        if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.9))) return true;
+
+        if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return false;
+
+        if (!unit.isMissionAttack() && eval >= 0.7) return false;
+//        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
+        if (unit.distToBase() <= 4) return false;
+//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return false;
+
+        if (ProtossApprxRetreat.check(unit)) return true;
 
         if (A.s <= 600 && (Enemy.protoss() || Enemy.zerg()) && EnemyUnits.discovered().ranged().empty()) {
             if (enemies.canAttack(unit, 2.8 + unit.woundPercent() / 100.0).empty()) return false;
@@ -56,26 +74,23 @@ public class ProtossShouldFullRetreat {
 //                && naturalBase.distTo(unit) <= 8
 //        ) return false;
 
-        if (true) return true;
+        return eval <= 0.92;
 
-        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
-            if (unit.combatEvalRelative() >= 2.3) return false;
-            if (enemies.atMost(2)) return false;
-            if (unit.friendsNear().combatUnits().atLeast(10)) return false;
-            if (unit.shieldDamageAtMost(19) && unit.enemiesNear().ranged().empty()) return false;
-        }
+//        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
+//            if (unit.eval() >= 2.3) return false;
+//            if (enemies.atMost(2)) return false;
+//            if (unit.friendsNear().combatUnits().atLeast(10)) return false;
+//            if (unit.shieldDamageAtMost(19) && unit.enemiesNear().ranged().empty()) return false;
+//        }
 
 //        if (
 //            enemies.onlyMelee()
 //                && unit.combatEvalRelative() >= 0.8
-//                && !(new ProtossSmallScaleRetreat(unit).applies())
+//                && !(new ProtossMeleeSmallScaleRetreat(unit).applies())
 //        ) {
 //            unit.addLog("StillFightSS");
 //            return false;
 //        }
-
-//        AUnit base = Select.naturalOrMain();
-//        if (base == null || (unit.hp() >= 33 && unit.cooldown() <= 5 && base.distTo(unit) <= 8)) return false;
 
 //        if (unit.isMissionSparta()) {
 //            AChoke mainChoke = Chokes.mainChoke();
@@ -100,9 +115,18 @@ public class ProtossShouldFullRetreat {
 //        }
 
 //        double evalRelative = applyTweaksToCombatEval();
-        double evalRelative = unit.combatEvalRelative();
+//        double evalRelative = unit.eval();
+//
+//        return evalRelative <= 1.05;
+    }
 
-        return evalRelative <= 1.05;
+    private static boolean retreatDuringMissionAttack(AUnit unit) {
+        if (!unit.isMissionAttack()) return false;
+
+        double base = A.s <= 60 * 7 ? 1.2 : 1.15;
+        if (Enemy.zerg()) base += 0.1;
+
+        return eval <= base;
     }
 
     private static boolean dontRunNearOurCombatBuildings() {
@@ -121,7 +145,7 @@ public class ProtossShouldFullRetreat {
 
         if (A.supplyUsed() <= 80) threshold += 0.1;
 
-        return unit.combatEvalRelative() >= threshold;
+        return unit.eval() >= threshold;
     }
 
 //    private double applyTweaksToCombatEval() {

@@ -1,5 +1,6 @@
 package atlantis.map.bullets;
 
+import atlantis.combat.state.AttackState;
 import atlantis.game.A;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
@@ -13,20 +14,29 @@ public class ABullet implements HasPosition {
     protected AUnit attacker;
     protected AUnit target;
     protected Bullet b;
-    protected AUnit _initTarget;
-    protected int _initTargetHp;
+    //    protected AUnit _initTarget;
+//    protected int _initTargetHp;
     private boolean consumed = false;
+    private int createdAt;
 
     // =========================================================
 
     public static ABullet fromBullet(Bullet b) {
-//        System.err.println("b = " + b.getID());
         ABullet bullet = new ABullet();
+        bullet.createdAt = A.now;
         bullet.attacker = AUnit.createFrom(b.getSource(), false);
-
-        if (bullet.attacker == null) return null;
+        if (bullet.attacker != null) {
+            bullet.attacker.setAttackState(AttackState.PENDING);
+            bullet.attacker.setLastBullet(bullet);
+//            System.err.println("      [ BULLET with ID:" + b.getID() + " ] from " + bullet.attacker);
+        }
 
         bullet.target = AUnit.createFrom(b.getTarget(), false);
+
+        if (bullet.attacker == null) {
+//            System.err.println("bullet.attacker null, target = " + bullet.target + "/our=" + bullet.target.isOur());
+            return null;
+        }
 
         if (bullet.target == null) {
 //            A.errPrintln(
@@ -114,5 +124,9 @@ public class ABullet implements HasPosition {
 
     public boolean isConsumed() {
         return consumed;
+    }
+
+    public int createdAt() {
+        return createdAt;
     }
 }

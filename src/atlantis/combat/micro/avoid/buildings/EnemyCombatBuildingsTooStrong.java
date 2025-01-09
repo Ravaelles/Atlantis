@@ -11,7 +11,7 @@ public class EnemyCombatBuildingsTooStrong {
         Selection combatBuildings = EnemyUnits.discovered().buildings().combatBuildingsAnti(unit);
         if (combatBuildings.empty()) return false;
 
-        double ourStrength = unit.combatEvalRelative();
+        double ourStrength = unit.eval();
         double enemyStrength = enemyStrength(unit, ourStrength, combatBuildings);
 
         return ourStrength >= enemyStrength;

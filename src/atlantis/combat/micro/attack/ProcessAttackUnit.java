@@ -3,6 +3,7 @@ package atlantis.combat.micro.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -17,6 +18,13 @@ public class ProcessAttackUnit extends Manager {
 
     public boolean processAttackOtherUnit(AUnit target) {
 //        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
+
+//        if (unit.isWounded()) {
+//            ErrorLog.debug("Wounded unit attacking " + unit + " / " + target + " / dist: " + unit.distToDigit(target));
+//            unit.managerLogs().print("Managers logs");
+//            printParentsStack();
+//            GameSpeed.pauseGame();
+//        }
 
         if (target == null) {
 //            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");
@@ -102,14 +110,18 @@ public class ProcessAttackUnit extends Manager {
 //    }
 
     private boolean confirmAttack(AUnit target) {
+//        System.out.println(unit.typeWithUnitId() + " - ConfirmAttack " + target.typeWithUnitId() + "(" + target.hp() +
+//            ")");
+
         return unit.attackUnit(target);
     }
 
     // =========================================================
 
     private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
-        if (!enemy.isTank()) return false;
+        if (!enemy.isTankSieged()) return false;
         if (We.terran()) return false;
+        if (unit.cooldown() <= 3) return false;
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
@@ -126,8 +138,9 @@ public class ProcessAttackUnit extends Manager {
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
 
-            if (unit.attackUnit(enemy)) {
-                unit.setTooltip("Soyuz" + A.dist(enemy, unit) + "/" + count);
+//            if (unit.attackUnit(enemy)) {
+            if (unit.move(enemy, Actions.MOVE_ENGAGE, "Soyuz")) {
+                unit.setTooltip("Soyuz" + unit.distToDigit(enemy) + "/" + count);
                 return true;
             }
 

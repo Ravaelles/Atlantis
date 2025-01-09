@@ -28,9 +28,9 @@ public class UnitTest {
     public static int MINERAL_COUNT = 3;
     public static int GEYSER_COUNT = 2;
 
-    public static AUnit[] ourUnits;
-    public static AUnit[] enemyUnits;
-    public static AUnit[] neutralUnits;
+    public static FakeUnit[] ourUnits;
+    public static FakeUnit[] enemyUnits;
+    public static FakeUnit[] neutralUnits;
 
     // =========================================================
 
@@ -90,10 +90,10 @@ public class UnitTest {
         return Arrays.asList(enemyUnits);
     }
 
-    public static List<AUnit> mockNeutralUnits() {
+    public static List<FakeUnit> mockNeutralUnits() {
         int neutralY = 2;
 
-        neutralUnits = new AUnit[]{
+        neutralUnits = new FakeUnit[]{
             new FakeUnit(AUnitType.Resource_Mineral_Field, 10, neutralY).setNeutral(),
             new FakeUnit(AUnitType.Resource_Mineral_Field_Type_2, 11, neutralY).setNeutral(),
             new FakeUnit(AUnitType.Resource_Mineral_Field_Type_3, 15, neutralY).setNeutral(),

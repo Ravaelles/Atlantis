@@ -3,14 +3,14 @@ package tests.acceptance;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AddToQueueTest extends NonAbstractTestFakingGame {
+public class AddToQueueTest extends WorldStubForTests {
     @Test
     public void marinesAreNotAddedMultipleTimesToTheQueue() {
         createWorld(1,

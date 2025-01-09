@@ -1,6 +1,6 @@
 package tests.fakes;
 
-import atlantis.game.APlayer;
+import atlantis.game.player.APlayer;
 import atlantis.units.AUnitType;
 import bwapi.*;
 

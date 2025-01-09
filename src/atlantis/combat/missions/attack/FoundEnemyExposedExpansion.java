@@ -14,7 +14,7 @@ public class FoundEnemyExposedExpansion {
     public static AFocusPoint getItFound() {
         return cache.getIfValid(
             "enemyExpansion",
-            247,
+            57,
             () -> {
                 APosition enemyMain = EnemyInfo.enemyMain();
                 if (enemyMain == null) return null;
@@ -24,12 +24,12 @@ public class FoundEnemyExposedExpansion {
                         base != null
                             && base.hasPosition()
                             && base.isAlive()
+                            && (!base.isPositionVisible() || Select.enemyBuildings().countInRadius(7, base) >= 1)
                             && base.groundDist(enemyMain) >= 33
                     ) {
                         return new AFocusPoint(
                             base,
-                            Select.mainOrAnyBuilding(),
-                            "AttackEnemyExpansion(" + base.distTo(Select.mainOrAnyBuilding()) + ")"
+                            "AttackEnemyExpansion(" + (int) base.distTo(Select.mainOrAnyBuilding()) + ")"
                         );
                     }
                 }

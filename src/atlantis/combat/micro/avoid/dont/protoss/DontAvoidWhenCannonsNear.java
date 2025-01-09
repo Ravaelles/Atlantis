@@ -1,19 +1,24 @@
 package atlantis.combat.micro.avoid.dont.protoss;
 
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
 public class DontAvoidWhenCannonsNear {
     public static boolean check(AUnit unit) {
-        if (unit.cooldown() >= 6) return false;
+//        if (unit.cooldown() >= 6) return false;
+
+        if (Enemy.protoss()) {
+            if (unit.hp() <= 42 && unit.enemiesNear().dts().effUndetected().countInRadius(3, unit) >= 1) {
+                return false;
+            }
+        }
 
         if (Count.cannons() > 0) {
-            if (unit.isRanged() && unit.cooldown() >= 6) return false;
-
             AUnit cannon = unit.friendsNear().cannons().inRadius(maxDistToCannon(unit), unit).nearestTo(unit);
             if (cannon != null) {
                 if (cannon.enemiesNear().havingAntiGroundWeapon().countInRadius(7, cannon) >= 1) {
-                    if ((unit.hp() >= 40 || unit.cooldown() <= 5)) {
+                    if ((unit.hp() >= 22 || unit.cooldown() <= 5)) {
                         return true;
                     }
 //                    else {

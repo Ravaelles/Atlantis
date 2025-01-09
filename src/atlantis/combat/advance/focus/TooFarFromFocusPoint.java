@@ -16,6 +16,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
+        if (focusPoint == null) return false;
         if (!unit.isLeader()) return false;
         if (focusPoint == null || !focusPoint.isValid()) return false;
         if (unit.enemiesNear().canAttack(unit, 2.5).notEmpty()) return false;
@@ -32,7 +33,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
         evaluateDistToFocusPointComparingToLeader();
 
-        if (distFromFocus == DistFromFocus.TOO_FAR) {
+        if (distFromFocus == DistFromFocus.TOO_FAR || fallbackTooFarFromFocus()) {
             if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
 
             return true;
@@ -42,9 +43,15 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     protected Manager handle() {
+        if (focusPoint == null) return null;
+
         if (act()) return usedManager(this);
 
         return null;
+    }
+
+    private boolean fallbackTooFarFromFocus() {
+        return unit.distToFocusPoint() >= 12;
     }
 
     @Override
@@ -66,11 +73,16 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (goTo != null) {
 //            if (unit.isDragoon()) A.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
 
-            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5);
+            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5, null);
             if (goTo == null) return false;
 
             if (goTo.isWalkable()) {
-                if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) return true;
+                if (
+                    (!unit.isMoving() || A.everyNthGameFrame(20))
+                        && unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)
+                ) {
+                    return true;
+                }
             }
             else {
                 ErrorLog.printMaxOncePerMinute("Unwalkable focus " + focusPoint + " for " + unit);

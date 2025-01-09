@@ -4,6 +4,7 @@ import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.units.AUnit;
 
 /**
  * Alpha is battle squad that is the main battle squad. Most new units arrive here (handled by NewUnitsToSquadsAssigner)
@@ -37,7 +38,7 @@ public class Alpha extends Squad {
 
     @Override
     public boolean allowsSideQuests() {
-        return true;
+        return A.s <= 60 * 7;
 //        return count() >= 14;
     }
 
@@ -46,6 +47,13 @@ public class Alpha extends Squad {
         if (A.isUms()) return Missions.ATTACK;
 
         return super.mission();
+    }
+
+    public static AUnit alphaLeader() {
+        Alpha alpha = get();
+        if (alpha == null) return null;
+
+        return alpha.leader();
     }
 
     // =========================================================

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -24,7 +24,7 @@ public class LeaderTooLowCohesion extends MissionManager {
 //        goTo = goTo();
 
         if (focusPoint == null || unit.distTo(focusPoint) <= 8) return false;
-        if (OurArmy.strength() >= 220) return false;
+        if (Army.strength() >= 220) return false;
 
         return unit.squad() != null && unit.squadSize() >= 7 && unit.squad().cohesionPercent() <= 45;
     }

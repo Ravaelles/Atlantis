@@ -36,7 +36,7 @@ public class ArmyStrength {
         return cacheInteger.get(
             "ourArmyRelativeStrength",
             13,
-            () -> (int) Math.min(999, (OurArmy.calculate() * 100 / EnemyArmyStrength.calculate()))
+            () -> (int) Math.min(999, (Army.calculate() * 100 / EnemyArmyStrength.calculate()))
         );
     }
 
@@ -44,7 +44,7 @@ public class ArmyStrength {
         return cacheInteger.get(
             "ourArmyRelativeStrengthWithoutCB",
             13,
-            () -> (int) Math.min(999, (OurArmy.calculateWithoutCB() * 100 / EnemyArmyStrength.calculateWithoutCB()))
+            () -> (int) Math.min(999, (Army.calculateWithoutCB() * 100 / EnemyArmyStrength.calculateWithoutCB()))
         );
     }
 
@@ -63,7 +63,7 @@ public class ArmyStrength {
             return base + 20;
         }
         else {
-            return Math.min(200, base + 30 + RetreatManager.GLOBAL_RETREAT_COUNTER);
+            return Math.min(165, base + 30 + RetreatManager.GLOBAL_RETREAT_COUNTER);
         }
     }
 }

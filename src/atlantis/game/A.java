@@ -7,7 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 import bwapi.TechType;
@@ -325,18 +325,54 @@ public class A {
      * @return string like "2011-09-03"
      */
     public static String getCurrentDateInFormatYMD() {
-        GregorianCalendar date = new GregorianCalendar();
-        String month = date.get(Calendar.MONTH) + "";
-        String day = date.get(Calendar.DAY_OF_MONTH) + "";
+        return dateYear() + "-" + dateMonth() + "-" + dateDay();
+    }
 
+    /**
+     * @return string like "2011-09-03"
+     */
+    public static String getCurrentDateInFormatYMDHHmm() {
+        return dateYear() + "-" + dateMonth() + "-" + dateDay() + " " + dateHours() + ":" + dateMinutes();
+    }
+
+    private static String dateYear() {
+        String year = (new GregorianCalendar()).get(Calendar.YEAR) + "";
+        if (year.length() < 2) {
+            year = "0" + year;
+        }
+        return year;
+    }
+
+    private static String dateMonth() {
+        String month = (new GregorianCalendar()).get(Calendar.MONTH) + "";
         if (month.length() < 2) {
             month = "0" + month;
         }
+        return month;
+    }
+
+    private static String dateDay() {
+        String day = (new GregorianCalendar()).get(Calendar.DAY_OF_MONTH) + "";
         if (day.length() < 2) {
             day = "0" + day;
         }
+        return day;
+    }
 
-        return date.get(Calendar.YEAR) + "-" + month + "-" + day;
+    private static String dateHours() {
+        String hours = (new GregorianCalendar()).get(Calendar.HOUR_OF_DAY) + "";
+        if (hours.length() < 2) {
+            hours = "0" + hours;
+        }
+        return hours;
+    }
+
+    private static String dateMinutes() {
+        String minutes = (new GregorianCalendar()).get(Calendar.MINUTE) + "";
+        if (minutes.length() < 2) {
+            minutes = "0" + minutes;
+        }
+        return minutes;
     }
 
     /**
@@ -413,8 +449,12 @@ public class A {
     public static String getCurrentTimeAsString() {
         GregorianCalendar today = new GregorianCalendar();
         String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
-        return (hour.length() < 2 ? ("0" + hour) : hour) + ":" + today.get(GregorianCalendar.MINUTE) + ":"
-            + today.get(GregorianCalendar.SECOND);
+        int minutes = today.get(GregorianCalendar.MINUTE);
+        int seconds = today.get(GregorianCalendar.SECOND);
+
+        return (hour.length() < 2 ? ("0" + hour) : hour)
+            + ":" + (minutes <= 9 ? "0" + minutes : minutes)
+            + ":" + (seconds <= 9 ? "0" + seconds : seconds);
     }
 
     /**
@@ -552,6 +592,16 @@ public class A {
         return null;
     }
 
+    public static void writeToFile(String filePath, String content) {
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            fw.write(content + "\n");
+            fw.close();
+        } catch (IOException exception) {
+            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
+        }
+    }
+
     public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
         try {
             if (!fileExists(filePath)) {
@@ -564,7 +614,6 @@ public class A {
             ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
     }
-
 
     /**
      * @return number of all files (directory is not a file) in all these directory and all its
@@ -1290,6 +1339,49 @@ public class A {
         return f.exists() && f.isDirectory();
     }
 
+    public static boolean createDirectory(String file) {
+        File f = new File(file);
+        return f.mkdir();
+    }
+
+    public static void moveDirectory(String source, String target) {
+        File sourceDir = new File(source);
+        File targetDir = new File(target);
+
+        if (!sourceDir.exists()) {
+            A.errPrintln("Source directory does not exist: " + source);
+            return;
+        }
+
+        if (targetDir.exists()) {
+            A.errPrintln("Target directory already exists: " + target + ", didn't move " + source);
+            return;
+        }
+
+        if (!sourceDir.renameTo(targetDir)) {
+            A.errPrintln("Failed to move directory from " + source + " to " + target);
+        }
+    }
+
+    public static void moveFile(String source, String target) {
+        File sourceFile = new File(source);
+        File targetFile = new File(target);
+
+        if (!sourceFile.exists()) {
+            A.errPrintln("Source file does not exist: " + source);
+            return;
+        }
+
+        if (targetFile.exists()) {
+            A.errPrintln("Target file already exists: " + target + ", didn't move " + source);
+            return;
+        }
+
+        if (!sourceFile.renameTo(targetFile)) {
+            A.errPrintln("Failed to move file from " + source + " to " + target);
+        }
+    }
+
     public static void removeFile(String filePath) {
         if (fileExists(filePath)) {
             File file = new File(filePath);
@@ -1325,8 +1417,10 @@ public class A {
 
     public static void sleep(int ms) {
         try {
-            TimeUnit.MILLISECONDS.sleep(ms);
+//            TimeUnit.MILLISECONDS.sleep(ms);
+            Thread.sleep(ms);
         } catch (InterruptedException e) {
+            System.err.println("InterruptedException in A.sleep");
         }
     }
 
@@ -1405,8 +1499,14 @@ public class A {
         return canAfford(
             minerals + ReservedResources.minerals(),
             gas + ReservedResources.gas()
-        )
-            || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
+        ) || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
+    }
+
+    public static boolean canAffordWithReserved(int minerals) {
+        return canAfford(
+            minerals + ReservedResources.minerals(),
+            0
+        ) || canAfford(Math.min(minerals, 550), 0);
     }
 
     public static boolean canAffordWithReserved(AUnitType type) {

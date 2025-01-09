@@ -6,6 +6,7 @@ import atlantis.game.AGame;
 import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
 import atlantis.information.decisions.GGForEnemy;
 import atlantis.util.log.ErrorLog;
+import benchmark.BenchmarkMode;
 
 import java.io.File;
 
@@ -16,13 +17,17 @@ import java.io.File;
 public class Env {
     private static boolean isLocal = false;
     private static boolean isTesting = false;
+    private static boolean isBenchmark = false;
     private static boolean isStarEngine = false;
     private static boolean firstRun = true;
     private static boolean paramTweaker = false;
+    private static String copyCherryVisDataTo = null;
 
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
+        isBenchmark = BenchmarkMode.detectBenchmarkMode(mainArgs);
+
         if (!A.fileExists(envFilePath())) {
             AGame.exit(
                 "ENV file doesn't exist (" + (new File(envFilePath())).getAbsolutePath()
@@ -33,19 +38,7 @@ public class Env {
         String[][] env = A.loadFile(envFilePath(), 2, "=");
 
         for (String[] line : env) {
-            String key = line[0].toUpperCase();
-            if (key.length() > 0 && key.charAt(0) == '#') {
-                continue;
-            }
-            if (key.trim().length() == 0) {
-                continue;
-            }
-            if (line.length < 2) {
-                continue;
-            }
-            String value = line[1];
-
-            applyKeyAndValueAsFlag(key, value);
+            convertEnvLineIntoFlag(line);
         }
 
         if (mainArgsContains("--param-tweaker", mainArgs)) {
@@ -56,7 +49,23 @@ public class Env {
         }
     }
 
-    private static boolean applyKeyAndValueAsFlag(String key, String value) {
+    private static void convertEnvLineIntoFlag(String[] line) {
+        String key = line[0].toUpperCase();
+        if (key.length() > 0 && key.charAt(0) == '#') {
+            return;
+        }
+        if (key.trim().length() == 0) {
+            return;
+        }
+        if (line.length < 2) {
+            return;
+        }
+        String value = line[1];
+
+        applyKeyAndValueToFlag(key, value);
+    }
+
+    private static boolean applyKeyAndValueToFlag(String key, String value) {
         switch (key) {
             case "LOCAL":
                 isLocal = trueFalse(value);
@@ -72,6 +81,9 @@ public class Env {
                 return true;
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
                 ForceExitLocallyAfterRealSeconds.realSecondsLimit = toInt(value);
+                return true;
+            case "POSTGAME_COPY_CHERRYVIS_TO":
+                copyCherryVisDataTo = value;
                 return true;
         }
         return false;
@@ -148,6 +160,10 @@ public class Env {
         return isTesting;
     }
 
+    public static boolean isBenchmark() {
+        return isBenchmark;
+    }
+
     public static boolean isStarEngine() {
         return isStarEngine;
     }
@@ -158,5 +174,9 @@ public class Env {
 
     public static void markUsingStarEngine(boolean enabled) {
         isStarEngine = enabled;
+    }
+
+    public static String copyCherryVisDataTo() {
+        return copyCherryVisDataTo;
     }
 }

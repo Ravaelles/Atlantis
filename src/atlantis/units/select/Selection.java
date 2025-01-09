@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.bullets.DeadMan;
@@ -106,7 +107,7 @@ public class Selection extends BaseSelection {
             0,
             () -> cloneByRemovingIf(
                 (u -> u.groundDist(unit) > maxDist),
-                maxDist + ":" + unit.idWithHash()
+                "inGroundRadius:" + maxDist + ":" + unit.idWithHash()
             )
         );
     }
@@ -128,7 +129,7 @@ public class Selection extends BaseSelection {
             1,
             () -> cloneByRemovingIf(
                 (u -> selectionOfUnits.nearestTo(u).distTo(u) > maxDist),
-                "selection:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
+                "inRadius:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
             )
         );
     }
@@ -245,6 +246,14 @@ public class Selection extends BaseSelection {
             (unit -> !unit.effUndetected()),
             "effUndetected"
         );
+    }
+
+    public Selection mobileDetectors() {
+        return cloneByRemovingIf(unit -> !unit.is(
+            AUnitType.Protoss_Observer,
+            AUnitType.Terran_Science_Vessel,
+            AUnitType.Zerg_Overlord
+        ), "mobileDetectors");
     }
 
     public Selection detectors() {
@@ -494,6 +503,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection nonRanged() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isRanged()), "nonRanged"
+        );
+    }
+
     /**
      * Selects only units that do not currently have max hit points.
      */
@@ -644,6 +659,12 @@ public class Selection extends BaseSelection {
             .reduce(0, Integer::sum);
     }
 
+    public Selection inSquad(Squad squad) {
+        return cloneByRemovingIf(
+            (unit -> !squad.equals(unit.squad())), "inSquad:" + squad.name()
+        );
+    }
+
     public Selection combatUnits() {
         return cloneByRemovingIf(
             (unit -> !unit.isCompleted() || !unit.type().isCombatUnit()), "combatUnits"
@@ -655,7 +676,9 @@ public class Selection extends BaseSelection {
      */
     public Selection combatBuildings(boolean includeCreepColonies) {
         return cloneByRemovingIf(
-            (unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding()),
+            (unit -> includeCreepColonies
+                ? !unit.type().isCombatBuildingOrCreepColony()
+                : !unit.type().isCombatBuildingWithoutCreepColonies()),
             "combatBuildings:" + A.trueFalse(includeCreepColonies)
         );
     }
@@ -720,13 +743,27 @@ public class Selection extends BaseSelection {
         return units().onlyAir();
     }
 
+    public boolean onlyGround() {
+        return units().onlyGround();
+    }
+
     public boolean onlyOfType(AUnitType type) {
         return count() > 0 && count() == countOfType(type);
+    }
+
+    public boolean mostlyOfType(AUnitType type, int percentThreshold) {
+        return count() > 0 && (count() * percentThreshold >= countOfType(type) * 100);
     }
 
     public Selection burrowed() {
         return cloneByRemovingIf(
             (unit -> !unit.isBurrowed()), "burrowed"
+        );
+    }
+
+    public Selection burrowing() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isBurrowing()), "burrowing"
         );
     }
 
@@ -795,6 +832,18 @@ public class Selection extends BaseSelection {
             (unit -> unit.spaceRemaining() < spaceRequired), "havingSpaceFree:" + spaceRequired);
     }
 
+    public Selection havingCooldownMin(int minCooldown) {
+        return cloneByRemovingIf(
+            (unit -> unit.cooldown() < minCooldown), "havingCooldownMin:" + minCooldown
+        );
+    }
+
+    public Selection havingCooldownMax(int maxCooldown) {
+        return cloneByRemovingIf(
+            (unit -> unit.cooldown() > maxCooldown), "havingCooldownMax:" + maxCooldown
+        );
+    }
+
     public Selection havingEnergy(int minEnergy) {
         return cloneByRemovingIf(
             (unit -> !unit.energy(minEnergy)), "havingEnergy:" + minEnergy
@@ -855,6 +904,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection dts() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isDarkTemplar()), "dts"
+        );
+    }
+
     public Selection lurkers() {
         return cloneByRemovingIf(
             (unit -> !unit.isLurker()), "lurkers"
@@ -872,7 +927,8 @@ public class Selection extends BaseSelection {
      */
     public Selection notConstructing() {
         return cloneByRemovingIf(
-            (unit -> unit.isConstructing() || unit.isMorphing() || unit.isBuilder()), "notConstructing"
+            (unit -> unit.isConstructing() || unit.construction() != null || unit.isMorphing() || unit.isBuilder()),
+            "notConstructing"
         );
     }
 
@@ -1067,6 +1123,9 @@ public class Selection extends BaseSelection {
         if (data.isEmpty() || position == null) {
             return null;
         }
+        if (data.size() == 1) {
+            return data.get(0);
+        }
 
         sortDataByDistanceTo(position, false);
 
@@ -1118,9 +1177,33 @@ public class Selection extends BaseSelection {
             return null;
         }
 
-        sortByHealth();
+//        sortByHealth();
+        sortByWound();
+
+//        print("Most wounded: " + data.get(0).type());
 
         return data.get(0);
+    }
+
+    public AUnit mostWoundedOrNearest(HasPosition nearestTo) {
+        if (data.isEmpty()) {
+            return null;
+        }
+
+//        sortByHealth();
+        sortByWound();
+        AUnit first = data.get(0);
+
+        if (first.isWounded()) {
+//            AUnit least = data.get(1);
+//            System.out.println("Most wounded: " + first.typeWithUnitId() + " (" + first.hp() + ")");
+//            if (least != null) System.out.println("Least wounded: " + least.typeWithUnitId() + " (" + least.hp() + ")");
+            return first;
+        }
+
+//        System.err.println("Nope, return nearest = " + nearestTo(nearestTo));
+
+        return nearestTo(nearestTo);
     }
 
     // =========================================================
@@ -1438,6 +1521,18 @@ public class Selection extends BaseSelection {
 
         if (data.size() != 1) {
             data.sort(Comparator.comparingDouble(AUnit::hpPercent));
+        }
+
+        return this;
+    }
+
+    public Selection sortByWound() {
+        if (data.isEmpty()) {
+            return new Selection(new ArrayList<>(), "");
+        }
+
+        if (data.size() != 1) {
+            data.sort(Comparator.comparingDouble(AUnit::woundOrder));
         }
 
         return this;

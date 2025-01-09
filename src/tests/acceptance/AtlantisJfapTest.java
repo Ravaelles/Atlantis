@@ -1,42 +1,42 @@
 package tests.acceptance;
 
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Terran_Marine;
-import static atlantis.units.AUnitType.Terran_Siege_Tank_Tank_Mode;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.concurrent.Callable;
 
-public class AtlantisJfapTest extends NonAbstractTestFakingGame {
+import static atlantis.units.AUnitType.Terran_Marine;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class AtlantisJfapTest extends WorldStubForTests {
+    private FakeUnit dragoon;
+    private FakeUnit sunkenColony;
 
     @Test
     public void sunkenColoniesAreTakenIntoAccount() {
-        FakeUnit dragoon1;
-        FakeUnit sunkenColony;
-
-        FakeUnit[] our = fakeOurs(
-            dragoon1 = fake(AUnitType.Protoss_Dragoon, 10),
+        Callable ours = () -> fakeOurs(
+            dragoon = fake(AUnitType.Protoss_Dragoon, 10),
             fake(AUnitType.Protoss_Dragoon, 11),
             fake(AUnitType.Protoss_Dragoon, 11.1),
             fake(AUnitType.Protoss_Dragoon, 11.9)
         );
-        FakeUnit[] enemies = fakeEnemies(
+        Callable enemies = () -> fakeEnemies(
             sunkenColony = fake(AUnitType.Zerg_Sunken_Colony, 12),
             fake(AUnitType.Zerg_Larva, 12)
         );
 
         createWorld(1, () -> {
-                double ourScore = dragoon1.combatEvalAbsolute();
+                double ourScore = dragoon.combatEvalAbsolute();
                 double enemyScore = sunkenColony.combatEvalAbsolute();
 
                 assertTrue(ourScore < -10);
                 assertTrue(enemyScore < -10);
 //                assertTrue(ourScore > enemyScore);
             },
-            () -> our,
-            () -> enemies
+            ours,
+            enemies
         );
     }
 

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class AttackParamountUnitsInRange extends Manager {
     private AUnit crucialEnemy;
@@ -36,18 +36,26 @@ public class AttackParamountUnitsInRange extends Manager {
         Selection enemies = null;
 
         if (Enemy.zerg()) {
-            enemies = unit.enemiesNear().ofType(AUnitType.Zerg_Scourge);
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Zerg_Scourge,
+                AUnitType.Zerg_Defiler
+            );
         }
         else if (Enemy.protoss()) {
-            enemies = unit.enemiesNear().ofType(AUnitType.Protoss_Observer);
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Dark_Templar
+            );
         }
-        else {
+        else if (Enemy.terran()) {
             return null;
+//            enemies = unit.enemiesNear().tanks();
         }
 
         Selection targets = enemies
             .realUnits()
             .notDeadMan()
+            .effVisible()
             .canBeAttackedBy(unit, 0.2);
 
         Selection closeTargets = targets.canBeAttackedBy(unit, -0.7);

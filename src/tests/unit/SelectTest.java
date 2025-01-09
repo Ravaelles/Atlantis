@@ -6,12 +6,14 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SelectTest extends AbstractTestWithUnits {
+public class SelectTest extends WorldStubForTests {
 
     // === Our ======================================================
 
@@ -24,6 +26,7 @@ public class SelectTest extends AbstractTestWithUnits {
 
     @Test
     public void ourWithUnfinished() {
+        ClearAllCaches.clearAll();
         int ourTx = 10;
         int enemyTx = 30;
 
@@ -37,7 +40,7 @@ public class SelectTest extends AbstractTestWithUnits {
 
         FakeUnit[] enemies = fakeEnemies();
 
-        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+        createWorld(ours, enemies, () -> {
 //            Select.our().print("Our");
 //            Select.ourWithUnfinished().print("Our with UNF");
 
@@ -56,7 +59,7 @@ public class SelectTest extends AbstractTestWithUnits {
 //            Select.ourRealUnits().print();
 //            Select.our().minus(Select.ourRealUnits()).print("Our units that are not real units");
 
-            assertEquals(GROUND_UNITS + AIR_UNITS + COMBAT_BUILDINGS, Select.ourRealUnits().size());
+            assertEquals(14, Select.ourRealUnits().size());
         });
     }
 
@@ -84,8 +87,12 @@ public class SelectTest extends AbstractTestWithUnits {
                 Select.enemyRealUnits(true, false, false).size()
             );
 
+//            Select.enemy().realUnits().print("Real units");
+//            Select.enemy().combatBuildings(true).print("COMBAT_BUILDINGS");
+//            Select.enemy().realUnitsAndCombatBuildings().print("REAL_UNITS + COMBAT_BUILDINGS");
+
             assertEquals(
-                REAL_UNITS + COMBAT_BUILDINGS,
+                14,
                 Select.enemy().realUnitsAndCombatBuildings().size()
             );
 

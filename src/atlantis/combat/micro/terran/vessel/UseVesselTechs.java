@@ -25,10 +25,10 @@ public class UseVesselTechs extends Manager {
         return true;
     }
 
-    protected boolean print(String s) {
-        System.err.println("Manager -> print:  " + s);
-        return true;
-    }
+//    protected boolean print(String s) {
+//        System.err.println("Manager -> print:  " + s);
+//        return true;
+//    }
 
     @Override
     public Manager handle() {
@@ -112,7 +112,7 @@ public class UseVesselTechs extends Manager {
             AUnitType.Zerg_Guardian, AUnitType.Zerg_Scourge,
             AUnitType.Protoss_High_Templar, AUnitType.Protoss_Archon, AUnitType.Protoss_Dark_Archon,
             AUnitType.Terran_Medic
-        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
+        ).effVisible().inRadius(AUnit.NEAR_DIST, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }
@@ -122,7 +122,7 @@ public class UseVesselTechs extends Manager {
             AUnitType.Zerg_Zergling, AUnitType.Zerg_Drone,
             AUnitType.Protoss_Dragoon, AUnitType.Protoss_Zealot,
             AUnitType.Terran_Marine
-        ).effVisible().inRadius(15, unit).mostDistantTo(unit);
+        ).effVisible().inRadius(AUnit.NEAR_DIST, unit).mostDistantTo(unit);
         if (enemy != null) {
             return unit.useTech(TechType.Irradiate, enemy);
         }

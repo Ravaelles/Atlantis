@@ -2,11 +2,11 @@ package atlantis.util;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
-import atlantis.game.race.MyRace;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Race;
+import main.Main;
 
 public class We {
     private static Cache<Object> cache = new Cache<>();
@@ -18,13 +18,13 @@ public class We {
             "race",
             -1,
             () -> {
-                if (MyRace.isPlayingAsProtoss()) {
+                if (We.protoss()) {
                     return Race.Protoss;
                 }
-                else if (MyRace.isPlayingAsTerran()) {
+                else if (We.terran()) {
                     return Race.Terran;
                 }
-                else if (MyRace.isPlayingAsZerg()) {
+                else if (We.zerg()) {
                     return Race.Zerg;
                 }
 
@@ -40,15 +40,21 @@ public class We {
     }
 
     public static boolean terran() {
-        return MyRace.isPlayingAsTerran() || Race.Terran.equals(AtlantisRaceConfig.MY_RACE);
+        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(Main.ourRace());
+
+        return AtlantisRaceConfig.MY_RACE.equals(Race.Terran);
     }
 
     public static boolean protoss() {
-        return MyRace.isPlayingAsProtoss();
+        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(Main.ourRace());
+
+        return AtlantisRaceConfig.MY_RACE.equals(Race.Protoss);
     }
 
     public static boolean zerg() {
-        return MyRace.isPlayingAsZerg();
+        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(Main.ourRace());
+
+        return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);
     }
 
     public static boolean haveBase() {

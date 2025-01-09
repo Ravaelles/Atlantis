@@ -1,8 +1,8 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Commander;
-import atlantis.protoss.observer.ProtossObserver;
 import atlantis.protoss.ProtossShieldBattery;
+import atlantis.protoss.observer.ProtossObserver;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;

@@ -11,7 +11,7 @@ public class ContinueHeal extends Manager {
 
     @Override
     public boolean applies() {
-        return !unit.isIdle() && unit.lastActionLessThanAgo(8, Actions.HEAL);
+        return unit.lastActionLessThanAgo(5, Actions.HEAL);
     }
 
     @Override

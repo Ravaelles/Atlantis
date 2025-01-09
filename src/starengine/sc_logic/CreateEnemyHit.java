@@ -8,7 +8,7 @@ public class CreateEnemyHit {
         int damage = attacker.damageAgainst(target);
         target.hp -= damage;
 
-        A.println(attacker + " hits " + target + " for " + damage + " hp (" + target.hp + " left)");
+//        A.println(attacker + " hits " + target + " for " + damage + " hp (" + target.hp + " left)");
 
         if (target.hp <= 0) unitIsDead(target);
     }

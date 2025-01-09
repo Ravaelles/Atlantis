@@ -18,7 +18,7 @@ public class Cohesion extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossCohesion.class,
+//            ProtossCohesion.class,
             TerranCohesion.class,
         };
     }

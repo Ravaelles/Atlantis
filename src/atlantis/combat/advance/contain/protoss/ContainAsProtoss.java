@@ -40,7 +40,7 @@ public class ContainAsProtoss extends Manager {
 //            else if (dist <= 14 || unit.distToOr999(Chokes.enemyMainChoke()) < DIST_TO_ENEMY_MAIN_CHOKE) {
             else if (dist <= 14) {
                 if (A.everyNthGameFrame(17)) {
-                    unit.holdPosition("ContainHold");
+                    unit.holdPosition(Actions.HOLD_POSITION, "ContainHold");
                 }
                 else {
                     unit.moveToSafety(Actions.MOVE_FORMATION, "ContainOut");
@@ -48,7 +48,7 @@ public class ContainAsProtoss extends Manager {
                 return true;
             }
 
-            unit.holdPosition("ContainHold");
+            unit.holdPosition(Actions.HOLD_POSITION, "ContainHold");
             return true;
         }
 

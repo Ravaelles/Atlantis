@@ -8,7 +8,7 @@ import atlantis.units.HasUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import bwapi.TechType;
 
 import java.util.List;

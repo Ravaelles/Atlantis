@@ -15,7 +15,7 @@ public class WorkerDefenceFightWorkers extends Manager {
         return unit.hp() >= 14
             && unit.enemiesNear().workers().notEmpty()
             && unit.enemiesNear().combatUnits().inRadius(7, unit).empty()
-            && unit.distToBase() <= 16;
+            && unit.distToBase() <= 12;
     }
 
     @Override

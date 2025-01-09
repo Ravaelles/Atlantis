@@ -62,7 +62,7 @@ public class ARegion implements HasPosition {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(HasPosition o) {
         if (this == o) return true;
         if (!(o instanceof ARegion)) return false;
         if (area == null) {
@@ -106,6 +106,10 @@ public class ARegion implements HasPosition {
                 (area.getTopLeft().x + area.getBottomRight().x) / 2,
                 (area.getTopLeft().y + area.getBottomRight().y) / 2
             );
+
+            if (!center.isWalkable()) {
+                center = center.makeWalkable(8, this);
+            }
         }
 
         return center;

@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
+import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.region.ARegion;
@@ -12,16 +13,13 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.Vector;
 import bwapi.Color;
-import bwapi.Point;
 import bwapi.Position;
-import bwapi.TilePosition;
 
 /**
  * This interface helps ease problems of overriding native bridge classes like e.g. BaseLocation which doesn't
  * have default constructor. Instead ABaseLocation can use this interface.
  */
 public interface HasPosition {
-
     public static final int PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE = 32;
 
     APosition position();
@@ -86,7 +84,7 @@ public interface HasPosition {
         if (Env.isTesting()) return position();
 
         APosition position = this.position();
-        if (position.isBuildable()) {
+        if (position.isBuildableIncludeBuildings()) {
             return position;
         }
 
@@ -99,7 +97,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         position = this.translateByTiles(dtx, dty);
-                        if (position.isBuildable()) {
+                        if (position.isBuildableIncludeBuildings()) {
                             return position;
                         }
                     }
@@ -116,7 +114,7 @@ public interface HasPosition {
         if (Env.isTesting()) return position();
 
         APosition position = this.position();
-        if (position.isBuildable()) {
+        if (position.isBuildableIncludeBuildings()) {
             return position;
         }
 
@@ -129,7 +127,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         position = this.translateByTiles(dtx, dty);
-                        if (position.isBuildable() && !position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
+                        if (position.isBuildableIncludeBuildings() && !position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
                             return position;
                         }
                     }
@@ -142,7 +140,7 @@ public interface HasPosition {
         return null;
     }
 
-    default APosition makeWalkable(int maxRadius) {
+    default APosition makeWalkable(int maxRadius, ARegion sameRegion) {
         if (Env.isTesting()) return position();
 
         APosition position = this.position();
@@ -159,7 +157,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         position = this.translateByTiles(dtx, dty);
-                        if (position.isWalkable()) {
+                        if (position.isWalkable() && (sameRegion == null || sameRegion.equals(position.region()))) {
                             return position;
                         }
                     }
@@ -228,8 +226,8 @@ public interface HasPosition {
         if (Env.isTesting()) return position();
 
         double currentRadius = 0;
-        double closenessMargin = 0.15;
-        Selection our = Select.our().groundUnits().inRadius(maxRadius + 1, this);
+        double closenessMargin = 0.1;
+        Selection our = Select.our().groundUnits().inRadius(maxRadius + 1, this).exclude(exceptUnit);
 
         while (currentRadius <= maxRadius) {
             for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
@@ -241,8 +239,9 @@ public interface HasPosition {
                         APosition position = this.translateByTiles(dtx, dty);
                         if (
                             position.isWalkable()
-                                && our.exclude(exceptUnit).inRadius(closenessMargin, position).empty()
+                                && our.inRadius(closenessMargin, position).empty()
                         ) {
+//                            System.err.println("position = " + position + " / " + position.distTo(exceptUnit));
                             return position;
                         }
                     }
@@ -285,6 +284,20 @@ public interface HasPosition {
         return distTo(otherPosition) >= minDist;
     }
 
+    default double distToMain() {
+        AUnit base = Select.main();
+        if (base == null) return 999;
+
+        return base.distTo(this);
+    }
+
+    default double groundDistToMain() {
+        AUnit base = Select.main();
+        if (base == null) return 999;
+
+        return base.groundDist(this);
+    }
+
     /**
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
@@ -299,7 +312,7 @@ public interface HasPosition {
     }
 
     default boolean isExplored() {
-        if (Env.isTesting()) return true;
+        if (Env.isTesting()) return APosition.TESTING_EXPLORED;
 
         return Atlantis.game().isExplored(position().p().toTilePosition());
     }
@@ -310,10 +323,16 @@ public interface HasPosition {
         return Atlantis.game().isVisible(position().p().toTilePosition());
     }
 
-    default boolean isBuildable() {
+    default boolean isBuildableNotIncludingBuildings() {
         if (Env.isTesting()) return Select.all().countInRadius(1.98, this) == 0;
 
         return Atlantis.game().isBuildable(position().p().toTilePosition());
+    }
+
+    default boolean isBuildableIncludeBuildings() {
+        if (Env.isTesting()) return Select.all().countInRadius(1.98, this) == 0;
+
+        return Atlantis.game().isBuildable(tx(), ty(), true);
     }
 
     default boolean isConnected() {
@@ -376,14 +395,19 @@ public interface HasPosition {
         return false;
     }
 
-    default boolean regionsMatch(HasPosition other) {
-        if (other == null || other.position() == null || !other.hasPosition()) return false;
+    default boolean regionsMatchOrClose(HasPosition other, double maxGroundDist) {
+        if (regionsMatch(other)) return true;
 
+        return groundDist(other) <= maxGroundDist;
+    }
+
+    default boolean regionsMatch(HasPosition other) {
+        if (other == null || other.position() == null || !other.hasPosition() || other.position() == null) return false;
         if (!hasPosition()) return false;
 
         ARegion region = position().region();
 
-        if (region == null) return false;
+        if (region == null || region.position() == null || !region.hasPosition()) return false;
 
         return region.equals(other.position().region());
     }
@@ -412,6 +436,12 @@ public interface HasPosition {
         }
     }
 
+    default void paintRectangle(double width, double height, Color color) {
+        AAdvancedPainter.paintRectangle(
+            this.translateByTiles(-width / 2, -height / 2), (int) (width * 32), (int) (height * 32), color
+        );
+    }
+
     default void paintLine(HasPosition to, Color color) {
         AAdvancedPainter.paintLine(this, to, color);
     }
@@ -433,13 +463,14 @@ public interface HasPosition {
         AAdvancedPainter.paintTextCentered(this.translateByTiles(0, tyOffset), text, color, false);
     }
 
-    default String digitDistTo(HasPosition to) {
+    default String distToDigit(HasPosition to) {
         return "(" + A.digit(distTo(to)) + ")";
     }
 
     default boolean equals(HasPosition obj) {
         if (this == obj) return true;
         if (obj == null) return false;
+        if (obj.position() == null) return false;
 
         int otherX = obj.x();
         int otherY = obj.y();
@@ -452,5 +483,36 @@ public interface HasPosition {
             compare = Integer.compare(x(), y());
         }
         return compare;
+    }
+
+
+    default boolean isCloseToMapBounds() {
+        int px = x();
+        int py = y();
+
+        if (px < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE)) return true;
+
+        if (py < PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE) return true;
+        else return py >= (32 * AMap.getMapHeightInTiles() - PIXELS_TO_MAP_BOUNDARIES_CONSIDERED_CLOSE);
+    }
+
+    default boolean isCloseToMapBounds(int tilesAwayFromEdge) {
+        int px = x();
+        int py = y();
+        int allowedPixelsAway = tilesAwayFromEdge * 32;
+
+        if (px <= allowedPixelsAway) return true;
+        else if (px >= (32 * AMap.getMapWidthInTiles() - allowedPixelsAway)) return true;
+
+        if (py <= allowedPixelsAway) return true;
+        else return py >= (32 * AMap.getMapHeightInTiles() - allowedPixelsAway);
+    }
+
+    default double distToMapBorders() {
+        return Math.min(
+            Math.min(tx(), ty()),
+            Math.min((AMap.getMapWidthInTiles() - tx()), (AMap.getMapHeightInTiles() - ty()))
+        );
     }
 }

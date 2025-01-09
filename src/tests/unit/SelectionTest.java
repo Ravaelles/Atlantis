@@ -1,19 +1,19 @@
 package tests.unit;
 
+import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class SelectionTest extends NonAbstractTestFakingGame {
-
+public class SelectionTest extends WorldStubForTests {
     @Test
     public void chainingSubsequentCallsWorksAsExpected() {
         usingFakeOurs(() -> {
@@ -67,14 +67,24 @@ public class SelectionTest extends NonAbstractTestFakingGame {
 
     @Test
     public void tanks() {
-        usingFakeOurs(() -> {
-            BaseSelect.clearCache();
-            Select.clearCache();
-            Count.clearCache();
+        ClearAllCaches.clearAll();
 
-//            Select.our().print();
+        usingFakeOurs(() -> {
+            Select.our().print();
             Selection our = Select.our();
 
+            assertEquals(22, our.size());
+//            Select.our().print("our");
+//            Select.ourWithUnfinished().print("Unfinished");
+            assertEquals(2, our.ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
+            assertEquals(2, Select.ourWithUnfinished().ofType(
+                AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
+            ).count());
+
+//            our.realUnitsAndCombatBuildings().print("Real units and combat buildings");
+//            System.err.println("our.realUnitsAndCombatBuildings().size() = " + our.realUnitsAndCombatBuildings().size());
             assertEquals(22, our.size());
             assertEquals(2, our.tanks().size());
             if (Count.tanks() != 2) {
@@ -93,14 +103,13 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             assertEquals(2, Select.ourWithUnfinished().ofType(
                 AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
             ).count());
-            assertEquals(22, our.size());
         });
     }
 
 //    @Test
 //    public void removesDuplicates() {
 //        FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon);
-//        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+//        Strategy.setTo(TerranStrategies.TERRAN_MMG_vP);
 //        EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon);
 //
 //        FakeUnit[] fakeEnemies = fakeEnemies(
@@ -115,10 +124,6 @@ public class SelectionTest extends NonAbstractTestFakingGame {
 //
 //        Selection enemies = Select.from(fakeEnemies).add(EnemyUnits.discovered()).removeDuplicates();
 //
-////        enemies.print();
-//
-//        assertEquals(6, enemies.size());
-//    }
 
     @Test
     public void testVariousMethods() {
@@ -130,11 +135,28 @@ public class SelectionTest extends NonAbstractTestFakingGame {
             AUnit zealot = our.first();
             AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
 
+//            our.print("OUR units");
+//            our.realUnits().print("OUR REAL units");
+//            our.exclude(our.realUnits()).print("OUR MINUS realUnits");
+//            our.combatUnits().print("Combat units");
+//            our.exclude(our.combatUnits()).print("OUR MINUS combatUnits");
+
+            assertEquals(22, our.size());
+
+            assertEquals(5, our.buildings().size());
+            assertEquals(2, our.combatBuildings(false).size());
+            assertEquals(3, our.combatBuildings(true).size());
+            assertEquals(11, our.combatUnits().size());
+            assertEquals(14, our.realUnits().size());
+
+            assertTrue(our.realUnits().cannons().notEmpty());
+
 //            our.exclude(our.combatUnits()).print();
 //            our.inShootRangeOf().print();
 //            A.println("zealot = " + zealot);
 
-            assertEquals(11, our.combatUnits().size());
+            assertNotEquals(0, our.combatUnits().sunkens().size());
+            assertNotEquals(0, our.combatUnits().cannons().size());
 
             assertEquals(5, our.havingAntiAirWeapon().size());
             assertEquals(17, our.notHavingAntiAirWeapon().size());
@@ -171,4 +193,32 @@ public class SelectionTest extends NonAbstractTestFakingGame {
         });
     }
 
+    @Test
+    public void targetsMostWounded() {
+        FakeUnit mostWounded, closest;
+
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit[] enemies = fakeEnemies(
+            closest = fake(AUnitType.Terran_Marine, 10.3).setHp(18),
+            fake(AUnitType.Terran_Bunker, 10.5).setHp(99),
+            fake(AUnitType.Terran_Bunker, 11.1),
+            fake(AUnitType.Terran_Marine, 12.1).setHp(25),
+            mostWounded = fake(AUnitType.Terran_Bunker, 13.1).setHp(12), // The bunker is relatively more wounded
+            fake(AUnitType.Terran_Marine, 13.2),
+            fake(AUnitType.Terran_Bunker, 13.5)
+        );
+
+        createWorld(1,
+            () -> {
+//                Select.enemy().print();
+
+                assertEquals(mostWounded, Select.enemy().mostWounded());
+                assertEquals(mostWounded, Select.enemy().mostWoundedOrNearest(our));
+                assertEquals(mostWounded, ATargeting.defineBestEnemyToAttack(our));
+
+                assertEquals(closest, Select.enemy().marines().mostWoundedOrNearest(our));
+                assertEquals(closest, Select.enemy().nearestTo(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
 }

@@ -2,7 +2,7 @@ package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import java.util.List;
 

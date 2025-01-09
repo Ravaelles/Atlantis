@@ -2,12 +2,7 @@ package atlantis.combat.managers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
-import atlantis.combat.generic.enemy_in_range.AttackEnemiesInRange;
-import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-//import atlantis.combat.micro.avoid.buildings.ProtossDontEngageWhenCombatBuildings;
-import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
-import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.micro.attack.expansion.OverrideAndAttackEnemyExpansion;
 import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.terran.repair.DontMoveWhenBeingRepared;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
@@ -26,8 +21,6 @@ public class CombatManagerMediumPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ShouldStopRunning.class,
-
 //            TerranCombatManager.class,
 //            ProtossCombatManager.class,
 
@@ -38,10 +31,9 @@ public class CombatManagerMediumPriority extends Manager {
 
             SquadScout.class,
 
-            AvoidAsUndetected.class,
-            AvoidEnemies.class,
+            OverrideAndAttackEnemyExpansion.class,
 
-            AttackNearbyEnemies.class,
+//            AttackNearbyEnemies.class,
 //            AttackEnemiesInRange.class,
 
             DontMoveWhenBeingRepared.class,

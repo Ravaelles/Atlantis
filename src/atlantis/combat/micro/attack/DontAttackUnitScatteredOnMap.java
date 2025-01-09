@@ -3,7 +3,7 @@ package atlantis.combat.micro.attack;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class DontAttackUnitScatteredOnMap {
     public static boolean isEnemyScatteredOnMap(AUnit unit, AUnit enemy) {
@@ -13,7 +13,7 @@ public class DontAttackUnitScatteredOnMap {
         if (A.isUms()) return false;
 
         if (dontChaseLonelyZerglings(unit, enemy)) return true;
-        if (preventChasingEarlyWorkerScout(unit, enemy)) return false;
+        if (preventChasingEarlyWorkerScout(unit, enemy)) return true;
 
         HasPosition squadCenter = unit.squadCenter();
         if (squadCenter != null && squadCenter.distTo(enemy) >= 20) return true;
@@ -35,10 +35,14 @@ public class DontAttackUnitScatteredOnMap {
 
     private static boolean preventChasingEarlyWorkerScout(AUnit unit, AUnit enemy) {
         if (!enemy.isWorker()) return false;
+        if (unit.isWorker() && unit.isBuilder()) return true;
         if (unit.canAttackTargetWithBonus(enemy, 0.1)) return false;
+        if (enemy.ourNearestBuildingDist() >= 15) return true;
+
+        if (Enemy.zerg() && A.s <= 60 * 4.5 && unit.distTo(enemy) >= 1.05 && enemy.distToMain() <= 25) return true;
 
         if (A.s >= 8 * 60) return false;
-        if (!unit.isMissionAttackOrGlobalAttack()) return false;
+//        if (!unit.isMissionAttackOrGlobalAttack()) return false;
 
         return enemy.friendsNear().inRadius(2, unit).empty()
             && !unit.canAttackTargetWithBonus(enemy, 0.1)

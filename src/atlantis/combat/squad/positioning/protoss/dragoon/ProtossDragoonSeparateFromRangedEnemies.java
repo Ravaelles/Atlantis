@@ -1,17 +1,5 @@
 package atlantis.combat.squad.positioning.protoss.dragoon;
 
-import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.DistFromFocus;
-import atlantis.game.A;
-import atlantis.map.position.HasPosition;
-import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.range.OurDragoonRange;
-import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
-import atlantis.util.We;
-import bwapi.Color;
-
 //public class ProtossDragoonSeparateFromRangedEnemies extends Manager {
 //    private Selection enemiesNear;
 //    private boolean underAttackRecently;

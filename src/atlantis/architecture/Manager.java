@@ -1,5 +1,6 @@
 package atlantis.architecture;
 
+import atlantis.architecture.helper.InstantiateManager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.log.ErrorLog;
@@ -69,6 +70,8 @@ public abstract class Manager extends BaseManager {
 //        else ErrorLog.printErrorOnce("Parent is null for " + this.getClass().getSimpleName() + "!");
     }
 
+    // === Invoke ===========================================
+
     public Manager invokeFrom(Manager parent) {
         return invokeFromParent(parent);
     }
@@ -84,6 +87,22 @@ public abstract class Manager extends BaseManager {
     public boolean invokedFrom(Manager parent) {
         return invokeFromParent(parent) != null;
     }
+
+    public boolean invokedManager(Class<? extends Manager> managerClass) {
+        Manager manager = InstantiateManager.byClass(managerClass, unit);
+        if (manager == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                "Failed to instantiate manager " + managerClass.getSimpleName()
+            );
+            return false;
+        }
+
+        if (!manager.applies()) return false;
+
+        return manager.invokedFrom(this);
+    }
+
+    // =========================================================
 
     private String parentToString(Manager parent) {
 //        if (parent instanceof String) return (String) parent;
@@ -161,6 +180,12 @@ public abstract class Manager extends BaseManager {
      * Indicates this Manager was just used by the unit.
      */
     public Manager usedManager(Manager manager) {
+        return usedManager(manager, null);
+    }
+
+    public Manager usedManager(Class managerClass) {
+        Manager manager = InstantiateManager.byClass(managerClass, unit);
+
         return usedManager(manager, null);
     }
 

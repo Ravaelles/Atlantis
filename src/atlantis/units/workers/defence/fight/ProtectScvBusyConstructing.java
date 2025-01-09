@@ -1,10 +1,9 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.production.constructing.ConstructionsCommander;
+import atlantis.production.constructions.ConstructionsCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ProtectScvBusyConstructing extends Manager {

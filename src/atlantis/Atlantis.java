@@ -6,6 +6,7 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.listeners.*;
+import atlantis.game.util.GameSummary;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -89,7 +90,7 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
 
-        OnStart.execute();
+        OnGameStarted.execute();
     }
 
     private void setBwapiFlags() {
@@ -125,7 +126,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        OnUnitCompleted.onUnitCompleted(u);
+        OnUnitCompleted.update(u);
     }
 
     /**

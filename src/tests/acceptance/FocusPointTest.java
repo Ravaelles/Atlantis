@@ -5,10 +5,10 @@ import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.game.listeners.OnUnitMorph;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-public class FocusPointTest extends AbstractTestFakingGame {
+public class FocusPointTest extends AbstractTestWithWorld {
     private AtlantisGameCommander gameCommander;
     private FakeUnit assimilator;
     private FakeUnit drone2;

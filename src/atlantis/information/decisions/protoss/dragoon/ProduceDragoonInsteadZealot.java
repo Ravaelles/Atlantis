@@ -2,12 +2,12 @@ package atlantis.information.decisions.protoss.dragoon;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProduceDragoonInsteadZealot {
     public static boolean dragoonInsteadOfZealot() {
@@ -24,7 +24,7 @@ public class ProduceDragoonInsteadZealot {
 //        if (!A.hasGas(50) || !Have.cyberneticsCore()) return false;
         if (notEnoughZealots()) return false;
 
-        if (Enemy.protoss() && Count.ourCombatUnits() >= 9 && OurArmy.strength() >= 70) return true;
+        if (Enemy.protoss() && Count.ourCombatUnits() >= 9 && Army.strength() >= 70) return true;
         if (A.minerals() >= 170 && Count.gateways() >= 3) return true;
         if (Enemy.zerg() && dragoonAgainstZerg()) return true;
         if (A.hasGas(50) && !A.hasMinerals(225) && Count.dragoons() <= 2 && Count.zealots() >= 1) return true;
@@ -43,14 +43,14 @@ public class ProduceDragoonInsteadZealot {
 
     private static boolean manyZealotsAndEnemyTooStrong() {
         return Enemy.protoss()
-            && OurArmy.strength() <= 120
+            && Army.strength() <= 120
             && Count.zealots() >= 9;
     }
 
     private static boolean notEnoughZealots() {
         if (
             Enemy.protoss()
-                && OurArmy.strength() <= 85
+                && Army.strength() <= 85
                 && A.seconds() <= 400
 //                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)
 //                && Count.zealots() <= Math.max(4, EnemyUnits.discovered().zealots().count() * 0.3)

@@ -5,7 +5,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ZergMissionChangerWhenAttack extends MissionChangerWhenAttack {
 

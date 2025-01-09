@@ -2,14 +2,13 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
+import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnitType;
-import org.junit.Test;
-import tests.unit.AbstractTestWithUnits;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ProtossStreetGridTest extends NonAbstractTestFakingGame {
+public class ProtossStreetGridTest extends WorldStubForTests {
     @Test
     public void testGatewayAndPylonPlacement() {
         createWorld(1, () -> {

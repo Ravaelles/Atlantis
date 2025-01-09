@@ -2,8 +2,14 @@ package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.away.DanceAway;
+import atlantis.combat.micro.dancing.away.DanceAwayAsMarine;
+import atlantis.combat.micro.dancing.away.DanceAwayAsMelee;
+import atlantis.combat.micro.dancing.away.protoss.DanceAwayAsDragoon;
+import atlantis.combat.micro.dancing.away.protoss.DanceAwayAsTank;
+import atlantis.combat.micro.dancing.to.DanceTo;
+import atlantis.combat.micro.dancing.to.DanceToAsDragoon;
+import atlantis.combat.micro.dancing.to.DanceToAsMarine;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.UnitAttackWaitFrames;
 
 public class DanceAfterShoot extends Manager {
     public DanceAfterShoot(AUnit unit) {
@@ -12,32 +18,50 @@ public class DanceAfterShoot extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.isMarine()) return false;
+//        if (unit.isMarine()) return false;
+
+//        if (true) return false;
 
         boolean applies = unit.isRanged()
-//            && !unit.isAttacking()
-//            && (!unit.hasTarget() || !unit.target().isABuilding())
-            && !unit.isHoldingPosition()
-            && !unit.isStartingAttack()
-            && !unit.isAttackFrame()
-//            && unit.cooldownRemaining() >= cooldownRemainingThreshold()
-            && !shouldSkip()
-//            && unit.cooldownRemaining() <= unit.cooldownAbsolute() - UnitAttackWaitFrames.effectiveStopFrames(unit.type())
+            && unit.attackState().finishedShooting();
+
+//        boolean applies = unit.isRanged()
+////            && !unit.isAttacking()
+////            && (!unit.hasTarget() || !unit.target().isABuilding())
+//            && !unit.isHoldingPosition()
+//            && !unit.isStartingAttack()
+//            && !unit.isAttackFrame()
 //            && unit.lastActionMoreThanAgo(6, Actions.ATTACK_UNIT)
-            && UnitAttackWaitFrames.waitedLongEnoughForAttackFrameToFinish(unit);
-//            && UnitAttackWaitFrames.waitedLongEnoughForStartedAttack(unit)
-//            && unit.enemiesNear().ranged().havingGreaterRanged().inRadius(6, unit).empty()
+//            && unit.lastAttackFrameLessThanAgo(unit.cooldownAbsolute())
+////            && applyAsDragoon()
+////            && unit.cooldownRemaining() >= cooldownRemainingThreshold()
+//            && !shouldSkip();
 
 //        System.err.println("APPLIES = " + (applies));
 
         return applies;
     }
 
+//    private boolean applyAsDragoon() {
+//        if (!unit.isDragoon()) return true;
+//
+////        if (unit.cooldown() >= 24) return false;
+////        if (unit.cooldown() <= 3) return false;
+//
+//        return true;
+//    }
+
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             DanceAway.class,
+            DanceAwayAsDragoon.class,
+            DanceAwayAsMelee.class,
+            DanceAwayAsMarine.class,
+            DanceAwayAsTank.class,
             DanceTo.class,
+            DanceToAsDragoon.class,
+            DanceToAsMarine.class,
         };
     }
 
@@ -50,7 +74,7 @@ public class DanceAfterShoot extends Manager {
         if (unit.target() == null) return true;
 
         if (unit.isMissionSparta()) return true;
-        if (!unit.isAttacking() && unit.noCooldown() && unit.woundPercent() <= 10) return true;
+//        if (!unit.isAttacking() && unit.noCooldown() && unit.woundPercent() <= 10) return true;
 
         // Terran
         if (unit.isMedic()) return true;

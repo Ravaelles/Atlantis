@@ -2,7 +2,7 @@ package atlantis.combat.retreating.protoss.should;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.big_scale.ProtossFullRetreat;
-import atlantis.combat.retreating.protoss.small_scale.ProtossSmallScaleRetreat;
+import atlantis.combat.retreating.protoss.small_scale.ProtossMeleeSmallScaleRetreat;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -15,7 +15,7 @@ public class ProtossShouldRetreat extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             ProtossFullRetreat.class,
-            ProtossSmallScaleRetreat.class,
+            ProtossMeleeSmallScaleRetreat.class,
         };
     }
 
@@ -25,7 +25,7 @@ public class ProtossShouldRetreat extends Manager {
 //
 //        Selection friends = friends(unit);
 //
-//        if (ProtossSmallScaleRetreat.shouldSmallScaleRetreat(unit, friends, enemies)) {
+//        if (ProtossMeleeSmallScaleRetreat.shouldSmallScaleRetreat(unit, friends, enemies)) {
 //            if (unit.isLeader()) {
 //                RetreatManager.GLOBAL_RETREAT_COUNTER++;
 //            }
@@ -49,7 +49,7 @@ public class ProtossShouldRetreat extends Manager {
 
     public static Selection friends(AUnit unit) {
 //        return unit.friendsNear().notRunning();
-        return unit.friendsNear().combatUnits().havingAtLeastHp(18);
+        return unit.friendsNear().combatUnits().havingAtLeastHp(22);
     }
 
     public static Selection enemies(AUnit unit) {

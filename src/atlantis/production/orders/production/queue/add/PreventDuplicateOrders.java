@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue.add;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueLastStatus;
@@ -17,25 +18,35 @@ import bwapi.UpgradeType;
 public class PreventDuplicateOrders {
     public static final int MAX_NONCOMPLETED_ORDERS_AT_ONCE = 20;
     public static boolean tempDisabled = false;
-//    public static History history = new History();
+    private static int lastRequestedAgo;
+    //    public static History history = new History();
 
     protected static boolean preventExcessiveOrInvalidOrders(AUnitType type, HasPosition position) {
         if (tempDisabled) return false;
 
         assert type != null;
 
-        if (onlyOneAllowed(type, position)) {
+        if (OnlyOneAllowedOfType.onlyOneAllowed(type, position)) {
             QueueLastStatus.updateStatusFailed("OnlyOneAllowed", type.toString());
             return true;
         }
 
-        if (excessivePylon(type, position)) {
-            QueueLastStatus.updateStatusFailed("ExcessivePylon", type.toString());
+//        if (excessivePylon(type, position)) {
+//            QueueLastStatus.updateStatusFailed("ExcessivePylon", type.toString());
+//            return true;
+//        }
+
+        if (justRequestedThisType(type)) {
+            QueueLastStatus.updateStatusFailed("JustRequested:" + lastRequestedAgo, type.toString());
             return true;
         }
 
-        if (justRequestedThisType(type)) {
-            QueueLastStatus.updateStatusFailed("JustRequested", type.toString());
+        if (preventSpamPylons(type, position)) {
+            return true;
+        }
+
+        if (tooManyRecently(type)) {
+            QueueLastStatus.updateStatusFailed("TooManyRecently", type.toString());
             return true;
         }
 
@@ -57,11 +68,26 @@ public class PreventDuplicateOrders {
         return false;
     }
 
-    private static boolean onlyOneAllowed(AUnitType type, HasPosition position) {
-        if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Robotics_Support_Bay)) return Count.withPlanned(type) > 0;
+    private static boolean preventSpamPylons(AUnitType type, HasPosition position) {
+        if (!type.isPylon()) return false;
+
+        if (A.supplyTotal() >= 30) {
+            int inQueue = Math.max(
+                ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon),
+                CountInQueue.count(AUnitType.Protoss_Pylon)
+            );
+
+            if (inQueue >= (1 + (A.supplyFree() <= 2 ? 1 : 0) + (A.hasMinerals(500) ? 1 : 0))) {
+                QueueLastStatus.updateStatusFailed("TooManyPylonsAtOnce:" + inQueue, type.toString());
+                return true;
+            }
+        }
+
+        if (A.supplyFree() >= 13 && type.isPylon()) {
+            QueueLastStatus.updateStatusFailed("DontSpamPylons", type.toString());
+//            ErrorLog.printMaxOncePerMinute("Stop Pylon to queue, prevent spam. Free supply: " + A.supplyFree());
+            return true;
+        }
 
         return false;
     }
@@ -72,7 +98,7 @@ public class PreventDuplicateOrders {
         if (!type.isABuilding()) return false;
         if (Count.withPlanned(type) == 0) return false;
 
-        int lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
+        lastRequestedAgo = Queue.get().history().lastHappenedAgo(type.name());
 //        System.err.println(
 //            A.now() + " - " + type + " lastRequestedAgo = " + lastRequestedAgo + " / CIQ="
 //                + CountInQueue.count(type)
@@ -90,7 +116,14 @@ public class PreventDuplicateOrders {
             return true;
         }
 
-        if (!type.isCombatBuilding() && Queue.get().history().countInLastSeconds(type.name(), 30) >= 2) {
+        return false;
+    }
+
+    private static boolean tooManyRecently(AUnitType type) {
+        if (type == null) return false;
+        if (!type.isCombatBuilding()) return false;
+
+        if (Queue.get().history().countInLastSeconds(type.name(), 15) >= 2) {
             return true;
         }
 
@@ -99,6 +132,10 @@ public class PreventDuplicateOrders {
 
     private static boolean excessivePylon(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
+
+        if ((A.minerals() / (0.1 + ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon))) < 100) {
+            return true;
+        }
 
         if (A.supplyUsed() <= 27 && A.supplyFree() >= 4) return true;
         if (A.supplyUsed() <= 36 && A.supplyFree() >= 5) return true;
@@ -109,7 +146,7 @@ public class PreventDuplicateOrders {
     }
 
     private static boolean forProtossEnforceHavingAPylonFirst(AUnitType type) {
-        if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylons() == 0) {
+        if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylonsWithUnfinished() == 0) {
             if (A.seconds() < 200) {
                 System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
                 A.printStackTrace("Duplicate first Pylon - something went very wrong");
@@ -124,7 +161,7 @@ public class PreventDuplicateOrders {
         int existingInQueue = Count.inQueue(type);
 
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
-        if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1;
+        if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1 + A.minerals() / 200;
         if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
         if (type.isGateway()) max = 1 + A.minerals() / 170;
 
@@ -134,9 +171,14 @@ public class PreventDuplicateOrders {
             return true;
         }
 
-        if (tooManyDepots(type, position)) return true;
-        if (tooManyPylons(type, position)) return true;
-        if (tooManyBunkers(type, position)) return true;
+        if (We.protoss()) {
+            if (tooManyPylons(type, position)) return true;
+        }
+
+        if (We.terran()) {
+            if (tooManyDepots(type, position)) return true;
+            if (tooManyBunkers(type, position)) return true;
+        }
 
         return false;
     }
@@ -144,7 +186,7 @@ public class PreventDuplicateOrders {
     private static boolean tooManyDepots(AUnitType type, HasPosition position) {
         if (!type.isSupplyDepot()) return false;
 
-        if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2) {
+        if (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= (1 + A.minerals() / 200)) {
             ErrorLog.printMaxOncePerMinute(
                 "Exceeded DEPOTS allowed: " + CountInQueue.count(AUnitType.Terran_Supply_Depot)
             );
@@ -180,19 +222,22 @@ public class PreventDuplicateOrders {
     }
 
     private static boolean tooManyOrdersInGeneral(AUnitType type) {
+        if (A.hasMinerals(700)) return A.s % 3 != 0;
+
         if (
-            !Env.isTournament() &&
-                Queue.get().nonCompleted().notInProgress().forCurrentSupply().size() >= MAX_NONCOMPLETED_ORDERS_AT_ONCE
+            Queue.get().notFinished().notInProgress().forCurrentSupply().size() >= MAX_NONCOMPLETED_ORDERS_AT_ONCE
         ) {
             ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
-            if (A.everyNthGameFrame(79)) Queue.get().nonCompleted().forCurrentSupply().print();
+            if (A.everyNthGameFrame(79) && (!Env.isTournament() || A.everyNthGameFrame(30 * 30))) {
+                Queue.get().notFinished().forCurrentSupply().print();
+            }
             return true;
         }
 
         return false;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(AUnitType type) {
+    public static boolean cancelPreviousNonStartedOrdersOf(AUnitType type, String reason) {
         boolean result = false;
 
         for (ProductionOrder order : Queue.get().nextOrders().ofType(type).list()) {
@@ -203,35 +248,35 @@ public class PreventDuplicateOrders {
                 order.construction().setBuilder(null);
             }
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 
         return result;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade) {
+    public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade, String reason) {
         boolean result = false;
 
-        for (ProductionOrder order : Queue.get().nonCompleted().ofType(upgrade).list()) {
+        for (ProductionOrder order : Queue.get().notFinished().ofType(upgrade).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 
         return result;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(TechType tech) {
+    public static boolean cancelPreviousNonStartedOrdersOf(TechType tech, String reason) {
         boolean result = false;
 
-        for (ProductionOrder order : Queue.get().nonCompleted().ofType(tech).list()) {
+        for (ProductionOrder order : Queue.get().notFinished().ofType(tech).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 

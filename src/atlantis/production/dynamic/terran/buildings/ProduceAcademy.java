@@ -9,16 +9,18 @@ import atlantis.units.select.Have;
 import static atlantis.units.AUnitType.Terran_Academy;
 
 public class ProduceAcademy {
-    public static void academy() {
+    public static boolean academy() {
         if (
             (!A.supplyUsed(35) && !A.hasMinerals(300))
                 || Have.academy()
                 || Count.withPlanned(Terran_Academy) > 0
                 || CountInQueue.count(Terran_Academy) > 0
-        ) return;
+        ) return false;
 
         if (Count.marines() >= 3 && A.hasMinerals(350)) {
-            AddToQueue.toHave(Terran_Academy);
+            return AddToQueue.toHave(Terran_Academy);
         }
+
+        return false;
     }
 }

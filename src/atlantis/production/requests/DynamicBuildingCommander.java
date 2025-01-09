@@ -1,11 +1,9 @@
 package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
-import atlantis.production.constructing.position.APositionFinder;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnitType;
