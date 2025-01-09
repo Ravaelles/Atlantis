@@ -9,14 +9,14 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public abstract class MissionChanger {
@@ -154,7 +154,7 @@ public abstract class MissionChanger {
         if (
             Count.ourCombatUnits() <= 6
                 && EnemyUnits.discovered().ofType(AUnitType.Zerg_Zergling).atLeast(7)
-                && OurArmy.strength() <= 125
+                && Army.strength() <= 125
         ) {
             if (DEBUG) reason = "Mass zerglings A";
             return true;

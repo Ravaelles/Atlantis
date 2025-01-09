@@ -6,7 +6,7 @@ import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
     public AUnitType type() {
@@ -23,7 +23,7 @@ public class ProtossPhotonCannonAntiLand extends AntiLandBuildingCommander {
             return 0;
         }
 
-//        if (GamePhase.isEarlyGame() && OurArmy.relative() <= 60 && Count.dragoons() <= 2) {
+//        if (GamePhase.isEarlyGame() && Army.relative() <= 60 && Count.dragoons() <= 2) {
 //            return 2;
 //        }
 

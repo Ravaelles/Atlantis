@@ -1,6 +1,6 @@
 package atlantis.production.orders.build;
 
-import atlantis.combat.missions.DynamicMissionsFromBuildOrder;
+import atlantis.combat.missions.from_build_order.DynamicMissionsFromBuildOrder;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
@@ -248,9 +248,9 @@ public class BuildOrderRowParser {
         else if (commandLine.startsWith(settingKey = "#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS")) {
             buildOrder.addSetting(settingKey, extractSpecialCommandValue(row));
         }
-//        else if (commandLine.contains("MISSION - ")) {
-//            handleMissionCommand(commandLine);
-//        }
+        else if (commandLine.contains("MISSION - ")) {
+            handleMissionCommand(commandLine);
+        }
         else {
             throw new RuntimeException("Unhandled command in build order: " + commandLine);
         }
@@ -265,8 +265,8 @@ public class BuildOrderRowParser {
         int supply = Integer.parseInt(line.substring(0, line.indexOf(" - MISSION=")));
         String mission = line.substring(line.lastIndexOf("=") + 1);
 
-        System.out.println("supply = " + supply);
-        System.out.println("mission = " + mission);
+        System.out.println("MissionCommand at supply = " + supply);
+        System.out.println("MissionCommand mission = " + mission);
 
         DynamicMissionsFromBuildOrder.addDynamicMission(mission, supply);
     }

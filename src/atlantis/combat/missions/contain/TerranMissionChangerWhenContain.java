@@ -9,7 +9,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranMissionChangerWhenContain extends MissionChangerWhenContain {
 

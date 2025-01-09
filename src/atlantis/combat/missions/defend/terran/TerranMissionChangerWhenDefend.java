@@ -3,22 +3,23 @@ package atlantis.combat.missions.defend.terran;
 import atlantis.Atlantis;
 import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.combat.squad.alpha.Alpha;
-import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
@@ -35,11 +36,15 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (Alpha.count() <= 7) return false;
 
         if (EnemyUnitBreachedBase.get() != null) return false;
-        if (Missions.lastMissionChangedSecondsAgo() <= 15) return false;
-        if (Missions.historyCount() >= 2 && Alpha.count() <= 25) return false;
+//        if (Missions.lastMissionChangedSecondsAgo() <= 15) return false;
+        if (Missions.historyCount() >= 3 && Alpha.count() <= 20) return false;
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
             if (DEBUG) reason = "Abundance of minerals";
+            return true;
+        }
+
+        if (attackVsZerg()) {
             return true;
         }
 
@@ -52,7 +57,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8 && !OurStrategy.get().isRushOrCheese()
         ) return false;
 
-        if (ActiveMap.isGosu()) {
+//        if (ActiveMap.isGosu()) {
 //            int alphaSize = Alpha.get().size();
 //            if (alphaSize <= 15) return false;
 //            if (AGame.killsLossesResourceBalance() < 1800) return false;
@@ -60,7 +65,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //                if (DEBUG) reason = "Alpha size big enough";
 //                return true;
 //            }
-        }
+//        }
 
         if (A.seconds() <= 450 && AGame.killsLossesResourceBalance() >= 600) {
             if (DEBUG) reason = "Early game and killed/lost resource balance";
@@ -96,6 +101,29 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         return false;
+    }
+
+    private boolean attackVsZerg() {
+        int combatUnits = Count.ourCombatUnits();
+        int strength = Army.strengthWithoutCB();
+
+        if (combatUnits >= 16 && strength >= 140) {
+            if (DEBUG) reason = "Enough combat units (" + combatUnits + "), strength: " + strength + "%";
+            return forceMissionAttack(reason);
+        }
+
+        if (foundExpansionAndCanAttack()) {
+            if (DEBUG) reason = "Found expansion and can attack, strength: " + strength + "%";
+            return forceMissionAttack(reason);
+        }
+
+        return false;
+    }
+
+    private boolean foundExpansionAndCanAttack() {
+        if (EnemyExistingExpansion.lastFound == null) return false;
+
+        return Army.strengthWithoutCB() >= 60;
     }
 
     // === CONTAIN =============================================

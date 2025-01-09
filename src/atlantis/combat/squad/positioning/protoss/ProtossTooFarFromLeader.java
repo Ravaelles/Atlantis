@@ -32,7 +32,8 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
 
         this.leader = unit.squadLeader();
-        if (this.leader == null) return false;
+        if (leader == null) return false;
+        if (leader.isRunning()) return false;
 
         if (A.supplyUsed() >= 170 && (
             unit.enemiesNear().empty() || EnemyUnits.discovered().buildings().atMost(1)

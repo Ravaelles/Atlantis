@@ -9,15 +9,14 @@ import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.RequestBuildingNear;
 import atlantis.production.dynamic.reinforce.protoss.BuildPylonFirst;
 import atlantis.production.dynamic.reinforce.protoss.ProtossSecureBaseWithCannons;
-import atlantis.production.dynamic.reinforce.protoss.RequestCannonAt;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class RequestBuildingNearTest extends NonAbstractTestFakingGame {
+public class RequestBuildingNearTest extends WorldStubForTests {
     private static FakeUnit main = null;
     private static FakeUnit natural = null;
     private static FakeUnit third = null;
@@ -222,7 +221,7 @@ public class RequestBuildingNearTest extends NonAbstractTestFakingGame {
         System.err.println("order     = " + order);
         System.err.println("nearTo    = " + nearTo);
         System.err.println("buildPos  = " + buildPosition);
-        System.err.println("buildable = " + buildPosition.isBuildable());
+        System.err.println("buildable = " + buildPosition.isBuildableIncludeBuildings());
         System.err.println("choke     = " + Chokes.natural());
         System.err.println("dist_init = " + nearTo.distTo(buildPosition));
     }

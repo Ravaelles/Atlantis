@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid.always;
 
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import atlantis.architecture.Manager;
 

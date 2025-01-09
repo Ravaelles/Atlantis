@@ -17,6 +17,13 @@ public class ContinueShootingAsDragoon {
 
         // =========================================================
 
+        targetInWeaponRange = unit.isTargetInWeaponRangeAccordingToGame();
+        if (!targetInWeaponRange) return Decision.FORBIDDEN;
+
+        if (af >= 30 * 3) return Decision.ALLOWED;
+
+        // =========================================================
+
 //        System.err.println("sa:" + sa + ", la:" + unit.lastAttackFrameAgo());
         if (sa <= 40) {
             if (sa < UnitAttackWaitFrames.attackAnimationFrames(AUnitType.Protoss_Dragoon)) {
@@ -28,11 +35,6 @@ public class ContinueShootingAsDragoon {
 
             return Decision.FORBIDDEN;
         }
-
-        // =========================================================
-
-        targetInWeaponRange = unit.isTargetInWeaponRangeAccordingToGame();
-        if (af >= 30 * 5 && targetInWeaponRange) return Decision.ALLOWED;
 
         // =========================================================
 

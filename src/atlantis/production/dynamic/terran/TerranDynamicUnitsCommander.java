@@ -10,7 +10,7 @@ import atlantis.production.dynamic.terran.units.*;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.HasReason;
 import atlantis.util.We;
 
@@ -49,7 +49,10 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
 
     @Override
     protected void handle() {
-        ProduceScienceVessels.scienceVessels();
+        if (
+            ProduceScienceVessels.scienceVessels()
+                || ProduceTanks.tanks()
+        ) return;
 
         if (dynamicOrders <= 3 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
             if (

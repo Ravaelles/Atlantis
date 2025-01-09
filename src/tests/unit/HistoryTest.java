@@ -3,9 +3,9 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.production.orders.production.queue.add.History;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static junit.framework.TestCase.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class HistoryTest extends AbstractTestWithUnits {
     @Test

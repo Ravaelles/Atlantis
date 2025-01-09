@@ -53,12 +53,12 @@ public class AvoidGroupOfEnemies extends Manager {
             return usedManager(this);
         }
 
-        if (A.isUms() && !unit.isObserver()) System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
-        return runError.handleErrorRun(unit);
+//        if (A.isUms() && !unit.isObserver()) System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
+        return runError.handleErrorRun(unit, -234);
     }
 
     private boolean allowedToNotifyNearUnitsToMakeSpace() {
-        return (unit.isDragoon() && unit.hp() <= 81) || unit.distToNearestChokeCenter() <= 4;
+        return (unit.isDragoon() && unit.hp() <= 121) || unit.distToNearestChokeCenter() <= 4;
     }
 
     private Manager processDontAvoid() {

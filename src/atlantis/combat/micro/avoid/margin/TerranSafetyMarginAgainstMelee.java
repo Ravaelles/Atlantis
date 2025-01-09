@@ -2,7 +2,7 @@ package atlantis.combat.micro.avoid.margin;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
@@ -46,7 +46,7 @@ public class TerranSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
                 + (1.2 * enemyMovementBonus(attacker))
 //                    + SafetyMargin.enemyMovementBonus(attacker)
 //                    + (defender.hasCooldown() ? enemyMovementBonus(attacker) : 0)
-                + workerBonus(attacker)
+                + asWorkerBonus(attacker)
                 + Math.min(1.2, woundedAgainstMeleeBonus(attacker));
 
 //            criticalDist = Math.min(criticalDist, defender.isWounded() ? 2.9 : 2.8);

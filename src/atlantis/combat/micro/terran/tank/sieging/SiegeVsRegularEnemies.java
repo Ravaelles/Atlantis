@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SiegeVsRegularEnemies extends Manager {
     public SiegeVsRegularEnemies(AUnit unit) {

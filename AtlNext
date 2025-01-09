@@ -1,1 +1,47 @@
-- EnemyUnitsUpdater.weDiscoveredEnemyUnit bug - always returns just 1 or no change at all
+- Place 3rd pylon in between natural/natural_choke
+
+- Need to implement proper scout behaviour to scout main and natural early game
+
+- Tens of workers (builders?) sacrificing vs Goons attacking expansion
+
+- Our 1-2 goons not retreating from 10 enemy goons.
+
+- moveToSafety problem. SO SERIOUS< ITS LOSING GAMES, UNITS JUST COMPLEYELY SEPARATING!!!!!!
+
+- Goons NOT avoiding Bunker AT ALL, lonely going in and shooting vs 2...
+
+
+
+- Produce Leg Enhancements for more zealots vs Terran
+
+
+
+
+
+
+
+
+- WHEN LURKERS DETECTED AND BUILDING SUPPORT BAY UNFINISHED AND DONT HAVE OBSERVATORY, CANCEL SUPPORT BAY IF CANT AFFORDS, IMMEDIATELY BUILD OBSERVATORY
+
+
+
+- GOONS FREEZING, TEST ON CPU MAP
+
+
+
+
+
+
+
+BananaBuildvT:
+8 - Pylon
+9 - Gateway
+9 - Gateway
+13 - Pylon
+24 - Pylon
+25 - Assimilator (can be later)
+26 - Core
+28 - Singularity Charge
+41 - Nexus (dynamic?)
+at 8 goons attack (58 sup)
+29 - Pylon

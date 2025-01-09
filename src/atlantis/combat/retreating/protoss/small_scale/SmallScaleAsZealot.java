@@ -2,7 +2,7 @@ package atlantis.combat.retreating.protoss.small_scale;
 
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SmallScaleAsZealot extends HasUnit {
     public SmallScaleAsZealot(AUnit unit) {

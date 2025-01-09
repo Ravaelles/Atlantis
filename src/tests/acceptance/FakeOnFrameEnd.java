@@ -6,7 +6,7 @@ import tests.fakes.FakeUnit;
 public class FakeOnFrameEnd {
     public static double UNIT_SPEED_MODIFIER_PER_FRAME = 1;
 
-    protected static void onFrameEnd(AbstractTestFakingGame game) {
+    protected static void onFrameEnd(AbstractWorldCreatingTest game) {
         for (FakeUnit unit : game.our) {
             updatePosition(unit);
         }

@@ -2,14 +2,14 @@ package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.Squad;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
-import atlantis.map.position.HasPosition;
+import atlantis.game.AGame;
+import atlantis.game.player.Enemy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
+import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class LeaderToOther extends MissionManager {
     private AUnit otherFriend;
@@ -20,18 +20,34 @@ public class LeaderToOther extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (!(We.protoss() && Enemy.zerg() && Count.ourCombatUnits() <= 10)) return false;
+
         otherFriend = otherFriend();
         if (otherFriend == null) return false;
-
         double distToOther = otherFriend.distTo(unit);
+
+        if (shouldBeCautiosAgainstProtossEarly(distToOther)) return true;
+
+        if (unit.enemiesNear().canAttack(unit, unit.shieldWound() >= 9 ? 6.1 : 4.1).notEmpty()) return false;
 
         return distToOther <= 20 && distToOther > dist();
     }
 
-    private double dist() {
-        if (unit.enemiesNear().combatUnits().havingWeapon().notEmpty()) return 0.75;
+    private boolean shouldBeCautiosAgainstProtossEarly(double distToOther) {
+        if (!Enemy.protoss()) return false;
+        if (!We.protoss()) return false;
 
-        return 2 + unit.squadSize() / 4.0 + (OurArmy.strength() >= 200 ? 1 : 0);
+        int dragoons = Count.dragoons();
+
+        return (dragoons <= 5 || AGame.killsLossesResourceBalance() < -50)
+            && distToOther >= 4
+            && dragoons <= 12;
+    }
+
+    private double dist() {
+        if (unit.enemiesNear().combatUnits().havingWeapon().empty()) return 5;
+
+        return 2 + unit.squadSize() / 5.0 + (Army.strength() >= 200 ? 1.5 : 0);
     }
 
     @Override

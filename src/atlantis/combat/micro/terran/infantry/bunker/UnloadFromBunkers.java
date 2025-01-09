@@ -34,8 +34,9 @@ public class UnloadFromBunkers extends Manager {
 
     public boolean tryUnloadingFromBunkerIfNeeded() {
         if (!unit.isLoaded()) return false;
+        if (unit.lastActionLessThanAgo(35, Actions.LOAD)) return false;
 
-        if (unit.lastActionLessThanAgo(30 * 2, Actions.LOAD)) return false;
+        if (pursueMeleeWithoutRanged()) return true;
 
         if (unit.enemiesNearInRadius(3) > 0) return false;
 
@@ -52,6 +53,14 @@ public class UnloadFromBunkers extends Manager {
         }
 
         return false;
+    }
+
+    private boolean pursueMeleeWithoutRanged() {
+        if (unit.enemiesNear().ranged().countInRadius(10, unit) > 0) return false;
+
+        return unit.isHealthy()
+            && unit.idIsOdd()
+            && unit.enemiesNear().countInRadius(3.4, unit) == 0;
     }
 
     private boolean noEnemiesNear() {

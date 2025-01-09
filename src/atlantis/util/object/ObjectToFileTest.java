@@ -1,21 +1,13 @@
 package atlantis.util.object;
 
-import atlantis.Atlantis;
-import atlantis.map.AMap;
-import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
-import atlantis.map.region.Regions;
-import atlantis.units.select.Selection;
-import bwem.BWEM;
-import org.junit.Test;
+import atlantis.util.object.not_needed.StaticFieldsToFile;
+import org.junit.jupiter.api.Test;
 import tests.unit.UnitTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ObjectToFileTest extends UnitTest {
     @Test

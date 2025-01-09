@@ -1,9 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.units.select.Select;
 
 public class UnitStateManager extends Manager {
     private int timeNow;
@@ -50,10 +48,12 @@ public class UnitStateManager extends Manager {
             unit._lastStartedAttack = timeNow;
         }
 
-        AUnit _oldLastTargetToAttack = unit._lastTargetToAttack;
-        unit._lastTargetToAttack = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+        AUnit _oldLastTargetToAttack = unit._lastTarget;
+        unit._lastTarget = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+
         if (unit.target() != null && !unit.target().equals(_oldLastTargetToAttack)) {
             unit._lastTargetToAttackAcquired = timeNow;
+            unit._lastTargetType = unit.target().type();
         }
 
         if (unit.isUnderAttack(3)) {

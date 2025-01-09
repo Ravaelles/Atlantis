@@ -56,7 +56,7 @@ import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.buildings.CountGasWorkers;
-import atlantis.units.buildings.NumberOfGasWorkersCommander;
+import atlantis.units.buildings.GasWorkersPerBuilding;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -473,6 +473,10 @@ public class AAdvancedPainter extends APainter {
 
 //        AFocusPoint focus = mission.focusPoint();
         paintSideMessage("Enemy base: " + EnemyUnits.enemyBase(), Color.Grey);
+//        paintSideMessage("Enemy discovered: " + EnemyUnits.discovered().buildings().size(), Color.Grey);
+//        paintSideMessage("Enemy disc/w/pos: " + EnemyUnits.discovered().buildings().havingPosition().size(), Color.Grey);
+//        paintSideMessage("Raw discovered: " + EnemyUnits.foggedUnits().size(), Color.Grey);
+//        paintSideMessage("Raw disc/w/pos: " + EnemyUnits.foggedUnits().havingPosition().size(), Color.Grey);
 //        paintSideMessage("Fogged buildings: " + EnemyUnits.foggedUnits().buildings().count(), Color.Grey);
 //        paintSideMessage("Fogged units: " + EnemyUnits.foggedUnits().realUnits().count(), Color.Grey);
 
@@ -522,7 +526,7 @@ public class AAdvancedPainter extends APainter {
             paintSideMessage("Marines: " + Count.marines(), Grey);
             paintSideMessage("Medics: " + Count.medics(), Grey);
         }
-        paintSideMessage("Gas workers per b: " + NumberOfGasWorkersCommander.defineGasWorkersPerBuilding(), Color.Grey);
+        paintSideMessage("Gas workers per b: " + GasWorkersPerBuilding.define(), Color.Grey);
         paintSideMessage("Reserved minerals: " + ReservedResources.minerals(), Color.Grey);
         paintSideMessage("Reserved gas: " + ReservedResources.gas(), Color.Grey);
     }
@@ -1615,10 +1619,12 @@ public class AAdvancedPainter extends APainter {
         paintBase(natural, "Our natural", Color.Grey, 0);
 
         // Enemy MAIN base
-        paintBase(EnemyMainBase.get(), "Enemy MAIN", Color.Orange, 0);
+//        paintBase(EnemyMainBase.get(), "Enemy MAIN", Color.Orange, 0);
+        paintBase(BaseLocations.enemyMain(), "Enemy MAIN", Color.Orange, 0);
 
         // Enemy NATURAL
-        paintBase(EnemyNaturalBase.get(), "Enemy NATURAL", Color.Orange, 0);
+//        paintBase(EnemyNaturalBase.get(), "Enemy NATURAL", Color.Orange, 0);
+        paintBase(BaseLocations.enemyNatural(), "Enemy NATURAL", Color.Orange, 0);
 
         // Our natural choke
         AChoke naturalChoke = Chokes.natural();
@@ -1635,14 +1641,14 @@ public class AAdvancedPainter extends APainter {
         paintChoke(enemyNaturalChoke, Color.Orange, "Enemy natural choke");
 
         // Base locations near enemy - potential enemy expansions
-        Positions<ABaseLocation> baseLocationsNearEnemy = BaseLocationsNearEnemy.get();
-        int count = 1;
-        for (ABaseLocation baseLocation : baseLocationsNearEnemy.list()) {
-            paintBase(baseLocation, "Enemy near base #" + count++, Cyan, 0);
-        }
+//        Positions<ABaseLocation> baseLocationsNearEnemy = BaseLocationsNearEnemy.get();
+//        int count = 1;
+//        for (ABaseLocation baseLocation : baseLocationsNearEnemy.list()) {
+//            paintBase(baseLocation, "Enemy near base #" + count++, Cyan, 0);
+//        }
 
         // Enemy THIRD
-        paintBase(EnemyThirdLocation.get(), "Enemy THIRD location", Color.Orange, 0);
+        paintBase(EnemyThirdBase.get(), "Enemy THIRD location", Color.Orange, 0);
 
         // Enemy EXPANSION
         paintBase(EnemyExistingExpansion.get(), "Enemy EXPANSION", Color.Orange, 0);
@@ -1772,6 +1778,40 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintWorkers() {
         for (AUnit unit : Select.ourWorkers().list()) {
+            if (unit.isRepairing()) {
+                paintLine(
+                    unit.position().translateByPixels(-12, -12),
+                    unit.position().translateByPixels(12, 12),
+                    Purple
+                );
+                paintLine(
+                    unit.position().translateByPixels(-13, -13),
+                    unit.position().translateByPixels(13, 13),
+                    Purple
+                );
+                paintLine(
+                    unit.position().translateByPixels(-14, -14),
+                    unit.position().translateByPixels(14, 14),
+                    Purple
+                );
+
+                paintLine(
+                    unit.position().translateByPixels(12, -12),
+                    unit.position().translateByPixels(-12, 12),
+                    Purple
+                );
+                paintLine(
+                    unit.position().translateByPixels(13, -13),
+                    unit.position().translateByPixels(-13, 13),
+                    Purple
+                );
+                paintLine(
+                    unit.position().translateByPixels(14, -14),
+                    unit.position().translateByPixels(-14, 14),
+                    Purple
+                );
+            }
+
             if (!unit.isGatheringMinerals() && !unit.isGatheringGas()) {
                 paintTextCentered(unit, unit.manager().toString(), Grey, 0, -0.6);
             }

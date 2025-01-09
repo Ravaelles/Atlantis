@@ -1,7 +1,6 @@
 package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class ASquadTargeting {

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SiegeVsTerran extends Manager {
     public SiegeVsTerran(AUnit unit) {

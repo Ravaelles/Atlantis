@@ -1,5 +1,6 @@
 package atlantis.game.race;
 
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import bwapi.Race;
@@ -9,7 +10,7 @@ public class DefineEnemyRaceForCustomMaps {
         AUnit firstEnemy = EnemyUnits.discovered().first();
 
         if (firstEnemy == null) {
-            System.err.println("COULDNT DETERMINE ENEMY RACE");
+            if (!A.isUms()) System.err.println("COULDNT DETERMINE ENEMY RACE");
             return null;
         }
 

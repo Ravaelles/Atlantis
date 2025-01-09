@@ -17,7 +17,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -213,7 +213,7 @@ public class EnemyInfo {
     }
 
     public static boolean hasHiddenUnits() {
-        return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker).notEmpty();
+        return EnemyUnits.discovered().ofType(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker, AUnitType.Zerg_Lurker_Egg).notEmpty();
     }
 
     public static int airUnitsAntiGround() {
@@ -246,7 +246,7 @@ public class EnemyInfo {
     public static APosition enemyMain() {
         return (APosition) cache.getIfValid(
             "enemyMain",
-            271,
+            -1,
             () -> {
                 Positions<ABaseLocation> startingLocations = new Positions<>(BaseLocations.startingLocations(true));
 
@@ -271,5 +271,16 @@ public class EnemyInfo {
 
     public static double ourCombatUnitsToEnemyRatio() {
         return (double) Count.ourCombatUnits() / EnemyUnits.combatUnits();
+    }
+
+    public static boolean hasMutas() {
+        return EnemyUnits.discovered().mutalisks().notEmpty();
+    }
+
+    public static boolean goesOrHasHiddenUnits() {
+        if (EnemyInfo.hasHiddenUnits()) return true;
+        if (EnemyStrategy.get().isGoingHiddenUnits()) return true;
+
+        return false;
     }
 }

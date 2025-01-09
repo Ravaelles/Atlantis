@@ -7,19 +7,12 @@ import atlantis.units.AUnitType;
 
 public class TooCloseToUnwalkable {
     public static boolean isTooCloseToUnwalkable(AUnitType building, APosition position) {
-//        if (true) return false;
-//        if (true) return false;
-
-//        if (!building.isPylon())
-
-//        if (!building.producesLandUnits()) return false;
         if (building.isBase() || building.isPylon()) return false;
 
-//        if (building.isSupplyDepot()) return false;
-//        if (building.isCombatBuilding()) return false;
-////        if (building.isBase() || building.isGasBuilding()) return false;
-
-        if (isTooClose(building, position)) return failed("Too close to unwalkable");
+        if (isTooClose(building, position)) return failed("Too close to unwalkable (A)");
+        if (building.producesLandUnits() && isTooClose(building, position.translateByTiles(4, 3))) {
+            return failed("Too close to unwalkable (B)");
+        }
 
         return false;
     }
@@ -30,17 +23,18 @@ public class TooCloseToUnwalkable {
     }
 
     protected static boolean isTooClose(AUnitType building, APosition position) {
-//        APosturn true;
+//        int delta = building.getTileWidth() >= 4 ? 5 : (!building.producesLandUnits() ? 3 : 2);
+        int delta = building.getTileWidth() >= 4 ? 3 : (!building.producesLandUnits() ? 1 : 2);
 
-        APosition left = BuildingTileHelper.tiles3LeftFrom(building, position);
-        APosition down = BuildingTileHelper.tiles3DownFrom(building, position);
+        APosition left = BuildingTileHelper.tilesLeftFrom(building, position, delta);
+        APosition down = BuildingTileHelper.tilesDownFrom(building, position, delta);
 
         if (!left.isWalkable() && !down.isWalkable()) {
             return failed("Left and down from unwalkable");
         }
 
-        APosition up = BuildingTileHelper.tiles3UpFrom(building, position);
-        APosition right = BuildingTileHelper.tiles3RightFrom(building, position);
+        APosition up = BuildingTileHelper.tilesUpFrom(building, position, delta);
+        APosition right = BuildingTileHelper.tilesRightFrom(building, position, delta);
 
         if (!up.isWalkable() && !right.isWalkable()) {
             return failed("Up and right from unwalkable");

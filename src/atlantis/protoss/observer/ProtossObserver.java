@@ -22,6 +22,7 @@ public class ProtossObserver extends MobileDetector {
         return new Class[]{
             DetectorAvoidAntiAir.class,
             AvoidEnemies.class,
+            AsThirdObserverScoutEnemyBases.class,
             DetectHiddenEnemyClosestToBase.class,
             DetectNewBasePotentiallyBlocked.class,
             SpreadOutDetectors.class,

@@ -2,7 +2,7 @@ package atlantis.information.strategy.response;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.game.A;
-import atlantis.information.decisions.OurStrategicBuildings;
+
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -30,9 +30,11 @@ public class EnemyUnitDiscoveredResponse {
 
         if (We.terran()) {
             AsTerranUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
-        } else if (We.protoss()) {
+        }
+        else if (We.protoss()) {
             AsProtossUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
-        } else if (We.zerg()) {
+        }
+        else if (We.zerg()) {
             AsZergUnitDiscoveredResponse.updateEnemyUnitDiscovered(enemyUnit);
         }
     }

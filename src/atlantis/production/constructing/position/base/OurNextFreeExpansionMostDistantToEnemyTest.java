@@ -1,22 +1,8 @@
 package atlantis.production.constructing.position.base;
 
-import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
-import atlantis.game.listeners.OnEnemyNewUnitDiscovered;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.map.base.ABaseLocation;
-import atlantis.map.position.APosition;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-import atlantis.util.Angle;
-import atlantis.util.Options;
-import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
-import tests.fakes.FakeUnit;
+import tests.acceptance.WorldStubForTests;
 
-import static org.junit.Assert.*;
-
-public class OurNextFreeExpansionMostDistantToEnemyTest extends NonAbstractTestFakingGame {
+public class OurNextFreeExpansionMostDistantToEnemyTest extends WorldStubForTests {
 //    @Test
 //    public void testClosestBaseMostDistantFromEnemyIsReturned() {
 //        createWorld(1,

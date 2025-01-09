@@ -29,7 +29,7 @@ public class LeaderProgressFlagToNextFocusChoke extends MissionManager {
             && unit.lastStartedRunningMoreThanAgo(30 * 6)
             && unit.lastRetreatedAgo() >= 30 * 9
             && unit.noCooldown()
-            && unit.combatEvalRelative() >= 2
+            && unit.eval() >= 2
             && !lastProgressedTooRecently()
             && squadIsHere();
     }

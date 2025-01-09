@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.DoAvoidEnemies;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ScoutSeparateFromCloseEnemies extends Manager {
     private HasPosition center;
@@ -37,7 +37,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
             unit.distToMain() <= 35 && unit.moveToSafety(Actions.MOVE_SAFETY)
         ) return usedManager(this, "Scout2Safety");
 
-        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
+//        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
         Manager manager = (new DoAvoidEnemies(unit, null)).handle();
         if (manager != null) return usedManager(this, "ScoutSeparateB");

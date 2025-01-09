@@ -5,6 +5,11 @@ import atlantis.production.orders.production.queue.add.History;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
+import atlantis.units.AUnitType;
+
+import java.util.List;
+
+import static atlantis.units.AUnitType.Terran_Engineering_Bay;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
@@ -53,11 +58,13 @@ public class Queue extends AbstractQueue {
     }
 
     public Orders readyToProduceOrders() {
-        return cache.get(
-            "readyToProduceOrders",
-            CACHE_FOR_FRAMES,
-            orders::readyToProduce
-        );
+        return orders.readyToProduce();
+
+//        return cache.get(
+//            "readyToProduceOrders",
+//            CACHE_FOR_FRAMES,
+//            orders::readyToProduce
+//        );
     }
 
     public Orders forCurrentSupply() {
@@ -68,28 +75,38 @@ public class Queue extends AbstractQueue {
         );
     }
 
+    public Orders completedOrInProgress() {
+        return orders.inProgress().addAll(orders.completed().list());
+    }
+
     public Orders inProgressOrders() {
-        return cache.get(
-            "inProgressOrders",
-            CACHE_FOR_FRAMES,
-            orders::inProgress
-        );
+        return orders.inProgress();
+
+//        return cache.get(
+//            "inProgressOrders",
+//            CACHE_FOR_FRAMES,
+//            orders::inProgress
+//        );
     }
 
     public Orders notStarted() {
-        return cache.get(
-            "notStarted",
-            CACHE_FOR_FRAMES,
-            orders::notStarted
-        );
+        return orders.notStarted();
+
+//        return cache.get(
+//            "notStarted",
+//            CACHE_FOR_FRAMES,
+//            orders::notStarted
+//        );
     }
 
     public Orders nonCompleted() {
-        return cache.get(
-            "nonCompleted",
-            CACHE_FOR_FRAMES,
-            orders::nonCompleted
-        );
+        return orders.nonCompleted();
+
+//        return cache.get(
+//            "nonCompleted",
+//            CACHE_FOR_FRAMES,
+//            orders::nonCompleted
+//        );
     }
 
     public Orders nonCompletedNext30() {
@@ -101,16 +118,20 @@ public class Queue extends AbstractQueue {
     }
 
     public Orders completedOrders() {
-        return cache.get(
-            "completedOrders",
-            CACHE_FOR_FRAMES,
-            orders::completed
-        );
+        return orders.completed();
+
+//        return cache.get(
+//            "completedOrders",
+//            CACHE_FOR_FRAMES,
+//            orders::completed
+//        );
     }
 
     // =========================================================
 
     public void removeOrder(ProductionOrder order) {
+//        A.printStackTrace("REMOVE ORDER " + order);
+
         orders.remove(order);
 
         clearCache();

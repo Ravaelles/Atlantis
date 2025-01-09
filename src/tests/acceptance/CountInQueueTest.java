@@ -8,7 +8,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Options;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.unit.DynamicMockOurUnits;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitHelper;
@@ -16,9 +16,9 @@ import tests.fakes.FakeUnitHelper;
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CountInQueueTest extends NonAbstractTestFakingGame {
+public class CountInQueueTest extends WorldStubForTests {
     private ArrayList<ProductionOrder> allOrders = null;
     private FakeUnit newBunker = null;
 

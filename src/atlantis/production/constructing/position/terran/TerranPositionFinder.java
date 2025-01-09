@@ -1,12 +1,11 @@
 package atlantis.production.constructing.position.terran;
 
-import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
 import atlantis.production.constructing.position.PositionFulfillsAllConditions;
-import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
+import atlantis.production.constructing.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -25,15 +24,15 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(
         AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
     ) {
-        int cacheForFrames = 83;
+        int cacheForFrames = 23;
 
         ValidateParams validator = validateParams(builder, building, nearTo, maxDistance);
 
         String cacheKey = CacheKey.create(
             "findStandardPositionFor",
             building,
-            nearTo,
-            A.digit(validator.maxDistance)
+            nearTo
+//            A.digit(validator.maxDistance)
         );
 
         return cache.get(

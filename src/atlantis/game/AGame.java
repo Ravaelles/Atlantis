@@ -5,6 +5,7 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
 
+import atlantis.game.player.APlayer;
 import bwapi.*;
 
 import java.util.ArrayList;

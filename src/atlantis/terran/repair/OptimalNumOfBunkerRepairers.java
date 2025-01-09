@@ -6,7 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 public class OptimalNumOfBunkerRepairers {
@@ -24,7 +24,7 @@ public class OptimalNumOfBunkerRepairers {
     }
 
     private static int define(AUnit bunker) {
-        Selection potentialEnemies = Select.enemy().combatUnits().inRadius(20, bunker);
+        Selection potentialEnemies = Select.enemy().combatUnits().inRadius(22, bunker);
 
         if (potentialEnemies.empty()) {
             return 0;
@@ -51,7 +51,11 @@ public class OptimalNumOfBunkerRepairers {
 
         // against PROTOSS
         if (Enemy.protoss()) {
-            optimalNumber = enemiesNear * 0.8 + enemiesFar * 0.55;
+            optimalNumber = enemiesNear * 0.9 + enemiesFar * 0.7;
+
+            if (enemiesTotal >= 6 && optimalNumber < 4) optimalNumber = 5;
+            if (optimalNumber < 6 && enemiesTotal > optimalNumber * 1.3) optimalNumber = Math.min(6, enemiesTotal);
+//            if (optimalNumber >= 6 && enemiesNear == 0) optimalNumber = 5;
         }
         // against TERRAN
         else if (Enemy.terran()) {
@@ -105,7 +109,7 @@ public class OptimalNumOfBunkerRepairers {
 
         // =========================================================
 
-        int result = Math.min(7, (int) Math.floor(optimalNumber));
+        int result = Math.min(hardMaxOneBunkerRepairers(), (int) Math.floor(optimalNumber));
 
         // =========================================================
 
@@ -119,6 +123,10 @@ public class OptimalNumOfBunkerRepairers {
         ) return 4;
 
         return result;
+    }
+
+    private static int hardMaxOneBunkerRepairers() {
+        return Count.workers() <= 15 && !A.hasMinerals(100) ? 6 : 7;
     }
 
     private static boolean thereIsFewAttackers(AUnit bunker) {

@@ -6,11 +6,15 @@ public enum OrderStatus {
     IN_PROGRESS,
     COMPLETED;
 
-    public boolean inProgress() {
+    public boolean isInProgress() {
         return this.equals(IN_PROGRESS);
     }
 
-    public boolean ready() {
+    public boolean isCompleted() {
+        return this.equals(COMPLETED);
+    }
+
+    public boolean isReady() {
         return this.equals(READY_TO_PRODUCE);
     }
 }

@@ -9,12 +9,15 @@ import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.Army;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.production.dynamic.terran.tech.ResearchStimpacks;
+import atlantis.production.dynamic.terran.tech.ResearchU238;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
     @Override
@@ -61,7 +64,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         }
 
         if (armyStrengthTooWeak()) {
-            if (DEBUG) reason = "Army too weak (" + ArmyStrength.ourArmyRelativeStrength() + ")";
+            if (DEBUG) reason = "Army too weak (" + Army.strengthWithoutCB() + "%)";
             return true;
         }
 
@@ -69,7 +72,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            return false;
 //        }
 
-        if (enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
+        if (EnemyInfo.hasMutas() && enemyHasDefensiveBuildingsAndWeArentStrongEnough()) {
             if (DEBUG) reason = "Not enough tanks to break defences";
             return true;
         }
@@ -116,12 +119,24 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return true;
         }
 
+        if (waitForTechOrTanksBeforeEngagingGoons()) {
+            if (DEBUG) reason = "Wait for tech or tanks before engaging goons";
+            return true;
+        }
+
         if (Missions.historyCount() >= 1 && Count.ourCombatUnits() <= 30) {
             if (DEBUG) reason = "Not enough terran units";
             return true;
         }
 
         return false;
+    }
+
+    private static boolean waitForTechOrTanksBeforeEngagingGoons() {
+        return !ResearchStimpacks.isResearched()
+            && !ResearchU238.isResearched()
+            && EnemyUnits.dragoons() >= 2
+            && Count.tanks() <= 5;
     }
 
     private boolean armyStrengthTooWeak() {

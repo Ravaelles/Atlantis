@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SpreadWhenHighTemplarsNear extends Manager {
     private AUnit ht;

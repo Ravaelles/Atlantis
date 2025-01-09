@@ -4,7 +4,8 @@ package atlantis.production.dynamic.protoss;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -12,19 +13,25 @@ import atlantis.units.select.Count;
 import atlantis.util.HasReason;
 import atlantis.util.We;
 
+import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
+
 public class ProtossDynamicUnitProductionCommander extends Commander implements HasReason {
     public static String reason = "-";
 
     @Override
     public boolean applies() {
-        return We.protoss()
-            && freeToSpendResources();
+        return We.protoss();
 //            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }
 
     private static boolean freeToSpendResources() {
+        if (!A.hasMinerals(275) && ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) > 0) {
+            return decision(false, "NeedCannons");
+        }
+
         if (!A.hasMinerals(450) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
         if (A.hasMinerals(550)) return decision(true, "Minerals++");
+        if (Count.ourCombatUnits() <= 7) return decision(true, "BattleProduce");
 
         if (A.supplyUsed() >= 25) {
             int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
@@ -75,7 +82,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     private static boolean inEarlyGamePhaseMakeSureNotToBeTooWeak() {
         return A.seconds() <= 400
-            && (OurArmy.strength() < 0.85 || Count.zealots() <= 2 || Count.dragoons() <= 3);
+            && (Army.strength() < 0.85 || Count.zealots() <= 2 || Count.dragoons() <= 3);
     }
 
     private static boolean keepSomeResourcesInLaterGamePhases() {
@@ -91,9 +98,12 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     protected void handle() {
         if (!AGame.everyNthGameFrame(7)) return;
 
-        ProduceScarabs.scarabs();
-        ProduceReavers.reavers();
         ProduceObserver.observers();
+        ProduceScarabs.scarabs();
+
+        if (!freeToSpendResources()) return;
+
+        ProduceReavers.reavers();
         ProduceArbiters.arbiters();
         ProduceShuttle.shuttles();
         ProduceDarkTemplar.dt();

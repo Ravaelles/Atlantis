@@ -3,13 +3,13 @@ package tests.acceptance;
 import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoidAsWraith;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TerranFightInsteadAvoidTest extends AbstractTestFakingGame {
+public class TerranFightInsteadAvoidTest extends AbstractTestWithWorld {
     private FakeUnit ourWraith;
     private FakeUnit enemyWraith;
 

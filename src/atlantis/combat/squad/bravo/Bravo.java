@@ -6,7 +6,8 @@ import atlantis.combat.missions.attack.FoundEnemyExposedExpansion;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
+import atlantis.util.We;
 
 /**
  * Bravo is additional battle squad created when there are too many units in Alpha.
@@ -40,8 +41,10 @@ public class Bravo extends Squad {
     public boolean shouldHaveThisSquad() {
 //        if (true) return false;
 
+        if (We.terran() && A.supplyUsed() <= 170) return false;
+
         return Alpha.count() >= ALPHA_COUNT_THRESHOLD
-            || (FoundEnemyExposedExpansion.getItFound() != null && OurArmy.strength() >= 240);
+            || (FoundEnemyExposedExpansion.getItFound() != null && Army.strength() >= 240);
 //            || (FoundEnemyExposedExpansion.getItFound() != null && Alpha.count() >= 17);
     }
 

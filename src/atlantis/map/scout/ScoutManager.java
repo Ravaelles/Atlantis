@@ -25,9 +25,10 @@ public class ScoutManager extends Manager {
 
             ScoutTryFindingEnemy.class,
 
+            ScoutEnemyThird.class,
+            ScoutPotentialTerranBases.class,
             ScoutNearEnemyBase.class,
 
-            ScoutEnemyThird.class,
             ScoutUnexploredBasesNearEnemy.class,
             ScoutPotentialEnemyBases.class,
 

@@ -4,10 +4,8 @@ package atlantis.combat.micro.terran.vessel;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
-import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
-import atlantis.combat.micro.generic.managers.FollowAlphaLeader;
-import atlantis.combat.micro.generic.managers.FollowArmy;
-import atlantis.combat.micro.generic.managers.SpreadOutDetectors;
+import atlantis.combat.micro.generic.managers.*;
+import atlantis.protoss.observer.DetectNewBasePotentiallyBlocked;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
@@ -26,14 +24,22 @@ public class TerranScienceVessel extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            DetectorAvoidAntiAir.class,
             UseVesselTechs.class,
             AvoidEnemies.class,
-            UnitBeingReparedManager.class,
-            GoToRepairAsAirUnit.class,
-            SpreadOutDetectors.class,
             DetectHiddenEnemyClosestToBase.class,
+            DetectNewBasePotentiallyBlocked.class,
+            SpreadOutDetectors.class,
             FollowAlphaLeader.class,
             FollowArmy.class,
+
+//            AvoidEnemies.class,
+//            UnitBeingReparedManager.class,
+//            GoToRepairAsAirUnit.class,
+//            SpreadOutDetectors.class,
+//            DetectHiddenEnemyClosestToBase.class,
+//            FollowAlphaLeader.class,
+//            FollowArmy.class,
         };
     }
 

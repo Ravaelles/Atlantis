@@ -5,8 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class ProtossCrescentTooAhead extends Manager {
-    private double deltaDist;
-
     public ProtossCrescentTooAhead(AUnit unit) {
         super(unit);
     }
@@ -15,19 +13,32 @@ public class ProtossCrescentTooAhead extends Manager {
     public boolean applies() {
         if (DragoonCrescent.dontApply(unit)) return false;
 
-        deltaDist = ProtossCrescent.preferredDistToConventionalPoint - ProtossCrescent.distToConventionalPoint;
+//        System.out.println(unit + " delta: " + deltaDist
+//            + " / dist:" + ProtossCrescent.distToConventionalPoint + " " +
+//            "/ pref:" + ProtossCrescent.preferredDistToConventionalPoint);
 
-        return deltaDist > 0.2;
+        return ProtossCrescent.deltaDist > ProtossCrescent.DELTA_MARGIN;
     }
 
     @Override
     protected Manager handle() {
 //        if (takeSmallStepBack() && smallStepBack()) return usedManager(this, "SmallStepBack");
 
-        if (unit.moveToSafety(Actions.MOVE_FORMATION, "CrescentTooAhead")) {
+        double moveDistance = ProtossCrescent.deltaDist >= 2 ? 0.8 : 0.2;
+
+        if (unit.moveAwayFrom(
+            ProtossCrescent.conventionalPoint, moveDistance, Actions.MOVE_FORMATION, "CrescentTooAhead"
+        )) {
+//            System.out.println("Move away");
             return usedManager(this, "CrescentTooAhead");
         }
 
+        if (unit.moveToSafety(Actions.MOVE_FORMATION, "CrescentTooAhead")) {
+//            System.out.println("Move to safety");
+            return usedManager(this, "CrescentTooAhead");
+        }
+
+        System.out.println("---- COULD NOT - TOO AHEAD, move:" + moveDistance + " / delta:" + ProtossCrescent.deltaDist);
         return null;
     }
 

@@ -90,7 +90,7 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + enemyMovementBonus(attacker)
             + scoutBonus(attacker)
 //            + combatEvalBonus(attacker)
-            + workerBonus(attacker);
+            + asWorkerBonus(attacker);
     }
 
     private double forAirUnit(AUnit attacker) {

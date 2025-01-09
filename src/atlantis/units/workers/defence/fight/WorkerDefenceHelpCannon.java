@@ -6,8 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.units.workers.GatherResources;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class WorkerDefenceHelpCannon extends Manager {

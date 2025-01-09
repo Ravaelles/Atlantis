@@ -7,7 +7,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class GoBehindLineOfTanks extends Manager {

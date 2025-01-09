@@ -6,6 +6,7 @@ import atlantis.combat.running.stop_running.protoss.TerranShouldStopRunning;
 import atlantis.combat.running.stop_running.zerg.ZergShouldStopRunning;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 
 public class ShouldStopRunning extends Manager {
     public ShouldStopRunning(AUnit unit) {
@@ -14,7 +15,9 @@ public class ShouldStopRunning extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isRunning();
+//        if (true) return false;
+
+        return unit.isRunning() || unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY);
     }
 
     @Override
@@ -104,7 +107,7 @@ public class ShouldStopRunning extends Manager {
     private boolean checkAsZergling() {
         return unit.isZergling()
             && unit.enemiesNear().melee().canAttack(unit, 2).empty()
-            && unit.combatEvalRelative() >= 1.2;
+            && unit.eval() >= 1.2;
     }
 
     private boolean decisionStopRunning() {

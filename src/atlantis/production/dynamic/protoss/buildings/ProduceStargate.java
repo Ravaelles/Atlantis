@@ -3,16 +3,18 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Protoss_Fleet_Beacon;
 import static atlantis.units.AUnitType.Protoss_Stargate;
 
 public class ProduceStargate {
     public static boolean produce() {
+        if (ConstructionRequests.isBeingBuilt(Protoss_Stargate)) return false;
+
         Decision decision = A.whenEnemyProtossTerranZerg(
             ProduceStargate::produceAgainstProtoss,
             ProduceStargate::produceAgainstTerran,

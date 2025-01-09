@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran.tech;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
@@ -11,7 +11,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import bwapi.TechType;
 
 public class SiegeMode extends Commander {
@@ -36,7 +36,7 @@ public class SiegeMode extends Commander {
     private static boolean shouldResearchAgainstTerran() {
         int tanks = Count.tanks();
 
-        return (tanks >= 3 || A.seconds() >= 440) && OurArmy.strength() >= 200;
+        return (tanks >= 3 || A.seconds() >= 440) && Army.strength() >= 200;
     }
 
     @Override

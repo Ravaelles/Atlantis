@@ -11,7 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TurretsForNonMain extends TerranMissileTurret {
     private final int MIN_TURRETS_PER_BASE = 2;

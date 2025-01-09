@@ -2,10 +2,8 @@ package atlantis.combat.micro.avoid.dont.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
-import atlantis.units.HasUnit;
 import atlantis.util.We;
 
-//public class TerranDontAvoidEnemy extends HasUnit {
 public class TerranDontAvoidEnemy extends Manager {
     public TerranDontAvoidEnemy(AUnit unit) {
         super(unit);
@@ -27,9 +25,4 @@ public class TerranDontAvoidEnemy extends Manager {
             TerranGroundDontAvoidEnemy.class,
         };
     }
-
-//    @Override
-//    public Manager handle() {
-//        return handleSubmanagers();
-//    }
 }

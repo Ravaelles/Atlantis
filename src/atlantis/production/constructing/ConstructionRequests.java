@@ -1,5 +1,6 @@
 package atlantis.production.constructing;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 
@@ -281,6 +282,7 @@ public class ConstructionRequests {
             if (
                 !construction.equals(newConstructionOrder)
                     && construction.sameAs(newConstructionOrder)
+                    && construction.positionToBuildCenter().distTo(newConstructionOrder.positionToBuildCenter()) <= 6
             ) {
                 if (allowPrint) {
 //                    A.errPrintln("Cancel same construction: " + construction.buildingType());
@@ -291,5 +293,9 @@ public class ConstructionRequests {
             }
         }
         return false;
+    }
+
+    public static boolean isBeingBuilt(AUnitType type) {
+        return !notCompletedOfType(type).isEmpty();
     }
 }

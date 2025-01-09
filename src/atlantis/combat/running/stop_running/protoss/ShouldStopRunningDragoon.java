@@ -50,11 +50,11 @@ public class ShouldStopRunningDragoon extends Manager {
 //        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) return usedManager(this);
 //        if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
-        unit.paintCircleFilled(11, Color.Brown);
+//        unit.paintCircleFilled(11, Color.Brown);
 
         if (unit.moveToLeader(Actions.MOVE_FORMATION, "StopGoon")) return usedManager(this);
 
-//        if ((new HandleFocusPointPositioning(unit)).invokeFrom(this) != null) return usedManager(this);
+//        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(this) != null) return usedManager(this);
 //        if (unit.isMoving()) {
 //            unit.holdPosition("StopDragoon&Hold");
 //            return usedManager(this);

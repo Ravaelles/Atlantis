@@ -1,6 +1,7 @@
 package atlantis.production.constructing.position.protoss;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.Chokes;
@@ -26,6 +27,15 @@ public class ProtossDefineNearTo {
 
         if (nearTo == null && t.isCannon()) {
             nearTo = forCannon(t, nearTo);
+        }
+
+        if (nearTo == null && t.isGateway() && (Enemy.terran() || Count.gateways() == 2)) {
+            nearTo = Chokes.mainChoke();
+            if (t != null) nearTo.translateTilesTowards(5, Select.mainOrAnyBuilding());
+        }
+
+        if (nearTo == null && t.is(AUnitType.Protoss_Shield_Battery)) {
+            nearTo = Chokes.mainChoke();
         }
 
         if (nearTo == null && A.supplyUsed() <= 75) {

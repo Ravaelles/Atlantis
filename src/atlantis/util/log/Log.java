@@ -96,10 +96,18 @@ public class Log {
     // =========================================================
 
     private void removeOldMessages() {
+        if (expireAfterFrames == -1) return;
+
         messages.removeIf(LogMessage::expired);
     }
 
     public void print() {
+        print(null);
+    }
+
+    public void print(String string) {
+        if (string != null) System.out.println("--- " + string + " ---");
+
         for (LogMessage message : messages) {
             System.out.println(message.messageWithTime());
         }

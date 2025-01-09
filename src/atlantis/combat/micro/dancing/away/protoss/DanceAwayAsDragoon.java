@@ -1,66 +1,136 @@
 package atlantis.combat.micro.dancing.away.protoss;
 
+import atlantis.combat.micro.dancing.away.DanceAway;
 import atlantis.decisions.Decision;
-import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
-import atlantis.units.HasUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
+import bwapi.Color;
 
-public class DanceAwayAsDragoon extends HasUnit {
-    private final AUnit enemy;
+public class DanceAwayAsDragoon extends DanceAway {
 
-    public DanceAwayAsDragoon(AUnit unit, AUnit enemy) {
+    private int rangedEnemiesCount;
+
+    public DanceAwayAsDragoon(AUnit unit) {
         super(unit);
-        this.enemy = enemy;
     }
 
-    public Decision applies() {
-        if (A.supplyUsed() >= 160) return Decision.FALSE;
+    @Override
+    public boolean applies() {
+        if (!unit.isDragoon()) return false;
+        if (unit.isRunning() || unit.isRetreating()) return false;
 
-        Decision decision;
+        rangedEnemiesCount = unit.rangedEnemiesCount(0.35);
 
-//        if (unit.lastActionLessThanAgo(2, Actions.ATTACK_UNIT)) return Decision.FALSE;
+//        if (rangedEnemiesCount >= 2 && unit.cooldown() >= 10) return true;
+//        if (rangedEnemiesCount >= 2 && unit.shieldWound() >= 18 && unit.cooldown() >= 6) return true;
 
-        if (unit.lastAttackFrameMoreThanAgo(30 * 8)) return Decision.FALSE;
-        if (unit.cooldown() <= (unit.hp() <= 40 ? 3 : 12)) return Decision.FALSE;
+        if (rangedEnemiesCount >= 3 && (unit.cooldown() > 0 || unit.shieldWound() >= 20)) return true;
+
+        double shotSecondsAgo = unit.shotSecondsAgo();
+
+        if (rangedEnemiesCount >= 2) {
+            if (unit.cooldown() >= 9 && unit.shieldWound() >= 20) return true;
+            if (unit.shieldWound() >= 40 && unit.cooldown() >= 6) return true;
+            if (unit.hp() <= 82 && unit.cooldown() >= 3) return true;
+            if (unit.hp() <= 60 && shotSecondsAgo <= 3) return true;
+            if (unit.hp() <= 44 && shotSecondsAgo <= 3) return true;
+        }
+
+        if (rangedEnemiesCount >= 1) {
+            if (unit.hp() <= 50 && shotSecondsAgo <= 2.5) return true;
+            if (unit.hp() <= 24 && shotSecondsAgo <= 3.5) return true;
+        }
+
+//        if (forbidDanceAwayWhenRangedNear()) return false;
+
+        if (unit.cooldown() <= (rangedEnemiesCount > 0 ? 12 : 8)) {
+//            if (unit.isMoving() && !unit.isRunning()) {
+//                if (unit.lastCommandIssuedAgo() >= 2) unit.holdPosition("HoldAfterDance");
+////                unit.paintCircleFilled(6, Color.Blue);
+////                PauseAndCenter.on(unit);
+//            }
+            return false;
+        }
+
+//        System.err.println("SIEGED = " + unit.enemiesNear().tanksSieged().countInRadius(6, unit));
+        if (Enemy.terran()) {
+            if (AUnitType.Terran_Siege_Tank_Siege_Mode.equals(unit._lastTargetType)) return false;
+            if (unit.enemiesNear().tanksSieged().countInRadius(8, unit) > 0) return false;
+        }
+
+        if (unit.enemiesNear().ranged().canAttack(unit, 0.6).atLeast(1)) return true;
+
+        if (unit.nearestEnemyDist() >= (unit.hp() >= 60 ? 3.1 : OurDragoonRange.range() - 0.5)) return false;
+
+        if (unit.attackState().finishedShooting()) return true;
+//        if (unit.lastUnderAttackLessThanAgo(10)) {
+//            System.err.println("YUP");
+//            return true;
+//        }
+
+//        if (unit.nearestEnemyDist() >= OurDragoonRange.range() - 0.5) return false;
+
+        if (unit.lastAttackFrameMoreThanAgo(25)) return false;
+        if (unit.shieldWound() <= 10 && unit.meleeEnemiesNearCount(2.6) == 0) return false;
+
+//        if (unit.nearestEnemyDist() <= 3.0) return true;
+
+        if (unit.shieldHealthy()) return false;
+        if (unit.lastAttackFrameMoreThanAgo(30 * 2)) return false;
+        if (unit.cooldown() <= (unit.shields() <= 30 ? 3 : 12)) return false;
 
         if (Enemy.protoss()) {
-            if ((decision = vsEnemyDragoons()).notIndifferent()) return decision;
+            if ((decision = vsEnemyDragoons()).notIndifferent()) return decision.toBoolean();
         }
 
         else if (Enemy.zerg()) {
-            if ((decision = vsEnemyHydra()).notIndifferent()) return decision;
+            if ((decision = vsEnemyHydra()).notIndifferent()) return decision.toBoolean();
 //            if ((decision = vsEnemyZergling()).notIndifferent()) return decision;
         }
 
         if (!Enemy.zerg() && EnemyInfo.hasRanged()) {
-            if (true) return Decision.FALSE;
+            if (true) return false;
         }
 
-//        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return Decision.FALSE;
-        if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return Decision.TRUE;
+//        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return false;
+        if ((unit.cooldown() >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return true;
 
-        if (tooHealthy()) return Decision.FALSE;
-        if (provideSupportForMelee()) return Decision.FALSE;
+        if (tooHealthy()) return false;
+        if (provideSupportForMelee()) return false;
 
         if (unit.enemiesNear().inRadius(8, unit).notEmpty()) {
-            if (dragoonLowHpAndStillUnderAttack()) return Decision.TRUE;
+            if (dragoonLowHpAndStillUnderAttack()) return true;
         }
 
-        if (quiteHealthyAndNotUnderAttack()) return Decision.FALSE;
+        if (quiteHealthyAndNotUnderAttack()) return false;
 
-        return Decision.INDIFFERENT;
+        return false;
+    }
+
+    private boolean forbidDanceAwayWhenRangedNear() {
+        if (rangedEnemiesCount == 0) return false;
+        if (unit.cooldown() <= 10 && unit.hp() <= 82) return false;
+
+        if (unit.cooldown() <= 15) return true;
+
+        // 8 enemies = 90%, 3 enemies = 30%
+//        int shieldWoundPercentThresholdAgainstRanged = Math.min(95, 10 * rangedEnemiesCount);
+        int shieldWoundPercentThresholdAgainstRanged = 5;
+
+        return unit.shieldWoundPercent() >= shieldWoundPercentThresholdAgainstRanged;
     }
 
     private Decision vsEnemyHydra() {
         Selection hydras = unit.enemiesNear().hydras();
         if (hydras.empty()) return Decision.INDIFFERENT;
 
-        double range = 3.85 + (ResearchSingularityCharge.isResearched() ? 2 : 0);
+        double range = ResearchSingularityCharge.isResearched() ? 5.8 : 3.8;
 
         return hydras.countInRadius(range, unit) > 0
             ? Decision.TRUE
@@ -93,16 +163,18 @@ public class DanceAwayAsDragoon extends HasUnit {
         return (unit.meleeEnemiesNearCount(meleeEnemiesRadius()) > 0)
             ? Decision.TRUE : Decision.FALSE;
 
-//        if (unit.shields() >= 40) return Decision.FALSE;
+//        if (unit.shields() >= 40) return false;
 //
-//        if (unit.enemiesNearInRadius(enemiesRadius()) > 0) return Decision.TRUE;
+//        if (unit.enemiesNearInRadius(enemiesRadius()) > 0) return true;
 //
-//        return Decision.FALSE;
+//        return false;
     }
 
     private double meleeEnemiesRadius() {
+        if (enemy == null) enemy = unit.nearestEnemy();
+
         return 1.4
-            + (enemy.isFacing(unit) ? 0.4 : -1.6)
+            + (enemy == null || enemy.isFacing(unit) ? 0.4 : -1.6)
             + (unit.hp() <= 60 ? 0.7 : 0);
     }
 

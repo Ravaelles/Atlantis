@@ -1,12 +1,10 @@
 package atlantis.production.constructing.position.zerg;
 
 import atlantis.Atlantis;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.AbstractPositionFinder;
-import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
+import atlantis.production.constructing.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructing.position.conditions.OtherConstructionTooClose;
 import atlantis.production.constructing.position.conditions.TooCloseToMineralsOrGeyser;
 import atlantis.production.constructing.position.conditions.TooCloseToMainBase;

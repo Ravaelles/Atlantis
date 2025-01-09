@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.terran.fight.ShouldFightInsteadAvoidAsTerran;
 import atlantis.combat.micro.avoid.terran.fight.TerranFightInsteadAvoid;
 import atlantis.combat.micro.avoid.zerg.ShouldFightInsteadAvoidAsZerg;
 
-import atlantis.combat.targeting.basic.ATargetingCrucial;
+import atlantis.combat.targeting.generic.ATargetingCrucial;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -144,7 +144,7 @@ public class ShouldAlwaysFightInsteadAvoid {
                 && unit.friendsInRadiusCount(2) >= 2
                 && unit.friendsInRadiusCount(4) >= (unit.isAir() ? 14 : 6)
                 && (!unit.isAir() || unit.woundPercentMax(15))
-                && unit.combatEvalRelative() >= 3.2
+                && unit.eval() >= 3.2
                 && (unit.hp() >= 23 || unit.isMelee())
         ) {
             unit.addLog("FightBuilding");

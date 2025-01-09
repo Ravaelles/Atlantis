@@ -10,7 +10,7 @@ import atlantis.production.constructing.position.DefineExactPositionForNewConstr
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -122,7 +122,7 @@ public class NewConstructionRequest {
         }
 
         if (ConstructionRequests.alreadyExists(newConstruction, true)) {
-            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
+//            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
             newConstruction.cancel();
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
 //            }
@@ -147,7 +147,7 @@ public class NewConstructionRequest {
     }
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
-        ErrorLog.printMaxOncePerMinute("Can't find place for `" + building + "`, " + order);
+        ErrorLog.printMaxOncePerMinute(A.minSec() + ": Can't find place for `" + building + "`, " + order);
 //                A.printStackTrace("Can't find place for `" + building + "`, " + order);
         if (AbstractPositionFinder._STATUS != null) {
             ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
@@ -184,7 +184,7 @@ public class NewConstructionRequest {
                 ErrorLog.printMaxOncePerMinute("(Max search distance was not defined - bug)");
             }
             else {
-                ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ")");
+                ErrorLog.printMaxOncePerMinute("(Max search distance was: " + order.maximumDistance() + ") near " + order.aroundPosition());
             }
         }
 

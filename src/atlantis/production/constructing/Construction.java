@@ -10,7 +10,6 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.GatherResources;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
@@ -98,7 +97,7 @@ public class Construction implements Comparable<Construction> {
         if (optimalBuilder != null) {
             builder = optimalBuilder;
             if (oldBuilder != null && !oldBuilder.equals(optimalBuilder)) {
-                oldBuilder.stop("OldBuilder");
+//                oldBuilder.stop("OldBuilder");
                 (new GatherResources(oldBuilder)).forceHandle();
             }
         }
@@ -202,6 +201,11 @@ public class Construction implements Comparable<Construction> {
     public void setStatus(ConstructionOrderStatus status) {
         this.status = status;
 
+//        if (buildingType.isCyberneticsCore()) {
+//            System.err.println("@@ STATUS " + status + " for " + this.buildingType);
+//            A.printStackTrace("---------");
+//        }
+
         if (status.equals(ConstructionOrderStatus.IN_PROGRESS)) {
             timeBecameInProgress = A.now();
         }
@@ -209,6 +213,10 @@ public class Construction implements Comparable<Construction> {
         if (!status.equals(ConstructionOrderStatus.NOT_STARTED)) {
             AUnit building = buildingUnit();
             if (building != null && building.isProtoss()) setBuilder(null);
+        }
+
+        if (status.equals(ConstructionOrderStatus.COMPLETED)) {
+            ConstructionRequests.removeOrder(this);
         }
     }
 
@@ -224,8 +232,10 @@ public class Construction implements Comparable<Construction> {
         return build;
     }
 
-    public void setBuild(AUnit build) {
-        this.build = build;
+    public void setBuildingUnit(AUnit buildingBeingBuilt) {
+        this.build = buildingBeingBuilt;
+
+        assert buildingType.equals(buildingUnit().type());
     }
 
     public int id() {

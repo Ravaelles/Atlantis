@@ -1,12 +1,10 @@
 package atlantis.information.strategy;
 
-import atlantis.config.env.Env;
+import atlantis.game.A;
 import atlantis.production.orders.production.queue.QueueInitializer;
-
-import static org.junit.Assert.assertNotNull;
+import atlantis.util.log.ErrorLog;
 
 public class OurStrategy {
-
     private static AStrategy ourStrategy = null;
 
     // =========================================================
@@ -39,7 +37,10 @@ public class OurStrategy {
      * Use this strategy and build order.
      */
     public static void setTo(AStrategy strategy) {
-        assertNotNull(strategy);
+        if (strategy == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("OurStrategy.setTo() was called with null");
+            A.quit();
+        }
 
         if (ourStrategy == strategy) return;
 

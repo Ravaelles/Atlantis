@@ -6,8 +6,8 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
+import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.buildings.*;
-import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -23,12 +23,14 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //                || A.supplyUsed(31)
 //                || A.hasMinerals(410)
 //                || A.canAffordWithReserved(100, 0)
-            A.canAffordWithReserved(92, 0)
+            A.canAffordWithReserved(92, 0) || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
         );
     }
 
     @Override
     protected void handle() {
+        if (ProduceFallbackPylonWhenVeryLowOnSupply.produce()) return;
+
         if (A.hasMinerals(600)) ProduceGateway.produce();
 
         if (ProduceCyberneticsCore.produce()) return;
@@ -41,7 +43,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         if (
             ProduceFirstAssimilator.produce()
 //                || ProduceCannon.produce()
-                || ProduceCannonAtNatural.produce()
+//                || ProduceCannonAtNatural.produce()
                 || ProduceShieldBatteryAtNatural.produce()
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())

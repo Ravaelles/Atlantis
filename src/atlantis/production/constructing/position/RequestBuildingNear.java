@@ -5,7 +5,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.constructing.NewConstructionRequest;
-import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
 import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -67,7 +66,8 @@ public class RequestBuildingNear {
 
         APosition exact = findExactPosition();
         if (exact == null) return error("RequestBuildingNear - No exact position for " + type + " near " + near);
-        if (!exact.isBuildable()) return error("RequestBuildingNear - Not buildable position for " + type);
+        if (!exact.isBuildableIncludeBuildings())
+            return error("RequestBuildingNear - Not buildable position for " + type);
 
         ProductionOrder order = AddToQueue.withTopPriority(type, exact);
         if (order == null) return error("RequestBuildingNear - Failed to add " + type + " at " + exact);
@@ -78,7 +78,7 @@ public class RequestBuildingNear {
         Construction construction = NewConstructionRequest.requestConstructionOf(type, exact, order);
         if (construction == null) return error("RequestBuildingNear - Empty construction of " + type + " at " + exact);
 
-        System.err.println("RequestBuilding OK - " + type + " at " + exact);
+//        System.err.println("RequestBuilding OK - " + type + " at " + exact);
 
         lastError = null;
         return order;

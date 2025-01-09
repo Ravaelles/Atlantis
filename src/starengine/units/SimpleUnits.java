@@ -1,14 +1,14 @@
 package starengine.units;
 
-import starengine.Map;
+import starengine.assets.Map;
 import starengine.StarEngine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static starengine.Map.SPACE_HEIGHT;
-import static starengine.Map.SPACE_WIDTH;
+import static starengine.assets.Map.SPACE_HEIGHT;
+import static starengine.assets.Map.SPACE_WIDTH;
 
 public class SimpleUnits extends Units {
     public static final int NUM_UNITS = 30;

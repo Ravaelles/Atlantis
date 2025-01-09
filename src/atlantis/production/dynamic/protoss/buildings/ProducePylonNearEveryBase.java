@@ -1,7 +1,6 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.information.generic.OurArmy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -9,8 +8,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import static atlantis.units.AUnitType.*;

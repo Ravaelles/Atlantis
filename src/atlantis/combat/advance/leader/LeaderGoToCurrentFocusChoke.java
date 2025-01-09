@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -19,7 +19,7 @@ public class LeaderGoToCurrentFocusChoke extends MissionManager {
     @Override
     public boolean applies() {
         if (EnemyInfo.combatBuildingsAntiLand() == 0) return false;
-        if (OurArmy.strength() >= 300) return false;
+        if (Army.strength() >= 300) return false;
         if (EnemyUnits.combatUnits() <= 1) return false;
 
         focusChoke = CurrentFocusChoke.get();

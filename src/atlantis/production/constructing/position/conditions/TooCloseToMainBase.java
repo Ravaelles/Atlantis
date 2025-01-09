@@ -29,13 +29,16 @@ public class TooCloseToMainBase {
     }
 
     private static double minDistFromBase(AUnitType building) {
-        if (We.terran()) return 4;
+        if (We.terran()) {
+            if (building.isCombatBuilding()) return 0;
+            return 5;
+        }
 
         if (We.protoss()) {
             return building.isPylon() ? (A.supplyTotal() <= 16 ? 5 : 4) : 5;
         }
 
-        return 0.6;
+        return 2;
     }
 
     private static boolean failed(String reason) {

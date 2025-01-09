@@ -1,7 +1,7 @@
 package atlantis.combat.micro.terran.tank.sieging;
 
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class WantsToSiege {
     public static boolean wantsToSiegeNow(AUnit unit, Object parent, String tooltip) {

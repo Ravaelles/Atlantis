@@ -14,7 +14,8 @@ public class ForbiddenByStreetGridForBarracks {
     public static boolean isForbidden(AUnit builder, AUnitType building, APosition position) {
         if (!building.isBarracks()) return false;
 
-        int GRID_SIZE = TerranForbiddenByStreetGrid.GRID_VALUE_X;
+//        int GRID_SIZE = TerranForbiddenByStreetGrid.GRID_VALUE_X;
+        int GRID_SIZE = 2222;
 
         if (!gridMatches(position, GRID_SIZE)) {
             AbstractPositionFinder._STATUS = "Barracks grid does NOT allow it";

@@ -11,17 +11,16 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
-    private int relativeStrength;
-    private int strength;
-    private int dragoons;
+    private static int strength;
+    private static int dragoons;
 
     // === CONTAIN =============================================
 
@@ -32,10 +31,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //    }
 
     public boolean shouldChangeMissionToAttack() {
-        relativeStrength = ArmyStrength.ourArmyRelativeStrength();
+        strength = Army.strength();
+        dragoons = Count.dragoons();
 
-        if (A.minerals() >= 900) {
-            if (DEBUG) reason = "2K_minerals";
+        if (A.minerals() >= 1000 && Count.ourCombatUnits() >= 10) {
+            if (DEBUG) reason = "1K_minerals";
             return forceMissionAttack(reason);
         }
 
@@ -44,7 +44,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return forceMissionAttack(reason);
         }
 
-        if (Count.dragoons() >= 20) {
+        if (dragoons >= 20) {
             if (DEBUG) reason = "Goon-attack";
             return true;
         }
@@ -61,38 +61,10 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             }
         }
 
-        if (A.s <= 30 * 6 && Count.dragoons() <= 1 && Count.cannons() >= 2) {
+        if (A.s <= 30 * 6 && dragoons <= 1 && Count.cannons() >= 2) {
             if (DEBUG) reason = "Wait for Goon with Cannons";
             return false;
         }
-
-        if (A.s <= 30 * 5 && rushAllowsAttack()) {
-            return forceMissionAttack(reason);
-        }
-
-//        double changedAgo = Missions.lastMissionChangedSecondsAgo();
-//        if (changedAgo <= 3) {
-//            if (DEBUG) reason = "Mission just changed (" + (int) changedAgo + "s)";
-//            return false;
-//        }
-
-////        if (A.supplyUsed() <= 110 && EnemyInfo.isEnemyNearAnyOurBase()) return false;
-//        if (A.supplyUsed() <= 100 && OurArmy.strength() <= 145 && EnemyExistingExpansion.notFound()) {
-//            if (DEBUG) reason = "Early game and too weak (" + OurArmy.strength() + "%)";
-//            return false;
-//        }
-
-        if (ProtossStickCombatToMainBaseEarly.should()) {
-            if (DEBUG) reason = "Stick to main early";
-            return false;
-        }
-
-        int combatUnits = Count.ourCombatUnits();
-        int enemyCombatUnits = EnemyUnits.combatUnits();
-
-        if (combatUnits <= 8 && OurArmy.strength() <= 160) return false;
-        if (enemyCombatUnits >= 12 && combatUnits <= 8) return false;
-        if (enemyCombatUnits >= 15 && combatUnits <= 9) return false;
 
         Decision decision;
 
@@ -116,8 +88,33 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            }
         }
 
-        strength = ArmyStrength.ourArmyRelativeStrength();
-        dragoons = Count.dragoons();
+        if (A.s <= 30 * 5 && rushAllowsAttack()) {
+            return forceMissionAttack(reason);
+        }
+
+//        double changedAgo = Missions.lastMissionChangedSecondsAgo();
+//        if (changedAgo <= 3) {
+//            if (DEBUG) reason = "Mission just changed (" + (int) changedAgo + "s)";
+//            return false;
+//        }
+
+////        if (A.supplyUsed() <= 110 && EnemyInfo.isEnemyNearAnyOurBase()) return false;
+//        if (A.supplyUsed() <= 100 && Army.strength() <= 145 && EnemyExistingExpansion.notFound()) {
+//            if (DEBUG) reason = "Early game and too weak (" + Army.strength() + "%)";
+//            return false;
+//        }
+
+        if (ProtossStickCombatToMainBaseEarly.should()) {
+            if (DEBUG) reason = "Stick to main early";
+            return false;
+        }
+
+        int combatUnits = Count.ourCombatUnits();
+        int enemyCombatUnits = EnemyUnits.combatUnits();
+
+        if (combatUnits <= 8 && strength <= 160) return false;
+        if (enemyCombatUnits >= 12 && combatUnits <= 8) return false;
+        if (enemyCombatUnits >= 15 && combatUnits <= 9) return false;
 
         if (Enemy.zerg()) {
             decision = shouldAttackVsZerg();
@@ -139,7 +136,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     private boolean pressureTerranEarly() {
         if (
-            A.s <= 60 * 7 && (Count.dragoons() >= 1 || Count.cannons() >= 1) && OurArmy.strength() >= 90
+            A.s <= 60 * 7 && (dragoons >= 1 || Count.cannons() >= 1) && strength >= 90
         ) {
             if (DEBUG) reason = "Pressure Terran early";
             return true;
@@ -154,8 +151,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 && EnemyUnits.zerglings() <= 4
                 && EnemyUnits.hydras() <= 0
                 && Count.ourCombatUnits() >= 2
-                && OurArmy.strengthWithoutCB() >= 140
-                && !Have.cyberneticsCoreWithUnfinished() && Count.dragoons() <= 1
+                && Army.strengthWithoutCB() >= 140
+                && !Have.cyberneticsCoreWithUnfinished() && dragoons <= 1
         ) {
             if (DEBUG) reason = "Pressure zerg with little lings";
             return true;
@@ -165,7 +162,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private boolean rushAllowsAttack() {
-        if (OurStrategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2 && OurArmy.strengthWithoutCB() >= 160) {
+        if (OurStrategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2 && Army.strengthWithoutCB() >= 160) {
             if (DEBUG) reason = "Rush allows it";
             return true;
         }
@@ -177,7 +174,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         int combatUnits = Count.ourCombatUnits();
         int enemyCombatUnits = EnemyUnits.combatUnits();
 
-        if (Count.dragoons() <= 1) {
+        if (dragoons <= 1) {
             double ratio = Count.ourCombatUnits() * 2.75;
             if (ratio <= EnemyUnits.combatUnits()) {
                 if (DEBUG) reason = "Wait for more Goons (ratio: " + ratio + ")";
@@ -185,8 +182,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             }
         }
 
-//        if (A.supplyUsed() <= 100 && OurArmy.strength() <= 145 && EnemyExistingExpansion.notFound()) {
-//            if (DEBUG) reason = "Early game and too weak (" + OurArmy.strength() + "%)";
+//        if (A.supplyUsed() <= 100 && strength <= 145 && EnemyExistingExpansion.notFound()) {
+//            if (DEBUG) reason = "Early game and too weak (" + strength + "%)";
 //            return Decision.FALSE;
 //        }
 
@@ -200,7 +197,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (enemyCombatUnits >= 8) {
             if (
-                OurArmy.strength() >= 350
+                strength >= 350
                     || EnemyExistingExpansion.found()
                     || combatUnits >= 25
                     || A.hasMinerals(1000)
@@ -209,11 +206,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return Decision.FALSE;
         }
 
-//        if (OurArmy.strength())
-
 //        if (strength <= 360 && combatUnits <= 7) return Decision.FALSE;
 
-        if (A.s <= 650 && Count.dragoons() >= 1 && A.resourcesBalance() >= -250 && EnemyUnits.hydras() <= 2) {
+        if (A.s <= 650 && dragoons >= 1 && A.resourcesBalance() >= -250 && EnemyUnits.hydras() <= 2) {
             MissionChanger.forceMissionAttack("GoWithGoonz");
             return Decision.TRUE;
         }
@@ -239,45 +234,42 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (A.seconds() >= 600) return false;
 //        if (EnemyUnits.dragoons() >= 1) return false;
 
-        int dragoons = Count.dragoons();
-
-        if (dragoons >= 1 && OurArmy.strength() >= 130) {
+        if (dragoons >= 1 && strength >= 130) {
             return true;
         }
 
-        if (dragoons >= 2 && OurArmy.strength() >= 160) {
+        if (dragoons >= 2 && strength >= 160) {
             return true;
         }
 
-        return (relativeStrength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3);
-//            || (MissionHistory.numOfChanges() <= 3 && Count.dragoons() >= 6);
+        return (strength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3);
+//            || (MissionHistory.numOfChanges() <= 3 && dragoons >= 6);
 //        return relativeStrength >= 90 ;
     }
 
     private static boolean notAllowedToDoEarlyPushVsProtoss() {
-        return Count.dragoons() < 2 && Count.ourCombatUnits() < 3;
+        return dragoons < 2 && Count.ourCombatUnits() < 3;
     }
 
     private Decision shouldAttackVsProtoss() {
 //        if (postEarlyGameDontAttackProtoss()) return Decision.FALSE;
 
-        int strength = OurArmy.strength();
+        int strength = Army.strength();
+
+        if (strength >= 150) {
+            if (DEBUG) reason = "Stronger Protoss! (" + strength + "%)";
+            return Decision.TRUE;
+        }
 
         if (
-            Count.dragoons() >= 1
-                && EnemyUnits.discovered().dragoons().empty()
+            dragoons >= 1.5 * EnemyUnits.dragoons()
         ) {
             if (DEBUG) reason = "Engage with Goons! (" + strength + "%)";
             return Decision.TRUE;
         }
 
-        if (strength >= 170) {
-            if (DEBUG) reason = "Stronger Protoss! (" + strength + "%)";
-            return Decision.TRUE;
-        }
-
         if (canPushEarlyVsProtoss()) {
-            reason = "Early push (" + relativeStrength + "%)";
+            reason = "Early push (" + this.strength + "%)";
             MissionChanger.forceMissionAttack(reason);
             return Decision.TRUE;
         }
@@ -299,7 +291,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         return A.seconds() >= 300
             && A.supplyUsed() <= 190
             && A.minerals() <= 1000
-            && OurArmy.strength() <= 800;
+            && Army.strength() <= 800;
     }
 
     private static boolean beBraveProtoss() {
@@ -312,7 +304,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private boolean whenSparta() {
         if (ArmyStrength.ourArmyRelativeStrength() >= 200 && (
             AGame.killsLossesResourceBalance() >= 100
-                || Count.dragoons() >= 3
+                || dragoons >= 3
                 || Count.zealots() >= 7
         )) {
             if (DEBUG) reason = "Spartans strong! (" + ArmyStrength.ourArmyRelativeStrength() + "%)";

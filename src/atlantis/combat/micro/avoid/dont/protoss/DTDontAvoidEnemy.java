@@ -18,7 +18,7 @@ public class DTDontAvoidEnemy {
         if (!unit.isMissionDefend()) return false;
 
         return Count.ourCombatUnits() <= 10
-            && (unit.hp() <= 33 || unit.combatEvalRelative() < 0.8);
+            && (unit.hp() <= 33 || unit.eval() < 0.8);
     }
 
     private static boolean healthyOrNotAttackedLong(AUnit unit) {

@@ -75,7 +75,7 @@ public class AddToQueue {
             ProductionOrder existingOrder = Queue.get().nextOrders(MAX).techType(tech).first();
 
             if (existingOrder != null) Queue.get().removeOrder(existingOrder);
-            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + tech + " to remove");
+//            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + tech + " to remove");
 
             return false;
         }
@@ -95,7 +95,7 @@ public class AddToQueue {
             ProductionOrder existingOrder = Queue.get().nextOrders(MAX).upgradeType(upgrade).first();
 
             if (existingOrder != null && !existingOrder.isInProgress()) Queue.get().removeOrder(existingOrder);
-            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + upgrade + " to remove");
+//            else ErrorLog.printMaxOncePerMinute("Could not find existing order for " + upgrade + " to remove");
 
             return false;
         }
@@ -111,20 +111,6 @@ public class AddToQueue {
     ) {
         if (priority != ProductionOrderPriority.TOP) {
             if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) {
-                return null;
-            }
-        }
-
-        if (A.supplyTotal() >= 30 && type.isPylon()) {
-            int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
-
-//            if (inQueue >= 2) {
-//                A.println(A.now() + ": @@@@@@@@@@@@@ Add PYLON @@@@ " + position + " / " +
-//                    inQueue);
-//            }
-
-            if (inQueue >= 4) {
-//                A.printStackTrace("Too many pylons in queue (" + inQueue + ")");
                 return null;
             }
         }
@@ -159,7 +145,7 @@ public class AddToQueue {
 //            }
 
             if (type.is(AUnitType.Protoss_Nexus)) {
-                A.println(A.now() + " Nexus ADDED TO QUEUE, min=" + A.minerals()
+                A.println(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals()
                     + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
             }
 
@@ -225,8 +211,6 @@ public class AddToQueue {
             return Count.gasBuildingsWithUnfinished() + 1;
         }
 
-//        System.err.println("A = " + (nextOrders.list().get(0).minSupply() + 1));
-
         ProductionOrder last = type == null ? null : nextOrders.nonCompleted().ofType(type).last();
 
         return 1 + Math.max(
@@ -269,14 +253,14 @@ public class AddToQueue {
     }
 
     public static boolean toHave(AUnitType type, int expectedInTotal, ProductionOrderPriority priority) {
-        int existing = Count.withPlanned(type);
+        int already = Count.withPlanned(type);
         boolean result = false;
 
-        if (existing < expectedInTotal) {
+        if (already < expectedInTotal) {
             PreventDuplicateOrders.tempDisabled = true;
 
-            for (int i = 0; i < expectedInTotal - existing; i++) {
-//                System.err.println("_Adding " + existing + " / " + expectedInTotal + " " + type + " to queue");
+            for (int i = 0; i < expectedInTotal - already; i++) {
+//                System.err.println("_Adding " + already + " / " + expectedInTotal + " " + type + " to queue");
                 result = withPriority(type, priority) != null || result;
             }
 

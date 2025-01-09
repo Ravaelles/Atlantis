@@ -39,11 +39,12 @@ public class FindPosition {
     private static APosition findForBuildingRaw(
         AUnit builder, AUnitType building, Construction construction, HasPosition nearTo, double maxDistance
     ) {
-        AbstractPositionFinder._STATUS = null;
+        AbstractPositionFinder._STATUS = "Reset";
 
         // =========================================================
 
         nearTo = DefineNearTo.defineNearTo(building, nearTo);
+//        System.err.println("nearTo = " + nearTo + " for " + building + " / main = " + Select.mainOrAnyBuildingPosition());
 
         if (builder == null) builder = defineBuilder();
 

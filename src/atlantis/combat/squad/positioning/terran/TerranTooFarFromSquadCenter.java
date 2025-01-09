@@ -29,7 +29,7 @@ public class TerranTooFarFromSquadCenter extends MissionManager {
         center = unit.squad().center();
         if (center == null) return false;
 
-        double maxDistToSquadCenter = squad.radius();
+        double maxDistToSquadCenter = unit.enemiesNear().empty() ? 10 : squad.radius();
 
         if (
             unit.distTo(center) > maxDistToSquadCenter

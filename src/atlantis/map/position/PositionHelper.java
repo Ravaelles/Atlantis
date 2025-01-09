@@ -2,13 +2,15 @@ package atlantis.map.position;
 
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.util.log.ErrorLog;
 
 import java.util.*;
 
 
 public class PositionHelper {
-    
+
     // === Median ========================================
+
     /**
      * Returns median PX and median PY for all passed units.
      */
@@ -20,39 +22,39 @@ public class PositionHelper {
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
         for (AUnit unit : units) {
-            xCoordinates.add(unit.position().getX());	//TODO: check whether position is in Pixels
+            xCoordinates.add(unit.position().getX());    //TODO: check whether position is in Pixels
             yCoordinates.add(unit.position().getX());
         }
         Collections.sort(xCoordinates);
         Collections.sort(yCoordinates);
 
         return new APosition(
-                xCoordinates.get(xCoordinates.size() / 2),
-                yCoordinates.get(yCoordinates.size() / 2)
+            xCoordinates.get(xCoordinates.size() / 2),
+            yCoordinates.get(yCoordinates.size() / 2)
         );
     }
-    
+
     public static APosition getPositionMedian(Units units) {
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
-        
-        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
+
+        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
             xCoordinates.add(unit.x());
             yCoordinates.add(unit.y());
         }
 
         return new APosition(
-                getPositionMedian(xCoordinates),
-                getPositionMedian(yCoordinates)
+            getPositionMedian(xCoordinates),
+            getPositionMedian(yCoordinates)
         );
     }
-    
+
     public static APosition getPositionAverage(Collection<? extends HasPosition> units) {
         int totalX = 0;
         int totalY = 0;
-        
-        for (Iterator<HasPosition> iterator = (Iterator<HasPosition>) units.iterator(); iterator.hasNext();) {
+
+        for (Iterator<HasPosition> iterator = (Iterator<HasPosition>) units.iterator(); iterator.hasNext(); ) {
             HasPosition position = iterator.next();
             if (!position.hasPosition()) {
                 continue;
@@ -63,13 +65,13 @@ public class PositionHelper {
 
         return new APosition(totalX / units.size(), totalY / units.size());
     }
-    
+
     public static APosition getPositionAverageDistanceWeightedTo(AUnit unit, Units units, double power) {
         int totalX = 0;
         int totalY = 0;
         double totalFactor = 0;
-        
-        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext();) {
+
+        for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext(); ) {
             AUnit otherUnit = iterator.next();
             double distanceToUnit = unit.distTo(otherUnit);
             double factor = Math.pow(distanceToUnit, power);
@@ -80,12 +82,12 @@ public class PositionHelper {
 
         return new APosition((int) (totalX / totalFactor), (int) (totalY / totalFactor));
     }
-    
+
     public static int getPositionMedian(List<Integer> collection) {
         Collections.sort(collection);
         return collection.get(collection.size() / 2);
     }
-    
+
     public static APosition getPositionMedian(Collection<APosition> positions) {
         ArrayList<Integer> xCoordinates = new ArrayList<>();
         ArrayList<Integer> yCoordinates = new ArrayList<>();
@@ -96,20 +98,34 @@ public class PositionHelper {
         }
 
         return new APosition(
-                getPositionMedian(xCoordinates),
-                getPositionMedian(yCoordinates)
+            getPositionMedian(xCoordinates),
+            getPositionMedian(yCoordinates)
         );
     }
-    
+
     // === Position between A and B ======================
-    
+
     public static APosition getPositionMovedPercentTowards(HasPosition from, HasPosition movedToward, double percent) {
+        if (from == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedPercentTowards: from is null");
+            return null;
+        }
+        if (movedToward == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedPercentTowards: movedToward is null");
+            return from.position();
+        }
+
         int finalX = (int) ((100 - percent) * from.x() + percent * movedToward.x()) / 100;
         int finalY = (int) ((100 - percent) * from.y() + percent * movedToward.y()) / 100;
         return new APosition(finalX, finalY);
     }
-    
+
     public static APosition getPositionMovedTilesTowards(HasPosition from, HasPosition to, double tiles) {
+        if (to == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("getPositionMovedTilesTowards: to is null");
+            return from.position();
+        }
+
         double modifier = tiles / from.distTo(to);
         int dirX = (int) ((to.x() - from.x()) * modifier);
         int dirY = (int) ((to.y() - from.y()) * modifier);
@@ -120,7 +136,7 @@ public class PositionHelper {
     }
 
     // === Translate position ============================
-    
+
     /**
      * Returns a <b>new</b> Position that represents the effect of moving this position by 
      * [deltaTileX, deltaTileY].
@@ -135,7 +151,7 @@ public class PositionHelper {
 //    public static APosition translateByPixels(HasPosition position, int deltaPixelX, int deltaPixelY) {
 //        return new APosition(position.x() + deltaPixelX, position.y() + deltaPixelY);
 //    }
-    
+
     // === Other method ==================================
 
     /**
@@ -157,5 +173,5 @@ public class PositionHelper {
             totalY / units.size()
         );
     }
-    
+
 }

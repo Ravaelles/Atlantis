@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.decisions.Decisions;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
@@ -17,9 +18,8 @@ public class ProduceReavers {
     private static int produced = 0;
 
     public static boolean reavers() {
-//        if (true) return false;
-
         if (A.supplyUsed() <= 70) return false;
+        if (Enemy.terran() && A.supplyUsed() <= 170) return false;
 
         if (
             Have.no(AUnitType.Protoss_Robotics_Support_Bay)

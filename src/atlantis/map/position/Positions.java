@@ -1,7 +1,6 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
-import atlantis.map.choke.AChoke;
 import atlantis.units.AUnit;
 
 import java.io.Serializable;
@@ -327,4 +326,21 @@ public class Positions<T extends HasPosition> implements Serializable {
         return average();
     }
 
+    public double distTo(AUnit unit) {
+        T t = nearestTo(unit);
+        if (t == null) {
+            return 999999;
+        }
+
+        return unit.distTo(t);
+    }
+
+    public double groundDistTo(AUnit unit) {
+        T t = groundNearestTo(unit);
+        if (t == null) {
+            return 999999;
+        }
+
+        return unit.groundDist(t);
+    }
 }

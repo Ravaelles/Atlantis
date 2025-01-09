@@ -16,7 +16,6 @@ import java.util.TreeMap;
  * T is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
  */
 public class Cache<T> {
-
     protected final TreeMap<String, T> data = new TreeMap<>();
     protected final TreeMap<String, Integer> cachedUntil = new TreeMap<>();
 
@@ -70,7 +69,6 @@ public class Cache<T> {
         if (value != null) {
             if (value instanceof AFocusPoint) {
                 if (((AFocusPoint) value).isValid()) {
-
                     return value;
                 }
             }

@@ -60,10 +60,12 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         return false;
     }
 
-    public void addAll(Collection<ProductionOrder> items) {
+    public Orders addAll(Collection<ProductionOrder> items) {
         for (ProductionOrder item : items) {
             add(item);
         }
+
+        return this;
     }
 
     // === Remove ==============================================

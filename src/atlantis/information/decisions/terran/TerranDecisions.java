@@ -9,7 +9,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.*;
 

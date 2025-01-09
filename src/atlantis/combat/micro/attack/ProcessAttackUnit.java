@@ -108,8 +108,9 @@ public class ProcessAttackUnit extends Manager {
     // =========================================================
 
     private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
-        if (!enemy.isTank()) return false;
+        if (!enemy.isTankSieged()) return false;
         if (We.terran()) return false;
+        if (unit.cooldown() <= 3) return false;
 
         int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
         if (
@@ -126,8 +127,9 @@ public class ProcessAttackUnit extends Manager {
         ) {
             if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
 
-            if (unit.attackUnit(enemy)) {
-                unit.setTooltip("Soyuz" + A.dist(enemy, unit) + "/" + count);
+//            if (unit.attackUnit(enemy)) {
+            if (unit.move(enemy, Actions.MOVE_ENGAGE, "Soyuz")) {
+                unit.setTooltip("Soyuz" + unit.distToDigit(enemy) + "/" + count);
                 return true;
             }
 

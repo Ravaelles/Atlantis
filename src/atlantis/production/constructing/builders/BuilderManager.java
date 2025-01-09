@@ -1,8 +1,8 @@
 package atlantis.production.constructing.builders;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.game.A;
-import atlantis.game.race.MyRace;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.production.constructing.ConstructionRequests;
@@ -23,6 +23,8 @@ public class BuilderManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            BuilderAvoidEnemies.class,
+            AvoidEnemies.class,
             AbandonAsBuilderIfAttacked.class,
         };
     }
@@ -81,7 +83,7 @@ public class BuilderManager extends Manager {
     public static boolean isBuilder(AUnit worker) {
         if (
             worker.isConstructing()
-                || (!MyRace.isPlayingAsProtoss() && ConstructionRequests.constructionFor(worker) != null)
+                || (!We.protoss() && ConstructionRequests.constructionFor(worker) != null)
         ) return true;
 
         for (Construction construction : ConstructionRequests.constructions) {

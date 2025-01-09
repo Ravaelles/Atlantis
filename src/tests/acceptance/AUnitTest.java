@@ -1,21 +1,18 @@
 package tests.acceptance;
 
-import atlantis.combat.targeting.basic.ATargeting;
-import atlantis.game.A;
+import atlantis.combat.targeting.generic.ATargeting;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
-import atlantis.units.select.Select;
 import atlantis.util.Angle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
-import static atlantis.units.AUnitType.Zerg_Creep_Colony;
-import static org.junit.Assert.*;
+import static atlantis.units.AUnitType.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AUnitTest extends AbstractTestFakingGame {
+public class AUnitTest extends AbstractTestWithWorld {
     private FakeUnit zealot;
     private FakeUnit firebat;
     private FakeUnit cannon;
@@ -51,8 +48,13 @@ public class AUnitTest extends AbstractTestFakingGame {
         createWorld(1, () -> {
             EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon = fakeEnemy(Protoss_Photon_Cannon, 18));
 
+//            Select.our().print("Our");
+//            Select.enemy().print("Enemiz");
+
             assertTrue(fake(AUnitType.Terran_Marine).isOur());
             assertFalse(fake(AUnitType.Terran_Marine).isEnemy());
+
+            EnemyUnitsUpdater.weDiscoveredEnemyUnit(fakeEnemy(Protoss_Observer, 98));
 
             assertFalse(zealot.isOur());
             assertTrue(zealot.isEnemy());
@@ -70,6 +72,13 @@ public class AUnitTest extends AbstractTestFakingGame {
             assertEquals(2, zealot.enemiesNear().count());
             assertEquals(2, zealot.friendsNear().count());
 
+//            EnemyUnits.discovered().print("Discovered");
+
+            assertEquals(4, EnemyUnits.discovered().havingPosition().count());
+            assertEquals(4, EnemyUnits.discovered().havingPosition().havingAtLeastHp(1).notDeadMan().count());
+
+//            cannon.enemiesNear().print("Cannon enemies");
+//            cannon.friendsNear().print("Cannon friends");
             assertEquals(2, cannon.enemiesNear().count());
             assertEquals(2, cannon.friendsNear().count());
         });

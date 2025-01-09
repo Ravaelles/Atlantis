@@ -46,6 +46,8 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     protected Manager handle() {
+        if (focusPoint == null) return null;
+
         if (act()) return usedManager(this);
 
         return null;

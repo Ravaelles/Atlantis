@@ -89,7 +89,7 @@ public class Atlantis implements BWEventListener {
 
         // =========================================================
 
-        OnStart.execute();
+        OnGameStarted.execute();
     }
 
     private void setBwapiFlags() {

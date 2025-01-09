@@ -3,7 +3,6 @@ package atlantis.production.constructing.commanders;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.race.MyRace;
 import atlantis.map.position.APosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionOrderStatus;
@@ -33,6 +32,7 @@ public class ConstructionStatusChanger extends Commander {
     private void checkForOverdueConstructions(Construction construction) {
 //        if (A.supplyUsed() <= 20) return;
         if (!A.everyNthGameFrame(31)) return;
+        if (A.supplyUsed() <= 27) return;
 
         if (construction.isOverdue()) {
             AUnitType building = construction.buildingType();
@@ -85,7 +85,7 @@ public class ConstructionStatusChanger extends Commander {
                     // Happens for Extractor
                     if (builder.buildType() == null || builder.buildType().equals(AUnitType.None)) {
                         building = builder;
-                        construction.setBuild(builder);
+                        construction.setBuildingUnit(builder);
                     }
                 }
 
@@ -94,29 +94,32 @@ public class ConstructionStatusChanger extends Commander {
                     AUnit buildUnit = builder.buildUnit();
                     if (buildUnit != null) {
                         building = buildUnit;
-                        construction.setBuild(buildUnit);
+                        construction.setBuildingUnit(buildUnit);
                     }
                 }
             }
         }
 
         // If playing as ZERG...
-        if (MyRace.isPlayingAsZerg()) {
+        if (We.zerg()) {
             handleZergConstructionsWhichBecameBuildings();
         }
 
         // If building exists
         if (building != null && !building.isNeutral()) {
 
-            // Finished: building is completed, remove the construction object
-            if (building.isCompleted()) {
-                construction.setStatus(ConstructionOrderStatus.COMPLETED);
-                ConstructionRequests.removeOrder(construction);
-            }
-            // In progress
-            else if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
-            }
+//            System.err.println("building = " + building + " / " + building.isCompleted() + " / " + building.construction() + " / " + building.getRemainingBuildTime());
+
+//            if (!We.protoss())
+//            // Finished: building is completed, remove the construction object
+//            if (building.isCompleted()) {
+//                construction.setStatus(ConstructionOrderStatus.COMPLETED);
+//                ConstructionRequests.removeOrder(construction);
+//            }
+//            // In progress
+//            if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
+//                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+//            }
         }
 
         // Building doesn't exist yet, means builder is travelling to the construction place
@@ -167,7 +170,7 @@ public class ConstructionStatusChanger extends Commander {
      * the drone actually became a building (sweet metamorphosis, yay!).
      */
     private void handleZergConstructionsWhichBecameBuildings() {
-        if (MyRace.isPlayingAsZerg()) {
+        if (We.zerg()) {
             ArrayList<Construction> allOrders = ConstructionRequests.all();
             if (!allOrders.isEmpty()) {
                 for (Construction construction : allOrders) {

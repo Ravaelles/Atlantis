@@ -30,8 +30,11 @@ public class TerranCloserToLeader extends MissionManager {
         if (shouldGetBackToLeader()) {
             APosition leaderPosition = squad.leader().position();
             if (leaderPosition != null) {
+                APosition position = leaderPosition.translateByTiles(0.5, 0);
+                if (!position.isWalkable()) position = leaderPosition;
+
                 unit.move(
-                    leaderPosition.translateByTiles(0.5, 0),
+                    position,
                     Actions.MOVE_FORMATION,
                     "TerranCloserToLeader"
                 );

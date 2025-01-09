@@ -7,13 +7,13 @@ import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.OurBuildingUnderAttack;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
     private AUnit enemy;
@@ -84,14 +84,14 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
     private boolean closeToBuildingsRelativelyAliveAndHaventAttackedRecently() {
         if (unit.hp() <= 30) return false;
-        if (unit.combatEvalRelative() <= 0.8) return false;
+        if (unit.eval() <= 0.8) return false;
         if (unit.friendsNear().buildings().inRadius(2.6, unit).empty()) return false;
 
         return unit.lastAttackFrameMoreThanAgo(30 * 3);
     }
 
     private boolean asRangedAttackTargetsInRange() {
-        return (unit.isRanged() || unit.combatEvalRelative() >= 1.2)
+        return (unit.isRanged() || unit.eval() >= 1.2)
             && unit.isTargetInWeaponRangeAccordingToGame(enemy);
     }
 
@@ -106,7 +106,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
 
     private boolean protossDontAttackWhenAlmostDead() {
-        if (unit.combatEvalRelative() >= 2 && unit.didntShootRecently(4)) return false;
+        if (unit.eval() >= 2 && unit.didntShootRecently(4)) return false;
 
         if (unit.isMelee()) {
             if (unit.hp() <= 25) return true; // Dont, avoid instead
@@ -132,7 +132,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     private boolean forbidden_earlyGameVsStrongZergStickToMainBase() {
         if (!ProtossStickCombatToMainBaseEarly.should()) return false;
         if (unit.isRanged() && EnemyInfo.noRanged() && unit.hp() >= 35 && unit.noCooldown()) return false;
-        if (unit.combatEvalRelative() >= 1.5) return false;
+        if (unit.eval() >= 1.5) return false;
 
         if (OurBuildingUnderAttack.notNull()) return false;
         if (unit.friendsNear().workers().inRadius(2.4, unit).notEmpty()) return false;
@@ -186,7 +186,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (
             Count.ourCombatUnits() <= 8
-                && (Count.dragoons() <= 2 && OurArmy.strength() <= 170)
+                && (Count.dragoons() <= 2 && Army.strength() <= 170)
 //                && unit.distToBase() >= (16 + unit.hpPercent() / 7.0)
                 && unit.distToFocusPoint() >= 7
         ) return true;
@@ -234,7 +234,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         // =========================================================
 
-        return (friends >= 2 && unit.combatEvalRelative() >= 2.5)
+        return (friends >= 2 && unit.eval() >= 2.5)
             || (friends >= 5 && unit.woundPercentMax(15));
     }
 }

@@ -8,20 +8,25 @@ import atlantis.util.cache.Cache;
 
 public class EnemyMainBase {
     private static Cache<APosition> cache = new Cache<>();
+    private static APosition _lastNonNull = null;
 
     public static APosition get() {
-        return cache.getIfValid(
-            "get",
-            271,
-            () -> {
-                for (AUnit base : EnemyUnits.discovered().bases().list()) {
-                    if (BaseLocations.isPositionInStartingLocation(base)) {
-                        return base.position();
-                    }
-                }
+        if (_lastNonNull != null) return _lastNonNull;
 
-                return null;
-            }
+        return cache.get(
+            "get",
+            -1,
+            EnemyMainBase::refresh
         );
+    }
+
+    private static APosition refresh() {
+        for (AUnit base : EnemyUnits.discovered().bases().list()) {
+            if (BaseLocations.isPositionInStartingLocation(base)) {
+                return _lastNonNull = base.position();
+            }
+        }
+
+        return null;
     }
 }

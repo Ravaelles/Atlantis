@@ -16,8 +16,8 @@ public class ContinueShooting extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        if (!unit.isAttacking()) return false;
         if (We.terran()) return false;
-
         if (unit.isDragoon()) return false;
 
 //        if (unit.isStartingAttack()) return true;

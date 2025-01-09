@@ -9,7 +9,6 @@ import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
-import atlantis.information.generic.OurArmy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.Bases;
 import atlantis.map.base.define.DefineNaturalBase;
@@ -23,7 +22,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -55,10 +54,21 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // =========================================================
 
+                if (
+                    A.s >= 60 * 5
+                        && (Enemy.zerg() || !EnemyInfo.hasHiddenUnits())
+                        && Count.ourCombatUnits() >= 6
+                ) {
+                    if ((focus = atNaturalChoke()) != null) return focus;
+                }
+
+                // =========================================================
+
                 if ((focus = stickToMain()) != null) return focus;
                 if ((focus = enemyWhoBreachedBase()) != null) return focus;
                 if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
                 if ((focus = stickToCannon()) != null) return focus;
+                if ((focus = mostDistantBunker()) != null) return focus;
 
                 // === Path to enemy =============================================
 
@@ -150,8 +160,6 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             AUnit main = Select.main();
             if (main == null) return null;
 
-            if (Count.dragoons() >= 2 || OurArmy.strength() >= 140) return null;
-
             if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
 
             AChoke mainChoke = Chokes.mainChoke();
@@ -190,6 +198,21 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             goTo,
             cannon,
             "HugCannon"
+        );
+    }
+
+    private AFocusPoint mostDistantBunker() {
+        if (!We.terran()) return null;
+        if (Count.basesWithUnfinished() >= 2) return null;
+
+        AUnit main = Select.mainOrAnyBuilding();
+        AUnit bunker = Select.ourOfTypeWithUnfinished(AUnitType.Terran_Bunker).groundFarthestTo(main);
+        if (bunker == null) return null;
+
+        return new AFocusPoint(
+            bunker,
+            main,
+            "HugBunker"
         );
     }
 
@@ -236,7 +259,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     private static AFocusPoint aroundCombatBuilding() {
 //        if (We.protoss()) {
 //            if (Count.ourCombatUnits() >= 13) return null;
-//            if (Count.bases() >= 2 && OurArmy.strength() >= 80) return null;
+//            if (Count.bases() >= 2 && Army.strength() >= 80) return null;
 //        }
 
 //        if (We.protoss() && Count.basesWithUnfinished() <= 1) return null;
@@ -432,7 +455,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         APosition natural = DefineNaturalBase.natural();
         return new AFocusPoint(
-            naturalChoke,
+            naturalChoke.translateTilesTowards(5, natural),
+//            naturalChoke,
 //            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
             natural,
             "NaturalChoke"

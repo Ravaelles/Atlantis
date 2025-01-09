@@ -4,11 +4,9 @@ import atlantis.architecture.Manager;
 
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.targeting.basic.ATargeting;
+import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
@@ -40,19 +38,10 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public Manager handle() {
-//        if (unit.woundHp() >= 16 && unit.lastUnderAttackLessThanAgo(55)) {
+//        if (unit.woundHp() >= 12 && unit.lastUnderAttackLessThanAgo(55)) {
 //            A.printStackTrace("Wounded, so why attacking?\n" + parentsStack());
+////            System.out.println(getParent());
 //            unit.managerLogs().print();
-//        }
-
-//        if (ShouldRetreat.shouldRetreat(unit)) return null;
-
-//        if (unit.isAttacking() && unit.lastActionLessThanAgo(2)) return usedManager(this);
-
-//        targetToAttack = defineBestEnemyToAttack(unit);
-//        if (targetToAttack == null || targetToAttack.hp() <= 0) {
-////            ErrorLog.printMaxOncePerMinute(unit.type() + " targetToAttack NULL or DEAD " + targetToAttack);
-//            return null;
 //        }
 
 //        System.err.println("@ " + A.now() + " - " + unit + " ATTACK " + targetToAttack);
@@ -68,11 +57,11 @@ public class AttackNearbyEnemies extends Manager {
 
                 if (unit.target() == null) ErrorLog.printMaxOncePerMinute(error);
 
-                if (A.isUms()) {
-                    System.err.println("Current manager: " + unit.manager());
-                    unit.managerLogs().print();
-                    A.printStackTrace(error);
-                }
+//                if (A.isUms()) {
+//                    System.err.println("Current manager: " + unit.manager());
+//                    unit.managerLogs().print();
+//                    A.printStackTrace(error);
+//                }
                 return null;
             }
             return usedManager(this);
@@ -117,6 +106,10 @@ public class AttackNearbyEnemies extends Manager {
 
         AUnit target = this.defineBestEnemyToAttack(unit);
         if (target == null) return false;
+        if (target.hp() <= 0) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Target has hp(" + target.hp() + ") - " + target);
+            return false;
+        }
 
         if (!unit.mission().allowsToAttackEnemyUnit(unit, target)) return false;
         if (!allowedToAttack.canAttackNow()) return false;
@@ -159,10 +152,17 @@ public class AttackNearbyEnemies extends Manager {
         AUnit enemy = bestTargetToAttack();
 
         if (enemy == null) {
+//            if (A.isUms() && unit.enemiesNear().canBeAttackedBy(unit, 4).notEmpty()) {
+//                ErrorLog.printMaxOncePerMinute("null enemy to attack for " + unit);
+//            }
+            return null;
+        }
+        if (enemy.hp() == 0) {
+            if (A.isUms()) ErrorLog.printMaxOncePerMinute("Enemy with no hp to attack for " + unit);
             return null;
         }
 
-        if (enemy != null && !unit.hasWeaponToAttackThisUnit(enemy)) {
+        if (!unit.hasWeaponToAttackThisUnit(enemy)) {
             ErrorLog.printMaxOncePerMinute(unit.type() + " has no weapon to attack " + enemy);
             enemy = null;
         }

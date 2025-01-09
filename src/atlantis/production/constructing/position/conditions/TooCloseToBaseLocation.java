@@ -1,7 +1,6 @@
 package atlantis.production.constructing.position.conditions;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
@@ -12,7 +11,7 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class TooCloseToBaseLocation {
-    public static boolean isOverlappingBaseLocation(AUnitType building, APosition position) {
+    public static boolean TooCloseAndOverlapsBaseLocation(AUnitType building, APosition position) {
         if (building.isGasBuilding()) return false;
         if (building.isBase()) return forBase(position);
 
@@ -41,22 +40,25 @@ public class TooCloseToBaseLocation {
     }
 
     private static boolean forNonBaseBuilding(APosition position, AUnitType building) {
-        double minDist = building.isBunker() ? 4 : 6;
+        double minDist = 6;
 
-        if (We.protoss() && building.isPylon()) minDist = 4.5;
-        if (We.protoss() && building.isForge()) minDist = 2.9;
+        if (We.protoss()) {
+            if (building.isPylon()) minDist = 4.5;
+            if (building.isGateway()) minDist = 5;
+            if (building.isForge()) minDist = 2.9;
+        }
+
+        if (We.terran()) {
+            if (building.isBunker()) minDist = 3.5;
+        }
 
 //        if (building.isBunker()) System.err.println("@ " + A.now() + " - bunker ");
 
         for (ABaseLocation base : BaseLocations.baseLocations()) {
-//            if (building.isBunker())
-//                System.err.println("@ " + A.now() + " - " + base + " / " + (base.translateByTiles(3, 1).distTo(position)));
             if (
-//                !base.isStartLocation()
-//                    (natural != null && natural.translateByTiles(3, 1).distTo(position) <= minDist)
                 base.translateByTiles(We.terran() ? 4 : 2, 1).distTo(position) <= minDist
             ) {
-                if (Select.ourBasesWithUnfinished().inRadius(10, position).notEmpty()) return false;
+                if (Select.ourBasesWithUnfinished().inRadius(6, position).notEmpty()) return false;
 //                System.err.println("   --- BASE " + base.position() + " Out with dist: " + base.translateByTiles(4,
 //                    1).distTo(position) + " / " + position);
 //                APosition natural = Bases.natural();

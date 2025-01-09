@@ -5,7 +5,9 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
+import atlantis.game.event.Events;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.path.OurClosestBaseToEnemy;
@@ -84,9 +86,12 @@ public class OnUnitDestroyed {
                 && A.s <= 60 * 7
                 && ArmyStrength.ourArmyRelativeStrength() <= 85
                 && !A.isUms()
+                && EnemyUnits.discovered().ranged().count() >= 2
         ) {
             Missions.forceGlobalMissionDefend("Far too weak to attack!");
         }
+
+        Events.dispatch("OurBunkerDestroyed", unit);
     }
 
 }

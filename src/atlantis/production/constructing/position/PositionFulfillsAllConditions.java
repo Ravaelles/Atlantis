@@ -3,6 +3,7 @@ package atlantis.production.constructing.position;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.position.conditions.*;
+import atlantis.production.constructing.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructing.position.protoss.*;
 import atlantis.production.constructing.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.constructing.position.terran.TerranPositionFinder;
@@ -61,15 +62,15 @@ public class PositionFulfillsAllConditions {
         }
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
-        if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return failed();
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
 
         if (!building.isBase()) {
             if (TooCloseToChoke.isTooCloseToChoke(building, position)) return failed();
-            if (TooCloseToBaseLocation.isOverlappingBaseLocation(building, position)) return failed();
+            if (TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(building, position)) return failed();
             if (TooCloseToMainBase.isTooCloseToMainBase(building, position)) return failed();
             if (TooCloseToMineralsOrGeyser.isTooCloseToMineralsOrGeyser(building, position)) return failed();
-            if (!ProtossHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
+//            if (!ProtossHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
+            if (TooCloseToUnwalkable.isTooCloseToUnwalkable(building, position)) return failed();
             if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return failed();
         }
 

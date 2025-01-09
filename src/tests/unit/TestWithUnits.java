@@ -4,19 +4,19 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 public class TestWithUnits extends AbstractTestWithUnits {
 
     @Test
     public void subsequentSelectionDoesNotModifyOriginal() {
         try (
-                MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
+            MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
         ) {
             baseSelectMock.when(BaseSelect::neutralUnits).thenReturn(mockNeutralUnits());
 

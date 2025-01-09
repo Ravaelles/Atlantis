@@ -2,12 +2,11 @@ package atlantis.production.constructing.builders;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.position.conditions.CanPhysicallyBuildHere;
+import atlantis.production.constructing.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 public class GasBuildingFix extends HasUnit {
     public GasBuildingFix(AUnit unit) {

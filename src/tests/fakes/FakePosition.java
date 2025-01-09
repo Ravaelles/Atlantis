@@ -1,6 +1,7 @@
 package tests.fakes;
 
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 
 public class FakePosition extends APosition {
     public FakePosition(APosition position) {
@@ -12,7 +13,7 @@ public class FakePosition extends APosition {
     }
 
     @Override
-    public boolean hasPathTo(APosition position) {
+    public boolean hasPathTo(HasPosition position) {
         return true;
     }
 }

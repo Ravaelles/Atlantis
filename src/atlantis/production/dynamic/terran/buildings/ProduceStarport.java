@@ -5,15 +5,17 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Starport;
 
 public class ProduceStarport {
-    public static void starport() {
+    public static boolean starport() {
         if (shouldBuild()) {
-            AddToQueue.toHave(Terran_Starport);
+            return AddToQueue.toHave(Terran_Starport);
         }
+        
+        return false;
     }
 
     private static boolean shouldBuild() {

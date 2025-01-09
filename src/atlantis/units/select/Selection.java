@@ -247,6 +247,14 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection mobileDetectors() {
+        return cloneByRemovingIf(unit -> !unit.is(
+            AUnitType.Protoss_Observer,
+            AUnitType.Terran_Science_Vessel,
+            AUnitType.Zerg_Overlord
+        ), "mobileDetectors");
+    }
+
     public Selection detectors() {
         return cloneByRemovingIf(unit -> !unit.is(
             AUnitType.Protoss_Photon_Cannon,
@@ -494,6 +502,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection nonRanged() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isRanged()), "nonRanged"
+        );
+    }
+
     /**
      * Selects only units that do not currently have max hit points.
      */
@@ -724,9 +738,19 @@ public class Selection extends BaseSelection {
         return count() > 0 && count() == countOfType(type);
     }
 
+    public boolean mostlyOfType(AUnitType type, int percentThreshold) {
+        return count() > 0 && (count() * percentThreshold >= countOfType(type) * 100);
+    }
+
     public Selection burrowed() {
         return cloneByRemovingIf(
             (unit -> !unit.isBurrowed()), "burrowed"
+        );
+    }
+
+    public Selection burrowing() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isBurrowing()), "burrowing"
         );
     }
 
@@ -793,6 +817,18 @@ public class Selection extends BaseSelection {
     public Selection havingSpaceFree(int spaceRequired) {
         return cloneByRemovingIf(
             (unit -> unit.spaceRemaining() < spaceRequired), "havingSpaceFree:" + spaceRequired);
+    }
+
+    public Selection havingCooldownMin(int minCooldown) {
+        return cloneByRemovingIf(
+            (unit -> unit.cooldown() < minCooldown), "havingCooldownMin:" + minCooldown
+        );
+    }
+
+    public Selection havingCooldownMax(int maxCooldown) {
+        return cloneByRemovingIf(
+            (unit -> unit.cooldown() > maxCooldown), "havingCooldownMax:" + maxCooldown
+        );
     }
 
     public Selection havingEnergy(int minEnergy) {
@@ -1067,6 +1103,9 @@ public class Selection extends BaseSelection {
         if (data.isEmpty() || position == null) {
             return null;
         }
+        if (data.size() == 1) {
+            return data.get(0);
+        }
 
         sortDataByDistanceTo(position, false);
 
@@ -1118,9 +1157,26 @@ public class Selection extends BaseSelection {
             return null;
         }
 
-        sortByHealth();
+//        sortByHealth();
+        sortByWound();
+
+//        print("Most wounded: " + data.get(0).type());
 
         return data.get(0);
+    }
+
+    public AUnit mostWoundedOrNearest(HasPosition nearestTo) {
+        if (data.isEmpty()) {
+            return null;
+        }
+
+//        sortByHealth();
+        sortByWound();
+        AUnit first = data.get(0);
+
+        if (first.isWounded()) return first;
+
+        return nearestTo(nearestTo);
     }
 
     // =========================================================
@@ -1438,6 +1494,18 @@ public class Selection extends BaseSelection {
 
         if (data.size() != 1) {
             data.sort(Comparator.comparingDouble(AUnit::hpPercent));
+        }
+
+        return this;
+    }
+
+    public Selection sortByWound() {
+        if (data.isEmpty()) {
+            return new Selection(new ArrayList<>(), "");
+        }
+
+        if (data.size() != 1) {
+            data.sort(Comparator.comparingDouble(AUnit::woundOrder));
         }
 
         return this;

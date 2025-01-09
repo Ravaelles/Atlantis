@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.combat.micro.avoid.terran.avoid.ShouldNeverAvoidAsTerran;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
@@ -11,14 +12,11 @@ public class WantsToAvoid extends Manager {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        return true;
-    }
-
     public Manager unitOrUnits(Units enemies) {
         if (enemies.isEmpty()) return null;
         if (shouldNeverAvoidIf(enemies)) return null;
+
+        if ((new DontAvoidEnemy(unit)).applies()) return null;
 
         return (new DoAvoidEnemies(unit, enemies)).handle();
     }

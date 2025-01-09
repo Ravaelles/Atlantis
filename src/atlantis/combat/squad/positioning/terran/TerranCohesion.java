@@ -12,7 +12,9 @@ public class TerranCohesion extends Manager {
 
     @Override
     public boolean applies() {
-        return We.terran() && unit.isGroundUnit() && !DoNotThinkOfImprovingCohesion.dontThink(unit);
+        return We.terran()
+            && unit.isGroundUnit()
+            && !DoNotThinkOfImprovingCohesion.dontThink(unit);
     }
 
     @Override

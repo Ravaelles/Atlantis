@@ -1,5 +1,6 @@
 package atlantis.production.orders.production.queue.updater;
 
+import atlantis.combat.missions.from_build_order.EnforceBuildOrderMissionsCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -22,12 +23,13 @@ public class QueueRefresher {
 
             updateOrderStatus(order);
         }
+
+        (new EnforceBuildOrderMissionsCommander()).invokeCommander();
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {
         if (IsOrderCompleted.isCompleted(order, existingCounter)) return markAsComplete(order);
-
-        if (IsOrderInProgress.check(order)) return markAsInProgress(order);
+        if (IsOrderInProgress.isInProgress(order)) return markAsInProgress(order);
 
         return tryChangingStatusToReady(order);
     }
@@ -36,7 +38,7 @@ public class QueueRefresher {
 //        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
         // Ready to produce
-        if (IsReadyToProduceOrder.check(order)) return markAsReadyToProduce(order);
+        if (IsReadyToProduceOrder.isReady(order)) return markAsReadyToProduce(order);
 
 //        if (
 //            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)

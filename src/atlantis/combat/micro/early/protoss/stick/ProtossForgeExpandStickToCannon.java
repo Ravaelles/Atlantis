@@ -1,11 +1,10 @@
 package atlantis.combat.micro.early.protoss.stick;
 
 import atlantis.architecture.Manager;
-import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.OurBuildingUnderAttack;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -14,7 +13,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 
 public class ProtossForgeExpandStickToCannon extends Manager {
     private AUnit cannon;
@@ -41,7 +39,7 @@ public class ProtossForgeExpandStickToCannon extends Manager {
         int supplyUsed = A.supplyUsed();
         if (supplyUsed >= 80) return false;
         int goons = Count.dragoons();
-        int strength = OurArmy.strengthWithoutCB();
+        int strength = Army.strengthWithoutCB();
         if (goons >= 1 || supplyUsed >= 45) {
             if (goons >= 8) return false;
             if (strength >= 150) return false;

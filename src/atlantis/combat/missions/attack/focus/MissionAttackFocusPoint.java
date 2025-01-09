@@ -8,19 +8,19 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyNearBases;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
-import atlantis.information.strategy.GamePhase;
+import atlantis.information.generic.Army;
 import atlantis.map.AMap;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -41,7 +41,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defineFocusPoint() {
-        main = Select.main();
+        main = Select.mainOrAnyBuilding();
         our = Select.our().first();
 
         // === AliveEnemies that breached into base =====================
@@ -94,19 +94,19 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AFocusPoint enemyBuilding = nearestEnemyBuilding(main);
         if (enemyBuilding != null) return enemyBuilding;
 
-        // Prevent switching bases across entire map
-        if (GamePhase.isEarlyGame()) {
+//        // Prevent switching bases across entire map
+//        if (GamePhase.isEarlyGame()) {
 
-            // Try going near enemy base
-            AUnit enemyBase = EnemyUnits.enemyBase();
-            if (enemyBase != null) {
-                return new AFocusPoint(
-                    enemyBase,
-                    main,
-                    "EnemyBase(" + enemyBase.name() + ")"
-                );
-            }
+        // Try going near enemy base
+        AUnit enemyBase = EnemyUnits.enemyBase();
+        if (enemyBase != null) {
+            return new AFocusPoint(
+                enemyBase.position(),
+                main,
+                "EnemyBase(" + enemyBase.name() + ")"
+            );
         }
+//        }
 
         // Try going near any enemy building
 //        AUnit visibleEnemyBuilding = enemiesDiscovered.buildings().last();
@@ -157,27 +157,32 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        }
 
         // Try to go to some starting location, hoping to find enemy there.
-        if (main != null) {
-            APosition startLocation = BaseLocations.nearestUnexploredStartingLocation(main);
+        APosition startLocation = BaseLocations.nearestUnexploredStartingLocation(main);
 
-//            System.err.println("startLocation = " + startLocation);
-//            if (startLocation != null && startLocation.isExplored()) {
-//                System.err.println("Damn, this start location is already explored!");
-//                System.err.println(startLocation.isExplored() + " / " + startLocation.isPositionVisible());
-//            }
+        if (startLocation != null) {
+            return new AFocusPoint(
+                startLocation.position(),
+                main,
+                "UnexplStartLoc"
+            );
+        }
+
+        // Try to go to some starting location, hoping to find enemy there.
+        if (A.s % 50 <= 33) {
+            startLocation = BaseLocations.nearestInvisibleStartingLocation(main);
 
             if (startLocation != null) {
                 return new AFocusPoint(
-                    startLocation,
+                    startLocation.position(),
                     main,
-                    "UnexplStartLoc"
+                    "InvisStartLoc"
                 );
             }
         }
 
-        if (isTemporaryTargetStillValid()) {
+        else if (isTemporaryTargetStillValid()) {
             return new AFocusPoint(
-                _temporaryTarget,
+                _temporaryTarget.position(),
                 our,
                 "RandPosition"
             );
@@ -187,25 +192,30 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // Go to random UNEXPLORED
         _temporaryTarget = AMap.randomUnexploredPosition(our);
-        if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
+        if (
+            _temporaryTarget != null
+                && _temporaryTarget.hasPosition()
+                && !_temporaryTarget.isPositionVisible()
+                && _temporaryTarget.hasPathTo(our.position())
+        ) {
             return new AFocusPoint(
-                _temporaryTarget,
+                _temporaryTarget.position(),
                 our,
                 "RandomUnexplored"
             );
         }
 
-        // Go to random INVISIBLE
-        for (int i = 0; i < 14; i++) {
-            _temporaryTarget = AMap.randomInvisiblePosition(our);
-            if (_temporaryTarget != null && _temporaryTarget.hasPathTo(our.position())) {
-                return new AFocusPoint(
-                    _temporaryTarget,
-                    our,
-                    "RandomInvisible"
-                );
-            }
-        }
+//        // Go to random INVISIBLE
+//        for (int i = 0; i < 14; i++) {
+//            _temporaryTarget = AMap.randomInvisiblePosition(our);
+//            if (_temporaryTarget != null && _temporaryTarget.hasPosition() && _temporaryTarget.hasPathTo(our.position())) {
+//                return new AFocusPoint(
+//                    _temporaryTarget,
+//                    our,
+//                    "RandomInvisible"
+//                );
+//            }
+//        }
 
         if (!A.isUms() && EnemyUnits.discovered().count() >= 1) {
             ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
@@ -220,6 +230,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (
                 enemyInBase != null
                     && enemyInBase.hasPosition()
+                    && enemyInBase.isVisibleUnitOnMap()
                     && enemyInBase.hp() > 0
                     && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())
                     && !enemyInBase.effUndetected()
@@ -240,7 +251,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         int enemyCB = EnemyInfo.combatBuildingsAntiLand();
         if (enemyCB <= 0) return null;
 
-        if (OurArmy.strength() >= 500 && Count.ourCombatUnits() >= 30) return null;
+        if (Army.strength() >= 400 && Count.ourCombatUnits() >= 6) return null;
 
         int ourCount = Alpha.count();
         if (ourCount >= 18 || enemyCB * 8 <= ourCount) return null;
@@ -252,6 +263,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        if (choke == null) return null;
 
         HasPosition chokeMoved = choke.groundTranslateTowardsMain(4);
+
+        ARegion region = chokeMoved.position().region();
+        if (region != null && region.center() != null) {
+            chokeMoved = choke.translateTilesTowards(6, region.center());
+        }
 
         return new AFocusPoint(
             (chokeMoved != null ? chokeMoved : choke),
@@ -269,7 +285,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 && enemyBuilding.hp() >= 1
         ) {
             return new AFocusPoint(
-                enemyBuilding,
+                enemyBuilding.position(),
                 main,
                 "EnemyCB(" + enemyBuilding.name() + ")"
             );
@@ -283,10 +299,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             enemyBuilding != null
                 && enemyBuilding.hasPosition()
 //                && (enemyBuilding.isAlive() || !enemyBuilding.isVisibleUnitOnMap())
-                && enemyBuilding.hp() >= 1
+//                && enemyBuilding.hp() >= 1
         ) {
             return new AFocusPoint(
-                enemyBuilding,
+                enemyBuilding.position(),
                 main,
                 "EnemyBuilding(" + enemyBuilding.name() + ")"
             );
@@ -299,12 +315,15 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        if (enemyBuilding == null) return null;
 
         AUnit nearestTo = Alpha.get().leader();
-        if (nearestTo == null) nearestTo = main;
+        if (nearestTo == null) nearestTo = Select.mainOrAnyBuilding();
 
-        AUnit enemy = Select.enemy().combatUnits().effVisible().nearestTo(nearestTo);
+        AUnit enemy = Select.enemy().combatUnits().visibleOnMap().effVisible().havingPosition().nearestTo(nearestTo);
+        if (enemy == null) enemy = Select.enemy().combatUnits().effVisible().havingPosition().nearestTo(nearestTo);
         if (enemy == null) return null;
 
         if (enemy.hp() <= 0) return null;
+        if (!enemy.hasPosition()) return null;
+        if (!enemy.isVisibleUnitOnMap()) return null;
 
         return new AFocusPoint(
             enemy,
@@ -314,7 +333,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private boolean isTemporaryTargetStillValid() {
-        return _temporaryTarget != null && !_temporaryTarget.isPositionVisible();
+        return _temporaryTarget != null
+            && _temporaryTarget.hasPosition()
+            && !_temporaryTarget.isPositionVisible()
+            && Select.our().first().hasPathTo(_temporaryTarget);
     }
 
 }

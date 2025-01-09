@@ -1,14 +1,13 @@
 package atlantis.combat.micro.generic.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.helper.InstantiateManager;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
 
 public class AsAirAvoidAntiAir extends Manager {
-
     private HasPosition enemyAAPosition;
 
     public AsAirAvoidAntiAir(AUnit unit) {
@@ -27,6 +26,8 @@ public class AsAirAvoidAntiAir extends Manager {
     }
 
     public Manager handle() {
+        if (invokedManager(AsAirRunToCannon.class)) return usedManager(AsAirRunToCannon.class);
+
         if (unit.moveAwayFrom(enemyAAPosition, 5, Actions.MOVE_FORMATION, "AirAvoidAA")) return usedManager(this);
 
         return null;

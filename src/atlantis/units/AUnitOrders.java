@@ -51,9 +51,10 @@ public interface AUnitOrders {
 //            );
 //        }
 
+        AUnit unit = unit();
         if (target == null) {
 //            System.err.println("Null attack unit target for " + this.unit().typeWithHash());
-            ErrorLog.printMaxOncePerMinute("Null attack unit target for " + this.unit().typeWithHash());
+            ErrorLog.printMaxOncePerMinute("Null attack unit target for " + unit.typeWithHash());
             return false;
         }
 
@@ -81,29 +82,29 @@ public interface AUnitOrders {
         }
 
         if (!target.isDetected()) {
-            System.err.println("Trying to attack not detected unit for " + this.unit().typeWithHash());
+            System.err.println("Trying to attack not detected unit for " + unit.typeWithHash());
             System.err.println(target);
             System.err.println(target.position());
             System.err.println(target.isPositionVisible());
             System.err.println(target.hp());
-            if (Env.isLocal()) A.printStackTrace();
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
             return false;
         }
 
         if (!target.hasPosition()) {
-            System.err.println("Target (" + target + ") has no position " + this.unit().typeWithHash());
+            System.err.println("Target (" + target + ") has no position " + unit.typeWithHash());
             return false;
         }
 
         if (!target.isAlive()) {
-            System.err.println("Dead target (" + target + ") for " + this.unit().typeWithHash());
+            System.err.println("Dead target (" + target + ") for " + unit.typeWithHash());
 //            A.printStackTrace("Dead...");
             return false;
         }
 
         // =========================================================
 
-        Squad squad = unit().squad();
+        Squad squad = unit.squad();
         if (squad != null) squad.targeting().setLastTarget(target);
 
         // =========================================================
@@ -115,16 +116,13 @@ public interface AUnitOrders {
         // Do NOT issue double orders
 //        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
 
-        // @Debug
-//        System.err.println("A = " + unit().isCommand(UnitCommandType.Attack_Unit));
-//        System.err.println("B = " + target.equals(unit().target()));
-        if (unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
-            return true;
-//            if (A.everyFrameExceptNthFrame(16)) return true;
-        }
+//        if (unit.isCommand(UnitCommandType.Attack_Unit) && A.ago(unit._lastAttackCommand) <= 1) {
+//            if (A.isUms()) System.err.println("@" + A.now() + ": Avoiding double attack command for " + unit);
+//            return false;
+//        }
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("@" + A.now() + "  " + unit().typeWithUnitId() + "  ATTACK_UNIT " + target);
+            System.out.println("@" + A.now() + "  " + unit.typeWithUnitId() + "  ATTACK_UNIT " + target);
 
 //            if (unit().lastActionLessThanAgo(15, Actions.HOLD_POSITION)) {
 //                A.printStackTrace("AttackUnit " + unit() + " / " + target);
@@ -135,8 +133,18 @@ public interface AUnitOrders {
 //            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
 //        }
 
-        unit().setTooltipTactical("ATTACK-UNIT");
-        unit().setAction(Actions.ATTACK_UNIT);
+        unit.setTooltipTactical("ATTACK-UNIT");
+        unit.setAction(Actions.ATTACK_UNIT);
+//        unit._lastAttackCommand = A.now;
+
+        if (unit.lastCommandIssuedAgo() <= ((unit.isMoving() || unit.isAttacking()) ? 2 : 1)) return unit.isAttacking();
+        else unit.lastCommandIssuedNow(UnitCommandType.Attack_Unit);
+
+        if (unit.isCommand(UnitCommandType.Attack_Unit) && target.equals(unit.target())) {
+            return true;
+//            if (A.everyFrameExceptNthFrame(16)) return true;
+        }
+
         return u().attack(target.u());
     }
 
@@ -186,6 +194,9 @@ public interface AUnitOrders {
     }
 
     default boolean processMorph(AUnitType into, ProductionOrder order) {
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Morph);
+
         if (u().morph(into.ut())) {
             if (order != null) order.releasedReservedResources();
             return true;
@@ -196,11 +207,14 @@ public interface AUnitOrders {
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, Construction construction) {
         unit().setAction(Actions.BUILD);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Build);
+
         boolean result = u().build(buildingType.ut(), buildTilePosition);
 
         String resultString = "";
         if (!result) {
-            resultString = " ErRoR:" + (APosition.create(buildTilePosition).isBuildable() ? "b" : "NB");
+            resultString = " ErRoR:" + (APosition.create(buildTilePosition).isBuildableIncludeBuildings() ? "b" : "NB");
 
 //            if (construction != null) {
 //                ErrorLog.printMaxOncePerMinute("Failed to build " + buildingType + ", refresh it!");
@@ -215,17 +229,26 @@ public interface AUnitOrders {
 
     default boolean buildAddon(AUnitType addon) {
         unit().setAction(Actions.BUILD);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Build_Addon);
+
         return u().buildAddon(addon.ut());
     }
 
     default boolean upgrade(UpgradeType upgrade) {
         unit().setAction(Actions.RESEARCH_OR_UPGRADE);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Upgrade);
+
         ATech.markAsBeingUpgraded(upgrade);
         return u().upgrade(upgrade);
     }
 
     default boolean research(TechType tech) {
         unit().setAction(Actions.RESEARCH_OR_UPGRADE);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Research);
+
         ATech.markAsBeingResearched(tech);
         return u().research(tech);
     }
@@ -251,8 +274,6 @@ public interface AUnitOrders {
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
-//        if (true) return u().move(target.position().p());
-
         if (target == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
             return false;
@@ -269,74 +290,15 @@ public interface AUnitOrders {
             unit().setTooltip(tooltip, strategicLevel);
         }
 
-//        if (unit().isCommand(UnitCommandType.Move) && target.equals(u().getTargetPosition())) {
-//            return true;
-//        }
-
-        // === Handle LOADED/SIEGED units ========================================
-
-//        if (unit().isLoaded()) {
-//            unit().unload(unit());
-//            unit().setLastUnitOrderNow();
-//            return true;
-//        }
-
-//        if (unit().isSieged()) {
-//            if (unit().lastActionMoreThanAgo(30 * 12, UnitActions.SIEGE) && A.chance(1.5)) {
-//                unit().unsiege();
-//                unit().setLastUnitOrderNow();
-//                return true;
-//            } else {
-//                return false;
-//            }
-//        }
-
         // =========================================================
-
-//        String actionName = unit().action().name();
-//        int lastActionFramesAgo = unit().lastActionFramesAgo();
-        if (unit().isMoving()) {
-            int lastActionFramesAgo = unit().lastActionFramesAgo();
-            if (
-                lastActionFramesAgo <= 1
-                //                && (actionName.startsWith("MOVE") || actionName.startsWith("RUN"))
-            ) {
-                // Prevent units from getting stuck by getting too quick move orders
-//                System.err.println("@ " + A.now() + " - " + unit() + " - PREVENT EXCESSIVE MOVING");
-                return true;
-            }
-        }
-
-        // =========================================================
-
-//        unit().setLastActionReceivedNow()
-//            .setAction(unitAction);
-
-        // =========================================================
-
-//        if (u().isMoving() && u().getTargetPosition() != null && !u().getTargetPosition().equals(target)) {
-//        if (unit().isMoving() && A.now() % 4 != 0) {
-//            return true;
-//        }
-//
-//        if (!unit().isUnitActionMove() || !target.equals(u().getTargetPosition()) || !u().isMoving()) {
-
-//        if (!unit().isMoving() || A.now() % 4 != 0) {
-//        if (!unit().isUnitActionMove() || A.now() % 5 == 0) {
 
         AUnit currentTarget = unit().target();
-//        APosition currentTarget = target.position();
-
-//        System.err.println("isDifferentTarget = " + isDifferentTarget + " / " + target);
-//            currentTarget != null && (!currentTarget.equals(target) || unit().lastOrderMinFramesAgo(6));
-
-//        boolean executeOrder = currentTarget == null || !target.equals(currentTarget);
         boolean executeOrder = !unit().isMoving() || !target.equals(currentTarget);
-//        boolean executeOrder = true;
 
         if (executeOrder) {
             if (We.terran() && unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
                 unit().unsiege();
+                unit().lastCommandIssuedNow(UnitCommandType.Unsiege);
                 return true;
             }
 
@@ -349,19 +311,19 @@ public interface AUnitOrders {
             if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
                 A.println("@" + A.now() + ": " + unit().typeWithUnitId() + "  MOVE / to:" + target);
             }
-            u().move(target.position().p());
 
-            unit().setLastActionReceivedNow()
-                .setAction(unitAction);
+            unit().setLastActionReceivedNow().setAction(unitAction);
+            if (unit().lastCommandIssuedAgo() <= (unit().isMoving() ? 2 : 1)) return true;
+            else unit().lastCommandIssuedNow(UnitCommandType.Move);
 
             if (target instanceof AUnit) {
                 unit().setTargetUnitToAttack((AUnit) target);
             }
 
-            return true;
+            return u().move(target.position().p());
         }
 
-        return true;
+        return false;
     }
 
     /**
@@ -400,6 +362,9 @@ public interface AUnitOrders {
 //        System.err.println("-------------------------");
 
         unit().setAction(Actions.HOLD_POSITION).setTooltip(tooltip);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Hold_Position);
+
         return u().holdPosition();
     }
 
@@ -416,10 +381,22 @@ public interface AUnitOrders {
 //            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
 
+        if (A.isUms() && unit().lastCommandIssuedAgo() <= 1) {
+            A.printStackTrace("Avoiding double stop command for " + unit());
+        }
+
+//        System.err.println("A unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+
         unit().setAction(Actions.STOP).setTooltip(tooltip);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Stop);
 
         if (Env.isTesting()) return true;
 
+//        if (unit().lastCommandIssuedAgo() <= 1) {
+//            System.err.println("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+//            A.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
+//        }
         return u().stop();
     }
 
@@ -435,6 +412,10 @@ public interface AUnitOrders {
     default boolean follow(AUnit target, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
             .setAction(Actions.MOVE_FOLLOW);
+
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Follow);
+
         return u().follow(target.u());
     }
 
@@ -457,6 +438,9 @@ public interface AUnitOrders {
         else {
             unit().setAction(Actions.GATHER_GAS);
         }
+
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Gather);
 
         return u().gather(target.u());
     }
@@ -528,9 +512,13 @@ public interface AUnitOrders {
                     -0.9 + 1.9 * ((-1 + unit().id()) % 3) / 4.0
                 );
 //                A.println(A.now() + " / " + unit() + " moveTo = " + moveTo);
+
                 move(moveTo, Actions.MOVE_REPAIR, tooltip, false);
             }
             else {
+                if (unit().lastCommandIssuedAgo() <= 1) return true;
+                else unit().lastCommandIssuedNow(UnitCommandType.Repair);
+
                 u().repair(target.u());
             }
         }
@@ -551,6 +539,9 @@ public interface AUnitOrders {
      */
     default boolean burrow() {
         unit().setAction(Actions.BURROW);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Burrow);
+
         return u().burrow();
     }
 
@@ -561,6 +552,9 @@ public interface AUnitOrders {
      */
     default boolean unburrow() {
         unit().setAction(Actions.UNBURROW);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Unburrow);
+
         return u().unburrow();
     }
 
@@ -571,6 +565,9 @@ public interface AUnitOrders {
      */
     default boolean cloak() {
         unit().setAction(Actions.CLOAK);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cloak);
+
         return u().cloak();
     }
 
@@ -580,7 +577,10 @@ public interface AUnitOrders {
      * it has been passed to Broodwar. See also cloak, isCloaked, canDecloak
      */
     default boolean decloak() {
-        unit().setAction(Actions.LOAD);
+        unit().setAction(Actions.DECLOAK);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Decloak);
+
         return u().decloak();
     }
 
@@ -591,6 +591,9 @@ public interface AUnitOrders {
      */
     default boolean siege() {
         unit().setAction(Actions.SIEGE);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Siege);
+
         return u().siege();
     }
 
@@ -601,6 +604,9 @@ public interface AUnitOrders {
      */
     default boolean unsiege() {
         unit().setAction(Actions.UNSIEGE);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Unsiege);
+
         return u().unsiege();
     }
 
@@ -611,6 +617,8 @@ public interface AUnitOrders {
      */
     default boolean lift() {
         unit().setAction(Actions.LIFT);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Lift);
 
         if (Env.isTesting()) return true;
 
@@ -625,6 +633,9 @@ public interface AUnitOrders {
      */
     default boolean land(TilePosition target) {
         unit().setAction(Actions.LAND);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Land);
+
         return u().land(target);
     }
 
@@ -639,7 +650,9 @@ public interface AUnitOrders {
      */
     default boolean load(AUnit target) {
         unit().setAction(Actions.LOAD);
-//        System.err.println(unit().idWithHash() + " LOAD " + target);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Load);
+
         return u().load(target.u());
     }
 
@@ -654,6 +667,12 @@ public interface AUnitOrders {
 //        A.printStackTrace("Unloaded...");
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else {
+            unit().lastCommandIssuedNow(UnitCommandType.Unload);
+            target.lastCommandIssuedNow(UnitCommandType.Unload);
+        }
+
         return u().unload(target.u());
     }
 
@@ -668,8 +687,13 @@ public interface AUnitOrders {
      */
     default boolean unloadAll() {
         unit().setAction(Actions.UNLOAD);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Unload_All);
+
         for (AUnit loaded : unit().loadedUnits()) {
             loaded.setAction(Actions.UNLOAD);
+            if (loaded.lastCommandIssuedAgo() <= 1) continue;
+            else loaded.lastCommandIssuedNow(UnitCommandType.Unload_All);
         }
         return u().unloadAll();
     }
@@ -685,8 +709,13 @@ public interface AUnitOrders {
      */
     default boolean unloadAll(APosition target) {
         unit().setAction(Actions.UNLOAD);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Unload_All);
+
         for (AUnit loaded : unit().loadedUnits()) {
             loaded.setAction(Actions.UNLOAD);
+            if (loaded.lastCommandIssuedAgo() <= 1) continue;
+            else loaded.lastCommandIssuedNow(UnitCommandType.Unload_All);
         }
         return u().unloadAll(target.p());
     }
@@ -718,6 +747,9 @@ public interface AUnitOrders {
      */
     default boolean haltConstruction() {
         unit().setAction(null);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Halt_Construction);
+
         return u().haltConstruction();
     }
 
@@ -729,6 +761,9 @@ public interface AUnitOrders {
      */
     default boolean cancelConstruction() {
         unit().setAction(Actions.CANCEL);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Construction);
+
 //        throw new RuntimeException("Cancel!");
         return unit() != null && u() != null ? u().cancelConstruction() : FakeUnitData.CANCEL.add(unit());
     }
@@ -741,6 +776,9 @@ public interface AUnitOrders {
      */
     default boolean cancelAddon() {
         unit().setAction(null);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Addon);
+
         return u().cancelAddon();
     }
 
@@ -754,11 +792,17 @@ public interface AUnitOrders {
      */
     default boolean cancelTrain() {
         unit().setAction(null);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
+
         return u().cancelTrain();
     }
 
     default boolean cancelTrain(int slot) {
         unit().setAction(null);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
+
         return u().cancelTrain(slot);
     }
 
@@ -768,6 +812,9 @@ public interface AUnitOrders {
      * for a command to fail after it has been passed to Broodwar. See also morph, isMorphing, canCancelMorph
      */
     default boolean cancelMorph() {
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Morph);
+
         return u().cancelMorph();
     }
 
@@ -778,6 +825,9 @@ public interface AUnitOrders {
      * getTech, canCancelResearch
      */
     default boolean cancelResearch() {
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Research);
+
         return u().cancelResearch();
     }
 
@@ -788,6 +838,9 @@ public interface AUnitOrders {
      * getUpgrade, canCancelUpgrade
      */
     default boolean cancelUpgrade() {
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Upgrade);
+
         return u().cancelUpgrade();
     }
 
@@ -813,6 +866,9 @@ public interface AUnitOrders {
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Position);
+
         return u().useTech(tech, target.p());
     }
 
@@ -822,6 +878,9 @@ public interface AUnitOrders {
         }
 
         unit().setAction(Actions.USING_TECH, tech, unit());
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech);
+
         return u().useTech(tech);
     }
 
@@ -831,6 +890,9 @@ public interface AUnitOrders {
         }
 
         unit().setAction(Actions.USING_TECH, tech, target);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Unit);
+
         return u().useTech(tech, target.u());
     }
 
@@ -840,12 +902,17 @@ public interface AUnitOrders {
         }
 
         unit().setAction(Actions.RIGHT_CLICK);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Right_Click_Unit);
+
         return u().rightClick(target.u());
     }
 
     default boolean shouldPrint() {
-        if (unit().isHealthy()) return false;
-        return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));
+        return false;
+
+//        if (unit().isHealthy()) return false;
+//        return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));
     }
 
 }

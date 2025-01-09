@@ -8,7 +8,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ShouldMakeTerranBio {
 

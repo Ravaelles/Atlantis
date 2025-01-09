@@ -8,7 +8,7 @@ import atlantis.information.strategy.GamePhase;
 
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.cache.Cache;
 
 import static atlantis.units.AUnitType.*;

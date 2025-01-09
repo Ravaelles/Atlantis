@@ -1,10 +1,10 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class ChokeBlockerRunAsProtoss extends Manager {
@@ -16,7 +16,7 @@ public class ChokeBlockerRunAsProtoss extends Manager {
     public boolean applies() {
         return We.protoss()
             && Enemy.zerg()
-            && OurArmy.strength() <= 70
+            && Army.strength() <= 70
             && (unit.woundPercent() >= 10 || unit.meleeEnemiesNearCount(1.2) >= 2)
             && unit.lastUnderAttackLessThanAgo(30 * 5)
 //            && unit.lastAttackFrameLessThanAgo(30 * 4)

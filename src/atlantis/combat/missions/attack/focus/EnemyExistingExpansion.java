@@ -13,6 +13,7 @@ import atlantis.util.cache.Cache;
 import java.util.ArrayList;
 
 public class EnemyExistingExpansion {
+    public static HasPosition lastFound = null;
     private static Cache<AUnit> cache = new Cache<>();
 
     public static boolean found() {
@@ -38,11 +39,16 @@ public class EnemyExistingExpansion {
                 // =========================================================
 
                 HasPosition vulnerable = getVulnerableBase(mainAndNatural);
-                if (vulnerable != null) return vulnerable;
+                if (vulnerable != null) {
+                    lastFound = vulnerable;
+                    return vulnerable;
+                }
 
                 // =========================================================
 
-                return getAccordingToNotBeingEnemyMainNorNatural(mainAndNatural, found, enemyMain);
+                AUnit base = getAccordingToNotBeingEnemyMainNorNatural(mainAndNatural, found, enemyMain);
+                if (base != null) lastFound = base.position();
+                return base;
             }
         );
     }
@@ -53,9 +59,12 @@ public class EnemyExistingExpansion {
         ArrayList<AUnit> found = new ArrayList<>();
 
         Selection enemyBuildings = EnemyUnits.discovered().buildings();
-        for (AUnit base : enemyBuildings.bases().list()) {
+        for (AUnit base : enemyBuildings.bases().notLifted().list()) {
             if (enemyBuildings.combatBuildingsAntiLand().countInRadius(10, base) <= 1) {
-                found.add(base);
+                HasPosition mainOrNatural = mainAndNatural.nearestTo(base);
+                if (mainOrNatural == null || mainOrNatural.groundDist(base) >= 18) {
+                    found.add(base);
+                }
             }
         }
 
@@ -65,7 +74,7 @@ public class EnemyExistingExpansion {
     private static AUnit getAccordingToNotBeingEnemyMainNorNatural(
         Positions<HasPosition> mainAndNatural, ArrayList<AUnit> found, APosition enemyMain
     ) {
-        for (AUnit building : EnemyUnits.discovered().buildings().list()) {
+        for (AUnit building : EnemyUnits.discovered().buildings().notLifted().list()) {
             if (mainAndNatural.inGroundRadius(17, building).empty()) {
                 found.add(building);
             }

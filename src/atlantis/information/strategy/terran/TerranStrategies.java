@@ -3,7 +3,7 @@ package atlantis.information.strategy.terran;
 import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.units.AUnitType;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class TerranStrategies extends AStrategy {
 
@@ -28,6 +28,32 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_Nada_2_Fac = new AStrategy();
     public static final AStrategy TERRAN_Three_Factory_Vultures = new AStrategy();
     public static final AStrategy TERRAN_Tests = new AStrategy(); // Marine Medic Ghost (with Lockdown)
+
+    // =========================================================
+
+    public static AStrategy terranChooseStrategy() {
+//        return TerranStrategies.TERRAN_3_Rax_MnM;
+//        return TerranStrategies.TERRAN_Nada_2_Fac;
+//        return TerranStrategies.TERRAN_1_Base_Vultures;
+//        if (true) { return TerranStrategies.TERRAN_BBS; }
+
+        if (Enemy.protoss()) {
+            return TERRAN_Sparks;
+//            return TerranStrategies.TERRAN_Shallow_Two_vP;
+//            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+//            return TerranStrategies.TERRAN_Nada_2_Fac;
+        }
+        else if (Enemy.terran()) {
+            return TERRAN_Mech;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
+        }
+        else {
+            return TERRAN_Sparks;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
+//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
+        }
+    }
 
     // =========================================================
 
@@ -68,32 +94,6 @@ public class TerranStrategies extends AStrategy {
         TERRAN_Three_Factory_Vultures.setTerran().setName("Three Factory Vultures").setGoingTech();
 
         TERRAN_Tests.setTerran().setName("Terran strategy for Tests").setGoingTech();
-    }
-
-    // =========================================================
-
-    public static AStrategy terranChooseStrategy() {
-//        return TerranStrategies.TERRAN_3_Rax_MnM;
-//        return TerranStrategies.TERRAN_Nada_2_Fac;
-//        return TerranStrategies.TERRAN_1_Base_Vultures;
-//        if (true) { return TerranStrategies.TERRAN_BBS; }
-
-        if (Enemy.protoss()) {
-            return TERRAN_Sparks;
-//            return TerranStrategies.TERRAN_Shallow_Two_vP;
-//            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
-//            return TerranStrategies.TERRAN_Nada_2_Fac;
-        }
-        else if (Enemy.terran()) {
-            return TERRAN_Mech;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
-        }
-        else {
-            return TERRAN_Sparks;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
-//            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
-        }
     }
 
     // =========================================================

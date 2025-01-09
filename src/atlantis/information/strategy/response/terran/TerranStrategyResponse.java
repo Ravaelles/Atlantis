@@ -2,13 +2,16 @@ package atlantis.information.strategy.response.terran;
 
 import atlantis.combat.missions.Missions;
 import atlantis.game.AGame;
-import atlantis.information.decisions.OurStrategicBuildings;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.response.AStrategyResponse;
+import atlantis.information.strategy.response.RaceStrategyResponse;
 
-public class TerranStrategyResponse extends AStrategyResponse {
+public class TerranStrategyResponse extends RaceStrategyResponse {
+    @Override
+    public void onEnemyGoesHiddenUnits() {
+        (new TerranResponseEnemyHiddenUnits()).handle();
+    }
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
@@ -20,14 +23,12 @@ public class TerranStrategyResponse extends AStrategyResponse {
 
         if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
-        OurStrategicBuildings.setAntiLandBuildingsNeeded(rushDefenseCombatBuildingsNeeded(enemyStrategy));
         return true;
     }
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
-        return 0;
-//        return 1;
+//        return 0;
+        return 1;
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
-
 }

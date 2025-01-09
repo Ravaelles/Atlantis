@@ -13,7 +13,7 @@ public class SquadsInitializer {
         Delta.get();
 
         /**
-         * To change missions see OnStart class
+         * To change missions see OnGameStarted class
          */
     }
 }

@@ -3,12 +3,12 @@ package tests.acceptance;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AtlantisGameCommanderTest extends AbstractTestFakingGame {
+public class AtlantisGameCommanderTest extends AbstractTestWithWorld {
     @Test
     public void mainGameLoopWorksAsExpected() {
         createWorld(1, () -> {

@@ -1,7 +1,7 @@
 package atlantis.information.strategy.response.terran;
 
 import atlantis.combat.missions.MissionChanger;
-import atlantis.information.decisions.OurStrategicBuildings;
+
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -113,8 +113,6 @@ public class AsTerranUnitDiscoveredResponse {
         EnemyFlags.HAS_HIDDEN_COMBAT_UNIT = true;
 
         if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker)) {
-            OurStrategicBuildings.setDetectorsNeeded(2);
-
             ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
         }
     }

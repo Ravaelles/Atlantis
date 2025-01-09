@@ -15,7 +15,7 @@ public class TooCloseToBunker {
 
         double minDist = 3.8;
         if (GamePhase.isLateGame()) minDist = 2.5;
-        if (building.isSupplyDepot()) minDist = 6;
+        if (building.isSupplyDepot() || building.isBarracks()) minDist = 6;
 
         for (AUnit bunker : Select.ourBuildingsWithUnfinished().ofType(AUnitType.Terran_Bunker).list()) {
             double distToBunker = bunker.distTo(position);

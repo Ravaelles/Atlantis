@@ -3,7 +3,7 @@ package tests.fakes;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
-import atlantis.game.APlayer;
+import atlantis.game.player.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -12,15 +12,19 @@ import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
-import starengine.Images;
+import starengine.assets.Images;
 import starengine.sc_logic.AttackState;
 import starengine.units.state.EngineUnitState;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FakeUnit extends AUnit implements Serializable {
     public static int firstFreeId = 10;
+    private static List<FakeUnit> all = new ArrayList<>();
+
     public int id;
     public AUnitType rawType;
     public APosition position;
@@ -70,6 +74,22 @@ public class FakeUnit extends AUnit implements Serializable {
         this.position = APosition.createFromPixels((int) (tx * 32), (int) (ty * 32));
 
         this.hp = maxHp();
+
+        all.add(this);
+    }
+
+    // =========================================================
+
+    public static void clearCache() {
+        for (FakeUnit unit : all) {
+//            System.err.println("! Cleared cache = " + unit);
+//            A.printStackTrace("Why now?");
+            unit.clearAUnitCache();
+            unit.id *= -44;
+            unit.position = null;
+            unit.hp = -1;
+        }
+        all.clear();
     }
 
     // =========================================================
@@ -190,7 +210,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     public int maxHp() {
-        return type().maxHp();
+        return type().maxHp() + type().maxShields();
     }
 
     @Override

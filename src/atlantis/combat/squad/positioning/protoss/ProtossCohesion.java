@@ -24,7 +24,6 @@ public class ProtossCohesion extends Manager {
             ProtossFormation.class,
 
 //            AllowTimeToReposition.class,
-            AdvanceAsAlphaLeader.class,
 
             ProtossTooFarFromSquadCenter.class,
 

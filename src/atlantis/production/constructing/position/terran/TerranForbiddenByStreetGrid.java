@@ -7,10 +7,8 @@ import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 public class TerranForbiddenByStreetGrid {
-    //    private static final int GRID_VALUE_X = 9;
-//    private static final int GRID_VALUE_Y = 6;
-    public static final int GRID_VALUE_X = 13;
-    public static final int GRID_VALUE_Y = 13;
+    public static final int GRID_SIZE_X = 11;
+    public static final int GRID_SIZE_Y = 6;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -20,79 +18,53 @@ public class TerranForbiddenByStreetGrid {
      */
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (!We.terran()) return false;
+        if (ignoreBuildingsOfThisType(building)) return false;
+
+        int moduloX = (position.tx() % GRID_SIZE_X);
+        int moduloY = (position.ty() % GRID_SIZE_Y);
+
+//        if (moduloX % GRID_SIZE_X == 0) return failed("TX modulo zero = " + moduloX);
+//        if (moduloY % GRID_SIZE_Y == 0) return failed("TY modulo zero = " + moduloY);
 
         if (building.isSupplyDepot() || building.isAcademy()) {
-            return ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position);
-//            if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
+            if (
+                moduloX != 1 && moduloX != 3 && moduloX != 5 && moduloX != 7 && moduloX != 9
+            ) return failed("TX modulo 2x2 = " + moduloY);
+            if (moduloY != 4) return failed("TY modulo 2x2 = " + moduloY);
+
+            return false;
         }
 
-        if (
-            building.isBase()
-                || building.isGasBuilding()
-                || building.isCombatBuilding() // @Check
-        ) return false;
+        boolean factoryOrStarport = building.isFactory();
+        if (building.isBarracks() || factoryOrStarport || building.isEngineeringBay()) {
+//            if (moduloX != 1 && moduloX != 7 && moduloX != (factoryOrStarport ? 9 : 1)) {
+            if (moduloX != 1 && moduloX != 7) {
+                return failed("TX modulo failed for Barracks = " + moduloX);
+            }
+            if (moduloY != 1) return failed("TY modulo even = " + moduloY);
 
-        int modulo;
-        if ((modulo = (position.tx()) % 3) != 0) return failed("TX modulo K = " + modulo);
-        if ((modulo = (position.ty()) % 3) != 0) return failed("TY modulo L = " + modulo);
+            return false;
+        }
 
-        if (true) return false;
+        if (moduloX % 2 != 1) return failed("TX modulo EVEN = " + moduloX);
+        if (moduloY % 2 != 1) return failed("TY modulo EVEN = " + moduloY);
 
-//        if (ForbiddenByStreetGridForBarracks.isForbidden(builder, building, position)) return true;
-
-//        if (
-//            building.isMissileTurret() && Select.ourBuildingsWithUnfinished().inRadius(3, position).empty()
-//        ) return false;
-
-        // =========================================================
-
-//        if (position.tx() % GRID_VALUE_X <= 0) return fail("TX modulo");
-//        if (position.ty() % GRID_VALUE_Y <= 0) return fail("TY modulo");
-
-        if ((position.tx() + building.dimensionRightPixels() / 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
-        if ((position.ty() + building.dimensionDownPixels() / 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
-
-//        if ((position.tx() + building.dimensionRightPx() * 32) % GRID_VALUE_X <= 0) return fail("TX modulo");
-//        if ((position.ty() + building.dimensionDownPx() * 32) % GRID_VALUE_Y <= 0) return fail("TY modulo");
-
-//        if (building.getTileWidth() >= 4) {
-//            if (position.tx() % 4 >= 2) return fail("TX big modulo");
+//        if (building.isCombatBuilding()) {
+//            return false;
 //        }
 
-//        if (building.isBarracks() || building.isFactory()) {
-//            if (position.tx() % 3 <= 1) return fail("TX Barracks & Factory modulo");
-//            if (position.ty() % 3 <= 1) return fail("TX Barracks & Factory modulo");
-//        }
-
-        // =========================================================
-
-//        // Leave entire vertical (same tileX) corridor free for units
-//        if (
-//            buildingLeftTx(building, position) % GRID_VALUE <= 1
-//                || buildingRightTx(building, position) % GRID_VALUE <= 1
-//        ) {
-//            if (
-//                !position.translateByTiles(-1 - building.dimensionLeftTx(), 0).isWalkable()
-//                    && !position.translateByTiles(+1 + building.dimensionRightTx(), 0).isWalkable()
-//            ) {
-//                return fail("LEAVE_PLACE_VERTICALLY");
-//            }
-//        }
-//
-//        // Leave entire horizontal (same tileY) corridor free for units
-//        if (
-//            position.ty() % GRID_VALUE <= 1
-//                || (position.ty() + building.dimensionDownPx() / 32) % GRID_VALUE <= 0
-//        ) {
-//            if (
-//                !position.translateByTiles(0, -1 - building.dimensionUpTx()).isWalkable()
-//                    && !position.translateByTiles(0, +1 + building.dimensionDownTx()).isWalkable()
-//            ) {
-//                return fail("LEAVE_PLACE_HORIZONTALLY");
-//            }
+//        if (building.isSupplyDepot() || building.isAcademy()) {
+//            return ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position);
+////            if (ForbiddenByStreetGridForSupplyDepotAndAcademy.isForbidden(builder, building, position)) return true;
 //        }
 
         return false;
+    }
+
+    private static boolean ignoreBuildingsOfThisType(AUnitType building) {
+        return building.isBase()
+            || building.isGasBuilding()
+            || building.isBunker();
     }
 
     private static boolean fail(String reason) {

@@ -106,6 +106,10 @@ public class ARegion implements HasPosition {
                 (area.getTopLeft().x + area.getBottomRight().x) / 2,
                 (area.getTopLeft().y + area.getBottomRight().y) / 2
             );
+
+            if (!center.isWalkable()) {
+                center = center.makeWalkable(8);
+            }
         }
 
         return center;

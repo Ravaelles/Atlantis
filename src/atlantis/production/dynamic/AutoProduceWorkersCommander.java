@@ -16,8 +16,9 @@ import atlantis.production.requests.produce.ProduceWorker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.*;
@@ -72,8 +73,12 @@ public class AutoProduceWorkersCommander extends Commander {
         // === Zerg ===========================================
 
         if (We.zerg()) {
-            if (!A.hasMinerals(75 * Count.creepColonies())) return false;
-            if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return false;
+            if (A.supplyUsed() <= 20 && !A.canAffordWithReserved(50, 0)) return dont("EarlyReserved");
+            ;
+            if (Have.spawningPoolWithUnfinished() && Count.zerglingsWithUnfinished() <= 3)
+                return A.hasMinerals(100) && Count.larvas(3);
+            if (!A.hasMinerals(75 * Count.creepColonies())) return dont("CreepColonies");
+            ;
             if (!A.hasMinerals(250) && SoonInQueue.have(Zerg_Spawning_Pool, 1)) {
                 ProductionOrder order = Queue.get().nextOrders(1).ofType(Zerg_Spawning_Pool).get(0);
                 if (order != null && order.supplyRequirementFulfilled(0)) {

@@ -1,6 +1,7 @@
 package atlantis.protoss.shuttle;
 
 import atlantis.architecture.Manager;
+import atlantis.protoss.reaver.reaver_with_shuttle.ProtossShuttleWithReaver;
 import atlantis.units.AUnit;
 
 public class ProtossShuttle extends Manager {

@@ -43,7 +43,7 @@ public class AvoidSingleEnemy extends Manager {
             return this;
         }
 
-        return runError.handleErrorRun(unit);
+        return runError.handleErrorRun(unit, -345);
     }
 
     private boolean allowedToNotifyNearUnitsToMakeSpace() {

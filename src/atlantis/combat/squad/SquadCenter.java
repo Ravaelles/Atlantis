@@ -3,15 +3,11 @@ package atlantis.combat.squad;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class SquadCenter {
     private Cache<AUnit> cache = new Cache<>();
@@ -36,7 +32,7 @@ public class SquadCenter {
         AUnit leader = cache.getIfValid(
             "leader",
             ttl,
-            this::defineLeader
+            () -> this.defineLeader(null)
         );
 
         if (leader != null && We.protoss() && leader.isZealot() && Count.dragoons() > 0) {
@@ -48,19 +44,23 @@ public class SquadCenter {
             return _prevLeader = leader;
         }
 
-        _prevLeader = leader = this.defineLeader();
+        _prevLeader = leader = this.defineLeader(null);
         cache.set("leader", ttl, leader);
         return leader;
     }
 
-    protected AUnit defineLeader() {
+    public void refreshLeader(AUnit exceptUnit) {
+        defineLeader(exceptUnit);
+    }
+
+    protected AUnit defineLeader(AUnit exceptUnit) {
         if (squad.isEmpty()) return null;
 
         Selection units = squad.units();
 //        APosition median = squad.average();
 //        APosition median = squad.median();
 
-        Selection candidates = potentialLeaders(units);
+        Selection candidates = potentialLeaders(units, exceptUnit);
         APosition nearestToPosition = nearestToPosition();
         AUnit unit;
 
@@ -86,11 +86,12 @@ public class SquadCenter {
         return Select.mainOrAnyBuildingPosition();
     }
 
-    private static Selection potentialLeaders(Selection units) {
+    private static Selection potentialLeaders(Selection units, AUnit exceptUnit) {
         Selection candidates = units
             .groundUnits()
             .havingWeapon()
-            .notSpecialAction();
+            .notSpecialAction()
+            .exclude(exceptUnit);
 
         return candidates;
     }

@@ -6,8 +6,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class DragoonInsteadZealotVsZerg {
     public static boolean dragoonInsteadOfZealot_vZ() {

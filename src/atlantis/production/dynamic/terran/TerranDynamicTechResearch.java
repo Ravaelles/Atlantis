@@ -15,8 +15,8 @@ public class TerranDynamicTechResearch extends Commander {
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
             SiegeMode.class,
-            Stimpacks.class,
-            U238.class,
+            ResearchStimpacks.class,
+            ResearchU238.class,
             CloakingField.class,
             Lockdown.class,
             TerranInfantryWeapons.class,

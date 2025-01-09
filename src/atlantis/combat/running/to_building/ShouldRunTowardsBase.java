@@ -2,13 +2,13 @@ package atlantis.combat.running.to_building;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.OurStrategy;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class ShouldRunTowardsBase {
@@ -17,7 +17,26 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.distTo(main);
-        if (distToMain <= 2.4) return false;
+        if (distToMain <= 3.6) return false;
+
+        if (
+            unit.enemiesNear().canAttack(unit, 4).count() >= 2
+                && Chokes.enemyMainAndNaturalChokes().groundDistTo(unit) <= 5
+        ) return true;
+
+        if (unit.rangedEnemiesCount(2) >= 3) return false;
+        if (nearestEnemyCloserToBaseThanUs(unit)) return false;
+
+//        if (distToMain >= 40 && unit.isDragoon() && unit.hp() >= 41 && ) return true;
+
+        if (We.protoss()) {
+            if (Enemy.zerg()) {
+                if (unit.lastUnderAttackLessThanAgo(30) || unit.hp() <= 35) return false;
+
+                if (unit.distToBase() >= 10) return true;
+                if (unit.distToCannon() >= 6) return true;
+            }
+        }
 
         if (!A.isUms() && unit.hp() >= 41 && Count.ourCombatUnits() <= 7) {
             if (!unit.isRanged() || !Enemy.protoss() || unit.rangedEnemiesCount(8) > 0) return true;
@@ -28,12 +47,17 @@ public class ShouldRunTowardsBase {
         if (Enemy.protoss()) {
             if (
                 unit.isDragoon()
-                    && EnemyInfo.noRanged()
-                    && unit.enemiesNear().countInRadius(5, unit) >= 3
-            ) return false;
+                    && unit.enemiesNear().ranged().empty()
+            ) {
+                if (
+                    unit.shotSecondsAgo(2) && unit.enemiesNear().countInRadius(2.7, unit) <= 0
+                ) return true;
+
+                if (unit.enemiesNear().countInRadius(5, unit) >= 3) return false;
+            }
         }
 
-        if (Enemy.zerg() && unit.isDragoon() && unit.combatEvalRelative() <= 0.6) return false;
+        if (Enemy.zerg() && unit.isDragoon() && unit.eval() <= 0.6) return false;
 
         if (unit.isMissionAttack() && unit.isGroundUnit() && unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.isScout() && !unit.isDragoon() && unit.enemiesNear().buildings().notEmpty()) return true;
@@ -98,6 +122,16 @@ public class ShouldRunTowardsBase {
 //
 //        return unit.distTo(mainOrAnyBuilding) >= 20
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
+    }
+
+    private static boolean nearestEnemyCloserToBaseThanUs(AUnit unit) {
+        AUnit enemy = unit.nearestEnemy();
+        if (enemy == null) return false;
+
+        AUnit main = Select.main();
+        if (main == null) return false;
+
+        return enemy.groundDist(main) < unit.distTo(main);
     }
 
     private static boolean forbidAsManyEnemiesNear(AUnit unit) {

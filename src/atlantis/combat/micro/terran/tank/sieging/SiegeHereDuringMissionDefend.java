@@ -5,7 +5,7 @@ import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class SiegeHereDuringMissionDefend extends Manager {
     public SiegeHereDuringMissionDefend(AUnit unit) {

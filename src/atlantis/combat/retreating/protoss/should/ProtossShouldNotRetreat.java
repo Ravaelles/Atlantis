@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 
 public class ProtossShouldNotRetreat extends Manager {
@@ -30,11 +31,26 @@ public class ProtossShouldNotRetreat extends Manager {
             return true;
         }
 
+        if (dontRetreatAsRangedAgainstMelee()) {
+            unit.addLog("RangedVsMelee");
+            return true;
+        }
+
 //        if (true) return false;
 
-//        if (unit.isDragoon()) return AsDragoonDoNotRetreat.doNotRetreat(unit);
+        if (unit.isDragoon() && AsDragoonDoNotRetreat.doNotRetreat(unit)) {
+            unit.addLog("GoGoGoon");
+            return true;
+        }
 
-        if (unit.friendsNear().combatUnits().countInRadius(6, unit) >= 3 && unit.combatEvalRelative() >= 1.5) {
+        double eval = unit.eval();
+
+        if (eval >= 0.98 && unit.hp() >= 32) {
+            unit.addLog("HighEval");
+            return true;
+        }
+
+        if (unit.friendsNear().combatUnits().countInRadius(6, unit) >= 3 && eval >= 1.5) {
             unit.addLog("NoRunHighEval");
             return true;
         }
@@ -44,8 +60,13 @@ public class ProtossShouldNotRetreat extends Manager {
 //            return true;
 //        }
 
-        if (unit.cooldown() <= 4 && DontAvoidWhenCannonsNear.check(unit)) {
+        if (DontAvoidWhenCannonsNear.check(unit)) {
             unit.addLog("DontRetreatSupportCannon");
+            return true;
+        }
+
+        if (dontRunNearBases()) {
+            unit.addLog("NoRetreatNearBase");
             return true;
         }
 
@@ -54,12 +75,16 @@ public class ProtossShouldNotRetreat extends Manager {
             return true;
         }
 
+//        System.out.println("PRINT CanRetreat");
+//        unit.addLog("CanRetreat");
+//        unit.log().print();
+
 //        if (shouldNotRunInMissionDefend(unit)) {
 //            unit.addLog("NoRunInDefend");
 //            return true;
 //        }
 
-        if (unit.combatEvalRelative() <= 1.2) return false;
+//        if (eval <= 1.25) return false;
 
 //        if (shouldNotRunInMissionAttack(unit)) {
 //            unit.addLog("NoRunInAttack");
@@ -67,6 +92,23 @@ public class ProtossShouldNotRetreat extends Manager {
 //        }
 
         return false;
+    }
+
+    private boolean dontRetreatAsRangedAgainstMelee() {
+        if (!unit.isRanged()) return false;
+        if (unit.hp() <= 22) return false;
+
+        if (Enemy.zerg()) {
+            if (unit.enemiesNear().zerglings().countInRadius(5, unit) >= 3) return false;
+        }
+
+        return unit.enemiesNear().ranged().canAttack(unit, 6).empty();
+    }
+
+    private boolean dontRunNearBases() {
+        return unit.hp() >= 30
+            && unit.cooldown() <= 2
+            && unit.friendsNear().bases().inRadius(4.5, unit).notEmpty();
     }
 
     private static boolean shouldNotRunInMissionSparta(AUnit unit) {
@@ -82,7 +124,7 @@ public class ProtossShouldNotRetreat extends Manager {
         return unit.isMelee()
             && unit.hp() >= 35
             && unit.cooldown() <= 10
-            && unit.combatEvalRelative() >= 0.7
+            && unit.eval() >= 0.7
             && (
             unit.distToBase() <= 6
                 ||

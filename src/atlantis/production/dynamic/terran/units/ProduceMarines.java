@@ -5,6 +5,7 @@ import atlantis.information.decisions.terran.ShouldMakeTerranBio;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
@@ -12,9 +13,10 @@ import atlantis.production.orders.production.queue.order.ForcedDirectProductionO
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 import static atlantis.units.AUnitType.Terran_Barracks;
 import static atlantis.units.AUnitType.Terran_Marine;
@@ -25,6 +27,8 @@ public class ProduceMarines {
     private static int marines;
 
     public static boolean marines() {
+        if (MechInsteadOfInfantry.check()) return false;
+
         int freeBarracks = Count.freeBarracks();
 
         if (freeBarracks <= 0) return false;
@@ -35,6 +39,7 @@ public class ProduceMarines {
         marines = Count.marines();
 
         if (marines <= 3 && A.hasMinerals(100)) return forceProduceMarine();
+        if (saveForFactoryWhenQuiteStrong()) return false;
 
         if (marines >= 5 && !A.hasMinerals(100)) return false;
         if (!A.canAffordWithReserved(55, 0)) return false;
@@ -93,6 +98,13 @@ public class ProduceMarines {
         }
 
         return trainMarinesForBunkersIfNeeded();
+    }
+
+    private static boolean saveForFactoryWhenQuiteStrong() {
+        return Army.strength() >= 110
+            && !Have.factoryWithUnfinished()
+            && Have.bunker()
+            && A.canAffordWithReserved(50);
     }
 
     private static boolean forceProduceMarine() {

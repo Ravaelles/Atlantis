@@ -7,7 +7,7 @@ import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.select.Count;
 
@@ -15,8 +15,8 @@ public class ProtossShouldPunishZergEarly {
     public static Decision shouldPunishZergEarly() {
         int zealotsAndGoons;
 
-        if (Count.dragoons() <= 2 && OurArmy.strength() <= 140) {
-            if (MissionChanger.DEBUG) MissionChanger.reason = "WeakDespiteGoons(" + OurArmy.strength() + "%)";
+        if (Count.dragoons() <= 2 && Army.strength() <= 140) {
+            if (MissionChanger.DEBUG) MissionChanger.reason = "WeakDespiteGoons(" + Army.strength() + "%)";
             return Decision.FALSE;
         }
 
@@ -28,12 +28,12 @@ public class ProtossShouldPunishZergEarly {
                 && (Count.dragoons() >= EnemyUnits.hydras() * 2)
         ) {
             if (
-                OurArmy.strength() >= 180 && (
+                Army.strength() >= 180 && (
                     (zealotsAndGoons * 2.5 >= EnemyUnits.discovered().combatUnits().count())
                         || (Count.dragoons() >= 1 && EnemyUnits.discovered().combatUnits().atMost(18))
                 )
             ) {
-                if (MissionChanger.DEBUG) MissionChanger.reason = "PunishZergEarly(" + OurArmy.strength() + "%)";
+                if (MissionChanger.DEBUG) MissionChanger.reason = "PunishZergEarly(" + Army.strength() + "%)";
                 return Decision.TRUE;
             }
         }
@@ -43,7 +43,7 @@ public class ProtossShouldPunishZergEarly {
 
     private static boolean enemyLooksVeryStrongEarlyGame() {
         return A.s <= 60 * 9
-            && OurArmy.strength() <= 190
+            && Army.strength() <= 190
             && (RetreatManager.GLOBAL_RETREAT_COUNTER >= 2 || Atlantis.LOST_RESOURCES >= 250)
             && (Count.dragoons() <= 9 || EnemyInfo.hasRanged())
             && !ResearchSingularityCharge.isResearched();

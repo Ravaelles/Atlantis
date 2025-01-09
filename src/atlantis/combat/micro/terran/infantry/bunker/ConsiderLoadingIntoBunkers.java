@@ -3,7 +3,8 @@ package atlantis.combat.micro.terran.infantry.bunker;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.util.Enemy;
+import atlantis.units.select.Selection;
+import atlantis.game.player.Enemy;
 
 public class ConsiderLoadingIntoBunkers extends Manager {
     public ConsiderLoadingIntoBunkers(AUnit unit) {
@@ -14,13 +15,17 @@ public class ConsiderLoadingIntoBunkers extends Manager {
     public boolean applies() {
         if (unit.isLoaded()) return false;
         if (Count.bunkers() == 0) return false;
-        if (unit.hp() <= 20 && Count.marines() >= 5 && unit.meleeEnemiesNearCount(1.7) > 0) return false;
         if (!unit.isMarine() && !unit.isGhost()) return false;
+
+        Selection bunkers = unit.friendsNear().bunkers().havingSpaceFree(1);
+        if (bunkers.countInRadius(0.8, unit) > 0) return true;
+
+        boolean noBunkerVeryNear = bunkers.inRadius(5.5, unit).empty();
+        if (!noBunkerVeryNear && unit.distToFocusPoint() <= 4) return true;
+
+        if (unit.hp() <= 20 && Count.marines() >= 5 && unit.meleeEnemiesNearCount(1.7) > 0) return false;
         if (unit.isWounded() && unit.meleeEnemiesNearCount(1.9) >= 2) return false;
 
-        boolean noBunkerVeryNear = unit.friendsNear().bunkers().inRadius(4.5, unit).empty();
-
-        if (!noBunkerVeryNear && unit.distToFocusPoint() <= 4) return true;
 
         if (unit.hp() >= 33 && noBunkerVeryNear && unit.noCooldown()) {
             if (unit.enemiesNear().inRadius(1.6, unit).notEmpty()) return false;

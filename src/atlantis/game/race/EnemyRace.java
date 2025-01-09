@@ -31,7 +31,11 @@ public class EnemyRace {
     public static Race enemyRace() {
         if (enemyRace != null) return enemyRace;
 
+//        System.err.println("AGame.enemy().getRace() = " + AGame.enemy().getRace());
+
         if (!A.isUms()) return enemyRace = AGame.enemy().getRace();
+
+//        System.err.println("DefineEnemyRaceForCustomMaps.define() = " + DefineEnemyRaceForCustomMaps.define());
 
         return enemyRace = DefineEnemyRaceForCustomMaps.define();
     }

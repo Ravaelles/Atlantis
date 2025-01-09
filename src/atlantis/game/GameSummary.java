@@ -31,7 +31,7 @@ public class GameSummary {
     }
 
     private static void paintCombatStatistics() {
-        AUnit unit = Select.ourCombatUnits().first();
+        AUnit unit = Select.ourCombatUnits().havingWeapon().first();
         if (unit == null) return;
 
         A.println("### " + unit.type() + " Wound: " + unit.woundHp() + "hp ###");

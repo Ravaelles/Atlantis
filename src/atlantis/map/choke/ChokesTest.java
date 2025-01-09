@@ -1,10 +1,10 @@
 package atlantis.map.choke;
 
 import atlantis.units.AUnitType;
-import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 
-public class ChokesTest extends NonAbstractTestFakingGame {
+public class ChokesTest extends WorldStubForTests {
     @Test
     public void testMainAndNaturalChoke() {
         createWorld(1,

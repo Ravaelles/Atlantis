@@ -37,7 +37,7 @@ public class ForbiddenByStreetGridForSupplyDepotAndAcademy {
     private static boolean otherSupplyDepotConstructionsAreTooClose(APosition position) {
         return ConstructionRequests.hasNotStartedNear(
             Terran_Supply_Depot, position, 5
-        );
+        ) && failed("Too close to other supply depots");
     }
 
     private static boolean streetGridMatches(APosition position) {

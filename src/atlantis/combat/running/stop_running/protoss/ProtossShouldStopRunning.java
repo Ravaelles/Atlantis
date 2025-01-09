@@ -43,11 +43,11 @@ public class ProtossShouldStopRunning extends Manager {
     private boolean checkAsZergling() {
         return unit.isZergling()
             && unit.enemiesNear().melee().canAttack(unit, 2).empty()
-            && unit.combatEvalRelative() >= 1.2;
+            && unit.eval() >= 1.2;
     }
 
     private boolean checkAsZealot() {
-        return unit.isZealot() && unit.combatEvalRelative() >= 1.2;
+        return unit.isZealot() && unit.eval() >= 1.2;
     }
 
     public static boolean decisionStopRunning(AUnit unit) {

@@ -4,12 +4,12 @@ import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
+public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
     private FakeUnit sunken;
 
     /**
@@ -42,8 +42,8 @@ public class AvoidCombatBuildingsTest extends AbstractTestFakingGame {
                     + ",\n   dist_to_sunken:" + A.dist(distToSunken)
                     + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
                     + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                    + "\n   marine eval = " + unit.combatEvalRelative()
-                    + "\n   sunken eval = " + sunken.combatEvalRelative()
+                    + "\n   marine eval = " + unit.eval()
+                    + "\n   sunken eval = " + sunken.eval()
                 );
                 System.err.println("_______________________________________");
             }

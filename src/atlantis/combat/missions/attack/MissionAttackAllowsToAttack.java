@@ -6,7 +6,7 @@ import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class MissionAttackAllowsToAttack extends HasUnit {
@@ -29,13 +29,13 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (
             unit.isRanged()
                 && unit.hp() >= 25
-                && unit.combatEvalRelative() >= 1.2
+                && unit.eval() >= 1.2
                 && unit.isTargetInWeaponRangeAccordingToGame(enemy)
         ) return true;
 
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
-            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.combatEvalRelative() < 2.0) return false;
+            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return false;
         }
 
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;

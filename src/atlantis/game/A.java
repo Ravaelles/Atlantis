@@ -7,7 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 import bwapi.TechType;
@@ -1325,8 +1325,10 @@ public class A {
 
     public static void sleep(int ms) {
         try {
-            TimeUnit.MILLISECONDS.sleep(ms);
+//            TimeUnit.MILLISECONDS.sleep(ms);
+            Thread.sleep(ms);
         } catch (InterruptedException e) {
+            System.err.println("InterruptedException in A.sleep");
         }
     }
 
@@ -1405,8 +1407,14 @@ public class A {
         return canAfford(
             minerals + ReservedResources.minerals(),
             gas + ReservedResources.gas()
-        )
-            || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
+        ) || canAfford(Math.min(minerals, 550), Math.min(minerals, 250));
+    }
+
+    public static boolean canAffordWithReserved(int minerals) {
+        return canAfford(
+            minerals + ReservedResources.minerals(),
+            0
+        ) || canAfford(Math.min(minerals, 550), 0);
     }
 
     public static boolean canAffordWithReserved(AUnitType type) {

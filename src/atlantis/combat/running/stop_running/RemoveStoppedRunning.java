@@ -18,7 +18,7 @@ public class RemoveStoppedRunning extends Manager {
     @Override
     public Manager handle() {
         unit.runningManager().stopRunning();
-        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - STOP RUNNING -");
+//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - STOP RUNNING -");
         return usedManager(this);
     }
 }

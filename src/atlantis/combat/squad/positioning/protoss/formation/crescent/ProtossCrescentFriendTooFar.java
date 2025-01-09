@@ -15,7 +15,7 @@ public class ProtossCrescentFriendTooFar extends Manager {
     public boolean applies() {
         friend = unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
 
-        return friend != null && friend.distTo(unit) > 0.3 && friend.distTo(unit) <= 4;
+        return friend != null && friend.distTo(unit) > 0.5 && friend.distTo(unit) <= 8;
     }
 
     @Override

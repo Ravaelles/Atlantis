@@ -2,11 +2,13 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
+import atlantis.information.strategy.OurStrategy;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.position.MaxBuildingDist;
-import atlantis.production.orders.production.Requirements;
+import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
@@ -264,17 +266,50 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //    }
 
     public boolean supplyRequirementFulfilled(int extraEarlyBonus) {
-        int bonus = unitOrBuilding != null && A.supplyUsed() >= 9 && unitOrBuilding.isABuilding() ? 2 : 0;
+        int supplyUsed = A.supplyUsed();
+
+        if (unitOrBuilding != null && is(AUnitType.Protoss_Pylon)) {
+            if (supplyUsed < minSupply && !A.canAffordWithReserved(100, 0)) return false;
+        }
+
+        int allBonuses = 0;
+
+        if (unitOrBuilding == null || !unitOrBuilding.isGasBuilding()) {
+            int bonus = supplyEarlierBonusToConsiderReady();
+            int penaltyReservedMinerals = penaltyReservedMinerals();
+            allBonuses = bonus - penaltyReservedMinerals + extraEarlyBonus;
+        }
+
+//        if (penaltyReservedMinerals > 0) {
+//            System.err.println("PENALTY RESERVED MINERALS: " + penaltyReservedMinerals + " for " + unitOrBuilding);
+//        }
 
 //        if (unitOrBuilding != null && unitOrBuilding.equals(AUnitType.Protoss_Cybernetics_Core)) {
 //            bonus = 2;
 //        }
 
-        return A.supplyUsed() + bonus + extraEarlyBonus >= minSupply;
+        return supplyUsed + allBonuses >= minSupply;
+    }
+
+    private int penaltyReservedMinerals() {
+        if (A.supplyUsed() < minSupply) {
+            if (ReservedResources.minerals() >= 100 && !is(AUnitType.Protoss_Pylon)) return 1;
+        }
+
+        return 0;
+    }
+
+    private int supplyEarlierBonusToConsiderReady() {
+        return unitOrBuilding != null
+            && A.supplyUsed() >= 9
+            && unitOrBuilding.isABuilding() ? (OurStrategy.get().isExpansion() ? 2 : 1) : 0;
     }
 
     public void cancel() {
-//        A.errPrintln("At " + A.s + "s cancelling order " + this);
+//        A.errPrintln(A.minSec() + " CANCEL order " + this);
+//        if (isBuilding() && unitOrBuilding.isPylon()) {
+//            A.printStackTrace("CANCEL PYLON");
+//        }
 
         if (construction() != null) construction().cancel();
 
@@ -432,7 +467,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         if (this.status != newStatus) {
             this.status = newStatus;
 
-            OrderStatusWasChanged.update(this, newStatus);
+            OrderStatusWasChanged.update(this);
         }
 
         return status;
@@ -525,5 +560,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
     public int requestedAgo() {
         return A.ago(requestedAt);
+    }
+
+    public boolean is(AUnitType type) {
+        return unitOrBuilding != null && unitOrBuilding.equals(type);
     }
 }

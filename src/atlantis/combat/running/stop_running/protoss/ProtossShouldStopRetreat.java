@@ -14,7 +14,7 @@ public class ProtossShouldStopRetreat extends Manager {
         if (unit.lastStartedRunningLessThanAgo(20)) return false;
 
         return unit.lastStartedRunningMoreThanAgo(30 * 3)
-            || unit.combatEvalRelative() >= 1.3
+            || unit.eval() >= 1.3
             || (unit.cooldown() <= 7 && (unit.distToCannon() <= 1.9 || unit.distToBase() <= 5));
     }
 

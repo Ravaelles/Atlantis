@@ -5,13 +5,13 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;
-import org.junit.Test;
-import tests.acceptance.NonAbstractTestFakingGame;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class FindPositionForBaseNearestFreeTest extends NonAbstractTestFakingGame {
+public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
     @Test
     public void testNaturalBaseIsReturnedIfWeHaveOnlyOneBase() {
         createWorld(1,

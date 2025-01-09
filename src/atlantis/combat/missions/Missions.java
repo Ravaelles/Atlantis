@@ -11,6 +11,7 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.
@@ -72,28 +73,31 @@ public class Missions {
         return globalMission().isMissionAttack();
     }
 
-    public static boolean forceGlobalMissionAttack(String reason) {
+    private static boolean enforceGlobalMission(Mission mission, String reason) {
         lastMissionEnforcedAt = A.now();
-        setGlobalMissionTo(ATTACK, reason);
+        setGlobalMissionTo(mission, reason);
         return true;
+    }
+
+    public static boolean forceGlobalMissionAttack(String reason) {
+        return enforceGlobalMission(ATTACK, reason);
     }
 
     public static boolean forceGlobalMissionDefend(String reason) {
-        lastMissionEnforcedAt = A.now();
-        setGlobalMissionTo(DEFEND, reason);
-        return true;
+        return enforceGlobalMission(DEFEND, reason);
     }
 
     public static boolean forceGlobalMissionContain(String reason) {
-        lastMissionEnforcedAt = A.now();
-        setGlobalMissionTo(CONTAIN, reason);
-        return true;
+        return enforceGlobalMission(CONTAIN, reason);
     }
 
     public static boolean forceGlobalMissionSparta(String reason) {
-        lastMissionEnforcedAt = A.now();
-        setGlobalMissionTo(SPARTA, reason);
-        return true;
+        return enforceGlobalMission(SPARTA, reason);
+    }
+
+    public static boolean forceGlobalMissionFromBuildOrder(Mission mission, String buildOrderMission) {
+        System.err.println(A.minSec() + ": FORCE GLOBAL MISSION FROM BUILD ORDER: " + mission + ", supply: " + A.supplyUsed());
+        return enforceGlobalMission(mission, buildOrderMission);
     }
 
     public static Mission initialMission() {
@@ -140,6 +144,11 @@ public class Missions {
     }
 
     public static void setGlobalMissionTo(Mission mission, String reason) {
+        if (mission == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Setting mission to null, ignore.");
+            return;
+        }
+
         if (A.isUms()) mission = ATTACK;
 
         if (mission.isMissionDefend()) {
@@ -206,5 +215,4 @@ public class Missions {
     public static double lastMissionEnforcedSecondsAgo() {
         return A.secondsAgo(lastMissionEnforcedAt);
     }
-
 }

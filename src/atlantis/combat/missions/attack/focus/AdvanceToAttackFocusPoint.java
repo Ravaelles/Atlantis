@@ -2,7 +2,7 @@ package atlantis.combat.missions.attack.focus;
 
 //import atlantis.architecture.Manager;
 //import atlantis.combat.advance.focus.AFocusPoint;
-//import atlantis.combat.advance.focus.HandleFocusPointPositioning;
+//import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 //import atlantis.combat.advance.focus.MoveToFocusPoint;
 //import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
 //import atlantis.combat.squad.positioning.protoss.ProtossAsLeaderTooFarFromOthers;
@@ -10,7 +10,7 @@ package atlantis.combat.missions.attack.focus;
 //import atlantis.game.A;
 //import atlantis.units.AUnit;
 //import atlantis.units.select.Select;
-//import atlantis.util.Enemy;
+//import atlantis.game.player.Enemy;
 //import atlantis.util.We;
 
 //public class AdvanceToAttackFocusPoint extends MoveToFocusPoint {
@@ -23,7 +23,7 @@ package atlantis.combat.missions.attack.focus;
 //        return new Class[]{
 ////            EarlyGameTooClustered.class,
 ////            TerranTooClustered.class,
-//            HandleFocusPointPositioning.class,
+//            HandleUnitPositioningOnMap.class,
 //
 //            ProtossTooFarFromLeader.class,
 //            ProtossAsLeaderTooFarFromOthers.class,

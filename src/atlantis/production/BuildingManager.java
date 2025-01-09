@@ -3,7 +3,6 @@ package atlantis.production;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.terran.TerranCommandCenter;
 import atlantis.combat.micro.terran.TerranComsatStation;
-import atlantis.protoss.ProtossShieldBattery;
 import atlantis.terran.LiftedBuildingManager;
 import atlantis.terran.ShouldLiftBuildingManager;
 import atlantis.units.AUnit;
@@ -25,7 +24,7 @@ public class BuildingManager extends Manager {
             TerranCommandCenter.class,
             LiftedBuildingManager.class,
             ShouldLiftBuildingManager.class,
-            ProtossShieldBattery.class,
+//            ProtossShieldBattery.class,
         };
     }
 }

@@ -6,12 +6,14 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SelectTest extends AbstractTestWithUnits {
+public class SelectTest extends WorldStubForTests {
 
     // === Our ======================================================
 
@@ -24,6 +26,7 @@ public class SelectTest extends AbstractTestWithUnits {
 
     @Test
     public void ourWithUnfinished() {
+        ClearAllCaches.clearAll();
         int ourTx = 10;
         int enemyTx = 30;
 
@@ -37,7 +40,7 @@ public class SelectTest extends AbstractTestWithUnits {
 
         FakeUnit[] enemies = fakeEnemies();
 
-        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+        createWorld(ours, enemies, () -> {
 //            Select.our().print("Our");
 //            Select.ourWithUnfinished().print("Our with UNF");
 

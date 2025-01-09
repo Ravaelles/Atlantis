@@ -2,13 +2,12 @@ package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.HandleFocusPointPositioning;
+import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
 import atlantis.util.We;
 
 public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
@@ -24,7 +23,7 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 //            ProtossTooFarFromLeader.class,
 //            ProtossAsLeaderTooFarFromOthers.class,
 
-            HandleFocusPointPositioning.class,
+            HandleUnitPositioningOnMap.class,
         };
     }
 

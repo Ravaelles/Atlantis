@@ -11,7 +11,7 @@ import atlantis.units.actions.Actions;
  * gaining a couple of frames of advantage.
  */
 public class HoldToShoot extends Manager {
-    private AUnit target;
+//    private AUnit target;
 
     public HoldToShoot(AUnit unit) {
         super(unit);
@@ -22,19 +22,17 @@ public class HoldToShoot extends Manager {
 //        if (true) return false;
 
         if (!unit.isRanged()) return false;
+        if (!unit.hasValidTarget()) return false;
 
-        target = unit.target();
-        if (target == null) return false;
-
-        if (unit._lastX == unit.x() && unit._lastY == unit.y()) return false;
-
-        if (unit.isRunning()) return false;
-        if (unit.lastStoppedRunningAgo() <= 5) return false;
-
-//        if (unit.cooldown() >= 8) return false;
-        if (!unit.isAction(
-            Actions.ATTACK_UNIT, Actions.MOVE_ATTACK, Actions.MOVE_DANCE_TO, Actions.MOVE_DANCE_AWAY
-        )) return false;
+//        if (unit._lastX == unit.x() && unit._lastY == unit.y()) return false;
+//
+//        if (unit.isRunning()) return false;
+//        if (unit.lastStoppedRunningAgo() <= 5) return false;
+//
+////        if (unit.cooldown() >= 8) return false;
+//        if (!unit.isAction(
+//            Actions.ATTACK_UNIT, Actions.MOVE_ATTACK, Actions.MOVE_DANCE_TO, Actions.MOVE_DANCE_AWAY
+//        )) return false;
 
         return true;
     }

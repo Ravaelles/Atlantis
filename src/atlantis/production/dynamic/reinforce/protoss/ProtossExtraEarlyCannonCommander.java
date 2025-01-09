@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.generic.OurArmy;
+import atlantis.information.generic.Army;
 import atlantis.map.base.Bases;
 import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.ConstructionRequests;
@@ -14,9 +14,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class ProtossExtraEarlyCannonCommander extends Commander {
 
@@ -28,7 +27,7 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
             && A.s <= 60 * 6
             && Count.basesWithUnfinished() >= 2
             && (cannonsWithUnfinished = Count.withPlanned(type())) <= 2
-            && ConstructionRequests.countNotFinishedOfType(type()) <= (OurArmy.strength() <= 75 ? 1 : 1)
+            && ConstructionRequests.countNotFinishedOfType(type()) <= (Army.strength() <= 75 ? 1 : 1)
             && A.everyNthGameFrame(29)
             && (shouldReinforceVsProtoss() || shouldReinforceVsZerg());
     }
@@ -65,7 +64,7 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
                 || (A.s <= 370 && EnemyUnits.zealots() >= 6)
                 || EnemyInfo.goesTemplarArchives()
                 || EnemyUnits.darkTemplars() > 0
-                || (cannonsWithUnfinished <= 2 && OurArmy.strengthWithoutCB() <= 70)
+                || (cannonsWithUnfinished <= 2 && Army.strengthWithoutCB() <= 70)
         );
     }
 
@@ -75,12 +74,12 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
             (A.s <= 280 && EnemyUnits.combatUnits() >= 11)
                 || (A.s <= 340 && EnemyUnits.combatUnits() >= 14)
 //                || lotsOfEnemiesNearCannon()
-                || (cannonsWithUnfinished <= 2 && OurArmy.strength() <= 110)
+                || (cannonsWithUnfinished <= 2 && Army.strength() <= 110)
         );
     }
 
     private boolean lotsOfEnemiesNearCannon() {
-        if (OurArmy.strength() >= 120) return false;
+        if (Army.strength() >= 120) return false;
 
         AUnit base = Bases.natural();
         if (base == null) base = Select.main();

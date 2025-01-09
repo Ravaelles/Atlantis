@@ -10,12 +10,12 @@ import atlantis.units.AUnitType;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.SpecialUnitsManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ManagerTest extends NonAbstractTestFakingGame {
+public class ManagerTest extends WorldStubForTests {
     @Test
     public void noExceptionIsThrown() {
         boolean status = false;

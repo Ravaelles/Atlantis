@@ -22,8 +22,9 @@ public class Have {
         return Count.ofType(type) == 0;
     }
 
-    public static boolean unfinishedOrPlanned(AUnitType type) {
-        return Count.inProductionOrInQueue(type) > 0;
+    public static boolean existingUnfinishedOrPlanned(AUnitType type) {
+        return Count.ourWithUnfinished(type) > 0
+            || !ConstructionRequests.notStartedOfType(type).isEmpty();
     }
 
     public static boolean notEvenPlanned(AUnitType type) {
@@ -95,12 +96,20 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Engineering_Bay) > 0;
     }
 
+    public static boolean engBayWithUnfinished() {
+        return existingUnfinishedOrPlanned(AUnitType.Terran_Engineering_Bay);
+    }
+
     public static boolean starport() {
         return Count.ofType(AUnitType.Terran_Starport) > 0;
     }
 
     public static boolean spawningPool() {
         return Count.ofType(AUnitType.Zerg_Spawning_Pool) > 0;
+    }
+
+    public static boolean spawningPoolWithUnfinished() {
+        return existingUnfinishedOrPlanned(AUnitType.Zerg_Spawning_Pool);
     }
 
     public static boolean controlTower() {
@@ -147,6 +156,10 @@ public class Have {
         return Count.ofType(AUnitType.Terran_Factory) > 0;
     }
 
+    public static boolean factoryWithUnfinished() {
+        return existingUnfinishedOrPlanned(AUnitType.Terran_Factory);
+    }
+
     public static boolean scienceFacility() {
         return Count.ofType(AUnitType.Terran_Science_Facility) > 0;
     }
@@ -173,5 +186,9 @@ public class Have {
 
     public static boolean scienceVessel() {
         return Count.ofType(AUnitType.Terran_Science_Vessel) > 0;
+    }
+
+    public static boolean bunker() {
+        return Count.ofType(AUnitType.Terran_Bunker) > 0;
     }
 }

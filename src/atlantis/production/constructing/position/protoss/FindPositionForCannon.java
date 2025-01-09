@@ -27,7 +27,7 @@ public class FindPositionForCannon {
             if (!noPlannedPylonNearby(nearTo)) {
                 if (A.supplyUsed() >= 35) {
                     requestPylonToBeAbleToBuildCannon(nearTo);
-                    A.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
+//                    A.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
                 }
             }
             return null;

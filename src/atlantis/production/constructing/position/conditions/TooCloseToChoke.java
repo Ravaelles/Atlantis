@@ -34,6 +34,11 @@ public class TooCloseToChoke {
             ? 1.5
             : (A.supplyUsed() >= 20 ? 4.7 : 2.3);
 
+        if (We.terran()) {
+            if (building.isBunker()) minDist = A.supplyUsed() <= 30 ? 5.5 : 3.5;
+            if (building.isMissileTurret()) minDist = 2;
+        }
+
         if (We.protoss()) {
             if (building.isForge()) minDist = 1.9;
             if (A.supplyTotal() <= 10 && building.isPylon()) minDist = 1.2;

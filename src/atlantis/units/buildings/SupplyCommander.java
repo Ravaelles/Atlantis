@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.game.race.MyRace;
 import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -37,7 +36,7 @@ public class SupplyCommander extends Commander {
         supplyFree = AGame.supplyFree();
 
         if (supplyTotal >= 200) return;
-        if (supplyFree >= 9) return;
+        if (supplyFree >= 12) return;
         if (lastAdded.lessThanSecondsAgo(7)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
@@ -123,7 +122,7 @@ public class SupplyCommander extends Commander {
     private boolean tooFewSupplyLeftAsForGateways() {
         return We.protoss()
             && A.supplyTotal() >= 30
-            && !A.hasFreeSupply(2 + Count.gateways());
+            && !A.hasFreeSupply((A.hasMinerals(120) ? 1 : 0) + 2 * Count.gateways());
     }
 
     private boolean isSupplyVeryLow() {
@@ -169,7 +168,7 @@ public class SupplyCommander extends Commander {
         }
 
         // Zerg handles supply a bit differently
-        if (MyRace.isPlayingAsZerg()) {
+        if (We.zerg()) {
             ProduceZergUnit.produceZergUnit(
                 AUnitType.Zerg_Overlord, ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
             );
@@ -203,26 +202,11 @@ public class SupplyCommander extends Commander {
             return Count.inProductionOrInQueue(AUnitType.Zerg_Overlord);
         }
 
-//        System.err.println("A = " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
-//        System.err.println("B = " + CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)2);
         return Math.max(
             ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
             CountInQueue.countInProgress(AtlantisRaceConfig.SUPPLY)
         );
 
-//        return Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY);
-//        System.out.println("A= " + ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY));
-//        System.out.println("B = " + Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY));
-//        return Math.max(
-////            Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size(),
-//            ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY),
-////            CountInQueue.count(AtlantisRaceConfig.SUPPLY)
-//            Count.inProductionOrInQueue(AtlantisRaceConfig.SUPPLY)
-//        );
-//        return ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
-
-//        return ConstructionRequests.countNotFinishedConstructionsOfType(AtlantisRaceConfig.SUPPLY);
-//
 //        // =========================================================
 //        // Terran + Protoss
 //        else {

@@ -79,9 +79,20 @@ public class AFocusPoint extends APosition {
             APosition pos = this.position();
             if (pos == null) return false;
 //            return !pos.isPositionVisible() || Select.our().inRadius(5, pos).empty();
-            return !pos.isPositionVisible() || Select.our().inRadius(3.5, pos).empty();
+            return !pos.isPositionVisible() || Select.our().inRadius(4.7, pos).empty();
         }
     }
+
+    // =========================================================
+
+//    @Override
+//    public APosition position() {
+//        if (unit != null && unit.hasPosition()) return unit.position();
+//        if (choke != null) return choke.center();
+//        if (position != null) return position.position();
+//
+//        return null;
+//    }
 
     // =========================================================
 
@@ -89,10 +100,10 @@ public class AFocusPoint extends APosition {
     public String toString() {
         return "Focus{" +
             "name='" + name + '\'' +
-            ", unit=" + unit +
-            ", pos=" + position +
+            (unit == null ? "" : ", unit=" + unit) +
+            (position == null ? "" : ", pos=" + position) +
 //            ", from=" + fromSide +
-//            ", choke=" + choke +
+            (choke == null ? "" : ", choke=" + choke) +
             '}';
     }
 

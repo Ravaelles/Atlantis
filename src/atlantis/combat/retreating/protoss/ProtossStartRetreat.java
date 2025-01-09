@@ -1,5 +1,6 @@
 package atlantis.combat.retreating.protoss;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -26,6 +27,8 @@ public class ProtossStartRetreat extends HasUnit {
 
     protected boolean handleRetreat() {
         if (enemy == null) return false;
+
+        if (Env.isTesting()) return true;
 
 //        A.printStackTrace("Start retreat " + unit);
 
@@ -143,6 +146,8 @@ public class ProtossStartRetreat extends HasUnit {
 //        if (Count.ourCombatUnits() <= 11) return false;
 
         if (unit.groundDistToMain() <= 20) return true;
+        
+        if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(3)) return false;
 
         if (unit.meleeEnemiesNearCount(2.4) >= 3) {
             if (unit.distToNearestChokeCenter() >= 2.6) return true;
@@ -158,7 +163,7 @@ public class ProtossStartRetreat extends HasUnit {
             return false;
         }
 
-//        if (OurArmy.strength() >= 400) return false;
+//        if (Army.strength() >= 400) return false;
 //        if (notSafeToRunTowardsMainOrMainChoke()) return false;
 
         return unit.moveToSafety(RUN_RETREAT, "RetreatTowardsBase")
@@ -168,8 +173,13 @@ public class ProtossStartRetreat extends HasUnit {
     private static boolean notifyNearbyUnitsToRetreat(AUnit unit) {
         for (AUnit friend : unit.friendsNear().inRadius(1.5, unit).list()) {
             if (
-                friend.isRetreating() || friend.isRunning() || friend.isAction(RUN_RETREAT) || friend.id() < unit.id()
+                friend.isRetreating()
+                    || friend.isRunning()
+                    || friend.isAction(RUN_RETREAT)
+                    || friend.id() < unit.id()
             ) continue;
+
+            if (!canIgnoreNotifyRetreatCallAndFinishShooting(friend, unit)) continue;
 
 //            friend.move(unit, Actions.RUN_RETREAT, "RetreatTowardsBase");
             retreatByRunningTowardsBase(friend);
@@ -178,11 +188,21 @@ public class ProtossStartRetreat extends HasUnit {
         return true;
     }
 
+    private static boolean canIgnoreNotifyRetreatCallAndFinishShooting(AUnit friend, AUnit caller) {
+        if (friend.isStartingAttack() || friend.isAttackFrame()) {
+            if (friend.eval() <= 0.7) return false;
+            if (friend.shields() <= 20) return false;
+            if (caller.shields() <= 20) return false;
+        }
+
+        return false;
+    }
+
 //    private boolean retreatTowardsMainChoke() {
 //        HasPosition goTo = mainChokeDefencePoint();
 //        if (goTo == null || unit.distTo(goTo) <= 3) return false;
 //
-//        if (OurArmy.strength() >= 400) return false;
+//        if (Army.strength() >= 400) return false;
 //
 //        if (unit.enemiesNear().buildings().empty()) {
 //            if (notSafeToRunTowardsMainOrMainChoke()) return false;

@@ -2,10 +2,10 @@ package tests.unit;
 
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnitType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TerranComsatTest extends AbstractTestWithUnits {
 

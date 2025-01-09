@@ -59,7 +59,7 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         if (focus == null) return false;
 
         if (A.supplyUsed() <= 60) return false;
-        if (unit.combatEvalRelative() >= 4) return false;
+        if (unit.eval() >= 4) return false;
         if (unit.cooldown() == 0 && unit.enemiesNear().inRadius(6, unit).atLeast(1)) return false;
 
         if (focus.groundDistanceTo(unit) >= 15 && focus.nameContains("Third", "Expansion")) {

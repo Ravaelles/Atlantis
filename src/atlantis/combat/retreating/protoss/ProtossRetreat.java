@@ -13,13 +13,13 @@ public class ProtossRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss();
+        return We.protoss()
+            && !(new ProtossShouldNotRetreat(unit)).applies();
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossShouldNotRetreat.class,
             ProtossShouldRetreat.class,
         };
     }

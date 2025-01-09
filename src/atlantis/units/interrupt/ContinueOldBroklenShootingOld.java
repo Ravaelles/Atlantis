@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.protoss.ContinueShootingAsDragoon;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ContinueOldBroklenShootingOld extends Manager {
     public ContinueOldBroklenShootingOld(AUnit unit) {
@@ -50,9 +50,9 @@ public class ContinueOldBroklenShootingOld extends Manager {
 //        }
 
         if (unit.isZergling()) {
-            if (unit.combatEvalRelative() < 1) return false;
+            if (unit.eval() < 1) return false;
             if (
-                unit.combatEvalRelative() < 1 && unit.enemiesNear().ranged().canAttack(unit, 1).notEmpty()
+                unit.eval() < 1 && unit.enemiesNear().ranged().canAttack(unit, 1).notEmpty()
             ) return false;
         }
 

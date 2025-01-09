@@ -23,20 +23,24 @@ public class DragoonHoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isDragoon()) return false;
 
 //        if (unit.lastActionLessThanAgo(15, Actions.HOLD_POSITION)) return true;
-        if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) return false;
+//        if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) return false;
 
-        if (!unit.isMoving()) return false;
-        if (unit.cooldown() >= 10) return false;
+        if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
+        if (unit.cooldown() >= 1) return false;
 
         target = unit.target();
         if (target == null || !unit.hasValidTarget()) return false;
+//        if (unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
 //        System.err.println("unit.cooldown() = " + unit.cooldown());
 
-        if (!target.isMoving() || unit.isOtherUnitShowingBackToUs(target)) return false;
+//        if (!target.isMoving() || unit.isOtherUnitShowingBackToUs(target)) return false;
+        if (unit.isOtherUnitShowingBackToUs(target)) return false;
 //        if (target.isMoving() && unit.isOtherUnitShowingBackToUs(target)) return false;
 //        if (!unit.isFacing(target)) return false;
 
@@ -45,6 +49,7 @@ public class DragoonHoldToShoot extends Manager {
 
     @Override
     protected Manager handle() {
+//        System.err.println("@ " + A.now() + " HOLD?");
         if (target == null) {
             target = unit.lastTarget();
         }
@@ -69,8 +74,9 @@ public class DragoonHoldToShoot extends Manager {
 
         // HOLD
         if (shouldHold()) {
-            if (!unit.isHoldingPosition() && !unit.isAttacking()) {
-//                System.err.println("@ " + A.now() + " HOLD! ");
+            if (!unit.isHoldingPosition()) {
+                System.err.println("@ " + A.now() + " HOLD!!!!!!!!!!!!!!! ");
+
 
                 unit.holdPosition("HoldToShoot");
             }
@@ -115,11 +121,12 @@ public class DragoonHoldToShoot extends Manager {
     private boolean shouldHold() {
 //        System.out.println("M:" + unit.isMoving() + " / A:" + unit.isAttacking() + " / H:" + unit.isHoldingPosition());
 
-        if (unit.isAttacking())
-            if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) {
-                System.out.println(A.now + " Still hold / target = " + unit.target());
-                return true;
-            }
+//        if (unit.isAttacking()) {
+//            if (unit.lastActionLessThanAgo(1, Actions.HOLD_POSITION)) {
+//                System.out.println(A.now + " Still hold / target = " + unit.target());
+//                return true;
+//            }
+//        }
 
 //        if (unit.isAttacking() && !unit.isMoving()) return false;
 //        if (!unit.isMoving() && unit.lastActionLessThanAgo(30, Actions.HOLD_POSITION)) return false;

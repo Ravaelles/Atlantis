@@ -1,13 +1,11 @@
 package atlantis.combat.micro.avoid.margin;
 
-import atlantis.combat.micro.avoid.margin.protoss.DragoonSafetyMarginAgainstRanged;
 import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.protoss.ZealotSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
+import atlantis.combat.micro.avoid.margin.terran.MarineSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.ContinueShotAnimation;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
@@ -49,6 +47,11 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         // === Terran ===============================================
 
         else if (defender.isTerranInfantry()) {
+            if (defender.isMarine()) {
+                double margin = (new MarineSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
+                if (margin > -1) return margin;
+            }
+
             criticalDist = (new TerranSafetyMarginAgainstMelee(defender)).handleTerranInfantry(attacker);
         }
 
@@ -66,7 +69,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
                 + woundedAgainstMeleeBonus(attacker)
                 + beastBonus(attacker)
                 + ourUnitsNearBonus(defender)
-                + workerBonus(attacker)
+                + asWorkerBonus(attacker)
                 + ourNotMovingPenalty(defender)
                 + quicknessBonus(attacker)
                 + enemyMovementBonus(attacker);

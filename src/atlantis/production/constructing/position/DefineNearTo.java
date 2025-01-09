@@ -1,7 +1,6 @@
 package atlantis.production.constructing.position;
 
 import atlantis.game.A;
-import atlantis.game.race.MyRace;
 import atlantis.map.base.Bases;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -55,7 +54,7 @@ public class DefineNearTo {
 
     public static HasPosition defineNearTo(HasPosition nearTo) {
         if (nearTo == null) {
-            if (MyRace.isPlayingAsZerg()) {
+            if (We.zerg()) {
                 nearTo = Select.main().position();
             }
             else {

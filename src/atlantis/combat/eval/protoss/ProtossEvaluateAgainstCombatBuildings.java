@@ -3,14 +3,14 @@ package atlantis.combat.eval.protoss;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossEvaluateAgainstCombatBuildings {
     public static boolean chancesLookGood(AUnit unit, HasPosition position) {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
-        return unit.combatEvalRelative() >= 1.7
-            || ourCombatUnits(unit).count() >= 13
+        return unit.eval() >= 1.4
+//            || ourCombatUnits(unit).count() >= 13
             || ourUnitsStrength(unit) >= enemyStrength(unit, position);
     }
 

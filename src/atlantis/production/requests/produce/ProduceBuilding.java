@@ -3,6 +3,7 @@ package atlantis.production.requests.produce;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructing.Construction;
 import atlantis.production.constructing.NewConstructionRequest;
 import atlantis.production.constructing.position.FindPosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -11,20 +12,22 @@ import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
 
 public class ProduceBuilding {
+    public static Construction _lastConstruction = null;
+
     public static boolean produceBuilding(AUnitType type, ProductionOrder order) {
         assert type.isABuilding();
 
         if (type.isZerg()) {
             return ProduceZergUnit.produceZergBuilding(type, order);
         }
-
-        if (type.isAddon()) {
+        else if (type.isAddon()) {
             return ProduceAddon.produceAddon(type);
         }
         else {
             validatePosition(order, type);
 
-            return NewConstructionRequest.requestConstructionOf(order) != null;
+            _lastConstruction = NewConstructionRequest.requestConstructionOf(order);
+            return _lastConstruction != null;
         }
     }
 

@@ -13,15 +13,16 @@ public class ProtossCrescentTooBehind extends Manager {
 
     @Override
     public boolean applies() {
-        deltaDist = ProtossCrescent.distToConventionalPoint - ProtossCrescent.preferredDistToConventionalPoint;
-
-        return deltaDist > 0.05;
+        return ProtossCrescent.deltaDist > 0.05;
     }
 
     @Override
     protected Manager handle() {
-        if (unit.move(ProtossCrescent.conventionalPoint, Actions.MOVE_FORMATION, "CrescentTooBehind"))
-            return usedManager(this);
+        if (ProtossCrescent.conventionalPoint.isWalkable()) {
+            if (unit.move(ProtossCrescent.conventionalPoint, Actions.MOVE_FORMATION, "CrescentTooBehind")) {
+                return usedManager(this);
+            }
+        }
 
         return null;
     }

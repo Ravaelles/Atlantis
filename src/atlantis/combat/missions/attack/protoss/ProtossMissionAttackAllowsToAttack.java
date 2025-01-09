@@ -2,7 +2,7 @@ package atlantis.combat.missions.attack.protoss;
 
 import atlantis.combat.missions.attack.MissionAttackAllowsToAttack;
 import atlantis.units.AUnit;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ProtossMissionAttackAllowsToAttack extends MissionAttackAllowsToAttack {
     public ProtossMissionAttackAllowsToAttack(AUnit unit) {

@@ -1,7 +1,7 @@
 package atlantis.information.strategy.response.zerg;
 
 import atlantis.combat.missions.MissionChanger;
-import atlantis.information.decisions.OurStrategicBuildings;
+
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
@@ -124,8 +124,6 @@ public class AsZergUnitDiscoveredResponse {
 
 //        if (enemyUnit.is(AUnitType.Protoss_Dark_Templar)) {
         if (enemyUnit.is(AUnitType.Protoss_Dark_Templar, AUnitType.Zerg_Lurker, AUnitType.Zerg_Lurker_Egg)) {
-            OurStrategicBuildings.setDetectorsNeeded(2);
-
             ProductionRequests.getInstance().requestDetectorQuick(Chokes.mainChokeCenter());
 
 //            ProductionRequests.getInstance().requestDetectorQuick(

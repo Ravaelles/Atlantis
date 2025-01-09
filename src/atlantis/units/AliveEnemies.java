@@ -6,14 +6,16 @@ import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class AliveEnemies {
-    private static Cache<Object> cache = new Cache<>();
+//    private static Cache<Object> cache = new Cache<>();
 
     public static Selection get() {
-        return (Selection) cache.get(
-            "aliveEnemies",
-            0,
-            () -> enemyUnitsThatWillNotBeDeadNextFrame()
-        );
+        return enemyUnitsThatWillNotBeDeadNextFrame();
+
+//        return (Selection) cache.get(
+//            "aliveEnemies",
+//            0,
+//            () -> enemyUnitsThatWillNotBeDeadNextFrame()
+//        );
     }
 
     private static Selection enemyUnitsThatWillNotBeDeadNextFrame() {

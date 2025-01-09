@@ -232,6 +232,10 @@ public abstract class Squad extends Units {
         return squadCenter.leader();
     }
 
+    public void changeLeader() {
+        squadCenter.refreshLeader(leader());
+    }
+
 //    public HasPosition tankMedian() {
 //
 //    }

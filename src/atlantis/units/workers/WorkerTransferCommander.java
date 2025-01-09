@@ -2,7 +2,6 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Commander;
 import atlantis.game.AGame;
-import atlantis.information.generic.OurArmy;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;

@@ -588,12 +588,20 @@ public class AUnitType implements Comparable<Object> {
         );
     }
 
+    public boolean isEngineeringBay() {
+        return is(Terran_Engineering_Bay);
+    }
+
     public boolean isGateway() {
         return (boolean) cache.get(
             "isGateway",
             -1,
             () -> is(Protoss_Gateway)
         );
+    }
+
+    public boolean isCyberneticsCore() {
+        return is(Protoss_Cybernetics_Core);
     }
 
     public boolean isStargate() {
@@ -725,7 +733,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isGasBuilding",
             0,
-            () -> is(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor)
+            () -> is(AUnitType.Terran_Refinery, AUnitType.Protoss_Assimilator, AUnitType.Zerg_Extractor, Resource_Vespene_Geyser)
         );
     }
 
@@ -807,6 +815,10 @@ public class AUnitType implements Comparable<Object> {
 
     public int maxHp() {
         return ut.maxHitPoints();
+    }
+
+    public int maxShields() {
+        return ut.maxShields();
     }
 
     public boolean isWorker() {
@@ -1680,6 +1692,17 @@ public class AUnitType implements Comparable<Object> {
             () -> isABuilding() && is(
                 Protoss_Gateway, Protoss_Robotics_Facility, Protoss_Nexus,
                 Terran_Barracks, Terran_Factory, Terran_Command_Center
+            )
+        );
+    }
+
+    public boolean createsBullets() {
+        return (boolean) cache.get(
+            "createsBullets",
+            -1,
+            () -> is(
+                Protoss_Dragoon, Protoss_Reaver, Protoss_Arbiter,
+                Terran_Vulture, Terran_Goliath
             )
         );
     }

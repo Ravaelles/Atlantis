@@ -1,10 +1,9 @@
 package atlantis.combat.targeting;
 
-import atlantis.combat.targeting.basic.ATargeting;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.util.Enemy;
+import atlantis.game.player.Enemy;
 
 public class ClosestEnemyTargeting {
     private Selection enemies = null;

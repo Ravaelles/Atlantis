@@ -103,7 +103,7 @@ public class AMap {
             if (
                 position != null
                     && position.isWalkable()
-                    && position.isBuildable()
+                    && position.isBuildableNotIncludingBuildings()
                     && !position.isPositionVisible()
                     && unit.hasPathTo(position)
                     && unit.position().groundDistanceTo(position) <= 100
@@ -115,6 +115,8 @@ public class AMap {
     }
 
     public static APosition randomUnexploredPosition(HasPosition startPoint) {
+        if (startPoint == null) return null;
+
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
@@ -125,7 +127,7 @@ public class AMap {
             if (
                 position != null
                     && position.isWalkable()
-                    && position.isBuildable()
+                    && position.isBuildableNotIncludingBuildings()
                     && !position.isExplored()
 //                            && position.translateByTiles(-1, 0).isWalkable()
 //                            && position.translateByTiles(1, 0).isWalkable()
