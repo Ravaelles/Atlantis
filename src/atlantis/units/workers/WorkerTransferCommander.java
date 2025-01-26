@@ -48,7 +48,7 @@ public class WorkerTransferCommander extends Commander {
             if (
                 base.isLifted()
                     || base.lastUnderAttackLessThanAgo(30 * 10)
-                    || base.enemiesNear().combatUnits().inRadius(10, base).atLeast(1)
+                    || base.enemiesNear().combatUnits().inRadius(15, base).atLeast(1)
             ) {
                 continue;
             }
