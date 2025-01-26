@@ -8,6 +8,9 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
 
 public class ZergStrategyResponse extends RaceStrategyResponse {
+    @Override
+    public void onEnemyGoesHiddenUnits() {
+    }
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
