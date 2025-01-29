@@ -148,6 +148,8 @@ public interface HasPosition {
             return position;
         }
 
+        ARegion region = position.region();
+
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
             for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
@@ -157,7 +159,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         position = this.translateByTiles(dtx, dty);
-                        if (position.isWalkable()) {
+                        if (position.isWalkable() && (region == null || region.equals(position.region()))) {
                             return position;
                         }
                     }

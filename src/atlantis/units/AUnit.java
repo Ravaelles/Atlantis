@@ -2396,9 +2396,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isSunken();
     }
 
+    private double _size = -1;
+
     // Approximate unit width (in tiles).
     public double size() {
-        return (type().dimensionLeftPixels() + type().dimensionRightPixels() + 2) / 64.0;
+        if (_size != -1) {
+            return _size;
+        }
+
+        return _size = (type().dimensionLeftPixels() + type().dimensionRightPixels() + 2) / 64.0;
     }
 
     public boolean isMarine() {
