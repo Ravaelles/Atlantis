@@ -38,8 +38,9 @@ public class AvoidCombatBuildingClose extends Manager {
 
         if (We.protoss() && combatBuilding.isBunker()) {
             Decision decision;
-            if ((decision = ShouldAvoidBunkerAsProtoss.decision(unit, combatBuilding)).notIndifferent())
+            if ((decision = ShouldAvoidBunkerAsProtoss.shouldAvoid(unit, combatBuilding)).notIndifferent()) {
                 return decision.toBoolean();
+            }
         }
 
         dist = unit.distTo(combatBuilding);

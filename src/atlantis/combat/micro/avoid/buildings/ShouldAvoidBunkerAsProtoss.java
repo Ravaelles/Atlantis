@@ -9,19 +9,19 @@ public class ShouldAvoidBunkerAsProtoss {
     private static AUnit bunker;
     private static double dist;
 
-    public static Decision decision(AUnit unit, AUnit bunker) {
+    public static Decision shouldAvoid(AUnit unit, AUnit bunker) {
         ShouldAvoidBunkerAsProtoss.bunker = bunker;
         dist = unit.distTo(bunker);
 
         if (veryPowerfulLetsBetterEngage(unit)) {
-            return Decision.FALSE;
+            return Decision.TRUE;
         }
 
         if (needToAvoidDueToSecondBunkerNearby(unit, bunker)) {
             return Decision.TRUE;
         }
 
-        if (dontAvoidBeingSafe(unit)) {
+        if (dontAvoidGoodToAttack(unit)) {
             return Decision.FALSE;
         }
 
@@ -45,7 +45,7 @@ public class ShouldAvoidBunkerAsProtoss {
         return A.supplyUsed() >= 190 || A.minerals() >= 1500 || unit.friendsNear().combatUnits().atLeast(25);
     }
 
-    public static boolean dontAvoidBeingSafe(AUnit unit) {
+    public static boolean dontAvoidGoodToAttack(AUnit unit) {
         double eval = unit.eval();
 
         if (eval <= 1.5) return false;
