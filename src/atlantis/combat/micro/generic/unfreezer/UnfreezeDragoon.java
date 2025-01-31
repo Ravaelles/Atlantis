@@ -57,7 +57,7 @@ public class UnfreezeDragoon extends Manager {
     public Manager handle() {
         if (A.isUms()) {
             unit.commandHistory().print("UnfreezeDragoon#" + unit.id() + " command history (now: " + A.now + ")");
-            PauseAndCenter.on(unit, true);
+//            PauseAndCenter.on(unit, true);
         }
 
 //        CenterCamera.on(unit, true, Color.Blue);

@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.bullets.DeadMan;
@@ -656,6 +657,12 @@ public class Selection extends BaseSelection {
         return data.stream()
             .map(AUnit::hp)
             .reduce(0, Integer::sum);
+    }
+
+    public Selection inSquad(Squad squad) {
+        return cloneByRemovingIf(
+            (unit -> !squad.equals(unit.squad())), "inSquad:" + squad.name()
+        );
     }
 
     public Selection combatUnits() {

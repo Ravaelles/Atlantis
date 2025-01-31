@@ -10,7 +10,7 @@ public class MoonFormationApplies {
     //    public static final double DELTA_MARGIN = 0.1;
 //    public static final double MAX_PREFERED_DIST = 10.5;
 //    public static final double MAX_PREFERED_DIST_WHEN_ONLY_MELEE_ENEMIES = 8;
-    public static final double START_BATTLE_DIST_THRESHOLD = 1.0;
+    public static final double START_BATTLE_DIST_THRESHOLD = 0.3;
 
     private HasPosition ourCenter;
 
@@ -19,21 +19,20 @@ public class MoonFormationApplies {
         if (unit.cooldown() > 0) return false;
         if (unit.lastAttackFrameLessThanAgo(60)) return false;
         if (squadHasTarget(leader)) return false;
-        if (unit.eval() >= 3.5) return false;
+//        if (unit.eval() >= 3.5) return false;
         if (unit.distToMain() <= 7) return false;
         if (unit.isReaver()) return false;
         if (unit.type().isTransport()) return false;
-//        if (unit.enemiesNear().inRadius(7.5, unit).notEmpty()) return false;
 
         leader = unit.squadLeader();
         if (leader == null) return false;
         if (leader.isRunning()) return false;
-        if (leader.distToBuilding() <= 5) return false;
-        if (muchMoreRangedUnitsThanEnemy(unit, leader)) return false;
+//        if (leader.distToBuilding() <= 5) return false;
+//        if (muchMoreRangedUnitsThanEnemy(unit, leader)) return false;
 
-        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.2) > 0) return false;
-        if (leader.enemiesThatCanAttackMe(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
-        if (leader.enemiesICanAttack(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
+//        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.2) > 0) return false;
+//        if (leader.enemiesThatCanAttackMe(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
+//        if (leader.enemiesICanAttack(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
 
         ourCenter = unit.squadCenter();
         if (ourCenter == null) return false;
@@ -48,6 +47,7 @@ public class MoonFormationApplies {
 //
 //        if (Math.abs(deltaDist) < DELTA_MARGIN) return false;
 
+        if (true) return true;
         return ProtossShouldCreateFormation.check(unit);
     }
 

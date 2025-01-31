@@ -198,6 +198,20 @@ public abstract class Squad extends Units {
     // =========================================================
 
     @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Squad)) return false;
+
+        Squad squad = (Squad) o;
+        return ID == squad.ID;
+    }
+
+    @Override
+    public int hashCode() {
+        return ID;
+    }
+
+    @Override
     public String toString() {
         return "Squad " + name + " (" + size() + " units)";
     }
