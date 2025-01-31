@@ -274,56 +274,62 @@ public interface AUnitOrders {
     }
 
     default boolean move(HasPosition target, Action unitAction, String tooltip, boolean strategicLevel) {
+        AUnit unit = unit();
+
         if (target == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit().typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit.typeWithHash());
             return false;
         }
 
-        if (unit().isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
+        if (unit.isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
-                "Trying to move to unwalkable position for " + unit() + " / " + unitAction
+                "Trying to move to unwalkable position for " + unit + " / " + unitAction
             );
             return false;
         }
 
         if (tooltip != null) {
-            unit().setTooltip(tooltip, strategicLevel);
+            unit.setTooltip(tooltip, strategicLevel);
         }
 
         // =========================================================
 
-        AUnit currentTarget = unit().target();
-        boolean executeOrder = !unit().isMoving() || !target.equals(currentTarget);
+        AUnit currentTarget = unit.target();
+        boolean executeOrder = !unit.isMoving() || !target.equals(currentTarget);
 
         if (executeOrder) {
-            if (We.terran() && unit().isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit())) {
-                unit().unsiege();
-                unit().lastCommandIssuedNow(UnitCommandType.Unsiege);
+            if (We.terran() && unit.isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit)) {
+                unit.unsiege();
+                unit.lastCommandIssuedNow(UnitCommandType.Unsiege);
                 return true;
             }
 
-            if (unit().isGroundUnit() && !target.isWalkable()) {
+            if (unit.isGroundUnit() && !target.isWalkable()) {
                 if (!(target instanceof FoggedUnit) || !((FoggedUnit) target).isAir()) {
                     ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unwalkable target " + target);
                 }
             }
 
             if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-                A.println("@" + A.now() + ": " + unit().typeWithUnitId() + "  MOVE / to:" + target);
+                A.println("@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE / to:" + target);
             }
 
-            unit().setLastActionReceivedNow().setAction(unitAction);
-            if (unit().lastCommandIssuedAgo() <= (unit().isMoving() ? 2 : 1)) return true;
-            else unit().lastCommandIssuedNow(UnitCommandType.Move);
+            unit.setLastActionReceivedNow().setAction(unitAction);
+            if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? commandMinDelayWhenMoving(unit) : 1)) return true;
+            else unit.lastCommandIssuedNow(UnitCommandType.Move);
 
             if (target instanceof AUnit) {
-                unit().setTargetUnitToAttack((AUnit) target);
+                unit.setTargetUnitToAttack((AUnit) target);
             }
 
             return u().move(target.position().p());
         }
 
         return false;
+    }
+
+    static int commandMinDelayWhenMoving(AUnit unit) {
+        return unit.isRunning() ? 3 : 2;
     }
 
     /**

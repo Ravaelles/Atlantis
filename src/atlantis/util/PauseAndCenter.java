@@ -12,7 +12,7 @@ public class PauseAndCenter {
         on(position, false, null);
     }
 
-    public static void on(APosition position, boolean paintCircle) {
+    public static void on(HasPosition position, boolean paintCircle) {
         on(position, paintCircle, null);
     }
 

@@ -467,6 +467,7 @@ public interface HasPosition {
     default boolean equals(HasPosition obj) {
         if (this == obj) return true;
         if (obj == null) return false;
+        if (obj.position() == null) return false;
 
         int otherX = obj.x();
         int otherY = obj.y();

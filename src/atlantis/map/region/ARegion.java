@@ -62,7 +62,7 @@ public class ARegion implements HasPosition {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(HasPosition o) {
         if (this == o) return true;
         if (!(o instanceof ARegion)) return false;
         if (area == null) {

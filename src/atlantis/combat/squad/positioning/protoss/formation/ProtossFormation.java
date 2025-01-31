@@ -1,7 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.formation;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.protoss.formation.crescent.ProtossCrescent;
+import atlantis.combat.squad.positioning.protoss.formation.moon.ProtossMoon;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -18,7 +18,8 @@ public class ProtossFormation extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossCrescent.class,
+            ProtossMoon.class,
+//            ProtossCrescent.class,
         };
     }
 }

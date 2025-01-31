@@ -33,7 +33,7 @@ public class DragoonSafetyMarginAgainstRanged extends SafetyMarginAgainstRanged 
 
 //        System.err.println("criticalDist = " + criticalDist);
 
-        return Math.max(OurDragoonRange.range() - 0.1, criticalDist);
+        return Math.max(OurDragoonRange.range() - 0.3, criticalDist);
     }
 
     public double woundedBonus(AUnit attacker) {

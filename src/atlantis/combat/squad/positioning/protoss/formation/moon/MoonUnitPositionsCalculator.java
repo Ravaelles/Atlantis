@@ -8,8 +8,8 @@ import atlantis.units.select.Selection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MoonFormation {
-    public static Map<AUnit, APosition> unitPositions(
+public class MoonUnitPositionsCalculator {
+    public static Map<AUnit, APosition> calculateUnitPositions(
         Selection units, HasPosition center, double radius, double separation
     ) {
         Map<AUnit, APosition> positions = new HashMap<>();

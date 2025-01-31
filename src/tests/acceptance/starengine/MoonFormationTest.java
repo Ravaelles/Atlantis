@@ -1,7 +1,6 @@
 package tests.acceptance.starengine;
 
-import atlantis.combat.squad.positioning.protoss.formation.moon.MoonFormation;
-import atlantis.game.A;
+import atlantis.combat.squad.positioning.protoss.formation.moon.MoonUnitPositionsCalculator;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -42,7 +41,7 @@ public class MoonFormationTest extends WorldStubForTests {
                 double radius = 9;
                 double separation = 2;
 
-                Map<AUnit, APosition> positions = MoonFormation.unitPositions(units, center, radius, separation);
+                Map<AUnit, APosition> positions = MoonUnitPositionsCalculator.calculateUnitPositions(units, center, radius, separation);
 
                 // Print the positions
                 for (AUnit unit : positions.keySet()) {

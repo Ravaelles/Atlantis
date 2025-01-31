@@ -3,14 +3,12 @@ package atlantis.combat.micro.dancing.away.protoss;
 import atlantis.combat.micro.dancing.away.DanceAway;
 import atlantis.decisions.Decision;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
-import bwapi.Color;
 
 public class DanceAwayAsDragoon extends DanceAway {
 
@@ -47,9 +45,12 @@ public class DanceAwayAsDragoon extends DanceAway {
             if (unit.hp() <= 24 && shotSecondsAgo <= 3.5) return true;
         }
 
-//        if (forbidDanceAwayWhenRangedNear()) return false;
+        if (Enemy.zerg()) {
+            if ((decision = vsEnemyHydra()).notIndifferent()) return decision.toBoolean();
+//            if ((decision = vsEnemyZergling()).notIndifferent()) return decision;
+        }
 
-        if (unit.cooldown() <= (rangedEnemiesCount > 0 ? 12 : 8)) {
+        if (unit.cooldown() <= (rangedEnemiesCount > 0 ? 11 : 8)) {
 //            if (unit.isMoving() && !unit.isRunning()) {
 //                if (unit.lastCommandIssuedAgo() >= 2) unit.holdPosition("HoldAfterDance");
 ////                unit.paintCircleFilled(6, Color.Blue);
@@ -57,6 +58,8 @@ public class DanceAwayAsDragoon extends DanceAway {
 //            }
             return false;
         }
+
+//        if (forbidDanceAwayWhenRangedNear()) return false;
 
 //        System.err.println("SIEGED = " + unit.enemiesNear().tanksSieged().countInRadius(6, unit));
         if (Enemy.terran()) {
@@ -87,11 +90,6 @@ public class DanceAwayAsDragoon extends DanceAway {
 
         if (Enemy.protoss()) {
             if ((decision = vsEnemyDragoons()).notIndifferent()) return decision.toBoolean();
-        }
-
-        else if (Enemy.zerg()) {
-            if ((decision = vsEnemyHydra()).notIndifferent()) return decision.toBoolean();
-//            if ((decision = vsEnemyZergling()).notIndifferent()) return decision;
         }
 
         if (!Enemy.zerg() && EnemyInfo.hasRanged()) {
@@ -127,10 +125,13 @@ public class DanceAwayAsDragoon extends DanceAway {
     }
 
     private Decision vsEnemyHydra() {
+        int minCooldown = unit.hp() >= 80 ? 10 : 3;
+        if (unit.cooldown() <= minCooldown) return Decision.FALSE;
+
         Selection hydras = unit.enemiesNear().hydras();
         if (hydras.empty()) return Decision.INDIFFERENT;
 
-        double range = ResearchSingularityCharge.isResearched() ? 5.8 : 3.8;
+        double range = OurDragoonRange.range() - 0.08;
 
         return hydras.countInRadius(range, unit) > 0
             ? Decision.TRUE

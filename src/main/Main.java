@@ -57,15 +57,15 @@ public class Main {
 
         // === Maps for testing as TERRAN ===========================
 
-        if (mapForTerran() != null) return mapForTerran();
+        if (mapAsTerran() != null) return mapAsTerran();
 
         // === Maps for testing as PROTOSS ==========================
 
-        if (mapForProtoss() != null) return mapForProtoss();
+        if (mapAsProtoss() != null) return mapAsProtoss();
 
         // === Maps for testing as ZERG ==========================
 
-        if (mapForZerg() != null) return mapForZerg();
+        if (mapAsZerg() != null) return mapAsZerg();
 
         // =========================================================
         // === More GENERIC maps now ===============================
@@ -123,7 +123,7 @@ public class Main {
 
     // === Maps for testing as PROTOSS =============================================
 
-    public static String mapForProtoss() {
+    public static String mapAsProtoss() {
         if (!"Protoss".equals(ourRace())) return null;
 
         // -------------------- vs Terran ------------------------
@@ -230,7 +230,7 @@ public class Main {
 
     // === Maps for testing as Terran ==============================================================================
 
-    public static String mapForTerran() {
+    public static String mapAsTerran() {
         if (!"Terran".equals(ourRace())) return null;
 
         // vs Terran
@@ -298,7 +298,7 @@ public class Main {
 
     // === Maps for testing as ZERG ================================================================================
 
-    public static String mapForZerg() {
+    public static String mapAsZerg() {
         if (!"Zerg".equals(ourRace())) return null;
 
 //        if (true) return "ums/rav/Lings_v_Zealots.scm";
