@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.formation.moon;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -14,7 +15,7 @@ public class MoonUnitPositions {
     private static Cache<Map<AUnit, APosition>> cacheMap = new Cache<>();
     private static Cache<APosition> cachePosition = new Cache<>();
     private static Cache<Double> cacheDouble = new Cache<>();
-    private static int _lastRadiusTimestamp = -1;
+    private static int _lastMoonCenterTimestamp = -1;
 
     private static HasPosition moonCenter;
     private static Selection ourUnits;
@@ -39,12 +40,6 @@ public class MoonUnitPositions {
 
     // =========================================================
 
-    private static void clearCache() {
-        cacheMap.clear();
-        cachePosition.clear();
-        cacheDouble.clear();
-    }
-
     private static Map<AUnit, APosition> refreshEntireMap(AUnit unit, AUnit leader) {
         moonCenter = moonCenter(leader);
         if (moonCenter == null) return null;
@@ -53,7 +48,8 @@ public class MoonUnitPositions {
         double radius = radius(unit, leader);
         if (radius == -1) return null;
 
-        double separation = 0.5;
+//        double separation = 0.5;
+        double separation = A.inRange(0.4, 20.0 / (10 + ourUnits.size()), 1.5);
 
         return MoonUnitPositionsCalculator.calculateUnitPositions(ourUnits, moonCenter, radius, separation);
     }
@@ -63,34 +59,55 @@ public class MoonUnitPositions {
             "radius:" + leader.id(),
             1,
             () -> {
-                double dist = leader.distTo(moonCenter) + 4;
+                int raceBonus = A.whenEnemyProtossTerranZerg(2, 3, 4);
+                double dist = leader.distTo(moonCenter) + raceBonus;
 
-                if (dist >= 14.8) return 14.8;
-                if (dist <= 5.2) return -1;
+                double MAX_FOR_PROTOSS = 10.0;
+                double MAX_FOR_ZERG = 12.0;
+
+                if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;
+                if (Enemy.zerg() && dist >= MAX_FOR_ZERG) return MAX_FOR_ZERG;
+
+                if (dist >= 13.8) return 13.8;
+                if (dist <= 5.2) return -1.0;
 
                 return dist;
             }
         );
 
-        radius -= A.ago(_lastRadiusTimestamp) / 60.0;
+        radius -= Math.min(10, A.ago(_lastMoonCenterTimestamp)) / 30.0;
 
-        _lastRadiusTimestamp = A.now;
+//        A.errPrintln(
+//            "radius: " + A.digit(radius)
+//                + " / ago: " + A.ago(_lastMoonCenterTimestamp)
+//                + " / center: " + moonCenter
+//        );
 
         return radius;
     }
 
     private static HasPosition moonCenter(AUnit leader) {
-        return cachePosition.get(
+        return cachePosition.getIfValid(
             "moonCenter",
-            30 * 5,
+            30 * 7,
             () -> {
                 clearCache();
+                _lastMoonCenterTimestamp = A.now;
 
-                AUnit enemy = leader.enemiesNear().combatUnits().groundUnits().nearestTo(leader);
-                if (enemy != null) return enemy;
+                HasPosition enemy = leader.enemiesNear().combatUnits().groundUnits().nearestTo(leader);
+                if (enemy != null) return enemy.position();
 
-                return AliveEnemies.get().groundUnits().combatUnits().nearestTo(leader);
+                enemy = AliveEnemies.get().groundUnits().combatUnits().nearestTo(leader);
+                if (enemy != null) return enemy.position();
+
+                return null;
             }
         );
+    }
+
+    private static void clearCache() {
+        cacheMap.clear();
+        cachePosition.clear();
+        cacheDouble.clear();
     }
 }

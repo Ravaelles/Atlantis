@@ -2,6 +2,7 @@ package atlantis.combat.micro.dancing.away.protoss;
 
 import atlantis.combat.micro.dancing.away.DanceAway;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
@@ -22,6 +23,12 @@ public class DanceAwayAsDragoon extends DanceAway {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
         if (unit.isRunning() || unit.isRetreating()) return false;
+
+//        System.err.println(A.minSec() + " - " + unit + " - DanceAwayAsDragoon");
+
+        if (unit.cooldown() >= 4) return true;
+        if (unit.cooldown() >= 14) return true;
+        if (unit.cooldown() >= 4 && unit.hp() <= 82) return true;
 
         rangedEnemiesCount = unit.rangedEnemiesCount(0.35);
 

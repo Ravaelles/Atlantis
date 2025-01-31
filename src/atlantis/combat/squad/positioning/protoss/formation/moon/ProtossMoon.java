@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class ProtossMoon extends Manager {

@@ -4,6 +4,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.protoss.formation.ProtossShouldCreateFormation;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.range.OurDragoonRange;
 
 public class MoonFormationApplies {
@@ -17,22 +18,30 @@ public class MoonFormationApplies {
     public boolean applies(AUnit unit, AUnit leader) {
         if (leader == null) return false;
         if (unit.cooldown() > 0) return false;
+        if (leader.cooldown() > 0) return false;
+        if (leader.lastAttackFrameLessThanAgo(60)) return false;
         if (unit.lastAttackFrameLessThanAgo(60)) return false;
-        if (squadHasTarget(leader)) return false;
+        if (unit.lastUnderAttackLessThanAgo(60)) return false;
+        if (squadHasTargetInRange(leader)) return false;
 //        if (unit.eval() >= 3.5) return false;
         if (unit.distToMain() <= 7) return false;
         if (unit.isReaver()) return false;
         if (unit.type().isTransport()) return false;
 
-        leader = unit.squadLeader();
-        if (leader == null) return false;
-        if (leader.isRunning()) return false;
+//        leader = unit.squadLeader();
+//        if (leader == null) return false;
+        if (leader.isRetreating()) return false;
+        if (leader.lastUnderAttackLessThanAgo(50)) return false;
+
+        if (leader.isAction(Actions.MOVE_FORMATION)) return true;
+
+//        if (leader.isRunning()) return false;
 //        if (leader.distToBuilding() <= 5) return false;
 //        if (muchMoreRangedUnitsThanEnemy(unit, leader)) return false;
 
-//        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.2) > 0) return false;
-//        if (leader.enemiesThatCanAttackMe(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
-//        if (leader.enemiesICanAttack(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
+        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.1) > 0) return false;
+        if (leader.enemiesThatCanAttackMe(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
+        if (leader.enemiesICanAttack(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
 
         ourCenter = unit.squadCenter();
         if (ourCenter == null) return false;
@@ -47,8 +56,9 @@ public class MoonFormationApplies {
 //
 //        if (Math.abs(deltaDist) < DELTA_MARGIN) return false;
 
-        if (true) return true;
-        return ProtossShouldCreateFormation.check(unit);
+        return true;
+//        if (true) return true;
+//        return ProtossShouldCreateFormation.check(unit);
     }
 
     private boolean muchMoreRangedUnitsThanEnemy(AUnit unit, AUnit leader) {
@@ -56,7 +66,7 @@ public class MoonFormationApplies {
             || (unit.eval() >= 1.8 && ((leader.rangedEnemiesCount(5) + 3) <= leader.friendsNear().ranged().count()));
     }
 
-    private boolean squadHasTarget(AUnit unit) {
+    private boolean squadHasTargetInRange(AUnit unit) {
         Squad squad = unit.squad();
         if (squad == null) return false;
 
@@ -65,4 +75,18 @@ public class MoonFormationApplies {
 
         return target.enemiesNear().groundUnits().inRadius(OurDragoonRange.range() + 0.3, target).notEmpty();
     }
+
+//    private boolean squadHasTargetInRange(AUnit unit) {
+//        Squad squad = unit.squad();
+//        if (squad == null) return false;
+//
+//        AUnit target = squad.targeting().lastTargetIfAlive();
+//        if (target == null) return false;
+//
+//        if (target.enemiesNear().groundUnits().inRadius(OurDragoonRange.range() + 0.3, target).notEmpty()) {
+//            return target;
+//        }
+//
+//        return null;
+//    }
 }
