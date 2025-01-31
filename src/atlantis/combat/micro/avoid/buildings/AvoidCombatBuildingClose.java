@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.protoss.ShouldAvoidCombatBuildingAsProtoss;
 import atlantis.combat.micro.avoid.buildings.protoss.ReaverDontAvoidCB;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.decisions.Decision;
@@ -36,11 +37,9 @@ public class AvoidCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        if (We.protoss() && combatBuilding.isBunker()) {
-            Decision decision;
-            if ((decision = ShouldAvoidBunkerAsProtoss.shouldAvoid(unit, combatBuilding)).notIndifferent()) {
-                return decision.toBoolean();
-            }
+        if (We.protoss()) {
+            Decision decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
+            if (decision.notIndifferent()) return decision.toBoolean();
         }
 
         dist = unit.distTo(combatBuilding);

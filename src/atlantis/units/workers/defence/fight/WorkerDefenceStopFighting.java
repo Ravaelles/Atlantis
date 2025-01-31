@@ -21,9 +21,9 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     protected Manager handle() {
-        if (unit.hp() >= 19) {
-            if ((new GatherResources(unit)).forceHandle() != null) return usedManager(this);
-        }
+//        if (unit.hp() >= 19) {
+//            if ((new GatherResources(unit)).forceHandle() != null) return usedManager(this);
+//        }
 
         AUnit enemy = unit.nearestEnemy();
         if (enemy != null) {

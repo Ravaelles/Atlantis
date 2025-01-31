@@ -12,6 +12,8 @@ public class CancelTooLongConstructions {
     public static void cancelCauseTakingTooLongIfNeeded(Construction constr, int timeout, AUnitType type, AUnitType buildingType) {
         if (tookTooLong(constr, timeout)) {
             if (neverCancel(type)) {
+                constr.findPositionForNewBuilding();
+
                 ErrorLog.printMaxOncePerMinute("--- Took too long but don't dancel " + type);
                 return;
             }

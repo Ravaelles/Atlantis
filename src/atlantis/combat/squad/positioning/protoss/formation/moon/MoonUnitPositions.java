@@ -62,8 +62,8 @@ public class MoonUnitPositions {
                 int raceBonus = A.whenEnemyProtossTerranZerg(2, 3, 4);
                 double dist = leader.distTo(moonCenter) + raceBonus;
 
-                double MAX_FOR_PROTOSS = 10.0;
-                double MAX_FOR_ZERG = 12.0;
+                double MAX_FOR_PROTOSS = 11.0;
+                double MAX_FOR_ZERG = 13.0;
 
                 if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;
                 if (Enemy.zerg() && dist >= MAX_FOR_ZERG) return MAX_FOR_ZERG;

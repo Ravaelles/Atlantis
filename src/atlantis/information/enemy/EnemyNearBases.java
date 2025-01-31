@@ -60,7 +60,7 @@ public class EnemyNearBases {
     }
 
     private static Selection potentialRegularEnemies() {
-        Selection enemies = Select.enemyRealUnits().havingAntiGroundWeapon();
+        Selection enemies = Select.enemyRealUnits().combatUnits().havingAntiGroundWeapon();
 
         if (A.supplyUsed() >= 140) {
             enemies = enemies.excludeTypes(

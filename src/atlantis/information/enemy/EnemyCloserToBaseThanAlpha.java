@@ -8,7 +8,7 @@ public class EnemyCloserToBaseThanAlpha {
 
 
     public static AUnit get() {
-        AUnit enemy = EnemyNearBases.enemyNearAnyOurBase(25);
+        AUnit enemy = EnemyNearBases.enemyNearAnyOurBase(20);
 
         _lastEnemy = enemy;
         return enemy;

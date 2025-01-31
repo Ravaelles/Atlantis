@@ -11,7 +11,7 @@ public class MoonFormationApplies {
     //    public static final double DELTA_MARGIN = 0.1;
 //    public static final double MAX_PREFERED_DIST = 10.5;
 //    public static final double MAX_PREFERED_DIST_WHEN_ONLY_MELEE_ENEMIES = 8;
-    public static final double START_BATTLE_DIST_THRESHOLD = 0.3;
+    public static final double START_BATTLE_DIST_THRESHOLD = 0.8;
 
     private HasPosition ourCenter;
 
@@ -39,7 +39,7 @@ public class MoonFormationApplies {
 //        if (leader.distToBuilding() <= 5) return false;
 //        if (muchMoreRangedUnitsThanEnemy(unit, leader)) return false;
 
-        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.1) > 0) return false;
+//        if (leader.enemiesNearInRadius(OurDragoonRange.range() + 0.5) > 0) return false;
         if (leader.enemiesThatCanAttackMe(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
         if (leader.enemiesICanAttack(START_BATTLE_DIST_THRESHOLD).notEmpty()) return false;
 
