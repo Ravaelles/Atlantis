@@ -14,24 +14,26 @@ public class MoonFormation {
     ) {
         Map<AUnit, APosition> positions = new HashMap<>();
 
-        // Total angle span depends on the number of units and their sizes
+        // Compute the angle towards the enemy position
+        double angleToCenter = Math.atan2(center.ty() - units.center().ty(), center.tx() - units.center().tx());
+
+        // Total angle span depends on unit count and their sizes
         double angleSpan = calculateTotalAngleSpan(units, radius, separation);
-        double angleStart = -angleSpan / 2; // Start angle (negative for left side)
-        double angleStep = angleSpan / Math.max(1, units.size() - 1);
+        double angleStart = angleToCenter - Math.toRadians(angleSpan / 2); // Leftmost point of the crescent
+        double angleStep = Math.toRadians(angleSpan / Math.max(1, units.size() - 1));
 
         int i = 0;
         for (AUnit unit : units.list()) {
-            double angle = Math.toRadians(angleStart + i * angleStep);
+            double angle = angleStart + i * angleStep;
             double offsetX = Math.cos(angle) * radius;
             double offsetY = Math.sin(angle) * radius;
-            APosition position = APosition.create((int) (center.tx() + offsetX), (int) (center.ty() + offsetY));
+            APosition position = APosition.create((int) (center.tx() - offsetX), (int) (center.ty() - offsetY));
 
             if (!position.isWalkable()) {
                 position = findNearestWalkable(position);
             }
 
             positions.put(unit, position);
-
             i++;
         }
         return positions;

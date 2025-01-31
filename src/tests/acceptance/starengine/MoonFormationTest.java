@@ -1,6 +1,7 @@
 package tests.acceptance.starengine;
 
 import atlantis.combat.squad.positioning.protoss.formation.moon.MoonFormation;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -21,13 +22,13 @@ public class MoonFormationTest extends WorldStubForTests {
     @Test
     public void moonShape() {
         Callable ours = () -> fakeOurs(
-            dragoon = fake(AUnitType.Protoss_Dragoon, 10),
+            dragoon = fake(AUnitType.Protoss_Dragoon, 10, 10),
             fake(AUnitType.Protoss_Dragoon, 11),
             fake(AUnitType.Protoss_Zealot, 11.1),
             fake(AUnitType.Protoss_Zealot, 11.9)
         );
         Callable enemies = () -> fakeEnemies(
-            sunken = fake(AUnitType.Zerg_Sunken_Colony, 20, 15)
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 15, 25)
 //            fake(AUnitType.Zerg_Larva, 12)
         );
 //        dragoon = fake(AUnitType.Protoss_Dragoon, 10),
@@ -38,17 +39,19 @@ public class MoonFormationTest extends WorldStubForTests {
         createWorld(60, () -> {
                 Selection units = dragoon.friendsNear().combatUnits().add(dragoon);
                 HasPosition center = sunken;
-                double radius = 7.5;
-                double separation = 0.6;
+                double radius = 9;
+                double separation = 2;
 
                 Map<AUnit, APosition> positions = MoonFormation.unitPositions(units, center, radius, separation);
 
                 // Print the positions
                 for (AUnit unit : positions.keySet()) {
                     APosition position = positions.get(unit);
-                    System.out.println(unit.idWithType() + " - " + position);
+//                    System.out.println(unit.idWithType() + " - " + position);
 
+//                    if (A.now >= 40) {
                     unit.move(position, Actions.MOVE_FORMATION);
+//                    }
                 }
             },
             ours,
