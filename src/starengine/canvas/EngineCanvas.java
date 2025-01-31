@@ -1,5 +1,6 @@
 package starengine.canvas;
 
+import starengine.StarEngineConfig;
 import starengine.assets.Map;
 import starengine.StarEngine;
 import starengine.canvas.painters.CanvasPainter;
@@ -10,7 +11,6 @@ import java.awt.*;
 public class EngineCanvas extends JPanel {
     public final StarEngine engine;
     public final CanvasPainter painter;
-    private double scaleFactor = 1.0;
 
     public EngineCanvas(StarEngine engine) {
         this.engine = engine;
@@ -23,11 +23,11 @@ public class EngineCanvas extends JPanel {
     public void updateScale(int monitorHeight) {
         // Calculate scale factor based on monitor height
         int originalHeight = Map.SPACE_HEIGHT; // The original height of the map
-        scaleFactor = (double) monitorHeight / originalHeight;
+        StarEngineConfig.SCALE_MAP = (double) monitorHeight / originalHeight;
 
         // Update preferred size based on the new scale factor
-        int newWidth = (int) (Map.SPACE_WIDTH * scaleFactor);
-        int newHeight = (int) (Map.SPACE_HEIGHT * scaleFactor);
+        int newWidth = (int) (Map.SPACE_WIDTH * StarEngineConfig.SCALE_MAP);
+        int newHeight = (int) (Map.SPACE_HEIGHT * StarEngineConfig.SCALE_MAP);
         setPreferredSize(new Dimension(newWidth, newHeight));
         revalidate();
     }
@@ -47,7 +47,7 @@ public class EngineCanvas extends JPanel {
 
         // Apply scaling
         Graphics2D g2d = (Graphics2D) g;
-        g2d.scale(scaleFactor, scaleFactor);
+        g2d.scale(StarEngineConfig.SCALE_MAP, StarEngineConfig.SCALE_MAP);
 
         // Delegate actual painting to the painter
         painter.paint(g2d);

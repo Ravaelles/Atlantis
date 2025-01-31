@@ -111,8 +111,14 @@ public class FakeUnit extends AUnit implements Serializable {
 
     // === StarEngine ==========================================
 
+    private BufferedImage _image = null;
+
     public BufferedImage image() {
-        return isOur() ? Images.dragoonOur : Images.dragoonEnemy;
+        return _image;
+    }
+
+    public void setImage(BufferedImage image) {
+        _image = image;
     }
 
     // === END OF StarEngine ===================================

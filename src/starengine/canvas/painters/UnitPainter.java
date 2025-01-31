@@ -9,6 +9,8 @@ import tests.fakes.FakeUnit;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static starengine.StarEngineConfig.SCALE_UNITS;
+
 public class UnitPainter {
     private final CanvasPainter canvasPainter;
     private FakeUnit au;
@@ -35,7 +37,7 @@ public class UnitPainter {
         if (au.isDead() || !au.isCompleted()) return;
 
         paintTarget(unit);
-        paintBackground(unit);
+        paintUnitImage(unit);
 //        paintBorder(unit);
         paintLifeBar(unit);
         paintTextsOverUnit(unit);
@@ -63,8 +65,8 @@ public class UnitPainter {
     }
 
     private void paintTextsOverUnit(FakeUnit unit) {
-        paintText(unit, au.typeWithUnitId(), -20);
-        paintText(unit, au.manager().toString(), 9);
+        paintText(unit, au.typeWithUnitId(), -22);
+        paintText(unit, au.manager().toString(), 25);
     }
 
     private void paintLifeBar(FakeUnit unit) {
@@ -89,7 +91,7 @@ public class UnitPainter {
     }
 
     private void paintText(FakeUnit unit, String text, int dy) {
-        g.setColor(Color.WHITE);
+        g.setColor(Color.GRAY);
         g.drawString(text, (int) (unit.x() + text.length() * -2.5), unit.y() + dy);
     }
 
@@ -116,7 +118,7 @@ public class UnitPainter {
         return Units.UNIT_HEIGHT;
     }
 
-    private void paintBackground(FakeUnit unit) {
+    private void paintUnitImage(FakeUnit unit) {
 //        g.setColor(unit.getColor());
 //        g.fillOval(
 //            unit.x() - unitSize() / 2,
@@ -126,13 +128,16 @@ public class UnitPainter {
 //        );
 
         BufferedImage image = unit.image();
+        int unitSize = Math.max(unitWidth(), unitHeight());
 
         g.drawImage(
             image,
             unit.x() - unitWidth() / 2,
             unit.y() - unitHeight() / 2,
-            unitWidth(),
-            unitHeight(),
+            (int) (unitWidth() * SCALE_UNITS),
+            (int) (unitHeight() * SCALE_UNITS),
+//            (int) (unitSize * SCALE_UNITS),
+//            (int) (unitSize * SCALE_UNITS),
             canvasPainter.canvas
         );
 

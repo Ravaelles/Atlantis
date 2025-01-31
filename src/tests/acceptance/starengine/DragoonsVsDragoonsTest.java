@@ -19,7 +19,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
         FakeUnit[] our = defineOurs();
         FakeUnit[] enemies = defineEnemies();
 
-//        useStarEngine(); // Uncomment to use StarEngine
+        useStarEngine(); // Uncomment to use StarEngine
 
         int runForSeconds = !isUsingEngine() ? 1 : 10;
         createWorld(30 * runForSeconds, () -> {
