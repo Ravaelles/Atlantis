@@ -73,7 +73,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (goTo != null) {
 //            if (unit.isDragoon()) A.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
 
-            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5);
+            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5, null);
             if (goTo == null) return false;
 
             if (goTo.isWalkable()) {

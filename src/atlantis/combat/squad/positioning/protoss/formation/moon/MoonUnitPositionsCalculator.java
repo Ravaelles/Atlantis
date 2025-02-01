@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class MoonUnitPositionsCalculator {
     public static Map<AUnit, APosition> calculateUnitPositions(
-        Selection units, HasPosition center, double radius, double separation
+        Selection units, HasPosition center, AUnit leader, double radius, double separation
     ) {
         Map<AUnit, APosition> positions = new HashMap<>();
 
@@ -27,13 +27,14 @@ public class MoonUnitPositionsCalculator {
             double angle = angleStart + i * angleStep;
             double offsetX = Math.cos(angle) * radius;
             double offsetY = Math.sin(angle) * radius;
-            APosition position = APosition.create((int) (center.tx() - offsetX), (int) (center.ty() - offsetY));
 
-            if (!position.isWalkable()) {
-                position = findNearestWalkable(position);
+            APosition position = APosition.create((int) (center.tx() - offsetX), (int) (center.ty() - offsetY));
+            position = validatePosition(position, unit, leader);
+
+            if (isPositionOkay(position, unit)) {
+                positions.put(unit, position);
             }
 
-            positions.put(unit, position);
             i++;
         }
         return positions;
@@ -51,7 +52,23 @@ public class MoonUnitPositionsCalculator {
         return Math.toDegrees(totalWidth / radius);
     }
 
-    private static APosition findNearestWalkable(APosition position) {
-        return position.makeWalkable(2);
+    private static APosition validatePosition(APosition position, AUnit unit, AUnit leader) {
+        if (position == null) return null;
+
+        if (!position.isWalkable()) {
+            position = position.makeWalkable(1, unit.position().region());
+        }
+
+        if (position == null || !position.isWalkable()) {
+            position = leader.position();
+        }
+
+        return position;
+    }
+
+    private static boolean isPositionOkay(APosition position, AUnit unit) {
+        return position != null
+            && position.isWalkable()
+            && position.regionsMatch(unit);
     }
 }

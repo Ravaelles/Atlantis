@@ -28,6 +28,8 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
 
+        if (enemy.enemiesNear().buildings().countInRadius(enemy.isMelee() ? 5 : 6, unit) > 0) return true;
+
         if (DontAvoidWhenCannonsNear.check(unit) && (unit.hp() >= 42 || unit.cooldown() <= 6)) {
             return true;
         }

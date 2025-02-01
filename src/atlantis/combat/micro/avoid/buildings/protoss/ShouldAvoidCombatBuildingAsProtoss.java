@@ -20,6 +20,12 @@ public class ShouldAvoidCombatBuildingAsProtoss {
             }
         }
 
+        if (combatBuilding.isSunken()) {
+            if ((decision = ShouldAvoidSunkenAsProtoss.shouldAvoid(unit, combatBuilding)).notIndifferent()) {
+                return decision;
+            }
+        }
+
         return Decision.INDIFFERENT;
     }
 }

@@ -240,7 +240,7 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
         if (somethingChanged) {
             APosition newPosition = new APosition(px, py);
-            return newPosition.makeWalkable(8);
+            return newPosition.makeWalkable(8, null);
         }
         else {
             return this;

@@ -5,6 +5,7 @@ import atlantis.combat.missions.MissionManager;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -25,6 +26,8 @@ public class LeaderToOther extends MissionManager {
         otherFriend = otherFriend();
         if (otherFriend == null) return false;
         double distToOther = otherFriend.distTo(unit);
+
+        if (!Enemy.protoss() && !EnemyInfo.hasRanged() && unit.enemiesNearInRadius(9) == 0) return false;
 
         if (shouldBeCautiosAgainstProtossEarly(distToOther)) return true;
 
@@ -47,7 +50,7 @@ public class LeaderToOther extends MissionManager {
     private double dist() {
         if (unit.enemiesNear().combatUnits().havingWeapon().empty()) return 5;
 
-        return 2 + unit.squadSize() / 5.0 + (Army.strength() >= 200 ? 1.5 : 0);
+        return 1.3 + unit.squadSize() / 6.0 + (Army.strength() >= 300 ? 1.5 : 0);
     }
 
     @Override

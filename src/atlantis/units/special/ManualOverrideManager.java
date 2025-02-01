@@ -11,8 +11,7 @@ public class ManualOverrideManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isPatrolling()
-            && unit.lastPositionChangedLessThanAgo(60);
+        return unit.isPatrolling();
     }
 
     protected Manager handle() {

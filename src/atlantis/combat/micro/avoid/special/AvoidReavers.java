@@ -6,7 +6,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class AvoidReavers extends Manager {
-    public static final double BASE_AVOID_RANGE = 9.9;
+    public static final double BASE_AVOID_RANGE = 10.4;
     private AUnit reaver;
 
     public AvoidReavers(AUnit unit) {
@@ -37,7 +37,7 @@ public class AvoidReavers extends Manager {
 
         if (ours >= 2 && enemies <= 1) return true;
 
-        return ours >= 6 && ((double) ours / enemies) >= 2.5;
+        return ours >= 6 && ((double) ours / enemies) >= 2.6;
     }
 
     private boolean ignoreType() {

@@ -108,7 +108,7 @@ public class ARegion implements HasPosition {
             );
 
             if (!center.isWalkable()) {
-                center = center.makeWalkable(8);
+                center = center.makeWalkable(8, this);
             }
         }
 

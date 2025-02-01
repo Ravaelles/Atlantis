@@ -898,6 +898,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection dts() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isDarkTemplar()), "dts"
+        );
+    }
+
     public Selection lurkers() {
         return cloneByRemovingIf(
             (unit -> !unit.isLurker()), "lurkers"

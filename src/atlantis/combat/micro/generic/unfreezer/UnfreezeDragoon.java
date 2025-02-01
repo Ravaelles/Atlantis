@@ -16,8 +16,6 @@ public class UnfreezeDragoon extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
-
         if (!unit.isDragoon()) return false;
         if (unit.hasCooldown()) return false;
         if (unit.lastAttackFrameLessThanAgo(40)) return false;
@@ -34,29 +32,12 @@ public class UnfreezeDragoon extends Manager {
         }
 
         return true;
-//            && (unit.isStopped() || unit.u().getOrder().equals(Order.Stop))
-//            && !unit.isHoldingPosition()
-//            && (
-//            unit.isStopped()
-//                || unit.u().getOrder().equals(Order.Stop)
-//            unit.lastPositionChangedMoreThanAgo(120)
-//                ||
-//            (underAttackRecently && !movedVeryRecently)
-//        )
-//            && (underAttackRecently || unit.lastPositionChangedMoreThanAgo(80));
-//            && unit.u().isSt
-//            && (unit.isStopped() || unit.isHoldingPosition())
-//            && unit.lastActionMoreThanAgo(20, Actions.STOP)
-//            && (unit.isMoving() || unit.isStopped())
-//            && (!unit.isLeader() || unit.lastPositionChangedMoreThanAgo(30 * 6));
-//            && unit.noCooldown();
-//            && unit.lastActionMoreThanAgo(20, Actions.HOLD_POSITION);
     }
 
     @Override
     public Manager handle() {
         if (A.isUms()) {
-            unit.commandHistory().print("UnfreezeDragoon#" + unit.id() + " command history (now: " + A.now + ")");
+//            unit.commandHistory().print("UnfreezeDragoon#" + unit.id() + " command history (now: " + A.now + ")");
 //            PauseAndCenter.on(unit, true);
         }
 

@@ -37,11 +37,14 @@ public class MoonFormationTest extends WorldStubForTests {
 
         createWorld(60, () -> {
                 Selection units = dragoon.friendsNear().combatUnits().add(dragoon);
+                AUnit leader = dragoon;
                 HasPosition center = sunken;
                 double radius = 9;
                 double separation = 2;
 
-                Map<AUnit, APosition> positions = MoonUnitPositionsCalculator.calculateUnitPositions(units, center, radius, separation);
+                Map<AUnit, APosition> positions = MoonUnitPositionsCalculator.calculateUnitPositions(
+                    units, center, leader, radius, separation
+                );
 
                 // Print the positions
                 for (AUnit unit : positions.keySet()) {

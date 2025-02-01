@@ -77,6 +77,7 @@ public class Cache<T> {
                     return value;
                 }
             }
+            return value;
         }
 
         @SuppressWarnings("unchecked") T newValue = (T) callback.run();

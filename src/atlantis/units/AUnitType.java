@@ -1706,4 +1706,8 @@ public class AUnitType implements Comparable<Object> {
             )
         );
     }
+
+    public double widthInTiles() {
+        return (ut.dimensionLeft() + ut.dimensionRight()) / 32.0;
+    }
 }

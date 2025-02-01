@@ -90,7 +90,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-//        if (true) return "ums/vsGosuRav.scx"; // v. AI Zerg Player - cheating as fuck - standard natural
+        if (true) return "ums/vsGosuRav.scx"; // v. AI Zerg Player - cheating as fuck - standard natural
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
@@ -157,7 +157,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/7Drag_v_8Drag.scm";
-        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
+//        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";
@@ -206,7 +206,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
@@ -220,7 +220,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/DragFew_v_Sunkens.scm"; // Few Dragoons attacking sunkens
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
-//        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
+        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
 //        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";

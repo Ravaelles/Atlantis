@@ -64,7 +64,7 @@ public class MoveAway {
                 return true;
             }
             else {
-                if (!unit.isABuilding()) {
+                if (A.isUms() && !unit.isABuilding()) {
                     System.err.println(
                         "MoveAway failed, dist: " + distTo + " / prefered:" + moveDistance + " / " + unit
                     );

@@ -140,15 +140,13 @@ public interface HasPosition {
         return null;
     }
 
-    default APosition makeWalkable(int maxRadius) {
+    default APosition makeWalkable(int maxRadius, ARegion sameRegion) {
         if (Env.isTesting()) return position();
 
         APosition position = this.position();
         if (position.isWalkable()) {
             return position;
         }
-
-        ARegion region = position.region();
 
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
@@ -159,7 +157,7 @@ public interface HasPosition {
                             || dty == -currentRadius || dty == currentRadius
                     ) {
                         position = this.translateByTiles(dtx, dty);
-                        if (position.isWalkable() && (region == null || region.equals(position.region()))) {
+                        if (position.isWalkable() && (sameRegion == null || sameRegion.equals(position.region()))) {
                             return position;
                         }
                     }
