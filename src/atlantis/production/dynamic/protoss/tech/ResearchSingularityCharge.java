@@ -16,13 +16,16 @@ import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Singularity_Charge;
 
-public class ResearchSingularityCharge extends Commander {
-    private static boolean isResearched = false;
-    private static boolean enqueued = false;
+public class ResearchSingularityCharge extends TechResearchCommander {
     private int dragoons;
 
-    public static UpgradeType what() {
+    public static UpgradeType upgrade() {
         return Singularity_Charge;
+    }
+
+    @Override
+    public UpgradeType what() {
+        return upgrade();
     }
 
     public static void onResearched() {
@@ -86,19 +89,6 @@ public class ResearchSingularityCharge extends Commander {
         }
 
         return Decision.INDIFFERENT;
-    }
-
-    @Override
-    protected void handle() {
-        AddToQueue.upgrade(what());
-
-        if (ResearchNow.research(what())) {
-            enqueued = true;
-        }
-        else if (!enqueued && AddToQueue.upgrade(what())) {
-            enqueued = true;
-//            Queue.get().history().addNow(what().name());
-        }
     }
 
     public static boolean isResearched() {

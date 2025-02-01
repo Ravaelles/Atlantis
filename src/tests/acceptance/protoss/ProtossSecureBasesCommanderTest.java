@@ -2,7 +2,7 @@ package tests.acceptance.protoss;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;

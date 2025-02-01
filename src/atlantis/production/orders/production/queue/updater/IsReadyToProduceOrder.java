@@ -2,7 +2,7 @@ package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
-import atlantis.production.constructing.Construction;
+import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -81,7 +81,7 @@ public class IsReadyToProduceOrder {
         if (isFarFromMainBaseSoTravelEarly) return true;
         if (type.isForge() && A.supplyUsed() == 9) return true;
 
-        boolean canAffordNow = A.canAfford(type.mineralPrice(), type.gasPrice());
+        boolean canAffordNow = A.canAffordWithReserved(Math.min(220, type.mineralPrice()), type.gasPrice());
 
         if (A.supplyUsed() >= order.minSupply()) return canAffordNow;
         else if (!canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())) return false;

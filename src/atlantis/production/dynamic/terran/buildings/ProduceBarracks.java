@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran.buildings;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;

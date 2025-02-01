@@ -2,7 +2,7 @@ package tests.acceptance;
 
 import atlantis.game.A;
 import atlantis.map.position.APosition;
-import atlantis.production.constructing.position.protoss.ProtossForbiddenByStreetGrid;
+import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 

@@ -63,6 +63,6 @@ public class ProtossSecureBaseWithCannons {
 //        System.err.println("natural bl = " + BaseLocations.natural());
 //        System.err.println("natural = " + natural);
 
-        return natural != null && initialPosition.distToLessThan(natural, 15);
+        return natural != null && initialPosition.groundDist(natural) <= 9;
     }
 }

@@ -25,8 +25,20 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
         this.enemy = enemy;
-
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
+
+        double distToEnemy = unit.distTo(enemy);
+
+        if (A.s <= 220 && enemy.isWorker()) {
+            if (distToEnemy <= 1.05) return true;
+            if (enemy.enemiesNear().buildings().countInRadius(15, unit) == 0) return false;
+        }
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null && leader.isMelee()) {
+            if (unit.distTo(leader) >= 2) return false;
+//            if (enemy.distTo(leader) >= 7) return false;
+        }
 
         if (enemy.enemiesNear().buildings().countInRadius(enemy.isMelee() ? 5 : 6, unit) > 0) return true;
 
@@ -47,7 +59,6 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         if (A.s >= 60 * 9) return true;
 
         boolean lowCooldown = unit.cooldown() <= 9;
-        double distToEnemy = unit.distTo(enemy);
 
         if (Enemy.zerg()) {
             if (lowCooldown && enemyVeryCloseToBuilding()) return true;

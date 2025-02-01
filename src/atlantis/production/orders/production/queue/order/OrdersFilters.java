@@ -1,11 +1,9 @@
 package atlantis.production.orders.production.queue.order;
 
-import atlantis.production.constructing.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

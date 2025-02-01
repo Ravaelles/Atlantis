@@ -3,7 +3,7 @@ package atlantis.production.dynamic.expansion.zerg;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.map.base.BaseLocations;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.zerg.ZergExpansionCommander;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.select.Count;

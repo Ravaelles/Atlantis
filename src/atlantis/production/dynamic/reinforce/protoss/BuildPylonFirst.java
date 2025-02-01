@@ -1,10 +1,8 @@
 package atlantis.production.dynamic.reinforce.protoss;
 
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
-import atlantis.production.constructing.NewConstructionRequest;
-import atlantis.production.constructing.position.RequestBuildingNear;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

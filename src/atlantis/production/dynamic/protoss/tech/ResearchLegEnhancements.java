@@ -12,18 +12,19 @@ import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Leg_Enhancements;
 
-public class ResearchLegEnhancements extends Commander {
-    public static UpgradeType tech() {
+public class ResearchLegEnhancements extends TechResearchCommander {
+    @Override
+    public UpgradeType what() {
         return Leg_Enhancements;
     }
 
     @Override
     public boolean applies() {
         if (!Have.citadel()) return false;
-        if (ATech.isResearched(tech())) return false;
+        if (ATech.isResearched(what())) return false;
         if (A.supplyUsed() <= 90 || Count.zealots() <= 4) return false;
-        if (Queue.get().history().lastHappenedLessThanSecondsAgo(tech().name(), 30)) return false;
-        if (CountInQueue.count(tech(), 10) > 0) return false;
+        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
+        if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
         if (A.hasGas(150) && A.hasMinerals(300) && (Count.zealots() >= 7 || A.s >= 700)) {
@@ -33,10 +34,7 @@ public class ResearchLegEnhancements extends Commander {
         return false;
     }
 
-    @Override
-    protected void handle() {
-        if (AddToQueue.upgrade(tech())) {
-            Queue.get().history().addNow(tech().name());
-        }
+    public static boolean isResearched() {
+        return isResearched;
     }
 }

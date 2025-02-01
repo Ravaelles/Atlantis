@@ -5,7 +5,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.Army;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;

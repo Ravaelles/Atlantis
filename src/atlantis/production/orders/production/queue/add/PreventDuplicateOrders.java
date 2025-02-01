@@ -25,7 +25,7 @@ public class PreventDuplicateOrders {
 
         assert type != null;
 
-        if (onlyOneAllowed(type, position)) {
+        if (OnlyOneAllowedOfType.onlyOneAllowed(type, position)) {
             QueueLastStatus.updateStatusFailed("OnlyOneAllowed", type.toString());
             return true;
         }
@@ -67,22 +67,6 @@ public class PreventDuplicateOrders {
         if (forProtossEnforceHavingAPylonFirst(type)) {
             QueueLastStatus.updateStatusFailed("EnforcePylonFirst", type.toString());
             return true;
-        }
-
-        return false;
-    }
-
-    private static boolean onlyOneAllowed(AUnitType type, HasPosition position) {
-        if (We.protoss()) {
-            if (type.equals(AUnitType.Protoss_Forge)) return Count.withPlanned(type) > 0;
-            if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
-            if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
-            if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
-            if (type.equals(AUnitType.Protoss_Robotics_Support_Bay)) return Count.withPlanned(type) > 0;
-        }
-        else if (We.terran()) {
-            if (type.equals(AUnitType.Terran_Engineering_Bay)) return Count.withPlanned(type) > 0;
-            if (type.equals(AUnitType.Terran_Armory)) return Count.withPlanned(type) > 0;
         }
 
         return false;

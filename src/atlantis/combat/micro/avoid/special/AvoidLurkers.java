@@ -73,7 +73,19 @@ public class AvoidLurkers extends Manager {
 //            lurker.paintCircleFilled(8, Color.Green);
 //        }
 
-        return lurkers.effUndetected();
+        if (We.protoss()) {
+            if (unit.hp() >= 64 && unit.lastUnderAttackMoreThanAgo(130)) {
+                lurkers = lurkers.effUndetected();
+            }
+            else {
+                lurkers = lurkers.burrowed();
+            }
+        }
+        else {
+            lurkers = lurkers.effUndetected();
+        }
+
+        return lurkers;
     }
 
     private boolean avoidAsTerran() {

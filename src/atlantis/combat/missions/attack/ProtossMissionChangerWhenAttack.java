@@ -93,7 +93,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         int lings = EnemyUnits.lings();
         int goons = Count.dragoons();
 
-        if (goons <= 1 && combatUnits <= 5 && lings >= 2.9 * combatUnits) {
+        if (lings >= 2 && goons <= 1 && combatUnits <= 5 && lings >= 2.9 * combatUnits) {
             if (DEBUG) reason = "Too many lings, ratio: (" + A.digit((double) lings / (combatUnits + 0.01)) + ")";
             return forceMissionSpartaOrDefend(reason);
         }

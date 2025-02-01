@@ -7,7 +7,7 @@ import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.Construction;
+import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;

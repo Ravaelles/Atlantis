@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.OurStrategy;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.reinforce.protoss.ShouldSecureProtossBase;
 import atlantis.production.dynamic.reinforce.protoss.ProtossSecureBaseWithCannons;
 import atlantis.units.AUnit;
@@ -27,6 +27,17 @@ public class ProtossSecureBasesCommander extends Commander {
             && (A.supplyUsed() >= 80 || A.minerals() >= 200 || EnemyInfo.hasHiddenUnits() || forgeFE())
             && (A.minerals() >= 260 || notTooManyStarted());
     }
+
+    @Override
+    protected void handle() {
+        for (AUnit base : Select.ourBasesWithUnfinished().reverse().list()) {
+            if ((new ShouldSecureProtossBase(base)).needsSecuring()) {
+                (new ProtossSecureBaseWithCannons(base)).reinforce();
+            }
+        }
+    }
+
+    // =========================================================
 
     private static boolean notTooManyStarted() {
         int maxNotStartedAtOnce = (hasMutas ? 3 : 0)
@@ -54,14 +65,5 @@ public class ProtossSecureBasesCommander extends Commander {
         if (hasMutas) return true;
 
         return hasMutas = (Enemy.zerg() && EnemyUnits.mutas() > 0);
-    }
-
-    @Override
-    protected void handle() {
-        for (AUnit base : Select.ourBasesWithUnfinished().reverse().list()) {
-            if ((new ShouldSecureProtossBase(base)).needsSecuring()) {
-                (new ProtossSecureBaseWithCannons(base)).reinforce();
-            }
-        }
     }
 }

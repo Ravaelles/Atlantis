@@ -20,14 +20,14 @@ public class ProtossShouldFullRetreat {
         ProtossShouldFullRetreat.unit = unit;
 
         if (!unit.isMissionAttack()) return false;
-        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
+//        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
 
         if (DontAvoidWhenCannonsNear.check(unit)) return false;
 
         Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 13 : 9, unit);
         if (enemies.empty()) return false;
-        if (Army.strength() >= 600 || A.minerals() >= 2000) return false;
-        if (unit.distToBase() <= 7) return false;
+        if ((Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
+        if (unit.distToBase() <= 4) return false;
 //        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return false;
         if (dontRunNearOurCombatBuildings()) return false;
 
@@ -57,7 +57,7 @@ public class ProtossShouldFullRetreat {
 //                && naturalBase.distTo(unit) <= 8
 //        ) return false;
 
-        return unit.eval() <= 0.97;
+        return unit.eval() <= 0.92;
 
 //        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
 //            if (unit.eval() >= 2.3) return false;

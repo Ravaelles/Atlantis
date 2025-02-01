@@ -23,11 +23,16 @@ public class LeaderToOther extends MissionManager {
     public boolean applies() {
         if (!(We.protoss() && Enemy.zerg() && Count.ourCombatUnits() <= 10)) return false;
 
+        if (
+            We.protoss()
+                && !Enemy.protoss()
+                && !EnemyInfo.hasRanged()
+                && unit.enemiesNearInRadius(9) == 0
+        ) return false;
+
         otherFriend = otherFriend();
         if (otherFriend == null) return false;
         double distToOther = otherFriend.distTo(unit);
-
-        if (!Enemy.protoss() && !EnemyInfo.hasRanged() && unit.enemiesNearInRadius(9) == 0) return false;
 
         if (shouldBeCautiosAgainstProtossEarly(distToOther)) return true;
 

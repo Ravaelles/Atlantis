@@ -10,7 +10,7 @@ import atlantis.information.strategy.OurStrategy;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;

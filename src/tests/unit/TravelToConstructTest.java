@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.ProtossStrategies;
-import atlantis.production.constructing.builders.TravelToConstruct;
+import atlantis.production.constructions.builders.TravelToConstruct;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.Orders;

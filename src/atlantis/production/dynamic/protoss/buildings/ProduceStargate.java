@@ -3,7 +3,7 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;

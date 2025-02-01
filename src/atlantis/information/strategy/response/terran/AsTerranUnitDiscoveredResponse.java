@@ -10,7 +10,7 @@ import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.OurStrategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.production.constructing.position.modifier.PositionModifier;
+import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.ProductionRequests;

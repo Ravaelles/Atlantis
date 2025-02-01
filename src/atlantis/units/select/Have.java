@@ -1,7 +1,7 @@
 package atlantis.units.select;
 
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;

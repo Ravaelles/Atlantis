@@ -1,8 +1,8 @@
 package atlantis.production.requests;
 
 import atlantis.game.A;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;

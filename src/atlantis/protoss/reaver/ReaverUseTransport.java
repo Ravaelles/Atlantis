@@ -24,6 +24,7 @@ public class ReaverUseTransport extends Manager {
         if (unit.scarabCount() == 0 && unit.enemiesNear().canAttack(unit, 2).notEmpty()) return true;
         if (unit.lastActionLessThanAgo(20, Actions.LOAD)) return true;
 
+        if (unit.lastUnderAttackLessThanAgo(50)) return true;
         if (unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)) return true;
         if (justShootAndShouldEvacuate()) return true;
 
@@ -53,13 +54,7 @@ public class ReaverUseTransport extends Manager {
                 && unit.enemiesNearInRadius(10) > 0
         ) return false;
 
-        shuttle = unit.friendsNear()
-            .ofType(AUnitType.Protoss_Shuttle)
-            .havingAtLeastHp(30)
-            .havingSpaceFree(2)
-            .nearestTo(unit);
-
-        return shuttle != null;
+        return true;
     }
 
     private boolean justShootAndShouldEvacuate() {
@@ -94,6 +89,12 @@ public class ReaverUseTransport extends Manager {
 
     @Override
     public Manager handle() {
+        shuttle = unit.friendsNear()
+            .ofType(AUnitType.Protoss_Shuttle)
+            .havingAtLeastHp(30)
+            .havingSpaceFree(2)
+            .nearestTo(unit);
+
         if (shuttle == null) {
 //            ErrorLog.printMaxOncePerMinute("ReaverUseTransport: shuttle is null");
             return null;

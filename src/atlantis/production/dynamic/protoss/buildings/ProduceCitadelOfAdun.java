@@ -11,9 +11,9 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceCitadelOfAdun {
     public static boolean produce() {
-        if (true) return false;
+//        if (true) return false;
 
-        if (A.supplyUsed() <= 60) return false;
+        if (A.supplyUsed() <= 70) return false;
         if (Have.a(type())) return false;
         if (Count.ofType(Protoss_Observatory) == 0) return false;
 

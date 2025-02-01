@@ -3,8 +3,8 @@ package atlantis.production.dynamic.expansion.protoss;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
-import atlantis.production.constructing.Construction;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 

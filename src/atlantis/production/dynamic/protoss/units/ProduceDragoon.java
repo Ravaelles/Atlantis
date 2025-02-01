@@ -5,7 +5,6 @@ import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.Army;
-import atlantis.production.constructing.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnitType;

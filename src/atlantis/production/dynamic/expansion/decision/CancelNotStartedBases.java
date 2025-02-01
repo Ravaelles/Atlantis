@@ -2,7 +2,7 @@ package atlantis.production.dynamic.expansion.decision;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.production.constructing.Construction;
+import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;

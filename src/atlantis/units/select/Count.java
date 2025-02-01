@@ -3,11 +3,10 @@ package atlantis.units.select;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.terran.repair.RepairAssignments;
-import atlantis.terran.repair.protect.ProtectorCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;

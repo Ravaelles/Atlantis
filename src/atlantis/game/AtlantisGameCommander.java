@@ -11,7 +11,7 @@ import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
-import atlantis.production.constructing.ConstructionsCommander;
+import atlantis.production.constructions.ConstructionsCommander;
 import atlantis.units.special.SpecialCommander;
 import atlantis.units.special.SpecialActionsCommander;
 import atlantis.units.UnitStateCommander;

@@ -1,7 +1,7 @@
 package atlantis.production.requests.protoss;
 
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructing.position.protoss.FindPositionForCannon;
+import atlantis.production.constructions.position.protoss.FindPositionForCannon;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;

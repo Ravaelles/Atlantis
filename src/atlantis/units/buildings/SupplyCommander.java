@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.production.constructing.ConstructionRequests;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -17,7 +17,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.TimeMoment;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class SupplyCommander extends Commander {
     private TimeMoment lastAdded = new TimeMoment(0);
