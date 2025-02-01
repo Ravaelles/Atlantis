@@ -213,7 +213,7 @@ public class PreventDuplicateOrders {
         return false;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(AUnitType type) {
+    public static boolean cancelPreviousNonStartedOrdersOf(AUnitType type, String reason) {
         boolean result = false;
 
         for (ProductionOrder order : Queue.get().nextOrders().ofType(type).list()) {
@@ -224,35 +224,35 @@ public class PreventDuplicateOrders {
                 order.construction().setBuilder(null);
             }
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 
         return result;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade) {
+    public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade, String reason) {
         boolean result = false;
 
         for (ProductionOrder order : Queue.get().nonCompleted().ofType(upgrade).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 
         return result;
     }
 
-    public static boolean cancelPreviousNonStartedOrdersOf(TechType tech) {
+    public static boolean cancelPreviousNonStartedOrdersOf(TechType tech, String reason) {
         boolean result = false;
 
         for (ProductionOrder order : Queue.get().nonCompleted().ofType(tech).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 
-            order.cancel();
+            order.cancel(reason);
             result = true;
         }
 

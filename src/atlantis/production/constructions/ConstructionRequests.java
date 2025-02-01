@@ -252,11 +252,11 @@ public class ConstructionRequests {
     /**
      * Top-priority request.
      */
-    public static void removeAllNotStarted() {
+    public static void removeAllNotStarted(String reason) {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
             if (!construction.hasStarted()) {
-                construction.cancel();
+                construction.cancel(reason);
             }
         }
     }

@@ -61,7 +61,7 @@ public class RemoveExcessiveOrders {
 //                    A.printStackTrace("Observer excessive");
 //                }
 
-                orders.get(i).cancel();
+                orders.get(i).cancel("Producing many " + type + " at once (" + orders.size() + ">" + max + ")");
 //                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE UNIT " + type);
 
             }
@@ -76,7 +76,7 @@ public class RemoveExcessiveOrders {
 
         if (constructions.size() > max) {
             for (int i = constructions.size() - 1; i >= 0; i--) {
-                constructions.get(i).productionOrder().cancel();
+                constructions.get(i).productionOrder().cancel("Too many " + type + " at once (" + constructions.size() + ">" + max + ")");
                 A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE BUILDING " + type);
             }
             return true;

@@ -26,7 +26,9 @@ public class ProduceFirstAssimilator {
         ProductionOrder existingOrder = Queue.get().nonCompletedNext30().ofType(type()).first();
         if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
             A.errPrintln("Canceling existing ASSIM order " + existingOrder);
-            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(type());
+            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(
+                type(), "Assim takes long (" + (existingOrder.requestedAgo() / 30) + "s)"
+            );
         }
 
 //        if (!A.hasMinerals(300) && Count.ourUnfinishedOfType(Protoss_Cybernetics_Core) == 0) return;

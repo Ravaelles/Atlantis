@@ -34,7 +34,9 @@ public class OnOurUnitCreated {
 
             if (unit.isBase()) {
                 ExpansionCommander.justExpanded();
-                CancelNotStartedBases.cancelNotStartedOrEarlyBases(unit);
+                CancelNotStartedBases.cancelNotStartedOrEarlyBases(
+                    unit, "New base created, remove not started ones"
+                );
             }
 
             Construction construction = unit.construction();

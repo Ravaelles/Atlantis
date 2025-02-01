@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
 public class CancelNotStartedBases {
-    public static void cancelNotStartedOrEarlyBases(AUnit unit) {
+    public static void cancelNotStartedOrEarlyBases(AUnit unit, String reason) {
         if (A.seconds() >= 700 || Count.bases() >= 3) return;
 
 //        if (CountInQueue.bases() > 0) {
@@ -31,7 +31,7 @@ public class CancelNotStartedBases {
             Construction construction = order.construction();
             if (shouldCancelBase(construction, unit)) {
                 A.errPrintln(A.now() + " Cancelling pending base " + order + " as other just finished!");
-                order.cancel();
+                order.cancel(reason);
                 return;
             }
         });

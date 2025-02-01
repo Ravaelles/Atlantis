@@ -65,7 +65,7 @@ public class ProductionOrderHandler extends Commander {
                 order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
 
-                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(upgrade);
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(upgrade, "Only one upgrade at a time");
             }
         }
 
@@ -78,7 +78,7 @@ public class ProductionOrderHandler extends Commander {
                 order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
 
-                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(tech);
+                PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(tech, "Only one tech at a time");
             }
         }
 

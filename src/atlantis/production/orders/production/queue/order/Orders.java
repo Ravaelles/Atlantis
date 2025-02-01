@@ -117,9 +117,9 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
         return orders.get(index);
     }
 
-    public void cancelAll() {
+    public void cancelAll(String reason) {
         for (ProductionOrder order : orders) {
-            order.cancel();
+            order.cancel(reason);
         }
     }
 }

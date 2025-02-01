@@ -9,7 +9,7 @@ public class RemoveFromQueue {
 
         for (ProductionOrder order : Queue.get().notStarted().ofType(type).list()) {
             if (order.construction() == null) {
-                order.cancel();
+                order.cancel(order.unitType() + " removed as it didn't have construction");
                 removed = true;
             }
         }

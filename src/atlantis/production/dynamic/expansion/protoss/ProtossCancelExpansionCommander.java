@@ -26,7 +26,7 @@ public class ProtossCancelExpansionCommander extends Commander {
         for (Construction construction : ConstructionRequests.notCompletedOfType(AUnitType.Protoss_Nexus)) {
             if (construction.progressPercent() >= 70) continue;
             System.err.println(A.minSec() + ": Cancelling expansion due to enemy pressure");
-            construction.cancel();
+            construction.cancel("Cancel expansion due to enemy pressure");
         }
     }
 }

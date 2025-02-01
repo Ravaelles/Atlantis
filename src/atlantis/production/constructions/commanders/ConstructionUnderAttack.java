@@ -29,7 +29,7 @@ public class ConstructionUnderAttack extends Commander {
             if (building.hp() <= 42 || building.getRemainingBuildTime() <= 30) {
                 if (preventCancelAsProtoss(building)) return;
 
-                order.cancel();
+                order.cancel(building.type() + " under attack");
             }
         }
     }

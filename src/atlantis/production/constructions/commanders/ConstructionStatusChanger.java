@@ -45,7 +45,7 @@ public class ConstructionStatusChanger extends Commander {
                 A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
                 APosition oldPosition = construction.buildPosition();
-                construction.cancel();
+                construction.cancel(building + " is overdue");
 
                 AddToQueue.withHighPriority(building, oldPosition);
             }
@@ -67,7 +67,7 @@ public class ConstructionStatusChanger extends Commander {
                 && construction.startedAgo() >= 30
                 && (building == null || !building.isAlive())
         ) {
-            construction.cancel();
+            construction.cancel(construction.buildingType() + " was destroyed");
             A.errPrintln("Building destroyed - cancel construction");
             return;
         }
@@ -149,7 +149,7 @@ public class ConstructionStatusChanger extends Commander {
                     && (building == null || building.isDead())
             ) {
                 ErrorLog.printMaxOncePerMinute("Builder and building are dead for " + construction + ", cancel");
-                construction.cancel();
+                construction.cancel(building + " and builder are dead");
             }
         }
     }

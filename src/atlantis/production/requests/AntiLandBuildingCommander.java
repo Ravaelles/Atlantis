@@ -99,7 +99,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
     private boolean addRequirement(AUnitType buildType) {
         if (buildType.isCannon()) {
             if (Count.existingOrInProductionOrInQueue(Protoss_Forge) == 0) {
-                Queue.get().nonCompleted().ofType(Protoss_Forge).cancelAll();
+                Queue.get().nonCompleted().ofType(Protoss_Forge).cancelAll("Cancel other Forges");
                 AddToQueue.withTopPriority(Protoss_Forge);
                 return true;
             }

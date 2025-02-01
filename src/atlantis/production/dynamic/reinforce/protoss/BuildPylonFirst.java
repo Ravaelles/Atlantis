@@ -30,7 +30,7 @@ public class BuildPylonFirst {
 //        Construction construction = NewConstructionRequest.requestConstructionOf(type(), position, order);
         Construction construction = order.construction();
         if (construction == null) {
-            order.cancel();
+            order.cancel("Invalid state - construction can't be determined");
             return error("Failed to request pylon - construction is null");
         }
 

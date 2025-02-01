@@ -12,6 +12,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -305,13 +306,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
             && unitOrBuilding.isABuilding() ? (OurStrategy.get().isExpansion() ? 2 : 1) : 0;
     }
 
-    public void cancel() {
-//        A.errPrintln(A.minSec() + " CANCEL order " + this);
-//        if (isBuilding() && unitOrBuilding.isPylon()) {
-//            A.printStackTrace("CANCEL PYLON");
-//        }
+    public void cancel(String reason) {
+        ErrorLog.debug("Cancel order " + this + " at " + A.minSec() + ": " + reason);
 
-        if (construction() != null) construction().cancel();
+        if (construction() != null) construction().cancel(reason);
 
         releasedReservedResources();
 

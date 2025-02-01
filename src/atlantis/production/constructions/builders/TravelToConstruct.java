@@ -40,7 +40,7 @@ public class TravelToConstruct extends HasUnit {
         }
         if (buildPosition == null) {
             System.err.println("buildPosition is null (travelToConstruct " + type + ")");
-            construction.cancel();
+            construction.cancel(type + " buildPosition is null");
             return false;
         }
 
@@ -70,7 +70,7 @@ public class TravelToConstruct extends HasUnit {
                         && !CanPhysicallyBuildHere.check(unit, type, buildPosition)
                         && (builder == null || builder.lastPositionChangedMoreThanAgo(30 * 8))
                 ) {
-                    construction.cancel();
+                    construction.cancel(type + " Can't build here");
 
                     A.errPrintln("Can't build here " + type + ", so cancel + re-request");
                     AddToQueue.withTopPriority(
@@ -337,7 +337,7 @@ public class TravelToConstruct extends HasUnit {
             buildPosition = (new GasBuildingFix(unit)).applyGasBuildingFixIfNeeded(buildPosition, buildingType);
 
             if (buildPosition == null) {
-                construction.cancel();
+                construction.cancel(buildingType + " has null buildPosition");
                 ErrorLog.printMaxOncePerMinute("Cancel construction of " + buildingType + " because position null");
                 return false;
             }

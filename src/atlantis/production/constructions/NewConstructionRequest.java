@@ -123,7 +123,7 @@ public class NewConstructionRequest {
 
         if (ConstructionRequests.alreadyExists(newConstruction, true)) {
 //            ErrorLog.printMaxOncePerMinute("Cancel as construction already exists: " + newConstruction);
-            newConstruction.cancel();
+            newConstruction.cancel(building + " already being constructed");
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
 //            }
             return null;
@@ -164,13 +164,13 @@ public class NewConstructionRequest {
                 && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
             ) {
                 cancelled = true;
-                order.cancel();
+                order.cancel("Invalid position for supply depot");
             }
         }
         else if (!building.isPylon()) {
             if (A.s >= 70 && A.supplyUsed() >= 11) {
                 cancelled = true;
-                order.cancel();
+                order.cancel("Invalid position for pylon");
                 A.errPrintln(A.s + "s: Cancelled order: " + order);
             }
         }

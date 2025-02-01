@@ -24,6 +24,9 @@ public class MoonFormationApplies {
         if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
 
+        if (unit.isMissionSparta()) return false;
+        if (unit.isMissionDefend() && unit.distToBase() >= 10) return false;
+
         if (Enemy.protoss() && enemies.dts().effUndetected().countInRadius(5, unit) > 0) return false;
 
         if (leader.enemiesNear().combatUnits().countInRadius(leader.isRanged() ? 8.5 : 4, leader) > 0) {

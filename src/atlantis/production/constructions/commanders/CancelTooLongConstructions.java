@@ -18,6 +18,7 @@ public class CancelTooLongConstructions {
                 return;
             }
 
+            constr.cancel(type + " took too long (" + A.ago(tookFrames(constr) / 30) + "s)");
 //            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeout);
             ErrorLog.printMaxOncePerMinute(
                 "Cancel constr of " + type
@@ -25,7 +26,6 @@ public class CancelTooLongConstructions {
                     + " buildable:" + constr.buildPosition().isBuildableIncludeBuildings()
                     + " (Supply " + A.supplyUsed() + "/" + A.supplyTotal() + ")"
             );
-            constr.cancel();
 
             constructionCancelledRequestAgainBecauseItsImportant(buildingType);
         }
@@ -40,7 +40,11 @@ public class CancelTooLongConstructions {
     }
 
     private static boolean tookTooLong(Construction constr, int timeout) {
-        return AGame.now() - constr.timeOrdered() > timeout;
+        return tookFrames(constr) > timeout;
+    }
+
+    private static int tookFrames(Construction constr) {
+        return AGame.now() - constr.timeOrdered();
     }
 
     private static void constructionCancelledRequestAgainBecauseItsImportant(AUnitType type) {

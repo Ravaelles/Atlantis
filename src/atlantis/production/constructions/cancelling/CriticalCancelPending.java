@@ -17,7 +17,7 @@ public class CriticalCancelPending {
     public static void cancelToGetMinerals(int mineralsNeeded) {
         int cleared = 0;
 
-        CancelNotStartedBases.cancelNotStartedOrEarlyBases(null);
+        CancelNotStartedBases.cancelNotStartedOrEarlyBases(null, "Critical base cancel");
 
         while (cleared < mineralsNeeded) {
             cleared += cancelOne();

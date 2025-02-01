@@ -24,7 +24,7 @@ public class OnEnemyNewUnitDiscovered {
         if (!weAreMuchWeaker()) return;
 
         if (A.seconds() <= 700) {
-            CancelNotStartedBases.cancelNotStartedOrEarlyBases(null);
+            CancelNotStartedBases.cancelNotStartedOrEarlyBases(null, "Cancel base - much weaker");
         }
     }
 

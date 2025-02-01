@@ -31,7 +31,7 @@ public class ADetectorRequest {
 
         // =========================================================
 
-        ConstructionRequests.removeAllNotStarted();
+        ConstructionRequests.removeAllNotStarted("Requesting detector, remove all not started");
         requestDetectorConstruction(detectorBuilding);
 
         // === Protect choke point =========================================
