@@ -1,5 +1,6 @@
 package atlantis.combat.eval.protoss;
 
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
@@ -10,8 +11,10 @@ public class ProtossEvaluateAgainstCombatBuildings {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
 //        return unit.eval() >= 1.2
+        if (A.supplyUsed() >= 190 && A.minerals() >= 500) return true;
+
         return (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
-            || OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.7;
+            && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.7;
     }
 
 //    public static boolean looksGoodAgainstThirdOrLaterEnemyBase(AUnit unit, APosition enemyBase) {

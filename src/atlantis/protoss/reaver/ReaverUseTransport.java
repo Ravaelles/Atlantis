@@ -22,7 +22,12 @@ public class ReaverUseTransport extends Manager {
 //        if (true) return false;
 
         if (unit.scarabCount() == 0 && unit.enemiesNear().canAttack(unit, 2).notEmpty()) return true;
+
+        if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
+
         if (unit.lastActionLessThanAgo(20, Actions.LOAD)) return true;
+
+        if (unit.hp() >= 120 && unit.shotSecondsAgo() >= 10) return false;
 
         if (unit.lastUnderAttackLessThanAgo(50)) return true;
         if (unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)) return true;

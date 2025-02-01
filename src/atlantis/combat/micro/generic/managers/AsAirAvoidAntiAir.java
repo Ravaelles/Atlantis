@@ -35,7 +35,7 @@ public class AsAirAvoidAntiAir extends Manager {
 
     private HasPosition enemyAntiAirInRange(AUnit unit) {
         Selection enemies = unit.enemiesNear().havingAntiAirWeapon();
-        HasPosition enemy = enemies.canAttack(unit, 1.3 + unit.shieldWound() / 20).center();
+        HasPosition enemy = enemies.canAttack(unit, 1.3 + unit.woundPercent() / 15.0).center();
 
         return enemy;
     }

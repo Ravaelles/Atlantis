@@ -150,7 +150,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             A.s <= 60 * 7
                 && EnemyUnits.zerglings() <= 4
                 && EnemyUnits.hydras() <= 0
-                && Count.ourCombatUnits() >= 2
+                && Count.ourCombatUnits() >= 4
                 && Army.strengthWithoutCB() >= 140
                 && !Have.cyberneticsCoreWithUnfinished() && dragoons <= 1
         ) {

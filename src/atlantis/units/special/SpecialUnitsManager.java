@@ -9,7 +9,7 @@ import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
-import atlantis.protoss.ProtossCorsair;
+import atlantis.protoss.corsair.ProtossCorsair;
 import atlantis.protoss.ProtossShieldBattery;
 import atlantis.protoss.ht.ProtossHighTemplar;
 import atlantis.protoss.observer.ProtossObserver;

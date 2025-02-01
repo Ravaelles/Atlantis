@@ -138,7 +138,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     private boolean dontAttackOnYourOwn() {
         return unit.squadSize() <= 5
             && (unit.isMelee() || EnemyInfo.hasRanged())
-            && unit.friendsNear().inRadius(1.2, unit).empty()
+            && ((unit.shieldWound() >= 15 || unit.cooldown() >= 6) || unit.friendsNear().inRadius(1.2, unit).empty())
             && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
             && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty();
 //            && unit.distToBase() >= 12;

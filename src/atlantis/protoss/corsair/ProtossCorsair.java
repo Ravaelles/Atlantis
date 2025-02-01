@@ -1,7 +1,6 @@
-package atlantis.protoss;
+package atlantis.protoss.corsair;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.*;
 import atlantis.units.AUnit;
@@ -21,6 +20,7 @@ public class ProtossCorsair extends MobileDetector {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AsAirAvoidAntiAir.class,
+            CorsairHuntOverlords.class,
         };
     }
 
