@@ -39,7 +39,7 @@ public class ProtossSecureBaseWithCannons {
     }
 
     public ProductionOrder reinforce() {
-        System.out.println(A.minSec() + " --------- Reinforce " + initialPosition + " with CANNON at " + aroundPosition);
+//        System.out.println(A.minSec() + " --------- Reinforce " + initialPosition + " with CANNON at " + aroundPosition);
 
         return RequestCannonAt.at(aroundPosition);
     }

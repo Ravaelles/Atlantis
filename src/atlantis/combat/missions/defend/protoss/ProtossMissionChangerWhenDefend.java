@@ -262,7 +262,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (
-            dragoons >= 1.5 * EnemyUnits.dragoons()
+            strength >= 40 && dragoons >= 1.5 * EnemyUnits.dragoons()
         ) {
             if (DEBUG) reason = "Engage with Goons! (" + strength + "%)";
             return Decision.TRUE;

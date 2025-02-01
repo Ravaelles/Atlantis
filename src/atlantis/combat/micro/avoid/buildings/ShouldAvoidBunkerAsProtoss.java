@@ -14,7 +14,7 @@ public class ShouldAvoidBunkerAsProtoss {
         dist = unit.distTo(bunker);
 
         if (veryPowerfulLetsBetterEngage(unit)) {
-            return Decision.TRUE;
+            return Decision.FALSE;
         }
 
         if (needToAvoidDueToSecondBunkerNearby(unit, bunker)) {

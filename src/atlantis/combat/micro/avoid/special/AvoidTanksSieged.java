@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.game.player.Enemy;
@@ -52,7 +53,10 @@ public class AvoidTanksSieged extends Manager {
     }
 
     private AUnit tank() {
-        return unit.enemiesNear().tanksSieged().inRadius(13.5 + unit.woundPercent() / 30.0, unit).nearestTo(unit);
+        return EnemyUnits.discovered()
+            .tanksSieged()
+            .inRadius(13.5 + unit.woundPercent() / 30.0, unit)
+            .nearestTo(unit);
     }
 
     @Override

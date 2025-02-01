@@ -130,8 +130,8 @@ public class RunInAnyDirection {
             return runTo.position();
         }
 
-        int BASE_RADIUS = 4;
-        int radius = BASE_RADIUS;
+//        int BASE_RADIUS = 4;
+        int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
         APosition position = null;
 
         if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
@@ -140,7 +140,7 @@ public class RunInAnyDirection {
         }
 
         radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
-        position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
+        position = findPositionWithRadius(runAwayFrom, radius, false);
         if (position != null) return position;
 
         return null;
