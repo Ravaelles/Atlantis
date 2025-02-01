@@ -73,10 +73,17 @@ public class PreventDuplicateOrders {
     }
 
     private static boolean onlyOneAllowed(AUnitType type, HasPosition position) {
-        if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
-        if (type.equals(AUnitType.Protoss_Robotics_Support_Bay)) return Count.withPlanned(type) > 0;
+        if (We.protoss()) {
+            if (type.equals(AUnitType.Protoss_Forge)) return Count.withPlanned(type) > 0;
+            if (type.equals(AUnitType.Protoss_Citadel_of_Adun)) return Count.withPlanned(type) > 0;
+            if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return Count.withPlanned(type) > 0;
+            if (type.equals(AUnitType.Protoss_Observatory)) return Count.withPlanned(type) > 0;
+            if (type.equals(AUnitType.Protoss_Robotics_Support_Bay)) return Count.withPlanned(type) > 0;
+        }
+        else if (We.terran()) {
+            if (type.equals(AUnitType.Terran_Engineering_Bay)) return Count.withPlanned(type) > 0;
+            if (type.equals(AUnitType.Terran_Armory)) return Count.withPlanned(type) > 0;
+        }
 
         return false;
     }

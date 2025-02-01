@@ -68,12 +68,17 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
 //
 ////        return unit.moveAwayFrom(centerOfEnemies, moveDist, Actions.RUN_ENEMY, "ZealotSeparate");
 
-        if (unit.distToMain() >= 3) {
-            return unit.moveToSafety(Actions.MOVE_AVOID, "ZealotSeparate");
+//        if (unit.distToMain() >= 3) {
+//            return unit.moveToSafety(Actions.MOVE_AVOID, "ZealotSeparate");
+//        }
+
+        AUnit runFrom = unit.enemiesNear().combatUnits().melee().nearestTo(unit);
+        if (runFrom == null) {
+            return false;
         }
 
         return unit.runningManager().runFrom(
-            unit.enemiesNear().combatUnits().melee().nearestTo(unit), 3, Actions.RUN_ENEMY, unit.isMissionDefend()
+            runFrom, 3, Actions.RUN_ENEMY, unit.isMissionDefend()
         );
     }
 }

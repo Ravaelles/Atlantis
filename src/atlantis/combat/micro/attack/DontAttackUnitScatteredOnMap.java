@@ -37,6 +37,7 @@ public class DontAttackUnitScatteredOnMap {
         if (!enemy.isWorker()) return false;
         if (unit.isWorker() && unit.isBuilder()) return true;
         if (unit.canAttackTargetWithBonus(enemy, 0.1)) return false;
+        if (enemy.ourNearestBuildingDist() >= 15) return true;
 
         if (Enemy.zerg() && A.s <= 60 * 4.5 && unit.distTo(enemy) >= 1.05 && enemy.distToMain() <= 25) return true;
 

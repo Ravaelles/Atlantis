@@ -81,6 +81,12 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                     if ((focus = aroundCombatBuilding()) != null) return focus;
                 }
 
+                // === Main choke ================================================
+
+                if (We.protoss() && Count.ourCombatUnits() <= 3 && Count.basesWithUnfinished() <= 1) {
+                    if ((focus = atMainChoke()) != null) return focus;
+                }
+
                 // === Natural choke if weak ================================================
 
                 int combatUnits = Count.ourCombatUnits();

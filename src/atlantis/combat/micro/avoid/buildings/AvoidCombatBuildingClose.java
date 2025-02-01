@@ -37,6 +37,8 @@ public class AvoidCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
+        if (unit.meleeEnemiesNearCount(1.7) > 0) return false;
+
         if (We.protoss()) {
             Decision decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
             if (decision.notIndifferent()) return decision.toBoolean();

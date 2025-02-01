@@ -70,6 +70,8 @@ public class AddToQueue {
     }
 
     public static boolean tech(TechType tech) {
+        if (CountInQueue.count(tech, 20) > 0) return false;
+
 //        if (Count.inQueueOrUnfinished(tech, 1) > 0) return false;
         if (Count.inQueueOrUnfinished(tech, MAX) > 0) {
             ProductionOrder existingOrder = Queue.get().nextOrders(MAX).techType(tech).first();
@@ -90,6 +92,8 @@ public class AddToQueue {
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
+        if (CountInQueue.count(upgrade, 20) > 0) return false;
+
 //        if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) return false;
         if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) {
             ProductionOrder existingOrder = Queue.get().nextOrders(MAX).upgradeType(upgrade).first();
@@ -109,11 +113,9 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(
         AUnitType type, HasPosition position, int index, ProductionOrderPriority priority
     ) {
-        if (priority != ProductionOrderPriority.TOP) {
-            if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) {
-                return null;
-            }
-        }
+//        if (priority != ProductionOrderPriority.TOP) {
+        if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+//        }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
 

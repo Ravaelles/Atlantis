@@ -15,7 +15,7 @@ public class ShouldAvoidSunkenAsProtoss {
     }
 
     private static boolean looksStrong(AUnit unit, AUnit combatBuilding) {
-        int enemies = 1 + combatBuilding.friendsNear().combatUnits().size();
+        int enemies = 1 + unit.enemiesNear().combatUnits().countInRadius(9, unit);
         int ours = combatBuilding.enemiesNear().combatUnits().size();
 
         return ours - 3 >= enemies && ((double) ours / enemies >= 1.1);

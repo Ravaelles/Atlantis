@@ -22,9 +22,9 @@ public class FixStoppedUnits extends Manager {
     public Manager handle() {
 //        unit.paintCircleFilled(16, Color.Teal);
 
-        if (A.everyNthGameFrame(39) && unit.moveToSafety(Actions.MOVE_UNFREEZE)) {
-            return usedManager(this, "FixStopped:Coh");
-        }
+//        if (A.everyNthGameFrame(39) && unit.moveToSafety(Actions.MOVE_UNFREEZE)) {
+//            return usedManager(this, "FixStopped:Coh");
+//        }
 
         if (unit.lastActionMoreThanAgo(11, Actions.HOLD_POSITION)) {
             unit.holdPosition("FixStopped:Hold");
