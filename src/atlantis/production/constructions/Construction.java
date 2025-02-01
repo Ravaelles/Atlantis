@@ -110,7 +110,9 @@ public class Construction implements Comparable<Construction> {
      * Fully delete this construction, remove the building if needed by cancelling it.
      */
     public void cancel(String reason) {
-        ErrorLog.printMaxOncePerMinute("Cancel construction: " + buildingType.name() + " / " + reason);
+        if (!reason.contains("already being constructed")) {
+            ErrorLog.printMaxOncePerMinute("Cancel construction: " + buildingType.name() + " / " + reason);
+        }
 //        A.printStackTrace("Construction.cancel() - " + this);
 
         if (build != null) {

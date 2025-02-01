@@ -17,7 +17,7 @@ public class ProtossZealotLongNotAttacked extends Manager {
     public boolean applies() {
         if (unit.isAttacking()) return false;
 
-        if (unit.cooldown() <= 5 && unit.distToBase() <= 2) return true;
+        if (unit.cooldown() <= 4 && unit.eval() >= 0.8 && unit.distToBase() <= 7) return true;
 
         if (unit.isRetreating()) return false;
         if (!unit.hasValidTarget()) return false;

@@ -1,5 +1,6 @@
 package atlantis.combat.retreating.protoss;
 
+import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
@@ -139,6 +140,8 @@ public class ProtossStartRetreat extends HasUnit {
     private static boolean retreatByRunningTowardsBase(AUnit unit) {
 //        if (Count.ourCombatUnits() >= 12) return false;
 
+        if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
+
         AUnit goTo = Select.mainOrAnyBuilding();
         if (goTo == null) return false;
         if (unit.distTo(goTo) <= (Count.ourCombatUnits() <= 8 ? 6.5 : 10)) return false;
@@ -146,7 +149,7 @@ public class ProtossStartRetreat extends HasUnit {
 //        if (Count.ourCombatUnits() <= 11) return false;
 
         if (unit.groundDistToMain() <= 20) return true;
-        
+
         if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(3)) return false;
 
         if (unit.meleeEnemiesNearCount(2.4) >= 3) {

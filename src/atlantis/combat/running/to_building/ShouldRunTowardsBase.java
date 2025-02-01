@@ -13,18 +13,26 @@ import atlantis.util.We;
 
 public class ShouldRunTowardsBase {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
+        if (runAwayFrom == null) return false;
+
         AUnit main = Select.main();
         if (main == null) return false;
 
         double distToMain = unit.distTo(main);
         if (distToMain <= 3.6) return false;
 
+        if (runAwayFrom instanceof AUnit) {
+            AUnit enemy = (AUnit) runAwayFrom;
+            if (enemy.isDarkTemplar()) return Count.cannons() > 0;
+        }
+
+        if (tooManyRangedNear(unit)) return false;
+
         if (
             unit.enemiesNear().canAttack(unit, 4).count() >= 2
                 && Chokes.enemyMainAndNaturalChokes().groundDistTo(unit) <= 5
         ) return true;
 
-        if (unit.rangedEnemiesCount(2) >= 3) return false;
         if (nearestEnemyCloserToBaseThanUs(unit)) return false;
 
 //        if (distToMain >= 40 && unit.isDragoon() && unit.hp() >= 41 && ) return true;
@@ -76,7 +84,7 @@ public class ShouldRunTowardsBase {
         if (A.seconds() >= 550) return false;
 
         if (A.seconds() <= 400 && unit.isRetreating() && unit.distToMain() >= 60) return true;
-        if (unit.isMarine() && unit.isHealthy() && unit.distToBase() >= 40) return true;
+        if (unit.isMarine() && unit.isHealthy() && unit.distToBase() >= 30) return true;
 
         if (unit.isFlying()) return false;
         if (unit.hp() <= 20) return false;
@@ -122,6 +130,11 @@ public class ShouldRunTowardsBase {
 //
 //        return unit.distTo(mainOrAnyBuilding) >= 20
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
+    }
+
+    private static boolean tooManyRangedNear(AUnit unit) {
+        return unit.rangedEnemiesCount(2 + unit.woundPercent() / 30.0)
+            >= (unit.woundPercent() >= 40 ? 2 : 3);
     }
 
     private static boolean nearestEnemyCloserToBaseThanUs(AUnit unit) {

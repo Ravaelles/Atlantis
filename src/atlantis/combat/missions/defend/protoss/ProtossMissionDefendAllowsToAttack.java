@@ -46,6 +46,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
             return true;
         }
 
+        if (dontAttackOnYourOwn()) return false;
         if (protossDontAttackWhenAlmostDead()) return false;
 
         if (
@@ -135,11 +136,12 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     }
 
     private boolean dontAttackOnYourOwn() {
-        return unit.squadSize() >= 3
-            && unit.friendsNear().inRadius(2.8, unit).empty()
+        return unit.squadSize() <= 5
+            && (unit.isMelee() || EnemyInfo.hasRanged())
+            && unit.friendsNear().inRadius(1.2, unit).empty()
             && unit.enemiesNear().ranged().canAttack(unit, 5).empty()
-            && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty()
-            && unit.distToBase() >= 10;
+            && unit.enemiesThatCanAttackMe(2.5 + unit.woundPercent() / 50.0).empty();
+//            && unit.distToBase() >= 12;
     }
 
     private boolean forbidden_earlyGameVsStrongZergStickToMainBase() {
