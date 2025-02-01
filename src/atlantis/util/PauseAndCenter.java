@@ -8,6 +8,8 @@ import atlantis.map.position.HasPosition;
 import bwapi.Color;
 
 public class PauseAndCenter {
+    private static int counter = 0;
+
     public static void on(HasPosition position) {
         on(position, false, null);
     }
@@ -17,6 +19,8 @@ public class PauseAndCenter {
     }
 
     public static void on(HasPosition position, boolean paintCircle, Color color) {
+        if (counter >= 4) return;
+
         if (position == null) return;
         if (color == null) color = Color.Yellow;
 
@@ -31,5 +35,7 @@ public class PauseAndCenter {
 
         CameraCommander.centerCameraOn(position);
         GameSpeed.pauseGame();
+
+        counter++;
     }
 }

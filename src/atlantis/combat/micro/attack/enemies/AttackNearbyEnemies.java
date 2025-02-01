@@ -38,18 +38,10 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public Manager handle() {
-//        if (unit.woundHp() >= 12 && unit.lastUnderAttackLessThanAgo(55)) {
-//            A.printStackTrace("Wounded, so why attacking?\n" + parentsStack());
-////            System.out.println(getParent());
-//            unit.managerLogs().print();
-//        }
-
-//        System.err.println("@ " + A.now() + " - " + unit + " ATTACK " + targetToAttack);
-//        if (targetToAttack.isOverlord()) {
-//            A.printStackTrace("Overlord targetToAttack");
-//            unit().managerLogs().print();
-//            unit().manager().printParentsStack();
-//        }
+//        A.printStackTrace("Why attack now? ");
+//        printParentsStack();
+//        unit.managerLogs().print();
+//        unit.log().print();
 
         if (handleAttackNearEnemyUnits()) {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
@@ -57,11 +49,6 @@ public class AttackNearbyEnemies extends Manager {
 
                 if (unit.target() == null && !unit.isRunning()) ErrorLog.printMaxOncePerMinute(error);
 
-//                if (A.isUms()) {
-//                    System.err.println("Current manager: " + unit.manager());
-//                    unit.managerLogs().print();
-//                    A.printStackTrace(error);
-//                }
                 return null;
             }
             return usedManager(this);
@@ -77,17 +64,6 @@ public class AttackNearbyEnemies extends Manager {
         }
     }
 
-//    private Manager dedicatedManager() {
-////        if (unit.isWraith()) return new AttackAsWraith(unit);
-//
-//        return null;
-//    }
-
-//    private boolean justHandledRecently() {
-//        return unit.lastActionLessThanAgo(5, Actions.ATTACK_UNIT)
-//            || unit.lastActionLessThanAgo(5, Actions.MOVE_ATTACK);
-//    }
-
     /**
      * Selects the best enemy unit and issues attack order.
      *
@@ -96,12 +72,6 @@ public class AttackNearbyEnemies extends Manager {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public boolean handleAttackNearEnemyUnits() {
-//        return (boolean) cacheObject.getIfValid(
-//            "handleAttackNearEnemyUnits: " + unit.id(),
-//            3,
-//            () -> {
-//                if (true) return false; // Temp disable attacking
-
         if (!applies()) return false;
 
         AUnit target = this.defineBestEnemyToAttack(unit);
@@ -133,7 +103,6 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         return false;
-//            });
     }
 
 //    public String canAttackEnemiesNowString() {
@@ -143,10 +112,6 @@ public class AttackNearbyEnemies extends Manager {
     // =========================================================
 
     protected AUnit defineBestEnemyToAttack(AUnit unit) {
-//        return cache.getIfValid(
-//            "defineBestEnemyToAttack:" + unit.id(),
-//            5,
-//            () -> {
         reasonNotToAttack = null;
 
         AUnit enemy = bestTargetToAttack();
@@ -172,8 +137,6 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         return enemy;
-//            }
-//        );
     }
 
     private AUnit fallbackToSquadLeaderTarget() {
@@ -197,10 +160,5 @@ public class AttackNearbyEnemies extends Manager {
     public String toString() {
         String target = unit.target() == null ? "NULL_TARGET" : unit.target().type().name();
         return super.toString() + "(" + target + ")";
-    }
-
-    public static void clearCache() {
-//        cache.clear();
-//        cacheObject.clear();
     }
 }

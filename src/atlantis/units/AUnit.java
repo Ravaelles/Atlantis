@@ -1528,7 +1528,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean hasValidTarget() {
         return target() != null
-            && target().isAlive()
+            && target().hp() > 0
             && !target().isDeadMan();
     }
 

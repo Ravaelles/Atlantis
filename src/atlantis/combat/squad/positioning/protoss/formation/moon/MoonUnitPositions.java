@@ -28,7 +28,7 @@ public class MoonUnitPositions {
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {
         return cacheMap.getIfValid(
             "getPositionsCreatedForLeader:" + leader.id(),
-            17,
+            11,
             () -> refreshEntireMap(unit, leader)
         );
     }

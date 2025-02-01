@@ -14,6 +14,7 @@ import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.defend.protoss.ProtossForceStickToMainDuringDefend;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.running.stop_running.ShouldStopRunning;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.ContinueShotAnimation;
@@ -69,7 +70,7 @@ public class CombatManagerTopPriority extends Manager {
             ProtossCombatManager.class,
             TerranCombatManager.class,
 
-//            ShouldStopRunning.class,
+            ShouldStopRunning.class,
 //            ContinueRunning.class,
 
 //            AvoidCombatBuilding.class,

@@ -106,6 +106,9 @@ public class AvoidEnemies extends Manager {
             AUnit enemy = unit.runningFromUnit();
             enemyString = enemy == null ? "-" : A.substring(enemy.type().name(), 0, 10);
         }
+        else if (unit.runningFromPosition() != null) {
+            enemyString = unit.runningFromPosition().toString();
+        }
 
         return "AvoidEnemies(" + enemyString + ')';
     }

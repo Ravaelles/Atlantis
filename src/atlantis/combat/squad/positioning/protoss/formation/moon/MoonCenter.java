@@ -17,7 +17,7 @@ public class MoonCenter {
     protected static HasPosition moonCenter(AUnit leader) {
         APosition moonCenter = cachePosition.getIfValid(
             "moonCenter:" + leader.id(),
-            11,
+            9,
             () -> {
                 MoonUnitPositions.clearCache();
 

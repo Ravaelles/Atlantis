@@ -1,7 +1,9 @@
 package atlantis.combat.squad.positioning.protoss.formation.moon;
 
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.protoss.formation.ProtossShouldCreateFormation;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -19,13 +21,17 @@ public class MoonFormationApplies {
 
     public boolean applies(AUnit unit, AUnit leader) {
         if (leader == null) return false;
-        Selection enemies = unit.enemiesNear();
+        if (A.s <= 2) return true;
+        Selection enemies = leader.enemiesNear();
         if (enemies.atMost(1)) return false;
         if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
+        if (unit.friendsInRadiusCount(2) < 0) return true;
 
-        if (unit.isMissionSparta()) return false;
-        if (unit.isMissionDefend() && unit.distToBase() >= 10) return false;
+        if (!A.isUms()) {
+            if (unit.isMissionSparta()) return false;
+            if (Missions.isGlobalMissionDefend() && unit.distToBase() >= 15) return false;
+        }
 
         if (Enemy.protoss() && enemies.dts().effUndetected().countInRadius(5, unit) > 0) return false;
 
@@ -40,7 +46,7 @@ public class MoonFormationApplies {
         if (squadHasTargetInRange(leader)) return false;
 //        if (unit.eval() >= 3.5) return false;
         if (unit.distToMain() <= 7) return false;
-        if (unit.isReaver()) return false;
+//        if (unit.isReaver()) return false;
         if (unit.type().isTransport()) return false;
 
 //        leader = unit.squadLeader();

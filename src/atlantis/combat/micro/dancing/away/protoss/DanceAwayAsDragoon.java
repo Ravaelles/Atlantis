@@ -26,8 +26,16 @@ public class DanceAwayAsDragoon extends DanceAway {
 
 //        System.err.println(A.minSec() + " - " + unit + " - DanceAwayAsDragoon");
 
-        if (unit.cooldown() >= 4) return true;
-        if (unit.cooldown() >= 14) return true;
+//        if (unit.cooldown() >= 4) return true;
+
+        if (
+            unit.shieldWound() <= 4
+                && unit.meleeEnemiesNearCount(2.8) == 0
+                && unit.friendsInRadiusCount(3) > 0
+        ) return false;
+
+        if (unit.cooldown() >= 15) return true;
+        if (unit.cooldown() >= 6 && unit.hp() <= 102) return true;
         if (unit.cooldown() >= 4 && unit.hp() <= 82) return true;
 
         rangedEnemiesCount = unit.rangedEnemiesCount(0.35);

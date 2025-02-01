@@ -28,7 +28,7 @@ public class ContinueShotAnimation extends Manager {
             if (unit.lastActionLessThanAgo(20, Actions.MOVE_FORMATION)) return false;
             if (unit.shotSecondsAgo() >= 4 && unit.lastActionMoreThanAgo(8)) return false;
 
-            if (unit.lastActionLessThanAgo(45)) return true;
+            if (A.s >= 5 && unit.lastActionLessThanAgo(45)) return true;
         }
 
         // =========================================================

@@ -19,12 +19,12 @@ public class MoonRadius {
             () -> {
                 double dist = leader.distTo(moonCenter);
 
-                if (dist <= 8 && unit.lastActionMoreThanAgo(30 * 7, Actions.MOVE_FORMATION)) {
-                    int raceBonus = A.whenEnemyProtossTerranZerg(2, 3, 4);
+                if (dist <= 8.5 && unit.lastActionMoreThanAgo(30 * 7, Actions.MOVE_FORMATION)) {
+                    int raceBonus = A.whenEnemyProtossTerranZerg(4, 3, 4);
                     dist += raceBonus;
                 }
 
-                double MAX_FOR_PROTOSS = 11.0;
+                double MAX_FOR_PROTOSS = 13.0;
                 double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
 
                 if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;

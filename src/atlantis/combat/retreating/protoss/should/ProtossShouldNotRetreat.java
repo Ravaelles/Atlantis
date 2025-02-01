@@ -6,6 +6,7 @@ import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
+import atlantis.units.select.Selection;
 
 public class ProtossShouldNotRetreat extends Manager {
     public ProtossShouldNotRetreat(AUnit unit) {
@@ -98,11 +99,13 @@ public class ProtossShouldNotRetreat extends Manager {
         if (!unit.isRanged()) return false;
         if (unit.hp() <= 22) return false;
 
+        Selection enemies = unit.enemiesNear();
+
         if (Enemy.zerg()) {
-            if (unit.enemiesNear().zerglings().countInRadius(5, unit) >= 3) return false;
+            if (enemies.zerglings().countInRadius(5, unit) >= 3) return false;
         }
 
-        return unit.enemiesNear().ranged().canAttack(unit, 6).empty();
+        return enemies.melee().notEmpty() && enemies.ranged().canAttack(unit, 6).empty();
     }
 
     private boolean dontRunNearBases() {

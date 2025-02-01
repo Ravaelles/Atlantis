@@ -52,7 +52,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Maps for testing as TERRAN ===========================
@@ -90,7 +90,7 @@ public class Main {
 //        if (true) return "ums/lt-terran1j.scm"; // Zerg v. Terran
 
         // vs ZERG cheat-bots
-        if (true) return "ums/vsGosuRav.scx"; // v. AI Zerg Player - cheating as fuck - standard natural
+//        if (true) return "ums/vsGosuRav.scx"; // v. AI Zerg Player - cheating as fuck - standard natural
 //        if (true) return "ums/vsGosuComputer.scx"; // v. AI Zerg Player - cheating as fuck
 //        if (true) return "ums/rav/vsGosuRav.scx"; // Like above, but starting at middle game
 
@@ -206,7 +206,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";

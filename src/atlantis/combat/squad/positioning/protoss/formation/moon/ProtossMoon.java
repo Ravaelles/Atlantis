@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class ProtossMoon extends Manager {
@@ -23,14 +24,17 @@ public class ProtossMoon extends Manager {
             return false;
         }
 
-        goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);
-        if (goTo == null) return false;
-
         return true;
     }
 
     @Override
     public Manager handle() {
+        AUnit leader = unit.squadLeader();
+        if (leader == null) return null;
+
+        goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);
+        if (goTo == null) return null;
+
         unit.paintLineDouble(goTo, Color.Green);
         unit.paintCircleFilled(6, Color.Green);
         goTo.paintCircleFilled(6, Color.Green);
