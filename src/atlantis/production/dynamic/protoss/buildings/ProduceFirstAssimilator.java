@@ -36,7 +36,7 @@ public class ProduceFirstAssimilator {
             RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
 
             return AddToQueue.withTopPriority(type()) != null
-                && A.errPrintln("FORCE ABC Assimilator to queue at " + A.minSec());
+                && A.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 

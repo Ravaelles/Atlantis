@@ -170,8 +170,8 @@ public class NewConstructionRequest {
         else if (!building.isPylon()) {
             if (A.s >= 70 && A.supplyUsed() >= 11) {
                 cancelled = true;
-                order.cancel("Invalid position for pylon");
-                A.errPrintln(A.s + "s: Cancelled order: " + order);
+                order.cancel("Invalid position for " + building);
+                A.errPrintln(A.minSec() + ": Cancelled order: " + order);
             }
         }
 

@@ -17,7 +17,8 @@ public class AddToQueueToHave {
         if (Count.withPlanned(type) >= howMany) return false;
 
         for (int i = 1; i <= howMany; i++) {
-            AddToQueue.withTopPriority(type).setMinSupply(atSupply);
+            ProductionOrder order = AddToQueue.withTopPriority(type);
+            if (order != null) order.setMinSupply(atSupply);
         }
 
         return howMany > 0;
