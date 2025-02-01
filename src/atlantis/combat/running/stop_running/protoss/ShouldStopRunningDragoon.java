@@ -23,6 +23,10 @@ public class ShouldStopRunningDragoon extends Manager {
 //        if (unit.lastActionMoreThanAgo(2)) return false;
 //        if (unit.lastStartedRunningLessThanAgo(7)) return false;
 
+        if (unit.isDancing()) return false;
+
+//        if (unit.hp() <= 60) return false;
+
         Selection enemies = unit.enemiesNear();
         Selection meleeEnemies = enemies.melee();
         if (meleeEnemies.inRadius(3.7, unit).notEmpty()) return false;
@@ -48,11 +52,11 @@ public class ShouldStopRunningDragoon extends Manager {
         ProtossShouldStopRunning.decisionStopRunning(unit);
 
 //        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) return usedManager(this);
-//        if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
 //        unit.paintCircleFilled(11, Color.Brown);
 
         if (unit.moveToLeader(Actions.MOVE_FORMATION, "StopGoon")) return usedManager(this);
+        if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
 //        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(this) != null) return usedManager(this);
 //        if (unit.isMoving()) {

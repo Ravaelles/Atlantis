@@ -28,7 +28,7 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
         int mineralsNeeded = cannonNeeded * 150;
         int mineralsMissing = mineralsNeeded - A.minerals();
 
-        if (mineralsMissing > 100) {
+        if (mineralsMissing > 90) {
             CriticalCancelPending.cancelToGetMinerals(mineralsMissing);
         }
     }

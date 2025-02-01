@@ -14,6 +14,8 @@ public class ShouldRunByShowingBackToEnemy {
         if (unit.friendsInRadiusCount(2) >= 2.5) return false;
         if (unit.enemiesNearInRadius(2.5) >= 2) return false;
 
+        if (unit.isDragoon() && unit.enemiesNearInRadius(4) >= (unit.hp() <= 50 ? 2 : 3)) return false;
+
 //        if (unit.meleeEnemiesNearCount(2.2) >= 2) return true;
 
         if (Count.ourCombatUnits() <= 11) return false;

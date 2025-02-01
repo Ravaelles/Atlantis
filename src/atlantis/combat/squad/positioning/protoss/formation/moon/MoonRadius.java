@@ -25,7 +25,8 @@ public class MoonRadius {
                 }
 
                 double MAX_FOR_PROTOSS = 13.0;
-                double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
+//                double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
+                double MAX_FOR_ZERG = 13.0;
 
                 if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;
                 if (Enemy.zerg() && dist >= MAX_FOR_ZERG) return MAX_FOR_ZERG;

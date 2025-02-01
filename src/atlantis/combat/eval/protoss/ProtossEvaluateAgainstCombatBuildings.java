@@ -6,12 +6,12 @@ import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
 public class ProtossEvaluateAgainstCombatBuildings {
-    public static boolean chancesLookGood(AUnit unit, HasPosition position) {
+    public static boolean chancesLookGood(AUnit unit, AUnit enemy) {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
-        return unit.eval() >= 1.4
-//            || ourCombatUnits(unit).count() >= 13
-            || ourUnitsStrength(unit) >= enemyStrength(unit, position);
+//        return unit.eval() >= 1.2
+        return (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
+            || OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.7;
     }
 
 //    public static boolean looksGoodAgainstThirdOrLaterEnemyBase(AUnit unit, APosition enemyBase) {

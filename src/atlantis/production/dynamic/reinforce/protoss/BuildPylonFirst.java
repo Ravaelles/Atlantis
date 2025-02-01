@@ -34,6 +34,8 @@ public class BuildPylonFirst {
             return error("Failed to request pylon - construction is null");
         }
 
+        System.err.println("----- Requested PYLON_FOR_CANNON at " + position);
+
         lastError = null;
         return order;
     }

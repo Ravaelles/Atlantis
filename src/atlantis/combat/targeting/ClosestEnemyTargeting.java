@@ -19,30 +19,32 @@ public class ClosestEnemyTargeting {
     }
 
     private AUnit forRanged(AUnit unit) {
-        AUnit inRange;
+//        AUnit inRange;
 
-        double baseExtraMargin = Enemy.zerg() ? -0.25 : -0.1;
+        return unit.enemiesNear().canBeAttackedBy(unit, 1).mostWoundedOrNearest(unit);
 
-        inRange = enemies.wounded().canBeAttackedBy(unit, baseExtraMargin).mostWounded();
-        if (inRange != null) return inRange;
-
-        inRange = enemies.canBeAttackedBy(unit, baseExtraMargin).nearestTo(unit);
-        if (inRange != null) return inRange;
-
-        inRange = enemies.wounded().canBeAttackedBy(unit, 0.5).mostWounded();
-        if (inRange != null) return inRange;
-
-        HasPosition squadCenter = unit.squadCenter();
-        if (squadCenter == null) return null;
-
-        Selection squadCenterEnemiesNear = unit.squadCenterEnemiesNear();
-        if (squadCenterEnemiesNear == null) return null;
-
-        return squadCenterEnemiesNear.canBeAttackedBy(unit, 10).nearestTo(unit);
+//        double baseExtraMargin = Enemy.zerg() ? -0.25 : -0.1;
+//
+//        inRange = enemies.wounded().canBeAttackedBy(unit, baseExtraMargin).mostWounded();
+//        if (inRange != null) return inRange;
+//
+//        inRange = enemies.canBeAttackedBy(unit, baseExtraMargin).nearestTo(unit);
+//        if (inRange != null) return inRange;
+//
+//        inRange = enemies.wounded().canBeAttackedBy(unit, 0.5).mostWounded();
+//        if (inRange != null) return inRange;
+//
+//        HasPosition squadCenter = unit.squadCenter();
+//        if (squadCenter == null) return null;
+//
+//        Selection squadCenterEnemiesNear = unit.squadCenterEnemiesNear();
+//        if (squadCenterEnemiesNear == null) return null;
+//
+//        return squadCenterEnemiesNear.canBeAttackedBy(unit, 10).nearestTo(unit);
     }
 
     private AUnit forMelee(AUnit unit) {
-        AUnit inRange = enemies.canBeAttackedBy(unit, 0).mostWounded();
+        AUnit inRange = enemies.canBeAttackedBy(unit, 0).mostWoundedOrNearest(unit);
 
         if (inRange != null) return inRange;
 

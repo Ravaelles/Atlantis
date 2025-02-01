@@ -26,7 +26,7 @@ public class MoonFormationApplies {
         if (enemies.atMost(1)) return false;
         if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
-        if (unit.friendsInRadiusCount(2) < 0) return true;
+//        if (unit.friendsInRadiusCount(1) < 0) return true;
 
         if (!A.isUms()) {
             if (unit.isMissionSparta()) return false;

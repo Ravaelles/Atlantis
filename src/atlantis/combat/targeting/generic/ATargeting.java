@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 
 public class ATargeting extends HasUnit {
     //    protected static final boolean DEBUG = true;
@@ -80,10 +81,15 @@ public class ATargeting extends HasUnit {
      */
     protected AUnit defineBestEnemyToAttack(double maxDistFromEnemy) {
 //        if (true) return null;
-//        if (unit.hp() <= 18) return ClosestEnemyTargeting.closestUnitFallback(unit, maxDistFromEnemy);
 //        if (true) return ClosestEnemyTargeting.fallbackTarget(unit, maxDistFromEnemy);
 
         AUnit enemy;
+
+        // =========================================================
+
+        if (ShouldTargetClosestEnemy.check(unit)) {
+            return (new ClosestEnemyTargeting(enemyUnits)).nearestTarget(unit, maxDistFromEnemy);
+        }
 
         // === Last squad target ===================================
 

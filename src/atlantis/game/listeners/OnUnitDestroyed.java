@@ -57,8 +57,8 @@ public class OnUnitDestroyed {
     private static void printOurDeadUnit(AUnit unit) {
         if (unit.type().isGasBuilding()) return;
 
-//        System.err.println(A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED");
-//        System.err.println(unit.managerLogs().toString());
+        System.err.println(A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED");
+        System.err.println(unit.managerLogs().toString());
     }
 
     private static void onOurUnitDestroyed(AUnit unit) {
@@ -66,7 +66,6 @@ public class OnUnitDestroyed {
 
         RepairAssignments.removeRepairer(unit);
 
-//            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
         Queue.get().refresh();
 
         if (!unit.type().isGasBuilding()) {

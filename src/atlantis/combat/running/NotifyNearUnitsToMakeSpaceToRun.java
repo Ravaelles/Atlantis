@@ -23,7 +23,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
      */
     public boolean notifyNearUnits(HasPosition runFrom) {
         if (runFrom == null || !runFrom.hasPosition()) return false;
-        if (We.protoss() && unit.friendsNear().inRadius(0.35, unit).atMost(1)) return false;
+        if (We.protoss() && unit.friendsNear().inRadius(0.4, unit).atMost(1)) return false;
         if (unit.isFlying() || unit.isLoaded()) return false;
 
         Selection friendsTooClose = unit
@@ -33,12 +33,13 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
             .notRunning()
             .realUnits()
             .exclude(unit)
-            .inRadius(unit.isDragoon() ? 0.3 : NOTIFY_UNITS_IN_RADIUS, unit);
+            .inRadius(unit.isDragoon() ? 0.6 : NOTIFY_UNITS_IN_RADIUS, unit);
 
-        if (unit.friendsNear().groundUnits().inRadius(0.35, unit).atMost(1)) return false;
+        if (unit.friendsNear().groundUnits().inRadius(1, unit).atMost(1)) return false;
 
         for (AUnit otherUnit : friendsTooClose.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
+//                A.errPrintln(A.minSec() + " Notify: " + unit + " is notifying " + otherUnit + " to make space");
                 if (otherUnit.moveAwayFrom(runFrom, 0.5, Actions.MOVE_SPACE)) {
                     APainter.paintCircleFilled(unit, 10, Color.Yellow);
                     APainter.paintCircleFilled(otherUnit, 7, Color.Grey);
