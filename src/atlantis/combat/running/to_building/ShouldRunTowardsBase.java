@@ -139,7 +139,7 @@ public class ShouldRunTowardsBase {
         if (!Enemy.zerg()) return false;
         if (!unit.isDragoon()) return false;
 
-        return unit.squadSize() <= 12;
+        return unit.hp() >= 35 && unit.squadSize() <= 12;
     }
 
     private static boolean tooManyRangedNear(AUnit unit) {

@@ -53,6 +53,11 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
+        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && retreatByRunningTowardsBase(unit)) {
+            unitStartedRetreating(runAwayFrom);
+            return true;
+        }
+
         if (shouldForceRetreatDirectlyFromEnemy() && retreatByRunningFromEnemy(runAwayFrom)) {
             unitStartedRetreating(runAwayFrom);
 //            unit.paintLine(unit.runningManager().runTo(), Color.Orange);
@@ -175,6 +180,8 @@ public class ProtossStartRetreat extends HasUnit {
 
     private static boolean notifyNearbyUnitsToRetreat(AUnit unit) {
         for (AUnit friend : unit.friendsNear().inRadius(1.5, unit).list()) {
+            if (friend == null || friend.hp() <= 0) continue;
+
             if (
                 friend.isRetreating()
                     || friend.isRunning()

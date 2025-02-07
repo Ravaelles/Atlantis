@@ -3,8 +3,9 @@ package atlantis.information.strategy.response.protoss;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.strategy.response.StrategyResponse;
+import atlantis.map.base.Bases;
 import atlantis.production.constructions.cancelling.CriticalCancelPending;
-import atlantis.production.dynamic.protoss.buildings.ProduceCannonAtNatural;
+import atlantis.production.dynamic.protoss.buildings.ProduceCannonAtNaturalOrMain;
 
 public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     private int cannonNeeded;
@@ -14,7 +15,7 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
         cancelConstructionsIfNeededToGetMinerals();
 
         for (int i = 0; i < cannonNeeded; i++) {
-            ProduceCannonAtNatural.produce();
+            ProduceCannonAtNaturalOrMain.produce();
         }
     }
 
