@@ -21,6 +21,7 @@ public class ProtossCorsair extends MobileDetector {
         return new Class[]{
             AsAirAvoidAntiAir.class,
             CorsairHuntOverlords.class,
+            CorsairHuntMutas.class,
         };
     }
 

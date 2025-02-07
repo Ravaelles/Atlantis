@@ -1,6 +1,7 @@
 package atlantis.protoss.corsair;
 
 import atlantis.architecture.Manager;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -13,6 +14,8 @@ public class CorsairHuntOverlords extends Manager {
 
     @Override
     public boolean applies() {
+        if (!Enemy.zerg()) return false;
+
         return (overlord = overlord()) != null;
     }
 

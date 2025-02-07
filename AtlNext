@@ -1,27 +1,5 @@
-- Place 3rd pylon in between natural/natural_choke
-
-- Need to implement proper scout behaviour to scout main and natural early game
-
-- Our 1-2 goons not retreating from 10 enemy goons.
-
-- moveToSafety problem. SO SERIOUS< ITS LOSING GAMES, UNITS JUST COMPLEYELY SEPARATING!!!!!!
-
-
-
-- Produce Leg Enhancements for more zealots vs Terran
-
-
-
-
-
-
-
-
-- WHEN LURKERS DETECTED AND BUILDING SUPPORT BAY UNFINISHED AND DONT HAVE OBSERVATORY, CANCEL SUPPORT BAY IF CANT AFFORDS, IMMEDIATELY BUILD OBSERVATORY
-
-
-
-- GOONS FREEZING, TEST ON CPU MAP
+Dont go into range of shot of sunkens
+Look into HoldDragoon, only if enemy facing and moving, test on minimaps
 
 
 
