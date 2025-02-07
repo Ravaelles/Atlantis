@@ -17,7 +17,7 @@ public class ProtossFullRetreat extends Manager {
 
     @Override
     protected Manager handle() {
-//        System.err.println("FullRetreat " + unit + " eval: " + unit.combatEvalRelative());
+//        System.err.println("FullRetreat " + unit + " eval: " + unit.eval());
 
 //        ProtossCohesion tooLonely = new ProtossCohesion(unit);
 //        if (tooLonely.applies() && tooLonely.forceHandle() != null) return usedManager(this);
@@ -25,6 +25,7 @@ public class ProtossFullRetreat extends Manager {
         if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy())) {
 //            unit.paintCircleFilled(14, Color.Red);
             if (unit.isLeader()) RetreatManager.GLOBAL_RETREAT_COUNTER++;
+//            System.err.println("            ------");
 
             unit.addLog("PFull");
             return usedManager(this);

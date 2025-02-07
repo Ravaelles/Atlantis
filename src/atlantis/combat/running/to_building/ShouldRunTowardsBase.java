@@ -28,6 +28,8 @@ public class ShouldRunTowardsBase {
 
         if (tooManyRangedNear(unit)) return false;
 
+        if (earlyGamePvZ(unit)) return true;
+
         if (
             unit.enemiesNear().canAttack(unit, 4).count() >= 2
                 && Chokes.enemyMainAndNaturalChokes().groundDistTo(unit) <= 5
@@ -130,6 +132,14 @@ public class ShouldRunTowardsBase {
 //
 //        return unit.distTo(mainOrAnyBuilding) >= 20
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
+    }
+
+    private static boolean earlyGamePvZ(AUnit unit) {
+        if (!We.protoss()) return false;
+        if (!Enemy.zerg()) return false;
+        if (!unit.isDragoon()) return false;
+
+        return unit.squadSize() <= 12;
     }
 
     private static boolean tooManyRangedNear(AUnit unit) {

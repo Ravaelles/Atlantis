@@ -55,6 +55,8 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
+        paintAllUnitEvals();
+
 //        paintShowingInOurDirection();
 
 //        int counter = 0;
@@ -152,6 +154,15 @@ public class OnEveryFrameHelper {
 //        paintBullets();
 
 //        paintUnitSpeeding();
+    }
+
+    private static void paintAllUnitEvals() {
+        for (AUnit unit : Select.enemyUnits()) {
+            unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Orange);
+        }
+        for (AUnit unit : Select.our().list()) {
+            unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Blue);
+        }
     }
 
     private static void paintShowingInOurDirection() {

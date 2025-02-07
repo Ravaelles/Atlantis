@@ -2528,7 +2528,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 }
                 else {
 //                    System.out.println("$$$ Weird case: " + this);
-                    if (Army.strength() <= 700 && !unit().type().isGeyser()) {
+                    if (Army.strength() <= 700 && !unit().type().isGeyser() && unit().isNeutral()) {
                         System.err.println("enemiesNear invoked for neutral?");
                         System.err.println("ThisContext = " + this);
                         System.err.println("alive=" + unit().isAlive() + " / hp=" + unit().hp());
@@ -3474,7 +3474,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double distToSquadCenter() {
-        return squad != null ? distTo(squad.center()) : -1;
+        HasPosition center;
+
+        return squad != null && (center = squad.center()) != null ? distTo(center) : -1;
     }
 
     public String lastCommandName() {

@@ -15,25 +15,31 @@ public class ProtossShouldFullRetreat {
     private static AUnit unit;
 
     public static boolean shouldFullRetreat(AUnit unit) {
-        if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return false;
-
         ProtossShouldFullRetreat.unit = unit;
-
-        if (!unit.isMissionAttack()) return false;
-//        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
-
-        if (DontAvoidWhenCannonsNear.check(unit)) return false;
 
         Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 13 : 9, unit);
         if (enemies.empty()) return false;
-        if ((Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
-        if (unit.distToBase() <= 4) return false;
-//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return false;
+
+        double eval = unit.eval();
+
+        if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
+
+        if (DontAvoidWhenCannonsNear.check(unit)) return false;
+        if (combatEvalIsTooHighToRetreat()) return false;
         if (dontRunNearOurCombatBuildings()) return false;
 
-        if (ProtossApprxRetreat.check(unit)) return true;
+        AUnit leader = unit.squadLeader();
 
-        if (combatEvalIsTooHighToRetreat()) return false;
+        if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.9))) return true;
+
+        if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return false;
+
+        if (!unit.isMissionAttack() && eval >= 0.7) return false;
+//        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
+        if (unit.distToBase() <= 4) return false;
+//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return false;
+
+        if (ProtossApprxRetreat.check(unit)) return true;
 
         if (A.s <= 600 && (Enemy.protoss() || Enemy.zerg()) && EnemyUnits.discovered().ranged().empty()) {
             if (enemies.canAttack(unit, 2.8 + unit.woundPercent() / 100.0).empty()) return false;
@@ -57,7 +63,7 @@ public class ProtossShouldFullRetreat {
 //                && naturalBase.distTo(unit) <= 8
 //        ) return false;
 
-        return unit.eval() <= 0.92;
+        return eval <= 0.92;
 
 //        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
 //            if (unit.eval() >= 2.3) return false;

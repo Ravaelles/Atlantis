@@ -35,6 +35,8 @@ public class ProduceGateway {
         existingGateways = Count.gatewaysWithUnfinished();
         freeGateways = Count.freeGateways();
 
+        if (ConstructionRequests.notStarted().size() >= (A.hasMinerals(350) ? 2 : 1)) return false;
+
         if (freeGateways >= 2 && existingGateways >= 4) return false;
 
         bases = Count.basesWithUnfinished();

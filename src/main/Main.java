@@ -157,7 +157,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/7Drag_v_8Drag.scm";
-        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
+//        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";

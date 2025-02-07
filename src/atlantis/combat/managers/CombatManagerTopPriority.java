@@ -49,6 +49,8 @@ public class CombatManagerTopPriority extends Manager {
             AvoidCombatBuildingClose.class,
             AvoidCriticalUnits.class,
 
+            RetreatManager.class,
+
             ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
 
@@ -79,7 +81,7 @@ public class CombatManagerTopPriority extends Manager {
 
 //            FixStoppedUnits.class,
 
-            RetreatManager.class,
+//            RetreatManager.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,
