@@ -4,14 +4,14 @@ import atlantis.game.A;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.util.log.ErrorLog;
 
-public class OurStrategy {
+public class Strategy {
     private static AStrategy ourStrategy = null;
 
     // =========================================================
 
     public static AStrategy get() {
 //        if (ourStrategy == null && Env.isTesting()) {
-//            OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+//            Strategy.setTo(TerranStrategies.TERRAN_MMG_vP);
 //        }
 
         if (ourStrategy == null) {
@@ -38,7 +38,7 @@ public class OurStrategy {
      */
     public static void setTo(AStrategy strategy) {
         if (strategy == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("OurStrategy.setTo() was called with null");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Strategy.setTo() was called with null");
             A.quit();
         }
 

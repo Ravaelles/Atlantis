@@ -2,7 +2,7 @@ package atlantis.combat.running.to_building;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -97,7 +97,7 @@ public class ShouldRunTowardsBase {
 
         if (unit.isAir() && main.distTo(unit) > 12) return true;
 
-        if (OurStrategy.get().isRushOrCheese() && A.seconds() <= 300) return false;
+        if (Strategy.get().isRushOrCheese() && A.seconds() <= 300) return false;
         if (!unit.hasPathTo(main)) return false;
 
         int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(4);

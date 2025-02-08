@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.RemoveFromQueue;
@@ -20,7 +20,7 @@ public class ProduceFirstAssimilator {
         if (Have.assimilator()) return false;
         if (CountInQueue.count(type(), 2) > 0) return false;
 
-        if (OurStrategy.get().isExpansion() && A.supplyUsed() <= 44) return false;
+        if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return false;
         if (!Have.existingOrUnfinished(Protoss_Cybernetics_Core)) return false;
 
         ProductionOrder existingOrder = Queue.get().nonCompletedNext30().ofType(type()).first();

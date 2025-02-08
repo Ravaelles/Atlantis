@@ -6,7 +6,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Count;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
@@ -60,7 +60,7 @@ public class ProtossStickCombatToMainBaseEarly {
     private static boolean whenWeDoRushDontStickTooLong(int combatUnits) {
         double desiredCombatUnitsRatio = A.whenEnemyProtossTerranZerg(1.25, 0.7, 0.38);
 
-        return OurStrategy.get().isRushOrCheese() && combatUnits >= 2 && (
+        return Strategy.get().isRushOrCheese() && combatUnits >= 2 && (
             Army.strength() >= 115 && EnemyInfo.ourCombatUnitsToEnemyRatio() >= desiredCombatUnitsRatio
         );
     }

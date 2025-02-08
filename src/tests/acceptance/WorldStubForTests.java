@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.game.AGame;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
@@ -59,7 +59,7 @@ public class WorldStubForTests extends AbstractTestWithWorld {
 //    protected Queue initQueue(int minerals, int gas) {
 //        aGame.when(AGame::minerals).thenReturn(minerals);
 //        aGame.when(AGame::gas).thenReturn(gas);
-//        OurStrategy.setTo(TerranStrategies.TERRAN_Tests);
+//        Strategy.setTo(TerranStrategies.TERRAN_Tests);
 //
 //        initSupply();
 //
@@ -77,8 +77,8 @@ public class WorldStubForTests extends AbstractTestWithWorld {
         aGame.when(AGame::minerals).thenAnswer(invocation -> currentMinerals());
         aGame.when(AGame::gas).thenAnswer(invocation -> currentGas());
 
-        OurStrategy.setTo(initBuildOrder());
-        buildOrder = OurStrategy.get().buildOrder();
+        Strategy.setTo(initBuildOrder());
+        buildOrder = Strategy.get().buildOrder();
         initSupply();
 
         QueueInitializer.initializeProductionQueue();

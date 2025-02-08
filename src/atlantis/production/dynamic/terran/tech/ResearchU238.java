@@ -2,11 +2,10 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.tech.ResearchNow;
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.range.OurMarineRange;
 import atlantis.units.select.Count;
@@ -38,7 +37,7 @@ public class ResearchU238 extends Commander {
             return false;
         }
 
-        if (OurStrategy.get().goingBio()) {
+        if (Strategy.get().goingBio()) {
             if (
                 Count.infantry() >= 8 && A.canAffordWithReserved(100, 100)
                     || A.canAffordWithReserved(150, 150)

@@ -6,7 +6,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -219,7 +219,7 @@ public class ProtossShouldExpand {
         ) return no("CoreFirst");
 
         if (armyStrength <= 90) return no("TooWeak");
-        if (seconds <= 500 && OurStrategy.get().isRushOrCheese()) no("RushPlan");
+        if (seconds <= 500 && Strategy.get().isRushOrCheese()) no("RushPlan");
         if (enemyHasNoCombatBuilding()) return no("NoEnemyCB");
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
@@ -321,7 +321,7 @@ public class ProtossShouldExpand {
     }
 
     private static boolean manyGateways() {
-        return A.hasMinerals(230 + (OurStrategy.get().isRushOrCheese() ? 120 : 0))
+        return A.hasMinerals(230 + (Strategy.get().isRushOrCheese() ? 120 : 0))
             && Count.gateways() >= 3;
     }
 

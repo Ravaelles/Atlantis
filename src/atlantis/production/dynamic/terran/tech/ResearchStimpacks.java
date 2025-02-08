@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.tech.ResearchNow;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -32,7 +32,7 @@ public class ResearchStimpacks extends Commander {
             return false;
         }
 
-        if (OurStrategy.get().goingBio()) {
+        if (Strategy.get().goingBio()) {
             if (Count.infantry() >= 8 && A.canAffordWithReserved(100, 100)) {
                 if (ATech.isNotResearchedOrPlanned(what())) {
                     return true;

@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.protoss.ProtossShouldExpand;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
@@ -126,7 +126,7 @@ public class ProduceGateway {
     }
 
     private static boolean allowWhenStrategyIsExpansion() {
-        if (!OurStrategy.get().isExpansion()) return false;
+        if (!Strategy.get().isExpansion()) return false;
 
         return A.hasMinerals(234) && existingGateways <= 1 && Count.basesWithUnfinished() >= 2;
     }

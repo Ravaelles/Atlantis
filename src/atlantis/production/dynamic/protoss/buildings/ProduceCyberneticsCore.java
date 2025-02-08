@@ -6,7 +6,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealot;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -68,7 +68,7 @@ public class ProduceCyberneticsCore {
     private static boolean needOne() {
         if (A.supplyUsed() >= 50) return true;
 
-        if (OurStrategy.get().nameContains("Forge FE")) return A.supplyUsed(24) && (
+        if (Strategy.get().nameContains("Forge FE")) return A.supplyUsed(24) && (
             A.hasMinerals(170) || Count.zealotsWithUnfinished() >= 2
         );
 

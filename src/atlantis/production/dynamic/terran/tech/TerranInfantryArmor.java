@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran.tech;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.tech.ResearchNow;
 import atlantis.units.select.Count;
@@ -15,8 +15,8 @@ public class TerranInfantryArmor extends Commander {
         if (Count.basesWithUnfinished() <= 1) return false;
         if (!A.canAfford(550 + delayBonus(), 250)) return false;
 
-        if (OurStrategy.get().goingBio() && Count.infantry() >= 8) {
-            if (OurStrategy.get().goingBio()) {
+        if (Strategy.get().goingBio() && Count.infantry() >= 8) {
+            if (Strategy.get().goingBio()) {
 
                 int currentUpgradeLevel = ATech.getUpgradeLevel(what());
                 int minInfantry = 12 + currentUpgradeLevel * 9;

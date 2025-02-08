@@ -16,7 +16,7 @@ import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.game.player.Enemy;
@@ -33,7 +33,7 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+        if (Strategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
             return forceMissionAttack("Rush or cheese");
         }
 
@@ -52,13 +52,13 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return true;
         }
 
-        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 95) {
+        if (Strategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 95) {
             if (DEBUG) reason = "Rush or cheese and strength ok";
             return true;
         }
 
         if (
-            A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8 && !OurStrategy.get().isRushOrCheese()
+            A.seconds() >= 600 && Atlantis.LOST >= 15 && Count.tanks() <= 8 && !Strategy.get().isRushOrCheese()
         ) return false;
 
 //        if (ActiveMap.isGosu()) {

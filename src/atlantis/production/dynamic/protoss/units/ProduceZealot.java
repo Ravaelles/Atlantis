@@ -7,7 +7,7 @@ import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealo
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -90,7 +90,7 @@ public class ProduceZealot {
     }
 
     private static boolean earlyGameRushZealots() {
-        return A.seconds() <= 350 && OurStrategy.get().isRushOrCheese() && A.hasMinerals(100);
+        return A.seconds() <= 350 && Strategy.get().isRushOrCheese() && A.hasMinerals(100);
     }
 
     private static boolean earlyGameDefenceVsProtoss() {
@@ -176,7 +176,7 @@ public class ProduceZealot {
         }
 
         if (
-            OurStrategy.get().isGoingTech()
+            Strategy.get().isGoingTech()
                 && (core || CountInQueue.count(Protoss_Cybernetics_Core, 3) > 0)
                 && !A.hasMinerals(500)
         ) return 1;

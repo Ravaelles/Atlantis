@@ -3,7 +3,7 @@ package atlantis.production.constructions.position.conditions.can_build_here;
 import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
@@ -85,7 +85,7 @@ public class CanPhysicallyBuildHere {
         if (
             We.protoss()
                 && A.supplyUsed() <= 13
-                && OurStrategy.get().isExpansion()
+                && Strategy.get().isExpansion()
                 && (building.isForge() || building.isGateway())
         ) {
             HasPosition pylon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).nearestTo(position);

@@ -4,7 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.reinforce.protoss.ShouldSecureProtossBase;
 import atlantis.production.dynamic.reinforce.protoss.ProtossSecureBaseWithCannons;
@@ -48,7 +48,7 @@ public class ProtossSecureBasesCommander extends Commander {
     }
 
     private boolean forgeFE() {
-        if (!OurStrategy.get().isExpansion()) return false;
+        if (!Strategy.get().isExpansion()) return false;
 
         if (Enemy.protoss()) {
             if (EnemyUnits.zealots() >= 3 && Count.cannonsWithUnfinished() < 3) return true;

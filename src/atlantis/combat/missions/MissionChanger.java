@@ -11,7 +11,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -43,7 +43,7 @@ public abstract class MissionChanger {
 
         // =========================================================
 
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
             return;
         }
 
@@ -101,7 +101,7 @@ public abstract class MissionChanger {
             return;
         }
 
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
             return;
         }
 

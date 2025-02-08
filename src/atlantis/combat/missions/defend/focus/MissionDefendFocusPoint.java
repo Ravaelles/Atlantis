@@ -9,7 +9,7 @@ import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.*;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.base.Bases;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
@@ -47,7 +47,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // =========================================================
 
-                if (OurStrategy.get().isExpansion()) {
+                if (Strategy.get().isExpansion()) {
                     if ((focus = atThirdBase()) != null) return focus;
                     if (A.s <= 60 * 8 && (focus = aroundCombatBuilding()) != null) return focus;
                 }
@@ -187,7 +187,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     private AFocusPoint stickToCannon() {
         if (
             !We.protoss()
-                || !OurStrategy.get().isExpansion()
+                || !Strategy.get().isExpansion()
                 || !Missions.isGlobalMissionDefend()
                 || Count.cannonsWithUnfinished() <= 0
         ) return null;

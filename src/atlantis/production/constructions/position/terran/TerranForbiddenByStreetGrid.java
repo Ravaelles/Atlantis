@@ -28,7 +28,7 @@ public class TerranForbiddenByStreetGrid {
 
         if (building.isSupplyDepot() || building.isAcademy()) {
             if (
-                moduloX != 1 && moduloX != 3 && moduloX != 5 && moduloX != 7 && moduloX != 9
+                moduloX != 1 && moduloX != 4 && moduloX != 7
             ) return failed("TX_Sm modulo 2x2 = " + moduloY);
             if (moduloY != 1 && moduloY != 3) return failed("TY_Sm modulo 2x2 = " + moduloY);
 

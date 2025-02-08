@@ -8,7 +8,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -58,7 +58,7 @@ public class NeedChokeBlockers {
     }
 
     private static boolean forTerran() {
-        if (OurStrategy.get().isRushOrCheese()) return false;
+        if (Strategy.get().isRushOrCheese()) return false;
 
         if (AGame.notNthGameFrame(5)) return false;
         if (Missions.isGlobalMissionAttack()) return false;

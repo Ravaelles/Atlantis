@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran.buildings;
 
 import atlantis.game.A;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
@@ -28,7 +28,7 @@ public class ProduceBarracks {
 
         if (unfinishedBarracks >= 1 && !A.hasMinerals(240)) return false;
 
-        if (OurStrategy.get().isRushOrCheese()) {
+        if (Strategy.get().isRushOrCheese()) {
             if (A.hasMinerals(126)) {
                 System.err.println("Barracks for RUSH - " + A.supplyUsed() + "/" + A.supplyTotal() + ", min:" + A.minerals());
                 return produce();
@@ -43,7 +43,7 @@ public class ProduceBarracks {
 
         bases = Count.basesWithUnfinished();
 
-        if (existingBarracks <= 4 && A.hasMinerals(126) && OurStrategy.get().goingBio()) return produce();
+        if (existingBarracks <= 4 && A.hasMinerals(126) && Strategy.get().goingBio()) return produce();
         else if (A.hasMinerals(550)) return produce();
 
 //        if (existingBarracks <= 8 && A.hasMinerals(800) && A.hasFreeSupply(4)) return produce();

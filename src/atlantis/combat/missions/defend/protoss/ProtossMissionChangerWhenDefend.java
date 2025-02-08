@@ -13,7 +13,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
@@ -162,7 +162,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private boolean rushAllowsAttack() {
-        if (OurStrategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2 && Army.strengthWithoutCB() >= 160) {
+        if (Strategy.get().isRushOrCheese() && Count.ourCombatUnits() >= 2 && Army.strengthWithoutCB() >= 160) {
             if (DEBUG) reason = "Rush allows it";
             return true;
         }

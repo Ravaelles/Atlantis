@@ -7,7 +7,7 @@ import atlantis.information.generic.Army;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -48,7 +48,7 @@ public class ShouldProduceNewBunker {
     }
 
     private static boolean ignore() {
-        return OurStrategy.get().isRushOrCheese()
+        return Strategy.get().isRushOrCheese()
             && (A.s <= 60 * 6 || Army.strength() >= 110);
     }
 
@@ -85,7 +85,7 @@ public class ShouldProduceNewBunker {
         return GamePhase.isEarlyGame()
             && EnemyUnits.discovered().combatUnits().atMost(Enemy.zerg() ? 8 : 5)
             && (
-            !OurStrategy.get().isRushOrCheese()
+            !Strategy.get().isRushOrCheese()
                 || Army.strengthWithoutCB() <= 90
                 || enemyStrategy.isRushOrCheese()
         );

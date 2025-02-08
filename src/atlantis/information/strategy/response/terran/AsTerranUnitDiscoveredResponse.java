@@ -7,7 +7,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructions.position.modifier.PositionModifier;
@@ -21,7 +21,7 @@ import atlantis.util.We;
 
 public class AsTerranUnitDiscoveredResponse {
     public static void updateEnemyUnitDiscovered(AUnit enemyUnit) {
-        if (OurStrategy.get().isRushOrCheese()) {
+        if (Strategy.get().isRushOrCheese()) {
             whenRushOrCheese(enemyUnit);
         }
 

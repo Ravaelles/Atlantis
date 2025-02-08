@@ -8,7 +8,7 @@ import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -103,12 +103,12 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return forceMissionSpartaOrDefend(reason);
         }
 
-        if (OurStrategy.get().isRushOrCheese() && Army.strengthWithoutCB() >= 95) {
+        if (Strategy.get().isRushOrCheese() && Army.strengthWithoutCB() >= 95) {
             if (DEBUG) reason = "Rush-or-cheese attack";
             return false;
         }
 
-        if (!OurStrategy.get().isRushOrCheese() && goons <= 3 && Army.strength() <= 120 && (
+        if (!Strategy.get().isRushOrCheese() && goons <= 3 && Army.strength() <= 120 && (
             combatUnits <= 7 || (combatUnits <= 8 && EnemyUnits.discovered().combatUnits().atLeast(11))
         )) {
             if (DEBUG) reason = "Wait for more army";

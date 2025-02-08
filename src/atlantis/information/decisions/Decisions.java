@@ -30,7 +30,7 @@ public class Decisions {
 ////                        && !ProductionQueue.isAtTheTopOfQueue(AUnitType.Terran_Machine_Shop, 5)
 //                ) return false;
 //
-//                return EnemyInfo.startedWithCombatBuilding && OurStrategy.get().goingBio();
+//                return EnemyInfo.startedWithCombatBuilding && Strategy.get().goingBio();
 //            }
 //        );
 //    }

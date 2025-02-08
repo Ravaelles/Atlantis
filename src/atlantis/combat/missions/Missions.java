@@ -9,7 +9,7 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
@@ -114,7 +114,7 @@ public class Missions {
 
         // =========================================================
 
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
             return Missions.ATTACK;
         }
 

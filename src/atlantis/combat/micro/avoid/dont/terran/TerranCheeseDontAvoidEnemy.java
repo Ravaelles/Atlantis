@@ -3,11 +3,9 @@ package atlantis.combat.micro.avoid.dont.terran;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 
 public class TerranCheeseDontAvoidEnemy extends Manager {
     public TerranCheeseDontAvoidEnemy(AUnit unit) {
@@ -16,7 +14,7 @@ public class TerranCheeseDontAvoidEnemy extends Manager {
 
     @Override
     public boolean applies() {
-        return OurStrategy.get().isRushOrCheese() && A.s <= 60 * 7 && EnemyUnits.ranged() <= maxEnemyRangedUnits();
+        return Strategy.get().isRushOrCheese() && A.s <= 60 * 7 && EnemyUnits.ranged() <= maxEnemyRangedUnits();
     }
 
     private int maxEnemyRangedUnits() {

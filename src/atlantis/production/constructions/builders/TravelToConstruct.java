@@ -3,7 +3,7 @@ package atlantis.production.constructions.builders;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.AbstractPositionFinder;
@@ -351,7 +351,7 @@ public class TravelToConstruct extends HasUnit {
             if (!unit.isConstructing() || AGame.now() % 37 == 0) {
 //                A.println("_CONSTRUCT_ " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
 
-                if (OurStrategy.get().isExpansion() && A.supplyUsed() <= 17) {
+                if (Strategy.get().isExpansion() && A.supplyUsed() <= 17) {
                     refreshConstructionPositionIfNeeded(construction);
                 }
 

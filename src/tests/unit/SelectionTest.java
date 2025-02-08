@@ -107,7 +107,7 @@ public class SelectionTest extends WorldStubForTests {
 //    @Test
 //    public void removesDuplicates() {
 //        FakeUnit cannon = fake(AUnitType.Protoss_Photon_Cannon);
-//        OurStrategy.setTo(TerranStrategies.TERRAN_MMG_vP);
+//        Strategy.setTo(TerranStrategies.TERRAN_MMG_vP);
 //        EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon);
 //
 //        FakeUnit[] fakeEnemies = fakeEnemies(

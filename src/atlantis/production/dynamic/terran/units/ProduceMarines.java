@@ -8,7 +8,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
@@ -36,8 +36,9 @@ public class ProduceMarines {
         int freeBarracks = Count.freeBarracks();
         if (freeBarracks <= 0) return false;
 
-        if (OurStrategy.get().isRushOrCheese()) {
-            if (A.hasMinerals(50)) return forceProduceMarine();
+        if (Strategy.get().isRushOrCheese() || Strategy.get().goingBio()) {
+            if (A.s <= 60 * 6 && A.hasMinerals(50)) return forceProduceMarine();
+            if (A.hasMinerals(260)) return forceProduceMarine();
         }
 
         if (A.hasMinerals(100) && EnemyUnitBreachedBase.get() != null) return forceProduceMarine();

@@ -9,7 +9,7 @@ import atlantis.game.listeners.OnGameStarted;
 import atlantis.game.player.Enemy;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.strategy.AStrategy;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.tech.ATech;
 import atlantis.map.base.AllBaseLocations;
@@ -167,7 +167,7 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     protected void setUpStrategy() {
-        OurStrategy.setTo(initBuildOrder());
+        Strategy.setTo(initBuildOrder());
     }
 
     // =========================================================

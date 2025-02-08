@@ -3,7 +3,7 @@ package atlantis.production.dynamic.terran;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.generic.ArmyStrength;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.terran.abundance.TerranAbundance;
 import atlantis.production.dynamic.terran.units.*;
@@ -22,7 +22,7 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     @Override
     public boolean applies() {
         if (!We.terran()) return false;
-        if (OurStrategy.get().isRushOrCheese()) return true;
+        if (Strategy.get().isRushOrCheese()) return true;
         if (Count.basesWithUnfinished() >= 2) return true;
 
         if (shouldProduceUnitsBeforeSecondBase()) return true;

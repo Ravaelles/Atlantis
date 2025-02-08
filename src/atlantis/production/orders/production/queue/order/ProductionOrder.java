@@ -2,7 +2,7 @@ package atlantis.production.orders.production.queue.order;
 
 import atlantis.combat.missions.Mission;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.MaxBuildingDist;
@@ -303,7 +303,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
     private int supplyEarlierBonusToConsiderReady() {
         return unitOrBuilding != null
             && A.supplyUsed() >= 9
-            && unitOrBuilding.isABuilding() ? (OurStrategy.get().isExpansion() ? 2 : 1) : 0;
+            && unitOrBuilding.isABuilding() ? (Strategy.get().isExpansion() ? 2 : 1) : 0;
     }
 
     public void cancel(String reason) {

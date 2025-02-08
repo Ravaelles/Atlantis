@@ -1,6 +1,6 @@
 package atlantis.production.constructions.position.protoss;
 
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -13,7 +13,7 @@ public class DefineCannonNearTo {
     public static HasPosition define() {
         int bases = Count.bases();
 
-        if (OurStrategy.get().isExpansion() || bases <= 2) {
+        if (Strategy.get().isExpansion() || bases <= 2) {
             AChoke natural = Chokes.natural();
             if (natural != null) {
                 AUnit cannon =

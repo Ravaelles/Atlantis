@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -177,7 +177,7 @@ public class TerranShouldNotRetreat extends Manager {
         }
 
         if (
-            OurStrategy.get().isRushOrCheese()
+            Strategy.get().isRushOrCheese()
                 && A.seconds() <= 400
                 && unit.isGroundUnit()
                 && unit.enemiesNear().ranged().empty()

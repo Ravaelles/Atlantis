@@ -10,7 +10,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.terran.tech.ResearchStimpacks;
 import atlantis.production.dynamic.terran.tech.ResearchU238;
 import atlantis.units.AUnitType;
@@ -26,7 +26,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (A.supplyUsed() >= 174) return false;
 
-//        if (OurStrategy.get().goingBio()) {
+//        if (Strategy.get().goingBio()) {
         if (!ArmyStrength.weAreMuchStronger()) {
             if (DEBUG) reason = "We aren't stronger (" + ArmyStrength.ourArmyRelativeStrength() + "%)";
             return true;
@@ -54,10 +54,10 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
         }
 
         if (
-            OurStrategy.get().isRushOrCheese()
+            Strategy.get().isRushOrCheese()
                 && ArmyStrength.ourArmyRelativeStrength() >= 95
                 && A.seconds() <= 400
-                && (!OurStrategy.get().goingBio() || Count.medics() >= 2)
+                && (!Strategy.get().goingBio() || Count.medics() >= 2)
         ) {
             if (DEBUG) reason = "Rush or cheese and strength still ok";
             return false;

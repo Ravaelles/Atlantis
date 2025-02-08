@@ -11,7 +11,7 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.OurStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.production.requests.AntiLandBuildingCommander;
@@ -42,7 +42,7 @@ public abstract class RaceStrategyResponse {
     public void updateEnemyStrategyChanged() {
         AStrategy enemyStrategy = EnemyStrategy.get();
 
-        if (OurStrategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
             return;
         }
 
