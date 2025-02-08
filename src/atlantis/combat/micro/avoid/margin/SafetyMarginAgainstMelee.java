@@ -5,6 +5,7 @@ import atlantis.combat.micro.avoid.margin.protoss.ZealotSafetyMarginAgainstMelee
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
 import atlantis.combat.micro.avoid.margin.terran.MarineSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -91,7 +92,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //            defender.manager().printParentsStack();
 //        }
 
-//        System.err.println("@" + A.now + " safetyMargin = " + criticalDist + " " + defender.digitDistTo(attacker));
+//        System.err.println("@" + A.now + " safetyMargin = " + criticalDist + " " + defender.distToDigit(attacker));
 
         return criticalDist;
     }

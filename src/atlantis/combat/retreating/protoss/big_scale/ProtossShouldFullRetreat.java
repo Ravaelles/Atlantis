@@ -22,7 +22,7 @@ public class ProtossShouldFullRetreat {
 
         double eval = unit.eval();
 
-        if (unit.isMissionAttack() && eval <= (A.s <= 60 * 7 ? 1.2 : 1.15)) return false;
+        if (unit.isMissionAttack() && eval <= (A.s <= 60 * 7 ? 1.2 : 1.15)) return true;
 
         if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
 

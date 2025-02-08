@@ -4,14 +4,11 @@ import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.running.fallback.RunAttackFallback;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import atlantis.util.PauseAndCenter;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -24,7 +21,7 @@ public class ARunningManager {
     protected AUnit runningFromUnit = null;
     protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
-    protected String method = "Init";
+    protected String _lastRunMode = "Init";
 
     protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
     //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
@@ -50,7 +47,7 @@ public class ARunningManager {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
         if (unit.lastStartedRunningLessThanAgo(1)) return true;
 
-        method = "Undefined";
+//        _lastRunMode = "Undefined";
 
         if (runFrom instanceof AUnit) {
             runningFromUnit = (AUnit) runFrom;
@@ -147,15 +144,6 @@ public class ARunningManager {
 
     // =========================================================
 
-    /**
-     * Returns true if given run position is traversable, land-connected and not very, very far
-     */
-    public boolean isReasonablePositionToRun(
-        AUnit unit, APosition position
-    ) {
-        return IsReasonablePositionToRunTo.check(unit, position, runningFromPosition);
-    }
-
 //    public boolean isReasonablePositionToRun(AUnit unit, APosition position) {
 //        return IsReasonablePositionToRunTo.isPossibleAndReasonablePosition(
 //            unit, position, runningFromPosition, true, null, null
@@ -229,6 +217,8 @@ public class ARunningManager {
         runningFromPosition = null;
         runningFromUnit = null;
 
+        if (unit.isMoving()) unit.stop("StopRunning");
+
 //        A.printStackTrace("StoppedRunning");
     }
 
@@ -262,5 +252,9 @@ public class ARunningManager {
         this.runTo = runTo;
         unit._lastRunningPositionChange = A.now;
         return runTo;
+    }
+
+    public String lastRunMode() {
+        return _lastRunMode;
     }
 }

@@ -19,8 +19,6 @@ public class OtherConstructionTooClose {
     public static boolean isOtherConstructionTooClose(AUnit builder, AUnitType building, APosition position) {
         if (building.isBase()) return false;
 
-        boolean isPylon = building.isPylon();
-
         // Compare against planned construction places
         for (Construction otherConstr : ConstructionRequests.notStarted()) {
             HasPosition otherPosition = otherConstr.buildPosition();
@@ -32,36 +30,41 @@ public class OtherConstructionTooClose {
 //                    System.err.println(building + " Other cons: " + otherConstr.buildingType() + ", dist: " + A.digit(distance));
 //                }
 
-                if (building.isGateway()) {
-                    if (distance < 3.5) {
-                        return failed("Gateway too close to other building(" + building + ", dist: " + distance + ")");
-                    }
-                }
-
                 if (distance >= 2) {
-                    if (We.protoss() && building.isCannon()) {
-                        if (otherConstr.buildingType().isCannon()) return false;
-                        if (otherConstr.buildingType().isGateway() && otherConstr.notStarted()) {
-                            return false;
+                    if (distance >= 6) return false;
+
+                    if (We.protoss()) {
+                        if (building.isPylon() && distance <= 3 && A.supplyTotal() <= 40) {
+                            return failed("Spread early pylons");
+                        }
+
+                        if (building.isGateway()) {
+                            if (distance < 3.5) {
+                                return failed("Gateway too close to other building(" + building + ", dist: " + distance + ")");
+                            }
+                        }
+
+                        if (building.isCannon()) {
+                            if (otherConstr.buildingType().isCannon()) return false;
+                            if (otherConstr.buildingType().isGateway() && otherConstr.notStarted()) {
+                                return false;
+                            }
+                        }
+
+                        if (building.isForge()) {
+                            if (otherConstr.buildingType().isForge()) return false;
+                            if (otherConstr.buildingType().isGateway()) return false;
                         }
                     }
 
-                    if (We.zerg() && building.isSunkenOrCreep() && otherConstr.buildingType().isSunkenOrCreep())
+                    if (We.zerg() && building.isSunkenOrCreep() && otherConstr.buildingType().isSunkenOrCreep()) {
                         return false;
-                }
-
-                if (We.protoss() && building.isForge()) {
-                    if (otherConstr.buildingType().isForge()) return false;
-                    if (otherConstr.buildingType().isGateway()) return false;
+                    }
                 }
 
                 // Look for two positions that could overlap one another
                 if (distance <= (building.canHaveAddon() ? 4 : (building.isPylon() ? 2.4 : 3.1))) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
-                }
-
-                if (isPylon && distance <= 3 && A.supplyTotal() <= 40) {
-                    return failed("Spread early pylons");
                 }
             }
         }

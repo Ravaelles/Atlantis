@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.margin.terran;
 
 import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.range.OurMarineRange;
@@ -14,16 +15,17 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public double marginAgainst(AUnit attacker) {
 //        if (attacker.hasBiggerWeaponRangeThan(defender)) return -1;
 
-        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
-        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
+//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
+//        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
+        if (defender.isOtherUnitShowingBackToUs(attacker)) return 0.7;
 
         double margin = baseValueAgainst(attacker)
             + (defender.woundPercent() / 76.0)
-            + (defender.cooldown() >= 13 ? +0.4 : 0)
-            + (defender.cooldown() >= 5 ? +0.4 : 0)
+            + (defender.cooldown() >= 10 ? +0.4 : 0)
+            + (defender.cooldown() >= 7 ? +0.4 : 0)
             + manyEnemiesNearBonus(defender);
 
-        margin = Math.min(OurMarineRange.range() - 0.25, margin);
+        margin = A.inRange(1.5, margin, OurMarineRange.range() - 0.21);
 
 //        System.err.println("@" + A.now + " safetyMargin = " + margin + " " + defender.digitDistTo(attacker));
 //        defender.paintCircle((int) (margin * 32), Red);

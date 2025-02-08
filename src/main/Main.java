@@ -52,7 +52,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // === Maps for testing as TERRAN ===========================
@@ -206,7 +206,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
@@ -220,7 +220,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/DragFew_v_Sunkens.scm"; // Few Dragoons attacking sunkens
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
-        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
+//        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
 //        if (true) return "ums/rav/protoss/5Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //@        if (true) return "ums/rav/ZealDrag_v_LingsHydra.scm";
@@ -243,17 +243,17 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/terran/3M&2M_v_Zealots.scx";
-//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/terran/1M_v_1Zealot.scm";
-//        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
+        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/terran/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_1Zealot.scm";
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
+//        if (true) return "ums/rav/terran/3M&2M_v_Zealots.scx";
 //        if (true) return "ums/rav/terran/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
 //        if (true) return "ums/rav/terran/wraiths_v_carriers_obs.scx"; // Wraiths & Valkyries v. Carriers & Observers
 //@        if (true) return "ums/rav/terran/Ghosts_v_P.scx";

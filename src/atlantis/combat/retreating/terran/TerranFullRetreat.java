@@ -11,6 +11,8 @@ public class TerranFullRetreat extends Manager {
 
     @Override
     public boolean applies() {
+        if ((new TerranShouldNotRetreat(unit)).shouldNotRetreat()) return false;
+
         return TerranShouldFullRetreat.shouldFullRetreat(unit);
     }
 

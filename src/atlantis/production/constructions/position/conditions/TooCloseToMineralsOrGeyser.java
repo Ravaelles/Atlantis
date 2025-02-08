@@ -44,6 +44,8 @@ public class TooCloseToMineralsOrGeyser {
     }
 
     private static double minDistToGeyser() {
+        if (true) return 0;
+
         if (We.protoss()) {
             return A.supplyUsed() >= 15 ? 1.1 : 4;
         }

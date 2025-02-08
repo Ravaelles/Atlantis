@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -14,40 +15,41 @@ import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Zerg_Hydralisk;
 
-public class TerranShouldNotRetreat extends Manager {
+public class TerranShouldNotRetreat extends HasUnit {
     private Decision decision;
 
     public TerranShouldNotRetreat(AUnit unit) {
         super(unit);
     }
 
-    @Override
-    public boolean applies() {
-        if (!We.terran()) return false;
+//    @Override
+//    public boolean applies() {
+//        if (!We.terran()) return false;
+//
+//        return shouldNotRetreat();
+////        return unit.enemiesNear().visibleOnMap().notEmpty();
+//    }
 
-        return true;
-//        return unit.enemiesNear().visibleOnMap().notEmpty();
-    }
-
-    @Override
-    protected Manager handle() {
-        if (shouldNotRetreat()) {
-            if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
-                return this;
-            }
-        }
-
-        return null;
-    }
+//    @Override
+//    protected Manager handle() {
+//        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+//            return this;
+//        }
+//
+//        return null;
+//    }
 
     public boolean shouldNotRetreat() {
-        if ((decision = asTank()).notIndifferent()) {
-            if (decision.isTrue()) unit.addLog("BraveTank");
+        if ((decision = whenNoEnemyRanged()).notIndifferent()) {
+            if (decision.isTrue()) {
+                unit.addLog("NoEnemyRanged");
+                return true;
+            }
             return decision.toBoolean();
         }
 
-        if ((decision = whenNoEnemyRanged()).notIndifferent()) {
-            if (decision.isTrue()) unit.addLog("NoEnemyRanged");
+        if ((decision = asTank()).notIndifferent()) {
+            if (decision.isTrue()) unit.addLog("BraveTank");
             return decision.toBoolean();
         }
 

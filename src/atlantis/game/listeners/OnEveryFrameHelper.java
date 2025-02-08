@@ -55,7 +55,9 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
-        paintAllUnitEvals();
+//        updateTooltips();
+
+//        paintAllUnitEvals();
 
 //        paintShowingInOurDirection();
 
@@ -154,6 +156,12 @@ public class OnEveryFrameHelper {
 //        paintBullets();
 
 //        paintUnitSpeeding();
+    }
+
+    private static void updateTooltips() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            unit.paintTextCentered(unit.runningManager().lastRunMode(), Color.Orange, -1);
+        }
     }
 
     private static void paintAllUnitEvals() {

@@ -26,7 +26,7 @@ public class ProduceBarracks {
         existingBarracks = Count.withPlanned(Terran_Barracks);
         unfinishedBarracks = ConstructionRequests.countNotFinishedOfType(Terran_Barracks);
 
-        if (unfinishedBarracks >= 1 && !A.hasMinerals(240)) return false;
+        if (unfinishedBarracks >= 1 && !A.hasMinerals(230)) return false;
 
         if (Strategy.get().isRushOrCheese()) {
             if (A.hasMinerals(126)) {

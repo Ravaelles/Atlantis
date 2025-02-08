@@ -62,15 +62,14 @@ public class IsReasonablePositionToRunTo {
     }
 
     private static boolean dontAvoidMinerals(AUnit unit) {
-        return unit.isNotLarge() && !unit.isWorker();
+        return false;
+//        return unit.isNotLarge() && !unit.isWorker();
     }
 
     private static boolean isWalkableAndFree(HasPosition position, AUnit unit) {
         boolean positionWalkable = position.isWalkable() && noBuildingsNorUnitsOn(position);
 
-        if (
-            dontAvoidMinerals(unit) || position.isCloseToMapBounds()
-        ) return positionWalkable;
+        if (dontAvoidMinerals(unit) || position.isCloseToMapBounds()) return positionWalkable;
 
         return positionWalkable && areNearbyTilesWalkable(position);
     }
@@ -90,7 +89,8 @@ public class IsReasonablePositionToRunTo {
 
     private static boolean notTooCloseToGeysersOrMinerals(AUnit unit, HasPosition position) {
         return Select.mineralsAndGeysers()
-            .inRadius(unit.size() * 5, position)
+//            .inRadius(Math.max(1.2, unit.size() * 5), position)
+            .inRadius(1.3, position)
             .exclude(unit).isEmpty();
     }
 

@@ -4,7 +4,6 @@ import atlantis.combat.running.ARunningManager;
 import atlantis.combat.running.IsReasonablePositionToRunTo;
 import atlantis.combat.running.RunToPositionFinder;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -16,12 +15,12 @@ import bwapi.Color;
 import java.util.ArrayList;
 
 public class RunInAnyDirection {
-    public static int ANY_DIRECTION_RADIUS_DEFAULT = 4;
+    public static int ANY_DIRECTION_RADIUS_DEFAULT = 5;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
     public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
     //    public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
 //    public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
-    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 4;
+    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 5;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
     private AUnit unit = null;
@@ -69,13 +68,13 @@ public class RunInAnyDirection {
 
         return 1.3 * position.distTo(runAwayFrom)
             - position.distTo(unit)
-            - allUnitsToConsider.inRadius(0.5, position).exclude(unit).count() * 0.5;
+            - allUnitsToConsider.inRadius(0.4, position).exclude(unit).count() * 0.5;
     }
 
     private boolean handleInvalidCaseWhenRunToIsTooClose() {
         if (
             runningManager.runTo() != null
-                && unit.distTo(runningManager.runTo()) <= 1.2
+                && isDistTooClose(runningManager.runTo())
                 && (wayTooShortRunTo() || stillInRangeOfRangedEnemy())
         ) {
             // Info: This is a known issue, I couldn't debug this, but it shouldn't be a huge problem...
@@ -102,6 +101,10 @@ public class RunInAnyDirection {
         return false;
     }
 
+    private boolean isDistTooClose(HasPosition position) {
+        return unit.distTo(position) < 0.5;
+    }
+
     private boolean stillInRangeOfRangedEnemy() {
         Selection rangedEnemies = unit.enemiesNear().ranged();
         AUnit rangedEnemy = rangedEnemies.nearestTo(unit);
@@ -124,23 +127,26 @@ public class RunInAnyDirection {
 
         if (
             runTo != null
-                && unit.distTo(runTo) > 1.5
-                && unit.lastStartedRunningLessThanAgo(6)
+                && isDistTooClose(runTo)
+                && unit.lastStartedRunningLessThanAgo(12)
         ) {
             return runTo.position();
         }
 
-//        int BASE_RADIUS = 4;
-        int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
+        int radius;
         APosition position = null;
 
-        if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
-            position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
-            if (position != null) return position;
-        }
+//        int BASE_RADIUS = 4;
+//        int radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
+//        APosition position = null;
+//
+//        if (unit.enemiesNear().inRadius(8, unit).count() <= 1) {
+//            position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
+//            if (position != null) return position;
+//        }
 
-        radius = runAnyDirectionInitialRadius(unit, runAwayFrom);
-        position = findPositionWithRadius(runAwayFrom, radius, false);
+        radius = runAnyDirectionRadius(unit, runAwayFrom);
+        position = findPositionWithRadius(runAwayFrom, radius, considerOtherUnitsInGoToPlace);
         if (position != null) return position;
 
         return null;
@@ -169,7 +175,7 @@ public class RunInAnyDirection {
 
             boolean isNewBest = bestPosition == null || positionScore >= bestScore;
             if (isNewBest) {
-                boolean targetPositionHasObstacles = unit.groundDist(position) >= 1.6 * unit.distTo(position);
+                boolean targetPositionHasObstacles = unit.groundDist(position) >= 2.2 * unit.distTo(position);
                 if (targetPositionHasObstacles) continue;
                 bestPosition = position;
                 bestScore = positionScore;
@@ -198,18 +204,10 @@ public class RunInAnyDirection {
                 APosition potentialPosition = unit.translateByTiles(dtx, dty);
 
                 // If has path to given point, add it to the list of potential points
-//                APainter.paintLine(unit, potentialPosition, Color.Purple);
-//                if (isPossibleAndReasonablePosition(unit, potentialPosition, false, "v", "x")) {
                 if (
                     IsReasonablePositionToRunTo.check(
-                        unit,
-                        potentialPosition,
-                        runAwayFrom
-//                        false,
-//                        null,
-//                        null
-//                        "O",
-//                        "x"
+                        unit, potentialPosition, runAwayFrom,
+                        "O", "x"
                     )
                         && potentialPosition.distTo(unit) >= 0.4
                         && !potentialPosition.isCloseToMapBounds()
@@ -220,7 +218,7 @@ public class RunInAnyDirection {
         }
     }
 
-    int runAnyDirectionInitialRadius(AUnit unit, HasPosition runFrom) {
+    int runAnyDirectionRadius(AUnit unit, HasPosition runFrom) {
         if (unit.isVulture()) {
             return ANY_DIRECTION_RADIUS_VULTURE;
         }
@@ -230,7 +228,8 @@ public class RunInAnyDirection {
                 : ANY_DIRECTION_RADIUS_DRAGOON;
         }
         else if (unit.isTerran() && unit.isInfantry()) {
-            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
+//            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
+            return ANY_DIRECTION_RADIUS_TERRAN_INFANTRY;
         }
 
         return ANY_DIRECTION_RADIUS_DEFAULT;

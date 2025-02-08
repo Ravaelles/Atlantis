@@ -16,6 +16,7 @@ public class RunError extends Manager {
             if (!unit.isObserver()) {
                 A.errPrintln(
                     A.now() + " ERROR_RUN for " + unit.nameWithId() + " / dist=" + A.digit(dist)
+                        + " / mode=" + unit.runningManager().lastRunMode()
                         + " / nearEnemy=" + unit.nearestEnemyDist()
                 );
 //                A.printStackTrace("Wtf");

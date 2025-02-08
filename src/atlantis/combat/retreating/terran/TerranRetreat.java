@@ -17,8 +17,7 @@ public class TerranRetreat extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            TerranShouldNotRetreat.class,
-            TerranShouldRetreat.class,
+            TerranFullRetreat.class,
         };
     }
 }

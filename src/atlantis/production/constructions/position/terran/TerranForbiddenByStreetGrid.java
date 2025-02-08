@@ -23,24 +23,30 @@ public class TerranForbiddenByStreetGrid {
         int moduloX = (position.tx() % GRID_SIZE_X);
         int moduloY = (position.ty() % GRID_SIZE_Y);
 
+        if (moduloX == 0) return failed("Terr_TX modulo is 0");
+        if (moduloY == 0) return failed("Terr_TY modulo is 0");
+
 //        if (moduloX % GRID_SIZE_X == 0) return failed("TX modulo zero = " + moduloX);
 //        if (moduloY % GRID_SIZE_Y == 0) return failed("TY modulo zero = " + moduloY);
 
         if (building.isSupplyDepot() || building.isAcademy()) {
-            if (
-                moduloX != 1 && moduloX != 4 && moduloX != 7
-            ) return failed("TX_Sm modulo 2x2 = " + moduloY);
-            if (moduloY != 1 && moduloY != 3) return failed("TY_Sm modulo 2x2 = " + moduloY);
+            if (moduloX != 1 && moduloX != 4 && moduloX != 7) return failed("TX_Sm modulo 3x2 = " + moduloY);
+//            if (moduloX != 1 && moduloX != 4) return failed("TX_Sm modulo 3x2 = " + moduloY);
+            if (moduloY != 1 && moduloY != 3) return failed("TY_Sm modulo 3x2 = " + moduloY);
 
             return false;
         }
 
         boolean factoryOrStarport = building.isFactory();
         if (building.isBarracks() || factoryOrStarport || building.isEngineeringBay()) {
-//            if (moduloX != 1 && moduloX != 7 && moduloX != (factoryOrStarport ? 9 : 1)) {
-            if (moduloX != 1 && moduloX != 7) {
-                return failed("TX_Lg modulo failed for Barrakz = " + moduloX);
+            if (building.isBarracks()) {
+                if (moduloX != 1 && moduloX != 5) return failed("TX faile for Barrakz = " + moduloX);
             }
+
+            if (factoryOrStarport) {
+                if (moduloX != 5) return failed("TX_Lg modulo failed for FactOrStar = " + moduloX);
+            }
+
             if (moduloY != 1) return failed("TY_Lg modulo failed for Barrakz = " + moduloY);
 
             return false;

@@ -7,7 +7,6 @@ import atlantis.units.AUnit;
 import atlantis.util.We;
 
 public class TerranShouldStopRunning extends Manager {
-
     public TerranShouldStopRunning(AUnit unit) {
         super(unit);
     }

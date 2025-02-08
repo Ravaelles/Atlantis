@@ -3324,7 +3324,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (cb != null) return cb;
 
         if (Count.ourCombatUnits() >= 8 && Count.bases() >= 2) {
-            return Bases.natural().translateTilesTowards(3, Chokes.natural());
+            AUnit natural = Bases.natural();
+            if (natural != null) {
+                return natural.translateTilesTowards(3, Chokes.natural());
+            }
         }
 
         AUnit base = Select.naturalOrMain();

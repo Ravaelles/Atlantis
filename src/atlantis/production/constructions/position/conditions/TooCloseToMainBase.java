@@ -20,6 +20,7 @@ public class TooCloseToMainBase {
 
             if (We.terran()) base = base.translateByTiles(2, 0);
 
+//            System.err.println("distFromBase = " + base.distTo(position) + " / " + minDistFromBase);
             if (base.distTo(position) <= minDistFromBase) {
                 return failed("Too close to main base");
             }
@@ -31,7 +32,7 @@ public class TooCloseToMainBase {
     private static double minDistFromBase(AUnitType building) {
         if (We.terran()) {
             if (building.isCombatBuilding()) return 0;
-            return 3;
+            return building.isSupplyDepot() ? 8 : 4;
         }
 
         if (We.protoss()) {

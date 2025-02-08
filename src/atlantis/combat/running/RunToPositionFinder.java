@@ -4,15 +4,10 @@ import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.combat.running.to_building.ShouldRunTowardsBunker;
-import atlantis.debug.painter.APainter;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
-import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public class RunToPositionFinder {
 
@@ -32,7 +27,7 @@ public class RunToPositionFinder {
         AUnit unit = running.unit;
 
         HasPosition currentRunTo = unit.runningManager().runTo();
-        if (currentRunTo != null && unit.lastRunningPositionChangeAgo() <= 8) {
+        if (currentRunTo != null && currentRunTo.distTo(unit) >= 1.4 && unit.lastRunningPositionChangeAgo() <= 14) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - CONT RUN TO");
             return currentRunTo;
         }
@@ -44,7 +39,7 @@ public class RunToPositionFinder {
         ) {
             // Run to BUNKER
             if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
-                running.method = "TowardsBunker";
+                running._lastRunMode = "TowardsBunker";
                 AUnit position = ShouldRunTowardsBunker.position();
                 if (position != null) {
 //                    unit.paintCircleFilled(8, Color.Teal);
@@ -57,7 +52,7 @@ public class RunToPositionFinder {
             if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
                 AUnit position = ShouldRunTowardsBase.position();
                 if (position != null) {
-                    running.method = "TowardsBase";
+                    running._lastRunMode = "TowardsBase";
 //                    unit.paintCircleFilled(3, Color.Yellow);
                     return running.setRunTo(position);
                 }
@@ -70,7 +65,7 @@ public class RunToPositionFinder {
 //            System.err.println("show back to enemy");
             if (runShowBackToEnemy.findPositionForShowingBackToEnemy(runAwayFrom)) {
 //                System.err.println("show back to enemy OK");
-                running.method = "ShowBack";
+                running._lastRunMode = "ShowBack";
 //                Color color = Color.Blue;
 //                HasPosition runTo = unit.runningManager().runTo;
 //                APainter.paintLine(unit, runTo, color);
@@ -86,7 +81,7 @@ public class RunToPositionFinder {
 
         // === Run as far from enemy as possible =====================
 
-        running.method = "AnyDirection";
+        running._lastRunMode = "AnyDirection";
         return running.setRunTo(runInAnyDirection.runInAnyDirection(runAwayFrom));
     }
 

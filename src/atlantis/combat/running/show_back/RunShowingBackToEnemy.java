@@ -11,7 +11,7 @@ import atlantis.util.Vector;
 public class RunShowingBackToEnemy {
     public static final double SHOW_BACK_DIST_DEFAULT = 4;
     public static final double SHOW_BACK_DIST_DRAGOON = 6;
-    public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 4;
+    public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 5;
     public static final double SHOW_BACK_DIST_VULTURE = 5;
 
     private final ARunningManager running;
@@ -138,10 +138,10 @@ public class RunShowingBackToEnemy {
         // =========================================================
 
         // If run distance is acceptably long and it's connected, it's ok.
-        if (running.isReasonablePositionToRun(
-//            running.unit(), runTo, true, "O", "X"
+        if (IsReasonablePositionToRunTo.check(
+            running.unit(), runTo, runAwayFrom, "O", "X"
 //            running.unit(), runTo, true, null, null
-            running.unit(), runTo
+//            running.unit(), runTo
         )) {
 //        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
 //            APainter.paintLine(unit.position(), runTo, Color.Purple);
