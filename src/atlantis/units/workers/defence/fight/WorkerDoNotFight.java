@@ -14,6 +14,8 @@ public class WorkerDoNotFight {
 
 //        if (A.s <= 60 * 6) return true;
 
+        if (unit.hp() >= 50) return false;
+
         if (unit.enemiesNear().buildings().notEmpty()) return false;
 
         Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
@@ -27,7 +29,7 @@ public class WorkerDoNotFight {
 
         if (Enemy.zerg()) {
             if (unit.hp() <= 25) return true;
-            if (unit.meleeEnemiesNearCount(3) >= 3) return true;
+            if (unit.meleeEnemiesNearCount(2.5) >= 3) return true;
         }
         else if (Enemy.protoss() && unit.hp() < minHpForProtoss(unit)) return true;
         else if (unit.hp() <= 20) return true;

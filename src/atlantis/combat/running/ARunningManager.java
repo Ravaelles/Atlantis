@@ -217,7 +217,7 @@ public class ARunningManager {
         runningFromPosition = null;
         runningFromUnit = null;
 
-        if (unit.isMoving()) unit.stop("StopRunning");
+        if (unit.isMoving() && unit.lastActionMoreThanAgo(1)) unit.stop("StopRunning");
 
 //        A.printStackTrace("StoppedRunning");
     }

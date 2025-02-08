@@ -14,8 +14,8 @@ import atlantis.util.ProcessHelper;
  */
 public class Main {
     public static String ourRace() {
-        return "Terran";
-//        return "Protoss";
+//        return "Terran";
+        return "Protoss";
 //        return "Zerg";
     }
 
@@ -206,7 +206,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
