@@ -28,7 +28,7 @@ public class PositionFulfillsAllConditions {
 
 //        System.out.println("Conditions: " + position);
 //        if (building.isForge())
-//        System.out.println(position + " / " + building + " / Status: " + AbstractPositionFinder._STATUS);
+        System.out.println(position + " / " + building + " / Status: " + AbstractPositionFinder._STATUS);
 
 //        APainter.paintCircle(position, 6, Color.Red);
 //        if (position.tx() % 2 == 0 && !building.isBase() && !building.isGasBuilding()) return false;

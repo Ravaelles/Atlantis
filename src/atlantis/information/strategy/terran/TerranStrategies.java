@@ -18,6 +18,7 @@ public class TerranStrategies extends AStrategy {
     public static final AStrategy TERRAN_2_Rax_Academy_vZ = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vP = new AStrategy();
     public static final AStrategy TERRAN_2_Rax_Academy_vT = new AStrategy();
+    public static final AStrategy TERRAN_2_Rax_AllIn = new AStrategy();
     public static final AStrategy TERRAN_3_Rax_Academy_vP = new AStrategy();
 
     // Expansion
@@ -38,7 +39,8 @@ public class TerranStrategies extends AStrategy {
 //        if (true) { return TerranStrategies.TERRAN_BBS; }
 
         if (Enemy.protoss()) {
-            return TERRAN_Sparks;
+            return TerranStrategies.TERRAN_2_Rax_AllIn;
+//            return TERRAN_Sparks;
 //            return TerranStrategies.TERRAN_Shallow_Two_vP;
 //            return TerranStrategies.TERRAN_3_Rax_Academy_vP;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
@@ -72,6 +74,8 @@ public class TerranStrategies extends AStrategy {
         TERRAN_2_Rax_Academy_vP.setTerran().setName("2 Rax Academy vP").setGoingRush().setGoingBio();
 
         TERRAN_2_Rax_Academy_vT.setTerran().setName("2 Rax Academy vT").setGoingRush().setGoingBio();
+
+        TERRAN_2_Rax_AllIn.setTerran().setName("2 Rax AllIn").setGoingCheese().setGoingBio();
 
         TERRAN_3_Rax_Academy_vP.setTerran().setName("3 Rax Academy vP").setGoingRush().setGoingBio();
 

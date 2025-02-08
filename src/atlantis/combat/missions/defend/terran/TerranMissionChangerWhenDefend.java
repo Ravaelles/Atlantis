@@ -33,6 +33,10 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
+        if (OurStrategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+            return forceMissionAttack("Rush or cheese");
+        }
+
         if (Alpha.count() <= 7) return false;
 
         if (EnemyUnitBreachedBase.get() != null) return false;

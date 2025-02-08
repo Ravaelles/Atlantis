@@ -6,6 +6,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
+import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
 
 public class TerranStrategyResponse extends RaceStrategyResponse {
     @Override
@@ -30,5 +31,12 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
 //        return 0;
         return 1;
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
+    }
+
+    // === Air units ======================================================
+
+    @Override
+    public void handleAirUnitsDefence() {
+        TerranAirDefence.update();
     }
 }

@@ -25,7 +25,8 @@ public class TerranShouldNotRetreat extends Manager {
     public boolean applies() {
         if (!We.terran()) return false;
 
-        return unit.enemiesNear().visibleOnMap().notEmpty();
+        return true;
+//        return unit.enemiesNear().visibleOnMap().notEmpty();
     }
 
     @Override
@@ -42,6 +43,11 @@ public class TerranShouldNotRetreat extends Manager {
     public boolean shouldNotRetreat() {
         if ((decision = asTank()).notIndifferent()) {
             if (decision.isTrue()) unit.addLog("BraveTank");
+            return decision.toBoolean();
+        }
+
+        if ((decision = whenNoEnemyRanged()).notIndifferent()) {
+            if (decision.isTrue()) unit.addLog("NoEnemyRanged");
             return decision.toBoolean();
         }
 
@@ -81,6 +87,14 @@ public class TerranShouldNotRetreat extends Manager {
 //        }
 
         return false;
+    }
+
+    private Decision whenNoEnemyRanged() {
+        if (unit.enemiesNear().ranged().inRadius(13.5, unit).isEmpty()) {
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
     }
 
     private Decision asTank() {

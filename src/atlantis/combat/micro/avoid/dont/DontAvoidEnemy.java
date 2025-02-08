@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.terran.TerranDontAvoidEnemy;
-import atlantis.combat.micro.avoid.terran.avoid.AlwaysAvoidAsTerran;
+import atlantis.combat.micro.avoid.terran.avoid.TerranAlwaysAvoidEnemy;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -34,7 +34,7 @@ public class DontAvoidEnemy extends Manager {
         // === Terran ===========================================
 
         if (We.terran()) {
-            if ((new AlwaysAvoidAsTerran(unit)).applies()) return false;
+            if ((new TerranAlwaysAvoidEnemy(unit)).applies()) return false;
 
             return (new TerranDontAvoidEnemy(unit)).anySubmanagerApplies() != null;
         }

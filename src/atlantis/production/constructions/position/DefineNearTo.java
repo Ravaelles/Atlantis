@@ -13,17 +13,15 @@ import atlantis.util.log.ErrorLog;
 
 public class DefineNearTo {
     public static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
-        if (We.protoss()) {
-            HasPosition forcedNearTo = ProtossDefineNearTo.forceAtMain(building, nearTo);
-            if (forcedNearTo != null) return forcedNearTo;
-        }
-
-        if (We.protoss()) {
-            nearTo = ProtossDefineNearTo.forProtoss(building, nearTo);
-        }
-
         if (We.terran()) {
             nearTo = forTerran(building, nearTo);
+        }
+
+        else if (We.protoss()) {
+            HasPosition forcedNearTo = ProtossDefineNearTo.forceAtMain(building, nearTo);
+            if (forcedNearTo != null) return forcedNearTo;
+
+            nearTo = ProtossDefineNearTo.forProtoss(building, nearTo);
         }
 
         if (nearTo == null) nearTo = Select.mainOrAnyBuilding();
@@ -40,7 +38,11 @@ public class DefineNearTo {
             nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
         }
 
-        if (nearTo == null && A.supplyUsed() <= 45) {
+        if (nearTo == null && A.supplyUsed() <= 40) {
+            nearTo = Select.mainOrAnyBuilding();
+        }
+
+        if (nearTo == null && A.supplyUsed() <= 70) {
             nearTo = MainRegion.center();
         }
 

@@ -24,10 +24,19 @@ public class ProduceBarracks {
         if (freeBarracks >= 1) return false;
 
         existingBarracks = Count.withPlanned(Terran_Barracks);
+        unfinishedBarracks = ConstructionRequests.countNotFinishedOfType(Terran_Barracks);
+
+        if (unfinishedBarracks >= 1 && !A.hasMinerals(240)) return false;
+
+        if (OurStrategy.get().isRushOrCheese()) {
+            if (A.hasMinerals(126)) {
+                System.err.println("Barracks for RUSH - " + A.supplyUsed() + "/" + A.supplyTotal() + ", min:" + A.minerals());
+                return produce();
+            }
+        }
+
         if (prioritizeFirstFactory()) return false;
         if (existingBarracks >= 3 && (freeBarracks > 0 || !A.hasMinerals(550))) return false;
-
-        unfinishedBarracks = ConstructionRequests.countNotFinishedOfType(Terran_Barracks);
         if (unfinishedBarracks >= 1 && !A.hasMinerals(190)) return false;
 
         if (freeBarracks == 0 && unfinishedBarracks <= 1 && A.hasMinerals(130)) return produce();

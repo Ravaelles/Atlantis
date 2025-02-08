@@ -31,7 +31,7 @@ public class TooCloseToMainBase {
     private static double minDistFromBase(AUnitType building) {
         if (We.terran()) {
             if (building.isCombatBuilding()) return 0;
-            return 5;
+            return 3;
         }
 
         if (We.protoss()) {

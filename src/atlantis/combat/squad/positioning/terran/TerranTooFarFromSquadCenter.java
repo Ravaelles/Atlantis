@@ -2,6 +2,8 @@ package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -28,6 +30,8 @@ public class TerranTooFarFromSquadCenter extends MissionManager {
 
         center = unit.squad().center();
         if (center == null) return false;
+
+        if (!Enemy.terran() && !EnemyInfo.hasRanged()) return false;
 
         double maxDistToSquadCenter = unit.enemiesNear().empty() ? 10 : squad.radius();
 

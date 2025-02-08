@@ -8,6 +8,7 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.buildings.*;
+import atlantis.production.dynamic.supply.ProduceFallbackPylonWhenSupplyLow;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -19,17 +20,13 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
             && (
-//            A.supplyUsed() <= 30
-//                || A.supplyUsed(31)
-//                || A.hasMinerals(410)
-//                || A.canAffordWithReserved(100, 0)
             A.canAffordWithReserved(92, 0) || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
         );
     }
 
     @Override
     protected void handle() {
-        if (ProduceFallbackPylonWhenVeryLowOnSupply.produce()) return;
+        if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) return;
 
         if (A.hasMinerals(600)) ProduceGateway.produce();
 

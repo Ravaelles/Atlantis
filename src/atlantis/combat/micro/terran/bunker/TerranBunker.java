@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.bunker;
 
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.production.dynamic.terran.buildings.ProduceBunker;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
@@ -25,14 +26,7 @@ public class TerranBunker extends AntiLandBuildingCommander {
 
     @Override
     public boolean shouldBuildNew() {
-        if (!We.terran()) {
-            ErrorLog.printMaxOncePerMinute("shouldBuildNew (Bunker) called for non-terran");
-            return false;
-        }
-
-        if (!Have.barracks()) return false;
-
-        return (new ShouldBuildNewBunker()).shouldBuild();
+        return ProduceBunker.shouldBuild();
     }
 
     @Override

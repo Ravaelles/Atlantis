@@ -2,6 +2,7 @@ package atlantis.combat.micro.terran.bunker;
 
 import atlantis.combat.micro.terran.bunker.position.NewBunkerApproximatePosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.dynamic.terran.buildings.ShouldProduceNewBunker;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -18,7 +19,7 @@ public class NewBunker {
     }
 
     public boolean requestNewAndAutomaticallyDecidePosition() {
-        if (!(new ShouldBuildNewBunker()).shouldBuild()) return false;
+        if (!(new ShouldProduceNewBunker()).shouldBuild()) return false;
 
         HasPosition approximatePositionAsUnspecified = (new NewBunkerApproximatePosition()).approximatePosition();
         if (Count.existingOrPlannedBuildingsNear(what(), 7, approximatePositionAsUnspecified) > 0) return false;

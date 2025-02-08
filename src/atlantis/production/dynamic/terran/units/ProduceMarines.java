@@ -8,6 +8,8 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
+import atlantis.information.strategy.OurStrategy;
+import atlantis.map.choke.Chokes;
 import atlantis.production.dynamic.terran.TerranDynamicInfantry;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
@@ -27,12 +29,16 @@ public class ProduceMarines {
     private static int marines;
 
     public static boolean marines() {
+        if (!A.hasMinerals(50)) return false;
+
         if (MechInsteadOfInfantry.check()) return false;
 
         int freeBarracks = Count.freeBarracks();
-
         if (freeBarracks <= 0) return false;
-//        freeBarracks < CountInQueue.count(Terran_Marine)
+
+        if (OurStrategy.get().isRushOrCheese()) {
+            if (A.hasMinerals(50)) return forceProduceMarine();
+        }
 
         if (A.hasMinerals(100) && EnemyUnitBreachedBase.get() != null) return forceProduceMarine();
 
@@ -108,7 +114,7 @@ public class ProduceMarines {
     }
 
     private static boolean forceProduceMarine() {
-        return Select.ourFree(Terran_Barracks).random().train(
+        return Select.ourFree(Terran_Barracks).nearestTo(Chokes.naturalOrAnyBuilding()).train(
             Terran_Marine, ForcedDirectProductionOrder.create(Terran_Marine)
         );
     }

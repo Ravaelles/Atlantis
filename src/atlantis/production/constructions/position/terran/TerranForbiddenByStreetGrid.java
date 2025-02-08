@@ -8,7 +8,7 @@ import atlantis.util.We;
 
 public class TerranForbiddenByStreetGrid {
     public static final int GRID_SIZE_X = 11;
-    public static final int GRID_SIZE_Y = 6;
+    public static final int GRID_SIZE_Y = 5;
 
     /**
      * Returns true if game says it's possible to build given building at this position.
@@ -29,8 +29,8 @@ public class TerranForbiddenByStreetGrid {
         if (building.isSupplyDepot() || building.isAcademy()) {
             if (
                 moduloX != 1 && moduloX != 3 && moduloX != 5 && moduloX != 7 && moduloX != 9
-            ) return failed("TX modulo 2x2 = " + moduloY);
-            if (moduloY != 4) return failed("TY modulo 2x2 = " + moduloY);
+            ) return failed("TX_Sm modulo 2x2 = " + moduloY);
+            if (moduloY != 1 && moduloY != 3) return failed("TY_Sm modulo 2x2 = " + moduloY);
 
             return false;
         }
@@ -39,9 +39,9 @@ public class TerranForbiddenByStreetGrid {
         if (building.isBarracks() || factoryOrStarport || building.isEngineeringBay()) {
 //            if (moduloX != 1 && moduloX != 7 && moduloX != (factoryOrStarport ? 9 : 1)) {
             if (moduloX != 1 && moduloX != 7) {
-                return failed("TX modulo failed for Barracks = " + moduloX);
+                return failed("TX_Lg modulo failed for Barrakz = " + moduloX);
             }
-            if (moduloY != 1) return failed("TY modulo even = " + moduloY);
+            if (moduloY != 1) return failed("TY_Lg modulo failed for Barrakz = " + moduloY);
 
             return false;
         }

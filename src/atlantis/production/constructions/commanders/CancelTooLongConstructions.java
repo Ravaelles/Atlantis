@@ -10,7 +10,7 @@ import atlantis.util.log.ErrorLog;
 
 public class CancelTooLongConstructions {
     public static void cancelCauseTakingTooLongIfNeeded(Construction constr, int timeout, AUnitType type, AUnitType buildingType) {
-        if (tookTooLong(constr, timeout)) {
+        if (tookTooLong(constr, timeout) && A.canAfford(type)) {
             if (neverCancel(type)) {
                 constr.findPositionForNewBuilding();
 

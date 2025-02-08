@@ -283,4 +283,12 @@ public class EnemyInfo {
 
         return false;
     }
+
+    public static int dangerousAirUnitsThatRequireAntiAirBuilding() {
+        if (Enemy.zerg()) return EnemyUnits.discovered().ofType(AUnitType.Zerg_Mutalisk).count();
+        if (Enemy.protoss()) return EnemyUnits.discovered().ofType(AUnitType.Protoss_Carrier).count();
+        if (Enemy.terran()) return EnemyUnits.discovered().ofType(AUnitType.Terran_Wraith).count();
+
+        return 0;
+    }
 }
