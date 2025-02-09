@@ -139,9 +139,8 @@ public class RunShowingBackToEnemy {
 
         // If run distance is acceptably long and it's connected, it's ok.
         if (IsReasonablePositionToRunTo.check(
-            running.unit(), runTo, runAwayFrom, "O", "X"
-//            running.unit(), runTo, true, null, null
-//            running.unit(), runTo
+            running.unit(), runTo, runAwayFrom
+//            "O", "X"
         )) {
 //        if (isPossibleAndReasonablePosition(unit, runTo, true, null, null)) {
 //            APainter.paintLine(unit.position(), runTo, Color.Purple);

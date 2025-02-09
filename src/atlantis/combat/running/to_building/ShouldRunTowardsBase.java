@@ -2,6 +2,7 @@ package atlantis.combat.running.to_building;
 
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -23,12 +24,13 @@ public class ShouldRunTowardsBase {
 
         if (runAwayFrom instanceof AUnit) {
             AUnit enemy = (AUnit) runAwayFrom;
-            if (enemy.isDarkTemplar()) return Count.cannons() > 0;
+            if (enemy.isDarkTemplar() && unit.distTo(enemy) >= 1.8) return Count.cannons() > 0;
         }
 
         if (tooManyRangedNear(unit)) return false;
 
         if (earlyGamePvZ(unit)) return true;
+        if (earlyGameTvP(unit)) return true;
 
         if (
             unit.enemiesNear().canAttack(unit, 4).count() >= 2
@@ -134,10 +136,19 @@ public class ShouldRunTowardsBase {
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
     }
 
+    private static boolean earlyGameTvP(AUnit unit) {
+        if (!We.terran()) return false;
+        if (!Enemy.protoss()) return false;
+        if (!unit.isMarine()) return false;
+
+        if (unit.rangedEnemiesCount(7) >= 2) return true;
+
+        return unit.hp() >= 30 && unit.meleeEnemiesNearCount(2.4) == 0;
+    }
+
     private static boolean earlyGamePvZ(AUnit unit) {
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
-        if (!unit.isDragoon()) return false;
 
         return unit.hp() >= 35 && unit.squadSize() <= 12;
     }

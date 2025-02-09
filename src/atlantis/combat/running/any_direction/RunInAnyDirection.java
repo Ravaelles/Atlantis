@@ -206,8 +206,8 @@ public class RunInAnyDirection {
                 // If has path to given point, add it to the list of potential points
                 if (
                     IsReasonablePositionToRunTo.check(
-                        unit, potentialPosition, runAwayFrom,
-                        "O", "x"
+                        unit, potentialPosition, runAwayFrom
+//                        "O", "x"
                     )
                         && potentialPosition.distTo(unit) >= 0.4
                         && !potentialPosition.isCloseToMapBounds()

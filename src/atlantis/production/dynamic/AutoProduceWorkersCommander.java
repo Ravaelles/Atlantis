@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -40,6 +41,8 @@ public class AutoProduceWorkersCommander extends Commander {
 
     public static boolean shouldProduceWorkers() {
         if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
+
+        if (prioritizeRush()) return dont("RushPriority");
 
         if (earlyGameOptimize()) return true;
 
@@ -104,6 +107,14 @@ public class AutoProduceWorkersCommander extends Commander {
         // Check if AUTO-PRODUCTION of WORKERS is active.
 
         return isAutoProduceWorkersActive(workers) || dont("Limit");
+    }
+
+    private static boolean prioritizeRush() {
+        if (!Strategy.get().isRushOrCheese()) return false;
+
+        return A.s <= 60 * 6 && !A.hasMinerals(92) && (
+            (!We.terran() || Have.barracks())
+        );
     }
 
     private static boolean earlyGameOptimize() {

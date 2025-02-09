@@ -17,11 +17,11 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
     protected int minFreeSupplyToAct() {
         int supplyUsed = A.supplyUsed();
         if (supplyUsed <= 14) return 0;
-        if (supplyUsed <= 28) return 2;
-        if (supplyUsed <= 40) return 3;
-        if (supplyUsed <= 60) return 5;
-        if (supplyUsed <= 90) return 6;
-        if (supplyUsed <= 120) return 10;
+        if (supplyUsed <= 28) return 3;
+        if (supplyUsed <= 40) return 4;
+        if (supplyUsed <= 60) return 6;
+        if (supplyUsed <= 90) return 8;
+        if (supplyUsed <= 120) return 11;
         if (supplyUsed <= 190) return 14;
         return -1;
     }

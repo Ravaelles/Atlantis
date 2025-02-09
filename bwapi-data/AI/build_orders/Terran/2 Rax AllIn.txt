@@ -34,5 +34,5 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 10 - Barracks
 11 - Barracks
 17 - Supply Depot
-38 - Academy
-39 - Refinery
+45 - Academy
+46 - Refinery

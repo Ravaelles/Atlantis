@@ -3,8 +3,8 @@ package atlantis.combat.micro.avoid.terran.avoid;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 
-public class ShouldNeverAvoidAsTerran extends HasUnit {
-    public ShouldNeverAvoidAsTerran(AUnit unit) {
+public class TerranShouldNeverAvoid extends HasUnit {
+    public TerranShouldNeverAvoid(AUnit unit) {
         super(unit);
     }
 
@@ -28,7 +28,21 @@ public class ShouldNeverAvoidAsTerran extends HasUnit {
             unit.addLog("NeverAvoidMarine");
             return true;
         }
+
+        if (dontAvoidRangedHavingAdvantage()) {
+            unit.addLog("BraveVsRanged");
+            return true;
+        }
+
         return false;
+    }
+
+    private boolean dontAvoidRangedHavingAdvantage() {
+        return unit.isMarine()
+            && unit.hp() >= 24
+            && unit.cooldown() <= 4
+            && unit.eval() >= 1.6
+            && unit.meleeEnemiesNearCount(3.6) == 0;
     }
 
     private boolean enemyWeakAirUnitsNearby() {

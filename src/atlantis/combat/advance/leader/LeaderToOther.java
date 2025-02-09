@@ -34,14 +34,19 @@ public class LeaderToOther extends MissionManager {
         if (otherFriend == null) return false;
         double distToOther = otherFriend.distTo(unit);
 
-        if (shouldBeCautiosAgainstProtossEarly(distToOther)) return true;
+        if (asProtossShouldBeCautiosAgainstProtossEarly(distToOther)) return true;
 
-        if (unit.enemiesNear().canAttack(unit, unit.shieldWound() >= 9 ? 6.1 : 4.1).notEmpty()) return false;
+        if (We.terran()) {
+            if (unit.enemiesNear().canAttack(unit, 5.1).notEmpty()) return false;
+        }
+        else if (We.protoss()) {
+            if (unit.enemiesNear().canAttack(unit, unit.shieldWound() >= 9 ? 6.1 : 4.1).notEmpty()) return false;
+        }
 
         return distToOther <= 20 && distToOther > dist();
     }
 
-    private boolean shouldBeCautiosAgainstProtossEarly(double distToOther) {
+    private boolean asProtossShouldBeCautiosAgainstProtossEarly(double distToOther) {
         if (!Enemy.protoss()) return false;
         if (!We.protoss()) return false;
 
@@ -55,7 +60,7 @@ public class LeaderToOther extends MissionManager {
     private double dist() {
         if (unit.enemiesNear().combatUnits().havingWeapon().empty()) return 5;
 
-        return 1.3 + unit.squadSize() / 6.0 + (Army.strength() >= 300 ? 1.5 : 0);
+        return 1.6 + unit.squadSize() / 5.0 + (Army.strength() >= 300 ? 1.5 : 0);
     }
 
     @Override
