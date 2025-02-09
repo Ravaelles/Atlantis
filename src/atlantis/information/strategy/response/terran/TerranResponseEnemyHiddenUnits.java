@@ -2,6 +2,7 @@ package atlantis.information.strategy.response.terran;
 
 import atlantis.game.A;
 import atlantis.information.strategy.response.StrategyResponse;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -30,8 +31,8 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
 
         for (int i = 0; i < n; i++) {
             if (AddToQueue.withHighPriority(
-                AUnitType.Terran_Missile_Turret
-//                Chokes.mainChoke().translateTilesTowards(6, Select.mainOrAnyBuilding())
+                AUnitType.Terran_Missile_Turret,
+                Chokes.mainChoke().translateTilesTowards(6, Select.mainOrAnyBuilding())
             ) != null) {
                 howManyAllowed--;
             }

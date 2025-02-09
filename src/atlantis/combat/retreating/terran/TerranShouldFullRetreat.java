@@ -15,13 +15,21 @@ public class TerranShouldFullRetreat {
         if (unit.enemiesNear().combatUnits().empty()) return false;
 
         double eval = unit.eval();
-        if (unit.isMissionAttack() && eval <= (A.s <= 60 * 7 ? 1.2 : 1.15)) return true;
+        if (unit.isMissionAttack() && eval <= evalThresholdDuringMissionAttack()) return true;
 
         if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
 
         if (unit.distToBunker() <= 2.5) return false;
 
         return unit.eval() <= 0.9;
+    }
+
+    private static double evalThresholdDuringMissionAttack() {
+        double base = A.s <= 60 * 7 ? 1.2 : 1;
+
+        base += 5.0 / (5 + Count.ourCombatUnits());
+
+        return base;
     }
 
 }
