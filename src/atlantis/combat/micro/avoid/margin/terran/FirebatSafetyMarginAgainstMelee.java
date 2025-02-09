@@ -17,15 +17,24 @@ public class FirebatSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 //        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
 //        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
         double ALLOW_ALWAYS = -0.1;
-        double MIN_SAFE = 2.3;
+        double MIN_SAFE = 2.6;
+        double MIN_SAFER = 2.9;
 
-        if (defender.hp() >= 18 && defender.isOtherUnitShowingBackToUs(attacker)) return ALLOW_ALWAYS;
+        if (defender.hp() <= 30) {
+            if (!defender.shotSecondsAgo(3) && defender.meleeEnemiesNearCount(2.5) <= 1) {
+                return ALLOW_ALWAYS;
+            }
 
-        if (defender.cooldown() >= 4) {
+            return MIN_SAFER;
+        }
+
+        if (defender.hp() >= 20 && defender.isOtherUnitShowingBackToUs(attacker)) return ALLOW_ALWAYS;
+
+        if (defender.cooldown() >= 3) {
             return MIN_SAFE;
         }
 
-        if (defender.hp() <= 29 && !defender.hasMedicInHealRange()) {
+        if (defender.hp() <= 36 && !defender.hasMedicInHealRange()) {
             return MIN_SAFE;
         }
 

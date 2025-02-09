@@ -41,6 +41,8 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double vsZerg(AUnit attacker) {
+        if (!attacker.isZerg()) return -1;
+
         if (
             defender.cooldown() <= 3
                 && defender.shotSecondsAgo() >= 0.6

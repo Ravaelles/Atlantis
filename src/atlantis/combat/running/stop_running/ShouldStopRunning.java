@@ -15,8 +15,6 @@ public class ShouldStopRunning extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
-
         return (unit.isRunning() || unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
             && !unit.isActionDance();
     }

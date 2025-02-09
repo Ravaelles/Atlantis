@@ -3,6 +3,7 @@ package atlantis.combat.micro.attack;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -17,6 +18,13 @@ public class ProcessAttackUnit extends Manager {
 
     public boolean processAttackOtherUnit(AUnit target) {
 //        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
+
+//        if (unit.isWounded()) {
+//            ErrorLog.debug("Wounded unit attacking " + unit + " / " + target + " / dist: " + unit.distToDigit(target));
+//            unit.managerLogs().print("Managers logs");
+//            printParentsStack();
+//            GameSpeed.pauseGame();
+//        }
 
         if (target == null) {
 //            ErrorLog.printMaxOncePerMinute(unit.type() + " AttackUnit got null target");

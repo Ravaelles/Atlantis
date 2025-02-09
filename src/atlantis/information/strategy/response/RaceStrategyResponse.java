@@ -42,9 +42,9 @@ public abstract class RaceStrategyResponse {
     public void updateEnemyStrategyChanged() {
         AStrategy enemyStrategy = EnemyStrategy.get();
 
-        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
-            return;
-        }
+//        if (Strategy.get().isRushOrCheese() && GamePhase.isEarlyGame()) {
+//            return;
+//        }
 
         // === Rush ========================================
 
@@ -70,10 +70,6 @@ public abstract class RaceStrategyResponse {
         // === Air units ===========================================
 
         if (enemyStrategy.isAirUnits()) {
-//            if (!Enemy.protoss()) {
-//                Missions.setGlobalMissionDefend();
-//            }
-
             handleAirUnitsDefence();
         }
     }

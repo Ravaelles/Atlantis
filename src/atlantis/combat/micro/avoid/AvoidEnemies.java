@@ -100,7 +100,7 @@ public class AvoidEnemies extends Manager {
 
     @Override
     public String toString() {
-        String enemyString = "NULL";
+        String enemyString = "None!";
 
         if (unit.runningFromUnit() != null) {
             AUnit enemy = unit.runningFromUnit();

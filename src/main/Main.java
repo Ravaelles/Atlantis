@@ -287,7 +287,8 @@ public class Main {
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Zerg
-        if (true) return "ums/rav/terran/M_v_Lings.scm";
+//        if (true) return "ums/rav/terran/M_v_Lings.scm";
+        if (true) return "ums/rav/terran/MMF_v_Lings.scx";
 //        if (true) return "ums/rav/terran/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
 //        if (true) return "ums/rav/terran/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings
 //        if (true) return "ums/rav/terran/M&M_v_Hydras.scx"; // M&M v Hydras

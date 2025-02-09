@@ -1,16 +1,17 @@
 package atlantis.information.strategy.response.terran;
 
 import atlantis.combat.missions.Missions;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
-import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
 
 public class TerranStrategyResponse extends RaceStrategyResponse {
     @Override
     public void onEnemyGoesHiddenUnits() {
+        System.out.println(A.minSec() + " TerranStrategyResponse.onEnemyGoesHiddenUnits");
         (new TerranResponseEnemyHiddenUnits()).handle();
     }
 
@@ -28,7 +29,6 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
     }
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
-//        return 0;
         return 1;
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }

@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.range.OurDragoonRange;
+import atlantis.util.We;
 
 public class ContinueShotAnimation extends Manager {
     public ContinueShotAnimation(AUnit unit) {
@@ -35,10 +36,14 @@ public class ContinueShotAnimation extends Manager {
 
         Decision decision;
 
-        if ((decision = forDragoon()).notIndifferent()) return decision.toBoolean();
-        if ((decision = forZealot()).notIndifferent()) return decision.toBoolean();
+        if (We.protoss()) {
+            if ((decision = forDragoon()).notIndifferent()) return decision.toBoolean();
+            if ((decision = forZealot()).notIndifferent()) return decision.toBoolean();
+        }
 
-        if ((decision = forMarine()).notIndifferent()) return decision.toBoolean();
+        if (We.terran()) {
+            if ((decision = forMarine()).notIndifferent()) return decision.toBoolean();
+        }
 
         // =========================================================
 
@@ -119,11 +124,15 @@ public class ContinueShotAnimation extends Manager {
     private Decision forMarine() {
         if (!unit.isMarine()) return Decision.INDIFFERENT;
 
-        if (true) return Decision.FALSE;
-        if (unit.cooldown() >= 14) {
-            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.cooldown());
+//        if (true) return Decision.FALSE;
+//        System.out.println(A.now + " - cooldown: " + unit.cooldown() + " / " + unit.cooldownAbsolute());
+
+        if (unit.cooldown() >= 17) {
+//            System.err.println("@ " + A.now() + " - DONT - " + unit.typeWithUnitId() + " - " + unit.cooldown());
             return Decision.FALSE;
         }
+
+        if (true) return Decision.FALSE;
 
         if (
             unit.isAttacking()
