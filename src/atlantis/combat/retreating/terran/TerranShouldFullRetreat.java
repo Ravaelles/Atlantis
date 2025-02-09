@@ -27,7 +27,7 @@ public class TerranShouldFullRetreat {
     private static double evalThresholdDuringMissionAttack() {
         double base = A.s <= 60 * 7 ? 1.2 : 1;
 
-        base += 5.0 / (5 + Count.ourCombatUnits());
+        base += 7.0 / (5 + Count.ourCombatUnits());
 
         return base;
     }

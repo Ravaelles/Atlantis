@@ -3,6 +3,7 @@ package atlantis.production.dynamic.expansion.terran;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -15,6 +16,8 @@ public class TerranShouldExpandToNatural {
         }
 
         if (A.s >= 60 * 9) return TerranShouldExpand.returnYes("GotLate");
+
+        if (Strategy.get().goingBio() && Army.strength() <= 200) return TerranShouldExpand.returnNo("NeedStrongerBio");
 
         if (!A.hasMinerals(550) && !Have.factoryWithUnfinished()) return TerranShouldExpand.returnNo("NoFactory");
 

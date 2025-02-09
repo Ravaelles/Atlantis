@@ -2,6 +2,7 @@ package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
@@ -40,7 +41,10 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     }
 
     private boolean shouldProduceUnitsBeforeSecondBase() {
-        return Count.marines() <= 3 || Count.medics() <= 3 || ArmyStrength.weAreWeaker();
+        return Count.marines() <= 3
+            || Count.medics() <= 3
+            || ArmyStrength.weAreWeaker()
+            || (Strategy.get().isRushOrCheese() && Army.strength() <= 200);
     }
 
     private static boolean saveForBase() {

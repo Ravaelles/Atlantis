@@ -15,7 +15,7 @@ public class TerranShouldExpand {
     public static boolean shouldExpand() {
         return cache.get(
             "shouldExpand",
-            57,
+            47,
             () -> {
                 bases = Count.bases();
                 basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);

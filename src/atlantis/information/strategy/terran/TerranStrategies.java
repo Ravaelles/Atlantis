@@ -51,7 +51,8 @@ public class TerranStrategies extends AStrategy {
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vT;
         }
         else {
-            return TERRAN_Sparks;
+            return TerranStrategies.TERRAN_2_Rax_AllIn;
+//            return TERRAN_Sparks;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vZ;
 //            return TerranStrategies.TERRAN_2_Rax_Academy_vP;
         }

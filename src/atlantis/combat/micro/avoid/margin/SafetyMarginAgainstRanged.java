@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.margin;
 import atlantis.combat.micro.avoid.margin.protoss.DragoonSafetyMarginAgainstRanged;
 import atlantis.combat.micro.avoid.margin.terran.BonusForWraith;
 
+import atlantis.combat.micro.avoid.margin.terran.MarineSafetyMarginAgainstRanged;
 import atlantis.debug.painter.APainter;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -33,7 +34,10 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
                 }
             }
             else if (We.terran()) {
-                if (defender.isGhost()) {
+                if (defender.isTerranInfantry()) {
+                    return (new MarineSafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
+                }
+                else if (defender.isGhost()) {
                     criticalDist += bonusForGhost(attacker);
                 }
                 else if (defender.isWraith()) {
