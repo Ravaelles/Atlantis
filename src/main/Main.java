@@ -72,7 +72,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // =========================================================
@@ -249,7 +249,7 @@ public class Main {
 
         // vs Protoss
 //        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
-        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
+//        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/terran/1M_v_1Zealot.scm";
@@ -287,6 +287,7 @@ public class Main {
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Zerg
+        if (true) return "ums/rav/terran/M_v_Lings.scm";
 //        if (true) return "ums/rav/terran/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
 //        if (true) return "ums/rav/terran/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings
 //        if (true) return "ums/rav/terran/M&M_v_Hydras.scx"; // M&M v Hydras

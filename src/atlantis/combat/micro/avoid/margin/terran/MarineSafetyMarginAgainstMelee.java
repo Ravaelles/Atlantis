@@ -17,9 +17,14 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
 //        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
 //        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
-        if (defender.isOtherUnitShowingBackToUs(attacker)) return 0.7;
+        if (defender.isOtherUnitShowingBackToUs(attacker)) return 0.4;
 
-        double margin = baseValueAgainst(attacker)
+        double margin = vsZerg(attacker);
+        if (margin != -1) {
+            return margin;
+        }
+
+        margin = baseValueAgainst(attacker)
             + (defender.woundPercent() / 76.0)
             + (defender.cooldown() >= 10 ? +0.4 : 0)
             + (defender.cooldown() >= 7 ? +0.4 : 0)
@@ -33,6 +38,19 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
         return margin;
 
+    }
+
+    private double vsZerg(AUnit attacker) {
+        if (
+            defender.cooldown() <= 3
+                && defender.shotSecondsAgo() >= 0.6
+                && defender.hp() >= 9
+        ) {
+//            System.err.println(A.now() + " - " + defender.typeWithUnitId() + " - " + defender.hp());
+            return -0.1;
+        }
+
+        return -1;
     }
 
     private double manyEnemiesNearBonus(AUnit defender) {
@@ -61,15 +79,18 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double baseVsZergling() {
+
 //        double base = 2.28;
         double base = 1.38;
-        int meleeEnemiesNear = defender.meleeEnemiesNearCount(3.5);
+        int meleeEnemiesNear = defender.meleeEnemiesNearCount(2.8);
 
-        if (defender.cooldown() >= 4) {
+        if (defender.cooldown() >= 6) {
             base += 1.2
                 + (meleeEnemiesNear >= 3 ? 0.4 : 0)
                 + (meleeEnemiesNear >= 4 ? 0.4 : 0);
         }
+
+        if (defender.hp() >= 20 && defender.cooldown() <= 4) return base;
 
         return base
             + (defender.cooldown() >= 10 ? 2.0 : 0)

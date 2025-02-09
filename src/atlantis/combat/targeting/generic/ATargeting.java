@@ -14,8 +14,8 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class ATargeting extends HasUnit {
-    //    protected static final boolean DEBUG = true;
-    protected static final boolean DEBUG = false;
+    public static boolean DEBUG = true;
+//    public static boolean DEBUG = false;
 
     protected Selection enemyBuildings;
     protected Selection enemyUnits;

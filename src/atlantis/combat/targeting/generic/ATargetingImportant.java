@@ -149,20 +149,6 @@ public class ATargetingImportant extends ATargeting {
 //            return target;
 //        }
 
-        // === Creep colonies ======================================
-
-        target = enemyUnits
-            .ofType(
-                AUnitType.Zerg_Creep_Colony
-            )
-            .inRadius(8, unit)
-            .canBeAttackedBy(unit, unit.isMelee() ? 3.7 : 1.7)
-            .mostWoundedOrNearest(unit);
-        if (target != null) {
-            debug("Targ_CB_CreepC = " + target);
-            return target;
-        }
-
         // =========================================================
 
         target = enemyUnits
@@ -333,6 +319,19 @@ public class ATargetingImportant extends ATargeting {
             return target;
         }
 
+        // === Very close enemy workers ============================
+
+        if (unit.isWounded() || unit.lastUnderAttackLessThanAgo(30)) {
+            target = enemyUnits
+                .workers()
+                .inRadius(1.04, unit)
+                .mostWoundedOrNearest(unit);
+            if (target != null) {
+                debug("Target_Offensive_Workers = " + target);
+                return target;
+            }
+        }
+
         // =========================================================
         // Including unfinished defensive buildings
 
@@ -352,63 +351,6 @@ public class ATargetingImportant extends ATargeting {
 
         if (target != null) {
             debug("C = " + target);
-            return target;
-        }
-
-        // =========================================================
-        // Close Zerglings/Zealots/Firebats OUT OF RANGE
-
-        target = enemyUnits
-            .ofType(
-                AUnitType.Protoss_Probe,
-                AUnitType.Protoss_Zealot,
-                AUnitType.Terran_SCV,
-                AUnitType.Terran_Firebat,
-                AUnitType.Terran_Marine,
-                AUnitType.Zerg_Drone,
-                AUnitType.Zerg_Zergling
-            )
-            .inRadius(9, unit)
-            .canBeAttackedBy(unit, 2)
-            .nearestTo(unit);
-
-        if (target != null) {
-            debug("C5a = " + target);
-            return target;
-        }
-
-        // === WORKERS in RANGE ======================================================
-
-        target = enemyUnits
-            .workers()
-            .inRadius(unit.isMelee() ? 1 : 3.6, unit)
-            .nearestTo(unit);
-
-        if (target != null) {
-            debug("C5bWork = " + target);
-            return target;
-        }
-
-        // === BASES NEARBY ======================================================
-
-        target = enemyBuildings.bases()
-            .inRadius(unit.isMelee() ? 3 : 8, unit)
-            .nearestTo(unit);
-
-        if (target != null) {
-            debug("C5b0 = " + target);
-            return target;
-        }
-
-        // === WORKERS ======================================================
-
-        target = enemyUnits
-            .workers()
-            .inRadius(unit.isMelee() ? 4 : 7, unit)
-            .nearestTo(unit);
-
-        if (target != null) {
-            debug("C5b1 = " + target);
             return target;
         }
 
@@ -460,6 +402,20 @@ public class ATargetingImportant extends ATargeting {
             return target;
         }
 
+        // === Creep colonies ======================================
+
+        target = enemyUnits
+            .ofType(
+                AUnitType.Zerg_Creep_Colony
+            )
+            .inRadius(8, unit)
+            .canBeAttackedBy(unit, unit.isMelee() ? 3.7 : 1.7)
+            .mostWoundedOrNearest(unit);
+        if (target != null) {
+            debug("Targ_CB_CreepC = " + target);
+            return target;
+        }
+
         // =========================================================
         // Including unfinished defensive buildings
 
@@ -472,6 +428,63 @@ public class ATargetingImportant extends ATargeting {
 
         if (target != null) {
             debug("C5d = " + target);
+            return target;
+        }
+
+        // === WORKERS in RANGE ======================================================
+
+        target = enemyUnits
+            .workers()
+            .inRadius(unit.isMelee() ? 1 : 3.6, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5bWork = " + target);
+            return target;
+        }
+
+        // =========================================================
+        // Close Zerglings/Zealots/Firebats OUT OF RANGE
+
+        target = enemyUnits
+            .ofType(
+                AUnitType.Protoss_Probe,
+                AUnitType.Protoss_Zealot,
+                AUnitType.Terran_SCV,
+                AUnitType.Terran_Firebat,
+                AUnitType.Terran_Marine,
+                AUnitType.Zerg_Drone,
+                AUnitType.Zerg_Zergling
+            )
+            .inRadius(9, unit)
+            .canBeAttackedBy(unit, 2)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5a = " + target);
+            return target;
+        }
+
+        // === BASES NEARBY ======================================================
+
+        target = enemyBuildings.bases()
+            .inRadius(unit.isMelee() ? 3 : 8, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5b0 = " + target);
+            return target;
+        }
+
+        // === WORKERS ======================================================
+
+        target = enemyUnits
+            .workers()
+            .inRadius(unit.isMelee() ? 4 : 7, unit)
+            .nearestTo(unit);
+
+        if (target != null) {
+            debug("C5b1 = " + target);
             return target;
         }
 

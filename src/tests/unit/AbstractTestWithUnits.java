@@ -73,6 +73,11 @@ public class AbstractTestWithUnits extends UnitTest {
 
         (new MockEverything(this)).mockEverything();
 //        HeuristicCombatEvaluator.clearCache();
+
+        init();
+    }
+
+    public void init() {
     }
 
     private static void clearCaches() {

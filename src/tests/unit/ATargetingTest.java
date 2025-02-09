@@ -4,6 +4,7 @@ import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.acceptance.WorldStubForTests;
@@ -13,6 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ATargetingTest extends WorldStubForTests {
     public MockedStatic<AGame> aGame;
+
+    @Override
+    public void init() {
+        ATargeting.DEBUG = true;
+
+        super.init();
+    }
 
     @Test
     public void targetsWorkers() {
@@ -109,6 +117,64 @@ public class ATargetingTest extends WorldStubForTests {
         createWorld(1,
             () -> {
                 assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
+    public void targetsCreepOverBaseOrDrones() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit drone, ling1, hydra, colony, ling2;
+
+        FakeUnit[] enemies = fakeEnemies(
+//                drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11.1),
+            fake(AUnitType.Zerg_Hatchery, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.3),
+            fake(AUnitType.Zerg_Cocoon, 11.5),
+            fake(AUnitType.Zerg_Drone, 13.6),
+            fake(AUnitType.Zerg_Hatchery, 13.7),
+            colony = fake(AUnitType.Zerg_Creep_Colony, 14.9),
+            fake(AUnitType.Zerg_Drone, 15.8),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 18.2),
+            fake(AUnitType.Zerg_Hydralisk, 18.3),
+            fake(AUnitType.Zerg_Zergling, 18.9),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(colony, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
+    public void targetsSuperCloseDronesOverCreep() {
+        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit drone, ling1, hydra, colony, ling2;
+
+        FakeUnit[] enemies = fakeEnemies(
+//                drone = fake(AUnitType.Zerg_Drone, 12),
+            drone = fake(AUnitType.Zerg_Drone, 11),
+            fake(AUnitType.Zerg_Larva, 11.1),
+            fake(AUnitType.Zerg_Egg, 11.2),
+            fake(AUnitType.Zerg_Hatchery, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.3),
+            fake(AUnitType.Zerg_Cocoon, 11.5),
+            fake(AUnitType.Zerg_Hatchery, 13.7),
+            colony = fake(AUnitType.Zerg_Creep_Colony, 14.9),
+            fake(AUnitType.Zerg_Drone, 15.8),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 18.2),
+            fake(AUnitType.Zerg_Hydralisk, 18.3),
+            fake(AUnitType.Zerg_Zergling, 18.9),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
             }, () -> fakeOurs(our), () -> enemies
         );
     }
