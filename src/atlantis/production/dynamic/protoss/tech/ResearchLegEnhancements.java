@@ -1,18 +1,16 @@
 package atlantis.production.dynamic.protoss.tech;
 
-import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Leg_Enhancements;
 
-public class ResearchLegEnhancements extends TechResearchCommander {
+public class ResearchLegEnhancements extends UpgradeResearchCommander {
     @Override
     public UpgradeType what() {
         return Leg_Enhancements;

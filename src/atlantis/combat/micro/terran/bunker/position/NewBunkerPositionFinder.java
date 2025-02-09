@@ -45,7 +45,7 @@ public class NewBunkerPositionFinder {
             builder,
             Terran_Bunker,
             positionToSecure,
-            12
+            9
         );
 
         return validateOutput(foundPosition, positionToSecure);

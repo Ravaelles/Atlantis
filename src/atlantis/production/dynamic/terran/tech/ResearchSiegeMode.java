@@ -1,10 +1,10 @@
 package atlantis.production.dynamic.terran.tech;
 
-import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
+import atlantis.production.dynamic.protoss.tech.TechResearchCommander;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -14,7 +14,12 @@ import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
 import bwapi.TechType;
 
-public class SiegeMode extends Commander {
+public class ResearchSiegeMode extends TechResearchCommander {
+    @Override
+    public TechType what() {
+        return TechType.Tank_Siege_Mode;
+    }
+
     @Override
     public boolean applies() {
         return Have.factory() && shouldResearchNow();
@@ -30,7 +35,7 @@ public class SiegeMode extends Commander {
     private static boolean shouldResearchAgainstProtossAndZerg() {
         int tanks = Count.tanks();
 
-        return tanks >= 2 || (tanks >= 1 && A.seconds() >= 430);
+        return tanks >= 2 || (tanks >= 1 && A.canAffordWithReserved(150, 100));
     }
 
     private static boolean shouldResearchAgainstTerran() {

@@ -178,7 +178,7 @@ public class TerranMissionChangerWhenAttack extends MissionChangerWhenAttack {
             )
         ) {
             return true;
-//            if (Count.tanks() <= 3 || !SiegeMode.isResearched()) return true;
+//            if (Count.tanks() <= 3 || !ResearchSiegeMode.isResearched()) return true;
         }
 
         return false;

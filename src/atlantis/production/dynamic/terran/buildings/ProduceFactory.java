@@ -28,11 +28,11 @@ public class ProduceFactory {
 
     private static boolean whenBioOnly() {
         if (!Have.barracks()) return false;
-        if (A.supplyUsed() <= 25) return false;
-        if (!A.hasGas(260)) return false;
+        if (A.supplyUsed() <= 30) return false;
+        if (!A.hasGas(120)) return false;
         if (Count.inProductionOrInQueue(Terran_Factory) >= 1) return false;
 //        if (CountInQueue.count(Terran_Factory) >= 1) return false;
-        if (!A.canAfford(350, 200) && Count.factories() > 0) return false;
+        if (!A.canAfford(290, 100) && Count.factories() > 0) return false;
 
         Selection freeFactories = Select.ourFree(Terran_Factory);
 

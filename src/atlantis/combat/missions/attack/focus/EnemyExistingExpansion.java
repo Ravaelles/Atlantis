@@ -29,6 +29,8 @@ public class EnemyExistingExpansion {
             "expansion",
             37,
             () -> {
+                lastFound = null;
+
                 Positions<HasPosition> mainAndNatural = new Positions<>();
                 APosition enemyMain = EnemyInfo.enemyMain();
                 mainAndNatural.addPosition(enemyMain);
@@ -40,8 +42,11 @@ public class EnemyExistingExpansion {
 
                 HasPosition vulnerable = getVulnerableBase(mainAndNatural);
                 if (vulnerable != null) {
-                    lastFound = vulnerable;
-                    return vulnerable;
+                    HasPosition mainOrNatural = mainAndNatural.nearestTo(vulnerable);
+                    if (mainOrNatural != null && mainOrNatural.groundDist(vulnerable) >= 20) {
+                        lastFound = vulnerable;
+                        return vulnerable;
+                    }
                 }
 
                 // =========================================================

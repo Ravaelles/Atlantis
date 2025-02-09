@@ -42,7 +42,7 @@ public class AsZergUnitDiscoveredResponse {
         if (GamePhase.isEarlyGame() && !Strategy.get().isRushOrCheese()) {
             if (enemyUnit.isZergling()) {
                 if (EnemyUnits.count(AUnitType.Zerg_Zergling) >= 6) {
-                    MissionChanger.forceMissionSpartaOrDefend("LotsOfZerglings");
+                    MissionChanger.forceMissionSpartaOrDefend("LotsOfZerglingsZ");
                 }
             }
 

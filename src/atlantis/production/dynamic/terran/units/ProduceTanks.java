@@ -2,7 +2,7 @@ package atlantis.production.dynamic.terran.units;
 
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
-import atlantis.production.dynamic.terran.tech.SiegeMode;
+import atlantis.production.dynamic.terran.tech.ResearchSiegeMode;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -40,7 +40,7 @@ public class ProduceTanks {
 //            return canAffordWithReserved;
 //        }
 
-        if (Enemy.terran() && tanks >= 1 && !SiegeMode.isResearched()) {
+        if (Enemy.terran() && tanks >= 1 && !ResearchSiegeMode.isResearched()) {
             if (!canAffordWithReserved) return false;
         }
 

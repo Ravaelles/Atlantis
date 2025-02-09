@@ -1,7 +1,7 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
-import atlantis.production.dynamic.terran.tech.SiegeMode;
+import atlantis.production.dynamic.terran.tech.ResearchSiegeMode;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -22,7 +22,7 @@ public class GoBehindLineOfTanks extends Manager {
         return We.terran()
             && !unit.isAir()
             && Count.tanks() >= 2
-            && SiegeMode.isResearched()
+            && ResearchSiegeMode.isResearched()
             && (enemies = unit.enemiesNear().groundUnits().canAttack(unit, 3.1)).notEmpty()
             && (unit.isWounded() || unit.hasCooldown());
     }

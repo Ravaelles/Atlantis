@@ -29,8 +29,8 @@ public class ProduceBarracks {
         if (unfinishedBarracks >= 1 && !A.hasMinerals(230)) return false;
 
         if (Strategy.get().isRushOrCheese()) {
-            if (A.hasMinerals(126)) {
-                System.err.println("Barracks for RUSH - " + A.supplyUsed() + "/" + A.supplyTotal() + ", min:" + A.minerals());
+            if (A.hasMinerals(134)) {
+//                System.err.println("Barracks for RUSH - " + A.supplyUsed() + "/" + A.supplyTotal() + ", min:" + A.minerals());
                 return produce();
             }
         }

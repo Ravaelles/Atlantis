@@ -5,7 +5,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import bwapi.UpgradeType;
 
-public abstract class TechResearchCommander extends Commander {
+public abstract class UpgradeResearchCommander extends Commander {
     protected static boolean isResearched = false;
     protected static boolean enqueued = false;
 

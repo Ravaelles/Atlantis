@@ -33,7 +33,7 @@ public class TerranShouldExpand {
     }
 
     private static boolean forThirdAndLater() {
-        return A.hasMinerals(700) && Army.strengthWithoutCB() >= 120 || A.hasMinerals(1000);
+        return A.hasMinerals(700) || A.hasMinerals(600) && Army.strengthWithoutCB() >= 115;
     }
 
     private static boolean forSecondBase() {

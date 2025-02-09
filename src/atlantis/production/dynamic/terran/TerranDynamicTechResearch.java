@@ -14,7 +14,7 @@ public class TerranDynamicTechResearch extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         return new Class[]{
-            SiegeMode.class,
+            ResearchSiegeMode.class,
             ResearchStimpacks.class,
             ResearchU238.class,
             CloakingField.class,
