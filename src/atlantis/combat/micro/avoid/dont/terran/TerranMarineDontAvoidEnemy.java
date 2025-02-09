@@ -4,7 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 
-public class TerranMarineDontAvoidEnemy extends Manager {
+public class
+TerranMarineDontAvoidEnemy extends Manager {
     public TerranMarineDontAvoidEnemy(AUnit unit) {
         super(unit);
     }
@@ -14,6 +15,11 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 //        if (true) return false;
 
         if (!unit.isMarine()) return false;
+
+        if (dontAvoidRangedHavingAdvantage()) {
+            unit.addLog("BraveVsRanged");
+            return true;
+        }
 
         if (noMeleeNearAndBattleAdvantage()) return dontAvoid();
 
@@ -41,6 +47,15 @@ public class TerranMarineDontAvoidEnemy extends Manager {
 
         return false;
     }
+
+    private boolean dontAvoidRangedHavingAdvantage() {
+        return unit.isMarine()
+            && unit.hp() >= (unit.enemiesNear().dragoons().countInRadius(7, unit) <= 1 ? 11 : 25)
+            && unit.cooldown() <= 4
+            && unit.eval() >= 1.6
+            && unit.meleeEnemiesNearCount(3.6) == 0;
+    }
+
 
     private boolean dontAvoid() {
 //        if (unit.hp() <= 19) A.printStackTrace("Why");

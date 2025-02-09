@@ -36,7 +36,7 @@ public class ProduceMarines {
 
         if (Strategy.get().isRushOrCheese() || Strategy.get().goingBio()) {
             if (A.s <= 60 * 6 && A.hasMinerals(50)) return forceProduceMarine();
-            if (A.hasMinerals(260)) return forceProduceMarine();
+            if (A.hasMinerals(250)) return forceProduceMarine();
         }
 
         if (MechInsteadOfInfantry.check()) return false;

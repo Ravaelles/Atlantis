@@ -29,7 +29,7 @@ public class ProduceEngineeringBay {
     }
 
     private static boolean shouldProduce() {
-        return (A.supplyUsed(42) && Army.strength() >= 120)
+        return (A.supplyUsed(42))
             || (A.supplyUsed() >= 36 && A.canAffordWithReserved(110, 0))
             || A.seconds() >= 60 * 7.5;
     }

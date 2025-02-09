@@ -68,7 +68,7 @@ public class ProduceScienceFacility {
     }
 
     private static boolean needToProduce() {
-        if (A.supplyUsed() <= 40) return false;
+        if (A.supplyUsed() <= 60) return false;
 
         return A.supplyUsed() >= (Enemy.terran() ? 90 : 50)
             || A.canAfford(550, 200)

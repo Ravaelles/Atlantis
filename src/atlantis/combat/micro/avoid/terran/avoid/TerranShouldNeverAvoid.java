@@ -29,20 +29,7 @@ public class TerranShouldNeverAvoid extends HasUnit {
             return true;
         }
 
-        if (dontAvoidRangedHavingAdvantage()) {
-            unit.addLog("BraveVsRanged");
-            return true;
-        }
-
         return false;
-    }
-
-    private boolean dontAvoidRangedHavingAdvantage() {
-        return unit.isMarine()
-            && unit.hp() >= 24
-            && unit.cooldown() <= 4
-            && unit.eval() >= 1.6
-            && unit.meleeEnemiesNearCount(3.6) == 0;
     }
 
     private boolean enemyWeakAirUnitsNearby() {

@@ -33,7 +33,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
             .notRunning()
             .realUnits()
             .exclude(unit)
-            .inRadius(unit.isDragoon() ? 0.6 : NOTIFY_UNITS_IN_RADIUS, unit);
+            .inRadius(unit.isNotLarge() ? NOTIFY_UNITS_IN_RADIUS : 0.6, unit);
 
         if (unit.friendsNear().groundUnits().inRadius(1, unit).atMost(1)) return false;
 
@@ -52,10 +52,12 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
     }
 
     private boolean canBeNotifiedToMakeSpace(AUnit unit) {
-        return !unit.isRunning()
-            && unit.isGroundUnit()
-            && unit.lastCommandIssuedAgo() >= 2
-            && !unit.isStartingAttack()
+        if (unit.isRunning() || unit.isGroundUnit()) return false;
+        if (unit.lastCommandIssuedAgo() <= 1) return false;
+
+        if (unit.isTerranInfantry()) return true;
+
+        return !unit.isStartingAttack()
             && !unit.isAttackFrame()
             && unit.lastStartedRunningMoreThanAgo(3)
             && !unit.isTankSieged()

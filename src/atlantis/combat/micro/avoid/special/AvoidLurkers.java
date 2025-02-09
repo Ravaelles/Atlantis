@@ -197,6 +197,7 @@ public class AvoidLurkers extends Manager {
 
     private double radius() {
         return 8.1
+            + (unit.isTerranInfantry() ? 0.4 : 0)
             + (unit.isWorker() ? 1.5 : 0)
             + meleeDistBonus()
             + noDetectorsBonus()

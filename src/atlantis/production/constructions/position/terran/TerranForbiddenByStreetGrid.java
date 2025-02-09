@@ -40,7 +40,7 @@ public class TerranForbiddenByStreetGrid {
         boolean factoryOrStarport = building.isFactory();
         if (building.isBarracks() || factoryOrStarport || building.isEngineeringBay()) {
             if (building.isBarracks()) {
-                if (moduloX != 1 && moduloX != 5) return failed("TX faile for Barrakz = " + moduloX);
+                if (moduloX != 1 && moduloX != 5) return failed("TX failed for Barrakz = " + moduloX);
             }
 
             if (factoryOrStarport) {
