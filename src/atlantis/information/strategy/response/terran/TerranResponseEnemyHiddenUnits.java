@@ -27,7 +27,7 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
 
     private boolean buildAnywhere() {
         int n = A.supplyUsed() >= 45 ? 3 : 2;
-        ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAnywhere " + n + " turrets");
+//        ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAnywhere " + n + " turrets");
 
         for (int i = 0; i < n; i++) {
             if (AddToQueue.withHighPriority(
@@ -47,10 +47,10 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
             ARegion region = bunker.position().region();
             if (region != null) at = at.translateTilesTowards(1.5, region.center());
 
-            int n = howManyAllowed - 2;
+            int n = howManyAllowed;
             if (n <= 0) return false;
 
-            ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAtBunker " + n + " turrets");
+//            ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAtBunker " + n + " turrets");
 
             for (int i = 0; i < n; i++) {
                 if (AddToQueue.withHighPriority(AUnitType.Terran_Missile_Turret, at) != null) {

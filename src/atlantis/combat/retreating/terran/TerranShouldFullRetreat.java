@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.terran;
 
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -27,9 +28,13 @@ public class TerranShouldFullRetreat {
     private static double evalThresholdDuringMissionAttack() {
         double base = A.s <= 60 * 7 ? 1.2 : 1;
 
-        base += 7.0 / (5 + Count.ourCombatUnits());
+        base += baseThresholdModifier() / (5 + Count.ourCombatUnits());
 
         return base;
+    }
+
+    private static double baseThresholdModifier() {
+        return EnemyInfo.hasRanged() ? 7.0 : 5.2;
     }
 
 }

@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position;
 
 import atlantis.game.A;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -36,6 +37,10 @@ public class DefineNearTo {
     private static HasPosition forTerran(AUnitType building, HasPosition nearTo) {
         if (nearTo == null && building.isSupplyDepot() && A.chance(50)) {
             nearTo = Select.ourOfType(AUnitType.Terran_Supply_Depot).last();
+        }
+
+        if (nearTo == null && building.isBarracks() && A.supplyUsed() >= 11) {
+            nearTo = Chokes.mainChoke().translateTilesTowards(8, Select.mainOrAnyBuilding());
         }
 
         if (nearTo == null && A.supplyUsed() <= 40) {
