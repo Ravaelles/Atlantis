@@ -49,23 +49,60 @@ public class ATargetingTest extends WorldStubForTests {
         FakeUnit[] enemies = fakeEnemies(
 //                drone = fake(AUnitType.Zerg_Drone, 12),
             fake(AUnitType.Zerg_Larva, 11),
-            fake(AUnitType.Zerg_Egg, 11),
-            fake(AUnitType.Zerg_Hatchery, 11),
-            fake(AUnitType.Zerg_Lurker_Egg, 11),
-            fake(AUnitType.Zerg_Cocoon, 11),
-            fake(AUnitType.Zerg_Creep_Colony, 12),
+            fake(AUnitType.Zerg_Egg, 11.1),
+            fake(AUnitType.Zerg_Hatchery, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.3),
+            fake(AUnitType.Zerg_Creep_Colony, 11.4),
+            fake(AUnitType.Zerg_Cocoon, 11.5),
+            fake(AUnitType.Zerg_Creep_Colony, 12.6),
 //                fake(AUnitType.Zerg_Spore_Colony, 12),
 //                fake(AUnitType.Zerg_Drone, 13),
-            fake(AUnitType.Zerg_Drone, 16),
 //                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
-            hydra = fake(AUnitType.Zerg_Hydralisk, 14),
             sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9),
-            fake(AUnitType.Zerg_Creep_Colony, 11),
 //                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
 //                fake(AUnitType.Zerg_Zergling, 13),
 //                fake(AUnitType.Zerg_Zergling, 14),
             fake(AUnitType.Zerg_Zergling, 15),
-            fake(AUnitType.Zerg_Zergling, 16),
+            fake(AUnitType.Zerg_Drone, 15.8),
+            fake(AUnitType.Zerg_Zergling, 15.9),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 16.2),
+            fake(AUnitType.Zerg_Zergling, 17),
+            fake(AUnitType.Zerg_Hydralisk, 18),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
+    public void targetsUnfinishedSunken() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit drone, ling1, hydra, sunken, ling2;
+
+        FakeUnit[] enemies = fakeEnemies(
+//                drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11.1),
+            fake(AUnitType.Zerg_Hatchery, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.3),
+            fake(AUnitType.Zerg_Cocoon, 11.4),
+//            fake(AUnitType.Zerg_Creep_Colony, 12),
+//                fake(AUnitType.Zerg_Spore_Colony, 12),
+//                fake(AUnitType.Zerg_Drone, 13),
+//                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
+            fake(AUnitType.Zerg_Creep_Colony, 11.5),
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9).setCompleted(false),
+//            sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9),
+//                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
+//                fake(AUnitType.Zerg_Zergling, 13),
+//                fake(AUnitType.Zerg_Zergling, 14),
+            fake(AUnitType.Zerg_Zergling, 15),
+            fake(AUnitType.Zerg_Drone, 16),
+            fake(AUnitType.Zerg_Zergling, 16.1),
             fake(AUnitType.Zerg_Zergling, 17),
             fake(AUnitType.Zerg_Hydralisk, 18),
             fake(AUnitType.Zerg_Sunken_Colony, 28)
@@ -317,8 +354,8 @@ public class ATargetingTest extends WorldStubForTests {
 
         FakeUnit[] enemies = fakeEnemies(
             fake(AUnitType.Zerg_Hydralisk_Den, 13),
-            expectedTarget = fake(AUnitType.Zerg_Overlord, 12),
-            fake(AUnitType.Zerg_Zergling, 19)
+            fake(AUnitType.Zerg_Overlord, 12),
+            expectedTarget = fake(AUnitType.Zerg_Zergling, 16)
         );
 
         createWorld(1,
@@ -419,7 +456,7 @@ public class ATargetingTest extends WorldStubForTests {
             gate = fake(AUnitType.Protoss_Gateway, 13.1),
             fake(AUnitType.Protoss_Pylon, 13.2),
             fake(AUnitType.Protoss_Templar_Archives, 13.5),
-            fake(AUnitType.Protoss_Photon_Cannon, 13.6),
+            fake(AUnitType.Protoss_Photon_Cannon, 13.6).setHp(66),
             expectedTarget = fake(AUnitType.Protoss_Photon_Cannon, 13.7).setHp(11),
             fake(AUnitType.Protoss_Nexus, 13.9)
         );

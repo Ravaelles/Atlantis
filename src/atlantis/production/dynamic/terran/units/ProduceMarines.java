@@ -31,8 +31,6 @@ public class ProduceMarines {
     public static boolean marines() {
         if (!A.hasMinerals(50)) return false;
 
-        if (MechInsteadOfInfantry.check()) return false;
-
         int freeBarracks = Count.freeBarracks();
         if (freeBarracks <= 0) return false;
 
@@ -40,6 +38,8 @@ public class ProduceMarines {
             if (A.s <= 60 * 6 && A.hasMinerals(50)) return forceProduceMarine();
             if (A.hasMinerals(260)) return forceProduceMarine();
         }
+
+        if (MechInsteadOfInfantry.check()) return false;
 
         if (A.hasMinerals(100) && EnemyUnitBreachedBase.get() != null) return forceProduceMarine();
 

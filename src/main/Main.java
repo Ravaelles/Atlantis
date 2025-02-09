@@ -14,8 +14,8 @@ import atlantis.util.ProcessHelper;
  */
 public class Main {
     public static String ourRace() {
-//        return "Terran";
-        return "Protoss";
+        return "Terran";
+//        return "Protoss";
 //        return "Zerg";
     }
 
@@ -46,14 +46,7 @@ public class Main {
     // =========================================================
 
     public static String defineMapToUse() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
-
-        // === Popular SSCAIT maps ==================================
-
-//        if (true) return "sscai/(2)HeartbreakRidge.scx";
-//        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
-//        if (true) return "sscai/(4)Roadrunner.scx";
+        if (mapGeneric() != null) return mapGeneric();
 
         // === Maps for testing as TERRAN ===========================
 
@@ -66,6 +59,21 @@ public class Main {
         // === Maps for testing as ZERG ==========================
 
         if (mapAsZerg() != null) return mapAsZerg();
+
+        // =========================================================
+
+        return "sscai/(?)*.sc?";
+    }
+
+    private static String mapGeneric() {
+        //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+
+        // === Popular SSCAIT maps ==================================
+
+//        if (true) return "sscai/(2)HeartbreakRidge.scx";
+//        if (true) return "sscai/(2)Destination.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(4)Roadrunner.scx";
 
         // =========================================================
         // === More GENERIC maps now ===============================
@@ -115,11 +123,8 @@ public class Main {
 //        if (true) return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines v. Zerg
 //        if (true) return "ums/protoss_micro.scx"; // Huge parallel map for Protosss
 
-        // =========================================================
-
-        return "sscai/(?)*.sc?";
+        return null;
     }
-
 
     // === Maps for testing as PROTOSS =============================================
 
@@ -206,7 +211,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
@@ -243,12 +248,12 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
-//        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
+//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/terran/1M_v_1Zealot.scm";
-        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
+//        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/terran/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_1Zealot.scm";

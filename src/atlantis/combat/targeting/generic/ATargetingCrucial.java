@@ -260,35 +260,10 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(AUnitType.Zerg_Hydralisk)
-            .canBeAttackedBy(unit, +0.1)
-            .nearestTo(unit);
+            .canBeAttackedBy(unit, 0)
+            .mostWoundedOrNearest(unit);
         if (target != null) {
             debug("CR_Hyd2 = " + target);
-            return target;
-        }
-
-        // === CB in range ===========================================
-
-        target = enemyBuildings
-            .ofType(
-                AUnitType.Protoss_Photon_Cannon,
-                AUnitType.Terran_Bunker,
-                AUnitType.Zerg_Sunken_Colony,
-                AUnitType.Zerg_Spore_Colony
-            )
-            .canBeAttackedBy(unit, 0.2)
-            .nearestTo(unit);
-        if (target != null) {
-            return target;
-        }
-
-        // === Creep in range ===========================================
-
-        target = enemyBuildings
-            .ofType(AUnitType.Zerg_Creep_Colony)
-            .canBeAttackedBy(unit, 0.2)
-            .nearestTo(unit);
-        if (target != null) {
             return target;
         }
 

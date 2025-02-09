@@ -96,7 +96,37 @@ public class ATargetingImportant extends ATargeting {
             .inRadius(6.5, unit)
             .canBeAttackedBy(unit, 0)
             .mostWounded();
-        if (target != null) return target;
+        if (target != null) {
+            debug("CombatUnit_inRange = " + target);
+            return target;
+        }
+
+        // === CB in range ===========================================
+
+        target = enemyBuildings
+            .ofType(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Terran_Bunker,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Spore_Colony
+            )
+            .canBeAttackedBy(unit, 0)
+            .nearestTo(unit);
+        if (target != null) {
+            debug("Targ_Close_CBs = " + target);
+            return target;
+        }
+
+        // === Creep in range ===========================================
+
+        target = enemyBuildings
+            .ofType(AUnitType.Zerg_Creep_Colony)
+            .canBeAttackedBy(unit, 0.2)
+            .nearestTo(unit);
+        if (target != null) {
+            debug("Targ_Close_Creeps = " + target);
+            return target;
+        }
 
         // =========================================================
         // Defensive buildings ALMOST IN RANGE
@@ -107,25 +137,31 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Bunker,
                 AUnitType.Zerg_Sunken_Colony
             )
-            .canBeAttackedBy(unit, unit.isMelee() ? 3.6 : 2.2);
+            .canBeAttackedBy(unit, unit.isMelee() ? 3.95 : 2.2);
 //            .inRadius(15, unit);
 
-        target = importantBuildings.mostWounded();
+        target = importantBuildings.mostWoundedOrNearest(unit);
+//        System.err.println("target = " + target + " / " + target.hp());
 
-        if (target != null && target.isHealthy()) target = importantBuildings.nearestTo(unit.squadLeader());
-        if (target != null) return getThisCombatBuildingOrScvRepairingIt(target);
+        if (target != null && target.isHealthy()) target = importantBuildings.mostWoundedOrNearest(unit.squadLeader());
+        if (target != null) {
+            debug("Targ_CBs_A = " + target);
+            return getThisCombatBuildingOrScvRepairingIt(target);
+        }
 
-//        target = enemyUnits
-//            .ofType(
-//                AUnitType.Protoss_Photon_Cannon,
-//                AUnitType.Terran_Bunker,
-//                AUnitType.Zerg_Sunken_Colony
-//            )
-//            .canBeAttackedBy(unit, 5)
-//            .nearestTo(unit);
-//        if (target != null) {
-//            return getThisCombatBuildingOrScvRepairingIt(target);
-//        }
+        // === Creep colonies ======================================
+
+        target = enemyUnits
+            .ofType(
+                AUnitType.Zerg_Creep_Colony
+            )
+            .inRadius(8, unit)
+            .canBeAttackedBy(unit, unit.isMelee() ? 3.7 : 1.7)
+            .mostWoundedOrNearest(unit);
+        if (target != null) {
+            debug("Targ_CB_CreepC = " + target);
+            return target;
+        }
 
         // =========================================================
 
@@ -211,8 +247,10 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Spore_Colony
             )
             .inRadius(15, unit)
-            .nearestTo(unit);
+            .canBeAttackedBy(unit, unit.isMelee() ? 5 : 2.8)
+            .mostWoundedOrNearest(unit);
         if (target != null) {
+            debug("Targ_CBs = " + target);
             return target;
         }
 

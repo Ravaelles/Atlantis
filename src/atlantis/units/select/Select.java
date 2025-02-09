@@ -640,8 +640,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 List<AUnit> data = new ArrayList<>(enemyUnits());
                 data.removeIf(
                     u -> (
-                        !u.isCompleted()
-                            || (!u.isABuilding() && !u.isRealUnit())
+//                        !u.isCompleted()
+                        (!u.isABuilding() && !u.isRealUnit())
                             || (!includeBuildings && u.isABuilding())
                             || (!includeGroundUnits && u.isGroundUnit())
                             || (!includeAirUnits && u.isAir())

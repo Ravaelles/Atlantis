@@ -136,8 +136,18 @@ public class ATargetingStandard extends ATargeting {
             .havingPosition()
             .canBeAttackedBy(unit, 150)
             .nearestTo(unit);
+        if (target != null && ATargeting.DEBUG) System.out.println("Any_EnemyUnit = " + target);
 
-        if (target != null && ATargeting.DEBUG) System.out.println("D8 = " + target);
+        // =========================================================
+
+        target = enemyBuildings
+            .havingPosition()
+            .canBeAttackedBy(unit, 150)
+            .nearestTo(unit);
+        if (target != null && ATargeting.DEBUG) System.out.println("Any_EnemyBuilding = " + target);
+
+        // =========================================================
+
         return target;
     }
 
