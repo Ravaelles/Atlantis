@@ -117,17 +117,6 @@ public class ATargetingImportant extends ATargeting {
             return target;
         }
 
-        // === Creep in range ===========================================
-
-        target = enemyBuildings
-            .ofType(AUnitType.Zerg_Creep_Colony)
-            .canBeAttackedBy(unit, 0.2)
-            .nearestTo(unit);
-        if (target != null) {
-            debug("Targ_Close_Creeps = " + target);
-            return target;
-        }
-
         // =========================================================
         // Defensive buildings ALMOST IN RANGE
 
@@ -137,7 +126,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Terran_Bunker,
                 AUnitType.Zerg_Sunken_Colony
             )
-            .canBeAttackedBy(unit, unit.isMelee() ? 3.95 : 2.2);
+            .canBeAttackedBy(unit, unit.isMelee() ? 3.95 : 2.8);
 //            .inRadius(15, unit);
 
         target = importantBuildings.mostWoundedOrNearest(unit);
@@ -148,6 +137,17 @@ public class ATargetingImportant extends ATargeting {
             debug("Targ_CBs_A = " + target);
             return getThisCombatBuildingOrScvRepairingIt(target);
         }
+
+//        // === Creep in range ===========================================
+//
+//        target = enemyBuildings
+//            .ofType(AUnitType.Zerg_Creep_Colony)
+//            .canBeAttackedBy(unit, 0)
+//            .mostWoundedOrNearest(unit);
+//        if (target != null) {
+//            debug("Targ_Close_Creeps = " + target);
+//            return target;
+//        }
 
         // === Creep colonies ======================================
 
@@ -243,14 +243,13 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Terran_Bunker,
                 AUnitType.Zerg_Sunken_Colony,
-                AUnitType.Zerg_Creep_Colony,
                 AUnitType.Zerg_Spore_Colony
             )
             .inRadius(15, unit)
             .canBeAttackedBy(unit, unit.isMelee() ? 5 : 2.8)
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("Targ_CBs = " + target);
+            debug("Targ_CBs_B = " + target);
             return target;
         }
 

@@ -58,10 +58,45 @@ public class ATargetingTest extends WorldStubForTests {
 //                fake(AUnitType.Zerg_Spore_Colony, 12),
 //                fake(AUnitType.Zerg_Drone, 13),
 //                ling1 = fake(AUnitType.Zerg_Zergling, 12.5),
+            fake(AUnitType.Zerg_Drone, 13.6),
+            fake(AUnitType.Zerg_Hatchery, 13.7),
             sunken = fake(AUnitType.Zerg_Sunken_Colony, 13.9),
 //                ling2 = fake(AUnitType.Zerg_Zergling, 12.9),
 //                fake(AUnitType.Zerg_Zergling, 13),
 //                fake(AUnitType.Zerg_Zergling, 14),
+            fake(AUnitType.Zerg_Zergling, 15),
+            fake(AUnitType.Zerg_Drone, 15.8),
+            fake(AUnitType.Zerg_Zergling, 15.9),
+            hydra = fake(AUnitType.Zerg_Hydralisk, 16.2),
+            fake(AUnitType.Zerg_Zergling, 17),
+            fake(AUnitType.Zerg_Hydralisk, 18),
+            fake(AUnitType.Zerg_Sunken_Colony, 28)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
+    public void targetsUnfinishedSunkenOverBaseOrDrones() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit drone, ling1, hydra, sunken, ling2;
+
+        FakeUnit[] enemies = fakeEnemies(
+//                drone = fake(AUnitType.Zerg_Drone, 12),
+            fake(AUnitType.Zerg_Larva, 11),
+            fake(AUnitType.Zerg_Egg, 11.1),
+            fake(AUnitType.Zerg_Hatchery, 11.2),
+            fake(AUnitType.Zerg_Lurker_Egg, 11.3),
+            fake(AUnitType.Zerg_Creep_Colony, 11.4),
+            fake(AUnitType.Zerg_Cocoon, 11.5),
+            fake(AUnitType.Zerg_Drone, 13.6),
+            fake(AUnitType.Zerg_Hatchery, 13.7),
+            fake(AUnitType.Zerg_Creep_Colony, 14.6),
+            sunken = fake(AUnitType.Zerg_Sunken_Colony, 14.9).setCompleted(false),
             fake(AUnitType.Zerg_Zergling, 15),
             fake(AUnitType.Zerg_Drone, 15.8),
             fake(AUnitType.Zerg_Zergling, 15.9),
