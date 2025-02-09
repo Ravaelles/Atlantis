@@ -8,8 +8,11 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
+    private int howManyAllowed = 3;
+
     public boolean handle() {
         if (Have.notEvenPlanned(AUnitType.Terran_Engineering_Bay)) {
             AddToQueue.withTopPriority(AUnitType.Terran_Engineering_Bay);
@@ -20,26 +23,38 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
         return buildAnywhere();
     }
 
-    private static boolean buildAnywhere() {
-        int howMany = 2;
-        for (int i = 0; i < howMany; i++) {
-            AddToQueue.withHighPriority(
+    private boolean buildAnywhere() {
+        int n = 2;
+        ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAnywhere " + n + " turrets");
+
+        for (int i = 0; i < n; i++) {
+            if (AddToQueue.withHighPriority(
                 AUnitType.Terran_Missile_Turret
 //                Chokes.mainChoke().translateTilesTowards(6, Select.mainOrAnyBuilding())
-            );
+            ) != null) {
+                howManyAllowed--;
+            }
         }
         return true;
     }
 
-    private static boolean buildAtBunker() {
+    private boolean buildAtBunker() {
         AUnit bunker = Select.ourBuildingsWithUnfinished().bunkers().mostDistantTo(Select.mainOrAnyBuilding());
         if (bunker != null) {
             HasPosition at = bunker;
             ARegion region = bunker.position().region();
             if (region != null) at = at.translateTilesTowards(1.5, region.center());
 
-            AddToQueue.withHighPriority(AUnitType.Terran_Missile_Turret, at);
-            AddToQueue.withHighPriority(AUnitType.Terran_Missile_Turret, at);
+            int n = howManyAllowed - 2;
+            if (n <= 0) return false;
+
+            ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAtBunker " + n + " turrets");
+
+            for (int i = 0; i < n; i++) {
+                if (AddToQueue.withHighPriority(AUnitType.Terran_Missile_Turret, at) != null) {
+                    howManyAllowed--;
+                }
+            }
             return true;
         }
         return false;

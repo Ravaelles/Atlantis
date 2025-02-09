@@ -14,7 +14,7 @@ TerranMarineDontAvoidEnemy extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (!unit.isMarine()) return false;
+        if (!unit.isMarine() && !unit.isFirebat()) return false;
 
         if (dontAvoidRangedHavingAdvantage()) {
             unit.addLog("BraveVsRanged");

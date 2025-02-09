@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.margin;
 import atlantis.combat.micro.avoid.margin.protoss.ProtossSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.protoss.ZealotSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.special.SafetyMarginAgainstMelee_Special;
+import atlantis.combat.micro.avoid.margin.terran.FirebatSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.terran.MarineSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.game.A;
@@ -50,6 +51,10 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         else if (defender.isTerranInfantry()) {
             if (defender.isMarine()) {
                 double margin = (new MarineSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
+                if (margin > -1) return margin;
+            }
+            else if (defender.isFirebat()) {
+                double margin = (new FirebatSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
                 if (margin > -1) return margin;
             }
 
