@@ -2,6 +2,8 @@ package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.*;
+import atlantis.combat.squad.positioning.protoss.formation.ProtossFormation;
+import atlantis.combat.squad.positioning.terran.formation.TerranFormation;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -13,13 +15,15 @@ public class TerranCohesion extends Manager {
     @Override
     public boolean applies() {
         return We.terran()
-            && unit.isGroundUnit()
-            && !DoNotThinkOfImprovingCohesion.dontThink(unit);
+            && unit.isGroundUnit();
+//            && !DoNotThinkOfImprovingCohesion.dontThink(unit);
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            TerranFormation.class,
+
             TerranTooFarFromLeader.class,
             TerranEnsureCoordinationWithTanks.class,
             TerranTooClustered.class,

@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.formation.moon;
+package atlantis.combat.squad.positioning.formations.moon;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -24,6 +24,6 @@ public class MoonSeparation {
             return AUnitType.Protoss_Zealot.widthInTiles() + spaceBetween;
         }
 
-        return 0.5;
+        return 0.15;
     }
 }

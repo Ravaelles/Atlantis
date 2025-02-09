@@ -46,7 +46,8 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
         if (
             defender.cooldown() <= 3
                 && defender.shotSecondsAgo() >= 0.6
-                && defender.hp() >= 9
+                && defender.hp() >= 12
+                && defender.friendsInRadiusCount(4) >= 1
         ) {
 //            System.err.println(A.now() + " - " + defender.typeWithUnitId() + " - " + defender.hp());
             return -0.1;

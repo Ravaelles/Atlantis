@@ -7,8 +7,14 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
+import atlantis.units.AUnit;
 
 public class TerranStrategyResponse extends RaceStrategyResponse {
+    @Override
+    public boolean requestDetection(AUnit enemyUnit) {
+        return (new TerranResponseEnemyHiddenUnits()).handle();
+    }
+
     @Override
     public void onEnemyGoesHiddenUnits() {
         System.out.println(A.minSec() + " TerranStrategyResponse.onEnemyGoesHiddenUnits");

@@ -1,8 +1,7 @@
-package atlantis.combat.squad.positioning.protoss.formation.moon;
+package atlantis.combat.squad.positioning.formations.moon;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.positioning.protoss.formation.ProtossShouldCreateFormation;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;

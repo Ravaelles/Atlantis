@@ -37,12 +37,12 @@ public class AvoidCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        if (unit.meleeEnemiesNearCount(1.7) > 0) return false;
+        if (unit.meleeEnemiesNearCount(1.4) > 0) return false;
 
         if (We.terran()) {
             if (
-                unit.eval() >= 1.5
-                    && unit.friendsNearCount() >= 7
+                unit.eval() >= 1.8
+                    && unit.friendsNearCount() >= 6
                     && unit.lastStartedRunningMoreThanAgo(30 * 8)
             ) return false;
         }

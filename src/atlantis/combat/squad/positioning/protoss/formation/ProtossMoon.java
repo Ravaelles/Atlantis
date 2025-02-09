@@ -1,10 +1,11 @@
-package atlantis.combat.squad.positioning.protoss.formation.moon;
+package atlantis.combat.squad.positioning.protoss.formation;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.positioning.formations.moon.MoonFormationApplies;
+import atlantis.combat.squad.positioning.formations.moon.MoonUnitPositions;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 public class ProtossMoon extends Manager {

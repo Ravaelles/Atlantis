@@ -6,8 +6,14 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.response.RaceStrategyResponse;
+import atlantis.units.AUnit;
 
 public class ZergStrategyResponse extends RaceStrategyResponse {
+    @Override
+    public boolean requestDetection(AUnit enemyUnit) {
+        return true;
+    }
+
     @Override
     public void onEnemyGoesHiddenUnits() {
     }

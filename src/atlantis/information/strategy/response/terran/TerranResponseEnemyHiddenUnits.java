@@ -1,5 +1,6 @@
 package atlantis.information.strategy.response.terran;
 
+import atlantis.game.A;
 import atlantis.information.strategy.response.StrategyResponse;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
@@ -24,7 +25,7 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
     }
 
     private boolean buildAnywhere() {
-        int n = 2;
+        int n = A.supplyUsed() >= 45 ? 3 : 2;
         ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAnywhere " + n + " turrets");
 
         for (int i = 0; i < n; i++) {

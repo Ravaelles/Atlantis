@@ -92,7 +92,11 @@ public class TerranShouldNotRetreat extends HasUnit {
     }
 
     private Decision whenNoEnemyRanged() {
-        if (unit.enemiesNear().ranged().inRadius(13.5, unit).isEmpty()) {
+        if (
+            unit.eval() >= 0.6
+                && unit.enemiesNear().ranged().inRadius(13.5, unit).isEmpty()
+                && (!A.isUms() || Select.ourBuildings().notEmpty())
+        ) {
             return Decision.TRUE;
         }
 

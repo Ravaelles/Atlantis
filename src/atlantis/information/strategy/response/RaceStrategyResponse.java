@@ -1,6 +1,7 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.micro.terran.bunker.TerranBunker;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
@@ -17,6 +18,7 @@ import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.production.requests.AntiLandBuildingCommander;
 import atlantis.production.requests.zerg.ZergSporeColony;
 import atlantis.production.requests.zerg.ZergSunkenColony;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
@@ -36,6 +38,10 @@ public abstract class RaceStrategyResponse {
     public static RaceStrategyResponse get() {
         return RaceStrategyResponseFactory.forOurRace();
     }
+
+    // =========================================================
+
+    public abstract boolean requestDetection(AUnit enemyUnit);
 
     // =========================================================
 
@@ -129,5 +135,4 @@ public abstract class RaceStrategyResponse {
 
         return AntiAirBuildingCommander.get();
     }
-
 }

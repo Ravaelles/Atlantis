@@ -1,7 +1,6 @@
 package atlantis.combat.squad.positioning.protoss.formation;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.protoss.formation.moon.ProtossMoon;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
