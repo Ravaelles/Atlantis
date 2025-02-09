@@ -882,7 +882,7 @@ public class AAdvancedPainter extends APainter {
     /**
      * Paints places where buildings that do not yet exist are planned to be placed.
      */
-    static void paintConstructionPlaces() {
+    public static void paintConstructionPlaces() {
         Color color = Color.Grey;
         for (Construction order : ConstructionRequests.all()) {
             if (order.status() == ConstructionOrderStatus.NOT_STARTED) {

@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue.add;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueLastStatus;
@@ -112,6 +113,10 @@ public class PreventDuplicateOrders {
 
     private static boolean excessivePylon(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
+
+        if ((A.minerals() / (0.1 + ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon))) < 100) {
+            return true;
+        }
 
         if (A.supplyUsed() <= 27 && A.supplyFree() >= 4) return true;
         if (A.supplyUsed() <= 36 && A.supplyFree() >= 5) return true;

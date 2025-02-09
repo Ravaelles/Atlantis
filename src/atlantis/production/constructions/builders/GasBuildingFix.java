@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
+import atlantis.util.log.ErrorLog;
 
 public class GasBuildingFix extends HasUnit {
     public GasBuildingFix(AUnit unit) {
@@ -33,21 +34,26 @@ public class GasBuildingFix extends HasUnit {
         }
 
         if (building.isGasBuilding() && Select.geysers().inRadius(3, position).isEmpty()) {
-//            ErrorLog.printMaxOncePerMinute(
-//                "There are no geysers in radius 3 of " + position + " for " + building
-//                    + "\nThis indicates a problem with initial position of the gas building."
-//            );
-//
-//            AUnit geyser = Select.geysers().nearestTo(position);
-//            if (geyser != null) {
-//                ErrorLog.printErrorOnce("Nearest geyser dist = " + geyser.distTo(position));
-//            }
-//            else {
-//                ErrorLog.printErrorOnce("No geyser is known!");
-//            }
+            AUnit geyser;
+
+            ErrorLog.printMaxOncePerMinute(
+                "There are no geysers in radius 3 of " + position + " for " + building
+                    + "\nThis indicates a problem with initial position of the gas building."
+            );
+
+            geyser = Select.geysers().nearestTo(position);
+            if (geyser != null) {
+                ErrorLog.printErrorOnce("Nearest geyser dist = " + geyser.distTo(position)
+                    + " / gey:" + geyser
+                    + " / pos:" + position
+                );
+            }
+            else {
+                ErrorLog.printErrorOnce("No geyser is known!");
+            }
 
             A.errPrintln("Gas building FIX got position too far from geyser");
-            AUnit geyser = Select.geysers().inRadius(10, position).nearestTo(position);
+            geyser = Select.geysers().inRadius(10, position).nearestTo(position);
 
             if (geyser == null) return null;
 

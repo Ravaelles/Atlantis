@@ -59,6 +59,10 @@ public class OnEveryFrameHelper {
 
 //        paintAllUnitEvals();
 
+        AAdvancedPainter.togglePainting();
+        AAdvancedPainter.paintConstructionPlaces();
+        AAdvancedPainter.togglePainting();
+
 //        paintShowingInOurDirection();
 
 //        int counter = 0;

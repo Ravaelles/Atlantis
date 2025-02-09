@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.Army;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.base.define.EnemyNaturalBase;
 import atlantis.map.position.APosition;
@@ -14,6 +15,8 @@ public class AttackEnemyThird {
     private int _enemyThirdLastVisibleAtS = -1;
 
     public boolean shouldFocusIt() {
+        if (Army.strength() >= 700) return false;
+
         APosition enemyThird = enemyThird();
         if (enemyThird == null) return false;
 

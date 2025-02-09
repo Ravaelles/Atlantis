@@ -49,11 +49,14 @@ TerranMarineDontAvoidEnemy extends Manager {
     }
 
     private boolean dontAvoidRangedHavingAdvantage() {
-        return unit.isMarine()
-            && unit.hp() >= (unit.enemiesNear().dragoons().countInRadius(7, unit) <= 1 ? 11 : 25)
-            && unit.cooldown() <= 4
-            && unit.eval() >= 1.6
-            && unit.meleeEnemiesNearCount(3.6) == 0;
+        if (unit.meleeEnemiesNearCount(3.2) > 0) return false;
+
+        double eval = unit.eval();
+        if (eval >= 1.5) return true;
+        if (unit.friendsNear().combatUnits().countInRadius(6, unit) >= 10) return true;
+
+        return unit.hp() >= (unit.enemiesNear().dragoons().countInRadius(7, unit) <= 1 ? 11 : 25)
+            && eval >= 1.25;
     }
 
 
