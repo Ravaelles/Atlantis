@@ -33,6 +33,7 @@ public class ConstructionStatusChanger extends Commander {
 //        if (A.supplyUsed() <= 20) return;
         if (!A.everyNthGameFrame(31)) return;
         if (A.supplyUsed() <= 27) return;
+        if (construction.buildingUnit() != null && construction.hasValidBuilderAndHeIsConstructing()) return;
 
         if (construction.isOverdue()) {
             AUnitType building = construction.buildingType();

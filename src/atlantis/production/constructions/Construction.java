@@ -311,4 +311,8 @@ public class Construction implements Comparable<Construction> {
         ProductionOrder order = productionOrder();
         if (order != null) order.releasedReservedResources();
     }
+
+    public boolean hasValidBuilderAndHeIsConstructing() {
+        return builder != null && builder.hp() >= 1 && builder.isConstructing();
+    }
 }

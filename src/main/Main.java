@@ -211,7 +211,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
-//        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
+        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
@@ -287,7 +287,7 @@ public class Main {
 //        if (true) return "ums/rav/M&M_v_Cannons.scx";
 
         // vs Zerg
-        if (true) return "ums/rav/terran/M_v_Lings.scm";
+//        if (true) return "ums/rav/terran/M_v_Lings.scm";
 //        if (true) return "ums/rav/terran/MMF_v_Lings.scx";
 //        if (true) return "ums/rav/terran/TankBall_v_Zerg.scx"; // Tanks & Marines v Zerg Base
 //        if (true) return "ums/rav/terran/TBall_v_HydraLings.scx"; // Tanks & Marines v Hydras & Lings

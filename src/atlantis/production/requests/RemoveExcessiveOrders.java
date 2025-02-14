@@ -77,7 +77,7 @@ public class RemoveExcessiveOrders {
         if (constructions.size() > max) {
             for (int i = constructions.size() - 1; i >= 0; i--) {
                 constructions.get(i).productionOrder().cancel("Too many " + type + " at once (" + constructions.size() + ">" + max + ")");
-                A.errPrintln("@" + A.now() + " - CANCEL EXCESSIVE BUILDING " + type);
+                A.errPrintln(A.minSec() + " - CANCEL EXCESSIVE BUILDING " + type);
             }
             return true;
         }

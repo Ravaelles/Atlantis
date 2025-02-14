@@ -33,7 +33,15 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (Strategy.get().isRushOrCheese() && ArmyStrength.ourArmyRelativeStrength() >= 75) {
+        int strength = Army.strength();
+
+        if (
+            Count.ourCombatUnits() >= 5
+                && Strategy.get().isRushOrCheese()
+                && A.resourcesBalance() >= -100
+                && strength >= 115
+                && (strength >= 131 || EnemyUnits.dragoons() <= 2)
+        ) {
             return forceMissionAttack("Rush or cheese");
         }
 
@@ -47,6 +55,8 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
             if (DEBUG) reason = "Abundance of minerals";
             return true;
         }
+
+        if (strength <= 110) return false;
 
         if (attackVsZerg()) {
             return true;

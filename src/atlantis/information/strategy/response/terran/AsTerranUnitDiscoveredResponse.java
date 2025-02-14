@@ -77,7 +77,7 @@ public class AsTerranUnitDiscoveredResponse {
 
         if (
             EnemyUnits.has(AUnitType.Protoss_Dragoon)
-                && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1)
+                && (ArmyStrength.ourArmyRelativeStrength() <= 130 || Count.medics() <= 1)
         ) {
             MissionChanger.forceMissionSpartaOrDefend("Enemy dragoons & not enough power");
             return true;

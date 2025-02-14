@@ -52,11 +52,11 @@ TerranMarineDontAvoidEnemy extends Manager {
         if (unit.meleeEnemiesNearCount(3.2) > 0) return false;
 
         double eval = unit.eval();
-        if (eval >= 1.5) return true;
+        if (eval >= 1.24) return true;
         if (unit.friendsNear().combatUnits().countInRadius(6, unit) >= 10) return true;
 
         return unit.hp() >= (unit.enemiesNear().dragoons().countInRadius(7, unit) <= 1 ? 11 : 25)
-            && eval >= 1.25;
+            && eval >= 1.15;
     }
 
 
