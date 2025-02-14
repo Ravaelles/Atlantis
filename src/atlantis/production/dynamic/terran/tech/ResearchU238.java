@@ -38,9 +38,10 @@ public class ResearchU238 extends Commander {
         }
 
         if (Strategy.get().goingBio()) {
+            int infantry = Count.infantry();
             if (
-                Count.infantry() >= 8 && A.canAffordWithReserved(100, 100)
-                    || A.canAffordWithReserved(150, 150)
+                (infantry >= 6 && A.canAffordWithReserved(100, 100))
+                    || (infantry >= 10 && A.canAfford(250, 100))
             ) {
                 if (ATech.isNotResearchedOrPlanned(what())) {
                     return true;

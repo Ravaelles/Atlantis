@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.terran;
 
 import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.MissionHistory;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
@@ -13,7 +14,12 @@ public class ShouldForceAttack {
     public static boolean check() {
         int strength = Army.strength();
 
-        if (Count.ourCombatUnits() <= 4) return false;
+        int combatUnits = Count.ourCombatUnits();
+        if (combatUnits <= 4) return false;
+
+        if (combatUnits >= 35) {
+            return forceMissionAttack("ManyCombatUnits(" + combatUnits + ")");
+        }
 
         if (strength >= 800) {
             return forceMissionAttack("HugeStrength");
@@ -29,10 +35,14 @@ public class ShouldForceAttack {
         }
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
-            if (MissionChanger.DEBUG) MissionChanger.reason = "Abundance of minerals";
+            MissionChanger.reason = "Abundance of minerals";
             return true;
         }
 
+        if (combatUnits >= 20 && strength >= 90 && Count.tanks() >= 3 && MissionHistory.numOfChanges() <= 3) {
+            MissionChanger.reason = "Try to engage at least once";
+            return true;
+        }
 
         return false;
     }
