@@ -30,7 +30,6 @@ public class TerranCohesion extends Manager {
             TerranEnsureBall.class,
             TerranComeCloser.class,
             TooLowSquadCohesion.class,
-            TerranTooFarFromLeader.class,
         };
     }
 }

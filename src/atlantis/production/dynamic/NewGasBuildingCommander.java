@@ -20,7 +20,8 @@ public class NewGasBuildingCommander extends Commander {
             && A.everyNthGameFrame(23)
             && !tooEarlyForAnotherGasBuilding()
             && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10);
+            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
+            && (We.zerg() || Count.gasBuildingsWithUnfinished() < Count.basesWithUnfinished());
 //            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
     }
 

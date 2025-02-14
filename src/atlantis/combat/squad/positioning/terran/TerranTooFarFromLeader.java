@@ -22,6 +22,7 @@ public class TerranTooFarFromLeader extends Manager {
 
         if (unit.isAir()) return false;
         if (unit.isDT()) return false;
+        if (unit.isMissionDefendOrSparta()) return false;
 //        if (A.seconds() % 4 <= 1) return false;
 
         leader = unit.squad().leader();

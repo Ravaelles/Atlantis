@@ -23,17 +23,17 @@ public class ProtossTooCloseToMapBoundaries {
                 && ty >= margin && ty <= AMap.getMapHeightInTiles() - margin
         ) return false;
 
-        if ((tx - building.getTileWidth() / 2) <= margin) {
+        if ((tx - building.getTilesWidth() / 2) <= margin) {
             return failed("Too close to left map boundary");
         }
-        if ((ty - building.getTileHeight() / 2) <= margin) {
+        if ((ty - building.getTilesHeights() / 2) <= margin) {
             return failed("Too close to top map boundary");
         }
 
-        if ((tx + building.getTileWidth() / 2) >= AMap.getMapWidthInTiles() - margin) {
+        if ((tx + building.getTilesWidth() / 2) >= AMap.getMapWidthInTiles() - margin) {
             return failed("Too close to right map boundary");
         }
-        if ((ty + building.getTileHeight() / 2) >= AMap.getMapHeightInTiles() - margin) {
+        if ((ty + building.getTilesHeights() / 2) >= AMap.getMapHeightInTiles() - margin) {
             return failed("Too close to bottom map boundary");
         }
 

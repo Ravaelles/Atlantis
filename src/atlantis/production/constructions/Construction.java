@@ -1,5 +1,6 @@
 package atlantis.production.constructions;
 
+import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -11,8 +12,10 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.GatherResources;
+import atlantis.util.PauseAndCenter;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
+import bwapi.Color;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -111,7 +114,16 @@ public class Construction implements Comparable<Construction> {
      */
     public void cancel(String reason) {
         if (!reason.contains("already being constructed")) {
-            ErrorLog.printMaxOncePerMinute("Cancel construction: " + buildingType.name() + " / " + reason);
+            APosition at = buildPosition();
+            AUnitType type = buildingType;
+            ErrorLog.printMaxOncePerMinute("Cancel construction: " + type.name()
+                + " / " + reason
+                + " / at:" + at
+                + (at != null ? " / buildable:" + at.isBuildableIncludeBuildings() : "")
+            );
+
+//            AAdvancedPainter.paintRectangle(at, (int) (32 * type.widthInTiles()), (int) (32 * type.heightInTiles()), Color.Green);
+//            PauseAndCenter.on(at, true);
         }
 //        A.printStackTrace("Construction.cancel() - " + this);
 

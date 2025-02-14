@@ -3,6 +3,7 @@ package atlantis.information.strategy.response.terran;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -23,7 +24,7 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
         if (GamePhase.isEarlyGame()) {
-            if (!ArmyStrength.weAreMuchStronger() && AGame.killsLossesResourceBalance() < 600) {
+            if (Army.strength() <= 120 && AGame.killsLossesResourceBalance() < 500) {
                 Missions.forceGlobalMissionDefend("Rush defence");
                 return true;
             }

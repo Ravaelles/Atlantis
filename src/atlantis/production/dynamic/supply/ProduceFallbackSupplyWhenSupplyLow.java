@@ -15,14 +15,16 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
     }
 
     protected int minFreeSupplyToAct() {
+        int bonus = A.minerals() >= 350 ? 1 : 0;
+
         int supplyUsed = A.supplyUsed();
-        if (supplyUsed <= 14) return 0;
-        if (supplyUsed <= 28) return 3;
-        if (supplyUsed <= 40) return 4;
-        if (supplyUsed <= 60) return 6;
-        if (supplyUsed <= 90) return 8;
-        if (supplyUsed <= 120) return 11;
-        if (supplyUsed <= 190) return 14;
+        if (supplyUsed <= 14) return 0 + bonus;
+        if (supplyUsed <= 28) return 3 + bonus;
+        if (supplyUsed <= 40) return 4 + bonus;
+        if (supplyUsed <= 60) return 6 + bonus;
+        if (supplyUsed <= 90) return 8 + bonus;
+        if (supplyUsed <= 120) return 11 + bonus;
+        if (supplyUsed <= 190) return 14 + bonus;
         return -1;
     }
 

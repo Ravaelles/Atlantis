@@ -4,7 +4,7 @@
 #SCOUT_IS_NTH_WORKER=9
 
 // When supply is bigger than N, then start auto-producing supply units
-#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=23
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=22
 
 // If have empty slot for a worker, force to build new workers
 #AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
@@ -33,6 +33,7 @@ https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
 9 - Supply Depot
 10 - Barracks
 11 - Barracks
+16 - Barracks
 17 - Supply Depot
 45 - Academy
 46 - Refinery

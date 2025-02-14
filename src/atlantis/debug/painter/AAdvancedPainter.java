@@ -915,17 +915,17 @@ public class AAdvancedPainter extends APainter {
         }
 
         // Paint box
-        paintRectangle(positionToBuild, buildingType.getTileWidth() * 32, buildingType.getTileHeight() * 32, color);
+        paintRectangle(positionToBuild, buildingType.getTilesWidth() * 32, buildingType.getTilesHeights() * 32, color);
 
         // Draw X
         paintLine(
-            positionToBuild.translateByPixels(buildingType.getTileWidth() * 32, 0),
-            positionToBuild.translateByPixels(0, buildingType.getTileHeight() * 32),
+            positionToBuild.translateByPixels(buildingType.getTilesWidth() * 32, 0),
+            positionToBuild.translateByPixels(0, buildingType.getTilesHeights() * 32),
             color
         );
         paintLine(positionToBuild,
-            buildingType.getTileWidth() * 32,
-            buildingType.getTileHeight() * 32,
+            buildingType.getTilesWidth() * 32,
+            buildingType.getTilesHeights() * 32,
             color
         );
 
@@ -1502,10 +1502,10 @@ public class AAdvancedPainter extends APainter {
 //            color = Brown;
 //        }
 //
-////        paintUnitProgressBar(unit, 27, 100, Color.Grey);
+
+    /// /        paintUnitProgressBar(unit, 27, 100, Color.Grey);
 //        paintUnitProgressBar(unit, 22, unit.cooldownPercent(), color);
 //    }
-
     private static void paintHealthBar(AUnit unit) {
         Color color = unit.isOur() ? Green : Yellow;
 
@@ -1725,8 +1725,8 @@ public class AAdvancedPainter extends APainter {
     public static void paintBuildingPosition(HasPosition position, String text, AUnitType type) {
         if (position == null) return;
 
-        int tw = type.getTileWidth();
-        int th = type.getTileHeight();
+        int tw = type.getTilesWidth();
+        int th = type.getTilesHeights();
 
         paintRectangle(position, tw * 32, th * 32, Color.Orange);
         paintTextCentered(position.translateByTiles(tw / 2.0, th / 2.0), text, Color.Orange);
@@ -1861,7 +1861,7 @@ public class AAdvancedPainter extends APainter {
 
         paintRectangle(
             position.translateByPixels(-2 * 32, (int) -1.5 * 32),
-            type.getTileWidth() * 32, type.getTileHeight() * 32, color
+            type.getTilesWidth() * 32, type.getTilesHeights() * 32, color
         );
         APainter.paintTextCentered(position.translateByTiles(1, -1), text, color);
     }

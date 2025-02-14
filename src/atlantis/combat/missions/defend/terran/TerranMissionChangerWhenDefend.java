@@ -35,26 +35,13 @@ public class TerranMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         int strength = Army.strength();
 
-        if (
-            Count.ourCombatUnits() >= 5
-                && Strategy.get().isRushOrCheese()
-                && A.resourcesBalance() >= -100
-                && strength >= 115
-                && (strength >= 131 || EnemyUnits.dragoons() <= 2)
-        ) {
-            return forceMissionAttack("Rush or cheese");
-        }
+        if (ShouldForceAttack.check()) return true;
 
         if (Alpha.count() <= 7) return false;
 
         if (EnemyUnitBreachedBase.get() != null) return false;
 //        if (Missions.lastMissionChangedSecondsAgo() <= 15) return false;
         if (Missions.historyCount() >= 3 && Alpha.count() <= 20) return false;
-
-        if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {
-            if (DEBUG) reason = "Abundance of minerals";
-            return true;
-        }
 
         if (strength <= 110) return false;
 

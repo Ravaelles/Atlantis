@@ -24,7 +24,7 @@ public class TooCloseToUnwalkable {
 
     protected static boolean isTooClose(AUnitType building, APosition position) {
 //        int delta = building.getTileWidth() >= 4 ? 5 : (!building.producesLandUnits() ? 3 : 2);
-        int delta = building.getTileWidth() >= 4 ? 3 : (!building.producesLandUnits() ? 1 : 2);
+        int delta = building.getTilesWidth() >= 4 ? 3 : (!building.producesLandUnits() ? 1 : 2);
 
         APosition left = BuildingTileHelper.tilesLeftFrom(building, position, delta);
         APosition down = BuildingTileHelper.tilesDownFrom(building, position, delta);

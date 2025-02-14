@@ -486,10 +486,10 @@ public class AUnitType implements Comparable<Object> {
 //        return Integer.compare(ID, o.ID);
     }
 //    public int compareTo(AUnitType o) {
-////        return this.ut.toString().compareTo(o.toString());
+
+    /// /        return this.ut.toString().compareTo(o.toString());
 //        return Integer.compare(ID, o.ID);
 //    }
-
     @Override
     public String toString() {
         return name();
@@ -805,11 +805,11 @@ public class AUnitType implements Comparable<Object> {
         return ut.requiredTech();
     }
 
-    public int getTileWidth() {
+    public int getTilesWidth() {
         return ut.tileWidth();
     }
 
-    public int getTileHeight() {
+    public int getTilesHeights() {
         return ut.tileHeight();
     }
 
@@ -1709,5 +1709,9 @@ public class AUnitType implements Comparable<Object> {
 
     public double widthInTiles() {
         return (ut.dimensionLeft() + ut.dimensionRight()) / 32.0;
+    }
+
+    public double heightInTiles() {
+        return (ut.dimensionUp() + ut.dimensionDown()) / 32.0;
     }
 }

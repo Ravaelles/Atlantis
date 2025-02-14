@@ -72,7 +72,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-//        if (true) return "sscai/(3)TauCross.scx";
+        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // =========================================================
@@ -257,6 +257,7 @@ public class Main {
 //        if (true) return "ums/rav/terran/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_1Zealot.scm";
+        if (true) return "ums/rav/terran/M_v_Dragoons.scm";
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/terran/3M&2M_v_Zealots.scx";
 //        if (true) return "ums/rav/terran/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
