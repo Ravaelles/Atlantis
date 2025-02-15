@@ -14,6 +14,8 @@ public class ProtossForceFightNearCannon extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isReaver() && (unit.hp() <= 120 || unit.cooldown() >= 3)) return false;
+
         if (asBadlyWoundedDoNotFight()) return false;
         if (unit.cooldown() >= (unit.hp() <= 60 ? 3 : 8)) return false;
         if (Enemy.protoss()) {

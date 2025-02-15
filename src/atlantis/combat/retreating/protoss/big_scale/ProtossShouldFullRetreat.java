@@ -13,6 +13,7 @@ import atlantis.game.player.Enemy;
 
 public class ProtossShouldFullRetreat {
     private static AUnit unit;
+    private static double eval;
 
     public static boolean shouldFullRetreat(AUnit unit) {
         ProtossShouldFullRetreat.unit = unit;
@@ -20,9 +21,9 @@ public class ProtossShouldFullRetreat {
         Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 13 : 9, unit);
         if (enemies.empty()) return false;
 
-        double eval = unit.eval();
+        eval = unit.eval();
 
-        if (unit.isMissionAttack() && eval <= (A.s <= 60 * 7 ? 1.2 : 1.15)) return true;
+        if (retreatDuringMissionAttack(unit)) return true;
 
         if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
 
@@ -109,6 +110,15 @@ public class ProtossShouldFullRetreat {
 //        double evalRelative = unit.eval();
 //
 //        return evalRelative <= 1.05;
+    }
+
+    private static boolean retreatDuringMissionAttack(AUnit unit) {
+        if (!unit.isMissionAttack()) return false;
+
+        double base = A.s <= 60 * 7 ? 1.2 : 1.15;
+        if (Enemy.zerg()) base += 0.1;
+
+        return eval <= base;
     }
 
     private static boolean dontRunNearOurCombatBuildings() {

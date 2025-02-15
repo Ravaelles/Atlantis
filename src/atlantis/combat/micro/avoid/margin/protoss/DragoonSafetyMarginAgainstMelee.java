@@ -18,6 +18,8 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public double marginAgainst(AUnit attacker) {
         if (attacker.hasBiggerWeaponRangeThan(defender)) return -1;
 
+        if (defender.shieldWound() <= 9 && attacker.isZergling() && defender.cooldown() <= 4) return -0.1;
+
         double margin = baseValueAgainst(attacker)
             + (defender.woundPercent() / 90.0)
 //            + (defender.cooldown() >= 8 ? +0.8 : 0)

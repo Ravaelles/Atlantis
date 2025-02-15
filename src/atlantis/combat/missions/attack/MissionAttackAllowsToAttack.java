@@ -3,6 +3,7 @@ package atlantis.combat.missions.attack;
 import atlantis.combat.advance.contain.ContainEnemy;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
@@ -33,6 +34,8 @@ public class MissionAttackAllowsToAttack extends HasUnit {
                 && unit.isTargetInWeaponRangeAccordingToGame(enemy)
         ) return true;
 
+        if (preventProtossFromChasingScatteredLings(enemy)) return false;
+
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
             if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return false;
@@ -53,6 +56,13 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (forbiddenToAttackWithinChoke(enemy)) return false;
 
         return true;
+    }
+
+    private boolean preventProtossFromChasingScatteredLings(AUnit enemy) {
+        if (!We.protoss()) return false;
+        if (!Enemy.zerg()) return false;
+
+        return enemy.isZergling() && EnemyInfo.hasRanged();
     }
 
     private boolean leaderJustAttacked() {
