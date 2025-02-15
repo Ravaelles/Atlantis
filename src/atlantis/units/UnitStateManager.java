@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.Squad;
 import atlantis.game.AGame;
 
 public class UnitStateManager extends Manager {
@@ -58,6 +59,10 @@ public class UnitStateManager extends Manager {
 
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = timeNow;
+            Squad squad = unit.squad();
+            if (squad != null) {
+                squad.markLastUnderAttackNow();
+            }
 
             if (unit.isUnderAttack(2)) {
                 unit.increaseHitCount();

@@ -7,16 +7,13 @@ import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.delta.Delta;
 import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.squad_scout.DefineSquadScout;
-import atlantis.combat.squad.squad_scout.SquadScout;
 import atlantis.combat.squad.transfers.SquadReinforcements;
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 /**
@@ -50,6 +47,7 @@ public abstract class Squad extends Units {
 
     private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
+    private int _lastUnderAttack = -87654;
 
     // =========================================================
 
@@ -377,5 +375,13 @@ public abstract class Squad extends Units {
 
     public boolean isAlpha() {
         return Alpha.get().equals(this);
+    }
+
+    public boolean lastUnderAttackLessThanAgo(int threshold) {
+        return A.ago(_lastUnderAttack) <= threshold;
+    }
+
+    public void markLastUnderAttackNow() {
+        _lastUnderAttack = A.now;
     }
 }

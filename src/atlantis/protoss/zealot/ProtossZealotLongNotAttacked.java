@@ -17,7 +17,10 @@ public class ProtossZealotLongNotAttacked extends Manager {
     public boolean applies() {
         if (unit.isAttacking()) return false;
 
-        if (unit.cooldown() <= 4 && unit.eval() >= 0.8 && unit.distToBase() <= 7) return true;
+        if (unit.cooldown() >= 5) return false;
+
+        if (unit.eval() >= 0.8 && unit.distToBase() <= 7) return true;
+        if (alwaysAttackWhenEnemyInRange()) return true;
 
         if (unit.isRetreating()) return false;
         if (!unit.hasValidTarget()) return false;
@@ -29,6 +32,13 @@ public class ProtossZealotLongNotAttacked extends Manager {
         if (unit.isActiveManager(this.getClass()) && unit.lastActionLessThanAgo(60)) return true;
 
         return unit.shields() >= 2 && canAttackNow();
+    }
+
+    private boolean alwaysAttackWhenEnemyInRange() {
+        return unit.hp() >= 40
+            && !unit.shotSecondsAgo(2)
+            && unit.meleeEnemiesNearCount(1.05) == 1
+            && unit.rangedEnemiesCount(2.1) == 0;
     }
 
     @Override

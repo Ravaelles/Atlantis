@@ -123,7 +123,8 @@ public class AddToQueue {
         if (Queue.get().addNew(index, productionOrder)) {
 //            A.println(A.now() + ": Adding " + type + " to queue");
 
-            if (type.isGasBuilding()) {
+            if (type.isCannon()) {
+                A.printStackTrace(A.minSec() + ": Adding " + type + " to queue at " + position);
                 System.out.println("@ " + A.minSec() + " - STUFF ADDED " + type + " = "
                     + CountInQueue.count(type)
                     + " / " + Count.inQueueOrUnfinished(type, 50)
@@ -131,6 +132,15 @@ public class AddToQueue {
                     + " / con_all:" + ConstructionRequests.countAllOfType(type)
                 );
             }
+
+//            if (type.isGasBuilding()) {
+//                System.out.println("@ " + A.minSec() + " - STUFF ADDED " + type + " = "
+//                    + CountInQueue.count(type)
+//                    + " / " + Count.inQueueOrUnfinished(type, 50)
+//                    + " / con_nf:" + ConstructionRequests.countNotFinishedOfType(type)
+//                    + " / con_all:" + ConstructionRequests.countAllOfType(type)
+//                );
+//            }
 
 //            if (type.isBunker()) {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);

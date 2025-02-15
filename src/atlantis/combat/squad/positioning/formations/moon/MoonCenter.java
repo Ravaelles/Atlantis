@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
+import atlantis.combat.squad.positioning.choking.ShouldDoChoking;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -17,9 +18,12 @@ public class MoonCenter {
     protected static HasPosition moonCenter(AUnit leader) {
         APosition moonCenter = cachePosition.getIfValid(
             "moonCenter:" + leader.id(),
-            9,
+            7,
             () -> {
                 MoonUnitPositions.clearCache();
+
+                HasPosition lastEnemyPosition = ShouldDoChoking.lastEnemyPosition();
+                if (lastEnemyPosition != null) return lastEnemyPosition;
 
                 HasPosition enemy = leader.enemiesNear().combatUnits().groundUnits().nearestTo(leader);
                 if (enemy != null) return enemy.position();

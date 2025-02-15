@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning.formations.moon;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.positioning.choking.ShouldDoChoking;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
@@ -23,9 +24,15 @@ public class MoonFormationApplies {
         if (A.s <= 2) return true;
         Selection enemies = leader.enemiesNear();
         if (enemies.atMost(1)) return false;
-        if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
-//        if (unit.friendsInRadiusCount(1) < 0) return true;
+
+        if (Enemy.protoss()) {
+            if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
+        }
+
+        if (ShouldDoChoking.check(unit)) {
+            return true;
+        }
 
         if (!A.isUms()) {
             if (unit.isMissionSparta()) return false;

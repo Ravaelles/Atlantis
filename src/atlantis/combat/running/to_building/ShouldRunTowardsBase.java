@@ -22,7 +22,7 @@ public class ShouldRunTowardsBase {
         double distToMain = unit.distTo(main);
         if (distToMain <= 3.6) return false;
 
-        if (unit.meleeEnemiesNearCount(2) >= (unit.hp() <= 50 ? 2 : 3)) return false;
+        if (unit.meleeEnemiesNearCount(2.1) >= (unit.hp() <= 80 ? 2 : 3)) return false;
 
         if (runAwayFrom instanceof AUnit) {
             AUnit enemy = (AUnit) runAwayFrom;

@@ -52,7 +52,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         if (
             ProtossStickCombatToMainBaseEarly.should()
                 && Select.ourBuildingsWithUnfinished().countInRadius(5, unit) == 0
-                && (unit.hasCooldown() || !unit.isTargetInWeaponRangeAccordingToGame(enemy))
+                && (unit.hasCooldown() || !unit.canAttackTargetWithBonus(enemy, 0.5))
         ) {
             return false;
         }

@@ -26,7 +26,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
         if (!unit.isCombatUnit()) return false;
         if (A.minerals() >= 1500) return false;
 
-        if (unit.enemiesNear().empty()) return false;
+//        if (unit.enemiesNear().empty()) return false;
 
         if (Count.ourCombatUnits() >= 7) {
             boolean anyEnemiesClose = unit.enemiesNear().combatUnits().countInRadius(8.2, unit) >= 1;
@@ -48,7 +48,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
         if (squadCenter == null) return false;
         double distToCenter = unit.distTo(squadCenter.position());
 
-        if (unit.lastActionMoreThanAgo(25, Actions.MOVE_FORMATION)) return false;
+        if (unit.lastActionMoreThanAgo(15, Actions.MOVE_FORMATION)) return false;
 
         if (distToCenter >= 6) return true;
 

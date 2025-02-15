@@ -6,6 +6,8 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.map.base.Bases;
+import atlantis.map.choke.Chokes;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -38,7 +40,7 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
     }
 
     private void requestNew() {
-        AUnit cannon = Select.ourWithUnfinished(type()).last();
+        HasPosition at = defineAt();
         ProductionOrder order = AddToQueue.withHighPriority(type());
 
         if (order == null) return;
@@ -48,8 +50,16 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
 //            ErrorLog.printMaxOncePerMinute("ProtossExtraEarlyCannonCommander: construction is null");
             return;
         }
-        construction.setNearTo(cannon);
+
+        construction.setNearTo(at);
         construction.findPositionForNewBuilding();
+    }
+
+    private static HasPosition defineAt() {
+        HasPosition at = Select.ourWithUnfinished(type()).last();
+        if (at != null) return at;
+
+        return Chokes.natural().groundTranslateTowardsMain(5);
     }
 
     private static AUnitType type() {

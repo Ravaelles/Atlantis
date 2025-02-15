@@ -67,10 +67,11 @@ public class CombatManagerTopPriority extends Manager {
 //            ContinueCurrentAction.class,
 
             ProtossEarlyGame.class,
-            ProtossForceStickToMainDuringDefend.class,
 
             ProtossCombatManager.class,
             TerranCombatManager.class,
+
+            ProtossForceStickToMainDuringDefend.class,
 
             ShouldStopRunning.class,
 //            ContinueRunning.class,
