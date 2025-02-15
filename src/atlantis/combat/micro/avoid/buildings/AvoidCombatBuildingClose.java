@@ -265,27 +265,27 @@ public class AvoidCombatBuildingClose extends Manager {
 ////        ) return true;
 //
 //        return dist >= (MIN_SAFE + (unit.woundPercent() / 40.0));
-////        return unit.isMoving()
-////            && unit.targetPosition() != null
-////            && dist < minDistAllowed;
+
+    /// /        return unit.isMoving()
+    /// /            && unit.targetPosition() != null
+    /// /            && dist < minDistAllowed;
 //    }
 
     // =========================================================
-
-
     private AUnit combatBuilding() {
         return unit.enemiesNear()
             .buildings()
             .onlyCompleted()
             .combatBuildingsAnti(unit)
-            .inRadius(8.2, unit)
+            .inRadius(8.35, unit)
             .nearestTo(unit);
     }
 
 //    private boolean combatBuildingShouldNotBeEngaged() {
 //        ourCombatUnitsNearby = combatBuilding.enemiesNear().combatUnits();
 //
-////        if (unit.combatEvalRelative() >= 2.6) return false;
+
+    /// /        if (unit.combatEvalRelative() >= 2.6) return false;
 //
 //        if (dontEngageBecauseTooManyEnemyCombatUnitsNearby()) return true;
 //
@@ -300,7 +300,6 @@ public class AvoidCombatBuildingClose extends Manager {
 //            .combatUnits()
 //            .inRadius(6, combatBuilding).atMost((int) (ourCombatUnitsNearby.count() / 8));
 //    }
-
     private boolean shouldRunToMainBecauseWasAttacked() {
         if (dist >= 7.9 || unit.lastUnderAttackLessThanAgo(50)) return true;
 

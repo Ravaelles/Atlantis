@@ -21,6 +21,7 @@ import atlantis.game.player.Enemy;
 public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     private static int strength;
     private static int dragoons;
+    private int combatUnits;
 
     // === CONTAIN =============================================
 
@@ -33,8 +34,9 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     public boolean shouldChangeMissionToAttack() {
         strength = Army.strength();
         dragoons = Count.dragoons();
+        combatUnits = Count.ourCombatUnits();
 
-        if (A.minerals() >= 1000 && Count.ourCombatUnits() >= 10) {
+        if (A.minerals() >= 1000 && combatUnits >= 10) {
             if (DEBUG) reason = "1K_minerals";
             return forceMissionAttack(reason);
         }
@@ -47,6 +49,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (dragoons >= 20) {
             if (DEBUG) reason = "Goon-attack";
             return true;
+        }
+
+        if (combatUnits <= 3) {
+            if (DEBUG) reason = "TooFewArmy(" + combatUnits + ")";
+            return false;
         }
 
         if (Enemy.zerg()) {
@@ -109,7 +116,6 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return false;
         }
 
-        int combatUnits = Count.ourCombatUnits();
         int enemyCombatUnits = EnemyUnits.combatUnits();
 
         if (combatUnits <= 8 && strength <= 160) return false;

@@ -1,6 +1,7 @@
 package atlantis.information.strategy.response.protoss;
 
 import atlantis.combat.missions.Missions;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;
@@ -26,6 +27,8 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
     }
 
     private boolean shouldIgnoreRushBecauseWeHaveGoons() {
+        if (!Enemy.protoss()) return false;
+
         int goons = Count.dragoonsWithUnfinished();
         return goons > 0 && goons >= 1.5 * EnemyUnits.dragoons();
     }

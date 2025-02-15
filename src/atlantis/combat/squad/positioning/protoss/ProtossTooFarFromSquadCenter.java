@@ -6,6 +6,7 @@ import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
@@ -27,8 +28,10 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
         if (unit.enemiesNear().empty()) return false;
 
-        boolean anyEnemiesClose = unit.enemiesNear().combatUnits().countInRadius(7, unit) >= 1;
-        if (anyEnemiesClose) return false;
+        if (Count.ourCombatUnits() >= 7) {
+            boolean anyEnemiesClose = unit.enemiesNear().combatUnits().countInRadius(8.2, unit) >= 1;
+            if (anyEnemiesClose) return false;
+        }
 
         if (unit.isLeader()) return false;
         if (unit.lastUnderAttackLessThanAgo(50)) return false;

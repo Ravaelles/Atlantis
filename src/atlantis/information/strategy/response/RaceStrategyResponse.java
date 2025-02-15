@@ -21,6 +21,7 @@ import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public abstract class RaceStrategyResponse {
     public boolean update() {
@@ -85,13 +86,13 @@ public abstract class RaceStrategyResponse {
     // =========================================================
 
     protected boolean rushDefence(AStrategy enemyStrategy) {
-        System.out.println("GENERIC RUSH - shouldn't be called, use race-specific");
+        ErrorLog.printMaxOncePerMinute("GENERIC RUSH - shouldn't be called, use race-specific");
 
-        Missions.forceGlobalMissionDefend("Rush defence");
+//        Missions.forceGlobalMissionDefend("Rush defence");
+//
+//        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
 
-        if (shouldSkipAntiRushCombatBuilding(enemyStrategy)) return false;
-
-        return true;
+        return false;
     }
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
