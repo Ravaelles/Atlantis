@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 import java.util.Map;
@@ -26,9 +27,11 @@ public class MoonUnitPositions {
     }
 
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {
+        int cacheForFrames = We.protoss() ? 6 : 10;
+
         return cacheMap.getIfValid(
             "getPositionsCreatedForLeader:" + leader.id(),
-            11,
+            cacheForFrames,
             () -> refreshEntireMap(unit, leader)
         );
     }

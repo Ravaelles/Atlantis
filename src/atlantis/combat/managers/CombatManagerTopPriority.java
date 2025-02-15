@@ -46,12 +46,12 @@ public class CombatManagerTopPriority extends Manager {
 
             Unfreezer.class,
 
+            ContinueShotAnimation.class,
+
             AvoidCombatBuildingClose.class,
             AvoidCriticalUnits.class,
 
             RetreatManager.class,
-
-            ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
 
             AttackParamountUnitsInRange.class,

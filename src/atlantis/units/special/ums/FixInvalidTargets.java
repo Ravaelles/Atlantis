@@ -28,7 +28,7 @@ public class FixInvalidTargets extends Manager {
                 && unit.noCooldown()
         ) {
             if (A.isUms() && AliveEnemies.get().notEmpty()) {
-                A.errPrintln("FixStoppedUnits: " + unit + " is attacking null target");
+                A.errPrintln(A.now() + ": FixStoppedUnits: " + unit + " is attacking null target");
             }
 //            PauseAndCenter.on(unit, true);
             return true;

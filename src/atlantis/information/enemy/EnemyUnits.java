@@ -133,6 +133,10 @@ public class EnemyUnits {
         return discovered().hydras().count();
     }
 
+    public static int lurkers() {
+        return discovered().lurkers().count();
+    }
+
     public static int mutas() {
         return discovered().mutalisks().count();
     }

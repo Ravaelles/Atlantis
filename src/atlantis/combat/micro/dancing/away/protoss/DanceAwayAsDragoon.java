@@ -12,7 +12,6 @@ import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
 public class DanceAwayAsDragoon extends DanceAway {
-
     private int rangedEnemiesCount;
 
     public DanceAwayAsDragoon(AUnit unit) {
@@ -27,6 +26,11 @@ public class DanceAwayAsDragoon extends DanceAway {
 //        System.err.println(A.minSec() + " - " + unit + " - DanceAwayAsDragoon");
 
 //        if (unit.cooldown() >= 4) return true;
+
+        if (noEnemiesThatCanAttackUsAndNoCooldown()) {
+//            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - " + unit.hp() + " - SAFE?");
+            return false;
+        }
 
         if (
             unit.shieldWound() <= 4
@@ -125,6 +129,12 @@ public class DanceAwayAsDragoon extends DanceAway {
         if (quiteHealthyAndNotUnderAttack()) return false;
 
         return false;
+    }
+
+    private boolean noEnemiesThatCanAttackUsAndNoCooldown() {
+        return unit.cooldown() >= 6
+            && unit.hp() >= 100
+            && unit.enemiesNear().canAttack(unit, 0.8).empty();
     }
 
     private boolean forbidDanceAwayWhenRangedNear() {

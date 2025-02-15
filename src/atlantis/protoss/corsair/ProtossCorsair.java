@@ -19,6 +19,7 @@ public class ProtossCorsair extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AsAirAvoidDeadlyAntiAir.class,
             AsAirAvoidAntiAir.class,
             CorsairHuntOverlords.class,
             CorsairHuntMutas.class,

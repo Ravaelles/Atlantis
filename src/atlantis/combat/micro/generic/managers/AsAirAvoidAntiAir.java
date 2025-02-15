@@ -19,6 +19,8 @@ public class AsAirAvoidAntiAir extends Manager {
         if (!unit.isAir()) return false;
         if (unit.shieldHealthy()) return false;
 
+        if (unit.hp() >= 40 && unit.eval() >= 1.4) return false;
+
         enemyAAPosition = enemyAntiAirInRange(unit);
         if (enemyAAPosition == null) return false;
 
