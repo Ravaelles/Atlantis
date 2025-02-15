@@ -22,13 +22,13 @@ public class FixInvalidTargets extends Manager {
 
         if (
             unit.isAttacking()
-                && unit.target() == null
                 && unit.action().isAttacking()
+                && !unit.hasValidTarget()
                 && unit.lastPositionChangedAgo() >= 5
                 && unit.noCooldown()
         ) {
             if (A.isUms() && AliveEnemies.get().notEmpty()) {
-                A.errPrintln(A.now() + ": FixStoppedUnits: " + unit + " is attacking null target");
+                A.errPrintln(A.now() + ": FixInvalidTargets: " + unit + " is attacking null target");
             }
 //            PauseAndCenter.on(unit, true);
             return true;

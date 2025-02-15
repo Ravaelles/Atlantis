@@ -1516,6 +1516,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (u != null && u.isAttacking()) || (isOur() && isCommand(UnitCommandType.Attack_Unit));
     }
 
+    public boolean isAttackingBuilding() {
+        return isAttacking() && hasValidTarget() && target().isABuilding();
+    }
+
     public boolean isAttackingRecently() {
         return u.isAttacking() && lastActionLessThanAgo(30);
     }

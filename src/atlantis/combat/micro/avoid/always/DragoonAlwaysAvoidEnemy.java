@@ -21,8 +21,26 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean vsZerg() {
-        if (unit.hp() <= 40 && unit.isMissionAttack() && unit.enemiesNear().inRadius(5.8, unit).notEmpty())
+        if (isAnyEnemyThatCanAttackUsRelativelyClose()) {
+            return unit.setTooltip("AvoidSwarm");
+        }
+
+        if (unit.meleeEnemiesNearCount(1.25) >= 3) {
+            return unit.setTooltip("AvoidSwarm");
+        }
+
+        if (unit.hp() <= 40 && unit.isMissionAttack() && unit.enemiesNear().inRadius(5.8, unit).notEmpty()) {
             return unit.setTooltip("AvoidVeryLowHP");
+        }
+
+        if (
+            unit.eval() <= 1.1
+                && unit.shieldWounded()
+                && unit.shotSecondsAgo(1.5)
+                && unit.meleeEnemiesNearCount(3.65) >= 2
+        ) {
+            return unit.setTooltip("CarefulGoon");
+        }
 
         if (
             unit.hp() <= 60
@@ -51,6 +69,13 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         }
 
         return false;
+    }
+
+    private boolean isAnyEnemyThatCanAttackUsRelativelyClose() {
+        return unit.cooldown() >= 12
+            && unit.shieldWounded()
+            && !unit.isAttackingBuilding()
+            && unit.enemiesNear().canAttack(unit, 2.8).notEmpty();
     }
 
     private boolean lonelyAndLotsOfHydras() {
