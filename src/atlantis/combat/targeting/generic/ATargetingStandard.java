@@ -2,6 +2,7 @@ package atlantis.combat.targeting.generic;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.Selection;
 
 public class ATargetingStandard extends ATargeting {
@@ -117,6 +118,20 @@ public class ATargetingStandard extends ATargeting {
         }
 
         // =========================================================
+        // Okay, try targeting overlords
+
+        if (unit.enemiesNear().groundUnits().countInRadius(9, unit) <= 1) {
+            target = AliveEnemies.get()
+                .overlords()
+                .canBeAttackedBy(unit, 0.9)
+                .mostWoundedOrNearest(unit);
+            if (target != null) {
+                debug("D7-Overlords = " + target);
+                return target;
+            }
+        }
+
+        // =========================================================
         // Okay, try targeting any-fuckin-thing
 
         // Non medics nearby
@@ -126,7 +141,7 @@ public class ATargetingStandard extends ATargeting {
             .canBeAttackedBy(unit, 15)
             .nearestTo(unit);
         if (target != null) {
-            debug("D7 = " + target);
+            debug("D8 = " + target);
             return target;
         }
 

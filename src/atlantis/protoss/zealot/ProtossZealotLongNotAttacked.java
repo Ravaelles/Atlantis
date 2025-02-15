@@ -21,6 +21,9 @@ public class ProtossZealotLongNotAttacked extends Manager {
 
         if (unit.isRetreating()) return false;
         if (!unit.hasValidTarget()) return false;
+
+        if (unit.cooldown() <= 3 && unit.enemiesNear().groundUnits().canAttack(unit, 0).notEmpty()) return true;
+
         if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
         if (unit.isActiveManager(this.getClass()) && unit.lastActionLessThanAgo(60)) return true;
@@ -56,7 +59,7 @@ public class ProtossZealotLongNotAttacked extends Manager {
     }
 
     private AUnit enemy() {
-        Selection enemies = unit.enemiesNear().realUnitsAndCombatBuildings().inRadius(1.1, unit).notDeadMan();
+        Selection enemies = unit.enemiesNear().realUnitsAndCombatBuildings().inRadius(1.05, unit).notDeadMan();
 
         AUnit target = enemies.canBeAttackedBy(unit, 0).mostWounded();
         if (target != null) return target;
