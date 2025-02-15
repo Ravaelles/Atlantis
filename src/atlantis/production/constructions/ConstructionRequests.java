@@ -57,6 +57,17 @@ public class ConstructionRequests {
         return total;
     }
 
+    public static int countAllOfType(AUnitType type) {
+        int total = 0;
+        for (Construction construction : constructions) {
+            if (construction.buildingType().equals(type)) {
+                total++;
+            }
+        }
+
+        return total;
+    }
+
     public static Construction getNotStartedOfType(AUnitType type) {
         for (Construction construction : constructions) {
             if (

@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.add;
 
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.ClearCountCache;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -122,12 +123,14 @@ public class AddToQueue {
         if (Queue.get().addNew(index, productionOrder)) {
 //            A.println(A.now() + ": Adding " + type + " to queue");
 
-//            if (type.isSupplyDepot()) {
-//                System.out.println("@ " + A.now() + " - ADDED DEPOT = "
-//                    + CountInQueue.count(AUnitType.Terran_Supply_Depot)
-//                    + " / " + Count.inQueueOrUnfinished(AUnitType.Terran_Supply_Depot, 50)
-//                );
-//            }
+            if (type.isGasBuilding()) {
+                System.out.println("@ " + A.minSec() + " - STUFF ADDED " + type + " = "
+                    + CountInQueue.count(type)
+                    + " / " + Count.inQueueOrUnfinished(type, 50)
+                    + " / con_nf:" + ConstructionRequests.countNotFinishedOfType(type)
+                    + " / con_all:" + ConstructionRequests.countAllOfType(type)
+                );
+            }
 
 //            if (type.isBunker()) {
 //                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);

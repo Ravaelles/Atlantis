@@ -172,14 +172,14 @@ public class TravelToConstruct extends HasUnit {
 //        // Farther than 15 tiles from base
 //        else {
 //            if (!A.hasMinerals(needThisMineralsForLongDistanceConstructionTravel(distance, type, order))) {
-////                System.out.println(A.minSec() + " !!!! WAIT FOR MORE MINERALS - " + type);
+
+    /// /                System.out.println(A.minSec() + " !!!! WAIT FOR MORE MINERALS - " + type);
 //                return true;
 //            }
 //        }
 //
 //        return false;
 //    }
-
     public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {
 //        return (!type.isGateway() ? 0 : ReservedResources.minerals())
 
@@ -337,11 +337,15 @@ public class TravelToConstruct extends HasUnit {
             buildPosition = (new GasBuildingFix(unit)).applyGasBuildingFixIfNeeded(buildPosition, buildingType);
 
             if (buildPosition == null) {
-                construction.cancel(buildingType + " has null buildPosition");
-                ErrorLog.printMaxOncePerMinute("Cancel construction of " + buildingType + " because position null");
+                if (construction.buildingUnit() == null) {
+                    construction.cancel(buildingType + " has null buildPosition");
+                    ErrorLog.printMaxOncePerMinute("Cancel construction of " + buildingType + " because position null");
+                }
+
+                construction.setBuilder(null);
+
                 return false;
             }
-
 
 //            if (Select.ourWithUnfinishedOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
 //                construction.cancel();
@@ -412,9 +416,9 @@ public class TravelToConstruct extends HasUnit {
 ////            );
 ////        }
 //
-////        return order.buildPosition();
-//    }
 
+    /// /        return order.buildPosition();
+//    }
     private void moveOtherUnitsOutOfConstructionPlace(APosition buildPosition) {
         for (AUnit unit : unit.friendsNear().groundUnits().inRadius(2.3, buildPosition).exclude(unit).list()) {
             unit.moveAwayFrom(buildPosition, 1, Actions.SPECIAL, "Construction!");

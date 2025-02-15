@@ -27,8 +27,9 @@ public class ShouldForceAttack {
 
         if (
             Strategy.get().isRushOrCheese()
-                && A.resourcesBalance() >= -250
-                && strength >= 115
+//                && A.resourcesBalance() >= -250
+                && combatUnits >= 5
+                && strength >= 111
                 && (strength >= 131 || EnemyUnits.dragoons() <= 2)
         ) {
             return forceMissionAttack("Rush or cheese");
