@@ -26,6 +26,7 @@ public class ContinueShotAnimation extends Manager {
 //        if (unit.shotSecondsAgo() >= 5) return false;
 //        if (unit.lastActionMoreThanAgo(15) && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
         if (!unit.isTargetInWeaponRangeAccordingToGame()) {
+            if (unit.isDragoon() && unit.hp() <= 60) return false;
             if (unit.lastActionLessThanAgo(20, Actions.MOVE_FORMATION)) return false;
             if (unit.shotSecondsAgo() >= 4 && unit.lastActionMoreThanAgo(8)) return false;
 

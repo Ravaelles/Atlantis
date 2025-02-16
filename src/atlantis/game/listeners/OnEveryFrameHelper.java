@@ -34,7 +34,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
-import atlantis.units.interrupt.ContinueOldBroklenShootingOld;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
@@ -490,13 +489,13 @@ public class OnEveryFrameHelper {
 //            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
 //        }
 
-        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
-            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
-            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
-        }
+//        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
+//            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
+//            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
+//        }
     }
 
 //    private static void validateNextDepotPosition() {
