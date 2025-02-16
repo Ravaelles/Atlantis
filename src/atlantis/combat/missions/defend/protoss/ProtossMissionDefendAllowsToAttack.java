@@ -34,6 +34,8 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
             if (enemy.enemiesNear().buildings().countInRadius(15, unit) == 0) return false;
         }
 
+        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.35) return false;
+
         AUnit leader = unit.squadLeader();
         if (leader != null && leader.isMelee()) {
             if (unit.distTo(leader) >= 2) return false;

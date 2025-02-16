@@ -2,8 +2,10 @@ package atlantis.combat.targeting.generic;
 
 import atlantis.combat.targeting.generic.protoss.ATargetingAsDragoon;
 import atlantis.combat.targeting.generic.protoss.ATargetingAsZealot;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 

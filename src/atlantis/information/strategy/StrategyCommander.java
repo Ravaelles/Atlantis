@@ -29,7 +29,7 @@ public class StrategyCommander extends Commander {
             }
         }
 
-        RaceStrategyResponseFactory.forOurRace().update();
+//        RaceStrategyResponseFactory.forOurRace().update();
 
         // CodeProfiler.endMeasuring(this);
     }

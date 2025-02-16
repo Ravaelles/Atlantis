@@ -274,9 +274,10 @@ public class AvoidCombatBuildingClose extends Manager {
     // =========================================================
     private AUnit combatBuilding() {
         double radius = (unit.isReaver() ? 8.2 : 9.7)
-            + (unit.isMelee() ? 0.7 : 0)
+            + (unit.isMelee() ? 1.3 : 0)
             + (unit.isWounded() ? 0.8 : 0)
-            + ((A.s % 10) / 6.0);
+            + (unit.woundPercent() >= 70 ? 1.0 : 0)
+            + ((A.s % 10) / 5.0);
 
         return unit.enemiesNear()
             .buildings()

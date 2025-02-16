@@ -3,11 +3,13 @@ package atlantis.combat.micro.avoid.dont.protoss.dragoon;
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
-import atlantis.game.player.Enemy;
+import bwapi.Color;
 
 public class DragoonDontAvoidEnemy {
     public static boolean dontAvoid(AUnit unit) {
@@ -72,9 +74,9 @@ public class DragoonDontAvoidEnemy {
 ////        if (unit.isSafeFromMelee()) return Decision.TRUE;
 //
 //        return unit.isSafeFromMelee() ? Decision.TRUE : Decision.FALSE;
-////        return Decision.INDIFFERENT;
-//    }
 
+    /// /        return Decision.INDIFFERENT;
+//    }
     private static boolean healthyAndSafe(AUnit unit) {
         return unit.woundHp() <= 9
             && unit.lastAttackFrameMoreThanAgo(30 * 5)
@@ -160,10 +162,10 @@ public class DragoonDontAvoidEnemy {
 
         Selection enemiesNear = unit.enemiesNear().havingAntiGroundWeapon();
 
-        if (!unit.isHealthy() && enemiesNear.inRadius(2.5, unit).atLeast(2)) return false;
-        if (unit.enemiesNear().ranged().inRadius(9, unit).empty()) return reason(unit, "OnlyLingsA");
+        if (!unit.isHealthy() && enemiesNear.inRadius(1.8, unit).atLeast(3)) return false;
+        if (unit.enemiesNear().ranged().inRadius(7.8, unit).empty()) return reason(unit, "OnlyLingsA");
 
-        return unit.shieldDamageAtMost(19)
+        return unit.shields() >= 5 && unit.cooldown() <= 8
             && reason(unit, "OnlyLingsB");
     }
 
@@ -184,6 +186,7 @@ public class DragoonDontAvoidEnemy {
     }
 
     private static boolean vsZerg(AUnit unit) {
+        if (dontAvoidZerglingsWhenManyDragoonsNear(unit)) return true;
         if (dontAvoidWhenOnlyEnemyZerglingsNearby(unit)) return true;
 
         if (unit.isHealthy()) return true;
@@ -198,6 +201,25 @@ public class DragoonDontAvoidEnemy {
 
         return unit.lastAttackFrameAgo() > 30 * 3
             && reason(unit, "VsZerg");
+    }
+
+    private static boolean dontAvoidZerglingsWhenManyDragoonsNear(AUnit unit) {
+//        if (!unit.isTarget(AUnitType.Zerg_Zergling)) return false;
+//        AUnit ling = unit.target();
+        if (unit.hp() <= 30) return false;
+        if (unit.cooldown() >= 8) return false;
+
+        AUnit ling = unit.enemiesNear().zerglings().inRadius(OurDragoonRange.range(), unit).nearestTo(unit);
+        if (ling == null) return false;
+
+        ling.paintTextCentered("_" + ling.enemiesNear().dragoons().countInRadius(7, ling), Color.Red);
+
+        if (ling.enemiesNear().dragoons().countInRadius(7, ling) >= 2) {
+//            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - \"GoonCo-op\"");
+            return reason(unit, "GoonCo-op");
+        }
+
+        return false;
     }
 
     private static boolean whenMeleeNear(AUnit unit) {

@@ -1,12 +1,25 @@
 package atlantis.combat.targeting.generic.protoss;
 
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 
+import static atlantis.combat.targeting.generic.ATargeting.debug;
+
 public class ATargetingAsDragoon {
     public static AUnit target(AUnit unit, Selection enemyUnits) {
         if (!unit.isDragoon()) return null;
+
+        if (Enemy.zerg() && unit.isDragoon()) {
+            AUnit target = enemyUnits
+                .inRadius(OurDragoonRange.range() - 0.4, unit)
+                .mostWoundedOrNearest(unit);
+            if (target != null) {
+                debug("ClosestZerg = " + target);
+                return target;
+            }
+        }
 
         AUnit target;
         double baseRange = OurDragoonRange.range();

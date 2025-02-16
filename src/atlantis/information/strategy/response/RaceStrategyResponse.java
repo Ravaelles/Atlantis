@@ -24,18 +24,18 @@ import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public abstract class RaceStrategyResponse {
-    public boolean update() {
-        if (AGame.notNthGameFrame(17)) return false;
+//    public boolean update() {
+//        if (AGame.notNthGameFrame(17)) return false;
+//
+//        // Anti-LAND
 
-        // Anti-LAND
-//        if (antiLandManager().requestToBuildNewAntiLandCombatBuilding()) return true;
-
-        // Anti-AIR
-        if (antiAirManager().requestToBuildNewAntiAirCombatBuilding()) return true;
-
-        return false;
-    }
-
+    /// /        if (antiLandManager().requestToBuildNewAntiLandCombatBuilding()) return true;
+//
+//        // Anti-AIR
+//        if (antiAirManager().requestToBuildNewAntiAirCombatBuilding()) return true;
+//
+//        return false;
+//    }
     public static RaceStrategyResponse get() {
         return RaceStrategyResponseFactory.forOurRace();
     }

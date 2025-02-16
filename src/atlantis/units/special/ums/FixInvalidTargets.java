@@ -27,10 +27,10 @@ public class FixInvalidTargets extends Manager {
                 && unit.lastPositionChangedAgo() >= 5
                 && unit.noCooldown()
         ) {
-            if (A.isUms() && AliveEnemies.get().notEmpty()) {
-                A.errPrintln(A.now() + ": FixInvalidTargets: " + unit + " is attacking null target");
-            }
-//            PauseAndCenter.on(unit, true);
+//            if (A.isUms() && AliveEnemies.get().notEmpty()) {
+//                A.errPrintln(A.now() + ": FixInvalidTargets: " + unit + " is attacking null target");
+//                PauseAndCenter.on(unit, true);
+//            }
             return true;
         }
 
