@@ -28,13 +28,12 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
 //        if (unit.enemiesNear().empty()) return false;
 
-        if (Count.ourCombatUnits() >= 7) {
-            boolean anyEnemiesClose = unit.enemiesNear().combatUnits().countInRadius(8.2, unit) >= 1;
-            if (anyEnemiesClose) return false;
-        }
+//        if (Count.ourCombatUnits() >= 7) {
+//            boolean anyEnemiesClose = unit.enemiesNear().combatUnits().countInRadius(8.2, unit) >= 1;
+//            if (anyEnemiesClose) return false;
+//        }
 
         if (unit.isLeader()) return false;
-        if (unit.lastUnderAttackLessThanAgo(50)) return false;
         if (A.supplyUsed() >= 110 && Army.strength() >= 450 && (unit.isMoving() || unit.isAttacking() || unit.hasCooldown()))
             return false;
 //        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(40)) return false; // Continue
@@ -50,7 +49,8 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
         if (unit.lastActionMoreThanAgo(15, Actions.MOVE_FORMATION)) return false;
 
-        if (distToCenter >= 6) return true;
+//        if (unit.lastUnderAttackLessThanAgo(50)) return false;
+        if (distToCenter >= 7) return true;
 
         if (enemiesTooClose()) return false;
 
