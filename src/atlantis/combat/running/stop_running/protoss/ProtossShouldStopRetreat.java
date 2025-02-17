@@ -1,6 +1,7 @@
 package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -25,11 +26,26 @@ public class ProtossShouldStopRetreat extends Manager {
 
     @Override
     public Manager handle() {
-        unit.runningManager().stopRunning();
-        if (unit.isMoving() && unit.isAction(Actions.RUN_RETREAT)) {
-            unit.stop("StopRetreat");
+        if (stopRetreating(unit)) {
+            for (AUnit friend : unit.squad().list()) {
+                stopRetreating(friend);
+            }
+            return usedManager(this);
         }
 
         return null;
+    }
+
+    private boolean stopRetreating(AUnit friend) {
+        friend.runningManager().stopRunning();
+        if (friend.isAction(Actions.RUN_RETREAT)) {
+            friend.stop("StopRetreat");
+        }
+
+        if (unit.hasAnyWeapon()) {
+            if ((new AttackNearbyEnemies(friend)).invokedFrom(this)) return true;
+        }
+
+        return false;
     }
 }

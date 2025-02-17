@@ -1,3 +1,16 @@
+- Always avoid when close to unwalkable and melee near
+
+
+- Antiair was remove, so handle that
+
+
+- Check if StopRetreat actually stops all units or just one
+
+
+
+- Build cannons at NATURAL CHOKE, not in main. There was no main, but after 6 min of game, do it. Why did it happen?
+
+
 - Dragoons should not run far from other goons in early game, cause lings arte faster and cheaper in any numbers and it takes 2 goons to kill them
 
 Dont go into range of shot of sunkens

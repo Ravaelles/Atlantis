@@ -16,8 +16,11 @@ public class ProtossDragoonLongNotAttacked extends Manager {
     @Override
     public boolean applies() {
         if (unit.isAttacking()) return false;
-        if (unit.isRetreating()) return false;
-        if (!unit.hasValidTarget()) return false;
+        if (unit.isRetreating()) {
+            if (unit.shotSecondsAgo() >= 2 && unit.eval() >= 0.9) return true;
+            return false;
+        }
+//        if (!unit.hasValidTarget()) return false;
         if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
         if (unit.shotSecondsAgo() <= 3) return false;
 

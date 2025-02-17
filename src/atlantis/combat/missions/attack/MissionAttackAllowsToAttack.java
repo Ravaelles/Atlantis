@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
 
 public class MissionAttackAllowsToAttack extends HasUnit {
     public MissionAttackAllowsToAttack(AUnit unit) {
@@ -25,7 +26,8 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
 //        if (true) return true;
 
-        if (!enemy.isAlive() || enemy.isDead() || !enemy.hasPosition()) return false;
+        if (!enemy.isAlive() || enemy.isDead()) return forbidden("EnemyDead");
+        if (!enemy.hasPosition()) return forbidden("EnemyWithoutPosition");
 
         if (
             unit.isRanged()
@@ -34,35 +36,44 @@ public class MissionAttackAllowsToAttack extends HasUnit {
                 && unit.isTargetInWeaponRangeAccordingToGame(enemy)
         ) return true;
 
-        if (preventProtossFromChasingScatteredLings(enemy)) return false;
+        if (preventProtossFromChasingScatteredLings(enemy)) return forbidden("ChasingLings");
 
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
-            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return false;
+            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return forbidden(
+                "TooFarFromCenter");
         }
 
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;
         if (Enemy.zerg() && unit.isMelee() && enemy.isMelee() && unit.distToNearestChokeLessThan(1)) return true;
 
 //        if (DontAttackAlone.isAlone(unit)) return false;
-        if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return false;
+        if (DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(unit, enemy)) return forbidden("ScatteredEnemy");
 
-        if (forbiddenToAttackCombatBuilding(enemy)) return false;
-        if (dontAttackAsSquadScout(enemy)) return false;
+        if (forbiddenToAttackCombatBuilding(enemy)) return forbidden("ForbiddenCB");
+        if (dontAttackAsSquadScout(enemy)) return forbidden("SScout");
 
         if (leaderJustAttacked()) return true;
 
-        if (dontAttackDuringContain(enemy)) return false;
-        if (forbiddenToAttackWithinChoke(enemy)) return false;
+        if (dontAttackDuringContain(enemy)) return forbidden("Containing");
+        if (forbiddenToAttackWithinChoke(enemy)) return forbidden("WithinChoke");
 
         return true;
+    }
+
+    private boolean forbidden(String reason) {
+//        ErrorLog.debug(reason);
+        return false;
     }
 
     private boolean preventProtossFromChasingScatteredLings(AUnit enemy) {
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
 
-        return enemy.isZergling() && EnemyInfo.hasRanged();
+        return enemy.isZergling()
+            && EnemyInfo.hasRanged()
+            && !unit.isTargetInWeaponRangeAccordingToGame(enemy)
+            && enemy.friendsNear().groundUnits().countInRadius(3, enemy) <= 0;
     }
 
     private boolean leaderJustAttacked() {
