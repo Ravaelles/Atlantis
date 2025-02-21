@@ -2026,6 +2026,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return squad().mission();
     }
 
+    public boolean squadIsAlpha() {
+        return squad != null && squad().isAlpha();
+    }
+
     public int squadSize() {
         if (squad() == null) {
             if (Env.isTesting()) return Alpha.count();

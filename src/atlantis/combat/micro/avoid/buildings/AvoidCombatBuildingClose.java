@@ -38,6 +38,7 @@ public class AvoidCombatBuildingClose extends Manager {
         if (combatBuilding == null) return false;
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return false;
+        if (unit.enemiesNear().ranged().nonBuildings().canAttack(unit, 1.4).count() > 0) return false;
 
         if (We.terran()) {
             if (

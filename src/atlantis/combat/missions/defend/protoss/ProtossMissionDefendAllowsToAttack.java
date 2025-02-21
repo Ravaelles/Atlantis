@@ -27,7 +27,9 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         this.enemy = enemy;
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
 
-        if (Enemy.zerg() && unit.squadSize() <= 7 && unit.eval() <= 1.6 && unit.distToFocusPoint() >= 10) return false;
+        if (Enemy.zerg()) {
+            if (whenSmallSquadVsZerg(enemy)) return false;
+        }
 
         double distToEnemy = unit.distTo(enemy);
 
@@ -92,6 +94,12 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         if (asRangedAttackTargetsInRange()) return true;
 
         return true;
+    }
+
+    private boolean whenSmallSquadVsZerg(AUnit enemy) {
+        return unit.squadIsAlpha()
+            && unit.squadSize() <= 7
+            && enemy.distToFocusPoint() >= (unit.eval() <= 3 ? 6.5 : 10);
     }
 
     private boolean enemyVeryCloseToBuilding() {

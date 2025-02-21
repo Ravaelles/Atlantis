@@ -12,9 +12,10 @@ public class ProtossEvaluateAgainstCombatBuildings {
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
 //        return unit.eval() >= 1.2
         if (A.supplyUsed() >= 190 && A.minerals() >= 500) return true;
+//        if (unit.eval() <= 1.2) return false;
 
         return (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
-            && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.7;
+            && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.5;
     }
 
 //    public static boolean looksGoodAgainstThirdOrLaterEnemyBase(AUnit unit, APosition enemyBase) {

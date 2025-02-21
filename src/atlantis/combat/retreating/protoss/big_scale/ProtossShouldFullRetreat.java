@@ -23,6 +23,8 @@ public class ProtossShouldFullRetreat {
 
         eval = unit.eval();
 
+        if (dontRetreatVsSunken(unit)) return false;
+
         if (retreatDuringMissionAttack(unit)) return true;
 
         if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
@@ -110,6 +112,13 @@ public class ProtossShouldFullRetreat {
 //        double evalRelative = unit.eval();
 //
 //        return evalRelative <= 1.05;
+    }
+
+    private static boolean dontRetreatVsSunken(AUnit unit) {
+        if (unit.squadSize() <= 4) return false;
+        if (unit.lastRetreatedAgo() <= 30 * 12) return false;
+
+        return unit.eval() >= 0.95;
     }
 
     private static boolean retreatDuringMissionAttack(AUnit unit) {

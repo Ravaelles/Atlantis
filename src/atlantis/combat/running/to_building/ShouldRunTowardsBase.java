@@ -19,7 +19,7 @@ public class ShouldRunTowardsBase {
         AUnit main = Select.main();
         if (main == null) return false;
 
-        double distToMain = unit.distTo(main);
+        double distToMain = unit.groundDistToMain();
         if (distToMain <= 3.6) return false;
 
         if (unit.meleeEnemiesNearCount(2.1) >= (unit.hp() <= 80 ? 2 : 3)) return false;
@@ -28,6 +28,8 @@ public class ShouldRunTowardsBase {
             AUnit enemy = (AUnit) runAwayFrom;
             if (enemy.isDarkTemplar() && unit.distTo(enemy) >= 1.8) return Count.cannons() > 0;
         }
+
+        if (unit.hp() >= 80 && A.s >= 60 * 6 && distToMain >= 30) return true;
 
         if (tooManyRangedNear(unit)) return false;
 
