@@ -11,8 +11,7 @@ public class ZergShouldStopRunning extends Manager {
 
     @Override
     public boolean applies() {
-        return We.zerg()
-            && unit.isRunning();
+        return We.zerg();
     }
 
     @Override

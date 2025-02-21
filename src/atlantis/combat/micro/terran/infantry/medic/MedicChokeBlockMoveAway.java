@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
@@ -39,7 +38,7 @@ public class MedicChokeBlockMoveAway extends Manager {
             }
         }
         else {
-            unit.holdPosition("ChokeBlock");
+            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
         }
         unit.setAction(Actions.SPECIAL);
 

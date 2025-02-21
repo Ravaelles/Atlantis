@@ -913,6 +913,21 @@ public class AUnitType implements Comparable<Object> {
                 AUnitType.Terran_Bunker,
                 AUnitType.Terran_Missile_Turret,
                 AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Zerg_Creep_Colony,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Spore_Colony
+            )
+        );
+    }
+
+    public boolean isCombatBuildingWithoutCreepColonies() {
+        return (boolean) cache.get(
+            "isCombatBuildingWithoutCreepColonies",
+            -1,
+            () -> is(
+                AUnitType.Terran_Bunker,
+                AUnitType.Terran_Missile_Turret,
+                AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Zerg_Sunken_Colony,
                 AUnitType.Zerg_Spore_Colony
             )
@@ -1345,7 +1360,8 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isNotRealUnit",
             -1,
-            () -> isLarvaOrEgg() || isMineralField() || isInvincible()
+            () -> (isABuilding() && !isCombatBuilding())
+                || isLarvaOrEgg() || isMineralField() || isInvincible()
                 || isGeyser() || isSpell() || isFlagOrBeacon()
         );
     }
@@ -1392,7 +1408,8 @@ public class AUnitType implements Comparable<Object> {
                 && !isInvincible()
                 && !isMine()
                 && !isObserver()
-                && (!isABuilding() || isCombatBuilding() || isSunkenOrCreep())
+                && (!isABuilding() || isCombatBuilding())
+//                && !isABuilding()
                 && !isOverlord()
         );
     }

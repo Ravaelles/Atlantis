@@ -71,7 +71,7 @@ public class ATargetingImportant extends ATargeting {
             target = ATargetingAsDragoon.target(unit, enemyUnits);
             if (target != null) {
 //                System.out.println("ImpGoon = " + target + " / " + target.hp());
-                debug("ImpGoon = " + target);
+//                debug("ImpGoon = " + target);
                 return target;
             }
 
@@ -88,16 +88,20 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyUnits
             .ofType(
+                AUnitType.Protoss_Photon_Cannon,
                 AUnitType.Protoss_Zealot,
                 AUnitType.Protoss_Dragoon,
+                AUnitType.Terran_Bunker,
                 AUnitType.Terran_Firebat,
                 AUnitType.Terran_Marine,
+                AUnitType.Zerg_Sunken_Colony,
+                AUnitType.Zerg_Lurker,
                 AUnitType.Zerg_Zergling,
                 AUnitType.Zerg_Hydralisk
             )
             .inRadius(6.5, unit)
             .canBeAttackedBy(unit, 0)
-            .mostWounded();
+            .mostWoundedOrNearest(unit);
         if (target != null) {
             debug("CombatUnit_inRange = " + target);
             return target;

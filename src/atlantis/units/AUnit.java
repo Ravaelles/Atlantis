@@ -2465,7 +2465,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isCombatBuilding() {
-        return type().isCombatBuilding();
+        return type().isCombatBuildingOrCreepColony();
     }
 
     public boolean isMutalisk() {
@@ -3400,6 +3400,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (target() == null) return 999;
 
         return distTo(target());
+    }
+
+    public String distToTargetDigit() {
+        return A.digit(distToTarget());
     }
 
     public boolean distToTargetLessThan(double dist) {

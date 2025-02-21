@@ -22,11 +22,11 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
 
     private boolean vsZerg() {
         if (isAnyEnemyThatCanAttackUsRelativelyClose()) {
-            return unit.setTooltip("AvoidSwarm");
+            return unit.setTooltip("CloseZergy");
         }
 
         if (unit.meleeEnemiesNearCount(1.25) >= 3) {
-            return unit.setTooltip("AvoidSwarm");
+            return unit.setTooltip("AvoidTheSwarm");
         }
 
         if (unit.hp() <= 40 && unit.isMissionAttack() && unit.enemiesNear().inRadius(5.8, unit).notEmpty()) {

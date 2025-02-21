@@ -17,7 +17,7 @@ public class UnfreezerShakeUnit {
         }
 
         if (framesModulo <= 26) {
-            if (!unit.isHoldingPosition()) return unit.holdPosition("UnfreezeHold");
+            if (!unit.isHoldingPosition()) return unit.holdPosition(Actions.HOLD_POSITION, "UnfreezeHold");
             return true;
         }
 

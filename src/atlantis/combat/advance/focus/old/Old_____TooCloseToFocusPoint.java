@@ -82,7 +82,7 @@ public class Old_____TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (unit.distToFocusPoint() <= 2.6) {
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
-            if (A.everyNthGameFrame(10)) unit.holdPosition("DragoonTooCloseA");
+            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.HOLD_POSITION, "DragoonTooCloseA");
 //            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
             else goAway();
         }

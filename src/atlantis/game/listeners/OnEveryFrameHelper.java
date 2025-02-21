@@ -6,6 +6,7 @@ import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
+import atlantis.game.listeners.temp.UnitStateHelper;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
@@ -34,6 +35,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
@@ -58,11 +60,13 @@ public class OnEveryFrameHelper {
 
 //        paintAllUnitEvals();
 
-        AAdvancedPainter.togglePainting();
-        AAdvancedPainter.paintConstructionPlaces();
-        AAdvancedPainter.togglePainting();
+//        AAdvancedPainter.togglePainting();
+//        AAdvancedPainter.paintConstructionPlaces();
+//        AAdvancedPainter.togglePainting();
 
-//        paintShowingInOurDirection();
+//        UnitStateHelper.identifyUnitBrakingDistance(Select.our().groundUnits().first());
+//
+//        paintEnemiesFacingOurDirection();
 
 //        int counter = 0;
 //        for (AUnit unit : Select.ourCombatUnits().havingWeapon().list()) {
@@ -176,11 +180,15 @@ public class OnEveryFrameHelper {
         }
     }
 
-    private static void paintShowingInOurDirection() {
-        AUnit enemy = Select.enemy().first();
+    private static void paintEnemiesFacingOurDirection() {
         AUnit our = Select.ourCombatUnits().first();
+        if (our == null) return;
 
-        enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+        our.paintCircle(our.groundWeaponRange() * 32, 1, Color.Orange);
+
+        for (AUnit enemy : our.enemiesNear().list()) {
+            enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+        }
 
 //        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
     }

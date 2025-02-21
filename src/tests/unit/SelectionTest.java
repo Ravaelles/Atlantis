@@ -11,7 +11,7 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 import tests.unit.helpers.ClearAllCaches;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SelectionTest extends WorldStubForTests {
     @Test
@@ -70,7 +70,7 @@ public class SelectionTest extends WorldStubForTests {
         ClearAllCaches.clearAll();
 
         usingFakeOurs(() -> {
-//            Select.our().print();
+            Select.our().print();
             Selection our = Select.our();
 
             assertEquals(22, our.size());
@@ -83,6 +83,8 @@ public class SelectionTest extends WorldStubForTests {
                 AUnitType.Terran_Siege_Tank_Siege_Mode, AUnitType.Terran_Siege_Tank_Tank_Mode
             ).count());
 
+//            our.realUnitsAndCombatBuildings().print("Real units and combat buildings");
+//            System.err.println("our.realUnitsAndCombatBuildings().size() = " + our.realUnitsAndCombatBuildings().size());
             assertEquals(22, our.size());
             assertEquals(2, our.tanks().size());
             if (Count.tanks() != 2) {
@@ -122,10 +124,6 @@ public class SelectionTest extends WorldStubForTests {
 //
 //        Selection enemies = Select.from(fakeEnemies).add(EnemyUnits.discovered()).removeDuplicates();
 //
-////        enemies.print();
-//
-//        assertEquals(6, enemies.size());
-//    }
 
     @Test
     public void testVariousMethods() {
@@ -137,11 +135,28 @@ public class SelectionTest extends WorldStubForTests {
             AUnit zealot = our.first();
             AUnit muta = our.ofType(AUnitType.Zerg_Mutalisk).first();
 
+//            our.print("OUR units");
+//            our.realUnits().print("OUR REAL units");
+//            our.exclude(our.realUnits()).print("OUR MINUS realUnits");
+//            our.combatUnits().print("Combat units");
+//            our.exclude(our.combatUnits()).print("OUR MINUS combatUnits");
+
+            assertEquals(22, our.size());
+
+            assertEquals(5, our.buildings().size());
+            assertEquals(2, our.combatBuildings(false).size());
+            assertEquals(3, our.combatBuildings(true).size());
+            assertEquals(11, our.combatUnits().size());
+            assertEquals(14, our.realUnits().size());
+
+            assertTrue(our.realUnits().cannons().notEmpty());
+
 //            our.exclude(our.combatUnits()).print();
 //            our.inShootRangeOf().print();
 //            A.println("zealot = " + zealot);
 
-            assertEquals(11, our.combatUnits().size());
+            assertNotEquals(0, our.combatUnits().sunkens().size());
+            assertNotEquals(0, our.combatUnits().cannons().size());
 
             assertEquals(5, our.havingAntiAirWeapon().size());
             assertEquals(17, our.notHavingAntiAirWeapon().size());

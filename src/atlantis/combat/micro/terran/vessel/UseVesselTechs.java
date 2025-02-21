@@ -25,10 +25,10 @@ public class UseVesselTechs extends Manager {
         return true;
     }
 
-    protected boolean print(String s) {
-        System.err.println("Manager -> print:  " + s);
-        return true;
-    }
+//    protected boolean print(String s) {
+//        System.err.println("Manager -> print:  " + s);
+//        return true;
+//    }
 
     @Override
     public Manager handle() {

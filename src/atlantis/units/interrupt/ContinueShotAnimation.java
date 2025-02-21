@@ -8,6 +8,8 @@ import atlantis.units.actions.Actions;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.util.We;
 
+import static atlantis.units.actions.Actions.HOLD_TO_SHOOT;
+
 public class ContinueShotAnimation extends Manager {
     public ContinueShotAnimation(AUnit unit) {
         super(unit);
@@ -19,7 +21,7 @@ public class ContinueShotAnimation extends Manager {
 //        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
 //        if (unit.isStopped()) return false;
-        if (!unit.isAttacking()) return false;
+        if (!unit.isAttacking() && !unit.isAction(HOLD_TO_SHOOT)) return false;
         if (!unit.hasValidTarget()) return false;
 //        if (unit.isRunning()) return false;
 //        if (unit.hp() <= 40) return false;
@@ -90,37 +92,6 @@ public class ContinueShotAnimation extends Manager {
 
         if (!unit.attackState().finishedShooting()) return Decision.TRUE;
         else return Decision.FALSE;
-
-//        if (
-//            unit.lastAttackFrameLessThanAgo(20)
-//                && unit.cooldown() >= 10
-//                && unit.cooldown() <= UnitAttackWaitFrames.DRAGOON
-//        ) {
-////            System.out.println(A.now() + " DONT");
-//            return Decision.FALSE;
-//        }
-//
-//        if (unit.lastAttackFrameMoreThanAgo(10)) {
-//            return Decision.TRUE;
-//        }
-//
-//        if (
-//            unit.isAttacking()
-//                && unit.hasValidTarget()
-//                && unit.distToTargetLessThan(OurDragoonRange.range() + 0.5)
-////                    && unit.isTargetInWeaponRangeAccordingToGame()
-////                    && unit.shotSecondsAgo() >= 1.01
-////                && unit.eval() >= 0.7
-//        ) {
-////            System.out.println(A.now() + " OK");
-////            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - ");
-//            return Decision.TRUE;
-//        }
-////            System.out.println("-------- QUIT with " + unit.cooldown());
-////            unit.paintCircleFilled(10, Color.Red);
-////            System.out.println(A.now() + " / " + unit.cooldown() + " / AF=" + unit.isAttackFrame());
-//
-//        return Decision.INDIFFERENT;
     }
 
     private Decision forMarine() {

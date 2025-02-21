@@ -12,7 +12,6 @@ import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
-import starengine.assets.Images;
 import starengine.sc_logic.AttackState;
 import starengine.units.state.EngineUnitState;
 
@@ -391,11 +390,11 @@ public class FakeUnit extends AUnit implements Serializable {
 //        int dy = otherPosition.y() - position.y();
 //        double dist = Math.sqrt(dx * dx + dy * dy) / 32.0;
 //
-////        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
+
+    /// /        System.err.println("FakeUnit::distTo (HasPosition), dx:" + dx + ", dy:" + dy + ", dist:" + dist);
 //
 //        return dist;
 //    }
-
     @Override
     public double groundDist(HasPosition other) {
         return distTo(other);
@@ -422,7 +421,7 @@ public class FakeUnit extends AUnit implements Serializable {
     }
 
     @Override
-    public boolean holdPosition(String tooltip) {
+    public boolean holdPosition(Action action, String tooltip) {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;

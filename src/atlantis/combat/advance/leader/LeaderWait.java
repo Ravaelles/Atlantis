@@ -116,7 +116,7 @@ public class LeaderWait extends MissionManager {
 
         if (!unit.squad().isCohesionPercentOkay() && A.seconds() % 4 <= 1) {
             if (unit.friendsNear().inRadius(5, unit).atLeast(5)) {
-                unit.holdPosition("LeaderWaiting");
+                unit.holdPosition(Actions.HOLD_POSITION, "LeaderWaiting");
                 return true;
             }
             else {

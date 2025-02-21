@@ -2,6 +2,7 @@ package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class ProtossShouldStopRunning extends Manager {
@@ -13,18 +14,20 @@ public class ProtossShouldStopRunning extends Manager {
     @Override
     public boolean applies() {
         return We.protoss()
-            && unit.isRunning();
+            && (unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
+//            && (unit.isRunning() || unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
+            && !unit.isActionDance();
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossShouldStopRetreat.class,
-            ProtossShouldStopRunningMelee.class,
             ShouldStopRunningDragoon.class,
             ShouldStopRunningZealot.class,
             ShouldStopRunningProtossAir.class,
             ShouldStopRunningProbe.class,
+            ProtossShouldStopRetreat.class,
+            ProtossShouldStopRunningMelee.class,
         };
     }
 

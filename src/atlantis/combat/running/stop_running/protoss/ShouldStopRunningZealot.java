@@ -11,7 +11,6 @@ public class ShouldStopRunningZealot extends Manager {
     @Override
     public boolean applies() {
         return unit.isZealot()
-            && unit.isRunning()
             && (unit.cooldown() <= 4 && (unit.distToCannon() <= 1.8 || unit.distToBase() <= 5));
     }
 

@@ -676,7 +676,9 @@ public class Selection extends BaseSelection {
      */
     public Selection combatBuildings(boolean includeCreepColonies) {
         return cloneByRemovingIf(
-            (unit -> includeCreepColonies ? !unit.type().isCombatBuildingOrCreepColony() : !unit.type().isCombatBuilding()),
+            (unit -> includeCreepColonies
+                ? !unit.type().isCombatBuildingOrCreepColony()
+                : !unit.type().isCombatBuildingWithoutCreepColonies()),
             "combatBuildings:" + A.trueFalse(includeCreepColonies)
         );
     }

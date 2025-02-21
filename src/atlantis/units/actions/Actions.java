@@ -18,6 +18,7 @@ public class Actions {
     public static final Action INVALID = new Action().setName("INVALID");
     public static final Action HEAL = new Action().setName("HEAL");
     public static final Action HOLD_POSITION = new Action().setName("HOLD_POSITION");
+    public static final Action HOLD_TO_SHOOT = new Action().setName("HOLD_TO_SHOOT");
     public static final Action LAND = new Action().setName("LAND");
     public static final Action LIFT = new Action().setName("LIFT");
     public static final Action LOAD = new Action().setName("LOAD");

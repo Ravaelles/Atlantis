@@ -9,6 +9,7 @@ import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
+import atlantis.combat.micro.dancing.hold.HoldToShoot;
 import atlantis.combat.micro.early.protoss.ProtossEarlyGame;
 import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
@@ -46,18 +47,18 @@ public class CombatManagerTopPriority extends Manager {
 
             Unfreezer.class,
 
+            HoldToShoot.class,
             ContinueShotAnimation.class,
 
             AvoidCombatBuildingClose.class,
             AvoidCriticalUnits.class,
 
             RetreatManager.class,
+            ShouldStopRunning.class,
 //            ForceRunAfterShot.class,
 
             AttackParamountUnitsInRange.class,
             AttackTanksInRange.class,
-
-//            HoldToShoot.class,
 //            ContinueShooting.class,
 
             AvoidAsUndetected.class,
@@ -73,7 +74,6 @@ public class CombatManagerTopPriority extends Manager {
 
             ProtossForceStickToMainDuringDefend.class,
 
-            ShouldStopRunning.class,
 //            ContinueRunning.class,
 
 //            AvoidCombatBuilding.class,

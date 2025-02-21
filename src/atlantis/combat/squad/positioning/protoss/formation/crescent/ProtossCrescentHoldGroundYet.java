@@ -18,7 +18,7 @@ public class ProtossCrescentHoldGroundYet extends Manager {
 
     @Override
     public Manager handle() {
-        unit.holdPosition("HoldGround");
+        unit.holdPosition(Actions.HOLD_POSITION, "HoldGround");
         return usedManager(this);
     }
 }

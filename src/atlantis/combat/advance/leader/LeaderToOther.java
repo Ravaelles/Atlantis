@@ -73,7 +73,7 @@ public class LeaderToOther extends MissionManager {
         }
         else {
             if (!unit.isHoldingPosition() && !unit.isAttacking()) {
-                unit.holdPosition("LeaderHold");
+                unit.holdPosition(Actions.HOLD_POSITION, "LeaderHold");
             }
             return usedManager(this);
         }

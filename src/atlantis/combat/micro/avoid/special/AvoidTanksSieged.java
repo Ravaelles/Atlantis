@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -67,7 +66,7 @@ public class AvoidTanksSieged extends Manager {
         tankSieged.paintRectangle(1.06, 0.76, Color.Orange);
 
         if (!unit.isAttacking() && unit.cooldown() <= 7 && unit.distTo(tankSieged) <= 0.7) {
-            unit.holdPosition("TANK!");
+            unit.holdPosition(Actions.HOLD_POSITION, "TANK!");
             return usedManager(this);
         }
 

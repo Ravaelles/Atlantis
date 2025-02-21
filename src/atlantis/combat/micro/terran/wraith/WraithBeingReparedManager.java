@@ -34,7 +34,7 @@ public class WraithBeingReparedManager extends Manager {
                 && (unit.woundPercent() >= 15 || unit.enemiesNear().groundUnits().canBeAttackedBy(unit, -0.2).empty())
         ) {
             if (unit.isAccelerating()) {
-                unit.holdPosition(null);
+                unit.holdPosition(Actions.HOLD_POSITION, null);
             }
             unit.setTooltip("WaitRepair(" + repairers + ")");
             return usedManager(this);

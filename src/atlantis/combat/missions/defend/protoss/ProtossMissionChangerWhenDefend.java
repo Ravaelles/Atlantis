@@ -57,6 +57,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (Enemy.zerg()) {
+            if (Strategy.get().isGoingTech() && Army.strength() <= 180 && Count.dragoons() <= 4) {
+                if (DEBUG) reason = "TechWait";
+                return forceMissionSpartaOrDefend("TechWait");
+            }
+
             if (pressureZergWithLittleEarlyLings()) {
                 return true;
             }

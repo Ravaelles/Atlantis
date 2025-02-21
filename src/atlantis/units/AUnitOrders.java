@@ -22,12 +22,12 @@ import tests.fakes.FakeUnitData;
  * Class using default methods which are extracted from AUnit class to separate this functionality.
  */
 public interface AUnitOrders {
-    int DEBUG_MIN_FRAMES = 0;
+    int DEBUG_MIN_FRAMES = -1;
 
     boolean DEBUG_ALL = false;
 //    boolean DEBUG_ALL = true;
 
-    boolean DEBUG_COMBAT = false;
+//    boolean DEBUG_COMBAT = false;
 //    boolean DEBUG_COMBAT = true;
 
     Unit u();
@@ -121,14 +121,6 @@ public interface AUnitOrders {
 //            return false;
 //        }
 
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-            System.out.println("@" + A.now() + "  " + unit.typeWithUnitId() + "  ATTACK_UNIT " + target);
-
-//            if (unit().lastActionLessThanAgo(15, Actions.HOLD_POSITION)) {
-//                A.printStackTrace("AttackUnit " + unit() + " / " + target);
-//            }
-        }
-
 //        if (unit().outsideSquadRadius()) {
 //            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
 //        }
@@ -143,6 +135,10 @@ public interface AUnitOrders {
         if (unit.isCommand(UnitCommandType.Attack_Unit) && target.equals(unit.target())) {
             return true;
 //            if (A.everyFrameExceptNthFrame(16)) return true;
+        }
+
+        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+            System.out.println("@" + A.now() + "  " + unit.typeWithUnitId() + "  ATTACK_UNIT " + target);
         }
 
         return u().attack(target.u());
@@ -355,7 +351,7 @@ public interface AUnitOrders {
      * if BWAPI determined that the command would fail. Note There is a small chance for a command to fail
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
-    default boolean holdPosition(String tooltip) {
+    default boolean holdPosition(Action action, String tooltip) {
         if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
 
         if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
@@ -367,7 +363,7 @@ public interface AUnitOrders {
 //        System.err.println(unit().managerLogs().toString());
 //        System.err.println("-------------------------");
 
-        unit().setAction(Actions.HOLD_POSITION).setTooltip(tooltip);
+        unit().setAction(action).setTooltip(tooltip);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Hold_Position);
 
@@ -915,7 +911,8 @@ public interface AUnitOrders {
     }
 
     default boolean shouldPrint() {
-        return false;
+//        return false;
+        return DEBUG_ALL;
 
 //        if (unit().isHealthy()) return false;
 //        return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));

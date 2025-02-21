@@ -86,9 +86,9 @@ public class OnGameStarted {
             A.printStackTrace();
         }
 
-        if (A.isUms()) {
-            DetectInitialTechs.update();
-        }
+        DetectInitialTechs.update();
+//        if (A.isUms()) {
+//        }
 
         Alpha.get().setMission(Missions.globalMission());
         Omega.get().setMission(Missions.DEFEND);

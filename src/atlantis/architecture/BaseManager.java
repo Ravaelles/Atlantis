@@ -100,6 +100,11 @@ public abstract class BaseManager {
         return sb.toString();
     }
 
+    public boolean print(String message) {
+        System.err.println(getClass().getSimpleName() + ": " + message);
+        return true;
+    }
+
     protected boolean hasSubmanagers() {
         return submanagerObjects.length > 0;
     }

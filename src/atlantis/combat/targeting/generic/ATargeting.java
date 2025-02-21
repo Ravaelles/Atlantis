@@ -66,11 +66,11 @@ public class ATargeting extends HasUnit {
 //        super(unit);
 //        this.enemyUnits = enemyUnits;
 //        this.enemyBuildings = enemyBuildings;
-////        enemyUnits = possibleEnemyUnitsToAttack(unit, maxDistFromEnemy);
+
+    /// /        enemyUnits = possibleEnemyUnitsToAttack(unit, maxDistFromEnemy);
 //    }
 
     // =========================================================
-
     public static AUnit defineBestEnemyToAttack(AUnit unit) {
         return (new ATargeting(unit)).defineBestEnemyToAttack(AttackNearbyEnemies.maxDistToAttack(unit));
     }

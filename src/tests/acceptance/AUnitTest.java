@@ -3,8 +3,10 @@ package tests.acceptance;
 import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
+import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
@@ -316,6 +318,24 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(fake(AUnitType.Protoss_Scarab).isRealUnit());
             assertFalse(fake(AUnitType.Zerg_Egg).isRealUnit());
             assertFalse(fake(AUnitType.Zerg_Lurker_Egg).isRealUnit());
+        });
+    }
+
+    @Test
+    public void combatBuildings() {
+        createWorld(1, () -> {
+            AUnit sunken = fake(Zerg_Sunken_Colony);
+            AUnit spore = fake(Zerg_Spore_Colony);
+            AUnit creep = fake(Zerg_Creep_Colony);
+            AUnit turret = fake(Terran_Missile_Turret);
+            AUnit bunker = fake(Terran_Bunker);
+            AUnit cannon = fake(Protoss_Photon_Cannon);
+
+            for (AUnit unit : new AUnit[]{sunken, spore, creep, turret, bunker, cannon}) {
+                assertTrue(unit.isCombatBuilding());
+                assertFalse(unit.isCombatUnit());
+                assertTrue(unit.isRealUnit());
+            }
         });
     }
 

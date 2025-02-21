@@ -23,15 +23,13 @@ public class DragoonHoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         if (!unit.isDragoon()) return false;
-
-//        if (unit.lastActionLessThanAgo(15, Actions.HOLD_POSITION)) return true;
-//        if (unit.lastActionLessThanAgo(25, Actions.HOLD_POSITION)) return false;
+        if (unit.cooldown() >= 8) return false;
+        if (unit.meleeEnemiesNearCount(3.7) > 0) return false;
 
         if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
-        if (unit.cooldown() >= 1) return false;
 
         target = unit.target();
         if (target == null || !unit.hasValidTarget()) return false;
@@ -47,12 +45,19 @@ public class DragoonHoldToShoot extends Manager {
         return true;
     }
 
+    private double minDistToHold() {
+        double minDist = unitWeaponRange + enemyMovementModifiers() + ourMovementModifiers();
+//        System.err.println("   " + unit.idWithHash() + " minDist = " + minDist + " (" + distToTarget + ")");
+
+        return minDist;
+    }
+
     @Override
     protected Manager handle() {
 //        System.err.println("@ " + A.now() + " HOLD?");
-        if (target == null) {
-            target = unit.lastTarget();
-        }
+//        if (target == null) {
+//            target = unit.lastTarget();
+//        }
         if (target == null) {
             return null;
         }
@@ -75,10 +80,9 @@ public class DragoonHoldToShoot extends Manager {
         // HOLD
         if (shouldHold()) {
             if (!unit.isHoldingPosition()) {
-                System.err.println("@ " + A.now() + " HOLD!!!!!!!!!!!!!!! ");
+//                System.err.println("@ " + A.now() + " HOLD!!!!!! DIST = " + unit.distToTargetDigit());
 
-
-                unit.holdPosition("HoldToShoot");
+                unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToShoot");
             }
 //            else {
 //                System.err.println("@ " + A.now() + " non-hold! ");
@@ -163,19 +167,12 @@ public class DragoonHoldToShoot extends Manager {
 //            && (c4 = unit.lastStartedAttackMoreThanAgo(10));
     }
 
-    private double enemyMovementModifiers() {
-        return (target.isMoving() ? 1.2 : 0);
-    }
-
     private double ourMovementModifiers() {
-        return (unit.isMoving() ? 1.0 : 0);
+        return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
     }
 
-    private double minDistToHold() {
-        double minDist = unitWeaponRange + enemyMovementModifiers() + ourMovementModifiers();
-//        System.err.println("   " + unit.idWithHash() + " minDist = " + minDist + " (" + distToTarget + ")");
-
-        return minDist;
+    private double enemyMovementModifiers() {
+        return (target.isMoving() ? unit.maxSpeed() / 4.0 : 0);
     }
 
     private boolean shouldSkip() {
@@ -206,9 +203,5 @@ public class DragoonHoldToShoot extends Manager {
         return (target != null && target.isMoving() && !target.isFacing(unit))
             &&
             (unit.isFacing(target));
-    }
-
-    private boolean enemyIsWithinRealRange() {
-        return unit.isTargetInWeaponRangeAccordingToGame(target);
     }
 }

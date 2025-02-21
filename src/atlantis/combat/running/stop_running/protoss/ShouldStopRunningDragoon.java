@@ -1,10 +1,11 @@
 package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 public class ShouldStopRunningDragoon extends Manager {
     public ShouldStopRunningDragoon(AUnit unit) {
@@ -27,6 +28,8 @@ public class ShouldStopRunningDragoon extends Manager {
 
 //        if (unit.hp() <= 60) return false;
 
+        if (stopVsZerg()) return true;
+
         Selection enemies = unit.enemiesNear();
         Selection meleeEnemies = enemies.melee();
         if (meleeEnemies.inRadius(3.7, unit).notEmpty()) return false;
@@ -38,6 +41,20 @@ public class ShouldStopRunningDragoon extends Manager {
 //        return meleeEnemies.inRadius(2.9, unit).empty()
 //            || meleeEnemies.canAttack(unit, safetyMargin(unit)).empty();
         return enemies.canAttack(unit, safetyMargin(unit)).empty();
+    }
+
+    private boolean stopVsZerg() {
+        if (!Enemy.zerg()) return false;
+//        if (!unit.isDragoon()) return false;
+
+//        System.err.println("unit.eval() = " + unit.eval());
+
+//        System.err.println("unit.eval() = " + unit.eval() + " / " + unit.enemiesThatCanAttackMe(0.5).count());
+//        return unit.eval() >= 0.85 && unit.shieldWound() <= 9 && unit.cooldown() <= 6
+        return unit.shields() >= 5
+            && unit.cooldown() <= 6
+            && (unit.eval() >= 0.85 || unit.enemiesThatCanAttackMe(0.5).count() <= 2);
+//            && A.println("DragoonStopVsZerg:" + A.now());
     }
 
     private boolean unitBecameIdleAfterRunning() {
@@ -55,8 +72,10 @@ public class ShouldStopRunningDragoon extends Manager {
 
 //        unit.paintCircleFilled(11, Color.Brown);
 
-        if (unit.moveToLeader(Actions.MOVE_FORMATION, "StopGoon")) return usedManager(this);
-        if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
+//        System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - StopGoon");
+
+//        if (unit.moveToLeader(Actions.MOVE_FORMATION, "StopGoon")) return usedManager(this);
+//        if (unit.mission().handleManagerClass(unit) != null) return usedManager(this);
 
 //        if ((new HandleUnitPositioningOnMap(unit)).invokeFrom(this) != null) return usedManager(this);
 //        if (unit.isMoving()) {

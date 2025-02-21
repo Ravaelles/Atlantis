@@ -13,7 +13,7 @@ public class TerranShouldStopRunning extends Manager {
 
     @Override
     public boolean applies() {
-        return We.terran() && unit.isRunning();
+        return We.terran();
     }
 
     @Override

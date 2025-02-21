@@ -50,7 +50,7 @@ public class GoToRepairAsAirUnit extends Manager {
             unit.move(worker, Actions.MOVE_REPAIR, "Go2Repair");
         }
         else {
-            unit.holdPosition("Go2Repair");
+            unit.holdPosition(Actions.HOLD_POSITION, "Go2Repair");
         }
 
         return true;
