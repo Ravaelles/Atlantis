@@ -27,6 +27,8 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         this.enemy = enemy;
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
 
+        if (Enemy.zerg() && unit.squadSize() <= 7 && unit.eval() <= 1.6 && unit.distToFocusPoint() >= 10) return false;
+
         double distToEnemy = unit.distTo(enemy);
 
         if (A.s <= 220 && enemy.isWorker()) {
