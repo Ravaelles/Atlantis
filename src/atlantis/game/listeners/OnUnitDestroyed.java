@@ -58,7 +58,9 @@ public class OnUnitDestroyed {
         if (unit.type().isGasBuilding()) return;
 
 //        System.err.println(A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED");
-//        System.err.println(unit.managerLogs().toString());
+        System.out.println("___DEAD_" + unit.type().name() + " at " + A.minSec() + "______________");
+        System.err.println(unit.managerLogs().toString());
+        System.out.println("_____________________________");
     }
 
     private static void onOurUnitDestroyed(AUnit unit) {

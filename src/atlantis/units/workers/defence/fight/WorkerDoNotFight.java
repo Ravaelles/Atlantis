@@ -1,5 +1,6 @@
 package atlantis.units.workers.defence.fight;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -15,8 +16,9 @@ public class WorkerDoNotFight {
 //        if (A.s <= 60 * 6) return true;
 
         if (unit.hp() >= 50) return false;
-
         if (unit.enemiesNear().buildings().notEmpty()) return false;
+
+        if (We.protoss() && unit.shields() <= 6 && A.s >= 60 * 6) return true;
 
         Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
         if (Enemy.protoss() && We.protoss()) {

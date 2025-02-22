@@ -161,7 +161,7 @@ public class ProduceZealot {
     public static double minZealots() {
         if (Enemy.terran()) return minZealotsVsTerran();
         if (Enemy.protoss()) return minZealotsVsProtoss();
-        return minZealotsVsZergOrProtoss();
+        return minZealotsVsZerg();
     }
 
     private static double minZealotsVsProtoss() {
@@ -197,12 +197,16 @@ public class ProduceZealot {
         return 1;
     }
 
-    private static double minZealotsVsZergOrProtoss() {
+    private static double minZealotsVsZerg() {
         if (A.hasGas(1) && Count.cannons() >= 2) return 2;
 
         boolean core = Have.cyberneticsCore();
 
-        if (core && A.hasGas(100)) return 0;
+        if (core) {
+            int dragoons = Count.dragoons();
+            if (A.hasGas(50) && dragoons <= 1) return 0;
+            if (dragoons >= 1) return Math.max(1, dragoons / 5);
+        }
         if (!core && A.hasMinerals(300)) return 5;
 
         double fromLings = EnemyUnits.discovered().zerglings().count() * 0.32;

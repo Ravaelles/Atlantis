@@ -278,6 +278,9 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     }
 
     private AFocusPoint defendLikePositions() {
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main == null) return null;
+
         // === AliveEnemies that breached into base =====================
 
         AFocusPoint enemyInBase = enemyWhoBreachedBase();
@@ -286,7 +289,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         // === Enemy near base ===========================================
 
         if (A.supplyUsed() <= 50) {
-            AUnit main = Select.mainOrAnyBuilding();
             AUnit closeEnemy = EnemyUnits.discovered()
                 .combatUnits()
                 .groundUnits()

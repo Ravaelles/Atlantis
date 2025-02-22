@@ -284,9 +284,11 @@ public class AvoidCombatBuildingClose extends Manager {
     private double radius() {
         if ((Enemy.zerg() || Enemy.protoss()) && We.protoss()) {
             if (
-                (unit.shieldWound() <= 18 || unit.lastUnderAttackMoreThanAgo(30 * 10))
+                unit.isRanged()
+                    && (unit.shieldWound() <= 14 || unit.lastUnderAttackMoreThanAgo(30 * 25))
+                    && unit.shieldWound() <= 30
                     && unit.friendsNear().dragoons().atLeast(4)
-            ) return 8.25;
+            ) return 8.7;
         }
 
         return baseDist()
@@ -327,9 +329,9 @@ public class AvoidCombatBuildingClose extends Manager {
 //            .combatUnits()
 //            .inRadius(6, combatBuilding).atMost((int) (ourCombatUnitsNearby.count() / 8));
 //    }
-    private boolean shouldRunToMainBecauseWasAttacked() {
-        if (dist >= 7.9 || unit.lastUnderAttackLessThanAgo(50)) return true;
-
-        return false;
-    }
+//    private boolean shouldRunToMainBecauseWasAttacked() {
+//        if (dist >= 7.9 || unit.lastUnderAttackLessThanAgo(50)) return true;
+//
+//        return false;
+//    }
 }

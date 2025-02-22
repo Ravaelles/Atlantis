@@ -62,8 +62,13 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 return forceMissionSpartaOrDefend("TechWait");
             }
 
-            if (pressureZergWithLittleEarlyLings()) {
+            if (Count.ourCombatUnits() >= 4 && pressureZergWithLittleEarlyLings()) {
                 return true;
+            }
+
+            if (!Strategy.get().isRushOrCheese() && Army.strength() <= 180 && Count.ourCombatUnits() <= 20) {
+                if (DEBUG) reason = "Cautious PvZ";
+                return forceMissionSpartaOrDefend(reason);
             }
         }
 

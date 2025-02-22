@@ -228,7 +228,7 @@ public class AGame {
     }
 
     public static void calcSeconds() {
-        _secondsNow = Atlantis.game().getFrameCount() / 30;
+        _secondsNow = (int) (Atlantis.game().getFrameCount() / 23.81);
         A.s = _secondsNow;
         A.now = _framesNow;
     }

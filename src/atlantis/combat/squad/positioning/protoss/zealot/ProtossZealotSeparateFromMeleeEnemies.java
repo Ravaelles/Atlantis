@@ -54,7 +54,11 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     protected Manager handle() {
         if (unit.enemiesNear().notEmpty()) {
             if (movedAway()) {
-                return usedManager(this);
+                return usedManager(this, "ZealotSeparateA");
+            }
+
+            if (unit.moveToSafety(Actions.MOVE_AVOID)) {
+                return usedManager(this, "ZealotSeparateB");
             }
         }
 
