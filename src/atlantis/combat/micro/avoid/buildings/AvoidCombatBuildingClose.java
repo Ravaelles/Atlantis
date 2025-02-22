@@ -274,7 +274,7 @@ public class AvoidCombatBuildingClose extends Manager {
 
     // =========================================================
     private double baseDist() {
-        if (unit.isReaver()) return 8.3;
+        if (unit.isReaver()) return unit.shields() >= 40 ? 8.2 : 8.7;
 
         if (Enemy.zerg()) return 9.7 + (400.0 / Army.strength());
 
@@ -282,11 +282,11 @@ public class AvoidCombatBuildingClose extends Manager {
     }
 
     private double radius() {
-        if (Enemy.protoss() && We.protoss()) {
+        if ((Enemy.zerg() || Enemy.protoss()) && We.protoss()) {
             if (
                 (unit.shieldWound() <= 18 || unit.lastUnderAttackMoreThanAgo(30 * 10))
                     && unit.friendsNear().dragoons().atLeast(4)
-            ) return 8.3;
+            ) return 8.25;
         }
 
         return baseDist()

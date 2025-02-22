@@ -28,7 +28,10 @@ public class ProtossEvaluateAgainstCombatBuildings {
     // =========================================================
 
     private static boolean moreOurUnitsThanBuildings(AUnit unit, AUnit enemy) {
-        return ourCombatUnits(unit).count() * 7 >= enemy.enemiesNear().combatBuildingsAnti(enemy).count();
+        int ourCombat = ourCombatUnits(unit).count();
+
+        return (A.s >= 60 * 8 || ourCombat >= 10)
+            && ourCombat * 7 >= enemy.enemiesNear().combatBuildingsAnti(enemy).count();
     }
 
     // =========================================================

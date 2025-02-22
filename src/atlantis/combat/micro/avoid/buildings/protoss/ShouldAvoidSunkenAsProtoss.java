@@ -2,6 +2,8 @@ package atlantis.combat.micro.avoid.buildings.protoss;
 
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
@@ -19,6 +21,8 @@ public class ShouldAvoidSunkenAsProtoss {
 //                return Decision.FALSE;
 //            }
 //        }
+
+        if (A.supplyUsed() < 140 && Army.strength() <= 160) return Decision.TRUE;
 
         return ProtossEvaluateAgainstCombatBuildings.chancesLookGood(unit, combatBuilding)
             ? Decision.FALSE : Decision.TRUE;

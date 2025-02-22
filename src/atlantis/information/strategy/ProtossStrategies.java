@@ -28,7 +28,8 @@ public class ProtossStrategies extends AStrategy {
 
         else if (Enemy.zerg()) {
 //            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
-            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot_vZ;
+            return ProtossStrategies.PROTOSS_4Zealot_Core_vZ;
+//            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot_vZ;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
 //            return ProtossStrategies.PROTOSS_Speedzealot;
@@ -53,6 +54,7 @@ public class ProtossStrategies extends AStrategy {
     public static final AStrategy PROTOSS_Zealot_Core_Dragoon = protossStrategy();
     public static final AStrategy PROTOSS_Zealot_Core_Zealot = protossStrategy();
     public static final AStrategy PROTOSS_Zealot_Core_Zealot_vZ = protossStrategy();
+    public static final AStrategy PROTOSS_4Zealot_Core_vZ = protossStrategy();
     public static final AStrategy PROTOSS_ZZ_Core = protossStrategy();
     public static final AStrategy PROTOSS_ZZZ_Core = protossStrategy();
     public static final AStrategy PROTOSS_ZZZZ_Core = protossStrategy();
@@ -90,6 +92,7 @@ public class ProtossStrategies extends AStrategy {
         PROTOSS_Zealot_Core_Dragoon.setName("Zealot Core Dragoon").setGoingTech();
         PROTOSS_Zealot_Core_Zealot.setName("Zealot Core Zealot");
         PROTOSS_Zealot_Core_Zealot_vZ.setName("Zealot Core Zealot vZ");
+        PROTOSS_4Zealot_Core_vZ.setName("4Zealot Core vZ");
         PROTOSS_ZZ_Core.setName("ZZ Core"); // Zealot-Zealot-Core
         PROTOSS_ZZZ_Core.setName("ZZZ Core"); // Zealot-Zealot-Zealot-Core
         PROTOSS_ZZZZ_Core.setName("ZZZZ Core"); // ZZZZ-Core
