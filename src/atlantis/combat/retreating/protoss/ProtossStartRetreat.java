@@ -201,6 +201,8 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private static boolean canIgnoreNotifyRetreatCallAndFinishShooting(AUnit friend, AUnit caller) {
+        if (friend == null) return true;
+
         if (friend.isStartingAttack() || friend.isAttackFrame()) {
             if (friend.eval() <= 0.7) return false;
             if (friend.shields() <= 20) return false;

@@ -1359,11 +1359,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isAttackFrame() {
-        return u.isAttackFrame();
+        return u != null && u.isAttackFrame();
     }
 
     public boolean isStartingAttack() {
-        return u.isStartingAttack();
+        return u != null && u.isStartingAttack();
     }
 
     public boolean isStopped() {

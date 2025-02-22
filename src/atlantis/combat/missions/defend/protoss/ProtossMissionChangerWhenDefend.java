@@ -167,7 +167,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 && EnemyUnits.zerglings() <= 4
                 && EnemyUnits.hydras() <= 0
                 && Count.ourCombatUnits() >= 4
-                && Army.strengthWithoutCB() >= 140
+                && Army.strengthWithoutCB() >= 160
                 && !Have.cyberneticsCoreWithUnfinished() && dragoons <= 1
         ) {
             if (DEBUG) reason = "Pressure zerg with little lings";

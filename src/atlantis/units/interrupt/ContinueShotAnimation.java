@@ -20,13 +20,10 @@ public class ContinueShotAnimation extends Manager {
 //        System.err.println(A.now() + " isAttacking = " + unit.isAttacking() + " / " + unit.u().getOrder() + " / " + unit.u().getOrder().getClass().getSimpleName());
 //        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
 
-//        if (unit.isStopped()) return false;
         if (!unit.isAttacking() && !unit.isAction(HOLD_TO_SHOOT)) return false;
         if (!unit.hasValidTarget()) return false;
-//        if (unit.isRunning()) return false;
-//        if (unit.hp() <= 40) return false;
-//        if (unit.shotSecondsAgo() >= 5) return false;
-//        if (unit.lastActionMoreThanAgo(15) && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
+        if (unit.isRunning() || unit.isRetreating()) return false;
+
         if (!unit.isTargetInWeaponRangeAccordingToGame()) {
             if (unit.distToTarget() > 7) return false;
             if (unit.isDragoon() && unit.hp() <= 60) return false;
