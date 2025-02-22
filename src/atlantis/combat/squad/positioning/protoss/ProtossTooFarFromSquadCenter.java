@@ -34,8 +34,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        }
 
         if (unit.isLeader()) return false;
-        if (A.supplyUsed() >= 110 && Army.strength() >= 450 && (unit.isMoving() || unit.isAttacking() || unit.hasCooldown()))
-            return false;
+        if (ignoreWhenBigSupply()) return false;
 //        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(40)) return false; // Continue
 //        if (unit.isMissionDefendOrSparta()) return false;
 
@@ -47,10 +46,10 @@ public class ProtossTooFarFromSquadCenter extends Manager {
         if (squadCenter == null) return false;
         double distToCenter = unit.distTo(squadCenter.position());
 
-        if (unit.lastActionMoreThanAgo(15, Actions.MOVE_FORMATION)) return false;
+//        if (unit.lastActionMoreThanAgo(15, Actions.MOVE_FORMATION)) return false;
 
 //        if (unit.lastUnderAttackLessThanAgo(50)) return false;
-        if (distToCenter >= 7) return true;
+        if (distToCenter >= 7 && unit.friendsNear().combatUnits().countInRadius(4, unit) >= 4) return true;
 
         if (enemiesTooClose()) return false;
 
@@ -101,6 +100,13 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 ////        if (unit.enemiesThatCanAttackMe(4).notEmpty()) return false;
 //
 //        return distToCenter > 5 && !isOvercrowded();
+    }
+
+    private boolean ignoreWhenBigSupply() {
+        return A.supplyUsed() >= 110
+            && unit.woundPercent() <= 6
+            && Army.strength() >= 450
+            && (unit.isMoving() || unit.isAttacking() || unit.hasCooldown());
     }
 
     private boolean enemiesTooClose() {

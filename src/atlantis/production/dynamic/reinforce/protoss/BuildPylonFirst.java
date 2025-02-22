@@ -5,6 +5,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.production.orders.production.queue.QueueLastStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -21,7 +22,7 @@ public class BuildPylonFirst {
 //        System.err.println("Count.inQueueOrUnfinished(type(), 15) = " + Count.inQueueOrUnfinished(type(), 15));
 
 //        if (Count.inQueueOrUnfinished(type(), 15) >= 5) return error("Too many Pylonz in queue");
-        if (Count.notFinishedConstructions(type(), 6, position) > 0) return error("Have pending pylon near");
+        if (Count.notFinishedConstructions(type(), 5.5, position) > 0) return error("Have pending pylon near");
 
 //        ProductionOrder order = AddToQueue.withHighPriority(Protoss_Pylon, position);
 //        order.setAroundPosition(position);
@@ -45,7 +46,7 @@ public class BuildPylonFirst {
     }
 
     public static boolean needsPylon(HasPosition position) {
-        return Select.ourOfType(type()).inRadius(5.9, position).count() == 0;
+        return Select.ourOfType(type()).inRadius(5.3, position).count() == 0;
     }
 
     // =========================================================

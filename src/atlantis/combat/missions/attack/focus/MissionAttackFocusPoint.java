@@ -2,6 +2,7 @@ package atlantis.combat.missions.attack.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
+import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
@@ -17,6 +18,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -44,32 +46,89 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         main = Select.mainOrAnyBuilding();
         our = Select.our().first();
 
-        // === AliveEnemies that breached into base =====================
+        AFocusPoint focus = defendLikePositions();
+        if (focus != null) return focus;
 
-        AFocusPoint enemyInBase = enemyWhoBreachedBase();
-        if (enemyInBase != null) return enemyInBase;
+        focus = enemyExpansionsPositions();
+        if (focus != null) return focus;
 
-        // === Enemy near base ===========================================
+        focus = enemyNearAlpha();
+        if (focus != null) return focus;
 
-        if (A.supplyUsed() <= 90) {
-            AUnit enemyNearBase = EnemyNearBases.enemyNearAnyOurBase(8);
-            if (
-                enemyNearBase != null
-                    && (enemyNearBase.friendsInRadiusCount(7) <= 1 || enemyNearBase.isCrucialUnit() || !enemyNearBase.effUndetected())
-            ) {
+        focus = middleMapChokePoint();
+        if (focus != null) return focus;
+
+        focus = enemyAnyUnitsPositions();
+        if (focus != null) return focus;
+
+        focus = enemyBuildingPositions();
+        if (focus != null) return focus;
+
+//        focus = enemyMainChoke();
+//        if (focus != null) return focus;
+
+        focus = guessPositions();
+        if (focus != null) return focus;
+
+        return null;
+    }
+
+    private AFocusPoint enemyNearAlpha() {
+        HasPosition alpha = Alpha.alphaCenter();
+        if (alpha == null) return null;
+
+        AUnit enemy = AliveEnemies.get().combatUnits().groundUnits().inRadius(20, alpha).nearestTo(alpha);
+        if (enemy == null) return null;
+
+        if (enemy.friendsNear().combatBuildingsAntiLand().countInRadius(12, enemy) == 0) {
+            return new AFocusPoint(
+                enemy,
+                main,
+                "EnemyNearAlpha"
+            );
+        }
+
+        return null;
+    }
+
+    private AFocusPoint middleMapChokePoint() {
+        if (!Enemy.zerg()) return null;
+        if (Alpha.count() >= 5 && Army.strength() >= 250) return null;
+
+        AChoke choke = CurrentFocusChoke.get();
+        if (choke != null) {
+            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
+            return new AFocusPoint(
+                choke,
+                main,
+                "FocusChoke"
+            );
+        }
+
+        return null;
+    }
+
+    private AFocusPoint enemyMainChoke() {
+        if (Count.ourCombatUnits() <= 40 && EnemyUnits.nearestEnemyBuilding() != null) {
+            AChoke mainChoke = Chokes.enemyMainChoke();
+            if (mainChoke != null) {
                 return new AFocusPoint(
-                    enemyNearBase,
-                    "EnemyNearBase"
+                    mainChoke,
+                    main,
+                    "EnemyMainChoke"
                 );
             }
         }
+        return null;
+    }
 
+    private AFocusPoint enemyExpansionsPositions() {
         // === Third ===============================================
 
-        AttackEnemyThird enemyThird = new AttackEnemyThird();
-        if (enemyThird.shouldFocusIt()) {
-            return enemyThird.enemyThird();
-        }
+//        AttackEnemyThird enemyThird = new AttackEnemyThird();
+//        if (enemyThird.shouldFocusIt()) {
+//            return enemyThird.enemyThird();
+//        }
 
         // === Expansions ===============================================
 
@@ -78,16 +137,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             return enemyExpansion.expansion();
         }
 
-        // === Against early combat buildings ======================
-
-        AFocusPoint focus = containEnemyCombatBuildingsInNaturalChoke(main);
-        if (focus != null) return focus;
-
         // =========================================================
 
-        AFocusPoint enemyUnit = nearestCombatUnit(main);
-        if (enemyUnit != null) return enemyUnit;
+        return null;
+    }
 
+    private AFocusPoint enemyBuildingPositions() {
         AFocusPoint enemyCombatBuilding = nearestEnemyCombatBuilding(main);
         if (enemyCombatBuilding != null) return enemyCombatBuilding;
 
@@ -106,6 +161,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 "EnemyBase(" + enemyBase.name() + ")"
             );
         }
+
+        return null;
+    }
+
+    private AFocusPoint enemyAnyUnitsPositions() {
+        AFocusPoint enemyUnit = nearestCombatUnit(main);
+        if (enemyUnit != null) return enemyUnit;
+
 //        }
 
         // Try going near any enemy building
@@ -144,19 +207,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 "AnyEnemyAirUnit(" + anyEnemyAirUnit.name() + ")"
             );
         }
+        return null;
+    }
 
-//        if (Count.ourCombatUnits() <= 40 && EnemyUnits.nearestEnemyBuilding() != null) {
-//            AChoke mainChoke = Chokes.enemyMainChoke();
-//            if (mainChoke != null) {
-//                return new AFocusPoint(
-//                    mainChoke,
-//                    main,
-//                    "EnemyMainChoke"
-//                );
-//            }
-//        }
-
-        // Try to go to some starting location, hoping to find enemy there.
+    private AFocusPoint guessPositions() {
         APosition startLocation = BaseLocations.nearestUnexploredStartingLocation(main);
 
         if (startLocation != null) {
@@ -220,7 +274,47 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (!A.isUms() && EnemyUnits.discovered().count() >= 1) {
             ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         }
+        return null;
+    }
 
+    private AFocusPoint defendLikePositions() {
+        // === AliveEnemies that breached into base =====================
+
+        AFocusPoint enemyInBase = enemyWhoBreachedBase();
+        if (enemyInBase != null) return enemyInBase;
+
+        // === Enemy near base ===========================================
+
+        if (A.supplyUsed() <= 50) {
+            AUnit main = Select.mainOrAnyBuilding();
+            AUnit closeEnemy = EnemyUnits.discovered()
+                .combatUnits()
+                .groundUnits()
+                .inGroundRadius(40, main)
+                .groundNearestTo(main);
+            if (closeEnemy != null) return new AFocusPoint(
+                closeEnemy,
+                "EnemyCloseToMain"
+            );
+        }
+
+        if (A.supplyUsed() <= 90) {
+            AUnit enemyNearBase = EnemyNearBases.enemyNearAnyOurBase(8);
+            if (
+                enemyNearBase != null
+                    && (enemyNearBase.friendsInRadiusCount(7) <= 1 || enemyNearBase.isCrucialUnit() || !enemyNearBase.effUndetected())
+            ) {
+                return new AFocusPoint(
+                    enemyNearBase,
+                    "EnemyNearBase"
+                );
+            }
+        }
+
+        // === Against early combat buildings ======================
+
+        AFocusPoint focus = containEnemyCombatBuildingsInNaturalChoke(main);
+        if (focus != null) return focus;
         return null;
     }
 
@@ -314,11 +408,12 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
 //        if (enemyBuilding == null) return null;
 
-        AUnit nearestTo = Alpha.get().leader();
-        if (nearestTo == null) nearestTo = Select.mainOrAnyBuilding();
+//        AUnit nearestTo = Alpha.get().leader();
+        AUnit nearestTo = Select.mainOrAnyBuilding();
 
-        AUnit enemy = Select.enemy().combatUnits().visibleOnMap().effVisible().havingPosition().nearestTo(nearestTo);
-        if (enemy == null) enemy = Select.enemy().combatUnits().effVisible().havingPosition().nearestTo(nearestTo);
+        Selection enemies = Select.enemy().combatUnits().visibleOnMap().effVisible().havingPosition();
+        AUnit enemy = enemies.ranged().groundNearestTo(nearestTo);
+        if (enemy == null) enemies.groundNearestTo(nearestTo);
         if (enemy == null) return null;
 
         if (enemy.hp() <= 0) return null;

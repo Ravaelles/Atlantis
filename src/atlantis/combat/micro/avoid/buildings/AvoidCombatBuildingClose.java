@@ -273,13 +273,32 @@ public class AvoidCombatBuildingClose extends Manager {
 //    }
 
     // =========================================================
-    private AUnit combatBuilding() {
-        double radius = (unit.isReaver() ? 8.3 : 9.7)
+    private double baseDist() {
+        if (unit.isReaver()) return 8.3;
+
+        if (Enemy.zerg()) return 9.7 + (400.0 / Army.strength());
+
+        return 9.7;
+    }
+
+    private double radius() {
+        if (Enemy.protoss() && We.protoss()) {
+            if (
+                (unit.shieldWound() <= 18 || unit.lastUnderAttackMoreThanAgo(30 * 10))
+                    && unit.friendsNear().dragoons().atLeast(4)
+            ) return 8.3;
+        }
+
+        return baseDist()
             + (unit.isMelee() ? 1.7 : 0)
             + (unit.isWounded() ? 0.8 : 0)
             + (unit.woundPercent() >= 60 ? 1.0 : 0)
             + (unit.woundPercent() >= 80 ? 0.5 : 0)
             + ((A.s % 10) / 5.0);
+    }
+
+    private AUnit combatBuilding() {
+        double radius = radius();
 
         return unit.enemiesNear()
             .buildings()

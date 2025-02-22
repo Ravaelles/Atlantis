@@ -22,6 +22,8 @@ public class ShouldRunTowardsBase {
         double distToMain = unit.groundDistToMain();
         if (distToMain <= 3.6) return false;
 
+        if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
+
         if (unit.meleeEnemiesNearCount(2.1) >= (unit.hp() <= 80 ? 2 : 3)) return false;
 
         if (runAwayFrom instanceof AUnit) {

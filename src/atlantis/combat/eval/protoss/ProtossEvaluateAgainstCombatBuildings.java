@@ -14,14 +14,22 @@ public class ProtossEvaluateAgainstCombatBuildings {
         if (A.supplyUsed() >= 190 && A.minerals() >= 500) return true;
 //        if (unit.eval() <= 1.2) return false;
 
-        return (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
-            && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.5;
+        return (
+            moreOurUnitsThanBuildings(unit, enemy)
+                || (ourUnitsStrength(unit) >= enemyStrength(unit, enemy))
+        ) && OurVsEnemyUnitsCount.oursToEnemiesRatio(unit, enemy) >= 1.5;
     }
 
 //    public static boolean looksGoodAgainstThirdOrLaterEnemyBase(AUnit unit, APosition enemyBase) {
 //        return unit.combatEvalRelative() >= 1.5
 //            || ourUnitsStrength(unit) <= enemyStrength(unit, enemyBase);
 //    }
+
+    // =========================================================
+
+    private static boolean moreOurUnitsThanBuildings(AUnit unit, AUnit enemy) {
+        return ourCombatUnits(unit).count() * 7 >= enemy.enemiesNear().combatBuildingsAnti(enemy).count();
+    }
 
     // =========================================================
 

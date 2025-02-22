@@ -53,7 +53,7 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
-        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && retreatByRunningTowardsBase(unit)) {
+        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
             unitStartedRetreating(runAwayFrom);
             return true;
         }
@@ -64,7 +64,7 @@ public class ProtossStartRetreat extends HasUnit {
             return true;
         }
 
-        if (retreatByRunningTowardsBase(unit)) {
+        if (shouldRetreatTowardsBase(unit)) {
             unitStartedRetreating(runAwayFrom);
             return true;
         }
@@ -142,8 +142,10 @@ public class ProtossStartRetreat extends HasUnit {
         return false;
     }
 
-    private static boolean retreatByRunningTowardsBase(AUnit unit) {
+    private static boolean shouldRetreatTowardsBase(AUnit unit) {
 //        if (Count.ourCombatUnits() >= 12) return false;
+
+        if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 
         if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
 
@@ -192,7 +194,7 @@ public class ProtossStartRetreat extends HasUnit {
             if (!canIgnoreNotifyRetreatCallAndFinishShooting(friend, unit)) continue;
 
 //            friend.move(unit, Actions.RUN_RETREAT, "RetreatTowardsBase");
-            retreatByRunningTowardsBase(friend);
+            shouldRetreatTowardsBase(friend);
         }
 
         return true;

@@ -8,6 +8,7 @@ import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
@@ -20,15 +21,21 @@ public class RequestBuildingNear {
     private int maxDistance = MaxBuildingDist.MAX_DIST;
     private boolean specialGridExclusionPermission = false;
     private int maxOtherUnfinishedNearby = 1;
+    private ProductionOrderPriority priority;
 
     // =========================================================
 
-    private RequestBuildingNear(AUnitType type) {
+    private RequestBuildingNear(AUnitType type, ProductionOrderPriority priority) {
         this.type = type;
+        this.priority = priority;
     }
 
     public static RequestBuildingNear constructionOf(AUnitType type) {
-        return new RequestBuildingNear(type);
+        return new RequestBuildingNear(type, ProductionOrderPriority.STANDARD);
+    }
+
+    public static RequestBuildingNear constructionOf(AUnitType type, ProductionOrderPriority priority) {
+        return new RequestBuildingNear(type, priority);
     }
 
     // =========================================================
@@ -74,6 +81,7 @@ public class RequestBuildingNear {
         order.setAroundPosition(exact);
         order.markAsUsingExactPosition();
         order.setMinSupply(0);
+        order.setPriority(priority);
 
         Construction construction = NewConstructionRequest.requestConstructionOf(type, exact, order);
         if (construction == null) return error("RequestBuildingNear - Empty construction of " + type + " at " + exact);

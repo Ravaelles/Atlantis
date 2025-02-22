@@ -3,6 +3,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
 import atlantis.combat.squad.Squad;
 import atlantis.config.env.Env;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
@@ -23,7 +24,8 @@ public class ProtossShouldFullRetreat {
 
         eval = unit.eval();
 
-        if (dontRetreatVsSunken(unit)) return false;
+        Decision decision;
+        if ((decision = ProtossRetreatFromSunken.decision(unit)).notIndifferent()) return decision.toBoolean();
 
         if (retreatDuringMissionAttack(unit)) return true;
 
@@ -112,13 +114,6 @@ public class ProtossShouldFullRetreat {
 //        double evalRelative = unit.eval();
 //
 //        return evalRelative <= 1.05;
-    }
-
-    private static boolean dontRetreatVsSunken(AUnit unit) {
-        if (unit.squadSize() <= 4) return false;
-        if (unit.lastRetreatedAgo() <= 30 * 12) return false;
-
-        return unit.eval() >= 0.95;
     }
 
     private static boolean retreatDuringMissionAttack(AUnit unit) {

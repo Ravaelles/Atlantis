@@ -34,6 +34,8 @@ public class CurrentFocusChoke {
     }
 
     public static boolean switchToNextIfPossible() {
+        if (true) return false;
+
         AChoke next = CurrentFocusChoke.next();
 
         if (next != null) {

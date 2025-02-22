@@ -12,10 +12,10 @@ public class ProtossForceStickToMainDuringDefend extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.cooldown() >= 3
+        return unit.cooldown() >= 8
             && ProtossStickCombatToMainBaseEarly.should()
             && OurBuildingUnderAttack.none()
-            && unit.distToMain() >= (unit.hasCooldown() ? 6 : 2)
+            && unit.distToMain() >= (unit.cooldown() >= 8 ? 5 : 7)
             && (unit.isZealot() || unit.shields() <= 25);
     }
 

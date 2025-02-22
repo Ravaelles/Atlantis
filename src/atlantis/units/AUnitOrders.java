@@ -276,6 +276,10 @@ public interface AUnitOrders {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null move position for " + unit.typeWithHash());
             return false;
         }
+        if (target.position() == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null target.position() for " + unit.typeWithHash());
+            return false;
+        }
 
         if (unit.isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(

@@ -16,6 +16,7 @@ public class AttackEnemyThird {
 
     public boolean shouldFocusIt() {
         if (Army.strength() >= 700) return false;
+        if (A.supplyUsed() <= 45) return false;
 
         APosition enemyThird = enemyThird();
         if (enemyThird == null) return false;

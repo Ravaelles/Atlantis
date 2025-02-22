@@ -1377,19 +1377,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isHoldingPosition() {
-        return u.isHoldingPosition();
+        return u != null && u.isHoldingPosition();
     }
 
     public boolean isPatrolling() {
-        return u.isPatrolling();
+        return u != null && u.isPatrolling();
     }
 
     public boolean isSieged() {
-        return u.isSieged();
+        return u != null && u.isSieged();
     }
 
     public boolean isUnsieged() {
-        return !u.isSieged();
+        return u != null && !u.isSieged();
     }
 
     public boolean isUnderAttack(int inLastFrames) {
@@ -2536,7 +2536,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
                 }
                 else {
 //                    System.out.println("$$$ Weird case: " + this);
-                    if (Army.strength() <= 700 && !unit().type().isGeyser() && unit().isNeutral()) {
+                    if (
+                        Army.strength() <= 700
+                            && unit().isAlive()
+                            && !unit().type().isGeyser() && unit().isNeutral()
+                    ) {
                         System.err.println("enemiesNear invoked for neutral?");
                         System.err.println("ThisContext = " + this);
                         System.err.println("alive=" + unit().isAlive() + " / hp=" + unit().hp());
@@ -3334,7 +3338,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (Count.ourCombatUnits() >= 8 && Count.bases() >= 2) {
             AUnit natural = Bases.natural();
             if (natural != null) {
-                return natural.translateTilesTowards(3, Chokes.natural());
+                APosition position = natural.translateTilesTowards(3, Chokes.natural());
+                if (position != null && position.isWalkable()) return position;
             }
         }
 
@@ -3667,7 +3672,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AttackState attackState() {
-        if (!isOur()) ErrorLog.printMaxOncePerMinute("### attackState invoked for enemy unit");
+        if (!isOur()) ErrorLog.printMaxOncePerMinute("### attackState invoked for enemy unit: " + this);
 
         return attackState;
     }
@@ -3713,11 +3718,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean runOrMoveAway(AUnit from, double dist) {
-        if (runningManager().runFrom(from, 3, Actions.MOVE_AVOID, false)) {
+        if (runningManager().runFrom(from, dist, Actions.MOVE_AVOID, false)) {
             return true;
         }
 
-        if (moveAwayFrom(from, 3, Actions.MOVE_AVOID)) return true;
+        if (moveAwayFrom(from, dist, Actions.MOVE_AVOID)) return true;
 
         return false;
     }

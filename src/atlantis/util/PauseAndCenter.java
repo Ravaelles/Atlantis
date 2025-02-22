@@ -1,5 +1,6 @@
 package atlantis.util;
 
+import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
@@ -19,6 +20,7 @@ public class PauseAndCenter {
     }
 
     public static void on(HasPosition position, boolean paintCircle, Color color) {
+        if (!Env.isLocal()) return;
         if (counter >= 4) return;
 
         if (position == null) return;

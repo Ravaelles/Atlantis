@@ -7,6 +7,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.PauseAndCenter;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
@@ -48,6 +49,8 @@ public class AttackNearbyEnemies extends Manager {
                 String error = unit + " handleAttackNearEnemyUnits got " + unit.target();
 
                 if (unit.target() == null && !unit.isRunning()) ErrorLog.printMaxOncePerMinute(error);
+
+//                PauseAndCenter.on(unit, true);
 
                 return null;
             }

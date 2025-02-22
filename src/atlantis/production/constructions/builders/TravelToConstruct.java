@@ -92,9 +92,9 @@ public class TravelToConstruct extends HasUnit {
             AbstractPositionFinder.clearCache();
 
             System.err.println(A.minSec() + " Refresh " + buildingType + " position");
-            buildPosition = refreshConstructionPositionIfNeeded(construction);
-
             AbstractPositionFinder.clearCache();
+
+            buildPosition = refreshConstructionPositionIfNeeded(construction);
         }
 
         if (shouldRefreshConstructionPosition(construction)) {

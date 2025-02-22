@@ -464,7 +464,7 @@ public class Count {
         return ofType(AUnitType.Protoss_Shuttle);
     }
 
-    public static int notFinishedConstructions(AUnitType type, int radius, HasPosition position) {
+    public static int notFinishedConstructions(AUnitType type, double radius, HasPosition position) {
         return ConstructionRequests.countNotFinishedOfTypeInRadius(type, radius, position);
     }
 
