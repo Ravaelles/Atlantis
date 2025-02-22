@@ -1,18 +1,10 @@
 package atlantis.game.listeners;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.transfers.SquadTransfersCommander;
-import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
-import atlantis.game.event.Events;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.UnitsArchive;
-import atlantis.information.generic.ArmyStrength;
 import atlantis.map.path.OurClosestBaseToEnemy;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 
@@ -25,7 +17,7 @@ public class OnUnitDestroyed {
 
         // Our unit
         if (unit.isOur() && unit.isRealUnit()) {
-            onOurUnitDestroyed(unit);
+            OnOurUnitDestroyed.update(unit);
         }
 //        else if (unit.isEnemy() && unit.isRealUnit()) {
         else if (unit.isEnemy()) {
@@ -53,46 +45,4 @@ public class OnUnitDestroyed {
             if (unit.type().isABuilding()) Atlantis.KILLED_BUILDINGS++;
         }
     }
-
-    private static void printOurDeadUnit(AUnit unit) {
-        if (unit.type().isGasBuilding()) return;
-
-//        System.err.println(A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED");
-        System.out.println("___DEAD_" + unit.type().name() + " at " + A.minSec() + "______________");
-        System.err.println(unit.managerLogs().toString());
-        System.out.println("_____________________________");
-    }
-
-    private static void onOurUnitDestroyed(AUnit unit) {
-        printOurDeadUnit(unit);
-
-        RepairAssignments.removeRepairer(unit);
-
-        Queue.get().refresh();
-
-        if (!unit.type().isGasBuilding()) {
-            Atlantis.LOST++;
-            Atlantis.LOST_RESOURCES += unit.type().getTotalResources();
-
-            if (unit.type().isABuilding()) Atlantis.LOST_BUILDINGS++;
-        }
-
-        OurWorkerWasKilled.onWorkedKilled(unit);
-        SquadTransfersCommander.removeUnitFromSquads(unit);
-
-        // =========================================================
-
-        if (
-            unit.isMissionAttack()
-                && A.s <= 60 * 7
-                && ArmyStrength.ourArmyRelativeStrength() <= 85
-                && !A.isUms()
-                && EnemyUnits.discovered().ranged().count() >= 2
-        ) {
-            Missions.forceGlobalMissionDefend("Far too weak to attack!");
-        }
-
-        Events.dispatch("OurBunkerDestroyed", unit);
-    }
-
 }

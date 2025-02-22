@@ -125,7 +125,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitComplete(Unit u) {
-        OnUnitCompleted.onUnitCompleted(u);
+        OnUnitCompleted.update(u);
     }
 
     /**
