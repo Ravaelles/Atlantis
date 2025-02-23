@@ -19,7 +19,8 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     public boolean applies() {
         if (!unit.isZealot()) return false;
 //        if (!Enemy.protoss()) return false;
-        if (unit.cooldown() >= 4 && unit.hp() >= 36) return false;
+        if (unit.cooldown() <= 5) return false;
+        if (unit.cooldown() >= 5 && unit.shieldWounded()) return false;
 
         if (unit.lastStartedRunningLessThanAgo(3)) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 3)) return false;
@@ -86,7 +87,7 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
         }
 
         return unit.runningManager().runFrom(
-            runFrom, 3, Actions.RUN_ENEMY, unit.isMissionDefend()
+            runFrom, 4, Actions.RUN_ENEMY, unit.isMissionDefend()
         );
     }
 }

@@ -1,5 +1,6 @@
 package atlantis.production.constructions.cancelling;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
@@ -24,6 +25,8 @@ public class CriticalCancelPending {
         }
     }
 
+    // =========================================================
+
     private static int cancelOne() {
         if (We.protoss()) {
             return cancelOneProtoss();
@@ -37,8 +40,6 @@ public class CriticalCancelPending {
 
         return 0;
     }
-
-    // =========================================================
 
     private static int cancelOneProtoss() {
         if (cancel(Protoss_Gateway)) return lastCancelledMinerals;
@@ -72,5 +73,9 @@ public class CriticalCancelPending {
         }
 
         return false;
+    }
+
+    public static void cancelBases() {
+        cancel(AtlantisRaceConfig.BASE);
     }
 }

@@ -16,7 +16,7 @@ public class ProtossForceClusterDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isDragoon()
-            && unit.lastUnderAttackMoreThanAgo(30)
+            && unit.lastUnderAttackMoreThanAgo(90)
             && unit.friendsNear().combatUnits().groundUnits().inRadius(minDistToFriend(), unit).count() == 0
             && (friend = friend()) != null;
     }

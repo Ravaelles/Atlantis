@@ -23,6 +23,7 @@ public class ContinueShotAnimation extends Manager {
         if (!unit.isAttacking() && !unit.isAction(HOLD_TO_SHOOT)) return false;
         if (!unit.hasValidTarget()) return false;
         if (unit.isRunning() || unit.isRetreating()) return false;
+        if (unit.lastStartedRetreatingAgo() <= 60) return false;
 
         if (!unit.isTargetInWeaponRangeAccordingToGame()) {
             if (unit.distToTarget() > 7) return false;

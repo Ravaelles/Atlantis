@@ -194,6 +194,8 @@ public class ProtossShouldExpand {
         int seconds = A.seconds();
         int armyStrength = Army.strength();
 
+        if (enemyWentHiddenUnitsAndWeHaveNoObservers()) return no("NoObservers");
+
         if (seconds >= 10.5 * 60) return yes("GettingLate");
         if (enemyGoesCombatBuildingsEarly()) return yes("EnemyManyEarlyCB");
 
@@ -245,6 +247,12 @@ public class ProtossShouldExpand {
         if (seconds <= 400 && armyStrength < 100) return no("Weak");
 
         return no("JustDont");
+    }
+
+    private static boolean enemyWentHiddenUnitsAndWeHaveNoObservers() {
+        if (Count.observers() > 0) return false;
+
+        return EnemyInfo.goesOrHasHiddenUnits();
     }
 
     private static boolean cautionAgainstZergArmy() {

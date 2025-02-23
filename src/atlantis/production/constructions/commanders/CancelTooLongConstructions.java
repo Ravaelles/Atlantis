@@ -2,6 +2,7 @@ package atlantis.production.constructions.commanders;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
@@ -11,19 +12,20 @@ import atlantis.util.log.ErrorLog;
 public class CancelTooLongConstructions {
     public static void cancelCauseTakingTooLongIfNeeded(Construction constr, int timeout, AUnitType type, AUnitType buildingType) {
         if (tookTooLong(constr, timeout) && A.canAfford(type)) {
-            if (neverCancel(type)) {
-                constr.findPositionForNewBuilding();
+//            if (neverCancel(type)) {
+//                constr.findPositionForNewBuilding();
+//
+//                ErrorLog.printMaxOncePerMinute("--- Took too long but don't cancel " + type);
+//                return;
+//            }
 
-                ErrorLog.printMaxOncePerMinute("--- Took too long but don't dancel " + type);
-                return;
-            }
-
+            APosition buildPosition = constr.buildPosition();
             constr.cancel(type + " took too long (" + A.ago(tookFrames(constr) / 30) + "s)");
 //            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeout);
             ErrorLog.printMaxOncePerMinute(
                 "Cancel constr of " + type
                     + " (Took too long)"
-                    + " buildable:" + constr.buildPosition().isBuildableIncludeBuildings()
+                    + " buildable:" + buildPosition.isBuildableIncludeBuildings()
                     + " (Supply " + A.supplyUsed() + "/" + A.supplyTotal() + ")"
             );
 
@@ -51,7 +53,7 @@ public class CancelTooLongConstructions {
         if (We.protoss()) {
             if (type.isRoboticsFacility() || type.isObservatory() || type.isForge()) {
                 ErrorLog.printMaxOncePerMinute("### IMPORTANT ### Requesting again " + type + " as it got cancelled");
-                AddToQueue.withHighPriority(type);
+                AddToQueue.withTopPriority(type);
             }
         }
     }

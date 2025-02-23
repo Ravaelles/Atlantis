@@ -7,6 +7,7 @@ import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealo
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
+import atlantis.information.strategy.ProtossStrategies;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -31,9 +32,10 @@ public class ProduceZealot {
         freeGateways = Count.freeGateways();
         if (freeGateways == 0) return false;
 
-        if (PrioritizeCyberneticsOverZealotsAndGateways.prioritizeCybernetics()) return false;
-
         zealots = Count.zealotsWithUnfinished();
+        if (notEnoughZealots()) return produceZealot();
+
+        if (PrioritizeCyberneticsOverZealotsAndGateways.prioritizeCybernetics()) return false;
 
         if (freeGateways >= 2 && A.hasMinerals(700) && A.supplyUsed() <= 185) return produceZealot();
 
@@ -43,7 +45,6 @@ public class ProduceZealot {
         if (zealots <= 1 && !A.hasGas(17) && A.hasMinerals(300)) return produceZealot();
 //        if (Enemy.zerg() && zealots < minZealotsToHave()) return produceZealot();
 
-        if (notEnoughZealots()) return produceZealot();
         if (A.minerals() <= 700 && enoughZealots()) return false;
 
         if (A.s >= 60 * 6 && !A.hasMinerals(550) && Enemy.zerg()) return false;
@@ -159,6 +160,8 @@ public class ProduceZealot {
     }
 
     public static double minZealots() {
+        if (A.s <= 60 * 6.5 && Strategy.is(ProtossStrategies.PROTOSS_Zealot_into_Goon)) return 6;
+
         if (Enemy.terran()) return minZealotsVsTerran();
         if (Enemy.protoss()) return minZealotsVsProtoss();
         return minZealotsVsZerg();

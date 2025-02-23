@@ -7,6 +7,8 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ProtossForceClusterZealot extends Manager {
+    public static final double DIST_BETWEEN_ZEALOTS = 0.4;
+
     private AUnit friend;
 
     public ProtossForceClusterZealot(AUnit unit) {
@@ -17,8 +19,8 @@ public class ProtossForceClusterZealot extends Manager {
     public boolean applies() {
         return unit.isZealot()
 //            && !unit.isAttacking()
-            && unit.lastUnderAttackMoreThanAgo(30)
-            && unit.friendsNear().combatUnits().groundUnits().inRadius(1, unit).count() == 0
+            && unit.lastUnderAttackMoreThanAgo(40)
+            && unit.friendsNear().combatUnits().groundUnits().inRadius(DIST_BETWEEN_ZEALOTS, unit).count() == 0
             && (friend = friend()) != null;
     }
 

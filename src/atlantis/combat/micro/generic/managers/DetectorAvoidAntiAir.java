@@ -27,6 +27,12 @@ public class DetectorAvoidAntiAir extends Manager {
         enemyAAPosition = enemyAntiAirInRange(unit);
         if (enemyAAPosition == null || !enemyAAPosition.hasPosition()) return false;
 
+        if (
+            unit.enemiesNear().effUndetected().notEmpty()
+                && unit.shields() >= 9
+                && unit.friendsNear().cannons().countInRadius(2, unit) == 0
+        ) return false;
+
         return true;
     }
 

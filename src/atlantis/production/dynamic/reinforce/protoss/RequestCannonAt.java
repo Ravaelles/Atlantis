@@ -10,9 +10,9 @@ public class RequestCannonAt {
     public static ProductionOrder at(HasPosition position) {
 //        AUnit existingPylon = Select.ourOfType(Protoss_Pylon).inRadius(10, position).nearestTo(position);
 
-        System.out.println(
-            A.minSec() + " ------- BuildPylonFirst (" + BuildPylonFirst.needsPylon(position) + ") at " + position
-        );
+//        System.out.println(
+//            A.minSec() + " ------- BuildPylonFirst (" + BuildPylonFirst.needsPylon(position) + ") at " + position
+//        );
 
         if (BuildPylonFirst.needsPylon(position)) {
             return BuildPylonFirst.requestNear(position);

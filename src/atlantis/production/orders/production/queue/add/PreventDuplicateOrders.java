@@ -31,10 +31,10 @@ public class PreventDuplicateOrders {
             return true;
         }
 
-        if (excessivePylon(type, position)) {
-            QueueLastStatus.updateStatusFailed("ExcessivePylon", type.toString());
-            return true;
-        }
+//        if (excessivePylon(type, position)) {
+//            QueueLastStatus.updateStatusFailed("ExcessivePylon", type.toString());
+//            return true;
+//        }
 
         if (justRequestedThisType(type)) {
             QueueLastStatus.updateStatusFailed("JustRequested:" + lastRequestedAgo, type.toString());

@@ -22,7 +22,10 @@ public class BuildPylonFirst {
 //        System.err.println("Count.inQueueOrUnfinished(type(), 15) = " + Count.inQueueOrUnfinished(type(), 15));
 
 //        if (Count.inQueueOrUnfinished(type(), 15) >= 5) return error("Too many Pylonz in queue");
-        if (Count.notFinishedConstructions(type(), 5.5, position) > 0) return error("Have pending pylon near");
+        if (Count.notFinishedConstructions(type(), 5.5, position) > 0) {
+//            ErrorLog.debug("Have pending pylon near");
+            return error("Have pending pylon near");
+        }
 
 //        ProductionOrder order = AddToQueue.withHighPriority(Protoss_Pylon, position);
 //        order.setAroundPosition(position);
@@ -32,6 +35,8 @@ public class BuildPylonFirst {
             "Request Pylon fail - null order - " + lastError + " / queue_status:" + QueueLastStatus.status()
         );
 
+//        System.out.println("----- Requested PYLON ORDER at " + order.aroundPosition() + " / " + position);
+
 //        Construction construction = NewConstructionRequest.requestConstructionOf(type(), position, order);
         Construction construction = order.construction();
         if (construction == null) {
@@ -39,7 +44,7 @@ public class BuildPylonFirst {
             return error("Failed to request pylon - construction is null");
         }
 
-        System.err.println("----- Requested PYLON_FOR_CANNON at " + position);
+//        System.out.println("----- Requested PYLON CONSTRUCTION at " + order.aroundPosition() + " / " + position);
 
         lastError = null;
         return order;
@@ -68,7 +73,7 @@ public class BuildPylonFirst {
 
     private static ProductionOrder error(String error) {
         lastError = error;
-//        ErrorLog.printMaxOncePerMinute(error);
+        ErrorLog.debug(error);
 //        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(error);
         return null;
     }

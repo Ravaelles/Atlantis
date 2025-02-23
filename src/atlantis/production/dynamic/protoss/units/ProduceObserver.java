@@ -72,6 +72,13 @@ public class ProduceObserver {
     public static void observers() {
         if (!needObservers()) return;
 
+        if (produceFirstObserver()) return;
+
+        int limit = observersNeeded();
+        if (Count.withPlanned(AUnitType.Protoss_Observer) < limit) {
+            buildToHave(AUnitType.Protoss_Observer, limit);
+        }
+
         if (Have.notEvenPlanned(AUnitType.Protoss_Robotics_Facility)) {
             AddToQueue.withTopPriority(AUnitType.Protoss_Robotics_Facility);
             if (Have.notEvenPlanned(AUnitType.Protoss_Observatory)) {
@@ -99,12 +106,14 @@ public class ProduceObserver {
 //            }
             return;
         }
+    }
 
-        int limit = observersNeeded();
-
-        if (Count.withPlanned(AUnitType.Protoss_Observer) < limit) {
-            buildToHave(AUnitType.Protoss_Observer, limit);
+    private static boolean produceFirstObserver() {
+        if (Have.observatory() && Count.observers() == 0) {
+            return produceObserver();
         }
+
+        return false;
     }
 
     private static int observersNeeded() {
@@ -123,7 +132,7 @@ public class ProduceObserver {
     }
 
     private static boolean produceObserver() {
-        AUnit building = Select.ourFree(Protoss_Robotics_Facility).mostDistantTo(Select.mainOrAnyBuilding());
+        AUnit building = Select.ourFree(Protoss_Robotics_Facility).nearestTo(Select.mainOrAnyBuilding());
         if (building == null) return false;
 
 //        System.err.println("YES< zealot");

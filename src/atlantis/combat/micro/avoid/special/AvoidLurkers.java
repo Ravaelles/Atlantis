@@ -174,12 +174,12 @@ public class AvoidLurkers extends Manager {
     }
 
 //    private boolean beBraveWithDetectorsNearby() {
-////        if (unit.combatEvalRelative() < 1.7) return false;
+
+    /// /        if (unit.combatEvalRelative() < 1.7) return false;
 //        if (lurker.enemiesNear().detectors().inRadius(8, unit).empty()) return false;
 //
 //        return true;
 //    }
-
     private boolean asTerranLoadIntoBunkers() {
         if (!We.terran()) return false;
         if (!unit.isMarine()) return false;
@@ -199,16 +199,8 @@ public class AvoidLurkers extends Manager {
         return 8.1
             + (unit.isTerranInfantry() ? 0.4 : 0)
             + (unit.isWorker() ? 1.5 : 0)
-            + meleeDistBonus()
-            + noDetectorsBonus()
+            + (unit.isMelee() ? 2.5 : 0)
+            + (unit.friendsNear().observers().empty() ? 1.8 : 0)
             + unit.woundPercent() / 65.0;
-    }
-
-    private double noDetectorsBonus() {
-        return unit.friendsNear().observers().empty() ? 1.8 : 0;
-    }
-
-    private double meleeDistBonus() {
-        return unit.isMelee() ? 2.5 : 0;
     }
 }

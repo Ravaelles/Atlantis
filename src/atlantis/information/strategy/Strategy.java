@@ -49,4 +49,8 @@ public class Strategy {
 
         QueueInitializer.initializeProductionQueue();
     }
+
+    public static boolean is(AStrategy strategy) {
+        return strategy.equals(get());
+    }
 }
