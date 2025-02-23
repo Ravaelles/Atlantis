@@ -1,10 +1,9 @@
-package atlantis.combat.squad.positioning.protoss.formation.crescent;
+package atlantis.combat.squad.positioning.protoss.formations.crescent;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.positioning.protoss.formation.ProtossShouldCreateFormation;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossShouldCreateFormation;
 import atlantis.debug.painter.AAdvancedPainter;
-import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;

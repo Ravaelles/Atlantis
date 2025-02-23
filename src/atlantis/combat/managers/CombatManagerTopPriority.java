@@ -8,6 +8,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.AvoidAsUndetected;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.hold.HoldToShoot;
 import atlantis.combat.micro.early.protoss.ProtossEarlyGame;
@@ -16,12 +17,14 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.defend.protoss.ProtossForceStickToMainDuringDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.squad.positioning.KeepFormation;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.ContinueShotAnimation;
 import atlantis.units.special.FixIdleUnits;
 import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.ManualOverrideManager;
+import atlantis.units.special.SpecialUnitsManager;
 import atlantis.units.special.ums.FixInvalidTargets;
 
 public class CombatManagerTopPriority extends Manager {
@@ -37,21 +40,30 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            // === A ===========================================
+
             ManualOverrideManager.class,
             RemoveDeadUnitsManager.class,
             AttackStateDeterminingManager.class,
+
+            AvoidSpellsAndMines.class,
+            SpecialUnitsManager.class,
 
             DontIssueOrdersOneFrameAfterCommand.class,
 
             FixPerformanceForBigSupply.class,
 
+            // === B ===========================================
+
             Unfreezer.class,
+
+            AvoidCombatBuildingClose.class,
+            AvoidCriticalUnits.class,
 
             HoldToShoot.class,
             ContinueShotAnimation.class,
 
-            AvoidCombatBuildingClose.class,
-            AvoidCriticalUnits.class,
+            KeepFormation.class,
 
             RetreatManager.class,
             ShouldStopRunning.class,
@@ -60,6 +72,11 @@ public class CombatManagerTopPriority extends Manager {
             AttackParamountUnitsInRange.class,
             AttackTanksInRange.class,
 //            ContinueShooting.class,
+
+            FixInvalidTargets.class,
+            FixIdleUnits.class,
+
+            // === C ===========================================
 
             AvoidAsUndetected.class,
             AvoidEnemies.class,
@@ -84,8 +101,8 @@ public class CombatManagerTopPriority extends Manager {
 
 //            RetreatManager.class,
 
-            FixInvalidTargets.class,
-            FixIdleUnits.class,
+//            FixInvalidTargets.class,
+//            FixIdleUnits.class,
 
 //            PreventDoNothing.class,
 //            PreventAttackNull.class,

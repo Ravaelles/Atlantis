@@ -2,7 +2,6 @@ package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.*;
-import atlantis.combat.squad.positioning.protoss.formation.ProtossFormation;
 import atlantis.combat.squad.positioning.terran.formation.TerranFormation;
 import atlantis.units.AUnit;
 import atlantis.util.We;

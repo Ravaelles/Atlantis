@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.formation;
+package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;

@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.formation.crescent;
+package atlantis.combat.squad.positioning.protoss.formations.crescent;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;

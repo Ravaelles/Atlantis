@@ -2,12 +2,9 @@ package atlantis.units.special.ums;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromSquadCenter;
 import atlantis.combat.squad.positioning.terran.TerranTooFarFromSquadCenter;
-import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.AliveEnemies;
-import atlantis.util.PauseAndCenter;
+import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class FixInvalidTargets extends Manager {
@@ -43,7 +40,8 @@ public class FixInvalidTargets extends Manager {
         if ((new AttackNearbyEnemies(unit)).forceHandle() != null) return usedManager(this);
 
         if (We.protoss()) {
-            if ((new ProtossTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
+//            if ((new ProtossTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
+            if (unit.moveToLeader(Actions.MOVE_FOLLOW, "FixInvalidTargetLeader")) return usedManager(this);
         }
 
         else if (We.terran()) {

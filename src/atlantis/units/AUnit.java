@@ -3734,4 +3734,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return lastTarget.isTank();
     }
 
+    public double speed() {
+        if (u == null) return 0;
+
+        return Math.sqrt(u.getVelocityX() * u.getVelocityX() + u.getVelocityY() * u.getVelocityY());
+    }
 }

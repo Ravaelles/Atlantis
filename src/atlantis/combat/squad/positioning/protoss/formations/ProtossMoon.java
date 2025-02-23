@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.formation;
+package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.formations.moon.MoonFormationApplies;

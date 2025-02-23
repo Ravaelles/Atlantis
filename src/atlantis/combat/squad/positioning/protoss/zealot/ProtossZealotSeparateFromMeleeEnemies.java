@@ -18,6 +18,9 @@ public class ProtossZealotSeparateFromMeleeEnemies extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isZealot()) return false;
+//        if (!Enemy.protoss()) return false;
+        if (unit.cooldown() >= 4 && unit.hp() >= 36) return false;
+
         if (unit.lastStartedRunningLessThanAgo(3)) return false;
         if (unit.lastUnderAttackMoreThanAgo(30 * 3)) return false;
         if (unit.isMissionSparta()) return false;

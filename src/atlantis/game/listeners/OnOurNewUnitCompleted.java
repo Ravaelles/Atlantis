@@ -17,7 +17,7 @@ import static atlantis.production.orders.production.queue.order.OrderStatus.COMP
 
 public class OnOurNewUnitCompleted {
     public static void ourNewUnitCompleted(AUnit unit) {
-        OnUnitCompleted.cleanUpProductionOrderAndConstruction(unit);
+        cleanUpProductionOrderAndConstruction(unit);
 
         Count.clearCache();
         Select.clearCache();
