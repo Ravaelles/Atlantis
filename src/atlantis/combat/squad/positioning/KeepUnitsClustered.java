@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.protoss.keep_formation.ProtossKeepFormation;
 import atlantis.units.AUnit;
 
-public class KeepFormation extends Manager {
-    public KeepFormation(AUnit unit) {
+public class KeepUnitsClustered extends Manager {
+    public KeepUnitsClustered(AUnit unit) {
         super(unit);
     }
 

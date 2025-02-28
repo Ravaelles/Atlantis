@@ -17,7 +17,8 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.defend.protoss.ProtossForceStickToMainDuringDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
-import atlantis.combat.squad.positioning.KeepFormation;
+import atlantis.combat.squad.positioning.KeepUnitsClustered;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.ContinueShotAnimation;
@@ -40,7 +41,7 @@ public class CombatManagerTopPriority extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            // === A ===========================================
+            // === Non-actions ===============================================
 
             ManualOverrideManager.class,
             RemoveDeadUnitsManager.class,
@@ -53,30 +54,34 @@ public class CombatManagerTopPriority extends Manager {
 
             FixPerformanceForBigSupply.class,
 
-            // === B ===========================================
+            // === Crucial actions ===========================================
 
             Unfreezer.class,
 
             AvoidCombatBuildingClose.class,
             AvoidCriticalUnits.class,
 
-            HoldToShoot.class,
-            ContinueShotAnimation.class,
+            AttackParamountUnitsInRange.class,
 
-            KeepFormation.class,
+            // === Very important actions ====================================
 
             RetreatManager.class,
             ShouldStopRunning.class,
+
+            ProtossFormation.class,
+            KeepUnitsClustered.class,
+
+            HoldToShoot.class,
+            ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
 
-            AttackParamountUnitsInRange.class,
             AttackTanksInRange.class,
 //            ContinueShooting.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,
 
-            // === C ===========================================
+            // === Important actions ========================================
 
             AvoidAsUndetected.class,
             AvoidEnemies.class,

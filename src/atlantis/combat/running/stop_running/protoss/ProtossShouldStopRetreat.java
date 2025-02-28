@@ -16,6 +16,8 @@ public class ProtossShouldStopRetreat extends Manager {
     public boolean applies() {
         if (!unit.isRetreating()) return false;
 //        if (unit.lastStartedRunningLessThanAgo(20)) return false;
+        if (unit.lastStartedRetreatingAgo() <= 30 * 3) return false;
+        if (unit.leaderIsRetreating() && unit.squadLeader().lastStartedRetreatingAgo() <= 30 * 3) return false;
 
         return noEnemiesNear()
             || unit.eval() >= 1.3

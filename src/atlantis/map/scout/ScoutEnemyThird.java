@@ -2,6 +2,8 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -21,6 +23,8 @@ public class ScoutEnemyThird extends Manager {
     @Override
     public boolean applies() {
         if (noLongerScoutAsBaseFound) return false;
+
+        if (!Enemy.zerg() && EnemyUnits.combatUnits() <= 2) return false;
 
         enemyThird = EnemyThirdBase.get();
         if (enemyThird == null) return false;

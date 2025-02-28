@@ -2330,7 +2330,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         Squad squad = squad();
         if (squad != null && squad.isAlpha()) {
             AUnit leader = squadLeader();
-            if (leader != null && leader.id() != this.id() && !isLeader()) {
+            if (leader != null && leader.id() != this.id() && !isLeader() && distTo(leader) <= 7) {
                 return leader.eval();
             }
         }

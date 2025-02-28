@@ -36,10 +36,16 @@ public class AttackParamountUnitsInRange extends Manager {
         Selection enemies = null;
 
         if (Enemy.zerg()) {
-            enemies = unit.enemiesNear().ofType(AUnitType.Zerg_Scourge);
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Zerg_Scourge,
+                AUnitType.Zerg_Defiler
+            );
         }
         else if (Enemy.protoss()) {
-            enemies = unit.enemiesNear().ofType(AUnitType.Protoss_Observer);
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Dark_Templar
+            );
         }
         else if (Enemy.terran()) {
             return null;
@@ -49,6 +55,7 @@ public class AttackParamountUnitsInRange extends Manager {
         Selection targets = enemies
             .realUnits()
             .notDeadMan()
+            .effVisible()
             .canBeAttackedBy(unit, 0.2);
 
         Selection closeTargets = targets.canBeAttackedBy(unit, -0.7);
