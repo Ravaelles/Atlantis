@@ -13,7 +13,7 @@ public class ATargetingAsDragoon {
 
         if (Enemy.zerg() && unit.isDragoon()) {
             AUnit target = enemyUnits
-                .inRadius(3.75, unit)
+                .inRadius(OurDragoonRange.range() - 0.15, unit)
                 .mostWoundedOrNearest(unit);
             if (target != null) {
                 debug("ClosestZergA = " + target);

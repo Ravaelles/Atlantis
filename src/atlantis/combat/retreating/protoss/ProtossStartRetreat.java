@@ -3,6 +3,7 @@ package atlantis.combat.retreating.protoss;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -57,7 +58,8 @@ public class ProtossStartRetreat extends HasUnit {
             return false;
         }
 
-        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
+//        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
+        if (shouldRetreatTowardsBase(unit)) {
             unitStartedRetreating(runAwayFrom);
             return true;
         }
@@ -154,6 +156,8 @@ public class ProtossStartRetreat extends HasUnit {
     private static boolean shouldRetreatTowardsBase(AUnit unit) {
 //        if (Count.ourCombatUnits() >= 12) return false;
 
+        if (Enemy.zerg() && Count.ourCombatUnits() <= 10) return true;
+        if (unit.groundDistToMain() <= 20) return true;
         if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 
         if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
@@ -163,8 +167,6 @@ public class ProtossStartRetreat extends HasUnit {
         if (unit.distTo(goTo) <= (Count.ourCombatUnits() <= 8 ? 6.5 : 10)) return false;
 
 //        if (Count.ourCombatUnits() <= 11) return false;
-
-        if (unit.groundDistToMain() <= 20) return true;
 
         if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(3)) return false;
 
