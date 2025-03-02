@@ -26,8 +26,8 @@ public class DragoonSafetyMarginAgainstRanged extends SafetyMarginAgainstRanged 
             + enemyWeaponRange(attacker)
             + woundedBonus(attacker)
             + (defender.cooldown() >= 13 ? +1.0 : 0)
-            + (defender.woundHp() >= 38 && defender.cooldown() >= 9 ? +0.5 : 0)
-            + (defender.lastUnderAttackLessThanAgo(35) ? 1.0 : 0)
+            + (defender.woundHp() >= 39 && defender.cooldown() >= 9 ? +0.5 : 0)
+            + (defender.lastUnderAttackLessThanAgo(20) ? 1.0 : 0)
             + ourNotMovingPenalty(defender);
 //            + enemyFacingDirectionBonus(attacker);
 

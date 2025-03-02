@@ -23,8 +23,6 @@ public class DragoonHoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
-//        if (true) return false;
-
         if (!unit.isDragoon()) return false;
         if (unit.cooldown() >= 8) return false;
         if (unit.meleeEnemiesNearCount(3.7) > 0) return false;

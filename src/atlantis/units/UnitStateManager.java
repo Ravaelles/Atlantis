@@ -57,9 +57,10 @@ public class UnitStateManager extends Manager {
             unit._lastTargetType = unit.target().type();
         }
 
+        Squad squad = unit.squad();
+
         if (unit.isUnderAttack(3)) {
             unit._lastUnderAttack = timeNow;
-            Squad squad = unit.squad();
             if (squad != null) {
                 squad.markLastUnderAttackNow();
             }
@@ -67,6 +68,12 @@ public class UnitStateManager extends Manager {
             if (unit.isUnderAttack(2)) {
                 unit.increaseHitCount();
 //                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UNDER ATTACK - " + unit.hitCount());
+            }
+        }
+
+        if (unit.isAttacking()) {
+            if (squad != null) {
+                squad.markLastAttackedNow();
             }
         }
 

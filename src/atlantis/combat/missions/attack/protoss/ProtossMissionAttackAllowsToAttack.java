@@ -10,6 +10,13 @@ public class ProtossMissionAttackAllowsToAttack extends MissionAttackAllowsToAtt
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        if (unit.leaderIsRetreating()) return forbidden("LeaderRetreating");
+
+        if (Enemy.zerg()) {
+            if (preventProtossFromChasingScatteredLings(enemy)) return forbidden("ChasingLings");
+            if (preventLonelyMelee(enemy)) return forbidden("LonelyMelee");
+        }
+
         if (Enemy.zerg() || Enemy.terran()) {
 //            boolean lowCooldown = unit.cooldown() <= 4;
             double distToEnemy = unit.distTo(enemy);
@@ -22,5 +29,11 @@ public class ProtossMissionAttackAllowsToAttack extends MissionAttackAllowsToAtt
         }
 
         return super.allowsToAttackEnemyUnit(enemy);
+    }
+
+    private boolean preventLonelyMelee(AUnit enemy) {
+        if (!unit.isMelee()) return false;
+
+        return unit.eval() <= 3 && unit.friendsInRadius(0.6).count() <= 0;
     }
 }

@@ -17,15 +17,8 @@ public class ShouldStopRunningDragoon extends Manager {
 //        if (true) return false;
 
         if (!unit.isDragoon()) return false;
-
-//        if (unitBecameIdleAfterRunning()) return true;
-//        if (!unit.isMoving()) return true;
-
-//        if (unit.lastActionMoreThanAgo(2)) return false;
-//        if (unit.lastStartedRunningLessThanAgo(7)) return false;
-
-        if (unit.isDancing()) return false;
-
+        if (unit.isDancing() && unit.shields() >= 3) return false;
+//
 //        if (unit.hp() <= 60) return false;
 
         if (stopVsZerg()) return true;

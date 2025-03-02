@@ -39,6 +39,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.leaderIsRetreating()) return null;
+
 //        A.printStackTrace("Why attack now? ");
 //        printParentsStack();
 //        unit.managerLogs().print();
@@ -109,11 +111,11 @@ public class AttackNearbyEnemies extends Manager {
 //            if (target.isOverlord()) A.printStackTrace("THAT OVERLORD targetToAttack " + target);
 
             //        if (unit.distTo(target) >= 8 && unit.distToTarget() <= 888) {
-            if (unit.distTo(target) >= 8 && unit.enemiesNear(6).notEmpty()) {
-                System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " --> " + target
-                    + " (hp:" + target.hp() + ") - " + unit.distTo(target));
-                PauseAndCenter.on(unit, true);
-            }
+//            if (unit.distTo(target) >= 8 && unit.enemiesNear(6).notEmpty()) {
+//                System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " --> " + target
+//                    + " (hp:" + target.hp() + ") - " + unit.distTo(target));
+//                PauseAndCenter.on(unit, true);
+//            }
 
             return processAttackUnit.processAttackOtherUnit(target);
         }

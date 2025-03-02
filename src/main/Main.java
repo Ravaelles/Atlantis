@@ -218,7 +218,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Ling.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
-        if (true) return "ums/rav/protoss/1Drag_v_2Ling.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_2Ling.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_2LingUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
@@ -229,7 +229,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
 
-        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
         if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm";
 
         return null;

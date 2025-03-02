@@ -36,8 +36,6 @@ public class MissionAttackAllowsToAttack extends HasUnit {
                 && unit.isTargetInWeaponRangeAccordingToGame(enemy)
         ) return true;
 
-        if (preventProtossFromChasingScatteredLings(enemy)) return forbidden("ChasingLings");
-
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
             if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return forbidden(
@@ -61,12 +59,12 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         return true;
     }
 
-    private boolean forbidden(String reason) {
+    protected boolean forbidden(String reason) {
 //        ErrorLog.debug(reason);
         return false;
     }
 
-    private boolean preventProtossFromChasingScatteredLings(AUnit enemy) {
+    protected boolean preventProtossFromChasingScatteredLings(AUnit enemy) {
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
 

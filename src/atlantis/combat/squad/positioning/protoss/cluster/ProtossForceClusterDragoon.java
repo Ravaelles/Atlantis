@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning.protoss.cluster;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -18,8 +19,16 @@ public class ProtossForceClusterDragoon extends Manager {
         return unit.isDragoon()
 //            && unit.lastUnderAttackMoreThanAgo(90)
             && unit.eval() <= 1.3
-            && unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
+            && goonsTooFarFromEachOther()
             && (friend = friend()) != null;
+    }
+
+    private boolean goonsTooFarFromEachOther() {
+        int dragoons = Count.dragoons();
+        if (dragoons <= 2) return false;
+
+        return unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
+            || unit.friendsNear().combatUnits().inRadius(1.2, unit).count() <= 1;
     }
 
     private double minDistToFriend() {

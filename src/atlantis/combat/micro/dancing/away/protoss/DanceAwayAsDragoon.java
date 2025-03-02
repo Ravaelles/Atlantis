@@ -57,7 +57,7 @@ public class DanceAwayAsDragoon extends DanceAway {
             if (unit.shieldWound() >= 40 && unit.cooldown() >= 6) return true;
             if (unit.hp() <= 82 && unit.cooldown() >= 3) return true;
             if (unit.hp() <= 60 && shotSecondsAgo <= 4) return true;
-            if (unit.hp() <= 44 && shotSecondsAgo <= 4) return true;
+            if (unit.hp() <= 44 && shotSecondsAgo <= 5) return true;
         }
 
         if (rangedEnemiesCount >= 1) {

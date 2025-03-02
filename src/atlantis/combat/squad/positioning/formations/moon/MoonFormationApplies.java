@@ -23,9 +23,9 @@ public class MoonFormationApplies {
         if (leader == null) return false;
         if (A.s <= 2) return true;
         Selection enemies = leader.enemiesNear();
-        if (enemies.atMost(1)) return false;
+        if (enemies.atLeast(1)) return false;
+        if (unit.squad() != null && unit.squad().lastAttackedLessThanAgo(40)) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
-
         if (unit.eval() >= 1.6) return false;
 
         if (Enemy.protoss()) {

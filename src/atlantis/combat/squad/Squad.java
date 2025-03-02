@@ -47,6 +47,7 @@ public abstract class Squad extends Units {
 
     private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
+    private int _lastAttacked = -76543;
     private int _lastUnderAttack = -87654;
 
     // =========================================================
@@ -383,5 +384,13 @@ public abstract class Squad extends Units {
 
     public void markLastUnderAttackNow() {
         _lastUnderAttack = A.now;
+    }
+
+    public void markLastAttackedNow() {
+        _lastAttacked = A.now;
+    }
+
+    public boolean lastAttackedLessThanAgo(int threshold) {
+        return A.ago(_lastUnderAttack) <= threshold;
     }
 }
