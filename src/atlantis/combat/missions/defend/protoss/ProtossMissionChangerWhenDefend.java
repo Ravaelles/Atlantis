@@ -62,7 +62,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 return forceMissionSpartaOrDefend("TechWait");
             }
 
-            if (Count.ourCombatUnits() >= 4 && pressureZergWithLittleEarlyLings()) {
+            if (Count.ourCombatUnits() >= 6 && pressureZergWithLittleEarlyLings()) {
                 return true;
             }
 

@@ -22,7 +22,7 @@ public class ProtossFullRetreat extends Manager {
 //        ProtossCohesion tooLonely = new ProtossCohesion(unit);
 //        if (tooLonely.applies() && tooLonely.forceHandle() != null) return usedManager(this);
 
-        if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy())) {
+        if ((new ProtossStartRetreat(unit.squadLeaderOrThisUnit())).startRetreatingFrom(enemy())) {
 //            unit.paintCircleFilled(14, Color.Red);
             if (unit.isLeader()) RetreatManager.GLOBAL_RETREAT_COUNTER++;
 //            System.err.println("            ------");

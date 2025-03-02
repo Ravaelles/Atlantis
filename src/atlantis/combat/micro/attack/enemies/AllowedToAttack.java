@@ -122,7 +122,7 @@ public class AllowedToAttack {
         if (unit.isZergling() && target.eval() > 1.7) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
-            AttackNearbyEnemies.reasonNotToAttack = "MissionForbids" + target.name();
+            AttackNearbyEnemies.reasonNotToAttack = "MissionAForbids" + target.name();
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
             return false;

@@ -68,12 +68,13 @@ public class ATargetingCrucial extends ATargeting {
         }
 
         // =========================================================
-        // DEFILER / LURKER in range
+        // DEFILER in range
 
         target = enemyUnits
             .ofType(AUnitType.Zerg_Defiler)
             .effVisible()
             .inRadius(13, unit)
+            .canBeAttackedBy(unit, 1.1)
             .nearestTo(unit);
         if (target != null) {
             debug("CR3 = " + target);
@@ -91,7 +92,7 @@ public class ATargetingCrucial extends ATargeting {
 
         target = enemyUnits
             .ofType(AUnitType.Zerg_Lurker)
-            .canBeAttackedBy(unit, 0.9)
+            .canBeAttackedBy(unit, unit.isRanged() ? 0.9 : 0.2)
             .nearestTo(unit);
         if (target != null) {
             debug("CR3b = " + target);

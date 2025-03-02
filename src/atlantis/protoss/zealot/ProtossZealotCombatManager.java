@@ -20,7 +20,7 @@ public class ProtossZealotCombatManager extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossZealotLongNotAttacked.class,
+//            ProtossZealotLongNotAttacked.class,
             ProtossZealotTooFarFromDragoon.class,
             ProtossZealotSeparateFromMeleeEnemies.class,
         };

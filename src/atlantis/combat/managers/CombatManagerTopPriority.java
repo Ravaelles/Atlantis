@@ -17,7 +17,6 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.missions.defend.protoss.ProtossForceStickToMainDuringDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
-import atlantis.combat.squad.positioning.KeepUnitsClustered;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
@@ -66,14 +65,16 @@ public class CombatManagerTopPriority extends Manager {
             // === Very important actions ====================================
 
             RetreatManager.class,
-            ShouldStopRunning.class,
-
-            ProtossFormation.class,
-            KeepUnitsClustered.class,
 
             HoldToShoot.class,
             ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
+
+            ShouldStopRunning.class,
+
+            ProtossTopCombatManager.class,
+
+            ProtossFormation.class,
 
             AttackTanksInRange.class,
 //            ContinueShooting.class,

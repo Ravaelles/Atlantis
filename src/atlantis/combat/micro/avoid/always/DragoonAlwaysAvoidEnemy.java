@@ -46,14 +46,19 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
             unit.hp() <= 60
                 && unit.shotSecondsAgo() <= 3.5
                 && unit.enemiesThatCanAttackMe(1.85).ranged().atLeast(2)
-        ) return true;
-
-        if (
-            unit.friendsNear().atMost(20)
-                && unit.enemiesNearInRadius(OurDragoonRange.range() - 0.6) >= 1
         ) {
-            return unit.lastAttackFrameLessThanAgo(30 * (unit.hp() >= 60 ? 4 : 7));
+            return unit.setTooltip("Goon2Enemies");
         }
+
+//        if (
+//            unit.cooldown() >= 11
+//                && unit.shotSecondsAgo(1)
+//                && unit.friendsNear().atMost(20)
+//                && unit.enemiesNearInRadius(OurDragoonRange.range() - 0.6) >= 1
+//        ) {
+//            return unit.lastAttackFrameLessThanAgo(30 * (unit.hp() >= 60 ? 4 : 7))
+//                && unit.setTooltip("GoonUA");
+//        }
 
         if (
             unit.cooldown() >= 15
@@ -61,19 +66,22 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                 && unit.lastUnderAttackLessThanAgo(30 * 2)
                 && unit.lastAttackFrameLessThanAgo(50)
                 && unit.enemiesNearInRadius(OurDragoonRange.range() - 0.5) >= 2
-        ) return true;
+        ) return unit.setTooltip("GoonCooldown");
 
         if (unit.shieldDamageAtLeast(9)) {
-            if (lonelyAndLotsOfZerglings()) return true;
-            if (lonelyAndLotsOfHydras()) return true;
+            if (lonelyAndLotsOfZerglings()) return unit.setTooltip("GoonLingz");
+            if (lonelyAndLotsOfHydras()) return unit.setTooltip("GoonHydraz");
         }
 
         return false;
     }
 
     private boolean isAnyEnemyThatCanAttackUsRelativelyClose() {
-        return unit.cooldown() >= 12
-            && unit.shieldWounded()
+//        System.out.println(unit.shotSecondsAgo() + " / " + unit.cooldown());
+//        System.out.println(unit.cooldown() + " / " + unit.lastAttackFrameAgo());
+        return unit.shieldWounded()
+            && unit.cooldown() >= 12
+//            && unit.shotSecondsAgo(1)
             && !unit.isAttackingBuilding()
             && unit.enemiesNear().canAttack(unit, 2.8).notEmpty();
     }

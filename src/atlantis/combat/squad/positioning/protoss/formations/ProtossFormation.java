@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.positioning.protoss.cluster.ProtossKeepUnitsClustered;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -19,6 +20,7 @@ public class ProtossFormation extends Manager {
         return new Class[]{
             ProtossMoon.class,
 //            ProtossCrescent.class,
+            ProtossKeepUnitsClustered.class,
         };
     }
 }

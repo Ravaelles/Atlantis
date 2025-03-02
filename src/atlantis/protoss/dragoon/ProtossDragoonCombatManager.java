@@ -19,7 +19,7 @@ public class ProtossDragoonCombatManager extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossDragoonLongNotAttacked.class,
+//            ProtossDragoonLongNotAttacked.class,
 //            ProtossDragoonSeparate.class,
         };
     }

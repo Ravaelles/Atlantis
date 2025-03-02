@@ -16,7 +16,7 @@ public class RetreatManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ContinueRetreating.class,
+//            ContinueRetreating.class,
             TerranRetreat.class,
             ProtossRetreat.class,
         };

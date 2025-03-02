@@ -26,6 +26,8 @@ public class MoonFormationApplies {
         if (enemies.atMost(1)) return false;
         if (leader.friendsNear().combatUnits().empty()) return false;
 
+        if (unit.eval() >= 1.6) return false;
+
         if (Enemy.protoss()) {
             if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
         }

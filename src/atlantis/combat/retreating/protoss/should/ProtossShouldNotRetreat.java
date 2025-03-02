@@ -10,7 +10,7 @@ import atlantis.units.select.Selection;
 
 public class ProtossShouldNotRetreat extends Manager {
     public ProtossShouldNotRetreat(AUnit unit) {
-        super(unit);
+        super(unit.squadLeaderOrThisUnit());
     }
 
     @Override

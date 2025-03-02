@@ -51,8 +51,8 @@ public class ShouldStopRunningDragoon extends Manager {
 
 //        System.err.println("unit.eval() = " + unit.eval() + " / " + unit.enemiesThatCanAttackMe(0.5).count());
 //        return unit.eval() >= 0.85 && unit.shieldWound() <= 9 && unit.cooldown() <= 6
-        return unit.shields() >= 5
-            && unit.cooldown() <= 6
+//        return unit.shields() >= 5
+        return unit.cooldown() <= 6
             && (unit.eval() >= 0.85 || unit.enemiesThatCanAttackMe(0.5).count() <= 2);
 //            && A.println("DragoonStopVsZerg:" + A.now());
     }

@@ -53,7 +53,16 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
+        if (A.isUms() && Select.ourBases().empty()) {
+            return false;
+        }
+
         if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
+            unitStartedRetreating(runAwayFrom);
+            return true;
+        }
+
+        if (retreatTowardsLeaderForBetterCohesion()) {
             unitStartedRetreating(runAwayFrom);
             return true;
         }
@@ -64,12 +73,12 @@ public class ProtossStartRetreat extends HasUnit {
             return true;
         }
 
-        if (shouldRetreatTowardsBase(unit)) {
-            unitStartedRetreating(runAwayFrom);
-            return true;
-        }
+//        if (shouldRetreatTowardsBase(unit)) {
+//            unitStartedRetreating(runAwayFrom);
+//            return true;
+//        }
 
-        if (retreatTowardsLeaderForBetterCohesion()) {
+        if (unit.moveAwayFrom(runAwayFrom, 6, RUN_RETREAT, "AnyhowRetreat")) {
             unitStartedRetreating(runAwayFrom);
             return true;
         }

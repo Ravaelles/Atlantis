@@ -17,10 +17,13 @@ public class DragoonDontAvoidEnemy {
 
 //        if (true) return false;
 
+//        System.err.println(A.now() + " - " + unit.typeWithUnitId() + " - ");
+
         if (justStartedAttack(unit)) return true;
         if (preventAttackAvoidAttackAvoidLoop(unit)) return true;
         if (seriouslyWoundedAndEnemiesNear(unit)) return true;
         if (healthyAndSafe(unit)) return true;
+        if (healthyAndGoodEval(unit)) return true;
         if (hasJustStoppedRunning(unit)) return true;
         if (hasNotShotInAWhile(unit)) return true;
         if (preventRunningAndNotShooting(unit)) return true;
@@ -38,6 +41,15 @@ public class DragoonDontAvoidEnemy {
         if (Enemy.terran()) return vsTerran(unit);
 
         return false;
+    }
+
+    private static boolean healthyAndGoodEval(AUnit unit) {
+        if (unit.woundHp() >= 5) return false;
+
+//        System.out.println(unit.eval());
+        return unit.eval() >= 0.8
+            && unit.enemiesNearInRadius(3.4) == 0
+            && reason(unit, "HealthyAndGoodEval");
     }
 
     private static boolean justStartedAttack(AUnit unit) {
@@ -79,7 +91,9 @@ public class DragoonDontAvoidEnemy {
 //    }
     private static boolean healthyAndSafe(AUnit unit) {
         return unit.woundHp() <= 9
-            && unit.lastAttackFrameMoreThanAgo(30 * 5)
+//            && unit.lastAttackFrameMoreThanAgo(30 * 5)
+            && unit.cooldown() <= 13
+            && unit.meleeEnemiesNearCount(1.7) <= (Enemy.zerg() ? 3 : 1)
             && reason(unit, "HealthyAndSafe");
 //            && unit.enemiesNear().ranged().canAttack(unit, 1.5).empty();
     }

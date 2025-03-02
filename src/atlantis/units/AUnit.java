@@ -662,6 +662,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean setTooltip(String tooltip) {
         this.tooltip = tooltip;
+        this.addLog(tooltip);
+//        System.err.println(typeWithUnitId() + ": " + tooltip);
         return true;
     }
 
@@ -3742,5 +3744,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (u == null) return 0;
 
         return Math.sqrt(u.getVelocityX() * u.getVelocityX() + u.getVelocityY() * u.getVelocityY());
+    }
+
+    public AUnit squadLeaderOrThisUnit() {
+        AUnit leader = squadLeader();
+        if (leader != null) return leader;
+
+        return this;
     }
 }

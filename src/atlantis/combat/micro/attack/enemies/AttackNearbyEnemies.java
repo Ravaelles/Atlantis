@@ -89,6 +89,12 @@ public class AttackNearbyEnemies extends Manager {
 
         // =========================================================
 
+//        if (unit.distToTarget() >= 8) {
+//            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - \"FarFromTarget\" - "
+//                + unit.distToTarget() + " / " + unit.target() + " / " + unit.target().hp());
+//            PauseAndCenter.on(unit, true);
+//        }
+
 //                why();
 
         if (!unit.canAttackTarget(target) || !unit.isAlive()) {
@@ -101,6 +107,13 @@ public class AttackNearbyEnemies extends Manager {
 
         if (unit.mission().allowsToAttackEnemyUnit(unit, target)) {
 //            if (target.isOverlord()) A.printStackTrace("THAT OVERLORD targetToAttack " + target);
+
+            //        if (unit.distTo(target) >= 8 && unit.distToTarget() <= 888) {
+            if (unit.distTo(target) >= 8 && unit.enemiesNear(6).notEmpty()) {
+                System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " --> " + target
+                    + " (hp:" + target.hp() + ") - " + unit.distTo(target));
+                PauseAndCenter.on(unit, true);
+            }
 
             return processAttackUnit.processAttackOtherUnit(target);
         }

@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.keep_formation;
+package atlantis.combat.squad.positioning.protoss.cluster;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromSquadCenter;
@@ -6,8 +6,8 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
-public class ProtossKeepFormation extends Manager {
-    public ProtossKeepFormation(AUnit unit) {
+public class ProtossKeepUnitsClustered extends Manager {
+    public ProtossKeepUnitsClustered(AUnit unit) {
         super(unit);
     }
 

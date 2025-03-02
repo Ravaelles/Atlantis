@@ -22,17 +22,23 @@ public class ContinueShotAnimation extends Manager {
 
         if (!unit.isAttacking() && !unit.isAction(HOLD_TO_SHOOT)) return false;
         if (!unit.hasValidTarget()) return false;
-        if (unit.isRunning() || unit.isRetreating()) return false;
-        if (unit.lastStartedRetreatingAgo() <= 60) return false;
+//        if (unit.isRunning() || unit.isRetreating()) return false;
+//        if (unit.lastStartedRetreatingAgo() <= 60) return false;
 
-        if (!unit.isTargetInWeaponRangeAccordingToGame()) {
-            if (unit.distToTarget() > 7) return false;
-            if (unit.isDragoon() && unit.hp() <= 60) return false;
-            if (unit.lastActionLessThanAgo(20, Actions.MOVE_FORMATION)) return false;
-            if (unit.shotSecondsAgo() >= 4 && unit.lastActionMoreThanAgo(8)) return false;
-
-//            if (A.s >= 5 && unit.lastActionLessThanAgo(45)) return true;
+        if (unit.isTargetInWeaponRangeAccordingToGame()) {
+            if (!unit.attackState().finishedShooting()) {
+                return true;
+            }
         }
+
+//        if (!unit.isTargetInWeaponRangeAccordingToGame()) {
+//            if (unit.distToTarget() > 7) return false;
+//            if (unit.isDragoon() && unit.hp() <= 60) return false;
+//            if (unit.lastActionLessThanAgo(20, Actions.MOVE_FORMATION)) return false;
+//            if (unit.shotSecondsAgo() >= 4 && unit.lastActionMoreThanAgo(8)) return false;
+//
+////            if (A.s >= 5 && unit.lastActionLessThanAgo(45)) return true;
+//        }
 
         // =========================================================
 

@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.keep_formation;
+package atlantis.combat.squad.positioning.protoss.cluster;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
@@ -16,13 +16,15 @@ public class ProtossForceClusterDragoon extends Manager {
     @Override
     public boolean applies() {
         return unit.isDragoon()
-            && unit.lastUnderAttackMoreThanAgo(90)
-            && unit.friendsNear().combatUnits().groundUnits().inRadius(minDistToFriend(), unit).count() == 0
+//            && unit.lastUnderAttackMoreThanAgo(90)
+            && unit.eval() <= 1.3
+            && unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
             && (friend = friend()) != null;
     }
 
-    private int minDistToFriend() {
-        return unit.rangedEnemiesCount(3) > 0 ? 1 : 5;
+    private double minDistToFriend() {
+//        return unit.rangedEnemiesCount(3) > 0 ? 0.5 : 5;
+        return unit.enemiesNearInRadius(8) > 0 ? 0.5 : 5;
     }
 
     @Override
@@ -35,8 +37,8 @@ public class ProtossForceClusterDragoon extends Manager {
     }
 
     private AUnit friend() {
-        Selection combatUnits = Select.ourCombatUnits().exclude(unit);
+        Selection combatUnits = unit.friendsNear().groundUnits().exclude(unit);
 
-        return combatUnits.groundUnits().nearestTo(unit);
+        return combatUnits.nearestTo(unit);
     }
 }

@@ -18,12 +18,12 @@ public class MoonSeparation {
 
     private static double minSeparation(AUnit leader) {
         if (We.protoss()) {
-            double spaceBetween = 0.08;
+            double spaceBetween = 0.04;
 
             if (leader.isRanged()) return AUnitType.Protoss_Dragoon.widthInTiles() + spaceBetween;
             return AUnitType.Protoss_Zealot.widthInTiles() + spaceBetween;
         }
 
-        return 0.15;
+        return 0.04;
     }
 }

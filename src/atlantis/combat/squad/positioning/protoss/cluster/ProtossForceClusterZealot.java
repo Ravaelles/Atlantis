@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.keep_formation;
+package atlantis.combat.squad.positioning.protoss.cluster;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
@@ -7,7 +7,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ProtossForceClusterZealot extends Manager {
-    public static final double DIST_BETWEEN_ZEALOTS = 0.4;
+    public static final double DIST_BETWEEN_ZEALOTS = 0.25;
 
     private AUnit friend;
 
