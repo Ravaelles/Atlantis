@@ -8,23 +8,22 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class ShouldRunTowardsBunker {
+public class ShouldRunTowardsCB {
     public static boolean check(AUnit unit, HasPosition runAwayFrom) {
-        if (!We.terran()) return false;
+//        if (!We.terran()) return false;
 
 //        if (unit.distTo(runAwayFrom) <= 2) return false;
 //        if (unit.enemiesNearInRadius(2) > 0) return false;
 
-        AUnit bunker = position();
-        if (bunker == null) return false;
+        AUnit cb = position();
+        if (cb == null) return false;
 
-        if (A.seconds() >= 600 && Count.marines() >= 13) return false;
+        if (A.seconds() >= 600 && Count.ourCombatUnits() >= 13) return false;
         if (unit.meleeEnemiesNearCount(1.7 + unit.woundPercent() / 75.0) > 0) return false;
 
-        double distTo = bunker.distTo(unit);
-        if (distTo <= 6 || distTo >= 30) return false;
+        double distTo = cb.distTo(unit);
 
-        return true;
+        return distTo >= 3 && distTo <= 30;
 
 //        AUnit mainOrAnyBuilding = Select.mainOrAnyBuilding();
 //        if (mainOrAnyBuilding == null) return false;

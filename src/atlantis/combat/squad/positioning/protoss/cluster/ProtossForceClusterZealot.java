@@ -20,8 +20,13 @@ public class ProtossForceClusterZealot extends Manager {
         return unit.isZealot()
 //            && !unit.isAttacking()
             && unit.lastUnderAttackMoreThanAgo(40)
-            && unit.friendsNear().combatUnits().groundUnits().inRadius(DIST_BETWEEN_ZEALOTS, unit).count() == 0
+            && zealotsTooFar()
             && (friend = friend()) != null;
+    }
+
+    private boolean zealotsTooFar() {
+        return unit.friendsNear().combatUnits().groundUnits().inRadius(DIST_BETWEEN_ZEALOTS, unit).count() == 0
+            || unit.distToLeader() >= 3;
     }
 
     @Override

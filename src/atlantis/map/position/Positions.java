@@ -34,7 +34,7 @@ public class Positions<T extends HasPosition> implements Serializable {
     // =====================================================================
 
     //    public static T nearestToFrom(HasPosition nearestTo, List<T extends HasPosition> positionsList) {
-    public static HasPosition nearestToFrom(HasPosition nearestTo, List<? extends HasPosition> positionsList) {
+    public static HasPosition nearestToFrom(HasPosition nearestTo, Collection<? extends HasPosition> positionsList) {
         Positions positions = new Positions();
         positions.addPositions(positionsList);
         return positions.nearestTo(nearestTo);

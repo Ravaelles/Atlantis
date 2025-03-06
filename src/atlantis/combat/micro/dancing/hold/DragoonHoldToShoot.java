@@ -3,6 +3,7 @@ package atlantis.combat.micro.dancing.hold;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -25,6 +26,7 @@ public class DragoonHoldToShoot extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
         if (unit.cooldown() >= 8) return false;
+        if (unit.enemiesNear().countInRadius(8, unit) == 0) return false;
         if (unit.meleeEnemiesNearCount(3.7) > 0) return false;
 
         if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
@@ -166,11 +168,13 @@ public class DragoonHoldToShoot extends Manager {
     }
 
     private double ourMovementModifiers() {
+//        if (Enemy.zerg()) return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
         return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
     }
 
     private double enemyMovementModifiers() {
-        return (target.isMoving() ? unit.maxSpeed() / 4.0 : 0);
+        if (Enemy.zerg()) return (target.isMoving() ? unit.maxSpeed() / 4.0 : 0);
+        return (target.isMoving() ? unit.maxSpeed() / 4.5 : 0);
     }
 
     private boolean shouldSkip() {

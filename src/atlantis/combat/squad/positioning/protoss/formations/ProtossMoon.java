@@ -34,6 +34,7 @@ public class ProtossMoon extends Manager {
         if (leader == null) return null;
 
         goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);
+//        System.err.println("goTo = " + goTo);
         if (goTo == null) return null;
 
         unit.paintLineDouble(goTo, Color.Green);

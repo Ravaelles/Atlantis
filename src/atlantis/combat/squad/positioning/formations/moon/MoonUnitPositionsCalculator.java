@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -30,10 +31,14 @@ public class MoonUnitPositionsCalculator {
 
             APosition position = APosition.create((int) (center.tx() - offsetX), (int) (center.ty() - offsetY));
             position = validatePosition(position, unit, leader);
+//            System.err.println("position = " + position);
 
             if (isPositionOkay(position, unit)) {
                 positions.put(unit, position);
             }
+//            else {
+//                A.errPrintln("Position is not okay: " + position + " / " + position.isWalkable() + " / " + position.regionsMatch(unit));
+//            }
 
             i++;
         }
@@ -69,6 +74,6 @@ public class MoonUnitPositionsCalculator {
     private static boolean isPositionOkay(APosition position, AUnit unit) {
         return position != null
             && position.isWalkable()
-            && position.regionsMatch(unit);
+            && position.regionsMatchOrClose(unit, 8);
     }
 }

@@ -2,10 +2,12 @@ package atlantis.combat.squad.positioning.formations.moon;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.position.Positions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 
 import java.util.Map;
 
@@ -23,7 +25,10 @@ public class MoonUnitPositions {
         Map<AUnit, APosition> positions = getPositionsCreatedForLeader(unit, leader);
         if (positions == null) return null;
 
-        return positions.get(unit);
+        APosition positionSpecificForUnit = positions.get(unit);
+        if (positionSpecificForUnit != null) return positionSpecificForUnit;
+
+        return Positions.nearestToFrom(unit, positions.values()).position();
     }
 
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {
@@ -39,7 +44,10 @@ public class MoonUnitPositions {
     // =========================================================
 
     private static Map<AUnit, APosition> refreshEntireMap(AUnit unit, AUnit leader) {
-        if (!defineAndValidateFormationParameters(unit, leader)) return null;
+        if (!defineAndValidateFormationParameters(unit, leader)) {
+            ErrorLog.printMaxOncePerMinute("Failed to define and validate formation parameters");
+            return null;
+        }
 
         return MoonUnitPositionsCalculator.calculateUnitPositions(ourUnits, moonCenter, leader, radius, separation);
     }

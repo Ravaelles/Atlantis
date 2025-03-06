@@ -57,8 +57,8 @@ public class HandleUnitPositioningOnMap extends MissionManager {
 
             Cohesion.class,
 
-            TooCloseToFocusPoint.class,
-            TooFarFromFocusPoint.class,
+//            TooCloseToFocusPoint.class,
+//            TooFarFromFocusPoint.class,
         };
     }
 }

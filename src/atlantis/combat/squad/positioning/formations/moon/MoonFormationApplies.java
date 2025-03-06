@@ -9,6 +9,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.range.OurDragoonRange;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
 public class MoonFormationApplies {
@@ -22,6 +23,8 @@ public class MoonFormationApplies {
     public boolean applies(AUnit unit, AUnit leader) {
         if (leader == null) return false;
         if (A.s <= 2) return true;
+//        if (true) return true;
+//        if (unit.isMissionDefendOrSparta()) return false;
         Selection enemies = leader.enemiesNear();
         if (enemies.atLeast(1)) return false;
         if (unit.squad() != null && unit.squad().lastAttackedLessThanAgo(40)) return false;
@@ -30,6 +33,10 @@ public class MoonFormationApplies {
 
         if (Enemy.protoss()) {
             if (leader.isRanged() && enemies.atMost(3) && enemies.onlyMelee()) return false;
+        }
+
+        if (Enemy.zerg()) {
+            if (Count.ourCombatUnits() <= 7 && unit.eval() >= 1.3) return false;
         }
 
         if (ShouldDoChoking.check(unit)) {

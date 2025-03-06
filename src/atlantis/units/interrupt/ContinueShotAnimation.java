@@ -25,10 +25,13 @@ public class ContinueShotAnimation extends Manager {
 //        if (unit.isRunning() || unit.isRetreating()) return false;
 //        if (unit.lastStartedRetreatingAgo() <= 60) return false;
 
-        if (unit.isTargetInWeaponRangeAccordingToGame()) {
-            if (!unit.attackState().finishedShooting()) {
-                return true;
-            }
+        if (!unit.isTargetInWeaponRangeAccordingToGame()) {
+            return false;
+        }
+
+        if (!unit.attackState().finishedShooting()) {
+//            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - shooting");
+            return true;
         }
 
 //        if (!unit.isTargetInWeaponRangeAccordingToGame()) {

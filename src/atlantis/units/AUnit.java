@@ -3678,7 +3678,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AttackState attackState() {
-        if (!isOur()) ErrorLog.printMaxOncePerMinute("### attackState invoked for enemy unit: " + this);
+        if (!isOur()) ErrorLog.printMaxOncePerMinute("### attackState invoked for enemy unit: " + this.idWithType());
 
         return attackState;
     }

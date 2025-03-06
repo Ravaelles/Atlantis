@@ -20,8 +20,8 @@ public class Main {
     }
 
     public static String enemyRace() {
-        return "Protoss";
-//        return "Zerg";
+//        return "Protoss";
+        return "Zerg";
     }
 
     // =========================================================

@@ -17,14 +17,14 @@ public class ProtossDragoonLongNotAttacked extends Manager {
     public boolean applies() {
         if (unit.isAttacking()) return false;
 
-        if (Enemy.zerg() && unit.isMissionDefendOrSparta() && unit.hp() >= 41 && unit.cooldown() <= 6) return true;
-
-        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
-
         if (unit.isRetreating()) {
             if (unit.shotSecondsAgo() >= 2 && unit.eval() >= 0.9) return true;
             return false;
         }
+
+//        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
+
+        if (Enemy.zerg() && unit.isMissionDefendOrSparta() && unit.hp() >= 41 && unit.cooldown() <= 6) return true;
 
 //        if (!unit.hasValidTarget()) return false;
         if (unit.shotSecondsAgo() <= 3) return false;

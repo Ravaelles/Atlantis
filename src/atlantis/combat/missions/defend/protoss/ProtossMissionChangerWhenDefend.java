@@ -59,7 +59,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (Enemy.zerg()) {
             if (Strategy.get().isGoingTech() && Army.strength() <= 180 && Count.dragoons() <= 4) {
                 if (DEBUG) reason = "TechWait";
-                return forceMissionSpartaOrDefend("TechWait");
+                forceMissionSpartaOrDefend("TechWait");
+                return false;
             }
 
             if (Count.ourCombatUnits() >= 6 && pressureZergWithLittleEarlyLings()) {
@@ -68,7 +69,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
             if (!Strategy.get().isRushOrCheese() && Army.strength() <= 180 && Count.ourCombatUnits() <= 20) {
                 if (DEBUG) reason = "Cautious PvZ";
-                return forceMissionSpartaOrDefend(reason);
+                forceMissionSpartaOrDefend(reason);
+                return false;
             }
         }
 
@@ -123,7 +125,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         if (ProtossStickCombatToMainBaseEarly.should()) {
             if (DEBUG) reason = "Stick to main early";
-            return forceMissionSpartaOrDefend(reason);
+            forceMissionSpartaOrDefend(reason);
+            return false;
         }
 
         int enemyCombatUnits = EnemyUnits.combatUnits();
@@ -207,6 +210,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         if (decision.notIndifferent()) {
             if (decision.isAllowed()) {
                 MissionChanger.forceMissionAttack("PunishZergEarly");
+                return Decision.TRUE;
             }
             return decision;
         }

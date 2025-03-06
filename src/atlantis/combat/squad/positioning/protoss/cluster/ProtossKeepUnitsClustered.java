@@ -15,7 +15,9 @@ public class ProtossKeepUnitsClustered extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)
-            && (!unit.isMoving() || unit.lastActionMoreThanAgo(10, Actions.MOVE_FORMATION));
+            && unit.distToLeader() <= 5
+//            && (!unit.isMoving() || unit.lastActionMoreThanAgo(10, Actions.MOVE_FORMATION));
+            && !unit.isMoving();
     }
 
     @Override

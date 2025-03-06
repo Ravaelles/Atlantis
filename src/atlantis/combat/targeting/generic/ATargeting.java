@@ -24,7 +24,7 @@ public class ATargeting extends HasUnit {
     public ATargeting(AUnit unit) {
         super(unit);
 
-        double maxDistFromEnemy = 678;
+        double maxDistFromEnemy = 16;
 
         defineEnemyUnits(unit, maxDistFromEnemy);
         defineEnemyBuildings(unit, maxDistFromEnemy);

@@ -3,7 +3,7 @@ package atlantis.combat.running;
 import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
-import atlantis.combat.running.to_building.ShouldRunTowardsBunker;
+import atlantis.combat.running.to_building.ShouldRunTowardsCB;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
@@ -38,9 +38,9 @@ public class RunToPositionFinder {
                 && !action.equals(Actions.MOVE_DANCE_AWAY)
         ) {
             // Run to BUNKER
-            if (ShouldRunTowardsBunker.check(unit, runAwayFrom)) {
-                running._lastRunMode = "TowardsBunker";
-                AUnit position = ShouldRunTowardsBunker.position();
+            if (ShouldRunTowardsCB.check(unit, runAwayFrom)) {
+                running._lastRunMode = "TowardsCB";
+                AUnit position = ShouldRunTowardsCB.position();
                 if (position != null) {
 //                    unit.paintCircleFilled(8, Color.Teal);
                     return running.setRunTo(position);

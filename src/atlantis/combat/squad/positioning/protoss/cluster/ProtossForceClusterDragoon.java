@@ -27,6 +27,8 @@ public class ProtossForceClusterDragoon extends Manager {
         int dragoons = Count.dragoons();
         if (dragoons <= 2) return false;
 
+        if (unit.distToLeader() >= 3) return true;
+
         return unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
             || unit.friendsNear().combatUnits().inRadius(1.2, unit).count() <= 1;
     }

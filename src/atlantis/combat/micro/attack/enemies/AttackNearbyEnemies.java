@@ -108,6 +108,9 @@ public class AttackNearbyEnemies extends Manager {
         // =========================================================
 
         if (unit.mission().allowsToAttackEnemyUnit(unit, target)) {
+//            unit.manager().printParentsStack();
+//            A.printStackTrace(unit + ": Why ATACC? ");
+
 //            if (target.isOverlord()) A.printStackTrace("THAT OVERLORD targetToAttack " + target);
 
             //        if (unit.distTo(target) >= 8 && unit.distToTarget() <= 888) {

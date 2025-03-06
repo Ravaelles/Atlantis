@@ -97,7 +97,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         AChoke choke = CurrentFocusChoke.get();
         if (choke != null) {
-            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
+//            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
             return new AFocusPoint(
                 choke,
                 main,

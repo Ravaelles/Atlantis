@@ -55,7 +55,7 @@ public class CombatManagerTopPriority extends Manager {
 
             // === Crucial actions ===========================================
 
-            Unfreezer.class,
+//            Unfreezer.class,
 
             AvoidCombatBuildingClose.class,
             AvoidCriticalUnits.class,
@@ -66,21 +66,21 @@ public class CombatManagerTopPriority extends Manager {
 
             RetreatManager.class,
 
+            ProtossFormation.class,
+
             HoldToShoot.class,
             ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
+
+            FixInvalidTargets.class,
+            FixIdleUnits.class,
 
             ShouldStopRunning.class,
 
             ProtossTopCombatManager.class,
 
-            ProtossFormation.class,
-
             AttackTanksInRange.class,
 //            ContinueShooting.class,
-
-            FixInvalidTargets.class,
-            FixIdleUnits.class,
 
             // === Important actions ========================================
 

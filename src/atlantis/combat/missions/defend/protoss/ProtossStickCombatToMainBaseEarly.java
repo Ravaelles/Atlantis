@@ -22,7 +22,7 @@ public class ProtossStickCombatToMainBaseEarly {
         if (!Enemy.zerg()) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.cannons() > 0) return false;
-        if (Count.bases() >= 2) return false;
+        if (Count.basesWithUnfinished() >= 2) return false;
 
         combatUnits = Count.ourCombatUnits();
         strength = Army.strength();

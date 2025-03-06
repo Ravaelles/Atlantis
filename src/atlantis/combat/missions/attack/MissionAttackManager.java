@@ -24,12 +24,11 @@ public class MissionAttackManager extends Manager {
 //            TerranAdvance.class,
 
             AsAirAttackAnyone.class,
+            AttackNearbyEnemies.class,
 
             AdvanceToAttackFocusPoint.class,
 
 //            TooLonely.class,
-
-            AttackNearbyEnemies.class,
         };
     }
 }

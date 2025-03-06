@@ -395,9 +395,14 @@ public interface HasPosition {
         return false;
     }
 
+    default boolean regionsMatchOrClose(HasPosition other, double maxGroundDist) {
+        if (regionsMatch(other)) return true;
+
+        return groundDist(other) <= maxGroundDist;
+    }
+
     default boolean regionsMatch(HasPosition other) {
         if (other == null || other.position() == null || !other.hasPosition() || other.position() == null) return false;
-
         if (!hasPosition()) return false;
 
         ARegion region = position().region();
