@@ -1,10 +1,10 @@
 package tests.unit;
 
 import atlantis.combat.targeting.generic.ATargeting;
+import atlantis.debug.DebugFlags;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import jdk.nashorn.internal.ir.annotations.Ignore;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.acceptance.WorldStubForTests;
@@ -17,7 +17,7 @@ public class ATargetingTest extends WorldStubForTests {
 
     @Override
     public void init() {
-        ATargeting.DEBUG = true;
+        DebugFlags.DEBUG_TARGETING = true;
 
         super.init();
     }

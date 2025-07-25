@@ -15,9 +15,19 @@ public class ProtossKeepUnitsClustered extends Manager {
     public boolean applies() {
         return We.protoss()
             && unit.lastActionMoreThanAgo(10, Actions.ATTACK_UNIT)
-            && unit.distToLeader() <= 5
+            && !unit.isRunning()
+            && !unit.underAttackSecondsAgo(2)
+            && unit.lastStartedRunningMoreThanAgo(30 * 3)
+            && unit.lastStoppedRunningMoreThanAgo(30)
+            && (unit.cooldown() == 0 || unit.cooldown() >= 12)
+//            && (unit.cooldown() >= 12 || !unit.underAttackSecondsAgo(2))
+            && (
+            (unit.distToLeader() >= 6 || unit.friendsInRadiusCount(2) <= 1)
+        );
 //            && (!unit.isMoving() || unit.lastActionMoreThanAgo(10, Actions.MOVE_FORMATION));
-            && !unit.isMoving();
+//            && (
+//            (unit.distToLeader() >= 6 && unit.friendsInRadiusCount(2) <= 2)
+//        );
     }
 
     @Override

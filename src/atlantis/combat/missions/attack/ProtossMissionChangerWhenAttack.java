@@ -37,6 +37,11 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return false;
         }
 
+        if (Enemy.zerg() && Count.ourCombatUnits() <= 7 && Count.dragoons() <= 2) {
+            if (DEBUG) reason = "Defend_vZ_no_Goonz";
+            return true;
+        }
+
         if (A.s <= 60 * 6 && Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0 && Count.dragoons() <= 1 && A.s >= 60 * 4.3) {
             if (Enemy.protoss() && A.resourcesBalance() >= -100 && Count.zealots() <= 2 && (Army.strengthWithoutCB() >= 110 || Count.dragoons() >= 1)) {
                 // No need to wait

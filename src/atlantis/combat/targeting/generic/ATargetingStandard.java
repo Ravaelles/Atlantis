@@ -1,10 +1,13 @@
 package atlantis.combat.targeting.generic;
 
+import atlantis.debug.DebugFlags;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
 import atlantis.units.select.Selection;
+
+import static atlantis.debug.DebugFlags.DEBUG_TARGETING;
 
 public class ATargetingStandard extends ATargeting {
     public ATargetingStandard(AUnit unit) {
@@ -152,7 +155,7 @@ public class ATargetingStandard extends ATargeting {
             .havingPosition()
             .canBeAttackedBy(unit, 150)
             .nearestTo(unit);
-        if (target != null && ATargeting.DEBUG) System.out.println("Any_EnemyUnit = " + target);
+        if (target != null && DEBUG_TARGETING) System.out.println("Any_EnemyUnit = " + target);
 
         // =========================================================
 
@@ -160,7 +163,7 @@ public class ATargetingStandard extends ATargeting {
             .havingPosition()
             .canBeAttackedBy(unit, 150)
             .nearestTo(unit);
-        if (target != null && ATargeting.DEBUG) System.out.println("Any_EnemyBuilding = " + target);
+        if (target != null && DEBUG_TARGETING) System.out.println("Any_EnemyBuilding = " + target);
 
         // =========================================================
 

@@ -20,6 +20,7 @@ public class ProtossStickCombatToMainBaseEarly {
     public static boolean should() {
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
+        if (Missions.isGlobalMissionSparta()) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.cannons() > 0) return false;
         if (Count.basesWithUnfinished() >= 2) return false;

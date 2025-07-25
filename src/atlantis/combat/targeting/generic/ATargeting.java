@@ -11,12 +11,10 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
+
+import static atlantis.debug.DebugFlags.DEBUG_TARGETING;
 
 public class ATargeting extends HasUnit {
-    //    public static boolean DEBUG = true;
-    public static boolean DEBUG = false;
-
     protected Selection enemyBuildings;
     protected Selection enemyUnits;
     private Selection leaderEnemies = null;
@@ -87,13 +85,13 @@ public class ATargeting extends HasUnit {
 
         // =========================================================
 
-        if (ShouldTargetClosestEnemy.check(unit)) {
-            return (new ClosestEnemyTargeting(enemyUnits)).nearestTarget(unit, maxDistFromEnemy);
-        }
+//        if (ShouldTargetClosestEnemy.check(unit)) {
+//            return (new ClosestEnemyTargeting(enemyUnits)).nearestTarget(unit, maxDistFromEnemy);
+//        }
 
         // === Last squad target ===================================
 
-        boolean longNotAttacked = unit.lastAttackFrameMoreThanAgo(30 * 6);
+//        boolean longNotAttacked = unit.lastAttackFrameMoreThanAgo(30 * 6);
 //        if (longNotAttacked && unit.friendsNear().combatUnits().inRadius(3, unit).notEmpty()) {
 //        if (longNotAttacked && unit.shieldWound() <= 5) {
 //            enemy = ASquadTargeting.useSquadTargetIfPossible(unit);
@@ -144,9 +142,11 @@ public class ATargeting extends HasUnit {
         // Used when something went wrong there ^
         AttackNearbyEnemies.reasonNotToAttack = null;
 //        AUnit fallback = ClosestEnemyTargeting.fallbackTarget(unit, maxDistFromEnemy);
-        AUnit fallback = null;
-        if (DEBUG && fallback != null) A.println("C fallback = " + fallback);
-        return fallback;
+//        AUnit fallback = null;
+//        if (DEBUG_TARGETING && fallback != null) A.println("C fallback = " + fallback);
+//        return fallback;
+
+        return null;
     }
 
     // =========================================================
@@ -160,39 +160,40 @@ public class ATargeting extends HasUnit {
 
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
-        AUnit enemy = selectUnitToAttackByType(unit, maxDistFromEnemy);
-//        System.out.println("BASE enemy = " + enemy + " / " + maxDistFromEnemy);
+        AUnit enemy = selectUnitToAttack(unit, maxDistFromEnemy);
+//        System.out.println(A.minSec() + " DEFINED TARGET = " + enemy + " / " + enemy.hp());
 
-        if (enemy == null && maxDistFromEnemy >= 8) {
-            enemy = enemyUnits
-                .canBeAttackedBy(unit, 0)
-                .nearestTo(unit);
-//            if (enemy != null && !unit.isAir()) {
-//                ErrorLog.printMaxOncePerMinute(
-//                    "DefineTarget fix for " + unit
-//                        + ", (was null), chosen " + enemy
-//                        + " maxDistFromEnemy = " + maxDistFromEnemy
-//                );
-//            }
-        }
-
+//        if (enemy == null && maxDistFromEnemy >= 8) {
+//            enemy = enemyUnits
+//                .canBeAttackedBy(unit, 0)
+//                .nearestTo(unit);
+////            if (enemy != null && !unit.isAir()) {
+////                ErrorLog.printMaxOncePerMinute(
+////                    "DefineTarget fix for " + unit
+////                        + ", (was null), chosen " + enemy
+////                        + " maxDistFromEnemy = " + maxDistFromEnemy
+////                );
+////            }
+//        }
 
         if (enemy == null) {
             return null;
         }
 
-        if (enemyUnits.inRadius(9, unit).empty()) return enemy;
+        return enemy;
 
-//        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
-        AUnit weakestEnemy = WeakestOfType.selectWeakestEnemyOfType(enemy.type(), unit);
-//        A.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
-
-        return weakestEnemy != null ? weakestEnemy : enemy;
+//        if (enemyUnits.inRadius(9, unit).empty()) return enemy;
+//
+////        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
+//        AUnit weakestEnemy = WeakestOfType.selectWeakestEnemyOfType(enemy.type(), unit);
+////        A.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
+//
+//        return weakestEnemy != null ? weakestEnemy : enemy;
     }
 
     // =========================================================
 
-    private AUnit selectUnitToAttackByType(AUnit unit, double maxDistFromEnemy) {
+    private AUnit selectUnitToAttack(AUnit unit, double maxDistFromEnemy) {
         AUnit target;
 
 ////        System.err.println("Aaaaaaaa " + Select.enemyRealUnits(true, false, true).size());
@@ -261,7 +262,7 @@ public class ATargeting extends HasUnit {
     }
 
     public static void debug(String message) {
-        if (ATargeting.DEBUG) {
+        if (DEBUG_TARGETING) {
             A.println(message);
         }
     }

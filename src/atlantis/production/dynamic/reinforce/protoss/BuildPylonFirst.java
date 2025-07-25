@@ -73,7 +73,7 @@ public class BuildPylonFirst {
 
     private static ProductionOrder error(String error) {
         lastError = error;
-        ErrorLog.debug(error);
+//        ErrorLog.debug(error);
 //        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(error);
         return null;
     }

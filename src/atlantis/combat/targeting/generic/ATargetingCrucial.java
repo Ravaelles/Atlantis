@@ -259,14 +259,14 @@ public class ATargetingCrucial extends ATargeting {
 //            return target;
 //        }
 
-        target = enemyUnits
-            .ofType(AUnitType.Zerg_Hydralisk)
-            .canBeAttackedBy(unit, 0)
-            .mostWoundedOrNearest(unit);
-        if (target != null) {
-            debug("CR_Hyd2 = " + target);
-            return target;
-        }
+//        target = enemyUnits
+//            .ofType(AUnitType.Zerg_Hydralisk)
+//            .canBeAttackedBy(unit, 0)
+//            .mostWoundedOrNearest(unit);
+//        if (target != null) {
+//            debug("CR_Hyd2 = " + target);
+//            return target;
+//        }
 
         // =========================================================
 

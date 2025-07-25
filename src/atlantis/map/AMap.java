@@ -46,14 +46,29 @@ public class AMap {
         // Init BWEM - Terran analysis tool
         bwem = new BWEM(Atlantis.game());
 
-        // Init JBWEB - needed for calculating ground distance
         try {
             bwem.initialize();
             bwem.getMap().assignStartingLocationsToSuitableBases();
-            InitJBWEB.init();
         } catch (Exception e) {
-            A.errPrintln("JBWEB exception, but dont worry. We can continue.");
-//            e.printStackTrace();
+            A.errPrintln(
+                "BWEM exception:\n"
+                + e.getMessage() + "\n"
+                + "but dont worry. We will continue."
+            );
+            if (!A.isUms()) e.printStackTrace();
+        }
+
+        // Init JBWEB - needed for calculating ground distance
+        try {
+            InitJBWEB.init();
+//            InitBWEB.init();
+        } catch (Exception e) {
+            A.errPrintln(
+                "JBWEB exception:\n"
+                + e.getMessage() + "\n"
+                + "but dont worry. We will continue."
+            );
+            if (!A.isUms()) e.printStackTrace();
         }
     }
 

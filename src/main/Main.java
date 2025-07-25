@@ -207,6 +207,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/10Zeal_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Lings.scm"; // Many Zealots v Many lings
 
+//        if (true) return "ums/rav/protoss/1Drag_v_1Hydra.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_2Hydra.scm";
 //        if (true) return "ums/rav/protoss/1DragUpg_v_2HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";

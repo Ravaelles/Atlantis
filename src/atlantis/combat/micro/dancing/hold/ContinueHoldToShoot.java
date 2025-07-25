@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing.hold;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -19,16 +20,28 @@ public class ContinueHoldToShoot extends Manager {
 //            print("isActionHOLD_TO_SHOOT = " + unit.isAction(Actions.HOLD_TO_SHOOT))
             unit.isAction(Actions.HOLD_TO_SHOOT)
 //            && print("Target = " + unit.target())
-                && (target = unit.target()) != null
+                && hasTarget()
 //            && print("NotInRange = " + !unit.isTargetInWeaponRangeAccordingToGame(target))
-                && !unit.isTargetInWeaponRangeAccordingToGame(target)
+//                && !unit.isTargetInWeaponRangeAccordingToGame(target)
 //            && print("lastActionLessThanAgo = " + unit.lastActionLessThanAgo(30, Actions.HOLD_TO_SHOOT))
                 && unit.lastActionLessThanAgo(30, Actions.HOLD_TO_SHOOT);
     }
 
+    private boolean hasTarget() {
+        if ((target = unit.target()) != null && !unit.isOtherUnitShowingBackToUs(target)) return true;
+
+//        if (unit.enemiesICanAttack(3).count() > 0) return true;
+
+//        System.err.println(A.now() + " ContinueHoldToShoot / No target");
+        return false;
+    }
+
     @Override
     public Manager handle() {
-        unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToShoot");
+        if (unit.isMelee() && !unit.isTargetInWeaponRangeAccordingToGame(target)) {
+            unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToShoot");
+        }
+
 //        System.err.println("ContinueHoldToShoot / dist:" + unit.distToTargetDigit());
         return usedManager(this);
     }

@@ -137,7 +137,10 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        if (!unit.isAttacking() && (!unit.isMoving() || A.everyNthGameFrame(9))) {
 //        if (!unit.isAttacking() && (!unit.isMoving() || A.everyNthGameFrame(9))) {
         HasPosition moveTo = moveTo();
-        if (moveTo != null && unit.distTo(moveTo) >= 2.2 && unit.move(moveTo, Actions.MOVE_FORMATION, "ToCenter")) {
+
+        if (moveTo == null || !moveTo.hasPosition()) return null;
+
+        if (unit.distTo(moveTo) >= 2.2 && unit.move(moveTo, Actions.MOVE_FORMATION, "ToCenter")) {
 //                unit.paintCircleFilled(8, Color.Red);
             return usedManager(this);
         }

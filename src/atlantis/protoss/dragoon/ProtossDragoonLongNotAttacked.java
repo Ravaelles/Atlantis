@@ -2,6 +2,7 @@ package atlantis.protoss.dragoon;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
@@ -15,12 +16,17 @@ public class ProtossDragoonLongNotAttacked extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (unit.isAttacking()) return false;
 
         if (unit.isRetreating()) {
             if (unit.shotSecondsAgo() >= 2 && unit.eval() >= 0.9) return true;
             return false;
         }
+
+        if (unit.isHoldingToShoot()) return false;
+//        if (unit.isHoldingPosition() && unit.lastActionLessThanAgo(3, Actions.HOLD_TO_SHOOT)) return false;
 
 //        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
 

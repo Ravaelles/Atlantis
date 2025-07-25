@@ -2,6 +2,7 @@ package atlantis.combat.micro.dancing.hold;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
@@ -18,16 +19,27 @@ public class HoldToShoot extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isRanged()) return false;
-        if (!unit.hasValidTarget()) return false;
+        if (unit.cooldown() >= 15) return false;
+//        if (unit.hasTarget() && unit.target().isRanged()) return false;
+        if (!unit.isHoldingPosition() && !unit.hasValidTarget()) return false;
+        if (Enemy.zerg() && unit.friendsInRadiusCount(3) >= 3) return false;
 
         return true;
+    }
+
+    public static boolean isHoldingToShoot(AUnit unit) {
+        if (unit.isHoldingPosition() && unit.lastActionLessThanAgo(5, Actions.HOLD_TO_SHOOT)) {
+            return true;
+        }
+
+        return false;
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ContinueHoldToShoot.class,
             DragoonHoldToShoot.class,
+            ContinueHoldToShoot.class,
         };
     }
 }

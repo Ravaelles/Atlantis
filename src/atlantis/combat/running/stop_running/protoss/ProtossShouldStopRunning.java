@@ -14,7 +14,7 @@ public class ProtossShouldStopRunning extends Manager {
     @Override
     public boolean applies() {
         return We.protoss()
-            && (unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
+            && (unit.isRunning() || unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
 //            && (unit.isRunning() || unit.isRetreating() || unit.isAction(Actions.MOVE_SAFETY))
             && !unit.isActionDance();
     }

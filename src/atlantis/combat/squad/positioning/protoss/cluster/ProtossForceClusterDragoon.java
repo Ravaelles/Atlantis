@@ -25,9 +25,9 @@ public class ProtossForceClusterDragoon extends Manager {
 
     private boolean goonsTooFarFromEachOther() {
         int dragoons = Count.dragoons();
-        if (dragoons <= 2) return false;
+        if (dragoons <= 1) return false;
 
-        if (unit.distToLeader() >= 3) return true;
+        if (unit.distToLeader() >= 6) return true;
 
         return unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
             || unit.friendsNear().combatUnits().inRadius(1.2, unit).count() <= 1;
@@ -40,6 +40,10 @@ public class ProtossForceClusterDragoon extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterGoon")) {
+            return usedManager(this);
+        }
+
         if (unit.move(friend, Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }

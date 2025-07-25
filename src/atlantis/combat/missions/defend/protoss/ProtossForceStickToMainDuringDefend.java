@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.Missions;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -12,6 +13,8 @@ public class ProtossForceStickToMainDuringDefend extends Manager {
 
     @Override
     public boolean applies() {
+        if (Missions.isGlobalMissionSparta()) return false;
+
         return unit.cooldown() >= 8
             && ProtossStickCombatToMainBaseEarly.should()
             && OurBuildingUnderAttack.none()

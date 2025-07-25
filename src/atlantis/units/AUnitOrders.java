@@ -3,6 +3,7 @@ package atlantis.units;
 import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
 import atlantis.combat.squad.Squad;
 import atlantis.config.env.Env;
+import atlantis.debug.DebugFlags;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.map.position.APosition;
@@ -18,17 +19,13 @@ import atlantis.util.log.ErrorLog;
 import bwapi.*;
 import tests.fakes.FakeUnitData;
 
+import static atlantis.debug.DebugFlags.DEBUG_UNIT_ORDERS;
+
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
  */
 public interface AUnitOrders {
-    int DEBUG_MIN_FRAMES = -1;
-
-    boolean DEBUG_ALL = false;
-//    boolean DEBUG_ALL = true;
-
-//    boolean DEBUG_COMBAT = false;
-//    boolean DEBUG_COMBAT = true;
+//    int DEBUG_MIN_FRAMES = -1;
 
     Unit u();
 
@@ -40,7 +37,7 @@ public interface AUnitOrders {
 //        System.err.println("@" + A.now() + " - " + unit() + ": Attack (" + unit().cooldown() + ")");
 //        if (true) return u().attack(target.u());
 
-//        if (DEBUG && A.now() > DEBUG_MIN_FRAMES) {
+//        if (DEBUG) {
 
 //                    "@ @" + A.now() + " ATTACK  / " +
 //                            "" + unit().typeWithHash() + " // " +
@@ -137,7 +134,7 @@ public interface AUnitOrders {
 //            if (A.everyFrameExceptNthFrame(16)) return true;
         }
 
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("@" + A.now() + "  " + unit.typeWithUnitId() + "  ATTACK_UNIT " + target);
         }
 
@@ -310,16 +307,18 @@ public interface AUnitOrders {
                 }
             }
 
-            if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
-                A.println("@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE / to:" + target);
-            }
-
             unit.setLastActionReceivedNow().setAction(unitAction);
             if (unit.lastCommandIssuedAgo() <= (unit.isMoving() ? commandMinDelayWhenMoving(unit) : 1)) return true;
             else unit.lastCommandIssuedNow(UnitCommandType.Move);
 
             if (target instanceof AUnit) {
                 unit.setTargetUnitToAttack((AUnit) target);
+            }
+
+            if (shouldPrint()) {
+                A.println(
+                    "@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE (" + unitAction + ") / to:" + target
+                );
             }
 
             return u().move(target.position().p());
@@ -358,7 +357,7 @@ public interface AUnitOrders {
     default boolean holdPosition(Action action, String tooltip) {
         if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
 
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
         }
 
@@ -382,7 +381,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also canStop, isIdle
      */
     default boolean stop(String tooltip) {
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("@" + A.now() + "  " + unit().idWithHash() + "  STOP / " + tooltip);
 //            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
@@ -434,7 +433,7 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also isGatheringGas, isGatheringMinerals, canGather
      */
     default boolean gather(AUnit target) {
-        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("GATHER @" + A.now() + " / worker:" + unit().typeWithHash() + " / " + target);
         }
 
@@ -462,7 +461,7 @@ public interface AUnitOrders {
      */
     // Bugged, doesn't work
 //    default boolean returnCargo() {
-//        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+//        if (DEBUG) {
 
 //        }
 //
@@ -529,7 +528,7 @@ public interface AUnitOrders {
             }
         }
 
-        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println(unit().typeWithHash() + " REPAIR @" + A.now() + " / " + target + " (" + target.hp() + ")");
         }
 
@@ -858,7 +857,7 @@ public interface AUnitOrders {
      * canUseTech, canUseTechWithoutTarget, canUseTechUnit, canUseTechPosition, TechTypes
      */
 //    default boolean useTech(TechType tech) {
-//        if (DEBUG && A.now() >= DEBUG_MIN_FRAMES) {
+//        if (DEBUG) {
 
 //        }
 //
@@ -867,7 +866,7 @@ public interface AUnitOrders {
 //        return u().useTech(tech);
 //    }
     default boolean useTech(TechType tech, APosition target) {
-        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("TECH_2 @" + A.now() + " / " + unit().typeWithHash());
         }
 
@@ -879,7 +878,7 @@ public interface AUnitOrders {
     }
 
     default boolean useTech(TechType tech) {
-        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("TECH_1 @" + A.now() + " / " + unit().typeWithHash());
         }
 
@@ -891,7 +890,7 @@ public interface AUnitOrders {
     }
 
     default boolean useTech(TechType tech, AUnit target) {
-        if (shouldPrint() && A.now() >= DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("TECH_3 @" + A.now() + " / " + unit().typeWithHash());
         }
 
@@ -903,7 +902,7 @@ public interface AUnitOrders {
     }
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
-        if (shouldPrint() && A.now() > DEBUG_MIN_FRAMES) {
+        if (shouldPrint()) {
             System.out.println("RIGHT_CLICK @" + A.now() + " / " + unit().typeWithHash() + " // " + target);
         }
 
@@ -915,11 +914,7 @@ public interface AUnitOrders {
     }
 
     default boolean shouldPrint() {
-//        return false;
-        return DEBUG_ALL;
-
-//        if (unit().isHealthy()) return false;
-//        return (DEBUG_ALL || (DEBUG_COMBAT && unit().isCombatUnit()));
+        return DEBUG_UNIT_ORDERS;
     }
 
 }

@@ -45,7 +45,7 @@ public class MoonUnitPositions {
 
     private static Map<AUnit, APosition> refreshEntireMap(AUnit unit, AUnit leader) {
         if (!defineAndValidateFormationParameters(unit, leader)) {
-            ErrorLog.printMaxOncePerMinute("Failed to define and validate formation parameters");
+//            ErrorLog.printMaxOncePerMinute("Failed to define and validate formation parameters");
             return null;
         }
 

@@ -53,12 +53,12 @@ public class HandleUnitPositioningOnMap extends MissionManager {
 
 //            TooLonely.class,
 
-            AdvanceAsAlphaLeader.class,
+//            AdvanceAsAlphaLeader.class,
 
             Cohesion.class,
 
-//            TooCloseToFocusPoint.class,
-//            TooFarFromFocusPoint.class,
+            TooCloseToFocusPoint.class,
+            TooFarFromFocusPoint.class,
         };
     }
 }

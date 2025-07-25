@@ -22,6 +22,11 @@ public class WorkerDoNotFight {
 
         Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
         if (Enemy.protoss() && We.protoss()) {
+            AUnit nearestMelee = enemiesNear.melee().nearestTo(unit);
+            if (nearestMelee != null) {
+                if (nearestMelee.enemiesNear().nonBuildings().countInRadius(3, unit) <= 1) return true;
+            }
+
             if (Count.workers() >= 15 && enemiesNear.atMost(2) && (unit.id() % 2 != 1 || unit.shieldWounded()))
                 return true;
         }

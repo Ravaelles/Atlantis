@@ -26,11 +26,15 @@ public class ProtossForceClusterZealot extends Manager {
 
     private boolean zealotsTooFar() {
         return unit.friendsNear().combatUnits().groundUnits().inRadius(DIST_BETWEEN_ZEALOTS, unit).count() == 0
-            || unit.distToLeader() >= 3;
+            || unit.distToLeader() >= 4;
     }
 
     @Override
     public Manager handle() {
+        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterZealot")) {
+            return usedManager(this);
+        }
+
         if (unit.move(friend, Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }

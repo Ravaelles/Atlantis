@@ -15,6 +15,7 @@ public class ProtossZealotLongNotAttacked extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isZealot()) return false;
         if (unit.isAttacking()) return false;
         if (unit.cooldown() >= 5) return false;
 

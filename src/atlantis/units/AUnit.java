@@ -5,6 +5,7 @@ import atlantis.combat.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.combat.micro.avoid.margin.UnitRange;
+import atlantis.combat.micro.dancing.hold.HoldToShoot;
 import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
@@ -1380,6 +1381,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isHoldingPosition() {
         return u != null && u.isHoldingPosition();
+    }
+
+    public boolean isHoldingToShoot() {
+        return HoldToShoot.isHoldingToShoot(this);
     }
 
     public boolean isPatrolling() {
@@ -2768,6 +2773,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public int enemiesNearCount(double maxDistToEnemy) {
+        return cacheInt.get(
+            "enemiesNearCount:" + maxDistToEnemy,
+            2,
+            () -> enemiesNear().combatUnits().inRadius(maxDistToEnemy, this).size()
+        );
+    }
+
     public int meleeEnemiesNearCount(double maxDistToEnemy) {
         return cacheInt.get(
             "meleeEnemiesNear:" + maxDistToEnemy,
@@ -3352,7 +3365,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         AUnit base = Select.naturalOrMain();
         if (base == null) return null;
 
-        APosition position = base.translateByTiles(1, -3);
+        APosition position = base.position();
+
+        if (We.protoss()) position = position.translateTilesTowards(2, Chokes.mainChoke());
+        else if (We.terran()) position = position.translateByTiles(1, -3);
+
         if (position != null && position.isWalkable()) return position;
 
         return base;
@@ -3751,5 +3768,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         if (leader != null) return leader;
 
         return this;
+    }
+
+    public void holdToShoot() {
+        holdPosition(Actions.HOLD_TO_SHOOT, "StopRunning");
     }
 }

@@ -27,9 +27,9 @@ public class DragoonHoldToShoot extends Manager {
         if (!unit.isDragoon()) return false;
         if (unit.cooldown() >= 8) return false;
         if (unit.enemiesNear().countInRadius(8, unit) == 0) return false;
-        if (unit.meleeEnemiesNearCount(3.7) > 0) return false;
-
+        if (unit.meleeEnemiesNearCount(3.3) > 0) return false;
         if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
+        if (unit.enemiesThatCanAttackMe(1.85).count() >= 2) return false;
 
         target = unit.target();
         if (target == null || !unit.hasValidTarget()) return false;

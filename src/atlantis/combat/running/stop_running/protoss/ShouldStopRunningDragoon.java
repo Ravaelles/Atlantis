@@ -17,6 +17,7 @@ public class ShouldStopRunningDragoon extends Manager {
 //        if (true) return false;
 
         if (!unit.isDragoon()) return false;
+        if (unit.cooldown() >= 15) return false;
         if (unit.isDancing() && unit.shields() >= 3) return false;
 //
 //        if (unit.hp() <= 60) return false;

@@ -66,11 +66,11 @@ public class CombatManagerTopPriority extends Manager {
 
             RetreatManager.class,
 
-            ProtossFormation.class,
-
             HoldToShoot.class,
             ContinueShotAnimation.class,
 //            ForceRunAfterShot.class,
+
+            ProtossFormation.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,

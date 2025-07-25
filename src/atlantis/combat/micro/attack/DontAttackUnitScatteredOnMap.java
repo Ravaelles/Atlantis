@@ -42,7 +42,7 @@ public class DontAttackUnitScatteredOnMap {
         if (Enemy.zerg() && A.s <= 60 * 4.5 && unit.distTo(enemy) >= 1.05 && enemy.distToMain() <= 25) return true;
 
         if (A.s >= 8 * 60) return false;
-        if (!unit.isMissionAttackOrGlobalAttack()) return false;
+//        if (!unit.isMissionAttackOrGlobalAttack()) return false;
 
         return enemy.friendsNear().inRadius(2, unit).empty()
             && !unit.canAttackTargetWithBonus(enemy, 0.1)

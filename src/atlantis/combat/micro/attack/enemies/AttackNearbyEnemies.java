@@ -136,6 +136,7 @@ public class AttackNearbyEnemies extends Manager {
         reasonNotToAttack = null;
 
         AUnit enemy = bestTargetToAttack();
+//        System.err.println("ANE enemy = " + enemy);
 
         if (enemy == null) {
 //            if (A.isUms() && unit.enemiesNear().canBeAttackedBy(unit, 4).notEmpty()) {
@@ -154,6 +155,7 @@ public class AttackNearbyEnemies extends Manager {
         }
 
         if (!allowedToAttack.isValidTargetAndAllowedToAttackUnit(enemy)) {
+//            ErrorLog.printMaxOncePerMinute(enemy + " is not valid target for " + unit.type());
             return null;
         }
 

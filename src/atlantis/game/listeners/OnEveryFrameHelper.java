@@ -67,6 +67,7 @@ public class OnEveryFrameHelper {
 //        UnitStateHelper.identifyUnitBrakingDistance(Select.our().groundUnits().first());
 //
 //        paintEnemiesFacingOurDirection();
+//        paintEnemiesTargets();
 
 //        int counter = 0;
 //        for (AUnit unit : Select.ourCombatUnits().havingWeapon().list()) {
@@ -178,6 +179,24 @@ public class OnEveryFrameHelper {
         for (AUnit unit : Select.our().list()) {
             unit.paintTextCentered(unit, A.digit(unit.eval()), Color.Blue);
         }
+    }
+
+    private static void paintEnemiesTargets() {
+        AUnit our = Select.ourCombatUnits().first();
+        if (our == null) return;
+
+        if (our.isAttacking()) {
+            our.paintLine(our.target(), Color.Orange);
+        }
+
+//        System.err.println("ORDER : " + our.orderTarget());
+//        System.err.println("TARGET: " + our.target());
+
+        for (AUnit enemy : our.enemiesNear().list()) {
+            enemy.paintTextCentered(enemy.idWithHash() + " (" + enemy.hp() + ")", Color.Orange, -1);
+        }
+
+//        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
     }
 
     private static void paintEnemiesFacingOurDirection() {

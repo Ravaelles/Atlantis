@@ -15,7 +15,9 @@ public class ShouldStopRunning extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.enemiesThatCanAttackMe(1).count() == 0;
+        return unit.isRunning()
+            && unit.enemiesThatCanAttackMe(3.5).count() == 0;
+//        return unit.enemiesThatCanAttackMe(1).count() == 0;
     }
 
     @Override
@@ -120,7 +122,8 @@ public class ShouldStopRunning extends Manager {
         System.out.println("@ " + A.now() + " - stop running, near enemy =  " + unit.nearestEnemyDist() + " / " + unit.tooltip());
 
         unit.runningManager().stopRunning();
-        unit.stop("StopRunning");
+//        unit.stop("StopRunning");
+        unit.holdToShoot();
         return false;
     }
 }

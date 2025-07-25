@@ -8,7 +8,7 @@ import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class MoonRadius {
-    public static final double OVERTIME_RADIUS_SHORTENING_MODIFIER = 0.006;
+    public static final double OVERTIME_RADIUS_SHORTENING_MODIFIER = 0.004;
 
     protected static final Cache<Double> cacheDouble = new Cache<>();
 

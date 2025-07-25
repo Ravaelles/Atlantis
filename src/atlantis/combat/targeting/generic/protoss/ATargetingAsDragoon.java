@@ -11,57 +11,89 @@ public class ATargetingAsDragoon {
     public static AUnit target(AUnit unit, Selection enemyUnits) {
         if (!unit.isDragoon()) return null;
 
+        AUnit target;
+        double range = OurDragoonRange.range();
+
         if (Enemy.zerg() && unit.isDragoon()) {
-            AUnit target = enemyUnits
-                .inRadius(OurDragoonRange.range() - 0.15, unit)
-                .mostWoundedOrNearest(unit);
+            Selection rangedEnemies = enemyUnits.ranged();
+
+            target = rangedEnemies
+                .inRadius(range + 1, unit)
+                .notHavingHp(25)
+//                .notShowingBackToUs(unit)
+                .nearestTo(unit);
             if (target != null) {
-                debug("ClosestZergA = " + target);
+                debug("ClosestZergA = " + target.typeWithUnitId());
                 return target;
             }
 
-            target = enemyUnits
-                .inRadius(OurDragoonRange.range(), unit)
+            target = rangedEnemies
+                .inRadius(range, unit)
+                .notShowingBackToUs(unit)
+                .mostWounded();
+            if (target != null && target.isWounded()) {
+                debug("ClosestZergB = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
+                return target;
+            }
+
+            target = rangedEnemies
+                .inRadius(range, unit)
+                .mostWoundedOrNearest(unit);
+            if (target != null) {
+                if (!unit.isOtherUnitShowingBackToUs(target) || unit.distTo(target) <= range - 0.4) {
+                    debug("ClosestZergC = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
+                    return target;
+                }
+            }
+
+            target = rangedEnemies
+                .inRadius(range, unit)
                 .nearestTo(unit);
             if (target != null) {
-                debug("ClosestZergB = " + target);
+                debug("ClosestZergD = " + target.typeWithUnitId());
                 return target;
             }
         }
-
-        AUnit target;
-        double baseRange = OurDragoonRange.range();
 
 //        if (unit.shotSecondsAgo() >= 2) {
         AUnit leader = unit.squadLeader();
         if (leader == null) return null;
 
-        AUnit enemyClosestToLeader = enemyUnits.inRadius(baseRange + 2, leader).mostWoundedOrNearest(leader);
+        AUnit enemyClosestToLeader = enemyUnits.inRadius(range + 2, leader).mostWoundedOrNearest(leader);
         if (enemyClosestToLeader != null) {
-            if (unit.distTo(enemyClosestToLeader) <= baseRange) {
+            if (unit.distTo(enemyClosestToLeader) <= range) {
 //                System.out.println("--- LEADER CLOSEST " + enemyClosestToLeader);
+                debug("GoonLeaderClosest = " + enemyClosestToLeader);
                 return enemyClosestToLeader;
             }
         }
 //        }
 
-        if (unit.meleeEnemiesNearCount(2.1) == 0) {
-            target = enemyUnits
-                .dragoons()
-                .inRadius(baseRange, unit)
-                .mostWoundedOrNearest(unit);
+        if (Enemy.protoss()) {
+            if (unit.enemiesNearCount(2.4) == 0) {
+                target = enemyUnits
+                    .dragoons()
+                    .inRadius(range, unit)
+                    .mostWoundedOrNearest(unit);
 
-            if (target != null) {
-                //            System.out.println("--- REGULAR " + target);
-                return target;
+                if (target != null) {
+                    //            System.out.println("--- REGULAR " + target);
+                    debug("GoonGoonz = " + target);
+                    return target;
+                }
             }
         }
 
         if (enemyClosestToLeader == null) {
             enemyClosestToLeader = enemyUnits.mostWoundedOrNearest(leader);
+            if (enemyClosestToLeader != null && unit.distTo(enemyClosestToLeader) <= 9) {
+                debug("GoonEnemyClosestToLeader = " + enemyClosestToLeader);
+                return enemyClosestToLeader;
+            }
         }
 
 //        System.out.println("@@@@@@@@@@@@@@@@ LEADER CLOSEST " + enemyClosestToLeader);
-        return enemyClosestToLeader;
+
+        return null;
     }
 }

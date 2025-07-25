@@ -110,6 +110,9 @@ public class ProcessAttackUnit extends Manager {
 //    }
 
     private boolean confirmAttack(AUnit target) {
+//        System.out.println(unit.typeWithUnitId() + " - ConfirmAttack " + target.typeWithUnitId() + "(" + target.hp() +
+//            ")");
+
         return unit.attackUnit(target);
     }
 

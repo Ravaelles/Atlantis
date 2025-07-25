@@ -1189,7 +1189,14 @@ public class Selection extends BaseSelection {
         sortByWound();
         AUnit first = data.get(0);
 
-        if (first.isWounded()) return first;
+        if (first.isWounded()) {
+//            AUnit least = data.get(1);
+//            System.out.println("Most wounded: " + first.typeWithUnitId() + " (" + first.hp() + ")");
+//            if (least != null) System.out.println("Least wounded: " + least.typeWithUnitId() + " (" + least.hp() + ")");
+            return first;
+        }
+
+//        System.err.println("Nope, return nearest = " + nearestTo(nearestTo));
 
         return nearestTo(nearestTo);
     }
