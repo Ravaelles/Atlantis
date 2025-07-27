@@ -4,7 +4,6 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.combat.squad.omega.Omega;
-import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
@@ -28,6 +27,8 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
+import benchmark.BenchmarkMode;
+import cherryvis.ACherryVis;
 
 public class OnGameStarted {
 
@@ -45,7 +46,7 @@ public class OnGameStarted {
 
         handleCheckIfUmsMap();
 
-        System.out.println("%%% enemyName = " + AGame.enemyName());
+        System.out.println("%%% enemyName   = " + AGame.enemyName());
         System.out.println("%%% mapFileName = " + Atlantis.game().mapFileName());
 
         // Atlantis can modify ChaosLauncher's config files treating AtlantisRaceConfig as the source-of-truth
@@ -101,10 +102,9 @@ public class OnGameStarted {
 
 //        AUnitTypesHelper.printUnitsAndRequirements();
 
-        // Special mode - enable if want to adjust parameter values
-        if (Env.isParamTweaker()) {
-            ParamTweakerFactory.init();
-        }
+        if (ACherryVis.isEnabled()) ACherryVis.initialize();
+        if (Env.isParamTweaker()) ParamTweakerFactory.init();
+        if (Env.isBenchmark()) BenchmarkMode.onGameStarted();
 
         RealTime.gameStarted = RealTime.currentTimestamp();
     }

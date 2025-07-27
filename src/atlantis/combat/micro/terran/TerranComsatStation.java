@@ -124,7 +124,7 @@ public class TerranComsatStation extends Manager {
         if (Select.ourRealUnits().inRadius(9, observer).havingAntiAirWeapon().atLeast(6)) return true;
 
         if (
-            Select.enemies(AUnitType.Protoss_Carrier).inRadius(15, observer).isNotEmpty()
+            Select.enemies(AUnitType.Protoss_Carrier).inRadius(AUnit.NEAR_DIST, observer).isNotEmpty()
                 && Select.ourRealUnits().inRadius(9, observer).atLeast(1)
         ) return true;
 

@@ -18,10 +18,13 @@ public class HoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (!unit.isRanged()) return false;
         if (unit.cooldown() >= 15) return false;
 //        if (unit.hasTarget() && unit.target().isRanged()) return false;
         if (!unit.isHoldingPosition() && !unit.hasValidTarget()) return false;
+        if (unit.enemiesNear().inShootRangeOf(unit).count() > 0) return false;
         if (Enemy.zerg() && unit.friendsInRadiusCount(3) >= 3) return false;
 
         return true;

@@ -21,7 +21,7 @@ public class ReaverUseTransport extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        if (unit.scarabCount() == 0 && unit.enemiesNear().canAttack(unit, 2).notEmpty()) return true;
+        if (unit.scarabCount() == 0 && unit.enemiesNear().combatUnits().canAttack(unit, 2).notEmpty()) return true;
 
         if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
 
@@ -72,7 +72,7 @@ public class ReaverUseTransport extends Manager {
     private boolean againstTerranSiegeTanksImmediatelyPickUpAfterShot() {
         return Enemy.terran()
             && unit.shotSecondsAgo() <= 3
-            && (unit.shieldWound() >= 35 || EnemyUnits.discovered().tanks().inRadius(15, unit).notEmpty());
+            && (unit.shieldWound() >= 35 || EnemyUnits.discovered().tanks().inRadius(AUnit.NEAR_DIST, unit).notEmpty());
     }
 
     private boolean surroundedByEnemiesGetTheFuckOuttaHere() {

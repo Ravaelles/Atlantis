@@ -23,7 +23,7 @@ public class ForceGoToEnemyExpansion extends Manager {
             && unit.isMissionAttack()
             && (Enemy.zerg() || EnemyUnits.discovered().bases().count() >= 3)
             && unit.cooldown() <= 0
-            && unit.eval() >= 1.3
+            && unit.eval() >= 1.6
             && unit.lastUnderAttackMoreThanAgo(50)
             && (expansion = EnemyExistingExpansion.get()) != null
             && unit.distTo(expansion) > 8;
@@ -31,6 +31,10 @@ public class ForceGoToEnemyExpansion extends Manager {
 
     @Override
     public Manager handle() {
+        if (firstAvoidCB()) {
+            return usedManager(this, "firstAvoidCB");
+        }
+
         if (expansion == null || !expansion.isWalkable() || !unit.hasPathTo(expansion)) return null;
 
         if (unit.move(expansion, Actions.MOVE_ENGAGE, null)) {
@@ -38,5 +42,15 @@ public class ForceGoToEnemyExpansion extends Manager {
         }
 
         return null;
+    }
+
+    private boolean firstAvoidCB() {
+        AUnit cb = unit.enemiesNear().combatBuildingsAnti(unit).inRadius(10, unit).nearestTo(unit);
+
+        if (cb == null) return false;
+
+        if (unit.moveAwayFrom(cb, 4, Actions.MOVE_AVOID, "FirstAvoidCB")) return true;
+
+        return false;
     }
 }

@@ -150,7 +150,7 @@ public class AKeyboard implements NativeKeyListener {
                 changeSpeedAndFrameSkip(0, 250);
                 break;
 
-            // ######### GAME SPEED 8 (don't-make-me-come-up-with-name-how-fast)
+            // ######### GAME SPEED 9 (don't-make-me-come-up-with-name-how-fast)
             case 10:
                 // Key "9"
                 changeSpeedAndFrameSkip(0, 500);

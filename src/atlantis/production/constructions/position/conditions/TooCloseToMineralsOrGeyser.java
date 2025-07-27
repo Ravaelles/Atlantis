@@ -27,7 +27,7 @@ public class TooCloseToMineralsOrGeyser {
         AUnit gasBuilding = Select.geysersAndGasBuildings().nearestTo(position);
         if (
             gasBuilding != null
-                && gasBuilding.distTo(position) <= minDistToGeyser()
+                && gasBuilding.distTo(position) <= minDistToGeyser(building)
                 && !allowCloseToBase(nearestBase, building, position)
         ) {
             return failed("Too close to geyser");
@@ -43,10 +43,12 @@ public class TooCloseToMineralsOrGeyser {
         return nearestBase.distTo(position) <= 3.5;
     }
 
-    private static double minDistToGeyser() {
+    private static double minDistToGeyser(AUnitType building) {
 //        if (true) return 0.1;
 
         if (We.protoss()) {
+            if (building.isCannon()) return 3.1;
+
             return A.supplyUsed() >= 15 ? 1.1 : 4;
         }
 

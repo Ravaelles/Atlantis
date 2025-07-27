@@ -1,7 +1,8 @@
-package atlantis.production.dynamic;
+package atlantis.production.dynamic.workers;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.Strategy;
@@ -41,10 +42,10 @@ public class AutoProduceWorkersCommander extends Commander {
 
     public static boolean shouldProduceWorkers() {
         if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
-
         if (prioritizeRush()) return dont("RushPriority");
 
-        if (earlyGameOptimize()) return true;
+        Decision decision = EarlyGameProduceWorkers.decision();
+        if (decision.notIndifferent()) return decision.toBoolean();
 
         int workers = Count.workers();
 
@@ -115,12 +116,6 @@ public class AutoProduceWorkersCommander extends Commander {
         return A.s <= 60 * 6 && !A.hasMinerals(92) && (
             (!We.terran() || Have.barracks())
         );
-    }
-
-    private static boolean earlyGameOptimize() {
-        if (We.zerg()) return false;
-
-        return Count.workers() <= 20;
     }
 
     private static boolean dont(String reason) {

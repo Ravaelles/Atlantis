@@ -14,8 +14,6 @@ import atlantis.util.We;
  * Its mission is the same as Alpha's. The goal is to split units into two groups.
  */
 public class Bravo extends Squad {
-    public static final int ALPHA_COUNT_THRESHOLD = 21;
-
     protected static Bravo bravo = null;
 
     // =========================================================
@@ -39,13 +37,7 @@ public class Bravo extends Squad {
 
     @Override
     public boolean shouldHaveThisSquad() {
-//        if (true) return false;
-
-        if (We.terran() && A.supplyUsed() <= 170) return false;
-
-        return Alpha.count() >= ALPHA_COUNT_THRESHOLD
-            || (FoundEnemyExposedExpansion.getItFound() != null && Army.strength() >= 240);
-//            || (FoundEnemyExposedExpansion.getItFound() != null && Alpha.count() >= 17);
+        return ShouldHaveBravo.shouldHave();
     }
 
     @Override

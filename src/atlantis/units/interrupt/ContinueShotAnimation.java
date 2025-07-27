@@ -17,6 +17,8 @@ public class ContinueShotAnimation extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isOur()) return false;
+
 //        System.err.println(A.now() + " isAttacking = " + unit.isAttacking() + " / " + unit.u().getOrder() + " / " + unit.u().getOrder().getClass().getSimpleName());
 //        if (!unit.isTargetInWeaponRangeAccordingToGame()) return false;
 

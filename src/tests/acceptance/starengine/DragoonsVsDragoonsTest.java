@@ -39,33 +39,34 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 //                (new CombatUnitManager(unit)).invokeFrom(null);
                 (new AttackNearbyEnemies(unit)).forceHandle();
 
-                boolean printUnit = false;
+//                boolean printUnit = false;
 //                boolean printUnit = true;
+                boolean printUnit = unit == Select.ourCombatUnits().second();
 
                 if (printUnit) {
-                    A.errPrintln("_____");
-                    A.errPrintln(A.now()
-                            + " -       " + unit.tooltip()
-                            + "\n   Type    : " + unit
-                            + "\n   Manager : " + unit.manager()
-//                            + "\n   Eval    : " + unit.combatEvalRelativeDigit()
-//                            + "\n   Squad   : " + unit.squad().toString()
-                        //                    + "\n   Managers: " + unit.managerLogs().toString()
-                        //                    + "\n   Command : " + unit.lastCommand()
-                        //                    + ",\n   tx     :" + unit.txWithPrecision()
-                        //                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
-                        //                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                        //                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                        //                    + "\n   marine eval = " + unit.combatEvalRelative()
-                        //                    + "\n   sunken eval = " + sunken.combatEvalRelative()
-                    );
+                    System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
                 }
+
+//                if (printUnit) {
+//                    A.errPrintln("_____");
+//                    A.errPrintln(A.now()
+//                            + " -       " + unit.tooltip()
+//                            + "\n   Type    : " + unit
+//                            + "\n   Manager : " + unit.manager()
+////                            + "\n   Eval    : " + unit.combatEvalRelativeDigit()
+////                            + "\n   Squad   : " + unit.squad().toString()
+//                        //                    + "\n   Managers: " + unit.managerLogs().toString()
+//                        //                    + "\n   Command : " + unit.lastCommand()
+//                        //                    + ",\n   tx     :" + unit.txWithPrecision()
+//                        //                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
+//                        //                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
+//                        //                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
+//                        //                    + "\n   marine eval = " + unit.combatEvalRelative()
+//                        //                    + "\n   sunken eval = " + sunken.combatEvalRelative()
+//                    );
+//                }
             }
-
-//            A.errPrintln("_______________________________________");
         }, () -> our, () -> enemies);
-
-//        A.errPrintln("Test finished");
     }
 
     // =========================================================

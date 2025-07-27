@@ -18,7 +18,7 @@ public class ShouldStopRunningDragoon extends Manager {
 
         if (!unit.isDragoon()) return false;
         if (unit.cooldown() >= 15) return false;
-        if (unit.isDancing() && unit.shields() >= 3) return false;
+//        if (unit.isDancing() && unit.shields() >= 3) return false;
 //
 //        if (unit.hp() <= 60) return false;
 
@@ -26,7 +26,7 @@ public class ShouldStopRunningDragoon extends Manager {
 
         Selection enemies = unit.enemiesNear();
         Selection meleeEnemies = enemies.melee();
-        if (meleeEnemies.inRadius(3.7, unit).notEmpty()) return false;
+        if (meleeEnemies.inRadius(3.1, unit).atLeast(2)) return false;
 
 //        unit.paintCircleFilled(10, Color.Yellow);
 
@@ -47,7 +47,7 @@ public class ShouldStopRunningDragoon extends Manager {
 //        return unit.eval() >= 0.85 && unit.shieldWound() <= 9 && unit.cooldown() <= 6
 //        return unit.shields() >= 5
         return unit.cooldown() <= 6
-            && (unit.eval() >= 0.85 || unit.enemiesThatCanAttackMe(0.5).count() <= 2);
+            && (unit.eval() >= 1.1 || unit.enemiesThatCanAttackMe(0.5).count() <= 1);
 //            && A.println("DragoonStopVsZerg:" + A.now());
     }
 

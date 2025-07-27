@@ -28,7 +28,8 @@ public class MoonUnitPositions {
         APosition positionSpecificForUnit = positions.get(unit);
         if (positionSpecificForUnit != null) return positionSpecificForUnit;
 
-        return Positions.nearestToFrom(unit, positions.values()).position();
+        HasPosition position = Positions.nearestToFrom(unit, positions.values());
+        return position != null ? position.position() : null;
     }
 
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {

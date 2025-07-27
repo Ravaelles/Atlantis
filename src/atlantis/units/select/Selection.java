@@ -129,7 +129,7 @@ public class Selection extends BaseSelection {
             1,
             () -> cloneByRemovingIf(
                 (u -> selectionOfUnits.nearestTo(u).distTo(u) > maxDist),
-                "selection:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
+                "inRadius:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
             )
         );
     }
@@ -923,7 +923,8 @@ public class Selection extends BaseSelection {
      */
     public Selection notConstructing() {
         return cloneByRemovingIf(
-            (unit -> unit.isConstructing() || unit.isMorphing() || unit.isBuilder()), "notConstructing"
+            (unit -> unit.isConstructing() || unit.construction() != null || unit.isMorphing() || unit.isBuilder()),
+            "notConstructing"
         );
     }
 

@@ -1,9 +1,8 @@
 package atlantis.combat.squad.positioning.terran.formation.moon;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.formations.moon.MoonFormationApplies;
+import atlantis.combat.squad.positioning.formations.moon.ProtossMoonFormationApplies;
 import atlantis.combat.squad.positioning.formations.moon.MoonUnitPositions;
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -23,7 +22,7 @@ public class TerranMoon extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
 
-        if (!(new MoonFormationApplies()).applies(unit, leader)) {
+        if (!(new ProtossMoonFormationApplies()).applies(unit, leader)) {
 //            PauseAndCenter.on(unit, true);
             return false;
         }

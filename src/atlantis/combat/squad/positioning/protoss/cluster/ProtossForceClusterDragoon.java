@@ -19,7 +19,10 @@ public class ProtossForceClusterDragoon extends Manager {
         return unit.isDragoon()
 //            && unit.lastUnderAttackMoreThanAgo(90)
             && unit.eval() <= 1.3
+            && unit.friendsNear().buildings().empty()
+            && unit.lastUnderAttackMoreThanAgo(30)
             && goonsTooFarFromEachOther()
+            && (unit.cooldown() >= 7 || unit.enemiesNear().countInRadius(2.8, unit) <= 0)
             && (friend = friend()) != null;
     }
 
@@ -30,21 +33,21 @@ public class ProtossForceClusterDragoon extends Manager {
         if (unit.distToLeader() >= 6) return true;
 
         return unit.friendsNear().combatUnits().inRadius(minDistToFriend(), unit).count() == 0
-            || unit.friendsNear().combatUnits().inRadius(1.2, unit).count() <= 1;
+            || unit.friendsNear().combatUnits().inRadius(1.5, unit).count() <= 1;
     }
 
     private double minDistToFriend() {
 //        return unit.rangedEnemiesCount(3) > 0 ? 0.5 : 5;
-        return unit.enemiesNearInRadius(8) > 0 ? 0.5 : 5;
+        return unit.enemiesNearInRadius(8) > 0 ? 0.8 : 5;
     }
 
     @Override
     public Manager handle() {
-        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterGoon")) {
-            return usedManager(this);
-        }
+//        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterGoon")) {
+//            return usedManager(this);
+//        }
 
-        if (unit.move(friend, Actions.MOVE_FORMATION)) {
+        if (unit.distTo(friend) >= 1 && unit.move(friend, Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }
 

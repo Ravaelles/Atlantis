@@ -69,7 +69,7 @@ public class FixIdleUnits extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
 
-        if (unit.distTo(leader) >= 2.5 && leader.isWalkable()) {
+        if (unit.distTo(leader) >= 2.5 && unit.distTo(leader) <= 60 && leader.isWalkable()) {
             if (unit.move(leader, Actions.MOVE_UNFREEZE, "FixIdleByLeader")) {
 //                System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.targetPosition() +
 //                    " / " + unit.action());

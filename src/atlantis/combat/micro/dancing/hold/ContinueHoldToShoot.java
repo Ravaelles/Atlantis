@@ -14,6 +14,8 @@ public class ContinueHoldToShoot extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
 //        return unit.isHoldingPosition()
 //        return unit.isAction(Actions.HOLD_TO_SHOOT)
         return

@@ -3,6 +3,7 @@ package atlantis.combat.retreating.protoss;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.game.GameSpeed;
 import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -11,6 +12,9 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import atlantis.util.PauseAndCenter;
+import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
 
@@ -54,34 +58,36 @@ public class ProtossStartRetreat extends HasUnit {
 //        unit.addLog("@ " + A.now() + " - RETREAT");
 //        System.err.println("@ " + A.now() + " - RETREAT " + unit.idWithType());
 
-        if (A.isUms() && Select.ourBases().empty()) {
-            return false;
-        }
-
 //        if (ShouldRunTowardsBase.check(unit, runAwayFrom) && shouldRetreatTowardsBase(unit)) {
-        if (shouldRetreatTowardsBase(unit)) {
+        if (shouldRetreatTowardsBase(unit) && unit.moveToSafety(RUN_RETREAT, "RetreatTowardsBase")) {
+//            unit.paintLineDouble(unit.runningManager().runTo(), Color.Red);
             unitStartedRetreating(runAwayFrom);
             return true;
         }
 
-        if (retreatTowardsLeaderForBetterCohesion()) {
-            unitStartedRetreating(runAwayFrom);
-            return true;
-        }
+        if (A.isUms()) return false;
 
         if (shouldForceRetreatDirectlyFromEnemy() && retreatByRunningFromEnemy(runAwayFrom)) {
             unitStartedRetreating(runAwayFrom);
-//            unit.paintLine(unit.runningManager().runTo(), Color.Orange);
+            PauseAndCenter.on(unit);
+            unit.paintLine(unit.runningManager().runTo(), Color.Purple);
             return true;
         }
+
+//        if (retreatTowardsLeaderForBetterCohesion()) {
+//            unitStartedRetreating(runAwayFrom);
+////            unit.paintLine(unit.runningManager().runTo(), Color.White);
+//            return true;
+//        }
 
 //        if (shouldRetreatTowardsBase(unit)) {
 //            unitStartedRetreating(runAwayFrom);
 //            return true;
 //        }
 
-        if (unit.moveAwayFrom(runAwayFrom, 6, RUN_RETREAT, "AnyhowRetreat")) {
+        if (unit.moveAwayFrom(runAwayFrom, 10, RUN_RETREAT, "AnyhowRetreat")) {
             unitStartedRetreating(runAwayFrom);
+            unit.paintLine(unit.runningManager().runTo(), Color.Blue);
             return true;
         }
 
@@ -146,7 +152,7 @@ public class ProtossStartRetreat extends HasUnit {
         }
 
         if (unit.isRanged()) {
-            if (unit.meleeEnemiesNearCount(2.2) >= 3) return true;
+            if (unit.meleeEnemiesNearCount(2.2) >= Enemy.protossElse(2, 3)) return true;
             if (unit.rangedEnemiesCount(1.2) >= 2) return true;
         }
 
@@ -156,8 +162,12 @@ public class ProtossStartRetreat extends HasUnit {
     private static boolean shouldRetreatTowardsBase(AUnit unit) {
 //        if (Count.ourCombatUnits() >= 12) return false;
 
-        if (Enemy.zerg() && Count.ourCombatUnits() <= 10) return true;
-        if (unit.groundDistToMain() <= 20) return true;
+        if (Select.ourBases().empty()) return false;
+
+        if (Enemy.zerg() && Count.ourCombatUnits() <= 15) return true;
+        double groundDistToMain = unit.groundDistToMain();
+        if (groundDistToMain <= 7) return false;
+        if (groundDistToMain <= 40) return true;
         if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 
         if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
@@ -259,6 +269,11 @@ public class ProtossStartRetreat extends HasUnit {
 
     private boolean retreatByRunningFromEnemy(HasPosition runAwayFrom) {
         double dist = unit.friendsNear().inRadius(2, unit).atLeast(1) ? 2.4 : 4;
+
+        Selection enemies = unit.enemiesNear().canAttack(unit, 3);
+        runAwayFrom = enemies.center();
+        if (runAwayFrom == null) runAwayFrom = enemies.nearestTo(unit);
+        if (runAwayFrom == null) return false;
 
         return unit.runningManager().runFrom(runAwayFrom, dist, RUN_RETREAT, true)
             && notifyNearbyUnitsToRetreat(unit);

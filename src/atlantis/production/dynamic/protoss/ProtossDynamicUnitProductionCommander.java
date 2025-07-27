@@ -4,6 +4,7 @@ package atlantis.production.dynamic.protoss;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
@@ -29,9 +30,10 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
             return decision(false, "NeedCannons");
         }
 
-        if (!A.hasMinerals(450) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
-        if (A.hasMinerals(550)) return decision(true, "Minerals++");
-        if (Count.ourCombatUnits() <= 7) return decision(true, "BattleProduce");
+        if (!A.hasMinerals(432) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
+        if (A.hasMinerals(500)) return decision(true, "Minerals++");
+        if (Count.ourCombatUnits() <= 4) return decision(true, "BattleProduce");
+        if (A.hasMinerals(210) && Count.ourCombatUnits() <= 7) return decision(true, "BattleProduceSaved");
 
         if (A.supplyUsed() >= 25) {
             int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
@@ -40,8 +42,12 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 //            int gasMargin = A.supplyUsed() < 40 ? 50 : 125;
 
             if (
-                Count.ourCombatUnits() < 15 && Count.basesWithUnfinished() >= 2 && A.hasMinerals(180)
-            ) return decision(true, "DoCombatUnits");
+                Count.ourCombatUnits() < 15
+                    && Count.basesWithUnfinished() >= 2
+                    && A.hasMinerals(210)
+                    && (A.hasMinerals(325) || ConstructionRequests.countNotFinishedWithHighPriority() == 0)
+                    && (A.hasMinerals(325) || !EnemyInfo.goesOrHasHiddenUnits() || Count.observers() > 0)
+            ) return decision(true, "MakeCombatUnits");
 
             if (reservedMinerals > 0 && !A.hasMinerals(mineralsMargin + reservedMinerals))
                 return decision(false, "MissingMinerals");
@@ -100,6 +106,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
         ProduceObserver.observers();
         ProduceScarabs.scarabs();
+        ProduceCorsairs.corsairs();
 
         if (!freeToSpendResources()) return;
 
@@ -108,7 +115,6 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceShuttle.shuttles();
         ProduceDarkTemplar.dt();
         ProduceHighTemplar.ht();
-        ProduceCorsairs.corsairs();
 
         ProduceDragoon.dragoon();
         ProduceZealot.zealot();

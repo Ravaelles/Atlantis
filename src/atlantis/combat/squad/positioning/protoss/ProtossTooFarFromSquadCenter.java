@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -35,6 +36,9 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
         if (unit.isLeader()) return false;
         if (ignoreWhenBigSupply()) return false;
+        if (unit.lastUnderAttackLessThanAgo(50)) return false;
+        if (unit.hp() <= 63 && unit.meleeEnemiesNearCount(2.3) > Enemy.zergElse(2, 1)) return false;
+
 //        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(40)) return false; // Continue
 //        if (unit.isMissionDefendOrSparta()) return false;
 
@@ -64,7 +68,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
         if (A.supplyUsed() >= 100 && squadCenter.isOvercrowded()) return false;
 
-        if (unit.enemiesNear().inRadius(15, unit).havingWeapon().notEmpty()) return false;
+        if (unit.enemiesNear().inRadius(AUnit.NEAR_DIST, unit).havingWeapon().notEmpty()) return false;
 
         if (distToCenter <= (unit.squadSize() <= 4 ? 3 : 10)) return false;
         if (distToCenter >= preferedDist()) return true;
@@ -137,6 +141,11 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        if (!unit.isAttacking() && (!unit.isMoving() || A.everyNthGameFrame(9))) {
 //        if (!unit.isAttacking() && (!unit.isMoving() || A.everyNthGameFrame(9))) {
         HasPosition moveTo = moveTo();
+
+        if (unit == null) {
+            System.err.println("ProtossTooFarFromSquadCenter.handle() - unit is null!");
+            return null;
+        }
 
         if (moveTo == null || !moveTo.hasPosition()) return null;
 

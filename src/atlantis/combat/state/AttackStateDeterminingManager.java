@@ -13,7 +13,7 @@ public class AttackStateDeterminingManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.hasAnyWeapon();
+        return unit.isOur() && unit.hasAnyWeapon();
     }
 
     @Override

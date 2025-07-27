@@ -135,6 +135,7 @@ public class AUnitTest extends AbstractTestWithWorld {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
+//            System.out.println("@canAttackBurrowedDetectedUnits = " + EnemyUnits.discovered().print());
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }
@@ -164,7 +165,7 @@ public class AUnitTest extends AbstractTestWithWorld {
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-//            System.out.println("@Fix A = " + EnemyUnits.discovered().print());
+//            System.out.println("@canAttackDetectedBurrowedLurkers = " + EnemyUnits.discovered().print());
             assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
         });
     }

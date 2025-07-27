@@ -1,6 +1,8 @@
-package atlantis.game;
+package atlantis.game.util;
 
 import atlantis.Atlantis;
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;

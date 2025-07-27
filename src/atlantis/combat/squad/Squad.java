@@ -382,15 +382,15 @@ public abstract class Squad extends Units {
         return A.ago(_lastUnderAttack) <= threshold;
     }
 
+    public boolean lastAttackedLessThanAgo(int threshold) {
+        return A.ago(_lastAttacked) <= threshold;
+    }
+
     public void markLastUnderAttackNow() {
         _lastUnderAttack = A.now;
     }
 
     public void markLastAttackedNow() {
         _lastAttacked = A.now;
-    }
-
-    public boolean lastAttackedLessThanAgo(int threshold) {
-        return A.ago(_lastUnderAttack) <= threshold;
     }
 }

@@ -135,7 +135,7 @@ public class LoadIntoTheBunker extends Manager {
 
     private AUnit bunkerToLoadTo() {
         return Select.ourOfType(AUnitType.Terran_Bunker)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .havingSpaceFree(unit.spaceRequired())
             .nearestTo(unit);
     }

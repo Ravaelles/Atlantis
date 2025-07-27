@@ -6,17 +6,18 @@ import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 
-public class ProtossShouldNotRetreat extends Manager {
-    public ProtossShouldNotRetreat(AUnit unit) {
+public class ProtossDontRetreat extends Manager {
+    public ProtossDontRetreat(AUnit unit) {
         super(unit.squadLeaderOrThisUnit());
     }
 
     @Override
     public boolean applies() {
         return unit.enemiesNear().visibleOnMap().notEmpty()
-            && shouldNotRetreat();
+            && dontRetreat();
     }
 
     @Override
@@ -26,7 +27,10 @@ public class ProtossShouldNotRetreat extends Manager {
         return null;
     }
 
-    public boolean shouldNotRetreat() {
+    public boolean dontRetreat() {
+        if (unit.isMissionDefendOrSparta()) return true;
+        if (unit.isRunning()) return true;
+
         if (A.supplyUsed() >= 193 && A.hasMinerals(300)) {
             unit.addLog("HugeSupply");
             return true;
@@ -46,15 +50,19 @@ public class ProtossShouldNotRetreat extends Manager {
 
         double eval = unit.eval();
 
-        if (eval >= 0.98 && unit.hp() >= 32) {
-            unit.addLog("HighEval");
-            return true;
-        }
+//        if (eval >= 0.98 && unit.hp() >= 32) {
+//            unit.addLog("HighEval");
+//            return true;
+//        }
 
-        if (unit.friendsNear().combatUnits().countInRadius(6, unit) >= 3 && eval >= 1.5) {
-            unit.addLog("NoRunHighEval");
-            return true;
-        }
+//        if (
+//            eval >= 1.5
+//                && (unit.hp() >= 43 && unit.cooldown() <= 9)
+//                && unit.friendsNear().combatUnits().countInRadius(6, unit) >= 3
+//        ) {
+//            unit.addLog("NoRunHighEval");
+//            return true;
+//        }
 
 //        if (unit.cooldown() <= 4 && unit.hp() >= 35 && unit.isMelee() && (unit.distToBase() <= 8 || unit.distToMain() <= 20)) {
 //            unit.addLog("NoRunNearBase");
@@ -92,18 +100,26 @@ public class ProtossShouldNotRetreat extends Manager {
 //            return true;
 //        }
 
-        return false;
+        double threshold = 0.88 - (Count.bases() == 0 ? 0.1 : 0);
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null) return leader.eval() >= threshold;
+
+        return unit.eval() >= threshold;
     }
 
     private boolean dontRetreatAsRangedAgainstMelee() {
         if (!unit.isRanged()) return false;
-        if (unit.hp() <= 22) return false;
+        if (unit.hp() <= Enemy.zergElse(22, 36) && unit.cooldown() <= 6) return false;
 
         Selection enemies = unit.enemiesNear();
 
-        if (Enemy.zerg()) {
-            if (enemies.zerglings().countInRadius(5, unit) >= 3) return false;
-        }
+//        if (Enemy.zerg()) {
+//            if (enemies.zerglings().countInRadius(5, unit) >= 3) return false;
+//        }
+//        else if (Enemy.protoss()) {
+        if (enemies.melee().countInRadius(5, unit) >= 3) return false;
+//        }
 
         return enemies.melee().notEmpty() && enemies.ranged().canAttack(unit, 6).empty();
     }

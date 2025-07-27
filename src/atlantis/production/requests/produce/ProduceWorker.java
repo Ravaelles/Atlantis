@@ -1,7 +1,7 @@
 package atlantis.production.requests.produce;
 
 import atlantis.game.AGame;
-import atlantis.production.dynamic.AutoProduceWorkersCommander;
+import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;

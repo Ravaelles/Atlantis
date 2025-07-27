@@ -8,6 +8,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.select.Count;
 
@@ -15,7 +16,11 @@ public class ProtossShouldPunishZergEarly {
     public static Decision shouldPunishZergEarly() {
         int zealotsAndGoons;
 
-        if (Count.dragoons() <= 2 && Army.strength() <= 140) {
+        if (A.s >= 60 * 7) return Decision.INDIFFERENT;
+
+        if (Strategy.get().isGoingTech() && Count.dragoons() <= 3) return Decision.FORBIDDEN;
+
+        if (Count.dragoons() <= 5 && Army.strength() <= 155) {
             if (MissionChanger.DEBUG) MissionChanger.reason = "WeakDespiteGoons(" + Army.strength() + "%)";
             return Decision.FALSE;
         }

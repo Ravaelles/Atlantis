@@ -298,6 +298,10 @@ public class Construction implements Comparable<Construction> {
         return ConstructionOrderStatus.NOT_STARTED.equals(status);
     }
 
+    public boolean notFinished() {
+        return !ConstructionOrderStatus.COMPLETED.equals(status);
+    }
+
     public static void clearCache() {
         cache.clear();
     }

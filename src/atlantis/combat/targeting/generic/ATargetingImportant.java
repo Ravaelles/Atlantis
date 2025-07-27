@@ -133,7 +133,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Sunken_Colony
             )
             .canBeAttackedBy(unit, unit.isMelee() ? 3.95 : 2.8);
-//            .inRadius(15, unit);
+//            .inRadius(AUnit.NEAR_DIST, unit);
 
         target = importantBuildings.mostWoundedOrNearest(unit);
 //        System.err.println("target = " + target + " / " + target.hp());
@@ -162,7 +162,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Devourer
             )
 //                .inShootRangeOf(unit)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
         if (target != null) {
             debug("Zz20 = " + target);
@@ -174,7 +174,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Mutalisk
             )
 //                .inShootRangeOf(unit)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .mostWoundedOrNearest(unit);
         if (target != null) {
             debug("Zz30 = " + target);
@@ -237,7 +237,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Sunken_Colony,
                 AUnitType.Zerg_Spore_Colony
             )
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .canBeAttackedBy(unit, unit.isMelee() ? 5 : 2.8)
             .mostWoundedOrNearest(unit);
         if (target != null) {
@@ -499,7 +499,7 @@ public class ATargetingImportant extends ATargeting {
         target = enemyBuildings
             .bases()
             .notHavingHp(140)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
 
         if (target != null) {
@@ -521,7 +521,7 @@ public class ATargetingImportant extends ATargeting {
                 AUnitType.Zerg_Spire,
                 AUnitType.Zerg_Greater_Spire
             )
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .nearestTo(unit);
 
         if (target != null) {

@@ -26,6 +26,8 @@ public class DragoonHoldToShoot extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
         if (unit.cooldown() >= 8) return false;
+        if (!unit.isMoving()) return false;
+//        if (unit.lastPositionChangedAgo() >= 2) return false;
         if (unit.enemiesNear().countInRadius(8, unit) == 0) return false;
         if (unit.meleeEnemiesNearCount(3.3) > 0) return false;
         if (!unit.isMoving() && !unit.isHoldingPosition()) return false;
@@ -46,7 +48,11 @@ public class DragoonHoldToShoot extends Manager {
     }
 
     private double minDistToHold() {
-        double minDist = unitWeaponRange + enemyMovementModifiers() + ourMovementModifiers();
+//        System.err.println("unit.speed() = " + unit.speed());
+        double minDist = unitWeaponRange
+            + (!unit.hasBiggerWeaponRangeThan(target) ? -1.2 : 0)
+            + enemyMovementModifiers()
+            + ourMovementModifiers();
 //        System.err.println("   " + unit.idWithHash() + " minDist = " + minDist + " (" + distToTarget + ")");
 
         return minDist;
@@ -169,12 +175,20 @@ public class DragoonHoldToShoot extends Manager {
 
     private double ourMovementModifiers() {
 //        if (Enemy.zerg()) return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
-        return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+
+//        if (Enemy.protoss()) {
+//            return (unit.isMoving() ? unit.maxSpeed() / 4.0 : 0);
+//        }
+
+//        return (unit.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+        return (unit.isMoving() ? unit.speed() / 5.5 : 0);
     }
 
     private double enemyMovementModifiers() {
         if (Enemy.zerg()) return (target.isMoving() ? unit.maxSpeed() / 4.0 : 0);
-        return (target.isMoving() ? unit.maxSpeed() / 4.5 : 0);
+
+//        return (target.isMoving() ? unit.maxSpeed() / 4.8 : 0);
+        return (target.isMoving() ? unit.maxSpeed() / 5.5 : 0);
     }
 
     private boolean shouldSkip() {

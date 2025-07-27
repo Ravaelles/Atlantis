@@ -17,11 +17,7 @@ public class GasWorkersPerBuilding {
             return 0;
         }
 
-        if (workers >= 32 && gas <= 450) {
-            return 3;
-        }
-
-        if (workers >= 17 && gas <= 350) {
+        if (workers >= 32 && gas <= 350) {
             return 3;
         }
 
@@ -30,6 +26,10 @@ public class GasWorkersPerBuilding {
             if (A.s <= 600 && gas >= 120) return 2;
             if (A.s <= 700 && gas >= 180) return 1;
         }
+
+//        if (workers >= 17 && gas <= 200) {
+//            return 3;
+//        }
 
         if (gas >= 410) {
             return 1;

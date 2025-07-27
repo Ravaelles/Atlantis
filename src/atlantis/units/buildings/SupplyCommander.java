@@ -36,7 +36,7 @@ public class SupplyCommander extends Commander {
 
         if (supplyTotal >= 200) return;
         if (supplyFree >= 12) return;
-        if (lastAdded.lessThanSecondsAgo(7)) return;
+        if (lastAdded.lessThanSecondsAgo(5)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
@@ -96,23 +96,43 @@ public class SupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 70) {
-                if (supplyFree <= 9 && suppliesBeingBuilt <= 1 || supplyFree <= 1) {
+                if (
+                    (supplyFree <= 9 && suppliesBeingBuilt <= 1)
+                        || (supplyFree <= 1 && suppliesBeingBuilt <= (1 + A.minerals() / 400))
+                ) {
                     requestAdditionalSupply();
                 }
             }
-            else if (supplyTotal <= 120) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 3) {
+            else {
+                if (supplyFree <= 3 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
+                    return;
                 }
-            }
-            else if (supplyTotal <= 170) {
-                if (supplyFree <= 14 && suppliesBeingBuilt <= 4) {
+
+                if (supplyFree <= 6 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
+                    return;
                 }
-            }
-            else if (supplyTotal <= 200) {
-                if (supplyFree <= 19 && suppliesBeingBuilt <= 1) {
+
+                if (supplyFree <= 8 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
+                    return;
+                }
+
+                if (supplyTotal <= 120) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= (12 / Math.max(1, suppliesBeingBuilt))) {
+                        requestAdditionalSupply();
+                    }
+                }
+                else if (supplyTotal <= 170) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 12 || suppliesBeingBuilt <= (A.minerals() / 300)) {
+                        requestAdditionalSupply();
+                    }
+                }
+                else if (supplyTotal <= 200) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 19) {
+                        requestAdditionalSupply();
+                    }
                 }
             }
         }
@@ -190,7 +210,12 @@ public class SupplyCommander extends Commander {
 
     private boolean tooManyNotStartedConstructions() {
         if (requestedConstructionsOfSupply >= 1 && A.supplyTotal() <= 38) return true;
-        if (requestedConstructionsOfSupply >= (A.supplyUsed() >= 70 ? 4 : 3)) return true;
+
+        int limit = (A.supplyUsed() >= 70 ? 3 : 2)
+            + A.minerals() / 300
+            + A.supplyFree() <= 1 ? 1 : 0;
+
+        if (requestedConstructionsOfSupply >= limit) return true;
 
         return false;
     }

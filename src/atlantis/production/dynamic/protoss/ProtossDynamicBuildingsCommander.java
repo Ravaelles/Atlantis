@@ -20,7 +20,9 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
             && (
-            A.canAffordWithReserved(92, 0) || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
+            A.hasMinerals(550)
+                || A.canAffordWithReserved(92, 0)
+                || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
         );
     }
 
@@ -28,7 +30,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     protected void handle() {
         if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) return;
 
-        if (A.hasMinerals(600)) ProduceGateway.produce();
+        if (A.hasMinerals(470)) ProduceGateway.produce();
 
         if (ProduceCyberneticsCore.produce()) return;
 

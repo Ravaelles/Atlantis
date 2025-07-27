@@ -27,7 +27,7 @@ public class ProduceRoboticsSupportBay {
         )) return false;
 
         if (A.supplyUsed() >= (120 - Army.strength() >= 130 ? 40 : 0)) return produceSupportBay();
-        if (A.supplyUsed() >= 50 && A.canAfford(500, 180)) return produceSupportBay();
+        if (A.supplyUsed() >= 70 && A.canAfford(500, 180)) return produceSupportBay();
 
 //        if (Enemy.zerg()) return false;
         if (!A.supplyUsed(atSupply())) return false;

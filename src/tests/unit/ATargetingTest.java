@@ -411,6 +411,24 @@ public class ATargetingTest extends WorldStubForTests {
     }
 
     @Test
+    public void nearHydrasOverWounded() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            expectedTarget = fake(AUnitType.Zerg_Hydralisk, 16.1),
+            fake(AUnitType.Zerg_Hydralisk, 17).setHp(30),
+            fake(AUnitType.Zerg_Hydralisk, 18)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
     public void sunkensOverCreepColonies() {
         FakeUnit our = fake(AUnitType.Terran_Marine, 10);
         FakeUnit expectedTarget;
@@ -457,6 +475,24 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Hydralisk_Den, 13),
             fake(AUnitType.Zerg_Overlord, 12),
             expectedTarget = fake(AUnitType.Zerg_Zergling, 16)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
+
+    @Test
+    public void itAllowsTargetingOverlords() {
+        FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
+        FakeUnit expectedTarget;
+
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Hydralisk_Den, 13),
+            expectedTarget = fake(AUnitType.Zerg_Overlord, 12),
+            fake(AUnitType.Zerg_Zergling, 20)
         );
 
         createWorld(1,

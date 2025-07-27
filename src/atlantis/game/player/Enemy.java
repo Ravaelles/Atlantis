@@ -51,4 +51,26 @@ public class Enemy {
     public static APlayer player() {
         return AGame.enemy();
     }
+
+    public static int protossElse(int ifEnemyProtoss, int ifEnemyNotProtoss) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+
+        return ifEnemyNotProtoss;
+    }
+
+    public static int terranElse(int ifEnemyTerran, int ifEnemyNotTerran) {
+        if (Enemy.terran()) return ifEnemyTerran;
+
+        return ifEnemyNotTerran;
+    }
+
+    public static int zergElse(int ifEnemyZerg, int ifEnemyNotZerg) {
+        if (Enemy.zerg()) return ifEnemyZerg;
+
+        return ifEnemyNotZerg;
+    }
+
+    public static String name() {
+        return AGame.enemyName();
+    }
 }

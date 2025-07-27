@@ -29,16 +29,26 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (Enemy.zerg()) {
             if (whenSmallSquadVsZerg(enemy)) return false;
+            if (forbidChasingEarlyWorker(enemy)) return false;
+        }
+
+        if (
+            focusPoint != null
+                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
+                && enemy.enemiesNear().buildings().countInRadius(6, enemy) == 0
+                && enemy.groundDistToMain() > focusPoint.groundDistToMain()
+        ) {
+            return false;
         }
 
         double distToEnemy = unit.distTo(enemy);
 
         if (A.s <= 220 && enemy.isWorker()) {
             if (distToEnemy <= 1.05) return true;
-            if (enemy.enemiesNear().buildings().countInRadius(15, unit) == 0) return false;
+            if (enemy.enemiesNear().buildings().countInRadius(AUnit.NEAR_DIST, unit) == 0) return false;
         }
 
-        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.35) return false;
+        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.1) return false;
 
         AUnit leader = unit.squadLeader();
         if (leader != null && leader.isMelee()) {
@@ -94,6 +104,16 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
         if (asRangedAttackTargetsInRange()) return true;
 
         return true;
+    }
+
+    private boolean forbidChasingEarlyWorker(AUnit enemy) {
+        if (!enemy.isWorker()) return false;
+
+        if (
+            enemy.distTo(focusPoint) >= 3 && !unit.canAttackTargetWithBonus(enemy, 1.6)
+        ) return true;
+
+        return false;
     }
 
     private boolean whenSmallSquadVsZerg(AUnit enemy) {
@@ -241,7 +261,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (
             unit.isMelee()
-                && sunkens.inRadius(15, enemy).notEmpty()
+                && sunkens.inRadius(AUnit.NEAR_DIST, enemy).notEmpty()
                 && sunkens.inRadius(7, enemy).empty()
         ) return false;
 

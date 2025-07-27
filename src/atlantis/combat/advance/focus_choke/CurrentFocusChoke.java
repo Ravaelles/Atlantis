@@ -1,4 +1,4 @@
-package atlantis.combat.advance.leader;
+package atlantis.combat.advance.focus_choke;
 
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;

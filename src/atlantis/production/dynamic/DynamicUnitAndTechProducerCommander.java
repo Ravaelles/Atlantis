@@ -1,13 +1,11 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
-import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
-import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
-import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
+import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
 import atlantis.util.HasReason;

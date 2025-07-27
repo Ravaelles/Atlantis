@@ -33,6 +33,8 @@ public class EngineCanvas extends JPanel {
     }
 
     public void updateOnFrameEnd() {
+        if (engine.game().isGameEnd()) return;
+
         repaint();
     }
 

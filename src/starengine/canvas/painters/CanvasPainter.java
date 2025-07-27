@@ -10,11 +10,12 @@ import java.awt.image.BufferedImage;
 public class CanvasPainter {
     protected final EngineCanvas canvas;
     protected final StarEngine engine;
-    private final UnitPainter unitPainter = new UnitPainter(this);
+    private final UnitPainter unitPainter;
 
     public CanvasPainter(EngineCanvas canvas) {
         this.canvas = canvas;
         this.engine = canvas.engine;
+        this.unitPainter = new UnitPainter(this, engine);
     }
 
     public void paint(Graphics g) {

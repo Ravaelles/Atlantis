@@ -1,7 +1,7 @@
 package atlantis.combat.retreating.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.retreating.protoss.should.ProtossShouldNotRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossDontRetreat;
 import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -14,7 +14,7 @@ public class ProtossRetreat extends Manager {
     @Override
     public boolean applies() {
         return We.protoss()
-            && !(new ProtossShouldNotRetreat(unit)).applies();
+            && !(new ProtossDontRetreat(unit)).applies();
     }
 
     @Override

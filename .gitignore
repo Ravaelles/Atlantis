@@ -21,3 +21,7 @@ nbproject/
 out/
 param_tweaker/
 replay_pid*
+/bwapi-data/write/*
+/bwapi-data/write/cherryvis.txt
+/benchmark_results.csv
+/_benchmarkState

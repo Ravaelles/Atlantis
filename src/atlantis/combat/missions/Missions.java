@@ -1,6 +1,6 @@
 package atlantis.combat.missions;
 
-import atlantis.combat.advance.leader.CurrentFocusChoke;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;

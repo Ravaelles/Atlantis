@@ -34,6 +34,8 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.cooldown() >= 13) return false;
+
         return (new AttackNearbyEnemiesApplies(unit)).applies();
     }
 
@@ -50,7 +52,9 @@ public class AttackNearbyEnemies extends Manager {
             if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
                 String error = unit + " handleAttackNearEnemyUnits got " + unit.target();
 
-                if (unit.target() == null && !unit.isRunning()) ErrorLog.printMaxOncePerMinute(error);
+//                if (unit.target() == null && !unit.isRunning()) ErrorLog.printMaxOncePerMinute(error);
+
+//                if (true) throw new RuntimeException("nuuuuuuuuuuuuuuuuuul");
 
 //                PauseAndCenter.on(unit, true);
 

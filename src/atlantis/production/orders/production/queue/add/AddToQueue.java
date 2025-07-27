@@ -105,7 +105,7 @@ public class AddToQueue {
             return false;
         }
 
-        Queue.get().addNew(0, new ProductionOrder(upgrade, A.supplyUsed()));
+        Queue.get().addNew(0, new ProductionOrder(upgrade, A.supplyUsed() - 2));
         return true;
     }
 

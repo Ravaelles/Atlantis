@@ -1,5 +1,6 @@
 package atlantis.combat.advance.focus;
 
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -44,6 +45,8 @@ public class AFocusPoint extends APosition {
         this.unit = unit;
         this.fromSide = fromSide;
         this.name = name;
+
+        System.err.println(A.minSec() + " - New FP: " + name);
 //        this.position = unit.position();
     }
 

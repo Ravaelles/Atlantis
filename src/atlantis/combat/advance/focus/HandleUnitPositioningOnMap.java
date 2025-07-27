@@ -14,7 +14,7 @@ public class HandleUnitPositioningOnMap extends MissionManager {
     @Override
     public boolean applies() {
         if (focusPoint == null) return false;
-        if (unit.enemiesNear().groundUnits().havingWeapon().canAttack(unit, 3.5).atLeast(1)) return false;
+//        if (unit.enemiesNear().groundUnits().havingWeapon().canAttack(unit, 3.5).atLeast(1)) return false;
 
 //        if (
 //            unit.isMissionAttack()

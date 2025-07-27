@@ -68,7 +68,7 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (validateAndRun(action, 0.2, false)) return makeUnitRun(action);
+        if (validateAndRun(action, 1, false)) return makeUnitRun(action);
 
         if (A.isUms() && !unit.isObserver()) {
 //            System.err.println(
@@ -84,7 +84,7 @@ public class ARunningManager {
 //            PauseAndCenter.on(unit);
         }
 
-        if (validateAndRun(action, 0.1, true)) return makeUnitRun(action);
+        if (validateAndRun(action, 1, true)) return makeUnitRun(action);
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
@@ -117,6 +117,7 @@ public class ARunningManager {
 
         if (unit.hp() >= 80) {
             if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+                unit.setTooltip("CantRun-Attack");
                 unit.setManagerUsed(new RunAttackFallback(unit));
                 return true;
             }

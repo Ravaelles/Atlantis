@@ -25,7 +25,7 @@ public class EnemyUnitsToAvoid extends HasUnit {
     public Units unitsToAvoid(boolean onlyDangerouslyClose) {
         return cache.get(
             "unitsToAvoid:" + unit.id() + "," + onlyDangerouslyClose,
-            2,
+            1,
             () -> {
                 enemies = new Units();
 

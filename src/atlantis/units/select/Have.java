@@ -27,6 +27,10 @@ public class Have {
             || !ConstructionRequests.notStartedOfType(type).isEmpty();
     }
 
+    public static boolean existingUnfinished(AUnitType type) {
+        return Count.ourWithUnfinished(type) > 0;
+    }
+
     public static boolean notEvenPlanned(AUnitType type) {
         return Count.withPlanned(type) == 0;
     }

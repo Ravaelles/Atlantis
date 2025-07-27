@@ -20,7 +20,7 @@ public class CorsairHuntMutas extends Manager {
     }
 
     private AUnit muta() {
-        Selection mutalisks = unit.enemiesNear().mutalisks();
+        Selection mutalisks = unit.enemiesNear().mutalisks().havingPosition();
         if (mutalisks.isEmpty()) return null;
 
         Selection mutalisksClose = mutalisks.inRadius(6, unit);

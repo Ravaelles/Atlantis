@@ -51,7 +51,7 @@ public class WorkerTransferCommander extends Commander {
             if (
                 base.isLifted()
                     || base.lastUnderAttackLessThanAgo(30 * 10)
-                    || base.enemiesNear().combatUnits().inRadius(15, base).atLeast(1)
+                    || base.enemiesNear().combatUnits().inRadius(AUnit.NEAR_DIST, base).atLeast(1)
             ) {
                 continue;
             }
@@ -106,7 +106,7 @@ public class WorkerTransferCommander extends Commander {
 
         for (int i = 0; i < n; i++) {
             AUnit worker = Select.ourWorkersMiningMinerals(true)
-                .inRadius(15, baseWithMostWorkers)
+                .inRadius(AUnit.NEAR_DIST, baseWithMostWorkers)
                 .groundNearestTo(baseWithFewestWorkers);
 
 //        System.err.println(

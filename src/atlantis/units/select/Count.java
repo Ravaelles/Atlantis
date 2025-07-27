@@ -416,6 +416,10 @@ public class Count {
         return ofTypeFree(AUnitType.Terran_Starport);
     }
 
+    public static int freeRoboticsFacility() {
+        return ofTypeFree(Protoss_Robotics_Facility);
+    }
+
     public static int freeBarracks() {
         return ofTypeFree(AUnitType.Terran_Barracks);
     }

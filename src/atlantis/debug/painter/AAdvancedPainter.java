@@ -40,7 +40,7 @@ import atlantis.production.constructions.position.protoss.GatewayPosition;
 import atlantis.production.constructions.position.protoss.PylonPosition;
 import atlantis.production.constructions.position.terran.BarracksPosition;
 import atlantis.production.constructions.position.terran.TerranSupplyDepot;
-import atlantis.production.dynamic.AutoProduceWorkersCommander;
+import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;

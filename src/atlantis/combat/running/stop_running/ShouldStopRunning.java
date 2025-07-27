@@ -16,7 +16,7 @@ public class ShouldStopRunning extends Manager {
     @Override
     public boolean applies() {
         return unit.isRunning()
-            && unit.enemiesThatCanAttackMe(3.5).count() == 0;
+            && (unit.eval() >= 3 || unit.enemiesThatCanAttackMe(unit.isRetreating() ? 10 : 3.5).count() == 0);
 //        return unit.enemiesThatCanAttackMe(1).count() == 0;
     }
 

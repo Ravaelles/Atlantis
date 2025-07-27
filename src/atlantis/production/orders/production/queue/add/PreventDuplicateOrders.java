@@ -41,13 +41,8 @@ public class PreventDuplicateOrders {
             return true;
         }
 
-        if (type.isPylon() && A.supplyTotal() >= 30) {
-            int inQueue = CountInQueue.count(AUnitType.Protoss_Pylon);
-
-            if (inQueue >= 4) {
-                QueueLastStatus.updateStatusFailed("TooManyPylonsAtOnce", type.toString());
-                return true;
-            }
+        if (preventSpamPylons(type, position)) {
+            return true;
         }
 
         if (tooManyRecently(type)) {
@@ -67,6 +62,30 @@ public class PreventDuplicateOrders {
 
         if (forProtossEnforceHavingAPylonFirst(type)) {
             QueueLastStatus.updateStatusFailed("EnforcePylonFirst", type.toString());
+            return true;
+        }
+
+        return false;
+    }
+
+    private static boolean preventSpamPylons(AUnitType type, HasPosition position) {
+        if (!type.isPylon()) return false;
+
+        if (A.supplyTotal() >= 30) {
+            int inQueue = Math.max(
+                ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon),
+                CountInQueue.count(AUnitType.Protoss_Pylon)
+            );
+
+            if (inQueue >= (1 + (A.supplyFree() <= 2 ? 1 : 0) + (A.hasMinerals(500) ? 1 : 0))) {
+                QueueLastStatus.updateStatusFailed("TooManyPylonsAtOnce:" + inQueue, type.toString());
+                return true;
+            }
+        }
+
+        if (A.supplyFree() >= 13 && type.isPylon()) {
+            QueueLastStatus.updateStatusFailed("DontSpamPylons", type.toString());
+//            ErrorLog.printMaxOncePerMinute("Stop Pylon to queue, prevent spam. Free supply: " + A.supplyFree());
             return true;
         }
 

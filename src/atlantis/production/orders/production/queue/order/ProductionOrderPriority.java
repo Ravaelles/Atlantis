@@ -1,8 +1,7 @@
 package atlantis.production.orders.production.queue.order;
 
 public enum ProductionOrderPriority implements Comparable<ProductionOrderPriority> {
-
-    STANDARD(1),
+    STANDARD(12),
     HIGH(23),
     TOP(34);
 
@@ -20,5 +19,9 @@ public enum ProductionOrderPriority implements Comparable<ProductionOrderPriorit
 
     public boolean isStandard() {
         return this == STANDARD;
+    }
+
+    public boolean isHighOrHigher() {
+        return number >= HIGH.number;
     }
 }

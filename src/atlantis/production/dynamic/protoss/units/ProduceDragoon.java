@@ -5,12 +5,14 @@ import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.Army;
+import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
+import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.trainIfPossible;
 import static atlantis.units.AUnitType.*;
@@ -26,6 +28,19 @@ public class ProduceDragoon {
 
         dragoons = Count.dragoons();
         strength = Army.strength();
+
+        if (
+            (dragoons >= 3 || A.supplyUsed() >= 50)
+                && !A.hasGas(200)
+                && !singularityChargeResearched()
+                && Army.strength() >= 70
+        ) {
+//            System.out.println(A.supplyUsed() + ": dont produce Dragoon, no Singularity Charge");
+            return false;
+        }
+
+//        System.out.println("ProduceDragoon: dragoons = " + dragoons + " / res:" + singularityChargeResearched()
+//            + " / freeCC:" + Select.ourFree(Protoss_Cybernetics_Core).count());
 
         if (dragoons <= 6) return produceDragoon();
         if (dragoons <= 9 && A.hasMinerals(228) && A.hasGas(50)) return produceDragoon();
@@ -59,6 +74,11 @@ public class ProduceDragoon {
         }
 
         return A.hasGas(175) && produceDragoon();
+    }
+
+    private static boolean singularityChargeResearched() {
+        return ResearchSingularityCharge.isResearched()
+            || Select.ourFree(Protoss_Cybernetics_Core).empty();
     }
 
     private static boolean againstEarlyZergRush() {

@@ -17,6 +17,8 @@ public class ProtossForceClusterZealot extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isMissionAttack()) return false;
+
         return unit.isZealot()
 //            && !unit.isAttacking()
             && unit.lastUnderAttackMoreThanAgo(40)
@@ -26,16 +28,16 @@ public class ProtossForceClusterZealot extends Manager {
 
     private boolean zealotsTooFar() {
         return unit.friendsNear().combatUnits().groundUnits().inRadius(DIST_BETWEEN_ZEALOTS, unit).count() == 0
-            || unit.distToLeader() >= 4;
+            && unit.distToLeader() >= 4;
     }
 
     @Override
     public Manager handle() {
-        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterZealot")) {
-            return usedManager(this);
-        }
+//        if (unit.moveToLeader(Actions.MOVE_FORMATION, "ClusterZealot")) {
+//            return usedManager(this);
+//        }
 
-        if (unit.move(friend, Actions.MOVE_FORMATION)) {
+        if (unit.distTo(friend) >= 1 && unit.move(friend, Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }
 

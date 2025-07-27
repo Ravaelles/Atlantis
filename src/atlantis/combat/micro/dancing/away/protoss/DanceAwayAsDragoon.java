@@ -20,8 +20,12 @@ public class DanceAwayAsDragoon extends DanceAway {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (!unit.isDragoon()) return false;
         if (unit.isRunning() || unit.isRetreating()) return false;
+        if (unit.shieldWound() <= 3) return false;
+        if (Enemy.zerg() && unit.hp() >= 60) return false;
 
 //        System.err.println(A.minSec() + " - " + unit + " - DanceAwayAsDragoon");
 
@@ -34,9 +38,12 @@ public class DanceAwayAsDragoon extends DanceAway {
 
         if (
             unit.shieldWound() <= 4
+                && unit.cooldown() <= 19
                 && unit.meleeEnemiesNearCount(2.8) == 0
                 && unit.friendsInRadiusCount(3) > 0
         ) return false;
+
+//        if (dontDanceAwayVsEnemyGoonEarly()) return false;
 
         if (unit.cooldown() >= 15) return true;
         if (unit.cooldown() >= 6 && unit.hp() <= 102) return true;
@@ -131,8 +138,17 @@ public class DanceAwayAsDragoon extends DanceAway {
         return false;
     }
 
+    private boolean dontDanceAwayVsEnemyGoonEarly() {
+        if (!Enemy.protoss()) return false;
+
+        return unit.shieldWound() <= 35
+            && unit.cooldown() <= 19
+            && unit.eval() >= 2
+            && unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.25) == 0;
+    }
+
     private boolean noEnemiesThatCanAttackUsAndNoCooldown() {
-        return unit.cooldown() >= 6
+        return unit.cooldown() <= 6
             && unit.hp() >= 100
             && unit.enemiesNear().canAttack(unit, 0.8).empty();
     }

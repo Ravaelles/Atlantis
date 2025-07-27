@@ -24,7 +24,7 @@ public class ResearchProtossGroundWeapons extends Commander {
         if (Count.ourCombatUnits() <= 10) return false;
         if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
-        if (CountInQueue.count(what(), 10) > 0) return false;
+        if (CountInQueue.count(what(), 4) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
         if (A.hasGas(150 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(290)) {

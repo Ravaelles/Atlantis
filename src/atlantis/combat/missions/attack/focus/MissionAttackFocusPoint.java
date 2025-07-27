@@ -2,7 +2,7 @@ package atlantis.combat.missions.attack.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
-import atlantis.combat.advance.leader.CurrentFocusChoke;
+import atlantis.combat.advance.focus_choke.MiddleFocusChoke;
 import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
@@ -17,7 +17,9 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
+import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
@@ -49,13 +51,16 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         AFocusPoint focus = defendLikePositions();
         if (focus != null) return focus;
 
+        focus = enemiesNearMain();
+        if (focus != null) return focus;
+
         focus = enemyExpansionsPositions();
         if (focus != null) return focus;
 
-        focus = enemyNearAlpha();
+        focus = middleMapChokePoint();
         if (focus != null) return focus;
 
-        focus = middleMapChokePoint();
+        focus = enemyNearAlpha();
         if (focus != null) return focus;
 
         focus = enemyAnyUnitsPositions();
@@ -71,6 +76,38 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (focus != null) return focus;
 
         return null;
+    }
+
+    private AFocusPoint enemiesNearMain() {
+        if (A.supplyUsed() >= 70) return null;
+
+        AUnit main = Select.main();
+        if (main == null) return null;
+
+        if (Enemy.zerg()) {
+            AUnit muta = Select.enemies(AUnitType.Zerg_Mutalisk).nearestTo(main);
+            if (muta != null && muta.enemiesNear().buildings().countInRadius(8, muta) > 0) {
+                return new AFocusPoint(
+                    muta,
+                    main,
+                    "EnemyMuta!"
+                );
+            }
+        }
+
+        Selection visibleEnemies = Select.enemyCombatUnits().visibleOnMap().inRadius(50, main);
+        if (visibleEnemies.count() <= 3) return null;
+
+        AUnit enemyNearestToMain = visibleEnemies.nearestTo(main);
+        if (enemyNearestToMain == null) return null;
+
+        if (enemyNearestToMain.friendsNear().atMost(1)) return null;
+
+        return new AFocusPoint(
+            enemyNearestToMain,
+            main,
+            "EnemiesNearMain"
+        );
     }
 
     private AFocusPoint enemyNearAlpha() {
@@ -93,15 +130,37 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
     private AFocusPoint middleMapChokePoint() {
         if (!Enemy.zerg()) return null;
-        if (Alpha.count() >= 5 && Army.strength() >= 250) return null;
 
-        AChoke choke = CurrentFocusChoke.get();
+        if (A.supplyUsed() >= 160 || A.hasMinerals(1000)) return null;
+
+//        if (
+//            goons >= 12
+//                && !ResearchSingularityCharge.isResearched()
+//                && Army.strengthWithoutCB() <= 125
+//        ) {
+//            if (DEBUG) reason = "Goons (" + goons + ") and no goon range(" + Army.strength() + "%)";
+//            return forceMissionSpartaOrDefend(reason);
+//        }
+
+        if (Enemy.zerg()) {
+            if (!EnemyExistingExpansion.found()) {
+                if (
+                    (Army.strengthWithoutCB() >= 150 || Alpha.count() >= 16)
+                        && ResearchSingularityCharge.isResearched()
+        //                && EnemyUnits.ranged() >= 5
+                        && Count.dragoons() >= 4
+                ) return null;
+            }
+        }
+
+//        AChoke choke = CurrentFocusChoke.get();
+        AChoke choke = MiddleFocusChoke.get();
         if (choke != null) {
 //            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
             return new AFocusPoint(
                 choke,
                 main,
-                "FocusChoke"
+                "MiddleFocusChoke"
             );
         }
 
@@ -333,10 +392,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             ) {
                 return new AFocusPoint(
                     enemyInBase,
-                    "EnemyBreachedBase"
+                    "EnemyBreachedBase_A"
                 );
             }
         }
+
         return null;
     }
 

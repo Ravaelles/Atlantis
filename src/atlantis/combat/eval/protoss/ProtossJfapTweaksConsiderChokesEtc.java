@@ -54,11 +54,15 @@ public class ProtossJfapTweaksConsiderChokesEtc {
     }
 
     private static double chokePenalty(AUnit unit) {
-        if (unit.isMissionDefendOrSparta()) return 0;
+        boolean missionDefendOrSparta = unit.isMissionDefendOrSparta();
+
+        if (missionDefendOrSparta && unit.distToMain() <= 30) return 0;
 
         if (applyHugePenaltyWhenCrossingChoke(unit)) return -2;
 
-        return (-0.4 + (Army.strengthWithoutCB() <= 150 ? -0.35 : 0));
+        return -0.4
+            + (missionDefendOrSparta ? -0.2 : 0)
+            + (Army.strengthWithoutCB() <= 150 ? -0.35 : 0);
     }
 
     private static boolean applyHugePenaltyWhenCrossingChoke(AUnit unit) {

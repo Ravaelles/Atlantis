@@ -34,7 +34,11 @@ public class MoveAway {
         }
 
         if (unit.isGroundUnit() && !newPosition.isWalkable()) {
-            ErrorLog.printErrorOnce("MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")");
+            if (!unit.isWorker()) {
+                ErrorLog.printErrorOnce(
+                    "MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")"
+                );
+            }
             return false;
         }
 

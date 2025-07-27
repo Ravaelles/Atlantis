@@ -1,13 +1,12 @@
 package atlantis.combat.micro.avoid.buildings.protoss;
 
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingKeepFar;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.units.select.Selection;
 
 public class ShouldAvoidSunkenAsProtoss {
     public static Decision shouldAvoid(AUnit unit, AUnit combatBuilding) {
@@ -24,17 +23,28 @@ public class ShouldAvoidSunkenAsProtoss {
 //            }
 //        }
 
-        if (Count.ourCombatUnits() <= 9) return Decision.TRUE;
+        double minDist = minDist(unit);
+        
+        if (unit.distTo(combatBuilding) >= minDist) return Decision.FALSE("FarEnough");
 
-        if (A.supplyUsed() < 140 && Army.strength() <= 160) return Decision.TRUE;
+        if (Count.ourCombatUnits() <= 7) return Decision.TRUE("FewUnits");
+        if (A.supplyUsed() < 140 && Army.strength() <= 250) return Decision.TRUE("TooWeak");
 //        if (A.s <= 60 * 9 && Count.ourCombatUnits() <= 10 && EnemyInfo.combatBuildingsAntiLand() >= 2) {
 //            return Decision.TRUE;
 //        }
 
         return ProtossEvaluateAgainstCombatBuildings.chancesLookGood(unit, combatBuilding)
-            ? Decision.FALSE : Decision.TRUE;
+            ? Decision.FALSE("GoodChances")
+            : Decision.TRUE("BadChances");
 
 //        return Decision.INDIFFERENT;
+    }
+
+    private static double minDist(AUnit unit) {
+        if (AvoidCombatBuildingKeepFar.shouldKeepFar()) return AvoidCombatBuildingKeepFar.DIST(unit);
+
+//        return Count.ourCombatUnits() <= 8 ? 8.4 : 14;
+        return Army.strength() >= 200 ? 8.4 : 14;
     }
 
 //    private static boolean looksStrong(AUnit unit, AUnit combatBuilding) {

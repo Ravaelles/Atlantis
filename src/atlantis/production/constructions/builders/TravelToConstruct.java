@@ -302,7 +302,9 @@ public class TravelToConstruct extends HasUnit {
             System.err.println("builder = " + builder);
             System.err.println("builder.buildUnit() = " + builder.buildUnit());
             System.err.println("builder.construction() = " + builder.construction());
-            System.err.println("builder.productionOrder() = " + builder.construction().productionOrder());
+            if (builder.construction() != null) {
+                System.err.println("builder.productionOrder() = " + builder.construction().productionOrder());
+            }
         }
 
 //        if (We.protoss()) {

@@ -1,12 +1,11 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.advance.leader.CurrentFocusChoke;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
-import atlantis.game.listeners.temp.UnitStateHelper;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
@@ -35,7 +34,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
@@ -56,6 +54,11 @@ import java.util.Set;
  */
 public class OnEveryFrameHelper {
     public static void handle() {
+//        AUnit unit = Select.ourCombatUnits().second();
+//        System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
+
+//        paintUnitTargets();
+
 //        updateTooltips();
 
 //        paintAllUnitEvals();
@@ -292,16 +295,16 @@ public class OnEveryFrameHelper {
     }
 
     private static void paintUnitTargets() {
-//        for (AUnit unit : Select.ourCombatUnits().list()) {
-//            if (unit.target() != null) {
-//                unit.paintLine(unit.target(), Color.Orange);
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.target() != null) {
+                unit.paintLine(unit.target(), Color.Orange);
 //                System.out.println("Target = " + unit.target());
-//            }
-//            else if (unit.targetPosition() != null) {
-//                unit.paintLine(unit.target(), Color.Cyan);
+            }
+            else if (unit.targetPosition() != null) {
+                unit.paintLine(unit.target(), Color.Cyan);
 //                System.out.println("TargetPOS = " + unit.targetPosition() + " / " + A.digit(unit.distTo(unit.targetPosition())));
-//            }
-//        }
+            }
+        }
     }
 
     private static void paintUnitSpeeding() {

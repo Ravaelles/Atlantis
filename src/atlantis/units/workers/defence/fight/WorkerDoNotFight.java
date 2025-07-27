@@ -20,7 +20,7 @@ public class WorkerDoNotFight {
 
         if (We.protoss() && unit.shields() <= 6 && A.s >= 60 * 6) return true;
 
-        Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(15, unit);
+        Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(AUnit.NEAR_DIST, unit);
         if (Enemy.protoss() && We.protoss()) {
             AUnit nearestMelee = enemiesNear.melee().nearestTo(unit);
             if (nearestMelee != null) {

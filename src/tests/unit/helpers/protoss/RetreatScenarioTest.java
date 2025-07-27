@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
+import atlantis.util.cache.Cache;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
@@ -38,6 +39,7 @@ public class RetreatScenarioTest extends WorldStubForTests {
 //                Select.our().print("Our");
 //                Select.enemy().print("Enemy");
 
+                Cache.nukeAllCaches();
                 BaseSelect.clearCache();
                 Select.clearCache();
 
@@ -47,6 +49,12 @@ public class RetreatScenarioTest extends WorldStubForTests {
                 assertEquals(1 + enemy.friendsNear().count(), Select.enemy().count());
                 assertEquals(enemy.enemiesNear().count(), Select.our().count());
                 assertEquals(1 + our.friendsNear().count(), Select.our().count());
+
+//                System.out.println("our.enemiesNear().count() = " + our.enemiesNear().count());
+//                our.enemiesNear().print();
+//                System.out.println("Select.enemy().count() = " + Select.enemy().count());
+//                Select.enemy().print();
+                
                 assertEquals(0, our.enemiesNear().count() - Select.enemy().count());
 
                 double ourCombatEvalRelative = our.eval();

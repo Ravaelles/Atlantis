@@ -80,6 +80,8 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
  */
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
+    public static final int NEAR_DIST = 15;
+
     /**
      * Mapping of native unit IDs to AUnit objects
      */
@@ -108,12 +110,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     protected AUnitType _lastType = null;
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
-    private Log managerLogs = new Log(30 * 30, 5);
+    private Log managerLogs = new Log(30 * 30, 8);
     private Log commandHistory = new Log(-1, 10);
     private UnderAttack underAttack = new UnderAttack(this);
     private Action unitAction = Actions.INIT;
     private Action _prevAction = null;
     private AttackState attackState = AttackState.getDefault();
+
+    /**
+     * Get the current unit action.
+     * Added to support CherryVis integration.
+     * 
+     * @return The current unit action
+     */
+    public Action getUnitAction() {
+        return unitAction;
+    }
     private ABullet _lastBullet = null;
 
     /**
@@ -643,6 +655,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit setTooltip(String tooltip, boolean strategicLevel) {
+        if (Env.isTournament()) return this;
+
         if (strategicLevel) {
             this.tooltip = tooltip;
         }
@@ -656,12 +670,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit setTooltipAndLog(String tooltip) {
+        if (Env.isTournament()) return this;
+
         setTooltip(tooltip);
         addLog(tooltip);
         return this;
     }
 
     public boolean setTooltip(String tooltip) {
+        if (Env.isTournament()) return true;
+
         this.tooltip = tooltip;
         this.addLog(tooltip);
 //        System.err.println(typeWithUnitId() + ": " + tooltip);
@@ -1599,6 +1617,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns true if given position has land connection to given point.
      */
     public boolean hasPathTo(HasPosition point) {
+        if (point == null || point.position() == null || point.position().p() == null) return false;
+
         return u.hasPath(point.position().p());
     }
 
@@ -2533,7 +2553,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                    return EnemyUnits.discovered()
                     return AliveEnemies.get()
                         .realUnitsAndBuildings()
-                        .inRadius(15, this)
+                        .inRadius(NEAR_DIST, this)
                         .exclude(this);
                 }
                 else if (unit().isEnemy() || (unit().type().isAddon() && unit().isNeutral())) {
@@ -2542,14 +2562,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //                        + " / " + Select.ourRealUnits().size()
 //                    );
                     return Select.ourRealUnits()
-                        .inRadius(15, this)
+                        .inRadius(NEAR_DIST, this)
                         .exclude(this);
                 }
                 else {
 //                    System.out.println("$$$ Weird case: " + this);
                     if (
                         Army.strength() <= 700
-                            && unit().isAlive()
+                            && (unit().isAlive() && !isDeadMan())
                             && !unit().type().isGeyser() && unit().isNeutral()
                     ) {
                         System.err.println("enemiesNear invoked for neutral?");
@@ -2600,12 +2620,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             () -> {
                 if (unit().isOur()) {
                     return Select.ourRealUnits()
-                        .inRadius(15, this)
+                        .inRadius(AUnit.NEAR_DIST, this)
                         .exclude(this);
                 }
                 else if (unit().isEnemy()) {
                     return EnemyUnits.discovered()
-                        .inRadius(15, this)
+                        .inRadius(AUnit.NEAR_DIST, this)
                         .exclude(this);
                 }
                 else {
@@ -2628,7 +2648,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             "allUnitsNear",
             5,
             () -> Select.all()
-                .inRadius(15, this)
+                .inRadius(AUnit.NEAR_DIST, this)
                 .exclude(this)
         ));
     }
@@ -2826,6 +2846,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     public boolean addLog(String message) {
+        if (Env.isTournament()) return true;
+
         if (!log.lastMessageWas(message)) {
             log.addMessage(message, this);
         }
@@ -2940,7 +2962,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return (AUnit) cache.getIfValid(
             "nearestEnemy",
             2,
-            () -> enemiesNear().havingPosition().canAttack(this, 5).nearestTo(this)
+            () -> enemiesNear().havingPosition().canAttack(this, 13).nearestTo(this)
+        );
+    }
+
+    public AUnit nearestCombatEnemy() {
+        return (AUnit) cache.getIfValid(
+            "nearestCombatEnemy",
+            2,
+            () -> enemiesNear().combatUnits().havingPosition().canAttack(this, 13).nearestTo(this)
         );
     }
 
@@ -3308,8 +3338,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean moveToLeader(Action action, String tooltip) {
         AUnit leader = squadLeader();
         if (leader == null) return false;
-
         if (distTo(leader) <= 1.5) return false;
+        if (!leader.position().isWalkable()) return false;
 
         return move(leader, action, tooltip);
     }
@@ -3322,7 +3352,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         HasPosition safety = safetyPosition();
         if (safety == null) return false;
 
-        double minDist = 1.3;
+        if (Select.ourBuildings().empty()) return false;
+
+        double minDist = isWorker() ? 8 : 2;
         double distTo = distTo(safety);
 
         if (distTo >= 15 && isCombatUnit()) {
@@ -3695,7 +3727,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AttackState attackState() {
-        if (!isOur()) ErrorLog.printMaxOncePerMinute("### attackState invoked for enemy unit: " + this.idWithType());
+        if (!isOur()) {
+            A.errPrintln("attackState invoked for enemy - " + this.idWithType());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### attackState invoked for enemy unit ###");
+        }
 
         return attackState;
     }
@@ -3772,5 +3807,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public void holdToShoot() {
         holdPosition(Actions.HOLD_TO_SHOOT, "StopRunning");
+    }
+
+    public boolean isRunningOrRetreating() {
+        return isRunning() || isRetreating();
     }
 }

@@ -17,8 +17,9 @@ public class FollowAlphaLeader extends Manager {
 
     @Override
     public boolean applies() {
-        followPoint = followPoint();
+        if (unit.isLeader()) return false;
 
+        followPoint = followPoint();
         if (followPoint != null && followPoint.hasPosition() && followPoint.distTo(unit) < 20 && followPoint.isWalkable()) {
             return true;
         }

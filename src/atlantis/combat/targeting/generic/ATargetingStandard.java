@@ -1,5 +1,6 @@
 package atlantis.combat.targeting.generic;
 
+import atlantis.combat.targeting.air.DontAttackOverlords;
 import atlantis.debug.DebugFlags;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -124,7 +125,9 @@ public class ATargetingStandard extends ATargeting {
         // =========================================================
         // Okay, try targeting overlords
 
-        if (unit.enemiesNear().groundUnits().countInRadius((A.s >= 60 * 8 ? 8 : 13), unit) <= (A.s >= 60 * 8 ? 2 : 1)) {
+        if (
+            !unit.shotSecondsAgo(3) || !DontAttackOverlords.forbidden(unit)
+        ) {
             target = AliveEnemies.get()
                 .overlords()
                 .canBeAttackedBy(unit, 0.9)

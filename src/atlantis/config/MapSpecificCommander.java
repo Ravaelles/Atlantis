@@ -20,7 +20,7 @@ public class MapSpecificCommander extends Commander {
 
     @Override
     protected void handle() {
-        if (!Env.isLocal() || Env.isParamTweaker()) return;
+        if (!Env.isLocal() || Env.isBenchmark() || Env.isParamTweaker()) return;
 
         // =========================================================
         // Marines & Medics v. Zealots

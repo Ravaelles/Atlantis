@@ -14,18 +14,18 @@ public class ShouldAvoidBunkerAsProtoss {
         dist = unit.distTo(bunker);
 
         if (veryPowerfulLetsBetterEngage(unit)) {
-            return Decision.FALSE;
+            return Decision.FALSE("veryPowerfulLetsBetterEngage");
         }
 
         if (needToAvoidDueToSecondBunkerNearby(unit, bunker)) {
-            return Decision.TRUE;
+            return Decision.TRUE("needToAvoidDueToSecondBunkerNearby");
         }
 
         if (dontAvoidGoodToAttack(unit)) {
-            return Decision.FALSE;
+            return Decision.FALSE("dontAvoidGoodToAttack");
         }
 
-        return dist >= minDist(unit) ? Decision.FALSE : Decision.TRUE;
+        return dist >= minDist(unit) ? Decision.FALSE("tooFar") : Decision.TRUE("tooClose");
     }
 
     private static double minDist(AUnit unit) {

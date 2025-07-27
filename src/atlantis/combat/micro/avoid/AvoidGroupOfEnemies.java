@@ -47,6 +47,13 @@ public class AvoidGroupOfEnemies extends Manager {
 //            return usedManager(this);
 //        }
 
+        if (
+            (unit.distToMain() >= 15 || unit.hp() >= 41)
+                && unit.moveToSafety(RUN_ENEMY, "AvoidGroupToSafety")
+        ) {
+            return usedManager(this);
+        }
+
         if (unit.runningManager().runFrom(
             centerOfEnemies, calculateRunDistance(), RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
         )) {
@@ -71,7 +78,9 @@ public class AvoidGroupOfEnemies extends Manager {
         if (unit.effUndetected()) return true;
         if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
 
-        if ((new DontAvoidEnemy(unit)).applies()) return true;
+        if (unit.isMissionDefendOrSparta()) {
+            if ((new DontAvoidEnemy(unit)).applies()) return true;
+        }
 
         return false;
     }

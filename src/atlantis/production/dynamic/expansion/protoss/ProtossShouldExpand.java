@@ -14,6 +14,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -34,6 +35,8 @@ public class ProtossShouldExpand {
         basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
 
         // =========================================================
+
+        if (A.hasMinerals(777) && Count.basesWithPlanned() <= 3) return yes("LimitedBases");
 
         if (!A.hasMinerals(384) && defendRush()) return no("DefendRush");
         if (tooManyInProgress()) return no("HaveInProgress");
@@ -321,7 +324,7 @@ public class ProtossShouldExpand {
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) return false;
 
-        return EnemyUnits.discovered().inRadius(15, mainChoke).atLeast(4);
+        return EnemyUnits.discovered().inRadius(AUnit.NEAR_DIST, mainChoke).atLeast(4);
     }
 
     private static boolean enemyHasNoCombatBuilding() {

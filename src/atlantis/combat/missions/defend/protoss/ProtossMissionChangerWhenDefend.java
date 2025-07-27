@@ -11,6 +11,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.Strategy;
@@ -41,7 +42,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return forceMissionAttack(reason);
         }
 
-        if (A.s >= 60 * 10) {
+        if (A.s >= 60 * 10 && Army.strength() >= 120 && EnemyUnitBreachedBase.noone()) {
             if (DEBUG) reason = "LateGame-attack";
             return forceMissionAttack(reason);
         }
@@ -57,7 +58,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (Enemy.zerg()) {
-            if (Strategy.get().isGoingTech() && Army.strength() <= 180 && Count.dragoons() <= 4) {
+            if (Strategy.get().isGoingTech() && Army.strength() <= 180 && Count.dragoons() <= 5) {
                 if (DEBUG) reason = "TechWait";
                 forceMissionSpartaOrDefend("TechWait");
                 return false;
@@ -67,7 +68,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 return true;
             }
 
-            if (!Strategy.get().isRushOrCheese() && Army.strength() <= 180 && Count.ourCombatUnits() <= 20) {
+            if (!Strategy.get().isRushOrCheese() && Army.strength() <= 200 && Count.ourCombatUnits() <= 20) {
                 if (DEBUG) reason = "Cautious PvZ";
                 forceMissionSpartaOrDefend(reason);
                 return false;
@@ -169,7 +170,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             A.s <= 60 * 7
                 && EnemyUnits.zerglings() <= 4
                 && EnemyUnits.hydras() <= 0
-                && Count.ourCombatUnits() >= 4
+                && Count.ourCombatUnits() >= 5
                 && Army.strengthWithoutCB() >= 160
                 && !Have.cyberneticsCoreWithUnfinished() && dragoons <= 1
         ) {
@@ -199,6 +200,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
                 if (DEBUG) reason = "Wait for more Goons (ratio: " + ratio + ")";
                 return Decision.FALSE;
             }
+        }
+
+        if (A.s >= 60 * 6 && Count.ourCombatUnits() <= 15) {
+            if (DEBUG) reason = "Not enough army vZ (" + Count.ourCombatUnits() + ")";
+            return Decision.FALSE;
         }
 
 //        if (A.supplyUsed() <= 100 && strength <= 145 && EnemyExistingExpansion.notFound()) {
@@ -251,6 +257,8 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
     }
 
     private boolean canPushEarlyVsProtoss() {
+        if (!Enemy.protoss()) return false;
+
         if (A.seconds() >= 600) return false;
 //        if (EnemyUnits.dragoons() >= 1) return false;
 
@@ -276,7 +284,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         int strength = Army.strength();
 
-        if (strength >= 150) {
+        if (strength >= 150 && (Count.ourCombatUnits() >= 12 || !EnemyInfo.hasRanged())) {
             if (DEBUG) reason = "Stronger Protoss! (" + strength + "%)";
             return Decision.TRUE;
         }
@@ -289,8 +297,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
         }
 
         if (canPushEarlyVsProtoss()) {
-            reason = "Early push (" + this.strength + "%)";
-            MissionChanger.forceMissionAttack(reason);
+            MissionChanger.forceMissionAttack(reason = "Early push (" + this.strength + "%)");
             return Decision.TRUE;
         }
 

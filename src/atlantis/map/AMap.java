@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.config.ActiveMap;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -49,23 +50,21 @@ public class AMap {
         try {
             bwem.initialize();
             bwem.getMap().assignStartingLocationsToSuitableBases();
-        } catch (Exception e) {
-            A.errPrintln(
-                "BWEM exception:\n"
-                + e.getMessage() + "\n"
-                + "but dont worry. We will continue."
-            );
-            if (!A.isUms()) e.printStackTrace();
-        }
 
-        // Init JBWEB - needed for calculating ground distance
-        try {
-            InitJBWEB.init();
-//            InitBWEB.init();
+            // Init JBWEB - needed for calculating ground distance
+            try {
+                InitJBWEB.init();
+    //            InitBWEB.init();
+            } catch (Exception e) {
+                A.errPrintln(
+                    "JBWEB exception: " + e.getMessage() + "\n"
+                    + "but dont worry. We will continue."
+                );
+                if (!A.isUms()) e.printStackTrace();
+            }
         } catch (Exception e) {
             A.errPrintln(
-                "JBWEB exception:\n"
-                + e.getMessage() + "\n"
+                "BWEM exception: " + e.getMessage() + "\n"
                 + "but dont worry. We will continue."
             );
             if (!A.isUms()) e.printStackTrace();
@@ -259,5 +258,19 @@ public class AMap {
 //    }
     public static void setBWEM(BWEM bwem) {
         AMap.bwem = bwem;
+    }
+
+    public static String mapFileNameWithoutPath() {
+        // Remove everything before the last slash
+        String name = ActiveMap.name();
+
+        if (name == null) return "# Invalid map name #";
+
+        int lastSlashIndex = name.lastIndexOf('/');
+        if (lastSlashIndex != -1) {
+            name = name.substring(lastSlashIndex + 1);
+        }
+
+        return name;
     }
 }

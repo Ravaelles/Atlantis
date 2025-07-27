@@ -1,11 +1,13 @@
 package main;
 
 import atlantis.Atlantis;
-import atlantis.config.AtlantisIgniter;
 import atlantis.config.ActiveMap;
+import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
 import atlantis.keyboard.AKeyboard;
 import atlantis.util.ProcessHelper;
+
+import java.io.IOException;
 
 /**
  * This is the main class of the bot. Here everything starts.
@@ -29,11 +31,11 @@ public class Main {
     /**
      * Sets up Atlantis config and runs the bot.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Env.readEnvFile(args);
 
         // If run locally (not in tournament) auto-start Starcraft.exe and Chaoslauncher, modify bwapi.ini etc
-        if (Env.isLocal()) localAtlantisSetup();
+        if (Env.isLocal() || Env.isBenchmark()) localAtlantisSetup(args);
 
         // =============================================================
         // ==== See AtlantisRaceConfig class to customize execution ====
@@ -45,7 +47,14 @@ public class Main {
 
     // =========================================================
 
-    public static String defineMapToUse() {
+    public static String defineMapToUse(String[] args) {
+        String mapFromCli = ActiveMap.readMapFromCliArgument(args);
+        if (mapFromCli != null) {
+            return mapFromCli;
+        }
+
+        // ==========================================================
+
         if (mapGeneric() != null) return mapGeneric();
 
         // === Maps for testing as TERRAN ===========================
@@ -56,11 +65,11 @@ public class Main {
 
         if (mapAsProtoss() != null) return mapAsProtoss();
 
-        // === Maps for testing as ZERG ==========================
+        // === Maps for testing as ZERG =============================
 
         if (mapAsZerg() != null) return mapAsZerg();
 
-        // =========================================================
+        // ==========================================================
 
         return "sscai/(?)*.sc?";
     }
@@ -231,7 +240,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
 
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
-        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm";
+        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm";  // <<<<<<<<<<<
 
         return null;
     }
@@ -251,7 +260,7 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v Zealots
+//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v ZealotsforceMissionAttack
 //        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots
@@ -321,8 +330,9 @@ public class Main {
 
     // =========================================================
 
-    private static void localAtlantisSetup() {
-        ActiveMap.specifyMap(defineMapToUse());
+    private static void localAtlantisSetup(String[] args) {
+        ActiveMap.specifyMap(defineMapToUse(args));
+
         AKeyboard.listenForKeyEvents();
 
         ProcessHelper.killStarcraftProcess();

@@ -7,12 +7,12 @@ public class EngineUpdater {
 //        System.out.println("@ " + A.now() + " - FRAME - update units (" + engine.units.getClass().getSimpleName() + ")");
         engine.units.updateUnits();
 
-        if (simulateTime()) waitAfterFrameEnded();
+        if (simulateFrameTime()) waitAfterFrameEnded();
 
         engine.game().checkForGameEnd();
     }
 
-    private static boolean simulateTime() {
+    private static boolean simulateFrameTime() {
         if (true) return false;
         return true;
     }

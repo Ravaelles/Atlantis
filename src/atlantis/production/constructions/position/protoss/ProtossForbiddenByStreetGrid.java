@@ -112,6 +112,7 @@ public class ProtossForbiddenByStreetGrid {
                 building.isGateway()
                     && moduloX == 0
                     && buildingsNear(4, position) <= 1
+                    && (A.supplyUsed() <= 80 || A.minerals() >= 650 || A.supplyFree() <= 2)
             ) return false;
 
             return failed("TX modulo NonP_X = " + moduloX + " / tx:" + position.tx() + " / grid:" + GRID_SIZE_X);

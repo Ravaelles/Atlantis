@@ -7,10 +7,15 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
 import atlantis.game.player.Enemy;
+import atlantis.units.select.Select;
 import bwapi.UpgradeType;
+
+import java.util.List;
 
 import static bwapi.UpgradeType.Singularity_Charge;
 
@@ -52,7 +57,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         if ((decision = againstProtoss()).notIndifferent()) return decision.toBoolean();
         if ((decision = againstZerg()).notIndifferent()) return decision.toBoolean();
 
-        if (dragoons >= 3) return true;
+//        if (dragoons >= 2) return true;
 
         if (!A.hasMinerals(140) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
 
@@ -91,5 +96,13 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
     public static boolean isResearched() {
         return isResearched;
+    }
+
+    public static boolean isBeingResearched() {
+        return isBeingResearched(upgrade());
+    }
+
+    public static boolean isResearchedOrBeingResearched() {
+        return isResearched() || isBeingResearched();
     }
 }

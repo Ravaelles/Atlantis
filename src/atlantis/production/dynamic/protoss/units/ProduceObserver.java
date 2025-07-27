@@ -19,23 +19,30 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceObserver {
+
+    private static int observers;
+
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
         if (detectedBuilding()) return true;
-
         if (A.supplyUsed() <= 45) return false;
+
+        observers = Count.observers();
+
         if (earlyGamePressureDontInvest()) return false;
 
-        if (Count.observers() >= 2 && Count.reavers() == 0 && Have.roboticsSupportBay() && ProduceReavers.reavers())
+        if (observers >= 2 && Count.reavers() == 0 && Have.roboticsSupportBay() && ProduceReavers.reavers())
             return false;
 
         if (shouldPrepareForObserver()) return true;
-        if (A.supplyUsed() >= 78 && Count.observers() == 0) return true;
+        if (A.supplyUsed() >= 78 && observers == 0) return true;
 
-        return Count.observers() < (4 + EnemyUnits.discovered().lurkers().count() >= 2 ? 4 : 0);
+        return observers < (4 + EnemyUnits.discovered().lurkers().count() >= 2 ? 4 : 0);
     }
 
     public static boolean earlyGamePressureDontInvest() {
+        if (observers >= 1 && !EnemyInfo.goesOrHasHiddenUnits()) return true;
+
         int cannons = Count.cannons();
         if (cannons <= 0 && Army.strength() >= 140) return false;
 

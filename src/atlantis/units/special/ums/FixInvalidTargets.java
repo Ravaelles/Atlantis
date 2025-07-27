@@ -36,17 +36,19 @@ public class FixInvalidTargets extends Manager {
 
     @Override
     public Manager handle() {
-//        if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) return usedManager(this);
+        if (!unit.isStopped() && unit.stop("FixInvalidAndStop")) return usedManager(this);
 
-        if (We.protoss()) {
-//            if ((new ProtossTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
-            if (unit.moveToLeader(Actions.MOVE_FOLLOW, "FixInvalidTargetLeader")) return usedManager(this);
-        }
-
-        else if (We.terran()) {
-            if ((new TerranTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
-        }
+////        if ((new AttackNearbyEnemies(unit)).invokeFrom(this) != null) return usedManager(this);
+////        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) return usedManager(this);
+//
+//        if (We.protoss()) {
+////            if ((new ProtossTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
+//            if (unit.moveToLeader(Actions.MOVE_FOLLOW, "FixInvalidTargetLeader")) return usedManager(this);
+//        }
+//
+//        else if (We.terran()) {
+//            if ((new TerranTooFarFromSquadCenter(unit)).invokedFrom(this)) return usedManager(this);
+//        }
 
         return null;
     }

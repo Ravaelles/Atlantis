@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -16,16 +17,37 @@ public class ProduceCorsairs {
             return false;
         }
 
-        if (produced <= 1 && A.supplyUsed() >= 80 && Count.corsairs() == 0) {
+        if (Enemy.zerg()) {
+            if (EnemyUnits.count(AUnitType.Zerg_Mutalisk) >= 1 && produceAgainstMutalisks()) return true;
+        }
+
+        if (!A.hasMinerals(200)) return false;
+
+        if (produceFirstCorsair()) {
             return buildToHave(AUnitType.Protoss_Corsair, 1) && increaseProduced();
         }
 
-        int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
-        if (mutas >= 1) {
-            return buildToHave(AUnitType.Protoss_Corsair, (int) (mutas / 2) + 1) && increaseProduced();
+        if (Enemy.terran()) {
+            if (EnemyUnits.count(AUnitType.Terran_Wraith) >= 1 && produceAgainstWraiths()) return true;
         }
 
         return false;
+    }
+
+    private static boolean produceAgainstMutalisks() {
+        return buildToHave(AUnitType.Protoss_Corsair, (int) (EnemyUnits.count(AUnitType.Zerg_Mutalisk) / 2) + 1)
+            && increaseProduced();
+    }
+
+    private static boolean produceAgainstWraiths() {
+        return buildToHave(AUnitType.Protoss_Corsair, (int) (EnemyUnits.count(AUnitType.Terran_Wraith) / 4) + 1)
+            && increaseProduced();
+    }
+
+    private static boolean produceFirstCorsair() {
+        return produced <= 1
+            && Count.corsairs() == 0
+            && A.supplyUsed() >= Enemy.zergElse(40, 80);
     }
 
     private static boolean increaseProduced() {

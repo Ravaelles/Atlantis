@@ -6,6 +6,7 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.listeners.*;
+import atlantis.game.util.GameSummary;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;

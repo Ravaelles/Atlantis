@@ -37,4 +37,8 @@ public class Army {
 
         return Math.max(1, total);
     }
+
+    public static double strengthRatio() {
+        return strength() / 100.0;
+    }
 }

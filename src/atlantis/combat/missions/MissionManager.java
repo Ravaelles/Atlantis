@@ -2,12 +2,9 @@ package atlantis.combat.missions;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.leader.CurrentFocusChoke;
 import atlantis.combat.missions.attack.FoundEnemyExposedExpansion;
 import atlantis.combat.squad.Squad;
-import atlantis.map.choke.AChoke;
 import atlantis.units.AUnit;
-import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class MissionManager extends Manager {

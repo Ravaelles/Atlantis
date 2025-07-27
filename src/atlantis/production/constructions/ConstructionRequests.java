@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,8 +51,19 @@ public class ConstructionRequests {
 
         // =========================================================
         // Special case for Overlord
-        if (type.equals(AUnitType.Zerg_Overlord)) {
+        if (We.zerg() && type.equals(AUnitType.Zerg_Overlord)) {
             total += Select.ourUnfinished().ofType(type).count();
+        }
+
+        return total;
+    }
+
+    public static int countNotFinishedWithHighPriority() {
+        int total = 0;
+        for (Construction construction : constructions) {
+            if (construction.productionOrder().priority().isHighOrHigher() && construction.notFinished()) {
+                total++;
+            }
         }
 
         return total;

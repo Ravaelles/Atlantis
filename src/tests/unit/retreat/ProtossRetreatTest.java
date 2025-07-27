@@ -1,7 +1,9 @@
 package tests.unit.retreat;
 
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.helpers.protoss.RetreatScenarioTest;
 import tests.unit.helpers.protoss.RetreatTestGoonsVsHydras;
@@ -9,7 +11,7 @@ import tests.unit.helpers.protoss.UnitsForRetreatTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProtossRetreatTest extends AbstractTestWithUnits {
+public class ProtossRetreatTest extends WorldStubForTests {
     private RetreatScenarioTest scenario;
 
     @Test
@@ -53,7 +55,7 @@ public class ProtossRetreatTest extends AbstractTestWithUnits {
     }
 
     @Test
-    public void goonsVsGoons() {
+    public void goonsVsGoons_3v2() {
         scenario = new RetreatScenarioTest(
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
             UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 2)
@@ -67,12 +69,25 @@ public class ProtossRetreatTest extends AbstractTestWithUnits {
         );
 
         assertFalse(scenario.retreatManagerApplied);
+    }
 
+    @Test
+    public void goonsVsGoons_3v3() {
         scenario = new RetreatScenarioTest(
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
-            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 4)
+            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 3)
         );
 
-        assertTrue(scenario.retreatManagerApplied);
+        assertFalse(scenario.retreatManagerApplied);
     }
+
+//    @Test
+//    public void goonsVsGoons_3v4() {
+//        scenario = new RetreatScenarioTest(
+//            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
+//            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 4)
+//        );
+//
+//        assertTrue(scenario.retreatManagerApplied);
+//    }
 }

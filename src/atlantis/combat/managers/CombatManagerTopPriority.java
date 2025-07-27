@@ -12,11 +12,10 @@ import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
 import atlantis.combat.micro.dancing.hold.HoldToShoot;
 import atlantis.combat.micro.early.protoss.ProtossEarlyGame;
-import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
-import atlantis.combat.missions.defend.protoss.ProtossForceStickToMainDuringDefend;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
+import atlantis.combat.squad.positioning.protoss.cluster.ProtossForceUnitsCloserToLeader;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
@@ -50,7 +49,6 @@ public class CombatManagerTopPriority extends Manager {
             SpecialUnitsManager.class,
 
             DontIssueOrdersOneFrameAfterCommand.class,
-
             FixPerformanceForBigSupply.class,
 
             // === Crucial actions ===========================================
@@ -71,6 +69,7 @@ public class CombatManagerTopPriority extends Manager {
 //            ForceRunAfterShot.class,
 
             ProtossFormation.class,
+            ProtossForceUnitsCloserToLeader.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,
@@ -95,7 +94,7 @@ public class CombatManagerTopPriority extends Manager {
             ProtossCombatManager.class,
             TerranCombatManager.class,
 
-            ProtossForceStickToMainDuringDefend.class,
+//            ProtossForceStickToMainDuringDefend.class,
 
 //            ContinueRunning.class,
 

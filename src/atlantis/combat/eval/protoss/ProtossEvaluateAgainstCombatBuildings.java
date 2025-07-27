@@ -11,7 +11,8 @@ public class ProtossEvaluateAgainstCombatBuildings {
 //        System.out.println("OUR / ENEMY (" + (ourUnitsStrength(unit) - enemyStrength(unit, position)) + ") // " +
 //            "OUR: " + ourUnitsStrength(unit) + " / ENEMY: " + enemyStrength(unit, position));
 //        return unit.eval() >= 1.2
-        if (A.supplyUsed() >= 190 && A.minerals() >= 500) return true;
+
+        if (A.supplyUsed() >= 185 && A.minerals() >= 700) return true;
 //        if (unit.eval() <= 1.2) return false;
 
         return (

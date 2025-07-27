@@ -19,8 +19,6 @@ import atlantis.util.log.ErrorLog;
 import bwapi.*;
 import tests.fakes.FakeUnitData;
 
-import static atlantis.debug.DebugFlags.DEBUG_UNIT_ORDERS;
-
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
  */
@@ -79,12 +77,14 @@ public interface AUnitOrders {
         }
 
         if (!target.isDetected()) {
-            System.err.println("Trying to attack not detected unit for " + unit.typeWithHash());
-            System.err.println(target);
-            System.err.println(target.position());
-            System.err.println(target.isPositionVisible());
-            System.err.println(target.hp());
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
+            if (target.isVisibleUnitOnMap()) {
+                System.err.println("Trying to attack not detected unit for " + unit.typeWithHash());
+                System.err.println(target);
+                System.err.println(target.position());
+                System.err.println(target.isPositionVisible());
+                System.err.println(target.hp());
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
+            }
             return false;
         }
 
@@ -318,7 +318,29 @@ public interface AUnitOrders {
             if (shouldPrint()) {
                 A.println(
                     "@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE (" + unitAction + ") / to:" + target
+                    + " / " + unit.manager()
                 );
+            }
+
+            if (target.position() == null) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                    "Null move target.position() for " + unit.typeWithHash() + " / " + target
+                );
+                return false;
+            }
+
+            if (target.position().p() == null) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                    "Null move target.position().p() for " + unit.typeWithHash() + " / " + target
+                );
+                return false;
+            }
+
+            if (u() == null) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+                    "Null unit.u() for " + unit.typeWithHash() + " / " + target
+                );
+                return false;
             }
 
             return u().move(target.position().p());
@@ -914,7 +936,7 @@ public interface AUnitOrders {
     }
 
     default boolean shouldPrint() {
-        return DEBUG_UNIT_ORDERS;
+        return DebugFlags.DEBUG_UNIT_ORDERS;
     }
 
 }

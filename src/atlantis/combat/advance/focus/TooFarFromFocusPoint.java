@@ -77,7 +77,12 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
             if (goTo == null) return false;
 
             if (goTo.isWalkable()) {
-                if (unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)) return true;
+                if (
+                    (!unit.isMoving() || A.everyNthGameFrame(20))
+                        && unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)
+                ) {
+                    return true;
+                }
             }
             else {
                 ErrorLog.printMaxOncePerMinute("Unwalkable focus " + focusPoint + " for " + unit);

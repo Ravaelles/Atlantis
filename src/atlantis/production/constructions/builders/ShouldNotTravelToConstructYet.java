@@ -11,7 +11,7 @@ public class ShouldNotTravelToConstructYet {
 
         if (AGame.timeSeconds() < 300) {
             int baseBonus = building.isBase() ? 80 : 0;
-            int mineralMargin = distance <= 15 ? 0 : 32;
+            int mineralMargin = distance <= 15 ? 0 : 24;
 
             return !A.canAfford(
                 building.mineralPrice() - mineralMargin - (int) (distance * 1.3) - baseBonus,

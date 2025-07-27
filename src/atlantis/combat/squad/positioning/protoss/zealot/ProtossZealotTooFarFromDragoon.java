@@ -29,17 +29,20 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         distToGoon = unit.distTo(dragoon);
         if (distToGoon <= 8 && A.supplyUsed() >= 180) return false;
         if (distToGoon <= 6 && allowAttackingZergWhenRelativelyOk()) return false;
-        if (distToGoon <= 7 && unit.eval() >= 1.25) return false;
+
+        double eval = unit.eval();
+
+        if (distToGoon <= 7 && eval >= 1.25) return false;
 
         if (
-            unit.eval() >= 0.65
+            eval >= 0.65
                 && unit.enemiesNear().groundUnits().canBeAttackedBy(unit, 0.3).notEmpty()
         ) {
             return false;
         }
 
         if (
-            distToGoon >= ABSOLUTE_MAX_DIST
+            eval <= 2 && distToGoon >= ABSOLUTE_MAX_DIST
 //                && !unit.enemiesNear().combatUnits().mostlyRanged()
         ) {
             return true;

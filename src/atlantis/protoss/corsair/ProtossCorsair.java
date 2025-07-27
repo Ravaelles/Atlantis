@@ -3,6 +3,7 @@ package atlantis.protoss.corsair;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.*;
+import atlantis.map.scout.ScoutFreeBases;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -23,6 +24,7 @@ public class ProtossCorsair extends MobileDetector {
             AsAirAvoidAntiAir.class,
             CorsairHuntOverlords.class,
             CorsairHuntMutas.class,
+            ScoutFreeBases.class,
         };
     }
 

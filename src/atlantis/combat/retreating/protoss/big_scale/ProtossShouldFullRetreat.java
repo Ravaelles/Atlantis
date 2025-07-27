@@ -19,8 +19,14 @@ public class ProtossShouldFullRetreat {
     public static boolean shouldFullRetreat(AUnit unit) {
         ProtossShouldFullRetreat.unit = unit;
 
-        Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 13 : 9, unit);
+        Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 14 : 10, unit);
         if (enemies.empty()) return false;
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null && !unit.isLeader()) {
+//            if (leader.isRetreating()) return true;
+            return leader.isRetreating();
+        }
 
         eval = unit.eval();
 
@@ -34,8 +40,6 @@ public class ProtossShouldFullRetreat {
         if (DontAvoidWhenCannonsNear.check(unit)) return false;
         if (combatEvalIsTooHighToRetreat()) return false;
         if (dontRunNearOurCombatBuildings()) return false;
-
-        AUnit leader = unit.squadLeader();
 
         if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.9))) return true;
 

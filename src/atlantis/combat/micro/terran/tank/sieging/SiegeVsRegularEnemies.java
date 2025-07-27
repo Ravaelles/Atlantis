@@ -20,7 +20,7 @@ public class SiegeVsRegularEnemies extends Manager {
         Selection enemies = unit.enemiesNear().groundUnits().effVisible();
 
         if (
-            enemies.inRadius(15, unit).atLeast(2)
+            enemies.inRadius(AUnit.NEAR_DIST, unit).atLeast(2)
                 && unit.friendsNear().inRadius(5, unit).count() >= 7
         ) {
             if (Enemy.terran()) return true;

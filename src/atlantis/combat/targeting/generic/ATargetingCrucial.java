@@ -62,7 +62,7 @@ public class ATargetingCrucial extends ATargeting {
             .effVisible()
             .inRadius(unit.isAir() ? 30 : 13, unit)
             .nearestTo(unit);
-        if (target != null && enemyUnits.ofType(AUnitType.Protoss_Carrier).inRadius(15, target).atLeast(1)) {
+        if (target != null && enemyUnits.ofType(AUnitType.Protoss_Carrier).inRadius(AUnit.NEAR_DIST, target).atLeast(1)) {
             debug("CR2 = " + target);
             return target;
         }

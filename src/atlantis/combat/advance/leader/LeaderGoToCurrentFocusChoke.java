@@ -1,6 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.MissionManager;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;

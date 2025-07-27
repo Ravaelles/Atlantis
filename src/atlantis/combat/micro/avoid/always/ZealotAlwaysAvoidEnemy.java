@@ -32,7 +32,7 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
             && unit.shieldWound() >= 3
             && A.s <= 60 * 6
 //            && Army.strength() <= 135
-            && unit.friendsNear().cannons().inRadius(15, unit).notEmpty()
+            && unit.friendsNear().cannons().inRadius(AUnit.NEAR_DIST, unit).notEmpty()
             && unit.friendsNear().cannons().inRadius(2.3, unit).empty();
     }
 }

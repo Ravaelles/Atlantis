@@ -8,8 +8,6 @@ import atlantis.information.generic.Army;
 import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Count;
 
-import static atlantis.combat.missions.MissionChanger.forceMissionAttack;
-
 public class ShouldForceAttack {
     public static boolean check() {
         int strength = Army.strength();
@@ -18,11 +16,11 @@ public class ShouldForceAttack {
         if (combatUnits <= 4) return false;
 
         if (combatUnits >= 35) {
-            return forceMissionAttack("ManyCombatUnits(" + combatUnits + ")");
+            return MissionChanger.forceMissionAttack("ManyCombatUnits(" + combatUnits + ")");
         }
 
         if (strength >= 800) {
-            return forceMissionAttack("HugeStrength");
+            return MissionChanger.forceMissionAttack("HugeStrength");
         }
 
         if (
@@ -32,7 +30,7 @@ public class ShouldForceAttack {
                 && strength >= 111
                 && (strength >= 131 || EnemyUnits.dragoons() <= 2)
         ) {
-            return forceMissionAttack("Rush or cheese");
+            return MissionChanger.forceMissionAttack("Rush or cheese");
         }
 
         if (A.minerals() >= 2000 && A.supplyUsed() >= 90) {

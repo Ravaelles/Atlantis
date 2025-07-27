@@ -35,9 +35,10 @@ public class StarEngineGame {
                     "GAME OVER, " + (weWon ? "VICTORY!" : "DEFEAT!") + "\n"
             );
             starEngine.testClass().setShouldQuitGameLoopNow(true);
+            starEngine.closeIfNeeded();
         }
 
-        return false;
+        return gameEnd;
     }
 
     // =========================================================

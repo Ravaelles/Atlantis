@@ -10,7 +10,10 @@ import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
+
+import java.util.List;
 
 public class LeaderToOther extends MissionManager {
     private AUnit otherFriend;
@@ -21,11 +24,11 @@ public class LeaderToOther extends MissionManager {
 
     @Override
     public boolean applies() {
-        if (!(We.protoss() && Enemy.zerg() && Count.ourCombatUnits() <= 10)) return false;
+//        if (We.protoss() && Enemy.zerg() && Count.ourCombatUnits() <= 10) return false;
 
         if (
             We.protoss()
-                && !Enemy.protoss()
+//                && !Enemy.protoss()
                 && !EnemyInfo.hasRanged()
                 && unit.enemiesNearInRadius(9) == 0
         ) return false;
@@ -82,6 +85,12 @@ public class LeaderToOther extends MissionManager {
     }
 
     private AUnit otherFriend() {
-        return unit.squad().units().groundUnits().exclude(unit).combatUnits().nearestTo(unit);
+//        return unit.squad().units().groundUnits().exclude(unit).combatUnits().nearestTo(unit);
+        Selection friends = unit.squad().units().groundUnits().exclude(unit).combatUnits();
+
+        List<AUnit> sorted = friends.sortDataByGroundDistanceTo(unit, true);
+        if (sorted.isEmpty()) return null;
+
+        return sorted.get(sorted.size() / 2);
     }
 }

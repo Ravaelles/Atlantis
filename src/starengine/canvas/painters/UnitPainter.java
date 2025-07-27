@@ -3,28 +3,35 @@ package starengine.canvas.painters;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import starengine.StarEngine;
 import starengine.units.Units;
 import tests.fakes.FakeUnit;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import static starengine.StarEngineConfig.SCALE_UNITS;
 
 public class UnitPainter {
     private final CanvasPainter canvasPainter;
+    private final StarEngine engine;
     private FakeUnit au;
     private Graphics g;
 
-    public UnitPainter(CanvasPainter canvasPainter) {
+    public UnitPainter(CanvasPainter canvasPainter, StarEngine engine) {
         this.canvasPainter = canvasPainter;
+        this.engine = engine;
     }
 
     public void paintUnits(Graphics g) {
         this.g = g;
 
+        if (engine.game().isGameEnd()) return;
+
         // Draw units
-        for (AUnit au : Select.all().list()) {
+        List<AUnit> units = Select.all().list();
+        for (AUnit au : units) {
             FakeUnit unit = (FakeUnit) au;
             paintUnit(unit);
         }

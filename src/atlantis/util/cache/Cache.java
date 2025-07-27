@@ -1,6 +1,7 @@
 package atlantis.util.cache;
 
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.FoggedUnit;
@@ -16,8 +17,16 @@ import java.util.TreeMap;
  * T is type of objects stored e.g. Booleans or generic Object (which can be then cast in methods).
  */
 public class Cache<T> {
+    private static ArrayList<Cache<?>> allInstances = new ArrayList<>();
+
     protected final TreeMap<String, T> data = new TreeMap<>();
     protected final TreeMap<String, Integer> cachedUntil = new TreeMap<>();
+
+    // =========================================================
+
+    public Cache() {
+        if (Env.isTesting()) allInstances.add(this);
+    }
 
     // =========================================================
 
@@ -211,5 +220,12 @@ public class Cache<T> {
 
     public TreeMap<String, Integer> rawCachedUntil() {
         return cachedUntil;
+    }
+
+    public static void nukeAllCaches() {
+        for (Cache<?> cache : allInstances) {
+            cache.clear();
+        }
+        allInstances.clear();
     }
 }

@@ -38,7 +38,7 @@ public class Alpha extends Squad {
 
     @Override
     public boolean allowsSideQuests() {
-        return true;
+        return A.s <= 60 * 7;
 //        return count() >= 14;
     }
 

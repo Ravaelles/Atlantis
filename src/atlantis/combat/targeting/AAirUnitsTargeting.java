@@ -120,7 +120,7 @@ public class AAirUnitsTargeting extends HasUnit {
                 AUnitType.Zerg_Guardian
             )
 //                .inShootRangeOf(unit)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
         if (target != null) {
             return target;
@@ -139,7 +139,7 @@ public class AAirUnitsTargeting extends HasUnit {
                 AUnitType.Zerg_Mutalisk
             )
 //                .inShootRangeOf(unit)
-            .inRadius(15, unit)
+            .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
         if (target != null) {
             return target;

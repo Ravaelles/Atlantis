@@ -171,7 +171,7 @@ public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
         if (unit.shieldWound() >= 20) return false;
 
         return unit.enemiesThatCanAttackMe(0.9).atMost(1)
-            && unit.enemiesNear().ranged().countInRadius(15, unit) <= 2;
+            && unit.enemiesNear().ranged().countInRadius(AUnit.NEAR_DIST, unit) <= 2;
     }
 
     @Override
@@ -185,7 +185,7 @@ public class ProtossForgeExpandStickToCannonSpecialized extends Manager {
         Selection cannons = Select.ourOfType(AUnitType.Protoss_Photon_Cannon);
 
         HasPosition natural = Chokes.natural();
-        if (natural != null) cannons = cannons.inRadius(15, natural);
+        if (natural != null) cannons = cannons.inRadius(AUnit.NEAR_DIST, natural);
 
         return cannons.groundFarthestTo(Select.mainOrAnyBuilding());
     }

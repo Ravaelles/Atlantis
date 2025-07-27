@@ -7,10 +7,10 @@ import atlantis.units.AUnit;
 
 public class ProtossRetreatFromSunken {
     public static Decision decision(AUnit unit) {
-        if (!hasSunkenInRadius(unit, 17)) return Decision.INDIFFERENT;
+        if (!hasSunkenInRadius(unit, 25)) return Decision.INDIFFERENT;
 
-        if (retreatVsSunken(unit)) return Decision.TRUE;
         if (dontRetreatVsSunken(unit)) return Decision.FALSE;
+        if (retreatVsSunken(unit)) return Decision.TRUE;
 
         return Decision.INDIFFERENT;
     }
@@ -24,17 +24,18 @@ public class ProtossRetreatFromSunken {
     }
 
     private static boolean retreatVsSunken(AUnit unit) {
-        if (unit.squadSize() >= 15) return false;
+        if (unit.squadSize() >= 30) return false;
 //        if (unit.lastRetreatedAgo() <= 30 * 5) return false;
-        if (A.s % 20 <= 5 && unit.eval() <= 1.2) return true;
+        if (A.s % 20 <= 5 && unit.eval() <= 1.6) return true;
 
         return false;
     }
 
     private static boolean dontRetreatVsSunken(AUnit unit) {
-        if (unit.squadSize() <= 4) return false;
+        if (unit.squadSize() <= 24) return false;
+        if (unit.eval() <= 2) return false;
         if (unit.lastRetreatedAgo() <= 30 * 12) return false;
 
-        return unit.eval() >= 0.95;
+        return true;
     }
 }

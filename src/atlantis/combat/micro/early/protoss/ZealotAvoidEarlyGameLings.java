@@ -40,13 +40,17 @@ public class ZealotAvoidEarlyGameLings extends Manager {
 
 //        if (enemy.enemiesNear().workers().inRadius(2, unit).notEmpty()) return null;
 
+        if (unit.distToMain() >= 15 && unit.moveToSafety(Actions.MOVE_AVOID)) {
+            return usedManager(this);
+        }
+
         if (unit.runOrMoveAway(enemy, 3)) {
             return usedManager(this);
         }
 
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
-            return usedManager(this, "MoRtAlKoMbAt");
-        }
+//        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+//            return usedManager(this, "MoRtAlKoMbAt");
+//        }
 
         return null;
     }

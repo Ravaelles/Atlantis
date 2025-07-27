@@ -413,8 +413,12 @@ public class A {
     public static String getCurrentTimeAsString() {
         GregorianCalendar today = new GregorianCalendar();
         String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
-        return (hour.length() < 2 ? ("0" + hour) : hour) + ":" + today.get(GregorianCalendar.MINUTE) + ":"
-            + today.get(GregorianCalendar.SECOND);
+        int minutes = today.get(GregorianCalendar.MINUTE);
+        int seconds = today.get(GregorianCalendar.SECOND);
+
+        return (hour.length() < 2 ? ("0" + hour) : hour)
+            + ":" + (minutes <= 9 ? "0" + minutes : minutes)
+            + ":" + (seconds <= 9 ? "0" + seconds : seconds);
     }
 
     /**
@@ -552,6 +556,16 @@ public class A {
         return null;
     }
 
+    public static void writeToFile(String filePath, String content) {
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            fw.write(content + "\n");
+            fw.close();
+        } catch (IOException exception) {
+            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
+        }
+    }
+
     public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
         try {
             if (!fileExists(filePath)) {
@@ -564,7 +578,6 @@ public class A {
             ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
     }
-
 
     /**
      * @return number of all files (directory is not a file) in all these directory and all its
@@ -1288,6 +1301,49 @@ public class A {
     public static boolean directoryExists(String file) {
         File f = new File(file);
         return f.exists() && f.isDirectory();
+    }
+
+    public static boolean createDirectory(String file) {
+        File f = new File(file);
+        return f.mkdir();
+    }
+
+    public static void moveDirectory(String source, String target) {
+        File sourceDir = new File(source);
+        File targetDir = new File(target);
+
+        if (!sourceDir.exists()) {
+            A.errPrintln("Source directory does not exist: " + source);
+            return;
+        }
+
+        if (targetDir.exists()) {
+            A.errPrintln("Target directory already exists: " + target + ", didn't move " + source);
+            return;
+        }
+
+        if (!sourceDir.renameTo(targetDir)) {
+            A.errPrintln("Failed to move directory from " + source + " to " + target);
+        }
+    }
+
+    public static void moveFile(String source, String target) {
+        File sourceFile = new File(source);
+        File targetFile = new File(target);
+
+        if (!sourceFile.exists()) {
+            A.errPrintln("Source file does not exist: " + source);
+            return;
+        }
+
+        if (targetFile.exists()) {
+            A.errPrintln("Target file already exists: " + target + ", didn't move " + source);
+            return;
+        }
+
+        if (!sourceFile.renameTo(targetFile)) {
+            A.errPrintln("Failed to move file from " + source + " to " + target);
+        }
     }
 
     public static void removeFile(String filePath) {

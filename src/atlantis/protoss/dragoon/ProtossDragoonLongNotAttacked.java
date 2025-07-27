@@ -18,7 +18,11 @@ public class ProtossDragoonLongNotAttacked extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
+        if (!unit.isDragoon()) return false;
         if (unit.isAttacking()) return false;
+        if (unit.hp() <= 23) return false;
+        if (unit.enemiesNear().ranged().countInRadius(9, unit) > 0) return false;
+        if (unit.hp() <= 63 && unit.meleeEnemiesNearCount(2.3) > Enemy.zergElse(2, 1)) return false;
 
         if (unit.isRetreating()) {
             if (unit.shotSecondsAgo() >= 2 && unit.eval() >= 0.9) return true;

@@ -86,7 +86,7 @@ public class EnemyExistingExpansion {
         }
 
 //                for (AUnit base : EnemyUnits.discovered().mainAndNatural().list()) {
-//                    if (mainAndNatural.inRadius(15, base).empty()) {
+//                    if (mainAndNatural.inRadius(AUnit.NEAR_DIST, base).empty()) {
 //                        found.add(base);
 //                    }
 //                }

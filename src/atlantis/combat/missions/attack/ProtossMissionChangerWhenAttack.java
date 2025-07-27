@@ -1,8 +1,10 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
@@ -37,7 +39,12 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return false;
         }
 
-        if (Enemy.zerg() && Count.ourCombatUnits() <= 7 && Count.dragoons() <= 2) {
+        if (baseUnderAttack()) {
+            if (DEBUG) reason = "Base_under_attack";
+            return forceMissionSpartaOrDefend(reason);
+        }
+
+        if (Enemy.zerg() && Count.ourCombatUnits() <= 7 && Count.dragoons() <= 2 && Army.strengthWithoutCB() <= 120) {
             if (DEBUG) reason = "Defend_vZ_no_Goonz";
             return true;
         }
@@ -77,6 +84,23 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         return false;
     }
 
+    private boolean baseUnderAttack() {
+        if (A.supplyUsed() <= 160 && !A.hasMinerals(2000)) {
+            AUnit enemyInBase = EnemyUnitBreachedBase.get();
+            if (
+                enemyInBase != null
+                    && enemyInBase.hasPosition()
+                    && enemyInBase.isVisibleUnitOnMap()
+                    && enemyInBase.hp() > 0
+                    && (enemyInBase.friendsInRadiusCount(5) >= 1 || enemyInBase.isCrucialUnit())
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static boolean ignoreWeAreWeaker() {
         return (!Enemy.zerg() || (Count.dragoons() >= 0.65 * EnemyUnits.hydras()))
             && (!Enemy.protoss() || (Count.dragoons() >= 2 * EnemyUnits.dragoons()));
@@ -103,10 +127,19 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
             return forceMissionSpartaOrDefend(reason);
         }
 
-        if (goons >= 1 && hydras >= 2 && Army.strengthWithoutCB() <= 155 && !ResearchSingularityCharge.isResearched()) {
-            if (DEBUG) reason = "Hydras and no goon range(" + Army.strength() + "%)";
-            return forceMissionSpartaOrDefend(reason);
-        }
+//        if (
+//            goons >= 12
+//                && !ResearchSingularityCharge.isResearched()
+//                && Army.strengthWithoutCB() <= 125
+//        ) {
+//            if (DEBUG) reason = "Goons (" + goons + ") and no goon range(" + Army.strength() + "%)";
+//            return forceMissionSpartaOrDefend(reason);
+//        }
+
+//        if (goons >= 1 && hydras >= 2 && Army.strengthWithoutCB() <= 155 && !ResearchSingularityCharge.isResearched()) {
+//            if (DEBUG) reason = "Hydras and no goon range(" + Army.strength() + "%)";
+//            return forceMissionSpartaOrDefend(reason);
+//        }
 
         if (Strategy.get().isRushOrCheese() && Army.strengthWithoutCB() >= 95) {
             if (DEBUG) reason = "Rush-or-cheese attack";
@@ -125,8 +158,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 //            return true;
 //        }
 
-        if (goons <= 1 && defendAgainstMassZerglings()) {
-            return forceMissionSpartaOrDefend(reason = "Mass zerglings E");
+        if ((goons <= 1 || (goons <= 3 && Army.strength() <= 120)) && defendAgainstMassZerglings()) {
+            return forceMissionSpartaOrDefend(reason = "Mass zerglings E!");
         }
 
         if (hydras > 0 && goons <= 6 && hydras * 2.5 >= goons && Army.strengthWithoutCB() <= 190) {

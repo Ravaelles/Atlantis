@@ -116,6 +116,11 @@ public class AtlantisIgniter {
     }
 
     private static void updateMapAndGameTypeIfNeeded() {
+        if (Env.isBenchmark()) {
+            fileContent = enforceGameTypeToUseMapSettings();
+            shouldUpdateFileContent = true;
+        }
+
         for (int i = 0; i < fileContent.length; i++) {
             String line = fileContent[i];
 //            System.err.println("line = " + line);
@@ -131,7 +136,7 @@ public class AtlantisIgniter {
 
             // game_type = USE_MAP_SETTINGS
             else if (line.startsWith("game_type = ")) {
-                String gameType = (
+                String gameType = Env.isBenchmark() || (
                     ActiveMap.activeMapPath().contains("ums/")
                 ) ? "USE_MAP_SETTINGS" : "MELEE";
                 fileContent[i] = "game_type = " + gameType;
@@ -142,6 +147,16 @@ public class AtlantisIgniter {
                 }
             }
         }
+
+        fileContent = java.util.Arrays.stream(fileContent).distinct().toArray(String[]::new);
+    }
+
+    private static String[] enforceGameTypeToUseMapSettings() {
+        String[] newFileContent = new String[fileContent.length + 1];
+        System.arraycopy(fileContent, 0, newFileContent, 0, fileContent.length);
+        newFileContent[fileContent.length] = "game_type = USE_MAP_SETTINGS";
+
+        return newFileContent;
     }
 
     private static void writeToBwapiIni() {

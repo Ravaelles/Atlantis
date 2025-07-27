@@ -62,8 +62,7 @@ public abstract class RaceStrategyResponse {
         // === Expansion ===================================
 
         if (enemyStrategy.isExpansion() && GamePhase.isEarlyGame() && Mission.get().isMissionDefendOrSparta()) {
-//            Missions.forceGlobalMissionContain("Enemy is expanding, engage him");
-            if (!Enemy.zerg() || Army.strength() >= 121) {
+            if (!Enemy.zerg() || Army.strengthWithoutCB() >= 131) {
                 Missions.forceGlobalMissionAttack("Enemy is expanding, engage him");
             }
         }

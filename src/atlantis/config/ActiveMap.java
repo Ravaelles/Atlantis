@@ -21,6 +21,20 @@ public class ActiveMap {
 
     // =========================================================
 
+    public static String readMapFromCliArgument(String[] args) {
+        String mapName = null;
+
+        for (String arg : args) {
+            if (arg.startsWith("--map=")) {
+                mapName = arg.substring(6); // Remove "--map=" prefix
+            }
+        }
+
+        return mapName;
+    }
+
+    // =========================================================
+
     public static String activeMapPath() {
         if (_cachedMapPath != null) return _cachedMapPath;
 

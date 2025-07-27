@@ -178,7 +178,7 @@ public class EnemyInfo {
             return null;
         }
 
-        return Select.enemyCombatUnits().havingAntiGroundWeapon().inRadius(15, main).nearestTo(main);
+        return Select.enemyCombatUnits().havingAntiGroundWeapon().inRadius(AUnit.NEAR_DIST, main).nearestTo(main);
     }
 
     public static boolean isProxyBuilding(AUnit enemyBuilding) {

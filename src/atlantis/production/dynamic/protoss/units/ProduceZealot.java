@@ -37,7 +37,10 @@ public class ProduceZealot {
 
         if (PrioritizeCyberneticsOverZealotsAndGateways.prioritizeCybernetics()) return false;
 
-        if (freeGateways >= 2 && A.hasMinerals(700) && A.supplyUsed() <= 185) return produceZealot();
+        if (earlyGameZealots(freeGateways)) return produceZealot();
+
+        if (freeGateways >= 1 && A.hasMinerals(560) && !A.hasGas(200) && Count.zealots() <= 12) return produceZealot();
+        if (freeGateways >= 2 && A.hasMinerals(530) && A.supplyUsed() <= 185) return produceZealot();
 
         if (!Have.assimilator() && A.hasMinerals(250) && zealots <= 7) return produceZealot();
         if (produceLateGameWithLotsOfMinerals()) return produceZealot();
@@ -55,8 +58,6 @@ public class ProduceZealot {
         if (zealots >= 2 && !A.hasMinerals(ReservedResources.minerals() + 100)) return false;
 
         if (freeGateways >= 2 && A.hasMinerals(700) && A.hasFreeSupply(4)) return produceZealot();
-
-        if (earlyGameZealots(freeGateways)) return produceZealot();
 
         if (A.hasMinerals(550) && freeGateways >= 2) return produceZealot();
 
@@ -87,7 +88,18 @@ public class ProduceZealot {
             if (freeGateways >= 2 && A.hasMinerals(minMinerals)) return produceZealot();
         }
 
+        if (earlyGameVsZerg()) return produceZealot();
+
         return false;
+    }
+
+    private static boolean earlyGameVsZerg() {
+        if (!Enemy.zerg()) return false;
+        if (freeGateways <= 0) return false;
+        if (A.hasMinerals(150)) return false;
+        if (!Have.existingUnfinishedOrPlanned(Protoss_Cybernetics_Core)) return false;
+
+        return EnemyUnits.combatUnits() >= (freeGateways >= 2 ? 7 : 8);
     }
 
     private static boolean earlyGameRushZealots() {

@@ -88,7 +88,7 @@ public class NumberOfGasWorkersCommander extends Commander {
 
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
         return FreeWorkers.get()
-            .inRadius(15, gasBuilding)
+            .inRadius(AUnit.NEAR_DIST, gasBuilding)
             .gatheringMinerals(true)
             .nearestTo(gasBuilding);
     }

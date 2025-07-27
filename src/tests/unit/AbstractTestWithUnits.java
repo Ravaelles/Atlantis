@@ -21,6 +21,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.Options;
+import atlantis.util.cache.Cache;
 import bwapi.Game;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
@@ -128,6 +129,8 @@ public class AbstractTestWithUnits extends UnitTest {
                 }
             }
         }
+
+        Cache.nukeAllCaches();
 
         ReservedResources.reset();
 

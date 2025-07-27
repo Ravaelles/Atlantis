@@ -3,6 +3,7 @@ package atlantis.game.listeners;
 import atlantis.Atlantis;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.transfers.SquadTransfersCommander;
+import atlantis.config.env.Env;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
 import atlantis.game.event.Events;
@@ -46,11 +47,26 @@ public class OnOurUnitDestroyed {
     }
 
     private static void printOurDeadUnit(AUnit unit) {
-        if (unit.type().isGasBuilding()) return;
+//        if (!unit.type().isDragoon()) return;
+        if (!unit.isCombatUnit()) return;
+        if (A.s >= 60 * 6 && !unit.isRanged()) return;
 
-//        System.err.println(A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED");
-//        System.out.println("___DEAD_" + unit.type().name() + " at " + A.minSec() + "______");
-//        System.out.println(unit.managerLogs().toString());
-//        System.out.println("_____________________________");
+        String prefix = "";
+        String string1 = unit.managerLogs().toString();
+        String string2 = unit.log().toString();
+
+        if (!Env.isLocal()) {
+            prefix = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+
+            string1 = string1.replace("\n", "\n" + prefix);
+            string2 = string2.replace("\n", "\n" + prefix);
+        }
+
+        System.out.println(prefix + "_____________________________");
+        System.out.println(prefix + A.minSec() + " - Our " + unit.type().name() + " DIED [*]");
+        System.out.println(prefix + string1);
+        System.out.println(prefix + "---");
+        System.out.println(prefix + string2);
+        System.out.println(prefix + "_____________________________");
     }
 }

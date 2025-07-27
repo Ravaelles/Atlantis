@@ -6,6 +6,7 @@ import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.dynamic.expansion.protoss.ProtossShouldExpand;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -42,7 +43,7 @@ public class ProduceGateway {
         bases = Count.basesWithUnfinished();
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (minerals >= 570 && freeGateways <= 2 && unfinishedGateways <= 2) return produceGateway();
+        if (minerals >= 520 && freeGateways <= 2 && unfinishedGateways <= 2) return produceGateway();
 
         if (existingGateways <= 2 && A.supplyUsed() >= 35 && A.hasMinerals(240)) return produceGateway();
         if (minerals >= 550 && (existingGateways <= 8 || freeGateways <= 1)) return produceGateway();
@@ -170,6 +171,10 @@ public class ProduceGateway {
                     && Count.ourWithUnfinished(Protoss_Observer) <= 1
             ) {
                 return !A.canAfford(310, 34);
+            }
+
+            if (Count.existingOrInProduction(Protoss_Forge) == 0) {
+                CancelNotStartedBases.cancelNotStartedOrEarlyBases(null, "HiddenEnemiesPressure");
             }
         }
 
