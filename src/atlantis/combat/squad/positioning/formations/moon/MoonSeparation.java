@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
+import atlantis.combat.squad.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -21,7 +22,7 @@ public class MoonSeparation {
         if (We.protoss()) {
 //            return Count.dragoons() >= 3 ? 0.8 : 0.6;
 //
-            if (leader.isRanged()) return AUnitType.Protoss_Dragoon.widthInTiles() + 0.1;
+            if (leader.isRanged()) return AUnitType.Protoss_Dragoon.widthInTiles() + 0.1 + Alpha.count() / 140.0;
             return AUnitType.Protoss_Zealot.widthInTiles() + 0.05;
         }
 

@@ -43,7 +43,7 @@ public class EnemyExistingExpansion {
                 HasPosition vulnerable = getVulnerableBase(mainAndNatural);
                 if (vulnerable != null) {
                     HasPosition mainOrNatural = mainAndNatural.nearestTo(vulnerable);
-                    if (mainOrNatural != null && mainOrNatural.groundDist(vulnerable) >= 20) {
+                    if (mainOrNatural != null && mainOrNatural.groundDist(vulnerable) >= 27) {
                         lastFound = vulnerable;
                         return vulnerable;
                     }
@@ -80,7 +80,7 @@ public class EnemyExistingExpansion {
         Positions<HasPosition> mainAndNatural, ArrayList<AUnit> found, APosition enemyMain
     ) {
         for (AUnit building : EnemyUnits.discovered().buildings().notLifted().list()) {
-            if (mainAndNatural.inGroundRadius(17, building).empty()) {
+            if (mainAndNatural.inGroundRadius(27, building).empty()) {
                 found.add(building);
             }
         }

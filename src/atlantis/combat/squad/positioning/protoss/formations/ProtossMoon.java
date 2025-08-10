@@ -37,9 +37,9 @@ public class ProtossMoon extends Manager {
 //        System.err.println("goTo = " + goTo);
         if (goTo == null) return null;
 
-        unit.paintLineDouble(goTo, Color.Green);
-        unit.paintCircleFilled(6, Color.Green);
-        goTo.paintCircleFilled(6, Color.Green);
+//        unit.paintLineDouble(goTo, Color.Green);
+//        unit.paintCircleFilled(6, Color.Green);
+//        goTo.paintCircleFilled(6, Color.Green);
 //        System.out.println(unit + " MOON to " + goTo + " / " + unit.distToDigit(goTo));
 
         unit.move(goTo, Actions.MOVE_FORMATION);

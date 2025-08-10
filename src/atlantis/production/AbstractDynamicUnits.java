@@ -56,7 +56,7 @@ public class AbstractDynamicUnits extends Helpers {
         if (!Requirements.hasRequirements(type)) return false;
         if (SoonInQueue.have(type)) return false;
 
-        AddToQueue.addToQueueIfHaveFreeBuilding(type);
+        return AddToQueue.addToQueueIfHaveFreeBuilding(type);
     }
 
 }

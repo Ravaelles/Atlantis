@@ -943,6 +943,15 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
+    public static Selection enemyBuildings() {
+        String cachePath;
+        return cache.get(
+            cachePath = "enemyBuildings",
+            microCacheForFrames,
+            () -> enemy().buildings()
+        );
+    }
+
     /**
      * Returns first idle our unit of given type or null if no idle units found.
      */

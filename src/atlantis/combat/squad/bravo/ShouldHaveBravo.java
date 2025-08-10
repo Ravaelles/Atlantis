@@ -18,12 +18,12 @@ public class ShouldHaveBravo {
 
         int alphaCount = Alpha.count();
 
-        if (!_prev && alphaCount <= ALPHA_COUNT_THRESHOLD - 2) return f("Too few units");
-
         if (Missions.isGlobalMissionAttack()) {
             AUnit enemy = EnemyUnitBreachedBase.get();
             if (enemy != null) return t("BreachedBase");
         }
+
+        if (!_prev && alphaCount <= ALPHA_COUNT_THRESHOLD - 2) return f("Too few units");
 
         if (We.terran() && A.supplyUsed() <= 170) return f("Terran and low supply");
 

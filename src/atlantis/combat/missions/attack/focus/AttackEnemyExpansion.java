@@ -40,7 +40,6 @@ public class AttackEnemyExpansion {
 
         return new AFocusPoint(
             expansion,
-            Select.mainOrAnyBuilding(),
             "AttackExpansion"
         );
     }

@@ -107,7 +107,7 @@ public class Selection extends BaseSelection {
             0,
             () -> cloneByRemovingIf(
                 (u -> u.groundDist(unit) > maxDist),
-                maxDist + ":" + unit.idWithHash()
+                "inGroundRadius:" + maxDist + ":" + unit.idWithHash()
             )
         );
     }

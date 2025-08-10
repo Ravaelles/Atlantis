@@ -12,8 +12,8 @@ import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
-public class ResearchProtossGroundWeapons extends Commander {
-    public static UpgradeType what() {
+public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
+    public UpgradeType what() {
         return Protoss_Ground_Weapons;
     }
 
@@ -36,8 +36,8 @@ public class ResearchProtossGroundWeapons extends Commander {
         return false;
     }
 
-    private static boolean isResearched() {
-        boolean isResearched = ATech.isResearched(what());
+    public static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(Protoss_Ground_Weapons);
         if (!isResearched) return false;
 
         int upgradeLevel = getCurrentUpgradeLevel();
@@ -47,14 +47,11 @@ public class ResearchProtossGroundWeapons extends Commander {
     }
 
     private static int getCurrentUpgradeLevel() {
-        return ATech.getUpgradeLevel(what());
+        return ATech.getUpgradeLevel(Protoss_Ground_Weapons);
     }
 
     @Override
     protected void handle() {
-//        if (AddToQueue.upgrade(what())) {
-//            Queue.get().history().addNow(what().name());
-//        }
         ResearchNow.research(what());
     }
 

@@ -39,7 +39,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
             "focusPoint",
-            23,
+            53,
             () -> defineFocusPoint()
         );
     }
@@ -54,7 +54,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemiesNearMain();
         if (focus != null) return focus;
 
-        if (A.supplyUsed() >= 90 || Alpha.count() >= 14) {
+        if (A.supplyUsed() >= 90 || Alpha.count() >= 14 || Army.strength() >= 180 || EnemyUnits.combatUnits() <= 10) {
             focus = enemyExpansionsPositions();
             if (focus != null) return focus;
         }
@@ -86,7 +86,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
     private AFocusPoint enemiesNearMain() {
         if (A.supplyUsed() >= 70) return null;
 
-        AUnit main = Select.main();
+        AUnit main = Select.mainOrAnyBuilding();
         if (main == null) return null;
 
         if (Enemy.zerg()) {
@@ -94,14 +94,13 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (muta != null && muta.enemiesNear().buildings().countInRadius(8, muta) > 0) {
                 return new AFocusPoint(
                     muta,
-                    main,
                     "EnemyMuta!"
                 );
             }
         }
 
-        Selection visibleEnemies = Select.enemyCombatUnits().visibleOnMap().inRadius(50, main);
-        if (visibleEnemies.count() <= 3) return null;
+        Selection visibleEnemies = Select.enemyCombatUnits().visibleOnMap().inGroundRadius(25, main);
+        if (visibleEnemies.count() <= 2) return null;
 
         AUnit enemyNearestToMain = visibleEnemies.nearestTo(main);
         if (enemyNearestToMain == null) return null;
@@ -110,7 +109,6 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         return new AFocusPoint(
             enemyNearestToMain,
-            main,
             "EnemiesNearMain"
         );
     }

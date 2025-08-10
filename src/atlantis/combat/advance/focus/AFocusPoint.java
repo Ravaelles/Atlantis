@@ -41,6 +41,10 @@ public class AFocusPoint extends APosition {
 //        this.position = unit.position();
     }
 
+    public AFocusPoint(HasPosition unit, String name) {
+        this(unit.position(), Select.mainOrAnyBuilding(), name);
+    }
+
     public AFocusPoint(AUnit unit, HasPosition fromSide, String name) {
         this(unit.position(), fromSide, name);
 //        this(unit, fromSide, name);
