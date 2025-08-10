@@ -29,7 +29,7 @@ public class FoundEnemyExposedExpansion {
                         return new AFocusPoint(
                             base,
                             Select.mainOrAnyBuilding(),
-                            "AttackEnemyExpansion(" + base.distTo(Select.mainOrAnyBuilding()) + ")"
+                            "AttackEnemyExpansion(" + (int) base.distTo(Select.mainOrAnyBuilding()) + ")"
                         );
                     }
                 }

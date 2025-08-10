@@ -25,3 +25,4 @@ replay_pid*
 /bwapi-data/write/cherryvis.txt
 /benchmark_results.csv
 /_benchmarkState
+/game_results.txt

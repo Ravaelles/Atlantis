@@ -21,6 +21,8 @@ public class AFocusPoint extends APosition {
     private HasPosition position = null;
     private String name = null;
 
+    private static String _prev = "";
+
     // =========================================================
 
 //    public AFocusPoint(HasPosition position) {
@@ -46,8 +48,10 @@ public class AFocusPoint extends APosition {
         this.fromSide = fromSide;
         this.name = name;
 
-        System.err.println(A.minSec() + " - New FP: " + name);
+        if (!_prev.equals(name)) System.err.println(A.minSec() + " - New FP: " + name);
 //        this.position = unit.position();
+
+        _prev = name;
     }
 
 //    public AFocusPoint(HasPosition position, String name) {
