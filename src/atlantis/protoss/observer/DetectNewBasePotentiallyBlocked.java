@@ -27,11 +27,14 @@ public class DetectNewBasePotentiallyBlocked extends Manager {
         if (shouldNotLeaveAlphaSquad()) return false;
 
         ArrayList<Construction> basesNotStarted = ConstructionRequests.notStartedOfType(AUnitType.Protoss_Nexus);
-        if (!basesNotStarted.isEmpty()) {
-            baseConstruction = basesNotStarted.get(0).buildPosition();
+        if (basesNotStarted.isEmpty()) {
+            return false;
         }
 
+        baseConstruction = basesNotStarted.get(0).buildPosition();
+
         return baseConstruction != null
+            && baseConstruction.hasPosition()
             && Select.ourBasesWithUnfinished().countInRadius(8, baseConstruction) == 0
             && isNearestObserverToConstructionPosition();
     }
