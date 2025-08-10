@@ -48,13 +48,13 @@ public class AbstractDynamicUnits extends Helpers {
         return AddToQueue.addToQueueIfHaveFreeBuilding(type);
     }
 
-    public static void trainNowIfHaveWhatsRequired(AUnitType type, boolean onlyOneAtTime) {
+    public static boolean trainNowIfHaveWhatsRequired(AUnitType type, boolean onlyOneAtTime) {
         if (!onlyOneAtTime) {
             AGame.exit("Unhandled yet");
         }
 
-        if (!Requirements.hasRequirements(type)) return;
-        if (SoonInQueue.have(type)) return;
+        if (!Requirements.hasRequirements(type)) return false;
+        if (SoonInQueue.have(type)) return false;
 
         AddToQueue.addToQueueIfHaveFreeBuilding(type);
     }

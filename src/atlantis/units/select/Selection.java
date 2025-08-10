@@ -743,6 +743,10 @@ public class Selection extends BaseSelection {
         return units().onlyAir();
     }
 
+    public boolean onlyGround() {
+        return units().onlyGround();
+    }
+
     public boolean onlyOfType(AUnitType type) {
         return count() > 0 && count() == countOfType(type);
     }

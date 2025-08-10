@@ -22,8 +22,9 @@ public class ProtossCorsair extends MobileDetector {
         return new Class[]{
             AsAirAvoidDeadlyAntiAir.class,
             AsAirAvoidAntiAir.class,
-            CorsairHuntOverlords.class,
             CorsairHuntMutas.class,
+            CorsairHuntOverlords.class,
+            CorsairHuntKnownOverlords.class,
             ScoutFreeBases.class,
         };
     }

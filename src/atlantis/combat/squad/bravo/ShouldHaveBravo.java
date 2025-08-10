@@ -18,7 +18,7 @@ public class ShouldHaveBravo {
 
         int alphaCount = Alpha.count();
 
-        if (alphaCount <= 20) return f("Too few units");
+        if (!_prev && alphaCount <= ALPHA_COUNT_THRESHOLD - 2) return f("Too few units");
 
         if (Missions.isGlobalMissionAttack()) {
             AUnit enemy = EnemyUnitBreachedBase.get();

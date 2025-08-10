@@ -291,4 +291,10 @@ public class EnemyInfo {
 
         return 0;
     }
+
+    public static boolean goesZergAirUnits() {
+        if (!Enemy.zerg()) return false;
+
+        return EnemyUnits.discovered().ofType(AUnitType.Zerg_Spire, AUnitType.Zerg_Mutalisk).empty();
+    }
 }

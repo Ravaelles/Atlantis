@@ -54,6 +54,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemiesNearMain();
         if (focus != null) return focus;
 
+        if (A.supplyUsed() >= 90 || Alpha.count() >= 14) {
+            focus = enemyExpansionsPositions();
+            if (focus != null) return focus;
+        }
+
         focus = middleMapChokePoint();
         if (focus != null) return focus;
 
