@@ -25,6 +25,7 @@ public class ProtossCorsair extends MobileDetector {
             CorsairHuntMutas.class,
             CorsairHuntOverlords.class,
             CorsairHuntKnownOverlords.class,
+            CorsairExploreEnemyMain.class,
             ScoutFreeBases.class,
         };
     }
