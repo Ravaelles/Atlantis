@@ -22,11 +22,11 @@ public class ZealotAvoidEarlyGameLings extends Manager {
             && Enemy.zerg()
             && Count.ourCombatUnits() <= 3
             && unit.isMelee()
-            && unit.cooldown() >= 4
+//            && unit.cooldown() >= 4
             && (Enemy.zerg() || Enemy.protoss())
             && unit.shieldWound() >= 4
             && unit.eval() <= 1.1
-            && unit.lastAttackFrameLessThanAgo(40)
+            && (unit.hp() <= 60 || unit.lastAttackFrameLessThanAgo(40))
             && (enemies = unit.enemiesNear().groundUnits().melee()).notEmpty()
             && enemies.inRadius(4, unit).notEmpty()
             && unit.friendsNear().workers().inRadius(2, unit).empty()
