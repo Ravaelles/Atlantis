@@ -11,7 +11,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
 
 public class EnemyNearBases {
-    public static final int DIST_CONSIDERED_CLOSE_TO_BASE = 7;
+    public static final int DIST_CONSIDERED_CLOSE_TO_BASE = 8;
     private static Cache<Object> cache = new Cache<>();
     private static int maxDist;
 

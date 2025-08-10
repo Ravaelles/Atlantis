@@ -206,7 +206,9 @@ public class ProtossShouldExpand {
         if (cautionAgainstZergArmy()) return no("CautionZerg");
 
         if (bases <= 1 && basesInProduction <= 0) {
-            int minNeeded = Count.ourCombatUnits() <= 9 ? 442 : 376;
+            int minNeeded = (Count.ourCombatUnits() <= 14 ? 442 : 360)
+                + (Army.strength() <= 150 ? 80 : 0);
+
             if (A.hasMinerals(minNeeded) && Count.workers() >= 18 && CountInQueue.bases() == 0) {
                 Count.clearCache();
                 if (Count.inProductionOrInQueue(AtlantisRaceConfig.BASE) == 0) {

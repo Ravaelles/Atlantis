@@ -34,6 +34,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         if (A.hasMinerals(500)) return decision(true, "Minerals++");
         if (Count.ourCombatUnits() <= 4) return decision(true, "BattleProduce");
         if (A.hasMinerals(210) && Count.ourCombatUnits() <= 7) return decision(true, "BattleProduceSaved");
+        if (Army.strength() <= 130 && Count.ourCombatUnits() <= 13) return decision(true, "BattleProduceMargin");
 
         if (A.supplyUsed() >= 25) {
             int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
