@@ -85,7 +85,7 @@ public class ProtossStartRetreat extends HasUnit {
 //            return true;
 //        }
 
-        if (unit.moveAwayFrom(runAwayFrom, 10, RUN_RETREAT, "AnyhowRetreat")) {
+        if (unit.moveAwayFrom(runAwayFrom, 8, RUN_RETREAT, "AnyhowRetreat")) {
             unitStartedRetreating(runAwayFrom);
             unit.paintLine(unit.runningManager().runTo(), Color.Blue);
             return true;
