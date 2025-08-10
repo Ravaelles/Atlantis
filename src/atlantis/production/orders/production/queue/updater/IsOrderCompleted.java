@@ -1,13 +1,11 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.Counter;
-import atlantis.util.log.ErrorLog;
 
 public class IsOrderCompleted {
     protected static boolean isCompleted(ProductionOrder order, Counter<AUnitType> existingCounter) {
@@ -66,7 +64,7 @@ public class IsOrderCompleted {
     private static int expectedUnitsCount(AUnitType type, Counter<AUnitType> expectedCounter) {
 //        return ThisManyUnitsByDefault.numOfUnits(type) + expectedCounter.getValueFor(type);
         return ThisManyUnitsByDefault.numOfUnits(type)
-            + Queue.get().completedOrInProgress().size();
+            + Queue.get().finishedOrInProgress().size();
     }
 
     private static int existingCompletedUnitsCount(AUnitType type) {

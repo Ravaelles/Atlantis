@@ -2,7 +2,6 @@ package atlantis.production.orders.production.queue.add;
 
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.ClearCountCache;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -211,7 +210,7 @@ public class AddToQueue {
 //    }
 
     private static int defineMinSupplyForNewOrder(AUnitType type) {
-        Orders nextOrders = Queue.get().nextOrders(20).nonCompleted();
+        Orders nextOrders = Queue.get().nextOrders(20).notFinished();
 
 //        nextOrders.print("nextOrders");
 
@@ -226,7 +225,7 @@ public class AddToQueue {
             return Count.gasBuildingsWithUnfinished() + 1;
         }
 
-        ProductionOrder last = type == null ? null : nextOrders.nonCompleted().ofType(type).last();
+        ProductionOrder last = type == null ? null : nextOrders.notFinished().ofType(type).last();
 
         return 1 + Math.max(
             Math.max(0, last == null ? 0 : last.minSupply()),

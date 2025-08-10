@@ -13,7 +13,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-import static atlantis.production.orders.production.queue.order.OrderStatus.COMPLETED;
+import static atlantis.production.orders.production.queue.order.OrderStatus.FINISHED;
 
 public class OnOurNewUnitCompleted {
     public static void ourNewUnitCompleted(AUnit unit) {
@@ -39,12 +39,12 @@ public class OnOurNewUnitCompleted {
     private static void cleanUpProductionOrderAndConstruction(AUnit unit) {
         ProductionOrder order = unit.productionOrder();
         if (order != null) {
-            order.setStatus(COMPLETED);
+            order.setStatus(FINISHED);
         }
 
         if (unit.isABuilding()) {
             Construction construction = unit.construction();
-            if (construction != null) construction.setStatus(ConstructionOrderStatus.COMPLETED);
+            if (construction != null) construction.setStatus(ConstructionOrderStatus.FINISHED);
 
             unit.setConstruction(null);
         }

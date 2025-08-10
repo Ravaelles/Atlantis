@@ -726,7 +726,7 @@ public class AAdvancedPainter extends APainter {
      */
     static void paintProductionQueue() {
 //        Orders nextOrders = Queue.get().nextOrders(30);
-        Orders nextOrders = Queue.get().nonCompletedNext30();
+        Orders nextOrders = Queue.get().notFinishedNext30();
         int size = nextOrders.size();
 
         paintSideMessage("", Color.White);
@@ -785,7 +785,7 @@ public class AAdvancedPainter extends APainter {
             case IN_PROGRESS:
                 return order.isBuildingAndConstructionStarted() ? Purple : Yellow;
 //                return order.con() != null ? Yellow;
-            case COMPLETED:
+            case FINISHED:
                 return Green;
             default:
                 return Black;
@@ -839,7 +839,7 @@ public class AAdvancedPainter extends APainter {
                     case IN_PROGRESS:
                         color = Color.Blue;
                         break;
-                    case COMPLETED:
+                    case FINISHED:
                         color = Color.Teal;
                         break;
                     default:

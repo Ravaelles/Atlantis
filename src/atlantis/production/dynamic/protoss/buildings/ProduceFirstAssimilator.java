@@ -23,7 +23,7 @@ public class ProduceFirstAssimilator {
         if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return false;
         if (!Have.existingOrUnfinished(Protoss_Cybernetics_Core)) return false;
 
-        ProductionOrder existingOrder = Queue.get().nonCompletedNext30().ofType(type()).first();
+        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
         if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
             A.errPrintln("Canceling existing ASSIM order " + existingOrder);
             PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(

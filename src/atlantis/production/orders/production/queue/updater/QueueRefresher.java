@@ -18,7 +18,7 @@ public class QueueRefresher {
     }
 
     public void refresh() {
-        for (ProductionOrder order : queue.nonCompleted().list()) {
+        for (ProductionOrder order : queue.notFinished().list()) {
             if (order.shouldIgnore()) continue;
 
             updateOrderStatus(order);
@@ -67,14 +67,14 @@ public class QueueRefresher {
 //            A.errPrintln("########################### Gas building completed: " + order.construction());
 //        }
 
-        order.setStatus(OrderStatus.COMPLETED);
+        order.setStatus(OrderStatus.FINISHED);
 //        order.setUnitType(null);
 //        order.setModifier(null);
 //        order.forceSetPosition(null);
 
         if (Queue.get() != null) Queue.get().clearCache();
 
-        return OrderStatus.COMPLETED;
+        return OrderStatus.FINISHED;
 
 //        OrderStatus status = order.status();
 //        order.cancel();

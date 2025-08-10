@@ -225,11 +225,11 @@ public class PreventDuplicateOrders {
         if (A.hasMinerals(700)) return A.s % 3 != 0;
 
         if (
-            Queue.get().nonCompleted().notInProgress().forCurrentSupply().size() >= MAX_NONCOMPLETED_ORDERS_AT_ONCE
+            Queue.get().notFinished().notInProgress().forCurrentSupply().size() >= MAX_NONCOMPLETED_ORDERS_AT_ONCE
         ) {
             ErrorLog.printMaxOncePerMinute("There are too many orders in queue, can't add more: " + type);
             if (A.everyNthGameFrame(79) && (!Env.isTournament() || A.everyNthGameFrame(30 * 30))) {
-                Queue.get().nonCompleted().forCurrentSupply().print();
+                Queue.get().notFinished().forCurrentSupply().print();
             }
             return true;
         }
@@ -258,7 +258,7 @@ public class PreventDuplicateOrders {
     public static boolean cancelPreviousNonStartedOrdersOf(UpgradeType upgrade, String reason) {
         boolean result = false;
 
-        for (ProductionOrder order : Queue.get().nonCompleted().ofType(upgrade).list()) {
+        for (ProductionOrder order : Queue.get().notFinished().ofType(upgrade).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 
@@ -272,7 +272,7 @@ public class PreventDuplicateOrders {
     public static boolean cancelPreviousNonStartedOrdersOf(TechType tech, String reason) {
         boolean result = false;
 
-        for (ProductionOrder order : Queue.get().nonCompleted().ofType(tech).list()) {
+        for (ProductionOrder order : Queue.get().notFinished().ofType(tech).list()) {
             if (order.isInProgress()) return true;
             order.setIgnore(true);
 

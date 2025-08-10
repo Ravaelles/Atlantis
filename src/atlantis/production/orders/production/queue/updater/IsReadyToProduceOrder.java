@@ -16,7 +16,7 @@ import atlantis.util.We;
 
 public class IsReadyToProduceOrder {
     public static boolean isReady(ProductionOrder order) {
-        if (order.isStatus(OrderStatus.COMPLETED)) {
+        if (order.isStatus(OrderStatus.FINISHED)) {
 //            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
             return false;
         }

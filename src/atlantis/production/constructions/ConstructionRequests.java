@@ -201,10 +201,10 @@ public class ConstructionRequests {
         return notStarted;
     }
 
-    public static ArrayList<Construction> notCompletedOfType(AUnitType type) {
+    public static ArrayList<Construction> notFinishedOfType(AUnitType type) {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() != ConstructionOrderStatus.COMPLETED
+            if (construction.status() != ConstructionOrderStatus.FINISHED
                 && (type == null || construction.buildingType().equals(type))) {
                 notStarted.add(construction);
             }
@@ -222,14 +222,14 @@ public class ConstructionRequests {
         return notStarted;
     }
 
-    public static ArrayList<Construction> notCompleted() {
-        ArrayList<Construction> notCompleted = new ArrayList<>();
+    public static ArrayList<Construction> notFinished() {
+        ArrayList<Construction> notFinished = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() != ConstructionOrderStatus.COMPLETED) {
-                notCompleted.add(construction);
+            if (construction.status() != ConstructionOrderStatus.FINISHED) {
+                notFinished.add(construction);
             }
         }
-        return notCompleted;
+        return notFinished;
     }
 
     /**
@@ -300,7 +300,7 @@ public class ConstructionRequests {
     public static APosition nearestOfTypeTo(AUnitType building, HasPosition position, double max) {
         assert position != null;
 
-        for (Construction order : notCompletedOfType(building)) {
+        for (Construction order : notFinishedOfType(building)) {
             if (
                 order != null
                     && order.buildPosition() != null
@@ -331,6 +331,6 @@ public class ConstructionRequests {
     }
 
     public static boolean isBeingBuilt(AUnitType type) {
-        return !notCompletedOfType(type).isEmpty();
+        return !notFinishedOfType(type).isEmpty();
     }
 }

@@ -98,7 +98,7 @@ public class TravelToConstructTest extends WorldStubForTests {
                 System.err.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
 //                ProductionOrder gatewayOrder = CurrentBuildOrder.get().productionOrders().get(0);
-                Orders nextOrders = Queue.get().nonCompletedNext30();
+                Orders nextOrders = Queue.get().notFinishedNext30();
                 nextOrders.print("Next orders assuming we have Pylon and Forge");
 
                 ProductionOrder gatewayOrder = nextOrders.ofType(Protoss_Gateway).first();

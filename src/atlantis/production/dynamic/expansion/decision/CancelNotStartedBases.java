@@ -27,7 +27,7 @@ public class CancelNotStartedBases {
 //            }
 //        }
 
-        Queue.get().nonCompleted().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
+        Queue.get().notFinished().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
             if (shouldCancelBase(construction, worker)) {
                 A.errPrintln(A.now() + " Cancelling pending base " + order + " as other just finished!");

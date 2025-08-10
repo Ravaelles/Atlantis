@@ -154,7 +154,7 @@ public class ZergSupplyCommander extends Commander {
             return;
         }
 
-        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
+        if (Queue.get().notFinished().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
 //            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }

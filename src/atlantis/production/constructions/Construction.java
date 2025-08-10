@@ -1,6 +1,5 @@
 package atlantis.production.constructions;
 
-import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -12,10 +11,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.GatherResources;
-import atlantis.util.PauseAndCenter;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
-import bwapi.Color;
 
 /**
  * Represents construction of a building, including ones not yet started.
@@ -230,7 +227,7 @@ public class Construction implements Comparable<Construction> {
             if (building != null && building.isProtoss()) setBuilder(null);
         }
 
-        if (status.equals(ConstructionOrderStatus.COMPLETED)) {
+        if (status.equals(ConstructionOrderStatus.FINISHED)) {
             ConstructionRequests.removeOrder(this);
         }
     }
@@ -299,7 +296,7 @@ public class Construction implements Comparable<Construction> {
     }
 
     public boolean notFinished() {
-        return !ConstructionOrderStatus.COMPLETED.equals(status);
+        return !ConstructionOrderStatus.FINISHED.equals(status);
     }
 
     public static void clearCache() {

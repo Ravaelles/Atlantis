@@ -62,7 +62,7 @@ public class ResourcesReservedTest extends WorldStubForTests {
 
                 assertEquals(afterInProgressMinerals, ReservedResources.minerals());
 
-                order.setStatus(OrderStatus.COMPLETED);
+                order.setStatus(OrderStatus.FINISHED);
 
 //                Queue.get().allOrders().print("After completed");
 

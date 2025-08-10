@@ -1,15 +1,8 @@
 package atlantis.production.orders.production.queue;
 
-import atlantis.game.A;
-import atlantis.production.orders.production.queue.add.History;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
-import atlantis.units.AUnitType;
-
-import java.util.List;
-
-import static atlantis.units.AUnitType.Terran_Engineering_Bay;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
@@ -75,8 +68,8 @@ public class Queue extends AbstractQueue {
         );
     }
 
-    public Orders completedOrInProgress() {
-        return orders.inProgress().addAll(orders.completed().list());
+    public Orders finishedOrInProgress() {
+        return orders.inProgress().addAll(orders.finished().list());
     }
 
     public Orders inProgressOrders() {
@@ -99,32 +92,20 @@ public class Queue extends AbstractQueue {
 //        );
     }
 
-    public Orders nonCompleted() {
-        return orders.nonCompleted();
-
-//        return cache.get(
-//            "nonCompleted",
-//            CACHE_FOR_FRAMES,
-//            orders::nonCompleted
-//        );
+    public Orders notFinished() {
+        return orders.notFinished();
     }
 
-    public Orders nonCompletedNext30() {
+    public Orders notFinishedNext30() {
         return cache.get(
-            "nonCompletedNext30",
+            "nonFinishedNext30",
             CACHE_FOR_FRAMES,
-            orders::nonCompletedNext30
+            orders::nonFinishedNext30
         );
     }
 
-    public Orders completedOrders() {
-        return orders.completed();
-
-//        return cache.get(
-//            "completedOrders",
-//            CACHE_FOR_FRAMES,
-//            orders::completed
-//        );
+    public Orders finishedOrders() {
+        return orders.finished();
     }
 
     // =========================================================

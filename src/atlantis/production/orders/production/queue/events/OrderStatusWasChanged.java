@@ -1,11 +1,9 @@
 package atlantis.production.orders.production.queue.events;
 
-import atlantis.game.A;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnitType;
 
 public class OrderStatusWasChanged {
     public static void update(ProductionOrder order) {
@@ -18,14 +16,14 @@ public class OrderStatusWasChanged {
 
         if (status.isReady()) order.makeSureResourcesAreReserved();
         else if (status.isInProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
-        else if (status.isCompleted() && order.isUnit() && Queue.get() != null) {
+        else if (status.isFinished() && order.isUnit() && Queue.get() != null) {
             Queue.get().markAsProducedAndForget(order.unitType());
         }
 
         if (status.isInProgress()) {
             removeSameTechFromQueue(order, status);
         }
-        if (status.isCompleted()) {
+        if (status.isFinished()) {
             removeSameTechFromQueue(order, status);
         }
     }

@@ -74,7 +74,7 @@ public class IsOrderInProgress {
 
         queue.clearCache();
 
-        Orders orders = queue.completedOrInProgress().ofType(order.unitType()).exclude(order);
+        Orders orders = queue.finishedOrInProgress().ofType(order.unitType()).exclude(order);
 
 //        if (!orders.isEmpty()) System.err.println(order.unitType() + " / list.size = " + orders.size());
 

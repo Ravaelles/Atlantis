@@ -53,7 +53,7 @@ public class RemoveExcessiveOrders {
     }
 
     private static boolean limitUnitsToMax(AUnitType type, int max) {
-        List<ProductionOrder> orders = Queue.get().nonCompleted().ofType(type).list();
+        List<ProductionOrder> orders = Queue.get().notFinished().ofType(type).list();
 
         if (orders.size() > max) {
             for (int i = orders.size() - 1; i >= 0; i--) {

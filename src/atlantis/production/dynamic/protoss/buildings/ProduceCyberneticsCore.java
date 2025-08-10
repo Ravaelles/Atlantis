@@ -38,7 +38,7 @@ public class ProduceCyberneticsCore {
     private static boolean addCyberneticsToQueue() {
 //        A.errPrintln("Add ZZZ Cybernetics Core to queue at " + A.minSec());
 
-        Orders productionOrders = Queue.get().nonCompletedNext30().ofType(type());
+        Orders productionOrders = Queue.get().notFinishedNext30().ofType(type());
         ProductionOrder existing = productionOrders.first();
 
 //        productionOrders.ofType(type()).forEach(ProductionOrder::cancel);

@@ -4,14 +4,14 @@ public enum OrderStatus {
     NOT_READY,
     READY_TO_PRODUCE,
     IN_PROGRESS,
-    COMPLETED;
+    FINISHED;
 
     public boolean isInProgress() {
         return this.equals(IN_PROGRESS);
     }
 
-    public boolean isCompleted() {
-        return this.equals(COMPLETED);
+    public boolean isFinished() {
+        return this.equals(FINISHED);
     }
 
     public boolean isReady() {

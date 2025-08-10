@@ -34,8 +34,8 @@ public class Queue1Test extends WorldStubForTests {
                 assertEquals(buildOrder.productionOrders().size(), queue.allOrders().size());
                 assertEquals(0, queue.inProgressOrders().size());
 //                assertEquals(0, queue.readyToProduceOrders().size());
-                assertEquals(0, queue.completedOrders().size());
-                assertEquals(true, !queue.nonCompleted().isEmpty());
+                assertEquals(0, queue.finishedOrders().size());
+                assertEquals(true, !queue.notFinished().isEmpty());
             },
             () -> ourInitialUnits(),
             () -> fakeExampleEnemies(),

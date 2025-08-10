@@ -141,36 +141,9 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
         if (unitOrBuilding != null && otherOrder.unitOrBuilding != null) {
             if (otherOrder.minSupply == this.minSupply) {
-//                if (unitOrBuilding.isSupplyDepot() && otherOrder.unitOrBuilding.isSupplyDepot()) return true;
                 if (unitOrBuilding.isCombatBuilding() && otherOrder.unitOrBuilding.isCombatBuilding()) return true;
             }
         }
-
-//        if (unitOrBuilding != null) {
-//            if (otherOrder.minSupply == this.minSupply) {
-//    //            if (isBuilding() && this.unitType().equals(otherOrder.unitType())) return true;
-//                if (
-//                    this.unitType().equals(otherOrder.unitType())
-//                    && (this.isDynamic() && otherOrder.isDynamic())
-//                ) return true;
-//            }
-//        }
-
-//        if (otherOrder.minSupply == minSupply) {
-//            if (unitOrBuilding != null && unitOrBuilding.equals(otherOrder.unitOrBuilding)) return true;
-//
-////            if (
-//////                    && otherOrder.status().equals(status())
-//////                otherOrder.isCompleted()
-////                unitOrBuilding != null
-////                    && unitOrBuilding.equals(otherOrder.unitOrBuilding)
-//////                    && unitOrBuilding.isABuilding()
-//////                    && otherOrder.unitType().equals(unitOrBuilding)
-////            ) return true;
-//
-//            if (otherOrder.tech() != null && otherOrder.tech().equals(tech())) return true;
-//            if (otherOrder.upgrade() != null && otherOrder.upgrade().equals(upgrade())) return true;
-//        }
 
         return false;
     }
@@ -225,7 +198,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         if (isStatus(OrderStatus.NOT_READY)) return "";
         else if (isStatus(OrderStatus.IN_PROGRESS)) return "(IN_PROGRESS)";
         else if (isStatus(OrderStatus.READY_TO_PRODUCE)) return "(READY_TO_PRODUCE)";
-        else if (isStatus(OrderStatus.COMPLETED)) return "(COMPLETED)";
+        else if (isStatus(OrderStatus.FINISHED)) return "(FINISHED)";
         else return "UNKNOWN";
     }
 
@@ -419,8 +392,8 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         return isStatus(OrderStatus.IN_PROGRESS);
     }
 
-    public boolean isCompleted() {
-        return isStatus(OrderStatus.COMPLETED);
+    public boolean isFinished() {
+        return isStatus(OrderStatus.FINISHED);
     }
 
     public boolean isReadyToProduce() {
