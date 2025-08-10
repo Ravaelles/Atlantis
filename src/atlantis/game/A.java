@@ -325,18 +325,54 @@ public class A {
      * @return string like "2011-09-03"
      */
     public static String getCurrentDateInFormatYMD() {
-        GregorianCalendar date = new GregorianCalendar();
-        String month = date.get(Calendar.MONTH) + "";
-        String day = date.get(Calendar.DAY_OF_MONTH) + "";
+        return dateYear() + "-" + dateMonth() + "-" + dateDay();
+    }
 
+    /**
+     * @return string like "2011-09-03"
+     */
+    public static String getCurrentDateInFormatYMDHHmm() {
+        return dateYear() + "-" + dateMonth() + "-" + dateDay() + " " + dateHours() + ":" + dateMinutes();
+    }
+
+    private static String dateYear() {
+        String year = (new GregorianCalendar()).get(Calendar.YEAR) + "";
+        if (year.length() < 2) {
+            year = "0" + year;
+        }
+        return year;
+    }
+
+    private static String dateMonth() {
+        String month = (new GregorianCalendar()).get(Calendar.MONTH) + "";
         if (month.length() < 2) {
             month = "0" + month;
         }
+        return month;
+    }
+
+    private static String dateDay() {
+        String day = (new GregorianCalendar()).get(Calendar.DAY_OF_MONTH) + "";
         if (day.length() < 2) {
             day = "0" + day;
         }
+        return day;
+    }
 
-        return date.get(Calendar.YEAR) + "-" + month + "-" + day;
+    private static String dateHours() {
+        String hours = (new GregorianCalendar()).get(Calendar.HOUR_OF_DAY) + "";
+        if (hours.length() < 2) {
+            hours = "0" + hours;
+        }
+        return hours;
+    }
+
+    private static String dateMinutes() {
+        String minutes = (new GregorianCalendar()).get(Calendar.MINUTE) + "";
+        if (minutes.length() < 2) {
+            minutes = "0" + minutes;
+        }
+        return minutes;
     }
 
     /**

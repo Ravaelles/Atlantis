@@ -16,6 +16,10 @@ public class ShouldHaveBravo {
     public static boolean shouldHave() {
         //        if (true) return false;
 
+        int alphaCount = Alpha.count();
+
+        if (alphaCount <= 20) return f("Too few units");
+
         if (Missions.isGlobalMissionAttack()) {
             AUnit enemy = EnemyUnitBreachedBase.get();
             if (enemy != null) return t("BreachedBase");
@@ -23,16 +27,16 @@ public class ShouldHaveBravo {
 
         if (We.terran() && A.supplyUsed() <= 170) return f("Terran and low supply");
 
-        if (Alpha.count() >= ALPHA_COUNT_THRESHOLD + (_prev ? -4 : 0)) return t("Alpha count: " + Alpha.count());
+        if (alphaCount >= ALPHA_COUNT_THRESHOLD + (_prev ? -4 : 0)) return t("Alpha count: " + alphaCount);
 
         if (
-            Alpha.count() >= ALPHA_COUNT_THRESHOLD
+            alphaCount >= ALPHA_COUNT_THRESHOLD
                 && FoundEnemyExposedExpansion.getItFound() != null
-                && (Alpha.count() >= 25 || Army.strength() >= 200)
+                && (alphaCount >= 25 || Army.strength() >= 200)
         ) return t("Found expansion and strong");
 
         if (_prev) {
-            if (Alpha.count() <= ALPHA_COUNT_THRESHOLD - 5) return f("Became too weak: " + Alpha.count());
+            if (alphaCount <= (ALPHA_COUNT_THRESHOLD - 5)) return f("Became too weak: " + alphaCount);
         }
 
         return f("No need");

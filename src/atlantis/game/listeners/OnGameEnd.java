@@ -26,9 +26,10 @@ public class OnGameEnd {
     }
 
     private static void saveResultToFile(boolean winner) {
-        String formatting = "%-8s %-16s %-32s %-9s %-12s %-14s";
+        String formatting = "%-18s %-8s %-16s %-32s %-9s %-12s %-14s";
 
         String content = String.format(formatting,
+            A.getCurrentDateInFormatYMDHHmm(),
             winner ? "WIN" : "LOSE",
             Enemy.name(),
             AMap.mapFileNameWithoutPath(),
@@ -41,7 +42,7 @@ public class OnGameEnd {
         if (!A.fileExists(filePath)) {
             content = String.format(
                 formatting + "%n",
-                "Result", "Enemy", "Map", "Time [s]", "Killed/Lost", "Resource balance"
+                "Date", "Result", "Enemy", "Map", "Time [s]", "Killed/Lost", "Resource balance"
             ) + content;
         }
     

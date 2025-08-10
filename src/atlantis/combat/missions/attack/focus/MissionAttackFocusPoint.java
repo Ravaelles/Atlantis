@@ -54,10 +54,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemiesNearMain();
         if (focus != null) return focus;
 
-        focus = enemyExpansionsPositions();
+        focus = middleMapChokePoint();
         if (focus != null) return focus;
 
-        focus = middleMapChokePoint();
+        focus = enemyExpansionsPositions();
         if (focus != null) return focus;
 
         focus = enemyNearAlpha();
@@ -148,7 +148,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                     (Army.strengthWithoutCB() >= 150 || Alpha.count() >= 16)
                         && ResearchSingularityCharge.isResearched()
         //                && EnemyUnits.ranged() >= 5
-                        && Count.dragoons() >= 4
+                        && Count.dragoons() >= 8
                 ) return null;
             }
         }
@@ -347,18 +347,21 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 
         // === Enemy near base ===========================================
 
-        if (A.supplyUsed() <= 50) {
-            AUnit closeEnemy = EnemyUnits.discovered()
-                .combatUnits()
-                .groundUnits()
-                .inGroundRadius(40, main)
-                .groundNearestTo(main);
-            if (closeEnemy != null) return new AFocusPoint(
-                closeEnemy,
-                "EnemyCloseToMain"
-            );
-        }
+        AFocusPoint enemyVeryCloseToAnyBase = enemyVeryCloseToAnyBase();
+        if (enemyVeryCloseToAnyBase != null) return enemyVeryCloseToAnyBase;
 
+        AFocusPoint enemyNearestToBase = enemyNearestToBase(main);
+        if (enemyNearestToBase != null) return enemyNearestToBase;
+
+        // === Against early combat buildings ======================
+
+        AFocusPoint focus = containEnemyCombatBuildingsInNaturalChoke(main);
+        if (focus != null) return focus;
+
+        return null;
+    }
+
+    private static AFocusPoint enemyVeryCloseToAnyBase() {
         if (A.supplyUsed() <= 90) {
             AUnit enemyNearBase = EnemyNearBases.enemyNearAnyOurBase(8);
             if (
@@ -371,11 +374,21 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 );
             }
         }
+        return null;
+    }
 
-        // === Against early combat buildings ======================
-
-        AFocusPoint focus = containEnemyCombatBuildingsInNaturalChoke(main);
-        if (focus != null) return focus;
+    private static AFocusPoint enemyNearestToBase(AUnit main) {
+        if (A.supplyUsed() <= 50) {
+            AUnit closeEnemy = EnemyUnits.discovered()
+                .combatUnits()
+                .groundUnits()
+                .inGroundRadius(40, main)
+                .groundNearestTo(main);
+            if (closeEnemy != null) return new AFocusPoint(
+                closeEnemy,
+                "EnemyCloseToMain"
+            );
+        }
         return null;
     }
 

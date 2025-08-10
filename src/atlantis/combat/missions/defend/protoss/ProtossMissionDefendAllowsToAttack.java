@@ -34,7 +34,7 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
 
         if (
             focusPoint != null
-                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
+//                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
                 && enemy.enemiesNear().buildings().countInRadius(6, enemy) == 0
                 && enemy.groundDistToMain() > focusPoint.groundDistToMain()
         ) {

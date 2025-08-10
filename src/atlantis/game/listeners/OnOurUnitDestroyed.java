@@ -49,7 +49,7 @@ public class OnOurUnitDestroyed {
     private static void printOurDeadUnit(AUnit unit) {
 //        if (!unit.type().isDragoon()) return;
         if (!unit.isCombatUnit()) return;
-        if (A.s >= 60 * 6 && !unit.isRanged()) return;
+        if (A.s >= 60 * 7.5 && !unit.isRanged()) return;
 
         String prefix = "";
         String string1 = unit.managerLogs().toString();
