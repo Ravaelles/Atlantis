@@ -12,6 +12,7 @@ build.xml
 Chaos launcher.lnk
 desktop.ini
 ENV
+/files/serialized/
 hs_err_pid*
 IntelliJ IDEA Community Edition 2020.3.3.lnk
 logs/units/
@@ -20,6 +21,7 @@ nbbuild.xml
 nbproject/
 out/
 param_tweaker/
+/production/
 replay_pid*
 /bwapi-data/write/*
 /bwapi-data/write/cherryvis.txt

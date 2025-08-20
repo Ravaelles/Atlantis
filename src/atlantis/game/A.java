@@ -604,6 +604,16 @@ public class A {
         return false;
     }
 
+    public static void writeToFile(String filePath, String content) {
+        try {
+            FileWriter fw = new FileWriter(filePath, true);
+            fw.write(content + "\n");
+            fw.close();
+        } catch (IOException exception) {
+            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
+        }
+    }
+
     public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
         try {
             if (!fileExists(filePath)) {
