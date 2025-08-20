@@ -2,9 +2,9 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
+import atlantis.combat.micro.avoid.buildings.protoss.PvZDontAvoidCB;
 import atlantis.combat.micro.avoid.buildings.protoss.ShouldAvoidCombatBuildingAsProtoss;
 import atlantis.combat.micro.avoid.buildings.protoss.ReaverDontAvoidCB;
-import atlantis.combat.retreating.RetreatManager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
@@ -15,6 +15,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 
@@ -32,27 +33,45 @@ public class AvoidCombatBuildingClose extends Manager {
 
     @Override
     public boolean applies() {
+        if (ignoreByUnitType()) return false;
+
+        Decision decision;
 //        if (unit.isRunning()) return false;
 
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        if ((unit.isRunning() || unit.isRetreating()) && combatBuilding.distTo(unit) >= 18) return false;
+        if (We.protoss() && A.supplyUsed(unit.eval() >= 5 ? 170 : 185)) {
+            if (unit.isGroundUnit()) return f("RichToss");
+            if (unit.isAir()) return t("AirAlways");
+        }
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null && leader.lastActionLessThanAgo(30 * 17, Actions.MOVE_AVOID)) return t("LeaderAvoidCB");
+
+        if (Enemy.zerg() && Army.strength() <= 400 && A.supplyUsed() <= 160) return t("YesVsZerg");
+
+        if (PvZDontAvoidCB.dontAvoid(unit, combatBuilding)) return f("VsZergDontAvoidCB");
+
+        if ((unit.isRunning() || unit.isRetreating()) && combatBuilding.distTo(unit) >= 18) return f("Running");
+        if ((decision = forReaver()).notIndifferent()) return decision.toBoolean();
+
+        if (!unit.squadIsAlpha() && unit.eval() >= 1.2 && unit.hasGroundWeapon()) return f("Non-alpha, dont ACB");
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return f("melee enemies");
         if (dontAttackDueToRangedEnemiesNear()) return f("ranged enemies");
 
-        if (We.terran()) {
+        if (unit.isProtoss()) {
+            decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
+            if (decision.notIndifferent()) return trOrF(decision.toBoolean(), decision.reason());
+        }
+
+        else if (We.terran()) {
             if (
                 unit.eval() >= 1.8
                     && unit.friendsNearCount() >= 6
                     && unit.lastStartedRunningMoreThanAgo(30 * 8)
             ) return f("Strong terran");
-        }
-
-        if (We.protoss()) {
-            Decision decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
-            if (decision.notIndifferent()) return trOrF(decision.toBoolean(), decision.reason());
         }
 
         dist = unit.distTo(combatBuilding);
@@ -77,6 +96,57 @@ public class AvoidCombatBuildingClose extends Manager {
         return !strongEnoughToAttack() ? t("not strongEnoughToAttack") : f("strongEnoughToAttack");
     }
 
+    private boolean ignoreByUnitType() {
+        if (We.protoss()) {
+            if (unit.isAir() && unit.isCorsair()) return true;
+            if (unit.isDarkTemplar()) return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    protected Manager handle() {
+//        if (ignoreOrderBecauseWeDontHaveToRetreat()) return null;
+//        if (combatBuilding == null || !combatBuilding.hasValidTarget()) return null;
+        if (combatBuilding == null) return null;
+        if (unit.distTo(combatBuilding) >= 18) return null;
+
+//        System.err.println("combatBuilding = " + combatBuilding);
+
+        if (unit.moveToSafety(Actions.MOVE_AVOID, "CB_A")) return usedManager(this);
+
+        if (unit.moveAwayFrom(
+            combatBuilding, moveAwayDist(), Actions.MOVE_AVOID
+        )) return usedManager(this, "CB_B" + unit.evalDigit());
+
+//        if (shouldRunToMainBecauseWasAttacked()) {
+//        }
+
+        if (unit.runningManager().runFrom(combatBuilding, 3, Actions.MOVE_AVOID, true)) {
+            return usedManager(this, "CB_A2");
+        }
+
+//        if (shouldHoldGround(combatBuilding)) {
+////            System.err.println("@ " + A.now() + " - HANDLE A - " + unit.typeWithUnitId());
+////            unit.holdPosition("HoldHere" + A.dist(dist));
+//            unit.holdPosition("CB_Hold" + unit.combatEvalRelativeDigit());
+//            return usedManager(this);
+//        }
+
+        return null;
+    }
+
+    private Decision forReaver() {
+        if (!unit.isReaver()) return Decision.INDIFFERENT;
+
+        if (unit.shieldHealthy()) return Decision.FALSE;
+        if (unit.cooldown() > 0) return Decision.FALSE;
+        if (unit.lastActionLessThanAgo(30, Actions.UNLOAD)) return Decision.FALSE;
+
+        return Decision.INDIFFERENT;
+    }
+
     private boolean dontAttackDueToRangedEnemiesNear() {
         int minRangedEnemies = unit.hp() >= 81 && unit.eval() >= 2.5 ? 3 : 1;
 
@@ -85,6 +155,7 @@ public class AvoidCombatBuildingClose extends Manager {
 
     private boolean t(String reason) {
 //        System.out.println("AvoidCB: " + reason);
+//        if (true) throw new RuntimeException("wut");
 
         return true;
     }
@@ -122,7 +193,6 @@ public class AvoidCombatBuildingClose extends Manager {
         return false;
     }
 
-
     private boolean allowBattleDueToAdvantage() {
         if (unit.eval() < 3.5) return false;
         if (unit.eval() >= 6) return allowBattle("CombatEval5");
@@ -158,42 +228,13 @@ public class AvoidCombatBuildingClose extends Manager {
         return true;
     }
 
-    @Override
-    protected Manager handle() {
-//        if (ignoreOrderBecauseWeDontHaveToRetreat()) return null;
-//        if (combatBuilding == null || !combatBuilding.hasValidTarget()) return null;
-        if (combatBuilding == null) return null;
-
-        if (unit.moveToSafety(Actions.MOVE_AVOID, "CB_A")) return usedManager(this);
-
-        if (unit.moveAwayFrom(
-            combatBuilding, moveAwayDist(), Actions.MOVE_AVOID
-        )) return usedManager(this, "CB_B" + unit.evalDigit());
-
-//        if (shouldRunToMainBecauseWasAttacked()) {
-//        }
-
-        if (unit.runningManager().runFrom(combatBuilding, 3, Actions.MOVE_SAFETY, true)) {
-            return usedManager(this, "CB_A");
-        }
-
-//        if (shouldHoldGround(combatBuilding)) {
-////            System.err.println("@ " + A.now() + " - HANDLE A - " + unit.typeWithUnitId());
-////            unit.holdPosition("HoldHere" + A.dist(dist));
-//            unit.holdPosition("CB_Hold" + unit.combatEvalRelativeDigit());
-//            return usedManager(this);
-//        }
-
-        return null;
-    }
-
-    private boolean ignoreOrderBecauseWeDontHaveToRetreat() {
-        if ((unit.isReaver() || unit.isTank()) && unit.woundPercent() >= 25) return false;
-        if (unit.eval() <= 1.4) return false;
-        if (unit.hp() <= 42 && We.protoss() && unit.eval() <= 2.5) return false;
-
-        return !(new RetreatManager(unit)).invokedFrom(this);
-    }
+//    private boolean ignoreOrderBecauseWeDontHaveToRetreat() {
+//        if ((unit.isReaver() || unit.isTank()) && unit.woundPercent() >= 25) return false;
+//        if (unit.eval() <= 1.4) return false;
+//        if (unit.hp() <= 42 && We.protoss() && unit.eval() <= 2.5) return false;
+//
+//        return !(new RetreatManager(unit)).invokedFrom(this);
+//    }
 
     private boolean fiercelyEngageEnemyThirdOrExpansions() {
         if (A.supplyUsed() <= 40 || unit.friendsNear().combatUnits().atMost(4)) return false;
@@ -202,7 +243,7 @@ public class AvoidCombatBuildingClose extends Manager {
         APosition enemyNatural = EnemyNaturalBase.get();
         if (enemyNatural == null) return false;
 
-        APosition enemyThird = EnemyThirdBase.get();
+        APosition enemyThird = EnemyThirdBase.position();
         if (enemyThird == null) return false;
 
         if (combatBuilding.friendsNear().combatBuildingsAnti(unit).atLeast(A.supplyUsed() <= 140 ? 1 : 2)) return false;
@@ -300,15 +341,6 @@ public class AvoidCombatBuildingClose extends Manager {
 //    }
 
     // =========================================================
-    private double baseDist() {
-        if (AvoidCombatBuildingKeepFar.shouldKeepFar()) return AvoidCombatBuildingKeepFar.DIST(unit);
-
-        if (unit.isReaver()) return unit.shields() >= 40 ? 8.2 : 8.7;
-
-        if (Enemy.zerg()) return 9.7 + (400.0 / Army.strength());
-
-        return 9.7;
-    }
 
     private double radius() {
 //        if ((Enemy.zerg() || Enemy.protoss()) && We.protoss()) {
@@ -328,47 +360,32 @@ public class AvoidCombatBuildingClose extends Manager {
 //            }
 //        }
 
-        return baseDist()
-            + (unit.isMelee() ? 1.7 : 0)
-            + (unit.isWounded() ? 0.8 : 0)
+        if (AvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return AvoidCombatBuildingKeepFar.DIST(unit);
+
+//        if (unit.isReaver()) return unit.shields() >= 40 ? 7.2 : 8.7;
+        if (unit.isReaver()) {
+            if (!unit.shotSecondsAgo(8) && unit.hp() >= 60) return 5.0;
+            return unit.shields() >= 40 ? 6.6 : 7.7;
+        }
+
+        return 11.4
+            + (400.0 / Army.strength())
+            + (unit.isMelee() ? 2 : 0)
+            + (unit.woundPercent() / 25.0)
             + (unit.woundPercent() >= 60 ? 1.0 : 0)
             + (unit.woundPercent() >= 80 ? 0.5 : 0)
             + ((A.s % 10) / 5.0);
     }
 
-    private AUnit combatBuilding() {
+    public AUnit combatBuilding() {
         double radius = radius();
 
-        return unit.enemiesNear()
+        return Select.enemyCombatUnits()
             .buildings()
             .onlyCompleted()
             .combatBuildingsAnti(unit)
             .inRadius(radius, unit)
+            .notUnpowered()
             .nearestTo(unit);
     }
-
-//    private boolean combatBuildingShouldNotBeEngaged() {
-//        ourCombatUnitsNearby = combatBuilding.enemiesNear().combatUnits();
-//
-
-    /// /        if (unit.combatEvalRelative() >= 2.6) return false;
-//
-//        if (dontEngageBecauseTooManyEnemyCombatUnitsNearby()) return true;
-//
-//        return A.supplyUsed() <= 70 || ourCombatUnitsNearby.atMost(7);
-//    }
-
-//    private boolean dontEngageBecauseTooManyEnemyCombatUnitsNearby() {
-//        if (A.supplyUsed() >= 170 || A.hasMinerals(3000)) return false;
-//        if (unit.friendsNear().combatUnits().atLeast(25)) return false;
-//
-//        return combatBuilding.enemiesNear()
-//            .combatUnits()
-//            .inRadius(6, combatBuilding).atMost((int) (ourCombatUnitsNearby.count() / 8));
-//    }
-//    private boolean shouldRunToMainBecauseWasAttacked() {
-//        if (dist >= 7.9 || unit.lastUnderAttackLessThanAgo(50)) return true;
-//
-//        return false;
-//    }
 }

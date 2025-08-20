@@ -7,6 +7,8 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 
+import java.util.List;
+
 public class Bases {
     private static Cache<AUnit> cache = new Cache<>();
 
@@ -31,5 +33,9 @@ public class Bases {
                 return null;
             }
         );
+    }
+
+    public static List<AUnit> existing() {
+        return Select.ourBasesWithUnfinished().list();
     }
 }

@@ -2,20 +2,18 @@ package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
-import atlantis.combat.micro.avoid.terran.avoid.TerranShouldNeverAvoid;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.We;
 
 public class WantsToAvoid extends Manager {
     public WantsToAvoid(AUnit unit) {
         super(unit);
     }
 
-    public Manager unitOrUnits(Units enemies) {
+    public Manager handleAvoidUnitOrUnits(Units enemies) {
         if (enemies.isEmpty()) return null;
-        if (shouldNeverAvoidIf(enemies)) return null;
 
+        if (shouldNeverAvoidIf(enemies)) return null;
         if ((new DontAvoidEnemy(unit)).applies()) return null;
 
         return (new DoAvoidEnemies(unit, enemies)).handle();
@@ -23,19 +21,25 @@ public class WantsToAvoid extends Manager {
 
     // =========================================================
 
+    // @ToDo - Remove and move into DontAvoidEnemy
     private boolean shouldNeverAvoidIf(Units enemies) {
-        if (unit.isMelee() && !unit.isTerran()) return true;
+        if (unit.isWorker() && unit.isGatheringMinerals()) return true;
 
-        if (unit.isWorker() && enemies.onlyMelee()) {
-            unit.addLog("BraveWorker");
-            return unit.hp() >= 40;
+        if (unit.isMelee() && unit.hp() >= 30 && enemies.onlyWorkers()) return true;
+
+        if (
+            unit.isMelee()
+                && !unit.isWorker()
+                && !unit.isTerran()
+                && (new DontAvoidEnemy(unit)).applies()
+        ) {
+            return true;
         }
 
-        if (We.terran()) {
-            if ((new TerranShouldNeverAvoid(unit)).shouldNeverAvoid()) return true;
-
-            if (unit.isTank() && unit.cooldownRemaining() <= 0) return true;
-        }
+//        if (unit.isWorker() && enemies.onlyMelee() && unit.meleeEnemiesNearCount(3) == 0) {
+//            unit.addLog("BraveWorker");
+//            return unit.hp() >= 40;
+//        }
 
         return false;
     }

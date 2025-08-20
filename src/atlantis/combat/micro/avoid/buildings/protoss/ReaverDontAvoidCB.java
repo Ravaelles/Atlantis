@@ -34,7 +34,7 @@ public class ReaverDontAvoidCB {
         if (dist <= 7.5) {
             if (unit.isMoving()) {
 //                    System.err.println("HoldPosition - " + dist);
-                unit.holdPosition(Actions.HOLD_POSITION, "ReaverHoldCB");
+                unit.holdPosition(Actions.STOP, "ReaverHoldCB");
             }
             return false;
         }

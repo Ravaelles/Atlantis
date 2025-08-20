@@ -1,15 +1,15 @@
 package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.Squad;
+import atlantis.combat.micro.dancing.hold.ProtossAttackHoldToShoot;
 import atlantis.game.A;
-import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import bwapi.Color;
 
 public class ProcessAttackUnit extends Manager {
     public ProcessAttackUnit(AUnit unit) {
@@ -31,7 +31,7 @@ public class ProcessAttackUnit extends Manager {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " AttackUnit got null target");
             return false;
         }
-        if (target.hp() <= 0) {
+        if (target.hp() <= 0 && !target.isABuilding() && !unit.isDarkTemplar()) {
 //            ErrorLog.printMaxOncePerMinute(
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 unit.type() + " AttackUnit got target.hp = " + target.hp() + " - " + target.type()
@@ -61,7 +61,7 @@ public class ProcessAttackUnit extends Manager {
             return false;
         }
 
-        if (handleMoveNextToTanksWhenAttackingThem(target)) return true;
+        if (MoveNextToTankWhenAttackingThem.check(unit, target)) return true;
 
         // Come closer when attacking enemy bases
         if (comeCloserToBuildingsWhenAttackingThem(target)) {
@@ -75,7 +75,7 @@ public class ProcessAttackUnit extends Manager {
         unit.addLog("Attacking" + target);
 
         // Ranged HOLD TO SHOOT
-//        if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.HOLD_POSITION)) {
+//        if (unit.isRanged() && unit.lastActionMoreThanAgo(10, Actions.MOVE_FORMATION)) {
 //            int range = unit.weaponRangeAgainst(target);
 //            double dist = unit.distTo(target);
 //            double distBonus = distBonus(target);
@@ -101,55 +101,18 @@ public class ProcessAttackUnit extends Manager {
             && unit.distToMoreThan(target, 1.5);
     }
 
-    //    private  double distBonus(AUnit target) {
-//        if (unit.isOtherUnitFacingThisUnit(target) && (target.isMoving() || target.isAttacking())) {
-//            return -1.6;
-//        }
-//
-//        return -0.5;
-//    }
-
     private boolean confirmAttack(AUnit target) {
-//        System.out.println(unit.typeWithUnitId() + " - ConfirmAttack " + target.typeWithUnitId() + "(" + target.hp() +
-//            ")");
+        if (ProtossAttackHoldToShoot.holdInsteadAttack(unit, target)) {
+//            System.err.println(A.now() + " - HOLD " +
+//                "- speed(" + unit.speed() + ") " +
+//                "- enemy:" + unit.nearestEnemyDist());
+
+            unit.paintCircle(18, Color.Orange);
+            unit.paintCircle(17, Color.Orange);
+            unit.paintCircle(16, Color.Orange);
+            return true;
+        }
 
         return unit.attackUnit(target);
     }
-
-    // =========================================================
-
-    private boolean handleMoveNextToTanksWhenAttackingThem(AUnit enemy) {
-        if (!enemy.isTankSieged()) return false;
-        if (We.terran()) return false;
-        if (unit.cooldown() <= 3) return false;
-
-        int count = Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).count();
-        if (
-            !unit.isAir()
-                && !unit.is(
-                AUnitType.Terran_Siege_Tank_Siege_Mode,
-                AUnitType.Terran_Siege_Tank_Tank_Mode,
-                AUnitType.Protoss_Archon,
-                AUnitType.Protoss_Reaver
-            )
-                && (enemy.distToMoreThan(unit, unit.isMelee() ? 0.8 : 1.15))
-                && Select.all().inRadius(0.4, unit).exclude(unit).exclude(enemy).atMost(2)
-                && (unit.isMelee() || Select.all().inRadius(0.7, enemy).exclude(unit).exclude(enemy).atMost(3))
-        ) {
-            if (unit.isRanged() && Select.enemy().tanksSieged().inRadius(12.2, unit).isEmpty()) return false;
-
-//            if (unit.attackUnit(enemy)) {
-            if (unit.move(enemy, Actions.MOVE_ENGAGE, "Soyuz")) {
-                unit.setTooltip("Soyuz" + unit.distToDigit(enemy) + "/" + count);
-                return true;
-            }
-
-//            if (unit.move(enemy, Actions.MOVE_ATTACK, "Soyuz" + A.dist(enemy, unit) + "/" + count, false)) {
-//                return true;
-//            }
-        }
-
-        return false;
-    }
-
 }

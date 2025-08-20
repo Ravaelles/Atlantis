@@ -47,7 +47,7 @@ public class DanceTo extends Manager {
         return unit.isMissionAttack()
             && A.supplyUsed() >= 165
             && unit.friendsNear().inRadius(3, unit).atLeast(4)
-            && unit.distToNearestChoke() <= 4;
+            && unit.nearestChokeDist() <= 4;
     }
 
     private boolean distanceConditionIsOk() {

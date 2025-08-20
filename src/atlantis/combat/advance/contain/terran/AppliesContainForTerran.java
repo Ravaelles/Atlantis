@@ -1,16 +1,16 @@
 package atlantis.combat.advance.contain.terran;
 
-import atlantis.combat.advance.contain.ContainEnemy;
+import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class AppliesContainForTerran {
-    private final ContainEnemy manager;
+    private final TerranContainEnemyWrapper manager;
     private final AUnit unit;
 
-    public AppliesContainForTerran(ContainEnemy manager) {
+    public AppliesContainForTerran(TerranContainEnemyWrapper manager) {
         this.manager = manager;
         this.unit = manager.unit();
     }

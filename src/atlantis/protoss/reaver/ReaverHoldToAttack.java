@@ -53,7 +53,10 @@ public class ReaverHoldToAttack extends Manager {
     @Override
     public Manager handle() {
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - HoldToAttack");
-        unit.holdPosition(Actions.HOLD_POSITION, "HoldToAttack");
-        return usedManager(this);
+        if (unit.isMoving() && unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToAttack")) {
+            return usedManager(this);
+        }
+
+        return null;
     }
 }

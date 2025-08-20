@@ -1,0 +1,41 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=12
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=38
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=0
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=40
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://www.youtube.com/watch?v=xaNAxSNLIT8
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+4 - MISSION=DEFEND
+9 - Spawning Pool
+9 - Extractor
+8 - Overlord
+9 - Zergling
+9 - Zergling
+9 - Zergling
+15 - Hatchery - NATURAL
+16 - Hatchery
+16 - Hydralisk Den
+16 - Overlord
+16 - Muscular Augments
+22 - Hydralisk
+23 - Hydralisk
+24 - Hydralisk
+25 - Grooved Spines
+32 - Overlord
+32 - MISSION=ATTACK

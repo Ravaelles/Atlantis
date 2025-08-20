@@ -18,4 +18,13 @@ public enum AttackState {
     public boolean pending() {
         return this == PENDING;
     }
+
+    public boolean starting() {
+        return this == STARTING;
+    }
+
+//    public boolean atLeastStarting() {
+////        return this == STARTING || this == PENDING || this == FINISHED;
+//        return this == STARTING || this == PENDING;
+//    }
 }

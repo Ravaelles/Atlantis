@@ -3,6 +3,7 @@ package atlantis.combat.missions.defend.protoss;
 import atlantis.Atlantis;
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.retreating.RetreatManager;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
@@ -10,6 +11,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 
 public class ProtossShouldPunishZergEarly {
@@ -17,6 +19,11 @@ public class ProtossShouldPunishZergEarly {
         int zealotsAndGoons;
 
         if (A.s >= 60 * 7) return Decision.INDIFFERENT;
+        if (Count.basesWithUnfinished() >= 2) return Decision.FALSE;
+        if (Army.strengthWithoutCB() <= 180) return Decision.FALSE;
+
+        AUnit leader = Alpha.alphaLeader();
+        if (leader != null && leader.eval() <= 1.2) return Decision.FALSE;
 
         if (Strategy.get().isGoingTech() && Count.dragoons() <= 3) return Decision.FORBIDDEN;
 
@@ -33,7 +40,7 @@ public class ProtossShouldPunishZergEarly {
                 && (Count.dragoons() >= EnemyUnits.hydras() * 2)
         ) {
             if (
-                Army.strength() >= 180 && (
+                Army.strengthWithoutCB() >= 180 && (
                     (zealotsAndGoons * 2.5 >= EnemyUnits.discovered().combatUnits().count())
                         || (Count.dragoons() >= 1 && EnemyUnits.discovered().combatUnits().atMost(18))
                 )

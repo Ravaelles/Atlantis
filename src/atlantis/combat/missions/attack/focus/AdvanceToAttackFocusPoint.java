@@ -5,7 +5,7 @@ package atlantis.combat.missions.attack.focus;
 //import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 //import atlantis.combat.advance.focus.MoveToFocusPoint;
 //import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
-//import atlantis.combat.squad.positioning.protoss.ProtossAsLeaderTooFarFromOthers;
+//import atlantis.combat.squad.positioning.protoss.cohesion.ProtossAsLeaderTooFarFromOthers;
 //import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromLeader;
 //import atlantis.game.A;
 //import atlantis.units.AUnit;

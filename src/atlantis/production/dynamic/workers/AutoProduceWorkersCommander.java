@@ -6,6 +6,7 @@ import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.Strategy;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -41,17 +42,21 @@ public class AutoProduceWorkersCommander extends Commander {
     // =========================================================
 
     public static boolean shouldProduceWorkers() {
-        if (AGame.supplyFree() == 0 || !A.hasMinerals(50)) return dont("CantAfford");
+        if (A.supplyFree() == 0 && A.supplyUsed() >= 11) return dont("NoSupply");
+        if (!A.hasMinerals(50)) return dont("CantAfford");
         if (prioritizeRush()) return dont("RushPriority");
 
-        Decision decision = EarlyGameProduceWorkers.decision();
-        if (decision.notIndifferent()) return decision.toBoolean();
-
         int workers = Count.workers();
+        if (workers >= 80) return dont("MaxedWorkers");
+
+        if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals()) return dont("CriticalStuff");
+
+        Decision decision = EarlyGameProduceWorkers.decision();
+        if (decision.notIndifferent() && decision.isFalse()) return dont(decision.reason());
 
         if (
             A.supplyUsed() <= 40 && workers >= 25 && (
-                (!A.hasMinerals(150) && A.minerals() < A.reservedMinerals() + 50))
+                (!A.hasMinerals(150) && A.minerals() < A.reservedMinerals() + 36))
         ) return dont("FollowBO");
 
         // === Protoss ===========================================
@@ -60,6 +65,7 @@ public class AutoProduceWorkersCommander extends Commander {
             if (
                 Enemy.zerg() && workers >= 20 && !A.hasMinerals(175)
             ) return dont("MineralsMargin");
+
         }
 
         // === Terran ===========================================
@@ -120,6 +126,9 @@ public class AutoProduceWorkersCommander extends Commander {
 
     private static boolean dont(String reason) {
         REASON = reason;
+//        if (Select.ourBases().free().notEmpty() && A.hasMinerals(50)) {
+//            System.err.println("No worker: " + REASON);
+//        }
         return false;
     }
 
@@ -130,17 +139,18 @@ public class AutoProduceWorkersCommander extends Commander {
      * See AutoProduceWorkersCommander which is also used to produce workers.
      */
     public static boolean produceWorker(AUnit base) {
-        if (AGame.supplyFree() == 0 || !A.canAfford(50, 0)) return false;
+        if (!A.canAfford(50, 0)) return false;
         if (A.supplyUsed() >= 8 && !hasEnoughMineralsToConsiderProducingWorker()) return false;
 
-        if (We.zerg()) return ProduceZergUnit.produceZergUnit(
+        if (We.zerg() && ProduceZergUnit.produceZergUnit(
             AtlantisRaceConfig.WORKER,
             ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
-        );
-        if (base != null) return base.train(
+        )) return true;
+
+        if (base != null && base.train(
             AtlantisRaceConfig.WORKER,
             ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
-        );
+        )) return true;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.WORKER) > 0) return false;
 
@@ -151,13 +161,17 @@ public class AutoProduceWorkersCommander extends Commander {
 
     private static boolean queueWorker() {
         AUnit base = Select.main();
-
         if (base == null) return false;
+        if (!base.isFree()) return false;
 
-        if (base.remainingTrainTime() <= 10 && base.remainingTrainTime() >= 1) {
+//        System.err.println("base.remainingTrainTime() = " + base.remainingTrainTime());
+
+        if (base.remainingTrainTime() <= 10) {
 //                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
-            if (base.hasNothingInQueue()) {
-                base.trainForced(AtlantisRaceConfig.WORKER);
+//            System.err.println("base.hasNothingInQueue() = " + base.hasNothingInQueue());
+//            System.err.println("base.trainForced(AtlantisRaceConfig.WORKER) = " + base.trainForced(AtlantisRaceConfig.WORKER));
+            if (base.hasNothingInQueue() && base.trainForced(AtlantisRaceConfig.WORKER)) {
+//                System.err.println("Queueing worker at " + A.supplyUsed() + ", min:" + A.minerals());
                 return true;
             }
         }

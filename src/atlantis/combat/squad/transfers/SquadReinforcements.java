@@ -1,7 +1,8 @@
 package atlantis.combat.squad.transfers;
 
+import atlantis.combat.squad.AssignUnitToSquad;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnit;
 
 import java.util.ArrayList;
@@ -26,8 +27,7 @@ public class SquadReinforcements {
             unit.squad().removeUnit(unit);
         }
 
-        toSquad.addUnit(unit);
-        unit.setSquad(toSquad);
+        AssignUnitToSquad.assignTo(unit, toSquad);
     }
 
     private void transferFromAlpha(int numberOfRecruits) {

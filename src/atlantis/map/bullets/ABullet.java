@@ -2,8 +2,6 @@ package atlantis.map.bullets;
 
 import atlantis.combat.state.AttackState;
 import atlantis.game.A;
-import atlantis.game.CameraCommander;
-import atlantis.game.GameSpeed;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -18,27 +16,29 @@ public class ABullet implements HasPosition {
 //    protected int _initTargetHp;
     private boolean consumed = false;
     private int createdAt;
+    private boolean exists;
+
+    // =========================================================
+
+    public ABullet(AUnit attacker, AUnit target, boolean exists) {
+        this.attacker = attacker;
+        this.target = target;
+        this.createdAt = A.now;
+        this.exists = exists;
+    }
 
     // =========================================================
 
     public static ABullet fromBullet(Bullet b) {
-        ABullet bullet = new ABullet();
-        bullet.createdAt = A.now;
-        bullet.attacker = AUnit.createFrom(b.getSource(), false);
-        if (bullet.attacker != null) {
-            bullet.attacker.setAttackState(AttackState.PENDING);
-            bullet.attacker.setLastBullet(bullet);
-//            System.err.println("      [ BULLET with ID:" + b.getID() + " ] from " + bullet.attacker);
-        }
+        AUnit attacker = AUnit.createFrom(b.getSource(), false);
+        AUnit target = AUnit.createFrom(b.getTarget(), false);
 
-        bullet.target = AUnit.createFrom(b.getTarget(), false);
-
-        if (bullet.attacker == null) {
+        if (attacker == null) {
 //            System.err.println("bullet.attacker null, target = " + bullet.target + "/our=" + bullet.target.isOur());
             return null;
         }
 
-        if (bullet.target == null) {
+        if (target == null) {
 //            A.errPrintln(
 //                "@" + A.now() + " - ABullet.fromBullet: target null \n"
 //                    + "       (" + b.getTarget() + "), \n"
@@ -51,23 +51,34 @@ public class ABullet implements HasPosition {
             return null;
         }
 
+        // =========================================================
+
+        ABullet bullet = new ABullet(attacker, target, true);
+
+        bullet.attacker = attacker;
+        bullet.attacker.setAttackState(AttackState.PENDING);
+        bullet.attacker.setLastBullet(bullet);
+//            System.err.println("      [ BULLET with ID:" + b.getID() + " ] from " + bullet.attacker);
+
+        bullet.target = target;
+
 //        System.err.println("            [ BULLET with ID:" + b.getID() + " ]");
 
         bullet.b = b;
         return bullet;
     }
 
-//    public static ABullet fromBullet(Bullet b, AUnit attacker, AUnit target) {
-//        ABullet bullet = new ABullet();
-//        bullet.attacker = attacker;
-//        bullet.target = target;
-//        bullet.b = b;
-//        return bullet;
-//    }
+    public static ABullet fromPendingAttack(AUnit attacker, AUnit enemy) {
+        ABullet bullet = new ABullet(attacker, enemy, false);
+
+        return bullet;
+    }
 
     // =========================================================
 
     public double distToTargetPosition() {
+        if (target == null || target.position() == null) return 9972;
+
         return position().distTo(target.position());
     }
 
@@ -128,5 +139,9 @@ public class ABullet implements HasPosition {
 
     public int createdAt() {
         return createdAt;
+    }
+
+    public boolean exists() {
+        return exists;
     }
 }

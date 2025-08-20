@@ -8,8 +8,11 @@ import atlantis.information.strategy.EnemyStrategy;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.protoss.buildings.*;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.supply.ProduceFallbackPylonWhenSupplyLow;
+import atlantis.production.orders.production.queue.CurrentQueue;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.add.TrimQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
@@ -19,16 +22,19 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
-            && applyForStandardCases();
+            && applyForStandardCases()
+            && ProtossCriticalStuffInQueue.hasEnoughResources();
     }
 
     private static boolean applyForStandardCases() {
-        return A.hasMinerals(550)
+        return A.hasMinerals(500)
             || A.canAffordWithReserved(92, 0)
-            || (A.hasMinerals(260) && !ShouldExpand.shouldExpand());
+            || (A.hasMinerals(200) && !ShouldExpand.shouldExpand());
     }
 
     private static boolean topPriority() {
+        TrimQueue.trimIfTooBig(CurrentQueue.get());
+
         if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) return true;
 
         if (
@@ -45,9 +51,13 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     protected void handle() {
         if (topPriority()) return;
 
+        if (Count.gatewaysWithUnfinished() <= 3) {
+            if (ProduceGateway.produce()) return;
+        }
+
         if (!applyForStandardCases()) return;
 
-        if (A.hasMinerals(470)) ProduceGateway.produce();
+        if (A.hasMinerals(460)) ProduceGateway.produce();
 
         boolean gatewaysEarly = A.supplyUsed() <= 30 || Count.gatewaysWithUnfinished() <= 1;
 //        if (gatewaysEarly) {

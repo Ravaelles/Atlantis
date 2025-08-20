@@ -49,7 +49,7 @@ public class Positions<T extends HasPosition> implements Serializable {
         return this;
     }
 
-    public Positions<T> addPositions(Collection<T> positionsToAdd) {
+    public Positions<T> addPositions(Collection<? extends T> positionsToAdd) {
         positions.addAll(positionsToAdd);
         return this;
     }
@@ -228,11 +228,11 @@ public class Positions<T extends HasPosition> implements Serializable {
     // Auxiliary
 
     public void print() {
-        System.out.println("Positions in list:");
+        A.println("Positions in list:");
         for (T position : list()) {
-            System.out.println(position);
+            A.println(position);
         }
-        System.out.println();
+        A.println();
     }
 
     // === Getters =============================================
@@ -343,4 +343,35 @@ public class Positions<T extends HasPosition> implements Serializable {
 
         return unit.groundDist(t);
     }
+
+    public int countInRadius(double radius, HasPosition inRadiusFrom) {
+        int count = 0;
+        for (T t : positions) {
+            if (t.distTo(inRadiusFrom) <= radius) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Leaves only distinct positions (no duplicates)
+     */
+    public void distinct() {
+        Set<T> set = new HashSet<>(positions);
+        positions.clear();
+        positions.addAll(set);
+    }
+
+//    public HasPosition nearestToInRange(HasPosition nearestTo, int minDist, int maxDist) {
+//        Positions<HasPosition> inRangePositions = new Positions<>();
+//        for (T position : positions) {
+//            double dist = position.distTo(nearestTo);
+//            if (dist >= minDist && dist <= maxDist) {
+//                inRangePositions.addPosition(position);
+//            }
+//        }
+//
+//        return inRangePositions.groundNearestTo(nearestTo);
+//    }
 }

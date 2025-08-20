@@ -3,6 +3,7 @@ package atlantis.protoss.reaver;
 import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.Selection;
 
 public class ReaverAlwaysAttack extends Manager {
@@ -14,9 +15,10 @@ public class ReaverAlwaysAttack extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.cooldownRemaining() >= 10) return false;
+        if (unit.cooldownRemaining() >= 13) return false;
 
         enemies = enemies();
+        if (enemies.empty()) return false;
 
         return enemies.notEmpty() || unit.lastActionMoreThanAgo(15);
     }
@@ -59,7 +61,7 @@ public class ReaverAlwaysAttack extends Manager {
         }
 
         // Attack the one most distant
-        if ((enemy = enemies.canBeAttackedBy(unit, 5).nearestTo(unit)) != null) {
+        if ((enemy = enemies.canBeAttackedBy(unit, 2).nearestTo(unit)) != null) {
             unit.attackUnit(enemy);
             unit.setTooltipTactical("Fancy" + enemy.name());
             return usedManager(this);
@@ -72,25 +74,37 @@ public class ReaverAlwaysAttack extends Manager {
             return usedManager(this);
         }
 
+//        // Attack truly anything
+//        if ((enemy = EnemyUnits.discovered().groundUnits().nearestTo(unit)) != null) {
+//            unit.attackUnit(enemy);
+//            unit.setTooltipTactical("AnyfreakingThing" + enemy.name());
+//            return usedManager(this);
+//        }
+
         return null;
     }
 
     private Selection enemies() {
-        enemies = unit.enemiesNear()
-            .groundUnits()
+        enemies = AliveEnemies.get()
             .realUnitsAndCombatBuildings()
+            .groundUnits()
             .effVisible()
+            .havingAtLeastHp(1)
             .canBeAttackedBy(unit, -0.1)
-            .notDeadMan();
+            .notDeadMan()
+            .inGroundRadius(12, unit)
+            .hasPathFrom(unit);
 
         if (enemies.empty()) {
             enemies = EnemyUnits.discovered()
-                .groundUnits()
                 .realUnitsAndCombatBuildings()
+                .groundUnits()
                 .effVisible()
                 .canBeAttackedBy(unit, 999)
-                .notDeadMan();
+                .notDeadMan()
+                .hasPathFrom(unit);
         }
+
 
         return enemies;
     }

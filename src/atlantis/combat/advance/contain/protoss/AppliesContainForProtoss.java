@@ -1,12 +1,14 @@
 package atlantis.combat.advance.contain.protoss;
 
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class AppliesContainForProtoss {
@@ -22,10 +24,18 @@ public class AppliesContainForProtoss {
 
     public boolean applies() {
         if (!We.protoss()) return false;
+        if (dontContainTerran()) return false;
+
         if (weAreTooStrongToJustContain()) return false;
 
         return closeToEnemyBuildingsOrChoke()
             && (noPlentyOfFriendsNearby() || enemyHasDefences());
+    }
+
+    private boolean dontContainTerran() {
+        if (!Enemy.terran()) return false;
+
+        return A.resourcesBalance() >= -400 && Count.dragoons() * 4 >= EnemyUnits.tanks();
     }
 
     public boolean closeToEnemyBuildingsOrChoke() {
@@ -67,7 +77,7 @@ public class AppliesContainForProtoss {
         if (A.minerals() > 2500) return true;
 
         if (
-            (Army.strength() >= 800 || Alpha.count() >= 32)
+            (Army.strengthWithoutCB() >= 500 || Alpha.count() >= 32)
                 && unit.friendsNear().combatUnits().atLeast(18)
         ) return true;
 

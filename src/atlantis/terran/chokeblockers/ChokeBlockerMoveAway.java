@@ -2,6 +2,8 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
+import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.DoAvoidEnemies;
 import atlantis.combat.squad.squad_scout.SquadScoutProceed;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
@@ -71,20 +73,26 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.distTo(this.chokeBlockPoint) >= MOVE_AWAY_DISTANCE) return null;
-
-        HasPosition goTo = Select.mainOrAnyBuilding();
-
-        if (goTo != null && goTo.distTo(unit) > 0.03) {
-            if (A.now() % 5 == 0) {
-                unit.move(goTo, Actions.SPECIAL, "ChokeBlock");
-            }
+        if ((new AvoidEnemies(unit)).invokedFrom(this)) {
+            return usedManager(this);
         }
-        else {
-            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
-        }
-        unit.setAction(Actions.SPECIAL);
 
-        return usedManager(this);
+        return null;
+
+//        if (unit.distTo(this.chokeBlockPoint) >= MOVE_AWAY_DISTANCE) return null;
+//
+//        HasPosition goTo = Select.mainOrAnyBuilding();
+//
+//        if (goTo != null && goTo.distTo(unit) > 0.03) {
+//            if (A.now() % 5 == 0) {
+//                unit.move(goTo, Actions.SPECIAL, "ChokeBlock");
+//            }
+//        }
+//        else {
+//            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
+//        }
+//        unit.setAction(Actions.SPECIAL);
+//
+//        return usedManager(this);
     }
 }

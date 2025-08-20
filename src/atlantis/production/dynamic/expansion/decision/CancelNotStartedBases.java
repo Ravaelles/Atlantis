@@ -27,12 +27,16 @@ public class CancelNotStartedBases {
 //            }
 //        }
 
-        Queue.get().notStarted().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
+        Queue.get().statusNotReady().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
             if (shouldCancelBase(construction, worker)) {
-                A.errPrintln(A.now() + " Cancelling pending base " + order + " as other just finished!");
+                A.errPrintln(
+                    A.now() + " Cancelling pending base "
+                    + order + ", Reason: " + reason
+                );
                 order.cancel(reason);
-                return;
+
+//                A.printStackTrace("Why cancel base?");
             }
         });
     }

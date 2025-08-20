@@ -9,7 +9,9 @@ public class IsPoweredByAPylon {
     public static boolean check(APosition position) {
         Selection pylons = Select.ourOfType(AUnitType.Protoss_Pylon);
 
-        return pylons.countInRadius(5.3, position) > 0
-            && pylons.countInRadius(2.0, position) == 0;
+        return pylons.countInRadius(3.2, position) > 0;
+
+//        return pylons.countInRadius(5.3, position) > 0
+//            && pylons.countInRadius(2.0, position) == 0;
     }
 }

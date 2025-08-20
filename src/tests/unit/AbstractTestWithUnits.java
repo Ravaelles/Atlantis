@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.debug.painter.APainter;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.listeners.OnGameStarted;
 import atlantis.game.player.Enemy;
@@ -130,7 +131,7 @@ public class AbstractTestWithUnits extends UnitTest {
             }
         }
 
-        Cache.nukeAllCaches();
+//        Cache.nukeAllCaches();
 
         ReservedResources.reset();
 
@@ -304,17 +305,17 @@ public class AbstractTestWithUnits extends UnitTest {
         }
 
         if (!containsAll || !lengthsMatch) {
-            System.err.println("\nExpected: (" + expected.length + ")");
+            A.println("\nExpected: (" + expected.length + ")");
             for (Object o : expected) {
-                System.err.println(o);
+                A.println(o);
             }
-            System.err.println("\nActual: (" + actual.length + ")");
+            A.println("\nActual: (" + actual.length + ")");
             for (Object o : actual) {
-                System.err.println(o);
+                A.println(o);
             }
         }
 
-        if (missing != null) System.err.println("\nMissing: " + missing);
+        if (missing != null) A.println("\nMissing: " + missing);
 
         assertEquals(expected.length, actual.length);
         assertTrue(containsAll);

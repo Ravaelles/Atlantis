@@ -7,10 +7,12 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.util.Vector;
+import atlantis.util.We;
 
 public class RunShowingBackToEnemy {
     public static final double SHOW_BACK_DIST_DEFAULT = 4;
-    public static final double SHOW_BACK_DIST_DRAGOON = 6;
+    public static final double SHOW_BACK_DIST_DRAGOON = 7;
+    public static final double SHOW_BACK_DIST_PROTOSS_DEFAULT = 6;
     public static final double SHOW_BACK_DIST_TERRAN_INFANTRY = 5;
     public static final double SHOW_BACK_DIST_VULTURE = 5;
 
@@ -28,7 +30,7 @@ public class RunShowingBackToEnemy {
     public boolean shouldRunByShowingBackToEnemy() {
         this.unit = running.unit();
 
-        return ShouldRunByShowingBackToEnemy.check(unit, running.runningFromUnit());
+        return CanRunByShowingBackToEnemy.check(unit, running.runningFromUnit());
     }
 
     // =========================================================
@@ -46,9 +48,11 @@ public class RunShowingBackToEnemy {
         if (
             runTo != null
                 && unit.distTo(runTo) > 1
-                && running.unit().lastStartedRunningLessThanAgo(8)
+//                && running.unit().lastStartedRunningLessThanAgo(8)
         ) {
-            runTo = SeparateEarlyFromFriends.modifyPositionSlightly(runTo, runAwayFrom, running);
+            if (We.terran()) {
+                runTo = SeparateEarlyFromFriends.modifyPositionSlightly(runTo, runAwayFrom, running);
+            }
 
             if (IsReasonablePositionToRunTo.check(unit, runTo, runAwayFrom)) {
                 running.setRunTo(runTo);
@@ -59,10 +63,9 @@ public class RunShowingBackToEnemy {
             }
         }
 
-//        if (runTo == null || running.unit().lastStartedRunningLessThanAgo(8)) {
-        if (runTo == null) {
-            runTo = findRunPositionShowYourBackToEnemy(runAwayFrom);
-        }
+//        if (runTo == null) {
+//            runTo = findRunPositionShowYourBackToEnemy(runAwayFrom);
+//        }
 
         running.setRunTo(runTo);
 
@@ -157,14 +160,22 @@ public class RunShowingBackToEnemy {
         if (unit.isFlying()) {
             return 1.1;
         }
-        else if (unit.isTerranInfantry()) {
-            return RunShowingBackToEnemy.SHOW_BACK_DIST_TERRAN_INFANTRY * 32;
+
+        if (unit.isProtoss()) {
+            if (unit.isDragoon()) {
+                return RunShowingBackToEnemy.SHOW_BACK_DIST_DRAGOON * 32;
+            }
+
+            return RunShowingBackToEnemy.SHOW_BACK_DIST_PROTOSS_DEFAULT * 32;
         }
-        else if (unit.isVulture()) {
-            return RunShowingBackToEnemy.SHOW_BACK_DIST_VULTURE * 32;
-        }
-        else if (unit.isDragoon()) {
-            return RunShowingBackToEnemy.SHOW_BACK_DIST_DRAGOON * 32;
+
+        if (unit.isTerran()) {
+            if (unit.isTerranInfantry()) {
+                return RunShowingBackToEnemy.SHOW_BACK_DIST_TERRAN_INFANTRY * 32;
+            }
+            else if (unit.isVulture()) {
+                return RunShowingBackToEnemy.SHOW_BACK_DIST_VULTURE * 32;
+            }
         }
 
         return (RunShowingBackToEnemy.SHOW_BACK_DIST_DEFAULT * 32);

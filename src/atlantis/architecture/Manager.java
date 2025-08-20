@@ -16,6 +16,27 @@ public abstract class Manager extends BaseManager {
         super(unit);
     }
 
+//    public static Manager invokedFor(AUnit unit) {
+//        InstantiateManager.byClass(currentClass());
+//
+//        Manager manager = new (..);
+//    }
+
+    public static <T extends Manager> T invokedFor(Class<T> managerClass, AUnit unit) {
+        try {
+            T manager = managerClass.getConstructor(AUnit.class).newInstance(unit);
+            if (manager.applies()) {
+                return (T) manager.handle();
+            }
+
+            return null;
+        }
+        catch (Exception e) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(e.getMessage());
+            return null;
+        }
+    }
+
     // =========================================================
 
     /**
@@ -39,7 +60,9 @@ public abstract class Manager extends BaseManager {
     }
 
     private Manager invokeFromParent(Manager parent) {
-        if (!applies()) return null;
+        if (!applies()) {
+            return null;
+        }
 
 //        if (unit.isLeader() && unit.isDragoon() && A.now() >= 50) {
 //            System.err.println("@ " + A.now() + " - " + this.getClass() + " - ");
@@ -117,12 +140,12 @@ public abstract class Manager extends BaseManager {
         System.err.println("Parents stack for " + this + ": " + parentsStack());
     }
 
-//    public Manager invoke(Commander parent) {
-//        return invokeFromParent(parent != null ? parent.getClass() : null);
-//    }
-
     public Manager forceHandle() {
         return handle();
+    }
+
+    public boolean forceHandled() {
+        return forceHandle() != null;
     }
 
     /**
@@ -195,10 +218,12 @@ public abstract class Manager extends BaseManager {
     public Manager usedManager(Manager manager, String message) {
         if (manager == null) return null;
 
-        if (unit.isLeader() && unit.isDragoon() && A.now() >= 1) {
-//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName());
+//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 1) {
+//        if (!unit.isWorker()) {
+//            System.err.println("@ " + A.now() + " - " + unit + " USED = " + this.getClass().getSimpleName());
+//        }
 //            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName() + " / " + parentsStack());
-        }
+//        }
 
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);

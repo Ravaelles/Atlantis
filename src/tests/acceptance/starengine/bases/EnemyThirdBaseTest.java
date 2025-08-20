@@ -31,12 +31,12 @@ public class EnemyThirdBaseTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Larva, 12)
         );
 
-        useStarEngine(); // Uncomment to use StarEngine
+//        useStarEngine(); // Uncomment to use StarEngine
 
         createWorld(25, () -> {
                 OnEnemyNewUnitDiscovered.update(fakeEnemy(AUnitType.Zerg_Sunken_Colony, 117, 14));
 
-                APosition third = EnemyThirdBase.get();
+                APosition third = EnemyThirdBase.position();
                 APosition natural = EnemyNaturalBase.get();
                 APosition enemyMain = EnemyMainBase.get();
                 System.err.println("enemyMain = " + enemyMain);

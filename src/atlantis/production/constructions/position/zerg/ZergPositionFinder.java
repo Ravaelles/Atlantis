@@ -21,7 +21,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _STATUS = null;
+        _STATUS = "None";
 
         if (nearTo == null) {
             ErrorLog.printMaxOncePerMinute("@@@ NULL nearTo for findStandardPositionFor " + building);
@@ -99,7 +99,7 @@ public class ZergPositionFinder extends AbstractPositionFinder {
         }
 
         // All conditions are fullfilled, return this position
-        _STATUS = null;
+        _STATUS = "None";
         return true;
     }
 

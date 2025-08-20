@@ -3,11 +3,11 @@ package atlantis.combat.micro.attack.enemies;
 import atlantis.architecture.Manager;
 
 import atlantis.combat.micro.attack.ProcessAttackUnit;
+import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.util.PauseAndCenter;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
@@ -16,6 +16,7 @@ public class AttackNearbyEnemies extends Manager {
     public static String reasonNotToAttack;
     private static ProcessAttackUnit processAttackUnit;
     private final AllowedToAttack allowedToAttack;
+    public static String _failReason = "_none_";
 //    private AUnit targetToAttack;
 
     // =========================================================
@@ -35,34 +36,61 @@ public class AttackNearbyEnemies extends Manager {
     @Override
     public boolean applies() {
         if (unit.cooldown() >= 13) return false;
+        if (unit.lastCommandIssuedAgo() <= 1) return false;
 
-        return (new AttackNearbyEnemiesApplies(unit)).applies();
+        if ((new AttackNearbyEnemiesApplies(unit)).applies()) {
+            return true;
+//            return allowedToAttack.canAttackNow();
+        }
+
+        return false;
     }
 
     @Override
     public Manager handle() {
-        if (unit.leaderIsRetreating()) return null;
+        _failReason = "";
 
-//        A.printStackTrace("Why attack now? ");
+//        if (unit.isDancingAway() && unit.lastCommandIssuedAgo() <= 2) {
+//            A.printStackTrace("Dancing away, no attack for now: " + unit + " / " + getParent());
+//        }
+
+//        if (ProtossAttackForbiddenByCohesion.forbiddenToAttack(unit)) {
+//            _failReason = "ProtossAttackForbiddenByCohesion";
+//            return null;
+//        }
+
+        if ((new ProtossAlwaysAvoidEnemy(unit)).applies()) {
+            _failReason = "ProtossAlwaysAvoidEnemy";
+            return null;
+        }
+        if (unit.leaderIsRetreating()) {
+            _failReason = "leaderIsRetreating";
+            return null;
+        }
+
 //        printParentsStack();
 //        unit.managerLogs().print();
 //        unit.log().print();
+//        System.out.println(A.now + ", AttackNearbyEnemies for " + unit);
 
         if (handleAttackNearEnemyUnits()) {
-            if (unit.isAttacking() && (unit.target() == null || unit.target().hp() <= 0)) {
-                String error = unit + " handleAttackNearEnemyUnits got " + unit.target();
-
-//                if (unit.target() == null && !unit.isRunning()) ErrorLog.printMaxOncePerMinute(error);
-
-//                if (true) throw new RuntimeException("nuuuuuuuuuuuuuuuuuul");
-
-//                PauseAndCenter.on(unit, true);
-
+            AUnit target = unit.target();
+            if (target == null) {
+                _failReason = "nullTarget";
                 return null;
             }
+            if (target.hp() <= 0) {
+                _failReason = "targetHp0,vis:" + target.effVisible() + ",dead:" + target.isDead();
+                return null;
+            }
+
+//            A.printStackTrace("Why attack now? @" + A.now);
+//            printParentsStack();
+//            if (!unit.isLeader()) A.printStackTrace("Why attack now? ");
             return usedManager(this);
         }
 
+        _failReason = "generic";
         return null;
     }
 
@@ -81,7 +109,7 @@ public class AttackNearbyEnemies extends Manager {
      * <b>false</b> if no valid enemy to attack could be found
      */
     public boolean handleAttackNearEnemyUnits() {
-        if (!applies()) return false;
+//        if (!applies()) return false;
 
         AUnit target = this.defineBestEnemyToAttack(unit);
         if (target == null) return false;
@@ -89,9 +117,6 @@ public class AttackNearbyEnemies extends Manager {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Target has hp(" + target.hp() + ") - " + target);
             return false;
         }
-
-        if (!unit.mission().allowsToAttackEnemyUnit(unit, target)) return false;
-        if (!allowedToAttack.canAttackNow()) return false;
 
         // =========================================================
 
@@ -104,14 +129,14 @@ public class AttackNearbyEnemies extends Manager {
 //                why();
 
         if (!unit.canAttackTarget(target) || !unit.isAlive()) {
-//                    ErrorLog.printMaxOncePerMinute(unit.type() + " can't attack " + target);
+            ErrorLog.printMaxOncePerMinute(unit.type() + " can't attack " + target);
 //                    ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(unit.type() + " can't attack " + target);
+            _failReason = "cannotAttackTarget:" + target.typeWithUnitId();
             return false;
         }
 
         // =========================================================
 
-        if (unit.mission().allowsToAttackEnemyUnit(unit, target)) {
 //            unit.manager().printParentsStack();
 //            A.printStackTrace(unit + ": Why ATACC? ");
 
@@ -124,9 +149,16 @@ public class AttackNearbyEnemies extends Manager {
 //                PauseAndCenter.on(unit, true);
 //            }
 
-            return processAttackUnit.processAttackOtherUnit(target);
+        if (!unit.mission().allowsToAttackEnemyUnit(unit, target)) {
+            _failReason = "missionNotAllows:" + target.typeWithUnitId();
+            return false;
         }
 
+        if (processAttackUnit.processAttackOtherUnit(target)) {
+            return true;
+        }
+
+        _failReason = "generic_failed";
         return false;
     }
 

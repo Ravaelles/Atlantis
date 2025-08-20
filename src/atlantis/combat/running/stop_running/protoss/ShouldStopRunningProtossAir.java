@@ -17,6 +17,8 @@ public class ShouldStopRunningProtossAir extends Manager {
 
     @Override
     protected Manager handle() {
+        unit.runningManager().stopRunning();
+
         return usedManager(this);
     }
 }

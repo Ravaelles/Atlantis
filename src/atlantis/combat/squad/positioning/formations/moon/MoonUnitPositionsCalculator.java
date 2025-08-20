@@ -1,10 +1,12 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
-import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
+import atlantis.map.region.ApproximateRegionCenter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +18,8 @@ public class MoonUnitPositionsCalculator {
         Map<AUnit, APosition> positions = new HashMap<>();
 
         // Compute the angle towards the enemy position
-        double angleToCenter = Math.atan2(center.ty() - units.center().ty(), center.tx() - units.center().tx());
+        APosition ourUnitsCenter = ourUnitsCenter(units);
+        double angleToCenter = Math.atan2(center.ty() - ourUnitsCenter.ty(), center.tx() - ourUnitsCenter.tx());
 
         // Total angle span depends on unit count and their sizes
         double angleSpan = calculateTotalAngleSpan(units, radius, separation);
@@ -45,6 +48,35 @@ public class MoonUnitPositionsCalculator {
         return positions;
     }
 
+    private static APosition ourUnitsCenter(Selection units) {
+        APosition centerOfOurUnits = units.center();
+
+        return moveCenterTowardsRegionCenter(centerOfOurUnits);
+    }
+
+    private static APosition moveCenterTowardsRegionCenter(APosition center) {
+        ARegion region = center.region();
+
+        if (region == null) return center;
+
+        APosition regionCenter = null;
+//        if (region == null || region.center() == null) return center;
+//        if (region == null || region.center() == null) {
+//            regionCenter = ApproximateRegionCenter.approximateFor(center);
+//        }
+//        else {
+            regionCenter = region.center();
+//        }
+
+        if (regionCenter == null) return center;
+
+//        regionCenter.paintCircle(60, Color.White);
+//        regionCenter.paintCircle(59, Color.White);
+//        regionCenter.paintCircle(58, Color.White);
+
+        return center.translatePercentTowards(33, regionCenter);
+    }
+
     private static double calculateTotalAngleSpan(Selection units, double radius, double separation) {
         double totalWidth = 0.0;
 
@@ -61,7 +93,7 @@ public class MoonUnitPositionsCalculator {
         if (position == null) return null;
 
         if (!position.isWalkable()) {
-            position = position.makeWalkable(1, unit.position().region());
+            position = position.makeWalkable(1, 1, unit.position().region());
         }
 
         if (position == null || !position.isWalkable()) {
@@ -73,7 +105,7 @@ public class MoonUnitPositionsCalculator {
 
     private static boolean isPositionOkay(APosition position, AUnit unit) {
         return position != null
-            && position.isWalkable()
+            && position.isWalkable(2)
             && position.regionsMatchOrClose(unit, 8);
     }
 }

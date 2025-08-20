@@ -33,7 +33,7 @@ public class MoonUnitPositions {
     }
 
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {
-        int cacheForFrames = We.protoss() ? 6 : 10;
+        int cacheForFrames = We.protoss() ? 4 : 6;
 
         return cacheMap.getIfValid(
             "getPositionsCreatedForLeader:" + leader.id(),

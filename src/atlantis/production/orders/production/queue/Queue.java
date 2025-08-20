@@ -84,12 +84,14 @@ public class Queue extends AbstractQueue {
 
     public Orders notStarted() {
         return orders.notStarted();
+    }
 
-//        return cache.get(
-//            "notStarted",
-//            CACHE_FOR_FRAMES,
-//            orders::notStarted
-//        );
+    public Orders notInProgress() {
+        return orders.notInProgres();
+    }
+
+    public Orders statusNotReady() {
+        return orders.notReady();
     }
 
     public Orders notFinished() {

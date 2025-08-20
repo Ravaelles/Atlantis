@@ -49,7 +49,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inShootRangeOf(groundRange + 4, unit)
                 .randomWithSeed(700 + unit.id());
             if (target != null) {
-                debug("CR1 = " + target);
+               debug(unit, "CR1 = " + target);
                 return target;
             }
         }
@@ -63,7 +63,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(unit.isAir() ? 30 : 13, unit)
             .nearestTo(unit);
         if (target != null && enemyUnits.ofType(AUnitType.Protoss_Carrier).inRadius(AUnit.NEAR_DIST, target).atLeast(1)) {
-            debug("CR2 = " + target);
+           debug(unit, "CR2 = " + target);
             return target;
         }
 
@@ -77,7 +77,7 @@ public class ATargetingCrucial extends ATargeting {
             .canBeAttackedBy(unit, 1.1)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR3 = " + target);
+           debug(unit, "CR3 = " + target);
             return target;
         }
 
@@ -86,7 +86,7 @@ public class ATargetingCrucial extends ATargeting {
             .inShootRangeOf(unit)
             .mostWounded();
         if (target != null) {
-            debug("CR3a = " + target);
+           debug(unit, "CR3a = " + target);
             return target;
         }
 
@@ -95,7 +95,7 @@ public class ATargetingCrucial extends ATargeting {
             .canBeAttackedBy(unit, unit.isRanged() ? 0.9 : 0.2)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR3b = " + target);
+           debug(unit, "CR3b = " + target);
             return target;
         }
 
@@ -108,7 +108,7 @@ public class ATargetingCrucial extends ATargeting {
             .mostWounded();
 
         if (target != null) {
-            debug("CR5 = " + target);
+           debug(unit, "CR5 = " + target);
             return target;
         }
 
@@ -145,7 +145,7 @@ public class ATargetingCrucial extends ATargeting {
                 .inRadius(5, unit)
                 .nearestTo(unit);
             if (target != null) {
-                debug("CR7 = " + target);
+               debug(unit, "CR7 = " + target);
                 return target;
             }
         }
@@ -159,7 +159,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(9, unit)
             .randomWithSeed(unit.id());
         if (target != null) {
-            debug("CR8 = " + target);
+           debug(unit, "CR8 = " + target);
             return target;
         }
 
@@ -173,7 +173,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(8, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR9 = " + target);
+           debug(unit, "CR9 = " + target);
             return target;
         }
 
@@ -188,7 +188,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(groundRange + 2, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR10 = " + target);
+           debug(unit, "CR10 = " + target);
             return target;
         }
 
@@ -202,7 +202,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(groundRange + 2.2, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR10b = " + target);
+           debug(unit, "CR10b = " + target);
             return target;
         }
 
@@ -220,7 +220,7 @@ public class ATargetingCrucial extends ATargeting {
             .inShootRangeOf(unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR11 = " + target);
+           debug(unit, "CR11 = " + target);
             return target;
         }
 
@@ -228,7 +228,7 @@ public class ATargetingCrucial extends ATargeting {
         // Special case - SHUTTLE
 
         if ((target = (new ATransportTargeting(unit)).target()) != null) {
-            debug("CR12 = " + target);
+           debug(unit, "CR12 = " + target);
             return target;
         }
 
@@ -244,7 +244,7 @@ public class ATargetingCrucial extends ATargeting {
             .inRadius(groundRange + 0.7, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("CR13 = " + target);
+           debug(unit, "CR13 = " + target);
             return target;
         }
 

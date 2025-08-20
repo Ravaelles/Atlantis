@@ -3,7 +3,7 @@ package atlantis.game.init;
 import atlantis.config.ActiveMap;
 import atlantis.game.AGame;
 import atlantis.units.select.Select;
-import atlantis.units.workers.AMineralGathering;
+import atlantis.units.workers.gather.AMineralGathering;
 
 public class AInitialActions {
 

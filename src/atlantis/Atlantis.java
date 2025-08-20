@@ -1,11 +1,9 @@
 package atlantis;
 
 import atlantis.config.AtlantisConfig;
-import atlantis.config.env.Env;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.listeners.*;
-import atlantis.game.util.GameSummary;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
@@ -145,6 +143,7 @@ public class Atlantis implements BWEventListener {
         AUnit unit = AUnit.createFrom(u);
         if (unit != null) {
             if (unit.isEnemy()) OnEnemyNewUnitDiscovered.update(unit);
+            else if (unit.isNeutral()) OnNeutralNewUnitDiscovered.update(unit);
 //            if (!unit.isRealUnit() && !unit.type().isInvincible()) {
         }
     }
@@ -188,10 +187,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitShow(Unit u) {
-//        AUnit unit = AUnit.getById(u);
-//        if (unit.isEnemy()) {
-//            EnemyUnits.updateEnemyUnitPosition(unit);
-//        }
+        OnEnemyUnitShow.update(AUnit.createFrom(u));
     }
 
     /**

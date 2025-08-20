@@ -23,9 +23,9 @@ public class ScoutTryFindingEnemy extends Manager {
         return unit != null
             && !EnemyInfo.hasDiscoveredAnyBuilding()
             && A.notUms()
+            && Select.main() != null
             && !unit.isSpecialMission()
-            && unit.enemiesNear().combatUnits().inRadius(7, unit).empty()
-            && Select.main() != null;
+            && unit.enemiesThatCanAttackMe(9).empty();
     }
 
     @Override

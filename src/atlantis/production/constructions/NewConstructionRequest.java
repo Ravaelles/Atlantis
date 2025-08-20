@@ -156,24 +156,10 @@ public class NewConstructionRequest {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
         }
 
-        boolean cancelled = false;
+        boolean cancelled = cancelInvalidNullPositionConstructionIfNeeded(building, order);
 
-        if (building.isSupplyDepot()) {
-            if (A.supplyTotal() > 10
-                && order != null
-                && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
-            ) {
-                cancelled = true;
-                order.cancel("Invalid position for supply depot");
-            }
-        }
-        else if (!building.isPylon()) {
-            if (A.s >= 70 && A.supplyUsed() >= 11) {
-                cancelled = true;
-                order.cancel("Invalid position for " + building);
-                A.errPrintln(A.minSec() + ": Cancelled order: " + order);
-            }
-        }
+//        System.err.println("cancelled = " + cancelled);
+//        if (true) throw new RuntimeException("cancelled = " + cancelled + " / " + building);
 
         // =========================================================
 
@@ -205,6 +191,28 @@ public class NewConstructionRequest {
         // =========================================================
 
         return false;
+    }
+
+    private static boolean cancelInvalidNullPositionConstructionIfNeeded(AUnitType building, ProductionOrder order) {
+        boolean cancelled = false;
+
+        if (building.isSupplyDepot()) {
+            if (A.supplyTotal() > 10
+                && order != null
+                && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
+            ) {
+                cancelled = true;
+                order.cancel("Invalid position for supply depot");
+            }
+        }
+        else if (!building.isPylon()) {
+            if (A.s >= 70 && A.supplyTotal() >= 11) {
+                cancelled = true;
+                order.cancel("Invalid position for " + building);
+                A.errPrintln(A.minSec() + ": Cancelled order: " + order);
+            }
+        }
+        return cancelled;
     }
 
     private static boolean handleRequirementMissingFor(AUnitType building) {

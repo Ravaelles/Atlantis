@@ -1,12 +1,12 @@
 package atlantis.map.scout.listeners;
 
 import atlantis.game.A;
-import atlantis.game.event.Listener;
+import atlantis.game.event.AutomaticListener;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnit;
 
-public class FirstPylonUnitCreated extends Listener {
+public class FirstPylonUnitCreated extends AutomaticListener {
     @Override
     public String listensTo() {
         return "FirstPylonUnitCreated";

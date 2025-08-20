@@ -2,7 +2,9 @@ package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.protoss.cluster.ProtossKeepUnitsClustered;
+import atlantis.combat.squad.positioning.protoss.dragoon.ProtossKeepUnitsCloseToBuildingsDuringDefend;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
 public class ProtossFormation extends Manager {
@@ -12,15 +14,19 @@ public class ProtossFormation extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss() && unit.isCombatUnit();
+        return We.protoss()
+            && unit.isCombatUnit()
+            && unit.isAlphaSquad()
+            && unit.lastActionMoreThanAgo(30 * 10, Actions.UNLOAD);
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ProtossMoonIdle.class,
             ProtossMoon.class,
-//            ProtossCrescent.class,
-            ProtossKeepUnitsClustered.class,
+//            ProtossKeepUnitsClustered.class,
+//            ProtossKeepUnitsCloseToBuildingsDuringDefend.class,
         };
     }
 }

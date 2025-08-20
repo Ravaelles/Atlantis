@@ -5,6 +5,7 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.units.AliveEnemies;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Count;
@@ -16,6 +17,7 @@ public class ClearAllCaches {
     public static void clearAll() {
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
+        AliveEnemies.clearCache();
         AvoidEnemies.clearCache();
         BaseSelect.clearCache();
         Count.clearCache();

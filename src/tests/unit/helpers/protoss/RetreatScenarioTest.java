@@ -73,7 +73,7 @@ public class RetreatScenarioTest extends WorldStubForTests {
 
                 this.retreatManagerApplied = manager != null;
 
-//            assertEquals(true, (new ProtossShouldRetreat(our).forceHandle());
+//            assertEquals(true, (new ProtossRetreatWrapper(our).forceHandle());
             }, () -> ours, () -> enemies);
     }
 }

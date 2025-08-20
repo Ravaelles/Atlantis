@@ -6,6 +6,7 @@ import atlantis.map.base.BaseLocations;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 
 public class ScoutFreeBases extends Manager {
     private HasPosition nextPosition;
@@ -17,7 +18,10 @@ public class ScoutFreeBases extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isScout() && !unit.isAir()) return false;
-        if (!unit.isOldestUnitsOfItsKind()) return false;
+        if (!unit.isWorker() && !unit.isOldestUnitsOfItsKind()) return false;
+        if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
+
+        if (Count.ourCombatUnits() <= 15) return false;
 
 //        if (
 //            unit.enemiesNear()

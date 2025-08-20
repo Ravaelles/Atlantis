@@ -23,6 +23,7 @@ public class BuilderManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            CancelConstructionsWhenEnemiesNear.class,
             BuilderAvoidEnemies.class,
             AvoidEnemies.class,
             AbandonAsBuilderIfAttacked.class,

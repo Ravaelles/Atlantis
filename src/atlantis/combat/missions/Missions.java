@@ -2,10 +2,9 @@ package atlantis.combat.missions;
 
 import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionAttack;
-import atlantis.combat.missions.contain.MissionContain;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.protoss.sparta.Sparta;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
@@ -19,7 +18,6 @@ import atlantis.util.log.ErrorLog;
 public class Missions {
 
     public static final Mission ATTACK = new MissionAttack();
-    public static final Mission CONTAIN = new MissionContain();
     public static final Mission DEFEND = new MissionDefend();
     public static final Mission SPARTA = new Sparta();
 
@@ -63,10 +61,6 @@ public class Missions {
         return isGlobalMissionDefend() || isGlobalMissionSparta();
     }
 
-    public static boolean isGlobalMissionContain() {
-        return globalMission().isMissionContain();
-    }
-
     public static boolean isGlobalMissionAttack() {
         if (AGame.isUms()) return true;
 
@@ -85,10 +79,6 @@ public class Missions {
 
     public static boolean forceGlobalMissionDefend(String reason) {
         return enforceGlobalMission(DEFEND, reason);
-    }
-
-    public static boolean forceGlobalMissionContain(String reason) {
-        return enforceGlobalMission(CONTAIN, reason);
     }
 
     public static boolean forceGlobalMissionSparta(String reason) {
@@ -133,8 +123,6 @@ public class Missions {
         switch (mission) {
             case "ATTACK":
                 return ATTACK;
-            case "CONTAIN":
-                return CONTAIN;
             case "DEFEND":
                 return DEFEND;
 //            default : AGame.exit("Invalid mission: " + mission); return null;
@@ -176,7 +164,12 @@ public class Missions {
 //            }
 
 //            if (MissionChanger.DEBUG) {
-            A.println("MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint());
+            if (!A.isUms()) {
+                A.println(
+                    "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()
+                    + "                  Resources balance: " + A.resourcesBalance()
+                );
+            }
 //                A.printStackTrace("Changing mission to " + mission);
 //            }
             MissionHistory.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);

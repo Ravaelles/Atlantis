@@ -2,11 +2,10 @@ package atlantis.production.dynamic.reinforce.terran.turrets.offensive;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.select.Count;

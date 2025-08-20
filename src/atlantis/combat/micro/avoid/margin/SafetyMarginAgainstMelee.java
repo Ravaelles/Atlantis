@@ -92,7 +92,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
             criticalDist = 2.3;
         }
 
-//        if (defender.isActiveManager(ContinueShotAnimation.class) && defender.lastAttackFrameMoreThanAgo(24)) {
+//        if (defender.isActiveManager(ContinueAttack.class) && defender.lastAttackFrameMoreThanAgo(24)) {
 //            A.printStackTrace("How comes we wanna avoid?");
 //            defender.manager().printParentsStack();
 //        }

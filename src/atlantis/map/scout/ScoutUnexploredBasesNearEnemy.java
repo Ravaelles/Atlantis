@@ -18,7 +18,8 @@ public class ScoutUnexploredBasesNearEnemy extends Manager {
     public boolean applies() {
         baseLocation = UnexploredBaseLocationNearEnemy.get();
 
-        return baseLocation != null;
+        return baseLocation != null
+            && unit.enemiesThatCanAttackMe(9).isEmpty();
     }
 
     @Override

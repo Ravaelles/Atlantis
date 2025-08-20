@@ -30,13 +30,15 @@ public class TooCloseToMainBase {
     }
 
     private static double minDistFromBase(AUnitType building) {
-        if (We.terran()) {
-            if (building.isCombatBuilding()) return 0;
-            return building.isSupplyDepot() ? 8 : 4;
+        if (We.protoss()) {
+            if (building.isGateway()) return 5;
+
+            return building.isPylon() ? (A.supplyTotal() <= 16 ? 5 : 4) : 5;
         }
 
-        if (We.protoss()) {
-            return building.isPylon() ? (A.supplyTotal() <= 16 ? 5 : 4) : 5;
+        else if (We.terran()) {
+            if (building.isCombatBuilding()) return 0;
+            return building.isSupplyDepot() ? 8 : 4;
         }
 
         return 2;

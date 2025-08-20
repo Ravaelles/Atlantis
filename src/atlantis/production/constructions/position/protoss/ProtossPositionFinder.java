@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position.protoss;
 
+import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -17,7 +18,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * It checks if buildings aren't too close one to another and things like that.
      */
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _STATUS = null;
+        _STATUS = "None";
 
         // =========================================================
 
@@ -63,9 +64,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                             }
 
                             AbstractPositionFinder._STATUS = "OK";
-//                            System.err.println("@@@@@@@@@@@@@@@@@@@ " + constructionPosition);
                             return constructionPosition;
                         }
+
+//                        if (building.isGateway() && A.supplyUsed() <= 12) {
+//                            System.out.println("Fail reason: " + constructionPosition + ", " + _STATUS);
+//                        }
                     }
                 }
             }

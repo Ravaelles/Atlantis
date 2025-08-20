@@ -1,0 +1,64 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=10
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=27
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=55
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/One_Base_Speedzeal_(vs._Zerg)
+8/9 - Pylon
+10 - Gateway
+12 - Assimilator
+13 - Zealot
+16 - Pylon
+17 - Zealot
+20 - Cybernetics Core
+21 - Zealot
+23 - Pylon
+25 - Dragoon
+27 - Citadel of Adun
+29 - Gateway
+29 - Zealot
+31 - Pylon
+Legs upgrade
+Two Zealots
+37/41 - Pylon
+37/49 - Templar Archives
+37/49 - Two Zealots
+Two High Templars or Dark Templars
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+4 - MISSION=DEFEND
+8 - Pylon
+10 - Gateway
+12 - Assimilator
+13 - Zealot
+14 - Pylon
+17 - Zealot
+18 - Cybernetics Core
+21 - Zealot
+21 - Gateway
+23 - Pylon
+25 - Dragoon
+27 - Citadel of Adun
+29 - Gateway
+29 - Dragoon
+31 - Leg enhancements
+31 - Zealot
+33 - Zealot
+34 - MISSION=ATTACK
+36 - Zealot
+39 - Zealot

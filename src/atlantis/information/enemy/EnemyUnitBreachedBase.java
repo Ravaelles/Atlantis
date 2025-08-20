@@ -22,7 +22,7 @@ public class EnemyUnitBreachedBase {
         return _numOfBaseAttacks;
     }
 
-    public static boolean notNull() {
+    public static boolean someone() {
         return get() != null;
     }
 

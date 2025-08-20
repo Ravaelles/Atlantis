@@ -3,8 +3,10 @@ package atlantis.util;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.select.Select;
 import bwapi.Color;
 
 public class CenterCamera {
@@ -30,5 +32,13 @@ public class CenterCamera {
         }
 
         CameraCommander.centerCameraOn(position);
+    }
+
+    public static void onFirstCombatUnit() {
+        on(Select.ourCombatUnits().first());
+    }
+
+    public static void onMainChoke() {
+        on(Chokes.mainChoke());
     }
 }

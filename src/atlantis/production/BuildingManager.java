@@ -24,7 +24,7 @@ public class BuildingManager extends Manager {
             TerranCommandCenter.class,
             LiftedBuildingManager.class,
             ShouldLiftBuildingManager.class,
-//            ProtossShieldBattery.class,
+//            ShieldBattery.class,
         };
     }
 }

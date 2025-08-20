@@ -11,6 +11,7 @@ import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
+import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ResearchProtossGroundArmor extends Commander {
     private static UpgradeType what() {
@@ -20,9 +21,10 @@ public class ResearchProtossGroundArmor extends Commander {
     @Override
     public boolean applies() {
         if (!Have.forge()) return false;
+        if (!ResearchProtossGroundWeapons.isResearched()) return false;
         if (Count.ourCombatUnits() <= 10) return false;
         if (ATech.isResearched(what())) return false;
-        if (!A.hasMinerals(650) && Count.basesWithUnfinished() <= 1) return false;
+        if (!A.hasMinerals(650) && !A.hasGas(400) && Count.basesWithUnfinished() <= 1) return false;
         if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
         if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
@@ -36,11 +38,22 @@ public class ResearchProtossGroundArmor extends Commander {
         return false;
     }
 
+    public static boolean isResearched() {
+        boolean isResearched = ATech.isResearched(what());
+        if (!isResearched) return false;
+
+        int upgradeLevel = getCurrentUpgradeLevel();
+        if (upgradeLevel >= 3) return true;
+
+        return !A.canAfford(550, 300);
+    }
+
+    private static int getCurrentUpgradeLevel() {
+        return ATech.getUpgradeLevel(what());
+    }
+
     @Override
     protected void handle() {
-//        if (AddToQueue.upgrade(tech())) {
-//            Queue.get().history().addNow(tech().name());
-//        }
         ResearchNow.research(what());
     }
 }

@@ -4,7 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 
 public class ScvDontAvoidEnemy extends Manager {
     public ScvDontAvoidEnemy(AUnit unit) {

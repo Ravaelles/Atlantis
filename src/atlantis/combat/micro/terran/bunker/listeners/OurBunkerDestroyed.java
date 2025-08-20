@@ -2,11 +2,11 @@ package atlantis.combat.micro.terran.bunker.listeners;
 
 import atlantis.combat.micro.terran.bunker.NewBunker;
 import atlantis.game.A;
-import atlantis.game.event.Listener;
+import atlantis.game.event.AutomaticListener;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
-public class OurBunkerDestroyed extends Listener {
+public class OurBunkerDestroyed extends AutomaticListener {
     @Override
     public String listensTo() {
         return "OurBunkerDestroyed";

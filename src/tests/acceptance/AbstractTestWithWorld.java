@@ -52,6 +52,33 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
     protected void createWorld(
         int proceedUntilFrameReached,
         Runnable onFrame,
+        FakeUnit our,
+        FakeUnit[] enemies
+    ) {
+        createWorld(proceedUntilFrameReached, onFrame, () -> fakeOurs(our), () -> enemies, null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        FakeUnit[] ours,
+        FakeUnit[] enemies,
+        Runnable onFrame
+    ) {
+        createWorld(proceedUntilFrameReached, onFrame, () -> ours, () -> enemies, null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        FakeUnit our,
+        FakeUnit[] enemies,
+        Runnable onFrame
+    ) {
+        createWorld(proceedUntilFrameReached, onFrame, () -> fakeOurs(our), () -> enemies, null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        Runnable onFrame,
         Callable generateOur,
         Callable generateEnemies
     ) {

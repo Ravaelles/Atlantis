@@ -1,13 +1,9 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.Squad;
-import atlantis.game.A;
-import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
-import atlantis.util.CenterCamera;
+import atlantis.units.actions.Actions;
 import atlantis.util.PauseAndCenter;
-import bwapi.Color;
 
 public class UnfreezeDragoon extends Manager {
     public UnfreezeDragoon(AUnit unit) {
@@ -18,37 +14,44 @@ public class UnfreezeDragoon extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
         if (unit.hasCooldown()) return false;
-        if (unit.lastAttackFrameLessThanAgo(40)) return false;
+        if (unit.lastPositionChangedAgo() <= Unfreezer.UNFREEZE_WHEN_IDLE_FOR) return false;
+        if (unit.lastActionLessThanAgo(5)) return false;
+        if (unit.lastPositionChangedAgo() <= 70) return false;
+//        if (unit.shotSecondsAgo(3)) return false;
 
-        boolean underAttackRecently = unit.lastUnderAttackLessThanAgo(15);
-        if (!underAttackRecently) return false;
-
-        boolean movedVeryRecently = unit.lastPositionChangedLessThanAgo(30);
-        if (movedVeryRecently) return false;
-
-        if (unit.isLeader()) {
-            Squad squad = unit.squad();
-            if (squad != null) squad.changeLeader();
-        }
+//        boolean underAttackRecently = unit.lastUnderAttackLessThanAgo(15);
+//        if (!underAttackRecently) return false;
+//
+//        if (unit.isLeader()) {
+//            Squad squad = unit.squad();
+//            if (squad != null) squad.changeLeader();
+//        }
 
         return true;
     }
 
     @Override
     public Manager handle() {
-        if (A.isUms()) {
-//            unit.commandHistory().print("UnfreezeDragoon#" + unit.id() + " command history (now: " + A.now + ")");
-//            PauseAndCenter.on(unit, true);
-        }
+//        System.out.println(unit + " history -----------------------------");
+//        unit.commandHistory().print();
+//        PauseAndCenter.on(unit);
 
-//        CenterCamera.on(unit, true, Color.Blue);
-//        GameSpeed.changeSpeedTo(70);
-//        unit.paintCircleFilled(10, Color.Blue);
-
-//        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - UnfreezeDragoon");
-
-        if (UnfreezerShakeUnit.shake(unit)) return usedManager(this);
+        if (UnfreezerShakeUnit.shake(unit)) return yesUsedManager("UnfreezeD");
 
         return null;
+
+//        if (FixActions.movedSlightlyOrToFocusPoint(unit)) return yesUsedManager("IdleAvoid-2Focus");
+//        if (FixActions.attackEnemies(unit, this, 0.9)) return yesUsedManager("IdleAvoid-Attack");
+//        if (FixActions.moveToLeader(unit)) return yesUsedManager("IdleAvoid-2Leader");
+
+//        if (OldUnfreezerShake.shake(unit)) return usedManager(this);
+
+//        return null;
+    }
+
+    private Manager yesUsedManager(String reason) {
+        unit.setAction(Actions.UNFREEZE);
+
+        return usedManager(this, reason);
     }
 }

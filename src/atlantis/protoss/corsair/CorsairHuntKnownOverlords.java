@@ -22,7 +22,8 @@ public class CorsairHuntKnownOverlords extends Manager {
     }
 
     private AUnit overlord() {
-        Selection overlords = Select.enemy().ofType(AUnitType.Zerg_Overlord).sortByNearestTo(Select.mainOrAnyBuilding());
+        Selection overlords =
+            Select.enemy().ofType(AUnitType.Zerg_Overlord).havingPosition().sortByNearestTo(Select.mainOrAnyBuilding());
         if (overlords.isEmpty()) return null;
 
         for (AUnit overlord : overlords.list()) {

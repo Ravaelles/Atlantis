@@ -1,6 +1,6 @@
 package atlantis.combat.advance.focus;
 
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
@@ -17,15 +17,42 @@ public class OptimalDistanceToFocusPoint {
     }
 
     private static double asProtoss(AUnit unit, AFocusPoint focusPoint) {
-        if (Alpha.count() <= 3) return 1.5;
+        if (focusPoint.hasIdealDistanceFromFocus()) {
+            return focusPoint.idealDistanceFromFocus() + (unit.isMelee() ? 2 : 0);
+        }
 
-        double rangedBonus = (unit.isMissionDefend() && unit.isRanged() ? 1.3 : 0);
+        double totalBonus = totalBonus(unit);
 
-        if (unit.isMissionDefend()) return 6 + rangedBonus;
+        if (Alpha.count() <= 8 && focusPoint.isMainChoke()) return 0.5 + totalBonus;
 
-        return (focusPoint != null && focusPoint.chokeWidthOr(99) <= 5)
-            ? (8 + rangedBonus)
-            : (7 + rangedBonus);
+        int chokeWidth = focusPoint.chokeWidthOr(99);
+        return chokeWidth <= 5
+            ? 8 + totalBonus
+            : 7 + totalBonus;
+    }
+
+    private static double totalBonus(AUnit unit) {
+        return
+            (unit.isMissionDefendOrSparta() && unit.isRanged() ? 1.1 : 0) // Ranged bonus
+            + meleeVsTerranBonus(unit)
+            + letWorkersComeThroughBonus(unit);
+    }
+
+    private static double meleeVsTerranBonus(AUnit unit) {
+        if (!Enemy.terran()) return 0;
+        if (!unit.isMelee()) return 0;
+
+        return 2.5;
+    }
+
+    private static double letWorkersComeThroughBonus(AUnit unit) {
+//        if (We.protoss() && A.seconds() >= 150) {
+//            return 0;
+//        }
+
+        return unit.enemiesNear().combatUnits().countInRadius(10, unit) == 0
+            && Select.ourWorkers().inRadius(7, unit).atLeast(1)
+            ? 3 : 0;
     }
 
     // =========================================================

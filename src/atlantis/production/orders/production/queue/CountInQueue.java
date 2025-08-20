@@ -50,4 +50,12 @@ public class CountInQueue {
     public static int countInProgress(AUnitType type) {
         return Queue.get().inProgressOrders().ofType(type).size();
     }
+
+    public static int countNotStarted(AUnitType type) {
+        return Queue.get().notStarted().ofType(type).size();
+    }
+
+    public static int countNotFinished(AUnitType type) {
+        return Queue.get().notFinished().ofType(type).size();
+    }
 }

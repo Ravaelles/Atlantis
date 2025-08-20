@@ -15,10 +15,18 @@ public class WorkerDoNotFight {
 
 //        if (A.s <= 60 * 6) return true;
 
-        if (unit.hp() >= 50) return false;
+        if (unit.hp() >= 40) return false;
         if (unit.enemiesNear().buildings().notEmpty()) return false;
+        if (forceFightVsEarlyZerg(unit)) return false;
 
-        if (We.protoss() && unit.shields() <= 6 && A.s >= 60 * 6) return true;
+        if (We.protoss()) {
+            if (Enemy.protoss()) {
+                if (unit.hp() <= 33) return true;
+                if (unit.meleeEnemiesNearCount(4) >= 3) return true;
+            }
+
+            if (unit.shields() <= 6 && A.s >= 60 * 6) return true;
+        }
 
         Selection enemiesNear = unit.enemiesNear().groundUnits().inRadius(AUnit.NEAR_DIST, unit);
         if (Enemy.protoss() && We.protoss()) {
@@ -61,7 +69,7 @@ public class WorkerDoNotFight {
 
 //        if (ProtossStickCombatToMainBaseEarly.should()) return true;
 
-        if (distToBase >= 9 && !unit.isMiningOrExtractingGas()) {
+        if (distToBase >= 9 && !unit.isGatheringResources()) {
 //            if (enemy.enemiesNear().combatUnits().inRadius(2.8, enemy).empty()) return true;
 
             if (
@@ -82,6 +90,13 @@ public class WorkerDoNotFight {
         if (!We.zerg() && (unit.isBuilder() || unit.isConstructing())) return true;
 
         return false;
+    }
+
+    private static boolean forceFightVsEarlyZerg(AUnit unit) {
+        if (!Enemy.zerg()) return false;
+        if (unit.hp() <= 12) return false;
+
+        return true;
     }
 
     private static boolean dontFightAsTooManyZealotsComparedToWorkers(AUnit unit) {

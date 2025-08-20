@@ -32,72 +32,39 @@ public interface AUnitOrders {
     // =========================================================
 
     default boolean attackUnit(AUnit target) {
-//        System.err.println("@" + A.now() + " - " + unit() + ": Attack (" + unit().cooldown() + ")");
-//        if (true) return u().attack(target.u());
-
-//        if (DEBUG) {
-
-//                    "@ @" + A.now() + " ATTACK  / " +
-//                            "" + unit().typeWithHash() + " // " +
-//                            "cooldown " + unit().cooldownRemaining()+ " // " +
-//                            "attackFrame " + unit()._lastAttackFrame + " // " +
-//                            "StartingAttack " + unit()._lastStartedAttack + " // " +
-//                            unit().tooltip()
-//            );
-//        }
-
         AUnit unit = unit();
         if (target == null) {
-//            System.err.println("Null attack unit target for " + this.unit().typeWithHash());
-            ErrorLog.printMaxOncePerMinute("Null attack unit target for " + unit.typeWithHash());
+//            A.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now + ": Null attack unit target for " + unit.typeWithHash());
             return false;
         }
 
         if (target.u() == null) {
             move(target, Actions.MOVE_ENGAGE, null, false);
             return true;
-
-//            // This likes to happen to sieged tanks. What matters is that we return false here.
-////            if (!unit().isTankSieged()) {
-////                if (Env.isLocal()) A.printStackTrace();
-//
-//            if (unit().distTo(target) >= 12.5) {
-//                return move(target, Actions.MOVE_ATTACK, null, false);
-//            }
-//            else {
-//                System.err.println("Null attack u(nit) for " + this.unit().typeWithHash());
-//                System.err.println("target = " + target.getClass());
-//                System.err.println("toString = " + target.toString());
-//                System.err.println("isVisibleUnitOnMap " + target.isVisibleUnitOnMap());
-//                System.err.println("hasPosition = " + target.hasPosition());
-//                System.err.println("isPositionVisible = " + target.isPositionVisible());
-//            }
-////            }
-//            return false;
         }
 
         if (!target.isDetected()) {
             if (target.isVisibleUnitOnMap()) {
-                System.err.println("Trying to attack not detected unit for " + unit.typeWithHash());
-                System.err.println(target);
-                System.err.println(target.position());
-                System.err.println(target.isPositionVisible());
-                System.err.println(target.hp());
+                A.errPrintln("Trying to attack not detected unit for " + unit.typeWithHash());
+                A.errPrintln(target);
+                A.errPrintln(target.position());
+                A.errPrintln(target.isPositionVisible());
+                A.errPrintln(target.hp());
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
             }
             return false;
         }
 
         if (!target.hasPosition()) {
-            System.err.println("Target (" + target + ") has no position " + unit.typeWithHash());
+            A.errPrintln("Target (" + target + ") has no position " + unit.typeWithHash());
             return false;
         }
 
         if (!target.isAlive()) {
             if (!unit.type().is(AUnitType.Protoss_Corsair)) {
-                System.err.println("Dead target (" + target + ") for " + unit.typeWithHash());
+                A.errPrintln("Dead target (" + target + ") for " + unit.typeWithHash());
             }
-//            A.printStackTrace("Dead...");
             return false;
         }
 
@@ -108,38 +75,17 @@ public interface AUnitOrders {
 
         // =========================================================
 
-//        if (!unit().hasWeaponRangeByGame(target)) {
-//            return move(target, Actions.MOVE_ATTACK, null, false);
-//        }
-
-        // Do NOT issue double orders
-//        if (unit().isAttacking() && unit().isCommand(UnitCommandType.Attack_Unit) && target.equals(unit().target())) {
-
-//        if (unit.isCommand(UnitCommandType.Attack_Unit) && A.ago(unit._lastAttackCommand) <= 1) {
-//            if (A.isUms()) System.err.println("@" + A.now() + ": Avoiding double attack command for " + unit);
-//            return false;
-//        }
-
-//        if (unit().outsideSquadRadius()) {
-//            A.printStackTrace("hmmm " + unit().distToSquadCenter() + " / " + unit().squadRadius());
-//        }
-
-        unit.setTooltipTactical("ATTACK-UNIT");
         unit.setAction(Actions.ATTACK_UNIT);
-//        unit._lastAttackCommand = A.now;
-
-        if (unit.lastCommandIssuedAgo() <= ((unit.isMoving() || unit.isAttacking()) ? 2 : 1)) return unit.isAttacking();
-        else unit.lastCommandIssuedNow(UnitCommandType.Attack_Unit);
 
         if (unit.isCommand(UnitCommandType.Attack_Unit) && target.equals(unit.target())) {
             return true;
-//            if (A.everyFrameExceptNthFrame(16)) return true;
         }
 
         if (shouldPrint()) {
             System.out.println("@" + A.now() + "  " + unit.typeWithUnitId() + "  ATTACK_UNIT " + target);
         }
 
+        unit.lastCommandIssuedNow(UnitCommandType.Attack_Unit);
         return u().attack(target.u());
     }
 
@@ -171,6 +117,9 @@ public interface AUnitOrders {
     default boolean trainForced(AUnitType unitToTrain) {
         unit().setAction(Actions.TRAIN);
         unit().setProductionOrder(ForcedDirectProductionOrder.create(unitToTrain));
+//        A.errPrintln("u() = " + u());
+//        A.errPrintln("u().train(unitToTrain.ut()) = " + u().train(unitToTrain.ut()));
+//        A.errPrintln("u().train(unitToTrain.ut()) = " + u().getTrainingQueue().add(unitToTrain.ut()));
         return u() != null ? processTrain(unitToTrain, null) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
@@ -282,7 +231,7 @@ public interface AUnitOrders {
 
         if (unit.isGroundUnit() && target.getClass() != FoggedUnit.class && !target.isWalkable()) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
-                "Trying to move to unwalkable position for " + unit + " / " + unitAction
+                "Trying to move to unwalkable position for " + unit + " / a:" + unitAction + " / t:" + target
             );
             return false;
         }
@@ -294,7 +243,11 @@ public interface AUnitOrders {
         // =========================================================
 
         AUnit currentTarget = unit.target();
-        boolean executeOrder = !unit.isMoving() || !target.equals(currentTarget);
+//        boolean executeOrder = !unit.isMoving() || !target.equals(currentTarget);
+//        boolean executeOrder = (!target.equals(currentTarget) && unit.lastCommandIssuedAgo() >= 8)
+//        boolean executeOrder = !target.equals(currentTarget) || unit.isStopped();
+        boolean executeOrder = !target.equals(currentTarget) || unit.lastPositionChangedAgo() >= 10;
+//            || (unit.isStopped() && unit.lastPositionChangedAgo() >= 12);
 
         if (executeOrder) {
             if (We.terran() && unit.isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit)) {
@@ -348,7 +301,8 @@ public interface AUnitOrders {
             return u().move(target.position().p());
         }
 
-        return false;
+        return true;
+//        return false;
     }
 
     static int commandMinDelayWhenMoving(AUnit unit) {
@@ -379,20 +333,25 @@ public interface AUnitOrders {
      * after it has been passed to Broodwar. See also canHoldPosition, isHoldingPosition
      */
     default boolean holdPosition(Action action, String tooltip) {
-        if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
 
-        if (shouldPrint()) {
-            System.out.println(unit().typeWithHash() + " HOLD @" + A.now() + " / " + tooltip);
-        }
-
-//        System.err.println(tooltip);
-//        System.err.println(unit().manager());
-//        System.err.println(unit().managerLogs().toString());
-//        System.err.println("-------------------------");
+//        A.errPrintln(tooltip);
+//        A.errPrintln(unit().manager());
+//        A.errPrintln(unit().managerLogs().toString());
+//        A.errPrintln("-------------------------");
 
         unit().setAction(action).setTooltip(tooltip);
+
+        if (unit().isCommand(UnitCommandType.Hold_Position)) return false;
+
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Hold_Position);
+
+        if (shouldPrint()) {
+            System.out.println("@" + A.now() + " " + unit().nameWithId() + " / " + tooltip);
+//            System.out.println("      cooldown: " + unit().cooldownRemaining());
+//            System.out.println(unit().isAttackFrame());
+//            System.out.println(unit().isStartingAttack());
+        }
 
         return u().holdPosition();
     }
@@ -410,11 +369,12 @@ public interface AUnitOrders {
 //            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
 
-        if (A.isUms() && unit().lastCommandIssuedAgo() <= 1) {
-            A.printStackTrace("Avoiding double stop command for " + unit());
-        }
+//        if (A.isUms() && unit().lastCommandIssuedAgo() <= 1) {
+//            A.printStackTrace("Avoiding double stop command for " + unit());
+//            return true;
+//        }
 
-//        System.err.println("A unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+//        A.errPrintln("A unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 
         unit().setAction(Actions.STOP).setTooltip(tooltip);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
@@ -423,7 +383,7 @@ public interface AUnitOrders {
         if (Env.isTesting()) return true;
 
 //        if (unit().lastCommandIssuedAgo() <= 1) {
-//            System.err.println("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+//            A.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 //            A.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
 //        }
         return u().stop();
@@ -515,7 +475,7 @@ public interface AUnitOrders {
      */
     default boolean repair(AUnit target, String tooltip) {
         if (target == null) {
-            System.err.println("Null repair target");
+            A.errPrintln("Null repair target");
             return false;
         }
 
@@ -523,7 +483,7 @@ public interface AUnitOrders {
 
 //        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
         if (unit().isRepairing() && target.equals(unit().target())) {
-//            System.err.println(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
+//            A.errPrintln(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
             return true;
         }
 
@@ -678,6 +638,10 @@ public interface AUnitOrders {
      * been passed to Broodwar. See also unload, unloadAll, getLoadedUnits, isLoaded
      */
     default boolean load(AUnit target) {
+//        if (A.s >= 6) {
+//            A.printStackTrace("Loading " + target + " into " + unit());
+//        }
+
         unit().setAction(Actions.LOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Load);
@@ -693,6 +657,8 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
+//        A.errPrintln("@" + A.now + " - " + unit() + " unload " + target);
+
 //        A.printStackTrace("Unloaded...");
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
@@ -938,7 +904,7 @@ public interface AUnitOrders {
     }
 
     default boolean shouldPrint() {
-        return DebugFlags.DEBUG_UNIT_ORDERS;
+        return DebugFlags.DEBUG_UNIT_COMMANDS;
     }
 
 }

@@ -1,15 +1,10 @@
 package atlantis.combat.micro.avoid;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.always.ProtossAlwaysAvoidEnemy;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
-import atlantis.combat.micro.avoid.dont.protoss.ObserverDontAvoidEnemy;
-import atlantis.combat.micro.avoid.dont.protoss.ProtossDontAvoidEnemy;
-import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
-import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
 public class AvoidEnemies extends Manager {
@@ -33,12 +28,13 @@ public class AvoidEnemies extends Manager {
     public boolean applies() {
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - ...");
 
-//        if (unit.isMissionSparta() && unit.isHealthy()) return false;
-//        if (unit.lastActionLessThanAgo(Math.max(6, unit.cooldownAbsolute() / 2), Actions.ATTACK_UNIT)) return false;
+        if (unit.isWorker() && !unit.isScout()) return false;
+        if (unit.isLoaded()) return false;
+        if (unit.lastCommandIssuedAgo() >= 100) return false;
+        if (unit.isDancingAway() && unit.isMoving()) return false;
+        if (unit.enemiesNear().canAttack(unit, 10).empty()) return false;
 
-//        if (true) return true;
-
-        if (unit.lastStartedRunningAgo() <= 1) return true;
+        if (unit.isMoving() && unit.lastStartedRunningAgo() <= 2) return true;
 
 //        return true;
         return !(new DontAvoidEnemy(unit)).applies();
@@ -46,38 +42,16 @@ public class AvoidEnemies extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.isCombatUnit() && unit.enemiesThatCanAttackMe(3).empty()) return null;
 //        if (unit.isMarine()) System.err.println(
 //                "@ " + A.now() + " - AVOID ENEMIES " + unit.typeWithUnitId() + " - " + avoidEnemies());
 
-        return avoidEnemies();
-    }
-
-    public Manager avoidEnemies() {
-        if (!applies()) return null;
-
         Units enemies = enemiesDangerouslyClose();
-//        System.err.println(A.now + ": enemies = " + enemies.size());
+        if (enemies.isEmpty()) return null;
 
-        if (wantsToAvoid.unitOrUnits(enemies) != null) {
-//            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - ##### AVOID ##### " + unit.runningManager().runningFromUnit());
+        if (wantsToAvoid.handleAvoidUnitOrUnits(enemies) != null && unit.isMoving()) {
             return usedManager(this);
         }
-
-        if (unit.isRunning() && unit.lastStartedRunningMoreThanAgo(4) && !unit.isActionDance()) {
-//            System.err.println("------- STOP RUNNING " + A.digit(unit.nearestEnemyDist()));
-            unit.runningManager().stopRunning();
-            unit.addLog("StopAvoiding");
-//            unit.stop("StopAvoiding");
-
-            return null;
-        }
-
-//        if (unit.isWounded() && unit.meleeEnemiesNearCount(2.5) > 0) {
-//            System.err.println("@@@@@@@@@@ HELL? ");
-//            enemies.print("ENEMIES - " + enemies.size());
-//            unit.managerLogs().print();
-//            unit.manager().printParentsStack();
-//        }
 
         return null;
     }
@@ -87,14 +61,6 @@ public class AvoidEnemies extends Manager {
     public Units enemiesDangerouslyClose() {
         return enemyUnitsToAvoid.enemiesDangerouslyClose();
     }
-
-//    public boolean shouldAvoidAnyUnit() {
-//        return enemiesDangerouslyClose().isNotEmpty();
-//    }
-
-//    public boolean shouldNotAvoidAnyUnit() {
-//        return !shouldAvoidAnyUnit();
-//    }
 
     // =========================================================
 
@@ -110,6 +76,6 @@ public class AvoidEnemies extends Manager {
             enemyString = unit.runningFromPosition().toString();
         }
 
-        return "AvoidEnemies(" + enemyString + ')';
+        return "AvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
     }
 }

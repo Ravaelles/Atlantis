@@ -41,7 +41,23 @@ public interface OrdersFilters {
     default Orders notStarted() {
         return new Orders(
             list().stream()
-                .filter(order -> order.isStatus(OrderStatus.NOT_READY))
+                .filter(order -> order.isStatus(OrderStatus.READY_TO_PRODUCE) || order.isStatus(OrderStatus.NOT_READY))
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders notInProgres() {
+        return new Orders(
+            list().stream()
+                .filter(order -> !order.isStatus(OrderStatus.IN_PROGRESS))
+                .collect(Collectors.toList())
+        );
+    }
+
+    default Orders notReady() {
+        return new Orders(
+            list().stream()
+                .filter(order -> !order.isStatus(OrderStatus.NOT_READY))
                 .collect(Collectors.toList())
         );
     }

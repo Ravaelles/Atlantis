@@ -3,6 +3,7 @@ package jfap;
 import atlantis.Atlantis;
 import atlantis.combat.eval.AtlantisJfap;
 import atlantis.debug.tweaker.Param;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import tests.fakes.FakeUnit;
@@ -66,7 +67,7 @@ public class JfapCombatEvaluator {
         int scoreDiff = myScoreDiff - enemyScoreDiff;
 
         if (PRINT_DEBUG) {
-            System.err.println(unit + "\n   score = " + scoreDiff + ", \n   myScoreDiff = " + myScoreDiff +
+            A.println(unit + "\n   score = " + scoreDiff + ", \n   myScoreDiff = " + myScoreDiff +
                 ", \n   myLosses=" + myLosses + ", \n   enemyScoreDiff=" + enemyScoreDiff + "\n");
         }
 

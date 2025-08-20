@@ -23,7 +23,7 @@ public class AvoidSingleEnemy extends Manager {
             return processDontAvoid();
         }
 
-        if (enemy.hasBiggerWeaponRangeThan(unit)) {
+        if (unit.isRanged() && enemy.hasBiggerWeaponRangeThan(unit)) {
             unit.addLog("EnemyHasLongerDick");
             return null;
         }
@@ -35,13 +35,14 @@ public class AvoidSingleEnemy extends Manager {
 
 //        System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - @D@ Avoiding single " + enemy);
 
+        double runDist = calculateRunDistance(enemy);
         if (unit.runningManager().runFrom(
-            enemy, calculateRunDistance(enemy), Actions.RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
+            enemy, runDist, Actions.RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
         )) {
             return this;
         }
 
-        return runError.handleErrorRun(unit, -345);
+        return runError.handleErrorRun(unit, runDist);
     }
 
     private boolean allowedToNotifyNearUnitsToMakeSpace() {
@@ -50,35 +51,35 @@ public class AvoidSingleEnemy extends Manager {
 
     private Manager processDontAvoid() {
         unit.runningManager().stopRunning();
-        if (unit.isMoving()) unit.holdPosition(Actions.HOLD_POSITION, "AvoidHold");
+        if (unit.isMoving()) unit.stop("AvoidStop");
 
         return null;
     }
 
-    private boolean doNotAvoid() {
-        if (this.enemy == null) return true;
-        if (unit.effUndetected()) return true;
-//        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
-//        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
+//    private boolean doNotAvoid() {
+//        if (this.enemy == null) return true;
+//        if (unit.effUndetected()) return true;
+////        if (unit.hp() >= 33 && unit.isRepairerOfAnyKind()) return true;
+////        if (isEnemyFacingOtherWayAndWeLookSafe()) return true;
+////
+////        APainter.paintCircle(enemy, 16, Color.Orange);
 //
-//        APainter.paintCircle(enemy, 16, Color.Orange);
-
-        if (enemy.position() == null) {
-            System.err.println("enemy.position() is NULL for " + enemy);
-            return true;
-        }
-
-        if ((new DontAvoidEnemy(unit)).applies()) return true;
-
-        return false;
-    }
-
-    private boolean isEnemyFacingOtherWayAndWeLookSafe() {
-        return enemy.isMelee()
-            && unit.hp() >= 18
-            && enemy.distTo(unit) >= 1.4
-            && !unit.isOtherUnitFacingThisUnit(enemy);
-    }
+//        if (enemy.position() == null) {
+//            System.err.println("enemy.position() is NULL for " + enemy);
+//            return true;
+//        }
+//
+//        if ((new DontAvoidEnemy(unit)).applies()) return true;
+//
+//        return false;
+//    }
+//
+//    private boolean isEnemyFacingOtherWayAndWeLookSafe() {
+//        return enemy.isMelee()
+//            && unit.hp() >= 18
+//            && enemy.distTo(unit) >= 1.4
+//            && !unit.isOtherUnitFacingThisUnit(enemy);
+//    }
 
     protected double calculateRunDistance(AUnit enemy) {
         if (enemy.isCombatBuilding()) {

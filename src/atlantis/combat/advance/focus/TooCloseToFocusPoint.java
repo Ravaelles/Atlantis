@@ -7,10 +7,12 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 public class TooCloseToFocusPoint extends MoveToFocusPoint {
     private DistFromFocus distFromFocus;
+    private double margin;
 
     public TooCloseToFocusPoint(AUnit unit) {
         super(unit);
@@ -21,39 +23,26 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
         if (unit.isLoaded()) return false;
 //        if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
-        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
+        if (Count.ourCombatUnits() >= 8) return false;
+        if (focus == null || !focus.isValid() || !focus.isAroundChoke()) return false;
 //        if (EnemyUnitBreachedBase.notNull()) return false;
-        if (focusPoint == null || !focusPoint.isValid()) return false;
+        if (unit.enemiesNear().canAttack(unit, 4).notEmpty()) return false;
+        if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
 
-//        System.err.println("           " + evaluateDistFromFocusPoint() + " / " + unit);
+        margin = unit.distTo(focus) - optimalDist(focus);
 
-
-        evaluateDistToFocusPointComparingToLeader();
-
-//        System.err.println("unitToFocus = " + unitToFocus + " / " + distFromFocus);
-
-        if (distFromFocus == DistFromFocus.TOO_CLOSE) {
-            // Be brave with ChokeBlockersAssignments
-//            if (unit.friendsNear().workers().specialAction().inRadius(7, unit).atLeast(2)) return false;
-
-            if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
-
-            return true;
-        }
-
-        return false;
+        return margin < 0.5;
     }
 
     protected Manager handle() {
-        if (focusPoint == null) return null;
+        if (focus == null) return null;
 
         if (act()) return usedManager(this);
 
         return null;
     }
 
-    @Override
-    public double optimalDist(AFocusPoint focusPoint) {
+    private double optimalDist(AFocusPoint focusPoint) {
         return OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
     }
 
@@ -65,12 +54,19 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (goAwayFromCenter()) return true;
 //        if (goToMain()) return true;
 
-        if (A.s % 4 <= 1) {
-            if (goToMain()) return true;
+        if (margin > 0.1) {
+            if (unit.isMelee()) return false;
+
+            if (A.everyNthGameFrame(3)) {
+                unit.stop("TooCloseStop");
+                return true;
+            }
         }
 
-        if (goAway()) return true;
-        if (goAwayFromCenter()) return true;
+        if (margin >= -0.3 && goAway()) return true;
+//        if (margin >= -2 && goAwayFromCenter()) return true;
+
+        if (goToMain()) return true;
 
         return false;
     }
@@ -78,7 +74,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     private boolean goAway() {
 //        if (A.fr % 50 <= 15) return unit.moveToMain(Actions.MOVE_FOCUS);
 
-        return unit.moveAwayFrom(focusPoint, 0.1, Actions.MOVE_FOCUS, "TooCloseF");
+        return unit.moveAwayFrom(focus, 0.06, Actions.MOVE_FOCUS, "TooCloseF");
     }
 
     private boolean asDragoon() {
@@ -88,7 +84,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (unit.distToFocusPoint() <= 2.6) {
 
         if (Missions.isGlobalMissionDefendOrSparta()) {
-            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.HOLD_POSITION, "DragoonTooCloseA");
+            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.MOVE_FORMATION, "DragoonTooCloseA");
 //            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
             else goAway();
         }
@@ -105,7 +101,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean goAwayFromCenter() {
-        AChoke choke = focusPoint.choke();
+        AChoke choke = focus.choke();
         HasPosition goTo = choke;
 
         if (goTo == null) return false;

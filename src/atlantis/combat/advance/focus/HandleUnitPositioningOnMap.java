@@ -1,9 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.leader.AdvanceAsAlphaLeader;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.positioning.Cohesion;
 import atlantis.units.AUnit;
 
 public class HandleUnitPositioningOnMap extends MissionManager {
@@ -13,7 +11,9 @@ public class HandleUnitPositioningOnMap extends MissionManager {
 
     @Override
     public boolean applies() {
-        if (focusPoint == null) return false;
+        if (focus == null) return false;
+        if (unit.enemiesThatCanAttackMe(2).notEmpty()) return false;
+
 //        if (unit.enemiesNear().groundUnits().havingWeapon().canAttack(unit, 3.5).atLeast(1)) return false;
 
 //        if (
@@ -33,7 +33,6 @@ public class HandleUnitPositioningOnMap extends MissionManager {
 //            return false;
 //        }
 
-//        if (unit.enemiesThatCanAttackMe(1.5).size() >= 2) return false;
 //
 //        if (unit.distToFocusPoint() <= 10) return true;
 //        if (unit.isLeader()) return true;
@@ -47,7 +46,6 @@ public class HandleUnitPositioningOnMap extends MissionManager {
         return new Class[]{
 //            MakeSpaceForNearbyWorkers.class,
 //            MakeSpaceForWrongSideOfFocusFriends.class,
-//            OnWrongSideOfFocusPoint.class,
 
 //            ProtossCohesion.class,
 
@@ -55,10 +53,12 @@ public class HandleUnitPositioningOnMap extends MissionManager {
 
 //            AdvanceAsAlphaLeader.class,
 
-            Cohesion.class,
+//            OnWrongSideOfFocusPoint.class,
 
-            TooCloseToFocusPoint.class,
-            TooFarFromFocusPoint.class,
+//            Cohesion.class,
+
+//            TooCloseToFocusPoint.class,
+//            TooFarFromFocusPoint.class,
         };
     }
 }

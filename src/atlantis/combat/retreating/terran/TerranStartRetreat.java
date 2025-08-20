@@ -76,7 +76,7 @@ public class TerranStartRetreat extends HasUnit {
         if (unit.enemiesNear().inRadius(4.3, unit).atLeast(2)) return false;
 
         if (unit.squadSize() >= 15) {
-            if (unit.distToNearestChokeCenter() <= 5) return false;
+            if (unit.nearestChokeCenterDist() <= 5) return false;
         }
 
         return true;
@@ -94,14 +94,14 @@ public class TerranStartRetreat extends HasUnit {
 //        if (Count.ourCombatUnits() <= 11) return false;
 
         if (unit.meleeEnemiesNearCount(2.4) >= 3) {
-            if (unit.distToNearestChokeCenter() >= 2.6) return true;
+            if (unit.nearestChokeCenterDist() >= 2.6) return true;
             if (unit.nearestChoke().width() >= 4) return true;
 
             return false;
         }
 
         if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(2)) {
-            if (unit.distToNearestChokeCenter() >= 2.6) return true;
+            if (unit.nearestChokeCenterDist() >= 2.6) return true;
 //            if (unit.nearestChoke().width() >= 4) return true;
 
             return false;

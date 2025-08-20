@@ -22,8 +22,8 @@ public class Main {
     }
 
     public static String enemyRace() {
-//        return "Protoss";
-        return "Zerg";
+        return "Protoss";
+//        return "Zerg";
     }
 
     // =========================================================
@@ -75,7 +75,7 @@ public class Main {
     }
 
     private static String mapGeneric() {
-        //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps ==================================
 
@@ -95,8 +95,9 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-//        if (true) return "ums/rav/7th_rav.scx";
+//        if (true) return "ums/rav/7th_rav.scx";  // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefenceB.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
 //        if (true) return "ums/exp_skilltest_asP.scx"; // Protoss v. AI Protoss player
 
@@ -131,6 +132,7 @@ public class Main {
 //        if (true) return "ums/MultiTask PvT.scx"; // Weird - ums but starts with bases
 //        if (true) return "ums/ControlFighterTZ-Easy.scx"; // Tanks & Marines v. Zerg
 //        if (true) return "ums/protoss_micro.scx"; // Huge parallel map for Protosss
+//        if (true) return "ums/(4)Lost Temple.scx"; // Quite playable PvP 1-1 map
 
         return null;
     }
@@ -138,17 +140,18 @@ public class Main {
     // === Maps for testing as PROTOSS =============================================
 
     public static String mapAsProtoss() {
-        if (!"Protoss".equals(ourRace())) return null;
+//        if (!"Protoss".equals(ourRace())) return null;
 
         // -------------------- vs Terran ------------------------
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
 //        if (true) return "ums/rav/protoss/Drag_v_Bunker.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_BunkerEmpty.scm";
-//        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm"; // Dragoons v Marines
+//        if (true) return "ums/rav/protoss/2Drag_v_M&M.scx"; // Like above, but 2 Goons
 //        if (true) return "ums/rav/protoss/Dragoons_v_Tanks.scm";
 //        if (true) return "ums/rav/protoss/Dragoons_v_TanksB.scm";
 //        if (true) return "ums/rav/protoss/Dragoons_v_6Tanks.scm";
+//        if (true) return "ums/rav/protoss/Dragoons_v_TanksVult.scm";
 
 //@        if (true) return "ums/rav/Drag&Zeal_v_M&M.scx";
 //@        if (true) return "ums/rav/protoss/DragoonsRange_v_Marines.scm";
@@ -168,7 +171,6 @@ public class Main {
 //        if (true) return "ums/rav/protoss/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
-//        if (true) return "ums/rav/protoss/3Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/7Drag_v_8Drag.scm";
 //        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
@@ -181,13 +183,24 @@ public class Main {
 //        if (true) return "ums/rav/protoss/4+3Zeal_v_4+3Zeal.scm";
 //        if (true) return "ums/rav/protoss/Zeal_v_Zeal.scm";
 
+//        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";     // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag2.scm";
+
+//        if (true) return "ums/rav/protoss/Reav_v_Drag.scm";
+//        if (true) return "ums/rav/protoss/Reav_v_DragB.scm";
+//        if (true) return "ums/rav/protoss/Reav_v_DragC.scm";
+
+//        if (true) return "ums/rav/protoss/Probe_run.scm";  // These two usually break bwapi for some reaosn
+//        if (true) return "ums/rav/protoss/Drag_run.scm"; // <-- this almost always fails
+
 //        if (true) return "ums/rav/protoss/Goon_v_DT.scx";
 
-//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // Dragoons v Zealots
+//        if (true) return "ums/rav/protoss/DT_v_Protoss.scx";
+
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_easy.scm";
 //        if (true) return "ums/rav/protoss/DragWounded_v_Zeal.scm";
-//        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";     // <<<<<<<<
-//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm"; // <<<<<<<<
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 
 //        if (true) return "ums/rav/protoss/DragZeal_v_Zeal.scm";
@@ -203,12 +216,13 @@ public class Main {
 //        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens.scm"; // Reaver & Shuttle  vs  Zerg
 //        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens2.scm"; // Reaver & Shuttle  vs  Sunkens
 //        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens3.scx";
+//        if (true) return "ums/rav/protoss/Reav&Shut_v_Sunkens4.scx";
 
 //        if (true) return "ums/rav/protoss/P_v_Z.scx";
 //        if (true) return "ums/rav/protoss/P_v_Lurkers.scx";
 //        if (true) return "ums/rav/protoss/P_v_Z2.scm"; // D+Z v Lings+Hydra
 
-//        if (true) return "ums/rav/protoss/1Zeal_v_2Ling.scm";
+        if (true) return "ums/rav/protoss/1Zeal_v_2Ling.scm";
 //        if (true) return "ums/rav/protoss/1Zeal_v_LingUp.scm";
 //        if (true) return "ums/rav/protoss/2Zeal_v_LingUp.scm";
 //        if (true) return "ums/rav/protoss/8Zeal_v_LingUp.scm";
@@ -221,26 +235,49 @@ public class Main {
 //        if (true) return "ums/rav/protoss/1DragUpg_v_2HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/2DragUpg_v_3HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_HydraUpg.scm";
-//        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // <<<<<<<<
+//        if (true) return "ums/rav/protoss/Drag_v_Hydra.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag&Cann_v_HydraUpg.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_Hydra&Ling.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Ling.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Hydra&Lurker.scx";
 //        if (true) return "ums/rav/protoss/1Drag_v_1Ling.scm";
-//        if (true) return "ums/rav/protoss/1Drag_v_2Ling.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_2LingUpg.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_2Ling.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm"; // Lots of space
+//        if (true) return "ums/rav/protoss/Drag_v_LingsUpg.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/Drag_v_Lings2.scm"; // Much less space
 //        if (true) return "ums/rav/protoss/DragFew_v_Sunkens.scm"; // Few Dragoons attacking sunkens
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
 
+//        if (true) return "ums/rav/protoss/Obser_v_Spores.scm";
+//        if (true) return "ums/rav/protoss/Cors_v_HydraBase.scx";
+//        if (true) return "ums/rav/protoss/Cors_v_HydraBaseB.scx";
+//        if (true) return "ums/rav/protoss/Cors_inCorner.scx";
+
+//        if (true) return "ums/rav/7th_rav.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefenceB.scx";
+//        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";
+//        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
+//        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/14Drag_v_16Drag.scm";
+//        if (true) return "ums/rav/protoss/15Drag_v_16Drag.scm";
+//        if (true) return "ums/rav/protoss/16Drag_v_16Drag.scm";
+
+//        if (true) return "ums/rav/protoss/Drag_v_Marines.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
-        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm";  // <<<<<<<<<<<
+//        if (true) return "ums/rav/protoss/ZealDrag_v_LingsUpg.scm";
+        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra2.scm";
 
         return null;
     }
@@ -269,7 +306,7 @@ public class Main {
 //        if (true) return "ums/rav/terran/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_1Zealot.scm";
-        if (true) return "ums/rav/terran/M_v_Dragoons.scm";
+//        if (true) return "ums/rav/terran/M_v_Dragoons.scm";
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Many Zealots v Many Marines in a Terran base
 //        if (true) return "ums/rav/terran/3M&2M_v_Zealots.scx";
 //        if (true) return "ums/rav/terran/Wraiths_v_Protoss.scm"; // Wraiths v Reavers & HT & Observer
@@ -310,7 +347,7 @@ public class Main {
 //        if (true) return "ums/rav/terran/1M_v_1Ling.scm";
 //        if (true) return "ums/rav/terran/2M_v_2Ling.scm";
 //        if (true) return "ums/rav/terran/3M_v_4Ling.scm";
-//        if (true) return "ums/rav/terran/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
+        if (true) return "ums/rav/terran/Wraiths_v_Base.scx"; // Wraiths v CC & Turret & Workers
 //        if (true) return "ums/rav/terran/Wraiths_v_Base2.scm"; // Wraiths v Hatchery & Spore & Workers
 
         return null;

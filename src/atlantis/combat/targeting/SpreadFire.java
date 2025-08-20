@@ -20,7 +20,7 @@ public class SpreadFire {
     }
 
     protected AUnit spreadFire(AUnit ourUnit, Selection targets) {
-        List<AUnit> enemies = targets.sortByHealth().limit(3).list();
+        List<AUnit> enemies = targets.sortByHealth().limit(4).list();
 
         // Randomize enemy target based on unit id
         AUnit randomPeasant = enemies.get(ourUnit.id() % enemies.size());

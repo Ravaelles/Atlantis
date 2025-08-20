@@ -7,6 +7,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
@@ -39,27 +40,25 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     @Override
     public boolean applies() {
         if (isResearched) return false;
-//        if (enqueued) return false;
-//        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
-
-//        if (CountInQueue.count(what(), 20) > 0) return false;
+        if (isBeingResearched()) return false;
 
         if (ATech.isResearched(what())) {
             onResearched();
             return false;
         }
 
+        if (!ProtossCriticalStuffInQueue.hasEnoughGas()) return false;
+
         dragoons = Count.dragoonsWithUnfinished();
 
         Decision decision;
-
         if ((decision = forForgeExpand()).notIndifferent()) return decision.toBoolean();
         if ((decision = againstProtoss()).notIndifferent()) return decision.toBoolean();
         if ((decision = againstZerg()).notIndifferent()) return decision.toBoolean();
 
 //        if (dragoons >= 2) return true;
 
-        if (!A.hasMinerals(140) && ArmyStrength.ourArmyRelativeStrength() <= 80) return false;
+        if (!A.hasGas(100) && Army.strength() <= 90) return false;
 
         if (dragoons >= 4 || (A.hasGas(80) && (A.hasGas(180) || dragoons >= 6))) return true;
         if (dragoons >= 2 && A.supplyUsed() >= 38 && Army.strength() >= 120 && A.hasMinerals(240)) return true;

@@ -2,7 +2,7 @@ package atlantis.combat.squad.transfers;
 
 import atlantis.architecture.Commander;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnit;
 
 public class SquadTransfersCommander extends Commander {
@@ -22,7 +22,7 @@ public class SquadTransfersCommander extends Commander {
 
         if (squad != null) {
             squad.removeUnit(unit);
-            unit.setSquad(null);
+            unit.forceSetSquad(null);
         }
 
         Alpha.get().removeUnit(unit);

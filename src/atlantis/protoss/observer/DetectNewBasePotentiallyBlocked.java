@@ -1,7 +1,8 @@
 package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -36,6 +37,7 @@ public class DetectNewBasePotentiallyBlocked extends Manager {
         return baseConstruction != null
             && baseConstruction.hasPosition()
             && Select.ourBasesWithUnfinished().countInRadius(8, baseConstruction) == 0
+            && EnemyUnits.discovered().groundUnits().inRadius(4, baseConstruction).notEmpty()
             && isNearestObserverToConstructionPosition();
     }
 

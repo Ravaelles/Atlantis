@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatUnitManager;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
 //            Select.enemy().print();
 
             FakeUnit unit = ourFirst;
-            unit.setSquad(Alpha.get());
+            unit.forceSetSquad(Alpha.get());
             (new CombatUnitManager(unit)).invokeFrom(this);
 
             double distToZealot = distToNearestEnemy(unit);

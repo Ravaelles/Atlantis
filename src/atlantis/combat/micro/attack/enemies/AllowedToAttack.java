@@ -1,6 +1,8 @@
 package atlantis.combat.micro.attack.enemies;
 
 import atlantis.combat.micro.attack.CanAttackCombatBuilding;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -119,10 +121,11 @@ public class AllowedToAttack {
     protected boolean isValidTargetAndAllowedToAttackUnit(AUnit target) {
         if (target == null || target.position() == null || target.hp() <= 0) return false;
         if (!CanAttackCombatBuilding.isAllowed(unit, target)) return false;
-        if (unit.isZergling() && target.eval() > 1.7) return false;
+//        if (unit.isZergling() && target.eval() > 1.7) return false;
 
         if (!missionAllowsToAttackEnemyUnit(target)) {
-            AttackNearbyEnemies.reasonNotToAttack = "MissionAForbids" + target.name();
+            AttackNearbyEnemies.reasonNotToAttack = unit.mission().name() + "Forbids" + target.name()
+                + "," + reasonToAcronym(AttackNearbyEnemies.reasonNotToAttack);
             unit.setTooltipTactical(AttackNearbyEnemies.reasonNotToAttack);
             unit.addLog(AttackNearbyEnemies.reasonNotToAttack);
             return false;
@@ -168,11 +171,31 @@ public class AllowedToAttack {
         return true;
     }
 
+    private String reasonToAcronym(String reason) {
+        if (reason == null || reason.isEmpty()) return "";
+
+        StringBuilder acronym = new StringBuilder();
+        for (String part : reason.split(" ")) {
+            acronym.append(part.charAt(0));
+        }
+        return acronym.toString().toUpperCase();
+    }
+
     protected boolean missionAllowsToAttackEnemyUnit(AUnit enemy) {
         return unit.mission() == null
             || (unit.isTank() && unit.noCooldown())
             || (unit.isWraith() && unit.isHealthy() && !enemy.isCombatBuilding())
-            || unit.mission().allowsToAttackEnemyUnit(unit, enemy);
+            || returnIfMissionAllowsToAttack(enemy);
 //            || (unit.isRanged() && enemy.isMelee());
+    }
+
+    private boolean returnIfMissionAllowsToAttack(AUnit enemy) {
+        Mission mission = unit.mission();
+
+        if (mission.isMissionDefendOrSparta() && unit.distToBase() >= 30) {
+             mission = Missions.ATTACK;
+        }
+
+        return mission.allowsToAttackEnemyUnit(unit, enemy);
     }
 }

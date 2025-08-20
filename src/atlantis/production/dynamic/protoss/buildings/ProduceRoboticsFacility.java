@@ -27,10 +27,10 @@ public class ProduceRoboticsFacility {
         if (Count.workers() <= 17) return false;
         if (A.seconds() <= 390 && Army.strength() <= 90) return false;
         if (Count.withPlanned(Protoss_Robotics_Facility) > 0) return false;
-        if (A.supplyUsed() <= 38 && Decisions.enemyStrategyIsRushOrCheese()) return false;
+        if (A.supplyUsed() <= 78 && Decisions.enemyStrategyIsRushOrCheese()) return false;
         if (A.supplyUsed() <= 70 && Have.cannon() && !EnemyInfo.hasHiddenUnits()) return false;
-
         if (!ProduceObserver.earlyGamePressureDontInvest()) return false;
+        if (Count.ourCombatUnits() <= 12 && !EnemyInfo.hasHiddenUnits()) return false;
 
         int n = Count.roboticsFacilities();
         if (

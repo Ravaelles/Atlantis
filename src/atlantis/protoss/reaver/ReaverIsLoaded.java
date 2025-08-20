@@ -17,7 +17,7 @@ public class ReaverIsLoaded extends Manager {
 
     @Override
     public Manager handle() {
-        unit.paintCircleFilled(9, Color.Brown);
+//        unit.paintCircleFilled(9, Color.Brown);
         return usedManager(this);
     }
 }

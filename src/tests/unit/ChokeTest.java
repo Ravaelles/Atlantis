@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -24,17 +23,17 @@ public class ChokeTest extends AbstractTestWithUnits {
 //        System.err.println("zealotA = " + zealotA);
 //        System.out.println(distToChoke);
 
-        assertEquals(zealotA.distTo(choke), zealotA.distToNearestChoke());
-        assertEquals(zealotB.distTo(choke), zealotB.distToNearestChoke());
+        assertEquals(zealotA.distTo(choke), zealotA.nearestChokeDist());
+        assertEquals(zealotB.distTo(choke), zealotB.nearestChokeDist());
 
         assertEquals(2.0, zealotA.distTo(choke));
         assertEquals(-1.0, zealotB.distTo(choke));
 
-        assertEquals(2.0, zealotA.distToNearestChoke());
-        assertEquals(-1.0, zealotB.distToNearestChoke());
+        assertEquals(2.0, zealotA.nearestChokeDist());
+        assertEquals(-1.0, zealotB.nearestChokeDist());
 
-        assertEquals(5.0, zealotA.distToNearestChokeCenter());
-        assertEquals(2.0, zealotB.distToNearestChokeCenter());
+        assertEquals(5.0, zealotA.nearestChokeCenterDist());
+        assertEquals(2.0, zealotB.nearestChokeCenterDist());
 
         assertEquals(false, zealotA.isWithinChoke());
         assertEquals(true, zealotB.isWithinChoke());

@@ -71,6 +71,7 @@ public class EnemyUnitsToAvoid extends HasUnit {
             .havingWeapon()
             .canAttack(unit, true, true, 5)
             .havingPosition()
+            .havingAtLeastHp(1)
             .list();
     }
 }

@@ -17,6 +17,9 @@ public class ProtossMoon extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAir()) return false;
+        if (unit.isReaver()) return false;
+
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
 
@@ -30,11 +33,15 @@ public class ProtossMoon extends Manager {
 
     @Override
     public Manager handle() {
+//        if (unit.lastPositionChangedAgo() >= 50) {
+//            unit.paintCircleFilled(16, Color.Green);
+//            System.out.println("@ " + unit + " - why waiting? " + unit.squad().lastShotLessThanAgo(3));
+//        }
+
         AUnit leader = unit.squadLeader();
         if (leader == null) return null;
 
         goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);
-//        System.err.println("goTo = " + goTo);
         if (goTo == null) return null;
 
 //        unit.paintLineDouble(goTo, Color.Green);

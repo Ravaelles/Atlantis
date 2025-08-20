@@ -21,16 +21,15 @@ public class ConstructionUnderAttack extends Commander {
 
     private void handleConstructionUnderAttack(Construction order) {
         AUnit building = order.buildingUnit();
+        if (building == null || building.isCompleted()) return;
+        if (!building.lastUnderAttackLessThanAgo(100)) return;
+        if (building.woundPercent() <= 50) return;
 
-        // If unfinished building is under attack
-        if (building != null && !building.isCompleted() && building.lastUnderAttackLessThanAgo(20)) {
+        // If it has less than 71HP or less than 60% and is close to being finished
+        if (building.getRemainingBuildTime() <= 5) {
+            if (preventCancelAsProtoss(building)) return;
 
-            // If it has less than 71HP or less than 60% and is close to being finished
-            if (building.hp() <= 42 || (building.hp() <= 30 && building.getRemainingBuildTime() <= 5)) {
-                if (preventCancelAsProtoss(building)) return;
-
-                order.cancel(building.type() + " under attack");
-            }
+            order.cancel(building.type() + " under attack");
         }
     }
 

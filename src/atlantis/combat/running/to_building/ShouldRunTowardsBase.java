@@ -1,8 +1,8 @@
 package atlantis.combat.running.to_building;
 
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -20,12 +20,33 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.groundDistToMain();
-        if (distToMain <= 3.6) return false;
+        if (distToMain <= 18) return false;
+        if (runAwayFrom.groundDist(main) < distToMain) return false;
+        if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
 
+        if (distToMain <= 30) return true;
+
+        if (Enemy.zerg() && distToMain >= 30 && unit.hp() >= 42) return true;
+
+        if (vsZergEarlyGame(unit, distToMain)) return true;
+
+        if (We.protoss() && unit.hp() <= 40 && unit.lastUnderAttackLessThanAgo(30 * 4)) return false;
+
+        if (unit.meleeEnemiesNearCount(1.5) >= 3) return false;
+
+//        if (unit.meleeEnemiesNearCount(2.7) >= 3) return false;
+//        if (
+//            unit.meleeEnemiesNearCount(3) >= 2
+//            && unit
+//        ) return false;
+
+//        if (distToMain <= 40) return true;
         if (unit.enemiesNear().buildings().notEmpty()) return true;
         if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 
         if (unit.meleeEnemiesNearCount(2.1) >= (unit.hp() <= 80 ? 2 : 3)) return false;
+
+        if (tooCloseToEnemyBuildings(unit)) return true;
 
         if (runAwayFrom instanceof AUnit) {
             AUnit enemy = (AUnit) runAwayFrom;
@@ -141,6 +162,26 @@ public class ShouldRunTowardsBase {
 //
 //        return unit.distTo(mainOrAnyBuilding) >= 20
 //            && unit.meleeEnemiesNearCount(1.7) == 0;
+    }
+
+    private static boolean vsZergEarlyGame(AUnit unit, double distToMain) {
+        if (!Enemy.zerg()) return false;
+
+        if (A.s <= 60 * 8) {
+            if (distToMain >= 12) return true;
+//            if (unit.hp() <= 40) return false;
+        }
+
+        return false;
+    }
+
+    private static boolean tooCloseToEnemyBuildings(AUnit unit) {
+        AUnit enemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        if (enemyBuilding == null) return false;
+
+        if (unit.meleeEnemiesNearCount(2.5) > 0) return false;
+
+        return unit.distTo(enemyBuilding) <= 20;
     }
 
     private static boolean earlyGameTvP(AUnit unit) {

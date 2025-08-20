@@ -1,10 +1,12 @@
 package atlantis.units;
 
+import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionHelper;
 import atlantis.map.position.PositionUtil;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -64,6 +66,20 @@ public class Units {
     }
 
     public Units addUnits(Collection<AUnit> unitsToAdd) {
+        for (AUnit unit : unitsToAdd) {
+            addUnit(unit);
+        }
+        return this;
+    }
+
+    public Units addUnits(Selection unitsToAdd) {
+        for (AUnit unit : unitsToAdd.list()) {
+            addUnit(unit);
+        }
+        return this;
+    }
+
+    public Units addFoggedUnits(Collection<AbstractFoggedUnit> unitsToAdd) {
         for (AUnit unit : unitsToAdd) {
             addUnit(unit);
         }
@@ -331,12 +347,16 @@ public class Units {
         return PositionHelper.getPositionMedian(this);
     }
 
+    public AUnit medianUnit() {
+        return selection().nearestTo(median());
+    }
+
     /**
      * Returns average PX and average PY for all units.
      */
     public APosition average() {
-        if (isEmpty()) {
-            return null;
+        if (size() == 1) {
+            return first().position();
         }
 
         return PositionHelper.getPositionAverage(units);
@@ -354,30 +374,51 @@ public class Units {
     }
 
     public boolean onlyRanged() {
-        ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
-        onlyRanged.removeIf(u -> !u.isRanged());
-        return onlyRanged.size() == this.units.size();
-    }
-
-    public boolean onlyMelee() {
         int initCount = this.units.size();
 
         ArrayList<AUnit> onlyRanged = new ArrayList<>(this.units);
-        onlyRanged.removeIf(u -> !u.isMelee());
+        onlyRanged.removeIf(u -> !u.isRanged());
 
         return onlyRanged.size() == initCount;
     }
 
+    public boolean onlyMelee() {
+        int initCount = this.units.size();
+        if (initCount == 0) {
+            return false;
+        }
+
+        ArrayList<AUnit> onlyMelee = new ArrayList<>(this.units);
+        onlyMelee.removeIf(u -> !u.isMelee());
+
+        return onlyMelee.size() == initCount;
+    }
+
+    public boolean onlyWorkers() {
+        int initCount = this.units.size();
+
+        ArrayList<AUnit> onlyWorkers = new ArrayList<>(this.units);
+        onlyWorkers.removeIf(u -> !u.isWorker());
+
+        return onlyWorkers.size() == initCount;
+    }
+
     public boolean onlyAir() {
-        ArrayList<AUnit> list = new ArrayList<>(this.units);
-        list.removeIf(u -> !u.isAir());
-        return list.isEmpty();
+        int initCount = this.units.size();
+
+        ArrayList<AUnit> onlyWorkers = new ArrayList<>(this.units);
+        onlyWorkers.removeIf(u -> !u.isAir());
+
+        return onlyWorkers.size() == initCount;
     }
 
     public boolean onlyGround() {
-        ArrayList<AUnit> list = new ArrayList<>(this.units);
-        list.removeIf(u -> !u.isGroundUnit());
-        return list.isEmpty();
+        int initCount = this.units.size();
+
+        ArrayList<AUnit> onlyWorkers = new ArrayList<>(this.units);
+        onlyWorkers.removeIf(u -> !u.isGroundUnit());
+
+        return onlyWorkers.size() == initCount;
     }
 
     // =========================================================

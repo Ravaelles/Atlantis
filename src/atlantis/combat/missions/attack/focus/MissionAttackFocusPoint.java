@@ -4,7 +4,8 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.advance.focus_choke.MiddleFocusChoke;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyNearBases;
@@ -18,14 +19,15 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.ARegion;
-import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.We;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -60,6 +62,14 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             if (focus != null) return focus;
         }
 
+        if (A.supplyUsed() >= 130 || Alpha.count() >= 22) {
+            focus = enemyExpansionsPositions();
+            if (focus != null) return focus;
+        }
+
+        focus = enemyProtossClusterCloserToMainThanAlpha();
+        if (focus != null) return focus;
+
         focus = middleMapChokePoint();
         if (focus != null) return focus;
 
@@ -69,17 +79,66 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemyNearAlpha();
         if (focus != null) return focus;
 
+        focus = enemyZergClusterCloserToMainThanAlpha();
+        if (focus != null) return focus;
+
         focus = enemyAnyUnitsPositions();
         if (focus != null) return focus;
 
         focus = enemyBuildingPositions();
         if (focus != null) return focus;
 
-//        focus = enemyMainChoke();
-//        if (focus != null) return focus;
+        focus = enemyFoggedBuilding();
+        if (focus != null) return focus;
+
+        focus = enemyFoggedUnit();
+        if (focus != null) return focus;
 
         focus = guessPositions();
         if (focus != null) return focus;
+
+        return null;
+    }
+
+    private AFocusPoint enemyFoggedBuilding() {
+        Selection base = EnemyUnits.foggedUnits()
+            .groundUnits()
+            .buildings()
+            .havingPosition();
+
+        AUnit enemyFogged = base
+            .hasPathFromUs()
+            .nearestToMain();
+
+        if (enemyFogged == null) enemyFogged = base.nearestToMain();
+
+        if (enemyFogged != null) {
+            return new AFocusPoint(
+                enemyFogged,
+                "FoggedBuilding" + enemyFogged.name()
+            );
+        }
+
+        return null;
+    }
+
+    private AFocusPoint enemyFoggedUnit() {
+        Selection enemies = EnemyUnits.foggedUnits()
+            .groundUnits()
+            .nonWorkers()
+            .havingPosition();
+
+        if (A.s <= 60 * 12 && (A.resourcesBalance() <= 100 || Count.ourCombatUnits() <= 25)) return null;
+
+        AUnit enemyFogged = enemies.nearestToMain();
+        if (enemyFogged == null) enemyFogged = enemies.nearestToMain();
+
+        if (enemyFogged != null) {
+            return new AFocusPoint(
+                enemyFogged,
+                "FoggedEnemy" + enemyFogged.name()
+            );
+        }
 
         return null;
     }
@@ -100,13 +159,13 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             }
         }
 
-        Selection visibleEnemies = Select.enemyCombatUnits().visibleOnMap().inGroundRadius(25, main);
+        Selection visibleEnemies = possibleEnemies().groundUnits().inGroundRadius(60, main);
         if (visibleEnemies.count() <= 2) return null;
 
-        AUnit enemyNearestToMain = visibleEnemies.nearestTo(main);
+        AUnit enemyNearestToMain = visibleEnemies.groundNearestTo(main);
         if (enemyNearestToMain == null) return null;
 
-        if (enemyNearestToMain.friendsNear().atMost(1)) return null;
+        if (A.supplyUsed() >= 110 && enemyNearestToMain.friendsNear().atMost(1)) return null;
 
         return new AFocusPoint(
             enemyNearestToMain,
@@ -118,70 +177,59 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         HasPosition alpha = Alpha.alphaCenter();
         if (alpha == null) return null;
 
-        AUnit enemy = AliveEnemies.get().combatUnits().groundUnits().inRadius(20, alpha).nearestTo(alpha);
+        Selection enemies = possibleEnemies().groundUnits().realUnits().havingAtLeastHp(1).inRadius(20, alpha);
+        if (We.protoss()) {
+            if (!Have.observer()) enemies = enemies.effVisible();
+            enemies = enemies.lastSeenRecently();
+        }
+
+        AUnit enemy = enemies.nearestTo(alpha);
+
         if (enemy == null) return null;
 
         if (enemy.friendsNear().combatBuildingsAntiLand().countInRadius(12, enemy) == 0) {
             return new AFocusPoint(
                 enemy,
                 main,
-                "EnemyNearAlpha"
+                "EnemyNearAlpha(" + enemy.name() + "," + (int) enemy.distTo(alpha) + ")"
             );
         }
 
         return null;
     }
 
+    private AFocusPoint enemyProtossClusterCloserToMainThanAlpha() {
+        AUnit cluster = ProtossClusterCloserToMainThanAlpha.detect();
+        if (cluster == null) return null;
+
+        return new AFocusPoint(
+            cluster,
+            "ProtossClusterCloserToMain"
+        );
+    }
+
+    private AFocusPoint enemyZergClusterCloserToMainThanAlpha() {
+        AUnit cluster = LonelyZergClusterCloserToMainThanAlpha.detect();
+        if (cluster == null) return null;
+
+        return new AFocusPoint(
+            cluster,
+            "ZergClusterCloserToMain"
+        );
+    }
+
     private AFocusPoint middleMapChokePoint() {
-        if (!Enemy.zerg()) return null;
-
-        if (A.supplyUsed() >= 160 || A.hasMinerals(1000)) return null;
-
-//        if (
-//            goons >= 12
-//                && !ResearchSingularityCharge.isResearched()
-//                && Army.strengthWithoutCB() <= 125
-//        ) {
-//            if (DEBUG) reason = "Goons (" + goons + ") and no goon range(" + Army.strength() + "%)";
-//            return forceMissionSpartaOrDefend(reason);
-//        }
-
-        if (Enemy.zerg()) {
-            if (!EnemyExistingExpansion.found()) {
-                if (
-                    (Army.strengthWithoutCB() >= 150 || Alpha.count() >= 16)
-                        && ResearchSingularityCharge.isResearched()
-        //                && EnemyUnits.ranged() >= 5
-                        && Count.dragoons() >= 8
-                ) return null;
-            }
-        }
-
-//        AChoke choke = CurrentFocusChoke.get();
         AChoke choke = MiddleFocusChoke.get();
         if (choke != null) {
 //            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
             return new AFocusPoint(
-                choke,
+                choke.translateTilesTowards(Select.mainOrAnyBuilding(), 8),
                 main,
                 "MiddleFocusChoke"
             );
+//            ).setIdealDistanceFromFocus(13);
         }
 
-        return null;
-    }
-
-    private AFocusPoint enemyMainChoke() {
-        if (Count.ourCombatUnits() <= 40 && EnemyUnits.nearestEnemyBuilding() != null) {
-            AChoke mainChoke = Chokes.enemyMainChoke();
-            if (mainChoke != null) {
-                return new AFocusPoint(
-                    mainChoke,
-                    main,
-                    "EnemyMainChoke"
-                );
-            }
-        }
         return null;
     }
 
@@ -244,13 +292,17 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //            );
 //        }
 
-        Selection enemiesDiscovered = EnemyUnits.discovered().havingWeapon();
+        Selection enemiesDiscovered = EnemyUnits.discovered().havingWeapon().effVisible();
 
         // Try going to any known enemy unit
         HasPosition alphaCenter = Alpha.alphaCenter();
-        AUnit anyEnemyLandUnit = enemiesDiscovered.groundUnits().effVisible().realUnits().nearestTo(
-            alphaCenter != null ? alphaCenter : Select.our().first()
-        );
+        AUnit anyEnemyLandUnit = possibleEnemies()
+            .groundUnits()
+            .realUnits()
+            .hasPathFrom(Alpha.alphaLeaderOrAnyUnit())
+            .nearestTo(
+                alphaCenter != null ? alphaCenter : Select.our().first()
+            );
 //        AUnit anyEnemyLandUnit = EnemyUnits.visibleAndFogged().combatUnits().groundUnits().first();
         if (anyEnemyLandUnit != null && !DontAttackUnitScatteredOnMap.isEnemyScatteredOnMap(null, anyEnemyLandUnit)) {
             return new AFocusPoint(
@@ -260,7 +312,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             );
         }
 
-        AUnit anyEnemyAirUnit = enemiesDiscovered.air().effVisible().nearestTo(
+        AUnit anyEnemyAirUnit = enemiesDiscovered.air().havingAntiGroundWeapon().nearestTo(
             alphaCenter != null ? alphaCenter : Select.our().first()
         );
         if (anyEnemyAirUnit != null) {
@@ -334,7 +386,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //            }
 //        }
 
-        if (!A.isUms() && EnemyUnits.discovered().count() >= 1) {
+        if (!A.isUms() && EnemyUnits.discovered().count() >= 1 && !Env.isTesting()) {
             ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         }
         return null;
@@ -387,6 +439,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
                 .combatUnits()
                 .groundUnits()
                 .inGroundRadius(40, main)
+                .effVisible()
                 .groundNearestTo(main);
             if (closeEnemy != null) return new AFocusPoint(
                 closeEnemy,
@@ -490,7 +543,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //        AUnit nearestTo = Alpha.get().leader();
         AUnit nearestTo = Select.mainOrAnyBuilding();
 
-        Selection enemies = Select.enemy().combatUnits().visibleOnMap().effVisible().havingPosition();
+        Selection enemies = possibleEnemies();
         AUnit enemy = enemies.ranged().groundNearestTo(nearestTo);
         if (enemy == null) enemies.groundNearestTo(nearestTo);
         if (enemy == null) return null;
@@ -504,6 +557,10 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             main,
             "EnemyUnit(" + enemy.name() + ")"
         );
+    }
+
+    private static Selection possibleEnemies() {
+        return AliveEnemies.get().combatUnits().havingAntiGroundWeapon().effVisible().visibleOnMap();
     }
 
     private boolean isTemporaryTargetStillValid() {

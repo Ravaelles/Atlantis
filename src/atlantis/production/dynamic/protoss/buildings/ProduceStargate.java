@@ -15,7 +15,7 @@ import static atlantis.units.AUnitType.Protoss_Stargate;
 
 public class ProduceStargate {
     public static boolean produce() {
-        if (Count.ofType(Protoss_Stargate) > 0) return false;
+        if (Count.ofTypeWithUnfinished(Protoss_Stargate) > 0) return false;
         if (ConstructionRequests.isBeingBuilt(Protoss_Stargate)) return false;
 
         Decision decision = A.whenEnemyProtossTerranZerg(
@@ -41,6 +41,7 @@ public class ProduceStargate {
 
     private static Decision produceAgainstProtoss() {
         if (!Enemy.protoss()) return Decision.INDIFFERENT;
+        if (Count.dragoons() <= 12) return Decision.FORBIDDEN;
 
         Selection enemies = EnemyUnits.discovered();
 

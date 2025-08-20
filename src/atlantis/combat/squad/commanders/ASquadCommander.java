@@ -1,6 +1,7 @@
 package atlantis.combat.squad.commanders;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.Manager;
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.mission.SquadMissionChanger;
@@ -28,7 +29,9 @@ public class ASquadCommander extends Commander {
 
         // Act with every combat unit
         for (AUnit unit : squad.units().list()) {
-            (new CombatUnitManager(unit)).invokeFrom(this);
+            Manager manager = (new CombatUnitManager(unit)).invokeFrom(this);
+
+//            System.err.println(A.now() + " - " + unit + " / " + manager);
 
 //            AAdvancedPainter.paintTextCentered(
 //                unit.position().translateByTiles(0, 0.6),

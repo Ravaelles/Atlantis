@@ -57,7 +57,9 @@ public class PylonPosition {
             return fallback();
         }
 
-        position = base.translateTilesTowards(-4, centerOfResources);
+        if (centerOfResources != null) {
+            position = base.translateTilesTowards(-7, centerOfResources);
+        }
         position = position.makeBuildableFarFromBounds(5);
 
         return position;
@@ -97,7 +99,7 @@ public class PylonPosition {
 
         // First pylon should be oriented towards the nearest choke
         else if (pylons == 5) {
-            nearTo = Select.mainOrAnyBuilding().translatePercentTowards(Chokes.mainChoke(), 60);
+            nearTo = Select.mainOrAnyBuilding().translatePercentTowards(Chokes.mainChoke(), 50);
         }
 
 //        AUnit main = Select.main();

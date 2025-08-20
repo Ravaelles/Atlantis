@@ -1,7 +1,7 @@
 package atlantis.game.listeners;
 
 import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.CameraCommander;
 import atlantis.production.constructions.Construction;

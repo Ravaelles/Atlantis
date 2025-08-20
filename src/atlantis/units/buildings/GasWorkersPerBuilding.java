@@ -1,6 +1,7 @@
 package atlantis.units.buildings;
 
 import atlantis.game.A;
+import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
@@ -17,8 +18,13 @@ public class GasWorkersPerBuilding {
             return 0;
         }
 
-        if (workers >= 32 && gas <= 350) {
-            return 3;
+        if (workers >= 18 && gas <= 180) return 3;
+        if (workers >= 45 && gas <= 800) return 3;
+
+        if (gas <= 250 && Strategy.get().isGoingTech()) return 3;
+
+        if (workers >= 32) {
+            if (gas >= 400 && A.minerals() <= 250) return 2;
         }
 
         if (We.protoss()) {
@@ -36,7 +42,7 @@ public class GasWorkersPerBuilding {
         }
         else if (gas >= 300) {
             if (A.seconds() <= 400) {
-                if (A.minerals() <= 400) return 0;
+                if (A.minerals() <= 400) return 1;
                 return 1;
             }
             else {

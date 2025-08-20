@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 import atlantis.units.workers.WorkerRepository;
 
 import java.util.Collection;
@@ -15,7 +15,7 @@ import java.util.Collection;
 public class NumberOfGasWorkersCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(9);
+        return A.everyNthGameFrame(7);
     }
 
     @Override

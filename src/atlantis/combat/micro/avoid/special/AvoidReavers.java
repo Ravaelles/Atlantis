@@ -6,7 +6,7 @@ import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class AvoidReavers extends Manager {
-    public static final double BASE_AVOID_RANGE = 10.4;
+    public static final double BASE_AVOID_RANGE = 9.8;
     private AUnit reaver;
 
     public AvoidReavers(AUnit unit) {
@@ -20,11 +20,20 @@ public class AvoidReavers extends Manager {
             && !unit.isABuilding()
             && !ignoreType()
             && (reaver = enemyReaver()) != null
-            && unit.eval() <= 2
+            && (unit.eval() <= 3 || missionAttackAndTooWeak())
             && !muchMoreOurThanEnemies();
 //            && !unit.isZealot()
 //            && !unit.isDragoon()
 //            && !unit.isMissionDefend();
+    }
+
+    private boolean missionAttackAndTooWeak() {
+        if (!unit.isMissionAttack()) return false;
+
+        int we = unit.friendsNear().combatUnits().inRadius(8, unit).size();
+        int them = unit.enemiesNear().combatUnits().inRadius(10, unit).size();
+
+        return we <= 10 && (we - them) <= 6;
     }
 
     private AUnit enemyReaver() {
@@ -46,6 +55,11 @@ public class AvoidReavers extends Manager {
 
     @Override
     protected Manager handle() {
+        if (unit.distTo(reaver) <= 4 && unit.noCooldown() && unit.isCombatUnit()) {
+            unit.setTooltip("DontAvoidReaverTooClose!", false);
+            return null;
+        }
+
         if (enoughForcesNotToRunFromReaver(reaver)) return null;
 
         if (unit.isCombatUnit()) {

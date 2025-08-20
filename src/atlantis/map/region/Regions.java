@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.select.Have;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
@@ -137,7 +138,10 @@ public class Regions {
             ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
             return region;
         } catch (Exception e) {
-            ErrorLog.printErrorOnce("Failed trying to get region for " + position + " / " + e.getMessage());
+//            if (!A.isUms() || Have.base()) {
+//                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Failed trying to get region");
+//                ErrorLog.printErrorOnce("Failed trying to get region for " + position + " / " + e.getMessage());
+//            }
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Region get fail");
 //            if (A.isUms()) e.printStackTrace();
 //            A.printStackTrace();

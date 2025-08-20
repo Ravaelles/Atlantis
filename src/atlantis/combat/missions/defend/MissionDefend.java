@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.units.AUnit;
@@ -35,10 +36,10 @@ public class MissionDefend extends Mission {
         return MissionDefendForceToFight.forcesUnitToFight(unit, enemies);
     }
 
-    @Override
-    public double optimalDist() {
-        return -1;
-    }
+//    @Override
+//    public double optimalDist() {
+//        return OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
+//    }
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit unit, AUnit enemy) {

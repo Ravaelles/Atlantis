@@ -1,0 +1,45 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=10
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=25
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=60
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/2_Rax_Academy_(vs._Zerg)
+9/10 - Supply Depot
+11/18 - Barracks
+13/18 - Barracks
+14/18 - Supply Depot
+18/26 - Refinery
+19/26 - Academy
+24/26 - Supply Depot
+26/34 - Stim Pack
+28/34 - Comsat Station
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Supply Depot
+11 - Barracks
+14 - Supply Depot
+14 - Barracks
+21 - Bunker - @MAIN
+23 - Academy
+24 - Supply Depot
+28 - Refinery
+33 - Comsat Station
+38 - Stim Packs
+40 - Machine Shop
+41 - U 238 Shells
+42 - Tank

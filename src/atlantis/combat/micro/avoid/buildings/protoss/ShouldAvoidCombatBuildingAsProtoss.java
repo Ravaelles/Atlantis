@@ -8,6 +8,12 @@ public class ShouldAvoidCombatBuildingAsProtoss {
     public static Decision decision(AUnit unit, AUnit combatBuilding) {
         Decision decision;
 
+        if (unit.isAir()) {
+            if ((decision = ShouldAvoidCannonAsProtossAir.shouldAvoid(unit, combatBuilding)).notIndifferent()) {
+                return decision;
+            }
+        }
+
         if (combatBuilding.isBunker()) {
             if ((decision = ShouldAvoidBunkerAsProtoss.shouldAvoid(unit, combatBuilding)).notIndifferent()) {
                 return decision;

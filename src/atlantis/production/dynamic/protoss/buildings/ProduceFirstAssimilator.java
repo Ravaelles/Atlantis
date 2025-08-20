@@ -29,18 +29,20 @@ public class ProduceFirstAssimilator {
 //        System.err.println("cc.getRemainingBuildTimeInSeconds() = " + cc.getRemainingBuildTimeInSeconds());
         if (cc.getRemainingBuildTimeInSeconds() >= 80) return false;
 
-        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
-        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
-            A.errPrintln("Canceling existing ASSIM order " + existingOrder);
-            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(
-                type(), "Assim takes long (" + (existingOrder.requestedAgo() / 30) + "s)"
-            );
-        }
+//        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
+//        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
+//            A.errPrintln("Canceling existing ASSIM order " + existingOrder);
+//            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(
+//                type(), "Assim takes long (" + (existingOrder.requestedAgo() / 30) + "s)"
+//            );
+//        }
 
 //        if (!A.hasMinerals(300) && Count.ourUnfinishedOfType(Protoss_Cybernetics_Core) == 0) return;
 //        if (Count.ourWithUnfinished(Protoss_Cybernetics_Core) >= 1) {
         if (cc != null) {
-            RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
+            Queue.get().notStarted().ofType(Protoss_Assimilator).cancelAll("Force Assimilator with CC");
+
+//            RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
 
             return AddToQueue.withTopPriority(type()) != null
                 && A.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());

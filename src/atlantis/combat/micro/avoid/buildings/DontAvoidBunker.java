@@ -9,6 +9,8 @@ public class DontAvoidBunker {
         if (!bunker.isBunker()) return false;
 
         if (We.protoss()) {
+            if (dist >= 6.3) return true;
+
             if (needToAvoidDueToSecondBunkerNearby(unit, bunker)) return false;
 
             if (unit.isRanged() || unit.lastUnderAttackMoreThanAgo(30 * 9)) {

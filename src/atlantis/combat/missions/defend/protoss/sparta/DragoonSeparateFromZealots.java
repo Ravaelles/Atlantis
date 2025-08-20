@@ -38,6 +38,6 @@ public class DragoonSeparateFromZealots extends Manager {
         zealot = unit.friendsNear().ofType(AUnitType.Protoss_Zealot).inRadius(0.7, unit).first();
         if (zealot == null) return false;
 
-        return unit.distToNearestChokeCenter() <= 2.7;
+        return unit.nearestChokeCenterDist() <= 2.7;
     }
 }

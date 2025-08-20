@@ -1,10 +1,9 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Selection;
 
 public class ReaverAlwaysFollowAlphaLeader extends Manager {
     public ReaverAlwaysFollowAlphaLeader(AUnit unit) {
@@ -13,7 +12,7 @@ public class ReaverAlwaysFollowAlphaLeader extends Manager {
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         return !unit.isRunning() && !unit.isAttacking();
     }

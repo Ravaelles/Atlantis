@@ -90,7 +90,7 @@ public class ProtossSupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 46) {
-                if (supplyFree <= 7 && noSuppliesBeingBuilt || supplyFree <= 1) {
+                if (supplyFree <= 8 && noSuppliesBeingBuilt || supplyFree <= 1) {
                     requestAdditionalSupply();
                 }
             }

@@ -4,6 +4,7 @@ import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.combat.running.to_building.ShouldRunTowardsCB;
+import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
@@ -39,9 +40,9 @@ public class RunToPositionFinder {
         ) {
             // Run to BUNKER
             if (ShouldRunTowardsCB.check(unit, runAwayFrom)) {
-                running._lastRunMode = "TowardsCB";
+                running._lastRunMode = "ToCB";
                 AUnit position = ShouldRunTowardsCB.position();
-                if (position != null) {
+                if (position != null && unit.distTo(position) > 0.1) {
 //                    unit.paintCircleFilled(8, Color.Teal);
                     return running.setRunTo(position);
                 }
@@ -51,8 +52,8 @@ public class RunToPositionFinder {
 
             if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
                 AUnit position = ShouldRunTowardsBase.position();
-                if (position != null) {
-                    running._lastRunMode = "TowardsBase";
+                if (position != null && unit.distTo(position) > 0.1) {
+                    running._lastRunMode = "ToBase";
 //                    unit.paintCircleFilled(3, Color.Yellow);
                     return running.setRunTo(position);
                 }
@@ -65,7 +66,6 @@ public class RunToPositionFinder {
 //            System.err.println("show back to enemy");
             if (runShowBackToEnemy.findPositionForShowingBackToEnemy(runAwayFrom)) {
 //                System.err.println("show back to enemy OK");
-                running._lastRunMode = "ShowBack";
 //                Color color = Color.Blue;
 //                HasPosition runTo = unit.runningManager().runTo;
 //                APainter.paintLine(unit, runTo, color);
@@ -75,13 +75,22 @@ public class RunToPositionFinder {
 //                    color
 //                );
 
-                return running.runTo();
+                if (running.runTo() != null && unit.distTo(running.runTo()) > 0.1)  {
+                    running._lastRunMode = "ShowBack";
+
+                    return running.runTo();
+                }
             }
+//            else {
+//                System.err.println(A.now + " show back to enemy FAILED " + unit);
+//            }
         }
+
+//        System.out.println("@ " + unit.nameWithId() + " - failed show back, RUN ANY DIR");
 
         // === Run as far from enemy as possible =====================
 
-        running._lastRunMode = "AnyDirection";
+        running._lastRunMode = "AnyDir";
         return running.setRunTo(runInAnyDirection.runInAnyDirection(runAwayFrom));
     }
 

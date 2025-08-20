@@ -8,6 +8,8 @@ import atlantis.game.player.Enemy;
 import bwapi.Color;
 
 public class DanceAwayAsZealot extends Manager {
+    private AUnit enemy;
+
     public DanceAwayAsZealot(AUnit unit) {
         super(unit);
     }
@@ -17,50 +19,96 @@ public class DanceAwayAsZealot extends Manager {
 //        if (true) return false;
 
         if (!unit.isZealot()) return false;
-//        if (unit.hp() >= 36) return false;
-        if (unit.isMissionSparta()) return false;
+        if (unit.isRunningOrRetreating()) return false;
+        if (unit.isMissionSparta() && unit.nearestChokeDist() <= 1) return false;
+        if (!unit.shotSecondsAgo(1)) return false;
+
+        enemy = nearestMeleeEnemy();
+        if (enemy == null) return false;
+
+        if (noCloseMeleeFacingThisUnit()) return false;
         if (dontApplyWhenAttackingRangedEnemy()) return false;
 
-        if (Enemy.zerg()) {
-            if (unit.shields() <= 10 && unit.cooldown() >= 4) return true;
+        if (appliesVsProtoss()) return true;
+        if (appliesVsZerg()) return true;
 
-            if (unit.shieldWound() <= 4 && unit.lastUnderAttackMoreThanAgo(20)) return false;
-            if (unit.hp() >= 70 && unit.lastUnderAttackMoreThanAgo(45)) return false;
+        return false;
+
+//        int cooldownThresholdToApply = cooldownThresholdToApply();
+//        if (unit.cooldown() < cooldownThresholdToApply) return false;
+//        if (unit.hp() >= 21 && unit.lastUnderAttackMoreThanAgo(15)) return false;
+//
+//        if (
+//            unit.hp() <= 35
+//                && unit.lastUnderAttackLessThanAgo(40)
+//                && unit.lastAttackFrameLessThanAgo(30)
+//        ) return true;
+//
+//        if (unit.cooldown() >= cooldownThresholdToApply) return true;
+//        if (unit.cooldown() >= 4 && unit.hp() <= 60) return true;
+//        if (unit.moreMeleeEnemiesThanOurUnits()) return true;
+//
+//        if (unit.hp() >= 35) return false;
+//
+//        boolean fairlyWounded = unit.hp() <= 38;
+//
+//        // @ToDo Tweak these values
+//        return unit.cooldown() >= (fairlyWounded ? 4 : 16)
+//            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60));
+    }
+
+    private boolean noCloseMeleeFacingThisUnit() {
+        for (AUnit meleeEnemy : unit.meleeEnemiesNear().inRadius(2, unit).list()) {
+            if (unit.isOtherUnitFacingThisUnit(meleeEnemy)) return false;
         }
 
-        int cooldownThresholdToApply = cooldownThresholdToApply();
-        if (unit.cooldown() < cooldownThresholdToApply) return false;
-        if (unit.hp() >= 21 && unit.lastUnderAttackMoreThanAgo(15)) return false;
+        return true;
+    }
 
-        if (dontApplyWhenRangedEnemiesNear()) return false;
+    private boolean appliesVsProtoss() {
+        if (!Enemy.protoss()) return false;
+        if (unit.shieldHealthy()) return false;
 
-        if (
-            unit.hp() <= 35
-                && unit.lastUnderAttackLessThanAgo(40)
-                && unit.lastAttackFrameLessThanAgo(30)
-        ) return true;
+        if (unit.hp() <= 17 && unit.eval() <= 3) return true;
 
-        if (unit.cooldown() >= cooldownThresholdToApply) return true;
-        if (unit.cooldown() >= 4 && unit.hp() <= 60) return true;
-        if (unit.moreMeleeEnemiesThanOurUnits()) return true;
+        if (unit.cooldown() >= 17 && unit.meleeEnemiesNearCount(1.3) >= 2) {
+            return true;
+        }
 
-        if (unit.hp() >= 35) return false;
+        return false;
+    }
 
-        boolean fairlyWounded = unit.hp() <= 38;
+    private boolean appliesVsZerg() {
+        if (!Enemy.zerg()) return false;
 
-        // @ToDo Tweak these values
-        return unit.cooldown() >= (fairlyWounded ? 4 : 16)
-            && (fairlyWounded || unit.lastUnderAttackLessThanAgo(60));
+        if (unit.cooldown() >= 12) return true;
+        if (unit.cooldown() >= 4 && unit.hp() <= 40) return true;
+
+        if (unit.shields() >= 2 && unit.meleeEnemiesNearCount(1.5) <= 1) return false;
+
+//            System.out.println("meleeEN = " + unit.meleeEnemiesNearCount(1.3));
+//        if (
+//            unit.shieldWounded() && unit.cooldown() >= 17
+//        ) return true;
+//            if (unit.shields() <= 10 && unit.cooldown() >= 5) return true;
+//            if (unit.cooldown() >= 9 && unit.eval() <= 3) return true;
+//
+//            if (unit.shieldWound() <= 4 && unit.lastUnderAttackMoreThanAgo(20)) return false;
+//            if (unit.hp() >= 70 && unit.lastUnderAttackMoreThanAgo(45)) return false;
+
+        return false;
     }
 
     @Override
     protected Manager handle() {
-        AUnit enemy = nearestMeleeEnemy();
-        if (enemy == null) return null;
-
         unit.paintCircleFilled(7, Color.Yellow);
 
-        return danceAwayFrom(enemy) ? usedManager(this) : null;
+        if (danceAwayFrom(enemy)) {
+//            System.err.println(A.now() + " - " + unit.typeWithUnitId() + " - Dancing away ");
+            return usedManager(this);
+        }
+
+        return null;
     }
 
     // =========================================================
@@ -98,7 +146,7 @@ public class DanceAwayAsZealot extends Manager {
 
     private boolean danceAwayFrom(AUnit enemy) {
         return unit.runningManager().runFrom(
-            enemy.position(), 1.5, Actions.MOVE_DANCE_AWAY, false
+            enemy.position(), 1, Actions.MOVE_DANCE_AWAY, false
         );
     }
 

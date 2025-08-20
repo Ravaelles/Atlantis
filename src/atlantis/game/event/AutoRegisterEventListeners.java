@@ -3,8 +3,6 @@ package atlantis.game.event;
 import atlantis.game.A;
 import atlantis.util.ClassScanner;
 
-import java.util.List;
-
 public class AutoRegisterEventListeners {
     private static boolean initialized = false;
 
@@ -13,9 +11,9 @@ public class AutoRegisterEventListeners {
 
         Class<?> currentClass = null;
         try {
-            for (Class<?> listenerClass : ClassScanner.classesExtending(Listener.class)) {
+            for (Class<?> listenerClass : ClassScanner.classesExtending(AutomaticListener.class)) {
                 currentClass = listenerClass;
-                Listener listener = (Listener) listenerClass.getDeclaredConstructor().newInstance();
+                AutomaticListener listener = (AutomaticListener) listenerClass.getDeclaredConstructor().newInstance();
                 Events.register(listener.listensTo(), listener);
             }
         } catch (Exception e) {

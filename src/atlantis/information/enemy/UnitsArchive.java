@@ -1,8 +1,11 @@
 package atlantis.information.enemy;
 
 import atlantis.game.A;
+import atlantis.map.bullets.ABullet;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.attacked_by.Bullets;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 import atlantis.util.Counter;
 
@@ -24,6 +27,11 @@ public class UnitsArchive {
     public static void markUnitAsDestroyed(AUnit unit) {
         destroyedUnitIds.put(unit.id(), unit);
 
+//        for (int id : destroyedUnitIds.keySet()) {
+//            System.out.println("Destroyed unit: " + id + " / " + destroyedUnitIds.get(id));
+//        }
+//        System.out.println("------");
+
         if (unit.isEnemy()) {
             EnemyInfo.removeDiscoveredUnit(unit);
             enemyUnitDestroyed(unit);
@@ -31,14 +39,30 @@ public class UnitsArchive {
         else if (unit.isOur()) {
             ourUnitDestroyed(unit);
         }
+
+//        System.out.println("Unit destroyed: " + unit
+//            + " / isEnemy: " + unit.isEnemy()
+//            + " / isOur: " + unit.isOur()
+//            + " / hp: " + unit.hp()
+//            + " / isDead: " + unit.isDead()
+//            + " / isAlive: " + unit.isAlive()
+//            + " / position: " + unit.position()
+//        );
     }
 
     private static AUnit ourUnitThatKilledEnemy(AUnit enemy) {
         for (AUnit our : Select.our().list()) {
-            if (enemy.equals(our.target())) {
+            if (enemy.equals(our.target()) || enemy.equals(our.lastTarget())) {
                 return our;
             }
         }
+
+        for (ABullet bullet : Bullets.against(enemy)) {
+            if (bullet.attacker() != null) {
+                return bullet.attacker();
+            }
+        }
+
         return null;
     }
 
@@ -112,13 +136,20 @@ public class UnitsArchive {
     public static void enemyUnitDestroyed(AUnit enemy) {
         enemyLostTypes.incrementValueFor(enemy.type());
 
+        modifyResourcesKilledForKilledEnemy(enemy);
+
+        AbstractFoggedUnit fogged = enemy.foggedUnit();
+        if (fogged != null) fogged.forceSetPositionNull();
+
+        if (enemy.isBase()) enemyBasesDestroyed++;
+    }
+
+    private static void modifyResourcesKilledForKilledEnemy(AUnit enemy) {
         AUnit ourKiller = ourUnitThatKilledEnemy(enemy);
-        if (ourKiller != null && !enemy.isABuilding()) {
+        if (ourKiller != null && (!enemy.isABuilding() || enemy.isCombatBuilding())) {
             ourKillCountersPerUnitTypes.incrementValueFor(ourKiller.type());
             ourKilledResourcesPerUnitTypes.changeValueBy(ourKiller.type(), enemy.totalCost());
         }
-
-        if (enemy.isBase()) enemyBasesDestroyed++;
     }
 
     public static boolean isDestroyed(AUnit unit) {

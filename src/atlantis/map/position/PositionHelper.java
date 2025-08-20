@@ -1,5 +1,6 @@
 package atlantis.map.position;
 
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.log.ErrorLog;
@@ -51,6 +52,10 @@ public class PositionHelper {
     }
 
     public static APosition getPositionAverage(Collection<? extends HasPosition> units) {
+        if (units.isEmpty()) {
+            return null;
+        }
+
         int totalX = 0;
         int totalY = 0;
 
@@ -174,4 +179,12 @@ public class PositionHelper {
         );
     }
 
+    public static HasPosition randomizePositionByTiles(
+        HasPosition hasPosition, int maxTranslateTiles, int seedForRandomizer
+    ) {
+        int deltaX = -maxTranslateTiles + A.randWithSeed(0, maxTranslateTiles * 2, seedForRandomizer);
+        int deltaY = -maxTranslateTiles + A.randWithSeed(0, maxTranslateTiles * 2, seedForRandomizer);
+
+        return hasPosition.position().translateByTiles(deltaX, deltaY);
+    }
 }

@@ -21,7 +21,7 @@ public class BaseSelect<T extends AUnit> {
             () -> {
                 List<AUnit> data = new ArrayList<>();
 
-                for (Unit u : AGame.getPlayerUs().getUnits()) {
+                for (Unit u : AGame.playerUs().getUnits()) {
                     AUnit unit = AUnit.getById(u);
                     data.add(unit);
                 }

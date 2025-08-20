@@ -27,6 +27,6 @@ public class ProductionCommander extends Commander {
     public boolean applies() {
         if (A.isUms() && !A.hasMinerals(350)) return false;
 
-        return (Have.base() && Count.workers() >= 4);
+        return (Have.base() && Count.workers() >= 1);
     }
 }

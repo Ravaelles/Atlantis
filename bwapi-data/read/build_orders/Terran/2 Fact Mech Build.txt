@@ -1,0 +1,44 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=11
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=30
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=12
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+http://strategywiki.org/wiki/StarCraft/Terran_strategies#Terran_2_Fact_Mech_Build
+
+Matchups: Tvp, Tvt, Hybrid, Air, Multi
+
+Theory: This is a general, flexible metal build that opens with two factories. You can make vultures or tanks to start, leaves room for marines and can be done in Tvp, Tvt, Air, Hybrid, and in Multiplayer games as well (no marines for air or hybrid maps of course). It is so flexible that economy can be sacrificed to have the second factory start sooner. You can go with one, two or no machine shops, and can easily add an armory for goliaths in Tvt. This is the foundation build for terran mech, most other specialized builds started from this point and were then tweaked to maximize their effectiveness.
+
+Build:
+
+9/10 - Depot
+11/18 - Barracks (Scout with SCV)
+12/18 - Refinery
+15/18 - Depot
+16/18 - Marine
+18/26 - Factory
+20/26 - Factory
+*/
+
+// === Build order for Atlantis =======================================
+
+9/10 - Depot
+11/18 - Barracks
+12/18 - Refinery
+15/18 - Depot
+16/18 - Marine
+18/26 - Factory
+20/26 - Factory
+22 - Depot

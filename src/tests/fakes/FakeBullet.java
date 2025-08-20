@@ -11,10 +11,14 @@ public class FakeBullet extends ABullet implements Comparable<FakeBullet> {
     protected int id;
     protected HasPosition position;
 
+    public FakeBullet(AUnit attacker, AUnit target, boolean exists) {
+        super(attacker, target, exists);
+    }
+
     public static FakeBullet fromPosition(HasPosition position, AUnit attacker, AUnit target) {
-        FakeBullet bullet = new FakeBullet();
-        bullet.attacker = attacker;
-        bullet.target = target;
+        FakeBullet bullet = new FakeBullet(attacker, target, true);
+//        bullet.attacker = attacker;
+//        bullet.target = target;
         bullet.id = firstFreeId++;
         bullet.position = position;
         return bullet;

@@ -11,7 +11,8 @@ import atlantis.units.select.Select;
 public class TooCloseToOtherPylons {
     public static boolean isTooCloseToOtherPylons(AUnit builder, AUnitType building, APosition position) {
         if (!building.isPylon()) return false;
-        if (A.supplyFree() <= 1) return false;
+        if (A.supplyFree() <= 2) return false;
+        if (A.supplyFree() <= (1 + (A.hasMinerals(500) ? 4 : 0))) return false;
 
         if (A.supplyUsed() % 3 != 0) return false;
 
@@ -26,7 +27,7 @@ public class TooCloseToOtherPylons {
 //            radius = 4;
 //        }
         else {
-            radius = 3;
+            return false;
         }
 
         int pylonsNear = Select.ourOfType(AUnitType.Protoss_Pylon).inRadius(radius, position).count();

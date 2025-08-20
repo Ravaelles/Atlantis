@@ -1,6 +1,6 @@
 package atlantis.combat.eval;
 
-import atlantis.combat.eval.tweaks.AtlantisApplyJfapTweaks;
+import atlantis.combat.eval.tweaks.AtlantisJfapModifier;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import jfap.JfapCombatEvaluator;
@@ -43,7 +43,7 @@ public class AtlantisJfap {
 //        System.err.println("--- " + unit + " ---");
 //        System.err.println("This score before = " + scores[0]);
 //        System.err.println("Enemy score before = " + scores[1]);
-        scores = (new AtlantisApplyJfapTweaks(this, unit)).applyTweaks();
+        scores = (new AtlantisJfapModifier(this, unit)).applyTweaks();
 //        System.err.println("This score AFTER = " + scores[0]);
 //        System.err.println("Other score AFTER  = " + scores[1]);
 

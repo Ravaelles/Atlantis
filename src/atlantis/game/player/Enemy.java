@@ -36,7 +36,7 @@ public class Enemy {
             () -> {
                 ArrayList<APlayer> players = new ArrayList<>();
 
-                APlayer playerUs = AGame.getPlayerUs();
+                APlayer playerUs = AGame.playerUs();
                 for (APlayer player : AGame.getPlayers()) {
                     if (player.isEnemy(playerUs)) {
                         players.add(player);

@@ -74,6 +74,7 @@ public class UnitStateManager extends Manager {
         if (unit.isAttacking()) {
             if (squad != null) {
                 squad.markLastAttackedNow();
+                if (unit.cooldown() + 2 >= unit.cooldownAbsolute()) squad.markLastShotNow();
             }
         }
 

@@ -72,7 +72,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
     }
 
     private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
-        _STATUS = null;
+        _STATUS = "None";
 
 //        System.err.println("building = " + building);
 //        System.err.println("nearTo = " + nearTo);

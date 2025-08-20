@@ -26,7 +26,7 @@ public class TerranTooClustered extends Manager {
         if (unit.isMissionAttackOrGlobalAttack()) return false;
         if (unit.enemiesNear().inRadius(14, unit).notEmpty()) return false;
         if (unit.friendsNear().buildings().inRadius(3, unit).notEmpty()) return false;
-        if (unit.isMissionDefend() && EnemyUnitBreachedBase.notNull()) return false;
+        if (unit.isMissionDefend() && EnemyUnitBreachedBase.someone()) return false;
 
         if (seconds <= 300 && unit.isMissionDefend() && unit.friendsNear().inRadius(2, unit).notEmpty())
             return true;

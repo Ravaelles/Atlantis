@@ -9,13 +9,12 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
 import atlantis.util.HasReason;
 import atlantis.util.We;
-
-import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ProtossDynamicUnitProductionCommander extends Commander implements HasReason {
     public static String reason = "-";
@@ -27,15 +26,13 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
     }
 
     private static boolean freeToSpendResources() {
-        if (!A.hasMinerals(275) && ConstructionRequests.countNotStartedOfType(Protoss_Photon_Cannon) > 0) {
-            return decision(false, "NeedCannons");
-        }
+        if (!ProtossCriticalStuffInQueue.hasEnoughResources()) return decision(false, "CriticalStuff");
+        if (!A.hasMinerals(408) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
 
-        if (!A.hasMinerals(432) && ShouldExpand.shouldExpand()) return decision(false, "ExpansionMinerals");
         if (A.hasMinerals(500)) return decision(true, "Minerals++");
         if (Count.ourCombatUnits() <= 4) return decision(true, "BattleProduce");
         if (A.hasMinerals(210) && Count.ourCombatUnits() <= 7) return decision(true, "BattleProduceSaved");
-        if (Army.strength() <= 130 && Count.ourCombatUnits() <= 13) return decision(true, "BattleProduceMargin");
+        if (Army.strength() <= 130 && Count.ourCombatUnits() <= 20) return decision(true, "BattleProduceMargin");
 
         if (A.supplyUsed() >= 25) {
             int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
@@ -116,21 +113,23 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
         ProduceObserver.observers();
         ProduceScarabs.scarabs();
+        ProduceDarkTemplar.dt();
         ProduceCorsairs.corsairs();
 
         if (!freeToSpendResources()) {
-            if (investInEarlyGoons()) ProduceDragoon.dragoon();
+            if (investInEarlyGoons() && ProduceDragoonAndZealots.allowed()) ProduceDragoon.dragoon();
             return;
         }
 
         ProduceReavers.reavers();
         ProduceArbiters.arbiters();
         ProduceShuttle.shuttles();
-        ProduceDarkTemplar.dt();
         ProduceHighTemplar.ht();
 
-        ProduceDragoon.dragoon();
-        ProduceZealot.zealot();
+        if (ProduceDragoonAndZealots.allowed()) {
+            ProduceDragoon.dragoon();
+            ProduceZealot.zealot();
+        }
     }
 
     @Override

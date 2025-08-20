@@ -34,7 +34,7 @@ public class Evaluate {
      * Also it makes sense to distguish before enemy evaluation (we will almost always understimate enemy
      * strength) or our own evaluation (we're likely to overestimate our strength).
      */
-    protected static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
+    private static double evaluateUnitsAgainstUnit(Units theseUnits, Units againstUnits, boolean isEnemyEval) {
         double totalStrength = 0;
         boolean enemyCombatBuildingFound = false;
         AUnit againstUnit = againstUnits.first();

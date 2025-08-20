@@ -25,7 +25,8 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
-        if (A.minerals() >= 1500) return false;
+        if (A.supplyUsed() >= 110) return false;
+        if (Army.strength() >= 300 && Count.ourCombatUnits() >= 22) return false;
 
 //        if (unit.enemiesNear().empty()) return false;
 
@@ -35,9 +36,12 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        }
 
         if (unit.isLeader()) return false;
-        if (ignoreWhenBigSupply()) return false;
         if (unit.lastUnderAttackLessThanAgo(50)) return false;
-        if (unit.hp() <= 63 && unit.meleeEnemiesNearCount(2.3) > Enemy.zergElse(2, 1)) return false;
+        if (unit.isRunningOrRetreating()) return false;
+        if (unit.lastPositioningActionLessThanAgo(30)) return false;
+        if (unit.friendsInRadiusCount(6) >= 7) return false;
+        if (unit.meleeEnemiesNearCount(2.4) > Enemy.zergElse(3, 1)) return false;
+//        if (unit.hp() <= 63 && unit.meleeEnemiesNearCount(2.3) > Enemy.zergElse(2, 1)) return false;
 
 //        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(40)) return false; // Continue
 //        if (unit.isMissionDefendOrSparta()) return false;
@@ -45,7 +49,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader != null && (leader.isRunning() || leader.isRetreating())) return false;
 
-        if (unit.squad() == null) squadCenter = squad.units().exclude(unit).nearestTo(unit);
+        if (unit.squad() != null) squadCenter = squad.units().exclude(unit).nearestTo(unit);
         else squadCenter = leader;
         if (squadCenter == null) return false;
         double distToCenter = unit.distTo(squadCenter.position());
@@ -106,13 +110,6 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        return distToCenter > 5 && !isOvercrowded();
     }
 
-    private boolean ignoreWhenBigSupply() {
-        return A.supplyUsed() >= 110
-            && unit.woundPercent() <= 6
-            && Army.strength() >= 450
-            && (unit.isMoving() || unit.isAttacking() || unit.hasCooldown());
-    }
-
     private boolean enemiesTooClose() {
         return unit.enemiesNear().inRadius(8, unit).canAttack(unit, 2.2).atLeast(2);
     }
@@ -147,7 +144,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
             return null;
         }
 
-        if (moveTo == null || !moveTo.hasPosition()) return null;
+        if (moveTo == null || !moveTo.hasPosition() || !moveTo.isWalkable()) return null;
 
         if (unit.distTo(moveTo) >= 2.2 && unit.move(moveTo, Actions.MOVE_FORMATION, "ToCenter")) {
 //                unit.paintCircleFilled(8, Color.Red);

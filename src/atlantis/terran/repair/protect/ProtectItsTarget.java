@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 
 public class ProtectItsTarget extends Manager {
     private AUnit target;

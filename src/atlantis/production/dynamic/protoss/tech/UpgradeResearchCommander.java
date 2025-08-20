@@ -18,7 +18,7 @@ public abstract class UpgradeResearchCommander extends Commander {
 
     @Override
     protected void handle() {
-        if (CountInQueue.count(what(), 3) > 0) {
+        if (CountInQueue.count(what(), 2) == 0) {
             if (AddToQueue.upgrade(what())) enqueued = true;
         }
 

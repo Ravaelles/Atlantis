@@ -15,6 +15,7 @@ public class WorkerDefenceFight extends Manager {
             && unit.enemiesNear().notEmpty()
             && (!We.terran() || !unit.isRepairerOfAnyKind())
             && !unit.isSpecialAction();
+//            && !WorkerDoNotFight.doNotFight(unit);
     }
 
     @Override

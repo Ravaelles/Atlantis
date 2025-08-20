@@ -3,7 +3,6 @@ package atlantis.util.log;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import cherryvis.ACherryVis;
-import cherryvis.ACherryVisLogUnit;
 
 import java.util.ArrayList;
 
@@ -43,9 +42,9 @@ public class Log {
 
         if (messages.size() > limit) messages.remove(0);
 
-        if (ACherryVis.isEnabled() && unit != null) {
-            ACherryVisLogUnit.logUnitData(unit, message);
-        }
+//        if (ACherryVis.isEnabled() && unit != null) {
+//            ACherryVisLogUnit.logUnitData(unit, message);
+//        }
     }
 
     public ArrayList<LogMessage> messages() {
@@ -57,7 +56,10 @@ public class Log {
     }
 
     public boolean lastMessageWas(String message) {
-        return messages.size() > 0 && lastMessage().message().equals(message);
+        return messages.size() > 0
+            && lastMessage() != null
+            && lastMessage().message() != null
+            && lastMessage().message().equals(message);
     }
 
     public LogMessage lastMessage() {

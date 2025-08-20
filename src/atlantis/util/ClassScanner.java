@@ -16,9 +16,9 @@ public class ClassScanner {
 
         try {
             for (Class<?> clazz : findClasses("atlantis")) {
-                // Check if the class is a subclass of Listener
+                // Check if the class is a subclass of AutomaticListener
                 if (ourClass.isAssignableFrom(clazz) && !clazz.equals(ourClass)) {
-                    listeners.add(clazz.asSubclass(ourClass));  // Safe cast to Class<? extends Listener>
+                    listeners.add(clazz.asSubclass(ourClass));  // Safe cast to Class<? extends AutomaticListener>
                 }
             }
         } catch (ClassNotFoundException e) {

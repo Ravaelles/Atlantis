@@ -3,7 +3,6 @@ package atlantis.combat.retreating.protoss;
 import atlantis.combat.running.to_building.ShouldRunTowardsBase;
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.game.GameSpeed;
 import atlantis.game.player.Enemy;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -13,7 +12,6 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
@@ -69,7 +67,7 @@ public class ProtossStartRetreat extends HasUnit {
 
         if (shouldForceRetreatDirectlyFromEnemy() && retreatByRunningFromEnemy(runAwayFrom)) {
             unitStartedRetreating(runAwayFrom);
-            PauseAndCenter.on(unit);
+//            PauseAndCenter.on(unit);
             unit.paintLine(unit.runningManager().runTo(), Color.Purple);
             return true;
         }
@@ -106,7 +104,7 @@ public class ProtossStartRetreat extends HasUnit {
         if (unit.enemiesNear().inRadius(4.3, unit).atLeast(2)) return false;
 
         if (unit.squadSize() >= 15) {
-            if (unit.distToNearestChokeCenter() <= 5) return false;
+            if (unit.nearestChokeCenterDist() <= 5) return false;
         }
 
         return unit.move(leader, RUN_RETREAT, "RetreatToCohesion")
@@ -181,14 +179,14 @@ public class ProtossStartRetreat extends HasUnit {
         if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(3)) return false;
 
         if (unit.meleeEnemiesNearCount(2.4) >= 3) {
-            if (unit.distToNearestChokeCenter() >= 2.6) return true;
+            if (unit.nearestChokeCenterDist() >= 2.6) return true;
             if (unit.nearestChoke().width() >= 4) return true;
 
             return false;
         }
 
         if (unit.enemiesNear().ranged().canAttack(unit, 2.4).atLeast(2)) {
-            if (unit.distToNearestChokeCenter() >= 2.6) return true;
+            if (unit.nearestChokeCenterDist() >= 2.6) return true;
 //            if (unit.nearestChoke().width() >= 4) return true;
 
             return false;
@@ -202,6 +200,8 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private static boolean notifyNearbyUnitsToRetreat(AUnit unit) {
+        if (A.supplyUsed() >= 180 || A.minerals() >= 1000) return false;
+
         for (AUnit friend : unit.friendsNear().inRadius(1.5, unit).list()) {
             if (friend == null || friend.hp() <= 0) continue;
 

@@ -6,9 +6,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
 
-//public class ProtossShieldBattery extends Manager {
+//public class ShieldBattery extends Manager {
 //
-//    public ProtossShieldBattery(AUnit unit) {
+//    public ShieldBattery(AUnit unit) {
 //        super(unit);
 //    }
 //

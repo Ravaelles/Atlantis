@@ -1,8 +1,7 @@
 package atlantis.combat.targeting.generic;
 
 import atlantis.combat.targeting.air.DontAttackOverlords;
-import atlantis.debug.DebugFlags;
-import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
@@ -38,7 +37,7 @@ public class ATargetingStandard extends ATargeting {
         }
 
         if (target != null) {
-            debug("D1 = " + target);
+           debug(unit, "D1 = " + target);
             return target;
         }
 
@@ -51,7 +50,7 @@ public class ATargetingStandard extends ATargeting {
                 .inRadius(3, unit)
                 .nearestTo(unit);
             if (target != null) {
-                debug("D1b = " + target);
+               debug(unit, "D1b = " + target);
                 return target;
             }
         }
@@ -65,7 +64,7 @@ public class ATargetingStandard extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("D2 = " + target);
+           debug(unit, "D2 = " + target);
             return target;
         }
 
@@ -80,8 +79,21 @@ public class ATargetingStandard extends ATargeting {
 //            .nearestTo(unit);
 
         if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
-            debug("D3 = " + target);
+           debug(unit, "D3 = " + target);
             return target;
+        }
+
+        // === Tanks ===============================================
+
+        if (Enemy.terran()) {
+            target = enemyUnits
+                .tanks()
+                .inRadius(16, unit)
+                .nearestTo(unit);
+            if (target != null) {
+                debug(unit, "D3_Tank = " + target);
+                return target;
+            }
         }
 
         // =========================================================
@@ -89,10 +101,11 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyBuildings
             .bases()
+            .onlyCompleted()
             .inRadius(10, unit)
             .mostWounded();
         if (target != null) {
-            debug("D4 = " + target);
+           debug(unit, "D4 = " + target);
             return target;
         }
 
@@ -103,11 +116,23 @@ public class ATargetingStandard extends ATargeting {
             .workers()
             .inRadius(17, unit)
             .nearestTo(unit);
-        if (target != null && enemyUnits.ofType(target.type()).inRadius(3, unit).atLeast(3)) {
-            if (target.friendsNear().buildings().inRadius(6, target).notEmpty()) {
-                debug("D5 = " + target);
+        if (target != null && enemyUnits.ofType(target.type()).inRadius(5, target).atLeast(2)) {
+            if (target.friendsNear().buildings().inRadius(10, target).notEmpty()) {
+               debug(unit, "D5 = " + target);
                 return target;
             }
+        }
+
+        // =========================================================
+        // Distant bases
+
+        target = enemyBuildings
+            .bases()
+            .onlyCompleted()
+            .nearestTo(unit);
+        if (target != null) {
+           debug(unit, "D6b = " + target);
+            return target;
         }
 
         // =========================================================
@@ -115,10 +140,10 @@ public class ATargetingStandard extends ATargeting {
 
         target = enemyBuildings
             .ofType(AUnitType.Protoss_Pylon, AUnitType.Zerg_Spawning_Pool)
-            .inRadius(6, unit)
+            .inRadius(15, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("D6a = " + target);
+           debug(unit, "D6c = " + target);
             return target;
         }
 
@@ -133,7 +158,7 @@ public class ATargetingStandard extends ATargeting {
                 .canBeAttackedBy(unit, 0.9)
                 .mostWoundedOrNearest(unit);
             if (target != null) {
-                debug("D7-Overlords = " + target);
+               debug(unit, "D7-Overlords = " + target);
                 return target;
             }
         }
@@ -148,7 +173,7 @@ public class ATargetingStandard extends ATargeting {
             .canBeAttackedBy(unit, 15)
             .nearestTo(unit);
         if (target != null) {
-            debug("D8 = " + target);
+           debug(unit, "D8 = " + target);
             return target;
         }
 

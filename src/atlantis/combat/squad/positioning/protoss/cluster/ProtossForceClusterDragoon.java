@@ -16,12 +16,17 @@ public class ProtossForceClusterDragoon extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isDragoon()
-//            && unit.lastUnderAttackMoreThanAgo(90)
+        if (!unit.isDragoon()) return false;
+        if (unit.isLeader()) return false;
+
+        return unit.isMissionAttack()
             && unit.eval() <= 1.3
             && unit.friendsNear().buildings().empty()
+            && unit.distToLeader() <= 4
+            && unit.enemiesThatCanAttackMe(1.2).empty()
             && unit.lastUnderAttackMoreThanAgo(30)
             && goonsTooFarFromEachOther()
+            && unit.friendsInRadiusCount(6) <= 5
             && (unit.cooldown() >= 7 || unit.enemiesNear().countInRadius(2.8, unit) <= 0)
             && (friend = friend()) != null;
     }
@@ -47,7 +52,7 @@ public class ProtossForceClusterDragoon extends Manager {
 //            return usedManager(this);
 //        }
 
-        if (unit.distTo(friend) >= 1 && unit.move(friend, Actions.MOVE_FORMATION)) {
+        if (unit.distTo(friend) >= 1 && friend.isWalkable() && unit.move(friend, Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }
 
@@ -55,7 +60,7 @@ public class ProtossForceClusterDragoon extends Manager {
     }
 
     private AUnit friend() {
-        Selection combatUnits = unit.friendsNear().groundUnits().exclude(unit);
+        Selection combatUnits = unit.friendsNear().groundUnits().exclude(unit).notRunning();
 
         return combatUnits.nearestTo(unit);
     }

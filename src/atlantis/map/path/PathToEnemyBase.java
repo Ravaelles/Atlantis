@@ -22,7 +22,6 @@ public class PathToEnemyBase {
 
     public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
         AUnit enemy = enemy();
-
         if (enemy == null) return new ArrayList<>();
 
         return cacheChokes.get(

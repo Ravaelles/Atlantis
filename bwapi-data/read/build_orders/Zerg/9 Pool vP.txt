@@ -1,0 +1,23 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=12
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=14
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=0
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=40
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+6 - Spawning Pool
+9 - Sunken Colony
+9 - Overlord
+10 - Sunken Colony

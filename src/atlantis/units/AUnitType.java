@@ -1314,9 +1314,9 @@ public class AUnitType implements Comparable<Object> {
             "hasNoWeaponAtAll",
             -1,
             () -> {
-                if (isCarrier() || isReaver()) return false;
+                if (isCarrier() || isReaver() || isBunker()) return false;
 
-                return groundWeapon().damageAmount() == 0 && airWeapon().damageAmount() == 0;
+                return groundWeapon().damageAmount() <= 0 && airWeapon().damageAmount() <= 0;
             }
         );
     }
@@ -1580,7 +1580,7 @@ public class AUnitType implements Comparable<Object> {
                     baseCost += requiredUnits().size() * requiredUnits().first().totalCost();
                 }
 
-                return baseCost + mineralPrice() + gasPrice();
+                return (int) (baseCost + mineralPrice() + gasPrice() * 1.5);
             }
         );
     }
@@ -1734,5 +1734,51 @@ public class AUnitType implements Comparable<Object> {
 
     public boolean isProtossImportantBuilding() {
         return isCyberneticsCore() || isRoboticsFacility() || isObservatory() || isForge() || isFleetBeacon();
+    }
+
+    public double dpsGround() {
+        return (double) cache.get(
+            "dpsGround",
+            -1,
+            () -> {
+                double groundDps = 0.0;
+//                double airDps = 0.0;
+
+                if (canAttackGround()) {
+                    WeaponType groundWeapon = groundWeapon();
+                    groundDps = (double) groundWeapon.damageAmount() / (double) groundWeapon.damageCooldown();
+                }
+
+//                if (canAttackAir()) {
+//                    WeaponType airWeapon = airWeapon();
+//                    airDps = (double) airWeapon.damageAmount() / (double) airWeapon.damageCooldown();
+//                }
+
+                return groundDps;
+            }
+        );
+    }
+
+    public boolean isScourge() {
+        return (boolean) cache.get(
+            "isScourge",
+            -1,
+            () -> is(Zerg_Scourge)
+        );
+    }
+
+    public boolean isDetector() {
+        return (boolean) cache.get(
+            "isDetector",
+            -1,
+            () -> is(
+                AUnitType.Protoss_Photon_Cannon,
+                AUnitType.Protoss_Observer,
+                AUnitType.Terran_Missile_Turret,
+                AUnitType.Terran_Science_Vessel,
+                AUnitType.Zerg_Overlord,
+                AUnitType.Zerg_Spore_Colony
+            )
+        );
     }
 }

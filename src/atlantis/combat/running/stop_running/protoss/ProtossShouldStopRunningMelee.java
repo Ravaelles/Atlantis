@@ -11,7 +11,8 @@ public class ProtossShouldStopRunningMelee extends Manager {
     @Override
     public boolean applies() {
         return unit.isMelee()
-            && unit.eval() >= 2;
+            && unit.eval() >= 2
+            && unit.hp() >= 34;
     }
 
     @Override

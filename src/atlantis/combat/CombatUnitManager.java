@@ -1,10 +1,10 @@
 package atlantis.combat;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.managers.*;
-import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
+import atlantis.combat.managers.protoss.ProtossCombatUnitManager;
+import atlantis.combat.managers.terran.TerranCombatUnitManager;
+import atlantis.combat.managers.zerg.ZergCombatUnitManager;
 import atlantis.units.AUnit;
-import atlantis.units.special.SpecialUnitsManager;
 
 public class CombatUnitManager extends Manager {
     public CombatUnitManager(AUnit unit) {
@@ -19,9 +19,12 @@ public class CombatUnitManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            CombatManagerTopPriority.class,
-            CombatManagerMediumPriority.class,
-            CombatManagerLowPriority.class,
+            ProtossCombatUnitManager.class,
+            TerranCombatUnitManager.class,
+            ZergCombatUnitManager.class,
+//            ZergCombatManagerTopPriority.class,
+//            ZergCombatManagerMediumPriority.class,
+//            ZergCombatManagerLowPriority.class,
         };
     }
 }

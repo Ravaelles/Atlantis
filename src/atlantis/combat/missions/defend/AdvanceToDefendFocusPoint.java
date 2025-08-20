@@ -2,7 +2,6 @@ package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.advance.focus.HandleUnitPositioningOnMap;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
 import atlantis.game.A;
@@ -23,26 +22,26 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
 //            ProtossTooFarFromLeader.class,
 //            ProtossAsLeaderTooFarFromOthers.class,
 
-            HandleUnitPositioningOnMap.class,
+//            HandleUnitPositioningOnMap.class,
         };
     }
 
     // =========================================================
 
-    public double optimalDist(AFocusPoint focusPoint) {
-//        if (unit.isZealot()) {
-//            private final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
-//            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
-//        }
-
-        double optimalDist = OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
-        if (optimalDist > 0.05) return optimalDist;
-
-        return Math.max(
-            baseForUnit(),
-            letWorkersComeThroughBonus()
-        );
-    }
+//    public double optimalDist(AFocusPoint focusPoint) {
+////        if (unit.isZealot()) {
+////            private final double SPARTA_MODE_DIST_FROM_FOCUS = 0.55;
+////            return SPARTA_MODE_DIST_FROM_FOCUS + letWorkersComeThroughBonus();
+////        }
+//
+//        double optimalDist = OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
+//        if (optimalDist > 0.05) return optimalDist;
+//
+//        return Math.max(
+//            baseForUnit(),
+//            letWorkersComeThroughBonus()
+//        );
+//    }
 
     private double baseForUnit() {
         if (unit.isDragoon()) return 0.3;

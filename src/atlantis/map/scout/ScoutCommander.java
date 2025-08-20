@@ -75,12 +75,11 @@ public class ScoutCommander extends Commander {
     private void manageScoutsAssigned() {
         removeDeadScouts();
         removeOverlordsAsScouts();
-        removeExcessiveScouts();
+//        removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
         if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker()) {
-            if (We.zerg()) {
-            }
+            if (We.zerg()) {}
 
             // =========================================================
             // TERRAN + PROTOSS
@@ -146,7 +145,7 @@ public class ScoutCommander extends Commander {
     private void removeDeadScouts() {
         for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
-            if (!scout.isAlive()) {
+            if (scout.hp() <= 0) {
                 scout.setScout(false);
                 iterator.remove();
                 ScoutState.scoutsKilledCount++;

@@ -6,7 +6,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 import atlantis.game.player.Enemy;
 
 public class TrackEnemyEarlyScoutCommander extends Commander {
@@ -59,9 +59,13 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
             if (main == null) return false;
 
 //            enemyScout = Select.enemy().workers().inRadius(30, main).nearestTo(main);
-            enemyScout = Select.enemy().inRadius(30, main).nearestTo(main);
+            enemyScout = Select.enemy().workers().inRadius(30, main).nearestTo(main);
 
             if (enemyScout != null && enemyScout.friendsNear().workers().countInRadius(7, enemyScout) > 0) {
+                enemyScout = null;
+            }
+
+            if (enemyScout != null && enemyScout.friendsNear().combatUnits().countInRadius(5, enemyScout) > 0) {
                 enemyScout = null;
             }
 

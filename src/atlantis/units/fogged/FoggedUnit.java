@@ -8,7 +8,7 @@ import atlantis.units.AUnit;
  */
 public class FoggedUnit extends AbstractFoggedUnit {
     public static AbstractFoggedUnit from(AUnit unit) {
-        AbstractFoggedUnit foggedUnit = (AbstractFoggedUnit) all.get(unit.id());
+        AbstractFoggedUnit foggedUnit = all.get(unit.id());
         if (foggedUnit != null) {
             return foggedUnit;
         }
@@ -32,7 +32,7 @@ public class FoggedUnit extends AbstractFoggedUnit {
 
     @Override
     public APosition position() {
-        if (_lastAUnit != null && _lastAUnit.hasPosition()) {
+        if (_lastAUnit != null && _lastAUnit.x() < 32000 && _lastAUnit.isVisibleUnitOnMap()) {
             return _lastAUnit.position();
         }
         return _lastPosition;

@@ -7,6 +7,7 @@ import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.MissionDefendManager;
 import atlantis.combat.missions.defend.focus.MissionDefendFocusPoint;
 import atlantis.game.A;
+import atlantis.information.generic.Army;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
@@ -28,17 +29,22 @@ public class Sparta extends MissionDefend {
     // =========================================================
 
     public static boolean canUseSpartaMission() {
-        if (Count.ourCombatUnits() >= 3) return false;
-
-//        if (true) return false;
-//        if (true) return false;
-
-        if (We.protoss()) {
-            if (!Enemy.zerg()) return false;
-        }
-
         if (We.terran()) return false;
         if (We.zerg() && Enemy.protoss()) return false;
+
+        int ourCombatUnits = Count.ourCombatUnits();
+        if (ourCombatUnits <= 5) return true;
+
+        if (ourCombatUnits >= 9) return false;
+        if (ourCombatUnits >= 4 && Army.strength() >= 160) return false;
+
+//        if (true) return false;
+//        if (true) return false;
+
+//        if (We.protoss()) {
+//            if (!Enemy.zerg()) return false;
+//            if (!Enemy.zerg()) return false;
+//        }
         if (A.s >= 330) return false;
 
         return Count.basesWithUnfinished() <= 1 && focusPointIsValidForSparta();
@@ -48,13 +54,13 @@ public class Sparta extends MissionDefend {
     private static boolean focusPointIsValidForSparta() {
         if (A.now() <= 30) return true;
 
-        AFocusPoint focusPoint = Missions.globalMission().focusPoint();
-        if (focusPoint == null) return false;
+//        AFocusPoint focusPoint = Missions.globalMission().focusPoint();
+//        if (focusPoint == null) return false;
 
         AChoke mainChoke = Chokes.mainChoke();
         if (mainChoke == null) return false;
 
-        return focusPoint.distTo(mainChoke) <= 6;
+        return mainChoke.width() <= 5;
     }
 
     // =========================================================

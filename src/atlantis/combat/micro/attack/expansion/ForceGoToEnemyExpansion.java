@@ -17,6 +17,7 @@ public class ForceGoToEnemyExpansion extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAir()) return false;
         if (unit.enemiesNear().combatUnits().inRadius(7, unit).atLeast(3)) return false;
 
         return unit.isCombatUnit()

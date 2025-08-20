@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.cluster;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
@@ -19,9 +20,12 @@ public class ProtossForceClusterZealot extends Manager {
     public boolean applies() {
         if (!unit.isMissionAttack()) return false;
 
+        if (A.supplyUsed() >= 170 || A.minerals() >= 1500) return false;
+
         return unit.isZealot()
 //            && !unit.isAttacking()
             && unit.lastUnderAttackMoreThanAgo(40)
+            && unit.friendsInRadiusCount(6) <= 5
             && zealotsTooFar()
             && (friend = friend()) != null;
     }

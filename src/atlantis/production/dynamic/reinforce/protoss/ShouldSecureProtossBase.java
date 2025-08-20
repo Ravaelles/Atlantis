@@ -6,6 +6,7 @@ import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.game.player.Enemy;
+import atlantis.units.select.Select;
 
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
@@ -24,6 +25,27 @@ public class ShouldSecureProtossBase {
         return notEnoughCannons(cannonsNearby);
     }
 
+    private static int expectedCannons() {
+        int minSupplyForSecondCannon = Enemy.terran() ? 100 : 85;
+
+        int total = (A.supplyTotal() >= minSupplyForSecondCannon ? 2 : 1)
+            + (A.hasMinerals(530) ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 110 ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 120 ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 140 ? 1 : 0)
+            + mutasBonus()
+            + (A.hasMinerals(600) ? 1 : 0)
+            + (A.hasMinerals(740) ? 1 : 0);
+
+        if (Enemy.protoss()) total = Math.min(total, 5);
+        if (Enemy.terran()) total = Math.min(total, 2);
+        if (Enemy.zerg()) total = Math.min(total, 7);
+
+        if (Enemy.zerg() && (A.supplyUsed() <= 150 && A.minerals() <= 550)) total = Math.min(3, total);
+
+        return total;
+    }
+
     private int existingCannonsNearby() {
         return Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, base);
     }
@@ -31,25 +53,11 @@ public class ShouldSecureProtossBase {
     private static boolean notEnoughCannons(int cannonsNearby) {
         int expectedCannons = expectedCannons();
 
-        if (cannonsNearby < expectedCannons) A.println(
-            "*************************** CANNONS = " + cannonsNearby + " / EXP: " + expectedCannons
-        );
+//        if (cannonsNearby < expectedCannons) A.println(
+//            "*************************** CANNONS = " + cannonsNearby + " / EXP: " + expectedCannons
+//        );
 
         return cannonsNearby < expectedCannons;
-    }
-
-    private static int expectedCannons() {
-        int minSupplyForSecondCannon = Enemy.terran() ? 100 : 85;
-
-        int total = (A.supplyTotal() >= minSupplyForSecondCannon ? 2 : 1)
-            + (A.hasMinerals(530) ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 110 ? 1 : 0)
-            + mutasBonus()
-            + (A.hasMinerals(740) ? 1 : 0);
-
-        if (Enemy.terran()) total = Math.min(total, 2);
-
-        return total;
     }
 
     private static int mutasBonus() {
@@ -67,6 +75,7 @@ public class ShouldSecureProtossBase {
 
     private static boolean consideredMutasAndItsOk() {
         if (Enemy.zerg() && A.supplyUsed() >= 110) return false;
+        if (A.supplyUsed() >= 90 && Select.main().friendsNear().cannons().atLeast(1)) return false;
 
         return !ProtossSecureBasesCommander.hasMutas();
     }

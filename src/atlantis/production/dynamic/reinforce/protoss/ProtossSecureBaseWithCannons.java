@@ -32,9 +32,13 @@ public class ProtossSecureBaseWithCannons {
         if (center == null) return initialPosition.makeBuildable(10);
 //        System.err.println("BB");
 
+        AChoke choke = center.position().nearestChoke();
+
         return initialPosition
             .translatePercentTowards(center, 50)
             .translatePercentTowards(initialPosition, 110)
+            .translatePercentTowards(initialPosition, 110)
+            .translateTilesTowards(2, choke)
             .makeBuildable(10);
     }
 
@@ -46,10 +50,12 @@ public class ProtossSecureBaseWithCannons {
 
     private HasPosition forNaturalBase() {
         AChoke choke = Chokes.natural();
-//        System.err.println("choke = " + choke);
         if (choke == null) return initialPosition.makeBuildable(10);
 
-        return translateChokeTowardsOurSide(choke).makeBuildable(10);
+        HasPosition position = translateChokeTowardsOurSide(choke);
+        if (position == null) position = choke;
+
+        return position.makeBuildable(10);
     }
 
     private APosition translateChokeTowardsOurSide(AChoke choke) {

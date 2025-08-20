@@ -1,10 +1,10 @@
 // WARNING!!! This has to have "atlantis" namespace, otherwise AutoRegisterEventListeners will not detect it.
 package atlantis.tests.fakes;
 
-import atlantis.game.event.Listener;
+import atlantis.game.event.AutomaticListener;
 import tests.unit.EventTest;
 
-public class FakeEventListener extends Listener {
+public class FakeEventListener extends AutomaticListener {
     @Override
     public String listensTo() {
         return "FakeEventName";

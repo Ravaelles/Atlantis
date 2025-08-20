@@ -36,7 +36,7 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             RunForYourLife.class,
-            ChangeLocationIfRanTooLong.class,
+            WraithChangeLocationIfRanTooLong.class,
             AttackOtherAirUnits.class,
             AttackWorkersWhenItMakesSense.class,
             AttackTargetInRangeIfRanTooLong.class,

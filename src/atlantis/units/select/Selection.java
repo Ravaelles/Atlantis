@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.combat.eval.estimate.Estimate;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -11,9 +12,11 @@ import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
+import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.util.cache.CacheKey;
+import atlantis.util.log.ErrorLog;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -221,6 +224,47 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection lastSeenRecently() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isVisibleUnitOnMap()
+                && unit.lastPositionUpdatedAgo() >= 30 * 7
+            ),
+            "lastSeenRecently"
+        );
+    }
+
+    public Selection lastActionLessThanAgo(int framesAgo, Action action) {
+        return cloneByRemovingIf(
+            (unit -> !unit.lastActionLessThanAgo(framesAgo, action)),
+            "lastActionLessThanAgo:" + framesAgo + ":" + action.name()
+        );
+    }
+
+    public Selection lastActionMoreThanAgo(int framesAgo, Action action) {
+        return cloneByRemovingIf(
+            (unit -> !unit.lastActionMoreThanAgo(framesAgo, action)),
+            "lastActionMoreThanAgo:" + framesAgo + ":" + action.name()
+        );
+    }
+
+    public Selection lastSeenAtLeastMinuteAgo() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isVisibleUnitOnMap()
+                && unit.lastPositionUpdatedAgo() >= 30 * 60
+            ),
+            "lastSeenAtLeastMinuteAgo"
+        );
+    }
+
+    public Selection regionsMatch(HasPosition position) {
+        if (position == null) return null;
+
+        return cloneByRemovingIf(
+            (unit -> !unit.regionsMatch(position)),
+            "regionsMatch:" + position.toString()
+        );
+    }
+
     /**
      * Selects only those units which are visible and not cloaked.
      */
@@ -257,20 +301,20 @@ public class Selection extends BaseSelection {
     }
 
     public Selection detectors() {
-        return cloneByRemovingIf(unit -> !unit.is(
-            AUnitType.Protoss_Photon_Cannon,
-            AUnitType.Protoss_Observer,
-            AUnitType.Terran_Missile_Turret,
-            AUnitType.Terran_Science_Vessel,
-            AUnitType.Zerg_Overlord,
-            AUnitType.Zerg_Spore_Colony
-        ), "detectors");
+        return cloneByRemovingIf(unit -> !unit.isDetector(), "detectors");
     }
 
     public Selection tanksSieged() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Terran_Siege_Tank_Siege_Mode)),
             "tanksSieged"
+        );
+    }
+
+    public Selection tanksUnsieged() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Terran_Siege_Tank_Tank_Mode)),
+            "tanksUnsieged"
         );
     }
 
@@ -309,10 +353,31 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection minerals() {
+        return cloneByRemovingIf(
+            (unit -> !unit.type().isMineralField()),
+            "minerals"
+        );
+    }
+
     public Selection dragoons() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Protoss_Dragoon)),
             "dragoons"
+        );
+    }
+
+    public Selection turrets() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Terran_Missile_Turret)),
+            "turrets"
+        );
+    }
+
+    public Selection vultures() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Terran_Vulture)),
+            "vultures"
         );
     }
 
@@ -323,10 +388,24 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection firebats() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Terran_Firebat)),
+            "firebats"
+        );
+    }
+
     public Selection overlords() {
         return cloneByRemovingIf(
             (unit -> !unit.is(AUnitType.Zerg_Overlord)),
             "overlords"
+        );
+    }
+
+    public Selection scienceVessels() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Terran_Science_Vessel)),
+            "scienceVessels"
         );
     }
 
@@ -344,12 +423,30 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection sporeColonies() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Spore_Colony)),
+            "sporeColonies"
+        );
+    }
+
+    public Selection creepColonies() {
+        return cloneByRemovingIf(
+            (unit -> !unit.is(AUnitType.Zerg_Creep_Colony)),
+            "creepColonies"
+        );
+    }
+
     public Selection tanks() {
         return cloneByRemovingIf(unit -> !unit.isTank(), "tanks");
     }
 
     public Selection nonTanks() {
         return cloneByRemovingIf(unit -> unit.isTank(), "nonTanks");
+    }
+
+    public Selection nonReavers() {
+        return cloneByRemovingIf(unit -> unit.isReaver(), "nonReavers");
     }
 
     public Selection groundUnits() {
@@ -488,6 +585,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection notUnpowered() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isPowered() && unit.isProtoss() && unit.isABuilding()), "notUnpowered"
+        );
+    }
+
     public Selection lifted() {
         return cloneByRemovingIf(
             (unit -> !unit.isLifted()), "notLifted"
@@ -542,6 +645,11 @@ public class Selection extends BaseSelection {
             (unit -> unit.isAttacking()), "notAttacking");
     }
 
+    public Selection attacking() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isAttacking()), "attacking");
+    }
+
     public Selection terranInfantryWithoutMedics() {
         return cloneByRemovingIf(
             (unit -> !unit.isTerranInfantryWithoutMedics()), "terranInfantryWithoutMedics"
@@ -555,10 +663,17 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection attackStatePending() {
+        return cloneByRemovingIf(
+            (unit -> !unit.attackState().pending()),
+            "attackStatePending"
+        );
+    }
+
     public Selection havingTargeted(AUnit targetUnit) {
         return cloneByRemovingIf(
             (unit -> (unit.target() == null || !unit.target().equals(targetUnit))),
-            "havingTargeted:" + targetUnit.idWithHash()
+            "havingTargeted:" + targetUnit.id()
         );
     }
 
@@ -712,6 +827,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection notCompleted() {
+        return cloneByRemovingIf(
+            (unit -> unit.isCompleted()), "notCompleted"
+        );
+    }
+
     /**
      * Selects only those Terran vehicles/buildings that can be repaired so it has to be:<br />
      * - mechanical<br />
@@ -796,6 +917,12 @@ public class Selection extends BaseSelection {
     public Selection builders() {
         return cloneByRemovingIf(
             (unit -> !unit.isBuilder()), "builders"
+        );
+    }
+
+    public Selection nonBuilders() {
+        return cloneByRemovingIf(
+            (unit -> unit.isBuilder()), "nonBuilders"
         );
     }
 
@@ -903,6 +1030,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection observatories() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isObservatory()), "observatories"
+        );
+    }
+
     public Selection bunkers() {
         return cloneByRemovingIf(
             (unit -> !unit.isBunker()), "bunkers"
@@ -915,9 +1048,21 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection forge() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isForge()), "forge"
+        );
+    }
+
     public Selection dts() {
         return cloneByRemovingIf(
             (unit -> !unit.isDarkTemplar()), "dts"
+        );
+    }
+
+    public Selection scarabs() {
+        return cloneByRemovingIf(
+            (unit -> !unit.type().isScarab()), "scarabs"
         );
     }
 
@@ -1022,8 +1167,24 @@ public class Selection extends BaseSelection {
     }
 
     public Selection hasPathFrom(HasPosition fromPosition) {
+        if (fromPosition == null) return cloneByRemovingIf((unit) -> true, "hasPathFrom:" + fromPosition);
+
         return cloneByRemovingIf(
             (unit -> !unit.hasPathTo(fromPosition)), "hasPathFrom:" + fromPosition
+        );
+    }
+
+    public Selection hasPathFromUs() {
+        AUnit we = Select.mainOrAnyUnit();
+        if (we == null) we = Select.our().groundUnits().first();
+        if (we == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("hasPathFromUs: 'we' unit is null");
+            return cloneByRemovingIf((unit) -> true, "hasPathFromUs");
+        }
+
+        AUnit finalWe = we;
+        return cloneByRemovingIf(
+            (unit -> !unit.hasPathTo(finalWe)), "hasPathFromUs"
         );
     }
 
@@ -1064,17 +1225,24 @@ public class Selection extends BaseSelection {
         return canBeAttackedBy(attacker, shootingRangeBonus);
     }
 
-    public Selection facing(AUnit target) {
+    public Selection facing(AUnit subject) {
         return cloneByRemovingIf(
-            attacker -> !attacker.isFacing(target),
-            "facing:" + target.idWithHash()
+//            attacker -> !attacker.isFacing(target),
+            otherUnit -> subject.isFacing(otherUnit),
+            "facing:" + subject.idWithHash()
         );
     }
 
-    public Selection notShowingBackToUs(AUnit target) {
+    public Selection notShowingBackToUs(AUnit subject) {
         return cloneByRemovingIf(
-            attacker -> attacker.isOtherUnitShowingBackToUs(target),
-            "notShowingBackToUs:" + target.idWithHash()
+            otherUnit -> subject.isOtherUnitShowingBackToUs(otherUnit),
+            "notShowingBackToUs:" + subject.idWithHash()
+        );
+    }
+
+    public Selection notMoving() {
+        return cloneByRemovingIf(
+            otherUnit -> otherUnit.isMoving(), "notMoving"
         );
     }
 
@@ -1120,6 +1288,13 @@ public class Selection extends BaseSelection {
         return data.isEmpty() ? null : data.get(0);
     }
 
+    public double nearestToDist(HasPosition position) {
+        AUnit nearest = nearestTo(position);
+        if (nearest == null) return 9999;
+
+        return nearest.distTo(position);
+    }
+
     public boolean nearestToDistLess(HasPosition position, double maxDist) {
         AUnit nearest = nearestTo(position);
         return nearest != null && nearest.distTo(position) <= maxDist;
@@ -1147,8 +1322,8 @@ public class Selection extends BaseSelection {
         return mostDistantTo(Select.mainOrAnyBuilding());
     }
 
-    public AUnit nearestToBase() {
-        return nearestTo(Select.mainOrAnyBuilding());
+    public AUnit nearestToMain() {
+        return nearestTo(Select.mainOrAnyUnit());
     }
 
     public AUnit closestToEnemyBase() {
@@ -1503,10 +1678,12 @@ public class Selection extends BaseSelection {
             return new Selection(new ArrayList<>(), "");
         }
 
-        if (data.size() != 1) {
+        if (data.size() >= 2) {
             data.sort(new Comparator<AUnit>() {
                 @Override
                 public int compare(AUnit p1, AUnit p2) {
+                    if (unit == null) return 1;
+
                     if (!(p1 instanceof HasPosition)) {
                         throw new RuntimeException("Invalid comparison: " + p1);
                     }
@@ -1590,5 +1767,9 @@ public class Selection extends BaseSelection {
         }
 
         return result.append(")").toString();
+    }
+
+    public double estimate() {
+        return Estimate.forSelection(this);
     }
 }

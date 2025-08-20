@@ -9,15 +9,17 @@ import atlantis.combat.micro.terran.infantry.TerranInfantry;
 import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.combat.micro.transport.ATransportManager;
 import atlantis.combat.micro.zerg.overlord.ZergOverlordManager;
-import atlantis.protoss.corsair.ProtossCorsair;
-import atlantis.protoss.ProtossShieldBattery;
-import atlantis.protoss.ht.ProtossHighTemplar;
-import atlantis.protoss.observer.ProtossObserver;
-import atlantis.protoss.reaver.ProtossReaver;
-import atlantis.protoss.shuttle.ProtossShuttle;
-import atlantis.protoss.shuttle.ProtossShuttleEmpty;
-import atlantis.protoss.reaver.reaver_with_shuttle.ProtossShuttleWithReaver;
+import atlantis.protoss.ShieldBattery;
+import atlantis.protoss.arbiter.Arbiter;
+import atlantis.protoss.corsair.Corsair;
+import atlantis.protoss.ht.HighTemplar;
+import atlantis.protoss.observer.Observer;
+import atlantis.protoss.reaver.Reaver;
+import atlantis.protoss.shuttle.Shuttle;
 import atlantis.units.AUnit;
+
+import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class SpecialUnitsManager extends Manager {
     public SpecialUnitsManager(AUnit unit) {
@@ -39,14 +41,13 @@ public class SpecialUnitsManager extends Manager {
         }
         else if (unit.isProtoss()) {
             raceSpecific = new Class[]{
-                ProtossShuttle.class,
-                ProtossShuttleWithReaver.class,
-                ProtossShuttleEmpty.class,
-                ProtossCorsair.class,
-                ProtossHighTemplar.class,
-                ProtossObserver.class,
-                ProtossReaver.class,
-                ProtossShieldBattery.class,
+                Shuttle.class,
+                Corsair.class,
+                Reaver.class,
+                Observer.class,
+                ShieldBattery.class,
+                HighTemplar.class,
+                Arbiter.class,
             };
         }
         else {
@@ -62,4 +63,7 @@ public class SpecialUnitsManager extends Manager {
         return mergeManagers(raceSpecific, generic);
     }
 
+    protected static Class[] mergeManagers(Class[] raceSpecific, Class[] generic) {
+        return Stream.concat(Arrays.stream(raceSpecific), Arrays.stream(generic)).toArray(Class[]::new);
+    }
 }

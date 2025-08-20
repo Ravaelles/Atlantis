@@ -62,10 +62,6 @@ public abstract class BaseManager {
         }
     }
 
-    protected static Class[] mergeManagers(Class[] raceSpecific, Class[] generic) {
-        return Stream.concat(Arrays.stream(raceSpecific), Arrays.stream(generic)).toArray(Class[]::new);
-    }
-
     // =========================================================
 
     @Override

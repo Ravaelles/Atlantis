@@ -48,24 +48,20 @@ public class AvoidGroupOfEnemies extends Manager {
 //        }
 
         if (
-            (unit.distToMain() >= 15 || unit.hp() >= 41)
+            (unit.distToMain() >= 15 && unit.hp() >= 41)
                 && unit.moveToSafety(RUN_ENEMY, "AvoidGroupToSafety")
         ) {
             return usedManager(this);
         }
 
         if (unit.runningManager().runFrom(
-            centerOfEnemies, calculateRunDistance(), RUN_ENEMY, allowedToNotifyNearUnitsToMakeSpace()
+            centerOfEnemies, calculateRunDistance(), RUN_ENEMY, NotifyNearUnitsToMakeSpace.allowed(unit)
         )) {
             return usedManager(this);
         }
 
 //        if (A.isUms() && !unit.isObserver()) System.err.println(A.now() + " AvoidSingleEnemy - run error for " + unit);
         return runError.handleErrorRun(unit, -234);
-    }
-
-    private boolean allowedToNotifyNearUnitsToMakeSpace() {
-        return (unit.isDragoon() && unit.hp() <= 121) || unit.distToNearestChokeCenter() <= 4;
     }
 
     private Manager processDontAvoid() {
@@ -99,7 +95,6 @@ public class AvoidGroupOfEnemies extends Manager {
 
     @Override
     public String toString() {
-//        String target = unit.runningFrom() == null ? "NULL_FROM" : unit.runningFrom().type().name();
-        return super.toString() + "(" + enemies.size() + ")";
+        return super.toString() + "(" + enemies.size() + "," + unit.lastRunningType() + ")";
     }
 }

@@ -43,8 +43,9 @@ public class ATransportManager extends Manager {
             return transportUnits.handleTransporting(unit, baby) ? transportUnits : null;
         }
 
-        unit.setTooltipTactical("Chill");
-        return usedManager(this);
+        return null;
+//        unit.setTooltipTactical("Chill");
+//        return usedManager(this);
     }
 
     // =========================================================

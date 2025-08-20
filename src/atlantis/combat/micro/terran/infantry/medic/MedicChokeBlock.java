@@ -2,7 +2,7 @@ package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
@@ -40,7 +40,7 @@ public class MedicChokeBlock extends Manager {
             }
         }
         else {
-            unit.holdPosition(Actions.HOLD_POSITION, "ChokeBlock");
+            unit.holdPosition(Actions.STOP, "ChokeBlock");
         }
         unit.setAction(Actions.SPECIAL);
 

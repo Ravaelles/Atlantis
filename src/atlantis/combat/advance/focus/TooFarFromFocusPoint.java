@@ -2,11 +2,12 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.game.player.Enemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class TooFarFromFocusPoint extends MoveToFocusPoint {
@@ -16,34 +17,47 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     @Override
     public boolean applies() {
-        if (focusPoint == null) return false;
-        if (!unit.isLeader()) return false;
-        if (focusPoint == null || !focusPoint.isValid()) return false;
-        if (unit.enemiesNear().canAttack(unit, 2.5).notEmpty()) return false;
-
-        if (
-            focusPoint.distTo(unit) >= 11
-                && focusPoint.nameContains("Third", "Expansion")
-//                && unit.enemiesNear().canBeAttackedBy(unit, 2.6).notEmpty()
-        ) return true;
-
+        if (focus == null || !focus.isValid()) return false;
+//        if (!unit.isLeader()) return false;
+        if (unit.isAir() && !unit.isAlphaSquad()) return false;
+        if (unit.isRunningOrRetreating()) return false;
+        if (unit.lastCommandIssuedAgo() <= 2) return false;
+        if (unit.lastCommandIssuedAgo() >= 30) return false;
+        if (unit.lastUnderAttackLessThanAgo(50)) return false;
+        if (unit.enemiesNear().canAttack(unit, 5).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
-//        if (EnemyUnitBreachedBase.get() != null) return false;
-//        if (unit.isMissionAttackOrGlobalAttack()) return false;
+        if (unit.distToLeader() > 6) return false;
+        if (unit.enemiesNear().combatUnits().countInRadius(6, unit) > 0) return false;
 
-        evaluateDistToFocusPointComparingToLeader();
-
-        if (distFromFocus == DistFromFocus.TOO_FAR || fallbackTooFarFromFocus()) {
-            if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
-
-            return true;
+        if (Enemy.terran()) {
+            if (unit.enemiesNear().tanksSieged().countInRadius(11.5, unit) > 0) return false;
         }
+
+//        if (unit.distToFocusPoint() > 4.5) return true;
+//        System.err.println("dist = " + unit.distToDigit(focus) + ", optimalDist = " + optimalDist(focus));
+        if (unit.distTo(focus) > optimalDist(focus) + 0.1) return true;
+
+//        evaluateDistToFocusPointComparingToLeader();
+//
+//        if (distFromFocus == DistFromFocus.TOO_FAR || fallbackTooFarFromFocus()) {
+//            if (unit.isTank() && unit.hasSiegedOrUnsiegedRecently()) return false;
+//
+//            return true;
+//        }
 
         return false;
     }
 
     protected Manager handle() {
-        if (focusPoint == null) return null;
+        if (focus == null) return null;
+
+        if (
+            unit.isMoving()
+                && unit.isActiveManager(this)
+                && unit.lastCommandIssuedAgo() <= (unit.enemiesNear().empty() ? 300 : 25)
+        ) {
+            return usedManager(this);
+        }
 
         if (act()) return usedManager(this);
 
@@ -54,16 +68,15 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         return unit.distToFocusPoint() >= 12;
     }
 
-    @Override
-    public double optimalDist(AFocusPoint focusPoint) {
+    private double optimalDist(AFocusPoint focusPoint) {
         return OptimalDistanceToFocusPoint.forUnit(unit, focusPoint);
     }
 
     protected boolean act() {
-        if (focusPoint == null) return false;
+        if (focus == null) return false;
 //        if (!unit.looksIdle()) return false;
 
-        double distToFocus = unit.distTo(focusPoint);
+        double distToFocus = unit.distTo(focus);
         HasPosition goTo = distToFocus <= 2.5
             ? goToWhenNotSoFarFromFocus()
             : goToWhenFarFromFocus();
@@ -73,19 +86,20 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (goTo != null) {
 //            if (unit.isDragoon()) A.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
 
-            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5, null);
-            if (goTo == null) return false;
+            if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5, 1, null);
+            if (goTo == null) {
+                ErrorLog.printMaxOncePerMinute("TFFP: Can't make walkable " + goTo + " for " + unit);
+                return false;
+            }
 
             if (goTo.isWalkable()) {
-                if (
-                    (!unit.isMoving() || A.everyNthGameFrame(20))
-                        && unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true)
-                ) {
+                if (!unit.isMoving() || A.everyNthGameFrame(5)) {
+                    unit.move(goTo, Actions.MOVE_FOCUS, "TooFar", true);
                     return true;
                 }
             }
             else {
-                ErrorLog.printMaxOncePerMinute("Unwalkable focus " + focusPoint + " for " + unit);
+                ErrorLog.printMaxOncePerMinute("Unwalkable focus " + focus + " for " + unit);
             }
         }
 
@@ -93,30 +107,30 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
     }
 
     private HasPosition goToWhenFarFromFocus() {
-        if (!focusPoint.isAroundChoke()) return focusPoint;
-        if (unit.distToFocusPoint() >= 10) return focusPoint;
+        if (!focus.isAroundChoke()) return focus;
+        if (unit.distToFocusPoint() >= 10) return focus;
 
-        APosition goTo = focusPoint.translateTilesTowards(-3, focusPoint.choke().center());
+        APosition goTo = focus.translateTilesTowards(-3, focus.choke().center());
         if (goTo != null && goTo.isWalkable()) {
             return goTo;
         }
 
-        goTo = focusPoint.translateTilesTowards(-1.7, focusPoint.choke().center());
+        goTo = focus.translateTilesTowards(-1.7, focus.choke().center());
         if (goTo != null && goTo.isWalkable()) {
             return goTo;
         }
 
-        return focusPoint;
+        return focus;
     }
 
     private HasPosition goToWhenNotSoFarFromFocus() {
-        APosition goTo = unit.translateTilesTowards(0.15, focusPoint);
+        APosition goTo = unit.translateTilesTowards(0.15, focus);
 
         if (goTo != null && goTo.isWalkable()) {
             return goTo;
         }
 
-        return focusPoint;
+        return focus;
     }
 }
 

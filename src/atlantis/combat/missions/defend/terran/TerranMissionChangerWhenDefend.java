@@ -5,7 +5,7 @@ import atlantis.combat.micro.terran.tank.TankDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.terran.TerranDecisions;

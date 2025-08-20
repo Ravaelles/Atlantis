@@ -1,17 +1,22 @@
 package atlantis.game.listeners;
 
 import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
+import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
+import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.PositionAroundBuilding;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
+import atlantis.information.enemy.EnemyOnCloseIsland;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
-import atlantis.map.choke.DefineNaturalChoke;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
@@ -35,9 +40,12 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
+import atlantis.units.attacked_by.MissedBullets;
+import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.CenterCamera;
 import atlantis.util.Vector;
 import atlantis.util.object.not_needed.NamespaceAccessibility;
 import atlantis.util.object.ObjectToFile;
@@ -54,8 +62,99 @@ import java.util.Set;
  * Auxiliary class, helpful when there's need to do something every frame and not spam other classes.
  */
 public class OnEveryFrameHelper {
+
     public static void handle() {
-        DefineNaturalChoke.defineByReturningChokeBelongingToRegionCloseToMain();
+//        MissedBullets.print();
+
+        if (true) return;
+
+//        Selection units = Select.ourOfType(AUnitType.Protoss_Dark_Templar);
+//        Selection units = Select.from(new Units()).add(Alpha.alphaLeader());
+//        Selection units = Select.ourCombatUnits().groundUnits();
+        Selection units = Select.ourCombatUnits().havingWeapon();
+        for (AUnit unit : units.list()) {
+//            unit.paintTextCentered(A.digit(unit.getAngle()), Color.Orange, 1);
+
+//            System.out.println(unit + ", detected: " + unit.isDetected()
+//                + ", effUnd:" + unit.effUndetected()
+//                + ", effVis:" + unit.effVisible()
+//            );
+//            if (
+//                unit.isMoving()
+//                    || unit.lastPositionChangedAgo() <= 50
+//                    || unit.shotSecondsAgo(2)
+//            ) continue;
+
+//            System.out.println(A.now() + "    cool:" + unit.cooldown()
+//                + ", st:" + unit.isStartingAttack()
+//                + ", af:" + unit.isAttackFrame()
+//                + ", state:" + unit.attackState()
+//            );
+
+//            unit.paintTextCentered(unit.cooldown() + "", Color.Blue, -1.3);
+
+//            unit.paintCircle(unit.groundWeaponRange() * 32, Color.Grey);
+//
+//            if (unit.isAttacking() && unit.hasTarget() && unit.target().isRanged()) {
+//                if (unit.meleeEnemiesNearCount(2.6) >= 1) {
+//                    unit.paintCircleFilled(10, Color.Yellow);
+//                    unit.paintCircle(6, Color.Orange);
+//                    unit.paintCircle(7, Color.Orange);
+//                }
+//            }
+
+//            unit.paintTextCentered(
+////                unit.lastCommandIssuedAgo() + " / " +
+//                    unit.lastActionFramesAgo() + "/"
+////                    + unit.lastCommandName(),
+//                    + unit.manager(),
+//                Color.Orange,
+//                -2
+//            );
+        }
+
+//
+//            if (!unit.isActiveManager(ProtossMoon.class)) {
+//                System.out.println("@ " + A.now());
+//
+//                System.out.println(
+//                    unit.manager()
+//                        + "/" + unit.tooltip()
+//                        + "/ lastAct:" + unit.lastActionFramesAgo()
+//                        + "/ lastComm:" + unit.lastCommandIssuedAgo()
+//                        + " / targ:" + unit.target()
+//                        + " / toTarg:" + unit.distToTargetPositionDigit()
+//                );
+//            }
+//
+////            if (unit.isActiveManager(AvoidEnemies.class)) {
+//            if (unit.isActiveManager(AttackNearbyEnemies.class)) {
+//                AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
+//                System.err.println(
+//                    "Tlt:" + unit.tooltip() + " / "
+//                    + "Man:" + unit.manager() + " / "
+//                    + "Act:" + unit.action() + " / "
+//                    + "Comm:" + unit.lastCommandName() + " / "
+//                    + "PosChng:" + unit.lastPositionChangedAgo() + " / "
+//                );
+//            }
+//        }
+//        System.err.println(A.now + " - leader - " + Alpha.alphaLeader());
+//        System.err.println(A.now + " - leader - " + Alpha.get().cohesionPercent());
+
+//        for (AUnit enemy : Select.enemy().list()) {
+//            if (enemy.isDeadMan()) enemy.paintCircle(10, Color.Orange);
+//            if (enemy.isDeadMan()) enemy.paintCircle(9, Color.Orange);
+//            if (enemy.isDeadMan()) enemy.paintCircle(8, Color.Orange);
+//        }
+
+//        CenterCamera.on(units.first());
+//        CenterCamera.on(Alpha.get().mission().focusPoint());
+
+//        enemyOnCloseIslandDebug();
+//        debugDragoonHoldToShoot();
+
+//        DefineNaturalChoke.defineByReturningChokeBelongingToRegionCloseToMain();
 
 //        AUnit unit = Select.ourCombatUnits().second();
 //        System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
@@ -170,6 +269,46 @@ public class OnEveryFrameHelper {
 //        paintBullets();
 
 //        paintUnitSpeeding();
+    }
+
+    private static void enemyOnCloseIslandDebug() {
+        HasPosition enemyOnCloseIsland = EnemyOnCloseIsland.get();
+        if (enemyOnCloseIsland != null) {
+            if (A.everyNthGameFrame(60)) {
+//                System.err.println(A.minSec() + "-EILand- "
+//                        + enemyOnCloseIsland.toString()
+//                        + " / hasPosition:" + enemyOnCloseIsland.hasPosition()
+//                        + " / visible:" + enemyOnCloseIsland.isVisibleUnitOnMap()
+//                        + " / dead:" + enemyOnCloseIsland.isDead()
+//                        + " / hp:" + enemyOnCloseIsland.hp()
+//                        + "/en:" + enemyOnCloseIsland.isEnemy()
+//                );
+            }
+            enemyOnCloseIsland.paintCircleFilled(8, Color.Purple);
+        }
+
+//        for (AUnit shuttle : Select.ourOfType(AUnitType.Protoss_Shuttle).list()) {
+//            System.err.println("   " + shuttle
+//                + " / " + shuttle.manager()
+//                + " / " + shuttle.action()
+//                + " / " + shuttle.lastCommandName());
+//        }
+    }
+
+    private static void debugDragoonHoldToShoot() {
+        AUnit unit = Select.ourOfType(AUnitType.Protoss_Dragoon).first();
+        CenterCamera.on(unit);
+
+        AUnit enemy = unit.enemiesThatCanAttackMe(100).nearestTo(unit);
+        if (enemy == null) return;
+
+        String lastCommand = unit.lastCommandName();
+        if (!"".equals(lastCommand)) {
+            System.err.println("@" + A.now + ":  " + unit.action().name()
+                + (unit.isAttackFrame() ? " (" + unit.cooldown() + ")" : "")
+                + ", dist: " + A.digit(unit.distTo(enemy))
+            );
+        }
     }
 
     private static void updateTooltips() {

@@ -1,8 +1,10 @@
 package atlantis.production.dynamic.protoss.units;
 
+import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.decisions.Decisions;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -11,8 +13,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
-import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
-import static atlantis.units.AUnitType.Protoss_Zealot;
+import static atlantis.units.AUnitType.*;
 
 public class ProduceReavers {
     private static int produced = 0;
@@ -30,6 +31,11 @@ public class ProduceReavers {
 
         int maxReavers = haveThisManyReavers();
         if (Count.ourOfTypeUnfinished(type()) >= maxReavers) return false;
+
+        if (!Missions.isGlobalMissionDefendOrSparta() && Count.shuttles() == 0 && Count.reavers() > 0) {
+            AddToQueue.withHighPriority(Protoss_Shuttle);
+            return false;
+        }
 
         return produceReaver();
     }

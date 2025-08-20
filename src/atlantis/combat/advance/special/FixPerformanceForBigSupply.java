@@ -15,12 +15,8 @@ public class FixPerformanceForBigSupply extends MissionManager {
 
     @Override
     public boolean applies() {
-        return Missions.isGlobalMissionAttack()
-            && (
-            A.supplyUsed(150)
-//                || (A.supplyUsed(80) && EnemyUnits.combatUnits() <= 0)
-//                || LongFrames.framesOver85() >= 30
-        )
+        return A.supplyUsed(150)
+            && Missions.isGlobalMissionAttack()
             && unit.isMoving()
 //            && !unit.isRunning()
 //            && unit.lastActionLessThanAgo(20)

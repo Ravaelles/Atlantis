@@ -3,10 +3,7 @@ package atlantis.production.orders.production.queue.add;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
-import atlantis.production.orders.production.queue.ClearCountCache;
-import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.QueueLastStatus;
+import atlantis.production.orders.production.queue.*;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
@@ -113,11 +110,27 @@ public class AddToQueue {
     private static ProductionOrder addToQueue(
         AUnitType type, HasPosition position, int index, ProductionOrderPriority priority
     ) {
-//        if (priority != ProductionOrderPriority.TOP) {
-        if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+        TrimQueue.trimIfTooBig(CurrentQueue.get());
+
+        if (canPreventExcessiveOrders(type, priority)) {
+            if (PreventDuplicateOrders.preventExcessiveOrInvalidOrders(type, position)) return null;
+        }
+
+//        if (type.isGateway()) {
+//            System.err.println("Count.gatewaysWithUnfinished() = " + Count.gatewaysWithUnfinished());
+//            A.printStackTrace("Why Gateway ADDED TO QUEUE?");
 //        }
 
+        if (type.is(AUnitType.Protoss_Nexus)) {
+            A.println(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
+            if ("_NO_EXPAND_REASON_".equals(ShouldExpand.reason)) {
+                ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
+                return null;
+            }
+        }
+
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
+        productionOrder.setPriority(priority);
 
         if (Queue.get().addNew(index, productionOrder)) {
 //            A.println(A.now() + ": Adding " + type + " to queue");
@@ -158,12 +171,9 @@ public class AddToQueue {
 //                    + ", IN_PROD:" + Count.inProductionOrInQueue(AUnitType.Protoss_Pylon) + ")");
 //            }
 
-            if (type.is(AUnitType.Protoss_Nexus)) {
-                A.println(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals()
-                    + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
+            if (productionOrder.priority() == null || !productionOrder.priority().isTop()) {
+                RemoveExcessiveOrders.removeExcessive(type);
             }
-
-            RemoveExcessiveOrders.removeExcessive(type);
 
             ClearCountCache.clear();
 
@@ -199,6 +209,13 @@ public class AddToQueue {
         }
 
         return productionOrder;
+    }
+
+    private static boolean canPreventExcessiveOrders(AUnitType type, ProductionOrderPriority priority) {
+        if (type.isPylon() && (A.supplyFree() >= 3 || CountInQueue.countNotStarted(AUnitType.Protoss_Pylon) >= 3)) return true;
+        if (type.isAssimilator()) return true;
+
+        return priority != ProductionOrderPriority.TOP;
     }
 
 //    private static void clearOtherExistingOfTheSameTypeIfNeeded(ProductionOrder productionOrder) {

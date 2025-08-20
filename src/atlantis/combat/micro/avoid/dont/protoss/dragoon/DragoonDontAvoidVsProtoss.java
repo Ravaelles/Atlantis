@@ -2,6 +2,7 @@ package atlantis.combat.micro.avoid.dont.protoss.dragoon;
 
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -42,14 +43,28 @@ public class DragoonDontAvoidVsProtoss {
 
     private static boolean dontAvoidBigGoonBattle(AUnit unit) {
         if (unit.enemiesNear().ranged().empty()) return false;
-        if (unit.meleeEnemiesNearCount(3.1) > 0) return false;
+        if (unit.meleeEnemiesNearCount(3) > 0) return false;
 
-        if (unit.cooldown() <= 7 && unit.eval() >= 1.1) return true;
+        int cooldown = unit.cooldown();
 
-        if (unit.cooldown() <= 14 && unit.shields() >= 5) return true;
-        if (unit.cooldown() <= 8) return true;
+//        if (unit.hp() >= 80) return true;
+        if (unit.shieldWound() <= 8) return true;
+        if (cooldown <= 8) return true;
+        if (!unit.shotSecondsAgo(2)) return true;
+        if (A.isUms() && cooldown <= 10) return true;
+        if (unit.hp() >= 80 && cooldown <= 16) return true;
+        if (unit.hp() >= 60 && cooldown <= 10) return true;
+//        if (cooldown <= 7 && unit.eval() >= 0.8) return true;
+        if (cooldown <= 14 && unit.shields() >= 5) return true;
 
-        return unit.eval() >= 0.9 && unit.hp() >= 18 && unit.enemiesNear().dragoons().atLeast(4);
+        if (cooldown <= 12 && unit.eval() <= 1.3) {
+            if (
+                (1 + unit.friendsNear().dragoons().countInRadius(6, unit))
+                    >= unit.enemiesNear().dragoons().countInRadius(6, unit) + 2
+            ) return true;
+        }
+
+        return unit.eval() >= 0.8 && unit.hp() >= 18 && unit.enemiesNear().dragoons().atLeast(4);
     }
 
     private static boolean dontAvoidZealotsSoMuchWhenEnemyGoonsNearby(AUnit unit) {
@@ -76,27 +91,34 @@ public class DragoonDontAvoidVsProtoss {
                 && enemiesNear.melee().inRadius(3.2, unit).empty()
         ) {
 //            unit.paintCircleFilled(14, Color.Green);
-            return DragoonDontAvoidEnemy.reason(unit, "OnlyMeleeA");
+            return DragoonDontAvoid.dontAvoid(unit, "OnlyMeleeA");
         }
 
         return unit.shieldDamageAtMost(29)
             && unit.meleeEnemiesNearCount(2.8) <= 0
-            && DragoonDontAvoidEnemy.reason(unit, "OnlyMeleeB");
+            && DragoonDontAvoid.dontAvoid(unit, "OnlyMeleeB");
     }
 
     private static Decision oneOnOneDragoon(AUnit unit) {
-        Selection enemies = unit.enemiesNear().groundUnits().combatUnits().inRadius(8.1, unit);
+        Selection enemies = unit.enemiesNear().groundUnits().combatUnits().canAttack(unit, 3.1);
         if (enemies.size() >= 2) return Decision.INDIFFERENT;
+        if (!enemies.onlyRanged()) return Decision.INDIFFERENT;
 
-        if (unit.hp() <= 41 && unit.cooldown() <= 9) {
-            DragoonDontAvoidEnemy.reason(unit, "ToraToraTora");
-            return Decision.TRUE;
-        }
+//        if (unit.cooldown() >= 11) return Decision.FALSE;
 
-        AUnit enemyGoon = enemies.first();
-        if (enemyGoon != null && enemies.onlyOfType(AUnitType.Protoss_Dragoon)) {
-            if (enemyGoon.hp() + 11 <= unit.hp()) {
-                DragoonDontAvoidEnemy.reason(unit, "1v1Dragoon");
+//        if (unit.cooldown() <= 8) {
+//            System.out.println("A");
+//            DragoonDontAvoid.reason(unit, "ToraToraTora");
+//            return Decision.TRUE;
+//        }
+
+        AUnit enemy = enemies.first();
+//        if (enemy != null && enemies.onlyOfType(AUnitType.Protoss_Dragoon)) {
+        if (enemy != null && enemies.onlyOfType(AUnitType.Protoss_Dragoon)) {
+//            System.out.println("B");
+            if (unit.hp() >= enemy.hp() - 22) {
+//                System.out.println("ToraTora");
+                DragoonDontAvoid.dontAvoid(unit, "1v1Dragoon");
                 return Decision.TRUE;
             }
         }

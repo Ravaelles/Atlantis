@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position;
 
+import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
@@ -11,7 +12,9 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.log.ErrorLog;
 
 public class RequestBuildingNear {
     public static String lastError = null;
@@ -97,13 +100,31 @@ public class RequestBuildingNear {
     private APosition findExactPosition() {
         AUnit builder = FreeWorkers.get().nearestTo(near);
 
-        return FindPosition.findForBuilding(
+        APosition position = FindPosition.findForBuilding(
             builder,
             type,
             null,
             near,
             maxDistance
         );
+
+        if (preventTooManyOfTheSameTypeInOnePlace(position)) return null;
+
+        return position;
+    }
+
+    private boolean preventTooManyOfTheSameTypeInOnePlace(APosition position) {
+        if (position == null) return false;
+
+        if (
+            type.isCannon()
+                && Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon).countInRadius(8, position) >= 6
+        ) {
+//            ErrorLog.printMaxOncePerMinute(A.minSec() + " - Prevent excessive cannons at " + position);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean tooManyNear(AUnitType type, HasPosition near) {

@@ -18,7 +18,6 @@ public class RetreatManager extends Manager {
         return new Class[]{
 //            ContinueRetreating.class,
             TerranRetreat.class,
-            ProtossRetreat.class,
         };
     }
 }

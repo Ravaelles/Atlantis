@@ -223,6 +223,7 @@ public class Cache<T> {
     }
 
     public static void nukeAllCaches() {
+//        System.out.println("Nuking all caches...");
         for (Cache<?> cache : allInstances) {
             cache.clear();
         }

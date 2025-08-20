@@ -1,19 +1,16 @@
 package atlantis.information.strategy.response;
 
 import atlantis.combat.micro.terran.bunker.TerranBunker;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.game.A;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.game.AGame;
 
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
-import atlantis.information.strategy.Strategy;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.production.requests.AntiAirBuildingCommander;
 import atlantis.production.requests.AntiLandBuildingCommander;

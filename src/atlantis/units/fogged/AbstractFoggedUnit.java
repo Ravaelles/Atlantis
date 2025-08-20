@@ -3,10 +3,12 @@ package atlantis.units.fogged;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
+import atlantis.util.log.ErrorLog;
 import tests.fakes.FakeUnit;
 
 import java.util.TreeMap;
@@ -19,9 +21,10 @@ public class AbstractFoggedUnit extends AUnit {
 
     protected AUnit _lastAUnit = null;
     protected int _id;
-    protected int _hp;
+//    protected int _hp;
     protected int _energy;
-    protected int _shields;
+//    protected int _shields;
+//    protected boolean _isEnemy;
     protected boolean _isStimmed;
     protected APosition _lastPosition;
     protected AUnitType _lastType;
@@ -33,6 +36,8 @@ public class AbstractFoggedUnit extends AUnit {
     // =========================================================
 
     protected AbstractFoggedUnit(AUnit unit) {
+        super(AbstractFoggedUnit.class);
+
         if (unit != null) {
             this.onAbstractFoggedUnitCreated(unit);
 
@@ -58,9 +63,10 @@ public class AbstractFoggedUnit extends AUnit {
         _isCompleted = unit.isCompleted();
         _isCloaked = unit.isCloaked();
         _isDetected = unit.isDetected();
-        _hp = unit.hp();
+//        _isEnemy = unit.isEnemy();
+//        _hp = unit.hp();
         _energy = unit.energy();
-        _shields = unit.shields();
+//        _shields = unit.shields();
         _isStimmed = unit.isStimmed();
     }
 
@@ -70,39 +76,16 @@ public class AbstractFoggedUnit extends AUnit {
             A.printStackTrace();
         }
 
-//        if (unit.hasPosition()) {
-//        if (u() != null && unit.x() > 0 && unit.y() > 0) {
-//        if (!(unit instanceof AbstractFoggedUnit) || unit.position().isPositionVisible()) {
-//        if (unit.x() > 0 && unit.y() > 0 && unit.position().isPositionVisible()) {
-//            _lastPosition = APosition.createFromPixels(unit.u().getX(), unit.u().getY());
-//        if (!(unit instanceof AbstractFoggedUnit) || unit.u() != null) {
-//        if (unit.isVisibleUnitOnMap()) {
-//            if (unit.type().isBase()) {
-//                System.err.println("--------- " + unit + " / x:" + unit.x() + " , y:" + unit.y());
-//            }
-
-//            _lastPosition = APosition.createFromPixels(unit.x(), unit.y());
         updateLastPosition(unit);
-
-//            if (unit.type().isBase()) {
-//                System.err.println("--AFTER-- " + unit + " / x:" + unit.x() + " , y:" + unit.y());
-//            }
-//        }
-
-//        if (!unit.isBuilding() && _position != null && _position.isVisible() && isAccessible()) {
-//            _position = null;
-//        }
     }
 
     private void updateLastPosition(AUnit unit) {
-//        _lastPosition = unit == null ? null : APosition.create(_lastAUnit.position());
-//        if (unit.isBuilding() && _lastPosition != null) System.err.println("PRE " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
+        if (unit.u() == null) return;
+//        if (unit.x() <= 0 || unit.x() >= 32000) return;
 
+        // If the unit.u is defined, it means it's visible, so it has valid x,y
         _lastPosition = new APosition(unit.x(), unit.y());
-//        if (unit.isABuilding()) System.err.println(A.minSec() + " - updated pos of " + unit + " to " + _lastPosition);
         cacheInt.set("lastPositionUpdated", -1, A.now());
-
-//        if (unit.isBuilding() && _lastPosition != null) System.err.println("POST " + unit.name() + " x:" + _lastPosition.x + ", y:" + _lastPosition.y);
     }
 
 
@@ -122,12 +105,10 @@ public class AbstractFoggedUnit extends AUnit {
      */
     @Override
     public AUnitType type() {
-//        if (_lastType == null) {
-//            if (_lastAUnit == null) {
-//                _lastAUnit = _lastAUnit;
-//            }
-//            _lastType = _lastAUnit.type();
-//        }
+        if (_lastType == null) {
+            if (_lastAUnit != null) _lastType = _lastAUnit.type();
+            else _lastType = super.type();
+        }
 
         return _lastType;
     }
@@ -197,6 +178,7 @@ public class AbstractFoggedUnit extends AUnit {
         return cacheInt.get("lastPositionUpdated");
     }
 
+    @Override
     public int lastPositionUpdatedAgo() {
         if (cacheInt.get("lastPositionUpdated") == null) {
             return -666;
@@ -205,29 +187,33 @@ public class AbstractFoggedUnit extends AUnit {
         return A.ago(cacheInt.get("lastPositionUpdated"));
     }
 
-    public boolean isAccessible() {
-        return !AUnitType.Unknown.equals(_lastAUnit.type());
-    }
+//    public boolean isAccessible() {
+//        return !AUnitType.Unknown.equals(_lastAUnit.type());
+//    }
+//
+//    public AUnit innerAUnit() {
+//        return _lastAUnit;
+//    }
 
-    public AUnit innerAUnit() {
-        return _lastAUnit;
+    public void forceSetPositionNull() {
+        _lastPosition = null;
     }
 
     // =========================================================
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + " "
-            + nameWithId() + " at " + _lastPosition
+        return "F_" + getClass().getSimpleName() + " "
+            + nameWithId() + " at " + _lastPosition.toString()
             + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
     // =========================================================
 
-    @Override
-    public boolean exists() {
-        return true;
-    }
+//    @Override
+//    public boolean exists() {
+//        return true;
+//    }
 
     @Override
     public APosition position() {
@@ -235,33 +221,8 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     @Override
-    public boolean isVisibleUnitOnMap() {
-        return position() != null && position().isPositionVisible();
-    }
-
-    @Override
-    public boolean isCompleted() {
-        return _isCompleted;
-    }
-
-    @Override
-    public boolean isDetected() {
-        return _isDetected;
-    }
-
-    @Override
-    public boolean isCloaked() {
-        return _isCloaked;
-    }
-
-    @Override
-    public boolean isPowered() {
-        return true;
-    }
-
-    @Override
-    public boolean isMoving() {
-        return false;
+    public int energy() {
+        return _energy;
     }
 
     @Override
@@ -275,28 +236,60 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     @Override
-    public AUnit target() {
-        return null;
+    public boolean isCompleted() {
+        return _isCompleted;
     }
 
     @Override
-    public int hp() {
-        return _hp;
+    public boolean isCloaked() {
+        return _isCloaked;
     }
 
     @Override
-    public int energy() {
-        return _energy;
+    public boolean isDetected() {
+        return _isDetected;
     }
 
     @Override
-    public int shields() {
-        return _shields;
+    public boolean isEnemy() {
+        return !type().isNeutralType();
+    }
+
+    @Override
+    public boolean isPowered() {
+        return true;
+    }
+
+    @Override
+    public boolean isMoving() {
+        return false;
     }
 
     @Override
     public boolean isStimmed() {
         return _isStimmed;
+    }
+
+    @Override
+    public boolean isVisibleUnitOnMap() {
+        return position() != null && position().isPositionVisible();
+    }
+
+    @Override
+    public int hp() {
+        return 0;
+//        return _hp;
+    }
+
+    @Override
+    public int shields() {
+        return 0;
+//        return _shields;
+    }
+
+    @Override
+    public AUnit target() {
+        return null;
     }
 
     @Override
@@ -308,5 +301,4 @@ public class AbstractFoggedUnit extends AUnit {
     public int y() {
         return _lastPosition.y();
     }
-
 }

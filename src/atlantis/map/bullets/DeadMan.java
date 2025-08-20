@@ -8,7 +8,7 @@ import atlantis.util.cache.CacheKey;
 
 import java.util.List;
 
-public class DeadMan {
+public class DeadMan implements ClearsCache {
     private static Cache<Boolean> cache = new Cache<>();
     private static List<ABullet> bulletsAgainst;
 
@@ -21,7 +21,7 @@ public class DeadMan {
     }
 
     private static boolean willBeDeadMan(AUnit unit) {
-//        if (Bullets.knownBullets().size() <= 1) return false;
+        if (unit.isNeutral()) return false;
         if (unit.isFoggedUnitWithKnownPosition()) return false;
 
         bulletsAgainst = Bullets.against(unit);
@@ -44,7 +44,7 @@ public class DeadMan {
 
     private static int healthBonus(AUnit unit) {
         if (unit.isTerran()) return 0;
-        return 2;
+        return 1;
     }
 
     private static int damageWithAllPendingBullets(AUnit unit) {

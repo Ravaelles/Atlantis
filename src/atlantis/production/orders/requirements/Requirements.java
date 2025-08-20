@@ -26,7 +26,7 @@ public class Requirements {
 //                System.err.println("dontHaveEnoughGasAsRequirement(type) = " + dontHaveEnoughGasAsRequirement(type));
 //            }
 
-            return hasRequirements(type);
+            return hasRequirements(type) || AllowToProduceEarlyWithoutRequirements.isGenericAllowed(type);
         }
         else if (order.tech() != null) {
             return hasRequirements(order.tech());
@@ -65,7 +65,7 @@ public class Requirements {
                     if (forge.remainingTrainTime() <= 10) return true;
                 }
 
-                return AllowToProduceEarlyWithoutRequirements.isAllowed(type);
+                return AllowToProduceEarlyWithoutRequirements.isAllowedForProtoss(type);
             }
         }
 

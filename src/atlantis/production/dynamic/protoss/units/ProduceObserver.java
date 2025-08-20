@@ -19,34 +19,64 @@ import static atlantis.production.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceObserver {
-
     private static int observers;
+    private static boolean _need = false;
 
     public static boolean needObservers() {
         if (EnemyFlags.HAS_HIDDEN_COMBAT_UNIT) return true;
-        if (detectedBuilding()) return true;
+        if (detectedBuilding()) return t("DetectedBuilding");
+
         if (A.supplyUsed() <= 45) return false;
 
         observers = Count.observers();
 
+        if (enemyEarlyTooStrong()) return false;
         if (earlyGamePressureDontInvest()) return false;
 
         if (observers >= 2 && Count.reavers() == 0 && Have.roboticsSupportBay() && ProduceReavers.reavers())
             return false;
 
-        if (shouldPrepareForObserver()) return true;
-        if (A.supplyUsed() >= 78 && observers == 0) return true;
+        if (shouldPrepareForObserver()) return t("ShouldPrepareForObserver");
+        if (A.supplyUsed() >= 115 && observers == 0) return t("QuiteLateAndNoObservers");
 
-        return observers < (4 + EnemyUnits.discovered().lurkers().count() >= 2 ? 4 : 0);
+        if (Enemy.zerg()) {
+            int lurkers = EnemyUnits.discovered().lurkers().count();
+            if (lurkers >= 1 && observers < (4 + lurkers >= 2 ? 4 : 0)) {
+                return t("NotEnoughObserversVsLurkers");
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean t(String reason) {
+        if (!_need) System.out.println("@@@@@ OBSERVER at " + A.supplyUsed() + ": " + reason);
+        _need = true;
+
+        return true;
+    }
+
+    private static boolean enemyEarlyTooStrong() {
+        if (A.s <= 60 * 7 && Army.strength() <= 140 && !EnemyInfo.goesOrHasHiddenUnits()) {
+            return true;
+        }
+
+        if (Enemy.protoss() && Army.strengthWithoutCB() <= 180 && A.supplyUsed() <= 80) {
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean earlyGamePressureDontInvest() {
         if (observers >= 1 && !EnemyInfo.goesOrHasHiddenUnits()) return true;
 
+        if (A.supplyUsed() <= 100 && !EnemyInfo.goesOrHasHiddenUnits()) return false;
+
         int cannons = Count.cannons();
         if (cannons <= 0 && Army.strength() >= 140) return false;
 
-        if (A.s <= 60 * 8.5 && Army.strengthWithoutCB() <= 110) return true;
+        if (A.s <= 60 * 8.5 && (Have.forge() || Army.strengthWithoutCB() <= 140)) return false;
 
         return A.s <= 60 * (7.5 + 3 * cannons)
             && Count.ourOfTypeUnfinished(Protoss_Reaver) == 0;
@@ -63,14 +93,16 @@ public class ProduceObserver {
     }
 
     private static boolean shouldPrepareForObserver() {
-        int minSupply = (Have.cannon() ? 65 : 47)
+        int minSupply = (Have.cannon() ? 65 : 65)
             + (Count.cannons() >= 2 ? 20 : 0)
             + (Count.ourCombatUnits() <= 7 ? 10 : 0)
-            + (Army.strength() <= 160 ? 10 : 0)
-            + (Army.strength() <= 150 ? 10 : 0)
+            + (Have.forge() ? 20 : 0)
+            + (Army.strength() <= 160 ? 30 : 0)
+            + (Army.strength() <= 150 ? 25 : 0)
             + (Army.strength() <= 130 ? 10 : 0)
+            + (A.resourcesBalance() <= 100 ? 20 : 0)
             + Math.min(6, (A.resourcesBalance() / 100))
-            + (EnemyInfo.noRanged() ? 8 : 0);
+            + (EnemyInfo.noRanged() ? 8 : 35);
 
         return A.supplyUsed() >= minSupply
             && Army.strength() >= 130;

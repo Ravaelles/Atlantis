@@ -3,7 +3,7 @@ package atlantis.combat.retreating.protoss.small_scale;
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
 import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
-import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossRetreatWrapper;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -17,8 +17,8 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
     public ProtossMeleeSmallScaleRetreat(AUnit unit) {
         super(unit);
 
-        friends = ProtossShouldRetreat.friends(unit);
-        enemies = ProtossShouldRetreat.enemies(unit);
+        friends = ProtossRetreatWrapper.friends(unit);
+        enemies = ProtossRetreatWrapper.enemies(unit);
     }
 
     @Override
@@ -100,6 +100,8 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
 
 
     protected boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
+        if (Enemy.zerg()) return false;
+
 //        if (unit.combatEvalRelative() >= 1.2) return false;
         if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
         if (unit.hasCooldown() && unit.hasTarget() && unit.target().hp() < unit.hp()) return false;

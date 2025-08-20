@@ -4,13 +4,14 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.bullets.ABullet;
+import atlantis.map.bullets.ClearsCache;
 import atlantis.units.AUnit;
 import tests.fakes.FakeBullets;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Bullets {
+public class Bullets implements ClearsCache {
     private static Map<Integer, ABullet> allRawBullets = new HashMap<>();
     private static Map<Integer, ABullet> validBullets = new HashMap<>();
 
@@ -72,13 +73,22 @@ public class Bullets {
         return validBullets.values();
     }
 
-    public static List<ABullet> against(AUnit unit) {
-        if (validBullets.isEmpty()) return Collections.emptyList();
-
+    public static List<ABullet> existingAgainst(AUnit unit) {
         return validBullets
             .values()
             .stream()
             .filter(bullet -> bullet.target() != null && bullet.target().id() == unit.id())
             .collect(Collectors.toList());
+    }
+
+    public static List<ABullet> against(AUnit unit) {
+        Collection<ABullet> pendingAttackBullets = PendingAttacksAgainstEnemyUnit.against(unit);
+        List<ABullet> existingBullets = existingAgainst(unit);
+
+        if (pendingAttackBullets.isEmpty()) return existingBullets;
+
+        existingBullets.addAll(pendingAttackBullets);
+
+        return existingBullets;
     }
 }

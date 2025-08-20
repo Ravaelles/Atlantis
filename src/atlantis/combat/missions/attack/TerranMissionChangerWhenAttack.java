@@ -4,7 +4,7 @@ import atlantis.Atlantis;
 import atlantis.combat.missions.MissionDecisions;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.defend.terran.ShouldForceAttack;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.terran.TerranDecisions;
 import atlantis.information.enemy.EnemyInfo;

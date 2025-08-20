@@ -20,24 +20,14 @@ public class Vector extends Vector2d {
         return new Vector2d(5, 0).angle(this);
     }
 
-    public boolean isAngleAlmostIdentical(Vector otherVector) {
-        return angleBetweenOtherVector(otherVector) < 0.87;
+    public double angleDifference(double otherAngle) {
+        double diff = Math.abs(this.toAngle() - otherAngle);
+
+        return Math.min(diff, 2 * Math.PI - diff);
     }
 
-    public boolean isAngleAlmostOpposite(Vector otherVector) {
-//        System.err.println("angleBetweenOtherVector(otherVector) = " + angleBetweenOtherVector(otherVector));
-        return Math.abs(angleBetweenOtherVector(otherVector) - Math.PI) <= 0.97;
-    }
-
-    private double angleBetweenOtherVector(Vector otherVector) {
-        return Math.abs(this.angle(otherVector)) % (2 * Math.PI);
-    }
-
-    /**
-     * Angle between vectors less than N degrees.
-     */
-    public boolean isAngleAlmostIdentical(Vector otherVector, double degreeMargin) {
-        return (Math.abs(this.angle(otherVector)) % 3.14) <= Angle.degreesToRadians(degreeMargin);
+    public boolean isAngleAlmostIdentical(double otherAngle) {
+        return angleDifference(otherAngle) <= 1.1;
     }
 
     public Vector rotate(double angle) {
@@ -57,6 +47,10 @@ public class Vector extends Vector2d {
         return vector;
 
 //        return new Vector(x + extraLength * x * x / length, y);
+    }
+
+    public double angle() {
+        return (6.29 - Math.atan2(y, x)) % 6.29;
     }
 
     public Vector normalizeTo1() {

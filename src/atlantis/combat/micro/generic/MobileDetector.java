@@ -5,7 +5,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
 import atlantis.combat.micro.generic.managers.FollowArmy;
 import atlantis.combat.micro.generic.managers.SpreadOutDetectors;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

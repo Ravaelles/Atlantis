@@ -21,11 +21,11 @@ public class ProtossNewGasBuildingCommander extends Commander {
         return We.protoss()
             && A.supplyUsed() >= 40
             && Count.bases() >= 2
-            && A.everyNthGameFrame(75)
+            && A.everyNthGameFrame(9)
             && (A.gas() < A.minerals() && A.minerals() >= 105)
             && (A.gas() <= 150 || Count.ourCombatUnits() >= 12)
             && Count.bases() > Count.gasBuildingsWithUnfinished()
-            && (CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 200 <= A.minerals() || A.minerals() >= 300)
+            && ((CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 200 <= A.minerals()) || A.minerals() >= 300)
             && (A.minerals() >= 400 || Have.existingOrUnfinished(Protoss_Cybernetics_Core));
 //            && !tooEarlyForAnotherGasBuilding()
     }
@@ -54,7 +54,7 @@ public class ProtossNewGasBuildingCommander extends Commander {
     }
 
     private static AUnit baseWithFreeGeyser() {
-        int maxDistBaseToGeyser = 10;
+        int maxDistBaseToGeyser = 11;
 
         for (AUnit base : Select.ourBases().list()) {
             if (Select.ourOfTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING)

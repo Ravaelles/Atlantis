@@ -1,9 +1,7 @@
 package atlantis.combat.squad.transfers;
 
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.omega.Omega;
-import atlantis.units.AUnit;
+import atlantis.combat.squad.squads.omega.Omega;
 
 public class OmegaTransfers extends AbstractSquadTransfers {
     @Override

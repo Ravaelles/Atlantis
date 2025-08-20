@@ -1,5 +1,6 @@
 package atlantis.units.actions.move;
 
+import atlantis.combat.running.IsReasonablePositionToRunTo;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -43,9 +44,10 @@ public class MoveAway {
         }
 
         double distTo = unit.distTo(newPosition);
-        boolean positionOk = (
-            (distTo >= (0.9 * moveDistance)) || (distTo <= 3 * moveDistance)
-        ) && !newPosition.isCloseToMapBounds(1);
+        boolean positionOk = IsReasonablePositionToRunTo.check(unit, newPosition, from);
+//        boolean positionOk = (
+//            (distTo >= (0.9 * moveDistance)) || (distTo <= 3 * moveDistance)
+//        ) && !newPosition.isCloseToMapBounds(1);
 //            boolean positionOk = (moveDistance <= 2 && distTo >= 0.02)
 //                || (distTo >= 1.9 && distTo > 3 * moveDistance && !unit.isWorker());
 
@@ -66,15 +68,15 @@ public class MoveAway {
 //                );
 //                return false;
 
-            if (unit.move(newPosition, action, "Move away", false)) {
+            if (unit.move(newPosition, action, "Move away" + unit.distToDigit(from), false)) {
                 return true;
             }
             else {
-                if (A.isUms() && !unit.isABuilding()) {
-                    System.err.println(
-                        "MoveAway failed, dist: " + distTo + " / prefered:" + moveDistance + " / " + unit
-                    );
-                }
+//                if (A.isUms() && !unit.isABuilding() && !unit.isAir()) {
+//                    System.err.println(
+//                        "MoveAway failed, dist: " + distTo + " / prefered:" + moveDistance + " / " + unit
+//                    );
+//                }
                 return true;
             }
         }

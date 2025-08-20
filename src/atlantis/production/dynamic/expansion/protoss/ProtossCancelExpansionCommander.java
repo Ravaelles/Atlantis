@@ -2,6 +2,8 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -24,7 +26,15 @@ public class ProtossCancelExpansionCommander extends Commander {
     @Override
     protected void handle() {
         for (Construction construction : ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Nexus)) {
+            if (A.hasMinerals(600)) continue;
             if (construction.progressPercent() >= 70) continue;
+            if (
+                Enemy.protoss()
+                    && construction.buildPosition() != null
+                    && EnemyUnits.discovered().dts().countInRadius(12, construction.buildPosition()) > 0
+            ) continue;
+
+
             System.err.println(A.minSec() + ": Cancelling expansion due to enemy pressure");
             construction.cancel("Cancel expansion due to enemy pressure");
         }

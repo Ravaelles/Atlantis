@@ -17,6 +17,10 @@ public class Army {
         return ArmyStrength.ourArmyRelativeStrengthWithoutCB();
     }
 
+    public static int strengthWithoutOurCB() {
+        return ArmyStrength.ourArmyRelativeStrengthWithoutOurCB();
+    }
+
     protected static double calculate() {
         return calculateFrom(Select.ourCombatUnits());
     }

@@ -17,7 +17,7 @@ public class ScoutNearEnemyBase extends Manager {
 
     @Override
     public boolean applies() {
-        if (ScoutState.scoutsKilledCount >= 2) return false;
+        if (ScoutState.scoutsKilledCount >= 3) return false;
         if (A.s >= 340) return false;
 
         enemyMain = EnemyMainBase.get();

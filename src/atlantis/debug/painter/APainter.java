@@ -88,9 +88,7 @@ public class APainter {
     }
 
     public static void paintRectangle(HasPosition position, int width, int height, Color color) {
-        if (isDisabled()) {
-            return;
-        }
+        if (isDisabled()) return;
 
         if (position == null) {
             return;
@@ -99,9 +97,7 @@ public class APainter {
     }
 
     public static void paintRectangleFilled(APosition position, int width, int height, Color color) {
-        if (isDisabled()) {
-            return;
-        }
+        if (isDisabled()) return;
 
         if (position == null) {
             return;
@@ -120,9 +116,7 @@ public class APainter {
     }
 
     public static void paintCircle(HasPosition position, int radius, Color color) {
-        if (isDisabled()) {
-            return;
-        }
+        if (isDisabled()) return;
 
         if (position == null || position.position() == null) {
             return;
@@ -131,9 +125,7 @@ public class APainter {
     }
 
     public static void paintCircleFilled(HasPosition position, int radius, Color color) {
-        if (isDisabled()) {
-            return;
-        }
+        if (isDisabled()) return;
 
         if (position == null || position.position() == null) {
             return;
@@ -146,9 +138,7 @@ public class APainter {
     }
 
     public static void paintLine(HasPosition start, int dx, int dy, Color color) {
-        if (isDisabled()) {
-            return;
-        }
+        if (isDisabled()) return;
 
         bwapi.drawLineMap(start.position().p(), start.translateByPixels(dx, dy).p(), color);
     }
@@ -161,13 +151,13 @@ public class APainter {
 //    }
 
     public static boolean paintLine(AUnit unit, AUnit end, Color color) {
-        if (unit == null || end == null || isDisabled()) return false;
+        if (isDisabled() || unit == null || end == null) return false;
         bwapi.drawLineMap(unit.position().p(), end.position().p(), color);
         return true;
     }
 
     public static void paintLine(HasPosition unit, HasPosition end, Color color) {
-        if (unit == null || end == null || isDisabled()) {
+        if (isDisabled() || unit == null || end == null) {
             return;
         }
         bwapi.drawLineMap(unit.position().p(), end.position().p(), color);

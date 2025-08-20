@@ -28,8 +28,9 @@ public class CanPhysicallyBuildHere {
             return false;
         }
 
-        if (AllowHereEarlyEvenWithoutRequirements.allowEarlyBuildingWithoutRequirements(builder, building, position))
+        if (ProtossAllowHereEarlyEvenWithoutRequirements.allow(builder, building, position)) {
             return true;
+        }
 
 //        if (building.isGasBuilding()) {
 //            AAdvancedPainter.paintCircleFilled(position, 5, Color.Red);
@@ -38,18 +39,34 @@ public class CanPhysicallyBuildHere {
         // Fix to allow UNEXPLORED positions and treat them as buildable
         if (
             building.isBase()
-                && !building.isGasBuilding()
                 && A.supplyTotal() >= 60
                 && (!position.isExplored() || !position.isPositionVisible())
-        ) return true;
+        ) {
+            return true;
+        }
 
         if (!isCanBuildHere(builder, building, position)) {
             if (positionUnexploredAndNotVisibleLetsDoit(position, building)) return true;
-            if (allowEarlyForgeAndGatewayDuringForgeExpand(building, position)) return true;
-            if (allowNearFirstUnfinishedPylon(building, position)) return true;
+            if (allowEarlyForgeAndGatewayDuringForgeExpand(building, position)) {
+                return true;
+            }
+            if (allowNearFirstUnfinishedPylon(building, position)) {
+                return true;
+            }
 
             if (!Env.isTesting()) AbstractPositionFinder._STATUS = "Can't physically build here";
             return false;
+        }
+
+        if (building.is(
+            AUnitType.Protoss_Citadel_of_Adun,
+            AUnitType.Protoss_Templar_Archives,
+            AUnitType.Protoss_Observatory
+        )) {
+            if (Select.ourBuildingsWithUnfinished().countInRadius(3.5, position) > 0) {
+                AbstractPositionFinder._STATUS = "Can't build CoE or Observatory here";
+                return false;
+            }
         }
 
         return true;
@@ -64,7 +81,7 @@ public class CanPhysicallyBuildHere {
             if (pylon == null) return false;
 
             double distTo = pylon.distTo(position);
-            return distTo >= 4 && distTo <= 7;
+            return distTo >= 4 && distTo <= 7 && Select.ourBasesWithUnfinished().countInRadius(4.5, position) == 0;
         }
 
         return false;
@@ -82,12 +99,10 @@ public class CanPhysicallyBuildHere {
     }
 
     private static boolean allowEarlyForgeAndGatewayDuringForgeExpand(AUnitType building, APosition position) {
-        if (
-            We.protoss()
-                && A.supplyUsed() <= 13
-                && Strategy.get().isExpansion()
-                && (building.isForge() || building.isGateway())
-        ) {
+        if (!We.protoss()) return false;
+        if (!(building.isForge() || building.isGateway())) return false;
+
+        if (A.supplyUsed() <= 13 && Strategy.get().isExpansion()) {
             HasPosition pylon = Select.ourOfTypeWithUnfinished(AUnitType.Protoss_Pylon).nearestTo(position);
             if (pylon == null) {
                 pylon = ConstructionRequests.nearestOfTypeTo(AUnitType.Protoss_Pylon, position, 10);

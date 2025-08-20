@@ -1,7 +1,7 @@
 package atlantis.combat.squad.transfers;
 
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnit;
 
 public abstract class AbstractSquadTransfers {

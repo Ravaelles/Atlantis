@@ -12,7 +12,7 @@ public class TerranShouldExpandToNatural {
     public static boolean shouldExpandToNatural() {
         if (A.supplyUsed() <= 20) return false;
         if (Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) > 1) {
-            return TerranShouldExpand.returnNo("Pending");
+            return TerranShouldExpand.returnNo("HasInProgress");
         }
 
         if (A.s >= 60 * 9) return TerranShouldExpand.returnYes("GotLate");

@@ -1,7 +1,7 @@
 package atlantis.combat.micro.attack.enemies;
 
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;

@@ -8,7 +8,6 @@ import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class ScoutEnemyThird extends Manager {
     private static boolean noLongerScoutAsBaseFound = false;
@@ -23,21 +22,29 @@ public class ScoutEnemyThird extends Manager {
     @Override
     public boolean applies() {
         if (noLongerScoutAsBaseFound) return false;
-        if (!Enemy.zerg() && EnemyUnits.combatUnits() <= 2) return false;
 
-        enemyThird = EnemyThirdBase.get();
+        enemyThird = EnemyThirdBase.position();
         if (enemyThird == null) return false;
-
-        if (!enemyThird.isExplored()) return true;
 
         updateLastSeenAtFrame();
 
+        // =========================================================
+
         if (unit.distTo(enemyThird) <= 5) return false;
+        if (A.s % 30 <= 15) return false;
+
+        if (unit.lastCommandIssuedAgo() >= 10) return true;
+
+        if (unit.enemiesThatCanAttackMe(8).notEmpty()) return false;
+        if (!Enemy.zerg() && EnemyUnits.combatUnits() <= 2) return false;
+        if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
+
         if (enemyThird.isPositionVisible()) return false;
 
+        if (!enemyThird.isExplored()) return true;
         if (unit.lastPositionChangedAgo() >= 20) return true;
 
-        return A.secondsAgo(lastSeenAtFrame) >= 34;
+        return A.secondsAgo(lastSeenAtFrame) >= 30;
     }
 
     @Override
@@ -50,12 +57,15 @@ public class ScoutEnemyThird extends Manager {
     }
 
     private void updateLastSeenAtFrame() {
+//        AAdvancedPainter.paintCircleFilled(enemyThird, 120, Color.Cyan);
+
         if (enemyThird.isPositionVisible()) {
             lastSeenAtFrame = A.now();
+//            System.err.println("    >> Enemy third location seen at frame " + lastSeenAtFrame + " / " + A.minSec());
 
-            if (Select.enemy().buildings().countInRadius(10, enemyThird) >= 1) {
-                noLongerScoutAsBaseFound = true;
-            }
+//            if (Select.enemy().buildings().countInRadius(10, enemyThird) >= 1) {
+//                noLongerScoutAsBaseFound = true;
+//            }
         }
     }
 }

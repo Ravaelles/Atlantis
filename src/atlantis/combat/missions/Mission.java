@@ -33,7 +33,7 @@ public abstract class Mission extends MissionHelper {
     /**
      * Optimal distance to focus point or -1 if not defined.
      */
-    public abstract double optimalDist();
+//    public abstract double optimalDist();
 
     protected abstract Manager managerClass(AUnit unit);
 
@@ -90,6 +90,10 @@ public abstract class Mission extends MissionHelper {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String letter() {
+        return name.substring(0, 1);
     }
 
 //    public APosition temporaryTarget() {

@@ -296,7 +296,7 @@ public class BaseLocations {
     }
 
     public static APosition enemyThird() {
-        return EnemyThirdBase.get();
+        return EnemyThirdBase.position();
     }
 
     public static boolean hasBaseAtNatural() {
@@ -383,5 +383,36 @@ public class BaseLocations {
         if (nearestStarting == null) return 999;
 
         return nearestStarting.groundDist(nearestTo);
+    }
+
+    public static Positions<HasPosition> mainNaturalAndExistingBases() {
+        return (Positions<HasPosition>) cache.get(
+            "mainNaturalAndExistingBases",
+            307,
+            () -> {
+                Positions<HasPosition> positions = new Positions<>();
+                positions.addPosition(main());
+                positions.addPosition(natural());
+                positions.addPositions(Bases.existing());
+
+                positions.distinct();
+
+                return positions;
+            }
+        );
+    }
+
+    public static Positions<HasPosition> mainAndNatural() {
+        return (Positions<HasPosition>) cache.get(
+            "mainAndNatural",
+            207,
+            () -> {
+                Positions<HasPosition> positions = new Positions<>();
+                positions.addPosition(main());
+                positions.addPosition(natural());
+
+                return positions;
+            }
+        );
     }
 }

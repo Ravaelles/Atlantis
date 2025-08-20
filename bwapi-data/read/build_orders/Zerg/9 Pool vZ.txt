@@ -1,0 +1,52 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=12
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=0
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=40
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+https://liquipedia.net/starcraft/9_Pool_(vs._Zerg)
+
+9 - Spawning Pool
+8 - Drone
+9 - Extractor (see note)
+8 - Overlord
+8 - Drone
+@100% Spawning Pool: The amount of Zerglings depends on your scouting information. Often, people will make 6.
+@100 Vespene Gas: Research Metabolic Boost. There are special situations where you could go Lair first.
+@100 Vespene Gas: Morph Lair.
+@100% Lair: Build a Spire.
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Spawning Pool
+8 - Overlord
+Zergling
+Zergling
+Creep Colony
+Creep Colony
+Sunken Colony
+Sunken Colony
+Drone
+Zergling
+Extractor
+Zergling
+Drone
+18 - Lair
+23 - Spire
+Mutalisk
+Mutalisk
+Zergling
+Mutalisk

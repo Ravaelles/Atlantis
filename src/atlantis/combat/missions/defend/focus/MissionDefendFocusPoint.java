@@ -19,7 +19,9 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
@@ -35,7 +37,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
     public AFocusPoint focusPoint() {
         return cache.getIfValid(
             "focusPoint",
-            17,
+            15,
             () -> {
                 AFocusPoint focus = null;
 
@@ -49,6 +51,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 if ((focus = enemyCloserToBaseThanAlpha()) != null) return focus;
                 if ((focus = stickToCannon()) != null) return focus;
 
+                if (We.protoss() && Count.gateways() <= 4) {
+                    if ((focus = atMainChoke()) != null) return focus;
+                }
+
                 // === Stick to main base early ============================
 
                 if (ProtossStickCombatToMainBaseEarly.should()) {
@@ -57,10 +63,18 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // =========================================================
 
+                if ((focus = visibleEnemyCloseToBuildings()) != null) return focus;
+
+                // =========================================================
+
                 if (Strategy.get().isExpansion()) {
                     if ((focus = atThirdBase()) != null) return focus;
                     if (A.s <= 60 * 8 && (focus = aroundCombatBuilding()) != null) return focus;
                 }
+
+                // =========================================================
+
+                if ((focus = aroundCombatBuilding()) != null) return focus;
 
                 // =========================================================
 
@@ -128,7 +142,7 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Main choke ================================================
 
-                if ((focus = atMainChoke()) != null) return focus;
+                if (Count.dragoons() <= 2 && (focus = atMainChoke()) != null) return focus;
 
                 // ===============================================================
                 // === Around combat buildings ===================================
@@ -156,6 +170,22 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
                 return fallbackToNearestEnemy();
             }
         );
+    }
+
+    private AFocusPoint visibleEnemyCloseToBuildings() {
+        AUnit enemy = AliveEnemies.get()
+            .combatUnits()
+            .havingAtLeastHp(1)
+            .groundNearestTo(Select.main());
+
+        if (enemy != null && enemy.enemiesNear().buildings().notEmpty()) {
+            return new AFocusPoint(
+                enemy,
+                "EnemyCloseToBuildings"
+            );
+        }
+
+        return null;
     }
 
     private AFocusPoint buildingUnderAttack() {
@@ -188,10 +218,10 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         AUnit main = Select.main();
         if (main == null) return null;
 
-        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
+//        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
 
         AChoke mainChoke = Chokes.mainChoke();
-        if (mainChoke == null) return null;
+//        if (mainChoke == null) return null;
 
         return new AFocusPoint(
             main.translateTilesTowards(3, mainChoke),
@@ -293,6 +323,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //
 //        if (base == null) return null;
 
+        if (We.protoss() && Have.observer()) return null;
+
         AUnit main = Select.mainOrAnyBuilding();
 
         AUnit combatBuilding = Select
@@ -301,7 +333,11 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
             .groundFarthestTo(main);
 
         if (combatBuilding == null) return null;
-        if (combatBuilding.distTo(main) <= 10 && Bases.natural() != null) return null;
+
+        if (Count.basesWithUnfinished() >= 2) {
+            AUnit natural = Bases.natural();
+            if (natural != null && combatBuilding.distTo(natural) >= 10) return null;
+        }
 
         return new AFocusPoint(
             combatBuilding.translateTilesTowards(main, 1),
@@ -453,15 +489,15 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
         if (Count.basesWithUnfinished() >= 2) return null;
 
-        HasPosition point = mainChoke;
-
-        if (We.protoss() && Count.dragoons() <= 2) {
-            point = point.translateTilesTowards(1.3, Select.main());
-        }
+//        HasPosition point = mainChoke;
+//        if (We.protoss() && Count.dragoons() <= 2) {
+//            point = point.translateTilesTowards(1.3, Select.main());
+//        }
 
         return new AFocusPoint(
 //            mainChoke.translateTilesTowards(0.5, Select.main()),
-            point,
+//            point,
+            mainChoke,
             Select.main(),
             "MainChoke"
         ).forceAroundChoke(mainChoke);
@@ -486,18 +522,25 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //        }
 
         AChoke naturalChoke = Chokes.natural();
-        if (naturalChoke == null) {
-            return null;
-        }
+        if (naturalChoke == null) return null;
 
         APosition natural = DefineNaturalBase.natural();
+        if (natural == null) return null;
+
+        APosition position = naturalChoke.position();
+
+        if (position.distTo(natural) > 7)
+        position = position.translateTilesTowards(3, natural);
+        if (position == null) position = naturalChoke.center();
+        if (position == null) return null;
+
         return new AFocusPoint(
-            naturalChoke.translateTilesTowards(5, natural),
-//            naturalChoke,
-//            natural != null ? naturalChoke.translateTilesTowards(5, natural) : naturalChoke,
+            position,
             natural,
             "NaturalChoke"
-        ).forceAroundChoke(naturalChoke);
+        )
+            .forceAroundChoke(naturalChoke)
+            .setIdealDistanceFromFocus(7);
     }
 
 }

@@ -15,7 +15,6 @@ public class ProtossEarlyGame extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ZealotAvoidEarlyGameLings.class,
 //            ProtossForgeExpandStickToCannonSpecialized.class,
 //            ProtossForgeExpandStickToCannon.class,
             ProtossForceFightNearCannon.class,

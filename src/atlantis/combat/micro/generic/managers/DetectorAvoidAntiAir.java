@@ -59,7 +59,7 @@ public class DetectorAvoidAntiAir extends Manager {
 
     private HasPosition enemyAntiAirInRange(AUnit unit) {
 //        return Select.enemy().havingAntiAirWeapon().inRadius(6.0 + unit.shieldWound() / 20, unit).center();
-        Selection enemies = unit.enemiesNear().havingAntiAirWeapon();
+        Selection enemies = unit.enemiesNear().nonBuildings().havingAntiAirWeapon();
         HasPosition enemy = enemies.canAttack(unit, baseDist() + unit.shieldWound() / 15).center();
 
         if (enemy != null) return enemy;

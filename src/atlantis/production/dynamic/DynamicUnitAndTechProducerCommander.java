@@ -5,7 +5,6 @@ import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
 import atlantis.production.dynamic.terran.TerranDynamicUnitsCommander;
-import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicTechResearch;
 import atlantis.production.dynamic.zerg.ZergDynamicUnitsCommander;
 import atlantis.util.HasReason;
@@ -16,16 +15,16 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
     protected Class<? extends Commander>[] subcommanders() {
         Class[] raceSpecific = null;
 
-        if (We.terran()) {
-            raceSpecific = new Class[]{
-                TerranDynamicTechResearch.class,
-                TerranDynamicUnitsCommander.class,
-            };
-        }
         if (We.protoss()) {
             raceSpecific = new Class[]{
                 ProtossDynamicTechResearch.class,
                 ProtossDynamicUnitProductionCommander.class,
+            };
+        }
+        if (We.terran()) {
+            raceSpecific = new Class[]{
+                TerranDynamicTechResearch.class,
+                TerranDynamicUnitsCommander.class,
             };
         }
         if (We.zerg()) {
@@ -36,7 +35,7 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
         }
 
         Class[] generic = new Class[]{
-            AutoProduceWorkersCommander.class
+//            AutoProduceWorkersCommander.class
         };
 
         return mergeCommanders(raceSpecific, generic);

@@ -22,7 +22,7 @@ public class ProtossShuttleEmptyGoToReaver extends Manager {
         target = definePotentialTargetToLift();
         if (target == null) return false;
 
-        return unit.distTo(target) > 0.2;
+        return unit.distTo(target) > 0.04;
     }
 
     private AUnit definePotentialTargetToLift() {

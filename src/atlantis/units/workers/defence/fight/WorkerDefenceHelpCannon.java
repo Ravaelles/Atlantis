@@ -50,8 +50,12 @@ public class WorkerDefenceHelpCannon extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.hp() <= 29 || cannon.enemiesNear().ranged().atLeast(10)) {
-            if (unit.isMiningOrExtractingGas()) return null;
+        if (unit.hp() <= A.whenEnemyProtoss(35, 29) || cannon.enemiesNear().ranged().atLeast(10)) {
+//            if (unit.isGatheringResources()) return null;
+            AUnit nearestEnemy = unit.nearestEnemy();
+            if (nearestEnemy != null) {
+                if (unit.moveAwayFrom(nearestEnemy, 3, Actions.MOVE_AVOID)) return usedManager(this);
+            }
             if (unit.moveToNearestBase(Actions.MOVE_MACRO, null)) return usedManager(this);
         }
 

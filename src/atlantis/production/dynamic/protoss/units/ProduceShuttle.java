@@ -18,18 +18,20 @@ public class ProduceShuttle {
     public static boolean shuttles() {
 //        if (true) return false;
 
-        if (!Have.roboticsFacility()) return false;
-        if (!Have.observer() && EnemyInfo.goesOrHasHiddenUnits()) return false;
-        if (Army.strength() <= 120 && Count.ourCombatUnits() <= 10) return false;
-
-        int shuttles = Count.shuttles();
-        if (shuttles == 0 && A.hasMinerals(650)) return produceShuttle();
-
         int reavers = Count.reavers();
         if (reavers == 0) return false;
 
+        int shuttles = Count.shuttles();
+        if (shuttles == 0) {
+            if (reavers > 0) return produceShuttle();
+            if (A.hasMinerals(650)) return produceShuttle();
+        }
         if (reavers < shuttles) return false;
-        if (shuttles == 0 && A.hasMinerals(580)) return produceShuttle();
+
+        if (!Have.roboticsFacility()) return false;
+        if (!Have.observer() && EnemyInfo.goesOrHasHiddenUnits()) return false;
+
+        if (Army.strength() <= 120 && Count.ourCombatUnits() <= 10) return false;
 
         if (A.supplyUsed() >= 100) {
             if (reavers > shuttles) {

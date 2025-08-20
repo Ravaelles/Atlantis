@@ -9,13 +9,13 @@ import atlantis.util.log.ErrorLog;
 
 public class MissionManager extends Manager {
     protected Mission mission;
-    protected AFocusPoint focusPoint;
+    protected AFocusPoint focus;
 
     public MissionManager(AUnit unit) {
         super(unit);
         if (unit != null) {
             mission = unit != null ? unit.mission() : null;
-            focusPoint = defineFocusPoint();
+            focus = defineFocusPoint();
         }
     }
 
@@ -27,7 +27,7 @@ public class MissionManager extends Manager {
             return null;
         }
 
-        if (sideQuestsAreAllowedForThisUnit() && mission.isMissionAttackOrContain()) {
+        if (sideQuestsAreAllowedForThisUnit() && mission.isMissionAttack()) {
             AFocusPoint focus = FoundEnemyExposedExpansion.getIfFound();
             if (focus != null) return focus;
         }

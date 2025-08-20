@@ -2,6 +2,7 @@ package atlantis.combat.missions.generic;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
+import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 

@@ -83,22 +83,27 @@ public class PreventDuplicateOrders {
             }
         }
 
-        if (A.supplyFree() >= 13 && type.isPylon()) {
-            QueueLastStatus.updateStatusFailed("DontSpamPylons", type.toString());
-//            ErrorLog.printMaxOncePerMinute("Stop Pylon to queue, prevent spam. Free supply: " + A.supplyFree());
-            return true;
-        }
+//        if (A.supplyFree() >= 13 && type.isPylon()) {
+//            QueueLastStatus.updateStatusFailed("DontSpamPylons", type.toString());
+////            ErrorLog.printMaxOncePerMinute("Stop Pylon to queue, prevent spam. Free supply: " + A.supplyFree());
+//            return true;
+//        }
 
         return false;
     }
 
     private static int maxPylonsInQueue() {
-        return 1
+        return (A.supplyUsed() >= 100 ? 4 : 1)
+            + (A.supplyFree() <= 3 && A.supplyUsed() >= 100 ? 1 : 0)
             + (A.supplyFree() <= 2 ? 1 : 0)
+            + (A.supplyFree() <= 1 ? 1 : 0)
+            + (A.supplyFree() <= 0 ? 1 : 0)
+            + (A.hasMinerals(300) ? 1 : 0)
             + (A.hasMinerals(500) ? 1 : 0)
             + (A.hasMinerals(700) ? 1 : 0)
             + (A.hasMinerals(1000) ? 1 : 0)
-            + (A.hasMinerals(1200) ? 1 : 0);
+            + (A.hasMinerals(1200) ? 1 : 0)
+            + (A.hasMinerals(1500) ? 10 : 0);
     }
 
     private static boolean justRequestedThisType(AUnitType type) {
@@ -120,7 +125,7 @@ public class PreventDuplicateOrders {
             A.printStackTrace("Excessive observER // " + Count.withPlanned(type));
         }
 
-        if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding()) {
+        if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding() && !type.isPylon()) {
 //            ErrorLog.printMaxOncePerMinute("Canceling " + type + " as last requested " + lastRequestedAgo + " frames ago.");
             return true;
         }

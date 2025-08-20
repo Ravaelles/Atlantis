@@ -1,8 +1,11 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.game.A;
+import atlantis.map.base.Bases;
+import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
@@ -11,6 +14,7 @@ import static atlantis.units.AUnitType.Protoss_Shield_Battery;
 public class ProduceShieldBattery {
     public static boolean produce() {
         if (A.minerals() <= 500 && A.minerals() <= 280 * Count.bases()) return false;
+        if (!A.hasMinerals(300) && Count.gasBuildingsWithUnfinished() <= 2) return false;
         if (Count.inProductionOrInQueue(type()) > 0) return false;
 
         if (Count.ourWithUnfinished(Protoss_Shield_Battery) >= max()) return false;
@@ -21,7 +25,16 @@ public class ProduceShieldBattery {
     }
 
     private static boolean produceNew() {
-        return AddToQueue.toHave(type(), max());
+        ProductionOrder order = AddToQueue.withStandardPriority(type(), at());
+        if (order == null) return false;
+
+        return true;
+    }
+
+    private static HasPosition at() {
+        if (Bases.natural() != null) return Bases.natural();
+
+        return null;
     }
 
     private static int max() {

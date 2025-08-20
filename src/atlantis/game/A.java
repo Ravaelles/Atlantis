@@ -20,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.List;
@@ -464,6 +465,19 @@ public class A {
     }
 
     /**
+     * Returns string like 21-49
+     */
+    public static String hourMin() {
+        GregorianCalendar today = new GregorianCalendar();
+
+        String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
+        int minutes = today.get(GregorianCalendar.MINUTE);
+
+        return (hour.length() < 2 ? ("0" + hour) : hour)
+            + "-" + (minutes <= 9 ? "0" + minutes : minutes);
+    }
+
+    /**
      * Returns list of strings made by splitting string <b>string</b> wherever c occurrs
      */
     public static ArrayList<String> implodeList(String string, char c) {
@@ -602,16 +616,6 @@ public class A {
             ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
         }
         return false;
-    }
-
-    public static void writeToFile(String filePath, String content) {
-        try {
-            FileWriter fw = new FileWriter(filePath, true);
-            fw.write(content + "\n");
-            fw.close();
-        } catch (IOException exception) {
-            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
-        }
     }
 
     public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
@@ -756,7 +760,7 @@ public class A {
      * Reads every line of given file into the array list.
      */
     public static ArrayList<String> readTextFileToList(String filePath) {
-        ArrayList<String> resultList = new ArrayList<String>();
+        ArrayList<String> resultList = new ArrayList<>();
         try {
             File file = new File(filePath);
             Scanner scanner = new Scanner(file);
@@ -1353,7 +1357,7 @@ public class A {
 
     public static boolean createDirectory(String file) {
         File f = new File(file);
-        return f.mkdir();
+        return f.mkdirs();
     }
 
     public static void moveDirectory(String source, String target) {
@@ -1392,6 +1396,28 @@ public class A {
         if (!sourceFile.renameTo(targetFile)) {
             A.errPrintln("Failed to move file from " + source + " to " + target);
         }
+    }
+
+    public static boolean copy(String source, String target) {
+        File sourceFile = new File(source);
+        File targetFile = new File(target);
+
+        if (!sourceFile.exists()) {
+            return false;
+        }
+
+        if (targetFile.exists()) {
+            return false;
+        }
+
+        // Copy file
+        try {
+            Files.copy(sourceFile.toPath(), targetFile.toPath());
+            return true;
+        } catch (IOException e) {
+            A.errPrintln("Failed to copy file from " + source + " to " + target);
+        }
+        return false;
     }
 
     public static void removeFile(String filePath) {
@@ -1551,6 +1577,32 @@ public class A {
         return ifEnemyZerg;
     }
 
+    public static int whenEnemyProtoss(int ifEnemyProtoss, int otherwise) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+        return otherwise;
+    }
+
+    public static double whenEnemyProtoss(double ifEnemyProtoss, double otherwise) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+        return otherwise;
+    }
+
+    public static int whenEnemyZerg(int ifEnemyZerg, int otherwise) {
+        if (Enemy.zerg()) return ifEnemyZerg;
+        return otherwise;
+    }
+
+    public static double whenEnemyZerg(double ifEnemyZerg, double otherwise) {
+        if (Enemy.zerg()) return ifEnemyZerg;
+        return otherwise;
+    }
+
+    public static int whenEnemyProtossZerg(int ifEnemyProtoss, int ifEnemyZerg) {
+        if (Enemy.protoss()) return ifEnemyProtoss;
+        if (Enemy.terran()) return 0;
+        return ifEnemyZerg;
+    }
+
     public static double whenEnemyProtossTerranZerg(double ifEnemyProtoss, double ifEnemyTerran, double ifEnemyZerg) {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return ifEnemyTerran;
@@ -1576,11 +1628,46 @@ public class A {
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
-    public static int fileSize(String filename) {
+    public static long fileSize(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
             return -1;
         }
-        return (int) file.length();
+
+        try {
+            long size = Files.size(file.toPath());
+            return size > 0 ? size : fileContent(filename).length();
+        } catch (IOException e) {
+            System.err.println("Error getting file size: " + e.getMessage());
+            return file.length();
+        }
+    }
+
+    public static String mapToJson(Map<String, String> mapOfStrings) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        Iterator<Map.Entry<String, String>> it = mapOfStrings.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, String> entry = it.next();
+            sb.append("\"")
+              .append(entry.getKey().replace("\"", "\\\""))
+              .append("\":\"")
+              .append(entry.getValue().replace("\"", "\\\""))
+              .append("\"");
+            if (it.hasNext()) {
+                sb.append(",");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
+    }
+
+    public static String fileContent(String filename) {
+        try {
+            return new String(Files.readAllBytes(new File(filename).toPath()));
+        } catch (IOException e) {
+            A.errPrintln("Error reading file: " + filename);
+            return "";
+        }
     }
 }

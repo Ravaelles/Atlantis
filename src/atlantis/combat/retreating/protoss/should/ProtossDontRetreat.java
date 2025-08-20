@@ -16,6 +16,9 @@ public class ProtossDontRetreat extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.isAir()) return true;
+        if (unit.isDarkTemplar()) return true;
+
         return unit.enemiesNear().visibleOnMap().notEmpty()
             && dontRetreat();
     }

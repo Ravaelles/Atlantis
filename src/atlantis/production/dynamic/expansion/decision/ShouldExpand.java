@@ -8,7 +8,7 @@ import atlantis.units.select.Have;
 import atlantis.util.We;
 
 public class ShouldExpand {
-    public static String reason = "---";
+    public static String reason = "_NO_EXPAND_REASON_";
 
     public static boolean shouldExpand() {
         if (A.isUms() && !Have.base()) return false;

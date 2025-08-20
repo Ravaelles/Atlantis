@@ -3,9 +3,12 @@ package atlantis.combat.micro.attack.enemies;
 import atlantis.combat.micro.attack.CanAttackAsMelee;
 import atlantis.combat.micro.avoid.terran.fight.MarineCanAttackNearEnemy;
 
+import atlantis.combat.squad.Squad;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.units.interrupt.PreventAttacksDuringRetreat;
+import atlantis.units.interrupt.PreventAttacksInMissionDefend;
 import atlantis.util.We;
 
 public class AttackNearbyEnemiesApplies extends HasUnit {
@@ -19,8 +22,19 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
 //        if (unit.isAttacking() && unit.lastActionLessThanAgo(6, Actions.ATTACK_UNIT) && unit.hasTarget()) return false;
 //        if (unit.cooldown() >= 10) return false;
         if (unit.enemiesNear().empty()) return false;
+        if (!unit.hasAnyWeapon()) return false;
+        if (unit.isSpecialMission() && unit.isMelee()) return false;
+
+        if (PreventAttacksInMissionDefend.prevent(unit)) return false;
+        if (PreventAttacksDuringRetreat.prevent(unit)) return false;
+
+        Squad squad = unit.squad();
+        if (squad != null && !squad.isRetreating()) {
+            if (squad.lastAttackedLessThanAgo(30)) return true;
+        }
 
         if (unit.isMissionAttack()) {
+            if (unit.isRetreating()) return false;
             if (unit.leaderIsRetreating()) return false;
             if (
                 unit.eval() < 4
@@ -29,8 +43,6 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
             ) return false;
         }
 
-        if (!unit.hasAnyWeapon()) return false;
-        if (unit.isSpecialMission() && unit.isMelee()) return false;
         if (!CanAttackAsMelee.canAttackAsMelee(unit)) return false;
 
         if (We.protoss()) {

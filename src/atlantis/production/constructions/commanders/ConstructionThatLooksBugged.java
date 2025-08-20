@@ -47,18 +47,6 @@ public class ConstructionThatLooksBugged extends Commander {
 //            }
         }
 
-        AUnit main = Select.main();
-        int bonus = We.protoss() ? 30 * 8 : 0;
-        int timeout = bonus + 30 * (
-            10
-                + (type.isBase() || type.isCombatBuilding() ? 30 : 0)
-                + ((int) (2 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
-        );
-
-        if (!type.isCombatBuilding() && !type.producesLandUnits()) {
-            timeout += 30 * 18;
-        }
-
-        CancelTooLongConstructions.cancelCauseTakingTooLongIfNeeded(constr, timeout, type, buildingType);
+        CancelTooLongConstructions.cancelCauseTakingTooLongIfNeeded(constr, type, buildingType);
     }
 }

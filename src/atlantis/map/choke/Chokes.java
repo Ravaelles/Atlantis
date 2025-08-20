@@ -60,13 +60,6 @@ public class Chokes {
         return Select.mainOrAnyBuilding();
     }
 
-    public static HasPosition naturalOrAnyBuilding() {
-        AChoke natural = natural();
-        if (natural != null) return natural;
-
-        return Select.mainOrAnyBuilding();
-    }
-
     /**
      * Returns chokepoint to defend for the natural (second) base.
      */

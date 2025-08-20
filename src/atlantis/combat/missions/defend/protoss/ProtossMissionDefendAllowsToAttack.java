@@ -6,123 +6,173 @@ import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.We;
 
-public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEnemyUnit {
+public class ProtossMissionDefendAllowsToAttack extends HasUnit {
     private AUnit enemy;
 
     public ProtossMissionDefendAllowsToAttack(AUnit unit) {
         super(unit);
     }
 
-    @Override
-    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+    public Decision allowsToAttackEnemyUnit(AUnit enemy) {
         this.enemy = enemy;
-        if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
-
-        if (Enemy.zerg()) {
-            AUnit leader = unit.squadLeader();
-            if (leader != null && leader.isAttacking()) return true;
-
-            if (whenSmallSquadVsZerg(enemy)) return false;
-            if (forbidChasingEarlyWorker(enemy)) return false;
-        }
+        if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return Decision.FALSE;
 
         if (
-            focusPoint != null
-//                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
-                && enemy.enemiesNear().buildings().countInRadius(6, enemy) == 0
-                && enemy.groundDistToMain() > focusPoint.groundDistToMain()
-        ) {
-            return false;
+            unit.squad().lastUnderAttackLessThanAgo(40)
+                && unit.distToFocusPoint() <= 20
+        ) return Decision.TRUE;
+
+        if (unit.eval() >= 1.3) return Decision.TRUE;
+
+        if (unit.isDragoon()) {
+            if (A.s >= 60 * 7) return Decision.TRUE;
+            if (unit.squad().lastAttackedLessThanAgo(40)) return Decision.TRUE;
+            if (unit.squad().lastUnderAttackLessThanAgo(40)) return Decision.TRUE;
         }
 
-        double distToEnemy = unit.distTo(enemy);
+        if (enemy.isDragoon() && unit.isDragoon()) return Decision.TRUE;
+        if (Count.dragoons() >= 4 || EnemyUnits.dragoons() >= 3) return Decision.TRUE;
 
-        if (A.s <= 220 && enemy.isWorker()) {
-            if (distToEnemy <= 1.05) return true;
-            if (enemy.enemiesNear().buildings().countInRadius(AUnit.NEAR_DIST, unit) == 0) return false;
-        }
-
-        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.1) return false;
-
-        AUnit leader = unit.squadLeader();
-        if (leader != null && leader.isMelee()) {
-            if (unit.distTo(leader) >= 2) return false;
-//            if (enemy.distTo(leader) >= 7) return false;
-        }
-
-        if (enemy.enemiesNear().buildings().countInRadius(enemy.isMelee() ? 5 : 6, unit) > 0) return true;
-
-        if (DontAvoidWhenCannonsNear.check(unit) && (unit.hp() >= 42 || unit.cooldown() <= 6)) {
-            return true;
-        }
-
-        if (dontAttackOnYourOwn()) return false;
-        if (protossDontAttackWhenAlmostDead()) return false;
-
-        if (
-            ProtossStickCombatToMainBaseEarly.should()
-                && Select.ourBuildingsWithUnfinished().countInRadius(5, unit) == 0
-                && (unit.hasCooldown() || !unit.canAttackTargetWithBonus(enemy, 0.5))
-        ) {
-            return false;
-        }
-
-        if (A.s >= 60 * 9) return true;
-
-        boolean lowCooldown = unit.cooldown() <= 9;
-
-        if (Enemy.zerg()) {
-            if (lowCooldown && enemyVeryCloseToBuilding()) return true;
-
-            if (unit.isMelee() && distToEnemy <= 1.4) {
-                if (unit.shotSecondsAgo() >= 8 && distToEnemy <= 1) return true;
-                if (lowCooldown) return true;
-                if (unit.cooldown() >= 12 && unit.shieldWound() >= 10) return false;
-            }
-        }
-        else {
-            if (enemyVeryCloseToBuilding()) return true;
-        }
-
-        if (forbidden_earlyGameVsStrongZergStickToMainBase()) return false;
-
-        if (Enemy.zerg()) {
-            if (unit.isMelee() && distToEnemy <= 1.1 && lowCooldown) return true;
-
-            if (closeToBuildingsRelativelyAliveAndHaventAttackedRecently()) return true;
-            if (earlyGameVsZergDontGoTooFar()) return false;
-        }
-
-        if (whenTooFarFromSquadCenter()) return false;
-
-        if (asRangedAttackTargetsInRange()) return true;
-
-        return true;
+        return Decision.INDIFFERENT;
     }
 
-    private boolean forbidChasingEarlyWorker(AUnit enemy) {
-        if (!enemy.isWorker()) return false;
+//    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+//        this.enemy = enemy;
+//        if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return false;
+//
+//        if (enemy.enemiesNear().bases().countInRadius(6, enemy) > 0) return true;
+//
+//        if (enemy.isAir() && unit.eval() >= 0.6) return true;
+//        if (unit.squad().lastUnderAttackLessThanAgo(30) && enemy.distTo(focusPoint) <= 12) return true;
+//
+//        if (Enemy.zerg()) {
+////            AUnit leader = unit.squadLeader();
+////            if (leader != null && leader.isAttacking()) return true;
+//
+//            if (allowWhenDefendVsZerg()) return true;
+//            if (forbidWhenSmallSquadVsZerg(enemy)) return false;
+//            if (forbidChasingEarlyWorker(enemy)) return false;
+//        }
+//
+//        if (Enemy.protoss()) {
+//            if (unit.isDragoon() && enemy.isZealot()) return true;
+//        }
+//
+//        double groundDistToMain = unit.groundDistToMain();
+//        if (groundDistToMain >= 40 && unit.eval() <= 4) return false;
+//
+//        if (
+//            focusPoint != null
+////                && enemy.distTo(focusPoint) >= (unit.isRanged() ? 1.2 + unit.weaponRangeAgainst(enemy) : 3.2)
+//                && enemy.enemiesNear().buildings().countInRadius(6, enemy) == 0
+//                && enemy.groundDistToMain() > focusPoint.groundDistToMain()
+//        ) {
+//            return false;
+//        }
+//
+//        double distToEnemy = unit.distTo(enemy);
+//
+//        if (A.s <= 220 && enemy.isWorker()) {
+//            if (distToEnemy <= 1.05) return true;
+//            if (enemy.enemiesNear().buildings().countInRadius(AUnit.NEAR_DIST, unit) == 0) return false;
+//        }
+//
+//        if (unit.squadSize() >= 2 && unit.distToLeader() >= 10 && unit.eval() <= 1.1) return false;
+//
+//        AUnit leader = unit.squadLeader();
+//        if (leader != null && leader.isMelee()) {
+//            if (unit.distTo(leader) >= 2) return false;
+////            if (enemy.distTo(leader) >= 7) return false;
+//        }
+//
+//        if (enemy.enemiesNear().buildings().countInRadius(enemy.isMelee() ? 5 : 6, unit) > 0) return true;
+//
+//        if (DontAvoidWhenCannonsNear.check(unit) && (unit.hp() >= 42 || unit.cooldown() <= 6)) {
+//            return true;
+//        }
+//
+//        if (dontAttackOnYourOwn()) return false;
+//        if (protossDontAttackWhenAlmostDead()) return false;
+//
+//        if (
+//            ProtossStickCombatToMainBaseEarly.should()
+//                && Select.ourBuildingsWithUnfinished().countInRadius(5, unit) == 0
+//                && (unit.hasCooldown() || !unit.canAttackTargetWithBonus(enemy, 0.5))
+//        ) {
+//            return false;
+//        }
+//
+//        if (A.s >= 60 * 9) return true;
+//
+//        boolean lowCooldown = unit.cooldown() <= 9;
+//
+//        if (Enemy.zerg()) {
+//            if (lowCooldown && enemyVeryCloseToBuilding()) return true;
+//
+//            if (unit.isMelee() && distToEnemy <= 1.4) {
+//                if (unit.shotSecondsAgo() >= 8 && distToEnemy <= 1) return true;
+//                if (lowCooldown) return true;
+//                if (unit.cooldown() >= 12 && unit.shieldWound() >= 10) return false;
+//            }
+//        }
+//        else {
+//            if (enemyVeryCloseToBuilding()) return true;
+//        }
+//
+//        if (forbidden_earlyGameVsStrongZergStickToMainBase()) return false;
+//
+//        if (Enemy.zerg()) {
+//            if (unit.isMelee() && distToEnemy <= 1.1 && lowCooldown) return true;
+//
+//            if (closeToBuildingsRelativelyAliveAndHaventAttackedRecently()) return true;
+//            if (earlyGameVsZergDontGoTooFar()) return false;
+//        }
+//
+//        if (whenTooFarFromSquadCenter()) return false;
+//
+//        if (asRangedAttackTargetsInRange()) return true;
+//
+//        return true;
+//    }
 
-        if (
-            enemy.distTo(focusPoint) >= 3 && !unit.canAttackTargetWithBonus(enemy, 1.6)
-        ) return true;
+    private boolean allowWhenDefendVsZerg() {
+        if (!Enemy.zerg()) return false;
+        if (!unit.isMissionDefend()) return false;
+        if (unit.hp() <= 40) return false;
+        if (unit.eval() <= 0.8) return false;
+        if (unit.cooldown() >= 8) return false;
 
-        return false;
+        return enemy.enemiesNear().buildings().countInRadius(3, unit) > 0;
     }
 
-    private boolean whenSmallSquadVsZerg(AUnit enemy) {
-        return unit.squadIsAlpha()
-            && unit.squadSize() <= 7
-            && enemy.distToFocusPoint() >= (unit.eval() <= 3 ? 6.5 : 10);
+//    private boolean forbidChasingEarlyWorker(AUnit enemy) {
+//        if (!enemy.isWorker()) return false;
+//
+//        if (
+//            enemy.distTo(focusPoint) >= 3 && !unit.canAttackTargetWithBonus(enemy, 1.6)
+//        ) return true;
+//
+//        return false;
+//    }
+
+    private boolean forbidWhenSmallSquadVsZerg(AUnit enemy) {
+        if (!unit.squadIsAlpha()) return false;
+        if (unit.squadSize() >= 7) return false;
+        if (unit.eval() >= 1.6) return false;
+
+        return enemy.distToFocusPoint() >= (unit.eval() <= 3 ? 6.5 : 10);
     }
 
     private boolean enemyVeryCloseToBuilding() {
@@ -180,7 +230,8 @@ public class ProtossMissionDefendAllowsToAttack extends MissionAllowsToAttackEne
     }
 
     private boolean forbidden_earlyGameVsStrongZergStickToMainBase() {
-        if (!ProtossStickCombatToMainBaseEarly.should()) return false;
+        if (!ProtossStickCombatToMainBaseEarly.should() && enemy.enemiesNear().buildings().countInRadius(3, enemy) == 0) return false;
+
         if (unit.isRanged() && EnemyInfo.noRanged() && unit.hp() >= 35 && unit.noCooldown()) return false;
         if (unit.eval() >= 1.5) return false;
 

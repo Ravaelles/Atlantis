@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import bwapi.Color;
 
 public class DoAvoidEnemies extends Manager {
     private ProcessAvoid avoid;
@@ -21,7 +22,11 @@ public class DoAvoidEnemies extends Manager {
         Units enemies = enemyUnitsToAvoid.unitsToAvoid(false);
 
         if (enemies.isEmpty() && (unit.hp() <= 30 || unit.woundPercent() >= 25)) {
-            return enemyUnitsToAvoid.unitsToAvoid(false);
+            enemies = enemyUnitsToAvoid.unitsToAvoid(false);
+        }
+
+        if (enemies.isNotEmpty()) {
+            enemies = enemies.selection().beingVisibleUnitOrNotVisibleFoggedUnit().units();
         }
 
         return enemies; // Can be empty
@@ -34,22 +39,21 @@ public class DoAvoidEnemies extends Manager {
 //        unit.paintCircle(15, Color.Purple);
 //        unit.paintCircle(16, Color.Purple);
 //        unit.paintCircle(17, Color.Purple);
-//        A.printStackTrace("Avoiding... " + unit.idWithHash());
+//        A.printStackTrace(A.now + " Avoiding... " + unit.idWithHash());
 //        if (unit.isRanged()) {
 //            System.out.println("ZZZ = " + unit.action());
 //            if (!unit.isRunning() && !unit.isDancing()) GameSpeed.pauseGame();
 //        }
 
-        if (
-            enemies.size() == 1
-//                ||
-//                (unit.isDragoon() && enemies.onlyRanged())
-                || unit.isScout()
-        ) {
+//        if (enemies.size() == 1 || unit.isScout()) {
+//        if (enemies.size() == 1) {
+        if (enemies.size() > 0) {
             return avoid.singleUnit(enemies.first());
         }
-        else {
-            return avoid.groupOfUnits(enemies);
-        }
+
+        return null;
+//        else {
+//            return avoid.groupOfUnits(enemies);
+//        }
     }
 }

@@ -23,6 +23,7 @@ import atlantis.util.cache.Cache;
 
 public class EnemyInfo {
     public static boolean startedWithCombatBuilding = false;
+    public static boolean _hasRanged = false;
 
     private static Cache<Object> cache = new Cache<>();
     private static Cache<Boolean> cacheBoolean = new Cache<>();
@@ -33,6 +34,7 @@ public class EnemyInfo {
         cache.clear();
         cacheBoolean.clear();
         startedWithCombatBuilding = false;
+        _hasRanged = false;
     }
 
     public static boolean isEnemyNearAnyOurBase() {
@@ -229,11 +231,13 @@ public class EnemyInfo {
     }
 
     public static boolean hasRanged() {
-        return EnemyUnits.discovered().ranged().notEmpty();
+        if (_hasRanged) return true;
+
+        return _hasRanged = EnemyUnits.discovered().ranged().notEmpty();
     }
 
     public static boolean noRanged() {
-        return EnemyUnits.discovered().ranged().empty();
+        return !hasRanged();
     }
 
     public static boolean hasNaturalBase() {

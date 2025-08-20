@@ -17,7 +17,7 @@ public class AsAirAvoidDeadlyAntiAir extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isAir()) return false;
-        if (unit.shieldWound() <= 9) return false;
+//        if (unit.shieldWound() <= 9) return false;
 
         enemyAAPosition = enemyDeadlyAntiAirInRange(unit);
         if (enemyAAPosition == null) return false;
@@ -35,16 +35,16 @@ public class AsAirAvoidDeadlyAntiAir extends Manager {
 
     private HasPosition enemyDeadlyAntiAirInRange(AUnit unit) {
         Selection enemies = unit.enemiesNear().ofType(
-            AUnitType.Protoss_Corsair,
-            AUnitType.Protoss_Photon_Cannon,
+//            AUnitType.Protoss_Corsair,
+//            AUnitType.Protoss_Photon_Cannon,
             AUnitType.Zerg_Scourge,
-            AUnitType.Zerg_Devourer,
+            AUnitType.Zerg_Devourer
 //            AUnitType.Zerg_Spore_Colony,
-            AUnitType.Terran_Valkyrie,
-            AUnitType.Terran_Missile_Turret
+//            AUnitType.Terran_Valkyrie,
+//            AUnitType.Terran_Missile_Turret
         );
 
-        HasPosition enemy = enemies.canAttack(unit, 1.3 + unit.woundPercent() / 15.0).center();
+        HasPosition enemy = enemies.canAttack(unit, 1.7 + unit.woundPercent() / 15.0).center();
 
         return enemy;
     }

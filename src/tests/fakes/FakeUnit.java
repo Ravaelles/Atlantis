@@ -49,6 +49,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean effCloaked = false;
     public boolean effVisible = true;
     public int hp;
+    public int shields = 0;
     public boolean idle = false;
     public boolean isVisibleUnitOnMap = true;
     public boolean lifted = false;
@@ -56,6 +57,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean lockedDown = false;
     public boolean stasised = false;
     public boolean stimmed = false;
+    public boolean underDarkSwarm = false;
     public FakeUnit target = null;
     public String lastCommand = "None";
     public TechType lastTechUsed = null;
@@ -65,14 +67,13 @@ public class FakeUnit extends AUnit implements Serializable {
     // =========================================================
 
     public FakeUnit(AUnitType type, double tx, double ty) {
-        super();
+        super(type);
         this.id = firstFreeId++;
         this.rawType = type;
         this._lastType = type;
-//        this.position = APosition.createFromPixels((int) tx * 32, (int) ty * 32);
         this.position = APosition.createFromPixels((int) (tx * 32), (int) (ty * 32));
-
         this.hp = maxHp();
+        this.shields = maxShields();
 
         all.add(this);
     }
@@ -81,8 +82,6 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public static void clearCache() {
         for (FakeUnit unit : all) {
-//            System.err.println("! Cleared cache = " + unit);
-//            A.printStackTrace("Why now?");
             unit.clearAUnitCache();
             unit.id *= -44;
             unit.position = null;
@@ -147,10 +146,10 @@ public class FakeUnit extends AUnit implements Serializable {
         return rawType.ut();
     }
 
-    @Override
-    public AUnitType type() {
-        return rawType;
-    }
+//    @Override
+//    public AUnitType type() {
+//        return rawType;
+//    }
 
     @Override
     public FakePlayer player() {
@@ -310,11 +309,6 @@ public class FakeUnit extends AUnit implements Serializable {
     @Override
     public boolean isHoldingPosition() {
         return lastCommand.equals("Hold");
-    }
-
-    @Override
-    public boolean isUnderDarkSwarm() {
-        return false;
     }
 
     @Override
@@ -573,11 +567,6 @@ public class FakeUnit extends AUnit implements Serializable {
     }
 
     @Override
-    public int shields() {
-        return 0;
-    }
-
-    @Override
     public boolean canLift() {
         return true;
     }
@@ -594,6 +583,36 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setHp(int hp) {
         this.hp = hp;
+        return this;
+    }
+
+    public FakeUnit setLastActionReceived(int atFrame) {
+        this._lastActionReceived = atFrame;
+        return this;
+    }
+
+    @Override
+    public boolean isUnderDarkSwarm() {
+        return underDarkSwarm;
+    }
+
+    public FakeUnit setUnderDarkSwarm(boolean underDarkSwarm) {
+        this.underDarkSwarm = underDarkSwarm;
+        return this;
+    }
+
+    @Override
+    public int shields() {
+        return shields;
+    }
+
+    public FakeUnit setShields(int shields) {
+        this.shields = shields;
+        return this;
+    }
+
+    public FakeUnit setFakeTarget(FakeUnit target) {
+        this.target = target;
         return this;
     }
 }

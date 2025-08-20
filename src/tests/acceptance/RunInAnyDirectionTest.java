@@ -2,6 +2,7 @@ package tests.acceptance;
 
 import atlantis.combat.running.RunToPositionFinder;
 import atlantis.combat.running.any_direction.RunInAnyDirection;
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class RunInAnyDirectionTest extends WorldStubForTests {
                 )
             ));
 
-            System.out.println(runInAnyDirection.runInAnyDirection(zergling));
+            A.println(runInAnyDirection.runInAnyDirection(zergling));
 
 //            assertContainsAll(
 //                new FakeUnit[]{drone, zergling, hydra, sunken},

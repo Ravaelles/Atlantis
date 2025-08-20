@@ -9,7 +9,7 @@ import atlantis.util.We;
 
 public class TerranHasEnoughSidesFreeFromOtherBuildings {
     public static boolean isOkay(AUnit builder, AUnitType building, APosition position) {
-        if (true) return true;
+//        if (true) return true;
         if (!We.terran()) return false;
         if (building.isBase()) return true;
 

@@ -11,7 +11,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -266,7 +266,7 @@ public class Construction implements Comparable<Construction> {
     }
 
     public boolean hasStarted() {
-        return !status().equals(ConstructionOrderStatus.NOT_STARTED);
+        return !status().equals(ConstructionOrderStatus.NOT_STARTED) || buildingUnit() != null;
     }
 
     public boolean notStarted() {
@@ -285,6 +285,12 @@ public class Construction implements Comparable<Construction> {
         if (hasStarted()) return false;
         if (buildingType != null && buildingType.isBase()) return false;
         if (!A.canAfford(buildingType)) return false;
+
+//        int secondsSinceStarted = A.ago(timeOrdered) / 30;
+//        if (secondsSinceStarted >= 12) {
+//            ErrorLog.printMaxOncePerMinute("Overdueing (" + secondsSinceStarted + "s), minerals: " + A.minerals() + " / " + this);
+//            CenterCamera.on(positionToBuild);
+//        }
 
         return A.ago(timeOrdered) > 30 * 22;
     }

@@ -2,7 +2,7 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.Atlantis;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
@@ -40,7 +40,7 @@ public class NeedChokeBlockers {
 //        if (A.supplyUsed() >= 45) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.basesWithUnfinished() >= 2) return false;
-        if (EnemyUnitBreachedBase.notNull()) return false;
+        if (EnemyUnitBreachedBase.someone()) return false;
 
         if (Enemy.protoss()) {
             if (Army.strength() >= 210) return false;

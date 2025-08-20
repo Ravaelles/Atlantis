@@ -33,7 +33,7 @@ public class MoonFormationTest extends WorldStubForTests {
 //        dragoon = fake(AUnitType.Protoss_Dragoon, 10),
 //        sunken = fake(AUnitType.Zerg_Sunken_Colony, 20)
 
-        useStarEngine();
+//        useStarEngine();
 
         createWorld(60, () -> {
                 Selection units = dragoon.friendsNear().combatUnits().add(dragoon);

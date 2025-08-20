@@ -28,10 +28,10 @@ public class MissionAttack extends Mission {
         return new MissionAttackManager(unit);
     }
 
-    @Override
-    public double optimalDist() {
-        return -1;
-    }
+//    @Override
+//    public double optimalDist() {
+//        return -1;
+//    }
 
     // =========================================================
 

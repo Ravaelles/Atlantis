@@ -1,22 +1,27 @@
 package atlantis.combat.missions.attack;
 
-import atlantis.combat.advance.contain.ContainEnemy;
+import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
+import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
-import atlantis.util.log.ErrorLog;
 
 public class MissionAttackAllowsToAttack extends HasUnit {
+    private AUnit enemy;
+
     public MissionAttackAllowsToAttack(AUnit unit) {
         super(unit);
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        this.enemy = enemy;
+
 //        if (A.supplyUsed() <= 40) {
 //            // Zealots vs Zealot fix
 //            if (ProtossMissionAdjustments.allowsToAttackEnemyUnits(unit, enemy)) {
@@ -29,12 +34,23 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (!enemy.isAlive() || enemy.isDead()) return forbidden("EnemyDead");
         if (!enemy.hasPosition()) return forbidden("EnemyWithoutPosition");
 
+        if (forbidByType(enemy)) return forbidden("ForbiddenByType");
+
+        if (
+            unit.isActiveManager(AvoidCombatBuildingClose.class) && enemy.isCombatBuilding()
+        ) return forbidden("ForbidCB");
+
+        if (unit.squad() != null && unit.squad().hasMostlyOffensiveRole()) return true;
+//        if (unit.isRanged() && unit.eval() >= 1.1 && unit.isTargetInWeaponRangeAccordingToGame(enemy)) return true;
+
         if (
             unit.isRanged()
                 && unit.hp() >= 25
                 && unit.eval() >= 1.2
                 && unit.isTargetInWeaponRangeAccordingToGame(enemy)
         ) return true;
+
+        if (Army.strength() >= 800 && enemy.isABuilding() && unit.eval() >= 2) return true;
 
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
@@ -59,8 +75,14 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         return true;
     }
 
+    private boolean forbidByType(AUnit enemy) {
+        return unit.isDarkTemplar() && enemy.isDetector();
+    }
+
     protected boolean forbidden(String reason) {
 //        ErrorLog.debug(reason);
+//        PauseAndCenter.on(unit, true, Color.Purple);
+//        System.err.println("MAA forbidden to attack " + enemy + ": " + reason);
         return false;
     }
 
@@ -82,14 +104,14 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean dontAttackDuringContain(AUnit enemy) {
-        if (!unit.isActiveManager(ContainEnemy.class)) return false;
+        if (!unit.isActiveManager(TerranContainEnemyWrapper.class)) return false;
 
-        if (enemy.isABuilding() && unit.groundWeaponRange() <= 7 && enemy.distToNearestChoke() <= 9) return true;
+        if (enemy.isABuilding() && unit.groundWeaponRange() <= 7 && enemy.nearestChokeDist() <= 9) return true;
 
         AUnit squadLeader = unit.squadLeader();
         if (squadLeader == null) return false;
 
-        return squadLeader.isActiveManager(ContainEnemy.class);
+        return squadLeader.isActiveManager(TerranContainEnemyWrapper.class);
     }
 
     private boolean dontAttackAsSquadScout(AUnit enemy) {

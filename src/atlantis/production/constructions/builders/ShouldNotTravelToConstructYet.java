@@ -11,7 +11,7 @@ public class ShouldNotTravelToConstructYet {
 
         if (AGame.timeSeconds() < 300) {
             int baseBonus = building.isBase() ? 80 : 0;
-            int mineralMargin = distance <= 15 ? 0 : 24;
+            int mineralMargin = mineralMargin(building, distance);
 
             return !A.canAfford(
                 building.mineralPrice() - mineralMargin - (int) (distance * 1.3) - baseBonus,
@@ -20,5 +20,10 @@ public class ShouldNotTravelToConstructYet {
         }
 
         return false;
+    }
+
+    private static int mineralMargin(AUnitType building, double distance) {
+        return (distance <= 15 ? 16 : 32)
+            + (building.isCyberneticsCore() ? 8 : 0);
     }
 }

@@ -4,6 +4,7 @@ import atlantis.units.select.BaseSelect;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import tests.acceptance.AbstractTestWithWorld;
 import tests.acceptance.WorldStubForTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,14 +35,10 @@ public class BaseSelectTest extends WorldStubForTests {
 
     @Test
     public void neutralUnits() {
-        try (
-            MockedStatic<BaseSelect> baseSelectMock = Mockito.mockStatic(BaseSelect.class)
-        ) {
-            baseSelectMock.when(BaseSelect::neutralUnits).thenReturn(mockNeutralUnits());
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::neutralUnits).thenReturn(mockNeutralUnits());
 
-            assertNotEquals(neutralUnits.length, 0);
-            assertEquals(neutralUnits.length, BaseSelect.neutralUnits().size());
-        }
+        assertNotEquals(neutralUnits.length, 0);
+        assertEquals(neutralUnits.length, BaseSelect.neutralUnits().size());
     }
 
 }

@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -20,6 +21,7 @@ public class AFocusPoint extends APosition {
     private AUnit unit = null;
     private HasPosition position = null;
     private String name = null;
+    private int idealDistanceFromFocus = -1;
 
     private static String _prev = "";
 
@@ -36,13 +38,13 @@ public class AFocusPoint extends APosition {
 
     public AFocusPoint(AUnit unit, String name) {
 //        this(unit.position(), null, name);
-        this(unit, null, name);
+        this(unit, defaultFrom(), name);
         this.unit = unit;
 //        this.position = unit.position();
     }
 
     public AFocusPoint(HasPosition unit, String name) {
-        this(unit.position(), Select.mainOrAnyBuilding(), name);
+        this(unit.position(), defaultFrom(), name);
     }
 
     public AFocusPoint(AUnit unit, HasPosition fromSide, String name) {
@@ -80,14 +82,30 @@ public class AFocusPoint extends APosition {
     }
 
     public AFocusPoint(HasPosition position, HasPosition fromSide, String name) {
-        super(position.position());
+        super(ensureFocusPointIsWalkable(position));
         this.fromSide = fromSide != null ? fromSide.position() : null;
         this.name = name;
     }
 
     // =========================================================
 
+    private static HasPosition defaultFrom() {
+        AUnit unit = Select.mainOrAnyUnit();
+        if (unit != null) return unit;
+
+        return Select.all().first().position();
+    }
+
+    private static APosition ensureFocusPointIsWalkable(HasPosition position) {
+        if (position == null) return null;
+        if (position.isWalkable()) return position.position();
+
+        return position.makeWalkable(6, 3, null);
+    }
+
     public boolean isValid() {
+        if (isAroundChoke()) return true;
+
         if (unit != null) {
             return (!unit.isVisibleUnitOnMap() && unit instanceof AbstractFoggedUnit)
                 || (unit.hp() > 0 && unit.isVisibleUnitOnMap());
@@ -169,24 +187,21 @@ public class AFocusPoint extends APosition {
         return false;
     }
 
-//    @Override
-//    public APosition position() {
-//        if (unit != null) {
-//            return unit.position();
-////            if (unit.isVisibleUnitOnMap()) return unit.position();
-////            return unit.lastPosition();
-//        }
-//        if (choke != null) return choke.position();
-//        return position != null ? position.position() : null;
-//    }
-//
-//    @Override
-//    public int x() {
-//        return position().x();
-//    }
-//
-//    @Override
-//    public int y() {
-//        return position().y();
-//    }
+    public boolean hasIdealDistanceFromFocus() {
+        return idealDistanceFromFocus >= 0;
+    }
+
+    public int idealDistanceFromFocus() {
+        return idealDistanceFromFocus;
+    }
+
+    public AFocusPoint setIdealDistanceFromFocus(int idealDistanceFromFocus) {
+        this.idealDistanceFromFocus = idealDistanceFromFocus;
+
+        return this;
+    }
+
+    public boolean isMainChoke() {
+        return choke != null && choke.equals(Chokes.mainChoke());
+    }
 }

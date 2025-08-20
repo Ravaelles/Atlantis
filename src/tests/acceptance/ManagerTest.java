@@ -3,8 +3,7 @@ package tests.acceptance;
 import atlantis.architecture.Manager;
 import atlantis.combat.CombatUnitManager;
 import atlantis.combat.micro.terran.TerranComsatStation;
-import atlantis.game.A;
-import atlantis.protoss.dragoon.ProtossDragoonCombatManager;
+import atlantis.protoss.dragoon.DragoonCombatManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.special.ManualOverrideManager;
@@ -70,7 +69,7 @@ public class ManagerTest extends WorldStubForTests {
             fake(AUnitType.Terran_Marine, 21)
         );
         FakeUnit[] enemies = fakeEnemies(
-            fake(AUnitType.Zerg_Sunken_Colony, 40)
+            fake(AUnitType.Zerg_Drone, 23)
         );
 
         createWorld(4, () -> {
@@ -82,20 +81,20 @@ public class ManagerTest extends WorldStubForTests {
 
                 assertNotNull(combatManager);
 
-                if (A.now() == 1) {
-                    unit.managerLogs().addMessage("MessageA", unit);
-                    System.err.println("Size at 1 = " + unit.managerLogs().messages().size());
-                }
-                else if (A.now() == 2) {
-                    System.err.println("Size at 2 = " + unit.managerLogs().messages().size());
-                    unit.managerLogs().addMessage("MessageB", unit);
-                }
-                else if (A.now() == 4) {
-                    System.err.println("Size at 4 = " + unit.managerLogs().messages().size());
-                    System.out.println(unit.managerLogs().lastMessage());
-                    System.out.println(unit.managerLogs().toString());
-                    System.out.println(unit.managerLogs().messages());
-                }
+//                if (A.now() == 1) {
+//                    unit.managerLogs().addMessage("MessageA", unit);
+//                    System.err.println("Size at 1 = " + unit.managerLogs().messages().size());
+//                }
+//                else if (A.now() == 2) {
+//                    System.err.println("Size at 2 = " + unit.managerLogs().messages().size());
+//                    unit.managerLogs().addMessage("MessageB", unit);
+//                }
+//                else if (A.now() == 4) {
+//                    System.err.println("Size at 4 = " + unit.managerLogs().messages().size());
+//                    System.out.println(unit.managerLogs().lastMessage());
+//                    System.out.println(unit.managerLogs().toString());
+//                    System.out.println(unit.managerLogs().messages());
+//                }
             },
             () -> our,
             () -> enemies
@@ -110,7 +109,7 @@ public class ManagerTest extends WorldStubForTests {
         );
 
         ManualOverrideManager manager1 = new ManualOverrideManager(unit);
-        ProtossDragoonCombatManager manager2 = new ProtossDragoonCombatManager(unit);
+        DragoonCombatManager manager2 = new DragoonCombatManager(unit);
         RemoveDeadUnitsManager manager3 = new RemoveDeadUnitsManager(unit);
 
         createWorld(1, () -> {
@@ -123,7 +122,7 @@ public class ManagerTest extends WorldStubForTests {
 
                 assertEquals("", manager1.parentsStack());
                 assertEquals("ManualOverrideManager > ", manager2.parentsStack());
-                assertEquals("ManualOverrideManager > ProtossDragoonCombatManager > ", manager3.parentsStack());
+                assertEquals("ManualOverrideManager > DragoonCombatManager > ", manager3.parentsStack());
             },
             () -> our,
             () -> fakeEnemies()

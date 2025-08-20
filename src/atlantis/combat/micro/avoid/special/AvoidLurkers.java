@@ -74,7 +74,7 @@ public class AvoidLurkers extends Manager {
 //        }
 
         if (We.protoss()) {
-            if (unit.hp() >= 64 && unit.lastUnderAttackMoreThanAgo(130)) {
+            if (asProtossOnlyAvoidUndetectedLurkers()) {
                 lurkers = lurkers.effUndetected();
             }
             else {
@@ -86,6 +86,12 @@ public class AvoidLurkers extends Manager {
         }
 
         return lurkers;
+    }
+
+    private boolean asProtossOnlyAvoidUndetectedLurkers() {
+        if (unit.isMelee() && unit.eval() <= 1.9 && Count.dragoons() >= 4) return true;
+
+        return unit.hp() >= 64 && unit.lastUnderAttackMoreThanAgo(130);
     }
 
     private boolean avoidAsTerran() {
@@ -164,11 +170,11 @@ public class AvoidLurkers extends Manager {
 
         if (asTerranLoadIntoBunkers()) return usedManager(this);
 
+        if (unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER-B!")) return usedManager(this);
+
         if (unit.distTo(lurker) >= 5) {
             if (unit.moveAwayFrom(lurker, 2.5, Actions.MOVE_AVOID, "LURKER-A!")) return usedManager(this);
         }
-
-        if (unit.runningManager().runFromAndNotifyOthersToMove(lurker, "LURKER-B!")) return usedManager(this);
 
         return null;
     }

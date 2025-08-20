@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.HasPosition;
@@ -8,7 +9,9 @@ import atlantis.units.actions.Actions;
 import atlantis.util.cache.Cache;
 
 public class MoonRadius {
-    public static final double OVERTIME_RADIUS_SHORTENING_MODIFIER = 0.004;
+    public static final double MAX_FOR_PROTOSS = 11.0;
+    public static final double MAX_FOR_ZERG = 12.0;
+    public static final double OVERTIME_RADIUS_SHORTENING_MODIFIER = 0.012;
 
     protected static final Cache<Double> cacheDouble = new Cache<>();
 
@@ -19,14 +22,13 @@ public class MoonRadius {
             () -> {
                 double dist = leader.distTo(moonCenter);
 
-                if (dist <= 8.5 && unit.lastActionMoreThanAgo(30 * 7, Actions.MOVE_FORMATION)) {
-                    int raceBonus = A.whenEnemyProtossTerranZerg(4, 3, 4);
-                    dist += raceBonus;
+                if (dist <= 8.5 && unit.lastActionMoreThanAgo(30 * 5, Actions.MOVE_FORMATION)) {
+                    dist += applyDistBonusWhenRecentlyDoingFormation(leader);
                 }
 
-                double MAX_FOR_PROTOSS = 13.0;
-//                double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
-                double MAX_FOR_ZERG = 13.0;
+                //                double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
+
+                if (unit.isMelee()) dist += 2.5;
 
                 if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;
                 if (Enemy.zerg() && dist >= MAX_FOR_ZERG) return MAX_FOR_ZERG;
@@ -52,7 +54,28 @@ public class MoonRadius {
         return radius;
     }
 
+    private static double applyDistBonusWhenRecentlyDoingFormation(AUnit leader) {
+        double raceBonus = A.whenEnemyProtossTerranZerg(2, 3, 3);
+
+        if (leader.shotSecondsAgo() >= 10) {
+            raceBonus = 0.1;
+        }
+
+        return raceBonus;
+    }
+
     private static double overtimeRadiusShortening(int moonCenterAssignedAgo) {
-        return Math.min(10, moonCenterAssignedAgo * OVERTIME_RADIUS_SHORTENING_MODIFIER);
+        double leaderBonus = 1;
+        AUnit leader = Alpha.alphaLeader();
+        if (leader != null) {
+            leaderBonus = 0.99 + (A.inRange(0.2, leader.eval(), 10)) / 40.0;
+        }
+
+        return Math.min(
+            10,
+            moonCenterAssignedAgo
+                * OVERTIME_RADIUS_SHORTENING_MODIFIER
+                * leaderBonus
+            );
     }
 }

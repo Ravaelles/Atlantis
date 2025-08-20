@@ -47,7 +47,12 @@ public class PositionUtil {
             fromPosition = ((FakeUnit) object1).position().p();
         }
         else if (object1 instanceof FoggedUnit) {
-            fromPosition = ((FoggedUnit) object1).position().p();
+            APosition foggedPosition = ((FoggedUnit) object1).position();
+            if (foggedPosition == null) {
+                return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
+            }
+
+            fromPosition = foggedPosition.p();
             if (fromPosition == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
@@ -100,7 +105,15 @@ public class PositionUtil {
             toPosition = ((FakeUnit) object2).position().p();
         }
         else if (object2 instanceof FoggedUnit) {
-            toPosition = ((FoggedUnit) object2).position().p();
+            APosition pos = ((FoggedUnit) object2).position();
+            if (pos == null) {
+                return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
+            }
+
+            toPosition = pos.p();
+            if (toPosition == null) {
+                return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
+            }
         }
         else if (object2 instanceof FakeFoggedUnit) {
             toPosition = ((FakeFoggedUnit) object2).position().p();
@@ -182,6 +195,9 @@ public class PositionUtil {
      * Returns real ground distance to given point (not the air shortcut over impassable terrain).
      */
     public static double groundDistanceTo(HasPosition from, HasPosition to) {
+        if (from == null || from.position() == null) return 999;
+        if (to == null || to.position() == null) return 999;
+
         return groundDistanceTo(from.position().p(), to.position().p());
     }
 

@@ -30,7 +30,25 @@ public class CircumnavigateCombatBuilding extends Manager {
      */
     @Override
     protected Manager handle() {
-        APosition goTo = findPositionAround(combatBuilding);
+        double woundBonus = unit.woundPercent() / 60.0;
+
+        if (unit.enemiesNear().combatUnits().groundUnits().nonBuildings().canAttack(unit, 2.2 + woundBonus).notEmpty()) return null;
+        if (unit.enemiesNear().air().canBeAttackedBy(unit, 0).notEmpty()) return null;
+
+        if (unit.distTo(combatBuilding) <= (8 + woundBonus)) {
+            if (unit.moveAwayFrom(combatBuilding, 1, Actions.MOVE_AVOID, "JustAvoid")) {
+                return usedManager(this);
+            }
+        }
+
+        if (unit.isMoving() && unit.isAction(Actions.MOVE_MACRO) && unit.distToTargetPosition() >= 3) {
+//            System.out.println("...continue: " + unit.distToTargetPosition());
+            return usedManager(this);
+        }
+
+//        APosition goTo = findPositionAround(combatBuilding);
+        int angle = (unit.idIsOdd() ? 1 : -1);
+        APosition goTo = PositionAroundBuilding.around(unit, combatBuilding, radiusAroundCb(), angle);
 
         APainter.paintLine(unit, goTo, Color.Orange);
         APainter.paintCircle(goTo, 4, Color.Orange);
@@ -43,12 +61,16 @@ public class CircumnavigateCombatBuilding extends Manager {
         return null;
     }
 
-    public APosition findPositionAround(AUnit combatBuilding) {
-        int roamingRange = unit.isAir() ? 9 : 4;
-
-        APosition raw = unit.translateTilesTowards(-roamingRange - 1, combatBuilding);
-
-        // Now we randomize the position to implement "circling around" the combat building
-        return raw.randomizePosition(roamingRange);
+    private double radiusAroundCb() {
+        return 9.5 + (unit.woundPercent() / 66.0);
     }
+
+//    public APosition findPositionAround(AUnit combatBuilding) {
+//        int roamingRange = unit.isAir() ? 9 : 4;
+//
+//        APosition raw = unit.translateTilesTowards(-roamingRange - 1, combatBuilding);
+//
+//        // Now we randomize the position to implement "circling around" the combat building
+//        return raw.randomizePosition(roamingRange);
+//    }
 }

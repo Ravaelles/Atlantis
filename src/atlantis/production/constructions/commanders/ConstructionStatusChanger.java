@@ -7,9 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.builders.TravelToConstruct;
 import atlantis.production.constructions.position.APositionFinder;
-import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
@@ -25,37 +23,7 @@ public class ConstructionStatusChanger extends Commander {
             Construction construction = iterator.next();
 
             checkForConstructionStatusChange(construction);
-            checkForOverdueConstructions(construction);
-        }
-    }
-
-    private void checkForOverdueConstructions(Construction construction) {
-//        if (A.supplyUsed() <= 20) return;
-        if (!A.everyNthGameFrame(31)) return;
-        if (A.supplyUsed() <= 27) return;
-        if (construction.buildingUnit() != null && construction.hasValidBuilderAndHeIsConstructing()) return;
-
-        if (construction.isOverdue()) {
-            AUnitType building = construction.buildingType();
-
-//            System.err.println("Construction is overdue: " + building + " / started s ago: " + construction.startedSecondsAgo());
-
-            construction.setBuilder(null);
-
-            if (building.isPylon() || building.isBase() || building.isGasBuilding()) {
-                A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
-
-                APosition oldPosition = construction.buildPosition();
-                construction.cancel(building + " is overdue");
-
-                AddToQueue.withHighPriority(building, oldPosition);
-            }
-            else {
-                TravelToConstruct.refreshConstructionPositionIfNeeded(construction);
-                if (construction.builder() == null || construction.builder().isDead()) {
-                    construction.assignOptimalBuilder();
-                }
-            }
+            OverdueConstructions.handleIfOverdue(construction);
         }
     }
 
@@ -77,7 +45,7 @@ public class ConstructionStatusChanger extends Commander {
         AUnit builder = construction.builder();
 
         // ...change builder into building (it just happens, yeah, weird stuff)
-        if (building == null || !building.exists()) {
+        if (building == null || building.hp() <= 0) {
             if (builder != null) {
 
                 // If builder has changed its type and became Zerg Extractor

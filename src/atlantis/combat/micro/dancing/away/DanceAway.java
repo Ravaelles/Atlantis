@@ -2,11 +2,8 @@ package atlantis.combat.micro.dancing.away;
 
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.PauseAndCenter;
-import atlantis.util.log.ErrorLog;
 
 public class DanceAway extends Manager {
     protected AUnit enemy;
@@ -40,6 +37,12 @@ public class DanceAway extends Manager {
 //            PauseAndCenter.on(unit);
 //        }
 
+//        System.err.println("unit.distTo(unit.targetPosition()) = " + unit.distTo(unit.targetPosition()));
+//        if (unit.isMoving() && unit.isDancingAway() && unit.distTo(unit.targetPosition()) >= 0.2) {
+        if (unit.isMoving() && unit.isDancingAway()) {
+            return usedManager(this);
+        }
+
         if (danceAwayFromTarget(logString)) {
 //            unit.paintCircleFilled(18, Color.Teal);
             return usedManager(this);
@@ -52,10 +55,21 @@ public class DanceAway extends Manager {
     // =========================================================
 
     private boolean danceAwayFromTarget(String logString) {
-//        return unit.moveAwayFrom(enemy.position(), danceAwayDist(), Actions.MOVE_DANCE_AWAY, logString);
+        if (
+            (unit.groundDistToMain() >= 50 || unit.friendsInRadiusCount(1) <= 2)
+                && unit.moveToMain(Actions.MOVE_DANCE_AWAY)
+        ) {
+            unit.setTooltip("DanceToMain");
+            return true;
+        }
+
         return unit.runningManager().runFrom(
-            enemy.position(), danceAwayDist(), Actions.MOVE_DANCE_AWAY, false
+            enemy.position(), danceAwayDist(), Actions.MOVE_DANCE_AWAY, allowedToNotifyNearUnitsToMakeSpace()
         );
+    }
+
+    protected boolean allowedToNotifyNearUnitsToMakeSpace() {
+        return false;
     }
 
     private double danceAwayDist() {

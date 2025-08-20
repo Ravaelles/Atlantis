@@ -48,6 +48,14 @@ public class ArmyStrength {
         );
     }
 
+    public static int ourArmyRelativeStrengthWithoutOurCB() {
+        return cacheInteger.get(
+            "ourArmyRelativeStrengthWithoutOurCB",
+            13,
+            () -> (int) Math.min(999, (Army.calculateWithoutCB() * 100 / EnemyArmyStrength.calculate()))
+        );
+    }
+
     // =========================================================
 
     private static int muchStrongerPercent() {

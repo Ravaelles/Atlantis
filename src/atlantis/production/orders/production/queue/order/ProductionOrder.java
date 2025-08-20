@@ -240,10 +240,10 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //    }
 
     public boolean supplyRequirementFulfilled(int extraEarlyBonus) {
-        int supplyUsed = A.supplyUsed();
+        int currentSupply = A.supplyUsed();
 
         if (unitOrBuilding != null && is(AUnitType.Protoss_Pylon)) {
-            if (supplyUsed < minSupply && !A.canAffordWithReserved(100, 0)) return false;
+            if (currentSupply < minSupply && !A.canAffordWithReserved(100, 0)) return false;
         }
 
         int allBonuses = 0;
@@ -262,7 +262,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 //            bonus = 2;
 //        }
 
-        return supplyUsed + allBonuses >= minSupply;
+        return currentSupply + allBonuses >= minSupply;
     }
 
     private int penaltyReservedMinerals() {

@@ -20,7 +20,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 
 //        System.out.println("A = " + A.digit((defender.woundPercent() / 90.0)));
         double margin = baseValueAgainst(attacker)
-            + (defender.woundPercent() / 120.0)
+            + (Math.abs(defender.woundPercent() - 5) / 120.0)
 //            + (defender.cooldown() >= 8 ? +0.8 : 0)
 //            + (defender.cooldown() >= 14 ? +1 : 0)
             + (defender.cooldown() >= 9 ? +3.5 : 0)

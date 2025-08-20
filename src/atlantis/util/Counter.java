@@ -85,4 +85,19 @@ public class Counter<K> {
     public K first() {
         return (new ArrayList<K>(mapping.keySet())).get(0);
     }
+
+    public K keyWithHighestValue() {
+        K maxKey = null;
+        int maxValue = Integer.MIN_VALUE;
+
+        for (K key : mapping.keySet()) {
+            int value = mapping.get(key);
+            if (value > maxValue) {
+                maxValue = value;
+                maxKey = key;
+            }
+        }
+
+        return maxKey;
+    }
 }

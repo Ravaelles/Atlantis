@@ -1,15 +1,12 @@
 package atlantis.combat.missions.defend.focus;
 
 import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.debug.painter.AAdvancedPainter;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.map.position.APosition;
 import atlantis.util.We;
-import bwapi.Color;
 
 import java.util.ArrayList;
 

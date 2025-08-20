@@ -33,7 +33,7 @@ public class ShouldDoChoking {
             if (squad.lastUnderAttackLessThanAgo(50)) return false;
         }
 
-        distToChoke = leader.distToNearestChokeCenter();
+        distToChoke = leader.nearestChokeCenterDist();
         if (distToChoke >= MIN_DIST_TO_CHOKE + 2) return false;
 
         if (enemies.canBeAttackedBy(leader, 1).notEmpty()) return false;

@@ -31,7 +31,7 @@ public class DanceToAsDragoon extends DanceTo {
     private boolean forceDanceToBunker() {
         return target.isBunker()
             && (unit.eval() >= 1.2 || A.supplyUsed() >= 170 || A.minerals() >= 1500)
-            && unit.distToNearestChokeCenter() <= 4
+            && unit.nearestChokeCenterDist() <= 4
             && unit.friendsInRadiusCount(1.5) >= 2;
     }
 

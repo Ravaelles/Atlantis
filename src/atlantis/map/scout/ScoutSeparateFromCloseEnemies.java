@@ -26,37 +26,49 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 
 
     private double safetyMargin() {
-        return 2.6
-            + (Enemy.zerg() ? 2.9 : 0)
-            + (unit.lastUnderAttackLessThanAgo(30 * 5) ? 3.5 : 0)
-            + unit.woundPercent() / 16.0;
+        return 6
+            + (Enemy.zerg() ? 2 : 0)
+            + (unit.lastUnderAttackLessThanAgo(30 * 15) ? 2.5 : 0)
+            + unit.woundPercent() / 10.0;
     }
 
     @Override
     public Manager handle() {
 //        if (unit.moveAwayFrom(center, 14, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
+        Manager manager = (new DoAvoidEnemies(unit, null)).handle();
+        if (manager != null) return usedManager(this, "ScoutSeparateS");
+
+        AUnit nearestEnemy = enemies.nearestTo(unit);
+        if (nearestEnemy != null && nearestEnemy.distTo(unit) >= (unit.shieldHealthy() ? 3.8 : 6.5)) {
+            if (
+                unit.distToMain() >= 70
+                    && unit.moveToSafety(Actions.RUN_ENEMIES)
+            ) return usedManager(this, "Scout2Safety");
+        }
+
+
+//        if (
+//            nearestEnemy != null
+//                && unit.moveAwayFrom(center, 7, Actions.RUN_ENEMIES, "ScoutSeparateN")
+//        ) {
+//            return usedManager(this);
+//        }
+
+//        if (unit.moveAwayFrom(enemies.nearestTo(unit), 6, Actions.RUN_ENEMIES, "ScoutSeparateB")) {
+//            return usedManager(this);
+//        }
+
+//        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
+
         if (center != null) {
-            if (unit.moveAwayFrom(center, 12, Actions.RUN_ENEMIES, "ScoutSeparateA")) {
+            if (unit.moveAwayFrom(center, 6, Actions.RUN_ENEMIES, "ScoutSeparateA")) {
                 return usedManager(this);
             }
         }
 
-        if (unit.moveAwayFrom(enemies.nearestTo(unit), 12, Actions.RUN_ENEMIES, "ScoutSeparateB")) {
-            return usedManager(this);
-        }
-
-        if (
-            unit.distToMain() >= 20 && unit.moveToSafety(Actions.RUN_ENEMIES)
-        ) return usedManager(this, "Scout2Safety");
-
-//        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
-
-//        Manager manager = (new DoAvoidEnemies(unit, null)).handle();
-//        if (manager != null) return usedManager(this, "ScoutSeparateB");
-
 //        if (unit.enemiesThatCanAttackMe(2.4 + unit.woundPercent() / 30.0).empty()) {
-        if (unit.moveToMain(Actions.RUN_ENEMIES)) return usedManager(this);
+//        if (unit.moveToMain(Actions.RUN_ENEMIES)) return usedManager(this);
 //        }
 
         return null;

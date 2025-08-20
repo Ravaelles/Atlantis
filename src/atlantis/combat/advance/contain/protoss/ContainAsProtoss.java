@@ -40,7 +40,7 @@ public class ContainAsProtoss extends Manager {
 //            else if (dist <= 14 || unit.distToOr999(Chokes.enemyMainChoke()) < DIST_TO_ENEMY_MAIN_CHOKE) {
             else if (dist <= 14) {
                 if (A.everyNthGameFrame(17)) {
-                    unit.holdPosition(Actions.HOLD_POSITION, "ContainHold");
+                    unit.holdPosition(Actions.MOVE_FORMATION, "ContainHold");
                 }
                 else {
                     unit.moveToSafety(Actions.MOVE_FORMATION, "ContainOut");
@@ -48,7 +48,7 @@ public class ContainAsProtoss extends Manager {
                 return true;
             }
 
-            unit.holdPosition(Actions.HOLD_POSITION, "ContainHold");
+            unit.holdPosition(Actions.MOVE_FORMATION, "ContainHold");
             return true;
         }
 
@@ -57,9 +57,14 @@ public class ContainAsProtoss extends Manager {
 
     private boolean shouldIgnore(double dist) {
         if (unit.enemiesNear().combatUnits().empty()) return false;
-        if (unit.enemiesNear().combatBuildingsAntiLand().count() >= 7 * unit.friendsNearCount()) return false;
 
-        return dist > 17 || unit.enemiesNear().combatUnits().atMost(4);
+        int enemyCB = unit.enemiesNear().combatBuildingsAntiLand().count();
+        if (enemyCB >= 9 * unit.friendsNearCount()) return false;
+
+        if (enemyCB >= 3 && A.supplyUsed() <= 170 && A.minerals() <= 1500) return false;
+
+        return dist > 17
+            || (unit.friendsNear().combatUnits().count() >= 16 && unit.enemiesNear().combatUnits().atMost(3));
     }
 
     private AUnit nearestEnemyBuilding() {

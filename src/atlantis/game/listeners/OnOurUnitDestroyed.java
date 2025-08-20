@@ -18,6 +18,8 @@ public class OnOurUnitDestroyed {
         printOurDeadUnit(unit);
 
         RepairAssignments.removeRepairer(unit);
+        OurWorkerWasKilled.onWorkedKilled(unit);
+        SquadTransfersCommander.removeUnitFromSquads(unit);
 
         Queue.get().refresh();
 
@@ -27,9 +29,6 @@ public class OnOurUnitDestroyed {
 
             if (unit.type().isABuilding()) Atlantis.LOST_BUILDINGS++;
         }
-
-        OurWorkerWasKilled.onWorkedKilled(unit);
-        SquadTransfersCommander.removeUnitFromSquads(unit);
 
         // =========================================================
 
@@ -47,13 +46,18 @@ public class OnOurUnitDestroyed {
     }
 
     private static void printOurDeadUnit(AUnit unit) {
+//        if (true) return;
 //        if (!unit.type().isDragoon()) return;
+//        if (unit.type().isDragoon() || unit.type().isZealot() || unit.isWorker()) return;
+        if (unit.isABuilding()) return;
+//        if (unit.type().isZealot()) return;
 //        if (!unit.isCombatUnit()) return;
-        if (A.s >= 60 * 7.5 && !unit.isRanged()) return;
+//        if (A.s >= 60 * 7.5 && !unit.isRanged() && !unit.isWorker()) return;
 
         String prefix = "";
         String string1 = unit.managerLogs().toString();
-        String string2 = unit.log().toString();
+//        String string2 = unit.log().toString();
+        String string2 = unit.commandHistory().toString();
 
         if (!Env.isLocal()) {
             prefix = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
@@ -62,8 +66,11 @@ public class OnOurUnitDestroyed {
             string2 = string2.replace("\n", "\n" + prefix);
         }
 
+        String leader = unit.isLeader() ? " LEADER!!!" : "";
+
         System.out.println(prefix + "_____________________________");
-        System.out.println(prefix + A.minSec() + " - Our " + unit.type().name() + " DIED [*]");
+        System.out.println(prefix + A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED [*]" + leader);
+        System.out.println(prefix + "Tooltip: " + unit.tooltip());
         System.out.println(prefix + string1);
         System.out.println(prefix + "---");
         System.out.println(prefix + string2);

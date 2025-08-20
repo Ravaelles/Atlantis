@@ -15,7 +15,7 @@ public class TerranComeCloser extends MissionManager {
         if (!We.terran()) return false;
         if (unit.isDT()) return false;
 
-        if (unit.isGroundUnit() && focusPoint != null && (
+        if (unit.isGroundUnit() && focus != null && (
             unit.friendsInRadius(1).groundUnits().atMost(1)
                 && unit.friendsInRadius(2).groundUnits().atMost(5)
         )) {

@@ -46,8 +46,14 @@ public class ActiveMap {
         return _cachedMapPath = ("maps/BroodWar/" + ActiveMap.mapName);
     }
 
-    public static boolean isMap(String mapPartialName) {
-        return ActiveMap.mapName != null && ActiveMap.mapName.contains(mapPartialName);
+    public static boolean isMap(String ...mapPartialName) {
+        if (ActiveMap.mapName == null) return false;
+
+        for (String subname : mapPartialName){
+            if (ActiveMap.mapName.contains(subname)) return true;
+        }
+
+        return false;
     }
 
     public static boolean isGosu() {

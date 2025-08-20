@@ -59,7 +59,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     }
 
     private boolean shouldGoToRandomUnexplored() {
-        return !EnemyInfo.weKnowAboutAnyRealUnit() && (focusPoint == null || focusPoint.isPositionVisible());
+        return !EnemyInfo.weKnowAboutAnyRealUnit() && (focus == null || focus.isPositionVisible());
     }
 
 //    private static boolean handleNearEnemy(Mission mission, AUnit unit) {

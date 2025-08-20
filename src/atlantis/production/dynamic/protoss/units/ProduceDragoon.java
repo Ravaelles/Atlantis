@@ -1,13 +1,16 @@
 package atlantis.production.dynamic.protoss.units;
 
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.Army;
+import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -29,7 +32,16 @@ public class ProduceDragoon {
         dragoons = Count.dragoons();
         strength = Army.strength();
 
-        if (!A.canAffordWithReserved(0, 50)) return false;
+        if (dragoons <= 6) return produceDragoon();
+        if (dragoons <= 17 && A.hasMinerals(125) && A.hasGas(150)) return produceDragoon();
+        if (A.hasMinerals(470) && A.hasGas(250)) return produceDragoon();
+        if (
+            dragoons <= 20 && !EnemyInfo.goesOrHasHiddenUnits() && !(new ResearchSingularityCharge()).applies()
+        ) return produceDragoon();
+
+        if (!A.hasGas(200) && !A.canAffordWithReserved(0, 50)) return false;
+        if (dragoons <= 14 && A.hasMinerals(175) && Count.basesWithUnfinished() >= 2) return produceDragoon();
+        if (Army.strength() >= 130 && Count.dragoons() >= 6 && !ProtossCriticalStuffInQueue.hasEnoughResources()) return false;
 
         if (
             (dragoons >= 3 || A.supplyUsed() >= 50)
@@ -43,8 +55,6 @@ public class ProduceDragoon {
 
 //        System.out.println("ProduceDragoon: dragoons = " + dragoons + " / res:" + singularityChargeResearched()
 //            + " / freeCC:" + Select.ourFree(Protoss_Cybernetics_Core).count());
-
-        if (dragoons <= 6) return produceDragoon();
         if (dragoons <= 9 && A.hasMinerals(228) && A.hasGas(50)) return produceDragoon();
 
         if (
@@ -52,7 +62,7 @@ public class ProduceDragoon {
         ) return produceDragoon();
 
         if (A.supplyUsed() <= 100 && A.hasMinerals(460) && A.hasGas(250)) return produceDragoon();
-        if (dragoons <= 15 && EnemyUnitBreachedBase.notNull() && Army.strength() <= 140) return produceDragoon();
+        if (dragoons <= 15 && EnemyUnitBreachedBase.someone() && Army.strength() <= 140) return produceDragoon();
 
         if (againstEarlyProtossRush()) return produceDragoon();
         if (againstEarlyZergRush()) return produceDragoon();
@@ -96,8 +106,10 @@ public class ProduceDragoon {
 
     private static boolean waitForDT() {
         return A.seconds() <= 500
-            && !A.canAfford(300, 220)
-            && CountInQueue.count(Protoss_Dark_Templar, 6) > 0;
+            && !A.canAfford(250, 150)
+            && Count.ourWithUnfinished(Protoss_Templar_Archives) > 0
+            && Count.darkTemplars() <= 2;
+//            && CountInQueue.count(Protoss_Dark_Templar, 6) > 0;
     }
 
     private static boolean againstEarlyProtossRush() {
@@ -111,7 +123,10 @@ public class ProduceDragoon {
     }
 
     private static boolean produceDragoon() {
-        boolean result = GatewayClosestToEnemy.get().train(
+        AUnit freeGateway = GatewayClosestToEnemy.get();
+        if (freeGateway == null) return false;
+
+        boolean result = freeGateway.train(
             type(), ForcedDirectProductionOrder.create(type())
         );
 //        System.err.println("ProduceDragoon = " + result);

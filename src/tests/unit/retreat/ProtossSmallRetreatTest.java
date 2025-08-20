@@ -62,7 +62,6 @@ public class ProtossSmallRetreatTest extends AbstractTestWithUnits {
             System.out.println("ManagerLogs");
             zealotA.managerLogs().print();
 
-//            System.out.println("-------- B");
             boolean shouldSmallScaleRetreatB = (new ProtossMeleeSmallScaleRetreat(zealotB)).shouldSmallScaleRetreat();
 //            System.out.println("shouldSmallScaleRetreatB = " + shouldSmallScaleRetreatB);
 //            System.out.println("smallScaleEval = " + zealotB.smallScaleEval());

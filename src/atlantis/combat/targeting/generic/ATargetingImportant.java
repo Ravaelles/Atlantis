@@ -2,10 +2,8 @@ package atlantis.combat.targeting.generic;
 
 import atlantis.combat.targeting.generic.protoss.ATargetingAsDragoon;
 import atlantis.combat.targeting.generic.protoss.ATargetingAsZealot;
-import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
@@ -51,7 +49,7 @@ public class ATargetingImportant extends ATargeting {
             .inShootRangeOf(unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("C1a = " + target);
+           debug(unit, "C1a = " + target);
             return target;
         }
 
@@ -61,7 +59,19 @@ public class ATargetingImportant extends ATargeting {
             .inShootRangeOf(unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("C1a = " + target);
+           debug(unit, "C1b = " + target);
+            return target;
+        }
+
+        // =========================================================
+        // Firebats
+
+        target = enemyUnits
+            .firebats()
+            .inShootRangeOf(unit)
+            .nearestTo(unit);
+        if (target != null) {
+           debug(unit, "C1f = " + target);
             return target;
         }
 
@@ -78,7 +88,7 @@ public class ATargetingImportant extends ATargeting {
             target = ATargetingAsZealot.target(unit, enemyUnits);
             if (target != null) {
 //                System.out.println("ImpZealot = " + target + " / " + target.hp());
-                debug("ImpZealot = " + target);
+               debug(unit, "ImpZealot = " + target);
                 return target;
             }
         }
@@ -103,7 +113,7 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, 0)
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("CombatUnit_inRange = " + target);
+           debug(unit, "CombatUnit_inRange = " + target);
             return target;
         }
 
@@ -119,7 +129,7 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, 0)
             .nearestTo(unit);
         if (target != null) {
-            debug("Targ_Close_CBs = " + target);
+           debug(unit, "Targ_Close_CBs = " + target);
             return target;
         }
 
@@ -140,7 +150,7 @@ public class ATargetingImportant extends ATargeting {
 
         if (target != null && target.isHealthy()) target = importantBuildings.mostWoundedOrNearest(unit.squadLeader());
         if (target != null) {
-            debug("Targ_CBs_A = " + target);
+           debug(unit, "Targ_CBs_A = " + target);
             return getThisCombatBuildingOrScvRepairingIt(target);
         }
 
@@ -165,7 +175,7 @@ public class ATargetingImportant extends ATargeting {
             .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
         if (target != null) {
-            debug("Zz20 = " + target);
+           debug(unit, "Zz_20 = " + target);
             return target;
         }
 
@@ -177,7 +187,7 @@ public class ATargetingImportant extends ATargeting {
             .inRadius(AUnit.NEAR_DIST, unit)
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("Zz30 = " + target);
+           debug(unit, "Zz30 = " + target);
             return target;
         }
 
@@ -192,7 +202,7 @@ public class ATargetingImportant extends ATargeting {
 //            .nearestTo(unit);
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("C1b = " + target);
+           debug(unit, "C1b = " + target);
             return target;
         }
 
@@ -203,7 +213,7 @@ public class ATargetingImportant extends ATargeting {
 //            .nearestTo(unit);
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("C1c = " + target);
+           debug(unit, "C1c = " + target);
             return target;
         }
 
@@ -241,7 +251,7 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, unit.isMelee() ? 5 : 2.8)
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("Targ_CBs_B = " + target);
+           debug(unit, "Targ_CBs_B = " + target);
             return target;
         }
 
@@ -262,7 +272,7 @@ public class ATargetingImportant extends ATargeting {
 
     private AUnit getThisCombatBuildingOrScvRepairingIt(AUnit target) {
         if (!target.isBunker()) {
-            debug("C0c = " + target);
+           debug(unit, "C0c = " + target);
             return target;
         }
 
@@ -273,11 +283,11 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(target, 2.1)
             .nearestTo(target);
         if (repairer != null) {
-            debug("C0a = " + repairer);
+           debug(unit, "C0a = " + repairer);
             return repairer;
         }
 
-        debug("C0b = " + target);
+       debug(unit, "C0b = " + target);
         return target;
     }
 
@@ -291,7 +301,7 @@ public class ATargetingImportant extends ATargeting {
             Selection enemiesInRange = enemyUnits.excludeMedics().inShootRangeOf(unit);
             target = enemiesInRange.mostWounded();
             if (target != null && (target.isWounded() || unit.cooldown() <= 3)) {
-                debug("C3_wnd_in = " + target);
+               debug(unit, "C3_wnd_in = " + target);
                 return target;
             }
 
@@ -300,13 +310,13 @@ public class ATargetingImportant extends ATargeting {
             enemiesInRange = enemyUnits.excludeMedics().canBeAttackedBy(unit, outBonus);
             target = enemiesInRange.mostWounded();
             if (target != null && target.isWounded()) {
-                debug("C3_wnd_out = " + target);
+               debug(unit, "C3_wnd_out = " + target);
                 return target;
             }
 
             target = leaderEnemies().excludeMedics().nearestTo(unit);
             if (target != null) {
-                debug("C3_near = " + target);
+               debug(unit, "C3_near = " + target);
                 return target;
             }
         }
@@ -321,7 +331,7 @@ public class ATargetingImportant extends ATargeting {
             .inRadius(7, unit)
             .nearestTo(unit);
         if (target != null) {
-            debug("C4 = " + target);
+           debug(unit, "C4 = " + target);
             return target;
         }
 
@@ -333,7 +343,7 @@ public class ATargetingImportant extends ATargeting {
                 .inRadius(1.04, unit)
                 .mostWoundedOrNearest(unit);
             if (target != null) {
-                debug("Target_Offensive_Workers = " + target);
+               debug(unit, "Target_Offensive_Workers = " + target);
                 return target;
             }
         }
@@ -356,7 +366,7 @@ public class ATargetingImportant extends ATargeting {
             .mostWounded();
 
         if (target != null) {
-            debug("C = " + target);
+           debug(unit, "C = " + target);
             return target;
         }
 
@@ -374,7 +384,7 @@ public class ATargetingImportant extends ATargeting {
             .mostWounded();
 
         if (target != null) {
-            debug("C5x = " + target);
+           debug(unit, "C5x = " + target);
             return target;
         }
 
@@ -383,7 +393,7 @@ public class ATargetingImportant extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("C5y = " + target);
+           debug(unit, "C5y = " + target);
             return target;
         }
 
@@ -404,7 +414,7 @@ public class ATargetingImportant extends ATargeting {
             .mostWounded();
 
         if (target != null) {
-            debug("C5z = " + target);
+           debug(unit, "C5z = " + target);
             return target;
         }
 
@@ -418,7 +428,7 @@ public class ATargetingImportant extends ATargeting {
             .canBeAttackedBy(unit, unit.isMelee() ? 3.7 : 1.7)
             .mostWoundedOrNearest(unit);
         if (target != null) {
-            debug("Targ_CB_CreepC = " + target);
+           debug(unit, "Targ_CB_CreepC = " + target);
             return target;
         }
 
@@ -433,7 +443,7 @@ public class ATargetingImportant extends ATargeting {
             .mostWounded();
 
         if (target != null) {
-            debug("C5d = " + target);
+           debug(unit, "C5d = " + target);
             return target;
         }
 
@@ -445,7 +455,7 @@ public class ATargetingImportant extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("C5bWork = " + target);
+           debug(unit, "C5bWork = " + target);
             return target;
         }
 
@@ -467,18 +477,19 @@ public class ATargetingImportant extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("C5a = " + target);
+           debug(unit, "C5a = " + target);
             return target;
         }
 
         // === BASES NEARBY ======================================================
 
         target = enemyBuildings.bases()
+            .onlyCompleted()
             .inRadius(unit.isMelee() ? 3 : 8, unit)
             .nearestTo(unit);
 
         if (target != null) {
-            debug("C5b0 = " + target);
+           debug(unit, "C5b0 = " + target);
             return target;
         }
 
@@ -490,7 +501,7 @@ public class ATargetingImportant extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("C5b1 = " + target);
+           debug(unit, "C5b1 = " + target);
             return target;
         }
 
@@ -498,12 +509,13 @@ public class ATargetingImportant extends ATargeting {
 
         target = enemyBuildings
             .bases()
+            .onlyCompleted()
             .notHavingHp(140)
             .inRadius(AUnit.NEAR_DIST, unit)
             .mostWounded();
 
         if (target != null) {
-            debug("C6 = " + target);
+           debug(unit, "C6 = " + target);
             return target;
         }
 
@@ -525,7 +537,7 @@ public class ATargetingImportant extends ATargeting {
             .nearestTo(unit);
 
         if (target != null) {
-            debug("D6b = " + target);
+           debug(unit, "D6b = " + target);
             return target;
         }
 

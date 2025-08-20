@@ -12,11 +12,13 @@ import atlantis.game.GameSpeed;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.CenterCamera;
 
 import java.util.Arrays;
 
 public class MapSpecificCommander extends Commander {
     public static boolean initialSpeed = true;
+    private static boolean _firstSettings = true;
 
     @Override
     protected void handle() {
@@ -53,7 +55,11 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        else if (ActiveMap.isMap("M_v_") || ActiveMap.isMap("Tanks_v_")) {
+        else if (
+            ActiveMap.isMap("M_v_")
+                || ActiveMap.isMap("Tanks_v_")
+                || ActiveMap.isMap("inCorner")
+        ) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedToNormal();
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
@@ -63,7 +69,9 @@ public class MapSpecificCommander extends Commander {
 
         // =========================================================
 
-        else if (ActiveMap.isMap("ZealDrag_v_")) {
+        else if (ActiveMap.isMap(
+            "ZealDrag_v_", "Drag_run", "Probe_run", "Reav_v_"
+        )) {
             if (A.now() <= 1) {
                 GameSpeed.changeSpeedToNormal();
                 AAdvancedPainter.paintingMode = AAdvancedPainter.MODE_FULL_PAINTING;
@@ -186,23 +194,31 @@ public class MapSpecificCommander extends Commander {
                 || ActiveMap.isMap("exp_skilltest")
                 || ActiveMap.isMap("7th")
         ) {
-            int initFrameSkip = 500;
-
-            if (A.now() <= 0) {
+            if (_firstSettings && Count.ourCombatUnits() >= 1) {
+                AUnit unit = Select.ourCombatUnits().first();
+                if (unit != null && unit.enemiesNear().combatUnits().notEmpty()) {
+//                    AAdvancedPainter.enablePainting();
+                    GameSpeed.changeFrameSkipTo(0);
+                    GameSpeed.changeSpeedTo(0);
+                    CenterCamera.onFirstCombatUnit();
+                    _firstSettings = false;
+                }
+            }
+            if (_firstSettings && A.now() <= 0) {
                 AAdvancedPainter.disablePainting();
 //                AAdvancedPainter.enablePainting();
                 GameSpeed.changeSpeedTo(0);
-                GameSpeed.changeFrameSkipTo(initFrameSkip);
+                GameSpeed.changeFrameSkipTo(1000);
 
                 if (ActiveMap.isMap("vsGosuRav")) {
                     CameraCommander.centerCameraOn((new MissionDefendFocusPoint()).focusPoint());
                 }
             }
 
-            if (A.now() == 120 * 30) {
-                GameSpeed.changeFrameSkipTo(0);
-                GameSpeed.changeSpeedTo(0);
-            }
+//            if (A.now() == 120 * 30) {
+//                GameSpeed.changeFrameSkipTo(0);
+//                GameSpeed.changeSpeedTo(20);
+//            }
 
 //            if (ActiveMap.isMap("exp_skilltest") && !Have.controlTower()) {
 //                GameSpeed.changeFrameSkipTo(2000);

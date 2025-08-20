@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid.special;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
@@ -27,7 +26,7 @@ public class AvoidDT extends Manager {
 //            if (unit.lastActionLessThanAgo(2, Actions.RUN_ENEMY)) return null;
 //        }
 
-        double radius = Math.min(3.9, 2.7 + enemyDts.count() - 1 + unit.woundPercent() / 90.0);
+        double radius = radius(enemyDts);
         AUnit dt = enemyDts
             .inRadius(radius, unit)
             .effUndetected()
@@ -37,5 +36,14 @@ public class AvoidDT extends Manager {
         if (unit.runningManager().runFromAndNotifyOthersToMove(dt, "DT!")) return usedManager(this);
 
         return null;
+    }
+
+    private double radius(Selection enemyDts) {
+        if (unit.isWorker()) return 3;
+
+        return Math.min(
+            4.9,
+            2.8 + enemyDts.count() - 1 + unit.woundPercent() / 40.0 + (unit.isWorker() ? 1.5 : 0)
+        );
     }
 }

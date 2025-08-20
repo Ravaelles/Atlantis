@@ -2,6 +2,7 @@ package atlantis.production.constructions.cancelling;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
+import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.*;
@@ -17,8 +18,13 @@ public class CriticalCancelPending {
 
         CancelNotStartedBases.cancelNotStartedOrEarlyBases(null, "Critical base cancel");
 
+        int counter = 0;
         while (cleared < mineralsNeeded) {
             cleared += cancelOne();
+
+            if (++counter >= 5) {
+                break;
+            }
         }
     }
 
@@ -39,26 +45,34 @@ public class CriticalCancelPending {
     }
 
     private static int cancelOneProtoss() {
-        if (CancelNotStarted.cancel(Protoss_Gateway)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Protoss_Cybernetics_Core)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Protoss_Robotics_Support_Bay)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Protoss_Pylon)) return lastCancelledMinerals;
+        if (cancel(Protoss_Gateway)) return lastCancelledMinerals;
+        if (cancel(Protoss_Cybernetics_Core)) return lastCancelledMinerals;
+        if (cancel(Protoss_Robotics_Support_Bay)) return lastCancelledMinerals;
+//        if (cancel(Protoss_Pylon)) return lastCancelledMinerals;
 
         return 0;
     }
 
     private static int cancelOneTerran() {
-        if (CancelNotStarted.cancel(Terran_Factory)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Terran_Barracks)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Terran_Supply_Depot)) return lastCancelledMinerals;
-        if (CancelNotStarted.cancel(Terran_Machine_Shop)) return lastCancelledMinerals;
+        if (cancel(Terran_Factory)) return lastCancelledMinerals;
+        if (cancel(Terran_Barracks)) return lastCancelledMinerals;
+        if (cancel(Terran_Supply_Depot)) return lastCancelledMinerals;
+        if (cancel(Terran_Machine_Shop)) return lastCancelledMinerals;
 
         return 0;
     }
 
     // =========================================================
 
+    private static boolean cancel(AUnitType type) {
+        return CancelNotStarted.cancel(type, "Critical");
+    }
+
     public static void cancelBases() {
-        CancelNotStarted.cancel(AtlantisRaceConfig.BASE);
+        cancel(AtlantisRaceConfig.BASE);
+    }
+
+    public static void cancelGatewats() {
+        cancel(Protoss_Gateway);
     }
 }

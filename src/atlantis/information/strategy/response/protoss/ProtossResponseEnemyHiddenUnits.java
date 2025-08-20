@@ -21,6 +21,7 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     private void cancelBasesBeingConstructed() {
         if (Count.observers() == 0 && !Have.observatory()) {
             CriticalCancelPending.cancelBases();
+            CriticalCancelPending.cancelGatewats();
         }
     }
 

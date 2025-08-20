@@ -4,7 +4,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.DefineConstructionForNewUnit;
 import atlantis.units.AUnit;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.We;
 
 public class TerranNewBuilding {

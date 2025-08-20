@@ -2,7 +2,7 @@ package atlantis.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;

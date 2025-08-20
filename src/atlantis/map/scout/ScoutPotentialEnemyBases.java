@@ -26,6 +26,7 @@ public class ScoutPotentialEnemyBases extends Manager {
     public boolean applies() {
         baseLocations = BaseLocationsNearEnemy.get();
         if (baseLocations.empty()) return false;
+        if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
 
         currentBaseLocationFocus = longestNotVisited();
         if (currentBaseLocationFocus == null) return false;

@@ -15,11 +15,12 @@ import java.io.File;
  * We don't want to print out too much data in production.
  */
 public class Env {
-    private static boolean isLocal = false;
-    private static boolean isTesting = false;
-    private static boolean isBenchmark = false;
-    private static boolean isStarEngine = false;
     private static boolean firstRun = true;
+    private static boolean generateCherryVisReplay = false;
+    private static boolean isBenchmark = false;
+    private static boolean isLocal = false;
+    private static boolean isStarEngine = false;
+    private static boolean isTesting = false;
     private static boolean modifyBwapiIni = false;
     private static boolean paramTweaker = false;
     private static String copyCherryVisDataTo = null;
@@ -68,9 +69,6 @@ public class Env {
 
     private static boolean applyKeyAndValueToFlag(String key, String value) {
         switch (key) {
-            case "LOCAL":
-                isLocal = trueFalse(value);
-                return true;
             case "BWAPI_DATA_PATH":
                 AtlantisIgniter.setBwapiDataPath(value);
                 return true;
@@ -82,6 +80,12 @@ public class Env {
                 return true;
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
                 ForceExitLocallyAfterRealSeconds.realSecondsLimit = toInt(value);
+                return true;
+            case "LOCAL":
+                isLocal = trueFalse(value);
+                return true;
+            case "GENERATE_CHERRYVIS_REPLAY":
+                generateCherryVisReplay = trueFalse(value);
                 return true;
             case "MODIFY_BWAPI_INI":
                 modifyBwapiIni = trueFalse(value);
@@ -186,5 +190,9 @@ public class Env {
 
     public static boolean shouldModifyBwapiIni() {
         return modifyBwapiIni;
+    }
+
+    public static boolean generateCherryVisReplay() {
+        return generateCherryVisReplay;
     }
 }

@@ -10,14 +10,22 @@ import tests.fakes.FakeUnit;
  */
 public class FakeFoggedUnit extends AbstractFoggedUnit {
 
-    protected FakeFoggedUnit() {
-        super(null);
+//    protected FakeFoggedUnit() {
+//        super(null);
+//    }
+
+    private FakeFoggedUnit(FakeUnit unit) {
+        super(unit);
     }
 
     public static FakeFoggedUnit fromFake(FakeUnit unit) {
-        FakeFoggedUnit fakeFoggedUnit = new FakeFoggedUnit();
+        FakeFoggedUnit fakeFoggedUnit = new FakeFoggedUnit(unit);
         fakeFoggedUnit._id = unit.id();
         fakeFoggedUnit._lastAUnit = unit;
+        fakeFoggedUnit._lastType = unit.type();
+
+        fakeFoggedUnit.lateInitByAbstractFoggedUnit();
+
         fakeFoggedUnit.onAbstractFoggedUnitCreated(unit);
 
         all.put(unit.id(), fakeFoggedUnit);

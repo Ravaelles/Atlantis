@@ -41,7 +41,7 @@ public class ShouldAvoidSunkenAsProtoss {
     }
 
     private static double minDist(AUnit unit) {
-        if (AvoidCombatBuildingKeepFar.shouldKeepFar()) return AvoidCombatBuildingKeepFar.DIST(unit);
+        if (AvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return AvoidCombatBuildingKeepFar.DIST(unit);
 
 //        return Count.ourCombatUnits() <= 8 ? 8.4 : 14;
         return Army.strength() >= 200 ? 8.4 : 14;

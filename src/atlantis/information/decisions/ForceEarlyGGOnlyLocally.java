@@ -5,7 +5,9 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.generic.Army;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 
 public class ForceEarlyGGOnlyLocally extends Commander {
@@ -13,12 +15,16 @@ public class ForceEarlyGGOnlyLocally extends Commander {
     public boolean applies() {
         if (!GGForEnemy.allowed) return false;
 
-        return A.s >= 8 * 60
+        return A.s >= 6 * 60
 //            && (Army.strength() <= 15 || A.resourcesBalance() <= -1100)
             && !A.isUms()
-            && Army.strength() <= 10
-            && Count.ourCombatUnits() <= 1
-            && Count.workers() <= 25;
+            && Army.strength() <= 8
+            && (A.resourcesBalance() <= -500 || Army.strength() <= 3)
+            && Count.enemyCombatUnits() >= 10
+            && (Count.ourCombatUnits() <= 2 && (Count.ourCombatUnits() * 7) <= Count.enemyCombatUnits())
+            && (A.resourcesBalance() <= -700 || Count.workers() <= 30)
+            && Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Dark_Templar) == 0
+            && Count.cannons() <= 1;
     }
 
     @Override

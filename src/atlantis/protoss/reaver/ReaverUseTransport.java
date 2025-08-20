@@ -5,6 +5,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 import atlantis.util.log.ErrorLog;
@@ -12,6 +13,7 @@ import atlantis.util.log.ErrorLog;
 public class ReaverUseTransport extends Manager {
 
     private AUnit shuttle;
+    private Selection enemies;
 
     public ReaverUseTransport(AUnit unit) {
         super(unit);
@@ -21,28 +23,47 @@ public class ReaverUseTransport extends Manager {
     public boolean applies() {
 //        if (true) return false;
 
-        Selection enemies = unit.enemiesNear().combatUnits();
+        if (Count.shuttles() == 0) return false;
+        if (
+            unit.hp() >= 60
+                && unit.lastActionLessThanAgo(60, Actions.UNLOAD)
+                && !unit.shotSecondsAgo(2)
+        ) return false;
 
-        if (unit.scarabCount() == 0 && enemies.canAttack(unit, 2).notEmpty()) return true;
+        if (unit.isMoving() && unit.distToTarget() >= 11) return true;
 
-        if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
+        Selection enemiesNear = unit.enemiesNear();
+        enemies = enemiesNear.combatUnits().canAttack(unit, 6);
+
+        if (Enemy.protoss() && enemiesNear.scarabs().countInRadius(5 + unit.woundPercent() / 33.0, unit) > 0) return true;
+
+        if (dontInterruptAttack()) return false;
+
+        if (
+            unit.shieldWound() >= 20
+                && (unit.shieldWound() >= 38 || unit.scarabCount() == 0)
+                && unit.enemiesNearInRadius(4) > 0
+                && enemies.nonBuildings().canAttack(unit, 2).notEmpty()
+        ) return load("EnemiesClose");
 
         if (unit.lastActionLessThanAgo(20, Actions.LOAD)) return true;
-        if (unit.lastUnderAttackLessThanAgo(50)) return true;
+        if (unit.lastUnderAttackLessThanAgo(50) && unit.shieldWound() >= 18) return load("UnderAttack");
 
         if (unit.hp() >= 120 && unit.shotSecondsAgo() >= 10 && enemies.groundUnits().canBeAttackedBy(unit, 4).notEmpty()) return false;
 
-        if (unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)) return true;
-        if (justShootAndShouldEvacuate()) return true;
+        if (
+            unit.lastUnderAttackLessThanAgo(50) && (unit.shields() <= 40 || unit.shotSecondsAgo() <= 3)
+        ) return load("UnderAttackAndWounded");
+        if (justShootAndShouldEvacuate()) return load("Evacuate");
 
         if (unit.isAttackFrame()) return false;
         if (unit.isStartingAttack()) return false;
 
-        if (unit.isRunning() || unit.isAction(Actions.MOVE_AVOID)) return true;
-        if (againstTerranSiegeTanksImmediatelyPickUpAfterShot()) return true;
-        if (surroundedByEnemiesGetTheFuckOuttaHere()) return true;
+        if (loadDueToRunning()) return load("Running");
+        if (againstTerranSiegeTanksImmediatelyPickUpAfterShot()) return load("QuickTanks");
+        if (surroundedByEnemiesGetTheFuckOuttaHere()) return load("Surrounded");
 
-        if (unit.lastActionLessThanAgo(35, Actions.UNLOAD)) return false;
+        if (unit.lastActionLessThanAgo(45, Actions.UNLOAD) && !unit.shotSecondsAgo(2)) return false;
 
         if (
             unit.noCooldown()
@@ -61,14 +82,52 @@ public class ReaverUseTransport extends Manager {
                 && unit.enemiesNearInRadius(10) > 0
         ) return false;
 
+        if (shouldGenericLoad()) return load("GenericNiceCar");
+
+        return false;
+    }
+
+    private boolean shouldGenericLoad() {
+        if (EnemyUnits.discovered().combatBuildingsAntiLand().count() == 0) return false;
+
+        return (enemies.empty() && unit.enemiesNear().buildings().countInRadius(8, unit) == 0)
+            || unit.hp() <= 80;
+    }
+
+    private boolean loadDueToRunning() {
+        if (unit.isRunning() || unit.isAction(Actions.MOVE_AVOID)) {
+            int nearbyEnemyCount = enemies.nonBuildings().countInRadius(12, unit);
+
+            return nearbyEnemyCount > 0 && unit.shieldWound() >= 45 && unit.eval() <= 2;
+        }
+
+        return false;
+    }
+
+    private boolean load(String reason) {
+//        System.err.println("Load reaver: " + reason);
         return true;
+    }
+
+    private boolean dontInterruptAttack() {
+        if (
+            unit.noCooldown()
+                && unit.isActiveManager(ReaverContinueAttack.class)
+                && unit.shields() >= 40
+                && unit.distToTarget() <= 10
+                && unit.distToTarget() >= 7.1
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean justShootAndShouldEvacuate() {
         return unit.cooldown() >= 10
-            && unit.shieldWound() >= 11
+            && unit.shieldWound() >= 45
             && unit.lastAttackFrameLessThanAgo(30)
-            && unit.enemiesNear().canAttack(unit, 1.1 + unit.woundPercent() / 30.0).atLeast(1);
+            && unit.enemiesNear().nonBuildings().canAttack(unit, 1.1 + unit.woundPercent() / 30.0).atLeast(1);
     }
 
     private boolean againstTerranSiegeTanksImmediatelyPickUpAfterShot() {
@@ -78,10 +137,12 @@ public class ReaverUseTransport extends Manager {
     }
 
     private boolean surroundedByEnemiesGetTheFuckOuttaHere() {
+        if (unit.shieldWound() <= 38 && unit.eval() >= 2) return false;
+
         Selection enemiesSuperNear = unit.enemiesNear().canAttack(unit, 2);
 
         return enemiesSuperNear.melee().atLeast(unit.hp() <= 180 ? 1 : 3)
-            || enemiesSuperNear.ranged().canAttack(unit, rangedEnemiesMargin()).atLeast(1);
+            || enemiesSuperNear.ranged().nonBuildings().canAttack(unit, rangedEnemiesMargin()).atLeast(1);
     }
 
     private double rangedEnemiesMargin() {
@@ -96,9 +157,12 @@ public class ReaverUseTransport extends Manager {
 
     @Override
     public Manager handle() {
+        int minHp = 30;
+        if (unit.enemiesNear().ranged().countInRadius(6, unit) >= 3) minHp = 50;
+
         shuttle = unit.friendsNear()
             .ofType(AUnitType.Protoss_Shuttle)
-            .havingAtLeastHp(30)
+            .havingAtLeastHp(minHp)
             .havingSpaceFree(2)
             .nearestTo(unit);
 

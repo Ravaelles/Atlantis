@@ -21,7 +21,7 @@ public class PauseAndCenter {
 
     public static void on(HasPosition position, boolean paintCircle, Color color) {
         if (!Env.isLocal()) return;
-        if (counter >= 4) return;
+        if (counter >= 5) return;
 
         if (position == null) return;
         if (color == null) color = Color.Yellow;

@@ -195,4 +195,12 @@ public class Have {
     public static boolean bunker() {
         return Count.ofType(AUnitType.Terran_Bunker) > 0;
     }
+
+    public static boolean pylon() {
+        return Count.ofType(AUnitType.Protoss_Pylon) > 0;
+    }
+
+    public static boolean anyBuilding() {
+        return Select.ourBuildings().notEmpty();
+    }
 }

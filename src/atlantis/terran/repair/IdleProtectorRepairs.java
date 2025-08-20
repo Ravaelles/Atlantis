@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
-import atlantis.units.workers.GatherResources;
 
 public class IdleProtectorRepairs extends Manager {
     private Selection repairable;

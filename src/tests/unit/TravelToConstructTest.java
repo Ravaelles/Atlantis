@@ -46,7 +46,7 @@ public class TravelToConstructTest extends WorldStubForTests {
                     currentSupplyUsed = 10;
                 }
 
-                System.err.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
+                A.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
                 ProductionOrder pylonOrder = CurrentBuildOrder.get().productionOrders().get(0);
                 assert pylonOrder.unitType().isPylon();
@@ -60,11 +60,11 @@ public class TravelToConstructTest extends WorldStubForTests {
                 buildings.add(Protoss_Gateway);
 
                 for (AUnitType building : buildings) {
-                    System.err.println("===== For " + building);
+                    A.println("===== For " + building);
                     int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
                         20, Protoss_Pylon, pylonOrder
                     );
-                    System.err.println("Minerals needed: " + mineralsNeeded);
+                    A.println("Minerals needed: " + mineralsNeeded);
 //                    for (int minerals = 0; minerals <= 90; minerals += 10) {
 //                    }
                 }
@@ -95,7 +95,7 @@ public class TravelToConstructTest extends WorldStubForTests {
                     currentSupplyUsed = 10;
                 }
 
-                System.err.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
+                A.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
 //                ProductionOrder gatewayOrder = CurrentBuildOrder.get().productionOrders().get(0);
                 Orders nextOrders = Queue.get().notFinishedNext30();
@@ -113,11 +113,11 @@ public class TravelToConstructTest extends WorldStubForTests {
                 buildings.add(Protoss_Gateway);
 
                 for (AUnitType building : buildings) {
-                    System.err.println("===== For " + building);
+                    A.println("===== For " + building);
                     int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
                         20, Protoss_Gateway, gatewayOrder
                     );
-                    System.err.println("Minerals needed: " + mineralsNeeded);
+                    A.println("Minerals needed: " + mineralsNeeded);
 //                    for (int minerals = 0; minerals <= 90; minerals += 10) {
 //                    }
                 }
@@ -141,7 +141,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 //                currentSupplyUsed = 7;
 ////                currentSupplyUsed = 6;
 //
-////                System.err.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
+////                A.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
 ////                CurrentBuildOrder.get().print();
 //                ProductionOrder pylonOrder = CurrentBuildOrder.get().productionOrders().get(0);
 //                assert pylonOrder.unitType().isPylon();
@@ -160,7 +160,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 //                IsReadyToProduceOrder readyToProduceService = new IsReadyToProduceOrder();
 //                boolean isApprxReady = readyToProduceService.check(pylonOrder);
 //
-//                System.err.println("isApprxReady = " + isApprxReady);
+//                A.println("isApprxReady = " + isApprxReady);
 //
 //                if (isApprxReady) {
 //                    TravelToConstruct service = new TravelToConstruct(worker);
@@ -168,7 +168,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 //                        20, Protoss_Pylon, pylonOrder
 //                    );
 //
-//                    System.err.println("mineralsNeeded = " + mineralsNeeded);
+//                    A.println("mineralsNeeded = " + mineralsNeeded);
 //                }
 //
 //

@@ -51,7 +51,7 @@ public class BuildPylonFirst {
     }
 
     public static boolean needsPylon(HasPosition position) {
-        return Select.ourOfType(type()).inRadius(5.3, position).count() == 0;
+        return Count.existingOrPlannedBuildingsNear(type(), 5.3, position) == 0;
     }
 
     // =========================================================

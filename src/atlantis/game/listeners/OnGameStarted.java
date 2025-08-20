@@ -2,8 +2,7 @@ package atlantis.game.listeners;
 
 import atlantis.Atlantis;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.omega.Omega;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
@@ -92,7 +91,6 @@ public class OnGameStarted {
 //        }
 
         Alpha.get().setMission(Missions.globalMission());
-        Omega.get().setMission(Missions.DEFEND);
 
         System.out.println("### Atlantis is working! ###\n");
         if (Env.isTournament()) {
@@ -135,7 +133,7 @@ public class OnGameStarted {
 
 //            A.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {
-                if (Env.isLocal()) A.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+                if (Env.isLocal() && !Env.isTesting()) A.println("Use build order: `" + CurrentBuildOrder.get() + "`");
             }
             else {
                 ErrorLog.printErrorOnce("Invalid (empty) build order in AtlantisRaceConfig!");

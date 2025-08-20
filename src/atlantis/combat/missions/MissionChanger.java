@@ -1,10 +1,9 @@
 package atlantis.combat.missions;
 
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
-import atlantis.combat.missions.contain.MissionChangerWhenContain;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.combat.missions.defend.protoss.sparta.Sparta;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -24,7 +23,7 @@ public abstract class MissionChanger {
 
     public static final boolean DEBUG = true;
     //    public static final boolean DEBUG = false;
-    public static String reason = "---";
+    public static String reason = "-MissionReasonUnknown-";
 
     // =========================================================
 
@@ -73,9 +72,6 @@ public abstract class MissionChanger {
 
         if (Missions.isGlobalMissionAttack()) {
             MissionChangerWhenAttack.get().changeMissionIfNeeded();
-        }
-        else if (Missions.isGlobalMissionContain()) {
-            MissionChangerWhenContain.get().changeMissionIfNeeded();
         }
         else if (Missions.isGlobalMissionDefendOrSparta()) {
             MissionChangerWhenDefend.get().changeMissionIfNeeded();
@@ -133,18 +129,13 @@ public abstract class MissionChanger {
         return Missions.forceGlobalMissionAttack(reason);
     }
 
-    public static void forceMissionContain(String reason) {
-        Missions.forceGlobalMissionContain(reason);
-    }
-
     public static boolean forceMissionSpartaOrDefend(String reason) {
         if (Sparta.canUseSpartaMission()) {
             Missions.forceGlobalMissionSparta(reason);
-        }
-        else {
-            Missions.forceGlobalMissionDefend(reason);
+            return true;
         }
 
+        Missions.forceGlobalMissionDefend(reason);
         return true;
     }
 

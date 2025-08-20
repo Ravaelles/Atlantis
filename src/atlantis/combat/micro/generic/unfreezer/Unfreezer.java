@@ -1,12 +1,16 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.generic.DoNothing;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.fix.PreventDoNothing;
 
 public class Unfreezer extends Manager {
+    public static final int UNFREEZE_WHEN_IDLE_FOR = 40;
+
     public Unfreezer(AUnit unit) {
         super(unit);
     }
@@ -18,9 +22,18 @@ public class Unfreezer extends Manager {
         if (unit.isAir()) return false;
         if (!unit.isCombatUnit()) return false;
         if (unit.isABuilding()) return false;
+        if (unit.isLoaded()) return false;
+        if (unit.lastPositionChangedLessThanAgo(40)) return false;
+        if (unit.lastPositioningActionLessThanAgo(70)) return false;
         if (unit.hasCooldown()) return false;
+        if (unit.isMissionSparta()) return false;
+        if (unit.isActiveManager(ProtossMoon.class)) return false;
 //        if (unit.lastAttackFrameLessThanAgo(45)) return false;
-        if (unit.lastPositionChangedLessThanAgo(29)) return false;
+//        if (unit.lastActionLessThanAgo(20, Actions.UNFREEZE)) return false;
+        if (unit.lastAttackFrameLessThanAgo(60)) return false;
+        if (unit.lastAttackFrameLessThanAgo(50)) return false;
+        if (unit.isActiveManager(DoNothing.class)) return false;
+        if (unit.enemiesICanAttack(1).notEmpty()) return false;
 //        if (unit.isStartingAttack()) return false;
 //        if (unit.isAttackFrame()) return false;
 //        if (unit.hasCooldown()) return false;
@@ -63,6 +76,7 @@ public class Unfreezer extends Manager {
         return new Class[]{
             UnfreezeDragoon.class,
             UnfreezeGeneric.class,
+            // ---------------
 //            UnfreezeAttackOrMove.class,
 //            UnfreezeRun.class,
 //            UnfreezeRunA.class,

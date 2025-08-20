@@ -42,17 +42,23 @@ public class PositionFulfillsAllConditions {
 //            return false;
 //        }
 
+        if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
+        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
+        if (EnemiesTooClose.check(builder, building, position)) return failed();
+
         if (We.protoss()) {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
-            if (IsPositionPowered.isNotPowered(building, position)) return failed();
             if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return failed();
+            if (PylonTooFarFromBaseEarly.isTooFar(builder, building, position)) return failed();
             if (ProtossTooCloseToMapBoundaries.isTooClose(building, position)) return failed();
+            if (ProtossTooCloseToOtherBuildings.isTooClose(builder, building, position)) return failed();
             if (ProtossTooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(building, position)) return failed();
+            if (ProtossCannonTooCloseToPylonFix.isTooClose(building, position)) return failed();
         }
 
         if (We.terran()) {
             if (TerranForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
-            if (!TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
+//            if (!TerranHasEnoughSidesFreeFromOtherBuildings.isOkay(builder, building, position)) return failed();
             if (TerranPositionFinder.isNotEnoughPlaceLeftForAddons(builder, building, position)) return failed();
             if (building.isMissileTurret()) {
                 if (IsProbablyInAnotherRegion.differentRegion(builder, building, position, nearTo)) return failed();
@@ -60,9 +66,6 @@ public class PositionFulfillsAllConditions {
             if (TooCloseToBunker.isTooCloseToBunker(building, position)) return failed();
             if (TooCloseToTerranBase.isTooCloseToBase(building, position)) return failed();
         }
-
-        if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
-        if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
 
         if (!building.isBase()) {
             if (TooCloseToChoke.isTooCloseToChoke(building, position)) return failed();

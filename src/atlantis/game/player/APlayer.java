@@ -91,4 +91,8 @@ public class APlayer implements Comparable<APlayer> {
     public Iterable<? extends Unit> getUnits() {
         return p.getUnits();
     }
+
+    public String name() {
+        return p.getName();
+    }
 }

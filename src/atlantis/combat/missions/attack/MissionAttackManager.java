@@ -3,8 +3,14 @@ package atlantis.combat.missions.attack;
 import atlantis.architecture.Manager;
 //import atlantis.combat.squad.positioning.protoss.ProtossSquadCohesion;
 import atlantis.combat.advance.AdvanceToAttackFocusPoint;
+import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
+import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
+import atlantis.combat.advance.focus.TooFarFromFocusPoint;
+import atlantis.combat.advance.terran.TerranAdvance;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.wraith.AsAirAttackAnyone;
+import atlantis.combat.squad.positioning.protoss.cohesion.ProtossCohesion;
+import atlantis.combat.squad.positioning.terran.TerranCohesion;
 import atlantis.units.AUnit;
 
 public class MissionAttackManager extends Manager {
@@ -15,20 +21,21 @@ public class MissionAttackManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-//            AllowTimeToReposition.class,
-
-//            ContainEnemy.class,
-//
-//            AttackNearbyEnemies.class,
-//
-//            TerranAdvance.class,
-
             AsAirAttackAnyone.class,
+
+            TerranContainEnemyWrapper.class,
+            TerranAdvance.class,
+
+//            AdvanceToAttackFocusPoint.class,
+
+            OnWrongSideOfFocusPoint.class,
+
             AttackNearbyEnemies.class,
 
-            AdvanceToAttackFocusPoint.class,
+            ProtossCohesion.class,
+            TerranCohesion.class,
 
-//            TooLonely.class,
+            TooFarFromFocusPoint.class,
         };
     }
 }

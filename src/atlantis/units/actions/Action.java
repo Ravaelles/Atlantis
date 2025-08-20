@@ -59,7 +59,7 @@ public class Action {
 
     public Action setName(String name) {
         this.name = name;
-        this.toString = name.replace("MOVE_", "");
+        this.toString = name.replace("MOVE_", "M_");
         return this;
     }
 }

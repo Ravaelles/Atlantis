@@ -98,7 +98,7 @@ public class ATech {
             return 0;
         }
 
-        return AGame.getPlayerUs().getUpgradeLevel(upgrade);
+        return AGame.playerUs().getUpgradeLevel(upgrade);
     }
 
     public static Integer[] costOf(Object techOrUpgrade) {
@@ -129,7 +129,7 @@ public class ATech {
     // =========================================================
 
     private static boolean isResearchedTech(TechType tech) {
-        return AGame.getPlayerUs().hasResearched(tech);
+        return AGame.playerUs().hasResearched(tech);
     }
 
     private static boolean isResearchedUpgrade(UpgradeType upgrade, int expectedUpgradeLevel) {

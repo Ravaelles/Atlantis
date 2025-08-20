@@ -1,12 +1,14 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.We;
+import atlantis.units.select.Selection;
 
 public class WorkerDefenceFightCombatUnits extends Manager {
     public WorkerDefenceFightCombatUnits(AUnit unit) {
@@ -15,15 +17,13 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.enemiesNear().combatUnits().notEmpty() && !shouldNotFight();
-    }
-
-    private boolean shouldNotFight() {
-        if (WorkerDoNotFight.doNotFight(unit)) {
-            return true;
-        }
-
-        return false;
+        return unit.enemiesNear().combatUnits().notEmpty()
+            && unit.hp() >= 21
+            && unit.lastStartedRunningMoreThanAgo(30 * 10)
+            && unit.friendsNear().bases().countInRadius(6, unit) > 0
+            && unit.hp() >= (Enemy.protoss() ? 34 : 26)
+            && unit.distToBase() <= 8;
+//            && !WorkerDoNotFight.doNotFight(unit);
     }
 
     @Override
@@ -35,7 +35,6 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     @Override
     protected Manager handle() {
-        if (handleSubmanagers() != null) return usedManager(this);
         if (handleFightEnemyCombatUnits(unit)) return usedManager(this);
 
         return null;
@@ -57,7 +56,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         int workers = Count.workers();
 
         if (workers <= 9 && unit.id() % 3 == 0) return false;
-        if (workers >= 16 && (unit.id() % 5 <= 1 || unit.shields() <= 2)) return false;
+        if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
 
         if (Select.enemyCombatUnits().ofType(
             AUnitType.Terran_Siege_Tank_Siege_Mode,
@@ -71,53 +70,34 @@ public class WorkerDefenceFightCombatUnits extends Manager {
             return false;
         }
 
-        // FIGHT against COMBAT UNITS
-        AUnit enemy = worker.enemiesNear()
-            .canBeAttackedBy(worker, 6)
-            .nearestTo(unit);
-
-        if (enemy != null) {
-            worker.setTooltipTactical("FurMotherland!");
-            return worker.attackUnit(enemy);
+        if (processFightEnemyCombatUnits(unit)) {
+            return true;
         }
 
-        return attackNearestEnemy(worker);
+        return false;
+    }
+
+    public static boolean processFightEnemyCombatUnits(AUnit unit) {
+        Selection potentialEnemies = potentialEnemies(unit);
+        AUnit enemy = potentialEnemies.nearestTo(unit);
+
+        if (enemy != null && enemy.enemiesNear().bases().countInRadius(12, enemy) > 0) {
+            unit.setTooltipTactical("FurMotherland!");
+            return unit.attackUnit(enemy);
+        }
+
+        return false;
+    }
+
+    private static Selection potentialEnemies(AUnit worker) {
+        return AliveEnemies.get()
+            .canBeAttackedBy(worker, 10);
     }
 
     private static boolean againstProtossDontFightWhenStrongAndTooWounded(AUnit worker) {
         return Enemy.protoss()
-            && worker.hp() <= 32
-            && Count.ourCombatUnits() >= 5
+            && worker.hp() <= 33
+//            && Count.ourCombatUnits() >= 5
             && worker.meleeEnemiesNearCount(2) == 0;
-    }
-
-//    private static boolean fightGroundEnemies(AUnit worker) {
-//        for (AUnit enemy : worker.enemiesNear().groundUnits().inRadius(3.2, worker).list()) {
-//            if (runIfTheresBunkerNearby(worker)) {
-//                worker.setTooltipTactical("Aaargh!");
-//                worker.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, true);
-//                return true;
-//            }
-//            worker.attackUnit(enemy);
-//            worker.setTooltipTactical("ForMotherland!");
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    private static boolean runIfTheresBunkerNearby(AUnit worker) {
-//        return We.terran()
-//            && worker.isScv()
-//            && worker.hp() <= 48
-//            && worker.friendsNear().bunkers().inRadius(12, worker).notEmpty();
-//    }
-
-    private static boolean attackNearestEnemy(AUnit worker) {
-        AUnit enemy = worker.enemiesNear().canBeAttackedBy(worker, 5).nearestTo(worker);
-        if (enemy == null) return false;
-
-        worker.setTooltip("WDM:Hooray", true);
-        worker.attackUnit(enemy);
-        return true;
     }
 }

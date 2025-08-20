@@ -22,7 +22,11 @@ public class CorsairExploreEnemyMain extends Manager {
         return enemyMain != null
             && A.s % 30 <= 13
             && enemyMain.hasPosition()
-            && A.secondsAgo(mainLastSeenAt) >= 20;
+            && tooLongNotSeenMain();
+    }
+
+    private static boolean tooLongNotSeenMain() {
+        return A.secondsAgo(mainLastSeenAt) >= A.whenEnemyZerg(20, 30);
     }
 
     @Override

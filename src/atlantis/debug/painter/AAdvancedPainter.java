@@ -12,7 +12,7 @@ import atlantis.combat.missions.Missions;
 
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -146,7 +146,7 @@ public class AAdvancedPainter extends APainter {
         paintBuildingsTrainingUnitsAndResearching();
         paintBarsUnderUnits();
         paintFoggedUnits();
-        paintDetailedUnits();
+        paintOurCombatUnits();
         paintEnemyCombatUnits();
         paintTooltipsOverUnits();
         paintWorkers();
@@ -173,10 +173,11 @@ public class AAdvancedPainter extends APainter {
     /**
      * Painting for combat units can be a little different. Put here all the related code.
      */
-    protected static void paintDetailedUnits() {
+    protected static void paintOurCombatUnits() {
         Selection unitsToPaint = Select.ourCombatUnits().add(Select.ourWorkers());
         for (AUnit unit : unitsToPaint.list()) {
             if (unit.isLoaded()) continue;
+            if (unit.loadedInto() != null) continue;
             if (unit.isCombatBuilding()) continue;
             if (unit.isWorker() && unit.lastActionMoreThanAgo(30 * 4)) continue;
 
@@ -286,6 +287,7 @@ public class AAdvancedPainter extends APainter {
 
     private static void paintManagerLogs(AUnit unit) {
         if (unit.isShuttle()) return;
+        if (unit.isLoaded()) return;
 
         int baseOffset = 13;
         int counter = 0;
@@ -332,16 +334,16 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintSquad(AUnit unit) {
-        if (unit.hasSquad() && unit.squad().isLeader(unit)) {
-            paintFlag(unit, Color.Teal);
+        if (unit.isLeader()) {
+            paintFlag(unit, Cyan);
         }
 
-        if (!unit.isAlive() || unit.squad() == null) {
+        if (!unit.isAlive() || unit.squad() == null || unit.squadIsAlpha()) {
             return;
         }
-//        String extra = " " + A.dist(unit.distToLeader());
-//        String squadLetter = unit.squad().letter() + extra;
-//        paintTextCentered(unit.translateByPixels(10, -16), squadLetter, Color.Purple);
+        String extra = " " + A.dist(unit.distToLeader());
+        String squadLetter = unit.squad().name() + extra;
+        paintTextCentered(unit.translateByPixels(10, -36), squadLetter, Color.Purple);
     }
 
     private static void paintTargets(AUnit unit) {
@@ -396,7 +398,10 @@ public class AAdvancedPainter extends APainter {
     }
 
     private static void paintDeadMan(AUnit unit) {
-        unit.paintCircleFilled(10, Black);
+        unit.paintCircle(10, Black);
+        unit.paintCircle(9, Black);
+        unit.paintCircle(5, Black);
+        unit.paintCircle(4, Black);
         paintUnitProgressBar(unit, 14, 100, Red);
         paintUnitProgressBar(unit, 7, 100, Grey);
     }
@@ -427,9 +432,6 @@ public class AAdvancedPainter extends APainter {
         if (mission.isMissionDefend()) {
             color = Color.White;
         }
-        else if (mission.isMissionContain()) {
-            color = Color.Teal;
-        }
         else {
             color = Color.Orange;
         }
@@ -438,9 +440,6 @@ public class AAdvancedPainter extends APainter {
         mission = Alpha.get().mission();
         if (mission.isMissionDefend()) {
             color = Color.White;
-        }
-        else if (mission.isMissionContain()) {
-            color = Color.Teal;
         }
         else {
             color = Color.Orange;
@@ -455,6 +454,13 @@ public class AAdvancedPainter extends APainter {
             "Should expand: " + shouldExpand + reason,
             shouldExpand == "YES" ? Green : Grey
         );
+
+//        if (We.protoss()) {
+//            paintSideMessage(
+//                "Produce Gateway: " + ProduceGateway.produce() + reason,
+//                shouldExpand == "YES" ? Green : Grey
+//            );
+//        }
 
         boolean applies = (DynamicBuildingsCommander.get()).applies();
         paintSideMessage(
@@ -496,7 +502,8 @@ public class AAdvancedPainter extends APainter {
 
         // =========================================================
 
-        paintSideMessage("Combat squad size: " + Alpha.get().size(), Yellow, 0);
+        paintSideMessage("Combat units: " + Count.ourCombatUnits(), Yellow, 0);
+        paintSideMessage("Alpha count: " + Alpha.get().size(), Grey, 0);
 
         int scouts = ScoutCommander.allScouts().size();
         color = scouts == 0 ? Color.Grey : (scouts == 1 ? Yellow : Color.Red);
@@ -1025,9 +1032,15 @@ public class AAdvancedPainter extends APainter {
     }
 
     protected static void paintFlag(AUnit unit, Color flagColor) {
-        int flagWidth = 15;
-        int flagHeight = 8;
-        int dy = 12;
+        int flagWidth = 18;
+        int flagHeight = 10;
+        int dy = 16;
+
+//        paintCircle(unit, 12, Grey);
+//        paintCircle(unit, 14, Grey);
+//        paintCircle(unit, 16, Grey);
+//        paintCircle(unit, 18, Grey);
+//        paintCircle(unit, 20, Grey);
 
 //        paintLine(unit, unit.targetPosition(), Color.Blue); // Where unit is running to
 
@@ -1647,7 +1660,7 @@ public class AAdvancedPainter extends APainter {
 //        }
 
         // Enemy THIRD
-        paintBase(EnemyThirdBase.get(), "Enemy THIRD location", Color.Orange, 0);
+        paintBase(EnemyThirdBase.position(), "Enemy THIRD location", Color.Orange, 0);
 
         // Enemy EXPANSION
         paintBase(EnemyExistingExpansion.get(), "Enemy EXPANSION", Color.Orange, 0);

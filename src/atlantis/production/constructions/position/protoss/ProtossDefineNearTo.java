@@ -16,6 +16,10 @@ public class ProtossDefineNearTo {
     public static HasPosition forProtoss(AUnitType t, HasPosition nearTo) {
         if (!We.protoss()) return null;
 
+        if (nearTo != null) {
+            return nearTo;
+        }
+
         if (nearTo == null && t.isPylon()) {
             nearTo = PylonPosition.nearToForPylon(nearTo);
         }
@@ -28,13 +32,17 @@ public class ProtossDefineNearTo {
             nearTo = forCannon(t, nearTo);
         }
 
+        if (nearTo == null && t.is(AUnitType.Protoss_Shield_Battery)) {
+            nearTo = Chokes.mainChoke();
+        }
+
+        if (nearTo == null && Enemy.zerg() && A.supplyUsed() <= 40) {
+            nearTo = Select.mainOrAnyBuilding();
+        }
+
         if (nearTo == null && t.isGateway() && (Enemy.terran() || Count.gateways() == 2)) {
             nearTo = Chokes.mainChoke();
             if (t != null) nearTo.translateTilesTowards(5, Select.mainOrAnyBuilding());
-        }
-
-        if (nearTo == null && t.is(AUnitType.Protoss_Shield_Battery)) {
-            nearTo = Chokes.mainChoke();
         }
 
         if (nearTo == null && A.supplyUsed() <= 75) {
@@ -43,7 +51,7 @@ public class ProtossDefineNearTo {
 
         if (nearTo == null && t.isGateway()) {
             if (Count.gateways() <= 5) {
-                nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).nearestTo(Select.mainOrAnyBuilding());
+                nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).mostDistantTo(Select.mainOrAnyBuilding());
 //                nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
             }
 

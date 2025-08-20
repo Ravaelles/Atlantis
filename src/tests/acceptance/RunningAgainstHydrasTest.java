@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatUnitManager;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
@@ -12,7 +12,7 @@ public class RunningAgainstHydrasTest extends AbstractTestWithWorld {
     public void runsFromHydras() {
         createWorld(10, () -> {
             FakeUnit unit = ourFirst;
-            unit.setSquad(Alpha.get());
+            unit.forceSetSquad(Alpha.get());
             (new CombatUnitManager(unit)).invokeFrom(this);
 
             FakeUnit enemy = nearestEnemy(unit);

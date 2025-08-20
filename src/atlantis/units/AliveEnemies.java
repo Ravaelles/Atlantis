@@ -20,12 +20,14 @@ public class AliveEnemies {
 
     private static Selection enemyUnitsThatWillNotBeDeadNextFrame() {
         return Select.from(
-//            EnemyUnits.discovered().list(),
             EnemyUnits.discovered()
                 .notDeadMan()
                 .list(),
-//            EnemyUnits.discovered().list(),
             "enemyUnitsThatWillNotBeDeadNextFrame"
         );
+    }
+
+    public static void clearCache() {
+        cache.clear();
     }
 }

@@ -5,6 +5,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.util.We;
 
@@ -17,11 +18,14 @@ public class SquadCohesion extends HasSquad {
     }
 
     public boolean isSquadCohesionOkay() {
+        AUnit leader = squad.leader();
+        if (leader != null && leader.isFormingFormation()) return true;
+
         HasPosition squadCenter = squad.center();
         if (squad == null || squadCenter == null) return true;
 
         int cohesionPercent = squad.cohesionPercent();
-        System.err.println("cohesionPercent = " + cohesionPercent);
+//        System.err.println("cohesionPercent = " + cohesionPercent);
         return cohesionPercent >= minCohesion();
     }
 
@@ -39,7 +43,7 @@ public class SquadCohesion extends HasSquad {
 //            base = 0;
 //        }
         if (We.protoss()) {
-//            base = (squad.size() >= 8 ? 3 : 0);
+            base = (squad.size() >= 8 ? 4 : 0);
             return Math.max(3.2, base + Math.sqrt(squad.size()));
         }
         else if (We.zerg()) {

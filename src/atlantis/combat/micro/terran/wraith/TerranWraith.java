@@ -25,7 +25,7 @@ public class TerranWraith extends Manager {
             GoToRepairAsAirUnit.class,
 
             // Attack-related
-            ChangeLocationIfRanTooLong.class,
+            WraithChangeLocationIfRanTooLong.class,
             AttackOtherAirUnits.class,
             AttackSpecificEnemiesNearBases.class,
             AttackSpecificEnemies.class,

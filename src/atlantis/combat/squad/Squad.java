@@ -3,10 +3,10 @@ package atlantis.combat.squad;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.delta.Delta;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.combat.squad.positioning.SquadCohesion;
 import atlantis.combat.squad.squad_scout.DefineSquadScout;
+import atlantis.combat.squad.squads.x.X;
 import atlantis.combat.squad.transfers.SquadReinforcements;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -45,9 +45,10 @@ public abstract class Squad extends Units {
 
     private SquadTargeting targeting = new SquadTargeting();
 
-    private SquadCenter squadCenter = new SquadCenter(this);
     private SquadCohesion squadCohesion = new SquadCohesion(this);
+    private DefineLeader defineLeader = new DefineLeader(this);
     private int _lastAttacked = -76543;
+    private int _lastShot = -765432;
     private int _lastUnderAttack = -87654;
 
     // =========================================================
@@ -217,10 +218,6 @@ public abstract class Squad extends Units {
 
     // =========================================================
 
-    public boolean isMissionContain() {
-        return Missions.CONTAIN.equals(mission());
-    }
-
     public boolean isMissionDefend() {
         return Missions.DEFEND.equals(mission());
     }
@@ -242,16 +239,8 @@ public abstract class Squad extends Units {
     }
 
     public AUnit leader() {
-        return squadCenter.leader();
+        return defineLeader.leader();
     }
-
-    public void changeLeader() {
-        squadCenter.refreshLeader(leader());
-    }
-
-//    public HasPosition tankMedian() {
-//
-//    }
 
     public boolean lessThanUnits(int units) {
         return size() < units;
@@ -338,11 +327,7 @@ public abstract class Squad extends Units {
     }
 
     public boolean hasMostlyOffensiveRole() {
-        return cacheBoolean.get(
-            "hasMostlyOffensiveRole",
-            -1,
-            () -> Delta.get().equals(this)
-        );
+        return false;
     }
 
     public double radius() {
@@ -378,6 +363,10 @@ public abstract class Squad extends Units {
         return Alpha.get().equals(this);
     }
 
+    public boolean isX() {
+        return X.get().equals(this);
+    }
+
     public boolean lastUnderAttackLessThanAgo(int threshold) {
         return A.ago(_lastUnderAttack) <= threshold;
     }
@@ -386,11 +375,23 @@ public abstract class Squad extends Units {
         return A.ago(_lastAttacked) <= threshold;
     }
 
+    public boolean lastAttackedMoreThanAgo(int threshold) {
+        return A.ago(_lastAttacked) >= threshold;
+    }
+
+    public boolean lastShotLessThanAgo(int threshold) {
+        return A.ago(_lastShot) <= threshold;
+    }
+
     public void markLastUnderAttackNow() {
         _lastUnderAttack = A.now;
     }
 
     public void markLastAttackedNow() {
         _lastAttacked = A.now;
+    }
+
+    public void markLastShotNow() {
+        _lastShot = A.now;
     }
 }

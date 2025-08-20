@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.protoss;
 
 import atlantis.combat.missions.Missions;
+import atlantis.combat.missions.defend.protoss.sparta.Sparta;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
@@ -20,8 +21,19 @@ public class ProtossStickCombatToMainBaseEarly {
     private static int dragoons;
 
     public static boolean should() {
+        if (true) return false;
+
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
+        if (Sparta.canUseSpartaMission()) return false;
+
+        if (
+            Count.ourCombatUnits() <= 7
+                && Army.strengthWithoutCB() <= 15
+                && Count.dragoons() <= 2
+                && EnemyUnits.combatUnits() >= 4
+        ) return true;
+
         if (Missions.isGlobalMissionSparta()) return false;
         if (Missions.isGlobalMissionAttack()) return false;
         if (Count.cannons() > 0) return false;
@@ -37,8 +49,8 @@ public class ProtossStickCombatToMainBaseEarly {
 
         if (Enemy.zerg()) {
             if (combatUnits <= 4) return true;
-            if (combatUnits <= 7 && Army.strength() <= 400) return true;
-            if (combatUnits <= 7 && dragoons <= 1 && Army.strength() <= 140) return true;
+            if (combatUnits <= 8 && Army.strength() <= 400) return true;
+            if (combatUnits <= 9 && dragoons <= 2 && Army.strength() <= 170) return true;
             if (combatUnits <= 10 && dragoons <= 0 && Strategy.get().isGoingTech() && Army.strength() <= 350) return true;
         }
         if (Enemy.protoss()) {
@@ -57,7 +69,7 @@ public class ProtossStickCombatToMainBaseEarly {
 
         if (whenWeDoRushDontStickTooLong(combatUnits)) return false;
 
-        if (combatUnits >= 5 && EnemyUnitBreachedBase.notNull() && Army.strength() >= 170) return false;
+        if (combatUnits >= 5 && EnemyUnitBreachedBase.someone() && Army.strength() >= 170) return false;
 
         if (
             (combatUnits <= 8 || Army.strength() <= 120)

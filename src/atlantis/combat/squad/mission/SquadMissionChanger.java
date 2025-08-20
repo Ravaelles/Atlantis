@@ -20,8 +20,7 @@ public class SquadMissionChanger {
 
         if (leader == null) return false;
 
-        if (ChangeSquadToDefend.shouldChangeToDefend(squad)) return true;
-        else if (ChangeSquadToDefault.shouldChangeToDefault(squad)) return true;
+        if (ChangeSquadToDefault.shouldChangeToDefault(squad)) return true;
 
         return false;
     }

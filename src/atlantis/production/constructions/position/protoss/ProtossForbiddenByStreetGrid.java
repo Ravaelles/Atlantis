@@ -7,6 +7,7 @@ import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import java.util.HashMap;
@@ -36,46 +37,51 @@ public class ProtossForbiddenByStreetGrid {
         // === CB ==============================================
 
         if (building.isCombatBuilding()) {
-//            if (position.distToNearestChokeLessThan(4)) {
-//                if (moduloX != 0) return failed("TX modulo CB_X1 = " + moduloX);
-//                if (moduloY != 0) return failed("TY modulo CB_Y1 = " + moduloY);
-//            }
-
-            if (position.distToNearestChokeLessThan(3.8)) {
-                return failed("CB too close to choke");
-            }
-
-            if (
-                (
-                    position.tx() % GRID_SIZE_X == 0 || position.ty() % GRID_SIZE_Y == 0
-                        || position.tx() % GRID_SIZE_X == 5 || position.ty() % GRID_SIZE_Y == 5
-                )
-                    && Count.withPlanned(AUnitType.Protoss_Photon_Cannon) >= 2
-                    && Select.mainOrAnyBuilding().groundDist(position) <= 45
-            ) {
-                return failed("TX/TY modulo CB_XY = " + moduloX + " / " + moduloY);
-            }
-
-            return false;
-//            if (position.distTo(Select.mainOrAnyBuilding()) >= 30) return false;
+            return forCombatBuilding(position, moduloX, moduloY);
         }
 
         // === Pylon ===========================================
 
         if (building.isPylon()) {
-            if (asPylon(moduloX, moduloY, position)) return true;
+            if (forPylon(moduloX, moduloY, position)) return true;
         }
 
         // === Non-pylon ======================================
 
-        return asStandard(moduloX, moduloY, position, building);
+        return forStandardBuilding(moduloX, moduloY, position, building);
     }
 
-    private static boolean asStandard(int moduloX, int moduloY, APosition position, AUnitType building) {
+    private static boolean forCombatBuilding(APosition position, int moduloX, int moduloY) {
+        //            if (position.distToNearestChokeLessThan(4)) {
+//                if (moduloX != 0) return failed("TX modulo CB_X1 = " + moduloX);
+//                if (moduloY != 0) return failed("TY modulo CB_Y1 = " + moduloY);
+//            }
+
+        if (position.distToNearestChokeLessThan(3.8)) {
+            return failed("CB too close to choke");
+        }
+
+        if (
+            (
+                position.tx() % GRID_SIZE_X == 0 || position.ty() % GRID_SIZE_Y == 0
+                    || position.tx() % GRID_SIZE_X == 5 || position.ty() % GRID_SIZE_Y == 5
+            )
+                && Count.withPlanned(AUnitType.Protoss_Photon_Cannon) >= 2
+                && Select.mainOrAnyBuilding().groundDist(position) <= 45
+        ) {
+            return failed("TX/TY modulo CB_XY = " + moduloX + " / " + moduloY);
+        }
+
+        return false;
+//            if (position.distTo(Select.mainOrAnyBuilding()) >= 30) return false;
+    }
+
+    private static boolean forStandardBuilding(int moduloX, int moduloY, APosition position, AUnitType building) {
         //            System.err.println(moduloX + " / " + moduloY);
 
         // P:2-3  G:4-7  G:8-11
-        boolean moduloXIsInvalid = moduloX != 2 && moduloX != 4 && moduloX != 6 && moduloX != 8;
+        boolean moduloXIsInvalid = moduloX != 2 && moduloX != 4 && moduloX != 6
+                && (moduloX != 8 || !A.hasMinerals(500));
 
         // G:2-4  G:5-7
         boolean moduloYIsInvalid = moduloY != 2 && moduloY != 5;
@@ -84,7 +90,7 @@ public class ProtossForbiddenByStreetGrid {
 
         if (
             (moduloXIsInvalid || moduloYIsInvalid)
-                && A.supplyUsed() <= 60
+                && A.supplyUsed() <= 22
 //                    && building.isGateway()
                 && !building.isPylon()
                 && !building.isGasBuilding()
@@ -93,8 +99,10 @@ public class ProtossForbiddenByStreetGrid {
             moduloYIsInvalid = moduloY <= 1;
 
             if (building.isForge() && Count.gateways() == 0) return false;
-            if (building.isCannon() && A.supplyUsed() >= 100) return false;
+//            if (building.isCannon() && A.supplyUsed() >= 100) return false;
         }
+
+        if (allowPylonWhenOutOfSupply(position)) return false;
 
         // =========================================================
 
@@ -136,7 +144,13 @@ public class ProtossForbiddenByStreetGrid {
         return false;
     }
 
-    private static boolean asPylon(int moduloX, int moduloY, APosition position) {
+    private static boolean allowPylonWhenOutOfSupply(APosition position) {
+        return A.supplyFree() <= (1 + (A.hasMinerals(500) ? 4 : 0))
+            && A.supplyTotal() >= 30
+            && buildingsNear(4, position) <= 0;
+    }
+
+    private static boolean forPylon(int moduloX, int moduloY, APosition position) {
         if (moduloX != 2) {
             if (A.supplyUsed() >= 30 && !A.hasFreeSupply(1) && A.minerals() >= 300) {
                 if (moduloX != 4 && moduloX != 6) return failed("TX modulo Pyl_X_Special_1 = " + moduloX);
@@ -155,7 +169,9 @@ public class ProtossForbiddenByStreetGrid {
         }
 
         if (moduloY != 2 && moduloY != 4) {
-            if (moduloY != 3 && A.supplyFree() <= 2 && Count.pylons() >= 2) return false;
+//            if (moduloY != 3 && A.supplyFree() <= 2 && Count.pylons() >= 2) return false;
+            if (moduloY != 3 && A.supplyFree() <= 3 && Count.pylons() >= 2) return false;
+            if (moduloY != 5 && A.supplyFree() <= 1 && Count.pylons() >= 2) return false;
 
             return failed("TY modulo Pyl_Y = " + moduloY);
         }

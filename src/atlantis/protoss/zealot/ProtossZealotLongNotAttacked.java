@@ -17,8 +17,11 @@ public class ProtossZealotLongNotAttacked extends Manager {
     public boolean applies() {
         if (!unit.isZealot()) return false;
         if (unit.isAttacking()) return false;
+        if (unit.eval() <= 1.1 && unit.meleeEnemiesNearCount(2.5) >= 2) return false;
         if (unit.cooldown() >= 5) return false;
-        if (unit.eval() <= 0.95) return false;
+        if (unit.eval() <= 0.8) return false;
+        if (Enemy.zerg() && unit.hp() <= 12) return false;
+        if (Enemy.protoss() && unit.hp() <= 34) return false;
 
         if (Enemy.zerg() && unit.isMissionDefendOrSparta() && unit.hp() >= 41) return true;
 

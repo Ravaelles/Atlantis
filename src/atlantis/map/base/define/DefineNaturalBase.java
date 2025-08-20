@@ -24,7 +24,7 @@ public class DefineNaturalBase {
             () -> {
                 ABaseLocation naturalLocation = naturalIfMainIsAt(Select.mainOrAnyBuildingPosition());
 
-                if (naturalLocation == null && !A.isUms()) {
+                if (naturalLocation == null && !A.isUms() && !Env.isTesting()) {
                     ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Natural base can not be determined");
                 }
 

@@ -131,10 +131,10 @@ public class FindPosition {
     }
 
     private static boolean ignorePositionNotFoundException(AUnitType building, APosition standardPosition) {
-        if (We.protoss() && !building.needsPower()) return false;
+//        if (We.protoss() && !building.needsPower()) return true;
 
         if (A.supplyFree() >= 3) {
-            if (building.isPylon()) return true;
+//            if (building.isPylon()) return true;
             if (!"OK".equals(AbstractPositionFinder._STATUS)) {
                 if ("Can't physically build here".equals(AbstractPositionFinder._STATUS)) return true;
                 if (AbstractPositionFinder._STATUS.contains(" modulo ")) return true;

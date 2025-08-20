@@ -24,7 +24,7 @@ public class IdleBuildersFix extends Commander {
         for (AUnit worker : FreeWorkers.get().list()) {
             if (!worker.recentlyMoved(40)) continue;
 
-            if (worker.isIdle() && !worker.isGatheringMinerals()) {
+            if (worker.isIdle() && !worker.isGatheringResources()) {
                 List<AUnit> unfinished = Select.ourUnfinished()
                     .buildings()
                     .excludeTypes(AUnitType.Terran_Refinery)

@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatUnitManager;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -71,9 +71,9 @@ public class AdvanceTest extends WorldStubForTests {
         Alpha alpha = Alpha.get();
 
         return fakeOurs(
-            (FakeUnit) fake(AUnitType.Terran_Marine, 10.1).setSquad(alpha),
-            (FakeUnit) fake(AUnitType.Terran_Marine, 10.2).setSquad(alpha),
-            (FakeUnit) fake(AUnitType.Terran_Siege_Tank_Tank_Mode, 11).setSquad(alpha)
+            (FakeUnit) fake(AUnitType.Terran_Marine, 10.1).forceSetSquad(alpha),
+            (FakeUnit) fake(AUnitType.Terran_Marine, 10.2).forceSetSquad(alpha),
+            (FakeUnit) fake(AUnitType.Terran_Siege_Tank_Tank_Mode, 11).forceSetSquad(alpha)
         );
     }
 

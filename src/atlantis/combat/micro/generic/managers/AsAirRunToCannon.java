@@ -15,16 +15,34 @@ public class AsAirRunToCannon extends Manager {
         super(unit);
     }
 
+    public static boolean shouldRunToCannonGeneric(AUnit unit) {
+        return Count.cannons() > 0
+            && unit.shields() <= 10
+//            && unit.enemiesNear().groundUnits().canAttack(unit, 3).empty()
+            && unit.enemiesNear().air().canAttack(unit, 6).notEmpty();
+    }
+
     @Override
     public boolean applies() {
         return unit.isAir()
             && We.protoss()
+            && unit.shields() <= 20
+            && unit.enemiesThatCanAttackMe(2 + unit.woundPercent() / 30.0).empty()
             && Count.cannons() > 0
             && (cannon = cannonToGoTo()) != null;
     }
 
     @Override
     public Manager handle() {
+        if (unit.distTo(cannon) <= 3) {
+            AUnit enemy = unit.enemiesThatCanAttackMe(10).nearestTo(unit);
+            if (unit.moveAwayFrom(enemy, 3, Actions.MOVE_SAFETY)) return usedManager(this);
+        }
+
+        if (unit.enemiesThatCanAttackMe(5 + unit.woundPercent() / 40.0).empty()) {
+            return null;
+        }
+
         if (unit.move(cannon, Actions.MOVE_SAFETY, "AirToCannon")) {
             return usedManager(this);
         }

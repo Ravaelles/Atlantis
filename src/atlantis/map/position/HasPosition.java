@@ -7,6 +7,7 @@ import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
+import atlantis.map.position.helpers.WalkableAround;
 import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -55,7 +56,7 @@ public interface HasPosition {
     default APosition translateTilesTowards(double tiles, HasPosition towards) {
         return PositionHelper.getPositionMovedTilesTowards(
             this, towards, tiles
-        );
+        ).ensureWithinBounds();
     }
 
     /**
@@ -80,6 +81,10 @@ public interface HasPosition {
         return new APosition((int) (x() + vector.x), (int) (y() + vector.y));
     }
 
+    default APosition translateByTileVector(Vector vector) {
+        return new APosition((int) (x() + vector.x * 32), (int) (y() + vector.y * 32));
+    }
+
     default APosition makeBuildable(int maxRadius) {
         if (Env.isTesting()) return position();
 
@@ -98,6 +103,67 @@ public interface HasPosition {
                     ) {
                         position = this.translateByTiles(dtx, dty);
                         if (position.isBuildableIncludeBuildings()) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius++;
+        }
+
+        return null;
+    }
+
+    default APosition ensureWithinBounds() {
+        if (Env.isTesting()) return position();
+
+        APosition position = position();
+
+        if (!position.isCloseToMapBounds(0)) {
+            return position;
+        }
+
+        int atLeastTilesAwayFromBounds = 0;
+        int currentRadius = 0;
+        while (currentRadius <= 8) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx += 2) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty += 2) {
+                    if (
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        position = this.translateByTiles(dtx, dty);
+                        if (!position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
+                            return position;
+                        }
+                    }
+                }
+            }
+
+            currentRadius += 2;
+        }
+
+        return null;
+    }
+
+    default APosition makeValidFarFromBounds(int atLeastTilesAwayFromBounds) {
+        if (Env.isTesting()) return position();
+
+        if (!position().isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
+            return position();
+        }
+
+        int currentRadius = 0;
+        while (currentRadius <= atLeastTilesAwayFromBounds) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+                    if (
+                        dtx == -currentRadius || dtx == currentRadius
+                            || dty == -currentRadius || dty == currentRadius
+                    ) {
+                        APosition position = this.translateByTiles(dtx, dty);
+                        if (!position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
                             return position;
                         }
                     }
@@ -140,7 +206,7 @@ public interface HasPosition {
         return null;
     }
 
-    default APosition makeWalkable(int maxRadius, ARegion sameRegion) {
+    default APosition makeWalkable(int maxRadius, int step, ARegion sameRegion) {
         if (Env.isTesting()) return position();
 
         APosition position = this.position();
@@ -150,8 +216,8 @@ public interface HasPosition {
 
         int currentRadius = 0;
         while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
+            for (int dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
+                for (int dty = -currentRadius; dty <= currentRadius; dty += step) {
                     if (
                         dtx == -currentRadius || dtx == currentRadius
                             || dty == -currentRadius || dty == currentRadius
@@ -164,7 +230,7 @@ public interface HasPosition {
                 }
             }
 
-            currentRadius++;
+            currentRadius += step;
         }
 
         return null;
@@ -311,6 +377,10 @@ public interface HasPosition {
         return Atlantis.game().isWalkable(position().p().toWalkPosition());
     }
 
+    default boolean isWalkable(int alsoCheckTilesInRadius) {
+        return WalkableAround.isWalkable(position(), alsoCheckTilesInRadius);
+    }
+
     default boolean isExplored() {
         if (Env.isTesting()) return APosition.TESTING_EXPLORED;
 
@@ -346,7 +416,12 @@ public interface HasPosition {
     }
 
     default boolean hasPosition() {
-        return position() != null && position().x() > 0 && position().x() < 32000;
+        APosition position = position();
+        return position != null && position.x() > 0 && position.x() < 32000;
+    }
+
+    default boolean noPosition() {
+        return !hasPosition();
     }
 
     // =========================================================
@@ -459,7 +534,7 @@ public interface HasPosition {
         AAdvancedPainter.paintTextCentered(this, text, color, false);
     }
 
-    default void paintTextCentered(String text, Color color, int tyOffset) {
+    default void paintTextCentered(String text, Color color, double tyOffset) {
         AAdvancedPainter.paintTextCentered(this.translateByTiles(0, tyOffset), text, color, false);
     }
 
@@ -514,5 +589,35 @@ public interface HasPosition {
             Math.min(tx(), ty()),
             Math.min((AMap.getMapWidthInTiles() - tx()), (AMap.getMapHeightInTiles() - ty()))
         );
+    }
+
+    default AChoke nearestChoke() {
+        return Chokes.nearestChoke(this, "ALL");
+    }
+
+    default Position toP() {
+        return new Position(x(), y());
+    }
+
+    default HasPosition randomizeByTiles(int maxTranslateTiles, int seedForRandomizer) {
+        return PositionHelper.randomizePositionByTiles(this, maxTranslateTiles, seedForRandomizer);
+    }
+
+    default boolean isInMapCorner(int tilesToCorner) {
+//        return distToMapBorders() <= tilesToCorner;
+        int mapWidthInTiles = AMap.getMapWidthInTiles();
+        int mapHeightInTiles = AMap.getMapHeightInTiles();
+
+        int tx = tx();
+        boolean txYes = false;
+        if (tx <= tilesToCorner) txYes = true;
+        if (tx >= (mapWidthInTiles - tilesToCorner)) txYes = true;
+
+        int ty = ty();
+        boolean tyYes = false;
+        if (ty <= tilesToCorner) tyYes = true;
+        if (ty >= (mapHeightInTiles - tilesToCorner)) tyYes = true;
+
+        return txYes && tyYes;
     }
 }

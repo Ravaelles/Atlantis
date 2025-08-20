@@ -1,8 +1,8 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.omega.Omega;
-import atlantis.combat.squad.delta.Delta;
+import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.combat.squad.squads.omega.Omega;
+import atlantis.combat.squad.squads.delta.Delta;
 
 public class SquadsInitializer {
     private final SquadsInitializer init = new SquadsInitializer();

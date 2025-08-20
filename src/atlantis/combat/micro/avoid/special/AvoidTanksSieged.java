@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -30,8 +31,11 @@ public class AvoidTanksSieged extends Manager {
         return Enemy.terran()
             && unit.isGroundUnit()
             && !unit.isSieged()
+            && unit.eval() <= 1.5
             && (tankSieged = tank()) != null
+            && unit.effVisible()
             && (distToTank = unit.distTo(tankSieged)) <= 16
+            && distToTank >= 4
             && notStrongerLocally()
             && tankSieged.distToBase() >= 25;
     }
@@ -65,13 +69,18 @@ public class AvoidTanksSieged extends Manager {
         tankSieged.paintRectangle(1.1, 0.8, Color.Orange);
         tankSieged.paintRectangle(1.06, 0.76, Color.Orange);
 
-        if (!unit.isAttacking() && unit.cooldown() <= 7 && unit.distTo(tankSieged) <= 0.7) {
-            unit.holdPosition(Actions.HOLD_POSITION, "TANK!");
-            return usedManager(this);
+        if (!unit.isAttacking() && unit.cooldown() <= 7 && unit.distTo(tankSieged) <= 4) {
+//            unit.holdPosition(Actions.STOP, "TANK!");
+            return null;
+//            return usedManager(this);
         }
 
         unit.setTooltip("TANK!");
-        unit.runningManager().runFrom(tankSieged, 2, Actions.MOVE_AVOID, false);
-        return usedManager(this);
+//        unit.runningManager().runFrom(tankSieged, 2, Actions.MOVE_AVOID, false);
+        if (unit.moveToMain(Actions.MOVE_AVOID)) {
+            return usedManager(this);
+        }
+
+        return null;
     }
 }

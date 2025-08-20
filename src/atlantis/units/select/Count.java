@@ -39,6 +39,10 @@ public class Count {
         return Select.countOurOfType(type);
     }
 
+    public static int ofTypeWithUnfinished(AUnitType type) {
+        return Select.countOurOfTypeWithUnfinished(type);
+    }
+
     public static int withPlanned(AUnitType type) {
         return existingOrInProductionOrInQueue(type);
     }
@@ -126,22 +130,20 @@ public class Count {
                     + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Spore_Colony).count()
                     + Select.ourWithUnfinished().ofType(AUnitType.Zerg_Sunken_Colony).count();
             }
+            else if (type.isPrimaryBase()) {
+                return Select.ourUnfinished().bases().count()
+                    + ConstructionRequests.countNotStartedOfType(type)
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
+                    + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
+            }
+            else if (type.isBase() && !type.isPrimaryBase()) {
+                return Select.ourUnfinished().ofType(type).count()
+                    + ConstructionRequests.countNotStartedOfType(type);
+            }
         }
 
-        if (type.isPrimaryBase()) {
-            return Select.ourUnfinished().bases().count()
-                + ConstructionRequests.countNotStartedOfType(type)
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Lair)
-                + ConstructionRequests.countNotStartedOfType(AUnitType.Zerg_Hive);
-        }
-        else if (type.isBase() && !type.isPrimaryBase()) {
-            return Select.ourUnfinished().ofType(type).count()
-                + ConstructionRequests.countNotStartedOfType(type);
-        }
-        else {
-            return Select.ourUnfinished().ofType(type).count()
-                + ConstructionRequests.countNotStartedOfType(type);
-        }
+        return Select.ourUnfinished().ofType(type).count()
+            + ConstructionRequests.countNotStartedOfType(type);
     }
 
     public static int existing(AUnitType type) {
@@ -191,6 +193,10 @@ public class Count {
         return Select.countOurOfTypeWithUnfinished(type);
     }
 
+    public static int ourUnfinished(AUnitType type) {
+        return Select.ourUnfinished().ofType(type).count();
+    }
+
     public static int ourUnfinishedOfType(AUnitType type) {
         return Select.countOurUnfinishedOfType(type);
     }
@@ -205,6 +211,10 @@ public class Count {
             5,
             () -> Select.ourWorkers().count()
         );
+    }
+
+    public static int darkTemplars() {
+        return ofType(Protoss_Dark_Templar);
     }
 
     public static int dragoons() {

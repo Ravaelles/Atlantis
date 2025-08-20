@@ -232,7 +232,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (AUnit unit : enemyUnits()) {
-                    if (!unit.isWorker() && unit.isRealUnit() || unit.isCombatBuilding()) {
+                    if (!unit.isWorker() && (unit.isRealUnit() || unit.isCombatBuilding())) {
                         data.add(unit);
                     }
                 }
@@ -461,7 +461,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.isCombatUnit()) {
+                    if (unit.isCompleted() && unit.isCombatUnit() && !unit.isABuilding()) {
                         data.add(unit);
                     }
                 }
@@ -780,6 +780,20 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
                 if (main != null) return main;
 
                 return Select.ourBuildings().first();
+            }
+        );
+    }
+
+    public static AUnit mainOrAnyUnit() {
+        return cacheUnit.getIfValid(
+            "mainOrAnyUnit",
+            293,
+            () -> {
+                AUnit main = Select.mainOrAnyBuilding();
+
+                if (main != null) return main;
+
+                return Select.ourRealUnits().first();
             }
         );
     }

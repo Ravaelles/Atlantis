@@ -65,6 +65,7 @@ public class RoamAroundEnemyBase extends Manager {
 
     private void initializeEnemyRegionPolygonPoints() {
         APosition center = (new Positions(ScoutState.enemyBaseRegion.boundaries())).average();
+        if (center == null) return;
 
         for (ARegionBoundary position : ScoutState.enemyBaseRegion.boundaries()) {
             double groundDistance = center.distTo(position);

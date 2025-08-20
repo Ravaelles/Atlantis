@@ -1,6 +1,7 @@
 package atlantis.combat.state;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
 
@@ -20,20 +21,20 @@ public class AttackStateDeterminingManager extends Manager {
     public Manager handle() {
         determineAttackState();
 
+//        System.out.println(A.now + ": " + unit.attackState());
+
         return null;
     }
 
     private AttackState determineAttackState() {
         cooldown = unit.cooldown();
-//        System.err.println(A.now + " ### cooldown = " + cooldown);
 
         if (cooldown == 0) {
-            if (!unit.isAttacking()) return unit.setAttackState(AttackState.NONE);
+            if (!unit.isAttacking() && !unit.isHoldingToShoot()) return unit.setAttackState(AttackState.NONE);
             if (unit.hasValidTarget()) return unit.setAttackState(AttackState.TARGET_ACQUIRED);
         }
 
         if (unit.isStartingAttack()) {
-//        if (unit.isStartingAttack() || unit.isAttackFrame()) {
             if (!unit.attackState().pending()) return unit.setAttackState(AttackState.STARTING);
         }
 
@@ -52,9 +53,9 @@ public class AttackStateDeterminingManager extends Manager {
 
     private boolean createdReadyBullet() {
         int bulletAge = unit.lastBulletAge();
-//        System.err.println(A.now + ": unit.lastBulletAge() = " + bulletAge);
 
-        if (bulletAge >= 0 && bulletAge <= 3) return true;
+        if (bulletAge >= 1 && bulletAge <= 2) return true;
+//        if (bulletAge >= 3 && bulletAge <= 4) return true;
 
         return false;
     }

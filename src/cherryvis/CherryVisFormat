@@ -1,0 +1,122 @@
+{
+  "frames": <int>,                     // optional, may be missing
+  "map": { ... },                      // optional
+  "units": [ ... ],                    // optional (normally present)
+  "game_values": { ... },              // optional, usually empty
+  "heatmaps": [ ... ],                 // optional
+  "logs": [ ... ],                     // recommended
+  "upcs": [ ... ],                     // optional
+  "tasks": [ ... ],                    // optional
+  "trees": [ ... ],                    // optional (decision trees)
+  "draw": [ ... ],                     // optional (lines, boxes, circles)
+  "debug": { ... }                     // optional
+}
+
+
+To make CherryVis load and display something, you need only:
+
+trace.json.zstd:
+{
+    "logs": [],
+    "game_values": {},
+    "heatmaps": []
+}
+
+In fact, CherryVis will load even if "logs" is empty—but you need at least these three keys:
+
+✔ Required
+
+logs (array)
+game_values (object)
+heatmaps (array)
+
+Optional (but safe to include)
+
+frames
+units
+tasks
+upcs
+
+--- Logs ------------------------------------------
+
+{
+  "file": "string",     // file path (can be fake)
+  "line": 0,            // int
+  "frame": 0,           // int
+  "message": "string",
+  "sev": 0,             // severity: 0=info, 1=warn, 2=error
+  "attachments": []     // optional array of { key, value }
+}
+
+Only frame and message are truly essential.
+
+"logs": [
+    {
+      "attachments": [],
+      "file": "../src/modules/genericautobuild.cpp",
+      "frame": 2,
+      "line": 44,
+      "message": "Running build zvpohydras",
+      "sev": 0
+    },
+    {
+      "attachments": [],
+      "file": "../src/modules/upctocommand.cpp",
+      "frame": 1694,
+      "line": 32,
+      "message": "More than one command to unit Friendly i83 Zerg_Drone (483,479) from UPC u2665 (Gather=1) of task No task",
+      "sev": 0
+    },
+
+--- Tasks ------------------------------------------
+
+ "tasks": [
+    {
+      "creation_frame": 2,
+      "name": "Task",
+      "owner": "GathererModule",
+      "upc_id": 3
+    },
+    {
+      "creation_frame": 2,
+      "name": "Builder",
+      "owner": "BuilderModule",
+      "upc_id": 12
+    },
+    {
+      "creation_frame": 2,
+      "name": "Task",
+      "owner": "ScoutingModule",
+      "upc_id": 6
+    },
+    {
+      "creation_frame": 341,
+      "name": "Task",
+      "owner": "GathererModule",
+      "upc_id": 476
+    },
+
+All 4 fields are optional. CherryVis will skip tasks if malformed.
+
+--- UPCs - Unit Probability Commands ------------------------------------------
+
+Rarely needed unless you want advanced overlays.
+
+{
+  "id": 123,
+  "generation_frame": 50,
+  "consumer": "ModuleName",
+  "command": {
+      "attack": 1.0,
+      "move": 0.0,
+      "gather": 0.0
+  },
+  "targets": [
+      {
+        "type": "unit",
+        "unit_id": 83,
+        "score": 1.0
+      }
+  ]
+}
+

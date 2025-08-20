@@ -1,7 +1,6 @@
 package tests.unit;
 
 import atlantis.game.event.Events;
-import atlantis.game.event.Listener;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,7 +12,7 @@ public class EventTest extends AbstractTestWithUnits {
     public void eventIsListenedToAndReceivesParams() {
         EventTest.state = "unchanged";
 
-//        new Listener() {
+//        new AutomaticListener() {
 //            @Override
 //            public String listensTo() {
 //                return "FakeEventName";
@@ -33,7 +32,7 @@ public class EventTest extends AbstractTestWithUnits {
     }
 }
 
-//class FakeListener extends Listener {
+//class FakeListener extends AutomaticListener {
 //    @Override
 //    public String listensTo() {
 //        return "FakeEventName";

@@ -51,7 +51,7 @@ public class ProduceCorsairs {
 
     private static boolean produceAgainstOverlords() {
         int corsairs = Count.ourWithUnfinished(AUnitType.Protoss_Corsair);
-        int expected = A.supplyUsed() / 36;
+        int expected = Math.max(2, A.supplyUsed() / 36);
 
         return corsairs < expected;
     }

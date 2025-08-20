@@ -25,7 +25,11 @@ public class ChokeBlockerPosition {
         Vector translationVector = NeedChokeBlockers.translationVectorInRelationToChoke;
         if (translationVector != null) {
 //            System.err.println("APPLY VECTOR before = " + position.toStringPixels());
-            position = position.translateByVector(translationVector);
+            APosition newPosition = position.translateByVector(translationVector);
+
+            if (newPosition.isWalkable()) {
+                position = newPosition;
+            }
 //            System.err.println("APPLY VECTOR after = " + position.toStringPixels());
         }
 

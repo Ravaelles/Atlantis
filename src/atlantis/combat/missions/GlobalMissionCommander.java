@@ -1,7 +1,7 @@
 package atlantis.combat.missions;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 
 public class GlobalMissionCommander extends Commander {
 

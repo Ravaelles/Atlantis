@@ -52,7 +52,7 @@ public class DanceAwayApplies {
 
         if (unit.isMissionSparta() && EnemyUnitBreachedBase.noone()) return false;
 
-//        decision = (new DanceAwayAsDragoon(unit, enemy)).applies();
+//        decision = (new DanceAwayDragoon(unit, enemy)).applies();
 //        if (decision.notIndifferent()) return decision.toBoolean();
 
 //        if (continueDancingAway()) return true;

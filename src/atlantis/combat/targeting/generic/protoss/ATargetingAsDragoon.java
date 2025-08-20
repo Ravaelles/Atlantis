@@ -10,6 +10,7 @@ import static atlantis.combat.targeting.generic.ATargeting.debug;
 public class ATargetingAsDragoon {
     public static AUnit target(AUnit unit, Selection enemyUnits) {
         if (!unit.isDragoon()) return null;
+        if (unit.meleeEnemiesNearCount(2.5) >= 1) return null;
 
         AUnit target;
         double range = OurDragoonRange.range();
@@ -23,7 +24,7 @@ public class ATargetingAsDragoon {
 //                .notShowingBackToUs(unit)
                 .nearestTo(unit);
             if (target != null) {
-                debug("ClosestZergA = " + target.typeWithUnitId());
+                debug(unit, "ClosestZergA = " + target.typeWithUnitId());
                 return target;
             }
 
@@ -32,7 +33,7 @@ public class ATargetingAsDragoon {
                 .notShowingBackToUs(unit)
                 .mostWounded();
             if (target != null && target.isWounded()) {
-                debug("ClosestZergB = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
+                debug(unit, "ClosestZergB = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
                 return target;
             }
 
@@ -41,7 +42,7 @@ public class ATargetingAsDragoon {
                 .mostWoundedOrNearest(unit);
             if (target != null) {
                 if (!unit.isOtherUnitShowingBackToUs(target) || unit.distTo(target) <= range - 0.4) {
-                    debug("ClosestZergC = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
+                    debug(unit, "ClosestZergC = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
                     return target;
                 }
             }
@@ -50,7 +51,7 @@ public class ATargetingAsDragoon {
                 .inRadius(range, unit)
                 .nearestTo(unit);
             if (target != null) {
-                debug("ClosestZergD = " + target.typeWithUnitId());
+                debug(unit, "ClosestZergD = " + target.typeWithUnitId());
                 return target;
             }
         }
@@ -63,14 +64,14 @@ public class ATargetingAsDragoon {
         if (enemyClosestToLeader != null) {
             if (unit.distTo(enemyClosestToLeader) <= range) {
 //                System.out.println("--- LEADER CLOSEST " + enemyClosestToLeader);
-                debug("GoonLeaderClosest = " + enemyClosestToLeader);
+                debug(unit, "GoonLeaderClosest = " + enemyClosestToLeader);
                 return enemyClosestToLeader;
             }
         }
 //        }
 
         if (Enemy.protoss()) {
-            if (unit.enemiesNearCount(2.4) == 0) {
+            if (unit.enemiesNearCount(1.8 + unit.woundPercent() / 90.0) == 0) {
                 target = enemyUnits
                     .dragoons()
                     .inRadius(range, unit)
@@ -78,7 +79,7 @@ public class ATargetingAsDragoon {
 
                 if (target != null) {
                     //            System.out.println("--- REGULAR " + target);
-                    debug("GoonGoonz = " + target);
+                    debug(unit, "GoonGoonz = " + target);
                     return target;
                 }
             }
@@ -87,7 +88,7 @@ public class ATargetingAsDragoon {
         if (enemyClosestToLeader == null) {
             enemyClosestToLeader = enemyUnits.mostWoundedOrNearest(leader);
             if (enemyClosestToLeader != null && unit.distTo(enemyClosestToLeader) <= 9) {
-                debug("GoonEnemyClosestToLeader = " + enemyClosestToLeader);
+                debug(unit, "GoonEnemyClosestToLeader = " + enemyClosestToLeader);
                 return enemyClosestToLeader;
             }
         }

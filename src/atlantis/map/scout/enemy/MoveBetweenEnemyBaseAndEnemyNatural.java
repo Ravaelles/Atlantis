@@ -23,6 +23,7 @@ public class MoveBetweenEnemyBaseAndEnemyNatural extends Manager {
     public boolean applies() {
         if (EnemyInfo.combatBuildingsAntiLand() > 0) return false;
         if (ScoutState.scoutsKilledCount >= 2) return false;
+        if (unit.enemiesNear().combatUnits().canAttack(unit, 9).notEmpty()) return false;
 
         enemyMain = EnemyMainBase.get();
         enemyNatural = BaseLocations.enemyNatural();

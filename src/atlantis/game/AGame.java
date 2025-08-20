@@ -24,6 +24,8 @@ public class AGame {
     private static APlayer _our = null; // Cached our APlayer
     private static int _framesNow = 0; // Cached current frames count
     private static int _secondsNow = 0; // Cached current frames count
+    private static boolean won = false;
+    private static boolean lost = false;
 
     // =========================================================
 
@@ -142,7 +144,7 @@ public class AGame {
     /**
      * Returns current APlayer.
      */
-    public static APlayer getPlayerUs() {
+    public static APlayer playerUs() {
         if (_our == null) {
             _our = new APlayer(Atlantis.game().self());
         }
@@ -172,11 +174,16 @@ public class AGame {
     }
 
     public static Player rawPlayer() {
+        if (game() == null) return null;
+
         return game().enemies().iterator().next();
     }
 
     public static String enemyName() {
-        return rawPlayer().getName();
+        Player player = rawPlayer();
+        if (player == null) return "NO_ENEMY_PLAYER_NAME";
+
+        return player.getName();
     }
 
     /**
@@ -243,5 +250,18 @@ public class AGame {
         if (game() != null) {
             game().sendText(message);
         }
+    }
+
+    public static boolean won() {
+        return won;
+    }
+
+    public static boolean lost() {
+        return lost;
+    }
+
+    public static void setWon(boolean won) {
+        AGame.won = won;
+        AGame.lost = !won;
     }
 }

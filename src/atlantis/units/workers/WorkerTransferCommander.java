@@ -6,6 +6,7 @@ import atlantis.game.AGame;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Select;
+import atlantis.units.workers.gather.AMineralGathering;
 
 import java.util.Collection;
 

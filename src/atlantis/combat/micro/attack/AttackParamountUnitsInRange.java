@@ -47,7 +47,7 @@ public class AttackParamountUnitsInRange extends Manager {
                 AUnitType.Protoss_Dark_Templar
             );
         }
-        else if (Enemy.terran()) {
+        else {
             return null;
 //            enemies = unit.enemiesNear().tanks();
         }

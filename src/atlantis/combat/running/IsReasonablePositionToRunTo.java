@@ -1,10 +1,10 @@
 package atlantis.combat.running;
 
 import atlantis.debug.painter.APainter;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import bwapi.Color;
 
 public class IsReasonablePositionToRunTo {
@@ -27,9 +27,7 @@ public class IsReasonablePositionToRunTo {
 
         if (position == null) return false;
         if (unit.isFlying()) return true;
-
-//        position = position.makeWalkable(1);
-        if (position == null || (unit.isGroundUnit() && !position.isWalkable())) return false;
+        if (unit.isGroundUnit() && (!position.isWalkable() || !position.isPositionVisible())) return false;
 
 //        if (runFrom != null && position.distTo(unit) < position.distTo(runFrom)) {
 //            System.err.println("er wut, why running towards enemy. " +
@@ -41,6 +39,9 @@ public class IsReasonablePositionToRunTo {
 //        }
 
         boolean isWalkable = isWalkableAndFree(position, unit);
+        if (!isWalkable) return false;
+
+        if (!position.isWalkable(2)) return false;
 
         boolean isOkay = isWalkable
 //                )
@@ -48,9 +49,11 @@ public class IsReasonablePositionToRunTo {
 //                && Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), position).count() <= 0
 //                && distToNearestRegionBoundaryIsOkay(position)
             && unit.position().groundDistanceTo(position) <= 12
-            && (dontAvoidMinerals(unit) || notTooCloseToGeysersOrMinerals(unit, position))
-            && isNotTooCloseToMinerals(position, unit)
-            && unit.hasPathTo(position);
+            && notTooCloseToGeysersOrMinerals(unit, position)
+//            && isNotTooCloseToMinerals(position, unit)
+//            && areAllNearbyTilesWalkable(position, unit)
+//            && areMostNearbyTilesWalkable(position, unit);
+            && position.isWalkable(2);
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
 
@@ -69,16 +72,28 @@ public class IsReasonablePositionToRunTo {
     private static boolean isWalkableAndFree(HasPosition position, AUnit unit) {
         boolean positionWalkable = position.isWalkable() && noBuildingsNorUnitsOn(position);
 
-        if (dontAvoidMinerals(unit) || position.isCloseToMapBounds()) return positionWalkable;
+        if (!positionWalkable) return false;
 
-        return positionWalkable && areNearbyTilesWalkable(position);
+        return !position.isCloseToMapBounds();
     }
 
     private static boolean noBuildingsNorUnitsOn(HasPosition position) {
         return Select.all().groundUnits().inRadius(0.15, position).exclude(unit).isEmpty();
     }
 
-    private static boolean areNearbyTilesWalkable(HasPosition position) {
+    private static boolean areMostNearbyTilesWalkable(HasPosition position, AUnit unit) {
+        int walkRadius = 54;
+        int walkable = 0;
+
+        if (position.translateByPixels(-walkRadius, -walkRadius).isWalkable()) walkable++;
+        if (position.translateByPixels(walkRadius, walkRadius).isWalkable()) walkable++;
+        if (position.translateByPixels(walkRadius, -walkRadius).isWalkable()) walkable++;
+        if (position.translateByPixels(-walkRadius, -walkRadius).isWalkable()) walkable++;
+
+        return walkable >= 3;
+    }
+
+    private static boolean areAllNearbyTilesWalkable(HasPosition position, AUnit unit) {
         int walkRadius = 32;
 
         return position.translateByPixels(-walkRadius, -walkRadius).isWalkable()
@@ -88,10 +103,12 @@ public class IsReasonablePositionToRunTo {
     }
 
     private static boolean notTooCloseToGeysersOrMinerals(AUnit unit, HasPosition position) {
+        if (unit.isAir()) return true;
+
         return Select.mineralsAndGeysers()
 //            .inRadius(Math.max(1.2, unit.size() * 5), position)
-            .inRadius(1.3, position)
-            .exclude(unit).isEmpty();
+            .inRadius(We.protoss() ? 5 : 1.3, position)
+            .isEmpty();
     }
 
     private static boolean isNotTooCloseToMinerals(HasPosition position, AUnit unit) {

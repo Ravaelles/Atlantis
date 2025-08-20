@@ -70,7 +70,7 @@ public class SelectionTest extends WorldStubForTests {
         ClearAllCaches.clearAll();
 
         usingFakeOurs(() -> {
-            Select.our().print();
+//            Select.our().print();
             Selection our = Select.our();
 
             assertEquals(22, our.size());

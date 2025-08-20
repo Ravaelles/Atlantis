@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;

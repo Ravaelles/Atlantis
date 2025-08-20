@@ -5,6 +5,7 @@ import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
 import atlantis.units.AUnit;
+import atlantis.util.CenterCamera;
 
 public class ScoutManager extends Manager {
     public ScoutManager(AUnit unit) {
@@ -13,21 +14,23 @@ public class ScoutManager extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.isScout();
+        return true;
     }
 
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            AvoidEnemies.class,
             ScoutSeparateFromCloseEnemies.class,
+            ScoutSeparateFromCloseWorkers.class,
 //            ScoutSafetyAvoidTooCloseEnemies.class,
             AvoidCriticalUnits.class,
-            AvoidEnemies.class,
             ScoutAvoidCombatBuildings.class,
+
+            ScoutEnemyThird.class,
 
             ScoutTryFindingEnemy.class,
 
-            ScoutEnemyThird.class,
             ScoutPotentialTerranBases.class,
             ScoutNearEnemyBase.class,
 

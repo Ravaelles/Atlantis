@@ -18,14 +18,17 @@ public class UnitAttackWaitFrames {
 //                && (unit.lastFrameOfStartingAttackAgo() + stopFrames(unit.type())) > A.now();
 //    }
 
-    public static boolean waitedLongEnoughForAttackFrameToFinish(AUnit unit) {
-        return unit.lastAttackFrameAgo()
-            >
-            (attackAnimationFrames(unit.type()) + effectiveStopFrames(unit.type()));
-    }
+//    public static boolean waitedLongEnoughForAttackFrameToFinish(AUnit unit) {
+//        return unit.lastAttackFrameAgo()
+//            >
+//            (attackAnimationFrames(unit.type()) + effectiveStopFrames(unit.type()));
+//    }
 
     public static boolean waitedLongEnoughForStartedAttack(AUnit unit) {
-        return !(unit.lastFrameOfStartingAttackAgo() <= effectiveStopFrames(unit.type()));
+//        return true;
+//        return false;
+        return unit.lastFrameOfStartingAttackAgo() > effectiveStopFrames(unit.type());
+//        return unit.lastFrameOfStartingAttackAgo() - 5 > effectiveStopFrames(unit.type());
     }
 
     public static boolean unitAlreadyStartedAttackAnimation(AUnit unit) {

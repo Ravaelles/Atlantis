@@ -108,7 +108,7 @@ public class APositionFinder {
                 }
 
                 else {
-                    System.err.println("Invalid race: " + AGame.getPlayerUs().getRace());
+                    System.err.println("Invalid race: " + AGame.playerUs().getRace());
                     System.exit(-1);
                     return null;
                 }

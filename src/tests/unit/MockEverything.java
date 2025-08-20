@@ -9,6 +9,7 @@ import atlantis.information.tech.ATech;
 import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
 import atlantis.game.player.Enemy;
+import atlantis.util.cache.Cache;
 import bwapi.*;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -30,6 +31,8 @@ public class MockEverything {
     }
 
     public void mockEverything() {
+        Cache.nukeAllCaches();
+
         mockAtlantisConfig();
         mockGameObject();
         mockAGameObject();
@@ -81,8 +84,8 @@ public class MockEverything {
      * You have to define static mocks as public field of this class, so they can be automatically reset on test end.
      */
     private void mockOtherStaticClasses() {
-        if (test.env == null) test.env = Mockito.mockStatic(Env.class);
-        test.env.when(Env::isTesting).thenReturn(true);
+//        if (test.env == null) test.env = Mockito.mockStatic(Env.class);
+//        test.env.when(Env::isTesting).thenReturn(true);
 
         if (test.aTech == null) test.aTech = Mockito.mockStatic(ATech.class);
         test.aTech.when(() -> ATech.isResearched(TechType.Lockdown)).thenReturn(true);

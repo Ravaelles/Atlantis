@@ -141,6 +141,10 @@ public class EnemyUnits {
         return discovered().mutalisks().count();
     }
 
+    public static int tanks() {
+        return discovered().tanks().count();
+    }
+
     public static int zealots() {
         return discovered().zealots().count();
     }

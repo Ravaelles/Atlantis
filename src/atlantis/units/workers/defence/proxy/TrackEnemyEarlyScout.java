@@ -15,7 +15,14 @@ public class TrackEnemyEarlyScout extends Manager {
 
     @Override
     public boolean applies() {
-        return enemyScout != null && enemyScout.isAlive() && enemyScout.hasPosition();
+        return enemyScout != null
+            && unit != null
+            && unit.hp() >= 18
+            && !unit.isBuilder()
+            && unit.friendsNear().buildings().notEmpty()
+            && enemyScout.isAlive()
+            && enemyScout.hasPosition()
+            && enemyScout.friendsNear().combatUnits().countInRadius(6, unit) == 0;
     }
 
     @Override

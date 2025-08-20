@@ -1,31 +1,44 @@
 package atlantis.production.dynamic.protoss.units;
 
 import atlantis.game.A;
+import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 
 public class ProduceDarkTemplar {
-    private static int requested = 0;
+    public static int requested = 0;
 
     public static boolean dt() {
-        if (true) return false;
+//        if (true) return false;
 
         if (Have.no(requiredBuilding())) return false;
-        if (requested >= 1) return false;
 
         int maxDT = haveThisManyHT();
-        return produce(maxDT);
+        if (requested >= 10 && Count.ourWithUnfinished(type()) >= maxDT) return false;
+
+        return produce();
     }
 
-    private static boolean produce(int maxDT) {
-        if (buildToHave(type(), maxDT)) {
-            requested++;
-            return true;
-        }
+    private static boolean produce() {
+//        if (buildToHave(type(), maxDT)) {
+//            requested++;
+//            return true;
+//        }
 
-        return false;
+        AUnit freeGateway = GatewayClosestToEnemy.get();
+        if (freeGateway == null) return false;
+
+        boolean result = freeGateway.train(
+            type(), ForcedDirectProductionOrder.create(type())
+        );
+        if (result) requested++;
+
+        return result;
     }
 
     private static AUnitType type() {
@@ -37,8 +50,13 @@ public class ProduceDarkTemplar {
     }
 
     private static int haveThisManyHT() {
-        if (A.supplyUsed() <= 160) return 1;
+        int supply = A.supplyUsed();
 
-        return 2;
+        if (supply <= 80) return 2;
+        if (supply <= 110) return 3;
+        if (supply <= 140) return 4;
+        if (supply <= 160) return 5;
+
+        return 6;
     }
 }

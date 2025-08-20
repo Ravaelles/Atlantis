@@ -28,7 +28,10 @@ public class ProtossFullRetreat extends Manager {
 //            System.err.println("            ------");
 
             unit.addLog("PFull");
-            return usedManager(this);
+
+            if (unit.distToTargetMoreThan(3)) {
+                return usedManager(this);
+            }
         }
 
         return null;

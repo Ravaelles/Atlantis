@@ -1,7 +1,7 @@
 package atlantis.combat.squad;
 
-import atlantis.combat.squad.alpha.Alpha;
-import atlantis.combat.squad.delta.Delta;
+import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.combat.squad.squads.delta.Delta;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 
@@ -17,8 +17,7 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
         Squad squad = chooseSquadFor();
 
         if (!squad.contains(unit)) {
-            squad.addUnit(unit);
-            unit.setSquad(squad);
+            AssignUnitToSquad.assignTo(unit, squad);
             return true;
 //            System.err.println(unit + " assigned, now unit.squad = " + unit.squad());
         }
@@ -32,18 +31,24 @@ public class NewUnitsToSquadsAssigner extends HasUnit {
     // =========================================================
 
     private Squad chooseSquadFor() {
-        Alpha alpha = Alpha.get();
-
         if (shouldAssignToDelta()) {
             return Delta.get();
         }
 
-        return alpha;
+        if (shouldAssignToX()) {
+            return Delta.get();
+        }
+
+        return Alpha.get();
     }
 
     private boolean shouldAssignToDelta() {
         return (unit.isAir() && !unit.type().isTransport())
             || unit.type().isDetectorNonBuilding();
+    }
+
+    private boolean shouldAssignToX() {
+        return unit.isDarkTemplar();
     }
 
     /**

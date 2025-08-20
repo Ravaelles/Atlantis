@@ -11,12 +11,17 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import bwapi.Color;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static atlantis.debug.DebugFlags.DEBUG_TARGETING;
 
 public class ATargeting extends HasUnit {
     protected Selection enemyBuildings;
     protected Selection enemyUnits;
+    protected static Map<AUnit, String> _targetReasons = new HashMap<>();
     private Selection leaderEnemies = null;
 
     public ATargeting(AUnit unit) {
@@ -39,7 +44,8 @@ public class ATargeting extends HasUnit {
             .havingPosition()
             .effVisibleOrFoggedWithKnownPosition()
             .canBeAttackedBy(unit, maxDistFromEnemy)
-            .excludeOverlords();
+            .excludeOverlords()
+            .notDeadMan();
 
 //        if (Enemy.zerg() && DontAttackOverlords.forbidden(unit)) {
 //            enemyUnits = enemyUnits.excludeOverlords();
@@ -70,7 +76,19 @@ public class ATargeting extends HasUnit {
 
     // =========================================================
     public static AUnit defineBestEnemyToAttack(AUnit unit) {
-        return (new ATargeting(unit)).defineBestEnemyToAttack(AttackNearbyEnemies.maxDistToAttack(unit));
+        ATargeting aTargeting = new ATargeting(unit);
+        AUnit target = aTargeting.defineBestEnemyToAttack(AttackNearbyEnemies.maxDistToAttack(unit));
+
+//        if (unit.isRanged() && unit.isAttacking() && unit.target() != null && unit.target().isRanged()) {
+//            if (unit.meleeEnemiesNearCount(2.6) >= 1) {
+//                unit.paintCircleFilled(10, Color.Yellow);
+//                unit.paintCircle(6, Color.Orange);
+//                unit.paintCircle(7, Color.Orange);
+//                System.err.println(A.now + ": " + unit + ": " + aTargeting._targetReasons.get(unit));
+//            }
+//        }
+
+        return target;
     }
 
     /**
@@ -152,11 +170,11 @@ public class ATargeting extends HasUnit {
     // =========================================================
 
     private AUnit defineTarget(AUnit unit, double maxDistFromEnemy) {
-        TargetingWhenDefendingAroundFocus defendingAroundFocus = new TargetingWhenDefendingAroundFocus(unit);
-        if (defendingAroundFocus.applies()) {
-            unit.setManagerUsed(defendingAroundFocus);
-            return defendingAroundFocus.targetToAttack();
-        }
+//        TargetingWhenDefendingAroundFocus defendingAroundFocus = new TargetingWhenDefendingAroundFocus(unit);
+//        if (defendingAroundFocus.applies()) {
+//            unit.setManagerUsed(defendingAroundFocus);
+//            return defendingAroundFocus.targetToAttack();
+//        }
 
         if (unit.isTankSieged()) return (new ATankTargeting(unit)).targetForTank();
 
@@ -261,8 +279,9 @@ public class ATargeting extends HasUnit {
             && (EnemyUnits.discovered().workers().atMost(4) && UnitsArchive.enemyDestroyedWorkers() <= 5);
     }
 
-    public static void debug(String message) {
+    public static void debug(AUnit unit, String message) {
         if (DEBUG_TARGETING) {
+            _targetReasons.put(unit, message);
             A.println(message);
         }
     }

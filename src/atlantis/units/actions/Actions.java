@@ -45,7 +45,8 @@ public class Actions {
     public static final Action MOVE_TRANSFER = new Action().setName("MOVE_TRANSFER");
     public static final Action MOVE_SPACE = new Action().setName("MOVE_SPACE");
     public static final Action SPECIAL = new Action().setName("MOVE_SPECIAL");
-    public static final Action MOVE_UNFREEZE = new Action().setName("MOVE_UNFREEZE");
+    public static final Action MOVE_IDLE = new Action().setName("MOVE_IDLE");
+    public static final Action UNFREEZE = new Action().setName("MOVE_UNFREEZE");
     public static final Action PATROL = new Action().setName("PATROL");
     public static final Action REPAIR = new Action().setName("REPAIR");
     //    public static final Action RETREAT = new Action(false, true).setName("RETREAT");

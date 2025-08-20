@@ -25,7 +25,7 @@ public class ActWithSquadsCommander extends Commander {
     }
 
     private void handleSquad(Squad squad) {
-        if (A.everyNthGameFrame(17)) {
+        if (squad.isAlpha() && A.everyNthGameFrame(17)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 

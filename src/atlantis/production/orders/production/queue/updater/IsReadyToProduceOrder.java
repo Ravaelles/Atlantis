@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.updater;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -19,6 +20,21 @@ public class IsReadyToProduceOrder {
         if (order.isStatus(OrderStatus.FINISHED)) {
 //            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
             return false;
+        }
+
+        if (We.protoss()) {
+            if (
+                A.supplyTotal() <= 12
+                    && order.isBuilding()
+                    && !order.unitType().isPylon()
+                    && Count.pylons() == 0
+            ) return false;
+
+            if (order.isBuilding() && order.unitType().isAssimilator() && !Strategy.get().isGoingHiddenUnits()) {
+                if (Select.ourWithUnfinished().ofType(AUnitType.Protoss_Cybernetics_Core).isEmpty()) {
+                    return false;
+                }
+            }
         }
 
         Construction construction = order.construction();
@@ -48,23 +64,37 @@ public class IsReadyToProduceOrder {
         }
 
         boolean isFarFromMainBaseSoTravelEarly = !isFarFromMainBaseSoTravelEarly(order);
-        boolean notEnoughResources, notEnoughSupplyResources, noRequirement = false;
         if (
-            (notEnoughSupplyResources = !order.supplyRequirementFulfilled(isFarFromMainBaseSoTravelEarly ? 1 : 0))
-//            (notEnoughSupplyResources = !order.supplyRequirementFulfilled(0))
-                || (notEnoughResources = !hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly))
-                || (noRequirement = !order.checkIfHasWhatRequired())
+            (!isSupplyRequirementFulfilled(order, isFarFromMainBaseSoTravelEarly))
+                || (!hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly))
+                || (!order.checkIfHasWhatRequired())
         ) {
-//            if (noRequirement || !isFarFromMainBaseSoTravelEarly) return false;
             return false;
         }
 
         if (cantAffordAndDidntExpandYet(order)) return false;
 
+//        if (order.isStatus(OrderStatus.NOT_READY) && order.isBuilding() && !order.is(AUnitType.Protoss_Pylon)) {
+//            System.out.println("▓▓▓▓▓▓▓ READY TO PRODUCE = " + order + " at " + A.supplyUsed() + ", mins:" + A.minerals());
+//            System.out.println("▓▓▓▓▓▓▓     supplyReqFulfilled: " + order.supplyRequirementFulfilled(0));
+//            System.err.println("isFarFromMainBaseSoTravelEarly = " + isFarFromMainBaseSoTravelEarly);
+//        }
         return true;
     }
 
+    private static boolean isSupplyRequirementFulfilled(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
+        if (
+            A.supplyUsed() <= 16
+                && !A.hasMinerals(234)
+                && order.is(AUnitType.Protoss_Gateway)
+                && !order.supplyRequirementFulfilled(0)
+        ) return false;
+
+        return order.supplyRequirementFulfilled(isFarFromMainBaseSoTravelEarly ? 1 : 0);
+    }
+
     private static boolean isFarFromMainBaseSoTravelEarly(ProductionOrder order) {
+        if (!order.isBuilding()) return false;
         if (order.aroundPosition() == null) return false;
 
         AUnit main = Select.mainOrAnyBuilding();

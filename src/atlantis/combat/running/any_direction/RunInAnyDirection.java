@@ -15,12 +15,11 @@ import bwapi.Color;
 import java.util.ArrayList;
 
 public class RunInAnyDirection {
-    public static int ANY_DIRECTION_RADIUS_DEFAULT = 5;
+    public static int ANY_DIRECTION_RADIUS_DEFAULT = 6;
     public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
-    public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
     //    public static int ANY_DIRECTION_RADIUS_DRAGOON = 6;
 //    public static int ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE = 4;
-    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 5;
+    public static int ANY_DIRECTION_RADIUS_TERRAN_INFANTRY = 6;
     public static int ANY_DIRECTION_RADIUS_VULTURE = 4;
 
     private AUnit unit = null;
@@ -66,8 +65,12 @@ public class RunInAnyDirection {
     private static double evalPosition(AUnit unit, APosition position, HasPosition runAwayFrom, boolean considerOtherUnitsInGoToPlace) {
         Selection allUnitsToConsider = considerOtherUnitsInGoToPlace ? Select.all() : Select.mineralsAndGeysers();
 
-        return 1.3 * position.distTo(runAwayFrom)
-            - position.distTo(unit)
+        double enemyDistThere = position.distTo(runAwayFrom);
+        double ourDistThere = position.distTo(unit);
+
+        return enemyDistThere
+            - ourDistThere
+            + (enemyDistThere <= ourDistThere ? -10 : 0)
             - allUnitsToConsider.inRadius(0.4, position).exclude(unit).count() * 0.5;
     }
 
@@ -128,7 +131,7 @@ public class RunInAnyDirection {
         if (
             runTo != null
                 && isDistTooClose(runTo)
-                && unit.lastStartedRunningLessThanAgo(12)
+                && unit.lastStartedRunningLessThanAgo(15)
         ) {
             return runTo.position();
         }
@@ -157,7 +160,7 @@ public class RunInAnyDirection {
         ArrayList<APosition> potentialPositionsList = new ArrayList<>();
 //        APainter.paintCircleFilled(enemyMedian, 8, Color.Purple); // @PAINT EnemyMedian
 
-        positionSearchLoop(radius, potentialPositionsList);
+        findReasonablePositions(radius, potentialPositionsList);
 //        positionSearchLoop((int) (radius * 0.6), potentialPositionsList);
 
         // =========================================================
@@ -192,40 +195,77 @@ public class RunInAnyDirection {
         return bestPosition;
     }
 
-    private void positionSearchLoop(int radius, ArrayList<APosition> potentialPositionsList) {
-        for (int dtx = -radius; dtx <= radius; dtx += 1) {
-            for (int dty = -radius; dty <= radius; dty += 1) {
-                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
-                    continue;
-                }
+    private void findReasonablePositions(int radius, ArrayList<APosition> potentialPositionsList) {
+        int step = 2;
 
-                // Create position, Make sure it's inbounds
-//                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
-                APosition potentialPosition = unit.translateByTiles(dtx, dty);
+        int loopsCounter = 0;
+        while (radius >= 4) {
+            for (int dtx = -radius; dtx <= radius; dtx += step) {
+                for (int dty = -radius; dty <= radius; dty += step) {
+                    if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
+                        continue;
+                    }
 
-                // If has path to given point, add it to the list of potential points
-                if (
-                    IsReasonablePositionToRunTo.check(
-                        unit, potentialPosition, runAwayFrom
-//                        "O", "x"
-                    )
-                        && potentialPosition.distTo(unit) >= 0.4
-                        && !potentialPosition.isCloseToMapBounds()
-                ) {
-                    potentialPositionsList.add(potentialPosition);
+                    // Create position, Make sure it's inbounds
+    //                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
+                    APosition potentialPosition = unit.translateByTiles(dtx, dty);
+
+                    // If has path to given point, add it to the list of potential points
+                    if (
+                        IsReasonablePositionToRunTo.check(
+                            unit, potentialPosition, runAwayFrom
+    //                        , "O", "x"
+                        )
+                            && potentialPosition.distTo(unit) >= 0.4
+                            && !potentialPosition.isCloseToMapBounds()
+                    ) {
+                        potentialPositionsList.add(potentialPosition);
+                    }
                 }
             }
+
+            loopsCounter++;
+            radius -= 2;
+            if (radius <= 4) step = 1;
+            if (loopsCounter >= 3) break;
         }
     }
+
+//    private void positionSearchLoop(int radius, ArrayList<APosition> potentialPositionsList) {
+//        for (int dtx = -radius; dtx <= radius; dtx += 1) {
+//            for (int dty = -radius; dty <= radius; dty += 1) {
+//                if (dtx != -radius && dtx != radius && dty != -radius && dty != radius) {
+//                    continue;
+//                }
+//
+//                // Create position, Make sure it's inbounds
+////                APosition potentialPosition = unit.translateByTiles(dtx, dty).makeValidFarFromBounds();
+//                APosition potentialPosition = unit.translateByTiles(dtx, dty);
+//
+//                // If has path to given point, add it to the list of potential points
+//                if (
+//                    IsReasonablePositionToRunTo.check(
+//                        unit, potentialPosition, runAwayFrom
+////                        , "O", "x"
+//                    )
+//                        && potentialPosition.distTo(unit) >= 0.4
+//                        && !potentialPosition.isCloseToMapBounds()
+//                ) {
+//                    potentialPositionsList.add(potentialPosition);
+//                }
+//            }
+//        }
+//    }
 
     int runAnyDirectionRadius(AUnit unit, HasPosition runFrom) {
         if (unit.isVulture()) {
             return ANY_DIRECTION_RADIUS_VULTURE;
         }
         else if (unit.isDragoon()) {
-            return unit.nearestEnemyDist() <= 3.4
-                ? ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE
-                : ANY_DIRECTION_RADIUS_DRAGOON;
+            return ANY_DIRECTION_RADIUS_DRAGOON;
+//            return unit.nearestEnemyDist() <= 3.4
+//                ? ANY_DIRECTION_RADIUS_DRAGOON_IF_ENEMIES_CLOSE
+//                : ANY_DIRECTION_RADIUS_DRAGOON;
         }
         else if (unit.isTerran() && unit.isInfantry()) {
 //            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);

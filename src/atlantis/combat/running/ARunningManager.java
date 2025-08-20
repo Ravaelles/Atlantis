@@ -21,7 +21,7 @@ public class ARunningManager {
     protected AUnit runningFromUnit = null;
     protected HasPosition runningFromPosition = null;
     protected boolean allowedToNotifyNearUnitsToMakeSpace;
-    protected String _lastRunMode = "Init";
+    protected String _lastRunMode = "_none_";
 
     protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
     //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
@@ -45,7 +45,7 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
-        if (unit.lastStartedRunningLessThanAgo(1)) return true;
+        if (unit.lastStartedRunningLessThanAgo(4)) return true;
 
 //        _lastRunMode = "Undefined";
 
@@ -59,16 +59,19 @@ public class ARunningManager {
         }
 
         this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
-        verifyRunFromPosition(runFrom);
+        if (!verifyRunFromPosition(runFrom)) {
+            return false;
+        }
 
         // === Define run to position ==============================
 
         runFrom = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
         runTo = runPositionFinder.findBestPositionToRun(runFrom, dist, action);
+//        System.out.println("runTo = " + runTo);
 
         // === Actual run order ====================================
 
-        if (validateAndRun(action, 1, false)) return makeUnitRun(action);
+        if (validateAndRun(action, 0.05, false)) return makeUnitRun(action);
 
         if (A.isUms() && !unit.isObserver()) {
 //            System.err.println(
@@ -84,10 +87,11 @@ public class ARunningManager {
 //            PauseAndCenter.on(unit);
         }
 
-        if (validateAndRun(action, 1, true)) return makeUnitRun(action);
+        if (validateAndRun(action, 0.05, true)) return makeUnitRun(action);
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
+//        if (runTo != null) System.err.println("runTo walk: " + runTo.isWalkable() + " / runToDist: " + A.digit(unit.distTo(runTo)));
 //        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
 //        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
 
@@ -106,7 +110,7 @@ public class ARunningManager {
             return true;
         }
 
-//        System.err.println("runTo.isWalkable() = " + runTo.isWalkable());
+//        System.err.println("FAAAAIL    runTo.isWalkable() = " + runTo.isWalkable());
 //        System.err.println("unit.distTo(runTo.position()) = " + unit.distTo(runTo.position()));
 
         return false;
@@ -126,12 +130,15 @@ public class ARunningManager {
         return false;
     }
 
-    private void verifyRunFromPosition(HasPosition runAwayFrom) {
+    private boolean verifyRunFromPosition(HasPosition runAwayFrom) {
         if (runAwayFrom == null || runAwayFrom.position() == null) {
-            System.err.println("Null unit to run from");
-            stopRunning();
-            throw new RuntimeException("Null unit to run from");
+//            System.err.println("Null runAwayFrom in verifyRunFromPosition: " + runAwayFrom);
+//            stopRunning();
+//            throw new RuntimeException("Null unit to run from");
+            return false;
         }
+
+        return true;
     }
 
     private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
@@ -166,21 +173,24 @@ public class ARunningManager {
 
         // === Valid run position ==============================
 
-        else {
-            if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
-                // Update last time run order was issued
-                if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
+        if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
+            // Update last time run order was issued
+            if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
 
-                // Make all other units very close to it run as well
-                if (allowedToNotifyNearUnitsToMakeSpace) {
-                    (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits(this.runningFromPosition());
-                }
-
-                return true;
+            // Make all other units very close to it run as well
+            if (allowedToNotifyNearUnitsToMakeSpace) {
+                (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits(this.runningFromPosition());
             }
-            return false;
+
+            return true;
         }
 
+//        System.err.println("Failed with unit.moveRun call " + runTo);
+//        if (action != null) {
+//            System.err.println("WLK:" + runTo.isWalkable());
+//            System.err.println("DST:" + runTo.distTo(unit));
+//        }
+        return false;
     }
 
     // === Getters ========================================
@@ -190,6 +200,11 @@ public class ARunningManager {
     }
 
     public boolean isRunning() {
+        if (runTo == null || !unit.isMoving() || !unit().action().isRunning()) {
+            runTo = null;
+            return false;
+        }
+
         if (runTo != null && unit.distTo(runTo) >= 0.04) {
             return true;
 //            if (unit.lastStartedRunningAgo(3)) {
@@ -202,7 +217,6 @@ public class ARunningManager {
 
 //        stopRunning();
         return unit.isMoving()
-            && unit().action().isRunning()
             && unit.distTo(unit.targetPosition()) >= 0.04;
 //        return false;
     }
@@ -218,7 +232,8 @@ public class ARunningManager {
         runningFromPosition = null;
         runningFromUnit = null;
 
-        if (unit.isMoving() && unit.lastActionMoreThanAgo(1)) unit.holdToShoot();
+//        if (unit.isMoving() && unit.lastActionMoreThanAgo(2)) unit.stop("StopRunning");
+        if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("StopRunning");
 
 //        A.printStackTrace("StoppedRunning");
     }

@@ -17,10 +17,12 @@ public class ChokeBlockerFight extends Manager {
         if (unit.hp() <= 24) return false;
 
         if (unit.isZealot()) {
+            if (unit.shieldWound() >= 40 && unit.eval() <= 0.7 && unit.friendsInRadiusCount(1) == 0) return false;
+
             if (
                 unit.lastUnderAttackLessThanAgo(10)
-                    && unit.distToNearestChoke() <= 2
-                    && unit.distToNearestChokeCenter() <= 4
+                    && unit.nearestChokeDist() <= 2
+                    && unit.nearestChokeCenterDist() <= 4
             ) return true;
 
             if (dontFightAsWoundedZealot()) return false;
@@ -87,7 +89,7 @@ public class ChokeBlockerFight extends Manager {
             if (
                 blocker.lastUnderAttackLessThanAgo(10)
                     && blocker.enemiesNear().inRadius(2, unit).notEmpty()
-                    && blocker.distToNearestChokeCenter() <= 3
+                    && blocker.nearestChokeCenterDist() <= 3
             ) return true;
         }
 

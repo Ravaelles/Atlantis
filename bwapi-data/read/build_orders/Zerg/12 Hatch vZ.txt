@@ -1,0 +1,41 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=12
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=15
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=12
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+9 - Overlord
+12 - Hatchery
+11 - Spawning Pool
+10 - Extractor
+Build Drones until 12
+Get 6 Zerglings
+Upgrade to Lair with your first 100 vespene gas
+Continue building Zerglings (Zergling Production)
+16/18 - Overlord (Zergling Production)
+Research Metabolic Boost with second 100 vespene gas
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Overlord
+12 - Hatchery - @NATURAL
+11 - Spawning Pool
+10 - Extractor
+13 - Zergling - x3
+Lair
+Zergling - x3
+Metabolic Boost
+Zergling - x10

@@ -1,7 +1,9 @@
 package atlantis.combat.missions.attack.focus;
 
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.base.define.EnemyThirdBase;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -31,6 +33,14 @@ public class EnemyExistingExpansion {
             () -> {
                 lastFound = null;
 
+                if (A.s <= 60 * 12) {
+                    AUnit third = EnemyThirdBase.get();
+                    if (third != null) {
+                        lastFound = third.position();
+                        return third.position();
+                    }
+                }
+
                 Positions<HasPosition> mainAndNatural = new Positions<>();
                 APosition enemyMain = EnemyInfo.enemyMain();
                 mainAndNatural.addPosition(enemyMain);
@@ -43,7 +53,10 @@ public class EnemyExistingExpansion {
                 HasPosition vulnerable = getVulnerableBase(mainAndNatural);
                 if (vulnerable != null) {
                     HasPosition mainOrNatural = mainAndNatural.nearestTo(vulnerable);
-                    if (mainOrNatural != null && mainOrNatural.groundDist(vulnerable) >= 35) {
+                    if (
+                        mainOrNatural != null
+                            && mainOrNatural.groundDist(vulnerable) >= 35
+                    ) {
                         lastFound = vulnerable;
                         return vulnerable;
                     }
@@ -68,7 +81,10 @@ public class EnemyExistingExpansion {
         for (AUnit base : enemyBuildings.bases().notLifted().list()) {
             if (enemyBuildings.combatBuildingsAntiLand().countInRadius(10, base) <= 1) {
                 HasPosition mainOrNatural = mainAndNatural.nearestTo(base);
-                if (mainOrNatural == null || mainOrNatural.groundDist(base) >= 18) {
+                if (
+                    mainOrNatural == null
+                    || (mainOrNatural.groundDist(base) >= 18 && mainOrNatural.position().hasPathTo(base))
+                ) {
                     found.add(base);
                 }
             }

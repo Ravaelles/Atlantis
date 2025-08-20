@@ -1,9 +1,8 @@
 package atlantis.terran.repair;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
-import atlantis.units.workers.GatherResources;
+import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;

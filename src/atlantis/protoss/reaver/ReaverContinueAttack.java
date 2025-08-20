@@ -1,6 +1,7 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -13,6 +14,7 @@ public class ReaverContinueAttack extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isAttacking()) return false;
+        if (!unit.hasValidTarget()) return false;
 
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;
@@ -37,7 +39,8 @@ public class ReaverContinueAttack extends Manager {
     private boolean shouldContinueAttacking() {
         return unit.isAttacking()
             && unit.lastActionLessThanAgo(45)
-            && unit.hasValidTarget();
+            && unit.hasValidTarget()
+            && unit.groundDist(unit.target()) <= 10;
 //            && unit.isTargetInWeaponRangeAccordingToGame();
     }
 }

@@ -1,0 +1,50 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=9
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=22
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+/**
+http://wiki.teamliquid.net/starcraft/13_Pool_Muta_(vs._Terran)
+9 - Overlord
+13 - Spawning Pool
+12 - Extractor
+13 - Hatchery (at Natural)
+@100% Spawning Pool - Lair (before Zerglings)
+13 - Two Zerglings
+14 - Two more Zerglings (for a total of 4)
+15 - Drone
+16 - Overlord
+17-19 - Creep Colony (morph to a Sunken Colony)
+20 - Stop Drone production
+20 - Two Overlords
+@75% Spire - Second Extractor
+@100% Spire - Six Mutalisks (keep making Mutalisks and Overlords)
+*/
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+9 - Spawning Pool
+8 - Overlord
+Zergling
+Zergling
+Creep Colony
+Creep Colony
+Sunken Colony
+Sunken Colony
+Drone
+Zergling
+Extractor
+Zergling
+Drone
+18 - Lair
+23 - Spire
+Mutalisk
+Mutalisk
+Zergling
+Mutalisk

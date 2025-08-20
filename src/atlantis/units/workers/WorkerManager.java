@@ -9,7 +9,9 @@ import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.terran.repair.DynamicRepairsNearby;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
+import atlantis.units.workers.defence.WorkerAvoidManager;
 import atlantis.units.workers.defence.WorkerDefenceManager;
+import atlantis.units.workers.gather.GatherResources;
 
 public class WorkerManager extends Manager {
     public WorkerManager(AUnit unit) {

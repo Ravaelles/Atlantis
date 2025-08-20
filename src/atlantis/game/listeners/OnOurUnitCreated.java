@@ -5,6 +5,7 @@ import atlantis.game.event.Events;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
+import atlantis.production.constructions.protoss.ProtossLimitExistingConstructions;
 import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.constructions.terran.TerranNewBuilding;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
@@ -77,6 +78,8 @@ public class OnOurUnitCreated {
 
         // CENTER CAMERA ON THE FIRST BUNKER
 //        if (unit.isBunker() && Env.isLocal() && Count.bunkers() == 0) CameraCommander.centerCameraOn(unit);
+
+        Events.dispatch("OurBuildingCreated", unit);
     }
 
     private static void updateProductionOrderToInProgress(AUnit unit) {
@@ -92,7 +95,9 @@ public class OnOurUnitCreated {
         order = assignOrderToUnitIfRelationMissing(unit, order);
 
         if (order == null) {
-            if (!unit.isWorker()) System.err.println("No ProductionOrder for " + unit);
+            if (!unit.isWorker() && !unit.type().isScarab() && !unit.type().isInvincible()) {
+                System.err.println("No ProductionOrder for " + unit);
+            }
             return;
         }
         order.setStatus(IN_PROGRESS);

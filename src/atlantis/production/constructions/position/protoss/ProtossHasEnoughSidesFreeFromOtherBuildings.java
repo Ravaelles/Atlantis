@@ -44,7 +44,7 @@ public class ProtossHasEnoughSidesFreeFromOtherBuildings {
     }
 
     private static boolean preventEnemyInBaseSituation() {
-        return A.supplyUsed() <= 50 && EnemyUnitBreachedBase.notNull();
+        return A.supplyUsed() <= 50 && EnemyUnitBreachedBase.someone();
     }
 
     private static boolean forbidden(String reason) {

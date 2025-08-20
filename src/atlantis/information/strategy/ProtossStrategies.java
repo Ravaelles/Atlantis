@@ -7,12 +7,15 @@ import atlantis.game.player.Enemy;
 
 public class ProtossStrategies extends AStrategy {
     public static AStrategy protossChooseStrategy() {
+//        if (true) return ProtossStrategies.PROTOSS_2_Gate_DT;
+
         if (Enemy.protoss()) {
 //            return ProtossStrategies.PROTOSS_Zealot_into_Goon;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;
-            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+//            return ProtossStrategies.PROTOSS_2_Gate_DT;
+            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon; // <--
 //            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //            return ProtossStrategies.PROTOSS_3_Gate_Zealot_vP;
@@ -23,10 +26,10 @@ public class ProtossStrategies extends AStrategy {
         }
 
         else if (Enemy.terran()) {
+            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
+//            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Zealot_into_Goon;
-            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
-//            return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
         }
 
         else if (Enemy.zerg()) {

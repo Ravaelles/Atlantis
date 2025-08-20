@@ -23,7 +23,7 @@ public class ProtossObserverAvoidDetectors extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.moveAwayFrom(enemyDetectorCenter, 3, Actions.MOVE_AVOID, "AvoidDetector")) {
+        if (unit.moveAwayFrom(enemyDetectorCenter, 3, Actions.MOVE_AVOID, "ObsAvoidDetector")) {
             return usedManager(this);
         }
 

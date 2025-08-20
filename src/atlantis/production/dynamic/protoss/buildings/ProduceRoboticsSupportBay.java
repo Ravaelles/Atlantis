@@ -9,24 +9,27 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
+import com.sun.media.sound.RIFFInvalidDataException;
 
-import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
-import static atlantis.units.AUnitType.Protoss_Robotics_Support_Bay;
+import static atlantis.units.AUnitType.*;
 
 public class ProduceRoboticsSupportBay {
     public static final AUnitType type = Protoss_Robotics_Support_Bay;
 
     public static boolean produce() {
 //        if (true) return false;
-        if (Enemy.terran() && A.supplyUsed() <= 190) return false;
-        if (A.supplyUsed() <= 49) return false;
-        if (EnemyUnits.lurkers() > 0 && Count.observers() == 0) return false;
         if (Count.ourOfTypeUnfinished(type) >= 1) return false;
+        if (Enemy.terran() && A.supplyUsed() <= 130) return false;
+        if (A.supplyUsed() <= 49) return false;
+
+        if (againstZergHaveTemplarArchivesFirst()) return false;
+
+        if (EnemyUnits.lurkers() > 0 && Count.observers() == 0) return false;
         if (Enemy.protoss() && (
             A.supplyUsed() <= 120 || Army.strength() <= 140 || Count.observers() <= 2
         )) return false;
 
-        if (A.supplyUsed() >= (120 - Army.strength() >= 130 ? 40 : 0)) return produceSupportBay();
+        if (A.supplyUsed() >= (120 - Army.strength() >= 150 ? 40 : 0)) return produceSupportBay();
         if (A.supplyUsed() >= 70 && A.canAfford(500, 180)) return produceSupportBay();
 
 //        if (Enemy.zerg()) return false;
@@ -43,6 +46,11 @@ public class ProduceRoboticsSupportBay {
         }
 
         return false;
+    }
+
+    private static boolean againstZergHaveTemplarArchivesFirst() {
+        return Enemy.zerg()
+            && Count.ourWithUnfinished(Protoss_Templar_Archives) == 0;
     }
 
     private static boolean produceSupportBay() {

@@ -1,8 +1,9 @@
 package atlantis.combat.retreating.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.early.protoss.ZealotAvoidLingsWhenWounded;
 import atlantis.combat.retreating.protoss.should.ProtossDontRetreat;
-import atlantis.combat.retreating.protoss.should.ProtossShouldRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossRetreatWrapper;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -20,7 +21,9 @@ public class ProtossRetreat extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            ProtossShouldRetreat.class,
+            ProtossRetreatWrapper.class,
+
+            ZealotAvoidLingsWhenWounded.class,
         };
     }
 }

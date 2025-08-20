@@ -1,7 +1,7 @@
 package tests.acceptance.starengine;
 
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.squad.alpha.Alpha;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.units.AUnit;
@@ -19,7 +19,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
         FakeUnit[] our = defineOurs();
         FakeUnit[] enemies = defineEnemies();
 
-        useStarEngine(); // Uncomment to use StarEngine
+//        useStarEngine(); // Uncomment to use StarEngine
 
         int runForSeconds = !isUsingEngine() ? 1 : 10;
         createWorld(30 * runForSeconds, () -> {
@@ -78,9 +78,9 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
         int ty = 10;
 
         return fakeOurs(
-            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 10, ty).setSquad(alpha),
-            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 13, ty + 1).setSquad(alpha),
-            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 19, ty).setSquad(alpha)
+            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 10, ty).forceSetSquad(alpha),
+            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 13, ty + 1).forceSetSquad(alpha),
+            (FakeUnit) fake(AUnitType.Protoss_Dragoon, 19, ty).forceSetSquad(alpha)
         );
     }
 

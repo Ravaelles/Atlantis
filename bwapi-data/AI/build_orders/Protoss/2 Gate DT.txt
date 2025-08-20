@@ -1,0 +1,34 @@
+// === CUSTOMIZABLE VARIABLES =========================================
+
+// Which worker (1st, 8th etc) should scout and try to find enemy base
+#SCOUT_IS_NTH_WORKER=16
+
+// When supply is bigger than N, then start auto-producing supply units
+#AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS=32
+
+// If have empty slot for a worker, force to build new workers
+#AUTO_PRODUCE_WORKERS_MIN_SUPPLY=1
+
+// Max number of workers for workers auto-production to remain active
+#AUTO_PRODUCE_WORKERS_MAX_WORKERS=55
+
+// === Raw build order used - taken from Liquipedia or so =============
+
+// https://liquipedia.net/starcraft/2_Gate_DT_(vs._Protoss)
+
+// === Build order for Atlantis =======================================
+
+@ - Name - Modifier
+8 - Pylon
+10 - Gateway
+12 - Assimilator
+14 - Cybernetics Core
+14 - Zealot
+16 - Pylon
+17 - Citadel of Adun
+19 - Dragoon
+22 - Templar Archives
+23 - Pylon
+26 - Dark Templar
+29 - Pylon
+29 - MISSION=ATTACK
