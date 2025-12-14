@@ -1,4 +1,4 @@
-package cherryvis.ztsd;
+package atlantis.cherryvis.ztsd;
 
 import atlantis.util.log.ErrorLog;
 import com.github.luben.zstd.Zstd;

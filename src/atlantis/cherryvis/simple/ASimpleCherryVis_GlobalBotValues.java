@@ -1,4 +1,4 @@
-package cherryvis.simple;
+package atlantis.cherryvis.simple;
 
 public class ASimpleCherryVis_GlobalBotValues {
     /**

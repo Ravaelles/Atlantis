@@ -58,7 +58,7 @@ import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 import atlantis.util.log.LogUnitsToFiles;
 import bwapi.*;
-import cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVis;
 import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package cherryvis;
+package atlantis.cherryvis;
 
 import atlantis.units.AUnit;
 

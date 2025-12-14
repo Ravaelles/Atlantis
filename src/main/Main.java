@@ -41,7 +41,7 @@ public class Main {
         // ==== See AtlantisRaceConfig class to customize execution ====
         // =============================================================
 
-        Atlantis atlantis = new Atlantis(); // Create Atlantis object, it is a wrapper around JBWAPI
+        Atlantis atlantis = Atlantis.getInstance(); // Create Atlantis object, it is a wrapper around JBWAPI
         atlantis.run(); // Start the bot
     }
 
@@ -222,7 +222,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/P_v_Lurkers.scx";
 //        if (true) return "ums/rav/protoss/P_v_Z2.scm"; // D+Z v Lings+Hydra
 
-        if (true) return "ums/rav/protoss/1Zeal_v_2Ling.scm";
+//        if (true) return "ums/rav/protoss/1Zeal_v_2Ling.scm";
 //        if (true) return "ums/rav/protoss/1Zeal_v_LingUp.scm";
 //        if (true) return "ums/rav/protoss/2Zeal_v_LingUp.scm";
 //        if (true) return "ums/rav/protoss/8Zeal_v_LingUp.scm";
@@ -255,7 +255,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/HT_v_Sunkens.scm";
 
 //        if (true) return "ums/rav/protoss/Obser_v_Spores.scm";
-//        if (true) return "ums/rav/protoss/Cors_v_HydraBase.scx";
+        if (true) return "ums/rav/protoss/Cors_v_HydraBase.scx";
 //        if (true) return "ums/rav/protoss/Cors_v_HydraBaseB.scx";
 //        if (true) return "ums/rav/protoss/Cors_inCorner.scx";
 

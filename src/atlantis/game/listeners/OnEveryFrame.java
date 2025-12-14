@@ -7,7 +7,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVis;
 
 public class OnEveryFrame {
     public static void update() {

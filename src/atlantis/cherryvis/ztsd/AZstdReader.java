@@ -1,4 +1,4 @@
-package cherryvis.ztsd;
+package atlantis.cherryvis.ztsd;
 
 import atlantis.game.A;
 import com.github.luben.zstd.ZstdInputStream;

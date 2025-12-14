@@ -1,6 +1,4 @@
-package cherryvis.simple;
-
-import atlantis.game.A;
+package atlantis.cherryvis.simple;
 
 import java.util.Map;
 import java.util.Set;

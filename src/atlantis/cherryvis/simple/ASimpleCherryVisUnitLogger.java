@@ -1,4 +1,4 @@
-package cherryvis.simple;
+package atlantis.cherryvis.simple;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;

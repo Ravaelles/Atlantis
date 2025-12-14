@@ -1,10 +1,10 @@
-package cherryvis.simple;
+package atlantis.cherryvis.simple;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import cherryvis.ACherryVisConfig;
-import cherryvis.ACherryVisLogger;
-import cherryvis.generic.ACherryVis_GameSummary;
+import atlantis.cherryvis.ACherryVisConfig;
+import atlantis.cherryvis.ACherryVisLogger;
+import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 
 public class ASimpleCherryVisLogger implements ACherryVisLogger {
     private ACherryVisConfig config;

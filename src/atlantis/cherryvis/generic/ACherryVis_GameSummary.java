@@ -1,10 +1,10 @@
-package cherryvis.generic;
+package atlantis.cherryvis.generic;
 
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
 import atlantis.map.AMap;
-import cherryvis.ACherryVisConfig;
+import atlantis.cherryvis.ACherryVisConfig;
 
 public class ACherryVis_GameSummary {
     private ACherryVisConfig config;

@@ -1,4 +1,4 @@
-package cherryvis.generic;
+package atlantis.cherryvis.generic;
 
 public class ACherryVis_TypesNames {
     public static String get() {

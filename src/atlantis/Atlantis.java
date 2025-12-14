@@ -3,6 +3,8 @@ package atlantis;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
+import atlantis.game.event.Event;
+import atlantis.game.event.Events;
 import atlantis.game.listeners.*;
 import atlantis.units.AUnit;
 import atlantis.util.ProcessHelper;
@@ -145,6 +147,8 @@ public class Atlantis implements BWEventListener {
             if (unit.isEnemy()) OnEnemyNewUnitDiscovered.update(unit);
             else if (unit.isNeutral()) OnNeutralNewUnitDiscovered.update(unit);
 //            if (!unit.isRealUnit() && !unit.type().isInvincible()) {
+
+            Events.dispatch(Event.UNIT_DISCOVERED, unit);
         }
     }
 
@@ -278,7 +282,7 @@ public class Atlantis implements BWEventListener {
     /**
      * You have to pass AtlantisRaceConfig object to initialize Atlantis.
      */
-    public Atlantis() {
+    private Atlantis() {
         instance = this; // Save static reference to this instance, act like a singleton.
     }
 

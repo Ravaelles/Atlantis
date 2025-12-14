@@ -1,11 +1,11 @@
 package atlantis.game.listeners;
 
 import atlantis.game.A;
+import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import atlantis.map.path.OurClosestBaseToEnemy;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
-import atlantis.production.constructions.protoss.ProtossLimitExistingConstructions;
 import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.constructions.terran.TerranNewBuilding;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
@@ -54,7 +54,7 @@ public class OnOurUnitCreated {
 
             if (We.protoss() && unit.type().isPylon() && Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Pylon) == 1) {
                 AUnit builder = unit.construction() == null ? null : unit.construction().builder();
-                Events.dispatch("FirstPylonUnitCreated", unit, builder);
+                Events.dispatch(Event.OUR_FIRST_PYLON_UNIT_CREATED, unit, builder);
             }
         }
 
@@ -79,7 +79,7 @@ public class OnOurUnitCreated {
         // CENTER CAMERA ON THE FIRST BUNKER
 //        if (unit.isBunker() && Env.isLocal() && Count.bunkers() == 0) CameraCommander.centerCameraOn(unit);
 
-        Events.dispatch("OurBuildingCreated", unit);
+        Events.dispatch(Event.OUR_BUILDING_CREATED, unit);
     }
 
     private static void updateProductionOrderToInProgress(AUnit unit) {

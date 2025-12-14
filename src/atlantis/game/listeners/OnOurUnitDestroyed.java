@@ -6,6 +6,7 @@ import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.config.env.Env;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
+import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -42,7 +43,7 @@ public class OnOurUnitDestroyed {
             Missions.forceGlobalMissionDefend("Far too weak to attack!");
         }
 
-        Events.dispatch("OurBunkerDestroyed", unit);
+        Events.dispatch(Event.OUR_BUNKER_DESTROYED, unit);
     }
 
     private static void printOurDeadUnit(AUnit unit) {

@@ -1,8 +1,8 @@
-package cherryvis;
+package atlantis.cherryvis;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import cherryvis.simple.ASimpleCherryVisLogger;
+import atlantis.cherryvis.simple.ASimpleCherryVisLogger;
 
 public class ACherryVis {
     public static boolean isEnabled() {
@@ -64,6 +64,6 @@ public class ACherryVis {
 //    }
 
 //    private static String cherryVisFile() {
-//        return "cherryvis.txt";
+//        return "atlantis.cherryvis.txt";
 //    }
 }

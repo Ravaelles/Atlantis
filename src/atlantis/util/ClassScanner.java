@@ -12,12 +12,12 @@ import java.util.List;
 public class ClassScanner {
     public static List<Class<?>> classesExtending(Class ourClass) {
         List<Class<?>> listeners = new ArrayList<>();
-//        List<Class<?>> classes = ClassScanner.findClasses(packageName);
 
         try {
             for (Class<?> clazz : findClasses("atlantis")) {
                 // Check if the class is a subclass of AutomaticListener
                 if (ourClass.isAssignableFrom(clazz) && !clazz.equals(ourClass)) {
+//                    A.println("Listener found: " + clazz.getSimpleName());
                     listeners.add(clazz.asSubclass(ourClass));  // Safe cast to Class<? extends AutomaticListener>
                 }
             }

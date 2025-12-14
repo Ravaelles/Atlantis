@@ -11,10 +11,10 @@ public abstract class AutomaticListener {
     /**
      * Event listeners are auto-registered using AutoRegisterEventListeners.
      */
-    public abstract String listensTo();
+    public abstract Event listensTo();
 
     /**
      * Event listeners are auto-registered using AutoRegisterEventListeners.
      */
-    public abstract void onEvent(String event, Object... data);
+    public abstract void onEvent(Event event, Object... data);
 }

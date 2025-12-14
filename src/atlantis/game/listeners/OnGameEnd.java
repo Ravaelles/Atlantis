@@ -7,7 +7,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.util.GameSummary;
 import benchmark.BenchmarkMode;
-import cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVis;
 
 public class OnGameEnd {
     private static boolean _executed = false;

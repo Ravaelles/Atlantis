@@ -2,6 +2,7 @@ package atlantis.production.constructions.protoss;
 
 import atlantis.game.A;
 import atlantis.game.event.AutomaticListener;
+import atlantis.game.event.Event;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
@@ -12,12 +13,12 @@ import java.util.ArrayList;
 
 public class ProtossLimitExistingConstructions extends AutomaticListener {
     @Override
-    public String listensTo() {
-        return "OurBuildingCreated";
+    public Event listensTo() {
+        return Event.OUR_BUILDING_CREATED;
     }
 
     @Override
-    public void onEvent(String event, Object... data) {
+    public void onEvent(Event event, Object... data) {
         AUnit unit = (AUnit) data[0];
 
         if (!unit.type().isABuilding()) return;

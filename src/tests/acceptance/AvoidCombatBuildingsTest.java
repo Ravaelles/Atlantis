@@ -1,24 +1,19 @@
 package tests.acceptance;
 
-import atlantis.architecture.Manager;
 import atlantis.combat.CombatUnitManager;
-import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
-import cherryvis.ACherryVis;
-import cherryvis.ACherryVisLogger;
-import cherryvis.simple.ASimpleCherryVisLogger;
-import cherryvis.simple.ASimpleCherryVisUnitLogger;
-import cherryvis.simple.ASimpleCherryVis_UnitLogs;
+import atlantis.cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVisLogger;
+import atlantis.cherryvis.simple.ASimpleCherryVisLogger;
+import atlantis.cherryvis.simple.ASimpleCherryVisUnitLogger;
+import atlantis.cherryvis.simple.ASimpleCherryVis_UnitLogs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Zerg_Hydralisk;
 import static atlantis.units.AUnitType.Zerg_Zergling;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;

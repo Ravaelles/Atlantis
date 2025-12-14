@@ -1,9 +1,9 @@
-package cherryvis.simple;
+package atlantis.cherryvis.simple;
 
 import atlantis.game.A;
-import cherryvis.ACherryVisConfig;
-import cherryvis.generic.ACherryVis_TypesNames;
-import cherryvis.ztsd.AZstdWriter;
+import atlantis.cherryvis.ACherryVisConfig;
+import atlantis.cherryvis.generic.ACherryVis_TypesNames;
+import atlantis.cherryvis.ztsd.AZstdWriter;
 
 public class ASimpleCherryVisLogger_TraceJson {
     protected final ACherryVisConfig config;
@@ -37,9 +37,12 @@ public class ASimpleCherryVisLogger_TraceJson {
             + emptyLineMap("tensors_summaries")
             + emptyLineArray("trees")
             + "\"types_names\": " + ACherryVis_TypesNames.get() + ","
-            + emptyLineMap("units_first_seen")
-            + emptyLineMap("units_logs")
-            + "\"units_updates\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "}"
+//            + emptyLineMap("units_first_seen")
+            + "\"units_first_seen\": " + ASimpleCherryVis_UnitFirstSeen.get() + ","
+//            + emptyLineMap("units_logs")
+            + "\"units_logs\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "}"
+            + emptyLineMap("units_updates")
+//            + "\"units_updates\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "}"
             + "}";
     }
 

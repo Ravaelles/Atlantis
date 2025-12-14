@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ public class EventTest extends AbstractTestWithUnits {
 
         assertEquals("unchanged", state);
 
-        Events.dispatch("FakeEventName", 666, null, "hello");
+        Events.dispatch(Event.FAKE_EVENT, 666, null, "hello");
 
         assertEquals("Foo! Integer:666, null:null, String:hello", state);
     }

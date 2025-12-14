@@ -2,7 +2,6 @@ package atlantis.util.log;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import cherryvis.ACherryVis;
 
 import java.util.ArrayList;
 

@@ -27,7 +27,7 @@ import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
-import cherryvis.ACherryVis;
+import atlantis.cherryvis.ACherryVis;
 
 public class OnGameStarted {
 
