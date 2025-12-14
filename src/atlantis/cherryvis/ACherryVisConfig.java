@@ -19,7 +19,6 @@ public class ACherryVisConfig {
         }
 
         ACherryVisConfig config = ACherryVis.logger().config();
-//        String basePath = Env.copyCherryVisDataTo();
         String basePath = "bwapi-data/write";
         cherryVisReplayDirectory = basePath + "/" + config.useDirectoryName();
 
@@ -29,8 +28,6 @@ public class ACherryVisConfig {
     }
 
     private String useDirectoryName() {
-        return "cherryvis_dir";
-//        + ".rep.cvis"
-//        return "_" + A.hourMin() + "_" + Enemy.name();
+        return "cherryvis_dir.rep.cvis";
     }
 }

@@ -27,37 +27,37 @@ public class ASimpleCherryVisLogger_TraceJson {
           If it's a command/decision from a subsystem → tasks or upcs
          */
         return "{"
-            + line("_version", 0)
-            + emptyLineMap("board_updates")
-            + emptyLineMap("draw_commands")
+            + line("_version", 0) + ","
+            + emptyLineMap("board_updates") + ","
+            + emptyLineMap("draw_commands") + ","
             + "\"game_values\": {" + ASimpleCherryVis_GlobalBotValues.build(logger) + "},"
-            + emptyLineArray("heatmaps")
+            + emptyLineArray("heatmaps") + ","
             + "\"logs\": [" + ASimpleCherryVis_GlobalBotLogs.build() + "],"
-            + emptyLineMap("tasks")
-            + emptyLineMap("tensors_summaries")
-            + emptyLineArray("trees")
+            + emptyLineMap("tasks") + ","
+            + emptyLineMap("tensors_summaries") + ","
+            + emptyLineArray("trees") + ","
             + "\"types_names\": " + ACherryVis_TypesNames.get() + ","
-//            + emptyLineMap("units_first_seen")
+//            + emptyLineMap("units_first_seen") + ","
             + "\"units_first_seen\": " + ASimpleCherryVis_UnitFirstSeen.get() + ","
-//            + emptyLineMap("units_logs")
-            + "\"units_logs\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "}"
+//            + emptyLineMap("units_logs") + ","
+            + "\"units_logs\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "},"
             + emptyLineMap("units_updates")
 //            + "\"units_updates\": {" + ASimpleCherryVis_UnitLogs.build(logger) + "}"
             + "}";
     }
 
     private String emptyLineMap(String key) {
-        return "\"" + key + "\": {},";
+        return "\"" + key + "\": {}";
     }
 
     private String emptyLineArray(String key) {
-        return "\"" + key + "\": [],";
+        return "\"" + key + "\": []";
     }
 
     private String line(String key, Object value) {
         String valueString = (value instanceof String) ? "\"" + value + "\"" : value.toString();
 
-        return "\"" + key + "\": " + valueString + ",";
+        return "\"" + key + "\": " + valueString;
     }
 
     // =========================================================

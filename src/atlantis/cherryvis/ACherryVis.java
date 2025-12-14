@@ -13,20 +13,7 @@ public class ACherryVis {
 
     private static ACherryVisLogger instance = null;
 
-//    public static ACherryVisLogger instance() {
-//        return instance;
-//    }
-
     public static void initialize() {
-//        String cherryVisFile = pathForCherryVisFiles();
-//        if (A.fileExists(cherryVisFile)) {
-//            A.removeFile(cherryVisFile);
-//        }
-
-//        CherryVis.initialize(cherryVisFile);
-        // In your main bot class, when the game begins:
-//        CherryVis.getInstance().initialize();
-
         logger();
     }
 
@@ -47,23 +34,7 @@ public class ACherryVis {
     }
 
     public static void finish() {
-        System.out.println("CherryVis finishing...");
+        A.println("CherryVis finishing...");
         logger().onGameEnd();
-
-//        String pathForCherryVisFiles = pathForCherryVisFiles();
-//        if (A.fileExists(pathForCherryVisFiles)) {
-//            A.moveFile(pathForCherryVisFiles, Env.copyCherryVisDataTo() + "\\" + cherryVisFile());
-//        }
     }
-
-    // =========================================================
-
-//    private static String pathForCherryVisFiles() {
-////        return System.getProperty("user.dir") + "\\bwapi-data\\write\\" + cherryVisFile();
-//        return System.getProperty("user.dir") + "\\bwapi-data\\write\\" + cherryVisFile();
-//    }
-
-//    private static String cherryVisFile() {
-//        return "atlantis.cherryvis.txt";
-//    }
 }

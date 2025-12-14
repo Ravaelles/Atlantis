@@ -87,8 +87,6 @@ public class ASimpleCherryVis_UnitFirstSeen extends AutomaticListener {
                 unitsByFrame.put(now, new ArrayList<>());
             }
             unitsByFrame.get(now).add(props);
-
-            System.err.println(A.now + " - unit = " + unit);
         }
     }
 }
