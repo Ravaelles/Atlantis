@@ -62,7 +62,8 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         }
 
         if (
-            unit.hp() <= 50
+            Enemy.zerg()
+                && unit.hp() <= 50
                 && unit.isMissionAttack()
                 && unit.shotSecondsAgo(2.5)
                 && (

@@ -33,16 +33,17 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean t(String reason) {
-        if (!reason.equals(_lastReason)) {
-            System.err.println("ZealotAvoid: " + reason + " e:" + unit.evalDigit() + ", hp:" + unit.hp());
-            _lastReason = reason;
-        }
+//        if (!reason.equals(_lastReason)) {
+//            System.err.println("ZealotAvoid: " + reason + " e:" + unit.evalDigit() + ", hp:" + unit.hp());
+//            _lastReason = reason;
+//        }
 
         return true;
     }
 
     private boolean badEvalEarly() {
         if (A.s >= 60 * 8) return false;
+        if (A.s <= 30) return false;
         if (unit.isMissionDefend() && (eval >= 0.8 || unit.distToMain() <= 6) && unit.hp() >= 34) return false;
 
         if (eval <= 0.9 && !unit.isMissionSparta()) return t("BadEvalEarlyA");
@@ -64,7 +65,7 @@ public class ZealotAlwaysAvoidEnemy extends Manager {
         if (unit.hp() >= 35 && unit.friendsNear().workers().inRadius(3, unit).atLeast(1)) return false;
         if (unit.hp() <= 35 && unit.eval() <= 3) t("WoundedEarlyB");
 
-        if (unit.hp() <= 32 || unit.eval() <= 0.95) {
+        if (unit.hp() <= 32 || unit.eval() <= 0.9) {
             int meleeEnemiesNear = unit.meleeEnemiesNearCount(3.6);
 
             if (meleeEnemiesNear >= 1 && meleeEnemiesNear <= 4) return t("WoundedEarlyA");

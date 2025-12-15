@@ -57,14 +57,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
                 if (shieldWound <= 9) return f("_GvG_A");
                 if (cooldown <= 12 && shieldWound <= 19) return f("_GvG_B");
 
-//                if (cooldown >= 4 && unit.hp() <= 22) return t("GvG_D");
+                if (unit.meleeEnemiesNearCount(1.8) >= 1) return f("_DontWhenMeleeNear");
             }
         }
-
-//        if (unit.hp() <= 40) return f("_DontWhenWounded");
-        if (unit.meleeEnemiesNearCount(1.8) >= 1) return f("_DontWhenMeleeNear");
-
-//        if (Enemy.zerg() && unit.shieldWound() >= 20 && unit.meleeEnemiesNearCount(2.7) >= 4) return t("Lingz");
 
         if (cooldown >= 11) {
             Selection melees = unit.enemiesNear()

@@ -31,7 +31,8 @@ public class MoonSeparation {
                 return separation;
             }
 
-            return AUnitType.Protoss_Zealot.widthInTiles() - 0.03;
+//            return AUnitType.Protoss_Zealot.widthInTiles() - 0.03;
+            return 0.1;
         }
 
         return 0.04;

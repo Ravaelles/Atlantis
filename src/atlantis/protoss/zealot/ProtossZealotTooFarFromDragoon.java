@@ -86,12 +86,18 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
             return true;
         }
 
-        return distToGoon >= PREFERED_DIST
+        return distToGoon >= preferedDist()
             && unit.enemiesNear().inRadius(4.2, unit).empty()
             && (
             unit.shieldWound() >= 16
                 || unit.enemiesNear().combatBuildingsAntiLand().inRadius(8.3, unit).empty()
         );
+    }
+
+    private double preferedDist() {
+        if (Enemy.zerg()) return PREFERED_DIST;
+
+        return PREFERED_DIST + (unit.enemiesNear().ranged().canAttack(unit, 3.1).empty() ? 3 : 0);
     }
 
     private boolean forceApply() {
@@ -173,7 +179,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
     }
 
     private boolean beCautiousNearCB() {
-        return distToGoon >= PREFERED_DIST
+        return distToGoon >= preferedDist()
             && unit.enemiesNear().combatBuildingsAntiLand().countInRadius(10, unit) > 0;
     }
 
