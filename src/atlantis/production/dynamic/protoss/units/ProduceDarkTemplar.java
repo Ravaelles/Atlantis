@@ -18,8 +18,7 @@ public class ProduceDarkTemplar {
 
         if (Have.no(requiredBuilding())) return false;
 
-        int maxDT = haveThisManyHT();
-        if (requested >= 10 && Count.ourWithUnfinished(type()) >= maxDT) return false;
+        if (requested >= 10 || Count.ourWithUnfinished(type()) >= haveThisManyHT()) return false;
 
         return produce();
     }
