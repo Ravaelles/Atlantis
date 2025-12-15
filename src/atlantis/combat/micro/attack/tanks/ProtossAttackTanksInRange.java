@@ -24,10 +24,9 @@ public class ProtossAttackTanksInRange extends Manager {
         if (!unit.hasGroundWeapon()) return false;
 
         return (tankInRange() != null)
-            && (
-                (unit.lastTargetWasTank() || unit.hp() >= 65)
-                && unit.enemiesNear().tanks().countInRadius(OurDragoonRange.range() + 0.5, unit) > 0
-        );
+            && (unit.lastTargetWasTank() || unit.hp() >= 65)
+            && unit.enemiesNear().tanks().countInRadius(OurDragoonRange.range() + 0.5, unit) > 0
+            && tank.friendsNear().nonTanks().countInRadius(4, tank) <= 3;
     }
 
     private AUnit tankInRange() {
