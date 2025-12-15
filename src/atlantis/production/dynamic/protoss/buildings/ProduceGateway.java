@@ -56,9 +56,9 @@ public class ProduceGateway {
 
         if (freeGateways > 0 && minerals <= 360) return false;
 
-        if (minerals >= 700 && existingGateways <= 6 && freeGateways <= 2) return produceGateway() && CV.log("Gateway:700");
-        if (minerals >= 500 && freeGateways <= 1 && existingGateways <= 7) return produceGateway() && CV.log("Gateway:500");
-        if (freeGateways <= 2 && minerals >= 1200) return produceGateway() && CV.log("Gateway:1200");
+        if (minerals >= 700 && existingGateways <= 6 && freeGateways <= 2) return produceGateway() && log("700");
+        if (minerals >= 500 && freeGateways <= 1 && existingGateways <= 7) return produceGateway() && log("500");
+        if (freeGateways <= 2 && minerals >= 1200) return produceGateway() && log("1200");
 
         if (
             minerals <= 210 && freeGateways >= 1
@@ -69,13 +69,13 @@ public class ProduceGateway {
             if (freeGateways > 0 && minerals <= 180) return false;
         }
         else {
-            if (minerals >= 220 && freeGateways <= 0 && existingGateways <= 3) return produceGateway() && CV.log("Gateway:220");
-            if (minerals >= 210 && freeGateways <= 1 && existingGateways <= 5) return produceGateway() && CV.log("Gateway:210");
+            if (minerals >= 220 && freeGateways <= 0 && existingGateways <= 3) return produceGateway() && log("220");
+            if (minerals >= 210 && freeGateways <= 1 && existingGateways <= 5) return produceGateway() && log("210");
         }
 
         if (
             minerals >= 190 && freeGateways <= 0 && PrioritizeGatewaysVsProtoss.shouldPrioritizeOverExpanding()
-        ) return produceGateway() && CV.log("Gateway:190");
+        ) return produceGateway() && log("190");
 
         if (freeGateways > 0 && minerals <= 180 && existingGateways <= 3) return false;
         if (existingGateways > 0 && A.supplyUsed() <= 17 && minerals <= 500) return false;
@@ -92,7 +92,7 @@ public class ProduceGateway {
 //            if (freeGateways >= 1 && existingGateways >= 3 && !A.hasMinerals(550)) return false;
         }
 
-        if (freeGateways <= 1 && existingGateways <= 4 && A.hasMinerals(150)) return produceGateway() && CV.log("Gateway:150");
+        if (freeGateways <= 1 && existingGateways <= 4 && A.hasMinerals(150)) return produceGateway() && log("150");
         if (freeGateways == 0 && existingGateways <= 2 && Army.strength() <= 130 && A.hasMinerals(230)) return produceGateway();;
 
         if (ConstructionRequests.notFinished().size() >= (A.hasMinerals(550) ? 2 : 1) && !A.hasMinerals(600)) return false;
@@ -100,14 +100,14 @@ public class ProduceGateway {
         bases = Count.basesWithUnfinished();
         unfinishedGateways = Count.inProductionOrInQueue(Protoss_Gateway);
 
-        if (minerals >= 520 && freeGateways <= 2 && unfinishedGateways <= 2) return produceGateway() && CV.log("Gateway:520");
+        if (minerals >= 520 && freeGateways <= 2 && unfinishedGateways <= 2) return produceGateway() && log("520");
 
-        if (existingGateways <= 2 && A.supplyUsed() >= 35 && A.hasMinerals(240)) return produceGateway() && CV.log("Gateway:240");
-        if (minerals >= 550 && (existingGateways <= 8 || freeGateways <= 1)) return produceGateway() && CV.log("Gateway:550");
-        if (minerals >= 250 && existingGateways <= 4 && freeGateways == 0) return produceGateway() && CV.log("Gateway:250");
+        if (existingGateways <= 2 && A.supplyUsed() >= 35 && A.hasMinerals(240)) return produceGateway() && log("240");
+        if (minerals >= 550 && (existingGateways <= 8 || freeGateways <= 1)) return produceGateway() && log("550");
+        if (minerals >= 250 && existingGateways <= 4 && freeGateways == 0) return produceGateway() && log("250");
         if (
             minerals >= 275 && existingGateways <= 4 && freeGateways <= 1 && !ProtossShouldExpand.shouldExpand()
-        ) return produceGateway() && CV.log("Gateway:275");
+        ) return produceGateway() && log("275");
 
         if (A.s <= 60 * 6 && existingGateways >= 2 && freeGateways >= 1 && !A.hasMinerals(220)) return false;
         if (freeGateways >= 2 && !A.hasMinerals(600) && existingGateways <= 12) return false;
@@ -119,11 +119,11 @@ public class ProduceGateway {
 
         if (ConstructionRequests.countNotFinishedOfType(type()) >= (A.hasMinerals(500) ? 2 : 1)) return false;
 
-        if (freeGateways <= 3 && existingGateways <= 14 && A.hasMinerals(650)) return produceGateway() && CV.log("Gateway:650");
+        if (freeGateways <= 3 && existingGateways <= 14 && A.hasMinerals(650)) return produceGateway() && log("650");
         if (bases >= 2 && minerals >= 215) {
-            if (freeGateways <= 0 && existingGateways <= 6) return produceGateway() && CV.log("Gateway:0-6");
-            if (minerals >= 280 && existingGateways <= 6) return produceGateway() && CV.log("Gateway:280-6");
-            if (existingGateways <= 1 && minerals >= 170) return produceGateway() && CV.log("Gateway:170-1");
+            if (freeGateways <= 0 && existingGateways <= 6) return produceGateway() && log("0-6");
+            if (minerals >= 280 && existingGateways <= 6) return produceGateway() && log("280-6");
+            if (existingGateways <= 1 && minerals >= 170) return produceGateway() && log("170-1");
         }
 
         if (againstZergProduceEarly()) return produceGateway();
@@ -134,9 +134,9 @@ public class ProduceGateway {
         if (allowWhenStrategyIsExpansion()) return produceGateway();
 
         if (minerals >= 660 && freeGateways <= 2) return produceGateway();
-        if (minerals >= 460 && existingGateways <= 8 && freeGateways <= 2) return produceGateway();
-        if (minerals >= 200 && existingGateways <= 5 && Count.bases() >= 2) return produceGateway();
-        if (minerals >= 210 && freeGateways <= 0) return produceGateway();
+        if (minerals >= 460 && existingGateways <= 8 && freeGateways <= 2) return produceGateway() && log("460");
+        if (minerals >= 200 && existingGateways <= 5 && Count.bases() >= 2) return produceGateway() && log("200-5");
+        if (minerals >= 210 && freeGateways <= 0) return produceGateway() && log("210-0");
 
         if (
             !A.hasMinerals(186)
@@ -148,8 +148,8 @@ public class ProduceGateway {
 
         if (!A.hasMinerals(290) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
 
-        if (minerals >= 210 && freeGateways <= 1) return produceGateway();
-        if (minerals >= 490 && freeGateways <= 2) return produceGateway();
+        if (minerals >= 210 && freeGateways <= 1) return produceGateway() && log("210-1");
+        if (minerals >= 490 && freeGateways <= 2) return produceGateway() && log("490-2");
 
         // =========================================================
 
@@ -161,9 +161,10 @@ public class ProduceGateway {
 //        allGateways = existingGateways + unfinishedGateways;
 
         if (freeGateways >= 2) {
-            if (tooManyGatewaysForNow()) return false;
+//            if (tooManyGatewaysForNow()) return false;
 //            if (allGateways <= 5 * Count.bases()) return produceGateway();
-            return produceGateway();
+//            return produceGateway();
+            return false;
         }
 
 //        if (minerals < 205 && existingGateways >= 3) return false;
@@ -174,9 +175,19 @@ public class ProduceGateway {
         if (unfinishedGateways >= 2 && !A.hasMinerals(550)) return false;
 //        }
 
-        if (continuousGatewayProduction()) return produceGateway();
+        if (continuousGatewayProduction()) return produceGateway() && log("Continuous");
 
         return false;
+    }
+
+    private static boolean log(String reason) {
+        CV.log(
+            "Gateway:" + reason
+                + " (ex:" + Count.gateways()
+                + ",fr:" + Count.freeGateways()
+                + ",min:" + A.minerals() + ")"
+        );
+        return true;
     }
 
     private static AUnitType type() {
@@ -197,13 +208,13 @@ public class ProduceGateway {
                 && freeGateways == 0
                 && A.hasMinerals(210)
                 && Count.basesWithUnfinished() >= 2
-        ) return true && CV.log("Gateway: Zerg early 4");
+        ) return true && log(" Zerg early 4");
 
         return existingGateways <= 2
             && freeGateways == 0
             && A.hasMinerals(184)
             && Army.strength() <= 180
-            && CV.log("Gateway: Zerg early 2");
+            && log(" Zerg early 2");
     }
 
     private static boolean againstProtossProduceEarly() {
@@ -214,7 +225,7 @@ public class ProduceGateway {
                 && freeGateways == 0
                 && A.hasMinerals(210)
                 && Count.basesWithUnfinished() >= 2
-        ) return true && CV.log("Gateway: Protoss early 4");
+        ) return true && log(" Protoss early 4");
 
         return false;
     }
