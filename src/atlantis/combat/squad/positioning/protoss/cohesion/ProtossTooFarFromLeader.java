@@ -19,7 +19,7 @@ public class ProtossTooFarFromLeader extends Manager {
         if (!unit.isCombatUnit()) return false;
         if (unit.isRunningOrRetreating()) return false;
 //        if (unit.enemiesNear().ranged().empty()) return false;
-        if (Count.ourCombatUnits() >= 20 && Army.strength() >= 950) return false;
+        if (Count.ourCombatUnits() >= 16 && Army.strength() >= 800) return false;
         if (unit.lastStoppedRunningLessThanAgo(40)) return false;
 
         leader = unit.squadLeader();

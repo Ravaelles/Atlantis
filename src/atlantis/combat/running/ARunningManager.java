@@ -173,7 +173,7 @@ public class ARunningManager {
 
         // === Valid run position ==============================
 
-        if (unit.move(runTo, action, "Run(" + A.digit(unit.distTo(runTo)) + ")", false)) {
+        if (unit.move(runTo, action, null, false)) {
             // Update last time run order was issued
             if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
 

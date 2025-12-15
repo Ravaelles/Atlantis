@@ -25,26 +25,46 @@ public class DanceAwayDragoonApplies extends HasUnit {
 //        if (true) return false;
 
         if (!unit.isDragoon()) return false;
+//        if (A.now % unit.cooldownAbsolute() <= 15) return false;
 //        System.err.println("unit.cooldown() = " + unit.cooldown() + " / " + unit.isRunningOrRetreating());
 //        if (unit.isRunning()) {
 //            System.out.println(A.now() + ": unit.isRunning");
 //        }
 //        unit.paintTextCentered(unit.enemiesNear().tanks().countInRadius(13, unit) + "", Color.Green, 2);
 
+        int cooldown = unit.cooldown();
+
 //        if (unit.isHealthy()) return f("_healthy");
         if (unit.lastAttackFrameMoreThanAgo(A.whenEnemyZerg(90, 60))) return f("_A");
-        if (unit.isRunning() || unit.isRetreating()) return f("_B");
-//        if (unit.lastActionLessThanAgo(5, Actions.STOP)) return f("_B2");
-//        if (unit.isHoldingToShoot() && unit.lastActionLessThanAgo(10, Actions.HOLD_TO_SHOOT)) return f("_B3");
+        if (unit.isRunning()) return f("_R1");
+        if (unit.isRetreating()) return f("_R2");
         if (unit.isActiveManager(ForceStopDancingDragoon.class)) return f("_FStop");
         if (unit.lastTarget() != null && unit.lastTarget().isCombatBuilding()) return f("_B5");
 
-        if (unit.hp() <= 40) return f("_DontWhenWounded");
-        if (unit.meleeEnemiesNearCount(1.5) >= 1) return f("_DontWhenMeleeNear");
+        if (Enemy.protoss()) {
+            if (cooldown <= 18 && unit.meleeEnemiesNearCount(3) == 0) {
+                if (unit.hp() >= 150) return f("_GvG_A");
+                if (cooldown <= 16 && unit.hp() >= 100) return f("_GvG_B");
+                if (cooldown <= 14 && unit.hp() >= 80) return f("_GvG_C");
+
+                if (cooldown >= 6 && unit.hp() <= 22) return t("GvG_D");
+            }
+        }
+
+        if (Enemy.zerg()) {
+            if (cooldown <= 14 && unit.meleeEnemiesNearCount(3.0) == 0) {
+                double shieldWound = unit.shieldWound();
+                if (shieldWound <= 9) return f("_GvG_A");
+                if (cooldown <= 12 && shieldWound <= 19) return f("_GvG_B");
+
+//                if (cooldown >= 4 && unit.hp() <= 22) return t("GvG_D");
+            }
+        }
+
+//        if (unit.hp() <= 40) return f("_DontWhenWounded");
+        if (unit.meleeEnemiesNearCount(1.8) >= 1) return f("_DontWhenMeleeNear");
 
 //        if (Enemy.zerg() && unit.shieldWound() >= 20 && unit.meleeEnemiesNearCount(2.7) >= 4) return t("Lingz");
-
-        int cooldown = unit.cooldown();
 
         if (cooldown >= 11) {
             Selection melees = unit.enemiesNear()
@@ -62,8 +82,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
         ) return f("_C");
 
         if (
-            unit.shieldWound() <= A.whenEnemyProtoss(25, 15)
+            unit.shieldWound() <= A.whenEnemyProtoss(19, 9)
                 && unit.meleeEnemiesNearCount(3.3) == 0
+                && (!Enemy.zerg() || unit.enemiesThatCanAttackMe(0.5).empty())
         ) return f("_B6");
 
         if (Enemy.terran()) {
@@ -76,11 +97,14 @@ public class DanceAwayDragoonApplies extends HasUnit {
         }
 
         if (Enemy.zerg()) {
+            if (cooldown <= 14 && unit.shieldWound() <= 18) return f("_BraveA_vZ");
             if (yesVsZerg()) return t("YvZ");
+            if (cooldown <= 12 && unit.shieldWound() <= 35) return f("_BraveB_vZ");
             if (noVsZerg()) return t("_NvZ");
         }
 
         if (Enemy.protoss()) {
+//            if (cooldown >= 14 && unit.hp() >= 80) return f("_GvG");
             if (cooldown >= 18 && unit.shieldWound() <= 3) return f("_D");
             if (unit.hp() >= 45 && unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(0.6).empty()) return true;
             if (unit.shieldWound() <= 6 && unit.friendsNear().countInRadius(3, unit) >= 1) return f("_D2");
@@ -250,7 +274,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
         }
 
         if (
-            unit.cooldown() >= 8
+            unit.cooldown() >= 10
                 && unit.enemiesNear().groundUnits().countInRadius(5.2, unit) > 0
         ) return true;
 

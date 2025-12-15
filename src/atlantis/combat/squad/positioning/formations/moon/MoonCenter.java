@@ -19,7 +19,10 @@ public class MoonCenter {
     private static int _lastMoonCenterChangedAt = -1;
 
     private static APosition flattenMoonCenter(AUnit leader, APosition moonCenter) {
-        return moonCenter.translateTilesTowards(6, leader);
+//        return moonCenter.translateTilesTowards(Math.min(leader.squadSize() * 1.6, 7), leader);
+//        if (leader.squadSize() <= ) return moonCenter;
+//        return moonCenter.translateTilesTowards(7, leader);
+        return moonCenter;
     }
 
     protected static HasPosition moonCenter(AUnit leader) {

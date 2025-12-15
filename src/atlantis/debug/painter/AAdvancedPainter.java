@@ -550,13 +550,13 @@ public class AAdvancedPainter extends APainter {
         }
         // =========================================================
 
+        unit.paintTextCentered(unit.evalDigit(), Cyan, -0.7);
+
 //        APosition unitPosition = unit.position();
-//        double combatEval = unit.combatEvalRelative();
 ////        double combatEval = unit.combatEvalAbsolute();
 //        String combatStrength = ColorUtil.getColorString(Color.Red) +
 //            (combatEval >= 9876 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
 ////                (combatEval >= 0 ? "+" : A.digit(combatEval > 2 ? (int) combatEval : combatEval));
-//        paintTextCentered(new APosition(unitPosition.getX(), unitPosition.getY() - 15), combatStrength, null);
     }
 
     /**

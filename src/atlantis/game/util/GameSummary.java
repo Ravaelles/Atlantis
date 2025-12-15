@@ -47,7 +47,10 @@ public class GameSummary {
         AUnit unit = Select.ourCombatUnits().havingWeapon().first();
         if (unit == null) return;
 
-        A.println("### " + unit.type() + " Wound: " + unit.woundHp() + "hp ###");
-        A.println("### Total hit times: " + unit.totalHitCount() + " ###\n");
+//        A.println("### " + unit.type() + " Wound: " + unit.woundHp() + "hp ###");
+//        int totalHits = unit.totalHitCount();
+        int totalHits = Select.ourCombatUnits().totalHits();
+
+        A.println("### Total hits: " + totalHits + " ###\n");
     }
 }

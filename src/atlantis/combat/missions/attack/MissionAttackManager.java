@@ -30,10 +30,13 @@ public class MissionAttackManager extends Manager {
 
             OnWrongSideOfFocusPoint.class,
 
-            AttackNearbyEnemies.class,
-
             ProtossCohesion.class,
             TerranCohesion.class,
+
+            AttackNearbyEnemies.class,
+
+//            ProtossCohesion.class,
+//            TerranCohesion.class,
 
             TooFarFromFocusPoint.class,
         };

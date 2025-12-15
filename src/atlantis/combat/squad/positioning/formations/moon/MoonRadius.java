@@ -3,6 +3,7 @@ package atlantis.combat.squad.positioning.formations.moon;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
+import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -28,13 +29,19 @@ public class MoonRadius {
 
                 //                double MAX_FOR_ZERG = 11.0 - Math.min(3, leader.eval());
 
+                double eval = Math.max(0.3, unit.eval() + 0.1);
+                if (eval <= 2) {
+                    dist += 1 / eval;
+                }
+
                 if (unit.isMelee()) dist += 2.5;
+                if (unit.isLeader()) dist -= 0.4;
 
                 if (Enemy.protoss() && dist >= MAX_FOR_PROTOSS) return MAX_FOR_PROTOSS;
                 if (Enemy.zerg() && dist >= MAX_FOR_ZERG) return MAX_FOR_ZERG;
 
                 if (dist >= 13.8) return 13.8;
-                if (dist <= 5.2) return -1.0;
+                if (dist <= 3.2) return -1.0;
 
                 return dist;
             }
@@ -68,7 +75,8 @@ public class MoonRadius {
         double leaderBonus = 1;
         AUnit leader = Alpha.alphaLeader();
         if (leader != null) {
-            leaderBonus = 0.99 + (A.inRange(0.2, leader.eval(), 10)) / 40.0;
+            double baseEval = leader.eval() - leader.enemiesNear().combatUnits().size() / 30.0;
+            leaderBonus = 0.99 + (A.inRange(0.2, baseEval, 10)) / 40.0;
         }
 
         return Math.min(

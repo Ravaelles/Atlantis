@@ -55,13 +55,13 @@ public class DanceAway extends Manager {
     // =========================================================
 
     private boolean danceAwayFromTarget(String logString) {
-        if (
-            (unit.groundDistToMain() >= 50 || unit.friendsInRadiusCount(1) <= 2)
-                && unit.moveToMain(Actions.MOVE_DANCE_AWAY)
-        ) {
-            unit.setTooltip("DanceToMain");
-            return true;
-        }
+//        if (
+//            (unit.groundDistToMain() >= 50 || unit.friendsInRadiusCount(1) <= 2)
+//                && unit.moveToMain(Actions.MOVE_DANCE_AWAY)
+//        ) {
+//            unit.setTooltip("DanceToMain");
+//            return true;
+//        }
 
         return unit.runningManager().runFrom(
             enemy.position(), danceAwayDist(), Actions.MOVE_DANCE_AWAY, allowedToNotifyNearUnitsToMakeSpace()

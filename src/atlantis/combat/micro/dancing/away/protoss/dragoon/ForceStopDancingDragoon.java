@@ -17,6 +17,8 @@ public class ForceStopDancingDragoon extends Manager {
 
     @Override
     public boolean applies() {
+//        if (true) return false;
+
         if (!unit.isDancingAway()) return false;
         if (unit.isHoldingToShoot()) return false;
         if (unit.isAttacking()) return false;

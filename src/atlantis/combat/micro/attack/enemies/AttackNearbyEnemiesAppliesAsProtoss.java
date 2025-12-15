@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack.enemies;
 
 import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
@@ -10,8 +11,14 @@ import atlantis.units.AUnit;
 public class AttackNearbyEnemiesAppliesAsProtoss {
     public static Decision decision(AUnit unit) {
         if (dontAttackNearEnemyBaseIfFocusPointIsExpansion(unit)) return Decision.FORBIDDEN;
-
         if (unit.isReaver()) return Decision.FORBIDDEN;
+        if (unit.isActiveManager(ProtossMoon.class)) return Decision.FORBIDDEN;
+        if (unit.lastPositioningActionLessThanAgo(3)) return Decision.FORBIDDEN;
+//        if (
+//            unit.lastPositioningActionLessThanAgo(10)
+//                && unit.eval() < 1.5
+//                && unit.lastUnderAttackAgo() >= 50
+//        ) return Decision.FORBIDDEN;
 
         if (unit.enemiesNear().buildings().nearestToDistMore(unit, 20)) {
             return Decision.FORBIDDEN;

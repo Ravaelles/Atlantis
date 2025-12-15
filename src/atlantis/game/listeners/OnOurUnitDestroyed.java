@@ -58,13 +58,13 @@ public class OnOurUnitDestroyed {
         String prefix = "";
         String string1 = unit.managerLogs().toString();
 //        String string2 = unit.log().toString();
-        String string2 = unit.commandHistory().toString();
+//        String string2 = unit.commandHistory().toString();
 
         if (!Env.isLocal()) {
             prefix = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
             string1 = string1.replace("\n", "\n" + prefix);
-            string2 = string2.replace("\n", "\n" + prefix);
+//            string2 = string2.replace("\n", "\n" + prefix);
         }
 
         String leader = unit.isLeader() ? " LEADER!!!" : "";
@@ -73,8 +73,8 @@ public class OnOurUnitDestroyed {
         System.out.println(prefix + A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED [*]" + leader);
         System.out.println(prefix + "Tooltip: " + unit.tooltip());
         System.out.println(prefix + string1);
-        System.out.println(prefix + "---");
-        System.out.println(prefix + string2);
+//        System.out.println(prefix + "---");
+//        System.out.println(prefix + string2);
         System.out.println(prefix + "_____________________________");
     }
 }

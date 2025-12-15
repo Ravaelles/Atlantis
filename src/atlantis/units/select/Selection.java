@@ -774,6 +774,12 @@ public class Selection extends BaseSelection {
             .reduce(0, Integer::sum);
     }
 
+    public int totalHits() {
+        return data.stream()
+            .map(AUnit::totalHitCount)
+            .reduce(0, Integer::sum);
+    }
+
     public Selection inSquad(Squad squad) {
         return cloneByRemovingIf(
             (unit -> !squad.equals(unit.squad())), "inSquad:" + squad.name()

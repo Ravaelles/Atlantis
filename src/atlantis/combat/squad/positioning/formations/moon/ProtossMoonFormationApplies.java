@@ -28,6 +28,16 @@ public class ProtossMoonFormationApplies {
     private HasPosition ourCenter;
     private AUnit unit;
 
+    private boolean dontApply(String failReason) {
+//        if (_lastState && !failReason.equals(_lastReason)) {
+//            System.err.println("MoonDon't: " + failReason);
+//            unit.paintTextCentered(failReason, Color.White, -1);
+//            _lastReason = failReason;
+//        }
+
+        return false;
+    }
+
     public boolean applies(AUnit unit, AUnit leader) {
         this.unit = unit;
 
@@ -36,7 +46,9 @@ public class ProtossMoonFormationApplies {
         if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
 
         if (unit.isRunningOrRetreating()) return dontApply("Running/R");
-        if (A.isUms() && A.s <= 2) return apply("Force at init");
+        if (unit.squadSize() <= 2 && unit.eval() >= 1.2) return dontApply("TooSmallSquad");
+
+        if (A.isUms() && A.now <= 25) return apply("Force at init");
         if (unit.friendsNear().combatUnits().countInRadius(3, unit) == 0) return false;
 
         if (
@@ -75,17 +87,14 @@ public class ProtossMoonFormationApplies {
         }
         if (evalAndStrengthForbids(unit)) return dontApply("eval(" + A.digit(unit.eval()) + "/" + Army.strength() + ")");
 
-//        if (unit.enemiesNear().combatUnits().inShootRangeOf(unit).notEmpty()) {
-//            return f("unit has range");
-//        }
-
-//        if (enemies.inShootRangeOf(unit.eval() >= 6 ? 1.4 : 1.1, leader).notEmpty()) {
         if (enemies.inShootRangeOf(0.5, leader).notEmpty()) {
             return dontApply("leader has range (" + leader.nearestEnemyDist() + ")");
         }
 
-//        if (enemies.inShootRangeOf(unit.eval() >= 6 ? 0.15 : 0, unit).notEmpty()) {
-        if (enemies.inShootRangeOf(0.1, unit).notEmpty()) {
+        if (
+            enemies.inShootRangeOf(0.05, unit).notEmpty()
+                && unit.eval() >= 1.5
+                && unit.friendsInRadiusCount(1) > 0) {
             return dontApply("unit has range (" + unit.nearestEnemyDist() + ")");
         }
 
@@ -176,10 +185,15 @@ public class ProtossMoonFormationApplies {
     }
 
     private static boolean evalAndStrengthForbids(AUnit unit) {
+        if (A.s <= 10) return false;
+
         double eval = unit.eval();
-        if (Army.strength() <= 200) return false;
+        if (Army.strengthWithoutCB() <= 300) return false;
 
         Selection enemyCombatUnits = unit.enemiesNear().combatUnits();
+
+        if (enemyCombatUnits.size() >= 7 && Army.strengthWithoutCB() <= 500) return false;
+
         AUnit nearestEnemy = enemyCombatUnits.nearestTo(unit);
 
         if (nearestEnemy != null) {
@@ -196,18 +210,12 @@ public class ProtossMoonFormationApplies {
             && A.s >= 3;
     }
 
-    private boolean dontApply(String failReason) {
-//        if (_lastState && !failReason.equals(_lastReason)) {
-//            System.err.println("MoonDon't: " + failReason);
-//            unit.paintTextCentered(failReason, Color.White, -1);
-//            _lastReason = failReason;
+    private boolean apply(String yesReason) {
+//        if (_lastState && !yesReason.equals(_lastReason)) {
+//            System.err.println(A.now + ": Moon APPLY: " + yesReason);
+//            unit.paintTextCentered(yesReason, Color.White, -1);
+//            _lastReason = yesReason;
 //        }
-
-        return false;
-    }
-
-    private boolean apply(String reason) {
-//        System.err.println("MoonReason: " + reason);
 
         return true;
     }

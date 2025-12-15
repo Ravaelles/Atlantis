@@ -12,13 +12,15 @@ public class ProtossMoonIdle extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         return unit.isActiveManager(ProtossMoon.class)
-            && (unit.isStopped() || unit.lastPositionChangedMoreThanAgo(50));
+            && (unit.isStopped() || unit.lastPositionChangedMoreThanAgo(100));
     }
 
     @Override
     public Manager handle() {
-        if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
+        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) {
             return usedManager(this);
         }
 

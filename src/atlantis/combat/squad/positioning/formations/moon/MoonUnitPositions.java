@@ -1,5 +1,6 @@
 package atlantis.combat.squad.positioning.formations.moon;
 
+import atlantis.information.generic.Army;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.Positions;
@@ -29,7 +30,14 @@ public class MoonUnitPositions {
         if (positionSpecificForUnit != null) return positionSpecificForUnit;
 
         HasPosition position = Positions.nearestToFrom(unit, positions.values());
-        return position != null ? position.position() : null;
+        boolean strong = unit.eval() >= 3 && Army.strengthWithoutOurCB() >= 170;
+        if (position != null && unit.friendsInRadiusCount(strong ? 1.6 : 0.4) >= 1) {
+            if (strong || unit.friendsInRadiusCount(1.6) >= 2) {
+                return position.position();
+            }
+        }
+
+        return null;
     }
 
     private static Map<AUnit, APosition> getPositionsCreatedForLeader(AUnit unit, AUnit leader) {

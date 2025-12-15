@@ -32,9 +32,9 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         if (
             unit.hp() <= 62
                 && unit.isMissionAttack()
-                && unit.shotSecondsAgo(2)
+                && unit.shotSecondsAgo(1.2)
                 && (
-                unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.4, unit).notEmpty()
+                unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.1, unit).notEmpty()
                     || unit.enemiesNear().melee().inRadius(3, unit).notEmpty()
             )
         ) {

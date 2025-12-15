@@ -25,6 +25,8 @@ public class MoonSeparation {
                     + (Alpha.count() / 100.0);
 
 //                System.err.println("separation = " + separation);
+
+                if (leader.eval() <= 4) separation = Math.min(1, separation);
                 
                 return separation;
             }
