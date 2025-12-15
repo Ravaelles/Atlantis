@@ -21,8 +21,8 @@ public class DarkTemplarAvoidCB extends Manager {
 
         if (
             unit.effUndetected()
-                && unit.shields() >= 20
-                && unit.lastUnderAttackMoreThanAgo(30 * 13)
+                && unit.hp() >= 100
+                && (unit.hp() >= 135 || unit.lastUnderAttackMoreThanAgo(30 * 16))
         ) {
             AUnit cb = cbs.nearestTo(unit);
             if (noDetectorsNearCb(cb) && cb.enemiesNear().countInRadius(5, unit) >= 1) {

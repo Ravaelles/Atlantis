@@ -27,6 +27,7 @@ public class Corsair extends MobileDetector {
             CorsairHuntMutas.class,
             CorsairDanceToOverlord.class,
             CorsairHuntOverlords.class,
+            CorsairSeparate.class,
             CorsairHuntKnownOverlords.class,
             CorsairExploreEnemyMain.class,
             ScoutFreeBases.class,

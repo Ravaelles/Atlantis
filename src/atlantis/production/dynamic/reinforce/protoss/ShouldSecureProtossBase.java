@@ -37,7 +37,7 @@ public class ShouldSecureProtossBase {
             + (A.hasMinerals(600) ? 1 : 0)
             + (A.hasMinerals(740) ? 1 : 0);
 
-        if (Enemy.protoss()) total = Math.min(total, 5);
+        if (Enemy.protoss()) total = Math.min(total, 5 + (A.hasMinerals(700) ? 1 : 0));
         if (Enemy.terran()) total = Math.min(total, 2);
         if (Enemy.zerg()) total = Math.min(total, 7);
 

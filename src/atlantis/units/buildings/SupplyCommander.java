@@ -38,7 +38,7 @@ public class SupplyCommander extends Commander {
         if (supplyFree >= 12) return;
         if (lastAdded.lessThanSecondsAgo(5)) return;
 
-        if (supplyFree >= 4 && supplyTotal <= 80 && Count.ourUnfinished(type()) > (A.minerals() <= 410 ? 0 : 1)) return;
+        if (supplyFree >= 4 && supplyTotal <= 80 && Count.ourUnfinished(type()) > (A.minerals() <= 310 ? 0 : 1)) return;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
