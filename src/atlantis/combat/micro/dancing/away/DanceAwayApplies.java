@@ -25,6 +25,8 @@ public class DanceAwayApplies {
         if (unit.isMarine()) return false;
         if (unit.isDragoon()) return false;
         if (!unit.isRanged()) return false;
+        if (unit.isRunningOrRetreating()) return false;
+
         if (unit.lastAttackFrameMoreThanAgo(30 * 5)) return false;
         if (unit.lastStartedRunningLessThanAgo(5)) return false;
 

@@ -139,6 +139,10 @@ public abstract class Squad extends Units {
      * Current mission object for this squad.
      */
     public Mission mission() {
+        if (isAlpha()) {
+            if (Missions.isGlobalMissionDefend()) return Missions.DEFEND;
+        }
+
         return mission;
     }
 

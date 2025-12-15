@@ -61,8 +61,6 @@ public class ProtossCombatManagerTopPriority extends Manager {
             Unfreezer.class,
             ContinueUnfreeze.class,
 
-            ProtossAttackTanksInRange.class,
-
             AvoidCombatBuildingClose.class,
 
             AvoidCriticalUnits.class,
@@ -71,6 +69,8 @@ public class ProtossCombatManagerTopPriority extends Manager {
 
             ProtossForceRetreatDuringDefend.class,
             ProtossRetreat.class,
+
+            ProtossAttackTanksInRange.class,
 
             // === Very important actions ====================================
 

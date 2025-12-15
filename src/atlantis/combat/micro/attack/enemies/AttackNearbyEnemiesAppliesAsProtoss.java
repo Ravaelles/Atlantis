@@ -14,6 +14,15 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         if (unit.isReaver()) return Decision.FORBIDDEN;
         if (unit.isActiveManager(ProtossMoon.class)) return Decision.FORBIDDEN;
         if (unit.lastPositioningActionLessThanAgo(3)) return Decision.FORBIDDEN;
+
+        if (
+            unit.isMissionDefend()
+                && (unit.eval() <= 1.5 || unit.distToFocusPoint() >= 10)
+                && unit.groundDistToMain() >= 40
+        ) {
+            return Decision.FORBIDDEN;
+        }
+
 //        if (
 //            unit.lastPositioningActionLessThanAgo(10)
 //                && unit.eval() < 1.5

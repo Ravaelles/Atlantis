@@ -85,6 +85,12 @@ public class ProduceObserver {
     // =========================================================
 
     private static boolean detectedBuilding() {
+        if (!Have.notEvenPlanned(Protoss_Forge)) {
+            AddToQueue.withTopPriority(Protoss_Forge);
+            AddToQueue.withTopPriority(Protoss_Photon_Cannon);
+            return false;
+        }
+
         return EnemyUnits.discovered().ofType(
             Protoss_Templar_Archives,
             Zerg_Lurker,

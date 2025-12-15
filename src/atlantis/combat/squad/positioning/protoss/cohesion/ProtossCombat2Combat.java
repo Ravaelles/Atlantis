@@ -25,7 +25,6 @@ public class ProtossCombat2Combat extends Manager {
         if (unit.effUndetected()) return false;
         if (unit.isMissionSparta()) return false;
         if (unit.hp() <= 40) return false;
-        if (unit.isRunningOrRetreating()) return false;
         if (unit.isDancingAway()) return false;
         if (unit.squadSize() <= 2) return false;
         if (unit.lastStoppedRunningLessThanAgo(25)) return false;

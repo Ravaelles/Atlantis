@@ -18,6 +18,7 @@ public class AsAirRunToCannon extends Manager {
     public static boolean shouldRunToCannonGeneric(AUnit unit) {
         return Count.cannons() > 0
             && unit.shields() <= 10
+            && (unit.hp() <= 60 || unit.eval() <= 1.5)
 //            && unit.enemiesNear().groundUnits().canAttack(unit, 3).empty()
             && unit.enemiesNear().air().canAttack(unit, 6).notEmpty();
     }
@@ -26,9 +27,10 @@ public class AsAirRunToCannon extends Manager {
     public boolean applies() {
         return unit.isAir()
             && We.protoss()
-            && unit.shields() <= 20
-            && unit.enemiesThatCanAttackMe(2 + unit.woundPercent() / 30.0).empty()
+            && unit.shields() <= 10
             && Count.cannons() > 0
+            && unit.eval() <= 1.5
+            && unit.enemiesThatCanAttackMe(2 + unit.woundPercent() / 30.0).empty()
             && (cannon = cannonToGoTo()) != null;
     }
 

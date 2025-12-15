@@ -24,9 +24,11 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (!unit.squadIsAlpha()) return false;
 
         double distToFocusPoint = unit.distToFocusPoint();
-        if (distToFocusPoint >= 20) return true;
+        if (distToFocusPoint >= 10) return true;
 
         if (distToFocusPoint <= 7) return false;
+
+        if (unit.groundDistToMain() >= 60) return true;
 
         if (unit.hp() <= 40 && unit.isRunning() && unit.distToTargetMoreThan(2)) return false;
 //        if (unit.leaderEval() >= 4 && unit.eval() >= 2.5) return false;

@@ -243,11 +243,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
             return true;
         }
 
-        if (dragoons >= 2 && strength >= 160) {
+        if (dragoons >= 2 && EnemyUnits.dragoons() == 0) {
             return true;
         }
 
-        return (strength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.zealots() >= 3);
+        return (strength >= 190 && MissionHistory.numOfChanges() <= 2 && Count.ourCombatUnits() >= 3);
 //            || (MissionHistory.numOfChanges() <= 3 && dragoons >= 6);
 //        return relativeStrength >= 90 ;
     }
