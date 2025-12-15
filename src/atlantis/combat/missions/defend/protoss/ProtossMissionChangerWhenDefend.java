@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.protoss;
 
 import atlantis.Atlantis;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.MissionHistory;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
@@ -319,12 +320,16 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     protected static boolean shouldEngageWithGoonsVsProtoss(int strength) {
         if (A.s >= 60 * 7) return false;
+        if (MissionHistory.numOfChanges() >= 3 && A.resourcesBalance() <= 400) return false;
 
         int enemyDragoons = EnemyUnits.dragoons();
-        if (enemyDragoons == 0 && EnemyUnits.combatUnits() <= 6) return true;
+        if (enemyDragoons == 0 && EnemyUnits.combatUnits() <= 6 && !EnemyInfo.hasRanged()) return true;
 
         AUnit leader = Alpha.alphaLeader();
-        if (leader != null && leader.squad().cohesionPercent() <= 70) return false;
+        if (leader != null) {
+            if (leader.eval() <= 3) return false;
+            if (leader.squad().cohesionPercent() <= 70) return false;
+        }
 
         if (A.resourcesBalance() >= 600 && (enemyDragoons <= 1 || Army.strengthWithoutCB() >= 200)) return true;
 

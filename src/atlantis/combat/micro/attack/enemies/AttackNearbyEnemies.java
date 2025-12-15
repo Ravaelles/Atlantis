@@ -8,6 +8,8 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.interrupt.PreventAttacksDuringRetreat;
+import atlantis.units.interrupt.PreventAttacksInMissionDefend;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
@@ -48,6 +50,9 @@ public class AttackNearbyEnemies extends Manager {
 
     @Override
     public Manager handle() {
+        if (PreventAttacksInMissionDefend.prevent(unit)) return null;
+        if (PreventAttacksDuringRetreat.prevent(unit)) return null;
+
         _failReason = "";
 
 //        if (unit.isDancingAway() && unit.lastCommandIssuedAgo() <= 2) {

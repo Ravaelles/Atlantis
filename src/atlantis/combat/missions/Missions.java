@@ -1,5 +1,6 @@
 package atlantis.combat.missions;
 
+import atlantis.cherryvis.CV;
 import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.defend.MissionDefend;
@@ -165,6 +166,8 @@ public class Missions {
 
 //            if (MissionChanger.DEBUG) {
             if (!A.isUms()) {
+                CV.log("MISSION @" + A.minSec() + " is " + mission.name());
+
                 A.println(
                     "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()
                     + "                  Resources balance: " + A.resourcesBalance()
