@@ -5,11 +5,6 @@ import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
-import atlantis.cherryvis.ACherryVis;
-import atlantis.cherryvis.ACherryVisLogger;
-import atlantis.cherryvis.simple.ASimpleCherryVisLogger;
-import atlantis.cherryvis.simple.ASimpleCherryVisUnitLogger;
-import atlantis.cherryvis.simple.ASimpleCherryVis_UnitLogs;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
@@ -29,9 +24,9 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
     @Test
     public void neverRunsIntoCombatBuildings() {
         createWorld(50, () -> {
-//        createWorld(5, () -> {
-//            Select.our().print();
-//            Select.enemy().print();
+            // createWorld(5, () -> {
+            // Select.our().print();
+            // Select.enemy().print();
 
             FakeUnit unit = ourFirst;
             unit.forceSetSquad(Alpha.get());
@@ -40,62 +35,25 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             double distToSunken = distToNearestEnemy(unit);
             boolean isSafe = distToSunken > 7.05;
             boolean alwaysShow = false;
-//            boolean alwaysShow = true;
+            // boolean alwaysShow = true;
 
             if (!isSafe || alwaysShow) {
                 System.err.println(A.now()
-                    + " -       " + unit.tooltip()
-                    + "\n   Manager : " + unit.manager()
-                    + "\n   Managers: " + unit.managerLogs().toString()
-                    + "\n   Command : " + unit.lastCommand()
-                    + ",\n   tx     :" + unit.txWithPrecision()
-                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
-                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                    + "\n   marine eval = " + unit.eval()
-                    + "\n   sunken eval = " + sunken.eval()
-                );
+                        + " -       " + unit.tooltip()
+                        + "\n   Manager : " + unit.manager()
+                        + "\n   Managers: " + unit.managerLogs().toString()
+                        + "\n   Command : " + unit.lastCommand()
+                        + ",\n   tx     :" + unit.txWithPrecision()
+                        + ",\n   dist_to_sunken:" + A.dist(distToSunken)
+                        + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
+                        + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
+                        + "\n   marine eval = " + unit.eval()
+                        + "\n   sunken eval = " + sunken.eval());
                 System.err.println("_______________________________________");
             }
 
             assertTrue(isSafe);
-
-//            if (A.now == 5) {
-//                System.out.println("Last frame: " + A.now());
-//                ACherryVisLogger logger = ACherryVis.logger();
-//                ASimpleCherryVisLogger simpleLogger = (ASimpleCherryVisLogger) logger;
-//                ASimpleCherryVisUnitLogger unitLogger = simpleLogger.getUnitLogger();
-//
-//                System.out.println(ASimpleCherryVis_UnitLogs.build(unitLogger));
-//            }
         });
-    }
-
-    @Test
-    public void cherryVisLogger() {
-//        createWorld(50, () -> {
-        createWorld(4, () -> {
-//                Select.our().print();
-//                Select.enemy().print();
-
-                FakeUnit unit = ourFirst;
-                unit.forceSetSquad(Alpha.get());
-                (new CombatUnitManager(unit)).invokeFrom(this);
-
-                System.out.println("@" + A.now + " - " + unit.manager());
-
-                if (A.now == 4) {
-                    ACherryVisLogger logger = ACherryVis.logger();
-                    ASimpleCherryVisLogger simpleLogger = (ASimpleCherryVisLogger) logger;
-                    ASimpleCherryVisUnitLogger unitLogger = simpleLogger.getUnitLogger();
-
-                    System.out.println("######### UnitLogs #########");
-                    System.out.println(ASimpleCherryVis_UnitLogs.build(unitLogger));
-                }
-            },
-            () -> fakeOurs(fake(AUnitType.Protoss_Dragoon, 10, 10)),
-            () -> fakeEnemies(fake(Zerg_Zergling, 13.5, 10))
-        );
     }
 
     @Test
@@ -108,31 +66,31 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
 
         FakeUnit[] enemies = fakeEnemies(
 
-//            fake(AUnitType.Zerg_Sunken_Colony, inRange),
-            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+                // fake(AUnitType.Zerg_Sunken_Colony, inRange),
+                fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
 
-            enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
-            fake(AUnitType.Terran_Missile_Turret, outsideRange),
+                enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
+                fake(AUnitType.Terran_Missile_Turret, outsideRange),
 
-            enemy3 = fake(AUnitType.Zerg_Spore_Colony, inRange),
-            fake(AUnitType.Zerg_Spore_Colony, outsideRange),
+                enemy3 = fake(AUnitType.Zerg_Spore_Colony, inRange),
+                fake(AUnitType.Zerg_Spore_Colony, outsideRange),
 
-            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
-//            fake(AUnitType.Protoss_Photon_Cannon, 20),
-            enemy4 = fake(AUnitType.Protoss_Photon_Cannon, 21.1)
+                fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                // fake(AUnitType.Protoss_Photon_Cannon, 20),
+                enemy4 = fake(AUnitType.Protoss_Photon_Cannon, 21.1)
 
-//            enemy4 = fake(AUnitType.Terran_Bunker, inRange - 5),
-//            fake(AUnitType.Terran_Bunker, outsideRange)
+        // enemy4 = fake(AUnitType.Terran_Bunker, inRange - 5),
+        // fake(AUnitType.Terran_Bunker, outsideRange)
         );
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-//            assertContainsAll(
-//                new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-//                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-//            );
+            // assertContainsAll(
+            // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+            // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+            // );
 
-            AvoidCombatBuildingClose manager =
-                (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our)).invokeFrom(null);
+            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+                    .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
             Assertions.assertEquals(enemy4, manager.combatBuilding());
@@ -148,23 +106,22 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         int outsideRange = 22;
 
         FakeUnit[] enemies = fakeEnemies(
-            sunken = fake(AUnitType.Zerg_Sunken_Colony, inRange),
-            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, inRange),
+                fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
 
-            cannon = fake(AUnitType.Protoss_Photon_Cannon, inRange),
-            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                cannon = fake(AUnitType.Protoss_Photon_Cannon, inRange),
+                fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
-            fake(AUnitType.Terran_Missile_Turret, inRange),
+                fake(AUnitType.Terran_Missile_Turret, inRange),
 
-            bunker = fake(AUnitType.Terran_Bunker, inRange),
-            fake(AUnitType.Terran_Bunker, outsideRange),
+                bunker = fake(AUnitType.Terran_Bunker, inRange),
+                fake(AUnitType.Terran_Bunker, outsideRange),
 
-            fake(AUnitType.Zerg_Spore_Colony, inRange)
-        );
+                fake(AUnitType.Zerg_Spore_Colony, inRange));
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            AvoidCombatBuildingClose manager =
-                (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our)).invokeFrom(null);
+            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+                    .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
             Assertions.assertEquals(sunken, manager.combatBuilding());
@@ -180,30 +137,29 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         int outsideRange = 24;
 
         FakeUnit[] enemies = fakeEnemies(
-            enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
-            fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                enemy1 = fake(AUnitType.Protoss_Photon_Cannon, inRange),
+                fake(AUnitType.Protoss_Photon_Cannon, outsideRange),
 
-            fake(AUnitType.Zerg_Sunken_Colony, inRange),
-            fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
+                fake(AUnitType.Zerg_Sunken_Colony, inRange),
+                fake(AUnitType.Zerg_Sunken_Colony, outsideRange),
 
-            enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
-            fake(AUnitType.Terran_Missile_Turret, outsideRange),
+                enemy2 = fake(AUnitType.Terran_Missile_Turret, inRange),
+                fake(AUnitType.Terran_Missile_Turret, outsideRange),
 
-            enemy3 = fake(AUnitType.Terran_Bunker, inRange),
-            fake(AUnitType.Terran_Bunker, outsideRange),
+                enemy3 = fake(AUnitType.Terran_Bunker, inRange),
+                fake(AUnitType.Terran_Bunker, outsideRange),
 
-            enemy4 = fake(AUnitType.Zerg_Spore_Colony, 16.9),
-            fake(AUnitType.Zerg_Spore_Colony, outsideRange)
-        );
+                enemy4 = fake(AUnitType.Zerg_Spore_Colony, 16.9),
+                fake(AUnitType.Zerg_Spore_Colony, outsideRange));
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-//            assertContainsAll(
-//                new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-//                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-//            );
+            // assertContainsAll(
+            // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+            // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+            // );
 
-            AvoidCombatBuildingClose manager =
-                (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our)).invokeFrom(null);
+            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+                    .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
             Assertions.assertEquals(enemy4, manager.combatBuilding());
@@ -216,56 +172,53 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         FakeUnit enemy1, enemy2, enemy3, enemy4;
 
         FakeUnit[] enemies = fakeEnemies(
-            fake(AUnitType.Protoss_Photon_Cannon, 11).setCompleted(false),
+                fake(AUnitType.Protoss_Photon_Cannon, 11).setCompleted(false),
 
-            fake(AUnitType.Zerg_Sunken_Colony, 12).setCompleted(false),
-            fake(AUnitType.Zerg_Sunken_Colony, 13).setCompleted(false),
+                fake(AUnitType.Zerg_Sunken_Colony, 12).setCompleted(false),
+                fake(AUnitType.Zerg_Sunken_Colony, 13).setCompleted(false),
 
-            enemy3 = fake(AUnitType.Terran_Missile_Turret, 12).setCompleted(false),
-            fake(AUnitType.Terran_Missile_Turret, 13).setCompleted(false),
+                enemy3 = fake(AUnitType.Terran_Missile_Turret, 12).setCompleted(false),
+                fake(AUnitType.Terran_Missile_Turret, 13).setCompleted(false),
 
-            enemy4 = fake(AUnitType.Zerg_Spore_Colony, 12).setCompleted(false),
-            fake(AUnitType.Zerg_Spore_Colony, 13).setCompleted(false),
+                enemy4 = fake(AUnitType.Zerg_Spore_Colony, 12).setCompleted(false),
+                fake(AUnitType.Zerg_Spore_Colony, 13).setCompleted(false),
 
-            enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 17).setCompleted(false)
-        );
+                enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 17).setCompleted(false));
 
         createWorld(1, () -> {
-                enemy1.setCompleted(true);
-//                Cache.nukeAllCaches();
+            enemy1.setCompleted(true);
+            // Cache.nukeAllCaches();
 
-                AvoidCombatBuildingClose manager =
-                    (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our)).invokeFrom(null);
+            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+                    .invokeFrom(null);
 
-                Assertions.assertNotNull(manager);
-                Assertions.assertEquals(enemy1, manager.combatBuilding());
-            },
-            our,
-            enemies
-        );
+            Assertions.assertNotNull(manager);
+            Assertions.assertEquals(enemy1, manager.combatBuilding());
+        },
+                our,
+                enemies);
     }
 
     // =========================================================
 
     protected FakeUnit[] generateOur() {
         return fakeOurs(
-            fake(AUnitType.Terran_Marine, 10)
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Marine, 11),
-//                fake(AUnitType.Terran_Medic, 11)
+                fake(AUnitType.Terran_Marine, 10)
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Marine, 11),
+        // fake(AUnitType.Terran_Medic, 11)
         );
     }
 
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 19;
         return fakeEnemies(
-            sunken = fake(AUnitType.Zerg_Sunken_Colony, enemyTy),
-            fake(AUnitType.Zerg_Sunken_Colony, enemyTy + 10)
-        );
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, enemyTy),
+                fake(AUnitType.Zerg_Sunken_Colony, enemyTy + 10));
     }
 
 }

@@ -76,6 +76,7 @@ public class AvoidEnemies extends Manager {
             enemyString = unit.runningFromPosition().toString();
         }
 
-        return "AvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
+//        return "AvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
+        return "AvoidEnemies";
     }
 }

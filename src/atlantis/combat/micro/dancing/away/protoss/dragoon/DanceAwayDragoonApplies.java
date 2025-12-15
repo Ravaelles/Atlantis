@@ -39,6 +39,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
         if (unit.isActiveManager(ForceStopDancingDragoon.class)) return f("_FStop");
         if (unit.lastTarget() != null && unit.lastTarget().isCombatBuilding()) return f("_B5");
 
+        if (unit.hp() <= 40) return f("_DontWhenWounded");
+        if (unit.meleeEnemiesNearCount(1.5) >= 1) return f("_DontWhenMeleeNear");
+
 //        if (Enemy.zerg() && unit.shieldWound() >= 20 && unit.meleeEnemiesNearCount(2.7) >= 4) return t("Lingz");
 
         int cooldown = unit.cooldown();

@@ -54,8 +54,9 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
         if (A.minerals() < 1000 && A.supplyUsed() <= 110) {
             HasPosition squadCenter = unit.squadCenter();
-            if (squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0) return forbidden(
-                "TooFarFromCenter");
+            if (
+                squadCenter != null && enemy.distToSquadCenter() >= 20 && unit.eval() < 2.0
+            ) return forbidden("TooFarFromCenter");
         }
 
         if (unit.canAttackTargetWithBonus(enemy, 0)) return true;
@@ -82,7 +83,10 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     protected boolean forbidden(String reason) {
 //        ErrorLog.debug(reason);
 //        PauseAndCenter.on(unit, true, Color.Purple);
-//        System.err.println("MAA forbidden to attack " + enemy + ": " + reason);
+        if (enemy != null) {
+            System.out.println(A.now + ": MAA forbids attack " + (enemy != null ? enemy.type() : enemy) + ": " + reason);
+        }
+
         return false;
     }
 

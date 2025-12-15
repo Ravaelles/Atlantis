@@ -24,6 +24,7 @@ public class ZealotDontAvoidEnemy {
 
         if (Enemy.zerg()) {
             if ((decision = whenEarlyDefendingChokeVZ(unit)).notIndifferent()) return decision.toBoolean();
+            if ((decision = vsZerg(unit)).notIndifferent()) return decision.toBoolean();
         }
 
         if ((decision = whenWorkersFightingNearby(unit)).notIndifferent()) return decision.toBoolean();
@@ -33,6 +34,14 @@ public class ZealotDontAvoidEnemy {
         if (healthyOrNotAttackedLong(unit)) return true;
 
         return false;
+    }
+
+    private static Decision vsZerg(AUnit unit) {
+        if (unit.hp() >= 24 && unit.cooldown() <= 6 && unit.eval() >= 0.95) {
+            return Decision.TRUE;
+        }
+
+        return Decision.INDIFFERENT;
     }
 
     private static boolean dontAvoidWhenCloseEnemyWorkers(AUnit unit) {

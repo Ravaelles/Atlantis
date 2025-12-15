@@ -3336,7 +3336,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         managerLogs.addMessage(message, this);
 
         if (ACherryVis.isEnabled()) {
-            ACherryVis.logger().unitActiveManager(message, this);
+            ACherryVis.logger().unitManager(message, this);
         }
     }
 

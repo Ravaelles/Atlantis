@@ -1,18 +1,19 @@
 package atlantis.cherryvis.simple;
 
+import atlantis.cherryvis.AbstractCherryVisLogger;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.cherryvis.ACherryVisConfig;
-import atlantis.cherryvis.ACherryVisLogger;
 import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 
-public class ASimpleCherryVisLogger implements ACherryVisLogger {
+public class ACherryVisLogger implements AbstractCherryVisLogger {
     private ACherryVisConfig config;
-    private ASimpleCherryVisUnitLogger unitLogger;
+    private ACherryVisUnitLogger unitLogger;
 
-    public ASimpleCherryVisLogger(ACherryVisConfig config) {
+    public ACherryVisLogger(ACherryVisConfig config) {
         this.config = config;
-        this.unitLogger = new ASimpleCherryVisUnitLogger();
+        this.unitLogger = new ACherryVisUnitLogger();
+        ACherryVis_GlobalLog.all.clear();
     }
 
     @Override
@@ -31,9 +32,6 @@ public class ASimpleCherryVisLogger implements ACherryVisLogger {
             A.createDirectory(directoryPath);
         }
 
-        // Get current working directory
-        String cwd = System.getProperty("user.dir");
-
         if (!A.directoryExists(directoryPath)) {
             A.errPrintln("##################################################");
             A.errPrintln("### Could not create CherryVis dir:");
@@ -43,20 +41,27 @@ public class ASimpleCherryVisLogger implements ACherryVisLogger {
         }
 
         (new ACherryVis_GameSummary(config)).saveToFile();
-        (new ASimpleCherryVisLogger_TraceJson(config, unitLogger)).saveToFile();
+        (new ACherryVisLogger_TraceJson(config, unitLogger)).saveToFile();
     }
 
     @Override
-    public void unitActiveManager(String message, AUnit unit) {
+    public void log(String message) {
+        String prefix = A.minSec() + " (" + A.now + "): ";
+
+        ACherryVis_GlobalLog.create(prefix + message, "Unknown");
+    }
+
+    @Override
+    public void unitManager(String message, AUnit unit) {
         unitLogger.managerLog(message, unit);
     }
 
     @Override
     public void unitTooltip(String tooltip, AUnit unit) {
-        unitLogger.tooltip(tooltip, unit);
+        // unitLogger.tooltip(tooltip, unit);
     }
 
-    public ASimpleCherryVisUnitLogger getUnitLogger() {
+    public ACherryVisUnitLogger getUnitLogger() {
         return unitLogger;
     }
 }

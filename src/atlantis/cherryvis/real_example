@@ -1,0 +1,88 @@
+"logs": [
+    {
+        "attachments": [],
+        "file": "../src/modules/genericautobuild.cpp",
+        "frame": 2,
+        "line": 44,
+        "message": "Running build zvpohydras",
+        "sev": 0
+    },
+    {
+        "attachments": [],
+        "file": "../src/modules/upctocommand.cpp",
+        "frame": 1694,
+        "line": 32,
+        "message": "More than one command to unit Friendly i83 Zerg_Drone (483,479) from UPC u2665 (Gather=1) of task No task",
+        "sev": 0
+    },
+
+------------------
+
+"tasks": [
+        {
+            "creation_frame": 2,
+            "name": "Task",
+            "owner": "GathererModule",
+            "upc_id": 3
+        },
+        {
+            "creation_frame": 2,
+            "name": "Builder",
+            "owner": "BuilderModule",
+            "upc_id": 12
+        },
+        {
+            "creation_frame": 2,
+            "name": "Task",
+            "owner": "ScoutingModule",
+            "upc_id": 6
+        },
+
+------------------
+
+"units_logs": {},
+        "units_updates": {
+            "0": {
+                "2": {
+                    "type": 176
+                }
+            },
+            "1": {
+                "2": {
+                    "type": 176
+                }
+            },
+            "136": {
+                "3431": {
+                    "type": 64
+                }
+            },
+            "137": {
+                "11022": {
+                    "task": 10676
+                },
+                "1112": {
+                    "type": 41
+                },
+                "11133": {
+                    "type": 131
+                },
+                "11136": {
+                    "task": -1
+                },
+                "1127": {
+                    "task": 10
+                },
+                "344": {
+                    "type": 35
+                },
+                "788": {
+                    "task": 7
+                },
+                "794": {
+                    "type": 36
+                },
+                "797": {
+                    "task": -1
+                }
+            },

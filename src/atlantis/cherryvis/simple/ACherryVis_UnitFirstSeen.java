@@ -7,7 +7,7 @@ import atlantis.units.AUnit;
 
 import java.util.*;
 
-public class ASimpleCherryVis_UnitFirstSeen extends AutomaticListener {
+public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     private static Set<Integer> knownUnitIds = new HashSet<>();
     private static Map<Integer, List<Map<String, Integer>>> unitsByFrame = new TreeMap<>();
 

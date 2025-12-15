@@ -39,6 +39,10 @@ public class ProtossMoonFormationApplies {
         if (A.isUms() && A.s <= 2) return apply("Force at init");
         if (unit.friendsNear().combatUnits().countInRadius(3, unit) == 0) return false;
 
+        if (
+            leader.isZealot() && unit.enemiesNear().groundUnits().countInRadius(3, unit) >= 2
+        ) return dontApply("Leader cloose enemies");
+
         if (dontApplyEarlyVsZerg(unit)) return dontApply("DontEarlyVsZerg");
 
 //        if (A.now <= 2) return true;

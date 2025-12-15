@@ -43,7 +43,7 @@ public class OnOurUnitDestroyed {
             Missions.forceGlobalMissionDefend("Far too weak to attack!");
         }
 
-        Events.dispatch(Event.OUR_BUNKER_DESTROYED, unit);
+        if (unit.isBunker()) Events.dispatch(Event.OUR_BUNKER_DESTROYED, unit);
     }
 
     private static void printOurDeadUnit(AUnit unit) {

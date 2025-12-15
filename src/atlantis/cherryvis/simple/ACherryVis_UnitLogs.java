@@ -3,19 +3,19 @@ package atlantis.cherryvis.simple;
 import java.util.Map;
 import java.util.Set;
 
-public class ASimpleCherryVis_UnitLogs {
+public class ACherryVis_UnitLogs {
     /**
      * "units_updates": {
-     *   "123": {
-     *     "4500": {
-     *       "manager": "CombatManager",
-     *       "state": "Kiting",
-     *       "target_unit": 567
-     *     }
-     *   }
+     * "123": {
+     * "4500": {
+     * "manager": "CombatManager",
+     * "state": "Kiting",
+     * "target_unit": 567
+     * }
+     * }
      * }
      */
-    public static String build(ASimpleCherryVisUnitLogger logger) {
+    public static String build(ACherryVisUnitLogger logger, ACherryVis_Strings strings) {
         StringBuilder result = new StringBuilder();
 
         Set<Integer> unitIds = logger.unitsManagerLogs.keySet();
@@ -25,17 +25,22 @@ public class ASimpleCherryVis_UnitLogs {
             StringBuilder unitString = new StringBuilder(commaForIds + "\"" + unitId + "\":{");
 
             Map<Integer, String> managerLogs = logger.unitsManagerLogs.get(unitId);
-            Map<Integer, String> tooltips = logger.unitsTooltips.get(unitId);
+//            Map<Integer, String> tooltips = logger.unitsTooltips.get(unitId);
 
             int counterForFrames = 0;
             for (int frame : managerLogs.keySet()) {
                 String manager = managerLogs.get(frame);
-                String tooltip = tooltips == null ? "" : tooltips.getOrDefault(frame, "");
+//                String tooltip = tooltips == null ? "" : tooltips.getOrDefault(frame, "");
+
+                // Map strings to integer IDs
+                int managerId = strings.get(manager);
+//                int tooltipId = strings.get(tooltip);
 
                 String commaForFrames = counterForFrames == 0 ? "" : ",";
                 String frameString = commaForFrames
-                    + "\"" + frame + "\":"
-                    + "{\"manager\":\"" + manager + "\",\"tooltip\":\"" + tooltip + "\"}";
+                        + "\"" + frame + "\":"
+//                        + "{\"manager\":" + managerId + ",\"tooltip\":" + tooltipId + "}";
+                        + "{\"manager\":" + managerId + "}";
                 unitString.append(frameString);
 
                 counterForFrames++;

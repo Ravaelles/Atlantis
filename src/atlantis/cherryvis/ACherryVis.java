@@ -1,8 +1,8 @@
 package atlantis.cherryvis;
 
+import atlantis.cherryvis.simple.ACherryVisLogger;
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.cherryvis.simple.ASimpleCherryVisLogger;
 
 public class ACherryVis {
     public static boolean isEnabled() {
@@ -11,15 +11,15 @@ public class ACherryVis {
 
     // =========================================================
 
-    private static ACherryVisLogger instance = null;
+    private static AbstractCherryVisLogger instance = null;
 
     public static void initialize() {
         logger();
     }
 
-    public static ACherryVisLogger logger() {
+    public static AbstractCherryVisLogger logger() {
         if (instance == null) {
-            instance = new ASimpleCherryVisLogger(config());
+            instance = new ACherryVisLogger(config());
         }
 
         return instance;

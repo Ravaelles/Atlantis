@@ -12,13 +12,15 @@ public class ProtossMissionAttackAllowsToAttack extends MissionAttackAllowsToAtt
     }
 
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        if (enemy == null) return false;
+
         if (unit.isAir()) return true;
 
         if (unit.leaderIsRetreating()) return forbidden("LeaderRetreating");
         if (closeToEnemyCombatBuilding(enemy)) return forbidden("CloseToEnemyCB");
 
         Decision decision;
-        if ((decision = asDT(enemy)).notIndifferent())return decision.toBoolean();
+        if ((decision = asDT(enemy)).notIndifferent()) return decision.toBoolean();
 
         if (Enemy.protoss()) {
             if (Count.ourCombatUnits() >= 10) return true;
