@@ -6,7 +6,7 @@ import atlantis.game.A;
 
 public class ACherryVis {
     public static boolean isEnabled() {
-        return Env.generateCherryVisReplay();
+        return !A.isUms() && Env.generateCherryVisReplay();
     }
 
     // =========================================================
@@ -34,6 +34,8 @@ public class ACherryVis {
     }
 
     public static void finish() {
+        if (!isEnabled()) return;
+
         A.println("CherryVis finishing...");
         logger().onGameEnd();
     }

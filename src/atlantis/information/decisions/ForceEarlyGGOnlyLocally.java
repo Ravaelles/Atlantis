@@ -19,9 +19,9 @@ public class ForceEarlyGGOnlyLocally extends Commander {
 //            && (Army.strength() <= 15 || A.resourcesBalance() <= -1100)
             && !A.isUms()
             && Army.strength() <= 8
-            && (A.resourcesBalance() <= -500 || Army.strength() <= 3)
-            && Count.enemyCombatUnits() >= 10
-            && (Count.ourCombatUnits() <= 2 && (Count.ourCombatUnits() * 7) <= Count.enemyCombatUnits())
+            && (A.resourcesBalance() <= -500 || Army.strength() <= 6)
+            && Count.enemyCombatUnits() >= 8
+            && (Count.ourCombatUnits() <= 1 || (Count.ourCombatUnits() * 7) <= Count.enemyCombatUnits())
             && (A.resourcesBalance() <= -700 || Count.workers() <= 30)
             && Select.countOurOfTypeWithUnfinished(AUnitType.Protoss_Dark_Templar) == 0
             && Count.cannons() <= 1;

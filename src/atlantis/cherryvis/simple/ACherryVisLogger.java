@@ -1,5 +1,6 @@
 package atlantis.cherryvis.simple;
 
+import atlantis.cherryvis.ACherryVis;
 import atlantis.cherryvis.AbstractCherryVisLogger;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -27,6 +28,8 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
 
     @Override
     public void onGameEnd() {
+        if (!ACherryVis.isEnabled()) return;
+
         String directoryPath = config.cherryVisDirReplayPath();
         if (!A.directoryExists(directoryPath)) {
             A.createDirectory(directoryPath);

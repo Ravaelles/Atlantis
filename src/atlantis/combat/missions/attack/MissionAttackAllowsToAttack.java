@@ -83,9 +83,9 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     protected boolean forbidden(String reason) {
 //        ErrorLog.debug(reason);
 //        PauseAndCenter.on(unit, true, Color.Purple);
-        if (enemy != null) {
-            System.out.println(A.now + ": MAA forbids attack " + (enemy != null ? enemy.type() : enemy) + ": " + reason);
-        }
+//        if (enemy != null) {
+//            System.out.println(A.now + ": MAA forbids attack " + (enemy != null ? enemy.type() : enemy) + ": " + reason);
+//        }
 
         return false;
     }

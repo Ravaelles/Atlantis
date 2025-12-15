@@ -35,7 +35,9 @@ public class ForceStopDancingDragoon extends Manager {
             if (unit.lastActionLessThanAgo(3, Actions.MOVE_DANCE_AWAY)) return false;
         }
 
-        if (unit.enemiesThatCanAttackMe(1.8).notDeadMan().empty()) return t("NoEnemies");
+        if (
+            unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(1.9).notDeadMan().empty()
+        ) return t("NoEnemies");
 
 //        if (unit.isStopped()) return true;
 
@@ -83,11 +85,25 @@ public class ForceStopDancingDragoon extends Manager {
 
         Selection enemiesThatCanAttackMe = unit.enemiesThatCanAttackMe(0.75);
 
+        if (
+            cooldown <= 6
+                && enemiesThatCanAttackMe.empty()
+                && unit.meleeEnemiesNearCount(2.7) == 0
+        ) {
+            return t("P_NoBadz");
+        }
+
         if (cooldown >= 5 && hp <= 42 && enemiesThatCanAttackMe.melee().atLeast(1)) return false;
         if (hp <= 22 && unit.enemiesThatCanAttackMe(2.5).notEmpty()) return false;
         if (hp <= 25 && unit.shotSecondsAgo(2.5) && enemiesThatCanAttackMe.notEmpty()) return false;
 
-        if (enemiesThatCanAttackMe.empty() && hp >= 65 && unit.cooldown() <= 12) {
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(2.8);
+        if (
+            enemiesThatCanAttackMe.empty()
+                && hp >= 65
+                && unit.cooldown() <= 10
+                && meleeEnemiesNearCount == 0
+        ) {
             return t("P0_Fight");
         }
 
@@ -101,7 +117,7 @@ public class ForceStopDancingDragoon extends Manager {
         boolean canStop = (cooldown <= 9 && hp >= 62 && unit.eval() >= 0.9)
             || (unit.cooldown() <= 10 && fewEnoughEnemiesNear(unit));
 
-        if (canStop) {
+        if (canStop && meleeEnemiesNearCount == 0) {
             return t("P_CanStop");
         }
 
