@@ -16,13 +16,18 @@ public class ProtossShouldFullRetreat {
     private static AUnit unit;
     private static double eval;
 
+    private static boolean f(String reasonWhyNot) {
+//        System.err.println("    ProtossShouldFullRetreat NO because: " + reasonWhyNot);
+        return false;
+    }
+
     public static boolean shouldFullRetreat(AUnit unit) {
         ProtossShouldFullRetreat.unit = unit;
 
-        if (unit.isRunning()) return false;
+        if (unit.isRunning()) return f("Unit running");
 
         Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 14 : 10, unit);
-        if (enemies.empty()) return false;
+        if (enemies.empty()) return f("Enemy empty");
 
         AUnit leader = unit.squadLeader();
         if (leader != null && !unit.isLeader()) {
@@ -35,34 +40,38 @@ public class ProtossShouldFullRetreat {
         Decision decision;
         if ((decision = ProtossRetreatFromSunken.decision(unit)).notIndifferent()) return decision.toBoolean();
 
+        if (eval >= 10 && Count.ourCombatUnits() >= 10) return f("Very high eval");
+
         if (retreatDuringMissionAttack(unit)) return true;
 
-        if (eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000) return false;
+        if (
+            eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000
+        ) return f("Very wealthy");
 
-        if (DontAvoidWhenCannonsNear.check(unit)) return false;
-        if (combatEvalIsTooHighToRetreat()) return false;
-        if (dontRunNearOurCombatBuildings()) return false;
+        if (DontAvoidWhenCannonsNear.check(unit)) return f("Cannons near");
+        if (combatEvalIsTooHighToRetreat()) return f("Eval too high to retreat");
+        if (dontRunNearOurCombatBuildings()) return f("Near our combat buildings");
 
         if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.75))) return true;
 
-        if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return false;
+        if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return f("UMS no bases");
 
-        if (!unit.isMissionAttack() && eval >= 0.7) return false;
-//        if (Enemy.protoss() && unit.eval() >= 0.91) return false;
-        if (unit.distToBase() <= 4) return false;
-//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return false;
+        if (!unit.isMissionAttack() && eval >= 0.7) return f("Not mission attack and eval high");
+//        if (Enemy.protoss() && unit.eval() >= 0.91) return f("");
+        if (unit.distToBase() <= 4) return f("Too close to base");
+//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return f("");
 
         if (ProtossApprxRetreat.check(unit)) return true;
 
         if (A.s <= 600 && (Enemy.protoss() || Enemy.zerg()) && EnemyUnits.discovered().ranged().empty()) {
-            if (enemies.canAttack(unit, 2.8 + unit.woundPercent() / 100.0).empty()) return false;
+            if (enemies.canAttack(unit, 2.8 + unit.woundPercent() / 100.0).empty()) return f("No ranged enemies can attack");
         }
 
-        if (unit.friendsNear().inRadius(2, unit).atLeast(6)) return false;
-        if (unit.friendsNear().inRadius(4, unit).atLeast(10)) return false;
+        if (unit.friendsNear().inRadius(2, unit).atLeast(6)) return f("Many friends in radius 2");
+        if (unit.friendsNear().inRadius(4, unit).atLeast(10)) return f("Many friends in radius 4");
 
         if (Enemy.zerg() && unit.isMelee() && unit.shields() >= 30 && unit.meleeEnemiesNearCount(1.3) == 1) {
-            return false;
+            return f("Zerg melee, high shields, 1 enemy");
         }
 
 //        AChoke naturalChoke = Chokes.natural();
@@ -74,52 +83,11 @@ public class ProtossShouldFullRetreat {
 //                && naturalChoke.distTo(unit) >= 2.5
 ////                && naturalChoke.distTo(unit) <= 8
 //                && naturalBase.distTo(unit) <= 8
-//        ) return false;
+//        ) return f("");
 
-        return eval <= 0.92;
+        if (eval <= 0.92) return f("Eval too low");
 
-//        if (unit.enemiesNear().combatBuildingsAntiLand().empty()) {
-//            if (unit.eval() >= 2.3) return false;
-//            if (enemies.atMost(2)) return false;
-//            if (unit.friendsNear().combatUnits().atLeast(10)) return false;
-//            if (unit.shieldDamageAtMost(19) && unit.enemiesNear().ranged().empty()) return false;
-//        }
-
-//        if (
-//            enemies.onlyMelee()
-//                && unit.combatEvalRelative() >= 0.8
-//                && !(new ProtossMeleeSmallScaleRetreat(unit).applies())
-//        ) {
-//            unit.addLog("StillFightSS");
-//            return false;
-//        }
-
-//        if (unit.isMissionSparta()) {
-//            AChoke mainChoke = Chokes.mainChoke();
-//            if (
-//                mainChoke != null
-//                    && unit.distTo(mainChoke) >= 2
-//                    && unit.distToNearestChokeCenter() <= 5
-////                    && base.distTo(unit) <= 25
-//            ) return false;
-//
-//            if (!Enemy.protoss()) {
-//                AChoke naturalChoke = Chokes.natural();
-//                APosition naturalBase = DefineNaturalBase.natural();
-//                if (
-//                    naturalChoke != null
-//                        && naturalBase != null
-//                        && naturalChoke.distTo(unit) >= 2.5
-////                        && naturalChoke.distTo(unit) <= 8
-//                        && naturalBase.distTo(unit) <= 8
-//                ) return false;
-//            }
-//        }
-
-//        double evalRelative = applyTweaksToCombatEval();
-//        double evalRelative = unit.eval();
-//
-//        return evalRelative <= 1.05;
+        return f("GenericNo");
     }
 
     private static boolean retreatDuringMissionAttack(AUnit unit) {

@@ -2,11 +2,16 @@ package tests.unit.helpers.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
+import atlantis.units.AUnit;
+import atlantis.units.AliveEnemies;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,8 +28,19 @@ public class RetreatScenarioTest extends WorldStubForTests {
     public RetreatScenarioTest(FakeUnit[] ours, FakeUnit[] enemies) {
         FakeUnit our, enemy;
 
+//        ClearAllCaches.clearAll();
+//        Cache.nukeAllCaches();
+
         our = ours[0];
         enemy = enemies[0];
+
+        our.clearAUnitCache();
+        BaseSelect.clearCache();
+        Select.clearCache();
+        AliveEnemies.clearCache();
+
+//        our.enemiesNear().print("our.enemiesNear()");
+//        Select.enemy().print("Select.enemy()");
 
 //        System.err.println(ours.length);
 //        System.err.println(enemies.length);
@@ -39,10 +55,6 @@ public class RetreatScenarioTest extends WorldStubForTests {
 //                Select.our().print("Our");
 //                Select.enemy().print("Enemy");
 
-                Cache.nukeAllCaches();
-                BaseSelect.clearCache();
-                Select.clearCache();
-
                 // Bunch of integrity tests that were failing before
                 assertEquals(BaseSelect.ourUnitsWithUnfinishedList().size(), Select.our().size());
                 assertEquals(BaseSelect.enemyUnits().size(), Select.enemy().size());
@@ -50,11 +62,14 @@ public class RetreatScenarioTest extends WorldStubForTests {
                 assertEquals(enemy.enemiesNear().count(), Select.our().count());
                 assertEquals(1 + our.friendsNear().count(), Select.our().count());
 
-//                System.out.println("our.enemiesNear().count() = " + our.enemiesNear().count());
-//                our.enemiesNear().print();
-//                System.out.println("Select.enemy().count() = " + Select.enemy().count());
-//                Select.enemy().print();
-                
+//                System.out.println("===================================================");
+//                Select.our().print("Our");
+//                our.enemiesNear().print("enemiesNear()");
+//                Select.enemy().print("Select.enemy()");
+//                EnemyUnits.discovered().print("EnemyUnits.discovered()");
+//                EnemyUnits.freshDiscovered().print("EnemyUnits.freshDiscovered()");
+//                AliveEnemies.get().print("AliveEnemies.get()");
+
                 assertEquals(0, our.enemiesNear().count() - Select.enemy().count());
 
                 double ourCombatEvalRelative = our.eval();

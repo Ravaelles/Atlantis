@@ -7,12 +7,12 @@ import atlantis.units.select.Selection;
 public class JfapTweaksForSpecificUnits {
     //    private static final int HYDRA_SINGLE_UNIT_BONUS = 180;
 //    private static final int HYDRA_SINGLE_UNIT_BONUS = 5;
-    private static final int HYDRA_SINGLE_UNIT_BONUS = 2;
+    private static final int HYDRA_SINGLE_UNIT_BONUS = 10;
 //    private static final int HYDRA_SINGLE_UNIT_BONUS = 0;
     private static final double MORE_GOONS_VS_GOONS_BONUS_MODIFIER = 40.0;
 
     public static double applyAll(double score, AUnit unit) {
-//        score += hydra(unit);
+        score += hydra(unit);
         score += goonsVsGoons(unit);
 
         return score;

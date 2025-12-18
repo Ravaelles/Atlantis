@@ -30,85 +30,60 @@ public class ProtossDontRetreat extends Manager {
         return null;
     }
 
+    private boolean t(String reasonWhyYes) {
+//        System.err.println("ProtossDontRetreat because " + reasonWhyYes);
+        return true;
+    }
+
     public boolean dontRetreat() {
-        if (unit.isMissionDefendOrSparta()) return true;
-        if (unit.isRunning()) return true;
+        if (unit.isMissionDefendOrSparta()) return t("Mission defend or Sparta");
+        if (unit.isRunning()) return t("Already running");
 
         if (A.supplyUsed() >= 193 && A.hasMinerals(300)) {
             unit.addLog("HugeSupply");
-            return true;
+            return t("HugeSupply");
         }
 
         if (dontRetreatAsRangedAgainstMelee()) {
             unit.addLog("RangedVsMelee");
-            return true;
+            return t("RangedVsMelee");
         }
 
 //        if (true) return false;
 
         if (unit.isDragoon() && AsDragoonDoNotRetreat.doNotRetreat(unit)) {
             unit.addLog("GoGoGoon");
-            return true;
+            return t("GoGoGoon");
         }
 
         double eval = unit.eval();
 
-//        if (eval >= 0.98 && unit.hp() >= 32) {
-//            unit.addLog("HighEval");
-//            return true;
-//        }
-
-//        if (
-//            eval >= 1.5
-//                && (unit.hp() >= 43 && unit.cooldown() <= 9)
-//                && unit.friendsNear().combatUnits().countInRadius(6, unit) >= 3
-//        ) {
-//            unit.addLog("NoRunHighEval");
-//            return true;
-//        }
-
-//        if (unit.cooldown() <= 4 && unit.hp() >= 35 && unit.isMelee() && (unit.distToBase() <= 8 || unit.distToMain() <= 20)) {
-//            unit.addLog("NoRunNearBase");
-//            return true;
-//        }
-
         if (DontAvoidWhenCannonsNear.check(unit)) {
             unit.addLog("DontRetreatSupportCannon");
-            return true;
+            return t("DontRetreatSupportCannon");
         }
 
         if (dontRunNearBases()) {
-            unit.addLog("NoRetreatNearBase");
-            return true;
+            unit.addLog("dontRunNearBases");
+            return t("dontRunNearBases");
         }
 
         if (shouldNotRunInMissionSparta(unit)) {
             unit.addLog("NoRunInSparta");
-            return true;
+            return t("NoRunInSparta");
         }
 
-//        System.out.println("PRINT CanRetreat");
-//        unit.addLog("CanRetreat");
-//        unit.log().print();
-
-//        if (shouldNotRunInMissionDefend(unit)) {
-//            unit.addLog("NoRunInDefend");
-//            return true;
-//        }
-
-//        if (eval <= 1.25) return false;
-
-//        if (shouldNotRunInMissionAttack(unit)) {
-//            unit.addLog("NoRunInAttack");
-//            return true;
-//        }
-
-        double threshold = 0.88 - (Count.bases() == 0 ? 0.1 : 0);
+//        double threshold = 0.88 - (Count.bases() == 0 ? 0.1 : 0);
+        double threshold = 1.05 - (Count.bases() == 0 ? 0.1 : 0);
 
         AUnit leader = unit.squadLeader();
         if (leader != null) return leader.eval() >= threshold;
 
-        return unit.eval() >= threshold;
+        if (unit.eval() >= threshold) {
+            return t("HighEval");
+        }
+
+        return false;
     }
 
     private boolean dontRetreatAsRangedAgainstMelee() {

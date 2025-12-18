@@ -16,10 +16,12 @@ public class ProtossRetreatTest extends WorldStubForTests {
 
     @Test
     public void retreatGoonsVsHydras() {
-        assertFalse(RetreatTestGoonsVsHydras.testWith(2, 1).retreatManagerApplied);
+        assertFalse(RetreatTestGoonsVsHydras.testWith(3, 2).retreatManagerApplied);
         assertFalse(RetreatTestGoonsVsHydras.testWith(2, 2).retreatManagerApplied);
-        assertTrue(RetreatTestGoonsVsHydras.testWith(1, 2).retreatManagerApplied);
+        assertFalse(RetreatTestGoonsVsHydras.testWith(2, 3).retreatManagerApplied);
+        assertFalse(RetreatTestGoonsVsHydras.testWith(1, 2).retreatManagerApplied);
         assertTrue(RetreatTestGoonsVsHydras.testWith(1, 3).retreatManagerApplied);
+        assertTrue(RetreatTestGoonsVsHydras.testWith(2, 5).retreatManagerApplied);
         assertTrue(RetreatTestGoonsVsHydras.testWith(4, 9).retreatManagerApplied);
     }
 

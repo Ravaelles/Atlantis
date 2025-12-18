@@ -286,7 +286,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //    }
 
     // =========================================================
-    protected void clearAUnitCache() {
+    public void clearAUnitCache() {
         cache.clear();
         cacheInt.clear();
         cacheBoolean.clear();
@@ -2620,7 +2620,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public Selection enemiesNear() {
         return ((Selection) cache.get(
             "enemiesNear",
-            7,
+            5,
             () -> {
 //                if (unit().isFirebat()) {
 //                    System.out.println("------");

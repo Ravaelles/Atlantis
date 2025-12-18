@@ -12,6 +12,7 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
@@ -32,19 +33,10 @@ public class ProtossStartRetreat extends HasUnit {
     protected boolean handleRetreat() {
         if (enemy == null) return false;
 
-        if (Env.isTesting()) return true;
-
-//        A.printStackTrace("Start retreat " + unit);
-
-//        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFightCached()) {
-//        if (ShouldRetreat.shouldRetreat(unit) && !FightInsteadAvoid.shouldFight()) {
-
-//        Selection nearEnemies = unit.enemiesNear().canAttack(unit, true, true, 5);
-//        HasPosition runAwayFrom = nearEnemies.center();
-//
-//        if (runAwayFrom == null) {
-//            runAwayFrom = nearEnemies.first();
-//        }
+        if (Env.isTesting()) {
+            unit.move(unit.translateByTiles(15, 0), RUN_RETREAT, "RetreatTesting");
+            return true;
+        }
 
         HasPosition runAwayFrom = enemy;
 
@@ -88,6 +80,8 @@ public class ProtossStartRetreat extends HasUnit {
             unit.paintLine(unit.runningManager().runTo(), Color.Blue);
             return true;
         }
+
+        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
 
         return false;
     }
