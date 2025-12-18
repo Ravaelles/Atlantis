@@ -58,6 +58,11 @@ public class ArmyStrength {
 
     // =========================================================
 
+    public static void clearCache() {
+        cacheBoolean.clear();
+        cacheInteger.clear();
+    }
+
     private static int muchStrongerPercent() {
         int base = 140;
 

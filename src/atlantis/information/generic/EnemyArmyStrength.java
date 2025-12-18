@@ -1,7 +1,6 @@
 package atlantis.information.generic;
 
 import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class EnemyArmyStrength {

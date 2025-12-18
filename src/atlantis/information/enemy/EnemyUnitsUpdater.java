@@ -6,14 +6,15 @@ import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
 
-public class EnemyUnitsUpdater extends EnemyUnits {
+//public class EnemyUnitsUpdater extends EnemyUnits {
+public class EnemyUnitsUpdater {
 
     public static void updateFoggedUnits() {
         for (AUnit enemy : Select.enemy().list()) {
             updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit(enemy);
         }
 
-        for (AbstractFoggedUnit foggedUnit : enemyUnitsDiscovered.values()) {
+        for (AbstractFoggedUnit foggedUnit : EnemyUnits.enemyUnitsDiscovered.values()) {
             updatedFoggedUnitEvenIfNotVisible(foggedUnit);
         }
     }
@@ -26,7 +27,7 @@ public class EnemyUnitsUpdater extends EnemyUnits {
             A.printStackTrace();
         }
 
-        AbstractFoggedUnit foggedUnit = getFoggedUnit(enemy);
+        AbstractFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemy);
         if (foggedUnit != null) {
             foggedUnit.updatePosition(enemy);
             foggedUnit.updateType(enemy);
@@ -57,11 +58,15 @@ public class EnemyUnitsUpdater extends EnemyUnits {
         int id = enemyUnit.id();
 
 //        System.err.println("addFoggedUnit = " + enemyUnit);
-        if (!enemyUnitsDiscovered.containsKey(id)) {
+        if (!EnemyUnits.enemyUnitsDiscovered.containsKey(id)) {
             AbstractFoggedUnit foggedUnit = AbstractFoggedUnit.from(enemyUnit);
 
-            enemyUnitsDiscovered.put(id, foggedUnit);
-//            System.err.println("added " + foggedUnit + " / " + enemyUnitsDiscovered.size());
+            EnemyUnits.enemyUnitsDiscovered.put(id, foggedUnit);
+//            System.err.println("--- added " + foggedUnit.type()
+//                + " / EUD:" + EnemyUnits.enemyUnitsDiscovered.size()
+//                + " / ED:" + EnemyUnits.discovered().size()
+//                + " / EFD:" + EnemyUnits.freshDiscovered().size()
+//            );
         }
     }
 
@@ -70,14 +75,14 @@ public class EnemyUnitsUpdater extends EnemyUnits {
 //            A.printStackTrace("Why remove building? " + unit + " / enemy? " + unit.isEnemy());
 //        }
 
-        AbstractFoggedUnit foggedUnit = enemyUnitsDiscovered.get(unit.id());
+        AbstractFoggedUnit foggedUnit = EnemyUnits.enemyUnitsDiscovered.get(unit.id());
 
         if (foggedUnit != null) {
             foggedUnit.foggedUnitNoLongerWhereItWasBefore();
         }
 
-        enemyUnitsDiscovered.remove(unit.id());
-        cache.clear();
+        EnemyUnits.enemyUnitsDiscovered.remove(unit.id());
+        EnemyUnits.cache.clear();
 
 //        if (unit.isBuilding()) {
 ////            A.printStackTrace(

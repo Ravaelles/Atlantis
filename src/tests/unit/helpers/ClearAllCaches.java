@@ -3,6 +3,7 @@ package tests.unit.helpers;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AliveEnemies;
@@ -18,6 +19,7 @@ public class ClearAllCaches {
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
         AliveEnemies.clearCache();
+        ArmyStrength.clearCache();
         AvoidEnemies.clearCache();
         BaseSelect.clearCache();
         Count.clearCache();

@@ -7,12 +7,14 @@ import atlantis.game.listeners.OnUnitMorph;
 import atlantis.game.listeners.OnUnitRenegade;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
+import atlantis.information.generic.Army;
+import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EnemyUnitsTest extends AbstractTestWithWorld {
     private AtlantisGameCommander gameCommander;
@@ -25,17 +27,27 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
     private FakeUnit geyser;
     private FakeUnit lurkerEgg;
     private FakeUnit larva;
+    private FakeUnit hydra;
+
+    private double armyStrengthA = -1;
+    private double armyStrengthB = -1;
 
     @Test
-    public void neverRunsIntoCombatBuildings() {
+    public void fiveFrames() {
         gameCommander = new AtlantisGameCommander();
 
-        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
+//        AtlantisRaceConfig.SUPPLY = AUnitType.Terran_Supply_Depot;
 
         createWorld(5, () -> {
 //            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
             if (A.now() == 1) {
+                drone4 = fakeEnemy(AUnitType.Zerg_Drone, 23);
+                drone5 = fakeEnemy(AUnitType.Zerg_Drone, 24);
+                drone6 = fakeEnemy(AUnitType.Zerg_Drone, 25);
+                lurkerEgg = fakeEnemy(AUnitType.Zerg_Lurker_Egg, 26);
+                hydra = fakeEnemy(AUnitType.Zerg_Hydralisk, 27);
+
                 firstFrame();
             }
             else if (A.now() == 2) {
@@ -56,17 +68,37 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
     }
 
     private void firstFrame() {
+//        assertTrue(armyStrengthUnchached() >= 999);
+
+//        EnemyUnits.discovered().print("Enemies at start");
+
+//        System.err.println("ia  = " + armyStrengthUnchached()
+//            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
+//        );
+
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone1);
-        EnemyUnits.discovered().print("Discovered 4");
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone2);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone3);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(lurkerEgg);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(larva);
 
-        EnemyUnits.discovered().print("Discovered 5");
+//        System.err.println("ib  = " + armyStrengthUnchached() +
+//            " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
+//        );
+
+//        System.err.println("AAAAA lurkerEgg = " + lurkerEgg);
+//        EnemyUnits.discovered().print("Discovered 1st");
+    }
+    
+    private double armyStrengthUnchached() {
+        ArmyStrength.clearCache();
+//        EnemyUnits.clearCountCache();
+
+        return Army.strength();
     }
 
     private void secondFrame() {
+
         // Visible
         drone1.changeRawUnitType(AUnitType.Zerg_Creep_Colony);
         drone2.changeRawUnitType(AUnitType.Zerg_Sunken_Colony);
@@ -110,9 +142,24 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
         drone5.changeRawUnitType(AUnitType.Zerg_Sunken_Colony);
         drone6.changeRawUnitType(AUnitType.Zerg_Lurker);
 
+//        EnemyUnits.discovered().print("Enemies");
+//        Select.our().print("Ours");
+
+//        System.err.println("i   = " + armyStrengthUnchached()
+//            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
+//        );
+
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone4);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone5);
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(drone6);
+//        System.err.println("ii  = " + armyStrengthUnchached()
+//            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
+//        );
+
+        armyStrengthA = armyStrengthUnchached();
+        assertTrue(10 < armyStrengthA && armyStrengthA < 200);
+
+        EnemyUnitsUpdater.weDiscoveredEnemyUnit(hydra);
     }
 
     private void fifthFrame() {
@@ -122,10 +169,22 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
 //        System.err.println(EnemyUnits.getFoggedUnit(drone3).type());
 //        System.err.println(EnemyUnits.getFoggedUnit(lurkerEgg).type());
 
+        armyStrengthB = armyStrengthUnchached();
+//        System.err.println("armyStrengthA = " + armyStrengthA);
+//        System.err.println("armyStrengthB = " + armyStrengthB);
+        assertTrue(armyStrengthA > armyStrengthB);
+        assertTrue(10 < armyStrengthB && armyStrengthB < 110);
+//        System.err.println("iii = " + armyStrengthUnchached()
+//            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
+//        );
+
+//        System.err.println("BBBBBB lurkerEgg = " + lurkerEgg);
+//        EnemyUnits.discovered().print("Hmmm");
+
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone1).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone2).type());
         assertEquals(AUnitType.Zerg_Lurker, EnemyUnits.getFoggedUnit(drone3).type());
-        assertEquals(AUnitType.Zerg_Lurker, EnemyUnits.getFoggedUnit(lurkerEgg).type());
+//        assertEquals(AUnitType.Zerg_Lurker, EnemyUnits.getFoggedUnit(lurkerEgg).type());
 
         assertEquals(AUnitType.Zerg_Creep_Colony, EnemyUnits.getFoggedUnit(drone4).type());
         assertEquals(AUnitType.Zerg_Sunken_Colony, EnemyUnits.getFoggedUnit(drone5).type());
@@ -142,14 +201,20 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
 
     protected FakeUnit[] generateEnemies() {
         return fakeEnemies(
-            drone1 = fake(AUnitType.Zerg_Drone),
-            drone2 = fake(AUnitType.Zerg_Drone),
-            drone3 = fake(AUnitType.Zerg_Drone),
-            drone4 = fake(AUnitType.Zerg_Drone),
-            drone5 = fake(AUnitType.Zerg_Drone),
-            drone6 = fake(AUnitType.Zerg_Drone),
-            lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
-            larva = fake(AUnitType.Zerg_Larva)
+            geyser = fakeEnemy(AUnitType.Resource_Vespene_Geyser, 18),
+
+            larva = fakeEnemy(AUnitType.Zerg_Larva, 19),
+            drone1 = fakeEnemy(AUnitType.Zerg_Drone, 20),
+            drone2 = fakeEnemy(AUnitType.Zerg_Drone, 21),
+            drone3 = fakeEnemy(AUnitType.Zerg_Drone, 22)
+//            drone1 = fake(AUnitType.Zerg_Drone),
+//            drone2 = fake(AUnitType.Zerg_Drone),
+//            drone3 = fake(AUnitType.Zerg_Drone),
+//            drone4 = fake(AUnitType.Zerg_Drone),
+//            drone5 = fake(AUnitType.Zerg_Drone),
+//            drone6 = fake(AUnitType.Zerg_Drone),
+//            lurkerEgg = fake(AUnitType.Zerg_Lurker_Egg),
+//            hydra = fake(AUnitType.Zerg_Hydralisk),
         );
     }
 

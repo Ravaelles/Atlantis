@@ -30,19 +30,19 @@ public class EnemyUnits {
 
         return (Selection) cache.get(
             "discovered",
-            0,
+            1,
             EnemyUnits::freshDiscovered
         );
     }
 
-    private static Selection freshDiscovered() {
+    public static Selection freshDiscovered() {
         //        return Select.from(Select.enemy(), "")
         return Select.enemy()
 //                    .print("visible")
             .notDeadMan()
 //                    .print("not dead")
             .add(rawUnitsDiscovered())
-//                    .print("now with enemy")
+//            .print("now with rawUnitsDiscovered / size: " + rawUnitsDiscovered().size())
             .removeDuplicates()
 //            .print("after removing duplicates")
             .havingPosition();
@@ -55,6 +55,10 @@ public class EnemyUnits {
     public static void clearCache() {
         cache.clear();
         enemyUnitsDiscovered.clear();
+    }
+
+    public static void clearCountCache() {
+        cache.clear();
     }
 
     public static Collection<AbstractFoggedUnit> rawUnitsDiscovered() {

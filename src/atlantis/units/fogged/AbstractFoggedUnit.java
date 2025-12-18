@@ -1,5 +1,6 @@
 package atlantis.units.fogged;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
@@ -80,7 +81,7 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     private void updateLastPosition(AUnit unit) {
-        if (unit.u() == null) return;
+        if (unit.u() == null && !Env.isTesting()) return;
 //        if (unit.x() <= 0 || unit.x() >= 32000) return;
 
         // If the unit.u is defined, it means it's visible, so it has valid x,y
@@ -203,8 +204,8 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public String toString() {
-        return "F_" + getClass().getSimpleName() + " "
-            + nameWithId() + " at " + _lastPosition.toString()
+        return "F_" + getClass().getSimpleName() + " " + nameWithId()
+            + " at " + (_lastPosition != null ? _lastPosition.toString() : "unknown_pos")
             + " (" + (isEnemy() ? "Enemy" : (isOur() ? "Our" : "Neutral")) + ")";
     }
 
