@@ -73,6 +73,6 @@ public class DanceAway extends Manager {
     }
 
     private double danceAwayDist() {
-        return 2.2 + unit.woundPercent() / 40.0;
+        return 3.2 + unit.woundPercent() / 18.0;
     }
 }
