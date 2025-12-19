@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -12,6 +11,7 @@ import tests.fakes.FakeUnit;
 import tests.unit.helpers.ClearAllCaches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SelectTest extends WorldStubForTests {
 
@@ -19,8 +19,8 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void our() {
-        usingFakeOurs(() -> {
-            assertEquals(ourUnits.length, Select.our().size());
+        createWorld(1, () -> {
+            assertEquals(22, Select.our().size());
         });
     }
 
@@ -54,7 +54,7 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void ourRealUnits() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
 //            Select.our().print();
 //            Select.ourRealUnits().print();
 //            Select.our().minus(Select.ourRealUnits()).print("Our units that are not real units");
@@ -67,21 +67,23 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void enemy() {
-        usingFakeEnemy(() -> {
+        createWorld(1, () -> {
             assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
         });
     }
 
     @Test
     public void enemyRealUnits() {
-        usingFakeEnemy(() -> {
+        createWorld(1, () -> {
             assertEquals(enemyUnits.length, Select.enemyUnits().size());
+            assertTrue(Select.enemyUnits().size() >= 2);
 
             assertEquals(
                 0,
                 Select.enemyRealUnits(false, false, false).size()
             );
 
+//            Select.enemy().print("All enemiez, while enemUnits.size()=" + Select.enemyUnits().size());
             assertEquals(
                 GROUND_UNITS,
                 Select.enemyRealUnits(true, false, false).size()
@@ -137,7 +139,7 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void addsUnitsAndRemovesDuplicates() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
             AUnit unit1 = Select.our().first();
             AUnit unit2 = Select.our().last();
 
@@ -160,7 +162,9 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void createsCacheKeysAsExpected() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
+            Select.clearCache();
+//            Select.cache().print("hmmm", true);
             assertEquals(0, Select.cache().size());
 
             Select.our();

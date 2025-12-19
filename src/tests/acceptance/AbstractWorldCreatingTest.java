@@ -13,6 +13,7 @@ import starengine.StarEngineLauncher;
 import starengine.events.OnStarEngineFrameEnd;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
+import tests.unit.UnitTest;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,9 +44,17 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
         // === Create fake units ==========================================
 
         try {
-            our = generateOur != null ? (FakeUnit[]) generateOur.call() : generateOur();
+            if (generateOur != null) {
+                our = (FakeUnit[]) generateOur.call();
+            }
+            else {
+                UnitTest.ourUnits = our = generateOur();
+            }
             ourFirst = our != null && our.length > 0 ? our[0] : null;
-            enemies = generateEnemies != null ? (FakeUnit[]) generateEnemies.call() : generateEnemies();
+
+            enemies = generateEnemies != null
+                ? (FakeUnit[]) generateEnemies.call() : generateEnemies();
+
             neutral = generateNeutral();
         } catch (Exception e) {
             System.err.println("AbstractWorldCreatingTest exception");

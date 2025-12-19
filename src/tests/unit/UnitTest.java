@@ -74,20 +74,28 @@ public class UnitTest {
 
     // =========================================================
 
-    public static List<AUnit> mockOurUnits() {
+    public static List<FakeUnit> mockOurUnits() {
         int ourY = 10;
 
-        ourUnits = generateUnits(true);
+        mockOurUnitsArray();
 
         return Arrays.asList(ourUnits);
+    }
+
+    public static FakeUnit[] mockOurUnitsArray() {
+        return ourUnits = generateUnits(true);
     }
 
     public static List<AUnit> mockEnemyUnits() {
         int y = 8;
 
-        enemyUnits = generateUnits(false);
+        mockEnemyUnitsArray();
 
         return Arrays.asList(enemyUnits);
+    }
+
+    public static FakeUnit[] mockEnemyUnitsArray() {
+        return enemyUnits = generateUnits(false);
     }
 
     public static List<FakeUnit> mockNeutralUnits() {

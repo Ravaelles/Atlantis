@@ -192,12 +192,16 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     protected void usingFakeOurs(Runnable runnable) {
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
+//        if (AbstractTestWithWorld.baseSelect != null) {
+//            AbstractTestWithWorld.baseSelect.close();
+//            AbstractTestWithWorld.baseSelect = null;
+//        }
+
+        if (AbstractTestWithWorld.baseSelect == null) {
+            System.out.println("AAAAAAAAAAAAAA");
+            AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
+            AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
         }
-        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
 
         runnable.run();
     }
@@ -269,14 +273,14 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     public static FakeUnit[] fakeOurs(FakeUnit... fakeUnits) {
-        return (FakeUnit[]) fakeUnits;
+        return UnitTest.ourUnits = fakeUnits;
     }
 
     public static FakeUnit[] fakeEnemies(FakeUnit... fakeUnits) {
         for (FakeUnit unit : fakeUnits) {
             unit.setEnemy();
         }
-        return fakeUnits;
+        return UnitTest.enemyUnits = fakeUnits;
     }
 
     protected static FakeFoggedUnit fogged(AUnitType type, double x) {

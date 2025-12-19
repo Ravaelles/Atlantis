@@ -8,6 +8,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mockito;
 import tests.fakes.FakeUnit;
 import tests.unit.MockEverything;
+import tests.unit.UnitTest;
 
 import java.util.Arrays;
 import java.util.concurrent.Callable;
@@ -25,6 +26,9 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
     protected void usingFakeOursEnemiesAndNeutral(
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
+        UnitTest.ourUnits = ours;
+        UnitTest.enemyUnits = enemies;
+
         if (AbstractTestWithWorld.baseSelect != null) {
             AbstractTestWithWorld.baseSelect.close();
             AbstractTestWithWorld.baseSelect = null;
@@ -46,9 +50,9 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
         createWorld(1, onFrame, () -> ours, () -> enemies, null);
     }
 
-    protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
-        createWorld(proceedUntilFrameReached, onFrame, null, null, null);
-    }
+//    protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
+//        createWorld(proceedUntilFrameReached, onFrame, null, null, null);
+//    }
 
     protected void createWorld(
         int proceedUntilFrameReached,
@@ -84,6 +88,23 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
         Callable generateEnemies
     ) {
         createWorld(proceedUntilFrameReached, onFrame, generateOur, generateEnemies, null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        Runnable onFrame,
+        FakeUnit[] ours
+    ) {
+        createWorld(proceedUntilFrameReached, onFrame, () -> ours, () -> mockEnemyUnitsArray(), null);
+    }
+
+    protected void createWorld(
+        int proceedUntilFrameReached,
+        Runnable onFrame
+    ) {
+        createWorld(
+            proceedUntilFrameReached, onFrame, () -> mockOurUnitsArray(), () -> mockEnemyUnitsArray(), null
+        );
     }
 
     protected void useFakeTime(int framesNow) {
