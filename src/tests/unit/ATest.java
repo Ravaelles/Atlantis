@@ -11,8 +11,6 @@ public class ATest extends AbstractTestWithUnits {
     public void decisionAllowedLogic() {
         int value = 33;
 
-        System.out.println(A.gradual(value, 0, 100, 20, 30));
-
         assertEquals(
             A.gradual(value, 0, 100, 20, 30), 23.3, 0.1
         );

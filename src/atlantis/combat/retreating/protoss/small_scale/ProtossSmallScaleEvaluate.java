@@ -12,7 +12,7 @@ public class ProtossSmallScaleEvaluate {
         if (ProtossMeleeVsMelee.beBraveIn1v1(unit, enemies)) return false;
 
         return meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_SM)
-            && meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_LG);
+            || meleeOverpoweredInRadius(unit, friends, enemies, RADIUS_LG);
     }
 
     protected static boolean meleeOverpoweredInRadius(
@@ -21,9 +21,7 @@ public class ProtossSmallScaleEvaluate {
         double ourMeleeStrength = ourMeleeStrength(unit, friends, radius);
         double enemyMeleeStrength = enemyMeleeStrength(unit, enemies, radius);
 
-//        if (ourMeleeStrength > 1.1) {
-//            System.out.println(A.at() + "STRENGTH = " + ourMeleeStrength + "/" + enemyMeleeStrength);
-//        }
+//        System.err.println("Radius: " + radius + " | OUR: " + ourMeleeStrength + " ENEMY: " + enemyMeleeStrength);
 
         double dEval = ourMeleeStrength - enemyMeleeStrength;
         unit.setLastSmallScaleEval(dEval);

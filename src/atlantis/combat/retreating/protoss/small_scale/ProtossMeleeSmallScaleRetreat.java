@@ -2,7 +2,8 @@ package atlantis.combat.retreating.protoss.small_scale;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
-import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
+import atlantis.combat.retreating.protoss.big_battle.ProtossTooBigBattleToRetreat;
+import atlantis.combat.retreating.protoss.big_battle.ProtossTooBigBattleToRetreat_asZealot;
 import atlantis.combat.retreating.protoss.should.ProtossRetreatWrapper;
 import atlantis.game.A;
 import atlantis.units.AUnit;
@@ -21,6 +22,16 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
         enemies = ProtossRetreatWrapper.enemies(unit);
     }
 
+    private boolean f(String reasonWhyNot) {
+//        System.out.println("SmallScale NO: " + reasonWhyNot);
+        return false;
+    }
+
+    private boolean t(String reasonWhyYEs) {
+//        System.out.println("SmallScale YES: " + reasonWhyYEs);
+        return true;
+    }
+
     @Override
     public boolean applies() {
 //        if (
@@ -28,7 +39,7 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
 //                && unit.friendsNear().combatUnits().havingAntiGroundWeapon().countInRadius(3, unit) == 0
 //        ) return true;
 
-        if (allowPendingAttackToContinue()) return false;
+        if (allowPendingAttackToContinue()) return f("allowPendingAttackContinue");
 
         return shouldSmallScaleRetreat();
     }
@@ -38,13 +49,13 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
             if (
                 unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)
                     && (unit.lastAttackFrameMoreThanAgo(20) || unit.cooldown() <= 5)
-            ) return true;
+            ) return t("recentAttackOrCooldownLow");
 
             if (
                 unit.lastAttackFrameMoreThanAgo(40)
                     && unit.lastUnderAttackLessThanAgo(35)
                     && unit.cooldown() <= 8
-            ) return true;
+            ) return t("longSinceAttackUnderFireCooldownOk");
         }
 
         return false;
@@ -68,27 +79,33 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
     }
 
     public boolean shouldSmallScaleRetreat() {
-        if (!unit.isMelee()) return false;
-        if (unit.isMissionSparta()) return false;
+        if (!unit.isMelee()) return f("notMelee");
+        if (unit.isMissionSparta()) return f("missionSparta");
 
         if (unit.isMissionDefend()) {
             if (unit.isZealot()) {
-                if ((new SmallScaleAsZealot(unit)).shouldSmallScaleRetreat()) return true;
+                if ((new SmallScaleAsZealot(unit)).shouldSmallScaleRetreat()) return t("zealotDefendRetreat");
             }
             if (Enemy.zerg()) {
-                if (unit.hp() >= 21) return false;
-                if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return false;
+                if (unit.hp() >= 21) return f("zergHighHp");
+                if (unit.allUnitsNear().inRadius(1.2, unit).atLeast(4)) return f("zergManyUnitsNear");
             }
         }
 
         Selection enemiesCombat = unit.enemiesNear().combatUnits();
 
-        if (enemiesCombat.onlyMelee() && enemiesCombat.inRadius(radius(), unit).empty()) return false;
-        if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
+        if (enemiesCombat.onlyMelee() && enemiesCombat.inRadius(radius(), unit).empty()) return f("onlyMeleeNoneInRadius");
+        if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return f("noEnemiesInLargeRadius");
+        if (enemiesCombat.groundUnits().empty()) return f("noGroundEnemies");
 
-        if (enemiesCombat.groundUnits().empty()) return false;
-        if (unit.eval() >= 1.1 && unit.hp() >= 24) return false;
-        if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return false;
+        double eval = unit.eval();
+        if (eval >= 2.5 && unit.hp() >= 35) return f("evalHighHpHigh:" + eval);
+
+        if (unit.friendsInRadiusCount(0.8) >= 2) {
+            if (ProtossTooBigBattleToRetreat_asZealot.doNotRetreat(unit)) return f("tooBigBattlePvP");
+
+            if (eval >= 1.2 && unit.hp() >= 35) return f("evalHighHpHigh");
+        }
 
         if (unit.isRanged()) return asRanged(unit, friends, enemies);
         return asMelee(unit, friends, enemies);
@@ -98,18 +115,17 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
         return Enemy.zerg() ? 5.5 : 4;
     }
 
-
     protected boolean asMelee(AUnit unit, Selection friends, Selection enemies) {
-        if (Enemy.zerg()) return false;
+        if (Enemy.zerg()) return f("dontWhenMeleeVsZerg");
 
-//        if (unit.combatEvalRelative() >= 1.2) return false;
-        if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return false;
-        if (unit.hasCooldown() && unit.hasTarget() && unit.target().hp() < unit.hp()) return false;
+//        if (unit.combatEvalRelative() >= 1.2) return f("");
+        if (enemies.inRadius(ProtossSmallScaleEvaluate.RADIUS_LG, unit).count() <= 0) return f("NoEnemiesInLargeRadius2");
+        if (unit.hasCooldown() && unit.hasTarget() && unit.target().hp() < unit.hp()) return f("MoreHpThanTarget");
 
-        if (Enemy.protoss()) {
-            // We're not outnumbered
-            if ((1 + friends.count()) > enemies.count()) return false;
-        }
+//        if (Enemy.protoss()) {
+//            // We're not outnumbered
+//            if ((1 + friends.count()) > enemies.count()) return f("MoreFriendsThanEnemies");
+//        }
 
         if (ProtossSmallScaleEvaluate.isOverpoweredByEnemyMelee(unit, friends, enemies)) {
             unit.setTooltip("PSC:A");
@@ -120,15 +136,15 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
 //            System.err.println(message);
             unit.addLog(message);
 
-            return true;
+            return t("overpoweredByEnemyMelee");
         }
 
 //        if (meleeOverpoweredInRadius(unit, friends, enemies, 3.2)) {
 //            unit.setTooltip("PSC:B");
-//            return true;
+//            return t("meleeOverpoweredInRadius");
 //        }
 
-        return false;
+        return f("asMeleeGenericNo");
     }
 
     protected boolean asRanged(AUnit unit, Selection friends, Selection enemies) {
@@ -140,9 +156,9 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
             if (unit.isMissionDefendOrSparta()) return false;
         }
 
-//        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
-        if (unit.hp() <= 40 && unit.friendsInRadiusCount(5) < enemies.count()) return true;
+//        if (unit.combatEvalRelative() <= 1.06 && unit.friendsInRadiusCount(5) < enemies.count()) return t("evalLowFriendsLessThanEnemies");
+        if (unit.hp() <= 40 && unit.friendsInRadiusCount(5) < enemies.count()) return t("lowHpOutnumbered");
 
-        return false;
+        return t("asRangedGenericYes");
     }
 }

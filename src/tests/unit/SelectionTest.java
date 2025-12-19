@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SelectionTest extends WorldStubForTests {
     @Test
     public void chainingSubsequentCallsWorksAsExpected() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
             int total = 22;
             Selection selection = Select.our();
             FakeUnit first = (FakeUnit) Select.our().first();
@@ -35,7 +35,7 @@ public class SelectionTest extends WorldStubForTests {
 
     @Test
     public void cloneByRemovingIf() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
             Selection our = Select.our();
 //            Select.our().print();
 
@@ -53,14 +53,14 @@ public class SelectionTest extends WorldStubForTests {
 
     @Test
     public void ranged() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
             assertEquals(9, Select.our().ranged().size());
         });
     }
 
     @Test
     public void melee() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
             assertEquals(3, Select.our().melee().size());
         });
     }
@@ -69,7 +69,7 @@ public class SelectionTest extends WorldStubForTests {
     public void tanks() {
         ClearAllCaches.clearAll();
 
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
 //            Select.our().print();
             Selection our = Select.our();
 
@@ -127,7 +127,7 @@ public class SelectionTest extends WorldStubForTests {
 
     @Test
     public void testVariousMethods() {
-        usingFakeOurs(() -> {
+        createWorld(1, () -> {
 //            Select.our().print();
 //            Select.enemy().print();
 

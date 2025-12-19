@@ -3,11 +3,12 @@ package tests.unit;
 import atlantis.combat.micro.terran.TerranComsatStation;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TerranComsatTest extends AbstractTestWithUnits {
+public class TerranComsatTest extends WorldStubForTests {
 
     private FakeUnit lurker1 = null;
     private FakeUnit lurker2 = null;
@@ -80,7 +81,8 @@ public class TerranComsatTest extends AbstractTestWithUnits {
             fake(AUnitType.Terran_Marine, 11)
         );
 
-        setupEnemyLurkers(ours, () -> {
+//        setupEnemyLurkers(ours, () -> {
+        createWorld(1, () -> {
             updateComsat(comsat, 200);
 
             assertEquals(lurker2, comsat.target);
@@ -96,7 +98,7 @@ public class TerranComsatTest extends AbstractTestWithUnits {
             updateComsat(comsat, 60);
 
             assertEquals(lurker2, comsat.target);
-        });
+        }, ours);
     }
 
 }

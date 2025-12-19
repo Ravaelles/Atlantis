@@ -1,6 +1,6 @@
 package atlantis.combat.micro.avoid.dont.protoss.dragoon;
 
-import atlantis.combat.retreating.protoss.ProtossTooBigBattleToRetreat;
+import atlantis.combat.retreating.protoss.big_battle.ProtossTooBigBattleToRetreat;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;

@@ -2,13 +2,15 @@ package tests.unit.retreat;
 
 import atlantis.combat.retreating.protoss.small_scale.ProtossMeleeSmallScaleRetreat;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import org.junit.jupiter.api.Test;
+import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProtossSmallRetreatTest extends AbstractTestWithUnits {
+public class ProtossSmallRetreatTest extends WorldStubForTests {
     @Test
     public void retreatWhenNoMeleeAdvantage() {
         FakeUnit our;
@@ -22,14 +24,17 @@ public class ProtossSmallRetreatTest extends AbstractTestWithUnits {
         FakeUnit[] enemies = fakeEnemies(
             fake(AUnitType.Protoss_Zealot, 10),
             fake(AUnitType.Protoss_Zealot, 10.1),
-            fake(AUnitType.Protoss_Zealot, 10.2)
+            fake(AUnitType.Protoss_Zealot, 10.2),
+            fake(AUnitType.Protoss_Zealot, 10.3)
         );
 
-        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+        createWorld(1, ours, enemies, () -> {
 //            Selection friends = our.friendsNear();
 //            Selection enemies = our.friendsNear();
 
 //            ProtossMeleeSmallScaleRetreat.shouldSmallScaleRetreat(our, friends, enemies);
+
+//            System.out.println(Select.ourCombatUnits().first().eval());
 
             assertEquals(true, (new ProtossMeleeSmallScaleRetreat(our)).applies());
         });
@@ -48,19 +53,19 @@ public class ProtossSmallRetreatTest extends AbstractTestWithUnits {
         );
 
         FakeUnit[] enemies = fakeEnemies(
-            fake(AUnitType.Protoss_Zealot, 10),
-            fake(AUnitType.Protoss_Zealot, 10.1),
-            fake(AUnitType.Protoss_Zealot, 10.2)
+            fakeEnemy(AUnitType.Protoss_Zealot, 10),
+            fakeEnemy(AUnitType.Protoss_Zealot, 10.1),
+            fakeEnemy(AUnitType.Protoss_Zealot, 10.2)
         );
 
-        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
+        createWorld(1, ours, enemies, () -> {
             boolean shouldSmallScaleRetreatA = (new ProtossMeleeSmallScaleRetreat(zealotA)).shouldSmallScaleRetreat();
-            System.out.println("shouldSmallScaleRetreatA = " + shouldSmallScaleRetreatA);
-            System.out.println("smallScaleEval = " + zealotA.smallScaleEval());
-            System.out.println("Logs");
-            zealotA.log().print();
-            System.out.println("ManagerLogs");
-            zealotA.managerLogs().print();
+//            System.out.println("shouldSmallScaleRetreatA = " + shouldSmallScaleRetreatA);
+//            System.out.println("smallScaleEval = " + zealotA.smallScaleEval());
+//            System.out.println("Logs");
+//            zealotA.log().print();
+//            System.out.println("ManagerLogs");
+//            zealotA.managerLogs().print();
 
             boolean shouldSmallScaleRetreatB = (new ProtossMeleeSmallScaleRetreat(zealotB)).shouldSmallScaleRetreat();
 //            System.out.println("shouldSmallScaleRetreatB = " + shouldSmallScaleRetreatB);

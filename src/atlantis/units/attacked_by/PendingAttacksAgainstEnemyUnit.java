@@ -9,13 +9,13 @@ import java.util.Collection;
 
 public class PendingAttacksAgainstEnemyUnit {
     public static Collection<ABullet> against(AUnit enemy) {
-        if (!enemy.isEnemy()) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
-                "PendingAttacksAgainstEnemyUnit only works for enemies, passed: "
-                    + enemy.type() + " (our:" + enemy.isOur() + ")"
-            );
-            return java.util.Collections.emptyList();
-        }
+//        if (!enemy.isEnemy()) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
+//                "PendingAttacksAgainstEnemyUnit only works for enemies, passed: "
+//                    + enemy.type() + " (our:" + enemy.isOur() + ")"
+//            );
+//            return java.util.Collections.emptyList();
+//        }
 
         Collection<ABullet> pendingBullets = new ArrayList<>();
         for (AUnit attacker : enemy.enemiesNear().havingTargeted(enemy).attackStatePending().list()) {
