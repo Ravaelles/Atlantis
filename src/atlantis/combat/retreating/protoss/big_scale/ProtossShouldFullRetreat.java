@@ -11,14 +11,20 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import com.sun.javafx.iio.gif.GIFImageLoader2;
 
 public class ProtossShouldFullRetreat {
     private static AUnit unit;
     private static double eval;
 
     private static boolean f(String reasonWhyNot) {
-//        System.err.println("    ProtossShouldFullRetreat NO because: " + reasonWhyNot);
+//        System.err.println("ProtossShouldFullRetreat NO: " + reasonWhyNot);
         return false;
+    }
+
+    private static boolean t(String reasonWhyYes) {
+//        System.err.println("ProtossShouldFullRetreat YES: " + reasonWhyYes);
+        return true;
     }
 
     public static boolean shouldFullRetreat(AUnit unit) {
@@ -31,37 +37,37 @@ public class ProtossShouldFullRetreat {
 
         AUnit leader = unit.squadLeader();
         if (leader != null && !unit.isLeader()) {
-//            if (leader.isRetreating()) return true;
-            return leader.isRetreating();
+            if (leader.isRetreating()) return t("leaderRetreating");
         }
 
         eval = unit.eval();
+//        System.err.println("should retreat eval = " + eval);
+
+        if (evalTooLowNearEnemyCB(leader)) return t("evalTooLowNearEnemyCB");
 
         Decision decision;
         if ((decision = ProtossRetreatFromSunken.decision(unit)).notIndifferent()) return decision.toBoolean();
 
         if (eval >= 10 && Count.ourCombatUnits() >= 10) return f("Very high eval");
 
-        if (retreatDuringMissionAttack(unit)) return true;
+        if (retreatDuringMissionAttack(unit)) return t("retreatDuringMissionAttack");
 
         if (
             eval >= 0.4 && (Army.strength() >= 600 && A.supplyUsed() >= 60) || A.minerals() >= 2000
         ) return f("Very wealthy");
 
         if (DontAvoidWhenCannonsNear.check(unit)) return f("Cannons near");
-        if (combatEvalIsTooHighToRetreat()) return f("Eval too high to retreat");
-        if (dontRunNearOurCombatBuildings()) return f("Near our combat buildings");
+        if (combatEvalIsTooHighToRetreat()) return f("Eval too high");
+        if (dontRunNearOurCombatBuildings()) return f("Near our CB");
 
-        if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.75))) return true;
+        if (eval <= 0.72 && (leader == null || (!leader.equals(unit) && leader.eval() <= 0.75))) return t("lowEvalAndLeaderLowEval");
 
         if (A.isUms() && !Env.isTesting() && Count.bases() == 0) return f("UMS no bases");
 
-        if (!unit.isMissionAttack() && eval >= 0.7) return f("Not mission attack and eval high");
-//        if (Enemy.protoss() && unit.eval() >= 0.91) return f("");
+        if (!unit.isMissionAttack() && eval >= 0.7) return f("NotMA and okEval");
         if (unit.distToBase() <= 4) return f("Too close to base");
-//        if (unit.eval() >= 0.75 && unit.ourNearestBuildingDist() <= 3) return f("");
 
-        if (ProtossApprxRetreat.check(unit)) return true;
+        if (ProtossApprxRetreat.check(unit)) return t("apprxRetreatCheck");
 
         if (A.s <= 600 && (Enemy.protoss() || Enemy.zerg()) && EnemyUnits.discovered().ranged().empty()) {
             if (enemies.canAttack(unit, 2.8 + unit.woundPercent() / 100.0).empty()) return f("No ranged enemies can attack");
@@ -90,13 +96,39 @@ public class ProtossShouldFullRetreat {
         return f("GenericNo");
     }
 
+    private static boolean evalTooLowNearEnemyCB(AUnit leader) {
+        if (leader == null) return false;
+
+        int cb = leader.enemiesNear().combatBuildings(false).countInRadius(13, leader);
+        if (cb == 0) return false;
+
+        double evalPenalty = 1 + cb * 0.2;
+
+        if (A.minerals() >= 1000) {
+            evalPenalty = 0;
+        }
+        else {
+            int supplyUsed = A.supplyUsed();
+            if (supplyUsed >= 160) {
+                evalPenalty /= A.gradual(
+                    supplyUsed, 159, 200, 1.0, 0.4
+                );
+            }
+        }
+
+//        System.err.println("eval = " + eval);
+//        System.err.println("evalPenalty = " + evalPenalty);
+
+        return (eval - evalPenalty) <= 1;
+    }
+
     private static boolean retreatDuringMissionAttack(AUnit unit) {
         if (!unit.isMissionAttack()) return false;
 
-        double base = A.s <= 60 * 7 ? 1.2 : 1.15;
-        if (Enemy.zerg()) base += 0.1;
+        double enemyRaceBonus = A.s <= 60 * 7 ? 1.2 : 1.15;
+        if (Enemy.zerg()) enemyRaceBonus += 0.1;
 
-        return eval <= base;
+        return eval <= enemyRaceBonus;
     }
 
     private static boolean dontRunNearOurCombatBuildings() {

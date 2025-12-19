@@ -20,11 +20,8 @@ public class MoveCombatBuildingsCloserToOurUnits extends HasUnit {
     }
 
     public Vector vectorTowardsOurUnits() {
-//        Selection ours = unit.enemiesNear().inRadius(7 + MARGIN, unit);
         Selection ours = unit.enemiesNear();
 
-//        System.err.println("unit = " + unit);
-//        System.err.println("ours = " + ours.count());
         if (ours.empty()) return null;
 
         APosition ourCenter = ours.center();

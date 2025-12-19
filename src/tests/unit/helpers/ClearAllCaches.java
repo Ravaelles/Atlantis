@@ -1,6 +1,9 @@
 package tests.unit.helpers;
 
 import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.squad.AllSquads;
+import atlantis.combat.squad.Squad;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;
@@ -29,5 +32,8 @@ public class ClearAllCaches {
         if (Queue.get() != null) Queue.get().clearCache();
         ReservedResources.reset();
         Select.clearCache();
+        Squad.clearCache();
+        AllSquads.clearCache();
+        Alpha.forceRemoveAlpha();
     }
 }

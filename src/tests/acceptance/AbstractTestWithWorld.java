@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.BaseSelect;
+import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
 import org.mockito.Mockito;
 import tests.fakes.FakeUnit;

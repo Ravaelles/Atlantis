@@ -14,8 +14,7 @@ public class ProtossRetreat extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss()
-            && !(new ProtossDontRetreat(unit)).applies();
+        return We.protoss();
     }
 
     @Override

@@ -29,8 +29,6 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 
 //            FakeUnit leader = (FakeUnit) Select.our().first();
 
-//            System.err.println("leader = " + leader);
-//            System.err.println("unit = " + unit);
 //            if (true) return;
 
             (new AtlantisGameCommander()).invokeCommander();

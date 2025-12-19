@@ -1596,9 +1596,9 @@ public class Selection extends BaseSelection {
     }
 
     public List<AUnit> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
-//        if (position == null) {
-//            return null;
-//        }
+        if (position == null) {
+            return data;
+        }
 
         if (data.size() != 1) {
             Collections.sort(data, new Comparator<HasPosition>() {

@@ -218,6 +218,8 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         AUnit main = Select.main();
         if (main == null) return null;
 
+        if (Missions.isGlobalMissionDefendOrSparta()) return null;
+
 //        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
 
         AChoke mainChoke = Chokes.mainChoke();

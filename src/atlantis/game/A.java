@@ -1670,4 +1670,19 @@ public class A {
             return "";
         }
     }
+
+    /**
+     * Returns value that gradually changes from minValue to maxValue, according to paramValue position
+     * between minParamValue and maxParamValue.
+     */
+    public static double gradual(
+        double paramValue,
+        double minParamValue, double maxParamValue,
+        double minValue, double maxValue
+    ) {
+        if (paramValue <= minParamValue) return minValue;
+        if (paramValue >= maxParamValue) return maxValue;
+        double ratio = (paramValue - minParamValue) / (maxParamValue - minParamValue);
+        return minValue + ratio * (maxValue - minValue);
+    }
 }

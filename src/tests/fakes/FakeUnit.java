@@ -75,6 +75,10 @@ public class FakeUnit extends AUnit implements Serializable {
         this.hp = maxHp();
         this.shields = maxShields();
 
+        if (position == null) {
+            throw new RuntimeException("FakeUnit got null position");
+        }
+
         all.add(this);
     }
 
@@ -401,11 +405,6 @@ public class FakeUnit extends AUnit implements Serializable {
 
     // =========================================================
     // Orders
-
-    @Override
-    public Mission mission() {
-        return Missions.ATTACK;
-    }
 
     @Override
     public boolean useTech(TechType tech, AUnit target) {

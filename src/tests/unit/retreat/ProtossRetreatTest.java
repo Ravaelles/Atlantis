@@ -1,5 +1,6 @@
 package tests.unit.retreat;
 
+import atlantis.combat.missions.Missions;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,8 @@ public class ProtossRetreatTest extends WorldStubForTests {
         assertFalse(RetreatTestGoonsVsHydras.testWith(3, 2).retreatManagerApplied);
         assertFalse(RetreatTestGoonsVsHydras.testWith(2, 2).retreatManagerApplied);
         assertFalse(RetreatTestGoonsVsHydras.testWith(2, 3).retreatManagerApplied);
-        assertFalse(RetreatTestGoonsVsHydras.testWith(1, 2).retreatManagerApplied);
+//        assertFalse(RetreatTestGoonsVsHydras.testWith(1, 2).retreatManagerApplied);
+        assertTrue(RetreatTestGoonsVsHydras.testWith(1, 5).retreatManagerApplied);
         assertTrue(RetreatTestGoonsVsHydras.testWith(1, 3).retreatManagerApplied);
         assertTrue(RetreatTestGoonsVsHydras.testWith(2, 5).retreatManagerApplied);
         assertTrue(RetreatTestGoonsVsHydras.testWith(4, 9).retreatManagerApplied);
@@ -31,28 +33,38 @@ public class ProtossRetreatTest extends WorldStubForTests {
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 1),
             UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 1)
         );
-
         assertTrue(scenario.retreatManagerApplied);
 
         scenario = new RetreatScenarioTest(
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 2),
             UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 2)
         );
-
         assertTrue(scenario.retreatManagerApplied);
 
         scenario = new RetreatScenarioTest(
-            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 2),
+            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
+            UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 2)
+        );
+        assertTrue(scenario.retreatManagerApplied);
+
+        // =========================================================
+
+        scenario = new RetreatScenarioTest(
+            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 10),
             UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 1)
         );
-
         assertFalse(scenario.retreatManagerApplied);
 
         scenario = new RetreatScenarioTest(
-            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
+            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 6),
             UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 1)
         );
+        assertFalse(scenario.retreatManagerApplied);
 
+        scenario = new RetreatScenarioTest(
+            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 4),
+            UnitsForRetreatTest.enemies(AUnitType.Protoss_Photon_Cannon, 1)
+        );
         assertFalse(scenario.retreatManagerApplied);
     }
 
@@ -64,32 +76,26 @@ public class ProtossRetreatTest extends WorldStubForTests {
         );
 
         assertFalse(scenario.retreatManagerApplied);
+    }
 
-        scenario = new RetreatScenarioTest(
+    @Test
+    public void goonsVsGoons_3v3() {
+        scenario = RetreatScenarioTest.testWith(
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
-            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 3)
+            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 3),
+            Missions.DEFEND
         );
 
         assertFalse(scenario.retreatManagerApplied);
     }
 
     @Test
-    public void goonsVsGoons_3v3() {
+    public void goonsVsGoons_3v4() {
         scenario = new RetreatScenarioTest(
             UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
-            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 3)
+            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 4)
         );
 
-        assertFalse(scenario.retreatManagerApplied);
+        assertTrue(scenario.retreatManagerApplied);
     }
-
-//    @Test
-//    public void goonsVsGoons_3v4() {
-//        scenario = new RetreatScenarioTest(
-//            UnitsForRetreatTest.ours(AUnitType.Protoss_Dragoon, 3),
-//            UnitsForRetreatTest.enemies(AUnitType.Protoss_Dragoon, 4)
-//        );
-//
-//        assertTrue(scenario.retreatManagerApplied);
-//    }
 }

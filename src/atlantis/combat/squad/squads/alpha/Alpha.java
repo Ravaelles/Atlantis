@@ -64,7 +64,7 @@ public class Alpha extends Squad {
     public Mission mission() {
         if (A.isUms()) return Missions.ATTACK;
 
-        return super.mission();
+        return Missions.globalMission();
     }
 
     public static AUnit alphaLeader() {
@@ -91,4 +91,7 @@ public class Alpha extends Squad {
         return get().size();
     }
 
+    public static void forceRemoveAlpha() {
+        alpha = null;
+    }
 }

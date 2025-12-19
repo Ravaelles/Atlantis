@@ -23,7 +23,6 @@ public class ClosestToEnemyBase {
 
                 for (AUnit unit : positions.list()) {
                     int distToEnemyInChokes = distToEnemyInNumOfChokes(unit);
-//                    System.out.println("unit = " + unit + " / distToEnemyInChokes=" + distToEnemyInChokes);
 
                     if (distToEnemyInChokes > 0 && distToEnemyInChokes < closestDistance) {
                         closest = unit;

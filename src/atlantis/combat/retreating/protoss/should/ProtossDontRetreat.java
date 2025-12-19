@@ -56,8 +56,6 @@ public class ProtossDontRetreat extends Manager {
             return t("GoGoGoon");
         }
 
-        double eval = unit.eval();
-
         if (DontAvoidWhenCannonsNear.check(unit)) {
             unit.addLog("DontRetreatSupportCannon");
             return t("DontRetreatSupportCannon");
@@ -73,15 +71,16 @@ public class ProtossDontRetreat extends Manager {
             return t("NoRunInSparta");
         }
 
-//        double threshold = 0.88 - (Count.bases() == 0 ? 0.1 : 0);
-        double threshold = 1.05 - (Count.bases() == 0 ? 0.1 : 0);
-
-        AUnit leader = unit.squadLeader();
-        if (leader != null) return leader.eval() >= threshold;
-
-        if (unit.eval() >= threshold) {
-            return t("HighEval");
-        }
+//        double threshold = 1.15 - (Count.bases() == 0 ? 0.2 : 0);
+//
+//        AUnit leader = unit.squadLeader();
+//        if (leader != null) {
+//            double eval = leader.eval();
+//
+//            if (eval >= threshold) {
+//                return t("HighEval:" + eval);
+//            }
+//        }
 
         return false;
     }

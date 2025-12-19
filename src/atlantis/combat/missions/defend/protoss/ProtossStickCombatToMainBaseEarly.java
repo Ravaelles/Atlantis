@@ -25,7 +25,7 @@ public class ProtossStickCombatToMainBaseEarly {
 
         if (!We.protoss()) return false;
         if (!Enemy.zerg()) return false;
-        if (Sparta.canUseSpartaMission()) return false;
+        if (Missions.isGlobalMissionDefendOrSparta() && Sparta.canUseSpartaMission()) return false;
 
         if (
             Count.ourCombatUnits() <= 7

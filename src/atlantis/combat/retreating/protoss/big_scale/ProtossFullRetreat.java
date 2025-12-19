@@ -3,6 +3,7 @@ package atlantis.combat.retreating.protoss.big_scale;
 import atlantis.architecture.Manager;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
+import atlantis.combat.retreating.protoss.should.ProtossDontRetreat;
 import atlantis.units.AUnit;
 
 public class ProtossFullRetreat extends Manager {
@@ -12,12 +13,14 @@ public class ProtossFullRetreat extends Manager {
 
     @Override
     public boolean applies() {
+        if ((new ProtossDontRetreat(unit)).applies()) return false;
+
         return ProtossShouldFullRetreat.shouldFullRetreat(unit);
     }
 
     @Override
     protected Manager handle() {
-//        System.err.println("FullRetreat " + unit + " eval: " + unit.eval());
+//        System.err.println("ProtossFullRetreat " + unit + " eval: " + unit.eval());
 
 //        ProtossCohesion tooLonely = new ProtossCohesion(unit);
 //        if (tooLonely.applies() && tooLonely.forceHandle() != null) return usedManager(this);

@@ -23,7 +23,7 @@ public class AvoidTanksSieged extends Manager {
 
 //        AUnit tank = unit.enemiesNear().tanksSieged().first();
 //        System.out.println(
-//            "unit = " + unit + " / ev:" + unit.eval() + " / sieged: " +
+//            "un it = " + unit + " / ev:" + unit.eval() + " / sieged: " +
 //                unit.enemiesNear().tanksSieged().size() + " / enemyEval:"
 //                + (tank != null ? tank.eval() : "-")
 //        );

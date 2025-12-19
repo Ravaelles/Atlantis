@@ -18,7 +18,6 @@ public class TerranFullRetreat extends Manager {
 
     @Override
     protected Manager handle() {
-//        System.err.println("FullRetreat " + unit + " eval: " + unit.combatEvalRelative());
         if ((new TerranStartRetreat(unit)).startRetreatingFrom(enemy())) {
 //            unit.paintCircleFilled(14, Color.Red);
             if (unit.isLeader()) RetreatManager.GLOBAL_RETREAT_COUNTER++;

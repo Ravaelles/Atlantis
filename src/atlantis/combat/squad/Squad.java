@@ -199,6 +199,13 @@ public abstract class Squad extends Units {
         return name.charAt(0) + "";
     }
 
+    public static void clearCache() {
+        cacheBoolean.clear();
+        cacheDouble.clear();
+        cacheInteger.clear();
+        cacheUnit.clear();
+    }
+
     // =========================================================
 
     @Override
@@ -312,7 +319,7 @@ public abstract class Squad extends Units {
     public int cohesionPercent() {
         return cacheInteger.get(
             "cohesionPercent",
-            3,
+            7,
             () -> {
                 HasPosition center = center();
                 if (size() <= 1 || center == null) {

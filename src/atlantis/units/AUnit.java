@@ -1012,10 +1012,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-//        if (squad == null && isOur()) {
-//            NewUnitsToSquadsAssigner.possibleCombatUnitCreated(this);
-//            A.printStackTrace("Should not be here");
-//        }
+        if (squad == null && Env.isTesting() && isOur() && isCombatUnit() && isGroundUnit()) {
+            return Alpha.get();
+        }
 
         return squad;
     }
@@ -2146,8 +2145,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean squadIsAlpha() {
         if (squad == null) {
-            if (Env.isTesting()) return true;
-
             return false;
         }
 
@@ -2382,13 +2379,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return type().isAirUnitAntiAir();
     }
 
-    private Mission squadMission() {
-        if (squad() == null) {
-            return null;
-        }
-
-        return squad.mission();
-    }
+//    private Mission squadMission() {
+//        if (squad() == null) {
+//            return null;
+//        }
+//
+//        return squad.mission();
+//    }
 
     public boolean isNotAttackableByRangedDueToSpell() {
         return isUnderDarkSwarm();
@@ -3302,6 +3299,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit squadLeader() {
+        if (Env.isTesting()) {
+            return Select.ourCombatUnits().first();
+        }
+
         return squad != null ? squad.leader() : null;
     }
 

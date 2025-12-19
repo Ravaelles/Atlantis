@@ -41,9 +41,15 @@ public class PositionHelper {
 
         for (Iterator<AUnit> iterator = units.iterator(); iterator.hasNext(); ) {
             AUnit unit = iterator.next();
+//            if (unit.hp() == -1) continue;
+
             xCoordinates.add(unit.x());
             yCoordinates.add(unit.y());
         }
+
+//        if (xCoordinates.isEmpty()) {
+//            return null;
+//        }
 
         return new APosition(
             getPositionMedian(xCoordinates),

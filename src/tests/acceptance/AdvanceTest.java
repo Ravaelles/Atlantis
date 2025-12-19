@@ -33,10 +33,6 @@ public class AdvanceTest extends WorldStubForTests {
 
             FakeUnit leader = (FakeUnit) Select.our().first();
 
-//            System.err.println("leader = " + leader);
-//            System.err.println("unit = " + unit);
-//            if (true) return;
-
             for (AUnit unit : Select.ourCombatUnits().list()) {
                 (new CombatUnitManager(unit)).invokeFrom(this);
 

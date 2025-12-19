@@ -6,6 +6,7 @@ import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.protoss.sparta.Sparta;
 import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
@@ -95,7 +96,7 @@ public class Missions {
 
         // === Handle UMS ==========================================
 
-        if (AGame.isUms() || Select.main() == null) {
+        if (AGame.isUms() || Env.isTesting()) {
             return Missions.ATTACK;
         }
 

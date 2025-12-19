@@ -1,7 +1,10 @@
 package tests.unit.helpers.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
@@ -15,14 +18,24 @@ import tests.unit.helpers.ClearAllCaches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-//public class RetreatScenarioTest extends AbstractTestWithUnits {
 public class RetreatScenarioTest extends WorldStubForTests {
     public double ourCombatEvalRelative = -666;
     public double enemyCombatEvalRelative = -666;
     public boolean retreatManagerApplied;
+    private static Mission globalMission = null;
+    private static Mission oldGlobalMission = null;
 
     public double eval() {
         return ourCombatEvalRelative;
+    }
+
+    public static RetreatScenarioTest testWith(FakeUnit[] ours, FakeUnit[] enemies, Mission globalMission) {
+        RetreatScenarioTest.oldGlobalMission = Missions.globalMission();
+        RetreatScenarioTest.globalMission = globalMission;
+        RetreatScenarioTest test = new RetreatScenarioTest(ours, enemies);
+        RetreatScenarioTest.globalMission = oldGlobalMission;
+
+        return test;
     }
 
     public RetreatScenarioTest(FakeUnit[] ours, FakeUnit[] enemies) {
@@ -52,6 +65,10 @@ public class RetreatScenarioTest extends WorldStubForTests {
 //        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
         createWorld(1,
             () -> {
+                if (globalMission != null) {
+                    Missions.setGlobalMissionTo(globalMission, "Forced in tests");
+                }
+
 //                Select.our().print("Our");
 //                Select.enemy().print("Enemy");
 
@@ -88,7 +105,9 @@ public class RetreatScenarioTest extends WorldStubForTests {
 
                 this.retreatManagerApplied = manager != null;
 
-//            assertEquals(true, (new ProtossRetreatWrapper(our).forceHandle());
+                if (oldGlobalMission != null) {
+                    Missions.setGlobalMissionTo(oldGlobalMission, "Force restore in tests");
+                }
             }, () -> ours, () -> enemies);
     }
 }

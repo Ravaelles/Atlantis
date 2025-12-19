@@ -19,4 +19,8 @@ public class AllSquads {
     public static ArrayList<Squad> allClone() {
         return (ArrayList<Squad>) AllSquads.all().clone();
     }
+
+    public static void clearCache() {
+        allSquads.clear();
+    }
 }
