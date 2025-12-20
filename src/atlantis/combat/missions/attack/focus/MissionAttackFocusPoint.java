@@ -82,8 +82,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemyZergClusterCloserToMainThanAlpha();
         if (focus != null) return focus;
 
-        focus = enemyAnyUnitsPositions();
-        if (focus != null) return focus;
+//        focus = enemyAnyUnitsPositions();
+//        if (focus != null) return focus;
 
         focus = enemyBuildingPositions();
         if (focus != null) return focus;
@@ -91,8 +91,8 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemyFoggedBuilding();
         if (focus != null) return focus;
 
-        focus = enemyFoggedUnit();
-        if (focus != null) return focus;
+//        focus = enemyFoggedUnit();
+//        if (focus != null) return focus;
 
         focus = guessPositions();
         if (focus != null) return focus;

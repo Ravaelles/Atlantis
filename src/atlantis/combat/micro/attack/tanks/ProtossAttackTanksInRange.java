@@ -1,7 +1,6 @@
 package atlantis.combat.micro.attack.tanks;
 
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -61,7 +60,7 @@ public class ProtossAttackTanksInRange extends Manager {
         if (tank == null || tank.hp() == 0) return null;
 
 //        System.err.println("Tank: " + tank);
-        if (shouldComeCloserToTank()) {
+        if (moveComeCloserToTank()) {
             unit.move(tank, Actions.MOVE_ENGAGE);
             unit.forceLastTarget(tank);
 
@@ -76,10 +75,17 @@ public class ProtossAttackTanksInRange extends Manager {
         return null;
     }
 
-    private boolean shouldComeCloserToTank() {
+    private boolean moveComeCloserToTank() {
         if (!tank.isSieged()) return false;
 
-        return unit.cooldown() >= 7 && unit.distTo(tank) >= 0.4 && unit.groundDist(tank) <= 11;
+        return unit.cooldown() >= 7
+            && unit.distTo(tank) >= 0.3
+            && unit.groundDist(tank) <= 11
+            && tankIsSurroundedByTooManyEnemies();
+    }
+
+    private boolean tankIsSurroundedByTooManyEnemies() {
+        return tank.enemiesNear().combatUnits().nonTanks().countInRadius(3, unit) >= 4;
     }
 
     private boolean attackTank() {

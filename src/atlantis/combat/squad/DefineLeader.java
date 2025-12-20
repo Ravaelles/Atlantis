@@ -1,5 +1,7 @@
 package atlantis.combat.squad;
 
+import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -67,10 +69,13 @@ public class DefineLeader {
             }
         }
 
-        return candidates.nearestTo(nearestToPosition);
+        return candidates.groundNearestTo(nearestToPosition);
     }
 
     private APosition nearestToPosition() {
+        AUnit nearestEnemyBuilding = EnemyUnits.nearestEnemyBuilding();
+        if (nearestEnemyBuilding != null) return nearestEnemyBuilding.position();
+
         APosition average = squad.average();
         if (average != null) return average;
 
@@ -104,6 +109,7 @@ public class DefineLeader {
             .groundUnits()
             .havingWeapon()
             .notSpecialAction()
+            .notRunning()
             .excludeTypes(AUnitType.Protoss_Dark_Templar, AUnitType.Protoss_Reaver)
             .exclude(exceptUnit);
 

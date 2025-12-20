@@ -5,7 +5,8 @@ import atlantis.units.AUnit;
 
 public class DontAttackOverlords {
     public static boolean forbidden(AUnit unit) {
-        return unit.lastAttackFrameLessThanAgo(30 * 3)
+        return unit.lastAttackFrameLessThanAgo(40)
+            && unit.eval() <= 2.5
             && unit.enemiesNear().groundUnits().countInRadius(radius(), unit) >= (A.s >= 60 * 8 ? 2 : 1);
 
 //        return unit.enemiesNear().combatUnits().countInRadius(AUnit.NEAR_DIST, unit) <= (unit.shotSecondsAgo() <= 4 ? 1 : 0)
