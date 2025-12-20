@@ -497,9 +497,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //        }
 
         return new AFocusPoint(
-//            mainChoke.translateTilesTowards(0.5, Select.main()),
+            mainChoke.translateTilesTowards(0.5, Select.mainOrAnyBuilding()),
 //            point,
-            mainChoke,
+//            mainChoke,
             Select.main(),
             "MainChoke"
         ).forceAroundChoke(mainChoke);

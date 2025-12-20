@@ -9,6 +9,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -81,8 +82,12 @@ public class ProtossStartRetreat extends HasUnit {
             return true;
         }
 
-        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
+        if (unit.moveToMain(RUN_RETREAT)) {
+            unit.setTooltip("RetreatToMain");
+            return true;
+        }
 
+        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
         return false;
     }
 
@@ -162,7 +167,7 @@ public class ProtossStartRetreat extends HasUnit {
         if (groundDistToMain <= 40) return true;
         if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 
-        if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy())) return false;
+        if (!ShouldRunTowardsBase.check(unit, unit.nearestEnemy(), null)) return false;
 
         AUnit goTo = Select.mainOrAnyBuilding();
         if (goTo == null) return false;

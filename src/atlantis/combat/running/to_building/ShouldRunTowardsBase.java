@@ -7,13 +7,15 @@ import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 public class ShouldRunTowardsBase {
-    public static boolean check(AUnit unit, HasPosition runAwayFrom) {
+    public static boolean check(AUnit unit, HasPosition runAwayFrom, Action action) {
         if (runAwayFrom == null) return false;
 
         AUnit main = Select.main();
@@ -22,6 +24,9 @@ public class ShouldRunTowardsBase {
         double distToMain = unit.groundDistToMain();
         if (distToMain <= 18) return false;
         if (runAwayFrom.groundDist(main) < distToMain) return false;
+
+        if (Actions.MOVE_DANCE_AWAY.equals(action)) return true;
+
         if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
 
         if (distToMain <= 30) return true;

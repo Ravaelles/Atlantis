@@ -50,7 +50,7 @@ public class RunToPositionFinder {
 
             // === Run directly to base ========================
 
-            if (ShouldRunTowardsBase.check(unit, runAwayFrom)) {
+            if (ShouldRunTowardsBase.check(unit, runAwayFrom, action)) {
                 AUnit position = ShouldRunTowardsBase.position();
                 if (position != null && unit.distTo(position) > 0.1) {
                     running._lastRunMode = "ToBase";

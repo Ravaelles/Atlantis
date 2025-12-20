@@ -50,8 +50,12 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean vsZerg() {
-        if (unit.meleeEnemiesNearCount(2.7) >= 3) {
+        if (unit.meleeEnemiesNearCount(2.8) >= 3) {
             return t("AvoidTheSwarm");
+        }
+
+        if (unit.meleeEnemiesNearCount(3.4) >= 5) {
+            return t("AvoidHugeSwarm");
         }
 
         if (unit.woundHp() <= 3 && unit.enemiesThatCanAttackMe(0.8).empty()) {

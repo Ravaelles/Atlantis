@@ -51,6 +51,10 @@ public class Sparta extends MissionDefend {
 //        return MissionHistory.numOfChanges() <= 1 &&;
     }
 
+    public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        return (new MissionSpartaAllowsToAttack(unit)).allowsToAttackEnemyUnit(enemy);
+    }
+
     private static boolean focusPointIsValidForSparta() {
         if (A.now() <= 30) return true;
 

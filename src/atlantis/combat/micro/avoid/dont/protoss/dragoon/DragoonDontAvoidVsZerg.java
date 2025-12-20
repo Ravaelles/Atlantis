@@ -16,7 +16,9 @@ public class DragoonDontAvoidVsZerg {
         if (dontAvoidWhenOnlyEnemyZerglingsNearby(unit)) return true;
         if (dontAvoidBigGoonHydraBattle(unit)) return true;
 
-        if (unit.isHealthy()) return true;
+        if (earlyOnDontAvoidLings(unit)) return true;
+
+//        if (unit.isHealthy()) return true;
 //        if (ProtossTooBigBattleToRetreat.PvP_doNotRetreat(unit)) return true;
 
         if (unit.cooldown() <= 7) {
@@ -28,6 +30,14 @@ public class DragoonDontAvoidVsZerg {
 
         return unit.lastAttackFrameAgo() > 30 * 3
             && dontAvoid(unit, "VsZerg");
+    }
+
+    private static boolean earlyOnDontAvoidLings(AUnit unit) {
+        if (A.s >= 350) return false;
+        if (unit.hp() <= 30) return false;
+        if (unit.rangedEnemiesCount(2) == 0) return false;
+
+        return unit.cooldown() == 0;
     }
 
     private static boolean dontAvoidBigGoonHydraBattle(AUnit unit) {

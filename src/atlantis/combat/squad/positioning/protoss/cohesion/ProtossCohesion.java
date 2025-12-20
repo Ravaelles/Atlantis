@@ -25,7 +25,8 @@ public class ProtossCohesion extends Manager {
         if (Count.ourCombatUnits() >= 20 && Army.strength() >= 500 && unit.eval() >= 3) return false;
 //        if (unit.isMissionDefendOrSparta() && Count.ourCombatUnits() >= 10) return false;
         if (unit.unloadedSecondsAgo(10)) return false;
-        if (unit.meleeEnemiesNearCount(3.5) >= 1) return false;
+        if (unit.cooldown() <= 15 && unit.meleeEnemiesNearCount(3.7) >= 1) return false;
+        if (unit.rangedEnemiesCount(4) >= 1) return false;
 
         return We.protoss()
             && (A.minerals() <= 1500 && A.supplyUsed() <= 195)

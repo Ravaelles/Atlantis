@@ -69,7 +69,9 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     private Decision againstZerg() {
         if (!Enemy.zerg()) return Decision.INDIFFERENT;
 
-        if (dragoons >= 1 && (dragoons >= 2 || EnemyUnits.hydras() > 0)) return Decision.TRUE;
+        if (dragoons <= 1) return Decision.FALSE;
+
+        if (dragoons >= 3 || EnemyUnits.hydras() > 0) return Decision.TRUE;
 
         return Decision.INDIFFERENT;
     }
