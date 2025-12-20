@@ -8,7 +8,7 @@ public class ProtossTooBigBattleToRetreat {
 
         if (unit.isDragoon()) {
             if (
-                unit.hpPercent() >= 25
+                unit.hpPercent() >= 60
 //                    && unit.cooldown() <= 9
                     && unit.meleeEnemiesNearCount(1.8 + unit.woundPercent() / 50.0) == 0
             ) return true;

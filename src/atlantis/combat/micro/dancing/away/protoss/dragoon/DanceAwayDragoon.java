@@ -47,6 +47,6 @@ public class DanceAwayDragoon extends DanceAway {
 
     @Override
     protected boolean allowedToNotifyNearUnitsToMakeSpace() {
-        return unit.shields() <= 24;
+        return unit.shields() <= 40;
     }
 }

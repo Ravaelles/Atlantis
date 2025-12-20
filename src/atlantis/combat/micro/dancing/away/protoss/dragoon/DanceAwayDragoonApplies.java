@@ -103,10 +103,13 @@ public class DanceAwayDragoonApplies extends HasUnit {
         }
 
         if (Enemy.zerg()) {
-            if (cooldown <= 14 && unit.shieldWound() <= 18) return f("_BraveA_vZ");
+            if (unit.cooldown() <= 8 || unit.meleeEnemiesNearCount(3) == 0) {
+                if (cooldown <= 14 && unit.shieldWound() <= 18) return f("_BraveA_vZ");
+                if (cooldown <= 12 && unit.shieldWound() <= 35) return f("_BraveB_vZ");
+                if (noVsZerg()) return f("_NvZ");
+            }
+
             if (yesVsZerg()) return t("YvZ");
-            if (cooldown <= 12 && unit.shieldWound() <= 35) return f("_BraveB_vZ");
-            if (noVsZerg()) return t("_NvZ");
         }
 
         if (Enemy.protoss()) {
@@ -260,19 +263,24 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
         // =====
 
-        Selection enemies = unit.enemiesNear().canAttack(unit, 2.2);
+        Selection enemies = unit.enemiesNear().canAttack(unit, Enemy.zerg() ? 2.7 : 2.2);
 
         if (enemies.ranged().notShowingBackToUs(unit).notEmpty()) return true;
 
-        if (enemies.melee().facingThisUnit(unit).empty()) return false;
-//        if (enemies.melee().facingThisUnit(unit).empty()) return f("_noMeleeFacing");
+        if (
+            enemies.melee().countInRadius(2.7, unit) == 0
+                && enemies.melee().facingThisUnit(unit).empty()
+        ) return f("_noMeleeFacing");
+//        if (enemies.melee().empty()) return f("_noMeleeFacing");
 
         return true;
     }
 
     private boolean f(String reason) {
 //        if (!reason.equals(_lastF)) {
-//            System.err.println("@" + A.now + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
+//            if (unit.enemiesNear().notDeadMan().notEmpty()) {
+//                System.err.println("@" + A.now + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
+//            }
 //        }
 //        _lastF = reason;
 
