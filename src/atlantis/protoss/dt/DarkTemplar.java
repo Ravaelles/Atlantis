@@ -17,6 +17,7 @@ public class DarkTemplar extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             DarkTemplarRunWhenAttacked.class,
+            DarkTemplarAvoidWhenUnderAttack.class,
             DarkTemplarAvoidDetectors.class,
             DarkTemplarAvoidCB.class,
             DarkTemplarAlwaysAttackWhenUndetected.class,

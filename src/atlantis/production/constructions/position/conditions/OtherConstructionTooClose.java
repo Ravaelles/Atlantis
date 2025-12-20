@@ -20,7 +20,7 @@ public class OtherConstructionTooClose {
         if (building.isBase()) return false;
 
         // Compare against planned construction places
-        for (Construction otherConstr : ConstructionRequests.notStarted()) {
+        for (Construction otherConstr : ConstructionRequests.notFinished()) {
             HasPosition otherPosition = otherConstr.buildPosition();
 
             if (position != null && otherPosition != null) {

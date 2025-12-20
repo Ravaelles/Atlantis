@@ -438,7 +438,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
             AUnit closeEnemy = EnemyUnits.discovered()
                 .combatUnits()
                 .groundUnits()
-                .inGroundRadius(40, main)
+                .inGroundRadius(24, main)
                 .effVisible()
                 .groundNearestTo(main);
             if (closeEnemy != null) return new AFocusPoint(

@@ -42,6 +42,7 @@ public class ProtossMoonFormationApplies {
         this.unit = unit;
 
         if (Enemy.terran()) return false;
+        if (unit.isMissionDefendOrSparta()) return false;
         if (unit.friendsNear().combatUnits().empty()) return false;
         if (unit.enemiesNear().combatBuildingsAntiLand().notEmpty()) return false;
 

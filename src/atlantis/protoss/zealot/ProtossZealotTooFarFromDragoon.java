@@ -36,6 +36,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         distToGoon = unit.distTo(dragoon);
 
         if (closeEnemiesAndRelativelyCloseGoon()) return false;
+        if (isAttackingSpecialUnit()) return false;
 
         // === Force apply =========================================
 
@@ -94,6 +95,18 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
             unit.shieldWound() >= 16
                 || unit.enemiesNear().combatBuildingsAntiLand().inRadius(8.3, unit).empty()
         );
+    }
+
+    private boolean isAttackingSpecialUnit() {
+        if (!unit.isAttacking()) return false;
+
+        AUnit target = unit.target();
+        if (target == null || target.hp() == 0) return false;
+
+        return target.isTank()
+            || target.isLurker()
+            || target.isReaver()
+            || target.isUltralisk();
     }
 
     private boolean closeEnemiesAndRelativelyCloseGoon() {

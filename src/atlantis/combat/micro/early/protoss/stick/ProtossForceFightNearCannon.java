@@ -15,13 +15,17 @@ public class ProtossForceFightNearCannon extends Manager {
     @Override
     public boolean applies() {
         if (unit.isAir()) return false;
-        if (unit.cooldown() >= 10 && unit.hp() <= 80) return false;
+        if (unit.cooldown() >= 9) return false;
+        if (unit.cooldown() >= 7 && unit.hp() <= 80) return false;
 
         cannon = unit.friendsNear().cannons().inRadius(3.5, unit).nearestTo(unit);
         if (cannon == null) return false;
 
         enemy = enemyToAttack();
         if (enemy == null) return false;
+
+        double enemyToCannon = enemy.distTo(cannon);
+        if (enemyToCannon - enemy.groundWeaponRange() >= 0.2) return false;
 
         if (unit.isReaver() && (unit.hp() <= 120 || unit.cooldown() >= 3)) return false;
         if (asBadlyWoundedDoNotFight()) return false;
@@ -30,7 +34,7 @@ public class ProtossForceFightNearCannon extends Manager {
             if (unit.cooldown() >= 1 && unit.shieldWound() >= 40 && unit.lastUnderAttackLessThanAgo(50)) return false;
         }
 
-        if (enemy.distTo(cannon) >= 5.9 && (unit.hp() <= 40 || unit.lastUnderAttackLessThanAgo(50))) return false;
+        if (enemyToCannon >= 5.9 && (unit.hp() <= 40 || unit.lastUnderAttackLessThanAgo(50))) return false;
 
         return true;
     }

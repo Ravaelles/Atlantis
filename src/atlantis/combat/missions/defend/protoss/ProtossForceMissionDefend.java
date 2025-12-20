@@ -18,7 +18,11 @@ public class ProtossForceMissionDefend {
         if (Enemy.protoss()) {
             if (A.s >= 9 * 60 && (strength >= 120 || ourCombatUnits >= 10)) return false;
 
-            if (ourCombatUnits <= 19 && (strength <= 165 || alphaEval <= 1.16)) return t("WeakEarlyGame");
+            if (
+                EnemyInfo.hasRanged()
+                    && ourCombatUnits <= 19
+                    && (strength <= 165 || alphaEval <= 1.16)
+            ) return t("WeakEarlyGame");
 
             if (combatUnits < 20) {
                 if (EnemyInfo.hasRanged()) {

@@ -14,7 +14,7 @@ public abstract class SpreadOutAirUnits extends Manager {
 
     @Override
     public boolean applies() {
-        return otherUnitsOfSameType().count() > 0;
+        return (separateFrom = otherUnitsOfSameType()).count() > 0;
     }
 
     protected abstract double minDistBetweenUnits();

@@ -10,7 +10,9 @@ public class TooCloseToUnwalkable {
         if (building.isBase()) return false;
 
         if (isTooClose(building, position)) return failed("Too close to unwalkable (A)");
-        if (building.producesLandUnits() && isTooClose(building, position.translateByTiles(4, 3))) {
+        if (
+            building.producesLandUnits() && !position.isWalkable(5)
+        ) {
             return failed("Too close to unwalkable (B)");
         }
 

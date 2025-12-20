@@ -5,8 +5,8 @@ import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
 public class ProtossSmallScaleEvaluate {
-    public static final double RADIUS_LG = 3.5;
-    public static final double RADIUS_SM = 1.6;
+    public static final double RADIUS_LG = 1.9;
+    public static final double RADIUS_SM = 1.2;
 
     public static boolean isOverpoweredByEnemyMelee(AUnit unit, Selection friends, Selection enemies) {
         if (ProtossMeleeVsMelee.beBraveIn1v1(unit, enemies)) return false;
