@@ -12,6 +12,11 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         super(unit);
     }
 
+    private boolean t(String reason) {
+//        unit.setTooltip(reason);
+        return true;
+    }
+
     @Override
     public boolean applies() {
         if (!unit.isDragoon()) return false;
@@ -25,20 +30,20 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
     }
 
     private boolean vsProtoss() {
-        if (A.s <= 5 * 60 && unit.shotSecondsAgo(3) && unit.meleeEnemiesNearCount(3.3) >= 2) {
-            return reason("DvZ_vP");
+        if (A.s <= 5 * 60 && unit.shotSecondsAgo(4) && unit.meleeEnemiesNearCount(3.3) >= 2) {
+            return t("GvZeal_vP");
         }
 
         if (
             unit.hp() <= 62
-                && unit.isMissionAttack()
-                && unit.shotSecondsAgo(3)
+//                && unit.isMissionAttack()
+                && (unit.hp() <= 25 || unit.shotSecondsAgo(5))
                 && (
-                unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.1, unit).notEmpty()
-                    || unit.enemiesNear().melee().inRadius(3.2, unit).notEmpty()
+                    unit.enemiesNear().melee().inRadius(3.7, unit).notEmpty()
+                        || unit.enemiesNear().ranged().inRadius(OurDragoonRange.range() - 0.1, unit).notEmpty()
             )
         ) {
-            return reason("VeryWounded_vP");
+            return t("VeryWounded_vP");
         }
 
         return false;
@@ -46,7 +51,7 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
 
     private boolean vsZerg() {
         if (unit.meleeEnemiesNearCount(2.7) >= 3) {
-            return reason("AvoidTheSwarm");
+            return t("AvoidTheSwarm");
         }
 
         if (unit.woundHp() <= 3 && unit.enemiesThatCanAttackMe(0.8).empty()) {
@@ -54,11 +59,11 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         }
 
         if (isAnyEnemyThatCanAttackUsRelativelyClose()) {
-            return reason("CloseZergy");
+            return t("CloseZergy");
         }
 
         if (unit.hp() <= 50 && unit.enemiesThatCanAttackMe(1.5).atLeast(3)) {
-            return reason("WantsToLive");
+            return t("WantsToLive");
         }
 
         if (
@@ -71,7 +76,7 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                     || unit.enemiesNear().melee().inRadius(3, unit).notEmpty()
             )
         ) {
-            return reason("VeryWounded_vZ");
+            return t("VeryWounded_vZ");
         }
 
         if (
@@ -81,7 +86,7 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                 && unit.cooldown() >= 4
                 && unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.8) >= 2
         ) {
-            return reason("CarefulGoon");
+            return t("CarefulGoon");
         }
 
         if (
@@ -89,7 +94,7 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                 && unit.shotSecondsAgo() <= 3.5
                 && unit.enemiesThatCanAttackMe(1.85).ranged().atLeast(2)
         ) {
-            return reason("Goon2Enemies");
+            return t("Goon2Enemies");
         }
 
 //        if (
@@ -108,11 +113,11 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
                 && unit.lastUnderAttackLessThanAgo(30 * 2)
                 && unit.lastAttackFrameLessThanAgo(50)
                 && unit.enemiesNearInRadius(OurDragoonRange.range() - 0.5) >= 2
-        ) return reason("GoonCooldown");
+        ) return t("GoonCooldown");
 
         if (unit.shieldDamageAtLeast(9)) {
-            if (lonelyAndLotsOfZerglings()) return reason("GoonLingz");
-            if (lonelyAndLotsOfHydras()) return reason("GoonHydraz");
+            if (lonelyAndLotsOfZerglings()) return t("GoonLingz");
+            if (lonelyAndLotsOfHydras()) return t("GoonHydraz");
         }
 
         return false;
@@ -151,16 +156,11 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
         return (
                 unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.3) > 0
                     || unit.rangedEnemiesCount(rangedEnemiesSafetyMargin(heavilyWounded)) >= (heavilyWounded ? 1 : 2)
-            ) && reason("SeriouslyWounded&EnemiesNear");
+            ) && t("SeriouslyWounded&EnemiesNear");
     }
 
     private double rangedEnemiesSafetyMargin(boolean heavilyWounded) {
         return (heavilyWounded ? 1 : 0.5)
             + (unit.cooldown() >= 15 ? 1 : 0);
-    }
-
-    private boolean reason(String reason) {
-        unit.setTooltip(reason);
-        return true;
     }
 }

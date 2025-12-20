@@ -2,6 +2,7 @@ package atlantis.combat.micro.dancing.away;
 
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -39,17 +40,28 @@ public class DanceAway extends Manager {
 
 //        System.err.println("unit.distTo(unit.targetPosition()) = " + unit.distTo(unit.targetPosition()));
 //        if (unit.isMoving() && unit.isDancingAway() && unit.distTo(unit.targetPosition()) >= 0.2) {
-        if (unit.isMoving() && unit.isDancingAway()) {
+        if (continueDancingAway()) {
             return usedManager(this);
         }
 
         if (danceAwayFromTarget(logString)) {
+//            System.err.println(A.now + " - DANCE AWAY");
 //            unit.paintCircleFilled(18, Color.Teal);
             return usedManager(this);
         }
 
         return null;
 //        return danceAwayError();
+    }
+
+    private boolean continueDancingAway() {
+        if (!unit.isMoving()) return false;
+        if (!unit.isDancingAway()) return false;
+
+        double dist = unit.distToTargetPosition();
+//        System.err.println(A.now + " dist: " + A.digit(dist) + " / " + unit.action() + " / " + unit.lastCommandName());
+
+        return (dist >= 3.5 || (dist == 0 && unit.speed() >= 3));
     }
 
     // =========================================================
@@ -72,7 +84,8 @@ public class DanceAway extends Manager {
         return false;
     }
 
-    private double danceAwayDist() {
-        return 3.2 + unit.woundPercent() / 18.0;
+    private int danceAwayDist() {
+//        return 3.2 + unit.woundPercent() / 22.0;
+        return (int) (3.2 + unit.woundPercent() / 22.0);
     }
 }

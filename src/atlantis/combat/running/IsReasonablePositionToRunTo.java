@@ -41,7 +41,9 @@ public class IsReasonablePositionToRunTo {
         boolean isWalkable = isWalkableAndFree(position, unit);
         if (!isWalkable) return false;
 
-        if (!position.isWalkable(2)) return false;
+        if (unit.hp() >= 61) {
+            if (!position.isWalkable(2)) return false;
+        }
 
         boolean isOkay = isWalkable
 //                )
@@ -53,7 +55,8 @@ public class IsReasonablePositionToRunTo {
 //            && isNotTooCloseToMinerals(position, unit)
 //            && areAllNearbyTilesWalkable(position, unit)
 //            && areMostNearbyTilesWalkable(position, unit);
-            && position.isWalkable(2);
+            && !isCloseToEnemyThanToUs(position, unit, runFrom);
+//            && position.isWalkable(unit.hp() >= 120 ? 2 : 1);
 //                && Select.enemy().inRadius(1.2, position).count() == 0
 //                && Select.ourBuildings().inRadius(1.2, position).count() == 0
 
@@ -62,6 +65,24 @@ public class IsReasonablePositionToRunTo {
         }
 
         return isOkay;
+    }
+
+    private static boolean isCloseToEnemyThanToUs(HasPosition position, AUnit unit, HasPosition runFrom) {
+        if (position == null) return false;
+        if (!unit.isMoving()) return false;
+        if (unit.targetPosition() == null || unit.distToTargetPosition() <= 2) return false;
+        if (unit.hp() <= 40) return false;
+
+        double pointToUs = position.groundDist(unit);
+        double pointToEnemy = position.groundDist(runFrom);
+
+//        System.err.println("pointToUs = " + pointToUs);
+//        System.err.println("pointToEnemy = " + pointToEnemy);
+
+//        double safetyMargin = unit.hpPercent() / 40.0;
+        double safetyMargin = 0.5;
+
+        return (pointToEnemy - safetyMargin) < pointToUs;
     }
 
     private static boolean dontAvoidMinerals(AUnit unit) {

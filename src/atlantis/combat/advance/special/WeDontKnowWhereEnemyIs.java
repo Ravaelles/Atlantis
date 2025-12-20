@@ -17,7 +17,7 @@ public class WeDontKnowWhereEnemyIs extends MissionManager {
     public boolean applies() {
         return !EnemyInfo.hasDiscoveredAnyBuilding()
             && !unit.isMoving()
-            && !unit.lastActionMoreThanAgo(15)
+            && !unit.lastActionMoreThanAgo(25)
             && !unit.lastPositionChangedLessThanAgo(15);
     }
 

@@ -34,7 +34,7 @@ public class ABullet implements HasPosition {
         AUnit target = AUnit.createFrom(b.getTarget(), false);
 
         if (attacker == null) {
-            System.err.println("bullet attacker is null");
+//            System.err.println("bullet attacker is null");
 //            System.err.println("bullet.attacker null, target = " + bullet.target + "/our=" + bullet.target.isOur());
             return null;
         }

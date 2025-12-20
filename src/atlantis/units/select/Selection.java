@@ -1231,11 +1231,10 @@ public class Selection extends BaseSelection {
         return canBeAttackedBy(attacker, shootingRangeBonus);
     }
 
-    public Selection facing(AUnit subject) {
+    public Selection facingThisUnit(AUnit subject) {
         return cloneByRemovingIf(
-//            attacker -> !attacker.isFacing(target),
-            otherUnit -> subject.isFacing(otherUnit),
-            "facing:" + subject.idWithHash()
+            otherUnit -> !otherUnit.isFacing(subject),
+            "facingThisUnit:" + subject.idWithHash()
         );
     }
 

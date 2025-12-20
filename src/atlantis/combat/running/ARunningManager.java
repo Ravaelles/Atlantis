@@ -4,7 +4,9 @@ import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.running.fallback.RunAttackFallback;
 import atlantis.combat.running.show_back.RunShowingBackToEnemy;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
@@ -45,7 +47,7 @@ public class ARunningManager {
 
     //    public boolean runFrom(Object unitOrPosition, double dist) {
     public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
-        if (unit.lastStartedRunningLessThanAgo(4)) return true;
+        if (unit.lastStartedRunningLessThanAgo(4) && unit.distToTargetPosition() >= 3) return true;
 
 //        _lastRunMode = "Undefined";
 
@@ -71,7 +73,7 @@ public class ARunningManager {
 
         // === Actual run order ====================================
 
-        if (validateAndRun(action, 0.05, false)) return makeUnitRun(action);
+        if (validateAndRun(action, 0.2, false)) return makeUnitRun(action);
 
         if (A.isUms() && !unit.isObserver()) {
 //            System.err.println(
@@ -87,7 +89,7 @@ public class ARunningManager {
 //            PauseAndCenter.on(unit);
         }
 
-        if (validateAndRun(action, 0.05, true)) return makeUnitRun(action);
+        if (validateAndRun(action, 0.2, true)) return makeUnitRun(action);
 
 //        System.err.println("Unit position = " + unit.position() + " // " + unit);
 //        System.err.println("runTo = " + runTo);
@@ -118,14 +120,29 @@ public class ARunningManager {
 
     private boolean actWhenCantRun() {
         unit.addLog("CantRun");
-        ErrorLog.printMaxOncePerMinute("CantRun " + unit);
+//        ErrorLog.printMaxOncePerMinute("CantRun " + unit);
 
-        if (unit.hp() >= 80) {
+        if (unit.hp() >= 62) {
             if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
                 unit.setTooltip("CantRun-Attack");
                 unit.setManagerUsed(new RunAttackFallback(unit));
                 return true;
             }
+        }
+
+        ARegion region = unit.position().region();
+        if (region != null) {
+            APosition center = region.center();
+            if (center != null) {
+                if (unit.move(center, Actions.RUN_ENEMY, "CantRun-GoToRegionCenter", false)) {
+                    return true;
+                }
+            }
+        }
+
+        AUnit friend = unit.friendsNear().groundUnits().mostDistantTo(unit);
+        if (friend != null && unit.move(friend, Actions.RUN_ENEMY, "CantRun-GoToFriend", false)) {
+            return true;
         }
 
         return false;

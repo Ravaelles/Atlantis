@@ -2,6 +2,7 @@ package atlantis.units.interrupt;
 
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -13,6 +14,13 @@ import static atlantis.units.actions.Actions.MOVE_AVOID;
 public class ContinueAttack extends Manager {
     public ContinueAttack(AUnit unit) {
         super(unit);
+    }
+
+    private boolean t(String reason) {
+//        if (unit.woundHp() >= 10) {
+//        System.err.println(A.now + " CA: " + reason);
+//        }
+        return true;
     }
 
     @Override
@@ -30,6 +38,8 @@ public class ContinueAttack extends Manager {
             return t("PendingAttackState");
         }
 
+        if (unit.cooldown() >= 12) return false;
+
         if (unit.attackState().finishedShooting() && unit.cooldown() >= unit.cooldownAbsolute() / 2) {
             return false;
         }
@@ -37,11 +47,11 @@ public class ContinueAttack extends Manager {
         if (unit.hp() <= 60 && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
         if (unit.woundPercent() >= 50 && unit.cooldown() >= 20) return false;
 
+        if (unit.cooldown() >= 15) return false;
+
         if (!unit.attackState().finishedShooting() && unit.isTargetInWeaponRangeAccordingToGame()) {
             return t("NotFinishedShooting");
         }
-
-        if (unit.cooldown() >= 15) return false;
 
         if (unit.hasTarget() && unit.target().isTankSieged()) return false;
 
@@ -189,12 +199,5 @@ public class ContinueAttack extends Manager {
 //        unit.paintCircleFilled(20, Color.White);
 
         return usedManager(this);
-    }
-
-    private boolean t(String reason) {
-//        if (unit.woundHp() >= 10) {
-//            System.err.println(reason);
-//        }
-        return true;
     }
 }

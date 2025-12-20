@@ -73,6 +73,7 @@ public class OnEveryFrameHelper {
 //        Selection units = Select.ourCombatUnits().groundUnits();
         Selection units = Select.ourCombatUnits().havingWeapon();
         for (AUnit unit : units.list()) {
+            System.err.println("Cooldown: " + unit.cooldown());
 //            unit.paintTextCentered(A.digit(unit.getAngle()), Color.Orange, 1);
 
 //            System.out.println(unit + ", detected: " + unit.isDetected()

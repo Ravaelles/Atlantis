@@ -12,20 +12,24 @@ public class ProtossAttackHoldToShoot {
 
         if (!We.protoss()) return false;
         if (!unit.isRanged()) return false;
+        if (unit.cooldown() >= 12) return false;
         if (unit.attackState().starting()) return false;
 
         if (target == null) target = unit.lastTarget();
         if (target == null || target.hp() <= 0) return false;
+        if (!target.isMoving()) return false;
 
-        if (unit.isHoldingToShoot() && unit.speed() >= 0.9) {
+        if (unit.isTargetInWeaponRangeAccordingToGame(target)) return false;
+
+        if (unit.isHoldingToShoot()) {
+            if (unit.speed() >= 0.9) return true;
 //            System.err.println(A.now() + " ## ContinueHolding, speed:" + unit.speed());
-            return true;
+//            if (unit.lastActionLessThanAgo(15, Actions.HOLD_TO_SHOOT)) return true;
         }
 
         if (Enemy.terran() && unit.enemiesNear().tanks().notEmpty()) return false;
         if (unit.lastPositionChangedAgo() >= 60) return false;
         if (unit.isAttacking() && unit.lastActionLessThanAgo(20, Actions.HOLD_TO_SHOOT)) return false;
-        if (unit.isTargetInWeaponRangeAccordingToGame(target)) return false;
         if (target.hasBiggerWeaponRangeThan(unit)) return false;
         if (!unit.isHoldingPosition() && unit.lastActionLessThanAgo(10, Actions.HOLD_TO_SHOOT)) return false;
         if (unit.distTo(target) <= unit.weaponRangeAgainst(target) + 0.07) return false;
@@ -33,13 +37,13 @@ public class ProtossAttackHoldToShoot {
 
         // ===
 
-        if (unit.isHoldingToShoot()) return false;
+//        if (unit.isHoldingToShoot()) return false;
 
         double dist, ourRange, theirRange;
         if (
             //                && !unit.isTargetInWeaponRangeAccordingToGame(target)
 //            (dist = distToTargetWithFactors(unit, target)) >= minDist(unit, target)
-            (dist = distToTargetWithFactors(unit, target)) <= ((ourRange = unit.weaponRangeAgainst(target)))
+            (dist = distToTargetWithFactors(unit, target)) > ((ourRange = unit.weaponRangeAgainst(target)))
 //                && unit.hp() >= 23
 //                && dist < (2 + (ourRange = unit.weaponRangeAgainst(target)))
 //                && ourRange >= (theirRange = target.weaponRangeAgainst(unit))
@@ -74,9 +78,10 @@ public class ProtossAttackHoldToShoot {
 //        System.err.println("target bonus = " + targetMovingBonus + " / " + target.speed());
 
         return unit.distTo(target)
-            - lowHealthBonus
-            - unitBonus
-            - targetMovingBonus;
+            + 0.3
+            + lowHealthBonus
+            + unitBonus
+            + targetMovingBonus;
     }
 
     private static double targetMovingDistBonus(AUnit target) {

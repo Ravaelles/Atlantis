@@ -27,6 +27,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (unit.enemiesNear().canAttack(unit, 5).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(40, Actions.LOAD)) return false;
         if (unit.distToLeader() > 6) return false;
+        if (unit.squadSize() >= 3 && unit.friendsInRadiusCount(0.8) == 0) return false;
         if (unit.enemiesThatCanAttackMe(3).count() > 0) return false;
 
         if (Enemy.terran()) {

@@ -75,12 +75,12 @@ public class ShouldContinueRunning {
 //        return false;
 //    }
 
-    private static boolean continueRunningInAnyDirection(AUnit unit) {
-        int maxFramesAgo = unit.isDragoon() ? 15 : 10;
-
-        return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION)
-            || unit.lastStartedRunningLessThanAgo(maxFramesAgo);
-    }
+//    private static boolean continueRunningInAnyDirection(AUnit unit) {
+//        int maxFramesAgo = unit.isDragoon() ? 15 : 10;
+//
+//        return unit.lastActionLessThanAgo(maxFramesAgo, Actions.RUN_IN_ANY_DIRECTION)
+//            || unit.lastStartedRunningLessThanAgo(maxFramesAgo);
+//    }
 
     private static boolean unitInDifficultSituation(AUnit unit) {
         if (unit.hp() <= 17) return true;

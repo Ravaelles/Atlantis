@@ -3,12 +3,10 @@ package atlantis.combat.micro.dancing.away.protoss.dragoon;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.protoss.ProtossFlags;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 
@@ -42,7 +40,11 @@ public class DanceAwayDragoonApplies extends HasUnit {
         if (unit.lastTarget() != null && unit.lastTarget().isCombatBuilding()) return f("_B5");
 
         if (Enemy.protoss()) {
-            if (cooldown <= 18 && unit.meleeEnemiesNearCount(3) == 0) {
+            if (
+                cooldown <= 18
+                    && unit.rangedEnemiesCount(2) > 0
+                    && unit.meleeEnemiesNearCount(3.2) == 0
+            ) {
                 if (unit.hp() >= 150) return f("_GvG_A");
                 if (cooldown <= 16 && unit.hp() >= 100) return f("_GvG_B");
                 if (cooldown <= 14 && unit.hp() >= 80) return f("_GvG_C");
@@ -54,8 +56,8 @@ public class DanceAwayDragoonApplies extends HasUnit {
         if (Enemy.zerg()) {
             if (cooldown <= 14 && unit.meleeEnemiesNearCount(3.0) == 0) {
                 double shieldWound = unit.shieldWound();
-                if (shieldWound <= 9) return f("_GvG_A");
-                if (cooldown <= 12 && shieldWound <= 19) return f("_GvG_B");
+                if (shieldWound <= 9) return f("_GvZ_A");
+                if (cooldown <= 12 && shieldWound <= 19) return f("_GvZ_B");
 
                 if (unit.meleeEnemiesNearCount(1.8) >= 1) return f("_DontWhenMeleeNear");
             }
@@ -70,15 +72,24 @@ public class DanceAwayDragoonApplies extends HasUnit {
             }
         }
 
-        if (unit.shieldHealthy() && cooldown <= 15) return f("_BZ");
+        if (
+            cooldown <= 11
+                && unit.shieldHealthy()
+                && unit.meleeEnemiesNearCount(2.5) == 0
+        ) return f("_BZ");
+
+        int meleeEnemiesNearCount = unit.meleeEnemiesNearCount(3.3);
 
         if (
-            cooldown <= 15 && unit.shieldWound() <= A.whenEnemyZerg(3, 14)
+            cooldown <= 15
+                && unit.shieldWound() <= A.whenEnemyZerg(3, 14)
+                && meleeEnemiesNearCount == 0
         ) return f("_C");
 
         if (
             unit.shieldWound() <= A.whenEnemyProtoss(19, 9)
-                && unit.meleeEnemiesNearCount(3.3) == 0
+                && unit.cooldown() <= 15
+                && meleeEnemiesNearCount == 0
                 && (!Enemy.zerg() || unit.enemiesThatCanAttackMe(0.5).empty())
         ) return f("_B6");
 
@@ -100,7 +111,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
         if (Enemy.protoss()) {
 //            if (cooldown >= 14 && unit.hp() >= 80) return f("_GvG");
-            if (cooldown >= 18 && unit.shieldWound() <= 3) return f("_D");
+//            if (cooldown >= 18 && unit.shieldWound() <= 3) return f("_D");
             if (unit.hp() >= 45 && unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(0.6).empty()) return true;
             if (unit.shieldWound() <= 6 && unit.friendsNear().countInRadius(3, unit) >= 1) return f("_D2");
 
@@ -116,7 +127,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
 //            if ((decision = DanceAwayDragoonVsDragoon.check(unit, enemy)).notIndifferent()) return decision.toBoolean();
             if (
-                unit.enemiesNear().melee().notEmpty() && unit.meleeEnemiesNearCount(3.2) == 0
+                unit.cooldown() <= 18
+                    && unit.enemiesNear().melee().notEmpty()
+                    && unit.meleeEnemiesNearCount(3.5) == 0
             ) return f("_E");
         }
 
@@ -127,7 +140,8 @@ public class DanceAwayDragoonApplies extends HasUnit {
 //        ) return f("_G");
         if (
             unit.shieldHealthy()
-                && unit.meleeEnemiesNearCount(3.3) == 0
+                && cooldown <= 15
+                && meleeEnemiesNearCount == 0
                 && unit.enemiesNear().ranged().empty()
         ) return f("_H");
 
@@ -194,8 +208,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
         if (unit.enemiesNear().ranged().canAttack(unit, 0.6).atLeast(1)) return t("G");
 
-//        if (unit.nearestEnemyDist() >= (unit.hp() >= 60 ? 3.1 : OurDragoonRange.range() - 0.5)) return f("_R");
-        if (unit.nearestEnemyDist() >= OurDragoonRange.range() - 0.4) return f("_R");
+        if (cooldown <= 13 && unit.nearestEnemyDist() >= OurDragoonRange.range() - 0.4) return f("_R");
 
         if (unit.attackState().finishedShooting()) return t("finishedShooting");
 //        if (unit.lastUnderAttackLessThanAgo(10)) {
@@ -250,7 +263,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
         Selection enemies = unit.enemiesNear().canAttack(unit, 2.2);
 
         if (enemies.ranged().notShowingBackToUs(unit).notEmpty()) return true;
-        if (enemies.melee().facing(unit).empty()) return false;
+
+        if (enemies.melee().facingThisUnit(unit).empty()) return false;
+//        if (enemies.melee().facingThisUnit(unit).empty()) return f("_noMeleeFacing");
 
         return true;
     }
