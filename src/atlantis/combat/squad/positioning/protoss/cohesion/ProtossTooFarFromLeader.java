@@ -61,6 +61,7 @@ public class ProtossTooFarFromLeader extends Manager {
 
     @Override
     public Manager handle() {
+        if (leader == null) leader = unit.squadLeader();
         if (leader == null) return null;
 
         if (leader.isWalkable() && unit.moveToLeader(Actions.MOVE_FORMATION)) {

@@ -3,12 +3,14 @@ package atlantis.production.constructions.commanders;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.builders.RefreshConstructionPosition;
 import atlantis.production.constructions.cancelling.CancelNotStarted;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 
 public class OverdueConstructions {
     public static void handleIfOverdue(Construction construction) {
@@ -43,6 +45,7 @@ public class OverdueConstructions {
     private static void whenDoesNotRequirePower(Construction construction, AUnitType building) {
         A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
+        AUnitType type = construction.buildingType();
         APosition oldPosition = construction.buildPosition();
         construction.cancel(building + " is overdue");
 
@@ -59,6 +62,8 @@ public class OverdueConstructions {
         A.errPrintln("---\nFresh requested order: " + newOrder);
 
         if (newOrder == null) {
+            if (type.isProtossImportantTechBuilding() && Count.existingOrInProduction(type) > 0) return;
+
             newOrder = AddToQueue.withTopPriority(building, oldPosition);
             A.errPrintln("---\nNow with TOP priority: " + newOrder + "\n---");
         }

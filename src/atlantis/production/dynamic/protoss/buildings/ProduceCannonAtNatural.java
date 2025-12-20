@@ -20,7 +20,7 @@ public class ProduceCannonAtNatural {
     public static boolean produce() {
         if ((bestPosition = shouldProduceAt()) == null) return false;
 
-        if (!Have.forge()) {
+        if (!Have.notEvenPlanned(Protoss_Forge)) {
             AddToQueue.withTopPriority(Protoss_Forge);
         }
 

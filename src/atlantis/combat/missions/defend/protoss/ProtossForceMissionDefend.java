@@ -16,9 +16,9 @@ public class ProtossForceMissionDefend {
         double alphaEval = Alpha.evalOr(9.99);
 
         if (Enemy.protoss()) {
-            if (A.s >= 9 * 60 && (Army.strengthWithoutCB() >= 120 || ourCombatUnits >= 10)) return false;
+            if (A.s >= 9 * 60 && (strength >= 120 || ourCombatUnits >= 10)) return false;
 
-            if (ourCombatUnits <= 19 && (strength <= 165 || alphaEval <= 1.16)) return false;
+            if (ourCombatUnits <= 19 && (strength <= 165 || alphaEval <= 1.16)) return t("WeakEarlyGame");
 
             if (combatUnits < 20) {
                 if (EnemyInfo.hasRanged()) {
@@ -77,6 +77,7 @@ public class ProtossForceMissionDefend {
     }
 
     private static boolean t(String reason) {
+//        System.err.println("[ProtossForceMissionDefend] Reason: " + reason);
         MissionChanger.reason = reason;
         return true;
     }

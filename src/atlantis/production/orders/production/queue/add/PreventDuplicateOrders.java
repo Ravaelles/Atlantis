@@ -175,9 +175,10 @@ public class PreventDuplicateOrders {
         int existingInQueue = Count.inQueue(type);
 
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
-        if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1 + A.minerals() / 200;
         if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
-        if (type.isGateway()) max = 1 + A.minerals() / 170;
+        else if (type.isGateway()) max = 1 + A.minerals() / 170;
+        else if (type.isCannon()) max = 5;
+        else if (type.isSupplyDepot() && A.supplyTotal() <= 32) max = 1 + A.minerals() / 200;
 
         if (existingInQueue >= max) {
             if (type.isSupplyDepot()) ErrorLog.printMaxOncePerMinute("Exceeded DEPOTS allowed: " + existingInQueue);
@@ -187,6 +188,7 @@ public class PreventDuplicateOrders {
 
         if (We.protoss()) {
             if (tooManyPylons(type, position)) return true;
+            if (type.isCannon()) return existingInQueue <= 3;
         }
 
         if (We.terran()) {

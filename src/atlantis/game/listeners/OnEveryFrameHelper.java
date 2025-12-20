@@ -4,6 +4,7 @@ import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.AvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.PositionAroundBuilding;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.AtlantisRaceConfig;
@@ -12,6 +13,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
 import atlantis.information.enemy.EnemyOnCloseIsland;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
@@ -65,6 +67,10 @@ public class OnEveryFrameHelper {
 
     public static void handle() {
 //        MissedBullets.print();
+
+//        if (A.everyNthGameFrame(29)) {
+//            System.out.println("Mission: " + MissionChanger.reason + " / EC:" + EnemyUnits.combatUnits());
+//        }
 
         if (true) return;
 

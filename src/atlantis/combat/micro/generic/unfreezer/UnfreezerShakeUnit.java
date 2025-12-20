@@ -17,7 +17,7 @@ public class UnfreezerShakeUnit {
         else {
             if (goToLeader(unit)) return true;
 
-            if((new ProtossCombat2Combat(unit)).forceHandled()) {
+            if((new ProtossCombat2Combat(unit)).invokedFrom(null)) {
                 return true;
             }
 

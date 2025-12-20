@@ -1732,7 +1732,7 @@ public class AUnitType implements Comparable<Object> {
         return (ut.dimensionUp() + ut.dimensionDown()) / 32.0;
     }
 
-    public boolean isProtossImportantBuilding() {
+    public boolean isProtossImportantTechBuilding() {
         return isCyberneticsCore() || isRoboticsFacility() || isObservatory() || isForge() || isFleetBeacon();
     }
 

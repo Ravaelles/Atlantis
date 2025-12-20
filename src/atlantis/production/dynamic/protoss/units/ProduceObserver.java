@@ -86,8 +86,8 @@ public class ProduceObserver {
 
     private static boolean detectedBuilding() {
         if (!Have.notEvenPlanned(Protoss_Forge)) {
-            AddToQueue.withTopPriority(Protoss_Forge);
-            AddToQueue.withTopPriority(Protoss_Photon_Cannon);
+            AddToQueue.withHighPriority(Protoss_Forge);
+            AddToQueue.withHighPriority(Protoss_Photon_Cannon);
             return false;
         }
 

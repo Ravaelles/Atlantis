@@ -16,7 +16,7 @@ public class AInitialActions {
             AGame.setUmsMode();
         }
 
-        if (Select.ourWorkers().count() != 4) {
+        if (Select.ourWorkers().count() < 4) {
             if (!ActiveMap.isMap("vsGosuRav")) {
                 AGame.setUmsMode();
             }

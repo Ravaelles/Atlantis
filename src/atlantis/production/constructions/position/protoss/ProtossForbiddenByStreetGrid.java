@@ -7,7 +7,6 @@ import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
 import java.util.HashMap;
@@ -114,7 +113,7 @@ public class ProtossForbiddenByStreetGrid {
 
         if (moduloXIsInvalid) {
             if (
-                (building.isGateway() || building.isProtossImportantBuilding())
+                (building.isGateway() || building.isProtossImportantTechBuilding())
                     && moduloX >= 2
                     && A.hasMinerals(700)
 //                    && A.

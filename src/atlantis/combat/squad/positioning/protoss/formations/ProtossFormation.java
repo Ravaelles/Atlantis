@@ -17,6 +17,8 @@ public class ProtossFormation extends Manager {
         return We.protoss()
             && unit.isCombatUnit()
             && unit.isAlphaSquad()
+            && !unit.isRetreating()
+            && !unit.leaderIsRetreating()
             && unit.lastActionMoreThanAgo(30 * 10, Actions.UNLOAD);
     }
 

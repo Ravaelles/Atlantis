@@ -69,6 +69,13 @@ public class ProtossCombat2Combat extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.distToLeader() >= 10) {
+            ProtossTooFarFromLeader tooFarFromLeader = new ProtossTooFarFromLeader(unit);
+            if (tooFarFromLeader.forceHandled()) {
+                return usedManager(this);
+            }
+        }
+
         AUnit friend = friendToGoTo();
 
         if (

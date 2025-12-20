@@ -12,6 +12,7 @@ import atlantis.units.actions.Actions;
 
 public class ProtossForceRetreatDuringDefend extends MissionManager {
     private double groundDistToMain;
+    private double distToMain;
 
     public ProtossForceRetreatDuringDefend(AUnit unit) {
         super(unit);
@@ -21,18 +22,17 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
     public boolean applies() {
         if (!unit.isMissionDefendOrSparta()) return false;
         if (unit.isAir()) return false;
+        if (!unit.isCombatUnit()) return false;
 //        if (!unit.squadIsAlpha()) return false;
 
         double distToFocusPoint = unit.distToFocusPoint();
         if (distToFocusPoint >= 10) return true;
 
-        double distToMain = unit.groundDistToMain();
-
-        if (distToMain >= 15 && unit.eval() <= 1.2) return true;
+        distToMain = unit.groundDistToMain();
+        if (distToMain >= 60) return true;
+        if (distToMain >= 50 && unit.eval() <= 10) return true;
 
         if (distToFocusPoint <= 7) return false;
-
-        if (distToMain >= 60) return true;
 
         if (unit.hp() <= 40 && unit.isRunning() && unit.distToTargetMoreThan(2)) return false;
 //        if (unit.leaderEval() >= 4 && unit.eval() >= 2.5) return false;
@@ -63,14 +63,18 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
 
     @Override
     public Manager handle() {
-        if (focus == null || (unit.distTo(focus) <= 6 || groundDistToMain <= 40)) return null;
+//        if (focus == null || (unit.distTo(focus) <= 6 || groundDistToMain <= 40)) return null;
 
-        if (unit.distToLeader() >= 5 && unit.eval() >= 2) {
-            if (unit.moveToLeader(Actions.MOVE_FORMATION, "RetreatToLeader")) return usedManager(this);
+        if (distToMain >= 40 && unit.moveToMain(Actions.RUN_RETREAT)) {
+            return usedManager(this);
         }
 
-        if (unit.move(focus, Actions.MOVE_FOCUS)) {
+        if (focus != null && focus.distTo(unit) >= 10 && unit.move(focus, Actions.MOVE_FOCUS)) {
             return usedManager(this, "RetreatToFocusPoint");
+        }
+
+        if (unit.distToLeader() >= 8 && unit.eval() >= 3) {
+            if (unit.moveToLeader(Actions.MOVE_FORMATION, "RetreatToLeader")) return usedManager(this);
         }
 
         return null;

@@ -113,7 +113,7 @@ public class CancelTooLongConstructions {
             );
 //            }
 
-            if (newOrder == null && type.isProtossImportantBuilding()) {
+            if (newOrder == null && type.isProtossImportantTechBuilding()) {
                 newOrder = AddToQueue.withTopPriority(type);
 
                 ErrorLog.printMaxOncePerMinute(
