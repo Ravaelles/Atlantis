@@ -30,6 +30,7 @@ public class ProtossCombat2Combat extends Manager {
         if (unit.lastStoppedRunningLessThanAgo(25)) return false;
         if (unit.isActiveManager(ProtossMoon.class)) return false;
         if (unit.lastPositioningActionLessThanAgo(10)) return false;
+        if (unit.enemiesThatCanAttackMe(3).notEmpty()) return false;
 
         if (unit.isAttacking() && unit.lastCommandIssuedAgo() <= 15) return false;
         if (unit.shotSecondsAgo(3) && unit.eval() >= 5) return false;

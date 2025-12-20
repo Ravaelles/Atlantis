@@ -34,6 +34,10 @@ public class DragoonAlwaysAvoidEnemy extends Manager {
             return t("GvZeal_vP");
         }
 
+        if (unit.eval() <= 1.2 && unit.rangedEnemiesCount(6) > 0) {
+            return t("GvG_notEnoughSupport");
+        }
+
         if (
             unit.hp() <= 62
 //                && unit.isMissionAttack()

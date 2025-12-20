@@ -7,6 +7,7 @@ import atlantis.combat.squad.squads.bravo.ShouldHaveBravo;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
 /**
@@ -32,9 +33,9 @@ public class Alpha extends Squad {
         return alpha;
     }
 
-    public static double eval() {
+    public static double evalOr(double orValue) {
         AUnit unit = alphaLeader();
-        if (unit == null) return 0;
+        if (unit == null) return orValue;
 
         return unit.eval();
     }
@@ -62,7 +63,7 @@ public class Alpha extends Squad {
 
     @Override
     public Mission mission() {
-        if (A.isUms()) return Missions.ATTACK;
+        if (A.isUms() && Count.bases() == 0) return Missions.ATTACK;
 
         return Missions.globalMission();
     }

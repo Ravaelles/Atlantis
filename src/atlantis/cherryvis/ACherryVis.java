@@ -35,6 +35,7 @@ public class ACherryVis {
 
     public static void finish() {
         if (!isEnabled()) return;
+        if (A.s <= 2) return;
 
         A.println("CherryVis finishing...");
         logger().onGameEnd();
