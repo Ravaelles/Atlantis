@@ -3,6 +3,7 @@ package atlantis.combat.micro.dancing.away.protoss.dragoon;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.avoid.always.DragoonAlwaysAvoidEnemy;
+import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -13,6 +14,11 @@ import bwapi.Color;
 public class ForceStopDancingDragoon extends Manager {
     public ForceStopDancingDragoon(AUnit unit) {
         super(unit);
+    }
+
+    private boolean t(String reason) {
+//        System.err.println("    FStopDragoon: " + reason + " / " + unit.cooldown());
+        return true;
     }
 
     @Override
@@ -36,8 +42,16 @@ public class ForceStopDancingDragoon extends Manager {
         }
 
         if (
-            unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(1.9).notDeadMan().empty()
+            unit.cooldown() <= 10
+                && unit.enemiesThatCanAttackMe(1.9).notDeadMan().empty()
+                && unit.meleeEnemiesNearCount(3.2) == 0
         ) return t("NoEnemies");
+
+//        boolean lowWound = unit.shieldWound() <= 30;
+//        if (
+//            unit.cooldown() <= (lowWound ? 12 : 9)
+//                && unit.enemiesThatCanAttackMe(lowWound ? 1.9 : 2.1).notDeadMan().empty()
+//        ) return t("NoEnemies");
 
 //        if (unit.isStopped()) return true;
 
@@ -157,12 +171,6 @@ public class ForceStopDancingDragoon extends Manager {
         if (cooldown <= 6 && fewEnoughEnemiesNear(unit)) return t("Z2");
 
         return false;
-    }
-
-    private boolean t(String reason) {
-//        System.out.println("FStopDragoon: " + reason + " / " + unit.cooldown());
-
-        return true;
     }
 
     private boolean vsTerran(AUnit unit) {

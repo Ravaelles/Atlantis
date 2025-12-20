@@ -218,12 +218,8 @@ public abstract class Manager extends BaseManager {
     public Manager usedManager(Manager manager, String message) {
         if (manager == null) return null;
 
-//        if (unit.isLeader() && unit.isDragoon() && A.now() >= 1) {
-//        if (!unit.isWorker()) {
-//            System.err.println("@ " + A.now() + " - " + unit + " USED = " + this.getClass().getSimpleName());
-//        }
-//            System.err.println("@ " + A.now() + " - " + unit.idWithHash() + " USED = " + this.getClass().getSimpleName() + " / " + parentsStack());
-//        }
+//        System.err.println("@ " + A.now() + " " + unit.typeWithUnitId() + " (" + unit.cooldown() + "): "
+//            + this.getClass().getSimpleName());
 
         if (message != null && !message.isEmpty()) {
             unit.setManagerUsed(manager, message);

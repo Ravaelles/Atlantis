@@ -214,9 +214,9 @@ public class DanceAwayDragoonApplies extends HasUnit {
         if (unit.lastAttackFrameMoreThanAgo(30 * 2)) return f("_V");
         if (cooldown <= (unit.shields() <= 30 ? 3 : 12)) return f("_X");
 
-        if (!Enemy.zerg() && EnemyInfo.hasRanged()) {
-            if (true) return f("_Y");
-        }
+//        if (!Enemy.zerg() && EnemyInfo.hasRanged()) {
+//            if (true) return f("_Y");
+//        }
 
 //        if (unit.woundHp() <= 14 && unit.lastAttackFrameMoreThanAgo(30 * 5)) return f("");
         if ((cooldown >= 12 || unit.hp() <= 100) && !unit.isSafeFromMelee()) return t("");
@@ -244,6 +244,13 @@ public class DanceAwayDragoonApplies extends HasUnit {
 //            System.out.println("@" + A.now + ":  " + unit.idWithHash() + " - DanceAway: " + reason);
 //        }
 //        _lastT = reason;
+
+        // =====
+
+        Selection enemies = unit.enemiesNear().canAttack(unit, 2.2);
+
+        if (enemies.ranged().notShowingBackToUs(unit).notEmpty()) return true;
+        if (enemies.melee().facing(unit).empty()) return false;
 
         return true;
     }

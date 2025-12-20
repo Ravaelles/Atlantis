@@ -26,6 +26,9 @@ import atlantis.units.workers.WorkerCommander;
 public class AtlantisGameCommander extends Commander {
     public static Class<? extends Commander>[] topLevelSubcommanders() {
         return new Class[]{
+            BulletsCommander.class,
+            UnitStateCommander.class,
+
             SpecialActionsCommander.class,
             ScoutCommander.class,
             WorkerCommander.class,
@@ -35,8 +38,6 @@ public class AtlantisGameCommander extends Commander {
             ConstructionsCommander.class,
 
             SpecialCommander.class,
-            UnitStateCommander.class,
-            BulletsCommander.class,
 
             StrategyCommander.class,
             EnemyUnitsCommander.class,

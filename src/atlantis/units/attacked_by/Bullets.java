@@ -16,13 +16,11 @@ public class Bullets implements ClearsCache {
     private static Map<Integer, ABullet> validBullets = new HashMap<>();
 
     public static void updateKnown() {
-//        System.out.println("UPDATE KNOWN BULLETS @" + A.now());
         addNewRawBullets();
         defineValidBullets();
     }
 
     private static void addNewRawBullets() {
-//        System.out.println("newMissingRawBullets() = " + newMissingRawBullets().size());
         for (ABullet bullet : newMissingRawBullets()) {
             allRawBullets.put(bullet.id(), bullet);
         }

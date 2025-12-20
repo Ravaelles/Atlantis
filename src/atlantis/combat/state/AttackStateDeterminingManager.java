@@ -54,7 +54,10 @@ public class AttackStateDeterminingManager extends Manager {
     private boolean createdReadyBullet() {
         int bulletAge = unit.lastBulletAge();
 
-        if (bulletAge >= 1 && bulletAge <= 2) return true;
+        if (bulletAge >= 1 && bulletAge <= 2) {
+//            System.err.println("bulletAge = " + bulletAge);
+            return true;
+        }
 //        if (bulletAge >= 3 && bulletAge <= 4) return true;
 
         return false;

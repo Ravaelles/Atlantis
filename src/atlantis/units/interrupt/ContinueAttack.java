@@ -30,6 +30,10 @@ public class ContinueAttack extends Manager {
             return t("PendingAttackState");
         }
 
+        if (unit.attackState().finishedShooting() && unit.cooldown() >= unit.cooldownAbsolute() / 2) {
+            return false;
+        }
+
         if (unit.hp() <= 60 && !unit.isTargetInWeaponRangeAccordingToGame()) return false;
         if (unit.woundPercent() >= 50 && unit.cooldown() >= 20) return false;
 

@@ -30,7 +30,7 @@ public class ReaverUseTransport extends Manager {
                 && !unit.shotSecondsAgo(2)
         ) return false;
 
-        if (unit.isMoving() && unit.distToTarget() >= 11) return true;
+        if (unit.isMoving() && unit.distToTargetPosition() >= 11) return true;
 
         Selection enemiesNear = unit.enemiesNear();
         enemies = enemiesNear.combatUnits().canAttack(unit, 6);
@@ -114,8 +114,8 @@ public class ReaverUseTransport extends Manager {
             unit.noCooldown()
                 && unit.isActiveManager(ReaverContinueAttack.class)
                 && unit.shields() >= 40
-                && unit.distToTarget() <= 10
-                && unit.distToTarget() >= 7.1
+                && unit.distToTargetPosition() <= 10
+                && unit.distToTargetPosition() >= 7.1
         ) {
             return true;
         }

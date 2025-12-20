@@ -19,7 +19,7 @@ public class FixIdleUnitsPostAvoid extends Manager {
         return (!unit.isMoving() || unit.enemiesThatCanAttackMe(2).empty())
             || unit.lastPositionChangedAgo() >= 2
             || unit.targetPosition() == null
-            || unit.distToTarget() <= 0.05;
+            || unit.distToTargetPosition() <= 0.05;
     }
 
     @Override

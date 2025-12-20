@@ -31,7 +31,7 @@ public class AvoidEnemies extends Manager {
         if (unit.isWorker() && !unit.isScout()) return false;
         if (unit.isLoaded()) return false;
         if (unit.lastCommandIssuedAgo() >= 100) return false;
-        if (unit.isDancingAway() && unit.isMoving()) return false;
+        if (unit.isDancingAway() && unit.isMoving() && unit.distToTargetPosition() >= 2) return false;
         if (unit.enemiesNear().canAttack(unit, 10).empty()) return false;
 
         if (unit.isMoving() && unit.lastStartedRunningAgo() <= 2) return true;

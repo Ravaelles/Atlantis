@@ -34,6 +34,7 @@ public class ABullet implements HasPosition {
         AUnit target = AUnit.createFrom(b.getTarget(), false);
 
         if (attacker == null) {
+            System.err.println("bullet attacker is null");
 //            System.err.println("bullet.attacker null, target = " + bullet.target + "/our=" + bullet.target.isOur());
             return null;
         }
@@ -58,13 +59,12 @@ public class ABullet implements HasPosition {
         bullet.attacker = attacker;
         bullet.attacker.setAttackState(AttackState.PENDING);
         bullet.attacker.setLastBullet(bullet);
-//            System.err.println("      [ BULLET with ID:" + b.getID() + " ] from " + bullet.attacker);
-
         bullet.target = target;
-
-//        System.err.println("            [ BULLET with ID:" + b.getID() + " ]");
-
         bullet.b = b;
+
+//        System.err.println("      [BULLET #" + b.getID() + "] by " + bullet.attacker.id() + " @" + A.now);
+//        System.err.println("       lastAge = " + bullet.attacker.lastBulletAge());
+
         return bullet;
     }
 
