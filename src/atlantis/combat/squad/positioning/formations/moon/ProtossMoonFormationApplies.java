@@ -188,11 +188,12 @@ public class ProtossMoonFormationApplies {
     private boolean dontApplyEarlyVsZerg(AUnit unit) {
         if (!Enemy.zerg()) return false;
 
+        double eval = unit.eval();
         if (
             !EnemyInfo.hasRanged()
-                && Army.strengthWithoutCB() >= 160
-                && unit.eval() >= 2
-                && unit.groundDistToMain() <= 60
+                && (eval >= 5 || Army.strengthWithoutCB() >= 160)
+                && eval >= 2
+                && (eval >= 5 || unit.groundDistToMain() <= 70)
         ) return true;
 
         return false;

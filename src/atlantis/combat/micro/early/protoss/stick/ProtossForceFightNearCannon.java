@@ -15,8 +15,7 @@ public class ProtossForceFightNearCannon extends Manager {
     @Override
     public boolean applies() {
         if (unit.isAir()) return false;
-        if (unit.cooldown() >= 9) return false;
-        if (unit.cooldown() >= 7 && unit.hp() <= 80) return false;
+        if (unit.cooldown() >= 8 && unit.hp() <= 34) return false;
 
         cannon = unit.friendsNear().cannons().inRadius(3.5, unit).nearestTo(unit);
         if (cannon == null) return false;
