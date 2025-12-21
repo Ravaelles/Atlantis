@@ -652,6 +652,10 @@ public class AUnitType implements Comparable<Object> {
         return is(Protoss_Dark_Templar);
     }
 
+    public boolean isTemplarArchives() {
+        return is(Protoss_Templar_Archives);
+    }
+
     public boolean isCannon() {
         return is(Protoss_Photon_Cannon);
     }

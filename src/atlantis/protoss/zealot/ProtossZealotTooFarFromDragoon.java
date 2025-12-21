@@ -30,6 +30,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (unit.hp() <= 38 && unit.isRunning()) return false;
         if (unit.shields() >= 20 && unit.eval() >= 5) return false;
         if (Enemy.protoss() && A.now % 30 <= 10) return false;
+        if (unit.eval() >= 1.4 && unit.isAttacking() && unit.hasValidTarget() && unit.target().isABuilding()) return false;
 //        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
 
         dragoon = unit.friendsNear().dragoons().notRunning().nearestTo(unit);

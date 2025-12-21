@@ -7,7 +7,7 @@ import atlantis.units.select.Have;
 
 public class ProtossGenericCanTransitionToUnit {
     public static boolean check(AUnitType type) {
-        if (type.isDarkTemplar()) return forDT();
+        if (type.isDarkTemplar() || type.isTemplarArchives()) return forDT();
 
         return true;
     }
