@@ -23,12 +23,12 @@ public class ZealotAvoidLingsWhenWounded extends Manager {
 //            && unit.cooldown() >= 4
             && (Enemy.zerg() || Enemy.protoss())
             && unit.shieldWound() >= 14
-            && unit.cooldown() == 0
-            && (enemies = unit.enemiesNear().groundUnits().melee()).notEmpty()
+            && unit.cooldown() >= 4
+            && (enemies = unit.enemiesNear().melee().inRadius(2.5, unit)).notEmpty()
             && unit.eval() <= 2
             && (unit.cooldown() >= 5 || unit.hp() <= 18)
             && (unit.shotSecondsAgo(1.5) || unit.hp() <= 18)
-            && (unit.cooldown() >= 8 || unit.eval() <= 0.8 || unit.hp() <= 40)
+            && (unit.cooldown() >= 5 || unit.eval() <= 0.8 || unit.hp() <= 40)
 //            && (unit.hp() <= 18 || unit.shotSecondsAgo(2))
 //            && (unit.hp() <= 60 || unit.lastAttackFrameLessThanAgo(40))
 //            && enemies.inRadius(4, unit).notEmpty()
