@@ -3,6 +3,7 @@ package atlantis.information.strategy;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.response.RaceStrategyResponseFactory;
 
 import atlantis.information.strategy.terran.TerranStrategies;

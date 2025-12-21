@@ -148,6 +148,10 @@ public class Have {
         return Count.ofType(AUnitType.Protoss_Cybernetics_Core) > 0;
     }
 
+    public static boolean templarArchives() {
+        return Count.ofType(AUnitType.Protoss_Templar_Archives) > 0;
+    }
+
     public static boolean cyberneticsCoreWithUnfinished() {
         return Count.ourWithUnfinished(AUnitType.Protoss_Cybernetics_Core) > 0;
     }

@@ -14,7 +14,7 @@ import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.game.init.DetectInitialTechs;
 import atlantis.game.race.EnemyRace;
-import atlantis.information.strategy.ProtossStrategies;
+import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.StrategyChooser;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;

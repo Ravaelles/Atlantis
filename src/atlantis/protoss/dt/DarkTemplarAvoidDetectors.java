@@ -35,7 +35,7 @@ public class DarkTemplarAvoidDetectors extends Manager {
 
     @Override
     public Manager handle() {
-        if (detector.isABuilding() || unit.hp() >= 90) {
+        if (detector.isABuilding() || unit.hp() >= 90 || detector.distTo(unit) <= 3) {
             if (unit.moveToSafety(Actions.MOVE_AVOID)) {
                 return usedManager(this, "DTDetector2Safety");
             }

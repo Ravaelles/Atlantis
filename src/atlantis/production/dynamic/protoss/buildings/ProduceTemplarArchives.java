@@ -3,6 +3,7 @@ package atlantis.production.dynamic.protoss.buildings;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -16,13 +17,18 @@ public class ProduceTemplarArchives {
 //        if (true) return false; // Always disabled
 
         if (!Enemy.zerg()) return false;
-
         if (Have.a(type())) return false;
 
         if (Enemy.zerg() && A.supplyUsed() < 90 && A.gas() <= 230) return false;
-        if (Army.strength() <= 120 && Alpha.get().isMissionAttack()) return false;
+        if (Army.strength() <= 140 && Alpha.get().isMissionAttack()) return false;
 //        if (Count.bases() <= 1) return false;
-        if (Count.ourCombatUnits() <= 13 && !A.canAfford(200, 200)) return false;
+        if ((Count.ourCombatUnits() <= 15 || Army.strength() <= 140) && !A.canAfford(200, 200)) return false;
+
+        // =========================================================
+
+        if (!Strategy.get().canProduceUnit(type())) return false;
+
+        // =========================================================
 
 //        if (A.supplyUsed() < 165) return false;
 //        if (A.supplyUsed() >= 175) return requestProduce();

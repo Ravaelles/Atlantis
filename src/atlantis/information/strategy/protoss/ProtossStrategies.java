@@ -1,6 +1,7 @@
-package atlantis.information.strategy;
+package atlantis.information.strategy.protoss;
 
 import atlantis.game.AGame;
+import atlantis.information.strategy.AStrategy;
 import atlantis.units.AUnitType;
 import atlantis.game.player.Enemy;
 

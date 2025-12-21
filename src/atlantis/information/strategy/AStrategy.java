@@ -1,10 +1,12 @@
 package atlantis.information.strategy;
 
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.strategy.protoss.ProtossGenericCanTransitionToUnit;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +41,14 @@ public class AStrategy {
 
     protected static AStrategy protossStrategy() {
         return (new AStrategy()).setProtoss();
+    }
+
+    // =========================================================
+
+    public boolean canProduceUnit(AUnitType type) {
+        if (We.protoss()) return ProtossGenericCanTransitionToUnit.check(type);
+
+        return true;
     }
 
     // =========================================================

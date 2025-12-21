@@ -6,6 +6,7 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.protoss.corsair.TransitionToCorsairs;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
@@ -52,12 +53,7 @@ public class ProduceStargate {
 
     private static Decision produceAgainstZerg() {
         if (!Enemy.zerg()) return Decision.INDIFFERENT;
-        if (A.supplyUsed() <= 60) return Decision.FORBIDDEN;
 
-        if (A.supplyUsed() >= 70 && Army.strength() >= 95 && EnemyUnits.lurkers() <= 2) return Decision.TRUE;
-
-        Selection enemies = EnemyUnits.discovered();
-
-        return Decision.fromBoolean(enemies.mutalisks().notEmpty());
+        return TransitionToCorsairs.decision();
     }
 }

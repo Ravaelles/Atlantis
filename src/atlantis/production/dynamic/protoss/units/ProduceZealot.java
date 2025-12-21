@@ -7,7 +7,7 @@ import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealo
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
-import atlantis.information.strategy.ProtossStrategies;
+import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeProtossBuildingsOverCombatUnits;
