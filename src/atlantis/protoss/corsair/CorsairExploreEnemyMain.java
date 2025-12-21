@@ -17,10 +17,12 @@ public class CorsairExploreEnemyMain extends Manager {
 
     @Override
     public boolean applies() {
+        enemyMain = EnemyInfo.enemyMain();
+        if (enemyMain == null) return false;
+
         updateMainLastSeenAt();
 
-        return enemyMain != null
-            && A.s % 30 <= 13
+        return A.s % 30 <= 9
             && enemyMain.hasPosition()
             && tooLongNotSeenMain();
     }
@@ -31,7 +33,7 @@ public class CorsairExploreEnemyMain extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.move(enemyMain, Actions.MOVE_ADVANCE, "ExploreEnemyMain")) {
+        if (enemyMain != null && unit.move(enemyMain, Actions.MOVE_ADVANCE, "ExploreEnemyMain")) {
             return usedManager(this);
         }
 
@@ -39,8 +41,7 @@ public class CorsairExploreEnemyMain extends Manager {
     }
 
     private void updateMainLastSeenAt() {
-        enemyMain = EnemyInfo.enemyMain();
-        if (enemyMain != null && enemyMain.isPositionVisible()) {
+        if (enemyMain.isPositionVisible()) {
             mainLastSeenAt = A.now;
         }
     }

@@ -14,7 +14,7 @@ public class CorsairSeparate extends SpreadOutAirUnits {
     protected double minDistBetweenUnits() {
         if (unit.lastUnderAttackMoreThanAgo(30 * 6)) return 0;
 
-        if (unit.enemiesNear().air().combatUnits().notEmpty()) return 2;
+        if (unit.enemiesNear().air().combatUnits().notEmpty()) return 2.5;
 
         return 4 + Math.min(6, unit.shotSecondsAgo() / 10.0);
     }

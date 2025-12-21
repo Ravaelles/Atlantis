@@ -110,7 +110,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
      */
     protected AUnitType _lastType = null;
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
-    private Log managerLogs = new Log(30 * 30, 8);
+    private Log managerLogs = new Log(30 * 30, 14);
     private Log commandHistory = new Log(-1, 10);
     private UnderAttack underAttack = new UnderAttack(this);
     private Action unitAction = Actions.INIT;

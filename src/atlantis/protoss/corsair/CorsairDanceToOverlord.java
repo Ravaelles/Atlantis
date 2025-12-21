@@ -17,8 +17,8 @@ public class CorsairDanceToOverlord extends Manager {
 
         return target != null
             && target.isOverlord()
-            && unit.cooldown() >= 10
-            && unit.distTo(target) >= 4.7;
+            && unit.cooldown() >= 9
+            && unit.distTo(target) >= (3 + unit.woundPercent() / 50.0);
     }
 
     @Override

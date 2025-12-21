@@ -7,9 +7,9 @@ import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.generic.Army;
+import atlantis.production.dynamic.protoss.decisions.AllowProduceDragoon;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
-import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -28,7 +28,7 @@ public class ProduceDragoon {
     public static boolean dragoon() {
         if (!A.hasGas(50) || !A.hasMinerals(125)) return false;
         if (noProperBuildings()) return false;
-        if (!ProduceDragoonAndZealots.allowed()) return false;
+        if (!AllowProduceDragoon.allowed()) return false;
         if (waitForDT()) return false;
 
         dragoons = Count.dragoons();

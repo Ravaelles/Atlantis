@@ -45,18 +45,18 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
     }
 
     private boolean allowPendingAttackToContinue() {
-        if (unit.hp() >= 26) {
-            if (
-                unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)
-                    && (unit.lastAttackFrameMoreThanAgo(20) || unit.cooldown() <= 5)
-            ) return t("recentAttackOrCooldownLow");
+        if (unit.hp() <= 26) return false;
 
-            if (
-                unit.lastAttackFrameMoreThanAgo(40)
-                    && unit.lastUnderAttackLessThanAgo(35)
-                    && unit.cooldown() <= 8
-            ) return t("longSinceAttackUnderFireCooldownOk");
-        }
+        if (
+            unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)
+                && (unit.lastAttackFrameMoreThanAgo(20) || unit.cooldown() <= 5)
+        ) return t("recentAttackOrCooldownLow");
+
+        if (
+            unit.lastAttackFrameMoreThanAgo(40)
+                && unit.lastUnderAttackLessThanAgo(35)
+                && unit.cooldown() <= 8
+        ) return t("longSinceAttackUnderFireCooldownOk");
 
         return false;
     }
@@ -80,6 +80,7 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
 
     public boolean shouldSmallScaleRetreat() {
         if (!unit.isMelee()) return f("notMelee");
+        if (unit.isRunningOrRetreating()) return false;
         if (unit.isMissionSparta()) return f("missionSparta");
 
         if (unit.isMissionDefend()) {

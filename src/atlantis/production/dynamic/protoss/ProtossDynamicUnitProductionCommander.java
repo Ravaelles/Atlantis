@@ -126,10 +126,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceShuttle.shuttles();
         ProduceHighTemplar.ht();
 
-        if (ProduceDragoonAndZealots.allowed()) {
-            ProduceDragoon.dragoon();
-            ProduceZealot.zealot();
-        }
+        ProduceDragoon.dragoon();
+        ProduceZealot.zealot();
     }
 
     @Override

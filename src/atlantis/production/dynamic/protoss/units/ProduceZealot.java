@@ -9,6 +9,8 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.information.strategy.Strategy;
+import atlantis.production.dynamic.protoss.decisions.AllowProduceDragoon;
+import atlantis.production.dynamic.protoss.decisions.AllowProduceZealot;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeProtossBuildingsOverCombatUnits;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -33,6 +35,8 @@ public class ProduceZealot {
 
         freeGateways = Count.freeGateways();
         if (freeGateways == 0) return false;
+
+        if (!AllowProduceZealot.allowed()) return false;
 
         if (freeGateways >= 2 && A.hasMinerals(600) && A.supplyUsed() <= 180) return produceZealot("LotsOfMinerals");
         if (freeGateways >= 2 && A.hasMinerals(550) && Count.zealots() <= 13) return produceZealot("WealthyGoZealots");

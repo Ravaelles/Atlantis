@@ -27,6 +27,8 @@ public class CorsairHuntKnownOverlords extends Manager {
         if (overlords.isEmpty()) return null;
 
         for (AUnit overlord : overlords.list()) {
+            if (overlord.hp() <= 0 && overlord.position().isPositionVisible()) continue;
+
             if (overlord.friendsNear().havingAntiAirWeapon().countInRadius(7.1, overlord) == 0) {
                 return overlord;
             }

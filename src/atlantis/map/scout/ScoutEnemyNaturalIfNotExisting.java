@@ -25,6 +25,12 @@ public class ScoutEnemyNaturalIfNotExisting extends Manager {
 
         if (enemyNatural.isPositionVisible()) lastVisibleAt = A.now;
 
+        // =========================================================
+
+        if (unit.enemiesThatCanAttackMe(5 + unit.woundPercent() / 50.0).notEmpty()) {
+            return false;
+        }
+
         return A.ago(lastVisibleAt) >= 15 * 30;
     }
 
