@@ -241,10 +241,14 @@ public class EnemyInfo {
     }
 
     public static boolean hasNaturalBase() {
-        APosition enemyNatural = BaseLocations.enemyNatural();
-        if (enemyNatural == null) return false;
+        return enemyNaturalBase() != null;
+    }
 
-        return EnemyUnits.buildings().inRadius(5, enemyNatural).atLeast(1);
+    public static AUnit enemyNaturalBase() {
+        APosition enemyNatural = BaseLocations.enemyNatural();
+        if (enemyNatural == null) return null;
+
+        return EnemyUnits.buildings().inRadius(7, enemyNatural).first();
     }
 
     public static APosition enemyMain() {

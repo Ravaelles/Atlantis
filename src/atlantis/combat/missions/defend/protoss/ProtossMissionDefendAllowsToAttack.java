@@ -2,6 +2,7 @@ package atlantis.combat.missions.defend.protoss;
 
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.avoid.dont.protoss.DontAvoidWhenCannonsNear;
+import atlantis.combat.missions.defend.PreventChasingEnemyWorkerInBase;
 import atlantis.combat.missions.generic.MissionAllowsToAttackEnemyUnit;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
@@ -28,6 +29,8 @@ public class ProtossMissionDefendAllowsToAttack extends HasUnit {
     public Decision allowsToAttackEnemyUnit(AUnit enemy) {
         this.enemy = enemy;
         if (enemy == null || !enemy.hasPosition() || enemy.hp() <= 0) return Decision.FALSE;
+
+        if (PreventChasingEnemyWorkerInBase.prevent(unit, enemy)) return Decision.FALSE;
 
         if (
             unit.squad().lastUnderAttackLessThanAgo(40)

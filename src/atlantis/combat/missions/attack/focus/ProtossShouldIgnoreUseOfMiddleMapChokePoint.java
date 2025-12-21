@@ -13,15 +13,9 @@ import atlantis.units.select.Count;
 
 public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
     public static boolean ignore() {
-        if (Enemy.protoss()) {
-            return ignoreVsProtoss();
-        }
-        else if (Enemy.zerg()) {
-            return ignoreVsZerg();
-        }
-        else if (Enemy.terran()) {
-            return ignoreVsTerran();
-        }
+        if (Enemy.protoss()) return ignoreVsProtoss();
+        else if (Enemy.zerg()) return ignoreVsZerg();
+        else if (Enemy.terran()) return ignoreVsTerran();
 
         return false;
     }
@@ -52,8 +46,10 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
         int supplyUsed = A.supplyUsed();
         int strength = Army.strengthWithoutCB();
 
-        if (supplyUsed >= 180 || A.hasMinerals(1000)) return true;
-        if (useWhenZergHasCBs(supplyUsed)) return true;
+        if (supplyUsed >= 160 || A.hasMinerals(1000)) return true;
+        if (Army.strengthWithoutCB() >= 400 || Count.darkTemplars() >= 1 || Count.reavers() >= 1) return true;
+
+        if (useWhenZergHasCBs(supplyUsed)) return false;
 
         AUnit leader = Alpha.alphaLeader();
         if (Alpha.count() >= 4 && strength >= 300 && A.resourcesBalance() >= 100) {

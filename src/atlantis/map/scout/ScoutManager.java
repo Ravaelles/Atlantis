@@ -27,6 +27,7 @@ public class ScoutManager extends Manager {
             AvoidCriticalUnits.class,
             ScoutAvoidCombatBuildings.class,
 
+            ScoutEnemyNaturalIfNotExisting.class,
             ScoutEnemyThird.class,
 
             ScoutTryFindingEnemy.class,
