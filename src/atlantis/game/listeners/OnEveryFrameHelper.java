@@ -72,7 +72,7 @@ public class OnEveryFrameHelper {
 //            System.out.println("Mission: " + MissionChanger.reason + " / EC:" + EnemyUnits.combatUnits());
 //        }
 
-//        if (true) return;
+        if (true) return;
 
 //        Selection units = Select.ourOfType(AUnitType.Protoss_Dark_Templar);
 //        Selection units = Select.from(new Units()).add(Alpha.alphaLeader());
@@ -314,7 +314,7 @@ public class OnEveryFrameHelper {
 
     private static void debugDragoonHoldToShoot() {
         AUnit unit = Select.ourOfType(AUnitType.Protoss_Dragoon).first();
-        CenterCamera.on(unit);
+//        CenterCamera.on(unit);
 
         AUnit enemy = unit.enemiesThatCanAttackMe(100).nearestTo(unit);
         if (enemy == null) return;

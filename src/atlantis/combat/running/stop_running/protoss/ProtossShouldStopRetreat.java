@@ -2,6 +2,7 @@ package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
+import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
@@ -47,6 +48,7 @@ public class ProtossShouldStopRetreat extends Manager {
         }
 
         if (unit.hasAnyWeapon()) {
+            if ((new ProtossFormation(friend)).invokedFrom(this)) return true;
             if ((new AttackNearbyEnemies(friend)).invokedFrom(this)) return true;
         }
 

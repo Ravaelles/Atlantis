@@ -120,7 +120,9 @@ public class ARunningManager {
 
     private boolean actWhenCantRun() {
         unit.addLog("CantRun");
-//        ErrorLog.printMaxOncePerMinute("CantRun " + unit);
+        if (A.isUms()) {
+            ErrorLog.printMaxOncePerMinute("CantRun " + unit);
+        }
 
         if (unit.hp() >= 62) {
             if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {

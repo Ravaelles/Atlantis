@@ -1251,6 +1251,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection moving() {
+        return cloneByRemovingIf(
+            otherUnit -> !otherUnit.isMoving(), "moving"
+        );
+    }
+
     // =========================================================
     // Localization-related methods
 

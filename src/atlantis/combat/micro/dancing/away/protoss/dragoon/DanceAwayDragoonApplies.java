@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
+import bwapi.Color;
 
 public class DanceAwayDragoonApplies extends HasUnit {
     private int rangedEnemiesCount;
@@ -17,6 +18,15 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
     public DanceAwayDragoonApplies(AUnit unit) {
         super(unit);
+    }
+
+    private boolean f(String reason) {
+//        if (!reason.equals(_lastF) && unit.enemiesNear().notDeadMan().notEmpty()) {
+//            System.err.println("@" + A.now + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
+//        }
+//        _lastF = reason;
+
+        return false;
     }
 
     public boolean applies() {
@@ -46,20 +56,22 @@ public class DanceAwayDragoonApplies extends HasUnit {
                     && unit.meleeEnemiesNearCount(3.2) == 0
             ) {
                 if (unit.hp() >= 150) return f("_GvG_A");
-                if (cooldown <= 16 && unit.hp() >= 100) return f("_GvG_B");
-                if (cooldown <= 14 && unit.hp() >= 80) return f("_GvG_C");
+                if (cooldown <= 16 && unit.hp() >= 140) return f("_GvG_B");
+                if (cooldown <= 14 && unit.hp() >= 130) return f("_GvG_C");
 
                 if (cooldown >= 6 && unit.hp() <= 22) return t("GvG_D");
             }
         }
 
         if (Enemy.zerg()) {
-            if (cooldown <= 14 && unit.meleeEnemiesNearCount(3.0) == 0) {
+            if (cooldown <= 8 && unit.meleeEnemiesNearCount(3.0) == 0) {
                 double shieldWound = unit.shieldWound();
-                if (shieldWound <= 9) return f("_GvZ_A");
-                if (cooldown <= 12 && shieldWound <= 19) return f("_GvZ_B");
+                if (shieldWound <= 8) return f("_GvZ_A");
+//                if (cooldown <= 9 && shieldWound <= 19) return f("_GvZ_B");
 
-                if (unit.meleeEnemiesNearCount(1.8) >= 1) return f("_DontWhenMeleeNear");
+                if (
+                    cooldown >= 6 && unit.meleeEnemiesNearCount(1.8) >= 1
+                ) return t("_MeleeNear");
             }
         }
 
@@ -103,13 +115,16 @@ public class DanceAwayDragoonApplies extends HasUnit {
         }
 
         if (Enemy.zerg()) {
-            if (unit.cooldown() <= 8 || unit.meleeEnemiesNearCount(3) == 0) {
-                if (cooldown <= 14 && unit.shieldWound() <= 18) return f("_BraveA_vZ");
-                if (cooldown <= 12 && unit.shieldWound() <= 35) return f("_BraveB_vZ");
-                if (noVsZerg()) return f("_NvZ");
+            if (unit.cooldown() <= 14 && unit.meleeEnemiesNearCount(3) == 0) {
+                if (cooldown <= 8 && unit.shieldWound() <= 17) return f("_Brave!_vZ");
+                if (unit.rangedEnemiesCount(1.7) == 0) {
+                    if (cooldown <= 8 && unit.shieldWound() <= 35) return f("_BraveA_vZ");
+                    if (cooldown <= 12 && unit.shieldWound() <= 35) return f("_BraveB_vZ");
+                    if (cooldown <= 14 && unit.shieldWound() <= 18) return f("_BraveC_vZ");
+                }
             }
 
-            if (yesVsZerg()) return t("YvZ");
+            if (yesVsZerg()) return t("Yes_vZ");
         }
 
         if (Enemy.protoss()) {
@@ -155,8 +170,8 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
         if (
             unit.shieldWound() <= 4
-                && cooldown <= 19
-                && unit.meleeEnemiesNearCount(2.8) == 0
+                && cooldown <= 14
+                && unit.meleeEnemiesNearCount(3.7) == 0
                 && unit.friendsInRadiusCount(3) > 0
         ) return f("_K");
 
@@ -249,12 +264,6 @@ public class DanceAwayDragoonApplies extends HasUnit {
         return f("_GenericNo");
     }
 
-    private boolean noVsZerg() {
-        if (unit.cooldown() <= 17 && unit.shieldWound() <= 35) return true;
-
-        return false;
-    }
-
     private boolean t(String reason) {
 //        if (!reason.equals(_lastT)) {
 //            System.out.println("@" + A.now + ":  " + unit.idWithHash() + " - DanceAway: " + reason);
@@ -263,30 +272,32 @@ public class DanceAwayDragoonApplies extends HasUnit {
 
         // =====
 
-        Selection enemies = unit.enemiesNear().canAttack(unit, Enemy.zerg() ? 2.7 : 2.2);
+        Selection enemies = unit.enemiesNear().canAttack(unit, Enemy.zerg() ? 2.85 : 2.2);
 
-        if (enemies.ranged().notShowingBackToUs(unit).notEmpty()) return true;
+        for (AUnit enemy : enemies.list()) {
+            if (unit.isOtherUnitShowingBackToUs(enemy)) {
+                enemy.paintCircleFilled(7, Color.Teal);
+            }
+        }
+
+        if (enemies.empty()) return true;
+//        if (enemies.ranged().notShowingBackToUs(unit).notEmpty()) return true;
+        if (unit.shieldWound() >= 38 || enemies.ranged().facingThisUnit(unit).notEmpty()) return true;
+//        System.err.println("### " + enemies.ranged().count()
+//            + " / MV:" + enemies.ranged().moving().size()
+//            + " / NMV:" + enemies.ranged().notMoving().size()
+//            + " / NSB:" + enemies.ranged().notShowingBackToUs(unit).size()
+//            + " / FA:" + enemies.ranged().facingThisUnit(unit).size());
 
         if (
-            enemies.melee().countInRadius(2.7, unit) == 0
+            unit.hp() >= 37
+                && enemies.melee().countInRadius(2.6, unit) == 0
                 && enemies.melee().facingThisUnit(unit).empty()
         ) return f("_noMeleeFacing");
 //        if (enemies.melee().empty()) return f("_noMeleeFacing");
 
         return true;
     }
-
-    private boolean f(String reason) {
-//        if (!reason.equals(_lastF)) {
-//            if (unit.enemiesNear().notDeadMan().notEmpty()) {
-//                System.err.println("@" + A.now + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
-//            }
-//        }
-//        _lastF = reason;
-
-        return false;
-    }
-
 
     private boolean yesVsZerg() {
         Selection enemiesThatCanAttackMe = unit.enemiesThatCanAttackMe(3);
@@ -318,8 +329,8 @@ public class DanceAwayDragoonApplies extends HasUnit {
     private boolean noEnemiesThatCanAttackUsAndNoCooldown() {
         return unit.cooldown() <= 6
             && unit.hp() >= 100
-            && unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.9) == 0
-            && unit.enemiesNear().canAttack(unit, A.whenEnemyProtoss(0.3, 0.8)).empty();
+            && unit.meleeEnemiesNearCount(OurDragoonRange.range() - 0.4) == 0
+            && unit.enemiesNear().canAttack(unit, A.whenEnemyProtossTerranZerg(0.3, 0.8, 2.7)).empty();
     }
 
     private boolean forbidDanceAwayWhenRangedNear() {

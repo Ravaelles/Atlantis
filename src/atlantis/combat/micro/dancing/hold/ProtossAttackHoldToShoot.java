@@ -8,18 +8,27 @@ import atlantis.util.We;
 
 public class ProtossAttackHoldToShoot {
     public static boolean holdInsteadAttack(AUnit unit, AUnit target) {
-//        if (true) return false;
+        if (target == null) target = unit.lastTarget();
+        if (target == null || target.hp() <= 0) return f("noValidTarget");
+
+        if (target.isRanged()) return false;
+        if (unit.isHealthy()) return false;
 
         if (!We.protoss()) return false;
         if (!unit.isRanged()) return false;
-        if (unit.cooldown() >= 12) return f("");
-        if (unit.attackState().startingOrPending()) return f("");
+        if (unit.cooldown() >= 11) return f("cooldownTooHigh");
+        if (unit.attackState().startingOrPending()) return f("attackStatePending");
 
-        if (target == null) target = unit.lastTarget();
-        if (target == null || target.hp() <= 0) return f("");
-        if (!target.isMoving()) return f("");
+        if (unit.isHoldingToShoot() && unit.lastActionLessThanAgo(4, Actions.HOLD_TO_SHOOT)) {
+            return t("justHeldToShoot");
+        }
+        if (
+            !target.isMoving() && unit.lastUnderAttackMoreThanAgo(50) && A.now >= 20
+        ) return f("targetNotMoving");
 
-        if (unit.isTargetInWeaponRangeAccordingToGame(target)) return f("");
+        if (
+            unit.cooldown() <= 8 && unit.isTargetInWeaponRangeAccordingToGame(target)
+        ) return f("alreadyInRange");
 
         if (unit.isHoldingToShoot()) {
             if (unit.speed() >= 0.9) return true;
@@ -27,13 +36,16 @@ public class ProtossAttackHoldToShoot {
             if (unit.lastActionLessThanAgo(15, Actions.HOLD_TO_SHOOT)) return true;
         }
 
-        if (Enemy.terran() && unit.enemiesNear().tanks().notEmpty()) return f("");
-        if (unit.lastPositionChangedAgo() >= 60) return f("");
-        if (unit.isAttacking() && unit.lastActionLessThanAgo(20, Actions.HOLD_TO_SHOOT)) return f("");
-        if (target.hasBiggerWeaponRangeThan(unit)) return f("");
-        if (!unit.isHoldingPosition() && unit.lastActionLessThanAgo(10, Actions.HOLD_TO_SHOOT)) return f("");
-        if (unit.distTo(target) <= unit.weaponRangeAgainst(target) + 0.07) return f("");
-        if (!unit.isOtherUnitFacingThisUnit(target)) return f("");
+        if (Enemy.terran() && unit.enemiesNear().tanks().notEmpty()) return f("enemyTankNearby");
+        if (unit.lastPositionChangedAgo() >= 60) return f("positionStale");
+        if (unit.isAttacking() && unit.lastActionLessThanAgo(20, Actions.HOLD_TO_SHOOT)) return f("recentAttackAction");
+        if (target.hasBiggerWeaponRangeThan(unit)) return f("targetHasBiggerRange");
+        if (!unit.isHoldingPosition() && unit.lastActionLessThanAgo(10, Actions.HOLD_TO_SHOOT)) return f("notHoldingRecently");
+        if (unit.distTo(target) <= unit.weaponRangeAgainst(target) + 0.07) return f("alreadyCloseEnough");
+        if (
+            !unit.isOtherUnitFacingThisUnit(target)
+                && unit.rangedEnemiesCount(1.3) <= (target.isRanged() ? 1 : 0)
+        ) return f("targetNotFacingUs");
 
         // ===
 
@@ -57,7 +69,7 @@ public class ProtossAttackHoldToShoot {
             )
 //                    && (new HoldToShoot(unit)).forceHandle() != null
         ) {
-            System.out.println("@" + A.now + " - " + unit.distToDigit(target) + " dist, HOLD !!!!!");
+//            System.out.println("@" + A.now + " - " + unit.distToDigit(target) + " dist, HOLD !!!!!");
 //            if (!unit.isHoldingPosition()) {
             unit.holdPosition(Actions.HOLD_TO_SHOOT, "HoldToShoot");
 //            } else {
@@ -67,12 +79,17 @@ public class ProtossAttackHoldToShoot {
             return true;
         }
 
-        return f("");
+        return f("GenericNoHold");
     }
 
     private static boolean f(String reasonWhyNot) {
-        System.err.println("Don't hold: " + reasonWhyNot);
+//        System.err.println("@" + A.now + " - Don't hold: " + reasonWhyNot);
         return false;
+    }
+
+    private static boolean t(String reasonWhy) {
+//        System.err.println("@" + A.now + " - HoldToShoot: " + reasonWhy);
+        return true;
     }
 
     private static double distToTargetWithFactors(AUnit unit, AUnit target) {
