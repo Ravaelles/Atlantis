@@ -12,69 +12,81 @@ import atlantis.units.select.Count;
 
 public class ProtossForceMissionDefend {
     public static boolean check(int strength, int combatUnits) {
+        if (Enemy.protoss()) return vsProtoss(strength, combatUnits);
+        if (Enemy.zerg()) return vsZerg(strength, combatUnits);
+
+        if (Enemy.terran()) return vsTerran(strength);
+
+        return false;
+    }
+
+    private static boolean vsTerran(int strength) {
+        if (Count.dragoons() >= EnemyUnits.tanks() * 3) return false;
+
+        if (
+            strength <= 150
+                && Count.darkTemplars() == 0
+                && Count.dragoons() * 2.9 < EnemyUnits.tanks()
+        ) return t("WeakVsTerran");
+
+        return false;
+    }
+
+    private static boolean vsProtoss(int strength, int combatUnits) {
         int ourCombatUnits = Count.ourCombatUnits();
-        double alphaEval = Alpha.evalOr(9.99);
+        double alphaEval = Alpha.evalOr(9.5);
 
-        if (Enemy.protoss()) {
-            if (A.s >= 9 * 60 && (strength >= 120 || ourCombatUnits >= 10)) return false;
+        if (A.s >= 9 * 60 && (strength >= 120 || ourCombatUnits >= 10)) return false;
 
-            if (
-                EnemyInfo.hasRanged()
-                    && ourCombatUnits <= 19
-                    && (strength <= 165 || alphaEval <= 1.16)
-            ) return t("WeakEarlyGame(" + strength + "%," + alphaEval + ")");
+        if (
+            EnemyInfo.hasRanged()
+                && ourCombatUnits <= 19
+                && (strength <= 165 || alphaEval <= 1.16)
+        ) return t("WeakEarlyGame(" + strength + "%," + alphaEval + ")");
 
-            if (combatUnits < 20) {
-                if (EnemyInfo.hasRanged()) {
-                    if (
-                        strength <= 300
-                            && Count.dragoons() <= 30
-                            && Alpha.evalOr(3) <= 1.5
-                            && Alpha.groundDistToMain() >= 60
-                    ) return t("WeakVsPRanged");
+        if (combatUnits < 20) {
+            if (EnemyInfo.hasRanged()) {
+                if (
+                    strength <= 300
+                        && Count.dragoons() <= 30
+                        && Alpha.evalOr(3) <= 1.5
+                        && Alpha.groundDistToMain() >= 60
+                ) return t("WeakVsPRanged");
 
-                    if (
-                        Count.dragoons() <= 25
-                            && Alpha.evalOr(3) <= 1.5
-                    ) return t("WeakPCohesion");
-                }
-                else {
-                    if (Count.dragoons() > 0) return false;
-
-                    if (strength <= 170) return t("WeakVsPMelee");
-                }
+                if (
+                    Count.dragoons() <= 25
+                        && Alpha.evalOr(3) <= 1.5
+                ) return t("WeakPCohesion");
             }
             else {
-                if (strength <= 200 && A.supplyUsed() <= 190 && !A.hasMinerals(1500)) return t("WeakVsPBig");
+                if (Count.dragoons() > 0) return false;
 
-                return false;
+                if (strength <= 170) return t("WeakVsPMelee");
             }
         }
 
-        if (Enemy.zerg()) {
-            if (combatUnits < 20) {
-                if (EnemyInfo.hasRanged()) {
-                    if (strength <= 170 && A.s <= 60 * 12) return t("WeakVsZRanged");
-                }
-                else {
-                    if (strength <= 220) return t("WeakVsZMelee");
-                    if (strength <= 300 && !Alpha.get().isCohesionPercentOkay()) return t("WeakZCohesion");
-                }
-            }
+        if (combatUnits >= 20) {
+            if (strength <= 200 && A.supplyUsed() <= 190 && !A.hasMinerals(1500)) return t("WeakVsPBig");
 
             return false;
         }
 
-        if (Enemy.terran()) {
-            if (Count.dragoons() >= EnemyUnits.tanks() * 3) return false;
+        return false;
+    }
 
-            if (
-                strength <= 150
-                    && Count.darkTemplars() == 0
-                    && Count.dragoons() * 2.9 < EnemyUnits.tanks()
-            ) return t("WeakVsTerran");
+    private static boolean vsZerg(int strength, int combatUnits) {
+        if (combatUnits <= 12 && Army.strength() <= 260 && Count.zealots() <= 2 && Alpha.evalOr(0) <= 5) {
+            return t("TooFewZealots");
+        }
 
-            return false;
+        if (combatUnits < 20) {
+            if (EnemyInfo.hasRanged()) {
+                if (strength <= 170 && A.s <= 60 * 12) return t("WeakVsZRanged");
+            }
+            else {
+                if (strength <= 220) return t("WeakVsZMelee");
+                if (strength <= 300 && !Alpha.get().isCohesionPercentOkay()) return t("WeakZCohesion");
+            }
         }
 
         return false;
