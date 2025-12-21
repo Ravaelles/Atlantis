@@ -28,7 +28,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (Count.dragoons() <= 1) return false;
         if (A.supplyUsed() >= 180 || A.minerals() >= 1500) return false;
         if (unit.hp() <= 38 && unit.isRunning()) return false;
-        if (unit.hp() >= 40 && unit.eval() >= 6) return false;
+        if (unit.shields() >= 20 && unit.eval() >= 5) return false;
         if (Enemy.protoss() && A.now % 30 <= 10) return false;
 //        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
 

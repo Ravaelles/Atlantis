@@ -56,17 +56,17 @@ public class ProtossForbiddenByStreetGrid {
 //                if (moduloY != 0) return failed("TY modulo CB_Y1 = " + moduloY);
 //            }
 
-        if (position.distToNearestChokeLessThan(3.8)) {
+        if (position.distToNearestChokeLessThan(4.1)) {
             return failed("CB too close to choke");
         }
 
         if (
             (
-                position.tx() % GRID_SIZE_X == 0 || position.ty() % GRID_SIZE_Y == 0
+                position.tx() % GRID_SIZE_X <= 1 || position.ty() % GRID_SIZE_Y <= 1
                     || position.tx() % GRID_SIZE_X == 5 || position.ty() % GRID_SIZE_Y == 5
             )
-                && Count.withPlanned(AUnitType.Protoss_Photon_Cannon) >= 2
                 && Select.mainOrAnyBuilding().groundDist(position) <= 45
+                && Count.withPlanned(AUnitType.Protoss_Photon_Cannon) >= 3
         ) {
             return failed("TX/TY modulo CB_XY = " + moduloX + " / " + moduloY);
         }

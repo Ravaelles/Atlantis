@@ -21,7 +21,7 @@ nbbuild.xml
 nbproject/
 out/
 param_tweaker/
-production/
+/production/
 replay_pid*
 /bwapi-data/write/*
 /bwapi-data/write/cherryvis.txt
