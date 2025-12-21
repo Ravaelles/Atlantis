@@ -263,6 +263,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
         int strength = Army.strength();
 
+        if (Count.dragoons() >= 1 && !EnemyInfo.hasRanged()) {
+            if (DEBUG) reason = "Enemy Toss has no Goons";
+            return Decision.TRUE;
+        }
+
         if (
             strength >= 150
                 && (Count.ourCombatUnits() >= 12 || !EnemyInfo.hasRanged())
@@ -320,6 +325,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
     protected static boolean shouldEngageWithGoonsVsProtoss(int strength) {
         if (A.s >= 60 * 7) return false;
+        if (dragoons == 0) return false;
         if (MissionHistory.numOfChanges() >= 3 && A.resourcesBalance() <= 400) return false;
 
         int enemyDragoons = EnemyUnits.dragoons();

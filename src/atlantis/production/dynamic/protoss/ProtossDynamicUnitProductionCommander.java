@@ -117,7 +117,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceCorsairs.corsairs();
 
         if (!freeToSpendResources()) {
-            if (investInEarlyGoons() && ProduceDragoonAndZealots.allowed()) ProduceDragoon.dragoon();
+            if (investInEarlyGoons()) ProduceDragoon.dragoon();
             return;
         }
 

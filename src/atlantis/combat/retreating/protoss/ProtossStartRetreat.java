@@ -82,13 +82,12 @@ public class ProtossStartRetreat extends HasUnit {
             return true;
         }
 
-        if (unit.moveToMain(RUN_RETREAT)) {
-            unit.setTooltip("RetreatToMain");
-            return true;
-        }
+        unit.moveToMain(RUN_RETREAT);
+        unit.setTooltip("RetreatToMain");
+        return true;
 
-        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
-        return false;
+//        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
+//        return false;
     }
 
     private boolean retreatTowardsLeaderForBetterCohesion() {

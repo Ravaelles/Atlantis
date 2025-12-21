@@ -1,5 +1,6 @@
 package atlantis.production.dynamic.protoss.units;
 
+import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
@@ -27,19 +28,24 @@ public class ProduceDragoon {
     public static boolean dragoon() {
         if (!A.hasGas(50) || !A.hasMinerals(125)) return false;
         if (noProperBuildings()) return false;
+        if (!ProduceDragoonAndZealots.allowed()) return false;
         if (waitForDT()) return false;
 
         dragoons = Count.dragoons();
         strength = Army.strength();
 
         if (dragoons <= 6) return produceDragoon();
-        if (dragoons <= 17 && A.hasMinerals(125) && A.hasGas(150)) return produceDragoon();
+        if (
+            A.hasMinerals(125) && A.hasGas(150) && (dragoons <= 17 || Missions.isGlobalMissionDefendOrSparta())
+        ) return produceDragoon();
         if (A.hasMinerals(470) && A.hasGas(250)) return produceDragoon();
         if (
             dragoons <= 20 && !EnemyInfo.goesOrHasHiddenUnits() && !(new ResearchSingularityCharge()).applies()
         ) return produceDragoon();
 
         if (!A.hasGas(200) && !A.canAffordWithReserved(0, 50)) return false;
+
+        if (A.gas() >= 150 && Missions.isGlobalMissionDefendOrSparta()) return produceDragoon();
         if (dragoons <= 14 && A.hasMinerals(175) && Count.basesWithUnfinished() >= 2) return produceDragoon();
         if (Army.strength() >= 130 && Count.dragoons() >= 6 && !ProtossCriticalStuffInQueue.hasEnoughResources()) return false;
 
