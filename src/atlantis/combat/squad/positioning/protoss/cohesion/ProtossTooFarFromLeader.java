@@ -64,6 +64,8 @@ public class ProtossTooFarFromLeader extends Manager {
         if (leader == null) leader = unit.squadLeader();
         if (leader == null) return null;
 
+        if (unit.cooldown() <= 6 && unit.enemiesThatCanAttackMe(3).notEmpty()) return null;
+
         if (leader.isWalkable() && unit.moveToLeader(Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }

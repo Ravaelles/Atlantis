@@ -47,7 +47,11 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
         int strength = Army.strengthWithoutCB();
 
         if (supplyUsed >= 160 || A.hasMinerals(1000)) return true;
-        if (Army.strengthWithoutCB() >= 400 || Count.darkTemplars() >= 1 || Count.reavers() >= 1) return true;
+        if (
+            (Count.ourCombatUnits() >= 25 || Army.strengthWithoutCB() >= 600)
+                || Count.darkTemplars() >= 2
+                || Count.reavers() >= 1
+        ) return true;
 
         if (useWhenZergHasCBs(supplyUsed)) return false;
 
@@ -79,9 +83,10 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
 
     private static boolean useWhenZergHasCBs(int supplyUsed) {
         return supplyUsed <= 150
-            && EnemyInfo.combatBuildingsAntiLand() >= 2
-            && Army.strength() <= 800
-            && EnemyThirdBase.get() == null;
+            && EnemyInfo.combatBuildingsAntiLand() >= 1
+            && (Army.strength() <= 800 || Count.ourCombatUnits() <= 15 || Alpha.evalOr(0) <= 2)
+            && EnemyThirdBase.get() == null
+            && EnemyExistingExpansion.get() == null;
     }
 
     private static boolean ignoreVsTerran() {

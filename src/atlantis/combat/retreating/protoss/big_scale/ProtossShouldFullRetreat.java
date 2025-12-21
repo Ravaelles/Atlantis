@@ -35,6 +35,8 @@ public class ProtossShouldFullRetreat {
         Selection enemies = unit.enemiesNear().combatUnits().inRadius(Enemy.terran() ? 14 : 10, unit);
         if (enemies.empty()) return f("Enemy empty");
 
+        if (unit.friendsNear().cannons().countInRadius(2, unit) > 0) return f("Defend Cannon");
+
         AUnit leader = unit.squadLeader();
         if (leader != null && !unit.isLeader()) {
             if (leader.isRetreating()) return t("leaderRetreating");

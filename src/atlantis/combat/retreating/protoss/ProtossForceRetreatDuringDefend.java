@@ -32,6 +32,8 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (distToMain <= 25) return false;
         if (distToMain <= 60 && unit.enemiesThatCanAttackMe(3).notEmpty()) return false;
 
+        if (unit.friendsNear().cannons().countInRadius(2, unit) > 0) return false;
+
         if (distToMain >= 60) return true;
         if (distToMain >= 50 && unit.eval() <= 10) return true;
         if (distToFocusPoint >= 10) return true;
