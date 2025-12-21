@@ -26,6 +26,7 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.base.Bases;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
@@ -3519,25 +3520,30 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         AUnit cb = Select.ourOfTypeWithUnfinished(groundCb).nearestTo(this);
         if (cb != null) return cb;
 
-        if (Count.ourCombatUnits() >= 8 && Count.bases() >= 2) {
-            AUnit natural = Bases.natural();
-            if (natural != null) {
-                APosition position = natural.translateTilesTowards(3, Chokes.natural());
+        if (Count.basesWithUnfinished() <= 1) {
+            AChoke choke = Chokes.mainChoke();
+            if (choke != null) {
+                HasPosition position = choke.translateTilesTowards(7, Select.mainOrAnyBuilding());
                 if (position != null && position.isWalkable()) return position;
             }
         }
 
-        AUnit base = Select.naturalOrMain();
-        if (base == null) return null;
+        if (Count.basesWithUnfinished() <= 2) {
+            APosition position = BaseLocations.natural();
+            if (position != null && position.isWalkable()) return position;
+        }
 
-        APosition position = base.position();
+//        AUnit base = Select.naturalOrMain();
+//        if (base == null) return null;
+//
+//        APosition position = base.position();
+//
+//        if (We.protoss()) position = position.translateTilesTowards(2, Chokes.mainChoke());
+//        else if (We.terran()) position = position.translateByTiles(1, -3);
+//
+//        if (position != null && position.isWalkable()) return position;
 
-        if (We.protoss()) position = position.translateTilesTowards(2, Chokes.mainChoke());
-        else if (We.terran()) position = position.translateByTiles(1, -3);
-
-        if (position != null && position.isWalkable()) return position;
-
-        return base;
+        return Select.mainOrAnyBuilding().translatePercentTowards(50, Chokes.mainChoke());
     }
 
     public boolean hasAirWeapon() {

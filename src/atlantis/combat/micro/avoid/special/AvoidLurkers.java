@@ -208,7 +208,8 @@ public class AvoidLurkers extends Manager {
             + (unit.isWorker() ? 1.5 : 0)
             + (unit.isMelee() ? 2.5 : 0)
             + (unit.friendsNear().observers().empty() ? 1.8 : 0)
-            + unit.woundPercent() / 65.0;
+            + (unit.isWounded() ? 0.6 : 0)
+            + unit.woundPercent() / 50.0;
     }
 
     private double radiusBonusForProtoss() {

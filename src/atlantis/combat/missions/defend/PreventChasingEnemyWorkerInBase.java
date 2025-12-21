@@ -11,7 +11,8 @@ public class PreventChasingEnemyWorkerInBase {
 
         if (Enemy.zerg()
             && A.s <= 6 * 30
-            && unit.isTargetInWeaponRangeAccordingToGame(enemy)
+            && !unit.isTargetInWeaponRangeAccordingToGame(enemy)
+            && (unit.distToFocusPoint() >= 10 || unit.eval() <= 1.5)
             && (unit.isMelee() || Count.dragoons() <= 3)
         ) return true;
 

@@ -1,6 +1,5 @@
 package atlantis.combat.squad;
 
-import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -22,23 +21,18 @@ public class DefineLeader {
     }
 
     protected AUnit leader() {
-        int ttl = 103;
+        int ttl = 133;
         AUnit leader = cache.getIfValid(
             "leader",
             ttl,
-            () -> this.define(null)
+            () -> this.defineNew(null)
         );
 
-        if (leader != null && We.protoss() && leader.isZealot() && Count.dragoons() > 0) {
-            leader = null;
-        }
-
-//        if (leader != null && leader.isAlive() && !leader.isRunning()) {
         if (shouldUsePreviousValid(leader)) {
             return _prevLeader = leader;
         }
 
-        _prevLeader = leader = this.define(null);
+        _prevLeader = leader = this.defineNew(null);
         cache.set("leader", ttl, leader);
         return leader;
     }
@@ -46,15 +40,20 @@ public class DefineLeader {
     private boolean shouldUsePreviousValid(AUnit leader) {
         if (leader == null) return false;
         if (!leader.isAlive()) return false;
+        if (We.protoss() && leader.isZealot() && Count.dragoons() > 0) return false;
 
-        if (leader.nearestChokeDist() <= 5) {
+        if (leader.groundDistToMain() <= 50) {
+            return true;
+        }
+
+        if (leader.nearestChokeDist() <= 7) {
             return true;
         }
 
         return false;
     }
 
-    protected AUnit define(AUnit exceptUnit) {
+    protected AUnit defineNew(AUnit exceptUnit) {
         if (squad.isEmpty()) return null;
 
         Selection units = squad.units();

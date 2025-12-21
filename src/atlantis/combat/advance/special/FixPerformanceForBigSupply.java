@@ -18,10 +18,9 @@ public class FixPerformanceForBigSupply extends MissionManager {
         return A.supplyUsed(150)
             && Missions.isGlobalMissionAttack()
             && unit.isMoving()
-//            && !unit.isRunning()
-//            && unit.lastActionLessThanAgo(20)
             && unit.enemiesNear().empty()
-            && A.everyFrameExceptNthFrame(17);
+            && !unit.isRunning()
+            && A.everyFrameExceptNthFrame(11);
     }
 
     protected Manager handle(AUnit unit) {

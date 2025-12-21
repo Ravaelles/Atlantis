@@ -14,6 +14,10 @@ public class MissionSpartaAllowsToAttack extends MissionAllowsToAttackEnemyUnit 
 
     @Override
     public boolean allowsToAttackEnemyUnit(AUnit enemy) {
+        if (unit.eval() <= 0.85 && unit.cooldown() >= 4 && unit.distTo(enemy) <= 2 && unit.friendsInRadiusCount(0.5) == 0) {
+            return false;
+        }
+
         if (Count.basesWithUnfinished() >= 2) return true;
         if (unit.hasWeaponRangeToAttack(enemy, 0.2)) return true;
 

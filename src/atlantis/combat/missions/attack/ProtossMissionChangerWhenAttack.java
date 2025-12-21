@@ -182,7 +182,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     private boolean alphaOutmatched() {
         if (A.supplyUsed() >= 170) return false;
-        if (Army.strengthWithoutOurCB() >= 350) return false;
+        if (Army.strengthWithoutOurCB() >= 260 && A.resourcesBalance() >= -100) return false;
 
         AUnit leader = Alpha.alphaLeader();
         if (leader == null) return false;

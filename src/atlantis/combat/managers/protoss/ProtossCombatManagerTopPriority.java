@@ -49,12 +49,12 @@ public class ProtossCombatManagerTopPriority extends Manager {
             RemoveDeadUnitsManager.class,
             AttackStateDeterminingManager.class,
 
+            FixPerformanceForBigSupply.class,
             ProtossPreventIssuingTooRapidCommands.class,
 
             AvoidSpellsAndMines.class,
-            SpecialUnitsManager.class,
 
-            FixPerformanceForBigSupply.class,
+            SpecialUnitsManager.class,
 
             // === Crucial actions ===========================================
 
