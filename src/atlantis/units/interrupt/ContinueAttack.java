@@ -34,6 +34,9 @@ public class ContinueAttack extends Manager {
         if (PreventAttacksInMissionDefend.prevent(unit)) return false;
         if (PreventAttacksDuringRetreat.prevent(unit)) return false;
 
+        if (unit.attackState().starting()) {
+            return t("StartingAttackState");
+        }
         if (unit.attackState().pending()) {
             return t("PendingAttackState");
         }

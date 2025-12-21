@@ -70,7 +70,7 @@ public class ProtossShouldExpandToNaturalBase extends ProtossShouldExpand {
 
 //        System.err.println(A.now() + " - armyStrength ok to expand = " + armyStrength);
 
-        if ((Army.strength() >= 130 || Count.ourCombatUnits() >= 10)) {
+        if ((Army.strength() >= 145 && Count.ourCombatUnits() >= 10 || A.hasMinerals(650))) {
             if (A.hasMinerals(350) && (workers >= 44 || workers * Count.basesWithUnfinished() >= 24)) {
                 Count.clearCache();
                 if (basesInProduction == 0) {

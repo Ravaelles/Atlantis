@@ -28,6 +28,7 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
 //        if (EnemyUnitBreachedBase.notNull()) return false;
         if (unit.enemiesNear().canAttack(unit, 4).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(60, Actions.LOAD)) return false;
+        if (unit.groundDistToMain() <= 15) return false;
 
         margin = unit.distTo(focus) - optimalDist(focus);
 

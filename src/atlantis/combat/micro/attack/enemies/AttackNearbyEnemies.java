@@ -220,9 +220,9 @@ public class AttackNearbyEnemies extends Manager {
         return ATargeting.defineBestEnemyToAttack(unit);
     }
 
-    @Override
-    public String toString() {
-        String target = unit.target() == null ? "NULL_TARGET" : unit.target().type().name();
-        return super.toString() + "(" + target + ")";
-    }
+//    @Override
+//    public String toString() {
+//        String target = unit.target() == null ? "NULL_TARGET" : unit.target().type().name();
+//        return super.toString() + "(" + target + ")";
+//    }
 }

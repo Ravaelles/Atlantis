@@ -72,14 +72,24 @@ public class OnEveryFrameHelper {
 //            System.out.println("Mission: " + MissionChanger.reason + " / EC:" + EnemyUnits.combatUnits());
 //        }
 
-        if (true) return;
+//        if (true) return;
 
 //        Selection units = Select.ourOfType(AUnitType.Protoss_Dark_Templar);
 //        Selection units = Select.from(new Units()).add(Alpha.alphaLeader());
 //        Selection units = Select.ourCombatUnits().groundUnits();
         Selection units = Select.ourCombatUnits().havingWeapon();
         for (AUnit unit : units.list()) {
-            System.err.println("Cooldown: " + unit.cooldown());
+            unit.paintTextCentered(unit.attackState().toString(), Color.Green, -1.4);
+
+            if (unit.lastPositionChangedAgo() <= 10) continue;
+            if (unit.attackState().none()) continue;
+
+//            System.out.println(unit + " " + unit.manager() + " / " + unit.action() + " / " + unit.lastCommandName()
+//                + " / actAgo:" + unit.lastActionFramesAgo() + " / cmdAgo:" + unit.lastCommandIssuedAgo());
+//
+//            CenterCamera.on(unit);
+
+//            System.err.println("Cooldown: " + unit.cooldown());
 //            unit.paintTextCentered(A.digit(unit.getAngle()), Color.Orange, 1);
 
 //            System.out.println(unit + ", detected: " + unit.isDetected()

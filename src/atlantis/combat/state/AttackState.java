@@ -23,6 +23,14 @@ public enum AttackState {
         return this == STARTING;
     }
 
+    public boolean none() {
+        return this == NONE;
+    }
+
+    public boolean startingOrPending() {
+        return this == PENDING || this == STARTING;
+    }
+
 //    public boolean atLeastStarting() {
 ////        return this == STARTING || this == PENDING || this == FINISHED;
 //        return this == STARTING || this == PENDING;

@@ -29,8 +29,15 @@ public class AttackStateDeterminingManager extends Manager {
     private AttackState determineAttackState() {
         cooldown = unit.cooldown();
 
+        if (!unit.isAttacking()) {
+            if (
+                unit.target() == null
+                    || !unit.isHoldingToShoot()
+                    || unit.isDancingAway()
+            ) return unit.setAttackState(AttackState.NONE);
+        }
+
         if (cooldown == 0) {
-            if (!unit.isAttacking() && !unit.isHoldingToShoot()) return unit.setAttackState(AttackState.NONE);
             if (unit.hasValidTarget()) return unit.setAttackState(AttackState.TARGET_ACQUIRED);
         }
 

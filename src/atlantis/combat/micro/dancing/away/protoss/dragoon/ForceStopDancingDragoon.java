@@ -26,11 +26,12 @@ public class ForceStopDancingDragoon extends Manager {
 //        if (true) return false;
 
         if (!unit.isDancingAway()) return false;
-        if (unit.isHoldingToShoot()) return false;
+        if (unit.isHoldingToShoot() && unit.lastPositionChangedAgo() <= 50) return false;
         if (unit.isAttacking()) return false;
-        if (Enemy.zerg() && unit.hp() <= 22) return false;
 
-        if (unit.isStopped() && unit.hp() >= 45) return t("Stopped");
+        if (unit.isStopped() && unit.hp() >= 20) return t("Stopped");
+
+        if (Enemy.zerg() && unit.hp() <= 22 && unit.enemiesThatCanAttackMe(3).notEmpty()) return false;
 
         if ((new DragoonAlwaysAvoidEnemy(unit)).applies()) return false;
 

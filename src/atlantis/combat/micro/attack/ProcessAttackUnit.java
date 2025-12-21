@@ -2,6 +2,7 @@ package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.hold.ProtossAttackHoldToShoot;
+import atlantis.combat.state.AttackState;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -103,16 +104,24 @@ public class ProcessAttackUnit extends Manager {
 
     private boolean confirmAttack(AUnit target) {
         if (ProtossAttackHoldToShoot.holdInsteadAttack(unit, target)) {
-//            System.err.println(A.now() + " - HOLD " +
-//                "- speed(" + unit.speed() + ") " +
-//                "- enemy:" + unit.nearestEnemyDist());
-
-            unit.paintCircle(18, Color.Orange);
-            unit.paintCircle(17, Color.Orange);
-            unit.paintCircle(16, Color.Orange);
-            return true;
+            return confirmHoldingToShoot(target);
         }
 
         return unit.attackUnit(target);
+    }
+
+    private boolean confirmHoldingToShoot(AUnit target) {
+        //            System.err.println(A.now() + " - HOLD " +
+//                "- speed(" + unit.speed() + ") " +
+//                "- enemy:" + unit.nearestEnemyDist());
+
+        unit.paintCircle(18, Color.Orange);
+        unit.paintCircle(17, Color.Orange);
+        unit.paintCircle(16, Color.Orange);
+
+        unit.forceLastTarget(target);
+        unit.setAttackState(AttackState.TARGET_ACQUIRED);
+
+        return true;
     }
 }
