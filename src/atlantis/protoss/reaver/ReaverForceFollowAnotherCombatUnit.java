@@ -19,7 +19,7 @@ public class ReaverForceFollowAnotherCombatUnit extends Manager {
         if (nearestFriend == null) return false;
 
         double groundDistToMain = unit.groundDistToMain();
-        if (groundDistToMain <= 35 || groundDistToMain < (Alpha.groundDistToMain() * 0.66)) return false;
+        if (groundDistToMain <= 35 || groundDistToMain < (Alpha.groundDistToMain() * 0.8)) return false;
 
         Selection enemiesICanAttack = unit.enemiesICanAttack(3);
         if (enemiesICanAttack.notEmpty() && unit.cooldown() <= 10) return false;

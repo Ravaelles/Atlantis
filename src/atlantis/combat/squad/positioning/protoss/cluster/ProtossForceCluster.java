@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning.protoss.cluster;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
@@ -12,6 +13,9 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class ProtossForceCluster extends Manager {
+
+    private double distToLeader;
+
     public ProtossForceCluster(AUnit unit) {
         super(unit);
     }
@@ -33,6 +37,7 @@ public class ProtossForceCluster extends Manager {
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
         if (unit.type().isTransport()) return false;
         if (unit.meleeEnemiesNearCount(3) >= 1) return false;
+        if (unit.cooldown() <= 5 && unit.enemiesICanAttack(2).empty()) return false;
 
         return true;
     }
@@ -43,8 +48,9 @@ public class ProtossForceCluster extends Manager {
         if (leader == null) return null;
 
         // Go to LEADER
+        distToLeader = unit.distTo(leader);
         if (
-            unit.distTo(leader) > 9
+            distToLeader > 9
                 && !unit.isLeader()
                 && unit.moveToLeader(Actions.MOVE_FORMATION, "PCluster2L")
         ) {
@@ -54,7 +60,7 @@ public class ProtossForceCluster extends Manager {
         // Go to FRIEND
         if (!skipGoingToFriend()) {
             AUnit friend = friend();
-            if (friend != null && unit.distTo(friend) > 0.7 && unit.move(friend, Actions.MOVE_FORMATION, "PCluster2F")) {
+            if (friend != null && unit.distTo(friend) > minDist() && unit.move(friend, Actions.MOVE_FORMATION, "PCluster2F")) {
                 return usedManager(this);
             }
         }
@@ -62,11 +68,29 @@ public class ProtossForceCluster extends Manager {
         return null;
     }
 
+    private double minDist() {
+        if (Enemy.zerg()) {
+            if (unit.isRanged()) return 1.7;
+            return 0.6;
+        }
+
+        if (Enemy.protoss()) {
+            if (unit.isRanged()) return 1;
+            return 0.8;
+        }
+
+        return 1.5;
+    }
+
     private boolean skipGoingToFriend() {
         if (A.supplyUsed() >= 170 && Army.strengthWithoutCB() >= 130) return true;
         if (EnemyInfo.noRanged()) return true;
 
         if (Count.ourCombatUnits() <= 10) return false;
+
+        if (Enemy.zerg() && distToLeader <= 6) return true;
+        if (Enemy.protoss() && distToLeader <= 4) return true;
+        if (Enemy.terran() && distToLeader <= 4) return true;
 
         if (unit.enemiesNear().combatUnits().empty()) return true;
 

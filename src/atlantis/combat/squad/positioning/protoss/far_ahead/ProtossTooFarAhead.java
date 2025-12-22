@@ -19,6 +19,7 @@ public class ProtossTooFarAhead extends Manager {
         if (leader == null) return false;
         if (leader.lastAttackFrameLessThanAgo(30 * 6)) return false;
         if (unit.cooldown() <= 8 && unit.meleeEnemiesNearCount(unit.isRanged() ? 3.8 : 2) > 0) return false;
+        if (unit.distToCannon() <= 1.2) return false;
 
         return leader.nearestEnemyDist() + 0.4 > unit.nearestEnemyDist();
     }
@@ -27,6 +28,10 @@ public class ProtossTooFarAhead extends Manager {
     public Manager handle() {
         AUnit enemy = unit.nearestEnemy();
         if (enemy == null || !enemy.canAttackTarget(unit)) return null;
+
+        if (unit.moveToMain(Actions.MOVE_FORMATION)) {
+            return usedManager(this);
+        }
 
         if (unit.moveAwayFrom(enemy, moveDistance(), Actions.MOVE_FORMATION)) {
             return usedManager(this);

@@ -22,7 +22,7 @@ public class ProtossShouldStopRetreat extends Manager {
 
         return noEnemiesNear()
             || unit.eval() >= 1.3
-            || (unit.cooldown() <= 7 && (unit.distToCannon() <= 1.9 || unit.distToBase() <= 5));
+            || (unit.cooldown() <= 7 && (unit.distToCannon() <= 0.7 || unit.distToBase() <= 5));
     }
 
     private boolean noEnemiesNear() {

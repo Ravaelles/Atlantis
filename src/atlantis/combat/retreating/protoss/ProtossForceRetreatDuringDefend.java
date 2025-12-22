@@ -67,7 +67,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
 
     @Override
     public Manager handle() {
-//        if (focus == null || (unit.distTo(focus) <= 6 || groundDistToMain <= 40)) return null;
+        if (unit.distToCannon() <= 1.2) return null;
 
         if (distToMain >= 40 && unit.moveToMain(Actions.RUN_RETREAT)) {
             return usedManager(this);

@@ -13,6 +13,6 @@ public class ProtossGenericCanTransitionToUnit {
     }
 
     private static boolean forDT() {
-        return A.supplyUsed() >= 140 || Count.corsairs() > 0 || Have.templarArchives();
+        return A.supplyUsed() >= 140 || Count.corsairs() >= 2 || Have.templarArchives();
     }
 }

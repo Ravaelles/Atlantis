@@ -3169,7 +3169,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double distToCannon() {
-        AUnit cannon = Select.ourOfType(AUnitType.Protoss_Photon_Cannon).nearestTo(this);
+        AUnit cannon = friendsNear().cannons().nearestTo(this);
+        if (cannon == null) cannon = Select.ourOfType(AUnitType.Protoss_Photon_Cannon).nearestTo(this);
         if (cannon == null) return 999;
 
         return cannon.distTo(this);
