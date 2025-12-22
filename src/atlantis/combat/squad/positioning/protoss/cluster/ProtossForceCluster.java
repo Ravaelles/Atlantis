@@ -36,7 +36,7 @@ public class ProtossForceCluster extends Manager {
         if (OurBuildingUnderAttack.notNull()) return false;
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
         if (unit.type().isTransport()) return false;
-        if (unit.meleeEnemiesNearCount(3) >= 1) return false;
+        if (unit.cooldown() <= 5 && unit.meleeEnemiesNearCount(3.7) >= 1) return false;
         if (unit.cooldown() <= 5 && unit.enemiesICanAttack(2).empty()) return false;
 
         return true;

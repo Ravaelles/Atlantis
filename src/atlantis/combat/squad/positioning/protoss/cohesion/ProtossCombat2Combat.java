@@ -21,6 +21,8 @@ public class ProtossCombat2Combat extends Manager {
 
     @Override
     public boolean applies() {
+        if (true) return false;
+
         if (!unit.isCombatUnit()) return false;
         if (unit.effUndetected()) return false;
         if (unit.isMissionSparta()) return false;

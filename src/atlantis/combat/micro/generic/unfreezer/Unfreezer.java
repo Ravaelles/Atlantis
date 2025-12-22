@@ -27,6 +27,7 @@ public class Unfreezer extends Manager {
         if (unit.lastPositioningActionLessThanAgo(70)) return false;
         if (unit.hasCooldown()) return false;
         if (unit.isMissionSparta()) return false;
+        if (unit.distToFocusPoint() <= 5) return false;
         if (unit.isActiveManager(ProtossMoon.class)) return false;
 //        if (unit.lastAttackFrameLessThanAgo(45)) return false;
 //        if (unit.lastActionLessThanAgo(20, Actions.UNFREEZE)) return false;
