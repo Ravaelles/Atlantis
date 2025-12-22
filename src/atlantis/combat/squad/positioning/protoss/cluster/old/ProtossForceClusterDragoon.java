@@ -1,10 +1,9 @@
-package atlantis.combat.squad.positioning.protoss.cluster;
+package atlantis.combat.squad.positioning.protoss.cluster.old;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
 public class ProtossForceClusterDragoon extends Manager {

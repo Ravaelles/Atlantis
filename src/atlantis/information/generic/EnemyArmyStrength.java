@@ -1,6 +1,7 @@
 package atlantis.information.generic;
 
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 
 public class EnemyArmyStrength {
@@ -14,6 +15,14 @@ public class EnemyArmyStrength {
 
     private static double calculateFrom(Selection combatUnits) {
         double total = 0;
+
+//        System.err.println("ES = " + combatUnits.totalHp());
+//        if (combatUnits.totalHp() <= 200) {
+//            System.out.println("Enemies(" + combatUnits.count() + "):");
+//            for (AUnit enemy : combatUnits.list()) {
+//                System.out.println("    -" + enemy + " #hp: " + enemy.hp());
+//            }
+//        }
 
         total += combatUnits.totalHp();
         total += combatUnits.melee().count() * 10;

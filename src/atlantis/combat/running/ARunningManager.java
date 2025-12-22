@@ -121,7 +121,8 @@ public class ARunningManager {
     private boolean actWhenCantRun() {
         unit.addLog("CantRun");
         if (A.isUms()) {
-            ErrorLog.printMaxOncePerMinute("CantRun " + unit);
+//            ErrorLog.printMaxOncePerMinute("CantRun " + unit.typeWithUnitId());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.idWithHash());
         }
 
         if (unit.hp() >= 62) {

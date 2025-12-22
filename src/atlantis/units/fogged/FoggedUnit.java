@@ -52,6 +52,16 @@ public class FoggedUnit extends AbstractFoggedUnit {
     public int y() {
         return position().getY();
     }
+    
+    @Override
+    public int hp() {
+        int hp = super.hp();
+        if (hp > 0) {
+            return hp;
+        }
+
+        return super.maxHp();
+    }
 
     // =========================================================
 

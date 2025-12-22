@@ -1,7 +1,6 @@
-package atlantis.combat.squad.positioning.protoss.cluster;
+package atlantis.combat.squad.positioning.protoss.cluster.old;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.positioning.protoss.ProtossTooFarFromSquadCenter;
 import atlantis.game.A;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;

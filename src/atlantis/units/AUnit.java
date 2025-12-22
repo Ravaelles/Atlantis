@@ -27,7 +27,6 @@ import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
 import atlantis.map.base.BaseLocations;
-import atlantis.map.base.Bases;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
 import atlantis.map.choke.AChoke;
@@ -566,7 +565,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean isWounded() {
-        return hp() < maxHP() || shields() < maxShields();
+        return hp() < maxHp() || shields() < maxShields();
     }
 
     public boolean isExists() {
@@ -579,10 +578,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public int maxShields() {
         return type().ut().maxShields();
-    }
-
-    public int maxHP() {
-        return maxHp() + maxShields();
     }
 
     public int minesCount() {
@@ -1265,19 +1260,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public int maxHp() {
-        return (int) cache.get(
-            "maxHp",
-            -1,
-            () -> {
-                int hp = type().maxHp() + maxShields();
-                if (hp == 0 && !type().isSpell()) {
-                    System.err.println("Max HP = 0 for");
-                    System.err.println(this);
-                }
-
-                return hp > 0 ? hp : 1;
-            }
-        );
+        return type().maxHp();
     }
 
     public boolean isResearching() {
@@ -3520,10 +3503,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         AUnit cb = Select.ourOfTypeWithUnfinished(groundCb).nearestTo(this);
         if (cb != null) return cb;
 
+        AUnit main = Select.mainOrAnyBuilding();
+
+        if (main == null) {
+            HasPosition alphaCenter = Alpha.alphaCenter();
+            if (alphaCenter == null || distTo(alphaCenter) <= 3) return null;
+
+            return alphaCenter;
+        }
+
         if (Count.basesWithUnfinished() <= 1) {
             AChoke choke = Chokes.mainChoke();
             if (choke != null) {
-                HasPosition position = choke.translateTilesTowards(7, Select.mainOrAnyBuilding());
+                HasPosition position = choke.translateTilesTowards(7, main);
                 if (position != null && position.isWalkable()) return position;
             }
         }
@@ -3543,7 +3535,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 //
 //        if (position != null && position.isWalkable()) return position;
 
-        return Select.mainOrAnyBuilding().translatePercentTowards(50, Chokes.mainChoke());
+        return main.translatePercentTowards(50, Chokes.mainChoke());
     }
 
     public boolean hasAirWeapon() {

@@ -278,8 +278,7 @@ public class AbstractFoggedUnit extends AUnit {
 
     @Override
     public int hp() {
-        return 0;
-//        return _hp;
+        return -69;
     }
 
     @Override

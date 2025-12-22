@@ -1,4 +1,4 @@
-package atlantis.combat.squad.positioning.protoss.cluster;
+package atlantis.combat.squad.positioning.protoss.cluster.old;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;

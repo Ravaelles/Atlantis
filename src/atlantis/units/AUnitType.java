@@ -818,7 +818,19 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public int maxHp() {
-        return ut.maxHitPoints();
+        return (int) cache.get(
+            "maxHp",
+            -1,
+            () -> {
+                int hp = ut.maxHitPoints() + maxShields();
+                if (hp == 0 && !isSpell()) {
+                    System.err.println("Max HP = 0 for");
+                    System.err.println(this);
+                }
+
+                return hp > 0 ? hp : 1;
+            }
+        );
     }
 
     public int maxShields() {

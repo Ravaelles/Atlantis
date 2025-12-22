@@ -76,9 +76,10 @@ public class ProtossCombatManagerTopPriority extends Manager {
             // === Very important actions ====================================
 
             ProtossFormation.class,
-            ProtossForceCluster.class,
 
             ContinueAttack.class,
+
+            ProtossForceCluster.class,
 
             DragoonAttackVultureInRange.class,
             ProtossAttackTanksNearby.class,

@@ -23,8 +23,10 @@ public class ProtossForceCluster extends Manager {
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(185)) return false;
         if (A.minerals() >= 1000) return false;
+        if (unit.cooldown() > 20) return false;
         if (unit.isRunningOrRetreating()) return false;
         if (unit.isDancingAway()) return false;
+        if (unit.eval() >= 10) return false;
         if (Army.strength() >= 500 && Count.ourCombatUnits() >= 25) return false;
         if (OurBuildingUnderAttack.notNull()) return false;
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
@@ -39,7 +41,11 @@ public class ProtossForceCluster extends Manager {
         if (leader == null) return null;
 
         // Go to LEADER
-        if (unit.distTo(leader) > 10 && unit.moveToLeader(Actions.MOVE_FORMATION, "PCluster2L")) {
+        if (
+            unit.distTo(leader) > 9
+                && !unit.isLeader()
+                && unit.moveToLeader(Actions.MOVE_FORMATION, "PCluster2L")
+        ) {
             return usedManager(this);
         }
 
