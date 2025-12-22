@@ -17,6 +17,7 @@ import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.protoss.ProtossForceRetreatDuringDefend;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
 import atlantis.combat.running.stop_running.protoss.ProtossShouldStopRunning;
+import atlantis.combat.squad.positioning.protoss.cluster.ProtossForceCluster;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.protoss.dragoon.DragoonAttackVultureInRange;
@@ -62,10 +63,10 @@ public class ProtossCombatManagerTopPriority extends Manager {
             ContinueUnfreeze.class,
 
             AvoidCombatBuildingClose.class,
-
             AvoidCriticalUnits.class,
 
             AttackParamountUnitsInRange.class,
+            ForceContinueCriticalMeleeAttack.class,
 
             ProtossForceRetreatDuringDefend.class,
             ProtossRetreat.class,
@@ -75,8 +76,8 @@ public class ProtossCombatManagerTopPriority extends Manager {
             // === Very important actions ====================================
 
             ProtossFormation.class,
+            ProtossForceCluster.class,
 
-            ForceContinueCriticalMeleeAttack.class,
             ContinueAttack.class,
 
             DragoonAttackVultureInRange.class,

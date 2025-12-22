@@ -16,6 +16,7 @@ public class ReaverAlwaysAttack extends Manager {
     @Override
     public boolean applies() {
         if (unit.cooldownRemaining() >= 13) return false;
+        if (unit.scarabCount() == 0) return false;
 
         enemies = enemies();
         if (enemies.empty()) return false;

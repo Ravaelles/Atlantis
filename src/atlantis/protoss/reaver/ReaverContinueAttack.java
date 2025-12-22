@@ -15,6 +15,7 @@ public class ReaverContinueAttack extends Manager {
     public boolean applies() {
         if (!unit.isAttacking()) return false;
         if (!unit.hasValidTarget()) return false;
+        if (unit.scarabCount() == 0) return false;
 
         if (unit.isStartingAttack()) return true;
         if (unit.isAttackFrame()) return true;

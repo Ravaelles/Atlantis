@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.EnemyStrategy;
+import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -19,7 +20,7 @@ public class ProduceRoboticsSupportBay {
     public static boolean produce() {
 //        if (true) return false;
         if (Count.ourOfTypeUnfinished(type) >= 1) return false;
-        if (Enemy.terran() && A.supplyUsed() <= 130) return false;
+        if (Enemy.terran() && A.supplyUsed() <= 90) return false;
         if (A.supplyUsed() <= 49) return false;
 
         if (againstZergHaveTemplarArchivesFirst()) return false;
@@ -49,8 +50,13 @@ public class ProduceRoboticsSupportBay {
     }
 
     private static boolean againstZergHaveTemplarArchivesFirst() {
-        return Enemy.zerg()
-            && Count.ourWithUnfinished(Protoss_Templar_Archives) == 0;
+        if (!Enemy.zerg()) return false;
+
+        if (Have.existingOrUnfinished(Protoss_Citadel_of_Adun) && Count.darkTemplars() <= 1) {
+            return Count.ourWithUnfinished(Protoss_Templar_Archives) == 0;
+        }
+
+        return false;
     }
 
     private static boolean produceSupportBay() {

@@ -22,6 +22,7 @@ public class ReaverForceHoldToFireInRange extends Manager {
      */
     public boolean applies() {
         if (Enemy.terran()) return false;
+        if (unit.scarabCount() == 0) return false;
 
         Selection enemies = unit.enemiesICanAttack(1.2).groundUnits().hasPathFrom(unit);
         if (enemies.isEmpty()) return false;

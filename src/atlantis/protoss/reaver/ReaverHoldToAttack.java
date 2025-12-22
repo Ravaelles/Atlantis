@@ -16,6 +16,7 @@ public class ReaverHoldToAttack extends Manager {
         if (!unit.isAttacking() && !unit.isMoving()) return false;
         if (unit.isStartingAttack()) return false;
         if (unit.isAttackFrame()) return false;
+        if (unit.scarabCount() == 0) return false;
 //        if (unit.isHoldingPosition()) return false;
 
         for (AUnit cb : unit.enemiesNear().combatBuildingsAntiLand().list()) {

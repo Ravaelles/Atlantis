@@ -21,7 +21,7 @@ public class Corsair extends MobileDetector {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             AsAirAvoidTowers.class,
-            AsAirAvoidDeadlyAntiAir.class,
+            CorsairAvoidDeadlyAntiAir.class,
             AsAirAvoidAntiAir.class,
             CorsairChangeLocationIfRanTooLong.class,
             CorsairHuntMutas.class,

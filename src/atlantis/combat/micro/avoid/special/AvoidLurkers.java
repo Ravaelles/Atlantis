@@ -204,10 +204,16 @@ public class AvoidLurkers extends Manager {
     private double radius() {
         return 8.1
             + radiusBonusForProtoss()
-            + (unit.isTerranInfantry() ? 0.4 : 0)
+            + radiusBonusForTerran()
             + (unit.isWorker() ? 1.5 : 0)
             + (unit.isMelee() ? 2.5 : 0)
-            + (unit.friendsNear().observers().empty() ? 1.8 : 0)
+            + (unit.friendsNear().observers().empty() ? 1.8 : 0);
+    }
+
+    private double radiusBonusForTerran() {
+        if (!We.terran()) return 0;
+
+        return (unit.isTerranInfantry() ? 0.4 : 0)
             + (unit.isWounded() ? 0.6 : 0)
             + unit.woundPercent() / 50.0;
     }
@@ -217,6 +223,7 @@ public class AvoidLurkers extends Manager {
 
         if (unit.isReaver() && unit.shieldWound() <= 25 && unit.cooldown() <= 8) return -1.6;
 
-        return 0;
+        return (unit.shieldWound() >= 15 ? 1.2 : 0)
+               + unit.woundPercent() / 40.0;
     }
 }

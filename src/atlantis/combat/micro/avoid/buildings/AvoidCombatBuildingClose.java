@@ -41,13 +41,17 @@ public class AvoidCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        if (We.protoss() && A.supplyUsed(unit.eval() >= 5 ? 170 : 185)) {
-            if (unit.isGroundUnit()) return f("RichToss");
+        AUnit leader = unit.squadLeader();
+        if (leader == null) return t("No leader");
+
+        if (We.protoss() && A.supplyUsed(unit.eval() >= 5 ? 190 : 196)) {
             if (unit.isAir()) return t("AirAlways");
+            if (unit.lastStoppedRunningMoreThanAgo(30 * 12) && leader.lastStoppedRunningMoreThanAgo(30 * 12)) {
+                return f("RichToss");
+            }
         }
 
-        AUnit leader = unit.squadLeader();
-        if (leader != null && leader.lastActionLessThanAgo(30 * 17, Actions.MOVE_AVOID)) return t("LeaderAvoidCB");
+        if (leader.lastActionLessThanAgo(30 * 17, Actions.MOVE_AVOID)) return t("LeaderAvoidCB");
 
         if (Enemy.zerg() && Army.strength() <= 400 && A.supplyUsed() <= 160) return t("YesVsZerg");
 

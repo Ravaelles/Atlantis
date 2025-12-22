@@ -27,19 +27,20 @@ public class ShouldSecureProtossBase {
 
     private static int expectedCannons() {
         int minSupplyForSecondCannon = Enemy.terran() ? 100 : 85;
+        int minerals = A.minerals();
 
         int total = (A.supplyTotal() >= minSupplyForSecondCannon ? 2 : 1)
-            + (A.hasMinerals(530) ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 110 ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 120 ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 140 ? 1 : 0)
+            + (minerals >= 540 ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 130 ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 180 ? 1 : 0)
+            + (Enemy.zerg() && A.supplyTotal() >= 190 ? 1 : 0)
             + mutasBonus()
-            + (A.hasMinerals(600) ? 1 : 0)
-            + (A.hasMinerals(740) ? 1 : 0);
+            + (minerals >= 640 ? 1 : 0)
+            + (minerals >= 800 ? 1 : 0);
 
-        if (Enemy.protoss()) total = Math.min(total, 5 + (A.hasMinerals(700) ? 1 : 0));
+        if (Enemy.protoss()) total = Math.min(total, 5 + (minerals >= 700 ? 1 : 0));
         if (Enemy.terran()) total = Math.min(total, 2);
-        if (Enemy.zerg()) total = Math.min(total, 7);
+        if (Enemy.zerg()) total = Math.min(total, 6);
 
         if (Enemy.zerg() && (A.supplyUsed() <= 150 && A.minerals() <= 550)) total = Math.min(3, total);
 

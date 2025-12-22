@@ -17,8 +17,8 @@ public class ProduceDarkTemplar {
 //        if (true) return false;
 
         if (Have.no(requiredBuilding())) return false;
-
         if (requested >= 10 || Count.ourWithUnfinished(type()) >= haveThisManyHT()) return false;
+        if (Have.roboticsSupportBay() && Count.reavers() == 0 && Have.free(AUnitType.Protoss_Robotics_Facility)) return false;
 
         return produce();
     }

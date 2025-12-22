@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic.managers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -8,7 +9,8 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 
 public class AsAirAvoidDeadlyAntiAir extends Manager {
-    private HasPosition enemyAAPosition;
+    protected HasPosition enemyAAPosition;
+    private Selection deadlyEnemies;
 
     public AsAirAvoidDeadlyAntiAir(AUnit unit) {
         super(unit);
@@ -26,15 +28,31 @@ public class AsAirAvoidDeadlyAntiAir extends Manager {
     }
 
     public Manager handle() {
-        if (invokedManager(AsAirRunToCannon.class)) return usedManager(AsAirRunToCannon.class);
+        if (allowedToRunToCannon() && invokedManager(AsAirRunToCannon.class)) return usedManager(AsAirRunToCannon.class);
 
-        if (unit.moveAwayFrom(enemyAAPosition, 5, Actions.MOVE_FORMATION, "AirDeadlyAA")) return usedManager(this);
+        if (moveAway()) return usedManager(this);
 
         return null;
     }
 
-    private HasPosition enemyDeadlyAntiAirInRange(AUnit unit) {
-        Selection enemies = unit.enemiesNear().ofType(
+    protected boolean moveAway() {
+        return unit.moveAwayFrom(enemyAAPosition, 6, Actions.MOVE_FORMATION, "AirDeadlyAA");
+    }
+
+    protected boolean moveToAlphaLeader() {
+        AUnit leader = Alpha.alphaLeader();
+        if (leader == null) return false;
+        if (unit.distTo(leader) <= 2) return false;
+
+        return unit.move(leader, Actions.MOVE_FORMATION, "ToAlphaLeader");
+    }
+
+    protected boolean allowedToRunToCannon() {
+        return true;
+    }
+
+    protected HasPosition enemyDeadlyAntiAirInRange(AUnit unit) {
+        deadlyEnemies = unit.enemiesNear().ofType(
 //            AUnitType.Protoss_Corsair,
 //            AUnitType.Protoss_Photon_Cannon,
             AUnitType.Zerg_Scourge,
@@ -43,9 +61,13 @@ public class AsAirAvoidDeadlyAntiAir extends Manager {
 //            AUnitType.Terran_Valkyrie,
 //            AUnitType.Terran_Missile_Turret
         );
+        if (deadlyEnemies.empty()) return null;
 
-        HasPosition enemy = enemies.canAttack(unit, 1.7 + unit.woundPercent() / 15.0).center();
+        return deadlyEnemies.canAttack(unit, safetyMargin(unit)).center();
+    }
 
-        return enemy;
+    protected static double safetyMargin(AUnit unit) {
+        return 3.8
+            + unit.woundPercent() / 15.0;
     }
 }
