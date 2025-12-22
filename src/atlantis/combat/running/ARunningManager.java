@@ -125,6 +125,11 @@ public class ARunningManager {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.idWithHash());
         }
 
+        if (unit.moveToMain(Actions.RUN_ENEMY)) {
+            unit.setTooltip("CantRun-GoToMain");
+            return true;
+        }
+
         if (unit.hp() >= 62) {
             if ((new AttackNearbyEnemies(unit)).forceHandle() != null) {
                 unit.setTooltip("CantRun-Attack");

@@ -18,6 +18,7 @@ public class ProtossTooFarAhead extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
         if (leader.lastAttackFrameLessThanAgo(30 * 6)) return false;
+        if (unit.cooldown() <= 8 && unit.meleeEnemiesNearCount(unit.isRanged() ? 3.8 : 2) > 0) return false;
 
         return leader.nearestEnemyDist() + 0.4 > unit.nearestEnemyDist();
     }

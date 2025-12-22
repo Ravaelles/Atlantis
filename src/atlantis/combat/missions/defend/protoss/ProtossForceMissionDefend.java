@@ -42,7 +42,7 @@ public class ProtossForceMissionDefend {
             EnemyInfo.hasRanged()
                 && ourCombatUnits <= 19
                 && (strength <= 165 || alphaEval <= 1.16)
-        ) return t("WeakEarlyGame(" + strength + "%," + alphaEval + ")");
+        ) return t("WeakEarlyGame(" + strength + "%," + A.digit(alphaEval) + ")");
 
         if (combatUnits < 20) {
             if (EnemyInfo.hasRanged()) {
