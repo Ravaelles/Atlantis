@@ -3,7 +3,10 @@ package atlantis.protoss.zealot;
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
+import atlantis.game.event.AutomaticListener;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Count;
@@ -26,16 +29,17 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (!unit.isZealot()) return false;
         if (unit.isMissionSparta()) return false;
         if (Count.dragoons() <= 1) return false;
-        if (A.supplyUsed() >= 180 || A.minerals() >= 1500) return false;
-        if (unit.hp() <= 38 && unit.isRunning()) return false;
-        if (unit.shields() >= 20 && unit.eval() >= 5) return false;
-        if (Enemy.protoss() && A.now % 30 <= 10) return false;
-        if (unit.eval() >= 1.4 && unit.isAttacking() && unit.hasValidTarget() && unit.target().isABuilding()) return false;
-//        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
+        if (A.supplyUsed() >= 190 || A.minerals() >= 1200) return false;
+        if (unit.hp() <= 41 && unit.isRunning()) return false;
 
         dragoon = unit.friendsNear().dragoons().notRunning().nearestTo(unit);
         if (dragoon == null) return false;
         distToGoon = unit.distTo(dragoon);
+
+        if (unit.shields() >= 20 && unit.eval() >= 5) return false;
+        if (Enemy.protoss() && A.now % 30 <= 10) return false;
+        if (unit.eval() >= 1.4 && unit.isAttacking() && unit.hasValidTarget() && unit.target().isABuilding()) return false;
+//        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
 
         if (closeEnemiesAndRelativelyCloseGoon()) return false;
         if (isAttackingSpecialUnit()) return false;

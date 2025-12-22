@@ -11,6 +11,9 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Leg_Enhancements;
 
 public class ResearchLegEnhancements extends UpgradeResearchCommander {
+    private static boolean isResearched = false;
+    private static boolean isEnqueued = false;
+
     @Override
     public UpgradeType what() {
         return Leg_Enhancements;
@@ -34,5 +37,15 @@ public class ResearchLegEnhancements extends UpgradeResearchCommander {
 
     public static boolean isResearched() {
         return isResearched;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        this.isEnqueued = isEnqueued;
+    }
+
+    @Override
+    protected boolean isEnqueued() {
+        return isEnqueued;
     }
 }

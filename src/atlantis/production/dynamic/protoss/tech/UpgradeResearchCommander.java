@@ -11,27 +11,22 @@ import bwapi.UpgradeType;
 import java.util.List;
 
 public abstract class UpgradeResearchCommander extends Commander {
-    protected static boolean isResearched = false;
-    protected static boolean enqueued = false;
-
     public abstract UpgradeType what();
+    protected abstract void setEnqueued(boolean isEnqueued);
+    protected abstract boolean isEnqueued();
 
     @Override
     protected void handle() {
         if (CountInQueue.count(what(), 2) == 0) {
-            if (AddToQueue.upgrade(what())) enqueued = true;
+            if (AddToQueue.upgrade(what())) setEnqueued(true);
         }
 
         if (ResearchNow.research(what())) {
-            enqueued = true;
+            setEnqueued(true);
         }
-        else if (!enqueued && AddToQueue.upgrade(what())) {
-            enqueued = true;
+        else if (!isEnqueued() && AddToQueue.upgrade(what())) {
+            setEnqueued(true);
         }
-    }
-
-    public static boolean isResearched() {
-        return isResearched;
     }
 
     public static boolean isBeingResearched(UpgradeType upgrade) {

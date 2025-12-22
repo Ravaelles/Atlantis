@@ -21,6 +21,9 @@ import java.util.List;
 import static bwapi.UpgradeType.Singularity_Charge;
 
 public class ResearchSingularityCharge extends UpgradeResearchCommander {
+    private static boolean isResearched = false;
+    private static boolean isEnqueued = false;
+
     private int dragoons;
 
     public static UpgradeType upgrade() {
@@ -94,9 +97,18 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
         return Decision.INDIFFERENT;
     }
-
     public static boolean isResearched() {
         return isResearched;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        this.isEnqueued = isEnqueued;
+    }
+
+    @Override
+    protected boolean isEnqueued() {
+        return isEnqueued;
     }
 
     public static boolean isBeingResearched() {

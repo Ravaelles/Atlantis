@@ -15,6 +15,9 @@ import atlantis.game.player.Enemy;
 import bwapi.TechType;
 
 public class ResearchSiegeMode extends TechResearchCommander {
+    private static boolean isResearched = false;
+    private static boolean isEnqueued = false;
+
     @Override
     public TechType what() {
         return TechType.Tank_Siege_Mode;
@@ -62,6 +65,16 @@ public class ResearchSiegeMode extends TechResearchCommander {
 //    }
 
     public static boolean isResearched() {
-        return isResearched = ATech.isResearched(TechType.Tank_Siege_Mode);
+        return isResearched;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        this.isEnqueued = isEnqueued;
+    }
+
+    @Override
+    protected boolean isEnqueued() {
+        return isEnqueued;
     }
 }

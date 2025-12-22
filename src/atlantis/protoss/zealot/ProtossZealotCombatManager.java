@@ -18,6 +18,7 @@ public class ProtossZealotCombatManager extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
+            ZealotStayInBackOfGoon.class,
             ProtossZealotTooFarFromDragoon.class,
             ProtossZealotSeparateFromMeleeEnemies.class,
         };

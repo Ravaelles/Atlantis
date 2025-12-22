@@ -13,6 +13,9 @@ import bwapi.UpgradeType;
 import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
+    private static boolean isResearched = false;
+    private static boolean isEnqueued = false;
+
     public UpgradeType what() {
         return Protoss_Ground_Weapons;
     }
@@ -34,6 +37,16 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
         }
 
         return false;
+    }
+
+    @Override
+    protected void setEnqueued(boolean isEnqueued) {
+        this.isEnqueued = isEnqueued;
+    }
+
+    @Override
+    protected boolean isEnqueued() {
+        return isEnqueued;
     }
 
     public static boolean isResearched() {

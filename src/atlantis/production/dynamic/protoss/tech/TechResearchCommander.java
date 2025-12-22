@@ -7,26 +7,22 @@ import bwapi.TechType;
 import bwapi.UpgradeType;
 
 public abstract class TechResearchCommander extends Commander {
-    protected static boolean isResearched = false;
-    protected static boolean enqueued = false;
+    protected abstract void setEnqueued(boolean isEnqueued);
+    protected abstract boolean isEnqueued();
 
     public abstract TechType what();
 
     @Override
     protected void handle() {
         if (CountInQueue.count(what(), 10) > 0) {
-            if (AddToQueue.tech(what())) enqueued = true;
+            if (AddToQueue.tech(what())) setEnqueued(true);
         }
 
         if (ResearchNow.research(what())) {
-            enqueued = true;
+            setEnqueued(true);
         }
-        else if (!enqueued && AddToQueue.tech(what())) {
-            enqueued = true;
+        else if (!isEnqueued() && AddToQueue.tech(what())) {
+            setEnqueued(true);
         }
-    }
-
-    public static boolean isResearched() {
-        return isResearched;
     }
 }
