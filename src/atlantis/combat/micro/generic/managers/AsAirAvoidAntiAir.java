@@ -60,7 +60,7 @@ public class AsAirAvoidAntiAir extends Manager {
     }
 
     private double safetyMargin() {
-        if (EnemyUnits.mutas() >= 7) return 5;
+        if (EnemyUnits.mutas() >= 7) return 7;
 
         if (unit.shieldWound() <= 3) return 1.0;
 
@@ -73,7 +73,7 @@ public class AsAirAvoidAntiAir extends Manager {
         AUnit leader = Alpha.alphaLeader();
         if (leader == null) return false;
 
-        if (unit.distTo(leader) <= 3.5) return false;
+        if (unit.distTo(leader) <= 4) return false;
         if (Alpha.get().units().havingAntiAirWeapon().atMost(2)) return false;
         if (unit.woundPercent() <= 30) return false;
 
