@@ -53,7 +53,7 @@ public class ProtossStartRetreat extends HasUnit {
         if (shouldRetreatTowardsBase(unit) && unit.moveToSafety(RUN_RETREAT, "RetreatTowardsBase")) {
 //            unit.paintLineDouble(unit.runningManager().runTo(), Color.Red);
             unitStartedRetreating(runAwayFrom);
-            return true;
+            return alsoRetreatAllFriends();
         }
 
         if (A.isUms()) return false;
@@ -62,7 +62,7 @@ public class ProtossStartRetreat extends HasUnit {
             unitStartedRetreating(runAwayFrom);
 //            PauseAndCenter.on(unit);
             unit.paintLine(unit.runningManager().runTo(), Color.Purple);
-            return true;
+            return alsoRetreatAllFriends();
         }
 
 //        if (retreatTowardsLeaderForBetterCohesion()) {
@@ -79,15 +79,26 @@ public class ProtossStartRetreat extends HasUnit {
         if (unit.moveAwayFrom(runAwayFrom, 8, RUN_RETREAT, "AnyhowRetreat")) {
             unitStartedRetreating(runAwayFrom);
             unit.paintLine(unit.runningManager().runTo(), Color.Blue);
-            return true;
+            return alsoRetreatAllFriends();
         }
 
         unit.moveToMain(RUN_RETREAT);
         unit.setTooltip("RetreatToMain");
-        return true;
+        return alsoRetreatAllFriends();
 
 //        ErrorLog.printMaxOncePerMinute("ProtossStartRetreat: couldn't retreat " + unit);
 //        return false;
+    }
+
+    private boolean alsoRetreatAllFriends() {
+        for (AUnit friend : unit.friendsNear().notRetreating().list()) {
+            if (friend.isRunningOrRetreating()) continue;
+            if (friend.effUndetected() || !enemy.canAttackTarget(friend)) continue;
+
+            (new ProtossStartRetreat(friend)).startRetreatingFrom(enemy);
+        }
+
+        return true;
     }
 
     private boolean retreatTowardsLeaderForBetterCohesion() {

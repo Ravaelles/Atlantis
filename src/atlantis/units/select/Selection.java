@@ -1180,6 +1180,10 @@ public class Selection extends BaseSelection {
         return cloneByRemovingIf(AUnit::isRunning, "notRunning");
     }
 
+    public Selection notRetreating() {
+        return cloneByRemovingIf(AUnit::isRetreating, "notRetreating");
+    }
+
     public Selection farFromAntiAirBuildings(double minDistToBuilding) {
         return cloneByRemovingIf((unit -> {
             AUnit nearestAntiAirBuilding = EnemyUnits.discovered().combatBuildingsAntiAir().nearestTo(unit);
