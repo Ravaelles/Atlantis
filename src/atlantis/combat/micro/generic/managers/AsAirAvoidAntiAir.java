@@ -70,6 +70,7 @@ public class AsAirAvoidAntiAir extends Manager {
         AUnit leader = Alpha.alphaLeader();
         if (leader == null) return false;
 
+        if (unit.distTo(leader) <= 1.8) return false;
         if (Alpha.get().units().havingAntiAirWeapon().atMost(2)) return false;
         if (unit.woundPercent() <= 30) return false;
 
