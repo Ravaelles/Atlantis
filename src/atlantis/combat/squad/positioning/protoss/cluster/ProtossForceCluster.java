@@ -23,8 +23,9 @@ public class ProtossForceCluster extends Manager {
     @Override
     public boolean applies() {
         if (!We.protoss()) return false;
-
         if (!Enemy.zerg()) return false;
+
+        if (unit.isAir()) return false;
 
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(196) && unit.eval() >= 1.5) return false;
