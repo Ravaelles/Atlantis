@@ -14,12 +14,14 @@ public class ProtossTooFarAhead extends Manager {
     public boolean applies() {
         if (unit.isMissionSparta()) return false;
         if (Army.strength() >= 600) return false;
-
+        if (unit.isRunningOrRetreating()) return false;
         if (unit.cooldown() <= 8) return false;
 
         AUnit leader = unit.squadLeader();
         if (leader == null) return false;
         if (unit.isLeader()) return false;
+
+        if (unit.eval() >= 4) return false;
 
 //        if (leader.lastAttackFrameLessThanAgo(30 * 6)) return false;
         if (unit.cooldown() <= 8 && unit.squad().lastUnderAttackLessThanAgo(40)) return false;

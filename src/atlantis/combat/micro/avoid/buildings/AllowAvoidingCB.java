@@ -21,10 +21,10 @@ public class AllowAvoidingCB {
         if (unit.isAir()) return t("AirAlways");
 
         if (
-            Army.strengthWithoutOurCB() >= 300
-                && Alpha.evalOr(0) >= 5
+            Army.strengthWithoutOurCB() >= 350
+                && Alpha.evalOr(0) >= 7
                 && Alpha.alphaLeader() != null
-                && Alpha.alphaLeader().lastRetreatedAgo() >= 25
+                && Alpha.alphaLeader().lastRetreatedAgo() >= 25 * 30
         ) return f("StrongArmyNoCBAvoid");
 
         if (A.supplyUsed(unit.eval() >= 3 ? 190 : 196)) {

@@ -82,6 +82,7 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
         if (!unit.isMelee()) return f("notMelee");
         if (unit.isRunningOrRetreating()) return false;
         if (unit.isMissionSparta()) return f("missionSparta");
+        if (Enemy.zerg() && unit.cooldown() == 0) return f("enemyZergNoCooldown");
 
         if (unit.isMissionDefend()) {
             if (unit.isZealot()) {

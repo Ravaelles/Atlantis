@@ -156,7 +156,7 @@ public class NewConstructionRequest {
             ErrorLog.printMaxOncePerMinute("(reason not defined - bug)");
         }
 
-        boolean cancelled = cancelInvalidNullPositionConstructionIfNeeded(building, order);
+        boolean cancelled = cancelNullPositionConstructionIfNeeded(building, order);
 
 //        System.err.println("cancelled = " + cancelled);
 //        if (true) throw new RuntimeException("cancelled = " + cancelled + " / " + building);
@@ -193,7 +193,7 @@ public class NewConstructionRequest {
         return false;
     }
 
-    private static boolean cancelInvalidNullPositionConstructionIfNeeded(AUnitType building, ProductionOrder order) {
+    private static boolean cancelNullPositionConstructionIfNeeded(AUnitType building, ProductionOrder order) {
         boolean cancelled = false;
 
         if (building.isSupplyDepot()) {
@@ -202,13 +202,13 @@ public class NewConstructionRequest {
                 && (CountInQueue.count(AUnitType.Terran_Supply_Depot) >= 2 || AGame.supplyFree() >= 3)
             ) {
                 cancelled = true;
-                order.cancel("Invalid position for supply depot");
+                order.cancel("Null position for supply depot");
             }
         }
         else if (!building.isPylon()) {
             if (A.s >= 70 && A.supplyTotal() >= 11) {
                 cancelled = true;
-                order.cancel("Invalid position for " + building);
+                order.cancel("Null position for " + building);
                 A.errPrintln(A.minSec() + ": Cancelled order: " + order);
             }
         }
