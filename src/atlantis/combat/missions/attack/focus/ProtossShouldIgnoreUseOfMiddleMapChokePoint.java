@@ -1,5 +1,6 @@
 package atlantis.combat.missions.attack.focus;
 
+import atlantis.combat.micro.avoid.buildings.AllowAvoidingCB;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
@@ -46,12 +47,19 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
         int supplyUsed = A.supplyUsed();
         int strength = Army.strengthWithoutCB();
 
-        if (supplyUsed >= 160 || A.hasMinerals(1000)) return true;
+        if (supplyUsed >= 180 || A.hasMinerals(1000)) return true;
+
         if (
-            (Count.ourCombatUnits() >= 25 || Army.strengthWithoutCB() >= 600)
-                || Count.darkTemplars() >= 2
-                || Count.reavers() >= 1
-        ) return true;
+            EnemyUnits.sunkens() >= 2
+                && Army.strengthWithoutCB() <= 200
+                && A.supplyUsed() <= 160
+                && Count.darkTemplars() <= 1
+                && Count.reavers() <= 0
+        ) {
+            return false;
+        }
+
+        if (Count.ourCombatUnits() >= 32 && Army.strengthWithoutCB() >= 800) return true;
 
         if (useWhenZergHasCBs(supplyUsed)) return false;
 

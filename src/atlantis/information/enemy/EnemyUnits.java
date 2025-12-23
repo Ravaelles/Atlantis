@@ -176,4 +176,8 @@ public class EnemyUnits {
     public static int ranged() {
         return discovered().ranged().combatUnits().count();
     }
+
+    public static int sunkens() {
+        return discovered().ofType(AUnitType.Zerg_Sunken_Colony).count();
+    }
 }
