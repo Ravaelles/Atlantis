@@ -14,7 +14,7 @@ public class ProtossExpansionCommander extends Commander {
     public boolean applies() {
         return A.everyNthGameFrame(67)
             && Count.ourOfTypeUnfinished(AUnitType.Protoss_Nexus) < maxBasesAtATime()
-            && ShouldExpand.shouldExpand();
+            && ProtossShouldExpand.shouldExpand();
     }
 
     @Override

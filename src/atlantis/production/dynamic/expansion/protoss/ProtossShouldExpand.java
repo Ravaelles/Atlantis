@@ -2,6 +2,7 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
@@ -27,6 +28,8 @@ public class ProtossShouldExpand {
 
         if (A.hasMinerals(777) && Count.basesWithPlanned() <= 3) return yes("LimitedBases");
 
+        if (dontExpandAgainstMutas()) return no("DontExpandAgainstMutas");
+
         if (!A.hasMinerals(384) && defendRush()) return no("DefendRush");
         if (tooManyInProgress()) return no("HasInProgress(" + basesInProduction + ")");
 
@@ -41,6 +44,13 @@ public class ProtossShouldExpand {
         // =========================================================
 
         return ProtossShouldExpandToThirdAndLaterBase.forThirdAndLaterBases();
+    }
+
+    private static boolean dontExpandAgainstMutas() {
+        if (!Enemy.zerg()) return false;
+        if (EnemyUnits.mutas() == 0) return false;
+
+        return A.minerals() >= 800 || basesInProduction * 3 >= Count.cannons();
     }
 
     // =========================================================

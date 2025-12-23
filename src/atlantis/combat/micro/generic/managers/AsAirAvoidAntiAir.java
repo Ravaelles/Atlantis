@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
+import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -59,6 +60,8 @@ public class AsAirAvoidAntiAir extends Manager {
     }
 
     private double safetyMargin() {
+        if (EnemyUnits.mutas() >= 7) return 5;
+
         if (unit.shieldWound() <= 3) return 1.0;
 
         return 1.2 + unit.woundPercent() / 14.0;
