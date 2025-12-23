@@ -36,11 +36,11 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (dragoon == null) return false;
         distToGoon = unit.distTo(dragoon);
 
-        if (unit.shields() >= 20 && unit.eval() >= 5) return false;
+        if (unit.shields() >= 30 && unit.eval() >= 5) return false;
         if (Enemy.protoss() && A.now % 30 <= 10) return false;
         if (unit.eval() >= 1.4 && unit.isAttacking() && unit.hasValidTarget() && unit.target().isABuilding()) return false;
 //        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
-        if (unit.rangedEnemiesCount(1.1) >= 1) return false;
+        if (unit.rangedEnemiesCount(1.5) >= 1) return false;
         if (isAttackingSpecialUnit()) return false;
 
         if (closeEnemiesAndRelativelyCloseGoon()) return false;
@@ -57,7 +57,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (unit.enemiesNear().empty() && unit.distToMain() <= 40) return false;
 
         double eval = unit.eval();
-        if (eval >= 1.6 && distToGoon <= 3 && unit.shields() >= 10) return false;
+        if (eval >= 1.6 && distToGoon <= 2.4 && unit.shields() >= 10) return false;
 
         if (unit.enemiesNear().combatBuildings(true).countInRadius(3, unit) > 0) return false;
 
@@ -188,7 +188,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
     private double safeDist() {
         if (Enemy.protoss()) return 2.4;
 
-        return 1.9;
+        return 1.6;
     }
 
     private boolean nearbyEnemiesAndGoodEval(double distToGoon) {

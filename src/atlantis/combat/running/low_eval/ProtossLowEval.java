@@ -3,6 +3,8 @@ package atlantis.combat.running.low_eval;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.generic.Army;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -21,7 +23,7 @@ public class ProtossLowEval extends Manager {
 //        if (!unit.isMissionAttack()) return false;
         if (A.isUms() && Count.bases() == 0) return false;
 
-        double eval = unit.eval();
+        double eval = evalWithPenalties();
 
         if (unit.isMissionAttack()) {
             return eval <= 1.16 && wantsToApply();
@@ -49,5 +51,21 @@ public class ProtossLowEval extends Manager {
         }
 
         return null;
+    }
+
+    private double evalWithPenalties() {
+        return unit.eval()
+            + evalChokePenalty();
+    }
+
+    private double evalChokePenalty() {
+        AChoke choke = unit.nearestChoke();
+        double chokeDist = unit.distTo(choke.center());
+
+        if (chokeDist >= 7) return 0;
+
+        double penaltyModifier = Army.strengthWithoutOurCB() <= 250 ? 1.2 : 1;
+
+        return (choke.width() <= 3.5 ? -1.6 : -0.7) * penaltyModifier;
     }
 }

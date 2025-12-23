@@ -53,13 +53,13 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
         if (focus == null) return null;
         if (unit.isRunningOrRetreating()) return null;
 
-        if (
-            unit.isMoving()
-                && unit.isActiveManager(this)
-                && unit.lastCommandIssuedAgo() <= (unit.enemiesNear().empty() ? 300 : 25)
-        ) {
-            return usedManager(this);
-        }
+//        if (
+//            unit.isMoving()
+//                && unit.isActiveManager(this)
+//                && unit.lastCommandIssuedAgo() <= 15
+//        ) {
+//            return usedManager(this);
+//        }
 
         if (act()) return usedManager(this);
 
