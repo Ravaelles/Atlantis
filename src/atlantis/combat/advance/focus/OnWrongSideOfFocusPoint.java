@@ -24,6 +24,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
         if (focus == null || focus.fromSide() == null || !focus.isAroundChoke() || focus.choke() == null) return false;
 
         if (unit.attackState().startingOrPending()) return false;
+        if (unit.meleeEnemiesNearCount(2) >= 2) return false;
 
         if (unit.eval() >= (unit.isMissionSparta() ? 1.2 : 3)) {
             if (Count.dragoons() >= 3 && unit.isMissionDefendOrSparta()) return false;
