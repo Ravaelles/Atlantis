@@ -28,7 +28,7 @@ public class ForceStopDancingDragoon extends Manager {
         if (unit.isAttacking()) return false;
         if (!unit.isDancingAway()) return false;
 
-        if (unit.enemiesThatCanAttackMe(5).empty()) return t("NoEnemies");
+        if (nooneToAttackMe()) return t("NooneToAttackMe");
 
         if (unit.isHoldingToShoot() && unit.lastPositionChangedAgo() <= 50) return false;
 
@@ -66,6 +66,18 @@ public class ForceStopDancingDragoon extends Manager {
         return false;
     }
 
+    private boolean nooneToAttackMe() {
+        double safetyMargin = unit.shieldWound() <= 15 ? 3 : 5;
+
+        if (Enemy.protoss()) {
+            if (unit.hp() >= 61 && unit.cooldown() <= 6 && unit.friendsNear().combatUnits().size() >= 5) {
+                safetyMargin = 0.2;
+            }
+        }
+
+        return unit.enemiesThatCanAttackMe(safetyMargin).empty();
+    }
+
     private boolean forceStop(AUnit unit) {
         if (unit.isAttacking()) return false;
 
@@ -77,10 +89,11 @@ public class ForceStopDancingDragoon extends Manager {
 
 //            if ((new AttackNearbyEnemies(unit)).forceHandled()) {
             if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) {
+                System.out.println("Attack post stop");
                 return true;
             }
             else {
-//                System.err.println(A.now() + " COULD NOT ATTACK / " + AttackNearbyEnemies._failReason);
+                System.err.println(A.now() + " COULD NOT ATTACK / " + AttackNearbyEnemies._failReason);
                 unit.stop("ForceStopDancingDragoon");
                 unit.setAction(Actions.STOP);
                 return true;

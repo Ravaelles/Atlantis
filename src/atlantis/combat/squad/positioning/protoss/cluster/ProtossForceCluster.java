@@ -24,10 +24,14 @@ public class ProtossForceCluster extends Manager {
     public boolean applies() {
         if (!We.protoss()) return false;
 
+        if (!Enemy.zerg()) return false;
+
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(185)) return false;
         if (A.minerals() >= 1000) return false;
         if (unit.cooldown() > 20) return false;
+        if (unit.cooldown() <= 8 && unit.eval() >= 1.5 && unit.meleeEnemiesNearCount(3.8) == 0) return true;
+
         if (Army.strength() >= 700 && Count.ourCombatUnits() >= 25) return false;
         if (unit.isRunningOrRetreating()) return false;
         if (unit.isDancingAway()) return false;
@@ -37,7 +41,8 @@ public class ProtossForceCluster extends Manager {
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
         if (unit.type().isTransport()) return false;
         if (unit.cooldown() <= 5 && unit.meleeEnemiesNearCount(3.7) >= 1) return false;
-        if (unit.cooldown() <= 5 && unit.enemiesICanAttack(2).empty()) return false;
+        if (unit.cooldown() <= 5 && unit.enemiesICanAttack(2).notEmpty()) return false;
+        if (unit.cooldown() <= 5 && unit.enemiesThatCanAttackMe(0.3).notEmpty()) return false;
 
         return true;
     }

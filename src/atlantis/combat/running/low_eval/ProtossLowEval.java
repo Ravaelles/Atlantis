@@ -1,10 +1,12 @@
 package atlantis.combat.running.low_eval;
 
 import atlantis.architecture.Manager;
+import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossLowEval extends Manager {
@@ -17,6 +19,7 @@ public class ProtossLowEval extends Manager {
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
 //        if (!unit.isMissionAttack()) return false;
+        if (A.isUms() && Count.bases() == 0) return false;
 
         double eval = unit.eval();
 
