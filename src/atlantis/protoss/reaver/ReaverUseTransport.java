@@ -30,9 +30,13 @@ public class ReaverUseTransport extends Manager {
                 && !unit.shotSecondsAgo(2)
         ) return false;
 
-        if (unit.isMoving() && unit.distToTargetPosition() >= 11) return true;
-
         Selection enemiesNear = unit.enemiesNear();
+
+        if (unit.isMoving() && (
+            unit.distToTargetPosition() >= 15
+                || (unit.hp() <= 160 && unit.enemiesThatCanAttackMe(2).atLeast(2))
+        )) return true;
+
         enemies = enemiesNear.combatUnits().canAttack(unit, 6);
 
         if (Enemy.protoss() && enemiesNear.scarabs().countInRadius(5 + unit.woundPercent() / 33.0, unit) > 0) return true;

@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 
+import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
@@ -79,12 +80,12 @@ public class ScoutCommander extends Commander {
 
         // Build order defines which worker should be a scout
         if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker()) {
-            if (We.zerg()) {}
+            if (We.zerg()) return;
 
             // =========================================================
             // TERRAN + PROTOSS
 
-            else if (ScoutState.scouts.size() < scoutsNeeded()) {
+            if (ScoutState.scouts.size() < scoutsNeeded()) {
 //                if (ScoutState.scoutsKilledCount >= 2) return;
 //
 //                if (ScoutState.scoutsKilledCount <= 1 && Strategy.get().isRushOrCheese()) {
@@ -102,34 +103,33 @@ public class ScoutCommander extends Commander {
     }
 
     private static boolean assignScout() {
-        for (AUnit scout : candidates()) {
+        for (AUnit worker : FreeWorkers.get().list()) {
             if (
-                scout.isBuilder()
-                    || scout.isRepairerOfAnyKind()
-                    || scout.isBuilder()
-                    || scout.lastActionLessThanAgo(90, Actions.SPECIAL)
+                worker.isBuilder()
+                    || worker.isRepairerOfAnyKind()
+                    || worker.isBuilder()
+                    || worker.lastActionLessThanAgo(90, Actions.SPECIAL)
             ) {
-                ErrorLog.printMaxOncePerMinute("Scout got mission: " + scout.manager());
+                ErrorLog.printMaxOncePerMinute("Scout got mission: " + worker.manager());
                 continue;
             }
 
-//            if (ScoutState.scouts.isEmpty()) {
-            addScout(scout);
-            return true;
-//            }
+            if (addScout(worker)) return true;
         }
 
         return false;
     }
 
-    private static void addScout(AUnit newScout) {
+    private static boolean addScout(AUnit newScout) {
         ScoutState.scouts.add(newScout);
         newScout.setScout(true);
+
+        return true;
     }
 
-    private static List<AUnit> candidates() {
-        return FreeWorkers.get().sortDataByDistanceTo(DefineNaturalBase.natural(), true);
-    }
+//    private static List<AUnit> candidates() {
+//        return FreeWorkers.get();
+//    }
 
     private void removeExcessiveScouts() {
         int scoutsNeeded = scoutsNeeded();
