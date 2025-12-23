@@ -4058,4 +4058,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     public boolean speedIsQuickerOrEqual(AUnit other) {
         return this.speed() >= other.speed();
     }
+
+    public double distToMainChokeOr(int fallback) {
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke != null) {
+            return distTo(mainChoke);
+        }
+        return fallback;
+    }
 }

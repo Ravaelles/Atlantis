@@ -8,14 +8,18 @@ import atlantis.util.We;
 
 public class ProtossAttackHoldToShoot {
     public static boolean holdInsteadAttack(AUnit unit, AUnit target) {
+        if (!We.protoss()) return false;
+        if (!unit.isRanged()) return false;
+
         if (target == null) target = unit.lastTarget();
         if (target == null || target.hp() <= 0) return f("noValidTarget");
+
+        if (unit.isMissionSparta()) return false;
+        if (unit.isMissionDefend() && unit.hpPercent(60)) return false;
 
         if (target.isRanged()) return false;
         if (unit.isHealthy()) return false;
 
-        if (!We.protoss()) return false;
-        if (!unit.isRanged()) return false;
         if (unit.cooldown() >= 11) return f("cooldownTooHigh");
         if (unit.attackState().startingOrPending()) return f("attackStatePending");
 

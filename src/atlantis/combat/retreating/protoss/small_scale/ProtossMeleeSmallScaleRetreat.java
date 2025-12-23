@@ -66,7 +66,7 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
         AUnit enemy = enemy();
         if (enemy == null) return null;
 
-        if ((new ProtossStartRetreat(unit)).startRetreatingFrom(enemy)) {
+        if ((new ProtossStartRetreat(unit, false)).startRetreatingFrom(enemy)) {
 //            unit.paintCircleFilled(14, Color.Red);
             return usedManager(this);
         }

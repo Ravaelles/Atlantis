@@ -5,6 +5,7 @@ import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.retreating.protoss.ProtossStartRetreat;
 import atlantis.combat.retreating.protoss.should.ProtossDontRetreat;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 
 public class ProtossFullRetreat extends Manager {
     public ProtossFullRetreat(AUnit unit) {
@@ -25,7 +26,7 @@ public class ProtossFullRetreat extends Manager {
 //        ProtossCohesion tooLonely = new ProtossCohesion(unit);
 //        if (tooLonely.applies() && tooLonely.forceHandle() != null) return usedManager(this);
 
-        if ((new ProtossStartRetreat(unit.squadLeaderOrThisUnit())).startRetreatingFrom(enemy())) {
+        if ((new ProtossStartRetreat(unit.squadLeaderOrThisUnit(), true)).startRetreatingFrom(enemy())) {
 //            unit.paintCircleFilled(14, Color.Red);
             if (unit.isLeader()) RetreatManager.GLOBAL_RETREAT_COUNTER++;
 //            System.err.println("            ------");

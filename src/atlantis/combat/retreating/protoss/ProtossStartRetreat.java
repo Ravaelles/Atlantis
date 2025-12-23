@@ -19,10 +19,12 @@ import bwapi.Color;
 import static atlantis.units.actions.Actions.RUN_RETREAT;
 
 public class ProtossStartRetreat extends HasUnit {
+    private final boolean allowCascade;
     private AUnit enemy;
 
-    public ProtossStartRetreat(AUnit unit) {
+    public ProtossStartRetreat(AUnit unit, boolean allowCascade) {
         super(unit);
+        this.allowCascade = allowCascade;
     }
 
     public boolean startRetreatingFrom(AUnit enemy) {
@@ -76,11 +78,11 @@ public class ProtossStartRetreat extends HasUnit {
 //            return true;
 //        }
 
-        if (unit.moveAwayFrom(runAwayFrom, 8, RUN_RETREAT, "AnyhowRetreat")) {
-            unitStartedRetreating(runAwayFrom);
-            unit.paintLine(unit.runningManager().runTo(), Color.Blue);
-            return alsoRetreatAllFriends();
-        }
+//        if (unit.moveAwayFrom(runAwayFrom, 8, RUN_RETREAT, "AnyhowRetreat")) {
+//            unitStartedRetreating(runAwayFrom);
+//            unit.paintLine(unit.runningManager().runTo(), Color.Blue);
+//            return alsoRetreatAllFriends();
+//        }
 
         unit.moveToMain(RUN_RETREAT);
         unit.setTooltip("RetreatToMain");
@@ -91,11 +93,16 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean alsoRetreatAllFriends() {
-        for (AUnit friend : unit.friendsNear().notRetreating().list()) {
-            if (friend.isRunningOrRetreating()) continue;
-            if (friend.effUndetected() || !enemy.canAttackTarget(friend)) continue;
+        if (allowCascade) return true;
 
-            (new ProtossStartRetreat(friend)).startRetreatingFrom(enemy);
+        for (AUnit friend : unit.friendsNear().notRetreating().list()) {
+            if (friend.id() < unit.id()) continue;
+            if (friend.isRunningOrRetreating() || friend.isAction(Actions.MOVE_AVOID)) continue;
+            if (friend.effUndetected() || !enemy.canAttackTarget(friend)) continue;
+            if (friend.lastActionLessThanAgo(1)) continue;
+            if (friend.lastCommandIssuedAgo() <= 1) continue;
+
+            (new ProtossStartRetreat(friend, false)).startRetreatingFrom(enemy);
         }
 
         return true;

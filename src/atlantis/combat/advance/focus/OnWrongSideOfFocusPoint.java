@@ -42,7 +42,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 //        unit.paintTextCentered(A.digit(margin) + "", Color.Green, -1.6);
 //        if (unit.isLeader()) System.out.println("@" + A.now() + ": " + margin);
 
-        int bonus = unit.isActiveManager(OnWrongSideOfFocusPoint.class) ? 2 : 0;
+        int bonus = unit.isActiveManager(OnWrongSideOfFocusPoint.class) ? 3 : 0;
         return margin < (bonus + (unit.isRanged() ? 1 : 0));
 
 //        && (unit.groundDist(focusPoint.fromSide()) - 4) < focusPoint.groundDist(focusPoint.fromSide());
