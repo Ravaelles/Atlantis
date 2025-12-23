@@ -38,7 +38,7 @@ public class DanceAwayDragoon extends DanceAway {
     @Override
     public Manager handle() {
         ForceStopDancingDragoon forceStopDancingDragoon = new ForceStopDancingDragoon(unit);
-        if (forceStopDancingDragoon.applies()) {
+        if (forceStopDancingDragoon.invokedFrom(this)) {
             return usedManager(forceStopDancingDragoon);
         }
 

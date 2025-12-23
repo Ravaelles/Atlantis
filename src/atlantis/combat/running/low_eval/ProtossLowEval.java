@@ -64,8 +64,9 @@ public class ProtossLowEval extends Manager {
 
         if (chokeDist >= 7) return 0;
 
-        double penaltyModifier = Army.strengthWithoutOurCB() <= 250 ? 1.2 : 1;
+//        double penaltyModifier = Army.strengthWithoutOurCB() <= 300 ? 1.6 : 1;
+        double penaltyModifier = 1;
 
-        return (choke.width() <= 3.5 ? -1.6 : -0.7) * penaltyModifier;
+        return (choke.width() <= 3.5 ? -1.8 : -1.2) * penaltyModifier;
     }
 }

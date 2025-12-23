@@ -18,6 +18,7 @@ public class ScoutFreeBases extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isScout() && !unit.isAir()) return false;
+        if (A.s <= 30 * 8 && unit.isMoving()) return false;
         if (!unit.isWorker() && !unit.isOldestUnitsOfItsKind()) return false;
         if (unit.enemiesThatCanAttackMe(9).notEmpty()) return false;
 

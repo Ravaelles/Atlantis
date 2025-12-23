@@ -66,6 +66,24 @@ public class ForceStopDancingDragoon extends Manager {
         return false;
     }
 
+    @Override
+    public Manager handle() {
+        if ((new AttackNearbyEnemies(unit)).invokedFrom(this)) {
+            return usedManager(this);
+        }
+
+        if (!unit.isLeader() && unit.moveToLeader(Actions.MOVE_FORMATION)) {
+            return usedManager(this);
+        }
+
+        if (unit.isMoving()) {
+            unit.stop("ForceStopDancingDragoon");
+            return usedManager(this);
+        }
+
+        return null;
+    }
+
     private boolean nooneToAttackMe() {
         double safetyMargin = unit.shieldWound() <= 15 ? 3 : 5;
 
