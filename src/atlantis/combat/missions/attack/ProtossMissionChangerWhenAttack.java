@@ -243,6 +243,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     }
 
     private boolean defendAgainstMutas() {
+        if (Count.corsairs() >= 2) return false;
+
         int mutas = EnemyUnits.count(AUnitType.Zerg_Mutalisk);
         if (mutas == 0) return false;
 

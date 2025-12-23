@@ -15,7 +15,7 @@ public class ProtossAttackHoldToShoot {
         if (target == null || target.hp() <= 0) return f("noValidTarget");
 
         if (unit.isMissionSparta()) return false;
-        if (unit.isMissionDefend() && unit.hpPercent(60)) return false;
+        if (unit.isMissionDefend() && unit.hp() >= 26) return false;
 
         if (target.isRanged()) return false;
         if (unit.isHealthy()) return false;

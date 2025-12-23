@@ -988,7 +988,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
     public boolean isRetreating() {
         return isAction(RUN_RETREAT)
-            && distTo(targetPosition()) >= 1;
+            && (isMoving() || distTo(targetPosition()) >= 2);
     }
 
     public boolean lastOrderMinFramesAgo(int minFramesAgo) {

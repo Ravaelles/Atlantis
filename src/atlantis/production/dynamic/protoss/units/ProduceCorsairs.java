@@ -57,11 +57,13 @@ public class ProduceCorsairs {
     }
 
     private static boolean produceAgainstMutalisks() {
-        if (!EnemyInfo.goesZergAirUnits()) {
+        int mutas = Count.mutas();
+
+        if (mutas == 0 && !EnemyInfo.goesZergAirUnits()) {
             return false;
         }
 
-        return buildToHave(AUnitType.Protoss_Corsair, (int) (EnemyUnits.count(AUnitType.Zerg_Mutalisk) / 2) + 1)
+        return buildToHave(AUnitType.Protoss_Corsair, (int) (mutas / 2) + 2)
             && increaseProduced();
     }
 
