@@ -14,7 +14,6 @@ public class ProtossForceMissionDefend {
     public static boolean check(int strength, int combatUnits) {
         if (Enemy.protoss()) return vsProtoss(strength, combatUnits);
         if (Enemy.zerg()) return vsZerg(strength, combatUnits);
-
         if (Enemy.terran()) return vsTerran(strength);
 
         return false;
@@ -76,7 +75,7 @@ public class ProtossForceMissionDefend {
     }
 
     private static boolean vsZerg(int strength, int combatUnits) {
-        if (combatUnits <= 12 && Army.strength() <= 260 && Count.zealots() <= 2 && Alpha.evalOr(0) <= 5) {
+        if (combatUnits <= 20 && Army.strengthWithoutOurCB() <= 300 && Count.zealots() <= 2 && Alpha.evalOr(0) <= 5) {
             return t("TooFewZealots");
         }
 

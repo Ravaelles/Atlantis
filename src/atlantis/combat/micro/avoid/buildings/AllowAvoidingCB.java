@@ -25,7 +25,8 @@ public class AllowAvoidingCB {
         }
 
         if (
-            Army.strengthWithoutOurCB() >= 350
+            Army.strengthWithoutOurCB() >= 500
+                && unit.eval() >= 7
                 && Alpha.evalOr(0) >= 7
                 && Alpha.alphaLeader() != null
                 && Alpha.alphaLeader().lastRetreatedAgo() >= 25 * 30

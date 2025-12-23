@@ -35,7 +35,8 @@ public class ProduceGateway {
         if (minerals <= 105) return false;
 
         freeGateways = Count.freeGateways();
-        if (freeGateways >= 1 && minerals <= 500) return false;
+        if (freeGateways >= 1 && minerals <= 1000) return false;
+
         if (minerals <= (50 + 150 * Count.inProduction(Protoss_Gateway))) return false;
         if (minerals <= 334 && CountInQueue.count(Protoss_Templar_Archives, 3) > 0) return false;
 

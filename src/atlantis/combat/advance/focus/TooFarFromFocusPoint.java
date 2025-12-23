@@ -51,7 +51,7 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
 
     protected Manager handle() {
         if (focus == null) return null;
-        if (unit.isRunningOrRetreating()) return null;
+        if (unit.isMoving() && unit.isRunningOrRetreating()) return null;
 
 //        if (
 //            unit.isMoving()
