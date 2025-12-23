@@ -22,14 +22,14 @@ public class ShouldRunTowardsBase {
         if (main == null) return false;
 
         double distToMain = unit.groundDistToMain();
-        if (distToMain <= 18) return false;
+        if (distToMain <= 13) return false;
+        if (distToMain <= 50) return true;
+
         if (runAwayFrom.groundDist(main) < distToMain) return false;
 
         if (Actions.MOVE_DANCE_AWAY.equals(action)) return true;
 
         if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
-
-        if (distToMain <= 30) return true;
 
         if (Enemy.zerg() && distToMain >= 30 && unit.hp() >= 42) return true;
 

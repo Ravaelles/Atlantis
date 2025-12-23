@@ -157,7 +157,7 @@ public class ProduceZealot {
             && Count.freeGateways() >= 1;
     }
 
-    private static boolean produceZealot(String reason) {
+    public static boolean produceZealot(String reason) {
         AUnit gateway = GatewayClosestToEnemy.get();
         if (gateway == null) return false;
 
