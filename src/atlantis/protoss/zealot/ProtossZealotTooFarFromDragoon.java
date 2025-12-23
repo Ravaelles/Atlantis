@@ -41,9 +41,9 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (unit.eval() >= 1.4 && unit.isAttacking() && unit.hasValidTarget() && unit.target().isABuilding()) return false;
 //        if (unit.hp() >= 40 && unit.meleeEnemiesNearCount(2) >= 1) return false;
         if (unit.rangedEnemiesCount(1.1) >= 1) return false;
+        if (isAttackingSpecialUnit()) return false;
 
         if (closeEnemiesAndRelativelyCloseGoon()) return false;
-        if (isAttackingSpecialUnit()) return false;
 
         // === Force apply =========================================
 

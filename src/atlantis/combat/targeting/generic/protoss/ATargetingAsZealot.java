@@ -4,6 +4,8 @@ import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 
+import static atlantis.Atlantis.debug;
+
 public class ATargetingAsZealot {
     public static AUnit target(AUnit unit, Selection enemyUnits) {
         if (!unit.isZealot()) return null;
@@ -20,6 +22,7 @@ public class ATargetingAsZealot {
 
         if (target != null) {
 //            System.out.println("--- REGULAR " + target);
+            debug(unit, "ImpZealot_A = " + target);
             return target;
         }
 
@@ -29,6 +32,7 @@ public class ATargetingAsZealot {
 
         if (target != null) {
 //            System.out.println("--- REGULAR " + target);
+            debug(unit, "ImpZealot_B = " + target);
             return target;
         }
 
@@ -36,6 +40,7 @@ public class ATargetingAsZealot {
         if (enemyClosestToLeader != null) {
             if (unit.distTo(enemyClosestToLeader) <= baseRange) {
 //                System.out.println("--- LEADER CLOSEST " + enemyClosestToLeader);
+                debug(unit, "ImpZealot_C = " + enemyClosestToLeader);
                 return enemyClosestToLeader;
             }
         }
@@ -44,6 +49,11 @@ public class ATargetingAsZealot {
         }
 
 //        System.out.println("@@@@@@@@@@@@@@@@ LEADER CLOSEST " + enemyClosestToLeader);
-        return enemyClosestToLeader;
+        if (enemyClosestToLeader != null) {
+            debug(unit, "ImpZealot_D = " + enemyClosestToLeader);
+            return enemyClosestToLeader;
+        }
+
+        return null;
     }
 }

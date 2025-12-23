@@ -16,10 +16,12 @@ public class ZealotAvoidLingsWhenWounded extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss()
-            && Enemy.zerg()
+        if (!We.protoss()) return false;
+
+        return Enemy.zerg()
 //            && Count.ourCombatUnits() <= 10
             && unit.isMelee()
+            && !unit.isMissionSparta()
 //            && unit.cooldown() >= 4
             && (Enemy.zerg() || Enemy.protoss())
             && unit.shieldWound() >= 14

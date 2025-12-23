@@ -28,15 +28,17 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
     public boolean shouldChangeMissionToDefend() {
+        if (ProtossForceMissionDefend.check(Army.strengthWithoutCB(), Count.ourCombatUnits())) {
+            return forceMissionSpartaOrDefend(reason);
+        }
+
+        // =========================================================
+
         if (MissionChanger.lastMissionWasLessThanSecondsAgo(Missions.ATTACK, 4)) {
             return false;
         }
 
         // =========================================================
-
-        if (ProtossForceMissionDefend.check(Army.strengthWithoutCB(), Count.ourCombatUnits())) {
-            return forceMissionSpartaOrDefend(reason);
-        }
 
         if (ProtossShouldForceMissionAttack.shouldForce()) return false;
 

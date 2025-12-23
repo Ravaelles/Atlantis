@@ -848,6 +848,12 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection onlyCompletedOrAlmost() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isCompletedOrAlmost()), "onlyCompletedOrAlmost"
+        );
+    }
+
     public Selection notCompleted() {
         return cloneByRemovingIf(
             (unit -> unit.isCompleted()), "notCompleted"

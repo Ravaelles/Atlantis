@@ -24,6 +24,7 @@ public class AttackNearbyEnemiesApplies extends HasUnit {
         if (unit.enemiesNear().empty()) return false;
         if (!unit.hasAnyWeapon()) return false;
         if (unit.isSpecialMission() && unit.isMelee()) return false;
+        if (unit.isRetreating() && unit.eval() <= 5) return false;
 
         if (PreventAttacksInMissionDefend.prevent(unit)) return false;
         if (PreventAttacksDuringRetreat.prevent(unit)) return false;

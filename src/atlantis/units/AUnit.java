@@ -1238,6 +1238,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         return u.isCompleted();
     }
 
+    public boolean isCompletedOrAlmost() {
+        return isCompleted() || getRemainingBuildTimeInSeconds() <= 3;
+    }
+
 //    public boolean exists() {
 //        return true;
 ////        return u() != null ? u.exists() : true;

@@ -87,8 +87,7 @@ public class ATargetingImportant extends ATargeting {
 
             target = ATargetingAsZealot.target(unit, enemyUnits);
             if (target != null) {
-//                System.out.println("ImpZealot = " + target + " / " + target.hp());
-               debug(unit, "ImpZealot = " + target);
+//                debug(unit, "ImpZealot = " + target);
                 return target;
             }
         }

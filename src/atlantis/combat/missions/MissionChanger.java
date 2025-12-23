@@ -242,6 +242,6 @@ public abstract class MissionChanger {
     public static boolean lastMissionWasLessThanSecondsAgo(Mission mission, int s) {
         int frame = lastMissionAt.getOrDefault(mission.name(), -877);
 
-        return (A.secondsAgo(frame) + s * 30) <= A.now;
+        return A.secondsAgo(frame) <= s;
     }
 }

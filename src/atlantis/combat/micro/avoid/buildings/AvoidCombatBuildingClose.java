@@ -390,6 +390,7 @@ public class AvoidCombatBuildingClose extends Manager {
             .combatBuildingsAnti(unit)
             .inRadius(radius, unit)
             .notUnpowered()
+            .canAttack(unit, 5)
             .nearestTo(unit);
     }
 }

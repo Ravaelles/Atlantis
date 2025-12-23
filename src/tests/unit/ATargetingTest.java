@@ -606,4 +606,23 @@ public class ATargetingTest extends WorldStubForTests {
             }, () -> fakeOurs(our), () -> enemies
         );
     }
+
+    @Test
+    public void targetsCreepOverBase() {
+        FakeUnit our = fake(AUnitType.Protoss_Zealot, 15);
+        FakeUnit drone, creep;
+
+        FakeUnit[] enemies = fakeEnemies(
+            drone = fake(AUnitType.Zerg_Drone, 10),
+            fake(AUnitType.Zerg_Larva, 11),
+            creep = fake(AUnitType.Zerg_Creep_Colony, 12).setCompleted(false).setHp(66),
+            fake(AUnitType.Zerg_Hatchery, 13)
+        );
+
+        createWorld(1,
+            () -> {
+                assertEquals(creep, ATargeting.defineBestEnemyToAttack(our));
+            }, () -> fakeOurs(our), () -> enemies
+        );
+    }
 }

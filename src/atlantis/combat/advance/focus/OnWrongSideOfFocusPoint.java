@@ -23,10 +23,18 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     public boolean applies() {
         if (focus == null || focus.fromSide() == null || !focus.isAroundChoke() || focus.choke() == null) return false;
 
+        if (unit.attackState().startingOrPending()) return false;
+
         if (unit.eval() >= (unit.isMissionSparta() ? 1.2 : 3)) {
             if (Count.dragoons() >= 3 && unit.isMissionDefendOrSparta()) return false;
             if (unit.isDragoon() && unit.hp() >= 100) return false;
         }
+
+        if (
+            unit.cooldown() == 0
+                && unit.lastUnderAttackLessThanAgo(10)
+                && unit.distToFocusPoint() <= 2
+        ) return false;
 
         AChoke choke = focus.choke();
         if (choke == null) return false;
