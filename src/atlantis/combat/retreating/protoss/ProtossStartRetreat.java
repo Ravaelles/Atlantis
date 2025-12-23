@@ -297,6 +297,7 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean unitStartedRetreating(HasPosition runAwayFrom) {
+        unit.setAction(RUN_RETREAT);
         unit.addLog("RetreatedFrom" + runAwayFrom);
         return true;
 

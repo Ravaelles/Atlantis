@@ -26,12 +26,12 @@ public class ProtossForceCluster extends Manager {
 
         if (unit.isAir()) return false;
         if (Enemy.zerg() && unit.isMissionDefendOrSparta()) return false;
+        if (unit.cooldown() > 20) return false;
+        if (unit.isRunningOrRetreating()) return false;
 
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(196) && unit.eval() >= 1.5) return false;
         if (A.minerals() >= 1000) return false;
-        if (unit.cooldown() > 20) return false;
-        if (unit.isRunningOrRetreating()) return false;
         if (unit.lastRetreatedAgo() <= 30) return false;
 
         if (unit.cooldown() <= 8 && unit.eval() >= 1.5 && unit.meleeEnemiesNearCount(3.8) == 0) return true;
