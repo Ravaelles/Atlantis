@@ -178,10 +178,11 @@ public class ProtossStartRetreat extends HasUnit {
 
         if (Select.ourBases().empty()) return false;
         double groundDistToMain = unit.groundDistToMain();
-        if (groundDistToMain <= 7) return false;
-        if (unit.meleeEnemiesNearCount(3) >= 4) return false;
-
+        if (groundDistToMain <= 12) return false;
         if (groundDistToMain <= 40) return true;
+
+        if (unit.meleeEnemiesNearCount(2.5) >= 3) return false;
+
         if (Enemy.zerg() && Count.ourCombatUnits() <= 15) return true;
         if (unit.enemiesNear().combatBuildingsAnti(unit).atLeast(1)) return true;
 

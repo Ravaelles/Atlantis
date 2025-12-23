@@ -82,23 +82,23 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
     public Manager handle() {
         if (unit.distToCannon() <= 1.2) return null;
 
-        if (distToMain <= 50 && unit.isMoving() && unit.enemiesThatCanAttackMe(6).empty()) {
-            unit.stop("StopForceRetreatDuringDefend");
-            unit.setAction(Actions.RUN_RETREAT);
-            return usedManager(this);
-        }
+//        if (distToMain <= 50 && unit.isMoving() && unit.enemiesThatCanAttackMe(6).empty()) {
+//            unit.stop("StopForceRetreatDuringDefend");
+//            unit.setAction(Actions.RUN_RETREAT);
+//            return usedManager(this);
+//        }
 
         if (distToMain >= 40 && unit.moveToMain(Actions.RUN_RETREAT)) {
             return usedManager(this);
         }
 
-        if (focus != null && focus.distTo(unit) >= 10 && unit.move(focus, Actions.RUN_RETREAT)) {
+        if (focus != null && focus.distTo(unit) >= 5 && unit.move(focus, Actions.RUN_RETREAT)) {
             return usedManager(this, "RetreatToFocusPoint");
         }
 
-        if (unit.distToLeader() >= 8 && unit.eval() >= 3) {
-            if (unit.moveToLeader(Actions.RUN_RETREAT, "RetreatToLeader")) return usedManager(this);
-        }
+//        if (unit.distToLeader() >= 8 && unit.eval() >= 3) {
+//            if (unit.moveToLeader(Actions.RUN_RETREAT, "RetreatToLeader")) return usedManager(this);
+//        }
 
         return null;
     }

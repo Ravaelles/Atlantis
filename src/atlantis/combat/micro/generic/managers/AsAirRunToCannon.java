@@ -36,9 +36,9 @@ public class AsAirRunToCannon extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.distTo(cannon) <= 3) {
+        if (unit.distTo(cannon) <= 4) {
             AUnit enemy = unit.enemiesThatCanAttackMe(10).nearestTo(unit);
-            if (unit.moveAwayFrom(enemy, 3, Actions.MOVE_SAFETY)) return usedManager(this);
+            if (unit.moveAwayFrom(enemy, 6, Actions.MOVE_SAFETY)) return usedManager(this);
         }
 
         if (unit.enemiesThatCanAttackMe(5 + unit.woundPercent() / 40.0).empty()) {
