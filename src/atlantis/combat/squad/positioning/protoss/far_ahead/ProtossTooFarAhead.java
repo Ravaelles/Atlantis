@@ -15,7 +15,7 @@ public class ProtossTooFarAhead extends Manager {
     public boolean applies() {
         if (unit.isMissionSparta()) return false;
         if (Army.strength() >= 600) return false;
-        if (Enemy.zerg() && unit.isMissionDefendOrSparta() && !unit.shotSecondsAgo(1.5)) return false;
+        if (Enemy.zerg() && unit.isMissionDefendOrSparta()) return false;
         if (unit.isRunningOrRetreating()) return false;
         if (unit.cooldown() <= 8) return false;
 
@@ -38,7 +38,9 @@ public class ProtossTooFarAhead extends Manager {
         AUnit enemy = unit.nearestEnemy();
         if (enemy == null || !enemy.canAttackTarget(unit)) return null;
 
-        if (unit.moveToMain(Actions.MOVE_FORMATION)) {
+        boolean distToMainOk = unit.distToMain() >= 16;
+
+        if (distToMainOk && unit.moveToMain(Actions.MOVE_FORMATION)) {
             return usedManager(this);
         }
 
@@ -46,7 +48,7 @@ public class ProtossTooFarAhead extends Manager {
             return usedManager(this);
         }
 
-        if (unit.moveToMain(Actions.MOVE_FORMATION)) {
+        if (unit.runningManager().runFrom(enemy, 6, Actions.RUN_ENEMY, unit.hp() <= 65)) {
             return usedManager(this);
         }
 
