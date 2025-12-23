@@ -2,6 +2,7 @@ package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.MissionManager;
+import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -22,7 +23,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     public boolean applies() {
         if (focus == null || focus.fromSide() == null || !focus.isAroundChoke() || focus.choke() == null) return false;
 
-        if (unit.eval() >= 3) {
+        if (unit.eval() >= (unit.isMissionSparta() ? 1.2 : 3)) {
             if (Count.dragoons() >= 3 && unit.isMissionDefendOrSparta()) return false;
             if (unit.isDragoon() && unit.hp() >= 100) return false;
         }
@@ -42,7 +43,7 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 //        if (unit.isLeader()) System.out.println("@" + A.now() + ": " + margin);
 
         int bonus = unit.isActiveManager(OnWrongSideOfFocusPoint.class) ? 2 : 0;
-        return margin < (0 + bonus);
+        return margin < (bonus + (unit.isRanged() ? 1 : 0));
 
 //        && (unit.groundDist(focusPoint.fromSide()) - 4) < focusPoint.groundDist(focusPoint.fromSide());
 //        return focusPoint.isAroundChoke()
@@ -76,6 +77,11 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
      * Unit is too far from its focus point and/or is on the wrong side of it (most evident on ramps).
      */
     private boolean withdrawFromWrongSideOfFocus() {
+        if (margin <= 4 && unit.isMoving() && A.everyNthGameFrame(9)) {
+            unit.stop("WrongSideStop");
+            return true;
+        }
+
         APosition withdrawTo = focus.fromSide().position();
         if (!focus.isAroundChoke() || withdrawTo == null) return false;
 
@@ -113,16 +119,16 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     private boolean makeFriendsHelpWithdraw(AUnit unit, AFocusPoint focus) {
         HasPosition withdrawFriendTo = focus.fromSide();
         if (withdrawFriendTo == null) return false;
+        if (unit.enemiesNear().combatUnits().inRadius(4, unit).notEmpty()) return false;
 
-        if (unit.enemiesNear().combatUnits().inRadius(4, unit).empty()) {
-            for (AUnit friend : Select.our().inRadius(5, focus).combatUnits().list()) {
+        for (AUnit friend : Select.our().combatUnits().groundUnits().inRadius(2, focus).list()) {
 //                APosition withdrawFriendTo = friend.translateTilesTowards(2, focusPoint.fromSide());
-                if (friend.move(withdrawFriendTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
-                    friend.setTooltip("HelpWithdraw", true);
-                }
-                return true;
+            if (friend.move(withdrawFriendTo, Actions.MOVE_FOCUS, "HelpWithdraw", true)) {
+                friend.setTooltip("HelpWithdraw", true);
             }
+            return true;
         }
+
         return false;
     }
 }

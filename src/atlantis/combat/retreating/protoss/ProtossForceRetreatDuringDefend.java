@@ -82,6 +82,11 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
     public Manager handle() {
         if (unit.distToCannon() <= 1.2) return null;
 
+        if (distToMain <= 50 && unit.isMoving() && unit.enemiesThatCanAttackMe(6).empty()) {
+            unit.stop("StopForceRetreatDuringDefend");
+            return usedManager(this);
+        }
+
         if (distToMain >= 40 && unit.moveToMain(Actions.RUN_RETREAT)) {
             return usedManager(this);
         }

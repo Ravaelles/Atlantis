@@ -29,7 +29,7 @@ public class ChokeBlockerMoveToBlock extends Manager {
     }
 
     private boolean unitsTryingToGetBackWithWrongSideOfChoke() {
-        for (AUnit friend : unit.friendsNear().groundUnits().inRadius(7, unit).list()) {
+        for (AUnit friend : unit.friendsNear().groundUnits().ranged().inRadius(7, unit).list()) {
             if (friend.isMoving() && friend.isActiveManager(OnWrongSideOfFocusPoint.class)) {
                 if (unit.moveToMain(Actions.MOVE_FORMATION)) {
                     unit.setTooltip("HelpUnblock");

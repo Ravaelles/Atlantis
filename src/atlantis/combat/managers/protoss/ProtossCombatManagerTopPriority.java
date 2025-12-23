@@ -16,6 +16,7 @@ import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.protoss.ProtossForceRetreatDuringDefend;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
+import atlantis.combat.running.low_eval.ProtossLowEval;
 import atlantis.combat.running.stop_running.protoss.ProtossShouldStopRunning;
 import atlantis.combat.squad.positioning.protoss.cluster.ProtossForceCluster;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
@@ -77,6 +78,7 @@ public class ProtossCombatManagerTopPriority extends Manager {
 
             AvoidEnemies.class,
 
+            ProtossLowEval.class,
             ProtossFormation.class,
 
             ContinueAttack.class,
