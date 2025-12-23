@@ -38,6 +38,10 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     protected Manager handle() {
         if (focus == null) return null;
 
+//        if (unit.isRanged()) {
+//            System.err.println(A.minSec() + " - " + unit.typeWithUnitId() + " - too close (" + unit.nearestChokeDist());
+//        }
+
         if (act()) return usedManager(this);
 
         return null;
@@ -64,42 +68,45 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
             }
         }
 
-        if (margin >= -0.3 && goAway()) return true;
+        if (margin >= -0.3 && goAway(0.06)) return true;
 //        if (margin >= -2 && goAwayFromCenter()) return true;
+        if (margin >= 2 && goAway(0.06)) return true;
 
-        if (goToMain()) return true;
+        if (margin <= 5 && goToMain()) return true;
+
+        if (goAway(0.5)) return true;
 
         return false;
     }
 
-    private boolean goAway() {
+    private boolean goAway(double moveAway) {
 //        if (A.fr % 50 <= 15) return unit.moveToMain(Actions.MOVE_FOCUS);
 
-        return unit.moveAwayFrom(focus, 0.06, Actions.MOVE_FOCUS, "TooCloseF");
+        return unit.moveAwayFrom(focus, moveAway, Actions.MOVE_FOCUS, "TooCloseF");
     }
 
-    private boolean asDragoon() {
-        if (!unit.isDragoon()) return false;
-
-//        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
-//        if (unit.distToFocusPoint() <= 2.6) {
-
-        if (Missions.isGlobalMissionDefendOrSparta()) {
-            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.MOVE_FORMATION, "DragoonTooCloseA");
-//            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
-            else goAway();
-        }
+//    private boolean asDragoon() {
+//        if (!unit.isDragoon()) return false;
+//
+////        System.err.println("TOO CLOSE = " + unit.distToFocusPoint() + " / " + unit);
+////        if (unit.distToFocusPoint() <= 2.6) {
+//
+//        if (Missions.isGlobalMissionDefendOrSparta()) {
+//            if (A.everyNthGameFrame(10)) unit.holdPosition(Actions.MOVE_FORMATION, "DragoonTooCloseA");
+////            else unit.moveToMain(Actions.MOVE_FOCUS, "DragoonTooCloseB");
+//            else goAway(0.06);
 //        }
-
-        return false;
-
-//        if (unit.hp() >= 30) {
-//            unit.holdPosition("DragoonHold");
-//            return true;
-//        }
+////        }
 //
 //        return false;
-    }
+//
+////        if (unit.hp() >= 30) {
+////            unit.holdPosition("DragoonHold");
+////            return true;
+////        }
+////
+////        return false;
+//    }
 
     private boolean goAwayFromCenter() {
         AChoke choke = focus.choke();
@@ -117,12 +124,13 @@ public class TooCloseToFocusPoint extends MoveToFocusPoint {
     }
 
     private boolean goToMain() {
-//        if (unit.isDragoon()) {
-//            if (A.everyNthGameFrame(3)) {
-//                unit.holdPosition("SlowlyTooClose");
-//            }
-//            return false;
-//        }
+        if (unit.isMoving()) {
+//            System.out.println("TooCloseToFocusPoint - Dragoon stop " + A.now());
+            if (A.everyNthGameFrame(10)) {
+                unit.stop("SlowlyTooClose");
+            }
+            return false;
+        }
 
         HasPosition goTo = fromSide != null ? fromSide : Select.main();
 

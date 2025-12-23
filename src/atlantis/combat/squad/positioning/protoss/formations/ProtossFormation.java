@@ -2,8 +2,10 @@ package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.protoss.far_ahead.ProtossTooFarAhead;
+import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossFormation extends Manager {
@@ -13,8 +15,10 @@ public class ProtossFormation extends Manager {
 
     @Override
     public boolean applies() {
-        return We.protoss()
-            && unit.isCombatUnit()
+        if (!We.protoss()) return false;
+        if (Army.strength() >= 800 && Count.ourCombatUnits() >= 25) return false;
+
+        return unit.isCombatUnit()
             && unit.isAlphaSquad()
             && !unit.isRetreating()
             && !unit.leaderIsRetreating()

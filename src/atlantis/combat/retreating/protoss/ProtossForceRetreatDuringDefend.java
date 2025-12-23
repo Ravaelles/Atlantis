@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.MissionManager;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
@@ -9,6 +10,7 @@ import atlantis.information.enemy.EnemyArmyCenter;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class ProtossForceRetreatDuringDefend extends MissionManager {
     private double groundDistToMain;
@@ -25,8 +27,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (!unit.isCombatUnit()) return false;
 //        if (!unit.squadIsAlpha()) return false;
 
-        double distToFocusPoint = unit.distToFocusPoint();
-        if (distToFocusPoint <= 10) return false;
+        if (distToFocusPointIsProper()) return false;
 
         distToMain = unit.groundDistToMain();
         if (distToMain <= 25) return false;
@@ -36,7 +37,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
 
         if (distToMain >= 60) return true;
         if (distToMain >= 50 && unit.eval() <= 10) return true;
-        if (distToFocusPoint >= 10) return true;
+//        if (distToFocusPoint >= 10) return true;
 
         if (unit.hp() <= 40 && unit.isRunning() && unit.distToTargetMoreThan(2)) return false;
 //        if (unit.leaderEval() >= 4 && unit.eval() >= 2.5) return false;
@@ -53,6 +54,18 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (preventIfEnemyArmyIsMuchCloserToOurMain()) return false;
 
         return true;
+    }
+
+    private boolean distToFocusPointIsProper() {
+        AFocusPoint focus = unit.focusPoint();
+        if (focus == null) return false;
+
+//        AUnit main = Select.mainOrAnyBuilding();
+
+        double unitToMain = unit.groundDistToMain();
+        double focusToMain = focus.groundDistToMain();
+
+        return unitToMain - 6 <= focusToMain;
     }
 
     private boolean preventIfEnemyArmyIsMuchCloserToOurMain() {

@@ -46,6 +46,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
         if (unit.lastAttackFrameMoreThanAgo(A.whenEnemyZerg(90, 60))) return f("_A");
         if (unit.isRunning()) return f("_R1");
         if (unit.isRetreating()) return f("_R2");
+        if (unit.isMissionSparta() && (unit.cooldown() <= 15 || unit.shieldWound() <= 17)) return f("_GSparta");
         if (unit.isActiveManager(ForceStopDancingDragoon.class)) return f("_FStop");
         if (unit.lastTarget() != null && unit.lastTarget().isCombatBuilding()) return f("_B5");
 

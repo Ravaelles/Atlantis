@@ -255,7 +255,8 @@ public class ProduceGateway {
     }
 
     private static boolean produceGateway() {
-        if (CountInQueue.countNotFinished(type()) >= (1 + A.minerals() / 300)) return false;
+        if (freeGateways > 0 && !A.hasMinerals(500)) return false;
+        if (CountInQueue.countNotFinished(type()) >= (1 + A.minerals() / 330)) return false;
 
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
 

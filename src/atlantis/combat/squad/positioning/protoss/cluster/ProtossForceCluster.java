@@ -28,11 +28,11 @@ public class ProtossForceCluster extends Manager {
         if (A.supplyUsed(185)) return false;
         if (A.minerals() >= 1000) return false;
         if (unit.cooldown() > 20) return false;
+        if (Army.strength() >= 700 && Count.ourCombatUnits() >= 25) return false;
         if (unit.isRunningOrRetreating()) return false;
         if (unit.isDancingAway()) return false;
-        if (unit.eval() >= 10) return false;
+        if (Count.ourCombatUnits() >= 25 && unit.eval() >= 10) return false;
         if (unit.isRanged() && unit.hp() >= 80 && unit.eval() >= 2) return false;
-        if (Army.strength() >= 500 && Count.ourCombatUnits() >= 25) return false;
         if (OurBuildingUnderAttack.notNull()) return false;
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
         if (unit.type().isTransport()) return false;

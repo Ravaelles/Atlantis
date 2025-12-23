@@ -495,12 +495,13 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 //            point = point.translateTilesTowards(1.3, Select.main());
 //        }
 
-        double translateToMain = Count.dragoons() >= 2 ? 8 : 0.5;
+        double translateToMain = (mainChoke.width() >= 4 && Count.dragoons() >= 2) ? 2 : 0.5;
+        AUnit main = Select.mainOrAnyBuilding();
         return new AFocusPoint(
-            mainChoke.translateTilesTowards(translateToMain, Select.mainOrAnyBuilding()),
+            mainChoke.translateTilesTowards(translateToMain, main),
 //            point,
 //            mainChoke,
-            Select.main(),
+            main,
             "MainChoke"
         ).forceAroundChoke(mainChoke);
     }

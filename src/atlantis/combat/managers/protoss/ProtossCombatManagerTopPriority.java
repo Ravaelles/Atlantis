@@ -73,18 +73,20 @@ public class ProtossCombatManagerTopPriority extends Manager {
 
             ProtossAttackTanksInRange.class,
 
-            // === Very important actions ====================================
+            // === Important actions ====================================
+
+            AvoidEnemies.class,
 
             ProtossFormation.class,
 
             ContinueAttack.class,
 
-            ProtossForceCluster.class,
-
             DragoonAttackVultureInRange.class,
             ProtossAttackTanksNearby.class,
 
             ProtossEarlyGame.class,
+
+            ProtossForceCluster.class,
 
             FixInvalidTargets.class,
             FixIdleUnits.class,
@@ -98,8 +100,6 @@ public class ProtossCombatManagerTopPriority extends Manager {
 //            ContinueShooting.class,
 
             // === Important actions ========================================
-
-            AvoidEnemies.class,
 
             DanceAfterShoot.class,
 

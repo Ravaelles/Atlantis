@@ -8,7 +8,7 @@ import atlantis.units.AUnitType;
 public class TooCloseToUnwalkable {
     public static boolean isTooCloseToUnwalkable(AUnitType building, APosition position) {
         if (building.isBase()) return false;
-        if (!building.producesLandUnits()) return false;
+        if (!building.isPylon() && !building.producesLandUnits()) return false;
 
         if (isTooClose(building, position)) return failed("Too close to unwalkable (A)");
         if (!position.isWalkable(5)) return failed("Too close to unwalkable (B)");

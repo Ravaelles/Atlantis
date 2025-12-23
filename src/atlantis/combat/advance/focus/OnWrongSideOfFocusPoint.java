@@ -21,7 +21,11 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
     @Override
     public boolean applies() {
         if (focus == null || focus.fromSide() == null || !focus.isAroundChoke() || focus.choke() == null) return false;
-        if (Count.dragoons() >= 3 && unit.isMissionDefendOrSparta()) return false;
+
+        if (unit.eval() >= 3) {
+            if (Count.dragoons() >= 3 && unit.isMissionDefendOrSparta()) return false;
+            if (unit.isDragoon() && unit.hp() >= 100) return false;
+        }
 
         AChoke choke = focus.choke();
         if (choke == null) return false;
@@ -37,7 +41,8 @@ public class OnWrongSideOfFocusPoint extends MissionManager {
 //        unit.paintTextCentered(A.digit(margin) + "", Color.Green, -1.6);
 //        if (unit.isLeader()) System.out.println("@" + A.now() + ": " + margin);
 
-        return margin < 0;
+        int bonus = unit.isActiveManager(OnWrongSideOfFocusPoint.class) ? 2 : 0;
+        return margin < (0 + bonus);
 
 //        && (unit.groundDist(focusPoint.fromSide()) - 4) < focusPoint.groundDist(focusPoint.fromSide());
 //        return focusPoint.isAroundChoke()

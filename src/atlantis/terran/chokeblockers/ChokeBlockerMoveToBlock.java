@@ -1,9 +1,11 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.We;
 import bwapi.Color;
 
 public class ChokeBlockerMoveToBlock extends Manager {
@@ -19,8 +21,30 @@ public class ChokeBlockerMoveToBlock extends Manager {
         if (blockChokePosition == null) return false;
         if (unit.isZealot() && unit.enemiesNearInRadius(1.15) > 0) return false;
 
+        if (anyDragoonUnderAttack()) return false;
+        if (unitsTryingToGetBackWithWrongSideOfChoke()) return false;
+
         return unit.hp() >= 25
             || unit.enemiesNear().inRadius(7, unit).groundUnits().havingAntiGroundWeapon().empty();
+    }
+
+    private boolean unitsTryingToGetBackWithWrongSideOfChoke() {
+        for (AUnit friend : unit.friendsNear().groundUnits().inRadius(7, unit).list()) {
+            if (friend.isMoving() && friend.isActiveManager(OnWrongSideOfFocusPoint.class)) {
+                if (unit.moveToMain(Actions.MOVE_FORMATION)) {
+                    unit.setTooltip("HelpUnblock");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean anyDragoonUnderAttack() {
+        if (!We.protoss()) return false;
+
+        return unit.squad().selection().dragoons().underAttackLessThanAgo(40).notEmpty();
     }
 
     public Manager handle() {

@@ -77,7 +77,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
         if (forceDefendVsProtossHavingDragoons()) {
             if (DEBUG) reason = "EnemyHasGoonz";
-            return true;
+            return forceMissionSpartaOrDefend(reason);
         }
 
         if (earlyExpansionVsProtoss()) {
@@ -174,7 +174,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     private boolean forceDefendVsProtossHavingDragoons() {
         if (!Enemy.protoss()) return false;
-        if (Count.ourCombatUnits() >= 25) return false;
+        if (Count.ourCombatUnits() >= 21) return false;
         if (Count.dragoons() >= 6) return false;
 
         return EnemyInfo.hasRanged() && Army.strengthWithoutCB() <= 300;
@@ -198,7 +198,7 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
     private boolean earlyGameWeakVsProtoss() {
         if (!Enemy.protoss()) return false;
         int ourCU = Count.ourCombatUnits();
-        if (ourCU >= 13) return false;
+        if (ourCU >= 14) return false;
 
         int enemyGoons = EnemyUnits.dragoons();
         if (enemyGoons == 0 && !EnemyInfo.hasRanged()) return false;

@@ -1,9 +1,11 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
+import atlantis.units.select.Selection;
 import atlantis.util.We;
 
 public class OptimalDistanceToFocusPoint {
@@ -21,6 +23,12 @@ public class OptimalDistanceToFocusPoint {
             return focusPoint.idealDistanceFromFocus() + (unit.isMelee() ? 2 : 0);
         }
 
+        if (We.protoss()) {
+            if (unit.isRanged() && unit.friendsNear().melee().countInRadius(1.8, unit) == 0) {
+                return 2;
+            }
+        }
+
         double totalBonus = totalBonus(unit);
 
         if (Alpha.count() <= 8 && focusPoint.isMainChoke()) return 0.5 + totalBonus;
@@ -33,7 +41,7 @@ public class OptimalDistanceToFocusPoint {
 
     private static double totalBonus(AUnit unit) {
         return
-            (unit.isMissionDefendOrSparta() && unit.isRanged() ? 1.1 : 0) // Ranged bonus
+            (unit.isMissionDefendOrSparta() && unit.isRanged() ? 0.6 : 0) // Ranged bonus
             + meleeVsTerranBonus(unit)
             + letWorkersComeThroughBonus(unit);
     }
@@ -50,9 +58,16 @@ public class OptimalDistanceToFocusPoint {
 //            return 0;
 //        }
 
-        return unit.enemiesNear().combatUnits().countInRadius(10, unit) == 0
-            && Select.ourWorkers().inRadius(7, unit).atLeast(1)
-            ? 3 : 0;
+        if (unit.enemiesNear().combatUnits().countInRadius(13, unit) > 0) return 0;
+
+        Selection workers = Select.ourWorkers();
+        if (A.s % 7 <= 2) {
+            workers = workers.notScout();
+        }
+
+        if (workers.inRadius(7, unit).empty()) return 0;
+
+        return 3;
     }
 
     // =========================================================

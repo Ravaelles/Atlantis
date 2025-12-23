@@ -224,6 +224,21 @@ public class Selection extends BaseSelection {
         );
     }
 
+    public Selection visibleOnMapOrCombatBuilding() {
+        return cloneByRemovingIf(
+            (unit -> !unit.isVisibleUnitOnMap() && !unit.isCombatBuilding()),
+            "visibleOnMapOrCombatBuilding"
+        );
+    }
+
+    public Selection underAttackLessThanAgo(int framesAgo) {
+        return cloneByRemovingIf(
+            (unit -> unit.lastUnderAttackAgo() > framesAgo
+            ),
+            "underAttackLessThanAgo:" + framesAgo
+        );
+    }
+
     public Selection lastSeenRecently() {
         return cloneByRemovingIf(
             (unit -> !unit.isVisibleUnitOnMap()

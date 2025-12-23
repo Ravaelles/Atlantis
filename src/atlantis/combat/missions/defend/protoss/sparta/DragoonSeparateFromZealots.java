@@ -23,11 +23,9 @@ public class DragoonSeparateFromZealots extends Manager {
 
     @Override
     public Manager handle() {
-        if (!unit.moveAwayFrom(zealot, 1, Actions.MOVE_SPACE, "SpaceForZealotA")) {
-            if (unit.moveAwayFrom(zealot, 3, Actions.MOVE_SPACE, "SpaceForZealotB")) {
-                if (unit.moveAwayFrom(zealot, 6, Actions.MOVE_SPACE, "SpaceForZealotC")) {
-                    return usedManager(this);
-                }
+        if (!unit.moveAwayFrom(zealot, 0.2, Actions.MOVE_SPACE, "SpaceForZealotA")) {
+            if (unit.moveAwayFrom(zealot, 2, Actions.MOVE_SPACE, "SpaceForZealotB")) {
+                return usedManager(this);
             }
         }
 
