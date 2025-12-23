@@ -6,7 +6,6 @@ import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.protoss.decisions.AllowProduceDragoon;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
@@ -20,7 +19,6 @@ import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.trainIfPossible;
-import static atlantis.production.dynamic.protoss.units.ProduceZealot.produceZealot;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceDragoon {
@@ -36,7 +34,7 @@ public class ProduceDragoon {
         dragoons = Count.dragoons();
         strength = Army.strength();
 
-        if (zealotInsteadDragoonVZ()) return false;
+        if (ZealotInsteadDragoon.needZealot()) return false;
 
         if (dragoons <= 6) return produceDragoon();
         if (
@@ -96,23 +94,6 @@ public class ProduceDragoon {
         }
 
         return A.hasGas(175) && produceDragoon();
-    }
-
-    private static boolean zealotInsteadDragoonVZ() {
-        if (!Enemy.zerg()) return false;
-//        if (Count.freeGateways() >= 2) return false;
-
-        if (
-            dragoons >= 4
-            && Count.zealots() == 0
-            && Count.freeGateways() <= 1
-            && EnemyUnits.zerglings() >= 8
-            && produceZealot("ZealotInsteadDragoonVZ")
-        )  {
-            return true;
-        }
-
-        return false;
     }
 
     private static boolean singularityChargeResearched() {
