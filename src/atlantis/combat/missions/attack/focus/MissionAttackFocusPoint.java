@@ -57,20 +57,20 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         focus = enemiesNearMain();
         if (focus != null) return focus;
 
-        if (A.supplyUsed() >= 90 || Alpha.count() >= 14 || Army.strength() >= 180 || EnemyUnits.combatUnits() <= 10) {
+//        if (A.supplyUsed() >= 90 || Alpha.count() >= 14 || Army.strength() >= 180 || EnemyUnits.combatUnits() <= 10) {
+//            focus = enemyExpansionsPositions();
+//            if (focus != null) return focus;
+//        }
+
+        if (A.supplyUsed() >= 130 || Alpha.count() >= 30) {
             focus = enemyExpansionsPositions();
             if (focus != null) return focus;
         }
-
-        if (A.supplyUsed() >= 130 || Alpha.count() >= 22) {
-            focus = enemyExpansionsPositions();
-            if (focus != null) return focus;
-        }
-
-        focus = enemyProtossClusterCloserToMainThanAlpha();
-        if (focus != null) return focus;
 
         focus = middleMapChokePoint();
+        if (focus != null) return focus;
+
+        focus = enemyProtossClusterCloserToMainThanAlpha();
         if (focus != null) return focus;
 
         focus = enemyExpansionsPositions();
@@ -223,11 +223,11 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (choke != null) {
 //            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
             return new AFocusPoint(
-                choke.translateTilesTowards(Select.mainOrAnyBuilding(), 8),
+                choke.translateTilesTowards(Select.mainOrAnyBuilding(), 4),
+//                choke,
                 main,
                 "MiddleFocusChoke"
-            );
-//            ).setIdealDistanceFromFocus(13);
+            ).setIdealDistanceFromFocus(8);
         }
 
         return null;

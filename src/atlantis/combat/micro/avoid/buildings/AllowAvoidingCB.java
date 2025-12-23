@@ -29,7 +29,7 @@ public class AllowAvoidingCB {
                 && unit.eval() >= 7
                 && Alpha.evalOr(0) >= 7
                 && Alpha.alphaLeader() != null
-                && Alpha.alphaLeader().lastRetreatedAgo() >= 25 * 30
+                && (A.resourcesBalance() < 200 || Alpha.alphaLeader().lastRetreatedAgo() >= 25 * 30)
         ) return f("StrongArmyNoCBAvoid");
 
         if (A.supplyUsed(unit.eval() >= 3 ? 190 : 196)) {
