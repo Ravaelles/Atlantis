@@ -231,7 +231,7 @@ public class ProtossMissionDefendAllowsToAttack extends HasUnit {
     }
 
     private boolean forbidden_earlyGameVsStrongZergStickToMainBase() {
-        if (!ProtossStickCombatToMainBaseEarly.should() && enemy.enemiesNear().buildings().countInRadius(3, enemy) == 0) return false;
+//        if (!ProtossStickCombatToMainBaseEarly.should() && enemy.enemiesNear().buildings().countInRadius(3, enemy) == 0) return false;
 
         if (unit.isRanged() && EnemyInfo.noRanged() && unit.hp() >= 35 && unit.noCooldown()) return false;
         if (unit.eval() >= 1.5) return false;

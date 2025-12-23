@@ -111,11 +111,11 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //            return false;
 //        }
 
-        if (ProtossStickCombatToMainBaseEarly.should()) {
-            if (DEBUG) reason = "Stick to main early";
-            forceMissionSpartaOrDefend(reason);
-            return false;
-        }
+//        if (ProtossStickCombatToMainBaseEarly.should()) {
+//            if (DEBUG) reason = "Stick to main early";
+//            forceMissionSpartaOrDefend(reason);
+//            return false;
+//        }
 
         int enemyCombatUnits = EnemyUnits.combatUnits();
 

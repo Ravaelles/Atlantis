@@ -4,7 +4,6 @@ import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.defend.focus.terran.TerranMissionDefendFocus;
-import atlantis.combat.missions.defend.protoss.ProtossStickCombatToMainBaseEarly;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
@@ -57,9 +56,9 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
 
                 // === Stick to main base early ============================
 
-                if (ProtossStickCombatToMainBaseEarly.should()) {
-                    if ((focus = stickToMain()) != null) return focus;
-                }
+//                if (ProtossStickCombatToMainBaseEarly.should()) {
+//                    if ((focus = stickToMain()) != null) return focus;
+//                }
 
                 // =========================================================
 
@@ -214,24 +213,24 @@ public class MissionDefendFocusPoint extends MissionFocusPoint {
         return null;
     }
 
-    private AFocusPoint stickToMain() {
-        AUnit main = Select.main();
-        if (main == null) return null;
-
-        if (Missions.isGlobalMissionDefendOrSparta()) return null;
-
-//        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
-
-        AChoke mainChoke = Chokes.mainChoke();
-//        if (mainChoke == null) return null;
-
-        return new AFocusPoint(
-            main.translateTilesTowards(3, mainChoke),
-//                main.translateTilesTowards(1, Select.minerals().nearestTo(main)),
-            main,
-            "StickToMain"
-        );
-    }
+//    private AFocusPoint stickToMain() {
+//        AUnit main = Select.main();
+//        if (main == null) return null;
+//
+//        if (Missions.isGlobalMissionDefendOrSparta()) return null;
+//
+////        if (main.enemiesNear().inRadius(10, main).notEmpty()) return null;
+//
+//        AChoke mainChoke = Chokes.mainChoke();
+////        if (mainChoke == null) return null;
+//
+//        return new AFocusPoint(
+//            main.translateTilesTowards(3, mainChoke),
+////                main.translateTilesTowards(1, Select.minerals().nearestTo(main)),
+//            main,
+//            "StickToMain"
+//        );
+//    }
 
     private AFocusPoint stickToCannon() {
         if (
