@@ -1,5 +1,7 @@
 package atlantis.combat.missions.attack;
 
+import atlantis.combat.missions.MissionChanger;
+import atlantis.combat.missions.Missions;
 import atlantis.combat.missions.defend.protoss.ProtossForceMissionDefend;
 import atlantis.combat.missions.defend.protoss.ProtossShouldForceMissionAttack;
 import atlantis.combat.squad.squads.alpha.Alpha;
@@ -26,9 +28,11 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     // === DEFEND ==============================================
     public boolean shouldChangeMissionToDefend() {
-//        if (Missions.lastMissionChangedSecondsAgo() <= 2) return false;
+        if (MissionChanger.lastMissionWasLessThanSecondsAgo(Missions.ATTACK, 4)) {
+            return false;
+        }
 
-//        if (Count.darkTemplars() > 0 && Army.strength() >= 70 )
+        // =========================================================
 
         if (ProtossForceMissionDefend.check(Army.strengthWithoutCB(), Count.ourCombatUnits())) {
             return forceMissionSpartaOrDefend(reason);

@@ -1,18 +1,13 @@
 package atlantis.combat.missions;
 
-import atlantis.cherryvis.CV;
-import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionAttack;
 import atlantis.combat.missions.defend.MissionDefend;
 import atlantis.combat.missions.defend.protoss.sparta.Sparta;
-import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.strategy.GamePhase;
 import atlantis.information.strategy.Strategy;
-import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 /**
  * Handles the global mission that is mission that affects the battle squad Alpha.
@@ -27,10 +22,10 @@ public class Missions {
      * This is the mission for main battle squad forces. E.g. initially it will be DEFEND, then it should be
      * PREPARE (go near enemy) and then ATTACK.
      */
-    private static Mission currentGlobalMission = null;
+    protected static Mission currentGlobalMission = null;
 
-    private static int lastMissionChanged = 0;
-    private static int lastMissionEnforcedAt = -1;
+    protected static int lastMissionChanged = 0;
+    protected static int lastMissionEnforcedAt = -1;
 
     // =========================================================
 
@@ -45,7 +40,7 @@ public class Missions {
         }
 
         if (currentGlobalMission == null) {
-            setGlobalMissionTo(initialMission(), "Initial mission");
+            MissionChanger.setGlobalMissionTo(initialMission(), "Initial mission");
         }
 
         return currentGlobalMission;
@@ -71,7 +66,7 @@ public class Missions {
 
     private static boolean enforceGlobalMission(Mission mission, String reason) {
         lastMissionEnforcedAt = A.now();
-        setGlobalMissionTo(mission, reason);
+        MissionChanger.setGlobalMissionTo(mission, reason);
         return true;
     }
 
@@ -130,53 +125,6 @@ public class Missions {
 //            default : AGame.exit("Invalid mission: " + mission); return null;
             default:
                 return null;
-        }
-    }
-
-    public static void setGlobalMissionTo(Mission mission, String reason) {
-        if (mission == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Setting mission to null, ignore.");
-            return;
-        }
-
-        if (A.isUms()) mission = ATTACK;
-
-        if (mission.isMissionDefend()) {
-            mission = MissionChanger.defendOrSpartaMission();
-        }
-
-        if (mission.equals(currentGlobalMission)) return;
-
-        if (mission.isMissionDefend()) {
-            CurrentFocusChoke.resetChoke();
-        }
-
-        Alpha.get().setMission(mission);
-
-//        System.err.println("NEW MISSION " + mission.name() + " AT " + A.minSec() + ": " + reason);
-        lastMissionChanged = A.now();
-        currentGlobalMission = mission;
-
-        if (A.now() > 50) {
-//            if (mission.isMissionDefend()) {
-//                throw new RuntimeException("DEF?!?");
-//            }
-//            if (mission.isMissionContain()) {
-//                throw new RuntimeException("CHange to contain?!?");
-//            }
-
-//            if (MissionChanger.DEBUG) {
-            if (!A.isUms()) {
-                CV.log("MISSION @" + A.minSec() + " is " + mission.name());
-
-                A.println(
-                    "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()
-                    + "                  Resources balance: " + A.resourcesBalance()
-                );
-            }
-//                A.printStackTrace("Changing mission to " + mission);
-//            }
-            MissionHistory.missionHistory.add(currentGlobalMission != null ? currentGlobalMission : mission);
         }
     }
 

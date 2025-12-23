@@ -17,10 +17,10 @@ public class GlobalMissionCommander extends Commander {
         MissionChanger.evaluateGlobalMission();
 
         // Global mission is de facto Alpha squad's mission
-        Alpha alpha = Alpha.get();
-        if (alpha.mission() == null) {
-            alpha.setMission(Missions.globalMission());
-        }
+//        Alpha alpha = Alpha.get();
+//        if (alpha.mission() == null) {
+//            alpha.setMission(Missions.globalMission());
+//        }
     }
 
 }

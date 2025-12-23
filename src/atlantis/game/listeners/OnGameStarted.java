@@ -90,7 +90,7 @@ public class OnGameStarted {
 //        if (A.isUms()) {
 //        }
 
-        Alpha.get().setMission(Missions.globalMission());
+//        Alpha.get().setMission(Missions.globalMission());
 
         System.out.println("### Atlantis is working! ###\n");
         if (Env.isTournament()) {

@@ -2,19 +2,14 @@ package tests.unit.helpers.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.combat.retreating.protoss.ProtossRetreat;
-import atlantis.combat.squad.squads.alpha.Alpha;
-import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
-import atlantis.units.AUnit;
 import atlantis.units.AliveEnemies;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
-import atlantis.util.cache.Cache;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
-import tests.unit.helpers.ClearAllCaches;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -66,7 +61,7 @@ public class RetreatScenarioTest extends WorldStubForTests {
         createWorld(1,
             () -> {
                 if (globalMission != null) {
-                    Missions.setGlobalMissionTo(globalMission, "Forced in tests");
+                    MissionChanger.setGlobalMissionTo(globalMission, "Forced in tests");
                 }
 
 //                Select.our().print("Our");
@@ -106,7 +101,7 @@ public class RetreatScenarioTest extends WorldStubForTests {
                 this.retreatManagerApplied = manager != null;
 
                 if (oldGlobalMission != null) {
-                    Missions.setGlobalMissionTo(oldGlobalMission, "Force restore in tests");
+                    MissionChanger.setGlobalMissionTo(oldGlobalMission, "Force restore in tests");
                 }
             }, () -> ours, () -> enemies);
     }

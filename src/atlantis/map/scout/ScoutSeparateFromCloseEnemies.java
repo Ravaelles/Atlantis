@@ -75,7 +75,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     }
 
     private AUnit nearestEnemy() {
-        if (unit.isHealthy() && !ScoutCommander.hasAnyScoutBeenKilled()) {
+        if (unit.hp() >= 36 && !ScoutCommander.hasAnyScoutBeenKilled()) {
             return enemies.visibleOnMapOrCombatBuilding().havingAtLeastHp(1).nearestTo(unit);
         }
 

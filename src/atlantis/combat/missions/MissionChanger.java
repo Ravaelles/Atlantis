@@ -1,9 +1,10 @@
 package atlantis.combat.missions;
 
+import atlantis.cherryvis.CV;
+import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.combat.missions.attack.MissionChangerWhenAttack;
 import atlantis.combat.missions.defend.MissionChangerWhenDefend;
 import atlantis.combat.missions.defend.protoss.sparta.Sparta;
-import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
@@ -17,6 +18,10 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
+import atlantis.util.log.ErrorLog;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 public abstract class MissionChanger {
     public static final int MISSIONS_ENFORCED_FOR_SECONDS = 12;
@@ -24,6 +29,11 @@ public abstract class MissionChanger {
     public static final boolean DEBUG = true;
     //    public static final boolean DEBUG = false;
     public static String reason = "-MissionReasonUnknown-";
+
+//    private static int _lastMissionAttackAt = -888;
+//    private static int _lastMissionDefendAt = -887;
+//    private static int _lastMissionSpartaAt = -886;
+    private static Map<String, Integer> lastMissionAt = new TreeMap<>();
 
     // =========================================================
 
@@ -61,6 +71,55 @@ public abstract class MissionChanger {
 
     public static void forceEvaluateGlobalMission() {
         changeCurrentMissionIfNeeded();
+    }
+
+    public static void setGlobalMissionTo(Mission mission, String reason) {
+        if (mission == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Setting mission to null, ignore.");
+            return;
+        }
+
+        if (A.isUms()) mission = Missions.ATTACK;
+
+        if (mission.isMissionDefend()) {
+            mission = defendOrSpartaMission();
+        }
+
+        if (mission.equals(Missions.currentGlobalMission)) return;
+
+        if (mission.isMissionDefend()) {
+            CurrentFocusChoke.resetChoke();
+        }
+
+//        Alpha.get().setMission(mission);
+//        MissionChanger.changeMissionTo(mission);
+
+        Missions.lastMissionChanged = A.now();
+        Missions.currentGlobalMission = mission;
+
+//        System.err.println("NEW MISSION " + mission.name() + " AT " + A.minSec() + ": " + reason);
+
+        if (A.now() > 50) {
+//            if (mission.isMissionDefend()) {
+//                throw new RuntimeException("DEF?!?");
+//            }
+//            if (mission.isMissionContain()) {
+//                throw new RuntimeException("CHange to contain?!?");
+//            }
+
+//            if (MissionChanger.DEBUG) {
+            if (!A.isUms()) {
+                CV.log("MISSION @" + A.minSec() + " is " + mission.name());
+
+                A.println(
+                    "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()
+                    + "                  Resources balance: " + A.resourcesBalance()
+                );
+            }
+//                A.printStackTrace("Changing mission to " + mission);
+//            }
+            MissionHistory.missionHistory.add(Missions.currentGlobalMission != null ? Missions.currentGlobalMission : mission);
+        }
     }
 
     protected abstract void changeMissionIfNeeded();
@@ -112,13 +171,22 @@ public abstract class MissionChanger {
     // =========================================================
 
     protected static void changeMissionTo(Mission newMission) {
-        Alpha.get().setMission(newMission);
+        if (newMission == null) {
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Null mission passed");
+            return;
+        }
+
+        System.err.println("newMission.name() = " + newMission.name());
+
+        if (lastMissionAt == null) lastMissionAt = new TreeMap<>();
+        
+        lastMissionAt.put(newMission.name(), A.now);
 
         if (Missions.globalMission().equals(newMission)) {
             return;
         }
 
-        Missions.setGlobalMissionTo(newMission, reason);
+        setGlobalMissionTo(newMission, reason);
         MissionHistory.missionHistory.add(newMission);
 
 //        A.errPrintln("Change to " + newMission);
@@ -169,5 +237,11 @@ public abstract class MissionChanger {
         }
 
         return false;
+    }
+
+    public static boolean lastMissionWasLessThanSecondsAgo(Mission mission, int s) {
+        int frame = lastMissionAt.getOrDefault(mission.name(), -877);
+
+        return (A.secondsAgo(frame) + s * 30) <= A.now;
     }
 }

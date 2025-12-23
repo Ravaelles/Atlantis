@@ -35,6 +35,12 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //    }
 
     public boolean shouldChangeMissionToAttack() {
+        if (MissionChanger.lastMissionWasLessThanSecondsAgo(Missions.DEFEND, 8)) {
+            return false;
+        }
+
+        // =========================================================
+
         strength = Army.strengthWithoutCB();
         dragoons = Count.dragoons();
         combatUnits = Count.ourCombatUnits();
