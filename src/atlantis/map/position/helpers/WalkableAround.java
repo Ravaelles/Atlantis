@@ -11,14 +11,14 @@ public class WalkableAround {
             return false;
         }
 
-        for (int i = 0; i < alsoCheckTilesInRadius; i++) {
-            APosition pos;
+//        for (int i = 0; i < alsoCheckTilesInRadius; i++) {
+//            APosition pos;
 
             if (!position.translateByTiles(alsoCheckTilesInRadius, alsoCheckTilesInRadius).isWalkable()) return false;
             if (!position.translateByTiles(-alsoCheckTilesInRadius, -alsoCheckTilesInRadius).isWalkable()) return false;
             if (!position.translateByTiles(alsoCheckTilesInRadius, -alsoCheckTilesInRadius).isWalkable()) return false;
             if (!position.translateByTiles(-alsoCheckTilesInRadius, alsoCheckTilesInRadius).isWalkable()) return false;
-        }
+//        }
 
 //        int currentRadius = Math.min(2, alsoCheckTilesInRadius);
 //        int maxRadius = alsoCheckTilesInRadius;
