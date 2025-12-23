@@ -20,6 +20,10 @@ public class AllowAvoidingCB {
     private static boolean allowedAsProtoss(AUnit unit, AUnit combatBuilding, AUnit leader) {
         if (unit.isAir()) return t("AirAlways");
 
+        if (A.supplyUsed() <= 160 && combatBuilding.friendsNear().combatBuildingsAntiLand().atLeast(2)) {
+            return f("ManyCB");
+        }
+
         if (
             Army.strengthWithoutOurCB() >= 350
                 && Alpha.evalOr(0) >= 7
