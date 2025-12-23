@@ -22,8 +22,8 @@ public class Main {
     }
 
     public static String enemyRace() {
-        return "Protoss";
-//        return "Zerg";
+//        return "Protoss";
+        return "Zerg";
     }
 
     // =========================================================
@@ -75,7 +75,7 @@ public class Main {
     }
 
     private static String mapGeneric() {
-//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps ==================================
 

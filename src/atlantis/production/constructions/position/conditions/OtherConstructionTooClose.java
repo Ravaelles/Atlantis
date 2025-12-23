@@ -45,7 +45,7 @@ public class OtherConstructionTooClose {
                         }
 
                         if (building.isCannon()) {
-                            if (otherConstr.buildingType().isCannon()) return false;
+                            if (otherConstr.buildingType().isCannon() && !otherConstr.notStarted()) return false;
                             if (otherConstr.buildingType().isGateway() && otherConstr.notStarted()) {
                                 return false;
                             }
@@ -63,7 +63,7 @@ public class OtherConstructionTooClose {
                 }
 
                 // Look for two positions that could overlap one another
-                if (distance <= (building.canHaveAddon() ? 4 : (building.isPylon() ? 2.4 : 3.1))) {
+                if (distance <= minDistanceTo(building)) {
                     return failed("Planned building too close (" + building + ", dist: " + distance + ")");
                 }
             }
@@ -71,6 +71,12 @@ public class OtherConstructionTooClose {
 
         // No collisions detected
         return false;
+    }
+
+    private static double minDistanceTo(AUnitType building) {
+        if (We.terran() && building.canHaveAddon()) return 4;
+
+        return (building.isPylon() ? 2.6 : 3.1);
     }
 
     private static boolean failed(String reason) {

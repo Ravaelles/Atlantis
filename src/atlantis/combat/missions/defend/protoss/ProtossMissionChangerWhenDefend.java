@@ -35,7 +35,7 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 //    }
 
     public boolean shouldChangeMissionToAttack() {
-        if (MissionChanger.lastMissionWasLessThanSecondsAgo(Missions.DEFEND, 8)) {
+        if (MissionChanger.lastMissionWasLessThanSecondsAgo(Missions.DEFEND, Army.strength() <= 200 ? 8 : 5)) {
             return false;
         }
 

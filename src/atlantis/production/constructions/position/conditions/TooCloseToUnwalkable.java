@@ -10,13 +10,16 @@ public class TooCloseToUnwalkable {
     public static boolean isTooCloseToUnwalkable(AUnitType building, APosition position) {
         if (building.isBase()) return false;
 
-        boolean isPylon = building.isPylon();
-        if (isPylon && A.supplyFree() <= (2 + A.supplyUsed() >= 30 ? 2 : 0)) return false;
+//        if (building.isPylon()) {
+//            return false;
+////            if (!position.isWalkable(4)) return failed("Too close to unwalkable for pylon");
+////            if (A.supplyFree() <= (2 + A.supplyUsed() >= 30 ? 2 : 0)) return false;
+//        }
 
-        if (!isPylon && !building.producesLandUnits()) return false;
+        if (!building.producesLandUnits()) return false;
 
-        if (!isPylon && isTooClose(building, position)) return failed("Too close to unwalkable (A)");
-        if (!position.isWalkable(isPylon ? 3 : 5)) return failed("Too close to unwalkable (B)");
+        if (isTooClose(building, position)) return failed("Too close to unwalkable (A)");
+        if (!position.isWalkable(4)) return failed("Too close to unwalkable (B)");
 
         return false;
     }

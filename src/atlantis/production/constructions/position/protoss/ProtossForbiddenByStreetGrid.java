@@ -151,7 +151,7 @@ public class ProtossForbiddenByStreetGrid {
 
     private static boolean forPylon(int moduloX, int moduloY, APosition position) {
         if (moduloX != 2) {
-            if (A.supplyUsed() >= 30 && !A.hasFreeSupply(1) && A.minerals() >= 300) {
+            if (A.supplyUsed() >= 15 && !A.hasFreeSupply(1) && A.minerals() >= 300) {
                 if (moduloX != 4 && moduloX != 6) return failed("TX modulo Pyl_X_Special_1 = " + moduloX);
                 if (A.supplyTotal() >= 90) return failed("TX modulo Pyl_X_Special_2 = " + moduloX);
             }

@@ -176,7 +176,7 @@ public abstract class MissionChanger {
             return;
         }
 
-        System.err.println("newMission.name() = " + newMission.name());
+//        System.err.println("newMission.name() = " + newMission.name());
 
         if (lastMissionAt == null) lastMissionAt = new TreeMap<>();
         

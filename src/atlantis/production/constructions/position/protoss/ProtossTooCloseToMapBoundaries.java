@@ -11,29 +11,29 @@ public class ProtossTooCloseToMapBoundaries {
     public static boolean isTooClose(AUnitType building, APosition position) {
         if (We.protoss() && !building.isGateway() && !building.isPylon()) return false;
 
-        double margin = 1.3;
+        int marginPx = 1 * 30;
 
-        if (A.supplyUsed() <= 30 && building.isPylon()) margin = 8;
+        if (A.supplyUsed() <= 30 && building.isPylon()) marginPx = 7 * 30;
 
-        int tx = position.tx();
-        int ty = position.ty();
+        int px = position.x();
+        int py = position.y();
 
         if (
-            tx >= margin && tx <= AMap.getMapWidthInTiles() - margin
-                && ty >= margin && ty <= AMap.getMapHeightInTiles() - margin
+            px > marginPx && px < (AMap.getMapWidthInTiles() - marginPx)
+                && py > marginPx && py < (AMap.getMapHeightInTiles() - marginPx)
         ) return false;
 
-        if ((tx - building.getTilesWidth() / 2) <= margin) {
+        if ((px - building.dimensionLeftPixels()) <= marginPx) {
             return failed("Too close to left map boundary");
         }
-        if ((ty - building.getTilesHeights() / 2) <= margin) {
+        if ((py - building.dimensionUpPixels()) <= marginPx) {
             return failed("Too close to top map boundary");
         }
 
-        if ((tx + building.getTilesWidth() / 2) >= AMap.getMapWidthInTiles() - margin) {
+        if ((px + building.dimensionRightPixels()) >= (AMap.getMapWidthInTiles() * 30 - marginPx)) {
             return failed("Too close to right map boundary");
         }
-        if ((ty + building.getTilesHeights() / 2) >= AMap.getMapHeightInTiles() - margin) {
+        if ((py + building.dimensionDownPixels()) >= (AMap.getMapHeightInTiles() * 30 - marginPx)) {
             return failed("Too close to bottom map boundary");
         }
 

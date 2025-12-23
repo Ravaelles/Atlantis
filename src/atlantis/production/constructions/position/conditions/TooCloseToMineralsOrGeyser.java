@@ -42,7 +42,7 @@ public class TooCloseToMineralsOrGeyser {
                 && allMinerals.notEmpty()
                 && Bases.natural() != null
                 && position.distTo(Bases.natural()) <= 7
-                && allMinerals.countInRadius(6, position) > 0
+                && allMinerals.countInRadius(4, position) > 0
         ) {
             return failed("Cannon too close natural minerals");
         }
@@ -87,7 +87,7 @@ public class TooCloseToMineralsOrGeyser {
             if (A.supplyTotal() >= 40 && Select.ourBuildings().countInRadius(10, position) <= 1) return 5.2;
 
             if (building.isPylon() && position.distToMain() >= 15) return 6.5;
-            if (building.isCannon() && position.distToMain() >= 15) return 4.2;
+            if (building.isCannon() && position.distToMain() >= 15) return 3.2;
             return 2.8;
         }
 

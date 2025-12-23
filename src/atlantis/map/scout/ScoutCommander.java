@@ -159,6 +159,10 @@ public class ScoutCommander extends Commander {
         return ScoutState.scoutsKilledCount > 0;
     }
 
+    public static int killedScouts() {
+        return ScoutState.scoutsKilledCount;
+    }
+
     public static ArrayList<AUnit> allScouts() {
         return ScoutState.scouts;
     }

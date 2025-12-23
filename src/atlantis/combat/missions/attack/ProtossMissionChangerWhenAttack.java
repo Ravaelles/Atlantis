@@ -188,7 +188,10 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
 
     private boolean alphaOutmatched() {
         if (A.supplyUsed() >= 170) return false;
-        if (Army.strengthWithoutOurCB() >= 260 && A.resourcesBalance() >= -100) return false;
+
+        double eval = Alpha.evalOr(-1);
+
+        if (eval >= 0.85 && Army.strengthWithoutOurCB() >= 260 && A.resourcesBalance() >= -200) return false;
 
         AUnit leader = Alpha.alphaLeader();
         if (leader == null) return false;
@@ -196,7 +199,8 @@ public class ProtossMissionChangerWhenAttack extends MissionChangerWhenAttack {
         if (leader.enemiesNear().combatUnits().atMost(3)) return false;
         if (leader.friendsNear().combatUnits().atLeast(10)) return false;
 
-        if (leader.eval() <= 0.7 && leader.friendsInRadiusCount(9) <= 5) return true;
+        if (eval <= 0.8) return true;
+//        if (eval <= 0.7 && leader.friendsInRadiusCount(9) <= 5) return true;
 
         return false;
     }

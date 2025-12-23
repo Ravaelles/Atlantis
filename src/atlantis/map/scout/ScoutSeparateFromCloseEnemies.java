@@ -18,7 +18,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        enemies = unit.enemiesNear().nonBuildings().combatUnits().canAttack(unit, safetyMargin());
+        enemies = unit.enemiesNear().havingWeapon().canAttack(unit, safetyMargin());
         center = enemies.limit(2).center();
 
         return enemies.notEmpty();
@@ -40,7 +40,9 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         if (manager != null) return usedManager(this, "ScoutSeparateS");
 
         AUnit nearestEnemy = nearestEnemy();
-        if (nearestEnemy != null && nearestEnemy.distTo(unit) >= (unit.shieldHealthy() ? 3.8 : 6.5)) {
+        if (nearestEnemy == null) return null;
+
+        if (nearestEnemy.distTo(unit) >= (unit.shieldHealthy() ? 3.8 : 6.5)) {
             if (
 //                unit.distToMain() >= 60 &&
                 unit.moveToSafety(Actions.RUN_ENEMIES)
@@ -75,7 +77,8 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
     }
 
     private AUnit nearestEnemy() {
-        if (unit.hp() >= 36 && !ScoutCommander.hasAnyScoutBeenKilled()) {
+        int killed = ScoutCommander.killedScouts();
+        if (unit.hp() >= (killed == 0 ? 34 : (killed == 1 ? 37 : 40))) {
             return enemies.visibleOnMapOrCombatBuilding().havingAtLeastHp(1).nearestTo(unit);
         }
 

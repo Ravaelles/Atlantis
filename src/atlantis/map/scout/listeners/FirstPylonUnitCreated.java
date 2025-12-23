@@ -18,7 +18,7 @@ public class FirstPylonUnitCreated extends AutomaticListener {
         AUnit unit = (AUnit) data[0];
         AUnit builder = (AUnit) data[1];
 
-        A.errPrintln(A.minSec() + " EVENT - First pylon created CALLBACK! " + unit + " by " + builder);
+//        A.errPrintln(A.minSec() + " EVENT - First pylon created CALLBACK! " + unit + " by " + builder);
 
         assert builder.isWorker();
 

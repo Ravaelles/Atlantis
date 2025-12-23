@@ -67,8 +67,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                             return constructionPosition;
                         }
 
-//                        if (building.isGateway() && A.supplyUsed() <= 12) {
-//                            System.out.println("Fail reason: " + constructionPosition + ", " + _STATUS);
+//                        if (building.isPylon() && A.supplyUsed() <= 18) {
+//                            System.out.println("Fail: " + _STATUS);
 //                        }
                     }
                 }

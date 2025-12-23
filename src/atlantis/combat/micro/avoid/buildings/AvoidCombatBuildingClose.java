@@ -2,7 +2,6 @@ package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
-import atlantis.combat.micro.avoid.buildings.protoss.PvZDontAvoidCB;
 import atlantis.combat.micro.avoid.buildings.protoss.ShouldAvoidCombatBuildingAsProtoss;
 import atlantis.combat.micro.avoid.buildings.protoss.ReaverDontAvoidCB;
 import atlantis.decisions.Decision;
@@ -44,18 +43,15 @@ public class AvoidCombatBuildingClose extends Manager {
         AUnit leader = unit.squadLeader();
         if (leader == null) return t("No leader");
 
-        if (We.protoss() && A.supplyUsed(unit.eval() >= 5 ? 190 : 196)) {
-            if (unit.isAir()) return t("AirAlways");
-            if (unit.lastStoppedRunningMoreThanAgo(30 * 12) && leader.lastStoppedRunningMoreThanAgo(30 * 12)) {
-                return f("RichToss");
-            }
-        }
+        // === Exception - skip ====================================
+
+        if (AllowAvoidingCB.allowed(unit, combatBuilding, leader)) return false;
+
+        // =========================================================
 
         if (leader.lastActionLessThanAgo(30 * 17, Actions.MOVE_AVOID)) return t("LeaderAvoidCB");
 
         if (Enemy.zerg() && Army.strength() <= 400 && A.supplyUsed() <= 160) return t("YesVsZerg");
-
-        if (PvZDontAvoidCB.dontAvoid(unit, combatBuilding)) return f("VsZergDontAvoidCB");
 
         if ((unit.isRunning() || unit.isRetreating()) && combatBuilding.distTo(unit) >= 18) return f("Running");
         if ((decision = forReaver()).notIndifferent()) return decision.toBoolean();
@@ -157,19 +153,19 @@ public class AvoidCombatBuildingClose extends Manager {
         return unit.enemiesNear().ranged().nonBuildings().canAttack(unit, 1.7).count() >= minRangedEnemies;
     }
 
-    private boolean t(String reason) {
-//        System.out.println("AvoidCB: " + reason);
+    public static boolean t(String reason) {
+//        System.out.println("AllowAvoidingCB: " + reason);
 //        if (true) throw new RuntimeException("wut");
 
         return true;
     }
 
-    private boolean trOrF(boolean result, String reason) {
+    public static boolean trOrF(boolean result, String reason) {
         return result ? t(reason) : f(reason);
     }
 
-    private boolean f(String reason) {
-//        System.out.println("Don't AvoidCB: " + reason);
+    public static boolean f(String reason) {
+//        System.out.println("Don't AllowAvoidingCB: " + reason);
 
         return false;
     }
