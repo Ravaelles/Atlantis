@@ -23,13 +23,22 @@ public class ShouldRunTowardsBase {
 
         double distToMain = unit.groundDistToMain();
         if (distToMain <= 13) return false;
-        if (distToMain <= 50) return true;
+//        if (distToMain <= 50) return true;
 
-        if (runAwayFrom.groundDist(main) < distToMain) return false;
+        if (unit.meleeEnemiesNearCount(2.5) >= 4) return false;
+
+        if (runAwayFrom instanceof AUnit) {
+            AUnit enemy = (AUnit) runAwayFrom;
+            if (enemy.isRanged()) {
+                if ((enemy.groundDist(main) - 5) < distToMain) return false;
+            }
+        }
+
+        if (true) return true;
+
+        // =========================================================
 
         if (Actions.MOVE_DANCE_AWAY.equals(action)) return true;
-
-        if (unit.meleeEnemiesNearCount(2.5) >= 2) return false;
 
         if (Enemy.zerg() && distToMain >= 30 && unit.hp() >= 42) return true;
 

@@ -14,7 +14,7 @@ public class ZealotInsteadDragoon {
 
         if (
             dragoons >= 4
-                && (zealots == 0 || (zealots <= 0.18 * dragoons))
+                && (zealots == 0 || zealotToDragoonRatioTooLow(zealots, dragoons))
                 && Count.freeGateways() <= 1
                 && EnemyUnits.zerglings() >= 8
         ) {
@@ -22,5 +22,25 @@ public class ZealotInsteadDragoon {
         }
 
         return false;
+    }
+
+    private static boolean zealotToDragoonRatioTooLow(int zealots, int dragoons) {
+        if (calcRatio(EnemyUnits.zerglings(), zealots) <= 3.3) return false;
+
+        return zealots <= (idealZealotToDragoonRatio(zealots, dragoons) * dragoons);
+    }
+
+    private static double idealZealotToDragoonRatio(int zealots, int dragoons) {
+        if (Enemy.zerg()) return ratioVsZerg(zealots, dragoons);
+
+        return 0.12;
+    }
+
+    private static double ratioVsZerg(int zealots, int dragoons) {
+        return 0.29;
+    }
+
+    private static double calcRatio(int val1, int val2) {
+        return val1 / (val2 + 0.1);
     }
 }
