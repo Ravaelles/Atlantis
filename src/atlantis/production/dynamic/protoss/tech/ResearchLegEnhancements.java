@@ -28,7 +28,7 @@ public class ResearchLegEnhancements extends UpgradeResearchCommander {
         if (CountInQueue.count(what(), 10) > 0) return false;
         if (TooWeakToTech.check()) return false;
 
-        if (A.hasGas(150) && A.hasMinerals(300) && (Count.zealots() >= 7 || A.s >= 700)) {
+        if (A.hasGas(150) && A.hasMinerals(250) && (Count.zealots() >= 7 || A.s >= 700)) {
             return true;
         }
 
