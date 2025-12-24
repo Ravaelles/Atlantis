@@ -10,8 +10,6 @@ import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossLowEval extends Manager {
-    private final ProtossLowEvalChokeTweaks PLE = new ProtossLowEvalChokeTweaks(this);
-
     public ProtossLowEval(AUnit unit) {
         super(unit);
     }

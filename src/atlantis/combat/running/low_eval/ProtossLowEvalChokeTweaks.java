@@ -18,13 +18,16 @@ public class ProtossLowEvalChokeTweaks extends HasUnit {
 
 //        double penaltyModifier = Army.strengthWithoutOurCB() <= 300 ? 1.6 : 1;
         double penaltyModifier = 1;
+        int ourCombatUnits = Count.ourCombatUnits();
 
-        if (Count.ourCombatUnits() <= 17 && choke.isMainChoke()) {
-            return -2;
-        }
+        if (chokeDist <= 5) {
+            if (ourCombatUnits <= 12 && choke.isMainChoke() && Count.workers() <= 2) {
+                return -0.4;
+            }
 
-        if (Count.ourCombatUnits() <= 22 && choke.isNaturalChoke()) {
-            return -1.6;
+            if (ourCombatUnits <= 15 && choke.isNaturalChoke()) {
+                return -0.25;
+            }
         }
 
         return (choke.width() <= 3.5 ? -1.8 : -1.2) * penaltyModifier;
