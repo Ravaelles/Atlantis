@@ -2681,6 +2681,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
         );
     }
 
+    public int ourBuildingsNearCount(double radius) {
+        return cacheInt.get(
+            "ourBuildingsNearCount:" + A.digit(radius),
+            3,
+            () -> friendsNear().buildings().inRadius(radius, this).size()
+        );
+    }
+
     public int friendsNearCount() {
         return cacheInt.get(
             "friendsNearCount",

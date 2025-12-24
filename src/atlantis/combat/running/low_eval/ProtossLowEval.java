@@ -21,6 +21,10 @@ public class ProtossLowEval extends Manager {
 //        if (!unit.isMissionAttack()) return false;
         if (A.isUms() && Count.bases() == 0) return false;
 
+        if (unit.cooldown() == 0 && unit.ourBuildingsNearCount(4) > 0) {
+            return false;
+        }
+
         double eval = evalWithPenalties();
 
         if (unit.isMissionAttack()) {
