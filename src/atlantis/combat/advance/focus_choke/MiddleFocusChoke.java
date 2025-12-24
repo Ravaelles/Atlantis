@@ -18,7 +18,9 @@ public class MiddleFocusChoke {
         ArrayList<AChoke> chokes = PathToEnemyBase.chokesLeadingToEnemyBase();
 
         int index = Math.min(3, chokes.size() / 2 + 1);
-        if (index >= 3 && index < chokes.size() - 2) {
+
+
+        if (index >= 2 && index < chokes.size() - 1) {
             return chokes.get(index);
         }
 
