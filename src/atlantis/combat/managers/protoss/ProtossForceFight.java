@@ -16,7 +16,12 @@ public class ProtossForceFight extends Manager {
     public boolean applies() {
         if (A.s <= 30 * 8) return false;
         if (unit.cooldown() >= 7) return false;
-        if (unit.eval() <= 0.4) return false;
+//        if (unit.eval() <= 0.3) return false;
+
+        AUnit leader = unit.squadLeader();
+        if (leader != null && leader.isAttackingRecently()) return true;
+
+        if (unit.ourBuildingsNearCount(3) > 0) return true;
 
         AChoke choke = unit.nearestChoke();
         if (choke == null) return false;
