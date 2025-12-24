@@ -34,7 +34,7 @@ public class ProduceDragoon {
         dragoons = Count.dragoons();
         strength = Army.strength();
 
-        if (ZealotInsteadDragoon.needZealot()) return false;
+        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot()) return false;
 
         if (dragoons <= 6) return produceDragoon();
         if (

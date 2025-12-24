@@ -3,8 +3,6 @@ package atlantis.combat.running.low_eval;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.information.generic.Army;
-import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -12,6 +10,8 @@ import atlantis.units.select.Count;
 import atlantis.util.We;
 
 public class ProtossLowEval extends Manager {
+    private final ProtossLowEvalChokeTweaks PLE = new ProtossLowEvalChokeTweaks(this);
+
     public ProtossLowEval(AUnit unit) {
         super(unit);
     }
@@ -33,8 +33,8 @@ public class ProtossLowEval extends Manager {
     }
 
     private boolean wantsToApply() {
-        if (unit.isRanged() && EnemyInfo.noRanged()) {
-            if (unit.meleeEnemiesNearCount(3) == 0) return false;
+        if (unit.cooldown() <= 4 && unit.isRanged() && EnemyInfo.noRanged()) {
+            if (unit.meleeEnemiesNearCount(unit.groundWeaponRange() - 0.5) == 0) return false;
         }
 
         return true;
@@ -63,18 +63,6 @@ public class ProtossLowEval extends Manager {
 
     private double evalWithPenalties() {
         return unit.eval()
-            + evalChokePenalty();
-    }
-
-    private double evalChokePenalty() {
-        AChoke choke = unit.nearestChoke();
-        double chokeDist = unit.distTo(choke.center());
-
-        if (chokeDist >= 7) return 0;
-
-//        double penaltyModifier = Army.strengthWithoutOurCB() <= 300 ? 1.6 : 1;
-        double penaltyModifier = 1;
-
-        return (choke.width() <= 3.5 ? -1.8 : -1.2) * penaltyModifier;
+            + (new ProtossLowEvalChokeTweaks(unit)).evalChokePenalty();
     }
 }

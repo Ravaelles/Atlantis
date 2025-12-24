@@ -26,7 +26,7 @@ public class ConstructionUnderAttack extends Commander {
         if (building.woundPercent() <= 50) return;
 
         // If it has less than 71HP or less than 60% and is close to being finished
-        if (building.hp() <= 82 || building.getRemainingBuildTime() <= 5) {
+        if (building.hp() <= 46 || building.getRemainingBuildTime() <= 5) {
             if (preventCancelAsProtoss(building)) return;
 
             order.cancel(building.type() + " under attack");

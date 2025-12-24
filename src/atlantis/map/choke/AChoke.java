@@ -244,4 +244,12 @@ public class AChoke implements HasPosition {
     public APosition pointB() {
         return pointB;
     }
+
+    public boolean isMainChoke() {
+        return this.equals(Chokes.mainChoke());
+    }
+
+    public boolean isNaturalChoke() {
+        return this.equals(Chokes.natural());
+    }
 }

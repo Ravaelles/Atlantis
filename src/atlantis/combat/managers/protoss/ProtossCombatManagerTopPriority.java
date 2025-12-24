@@ -78,7 +78,7 @@ public class ProtossCombatManagerTopPriority extends Manager {
 
             AvoidEnemies.class,
 
-//            ProtossLowEval.class,
+            ProtossLowEval.class,
 
             ContinueAttack.class,
 
