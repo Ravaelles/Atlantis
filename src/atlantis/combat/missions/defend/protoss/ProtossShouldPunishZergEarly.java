@@ -20,10 +20,10 @@ public class ProtossShouldPunishZergEarly {
 
         if (A.s >= 60 * 7) return Decision.INDIFFERENT;
         if (Count.basesWithUnfinished() >= 2) return Decision.FALSE;
-        if (Army.strengthWithoutCB() <= 180) return Decision.FALSE;
+        if (Army.strengthWithoutCB() <= 200) return Decision.FALSE;
 
         AUnit leader = Alpha.alphaLeader();
-        if (leader != null && leader.eval() <= 1.2) return Decision.FALSE;
+        if (leader != null && leader.eval() <= 1.8) return Decision.FALSE;
 
         if (Strategy.get().isGoingTech() && Count.dragoons() <= 3) return Decision.FORBIDDEN;
 

@@ -169,6 +169,10 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
     private Decision applyAgainstZerg() {
         if (!Enemy.zerg()) return Decision.INDIFFERENT;
 
+        if (unit.noCooldown() && unit.enemiesNear().groundUnits().nonBuildings().countInRadius(1.1, unit) >= 1) {
+            return Decision.FALSE("AhEnemy");
+        }
+
         if (distToGoon >= 0.8 && unit.shieldWound() >= 9 && unit.enemiesNear().hydras().countInRadius(6, unit) >= 1) {
             return Decision.TRUE("Z_Hydra");
         }

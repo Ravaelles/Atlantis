@@ -21,6 +21,11 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
         return false;
     }
 
+    private static boolean canIgnore(String reason) {
+        if (A.s % 10 <= 2) System.out.println("IgnoreMiddleFocus: " + reason);
+        return true;
+    }
+
     private static boolean ignoreVsProtoss() {
         if (A.supplyUsed() >= 180 || A.hasMinerals(1000)) return true;
 
@@ -47,7 +52,7 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
         int supplyUsed = A.supplyUsed();
         int strength = Army.strengthWithoutCB();
 
-        if (supplyUsed >= 180 || A.hasMinerals(1000)) return true;
+        if (supplyUsed >= 180 || A.hasMinerals(1000)) return canIgnore("RichToss");
 
         if (
             EnemyUnits.sunkens() >= 2
@@ -59,13 +64,13 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
             return false;
         }
 
-        if (Count.ourCombatUnits() >= 32 && Army.strengthWithoutCB() >= 800) return true;
+        if (Count.ourCombatUnits() >= 32 && Army.strengthWithoutCB() >= 800) return canIgnore("ManyCombatUnits");
 
         if (useWhenZergHasCBs(supplyUsed)) return false;
 
         AUnit leader = Alpha.alphaLeader();
-        if (Alpha.count() >= 4 && strength >= 300 && A.resourcesBalance() >= 100) {
-            if (leader != null && leader.eval() >= 5) return true;
+        if (Alpha.count() >= 30 && strength >= 300 && A.resourcesBalance() >= 600) {
+            if (leader != null && leader.eval() >= 5) return canIgnore("HiEval");
         }
 
         if (strength <= 450 || Count.ourCombatUnits() <= 25) return false;
@@ -77,14 +82,14 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
             }
         }
 
-        if (!EnemyExistingExpansion.found()) {
-            if (
-                (strength >= 150 || Alpha.count() >= 16)
-                    && ResearchSingularityCharge.isResearched()
-                    //                && EnemyUnits.ranged() >= 5
-                    && Count.dragoons() >= 8
-            ) return true;
-        }
+//        if (!EnemyExistingExpansion.found()) {
+//            if (
+//                (strength >= 150 || Alpha.count() >= 16)
+//                    && ResearchSingularityCharge.isResearched()
+//                    //                && EnemyUnits.ranged() >= 5
+//                    && Count.dragoons() >= 8
+//            ) return true;
+//        }
 
         return false;
     }
