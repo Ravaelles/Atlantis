@@ -3,6 +3,7 @@ package atlantis.combat.advance.focus_choke;
 import atlantis.combat.missions.attack.focus.ProtossShouldIgnoreUseOfMiddleMapChokePoint;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 
@@ -20,6 +21,9 @@ public class MiddleFocusChoke {
         if (index >= 3 && index < chokes.size() - 2) {
             return chokes.get(index);
         }
+
+        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("No middle choke found! Chokes on path: "
+            + chokes.size() + " / " + index);
 
         return null;
     }

@@ -73,14 +73,14 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
             if (leader != null && leader.eval() >= 5) return canIgnore("HiEval");
         }
 
-        if (strength <= 450 || Count.ourCombatUnits() <= 25) return false;
-        if (strength <= 160 && supplyUsed <= 160 && A.resourcesBalance() <= 500) return false;
-
-        if (strength <= 200 && supplyUsed <= 130) {
-            if (leader != null) {
-                if (leader.squad().cohesionPercent() <= 75) return false;
-            }
-        }
+//        if (strength <= 450 || Count.ourCombatUnits() <= 25) return false;
+//        if (strength <= 160 && supplyUsed <= 160 && A.resourcesBalance() <= 500) return false;
+//
+//        if (strength <= 200 && supplyUsed <= 130) {
+//            if (leader != null) {
+//                if (leader.squad().cohesionPercent() <= 75) return false;
+//            }
+//        }
 
 //        if (!EnemyExistingExpansion.found()) {
 //            if (
