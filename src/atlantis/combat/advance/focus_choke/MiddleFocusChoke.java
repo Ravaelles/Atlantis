@@ -17,16 +17,13 @@ public class MiddleFocusChoke {
 
         ArrayList<AChoke> chokes = PathToEnemyBase.chokesLeadingToEnemyBase();
 
-        int index = Math.min(3, chokes.size() / 2 + 1);
+        int index = Math.min(2, chokes.size() - 2);
 
+        return chokes.get(index);
 
-        if (index >= 2 && index < chokes.size() - 1) {
-            return chokes.get(index);
-        }
-
-        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("No middle choke found! Chokes on path: "
-            + chokes.size() + " / " + index);
-
-        return null;
+//        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("No middle choke found! Chokes on path: "
+//            + chokes.size() + " / " + index);
+//
+//        return null;
     }
 }

@@ -44,17 +44,19 @@ public class AsAirAvoidAntiAir extends Manager {
         }
 
         Selection enemies = unit.enemiesThatCanAttackMe(safetyMargin());
+        HasPosition runFrom = enemies.center();
         if (isGroundEnemy && enemies.notEmpty()) {
-            HasPosition runFrom = enemies.center();
             if (runFrom == null) runFrom = enemyAA;
 
-            if (unit.moveAwayFrom(runFrom, 6, Actions.MOVE_FORMATION, "AirAvoidAA")) return usedManager(this);
+            if (unit.moveAwayFrom(runFrom, 6, Actions.MOVE_FORMATION, "AirAvoidA")) return usedManager(this);
         }
 
         if (!isGroundEnemy) {
             if (goToAlphaLeader()) return usedManager(this, "AARunToAlphaLeader");
             if (unit.moveToCannon(Actions.MOVE_SAFETY)) return usedManager(this, "AARunToCannon");
         }
+
+        if (unit.moveAwayFrom(runFrom, 6, Actions.MOVE_FORMATION, "AirAvoidB")) return usedManager(this);
 
         return null;
     }
@@ -73,7 +75,9 @@ public class AsAirAvoidAntiAir extends Manager {
         AUnit leader = Alpha.alphaLeader();
         if (leader == null) return false;
 
-        if (unit.distTo(leader) <= 4) return false;
+        double distToLeader = unit.distTo(leader);
+        if (distToLeader <= 3) return false;
+        if (distToLeader <= 5 && unit.enemiesThatCanAttackMe(1.2 + unit.woundPercent() / 30.0).notEmpty()) return false;
         if (Alpha.get().units().havingAntiAirWeapon().atMost(2)) return false;
         if (unit.woundPercent() <= 30) return false;
 

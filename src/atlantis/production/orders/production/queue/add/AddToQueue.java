@@ -179,8 +179,8 @@ public class AddToQueue {
 
 //            if (type.isSupplyDepot()) {
 //                System.out.println("@ " + A.now() + " - ADDED DEPOT - POST CLEAR CACHE = "
-//                    + CountInQueue.count(AUnitType.Terran_Supply_Depot)
-//                    + " / " + Count.inQueueOrUnfinished(AUnitType.Terran_Supply_Depot, 50)
+//                    + CountInQueue.count(AtlantisRaceConfig.SUPPLY)
+//                    + " / " + Count.inQueueOrUnfinished(AtlantisRaceConfig.SUPPLY, 50)
 //                );
 //            }
 

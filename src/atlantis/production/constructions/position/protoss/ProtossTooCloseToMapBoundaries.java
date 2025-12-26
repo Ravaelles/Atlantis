@@ -11,7 +11,7 @@ public class ProtossTooCloseToMapBoundaries {
     public static boolean isTooClose(AUnitType building, APosition position) {
         if (We.protoss() && !building.isGateway() && !building.isPylon()) return false;
 
-        int marginPx = 1 * 30;
+        int marginPx = 3 * 30;
 
         if (A.supplyUsed() <= 30 && building.isPylon()) marginPx = 7 * 30;
 

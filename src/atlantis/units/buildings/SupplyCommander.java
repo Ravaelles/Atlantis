@@ -1,6 +1,7 @@
 package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
+import atlantis.cherryvis.ACherryVis;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -192,7 +193,7 @@ public class SupplyCommander extends Commander {
             return;
         }
 
-        int notFinished = ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Supply_Depot);
+        int notFinished = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
         if (notFinished >= maxAtOnce) {
 //            System.err.println("TOO MANY CONSTRS! " + notFinished);
             return;
@@ -212,6 +213,15 @@ public class SupplyCommander extends Commander {
         ProductionOrder order = AddToQueue.withTopPriority(AtlantisRaceConfig.SUPPLY);
         if (order != null) order.setStatus(OrderStatus.READY_TO_PRODUCE);
         if (order != null) order.setMinSupply(A.supplyUsed() - 1);
+
+        if (order != null) {
+//            int notFinished = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
+            int pending = ConstructionRequests.countPendingOfType(AtlantisRaceConfig.SUPPLY);
+            ACherryVis.logger().log("Need SUPPLY: (" + A.supplyUsed() + "/ " + A.supplyTotal() + "), "
+                + "nf:" + notFinished
+                + (pending > 0 ? (", pen:" + pending) : "")
+            );
+        }
     }
 
     private static int maxAtOnce() {

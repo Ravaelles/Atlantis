@@ -6,7 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 public class PreventAirCornerStucking extends Manager {
-    public static final int MIN_TILES_TO_CORNER = 20;
+    public static final int BASE_MIN_TILES_TO_CORNER = 14;
 
     public PreventAirCornerStucking(AUnit unit) {
         super(unit);
@@ -40,7 +40,7 @@ public class PreventAirCornerStucking extends Manager {
     }
 
     private int getMinTilesToCorner() {
-        return MIN_TILES_TO_CORNER;
+        return (int) (BASE_MIN_TILES_TO_CORNER + (unit.woundPercent() / 5.0));
 //        return (int) (8 + unit.woundPercent() / 7.0);
     }
 }

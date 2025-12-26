@@ -155,11 +155,10 @@ public class ProtossSupplyCommander extends Commander {
         }
 
         if (Queue.get().notFinished().ofType(AtlantisRaceConfig.SUPPLY).size() >= maxAtOnce) {
-//            System.err.println("Too many SUPPLY!!!! " + Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size());
             return;
         }
 
-        int notFinished = ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Supply_Depot);
+        int notFinished = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
         if (notFinished >= maxAtOnce) {
 //            System.err.println("TOO MANY CONSTRS! " + notFinished);
             return;

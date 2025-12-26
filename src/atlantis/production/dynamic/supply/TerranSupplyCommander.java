@@ -159,7 +159,7 @@ public class TerranSupplyCommander extends Commander {
             return;
         }
 
-        int notFinished = ConstructionRequests.countNotFinishedOfType(AUnitType.Terran_Supply_Depot);
+        int notFinished = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
         if (notFinished >= maxAtOnce) {
 //            System.err.println("TOO MANY CONSTRS! " + notFinished);
             return;
