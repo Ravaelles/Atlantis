@@ -19,7 +19,7 @@ public class ProtossLowEval extends Manager {
         if (!We.protoss()) return false;
         if (!unit.isCombatUnit()) return false;
         if (unit.isRunningOrRetreating()) return false;
-//        if (!unit.isMissionAttack()) return false;
+        if (!unit.isMissionAttack()) return false;
         if (A.isUms() && Count.bases() == 0) return false;
         if (unit.attackState().startingOrPending()) return false;
 

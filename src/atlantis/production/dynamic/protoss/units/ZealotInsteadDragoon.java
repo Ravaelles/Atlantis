@@ -42,7 +42,7 @@ public class ZealotInsteadDragoon {
         if (Enemy.zerg()) {
             int zerglings = EnemyUnits.zerglings();
 
-            if (dragoons >= 4 && zealots <= 7 && zerglings >= 4) return true;
+            if (zealots >= 2 && dragoons <= 2) return false;
 
 //            if (currentZealotToDragoonRatio >= 0.22) {
 //                double lingToZealotRatio = calcRatio(zerglings, zealots);
@@ -63,7 +63,7 @@ public class ZealotInsteadDragoon {
     }
 
     private static double ratioVsZerg(int zealots, int dragoons) {
-        return 0.6;
+        return 0.8;
     }
 
     private static double calcRatio(int val1, int val2) {
