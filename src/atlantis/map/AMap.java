@@ -108,6 +108,8 @@ public class AMap {
      * Returns random point on map with fog of war, preferably unexplored one.
      */
     public static APosition randomInvisiblePosition(AUnit unit) {
+        if (unit == null) return null;
+
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;

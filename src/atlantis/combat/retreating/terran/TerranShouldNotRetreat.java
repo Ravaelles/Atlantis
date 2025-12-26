@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.We;
@@ -40,6 +41,8 @@ public class TerranShouldNotRetreat extends HasUnit {
 //    }
 
     public boolean shouldNotRetreat() {
+        if (A.isUms() && Count.buildings() == 0) return true;
+
         if ((decision = whenNoEnemyRanged()).notIndifferent()) {
             if (decision.isTrue()) {
                 unit.addLog("NoEnemyRanged");

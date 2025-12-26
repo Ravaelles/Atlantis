@@ -45,7 +45,7 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
         if (nearestEnemy.distTo(unit) >= (unit.shieldHealthy() ? 3.8 : 6.5)) {
             if (
 //                unit.distToMain() >= 60 &&
-                unit.moveToSafety(Actions.RUN_ENEMIES)
+                unit.moveToSafety(Actions.RUN_ENEMY)
             ) return usedManager(this, "Scout2Safety");
         }
 
@@ -64,13 +64,13 @@ public class ScoutSeparateFromCloseEnemies extends Manager {
 //        if (unit.moveAwayFrom(center, 3.5, Actions.MOVE_SAFETY, "ScoutSeparateA")) return usedManager(this);
 
         if (center != null) {
-            if (unit.moveAwayFrom(center, 6, Actions.RUN_ENEMIES, "ScoutSeparateA")) {
+            if (unit.moveAwayFrom(center, 6, Actions.RUN_ENEMY, "ScoutSeparateA")) {
                 return usedManager(this);
             }
         }
 
 //        if (unit.enemiesThatCanAttackMe(2.4 + unit.woundPercent() / 30.0).empty()) {
-        if (unit.moveToMain(Actions.RUN_ENEMIES)) return usedManager(this);
+        if (unit.moveToMain(Actions.RUN_ENEMY)) return usedManager(this);
 //        }
 
         return null;

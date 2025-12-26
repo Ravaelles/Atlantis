@@ -248,18 +248,25 @@ public class ARunningManager {
     }
 
     public void stopRunning() {
+        if (!unit.isRunning()) {
+            ErrorLog.printMaxOncePerMinute("Trying to stop running when not running");
+        }
+
         if (unit.isRunning()) {
+//            System.err.println(unit.action());
+//            System.err.println(unit.lastCommandName());
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Hmm");
+
             unit._lastStoppedRunning = A.now();
 //            System.out.println("Stopped running at " + A.now());
 //            A.printStackTrace("StoppedRunning at " + A.now());
+
+//            if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("AStopRunning");
         }
 
         runTo = null;
         runningFromPosition = null;
         runningFromUnit = null;
-
-//        if (unit.isMoving() && unit.lastActionMoreThanAgo(2)) unit.stop("StopRunning");
-        if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("StopRunning");
 
 //        A.printStackTrace("StoppedRunning");
     }

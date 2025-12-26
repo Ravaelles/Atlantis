@@ -103,7 +103,7 @@ public class ProcessAttackUnit extends Manager {
     }
 
     private boolean confirmAttack(AUnit target) {
-        if (ProtossAttackHoldToShoot.holdInsteadAttack(unit, target)) {
+        if (We.protoss() && ProtossAttackHoldToShoot.holdInsteadAttack(unit, target)) {
             return confirmHoldingToShoot(target);
         }
 

@@ -485,4 +485,8 @@ public class Count {
     public static int protectors() {
         return RepairAssignments.countTotalProtectors();
     }
+
+    public static int buildings() {
+        return Select.ourBuildings().count();
+    }
 }

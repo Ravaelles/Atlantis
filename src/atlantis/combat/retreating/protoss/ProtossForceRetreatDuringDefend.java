@@ -9,6 +9,7 @@ import atlantis.information.enemy.EnemyArmyCenter;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.We;
 
 public class ProtossForceRetreatDuringDefend extends MissionManager {
     private double groundDistToMain;
@@ -20,6 +21,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
 
     @Override
     public boolean applies() {
+        if (!We.protoss()) return false;
         if (!unit.isMissionDefendOrSparta()) return false;
         if (unit.isAir()) return false;
         if (!unit.isCombatUnit()) return false;

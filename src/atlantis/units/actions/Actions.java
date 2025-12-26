@@ -57,7 +57,7 @@ public class Actions {
 
     //    public static final Action RUN_ = new Action(false, true).setName("RUN_");
     public static final Action RUN_ENEMY = new Action(false, true).setName("RUN_ENEMY");
-    public static final Action RUN_ENEMIES = new Action(false, true).setName("RUN_ENEMIES");
+//    public static final Action RUN_ENEMIES = new Action(false, true).setName("RUN_ENEMIES");
     public static final Action RUN_IN_ANY_DIRECTION = new Action(false, true).setName("RUN_IN_ANY_DIR");
     public static final Action RUN_RETREAT = new Action(false, true).setName("RUN_RETREAT");
     public static final Action RESEARCH_OR_UPGRADE = new Action().setName("RESEARCH_OR_UPGRADE");

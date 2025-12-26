@@ -127,6 +127,8 @@ public class EnemyInfo {
     }
 
     public static APosition enemyLocationOrGuess() {
+        if (A.isUms() && Count.buildings() == 0) return null;
+
         return (APosition) cache.get(
             "enemyLocationOrGuess",
             50,

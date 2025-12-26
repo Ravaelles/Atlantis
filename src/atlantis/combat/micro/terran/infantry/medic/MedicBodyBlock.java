@@ -47,7 +47,7 @@ public class MedicBodyBlock extends Manager {
 
     @Override
     public Manager handle() {
-        if (posBetweenEnemyAndOurUnit == null) return null;
+        if (posBetweenEnemyAndOurUnit == null || !posBetweenEnemyAndOurUnit.isWalkable()) return null;
 
         unit.move(posBetweenEnemyAndOurUnit, Actions.MOVE_MACRO, "Block", false);
         return usedManager(this);

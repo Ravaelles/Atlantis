@@ -1,8 +1,6 @@
 package atlantis.combat.running.stop_running;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.running.stop_running.protoss.ProtossShouldStopRunning;
-import atlantis.combat.running.stop_running.protoss.TerranShouldStopRunning;
 import atlantis.combat.running.stop_running.zerg.ZergShouldStopRunning;
 import atlantis.units.AUnit;
 

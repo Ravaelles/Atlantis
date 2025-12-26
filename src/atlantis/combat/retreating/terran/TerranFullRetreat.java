@@ -22,7 +22,6 @@ public class TerranFullRetreat extends Manager {
 //            unit.paintCircleFilled(14, Color.Red);
             if (unit.isLeader()) RetreatManager.GLOBAL_RETREAT_COUNTER++;
 
-            unit.addLog("PFull");
             return usedManager(this);
         }
 

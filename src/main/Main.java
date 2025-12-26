@@ -303,12 +303,12 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v ZealotsforceMissionAttack
+//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v ZealotsforceMissionAttack
 //        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots
 //        if (true) return "ums/rav/terran/1M_v_1Zealot.scm";
-//        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
+        if (true) return "ums/rav/terran/2M_v_1Zealot.scm";
 //        if (true) return "ums/rav/terran/3M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_2Zealots.scx";
 //        if (true) return "ums/rav/terran/4M_v_1Zealot.scm";

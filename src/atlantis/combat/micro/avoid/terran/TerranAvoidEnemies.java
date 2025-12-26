@@ -79,6 +79,6 @@ public class TerranAvoidEnemies extends Manager {
         }
 
 //        return "ProtossAvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
-        return "ProtossAvoidEnemies";
+        return "TerranAvoidEnemies";
     }
 }

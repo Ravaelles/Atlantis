@@ -1,8 +1,6 @@
-package atlantis.combat.running.stop_running.protoss;
+package atlantis.combat.running.stop_running.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.running.stop_running.terran.ShouldStopRunningMarine;
-import atlantis.combat.running.stop_running.terran.TerranShouldStopRetreat;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 

@@ -29,7 +29,8 @@ public class Action {
     // =========================================================
 
     public boolean isRunning() {
-        return name.startsWith("RUN_") || equals(Actions.MOVE_SAFETY);
+//        return equals(Actions.RUN_ENEMY) || equals(Actions.MOVE_SAFETY);
+        return equals(Actions.RUN_ENEMY);
     }
 
     // =========================================================

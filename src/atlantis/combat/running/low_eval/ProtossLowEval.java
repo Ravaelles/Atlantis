@@ -49,7 +49,7 @@ public class ProtossLowEval extends Manager {
         HasPosition safety = unit.safetyPosition();
         if (safety == null) return null;
         if (unit.distTo(safety) > (unit.isRanged() ? 8 : 5)) {
-            if (unit.move(safety, Actions.RUN_ENEMIES)) {
+            if (unit.move(safety, Actions.RUN_ENEMY)) {
                 return usedManager(this);
             }
         }
@@ -58,7 +58,7 @@ public class ProtossLowEval extends Manager {
         if (enemy == null) return null;
 
         if (unit.runOrMoveAway(enemy, 5)) {
-            unit.setAction(Actions.RUN_ENEMIES);
+            unit.setAction(Actions.RUN_ENEMY);
             return usedManager(this);
         }
 
