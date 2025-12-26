@@ -2,6 +2,7 @@ package atlantis.combat.running.to_building;
 
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
@@ -21,11 +22,20 @@ public class ShouldRunTowardsBase {
         AUnit main = Select.main();
         if (main == null) return false;
 
+        if (unit.hp() <= A.whenEnemyProtoss(35, 30)) return false;
+
         double distToMain = unit.groundDistToMain();
-        if (distToMain <= 13) return false;
+        if (distToMain <= 20) return false;
 //        if (distToMain <= 50) return true;
 
-        if (unit.meleeEnemiesNearCount(2.5) >= 4) return false;
+        if (Enemy.protoss()) {
+            if (!EnemyInfo.hasRanged()) {
+                if (unit.cooldown() <= 8 && unit.meleeEnemiesNearCount(3) <= 1) return false;
+                if (unit.meleeEnemiesNearCount(3) >= 2) return false;
+            }
+        }
+
+        if (Enemy.zerg() && unit.meleeEnemiesNearCount(2.5) >= 4) return false;
 
         if (runAwayFrom instanceof AUnit) {
             AUnit enemy = (AUnit) runAwayFrom;

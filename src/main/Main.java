@@ -75,7 +75,7 @@ public class Main {
     }
 
     private static String mapGeneric() {
-        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+//        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
         // === Popular SSCAIT maps ==================================
 
@@ -168,7 +168,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealDead.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
 
-        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";
+//        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
@@ -266,7 +266,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefenceB.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefenceC.scx";
-        if (true) return "ums/rav/protoss/ChokeSpartaDefenceD.scx";
+//        if (true) return "ums/rav/protoss/ChokeSpartaDefenceD.scx";
 //        if (true) return "ums/rav/protoss/Drag_v_Zeal_inBase.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_ZealDrag.scm";

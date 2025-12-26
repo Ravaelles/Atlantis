@@ -109,10 +109,10 @@ public class SupplyCommander extends Commander {
                 }
             }
             else {
-                if (supplyFree <= 7 && suppliesBeingBuilt <= (1 + A.minerals() / 250)) {
-                    requestAdditionalSupply();
-                    return;
-                }
+//                if (supplyFree <= 7 && suppliesBeingBuilt <= (1 + A.minerals() / 250)) {
+//                    requestAdditionalSupply();
+//                    return;
+//                }
 
                 if (supplyFree <= 4 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
@@ -124,7 +124,7 @@ public class SupplyCommander extends Commander {
                     return;
                 }
 
-                if (supplyFree <= 8 && suppliesBeingBuilt <= 0) {
+                if (supplyFree <= 12 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
                     return;
                 }

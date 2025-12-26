@@ -122,7 +122,7 @@ public class ARunningManager {
         unit.addLog("CantRun");
         if (A.isUms()) {
 //            ErrorLog.printMaxOncePerMinute("CantRun " + unit.typeWithUnitId());
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.idWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.nameWithId());
         }
 
         if (unit.moveToMain(Actions.RUN_ENEMY)) {

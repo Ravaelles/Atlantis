@@ -160,7 +160,6 @@ public class ProduceZealot {
 
     public static boolean produceZealot(String reason) {
         AUnit gateway = GatewayClosestToEnemy.get();
-        System.err.println("gateway = " + gateway);
         if (gateway == null) return false;
 
         return gateway.train(

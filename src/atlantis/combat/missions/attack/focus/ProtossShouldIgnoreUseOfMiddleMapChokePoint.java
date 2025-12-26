@@ -22,7 +22,8 @@ public class ProtossShouldIgnoreUseOfMiddleMapChokePoint {
     }
 
     private static boolean canIgnore(String reason) {
-        if (A.s % 10 <= 2) System.out.println("IgnoreMiddleFocus: " + reason);
+//        if (A.s % 10 <= 2)
+        System.out.println("____IgnoreMiddleFocus: " + reason);
         return true;
     }
 

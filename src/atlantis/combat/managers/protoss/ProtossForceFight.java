@@ -17,6 +17,7 @@ public class ProtossForceFight extends Manager {
         if (A.s <= 30 * 8) return false;
         if (unit.cooldown() >= 7) return false;
 //        if (unit.eval() <= 0.3) return false;
+        if (unit.isAttacking()) return false;
 
         AUnit leader = unit.squadLeader();
         if (leader != null && leader.isAttackingRecently()) return true;

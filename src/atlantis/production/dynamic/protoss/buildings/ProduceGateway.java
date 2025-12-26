@@ -35,27 +35,32 @@ public class ProduceGateway {
         if (minerals <= 105) return false;
 
         freeGateways = Count.freeGateways();
-        if (freeGateways >= 1 && minerals <= 1000) return false;
+
+        if (freeGateways <= 0 && minerals >= 220 && existingGateways <= 3) return produceGateway() && log("220");
+
+        if (freeGateways >= 1 && minerals <= 360) return false;
+        if (freeGateways >= 1 && A.supplyFree() >= 2 && minerals <= 550) return false;
 
         if (minerals <= (50 + 150 * Count.inProduction(Protoss_Gateway))) return false;
-        if (minerals <= 334 && CountInQueue.count(Protoss_Templar_Archives, 3) > 0) return false;
+
+        if (Strategy.get().isGoingHiddenUnits() && minerals <= 334) {
+            if (CountInQueue.count(Protoss_Templar_Archives, 3) > 0) return false;
+        }
 
         if (
             A.supplyFree() <= 2
-                && A.minerals() < 300
+                && A.minerals() < 270
                 && ConstructionRequests.countPendingOfType(Protoss_Pylon) == 0
         ) return false;
 
         if (
-            minerals <= 320 && minerals + 200 <= ReservedResources.minerals()
+            minerals <= 320 && (minerals + 200) <= ReservedResources.minerals()
                 && !Queue.get().readyToProduceOrders().buildings().isEmpty()
         ) return false;
 
 //        A.errPrintln(A.minSec() + " GATEWAY CHECK");
 
         existingGateways = Count.gatewaysWithUnfinished();
-
-        if (freeGateways > 0 && minerals <= 360) return false;
 
         if (minerals >= 700 && existingGateways <= 6 && freeGateways <= 2) return produceGateway() && log("700");
         if (minerals >= 500 && freeGateways <= 1 && existingGateways <= 7) return produceGateway() && log("500");
@@ -70,7 +75,7 @@ public class ProduceGateway {
             if (freeGateways > 0 && minerals <= 180) return false;
         }
         else {
-            if (minerals >= 220 && freeGateways <= 0 && existingGateways <= 3) return produceGateway() && log("220");
+//            if (minerals >= 220 && freeGateways <= 0 && existingGateways <= 3) return produceGateway() && log("220");
             if (minerals >= 210 && freeGateways <= 1 && existingGateways <= 5) return produceGateway() && log("210");
         }
 
