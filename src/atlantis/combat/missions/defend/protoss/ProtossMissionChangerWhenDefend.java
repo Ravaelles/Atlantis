@@ -219,7 +219,13 @@ public class ProtossMissionChangerWhenDefend extends MissionChangerWhenDefend {
 
 //        if (strength <= 360 && combatUnits <= 7) return Decision.FALSE;
 
-        if (A.s <= 650 && dragoons >= 1 && A.resourcesBalance() >= -250 && EnemyUnits.hydras() <= 2) {
+        if (
+            A.s <= 650
+                && dragoons >= 2
+                && A.resourcesBalance() >= 0
+                && EnemyUnits.hydras() <= 0
+                && Army.strength() >= 200
+        ) {
             if (DEBUG) reason = "GoWithGoonz";
             return Decision.TRUE;
         }

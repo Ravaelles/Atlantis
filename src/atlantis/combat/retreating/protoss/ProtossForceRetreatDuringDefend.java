@@ -27,6 +27,9 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (!unit.isCombatUnit()) return false;
 //        if (!unit.squadIsAlpha()) return false;
 
+        AUnit leader = unit.squadLeader();
+        if (leader != null && unit.eval() >= 2) return false;
+
         if (distToFocusPointIsProper()) return false;
 
         distToMain = unit.groundDistToMain();
