@@ -25,7 +25,7 @@ public class MiddleFocusChoke {
             return chokes.get(index);
         }
 
-        if (!A.isUms() && chokes.size() > 0 && Select.ourBuildings().atLeast(1)) {
+        if (!A.isUms() || Select.ourBuildings().atLeast(1)) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("No middle choke found! Chokes on path: "
                 + chokes.size() + "/" + index);
         }

@@ -24,7 +24,7 @@ public class PathToEnemyBase {
         AUnit enemy = enemy();
         if (enemy == null) return new ArrayList<>();
 
-        return cacheChokes.get(
+        return cacheChokes.getIfValid(
             "chokesLeadingToEnemyBase:" + CacheKey.toKey(enemy),
             -1,
             () -> {
