@@ -17,7 +17,7 @@ public class PreventChasingEnemyWorkerInBase {
                     || unit.enemiesNear().combatUnits().atLeast(1)
                     || unit.distToFocusPoint() >= 12
         )
-            && (unit.distToFocusPoint() >= 8 || enemy.distToMainChokeOr(-1) >= 12)
+//            && (unit.distToFocusPoint() >= 8 || enemy.distToMainChokeOr(-1) >= 12)
         ) return true;
 
         return false;

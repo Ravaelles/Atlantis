@@ -15,7 +15,7 @@ public class ProtossForceFight extends Manager {
     @Override
     public boolean applies() {
         if (A.s <= 30 * 8) return false;
-        if (unit.cooldown() >= 7) return false;
+        if (unit.cooldown() >= 8) return false;
 //        if (unit.eval() <= 0.3) return false;
         if (unit.isAttacking()) return false;
 
@@ -26,8 +26,7 @@ public class ProtossForceFight extends Manager {
 
         AChoke choke = unit.nearestChoke();
         if (choke == null) return false;
-        if (!choke.isNaturalChoke()) return false;
-        if (!choke.isMainChoke()) return false;
+        if (!choke.isNaturalChoke() && !choke.isMainChoke()) return false;
 
         return unit.distTo(choke.center()) <= 5;
     }
