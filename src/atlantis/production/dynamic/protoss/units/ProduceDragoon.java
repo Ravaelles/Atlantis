@@ -37,9 +37,8 @@ public class ProduceDragoon {
 
         if (dragoons <= 4) return produceDragoon();
 
-        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot() && produceZealot("InsteadGoon")) {
-            return true;
-        }
+        if (ZealotInsteadDragoon.needZealot() && produceZealot("InsteadGoon")) return true;
+
         if (
             A.hasMinerals(125) && A.hasGas(150) && (dragoons <= 17 || Missions.isGlobalMissionDefendOrSparta())
         ) return produceDragoon();

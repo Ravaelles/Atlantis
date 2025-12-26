@@ -161,7 +161,6 @@ public class ProduceZealot {
     public static boolean produceZealot(String reason) {
         AUnit gateway = GatewayClosestToEnemy.get();
         if (gateway == null) return false;
-        System.err.println("gateway = " + gateway);
 
         return gateway.train(
             Protoss_Zealot, ForcedDirectProductionOrder.create(Protoss_Zealot)
