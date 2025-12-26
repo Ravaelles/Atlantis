@@ -7,6 +7,8 @@ import atlantis.units.AUnit;
 import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 
+import java.io.File;
+
 public class ACherryVisLogger implements AbstractCherryVisLogger {
     private ACherryVisConfig config;
     private ACherryVisUnitLogger unitLogger;
@@ -31,6 +33,8 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
         if (!ACherryVis.isEnabled()) return;
 
         String directoryPath = config.cherryVisDirReplayPath();
+//        System.err.println((new File(directoryPath)).getAbsolutePath());
+
         if (!A.directoryExists(directoryPath)) {
             A.createDirectory(directoryPath);
         }

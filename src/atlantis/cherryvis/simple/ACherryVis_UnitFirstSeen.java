@@ -1,15 +1,19 @@
 package atlantis.cherryvis.simple;
 
+import atlantis.cherryvis.ACherryVis;
 import atlantis.game.A;
 import atlantis.game.event.AutomaticListener;
 import atlantis.game.event.Event;
 import atlantis.units.AUnit;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 public class ACherryVis_UnitFirstSeen extends AutomaticListener {
-    private static Set<Integer> knownUnitIds = new HashSet<>();
-    private static Map<Integer, List<Map<String, Integer>>> unitsByFrame = new TreeMap<>();
+    //    private static Set<Integer> knownUnitIds = new HashSet<>();
+//    private static Map<Integer, List<Map<String, Integer>>> unitsByFrame = new TreeMap<>();
+    private static Map<Integer, Integer[]> unitsSeenAt = new TreeMap<>();
 
     /**
      * "10203": [
@@ -31,33 +35,35 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      */
     public static String get() {
         StringBuilder result = new StringBuilder();
-        result.append("{");
 
         boolean firstFrame = true;
-        for (Integer frame : unitsByFrame.keySet()) {
+        int i = 0;
+        int total = unitsSeenAt.size();
+        Set<Integer> frames = unitsSeenAt.keySet();
+        for (Integer frame : frames) {
             if (!firstFrame) {
                 result.append(",");
             }
-            result.append("\"").append(frame).append("\":[");
-
-            List<Map<String, Integer>> units = unitsByFrame.get(frame);
-            for (int i = 0; i < units.size(); i++) {
-                Map<String, Integer> props = units.get(i);
-                result.append("{");
-                result.append("\"id\":").append(props.get("id")).append(",");
-                result.append("\"type\":").append(props.get("type")).append(",");
-                result.append("\"x\":").append(props.get("x")).append(",");
-                result.append("\"y\":").append(props.get("y"));
-                result.append("}");
-                if (i < units.size() - 1) {
-                    result.append(",");
-                }
-            }
-            result.append("]");
             firstFrame = false;
-        }
 
-        result.append("}");
+            result.append("\"").append(frame).append("\":");
+
+//            List<Map<String, Integer>> units = unitsSeenAt.get(frame);
+//            for (int i = 0; i < units.size(); i++) {
+//                Map<String, Integer> props = unitsSet.get(i);
+            Integer[] record = unitsSeenAt.get(i);
+            result.append("{");
+            result.append("\"id\":").append(record[0]).append(",");
+            result.append("\"type\":").append(record[1]).append(",");
+            result.append("\"x\":").append(record[2]).append(",");
+            result.append("\"y\":").append(record[3]);
+            result.append("}");
+//            if (i < total - 1) {
+//                result.append(",");
+//            }
+//            }
+//            result.append("}");
+        }
 
         return result.toString();
     }
@@ -71,22 +77,24 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
 
     @Override
     public void onEvent(Event event, Object... data) {
+        if (!ACherryVis.isEnabled()) return;
+
         AUnit unit = (AUnit) data[0];
 
-        if (!unit.isNeutral() && !knownUnitIds.contains(unit.id())) {
-            knownUnitIds.add(unit.id());
+        if (!unit.isNeutral() && !unitsSeenAt.containsKey(unit.id())) {
+//            Map<String, Integer> props = new HashMap<>();
+//            props.put("id", unit.id());
+//            props.put("type", unit.type().id());
+//            props.put("x", unit.x());
+//            props.put("y", unit.y());
 
-            Map<String, Integer> props = new HashMap<>();
-            props.put("id", unit.id());
-            props.put("type", unit.type().id());
-            props.put("x", unit.x());
-            props.put("y", unit.y());
+//            int now = A.now;
+//            if (!unitsByFrame.containsKey(now)) {
+//                unitsByFrame.put(now, new ArrayList<>());
+//            }
+//            unitsByFrame.get(now).add(props);
 
-            int now = A.now;
-            if (!unitsByFrame.containsKey(now)) {
-                unitsByFrame.put(now, new ArrayList<>());
-            }
-            unitsByFrame.get(now).add(props);
+            unitsSeenAt.put(A.now, new Integer[]{unit.id(), unit.type().id(), unit.x(), unit.y()});
         }
     }
 }
