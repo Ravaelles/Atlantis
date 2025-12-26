@@ -18,7 +18,7 @@ public class AttackParamountUnitsInRange extends Manager {
         if (!unit.isCombatUnit()) return false;
         if (!unit.type().hasAirWeapon()) return false;
         if (unit.enemiesNear().empty()) return false;
-        if (unit.cooldown() >= 6) return false;
+        if (unit.cooldown() >= 5) return false;
 
         return (crucialEnemy = crucialEnemyInRange()) != null;
     }
@@ -40,6 +40,12 @@ public class AttackParamountUnitsInRange extends Manager {
                 AUnitType.Zerg_Scourge,
                 AUnitType.Zerg_Defiler
             );
+
+            if (enemies.empty()) {
+                enemies = unit.enemiesNear().ofType(
+                    AUnitType.Zerg_Mutalisk
+                );
+            }
         }
         else if (Enemy.protoss()) {
             enemies = unit.enemiesNear().ofType(

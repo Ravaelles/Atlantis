@@ -1,5 +1,6 @@
 package atlantis.map.path;
 
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.AMap;
 import atlantis.map.choke.AChoke;
@@ -21,12 +22,12 @@ public class PathToEnemyBase {
     private static Cache<ArrayList<AChoke>> cacheChokes = new Cache<>();
 
     public static ArrayList<AChoke> chokesLeadingToEnemyBase() {
-        AUnit enemy = enemy();
+        HasPosition enemy = enemy();
         if (enemy == null) return new ArrayList<>();
 
         return cacheChokes.getIfValid(
             "chokesLeadingToEnemyBase:" + CacheKey.toKey(enemy),
-            -1,
+            161,
             () -> {
                 CPPath path = definePathToEnemy(Select.mainOrAnyBuilding());
 
@@ -39,12 +40,12 @@ public class PathToEnemyBase {
         );
     }
 
-    private static AUnit enemy() {
-        return EnemyUnits.nearestEnemyBuilding();
+    private static HasPosition enemy() {
+        return EnemyInfo.enemyLocationOrGuess();
     }
 
     protected static CPPath definePathToEnemy(HasPosition from) {
-        AUnit enemy = enemy();
+        HasPosition enemy = enemy();
 
         if (enemy == null || !enemy.hasPosition() || from == null) {
             return null;
