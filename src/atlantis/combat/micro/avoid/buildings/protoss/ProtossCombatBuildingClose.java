@@ -40,7 +40,7 @@ public class ProtossCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return t("No leader");
 
         // === Exception - skip ====================================

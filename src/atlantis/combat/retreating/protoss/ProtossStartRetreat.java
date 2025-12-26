@@ -13,7 +13,6 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
@@ -109,7 +108,7 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean retreatTowardsLeaderForBetterCohesion() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
         if (unit.hp() <= 33) return false;
         if (unit.distTo(leader) <= 4) return false;
@@ -128,7 +127,7 @@ public class ProtossStartRetreat extends HasUnit {
     }
 
     private boolean runTowardsLeader() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
         if (unit.distTo(leader) <= 3) return false;
 

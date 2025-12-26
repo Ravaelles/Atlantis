@@ -66,6 +66,6 @@ public class ProtossTooLonelyGetCloser extends Manager {
     private AUnit defineGoTo() {
         if (unit.isLeader()) return unit.friendsNear().combatUnits().groundUnits().nearestTo(unit);
 
-        return unit.squadLeader();
+        return unit.leader();
     }
 }

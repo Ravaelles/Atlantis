@@ -23,7 +23,7 @@ public class ProtossTooFarFromLeader extends Manager {
         if (Count.ourCombatUnits() >= 16 && Army.strength() >= 800) return false;
         if (unit.lastStoppedRunningLessThanAgo(40)) return false;
 
-        leader = unit.squadLeader();
+        leader = unit.leader();
         if (leader == null) return false;
         double dist = unit.distTo(leader);
 
@@ -62,7 +62,7 @@ public class ProtossTooFarFromLeader extends Manager {
 
     @Override
     public Manager handle() {
-        if (leader == null) leader = unit.squadLeader();
+        if (leader == null) leader = unit.leader();
         if (leader == null) return null;
 
         if (unit.cooldown() <= 6 && unit.enemiesThatCanAttackMe(3).notEmpty()) return null;

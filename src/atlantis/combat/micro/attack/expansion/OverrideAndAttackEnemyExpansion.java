@@ -38,7 +38,7 @@ public class OverrideAndAttackEnemyExpansion extends Manager {
     }
 
     private boolean notLosingFormation() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         return leader != null && unit.distTo(leader) < 10;
     }
 

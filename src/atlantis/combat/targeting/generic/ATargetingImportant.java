@@ -147,7 +147,7 @@ public class ATargetingImportant extends ATargeting {
         target = importantBuildings.mostWoundedOrNearest(unit);
 //        System.err.println("target = " + target + " / " + target.hp());
 
-        if (target != null && target.isHealthy()) target = importantBuildings.mostWoundedOrNearest(unit.squadLeader());
+        if (target != null && target.isHealthy()) target = importantBuildings.mostWoundedOrNearest(unit.leader());
         if (target != null) {
             debug(unit, "Targ_CBs_A = " + target);
             return getThisCombatBuildingOrScvRepairingIt(target);

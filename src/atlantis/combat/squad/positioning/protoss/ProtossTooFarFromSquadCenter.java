@@ -46,7 +46,7 @@ public class ProtossTooFarFromSquadCenter extends Manager {
 //        if (unit.isMoving() && unit.lastPositioningActionLessThanAgo(40)) return false; // Continue
 //        if (unit.isMissionDefendOrSparta()) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader != null && (leader.isRunning() || leader.isRetreating())) return false;
 
         if (unit.squad() != null) squadCenter = squad.units().exclude(unit).nearestTo(unit);

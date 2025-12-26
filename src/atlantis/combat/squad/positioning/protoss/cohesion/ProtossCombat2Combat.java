@@ -2,8 +2,6 @@ package atlantis.combat.squad.positioning.protoss.cohesion;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
-import atlantis.decisions.Decision;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -93,7 +91,7 @@ public class ProtossCombat2Combat extends Manager {
     }
 
     private AUnit friendToGoTo() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader != null && unit.distTo(leader) > 10) {
             return leader;
         }

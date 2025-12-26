@@ -5,7 +5,6 @@ import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.units.AUnit;
-import atlantis.units.select.Count;
 
 public class ProtossForceFight extends Manager {
     public ProtossForceFight(AUnit unit) {
@@ -19,7 +18,7 @@ public class ProtossForceFight extends Manager {
 //        if (unit.eval() <= 0.3) return false;
         if (unit.isAttacking()) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader != null && leader.isAttackingRecently()) return true;
 
         if (unit.ourBuildingsNearCount(3) > 0) return true;

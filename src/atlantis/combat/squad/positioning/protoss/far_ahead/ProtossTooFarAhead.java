@@ -19,7 +19,7 @@ public class ProtossTooFarAhead extends Manager {
         if (unit.isRunningOrRetreating()) return false;
         if (unit.cooldown() <= 8) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
         if (unit.isLeader()) return false;
 

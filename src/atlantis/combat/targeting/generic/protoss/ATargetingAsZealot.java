@@ -1,8 +1,6 @@
 package atlantis.combat.targeting.generic.protoss;
 
-import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.units.AUnit;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 
 import static atlantis.combat.targeting.generic.ATargeting.debug;
@@ -14,7 +12,7 @@ public class ATargetingAsZealot {
         AUnit target;
         double baseRange = 1.0;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return null;
 
         target = enemyUnits

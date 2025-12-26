@@ -19,7 +19,7 @@ public class ShouldDoChoking {
     public static boolean check(AUnit unit) {
         nearestEnemy = null;
 
-        leader = unit.squadLeader();
+        leader = unit.leader();
         if (leader == null) return false;
 
         enemies = leader.enemiesNear().combatUnits();

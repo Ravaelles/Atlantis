@@ -11,7 +11,6 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
-import com.sun.javafx.iio.gif.GIFImageLoader2;
 
 public class ProtossShouldFullRetreat {
     private static AUnit unit;
@@ -41,7 +40,7 @@ public class ProtossShouldFullRetreat {
 
         if (unit.friendsNear().cannons().countInRadius(2, unit) > 0) return f("Defend Cannon");
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader != null && !unit.isLeader()) {
             if (leader.isRetreating()) return t("leaderRetreating");
         }

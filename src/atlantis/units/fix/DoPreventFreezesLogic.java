@@ -93,7 +93,7 @@ public class DoPreventFreezesLogic {
     }
 
     private static boolean goToLeader(AUnit unit) {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null || unit.distTo(leader) <= 5) return false;
 
         return unit.move(leader, Actions.MOVE_FORMATION, null);

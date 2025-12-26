@@ -2418,7 +2418,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
 
         Squad squad = squad();
         if (squad != null && squad.isAlpha()) {
-            AUnit leader = squadLeader();
+            AUnit leader = leader();
             if (leader != null && leader.id() != this.id() && !isLeader() && distTo(leader) <= 7) {
                 return leader.eval();
             }
@@ -3294,7 +3294,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
             || (!isMoving() && !isAccelerating() && noCooldown());
     }
 
-    public AUnit squadLeader() {
+    public AUnit leader() {
         if (Env.isTesting()) {
             return Select.ourCombatUnits().first();
         }
@@ -3448,7 +3448,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public boolean moveToLeader(Action action, String tooltip) {
-        AUnit leader = squadLeader();
+        AUnit leader = leader();
         if (leader == null) return false;
         if (distTo(leader) <= 1.5) return false;
         if (!leader.position().isWalkable()) return false;
@@ -3985,7 +3985,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public AUnit squadLeaderOrThisUnit() {
-        AUnit leader = squadLeader();
+        AUnit leader = leader();
         if (leader != null) return leader;
 
         return this;
@@ -4037,7 +4037,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     }
 
     public double leaderEval() {
-        AUnit leader = squadLeader();
+        AUnit leader = leader();
         if (leader == null) return -1;
 
         return leader.eval();

@@ -204,7 +204,7 @@ public class AttackNearbyEnemies extends Manager {
     }
 
     private AUnit fallbackToSquadLeaderTarget() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null || unit.equals(leader)) return null;
 
         Squad squad = unit.squad();

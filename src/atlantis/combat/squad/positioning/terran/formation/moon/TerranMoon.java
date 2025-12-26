@@ -19,7 +19,7 @@ public class TerranMoon extends Manager {
     public boolean applies() {
         if (unit.enemiesNear().combatUnits().empty()) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
 
         if (!(new ProtossMoonFormationApplies()).applies(unit, leader)) {
@@ -33,7 +33,7 @@ public class TerranMoon extends Manager {
 
     @Override
     public Manager handle() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return null;
 
         goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);

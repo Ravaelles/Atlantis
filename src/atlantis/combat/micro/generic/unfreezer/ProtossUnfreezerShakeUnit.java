@@ -32,7 +32,7 @@ public class ProtossUnfreezerShakeUnit {
     }
 
     private static boolean goToLeader(AUnit unit) {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
 
         if (unit.distTo(leader) > 0.5) {

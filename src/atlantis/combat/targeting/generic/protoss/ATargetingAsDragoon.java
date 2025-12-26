@@ -57,7 +57,7 @@ public class ATargetingAsDragoon {
         }
 
 //        if (unit.shotSecondsAgo() >= 2) {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return null;
 
         AUnit enemyClosestToLeader = enemyUnits.inRadius(range + 2, leader).mostWoundedOrNearest(leader);

@@ -3,8 +3,6 @@ package atlantis.combat.running.stop_running.protoss;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
-import atlantis.game.A;
-import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
@@ -18,7 +16,7 @@ public class ProtossShouldStopRetreat extends Manager {
         if (!unit.isRetreating()) return false;
 //        if (unit.lastStartedRunningLessThanAgo(20)) return false;
         if (unit.lastStartedRetreatingAgo() <= 30 * 3) return false;
-        if (unit.leaderIsRetreating() && unit.squadLeader().lastStartedRetreatingAgo() <= 30 * 3) return false;
+        if (unit.leaderIsRetreating() && unit.leader().lastStartedRetreatingAgo() <= 30 * 3) return false;
 
         return noEnemiesNear()
             || unit.eval() >= 1.3

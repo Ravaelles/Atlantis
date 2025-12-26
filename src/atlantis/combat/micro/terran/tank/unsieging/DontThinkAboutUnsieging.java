@@ -20,7 +20,7 @@ public class DontThinkAboutUnsieging extends Manager {
 
         if (enemyBreachedBase != null && enemyBreachedBase.distTo(unit) >= 10.5) return false;
 
-        return unit.hp() >= 60 && unit.distToLessThan(unit.squadLeader(), 8);
+        return unit.hp() >= 60 && unit.distToLessThan(unit.leader(), 8);
     }
 
     @Override

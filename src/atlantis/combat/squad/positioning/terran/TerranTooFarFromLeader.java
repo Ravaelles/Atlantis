@@ -83,7 +83,7 @@ public class TerranTooFarFromLeader extends Manager {
     }
 
     protected Manager handle() {
-        if (leader == null) leader = unit.squadLeader();
+        if (leader == null) leader = unit.leader();
 
         if (!unit.isMoving() || A.everyNthGameFrame(5)) {
             unit.move(leader, Actions.MOVE_FORMATION, "Coordinate");

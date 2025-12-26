@@ -11,7 +11,6 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import bwapi.Color;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -288,7 +287,7 @@ public class ATargeting extends HasUnit {
 
     protected Selection leaderEnemies() {
         if (leaderEnemies != null) return leaderEnemies;
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return enemyUnits;
 
         return leaderEnemies = (new ATargeting(leader)).enemyUnits;

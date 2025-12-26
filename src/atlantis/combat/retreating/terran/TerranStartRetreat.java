@@ -65,7 +65,7 @@ public class TerranStartRetreat extends HasUnit {
     }
 
     private boolean shouldRetreatTowardsLeader() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
         if (unit.hp() <= 33) return false;
         if (unit.distTo(leader) <= 4) return false;
@@ -126,12 +126,12 @@ public class TerranStartRetreat extends HasUnit {
     // === To Leader ===========================================
 
     private boolean retreatTowardsLeaderForBetterCohesion() {
-        return unit.move(unit.squadLeader(), RUN_RETREAT, "RetreatToCohesion")
+        return unit.move(unit.leader(), RUN_RETREAT, "RetreatToCohesion")
             && notifyNearbyUnitsToRetreat(unit);
     }
 
     private boolean runTowardsLeader() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
         if (unit.distTo(leader) <= 3) return false;
 

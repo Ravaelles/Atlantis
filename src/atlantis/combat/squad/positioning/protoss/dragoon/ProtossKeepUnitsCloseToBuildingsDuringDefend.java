@@ -31,7 +31,7 @@ public class ProtossKeepUnitsCloseToBuildingsDuringDefend extends Manager {
         return distTooBig
             && unit.enemiesNear().combatUnits().havingWeapon().notEmpty()
             && unit.noCooldown()
-            && unit.squadLeader().eval() <= 4
+            && unit.leader().eval() <= 4
 //            && unit.meleeEnemiesNearCount(2.7) == 0
             && (focusPoint = unit.focusPoint()) != null
             && noBuildingUnderSeriousAttack()

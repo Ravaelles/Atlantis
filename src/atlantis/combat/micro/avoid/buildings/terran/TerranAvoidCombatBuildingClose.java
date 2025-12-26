@@ -3,7 +3,6 @@ package atlantis.combat.micro.avoid.buildings.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
 import atlantis.combat.micro.avoid.buildings.AllowAvoidingCB;
-import atlantis.combat.micro.avoid.buildings.protoss.ProtossAvoidCombatBuildingKeepFar;
 import atlantis.combat.micro.avoid.buildings.DontAvoidBunker;
 import atlantis.combat.micro.avoid.buildings.protoss.ReaverDontAvoidCB;
 import atlantis.decisions.Decision;
@@ -41,7 +40,7 @@ public class TerranAvoidCombatBuildingClose extends Manager {
         combatBuilding = combatBuilding();
         if (combatBuilding == null) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return t("No leader");
 
         // === Exception - skip ====================================

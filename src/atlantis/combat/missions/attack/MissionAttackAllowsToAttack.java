@@ -101,7 +101,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
     }
 
     private boolean leaderJustAttacked() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         return leader != null
             && leader.distTo(unit) <= 8
             && leader.lastAttackFrameLessThanAgo(30 * 3);
@@ -112,7 +112,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
 
         if (enemy.isABuilding() && unit.groundWeaponRange() <= 7 && enemy.nearestChokeDist() <= 9) return true;
 
-        AUnit squadLeader = unit.squadLeader();
+        AUnit squadLeader = unit.leader();
         if (squadLeader == null) return false;
 
         return squadLeader.isActiveManager(TerranContainEnemyWrapper.class);

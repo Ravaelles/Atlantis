@@ -11,7 +11,7 @@ import atlantis.units.actions.Actions;
 
 public class FixActions {
     public static boolean moveToLeader(AUnit unit) {
-        HasPosition goTo = unit.squadLeader();
+        HasPosition goTo = unit.leader();
         if (goTo == null) return false;
 
 //        goTo = unit.translateTilesTowards(0.15, goTo);

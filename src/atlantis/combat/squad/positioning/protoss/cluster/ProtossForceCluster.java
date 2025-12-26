@@ -52,7 +52,7 @@ public class ProtossForceCluster extends Manager {
 
     @Override
     public Manager handle() {
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return null;
 
         // Go to LEADER

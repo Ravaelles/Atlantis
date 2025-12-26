@@ -3,14 +3,12 @@ package atlantis.combat.retreating.protoss;
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.missions.MissionManager;
-import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyArmyCenter;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Select;
 
 public class ProtossForceRetreatDuringDefend extends MissionManager {
     private double groundDistToMain;
@@ -27,7 +25,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         if (!unit.isCombatUnit()) return false;
 //        if (!unit.squadIsAlpha()) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader != null && unit.eval() >= 2) return false;
 
         if (distToFocusPointIsProper()) return false;
@@ -75,7 +73,7 @@ public class ProtossForceRetreatDuringDefend extends MissionManager {
         HasPosition center = EnemyArmyCenter.get();
         if (center == null) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
 
         return center.groundDistToMain() + 10 < leader.groundDistToMain();

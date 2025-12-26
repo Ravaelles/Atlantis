@@ -6,7 +6,6 @@ import atlantis.combat.squad.positioning.formations.moon.MoonUnitPositions;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import bwapi.Color;
 
 public class ProtossMoon extends Manager {
     private APosition goTo;
@@ -20,7 +19,7 @@ public class ProtossMoon extends Manager {
         if (unit.isAir()) return false;
         if (unit.isReaver()) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
 
         if (!(new ProtossMoonFormationApplies()).applies(unit, leader)) {
@@ -38,7 +37,7 @@ public class ProtossMoon extends Manager {
 //            System.out.println("@ " + unit + " - why waiting? " + unit.squad().lastShotLessThanAgo(3));
 //        }
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return null;
 
         goTo = MoonUnitPositions.positionToGoForUnit(unit, leader);

@@ -15,7 +15,7 @@ public class ProtossShouldCreateFormation {
         nearestEnemy = unit.nearestGroundCombatEnemy();
         if (nearestEnemy == null) return false;
 
-        AUnit leader = unit.squadLeader();
+        AUnit leader = unit.leader();
         if (leader == null) return false;
 
 //        return leader.distTo(nearestEnemy) <= 7.8 || leader.lastAttackFrameLessThanAgo(30 * 3);

@@ -21,7 +21,7 @@ public class ProtossForceUnitsCloserToLeader extends Manager {
     public boolean applies() {
         if (!We.protoss()) return false;
 
-        leader = unit.squadLeader();
+        leader = unit.leader();
         if (leader == null) return false;
 
         if (!unit.isMissionAttack()) return false;
