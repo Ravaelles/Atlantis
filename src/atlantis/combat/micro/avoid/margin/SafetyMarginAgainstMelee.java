@@ -9,6 +9,7 @@ import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.We;
+import bwapi.Color;
 
 import static atlantis.units.AUnitType.Protoss_Zealot;
 import static atlantis.units.AUnitType.Zerg_Devourer;
@@ -51,6 +52,8 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         else if (defender.isTerranInfantry()) {
             if (defender.isMarine()) {
                 double margin = (new MarineSafetyMarginAgainstMelee(defender)).marginAgainst(attacker);
+//                defender.paintTextCentered(A.digit(criticalDist), Color.Orange);
+//                System.err.println(A.now + " - " + defender.typeWithUnitId() + " -MARGIN: " + A.digit(criticalDist));
                 if (margin > -1) return margin;
             }
             else if (defender.isFirebat()) {

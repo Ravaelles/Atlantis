@@ -248,8 +248,12 @@ public class ARunningManager {
     }
 
     public void stopRunning() {
+        runTo = null;
+        runningFromPosition = null;
+        runningFromUnit = null;
+
         if (!unit.isRunning()) {
-            ErrorLog.printMaxOncePerMinute("Trying to stop running when not running");
+            return;
         }
 
         if (unit.isRunning()) {
@@ -263,10 +267,6 @@ public class ARunningManager {
 
 //            if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("AStopRunning");
         }
-
-        runTo = null;
-        runningFromPosition = null;
-        runningFromUnit = null;
 
 //        A.printStackTrace("StoppedRunning");
     }

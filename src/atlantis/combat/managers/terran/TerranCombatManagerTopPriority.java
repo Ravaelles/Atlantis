@@ -55,6 +55,8 @@ public class TerranCombatManagerTopPriority extends Manager {
 
             // === Very important actions ====================================
 
+            TerranAvoidEnemies.class,
+
             TerranContinueAttack.class,
 
 //            ProtossFixInvalidTargets.class,
@@ -63,8 +65,6 @@ public class TerranCombatManagerTopPriority extends Manager {
             TerranShouldStopRunning.class,
 
             // === Important actions ========================================
-
-            TerranAvoidEnemies.class,
 
 //            DanceAfterShoot.class,
 
