@@ -2,12 +2,11 @@ package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
 import atlantis.terran.chokeblockers.ChokeBlockersAssignments;
-import atlantis.terran.chokeblockers.ChokeToBlock;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-public class UnfreezeGeneric extends Manager {
-    public UnfreezeGeneric(AUnit unit) {
+public class ProtossUnfreezeGeneric extends Manager {
+    public ProtossUnfreezeGeneric(AUnit unit) {
         super(unit);
     }
 
@@ -29,7 +28,7 @@ public class UnfreezeGeneric extends Manager {
 
     @Override
     public Manager handle() {
-        if (UnfreezerShakeUnit.shake(unit)) return usedManager(this);
+        if (ProtossUnfreezerShakeUnit.shake(unit)) return usedManager(this);
 
         return null;
     }

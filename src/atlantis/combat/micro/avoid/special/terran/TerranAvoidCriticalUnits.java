@@ -1,11 +1,12 @@
-package atlantis.combat.micro.avoid.special;
+package atlantis.combat.micro.avoid.special.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.special.*;
 import atlantis.units.AUnit;
 
-public class AvoidCriticalUnits extends Manager {
+public class TerranAvoidCriticalUnits extends Manager {
 
-    public AvoidCriticalUnits(AUnit unit) {
+    public TerranAvoidCriticalUnits(AUnit unit) {
         super(unit);
     }
 

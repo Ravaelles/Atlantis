@@ -1,7 +1,7 @@
 package atlantis.protoss.shuttle;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.units.AUnit;
 
 public class ProtossShuttleAvoidEnemies extends Manager {
@@ -16,7 +16,7 @@ public class ProtossShuttleAvoidEnemies extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AvoidEnemies(unit)).forceHandle() != null) {
+        if ((new ProtossAvoidEnemies(unit)).forceHandle() != null) {
             return usedManager(this);
         }
 

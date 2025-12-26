@@ -1,6 +1,6 @@
 package atlantis.combat.retreating.terran;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
@@ -57,7 +57,7 @@ public class TerranStartRetreat extends HasUnit {
             return true;
         }
 
-        if ((new AvoidEnemies(unit)).invokeFrom(this) != null) {
+        if ((new ProtossAvoidEnemies(unit)).invokeFrom(this) != null) {
             return true;
         }
 

@@ -1,7 +1,7 @@
 package tests.acceptance;
 
 import atlantis.combat.CombatUnitManager;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
+import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static atlantis.units.AUnitType.Zerg_Zergling;
 import static org.junit.Assert.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -89,7 +88,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             // );
 
-            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
                     .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
@@ -120,7 +119,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
                 fake(AUnitType.Zerg_Spore_Colony, inRange));
 
         usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
                     .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
@@ -158,7 +157,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
             // );
 
-            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
                     .invokeFrom(null);
 
             Assertions.assertNotNull(manager);
@@ -189,7 +188,7 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             enemy1.setCompleted(true);
             // Cache.nukeAllCaches();
 
-            AvoidCombatBuildingClose manager = (AvoidCombatBuildingClose) (new AvoidCombatBuildingClose(our))
+            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
                     .invokeFrom(null);
 
             Assertions.assertNotNull(manager);

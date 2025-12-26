@@ -1,15 +1,12 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.generic.DoNothing;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.util.We;
 
-public class FixIdleUnits extends Manager {
-    public FixIdleUnits(AUnit unit) {
+public class ProtossFixIdleUnits extends Manager {
+    public ProtossFixIdleUnits(AUnit unit) {
         super(unit);
     }
 

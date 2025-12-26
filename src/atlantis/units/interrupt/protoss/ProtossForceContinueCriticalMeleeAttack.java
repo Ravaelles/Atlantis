@@ -1,11 +1,11 @@
-package atlantis.units.interrupt;
+package atlantis.units.interrupt.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 
-public class ForceContinueCriticalMeleeAttack extends Manager {
-    public ForceContinueCriticalMeleeAttack(AUnit unit) {
+public class ProtossForceContinueCriticalMeleeAttack extends Manager {
+    public ProtossForceContinueCriticalMeleeAttack(AUnit unit) {
         super(unit);
     }
 

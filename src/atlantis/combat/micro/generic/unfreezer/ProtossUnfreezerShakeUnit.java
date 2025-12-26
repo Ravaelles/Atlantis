@@ -1,7 +1,5 @@
 package atlantis.combat.micro.generic.unfreezer;
 
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.squad.positioning.protoss.cohesion.ProtossCombat2Combat;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossFormation;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -10,7 +8,7 @@ import atlantis.units.select.Select;
 
 import static atlantis.units.actions.Actions.MOVE_IDLE;
 
-public class UnfreezerShakeUnit {
+public class ProtossUnfreezerShakeUnit {
     public static boolean shake(AUnit unit) {
         if (
             unit.lastActionMoreThanAgo(40, Actions.UNFREEZE)

@@ -1,4 +1,4 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;

@@ -3,11 +3,11 @@ package atlantis.combat.micro.generic.unfreezer;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class UnfreezeRun extends Manager {
+public class ProtossUnfreezeRun extends Manager {
 
     private boolean simpleRunFix;
 
-    public UnfreezeRun(AUnit unit) {
+    public ProtossUnfreezeRun(AUnit unit) {
         super(unit);
     }
 
@@ -34,7 +34,7 @@ public class UnfreezeRun extends Manager {
 //        System.err.println("unit.lastPositionChangedAgo() = " + unit.lastPositionChangedAgo());
 //        System.err.println("unit.LAST RUN() = " + unit.lastStartedRunningAgo());
 
-        if (UnfreezerShakeUnit.shake(unit)) return usedManager(this);
+        if (ProtossUnfreezerShakeUnit.shake(unit)) return usedManager(this);
 
         return null;
     }

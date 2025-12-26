@@ -1508,7 +1508,7 @@ public class AAdvancedPainter extends APainter {
 //        Color color;
 //
 //        if (unit.isOur()) {
-//            boolean shouldAvoidAnyUnit = (new AvoidEnemies(unit)).shouldAvoidAnyUnit();
+//            boolean shouldAvoidAnyUnit = (new ProtossAvoidEnemies(unit)).shouldAvoidAnyUnit();
 //            color = shouldAvoidAnyUnit ? Red : Teal;
 //        }
 //        else {

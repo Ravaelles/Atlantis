@@ -7,18 +7,31 @@ import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-import static atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose.f;
-import static atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose.t;
+import static atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose.f;
+import static atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose.t;
 
 public class AllowAvoidingCB {
     public static boolean allowed(AUnit unit, AUnit combatBuilding, AUnit leader) {
         if (We.protoss()) return allowedAsProtoss(unit, combatBuilding, leader);
+        if (We.terran()) return allowedAsTerran(unit, combatBuilding, leader);
 
         return false;
     }
 
+    private static boolean allowedAsTerran(AUnit unit, AUnit combatBuilding, AUnit leader) {
+        if (unit.isAir()) return f("AirNever");
+
+        if (
+            Army.strengthWithoutOurCB() >= 500
+                && unit.eval() >= 7
+                && Alpha.evalOr(0) >= 7
+        ) return t("StrongTArmyNoCBAvoid");
+
+        return f("genericNo");
+    }
+
     private static boolean allowedAsProtoss(AUnit unit, AUnit combatBuilding, AUnit leader) {
-        if (unit.isAir()) return t("AirAlways");
+        if (unit.isAir()) return f("AirNever");
 
         if (A.supplyUsed() <= 160 && combatBuilding.friendsNear().combatBuildingsAntiLand().atLeast(2)) {
             return f("ManyCB");

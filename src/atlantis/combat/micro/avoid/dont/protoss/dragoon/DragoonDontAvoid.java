@@ -5,7 +5,7 @@ import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.ContinueAttack;
+import atlantis.units.interrupt.protoss.ProtossContinueAttack;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 
@@ -19,12 +19,12 @@ public class DragoonDontAvoid {
 
 //        if (unit.hp() <= 20) return false;
 
-        if (!unit.shotSecondsAgo(4) && unit.isActiveManager(ContinueAttack.class)) return true;
+        if (!unit.shotSecondsAgo(4) && unit.isActiveManager(ProtossContinueAttack.class)) return true;
         if (unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)) return true;
 
         if (
             unit.isAttacking()
-                && unit.isActiveManager(ContinueAttack.class)
+                && unit.isActiveManager(ProtossContinueAttack.class)
                 && unit.hasValidTarget()
                 && unit.isTargetInWeaponRangeAccordingToGame()
                 && (!unit.shotSecondsAgo(4) || unit.distTo(unit.target()) >= OurDragoonRange.range() - 1)

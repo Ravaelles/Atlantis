@@ -1,10 +1,10 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 
-public class FixInvalidTargets extends Manager {
-    public FixInvalidTargets(AUnit unit) {
+public class ProtossFixInvalidTargets extends Manager {
+    public ProtossFixInvalidTargets(AUnit unit) {
         super(unit);
     }
 
@@ -25,7 +25,7 @@ public class FixInvalidTargets extends Manager {
 //            System.err.println(unit.target());
 //            if (unit.target() != null) System.err.println("   " + unit.target().hp());
 //            if (A.isUms() && AliveEnemies.get().notEmpty()) {
-//                A.errPrintln(A.now() + ": FixInvalidTargets: " + unit + " is attacking null target");
+//                A.errPrintln(A.now() + ": ProtossFixInvalidTargets: " + unit + " is attacking null target");
 //                PauseAndCenter.on(unit, true);
 //            }
             return true;

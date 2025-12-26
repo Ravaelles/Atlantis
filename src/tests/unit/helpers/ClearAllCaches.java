@@ -1,6 +1,6 @@
 package tests.unit.helpers;
 
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.squad.AllSquads;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.squads.alpha.Alpha;
@@ -23,7 +23,7 @@ public class ClearAllCaches {
         FakeUnit.clearCache();
         AliveEnemies.clearCache();
         ArmyStrength.clearCache();
-        AvoidEnemies.clearCache();
+        ProtossAvoidEnemies.clearCache();
         BaseSelect.clearCache();
         Count.clearCache();
         EnemyInfo.clearCache();

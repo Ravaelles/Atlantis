@@ -1,7 +1,7 @@
 package atlantis.terran.repair.repairer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
@@ -28,7 +28,7 @@ public class RepairerSafety extends Manager {
         unit.setTooltipTactical("FuckThisJob");
         RepairAssignments.removeRepairer(unit);
 
-        AvoidEnemies manager = new AvoidEnemies(unit);
+        ProtossAvoidEnemies manager = new ProtossAvoidEnemies(unit);
         if (manager.invokedFrom(this)) {
             return usedManager(this, "RepairerSafety");
         }
@@ -37,7 +37,7 @@ public class RepairerSafety extends Manager {
 
 //        if (
 //            (!unit.isRepairing() || unit.hpPercent() <= 30)
-//                && (new AvoidEnemies(unit)).avoidEnemiesIfNeeded() != null
+//                && (new ProtossAvoidEnemies(unit)).avoidEnemiesIfNeeded() != null
 //        ) {
 //            return true;
 //        }

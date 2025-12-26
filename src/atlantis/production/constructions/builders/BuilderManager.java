@@ -1,7 +1,7 @@
 package atlantis.production.constructions.builders;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
@@ -25,7 +25,7 @@ public class BuilderManager extends Manager {
         return new Class[]{
             CancelConstructionsWhenEnemiesNear.class,
             BuilderAvoidEnemies.class,
-            AvoidEnemies.class,
+            ProtossAvoidEnemies.class,
             AbandonAsBuilderIfAttacked.class,
         };
     }

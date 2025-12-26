@@ -1,0 +1,74 @@
+package atlantis.combat.micro.attack.terran;
+
+import atlantis.architecture.Manager;
+import atlantis.game.player.Enemy;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Selection;
+
+public class TerranAttackParamountUnitsInRange extends Manager {
+    private AUnit crucialEnemy;
+
+    public TerranAttackParamountUnitsInRange(AUnit unit) {
+        super(unit);
+    }
+
+    @Override
+    public boolean applies() {
+        if (!unit.isCombatUnit()) return false;
+        if (!unit.type().hasAirWeapon()) return false;
+        if (unit.enemiesNear().empty()) return false;
+        if (unit.cooldown() >= 5) return false;
+
+        return (crucialEnemy = crucialEnemyInRange()) != null;
+    }
+
+    @Override
+    public Manager handle() {
+        if (unit.attackUnit(crucialEnemy)) {
+            return usedManager(this, "CrucialAttack");
+        }
+
+        return null;
+    }
+
+    private AUnit crucialEnemyInRange() {
+        Selection enemies = null;
+
+        if (Enemy.zerg()) {
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Zerg_Scourge,
+                AUnitType.Zerg_Defiler
+            );
+
+            if (enemies.empty()) {
+                enemies = unit.enemiesNear().ofType(
+                    AUnitType.Zerg_Mutalisk
+                );
+            }
+        }
+        else if (Enemy.protoss()) {
+            enemies = unit.enemiesNear().ofType(
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Dark_Templar
+            );
+        }
+        else {
+            return null;
+//            enemies = unit.enemiesNear().tanks();
+        }
+
+        Selection targets = enemies
+            .realUnits()
+            .notDeadMan()
+            .effVisible()
+            .canBeAttackedBy(unit, 0.2);
+
+        Selection closeTargets = targets.canBeAttackedBy(unit, -0.7);
+        if (!closeTargets.isEmpty()) {
+            return closeTargets.randomWithSeed(unit.id());
+        }
+
+        return targets.nearestTo(unit);
+    }
+}

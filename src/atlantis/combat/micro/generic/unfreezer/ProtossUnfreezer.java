@@ -5,19 +5,20 @@ import atlantis.combat.generic.DoNothing;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
-import atlantis.units.fix.PreventDoNothing;
+import atlantis.util.We;
 
-public class Unfreezer extends Manager {
+public class ProtossUnfreezer extends Manager {
     public static final int UNFREEZE_WHEN_IDLE_FOR = 40;
 
-    public Unfreezer(AUnit unit) {
+    public ProtossUnfreezer(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
 //        if (true) return false;
+
+        if (!We.protoss()) return false;
 
         if (unit.isAir()) return false;
         if (!unit.isCombatUnit()) return false;
@@ -76,10 +77,10 @@ public class Unfreezer extends Manager {
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
             UnfreezeDragoon.class,
-            UnfreezeGeneric.class,
+            ProtossUnfreezeGeneric.class,
             // ---------------
 //            UnfreezeAttackOrMove.class,
-//            UnfreezeRun.class,
+//            ProtossUnfreezeRun.class,
 //            UnfreezeRunA.class,
 //            UnfreezeRunB.class,
         };

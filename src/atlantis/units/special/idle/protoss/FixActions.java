@@ -1,9 +1,9 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -36,7 +36,7 @@ public class FixActions {
 
         if (unit.enemiesNear().notEmpty()) {
             if (unit.isRanged() && unit.meleeEnemiesNearCount(2.5) > 0) {
-                if ((new AvoidEnemies(unit)).forceHandle() != null) return true;
+                if ((new ProtossAvoidEnemies(unit)).forceHandle() != null) return true;
 
                 return false;
             }

@@ -2,7 +2,7 @@ package atlantis.combat.missions.attack;
 
 import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
+import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.generic.Army;
@@ -37,7 +37,7 @@ public class MissionAttackAllowsToAttack extends HasUnit {
         if (forbidByType(enemy)) return forbidden("ForbiddenByType");
 
         if (
-            unit.isActiveManager(AvoidCombatBuildingClose.class) && enemy.isCombatBuilding()
+            unit.isActiveManager(ProtossCombatBuildingClose.class) && enemy.isCombatBuilding()
         ) return forbidden("ForbidCB");
 
         if (unit.squad() != null && unit.squad().hasMostlyOffensiveRole()) return true;

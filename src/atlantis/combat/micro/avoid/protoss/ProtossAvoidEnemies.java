@@ -1,18 +1,20 @@
-package atlantis.combat.micro.avoid;
+package atlantis.combat.micro.avoid.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
+import atlantis.combat.micro.avoid.WantsToAvoid;
 import atlantis.combat.micro.avoid.dont.DontAvoidEnemy;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.util.cache.Cache;
 
-public class AvoidEnemies extends Manager {
+public class ProtossAvoidEnemies extends Manager {
     private static Cache<Units> cache = new Cache<>();
     private WantsToAvoid wantsToAvoid;
     private EnemyUnitsToAvoid enemyUnitsToAvoid;
 
-    public AvoidEnemies(AUnit unit) {
+    public ProtossAvoidEnemies(AUnit unit) {
         super(unit);
         wantsToAvoid = new WantsToAvoid(unit);
         enemyUnitsToAvoid = new EnemyUnitsToAvoid(unit);
@@ -76,7 +78,7 @@ public class AvoidEnemies extends Manager {
             enemyString = unit.runningFromPosition().toString();
         }
 
-//        return "AvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
-        return "AvoidEnemies";
+//        return "ProtossAvoidEnemies(" + enemyString + "," + unit.lastRunningType() + ")" + ')';
+        return "ProtossAvoidEnemies";
     }
 }

@@ -7,8 +7,8 @@ import atlantis.combat.squad.Squad;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
-import atlantis.units.interrupt.PreventAttacksDuringRetreat;
-import atlantis.units.interrupt.PreventAttacksInMissionDefend;
+import atlantis.units.interrupt.protoss.PreventAttacksDuringRetreat;
+import atlantis.units.interrupt.protoss.PreventAttacksInMissionDefend;
 import atlantis.util.We;
 
 public class AttackNearbyEnemiesApplies extends HasUnit {

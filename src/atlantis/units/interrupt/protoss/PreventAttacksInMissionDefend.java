@@ -1,6 +1,5 @@
-package atlantis.units.interrupt;
+package atlantis.units.interrupt.protoss;
 
-import atlantis.combat.missions.Missions;
 import atlantis.units.AUnit;
 
 public class PreventAttacksInMissionDefend {

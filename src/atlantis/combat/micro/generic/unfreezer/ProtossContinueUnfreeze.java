@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
-public class ContinueUnfreeze extends Manager {
-    public ContinueUnfreeze(AUnit unit) {
+public class ProtossContinueUnfreeze extends Manager {
+    public ProtossContinueUnfreeze(AUnit unit) {
         super(unit);
     }
 
@@ -23,7 +23,7 @@ public class ContinueUnfreeze extends Manager {
                 && (unit.lastActionLessThanAgo(12, Actions.UNFREEZE) || unit.lastCommandIssuedAgo() <= 11)
         ) {
 //            unit.paintCircleFilled(18, Color.Yellow);
-//            System.err.println(A.now() + " - " + unit.typeWithUnitId() + " - ContinueUnfreeze");
+//            System.err.println(A.now() + " - " + unit.typeWithUnitId() + " - ProtossContinueUnfreeze");
 //            CenterCamera.on(unit);
             return usedManager(this);
         }

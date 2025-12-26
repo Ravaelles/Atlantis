@@ -1,11 +1,10 @@
 package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
 import atlantis.units.AUnit;
-import atlantis.util.CenterCamera;
 
 public class ScoutManager extends Manager {
     public ScoutManager(AUnit unit) {
@@ -20,11 +19,11 @@ public class ScoutManager extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidEnemies.class,
+            ProtossAvoidEnemies.class,
             ScoutSeparateFromCloseEnemies.class,
             ScoutSeparateFromCloseWorkers.class,
 //            ScoutSafetyAvoidTooCloseEnemies.class,
-            AvoidCriticalUnits.class,
+            ProtossAvoidCriticalUnits.class,
             ScoutAvoidCombatBuildings.class,
 
             ScoutEnemyNaturalIfNotExisting.class,

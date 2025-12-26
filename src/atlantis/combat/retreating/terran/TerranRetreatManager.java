@@ -4,8 +4,8 @@ import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
-public class TerranRetreat extends Manager {
-    public TerranRetreat(AUnit unit) {
+public class TerranRetreatManager extends Manager {
+    public TerranRetreatManager(AUnit unit) {
         super(unit);
     }
 

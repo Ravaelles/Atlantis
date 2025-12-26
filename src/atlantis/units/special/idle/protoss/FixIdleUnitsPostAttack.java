@@ -1,9 +1,9 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.ContinueAttack;
+import atlantis.units.interrupt.protoss.ProtossContinueAttack;
 
 public class FixIdleUnitsPostAttack extends Manager {
     public FixIdleUnitsPostAttack(AUnit unit) {
@@ -14,7 +14,7 @@ public class FixIdleUnitsPostAttack extends Manager {
     public boolean applies() {
         if (unit.lastPositionChangedAgo() <= 20) return false;
         if (unit.hasCooldown()) return false;
-        if (!unit.isAction(Actions.ATTACK_UNIT) && !unit.isActiveManager(ContinueAttack.class)) return false;
+        if (!unit.isAction(Actions.ATTACK_UNIT) && !unit.isActiveManager(ProtossContinueAttack.class)) return false;
         if (unit.lastCommandIssuedAgo() <= 2) return false;
         if (unit.isMelee() && unit.enemiesNear().inRadius(3, unit).notEmpty()) return false;
         if (unit.lastActionLessThanAgo(20, Actions.ATTACK_UNIT)) return false;

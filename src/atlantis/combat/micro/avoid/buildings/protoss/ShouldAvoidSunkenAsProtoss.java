@@ -1,7 +1,6 @@
 package atlantis.combat.micro.avoid.buildings.protoss;
 
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingKeepFar;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
@@ -41,7 +40,7 @@ public class ShouldAvoidSunkenAsProtoss {
     }
 
     private static double minDist(AUnit unit) {
-        if (AvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return AvoidCombatBuildingKeepFar.DIST(unit);
+        if (ProtossAvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return ProtossAvoidCombatBuildingKeepFar.DIST(unit);
 
 //        return Count.ourCombatUnits() <= 8 ? 8.4 : 14;
         return Army.strength() >= 200 ? 8.4 : 14;

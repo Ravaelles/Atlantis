@@ -1,19 +1,12 @@
 package atlantis.game.listeners;
 
 import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
-import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.buildings.PositionAroundBuilding;
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
-import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.CameraCommander;
 import atlantis.information.enemy.EnemyOnCloseIsland;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
@@ -42,12 +35,9 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.attacked_by.Bullets;
-import atlantis.units.attacked_by.MissedBullets;
-import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
-import atlantis.util.CenterCamera;
 import atlantis.util.Vector;
 import atlantis.util.object.not_needed.NamespaceAccessibility;
 import atlantis.util.object.ObjectToFile;
@@ -144,9 +134,9 @@ public class OnEveryFrameHelper {
 //                );
 //            }
 //
-////            if (unit.isActiveManager(AvoidEnemies.class)) {
+////            if (unit.isActiveManager(ProtossAvoidEnemies.class)) {
 //            if (unit.isActiveManager(AttackNearbyEnemies.class)) {
-//                AvoidEnemies avoidEnemies = new AvoidEnemies(unit);
+//                ProtossAvoidEnemies avoidEnemies = new ProtossAvoidEnemies(unit);
 //                System.err.println(
 //                    "Tlt:" + unit.tooltip() + " / "
 //                    + "Man:" + unit.manager() + " / "

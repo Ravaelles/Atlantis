@@ -3,7 +3,6 @@ package atlantis.combat.micro.generic.unfreezer;
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.util.PauseAndCenter;
 
 public class UnfreezeDragoon extends Manager {
     public UnfreezeDragoon(AUnit unit) {
@@ -14,7 +13,7 @@ public class UnfreezeDragoon extends Manager {
     public boolean applies() {
         if (!unit.isDragoon()) return false;
         if (unit.hasCooldown()) return false;
-        if (unit.lastPositionChangedAgo() <= Unfreezer.UNFREEZE_WHEN_IDLE_FOR) return false;
+        if (unit.lastPositionChangedAgo() <= ProtossUnfreezer.UNFREEZE_WHEN_IDLE_FOR) return false;
         if (unit.lastActionLessThanAgo(5)) return false;
         if (unit.lastPositionChangedAgo() <= 70) return false;
 //        if (unit.shotSecondsAgo(3)) return false;
@@ -36,7 +35,7 @@ public class UnfreezeDragoon extends Manager {
 //        unit.commandHistory().print();
 //        PauseAndCenter.on(unit);
 
-        if (UnfreezerShakeUnit.shake(unit)) return yesUsedManager("UnfreezeD");
+        if (ProtossUnfreezerShakeUnit.shake(unit)) return yesUsedManager("UnfreezeD");
 
         return null;
 

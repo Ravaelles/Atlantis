@@ -1,8 +1,8 @@
 package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.combat.squad.positioning.terran.TerranTooFarFromSquadCenter;
 import atlantis.units.AUnit;
 
@@ -32,7 +32,7 @@ public class TerranMedic extends Manager {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidCriticalUnits.class,
+            ProtossAvoidCriticalUnits.class,
             MedicAvoidWhenAttacked.class,
             ContinueHeal.class,
             HealMostWoundedInRange.class,
@@ -45,7 +45,7 @@ public class TerranMedic extends Manager {
             TooFarFromNearestInfantry.class,
             MoveAwayMedicFromTanks.class,
             GlueToAssignments.class,
-            AvoidEnemies.class,
+            ProtossAvoidEnemies.class,
         };
     }
 

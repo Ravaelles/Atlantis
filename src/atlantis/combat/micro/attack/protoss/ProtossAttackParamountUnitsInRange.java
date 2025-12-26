@@ -1,4 +1,4 @@
-package atlantis.combat.micro.attack;
+package atlantis.combat.micro.attack.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
@@ -6,10 +6,10 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
-public class AttackParamountUnitsInRange extends Manager {
+public class ProtossAttackParamountUnitsInRange extends Manager {
     private AUnit crucialEnemy;
 
-    public AttackParamountUnitsInRange(AUnit unit) {
+    public ProtossAttackParamountUnitsInRange(AUnit unit) {
         super(unit);
     }
 

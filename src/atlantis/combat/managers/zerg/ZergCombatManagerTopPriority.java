@@ -2,26 +2,24 @@ package atlantis.combat.managers.zerg;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
-import atlantis.combat.micro.attack.AttackParamountUnitsInRange;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
-import atlantis.combat.micro.avoid.special.AvoidCriticalUnits;
+import atlantis.combat.micro.attack.protoss.ProtossAttackParamountUnitsInRange;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
+import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.combat.micro.dancing.DanceAfterShoot;
-import atlantis.combat.micro.generic.unfreezer.ContinueUnfreeze;
-import atlantis.combat.micro.generic.unfreezer.Unfreezer;
 import atlantis.combat.micro.transport.TransportUnits;
 import atlantis.combat.retreating.RetreatManager;
 import atlantis.combat.running.stop_running.ShouldStopRunning;
 import atlantis.combat.state.AttackStateDeterminingManager;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.ContinueAttack;
-import atlantis.units.interrupt.ForceContinueCriticalMeleeAttack;
-import atlantis.units.special.idle.FixIdleUnits;
+import atlantis.units.interrupt.protoss.ProtossContinueAttack;
+import atlantis.units.interrupt.protoss.ProtossForceContinueCriticalMeleeAttack;
+import atlantis.units.special.idle.protoss.ProtossFixIdleUnits;
 import atlantis.units.special.RemoveDeadUnitsManager;
 import atlantis.units.special.ManualOverrideManager;
 import atlantis.units.special.SpecialUnitsManager;
-import atlantis.units.special.idle.FixInvalidTargets;
+import atlantis.units.special.idle.protoss.ProtossFixInvalidTargets;
 
 public class ZergCombatManagerTopPriority extends Manager {
     public ZergCombatManagerTopPriority(AUnit unit) {
@@ -49,30 +47,30 @@ public class ZergCombatManagerTopPriority extends Manager {
 
             // === Crucial actions ===========================================
 
-            Unfreezer.class,
-            ContinueUnfreeze.class,
+//            ProtossUnfreezer.class,
+//            ProtossContinueUnfreeze.class,
 
-            AvoidCombatBuildingClose.class,
-            AvoidCriticalUnits.class,
+            ProtossCombatBuildingClose.class,
+            ProtossAvoidCriticalUnits.class,
 
-            AttackParamountUnitsInRange.class,
+            ProtossAttackParamountUnitsInRange.class,
 
 //            ProtossForceRetreatDuringDefend.class,
             RetreatManager.class,
 
             // === Very important actions ====================================
 
-            ForceContinueCriticalMeleeAttack.class,
-            ContinueAttack.class,
+            ProtossForceContinueCriticalMeleeAttack.class,
+            ProtossContinueAttack.class,
 
-            FixInvalidTargets.class,
-            FixIdleUnits.class,
+            ProtossFixInvalidTargets.class,
+            ProtossFixIdleUnits.class,
 
             ShouldStopRunning.class,
 
             // === Important actions ========================================
 
-            AvoidEnemies.class,
+            ProtossAvoidEnemies.class,
 
             DanceAfterShoot.class,
 

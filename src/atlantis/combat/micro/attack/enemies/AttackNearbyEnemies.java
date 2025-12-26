@@ -8,8 +8,8 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.units.AUnit;
-import atlantis.units.interrupt.PreventAttacksDuringRetreat;
-import atlantis.units.interrupt.PreventAttacksInMissionDefend;
+import atlantis.units.interrupt.protoss.PreventAttacksDuringRetreat;
+import atlantis.units.interrupt.protoss.PreventAttacksInMissionDefend;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {

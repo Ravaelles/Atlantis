@@ -1,9 +1,8 @@
 package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.buildings.AvoidCombatBuildingClose;
-import atlantis.combat.micro.avoid.special.protoss.ProtossObserverAvoidDetectors;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.*;
 import atlantis.units.AUnit;
@@ -22,9 +21,9 @@ public class Observer extends MobileDetector {
     @Override
     protected Class<? extends Manager>[] managers() {
         return new Class[]{
-            AvoidCombatBuildingClose.class,
+            ProtossCombatBuildingClose.class,
             DetectorAvoidAntiAir.class,
-            AvoidEnemies.class,
+            ProtossAvoidEnemies.class,
 //            ProtossObserverAvoidDetectors.class,
             ObserverAvoidEnemyDetectors.class,
             AsThirdObserverScoutEnemyBases.class,

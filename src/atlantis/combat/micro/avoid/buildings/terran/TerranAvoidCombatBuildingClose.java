@@ -1,8 +1,10 @@
-package atlantis.combat.micro.avoid.buildings;
+package atlantis.combat.micro.avoid.buildings.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.eval.protoss.ProtossEvaluateAgainstCombatBuildings;
-import atlantis.combat.micro.avoid.buildings.protoss.ShouldAvoidCombatBuildingAsProtoss;
+import atlantis.combat.micro.avoid.buildings.AllowAvoidingCB;
+import atlantis.combat.micro.avoid.buildings.protoss.ProtossAvoidCombatBuildingKeepFar;
+import atlantis.combat.micro.avoid.buildings.DontAvoidBunker;
 import atlantis.combat.micro.avoid.buildings.protoss.ReaverDontAvoidCB;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
@@ -16,9 +18,8 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.util.We;
 
-public class AvoidCombatBuildingClose extends Manager {
+public class TerranAvoidCombatBuildingClose extends Manager {
     public static final double MIN_UNSAFE = 12.2;
     public static final double MIN_SAFE = MIN_UNSAFE + 1.8;
     private AUnit combatBuilding;
@@ -26,7 +27,7 @@ public class AvoidCombatBuildingClose extends Manager {
     private double dist;
     private Selection friends;
 
-    public AvoidCombatBuildingClose(AUnit unit) {
+    public TerranAvoidCombatBuildingClose(AUnit unit) {
         super(unit);
     }
 
@@ -54,25 +55,22 @@ public class AvoidCombatBuildingClose extends Manager {
         if (Enemy.zerg() && Army.strength() <= 400 && A.supplyUsed() <= 160) return t("YesVsZerg");
 
         if ((unit.isRunning() || unit.isRetreating()) && combatBuilding.distTo(unit) >= 18) return f("Running");
-        if ((decision = forReaver()).notIndifferent()) return decision.toBoolean();
 
         if (!unit.squadIsAlpha() && unit.eval() >= 1.2 && unit.hasGroundWeapon()) return f("Non-alpha, dont ACB");
 
         if (unit.meleeEnemiesNearCount(1.4) > 0) return f("melee enemies");
         if (dontAttackDueToRangedEnemiesNear()) return f("ranged enemies");
 
-        if (unit.isProtoss()) {
-            decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
-            if (decision.notIndifferent()) return trOrF(decision.toBoolean(), decision.reason());
-        }
+//        if (unit.isProtoss()) {
+//            decision = ShouldAvoidCombatBuildingAsProtoss.decision(unit, combatBuilding);
+//            if (decision.notIndifferent()) return trOrF(decision.toBoolean(), decision.reason());
+//        }
 
-        else if (We.terran()) {
-            if (
-                unit.eval() >= 1.8
-                    && unit.friendsNearCount() >= 6
-                    && unit.lastStartedRunningMoreThanAgo(30 * 8)
-            ) return f("Strong terran");
-        }
+        if (
+            unit.eval() >= 1.8
+                && unit.friendsNearCount() >= 6
+                && unit.lastStartedRunningMoreThanAgo(30 * 8)
+        ) return f("Strong terran");
 
         dist = unit.distTo(combatBuilding);
 
@@ -97,10 +95,7 @@ public class AvoidCombatBuildingClose extends Manager {
     }
 
     private boolean ignoreByUnitType() {
-        if (We.protoss()) {
-            if (unit.isAir() && unit.isCorsair()) return true;
-            if (unit.isDarkTemplar()) return true;
-        }
+        if (unit.isAir()) return true;
 
         return false;
     }
@@ -135,16 +130,6 @@ public class AvoidCombatBuildingClose extends Manager {
 //        }
 
         return null;
-    }
-
-    private Decision forReaver() {
-        if (!unit.isReaver()) return Decision.INDIFFERENT;
-
-        if (unit.shieldHealthy()) return Decision.FALSE;
-        if (unit.cooldown() > 0) return Decision.FALSE;
-        if (unit.lastActionLessThanAgo(30, Actions.UNLOAD)) return Decision.FALSE;
-
-        return Decision.INDIFFERENT;
     }
 
     private boolean dontAttackDueToRangedEnemiesNear() {
@@ -360,13 +345,7 @@ public class AvoidCombatBuildingClose extends Manager {
 //            }
 //        }
 
-        if (AvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return AvoidCombatBuildingKeepFar.DIST(unit);
-
-//        if (unit.isReaver()) return unit.shields() >= 40 ? 7.2 : 8.7;
-        if (unit.isReaver()) {
-            if (!unit.shotSecondsAgo(8) && unit.hp() >= 60) return 5.0;
-            return unit.shields() >= 40 ? 6.6 : 7.7;
-        }
+//        if (TerranAvoidCombatBuildingKeepFar.shouldKeepFar(unit)) return TerranAvoidCombatBuildingKeepFar.DIST(unit);
 
         return 11.4
             + (400.0 / Army.strength())

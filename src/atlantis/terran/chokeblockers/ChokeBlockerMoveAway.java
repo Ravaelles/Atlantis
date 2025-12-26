@@ -2,17 +2,13 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
-import atlantis.combat.micro.avoid.AvoidEnemies;
-import atlantis.combat.micro.avoid.DoAvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.squad.squad_scout.SquadScoutProceed;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
-import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
-import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
 
 public class ChokeBlockerMoveAway extends Manager {
     public static final int MOVE_AWAY_DISTANCE = 3;
@@ -73,7 +69,7 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new AvoidEnemies(unit)).invokedFrom(this)) {
+        if ((new ProtossAvoidEnemies(unit)).invokedFrom(this)) {
             return usedManager(this);
         }
 

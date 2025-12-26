@@ -1,7 +1,7 @@
-package atlantis.units.special.idle;
+package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.units.AUnit;
 
 public class FixIdleUnitsPostAvoid extends Manager {
@@ -11,7 +11,7 @@ public class FixIdleUnitsPostAvoid extends Manager {
 
     @Override
     public boolean applies() {
-        if (!unit.isActiveManager(AvoidEnemies.class)) return false;
+        if (!unit.isActiveManager(ProtossAvoidEnemies.class)) return false;
         if (unit.lastUnderAttackLessThanAgo(50)) return false;
         if (unit.lastPositionChangedAgo() <= 40) return false;
         if (unit.lastActionLessThanAgo(1)) return false;

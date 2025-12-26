@@ -1,18 +1,19 @@
-package atlantis.units.interrupt;
+package atlantis.units.interrupt.terran;
 
 import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
-import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.interrupt.UnitAttackWaitFrames;
+import atlantis.units.interrupt.protoss.PreventAttacksDuringRetreat;
+import atlantis.units.interrupt.protoss.PreventAttacksInMissionDefend;
 import atlantis.util.We;
-import bwapi.UnitCommandType;
 
 import static atlantis.units.actions.Actions.HOLD_TO_SHOOT;
 import static atlantis.units.actions.Actions.MOVE_AVOID;
 
-public class ContinueAttack extends Manager {
-    public ContinueAttack(AUnit unit) {
+public class TerranContinueAttack extends Manager {
+    public TerranContinueAttack(AUnit unit) {
         super(unit);
     }
 

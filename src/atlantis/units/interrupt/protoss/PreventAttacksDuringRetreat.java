@@ -1,4 +1,4 @@
-package atlantis.units.interrupt;
+package atlantis.units.interrupt.protoss;
 
 import atlantis.units.AUnit;
 

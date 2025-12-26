@@ -3,13 +3,9 @@ package atlantis.combat.generic;
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.choke.Chokes;
-import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.special.idle.FixActions;
-import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
 public class DoNothing extends Manager {

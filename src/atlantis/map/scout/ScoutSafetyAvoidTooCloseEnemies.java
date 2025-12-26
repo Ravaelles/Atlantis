@@ -1,7 +1,7 @@
 package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidEnemies;
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.avoid.WantsToAvoid;
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
@@ -24,7 +24,7 @@ public class ScoutSafetyAvoidTooCloseEnemies extends Manager {
     }
 
     private AUnit defineEnemyToRunFrom() {
-        AUnit enemy = (new AvoidEnemies(unit)).enemiesDangerouslyClose().first();
+        AUnit enemy = (new ProtossAvoidEnemies(unit)).enemiesDangerouslyClose().first();
         if (enemy != null) return enemy;
 
         return unit.enemiesNear().combatUnits().inRadius(9, unit).nearestTo(unit);
