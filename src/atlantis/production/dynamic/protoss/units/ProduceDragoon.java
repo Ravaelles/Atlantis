@@ -35,9 +35,11 @@ public class ProduceDragoon {
         dragoons = Count.dragoons();
         strength = Army.strength();
 
-        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot()) return produceZealot("InsteadGoon");
+        if (dragoons <= 4) return produceDragoon();
 
-        if (dragoons <= 6) return produceDragoon();
+        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot() && produceZealot("InsteadGoon")) {
+            return true;
+        }
         if (
             A.hasMinerals(125) && A.hasGas(150) && (dragoons <= 17 || Missions.isGlobalMissionDefendOrSparta())
         ) return produceDragoon();

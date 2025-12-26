@@ -21,11 +21,9 @@
 @ - Name - Modifier
 8 - Pylon
 9 - Gateway
-9 - Gateway
+10 - Gateway
 13 - Pylon
 18 - Cybernetics Core
 20 - Pylon
 22 - Assimilator
 27 - Pylon
-//41 - Nexus (dynamic?)
-//58 - MISSION=ATTACK

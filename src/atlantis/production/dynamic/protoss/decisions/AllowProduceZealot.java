@@ -17,7 +17,7 @@ public class AllowProduceZealot {
 
         if (A.minerals() >= 275) return true;
 
-        if (Strategy.get().isGoingHiddenUnits()) {
+        if (Strategy.get().isGoingHiddenUnits() && A.minerals() <= 300) {
             if (Select.ourWithUnfinishedOfType(Protoss_Templar_Archives).notEmpty()) return false;
             if (Select.ourWithUnfinishedOfType(Protoss_Citadel_of_Adun).notEmpty()) return false;
         }
