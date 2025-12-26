@@ -22,6 +22,8 @@
 8 - Pylon
 9 - Gateway
 10 - Gateway
+11 - Zealot
+12 - Zealot
 13 - Pylon
 18 - Cybernetics Core
 20 - Pylon

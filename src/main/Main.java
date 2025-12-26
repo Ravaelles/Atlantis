@@ -16,8 +16,8 @@ import java.io.IOException;
  */
 public class Main {
     public static String ourRace() {
-        return "Terran";
-//        return "Protoss";
+//        return "Terran";
+        return "Protoss";
 //        return "Zerg";
     }
 
