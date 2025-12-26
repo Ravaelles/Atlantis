@@ -13,6 +13,8 @@ import static atlantis.units.AUnitType.Protoss_Shield_Battery;
 
 public class ProduceShieldBattery {
     public static boolean produce() {
+        if (true) return false;
+
         if (A.minerals() <= 500 && A.minerals() <= 280 * Count.bases()) return false;
         if (!A.hasMinerals(300) && Count.gasBuildingsWithUnfinished() <= 2) return false;
         if (Count.inProductionOrInQueue(type()) > 0) return false;

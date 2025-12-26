@@ -19,6 +19,7 @@ import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 
 import static atlantis.production.AbstractDynamicUnits.trainIfPossible;
+import static atlantis.production.dynamic.protoss.units.ProduceZealot.produceZealot;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceDragoon {
@@ -34,7 +35,7 @@ public class ProduceDragoon {
         dragoons = Count.dragoons();
         strength = Army.strength();
 
-        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot()) return false;
+        if (Count.freeGateways() <= 1 && ZealotInsteadDragoon.needZealot()) return produceZealot("InsteadGoon");
 
         if (dragoons <= 6) return produceDragoon();
         if (

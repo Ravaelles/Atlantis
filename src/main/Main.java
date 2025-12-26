@@ -16,8 +16,8 @@ import java.io.IOException;
  */
 public class Main {
     public static String ourRace() {
-//        return "Terran";
-        return "Protoss";
+        return "Terran";
+//        return "Protoss";
 //        return "Zerg";
     }
 
@@ -168,7 +168,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealDead.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_3Zeal.scm";
 
-//        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";
+        if (true) return "ums/rav/protoss/1Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/2Drag_v_2Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_1Drag.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
@@ -303,7 +303,7 @@ public class Main {
 //        if (true) return "ums/rav/Wraiths_v_Zerg.scm"; // Wraiths v Scourge + Overlord + Guardian
 
         // vs Protoss
-//        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v ZealotsforceMissionAttack
+        if (true) return "ums/rav/terran/M&M_v_Zealots.scx"; // Marines & Medics v ZealotsforceMissionAttack
 //        if (true) return "ums/rav/terran/M_v_Zealots_map.scx"; // Marines running from Zealots on big map
 //        if (true) return "ums/rav/terran/Bunker_v_Zealots.scx"; // Bunker + M&M v Zealots
 //        if (true) return "ums/rav/terran/M_v_Zealots.scx"; // Marines v Zealots

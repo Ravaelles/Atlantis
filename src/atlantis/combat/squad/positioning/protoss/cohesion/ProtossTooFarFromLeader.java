@@ -33,8 +33,9 @@ public class ProtossTooFarFromLeader extends Manager {
         if (unit.leaderIsRetreating() && !unit.isAttacking()) return false;
         if (unit.leaderIsRetreating() && !unit.isAttacking()) return false;
         if (unit.enemiesNear().havingAtLeastHp(1).countInRadius(4, unit) > 0) return false;
+        if (unit.friendsNear().groundUnits().countInRadius(2, unit) >= 5) return false;
 
-        if (dist >= 10) return true;
+        if (dist >= 6) return true;
 
 //        if (
 //            unit.isMissionDefendOrSparta()

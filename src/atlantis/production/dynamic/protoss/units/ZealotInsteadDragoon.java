@@ -63,7 +63,7 @@ public class ZealotInsteadDragoon {
     }
 
     private static double ratioVsZerg(int zealots, int dragoons) {
-        return 0.46;
+        return 0.6;
     }
 
     private static double calcRatio(int val1, int val2) {

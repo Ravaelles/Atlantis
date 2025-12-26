@@ -65,6 +65,15 @@ public class DanceAwayDragoonApplies extends HasUnit {
         }
 
         if (Enemy.zerg()) {
+            if (
+                unit.cooldown() <= 12
+                    && unit.shieldWound() <= 12
+                    && unit.rangedEnemiesCount(4) == 0
+                    && unit.meleeEnemiesNearCount(2.0) <= 1
+            ) {
+                return f("_GvZ_NoRanged");
+            }
+
             if (cooldown <= 8 && unit.meleeEnemiesNearCount(3.0) == 0) {
                 double shieldWound = unit.shieldWound();
                 if (shieldWound <= 8) return f("_GvZ_A");
