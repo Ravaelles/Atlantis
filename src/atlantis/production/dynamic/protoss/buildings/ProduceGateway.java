@@ -182,8 +182,8 @@ public class ProduceGateway {
     }
 
     private static boolean log(String reason) {
-        CV.log(
-            "Gateway:" + reason
+        CV.globalLog(
+            "Build Gateway:" + reason
                 + " (ex:" + Count.gateways()
                 + ",fr:" + Count.freeGateways()
                 + ",min:" + A.minerals() + ")"

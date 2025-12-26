@@ -109,7 +109,7 @@ public abstract class MissionChanger {
 
 //            if (MissionChanger.DEBUG) {
             if (!A.isUms()) {
-                CV.log("MISSION @" + A.minSec() + " is " + mission.name());
+                CV.globalLog("MISSION " + mission.name()+ ": " + reason + ", balance: " + A.resourcesBalance());
 
                 A.println(
                     "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()

@@ -78,7 +78,7 @@ public class ACherryVisLogger_TraceJson {
         String filePath = cherryVisDirPath + "/trace.json";
         String content = content();
 
-//        A.saveToFile("D:\\last_trace.json", content, true);
+        // A.saveToFile("D:\\last_trace.json", content, true);
 
         String rawFilePath = cherryVisDirPath + "/trace_raw.json";
         A.saveToFile(rawFilePath, content, true);

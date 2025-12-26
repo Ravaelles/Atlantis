@@ -2,6 +2,7 @@ package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
 import atlantis.cherryvis.ACherryVis;
+import atlantis.cherryvis.CV;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -217,7 +218,7 @@ public class SupplyCommander extends Commander {
         if (order != null) {
 //            int notFinished = ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY);
             int pending = ConstructionRequests.countPendingOfType(AtlantisRaceConfig.SUPPLY);
-            ACherryVis.logger().log("Need SUPPLY: (" + A.supplyUsed() + "/ " + A.supplyTotal() + "), "
+            CV.globalLog("Requested SUPPLY: (" + A.supplyUsed() + "/ " + A.supplyTotal() + "), "
                 + "nf:" + notFinished
                 + (pending > 0 ? (", pen:" + pending) : "")
             );

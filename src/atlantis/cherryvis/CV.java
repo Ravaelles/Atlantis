@@ -3,7 +3,7 @@ package atlantis.cherryvis;
 import atlantis.units.AUnit;
 
 public class CV {
-    public static boolean log(String message) {
+    public static boolean globalLog(String message) {
         if (!ACherryVis.isEnabled()) return true;
 
         ACherryVis.logger().log(message);
