@@ -1,20 +1,20 @@
 package atlantis.production.dynamic.terran.bunker;
 
-import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
-import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.We;
+import atlantis.units.select.Have;
 
 public class HaveBunkerAtNaturalChoke extends HaveBunkerAt {
     @Override
     public boolean applies() {
+        if (Count.basesWithUnfinished() <= 1) return false;
         if (Count.bunkersWithUnfinished() >= 3) return false;
-        if (haveBunkerHere()) return false;
+        if (bunkerExistsAtPosition()) return false;
 
-        return true;
+        return Count.marines() >= 2 || A.hasMinerals(160);
     }
 
     @Override

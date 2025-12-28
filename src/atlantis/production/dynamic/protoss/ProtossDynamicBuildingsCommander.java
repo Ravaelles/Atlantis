@@ -22,6 +22,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.protoss()
             && AGame.everyNthGameFrame(17)
+            && (A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4)
             && applyForStandardCases()
             && ProtossCriticalStuffInQueue.hasEnoughResources();
     }

@@ -7,6 +7,7 @@ import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.supply.ProduceFallbackDepotWhenSupplyLow;
 import atlantis.production.dynamic.terran.turrets.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.util.We;
 
 public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
@@ -14,6 +15,7 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     public boolean applies() {
         return We.terran()
             && AGame.everyNthGameFrame(17)
+            && (A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4)
             && (
             A.canAffordWithReserved(92, 0) || (A.hasMinerals(260) && !ShouldExpand.shouldExpand())
         );

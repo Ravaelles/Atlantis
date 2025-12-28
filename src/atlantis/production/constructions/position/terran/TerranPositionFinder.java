@@ -51,7 +51,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
             builder = FreeWorkers.get().first();
         }
         if (nearTo == null) {
-            ErrorLog.printMaxOncePerMinute("Your nearTo is null for " + building + ", fallback to any building");
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Your nearTo is null for " + building + ", fallback to any building");
         }
 
         HasPosition finalNearTo = nearTo != null ? nearTo : Select.mainOrAnyBuilding();

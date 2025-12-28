@@ -293,6 +293,8 @@ public class Main {
     public static String mapAsTerran() {
         if (!"Terran".equals(ourRace())) return null;
 
+        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
+
         // vs Terran
 //        if (true) return "ums/rav/Wraith_v_Wraith.scm";
 //        if (true) return "ums/rav/Wraiths_v_Base.scx";

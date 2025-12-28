@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
 import atlantis.production.dynamic.protoss.ProtossSpecificBuildingsCommander;
-import atlantis.production.dynamic.reinforce.ReinforceBasesCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
 import atlantis.production.dynamic.terran.TerranSpecificBuildingsCommander;
@@ -16,7 +15,7 @@ import atlantis.util.We;
 public class DynamicBuildingsCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4;
+        return true;
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
