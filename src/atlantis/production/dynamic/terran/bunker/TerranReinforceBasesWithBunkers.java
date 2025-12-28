@@ -5,7 +5,9 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.generic.AllOfOurBasePositions;
 import atlantis.information.generic.ArmyStrength;
+import atlantis.map.choke.AChoke;
 import atlantis.map.position.HasPosition;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -50,6 +52,17 @@ public class TerranReinforceBasesWithBunkers extends Commander {
     private boolean ensurePositionHasBunker(HasPosition position) {
         if (Count.hasExistingOrPlannedBuildingNear(Terran_Bunker, 8, position)) return false;
 
-        return (new ReinforceWithBunkerAtNearestChoke(position)).invokedCommander();
+        return requestBunkerAt(positionForBunkerNear(position));
+    }
+
+    private HasPosition positionForBunkerNear(HasPosition position) {
+        AChoke choke = position.nearestChoke();
+        if (choke == null) return position;
+
+        return choke.translateTilesTowards(5, position);
+    }
+
+    protected boolean requestBunkerAt(HasPosition position) {
+        return AddToQueue.withHighPriority(Terran_Bunker, position) != null;
     }
 }

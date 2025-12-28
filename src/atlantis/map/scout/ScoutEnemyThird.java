@@ -32,8 +32,7 @@ public class ScoutEnemyThird extends Manager {
 
         if (unit.distTo(enemyThird) <= 5) return false;
         if (A.s % 30 <= 15) return false;
-
-        if (unit.lastCommandIssuedAgo() >= 10) return true;
+        if (A.secondsAgo(lastSeenAtFrame) <= 24) return false;
 
         if (unit.enemiesThatCanAttackMe(8).notEmpty()) return false;
         if (!Enemy.zerg() && EnemyUnits.combatUnits() <= 2) return false;
@@ -41,10 +40,12 @@ public class ScoutEnemyThird extends Manager {
 
         if (enemyThird.isPositionVisible()) return false;
 
+        if (unit.lastPositionChangedAgo() >= 5 && unit.lastCommandIssuedAgo() >= 10) return true;
+
         if (!enemyThird.isExplored()) return true;
         if (unit.lastPositionChangedAgo() >= 20) return true;
 
-        return A.secondsAgo(lastSeenAtFrame) >= 30;
+        return false;
     }
 
     @Override

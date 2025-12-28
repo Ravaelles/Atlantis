@@ -21,7 +21,9 @@ public class ExpansionCommander extends Commander {
         return new Class[]{
             ProtossExpansionCommander.class,
             ProtossCancelExpansionCommander.class,
+
             TerranExpansionCommander.class,
+
             ZergExpansionCommander.class,
         };
     }

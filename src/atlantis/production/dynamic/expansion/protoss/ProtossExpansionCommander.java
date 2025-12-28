@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class ProtossExpansionCommander extends Commander {
     public ProtossExpansionCommander() {
@@ -11,7 +12,8 @@ public class ProtossExpansionCommander extends Commander {
 
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(67)
+        return We.protoss()
+            && A.everyNthGameFrame(67)
             && Count.ourOfTypeUnfinished(AUnitType.Protoss_Nexus) < maxBasesAtATime()
             && ProtossShouldExpand.shouldExpand();
     }

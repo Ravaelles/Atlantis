@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position.terran;
 
+import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -50,9 +51,9 @@ public class TerranPositionFinder extends AbstractPositionFinder {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("builder is null for " + building + ", fallback to any");
             builder = FreeWorkers.get().first();
         }
-        if (nearTo == null) {
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Your nearTo is null for " + building + ", fallback to any building");
-        }
+//        if (nearTo == null) {
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Your nearTo is null for " + building + ", fallback to any building");
+//        }
 
         HasPosition finalNearTo = nearTo != null ? nearTo : Select.mainOrAnyBuilding();
         AUnit finalBuilder = builder;
@@ -71,59 +72,64 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         }
     }
 
-    private static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
+    public static APosition findNewPosition(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _STATUS = "None";
 
-//        System.err.println("building = " + building);
-//        System.err.println("nearTo = " + nearTo);
-//        System.err.println("maxDistance = " + maxDistance);
+        // =========================================================
 
-        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
-        APosition constructionPosition = null;
+        if (builder == null) {
+            AbstractPositionFinder._STATUS = "NO BUILDER ASSIGNED";
+            return null;
+        }
+
+        // =========================================================
+
+//        int searchRadius = (building.isBase() || building.isCombatBuilding()) ? 0 : 1;
+        int searchRadius = 0;
+
+//        boolean logToFile = building.isGateway();
+//        if (logToFile) LogToFile.info("------------\n");
+
+        int xMapMax = AMap.getMapWidthInTiles() - 1;
+        int yMapMax = AMap.getMapHeightInTiles() - 1;
+
+//        System.err.println("maxDistance = " + maxDistance);
 
         while (searchRadius < maxDistance) {
             int xMin = Math.max(0, nearTo.tx() - searchRadius);
-            int xMax = Math.min(AMap.getMapWidthInTiles() - 1, nearTo.tx() + searchRadius);
+            int xMax = Math.min(xMapMax, nearTo.tx() + searchRadius);
             int yMin = Math.max(0, nearTo.ty() - searchRadius);
-            int yMax = Math.min(AMap.getMapHeightInTiles() - 1, nearTo.ty() + searchRadius);
+            int yMax = Math.min(yMapMax, nearTo.ty() + searchRadius);
+
             for (int tileX = xMin; tileX <= xMax; tileX++) {
                 for (int tileY = yMin; tileY <= yMax; tileY++) {
                     if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
-                        constructionPosition = APosition.create(tileX, tileY);
+//                        if (logToFile) LogToFile.info("tx,ty: [" + tileX + "," + tileY + "]\n");
+
+                        APosition constructionPosition = APosition.create(tileX, tileY);
+//                        System.err.println("constructionPosition = " + constructionPosition + " / " + _CONDITION_THAT_FAILED);
                         if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
                             builder, building, constructionPosition, nearTo
                         )) {
+                            if (building.isCombatBuilding()) {
+                                // Turret fix - make sure to build in the same region
+                                if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
+                                    continue;
+                                }
+                            }
 
-//                            if (building.isCombatBuilding()) {
-//                                // Turret fix - make sure to build in the same region
-//                                if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
-//                                    continue;
-//                                }
-//                            }
-
+                            AbstractPositionFinder._STATUS = "OK";
                             return constructionPosition;
                         }
-//                        else {
-//                            if (searchRadius == 20) {
-//                                APainter.paintCircle(constructionPosition, 8, Color.Red);
-//                                System.out.println("BazBaz pause for " + building + " / " +
-//                                    tileX + "," + tileY + " / " + _CONDITION_THAT_FAILED);
-////                                CameraCommander.centerCameraOn(constructionPosition);
-////                                GameSpeed.pauseGame();
-//                            }
+
+//                        if (A.supplyUsed() <= 28) {
+//                            System.out.println("Fail: " + _STATUS);
 //                        }
                     }
                 }
             }
 
             searchRadius++;
-            PositionFulfillsAllConditions.currentSearchRadius = searchRadius;
-
-//            if (searchRadius >= 23) {
-//                System.out.println("FooBar pause for " + building);
-//                CameraCommander.centerCameraOn(constructionPosition);
-//                GameSpeed.pauseGame();
-//            }
         }
 
         return null;

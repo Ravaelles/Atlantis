@@ -9,11 +9,13 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.We;
 
 public class ProtossCancelExpansionCommander extends Commander {
     @Override
     public boolean applies() {
-        return A.everyNthGameFrame(47)
+        return We.protoss()
+            && A.everyNthGameFrame(47)
             && Count.basesWithUnfinished() <= 2
             && Count.ourOfTypeUnfinished(AUnitType.Protoss_Nexus) > 0
             && shouldCancelDueToEnemyPressure();

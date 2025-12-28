@@ -5,15 +5,15 @@ import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.path.PathToEnemyBase;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 
 public class MiddleFocusChoke {
     public static AChoke get() {
-        if (ProtossShouldIgnoreUseOfMiddleMapChokePoint.ignore()) {
-            return null;
-        }
+        if (We.terran()) return null;
+        if (ProtossShouldIgnoreUseOfMiddleMapChokePoint.ignore()) return null;
 
         // =========================================================
 

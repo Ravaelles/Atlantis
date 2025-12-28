@@ -18,9 +18,5 @@ public class TerranNewBuilding {
         construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
         construction.setBuildingUnit(newBuilding);
         newBuilding.setConstruction(construction);
-
-        if (construction.builder() != null) (new GatherResources(construction.builder())).forceHandle();
-
-        construction.setBuilder(null);
     }
 }

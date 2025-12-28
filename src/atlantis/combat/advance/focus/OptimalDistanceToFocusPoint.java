@@ -58,7 +58,7 @@ public class OptimalDistanceToFocusPoint {
 //            return 0;
 //        }
 
-        if (unit.enemiesNear().combatUnits().countInRadius(13, unit) > 0) return 0;
+        if (unit.enemiesNear().combatUnits().countInRadius(10, unit) > 0) return 0;
 
         Selection workers = Select.ourWorkers();
         if (A.s % 7 <= 2) {
@@ -67,7 +67,7 @@ public class OptimalDistanceToFocusPoint {
 
         if (workers.inRadius(7, unit).empty()) return 0;
 
-        return 3;
+        return 5;
     }
 
     // =========================================================
@@ -88,6 +88,11 @@ public class OptimalDistanceToFocusPoint {
 
     private static double asTerran(AUnit unit, AFocusPoint focusPoint) {
         double base = 0.0;
+
+        double workersBonus = letWorkersComeThroughBonus(unit);
+        if (workersBonus > 0) {
+            return workersBonus;
+        }
 
         if (unit.isMedic()) return 0.5;
         if (unit.isMelee()) return 2;

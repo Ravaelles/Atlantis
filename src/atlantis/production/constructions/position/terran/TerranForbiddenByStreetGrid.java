@@ -39,6 +39,8 @@ public class TerranForbiddenByStreetGrid {
 
         boolean factoryOrStarport = building.isFactory();
         if (building.isBarracks() || factoryOrStarport || building.isEngineeringBay()) {
+            if (moduloY != 1) return failed("TY_Lg modulo failed for Genericc = " + moduloY);
+
             if (building.isBarracks()) {
                 if (moduloX != 1 && moduloX != 5) return failed("TX failed for Barrakz = " + moduloX);
             }
@@ -47,13 +49,11 @@ public class TerranForbiddenByStreetGrid {
                 if (moduloX != 5) return failed("TX_Lg modulo failed for FactOrStar = " + moduloX);
             }
 
-            if (moduloY != 1) return failed("TY_Lg modulo failed for Barrakz = " + moduloY);
-
             return false;
         }
 
-        if (moduloX % 2 != 1) return failed("TX modulo EVEN = " + moduloX);
-        if (moduloY % 2 != 1) return failed("TY modulo EVEN = " + moduloY);
+//        if (moduloX % 2 != 1) return failed("TX modulo EVEN = " + moduloX);
+//        if (moduloY % 2 != 1) return failed("TY modulo EVEN = " + moduloY);
 
 //        if (building.isCombatBuilding()) {
 //            return false;

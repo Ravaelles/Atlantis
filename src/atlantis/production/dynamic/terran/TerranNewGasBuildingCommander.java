@@ -11,8 +11,7 @@ import atlantis.units.select.Select;
 import atlantis.util.We;
 
 public class TerranNewGasBuildingCommander extends Commander {
-
-    private static int numberOfGasBuildings;
+    private int gasBuildingsWithUnfinished;
 
     @Override
     public boolean applies() {
@@ -20,14 +19,14 @@ public class TerranNewGasBuildingCommander extends Commander {
             && A.everyNthGameFrame(23)
             && !tooEarlyForAnotherGasBuilding()
             && (A.gas() <= 600 || A.minerals() >= 500)
-            && (A.gas() <= 100 || Count.ourCombatUnits() >= 10)
-            && (We.zerg() || Count.gasBuildingsWithUnfinished() < Count.basesWithUnfinished());
+            && ((gasBuildingsWithUnfinished = Count.gasBuildingsWithUnfinished()) < Count.basesWithUnfinished())
+            && (A.gas() <= 200 || Count.ourCombatUnits() >= 10);
 //            && CountInQueue.count(AtlantisRaceConfig.GAS_BUILDING) * 250 <= A.minerals();
     }
 
     @Override
     protected boolean handle() {
-        if (numberOfGasBuildings <= 0) {
+        if (gasBuildingsWithUnfinished <= 0) {
             requestFirstBuildingIfNeeded();
         }
         else {
@@ -45,7 +44,7 @@ public class TerranNewGasBuildingCommander extends Commander {
     }
 
     private static boolean tooEarlyForAnotherGasBuilding() {
-        return A.supplyTotal() <= 30;
+        return A.supplyTotal() <= 35;
 
 //        if (Count.existingOrInProduction(AtlantisRaceConfig.GAS_BUILDING) >= 1) {
 //            if (!A.hasMinerals(160) || A.supplyTotal() <= 30) {

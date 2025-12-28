@@ -22,9 +22,9 @@ public class TerranExpansionCommander extends Commander {
         return We.terran()
             && Have.barracks()
 //            && Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE) <= 1
-            && CountInQueue.count(AUnitType.Terran_Bunker) <= 0
+//            && CountInQueue.count(AUnitType.Terran_Bunker) <= 0
             && A.everyNthGameFrame(67)
-            && ShouldExpand.shouldExpand();
+            && TerranShouldExpand.shouldExpand();
     }
 
     @Override
