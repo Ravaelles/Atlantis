@@ -28,7 +28,7 @@ public class ForceEarlyGGOnlyLocally extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         A.errPrintln("\n####################################################");
         A.errPrintln("####################################################");
         A.errPrintln("### Local forced early leave #######################");
@@ -39,5 +39,6 @@ public class ForceEarlyGGOnlyLocally extends Commander {
         ErrorLog.printErrorOnce("ForceEarlyGGOnlyLocally at " + A.s + "s, strength: " + Army.strength());
 
         Atlantis.getInstance().onEnd(false);
+        return false;
     }
 }

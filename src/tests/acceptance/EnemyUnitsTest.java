@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
 import atlantis.game.listeners.OnUnitMorph;
@@ -10,7 +9,6 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.information.generic.Army;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -63,7 +61,7 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
                 fifthFrame();
             }
 
-            gameCommander.invokeCommander();
+            gameCommander.invokedCommander();
         });
     }
 

@@ -1,6 +1,5 @@
-package atlantis.production.dynamic.reinforce.protoss;
+package atlantis.production.dynamic.protoss.reinforce;
 
-import atlantis.game.A;
 import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;

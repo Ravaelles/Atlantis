@@ -6,7 +6,6 @@ import atlantis.config.env.Env;
 import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
-import atlantis.information.generic.Army;
 import atlantis.util.log.ErrorLog;
 
 public class ForceExitLocallyAfterRealSeconds extends Commander {
@@ -20,7 +19,7 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
             && RealTime.gameLengthInRealSeconds() >= realSecondsLimit;
     }
 
-    protected void handle() {
+    protected boolean handle() {
         A.errPrintln("####################################################");
         A.errPrintln("####################################################");
         A.errPrintln("####################################################");
@@ -35,5 +34,6 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         ErrorLog.printErrorOnce("Prevent too long game. It ran " + RealTime.gameLengthInRealSeconds() + " real seconds");
 
         Atlantis.getInstance().onEnd(false);
+        return false;
     }
 }

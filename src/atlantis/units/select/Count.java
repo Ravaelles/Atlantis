@@ -169,6 +169,14 @@ public class Count {
         return ourWithUnfinished(type, radius, position) + plannedBuildingsNear(type, radius, position);
     }
 
+    public static boolean hasExistingOrPlannedBuildingNear(AUnitType type, double radius, HasPosition position) {
+        assert type.isABuilding();
+
+        if (ourWithUnfinished(type, radius, position) > 0) return true;
+
+        return plannedBuildingsNear(type, radius, position) > 0;
+    }
+
     public static int existingOrUnfinishedBuildingsNear(AUnitType type, double radius, HasPosition position) {
         assert type.isABuilding();
 

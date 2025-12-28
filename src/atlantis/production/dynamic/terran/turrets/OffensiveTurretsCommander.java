@@ -1,7 +1,7 @@
-package atlantis.production.dynamic.reinforce.terran.turrets;
+package atlantis.production.dynamic.terran.turrets;
 
 import atlantis.architecture.Commander;
-import atlantis.production.dynamic.reinforce.terran.turrets.offensive.TurretsToContainEnemy;
+import atlantis.production.dynamic.terran.turrets.offensive.TurretsToContainEnemy;
 
 public class OffensiveTurretsCommander extends Commander {
 //    @Override

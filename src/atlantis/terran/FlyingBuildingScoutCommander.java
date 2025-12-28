@@ -14,9 +14,9 @@ public class FlyingBuildingScoutCommander extends Commander {
     private static final ArrayList<AUnit> flyingBuildings = new ArrayList<>();
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (AGame.isUms()) {
-            return;
+            return false;
         }
 
         if (needNewFlyingBuilding()) {
@@ -32,6 +32,7 @@ public class FlyingBuildingScoutCommander extends Commander {
 
             (new FlyingBuildingScoutManager(unit)).invokeFrom(this);
         }
+        return false;
     }
 
     // =========================================================

@@ -28,11 +28,12 @@ public class TerranExpansionCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         securingBase = (new SecuringBaseAsTerran(NextBasePosition.nextBasePosition()));
 
 //        System.err.println("ExpansionCommander.handle() @ " + A.now());
         prepareNewBase();
+        return false;
     }
 
     protected void prepareNewBase() {

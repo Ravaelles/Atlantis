@@ -30,7 +30,7 @@ public class OnEveryFrame {
 
             if (ACherryVis.isEnabled()) ACherryVis.update();
 
-            Atlantis.getInstance().getGameCommander().invokeCommander();
+            Atlantis.getInstance().getGameCommander().invokedCommander();
         }
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================

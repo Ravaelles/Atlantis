@@ -4,8 +4,9 @@ import atlantis.architecture.Commander;
 
 public class PainterCommander extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         AAdvancedPainter.paint();
+        return false;
     }
 
     @Override

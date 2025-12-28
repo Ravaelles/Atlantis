@@ -20,7 +20,7 @@ public class IdleBuildersFix extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (AUnit worker : FreeWorkers.get().list()) {
             if (!worker.recentlyMoved(40)) continue;
 
@@ -39,5 +39,6 @@ public class IdleBuildersFix extends Commander {
                 }
             }
         }
+        return false;
     }
 }

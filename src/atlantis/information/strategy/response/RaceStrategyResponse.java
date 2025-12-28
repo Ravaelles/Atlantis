@@ -4,7 +4,7 @@ import atlantis.combat.micro.terran.bunker.TerranBunker;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
-import atlantis.production.dynamic.reinforce.terran.turrets.TerranMissileTurret;
+import atlantis.production.dynamic.terran.turrets.TerranMissileTurret;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 

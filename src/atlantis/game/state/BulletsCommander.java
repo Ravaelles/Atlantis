@@ -5,7 +5,8 @@ import atlantis.units.attacked_by.Bullets;
 
 public class BulletsCommander extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         Bullets.updateKnown();
+        return false;
     }
 }

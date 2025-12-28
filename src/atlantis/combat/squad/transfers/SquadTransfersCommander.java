@@ -8,8 +8,9 @@ import atlantis.units.AUnit;
 public class SquadTransfersCommander extends Commander {
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         updateSquadTransfers();
+        return false;
     }
 
     private void updateSquadTransfers() {

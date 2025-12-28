@@ -1,7 +1,6 @@
 package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
-import atlantis.cherryvis.ACherryVis;
 import atlantis.cherryvis.CV;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
@@ -32,15 +31,16 @@ public class SupplyCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         supplyTotal = AGame.supplyTotal();
         supplyFree = AGame.supplyFree();
 
-        if (supplyTotal >= 200) return;
-        if (supplyFree >= 12) return;
-        if (lastAdded.lessThanSecondsAgo(5)) return;
+        if (supplyTotal >= 200) return false;
+        if (supplyFree >= 12) return false;
+        if (lastAdded.lessThanSecondsAgo(5)) return false;
 
-        if (supplyFree >= 4 && supplyTotal <= 80 && Count.ourUnfinished(type()) > (A.minerals() <= 310 ? 0 : 1)) return;
+        if (supplyFree >= 4 && supplyTotal <= 80 && Count.ourUnfinished(type()) > (A.minerals() <= 310 ? 0 : 1))
+            return false;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
@@ -51,7 +51,7 @@ public class SupplyCommander extends Commander {
 //            ErrorLog.printMaxOncePerMinute(
 //                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
 //            );
-            return;
+            return false;
         }
 
 //        if (isSupplyVeryLow()) {
@@ -65,13 +65,13 @@ public class SupplyCommander extends Commander {
 
         if (tooFewSupplyLeftAsForGateways()) {
             requestAdditionalSupply();
-            return;
+            return false;
         }
 
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
-            return;
+            return false;
         }
 
         // Should use auto supply manager
@@ -116,17 +116,17 @@ public class SupplyCommander extends Commander {
 
                 if (supplyFree <= 4 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
-                    return;
+                    return noSuppliesBeingBuilt;
                 }
 
                 if (supplyFree <= 6 && suppliesBeingBuilt <= 1) {
                     requestAdditionalSupply();
-                    return;
+                    return noSuppliesBeingBuilt;
                 }
 
                 if (supplyFree <= 12 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
-                    return;
+                    return noSuppliesBeingBuilt;
                 }
 
                 if (supplyTotal <= 120) {
@@ -146,6 +146,7 @@ public class SupplyCommander extends Commander {
                 }
             }
         }
+        return false;
     }
 
     private AUnitType type() {

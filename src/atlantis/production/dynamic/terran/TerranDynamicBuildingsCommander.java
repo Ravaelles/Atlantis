@@ -5,7 +5,7 @@ import atlantis.game.AGame;
 import atlantis.production.dynamic.DynamicCommanderHelpers;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.dynamic.supply.ProduceFallbackDepotWhenSupplyLow;
-import atlantis.production.dynamic.reinforce.terran.turrets.OffensiveTurretsCommander;
+import atlantis.production.dynamic.terran.turrets.OffensiveTurretsCommander;
 import atlantis.production.dynamic.terran.buildings.*;
 import atlantis.util.We;
 
@@ -20,8 +20,8 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
     }
 
     @Override
-    protected void handle() {
-        if ((new ProduceFallbackDepotWhenSupplyLow()).produceIfNeeded()) return;
+    protected boolean handle() {
+        if ((new ProduceFallbackDepotWhenSupplyLow()).produceIfNeeded()) return false;
 
         if (
             ProduceBunker.produce()
@@ -40,14 +40,15 @@ public class TerranDynamicBuildingsCommander extends DynamicCommanderHelpers {
                 || ProduceFactory.factory()
 
                 || ProduceBarracks.barracks()
-        ) return;
+        ) return false;
 //        }
 
         // Turrets
 //        (new ReinforceBunkersWithTurrets()).invoke(this);
 //        if (A.everyNthGameFrame(59)) {
-        (new OffensiveTurretsCommander()).invokeCommander();
+        (new OffensiveTurretsCommander()).invokedCommander();
 //        }
 
+        return false;
     }
 }

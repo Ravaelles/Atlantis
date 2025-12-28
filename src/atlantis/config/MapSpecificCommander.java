@@ -21,8 +21,8 @@ public class MapSpecificCommander extends Commander {
     private static boolean _firstSettings = true;
 
     @Override
-    protected void handle() {
-        if (!Env.isLocal() || Env.isBenchmark() || Env.isParamTweaker()) return;
+    protected boolean handle() {
+        if (!Env.isLocal() || Env.isBenchmark() || Env.isParamTweaker()) return false;
 
         // =========================================================
         // Marines & Medics v. Zealots
@@ -301,6 +301,7 @@ public class MapSpecificCommander extends Commander {
 //                CameraCommander.focusCameraOnInterestingCombatUnit();
             }
         }
+        return false;
     }
 
     private static AUnit ourUnitNearestToEnemy() {

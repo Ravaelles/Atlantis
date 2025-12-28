@@ -31,7 +31,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 
 //            if (true) return;
 
-            (new AtlantisGameCommander()).invokeCommander();
+            (new AtlantisGameCommander()).invokedCommander();
 
             for (AUnit unit : Select.ourCombatUnits().list()) {
 //                (new CombatUnitManager(unit)).invokeFrom(null);

@@ -11,6 +11,14 @@ public class CV {
         return true;
     }
 
+    public static boolean globalState(String message) {
+        if (!ACherryVis.isEnabled()) return true;
+
+        ACherryVis.logger().state(message);
+
+        return true;
+    }
+
     public static boolean unitManager(String message, AUnit unit) {
         if (!ACherryVis.isEnabled()) return true;
 

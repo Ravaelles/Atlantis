@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.protoss;
+package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;

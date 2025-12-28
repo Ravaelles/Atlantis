@@ -17,18 +17,20 @@ public class WorkerTransferCommander extends Commander {
 
     /**
      * Every base should have similar number of workers, more or less.
+     *
+     * @return
      */
-    protected void handle() {
+    protected boolean handle() {
 //        if (true) return;
 
         // Don't run every frame
         if (!AGame.everyNthGameFrame(onceEveryFrames())) {
-            return;
+            return false;
         }
 
         Collection<AUnit> ourBases = Select.ourBases().list();
         if (ourBases.size() <= 1) {
-            return;
+            return false;
         }
 
         // =========================================================
@@ -39,6 +41,7 @@ public class WorkerTransferCommander extends Commander {
         }
 
         if (result) maxAtOnceBonus = 1;
+        return result;
     }
 
     private static int onceEveryFrames() {

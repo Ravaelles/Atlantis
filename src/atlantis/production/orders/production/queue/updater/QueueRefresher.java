@@ -24,7 +24,7 @@ public class QueueRefresher {
             updateOrderStatus(order);
         }
 
-        (new EnforceBuildOrderMissionsCommander()).invokeCommander();
+        (new EnforceBuildOrderMissionsCommander()).invokedCommander();
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {

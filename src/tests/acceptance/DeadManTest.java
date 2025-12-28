@@ -24,7 +24,7 @@ public class DeadManTest extends AbstractTestWithWorld {
     @Test
     public void isDeadMan_dragoon() {
         createWorld(5, () -> {
-                (new UnitStateCommander()).invokeCommander();
+                (new UnitStateCommander()).invokedCommander();
 
                 createBullet(dragoon, zergling);
                 createBullet(dragoon, marine);

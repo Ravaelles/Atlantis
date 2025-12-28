@@ -7,12 +7,11 @@ import atlantis.combat.squad.mission.SquadMissionChanger;
 import atlantis.game.A;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class ActWithSquadsCommander extends Commander {
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         ArrayList<Squad> allSquads = AllSquads.allClone();
 
         // Act with every squad (which contains combat units)
@@ -22,6 +21,7 @@ public class ActWithSquadsCommander extends Commander {
 //            }
             handleSquad(squad);
         }
+        return false;
     }
 
     private void handleSquad(Squad squad) {
@@ -29,6 +29,6 @@ public class ActWithSquadsCommander extends Commander {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
 
-        (new ASquadCommander(squad)).invokeCommander();
+        (new ASquadCommander(squad)).invokedCommander();
     }
 }

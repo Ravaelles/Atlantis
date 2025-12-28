@@ -11,12 +11,13 @@ import java.util.Iterator;
 
 public class ConstructionUnderAttack extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
 
             handleConstructionUnderAttack(construction);
         }
+        return false;
     }
 
     private void handleConstructionUnderAttack(Construction order) {

@@ -16,31 +16,37 @@ public class Commander extends BaseCommander {
         return true;
     }
 
-    public void invokeCommander() {
-        if (A.now == lastFrameInvoked) return;
-
+    public boolean invokedCommander() {
+        if (A.now == lastFrameInvoked) return false;
         lastFrameInvoked = A.now;
 
         CodeProfiler.startMeasuring(this);
 
+        boolean result = false;
         if (applies()) {
-            handle();
+            result = handle();
         }
 
         CodeProfiler.endMeasuring(this);
+
+        return result;
     }
 
-    public void forceHandle() {
-        handle();
+    public boolean forceHandle() {
+        return handle();
     }
 
-    protected void handle() {
-        handleSubcommanders();
+    protected boolean handle() {
+        return handleSubcommanders();
     }
 
-    public void handleSubcommanders() {
+    public boolean handleSubcommanders() {
+        boolean result = false;
+
         for (Commander commander : commanderObjects) {
-            commander.invokeCommander();
+            result = result || commander.invokedCommander();
         }
+
+        return result;
     }
 }

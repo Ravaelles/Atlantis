@@ -23,8 +23,9 @@ public class GG extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         AGame.sendMessage("gg");
         Atlantis.getInstance().onEnd(false);
+        return false;
     }
 }

@@ -22,16 +22,19 @@ public class ProductionOrdersCommander extends Commander {
 
     /**
      * Is responsible for training new units and issuing construction requests for buildings.
+     *
+     * @return
      */
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (A.everyNthGameFrame(GamePhase.isEarlyGame() ? 19 : 71)) Queue.get().refresh();
 
         for (ProductionOrder order : Queue.get().readyToProduceOrders().list()) {
-            if (newBaseInProgressAndCantAffordThisOrder(order)) return;
+            if (newBaseInProgressAndCantAffordThisOrder(order)) return false;
 
             ProduceOrdersFromQueue.handleProductionOrder(order);
         }
+        return false;
     }
 
     private static boolean newBaseInProgressAndCantAffordThisOrder(ProductionOrder order) {

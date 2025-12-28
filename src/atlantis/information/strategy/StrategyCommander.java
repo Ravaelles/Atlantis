@@ -13,8 +13,10 @@ public class StrategyCommander extends Commander {
 
     /**
      * Detect enemy strategy and use our strategy accordingly.
+     *
+     * @return
      */
-    protected void handle() {
+    protected boolean handle() {
         // CodeProfiler.startMeasuring(this);
 
         // If we don't know enemy strategy, try to guess it based on enemy buildings/units we know
@@ -33,6 +35,7 @@ public class StrategyCommander extends Commander {
 //        RaceStrategyResponseFactory.forOurRace().update();
 
         // CodeProfiler.endMeasuring(this);
+        return false;
     }
 
     // =========================================================

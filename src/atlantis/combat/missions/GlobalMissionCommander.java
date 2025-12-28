@@ -1,7 +1,6 @@
 package atlantis.combat.missions;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.squad.squads.alpha.Alpha;
 
 public class GlobalMissionCommander extends Commander {
 
@@ -13,7 +12,7 @@ public class GlobalMissionCommander extends Commander {
 //    }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         MissionChanger.evaluateGlobalMission();
 
         // Global mission is de facto Alpha squad's mission
@@ -21,6 +20,7 @@ public class GlobalMissionCommander extends Commander {
 //        if (alpha.mission() == null) {
 //            alpha.setMission(Missions.globalMission());
 //        }
+        return false;
     }
 
 }

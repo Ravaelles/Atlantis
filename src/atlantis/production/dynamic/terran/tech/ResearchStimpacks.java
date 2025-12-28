@@ -48,7 +48,7 @@ public class ResearchStimpacks extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (ResearchNow.research(what())) {
 //            isEnqueued = true;
         }
@@ -59,6 +59,7 @@ public class ResearchStimpacks extends Commander {
                 isEnqueued = true;
             }
         }
+        return false;
     }
 
     public static boolean isResearched() {

@@ -40,11 +40,12 @@ public class TerranInfantryWeapons extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (upgradeLevel() <= 2) {
             ResearchNow.research(what());
 //            AddToQueue.upgrade(UpgradeType.Terran_Infantry_Weapons);
         }
+        return false;
     }
 
     public static UpgradeType what() {

@@ -3,11 +3,13 @@ package atlantis.production.dynamic;
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.ExpansionCommander;
+import atlantis.production.dynamic.protoss.ProtossSpecificBuildingsCommander;
 import atlantis.production.dynamic.reinforce.ReinforceBasesCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
-import atlantis.production.dynamic.protoss.ProtossNewGasBuildingCommander;
 import atlantis.production.dynamic.terran.TerranDynamicBuildingsCommander;
+import atlantis.production.dynamic.terran.TerranSpecificBuildingsCommander;
 import atlantis.production.dynamic.zerg.ZergDynamicBuildingsCommander;
+import atlantis.production.dynamic.zerg.ZergNewGasBuildingCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.util.We;
 
@@ -21,9 +23,12 @@ public class DynamicBuildingsCommander extends Commander {
     @Override
     protected Class<? extends Commander>[] subcommanders() {
         Class[] generic = new Class[]{
-            ReinforceBasesCommander.class,
-            NewGasBuildingCommander.class,
-            ProtossNewGasBuildingCommander.class,
+            ProtossSpecificBuildingsCommander.class,
+
+            TerranSpecificBuildingsCommander.class,
+
+            ZergNewGasBuildingCommander.class,
+
             ExpansionCommander.class,
         };
 

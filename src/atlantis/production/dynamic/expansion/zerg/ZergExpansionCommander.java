@@ -20,8 +20,9 @@ public class ZergExpansionCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         prepareNewBase();
+        return false;
     }
 
     protected void prepareNewBase() {

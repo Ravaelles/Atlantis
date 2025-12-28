@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.terran;
+package atlantis.production.dynamic.terran.bunker;
 
 import atlantis.architecture.Commander;
 import atlantis.map.base.define.DefineNaturalBase;
@@ -20,20 +20,21 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
     private HasPosition position;
     private APosition natural;
 
-    public ReinforceWithBunkerAtNearestChoke(HasPosition position) {
+    protected ReinforceWithBunkerAtNearestChoke(HasPosition position) {
         this.initialPositionToReinforce = position;
 
-        if (isForNatural()) {
-            this.initialPositionToReinforce = natural;
-        }
+//        if (isForNatural()) {
+//            this.initialPositionToReinforce = natural;
+//        }
     }
 
     @Override
     public boolean applies() {
-        if (true) return false;
+//        if (true) return false;
 
         if (Count.barracks() <= 0) return false;
         if (Count.inProductionOrInQueue(Terran_Bunker) > 0) return false;
+//        if (Count.unf(Terran_Bunker) > 0) return false;
 
         position = initialPositionToReinforce;
         AChoke choke = Chokes.nearestChoke(initialPositionToReinforce, "MAIN");
@@ -80,9 +81,10 @@ public class ReinforceWithBunkerAtNearestChoke extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         System.err.println("Reinforce " + initialPositionToReinforce + " with BUNKER at " + position);
         haveBunkerAtTheNearestChoke();
+        return false;
     }
 
     private void haveBunkerAtTheNearestChoke() {

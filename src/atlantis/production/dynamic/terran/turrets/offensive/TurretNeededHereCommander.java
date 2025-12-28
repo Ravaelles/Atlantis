@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.terran.turrets.offensive;
+package atlantis.production.dynamic.terran.turrets.offensive;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
@@ -26,8 +26,8 @@ public class TurretNeededHereCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
-        if ((new OffensiveTurrets()).buildIfNeeded()) return;
+    protected boolean handle() {
+        if ((new OffensiveTurrets()).buildIfNeeded()) return false;
 
         HasPosition position = (new AnyOffensiveTurretNeeded()).getTurretNeededHere();
 
@@ -36,5 +36,6 @@ public class TurretNeededHereCommander extends Commander {
             AddToQueue.withHighPriority(Terran_Missile_Turret, position.position());
         }
 
+        return false;
     }
 }

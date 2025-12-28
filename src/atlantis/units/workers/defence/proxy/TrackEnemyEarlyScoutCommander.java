@@ -19,7 +19,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (detectEnemyScout()) {
             haveDefenderAssigned();
             if (ourDefender != null && ourDefender.isAlive()) {
@@ -27,6 +27,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
             }
         }
         else noDefenderNeeded();
+        return false;
     }
 
     private Manager sendDefenderToFight() {

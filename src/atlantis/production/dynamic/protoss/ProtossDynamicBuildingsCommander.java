@@ -48,14 +48,14 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     }
 
     @Override
-    protected void handle() {
-        if (topPriority()) return;
+    protected boolean handle() {
+        if (topPriority()) return false;
 
         if (Count.gatewaysWithUnfinished() <= 3) {
-            if (ProduceGateway.produce()) return;
+            if (ProduceGateway.produce()) return false;
         }
 
-        if (!applyForStandardCases()) return;
+        if (!applyForStandardCases()) return false;
 
         if (A.hasMinerals(460)) ProduceGateway.produce();
 
@@ -73,9 +73,9 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
                 || ProducePylonNearEveryBase.produce()
                 || ProduceTemplarArchives.produce()
                 || ProduceCitadelOfAdun.produce()
-        ) return;
+        ) return gatewaysEarly;
 
-        if (A.minerals() <= 500 && Queue.get().readyToProduceOrders().size() <= 1) return;
+        if (A.minerals() <= 500 && Queue.get().readyToProduceOrders().size() <= 1) return gatewaysEarly;
 
         if (isItSafeToAddTechBuildings()) {
             if (
@@ -85,10 +85,11 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
                     || ProduceStargate.produce()
                     || ProduceArbiterTribunal.produce()
                     || ProduceShieldBattery.produce()
-            ) return;
+            ) return gatewaysEarly;
         }
 
         ProduceGateway.produce();
+        return gatewaysEarly;
     }
 
     // =========================================================

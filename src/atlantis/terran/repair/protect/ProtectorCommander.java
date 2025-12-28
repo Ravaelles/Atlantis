@@ -21,7 +21,7 @@ public class ProtectorCommander extends Commander {
     // =========================================================
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (AGame.everyNthGameFrame(5)) {
             AssignNewBunkerProtectors.assignBunkerProtectorsIfNeeded();
         }
@@ -34,6 +34,7 @@ public class ProtectorCommander extends Commander {
             AUnit unit = iterator.next();
             (new ProtectorManager(unit)).invokeFrom(this);
         }
+        return false;
     }
 
     // =========================================================

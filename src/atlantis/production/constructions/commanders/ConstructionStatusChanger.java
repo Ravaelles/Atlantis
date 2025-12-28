@@ -18,13 +18,14 @@ import java.util.Iterator;
 
 public class ConstructionStatusChanger extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
 
             checkForConstructionStatusChange(construction);
             OverdueConstructions.handleIfOverdue(construction);
         }
+        return false;
     }
 
     private void checkForConstructionStatusChange(Construction construction) {

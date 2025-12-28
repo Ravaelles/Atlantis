@@ -46,7 +46,7 @@ public class ResearchPsionicStorm extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (ResearchNow.research(what())) {
             enqueued = true;
         }
@@ -55,6 +55,7 @@ public class ResearchPsionicStorm extends Commander {
 //            enqueued = true;
 //            Queue.get().history().addNow(tech().name());
 //        }
+        return false;
     }
 
     public static boolean isResearched() {

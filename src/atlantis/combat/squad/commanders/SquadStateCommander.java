@@ -5,10 +5,11 @@ import atlantis.architecture.Commander;
 public class SquadStateCommander extends Commander {
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
 //        makeSureSquadObjectsAreInitialized();
 
         assignAlphaSquadScout();
+        return false;
     }
 
     private void assignAlphaSquadScout() {

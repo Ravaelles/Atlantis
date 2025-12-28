@@ -21,12 +21,13 @@ public class NewRepairsCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         removeExcessiveRepairersIfNeeded();
 
         if (!OptimalNumOfRepairers.weHaveTooManyRepairersOverall()) {
             assignRepairersToWoundedUnits();
         }
+        return false;
     }
 
     protected void assignRepairersToWoundedUnits() {

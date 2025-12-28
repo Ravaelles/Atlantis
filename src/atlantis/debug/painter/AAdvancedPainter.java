@@ -44,7 +44,7 @@ import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.dynamic.DynamicBuildingsCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
-import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForMain;
+import atlantis.production.dynamic.terran.turrets.TurretsForMain;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.Orders;

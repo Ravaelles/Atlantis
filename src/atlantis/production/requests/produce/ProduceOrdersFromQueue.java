@@ -8,7 +8,7 @@ import atlantis.util.log.ErrorLog;
 public class ProduceOrdersFromQueue {
     public static void handleProductionOrder(ProductionOrder order) {
         try {
-            (new ProductionOrderHandler(order)).invokeCommander();
+            (new ProductionOrderHandler(order)).invokedCommander();
         } catch (Exception e) {
             order.setStatus(OrderStatus.READY_TO_PRODUCE);
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancelled " + order + " as there was: " + e.getClass());

@@ -1,8 +1,6 @@
 package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.missions.Missions;
-import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
@@ -22,12 +20,12 @@ public class ProductionOrderHandler extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (isAlreadyConsumed()) {
 //            A.errPrintln("Order " + order + " is already consumed!");
 //            System.err.println("Order " + order + " is already consumed, SET TO COMPLETED!");
 //            order.setStatus(OrderStatus.COMPLETED);
-            return;
+            return false;
         }
 
         // =========================================================
@@ -38,7 +36,7 @@ public class ProductionOrderHandler extends Commander {
 
             if (order.construction() != null) {
 //                ErrorLog.printMaxOncePerMinute("Construction already begun for " + order);
-                return;
+                return false;
             }
 
             if (unitType.isABuilding()) {
@@ -102,6 +100,7 @@ public class ProductionOrderHandler extends Commander {
         else {
             ErrorLog.printMaxOncePerMinute(order + " was not handled at all!");
         }
+        return false;
     }
 
     private boolean isAlreadyConsumed() {

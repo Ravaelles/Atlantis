@@ -52,17 +52,17 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (
             ProduceScienceVessels.scienceVessels()
                 || ProduceTanks.tanks()
-        ) return;
+        ) return false;
 
         if (dynamicOrders <= 3 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
             if (
                 ProduceWraiths.wraiths()
 //                    || TerranDynamicFactoryUnits.handleFactoryProduction()
-            ) return;
+            ) return false;
         }
 
         if (dynamicOrders <= 8 || (dynamicOrders <= 10 && A.hasMinerals(700))) {
@@ -73,7 +73,8 @@ public class TerranDynamicUnitsCommander extends Commander implements HasReason 
             }
         }
 
-        (new TerranAbundance()).invokeCommander();
+        (new TerranAbundance()).invokedCommander();
+        return false;
     }
 
     @Override

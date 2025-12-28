@@ -20,9 +20,11 @@ public class ASquadCommander extends Commander {
 
     /**
      * Acts with all units that are part of given battle squad.
+     *
+     * @return
      */
     @Override
-    public void handle() {
+    public boolean handle() {
         if (A.everyNthGameFrame(11)) {
             SquadMissionChanger.changeSquadMissionIfNeeded(squad);
         }
@@ -39,5 +41,6 @@ public class ASquadCommander extends Commander {
 //                Color.Teal
 //            );
         }
+        return false;
     }
 }

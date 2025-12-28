@@ -1,15 +1,12 @@
-package atlantis.production.dynamic.reinforce.protoss;
+package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.production.orders.production.queue.QueueLastStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.units.select.Select;
-import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Protoss_Pylon;
 

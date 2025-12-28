@@ -26,7 +26,7 @@ public class FirstPylonUnitCreated extends AutomaticListener {
             A.errPrintln(A.minSec() + " ---------- No scouts, creating one.");
 
             ScoutState.scouts.add(builder);
-            (new ScoutCommander()).invokeCommander();
+            (new ScoutCommander()).invokedCommander();
         }
     }
 }

@@ -9,7 +9,7 @@ import atlantis.units.select.Select;
 
 public class SpecialUnitsCommander extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (AUnit building : Select.ourBuildings().list()) {
             if (building.is(AUnitType.Protoss_Shield_Battery)) {
                 (new ShieldBattery(building)).invokeFrom(this);
@@ -19,5 +19,6 @@ public class SpecialUnitsCommander extends Commander {
         for (AUnit unit : Select.ourOfType(AUnitType.Protoss_Observer).list()) {
             (new Observer(unit)).invokeFrom(this);
         }
+        return false;
     }
 }

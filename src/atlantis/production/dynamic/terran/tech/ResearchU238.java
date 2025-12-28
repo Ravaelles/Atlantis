@@ -53,7 +53,7 @@ public class ResearchU238 extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (ResearchNow.research(what())) {
 //            isEnqueued = true;
         }
@@ -64,6 +64,7 @@ public class ResearchU238 extends Commander {
                 isEnqueued = true;
             }
         }
+        return false;
     }
 
     public static boolean isResearched() {

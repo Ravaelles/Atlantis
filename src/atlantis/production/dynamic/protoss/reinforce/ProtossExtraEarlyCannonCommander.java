@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.protoss;
+package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
@@ -35,8 +35,9 @@ public class ProtossExtraEarlyCannonCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         requestNew();
+        return false;
     }
 
     private void requestNew() {

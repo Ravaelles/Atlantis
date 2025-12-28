@@ -29,13 +29,13 @@ public class TerranSupplyCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         supplyTotal = AGame.supplyTotal();
         supplyFree = AGame.supplyFree();
 
-        if (supplyTotal >= 200) return;
-        if (supplyFree >= 9) return;
-        if (lastAdded.lessThanSecondsAgo(7)) return;
+        if (supplyTotal >= 200) return false;
+        if (supplyFree >= 9) return false;
+        if (lastAdded.lessThanSecondsAgo(7)) return false;
 
 //        if (CountInQueue.count(AtlantisRaceConfig.SUPPLY) >= 2) return;
 //        if (Queue.get().nonCompleted().ofType(AtlantisRaceConfig.SUPPLY).size() >= 2) return;
@@ -46,7 +46,7 @@ public class TerranSupplyCommander extends Commander {
 //            ErrorLog.printMaxOncePerMinute(
 //                "Too many not started constructions of supply: " + requestedConstructionsOfSupply
 //            );
-            return;
+            return false;
         }
 
         if (isSupplyVeryLow()) {
@@ -55,18 +55,18 @@ public class TerranSupplyCommander extends Commander {
 //                    + A.supplyUsed() + "/" + A.supplyTotal() + ")"
 //            );
             requestAdditionalSupply();
-            return;
+            return false;
         }
 
         if (tooFewSupplyLeftAsForGateways()) {
             requestAdditionalSupply();
-            return;
+            return false;
         }
 
         // Fix for UMS maps
         if (A.isUms() && AGame.supplyFree() <= 1) {
             requestAdditionalSupply();
-            return;
+            return false;
         }
 
         // Should use auto supply manager
@@ -115,6 +115,7 @@ public class TerranSupplyCommander extends Commander {
                 }
             }
         }
+        return false;
     }
 
     private boolean tooFewSupplyLeftAsForGateways() {

@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import bwapi.TechType;
-import bwapi.UpgradeType;
 
 public abstract class TechResearchCommander extends Commander {
     protected abstract void setEnqueued(boolean isEnqueued);
@@ -13,7 +12,7 @@ public abstract class TechResearchCommander extends Commander {
     public abstract TechType what();
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (CountInQueue.count(what(), 10) > 0) {
             if (AddToQueue.tech(what())) setEnqueued(true);
         }
@@ -24,5 +23,6 @@ public abstract class TechResearchCommander extends Commander {
         else if (!isEnqueued() && AddToQueue.tech(what())) {
             setEnqueued(true);
         }
+        return false;
     }
 }

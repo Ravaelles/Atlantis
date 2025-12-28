@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 public class RepairerCommander extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         boolean noMineralsToContinueRepairs = !A.hasMinerals(4);
 
         for (Iterator<AUnit> iterator = RepairAssignments.getRepairers().iterator(); iterator.hasNext(); ) {
@@ -27,5 +27,6 @@ public class RepairerCommander extends Commander {
 
             (new RepairerManager(repairer)).invokeFrom(this);
         }
+        return noMineralsToContinueRepairs;
     }
 }

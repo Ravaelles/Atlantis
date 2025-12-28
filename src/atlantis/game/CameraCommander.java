@@ -20,11 +20,12 @@ public class CameraCommander extends Commander {
 
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         AUnit cameraUnit = centerCameraOnUnit();
         if (A.now() <= 1 || CameraCommander.isFocusCameraOnUnit()) {
             CameraCommander.centerCameraOn(cameraUnit);
         }
+        return false;
     }
 
     // =========================================================

@@ -12,11 +12,12 @@ public class TerranAbundanceTech extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         int marines = Count.marines();
 
         if (marines >= 9) {
             (new TerranInfantryWeapons()).forceHandle();
         }
+        return false;
     }
 }

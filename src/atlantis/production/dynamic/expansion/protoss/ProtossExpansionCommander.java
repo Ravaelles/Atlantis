@@ -2,7 +2,6 @@ package atlantis.production.dynamic.expansion.protoss;
 
 import atlantis.architecture.Commander;
 import atlantis.game.A;
-import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 
@@ -18,9 +17,10 @@ public class ProtossExpansionCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
 //        System.err.println("@ " + A.now() + " ProtossExpansionCommander ");
         ProtossExpandNow.requestNewBase();
+        return false;
     }
 
     public static int maxBasesAtATime() {

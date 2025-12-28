@@ -16,7 +16,7 @@ public abstract class UpgradeResearchCommander extends Commander {
     protected abstract boolean isEnqueued();
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (CountInQueue.count(what(), 2) == 0) {
             if (AddToQueue.upgrade(what())) setEnqueued(true);
         }
@@ -27,6 +27,7 @@ public abstract class UpgradeResearchCommander extends Commander {
         else if (!isEnqueued() && AddToQueue.upgrade(what())) {
             setEnqueued(true);
         }
+        return false;
     }
 
     public static boolean isBeingResearched(UpgradeType upgrade) {

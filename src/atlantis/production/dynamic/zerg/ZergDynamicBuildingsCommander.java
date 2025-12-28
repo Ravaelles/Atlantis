@@ -16,8 +16,9 @@ public class ZergDynamicBuildingsCommander extends DynamicCommanderHelpers {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         hydraDen();
+        return false;
     }
 
     // =========================================================

@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.protoss.tech;
 
-import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
 import atlantis.production.orders.production.queue.CountInQueue;
@@ -64,8 +63,9 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         ResearchNow.research(what());
+        return false;
     }
 
 }

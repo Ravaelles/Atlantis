@@ -6,8 +6,8 @@ import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.dynamic.reinforce.protoss.ShouldSecureProtossBase;
-import atlantis.production.dynamic.reinforce.protoss.ProtossSecureBaseWithCannons;
+import atlantis.production.dynamic.protoss.reinforce.ShouldSecureProtossBase;
+import atlantis.production.dynamic.protoss.reinforce.ProtossSecureBaseWithCannons;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -29,12 +29,13 @@ public class ProtossSecureBasesCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (AUnit base : Select.ourBasesWithUnfinished().reverse().list()) {
             if ((new ShouldSecureProtossBase(base)).needsSecuring()) {
                 (new ProtossSecureBaseWithCannons(base)).reinforce();
             }
         }
+        return false;
     }
 
     // =========================================================

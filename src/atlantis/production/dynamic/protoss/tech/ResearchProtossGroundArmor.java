@@ -11,7 +11,6 @@ import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
-import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ResearchProtossGroundArmor extends Commander {
     private static UpgradeType what() {
@@ -53,7 +52,8 @@ public class ResearchProtossGroundArmor extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         ResearchNow.research(what());
+        return false;
     }
 }

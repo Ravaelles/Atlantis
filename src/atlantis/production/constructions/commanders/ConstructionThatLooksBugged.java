@@ -4,22 +4,20 @@ import atlantis.architecture.Commander;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
-import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 import java.util.Iterator;
 
 public class ConstructionThatLooksBugged extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (Iterator<Construction> iterator = ConstructionRequests.constructions.iterator(); iterator.hasNext(); ) {
             Construction construction = iterator.next();
 
             handleConstructionThatLooksBugged(construction);
         }
+        return false;
     }
 
     private void handleConstructionThatLooksBugged(Construction constr) {

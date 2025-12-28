@@ -43,10 +43,11 @@ public class TerranInfantryArmor extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (upgradeLevel() <= 2) {
             ResearchNow.research(what());
         }
+        return false;
     }
 
     public static UpgradeType what() {

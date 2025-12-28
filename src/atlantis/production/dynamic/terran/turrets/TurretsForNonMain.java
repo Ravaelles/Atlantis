@@ -1,4 +1,4 @@
-package atlantis.production.dynamic.reinforce.terran.turrets;
+package atlantis.production.dynamic.terran.turrets;
 
 import atlantis.game.A;
 import atlantis.map.base.define.DefineNaturalBase;

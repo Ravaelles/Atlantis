@@ -108,8 +108,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         return !A.hasMinerals(320) && A.seconds() > 320;
     }
 
-    protected void handle() {
-        if (!AGame.everyNthGameFrame(7)) return;
+    protected boolean handle() {
+        if (!AGame.everyNthGameFrame(7)) return false;
 
         ProduceObserver.observers();
         ProduceScarabs.scarabs();
@@ -118,7 +118,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
         if (!freeToSpendResources()) {
             if (investInEarlyGoons()) ProduceDragoon.dragoon();
-            return;
+            return false;
         }
 
         ProduceReavers.reavers();
@@ -128,6 +128,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
         ProduceDragoon.dragoon();
         ProduceZealot.zealot();
+        return false;
     }
 
     @Override

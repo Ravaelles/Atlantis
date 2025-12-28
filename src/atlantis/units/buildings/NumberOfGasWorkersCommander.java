@@ -19,7 +19,7 @@ public class NumberOfGasWorkersCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         Collection<AUnit> gasBuildings = Select.ourBuildings().ofType(AtlantisRaceConfig.GAS_BUILDING).list();
         int expectedGasWorkers = expectedGasWorkers();
 
@@ -56,6 +56,7 @@ public class NumberOfGasWorkersCommander extends Commander {
                 break; // Only one worker per execution - prevent weird runs
             }
         }
+        return false;
     }
 
     private static boolean shouldHaveNoWorkersAssigned(AUnit gasBuilding) {

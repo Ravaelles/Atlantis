@@ -1,10 +1,10 @@
-package atlantis.production.dynamic.reinforce.terran.turrets.offensive;
+package atlantis.production.dynamic.terran.turrets.offensive;
 
 import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.map.position.HasPosition;
-import atlantis.production.dynamic.reinforce.terran.turrets.TurretsForNonMain;
+import atlantis.production.dynamic.terran.turrets.TurretsForNonMain;
 import atlantis.units.select.Have;
 
 public class OffensiveTurrets extends TurretsForNonMain {

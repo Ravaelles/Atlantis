@@ -17,9 +17,10 @@ public class EnforceBuildOrderMissionsCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (_lastEnforcedAt == -1) _lastEnforcedAt = A.now();
 
         Missions.forceGlobalMissionFromBuildOrder(mission, "BuildOrderMission");
+        return false;
     }
 }

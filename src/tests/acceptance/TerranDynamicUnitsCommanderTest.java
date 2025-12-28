@@ -42,7 +42,7 @@ public class TerranDynamicUnitsCommanderTest extends WorldStubForTests {
 
                 int oldTrainUnits = FakeUnitData.TRAIN.size();
 
-                (new TerranDynamicUnitsCommander()).invokeCommander();
+                (new TerranDynamicUnitsCommander()).invokedCommander();
 
 //                Select.our().print("All our units!");
 //                System.out.println("## Supply: " + A.supplyUsed() + " / Minerals: " + A.minerals() + " ##\n");

@@ -10,7 +10,7 @@ public class ChokeBlockersCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         ChokeBlockersAssignments chokeBlockers = ChokeBlockersAssignments.get();
 
         chokeBlockers.removeDeadUnits();
@@ -20,6 +20,7 @@ public class ChokeBlockersCommander extends Commander {
         for (AUnit blocker : chokeBlockers.blockers) {
             actWithWorker(blocker);
         }
+        return false;
     }
 
     private void actWithWorker(AUnit unit) {

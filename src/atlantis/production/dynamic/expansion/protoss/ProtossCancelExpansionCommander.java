@@ -24,7 +24,7 @@ public class ProtossCancelExpansionCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (Construction construction : ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Nexus)) {
             if (A.hasMinerals(600)) continue;
             if (construction.progressPercent() >= 70) continue;
@@ -38,5 +38,6 @@ public class ProtossCancelExpansionCommander extends Commander {
             System.err.println(A.minSec() + ": Cancelling expansion due to enemy pressure");
             construction.cancel("Cancel expansion due to enemy pressure");
         }
+        return false;
     }
 }

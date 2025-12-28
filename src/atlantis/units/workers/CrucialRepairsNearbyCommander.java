@@ -14,13 +14,14 @@ public class CrucialRepairsNearbyCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
-        if (A.everyFrameExceptNthFrame(17) || !A.hasMinerals(16)) return;
-        if (tooManyRepairers()) return;
+    protected boolean handle() {
+        if (A.everyFrameExceptNthFrame(17) || !A.hasMinerals(16)) return false;
+        if (tooManyRepairers()) return false;
 
         for (AUnit worker : FreeWorkers.get().list()) {
             (new DoRepairsNearby(worker)).invokeFrom(this);
         }
+        return false;
     }
 
     private boolean tooManyRepairers() {

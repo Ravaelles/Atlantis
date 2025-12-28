@@ -4,8 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 
-import static atlantis.units.AUnitType.*;
-
 public class TerranAbundanceEarlyToMidGame extends Commander {
     @Override
     public boolean applies() {
@@ -13,10 +11,11 @@ public class TerranAbundanceEarlyToMidGame extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (AbundanceProduce.produceWraith()) ;
         if (AbundanceProduce.produceTank()) ;
         if (AbundanceProduce.produceMarine()) ;
         if (AbundanceProduce.produceVulture()) ;
+        return false;
     }
 }

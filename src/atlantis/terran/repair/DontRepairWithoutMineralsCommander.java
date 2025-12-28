@@ -6,7 +6,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 
 public class DontRepairWithoutMineralsCommander extends Commander {
     @Override
-    protected void handle() {
+    protected boolean handle() {
         int totalRepairers = RepairAssignments.countTotalRepairers();
         int minMineralsForRepairers = totalRepairers * 20;
         if (totalRepairers >= 1 && ReservedResources.minerals() <= minMineralsForRepairers) {
@@ -15,5 +15,6 @@ public class DontRepairWithoutMineralsCommander extends Commander {
                 "repairs"
             );
         }
+        return false;
     }
 }

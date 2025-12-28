@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
@@ -31,12 +30,15 @@ public class AutoProduceWorkersCommander extends Commander {
 
     /**
      * Selects the least worker-saturated base to build a worker.
+     *
+     * @return
      */
     @Override
-    protected void handle() {
-        if (!shouldProduceWorkers()) return;
+    protected boolean handle() {
+        if (!shouldProduceWorkers()) return false;
 
         ProduceWorker.produceWorker();
+        return false;
     }
 
     // =========================================================

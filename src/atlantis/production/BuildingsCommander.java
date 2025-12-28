@@ -15,12 +15,13 @@ public class BuildingsCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (AUnit unit : Select.ourBuildings().list()) {
             if (We.protoss() && !unit.isPowered()) continue;
 
             (new BuildingManager(unit)).invokeFrom(this);
         }
+        return false;
     }
 
 }

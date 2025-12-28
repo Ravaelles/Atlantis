@@ -13,9 +13,10 @@ public class UmsSpecialBehaviorCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         for (AUnit unit : Select.ourRealUnits().list()) {
             (new UmsSpecialBehaviorManager(unit)).invokeFrom(this);
         }
+        return false;
     }
 }

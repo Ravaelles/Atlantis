@@ -31,8 +31,9 @@ public class ProtossNewGasBuildingCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         requestAdditionalBuilding();
+        return false;
     }
 
     /**

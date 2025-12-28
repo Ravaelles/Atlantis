@@ -1,4 +1,4 @@
-package atlantis.production.dynamic;
+package atlantis.production.dynamic.zerg;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
@@ -10,13 +10,13 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-public class NewGasBuildingCommander extends Commander {
+public class ZergNewGasBuildingCommander extends Commander {
 
     private static int numberOfGasBuildings;
 
     @Override
     public boolean applies() {
-        return !We.protoss()
+        return We.zerg()
             && A.everyNthGameFrame(23)
             && !tooEarlyForAnotherGasBuilding()
             && (A.gas() <= 600 || A.minerals() >= 500)
@@ -26,13 +26,14 @@ public class NewGasBuildingCommander extends Commander {
     }
 
     @Override
-    protected void handle() {
+    protected boolean handle() {
         if (numberOfGasBuildings <= 0) {
             requestFirstBuildingIfNeeded();
         }
         else {
             requestAdditionalBuildingIfNeeded();
         }
+        return false;
     }
 
     private void requestFirstBuildingIfNeeded() {

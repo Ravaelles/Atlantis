@@ -2,16 +2,13 @@ package atlantis.map.scout;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 
-import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
@@ -19,18 +16,19 @@ import atlantis.util.log.ErrorLog;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
-import java.util.List;
 
 public class ScoutCommander extends Commander {
     /**
      * If we don't have unit scout assigns one of workers to become one and then, <b>scouts and harasses</b>
      * the enemy base or tries to find it if we still don't know where the enemy is.
+     *
+     * @return
      */
     @Override
-    public void handle() {
+    public boolean handle() {
         // CodeProfiler.startMeasuring(this);
 
-        if (AGame.isUms() && Count.bases() == 0) return;
+        if (AGame.isUms() && Count.bases() == 0) return false;
 
         // === Act with every scout ================================
 
@@ -49,6 +47,7 @@ public class ScoutCommander extends Commander {
         }
 
         // CodeProfiler.endMeasuring(this);
+        return false;
     }
 
     // =========================================================

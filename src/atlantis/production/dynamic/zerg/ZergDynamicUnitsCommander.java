@@ -18,15 +18,16 @@ public class ZergDynamicUnitsCommander extends Commander implements HasReason {
     }
 
     @Override
-    protected void handle() {
-        if (Count.larvas() == 0) return;
+    protected boolean handle() {
+        if (Count.larvas() == 0) return false;
 
         ProduceMutas.mutalisks();
 
-        if (Count.larvas() <= 1) return;
+        if (Count.larvas() <= 1) return false;
 
         ProduceHydras.hydras();
         ProduceZerglings.zerglings();
+        return false;
     }
 
     @Override
