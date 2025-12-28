@@ -59,10 +59,8 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
     }
 
     @Override
-    public void state(String message) {
-        String prefix = A.minSec() + ": ";
-
-        ACherryVis_GlobalState.create(prefix + message, "Unknown");
+    public void state(String stateName, String stateValue) {
+        ACherryVis_GlobalState.logNewState(stateName, stateValue);
     }
 
     @Override

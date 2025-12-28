@@ -41,7 +41,7 @@ public class ACherryVisLogger_TraceJson {
             + emptyLineMap("tasks") + ","
             + emptyLineMap("tensors_summaries") + ","
             + emptyLineArray("trees") + ","
-            + "\"types_names\": " + mergeTypes(strings) + ","
+            + "\"types_names\": " + typesToString(strings) + ","
             // + emptyLineMap("units_first_seen") + ","
             + "\"units_first_seen\": {" + ACherryVis_UnitFirstSeen.get() + "},"
             + emptyLineMap("units_logs") + ","
@@ -62,7 +62,7 @@ public class ACherryVisLogger_TraceJson {
             + "}";
     }
 
-    private String mergeTypes(ACherryVis_Strings strings) {
+    private String typesToString(ACherryVis_Strings strings) {
         String original = ACherryVis_TypesNames.get();
         if (strings.isEmpty()) {
             return original;

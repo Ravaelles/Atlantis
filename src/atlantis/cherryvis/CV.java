@@ -11,10 +11,10 @@ public class CV {
         return true;
     }
 
-    public static boolean globalState(String message) {
+    public static boolean globalState(String stateName, String stateValue) {
         if (!ACherryVis.isEnabled()) return true;
 
-        ACherryVis.logger().state(message);
+        ACherryVis.logger().state(stateName, stateValue);
 
         return true;
     }
