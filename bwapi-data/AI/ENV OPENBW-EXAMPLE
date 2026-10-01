@@ -1,0 +1,18 @@
+# Atlantis on Linux: OpenBW backend via StardustDevEnvironment.
+# Copy this file to bwapi-data/AI/ENV (that file is git-ignored, local only).
+#
+# How it works: an external OpenBW server (BWAPILauncher from
+# StardustDevEnvironment/build/bin) hosts the game; Atlantis only attaches
+# via BWClient.startGame(). Nothing is started/killed here, bwapi.ini is NOT
+# patched (races/map belong to the server side).
+#
+# Recipe (see StardustDevEnvironment/DOCS/HOW-ATLANTIS-OPENBW.md):
+#   Terminal 1 (server): StardustDevEnvironment/scripts/run-openbw-server.sh
+#   Terminal 2 (bot):    java -jar Atlantis.jar   (from the Atlantis dir)
+LOCAL=true
+GAME_LAUNCHER=OPENBW
+BWAPI_DATA_PATH=
+CHAOS_LAUNCHER_PATH=
+FORCE_GG_FOR_ENEMY=true
+FORCE_END_GAME_AFTER_REAL_SECONDS=1200
+POSTGAME_COPY_CHERRYVIS_TO=

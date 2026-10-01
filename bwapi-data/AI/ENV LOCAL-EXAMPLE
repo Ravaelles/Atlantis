@@ -4,3 +4,7 @@ CHAOS_LAUNCHER_PATH=C:\\Program Files (x86)\\BWAPI\\Chaoslauncher\\Chaoslauncher
 FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
 POSTGAME_COPY_CHERRYVIS_TO=
+# Game backend: CHAOS (default, Windows + ChaosLauncher + live StarCraft)
+# or OPENBW (Linux + external BWAPILauncher server, see ENV OPENBW-EXAMPLE).
+# Any value other than OPENBW (including empty/missing) keeps Chaos behavior.
+GAME_LAUNCHER=CHAOS
