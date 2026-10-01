@@ -1,5 +1,5 @@
 # Atlantis
-...is an extensive Java framework based on [JBWAPI 2.1.0](https://github.com/JavaBWAPI/JBWAPI). Last updated **2024/09**.
+...is an extensive Java framework based on [JBWAPI 2.1.0](https://github.com/JavaBWAPI/JBWAPI)
 
 ![image](https://github.com/user-attachments/assets/14be34c7-5b0f-4dd8-a9a8-132904fc5f16)
 
@@ -39,6 +39,6 @@ The latest stable version is in the `master` branch. In `develop` you will find 
 - Esc makes the bot to exit gently, killing StarCraft and ChaosLauncher processes on exit
 
 # AI tournaments
-You probably know it already, but take a look at: http://sscaitournament.com/
+You probably know it already, but take a look at: http://sscaitournament.com/ and https://www.basil-ladder.net/ranking.html
 
 Starcraft bots that plays there online 365/24/7. Pretty cool, eh?

@@ -5,4 +5,8 @@ FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
 GENERATE_CHERRYVIS_REPLAY=true
 MODIFY_BWAPI_INI=true
-# POSTGAME_COPY_C   HERRYVIS_TO=C:\Users\MyName\AppData\Roaming\scbw\games
+POSTGAME_COPY_CHERRYVIS_TO=
+# Game backend: CHAOS (default, Windows + ChaosLauncher + live StarCraft)
+# or OPENBW (Linux + external BWAPILauncher server, see ENV OPENBW-EXAMPLE).
+# Any value other than OPENBW (including empty/missing) keeps Chaos behavior.
+GAME_LAUNCHER=CHAOS

@@ -2,10 +2,8 @@ package main;
 
 import atlantis.Atlantis;
 import atlantis.config.ActiveMap;
-import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
-import atlantis.keyboard.AKeyboard;
-import atlantis.util.ProcessHelper;
+import atlantis.config.launcher.GameLauncherFactory;
 
 import java.io.IOException;
 
@@ -376,18 +374,9 @@ public class Main {
     // =========================================================
 
     private static void localAtlantisSetup(String[] args) {
-        ActiveMap.specifyMap(defineMapToUse(args));
-
-        AKeyboard.listenForKeyEvents();
-
-        ProcessHelper.killStarcraftProcess();
-        ProcessHelper.killChaosLauncherProcess();
-
-        // Dynamically modify bwapi.ini file, change race and enemy race.
-        // If you want to change your/enemy race, edit AtlantisRaceConfig constants.
-        AtlantisIgniter.modifyBwapiFileIfNeeded();
-
-        // IMPORTANT: Make sure Chaoslauncher -> Settings -> "Run Starcraft on Startup" is checked
-        ProcessHelper.startChaosLauncherProcess();
+        // Backend chosen by bwapi-data/AI/ENV (GAME_LAUNCHER=OPENBW or default Chaos).
+        // See atlantis.config.launcher.* (Strategy): Windows/ChaosLauncher starts
+        // live StarCraft itself, OpenBW only attaches to an external BWAPILauncher server.
+        GameLauncherFactory.forCurrentEnv().launch(args);
     }
 }

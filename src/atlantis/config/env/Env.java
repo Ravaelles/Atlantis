@@ -22,6 +22,7 @@ public class Env {
     private static boolean isStarEngine = false;
     private static boolean isTesting = false;
     private static boolean modifyBwapiIni = false;
+    private static boolean openBW = false;
     private static boolean paramTweaker = false;
     private static String copyCherryVisDataTo = null;
 
@@ -92,6 +93,10 @@ public class Env {
                 return true;
             case "POSTGAME_COPY_CHERRYVIS_TO":
                 copyCherryVisDataTo = value;
+                return true;
+            case "GAME_LAUNCHER":
+                // CHAOS (default, Windows + ChaosLauncher) or OPENBW (Linux + BWAPILauncher server).
+                openBW = value != null && value.trim().equalsIgnoreCase("OPENBW");
                 return true;
         }
         return false;
@@ -174,6 +179,16 @@ public class Env {
 
     public static boolean isStarEngine() {
         return isStarEngine;
+    }
+
+    /**
+     * OpenBW backend (Linux, headless server) selected via
+     * {@code GAME_LAUNCHER=OPENBW} in {@code bwapi-data/AI/ENV}.
+     * Anything else (including a missing key) means the classic
+     * Windows + ChaosLauncher backend, so old setups keep working.
+     */
+    public static boolean isOpenBW() {
+        return openBW;
     }
 
     public static void markIsTesting(boolean enabled) {
