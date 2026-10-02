@@ -694,6 +694,14 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `AtlantisGameCommander` now delegates. Still pending in Stage C: remove
   reflection from `Commander`/`Manager` construction, unify the `handle()`
   contract, and verify with a game run.
+- **Headless build & tests: DONE.** Whole project compiles from source and the
+  unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
+  pre-existing failures are listed there rather than hidden.
+- **Stage J (partial): DONE.** ADRs in `DOCS/adr/`; test runner + arch runner.
+- **Defect fixed:** `BaseManager` equals/hashCode contract (REVIEW §4). Shrank
+  the baseline by one violation.
+- **Stage B hardened:** new rule — `atlantis.application` must not depend on
+  `bwapi`.
 
 ### 16.0 Summary
 
@@ -892,3 +900,28 @@ Begin with **Stage A** and **Stage B**. They are days of work, change no
 behavior, and unlock every later stage by making the boundaries enforceable.
 Suggested first branches: `stage-a/boundary-contract`,
 `stage-b/boundary-ratchet`.
+
+**Progress:** A and B are done; the pipeline ordering is pinned (Stage C start);
+the build/test tooling and ADRs are in place. Next concrete targets: finish
+Stage C (remove reflection), then start Stage D (OrderSink) and Stage E
+(read model).
+
+---
+
+## 17. Deferred defects — need a game run to verify
+
+These are confirmed bugs, but fixing them **changes bot behaviour**, so they must
+not be changed blindly without a game run to compare against. Tracked here so
+they are not lost.
+
+1. **`Cache.getIfValid` returns invalid values** (REVIEW §3.3). The validity
+   checks for `AFocusPoint`/`AUnit` are ineffective because the method falls
+   through to `return value;`. Fixing it means `Select.main()` etc. can start
+   returning a *recomputed* (possibly `null`) value where a stale unit used to be
+   returned — callers that currently assume non-null would NPE. Needs a game run
+   plus a review of every `Select.main*()` caller.
+2. **`System.exit`/`A.quit`/`AGame.exit` from arbitrary depth** (26 sites).
+   Replacing them with exceptions caught by one top-level handler is the right
+   design, but changes failure behaviour; verify against a failing game start.
+3. **Reflection in the hot loop** (per-unit `Manager` trees, §3.2).
+   Stage C removes it; must be validated by a game run, not only by unit tests.
