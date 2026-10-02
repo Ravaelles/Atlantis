@@ -21,28 +21,28 @@ public class UnitsToTargetsWithCacheTest extends AbstractTestWithWorld {
 
     @Test
     public void tetsItReturnsTargetsAcquiredInLastNFrames() {
-        createWorld(2, () -> {
+        world(2, generateOur(), generateEnemies(), () -> {
 //            System.err.println("\n### now = " + A.now());
 
-            // === 1 ===========================================
+        // === 1 ===========================================
 
-            if (A.now() == 1) {
-                assertEquals(0, TerranGhost.lockdownTargets.targetsAcquiredInLast(1).size());
+        if (A.now() == 1) {
+            assertEquals(0, TerranGhost.lockdownTargets.targetsAcquiredInLast(1).size());
 
-                TerranGhost.lockdownTargets.addTarget(shuttle1, ghost1);
-                TerranGhost.lockdownTargets.addTarget(shuttle2, ghost2);
-                TerranGhost.lockdownTargets.addTarget(shuttle2, ghost3);
-            }
+            TerranGhost.lockdownTargets.addTarget(shuttle1, ghost1);
+            TerranGhost.lockdownTargets.addTarget(shuttle2, ghost2);
+            TerranGhost.lockdownTargets.addTarget(shuttle2, ghost3);
+        }
 
-            // === 2 ===========================================
+        // === 2 ===========================================
 
-            else if (A.now() == 2) {
-                assertEquals(0, TerranGhost.lockdownTargets.targetsAcquiredInLast(0).size());
-                assertEquals(3, TerranGhost.lockdownTargets.targetsAcquiredInLast(1).size());
+        else if (A.now() == 2) {
+            assertEquals(0, TerranGhost.lockdownTargets.targetsAcquiredInLast(0).size());
+            assertEquals(3, TerranGhost.lockdownTargets.targetsAcquiredInLast(1).size());
 
-                TerranGhost.lockdownTargets.clear();
-            }
-        }, this::generateOur, this::generateEnemies);
+            TerranGhost.lockdownTargets.clear();
+        }
+        });
     }
 
     // =========================================================

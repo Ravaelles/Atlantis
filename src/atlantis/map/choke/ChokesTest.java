@@ -7,13 +7,9 @@ import tests.acceptance.WorldStubForTests;
 public class ChokesTest extends WorldStubForTests {
     @Test
     public void testMainAndNaturalChoke() {
-        createWorld(1,
-            () -> {
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 7, 44)), fakeEnemies(), () -> {
                 System.err.println("main choke = " + Chokes.mainChoke());
                 System.err.println("natural choke = " + Chokes.natural());
-            },
-            () -> fakeOurs(fake(AUnitType.Protoss_Nexus, 7, 44)),
-            () -> fakeEnemies()
-        );
+            });
     }
 }

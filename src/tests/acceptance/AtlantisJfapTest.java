@@ -4,7 +4,6 @@ import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import java.util.concurrent.Callable;
 
 import static atlantis.units.AUnitType.Terran_Marine;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,28 +15,25 @@ public class AtlantisJfapTest extends WorldStubForTests {
 
     @Test
     public void sunkenColoniesAreTakenIntoAccount() {
-        Callable ours = () -> fakeOurs(
+        FakeUnit[] ours = fakeOurs(
             dragoon = fake(AUnitType.Protoss_Dragoon, 10),
             fake(AUnitType.Protoss_Dragoon, 11),
             fake(AUnitType.Protoss_Dragoon, 11.1),
             fake(AUnitType.Protoss_Dragoon, 11.9)
         );
-        Callable enemies = () -> fakeEnemies(
+        FakeUnit[] enemies = fakeEnemies(
             sunkenColony = fake(AUnitType.Zerg_Sunken_Colony, 12),
             fake(AUnitType.Zerg_Larva, 12)
         );
 
-        createWorld(1, () -> {
-                double ourScore = dragoon.combatEvalAbsolute();
-                double enemyScore = sunkenColony.combatEvalAbsolute();
+        world(1, ours, enemies, () -> {
+            double ourScore = dragoon.combatEvalAbsolute();
+            double enemyScore = sunkenColony.combatEvalAbsolute();
 
-                assertTrue(ourScore < -10);
-                assertTrue(enemyScore < -10);
+            assertTrue(ourScore < -10);
+            assertTrue(enemyScore < -10);
 //                assertTrue(ourScore > enemyScore);
-            },
-            ours,
-            enemies
-        );
+        });
     }
 
     @Test
@@ -74,33 +70,30 @@ public class AtlantisJfapTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Hydralisk, 12.9)
         );
 
-        createWorld(1, () -> {
-                double ourScore = marine.combatEvalAbsolute();
+        world(1, our, enemies, () -> {
+            double ourScore = marine.combatEvalAbsolute();
 //                System.err.println();
 //                System.err.println("## our   SCORE = " + ourScore);
 //                System.err.println("## enemy SCORE = " + hydra.combatEvalAbsolute());
 
-                // JFAP simulates 60 frames and returns the score of the side the
-                // unit belongs to, so a negative number means that fight goes
-                // against us. Measured: 4 marines against 5 hydras = -186.
-                assertTrue(ourScore < 0, "the simulated fight goes against our marines");
+            // JFAP simulates 60 frames and returns the score of the side the
+            // unit belongs to, so a negative number means that fight goes
+            // against us. Measured: 4 marines against 5 hydras = -186.
+            assertTrue(ourScore < 0, "the simulated fight goes against our marines");
 
-                // The relative form is the documented "them vs us" ratio, > 1
-                // meaning the enemy is stronger. Measured: 2.25.
-                //
-                // The old assertion compared our score with the hydra's *own*
-                // score, which only meant something under the heuristic evaluator
-                // that combatEvalAbsolute() no longer calls: the two numbers come
-                // from opposite perspectives and are not on a common scale.
-                assertEquals(2.25, marine.eval(), 0.1, "hydras are about twice as strong");
+            // The relative form is the documented "them vs us" ratio, > 1
+            // meaning the enemy is stronger. Measured: 2.25.
+            //
+            // The old assertion compared our score with the hydra's *own*
+            // score, which only meant something under the heuristic evaluator
+            // that combatEvalAbsolute() no longer calls: the two numbers come
+            // from opposite perspectives and are not on a common scale.
+            assertEquals(2.25, marine.eval(), 0.1, "hydras are about twice as strong");
 
-                // Sanity check that both views agree (measured 0.44, the
-                // reciprocal): asking the hydra tells the same story.
-                assertTrue(hydra.eval() < 1, "and the hydra agrees");
-            },
-            () -> our,
-            () -> enemies
-        );
+            // Sanity check that both views agree (measured 0.44, the
+            // reciprocal): asking the hydra tells the same story.
+            assertTrue(hydra.eval() < 1, "and the hydra agrees");
+        });
     }
 
 }

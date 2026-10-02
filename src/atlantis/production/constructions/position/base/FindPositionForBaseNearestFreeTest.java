@@ -14,8 +14,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
     @Test
     public void testNaturalBaseIsReturnedIfWeHaveOnlyOneBase() {
-        createWorld(1,
-            () -> {
+        options = Options.create().set("supplyUsed", 18);
+        world(1, fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 7, 44)
+            ), fakeEnemies(), () -> {
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Creep_Colony, 95, 10));
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Zergling, 20, 10));
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Hatchery, 90, 10));
@@ -31,19 +33,17 @@ public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
                 assertNotNull(location);
                 assertEquals(14, location.tx());
                 assertEquals(13, location.ty());
-            },
-            () -> fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 7, 44)
-            ),
-            () -> fakeEnemies(),
-            Options.create().set("supplyUsed", 18)
-        );
+            });
     }
 
     @Test
     public void testClosestBaseMostDistantFromEnemyIsReturned() {
-        createWorld(1,
-            () -> {
+        options = Options.create().set("supplyUsed", 18);
+        world(1, fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 7, 44), // Main
+//                fake(AUnitType.Protoss_Nexus, 16, 15) // Natural
+                fake(AUnitType.Protoss_Nexus, 7, 80)
+            ), fakeEnemies(), () -> {
 //                EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Zergling, 25, 10));
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Creep_Colony, 95, 10));
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Zergling, 20, 10));
@@ -68,14 +68,6 @@ public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
                 assertNotNull(location);
                 assertEquals(14, location.tx());
                 assertEquals(13, location.ty());
-            },
-            () -> fakeOurs(
-                fake(AUnitType.Protoss_Nexus, 7, 44), // Main
-//                fake(AUnitType.Protoss_Nexus, 16, 15) // Natural
-                fake(AUnitType.Protoss_Nexus, 7, 80)
-            ),
-            () -> fakeEnemies(),
-            Options.create().set("supplyUsed", 18)
-        );
+            });
     }
 }

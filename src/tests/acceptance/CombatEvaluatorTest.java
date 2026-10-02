@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * asserted instead. See `_AI/BUGS.md` (the threshold semantics that 228
  * production call sites rely on are still open).
  *
- * <p>Every test builds its own world explicitly: {@code createWorld(1, ...)}
+ * <p>Every test builds its own world explicitly: {@code world(1, ...)}
  * with no units silently creates the 22-unit sample world instead of calling
  * the generators, which is why this class used to throw NPEs on its own fields.
  */
@@ -49,27 +49,21 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit hydra = fakeEnemy(AUnitType.Zerg_Hydralisk, 16);
 
-        createWorld(1,
-            () -> {
-                // Measured: ourEval = 0.0182, enemyEval = 55.03 -> product 1.0
-                assertReciprocal(marine, hydra);
-            },
-            () -> fakeOurs(marine),
-            () -> fakeEnemies(hydra));
+        world(1, fakeOurs(marine), fakeEnemies(hydra), () -> {
+            // Measured: ourEval = 0.0182, enemyEval = 55.03 -> product 1.0
+            assertReciprocal(marine, hydra);
+        });
     }
 
     @Test
     public void bothSidesScoreTheSameWithoutEnemies() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
 
-        createWorld(1,
-            () -> {
-                assertTrue(marine.eval() > 0, "with no enemy around the ratio is positive");
-                assertTrue(marine.combatEvalAbsolute() < 0,
-                    "the absolute score is a cost-like number and stays negative");
-            },
-            () -> fakeOurs(marine),
-            () -> fakeEnemies());
+        world(1, fakeOurs(marine), fakeEnemies(), () -> {
+            assertTrue(marine.eval() > 0, "with no enemy around the ratio is positive");
+            assertTrue(marine.combatEvalAbsolute() < 0,
+                "the absolute score is a cost-like number and stays negative");
+        });
     }
 
     @Test
@@ -77,17 +71,14 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
         FakeUnit sunken = fake(Zerg_Sunken_Colony, 13);
 
-        createWorld(1,
-            () -> {
-                // Measured: ourEval = 0.6996, enemyEval = 1.0208. Not reciprocal
-                // (product 0.71): a building scores the fight from a different
-                // unit set, so the reciprocal invariant only holds between units
-                // of the same kind.
-                assertTrue(marine.eval() < 1, "our side scores better than one sunken colony");
-            },
-            () -> fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
-                marine, fake(AUnitType.Terran_Marine, 12)),
-            () -> fakeEnemies(sunken));
+        world(1, fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
+                marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
+            // Measured: ourEval = 0.6996, enemyEval = 1.0208. Not reciprocal
+            // (product 0.71): a building scores the fight from a different
+            // unit set, so the reciprocal invariant only holds between units
+            // of the same kind.
+            assertTrue(marine.eval() < 1, "our side scores better than one sunken colony");
+        });
     }
 
     @Test
@@ -95,68 +86,56 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit sunken = fake(Zerg_Sunken_Colony, 23.5);
 
-        createWorld(1,
-            () -> {
-                // Measured: 1.001 both ways. A sunken colony shoots 7 tiles, so
-                // from 13.5 tiles there is nothing to dodge and both sides score
-                // "no threat" (1.0 = even; the extra 0.001 is eval()'s guard
-                // against dividing by zero). The numbers this test used to carry
-                // in its comment - ourEval = 0.7210 - came from a run in which the
-                // whole suite pretended to be Protoss and used the Protoss
-                // defensive-building config.
-                assertEquals(1.001, marine.eval(), 0.01,
-                    "13.5 tiles is well outside a sunken colony's 7 tile range");
-                assertEquals(1.001, sunken.eval(), 0.01,
-                    "and from the colony's side we are no threat either");
-            },
-            () -> fakeOurs(marine),
-            () -> fakeEnemies(sunken));
+        world(1, fakeOurs(marine), fakeEnemies(sunken), () -> {
+            // Measured: 1.001 both ways. A sunken colony shoots 7 tiles, so
+            // from 13.5 tiles there is nothing to dodge and both sides score
+            // "no threat" (1.0 = even; the extra 0.001 is eval()'s guard
+            // against dividing by zero). The numbers this test used to carry
+            // in its comment - ourEval = 0.7210 - came from a run in which the
+            // whole suite pretended to be Protoss and used the Protoss
+            // defensive-building config.
+            assertEquals(1.001, marine.eval(), 0.01,
+                "13.5 tiles is well outside a sunken colony's 7 tile range");
+            assertEquals(1.001, sunken.eval(), 0.01,
+                "and from the colony's side we are no threat either");
+        });
     }
 
     @Test
     public void fourMarinesBeatOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
-        createWorld(1,
-            () -> {
-                // Measured: ourEval = 7.5557, enemyEval = 0.1324
-                assertTrue(marine.eval() > 1, "four marines lose to a single hydralisk here");
-                assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
-            },
-            () -> fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
-                fake(AUnitType.Terran_Marine, 11.8), fake(AUnitType.Terran_Marine, 12)),
-            () -> fakeEnemies(fake(Zerg_Hydralisk, 13.3)));
+        world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
+                fake(AUnitType.Terran_Marine, 11.8), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
+            // Measured: ourEval = 7.5557, enemyEval = 0.1324
+            assertTrue(marine.eval() > 1, "four marines lose to a single hydralisk here");
+            assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
+        });
     }
 
     @Test
     public void threeMarinesBeatTwoHydralisks() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
-        createWorld(1,
-            () -> {
-                // Measured: ourEval = 3.3694, enemyEval = 0.2968. The old
-                // expectation ("ourEval * 300 < enemyEval") asserted the exact
-                // opposite of what the test is named after.
-                assertTrue(marine.eval() > 1, "three marines should beat two hydralisks");
-                assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
-            },
-            () -> fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6), fake(AUnitType.Terran_Marine, 12)),
-            () -> fakeEnemies(fake(Zerg_Hydralisk, 13.2), fake(Zerg_Hydralisk, 13.3)));
+        world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.2), fake(Zerg_Hydralisk, 13.3)), () -> {
+            // Measured: ourEval = 3.3694, enemyEval = 0.2968. The old
+            // expectation ("ourEval * 300 < enemyEval") asserted the exact
+            // opposite of what the test is named after.
+            assertTrue(marine.eval() > 1, "three marines should beat two hydralisks");
+            assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
+        });
     }
 
     @Test
     public void marinesAndMedicBeatOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
-        createWorld(1,
-            () -> {
-                // Measured: ourEval = 21.2513, enemyEval = 0.0500
-                assertTrue(marine.eval() > 1, "a medic in the group does not turn the fight around");
-                assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
-            },
-            () -> fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
-                fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)),
-            () -> fakeEnemies(fake(Zerg_Hydralisk, 13.3)));
+        world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
+                fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
+            // Measured: ourEval = 21.2513, enemyEval = 0.0500
+            assertTrue(marine.eval() > 1, "a medic in the group does not turn the fight around");
+            assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
+        });
     }
 
     @Test
@@ -164,17 +143,14 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit ourMarine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit enemyMarine = fakeEnemy(AUnitType.Terran_Marine, 11);
 
-        createWorld(1,
-            () -> {
-                // Measured: eval = 1.00001 for both, absolute = -88.0 for both.
-                assertEquals(ourMarine.combatEvalAbsolute(), enemyMarine.combatEvalAbsolute(),
-                    "mirror units have the same absolute score");
-                assertEquals(1.0, ourMarine.eval(), 0.01, "a mirror fight is exactly even");
-                assertEquals(1.0, enemyMarine.eval(), 0.01);
-                assertReciprocal(ourMarine, enemyMarine);
-            },
-            () -> fakeOurs(ourMarine),
-            () -> fakeEnemies(enemyMarine));
+        world(1, fakeOurs(ourMarine), fakeEnemies(enemyMarine), () -> {
+            // Measured: eval = 1.00001 for both, absolute = -88.0 for both.
+            assertEquals(ourMarine.combatEvalAbsolute(), enemyMarine.combatEvalAbsolute(),
+                "mirror units have the same absolute score");
+            assertEquals(1.0, ourMarine.eval(), 0.01, "a mirror fight is exactly even");
+            assertEquals(1.0, enemyMarine.eval(), 0.01);
+            assertReciprocal(ourMarine, enemyMarine);
+        });
     }
 
     @Test
@@ -183,23 +159,20 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit cannon1 = fakeEnemy(Protoss_Photon_Cannon, 92);
         FakeUnit cannon2 = fakeEnemy(Protoss_Photon_Cannon, 93);
 
-        createWorld(1,
-            () -> {
-                EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon1);
-                EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon2);
+        world(1, fakeOurs(wraith), fakeEnemies(), () -> {
+            EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon1);
+            EnemyUnitsUpdater.weDiscoveredEnemyUnit(cannon2);
 
-                assertEquals(2, wraith.enemiesNear().size(), "both cannons are near the wraith");
-                assertEquals(1, cannon1.enemiesNear().size(), "but the cannons only see the wraith");
+            assertEquals(2, wraith.enemiesNear().size(), "both cannons are near the wraith");
+            assertEquals(1, cannon1.enemiesNear().size(), "but the cannons only see the wraith");
 
-                // Measured: ourEval = -0.3961, enemyEval = 169.06. The product is
-                // NOT 1 (it is -67), which means one of the two Jfap scores is
-                // negative - a negative side score makes every "eval >= x"
-                // comparison in production meaningless. Tracked in _AI/BUGS.md.
-                assertTrue(cannon1.eval() > 0, "from the cannons' side we are the weaker number");
-                assertTrue(cannon1.eval() > wraith.eval(), "the wraith is outnumbered 1 vs 2");
-            },
-            () -> fakeOurs(wraith),
-            () -> fakeEnemies());
+            // Measured: ourEval = -0.3961, enemyEval = 169.06. The product is
+            // NOT 1 (it is -67), which means one of the two Jfap scores is
+            // negative - a negative side score makes every "eval >= x"
+            // comparison in production meaningless. Tracked in _AI/BUGS.md.
+            assertTrue(cannon1.eval() > 0, "from the cannons' side we are the weaker number");
+            assertTrue(cannon1.eval() > wraith.eval(), "the wraith is outnumbered 1 vs 2");
+        });
     }
 
     /**
@@ -213,14 +186,11 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
     public void freeDragoonsAreEvaluatedAsEnemies() {
         FakeUnit wraith = fake(AUnitType.Terran_Wraith, 90);
 
-        createWorld(1,
-            () -> {
-                assertEquals(2, wraith.enemiesNear().size());
-                assertTrue(wraith.eval() < 1, "two free dragoons next to a wraith is a bad fight");
-                assertTrue(wraith.combatEvalAbsolute() < -100, "and it costs real strength");
-            },
-            () -> fakeOurs(wraith),
-            () -> fakeEnemies(fakeEnemy(Protoss_Dragoon, 92), fakeEnemy(Protoss_Dragoon, 93)));
+        world(1, fakeOurs(wraith), fakeEnemies(fakeEnemy(Protoss_Dragoon, 92), fakeEnemy(Protoss_Dragoon, 93)), () -> {
+            assertEquals(2, wraith.enemiesNear().size());
+            assertTrue(wraith.eval() < 1, "two free dragoons next to a wraith is a bad fight");
+            assertTrue(wraith.combatEvalAbsolute() < -100, "and it costs real strength");
+        });
     }
 
     @Test
@@ -229,24 +199,21 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit dragoon1 = fakeEnemy(Protoss_Dragoon, 92).setLockedDown(true);
         FakeUnit dragoon2 = fakeEnemy(Protoss_Dragoon, 93).setStasised(true);
 
-        createWorld(1,
-            () -> {
-                assertEquals(2, wraith.enemiesNear().size(), "the selection still lists them");
-                assertEquals(0, wraith.enemiesNear().notImmobilized().size(),
-                    "but neither of them can shoot back");
+        world(1, fakeOurs(wraith), fakeEnemies(dragoon1, dragoon2), () -> {
+            assertEquals(2, wraith.enemiesNear().size(), "the selection still lists them");
+            assertEquals(0, wraith.enemiesNear().notImmobilized().size(),
+                "but neither of them can shoot back");
 
-                assertEquals(-1.0, wraith.combatEvalAbsolute(), 0.001,
-                    "-1 is the 'no enemy nearby' absolute value");
-                assertTrue(wraith.eval() > 1000,
-                    "with no threat the relative score is overwhelming (9874.0), which is what "
-                        + "every 'eval >= 2' check in production reads as safe");
-                // The dragoons are enemy units, so their score is computed from
-                // their side and stays small (their own "enemy" is the wraith).
-                assertTrue(dragoon1.eval() < 1,
-                    "from an enemy unit's point of view the ratio is inverted");
-            },
-            () -> fakeOurs(wraith),
-            () -> fakeEnemies(dragoon1, dragoon2));
+            assertEquals(-1.0, wraith.combatEvalAbsolute(), 0.001,
+                "-1 is the 'no enemy nearby' absolute value");
+            assertTrue(wraith.eval() > 1000,
+                "with no threat the relative score is overwhelming (9874.0), which is what "
+                    + "every 'eval >= 2' check in production reads as safe");
+            // The dragoons are enemy units, so their score is computed from
+            // their side and stays small (their own "enemy" is the wraith).
+            assertTrue(dragoon1.eval() < 1,
+                "from an enemy unit's point of view the ratio is inverted");
+        });
     }
 
     /**

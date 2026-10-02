@@ -23,12 +23,20 @@ public class DeadManTest extends AbstractTestWithWorld {
 
     @Test
     public void isDeadMan_dragoon() {
-        createWorld(5, () -> {
-                (new UnitStateCommander()).invokedCommander();
+        world(5, fakeOurs(
+                dragoon = fake(Protoss_Dragoon, 10),
+                marine = fake(AUnitType.Terran_Marine, 11.5),
+                vulture = fake(AUnitType.Terran_Vulture, 11.7)
+            ), fakeEnemies(
+                sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
+                hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
+                zergling = fake(AUnitType.Zerg_Zergling, 13.4)
+            ), () -> {
+            (new UnitStateCommander()).invokedCommander();
 
-                createBullet(dragoon, zergling);
-                createBullet(dragoon, marine);
-                createBullet(dragoon, vulture);
+            createBullet(dragoon, zergling);
+            createBullet(dragoon, marine);
+            createBullet(dragoon, vulture);
 
 //                System.out.println("@" + A.now());
 //                System.out.println(Bullets.against(marine).size());
@@ -40,21 +48,10 @@ public class DeadManTest extends AbstractTestWithWorld {
 //                System.err.println("DeadMan.isDeadMan(zergling) = " + DeadMan.isDeadMan(zergling));
 //                System.out.println(Bullets.against(zergling).size());
 
-                assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(zergling));
-                assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(marine));
-                assertEquals(A.now() <= 7 ? false : true, DeadMan.isDeadMan(vulture));
-            },
-            () -> fakeOurs(
-                dragoon = fake(Protoss_Dragoon, 10),
-                marine = fake(AUnitType.Terran_Marine, 11.5),
-                vulture = fake(AUnitType.Terran_Vulture, 11.7)
-            ),
-            () -> fakeEnemies(
-                sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
-                hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
-                zergling = fake(AUnitType.Zerg_Zergling, 13.4)
-            )
-        );
+            assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(zergling));
+            assertEquals(A.now() <= 3 ? false : true, DeadMan.isDeadMan(marine));
+            assertEquals(A.now() <= 7 ? false : true, DeadMan.isDeadMan(vulture));
+        });
     }
 
     // =========================================================

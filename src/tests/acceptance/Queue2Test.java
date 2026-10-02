@@ -26,18 +26,14 @@ public class Queue2Test extends WorldStubForTests {
 
     @Test
     public void queueIsProperlyDetectingInProgressAndReadyAndCompletedOrders() {
-        createWorld(5,
-            () -> {
-                if (A.now() == 1) frame1_queueIsInitializedFromBuildOrder();
-                if (A.now() == 2) frame2_completedOrdersAreDetected();
-                if (A.now() == 3) frame3_inProgressOrdersAreDetected();
-                if (A.now() == 4) frame4();
-                if (A.now() == 5) frame5();
-            },
-            () -> ourInitialUnits(),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 66)
-        );
+        options = Options.create().set("supplyUsed", 66);
+        world(5, ourInitialUnits(), fakeExampleEnemies(), () -> {
+            if (A.now() == 1) frame1_queueIsInitializedFromBuildOrder();
+            if (A.now() == 2) frame2_completedOrdersAreDetected();
+            if (A.now() == 3) frame3_inProgressOrdersAreDetected();
+            if (A.now() == 4) frame4();
+            if (A.now() == 5) frame5();
+        });
     }
 
     private void frame1_queueIsInitializedFromBuildOrder() {

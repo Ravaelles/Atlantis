@@ -5,7 +5,6 @@ import atlantis.units.AUnitType;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
-import java.util.concurrent.Callable;
 
 /**
  * Stage J: deterministic cost of one frame of combat decisions for a fixed
@@ -36,17 +35,14 @@ public class TreeConstructionBenchmark extends WorldStubForTests {
             new FakeUnit(AUnitType.Zerg_Zergling, 40, 20).setEnemy()
         };
 
-        Callable<FakeUnit[]> ourSupplier = () -> ours;
-        Callable<FakeUnit[]> enemySupplier = () -> enemies;
-
         // Warmup so JIT settles before measuring.
-        createWorld(30, () -> invokeForAll(ours), ourSupplier, enemySupplier);
+        world(30, ours, enemies, () -> invokeForAll(ours));
 
         long best = Long.MAX_VALUE;
         int frames = 20;
         for (int round = 0; round < 5; round++) {
             long start = System.nanoTime();
-            createWorld(frames, () -> invokeForAll(ours), ourSupplier, enemySupplier);
+            world(frames, ours, enemies, () -> invokeForAll(ours));
             long took = System.nanoTime() - start;
             if (took < best) best = took;
         }

@@ -24,22 +24,18 @@ public class CountInQueueTest extends WorldStubForTests {
 
     @Test
     public void bunkersInQueue() {
-        createWorld(2,
-            () -> {
-                if (A.now() == 1) frame1();
-                else if (A.now() == 2) frame2();
-            },
-            () -> FakeUnitHelper.merge(
+        options = Options.create().set("supplyUsed", 49);
+        world(2, FakeUnitHelper.merge(
                 ourInitialUnits(),
                 fakeOurs(
                     fake(Terran_Supply_Depot, 20),
                     fake(Terran_Barracks, 21),
                     fake(Terran_Academy, 22)
                 )
-            ),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 49)
-        );
+            ), fakeExampleEnemies(), () -> {
+            if (A.now() == 1) frame1();
+            else if (A.now() == 2) frame2();
+        });
     }
 
     private void frame2() {

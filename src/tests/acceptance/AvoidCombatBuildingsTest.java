@@ -22,42 +22,42 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
      */
     @Test
     public void neverRunsIntoCombatBuildings() {
-        createWorld(50, () -> {
-            // createWorld(5, () -> {
-            // Select.our().print();
-            // Select.enemy().print();
+        world(50, generateOur(), generateEnemies(), () -> {
+        // world(5, () -> {
+        // Select.our().print();
+        // Select.enemy().print();
 
-            FakeUnit unit = ourFirst;
-            unit.forceSetSquad(Alpha.get());
-            (new CombatUnitManager(unit)).invokeFrom(this);
+        FakeUnit unit = ourFirst;
+        unit.forceSetSquad(Alpha.get());
+        (new CombatUnitManager(unit)).invokeFrom(this);
 
-            double distToSunken = distToNearestEnemy(unit);
-            // 7.05, not 7: just outside the range of a Sunken Colony the eval
-            // suddenly gets much worse (see this class's javadoc), so the marine
-            // has to keep a small margin - not merely stay outside.
-            boolean isSafe = distToSunken > 7.05;
-            boolean alwaysShow = false;
-            // boolean alwaysShow = true;
+        double distToSunken = distToNearestEnemy(unit);
+        // 7.05, not 7: just outside the range of a Sunken Colony the eval
+        // suddenly gets much worse (see this class's javadoc), so the marine
+        // has to keep a small margin - not merely stay outside.
+        boolean isSafe = distToSunken > 7.05;
+        boolean alwaysShow = false;
+        // boolean alwaysShow = true;
 
-            if (!isSafe || alwaysShow) {
-                System.err.println(A.now()
-                        + " -       " + unit.tooltip()
-                        + "\n   Manager : " + unit.manager()
-                        + "\n   Managers: " + unit.managerLogs().toString()
-                        + "\n   Command : " + unit.lastCommand()
-                        + ",\n   tx     :" + unit.txWithPrecision()
-                        + ",\n   dist_to_sunken:" + A.dist(distToSunken)
-                        + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                        + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                        + "\n   marine eval = " + unit.eval()
-                        + "\n   sunken eval = " + sunken.eval());
-                System.err.println("_______________________________________");
-            }
+        if (!isSafe || alwaysShow) {
+            System.err.println(A.now()
+                    + " -       " + unit.tooltip()
+                    + "\n   Manager : " + unit.manager()
+                    + "\n   Managers: " + unit.managerLogs().toString()
+                    + "\n   Command : " + unit.lastCommand()
+                    + ",\n   tx     :" + unit.txWithPrecision()
+                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
+                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
+                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
+                    + "\n   marine eval = " + unit.eval()
+                    + "\n   sunken eval = " + sunken.eval());
+            System.err.println("_______________________________________");
+        }
 
-            assertTrue(isSafe);
-            // The class's own generators, not the 22-unit sample world: the
-            // 'sunken' field used to stay null with createWorld(frames, runnable).
-        }, this::generateOur, this::generateEnemies);
+        assertTrue(isSafe);
+        // The class's own generators, not the 22-unit sample world: the
+        // 'sunken' field used to stay null with world(frames, eachFrame).
+        });
     }
 
     @Test
@@ -90,42 +90,42 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         // fake(AUnitType.Terran_Bunker, outsideRange)
         );
 
-        usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            // assertContainsAll(
-            // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-            // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-            // );
+        world(1, units(our), enemies, () -> {
+        // assertContainsAll(
+        // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+        // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+        // );
 
-            // The decision reads cached combat evaluation, and a world-based test
-            // earlier in this class leaves that cache populated - so the caches
-            // are dropped explicitly here, otherwise applies() flips depending on
-            // what ran before (see _AI/BUGS.md B-12).
-            atlantis.units.select.Select.clearCache();
-            atlantis.information.generic.ArmyStrength.clearCache();
-            atlantis.information.enemy.EnemyUnits.clearCache();
+        // The decision reads cached combat evaluation, and a world-based test
+        // earlier in this class leaves that cache populated - so the caches
+        // are dropped explicitly here, otherwise applies() flips depending on
+        // what ran before (see _AI/BUGS.md B-12).
+        atlantis.units.select.Select.clearCache();
+        atlantis.information.generic.ArmyStrength.clearCache();
+        atlantis.information.enemy.EnemyUnits.clearCache();
 
-            ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
+        ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
 
-            // Only anti-air buildings matter to a Dragoon: a missile turret and a
-            // spore colony cannot shoot at air, so the cannon is the only
-            // candidate (measured).
-            Assertions.assertEquals(enemy4, manager.combatBuilding());
+        // Only anti-air buildings matter to a Dragoon: a missile turret and a
+        // spore colony cannot shoot at air, so the cannon is the only
+        // candidate (measured).
+        Assertions.assertEquals(enemy4, manager.combatBuilding());
 
-            // applies() is what picks the combat building (handle() only reads
-            // the field), so it has to run first - the old test called
-            // invokeFrom() alone and therefore got a manager with no building.
-            // Whether applies() then accepts the fight is NOT asserted: measured
-            // false in isolation ("not strongEnoughToAttack") and true in a full
-            // class run, and the responsible cache has not been identified -
-            // _AI/BUGS.md B-12. The unit-type filtering above is stable and is
-            // what this test is really about.
-            manager.applies();
-            Assertions.assertEquals(enemy4, manager.combatBuilding(),
-                "the only anti-air building is the one to watch");
-            Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
-                "a missile turret cannot shoot at our dragoon");
-            Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
-                "nor can a spore colony");
+        // applies() is what picks the combat building (handle() only reads
+        // the field), so it has to run first - the old test called
+        // invokeFrom() alone and therefore got a manager with no building.
+        // Whether applies() then accepts the fight is NOT asserted: measured
+        // false in isolation ("not strongEnoughToAttack") and true in a full
+        // class run, and the responsible cache has not been identified -
+        // _AI/BUGS.md B-12. The unit-type filtering above is stable and is
+        // what this test is really about.
+        manager.applies();
+        Assertions.assertEquals(enemy4, manager.combatBuilding(),
+            "the only anti-air building is the one to watch");
+        Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
+            "a missile turret cannot shoot at our dragoon");
+        Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
+            "nor can a spore colony");
         });
     }
 
@@ -151,12 +151,12 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
 
                 fake(AUnitType.Zerg_Spore_Colony, inRange));
 
-        usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
-                    .invokeFrom(null);
+        world(1, units(our), enemies, () -> {
+        ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
+                .invokeFrom(null);
 
-            Assertions.assertNotNull(manager);
-            Assertions.assertEquals(sunken, manager.combatBuilding());
+        Assertions.assertNotNull(manager);
+        Assertions.assertEquals(sunken, manager.combatBuilding());
         });
     }
 
@@ -184,42 +184,42 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
                 enemy4 = fake(AUnitType.Zerg_Spore_Colony, 16.9),
                 fake(AUnitType.Zerg_Spore_Colony, outsideRange));
 
-        usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            // assertContainsAll(
-            // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
-            // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-            // );
+        world(1, units(our), enemies, () -> {
+        // assertContainsAll(
+        // new FakeUnit[]{enemy1, enemy2, enemy3, enemy4},
+        // (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+        // );
 
-            // The decision reads cached combat evaluation, and a world-based test
-            // earlier in this class leaves that cache populated - so the caches
-            // are dropped explicitly here, otherwise applies() flips depending on
-            // what ran before (see _AI/BUGS.md B-12).
-            atlantis.units.select.Select.clearCache();
-            atlantis.information.generic.ArmyStrength.clearCache();
-            atlantis.information.enemy.EnemyUnits.clearCache();
+        // The decision reads cached combat evaluation, and a world-based test
+        // earlier in this class leaves that cache populated - so the caches
+        // are dropped explicitly here, otherwise applies() flips depending on
+        // what ran before (see _AI/BUGS.md B-12).
+        atlantis.units.select.Select.clearCache();
+        atlantis.information.generic.ArmyStrength.clearCache();
+        atlantis.information.enemy.EnemyUnits.clearCache();
 
-            ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
+        ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
 
-            // Only anti-air buildings matter to a Dragoon: a missile turret and a
-            // spore colony cannot shoot at air, so the cannon is the only
-            // candidate (measured).
-            Assertions.assertEquals(enemy4, manager.combatBuilding());
+        // Only anti-air buildings matter to a Dragoon: a missile turret and a
+        // spore colony cannot shoot at air, so the cannon is the only
+        // candidate (measured).
+        Assertions.assertEquals(enemy4, manager.combatBuilding());
 
-            // applies() is what picks the combat building (handle() only reads
-            // the field), so it has to run first - the old test called
-            // invokeFrom() alone and therefore got a manager with no building.
-            // Whether applies() then accepts the fight is NOT asserted: measured
-            // false in isolation ("not strongEnoughToAttack") and true in a full
-            // class run, and the responsible cache has not been identified -
-            // _AI/BUGS.md B-12. The unit-type filtering above is stable and is
-            // what this test is really about.
-            manager.applies();
-            Assertions.assertEquals(enemy4, manager.combatBuilding(),
-                "the only anti-air building is the one to watch");
-            Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
-                "a missile turret cannot shoot at our dragoon");
-            Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
-                "nor can a spore colony");
+        // applies() is what picks the combat building (handle() only reads
+        // the field), so it has to run first - the old test called
+        // invokeFrom() alone and therefore got a manager with no building.
+        // Whether applies() then accepts the fight is NOT asserted: measured
+        // false in isolation ("not strongEnoughToAttack") and true in a full
+        // class run, and the responsible cache has not been identified -
+        // _AI/BUGS.md B-12. The unit-type filtering above is stable and is
+        // what this test is really about.
+        manager.applies();
+        Assertions.assertEquals(enemy4, manager.combatBuilding(),
+            "the only anti-air building is the one to watch");
+        Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
+            "a missile turret cannot shoot at our dragoon");
+        Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
+            "nor can a spore colony");
         });
     }
 
@@ -242,18 +242,16 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
 
                 enemy1 = fake(AUnitType.Protoss_Photon_Cannon, 17).setCompleted(false));
 
-        createWorld(1, () -> {
-            enemy1.setCompleted(true);
-            // Cache.nukeAllCaches();
+        world(1, units(our), enemies, () -> {
+        enemy1.setCompleted(true);
+        // Cache.nukeAllCaches();
 
-            ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
-                    .invokeFrom(null);
+        ProtossCombatBuildingClose manager = (ProtossCombatBuildingClose) (new ProtossCombatBuildingClose(our))
+                .invokeFrom(null);
 
-            Assertions.assertNotNull(manager);
-            Assertions.assertEquals(enemy1, manager.combatBuilding());
-        },
-                our,
-                enemies);
+        Assertions.assertNotNull(manager);
+        Assertions.assertEquals(enemy1, manager.combatBuilding());
+        });
     }
 
     // =========================================================

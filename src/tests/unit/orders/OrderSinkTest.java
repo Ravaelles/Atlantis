@@ -39,12 +39,12 @@ public class OrderSinkTest extends WorldStubForTests {
 
         FakeOrderSink sink = (FakeOrderSink) marine.orderSink();
 
-        createWorld(ours, enemies, () -> {
-            assertTrue(marine.holdPosition(Actions.HOLD_POSITION, "test"));
+        world(1, ours, enemies, () -> {
+        assertTrue(marine.holdPosition(Actions.HOLD_POSITION, "test"));
 
-            assertEquals(1, sink.orders().size());
-            assertEquals("holdPosition", sink.orders().get(0).operation);
-            assertEquals(marine.id(), sink.orders().get(0).actorId);
+        assertEquals(1, sink.orders().size());
+        assertEquals("holdPosition", sink.orders().get(0).operation);
+        assertEquals(marine.id(), sink.orders().get(0).actorId);
         });
     }
 
@@ -61,12 +61,12 @@ public class OrderSinkTest extends WorldStubForTests {
 
         FakeOrderSink sink = (FakeOrderSink) marine.orderSink();
 
-        createWorld(ours, enemies, () -> {
-            assertTrue(marine.attackUnit(zergling));
+        world(1, ours, enemies, () -> {
+        assertTrue(marine.attackUnit(zergling));
 
-            assertEquals(1, sink.orders().size());
-            assertEquals("attackUnit", sink.orders().get(0).operation);
-            assertEquals(marine.id(), sink.orders().get(0).actorId);
+        assertEquals(1, sink.orders().size());
+        assertEquals("attackUnit", sink.orders().get(0).operation);
+        assertEquals(marine.id(), sink.orders().get(0).actorId);
         });
     }
 }

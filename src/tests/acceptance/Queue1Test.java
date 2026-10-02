@@ -18,9 +18,9 @@ public class Queue1Test extends WorldStubForTests {
 
     @Test
     public void queueIsInitializedWithOrdersComingFromBuildOrder() {
-        createWorld(1,
-            () -> {
-                queue = initQueue();
+        options = Options.create().set("supplyUsed", 8);
+        world(1, ourInitialUnits(), fakeExampleEnemies(), () -> {
+            queue = initQueue();
 
 //                aGame.when(AGame::supplyUsed).thenReturn(10);
 //                aGame.when(AGame::supplyTotal).thenReturn(18);
@@ -31,16 +31,12 @@ public class Queue1Test extends WorldStubForTests {
 //                queue.readyToProduceOrders().print("Ready to produce orders");
 //                queue.inProgressOrders().print("In progress orders");
 
-                assertEquals(buildOrder.productionOrders().size(), queue.allOrders().size());
-                assertEquals(0, queue.inProgressOrders().size());
+            assertEquals(buildOrder.productionOrders().size(), queue.allOrders().size());
+            assertEquals(0, queue.inProgressOrders().size());
 //                assertEquals(0, queue.readyToProduceOrders().size());
-                assertEquals(0, queue.finishedOrders().size());
-                assertEquals(true, !queue.notFinished().isEmpty());
-            },
-            () -> ourInitialUnits(),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 8)
-        );
+            assertEquals(0, queue.finishedOrders().size());
+            assertEquals(true, !queue.notFinished().isEmpty());
+        });
     }
 
     // =========================================================

@@ -27,38 +27,38 @@ public class AdvanceTest extends WorldStubForTests {
         FakeUnit[] our = defineOurs();
         FakeUnit[] enemies = defineEnemies();
 
-        createWorld(2, () -> {
-            Select.our().print();
-            Select.enemy().print();
+        world(2, our, enemies, () -> {
+        Select.our().print();
+        Select.enemy().print();
 
-            FakeUnit leader = (FakeUnit) Select.our().first();
+        FakeUnit leader = (FakeUnit) Select.our().first();
 
-            for (AUnit unit : Select.ourCombatUnits().list()) {
-                (new CombatUnitManager(unit)).invokeFrom(this);
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            (new CombatUnitManager(unit)).invokeFrom(this);
 
-                //            boolean printUnit = false;
-                boolean printUnit = true;
+            //            boolean printUnit = false;
+            boolean printUnit = true;
 
-                if (printUnit) {
-                    System.err.println(A.now()
-                            + " -       " + unit.tooltip()
-                            + "\n   Type    : " + unit
-                            + "\n   Manager : " + unit.manager()
-                            + "\n   Eval    : " + unit.evalDigit()
+            if (printUnit) {
+                System.err.println(A.now()
+                        + " -       " + unit.tooltip()
+                        + "\n   Type    : " + unit
+                        + "\n   Manager : " + unit.manager()
+                        + "\n   Eval    : " + unit.evalDigit()
 //                            + "\n   Squad   : " + unit.squad().toString()
-                        //                    + "\n   Managers: " + unit.managerLogs().toString()
-                        //                    + "\n   Command : " + unit.lastCommand()
-                        //                    + ",\n   tx     :" + unit.txWithPrecision()
-                        //                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
-                        //                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                        //                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                        //                    + "\n   marine eval = " + unit.combatEvalRelative()
-                        //                    + "\n   sunken eval = " + sunken.combatEvalRelative()
-                    );
-                    System.err.println("_______________________________________");
-                }
+                    //                    + "\n   Managers: " + unit.managerLogs().toString()
+                    //                    + "\n   Command : " + unit.lastCommand()
+                    //                    + ",\n   tx     :" + unit.txWithPrecision()
+                    //                    + ",\n   dist_to_sunken:" + A.dist(distToSunken)
+                    //                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
+                    //                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
+                    //                    + "\n   marine eval = " + unit.combatEvalRelative()
+                    //                    + "\n   sunken eval = " + sunken.combatEvalRelative()
+                );
+                System.err.println("_______________________________________");
             }
-        }, () -> our, () -> enemies);
+        }
+        });
     }
 
     // =========================================================

@@ -30,22 +30,7 @@ public class RequestBuildingNearTest extends WorldStubForTests {
 
     @Test
     public void testRequestingACannon_main_requestCannonInStandardWayForMain() {
-        createWorld(1,
-            () -> {
-                assertEquals(0, ConstructionRequests.all().size());
-                assertEquals("Init", AbstractPositionFinder._STATUS);
-
-                HasPosition secure = main;
-                ProductionOrder order = securePositionWithCannon(secure);
-
-//                printOrder(order, secure);
-
-                assertNull(RequestBuildingNear.lastError);
-                assertNotNull(order);
-                assertEquals(1, ConstructionRequests.all().size());
-                assertEquals("OK", AbstractPositionFinder._STATUS);
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
                 fake(AUnitType.Protoss_Pylon, 10, 45),
 
@@ -53,48 +38,25 @@ public class RequestBuildingNearTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Forge, 98, 98),
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
-            ),
-            () -> fakeEnemies()
-        );
+            ), fakeEnemies(), () -> {
+            assertEquals(0, ConstructionRequests.all().size());
+            assertEquals("Init", AbstractPositionFinder._STATUS);
+
+            HasPosition secure = main;
+            ProductionOrder order = securePositionWithCannon(secure);
+
+//                printOrder(order, secure);
+
+            assertNull(RequestBuildingNear.lastError);
+            assertNotNull(order);
+            assertEquals(1, ConstructionRequests.all().size());
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+        });
     }
 
     @Test
     public void testRequestingACannon_mainAndNatural_buildAMissingPylonInNatural() {
-        createWorld(1,
-            () -> {
-                assertEquals(0, ConstructionRequests.all().size());
-                assertEquals("Init", AbstractPositionFinder._STATUS);
-                assertNull(RequestBuildingNear.lastError);
-                assertNull(BuildPylonFirst.lastError);
-
-                HasPosition secure = natural;
-                ProductionOrder order = securePositionWithCannon(secure);
-
-                printOrder(order, secure);
-
-                // The stub world cannot satisfy the 14 Protoss position
-                // conditions: 90 tiles around this base pass
-                // CanPhysicallyBuildHere, but the request still fails - see
-                // _AI/BUGS.md B-6. What is verified here is the contract that
-                // does hold and is worth pinning: securing a base without power
-                // goes through BuildPylonFirst, and the failure is reported
-                // instead of silently queuing a cannon.
-                assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the natural");
-                assertNull(order, "the cannon request is not reached without a pylon");
-                assertNotNull(BuildPylonFirst.lastError, "BuildPylonFirst reports the failure");
-                assertNotNull(RequestBuildingNear.lastError,
-                    "and so does the position finder underneath it");
-                assertEquals(0, ConstructionRequests.all().size());
-                assertFalse(AbstractPositionFinder._STATUS.equals("OK"),
-                    "the position finder did not succeed");
-
-
-//                assertNull(RequestBuildingNear.lastError);
-//                assertNotNull(order);
-//                assertEquals("OK", AbstractPositionFinder._STATUS);
-//                assertEquals(1, ConstructionRequests.all().size());
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
                 natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
 
@@ -102,30 +64,44 @@ public class RequestBuildingNearTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Forge, 98, 98),
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
-            ),
-            () -> fakeEnemies()
-        );
+            ), fakeEnemies(), () -> {
+            assertEquals(0, ConstructionRequests.all().size());
+            assertEquals("Init", AbstractPositionFinder._STATUS);
+            assertNull(RequestBuildingNear.lastError);
+            assertNull(BuildPylonFirst.lastError);
+
+            HasPosition secure = natural;
+            ProductionOrder order = securePositionWithCannon(secure);
+
+            printOrder(order, secure);
+
+            // The stub world cannot satisfy the 14 Protoss position
+            // conditions: 90 tiles around this base pass
+            // CanPhysicallyBuildHere, but the request still fails - see
+            // _AI/BUGS.md B-6. What is verified here is the contract that
+            // does hold and is worth pinning: securing a base without power
+            // goes through BuildPylonFirst, and the failure is reported
+            // instead of silently queuing a cannon.
+            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the natural");
+            assertNull(order, "the cannon request is not reached without a pylon");
+            assertNotNull(BuildPylonFirst.lastError, "BuildPylonFirst reports the failure");
+            assertNotNull(RequestBuildingNear.lastError,
+                "and so does the position finder underneath it");
+            assertEquals(0, ConstructionRequests.all().size());
+            assertFalse(AbstractPositionFinder._STATUS.equals("OK"),
+                "the position finder did not succeed");
+
+
+//                assertNull(RequestBuildingNear.lastError);
+//                assertNotNull(order);
+//                assertEquals("OK", AbstractPositionFinder._STATUS);
+//                assertEquals(1, ConstructionRequests.all().size());
+        });
     }
 
     @Test
     public void testRequestingACannon_mainAndNatural_buildFirstCannonAtNatural() {
-        createWorld(1,
-            () -> {
-                assertEquals(0, ConstructionRequests.all().size());
-                assertEquals("Init", AbstractPositionFinder._STATUS);
-                assertNull(RequestBuildingNear.lastError);
-
-                HasPosition secure = natural;
-                ProductionOrder order = securePositionWithCannon(secure);
-
-                printOrder(order, secure);
-
-                assertNull(RequestBuildingNear.lastError);
-                assertNotNull(order);
-                assertEquals("OK", AbstractPositionFinder._STATUS);
-                assertEquals(1, ConstructionRequests.all().size());
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
                 natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
                 fake(AUnitType.Protoss_Pylon, 17, 13),
@@ -134,35 +110,26 @@ public class RequestBuildingNearTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Forge, 98, 98),
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
-            ),
-            () -> fakeEnemies()
-        );
+            ), fakeEnemies(), () -> {
+            assertEquals(0, ConstructionRequests.all().size());
+            assertEquals("Init", AbstractPositionFinder._STATUS);
+            assertNull(RequestBuildingNear.lastError);
+
+            HasPosition secure = natural;
+            ProductionOrder order = securePositionWithCannon(secure);
+
+            printOrder(order, secure);
+
+            assertNull(RequestBuildingNear.lastError);
+            assertNotNull(order);
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+            assertEquals(1, ConstructionRequests.all().size());
+        });
     }
 
     @Test
     public void testRequestingACannon_third_noPylon() {
-        createWorld(1,
-            () -> {
-                assertEquals(0, ConstructionRequests.all().size());
-                assertEquals("Init", AbstractPositionFinder._STATUS);
-                assertNull(RequestBuildingNear.lastError);
-
-                HasPosition secure = third;
-                ProductionOrder order = securePositionWithCannon(secure);
-
-                printOrder(order, secure);
-
-                // Same limitation as above (_AI/BUGS.md B-6): the finder cannot
-                // place a pylon near a base that has none, so no cannon is
-                // requested either. Pinned here so the day it works, this test
-                // fails and asks for the stronger assertion back.
-                assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the third base");
-                assertNull(order);
-                assertNotNull(RequestBuildingNear.lastError);
-                assertEquals(0, ConstructionRequests.all().size());
-                assertFalse(AbstractPositionFinder._STATUS.equals("OK"));
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
                 natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
                 third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
@@ -172,31 +139,31 @@ public class RequestBuildingNearTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Forge, 98, 98),
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
-            ),
-            () -> fakeEnemies()
-        );
+            ), fakeEnemies(), () -> {
+            assertEquals(0, ConstructionRequests.all().size());
+            assertEquals("Init", AbstractPositionFinder._STATUS);
+            assertNull(RequestBuildingNear.lastError);
+
+            HasPosition secure = third;
+            ProductionOrder order = securePositionWithCannon(secure);
+
+            printOrder(order, secure);
+
+            // Same limitation as above (_AI/BUGS.md B-6): the finder cannot
+            // place a pylon near a base that has none, so no cannon is
+            // requested either. Pinned here so the day it works, this test
+            // fails and asks for the stronger assertion back.
+            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the third base");
+            assertNull(order);
+            assertNotNull(RequestBuildingNear.lastError);
+            assertEquals(0, ConstructionRequests.all().size());
+            assertFalse(AbstractPositionFinder._STATUS.equals("OK"));
+        });
     }
 
     @Test
     public void testRequestingACannon_third_withPylon() {
-        createWorld(1,
-            () -> {
-                assertEquals(0, ConstructionRequests.all().size());
-                assertEquals("Init", AbstractPositionFinder._STATUS);
-                assertNull(RequestBuildingNear.lastError);
-
-                HasPosition secure = third;
-                ProductionOrder order = securePositionWithCannon(secure);
-
-                printOrder(order, secure);
-
-                assertNull(RequestBuildingNear.lastError);
-                assertNotNull(order);
-                assertEquals("OK", AbstractPositionFinder._STATUS);
-                assertEquals(1, ConstructionRequests.all().size());
-                assertTrue(ConstructionRequests.all().get(0).buildingType().isCannon());
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
                 natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural
                 third = fake(AUnitType.Protoss_Nexus, 52, 9), // Third
@@ -207,9 +174,22 @@ public class RequestBuildingNearTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Forge, 98, 98),
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
-            ),
-            () -> fakeEnemies()
-        );
+            ), fakeEnemies(), () -> {
+            assertEquals(0, ConstructionRequests.all().size());
+            assertEquals("Init", AbstractPositionFinder._STATUS);
+            assertNull(RequestBuildingNear.lastError);
+
+            HasPosition secure = third;
+            ProductionOrder order = securePositionWithCannon(secure);
+
+            printOrder(order, secure);
+
+            assertNull(RequestBuildingNear.lastError);
+            assertNotNull(order);
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+            assertEquals(1, ConstructionRequests.all().size());
+            assertTrue(ConstructionRequests.all().get(0).buildingType().isCannon());
+        });
     }
 
     // =========================================================

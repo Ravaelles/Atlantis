@@ -64,6 +64,14 @@ public class AbstractTestWithUnits extends UnitTest {
 
     protected Options options = new Options();
 
+    /**
+     * Units that count as neutral in this world, {@code null} for none.
+     *
+     * <p>Set it before calling {@code world(...)} in a test that needs minerals
+     * and geysers: the sample world has no neutral units.</p>
+     */
+    protected FakeUnit[] neutralInWorld = null;
+
     // =========================================================
 
     @BeforeEach
@@ -77,7 +85,7 @@ public class AbstractTestWithUnits extends UnitTest {
 //        HeuristicCombatEvaluator.clearCache();
 
         // Always reset the clock, including for world-based tests: AUnitTest
-        // (and others) mix world-free tests with createWorld() tests, and the
+        // (and others) mix world-free tests with world() tests, and the
         // A.now field left behind by the previous test then disagreed with the
         // mocked AGame.now(). A "5 frames ago" assertion was off by one purely
         // because of which test ran before. Frame 0 also keeps every modulo
@@ -152,7 +160,7 @@ public class AbstractTestWithUnits extends UnitTest {
 
         // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
         // close(), not reset(): reset only clears stubs and leaves the mock
-        // registered in the thread, so any test that failed inside createWorld
+        // registered in the thread, so any test that failed inside world(
         // (assertion error before the closing line was reached) leaked it into
         // whatever ran next - which is why failures looked order-dependent.
         // This runs from @AfterEach, so it happens even when the test threw.
@@ -244,76 +252,6 @@ public class AbstractTestWithUnits extends UnitTest {
         // one. One source of truth, set here.
         A.now = framesNow;
         A.s = framesNow / 30;
-    }
-
-    protected void usingFakeOurs(Runnable runnable) {
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
-        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
-
-        runnable.run();
-
-        AbstractTestWithWorld.baseSelect.close();
-        AbstractTestWithWorld.baseSelect = null;
-    }
-
-    protected void usingFakeEnemy(Runnable runnable) {
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
-        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
-
-        runnable.run();
-
-        AbstractTestWithWorld.baseSelect.close();
-        AbstractTestWithWorld.baseSelect = null;
-    }
-
-    protected void usingFakeNeutral(Runnable runnable) {
-        List<FakeUnit> neutral = mockNeutralUnits();
-        usingFakeOursEnemiesAndNeutral(new FakeUnit[]{}, new FakeUnit[]{}, neutral.toArray(new FakeUnit[0]), runnable);
-    }
-
-    public void usingFakeOursAndFakeEnemies(FakeUnit[] ours, FakeUnit[] enemies, Runnable runnable) {
-        usingFakeOursEnemiesAndNeutral(ours, enemies, new FakeUnit[]{}, runnable);
-    }
-
-    protected void usingFakeOurAndFakeEnemies(FakeUnit our, FakeUnit[] enemies, Runnable runnable) {
-        usingFakeOursEnemiesAndNeutral(new FakeUnit[]{our}, enemies, new FakeUnit[]{}, runnable);
-    }
-
-    protected void usingFakeOursEnemiesAndNeutral(
-        FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
-    ) {
-        // No setUp() here on purpose. setUp() is @BeforeEach, so it has already
-        // run - and it ends in FakeUnit.clearCache(), which nulls the position,
-        // the hp and the id of *every* FakeUnit created so far. Calling it again
-        // wiped the units the test had just built: positions became null, so
-        // range assertions saw "nothing in range" and distance helpers threw
-        // NPEs. setUpTestLogic() below is the part that needs the stubs.
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
-        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
-        AbstractTestWithWorld.baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
-
-        setUpTestLogic();
-
-        runnable.run();
-
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
     }
 
     public static FakeUnit fake(AUnitType type) {

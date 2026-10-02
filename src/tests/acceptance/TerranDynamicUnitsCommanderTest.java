@@ -36,30 +36,26 @@ public class TerranDynamicUnitsCommanderTest extends WorldStubForTests {
             fake(AUnitType.Terran_Marine)
         );
 
-        createWorld(1,
-            () -> {
-                queue = initQueue();
+        options = Options.create().set("supplyUsed", 24);
+        world(1, ours, fakeExampleEnemies(), () -> {
+            queue = initQueue();
 
-                int oldTrainUnits = FakeUnitData.TRAIN.size();
+            int oldTrainUnits = FakeUnitData.TRAIN.size();
 
-                (new TerranDynamicUnitsCommander()).invokedCommander();
+            (new TerranDynamicUnitsCommander()).invokedCommander();
 
 //                Select.our().print("All our units!");
 //                System.out.println("## Supply: " + A.supplyUsed() + " / Minerals: " + A.minerals() + " ##\n");
 //                queue.allOrders().print("Queue all");
 
-                Queue.get().clearCache();
-                Orders dynamicUnitOrders = queue.forCurrentSupply().dynamic().units();
+            Queue.get().clearCache();
+            Orders dynamicUnitOrders = queue.forCurrentSupply().dynamic().units();
 
-                int newTrainUnits = FakeUnitData.TRAIN.size();
+            int newTrainUnits = FakeUnitData.TRAIN.size();
 
-                assertEquals(true, newTrainUnits > oldTrainUnits);
+            assertEquals(true, newTrainUnits > oldTrainUnits);
 //                assertEquals(true, dynamicUnitOrders.get(0).unitType().isTerranInfantry());
-            },
-            () -> ours,
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 24)
-        );
+        });
     }
 
     // =========================================================

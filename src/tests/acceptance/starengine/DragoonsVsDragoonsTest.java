@@ -23,8 +23,8 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 //        useStarEngine(); // Uncomment to use StarEngine
 
         int runForSeconds = !isUsingEngine() ? 1 : 10;
-        createWorld(30 * runForSeconds, () -> {
-            if (isUsingEngine() && A.now % 30 == 0) AConsole.println("Frame: " + A.now);
+        world(30 * runForSeconds, our, enemies, () -> {
+        if (isUsingEngine() && A.now % 30 == 0) AConsole.println("Frame: " + A.now);
 //            Select.our().print();
 //            Select.enemy().print();
 
@@ -32,19 +32,19 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 
 //            if (true) return;
 
-            (new AtlantisGameCommander()).invokedCommander();
+        (new AtlantisGameCommander()).invokedCommander();
 
-            for (AUnit unit : Select.ourCombatUnits().list()) {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
 //                (new CombatUnitManager(unit)).invokeFrom(null);
-                (new AttackNearbyEnemies(unit)).forceHandle();
+            (new AttackNearbyEnemies(unit)).forceHandle();
 
 //                boolean printUnit = false;
 //                boolean printUnit = true;
-                boolean printUnit = unit == Select.ourCombatUnits().second();
+            boolean printUnit = unit == Select.ourCombatUnits().second();
 
-                if (printUnit) {
-                    System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
-                }
+            if (printUnit) {
+                System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
+            }
 
 //                if (printUnit) {
 //                    AConsole.errPrintln("_____");
@@ -64,8 +64,8 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 //                        //                    + "\n   sunken eval = " + sunken.combatEvalRelative()
 //                    );
 //                }
-            }
-        }, () -> our, () -> enemies);
+        }
+        });
     }
 
     // =========================================================

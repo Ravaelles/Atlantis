@@ -25,32 +25,28 @@ public class PendingAttacksAgainstEnemyUnitTest extends WorldStubForTests {
 
     @Test
     public void dragoonNotStartedAttacksAreAccountedAsBullets() {
-        createWorld(1,
-            fakeOurs(
+        world(1, fakeOurs(
                 dragoon = fake(Protoss_Dragoon, 10),
                 marine = fake(AUnitType.Terran_Marine, 11.5),
                 vulture = fake(AUnitType.Terran_Vulture, 11.7)
-            ),
-            fakeEnemies(
+            ), fakeEnemies(
                 sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
 //                hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
                 zergling = fake(AUnitType.Zerg_Zergling, 13.4).setHp(9)
-            ),
-            () -> {
-                assertFalse(zergling.isDeadMan());
-                assertEquals(0, PendingAttacksAgainstEnemyUnit.against(zergling).size());
+            ), () -> {
+            assertFalse(zergling.isDeadMan());
+            assertEquals(0, PendingAttacksAgainstEnemyUnit.against(zergling).size());
 
-                (new DeadMan()).clearCache();
+            (new DeadMan()).clearCache();
 
-                dragoon.setFakeTarget(zergling);
-                dragoon.setAttackState(AttackState.STARTING);
-                assertEquals(zergling, dragoon.target());
+            dragoon.setFakeTarget(zergling);
+            dragoon.setAttackState(AttackState.STARTING);
+            assertEquals(zergling, dragoon.target());
 
-                Collection<ABullet> bullets = PendingAttacksAgainstEnemyUnit.against(zergling);
+            Collection<ABullet> bullets = PendingAttacksAgainstEnemyUnit.against(zergling);
 
-                assertEquals(1, bullets.size());
-                assertTrue(zergling.isDeadMan());
-            }
-        );
+            assertEquals(1, bullets.size());
+            assertTrue(zergling.isDeadMan());
+        });
     }
 }

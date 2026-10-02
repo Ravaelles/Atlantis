@@ -25,10 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * <ul>
  *   <li><b>No world, no mocks</b> for anything that only reads a unit's own
  *       type or fields - the cheapest and least order-sensitive option.</li>
- *   <li><b>{@code createWorld(1, ours, enemies, runnable)}</b> only where a
+ *   <li><b>{@code world(1, ours, enemies, eachFrame)}</b> only where a
  *       query reads the unit collections ({@code friendsNear()},
  *       {@code enemiesNear()}, {@code allUnitsNear()}, nearest-enemy).</li>
- *   <li><b>{@code usingFakeOurAndFakeEnemies(...)}</b> only where the unit
+ *   <li><b>{@code world(...)}</b> only where the unit
  *       under test needs its enemies visible without a frame loop.</li>
  * </ul>
  *
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * </ul>
  *
  * <p>The previous version of this class ran against the 22-unit sample world
- * that {@code createWorld(1, runnable)} silently builds, asserted on instance
+ * that {@code world(1, eachFrame)} silently builds, asserted on instance
  * fields that only existed as a side effect of the world generators (so
  * {@code ourAndEnemyCount} threw NPE when run alone), and contained assertions
  * that could not fail. None of that is left here.</p>
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class AUnitTest extends AbstractTestWithWorld {
 
     /**
-     * Only the {@code createWorld(1, runnable)} overload asks the harness for
+     * Only {@code world(1, eachFrame)} asks the harness for
      * these. Every test below that needs units passes them explicitly, because
      * that overload silently builds the 22-unit sample world from UnitTest
      * instead - which is how the previous version of this class ended up
@@ -831,55 +831,49 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit closeEnemy = fake(AUnitType.Zerg_Zergling, 12);
         FakeUnit farEnemy = fake(AUnitType.Zerg_Hydralisk, 15);
 
-        createWorld(1,
-            fakeOurs(unit, friend),
-            fakeEnemies(closeEnemy, farEnemy),
-            () -> {
-                assertEquals(0, unit.friendsInRadiusCount(0.9));
-                assertEquals(1, unit.friendsInRadiusCount(1));
+        world(1, fakeOurs(unit, friend), fakeEnemies(closeEnemy, farEnemy), () -> {
+            assertEquals(0, unit.friendsInRadiusCount(0.9));
+            assertEquals(1, unit.friendsInRadiusCount(1));
 
-                assertEquals(0, unit.enemiesNearCount(1.9));
-                assertEquals(1, unit.enemiesNearCount(2));
-                assertEquals(2, unit.enemiesNearCount(6));
+            assertEquals(0, unit.enemiesNearCount(1.9));
+            assertEquals(1, unit.enemiesNearCount(2));
+            assertEquals(2, unit.enemiesNearCount(6));
 
-                assertEquals(2.0, unit.nearestEnemyDist(), 0.001);
-                assertEquals(2.0, unit.nearestMeleeEnemyDist(), 0.001);
+            assertEquals(2.0, unit.nearestEnemyDist(), 0.001);
+            assertEquals(2.0, unit.nearestMeleeEnemyDist(), 0.001);
 
-                // Counter-intuitive but measured: a Hydralisk is *ranged* in
-                // Atlantis (weapon range 5), so only the zergling counts as
-                // melee. The old version of this test assumed the opposite.
-                assertEquals(2, unit.enemiesNearCount(6));
-                assertEquals(1, unit.rangedEnemiesCount(6), "the hydra is the ranged one");
-                assertEquals(0, unit.meleeEnemiesNearCount(1.9));
-                assertEquals(1, unit.meleeEnemiesNearCount(2), "the zergling is the melee one");
-                assertEquals(1, unit.meleeEnemiesNearCount(6), "the hydra does not count as melee");
+            // Counter-intuitive but measured: a Hydralisk is *ranged* in
+            // Atlantis (weapon range 5), so only the zergling counts as
+            // melee. The old version of this test assumed the opposite.
+            assertEquals(2, unit.enemiesNearCount(6));
+            assertEquals(1, unit.rangedEnemiesCount(6), "the hydra is the ranged one");
+            assertEquals(0, unit.meleeEnemiesNearCount(1.9));
+            assertEquals(1, unit.meleeEnemiesNearCount(2), "the zergling is the melee one");
+            assertEquals(1, unit.meleeEnemiesNearCount(6), "the hydra does not count as melee");
 
-                assertEquals(0, unit.allUnitsNear().inRadius(0.9, unit).count());
-                assertEquals(1, unit.allUnitsNear().inRadius(1, unit).count());
-            });
+            assertEquals(0, unit.allUnitsNear().inRadius(0.9, unit).count());
+            assertEquals(1, unit.allUnitsNear().inRadius(1, unit).count());
+        });
     }
 
     @Test
     public void nearbyBuildingsAndBase() {
         FakeUnit probe = fake(Protoss_Probe, 10);
 
-        createWorld(1,
-            fakeOurs(probe, fake(Protoss_Nexus, 2), fake(Protoss_Pylon, 5)),
-            fakeEnemies(fake(AUnitType.Zerg_Zergling, 12)),
-            () -> {
-                assertEquals(2.0, probe.distTo(probe.nearestEnemy()), 0.001);
-                assertEquals(8.0, probe.distToBase(), 0.001, "Nexus is 8 tiles west");
-                assertEquals(5.0, probe.distToBuilding(), 0.001, "Pylon is 5 tiles west");
-            });
+        world(1, fakeOurs(probe, fake(Protoss_Nexus, 2), fake(Protoss_Pylon, 5)), fakeEnemies(fake(AUnitType.Zerg_Zergling, 12)), () -> {
+            assertEquals(2.0, probe.distTo(probe.nearestEnemy()), 0.001);
+            assertEquals(8.0, probe.distToBase(), 0.001, "Nexus is 8 tiles west");
+            assertEquals(5.0, probe.distToBuilding(), 0.001, "Pylon is 5 tiles west");
+        });
     }
 
     @Test
     public void safeFromMeleeWhenNobodyIsInMeleeRange() {
         FakeUnit zealot = fake(Protoss_Zealot, 10);
 
-        createWorld(1, zealot, fakeEnemies(fake(AUnitType.Zerg_Zergling, 16)), () -> {
-            assertEquals(0, zealot.meleeEnemiesNearCount(3.0), "6 tiles is outside 3");
-            assertTrue(zealot.isSafeFromMelee());
+        world(1, units(zealot), fakeEnemies(fake(AUnitType.Zerg_Zergling, 16)), () -> {
+        assertEquals(0, zealot.meleeEnemiesNearCount(3.0), "6 tiles is outside 3");
+        assertTrue(zealot.isSafeFromMelee());
         });
     }
 
@@ -893,9 +887,9 @@ public class AUnitTest extends AbstractTestWithWorld {
     public void unsafeWhenAMeleeUnitIsNextToUs() {
         FakeUnit zealot = fake(Protoss_Zealot, 10);
 
-        createWorld(1, zealot, fakeEnemies(fake(AUnitType.Zerg_Zergling, 11)), () -> {
-            assertEquals(1, zealot.meleeEnemiesNearCount(1.6), "1 tile is inside 1.6");
-            assertFalse(zealot.isSafeFromMelee());
+        world(1, units(zealot), fakeEnemies(fake(AUnitType.Zerg_Zergling, 11)), () -> {
+        assertEquals(1, zealot.meleeEnemiesNearCount(1.6), "1 tile is inside 1.6");
+        assertFalse(zealot.isSafeFromMelee());
         });
     }
 
@@ -904,16 +898,16 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(Protoss_Zealot, 10);
         FakeUnit zergling = fake(AUnitType.Zerg_Zergling, 11);
 
-        createWorld(1, zealot, fakeEnemies(zergling), () -> {
-            zealot.setHp(zealot.maxHp());
-            assertEquals(0.0, zealot.woundPercent(), 0.001);
-            assertFalse(zealot.isSafeFromMelee(), "at full hp the margin is 1.6 tiles");
+        world(1, units(zealot), fakeEnemies(zergling), () -> {
+        zealot.setHp(zealot.maxHp());
+        assertEquals(0.0, zealot.woundPercent(), 0.001);
+        assertFalse(zealot.isSafeFromMelee(), "at full hp the margin is 1.6 tiles");
 
-            // Half hp means half wounded: 1.8 + 50 > 1.6, and the zergling is
-            // only 1 tile away, so the wider margin does not save us here.
-            zealot.setHp(zealot.maxHp() / 2);
-            assertEquals(50.0, zealot.woundPercent(), 0.001);
-            assertFalse(zealot.isSafeFromMelee());
+        // Half hp means half wounded: 1.8 + 50 > 1.6, and the zergling is
+        // only 1 tile away, so the wider margin does not save us here.
+        zealot.setHp(zealot.maxHp() / 2);
+        assertEquals(50.0, zealot.woundPercent(), 0.001);
+        assertFalse(zealot.isSafeFromMelee());
         });
     }
 
@@ -930,7 +924,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Dark_Templar, 11).setCloaked(true).setDetected(false)
         );
 
-        usingFakeOurAndFakeEnemies(our, enemies, () ->
+        world(1, units(our), enemies, () ->
             assertNull(ATargeting.defineBestEnemyToAttack(our),
                 "nothing is detected, so there is no target"));
     }
@@ -964,12 +958,12 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit our = fake(AUnitType.Terran_Marine);
         FakeUnit enemy = fakeEnemy(AUnitType.Protoss_Zealot, 16);
 
-        usingFakeOurAndFakeEnemies(our, new FakeUnit[]{enemy}, () -> {
-            assertTrue(our.isOur());
-            assertFalse(our.isEnemy());
+        world(1, units(our), new FakeUnit[]{enemy}, () -> {
+        assertTrue(our.isOur());
+        assertFalse(our.isEnemy());
 
-            assertFalse(enemy.isOur());
-            assertTrue(enemy.isEnemy());
+        assertFalse(enemy.isOur());
+        assertTrue(enemy.isEnemy());
         });
     }
 
@@ -979,14 +973,14 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit friend = fake(AUnitType.Terran_Medic, 11);
         FakeUnit enemy = fake(AUnitType.Protoss_Zealot, 12);
 
-        usingFakeOursAndFakeEnemies(fakeOurs(our, friend), fakeEnemies(enemy), () -> {
-            assertEquals(1, our.enemiesNear().count(), "the zealot is our only enemy");
-            assertEquals(1, our.friendsNear().count(), "the medic is our only friend, we are excluded");
+        world(1, fakeOurs(our, friend), fakeEnemies(enemy), () -> {
+        assertEquals(1, our.enemiesNear().count(), "the zealot is our only enemy");
+        assertEquals(1, our.friendsNear().count(), "the medic is our only friend, we are excluded");
 
-            // Seen from the other side: our two units are "its" enemies, and it
-            // has no friends here because nothing was ever discovered.
-            assertEquals(2, enemy.enemiesNear().count());
-            assertEquals(0, enemy.friendsNear().count());
+        // Seen from the other side: our two units are "its" enemies, and it
+        // has no friends here because nothing was ever discovered.
+        assertEquals(2, enemy.enemiesNear().count());
+        assertEquals(0, enemy.friendsNear().count());
         });
     }
 
@@ -1027,9 +1021,7 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit[] ours = fakeOurs(our);
         FakeUnit[] enemies = fakeEnemies(expectedTarget);
 
-        createWorld(1, () ->
-            assertSame(expectedTarget, ATargeting.defineBestEnemyToAttack(our)),
-            () -> ours,
-            () -> enemies);
+        world(1, ours, enemies, () ->
+            assertSame(expectedTarget, ATargeting.defineBestEnemyToAttack(our)));
     }
 }

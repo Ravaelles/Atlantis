@@ -8,8 +8,8 @@ import tests.fakes.FakeUnit;
 public class BuildingsCommanderTest extends AbstractTestWithWorld {
     @Test
     public void iteratesOverBuildings() {
-        createWorld(1, () -> {
-            (new BuildingsCommander()).invokedCommander();
+        world(1, () -> {
+        (new BuildingsCommander()).invokedCommander();
         });
     }
 

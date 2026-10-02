@@ -29,14 +29,11 @@ public class CommanderTest extends WorldStubForTests {
 
     @Test
     public void commanderHandlers() {
-        createWorld(3, () -> {
+        world(3, UnitTest.randomOurs(), UnitTest.randomEnemies(), () -> {
 //                (new ProductionCommander()).invokeCommander();
 //                (new DynamicUnitAndTechProducerCommander()).invoke(this);
 
-                assertTrue(true);
-            },
-            () -> UnitTest.randomOurs(),
-            () -> UnitTest.randomEnemies()
-        );
+            assertTrue(true);
+        });
     }
 }

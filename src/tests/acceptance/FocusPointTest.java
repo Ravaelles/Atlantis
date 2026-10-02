@@ -24,27 +24,27 @@ public class FocusPointTest extends AbstractTestWithWorld {
     public void uhm() {
         gameCommander = new AtlantisGameCommander();
 
-        createWorld(5, () -> {
+        world(5, generateOur(), generateEnemies(), () -> {
 //            System.err.println("\n===================== FRAME = " + A.now() + " ===========================");
 
-            if (A.now() == 1) {
-                firstFrame();
-            }
-            else if (A.now() == 2) {
-                secondFrame();
-            }
-            else if (A.now() == 3) {
-                thirdFrame();
-            }
-            else if (A.now() == 4) {
-                forthFrame();
-            }
-            else if (A.now() == 5) {
-                fifthFrame();
-            }
+        if (A.now() == 1) {
+            firstFrame();
+        }
+        else if (A.now() == 2) {
+            secondFrame();
+        }
+        else if (A.now() == 3) {
+            thirdFrame();
+        }
+        else if (A.now() == 4) {
+            forthFrame();
+        }
+        else if (A.now() == 5) {
+            fifthFrame();
+        }
 
-            gameCommander.invokedCommander();
-        }, this::generateOur, this::generateEnemies);
+        gameCommander.invokedCommander();
+        });
     }
 
     private void firstFrame() {

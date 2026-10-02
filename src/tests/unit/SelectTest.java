@@ -19,8 +19,8 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void our() {
-        createWorld(1, () -> {
-            assertEquals(22, Select.our().size());
+        world(1, () -> {
+        assertEquals(22, Select.our().size());
         });
     }
 
@@ -40,26 +40,26 @@ public class SelectTest extends WorldStubForTests {
 
         FakeUnit[] enemies = fakeEnemies();
 
-        createWorld(ours, enemies, () -> {
+        world(1, ours, enemies, () -> {
 //            Select.our().print("Our");
 //            Select.ourWithUnfinished().print("Our with UNF");
 
-            assertEquals(4, Select.ourWithUnfinished().size());
-            assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
-            assertEquals(2, Select.ourWithUnfinished().bunkers().size());
-            assertEquals(2, Select.ourOfType(AUnitType.Terran_Bunker).size());
-            assertEquals(2, Select.our().bunkers().size());
+        assertEquals(4, Select.ourWithUnfinished().size());
+        assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
+        assertEquals(2, Select.ourWithUnfinished().bunkers().size());
+        assertEquals(2, Select.ourOfType(AUnitType.Terran_Bunker).size());
+        assertEquals(2, Select.our().bunkers().size());
         });
     }
 
     @Test
     public void ourRealUnits() {
-        createWorld(1, () -> {
+        world(1, () -> {
 //            Select.our().print();
 //            Select.ourRealUnits().print();
 //            Select.our().minus(Select.ourRealUnits()).print("Our units that are not real units");
 
-            assertEquals(14, Select.ourRealUnits().size());
+        assertEquals(14, Select.ourRealUnits().size());
         });
     }
 
@@ -67,56 +67,56 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void enemy() {
-        createWorld(1, () -> {
-            assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
+        world(1, () -> {
+        assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
         });
     }
 
     @Test
     public void enemyRealUnits() {
-        createWorld(1, () -> {
-            assertEquals(enemyUnits.length, Select.enemyUnits().size());
-            assertTrue(Select.enemyUnits().size() >= 2);
+        world(1, () -> {
+        assertEquals(enemyUnits.length, Select.enemyUnits().size());
+        assertTrue(Select.enemyUnits().size() >= 2);
 
-            assertEquals(
-                0,
-                Select.enemyRealUnits(false, false, false).size()
-            );
+        assertEquals(
+            0,
+            Select.enemyRealUnits(false, false, false).size()
+        );
 
 //            Select.enemy().print("All enemiez, while enemUnits.size()=" + Select.enemyUnits().size());
-            assertEquals(
-                GROUND_UNITS,
-                Select.enemyRealUnits(true, false, false).size()
-            );
+        assertEquals(
+            GROUND_UNITS,
+            Select.enemyRealUnits(true, false, false).size()
+        );
 
 //            Select.enemy().realUnits().print("Real units");
 //            Select.enemy().combatBuildings(true).print("COMBAT_BUILDINGS");
 //            Select.enemy().realUnitsAndCombatBuildings().print("REAL_UNITS + COMBAT_BUILDINGS");
 
-            assertEquals(
-                14,
-                Select.enemy().realUnitsAndCombatBuildings().size()
-            );
+        assertEquals(
+            14,
+            Select.enemy().realUnitsAndCombatBuildings().size()
+        );
 
-            assertEquals(
-                GROUND_UNITS + BUILDINGS,
-                Select.enemyRealUnits(true, false, true).size()
-            );
+        assertEquals(
+            GROUND_UNITS + BUILDINGS,
+            Select.enemyRealUnits(true, false, true).size()
+        );
 
-            assertEquals(
-                AIR_UNITS,
-                Select.enemyRealUnits(false, true, false).size()
-            );
+        assertEquals(
+            AIR_UNITS,
+            Select.enemyRealUnits(false, true, false).size()
+        );
 
-            assertEquals(
-                REAL_UNITS,
-                Select.enemyRealUnits(true, true, false).size()
-            );
+        assertEquals(
+            REAL_UNITS,
+            Select.enemyRealUnits(true, true, false).size()
+        );
 
-            assertEquals(
-                REAL_UNITS + BUILDINGS,
-                Select.enemyRealUnits(true, true, true).size()
-            );
+        assertEquals(
+            REAL_UNITS + BUILDINGS,
+            Select.enemyRealUnits(true, true, true).size()
+        );
         });
     }
 
@@ -124,14 +124,16 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void neutralUnits() {
-        usingFakeNeutral(() -> {
-            assertEquals(MINERAL_COUNT, Select.minerals().size());
-            assertEquals(GEYSER_COUNT, Select.geysers().size());
+        neutralInWorld = mockNeutralUnits().toArray(new FakeUnit[0]);
 
-            assertEquals(neutralUnits.length, Select.neutral().size());
+        world(1, () -> {
+        assertEquals(MINERAL_COUNT, Select.minerals().size());
+        assertEquals(GEYSER_COUNT, Select.geysers().size());
 
-            assertEquals(MINERAL_COUNT, Select.minerals().size());
-            assertEquals(GEYSER_COUNT, Select.geysers().size());
+        assertEquals(neutralUnits.length, Select.neutral().size());
+
+        assertEquals(MINERAL_COUNT, Select.minerals().size());
+        assertEquals(GEYSER_COUNT, Select.geysers().size());
         });
     }
 
@@ -139,22 +141,22 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void addsUnitsAndRemovesDuplicates() {
-        createWorld(1, () -> {
-            AUnit unit1 = Select.our().first();
-            AUnit unit2 = Select.our().last();
+        world(1, () -> {
+        AUnit unit1 = Select.our().first();
+        AUnit unit2 = Select.our().last();
 
-            Selection selection = Select.from(new AUnit[]{unit1});
-            Selection selectionB = Select.from(new AUnit[]{unit2, unit2});
+        Selection selection = Select.from(new AUnit[]{unit1});
+        Selection selectionB = Select.from(new AUnit[]{unit2, unit2});
 
-            assertEquals(1, selection.size());
+        assertEquals(1, selection.size());
 
-            selection = selection.add(selectionB);
+        selection = selection.add(selectionB);
 
-            assertEquals(3, selection.size());
+        assertEquals(3, selection.size());
 
-            selection = selection.removeDuplicates();
+        selection = selection.removeDuplicates();
 
-            assertEquals(2, selection.size());
+        assertEquals(2, selection.size());
         });
     }
 
@@ -162,21 +164,21 @@ public class SelectTest extends WorldStubForTests {
 
     @Test
     public void createsCacheKeysAsExpected() {
-        createWorld(1, () -> {
-            Select.clearCache();
+        world(1, () -> {
+        Select.clearCache();
 //            Select.cache().print("hmmm", true);
-            assertEquals(0, Select.cache().size());
+        assertEquals(0, Select.cache().size());
 
-            Select.our();
+        Select.our();
 
-            assertEquals(1, Select.cache().size());
-            assertEquals("[our]", Select.cache().rawCacheData().keySet().toString());
+        assertEquals(1, Select.cache().size());
+        assertEquals("[our]", Select.cache().rawCacheData().keySet().toString());
 
-            Select.our().melee();
+        Select.our().melee();
 //            Select.cache().printKeys();
 
-            assertEquals(2, Select.cache().size());
-            assertEquals("[our, our:melee]", Select.cache().rawCacheData().keySet().toString());
+        assertEquals(2, Select.cache().size());
+        assertEquals("[our, our:melee]", Select.cache().rawCacheData().keySet().toString());
         });
     }
 

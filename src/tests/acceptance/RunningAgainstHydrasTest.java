@@ -10,12 +10,12 @@ public class RunningAgainstHydrasTest extends AbstractTestWithWorld {
 
     @Test
     public void runsFromHydras() {
-        createWorld(10, () -> {
-            FakeUnit unit = ourFirst;
-            unit.forceSetSquad(Alpha.get());
-            (new CombatUnitManager(unit)).invokeFrom(this);
+        world(10, () -> {
+        FakeUnit unit = ourFirst;
+        unit.forceSetSquad(Alpha.get());
+        (new CombatUnitManager(unit)).invokeFrom(this);
 
-            FakeUnit enemy = nearestEnemy(unit);
+        FakeUnit enemy = nearestEnemy(unit);
 
 //            System.err.println(A.now() + " -       " + unit.tooltip()
 //                    + "\n " + unit.lastCommand()

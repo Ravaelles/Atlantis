@@ -26,69 +26,65 @@ public class ResourcesReservedTest extends WorldStubForTests {
 
         ReservedResources.reset();
 
-        createWorld(1,
-            () -> {
-//                mineralsAreReservedForOrdersMarkedAsReady();
-
-                int haveMinerals = 460;
-
-                queue = initQueue(haveMinerals, 2323);
-                queue.refresh();
-                readyToProduceOrders = queue.readyToProduceOrders();
-
-                ProductionOrder order = readyToProduceOrders.first();
-
-//                System.out.println("A.supplyUsed() = " + A.supplyUsed());
-//                System.out.println("ReservedResources.minerals() = " + ReservedResources.minerals());
-//                System.out.println("first READY order = " + order);
-//                Queue.get().allOrders().print("All orders");
-
-                // Measured: every order that turns READY reserves its own price, so
-                // the running total is far above the first order, and it is then
-                // clamped - to MAX_VALUE_WITHOUT_BASE while no base is being built,
-                // and to 250 for gas by ReservedResources.gas() itself. The old
-                // expectation ("only the first order, 100 minerals") does not
-                // describe this code any more.
-                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE, ReservedResources.minerals());
-                assertEquals(250, ReservedResources.gas());
-
-                int costOfFirstOrder = order.mineralPrice();
-                assertEquals(100, costOfFirstOrder, "supply depot - sanity check on the world");
-
-//                System.out.println("readyToProduceOrders.first() = " + readyToProduceOrders.first());
-//                readyToProduceOrders.first().unitType().print("First unit type");
-
-//                Queue.get().allOrders().print("Before in progress");
-
-                order.setStatus(OrderStatus.IN_PROGRESS);
-                order.releasedReservedResources();
-//                OnUnitCreated.onUnitCreated();
-
-//                Queue.get().allOrders().print("After in progress");
-
-                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
-                    ReservedResources.minerals(),
-                    "an order that is already being produced frees its own reservation");
-
-                order.setStatus(OrderStatus.FINISHED);
-
-//                Queue.get().allOrders().print("After completed");
-
-                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
-                    ReservedResources.minerals(),
-                    "finishing the order does not reserve anything again");
-            },
-            () -> FakeUnitHelper.merge(
+        options = Options.create().set("supplyUsed", 49);
+        world(1, FakeUnitHelper.merge(
                 ourInitialUnits(),
                 fakeOurs(
                     fake(Terran_Supply_Depot, 7),
                     fake(Terran_Barracks, 4),
                     fake(Terran_Academy, 33)
                 )
-            ),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 49)
-        );
+            ), fakeExampleEnemies(), () -> {
+//                mineralsAreReservedForOrdersMarkedAsReady();
+
+            int haveMinerals = 460;
+
+            queue = initQueue(haveMinerals, 2323);
+            queue.refresh();
+            readyToProduceOrders = queue.readyToProduceOrders();
+
+            ProductionOrder order = readyToProduceOrders.first();
+
+//                System.out.println("A.supplyUsed() = " + A.supplyUsed());
+//                System.out.println("ReservedResources.minerals() = " + ReservedResources.minerals());
+//                System.out.println("first READY order = " + order);
+//                Queue.get().allOrders().print("All orders");
+
+            // Measured: every order that turns READY reserves its own price, so
+            // the running total is far above the first order, and it is then
+            // clamped - to MAX_VALUE_WITHOUT_BASE while no base is being built,
+            // and to 250 for gas by ReservedResources.gas() itself. The old
+            // expectation ("only the first order, 100 minerals") does not
+            // describe this code any more.
+            assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE, ReservedResources.minerals());
+            assertEquals(250, ReservedResources.gas());
+
+            int costOfFirstOrder = order.mineralPrice();
+            assertEquals(100, costOfFirstOrder, "supply depot - sanity check on the world");
+
+//                System.out.println("readyToProduceOrders.first() = " + readyToProduceOrders.first());
+//                readyToProduceOrders.first().unitType().print("First unit type");
+
+//                Queue.get().allOrders().print("Before in progress");
+
+            order.setStatus(OrderStatus.IN_PROGRESS);
+            order.releasedReservedResources();
+//                OnUnitCreated.onUnitCreated();
+
+//                Queue.get().allOrders().print("After in progress");
+
+            assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
+                ReservedResources.minerals(),
+                "an order that is already being produced frees its own reservation");
+
+            order.setStatus(OrderStatus.FINISHED);
+
+//                Queue.get().allOrders().print("After completed");
+
+            assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
+                ReservedResources.minerals(),
+                "finishing the order does not reserve anything again");
+        });
     }
 
     private void mineralsAreReservedForOrdersMarkedAsReady() {

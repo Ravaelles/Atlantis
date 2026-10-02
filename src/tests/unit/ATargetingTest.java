@@ -42,11 +42,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -81,11 +79,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -114,11 +110,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -143,11 +137,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(colony, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(colony, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -172,11 +164,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(drone, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -209,11 +199,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(sunken, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -236,11 +224,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(templar, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(templar, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -255,11 +241,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Zealot, 22)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -274,11 +258,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Zealot, 22)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(scout, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -298,11 +280,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Zealot, 22)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(cannon, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(cannon, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -318,11 +298,9 @@ public class ATargetingTest extends WorldStubForTests {
             building = fake(AUnitType.Zerg_Hydralisk_Den, 17)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(building, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(building, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -343,11 +321,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(spore, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(spore, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -364,11 +340,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -385,11 +359,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 29)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(target, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -403,11 +375,9 @@ public class ATargetingTest extends WorldStubForTests {
             expectedTarget = fake(AUnitType.Zerg_Zergling, 13)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -421,11 +391,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Hydralisk, 18)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -440,11 +408,9 @@ public class ATargetingTest extends WorldStubForTests {
             expectedTarget = fake(AUnitType.Zerg_Sunken_Colony, 13)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -459,11 +425,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Evolution_Chamber, 13)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -477,11 +441,9 @@ public class ATargetingTest extends WorldStubForTests {
             expectedTarget = fake(AUnitType.Zerg_Zergling, 16)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -495,11 +457,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Zergling, 20)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -514,11 +474,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Zergling, 19)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -533,11 +491,9 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Terran_Marine, 13.2)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -551,11 +507,9 @@ public class ATargetingTest extends WorldStubForTests {
             expectedTarget = fake(AUnitType.Terran_Marine, 13.2)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -571,13 +525,11 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Terran_Marine, 13.2)
         );
 
-        createWorld(1,
-            () -> {
+        world(1, fakeOurs(our), enemies, () -> {
 //                Select.enemy().print();
 
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -600,11 +552,9 @@ public class ATargetingTest extends WorldStubForTests {
 
 //        our.attackUnit(gate);
 
-        createWorld(1,
-            () -> {
-                assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(expectedTarget, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 
     @Test
@@ -619,10 +569,8 @@ public class ATargetingTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Hatchery, 13)
         );
 
-        createWorld(1,
-            () -> {
-                assertEquals(creep, ATargeting.defineBestEnemyToAttack(our));
-            }, () -> fakeOurs(our), () -> enemies
-        );
+        world(1, fakeOurs(our), enemies, () -> {
+            assertEquals(creep, ATargeting.defineBestEnemyToAttack(our));
+        });
     }
 }

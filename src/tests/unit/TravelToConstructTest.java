@@ -39,40 +39,37 @@ public class TravelToConstructTest extends WorldStubForTests {
             (worker = fake(AUnitType.Protoss_Probe, 12))
         );
 
-        createWorld(2, () -> {
-                if (A.now() <= 1) {
-                    currentSupplyUsed = 8;
-                }
-                else {
-                    currentSupplyUsed = 10;
-                }
+        world(2, our, units(new FakeUnit[0]), () -> {
+            if (A.now() <= 1) {
+                currentSupplyUsed = 8;
+            }
+            else {
+                currentSupplyUsed = 10;
+            }
 
-                AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
+            AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
-                ProductionOrder pylonOrder = CurrentBuildOrder.get().productionOrders().get(0);
-                assert pylonOrder.unitType().isPylon();
+            ProductionOrder pylonOrder = CurrentBuildOrder.get().productionOrders().get(0);
+            assert pylonOrder.unitType().isPylon();
 
-                TravelToConstruct service = new TravelToConstruct(worker);
+            TravelToConstruct service = new TravelToConstruct(worker);
 
-                ArrayList<AUnitType> buildings = new ArrayList<>();
-                buildings.add(Protoss_Pylon);
-                buildings.add(Protoss_Forge);
-                buildings.add(Protoss_Photon_Cannon);
-                buildings.add(Protoss_Gateway);
+            ArrayList<AUnitType> buildings = new ArrayList<>();
+            buildings.add(Protoss_Pylon);
+            buildings.add(Protoss_Forge);
+            buildings.add(Protoss_Photon_Cannon);
+            buildings.add(Protoss_Gateway);
 
-                for (AUnitType building : buildings) {
-                    AConsole.println("===== For " + building);
-                    int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
-                        20, Protoss_Pylon, pylonOrder
-                    );
-                    AConsole.println("Minerals needed: " + mineralsNeeded);
+            for (AUnitType building : buildings) {
+                AConsole.println("===== For " + building);
+                int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
+                    20, Protoss_Pylon, pylonOrder
+                );
+                AConsole.println("Minerals needed: " + mineralsNeeded);
 //                    for (int minerals = 0; minerals <= 90; minerals += 10) {
 //                    }
-                }
-            },
-            () -> our, () -> new FakeUnit[0]
-//            Options.create().set("supplyUsed", 33).set("supplyTotal", 44)
-        );
+            }
+        });
     }
 
     @Test
@@ -86,46 +83,43 @@ public class TravelToConstructTest extends WorldStubForTests {
             fake(Protoss_Forge, 21)
         );
 
-        createWorld(2, () -> {
-                Queue.get().refresh();
+        world(2, our, units(new FakeUnit[0]), () -> {
+            Queue.get().refresh();
 
-                if (A.now() <= 1) {
-                    currentSupplyUsed = 8;
-                }
-                else {
-                    currentSupplyUsed = 10;
-                }
+            if (A.now() <= 1) {
+                currentSupplyUsed = 8;
+            }
+            else {
+                currentSupplyUsed = 10;
+            }
 
-                AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
+            AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
 //                ProductionOrder gatewayOrder = CurrentBuildOrder.get().productionOrders().get(0);
-                Orders nextOrders = Queue.get().notFinishedNext30();
-                nextOrders.print("Next orders assuming we have Pylon and Forge");
+            Orders nextOrders = Queue.get().notFinishedNext30();
+            nextOrders.print("Next orders assuming we have Pylon and Forge");
 
-                ProductionOrder gatewayOrder = nextOrders.ofType(Protoss_Gateway).first();
-                assert gatewayOrder.unitType().isGateway();
+            ProductionOrder gatewayOrder = nextOrders.ofType(Protoss_Gateway).first();
+            assert gatewayOrder.unitType().isGateway();
 
-                TravelToConstruct service = new TravelToConstruct(worker);
+            TravelToConstruct service = new TravelToConstruct(worker);
 
-                ArrayList<AUnitType> buildings = new ArrayList<>();
+            ArrayList<AUnitType> buildings = new ArrayList<>();
 //                buildings.add(Protoss_Pylon);
 //                buildings.add(Protoss_Forge);
-                buildings.add(Protoss_Photon_Cannon);
-                buildings.add(Protoss_Gateway);
+            buildings.add(Protoss_Photon_Cannon);
+            buildings.add(Protoss_Gateway);
 
-                for (AUnitType building : buildings) {
-                    AConsole.println("===== For " + building);
-                    int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
-                        20, Protoss_Gateway, gatewayOrder
-                    );
-                    AConsole.println("Minerals needed: " + mineralsNeeded);
+            for (AUnitType building : buildings) {
+                AConsole.println("===== For " + building);
+                int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
+                    20, Protoss_Gateway, gatewayOrder
+                );
+                AConsole.println("Minerals needed: " + mineralsNeeded);
 //                    for (int minerals = 0; minerals <= 90; minerals += 10) {
 //                    }
-                }
-            },
-            () -> our, () -> new FakeUnit[0]
-//            Options.create().set("supplyUsed", 33).set("supplyTotal", 44)
-        );
+            }
+        });
     }
 
 //    @Test
@@ -137,7 +131,7 @@ public class TravelToConstructTest extends WorldStubForTests {
 //            (worker = fake(AUnitType.Protoss_Probe, 12))
 //        );
 //
-//        createWorld(10, () -> {
+//        world(10, () -> {
 //                currentMinerals = A.now() * 5;
 //                currentSupplyUsed = 7;
 ////                currentSupplyUsed = 6;

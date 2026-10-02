@@ -15,9 +15,9 @@ public class BaseSelectTest extends WorldStubForTests {
         ourUnits = fakeExampleOurs();
         enemyUnits = fakeExampleEnemies();
 
-        createWorld(ourUnits, enemyUnits, () -> {
-            assertNotEquals(ourUnits.length, 0);
-            assertEquals(ourUnits.length, BaseSelect.ourUnitsWithUnfinishedList().size());
+        world(1, ourUnits, enemyUnits, () -> {
+        assertNotEquals(ourUnits.length, 0);
+        assertEquals(ourUnits.length, BaseSelect.ourUnitsWithUnfinishedList().size());
         });
     }
 
@@ -26,9 +26,9 @@ public class BaseSelectTest extends WorldStubForTests {
         ourUnits = fakeExampleOurs();
         enemyUnits = fakeExampleEnemies();
 
-        createWorld(ourUnits, enemyUnits, () -> {
-            assertNotEquals(enemyUnits.length, 0);
-            assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
+        world(1, ourUnits, enemyUnits, () -> {
+        assertNotEquals(enemyUnits.length, 0);
+        assertEquals(enemyUnits.length, BaseSelect.enemyUnits().size());
         });
     }
 

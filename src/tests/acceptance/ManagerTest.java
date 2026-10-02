@@ -45,14 +45,11 @@ public class ManagerTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 12)
         );
 
-        createWorld(1, () -> {
-                Manager comsatManager = new TerranComsatStation(comsat);
+        world(1, our, enemies, () -> {
+            Manager comsatManager = new TerranComsatStation(comsat);
 
-                assertNotNull(comsatManager);
-            },
-            () -> our,
-            () -> enemies
-        );
+            assertNotNull(comsatManager);
+        });
     }
 
     @Test
@@ -71,14 +68,14 @@ public class ManagerTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Drone, 23)
         );
 
-        createWorld(4, () -> {
+        world(4, our, enemies, () -> {
 //                Manager combatManager = (new CombatUnitManager(unit)).instantiateManager(TerranComsatStation.class);
-                Manager combatManager = (new CombatUnitManager(unit)).forceHandle();
+            Manager combatManager = (new CombatUnitManager(unit)).forceHandle();
 
 //                System.err.println("combatManager = " + combatManager);
 //                System.err.println(unit.manager());
 
-                assertNotNull(combatManager);
+            assertNotNull(combatManager);
 
 //                if (A.now() == 1) {
 //                    unit.managerLogs().addMessage("MessageA", unit);
@@ -94,10 +91,7 @@ public class ManagerTest extends WorldStubForTests {
 //                    System.out.println(unit.managerLogs().toString());
 //                    System.out.println(unit.managerLogs().messages());
 //                }
-            },
-            () -> our,
-            () -> enemies
-        );
+        });
     }
 
     @Test
@@ -111,21 +105,18 @@ public class ManagerTest extends WorldStubForTests {
         DragoonCombatManager manager2 = new DragoonCombatManager(unit);
         RemoveDeadUnitsManager manager3 = new RemoveDeadUnitsManager(unit);
 
-        createWorld(1, () -> {
-                assertEquals("", manager1.parentsStack());
-                assertEquals("", manager2.parentsStack());
-                assertEquals("", manager3.parentsStack());
+        world(1, our, fakeEnemies(), () -> {
+            assertEquals("", manager1.parentsStack());
+            assertEquals("", manager2.parentsStack());
+            assertEquals("", manager3.parentsStack());
 
-                manager2.invokeFrom(manager1);
-                manager3.invokeFrom(manager2);
+            manager2.invokeFrom(manager1);
+            manager3.invokeFrom(manager2);
 
-                assertEquals("", manager1.parentsStack());
-                assertEquals("ManualOverrideManager > ", manager2.parentsStack());
-                assertEquals("ManualOverrideManager > DragoonCombatManager > ", manager3.parentsStack());
-            },
-            () -> our,
-            () -> fakeEnemies()
-        );
+            assertEquals("", manager1.parentsStack());
+            assertEquals("ManualOverrideManager > ", manager2.parentsStack());
+            assertEquals("ManualOverrideManager > DragoonCombatManager > ", manager3.parentsStack());
+        });
 
     }
 }

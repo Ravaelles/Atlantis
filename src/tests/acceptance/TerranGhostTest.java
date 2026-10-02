@@ -22,17 +22,17 @@ public class TerranGhostTest extends AbstractTestWithWorld {
 
     @Test
     public void ghostIsTargetingMechanicalUnitsForLockdown() {
-        createWorld(1, () -> {
-                TerranGhost manager1 = new TerranGhost(ghost1);
-                TerranGhost manager2 = new TerranGhost(ghost2);
-                TerranGhost manager3 = new TerranGhost(ghost3);
-                TerranGhost manager4 = new TerranGhost(ghost4);
-                TerranGhost manager5 = new TerranGhost(ghost5);
-                manager1.invokeFrom(this);
-                manager2.invokeFrom(this);
-                manager3.invokeFrom(this);
-                manager4.invokeFrom(this);
-                manager5.invokeFrom(this);
+        world(1, this.generateOur(), this.generateEnemies(), () -> {
+            TerranGhost manager1 = new TerranGhost(ghost1);
+            TerranGhost manager2 = new TerranGhost(ghost2);
+            TerranGhost manager3 = new TerranGhost(ghost3);
+            TerranGhost manager4 = new TerranGhost(ghost4);
+            TerranGhost manager5 = new TerranGhost(ghost5);
+            manager1.invokeFrom(this);
+            manager2.invokeFrom(this);
+            manager3.invokeFrom(this);
+            manager4.invokeFrom(this);
+            manager5.invokeFrom(this);
 
 //                System.err.println("Lockdown targetFor(ghost1) = " + TerranGhost.lockdownTargets.targetFor(ghost1));
 //                System.err.println("Lockdown targetFor(ghost2) = " + TerranGhost.lockdownTargets.targetFor(ghost2));
@@ -40,17 +40,14 @@ public class TerranGhostTest extends AbstractTestWithWorld {
 //                System.err.println("Lockdown targetFor(ghost4) = " + TerranGhost.lockdownTargets.targetFor(ghost4));
 //                System.err.println("Lockdown targetFor(ghost5) = " + TerranGhost.lockdownTargets.targetFor(ghost5));
 
-                assertEquals(reaver, TerranGhost.lockdownTargets.targetFor(ghost1)); // Reaver
-                assertEquals(dragoon, TerranGhost.lockdownTargets.targetFor(ghost2)); // Dragoon
-                assertEquals(scout, TerranGhost.lockdownTargets.targetFor(ghost3)); // Scout
-                assertEquals(wraith1, TerranGhost.lockdownTargets.targetFor(ghost4)); // Wraith
-                assertEquals(null, TerranGhost.lockdownTargets.targetFor(ghost5)); // null
+            assertEquals(reaver, TerranGhost.lockdownTargets.targetFor(ghost1)); // Reaver
+            assertEquals(dragoon, TerranGhost.lockdownTargets.targetFor(ghost2)); // Dragoon
+            assertEquals(scout, TerranGhost.lockdownTargets.targetFor(ghost3)); // Scout
+            assertEquals(wraith1, TerranGhost.lockdownTargets.targetFor(ghost4)); // Wraith
+            assertEquals(null, TerranGhost.lockdownTargets.targetFor(ghost5)); // null
 
-                TerranGhost.lockdownTargets.clear();
-            },
-            () -> this.generateOur(),
-            () -> this.generateEnemies()
-        );
+            TerranGhost.lockdownTargets.clear();
+        });
     }
 
     // =========================================================

@@ -32,7 +32,16 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
 
     // =========================================================
 
-    public void createWorld(
+    /**
+     * The one place a world is actually built and stepped. Tests never call this:
+     * {@link AbstractTestWithWorld#world(int, Runnable)} and
+     * {@link AbstractTestWithWorld#world(int, FakeUnit[], FakeUnit[], Runnable)}
+     * are the two entry points, and both come here.
+     *
+     * <p>{@code generateOur} / {@code generateEnemies} are null when the caller
+     * wants this class's own {@link #generateOur()} / {@link #generateEnemies()}.</p>
+     */
+    protected void buildWorld(
         int proceedUntilFrameReached,
         Runnable onFrame,
         Callable generateOur,
@@ -55,7 +64,7 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
             enemies = generateEnemies != null
                 ? (FakeUnit[]) generateEnemies.call() : generateEnemies();
 
-            neutral = generateNeutral();
+            neutral = neutralInWorld != null ? neutralInWorld : generateNeutral();
         } catch (Exception e) {
             System.err.println("AbstractWorldCreatingTest exception");
             e.printStackTrace();

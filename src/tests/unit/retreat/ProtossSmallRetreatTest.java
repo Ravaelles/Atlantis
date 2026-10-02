@@ -40,14 +40,14 @@ public class ProtossSmallRetreatTest extends WorldStubForTests {
         FakeUnit[] ours = fakeOurs(zealotsAt(8, 8.1, 8.2));
         FakeUnit[] enemies = fakeEnemies(zealotsAt(9.7, 9.8, 9.9, 10.0));
 
-        createWorld(1, ours, enemies, () -> {
-            ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[2]);
+        world(1, ours, enemies, () -> {
+        ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[2]);
 
-            assertTrue(retreat.shouldSmallScaleRetreat(),
-                "3 zealots against 4 at 1.5 tiles: locally outnumbered, so retreat. Reason: " + retreat.reason());
-            assertTrue(retreat.reason().contains("overpoweredByEnemyMelee"),
-                "the decision has to come from the local melee strength, was: " + retreat.reason());
-            assertTrue(retreat.applies());
+        assertTrue(retreat.shouldSmallScaleRetreat(),
+            "3 zealots against 4 at 1.5 tiles: locally outnumbered, so retreat. Reason: " + retreat.reason());
+        assertTrue(retreat.reason().contains("overpoweredByEnemyMelee"),
+            "the decision has to come from the local melee strength, was: " + retreat.reason());
+        assertTrue(retreat.applies());
         });
     }
 
@@ -56,14 +56,14 @@ public class ProtossSmallRetreatTest extends WorldStubForTests {
         FakeUnit[] ours = fakeOurs(zealotsAt(8, 8.1, 8.2));
         FakeUnit[] enemies = fakeEnemies(zealotsAt(10.0, 10.1, 10.2, 10.3));
 
-        createWorld(1, ours, enemies, () -> {
-            ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[2]);
+        world(1, ours, enemies, () -> {
+        ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[2]);
 
-            assertFalse(retreat.shouldSmallScaleRetreat(),
-                "3 against 4 is a bad ratio, but at 2 tiles the enemy melee is outside both local "
-                    + "radii, so there is nothing to run from yet. Reason: " + retreat.reason());
-            assertTrue(retreat.reason().contains("asMeleeGenericNo"),
-                "was: " + retreat.reason());
+        assertFalse(retreat.shouldSmallScaleRetreat(),
+            "3 against 4 is a bad ratio, but at 2 tiles the enemy melee is outside both local "
+                + "radii, so there is nothing to run from yet. Reason: " + retreat.reason());
+        assertTrue(retreat.reason().contains("asMeleeGenericNo"),
+            "was: " + retreat.reason());
         });
     }
 
@@ -72,15 +72,15 @@ public class ProtossSmallRetreatTest extends WorldStubForTests {
         FakeUnit[] ours = fakeOurs(zealotsAt(7, 7.1, 8.1, 8.2, 9.9));
         FakeUnit[] enemies = fakeEnemies(zealotsAt(10.0, 10.1, 10.2));
 
-        createWorld(1, ours, enemies, () -> {
-            // The front zealot, one tile from three enemy zealots, but full hp and
-            // in an army whose evaluation is 2.5+.
-            ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[4]);
+        world(1, ours, enemies, () -> {
+        // The front zealot, one tile from three enemy zealots, but full hp and
+        // in an army whose evaluation is 2.5+.
+        ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[4]);
 
-            assertFalse(retreat.shouldSmallScaleRetreat(),
-                "5 against 3, full hp, evaluation 2.5: no small-scale retreat. Reason: " + retreat.reason());
-            assertTrue(retreat.reason().contains("evalHighHpHigh"),
-                "was: " + retreat.reason());
+        assertFalse(retreat.shouldSmallScaleRetreat(),
+            "5 against 3, full hp, evaluation 2.5: no small-scale retreat. Reason: " + retreat.reason());
+        assertTrue(retreat.reason().contains("evalHighHpHigh"),
+            "was: " + retreat.reason());
         });
     }
 

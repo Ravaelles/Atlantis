@@ -35,11 +35,8 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
         currentMinerals = 567;
         currentGas = 678;
 
-        createWorld(200,
-            () -> {
-                onFrame();
-            },
-            () -> FakeUnitHelper.merge(
+        options = Options.create().set("supplyUsed", 49);
+        world(200, FakeUnitHelper.merge(
                 ourInitialUnits(),
                 fakeOurs(
                     fake(Terran_Barracks, 4),
@@ -48,10 +45,9 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
                     fake(Terran_Supply_Depot, 7)
 //                    fake(Terran_Academy, 33)
                 )
-            ),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 49)
-        );
+            ), fakeExampleEnemies(), () -> {
+            onFrame();
+        });
     }
 
     // =========================================================

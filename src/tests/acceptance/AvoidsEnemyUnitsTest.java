@@ -26,11 +26,11 @@ public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 11);
 
-        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
-            Units toAvoid = new EnemyUnitsToAvoid(marine).unitsToAvoid(false);
+        world(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+        Units toAvoid = new EnemyUnitsToAvoid(marine).unitsToAvoid(false);
 
-            assertEquals(1, toAvoid.size(), "a melee zealot next to us is a threat");
-            assertEquals(zealot, toAvoid.first());
+        assertEquals(1, toAvoid.size(), "a melee zealot next to us is a threat");
+        assertEquals(zealot, toAvoid.first());
         });
     }
 
@@ -39,13 +39,13 @@ public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 16);
 
-        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
-            // potentialEnemies() keeps only enemies that can reach us within a
-            // 5 tile margin, and a zealot is melee: 6 tiles away it is out of
-            // reach, so it never enters the list (measured, not assumed).
-            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
-                "6 tiles is out of a zealot's reach, even with the 5 tile margin");
-            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size());
+        world(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+        // potentialEnemies() keeps only enemies that can reach us within a
+        // 5 tile margin, and a zealot is melee: 6 tiles away it is out of
+        // reach, so it never enters the list (measured, not assumed).
+        assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+            "6 tiles is out of a zealot's reach, even with the 5 tile margin");
+        assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size());
         });
     }
 
@@ -54,11 +54,11 @@ public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 14);
 
-        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
-            assertEquals(1, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
-                "4 tiles is inside the 5 tile reach margin");
-            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size(),
-                "but not close enough to be 'dangerously close'");
+        world(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+        assertEquals(1, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+            "4 tiles is inside the 5 tile reach margin");
+        assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size(),
+            "but not close enough to be 'dangerously close'");
         });
     }
 
@@ -67,9 +67,9 @@ public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
         FakeUnit overlord = fake(AUnitType.Zerg_Overlord, 11);
 
-        createWorld(1, fakeOurs(marine), fakeEnemies(overlord), () -> {
-            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
-                "an overlord cannot shoot back");
+        world(1, fakeOurs(marine), fakeEnemies(overlord), () -> {
+        assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+            "an overlord cannot shoot back");
         });
     }
 

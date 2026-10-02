@@ -12,29 +12,29 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ProtossStreetGridTest extends WorldStubForTests {
     @Test
     public void testGatewayAndPylonPlacement() {
-        createWorld(1, () -> {
-            int xRadius = 20;
-            int yRadius = 20;
+        world(1, () -> {
+        int xRadius = 20;
+        int yRadius = 20;
 
-            for (int ty = 1; ty < yRadius * 2; ty++) {
-                for (int tx = 1; tx < xRadius * 2; tx++) {
-                    APosition position = APosition.create(tx, ty);
+        for (int ty = 1; ty < yRadius * 2; ty++) {
+            for (int tx = 1; tx < xRadius * 2; tx++) {
+                APosition position = APosition.create(tx, ty);
 
-                    boolean isOkForPylon = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-                        null, AUnitType.Protoss_Pylon, position
-                    );
+                boolean isOkForPylon = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+                    null, AUnitType.Protoss_Pylon, position
+                );
 
-                    //                if (isOkForPylon) AConsole.print("█");
-                    //                else {
-                    //                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
-                    //                        null, AUnitType.Protoss_Gateway, position
-                    //                    );
-                    //                    if (isOkForGateway) AConsole.print("░"); // ░ ▒
-                    //                    else AConsole.print("◦");
-                    //                }
-                }
-                AConsole.println();
+                //                if (isOkForPylon) AConsole.print("█");
+                //                else {
+                //                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
+                //                        null, AUnitType.Protoss_Gateway, position
+                //                    );
+                //                    if (isOkForGateway) AConsole.print("░"); // ░ ▒
+                //                    else AConsole.print("◦");
+                //                }
             }
+            AConsole.println();
+        }
         });
     }
 

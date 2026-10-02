@@ -20,34 +20,31 @@ public class BulletDamageAgainstTest extends AbstractTestWithWorld {
 
     @Test
     public void unitDamages() {
-        createWorld(1, () -> {
-                assertEquals(20, BulletDamageAgainst.forBullet(createBullet(dragoon, sunken)));
-
-                assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, vulture)));
-                assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, hydra)));
-
-                assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, marine)));
-                assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, zergling)));
-
-                assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, sunken)));
-                assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, dragoon)));
-                assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, marine)));
-
-                assertEquals(20, BulletDamageAgainst.forBullet(createBullet(vulture, marine)));
-                assertEquals(10, BulletDamageAgainst.forBullet(createBullet(vulture, vulture)));
-                assertEquals(5, BulletDamageAgainst.forBullet(createBullet(vulture, dragoon)));
-            },
-            () -> fakeOurs(
+        world(1, fakeOurs(
                 dragoon = fake(Protoss_Dragoon, 10),
                 marine = fake(AUnitType.Terran_Marine, 11.5),
                 vulture = fake(AUnitType.Terran_Vulture, 11.7)
-            ),
-            () -> fakeEnemies(
+            ), fakeEnemies(
                 sunken = fake(AUnitType.Zerg_Sunken_Colony, 13),
                 hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
                 zergling = fake(AUnitType.Zerg_Zergling, 13.4)
-            )
-        );
+            ), () -> {
+            assertEquals(20, BulletDamageAgainst.forBullet(createBullet(dragoon, sunken)));
+
+            assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, vulture)));
+            assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, hydra)));
+
+            assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, marine)));
+            assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, zergling)));
+
+            assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, sunken)));
+            assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, dragoon)));
+            assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, marine)));
+
+            assertEquals(20, BulletDamageAgainst.forBullet(createBullet(vulture, marine)));
+            assertEquals(10, BulletDamageAgainst.forBullet(createBullet(vulture, vulture)));
+            assertEquals(5, BulletDamageAgainst.forBullet(createBullet(vulture, dragoon)));
+        });
     }
 
     private FakeBullet createBullet(FakeUnit attacker, FakeUnit target) {

@@ -21,8 +21,7 @@ public class CacheTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 16)
         );
 
-        createWorld(1, () ->
-        {
+        world(1, fakeOurs(our), enemies, () -> {
             counter = 0;
 
 //            System.out.println(A.now() + " / " + A.now);
@@ -87,6 +86,6 @@ public class CacheTest extends WorldStubForTests {
             assertEquals(2, counter);
 
             counter = 0;
-        }, () -> fakeOurs(our), () -> enemies);
+        });
     }
 }

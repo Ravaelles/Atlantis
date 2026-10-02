@@ -15,17 +15,17 @@ public class TerranFightInsteadAvoidTest extends AbstractTestWithWorld {
 
     @Test
     public void iteratesOverBuildings() {
-        createWorld(1, () -> {
-            ShouldFightInsteadAvoidAsTerran manager = new ShouldFightInsteadAvoidAsTerran(ourWraith);
+        world(1, generateOur(), generateEnemies(), () -> {
+        ShouldFightInsteadAvoidAsTerran manager = new ShouldFightInsteadAvoidAsTerran(ourWraith);
 
 //            System.err.println("manager.applies() = " + manager.applies());
 //            System.err.println("manager.invoke(this) = " + manager.invoke(this));
 
-            assertTrue(manager.applies());
-            assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invokeFrom(this));
+        assertTrue(manager.applies());
+        assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invokeFrom(this));
 
 //            System.err.println(ourWraith.managerLogs().toString());
-        }, this::generateOur, this::generateEnemies);
+        });
     }
 
     // =========================================================

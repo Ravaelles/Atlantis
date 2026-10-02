@@ -69,22 +69,21 @@ public class RetreatScenarioTest extends WorldStubForTests {
 //        our.clearCache();
 //        enemy.clearCache();
 
-//        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
-        createWorld(1,
-            () -> {
-                if (globalMission != null) {
-                    MissionChanger.setGlobalMissionTo(globalMission, "Forced in tests");
-                }
+//        world(1, ours, enemies, () -> {
+        world(1, ours, enemies, () -> {
+            if (globalMission != null) {
+                MissionChanger.setGlobalMissionTo(globalMission, "Forced in tests");
+            }
 
 //                Select.our().print("Our");
 //                Select.enemy().print("Enemy");
 
-                // Bunch of integrity tests that were failing before
-                assertEquals(BaseSelect.ourUnitsWithUnfinishedList().size(), Select.our().size());
-                assertEquals(BaseSelect.enemyUnits().size(), Select.enemy().size());
-                assertEquals(1 + enemy.friendsNear().count(), Select.enemy().count());
-                assertEquals(enemy.enemiesNear().count(), Select.our().count());
-                assertEquals(1 + our.friendsNear().count(), Select.our().count());
+            // Bunch of integrity tests that were failing before
+            assertEquals(BaseSelect.ourUnitsWithUnfinishedList().size(), Select.our().size());
+            assertEquals(BaseSelect.enemyUnits().size(), Select.enemy().size());
+            assertEquals(1 + enemy.friendsNear().count(), Select.enemy().count());
+            assertEquals(enemy.enemiesNear().count(), Select.our().count());
+            assertEquals(1 + our.friendsNear().count(), Select.our().count());
 
 //                System.out.println("===================================================");
 //                Select.our().print("Our");
@@ -94,27 +93,27 @@ public class RetreatScenarioTest extends WorldStubForTests {
 //                EnemyUnits.freshDiscovered().print("EnemyUnits.freshDiscovered()");
 //                AliveEnemies.get().print("AliveEnemies.get()");
 
-                assertEquals(0, our.enemiesNear().count() - Select.enemy().count());
+            assertEquals(0, our.enemiesNear().count() - Select.enemy().count());
 
-                double ourCombatEvalRelative = our.eval();
-                double enemyCombatEvalRelative = enemy.eval();
+            double ourCombatEvalRelative = our.eval();
+            double enemyCombatEvalRelative = enemy.eval();
 
 //                System.out.println("Our " + our.typeWithUnitId() + " eval  : "
 //                    + A.digit(ourCombatEvalRelative) + " / " + our.combatEvalAbsolute());
 //                System.out.println("Enemy " + enemy.typeWithUnitId() + " eval: "
 //                    + A.digit(enemyCombatEvalRelative) + " / " + enemy.combatEvalAbsolute());
 
-                this.ourCombatEvalRelative = ourCombatEvalRelative;
-                this.enemyCombatEvalRelative = enemyCombatEvalRelative;
+            this.ourCombatEvalRelative = ourCombatEvalRelative;
+            this.enemyCombatEvalRelative = enemyCombatEvalRelative;
 
-                Manager manager = (new ProtossRetreat(our)).invokeFrom(null);
+            Manager manager = (new ProtossRetreat(our)).invokeFrom(null);
 //            boolean applies = (new ProtossRetreat(our)).applies();
 
-                this.retreatManagerApplied = manager != null;
+            this.retreatManagerApplied = manager != null;
 
-                if (oldGlobalMission != null) {
-                    MissionChanger.setGlobalMissionTo(oldGlobalMission, "Force restore in tests");
-                }
-            }, () -> ours, () -> enemies);
+            if (oldGlobalMission != null) {
+                MissionChanger.setGlobalMissionTo(oldGlobalMission, "Force restore in tests");
+            }
+        });
     }
 }

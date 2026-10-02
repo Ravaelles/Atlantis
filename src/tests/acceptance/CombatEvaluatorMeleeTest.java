@@ -10,7 +10,10 @@ public class CombatEvaluatorMeleeTest extends AbstractTestWithWorld {
 
     @Test
     public void evaluatesMeleeUnits() {
-        createWorld(1, () -> {
+        // The class's own generators, not the 22-unit sample world: this test is
+        // about firebats versus zealots, and "our" and "the enemy" have to be
+        // exactly those.
+        world(1, generateOur(), generateEnemies(), () -> {
 //            Select.our().print("Our units");
 //            Select.enemy().print("Enemy units");
 
@@ -48,14 +51,7 @@ public class CombatEvaluatorMeleeTest extends AbstractTestWithWorld {
 
             assertTrue(ourEval > 0);
             assertTrue(enemyEval > 0);
-        },
-            // The class's own generators: createWorld(frames, runnable) builds the
-            // 22-unit sample world, in which "our" and "the enemy" are whatever
-            // that world happens to contain - not the firebats vs zealots this
-            // test is about.
-            this::generateOur,
-            this::generateEnemies
-        );
+        });
     }
 
     // =========================================================

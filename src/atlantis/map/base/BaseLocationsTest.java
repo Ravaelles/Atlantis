@@ -26,21 +26,17 @@ public class BaseLocationsTest extends WorldStubForTests {
     public void testNearestUnexploredStartingLocation() {
         FakeUnit base = fake(Protoss_Nexus, 9, 46);
 
-        createWorld(1,
-            () -> {
+        options = Options.create().set("supplyUsed", 49);
+        world(1, fakeOurs(
+                base,
+                fake(Protoss_Pylon, 11, 48)
+            ), fakeExampleEnemies(), () -> {
                 APosition.TESTING_EXPLORED = false;
                 APosition position = BaseLocations.nearestUnexploredStartingLocation(base);
                 APosition.TESTING_EXPLORED = true;
 //                System.err.println("position = " + position);
 
                 assertNotNull(position);
-            },
-            () -> fakeOurs(
-                base,
-                fake(Protoss_Pylon, 11, 48)
-            ),
-            () -> fakeExampleEnemies(),
-            Options.create().set("supplyUsed", 49)
-        );
+            });
     }
 }

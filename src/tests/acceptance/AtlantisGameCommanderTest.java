@@ -11,12 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AtlantisGameCommanderTest extends AbstractTestWithWorld {
     @Test
     public void mainGameLoopWorksAsExpected() {
-        createWorld(1, () -> {
-            (new AtlantisGameCommander()).invokedCommander();
+        world(1, () -> {
+        (new AtlantisGameCommander()).invokedCommander();
 
-            CodeProfiler.printSummary();
+        CodeProfiler.printSummary();
 
-            assertTrue(true);
+        assertTrue(true);
         });
     }
 

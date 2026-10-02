@@ -25,8 +25,8 @@ public class TerranComsatTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 18)
         );
 
-        usingFakeOursAndFakeEnemies(ours, enemies, () -> {
-            runnable.run();
+        world(1, ours, enemies, () -> {
+        runnable.run();
         });
     }
 
@@ -82,23 +82,23 @@ public class TerranComsatTest extends WorldStubForTests {
         );
 
 //        setupEnemyLurkers(ours, () -> {
-        createWorld(1, () -> {
-            updateComsat(comsat, 200);
+        world(1, ours, mockEnemyUnitsArray(), () -> {
+        updateComsat(comsat, 200);
 
-            assertEquals(lurker2, comsat.target);
+        assertEquals(lurker2, comsat.target);
 
-            updateComsat(comsat, 140);
+        updateComsat(comsat, 140);
 
-            assertEquals(lurker2, comsat.target);
+        assertEquals(lurker2, comsat.target);
 
-            updateComsat(comsat, 90);
+        updateComsat(comsat, 90);
 
-            assertEquals(lurker2, comsat.target);
+        assertEquals(lurker2, comsat.target);
 
-            updateComsat(comsat, 60);
+        updateComsat(comsat, 60);
 
-            assertEquals(lurker2, comsat.target);
-        }, ours);
+        assertEquals(lurker2, comsat.target);
+        });
     }
 
 }

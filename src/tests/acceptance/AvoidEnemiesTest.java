@@ -53,16 +53,13 @@ public class AvoidEnemiesTest extends WorldStubForTests {
             fake(AUnitType.Zerg_Sunken_Colony, 28)
         );
 
-        createWorld(1, () -> {
-                assertContainsAll(
+        world(1, units(our), enemies, () -> {
+            assertContainsAll(
 //                    new FakeUnit[]{drone, ling1, hydra, sunken},
-                    new FakeUnit[]{ling1, hydra},
-                    (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-                );
-            },
-            our,
-            enemies
-        );
+                new FakeUnit[]{ling1, hydra},
+                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+            );
+        });
     }
 
     @Test
@@ -84,11 +81,11 @@ public class AvoidEnemiesTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Dragoon, outsideRange)
         );
 
-        usingFakeOurAndFakeEnemies(our, enemies, () -> {
-            assertContainsAll(
-                new FakeUnit[]{enemy3, enemy4},
-                (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
-            );
+        world(1, units(our), enemies, () -> {
+        assertContainsAll(
+            new FakeUnit[]{enemy3, enemy4},
+            (new EnemyUnitsToAvoid(our)).enemiesDangerouslyClose().array()
+        );
         });
     }
 
@@ -108,48 +105,44 @@ public class AvoidEnemiesTest extends WorldStubForTests {
 
         AUnit ourUnit = ours[0];
 
-        createWorld(1, () ->
-            {
-                FakeFoggedUnit enemy2, enemy3, enemy4, enemy5, enemy6, enemy7;
-                FakeFoggedUnit skippedTank1, skippedTank2;
+        world(1, ours, enemies, () -> {
+            FakeFoggedUnit enemy2, enemy3, enemy4, enemy5, enemy6, enemy7;
+            FakeFoggedUnit skippedTank1, skippedTank2;
 
-                FakeFoggedUnit[] fogged = new FakeFoggedUnit[]{
-                    enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange + 1.1),
-                    fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
-                    enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange + 1.2),
-                    fogged(AUnitType.Zerg_Sunken_Colony, outsideRange + 1),
-                    enemy4 = fogged(AUnitType.Protoss_Zealot, inRange + 1.3),
-                    fogged(AUnitType.Zerg_Mutalisk, outsideRange + 2),
-                    enemy5 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange + 1.4),
-                    skippedTank1 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange + 3),
-                    enemy6 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange + 2),
-                    skippedTank2 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange + 4),
-                    enemy7 = fogged(AUnitType.Zerg_Lurker, inRange + 3),
-                    fogged(AUnitType.Zerg_Lurker, outsideRange + 5)
-                };
+            FakeFoggedUnit[] fogged = new FakeFoggedUnit[]{
+                enemy2 = fogged(AUnitType.Protoss_Photon_Cannon, inRange + 1.1),
+                fogged(AUnitType.Protoss_Photon_Cannon, outsideRange),
+                enemy3 = fogged(AUnitType.Zerg_Sunken_Colony, inRange + 1.2),
+                fogged(AUnitType.Zerg_Sunken_Colony, outsideRange + 1),
+                enemy4 = fogged(AUnitType.Protoss_Zealot, inRange + 1.3),
+                fogged(AUnitType.Zerg_Mutalisk, outsideRange + 2),
+                enemy5 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, inRange + 1.4),
+                skippedTank1 = fogged(AUnitType.Terran_Siege_Tank_Siege_Mode, outsideRange + 3),
+                enemy6 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, inRange + 2),
+                skippedTank2 = fogged(AUnitType.Terran_Siege_Tank_Tank_Mode, outsideRange + 4),
+                enemy7 = fogged(AUnitType.Zerg_Lurker, inRange + 3),
+                fogged(AUnitType.Zerg_Lurker, outsideRange + 5)
+            };
 
-                for (FakeFoggedUnit unit : fogged) {
-                    EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
-                }
+            for (FakeFoggedUnit unit : fogged) {
+                EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
+            }
 
 //                Select.enemy().print("SELECT Enemy units");
 //                Select.from(
 //                    (new Units()).addUnits(EnemyUnits.discovered().sortDataByDistanceTo(ourUnit, true))
 //                ).print("Enemy DISCOVERED units");
 
-                System.out.println("EnemyUnitsToAvoid:");
-                for (AUnit unit : (new EnemyUnitsToAvoid(ourUnit)).enemiesDangerouslyClose().array()) {
-                    System.out.println(unit);
-                }
+            System.out.println("EnemyUnitsToAvoid:");
+            for (AUnit unit : (new EnemyUnitsToAvoid(ourUnit)).enemiesDangerouslyClose().array()) {
+                System.out.println(unit);
+            }
 
 //                assertContainsAll(
 //                    new AUnit[]{enemy1, enemy4, enemy5, enemy6, enemy7},
 //                    (new EnemyUnitsToAvoid(ourUnit)).enemiesDangerouslyClose().array()
 //                );
-            },
-            () -> ours,
-            () -> enemies
-        );
+        });
     }
 
 }

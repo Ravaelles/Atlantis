@@ -22,15 +22,16 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 it hid a lot: acceptance tests were written against a broken harness and were
 never executed, so nobody saw 44 failures sitting in the tree.
 
-| Scope | Command | Result (2026-10-02) |
+| Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **87 passing / 11 failing** of 98 |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **212 passing / 11 failing** of 223 |
+| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **218 passing / 6 failing** of 225 |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 The acceptance package is **fully green** (115/115) after the harness fixes
-recorded in `_AI/BUGS.md` B-13…B-16. The 11 remaining failures are all in
-`tests.unit` and are listed below.
+recorded in `_AI/BUGS.md` B-13…B-16. The 6 remaining failures are all in
+`tests.unit` and are listed below. Random order (seeds 7, 42, 99) gives the
+identical failure set.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
@@ -71,19 +72,28 @@ how B-13 and B-14 survived).
 
 ## Known-failing baseline (unit tests)
 
-The suite is **not fully green yet**. These failures are **pre-existing
-assertion mismatches**, unrelated to the architecture stages; they are kept
-visible on purpose rather than hidden:
+The suite is **not fully green yet**. Six `ATargetingTest` cases fail
+(`targetsSunken`, `targetsMarinesOverBunkerYup`, `targetsCreepOverBaseOrDrones`,
+`targetsUnfinishedSunken`, `targetsUnfinishedSunkenOverBaseOrDrones`,
+`nearHydrasOverWounded`): targeting picks a different enemy than expected.
 
-| Test | Symptom |
-|---|---|
-| `ATargetingTest` (6 cases) | targeting picks a different enemy than expected |
-| `ProtossRetreatTest` (`goonsVsCannons`, `goonsVsGoons_3v4`, `retreatGoonsVsHydras`) | expected retreat. `true`, was `false` |
-| `ProtossSmallRetreatTest` (`noRetreatWhenMeleeAdvantage`, `retreatWhenNoMeleeAdvantage`) | expected `true`, was `false` |
+This is not a wrong assertion and not a wrong bot — the harness has no unit-type
+data at all. `bwapi.UnitType.isFlyer()` answers `false` for every type, hit
+points are placeholders (marine 40 vs 45, sunken colony 300 vs 150) and ranges
+are off (dragoon 128 px vs 96). Injecting a unit-type table flipped these 6
+into 10 failures, because the test expectations and the placeholders were
+calibrated against each other. Fixing it properly needs real engine data.
+Tracked as `_AI/NEXT.md` #29.
 
-`ChokeTest.distToChokes` used to be on this list (`2.0` vs `14.29`); it was
-the same harness defect as everything else in `_AI/BUGS.md` B-15 - a stale
-choke list from the previous test - and passes now.
+Two lists that used to be here are now green:
+
+- `ProtossRetreatTest` and `ProtossSmallRetreatTest` — they were failing on a
+  harness that declared the wrong race and on unit positions the world put
+  where the test did not expect. `goonsVsCannons` now also pins the
+  `DontEnemyCB` doctrine (no retreat from an anti-ground cannon within 10
+  tiles).
+- `ChokeTest.distToChokes` (`2.0` vs `14.29`) — the same harness defect as
+  `_AI/BUGS.md` B-15, a stale choke list from the previous test.
 
 > Do not "fix" these by weakening assertions. Either make the behaviour match
 > the expectation, or update the expectation deliberately and explain why.
@@ -105,18 +115,33 @@ against the 22-unit sample world instead of their own generators.
 
 ## Which world helper to use in a new test
 
-Two families, pick by need — do not add new ones:
+There are exactly **two** ways to declare a world, and no more:
 
-- `createWorld(...)` (`AbstractTestWithWorld` / `AbstractWorldCreatingTest`) —
-  full stub world with advancing frames (`A.now` moves). Use when the code
-  under test depends on frame progression (command throttles, TTLs, multi-
-  frame behaviour). Overloads differ only in how units are supplied
-  (single/array/Callable, default enemies); they all funnel into one
-  implementation.
-- `usingFakeOurs*` / `usingFakeEnemy` / `usingFakeNeutral`
-  (`AbstractTestWithUnits`) — mocks only, no frames advance. Use for pure
-  unit-level assertions. Prefer world-free construction (plain
-  `new FakeUnit(...)`) when even mocks are unnecessary.
+- `world(frames, eachFrame)` — the sample world: the 22 units of
+  `mockOurUnitsArray()` against `mockEnemyUnitsArray()`. Use it when the code
+  under test only needs *some* units and enemy units to be visible.
+- `world(frames, ours, enemies, eachFrame)` — an explicit world: exactly these
+  are our units, exactly those are the enemy's. Use it whenever the test is
+  about particular units. `units(one)` wraps a single unit for the array
+  argument.
+
+Everything else about a world is a field or an override on the test class:
+`options` (supply, anything else `Options` carries), `neutralInWorld`,
+`initRace()`, `initEnemyRace()`. Set them before calling `world(...)`.
+
+Both entry points land in `buildWorld(...)` (`AbstractWorldCreatingTest`),
+which is the only code that actually builds and steps a world — tests never
+call it.
+
+The old six-overload `createWorld(...)` and the six `usingFake*()` wrappers
+were removed in one sweep across ~120 call sites. They were one operation with
+the arguments in six different orders, so nobody could remember which one to
+reach for; `usingFakeOurs*` in particular was a second way to say "no frames",
+which is what `world(1, ...)` means now.
+
+Prefer world-free construction (plain `new FakeUnit(...)`) for assertions that
+read only a unit's own type or fields — it is the cheapest and least
+order-sensitive option.
 
 Every helper that opens a static mock closes it before returning, so tests
 stay order-independent. If a suite failure mentions "static mocking is
