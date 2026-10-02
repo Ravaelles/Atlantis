@@ -689,8 +689,11 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `src/tests/architecture/ArchitectureBoundaryTest.java`;
   frozen baseline in `_AI/architecture/archunit-store/`; runner
   `scripts/run-architecture-tests.sh`. New violations fail the build (verified).
-- Next: **Stage C — Explicit Pipeline** (needs a dedicated effort and a game run
-  to verify behavior is unchanged).
+- **Stage C — Explicit Pipeline: STARTED.** Top-level ordering centralized in
+  `atlantis.application.FramePipeline` and pinned by `FramePipelineTest`;
+  `AtlantisGameCommander` now delegates. Still pending in Stage C: remove
+  reflection from `Commander`/`Manager` construction, unify the `handle()`
+  contract, and verify with a game run.
 
 ### 16.0 Summary
 
