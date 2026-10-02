@@ -69,17 +69,17 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Stage H — god-class split
 
 - **#9** Split `A` (163 public static methods) into cohesive collaborators.
-  First slice done: file/path I/O moved to `atlantis.util.AFile` (12 methods),
-  9 dead file helpers deleted (`isImage`, `isFileImage`, `getFileExtension`,
-  `getFileNameWithoutExtension`, `writeToFile`, `countNumberOfFiles` ×2,
-  `moveDirectory`, `moveFile`), `fileContent` demoted to a private helper.
+  Two slices done: file/path I/O moved to `atlantis.util.AFile` (12 methods,
+  9 dead helpers deleted); the Swing surface replaced by `atlantis.util.AGui`
+  (4 popup methods) after 19 dead GUI helpers were deleted, so `A` no longer
+  imports `javax.swing`/`java.awt` at all (1688 → 1044 lines).
   Remaining slices, in order of cohesion: string/`List`/debug-formatting
-  helpers, Swing/GUI helpers (`displayMessage`, `setAllBackgroundsColors*`,
-  `setColorOnHover`, `centerFrameOnScreen`, …), pure math helpers (`inRange`,
-  `median`, `dist`, `gradual`, `chance`, …), game-clock helpers (`ago`,
-  `secondsAgo`, `nowString`, `minSec`, …). `A` should keep only what is
-  genuinely global (game clock, random, mineral/supply views) and callers
-  should hold explicit references instead of reaching into statics.
+  helpers, date/time helpers (`getCurrentDateInFormatYMD`, `getToday`,
+  `hourMin`, `daysBetween`), pure math helpers (`inRange`, `median`, `dist`,
+  `gradual`, `chance`, …), game-clock helpers (`ago`, `secondsAgo`,
+  `nowString`, `minSec`, …). `A` should keep only what is genuinely global
+  (game clock, random, mineral/supply views) and callers should hold explicit
+  references instead of reaching into statics.
 - **#10** Split `Selection` (235 public methods) along its existing internal
   seams; verify with a test that pins selection semantics before and after.
 - **#11** Split `AUnit` (~623 methods) — start by extracting the order-emission

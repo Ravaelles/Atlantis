@@ -8,16 +8,11 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.game.player.Enemy;
+import atlantis.util.AGui;
 import bwapi.Game;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.text.DecimalFormat;
@@ -43,35 +38,6 @@ public class A {
         return Atlantis.game();
     }
 
-    /**
-     * Displays small window with <b>text</b> information. Very useful for testing, error reporting.
-     */
-    public static void displayMessage(String text) {
-        JOptionPane.showMessageDialog(new JOptionPane(), text, "", JOptionPane.PLAIN_MESSAGE);
-    }
-
-    /**
-     * Displays small window with <b>text</b> information and with <b>title</b> title. Very useful for
-     * testing, error reporting.
-     */
-    public static void displayMessage(String title, String text) {
-        JOptionPane.showMessageDialog(new JOptionPane(), text, title, JOptionPane.PLAIN_MESSAGE);
-    }
-
-    /**
-     * Displays small window showing that some error has occured, window has <b>errorText</b> information.
-     */
-    public static void displayError(String errorText) {
-        JOptionPane.showMessageDialog(new JOptionPane(), errorText, "ERROR", JOptionPane.ERROR_MESSAGE);
-    }
-
-    /**
-     * Displays small window showing that some error has occured, window has <b>errorText</b> information and
-     * <b>title</b> title.
-     */
-    public static void displayError(String title, String errorText) {
-        JOptionPane.showMessageDialog(new JOptionPane(), errorText, title, JOptionPane.ERROR_MESSAGE);
-    }
 
     /**
      * Prints the list of the given argument, separated with commas.
@@ -156,154 +122,12 @@ public class A {
     }
 
     /**
-     * Makes sure each object in given panel (and its children) has specified color.
-     */
-    public static void setAllBackgroundsColorsOfComponent(Container container, Color desiredBackgroundColor) {
-        container.setBackground(desiredBackgroundColor);
-        for (Component component : container.getComponents()) {
-            if (component instanceof Container) {
-                setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            }
-            else {
-                component.setBackground(desiredBackgroundColor);
-            }
-        }
-    }
-
-    /**
-     * Makes sure each object in given panel (and its children) has specified color.
-     */
-    public static void setAllBackgroundsColorsOfJTextField(Container container, Color desiredBackgroundColor) {
-        if (container instanceof JTextField || container instanceof JTextArea) {
-            container.setBackground(desiredBackgroundColor);
-        }
-
-        for (Component component : container.getComponents()) {
-            if (component instanceof Container) {
-                setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            }
-            else {
-                component.setBackground(desiredBackgroundColor);
-            }
-        }
-    }
-
-    /**
-     * Makes sure each object in given panel (and its children) has specified color.
-     */
-    public static void setAllBackgroundsColorsOfButtons(Container container, Color desiredBackgroundColor) {
-        container.setBackground(desiredBackgroundColor);
-        for (Component component : container.getComponents()) {
-            if (component instanceof Container) {
-                setAllBackgroundsColorsOfComponent((Container) component, desiredBackgroundColor);
-            }
-            else if (component instanceof Button || component instanceof JButton) {
-                component.setBackground(desiredBackgroundColor);
-            }
-        }
-    }
-
-    /**
-     * Makes sure each object in given panel (and its children) has specified color.
-     */
-    public static void setAllForegroundsColorsOfComponent(Container container, Color desiredForegroundColor) {
-        container.setForeground(desiredForegroundColor);
-
-        for (Component component : container.getComponents()) {
-            if (component instanceof Container) {
-                setAllForegroundsColorsOfComponent((Container) component, desiredForegroundColor);
-            }
-            else {
-                component.setForeground(desiredForegroundColor);
-            }
-        }
-    }
-
-    /**
-     * Makes sure each object in given panel (and its children) has specified color.
-     */
-    public static void setAllButtonsOfComponent(Container container, Color backgroundColor, Color fontColor,
-                                                Border border) {
-        for (Component component : container.getComponents()) {
-            if (component instanceof JButton) {
-                component.setBackground(backgroundColor);
-                component.setForeground(fontColor);
-                ((JButton) component).setBorder(border);
-            }
-            else if (component instanceof JPanel) {
-                setAllButtonsOfComponent((JButton) component, backgroundColor, fontColor, border);
-            }
-        }
-    }
-
-    /**
      * @return true if the string has at least one character
      */
     public static boolean isStringNotEmpty(String string) {
         return string != null && !string.isEmpty() && string.charAt(0) != ' ';
     }
 
-
-    /**
-     * Displays given exception in user-friendly way (with exception name and stack).
-     */
-//    public static void displayException(Exception e) {
-//        displayException(e, "Error", "An error has occurred");
-//    }
-//
-//    /**
-//     * Displays given exception in user-friendly way (with exception name and stack).
-//     */
-//    public static void displayException(Exception e, String title, String preText) {
-//        A.displayError(title,
-//            preText + "\n\n" + e.getMessage() + "\n\n" + A.convertStackToString(10, e.getStackTrace()));
-//    }
-
-    /**
-     * Displays popup with title @title and content @text with possible options yes and no.
-     *
-     * @return true if user clicked yes
-     * @return false if user clicked no
-     */
-    public static boolean displayYesNoPopup(String title, String text) {
-        return JOptionPane.showConfirmDialog(new JOptionPane(), text, title, JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
-    }
-
-    /**
-     * Displays new JFrame with given panel, as centered window.
-     */
-    public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle, Image frameIcon) {
-        return displayPanelAsCenteredFrame(panel, frameTitle, frameIcon, true);
-    }
-
-    /**
-     * Displays new JFrame with given panel, as centered window.
-     */
-    public static JFrame displayPanelAsCenteredFrame(JPanel panel, String frameTitle, Image frameIcon, boolean visible) {
-        JFrame frame = new JFrame();
-        if (frameIcon != null) {
-            frame.setIconImage(frameIcon);
-        }
-        frame.setTitle(frameTitle);
-        panel.setSize(panel.getPreferredSize());
-        panel.setVisible(true);
-        frame.add(panel);
-        frame.setSize(panel.getSize());
-        A.centerFrameOnScreen(frame);
-        frame.setVisible(visible);
-        return frame;
-    }
-
-    /**
-     * Displays given frame exactly centered in the screen.
-     */
-    public static JFrame centerFrameOnScreen(JFrame frame) {
-        Dimension screenDimension = Toolkit.getDefaultToolkit().getScreenSize();
-        int x = screenDimension.width / 2 - frame.getWidth() / 2;
-        int y = screenDimension.height / 2 - frame.getHeight() / 2;
-        frame.setLocation(x, y);
-        return frame;
-    }
 
     /**
      * @return string like "2011-09-03"
@@ -521,18 +345,6 @@ public class A {
 
 
     /**
-     * Returns scaled image.
-     */
-    public static BufferedImage resizeImage(BufferedImage originalImage, int width, int height) {
-        BufferedImage resizedImage = new BufferedImage(width, height, originalImage.getType());
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, width, height, null);
-        g.dispose();
-
-        return resizedImage;
-    }
-
-    /**
      * Returns something like: 1d 3h 2m 53s
      */
     public static String convertSecondsToDisplayableFormat(int numberOfSeconds) {
@@ -550,34 +362,6 @@ public class A {
         }
     }
 
-    /**
-     * Displays report concerning total amount of time that some task has taken, also it displays average per
-     * one "task object". Number of atomic tasks is <b>totalToProcess</b>. You need to pass timeStart
-     * (System.getCurrentTimeInMillis()).
-     */
-    public static void displayTimeReport(long timeStart, int totalToProcess) {
-        long timeEnd = System.currentTimeMillis();
-
-        A.println("");
-        A.println(totalToProcess + " objects have been processed.");
-        A.println("Processing took " + convertSecondsToDisplayableFormat((int) (timeEnd - timeStart) / 1000)
-            + " seconds  (" + String.format("%.2f", (double) (timeEnd - timeStart) / (1000 * totalToProcess))
-            + "s per file)");
-        A.println("################################################");
-        A.println("");
-    }
-
-    /**
-     * According to current objects processed and total to process it displays estimated time to finish all
-     * tasks.
-     */
-    public static void displayETA(long timeStart, int alreadyProcessed, int totalToProcess) {
-        double seconds = ((double) (System.currentTimeMillis() - timeStart) / (1000 * alreadyProcessed));
-        String eta = A
-            .convertSecondsToDisplayableFormat((int) ((totalToProcess - alreadyProcessed) * seconds));
-        A.println("It took " + String.format("%.1f", seconds) + "s. " + alreadyProcessed * 100
-            / totalToProcess + "% objects (" + alreadyProcessed + "/" + totalToProcess + ") ready. ETA: " + eta);
-    }
 
     /**
      * Returns map containing number of occurences of each element in given collection.
@@ -649,60 +433,6 @@ public class A {
         return (int) Math.abs((c1.getTimeInMillis() - c2.getTimeInMillis()) / 3600000 / 24);
     }
 
-    /**
-     *
-     */
-    public static void display2DList(java.util.List<java.util.List<Object>> list) {
-        A.println("### START OF LIST");
-        for (java.util.List<Object> arrayList : list) {
-            for (Object string : arrayList) {
-                System.out.print(string + "/");
-            }
-            A.println();
-        }
-        A.println("### END OF LIST");
-    }
-
-    /**
-     * Prints out all element of this list.
-     */
-    public static void displayList(Collection<?> list, String header, String footer, boolean useNewLines) {
-        if (header == null) {
-            header = "### START OF LIST";
-        }
-        if (footer == null) {
-            footer = "### END OF LIST";
-        }
-
-        A.println(header);
-        for (Object object : list) {
-            System.out.print(object + "/");
-            if (useNewLines) {
-                A.println();
-            }
-        }
-        if (!useNewLines) {
-            A.println();
-        }
-
-        if (!"".equals(footer)) {
-            A.println(footer);
-        }
-    }
-
-    /**
-     *
-     */
-    public static void displayArray(Object[][] array) {
-        A.println("### START OF LIST");
-        for (Object[] row : array) {
-            for (Object string : row) {
-                System.out.print(string + "/");
-            }
-            A.println();
-        }
-        A.println("### END OF LIST");
-    }
 
     /**
      *
@@ -716,43 +446,6 @@ public class A {
         A.println("### END OF LIST");
     }
 
-    /**
-     *
-     */
-    public static void setColorOnHover(final JLabel label, final Color color) {
-        label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        final Color defaultColor = label.getForeground();
-        label.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                // Global.underlineLabel(label);
-                label.setForeground(color);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                // Global.deunderlineLabel(label);
-                label.setForeground(defaultColor);
-            }
-        });
-    }
-
-    /**
-     *
-     */
-    public static void setActionOnClick(JLabel label, final Callable<Object> callable) {
-        label.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                try {
-                    callable.call();
-                } catch (Exception ex) {
-                    A.errPrintln(ex);
-                    ex.printStackTrace();
-                }
-            }
-        });
-    }
 
     /**
      * Returns String value, according to the relative comparison of the provided value to the possible range
@@ -824,7 +517,7 @@ public class A {
      */
     public static double median(Collection<Double> list, boolean mathematicMedian) {
         if (list.isEmpty()) {
-            A.displayMessage("List for computing a median is empty!");
+            AGui.displayMessage("List for computing a median is empty!");
             return -1;
         }
         if (list.size() == 1) {
@@ -888,7 +581,7 @@ public class A {
         for (double d : weights) {
             log += d + " / ";
         }
-        displayError("chooseOptionRandomlyWithWeights:\n" + log);
+        AGui.displayError("chooseOptionRandomlyWithWeights:\n" + log);
         return -1;
     }
 
@@ -1140,21 +833,6 @@ public class A {
         return true;
     }
 
-    public static void centerAndPause(APosition position) {
-        CameraCommander.centerCameraOn(position);
-        GameSpeed.pauseGame();
-    }
-
-    public static void centerAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraCommander.centerCameraOn(position);
-        GameSpeed.changeSpeedTo(newGameSpeed);
-    }
-
-    public static void centerAndPauseAndChangeSpeed(APosition position, int newGameSpeed) {
-        CameraCommander.centerCameraOn(position);
-        GameSpeed.changeSpeedTo(newGameSpeed);
-        GameSpeed.pauseGame();
-    }
 
     public static void sleep(int ms) {
         try {
