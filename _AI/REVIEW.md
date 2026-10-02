@@ -730,7 +730,19 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `_lastUnderAttack` and other classes' own fields untouched). Suite 70/81
   with identical 11 pre-existing failures; ArchUnit 7/7. Verified by
   `GAME_A8A66EAC` (fresh Java 8 jar, factory trees + sink + UnitState live):
-  natural defeat, no exceptions.
+  natural defeat, no exceptions. Suite now 74/85 (UnitRegistryTest) + WorldTest.
+- **Stage J — tree benchmark: DONE.** `TreeConstructionBenchmark` (+
+  `scripts/benchmark-trees.sh`) measures full combat-tree frame work in the
+  stub world. A/B across Stage C: ~6.1ms → ~4.6ms per frame per unit (-25%).
+  Numbers and harness caveats recorded in `_AI/NOTES.md`.
+- **Stage E — fogged spike: DONE.** `AbstractFoggedUnit.snapshot()` projects
+  last-known state (faithful, incl. the -69 unknown-hp sentinel — its
+  representation is open design work), covered by world-free
+  `FoggedSnapshotTest`. No production reader migrated yet.
+- **Test-hygiene finding:** `TestWithUnits` fails when a world-based test
+  leaves a static mock registered immediately before it (order-dependent,
+  pre-existing fragility). New tests prefer world-free construction where
+  possible. See `_AI/NOTES.md`.
 - **Stage E — registry: DONE.** `AUnit`'s static `instances` map replaced by
   `core.world.UnitRegistry` (instantiable, engine-free testable) with
   `Worlds` as the transitional production holder; all `createFrom`/`getById`/
