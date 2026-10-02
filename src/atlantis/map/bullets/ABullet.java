@@ -1,5 +1,6 @@
 package atlantis.map.bullets;
 
+import atlantis.core.world.Worlds;
 import atlantis.combat.state.AttackState;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -30,8 +31,8 @@ public class ABullet implements HasPosition {
     // =========================================================
 
     public static ABullet fromBullet(Bullet b) {
-        AUnit attacker = AUnit.createFrom(b.getSource(), false);
-        AUnit target = AUnit.createFrom(b.getTarget(), false);
+        AUnit attacker = Worlds.units().createFrom(b.getSource(), false);
+        AUnit target = Worlds.units().createFrom(b.getTarget(), false);
 
         if (attacker == null) {
 //            System.err.println("bullet attacker is null");

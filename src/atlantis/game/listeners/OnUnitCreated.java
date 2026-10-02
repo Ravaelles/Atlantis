@@ -1,5 +1,6 @@
 package atlantis.game.listeners;
 
+import atlantis.core.world.Worlds;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import bwapi.Unit;
@@ -11,7 +12,7 @@ public class OnUnitCreated {
             return;
         }
 
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = Worlds.units().createFrom(u);
 
         // Our unit
         if (unit.isOur() && A.now() >= 2) {

@@ -1,5 +1,6 @@
 package atlantis;
 
+import atlantis.core.world.Worlds;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
@@ -133,7 +134,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDestroy(Unit u) {
-        OnUnitDestroyed.onUnitDestroyed(AUnit.createFrom(u));
+        OnUnitDestroyed.onUnitDestroyed(Worlds.units().createFrom(u));
     }
 
     /**
@@ -142,7 +143,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitDiscover(Unit u) {
-        AUnit unit = AUnit.createFrom(u);
+        AUnit unit = Worlds.units().createFrom(u);
         if (unit != null) {
             if (unit.isEnemy()) OnEnemyNewUnitDiscovered.update(unit);
             else if (unit.isNeutral()) OnNeutralNewUnitDiscovered.update(unit);
@@ -182,7 +183,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitMorph(Unit u) {
-        AUnit unit = AUnit.getById(u);
+        AUnit unit = Worlds.units().getById(u);
         OnUnitMorph.update(unit);
     }
 
@@ -191,7 +192,7 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onUnitShow(Unit u) {
-        OnEnemyUnitShow.update(AUnit.createFrom(u));
+        OnEnemyUnitShow.update(Worlds.units().createFrom(u));
     }
 
     /**
@@ -200,7 +201,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitRenegade(Unit u) {
         onUnitDestroy(u);
-        AUnit newUnit = AUnit.createFrom(u);
+        AUnit newUnit = Worlds.units().createFrom(u);
         OnUnitRenegade.update(newUnit);
     }
 

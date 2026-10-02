@@ -1,5 +1,6 @@
 package atlantis.game.listeners;
 
+import atlantis.core.world.Worlds;
 import atlantis.units.AUnit;
 import atlantis.units.special.ums.GoToNeutralNewCompanions;
 
@@ -12,7 +13,7 @@ public class OnUnitRenegade {
      * receives a Refinery.
      */
     public static void update(AUnit unit) {
-        AUnit.forgetUnitEntirely(unit);
+        Worlds.units().forgetEntirely(unit);
         unit.refreshType();
 
 //        if (newUnit.type().isGasBuilding() || newUnit.type().isGeyser() || newUnit.isLarvaOrEgg()) {

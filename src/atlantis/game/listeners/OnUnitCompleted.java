@@ -1,5 +1,6 @@
 package atlantis.game.listeners;
 
+import atlantis.core.world.Worlds;
 import atlantis.units.AUnit;
 import bwapi.Unit;
 
@@ -10,7 +11,7 @@ public class OnUnitCompleted {
             return;
         }
 
-        AUnit unit = AUnit.getById(u);
+        AUnit unit = Worlds.units().getById(u);
         unit.refreshType();
         if (unit.isOur()) {
             OnOurNewUnitCompleted.ourNewUnitCompleted(unit);

@@ -1,5 +1,6 @@
 package atlantis.units.select;
 
+import atlantis.core.world.Worlds;
 import atlantis.Atlantis;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
@@ -22,7 +23,7 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : AGame.playerUs().getUnits()) {
-                    AUnit unit = AUnit.getById(u);
+                    AUnit unit = Worlds.units().getById(u);
                     data.add(unit);
                 }
 
@@ -40,7 +41,7 @@ public class BaseSelect<T extends AUnit> {
 
                 for (APlayer player : Enemy.players()) {
                     for (Unit u : player.getUnits()) {
-                        AUnit unit = AUnit.getById(u);
+                        AUnit unit = Worlds.units().getById(u);
                         data.add(unit);
                     }
                 }
@@ -58,7 +59,7 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : Atlantis.game().neutral().getUnits()) {
-                    AUnit unit = AUnit.getById(u);
+                    AUnit unit = Worlds.units().getById(u);
                     data.add(unit);
                 }
 
@@ -75,7 +76,7 @@ public class BaseSelect<T extends AUnit> {
                 List<AUnit> data = new ArrayList<>();
 
                 for (Unit u : Atlantis.game().getAllUnits()) {
-                    AUnit unit = AUnit.getById(u);
+                    AUnit unit = Worlds.units().getById(u);
                     data.add(unit);
                 }
 

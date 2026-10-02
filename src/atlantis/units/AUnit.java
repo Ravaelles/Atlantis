@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.util.cache.ValidityCheck;
 import atlantis.combat.eval.estimate.Estimate;
 import atlantis.core.world.UnitState;
+import atlantis.core.world.Worlds;
 import atlantis.combat.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
@@ -82,11 +83,6 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
 public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, ValidityCheck {
     public static final int NEAR_DIST = 15;
-
-    /**
-     * Mapping of native unit IDs to AUnit objects
-     */
-    private static final Map<Integer, AUnit> instances = new HashMap<>();
 
     /**
      * Inner BWAPI Unit object that we extend for easier code maintainability.
@@ -171,44 +167,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     // =========================================================
 
-    public static AUnit createFrom(Unit u) {
-        return createFrom(u, true);
-    }
-
-    /**
-     * Atlantis uses wrapper for BWAPI classes.
-     *
-     * <b>AUnit</b> class contains numerous helper methods, but if you think some methods are missing you can
-     * create missing method here and you can reference original Unit class via u() method.
-     * <p>
-     * The idea why we don't use inner Unit class is because if you change game bridge (JBWAPI, JNIBWAPI, JBWAPI etc)
-     * you need to change half of your codebase. I've done it 3 times already ;__:
-     */
-    public static AUnit createFrom(Unit u, boolean throwErrorOnNull) {
-        if (u == null) {
-            if (!throwErrorOnNull) return null;
-            throw new RuntimeException("AUnit constructor: unit is null");
-        }
-
-        AUnit unit;
-        if (instances.containsKey(u.getID())) {
-            unit = instances.get(u.getID());
-//            if (unit != null && unit.isAlive()) {
-            if (unit != null) {
-                return unit;
-            }
-//            instances.remove(id());
-        }
-
-        unit = new AUnit(u);
-        instances.put(unit.id(), unit);
-        return unit;
-    }
-
-    public static AUnit getById(Unit u) {
-        return createFrom(u);
-    }
-
     // =========================================================
     // Constructors only used for tests
 
@@ -224,7 +182,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         init();
     }
 
-    protected AUnit(Unit u) {
+    /**
+     * Stage E: only {@link atlantis.core.world.UnitRegistry} creates units
+     * from engine handles. Public for that reason, not for general use.
+     */
+    public AUnit(Unit u) {
         this.u = u;
 
         init();
@@ -285,14 +247,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         cache.clear();
         cacheInt.clear();
         cacheBoolean.clear();
-        if (Env.isTesting()) instances.clear();
+        if (Env.isTesting()) Worlds.reset();
     }
 
     // =========================================================
-
-    public static void forgetUnitEntirely(AUnit unit) {
-        instances.remove(unit.id());
-    }
 
     /**
      * Returns unit type from bridge OR if type is Unknown (behind fog of war) it will return last cached type.
@@ -837,7 +795,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             Map<AUnit, Integer> result = new HashMap<>();
             for (Object key : ((Map) collection).keySet()) {
                 Unit u = (Unit) key;
-                AUnit unit = createFrom(u);
+                AUnit unit = Worlds.units().createFrom(u);
                 result.put(unit, (Integer) ((Map) collection).get(u));
             }
             return result;
@@ -846,7 +804,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             List<AUnit> result = new ArrayList<>();
             for (Object key : (List) collection) {
                 Unit u = (Unit) key;
-                AUnit unit = createFrom(u);
+                AUnit unit = Worlds.units().createFrom(u);
                 result.add(unit);
             }
             return result;
@@ -1510,7 +1468,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit target() {
         if (u.getTarget() != null) {
-            unitState().setLastTarget(AUnit.getById(u.getTarget()));
+            unitState().setLastTarget(Worlds.units().getById(u.getTarget()));
             unitState().setLastTargetType(unitState().getLastTarget() != null ? unitState().getLastTarget().type() : null);
 
             return unitState().getLastTarget();
@@ -1551,14 +1509,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit orderTarget() {
         if (u == null) return null;
-        return u.getOrderTarget() != null ? AUnit.getById(u.getOrderTarget()) : null;
+        return u.getOrderTarget() != null ? Worlds.units().getById(u.getOrderTarget()) : null;
     }
 
     public AUnit buildUnit() {
         if (u == null) {
             return null;
         }
-        return u.getBuildUnit() != null ? AUnit.getById(u.getBuildUnit()) : null;
+        return u.getBuildUnit() != null ? Worlds.units().getById(u.getBuildUnit()) : null;
     }
 
     public AUnitType buildType() {
@@ -2300,7 +2258,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public List<AUnit> loadedUnits() {
         List<AUnit> loaded = new ArrayList<>();
         for (Unit unit : u.getLoadedUnits()) {
-            loaded.add(AUnit.getById(unit));
+            loaded.add(Worlds.units().getById(unit));
         }
         return loaded;
     }
@@ -2318,7 +2276,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit loadedUnitsGet(AUnitType type) {
         for (Unit loaded : u.getLoadedUnits()) {
-            AUnit au = AUnit.getById(loaded);
+            AUnit au = Worlds.units().getById(loaded);
 //            System.err.println("au = " + au);
 //            System.err.println("type = " + type);
 //            System.err.println("au.is(type) = " + au.is(type));
