@@ -10,10 +10,19 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.HasReason;
 
-public class ProtossMeleeSmallScaleRetreat extends Manager {
+public class ProtossMeleeSmallScaleRetreat extends Manager implements HasReason {
     private Selection friends;
     private Selection enemies;
+
+    /**
+     * Why the last decision went the way it did. Every branch below already
+     * computes this string and then threw it away, which made "why does it not
+     * retreat here?" unanswerable without a debugger - and made the retreat
+     * tests fail with a bare {@code expected true, was false}.
+     */
+    private String lastReason = "not asked yet";
 
     public ProtossMeleeSmallScaleRetreat(AUnit unit) {
         super(unit);
@@ -22,13 +31,18 @@ public class ProtossMeleeSmallScaleRetreat extends Manager {
         enemies = ProtossRetreatWrapper.enemies(unit);
     }
 
+    @Override
+    public String reason() {
+        return lastReason;
+    }
+
     private boolean f(String reasonWhyNot) {
-//        System.out.println("SmallScale NO: " + reasonWhyNot);
+        lastReason = "no: " + reasonWhyNot;
         return false;
     }
 
-    private boolean t(String reasonWhyYEs) {
-//        System.out.println("SmallScale YES: " + reasonWhyYEs);
+    private boolean t(String reasonWhyYes) {
+        lastReason = "yes: " + reasonWhyYes;
         return true;
     }
 

@@ -12,8 +12,20 @@ import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import bwapi.Race;
 
 public class RetreatScenarioTest extends WorldStubForTests {
+
+    /**
+     * ProtossRetreat.applies() is {@code We.protoss()} and nothing else, so the
+     * race is not a detail of this helper: with any other race the whole retreat
+     * is switched off and every scenario here reports "no retreat".
+     */
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
+
     public double ourCombatEvalRelative = -666;
     public double enemyCombatEvalRelative = -666;
     public boolean retreatManagerApplied;
