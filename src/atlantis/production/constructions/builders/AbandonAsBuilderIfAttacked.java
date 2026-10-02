@@ -17,7 +17,7 @@ public class AbandonAsBuilderIfAttacked extends Manager {
     @Override
     public Manager handle() {
         if (unit.isConstructing()) {
-            unit.u().stop();
+            unit.orderSink().stop(unit);
             System.err.println("STOP CONSTRUCTING");
             return usedManager(this, "StopConstructing");
         }

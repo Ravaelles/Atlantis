@@ -98,6 +98,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     private Manager manager;
 
     /**
+     * Stage D (see _AI/REVIEW.md §16): the door through which this unit's
+     * orders reach the engine. Live game uses {@link BwapiOrderSink}; tests
+     * plug in a recording fake via {@link #setOrderSink(OrderSink)}.
+     * This per-instance seam dies in Stage E, when the World injects the sink.
+     */
+    private OrderSink orderSink = BwapiOrderSink.instance();
+
+    /**
      * Cache var storing generic Object-type keys.
      */
     private Cache<Object> cache = new Cache<>();
@@ -368,6 +376,20 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
     @Override
     public AUnit unit() {
         return this;
+    }
+
+    /**
+     * Stage D: the {@link OrderSink} this unit's orders go through.
+     */
+    public OrderSink orderSink() {
+        return orderSink;
+    }
+
+    /**
+     * Stage D: tests plug in a recording {@link OrderSink} here.
+     */
+    public void setOrderSink(OrderSink orderSink) {
+        this.orderSink = orderSink;
     }
 
     @Override

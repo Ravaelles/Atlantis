@@ -68,6 +68,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit(AUnitType type, double tx, double ty) {
         super(type);
+        setOrderSink(new FakeOrderSink());
         this.id = firstFreeId++;
         this.rawType = type;
         this._lastType = type;
@@ -410,7 +411,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean useTech(TechType tech, AUnit target) {
         this.lastTechUsed = tech;
         this.target = (FakeUnit) target;
-        return true;
+        return orderSink().useTechOn(this, tech, target);
     }
 
     @Override
@@ -418,7 +419,7 @@ public class FakeUnit extends AUnit implements Serializable {
         lastCommand = "Hold";
         target = null;
         targetPosition = null;
-        return true;
+        return orderSink().holdPosition(this);
     }
 
     @Override
@@ -430,7 +431,7 @@ public class FakeUnit extends AUnit implements Serializable {
 //        System.err.println("target.targetPosition() = " + target.position());
 //        System.err.println("### End of ATTACK");
         targetPosition = target.position();
-        return true;
+        return orderSink().attackUnit(this, target);
     }
 
 //    @Override
@@ -457,7 +458,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
         setAction(unitAction);
         targetPosition = target.position();
-        return true;
+        return orderSink().move(this, target.position().p());
     }
 
     // =========================================================

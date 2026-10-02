@@ -20,7 +20,7 @@ public class ReaverProduceScarab extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.u().train(AUnitType.Protoss_Scarab.ut())) {
+        if (unit.orderSink().train(unit, AUnitType.Protoss_Scarab.ut())) {
 //            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - ProduceScarab");
             return usedManager(this);
         }

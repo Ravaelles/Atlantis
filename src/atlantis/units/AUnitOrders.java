@@ -86,7 +86,7 @@ public interface AUnitOrders {
         }
 
         unit.lastCommandIssuedNow(UnitCommandType.Attack_Unit);
-        return u().attack(target.u());
+        return unit().orderSink().attackUnit(unit(), target);
     }
 
     // To avoid confusion: NEVER USE IT.
@@ -124,7 +124,7 @@ public interface AUnitOrders {
     }
 
     default boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
-        if (u().train(unitToTrain.ut())) {
+        if (unit().orderSink().train(unit(), unitToTrain.ut())) {
             if (order != null) order.releasedReservedResources();
             return true;
         }
@@ -141,7 +141,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Morph);
 
-        if (u().morph(into.ut())) {
+        if (unit().orderSink().morph(unit(), into.ut())) {
             if (order != null) order.releasedReservedResources();
             return true;
         }
@@ -154,7 +154,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Build);
 
-        boolean result = u().build(buildingType.ut(), buildTilePosition);
+        boolean result = unit().orderSink().build(unit(), buildingType.ut(), buildTilePosition);
 
         String resultString = "";
         if (!result) {
@@ -176,7 +176,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Build_Addon);
 
-        return u().buildAddon(addon.ut());
+        return unit().orderSink().buildAddon(unit(), addon.ut());
     }
 
     default boolean upgrade(UpgradeType upgrade) {
@@ -185,7 +185,7 @@ public interface AUnitOrders {
         else unit().lastCommandIssuedNow(UnitCommandType.Upgrade);
 
         ATech.markAsBeingUpgraded(upgrade);
-        return u().upgrade(upgrade);
+        return unit().orderSink().upgrade(unit(), upgrade);
     }
 
     default boolean research(TechType tech) {
@@ -194,7 +194,7 @@ public interface AUnitOrders {
         else unit().lastCommandIssuedNow(UnitCommandType.Research);
 
         ATech.markAsBeingResearched(tech);
-        return u().research(tech);
+        return unit().orderSink().research(unit(), tech);
     }
 
 //    default boolean move(AUnit target, Action unitAction, String tooltip, boolean strategicLevel) {
@@ -298,7 +298,7 @@ public interface AUnitOrders {
                 return false;
             }
 
-            return u().move(target.position().p());
+            return unit().orderSink().move(unit(), target.position().p());
         }
 
         return true;
@@ -322,7 +322,7 @@ public interface AUnitOrders {
     default boolean patrol(APosition target, Action unitAction, String tooltip, boolean strategicLevel) {
         unit().setTooltip(tooltip, strategicLevel)
             .setAction(Actions.PATROL);
-        return u().patrol(target.p());
+        return unit().orderSink().patrol(unit(), target.p());
     }
 
     /**
@@ -353,7 +353,7 @@ public interface AUnitOrders {
 //            System.out.println(unit().isStartingAttack());
         }
 
-        return u().holdPosition();
+        return unit().orderSink().holdPosition(unit());
     }
 
     /**
@@ -386,7 +386,7 @@ public interface AUnitOrders {
 //            A.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 //            A.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
 //        }
-        return u().stop();
+        return unit().orderSink().stop(unit());
     }
 
     /**
@@ -405,7 +405,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Follow);
 
-        return u().follow(target.u());
+        return unit().orderSink().follow(unit(), target);
     }
 
     /**
@@ -431,7 +431,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Gather);
 
-        return u().gather(target.u());
+        return unit().orderSink().gather(unit(), target);
     }
 
     /**
@@ -508,7 +508,7 @@ public interface AUnitOrders {
                 if (unit().lastCommandIssuedAgo() <= 1) return true;
                 else unit().lastCommandIssuedNow(UnitCommandType.Repair);
 
-                u().repair(target.u());
+                unit().orderSink().repair(unit(), target);
             }
         }
 
@@ -531,7 +531,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Burrow);
 
-        return u().burrow();
+        return unit().orderSink().burrow(unit());
     }
 
     /**
@@ -544,7 +544,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Unburrow);
 
-        return u().unburrow();
+        return unit().orderSink().unburrow(unit());
     }
 
     /**
@@ -557,7 +557,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cloak);
 
-        return u().cloak();
+        return unit().orderSink().cloak(unit());
     }
 
     /**
@@ -570,7 +570,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Decloak);
 
-        return u().decloak();
+        return unit().orderSink().decloak(unit());
     }
 
     /**
@@ -583,7 +583,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Siege);
 
-        return u().siege();
+        return unit().orderSink().siege(unit());
     }
 
     /**
@@ -596,7 +596,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Unsiege);
 
-        return u().unsiege();
+        return unit().orderSink().unsiege(unit());
     }
 
     /**
@@ -611,7 +611,7 @@ public interface AUnitOrders {
 
         if (Env.isTesting()) return true;
 
-        return u().lift();
+        return unit().orderSink().lift(unit());
     }
 
     /**
@@ -625,7 +625,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Land);
 
-        return u().land(target);
+        return unit().orderSink().land(unit(), target);
     }
 
     /**
@@ -646,7 +646,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Load);
 
-        return u().load(target.u());
+        return unit().orderSink().load(unit(), target);
     }
 
     /**
@@ -668,7 +668,7 @@ public interface AUnitOrders {
             target.lastCommandIssuedNow(UnitCommandType.Unload);
         }
 
-        return u().unload(target.u());
+        return unit().orderSink().unload(unit(), target);
     }
 
     /**
@@ -690,7 +690,7 @@ public interface AUnitOrders {
             if (loaded.lastCommandIssuedAgo() <= 1) continue;
             else loaded.lastCommandIssuedNow(UnitCommandType.Unload_All);
         }
-        return u().unloadAll();
+        return unit().orderSink().unloadAll(unit());
     }
 
     /**
@@ -712,7 +712,7 @@ public interface AUnitOrders {
             if (loaded.lastCommandIssuedAgo() <= 1) continue;
             else loaded.lastCommandIssuedNow(UnitCommandType.Unload_All);
         }
-        return u().unloadAll(target.p());
+        return unit().orderSink().unloadAllAt(unit(), target.p());
     }
 
     /**
@@ -745,7 +745,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Halt_Construction);
 
-        return u().haltConstruction();
+        return unit().orderSink().haltConstruction(unit());
     }
 
     /**
@@ -760,7 +760,7 @@ public interface AUnitOrders {
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Construction);
 
 //        throw new RuntimeException("Cancel!");
-        return unit() != null && u() != null ? u().cancelConstruction() : FakeUnitData.CANCEL.add(unit());
+        return unit() != null && u() != null ? unit().orderSink().cancelConstruction(unit()) : FakeUnitData.CANCEL.add(unit());
     }
 
     /**
@@ -774,7 +774,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Addon);
 
-        return u().cancelAddon();
+        return unit().orderSink().cancelAddon(unit());
     }
 
     /**
@@ -790,7 +790,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
 
-        return u().cancelTrain();
+        return unit().orderSink().cancelTrain(unit());
     }
 
     default boolean cancelTrain(int slot) {
@@ -798,7 +798,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Train);
 
-        return u().cancelTrain(slot);
+        return unit().orderSink().cancelTrainSlot(unit(), slot);
     }
 
     /**
@@ -810,7 +810,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Morph);
 
-        return u().cancelMorph();
+        return unit().orderSink().cancelMorph(unit());
     }
 
     /**
@@ -823,7 +823,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Research);
 
-        return u().cancelResearch();
+        return unit().orderSink().cancelResearch(unit());
     }
 
     /**
@@ -836,7 +836,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Upgrade);
 
-        return u().cancelUpgrade();
+        return unit().orderSink().cancelUpgrade(unit());
     }
 
     /**
@@ -864,7 +864,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Position);
 
-        return u().useTech(tech, target.p());
+        return unit().orderSink().useTechAt(unit(), tech, target.p());
     }
 
     default boolean useTech(TechType tech) {
@@ -876,7 +876,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech);
 
-        return u().useTech(tech);
+        return unit().orderSink().useTech(unit(), tech);
     }
 
     default boolean useTech(TechType tech, AUnit target) {
@@ -888,7 +888,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Use_Tech_Unit);
 
-        return u().useTech(tech, target.u());
+        return unit().orderSink().useTechOn(unit(), tech, target);
     }
 
     default boolean doRightClickAndYesIKnowIShouldAvoidUsingIt(AUnit target) {
@@ -900,7 +900,7 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Right_Click_Unit);
 
-        return u().rightClick(target.u());
+        return unit().orderSink().rightClick(unit(), target);
     }
 
     default boolean shouldPrint() {
