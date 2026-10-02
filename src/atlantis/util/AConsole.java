@@ -1,5 +1,8 @@
 package atlantis.util;
 
+import atlantis.util.log.LogPort;
+import atlantis.util.log.SystemLogPort;
+
 import java.util.Collection;
 
 /**
@@ -7,33 +10,56 @@ import java.util.Collection;
  * (REVIEW §4, Stage H).
  *
  * <p>Output formatting is infrastructure, not game state, so it no longer
- * belongs next to the resource and clock facades. These are thin
- * {@code System.out}/{@code System.err} wrappers and they return nothing:
- * the previous {@code boolean} returns existed because callers used
- * {@code return A.println(...)} as a one-line guard, and no call site
- * actually consumed the value. The one exception is
- * {@link #printErrorAndReturnTrue(String)}, whose name states its contract.</p>
+ * belongs next to the resource and clock facades. What gets written goes
+ * through the {@link LogPort} port (ADR 0001); this class only decides how a
+ * message is composed. Tests swap the port via {@link #usePort(LogPort)} and
+ * assert on what was reported instead of scraping the console.</p>
  *
- * <p>A future logging port (Stage J) can replace this class without touching
- * call sites.</p>
+ * <p>The writers return nothing: the previous {@code boolean} returns existed
+ * because callers used {@code return A.println(...)} as a one-line guard, and
+ * the few sites that did are now written out explicitly. The one exception is
+ * {@link #printErrorAndReturnTrue(String)}, whose name is the contract.</p>
+ *
+ * <p>A static port holder is a transitional seam, the same trade-off as
+ * {@code AUnit.setOrderSink(...)}: constructor injection everywhere would mean
+ * touching every class in the bot before the composition root exists
+ * (Stage I). See {@code _AI/NEXT.md}.</p>
  */
 public class AConsole {
+
+    private static LogPort port = new SystemLogPort();
+
+    /**
+     * Replaces the destination of all console output. Intended for tests and
+     * for the future composition root; passing {@code null} is a programming
+     * error and restores the console rather than failing silently.
+     */
+    public static void usePort(LogPort newPort) {
+        port = newPort == null ? new SystemLogPort() : newPort;
+    }
+
+    /**
+     * @return the port currently receiving console output
+     */
+    public static LogPort port() {
+        return port;
+    }
 
     /**
      * Prints the list of the given argument, separated with commas.
      */
     public static void print(Object... args) {
-        (System.out).print(args[0]);
+        print(args[0]);
 
         if (args.length > 1) {
-            (System.out).print(", ");
+            print(", ");
         }
 
         for (int i = 1; i < args.length - 1; i++) {
-            (System.out).print(args[i] + ", ");
+            print(args[i] + ", ");
         }
 
-        (System.out).println(args[args.length - 1]);
+        println(args[args.length - 1]);
     }
 
     /**
@@ -48,23 +74,17 @@ public class AConsole {
      * @return exception stack converted to String (each trace in new line)
      */
     public static String convertStackToString(int maxLines, StackTraceElement[] stackTrace) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < stackTrace.length && i < maxLines; i++) {
-            result += stackTrace[i];
+            result.append(stackTrace[i]);
 
             if (i != stackTrace.length - 1) {
-                result += "\n";
+                result.append("\n");
             }
         }
-        // for (int i = stackTrace.length - 1; i >= 0; i--) {
-        // result += stackTrace[i];
-        //
-        // if (i != 0)
-        // result += "\n";
-        // }
 
-        return result;
+        return result.toString();
     }
 
     public static void printList(Collection<?> list) {
@@ -79,30 +99,31 @@ public class AConsole {
     }
 
     public static void printStackTrace(String message) {
-        if (message != null) {
-            System.err.println("### " + message + " ##########");
-        }
-        Thread.dumpStack();
+        port.printStackTrace(message);
     }
 
+    /**
+     * Kept for the handful of call sites that read better as
+     * {@code return printErrorAndReturnTrue(...)}.
+     */
     public static boolean printErrorAndReturnTrue(String text) {
         println(text);
         return true;
     }
 
     public static void println() {
-        (System.out).println("");
+        port.println("");
     }
 
     public static void println(Object string) {
-        (System.out).println(string);
+        port.println(string);
     }
 
     public static void errPrintln(Object string) {
-        (System.err).println(string);
+        port.printError(string);
     }
 
     public static void print(Object string) {
-        (System.out).print(string);
+        port.print(string);
     }
 }
