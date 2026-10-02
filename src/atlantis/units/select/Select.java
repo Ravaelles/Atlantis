@@ -1,6 +1,5 @@
 package atlantis.units.select;
 
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnit;
@@ -97,20 +96,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
-    public static Selection enemyFoggedUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyFoggedUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-                data.addAll(EnemyUnits.discovered().list());
-
-                return new Selection(data, cachePath);
-            }
-        );
-    }
-
     /**
      * Selects all game units including minerals, geysers and enemy units.
      */
@@ -186,28 +171,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
                 for (AUnit unit : ourUnitsWithUnfinishedList()) {
                     if (unit.isWorker()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
-    }
-
-    /**
-     * Selects all units of given type(s).
-     */
-    public static Selection allOfType(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "allOfType:" + type.name(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : allUnits()) {
-                    if (unit.isCompleted() && unit.is(type)) {
                         data.add(unit);
                     }
                 }
@@ -344,24 +307,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return total;
 //            }
 //        );
-    }
-
-    public static int countOurOfTypes(AUnitType... types) {
-        return cacheInt.get(
-            "countOurOfTypes:" + AUnitType.arrayToIds(types),
-            0,
-            () -> {
-                int total = 0;
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.is(types)) {
-                        total++;
-                    }
-                }
-
-                return total;
-            }
-        );
     }
 
     public static int countOurOfTypesWithUnfinished(AUnitType... types) {
@@ -809,17 +754,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         );
     }
 
-    /**
-     * Returns first building. The advantage over Select.main() is that it always works
-     */
-    public static AUnit firstBuilding() {
-        return cacheUnit.get(
-            "firstBuilding",
-            91,
-            () -> Select.ourBuildings().first()
-        );
-    }
-
     public static boolean haveMain() {
         return main() != null;
     }
@@ -859,18 +793,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourTanks",
             microCacheForFrames,
             () -> our().tanks()
-        );
-    }
-
-    /**
-     * Selects all our sieged tanks.
-     */
-    public static Selection ourTanksSieged() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourTanksSieged",
-            microCacheForFrames,
-            () -> our().ofType(AUnitType.Terran_Siege_Tank_Siege_Mode)
         );
     }
 

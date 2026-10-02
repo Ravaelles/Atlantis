@@ -106,13 +106,14 @@ cache-purge problem, it is a *missing-reason* problem. Deleting the caches (what
 measurable amount of per-frame work; the inventory exists so that decision is
 made with the numbers in front of it.
 
-## Five dead entries
+## Five dead entries (now deleted)
 
 `enemyFoggedUnits`, `allOfType`, `countOurOfTypes`, `firstBuilding` and
-`ourTanksSieged` have **zero call sites outside `Select.java`**. They are
-computed lazily, so they cost nothing until called - but they are four public
-methods and one cache entry that exist for nobody. Deleting them is a strictly
-behaviour-neutral change and is the natural first commit of the cache work.
+`ourTanksSieged` had **zero call sites outside `Select.java`** - four public
+methods and one cache entry that existed for nobody. They were computed lazily,
+so they cost nothing, but they were still a reader's dead end. Deleted; the frozen
+ArchUnit store shrank by one violation as a result (`Select.enemyFoggedUnits()`
+was the last `units -> information` edge in its rule).
 
 ## How to regenerate this table
 

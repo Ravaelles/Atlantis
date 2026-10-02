@@ -157,7 +157,6 @@ Method <atlantis.units.select.Have.existingOrPlannedOrInQueue(atlantis.units.AUn
 Method <atlantis.units.select.Have.existingOrPlannedOrInQueue(atlantis.units.AUnitType, atlantis.map.position.HasPosition, double)> calls method <atlantis.production.orders.production.queue.Queue.get()> in (Have.java:67)
 Method <atlantis.units.select.Have.existingOrPlannedOrInQueue(atlantis.units.AUnitType, atlantis.map.position.HasPosition, double)> calls method <atlantis.production.orders.production.queue.Queue.haveAmongNextOrders(atlantis.units.AUnitType, int)> in (Have.java:67)
 Method <atlantis.units.select.Have.existingUnfinishedOrPlanned(atlantis.units.AUnitType)> calls method <atlantis.production.constructions.ConstructionRequests.notStartedOfType(atlantis.units.AUnitType)> in (Have.java:27)
-Method <atlantis.units.select.Select.enemyFoggedUnits()> calls method <atlantis.information.enemy.EnemyUnits.discovered()> in (Select.java:107)
 Method <atlantis.units.select.Select.ourWorkersFreeToBuildOrRepair(boolean)> calls method <atlantis.production.constructions.builders.BuilderManager.isBuilder(atlantis.units.AUnit)> in (Select.java:989)
 Method <atlantis.units.select.Selection.estimate()> calls method <atlantis.combat.eval.estimate.Estimate.forSelection(atlantis.units.select.Selection)> in (Selection.java:1809)
 Method <atlantis.units.select.Selection.farFromAntiAirBuildings(double)> calls method <atlantis.information.enemy.EnemyUnits.discovered()> in (Selection.java:1195)
