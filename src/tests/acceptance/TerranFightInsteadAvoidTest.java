@@ -25,7 +25,7 @@ public class TerranFightInsteadAvoidTest extends AbstractTestWithWorld {
             assertEquals(new TerranFightInsteadAvoidAsWraith(ourWraith), manager.invokeFrom(this));
 
 //            System.err.println(ourWraith.managerLogs().toString());
-        });
+        }, this::generateOur, this::generateEnemies);
     }
 
     // =========================================================

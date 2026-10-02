@@ -154,6 +154,27 @@ documented in code with a comment. The closure goes into the commit message.
   should be asserted somewhere. The first is safer; the second documents the
   coupling. Either way the invariant deserves a name and a test.
 
+## B-10 — army strength saturates at 999 when the enemy is only buildings
+
+- **Where:** `Army.calculate()` and `EnemyArmyStrength.calculateFrom()`
+  (`totalHp + melee*10 + ranged*30 - combatBuildings*50 - bases*100`, then
+  `Math.max(1, total)`), consumed by
+  `ArmyStrength.ourArmyRelativeStrength()` = `min(999, ours*100/theirs)`.
+- **Measured** (`EnemyUnitsTest` frame 4, one marine against a Zerg base made of
+  creep colony, sunken colonies, a lurker den, extractor and a hydralisk):
+  `ourArmyRelativeStrength() = 999`, i.e. the clamp.
+- **Why it matters:** an enemy army made mostly of buildings scores *negative*
+  and is clamped to 1, so "the enemy has only structures" reads as "our army is
+  999% as strong". `weAreStronger()` (>= 108), `weAreMuchStronger()` and every
+  fight/avoid decision keyed on those thresholds then see a certainty that the
+  data does not support - and it is exactly the situation in which the bot must
+  be most careful (a defended base).
+- **How to settle it:** decide whether the building penalties may drive the
+  score to its floor (then the ratio needs a guard, e.g. treat a floored
+  strength as "unknown" rather than "infinitely strong"), or whether the
+  penalties should be clamped separately. Either way `ourArmyRelativeStrength`
+  should not return 999 for a base.
+
 ## How to add an entry
 
 ```

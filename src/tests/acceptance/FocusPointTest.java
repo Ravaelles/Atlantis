@@ -44,7 +44,7 @@ public class FocusPointTest extends AbstractTestWithWorld {
             }
 
             gameCommander.invokedCommander();
-        });
+        }, this::generateOur, this::generateEnemies);
     }
 
     private void firstFrame() {

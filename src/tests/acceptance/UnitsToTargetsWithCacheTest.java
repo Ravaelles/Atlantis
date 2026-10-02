@@ -42,7 +42,7 @@ public class UnitsToTargetsWithCacheTest extends AbstractTestWithWorld {
 
                 TerranGhost.lockdownTargets.clear();
             }
-        });
+        }, this::generateOur, this::generateEnemies);
     }
 
     // =========================================================
