@@ -36,6 +36,22 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   trustworthy, and their expectations were written for the heuristic evaluator -
   `AUnit.eval()` is JFAP now (`AUnit.combatEvalAbsolute()`), so check whether
   "melee advantage" still means what the test thinks before touching code.
+- **#28** Production code imports the test harness: 15 files under
+  `src/atlantis`/`src/main` import `tests.fakes.*` (`AUnit` -> `FakeUnit`,
+  `Bullets` -> `FakeBullets`, `AbstractFoggedUnit`, `AUnitOrders` ->
+  `FakeUnitData`, ...) and `ClearCountCache` imports
+  `tests.unit.helpers.ClearAllCaches`; two JUnit tests even live in the
+  production tree
+  (`src/atlantis/production/constructions/position/base/*Test.java`). The
+  consequence is concrete: the game jar **must ship `tests/fakes/**` and
+  `tests/unit/helpers/**`**, otherwise
+  `NoClassDefFoundError: tests/fakes/FakeUnit` (`GAME_08792F08`). Fix it the
+  ADR 0001 way: give each of those call sites a port (a unit sink, a bullet
+  sink, a cache-clearing hook) with the fakes as one adapter among several,
+  move the two stray JUnit classes to `src/tests/`, and then the jar can stop
+  shipping the harness. Verify with a game run: the jar size and
+  `scripts/build-bot-jar.sh`'s assertions are the check.
+
 - **#24** `AUnit.shieldPercent()` is `100 * shields / maxShields` with no zero
   guard, so it returns `NaN` for every unit without shields (Terran, buildings
   without upgrades). Production callers check `maxShields()` first, so it is
