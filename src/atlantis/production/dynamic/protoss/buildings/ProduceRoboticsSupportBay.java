@@ -10,7 +10,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
-import com.sun.media.sound.RIFFInvalidDataException;
 
 import static atlantis.units.AUnitType.*;
 

@@ -4,7 +4,7 @@ import atlantis.combat.targeting.generic.ATargeting;
 import atlantis.debug.DebugFlags;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
-import jdk.nashorn.internal.ir.annotations.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.acceptance.WorldStubForTests;
@@ -559,7 +559,7 @@ public class ATargetingTest extends WorldStubForTests {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void targetsMostWoundedMarineOverBunker() {
         FakeUnit our = fake(AUnitType.Protoss_Dragoon, 10);
         FakeUnit expectedTarget;

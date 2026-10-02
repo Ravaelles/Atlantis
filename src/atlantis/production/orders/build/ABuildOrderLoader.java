@@ -51,11 +51,32 @@ public class ABuildOrderLoader {
         return loader.readBuildOrdersFromFile(strategy.race(), strategy.name(), filePath);
     }
 
+    /**
+     * Returns the first existing build-orders directory.
+     *
+     * <p>Tries several candidate roots instead of relying on a single
+     * Windows-only path: {@link AtlantisIgniter#getBwapiDataPath()} historically
+     * returned a backslash-containing path under test, which does not exist on
+     * Linux. This keeps headless runs (and OpenBW) working.</p>
+     */
     private static String buildOrdersDir() {
-        String dirPath = AtlantisIgniter.getBwapiDataPath() + BUILD_ORDERS_PATH;
-        String fallbackDirPath = AtlantisIgniter.getBwapiDataPath() + BUILD_ORDERS_PATH_FALLBACK;
+        String base = AtlantisIgniter.getBwapiDataPath();
+        String[] candidates = {
+            base + BUILD_ORDERS_PATH,
+            base + BUILD_ORDERS_PATH_FALLBACK,
+            "./bwapi-data/" + BUILD_ORDERS_PATH,
+            "./bwapi-data/" + BUILD_ORDERS_PATH_FALLBACK,
+            "../bwapi-data/" + BUILD_ORDERS_PATH,
+            "../bwapi-data/" + BUILD_ORDERS_PATH_FALLBACK,
+        };
 
-        return A.directoryExists(dirPath) ? dirPath : fallbackDirPath;
+        for (String candidate : candidates) {
+            if (A.directoryExists(candidate)) {
+                return candidate;
+            }
+        }
+
+        return base + BUILD_ORDERS_PATH_FALLBACK;
     }
 
     // =========================================================
