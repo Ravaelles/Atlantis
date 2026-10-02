@@ -1,6 +1,7 @@
 package atlantis.units.fogged;
 
 import atlantis.config.env.Env;
+import atlantis.core.world.UnitSnapshot;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
@@ -295,6 +296,14 @@ public class AbstractFoggedUnit extends AUnit {
     @Override
     public int x() {
         return _lastPosition.x();
+    }
+
+    /**
+     * Stage E: last-known-state projection of this fogged unit.
+     * Additive spike — no production reader migrated yet (see REVIEW §16).
+     */
+    public UnitSnapshot snapshot() {
+        return new UnitSnapshot(id(), type(), position(), hp(), shields());
     }
 
     @Override
