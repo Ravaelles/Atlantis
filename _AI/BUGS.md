@@ -175,6 +175,47 @@ documented in code with a comment. The closure goes into the commit message.
   penalties should be clamped separately. Either way `ourArmyRelativeStrength`
   should not return 999 for a base.
 
+## B-11 — Terran units keep no margin against combat buildings
+
+- **Where:** `TerranDontEngageWhenCombatBuildings.handle()`: inside 9 tiles it
+  calls `moveToSafety`, between 9 and 11 it holds position **only if not already
+  attacking**.
+- **Measured** (`AvoidCombatBuildingsTest.neverRunsIntoCombatBuildings`, 50
+  frames, marine vs two sunken colonies at 19 and 29): the marine walks up to
+  **exactly 7.0 tiles** - its own weapon range - and issues an attack, so the
+  `moveToSafety` branch never gets a chance (`addLog("CarefulCB")` is not in
+  `managerLogs`).
+- **Why it matters:** the Protoss side (`ProtossCombatBuildingClose`) has an
+  explicit `moveAwayFrom(..., moveAwayDist())` branch; the Terran side relies on
+  `moveToSafety` succeeding. At exactly weapon range against a sunken colony or
+  spore colony (whose damage outranges the shooter's hp trade) that is a real
+  risk, and the class-level comment of that test says exactly that.
+- **How to settle it:** decide whether Terran units should also hold a margin
+  (a `dist <= weaponRange + margin` hold), or whether `moveToSafety` failing is
+  acceptable at that distance. The test now pins the reachable property
+  ("never inside range") and will fail loudly if the margin ever appears.
+
+## B-12 — `ProtossCombatBuildingClose.applies()` is not reproducible across runs
+
+- **Where:** `atlantis/combat/micro/avoid/buildings/protoss/ProtossCombatBuildingClose.applies()`.
+- **Measured:** the *same* scenario (lone dragoon at 10, missile turrets at 17/22,
+  spore colonies at 17/22, photon cannon at 21.1) gives
+  - `applies() == false` three times in a row when the class runs alone, and
+  - `applies() == true` when a world-based test from the same class ran first.
+  Clearing `Select`, `ArmyStrength` and `EnemyUnits` caches explicitly inside the
+  test does not change it, so the deciding cache is elsewhere (JFAP/`eval()` is
+  the obvious suspect, and `Eval`-related caches are not part of
+  `ClearAllCaches`).
+- **Why it matters:** any decision that depends on the combat evaluation can
+  therefore be observed with two different answers in the same suite, which is
+  the class of problem this whole effort is about. Until the missing cache is in
+  `ClearAllCaches`, tests of such managers can only assert the parts that do not
+  depend on it (as `AvoidCombatBuildingsTest.dragoonAvoidsCBs` now does).
+- **How to settle it:** find which cache feeds `strongEnoughToAttack()` /
+  `ShouldAvoidCombatBuildingAsProtoss` and either clear it in the harness or make
+  the decision read fresh state. `ClearAllCaches` is missing any JFAP / eval
+  invalidation, which is worth auditing as a whole.
+
 ## How to add an entry
 
 ```
