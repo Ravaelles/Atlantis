@@ -248,8 +248,12 @@ public class AbstractTestWithUnits extends UnitTest {
     protected void usingFakeOursEnemiesAndNeutral(
         FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
     ) {
-        setUp();
-
+        // No setUp() here on purpose. setUp() is @BeforeEach, so it has already
+        // run - and it ends in FakeUnit.clearCache(), which nulls the position,
+        // the hp and the id of *every* FakeUnit created so far. Calling it again
+        // wiped the units the test had just built: positions became null, so
+        // range assertions saw "nothing in range" and distance helpers threw
+        // NPEs. setUpTestLogic() below is the part that needs the stubs.
         if (AbstractTestWithWorld.baseSelect != null) {
             AbstractTestWithWorld.baseSelect.close();
             AbstractTestWithWorld.baseSelect = null;
