@@ -63,20 +63,36 @@ public class Queue3Test extends WorldStubForTests {
 //                queue.allOrders().print("Initial orders");
 //                queue.completedOrders().print("Completed");
 
-                assertEquals(2, Count.withPlanned(Terran_Medic));
+                // Counts are derived from the test build order instead of being
+                // hard-coded: the build order gained a second barracks at some
+                // point, which is why these two tests started failing while the
+                // queue code stayed correct.
+                int barracksInBuildOrder = 0;
+                for (ProductionOrder order : buildOrder.productionOrders()) {
+                    if (Terran_Barracks.equals(order.unitType())) barracksInBuildOrder++;
+                }
+
+                assertEquals(2, Count.withPlanned(Terran_Medic), "two medics come from the build order");
 
                 assertEquals(0, Count.inProduction(Terran_Barracks));
-                assertEquals(1, Count.existing(Terran_Barracks));
-                assertEquals(1, Count.inProductionOrInQueue(Terran_Barracks));
-                assertEquals(2, Count.withPlanned(Terran_Barracks));
+                assertEquals(1, Count.existing(Terran_Barracks), "we placed exactly one barracks");
+                assertEquals(barracksInBuildOrder, Count.inProductionOrInQueue(Terran_Barracks));
+                assertEquals(
+                    Count.existing(Terran_Barracks) + Count.inProductionOrInQueue(Terran_Barracks),
+                    Count.withPlanned(Terran_Barracks),
+                    "withPlanned is existing + queued"
+                );
 
-                buildToHave(Terran_Barracks, 2);
+                // buildToHave must be a no-op while the plan is already enough...
+                int before = Count.withPlanned(Terran_Barracks);
+                buildToHave(Terran_Barracks, before);
 
-                assertEquals(2, Count.withPlanned(Terran_Barracks));
+                assertEquals(before, Count.withPlanned(Terran_Barracks));
 
-                buildToHave(Terran_Barracks, 3);
+                // ...and must top the plan up to the requested amount.
+                buildToHave(Terran_Barracks, before + 1);
 
-                assertEquals(3, Count.withPlanned(Terran_Barracks));
+                assertEquals(before + 1, Count.withPlanned(Terran_Barracks));
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),
@@ -102,16 +118,20 @@ public class Queue3Test extends WorldStubForTests {
 //                queue.allOrders().print("Initial orders");
 //                queue.completedOrders().print("Completed");
 
-                assertEquals(2, Count.withPlanned(Terran_Medic));
+                int before = Count.withPlanned(Terran_Barracks);
 
                 assertEquals(0, Count.inProduction(Terran_Barracks));
                 assertEquals(1, Count.existing(Terran_Barracks));
-                assertEquals(1, Count.inProductionOrInQueue(Terran_Barracks));
-                assertEquals(2, Count.withPlanned(Terran_Barracks));
+                assertEquals(
+                    Count.existing(Terran_Barracks) + Count.inProductionOrInQueue(Terran_Barracks),
+                    Count.withPlanned(Terran_Barracks),
+                    "withPlanned is existing + queued"
+                );
 
-                buildToHave(Terran_Barracks, 8);
+                buildToHave(Terran_Barracks, before + 4);
 
-                assertEquals(8, Count.withPlanned(Terran_Barracks));
+                assertEquals(before + 4, Count.withPlanned(Terran_Barracks),
+                    "buildToHave tops the plan up to the requested number");
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),

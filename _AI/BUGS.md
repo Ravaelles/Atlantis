@@ -130,6 +130,30 @@ documented in code with a comment. The closure goes into the commit message.
 - **Why it matters:** a leaf position finder deciding to kill the process is the
   same violation already fixed in `AFile.loadFile`.
 
+## B-9 — the queue never detects unit/building progress on its own
+
+- **Where:** `IsOrderInProgress.isInProgress` and `IsOrderCompleted.isCompleted`
+  (both have their **unit branch commented out**, with the notes "this will
+  happen in OnOurUnitCreated / OnOurNewUnitCompleted").
+- **Measured:** after firing `OnOurNewUnitCompleted` for a completed depot the
+  order does become FINISHED (and `IsReadyToProduceOrder` refuses to move a
+  FINISHED order back), but for an **unfinished** building the order flips from
+  IN_PROGRESS back to READY_TO_PRODUCE on the next `Queue.refresh()` - the only
+  thing that keeps it IN_PROGRESS in a real game is the linked `Construction`
+  with `buildingUnit().hp() > 0`.
+- **Consequences:**
+  1. Correctness of the queue silently depends on the invariant "every
+     in-progress building has a construction with hp > 0". Nothing checks it,
+     and a missed construction silently turns into duplicate production
+     (order goes back to ready while the building is still rising).
+  2. `Queue2Test`, `CountInQueueTest`, `Queue3Test` could not observe queue
+     states by adding units to the mocked list; they now fire the engine
+     listeners, which is the faithful simulation.
+- **How to settle it:** decide whether the queue should verify unit progress
+  itself (re-enable the commented branch) or whether the construction invariant
+  should be asserted somewhere. The first is safer; the second documents the
+  coupling. Either way the invariant deserves a name and a test.
+
 ## How to add an entry
 
 ```

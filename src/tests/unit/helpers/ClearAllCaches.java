@@ -18,6 +18,30 @@ import tests.fakes.FakeBullets;
 import tests.fakes.FakeUnit;
 
 public class ClearAllCaches {
+    /**
+     * Drops every cached *query* result, but leaves unit state alone.
+     *
+     * <p>Use this when a test changes the set of units mid-test (see
+     * {@code DynamicMockOurUnits.mockOur}): the cached selections are stale, but
+     * the units the test just built are still valid. {@link #clearAll()} nulls
+     * the position, hp and id of every FakeUnit, which silently turned every
+     * unit added after the first frame into a unit with no position.</p>
+     */
+    public static void clearQueries() {
+        AliveEnemies.clearCache();
+        ArmyStrength.clearCache();
+        ProtossAvoidEnemies.clearCache();
+        BaseSelect.clearCache();
+        Count.clearCache();
+        EnemyInfo.clearCache();
+        EnemyUnits.clearCache();
+        ReservedResources.reset();
+        Select.clearCache();
+        Squad.clearCache();
+        AllSquads.clearCache();
+        Alpha.forceRemoveAlpha();
+    }
+
     public static void clearAll() {
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
