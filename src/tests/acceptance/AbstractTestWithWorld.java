@@ -42,6 +42,11 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
         (new MockEverything(this)).mockEverything();
 
         runnable.run();
+
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
+        }
     }
 
     // =========================================================
