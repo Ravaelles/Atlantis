@@ -83,6 +83,10 @@ by the language rule below.
   tactical (no aggregates/repositories).
 - Large changes follow the stages in `_AI/REVIEW.md` §16, incrementally, and
   must keep the bot playable.
+- Every change is also checked against `DOCS/SOLID-CHECKLIST.md`, which states
+  the five principles as measurable rules for this repository (leaf utilities
+  must not decide policy, new interfaces start narrow, the ArchUnit store must
+  shrink or stay unchanged) plus the per-commit review gate.
 
 ## 6. Commit after every completed work cycle (mandatory)
 

@@ -107,6 +107,22 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   Stage E/F/H refactor that slows the per-frame work fails visibly instead of
   silently.
 
+## SOLID follow-ups (see `DOCS/SOLID-CHECKLIST.md`)
+
+- **#16** Give `AUnit` and `Selection` consumer-shaped interfaces. ISP cannot
+  start before the split: 587 and 231 methods cannot be "just injected". Start
+  with the two or three narrowest consumers (e.g. "something that can be
+  attacked", "something that has a position") and move call sites one by one.
+- **#17** Remove `System.exit` from domain code: `AtlantisRaceConfig`,
+  `APositionFinder`, `Atlantis`, `AKeyboard`. Same rule as the `AFile` fix —
+  report and let the composition root decide. Verify each with a game run,
+  because a wrong exit path is invisible in unit tests.
+- **#18** Add the remaining ADR 0001 ports (`GameQuery`, `MapPort`,
+  `ClockPort`) and migrate one subsystem each. `LogPort` is the precedent:
+  port + adapter + a test double, no call-site churn. Clock first — it is the
+  most-read global (`A.now`, `A.seconds()`, `A.minSec()`), and a port makes
+  TTL/frame logic testable without a game.
+
 ## Housekeeping
 
 - **#15** Rebuild the deployed bot jars. Done for the `A`-split round
