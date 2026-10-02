@@ -42,7 +42,7 @@ public class ProcessAttackUnitAsTank {
     }
 
     private static boolean isGoodDistToSiege(AUnit unit, double distTo, AUnit target) {
-        double minDist = target.isMoving() && unit.isOtherUnitFacingThisUnit(target) ? 13.7 : 11.99;
+        double minDist = target.isMoving() && unit.isOtherFacingThisUnit(target) ? 13.7 : 11.99;
 
         return distTo <= minDist && (distTo >= 8 || unit.hasCooldown());
     }

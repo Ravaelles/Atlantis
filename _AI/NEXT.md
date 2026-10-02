@@ -73,13 +73,6 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   harmless today, but a naive use silently poisons comparisons. Decide the
   contract (100%? 0%? throw?) and fix it; `AUnitTest.shieldsOnAUnitThatHasNone`
   pins the current behaviour on purpose.
-- **#26** Rename or document `isOtherUnitFacingThisUnit` /
-  `isOtherUnitShowingBackToUs`. Both ask about the *other* unit's angle but
-  against different reference directions, so they are two questions
-  ("facing us?" within 1.1 rad, "showing its back?" within 0.95 rad). The
-  names read as one question with one answer, which is how the old
-  `AUnitTest.facingLogic` ended up with guessed angles. If they are renamed,
-  update all 46 call sites at once (production + tests).
 
 ## Stage E — read model (remaining)
 

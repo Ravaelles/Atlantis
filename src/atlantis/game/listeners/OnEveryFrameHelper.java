@@ -359,7 +359,7 @@ public class OnEveryFrameHelper {
         our.paintCircle(our.groundWeaponRange() * 32, 1, Color.Orange);
 
         for (AUnit enemy : our.enemiesNear().list()) {
-            enemy.paintCircleFilled(8, our.isOtherUnitFacingThisUnit(enemy) ? Color.Red : Color.Green);
+            enemy.paintCircleFilled(8, our.isOtherFacingThisUnit(enemy) ? Color.Red : Color.Green);
         }
 
 //        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());

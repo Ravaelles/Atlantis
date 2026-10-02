@@ -78,7 +78,7 @@ public class ATargetingStandard extends ATargeting {
             .mostWounded();
 //            .nearestTo(unit);
 
-        if (target != null && (!target.isAir() || unit.isOtherUnitFacingThisUnit(target))) {
+        if (target != null && (!target.isAir() || unit.isOtherFacingThisUnit(target))) {
            debug(unit, "D3 = " + target);
             return target;
         }

@@ -89,7 +89,7 @@ package atlantis.combat.squad.positioning.protoss.dragoon;
 ////        }
 //
 //        return (!enemy.isMoving() && !enemy.isAttacking())
-//            || !unit.isOtherUnitFacingThisUnit(enemy);
+//            || !unit.isOtherFacingThisUnit(enemy);
 //    }
 //
 //    private boolean separateAgainstProtoss() {

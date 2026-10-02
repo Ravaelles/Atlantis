@@ -59,7 +59,7 @@ public class DanceAwayAsZealot extends Manager {
 
     private boolean noCloseMeleeFacingThisUnit() {
         for (AUnit meleeEnemy : unit.meleeEnemiesNear().inRadius(2, unit).list()) {
-            if (unit.isOtherUnitFacingThisUnit(meleeEnemy)) return false;
+            if (unit.isOtherFacingThisUnit(meleeEnemy)) return false;
         }
 
         return true;

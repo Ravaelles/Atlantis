@@ -41,7 +41,7 @@ public class ATargetingAsDragoon {
                 .inRadius(range, unit)
                 .mostWoundedOrNearest(unit);
             if (target != null) {
-                if (!unit.isOtherUnitShowingBackToUs(target) || unit.distTo(target) <= range - 0.4) {
+                if (!unit.isOtherShowingBackToUs(target) || unit.distTo(target) <= range - 0.4) {
                     debug(unit, "ClosestZergC = " + target.typeWithUnitId() + "(" + target.hp() + ") out of " + enemyUnits.size());
                     return target;
                 }

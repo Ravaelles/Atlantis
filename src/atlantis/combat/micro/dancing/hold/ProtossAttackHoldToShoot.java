@@ -48,7 +48,7 @@ public class ProtossAttackHoldToShoot {
         if (!unit.isHoldingPosition() && unit.lastActionLessThanAgo(10, Actions.HOLD_TO_SHOOT)) return f("notHoldingRecently");
         if (unit.distTo(target) <= unit.weaponRangeAgainst(target) + 0.07) return f("alreadyCloseEnough");
         if (
-            !unit.isOtherUnitFacingThisUnit(target)
+            !unit.isOtherFacingThisUnit(target)
                 && unit.rangedEnemiesCount(1.3) <= (target.isRanged() ? 1 : 0)
         ) return f("targetNotFacingUs");
 

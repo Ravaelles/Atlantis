@@ -20,7 +20,7 @@ public class DragoonSafetyMarginAgainstRanged extends SafetyMarginAgainstRanged 
                 && defender.eval() >= 0.95
         ) return -0.1;
 
-        if (defender.isOtherUnitShowingBackToUs(attacker)) return -0.1;
+        if (defender.isOtherShowingBackToUs(attacker)) return -0.1;
 
         double criticalDist = 0
             + enemyWeaponRange(attacker)
@@ -47,8 +47,8 @@ public class DragoonSafetyMarginAgainstRanged extends SafetyMarginAgainstRanged 
     }
 
 //    private double enemyFacingDirectionBonus(AUnit attacker) {
-//        if (defender.isOtherUnitShowingBackToUs(attacker)) return -2.5;
-//        if (attacker.isMoving() && defender.isOtherUnitFacingThisUnit(attacker)) return +0.5;
+//        if (defender.isOtherShowingBackToUs(attacker)) return -2.5;
+//        if (attacker.isMoving() && defender.isOtherFacingThisUnit(attacker)) return +0.5;
 //
 //        return 0;
 //    }

@@ -42,8 +42,8 @@ public class DragoonSafetyMarginAgainstMeleeOld extends SafetyMarginAgainstMelee
 
         if (attacker.isDT()) {
             base += defender.hp() >= 50 ? 0.7 : 2.0;
-//            if (defender.isOtherUnitShowingBackToUs(attacker)) {
-////                System.err.println("defender.isOtherUnitShowingBackToUs = ");
+//            if (defender.isOtherShowingBackToUs(attacker)) {
+////                System.err.println("defender.isOtherShowingBackToUs = ");
 //                base += defender.hp() >= 40 ? -2.0 : -0.7;
 //            }
 //
@@ -91,12 +91,12 @@ public class DragoonSafetyMarginAgainstMeleeOld extends SafetyMarginAgainstMelee
 //                return 3.2;
         }
 
-        if (defender.isOtherUnitFacingThisUnit(attacker)) {
+        if (defender.isOtherFacingThisUnit(attacker)) {
 //                defender.paintCircleFilled(12, Color.Orange);
             return BASE;
         }
 
-        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+        if (defender.isOtherShowingBackToUs(attacker)) {
 //            defender.paintCircleFilled(12, Color.Green);
             return -1.9;
         }

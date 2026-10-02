@@ -115,13 +115,13 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 //                return 3.2;
             }
 
-            if (defender.isOtherUnitFacingThisUnit(attacker)) {
+            if (defender.isOtherFacingThisUnit(attacker)) {
 //                defender.paintCircleFilled(12, Color.Orange);
                 return 1.4;
             }
         }
 
-        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+        if (defender.isOtherShowingBackToUs(attacker)) {
 //            defender.paintCircleFilled(12, Color.Green);
             return -1.9;
         }

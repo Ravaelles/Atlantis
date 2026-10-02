@@ -1276,7 +1276,7 @@ public class Selection extends BaseSelection {
 
     public Selection notShowingBackToUs(AUnit subject) {
         return cloneByRemovingIf(
-            otherUnit -> subject.isOtherUnitShowingBackToUs(otherUnit),
+            otherUnit -> subject.isOtherShowingBackToUs(otherUnit),
             "notShowingBackToUs:" + subject.idWithHash()
         );
     }

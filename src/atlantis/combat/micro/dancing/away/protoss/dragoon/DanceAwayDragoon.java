@@ -21,8 +21,8 @@ public class DanceAwayDragoon extends DanceAway {
                 AUnit enemy = enemies.first();
                 if (enemy == null || enemy.isDeadMan()) return false;
 
-//                if (!enemy.isMoving() || !unit.isOtherUnitFacingThisUnit(enemy)) {
-                if (!unit.isOtherUnitFacingThisUnit(enemy)) {
+//                if (!enemy.isMoving() || !unit.isOtherFacingThisUnit(enemy)) {
+                if (!unit.isOtherFacingThisUnit(enemy)) {
 //                    unit.paintCircleFilled(9, Color.Purple);
 //                    enemy.paintCircleFilled(9, Color.Purple);
 //                    enemy.paintLine(unit, Color.Purple);

@@ -34,12 +34,13 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * <h2>Two semantics that read wrong but are pinned on purpose</h2>
  * <ul>
- *   <li>{@code isOtherUnitFacingThisUnit(other)} asks whether <b>other</b>
+ *   <li>{@code isOtherFacingThisUnit(other)} asks whether <b>other</b>
  *       faces <i>this</i> unit (direction other → this, tolerance 1.1 rad).</li>
- *   <li>{@code isOtherUnitShowingBackToUs(other)} uses the same direction with
- *       a tighter tolerance (0.95 rad), i.e. it also answers "does other face
- *       us" - the name suggests the opposite. Both are asserted as they
- *       behave; the naming is tracked in _AI/NEXT.md.</li>
+ *   <li>{@code isOtherShowingBackToUs(other)} asks the opposite question with
+ *       the other reference direction (this → other, tolerance 0.95 rad). Both
+ *       are asserted against the raw vectors in
+ *       {@code facingHelperAgreesWithTheRawVector} rather than against angles
+ *       somebody guessed.</li>
  *   <li>{@code shieldPercent()} is {@code 100 * shields / maxShields}, so it
  *       is NaN for a unit that has no shields at all (Terran). Pinned here so
  *       a future fix shows up as a deliberate change, not a silent one.</li>
@@ -692,15 +693,15 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(ours.isFacing(theirs), "30 degrees is within the 1.1 rad tolerance");
         assertTrue(ours.isFacingItsTarget());
 
-        // isOtherUnitFacingThisUnit asks whether the *other* unit faces us, so
+        // isOtherFacingThisUnit asks whether the *other* unit faces us, so
         // they have to point west (their unit is east of ours).
         ours.setAngle(0);
         theirs.setAngle(Math.PI);
-        assertTrue(ours.isOtherUnitFacingThisUnit(theirs));
+        assertTrue(ours.isOtherFacingThisUnit(theirs));
         theirs.setAngle(Math.PI / 3);
-        assertFalse(ours.isOtherUnitFacingThisUnit(theirs), "60 degrees off is outside 1.1 rad");
+        assertFalse(ours.isOtherFacingThisUnit(theirs), "60 degrees off is outside 1.1 rad");
         theirs.setAngle(Math.PI - Math.PI / 6);
-        assertTrue(ours.isOtherUnitFacingThisUnit(theirs), "30 degrees off is inside 1.1 rad");
+        assertTrue(ours.isOtherFacingThisUnit(theirs), "30 degrees off is inside 1.1 rad");
     }
 
     /**
@@ -714,18 +715,18 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit theirs = fake(AUnitType.Zerg_Zergling, 13);
 
         theirs.setAngle(Math.PI);
-        assertTrue(ours.isOtherUnitFacingThisUnit(theirs), "pointing straight at us");
-        assertFalse(ours.isOtherUnitShowingBackToUs(theirs));
+        assertTrue(ours.isOtherFacingThisUnit(theirs), "pointing straight at us");
+        assertFalse(ours.isOtherShowingBackToUs(theirs));
 
         theirs.setAngle(0);
-        assertFalse(ours.isOtherUnitFacingThisUnit(theirs));
-        assertTrue(ours.isOtherUnitShowingBackToUs(theirs), "pointing straight away from us");
+        assertFalse(ours.isOtherFacingThisUnit(theirs));
+        assertTrue(ours.isOtherShowingBackToUs(theirs), "pointing straight away from us");
 
         theirs.setAngle(Math.PI / 6);
-        assertTrue(ours.isOtherUnitShowingBackToUs(theirs), "30 degrees off 'away' is inside 0.95 rad");
+        assertTrue(ours.isOtherShowingBackToUs(theirs), "30 degrees off 'away' is inside 0.95 rad");
 
         theirs.setAngle(Math.PI / 3);
-        assertFalse(ours.isOtherUnitShowingBackToUs(theirs), "60 degrees off is outside 0.95 rad");
+        assertFalse(ours.isOtherShowingBackToUs(theirs), "60 degrees off is outside 0.95 rad");
     }
 
     @Test
@@ -745,10 +746,10 @@ public class AUnitTest extends AbstractTestWithWorld {
             theirs.setAngle(angle);
 
             assertEquals(angleDifference(towardsUs, angle) <= 1.1,
-                ours.isOtherUnitFacingThisUnit(theirs),
+                ours.isOtherFacingThisUnit(theirs),
                 "facing window (1.1 rad) at " + angle + " rad");
             assertEquals(angleDifference(awayFromUs, angle) <= 0.95,
-                ours.isOtherUnitShowingBackToUs(theirs),
+                ours.isOtherShowingBackToUs(theirs),
                 "showing-back window (0.95 rad) at " + angle + " rad");
         }
     }

@@ -13,7 +13,7 @@ public class BonusForWraith {
 
         if (attacker.isGroundUnit() && attacker.isRanged()) {
             return base
-                + (defender.isOtherUnitFacingThisUnit(attacker) ? 1.7 : -0.4)
+                + (defender.isOtherFacingThisUnit(attacker) ? 1.7 : -0.4)
                 + (defender.lastUnderAttackLessThanAgo(200) ? 1.7 : 0);
         }
 

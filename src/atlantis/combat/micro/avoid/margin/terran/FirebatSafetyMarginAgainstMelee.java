@@ -14,8 +14,8 @@ public class FirebatSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public double marginAgainst(AUnit attacker) {
 //        if (attacker.hasBiggerWeaponRangeThan(defender)) return -1;
 
-//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
-//        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
+//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherFacingThisUnit(attacker);
+//        if (!lookingAtUs) return defender.isOtherShowingBackToUs(attacker) ? 0.2 : 1.4;
         double ALLOW_ALWAYS = -0.1;
         double MIN_SAFE = 2.6;
         double MIN_SAFER = 2.9;
@@ -28,7 +28,7 @@ public class FirebatSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             return MIN_SAFER;
         }
 
-        if (defender.hp() >= 20 && defender.isOtherUnitShowingBackToUs(attacker)) return ALLOW_ALWAYS;
+        if (defender.hp() >= 20 && defender.isOtherShowingBackToUs(attacker)) return ALLOW_ALWAYS;
 
         if (defender.cooldown() >= 3) {
             return MIN_SAFE;
@@ -111,12 +111,12 @@ public class FirebatSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 ////                return 3.2;
 //        }
 //
-//        if (defender.isOtherUnitFacingThisUnit(attacker)) {
+//        if (defender.isOtherFacingThisUnit(attacker)) {
 ////                defender.paintCircleFilled(12, Color.Orange);
 //            return BASE;
 //        }
 //
-//        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+//        if (defender.isOtherShowingBackToUs(attacker)) {
 ////            defender.paintCircleFilled(12, Color.Green);
 //            return -1.9;
 //        }

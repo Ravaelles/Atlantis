@@ -78,7 +78,7 @@ public class AvoidSingleEnemy extends Manager {
 //        return enemy.isMelee()
 //            && unit.hp() >= 18
 //            && enemy.distTo(unit) >= 1.4
-//            && !unit.isOtherUnitFacingThisUnit(enemy);
+//            && !unit.isOtherFacingThisUnit(enemy);
 //    }
 
     protected double calculateRunDistance(AUnit enemy) {

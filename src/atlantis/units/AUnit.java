@@ -2070,7 +2070,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return target() != null && isFacing(target());
     }
 
-    public boolean isOtherUnitFacingThisUnit(AUnit otherUnit) {
+    /**
+     * Is {@code otherUnit} facing towards <b>this</b> unit? Its own angle is
+     * compared with the direction from it to us, within a 1.1 rad window
+     * (roughly 63 degrees each way).
+     */
+    public boolean isOtherFacingThisUnit(AUnit otherUnit) {
         if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
@@ -2078,13 +2083,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return positionDifference.isAngleAlmostIdentical(otherUnit.getAngle());
     }
 
-    public boolean isOtherUnitShowingBackToUs(AUnit otherUnit) {
+    /**
+     * Is {@code otherUnit} showing its back to <b>this</b> unit? Its own angle
+     * is compared with the direction from us to it - i.e. the way it would be
+     * pointing if it were running away - within a 0.95 rad window (roughly 54
+     * degrees each way).
+     *
+     * <p>Two questions, two different reference directions and two different
+     * tolerances. The old names, {@code isOtherUnitFacingThisUnit} and
+     * {@code isOtherUnitShowingBackToUs}, read as one question with two
+     * spellings, which is how guessed angles ended up in the tests that cover
+     * this. See {@code AUnitTest.facingHelperAgreesWithTheRawVector}.</p>
+     */
+    public boolean isOtherShowingBackToUs(AUnit otherUnit) {
         if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
 
         Vector positionDifference = Vectors.fromPositionsBetween(otherUnit, this);
 
-//        System.err.println("positionDifference.angleDifference(otherUnit.getAngle()) = " + positionDifference.angleDifference(otherUnit.getAngle()));
-//        System.err.println("positionDifference deg = " + Angle.radiansToDegrees(positionDifference.angleDifference(otherUnit.getAngle())));
         return positionDifference.angleDifference(otherUnit.getAngle()) <= 0.95;
     }
 

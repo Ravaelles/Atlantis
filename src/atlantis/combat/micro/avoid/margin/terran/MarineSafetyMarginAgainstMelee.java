@@ -16,9 +16,9 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public double marginAgainst(AUnit attacker) {
 //        if (attacker.hasBiggerWeaponRangeThan(defender)) return -1;
 
-//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
-//        if (!lookingAtUs) return defender.isOtherUnitShowingBackToUs(attacker) ? 0.2 : 1.4;
-        if (defender.isOtherUnitShowingBackToUs(attacker)) return 0.4;
+//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherFacingThisUnit(attacker);
+//        if (!lookingAtUs) return defender.isOtherShowingBackToUs(attacker) ? 0.2 : 1.4;
+        if (defender.isOtherShowingBackToUs(attacker)) return 0.4;
 
         double margin = vsZerg(attacker);
         if (margin != -1) {
@@ -114,12 +114,12 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 ////                return 3.2;
 //        }
 //
-//        if (defender.isOtherUnitFacingThisUnit(attacker)) {
+//        if (defender.isOtherFacingThisUnit(attacker)) {
 ////                defender.paintCircleFilled(12, Color.Orange);
 //            return BASE;
 //        }
 //
-//        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+//        if (defender.isOtherShowingBackToUs(attacker)) {
 ////            defender.paintCircleFilled(12, Color.Green);
 //            return -1.9;
 //        }

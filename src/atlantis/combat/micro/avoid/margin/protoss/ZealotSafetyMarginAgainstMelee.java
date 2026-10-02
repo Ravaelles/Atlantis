@@ -36,7 +36,7 @@ public class ZealotSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double baseValueAgainst(AUnit attacker) {
-        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
+        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherFacingThisUnit(attacker);
 
         if (!lookingAtUs) return 2.0;
 

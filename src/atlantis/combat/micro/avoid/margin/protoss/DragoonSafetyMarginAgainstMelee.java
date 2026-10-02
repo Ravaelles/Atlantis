@@ -42,13 +42,13 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     private double baseVsZealot(AUnit attacker) {
 //        System.out.println(
 //            "Moving: " + (attacker.isMoving() ? 0 : -0.7)
-//            + " / Facing: " + (defender.isOtherUnitFacingThisUnit(attacker) ? +0 : -0.15)
+//            + " / Facing: " + (defender.isOtherFacingThisUnit(attacker) ? +0 : -0.15)
 //        );
 
         return 2.25
 
             + (attacker.isMoving() ? 0 : -0.3)
-            + (defender.isOtherUnitFacingThisUnit(attacker) ? 0 : -0.1)
+            + (defender.isOtherFacingThisUnit(attacker) ? 0 : -0.1)
             + (defender.shieldWound() <= 6 ? -0.2 : 0)
 
             + (defender.meleeEnemiesNearCount(2.5) >= 2 ? 0.4 : 0)
@@ -76,14 +76,14 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double baseValueAgainst(AUnit attacker) {
-//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherUnitFacingThisUnit(attacker);
+//        boolean lookingAtUs = attacker.isTarget(defender) || defender.isOtherFacingThisUnit(attacker);
 
         if (attacker.isDT()) return 2.6;
 
 //        if (!lookingAtUs) {
 ////            System.err.println(A.minSec() + " - NOT LOOKING AT US");
 ////            attacker.paintCircleFilled(12, Yellow);
-//            return defender.isOtherUnitShowingBackToUs(attacker) ? 0.9 : 2.3;
+//            return defender.isOtherShowingBackToUs(attacker) ? 0.9 : 2.3;
 //        }
 
         if (attacker.isZealot()) return baseVsZealot(attacker);
@@ -93,7 +93,7 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     }
 
     private double enemyShowingBackBonus(AUnit attacker) {
-        if (defender.hp() >= 19 && defender.isOtherUnitShowingBackToUs(attacker)) return -5;
+        if (defender.hp() >= 19 && defender.isOtherShowingBackToUs(attacker)) return -5;
 
         return 0;
     }
@@ -109,12 +109,12 @@ public class DragoonSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
 ////                return 3.2;
 //        }
 //
-//        if (defender.isOtherUnitFacingThisUnit(attacker)) {
+//        if (defender.isOtherFacingThisUnit(attacker)) {
 ////                defender.paintCircleFilled(12, Color.Orange);
 //            return BASE;
 //        }
 //
-//        if (defender.isOtherUnitShowingBackToUs(attacker)) {
+//        if (defender.isOtherShowingBackToUs(attacker)) {
 ////            defender.paintCircleFilled(12, Color.Green);
 //            return -1.9;
 //        }

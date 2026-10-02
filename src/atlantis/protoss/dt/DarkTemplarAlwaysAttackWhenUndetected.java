@@ -37,7 +37,7 @@ public class DarkTemplarAlwaysAttackWhenUndetected extends Manager {
             && unit.hasValidTarget()
             && unit.target().isMoving()
             && unit.target().speedIsQuickerOrEqual(unit)
-            && unit.isOtherUnitShowingBackToUs(unit.target());
+            && unit.isOtherShowingBackToUs(unit.target());
     }
 
     private boolean attackBestEnemies() {

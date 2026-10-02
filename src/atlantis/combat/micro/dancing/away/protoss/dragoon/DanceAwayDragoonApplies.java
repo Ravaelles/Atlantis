@@ -285,7 +285,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
         Selection enemies = unit.enemiesNear().canAttack(unit, Enemy.zerg() ? 2.85 : 2.2);
 
         for (AUnit enemy : enemies.list()) {
-            if (unit.isOtherUnitShowingBackToUs(enemy)) {
+            if (unit.isOtherShowingBackToUs(enemy)) {
                 enemy.paintCircleFilled(7, Color.Teal);
             }
         }
