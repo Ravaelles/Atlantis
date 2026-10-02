@@ -14,8 +14,16 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
+import bwapi.Race;
 
 public class RequestBuildingNearTest extends WorldStubForTests {
+
+    /** Pylons, cannons and Protoss base reinforcement - this is a Protoss test. */
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
+
     private static FakeUnit main = null;
     private static FakeUnit natural = null;
     private static FakeUnit third = null;

@@ -11,9 +11,16 @@ import atlantis.util.Angle;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.fakes.FakeUnit;
+import bwapi.Race;
 
 public class AvoidEnemiesTest extends WorldStubForTests {
     public MockedStatic<AGame> aGame;
+
+    /** Drones, hydras, lurkers and spore colonies - a Zerg enemy. */
+    @Override
+    public Race initEnemyRace() {
+        return Race.Zerg;
+    }
 
     @Test
     public void zergUnits() {

@@ -101,8 +101,21 @@ public class AbstractTestWithUnits extends UnitTest {
         return MockEverything.defaultRaceForTests();
     }
 
+    /**
+     * Which race the enemy is in. Same idea as {@link #initRace()}: a test that
+     * fills the enemy side with drones, lurkers and spore colonies has to say so,
+     * otherwise every {@code Enemy.zerg()} branch in it answers for a Protoss.
+     */
+    public Race initEnemyRace() {
+        return MockEverything.defaultEnemyRaceForTests();
+    }
+
     protected void setUpTestLogic() {
-        AtlantisRaceConfig.MY_RACE = MockEverything.defaultRaceForTests();
+        // initRace() is the override point a test uses to say which race it is
+        // about (TravelToConstructTest has always overridden it) - using the
+        // default directly here is what made the override dead code and every
+        // test Protoss.
+        AtlantisRaceConfig.MY_RACE = initRace();
 
         if (AtlantisRaceConfig.MY_RACE == null) {
             AtlantisRaceConfig.MY_RACE = MockEverything.defaultRaceForTests();
@@ -121,6 +134,12 @@ public class AbstractTestWithUnits extends UnitTest {
      * PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
      */
     protected void cleanUp() {
+        // Wipe the fake-unit world as well, not just the static mocks: production
+        // caches are nuked at setUp, but static fields that hold Units/Orders
+        // created by the previous test survive it, and their fakes get their
+        // positions nulled underneath them - which is how a later test ended up
+        // with "FakeUnit.position() is null" from a unit it never created.
+        ClearAllCaches.clearAll();
         AbstractPositionFinder._STATUS = "Init";
         ConstructionRequests.constructions.clear();
 

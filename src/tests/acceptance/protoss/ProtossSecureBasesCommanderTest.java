@@ -10,8 +10,16 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import bwapi.Race;
 
 public class ProtossSecureBasesCommanderTest extends WorldStubForTests {
+
+    /** Photon cannons at a natural - a Protoss test. */
+    @Override
+    public Race initRace() {
+        return Race.Protoss;
+    }
+
     @Test
     public void testNaturalBaseGetsCannons() {
         createWorld(1,

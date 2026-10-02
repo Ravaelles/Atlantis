@@ -26,8 +26,21 @@ public class MockEverything {
         this.test = test;
     }
 
-    public static Race defaultRaceForTests() {
+    /**
+     * Terran, because that is what {@code Main.ourRace()} returns and what almost
+     * every test builds. Before this, the whole suite pretended to be Protoss:
+     * {@code AtlantisRaceConfig} said BASE = Protoss_Nexus, WORKER = Protoss_Probe,
+     * BARRACKS = Protoss_Gateway, DEFENSIVE_BUILDING_* = Photoss_Cannon while the
+     * tests were creating Terran_Marine and Terran_Barracks, so every branch
+     * guarded by that config (and every {@code We.terran()}) was evaluated with
+     * the wrong race. A test that needs another race overrides {@code initRace()}.
+     */
+    public static Race defaultEnemyRaceForTests() {
         return Race.Protoss;
+    }
+
+    public static Race defaultRaceForTests() {
+        return Race.Terran;
     }
 
     public void mockEverything() {
@@ -42,7 +55,22 @@ public class MockEverything {
     }
 
     private void mockAtlantisConfig() {
-        AtlantisConfigChanger.useConfigForProtoss();
+        // Has to follow the race the test asked for, not a hard-coded one: the
+        // config is what defines BASE / WORKER / BARRACKS / DEFENSIVE_BUILDING_*,
+        // so a Protoss config silently reinterprets every Terran unit a test
+        // creates.
+        switch (test.initRace()) {
+            case Protoss:
+                AtlantisConfigChanger.useConfigForProtoss();
+                break;
+            case Zerg:
+                AtlantisConfigChanger.useConfigForZerg();
+                break;
+            case Terran:
+            default:
+                AtlantisConfigChanger.useConfigForTerran();
+                break;
+        }
     }
 
     private void mockGameObject() {
@@ -75,9 +103,10 @@ public class MockEverything {
         test.aGame.when(AGame::gas).thenAnswer(invocation -> test.currentGas());
 
         if (test.enemyRace == null) test.enemyRace = Mockito.mockStatic(EnemyRace.class);
-        test.enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(true);
-        test.enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(false);
-        test.enemyRace.when(EnemyRace::isEnemyZerg).thenReturn(false);
+        Race enemy = test.initEnemyRace();
+        test.enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(enemy.equals(Race.Protoss));
+        test.enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(enemy.equals(Race.Terran));
+        test.enemyRace.when(EnemyRace::isEnemyZerg).thenReturn(enemy.equals(Race.Zerg));
     }
 
     /**
@@ -92,10 +121,14 @@ public class MockEverything {
         test.aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
         test.aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
 
+        // Same race as EnemyRace above - the two mocks used to disagree, because
+        // this one was hard-coded to "enemy is Protoss" while a test could change
+        // the other one. Enemy.* is what production code actually calls.
+        Race enemyRace = test.initEnemyRace();
         if (test.enemy == null) test.enemy = Mockito.mockStatic(Enemy.class);
-        test.enemy.when(() -> Enemy.terran()).thenReturn(false);
-        test.enemy.when(() -> Enemy.protoss()).thenReturn(true);
-        test.enemy.when(() -> Enemy.zerg()).thenReturn(false);
+        test.enemy.when(() -> Enemy.terran()).thenReturn(enemyRace.equals(Race.Terran));
+        test.enemy.when(() -> Enemy.protoss()).thenReturn(enemyRace.equals(Race.Protoss));
+        test.enemy.when(() -> Enemy.zerg()).thenReturn(enemyRace.equals(Race.Zerg));
     }
 
     private void mockBaseLocations() {
