@@ -24,7 +24,6 @@ public abstract class BaseCommander {
      * A failing constructor ends the game, same as the old reflective path
      * (which called {@code AGame.exit()} on any instantiation failure).
      */
-    @SafeVarargs
     protected final void initChildren(CommanderFactory... factories) {
         Commander[] created = new Commander[factories.length];
 
