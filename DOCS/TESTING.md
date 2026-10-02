@@ -38,6 +38,25 @@ visible on purpose rather than hidden:
   `_AI/architecture/archunit-store/README.md`.
 - `FramePipelineTest` — pins the top-level frame order (Stage C).
 
+## Which world helper to use in a new test
+
+Two families, pick by need — do not add new ones:
+
+- `createWorld(...)` (`AbstractTestWithWorld` / `AbstractWorldCreatingTest`) —
+  full stub world with advancing frames (`A.now` moves). Use when the code
+  under test depends on frame progression (command throttles, TTLs, multi-
+  frame behaviour). Overloads differ only in how units are supplied
+  (single/array/Callable, default enemies); they all funnel into one
+  implementation.
+- `usingFakeOurs*` / `usingFakeEnemy` / `usingFakeNeutral`
+  (`AbstractTestWithUnits`) — mocks only, no frames advance. Use for pure
+  unit-level assertions. Prefer world-free construction (plain
+  `new FakeUnit(...)`) when even mocks are unnecessary.
+
+Every helper that opens a static mock closes it before returning, so tests
+stay order-independent. If a suite failure mentions "static mocking is
+already registered", a helper leaks again — see `_AI/NOTES.md`.
+
 ## Why this matters
 
 Being able to run the suite headlessly is what lets every later stage be

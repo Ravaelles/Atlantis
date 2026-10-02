@@ -5,12 +5,10 @@ import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
-import org.mockito.Mockito;
 import tests.fakes.FakeUnit;
 import tests.unit.MockEverything;
 import tests.unit.UnitTest;
 
-import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
@@ -23,41 +21,13 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
 
     // =========================================================
 
-    protected void usingFakeOursEnemiesAndNeutral(
-        FakeUnit[] ours, FakeUnit[] enemies, FakeUnit[] neutral, Runnable runnable
-    ) {
-        UnitTest.ourUnits = ours;
-        UnitTest.enemyUnits = enemies;
 
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
-        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-
-        baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
-        baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
-        baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
-
-        (new MockEverything(this)).mockEverything();
-
-        runnable.run();
-
-        if (AbstractTestWithWorld.baseSelect != null) {
-            AbstractTestWithWorld.baseSelect.close();
-            AbstractTestWithWorld.baseSelect = null;
-        }
-    }
 
     // =========================================================
 
     protected void createWorld(FakeUnit[] ours, FakeUnit[] enemies, Runnable onFrame) {
         createWorld(1, onFrame, () -> ours, () -> enemies, null);
     }
-
-//    protected void createWorld(int proceedUntilFrameReached, Runnable onFrame) {
-//        createWorld(proceedUntilFrameReached, onFrame, null, null, null);
-//    }
 
     protected void createWorld(
         int proceedUntilFrameReached,

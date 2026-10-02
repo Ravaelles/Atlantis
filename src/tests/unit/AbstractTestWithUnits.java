@@ -192,18 +192,17 @@ public class AbstractTestWithUnits extends UnitTest {
     }
 
     protected void usingFakeOurs(Runnable runnable) {
-//        if (AbstractTestWithWorld.baseSelect != null) {
-//            AbstractTestWithWorld.baseSelect.close();
-//            AbstractTestWithWorld.baseSelect = null;
-//        }
-
-        if (AbstractTestWithWorld.baseSelect == null) {
-            System.out.println("AAAAAAAAAAAAAA");
-            AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
-            AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
         }
+        AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
+        AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(mockOurUnits());
 
         runnable.run();
+
+        AbstractTestWithWorld.baseSelect.close();
+        AbstractTestWithWorld.baseSelect = null;
     }
 
     protected void usingFakeEnemy(Runnable runnable) {
@@ -215,6 +214,9 @@ public class AbstractTestWithUnits extends UnitTest {
         AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(mockEnemyUnits());
 
         runnable.run();
+
+        AbstractTestWithWorld.baseSelect.close();
+        AbstractTestWithWorld.baseSelect = null;
     }
 
     protected void usingFakeNeutral(Runnable runnable) {
@@ -241,7 +243,6 @@ public class AbstractTestWithUnits extends UnitTest {
         }
         AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
 
-//        try (MockedStatic<BaseSelect> baseSelect = AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class)) {
         AbstractTestWithWorld.baseSelect.when(BaseSelect::ourUnitsWithUnfinishedList).thenReturn(Arrays.asList(ours));
         AbstractTestWithWorld.baseSelect.when(BaseSelect::enemyUnits).thenReturn(Arrays.asList(enemies));
         AbstractTestWithWorld.baseSelect.when(BaseSelect::neutralUnits).thenReturn(Arrays.asList(neutral));
@@ -249,7 +250,11 @@ public class AbstractTestWithUnits extends UnitTest {
         setUpTestLogic();
 
         runnable.run();
-//        }
+
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
+        }
     }
 
     public static FakeUnit fake(AUnitType type) {
