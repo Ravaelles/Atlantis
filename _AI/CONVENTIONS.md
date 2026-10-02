@@ -64,7 +64,8 @@ by the language rule below.
 
 - Target: a **modular monolith with a hexagonal core**. Full details in
   `DOCS/ARCHITECTURE-CONTEXT-MAP.md`; the canonical execution plan is
-  `_AI/REVIEW.md` §16 (stages A–J).
+  `_AI/REVIEW.md` §16 (stages A–J), and open items are tracked in
+  `_AI/NEXT.md`.
 - **Dependencies point inward only**: `adapters → application → contexts →
   core`. The core must not depend on contexts or adapters; contexts may depend
   on the core and only on the **Published API** of other contexts.
@@ -94,3 +95,19 @@ by the language rule below.
   on purpose (see its `README.md`). It is **not** a build artifact and must
   **not** be added to `.gitignore`.
 - Never `git push` unless the user explicitly asks.
+
+## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
+
+- `_AI/NEXT.md` is the single source of truth for open work. `_AI/REVIEW.md`
+  keeps the stage narrative, `_AI/NOTES.md` keeps operational learnings.
+- Every item carries a **stable number** (`#1`, `#2`, ...). Numbers are never
+  reused and never renumbered, so old commits and chat answers stay
+  interpretable. The list is expected to run to hundreds of items over time.
+- When an item is finished, **delete its line from `_AI/NEXT.md`** (no "done"
+  section — the git history is the archive) and record the closure in the
+  commit message: `Closes #<n>: <what was actually verified>`. Naming a test
+  result, a game-run id or the ArchUnit output is required, not optional.
+- New items are appended with the next free number.
+- Items may be worked in any order, but an item counts as closed only when it
+  is verified by execution (build, test run, game run) — not when it merely
+  compiles.
