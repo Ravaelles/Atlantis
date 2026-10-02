@@ -714,6 +714,19 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `Atlantis.jar` missed classes newer than Oct 1 (`AutomaticListener`);
   `ARegion` used private `bwapi` fields that only compiled via classpath
   shadowing (fixed to `getId().intValue()`).
+- **Stage D — Order Sink: DONE.** `OrderSink` port + `BwapiOrderSink` adapter
+  in `atlantis.units`; all ~50 raw engine order calls (previously scattered
+  across `AUnitOrders` plus 2 strays) now flow through the sink, which guards
+  engine exceptions to `false` instead of propagating. `AUnit` carries the sink
+  (live by default); `FakeUnit` auto-wires a recording `FakeOrderSink`,
+  preserving existing fake behaviour. New `OrderSinkTest` (3 tests). Suite
+  65/76 with the same 11 pre-existing failures; ArchUnit 7/7, no baseline
+  change needed.
+- **Stage E — Read Model: STARTED.** Additive foundation only:
+  `atlantis.core.world.World` + immutable `UnitSnapshot` (+ `UnitSnapshots`
+  bridge backed by `AUnit`), `WorldTest` proving engine-free construction.
+  No production behaviour touched. Next: `UnitState`, migrating `public _last*`
+  fields, replacing the static registry.
 - **Headless build & tests: DONE.** Whole project compiles from source and the
   unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
   pre-existing failures are listed there rather than hidden.
