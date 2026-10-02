@@ -3,6 +3,7 @@ package atlantis.map;
 import atlantis.Atlantis;
 import atlantis.config.ActiveMap;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -113,8 +114,8 @@ public class AMap {
         APosition position = null;
         for (int attempts = 0; attempts < 50; attempts++) {
             int maxRadius = 30 * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
-            int dy = -maxRadius + A.randWithSeed(0, 2 * maxRadius, unit.id());
+            int dx = -maxRadius + ARandom.randWithSeed(0, 2 * maxRadius, unit.id());
+            int dy = -maxRadius + ARandom.randWithSeed(0, 2 * maxRadius, unit.id());
             position = unit.translateByPixels(dx, dy).makeBuildableGroundPositionFarFromBounds();
             if (
                 position != null
@@ -137,8 +138,8 @@ public class AMap {
         for (int attempts = 0; attempts < 50; attempts++) {
             int mapDimension = Math.max(Atlantis.game().mapWidth(), Atlantis.game().mapHeight());
             int maxRadius = mapDimension * TilePosition.SIZE_IN_PIXELS;
-            int dx = -maxRadius + A.rand(0, 2 * maxRadius);
-            int dy = -maxRadius + A.rand(0, 2 * maxRadius);
+            int dx = -maxRadius + ARandom.rand(0, 2 * maxRadius);
+            int dy = -maxRadius + ARandom.rand(0, 2 * maxRadius);
             position = startPoint.translateByPixels(dx, dy).makeBuildableGroundPositionFarFromBounds();
             if (
                 position != null

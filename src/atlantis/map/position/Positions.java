@@ -1,6 +1,7 @@
 package atlantis.map.position;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 
 import java.io.Serializable;
@@ -107,7 +108,7 @@ public class Positions<T extends HasPosition> implements Serializable {
      * Returns random positions.
      */
     public T random() {
-        return (T) A.getRandomListElement(positions);
+        return (T) ARandom.getRandomListElement(positions);
     }
 
     /**

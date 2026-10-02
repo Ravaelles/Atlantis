@@ -223,7 +223,7 @@ public class AGame {
      * Returns random int number from range [min, max], both inclusive.
      */
     public static int rand(int min, int max) {
-        return A.rand(min, max);
+        return ARandom.rand(min, max);
     }
 
     public static int killsLossesResourceBalance() {

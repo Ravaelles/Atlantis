@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position.protoss;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.ABaseLocation;
@@ -107,11 +108,11 @@ public class PylonPosition {
 //            if (main.friendsNear().buildings().atMost(13)) nearTo = main;
 //        }
 
-//        if (A.chance(70)) {
+//        if (ARandom.chance(70)) {
 //            if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).nearestTo(EnemyUnits.nearestEnemyBuilding());
 //        }
         if (A.supplyFree() <= 1 && A.hasMinerals(300)) {
-//            if (nearTo == null && A.chance(70) && Count.bases() >= 3) nearTo = Select.ourBases().last();
+//            if (nearTo == null && ARandom.chance(70) && Count.bases() >= 3) nearTo = Select.ourBases().last();
             if (nearTo == null) nearTo = Select.mainOrAnyBuildingPosition();
         }
         if (nearTo == null) nearTo = Select.ourBasesWithUnfinished().exclude(Bases.natural()).last();

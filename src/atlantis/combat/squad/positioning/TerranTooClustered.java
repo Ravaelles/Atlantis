@@ -2,6 +2,7 @@ package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -50,7 +51,7 @@ public class TerranTooClustered extends Manager {
 //                return usedManager(this);
 //            }
 
-//            double moveDistance = A.chance(15) ? 2 : 0.5;
+//            double moveDistance = ARandom.chance(15) ? 2 : 0.5;
 //            unit.moveAwayFrom(nearestBuddy, moveDistance, Actions.MOVE_FORMATION, "SpreadOut");
             if (uncluster()) return usedManager(this, "SpreadOut");
         }

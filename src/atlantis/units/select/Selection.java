@@ -3,6 +3,7 @@ package atlantis.units.select;
 import atlantis.combat.eval.estimate.Estimate;
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.bullets.DeadMan;
 import atlantis.map.path.ClosestToEnemyBase;
@@ -1468,7 +1469,7 @@ public class Selection extends BaseSelection {
      * Returns random unit that matches previous conditions or null if no units matched all conditions.
      */
     public AUnit random() {
-        return (AUnit) A.getRandomElement(data);
+        return (AUnit) ARandom.getRandomElement(data);
     }
 
     // === High-level of abstraction ===========================

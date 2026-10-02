@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position.terran;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
@@ -39,7 +40,7 @@ public class SupplyDepotPositionFinder {
 
         if (depots.size() <= 1) return Select.mainOrAnyBuilding();
 
-        if (A.chance(70)) return depots.last();
+        if (ARandom.chance(70)) return depots.last();
         
         return MainRegion.mainRegion().center();
 

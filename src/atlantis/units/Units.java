@@ -2,6 +2,7 @@ package atlantis.units;
 
 import atlantis.combat.squad.Squad;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionHelper;
@@ -123,7 +124,7 @@ public class Units {
      * Returns random unit from the set.
      */
     public AUnit random() {
-        return (AUnit) A.getRandomElement(units);
+        return (AUnit) ARandom.getRandomElement(units);
     }
 
     /**

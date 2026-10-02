@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position.protoss;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.game.player.Enemy;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.HasPosition;
@@ -58,14 +59,14 @@ public class ProtossDefineNearTo {
             if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
 
             if (nearTo == null) {
-                if (A.chance(80)) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
+                if (ARandom.chance(80)) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).random();
             }
 
             if (nearTo == null) nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
 
             if (nearTo == null
                 && (!A.hasFreeSupply(2) || A.supplyTotal() >= 130)
-                && A.chance(60)) {
+                && ARandom.chance(60)) {
                 nearTo = Select.ourOfType(AUnitType.Protoss_Pylon).last();
             }
         }

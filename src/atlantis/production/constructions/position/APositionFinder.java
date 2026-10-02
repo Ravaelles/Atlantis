@@ -3,6 +3,7 @@ package atlantis.production.constructions.position;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
@@ -37,7 +38,7 @@ public class APositionFinder {
             return null;
         }
 
-        if (Env.isTesting()) return APosition.create(A.rand(1, 99), A.rand(13, 99));
+        if (Env.isTesting()) return APosition.create(ARandom.rand(1, 99), ARandom.rand(13, 99));
 
         HasPosition near = construction.nearTo();
         double maxDistance = construction.maxDistance() >= 0 ? construction.maxDistance() : 35;

@@ -1,6 +1,7 @@
 package atlantis.debug.profiler;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.util.log.ErrorLog;
 
 public class LongFrames {
@@ -9,7 +10,7 @@ public class LongFrames {
     private static int framesOver10000 = 0;
 
     public static void reportFrameLength(int frameLengthInMs) {
-//        frameLengthInMs = A.rand(0, 10500);
+//        frameLengthInMs = ARandom.rand(0, 10500);
 //        frameLengthInMs += 40;
 
         if (frameLengthInMs >= 85) framesOver85++;

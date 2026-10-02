@@ -3,6 +3,7 @@ package tests.fakes;
 import atlantis.combat.missions.Mission;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.game.player.APlayer;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -577,7 +578,7 @@ public class FakeUnit extends AUnit implements Serializable {
     }
 
     public FakeUnit injectCooldown() {
-        this.cooldown = cooldownAbsolute() - 1 + A.rand(0, 2);
+        this.cooldown = cooldownAbsolute() - 1 + ARandom.rand(0, 2);
         return this;
     }
 

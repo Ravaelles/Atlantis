@@ -83,27 +83,6 @@ public class A {
         return result;
     }
 
-    /**
-     * @param percentChance is chance percentage of some action, e.g. 87.2 means some event occurs with 87.2%
-     *                      probability
-     * @return true if given random event occured
-     */
-    public static boolean chance(double percentChance) {
-        return random.nextDouble() <= (percentChance / 100.0);
-    }
-
-    /**
-     * @return random integer number from range [min, max]
-     */
-    public static int rand(int min, int max) {
-        return min + random.nextInt(max - min + 1);
-    }
-
-    public static int randWithSeed(int min, int max, long seed) {
-        random = new Random(seed);
-        return min + random.nextInt(max - min + 1);
-    }
-
 
     /**
      * @return string like "2011-09-03"
@@ -169,32 +148,6 @@ public class A {
 
 
     /**
-     * Returns random element of given list.
-     */
-    public static Object getRandomListElement(List<?> list) {
-        return list.get(random.nextInt(list.size()));
-    }
-
-    /**
-     * Returns random element of given list.
-     */
-    public static Object getRandomElement(Collection<?> collection) {
-        if (collection.isEmpty()) {
-            return null;
-        }
-
-        int indexToPick = random.nextInt(collection.size());
-        int counter = 0;
-        for (Object object : collection) {
-            if (indexToPick == counter++) {
-                return object;
-            }
-        }
-        return null;
-    }
-
-
-    /**
      * Returns map containing number of occurences of each element in given collection.
      */
     public static TreeMap<String, Integer> getOccurenceMap(Collection<String> collection) {
@@ -210,20 +163,6 @@ public class A {
         return occurences;
     }
 
-
-    /**
-     *
-     */
-    public static String randomElement(String[] array) {
-        return array[random.nextInt(array.length)];
-    }
-
-    /**
-     *
-     */
-    public static Object randomElement(ArrayList<?> list) {
-        return list.get(rand(0, list.size() - 1));
-    }
 
     /**
      *

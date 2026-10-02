@@ -3,6 +3,7 @@ package atlantis.combat.micro.terran.wraith;
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -54,8 +55,8 @@ public class WraithChangeLocationIfRanTooLong extends Manager {
         }
 
         int delta = 12 + unit.id() % 7;
-        int dx = -delta + A.rand(0, 2 * delta);
-        int dy = -delta + A.rand(0, 2 * delta);
+        int dx = -delta + ARandom.rand(0, 2 * delta);
+        int dy = -delta + ARandom.rand(0, 2 * delta);
         APosition goTo = unit.position().translateByTiles(dx, dy).makeValidGroundPosition();
 
         AAdvancedPainter.paintCircleFilled(unit, 6, Color.Orange);

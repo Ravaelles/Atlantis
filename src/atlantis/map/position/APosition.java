@@ -2,6 +2,7 @@ package atlantis.map.position;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
 import atlantis.map.region.ARegion;
@@ -367,8 +368,8 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     public APosition randomizePosition(int maxTiles) {
         return APosition.create(
-            tx() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles)),
-            ty() - (A.chance(50) ? 0 : maxTiles + A.rand(0, 2 * maxTiles))
+            tx() - (ARandom.chance(50) ? 0 : maxTiles + ARandom.rand(0, 2 * maxTiles)),
+            ty() - (ARandom.chance(50) ? 0 : maxTiles + ARandom.rand(0, 2 * maxTiles))
         ).makeValidGroundPosition();
     }
 

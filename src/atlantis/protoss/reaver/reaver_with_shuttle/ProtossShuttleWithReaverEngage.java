@@ -3,6 +3,7 @@ package atlantis.protoss.reaver.reaver_with_shuttle;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -121,6 +122,6 @@ public class ProtossShuttleWithReaverEngage extends Manager {
 
     private static int randomDelta() {
         int spread = 12;
-        return -(spread / 3) + A.randWithSeed(0, spread, A.s % 4);
+        return -(spread / 3) + ARandom.randWithSeed(0, spread, A.s % 4);
     }
 }

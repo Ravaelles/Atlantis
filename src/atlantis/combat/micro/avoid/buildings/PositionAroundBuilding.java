@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.buildings;
 
 import atlantis.game.A;
+import atlantis.game.ARandom;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -33,8 +34,8 @@ public class PositionAroundBuilding {
 //
 //        around.translateByVector(vector).paintCircle(8, Color.Yellow);
 
-//        vector = vector.rotate(A.rand(1, 100) / 100.0);
-        vector = vector.rotate(A.rand(30, 60) / 100.0);
+//        vector = vector.rotate(ARandom.rand(1, 100) / 100.0);
+        vector = vector.rotate(ARandom.rand(30, 60) / 100.0);
         vector = vector.normalizeTo(radiusMargin);
 
 //        System.out.println("DIST = " + around.translateByTileVector(vector).distTo(around));

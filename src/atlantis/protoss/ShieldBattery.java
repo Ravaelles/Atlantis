@@ -1,6 +1,7 @@
 package atlantis.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 
@@ -32,7 +33,7 @@ public class ShieldBattery extends Manager {
                         continue;
                     }
 
-//                    if (!shieldBattery.equals(friend.target()) || A.chance(2)) {
+//                    if (!shieldBattery.equals(friend.target()) || ARandom.chance(2)) {
                     if (!shieldBattery.equals(friend.target())) {
                         friend.doRightClickAndYesIKnowIShouldAvoidUsingIt(shieldBattery);
                     }
