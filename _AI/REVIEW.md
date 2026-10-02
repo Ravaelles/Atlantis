@@ -694,6 +694,19 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `AtlantisGameCommander` now delegates. Still pending in Stage C: remove
   reflection from `Commander`/`Manager` construction, unify the `handle()`
   contract, and verify with a game run.
+- **Stage C — reflection removal: DONE (code), game-run verification pending.**
+  `Class[]` + reflective instantiation replaced by explicit
+  `CommanderFactory`/`ManagerFactory` constructor references
+  (`atlantis.architecture`); `InstantiateManager` deleted;
+  `invokedFor`/`invokedManager`/`usedManager` take factories; both `handle()`
+  contracts documented (semantics unchanged by design). Order and failure
+  semantics preserved — unit suite 62/73 identical to baseline, ArchUnit 7/7
+  after re-freeze (the conversion made 57 previously-invisible tree edges
+  visible to ArchUnit as constructor calls instead of class literals; coupling
+  itself is unchanged — verified 1:1 against the old baseline entries).
+  Remaining for Stage C: unify-or-document decision recorded (documented, not
+  unified — unification would change traversal behaviour); full game run to
+  confirm no behaviour change.
 - **Headless build & tests: DONE.** Whole project compiles from source and the
   unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
   pre-existing failures are listed there rather than hidden.
