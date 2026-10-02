@@ -41,9 +41,12 @@ import static org.junit.jupiter.api.Assertions.*;
  *       are asserted against the raw vectors in
  *       {@code facingHelperAgreesWithTheRawVector} rather than against angles
  *       somebody guessed.</li>
- *   <li>{@code shieldPercent()} is {@code 100 * shields / maxShields}, so it
- *       is NaN for a unit that has no shields at all (Terran). Pinned here so
- *       a future fix shows up as a deliberate change, not a silent one.</li>
+ *   <li>{@code shieldPercent()} is undefined - NaN - for a unit that has no
+ *       shields at all (Terran, Zerg, Protoss before the battery). That is the
+ *       contract, not an oversight: it makes both
+ *       {@code shieldWound() <= x} and {@code shieldWound() >= x} read as "not
+ *       my rule". Pinned in {@code shieldsOnAUnitThatHasNone} so a replacement
+ *       value shows up as a deliberate change, not a silent one.</li>
  * </ul>
  *
  * <p>The previous version of this class ran against the 22-unit sample world
@@ -371,17 +374,32 @@ public class AUnitTest extends AbstractTestWithWorld {
     }
 
     /**
-     * Pinned as-is: {@code shieldPercent()} is {@code 100 * shields / maxShields}
-     * with no zero guard, so a unit without shields yields NaN rather than
-     * "100% of nothing". Every caller in production checks {@code maxShields()}
-     * first; if that ever changes, this test must change deliberately.
+     * The contract for a unit that cannot have shields: the three percentages are
+     * {@code NaN}, and <b>every</b> comparison against them is false - so
+     * "shieldWound() &lt;= 4" and "shieldWound() &gt;= 40" both read as "this
+     * shield-based rule does not apply to me". That is the point of the test: a
+     * replacement value (0 or 100) would flip one of those two families on for
+     * every Terran and Zerg unit.
+     *
+     * <p>Pinned deliberately - see the javadoc on {@code AUnit.shieldPercent()}.</p>
      */
     @Test
     public void shieldsOnAUnitThatHasNone() {
         FakeUnit marine = fake(AUnitType.Terran_Marine);
+
         assertEquals(0, marine.maxShields());
-        assertTrue(Double.isNaN(marine.shieldPercent()),
-            "current behaviour; tracked in _AI/NEXT.md");
+        assertTrue(Double.isNaN(marine.shieldPercent()), "undefined, not 0 and not 100");
+        assertTrue(Double.isNaN(marine.shieldWoundPercent()));
+        assertTrue(Double.isNaN(marine.shieldWound()));
+
+        assertFalse(marine.shieldWound() <= 4, "'shields nearly intact' must not apply");
+        assertFalse(marine.shieldWound() >= 40, "'shields badly wounded' must not apply");
+        assertFalse(marine.shieldPercent() >= 100);
+
+        // The boolean accessors stay meaningful, which is why production can use
+        // them instead of the percentages.
+        assertTrue(marine.shieldHealthy());
+        assertFalse(marine.shieldWounded());
     }
 
     @Test

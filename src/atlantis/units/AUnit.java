@@ -3796,14 +3796,44 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return shields() >= maxShields();
     }
 
+    /**
+     * How much of this unit's shield is still up, as a percentage.
+     *
+     * <p><b>Undefined for a unit that cannot have shields</b> (every Terran and
+     * Zerg unit, and Protoss units before the shield battery is researched): the
+     * answer is {@code NaN}, and every comparison against {@code NaN} is false.
+     * That is deliberate. All three shield-based rules in production are written
+     * as guards of the shape {@code shieldWound() <= x} ("my shields are nearly
+     * intact, so back off") or {@code shieldWound() >= x} ("wounded badly
+     * enough to run"), and {@code NaN} is the only value that makes *both* read
+     * as "this rule does not apply to me".</p>
+     *
+     * <p>The alternatives were measured and are worse: returning {@code 0} would
+     * make {@code shieldWound() <= x} true for a Terran unit and switch off rules
+     * that Terran air and workers currently rely on (e.g.
+     * {@code PreventAirCornerStucking}); returning {@code 100} would make
+     * {@code shieldWound() >= x} true and switch on rules Terran units should
+     * never see. Neither can be justified without a game run, and neither is
+     * covered by a test.</p>
+     *
+     * <p>So: guard a call with {@link #maxShields()} if you need a number rather
+     * than a decision. {@code AUnitTest.shieldsOnAUnitThatHasNone} is the
+     * pin.</p>
+     */
     public double shieldPercent() {
         return (double) (100 * shields()) / maxShields();
     }
 
+    /** {@code shieldPercent()}'s wound-side twin: the share of the shield that is gone. */
     public double shieldWoundPercent() {
         return (double) (100 * shieldWound()) / maxShields();
     }
 
+    /**
+     * How much of this unit's shield is gone, as a percentage. Undefined
+     * ({@code NaN}) for a unit without shields - see {@link #shieldPercent()} for
+     * why that is the contract rather than an accident.
+     */
     public double shieldWound() {
         return 100 - ((double) (100 * shields()) / maxShields());
     }

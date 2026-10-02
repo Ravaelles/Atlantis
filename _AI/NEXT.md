@@ -66,12 +66,6 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   and then the jar can stop shipping the harness. Verify with a game run: the
   jar size and `scripts/build-bot-jar.sh`'s assertions are the check.
 
-- **#24** `AUnit.shieldPercent()` is `100 * shields / maxShields` with no zero
-  guard, so it returns `NaN` for every unit without shields (Terran, buildings
-  without upgrades). Production callers check `maxShields()` first, so it is
-  harmless today, but a naive use silently poisons comparisons. Decide the
-  contract (100%? 0%? throw?) and fix it; `AUnitTest.shieldsOnAUnitThatHasNone`
-  pins the current behaviour on purpose.
 
 ## Stage E — read model (remaining)
 
