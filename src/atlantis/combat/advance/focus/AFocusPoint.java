@@ -1,6 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.game.A;
+import atlantis.util.cache.ValidityCheck;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
@@ -15,7 +16,7 @@ import atlantis.units.select.Select;
  * LOOKING FROM - Units can position themselves from the wrong side of focus point.
  * This point should tell units from which side they should stand.
  */
-public class AFocusPoint extends APosition {
+public class AFocusPoint extends APosition implements ValidityCheck {
     private HasPosition fromSide = null;
     private AChoke choke = null;
     private AUnit unit = null;

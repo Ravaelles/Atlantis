@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
+import atlantis.util.cache.ValidityCheck;
 import atlantis.combat.eval.estimate.Estimate;
 import atlantis.combat.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
@@ -78,7 +79,7 @@ import static atlantis.units.actions.Actions.RUN_RETREAT;
  * hard to migrate to another bridge. I've already used 3 of them in my career so far.
  */
 //public class AUnit implements UnitInterface, Comparable<AUnit>, HasPosition, AUnitOrders {
-public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders {
+public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, ValidityCheck {
     public static final int NEAR_DIST = 15;
 
     /**

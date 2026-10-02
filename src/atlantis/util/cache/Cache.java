@@ -1,10 +1,7 @@
 package atlantis.util.cache;
 
-import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.units.AUnit;
-import atlantis.units.fogged.FoggedUnit;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 
@@ -73,49 +70,24 @@ public class Cache<T> {
         }
     }
 
+    /**
+     * Like {@link #get(String, int, Callback)}, but a cached {@code AUnit} or
+     * {@code AFocusPoint} that already died (became invalid) is treated as a
+     * miss: it is dropped and recomputed via the callback. Other value types
+     * pass through untouched.
+     */
     public T getIfValid(String cacheKey, int cacheForFrames, Callback callback) {
         T value = get(cacheKey, cacheForFrames, callback);
-        if (value != null) {
-            if (value instanceof AFocusPoint) {
-                if (((AFocusPoint) value).isValid()) {
-                    return value;
-                }
-            }
-            if (value instanceof AUnit) {
-                if (((AUnit) value).isValid()) {
-                    return value;
-                }
-            }
-            return value;
+        if (value != null && isKnownInvalid(value)) {
+            forget(cacheKey);
+            value = get(cacheKey, cacheForFrames, callback);
         }
 
-        @SuppressWarnings("unchecked") T newValue = (T) callback.run();
-        set(cacheKey, cacheForFrames, newValue);
+        return value;
+    }
 
-//        if (newValue != null) {
-//            if (newValue instanceof AFocusPoint) {
-//                if (((AFocusPoint) value).isValid()) {
-//                    return value;
-//                }
-//            }
-//            if (newValue instanceof FoggedUnit) {
-//                if (((FoggedUnit) value).isValid()) {
-//                    return value;
-//                }
-//            }
-//            if (newValue instanceof AUnit) {
-//                if (((AUnit) value).isValid()) {
-//                    return value;
-//                }
-//            }
-//        }
-
-        return newValue;
-
-//        set(cacheKey, cacheForFrames, callback);
-//        return get(cacheKey, cacheForFrames, callback);
-
-//        return (V) callback.run();
+    private static boolean isKnownInvalid(Object value) {
+        return value instanceof ValidityCheck && !((ValidityCheck) value).isValid();
     }
 
     public List<T> allValid() {
