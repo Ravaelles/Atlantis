@@ -23,13 +23,34 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Test health
 
-- **#1** Triage the 11 remaining unit-test failures
-  (6× `ATargetingTest`, 3× `ProtossRetreatTest`, 2× `ProtossSmallRetreatTest`;
-  see `DOCS/TESTING.md`). Decide per failure: fix production behaviour, fix the
-  expectation deliberately, or pin as a known-broken expectation with a comment.
-  Do not weaken assertions to make the suite green. `ChokeTest.distToChokes`
-  used to be the 11th and was the same harness defect as `_AI/BUGS.md` B-15, not
-  a targeting or choke bug at all - measure before assuming.
+- **#1** Triage the remaining unit-test failures - now **6, all
+  `ATargetingTest`**, and **blocked on missing engine data** (see #29). The five
+  retreat failures are gone; `ChokeTest.distToChokes` turned out to be the
+  harness defect of `_AI/BUGS.md` B-15, not a choke bug.
+- **#29** The test harness has **no unit-type data at all**, so every test that
+  depends on unit attributes measures a fiction. Measured: with
+  `bwapi.UnitType` read straight from the jar, `isFlyer()` is **false for every
+  single type** (a Protoss Dragoon is a ground unit), hit points are wrong
+  (marine 40, sunken colony 300, marine should be 45/150), and weapon ranges are
+  placeholders (Dragoon 128 px = 8 tiles instead of 6). `UnitType` reads those
+  from static arrays that a BWAPI client fills from the running game, and there
+  is no client - and no data file to load them from - in a test. That is why
+  `ATargetingTest` cannot pass: its subject is air-vs-ground targeting.
+  Attempts and measurements, so nobody repeats them:
+  - Filling the arrays from a hand-written table of real stats *and* the
+    Flyer/Building/Worker flags: **10 failures instead of 6** - giving Cocoons
+    real hit points turned them into valid targets, and marking buildings
+    changed the building-vs-worker priority. The jar's placeholder data and the
+    suite's expectations were calibrated together.
+  - Flags only, no hit points: also 10 failures (a Nexus started winning over a
+    Photon Cannon).
+  So the choice is: (a) get real unit-type data - run a game with a patched
+  client that dumps `UnitTypeContainer`, or point the harness at a data file
+  from scbw/OpenBW; or (b) keep a maintained table **and** recalibrate every
+  expectation that depends on a unit attribute (ranges, hit points, air) - which
+  is most of `tests.unit`. Until then `ATargetingTest` stays red on purpose:
+  its expectations are right about the game and unreachable in this harness.
+  Do **not** "fix" them by rewriting the expectations to match the fake world.
 - **#27** The retreat tests (`ProtossRetreatTest`, `ProtossSmallRetreatTest`,
   5 failures) are the largest remaining group and the only ones left that assert
   a *decision* rather than a value. They must be triaged after the harness is
