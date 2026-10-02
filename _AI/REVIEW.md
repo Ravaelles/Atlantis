@@ -727,6 +727,11 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   bridge backed by `AUnit`), `WorldTest` proving engine-free construction.
   No production behaviour touched. Next: `UnitState`, migrating `public _last*`
   fields, replacing the static registry.
+- **Deferred defect #1 — Cache.getIfValid: FIXED + VERIFIED.** Stale-invalid
+  units/focus points are now dropped and recomputed; validity is a
+  `ValidityCheck` port (no new ArchUnit violations, 4 stale entries cleaned).
+  All 28 call sites audited for null-tolerance. Verified by `GAME_75B21379`
+  (see below): no new crashes, natural game end.
 - **Headless build & tests: DONE.** Whole project compiles from source and the
   unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
   pre-existing failures are listed there rather than hidden.

@@ -16,7 +16,7 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Known-failing baseline (unit tests)
 
 The suite is **not fully green yet**. As of the architecture work, running
-`tests.unit` gives ~67 passing / ~11 failing. These failures are **pre-existing
+`tests.unit` gives ~70 passing / ~11 failing. These failures are **pre-existing
 assertion mismatches**, unrelated to the architecture stages; they are kept
 visible on purpose rather than hidden:
 
