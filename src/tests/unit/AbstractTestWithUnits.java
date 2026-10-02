@@ -17,6 +17,8 @@ import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.AbstractPositionFinder;
+import atlantis.production.constructions.position.RequestBuildingNear;
+import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
 import atlantis.units.fogged.FakeFoggedUnit;
@@ -121,6 +123,13 @@ public class AbstractTestWithUnits extends UnitTest {
     protected void cleanUp() {
         AbstractPositionFinder._STATUS = "Init";
         ConstructionRequests.constructions.clear();
+
+        // Static "last error" fields are only cleared on success in production
+        // (RequestBuildingNear.error() sets it, the success path clears it), so
+        // they carry a failure from one test into the next one. Tests assert on
+        // them being null, which made RequestBuildingNearTest order-dependent.
+        RequestBuildingNear.lastError = null;
+        BuildPylonFirst.lastError = null;
 
         // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
         // close(), not reset(): reset only clears stubs and leaves the mock

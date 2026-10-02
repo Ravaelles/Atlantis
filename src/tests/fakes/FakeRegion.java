@@ -4,9 +4,13 @@ import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
+import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegion;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,6 +38,39 @@ public class FakeRegion extends ARegion {
     }
 
     // =========================================================
+
+    /**
+     * The stub world has no BWEM areas, so every inherited method that touches
+     * {@code area} would throw NPE. Overriding them here keeps the fakes honest
+     * about what they know: one region per base location, and nothing else.
+     * Without this, {@code Chokes.mainChoke()} -> {@code DefineMainChoke} ->
+     * {@code ARegion.getReachableRegions()} exploded in every test that asked
+     * for a building position.
+     */
+    @Override
+    public List<ARegion> getReachableRegions() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<AChoke> chokes() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<ABaseLocation> getBaseLocations() {
+        return new ArrayList<>(Collections.singletonList(location));
+    }
+
+    @Override
+    public boolean isReachable(ARegion otherRegion) {
+        return false;
+    }
+
+    @Override
+    public double apprxWidth() {
+        return 0;
+    }
 
     @Override
     public final boolean equals(Object o) {

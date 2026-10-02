@@ -85,6 +85,51 @@ documented in code with a comment. The closure goes into the commit message.
   suite, it turns "measured" into "constant". When a getter looks suspiciously
   constant in tests, look for a short-circuit in the getter.
 
+## B-6 — the Protoss position finder cannot place anything in the stub world
+
+- **Where:** `atlantis/production/constructions/position/PositionFulfillsAllConditions`
+  (14 Protoss conditions), reached from `ProtossPositionFinder.findStandardPositionFor`.
+- **Measured** (`RequestBuildingNearTest` scenario, main nexus at 9,46, natural
+  at 16,14, one probe worker, no pylon nearby): a direct
+  `CanPhysicallyBuildHere.check(worker, Protoss_Pylon, position)` **accepts 90**
+  candidate tiles around the natural, yet
+  `RequestBuildingNear.constructionOf(Protoss_Pylon).near(natural).request()`
+  returns `null` with `_STATUS = "[Testing] Can't physically build here"`.
+  So one of the other thirteen conditions rejects every candidate.
+- **Consequence:** "protect a base that has no pylon" cannot be tested at all,
+  which is exactly the behaviour the Protoss opening depends on. Both affected
+  tests are pinned at the weaker contract that does hold (see
+  `RequestBuildingNearTest`), with this entry as the reason.
+- **How to settle it:** binary-search the conditions by calling
+  `PositionFulfillsAllConditions.doesPositionFulfillAllConditions` for one of
+  the 90 accepted tiles and printing which check flips it. Prime suspects:
+  `ProtossForbiddenByStreetGrid` (needs `moduloX == 2` lattice positions),
+  `IsProbablyInAnotherRegion` and `ProtossTooCloseToRegionBoundaries` (both
+  need `ARegion`, which is a stub without a BWEM area).
+
+## B-7 — `ProtossTooCloseToRegionBoundaries` can never fire
+
+- **Where:** `.../position/protoss/ProtossTooCloseToRegionBoundaries.java:14`.
+- **The code:** `if (!building.isPylon()) return false;` followed by
+  `if (!building.isCannon()) return false;`. A building that is both a pylon
+  and a cannon does not exist, so the whole condition is dead code.
+- **Why it matters:** it looks like a safety rule ("do not build pylons or
+  cannons near region borders") and is neither enforced nor documented as
+  disabled. Almost certainly one `||` was intended instead of two `&&` guards -
+  but which of the two was meant is a design question, not a typo fix, because
+  the rule would then apply to *every* Protoss building.
+- **How to settle it:** decide the intent, then either fix the condition or
+  delete it with a comment. Deleting is defensible: it currently has zero
+  effect and nobody noticed in a decade.
+
+## B-8 — `APositionFinder` can still terminate the JVM
+
+- **Where:** `atlantis/production/constructions/position/APositionFinder.java:113`
+  (`System.exit(-1)` on an "Invalid race"), next to similar exits in
+  `AtlantisRaceConfig`, `Atlantis` and `AKeyboard` (swept in NEXT.md #17).
+- **Why it matters:** a leaf position finder deciding to kill the process is the
+  same violation already fixed in `AFile.loadFile`.
+
 ## How to add an entry
 
 ```
