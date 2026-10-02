@@ -1,6 +1,7 @@
 package starengine.events;
 
 import atlantis.game.A;
+import atlantis.util.AMath;
 import starengine.sc_logic.UpdateUnits;
 import tests.acceptance.AbstractWorldCreatingTest;
 import tests.fakes.FakeUnit;
@@ -29,8 +30,8 @@ public class OnStarEngineFrameEnd {
         if (unit.targetPosition != null && (unit.isMoving() || unit.isAttacking())) {
 //            System.err.println("PRE " + unit.position);
             unit.position = unit.position.translateByPixels(
-                A.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
-                A.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
+                AMath.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
+                AMath.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
             );
 //            System.err.println("Post " + unit.position);
         }

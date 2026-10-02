@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.range.OurMarineRange;
+import atlantis.util.AMath;
 
 public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
     public MarineSafetyMarginAgainstMelee(AUnit defender) {
@@ -30,7 +31,7 @@ public class MarineSafetyMarginAgainstMelee extends SafetyMarginAgainstMelee {
             + (defender.cooldown() >= 7 ? +0.4 : 0)
             + manyEnemiesNearBonus(defender);
 
-        margin = A.inRange(1.5, margin, OurMarineRange.range() - 0.21);
+        margin = AMath.inRange(1.5, margin, OurMarineRange.range() - 0.21);
 
 //        System.err.println("@" + A.now + " safetyMargin = " + margin + " " + defender.digitDistTo(attacker));
 //        defender.paintCircle((int) (margin * 32), Red);

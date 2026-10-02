@@ -10,6 +10,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.AMath;
 import bwapi.Color;
 
 import java.util.ArrayList;
@@ -270,7 +271,7 @@ public class RunInAnyDirection {
 //                : ANY_DIRECTION_RADIUS_DRAGOON;
         }
         else if (unit.isTerran() && unit.isInfantry()) {
-//            return A.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
+//            return AMath.inRange(2, (int) (unit.distTo(runFrom) * 2), ANY_DIRECTION_RADIUS_TERRAN_INFANTRY);
             return ANY_DIRECTION_RADIUS_TERRAN_INFANTRY;
         }
 

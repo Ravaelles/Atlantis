@@ -61,6 +61,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.WorkerRepository;
+import atlantis.util.AMath;
 import atlantis.util.Counter;
 import atlantis.util.HasReason;
 import atlantis.util.We;
@@ -1410,12 +1411,12 @@ public class AAdvancedPainter extends APainter {
 //         */
 //        if (true) return;
 
-//        double maxValue = A.getMaxElement(
+//        double maxValue = AMath.getMaxElement(
         // CodeProfiler.getAspectsTimeConsumption().values()
 //        );
 
         Map<String, Integer> aspectsLength = CodeProfiler.aspectLengthSorted();
-        int maxValue = A.getMaxElement(aspectsLength.values());
+        int maxValue = AMath.getMaxElement(aspectsLength.values());
 
         int counter = 0;
         for (String aspectTitle : aspectsLength.keySet()) {
@@ -1543,7 +1544,7 @@ public class AAdvancedPainter extends APainter {
         APosition topLeft = new APosition(unit.x() - barWidth / 2, unit.y() + dpy);
 
         // Progress bar
-        paintRectangleFilled(topLeft, (int) A.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
+        paintRectangleFilled(topLeft, (int) AMath.inRange(1, barWidth * progressPercent / 100, 100), barHeight, barColor);
 
         // Bar borders
         paintRectangle(topLeft, barWidth, barHeight, Color.Black);

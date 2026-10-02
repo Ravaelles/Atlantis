@@ -8,6 +8,7 @@ import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.units.select.Count;
+import atlantis.util.AMath;
 
 /**
  * Omega is battle squad that ALWAYS DEFENDS the main base and natural.
@@ -46,7 +47,7 @@ public class Omega extends Squad {
 
     @Override
     public int expectedUnits() {
-        if (OurBuildingUnderAttack.get() != null) return A.inRange(
+        if (OurBuildingUnderAttack.get() != null) return AMath.inRange(
             2,
             Count.ourCombatUnits() / 7,
             4

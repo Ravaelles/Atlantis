@@ -1,6 +1,7 @@
 package starengine.sc_logic;
 
 import atlantis.map.position.APosition;
+import atlantis.util.AMath;
 import atlantis.util.Vector;
 import starengine.units.state.EngineUnitState;
 import tests.fakes.FakeUnit;
@@ -26,8 +27,8 @@ public class ProcessMoveUnit {
 
 //            System.err.println("PRE " + unit.position);
 //        unit.position = unit.position.translateByPixels(
-//            A.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
-//            A.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
+//            AMath.inRange(-speedInPixels, unit.targetPosition.x - unit.position.x, speedInPixels),
+//            AMath.inRange(-speedInPixels, unit.targetPosition.y - unit.position.y, speedInPixels)
 //        );
 //            System.err.println("Post " + unit.position);
 

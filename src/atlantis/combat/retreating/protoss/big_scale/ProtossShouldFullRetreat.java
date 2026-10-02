@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.AMath;
 
 public class ProtossShouldFullRetreat {
     private static AUnit unit;
@@ -115,7 +116,7 @@ public class ProtossShouldFullRetreat {
         else {
             int supplyUsed = A.supplyUsed();
             if (supplyUsed >= 160) {
-                evalPenalty /= A.gradual(
+                evalPenalty /= AMath.gradual(
                     supplyUsed, 159, 200, 1.0, 0.4
                 );
             }

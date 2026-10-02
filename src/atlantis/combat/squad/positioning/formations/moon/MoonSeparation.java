@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
+import atlantis.util.AMath;
 import atlantis.util.We;
 
 public class MoonSeparation {
@@ -14,7 +15,7 @@ public class MoonSeparation {
     protected static double defineSeparation(Selection ourUnits, AUnit leader) {
         double min = minSeparation(leader);
 
-        return A.inRange(min, 20.0 / (10 + ourUnits.size()), 1.5);
+        return AMath.inRange(min, 20.0 / (10 + ourUnits.size()), 1.5);
     }
 
     private static double minSeparation(AUnit leader) {

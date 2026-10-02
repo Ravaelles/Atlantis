@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.game.A;
+import atlantis.util.AMath;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +13,7 @@ public class ATest extends AbstractTestWithUnits {
         int value = 33;
 
         assertEquals(
-            A.gradual(value, 0, 100, 20, 30), 23.3, 0.1
+            AMath.gradual(value, 0, 100, 20, 30), 23.3, 0.1
         );
     }
 }

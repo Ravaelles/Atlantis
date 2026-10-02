@@ -7,6 +7,7 @@ import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AMath;
 import atlantis.util.cache.Cache;
 
 public class MoonRadius {
@@ -76,7 +77,7 @@ public class MoonRadius {
         AUnit leader = Alpha.alphaLeader();
         if (leader != null) {
             double baseEval = leader.eval() - leader.enemiesNear().combatUnits().size() / 30.0;
-            leaderBonus = 0.99 + (A.inRange(0.2, baseEval, 10)) / 40.0;
+            leaderBonus = 0.99 + (AMath.inRange(0.2, baseEval, 10)) / 40.0;
         }
 
         return Math.min(

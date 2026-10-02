@@ -5,6 +5,7 @@ import atlantis.combat.missions.Missions;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.game.A;
+import atlantis.util.AMath;
 
 /**
  * Bravo is additional battle squad created when there are too many units in Alpha.
@@ -50,7 +51,7 @@ public class Bravo extends Squad {
     // =========================================================
 
     public int expectedUnits() {
-        return A.inRange(3, Alpha.count() / 4, 14);
+        return AMath.inRange(3, Alpha.count() / 4, 14);
     }
 
     public static int count() {

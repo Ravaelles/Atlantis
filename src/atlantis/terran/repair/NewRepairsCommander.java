@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.AMath;
 import atlantis.util.We;
 import bwapi.Color;
 
@@ -95,10 +96,10 @@ public class NewRepairsCommander extends Commander {
             int enemies = unit.enemiesNear().air().inRadius(11, unit).count();
 
             if (Have.main() && Select.main().distToLessThan(unit, 14)) {
-                return A.inRange(3, enemies, 5);
+                return AMath.inRange(3, enemies, 5);
             }
 
-            return A.inRange(2, (int) (enemies / 1.5), 5);
+            return AMath.inRange(2, (int) (enemies / 1.5), 5);
         }
         else if (unit.isTank()) {
             return 3;

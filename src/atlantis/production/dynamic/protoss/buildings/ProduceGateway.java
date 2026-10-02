@@ -21,6 +21,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AMath;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceGateway {
@@ -149,7 +150,7 @@ public class ProduceGateway {
                 && freeGateways >= 1
                 && existingGateways >= (2 + 3 * bases)
                 && bases >= 2
-//                && A.isInRange(50, ReservedResources.minerals(), 350)
+//                && AMath.isInRange(50, ReservedResources.minerals(), 350)
         ) return false;
 
         if (!A.hasMinerals(290) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;

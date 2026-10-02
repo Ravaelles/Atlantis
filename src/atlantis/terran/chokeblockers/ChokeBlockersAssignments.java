@@ -10,6 +10,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.game.player.Enemy;
+import atlantis.util.AMath;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -48,7 +49,7 @@ public class ChokeBlockersAssignments {
     }
 
     private int blockersNeeded() {
-        int available = A.inRange(3, blockers.size() + Count.zealots(), (int) (choke.width() * 1.7));
+        int available = AMath.inRange(3, blockers.size() + Count.zealots(), (int) (choke.width() * 1.7));
         return workersNeeded() - available;
     }
 

@@ -5,6 +5,7 @@ import atlantis.combat.micro.terran.tank.TerranTank;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AMath;
 
 public class SiegeTankRunCritical extends Manager {
     public SiegeTankRunCritical(AUnit unit) {
@@ -21,7 +22,7 @@ public class SiegeTankRunCritical extends Manager {
     }
 
     private boolean manyMeleeNear() {
-        double minDist = A.inRange(2, 3 + unit.woundPercent() / 30.0 - unit.friendsNear().count() / 7.0, 5);
+        double minDist = AMath.inRange(2, 3 + unit.woundPercent() / 30.0 - unit.friendsNear().count() / 7.0, 5);
         int minCount = unit.isWounded() ? 1 : 2;
 
         return unit.enemiesNear().groundUnits().havingWeapon().inRadius(minDist, unit).count() >= minCount;

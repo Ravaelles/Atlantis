@@ -7,6 +7,7 @@ import atlantis.map.position.Positions;
 import atlantis.map.region.ARegion;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.AMath;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -75,7 +76,7 @@ public class NearestWalkable {
         double currentRadius = minDist;
         Positions<APosition> positions = new Positions<>();
 
-        int smallStep = A.inRange(2,maxDist - minDist, 3);
+        int smallStep = AMath.inRange(2,maxDist - minDist, 3);
 
         while (currentRadius <= maxDist) {
             for (double dtx = -currentRadius; dtx <= currentRadius; dtx += smallStep) {

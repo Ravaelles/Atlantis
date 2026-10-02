@@ -12,6 +12,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import atlantis.util.AMath;
 import static atlantis.units.AUnitType.Terran_Factory;
 
 public class ProduceFactory {
@@ -97,7 +98,7 @@ public class ProduceFactory {
         if (A.canAffordWithReserved(160, 120)) {
             Selection factories = Select.ourOfType(Terran_Factory);
 
-            if (inProgress >= A.inRange(1, AGame.gas() / 150, 3)) return false;
+            if (inProgress >= AMath.inRange(1, AGame.gas() / 150, 3)) return false;
 
             int numberOfFactories = factories.size() + inProgress;
 

@@ -22,6 +22,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AMath;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceZealot {
@@ -236,9 +237,9 @@ public class ProduceZealot {
 
         double fromZealots = EnemyUnits.discovered().zealots().count() * 0.6;
 
-        if (A.hasGas(50)) fromZealots = A.inRange(2, fromZealots, 6);
+        if (A.hasGas(50)) fromZealots = AMath.inRange(2, fromZealots, 6);
 
-        return A.inRange(2, fromZealots, 9);
+        return AMath.inRange(2, fromZealots, 9);
     }
 
     private static double minZealotsVsTerran() {
@@ -259,8 +260,8 @@ public class ProduceZealot {
 
         double fromLings = EnemyUnits.discovered().zerglings().count() * 0.32;
 
-        if (A.hasGas(130)) fromLings = A.inRange(2, fromLings, 6);
+        if (A.hasGas(130)) fromLings = AMath.inRange(2, fromLings, 6);
 
-        return A.inRange(4, fromLings, 9);
+        return AMath.inRange(4, fromLings, 9);
     }
 }

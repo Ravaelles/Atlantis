@@ -12,6 +12,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
+import atlantis.util.AMath;
 import static atlantis.production.AbstractDynamicUnits.buildToHave;
 import static atlantis.units.AUnitType.*;
 
@@ -49,7 +50,7 @@ public class ProduceReavers {
         int resourcesBonus = A.canAfford(200, 200) ? 2 : 0;
 
         return
-            A.inRange(
+            AMath.inRange(
                 resourcesBonus,
                 (Decisions.isEnemyGoingAirAndWeAreNotPreparedEnough() ? 0 : (1 + A.supplyUsed() / 45)),
                 4 + resourcesBonus

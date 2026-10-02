@@ -3,6 +3,7 @@ package atlantis.units.buildings;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.units.select.Count;
+import atlantis.util.AMath;
 import atlantis.util.We;
 
 public class GasWorkersPerBuilding {
@@ -67,7 +68,7 @@ public class GasWorkersPerBuilding {
         }
 
         if (gas >= 380 && A.minerals() <= 280) {
-            return A.inRange(1, Count.workers() / 12, 3);
+            return AMath.inRange(1, Count.workers() / 12, 3);
         }
 
         int seconds = A.seconds();

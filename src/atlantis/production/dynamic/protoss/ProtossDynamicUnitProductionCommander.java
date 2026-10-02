@@ -13,6 +13,7 @@ import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueu
 import atlantis.production.dynamic.protoss.units.*;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.select.Count;
+import atlantis.util.AMath;
 import atlantis.util.HasReason;
 import atlantis.util.We;
 
@@ -35,7 +36,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         if (Army.strength() <= 130 && Count.ourCombatUnits() <= 20) return decision(true, "BattleProduceMargin");
 
         if (A.supplyUsed() >= 25) {
-            int reservedMinerals = A.inRange(0, ReservedResources.minerals(), 410);
+            int reservedMinerals = AMath.inRange(0, ReservedResources.minerals(), 410);
             int mineralsMargin = A.supplyUsed() < 40 ? 150 : 200;
 //            int reservedGas = ReservedResources.gas();
 //            int gasMargin = A.supplyUsed() < 40 ? 50 : 125;

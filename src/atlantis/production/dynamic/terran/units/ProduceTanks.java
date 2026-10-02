@@ -9,6 +9,7 @@ import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.AMath;
 
 public class ProduceTanks {
 
@@ -60,7 +61,7 @@ public class ProduceTanks {
         return ForceProduceUnit.forceProduce(AUnitType.Terran_Siege_Tank_Tank_Mode);
 //        return AddToQueue.maxAtATime(
 //            AUnitType.Terran_Siege_Tank_Tank_Mode,
-//            A.inRange(1, AGame.minerals() / 160, Count.ofType(AUnitType.Terran_Machine_Shop))
+//            AMath.inRange(1, AGame.minerals() / 160, Count.ofType(AUnitType.Terran_Machine_Shop))
 //        ) != null;
     }
 
