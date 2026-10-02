@@ -24,11 +24,46 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Test health
 
 - **#1** Triage the 11 pre-existing unit-test failures
-  (7× `ATargetingTest`, 2× `ProtossRetreatTest`, 2× `ProtossSmallRetreatTest`,
+  (6× `ATargetingTest`, 2× `ProtossRetreatTest`, 2× `ProtossSmallRetreatTest`,
   1× `ChokeTest.distToChokes`, see `DOCS/TESTING.md`). Decide per failure:
   fix production behaviour, fix the expectation deliberately, or pin as a
   known-broken expectation with a comment. Do not weaken assertions to make
   the suite green.
+- **#22** Triage the 45 failures in `tests.acceptance`, which
+  `scripts/run-tests.sh` never executed (it defaults to `--select-package
+  tests.unit`). Two harness bugs are already fixed (the `usingFake*` helpers
+  wiping the units under test; the clock field disagreeing with the mocked
+  `AGame.now()`); the remaining classes, largest first: `CombatEvaluatorTest`
+  (7–8), `RequestBuildingNearTest` (3–5), `Queue3Test` (2),
+  `AvoidCombatBuildingsTest` (2), and 15 classes with 1 each (full list per
+  class in the table produced by `DOCS/TESTING.md`'s random-order command).
+  Use the same method as `AUnitTest`: measure the production behaviour with a
+  throwaway probe test, then decide whether the test or the code is wrong.
+- **#23** Four acceptance classes are still order-dependent: the failure total
+  stays 45 across random-order seeds, but the *set* moves between
+  `CombatEvaluatorTest`, `RequestBuildingNearTest`, `ManagerTest` and
+  `starengine.DragoonsVsDragoonsTest`. Find the static that leaks between
+  methods (candidates: per-unit `cacheInt`/`cache`, `Select` micro-caches,
+  `Squad`/`AllSquads`, `AliveEnemies`, `Queue`) and add it to
+  `ClearAllCaches.clearAll()`.
+- **#24** `AUnit.shieldPercent()` is `100 * shields / maxShields` with no zero
+  guard, so it returns `NaN` for every unit without shields (Terran, buildings
+  without upgrades). Production callers check `maxShields()` first, so it is
+  harmless today, but a naive use silently poisons comparisons. Decide the
+  contract (100%? 0%? throw?) and fix it; `AUnitTest.shieldsOnAUnitThatHasNone`
+  pins the current behaviour on purpose.
+- **#25** `scripts/run-tests.sh` defaults to `--select-package tests.unit`,
+  which hides the acceptance package. Either make the default cover everything
+  and accept a red run with a documented baseline, or keep the split but add
+  `scripts/run-acceptance-tests.sh` so the second scope is one command instead
+  of a flag someone has to know about.
+- **#26** Rename or document `isOtherUnitFacingThisUnit` /
+  `isOtherUnitShowingBackToUs`. Both ask about the *other* unit's angle but
+  against different reference directions, so they are two questions
+  ("facing us?" within 1.1 rad, "showing its back?" within 0.95 rad). The
+  names read as one question with one answer, which is how the old
+  `AUnitTest.facingLogic` ended up with guessed angles. If they are renamed,
+  update all 46 call sites at once (production + tests).
 
 ## Stage E — read model (remaining)
 

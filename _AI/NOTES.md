@@ -12,6 +12,28 @@ hard-won operational facts that do not belong anywhere else.
 - JUnit class execution order is not source order. New test classes can
   shift it.
 
+## The acceptance package was never run
+
+- `scripts/run-tests.sh` defaults to `--select-package tests.unit`.
+  `tests.acceptance` (~120 tests: world, squads, commanders) was therefore not
+  executed for the whole architecture effort - and it held 44 failures,
+  including tests whose assertions could not fail (`cooldownPercent()` was a
+  constant 100 for fake units) and tests that only passed because of leftovers
+  from earlier tests.
+- Two harness bugs explained 10 of them:
+  1. `usingFakeOursEnemiesAndNeutral()` called `setUp()` a second time; `setUp()`
+     ends in `FakeUnit.clearCache()`, which nulls position/hp/id of every
+     FakeUnit made so far - i.e. it destroyed the units under test.
+  2. `setUp()` reset the clock only for non-world tests, so the public `A.now`
+     field left by the previous test disagreed with the mocked `AGame.now()`.
+     Every "N frames ago" assertion was off by one depending on test order.
+- Lesson: a test that has never been executed is not a test. When adding
+  infrastructure, run the widest scope at least once, and when a class is
+  "fixed", run it alone *and* inside the full package *and* with random order.
+- `FakeUnit.clearCache()` is still destructive by design (it also flips ids).
+  Any new helper that touches unit state after a test built its units must not
+  call `setUp()`.
+
 ## Mockito static-mock leak (fully fixed)
 
 - World-based tests used to leave `Mockito.mockStatic(BaseSelect.class)`
