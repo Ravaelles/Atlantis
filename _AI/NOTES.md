@@ -12,19 +12,26 @@ hard-won operational facts that do not belong anywhere else.
 - JUnit class execution order is not source order. New test classes can
   shift it.
 
-## Mockito static-mock leak (fixed)
+## Mockito static-mock leak (fully fixed)
 
 - World-based tests used to leave `Mockito.mockStatic(BaseSelect.class)`
-  registered: `tearDown → cleanUp` only *resets* `MockedStatic` fields, it
-  does not *close* them. Both world entry points (`createWorld`,
-  `usingFakeOursEnemiesAndNeutral`) now close the mock on exit.
-- There are **two** `baseSelect` static fields
-  (`AbstractTestWithWorld` and `AbstractWorldCreatingTest`); treat both as
-  suspect when debugging mock issues.
-- `BaseSelectTest.neutralUnits` freeloaded on the leak and now owns its mock
-  via try-with-resources.
-- `MockEverything` statics (`aGame` etc.) are the remaining unclosed suspects
-  if an order-dependent failure ever returns.
+  registered. Root cause was in `AbstractTestWithUnits.cleanUp()`, reached from
+  `@AfterEach`: it called `MockedStatic.reset()`, which clears stubs but keeps
+  the mock **registered in the thread**. Any test that failed inside
+  `createWorld` (assertion error before the closing line) therefore leaked the
+  mock into whatever ran next - which is why failures looked order-dependent.
+- `cleanUp()` now `close()`s and nulls the field (reflection loop over public
+  `MockedStatic` fields). Both world entry points (`createWorld`,
+  `usingFakeOursEnemiesAndNeutral`) also close on the happy path, and
+  `BaseSelectTest.neutralUnits` owns its mock via try-with-resources.
+- Consequence: the suite is order-independent again - 11 failures are the
+  documented pre-existing ones, with or without a failing world test in front
+  of `TestWithUnits`.
+- Rule of thumb: `@AfterEach` owns mock lifecycle. A `finally`/close at the end
+  of a happy path is not enough, because the unhappy path is exactly when the
+  next test needs the thread back.
+- `MockEverything` statics (`aGame` etc.) are still unclosed suspects if an
+  order-dependent failure ever returns.
 
 ## ArchUnit store mechanics (observed, vendored version)
 

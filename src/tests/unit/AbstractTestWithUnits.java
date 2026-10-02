@@ -36,6 +36,7 @@ import tests.fakes.FakeUnit;
 import tests.unit.helpers.ClearAllCaches;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
@@ -116,13 +117,24 @@ public class AbstractTestWithUnits extends UnitTest {
         AbstractPositionFinder._STATUS = "Init";
         ConstructionRequests.constructions.clear();
 
-        // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK
+        // Close static mocks - PROPERTIES HAVE TO BE PUBLIC FOR THIS TO WORK.
+        // close(), not reset(): reset only clears stubs and leaves the mock
+        // registered in the thread, so any test that failed inside createWorld
+        // (assertion error before the closing line was reached) leaked it into
+        // whatever ran next - which is why failures looked order-dependent.
+        // This runs from @AfterEach, so it happens even when the test threw.
         for (Field field : getClass().getFields()) {
             if (field.getType().toString().contains("MockedStatic")) {
                 try {
                     Object object = field.get(this);
                     if (object != null) {
-                        ((MockedStatic) object).reset();
+                        try {
+                            ((MockedStatic) object).close();
+                        } finally {
+                            // Leave no closed mock behind: the helpers check
+                            // for null before registering their own.
+                            field.set(Modifier.isStatic(field.getModifiers()) ? null : this, null);
+                        }
                     }
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException("Something went wrong here");
