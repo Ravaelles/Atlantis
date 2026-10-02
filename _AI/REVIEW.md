@@ -730,8 +730,15 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `_lastUnderAttack` and other classes' own fields untouched). Suite 70/81
   with identical 11 pre-existing failures; ArchUnit 7/7. Verified by
   `GAME_A8A66EAC` (fresh Java 8 jar, factory trees + sink + UnitState live):
-  natural defeat, no exceptions. Next: replacing the static registry,
-  `FoggedUnit` projection.
+  natural defeat, no exceptions.
+- **Stage E — registry: DONE.** `AUnit`'s static `instances` map replaced by
+  `core.world.UnitRegistry` (instantiable, engine-free testable) with
+  `Worlds` as the transitional production holder; all `createFrom`/`getById`/
+  `forgetUnitEntirely` sites rewired, `AUnit(Unit)` widened for the registry.
+  New `UnitRegistryTest` (4 tests). Suite 74/85, same 11 failures; ArchUnit
+  7/7, no baseline change. Verified by `GAME_5FFE12D5` (fresh jar, registry
+  live): natural defeat, no exceptions. Remaining for E: `FoggedUnit`
+  projection.
 - **Deferred defect #1 — Cache.getIfValid: FIXED + VERIFIED.** Stale-invalid
   units/focus points are now dropped and recomputed; validity is a
   `ValidityCheck` port (no new ArchUnit violations, 4 stale entries cleaned).
