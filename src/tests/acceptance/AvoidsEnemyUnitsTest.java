@@ -1,70 +1,85 @@
 package tests.acceptance;
 
-import atlantis.combat.CombatUnitManager;
-import atlantis.combat.squad.squads.alpha.Alpha;
-import atlantis.game.A;
+import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
 import atlantis.units.AUnitType;
+import atlantis.units.Units;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Which enemies a unit wants to avoid.
+ *
+ * <p>The previous version of this test drove {@code CombatUnitManager} and
+ * expected a marine to keep 1.1+ tiles away from a zealot. That behaviour is no
+ * longer in the manager chain - the avoid managers were commented out of
+ * {@code TerranCombatManagerMediumPriority}, and avoidance is now driven by
+ * whoever assembles the enemy list ({@code DoAvoidEnemies} takes its
+ * {@code Units} as a constructor argument). The test therefore drives the seam
+ * that is actually live: {@link EnemyUnitsToAvoid}.</p>
+ */
 public class AvoidsEnemyUnitsTest extends AbstractTestWithWorld {
-    private FakeUnit zealot;
 
-    /**
-     * With buildings there is a problem - JFAP returns "no danger" status
-     * if the unit is 0.1 tiles outside of range of a Sunken Colony, but the
-     * eval gets drastically worse once within range.
-     */
     @Test
-    public void marinesAreAvoidingZealots() {
-        createWorld(70, () -> {
-//            Select.our().print();
-//            Select.enemy().print();
+    public void aZealotNextToOurMarineIsSomethingToAvoid() {
+        FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 11);
 
-            FakeUnit unit = ourFirst;
-            unit.forceSetSquad(Alpha.get());
-            (new CombatUnitManager(unit)).invokeFrom(this);
+        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+            Units toAvoid = new EnemyUnitsToAvoid(marine).unitsToAvoid(false);
 
-            double distToZealot = distToNearestEnemy(unit);
-            boolean isSafe = distToZealot > 1.1;
-//            boolean alwaysShow = false;
-            boolean alwaysShow = true;
-
-            if (!isSafe || alwaysShow) {
-                System.err.println(A.now()
-                    + " -       " + unit.tooltip()
-                    + "\n   Manager : " + unit.manager()
-                    + "\n   Managers: " + unit.managerLogs().toString()
-                    + "\n   Command : " + unit.lastCommand()
-                    + "\n   tooltip: " + unit.tooltip() + " / " + unit.lastCommand()
-                    + ",\n   tx:" + unit.txWithPrecision() + ", dist_to_zealot:" + A.dist(distToZealot)
-                    + (unit.target == null ? "" : ",\n   dist_to_target:" + A.dist(unit, unit.target))
-                    + (unit.targetPosition == null ? "" : ",\n   target_position:" + unit.targetPosition)
-                    + "\n   marine eval = " + unit.eval()
-                    + "\n   zealot eval = " + zealot.eval()
-                );
-                System.err.println("_______________________________________");
-            }
-
-            assertTrue(isSafe);
+            assertEquals(1, toAvoid.size(), "a melee zealot next to us is a threat");
+            assertEquals(zealot, toAvoid.first());
         });
     }
 
-    // =========================================================
+    @Test
+    public void aZealotOutOfReachIsNotEvenAPotentialEnemy() {
+        FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 16);
 
+        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+            // potentialEnemies() keeps only enemies that can reach us within a
+            // 5 tile margin, and a zealot is melee: 6 tiles away it is out of
+            // reach, so it never enters the list (measured, not assumed).
+            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+                "6 tiles is out of a zealot's reach, even with the 5 tile margin");
+            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size());
+        });
+    }
+
+    @Test
+    public void aZealotWithinTheMarginIsPotentialButNotDangerouslyClose() {
+        FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 14);
+
+        createWorld(1, fakeOurs(marine), fakeEnemies(zealot), () -> {
+            assertEquals(1, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+                "4 tiles is inside the 5 tile reach margin");
+            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(true).size(),
+                "but not close enough to be 'dangerously close'");
+        });
+    }
+
+    @Test
+    public void aUnitThatCannotAttackUsIsNotAPotentialEnemy() {
+        FakeUnit marine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit overlord = fake(AUnitType.Zerg_Overlord, 11);
+
+        createWorld(1, fakeOurs(marine), fakeEnemies(overlord), () -> {
+            assertEquals(0, new EnemyUnitsToAvoid(marine).unitsToAvoid(false).size(),
+                "an overlord cannot shoot back");
+        });
+    }
+
+    @Override
     protected FakeUnit[] generateOur() {
-        return fakeOurs(
-            fake(AUnitType.Terran_Marine, 10)
-        );
+        return fakeOurs(fake(AUnitType.Terran_Marine, 10));
     }
 
+    @Override
     protected FakeUnit[] generateEnemies() {
-        return fakeEnemies(
-            zealot = fake(AUnitType.Protoss_Zealot, 14),
-            fake(AUnitType.Protoss_Zealot, 18)
-        );
+        return fakeEnemies(fake(AUnitType.Protoss_Zealot, 14));
     }
-
 }

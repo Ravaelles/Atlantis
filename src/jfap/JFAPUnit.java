@@ -101,8 +101,14 @@ public class JFAPUnit implements Comparable<JFAPUnit> {
         if (unitType == AUnitType.Protoss_Carrier) {
             AUnit carrier = u;
             groundDamage = UnitType.Protoss_Interceptor.groundWeapon().damageAmount();
-            if (u != null && u.isVisibleUnitOnMap()) {
-                final int interceptorCount = carrier.u().getInterceptorCount();
+            // The guard used to check the Atlantis wrapper (u != null) and then
+            // dereference the *engine* unit (carrier.u()), which is null for
+            // FakeUnit - and JfapCombatEvaluator.addFriends admits fakes on
+            // purpose. In a real game the two are equivalent, hence this NPE only
+            // ever fired in tests; now both are checked.
+            bwapi.Unit engineUnit = carrier == null ? null : carrier.u();
+            if (engineUnit != null && u.isVisibleUnitOnMap()) {
+                final int interceptorCount = engineUnit.getInterceptorCount();
                 if (interceptorCount > 0) groundCooldown = Math.round(37.0f / interceptorCount);
                 else {
                     groundDamage = 0;
