@@ -109,7 +109,6 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Housekeeping
 
-- **#15** Rebuild `bots/AtlantisP/AI/Atlantis.jar` and
-  `bots/AtlantisT/AI/Atlantis.jar` with `scripts/build-bot-jar.sh` and
-  re-verify a real game (`scbw.play ... --headless`) after the current
-  backlog round, so the deployed jars match the current source.
+- **#15** Rebuild the deployed bot jars. Done for the `A`-split round
+  (`GAME_5AC1C438`, `GAME_5C6F3544`); repeat after the next backlog round so
+  `bots/AtlantisP` and `bots/AtlantisT` never lag behind the source.

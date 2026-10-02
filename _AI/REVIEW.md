@@ -756,6 +756,22 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   `ValidityCheck` port (no new ArchUnit violations, 4 stale entries cleaned).
   All 28 call sites audited for null-tolerance. Verified by `GAME_75B21379`
   (see below): no new crashes, natural game end.
+- **Stage H — `A` split (first pass): DONE.** The god utility went from 163
+  public static methods / 1688 lines to **43 / 414**, with collaborators per
+  concern: `atlantis.util.AFile` (file/path I/O), `AGui` (the only 4 popups
+  that had callers — `A` no longer imports Swing/AWT at all), `AMath` (ranges
+  and statistics), `atlantis.game.ARandom` (stays in `game`: it shares the
+  mutable `A.random` stream), `atlantis.util.AConsole` (console writers, 140
+  files rewired). 56 methods with **zero** callers were deleted instead of
+  relocated, among them `formatDecimalPlaces`, which formatted the wrong
+  argument — dead code nobody noticed. Each extraction **shrank** the frozen
+  ArchUnit store (−6 for `AFile`, −7 for `AConsole`, incl. a real fix in
+  `BaseManager`, which now prints the failing exception itself instead of
+  dumping the current thread) and never grew it. Verified in real games:
+  `GAME_5AC1C438` (Protoss) and `GAME_5C6F3544` (Terran) vs Steamhammer —
+  natural defeat, `is_crashed: false`, zero exceptions in `bot.log`.
+  Remaining in `A`: resource/supply facades (~1400 call sites), clock
+  arithmetic and race predicates; see `_AI/NEXT.md` #9.
 - **Headless build & tests: DONE.** Whole project compiles from source and the
   unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
   pre-existing failures are listed there rather than hidden.
