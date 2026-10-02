@@ -21,7 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class FramePipelineTest {
 
-    private static final List<String> EXPECTED_ORDER = List.of(
+    // Arrays.asList, not List.of: this test must keep compiling under --release 8
+    // (the game jar targets Java 8), and List.of is Java 9+.
+    private static final List<String> EXPECTED_ORDER = Arrays.asList(
         "BulletsCommander",
         "UnitStateCommander",
         "SpecialActionsCommander",

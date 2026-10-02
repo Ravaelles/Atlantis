@@ -6,11 +6,13 @@
 # in the past (see _AI/REVIEW.md Stage C notes):
 #   1. Every source must be compiled (a stale file list once skipped new
 #      classes, shipping a franken-jar) -> the source list is regenerated
-#      with find on every run, minus the two files that cannot compile
+#      with find on every run, minus the one file that cannot compile
 #      to Java 8 (see below).
 #   2. Bytecode must be Java 8 (the container runs Corretto 8) -> --release 8.
-#      Production code must stay Java 8 compatible; tests are allowed newer
-#      APIs, which is why FramePipelineTest is excluded here.
+#      That includes tests: the whole tree is compiled in one javac
+#      invocation, so a test using a Java 9+ API (e.g. List.of) breaks the
+#      game jar. The only exclusion is ATargetingTest, which needs the Nashorn
+#      engine (gone since JDK 15).
 #   3. No duplicate entries (zip appends shadow old classes) -> fresh zip.
 #   4. Layering: freshly compiled classes win; JBWAPI-Rav's bwapi/bwem win
 #      over the stale ones frozen in the old jar (classpath shadowing
@@ -30,7 +32,6 @@ trap 'rm -rf "$WORK"' EXIT
 
 find src -name "*.java" \
     | grep -v "src/tests/unit/ATargetingTest.java" \
-    | grep -v "src/tests/architecture/FramePipelineTest.java" \
     | sort > "$WORK/sources.txt"
 
 CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"

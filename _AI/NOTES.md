@@ -53,6 +53,18 @@ hard-won operational facts that do not belong anywhere else.
   could have been a rename of 6 stored violations; putting the new class in
   `atlantis.util` instead deleted those 6 baseline entries for real.
 
+## Java 8 target applies to tests too
+
+- The game jar is built with a single `javac --release 8` over the **whole**
+  tree, tests included. A test using a Java 9+ API therefore breaks the game
+  build, not just itself.
+- This bit us with `FramePipelineTest`: `List.of(...)` (Java 9+) had to become
+  `Arrays.asList(...)`. Prefer Java 8 APIs in tests — `Arrays.asList`,
+  `Collections.unmodifiableList`, anonymous classes over lambdas where the
+  target matters.
+- Only `ATargetingTest` is excluded from the jar build (needs Nashorn, removed
+  in JDK 15).
+
 ## Fat-jar recipe (game runs)
 
 - Canonical: `scripts/build-bot-jar.sh <base-jar> <out-jar>`.
