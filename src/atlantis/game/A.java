@@ -2,20 +2,16 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.decisions.Decision;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.game.player.Enemy;
-import atlantis.util.AGui;
 import bwapi.Game;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
@@ -108,33 +104,6 @@ public class A {
         return min + random.nextInt(max - min + 1);
     }
 
-    /**
-     * @param number        number that you want to format
-     * @param decimalPlaces how many digits will be after '.'
-     * @return String representing a number with given decimal places e.g. (3.1415, 2) will give "3.14"
-     */
-    public static String formatDecimalPlaces(double number, int decimalPlaces) {
-        String zeros = "";
-        for (int i = 0; i < decimalPlaces; i++) {
-            zeros += "0";
-        }
-        return new DecimalFormat("0." + zeros).format(decimalPlaces).replace(',', '.');
-    }
-
-    /**
-     * @return true if the string has at least one character
-     */
-    public static boolean isStringNotEmpty(String string) {
-        return string != null && !string.isEmpty() && string.charAt(0) != ' ';
-    }
-
-
-    /**
-     * @return string like "2011-09-03"
-     */
-    public static String getCurrentDateInFormatYMD() {
-        return dateYear() + "-" + dateMonth() + "-" + dateDay();
-    }
 
     /**
      * @return string like "2011-09-03"
@@ -183,73 +152,6 @@ public class A {
         return minutes;
     }
 
-    /**
-     * @return string like "2011-09-03"
-     */
-    public static String getDateInFormatYMD(Calendar date) {
-        String month = date.get(Calendar.MONTH) + "";
-        String day = date.get(Calendar.DAY_OF_MONTH) + "";
-
-        if (month.length() < 2) {
-            month = "0" + month;
-        }
-        if (day.length() < 2) {
-            day = "0" + day;
-        }
-
-        String text = date.get(Calendar.YEAR) + "-" + month + "-" + day;
-        String result = "";
-        for (String part : A.implodeList(text, '-')) {
-            if (result.length() > 0) {
-                result += ".";
-            }
-            if (part.length() < 2) {
-                result += "0" + part;
-            }
-            else {
-                result += part;
-            }
-        }
-        return result;
-    }
-
-    /**
-     * @return string without last character or empty string if there was one or less characters.
-     */
-    public static String removeLastChar(String inputString) {
-        if (inputString.length() > 1) {
-            return inputString.substring(0, inputString.length() - 1);
-        }
-        else {
-            return "";
-        }
-    }
-
-    /**
-     * @return today's date.
-     */
-    public static GregorianCalendar getToday() {
-        return new GregorianCalendar();
-    }
-
-    /**
-     * @return string like "2011-03-07", based on today's date.
-     */
-    public static String getTodayAsString() {
-        GregorianCalendar today = new GregorianCalendar();
-        return today.get(GregorianCalendar.YEAR) + "-" + today.get(GregorianCalendar.MONTH) + "-"
-            + today.get(GregorianCalendar.DAY_OF_MONTH);
-    }
-
-    /**
-     * @return string like "2011-03-07", based on yesterday's date.
-     */
-    public static String getYesterdayAsString() {
-        GregorianCalendar yesterday = new GregorianCalendar();
-        yesterday.add(GregorianCalendar.DAY_OF_MONTH, -1);
-        return yesterday.get(GregorianCalendar.YEAR) + "-" + yesterday.get(GregorianCalendar.MONTH) + "-"
-            + yesterday.get(GregorianCalendar.DAY_OF_MONTH);
-    }
 
     /**
      * Returns string like 21:12:59
@@ -265,58 +167,6 @@ public class A {
             + ":" + (seconds <= 9 ? "0" + seconds : seconds);
     }
 
-    /**
-     * Returns string like 2011-06-09 21:20:59
-     */
-    public static String getDateAndTime() {
-        return A.getTodayAsString() + " " + A.getCurrentTimeAsString();
-    }
-
-    /**
-     * Returns string like 21-49
-     */
-    public static String hourMin() {
-        GregorianCalendar today = new GregorianCalendar();
-
-        String hour = today.get(GregorianCalendar.HOUR_OF_DAY) + "";
-        int minutes = today.get(GregorianCalendar.MINUTE);
-
-        return (hour.length() < 2 ? ("0" + hour) : hour)
-            + "-" + (minutes <= 9 ? "0" + minutes : minutes);
-    }
-
-    /**
-     * Returns list of strings made by splitting string <b>string</b> wherever c occurrs
-     */
-    public static ArrayList<String> implodeList(String string, char c) {
-        ArrayList<String> result = new ArrayList<String>();
-        int pointer = 0;
-        while (pointer < string.length()) {
-            int indexOfChar = string.indexOf(c);
-            if (indexOfChar > -1) {
-                String cut = string.substring(0, indexOfChar);
-                result.add(cut);
-                string = string.substring(indexOfChar + 1);
-                pointer = 0;
-            }
-            else {
-                pointer++;
-            }
-        }
-        result.add(string);
-        return result;
-    }
-
-    /**
-     * Returns list of strings made by merging strings in the list with char.
-     */
-    public static String explodeList(ArrayList<String> list, char character) {
-        String result = "";
-        for (String element : list) {
-            result += element + character;
-        }
-        return result.substring(0, result.length() - 1);
-    }
 
     /**
      * Returns random element of given list.
@@ -345,25 +195,6 @@ public class A {
 
 
     /**
-     * Returns something like: 1d 3h 2m 53s
-     */
-    public static String convertSecondsToDisplayableFormat(int numberOfSeconds) {
-        if (numberOfSeconds < 60) {
-            return numberOfSeconds + "s";
-        }
-        else if (numberOfSeconds < 3600) {
-            return numberOfSeconds / 60 + "m " + convertSecondsToDisplayableFormat(numberOfSeconds % 60);
-        }
-        else if (numberOfSeconds < 86400) {
-            return numberOfSeconds / 3600 + "h " + convertSecondsToDisplayableFormat(numberOfSeconds % 3600);
-        }
-        else {
-            return numberOfSeconds / 86400 + "d " + convertSecondsToDisplayableFormat(numberOfSeconds % 86400);
-        }
-    }
-
-
-    /**
      * Returns map containing number of occurences of each element in given collection.
      */
     public static TreeMap<String, Integer> getOccurenceMap(Collection<String> collection) {
@@ -379,94 +210,6 @@ public class A {
         return occurences;
     }
 
-    /**
-     * Returns element occurring highest amount of times in given collection.
-     */
-    public static String getMostOccurringElement(Collection<String> collection) {
-        TreeMap<String, Integer> occurences = getOccurenceMap(collection);
-        int max = 0;
-        for (Integer occurrences : occurences.values()) {
-            if (occurrences > max) {
-                max = occurrences;
-            }
-        }
-
-        for (String key : occurences.keySet()) {
-            if (occurences.get(key) == max) {
-                return key;
-            }
-        }
-        return null;
-    }
-
-
-    /**
-     * Returns value that is not less than min and not greater than max.
-     */
-    public static double forceValueInRange(double value, int min, int max) {
-        if (value < min) {
-            value = min;
-        }
-        if (value > max) {
-            value = max;
-        }
-        return value;
-    }
-
-    /**
-     * Returns value that is not less than min and not greater than max.
-     */
-    public static int forceValueInRange(int value, int min, int max) {
-        if (value < min) {
-            value = min;
-        }
-        if (value > max) {
-            value = max;
-        }
-        return value;
-    }
-
-    /**
-     *
-     */
-    public static int daysBetween(Calendar c1, Calendar c2) {
-        return (int) Math.abs((c1.getTimeInMillis() - c2.getTimeInMillis()) / 3600000 / 24);
-    }
-
-
-    /**
-     *
-     */
-    public static void displayArray(Object[] array) {
-        A.println("### START OF LIST");
-        for (Object value : array) {
-            System.out.print(value + "/");
-            A.println();
-        }
-        A.println("### END OF LIST");
-    }
-
-
-    /**
-     * Returns String value, according to the relative comparison of the provided value to the possible range
-     * e.g. we can assign letters from A to Z for numbers 1-10.
-     */
-    public static String assignStringForValue(double value, double max, double min, String[] strings) {
-        value -= min;
-        max -= min;
-        min = 0;
-
-        int ranges = strings.length;
-        int i;
-        for (i = 1; i < ranges; i++) {
-            if (value > (max * (ranges - i) / ranges)) {
-                return strings[strings.length - i];
-            }
-            else {
-            }
-        }
-        return strings[0];
-    }
 
     /**
      *
@@ -502,144 +245,6 @@ public class A {
         return result;
     }
 
-    /**
-     * Returns median of given double list.
-     */
-    public static double median(Collection<Double> list) {
-        return median(list, true);
-    }
-
-    /**
-     * Returns median of given double list.
-     *
-     * @param mathematicMedian If true it will return normal median. If it is set to false and number of
-     *                         elements is even the center (but lesser) element will be returned e.g. for [1 2 3 4] it would return 2.
-     */
-    public static double median(Collection<Double> list, boolean mathematicMedian) {
-        if (list.isEmpty()) {
-            AGui.displayMessage("List for computing a median is empty!");
-            return -1;
-        }
-        if (list.size() == 1) {
-            return list.iterator().next();
-        }
-
-        ArrayList<Double> sorted = new ArrayList<Double>();
-        sorted.addAll(list);
-        Collections.sort(sorted);
-
-        int size = sorted.size();
-        if (size % 2 == 0) {
-            return sorted.get(sorted.size() / 2);
-        }
-        else if (mathematicMedian) {
-            return (sorted.get(sorted.size() / 2) + sorted.get(sorted.size() / 2 + 1)) / 2;
-        }
-        else {
-            return (sorted.get(sorted.size() / 2));
-        }
-    }
-
-    /**
-     * Returns index of option chosen according to the option weights. Higher the weight is, greater the
-     * chance for the option to be chosen.
-     */
-    public static int chooseOptionRandomlyWithWeights(boolean areValuesNormalizedToOne, double... weights) {
-        double[] normalized;
-
-        if (!areValuesNormalizedToOne) {
-            normalized = new double[weights.length];
-
-            double total = 0;
-            for (double value : weights) {
-                total += value;
-            }
-
-            int counter = 0;
-            for (double value : weights) {
-                normalized[counter] = value / total;
-                counter++;
-            }
-        }
-        else {
-            normalized = weights;
-        }
-
-        double randomValue = random.nextDouble();
-        int index = 0;
-        for (double weight : normalized) {
-            if (randomValue < weight) {
-                return index;
-            }
-            else {
-                randomValue -= weight;
-                index++;
-            }
-        }
-
-        String log = "";
-        for (double d : weights) {
-            log += d + " / ";
-        }
-        AGui.displayError("chooseOptionRandomlyWithWeights:\n" + log);
-        return -1;
-    }
-
-    /**
-     *
-     */
-    public static HashMap<Object, Double> normalizeTo(Map<?, Double> map, int toValue) {
-        HashMap<Object, Double> normalized = new HashMap<Object, Double>();
-
-        double total = 0;
-        for (Iterator<Double> it = map.values().iterator(); it.hasNext(); ) {
-            double value = it.next();
-            total += value;
-        }
-
-        for (Iterator<? extends Object> it = map.keySet().iterator(); it.hasNext(); ) {
-            Object key = it.next();
-            normalized.put(key, map.get(key) / total);
-        }
-
-        return normalized;
-    }
-
-    /**
-     * Returns index-th element of the given set or null if there's no element "at" given index.
-     *
-     * @return
-     */
-    public static Object getSetElement(Set<?> set, int index) {
-        int counter = 0;
-        for (Object object : set) {
-            if (counter++ == index) {
-                return object;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the first key from the given map or null if map is empty.
-     */
-    public static Object getFirstMapElement(Map<?, ?> map) {
-        for (Object object : map.keySet()) {
-            return object;
-        }
-        return null;
-    }
-
-    public static int getMaxElement(Collection<Integer> collection) {
-        int max = -9999999;
-        for (int number : collection) {
-            if (max < number) {
-                max = number;
-            }
-        }
-        return max;
-    }
-
 
     public static int countSubstrings(String str, String subStr) {
         return (str.length() - str.replaceAll(Pattern.quote(subStr), "").length()) / subStr.length();
@@ -664,9 +269,6 @@ public class A {
         return AGame.now();
     }
 
-    public static String nowString() {
-        return "@" + AGame.now();
-    }
 
     public static int seconds() {
         return AGame.timeSeconds();
@@ -680,43 +282,11 @@ public class A {
         return (A.now() - frame) / 30.0;
     }
 
-    public static boolean atMostFramesAgo(int frame, int maxFramesAgo) {
-        return A.ago(frame) <= maxFramesAgo;
-    }
-
-    public static boolean atLestFramesAgo(int frame, int maxFramesAgo) {
-        return A.ago(frame) <= maxFramesAgo;
-    }
 
     public static boolean everyNthGameFrame(int n) {
         return A.now() % n == 0;
     }
 
-    public static double inRange(double min, double value, double max) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
-
-    public static int inRange(int min, int value, int max) {
-        if (value < min) {
-            return min;
-        }
-        if (value > max) {
-            return max;
-        }
-        return value;
-    }
-
-    public static boolean isInRange(int min, int value, int max) {
-        if (value < min) return false;
-        if (value > max) return false;
-        return true;
-    }
 
     public static boolean isUms() {
         return AGame.isUms();
@@ -765,9 +335,6 @@ public class A {
         return AGame.supplyUsed() >= min;
     }
 
-    public static boolean supplyAtLeast(int minSupply) {
-        return AGame.supplyUsed() >= minSupply;
-    }
 
     public static int resourcesBalance() {
         return AGame.killsLossesResourceBalance();
@@ -777,9 +344,6 @@ public class A {
         return AGame.supplyFree() >= supplyNeeded;
     }
 
-    public static AUnit firstElement(List<AUnit> coll) {
-        return coll.isEmpty() ? null : coll.get(0);
-    }
 
     public static boolean hasMinerals(int minerals) {
         return A.minerals() >= minerals;
@@ -828,11 +392,6 @@ public class A {
         return true;
     }
 
-    public static boolean printAndReturnTrue(String text) {
-        System.err.println(text);
-        return true;
-    }
-
 
     public static void sleep(int ms) {
         try {
@@ -845,10 +404,6 @@ public class A {
 
     public static int reservedMinerals() {
         return ReservedResources.minerals();
-    }
-
-    public static int reservedGas() {
-        return ReservedResources.gas();
     }
 
 
@@ -1004,41 +559,5 @@ public class A {
         int seconds = A.s % 60;
 
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
-    }
-
-
-    public static String mapToJson(Map<String, String> mapOfStrings) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{");
-        Iterator<Map.Entry<String, String>> it = mapOfStrings.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, String> entry = it.next();
-            sb.append("\"")
-              .append(entry.getKey().replace("\"", "\\\""))
-              .append("\":\"")
-              .append(entry.getValue().replace("\"", "\\\""))
-              .append("\"");
-            if (it.hasNext()) {
-                sb.append(",");
-            }
-        }
-        sb.append("}");
-        return sb.toString();
-    }
-
-
-    /**
-     * Returns value that gradually changes from minValue to maxValue, according to paramValue position
-     * between minParamValue and maxParamValue.
-     */
-    public static double gradual(
-        double paramValue,
-        double minParamValue, double maxParamValue,
-        double minValue, double maxValue
-    ) {
-        if (paramValue <= minParamValue) return minValue;
-        if (paramValue >= maxParamValue) return maxValue;
-        double ratio = (paramValue - minParamValue) / (maxParamValue - minParamValue);
-        return minValue + ratio * (maxValue - minValue);
     }
 }
