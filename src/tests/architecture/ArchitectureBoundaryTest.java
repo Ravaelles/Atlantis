@@ -140,4 +140,18 @@ public class ArchitectureBoundaryTest {
 
         FreezingArchRule.freeze(rule).check(ATLANTIS);
     }
+
+    /**
+     * The application layer must not touch the engine directly; it goes through
+     * ports/adapters (ADR 0001).
+     */
+    @Test
+    void applicationMustNotDependOnEngine() {
+        ArchRule rule = noClasses()
+            .that().resideInAPackage("atlantis.application..")
+            .should().dependOnClassesThat().resideInAPackage("bwapi..")
+            .because("application talks to the engine only through ports (ADR 0001)");
+
+        FreezingArchRule.freeze(rule).check(ATLANTIS);
+    }
 }

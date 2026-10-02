@@ -8,7 +8,6 @@ Method <atlantis.architecture.BaseCommander.initializeCommanderInstances()> call
 Method <atlantis.architecture.BaseCommander.instantiateCommander(java.lang.Class, atlantis.architecture.Commander)> calls method <atlantis.game.A.printStackTrace(java.lang.String)> in (BaseCommander.java:51)
 Method <atlantis.architecture.BaseCommander.instantiateCommander(java.lang.Class, atlantis.architecture.Commander)> calls method <atlantis.game.A.printStackTrace(java.lang.String)> in (BaseCommander.java:56)
 Method <atlantis.architecture.BaseCommander.instantiateCommander(java.lang.Class, atlantis.architecture.Commander)> calls method <atlantis.game.AGame.exit()> in (BaseCommander.java:59)
-Method <atlantis.architecture.BaseManager.hashCode()> calls method <atlantis.units.AUnit.id()> in (BaseManager.java:76)
 Method <atlantis.architecture.BaseManager.instantiateManager(java.lang.Class)> calls method <atlantis.game.A.printStackTrace(java.lang.String)> in (BaseManager.java:55)
 Method <atlantis.architecture.BaseManager.instantiateManager(java.lang.Class)> calls method <atlantis.game.A.quit()> in (BaseManager.java:60)
 Method <atlantis.architecture.BaseManager.instantiateManager(java.lang.Class)> references class object <atlantis.units.AUnit> in (BaseManager.java:47)

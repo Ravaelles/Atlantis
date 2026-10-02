@@ -73,7 +73,10 @@ public abstract class BaseManager {
 
     @Override
     public int hashCode() {
-        return (unit.id() + "," + getClass()).hashCode();
+        // Must be consistent with equals(), which deliberately compares classes only
+        // (see AUnit.setManagerUsed). Using unit.id() broke the equals/hashCode
+        // contract and would NPE when unit is null.
+        return getClass().hashCode();
     }
 
     @Override
