@@ -7,10 +7,12 @@ import java.util.Collection;
  * (REVIEW §4, Stage H).
  *
  * <p>Output formatting is infrastructure, not game state, so it no longer
- * belongs next to the resource and clock facades. Behaviour is unchanged:
- * these are thin {@code System.out}/{@code System.err} wrappers, and they
- * return {@code true} in several places purely because call sites use them as
- * one-line guards - kept as-is so this commit stays behaviour-neutral.</p>
+ * belongs next to the resource and clock facades. These are thin
+ * {@code System.out}/{@code System.err} wrappers and they return nothing:
+ * the previous {@code boolean} returns existed because callers used
+ * {@code return A.println(...)} as a one-line guard, and no call site
+ * actually consumed the value. The one exception is
+ * {@link #printErrorAndReturnTrue(String)}, whose name states its contract.</p>
  *
  * <p>A future logging port (Stage J) can replace this class without touching
  * call sites.</p>
@@ -92,14 +94,12 @@ public class AConsole {
         (System.out).println("");
     }
 
-    public static boolean println(Object string) {
+    public static void println(Object string) {
         (System.out).println(string);
-        return true;
     }
 
-    public static boolean errPrintln(Object string) {
+    public static void errPrintln(Object string) {
         (System.err).println(string);
-        return true;
     }
 
     public static void print(Object string) {

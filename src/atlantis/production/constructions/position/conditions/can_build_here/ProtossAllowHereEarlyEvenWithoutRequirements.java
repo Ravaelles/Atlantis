@@ -26,10 +26,18 @@ public class ProtossAllowHereEarlyEvenWithoutRequirements {
     }
 
     private static boolean allowEarlyPlacementEvenWithoutFinishedPylon(AUnitType building, APosition position) {
-        return A.supplyTotal() <= 12
-            && building.isGateway()
-            && Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).notEmpty()
-            && AConsole.println("Allow early Gateway - " + position.distToDigit(Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()));
+        if (A.supplyTotal() > 12 || !building.isGateway()) {
+            return false;
+        }
+        if (Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).isEmpty()) {
+            return false;
+        }
+        // The debug print used to be the value of this expression; its `true`
+        // return stood in for the predicate result.
+        AConsole.println("Allow early Gateway - " + position.distToDigit(
+            Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()
+        ));
+        return true;
     }
 
     private static boolean isBuildable(APosition position, int dx, int dy) {

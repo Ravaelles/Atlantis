@@ -43,14 +43,22 @@ public class ProduceTemplarArchives {
 
     private static boolean requestProduce() {
         if (Have.notEvenPlanned(Protoss_Citadel_of_Adun)) {
-            return AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null
-                && AConsole.println("@@@@@@@@@@ Make CITADEL for ARCHIVES at " + A.supplyUsed());
+            // The print used to be the value of the expression (its `true`
+            // return stood in for the queue result); keep both explicit.
+            if (AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null) {
+                AConsole.println("@@@@@@@@@@ Make CITADEL for ARCHIVES at " + A.supplyUsed());
+                return true;
+            }
+            return false;
         }
         if (!Have.a(Protoss_Citadel_of_Adun)) return false;
 
         if (Have.notEvenPlanned(type())) {
-            return AddToQueue.withHighPriority(type()) != null
-                && AConsole.println("@@@@@@@@@@ Make TEMPLAR ARCHIVES at " + A.supplyUsed());
+            if (AddToQueue.withHighPriority(type()) != null) {
+                AConsole.println("@@@@@@@@@@ Make TEMPLAR ARCHIVES at " + A.supplyUsed());
+                return true;
+            }
+            return false;
         }
 
         return false;

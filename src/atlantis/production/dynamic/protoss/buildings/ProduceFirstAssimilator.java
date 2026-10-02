@@ -45,8 +45,14 @@ public class ProduceFirstAssimilator {
 
 //            RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
 
-            return AddToQueue.withTopPriority(type()) != null
-                && AConsole.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
+            // Was: `AddToQueue... != null && AConsole.errPrintln(...)`, i.e. the
+            // print helper's `true` return silently doubled as the method result.
+            // Written out, so the queue decision and the logging are separate.
+            if (AddToQueue.withTopPriority(type()) != null) {
+                AConsole.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
+                return true;
+            }
+            return false;
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 
