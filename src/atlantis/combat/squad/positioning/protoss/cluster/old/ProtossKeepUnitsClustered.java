@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.cluster.old;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
@@ -45,8 +46,8 @@ public class ProtossKeepUnitsClustered extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ProtossForceUnitsCloserToLeader.class,
 //            ProtossForceClusterDragoon.class,
 //            ProtossForceClusterZealot.class,

@@ -1,6 +1,7 @@
 package atlantis.protoss.shuttle.transports.island_recover;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.drops.ProtossShouldDropToIsland;
 import atlantis.combat.squad.squads.iota.Iota;
 import atlantis.units.AUnit;
@@ -18,10 +19,10 @@ public class ShuttleRecoverFromIslands extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossShuttleRecoverFromIslandsLoadUnits.class,
-            ProtossShuttleRecoverFromIslandsUnloadUnits.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossShuttleRecoverFromIslandsLoadUnits::new,
+            ProtossShuttleRecoverFromIslandsUnloadUnits::new,
         };
     }
 

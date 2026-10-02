@@ -1,6 +1,7 @@
 package atlantis.combat.running.stop_running;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.running.stop_running.zerg.ZergShouldStopRunning;
 import atlantis.units.AUnit;
 
@@ -18,10 +19,10 @@ public class ShouldStopRunning extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            TerranShouldStopRunning.class,
-            ZergShouldStopRunning.class,
+            ZergShouldStopRunning::new,
 //            RemoveStoppedRunning.class,
         };
     }

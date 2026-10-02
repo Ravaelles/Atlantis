@@ -1,7 +1,7 @@
 package atlantis.architecture;
 
-import atlantis.architecture.helper.InstantiateManager;
 import atlantis.game.A;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.log.ErrorLog;
 
@@ -17,16 +17,14 @@ public abstract class Manager extends BaseManager {
     }
 
 //    public static Manager invokedFor(AUnit unit) {
-//        InstantiateManager.byClass(currentClass());
-//
-//        Manager manager = new (..);
+//        Manager manager = new (...);
 //    }
 
-    public static <T extends Manager> T invokedFor(Class<T> managerClass, AUnit unit) {
+    public static Manager invokedFor(ManagerFactory factory, AUnit unit) {
         try {
-            T manager = managerClass.getConstructor(AUnit.class).newInstance(unit);
-            if (manager.applies()) {
-                return (T) manager.handle();
+            Manager manager = factory.create(unit);
+            if (manager != null && manager.applies()) {
+                return manager.handle();
             }
 
             return null;
@@ -42,9 +40,8 @@ public abstract class Manager extends BaseManager {
     /**
      * All sub-managers. Order matters.
      */
-    @SuppressWarnings("unchecked")
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{};
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{};
     }
 
     /**
@@ -111,11 +108,11 @@ public abstract class Manager extends BaseManager {
         return invokeFromParent(parent) != null;
     }
 
-    public boolean invokedManager(Class<? extends Manager> managerClass) {
-        Manager manager = InstantiateManager.byClass(managerClass, unit);
+    public boolean invokedManager(ManagerFactory factory) {
+        Manager manager = factory.create(unit);
         if (manager == null) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
-                "Failed to instantiate manager " + managerClass.getSimpleName()
+                "Failed to instantiate manager"
             );
             return false;
         }
@@ -151,6 +148,18 @@ public abstract class Manager extends BaseManager {
     /**
      * @return TRUE if the manager was applied, an action was taken, meaning further execution should be stopped.
      * FALSE if the manager was not applied. Further execution down the stack should be proceeded.
+     */
+    /**
+     * Handles this manager for the current frame.
+     *
+     * <p><b>Contract (Stage C):</b> returns the manager that acted (usually
+     * {@code this} via submanager traversal) or {@code null} if nothing
+     * applied. A <b>non-null return stops the chain</b> — callers
+     * ({@link #handleSubmanagers}) run submanagers in order and stop at the
+     * first non-null result. This differs deliberately from
+     * {@link Commander#handle()}, whose boolean is OR-accumulated without
+     * stopping. Both contracts are documented (not unified), because unifying
+     * the traversal semantics would change bot behaviour.</p>
      */
     protected Manager handle() {
 //        if (!applies()) return null;
@@ -206,8 +215,8 @@ public abstract class Manager extends BaseManager {
         return usedManager(manager, null);
     }
 
-    public Manager usedManager(Class managerClass) {
-        Manager manager = InstantiateManager.byClass(managerClass, unit);
+    public Manager usedManager(ManagerFactory factory) {
+        Manager manager = factory.create(unit);
 
         return usedManager(manager, null);
     }

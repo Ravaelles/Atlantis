@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.terran.air.RunForYourLife;
 import atlantis.terran.repair.managers.GoToRepairAsAirUnit;
@@ -17,23 +18,23 @@ public class TerranWraith extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            WraithBeingReparedManager.class,
-            RunForYourLife.class,
-            ProtossAvoidEnemies.class,
-            GoToRepairAsAirUnit.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            WraithBeingReparedManager::new,
+            RunForYourLife::new,
+            ProtossAvoidEnemies::new,
+            GoToRepairAsAirUnit::new,
 
             // Attack-related
-            WraithChangeLocationIfRanTooLong.class,
-            AttackOtherAirUnits.class,
-            AttackSpecificEnemiesNearBases.class,
-            AttackSpecificEnemies.class,
-            AttackWorkersWhenItMakesSense.class,
-            AttackTargetInRangeIfRanTooLong.class,
-            SeparateFromOtherWraiths.class,
-            AttackTargetInRange.class,
-            MoveAsLooksIdle.class,
+            WraithChangeLocationIfRanTooLong::new,
+            AttackOtherAirUnits::new,
+            AttackSpecificEnemiesNearBases::new,
+            AttackSpecificEnemies::new,
+            AttackWorkersWhenItMakesSense::new,
+            AttackTargetInRangeIfRanTooLong::new,
+            SeparateFromOtherWraiths::new,
+            AttackTargetInRange::new,
+            MoveAsLooksIdle::new,
         };
     }
 

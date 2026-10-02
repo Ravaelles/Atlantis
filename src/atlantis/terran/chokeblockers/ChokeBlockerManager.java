@@ -1,6 +1,7 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class ChokeBlockerManager extends Manager {
@@ -17,13 +18,13 @@ public class ChokeBlockerManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ChokeBlockerRunAsProtoss.class,
-            ChokeBlockerRepairOther.class,
-            ChokeBlockerMoveAway.class,
-            ChokeBlockerFight.class,
-            ChokeBlockerMoveToBlock.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ChokeBlockerRunAsProtoss::new,
+            ChokeBlockerRepairOther::new,
+            ChokeBlockerMoveAway::new,
+            ChokeBlockerFight::new,
+            ChokeBlockerMoveToBlock::new,
         };
     }
 }

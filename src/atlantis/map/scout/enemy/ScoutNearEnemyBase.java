@@ -1,6 +1,7 @@
 package atlantis.map.scout.enemy;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.map.base.define.EnemyMainBase;
 import atlantis.map.position.APosition;
@@ -28,10 +29,10 @@ public class ScoutNearEnemyBase extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            MoveBetweenEnemyBaseAndEnemyNatural.class,
-            RoamAroundEnemyBase.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            MoveBetweenEnemyBaseAndEnemyNatural::new,
+            RoamAroundEnemyBase::new,
         };
     }
 }

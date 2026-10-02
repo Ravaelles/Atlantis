@@ -2,6 +2,7 @@
 package atlantis.combat.micro.terran.vessel;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.*;
@@ -20,16 +21,16 @@ public class TerranScienceVessel extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            DetectorAvoidAntiAir.class,
-            UseVesselTechs.class,
-            ProtossAvoidEnemies.class,
-            DetectHiddenEnemyClosestToBase.class,
-            DetectNewBasePotentiallyBlocked.class,
-            SpreadOutDetectors.class,
-            FollowAlphaLeader.class,
-            FollowArmy.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            DetectorAvoidAntiAir::new,
+            UseVesselTechs::new,
+            ProtossAvoidEnemies::new,
+            DetectHiddenEnemyClosestToBase::new,
+            DetectNewBasePotentiallyBlocked::new,
+            SpreadOutDetectors::new,
+            FollowAlphaLeader::new,
+            FollowArmy::new,
 
 //            ProtossAvoidEnemies.class,
 //            UnitBeingReparedManager.class,

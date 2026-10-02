@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -15,9 +16,9 @@ public class TerranRetreatManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranFullRetreat.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranFullRetreat::new,
         };
     }
 }

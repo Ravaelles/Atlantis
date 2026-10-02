@@ -1,6 +1,7 @@
 package atlantis.terran.marine;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class TerranMarine extends Manager {
@@ -16,9 +17,9 @@ public class TerranMarine extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranMarineLongNotAttacked.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranMarineLongNotAttacked::new,
         };
     }
 }

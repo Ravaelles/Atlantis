@@ -1,6 +1,7 @@
 package atlantis.protoss.shuttle;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.protoss.reaver.reaver_with_shuttle.ShuttleWithReaver;
 import atlantis.protoss.shuttle.transports.island_drop.ShuttleDropToIslands;
 import atlantis.protoss.shuttle.transports.island_recover.ShuttleRecoverFromIslands;
@@ -21,15 +22,15 @@ public class Shuttle extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ShuttleWithReaver.class,
-            ShuttleEmpty.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ShuttleWithReaver::new,
+            ShuttleEmpty::new,
 
-            ShuttleDropToIslands.class,
-            ShuttleRecoverFromIslands.class,
-            ShuttleWithReaver.class,
-            ShuttleEmpty.class,
+            ShuttleDropToIslands::new,
+            ShuttleRecoverFromIslands::new,
+            ShuttleWithReaver::new,
+            ShuttleEmpty::new,
         };
     }
 }

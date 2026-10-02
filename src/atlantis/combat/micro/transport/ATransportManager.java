@@ -1,6 +1,7 @@
 package atlantis.combat.micro.transport;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -29,9 +30,9 @@ public class ATransportManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TransportUnits.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TransportUnits::new,
         };
     }
 

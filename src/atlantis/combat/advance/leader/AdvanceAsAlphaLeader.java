@@ -1,6 +1,7 @@
 package atlantis.combat.advance.leader;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
@@ -34,8 +35,8 @@ public class AdvanceAsAlphaLeader extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ProtossLeaderToOther.class,
 //            TerranLeaderToOther.class,
 //            LeaderTooLowCohesion.class,

@@ -1,6 +1,7 @@
 package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
 import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
@@ -27,22 +28,22 @@ public class WorkerManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AvoidSpellsAndMines.class,
-            ProtossAvoidCriticalUnits.class,
-            ProtossCombatBuildingClose.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AvoidSpellsAndMines::new,
+            ProtossAvoidCriticalUnits::new,
+            ProtossCombatBuildingClose::new,
 
-            WorkerDefenceManager.class,
-            WorkerAvoidManager.class,
-            ProtossAvoidEnemies.class,
+            WorkerDefenceManager::new,
+            WorkerAvoidManager::new,
+            ProtossAvoidEnemies::new,
 
-            BuilderManager.class,
-            DynamicRepairsNearby.class,
+            BuilderManager::new,
+            DynamicRepairsNearby::new,
 
-            GatherResources.class,
+            GatherResources::new,
 
-            IdleWorker.class,
+            IdleWorker::new,
         };
     }
 }

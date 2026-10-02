@@ -1,6 +1,7 @@
 package atlantis.combat.micro.attack.expansion;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
@@ -30,10 +31,10 @@ public class OverrideAndAttackEnemyExpansion extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            OnTheWayAttackEnemiesInRange.class,
-            ForceGoToEnemyExpansion.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            OnTheWayAttackEnemiesInRange::new,
+            ForceGoToEnemyExpansion::new,
         };
     }
 

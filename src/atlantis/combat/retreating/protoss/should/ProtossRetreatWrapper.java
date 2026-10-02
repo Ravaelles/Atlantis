@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.protoss.should;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.retreating.protoss.ProtossForceRetreatDuringDefend;
 import atlantis.combat.retreating.protoss.big_scale.ProtossFullRetreat;
 import atlantis.combat.retreating.protoss.small_scale.ProtossMeleeSmallScaleRetreat;
@@ -13,10 +14,10 @@ public class ProtossRetreatWrapper extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossFullRetreat.class,
-            ProtossMeleeSmallScaleRetreat.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossFullRetreat::new,
+            ProtossMeleeSmallScaleRetreat::new,
         };
     }
 

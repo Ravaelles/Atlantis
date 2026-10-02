@@ -1,6 +1,7 @@
 package atlantis.combat.managers.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.attack.protoss.ProtossAttackParamountUnitsInRange;
 import atlantis.combat.micro.attack.tanks.ProtossAttackTanksInRange;
@@ -43,61 +44,61 @@ public class ProtossCombatManagerTopPriority extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
             // === Non-actions ===============================================
 
-            ManualOverrideManager.class,
-            RemoveDeadUnitsManager.class,
-            AttackStateDeterminingManager.class,
+            ManualOverrideManager::new,
+            RemoveDeadUnitsManager::new,
+            AttackStateDeterminingManager::new,
 
-            FixPerformanceForBigSupply.class,
-            ProtossPreventIssuingTooRapidCommands.class,
+            FixPerformanceForBigSupply::new,
+            ProtossPreventIssuingTooRapidCommands::new,
 
-            AvoidSpellsAndMines.class,
+            AvoidSpellsAndMines::new,
 
-            SpecialUnitsManager.class,
+            SpecialUnitsManager::new,
 
             // === Crucial actions ===========================================
 
-            ProtossUnfreezer.class,
-            ProtossContinueUnfreeze.class,
+            ProtossUnfreezer::new,
+            ProtossContinueUnfreeze::new,
 
-            ProtossCombatBuildingClose.class,
-            ProtossAvoidCriticalUnits.class,
+            ProtossCombatBuildingClose::new,
+            ProtossAvoidCriticalUnits::new,
 
-            ProtossAttackParamountUnitsInRange.class,
-            ProtossForceContinueCriticalMeleeAttack.class,
+            ProtossAttackParamountUnitsInRange::new,
+            ProtossForceContinueCriticalMeleeAttack::new,
 
-            ProtossForceRetreatDuringDefend.class,
-            ProtossRetreat.class,
+            ProtossForceRetreatDuringDefend::new,
+            ProtossRetreat::new,
 
-            ProtossAttackTanksInRange.class,
+            ProtossAttackTanksInRange::new,
 
             // === Important actions ====================================
 
-            ProtossAvoidEnemies.class,
+            ProtossAvoidEnemies::new,
 
-            ProtossForceFight.class,
-            ProtossLowEval.class,
+            ProtossForceFight::new,
+            ProtossLowEval::new,
 
-            ProtossContinueAttack.class,
+            ProtossContinueAttack::new,
 
-            ProtossFormation.class,
+            ProtossFormation::new,
 
-            DragoonAttackVultureInRange.class,
-            ProtossAttackTanksNearby.class,
+            DragoonAttackVultureInRange::new,
+            ProtossAttackTanksNearby::new,
 
-            ProtossEarlyGame.class,
+            ProtossEarlyGame::new,
 
-            ProtossForceCluster.class,
+            ProtossForceCluster::new,
 
-            ProtossFixInvalidTargets.class,
-            ProtossFixIdleUnits.class,
+            ProtossFixInvalidTargets::new,
+            ProtossFixIdleUnits::new,
 
-            ProtossShouldStopRunning.class,
+            ProtossShouldStopRunning::new,
 
-            DarkTemplar.class,
+            DarkTemplar::new,
 
 //            ProtossTopCombatManager.class,
 
@@ -105,11 +106,11 @@ public class ProtossCombatManagerTopPriority extends Manager {
 
             // === Important actions ========================================
 
-            DanceAfterShoot.class,
+            DanceAfterShoot::new,
 
-            ProtossCombatManager.class,
+            ProtossCombatManager::new,
 
-            TransportUnits.class,
+            TransportUnits::new,
         };
     }
 }

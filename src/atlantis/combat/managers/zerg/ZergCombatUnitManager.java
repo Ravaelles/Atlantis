@@ -1,6 +1,7 @@
 package atlantis.combat.managers.zerg;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -15,11 +16,11 @@ public class ZergCombatUnitManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ZergCombatManagerTopPriority.class,
-            ZergCombatManagerMediumPriority.class,
-            ZergCombatManagerLowPriority.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ZergCombatManagerTopPriority::new,
+            ZergCombatManagerMediumPriority::new,
+            ZergCombatManagerLowPriority::new,
         };
     }
 }

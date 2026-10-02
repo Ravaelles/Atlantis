@@ -1,17 +1,15 @@
 package atlantis.architecture;
 
 import atlantis.combat.squad.Squad;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public abstract class BaseManager {
-    protected Manager[] submanagerObjects;
+    protected Manager[] submanagerObjects = new Manager[0];
 
     protected final AUnit unit;
     protected final Squad squad;
@@ -25,41 +23,39 @@ public abstract class BaseManager {
         this.squad = (unit != null ? unit.squad() : null);
         parentsLastTimestamp = -1;
 
-        initializeManagerInstances();
+        initChildren(managers());
     }
 
-    protected abstract Class<? extends Manager>[] managers();
+    protected abstract ManagerFactory[] managers();
 
-    protected void initializeManagerInstances() {
-        Class<? extends Manager>[] managers = managers();
-        submanagerObjects = new Manager[managers.length];
+    /**
+     * Stage C: builds child managers from explicit constructor references,
+     * without reflection. Order of {@code factories} is the execution order.
+     * A failing constructor quits the game, same as the old reflective path.
+     */
+    protected final void initChildren(ManagerFactory[] factories) {
+        Manager[] created = new Manager[factories.length];
 
         int index = 0;
-        for (Class<? extends Manager> classObject : managers) {
-            Manager manager = instantiateManager(classObject);
+        for (ManagerFactory factory : factories) {
+            try {
+                Manager manager = factory.create(unit);
+                if (manager == null) {
+                    System.err.println("MANAGER INIT null");
+                    A.quit();
+                }
 
-            submanagerObjects[index++] = manager;
+                created[index++] = manager;
+            } catch (Exception e) {
+                A.printStackTrace(
+                    "Could not instantiate manager / " + e.getMessage()
+                        + " / " + "ERROR CLASS: " + e.getClass()
+                );
+                A.quit();
+            }
         }
-    }
 
-    public Manager instantiateManager(Class<? extends Manager> classObject) {
-        try {
-            return classObject.getDeclaredConstructor(AUnit.class).newInstance(unit);
-        } catch (InvocationTargetException e) {
-            System.err.println("There was an error in constructor of:\n");
-            System.err.println(classObject);
-            System.err.println(e.getMessage());
-            e.printStackTrace();
-            return null;
-        } catch (Exception e) {
-            A.printStackTrace(
-                "Could not instantiate " + classObject
-                    + " / " + e.getMessage()
-                    + " / " + "ERROR CLASS: " + e.getClass()
-            );
-            A.quit();
-            return null;
-        }
+        submanagerObjects = created;
     }
 
     // =========================================================

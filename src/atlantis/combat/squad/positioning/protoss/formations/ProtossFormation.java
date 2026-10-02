@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.formations;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.squad.positioning.protoss.far_ahead.ProtossTooFarAhead;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
@@ -26,12 +27,12 @@ public class ProtossFormation extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossMoonIdle.class,
-            ProtossMoon.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossMoonIdle::new,
+            ProtossMoon::new,
 
-            ProtossTooFarAhead.class,
+            ProtossTooFarAhead::new,
 //            ProtossKeepUnitsClustered.class,
 //            ProtossKeepUnitsCloseToBuildingsDuringDefend.class,
         };

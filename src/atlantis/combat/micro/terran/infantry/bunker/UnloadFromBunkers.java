@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
@@ -17,9 +18,9 @@ public class UnloadFromBunkers extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            PreventMaginotLine.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            PreventMaginotLine::new,
         };
     }
 

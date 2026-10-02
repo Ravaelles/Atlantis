@@ -1,6 +1,7 @@
 package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
 import atlantis.combat.micro.generic.MobileDetector;
@@ -19,20 +20,20 @@ public class Observer extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossCombatBuildingClose.class,
-            DetectorAvoidAntiAir.class,
-            ProtossAvoidEnemies.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossCombatBuildingClose::new,
+            DetectorAvoidAntiAir::new,
+            ProtossAvoidEnemies::new,
 //            ProtossObserverAvoidDetectors.class,
-            ObserverAvoidEnemyDetectors.class,
-            AsThirdObserverScoutEnemyBases.class,
-            SpreadOutDetectors.class,
-            DetectHiddenEnemyClosestToBase.class,
-            DetectHiddenEnemyClosestToAlpha.class,
-            DetectNewBasePotentiallyBlocked.class,
-            FollowAlphaLeader.class,
-            FollowArmy.class,
+            ObserverAvoidEnemyDetectors::new,
+            AsThirdObserverScoutEnemyBases::new,
+            SpreadOutDetectors::new,
+            DetectHiddenEnemyClosestToBase::new,
+            DetectHiddenEnemyClosestToAlpha::new,
+            DetectNewBasePotentiallyBlocked::new,
+            FollowAlphaLeader::new,
+            FollowArmy::new,
         };
     }
 

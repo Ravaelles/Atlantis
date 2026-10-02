@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.generic.managers.DetectHiddenEnemyClosestToBase;
 import atlantis.combat.micro.generic.managers.FollowArmy;
@@ -29,13 +30,13 @@ public class MobileDetector extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossAvoidEnemies.class,
-            UnitBeingReparedManager.class,
-            SpreadOutDetectors.class,
-            DetectHiddenEnemyClosestToBase.class,
-            FollowArmy.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossAvoidEnemies::new,
+            UnitBeingReparedManager::new,
+            SpreadOutDetectors::new,
+            DetectHiddenEnemyClosestToBase::new,
+            FollowArmy::new,
         };
     }
 

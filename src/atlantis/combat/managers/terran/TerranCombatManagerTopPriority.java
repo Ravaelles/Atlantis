@@ -1,6 +1,7 @@
 package atlantis.combat.managers.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.attack.terran.TerranAttackParamountUnitsInRange;
 import atlantis.combat.micro.avoid.buildings.terran.TerranAvoidCombatBuildingClose;
@@ -28,49 +29,49 @@ public class TerranCombatManagerTopPriority extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
             // === Non-actions ===============================================
 
-            ManualOverrideManager.class,
-            RemoveDeadUnitsManager.class,
-            AttackStateDeterminingManager.class,
+            ManualOverrideManager::new,
+            RemoveDeadUnitsManager::new,
+            AttackStateDeterminingManager::new,
 
-            AvoidSpellsAndMines.class,
-            SpecialUnitsManager.class,
+            AvoidSpellsAndMines::new,
+            SpecialUnitsManager::new,
 
-            FixPerformanceForBigSupply.class,
+            FixPerformanceForBigSupply::new,
 
             // === Crucial actions ===========================================
 
 //            ProtossUnfreezer.class,
 //            ProtossContinueUnfreeze.class,
 
-            TerranAvoidCombatBuildingClose.class,
-            TerranAvoidCriticalUnits.class,
+            TerranAvoidCombatBuildingClose::new,
+            TerranAvoidCriticalUnits::new,
 
-            TerranAttackParamountUnitsInRange.class,
+            TerranAttackParamountUnitsInRange::new,
 
-            TerranRetreatManager.class,
+            TerranRetreatManager::new,
 
             // === Very important actions ====================================
 
-            TerranAvoidEnemies.class,
+            TerranAvoidEnemies::new,
 
-            TerranContinueAttack.class,
+            TerranContinueAttack::new,
 
 //            ProtossFixInvalidTargets.class,
 //            ProtossFixIdleUnits.class,
 
-            TerranShouldStopRunning.class,
+            TerranShouldStopRunning::new,
 
             // === Important actions ========================================
 
 //            DanceAfterShoot.class,
 
-            TerranCombatManager.class,
+            TerranCombatManager::new,
 
-            TransportUnits.class,
+            TransportUnits::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend.protoss.sparta;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -17,10 +18,10 @@ public class ProtossSpartaSpecific extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ProtossCohesion.class,
-            DragoonSeparateFromZealots.class,
+            DragoonSeparateFromZealots::new,
         };
     }
 

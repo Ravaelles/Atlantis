@@ -22,10 +22,9 @@ public class ManagerTest extends WorldStubForTests {
         TerranComsatStation comsatManager = null;
 
         try {
-            TerranComsatStation.class.getDeclaredConstructor(AUnit.class);
-            comsatManager = TerranComsatStation.class.getDeclaredConstructor(AUnit.class).newInstance(comsat);
+            comsatManager = new TerranComsatStation(comsat);
 
-            SpecialUnitsManager.class.getDeclaredConstructor(AUnit.class).newInstance(comsat);
+            new SpecialUnitsManager(comsat);
 
             status = true;
         } catch (Exception e) {
@@ -47,7 +46,7 @@ public class ManagerTest extends WorldStubForTests {
         );
 
         createWorld(1, () -> {
-                Manager comsatManager = (new TerranComsatStation(comsat)).instantiateManager(TerranComsatStation.class);
+                Manager comsatManager = new TerranComsatStation(comsat);
 
                 assertNotNull(comsatManager);
             },

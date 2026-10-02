@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.squad.positioning.*;
 import atlantis.combat.squad.positioning.terran.formation.TerranFormation;
 import atlantis.units.AUnit;
@@ -19,16 +20,16 @@ public class TerranCohesion extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranFormation.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranFormation::new,
 
-            TerranTooFarFromLeader.class,
-            TerranEnsureCoordinationWithTanks.class,
-            TerranTooClustered.class,
-            TerranEnsureBall.class,
-            TerranComeCloser.class,
-            TooLowSquadCohesion.class,
+            TerranTooFarFromLeader::new,
+            TerranEnsureCoordinationWithTanks::new,
+            TerranTooClustered::new,
+            TerranEnsureBall::new,
+            TerranComeCloser::new,
+            TooLowSquadCohesion::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class Cohesion extends Manager {
@@ -14,8 +15,8 @@ public class Cohesion extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ProtossCohesion.class,
 //            TerranCohesion.class,
         };

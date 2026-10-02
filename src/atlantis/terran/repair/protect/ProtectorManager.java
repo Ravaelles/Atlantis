@@ -1,6 +1,7 @@
 package atlantis.terran.repair.protect;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 
@@ -34,10 +35,10 @@ public class ProtectorManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtectItsTarget.class,
-            IdleProtector.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtectItsTarget::new,
+            IdleProtector::new,
         };
     }
 }

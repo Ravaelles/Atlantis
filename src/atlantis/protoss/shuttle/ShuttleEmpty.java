@@ -1,6 +1,7 @@
 package atlantis.protoss.shuttle;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class ShuttleEmpty extends Manager {
@@ -19,11 +20,11 @@ public class ShuttleEmpty extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossShuttleAvoidAA.class,
-            ProtossShuttleEmptyGoToReaver.class,
-            ProtossShuttleEmptyAvoidEnemies.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossShuttleAvoidAA::new,
+            ProtossShuttleEmptyGoToReaver::new,
+            ProtossShuttleEmptyAvoidEnemies::new,
         };
     }
 }

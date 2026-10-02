@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing.away;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.dancing.away.protoss.DanceAwayAsZealot;
 import atlantis.units.AUnit;
 
@@ -15,9 +16,9 @@ public class DanceAwayAsMelee extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            DanceAwayAsZealot.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            DanceAwayAsZealot::new,
         };
     }
 }

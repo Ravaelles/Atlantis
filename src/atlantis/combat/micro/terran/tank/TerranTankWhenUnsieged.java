@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.tank;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseEnemiesToUnsiegedTank;
 import atlantis.combat.micro.terran.tank.sieging.ThinkOfSieging;
 import atlantis.combat.micro.terran.tank.unsieged.AvoidCloseMeleeEnemiesToUnsiegedTank;
@@ -23,13 +24,13 @@ public class TerranTankWhenUnsieged extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AvoidCloseMeleeEnemiesToUnsiegedTank.class,
-            AvoidCloseEnemiesToUnsiegedTank.class,
-            UnitBeingReparedManager.class,
-            HighGroundSiegeDuringDefend.class,
-            ThinkOfSieging.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AvoidCloseMeleeEnemiesToUnsiegedTank::new,
+            AvoidCloseEnemiesToUnsiegedTank::new,
+            UnitBeingReparedManager::new,
+            HighGroundSiegeDuringDefend::new,
+            ThinkOfSieging::new,
         };
     }
 

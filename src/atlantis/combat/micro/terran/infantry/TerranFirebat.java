@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -17,9 +18,9 @@ public class TerranFirebat extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            GoTowardsMedic.class
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            GoTowardsMedic::new
         };
     }
 

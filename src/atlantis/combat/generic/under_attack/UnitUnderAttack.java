@@ -1,6 +1,7 @@
 package atlantis.combat.generic.under_attack;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.generic.under_attack.protoss.ProtossMeleeUnitUnderAttack;
 import atlantis.units.AUnit;
 
@@ -10,10 +11,10 @@ public class UnitUnderAttack extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossMeleeUnitUnderAttack.class,
-            TerranUnitUnderAttack.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossMeleeUnitUnderAttack::new,
+            TerranUnitUnderAttack::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.map.scout;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
@@ -17,27 +18,27 @@ public class ScoutManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossAvoidEnemies.class,
-            ScoutSeparateFromCloseEnemies.class,
-            ScoutSeparateFromCloseWorkers.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossAvoidEnemies::new,
+            ScoutSeparateFromCloseEnemies::new,
+            ScoutSeparateFromCloseWorkers::new,
 //            ScoutSafetyAvoidTooCloseEnemies.class,
-            ProtossAvoidCriticalUnits.class,
-            ScoutAvoidCombatBuildings.class,
+            ProtossAvoidCriticalUnits::new,
+            ScoutAvoidCombatBuildings::new,
 
-            ScoutEnemyNaturalIfNotExisting.class,
-            ScoutEnemyThird.class,
+            ScoutEnemyNaturalIfNotExisting::new,
+            ScoutEnemyThird::new,
 
-            ScoutTryFindingEnemy.class,
+            ScoutTryFindingEnemy::new,
 
-            ScoutPotentialTerranBases.class,
-            ScoutNearEnemyBase.class,
+            ScoutPotentialTerranBases::new,
+            ScoutNearEnemyBase::new,
 
-            ScoutUnexploredBasesNearEnemy.class,
-            ScoutPotentialEnemyBases.class,
+            ScoutUnexploredBasesNearEnemy::new,
+            ScoutPotentialEnemyBases::new,
 
-            ScoutFreeBases.class,
+            ScoutFreeBases::new,
 
 //            ScoutRoaming.class,
 //            WorkerAvoidManager.class,

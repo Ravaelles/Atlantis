@@ -1,6 +1,7 @@
 package atlantis.combat.managers.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -15,11 +16,11 @@ public class ProtossCombatUnitManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossCombatManagerTopPriority.class,
-            ProtossCombatManagerMediumPriority.class,
-            ProtossCombatManagerLowPriority.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossCombatManagerTopPriority::new,
+            ProtossCombatManagerMediumPriority::new,
+            ProtossCombatManagerLowPriority::new,
         };
     }
 }

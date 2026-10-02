@@ -1,6 +1,7 @@
 package atlantis.combat.advance.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.tank.TerranAdvanceAsTank;
 import atlantis.combat.squad.positioning.terran.TerranTooFarFromLeader;
 import atlantis.units.AUnit;
@@ -17,11 +18,11 @@ public class TerranAdvance extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranTooFarFromLeader.class,
-            TerranCloserToLeader.class,
-            TerranAdvanceAsTank.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranTooFarFromLeader::new,
+            TerranCloserToLeader::new,
+            TerranAdvanceAsTank::new,
         };
     }
 }

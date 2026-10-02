@@ -1,6 +1,7 @@
 package atlantis.combat.squad.squad_scout;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
@@ -21,10 +22,10 @@ public class SquadScout extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            SquadScoutSafety.class,
-            SquadScoutProceed.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            SquadScoutSafety::new,
+            SquadScoutProceed::new,
         };
     }
 

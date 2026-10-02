@@ -1,6 +1,7 @@
 package atlantis.combat.missions.attack;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 //import atlantis.combat.squad.positioning.protoss.ProtossSquadCohesion;
 import atlantis.combat.advance.AdvanceToAttackFocusPoint;
 import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
@@ -19,26 +20,26 @@ public class MissionAttackManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AsAirAttackAnyone.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AsAirAttackAnyone::new,
 
-            TerranContainEnemyWrapper.class,
-            TerranAdvance.class,
+            TerranContainEnemyWrapper::new,
+            TerranAdvance::new,
 
 //            AdvanceToAttackFocusPoint.class,
 
-            OnWrongSideOfFocusPoint.class,
+            OnWrongSideOfFocusPoint::new,
 
-            ProtossCohesion.class,
-            TerranCohesion.class,
+            ProtossCohesion::new,
+            TerranCohesion::new,
 
-            AttackNearbyEnemies.class,
+            AttackNearbyEnemies::new,
 
 //            ProtossCohesion.class,
 //            TerranCohesion.class,
 
-            TooFarFromFocusPoint.class,
+            TooFarFromFocusPoint::new,
         };
     }
 }

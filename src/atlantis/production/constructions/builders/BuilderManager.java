@@ -1,6 +1,7 @@
 package atlantis.production.constructions.builders;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
@@ -21,12 +22,12 @@ public class BuilderManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            CancelConstructionsWhenEnemiesNear.class,
-            BuilderAvoidEnemies.class,
-            ProtossAvoidEnemies.class,
-            AbandonAsBuilderIfAttacked.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            CancelConstructionsWhenEnemiesNear::new,
+            BuilderAvoidEnemies::new,
+            ProtossAvoidEnemies::new,
+            AbandonAsBuilderIfAttacked::new,
         };
     }
 

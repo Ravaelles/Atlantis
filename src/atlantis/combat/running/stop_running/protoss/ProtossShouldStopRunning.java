@@ -1,6 +1,7 @@
 package atlantis.combat.running.stop_running.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.We;
@@ -20,14 +21,14 @@ public class ProtossShouldStopRunning extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ShouldStopRunningDragoon.class,
-            ShouldStopRunningZealot.class,
-            ShouldStopRunningProtossAir.class,
-            ShouldStopRunningProbe.class,
-            ProtossShouldStopRetreat.class,
-            ProtossShouldStopRunningMelee.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ShouldStopRunningDragoon::new,
+            ShouldStopRunningZealot::new,
+            ShouldStopRunningProtossAir::new,
+            ShouldStopRunningProbe::new,
+            ProtossShouldStopRetreat::new,
+            ProtossShouldStopRunningMelee::new,
         };
     }
 

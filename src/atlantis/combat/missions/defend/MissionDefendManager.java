@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
 import atlantis.combat.advance.focus.TooCloseToFocusPoint;
 import atlantis.combat.advance.focus.TooFarFromFocusPoint;
@@ -19,23 +20,23 @@ public class MissionDefendManager extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossSpartaSpecific.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossSpartaSpecific::new,
 
-            AllowTimeToReposition.class,
+            AllowTimeToReposition::new,
 //            ProtossSquadCohesion.class,
 
 //            OldAdvance.class,
 
-            OnWrongSideOfFocusPoint.class,
+            OnWrongSideOfFocusPoint::new,
 
-            AttackNearbyEnemies.class,
+            AttackNearbyEnemies::new,
 
-            ProtossCohesionDuringDefend.class,
+            ProtossCohesionDuringDefend::new,
 
-            TooCloseToFocusPoint.class,
-            TooFarFromFocusPoint.class,
+            TooCloseToFocusPoint::new,
+            TooFarFromFocusPoint::new,
 
 //            AdvanceToDefendFocusPoint.class,
 //            HandleUnitPositioningOnMap.class,

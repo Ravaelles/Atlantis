@@ -1,6 +1,7 @@
 package atlantis.combat.managers.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.micro.attack.expansion.OverrideAndAttackEnemyExpansion;
 import atlantis.combat.squad.squad_scout.SquadScout;
@@ -19,20 +20,20 @@ public class TerranCombatManagerMediumPriority extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            SquadScout.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            SquadScout::new,
 
-            OverrideAndAttackEnemyExpansion.class,
+            OverrideAndAttackEnemyExpansion::new,
 
 //            AttackNearbyEnemies.class,
 //            AttackEnemiesInRange.class,
 
-            DontMoveWhenBeingRepared.class,
-            UnitBeingReparedManager.class,
+            DontMoveWhenBeingRepared::new,
+            UnitBeingReparedManager::new,
 //            AttackNearbyEnemies.class,
 
-            WeDontKnowWhereEnemyIs.class,
+            WeDontKnowWhereEnemyIs::new,
         };
     }
 }

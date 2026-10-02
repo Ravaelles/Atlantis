@@ -36,6 +36,18 @@ public class Commander extends BaseCommander {
         return handle();
     }
 
+    /**
+     * Handles this commander for the current frame.
+     *
+     * <p><b>Contract (Stage C):</b> returns {@code true} if this commander (or
+     * any of its subcommanders) did anything this frame. The caller
+     * ({@link #handleSubcommanders}) OR-accumulates results and runs
+     * <b>all</b> subcommanders regardless — a {@code true} here never stops
+     * the chain. This differs deliberately from
+     * {@link Manager#handle()}, where a non-null return stops the chain.
+     * Both contracts are documented (not unified), because unifying the
+     * traversal semantics would change bot behaviour.</p>
+     */
     protected boolean handle() {
         return handleSubcommanders();
     }

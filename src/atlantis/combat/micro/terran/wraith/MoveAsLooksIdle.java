@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.units.AUnit;
 
@@ -19,11 +20,11 @@ public class MoveAsLooksIdle extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AttackTargetInRange.class,
-            AsAirAttackAnyone.class,
-            WeDontKnowWhereEnemyIs.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AttackTargetInRange::new,
+            AsAirAttackAnyone::new,
+            WeDontKnowWhereEnemyIs::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.units.workers.defence;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Have;
@@ -29,15 +30,15 @@ public class WorkerDefenceManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            WorkerDefenceHelpCannon.class,
-            WorkerHelpCombatUnitsFight.class,
-            WorkerDefenceRun.class,
-            WorkerDefenceStopFighting.class,
-            WorkerDefenceFight.class,
-            BuddyRepair.class,
-            WorkerAvoidManager.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            WorkerDefenceHelpCannon::new,
+            WorkerHelpCombatUnitsFight::new,
+            WorkerDefenceRun::new,
+            WorkerDefenceStopFighting::new,
+            WorkerDefenceFight::new,
+            BuddyRepair::new,
+            WorkerAvoidManager::new,
         };
     }
 

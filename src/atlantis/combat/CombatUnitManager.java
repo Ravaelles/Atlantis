@@ -1,6 +1,7 @@
 package atlantis.combat;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.managers.protoss.ProtossCombatUnitManager;
 import atlantis.combat.managers.terran.TerranCombatUnitManager;
 import atlantis.combat.managers.zerg.ZergCombatUnitManager;
@@ -17,11 +18,11 @@ public class CombatUnitManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossCombatUnitManager.class,
-            TerranCombatUnitManager.class,
-            ZergCombatUnitManager.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossCombatUnitManager::new,
+            TerranCombatUnitManager::new,
+            ZergCombatUnitManager::new,
 //            ZergCombatManagerTopPriority.class,
 //            ZergCombatManagerMediumPriority.class,
 //            ZergCombatManagerLowPriority.class,

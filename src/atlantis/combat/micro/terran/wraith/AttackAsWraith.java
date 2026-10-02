@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.wraith;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.micro.terran.air.RunForYourLife;
 import atlantis.units.AUnit;
@@ -33,15 +34,15 @@ public class AttackAsWraith extends AttackNearbyEnemies {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            RunForYourLife.class,
-            WraithChangeLocationIfRanTooLong.class,
-            AttackOtherAirUnits.class,
-            AttackWorkersWhenItMakesSense.class,
-            AttackTargetInRangeIfRanTooLong.class,
-            AttackTargetInRange.class,
-            MoveAsLooksIdle.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            RunForYourLife::new,
+            WraithChangeLocationIfRanTooLong::new,
+            AttackOtherAirUnits::new,
+            AttackWorkersWhenItMakesSense::new,
+            AttackTargetInRangeIfRanTooLong::new,
+            AttackTargetInRange::new,
+            MoveAsLooksIdle::new,
         };
     }
 

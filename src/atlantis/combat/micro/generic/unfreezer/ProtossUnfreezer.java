@@ -1,6 +1,7 @@
 package atlantis.combat.micro.generic.unfreezer;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.generic.DoNothing;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.game.A;
@@ -74,10 +75,10 @@ public class ProtossUnfreezer extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            UnfreezeDragoon.class,
-            ProtossUnfreezeGeneric.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            UnfreezeDragoon::new,
+            ProtossUnfreezeGeneric::new,
             // ---------------
 //            UnfreezeAttackOrMove.class,
 //            ProtossUnfreezeRun.class,

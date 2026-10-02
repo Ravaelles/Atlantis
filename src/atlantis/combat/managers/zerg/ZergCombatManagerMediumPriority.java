@@ -1,6 +1,7 @@
 package atlantis.combat.managers.zerg;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.WeDontKnowWhereEnemyIs;
 import atlantis.combat.micro.attack.expansion.OverrideAndAttackEnemyExpansion;
 import atlantis.combat.squad.squad_scout.SquadScout;
@@ -19,13 +20,13 @@ public class ZergCombatManagerMediumPriority extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            SquadScout.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            SquadScout::new,
 
-            OverrideAndAttackEnemyExpansion.class,
+            OverrideAndAttackEnemyExpansion::new,
 
-            WeDontKnowWhereEnemyIs.class,
+            WeDontKnowWhereEnemyIs::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.dancing;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.dancing.away.protoss.dragoon.DanceAwayDragoon;
 import atlantis.units.AUnit;
 
@@ -17,10 +18,10 @@ public class DanceAfterShoot extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            DanceAwayIdle.class,
-            DanceAwayDragoon.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            DanceAwayIdle::new,
+            DanceAwayDragoon::new,
 //            DanceAwayAsMelee.class,
 //            DanceAwayAsMarine.class,
 //            DanceAwayAsTank.class,

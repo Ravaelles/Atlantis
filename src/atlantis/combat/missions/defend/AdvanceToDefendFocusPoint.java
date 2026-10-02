@@ -1,6 +1,7 @@
 package atlantis.combat.missions.defend;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.advance.focus.MoveToFocusPoint;
 import atlantis.combat.advance.focus.OptimalDistanceToFocusPoint;
@@ -15,8 +16,8 @@ public class AdvanceToDefendFocusPoint extends MoveToFocusPoint {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            EarlyGameTooClustered.class,
 //            TerranTooClustered.class,
 //            ProtossTooFarFromLeader.class,

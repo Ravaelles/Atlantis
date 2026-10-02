@@ -1,6 +1,7 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
@@ -27,9 +28,9 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtectScvBusyConstructing.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtectScvBusyConstructing::new,
         };
     }
 

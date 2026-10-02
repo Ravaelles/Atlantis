@@ -1,6 +1,7 @@
 package atlantis.combat.managers.zerg;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.special.FixPerformanceForBigSupply;
 import atlantis.combat.micro.attack.protoss.ProtossAttackParamountUnitsInRange;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
@@ -32,49 +33,49 @@ public class ZergCombatManagerTopPriority extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
             // === Non-actions ===============================================
 
-            ManualOverrideManager.class,
-            RemoveDeadUnitsManager.class,
-            AttackStateDeterminingManager.class,
+            ManualOverrideManager::new,
+            RemoveDeadUnitsManager::new,
+            AttackStateDeterminingManager::new,
 
-            AvoidSpellsAndMines.class,
-            SpecialUnitsManager.class,
+            AvoidSpellsAndMines::new,
+            SpecialUnitsManager::new,
 
-            FixPerformanceForBigSupply.class,
+            FixPerformanceForBigSupply::new,
 
             // === Crucial actions ===========================================
 
 //            ProtossUnfreezer.class,
 //            ProtossContinueUnfreeze.class,
 
-            ProtossCombatBuildingClose.class,
-            ProtossAvoidCriticalUnits.class,
+            ProtossCombatBuildingClose::new,
+            ProtossAvoidCriticalUnits::new,
 
-            ProtossAttackParamountUnitsInRange.class,
+            ProtossAttackParamountUnitsInRange::new,
 
 //            ProtossForceRetreatDuringDefend.class,
-            RetreatManager.class,
+            RetreatManager::new,
 
             // === Very important actions ====================================
 
-            ProtossForceContinueCriticalMeleeAttack.class,
-            ProtossContinueAttack.class,
+            ProtossForceContinueCriticalMeleeAttack::new,
+            ProtossContinueAttack::new,
 
-            ProtossFixInvalidTargets.class,
-            ProtossFixIdleUnits.class,
+            ProtossFixInvalidTargets::new,
+            ProtossFixIdleUnits::new,
 
-            ShouldStopRunning.class,
+            ShouldStopRunning::new,
 
             // === Important actions ========================================
 
-            ProtossAvoidEnemies.class,
+            ProtossAvoidEnemies::new,
 
-            DanceAfterShoot.class,
+            DanceAfterShoot::new,
 
-            TransportUnits.class,
+            TransportUnits::new,
         };
     }
 }

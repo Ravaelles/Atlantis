@@ -1,6 +1,7 @@
 package atlantis.combat.managers.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.protoss.dragoon.DragoonCombatManager;
 import atlantis.protoss.dt.DarkTemplar;
@@ -21,15 +22,15 @@ public class ProtossCombatManager extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
             //            ProtossDontEngageWhenCombatBuildings.class,
 //            ProtossTooLonelyGetCloser.class,
 
-            DragoonCombatManager.class,
-            ProtossZealotCombatManager.class,
-            ProtossHTCombatManager.class,
-            Reaver.class,
+            DragoonCombatManager::new,
+            ProtossZealotCombatManager::new,
+            ProtossHTCombatManager::new,
+            Reaver::new,
         };
     }
 }

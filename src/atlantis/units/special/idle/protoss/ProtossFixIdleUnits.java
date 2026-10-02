@@ -1,6 +1,7 @@
 package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.generic.DoNothing;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -26,11 +27,11 @@ public class ProtossFixIdleUnits extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            FixIdleUnitsGeneric.class,
-            FixIdleUnitsPostAttack.class,
-            FixIdleUnitsPostAvoid.class,
+            FixIdleUnitsPostAttack::new,
+            FixIdleUnitsPostAvoid::new,
         };
     }
 }

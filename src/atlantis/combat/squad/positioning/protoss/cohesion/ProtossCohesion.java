@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.protoss.cohesion;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
@@ -34,8 +35,8 @@ public class ProtossCohesion extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ProtossFormation.class,
 
 //            AllowTimeToReposition.class,
@@ -45,8 +46,8 @@ public class ProtossCohesion extends Manager {
 //            ProtossMeleeTooFarFromRanged.class,
 
 //            ProtossTooFarFromLeader.class,
-            ProtossCombat2Combat.class,
-            ProtossTooFarFromLeader.class,
+            ProtossCombat2Combat::new,
+            ProtossTooFarFromLeader::new,
 //            ProtossAsLeaderTooFarFromOthers.class,
         };
     }

@@ -1,6 +1,7 @@
 package atlantis.combat.advance;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.contain.TerranContainEnemyWrapper;
 import atlantis.combat.advance.terran.TerranAdvance;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
@@ -17,16 +18,16 @@ public class AdvanceToAttackFocusPoint extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossCohesion.class,
-            TerranCohesion.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossCohesion::new,
+            TerranCohesion::new,
 
 //            HandleUnitPositioningOnMap.class,
 
-            AttackNearbyEnemies.class,
+            AttackNearbyEnemies::new,
 
-            WeDontKnowEnemyLocation.class,
+            WeDontKnowEnemyLocation::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.information.strategy.GamePhase;
 import atlantis.units.AUnit;
@@ -55,9 +56,9 @@ public class LoadIntoTheBunker extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ContinueLoadingIntoBunker.class
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ContinueLoadingIntoBunker::new
         };
     }
 

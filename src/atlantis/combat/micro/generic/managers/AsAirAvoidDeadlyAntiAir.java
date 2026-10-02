@@ -28,7 +28,7 @@ public class AsAirAvoidDeadlyAntiAir extends Manager {
     }
 
     public Manager handle() {
-        if (allowedToRunToCannon() && invokedManager(AsAirRunToCannon.class)) return usedManager(AsAirRunToCannon.class);
+        if (allowedToRunToCannon() && invokedManager(AsAirRunToCannon::new)) return usedManager(AsAirRunToCannon::new);
 
         if (moveAway()) return usedManager(this);
 

@@ -1,6 +1,7 @@
 package atlantis.protoss.reaver.reaver_with_shuttle;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.protoss.shuttle.ProtossShuttleAvoidAA;
 import atlantis.protoss.shuttle.ProtossShuttleAvoidEnemies;
 import atlantis.units.AUnit;
@@ -19,15 +20,15 @@ public class ShuttleWithReaver extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossShuttleAvoidAA.class,
-            ProtossShuttleWithReaverRun.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossShuttleAvoidAA::new,
+            ProtossShuttleWithReaverRun::new,
 
-            ProtossShuttleWithReaverEngage.class,
-            ProtossShuttleWithReaverIdle.class,
+            ProtossShuttleWithReaverEngage::new,
+            ProtossShuttleWithReaverIdle::new,
 
-            ProtossShuttleAvoidEnemies.class,
+            ProtossShuttleAvoidEnemies::new,
         };
     }
 }

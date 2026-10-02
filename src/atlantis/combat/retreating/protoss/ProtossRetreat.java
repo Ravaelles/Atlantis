@@ -1,6 +1,7 @@
 package atlantis.combat.retreating.protoss;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.early.protoss.ZealotAvoidLingsWhenWounded;
 import atlantis.combat.retreating.protoss.should.ProtossDontRetreat;
 import atlantis.combat.retreating.protoss.should.ProtossRetreatWrapper;
@@ -18,11 +19,11 @@ public class ProtossRetreat extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossRetreatWrapper.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossRetreatWrapper::new,
 
-            ZealotAvoidLingsWhenWounded.class,
+            ZealotAvoidLingsWhenWounded::new,
         };
     }
 }

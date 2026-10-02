@@ -1,6 +1,7 @@
 package atlantis.protoss.dt;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class DarkTemplar extends Manager {
@@ -14,14 +15,14 @@ public class DarkTemplar extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            DarkTemplarRunWhenAttacked.class,
-            DarkTemplarAvoidWhenUnderAttack.class,
-            DarkTemplarAvoidDetectors.class,
-            DarkTemplarAvoidCB.class,
-            DarkTemplarAlwaysAttackWhenUndetected.class,
-            DarkTemplarIdle.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            DarkTemplarRunWhenAttacked::new,
+            DarkTemplarAvoidWhenUnderAttack::new,
+            DarkTemplarAvoidDetectors::new,
+            DarkTemplarAvoidCB::new,
+            DarkTemplarAlwaysAttackWhenUndetected::new,
+            DarkTemplarIdle::new,
         };
     }
 }

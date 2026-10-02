@@ -1,6 +1,7 @@
 package atlantis.combat.advance.focus;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
@@ -42,8 +43,8 @@ public class HandleUnitPositioningOnMap extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            MakeSpaceForNearbyWorkers.class,
 //            MakeSpaceForWrongSideOfFocusFriends.class,
 

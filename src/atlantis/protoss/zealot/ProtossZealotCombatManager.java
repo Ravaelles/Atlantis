@@ -1,6 +1,7 @@
 package atlantis.protoss.zealot;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,11 +17,11 @@ public class ProtossZealotCombatManager extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ZealotStayInBackOfGoon.class,
-            ProtossZealotTooFarFromDragoon.class,
-            ProtossZealotSeparateFromMeleeEnemies.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ZealotStayInBackOfGoon::new,
+            ProtossZealotTooFarFromDragoon::new,
+            ProtossZealotSeparateFromMeleeEnemies::new,
         };
     }
 

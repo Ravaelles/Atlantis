@@ -34,13 +34,13 @@ public class AsAirAvoidAntiAir extends Manager {
     }
 
     public Manager handle() {
-        Manager manager = Manager.invokedFor(PreventAirCornerStucking.class, unit);
+        Manager manager = Manager.invokedFor(PreventAirCornerStucking::new, unit);
         if (manager != null && unit.isMoving()) {
             return usedManager(manager);
         }
 
         if (!isGroundEnemy && AsAirRunToCannon.shouldRunToCannonGeneric(unit)) {
-            if (invokedManager(AsAirRunToCannon.class)) return usedManager(AsAirRunToCannon.class);
+            if (invokedManager(AsAirRunToCannon::new)) return usedManager(AsAirRunToCannon::new);
         }
 
         Selection enemies = unit.enemiesThatCanAttackMe(safetyMargin());

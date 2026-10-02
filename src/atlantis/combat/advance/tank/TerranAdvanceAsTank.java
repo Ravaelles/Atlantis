@@ -1,6 +1,7 @@
 package atlantis.combat.advance.tank;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 
@@ -15,10 +16,10 @@ public class TerranAdvanceAsTank extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AdvanceAsTankWounded.class,
-            AdvanceAsTankCoordinate.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AdvanceAsTankWounded::new,
+            AdvanceAsTankCoordinate::new,
         };
     }
 }

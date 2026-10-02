@@ -1,6 +1,7 @@
 package atlantis.protoss.arbiter;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.micro.generic.managers.*;
 import atlantis.map.scout.ScoutFreeBases;
@@ -19,14 +20,14 @@ public class Arbiter extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AsAirAvoidTowers.class,
-            AsAirAvoidDeadlyAntiAir.class,
-            AsAirAvoidAntiAir.class,
-            SpreadOutArbiters.class,
-            FollowAlphaLeader.class,
-            FollowArmy.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AsAirAvoidTowers::new,
+            AsAirAvoidDeadlyAntiAir::new,
+            AsAirAvoidAntiAir::new,
+            SpreadOutArbiters::new,
+            FollowAlphaLeader::new,
+            FollowArmy::new,
         };
     }
 

@@ -1,6 +1,7 @@
 package atlantis.protoss.ht;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.generic.MobileDetector;
 import atlantis.combat.squad.positioning.protoss.zealot.ProtossHtSeparateFromEnemies;
 import atlantis.units.AUnit;
@@ -17,9 +18,9 @@ public class ProtossHTCombatManager extends MobileDetector {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossHtSeparateFromEnemies.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossHtSeparateFromEnemies::new,
         };
     }
 

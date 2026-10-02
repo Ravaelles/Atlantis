@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.tank;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.terran.tank.sieging.SiegeHereDuringMissionDefend;
 import atlantis.combat.micro.terran.tank.sieging.WouldBlockChokeBySieging;
 import atlantis.combat.micro.terran.tank.unsieging.DontThinkAboutUnsieging;
@@ -21,16 +22,16 @@ public class TerranTankWhenSieged extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TankVsTank.class,
-            SiegeTankRunCritical.class,
-            DontThinkAboutUnsieging.class,
-            SiegeTankRun.class,
-            WouldBlockChokeBySieging.class,
-            SiegeHereDuringMissionDefend.class,
-            UnsiegeToReposition.class,
-            UnsiegeCauseLonely.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TankVsTank::new,
+            SiegeTankRunCritical::new,
+            DontThinkAboutUnsieging::new,
+            SiegeTankRun::new,
+            WouldBlockChokeBySieging::new,
+            SiegeHereDuringMissionDefend::new,
+            UnsiegeToReposition::new,
+            UnsiegeCauseLonely::new,
         };
     }
 }

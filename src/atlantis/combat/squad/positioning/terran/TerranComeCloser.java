@@ -1,6 +1,7 @@
 package atlantis.combat.squad.positioning.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.missions.MissionManager;
 import atlantis.units.AUnit;
 import atlantis.util.We;
@@ -28,10 +29,10 @@ public class TerranComeCloser extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranTooFarFromLeader.class,
-            TerranTooFarFromSquadCenter.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranTooFarFromLeader::new,
+            TerranTooFarFromSquadCenter::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.zerg.overlord;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.AUnit;
 
@@ -16,10 +17,10 @@ public class WeKnowEnemyLocation extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            FollowArmy.class,
-            StayAtHome.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            FollowArmy::new,
+            StayAtHome::new,
         };
     }
 

@@ -1,6 +1,7 @@
 package atlantis.terran.repair.repairer;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.special.AvoidPsionicStorm;
 import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
 import atlantis.units.AUnit;
@@ -17,13 +18,13 @@ public class RepairerManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AvoidSpellsAndMines.class,
-            RepairerSafety.class,
-            RemoveRepairer.class,
-            IssueRepairCommand.class,
-            SeparateFromRunningTanks.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AvoidSpellsAndMines::new,
+            RepairerSafety::new,
+            RemoveRepairer::new,
+            IssueRepairCommand::new,
+            SeparateFromRunningTanks::new,
         };
     }
 

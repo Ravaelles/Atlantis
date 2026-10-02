@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.tank.sieging.kursk;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class TankVsTank extends Manager {
@@ -14,9 +15,9 @@ public class TankVsTank extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            DontUnsiegeEnemyTanksNear.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            DontUnsiegeEnemyTanksNear::new,
         };
     }
 }

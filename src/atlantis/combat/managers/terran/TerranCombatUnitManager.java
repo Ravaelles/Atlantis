@@ -1,6 +1,7 @@
 package atlantis.combat.managers.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -15,11 +16,11 @@ public class TerranCombatUnitManager extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            TerranCombatManagerTopPriority.class,
-            TerranCombatManagerMediumPriority.class,
-            TerranCombatManagerLowPriority.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            TerranCombatManagerTopPriority::new,
+            TerranCombatManagerMediumPriority::new,
+            TerranCombatManagerLowPriority::new,
         };
     }
 }

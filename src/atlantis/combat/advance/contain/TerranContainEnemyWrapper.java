@@ -1,6 +1,7 @@
 package atlantis.combat.advance.contain;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.advance.contain.terran.AppliesContainForTerran;
 import atlantis.combat.advance.contain.terran.TerranContainEnemy;
 import atlantis.combat.missions.MissionManager;
@@ -30,10 +31,10 @@ public class TerranContainEnemyWrapper extends MissionManager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
 //            ContainAsProtoss.class,
-            TerranContainEnemy.class,
+            TerranContainEnemy::new,
         };
     }
 

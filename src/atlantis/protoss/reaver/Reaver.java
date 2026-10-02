@@ -1,6 +1,7 @@
 package atlantis.protoss.reaver;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.special.AvoidLurkers;
 import atlantis.units.AUnit;
 
@@ -15,24 +16,24 @@ public class Reaver extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ReaverProduceScarab.class,
-            ReaverIsLoaded.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ReaverProduceScarab::new,
+            ReaverIsLoaded::new,
 
-            ReaverUseTransport.class,
-            AvoidLurkers.class,
+            ReaverUseTransport::new,
+            AvoidLurkers::new,
 
-            ReaverForceHoldToFireInRange.class,
-            ReaverContinueAttack.class,
-            ReaverHoldToAttack.class,
+            ReaverForceHoldToFireInRange::new,
+            ReaverContinueAttack::new,
+            ReaverHoldToAttack::new,
 
-            ReaverForceFollowAnotherCombatUnit.class,
+            ReaverForceFollowAnotherCombatUnit::new,
 
-            ReaverAlwaysAttack.class,
+            ReaverAlwaysAttack::new,
 
-            ReaverControlEnemyDistance.class,
-            ReaverAlwaysFollowAlphaLeader.class,
+            ReaverControlEnemyDistance::new,
+            ReaverAlwaysFollowAlphaLeader::new,
         };
     }
 }

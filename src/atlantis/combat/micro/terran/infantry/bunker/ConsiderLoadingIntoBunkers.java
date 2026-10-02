@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry.bunker;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
@@ -51,9 +52,9 @@ public class ConsiderLoadingIntoBunkers extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            LoadIntoTheBunker.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            LoadIntoTheBunker::new,
         };
     }
 }

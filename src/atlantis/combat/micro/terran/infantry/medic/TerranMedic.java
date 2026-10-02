@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry.medic;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.combat.squad.positioning.terran.TerranTooFarFromSquadCenter;
@@ -30,22 +31,22 @@ public class TerranMedic extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            ProtossAvoidCriticalUnits.class,
-            MedicAvoidWhenAttacked.class,
-            ContinueHeal.class,
-            HealMostWoundedInRange.class,
-            HealAnyWoundedNear.class,
-            MedicChokeBlockMoveAway.class,
-            MedicChokeBlock.class,
-            MedicBodyBlock.class,
-            UnitTooCloseToBunker.class,
-            TerranTooFarFromSquadCenter.class,
-            TooFarFromNearestInfantry.class,
-            MoveAwayMedicFromTanks.class,
-            GlueToAssignments.class,
-            ProtossAvoidEnemies.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            ProtossAvoidCriticalUnits::new,
+            MedicAvoidWhenAttacked::new,
+            ContinueHeal::new,
+            HealMostWoundedInRange::new,
+            HealAnyWoundedNear::new,
+            MedicChokeBlockMoveAway::new,
+            MedicChokeBlock::new,
+            MedicBodyBlock::new,
+            UnitTooCloseToBunker::new,
+            TerranTooFarFromSquadCenter::new,
+            TooFarFromNearestInfantry::new,
+            MoveAwayMedicFromTanks::new,
+            GlueToAssignments::new,
+            ProtossAvoidEnemies::new,
         };
     }
 

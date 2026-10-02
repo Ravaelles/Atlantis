@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.terran.lifted.RebaseToNewMineralPatches;
 import atlantis.combat.micro.terran.lifted.LandBuildingThatLifted;
 import atlantis.units.AUnit;
@@ -17,10 +18,10 @@ public class TerranCommandCenter extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            RebaseToNewMineralPatches.class,
-            LandBuildingThatLifted.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            RebaseToNewMineralPatches::new,
+            LandBuildingThatLifted::new,
         };
     }
 }

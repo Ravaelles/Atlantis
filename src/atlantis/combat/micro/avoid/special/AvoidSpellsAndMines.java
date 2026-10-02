@@ -1,6 +1,7 @@
 package atlantis.combat.micro.avoid.special;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 
 public class AvoidSpellsAndMines extends Manager {
@@ -9,10 +10,10 @@ public class AvoidSpellsAndMines extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            AvoidPsionicStorm.class,
-            AvoidMines.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            AvoidPsionicStorm::new,
+            AvoidMines::new,
         };
     }
 }

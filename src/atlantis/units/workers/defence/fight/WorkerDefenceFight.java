@@ -1,6 +1,7 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 
@@ -19,11 +20,11 @@ public class WorkerDefenceFight extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            WorkerFightEnemyProxyBuilding.class,
-            WorkerDefenceFightCombatUnits.class,
-            WorkerDefenceFightWorkers.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            WorkerFightEnemyProxyBuilding::new,
+            WorkerDefenceFightCombatUnits::new,
+            WorkerDefenceFightWorkers::new,
         };
     }
 }

@@ -1,6 +1,7 @@
 package atlantis.combat.micro.terran.infantry;
 
 import atlantis.architecture.Manager;
+import atlantis.architecture.ManagerFactory;
 import atlantis.combat.micro.terran.infantry.bunker.ConsiderLoadingIntoBunkers;
 import atlantis.combat.micro.terran.infantry.bunker.DontGoTooFarFromBunkers;
 import atlantis.combat.micro.terran.infantry.bunker.UnloadFromBunkers;
@@ -20,16 +21,16 @@ public class TerranInfantry extends Manager {
     }
 
     @Override
-    protected Class<? extends Manager>[] managers() {
-        return new Class[]{
-            SpreadWhenHighTemplarsNear.class,
-            TerranMedic.class,
-            TerranFirebat.class,
-            Stimpack.class,
-            ConsiderLoadingIntoBunkers.class,
-            UnloadFromBunkers.class,
-            GoTowardsMedic.class,
-            DontGoTooFarFromBunkers.class,
+    protected ManagerFactory[] managers() {
+        return new ManagerFactory[]{
+            SpreadWhenHighTemplarsNear::new,
+            TerranMedic::new,
+            TerranFirebat::new,
+            Stimpack::new,
+            ConsiderLoadingIntoBunkers::new,
+            UnloadFromBunkers::new,
+            GoTowardsMedic::new,
+            DontGoTooFarFromBunkers::new,
         };
     }
 }
