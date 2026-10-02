@@ -199,6 +199,11 @@ public class Cache<T> {
         for (Cache<?> cache : allInstances) {
             cache.clear();
         }
-        allInstances.clear();
+        // The registry is deliberately NOT emptied. Cache instances are static
+        // fields and register themselves once, in their constructor - so dropping
+        // them here meant that every nuke after the first one in a JVM cleared
+        // nothing at all, and stale selections, enemy lists and safety margins
+        // survived from one test into the next. That is what made tests that pass
+        // alone fail inside a package run.
     }
 }
