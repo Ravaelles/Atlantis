@@ -71,12 +71,17 @@ public class AbstractTestWithUnits extends UnitTest {
 
         clearCaches();
 
-        if (!(this instanceof AbstractTestWithWorld)) {
-            useFakeTime(0); // This needs to be 0 so every modulo division returns 0
-        }
-
         (new MockEverything(this)).mockEverything();
 //        HeuristicCombatEvaluator.clearCache();
+
+        // Always reset the clock, including for world-based tests: AUnitTest
+        // (and others) mix world-free tests with createWorld() tests, and the
+        // A.now field left behind by the previous test then disagreed with the
+        // mocked AGame.now(). A "5 frames ago" assertion was off by one purely
+        // because of which test ran before. Frame 0 also keeps every modulo
+        // division in the bot returning 0.
+        // After MockEverything, because useFakeTime() stubs the aGame mock.
+        useFakeTime(0);
 
         init();
     }
@@ -202,6 +207,15 @@ public class AbstractTestWithUnits extends UnitTest {
         if (Atlantis.game() == null) {
             Atlantis.getInstance().setGame(game);
         }
+
+        // Keep the clock fields in sync with the mocked AGame.now(). Production
+        // code reaches the frame number through A.now(), but tests read the
+        // public A.now field - and world tests set that field while unit tests
+        // did not. A test running after a world test therefore saw two
+        // different "now" values, and every "N frames ago" assertion was off by
+        // one. One source of truth, set here.
+        A.now = framesNow;
+        A.s = framesNow / 30;
     }
 
     protected void usingFakeOurs(Runnable runnable) {
