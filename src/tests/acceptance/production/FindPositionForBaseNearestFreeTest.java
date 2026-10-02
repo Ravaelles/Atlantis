@@ -1,8 +1,9 @@
-package atlantis.production.constructions.position.base;
+package tests.acceptance.production;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.map.position.APosition;
+import atlantis.production.constructions.position.base.FindPositionForBaseNearestFree;
 import atlantis.units.AUnitType;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;

@@ -17,7 +17,7 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Two scopes, two baselines — read this before trusting a green run
 
 **The default run only executes `tests.unit`.** The whole
-`tests.acceptance` package (world/squad/commander behaviour, ~115 tests) is
+`tests.acceptance` package (world/squad/commander behaviour, ~119 tests) is
 **not** run by `bash scripts/run-tests.sh`. That was true for the whole
 architecture effort, and it hid a lot: acceptance tests were written against a
 broken harness and were never executed, so nobody saw 44 failures sitting in
@@ -27,8 +27,8 @@ is one command rather than a flag somebody has to remember.
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **115 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **218 passing / 6 failing** of 225 |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **119 passing / 0 failing** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **222 passing / 6 failing** of 229 |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 The 6 remaining failures are all in `tests.unit` and are listed below. Random

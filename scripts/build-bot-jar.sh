@@ -79,9 +79,13 @@ for junk in "atlantis (copy)" bwapi bwta com META-INF; do
 done
 # src/tests IS packaged, unfortunately: 15 production classes import the test
 # harness (AUnit -> tests.fakes.FakeUnit, Bullets -> tests.fakes.FakeBullets,
-# ClearCountCache -> tests.unit.helpers.ClearAllCaches, ...) and two JUnit tests
-# even live in the production tree. Classes load lazily, so the test *frameworks*
-# are not needed in a game - only these classes are. Tracked in _AI/NEXT.md.
+# ClearCountCache -> tests.unit.helpers.ClearAllCaches, ...). Classes load
+# lazily, so the test *frameworks* are not needed in a game - only these classes
+# are. Tracked in _AI/NEXT.md #28.
+#
+# (The two JUnit classes that used to live in the production tree have moved to
+# src/tests/acceptance/production/, so nothing under atlantis/ is a test class
+# any more.)
 
 mkdir -p "$(dirname "$OUT_JAR")"
 python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "${RUNTIME_LIBS[@]}" <<'EOF'
