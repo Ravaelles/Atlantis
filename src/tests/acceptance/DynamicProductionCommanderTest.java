@@ -24,6 +24,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DynamicProductionCommanderTest extends WorldStubForTests {
     private int nextX = 20;
     private ArrayList<FakeUnit> newUnits = new ArrayList<>();
+    private ArrayList<FakeUnit> initialUnits = new ArrayList<>();
+    private boolean initialUnitsCreated = false;
 
     //    protected int currentMinerals = 567;
 //    protected int currentGas = 678;
@@ -85,8 +87,18 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
 
     // =========================================================
 
+    /**
+     * Created once and reused: addOurNewUnits() needs the initial army, and
+     * fakeExampleOurs() builds *new* FakeUnits on every call, so asking again
+     * used to add a second command centre and a second set of SCVs to the mock
+     * every single time a depot was added.
+     */
     private FakeUnit[] ourInitialUnits() {
-        return fakeExampleOurs();
+        if (!initialUnitsCreated) {
+            initialUnitsCreated = true;
+            initialUnits.addAll(FakeUnitHelper.fakeUnitsToArrayList(fakeExampleOurs()));
+        }
+        return initialUnits.toArray(new FakeUnit[0]);
     }
 
     private void addOurNewUnits(FakeUnit[] ourNewFakeUnits) {
@@ -95,7 +107,12 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
         ArrayList<FakeUnit> ourUnits = FakeUnitHelper.fakeUnitsToArrayList(ourInitialUnits());
         ourUnits.addAll(newUnits);
 
-        ClearAllCaches.clearAll();
+        // Queries only. clearAll() nulls the position of every FakeUnit that
+        // exists, including the ones this method has just created, so
+        // Select.mainOrAnyBuilding() then handed a position-less command centre
+        // to HaveBunkerAtMainChoke and the run died with an NPE in
+        // PositionUtil.distanceTo().
+        ClearAllCaches.clearQueries();
 
         int supplyTotal = 10 + 8 * Select.ourOfType(Terran_Supply_Depot).size();
         int supplyUsed = supplyTotal * 2 / 3;

@@ -530,6 +530,29 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         consumed = true;
     }
 
+    /**
+     * Put this order back into its pristine state.
+     *
+     * <p>A build order is a *definition*, but its {@code ProductionOrder}
+     * objects carry runtime state: a status, a consumed flag, a construction and
+     * resource reservations. {@code QueueFactory.fromBuildOrder()} hands those
+     * very objects to the queue, so once something has been produced from a
+     * build order, that build order is no longer pristine - and a queue created
+     * from it later inherits orders that are still IN_PROGRESS with their
+     * resources reserved.
+     *
+     * <p>In a game the queue is initialized once, so this never shows up; it is
+     * the test harness (which builds a fresh queue from the same static strategy
+     * over and over) that needs a way to say "this queue starts from scratch".</p>
+     */
+    public void resetRuntimeState() {
+        status = OrderStatus.NOT_READY;
+        consumed = false;
+        construction = null;
+        orderReservations = new OrderReservations(this);
+        requestedAt = A.now();
+    }
+
     public int requestedAgo() {
         return A.ago(requestedAt);
     }

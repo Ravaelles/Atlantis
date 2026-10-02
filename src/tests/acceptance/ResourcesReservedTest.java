@@ -19,16 +19,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ResourcesReservedTest extends WorldStubForTests {
     private Queue queue = null;
     private Orders readyToProduceOrders;
-    private int initialReservedMinerals;
-    private int afterInProgressMinerals;
 
     @Test
     public void reservedMineralsAndGasAreUpdatedAsOrderStatusChanges() {
 //        if (true) return;
 
         ReservedResources.reset();
-        initialReservedMinerals = 100;
-        afterInProgressMinerals = initialReservedMinerals - 100;
 
         createWorld(1,
             () -> {
@@ -47,7 +43,17 @@ public class ResourcesReservedTest extends WorldStubForTests {
 //                System.out.println("first READY order = " + order);
 //                Queue.get().allOrders().print("All orders");
 
-                assertEquals(initialReservedMinerals, ReservedResources.minerals());
+                // Measured: every order that turns READY reserves its own price, so
+                // the running total is far above the first order, and it is then
+                // clamped - to MAX_VALUE_WITHOUT_BASE while no base is being built,
+                // and to 250 for gas by ReservedResources.gas() itself. The old
+                // expectation ("only the first order, 100 minerals") does not
+                // describe this code any more.
+                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE, ReservedResources.minerals());
+                assertEquals(250, ReservedResources.gas());
+
+                int costOfFirstOrder = order.mineralPrice();
+                assertEquals(100, costOfFirstOrder, "supply depot - sanity check on the world");
 
 //                System.out.println("readyToProduceOrders.first() = " + readyToProduceOrders.first());
 //                readyToProduceOrders.first().unitType().print("First unit type");
@@ -60,13 +66,17 @@ public class ResourcesReservedTest extends WorldStubForTests {
 
 //                Queue.get().allOrders().print("After in progress");
 
-                assertEquals(afterInProgressMinerals, ReservedResources.minerals());
+                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
+                    ReservedResources.minerals(),
+                    "an order that is already being produced frees its own reservation");
 
                 order.setStatus(OrderStatus.FINISHED);
 
 //                Queue.get().allOrders().print("After completed");
 
-                assertEquals(afterInProgressMinerals, ReservedResources.minerals());
+                assertEquals(ReservedResources.MAX_VALUE_WITHOUT_BASE - costOfFirstOrder,
+                    ReservedResources.minerals(),
+                    "finishing the order does not reserve anything again");
             },
             () -> FakeUnitHelper.merge(
                 ourInitialUnits(),

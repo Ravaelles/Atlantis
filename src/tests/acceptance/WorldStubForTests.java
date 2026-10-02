@@ -5,6 +5,7 @@ import atlantis.information.strategy.Strategy;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.QueueInitializer;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeUnit;
 
@@ -80,6 +81,17 @@ public class WorldStubForTests extends AbstractTestWithWorld {
         Strategy.setTo(initBuildOrder());
         buildOrder = Strategy.get().buildOrder();
         initSupply();
+
+        // QueueFactory hands the build order's own ProductionOrder objects to the
+        // queue, and the test strategies are static singletons. Without this a
+        // queue created here inherits the statuses, consumed flags and resource
+        // reservations of whatever an earlier test produced from the same build
+        // order - which is exactly what made Queue1Test order-dependent (5 orders
+        // still IN_PROGRESS at frame 1) and ResourcesReservedTest see stale
+        // reservations. "A fresh queue" has to mean fresh orders.
+        for (ProductionOrder order : buildOrder.productionOrders()) {
+            order.resetRuntimeState();
+        }
 
         QueueInitializer.initializeProductionQueue();
 
