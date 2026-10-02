@@ -6,7 +6,6 @@ Field <atlantis.architecture.BaseManager.squad> has type <atlantis.combat.squad.
 Field <atlantis.architecture.BaseManager.unit> has type <atlantis.units.AUnit> in (BaseManager.java:0)
 Method <atlantis.architecture.BaseCommander.initChildren([Latlantis.architecture.CommanderFactory;)> calls method <atlantis.game.AGame.exit()> in (BaseCommander.java:37)
 Method <atlantis.architecture.BaseCommander.initChildren([Latlantis.architecture.CommanderFactory;)> calls method <atlantis.game.AGame.exit()> in (BaseCommander.java:43)
-Method <atlantis.architecture.BaseManager.initChildren([Latlantis.architecture.ManagerFactory;)> calls method <atlantis.game.A.printStackTrace(java.lang.String)> in (BaseManager.java:50)
 Method <atlantis.architecture.BaseManager.initChildren([Latlantis.architecture.ManagerFactory;)> calls method <atlantis.game.A.quit()> in (BaseManager.java:45)
 Method <atlantis.architecture.BaseManager.initChildren([Latlantis.architecture.ManagerFactory;)> calls method <atlantis.game.A.quit()> in (BaseManager.java:54)
 Method <atlantis.architecture.BaseManager.toString()> calls method <atlantis.game.A.substring(java.lang.String, int, int)> in (BaseManager.java:83)

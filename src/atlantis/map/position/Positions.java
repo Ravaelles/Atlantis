@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.units.AUnit;
 
+import atlantis.util.AConsole;
 import java.io.Serializable;
 import java.util.*;
 
@@ -229,11 +230,11 @@ public class Positions<T extends HasPosition> implements Serializable {
     // Auxiliary
 
     public void print() {
-        A.println("Positions in list:");
+        AConsole.println("Positions in list:");
         for (T position : list()) {
-            A.println(position);
+            AConsole.println(position);
         }
-        A.println();
+        AConsole.println();
     }
 
     // === Getters =============================================

@@ -3,6 +3,7 @@ package tests.acceptance;
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.util.AConsole;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
@@ -25,7 +26,7 @@ public class AddToQueueTest extends WorldStubForTests {
                 assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
 
                 added = AddToQueue.maxAtATime(Terran_Marine, 2);
-                A.println("added = " + added);
+                AConsole.println("added = " + added);
 
                 queue.clearCache();
                 assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());

@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import bwapi.Color;
 
@@ -33,7 +34,7 @@ public class NotifyNearUnitsToMakeSpaceToRun extends HasUnit {
 
         for (AUnit otherUnit : friendsToNotify.list()) {
             if (canBeNotifiedToMakeSpace(otherUnit)) {
-//                A.errPrintln(A.minSec() + " Notify: " + unit + " is notifying " + otherUnit + " to make space");
+//                AConsole.errPrintln(A.minSec() + " Notify: " + unit + " is notifying " + otherUnit + " to make space");
                 if (otherUnit.moveAwayFrom(runFrom, 0.5, Actions.MOVE_SPACE)) {
                     APainter.paintCircleFilled(unit, 10, Color.Yellow);
                     APainter.paintCircleFilled(otherUnit, 7, Color.Grey);

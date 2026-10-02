@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.Counter;
 
 public class QueueRefresher {
@@ -64,7 +65,7 @@ public class QueueRefresher {
 
     private OrderStatus markAsComplete(ProductionOrder order) {
 //        if (order.unitType() != null && order.unitType().isGasBuilding()) {
-//            A.errPrintln("########################### Gas building completed: " + order.construction());
+//            AConsole.errPrintln("########################### Gas building completed: " + order.construction());
 //        }
 
         order.setStatus(OrderStatus.FINISHED);

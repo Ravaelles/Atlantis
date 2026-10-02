@@ -17,15 +17,15 @@ public class ClassScanner {
             for (Class<?> clazz : findClasses("atlantis")) {
                 // Check if the class is a subclass of AutomaticListener
                 if (ourClass.isAssignableFrom(clazz) && !clazz.equals(ourClass)) {
-//                    A.println("Listener found: " + clazz.getSimpleName());
+//                    AConsole.println("Listener found: " + clazz.getSimpleName());
                     listeners.add(clazz.asSubclass(ourClass));  // Safe cast to Class<? extends AutomaticListener>
                 }
             }
         } catch (ClassNotFoundException e) {
-            A.printStackTrace("AutoRegisterEventListeners ClassNotFoundException: " + e.getMessage());
+            AConsole.printStackTrace("AutoRegisterEventListeners ClassNotFoundException: " + e.getMessage());
             throw new RuntimeException(e);
         } catch (IOException e) {
-            A.printStackTrace("AutoRegisterEventListeners IOException: " + e.getMessage());
+            AConsole.printStackTrace("AutoRegisterEventListeners IOException: " + e.getMessage());
             throw new RuntimeException(e);
         }
 

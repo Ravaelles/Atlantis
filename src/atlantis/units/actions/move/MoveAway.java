@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class MoveAway {
@@ -56,7 +57,7 @@ public class MoveAway {
             positionOk
         ) {
 //            if (from instanceof AUnit && Select.enemy().bunkers().countInRadius(0.5, from) > 0) {
-//                A.printStackTrace("Why running from bunker?");
+//                AConsole.printStackTrace("Why running from bunker?");
 //            }
 
 //                if (moveDistance < 2.5) return unit.moveAwayFrom(from, 2.5, action, tooltip);

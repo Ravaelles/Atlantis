@@ -3,6 +3,7 @@ package atlantis.units.special;
 import atlantis.architecture.Manager;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class RemoveDeadUnitsManager extends Manager {
     public RemoveDeadUnitsManager(AUnit unit) {
@@ -13,7 +14,7 @@ public class RemoveDeadUnitsManager extends Manager {
     public Manager handle() {
         if (!unit.isAlive()) {
             Squad squad = unit.squad();
-//            A.errPrintln("Removing invalid unit: "
+//            AConsole.errPrintln("Removing invalid unit: "
 //                + unit + " / hp:" + unit.hp()
 //                + " / alive:" + unit.isAlive());
             if (squad != null) squad.removeUnit(unit);

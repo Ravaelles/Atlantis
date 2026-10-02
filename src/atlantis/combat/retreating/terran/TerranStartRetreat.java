@@ -10,6 +10,7 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
+import atlantis.util.AConsole;
 import static atlantis.units.actions.Actions.RUN_RETREAT;
 
 public class TerranStartRetreat extends HasUnit {
@@ -31,7 +32,7 @@ public class TerranStartRetreat extends HasUnit {
         HasPosition runAwayFrom = enemy;
 
         if (runAwayFrom == null) {
-            A.errPrintln("Retreat runAwayFrom is NULL");
+            AConsole.errPrintln("Retreat runAwayFrom is NULL");
             return false;
         }
 

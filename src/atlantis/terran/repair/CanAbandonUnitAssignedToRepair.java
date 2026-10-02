@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 
 public class CanAbandonUnitAssignedToRepair {
     public static boolean check(AUnit unit) {
@@ -16,7 +17,7 @@ public class CanAbandonUnitAssignedToRepair {
 
         if (target == null || target.isNeutral() || !target.isAlive()) {
 //            System.err.println("target = " + target);
-//            A.printStackTrace("WTF, why here?");
+//            AConsole.printStackTrace("WTF, why here?");
             return true;
         }
 

@@ -7,6 +7,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 
 public class GameSummary {
     public static void print(boolean winner) {
@@ -18,7 +19,7 @@ public class GameSummary {
 
         LongFrames.printSummary();
 
-        A.println(result);
+        AConsole.println(result);
 
         if (Atlantis.game() == null) {
             return;
@@ -26,7 +27,7 @@ public class GameSummary {
 
         int resourceBalance = AGame.killsLossesResourceBalance();
         int totalS = AGame.timeSeconds();
-        A.println(
+        AConsole.println(
             "\n### Total time: " + totalS + " seconds. ###" +
                 (totalS >= 90 ? "\n\n" : "\n### Total frames: " + A.now() + " frames. ###\n\n") +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +
@@ -47,10 +48,10 @@ public class GameSummary {
         AUnit unit = Select.ourCombatUnits().havingWeapon().first();
         if (unit == null) return;
 
-//        A.println("### " + unit.type() + " Wound: " + unit.woundHp() + "hp ###");
+//        AConsole.println("### " + unit.type() + " Wound: " + unit.woundHp() + "hp ###");
 //        int totalHits = unit.totalHitCount();
         int totalHits = Select.ourCombatUnits().totalHits();
 
-        A.println("### Total hits: " + totalHits + " ###\n");
+        AConsole.println("### Total hits: " + totalHits + " ###\n");
     }
 }

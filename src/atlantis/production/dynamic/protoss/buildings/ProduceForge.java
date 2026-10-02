@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.Protoss_Forge;
@@ -48,7 +49,7 @@ public class ProduceForge {
     private static boolean produce(int buildAtSupply) {
         if (!A.supplyUsed(buildAtSupply)) return false;
 
-//        if (Have.notEvenPlanned(Protoss_Forge)) A.printStackTrace("Why Forge? @ " + A.minSec());
+//        if (Have.notEvenPlanned(Protoss_Forge)) AConsole.printStackTrace("Why Forge? @ " + A.minSec());
 
         return DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Forge)
             && yes("buildAtSupply: " + buildAtSupply);

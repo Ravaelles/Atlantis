@@ -9,6 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -34,7 +35,7 @@ public class FindPositionForBase {
         construction.setMaxDistance(25);
 
 //        if (Select.main() != null) System.err.println("near = " + near + ", distToMain = " + A.dist(Select.main(), near));
-//        if (true) A.printStackTrace("findPositionForBase_nearMainBase");
+//        if (true) AConsole.printStackTrace("findPositionForBase_nearMainBase");
 
         return APositionFinder.findStandardPosition(builder, building, near, construction.maxDistance());
     }
@@ -48,7 +49,7 @@ public class FindPositionForBase {
         }
 
 //        if (Select.main() != null) System.err.println("near NAT = " + near + ", distToMain = " + A.dist(Select.main(), near));
-//        if (true) A.printStackTrace("findPositionForBase_natural");
+//        if (true) AConsole.printStackTrace("findPositionForBase_natural");
 
         return APositionFinder.findStandardPosition(builder, building, near, 5);
     }

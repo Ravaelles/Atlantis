@@ -14,6 +14,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 
 /**
@@ -162,7 +163,7 @@ public abstract class Squad extends Units {
 //        }
 
 //        if (size() > 0 && mission.isMissionDefend()) {
-//            A.printStackTrace("Why DEFEND? " + mission);
+//            AConsole.printStackTrace("Why DEFEND? " + mission);
 //        }
 
         this.mission = mission;

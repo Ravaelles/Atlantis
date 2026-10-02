@@ -36,55 +36,6 @@ public class A {
 
 
     /**
-     * Prints the list of the given argument, separated with commas.
-     */
-    public static void print(Object... args) {
-        (System.out).print(args[0]);
-
-        if (args.length > 1) {
-            (System.out).print(", ");
-        }
-
-        for (int i = 1; i < args.length - 1; i++) {
-            (System.out).print(args[i] + ", ");
-        }
-
-        (System.out).println(args[args.length - 1]);
-    }
-
-    /**
-     * @return exception stack converted to String (each trace in new line)
-     */
-    public static String convertStackToString(StackTraceElement[] stackTrace) {
-        return convertStackToString(stackTrace.length, stackTrace);
-    }
-
-    /**
-     * @param maxLines maximum number of lines of result String
-     * @return exception stack converted to String (each trace in new line)
-     */
-    public static String convertStackToString(int maxLines, StackTraceElement[] stackTrace) {
-        String result = "";
-
-        for (int i = 0; i < stackTrace.length && i < maxLines; i++) {
-            result += stackTrace[i];
-
-            if (i != stackTrace.length - 1) {
-                result += "\n";
-            }
-        }
-        // for (int i = stackTrace.length - 1; i >= 0; i--) {
-        // result += stackTrace[i];
-        //
-        // if (i != 0)
-        // result += "\n";
-        // }
-
-        return result;
-    }
-
-
-    /**
      * @return string like "2011-09-03"
      */
     public static String getCurrentDateInFormatYMDHHmm() {
@@ -303,32 +254,9 @@ public class A {
         return Atlantis.game().getFrameCount() % n != 0;
     }
 
-    public static void printList(Collection<?> list) {
-        A.println("List (" + list.size() + ")");
-        for (Object o : list) {
-            A.println("- " + o);
-        }
-    }
-
-    public static void printStackTrace() {
-        printStackTrace(null);
-    }
-
-    public static void printStackTrace(String message) {
-        if (message != null) {
-            System.err.println("### " + message + " ##########");
-        }
-        Thread.dumpStack();
-    }
 
     public static long realSecondsNow() {
         return Instant.now().getEpochSecond();
-    }
-
-
-    public static boolean printErrorAndReturnTrue(String text) {
-        A.println(text);
-        return true;
     }
 
 
@@ -358,23 +286,6 @@ public class A {
         return str.substring(start, Math.min(end, str.length()));
     }
 
-    public static void println() {
-        (System.out).println("");
-    }
-
-    public static boolean println(Object string) {
-        (System.out).println(string);
-        return true;
-    }
-
-    public static boolean errPrintln(Object string) {
-        (System.err).println(string);
-        return true;
-    }
-
-    public static void print(Object string) {
-        (System.out).print(string);
-    }
 
     /**
      * Returns true if we can afford minerals and gas for given unit type.

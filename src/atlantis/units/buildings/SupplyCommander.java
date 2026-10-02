@@ -16,6 +16,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.AConsole;
 import atlantis.util.TimeMoment;
 import atlantis.util.We;
 
@@ -170,7 +171,7 @@ public class SupplyCommander extends Commander {
     private void requestAdditionalSupply() {
         int requestedConstructionsOfSupply = requestedConstructionsOfSupply();
 
-//        A.printStackTrace("Supply request: "
+//        AConsole.printStackTrace("Supply request: "
 //            + A.supplyUsed() + " // "
 //            + A.supplyTotal() + " // F="
 //            + requestedConstructionsOfSupply + " // G="

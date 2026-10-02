@@ -10,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
@@ -46,7 +47,7 @@ public class ProtossNewGasBuildingCommander extends Commander {
             ProductionOrder order = AddToQueue.withHighPriority(AtlantisRaceConfig.GAS_BUILDING);
 
 //            if (order == null) return;
-//            A.errPrintln("Request PROTOSS GAS, sup:" + A.supplyUsed() + " at " + freeGeyser
+//            AConsole.errPrintln("Request PROTOSS GAS, sup:" + A.supplyUsed() + " at " + freeGeyser
 //                + " / " + order
 //                + " / pos: " + order.atPosition()
 //                + " (" + (order.atPosition() == null ? "-" : Select.main().distTo(order.atPosition())) + ")"

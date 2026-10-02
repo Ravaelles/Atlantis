@@ -4,6 +4,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 
 public class TerranBuildOrder extends ABuildOrder {
 
@@ -22,7 +23,7 @@ public class TerranBuildOrder extends ABuildOrder {
             return parentUnit.train(type, order);
         }
 //        else {
-//            A.errPrintln("Can't find " + whatBuildsIt + " to produce " + type);
+//            AConsole.errPrintln("Can't find " + whatBuildsIt + " to produce " + type);
 //        }
 
         return false;

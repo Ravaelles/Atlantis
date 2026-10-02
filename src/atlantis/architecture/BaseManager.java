@@ -47,10 +47,13 @@ public abstract class BaseManager {
 
                 created[index++] = manager;
             } catch (Exception e) {
-                A.printStackTrace(
-                    "Could not instantiate manager / " + e.getMessage()
-                        + " / " + "ERROR CLASS: " + e.getClass()
-                );
+                // Plain System.err on purpose: atlantis.architecture is a base
+                // package and must not depend on the console helpers
+                // (ArchUnit architectureMustNotDependOnFeatures). The sibling
+                // branch below already does the same.
+                System.err.println("### Could not instantiate manager / " + e.getMessage()
+                    + " / " + "ERROR CLASS: " + e.getClass() + " ##########");
+                e.printStackTrace();
                 A.quit();
             }
         }

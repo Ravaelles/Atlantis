@@ -11,6 +11,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Forge;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
@@ -24,7 +25,7 @@ public class ProduceCannonAtNatural {
             AddToQueue.withTopPriority(Protoss_Forge);
         }
 
-//        A.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
+//        AConsole.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
 
         return requestAtBestPosition();
     }

@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -332,9 +333,9 @@ public class ConstructionRequests {
                     && construction.positionToBuildCenter().distTo(newConstructionOrder.positionToBuildCenter()) <= 6
             ) {
                 if (allowPrint) {
-//                    A.errPrintln("Cancel same construction: " + construction.buildingType());
-//                    A.errPrintln("A (old): " + construction);
-//                    A.errPrintln("B (new): " + newConstructionOrder);
+//                    AConsole.errPrintln("Cancel same construction: " + construction.buildingType());
+//                    AConsole.errPrintln("A (old): " + construction);
+//                    AConsole.errPrintln("B (new): " + newConstructionOrder);
                 }
                 return true;
             }

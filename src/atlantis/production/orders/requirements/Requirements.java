@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.Counter;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
@@ -47,17 +48,17 @@ public class Requirements {
 
         Counter<AUnitType> requiredUnits = type.requiredUnits();
         for (AUnitType requiredType : requiredUnits.keys()) {
-//            A.errPrintln(requiredType + " required for " + type + " - Have:" + A.trueFalse(Have.a(requiredType)));
+//            AConsole.errPrintln(requiredType + " required for " + type + " - Have:" + A.trueFalse(Have.a(requiredType)));
             if (!requiredType.isLarva() && !requiredType.isWorker() && !Have.a(requiredType)) {
-//                A.errPrintln("--------------------------");
-//                A.errPrintln("DONT have " + requiredType + " for " + type);
-//                A.errPrintln("Have.a(requiredType) = " + Have.a(requiredType));
-//                A.errPrintln(Select.ourOfType(requiredType).count());
+//                AConsole.errPrintln("--------------------------");
+//                AConsole.errPrintln("DONT have " + requiredType + " for " + type);
+//                AConsole.errPrintln("Have.a(requiredType) = " + Have.a(requiredType));
+//                AConsole.errPrintln(Select.ourOfType(requiredType).count());
 //                Select.clearCache();
-//                A.errPrintln(Select.ourOfType(requiredType).count());
+//                AConsole.errPrintln(Select.ourOfType(requiredType).count());
 //                Select.ourOfType(requiredType).print();
 //                Select.our().print();
-//                A.errPrintln("--------------------------");
+//                AConsole.errPrintln("--------------------------");
                 if (type.isCannon()) {
                     AUnit forge = Select.ourWithUnfinished(AUnitType.Protoss_Forge).first();
                     if (forge == null) return false;
@@ -117,7 +118,7 @@ public class Requirements {
         if (upgrade.whatsRequired() != null) {
             AUnitType required = AUnitType.from(upgrade.whatsRequired());
 //            if (ResearchU238.upgradeType().equals(upgrade)) {
-//                A.errPrintln("for ResearchU238 required = " + required);
+//                AConsole.errPrintln("for ResearchU238 required = " + required);
 //            }
             if (required != null && Count.ofType(required) == 0) return false;
         }
@@ -125,7 +126,7 @@ public class Requirements {
         if (upgrade.whatUpgrades() != null) {
             AUnitType whatUpgrades = AUnitType.from(upgrade.whatUpgrades());
 //            if (ResearchU238.upgradeType().equals(upgrade)) {
-//                A.errPrintln("for ResearchU238 whatResearches = " + whatUpgrades);
+//                AConsole.errPrintln("for ResearchU238 whatResearches = " + whatUpgrades);
 //            }
             if (whatUpgrades != null && Count.ofType(whatUpgrades) == 0) return false;
         }

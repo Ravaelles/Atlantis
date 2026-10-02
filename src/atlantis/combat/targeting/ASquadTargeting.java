@@ -1,6 +1,7 @@
 package atlantis.combat.targeting;
 
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class ASquadTargeting {
@@ -16,7 +17,7 @@ public class ASquadTargeting {
                 && unit.hasWeaponRangeToAttack(enemy, allowThisManyTilesOutsideRange(unit))
 //                && unit.enemiesNear().canBeAttackedBy(unit, 0).empty()
         ) {
-//            if (DEBUG) A.println("SqL enemy = " + enemy.typeWithUnitId());
+//            if (DEBUG) AConsole.println("SqL enemy = " + enemy.typeWithUnitId());
 
             return enemy;
         }

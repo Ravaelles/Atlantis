@@ -2,6 +2,7 @@ package atlantis.config;
 
 import atlantis.game.A;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Race;
 
@@ -41,7 +42,7 @@ public class AtlantisRaceConfig {
         validate("SUPPLY", SUPPLY);
         validate("GAS_BUILDING", GAS_BUILDING);
 
-        A.println("Atlantis config is valid.");
+        AConsole.println("Atlantis config is valid.");
     }
 
     // =========================================================

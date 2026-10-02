@@ -9,6 +9,7 @@ import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import bwapi.TilePosition;
 import bwem.BWEM;
@@ -57,14 +58,14 @@ public class AMap {
                 InitJBWEB.init();
     //            InitBWEB.init();
             } catch (Exception e) {
-                A.errPrintln(
+                AConsole.errPrintln(
                     "JBWEB exception: " + e.getMessage() + " "
                     + "but dont worry. We will continue."
                 );
                 if (!A.isUms()) e.printStackTrace();
             }
         } catch (Exception e) {
-            A.errPrintln(
+            AConsole.errPrintln(
                 "BWEM exception: " + e.getMessage() + " "
                 + "but dont worry. We will continue."
             );

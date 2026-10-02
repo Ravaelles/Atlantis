@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
@@ -18,7 +19,7 @@ public class ProcessAttackUnit extends Manager {
     }
 
     public boolean processAttackOtherUnit(AUnit target) {
-//        A.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
+//        AConsole.printStackTrace("ProcessAttackUnit.processAttackOtherUnit() " + unit.idWithHash());
 
 //        if (unit.isWounded()) {
 //            ErrorLog.debug("Wounded unit attacking " + unit + " / " + target + " / dist: " + unit.distToDigit(target));
@@ -46,7 +47,7 @@ public class ProcessAttackUnit extends Manager {
             return false;
         }
 
-//        if (target.isOverlord()) A.printStackTrace("OooOverlord targetToAttack " + target);
+//        if (target.isOverlord()) AConsole.printStackTrace("OooOverlord targetToAttack " + target);
 
         // =========================================================
 

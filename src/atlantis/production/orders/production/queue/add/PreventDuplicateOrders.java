@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.QueueLastStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
@@ -119,10 +120,10 @@ public class PreventDuplicateOrders {
 //        );
 
         if (type.is(AUnitType.Protoss_Observatory)) {
-            A.printStackTrace("Excessive observatory // " + Count.withPlanned(type));
+            AConsole.printStackTrace("Excessive observatory // " + Count.withPlanned(type));
         }
         if (type.is(AUnitType.Protoss_Observer)) {
-            A.printStackTrace("Excessive observER // " + Count.withPlanned(type));
+            AConsole.printStackTrace("Excessive observER // " + Count.withPlanned(type));
         }
 
         if (lastRequestedAgo <= 30 * 2 && !type.isCombatBuilding() && !type.isPylon()) {
@@ -163,7 +164,7 @@ public class PreventDuplicateOrders {
         if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylonsWithUnfinished() == 0) {
             if (A.seconds() < 200) {
                 System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
-                A.printStackTrace("Duplicate first Pylon - something went very wrong");
+                AConsole.printStackTrace("Duplicate first Pylon - something went very wrong");
             }
             return true;
         }

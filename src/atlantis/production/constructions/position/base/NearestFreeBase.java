@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class NearestFreeBase {
@@ -59,7 +60,7 @@ public class NearestFreeBase {
             nearTo = nearToNearestFree();
 
             if (nearTo == null) {
-                A.errPrintln("@@@@@@@@@@@ findPositionForBase_nearestFreeBase is null, FALLBACK to most distant");
+                AConsole.errPrintln("@@@@@@@@@@@ findPositionForBase_nearestFreeBase is null, FALLBACK to most distant");
                 nearTo = nearToMostDistantToEnemy();
             }
         }

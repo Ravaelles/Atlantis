@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.map.choke.Chokes;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 public class DoNothing extends Manager {
@@ -16,7 +17,7 @@ public class DoNothing extends Manager {
     @Override
     protected Manager handle() {
         AAdvancedPainter.paintTextCentered(unit, unit.idWithHash(), Color.Red);
-        A.errPrintln("@ " + A.now() + " - Still DoNothing! " + unit.id());
+        AConsole.errPrintln("@ " + A.now() + " - Still DoNothing! " + unit.id());
 
         if (unit.move(Chokes.natural(), Actions.MOVE_IDLE)) return usedManager(this);
         if (unit.move(Chokes.mainChoke(), Actions.MOVE_IDLE)) return usedManager(this);

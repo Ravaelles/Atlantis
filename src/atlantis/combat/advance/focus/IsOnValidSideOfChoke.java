@@ -3,6 +3,7 @@ package atlantis.combat.advance.focus;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class IsOnValidSideOfChoke {
     public static boolean check(AUnit unit, AFocusPoint focus) {
@@ -17,7 +18,7 @@ public class IsOnValidSideOfChoke {
         double unitToFromSide = unit.distTo(focus.fromSide());
         double focusToFromSide = focus.distTo(focus.fromSide());
 
-//        A.errPrintln("@ " + A.now() + " - " + unit.typeWithUnitId() + " / " + unitToFromSide + " / " + focusToFromSide);
+//        AConsole.errPrintln("@ " + A.now() + " - " + unit.typeWithUnitId() + " / " + unitToFromSide + " / " + focusToFromSide);
 
         return unitToFromSide <= focusToFromSide;
     }

@@ -6,6 +6,7 @@ import atlantis.combat.running.SeparateEarlyFromFriends;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.Vector;
 import atlantis.util.We;
 
@@ -112,7 +113,7 @@ public class RunShowingBackToEnemy {
 //            System.err.println("runner = " + unit + " // " + unit.position());
 //            System.err.println("runAwayFrom = " + runAwayFrom);
 //            System.err.println("unit.distTo(runAwayFrom) = " + unit.distTo(runAwayFrom));
-//            A.printStackTrace();
+//            AConsole.printStackTrace();
 //            GameSpeed.pauseGame();
             return null;
         }

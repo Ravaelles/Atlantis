@@ -3,6 +3,7 @@ package atlantis.terran.repair;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.units.workers.gather.GatherResources;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class RepairAssignments {
 
 //            if (repairer.target() != null && repairer.target().isAlive()) {
 //                // =========================================================
-//                A.printStackTrace(A.now() + " REMOVED REPAIRER");
+//                AConsole.printStackTrace(A.now() + " REMOVED REPAIRER");
 //                // =========================================================
 //            }
 

@@ -4,10 +4,11 @@ import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.util.AConsole;
 
 public class Exit {
     public static void handle() {
-        A.println("\nExit was requested manually. Cleaning up...");
+        AConsole.println("\nExit was requested manually. Cleaning up...");
 
         if (Env.isLocal()) AGame.exit();
     }

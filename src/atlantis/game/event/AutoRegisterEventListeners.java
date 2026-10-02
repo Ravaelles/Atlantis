@@ -1,6 +1,7 @@
 package atlantis.game.event;
 
 import atlantis.game.A;
+import atlantis.util.AConsole;
 import atlantis.util.ClassScanner;
 
 public class AutoRegisterEventListeners {
@@ -17,7 +18,7 @@ public class AutoRegisterEventListeners {
                 Events.register(listener.listensTo(), listener);
             }
         } catch (Exception e) {
-            A.errPrintln("AutoRegisterEventListeners Failed to initialize: " + currentClass);
+            AConsole.errPrintln("AutoRegisterEventListeners Failed to initialize: " + currentClass);
         }
 
         initialized = true;

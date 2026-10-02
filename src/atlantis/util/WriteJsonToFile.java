@@ -59,7 +59,7 @@ public class WriteJsonToFile {
             return true;
         }
         catch (IOException e) {
-            A.errPrintln("Error writing to file: " + filename);
+            AConsole.errPrintln("Error writing to file: " + filename);
         }
 
         return false;

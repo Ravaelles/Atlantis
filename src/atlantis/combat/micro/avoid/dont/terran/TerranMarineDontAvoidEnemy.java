@@ -3,6 +3,7 @@ package atlantis.combat.micro.avoid.dont.terran;
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class
 TerranMarineDontAvoidEnemy extends Manager {
@@ -61,7 +62,7 @@ TerranMarineDontAvoidEnemy extends Manager {
 
 
     private boolean dontAvoid() {
-//        if (unit.hp() <= 19) A.printStackTrace("Why");
+//        if (unit.hp() <= 19) AConsole.printStackTrace("Why");
         return true;
     }
 

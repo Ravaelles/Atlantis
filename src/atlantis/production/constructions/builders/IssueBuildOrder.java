@@ -10,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TilePosition;
 
@@ -79,7 +80,7 @@ public class IssueBuildOrder extends HasUnit {
 //            }
 
             if (!unit.isConstructing() || AGame.now() % 37 == 0) {
-//                A.println("_CONSTRUCT_ " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
+//                AConsole.println("_CONSTRUCT_ " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
 
                 if (Strategy.get().isExpansion() && A.supplyUsed() <= 17) {
                     RefreshConstructionPosition.refreshIfNeeded(construction);

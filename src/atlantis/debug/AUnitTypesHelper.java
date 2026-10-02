@@ -2,6 +2,7 @@ package atlantis.debug;
 
 import atlantis.game.A;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.WeaponUtil;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class AUnitTypesHelper {
      * Auxiliary function that ensures that damages units inflict are properly calculated.
      */
     public static void displayUnitTypesDamage() {
-        A.println("Displaying damages of all units (" + AUnitType.getAllUnitTypes().size() + " units)");
+        AConsole.println("Displaying damages of all units (" + AUnitType.getAllUnitTypes().size() + " units)");
 
         HashMap<AUnitType, Double> unitsPerGroundDamage = new HashMap<>();
         HashMap<AUnitType, Double> unitsPerAirDamage = new HashMap<>();
@@ -49,41 +50,41 @@ public class AUnitTypesHelper {
         // =========================================================
         // Display all results
 
-        A.println("Displaying top damage units and most economical ground and air units "
+        AConsole.println("Displaying top damage units and most economical ground and air units "
             + "in terms of offensive power.\n");
 
-        A.println("===== Best ground damage =====");
+        AConsole.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            A.println(unitType.name() + " (" + unitType.groundWeapon() + ", range "
+            AConsole.println(unitType.name() + " (" + unitType.groundWeapon() + ", range "
                 + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
         }
-        A.println("");
+        AConsole.println("");
 
-        A.println("===== Best air damage =====");
+        AConsole.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            A.println(unitType.name() + "(" + unitType.groundWeapon() + ", range "
+            AConsole.println(unitType.name() + "(" + unitType.groundWeapon() + ", range "
                 + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
         }
-        A.println("");
+        AConsole.println("");
 
-        A.println("===== Top quality / price ground units =====");
+        AConsole.println("===== Top quality / price ground units =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
-            A.println(unitType.name() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
+            AConsole.println(unitType.name() + " ratio: " + String.format("%.2f", bestGroundDamage.get(unitType)));
         }
-        A.println("");
+        AConsole.println("");
 
-        A.println("===== Top quality / price air units =====");
+        AConsole.println("===== Top quality / price air units =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
-            A.println(unitType.name() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
+            AConsole.println(unitType.name() + " ratio: " + String.format("%.2f", bestAirDamage.get(unitType)));
         }
-        A.println("");
+        AConsole.println("");
     }
 
     public static void printUnitsAndRequirements() {
-        A.println("=== All unit types ===");
+        AConsole.println("=== All unit types ===");
         for (AUnitType type : AUnitType.getAllUnitTypes()) {
-            A.println(type.name() + ", required:" + type.whatIsRequired() + ", buildsIt:" + type.whatBuildsIt());
+            AConsole.println(type.name() + ", required:" + type.whatIsRequired() + ", buildsIt:" + type.whatBuildsIt());
         }
-        A.println("=== END OF All unit types ===");
+        AConsole.println("=== END OF All unit types ===");
     }
 }

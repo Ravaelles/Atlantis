@@ -4,6 +4,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.util.AConsole;
 
 public class ReservedResources {
     public static final int MAX_VALUE = 500;
@@ -16,7 +17,7 @@ public class ReservedResources {
 
     public static void reset() {
 //        System.out.println("---------------------- RESET");
-//        if (minerals > 0) A.printStackTrace("Ah!");
+//        if (minerals > 0) AConsole.printStackTrace("Ah!");
 
         minerals = 0;
         gas = 0;
@@ -28,9 +29,9 @@ public class ReservedResources {
         ReservedResources.minerals += minerals;
 
 //        if (minerals > 0) {
-//            A.errPrintln("        Reserved MINERALS = " + minerals + " - " + whatFor + " /   total: " + ReservedResources.minerals);
+//            AConsole.errPrintln("        Reserved MINERALS = " + minerals + " - " + whatFor + " /   total: " + ReservedResources.minerals);
 //        } else {
-//            A.errPrintln("  + + + FREED MINERALS = " + minerals + " - " + whatFor + " /   total: " + ReservedResources.minerals);
+//            AConsole.errPrintln("  + + + FREED MINERALS = " + minerals + " - " + whatFor + " /   total: " + ReservedResources.minerals);
 //        }
 
         if (ReservedResources.minerals >= MAX_VALUE) {
@@ -72,13 +73,13 @@ public class ReservedResources {
     }
 
     public static void printMinerals() {
-        A.errPrintln(
+        AConsole.errPrintln(
             "         Reserved minerals = " + ReservedResources.minerals + " / " + AGame.minerals()
         );
     }
 
     public static void print() {
-        A.errPrintln(
+        AConsole.errPrintln(
             "         Reserved minerals/gas = " + ReservedResources.minerals + " / " + ReservedResources.gas
         );
     }

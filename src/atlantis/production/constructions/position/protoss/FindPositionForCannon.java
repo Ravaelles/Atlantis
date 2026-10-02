@@ -14,6 +14,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 import static atlantis.units.AUnitType.Protoss_Pylon;
 
@@ -27,7 +28,7 @@ public class FindPositionForCannon {
             if (!noPlannedPylonNearby(nearTo)) {
                 if (A.supplyUsed() >= 35) {
                     requestPylonToBeAbleToBuildCannon(nearTo);
-//                    A.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
+//                    AConsole.errPrintln("FindPositionForCannon: Requested pylon near " + nearTo);
                 }
             }
             return null;

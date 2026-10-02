@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.gather.GatherResources;
+import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 
@@ -193,7 +194,7 @@ public class Construction implements Comparable<Construction> {
 
 //        if (buildingType.isCyberneticsCore()) {
 //            System.err.println("@@ STATUS " + status + " for " + this.buildingType);
-//            A.printStackTrace("---------");
+//            AConsole.printStackTrace("---------");
 //        }
 
         if (status.equals(ConstructionOrderStatus.IN_PROGRESS)) {

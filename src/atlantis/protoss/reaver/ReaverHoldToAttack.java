@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 public class ReaverHoldToAttack extends Manager {
@@ -32,18 +33,18 @@ public class ReaverHoldToAttack extends Manager {
         if (dist >= 7.91) return false;
         if (dist <= 6.6) return false;
 //        if (dist <= 6.75) {
-//            A.errPrintln("@ " + A.now() + " - ENFORCE HOLDING " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
+//            AConsole.errPrintln("@ " + A.now() + " - ENFORCE HOLDING " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
 //            return true;
 //        }
 
 //        if (dist <= 6.78 && !unit.isRunning() && unit.lastPositionChangedLessThanAgo(120)) {
         if (dist <= 6.78) {
-//            A.errPrintln("@ " + A.now() + " - force hold " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
-//            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
-//            A.errPrintln(unit.isTargetInWeaponRangeAccordingToGame());
-//            A.errPrintln("EN = " + unit.target().isTargetInWeaponRangeAccordingToGame());
-//            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0));
-//            A.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0.5));
+//            AConsole.errPrintln("@ " + A.now() + " - force hold " + unit.typeWithUnitId() + " (" + A.digit(dist) + ")");
+//            AConsole.errPrintln(unit.isTargetInWeaponRangeAccordingToGame(unit.target()));
+//            AConsole.errPrintln(unit.isTargetInWeaponRangeAccordingToGame());
+//            AConsole.errPrintln("EN = " + unit.target().isTargetInWeaponRangeAccordingToGame());
+//            AConsole.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0));
+//            AConsole.errPrintln(unit.canAttackTargetWithBonus(unit.target(), 0.5));
             return true;
         }
 

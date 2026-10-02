@@ -6,6 +6,7 @@ import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
@@ -152,7 +153,7 @@ public class PositionUtil {
 //            System.err.println("Object: " + object2);
 //            System.err.println("Class:  " + object2 != null ? object2.getClass() : "- null -");
 //            throw new RuntimeException("Invalid class for argument `to`: " + object2);
-//            A.printStackTrace("Invalid class for argument `to`: " + object2);
+//            AConsole.printStackTrace("Invalid class for argument `to`: " + object2);
             System.err.println("Invalid class for argument `to`: " + object2);
             return 999;
         }

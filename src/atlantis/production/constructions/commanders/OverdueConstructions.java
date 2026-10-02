@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.AConsole;
 
 public class OverdueConstructions {
     public static void handleIfOverdue(Construction construction) {
@@ -43,7 +44,7 @@ public class OverdueConstructions {
     }
 
     private static void whenDoesNotRequirePower(Construction construction, AUnitType building) {
-        A.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
+        AConsole.errPrintln(building + " construction is overdue, cancel it. Supply: " + A.supplyUsed() + "/" + A.supplyTotal());
 
         AUnitType type = construction.buildingType();
         APosition oldPosition = construction.buildPosition();
@@ -59,19 +60,19 @@ public class OverdueConstructions {
 
         ProductionOrder newOrder = AddToQueue.withHighPriority(building, oldPosition);
 
-        A.errPrintln("---\nFresh requested order: " + newOrder);
+        AConsole.errPrintln("---\nFresh requested order: " + newOrder);
 
         if (newOrder == null) {
             if (type.isProtossImportantTechBuilding() && Count.existingOrInProduction(type) > 0) return;
 
             newOrder = AddToQueue.withTopPriority(building, oldPosition);
-            A.errPrintln("---\nNow with TOP priority: " + newOrder + "\n---");
+            AConsole.errPrintln("---\nNow with TOP priority: " + newOrder + "\n---");
         }
 
         if (newOrder == null && !building.isCombatBuilding()) {
             Queue.get().notStarted().buildings().cancelAll("Last resort - cancelling ALL not started");
             newOrder = AddToQueue.withTopPriority(building);
-            A.errPrintln("Crazy, FLUSHED QUEUE and new TOP: " + newOrder + "\n---");
+            AConsole.errPrintln("Crazy, FLUSHED QUEUE and new TOP: " + newOrder + "\n---");
         }
     }
 }

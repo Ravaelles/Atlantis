@@ -7,6 +7,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.Counter;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
@@ -114,7 +115,7 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
         }
 
         for (AUnitType type : counter.keys()) {
-            A.println(type + ": " + counter.getValueFor(type));
+            AConsole.println(type + ": " + counter.getValueFor(type));
         }
     }
 
@@ -123,7 +124,7 @@ public class DynamicProductionCommanderTest extends WorldStubForTests {
             AUnitType type = order.unitType();
             if (type != null) {
                 newUnits.add(fake(type));
-//                A.errPrintln("Producing " + type);
+//                AConsole.errPrintln("Producing " + type);
             }
         }
     }

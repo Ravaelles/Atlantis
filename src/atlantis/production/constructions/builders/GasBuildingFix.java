@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class GasBuildingFix extends HasUnit {
@@ -21,7 +22,7 @@ public class GasBuildingFix extends HasUnit {
      */
     protected APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
         if (position == null) {
-            A.errPrintln("Gas building FIX got NULL");
+            AConsole.errPrintln("Gas building FIX got NULL");
             return null;
         }
 
@@ -52,7 +53,7 @@ public class GasBuildingFix extends HasUnit {
                 ErrorLog.printErrorOnce("No geyser is known!");
             }
 
-            A.errPrintln("Gas building FIX got position too far from geyser");
+            AConsole.errPrintln("Gas building FIX got position too far from geyser");
             geyser = Select.geysers().inRadius(10, position).nearestTo(position);
 
             if (geyser == null) return null;
@@ -93,25 +94,25 @@ public class GasBuildingFix extends HasUnit {
 //        if (CanPhysicallyBuildHere.check(
 //            unit, building, position.translateByTiles(-1, 0))
 //        ) {
-//            A.errPrintln("Gas building FIX A was applied");
+//            AConsole.errPrintln("Gas building FIX A was applied");
 //            return position.translateByTiles(-1, 0);
 //        }
 //        if (CanPhysicallyBuildHere.check(
 //            unit, building, position.translateByTiles(1, 0))
 //        ) {
-//            A.errPrintln("Gas building FIX B was applied");
+//            AConsole.errPrintln("Gas building FIX B was applied");
 //            return position.translateByTiles(1, 0);
 //        }
 //        if (CanPhysicallyBuildHere.check(
 //            unit, building, position.translateByTiles(-2, -1))
 //        ) {
-//            A.errPrintln("Gas building FIX C was applied");
+//            AConsole.errPrintln("Gas building FIX C was applied");
 //            return position.translateByTiles(-2, -1);
 //        }
 //        if (CanPhysicallyBuildHere.check(
 //            unit, building, position.translateByTiles(2, 1))
 //        ) {
-//            A.errPrintln("Gas building FIX D was applied");
+//            AConsole.errPrintln("Gas building FIX D was applied");
 //            return position.translateByTiles(2, 1);
 //        }
 //

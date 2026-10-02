@@ -21,6 +21,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
 import atlantis.units.fogged.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
+import atlantis.util.AConsole;
 import atlantis.util.Options;
 import atlantis.util.cache.Cache;
 import bwapi.Game;
@@ -314,17 +315,17 @@ public class AbstractTestWithUnits extends UnitTest {
         }
 
         if (!containsAll || !lengthsMatch) {
-            A.println("\nExpected: (" + expected.length + ")");
+            AConsole.println("\nExpected: (" + expected.length + ")");
             for (Object o : expected) {
-                A.println(o);
+                AConsole.println(o);
             }
-            A.println("\nActual: (" + actual.length + ")");
+            AConsole.println("\nActual: (" + actual.length + ")");
             for (Object o : actual) {
-                A.println(o);
+                AConsole.println(o);
             }
         }
 
-        if (missing != null) A.println("\nMissing: " + missing);
+        if (missing != null) AConsole.println("\nMissing: " + missing);
 
         assertEquals(expected.length, actual.length);
         assertTrue(containsAll);

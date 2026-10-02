@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 
 public class RefreshConstructionPosition {
 
@@ -41,7 +42,7 @@ public class RefreshConstructionPosition {
             ) {
                 construction.cancel(type + " Can't build here");
 
-                A.errPrintln("Can't build here " + type + ", so cancel + re-request");
+                AConsole.errPrintln("Can't build here " + type + ", so cancel + re-request");
                 AddToQueue.withTopPriority(
                     type,
                     construction.positionToBuildCenter()

@@ -17,6 +17,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -115,12 +116,12 @@ public abstract class MissionChanger {
                         + ", resBal: " + A.resourcesBalance()
                 );
 
-                A.println(
+                AConsole.println(
                     "MISSION @" + A.minSec() + " TO " + mission.name() + ": " + reason + " - " + mission.focusPoint()
                     + "                  Resources balance: " + A.resourcesBalance()
                 );
             }
-//                A.printStackTrace("Changing mission to " + mission);
+//                AConsole.printStackTrace("Changing mission to " + mission);
 //            }
             MissionHistory.missionHistory.add(Missions.currentGlobalMission != null ? Missions.currentGlobalMission : mission);
         }
@@ -193,8 +194,8 @@ public abstract class MissionChanger {
         setGlobalMissionTo(newMission, reason);
         MissionHistory.missionHistory.add(newMission);
 
-//        A.errPrintln("Change to " + newMission);
-//        A.printStackTrace("Change to " + newMission);
+//        AConsole.errPrintln("Change to " + newMission);
+//        AConsole.printStackTrace("Change to " + newMission);
     }
 
     public static boolean forceMissionAttack(String reason) {

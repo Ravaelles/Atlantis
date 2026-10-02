@@ -13,6 +13,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class OnUnitMorph {
 
@@ -84,7 +85,7 @@ public class OnUnitMorph {
     private static void releaseReservedResources(AUnit unit) {
         Construction construction = unit.construction();
         if (construction == null && unit.isABuilding() && !unit.type().isAddon()) {
-            if (!unit.type().isGasBuilding()) A.errPrintln("No construction for " + unit);
+            if (!unit.type().isGasBuilding()) AConsole.errPrintln("No construction for " + unit);
         }
         if (construction != null) {
             construction.releaseReservedResources();

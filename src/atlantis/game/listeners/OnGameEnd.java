@@ -6,6 +6,7 @@ import atlantis.debug.tweaker.ParamTweakerEvaluator;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.util.GameSummary;
+import atlantis.util.AConsole;
 import benchmark.BenchmarkMode;
 import atlantis.cherryvis.ACherryVis;
 
@@ -31,7 +32,7 @@ public class OnGameEnd {
         if (Env.isBenchmark()) BenchmarkMode.onGameEnd(won);
 
         SaveGameResultsToFile.createAndSave(won);
-        if (!Env.isLocal()) A.println("Game ended at: " + A.getCurrentTimeAsString());
+        if (!Env.isLocal()) AConsole.println("Game ended at: " + A.getCurrentTimeAsString());
 
         _executed = true;
 

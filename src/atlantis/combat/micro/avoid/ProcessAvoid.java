@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 public class ProcessAvoid extends Manager {
@@ -27,7 +28,7 @@ public class ProcessAvoid extends Manager {
     public Manager singleUnit(AUnit enemy) {
         this.enemy = enemy;
 
-//        A.printStackTrace("Why avoiding single?");
+//        AConsole.printStackTrace("Why avoiding single?");
 
         return (new AvoidSingleEnemy(unit, enemy)).avoid();
     }
@@ -35,7 +36,7 @@ public class ProcessAvoid extends Manager {
     public Manager groupOfUnits(Units enemiesDangerouslyClose) {
         HasPosition runFrom = defineRunFromForGroupOfUnits(enemiesDangerouslyClose);
 
-//        A.printStackTrace("Why avoiding group? ");
+//        AConsole.printStackTrace("Why avoiding group? ");
 
         if (runFrom == null) {
 //            System.err.println("Run from group is null for " + unit);

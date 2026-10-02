@@ -15,6 +15,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceTurretForBunker {
@@ -27,7 +28,7 @@ public class ProduceTurretForBunker {
             return AddToQueue.maxAtATime(Terran_Engineering_Bay, 1, ProductionOrderPriority.HIGH) != null;
         }
 
-//        A.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
+//        AConsole.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
 
         return requestAtBestPosition();
     }

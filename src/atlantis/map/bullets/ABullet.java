@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import bwapi.Bullet;
 import bwapi.BulletType;
 
@@ -41,7 +42,7 @@ public class ABullet implements HasPosition {
         }
 
         if (target == null) {
-//            A.errPrintln(
+//            AConsole.errPrintln(
 //                "@" + A.now() + " - ABullet.fromBullet: target null \n"
 //                    + "       (" + b.getTarget() + "), \n"
 //                    + "       (attacker:" + bullet.attacker.typeWithUnitId() + ")"

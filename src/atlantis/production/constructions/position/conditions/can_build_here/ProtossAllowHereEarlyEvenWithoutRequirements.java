@@ -6,6 +6,7 @@ import atlantis.production.orders.requirements.AllowToProduceEarlyWithoutRequire
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 
 public class ProtossAllowHereEarlyEvenWithoutRequirements {
     public static boolean allow(AUnit builder, AUnitType building, APosition position) {
@@ -28,7 +29,7 @@ public class ProtossAllowHereEarlyEvenWithoutRequirements {
         return A.supplyTotal() <= 12
             && building.isGateway()
             && Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).notEmpty()
-            && A.println("Allow early Gateway - " + position.distToDigit(Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()));
+            && AConsole.println("Allow early Gateway - " + position.distToDigit(Select.ourWithUnfinished(AUnitType.Protoss_Pylon).inRadius(3.2, position).first()));
     }
 
     private static boolean isBuildable(APosition position, int dx, int dy) {

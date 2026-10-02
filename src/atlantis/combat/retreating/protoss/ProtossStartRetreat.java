@@ -13,6 +13,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 import static atlantis.units.actions.Actions.RUN_RETREAT;
@@ -43,7 +44,7 @@ public class ProtossStartRetreat extends HasUnit {
         HasPosition runAwayFrom = enemy;
 
         if (runAwayFrom == null) {
-            A.errPrintln("Retreat runAwayFrom is NULL");
+            AConsole.errPrintln("Retreat runAwayFrom is NULL");
             return false;
         }
 

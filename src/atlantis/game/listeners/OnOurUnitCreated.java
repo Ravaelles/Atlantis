@@ -16,6 +16,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 import static atlantis.production.orders.production.queue.order.OrderStatus.IN_PROGRESS;
@@ -42,7 +43,7 @@ public class OnOurUnitCreated {
 
             Construction construction = unit.construction();
             if (construction == null && !unit.type().isAddon() && !unit.type().isGasBuilding()) {
-                A.errPrintln("No construction for " + unit);
+                AConsole.errPrintln("No construction for " + unit);
             }
 //            if (construction != null) {
 //                construction.releaseReservedResources();

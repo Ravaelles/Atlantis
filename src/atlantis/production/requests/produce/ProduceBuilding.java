@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.AConsole;
 
 public class ProduceBuilding {
     public static Construction _lastConstruction = null;
@@ -45,7 +46,7 @@ public class ProduceBuilding {
             order.setAroundPosition(newPosition);
         }
         else {
-            A.errPrintln("^^^^^^^^^^^^^^^^^^^ CAN'T FIND POSITION FOR " + type + " at " + atPosition);
+            AConsole.errPrintln("^^^^^^^^^^^^^^^^^^^ CAN'T FIND POSITION FOR " + type + " at " + atPosition);
         }
     }
 }

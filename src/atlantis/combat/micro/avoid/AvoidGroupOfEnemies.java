@@ -10,6 +10,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
+import atlantis.util.AConsole;
 import static atlantis.units.actions.Actions.RUN_ENEMY;
 
 public class AvoidGroupOfEnemies extends Manager {
@@ -34,7 +35,7 @@ public class AvoidGroupOfEnemies extends Manager {
 //            return (new AvoidCombatBuilding(unit, enemy)).invoke(this);
 //        }
 
-//        A.printStackTrace("AvoidSingleEnemy");
+//        AConsole.printStackTrace("AvoidSingleEnemy");
 
 //        if (
 //            unit.hp() >= 40

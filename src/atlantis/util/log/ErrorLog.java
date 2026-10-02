@@ -2,6 +2,7 @@ package atlantis.util.log;
 
 import atlantis.game.A;
 
+import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import java.util.Map;
 import java.util.TreeMap;
@@ -16,7 +17,7 @@ public class ErrorLog {
     private static Map<String, Integer> errorTimestamps = new TreeMap<>();
 
     public static void debug(String message) {
-        A.errPrintln(message);
+        AConsole.errPrintln(message);
     }
 
     public static void printErrorOnce(String message) {
@@ -39,7 +40,7 @@ public class ErrorLog {
         if (!theSameErrorWasLoggedLessThanMinuteAgo(message)) {
             print(message);
             System.err.println("-------------------");
-            A.printStackTrace(message);
+            AConsole.printStackTrace(message);
             System.err.println("-------------------");
         }
 
@@ -47,7 +48,7 @@ public class ErrorLog {
     }
 
     private static void print(String message) {
-        A.errPrintln(message);
+        AConsole.errPrintln(message);
 
         errorTimestamps.put(message, A.seconds());
     }

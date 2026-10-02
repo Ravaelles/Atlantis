@@ -2,6 +2,7 @@ package atlantis.map;
 
 import atlantis.Atlantis;
 import atlantis.game.A;
+import atlantis.util.AConsole;
 import jbweb.*;
 
 public class InitJBWEB {
@@ -37,7 +38,7 @@ public class InitJBWEB {
 //                Atlantis.getInstance().exitGame();
 //            }
 //            else {
-//                A.errPrintln("InitJBWEB failed, but continuing to play.");
+//                AConsole.errPrintln("InitJBWEB failed, but continuing to play.");
 //            }
 //        }
 

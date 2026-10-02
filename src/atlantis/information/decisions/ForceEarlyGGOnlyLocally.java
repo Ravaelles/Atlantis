@@ -8,6 +8,7 @@ import atlantis.information.generic.Army;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class ForceEarlyGGOnlyLocally extends Commander {
@@ -29,11 +30,11 @@ public class ForceEarlyGGOnlyLocally extends Commander {
 
     @Override
     protected boolean handle() {
-        A.errPrintln("\n####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("### Local forced early leave #######################");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
+        AConsole.errPrintln("\n####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("### Local forced early leave #######################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("Local force early leave");
         ErrorLog.printErrorOnce("ForceEarlyGGOnlyLocally at " + A.s + "s, strength: " + Army.strength());

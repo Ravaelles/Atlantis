@@ -4,6 +4,7 @@ import atlantis.architecture.Commander;
 import atlantis.config.AtlantisConfig;
 import atlantis.game.A;
 
+import atlantis.util.AConsole;
 import java.util.*;
 
 public class CodeProfiler {
@@ -76,21 +77,21 @@ public class CodeProfiler {
         for (String aspectTitle : aspectsLength.keySet()) {
             int value = aspectsLength.get(aspectTitle);
             if (value >= MIN_MS_TO_INCLUDE) {
-                A.println(String.format("%25s:  ", aspectTitle) + value + "ms");
+                AConsole.println(String.format("%25s:  ", aspectTitle) + value + "ms");
             }
         }
 
         Map<String, Integer> aspectTotalSorted = aspectLengthSorted();
         for (String aspectTitle : aspectTotalSorted.keySet()) {
             int value = aspectsLength.get(aspectTitle);
-            A.println(String.format("%25s:  ", aspectTitle) + A.digit(value) + "s");
+            AConsole.println(String.format("%25s:  ", aspectTitle) + A.digit(value) + "s");
         }
 
         if (aspectLengthSorted().isEmpty()) {
-            A.println("No aspects measured, looks like a bug.");
+            AConsole.println("No aspects measured, looks like a bug.");
         }
 
-        A.println("### END OF Commanders time consumption ###");
+        AConsole.println("### END OF Commanders time consumption ###");
     }
 
     public static void startMeasuringTotalFrame() {

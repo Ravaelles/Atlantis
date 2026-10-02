@@ -8,6 +8,7 @@ import atlantis.units.select.Count;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Photon_Cannon;
 
 public class ShouldSecureProtossBase {
@@ -54,7 +55,7 @@ public class ShouldSecureProtossBase {
     private static boolean notEnoughCannons(int cannonsNearby) {
         int expectedCannons = expectedCannons();
 
-//        if (cannonsNearby < expectedCannons) A.println(
+//        if (cannonsNearby < expectedCannons) AConsole.println(
 //            "*************************** CANNONS = " + cannonsNearby + " / EXP: " + expectedCannons
 //        );
 

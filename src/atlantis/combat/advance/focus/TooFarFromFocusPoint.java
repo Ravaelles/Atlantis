@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -83,10 +84,10 @@ public class TooFarFromFocusPoint extends MoveToFocusPoint {
             ? goToWhenNotSoFarFromFocus()
             : goToWhenFarFromFocus();
 
-//        if (unit.isDragoon()) A.errPrintln("distToFocus = " + distToFocus + " / " + goTo + " / " + unit);
+//        if (unit.isDragoon()) AConsole.errPrintln("distToFocus = " + distToFocus + " / " + goTo + " / " + unit);
 
         if (goTo != null) {
-//            if (unit.isDragoon()) A.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
+//            if (unit.isDragoon()) AConsole.errPrintln("TOO FAR = " + unit.distToFocusPoint() + " / " + unit);
 
             if (!goTo.isWalkable()) goTo = goTo.makeWalkable(5, 1, null);
             if (goTo == null) {

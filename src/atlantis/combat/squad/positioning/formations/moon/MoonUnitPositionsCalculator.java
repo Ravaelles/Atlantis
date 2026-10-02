@@ -6,6 +6,7 @@ import atlantis.map.region.ARegion;
 import atlantis.map.region.ApproximateRegionCenter;
 import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 import java.util.HashMap;
@@ -40,7 +41,7 @@ public class MoonUnitPositionsCalculator {
                 positions.put(unit, position);
             }
 //            else {
-//                A.errPrintln("Position is not okay: " + position + " / " + position.isWalkable() + " / " + position.regionsMatch(unit));
+//                AConsole.errPrintln("Position is not okay: " + position + " / " + position.isWalkable() + " / " + position.regionsMatch(unit));
 //            }
 
             i++;

@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.cache.CacheKey;
 import atlantis.util.log.ErrorLog;
@@ -47,7 +48,7 @@ public class TerranPositionFinder extends AbstractPositionFinder {
         if (maxDistance < 0) maxDistance = 28;
 
         if (builder == null) {
-//            A.errPrintln("builder is null for " + building + ", fallback to any builder");
+//            AConsole.errPrintln("builder is null for " + building + ", fallback to any builder");
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("builder is null for " + building + ", fallback to any");
             builder = FreeWorkers.get().first();
         }

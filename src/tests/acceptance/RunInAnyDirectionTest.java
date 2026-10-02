@@ -5,6 +5,7 @@ import atlantis.combat.running.any_direction.RunInAnyDirection;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import tests.fakes.FakeUnit;
@@ -51,7 +52,7 @@ public class RunInAnyDirectionTest extends WorldStubForTests {
                 )
             ));
 
-            A.println(runInAnyDirection.runInAnyDirection(zergling));
+            AConsole.println(runInAnyDirection.runInAnyDirection(zergling));
 
 //            assertContainsAll(
 //                new FakeUnit[]{drone, zergling, hydra, sunken},

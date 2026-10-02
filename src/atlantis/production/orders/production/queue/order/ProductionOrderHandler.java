@@ -6,6 +6,7 @@ import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -22,7 +23,7 @@ public class ProductionOrderHandler extends Commander {
     @Override
     protected boolean handle() {
         if (isAlreadyConsumed()) {
-//            A.errPrintln("Order " + order + " is already consumed!");
+//            AConsole.errPrintln("Order " + order + " is already consumed!");
 //            System.err.println("Order " + order + " is already consumed, SET TO COMPLETED!");
 //            order.setStatus(OrderStatus.COMPLETED);
             return false;
@@ -116,7 +117,7 @@ public class ProductionOrderHandler extends Commander {
         ) return false;
 
 //        if (order.isBuilding()) {
-//            A.errPrintln("Building " + order + " is already consumed! Const = " + order.construction());
+//            AConsole.errPrintln("Building " + order + " is already consumed! Const = " + order.construction());
 //        }
 
         return true;

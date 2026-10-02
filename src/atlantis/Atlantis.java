@@ -8,6 +8,7 @@ import atlantis.game.event.Event;
 import atlantis.game.event.Events;
 import atlantis.game.listeners.*;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.ProcessHelper;
 import bwapi.*;
 
@@ -218,13 +219,13 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
-        A.println("\nKilling StarCraft process... ");
+        AConsole.println("\nKilling StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
-        A.println("Killing Chaoslauncher process... ");
+        AConsole.println("Killing Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
 
-        A.println("Exit...");
+        AConsole.println("Exit...");
         System.exit(0);
     }
 

@@ -10,6 +10,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -38,7 +39,7 @@ public class ConstructionStatusChanger extends Commander {
                 && (building == null || !building.isAlive())
         ) {
             construction.cancel(construction.buildingType() + " was destroyed");
-            A.errPrintln("Building destroyed - cancel construction");
+            AConsole.errPrintln("Building destroyed - cancel construction");
             return;
         }
 

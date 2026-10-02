@@ -9,6 +9,7 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import tests.fakes.FakeUnit;
@@ -75,7 +76,7 @@ public class AbstractFoggedUnit extends AUnit {
     public void updatePosition(AUnit unit) {
         if (unit instanceof AbstractFoggedUnit) {
             System.err.println("updatePosition got AbstractFoggedUnit: " + unit);
-            A.printStackTrace();
+            AConsole.printStackTrace();
         }
 
         updateLastPosition(unit);

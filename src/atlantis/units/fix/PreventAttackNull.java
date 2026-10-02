@@ -3,6 +3,7 @@ package atlantis.units.fix;
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 public class PreventAttackNull extends Manager {
@@ -27,7 +28,7 @@ public class PreventAttackNull extends Manager {
     private boolean isAttackingNullTarget() {
         if (unit.isAttacking() || "Attack_Unit".equals(unit.action().toString())) {
             if (unit.target() == null || unit.target().hp() <= 0 || unit.orderTarget() == null) {
-                A.errPrintln(
+                AConsole.errPrintln(
                     unit.typeWithUnitId() + " NULL ATTACK target:" + unit.target()
                         + " / hp=" + unit.hp() + " / alive:" + unit.isAlive()
                         + " / orderTarget=" + unit.orderTarget()

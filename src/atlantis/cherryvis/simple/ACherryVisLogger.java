@@ -7,6 +7,7 @@ import atlantis.units.AUnit;
 import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.cherryvis.generic.ACherryVis_GameSummary;
 
+import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import java.io.File;
 
@@ -41,11 +42,11 @@ public class ACherryVisLogger implements AbstractCherryVisLogger {
         }
 
         if (!AFile.directoryExists(directoryPath)) {
-            A.errPrintln("##################################################");
-            A.errPrintln("### Could not create CherryVis dir:");
-            A.errPrintln("### " + directoryPath);
-            A.errPrintln("### As a result, CherryVis logs will not be saved.");
-            A.errPrintln("##################################################");
+            AConsole.errPrintln("##################################################");
+            AConsole.errPrintln("### Could not create CherryVis dir:");
+            AConsole.errPrintln("### " + directoryPath);
+            AConsole.errPrintln("### As a result, CherryVis logs will not be saved.");
+            AConsole.errPrintln("##################################################");
         }
 
         (new ACherryVis_GameSummary(config)).saveToFile();

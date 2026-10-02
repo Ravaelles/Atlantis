@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 import static atlantis.units.AUnitType.*;
@@ -43,13 +44,13 @@ public class ProduceTemplarArchives {
     private static boolean requestProduce() {
         if (Have.notEvenPlanned(Protoss_Citadel_of_Adun)) {
             return AddToQueue.withHighPriority(Protoss_Citadel_of_Adun) != null
-                && A.println("@@@@@@@@@@ Make CITADEL for ARCHIVES at " + A.supplyUsed());
+                && AConsole.println("@@@@@@@@@@ Make CITADEL for ARCHIVES at " + A.supplyUsed());
         }
         if (!Have.a(Protoss_Citadel_of_Adun)) return false;
 
         if (Have.notEvenPlanned(type())) {
             return AddToQueue.withHighPriority(type()) != null
-                && A.println("@@@@@@@@@@ Make TEMPLAR ARCHIVES at " + A.supplyUsed());
+                && AConsole.println("@@@@@@@@@@ Make TEMPLAR ARCHIVES at " + A.supplyUsed());
         }
 
         return false;

@@ -6,6 +6,7 @@ import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class TerranHasEnemyInRange extends Manager {
@@ -114,7 +115,7 @@ public class TerranHasEnemyInRange extends Manager {
         ) return null;
 
 //        if (unit.isRanged()) {
-//            A.printStackTrace("lol " + unit);
+//            AConsole.printStackTrace("lol " + unit);
 //        }
 
         if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemyInRange)) return usedManager(this);

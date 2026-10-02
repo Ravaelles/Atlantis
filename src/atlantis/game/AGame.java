@@ -6,6 +6,7 @@ import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
 
 import atlantis.game.player.APlayer;
+import atlantis.util.AConsole;
 import bwapi.*;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class AGame {
      * Quits the game gently, killing all processes and cleaning up.
      */
     public static void exit(String message) {
-        A.println(message);
+        AConsole.println(message);
         Atlantis.getInstance().exitGame(false);
     }
 
@@ -210,7 +211,7 @@ public class AGame {
 
         if (!AGame.umsMode) {
             AGame.umsMode = true;
-            A.println("### UMS mode enabled! ###");
+            AConsole.println("### UMS mode enabled! ###");
 
             MissionChanger.forceMissionAttack("UmsAlwaysAttack");
         }

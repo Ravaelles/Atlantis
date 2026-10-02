@@ -5,6 +5,7 @@ import atlantis.information.strategy.response.EnemyUnitDiscoveredResponse;
 import atlantis.units.AUnit;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 
 //public class EnemyUnitsUpdater extends EnemyUnits {
 public class EnemyUnitsUpdater {
@@ -24,7 +25,7 @@ public class EnemyUnitsUpdater {
 
         if (enemy instanceof AbstractFoggedUnit) {
             System.err.println("updateTypeAndPositionOfFoggedUnitBasenOnVisibleAUnit got AbstractFoggedUnit: " + enemy);
-            A.printStackTrace();
+            AConsole.printStackTrace();
         }
 
         AbstractFoggedUnit foggedUnit = EnemyUnits.getFoggedUnit(enemy);
@@ -72,7 +73,7 @@ public class EnemyUnitsUpdater {
 
     public static void removeFoggedUnit(AUnit unit) {
 //        if (unit.isABuilding() && !unit.type().isGasBuilding()) {
-//            A.printStackTrace("Why remove building? " + unit + " / enemy? " + unit.isEnemy());
+//            AConsole.printStackTrace("Why remove building? " + unit + " / enemy? " + unit.isEnemy());
 //        }
 
         AbstractFoggedUnit foggedUnit = EnemyUnits.enemyUnitsDiscovered.get(unit.id());
@@ -85,7 +86,7 @@ public class EnemyUnitsUpdater {
         EnemyUnits.cache.clear();
 
 //        if (unit.isBuilding()) {
-////            A.printStackTrace(
+////            AConsole.printStackTrace(
 //            System.err.println(
 //                "REMOVE enemyBuilding = " + unit + " / " + unit.id()
 //                + " / " + unit.isVisibleUnitOnMap() + " / " + unit.isPositionVisible()

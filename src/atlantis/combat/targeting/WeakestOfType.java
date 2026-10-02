@@ -3,6 +3,7 @@ package atlantis.combat.targeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 
 public class WeakestOfType {
     protected static AUnit selectWeakestEnemyOfType(AUnitType type, AUnit ourUnit, double extraRange) {
@@ -50,7 +51,7 @@ public class WeakestOfType {
     public static AUnit selectWeakestEnemyOfType(AUnitType enemyType, AUnit unit) {
         // Most wounded enemy IN RANGE
         AUnit enemy = selectWeakestEnemyOfType(enemyType, unit, 0);
-//        A.errPrintln("@ " + A.now() + " enemy A = " + enemy);
+//        AConsole.errPrintln("@ " + A.now() + " enemy A = " + enemy);
 
         if (enemy != null) {
 //            unit.addLog("AttackClose");
@@ -60,7 +61,7 @@ public class WeakestOfType {
 
         // Most wounded enemy some distance from away
         enemy = selectWeakestEnemyOfType(enemyType, unit, 1.6);
-//        A.errPrintln("enemy B = " + enemy);
+//        AConsole.errPrintln("enemy B = " + enemy);
         if (enemy != null) {
 //            System.err.println("Attack 1 range");
             return enemy;

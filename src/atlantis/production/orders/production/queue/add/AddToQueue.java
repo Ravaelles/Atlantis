@@ -12,6 +12,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -26,7 +27,7 @@ public class AddToQueue {
     public static ProductionOrder withTopPriority(AUnitType type, HasPosition position) {
 
 //        if (type.is(AUnitType.Protoss_Robotics_Facility)) {
-//            A.printStackTrace("Why top priority " + type + "???");
+//            AConsole.printStackTrace("Why top priority " + type + "???");
 //        }
 
         ProductionOrderPriority priority = ProductionOrderPriority.TOP;
@@ -118,11 +119,11 @@ public class AddToQueue {
 
 //        if (type.isGateway()) {
 //            System.err.println("Count.gatewaysWithUnfinished() = " + Count.gatewaysWithUnfinished());
-//            A.printStackTrace("Why Gateway ADDED TO QUEUE?");
+//            AConsole.printStackTrace("Why Gateway ADDED TO QUEUE?");
 //        }
 
         if (type.is(AUnitType.Protoss_Nexus)) {
-            A.println(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
+            AConsole.println(A.minSec() + ": Nexus ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed() + " / " + ShouldExpand.reason);
             if ("_NO_EXPAND_REASON_".equals(ShouldExpand.reason)) {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
                 return null;
@@ -133,10 +134,10 @@ public class AddToQueue {
         productionOrder.setPriority(priority);
 
         if (Queue.get().addNew(index, productionOrder)) {
-//            A.println(A.now() + ": Adding " + type + " to queue");
+//            AConsole.println(A.now() + ": Adding " + type + " to queue");
 
 //            if (type.isCannon()) {
-//                A.printStackTrace(A.minSec() + ": Adding " + type + " to queue at " + position);
+//                AConsole.printStackTrace(A.minSec() + ": Adding " + type + " to queue at " + position);
 //                System.out.println("@ " + A.minSec() + " - STUFF ADDED " + type + " = "
 //                    + CountInQueue.count(type)
 //                    + " / " + Count.inQueueOrUnfinished(type, 50)
@@ -155,19 +156,19 @@ public class AddToQueue {
 //            }
 
 //            if (type.isBunker()) {
-//                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
+//                AConsole.printStackTrace(A.now() + ": Adding bunker to queue at " + position);
 //            }
 
 //            if (type.isGasBuilding()) {
-//                A.printStackTrace(A.now() + ": Adding GAS to queue at " + position);
+//                AConsole.printStackTrace(A.now() + ": Adding GAS to queue at " + position);
 //            }
 
 //            if (type.is(AUnitType.Protoss_Robotics_Facility)) {
-//                A.printStackTrace("Robotics Facility ADDED TO QUEUE");
+//                AConsole.printStackTrace("Robotics Facility ADDED TO QUEUE");
 //            }
 
 //            if (A.supplyTotal() >= 16 && type.is(AUnitType.Protoss_Pylon) && A.supplyTotal() <= 26) {
-//                A.printStackTrace("Pylon ADDED TO QUEUE (Supply:" + A.supplyTotal()
+//                AConsole.printStackTrace("Pylon ADDED TO QUEUE (Supply:" + A.supplyTotal()
 //                    + ", IN_PROD:" + Count.inProductionOrInQueue(AUnitType.Protoss_Pylon) + ")");
 //            }
 
@@ -187,7 +188,7 @@ public class AddToQueue {
 //            clearOtherExistingOfTheSameTypeIfNeeded(productionOrder);
 
 //            if (type.isBase()) {
-//                A.printStackTrace(A.now() + ": Queued BASE at " + position + " / natural: " + Bases.natural());
+//                AConsole.printStackTrace(A.now() + ": Queued BASE at " + position + " / natural: " + Bases.natural());
 //            }
 
 //            if (type.isBunker()) {
@@ -196,11 +197,11 @@ public class AddToQueue {
 //                    AAdvancedPainter.paintCircleFilled(position, 14, Color.Orange);
 //                    CameraCommander.centerCameraOn(position);
 //                }
-//                A.printStackTrace(A.now() + ": Adding bunker to queue at " + position + " / natural: " + Bases.natural());
+//                AConsole.printStackTrace(A.now() + ": Adding bunker to queue at " + position + " / natural: " + Bases.natural());
 //                GameSpeed.pauseGame();
 //            }
 
-//            A.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
+//            AConsole.errPrintln("Adding to queue: " + productionOrder + " / existingInQueue = " + Count.inQueue(type, 30));
         }
         else {
             if (type.isCannon() && Count.ourOfTypeUnfinished(AUnitType.Protoss_Photon_Cannon) >= 7) {

@@ -14,6 +14,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Assimilator;
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
@@ -31,7 +32,7 @@ public class ProduceFirstAssimilator {
 
 //        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
 //        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
-//            A.errPrintln("Canceling existing ASSIM order " + existingOrder);
+//            AConsole.errPrintln("Canceling existing ASSIM order " + existingOrder);
 //            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(
 //                type(), "Assim takes long (" + (existingOrder.requestedAgo() / 30) + "s)"
 //            );
@@ -45,7 +46,7 @@ public class ProduceFirstAssimilator {
 //            RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
 
             return AddToQueue.withTopPriority(type()) != null
-                && A.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
+                && AConsole.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 

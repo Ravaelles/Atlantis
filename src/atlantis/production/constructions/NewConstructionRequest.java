@@ -14,6 +14,7 @@ import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -65,7 +66,7 @@ public class NewConstructionRequest {
         // Create ConstructionOrder object, assign random worker for the time being
 
 //        if (building.isBase()) {
-//            A.printStackTrace("Requested BASE");
+//            AConsole.printStackTrace("Requested BASE");
 //        }
 
 //        if (near == null) {
@@ -117,7 +118,7 @@ public class NewConstructionRequest {
             Select.clearCache();
             Construction.clearCache();
             APositionFinder.clearCache();
-//            A.errPrintln("Construction had the same position, find new: " + newConstruction);
+//            AConsole.errPrintln("Construction had the same position, find new: " + newConstruction);
             newConstruction.findPositionForNewBuilding();
         }
 
@@ -133,9 +134,9 @@ public class NewConstructionRequest {
             ConstructionRequests.constructions.add(newConstruction);
         }
 
-//            A.printStackTrace("AFTER ADDED");
+//            AConsole.printStackTrace("AFTER ADDED");
 
-//            A.printList(constructions);
+//            AConsole.printList(constructions);
 
         // Rebuild production queue as new building is about to be built
 //        ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
@@ -148,7 +149,7 @@ public class NewConstructionRequest {
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
         ErrorLog.printMaxOncePerMinute(A.minSec() + ": Can't find place for `" + building + "`, " + order);
-//                A.printStackTrace("Can't find place for `" + building + "`, " + order);
+//                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
         if (AbstractPositionFinder._STATUS != null) {
             ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
         }
@@ -209,7 +210,7 @@ public class NewConstructionRequest {
             if (A.s >= 70 && A.supplyTotal() >= 11) {
                 cancelled = true;
                 order.cancel("Null position for " + building);
-                A.errPrintln(A.minSec() + ": Cancelled order: " + order);
+                AConsole.errPrintln(A.minSec() + ": Cancelled order: " + order);
             }
         }
         return cancelled;

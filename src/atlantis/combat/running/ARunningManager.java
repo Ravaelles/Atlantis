@@ -11,6 +11,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Color;
 
@@ -263,12 +264,12 @@ public class ARunningManager {
 
             unit.unitState().setLastStoppedRunning(A.now());
 //            System.out.println("Stopped running at " + A.now());
-//            A.printStackTrace("StoppedRunning at " + A.now());
+//            AConsole.printStackTrace("StoppedRunning at " + A.now());
 
 //            if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("AStopRunning");
         }
 
-//        A.printStackTrace("StoppedRunning");
+//        AConsole.printStackTrace("StoppedRunning");
     }
 
     public AUnit unit() {

@@ -10,6 +10,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.*;
 
 public class ProducePylonNearEveryBase {
@@ -21,7 +22,7 @@ public class ProducePylonNearEveryBase {
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
             if (base.friendsNear().ofType(type()).empty()) {
                 return AddToQueue.withStandardPriority(type(), nearTo(base)) != null;
-//                    && A.println(A.s + "s: ------- ProducePylonNearEveryBase (index:" + index + ")");
+//                    && AConsole.println(A.s + "s: ------- ProducePylonNearEveryBase (index:" + index + ")");
             }
             index++;
         }

@@ -2,6 +2,7 @@ package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class ProtossFixInvalidTargets extends Manager {
     public ProtossFixInvalidTargets(AUnit unit) {
@@ -25,7 +26,7 @@ public class ProtossFixInvalidTargets extends Manager {
 //            System.err.println(unit.target());
 //            if (unit.target() != null) System.err.println("   " + unit.target().hp());
 //            if (A.isUms() && AliveEnemies.get().notEmpty()) {
-//                A.errPrintln(A.now() + ": ProtossFixInvalidTargets: " + unit + " is attacking null target");
+//                AConsole.errPrintln(A.now() + ": ProtossFixInvalidTargets: " + unit + " is attacking null target");
 //                PauseAndCenter.on(unit, true);
 //            }
             return true;

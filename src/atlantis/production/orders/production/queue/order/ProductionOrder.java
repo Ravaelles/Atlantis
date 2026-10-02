@@ -12,6 +12,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.events.OrderStatusWasChanged;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -118,7 +119,7 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
 
 //        if (unitOrBuilding != null && unitOrBuilding.isBunker()) {
 //            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-//            A.printStackTrace("BUNKER ORDER CREATED at " + position);
+//            AConsole.printStackTrace("BUNKER ORDER CREATED at " + position);
 //            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //        }
     }

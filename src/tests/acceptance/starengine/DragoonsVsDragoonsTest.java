@@ -7,6 +7,7 @@ import atlantis.game.AtlantisGameCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -23,7 +24,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 
         int runForSeconds = !isUsingEngine() ? 1 : 10;
         createWorld(30 * runForSeconds, () -> {
-            if (isUsingEngine() && A.now % 30 == 0) A.println("Frame: " + A.now);
+            if (isUsingEngine() && A.now % 30 == 0) AConsole.println("Frame: " + A.now);
 //            Select.our().print();
 //            Select.enemy().print();
 
@@ -46,8 +47,8 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
                 }
 
 //                if (printUnit) {
-//                    A.errPrintln("_____");
-//                    A.errPrintln(A.now()
+//                    AConsole.errPrintln("_____");
+//                    AConsole.errPrintln(A.now()
 //                            + " -       " + unit.tooltip()
 //                            + "\n   Type    : " + unit
 //                            + "\n   Manager : " + unit.manager()

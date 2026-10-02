@@ -3,6 +3,7 @@ package atlantis.cherryvis;
 import atlantis.cherryvis.simple.ACherryVisLogger;
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.util.AConsole;
 
 public class ACherryVis {
     public static boolean isEnabled() {
@@ -39,7 +40,7 @@ public class ACherryVis {
         if (!isEnabled()) return;
         if (A.s <= 2) return;
 
-        A.println("CherryVis finishing...");
+        AConsole.println("CherryVis finishing...");
         logger().onGameEnd();
     }
 }

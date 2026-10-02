@@ -21,6 +21,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AConsole;
 import atlantis.util.AMath;
 import static atlantis.units.AUnitType.*;
 
@@ -59,7 +60,7 @@ public class ProduceGateway {
                 && !Queue.get().readyToProduceOrders().buildings().isEmpty()
         ) return false;
 
-//        A.errPrintln(A.minSec() + " GATEWAY CHECK");
+//        AConsole.errPrintln(A.minSec() + " GATEWAY CHECK");
 
         existingGateways = Count.gatewaysWithUnfinished();
 
@@ -269,7 +270,7 @@ public class ProduceGateway {
 
         if (order != null) order.setMinSupply(A.supplyUsed());
 //        else {
-//            A.errPrintln(A.minSec() + ", Failed to produce Gateway " + existingGateways + " / " + freeGateways
+//            AConsole.errPrintln(A.minSec() + ", Failed to produce Gateway " + existingGateways + " / " + freeGateways
 //                + " / " + unfinishedGateways + " / min:" + A.minerals() + " / " + QueueLastStatus.status());
 //            return false;
 //        }

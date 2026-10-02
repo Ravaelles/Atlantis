@@ -1,6 +1,7 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.util.AConsole;
 import bweb.Blocks;
 import bweb.BWEB;
 import bweb.Stations;
@@ -39,7 +40,7 @@ public class InitBWEB {
 //                Atlantis.getInstance().exitGame();
 //            }
 //            else {
-//                A.errPrintln("InitBWEB failed, but continuing to play.");
+//                AConsole.errPrintln("InitBWEB failed, but continuing to play.");
 //            }
 //        }
 

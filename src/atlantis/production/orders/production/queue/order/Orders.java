@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.QueueLastStatus;
 
+import atlantis.util.AConsole;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -89,11 +90,11 @@ public class Orders implements OrdersFilters, Iterable<ProductionOrder> {
     }
 
     public Orders print(String message) {
-        A.println("@" + A.now() + " " + message + " (" + orders.size() + "):");
+        AConsole.println("@" + A.now() + " " + message + " (" + orders.size() + "):");
         for (ProductionOrder order : orders) {
-            A.println("    " + order);
+            AConsole.println("    " + order);
         }
-        A.println("");
+        AConsole.println("");
         return this;
     }
 

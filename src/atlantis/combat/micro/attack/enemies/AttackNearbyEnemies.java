@@ -10,6 +10,7 @@ import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.interrupt.protoss.PreventAttacksDuringRetreat;
 import atlantis.units.interrupt.protoss.PreventAttacksInMissionDefend;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class AttackNearbyEnemies extends Manager {
@@ -56,7 +57,7 @@ public class AttackNearbyEnemies extends Manager {
         _failReason = "";
 
 //        if (unit.isDancingAway() && unit.lastCommandIssuedAgo() <= 2) {
-//            A.printStackTrace("Dancing away, no attack for now: " + unit + " / " + getParent());
+//            AConsole.printStackTrace("Dancing away, no attack for now: " + unit + " / " + getParent());
 //        }
 
 //        if (ProtossAttackForbiddenByCohesion.forbiddenToAttack(unit)) {
@@ -89,9 +90,9 @@ public class AttackNearbyEnemies extends Manager {
                 return null;
             }
 
-//            A.printStackTrace("Why attack now? @" + A.now);
+//            AConsole.printStackTrace("Why attack now? @" + A.now);
 //            printParentsStack();
-//            if (!unit.isLeader()) A.printStackTrace("Why attack now? ");
+//            if (!unit.isLeader()) AConsole.printStackTrace("Why attack now? ");
             return usedManager(this);
         }
 
@@ -102,7 +103,7 @@ public class AttackNearbyEnemies extends Manager {
     private void why() {
 //        if (unit.combatEvalRelative() < 1) {
         if (unit.isWounded()) {
-            A.printStackTrace("Why is this unit attacking? " + unit);
+            AConsole.printStackTrace("Why is this unit attacking? " + unit);
         }
     }
 
@@ -143,9 +144,9 @@ public class AttackNearbyEnemies extends Manager {
         // =========================================================
 
 //            unit.manager().printParentsStack();
-//            A.printStackTrace(unit + ": Why ATACC? ");
+//            AConsole.printStackTrace(unit + ": Why ATACC? ");
 
-//            if (target.isOverlord()) A.printStackTrace("THAT OVERLORD targetToAttack " + target);
+//            if (target.isOverlord()) AConsole.printStackTrace("THAT OVERLORD targetToAttack " + target);
 
             //        if (unit.distTo(target) >= 8 && unit.distToTarget() <= 888) {
 //            if (unit.distTo(target) >= 8 && unit.enemiesNear(6).notEmpty()) {

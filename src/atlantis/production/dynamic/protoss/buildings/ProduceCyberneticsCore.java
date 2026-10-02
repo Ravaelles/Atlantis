@@ -17,6 +17,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.game.player.Enemy;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.Protoss_Assimilator;
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
@@ -36,7 +37,7 @@ public class ProduceCyberneticsCore {
     }
 
     private static boolean addCyberneticsToQueue() {
-//        A.errPrintln("Add ZZZ Cybernetics Core to queue at " + A.minSec());
+//        AConsole.errPrintln("Add ZZZ Cybernetics Core to queue at " + A.minSec());
 
         Orders productionOrders = Queue.get().notFinishedNext30().ofType(type());
         ProductionOrder existing = productionOrders.first();
@@ -50,7 +51,7 @@ public class ProduceCyberneticsCore {
 //        }
 
         ProductionOrder order = existing != null ? existing : AddToQueue.withTopPriority(type());
-//        A.errPrintln("addCybernetics ORDER " + order);
+//        AConsole.errPrintln("addCybernetics ORDER " + order);
         if (order != null) {
             order.setMinSupply(4);
 

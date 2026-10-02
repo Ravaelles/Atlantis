@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class TerranNewGasBuildingCommander extends Commander {
@@ -72,10 +73,10 @@ public class TerranNewGasBuildingCommander extends Commander {
 
         if (hasABaseWithFreeGeyser()) {
             AddToQueue.withTopPriority(AtlantisRaceConfig.GAS_BUILDING);
-            A.errPrintln("@@@@@@@@@@@@ DYNAMIC GAS BUILDING at supply: " + A.supplyUsed());
+            AConsole.errPrintln("@@@@@@@@@@@@ DYNAMIC GAS BUILDING at supply: " + A.supplyUsed());
         }
         else {
-            A.errPrintln(A.s + " NO FREE GEYSER");
+            AConsole.errPrintln(A.s + " NO FREE GEYSER");
         }
 
         // =========================================================
@@ -89,7 +90,7 @@ public class TerranNewGasBuildingCommander extends Commander {
 //                && ConstructionRequests.countNotStartedOfType(AtlantisRaceConfig.GAS_BUILDING) == 0
 //                && hasABaseWithFreeGeyser()
 //        ) {
-////            A.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed());
+////            AConsole.errPrintln("Request GAS BUILDING at supply: " + A.supplyUsed());
 //            AddToQueue.withTopPriority(AtlantisRaceConfig.GAS_BUILDING);
 //        }
     }

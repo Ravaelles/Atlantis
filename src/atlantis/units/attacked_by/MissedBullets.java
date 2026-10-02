@@ -3,6 +3,7 @@ package atlantis.units.attacked_by;
 import atlantis.game.A;
 import atlantis.map.bullets.ABullet;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
@@ -35,6 +36,6 @@ public class MissedBullets {
     }
 
     private static void yes(ABullet bullet, String message) {
-        A.errPrintln("@" + A.now + ": Bullet#" + bullet.id() + ": " + message);
+        AConsole.errPrintln("@" + A.now + ": Bullet#" + bullet.id() + ": " + message);
     }
 }

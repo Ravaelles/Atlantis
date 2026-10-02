@@ -4,14 +4,15 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.util.AConsole;
 
 public class OrderStatusWasChanged {
     public static void update(ProductionOrder order) {
         OrderStatus status = order.status();
 
 //        if (order.is(AUnitType.Protoss_Pylon)) {
-//            A.errPrintln(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
-////            A.printStackTrace(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
+//            AConsole.errPrintln(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
+////            AConsole.printStackTrace(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
 //        }
 
         if (status.isReady()) order.makeSureResourcesAreReserved();

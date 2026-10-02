@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
 
@@ -24,7 +25,7 @@ public class CancelConstruction {
 //            AAdvancedPainter.paintRectangle(at, (int) (32 * type.widthInTiles()), (int) (32 * type.heightInTiles()), Color.Green);
 //            PauseAndCenter.on(at, true);
         }
-//        A.printStackTrace("Construction.cancel() - " + this);
+//        AConsole.printStackTrace("Construction.cancel() - " + this);
 
         if (construction.buildingUnit() != null) {
             construction.buildingUnit().cancelConstruction();

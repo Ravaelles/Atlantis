@@ -7,6 +7,7 @@ import atlantis.information.generic.Army;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import atlantis.util.AMath;
 import atlantis.util.cache.Cache;
 
@@ -53,7 +54,7 @@ public class MoonRadius {
 
 //        System.err.println("radius = " + radius + " / overtime:" + changeOverTime);
 
-//        A.errPrintln(
+//        AConsole.errPrintln(
 //            "radius: " + A.digit(radius)
 //                + " / ago: " + A.ago(_lastMoonCenterTimestamp)
 //                + " / center: " + moonCenter

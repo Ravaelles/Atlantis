@@ -12,6 +12,7 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 
+import atlantis.util.AConsole;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -138,7 +139,7 @@ public class ATargeting extends HasUnit {
 
 //        if (enemy != null) System.err.println("@@@@ " + unit.typeWithUnitId() + " / " + unit.hp());
 
-//        if (DEBUG) A.println("A enemy = " + enemy);
+//        if (DEBUG) AConsole.println("A enemy = " + enemy);
 
 //        if (enemy != null && enemy.isAlive() && !unit.canAttackTarget(enemy)) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Unit " + unit + " cannot attack " + enemy);
@@ -146,7 +147,7 @@ public class ATargeting extends HasUnit {
 
         if (enemy != null && enemy.isAlive() && unit.canAttackTarget(enemy)) {
 //            APainter.paintTextCentered(unit.translateByPixels(0, 25), enemy.name(), Color.Green);
-//            if (DEBUG) A.println("B enemy = " + enemy);
+//            if (DEBUG) AConsole.println("B enemy = " + enemy);
 
             return enemy;
 //            if (
@@ -160,7 +161,7 @@ public class ATargeting extends HasUnit {
         AttackNearbyEnemies.reasonNotToAttack = null;
 //        AUnit fallback = ClosestEnemyTargeting.fallbackTarget(unit, maxDistFromEnemy);
 //        AUnit fallback = null;
-//        if (DEBUG_TARGETING && fallback != null) A.println("C fallback = " + fallback);
+//        if (DEBUG_TARGETING && fallback != null) AConsole.println("C fallback = " + fallback);
 //        return fallback;
 
         return null;
@@ -201,9 +202,9 @@ public class ATargeting extends HasUnit {
 
 //        if (enemyUnits.inRadius(9, unit).empty()) return enemy;
 //
-////        A.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
+////        AConsole.errPrintln("BEFORE weakestEnemy = " + enemy + "\n");
 //        AUnit weakestEnemy = WeakestOfType.selectWeakestEnemyOfType(enemy.type(), unit);
-////        A.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
+////        AConsole.errPrintln("AFTER weakestEnemy = " + weakestEnemy + "\n");
 //
 //        return weakestEnemy != null ? weakestEnemy : enemy;
     }
@@ -237,7 +238,7 @@ public class ATargeting extends HasUnit {
         if (unit.isAir() && unit.canAttackGroundUnits()) {
             target = (new AAirUnitsTargeting(unit)).targetForAirUnit();
 
-//            A.errPrintln("Air target for " + unit + ": " + target);
+//            AConsole.errPrintln("Air target for " + unit + ": " + target);
 //            if ((target = AAirUnitsTargeting.targetForAirUnits()) != null) {
 //                debug("AirTarget = " + target);
 //            }
@@ -281,7 +282,7 @@ public class ATargeting extends HasUnit {
     public static void debug(AUnit unit, String message) {
         if (DEBUG_TARGETING) {
             _targetReasons.put(unit, message);
-            A.println(message);
+            AConsole.println(message);
         }
     }
 

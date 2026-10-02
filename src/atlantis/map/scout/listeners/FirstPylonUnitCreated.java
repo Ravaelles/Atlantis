@@ -6,6 +6,7 @@ import atlantis.game.event.Event;
 import atlantis.map.scout.ScoutCommander;
 import atlantis.map.scout.ScoutState;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 
 public class FirstPylonUnitCreated extends AutomaticListener {
     @Override
@@ -18,12 +19,12 @@ public class FirstPylonUnitCreated extends AutomaticListener {
         AUnit unit = (AUnit) data[0];
         AUnit builder = (AUnit) data[1];
 
-//        A.errPrintln(A.minSec() + " EVENT - First pylon created CALLBACK! " + unit + " by " + builder);
+//        AConsole.errPrintln(A.minSec() + " EVENT - First pylon created CALLBACK! " + unit + " by " + builder);
 
         assert builder.isWorker();
 
         if (ScoutState.scouts.isEmpty()) {
-            A.errPrintln(A.minSec() + " ---------- No scouts, creating one.");
+            AConsole.errPrintln(A.minSec() + " ---------- No scouts, creating one.");
 
             ScoutState.scouts.add(builder);
             (new ScoutCommander()).invokedCommander();

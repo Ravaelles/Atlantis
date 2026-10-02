@@ -25,6 +25,7 @@ import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
@@ -80,11 +81,11 @@ public class OnGameStarted {
         try {
             AInitialActions.executeInitialActions();
         } catch (Exception e) {
-            A.errPrintln("### Early exception, but don't worry ###");
-            A.errPrintln("This probably means you are playing UMS map.");
-            A.errPrintln("Atlantis is handling this case and keeps on playing.");
+            AConsole.errPrintln("### Early exception, but don't worry ###");
+            AConsole.errPrintln("This probably means you are playing UMS map.");
+            AConsole.errPrintln("Atlantis is handling this case and keeps on playing.");
             AGame.setUmsMode();
-            A.printStackTrace();
+            AConsole.printStackTrace();
         }
 
         DetectInitialTechs.update();
@@ -132,34 +133,34 @@ public class OnGameStarted {
             StrategyChooser.initializeStrategy();
             QueueInitializer.initializeProductionQueue();
 
-//            A.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
+//            AConsole.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {
-                if (Env.isLocal() && !Env.isTesting()) A.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+                if (Env.isLocal() && !Env.isTesting()) AConsole.println("Use build order: `" + CurrentBuildOrder.get() + "`");
             }
             else {
                 ErrorLog.printErrorOnce("Invalid (empty) build order in AtlantisRaceConfig!");
                 AGame.exit();
             }
         } catch (Exception e) {
-            A.errPrintln("");
-            A.errPrintln("#######################################################");
-            A.errPrintln(
+            AConsole.errPrintln("");
+            AConsole.errPrintln("#######################################################");
+            AConsole.errPrintln(
                 "Make sure that " + ABuildOrderLoader.BUILD_ORDERS_PATH + " contains build_orders directory,"
             );
-            A.errPrintln("copy it from Atlantis/build_orders");
-            A.errPrintln("#######################################################");
+            AConsole.errPrintln("copy it from Atlantis/build_orders");
+            AConsole.errPrintln("#######################################################");
 
             if (CurrentBuildOrder.get() == null) {
-                A.errPrintln("");
+                AConsole.errPrintln("");
                 throw new RuntimeException("Current BUILD ORDER is NULL");
             }
 
-            A.errPrintln(
+            AConsole.errPrintln(
                 "Does file exist? "
                     + (AFile.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
                     + CurrentBuildOrder.get().getName()
             );
-            A.errPrintln("Error: " + e.getMessage());
+            AConsole.errPrintln("Error: " + e.getMessage());
             e.printStackTrace();
             throw new RuntimeException("Exception when loading build orders file");
         }

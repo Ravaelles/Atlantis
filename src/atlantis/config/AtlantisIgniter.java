@@ -2,6 +2,7 @@ package atlantis.config;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import main.Main;
@@ -93,7 +94,7 @@ public class AtlantisIgniter {
 
                 if (!fileContent[i].equals(line)) {
                     shouldUpdateFileContent = true;
-                    A.println("Updated our race in bwapi.ini to: " + Main.ourRace());
+                    AConsole.println("Updated our race in bwapi.ini to: " + Main.ourRace());
                 }
                 return;
             }

@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class AttackEnemyExpansion {
             return null;
         }
 
-//        A.errPrintln(A.s + "s:  ENEMY EXPANSION FOUND: " + expansion);
+//        AConsole.errPrintln(A.s + "s:  ENEMY EXPANSION FOUND: " + expansion);
 
         if (
             expansion.isPositionVisible()

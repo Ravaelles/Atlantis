@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;
 import atlantis.map.AMap;
+import atlantis.util.AConsole;
 import atlantis.util.AFile;
 import atlantis.util.WriteJsonToFile;
 
@@ -43,7 +44,7 @@ public class SaveGameResultsToFile {
             output, headers, values, 32, true
         );
 
-//        A.println("@@@@@@@@@@@@@@@@@@@@ Game result saved to: " + output
+//        AConsole.println("@@@@@@@@@@@@@@@@@@@@ Game result saved to: " + output
 //            + " / result:" + (result ? "OK" : "FAILED")
 //            + " / exists:" + AFile.fileExists(output)
 //            + " / current working directory:" + System.getProperty("user.dir")

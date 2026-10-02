@@ -6,6 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -153,7 +154,7 @@ public class SelectionTest extends WorldStubForTests {
 
 //            our.exclude(our.combatUnits()).print();
 //            our.inShootRangeOf().print();
-//            A.println("zealot = " + zealot);
+//            AConsole.println("zealot = " + zealot);
 
             assertNotEquals(0, our.combatUnits().sunkens().size());
             assertNotEquals(0, our.combatUnits().cannons().size());

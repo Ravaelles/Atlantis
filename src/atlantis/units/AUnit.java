@@ -1,6 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
+import atlantis.util.AConsole;
 import atlantis.util.cache.ValidityCheck;
 import atlantis.combat.eval.estimate.Estimate;
 import atlantis.core.world.UnitState;
@@ -2188,7 +2189,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             return Missions.DEFEND;
         }
         else if (squad.mission() == null) {
-            A.errPrintln("Empty squad mission for: " + squad);
+            AConsole.errPrintln("Empty squad mission for: " + squad);
             return Missions.DEFEND;
         }
 
@@ -2626,7 +2627,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
                         System.err.println("ThisContext = " + this);
                         System.err.println("alive=" + unit().isAlive() + " / hp=" + unit().hp());
                         System.err.println("enemy=" + unit().isEnemy() + " / our=" + unit().isOur());
-                        A.printStackTrace("This is weird, should not be here");
+                        AConsole.printStackTrace("This is weird, should not be here");
                     }
                     return Select.from(new Units());
                 }
@@ -3215,7 +3216,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean debug() {
         if (action().equals(Actions.INIT)) {
             System.out.println("UNIT " + this + " " + this.idWithHash());
-//            A.printStackTrace("Ahhhhhhhh");
+//            AConsole.printStackTrace("Ahhhhhhhh");
             return true;
         }
 
@@ -3277,7 +3278,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public void setManagerUsed(Manager managerUsed) {
-//        if (A.now() >= 50 && isDragoon()) A.errPrintln(typeWithUnitId() + ": used " + managerUsed);
+//        if (A.now() >= 50 && isDragoon()) AConsole.errPrintln(typeWithUnitId() + ": used " + managerUsed);
 
         setManagerUsed(managerUsed, null);
     }
@@ -3874,7 +3875,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public void lastCommandIssuedNow(UnitCommandType command) {
         unitState().setLastCommandIssued(A.now);
-//        if (unitAction.equals(Actions.ATTACK_UNIT)) A.printStackTrace("Attack Unit issued now");
+//        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(
             command.name() + "/a:" + action().name() + "/" + tooltip, this
@@ -3883,7 +3884,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AttackState attackState() {
         if (!isOur()) {
-            A.errPrintln("attackState invoked for enemy - " + this.idWithType());
+            AConsole.errPrintln("attackState invoked for enemy - " + this.idWithType());
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### attackState invoked for enemy unit ###");
         }
 

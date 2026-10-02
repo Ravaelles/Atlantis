@@ -4,6 +4,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 
 public class ToLastSquadTarget {
     public static boolean goTo(AUnit unit) {
@@ -28,7 +29,7 @@ public class ToLastSquadTarget {
         if (lastTarget == null) return false;
 
         if (!lastTarget.isVisibleUnitOnMap() && lastTarget.position().isPositionVisible()) {
-            A.errPrintln("Looks like an outdated dead target");
+            AConsole.errPrintln("Looks like an outdated dead target");
             squad.targeting().setLastTarget(null);
             return false;
         }

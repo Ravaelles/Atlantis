@@ -6,6 +6,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.util.AConsole;
 
 public class CancelNotStartedBases {
     public static void cancelNotStartedOrEarlyBases(AUnit worker, String reason) {
@@ -15,13 +16,13 @@ public class CancelNotStartedBases {
 //            List<ProductionOrder> orders = Queue.get().nonCompleted().ofType(AtlantisRaceConfig.BASE).list();
 //            for (ProductionOrder order : orders) {
 //                if (order.progressPercent() <= 49) {
-//                    A.println("Cancel " + order.unitType() + " (" + order.progressPercent() + "%) - much weaker");
+//                    AConsole.println("Cancel " + order.unitType() + " (" + order.progressPercent() + "%) - much weaker");
 //                    order.cancel();
 //                }
 //
 ////                int progress = construction.progressPercent();
 ////                if (progress <= 49) {
-////                    A.println("Cancel " + construction.buildingType() + " (" + progress + "%) - much weaker");
+////                    AConsole.println("Cancel " + construction.buildingType() + " (" + progress + "%) - much weaker");
 ////                    construction.cancel();
 ////                }
 //            }
@@ -30,13 +31,13 @@ public class CancelNotStartedBases {
         Queue.get().statusNotReady().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
             if (shouldCancelBase(construction, worker)) {
-                A.errPrintln(
+                AConsole.errPrintln(
                     A.now() + " Cancelling pending base "
                     + order + ", Reason: " + reason
                 );
                 order.cancel(reason);
 
-//                A.printStackTrace("Why cancel base?");
+//                AConsole.printStackTrace("Why cancel base?");
             }
         });
     }

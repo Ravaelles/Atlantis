@@ -9,6 +9,7 @@ import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.util.AConsole;
 
 public class WhenCBDiscovered {
     public static void whenCBDiscovered(AUnit enemyUnit) {
@@ -20,7 +21,7 @@ public class WhenCBDiscovered {
                 && EnemyInfo.combatBuildingsAntiLand() >= 2
                 && Count.basesWithPlanned() <= 1
         ) {
-            if (!Env.isTesting()) A.println(A.s + "s ----------- Enemy goes combat buildings, expand");
+            if (!Env.isTesting()) AConsole.println(A.s + "s ----------- Enemy goes combat buildings, expand");
 
             ShouldExpand.reason = "Enemy goes combat buildings, expand";
             AddToQueue.withTopPriority(AtlantisRaceConfig.BASE);

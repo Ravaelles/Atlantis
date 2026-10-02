@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,16 +24,16 @@ public class ProtossStreetGridTest extends WorldStubForTests {
                         null, AUnitType.Protoss_Pylon, position
                     );
 
-                    //                if (isOkForPylon) A.print("█");
+                    //                if (isOkForPylon) AConsole.print("█");
                     //                else {
                     //                    boolean isOkForGateway = !ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(
                     //                        null, AUnitType.Protoss_Gateway, position
                     //                    );
-                    //                    if (isOkForGateway) A.print("░"); // ░ ▒
-                    //                    else A.print("◦");
+                    //                    if (isOkForGateway) AConsole.print("░"); // ░ ▒
+                    //                    else AConsole.print("◦");
                     //                }
                 }
-                A.println();
+                AConsole.println();
             }
         });
     }
@@ -47,9 +48,9 @@ public class ProtossStreetGridTest extends WorldStubForTests {
                 APosition position = APosition.create(tx, ty);
                 String string = gatewayPositionToString(position);
 
-                A.print(string);
+                AConsole.print(string);
             }
-            A.println();
+            AConsole.println();
         }
     }
 
@@ -63,9 +64,9 @@ public class ProtossStreetGridTest extends WorldStubForTests {
                 APosition position = APosition.create(tx, ty);
                 String string = pylonPositionToString(position);
 
-                A.print(string);
+                AConsole.print(string);
             }
-            A.println();
+            AConsole.println();
         }
     }
 
@@ -79,9 +80,9 @@ public class ProtossStreetGridTest extends WorldStubForTests {
                 APosition position = APosition.create(tx, ty);
                 String string = pylonAndGatewayPositionToString(position);
 
-                A.print(string);
+                AConsole.print(string);
             }
-            A.println();
+            AConsole.println();
         }
     }
 

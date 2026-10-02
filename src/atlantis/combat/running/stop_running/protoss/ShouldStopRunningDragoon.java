@@ -6,6 +6,7 @@ import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 
 public class ShouldStopRunningDragoon extends Manager {
     public ShouldStopRunningDragoon(AUnit unit) {
@@ -52,7 +53,7 @@ public class ShouldStopRunningDragoon extends Manager {
                 (unit.hp() >= 36 && unit.eval() >= 1.6)
                     ||
                     (unit.enemiesThatCanAttackMe(unit.hp() >= 42 ? 0.05 : 1.3).count() == 0));
-//            && A.println("DragoonStopVsZerg:" + A.now());
+//            && AConsole.println("DragoonStopVsZerg:" + A.now());
     }
 
     private boolean unitBecameIdleAfterRunning() {

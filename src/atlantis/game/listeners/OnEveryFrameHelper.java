@@ -38,6 +38,7 @@ import atlantis.units.attacked_by.Bullets;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
+import atlantis.util.AConsole;
 import atlantis.util.Vector;
 import atlantis.util.object.not_needed.NamespaceAccessibility;
 import atlantis.util.object.ObjectToFile;
@@ -773,10 +774,10 @@ public class OnEveryFrameHelper {
         AUnit first = Select.ourCombatUnits().nonBuildings().first();
         if (first == null) return;
 
-        A.println(first.typeWithHash() + " / " + first.manager() + " / " + first.eval());
+        AConsole.println(first.typeWithHash() + " / " + first.manager() + " / " + first.eval());
 
 //        if (first.combatEvalRelative() < 1 && first.isActiveManager(AttackNearbyEnemies.class)) {
-//            A.printStackTrace("Why is this unit attacking?");
+//            AConsole.printStackTrace("Why is this unit attacking?");
 //        }
     }
 

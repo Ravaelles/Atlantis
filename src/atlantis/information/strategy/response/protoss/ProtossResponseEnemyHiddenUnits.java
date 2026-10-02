@@ -7,6 +7,7 @@ import atlantis.production.constructions.cancelling.CriticalCancelPending;
 import atlantis.production.dynamic.protoss.buildings.ProduceCannonAtNaturalOrMain;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.AConsole;
 
 public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
     private int cannonNeeded;
@@ -29,7 +30,7 @@ public class ProtossResponseEnemyHiddenUnits extends StrategyResponse {
         cannonNeeded = cannonNeeded();
         cancelConstructionsIfNeededToGetMinerals();
 
-        A.errPrintln("cannonsNeeded = " + cannonNeeded);
+        AConsole.errPrintln("cannonsNeeded = " + cannonNeeded);
 
         for (int i = 0; i < cannonNeeded; i++) {
             ProduceCannonAtNaturalOrMain.produce();

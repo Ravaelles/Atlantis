@@ -8,6 +8,7 @@ import atlantis.combat.micro.avoid.margin.terran.MarineSafetyMarginAgainstMelee;
 import atlantis.combat.micro.avoid.margin.zerg.ZergSafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import bwapi.Color;
 
@@ -96,7 +97,7 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
         }
 
 //        if (defender.isActiveManager(ProtossContinueAttack.class) && defender.lastAttackFrameMoreThanAgo(24)) {
-//            A.printStackTrace("How comes we wanna avoid?");
+//            AConsole.printStackTrace("How comes we wanna avoid?");
 //            defender.manager().printParentsStack();
 //        }
 

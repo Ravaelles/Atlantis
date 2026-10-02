@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
+import atlantis.util.AConsole;
 
 public class Queue extends AbstractQueue {
     private static Queue instance = null;
@@ -32,7 +33,7 @@ public class Queue extends AbstractQueue {
 //            System.err.println("history.size = " + history.size() + " / last:" + history.last());
         }
 //        else {
-//            A.errPrintln("Failed to add " + productionOrder.whatToString());
+//            AConsole.errPrintln("Failed to add " + productionOrder.whatToString());
 //        }
 
 //        allOrders().print("Added");
@@ -113,7 +114,7 @@ public class Queue extends AbstractQueue {
     // =========================================================
 
     public void removeOrder(ProductionOrder order) {
-//        A.printStackTrace("REMOVE ORDER " + order);
+//        AConsole.printStackTrace("REMOVE ORDER " + order);
 
         orders.remove(order);
 

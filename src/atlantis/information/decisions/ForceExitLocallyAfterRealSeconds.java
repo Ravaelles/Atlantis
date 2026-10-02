@@ -6,6 +6,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class ForceExitLocallyAfterRealSeconds extends Commander {
@@ -20,15 +21,15 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
     }
 
     protected boolean handle() {
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("### ForceExitLocallyAfterRealSeconds #########");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
-        A.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("### ForceExitLocallyAfterRealSeconds #########");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
+        AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterRealSeconds");
         ErrorLog.printErrorOnce("Prevent too long game. It ran " + RealTime.gameLengthInRealSeconds() + " real seconds");

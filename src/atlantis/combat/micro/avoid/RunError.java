@@ -5,6 +5,7 @@ import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.util.AConsole;
 import atlantis.util.PauseAndCenter;
 import bwapi.Color;
 
@@ -22,12 +23,12 @@ public class RunError extends Manager {
 
 //        if (A.isUms()) {
 //            if (!unit.isAir() && !"ShowBack".equals(unit.runningManager().lastRunMode())) {
-//                A.errPrintln(
+//                AConsole.errPrintln(
 //                    A.now() + " ERROR_RUN for " + unit.nameWithId() + " / dist=" + A.digit(dist)
 //                        + " / mode=" + unit.runningManager().lastRunMode()
 //                        + " / nearEnemy=" + unit.nearestEnemyDist()
 //                );
-//                A.printStackTrace("Wtf");
+//                AConsole.printStackTrace("Wtf");
 
 //                if (A.isUms()) {
 //                    unit.paintCircleFilled(9, Color.Red);

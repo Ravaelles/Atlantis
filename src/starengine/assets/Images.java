@@ -3,6 +3,7 @@ package starengine.assets;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 
+import atlantis.util.AConsole;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
@@ -63,7 +64,7 @@ public class Images {
             return ImageIO.read(new File(path));
 
         } catch (IOException e) {
-            A.errPrintln("Error loading image: " + path);
+            AConsole.errPrintln("Error loading image: " + path);
             e.printStackTrace();
             A.quit();
         }

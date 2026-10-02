@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 
 public class ProduceUnit {
     public static boolean produceUnit(AUnitType type, ProductionOrder order) {
@@ -29,7 +30,7 @@ public class ProduceUnit {
             return CurrentBuildOrder.get().produceUnit(type, order);
         }
 //        else {
-//            A.errPrintln("Can't afford " + type + " (" + type.getMineralPrice() + ", " + type.getGasPrice() + ")");
+//            AConsole.errPrintln("Can't afford " + type + " (" + type.getMineralPrice() + ", " + type.getGasPrice() + ")");
 //        }
 
         return false;

@@ -2,6 +2,7 @@ package starengine.sc_logic;
 
 import atlantis.game.A;
 import atlantis.units.interrupt.UnitAttackWaitFrames;
+import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import starengine.units.state.EngineUnitState;
 import tests.fakes.FakeUnit;
@@ -82,7 +83,7 @@ public class ProcessAttackUnit {
 
     private static boolean inAttackFrameState(FakeUnit unit) {
         unit.attackState = AttackState.ATTACK_FRAME;
-//        A.println(unit + " in #ATTACK_FRAME# state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
+//        AConsole.println(unit + " in #ATTACK_FRAME# state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
 
         attackHasEnded(unit);
 
@@ -96,13 +97,13 @@ public class ProcessAttackUnit {
             unit.injectCooldown();
         }
 
-//        A.println(unit + " in SA state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
+//        AConsole.println(unit + " in SA state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
         return true;
     }
 
     private static boolean inReadyState(FakeUnit unit) {
         unit.attackState = AttackState.READY;
-//        A.println(unit + " in READY state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
+//        AConsole.println(unit + " in READY state, cooldown = " + unit.cooldown + ", attackState = " + unit.attackState);
         return true;
     }
 

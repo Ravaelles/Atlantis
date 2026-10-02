@@ -14,6 +14,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
 
@@ -78,7 +79,7 @@ public abstract class AntiLandBuildingCommander extends DynamicBuildingCommander
                         System.err.println("--- Non critical but ugly issue ---");
                         System.err.println("Missing requirement: " + requirement + " for: " + buildType);
                     }
-                    //                A.printStackTrace("Missing requirement: " + requirement + " for: " + type());
+                    //                AConsole.printStackTrace("Missing requirement: " + requirement + " for: " + type());
                     return false;
                 }
 

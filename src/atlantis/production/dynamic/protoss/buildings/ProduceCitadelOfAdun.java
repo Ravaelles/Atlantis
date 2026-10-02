@@ -7,6 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 
+import atlantis.util.AConsole;
 import static atlantis.units.AUnitType.*;
 
 public class ProduceCitadelOfAdun {
@@ -18,12 +19,12 @@ public class ProduceCitadelOfAdun {
         if (Count.ofType(Protoss_Observatory) == 0) return false;
 
         if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now % 41 == 0 && Have.notEvenPlanned(type())) {
-            A.errPrintln("TEMP Citadel of Adun at " + A.s);
+            AConsole.errPrintln("TEMP Citadel of Adun at " + A.s);
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }
 
 //        if (CountInQueue.count(type(), 6) == 0) {
-//            A.errPrintln("ProduceCitadelOfAdun: Requested Citadel of Adun at " + A.s);
+//            AConsole.errPrintln("ProduceCitadelOfAdun: Requested Citadel of Adun at " + A.s);
 //            return AddToQueue.withHighPriority(type()) != null;
 //        }
 

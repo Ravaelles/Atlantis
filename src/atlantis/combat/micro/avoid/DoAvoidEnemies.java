@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.Units;
+import atlantis.util.AConsole;
 import bwapi.Color;
 
 public class DoAvoidEnemies extends Manager {
@@ -39,7 +40,7 @@ public class DoAvoidEnemies extends Manager {
 //        unit.paintCircle(15, Color.Purple);
 //        unit.paintCircle(16, Color.Purple);
 //        unit.paintCircle(17, Color.Purple);
-//        A.printStackTrace(A.now + " Avoiding... " + unit.idWithHash());
+//        AConsole.printStackTrace(A.now + " Avoiding... " + unit.idWithHash());
 //        if (unit.isRanged()) {
 //            System.out.println("ZZZ = " + unit.action());
 //            if (!unit.isRunning() && !unit.isDancing()) GameSpeed.pauseGame();

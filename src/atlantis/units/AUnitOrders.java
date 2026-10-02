@@ -14,6 +14,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.FoggedUnit;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
@@ -34,7 +35,7 @@ public interface AUnitOrders {
     default boolean attackUnit(AUnit target) {
         AUnit unit = unit();
         if (target == null) {
-//            A.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
+//            AConsole.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now + ": Null attack unit target for " + unit.typeWithHash());
             return false;
         }
@@ -46,24 +47,24 @@ public interface AUnitOrders {
 
         if (!target.isDetected()) {
             if (target.isVisibleUnitOnMap()) {
-                A.errPrintln("Trying to attack not detected unit for " + unit.typeWithHash());
-                A.errPrintln(target);
-                A.errPrintln(target.position());
-                A.errPrintln(target.isPositionVisible());
-                A.errPrintln(target.hp());
+                AConsole.errPrintln("Trying to attack not detected unit for " + unit.typeWithHash());
+                AConsole.errPrintln(target);
+                AConsole.errPrintln(target.position());
+                AConsole.errPrintln(target.isPositionVisible());
+                AConsole.errPrintln(target.hp());
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Not detected target for " + unit);
             }
             return false;
         }
 
         if (!target.hasPosition()) {
-            A.errPrintln("Target (" + target + ") has no position " + unit.typeWithHash());
+            AConsole.errPrintln("Target (" + target + ") has no position " + unit.typeWithHash());
             return false;
         }
 
         if (!target.isAlive()) {
             if (!unit.type().is(AUnitType.Protoss_Corsair)) {
-                A.errPrintln("Dead target (" + target + ") for " + unit.typeWithHash());
+                AConsole.errPrintln("Dead target (" + target + ") for " + unit.typeWithHash());
             }
             return false;
         }
@@ -117,9 +118,9 @@ public interface AUnitOrders {
     default boolean trainForced(AUnitType unitToTrain) {
         unit().setAction(Actions.TRAIN);
         unit().setProductionOrder(ForcedDirectProductionOrder.create(unitToTrain));
-//        A.errPrintln("u() = " + u());
-//        A.errPrintln("u().train(unitToTrain.ut()) = " + u().train(unitToTrain.ut()));
-//        A.errPrintln("u().train(unitToTrain.ut()) = " + u().getTrainingQueue().add(unitToTrain.ut()));
+//        AConsole.errPrintln("u() = " + u());
+//        AConsole.errPrintln("u().train(unitToTrain.ut()) = " + u().train(unitToTrain.ut()));
+//        AConsole.errPrintln("u().train(unitToTrain.ut()) = " + u().getTrainingQueue().add(unitToTrain.ut()));
         return u() != null ? processTrain(unitToTrain, null) : FakeUnitData.TRAIN.add(unitToTrain);
     }
 
@@ -271,7 +272,7 @@ public interface AUnitOrders {
             }
 
             if (shouldPrint()) {
-                A.println(
+                AConsole.println(
                     "@" + A.now() + ": " + unit.typeWithUnitId() + "  MOVE (" + unitAction + ") / to:" + target
                     + " / " + unit.manager()
                 );
@@ -334,10 +335,10 @@ public interface AUnitOrders {
      */
     default boolean holdPosition(Action action, String tooltip) {
 
-//        A.errPrintln(tooltip);
-//        A.errPrintln(unit().manager());
-//        A.errPrintln(unit().managerLogs().toString());
-//        A.errPrintln("-------------------------");
+//        AConsole.errPrintln(tooltip);
+//        AConsole.errPrintln(unit().manager());
+//        AConsole.errPrintln(unit().managerLogs().toString());
+//        AConsole.errPrintln("-------------------------");
 
         unit().setAction(action).setTooltip(tooltip);
 
@@ -366,15 +367,15 @@ public interface AUnitOrders {
     default boolean stop(String tooltip) {
         if (shouldPrint()) {
             System.out.println("@" + A.now() + "  " + unit().idWithHash() + "  STOP / " + tooltip);
-//            A.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
+//            AConsole.printStackTrace(unit().idWithHash() + " Stopped @" + A.now());
         }
 
 //        if (A.isUms() && unit().lastCommandIssuedAgo() <= 1) {
-//            A.printStackTrace("Avoiding double stop command for " + unit());
+//            AConsole.printStackTrace("Avoiding double stop command for " + unit());
 //            return true;
 //        }
 
-//        A.errPrintln("A unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+//        AConsole.errPrintln("A unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 
         unit().setAction(Actions.STOP).setTooltip(tooltip);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
@@ -383,8 +384,8 @@ public interface AUnitOrders {
         if (Env.isTesting()) return true;
 
 //        if (unit().lastCommandIssuedAgo() <= 1) {
-//            A.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
-//            A.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
+//            AConsole.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
+//            AConsole.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
 //        }
         return unit().orderSink().stop(unit());
     }
@@ -475,7 +476,7 @@ public interface AUnitOrders {
      */
     default boolean repair(AUnit target, String tooltip) {
         if (target == null) {
-            A.errPrintln("Null repair target");
+            AConsole.errPrintln("Null repair target");
             return false;
         }
 
@@ -483,7 +484,7 @@ public interface AUnitOrders {
 
 //        if (unit().isRepairing() && unit().isCommand(UnitCommandType.Repair) && target.u().equals(u().getTarget())) {
         if (unit().isRepairing() && target.equals(unit().target())) {
-//            A.errPrintln(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
+//            AConsole.errPrintln(this + " avoid double command / " + unit().getLastCommand() + " // " + unit().target());
             return true;
         }
 
@@ -500,7 +501,7 @@ public interface AUnitOrders {
                     -0.9 + 1.9 * ((1 + unit().id()) % 4) / 4.0,
                     -0.9 + 1.9 * ((-1 + unit().id()) % 3) / 4.0
                 );
-//                A.println(A.now() + " / " + unit() + " moveTo = " + moveTo);
+//                AConsole.println(A.now() + " / " + unit() + " moveTo = " + moveTo);
 
                 move(moveTo, Actions.MOVE_REPAIR, tooltip, false);
             }
@@ -639,7 +640,7 @@ public interface AUnitOrders {
      */
     default boolean load(AUnit target) {
 //        if (A.s >= 6) {
-//            A.printStackTrace("Loading " + target + " into " + unit());
+//            AConsole.printStackTrace("Loading " + target + " into " + unit());
 //        }
 
         unit().setAction(Actions.LOAD);
@@ -657,9 +658,9 @@ public interface AUnitOrders {
      * Broodwar. See also load, unloadAll, getLoadedUnits, isLoaded, canUnload, canUnloadAtPosition
      */
     default boolean unload(AUnit target) {
-//        A.errPrintln("@" + A.now + " - " + unit() + " unload " + target);
+//        AConsole.errPrintln("@" + A.now + " - " + unit() + " unload " + target);
 
-//        A.printStackTrace("Unloaded...");
+//        AConsole.printStackTrace("Unloaded...");
         unit().setAction(Actions.UNLOAD);
         target.setAction(Actions.UNLOAD);
         if (unit().lastCommandIssuedAgo() <= 1) return false;

@@ -12,6 +12,7 @@ import atlantis.production.constructions.position.modifier.PositionModifier;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class FindPositionForBaseNearestFree {
@@ -59,7 +60,7 @@ public class FindPositionForBaseNearestFree {
 //                System.err.println("Bases.natural() = " + Bases.natural());
 
                 if (result == null && We.zerg()) {
-                    A.errPrintln("Fallback to standard building position for " + building);
+                    AConsole.errPrintln("Fallback to standard building position for " + building);
                     result = APositionFinder.findStandardPosition(builder, building, Select.main(), 50);
                 }
 

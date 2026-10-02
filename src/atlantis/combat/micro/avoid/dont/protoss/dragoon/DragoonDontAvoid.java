@@ -8,6 +8,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.interrupt.protoss.ProtossContinueAttack;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
 
 public class DragoonDontAvoid {
     public static boolean dontAvoid(AUnit unit) {
@@ -78,7 +79,7 @@ public class DragoonDontAvoid {
     private static boolean hasJustStoppedRunning(AUnit unit) {
         return unit.lastStoppedRunningLessThanAgo(10)
             && dontAvoid(unit, "JustStoppedRunning(" + unit.lastStoppedRunningAgo() + ")");
-//            && A.println("hasJustStoppedRunning (" + unit.lastStoppedRunningAgo() + ")");
+//            && AConsole.println("hasJustStoppedRunning (" + unit.lastStoppedRunningAgo() + ")");
     }
 
 //    private static Decision whenMissionSparta(AUnit unit) {

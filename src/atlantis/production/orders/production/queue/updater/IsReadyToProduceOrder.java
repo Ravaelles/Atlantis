@@ -13,6 +13,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class IsReadyToProduceOrder {
@@ -45,8 +46,8 @@ public class IsReadyToProduceOrder {
 //        if (order.unitType() == AUnitType.Terran_Machine_Shop) {
 //        if (order.tech() == TechType.Stim_Packs) {
 //        if (order.upgrade() == ResearchU238.upgradeType()) {
-//        A.errPrintln("----------- Order: " + order + " / now: " + A.now());
-//        A.errPrintln(
+//        AConsole.errPrintln("----------- Order: " + order + " / now: " + A.now());
+//        AConsole.errPrintln(
 //            "supplyRequirementFulfilled: " + order.supplyRequirementFulfilled() + "\r\n"
 //                + "hasEnoughResourcesFor: " + hasEnoughResourcesFor(order) + " / res_min:"
 //                + ReservedResources.minerals() + "\r\n"
@@ -55,7 +56,7 @@ public class IsReadyToProduceOrder {
 //                + "checkIfHasWhatRequired: " + order.checkIfHasWhatRequired() + "\r\n"
 //                + order.minSupply() + "/" + A.supplyUsed()
 //        );
-//        A.errPrintln("-----------");
+//        AConsole.errPrintln("-----------");
 //        }
 
         // Prioritize combat unit production when base is under attack

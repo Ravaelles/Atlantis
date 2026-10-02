@@ -3,11 +3,12 @@ package atlantis.debug.tweaker;
 import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.game.ARandom;
+import atlantis.util.AConsole;
 
 public class ParamTweakerFactory extends ParamTweaker {
 
     public static void init() {
-        A.println("###### INIT ParamTweaker ######");
+        AConsole.println("###### INIT ParamTweaker ######");
         tweaker = new ParamTweaker();
 
 //        tweaker.addParam(new Param(

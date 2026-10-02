@@ -5,6 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.AConsole;
 import atlantis.util.Counter;
 import atlantis.util.We;
 
@@ -30,7 +31,7 @@ public class AllowToProduceEarlyWithoutRequirements {
 
         AUnitType requiredType = type.requiredUnits().first();
         if (requiredType == null) {
-            A.printStackTrace("!No requirement for " + type);
+            AConsole.printStackTrace("!No requirement for " + type);
             return false;
         }
 
