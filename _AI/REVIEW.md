@@ -707,6 +707,13 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   Remaining for Stage C: unify-or-document decision recorded (documented, not
   unified — unification would change traversal behaviour); full game run to
   confirm no behaviour change.
+- **Stage C — game-run verification: DONE.** Fresh `--release 8` jar
+  (`AtlantisC` vs Steamhammer, Benzene, `GAME_629230BF`): bot connects,
+  analyzes the map, plays to a natural defeat (Steamhammer rushed),
+  no exceptions, no crashes. Drive-by findings from the run, fixed: stale
+  `Atlantis.jar` missed classes newer than Oct 1 (`AutomaticListener`);
+  `ARegion` used private `bwapi` fields that only compiled via classpath
+  shadowing (fixed to `getId().intValue()`).
 - **Headless build & tests: DONE.** Whole project compiles from source and the
   unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
   pre-existing failures are listed there rather than hidden.
