@@ -5,11 +5,11 @@ import atlantis.game.A;
 
 public class Commander extends BaseCommander {
     /**
-     * All sub-commanders. Order matters.
+     * All sub-commanders, as explicit constructor references. Order matters:
+     * it is the execution order.
      */
-    @SuppressWarnings("unchecked")
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{};
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{};
     }
 
     public boolean applies() {

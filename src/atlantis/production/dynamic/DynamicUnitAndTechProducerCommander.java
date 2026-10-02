@@ -1,6 +1,7 @@
 package atlantis.production.dynamic;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.production.dynamic.protoss.ProtossDynamicTechResearch;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.production.dynamic.terran.TerranDynamicTechResearch;
@@ -12,29 +13,29 @@ import atlantis.util.We;
 
 public class DynamicUnitAndTechProducerCommander extends Commander implements HasReason {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        Class[] raceSpecific = null;
+    protected CommanderFactory[] subcommanders() {
+        CommanderFactory[] raceSpecific = null;
 
         if (We.protoss()) {
-            raceSpecific = new Class[]{
-                ProtossDynamicTechResearch.class,
-                ProtossDynamicUnitProductionCommander.class,
+            raceSpecific = new CommanderFactory[]{
+                ProtossDynamicTechResearch::new,
+                ProtossDynamicUnitProductionCommander::new,
             };
         }
         if (We.terran()) {
-            raceSpecific = new Class[]{
-                TerranDynamicTechResearch.class,
-                TerranDynamicUnitsCommander.class,
+            raceSpecific = new CommanderFactory[]{
+                TerranDynamicTechResearch::new,
+                TerranDynamicUnitsCommander::new,
             };
         }
         if (We.zerg()) {
-            raceSpecific = new Class[]{
-                ZergDynamicTechResearch.class,
-                ZergDynamicUnitsCommander.class,
+            raceSpecific = new CommanderFactory[]{
+                ZergDynamicTechResearch::new,
+                ZergDynamicUnitsCommander::new,
             };
         }
 
-        Class[] generic = new Class[]{
+        CommanderFactory[] generic = new CommanderFactory[]{
 //            AutoProduceWorkersCommander.class
         };
 

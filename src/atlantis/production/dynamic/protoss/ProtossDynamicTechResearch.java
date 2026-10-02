@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.protoss.tech.*;
 import atlantis.util.We;
@@ -13,13 +14,13 @@ public class ProtossDynamicTechResearch extends Commander {
     }
 
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            ResearchSingularityCharge.class,
-            ResearchPsionicStorm.class,
-            ResearchLegEnhancements.class,
-            ResearchProtossGroundWeapons.class,
-            ResearchProtossGroundArmor.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            ResearchSingularityCharge::new,
+            ResearchPsionicStorm::new,
+            ResearchLegEnhancements::new,
+            ResearchProtossGroundWeapons::new,
+            ResearchProtossGroundArmor::new,
         };
     }
 }

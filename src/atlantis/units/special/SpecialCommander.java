@@ -1,6 +1,7 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.information.decisions.ForceEarlyGGOnlyLocally;
 import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
 import atlantis.information.decisions.GG;
@@ -11,17 +12,17 @@ import atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander;
 
 public class SpecialCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            TrackEnemyEarlyScoutCommander.class,
-            TerranRepairsCommander.class,
-            ChokeBlockersCommander.class,
-            SpecialUnitsCommander.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            TrackEnemyEarlyScoutCommander::new,
+            TerranRepairsCommander::new,
+            ChokeBlockersCommander::new,
+            SpecialUnitsCommander::new,
 
-            GG.class,
-            GGForEnemy.class,
-            ForceEarlyGGOnlyLocally.class,
-            ForceExitLocallyAfterRealSeconds.class,
+            GG::new,
+            GGForEnemy::new,
+            ForceEarlyGGOnlyLocally::new,
+            ForceExitLocallyAfterRealSeconds::new,
         };
     }
 }

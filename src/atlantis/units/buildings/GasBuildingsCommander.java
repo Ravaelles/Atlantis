@@ -1,13 +1,14 @@
 package atlantis.units.buildings;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.AGame;
 
 public class GasBuildingsCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            NumberOfGasWorkersCommander.class
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            NumberOfGasWorkersCommander::new
         };
     }
 

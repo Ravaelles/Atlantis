@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.expansion;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.expansion.protoss.ProtossCancelExpansionCommander;
 import atlantis.production.dynamic.expansion.protoss.ProtossExpansionCommander;
@@ -17,14 +18,14 @@ public class ExpansionCommander extends Commander {
     }
 
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            ProtossExpansionCommander.class,
-            ProtossCancelExpansionCommander.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            ProtossExpansionCommander::new,
+            ProtossCancelExpansionCommander::new,
 
-            TerranExpansionCommander.class,
+            TerranExpansionCommander::new,
 
-            ZergExpansionCommander.class,
+            ZergExpansionCommander::new,
         };
     }
 

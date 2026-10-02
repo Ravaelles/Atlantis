@@ -2,6 +2,23 @@ package atlantis.game;
 
 import atlantis.application.FramePipeline;
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
+import atlantis.combat.CombatCommander;
+import atlantis.config.MapSpecificCommander;
+import atlantis.debug.DebugCommander;
+import atlantis.debug.painter.PainterCommander;
+import atlantis.game.CameraCommander;
+import atlantis.game.state.BulletsCommander;
+import atlantis.information.enemy.EnemyUnitsCommander;
+import atlantis.information.strategy.StrategyCommander;
+import atlantis.map.scout.ScoutCommander;
+import atlantis.production.BuildingsCommander;
+import atlantis.production.ProductionCommander;
+import atlantis.production.constructions.ConstructionsCommander;
+import atlantis.units.UnitStateCommander;
+import atlantis.units.special.SpecialActionsCommander;
+import atlantis.units.special.SpecialCommander;
+import atlantis.units.workers.WorkerCommander;
 
 /**
  * Top abstraction level entity that issues orders to all other modules (managers).
@@ -19,7 +36,31 @@ public class AtlantisGameCommander extends Commander {
     }
 
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return topLevelSubcommanders();
+    protected CommanderFactory[] subcommanders() {
+        // Must mirror FramePipeline.steps() in the same order.
+        // steps() stays the Class[]-based pinned order (see FramePipelineTest);
+        // this is the construction side of the same list, without reflection.
+        return new CommanderFactory[]{
+            BulletsCommander::new,
+            UnitStateCommander::new,
+
+            SpecialActionsCommander::new,
+            ScoutCommander::new,
+            WorkerCommander::new,
+            CombatCommander::new,
+            ProductionCommander::new,
+            BuildingsCommander::new,
+            ConstructionsCommander::new,
+
+            SpecialCommander::new,
+
+            StrategyCommander::new,
+            EnemyUnitsCommander::new,
+            CameraCommander::new,
+            MapSpecificCommander::new,
+            PainterCommander::new,
+
+            DebugCommander::new,
+        };
     }
 }

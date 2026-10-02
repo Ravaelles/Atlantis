@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.terran.tech.*;
 import atlantis.util.We;
@@ -12,15 +13,15 @@ public class TerranDynamicTechResearch extends Commander {
     }
 
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            ResearchSiegeMode.class,
-            ResearchStimpacks.class,
-            ResearchU238.class,
-            CloakingField.class,
-            Lockdown.class,
-            TerranInfantryWeapons.class,
-            TerranInfantryArmor.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            ResearchSiegeMode::new,
+            ResearchStimpacks::new,
+            ResearchU238::new,
+            CloakingField::new,
+            Lockdown::new,
+            TerranInfantryWeapons::new,
+            TerranInfantryArmor::new,
         };
     }
 }

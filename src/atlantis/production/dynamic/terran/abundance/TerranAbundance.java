@@ -1,6 +1,7 @@
 package atlantis.production.dynamic.terran.abundance;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.dynamic.AbundanceCommander;
 import atlantis.production.orders.production.queue.Queue;
@@ -15,11 +16,11 @@ public class TerranAbundance extends AbundanceCommander {
     }
 
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            TerranAbundanceEarlyToMidGame.class,
-            TerranAbundanceLateGame.class,
-            TerranAbundanceTech.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            TerranAbundanceEarlyToMidGame::new,
+            TerranAbundanceLateGame::new,
+            TerranAbundanceTech::new,
         };
     }
 }

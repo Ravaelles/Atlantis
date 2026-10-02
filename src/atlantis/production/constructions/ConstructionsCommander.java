@@ -1,6 +1,7 @@
 package atlantis.production.constructions;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.production.constructions.builders.TerranKilledBuilderCommander;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.production.constructions.commanders.ConstructionThatLooksBugged;
@@ -12,13 +13,13 @@ import java.util.ArrayList;
 
 public class ConstructionsCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            TerranKilledBuilderCommander.class,
-            ConstructionStatusChanger.class,
-            ConstructionUnderAttack.class,
-            ConstructionThatLooksBugged.class,
-            IdleBuildersFix.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            TerranKilledBuilderCommander::new,
+            ConstructionStatusChanger::new,
+            ConstructionUnderAttack::new,
+            ConstructionThatLooksBugged::new,
+            IdleBuildersFix::new,
         };
     }
 

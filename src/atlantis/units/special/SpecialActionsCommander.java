@@ -1,6 +1,7 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.units.special.ums.UmsSpecialBehaviorCommander;
 
 /**
@@ -8,9 +9,9 @@ import atlantis.units.special.ums.UmsSpecialBehaviorCommander;
  */
 public class SpecialActionsCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            UmsSpecialBehaviorCommander.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            UmsSpecialBehaviorCommander::new,
         };
     }
 }

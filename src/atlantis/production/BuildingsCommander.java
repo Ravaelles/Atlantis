@@ -1,6 +1,7 @@
 package atlantis.production;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.terran.FlyingBuildingScoutCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
@@ -8,9 +9,9 @@ import atlantis.util.We;
 
 public class BuildingsCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            FlyingBuildingScoutCommander.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            FlyingBuildingScoutCommander::new,
         };
     }
 

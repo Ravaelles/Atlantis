@@ -1,6 +1,7 @@
 package atlantis.production;
 
 import atlantis.architecture.Commander;
+import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
 import atlantis.production.constructions.ConstructionsCommander;
 import atlantis.production.dynamic.DynamicProductionCommander;
@@ -13,12 +14,12 @@ import atlantis.units.select.Have;
  */
 public class ProductionCommander extends Commander {
     @Override
-    protected Class<? extends Commander>[] subcommanders() {
-        return new Class[]{
-            ProductionOrdersCommander.class,
-            SupplyCommander.class,
-            ConstructionsCommander.class,
-            DynamicProductionCommander.class,
+    protected CommanderFactory[] subcommanders() {
+        return new CommanderFactory[]{
+            ProductionOrdersCommander::new,
+            SupplyCommander::new,
+            ConstructionsCommander::new,
+            DynamicProductionCommander::new,
 //            RemoveExcessiveOrders.class,
         };
     }
