@@ -51,12 +51,6 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   is most of `tests.unit`. Until then `ATargetingTest` stays red on purpose:
   its expectations are right about the game and unreachable in this harness.
   Do **not** "fix" them by rewriting the expectations to match the fake world.
-- **#27** The retreat tests (`ProtossRetreatTest`, `ProtossSmallRetreatTest`,
-  5 failures) are the largest remaining group and the only ones left that assert
-  a *decision* rather than a value. They must be triaged after the harness is
-  trustworthy, and their expectations were written for the heuristic evaluator -
-  `AUnit.eval()` is JFAP now (`AUnit.combatEvalAbsolute()`), so check whether
-  "melee advantage" still means what the test thinks before touching code.
 - **#28** Production code imports the test harness: 15 files under
   `src/atlantis`/`src/main` import `tests.fakes.*` (`AUnit` -> `FakeUnit`,
   `Bullets` -> `FakeBullets`, `AbstractFoggedUnit`, `AUnitOrders` ->
@@ -79,11 +73,6 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   harmless today, but a naive use silently poisons comparisons. Decide the
   contract (100%? 0%? throw?) and fix it; `AUnitTest.shieldsOnAUnitThatHasNone`
   pins the current behaviour on purpose.
-- **#25** `scripts/run-tests.sh` defaults to `--select-package tests.unit`,
-  which hides the acceptance package. Either make the default cover everything
-  and accept a red run with a documented baseline, or keep the split but add
-  `scripts/run-acceptance-tests.sh` so the second scope is one command instead
-  of a flag someone has to know about.
 - **#26** Rename or document `isOtherUnitFacingThisUnit` /
   `isOtherUnitShowingBackToUs`. Both ask about the *other* unit's angle but
   against different reference directions, so they are two questions

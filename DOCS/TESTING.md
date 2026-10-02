@@ -5,9 +5,10 @@ with vendored jars in `lib/`. Everything can still be compiled and tested
 headlessly:
 
 ```bash
-bash scripts/run-tests.sh                              # unit tests (default scope!)
-bash scripts/run-tests.sh --select-package tests       # unit + acceptance
-bash scripts/run-architecture-tests.sh                 # architecture bounds only
+bash scripts/run-tests.sh                    # unit tests (default scope!)
+bash scripts/run-acceptance-tests.sh         # acceptance tests
+bash scripts/run-tests.sh --select-package tests    # everything at once
+bash scripts/run-architecture-tests.sh       # architecture bounds only
 ```
 
 `scripts/run-tests.sh` compiles all sources to `out/production/Atlantis` and
@@ -16,22 +17,22 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Two scopes, two baselines — read this before trusting a green run
 
 **The default run only executes `tests.unit`.** The whole
-`tests.acceptance` package (world/squad/commander behaviour, ~120 tests) is
-**not** run by `bash scripts/run-tests.sh` unless you pass
-`--select-package tests`. That was true for the whole architecture effort, and
-it hid a lot: acceptance tests were written against a broken harness and were
-never executed, so nobody saw 44 failures sitting in the tree.
+`tests.acceptance` package (world/squad/commander behaviour, ~115 tests) is
+**not** run by `bash scripts/run-tests.sh`. That was true for the whole
+architecture effort, and it hid a lot: acceptance tests were written against a
+broken harness and were never executed, so nobody saw 44 failures sitting in
+the tree. There is now `scripts/run-acceptance-tests.sh` for that scope, so it
+is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **115 passing / 0 failing** |
 | Everything | `bash scripts/run-tests.sh --select-package tests` | **218 passing / 6 failing** of 225 |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
-The acceptance package is **fully green** (115/115) after the harness fixes
-recorded in `_AI/BUGS.md` B-13…B-16. The 6 remaining failures are all in
-`tests.unit` and are listed below. Random order (seeds 7, 42, 99) gives the
-identical failure set.
+The 6 remaining failures are all in `tests.unit` and are listed below. Random
+order (seeds 7, 42, 99) gives the identical failure set.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
