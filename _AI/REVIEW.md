@@ -682,6 +682,16 @@ that work, branches, and issues can reference them unambiguously (e.g. a branch
 `stage-b/boundary-ratchet`). Each stage is independently shippable and must
 leave the bot playable. Pooling: **A** and **B** can start immediately.
 
+### 16.0 Status log
+
+- **Stage A — Boundary Contract: DONE.** `DOCS/ARCHITECTURE-CONTEXT-MAP.md`.
+- **Stage B — Boundary Ratchet: DONE.** ArchUnit vendored in `lib/`;
+  `src/tests/architecture/ArchitectureBoundaryTest.java`;
+  frozen baseline in `_AI/architecture/archunit-store/`; runner
+  `scripts/run-architecture-tests.sh`. New violations fail the build (verified).
+- Next: **Stage C — Explicit Pipeline** (needs a dedicated effort and a game run
+  to verify behavior is unchanged).
+
 ### 16.0 Summary
 
 | Stage | Name | Horizon | Behavior change | Depends on |

@@ -53,3 +53,44 @@ by the language rule below.
   acceptable response on its own.
 - If the user overrules a well-argued objection after hearing it, the assistant
   proceeds and implements the user's decision without re-litigating it.
+
+## 4. Completion notification (mandatory)
+
+- At the very end of **every** request, the assistant must run the script
+  `/home/ping.sh`. It notifies the user that the work is finished.
+- This applies to **every** task, not only the first one.
+
+## 5. Architecture direction (agreed, normative)
+
+- Target: a **modular monolith with a hexagonal core**. Full details in
+  `DOCS/ARCHITECTURE-CONTEXT-MAP.md`; the canonical execution plan is
+  `_AI/REVIEW.md` §16 (stages A–J).
+- **Dependencies point inward only**: `adapters → application → contexts →
+  core`. The core must not depend on contexts or adapters; contexts may depend
+  on the core and only on the **Published API** of other contexts.
+- **Six bounded contexts**: `Economy`, `Production`, `Combat`,
+  `Intelligence`, `Map`, `Scouting`, plus `core`, `application`, `adapters`,
+  `bootstrap`. Every class belongs to exactly one.
+- **Units move to a read model + stateless systems**: `UnitSnapshot`,
+  `UnitState`, `World`. Do not add new `public` mutable unit state fields, new
+  static caches, or new `A.*` (God utility) usage in production code.
+- **Boundaries are enforced mechanically** by
+  `src/tests/architecture/ArchitectureBoundaryTest.java`. Never grow the frozen
+  baseline in `_AI/architecture/archunit-store/`; fix the dependency instead.
+- **VSA is not the system architecture** (only per-unit behavior packs).
+  **DDD is strategic only** (bounded contexts + ubiquitous language), not
+  tactical (no aggregates/repositories).
+- Large changes follow the stages in `_AI/REVIEW.md` §16, incrementally, and
+  must keep the bot playable.
+
+## 6. Commit after every completed work cycle (mandatory)
+
+- After each **completed cycle of work** (a finished task or stage from
+  `_AI/REVIEW.md` §16), commit the changes before starting the next cycle.
+- One logical change per commit. Do not mix unrelated changes in one commit.
+- Write a concise, English commit message that explains the **why**, not just
+  the what.
+- The architecture baseline in `_AI/architecture/archunit-store/` is versioned
+  on purpose (see its `README.md`). It is **not** a build artifact and must
+  **not** be added to `.gitignore`.
+- Never `git push` unless the user explicitly asks.
