@@ -725,8 +725,13 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
 - **Stage E — Read Model: STARTED.** Additive foundation only:
   `atlantis.core.world.World` + immutable `UnitSnapshot` (+ `UnitSnapshots`
   bridge backed by `AUnit`), `WorldTest` proving engine-free construction.
-  No production behaviour touched. Next: `UnitState`, migrating `public _last*`
-  fields, replacing the static registry.
+  `UnitState` migrated: all 22 `public _last*` fields moved out of `AUnit`
+  behind get/set accessors (97 sites rewired mechanically; `Squad`'s own
+  `_lastUnderAttack` and other classes' own fields untouched). Suite 70/81
+  with identical 11 pre-existing failures; ArchUnit 7/7. Verified by
+  `GAME_A8A66EAC` (fresh Java 8 jar, factory trees + sink + UnitState live):
+  natural defeat, no exceptions. Next: replacing the static registry,
+  `FoggedUnit` projection.
 - **Deferred defect #1 — Cache.getIfValid: FIXED + VERIFIED.** Stale-invalid
   units/focus points are now dropped and recomputed; validity is a
   `ValidityCheck` port (no new ArchUnit violations, 4 stale entries cleaned).
