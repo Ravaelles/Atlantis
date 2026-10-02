@@ -322,7 +322,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             int now = A.now();
 
             // Position changed
-            unit._lastPositionChanged = now - 5;
+            unit.unitState().setLastPositionChanged(now - 5);
             assertTrue(unit.lastPositionChangedLessThanAgo(6));
             assertTrue(unit.lastPositionChangedLessThanAgo(5));
             assertFalse(unit.lastPositionChangedLessThanAgo(4));
@@ -331,13 +331,13 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastPositionChangedMoreThanAgo(6));
 
             // Started attack
-            unit._lastStartedAttack = now - 10;
+            unit.unitState().setLastStartedAttack(now - 10);
             assertTrue(unit.lastStartedAttackLessThanAgo(11));
             assertTrue(unit.lastStartedAttackLessThanAgo(10));
             assertFalse(unit.lastStartedAttackLessThanAgo(9));
 
             // Under attack
-            unit._lastUnderAttack = now - 15;
+            unit.unitState().setLastUnderAttack(now - 15);
             assertTrue(unit.lastUnderAttackLessThanAgo(16));
             assertTrue(unit.lastUnderAttackLessThanAgo(15));
             assertFalse(unit.lastUnderAttackLessThanAgo(14));
@@ -346,7 +346,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastUnderAttackMoreThanAgo(16));
 
             // Attack frame
-            unit._lastAttackFrame = now - 20;
+            unit.unitState().setLastAttackFrame(now - 20);
             assertTrue(unit.lastAttackFrameLessThanAgo(21));
             assertTrue(unit.lastAttackFrameLessThanAgo(20));
             assertFalse(unit.lastAttackFrameLessThanAgo(19));
@@ -355,7 +355,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastAttackFrameMoreThanAgo(21));
 
             // Attack order
-            unit._lastAttackOrder = now - 25;
+            unit.unitState().setLastAttackOrder(now - 25);
             assertTrue(unit.lastAttackOrderLessThanAgo(26));
             assertTrue(unit.lastAttackOrderLessThanAgo(25));
             assertFalse(unit.lastAttackOrderLessThanAgo(24));
@@ -364,7 +364,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastAttackOrderMoreThanAgo(26));
 
             // Frame of starting attack
-            unit._lastFrameOfStartingAttack = now - 30;
+            unit.unitState().setLastFrameOfStartingAttack(now - 30);
             assertTrue(unit.lastFrameOfStartingAttackLessThanAgo(31));
             assertTrue(unit.lastFrameOfStartingAttackLessThanAgo(30));
             assertFalse(unit.lastFrameOfStartingAttackLessThanAgo(29));
@@ -373,7 +373,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastFrameOfStartingAttackMoreThanAgo(31));
 
             // Started running
-            unit._lastStartedRunning = now - 35;
+            unit.unitState().setLastStartedRunning(now - 35);
             assertTrue(unit.lastStartedRunningLessThanAgo(36));
             assertTrue(unit.lastStartedRunningLessThanAgo(35));
             assertFalse(unit.lastStartedRunningLessThanAgo(34));
@@ -382,7 +382,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.lastStartedRunningMoreThanAgo(36));
 
             // Stopped running
-            unit._lastStoppedRunning = now - 40;
+            unit.unitState().setLastStoppedRunning(now - 40);
             assertTrue(unit.lastStoppedRunningLessThanAgo(41));
             assertTrue(unit.lastStoppedRunningLessThanAgo(40));
             assertFalse(unit.lastStoppedRunningLessThanAgo(39));
@@ -991,20 +991,20 @@ public class AUnitTest extends AbstractTestWithWorld {
             int now = A.now();
 
             // Shot recently
-            unit._lastAttackFrame = now - 10;
+            unit.unitState().setLastAttackFrame(now - 10);
             assertTrue(unit.shotAgo(15));
             assertFalse(unit.shotAgo(5));
             assertTrue(unit.shotSecondsAgo(1)); // 10 frames < 30 frames
             assertFalse(unit.didntShootRecently(1)); // didntShootRecently(1) means > 30 frames ago
 
-            unit._lastAttackFrame = now - 100;
+            unit.unitState().setLastAttackFrame(now - 100);
             assertFalse(unit.shotSecondsAgo(1));
             assertTrue(unit.didntShootRecently(1));
 
             // Ran recently
-            unit._lastStartedRunning = now - 10;
+            unit.unitState().setLastStartedRunning(now - 10);
             assertTrue(unit.ranRecently(1));
-            unit._lastStartedRunning = now - 100;
+            unit.unitState().setLastStartedRunning(now - 100);
             assertFalse(unit.ranRecently(1));
 
             // Attacking recently
@@ -1018,7 +1018,7 @@ public class AUnitTest extends AbstractTestWithWorld {
             assertFalse(unit.isAttackingRecently());
 
             // Position changed
-            unit._lastPositionChanged = now - 5;
+            unit.unitState().setLastPositionChanged(now - 5);
             assertEquals(5, unit.lastPositionChangedAgo());
         });
     }

@@ -201,7 +201,7 @@ public class ARunningManager {
 
         if (unit.move(runTo, action, null, false)) {
             // Update last time run order was issued
-            if (unit._lastStartedRunning <= unit._lastStoppedRunning) unit._lastStartedRunning = A.now();
+            if (unit.unitState().getLastStartedRunning() <= unit.unitState().getLastStoppedRunning()) unit.unitState().setLastStartedRunning(A.now());
 
             // Make all other units very close to it run as well
             if (allowedToNotifyNearUnitsToMakeSpace) {
@@ -261,7 +261,7 @@ public class ARunningManager {
 //            System.err.println(unit.lastCommandName());
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Hmm");
 
-            unit._lastStoppedRunning = A.now();
+            unit.unitState().setLastStoppedRunning(A.now());
 //            System.out.println("Stopped running at " + A.now());
 //            A.printStackTrace("StoppedRunning at " + A.now());
 
@@ -299,7 +299,7 @@ public class ARunningManager {
 
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
-        unit._lastRunningPositionChange = A.now;
+        unit.unitState().setLastRunningPositionChange(A.now);
         return runTo;
     }
 

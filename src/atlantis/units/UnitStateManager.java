@@ -19,7 +19,7 @@ public class UnitStateManager extends Manager {
 
         if (unit.isAttackFrame()) {
 //            System.err.println("%%%%%%%%% ATTACK FRAME - " + timeNow);
-            unit._lastAttackFrame = timeNow;
+            unit.unitState().setLastAttackFrame(timeNow);
 //            APainter.paintCircleFilled(unit, 8, Color.Yellow);
 //            if (unit.isFirstCombatUnit()) {
 
@@ -27,15 +27,15 @@ public class UnitStateManager extends Manager {
         }
 
         if (unit.isAttackingOrMovingToAttack()) {
-            unit._lastAttackOrder = timeNow;
+            unit.unitState().setLastAttackOrder(timeNow);
         }
 
-        unit._lastCooldown = unit.cooldownRemaining();
+        unit.unitState().setLastCooldown(unit.cooldownRemaining());
 
         if (unit.isStartingAttack()) {
 //            APainter.paintCircleFilled(unit, 8, Color.Orange);
-            if (unit.cooldownRemaining() > unit._lastCooldown) {
-                unit._lastFrameOfStartingAttack = timeNow;
+            if (unit.cooldownRemaining() > unit.unitState().getLastCooldown()) {
+                unit.unitState().setLastFrameOfStartingAttack(timeNow);
             }
 //            System.err.println("@@@@@@@@@@@@@@@@@ UPDATED STARTING ATTACK - " + timeNow);
 //            if (unit.isFirstCombatUnit()) {
@@ -43,24 +43,24 @@ public class UnitStateManager extends Manager {
 //            }
         }
 
-        unit._lastHitPoints.add(unit.hp());
+        unit.unitState().getLastHitPoints().add(unit.hp());
 
         if (unit.isStartingAttack()) {
-            unit._lastStartedAttack = timeNow;
+            unit.unitState().setLastStartedAttack(timeNow);
         }
 
-        AUnit _oldLastTargetToAttack = unit._lastTarget;
-        unit._lastTarget = unit.isAttackingOrMovingToAttack() ? unit.target() : null;
+        AUnit _oldLastTargetToAttack = unit.unitState().getLastTarget();
+        unit.unitState().setLastTarget(unit.isAttackingOrMovingToAttack() ? unit.target() : null);
 
         if (unit.target() != null && !unit.target().equals(_oldLastTargetToAttack)) {
-            unit._lastTargetToAttackAcquired = timeNow;
-            unit._lastTargetType = unit.target().type();
+            unit.unitState().setLastTargetToAttackAcquired(timeNow);
+            unit.unitState().setLastTargetType(unit.target().type());
         }
 
         Squad squad = unit.squad();
 
         if (unit.isUnderAttack(3)) {
-            unit._lastUnderAttack = timeNow;
+            unit.unitState().setLastUnderAttack(timeNow);
             if (squad != null) {
                 squad.markLastUnderAttackNow();
             }
@@ -82,11 +82,11 @@ public class UnitStateManager extends Manager {
     }
 
     private void rememberLastPositionAndLastPositionChange() {
-        if (unit._lastX != unit.x() || unit._lastY != unit.y()) {
-            unit._lastPositionChanged = timeNow;
+        if (unit.unitState().getLastX() != unit.x() || unit.unitState().getLastY() != unit.y()) {
+            unit.unitState().setLastPositionChanged(timeNow);
 
-            unit._lastX = unit.x();
-            unit._lastY = unit.y();
+            unit.unitState().setLastX(unit.x());
+            unit.unitState().setLastY(unit.y());
         }
     }
 }

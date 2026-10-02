@@ -31,7 +31,7 @@ public class DanceAwayApplies {
         if (unit.lastStartedRunningLessThanAgo(5)) return false;
 
         if (unit.enemiesNear().ranged().canAttack(unit, 2.1).empty()) return false;
-        if (AUnitType.Terran_Siege_Tank_Siege_Mode.equals(unit._lastTargetType)) return false;
+        if (AUnitType.Terran_Siege_Tank_Siege_Mode.equals(unit.unitState().getLastTargetType())) return false;
 
         enemy = defineUnitToDanceAwayFrom(unit);
         if (enemy == null) return false;

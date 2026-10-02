@@ -116,7 +116,7 @@ public class DanceAwayDragoonApplies extends HasUnit {
         ) return f("_B6");
 
         if (Enemy.terran()) {
-            if (AUnitType.Terran_Siege_Tank_Siege_Mode.equals(unit._lastTargetType)) return f("_P");
+            if (AUnitType.Terran_Siege_Tank_Siege_Mode.equals(unit.unitState().getLastTargetType())) return f("_P");
             if (unit.enemiesNear().tanksSieged().countInRadius(12.5, unit) > 0) return f("_Q");
             if (unit.enemiesNear().tanks().countInRadius(7.5, unit) > 0) return f("_Ta");
 

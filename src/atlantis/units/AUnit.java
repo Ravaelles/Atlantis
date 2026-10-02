@@ -3,6 +3,7 @@ package atlantis.units;
 import atlantis.architecture.Manager;
 import atlantis.util.cache.ValidityCheck;
 import atlantis.combat.eval.estimate.Estimate;
+import atlantis.core.world.UnitState;
 import atlantis.combat.generic.DoNothing;
 import atlantis.combat.advance.focus.AFocusPoint;
 import atlantis.combat.eval.AtlantisJfap;
@@ -107,6 +108,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private OrderSink orderSink = BwapiOrderSink.instance();
 
     /**
+     * Stage E (see _AI/REVIEW.md §16): accumulated derived per-unit state,
+     * migrated out of the former {@code public _last*} fields. The only
+     * mutable per-unit state holder besides the engine binding itself.
+     */
+    private final UnitState unitState = new UnitState();
+
+    /**
      * Cache var storing generic Object-type keys.
      */
     private Cache<Object> cache = new Cache<>();
@@ -146,7 +154,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     private Construction construction = null;
 
-    public CappedList<Integer> _lastHitPoints = new CappedList<>(20);
 //    private AUnit runningFrom = null;
 
     /**
@@ -154,30 +161,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     private APosition specialPosition = null;
     protected int _lastActionReceived = -9668;
-    public int _lastAttackOrder = -9999;
-    public int _lastAttackFrame = -9999;
     private int _lastAttackCommand = -9876;
-    public int _lastCommandIssued = -9877;
-    public int _lastCooldown;
-    public int _lastFrameOfStartingAttack = -9999;
-    public int _lastRetreat = -9998;
-    public int _lastStartedRunning = -999;
-    public int _lastStoppedRunning = -999;
-    public int _lastRunningPositionChange = -999;
-    public int _lastStartedAttack = -999;
-    public AUnit _lastTarget = null;
-    public AUnitType _lastTargetType = null;
-    public int _lastTargetToAttackAcquired = -999;
-    public TechType _lastTech;
-    public APosition _lastTechPosition;
-    public AUnit _lastTechUnit;
-    public int _lastUnderAttack = -999;
     public int _hitCount = 0;
     public static int _totalHitCount = 0;
-    public int _lastX = -1;
-    public int _lastY = -1;
-    public int _lastPositionChanged = -999;
-    public HasPosition _lastPositionRunInAnyDir = null;
     private AUnit _targetUnitToAttack;
 
     private boolean isScout = false;
@@ -377,6 +363,13 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     @Override
     public AUnit unit() {
         return this;
+    }
+
+    /**
+     * Stage E: the {@link UnitState} holding this unit's derived state.
+     */
+    public UnitState unitState() {
+        return unitState;
     }
 
     /**
@@ -1491,9 +1484,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         // In-game solutions sucks ass badly - don't use it
 //        return u.isUnderAttack();
 
-        if (_lastHitPoints.size() < inLastFrames) return false;
+        if (unitState().getLastHitPoints().size() < inLastFrames) return false;
 
-        return hp() < _lastHitPoints.get(inLastFrames - 1);
+        return hp() < unitState().getLastHitPoints().get(inLastFrames - 1);
     }
 
     public boolean isUnderAttack() {
@@ -1517,27 +1510,27 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit target() {
         if (u.getTarget() != null) {
-            _lastTarget = AUnit.getById(u.getTarget());
-            _lastTargetType = _lastTarget != null ? _lastTarget.type() : null;
+            unitState().setLastTarget(AUnit.getById(u.getTarget()));
+            unitState().setLastTargetType(unitState().getLastTarget() != null ? unitState().getLastTarget().type() : null);
 
-            return _lastTarget;
+            return unitState().getLastTarget();
         }
 
 //        if (Actions.MOVE_ATTACK.equals(unitAction)) {
 //            return _lastTargetToAttack = targetUnitToAttack();
 //        }
 
-        _lastTarget = orderTarget();
-        _lastTargetType = _lastTarget != null ? _lastTarget.type() : null;
-        return _lastTarget;
+        unitState().setLastTarget(orderTarget());
+        unitState().setLastTargetType(unitState().getLastTarget() != null ? unitState().getLastTarget().type() : null);
+        return unitState().getLastTarget();
     }
 
     public AUnit lastTarget() {
-        return _lastTarget;
+        return unitState().getLastTarget();
     }
 
     public AUnitType lastTargetType() {
-        return _lastTargetType;
+        return unitState().getLastTargetType();
     }
 
     public boolean hasTarget() {
@@ -1779,16 +1772,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public AUnit setAction(Action unitAction, TechType tech, APosition usedAt) {
-        this._lastTech = tech;
-        this._lastTechPosition = usedAt;
+        this.unitState().setLastTech(tech);
+        this.unitState().setLastTechPosition(usedAt);
         SpellCoordinator.newSpellAt(usedAt, tech);
 
         return setAction(unitAction);
     }
 
     public AUnit setAction(Action unitAction, TechType tech, AUnit usedOn) {
-        this._lastTech = tech;
-        this._lastTechUnit = usedOn;
+        this.unitState().setLastTech(tech);
+        this.unitState().setLastTechUnit(usedOn);
 
 //        if (ATech.isOffensiveSpell(tech)) {
         SpellCoordinator.newSpellAt(usedOn.position(), tech);
@@ -1964,79 +1957,79 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 //    }
 
     public boolean lastStartedAttackMoreThanAgo(int framesAgo) {
-        return A.ago(_lastStartedAttack) >= framesAgo;
+        return A.ago(unitState().getLastStartedAttack()) >= framesAgo;
     }
 
     public boolean lastStartedAttackLessThanAgo(int framesAgo) {
-        return A.ago(_lastStartedAttack) <= framesAgo;
+        return A.ago(unitState().getLastStartedAttack()) <= framesAgo;
     }
 
     public boolean lastUnderAttackLessThanAgo(int framesAgo) {
-        return A.ago(_lastUnderAttack) <= framesAgo;
+        return A.ago(unitState().getLastUnderAttack()) <= framesAgo;
     }
 
     public boolean lastUnderAttackMoreThanAgo(int framesAgo) {
-        return A.ago(_lastUnderAttack) >= framesAgo;
+        return A.ago(unitState().getLastUnderAttack()) >= framesAgo;
     }
 
     public boolean lastPositionChangedLessThanAgo(int framesAgo) {
-        return A.ago(_lastPositionChanged) <= framesAgo;
+        return A.ago(unitState().getLastPositionChanged()) <= framesAgo;
     }
 
     public boolean lastPositionChangedMoreThanAgo(int framesAgo) {
-        return A.ago(_lastPositionChanged) >= framesAgo;
+        return A.ago(unitState().getLastPositionChanged()) >= framesAgo;
     }
 
     public int lastPositionChangedAgo() {
-        return A.ago(_lastPositionChanged);
+        return A.ago(unitState().getLastPositionChanged());
     }
 
     public boolean lastAttackFrameLessThanAgo(int framesAgo) {
-        return A.ago(_lastAttackFrame) <= framesAgo;
+        return A.ago(unitState().getLastAttackFrame()) <= framesAgo;
     }
 
     public boolean lastAttackFrameMoreThanAgo(int framesAgo) {
-        return A.ago(_lastAttackFrame) >= framesAgo;
+        return A.ago(unitState().getLastAttackFrame()) >= framesAgo;
     }
 
     public int lastUnderAttackAgo() {
-        return A.ago(_lastUnderAttack);
+        return A.ago(unitState().getLastUnderAttack());
     }
 
     public boolean underAttackSecondsAgo(double seconds) {
-        return (A.ago(_lastUnderAttack) / 30.0) <= seconds;
+        return (A.ago(unitState().getLastUnderAttack()) / 30.0) <= seconds;
     }
 
     public boolean lastAttackOrderLessThanAgo(int framesAgo) {
-        return A.ago(_lastAttackOrder) <= framesAgo;
+        return A.ago(unitState().getLastAttackOrder()) <= framesAgo;
     }
 
     public boolean lastAttackOrderMoreThanAgo(int framesAgo) {
-        return A.ago(_lastAttackOrder) >= framesAgo;
+        return A.ago(unitState().getLastAttackOrder()) >= framesAgo;
     }
 
     public int lastAttackFrameAgo() {
-        return A.ago(_lastAttackFrame);
+        return A.ago(unitState().getLastAttackFrame());
     }
 
     public int lastAttackOrderAgo() {
-        return A.ago(_lastAttackOrder);
+        return A.ago(unitState().getLastAttackOrder());
     }
 
     public boolean lastFrameOfStartingAttackMoreThanAgo(int framesAgo) {
-        return A.ago(_lastFrameOfStartingAttack) >= framesAgo;
+        return A.ago(unitState().getLastFrameOfStartingAttack()) >= framesAgo;
     }
 
     public boolean lastFrameOfStartingAttackLessThanAgo(int framesAgo) {
-        return A.ago(_lastFrameOfStartingAttack) <= framesAgo;
+        return A.ago(unitState().getLastFrameOfStartingAttack()) <= framesAgo;
     }
 
     public int lastFrameOfStartingAttackAgo() {
-        return A.ago(_lastFrameOfStartingAttack);
+        return A.ago(unitState().getLastFrameOfStartingAttack());
     }
 
     public int lastStartedAttackAgo() {
-        return A.ago(_lastStartedAttack);
+        return A.ago(unitState().getLastStartedAttack());
     }
 
     public int lastSiegedAgo() {
@@ -2048,23 +2041,23 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int lastRetreatedAgo() {
-        return A.ago(_lastRetreat);
+        return A.ago(unitState().getLastRetreat());
     }
 
     public int lastRunningPositionChangeAgo() {
-        return A.ago(_lastRunningPositionChange);
+        return A.ago(unitState().getLastRunningPositionChange());
     }
 
     public int lastStartedRunningAgo() {
-        return A.ago(_lastStartedRunning);
+        return A.ago(unitState().getLastStartedRunning());
     }
 
     public boolean lastStartedRunningMoreThanAgo(int framesAgo) {
-        return A.ago(_lastStartedRunning) >= framesAgo;
+        return A.ago(unitState().getLastStartedRunning()) >= framesAgo;
     }
 
     public boolean lastStartedRunningLessThanAgo(int framesAgo) {
-        return A.ago(_lastStartedRunning) <= framesAgo;
+        return A.ago(unitState().getLastStartedRunning()) <= framesAgo;
     }
 
     public int lastStartedRetreatingAgo() {
@@ -2072,19 +2065,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int lastStoppedRunningAgo() {
-        return A.ago(_lastStoppedRunning);
+        return A.ago(unitState().getLastStoppedRunning());
     }
 
     public boolean lastStoppedRunningLessThanAgo(int framesAgo) {
-        return A.ago(_lastStoppedRunning) <= framesAgo;
+        return A.ago(unitState().getLastStoppedRunning()) <= framesAgo;
     }
 
     public boolean lastStoppedRunningMoreThanAgo(int framesAgo) {
-        return A.ago(_lastStoppedRunning) >= framesAgo;
+        return A.ago(unitState().getLastStoppedRunning()) >= framesAgo;
     }
 
     public boolean hasNotMovedInAWhile() {
-        return x() == _lastX && y() == _lastY;
+        return x() == unitState().getLastX() && y() == unitState().getLastY();
     }
 
     public boolean hasNotShotInAWhile() {
@@ -2342,15 +2335,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public TechType lastTechUsed() {
-        return _lastTech;
+        return unitState().getLastTech();
     }
 
     public APosition lastTechPosition() {
-        return _lastTechPosition;
+        return unitState().getLastTechPosition();
     }
 
     public AUnit lastTechUnit() {
-        return _lastTechUnit;
+        return unitState().getLastTechUnit();
     }
 
     public boolean hasCargo() {
@@ -2382,7 +2375,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int lastTargetToAttackAcquiredAgo() {
-        return A.ago(_lastTargetToAttackAcquired);
+        return A.ago(unitState().getLastTargetToAttackAcquired());
     }
 
     public boolean isAirUnitAntiAir() {
@@ -3436,7 +3429,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public APosition lastPosition() {
-        return APosition.createFromPixels(_lastX, _lastY);
+        return APosition.createFromPixels(unitState().getLastX(), unitState().getLastY());
     }
 
     public boolean hasChangedPositionRecently() {
@@ -3918,11 +3911,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int lastCommandIssuedAgo() {
-        return A.ago(_lastCommandIssued);
+        return A.ago(unitState().getLastCommandIssued());
     }
 
     public void lastCommandIssuedNow(UnitCommandType command) {
-        _lastCommandIssued = A.now;
+        unitState().setLastCommandIssued(A.now);
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) A.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(
@@ -4073,7 +4066,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public AUnit forceLastTarget(AUnit target) {
-        this._lastTarget = target;
+        this.unitState().setLastTarget(target);
         return this;
     }
 
