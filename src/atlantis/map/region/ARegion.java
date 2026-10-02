@@ -39,7 +39,7 @@ public class ARegion implements HasPosition {
         }
 
         ARegion region = new ARegion();
-        region.id = area.id.val;
+        region.id = area.getId().intValue();
         region.area = area;
         region.position = APosition.create(area.getBoundingBoxSize());;
 
