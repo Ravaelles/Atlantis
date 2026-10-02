@@ -11,6 +11,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
 import atlantis.util.log.ErrorLog;
+import atlantis.map.choke.AChoke;
 
 public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
     private int howManyAllowed = 3;
@@ -26,13 +27,19 @@ public class TerranResponseEnemyHiddenUnits extends StrategyResponse {
     }
 
     private boolean buildAnywhere() {
+        // Chokes.mainChoke() is null until the map analysis has run (and stays
+        // null on maps without a main choke). Discovering an enemy must not blow
+        // up because of that - it is called for every discovered enemy unit.
+        AChoke mainChoke = Chokes.mainChoke();
+        if (mainChoke == null) return false;
+
         int n = A.supplyUsed() >= 45 ? 3 : 2;
 //        ErrorLog.debug("### TerranResponseEnemyHiddenUnits - buildAnywhere " + n + " turrets");
 
         for (int i = 0; i < n; i++) {
             if (AddToQueue.withHighPriority(
                 AUnitType.Terran_Missile_Turret,
-                Chokes.mainChoke().translateTilesTowards(6, Select.mainOrAnyBuilding())
+                mainChoke.translateTilesTowards(6, Select.mainOrAnyBuilding())
             ) != null) {
                 howManyAllowed--;
             }
