@@ -48,11 +48,19 @@ public class CombatEvaluatorMeleeTest extends AbstractTestWithWorld {
 
             assertTrue(ourEval > 0);
             assertTrue(enemyEval > 0);
-        });
+        },
+            // The class's own generators: createWorld(frames, runnable) builds the
+            // 22-unit sample world, in which "our" and "the enemy" are whatever
+            // that world happens to contain - not the firebats vs zealots this
+            // test is about.
+            this::generateOur,
+            this::generateEnemies
+        );
     }
 
     // =========================================================
 
+    @Override
     protected FakeUnit[] generateOur() {
         return fakeOurs(
             fake(AUnitType.Terran_Firebat, 10),
@@ -61,6 +69,7 @@ public class CombatEvaluatorMeleeTest extends AbstractTestWithWorld {
         );
     }
 
+    @Override
     protected FakeUnit[] generateEnemies() {
         int enemyTy = 13;
         return fakeEnemies(

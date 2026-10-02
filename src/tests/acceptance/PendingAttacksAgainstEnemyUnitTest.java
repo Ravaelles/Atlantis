@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.state.AttackState;
+import atlantis.units.AttackState;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnitType;

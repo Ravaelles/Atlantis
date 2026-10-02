@@ -2,7 +2,7 @@ package atlantis.combat.micro.attack;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.dancing.hold.ProtossAttackHoldToShoot;
-import atlantis.combat.state.AttackState;
+import atlantis.units.AttackState;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

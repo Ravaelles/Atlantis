@@ -19,7 +19,6 @@ import atlantis.combat.squad.NewUnitsToSquadsAssigner;
 import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
 import atlantis.combat.squad.squads.alpha.Alpha;
-import atlantis.combat.state.AttackState;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;

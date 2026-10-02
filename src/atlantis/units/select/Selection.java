@@ -679,9 +679,19 @@ public class Selection extends BaseSelection {
         );
     }
 
+    /**
+     * Units whose attack against us is under way but whose shot has not left yet.
+     *
+     * <p>This means STARTING as well as PENDING, exactly like every other place
+     * in the code that asks "is this unit busy shooting" ({@code AttackState
+     * .startingOrPending()}). Filtering out STARTING made a unit that had
+     * already been ordered to shoot look harmless for one more frame, which is
+     * precisely what {@code Bullets.against()} and the dead-man logic use this
+     * for.</p>
+     */
     public Selection attackStatePending() {
         return cloneByRemovingIf(
-            (unit -> !unit.attackState().pending()),
+            (unit -> !unit.attackState().startingOrPending()),
             "attackStatePending"
         );
     }

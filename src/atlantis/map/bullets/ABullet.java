@@ -1,7 +1,7 @@
 package atlantis.map.bullets;
 
 import atlantis.core.world.Worlds;
-import atlantis.combat.state.AttackState;
+import atlantis.units.AttackState;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

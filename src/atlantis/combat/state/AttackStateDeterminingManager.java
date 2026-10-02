@@ -1,5 +1,7 @@
 package atlantis.combat.state;
 
+import atlantis.units.AttackState;
+
 import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.units.AUnit;

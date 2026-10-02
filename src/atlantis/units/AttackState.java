@@ -1,4 +1,4 @@
-package atlantis.combat.state;
+package atlantis.units;
 
 public enum AttackState {
     NONE,
