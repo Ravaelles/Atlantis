@@ -35,7 +35,15 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             }
             else if (We.terran()) {
                 if (defender.isTerranInfantry()) {
-                    return (new MarineSafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
+                    // MarineSafetyMarginAgainstRanged answers -1 when it has no
+                    // opinion (it only has one for mutalisks). Returning that
+                    // sentinel used to make SafetyMargin compute
+                    // "distance - (-1)", so a hydralisk 4 tiles away scored +5
+                    // tiles of safety and Terran infantry treated every ranged
+                    // attacker as harmless. The melee path already checks the
+                    // sentinel; this one did not.
+                    double marineMargin = (new MarineSafetyMarginAgainstRanged(defender)).marginAgainst(attacker);
+                    if (marineMargin > -1) return marineMargin;
                 }
                 else if (defender.isGhost()) {
                     criticalDist += bonusForGhost(attacker);
