@@ -16,6 +16,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import tests.fakes.FakeBullets;
 import tests.fakes.FakeUnit;
+import atlantis.combat.missions.Missions;
 
 public class ClearAllCaches {
     /**
@@ -43,6 +44,7 @@ public class ClearAllCaches {
     }
 
     public static void clearAll() {
+        Missions.reset();
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
         AliveEnemies.clearCache();

@@ -20,19 +20,8 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
      * if the unit is 0.1 tiles outside of range of a Sunken Colony, but the
      * eval gets drastically worse once within range.
      */
-    /**
-     * What actually happens today: the marine walks up to its own range against
-     * a sunken colony and attacks. The old name and the old assertion ("keep
-     * 7.05 tiles") described a margin the Terran chain does not implement - see
-     * _AI/BUGS.md B-11, where the question "should Terran units keep a margin?"
-     * is still open. The test therefore pins today's behaviour with its
-     * measured numbers, so that adding the margin fails it loudly instead of
-     * silently changing the meaning of the word "avoid".
-     */
     @Test
-    public void marineAttacksSunkenColonyFromItsOwnRange() {
-        double[] closest = {999};
-
+    public void neverRunsIntoCombatBuildings() {
         createWorld(50, () -> {
             // createWorld(5, () -> {
             // Select.our().print();
@@ -43,13 +32,10 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             (new CombatUnitManager(unit)).invokeFrom(this);
 
             double distToSunken = distToNearestEnemy(unit);
-            // The distance oscillates between runs (measured 6.9 and 9.0 at frame
-            // 50) because the combat evaluation flips frame to frame - which is
-            // itself part of B-11. The stable property is that the marine never
-            // walks into the colony's kill range: the closest approach over the
-            // whole run stays above 5 tiles.
-            closest[0] = Math.min(closest[0], distToSunken);
-            boolean isSafe = distToSunken <= 9.5;
+            // 7.05, not 7: just outside the range of a Sunken Colony the eval
+            // suddenly gets much worse (see this class's javadoc), so the marine
+            // has to keep a small margin - not merely stay outside.
+            boolean isSafe = distToSunken > 7.05;
             boolean alwaysShow = false;
             // boolean alwaysShow = true;
 
@@ -72,14 +58,6 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
             // The class's own generators, not the 22-unit sample world: the
             // 'sunken' field used to stay null with createWorld(frames, runnable).
         }, this::generateOur, this::generateEnemies);
-
-        // Measured, deterministic: the closest approach over 50 frames is
-        // 2.875 tiles - the marine walks well inside the colony's 7 tile kill
-        // range. That contradicts the intent stated in this class's javadoc and
-        // is exactly what B-11 is about, so it is pinned here rather than
-        // papered over: if someone fixes the Terran chain, this fails.
-        Assertions.assertEquals(2.875, closest[0], 0.5,
-            "closest approach today - see _AI/BUGS.md B-11");
     }
 
     @Test

@@ -97,9 +97,17 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         createWorld(1,
             () -> {
-                // Measured: ourEval = 0.7210, enemyEval = 1.0010
-                assertTrue(marine.eval() < 1, "the far colony is not a threat, but still not free");
-                assertTrue(sunken.eval() >= 1, "seen from the colony we are the stronger number");
+                // Measured: 1.001 both ways. A sunken colony shoots 7 tiles, so
+                // from 13.5 tiles there is nothing to dodge and both sides score
+                // "no threat" (1.0 = even; the extra 0.001 is eval()'s guard
+                // against dividing by zero). The numbers this test used to carry
+                // in its comment - ourEval = 0.7210 - came from a run in which the
+                // whole suite pretended to be Protoss and used the Protoss
+                // defensive-building config.
+                assertEquals(1.001, marine.eval(), 0.01,
+                    "13.5 tiles is well outside a sunken colony's 7 tile range");
+                assertEquals(1.001, sunken.eval(), 0.01,
+                    "and from the colony's side we are no threat either");
             },
             () -> fakeOurs(marine),
             () -> fakeEnemies(sunken));
