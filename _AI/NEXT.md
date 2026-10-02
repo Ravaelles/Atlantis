@@ -83,10 +83,19 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Stage F — cache purge
 
-- **#4** Inventory the static caches in `Select` (4 caches, dozens of string
-  keys, magic TTLs: 0, 1, 30, 31, 53, 73, 91, 293 frames) into one document
-  table: key → TTL → why the TTL → who reads it. No code change yet; the
-  inventory is what makes the migration safe.
+The full inventory is `DOCS/SELECT-CACHES.md` (46 entries, key → TTL → readers),
+generated rather than remembered. Three concrete starting points came out of it;
+the first is already done.
+- `Select.clearCache()` never clears `cacheObject`, so
+  `mainOrAnyBuildingPosition` lives purely on its 73-frame TTL. Decide whether
+  that is an oversight before migrating anything.
+- 24 of the 46 keys use `microCacheForFrames`, which is literally the constant
+  `1` - the same one-frame intent as TTL `0`, spelled twice. Replacing it is
+  behaviour-neutral and needs no game run.
+- Six TTLs above one frame (30, 31, 53, 73, 91, 293) have no stated reason
+  anywhere. `Select.main()` - 90 call sites, the most-read method in the tree -
+  is cached for 2.4 s.
+
 - **#5** Introduce a per-frame query service in `core.world` owning the
   caches, with explicit invalidation per frame instead of TTL guesses. Move
   one cache at a time, starting with the one with the fewest readers.
