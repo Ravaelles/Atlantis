@@ -94,6 +94,21 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
 
 //        if (isUsingEngine && engine.game().isGameEnd()) engine.closeIfNeeded();
         if (isUsingEngine) A.sleep(1 * 3000);
+
+        closeStaticMocks();
+    }
+
+    /**
+     * A static mock left registered leaks into whatever test runs next in the
+     * same thread (e.g. TestWithUnits fails with "static mocking is already
+     * registered"). tearDown only resets stubs, it does not unregister, so
+     * the world releases its mocks explicitly here.
+     */
+    private void closeStaticMocks() {
+        if (AbstractTestWithWorld.baseSelect != null) {
+            AbstractTestWithWorld.baseSelect.close();
+            AbstractTestWithWorld.baseSelect = null;
+        }
     }
 
     // =========================================================
