@@ -1084,9 +1084,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     /**
      * Returns number of frames unit STILL has to wait before it can shoot again.
      * E.g. for Dragoon this value will vary between 0 and 30 inclusive.
+     *
+     * <p>No {@code u == null} guard on purpose: {@link #isVisibleUnitOnMap()}
+     * already answers false without a live engine unit, and so do both weapon
+     * cooldown getters. The extra check only short-circuited, which made every
+     * cooldown-derived method ({@link #cooldownPercent()},
+     * {@code canAttackTarget(...)}) return "ready" for test units - assertions
+     * about cooldowns could not fail. Production behaviour is unchanged: with
+     * no engine unit every path below returns 0 anyway.</p>
      */
     public int cooldownRemaining() {
-        if (u == null || !isVisibleUnitOnMap()) return 0;
+        if (!isVisibleUnitOnMap()) return 0;
 
         if (canAttackGroundUnits()) {
             return groundWeaponCooldown();
