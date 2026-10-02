@@ -69,17 +69,21 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Stage H — god-class split
 
 - **#9** Split `A` (163 public static methods) into cohesive collaborators.
-  Two slices done: file/path I/O moved to `atlantis.util.AFile` (12 methods,
-  9 dead helpers deleted); the Swing surface replaced by `atlantis.util.AGui`
-  (4 popup methods) after 19 dead GUI helpers were deleted, so `A` no longer
-  imports `javax.swing`/`java.awt` at all (1688 → 1044 lines).
-  Remaining slices, in order of cohesion: string/`List`/debug-formatting
-  helpers, date/time helpers (`getCurrentDateInFormatYMD`, `getToday`,
-  `hourMin`, `daysBetween`), pure math helpers (`inRange`, `median`, `dist`,
-  `gradual`, `chance`, …), game-clock helpers (`ago`, `secondsAgo`,
-  `nowString`, `minSec`, …). `A` should keep only what is genuinely global
-  (game clock, random, mineral/supply views) and callers should hold explicit
-  references instead of reaching into statics.
+  Progress: 163 → 43 public static methods, 1688 → 414 lines. Extracted so
+  far: `AFile` (file/path I/O), `AGui` (4 popups, A lost Swing entirely),
+  `AMath` (ranges/statistics), `ARandom` (stays in `atlantis.game`: it shares
+  the mutable `A.random` stream), `AConsole` (console writers). Deleted: 56
+  methods with zero callers, including `formatDecimalPlaces` which formatted
+  the wrong argument. Each extraction also shrank the frozen ArchUnit store
+  instead of growing it.
+  Remaining in `A`: resource/supply facades (`supplyUsed`, `hasMinerals`,
+  `canAfford*`, ~1400 call sites), clock arithmetic (`seconds`, `ago`,
+  `everyNthGameFrame`, `minSec`), race predicates (`whenEnemyProtoss*` — do
+  these in Stage G, not here), and the wall-clock formatters
+  (`getCurrentDateInFormatYMDHHmm`, `getCurrentTimeAsString`). Decide whether
+  the resource facades move to `AGame` (which already exposes minerals/gas)
+  or become an `EconomyContext` port — that decision belongs with Stage G/I,
+  so do not start it here.
 - **#10** Split `Selection` (235 public methods) along its existing internal
   seams; verify with a test that pins selection semantics before and after.
 - **#11** Split `AUnit` (~623 methods) — start by extracting the order-emission
