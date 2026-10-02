@@ -1,7 +1,6 @@
 package atlantis.production.orders.build;
 
 import atlantis.config.AtlantisIgniter;
-import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.util.AFile;
@@ -31,21 +30,17 @@ public class ABuildOrderLoader {
 
         File f = new File(filePath);
         if (!f.exists()) {
-            String message = "\n### Build order file does not exist:\r\n"
-                + f.getAbsolutePath()
-                + "\r\n### Strategy: " + strategy
-                + "\r\n### Quit ###";
-
-            System.err.println("Current strategy: " + strategy);
-
-            if (A.seconds() <= 1) {
-                System.err.println(message);
-
-                throw new RuntimeException(message);
-            }
-            else {
-                System.err.println(message);
-            }
+            // A missing build order is fatal for this bot and this layer owns
+            // that decision. The old code only threw in the first second and
+            // otherwise "continued" into AFile.loadFile, which killed the JVM
+            // from inside a file-reading helper - fatal either way, but with no
+            // diagnostic. One policy, one place, reported as a real error.
+            throw new BuildOrderFileNotFoundException(
+                "### Build order file does not exist:\n"
+                    + f.getAbsolutePath()
+                    + "\n### Strategy: " + strategy,
+                filePath
+            );
         }
 
         ABuildOrderLoader loader = new ABuildOrderLoader();

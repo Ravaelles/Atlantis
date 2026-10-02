@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -96,6 +97,11 @@ public class AFile {
 
     /**
      * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
+     *
+     * @throws UncheckedIOException if the file cannot be read. A leaf utility
+     *     must not decide policy: it reports the failure, the caller decides
+     *     whether that means quitting the game (see
+     *     {@code ABuildOrderLoader}) or degrading.
      */
     public static String[][] loadFile(String path, int numberOfFields, String delimiter) {
         if (delimiter == null) {
@@ -124,9 +130,9 @@ public class AFile {
 
             inputStream.close();
         } catch (FileNotFoundException e) {
-            System.err.println("Error parsing CSV file: '" + path + "'");
-            System.exit(-1);
-            return null;
+            // Was System.exit(-1) here, which meant a file-reading helper could
+            // kill the JVM on a path nothing else could handle or test.
+            throw new UncheckedIOException("Error parsing CSV file: '" + path + "'", e);
         }
 
         // =========================================================
