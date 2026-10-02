@@ -12,21 +12,19 @@ hard-won operational facts that do not belong anywhere else.
 - JUnit class execution order is not source order. New test classes can
   shift it.
 
-## Mockito static-mock leak (known trap)
+## Mockito static-mock leak (fixed)
 
-- World-based tests leave `Mockito.mockStatic(BaseSelect.class)` registered:
-  `tearDown → cleanUp` only *resets* `MockedStatic` fields, it does not
-  *close* them.
+- World-based tests used to leave `Mockito.mockStatic(BaseSelect.class)`
+  registered: `tearDown → cleanUp` only *resets* `MockedStatic` fields, it
+  does not *close* them. Both world entry points (`createWorld`,
+  `usingFakeOursEnemiesAndNeutral`) now close the mock on exit.
 - There are **two** `baseSelect` static fields
-  (`AbstractTestWithWorld` and `AbstractWorldCreatingTest`); code paths mix
-  them. Treat both as suspect when debugging mock issues.
-- Consequence observed: `TestWithUnits.subsequentSelectionDoesNotModifyOriginal`
-  fails with "static mocking is already registered" when a world-based test
-  runs immediately before it. World-free tests (plain `new FakeUnit`, no
-  `createWorld`) do not participate in the leak — prefer them when the
-  projection under test needs no world.
-- If you must use `createWorld` in a new test and the suite turns red
-  elsewhere, check order adjacency first.
+  (`AbstractTestWithWorld` and `AbstractWorldCreatingTest`); treat both as
+  suspect when debugging mock issues.
+- `BaseSelectTest.neutralUnits` freeloaded on the leak and now owns its mock
+  via try-with-resources.
+- `MockEverything` statics (`aGame` etc.) are the remaining unclosed suspects
+  if an order-dependent failure ever returns.
 
 ## ArchUnit store mechanics (observed, vendored version)
 
