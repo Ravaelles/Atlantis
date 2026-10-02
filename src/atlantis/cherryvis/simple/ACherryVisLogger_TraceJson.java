@@ -1,9 +1,9 @@
 package atlantis.cherryvis.simple;
 
-import atlantis.game.A;
 import atlantis.cherryvis.ACherryVisConfig;
 import atlantis.cherryvis.generic.ACherryVis_TypesNames;
 import atlantis.cherryvis.ztsd.AZstdWriter;
+import atlantis.util.AFile;
 
 public class ACherryVisLogger_TraceJson {
     protected final ACherryVisConfig config;
@@ -91,10 +91,10 @@ public class ACherryVisLogger_TraceJson {
         String filePath = cherryVisDirPath + "/trace.json";
         String content = content();
 
-        // A.saveToFile("D:\\last_trace.json", content, true);
+        // AFile.saveToFile("D:\\last_trace.json", content, true);
 
         String rawFilePath = cherryVisDirPath + "/trace_raw.json";
-        A.saveToFile(rawFilePath, content, true);
+        AFile.saveToFile(rawFilePath, content, true);
 
         AZstdWriter.writeZstdFile(filePath, content);
     }

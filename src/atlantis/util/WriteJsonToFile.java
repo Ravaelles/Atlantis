@@ -24,7 +24,7 @@ public class WriteJsonToFile {
 
         String indent = useTabs ? "\t" : "    "; // 1 tab or 4 spaces
 
-        boolean append = A.fileExists(filename) && A.fileSize(filename) > 0;
+        boolean append = AFile.fileExists(filename) && AFile.fileSize(filename) > 0;
 
         try (FileWriter writer = new FileWriter(filename, true)) {
             if (append) {

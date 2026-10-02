@@ -2,6 +2,7 @@ package atlantis.util.log;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.AFile;
 
 public class LogUnitsToFiles {
 
@@ -23,12 +24,12 @@ public class LogUnitsToFiles {
 
         handleClearTheFileIfNeeded(file, message);
 
-        A.appendToFile(file, content);
+        AFile.appendToFile(file, content);
     }
 
     private static void handleClearTheFileIfNeeded(String file, String message) {
         if (message == null || A.now() <= 1) {
-            A.saveToFile(file, "", true);
+            AFile.saveToFile(file, "", true);
         }
     }
 }

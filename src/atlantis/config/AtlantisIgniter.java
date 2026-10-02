@@ -2,6 +2,7 @@ package atlantis.config;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import main.Main;
 
@@ -56,7 +57,7 @@ public class AtlantisIgniter {
         }
 
         String bwapiIniPath = bwapiDataPath + "bwapi.ini";
-        if (!A.fileExists(bwapiIniPath)) {
+        if (!AFile.fileExists(bwapiIniPath)) {
             ErrorLog.printPlusToFile("Couldn't locate bwapi.ini file at: " + bwapiIniPath);
             ErrorLog.printPlusToFile("Go to bwapi-data/AI/ENV file and point it to your bwapi.ini");
             A.quit();
@@ -64,7 +65,7 @@ public class AtlantisIgniter {
         }
 
         // Read every single line
-        ArrayList<String> linesList = A.readTextFileToList(bwapiIniPath);
+        ArrayList<String> linesList = AFile.readTextFileToList(bwapiIniPath);
         fileContent = new String[linesList.size()];
         fileContent = linesList.toArray(fileContent);
 
@@ -165,7 +166,7 @@ public class AtlantisIgniter {
             finalContent += line + "\n";
         }
 
-        A.saveToFile(bwapiDataPath + "bwapi.ini", finalContent, true);
+        AFile.saveToFile(bwapiDataPath + "bwapi.ini", finalContent, true);
     }
 
     // =========================================================

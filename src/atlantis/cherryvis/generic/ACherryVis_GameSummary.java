@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.game.player.APlayer;
 import atlantis.map.AMap;
 import atlantis.cherryvis.ACherryVisConfig;
+import atlantis.util.AFile;
 
 public class ACherryVis_GameSummary {
     private ACherryVisConfig config;
@@ -33,7 +34,7 @@ public class ACherryVis_GameSummary {
 
         String cherryVisDirPath = config.cherryVisDirReplayPath();
 
-        A.saveToFile(
+        AFile.saveToFile(
             cherryVisDirPath + "\\game_summary.json",
             content,
             true

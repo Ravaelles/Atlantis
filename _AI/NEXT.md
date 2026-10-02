@@ -69,13 +69,17 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Stage H — god-class split
 
 - **#9** Split `A` (163 public static methods) into cohesive collaborators.
-  Candidate extractions in order of cohesion: file/path I/O (`saveToFile`,
-  `appendToFile`, `writeToFile`, `readTextFileToList`, `loadFile`,
-  `fileExists`, `directoryExists`, `createDirectory`, `moveDirectory`,
-  `countNumberOfFiles`, `currentPath`, `isFileImage`, `getFileExtension`,
-  `getFileNameWithoutExtension`), then string/`List` formatting helpers, then
-  pure math helpers. `A` keeps only what is genuinely global (game clock,
-  random, mineral/supply views) and the calls become explicit dependencies.
+  First slice done: file/path I/O moved to `atlantis.util.AFile` (12 methods),
+  9 dead file helpers deleted (`isImage`, `isFileImage`, `getFileExtension`,
+  `getFileNameWithoutExtension`, `writeToFile`, `countNumberOfFiles` ×2,
+  `moveDirectory`, `moveFile`), `fileContent` demoted to a private helper.
+  Remaining slices, in order of cohesion: string/`List`/debug-formatting
+  helpers, Swing/GUI helpers (`displayMessage`, `setAllBackgroundsColors*`,
+  `setColorOnHover`, `centerFrameOnScreen`, …), pure math helpers (`inRange`,
+  `median`, `dist`, `gradual`, `chance`, …), game-clock helpers (`ago`,
+  `secondsAgo`, `nowString`, `minSec`, …). `A` should keep only what is
+  genuinely global (game clock, random, mineral/supply views) and callers
+  should hold explicit references instead of reaching into statics.
 - **#10** Split `Selection` (235 public methods) along its existing internal
   seams; verify with a test that pins selection semantics before and after.
 - **#11** Split `AUnit` (~623 methods) — start by extracting the order-emission

@@ -28,19 +28,30 @@ hard-won operational facts that do not belong anywhere else.
 
 ## ArchUnit store mechanics (observed, vendored version)
 
+- `scripts/run-architecture-tests.sh` reads the **compiled** classes from
+  `out/`. Running it after `rm -rf out` makes all 7 rules fail with
+  "failed to check any classes" — that is a missing build, not a regression.
+  Run the unit suite (or any compile) first.
 - Each test run **auto-removes stale entries** (violations that no longer
   exist) from `_AI/architecture/archunit-store/` but **never adds** new ones.
   It also does **not** recreate a deleted store file.
-- Violation strings embed `Class[]`-vs-constructor-call distinctions AND
-  source line numbers:
+- Violation strings distinguish `Class[]` literals from constructor calls:
   - `X.class` literals in arrays are (mostly) invisible to the rules;
     `X::new` constructor references are flagged as dependencies. Converting
     reflection to factories therefore *surfaces* previously frozen edges —
     re-freeze explicitly and prove 1:1 mapping, do not silently absorb.
-  - Touching a method can shift its line numbers and churn its entries.
+- **Line numbers do NOT affect store matching** (verified: `ErrorLog` entries
+  in the store still carry `:18/:41/:49/:51/:59` while the code sits at
+  `:19/:42/:50/:52/:60`, and the rule is green). What matters is
+  origin-class → target-class/method. So editing a method body, adding
+  imports or shifting lines is free; only *changing which class a call
+  targets* (e.g. `A.saveToFile` → `AFile.saveToFile`) creates a new entry.
 - Re-freeze procedure used: capture failing entries per rule → verify each
   maps to a moved (not new) edge → append exact lines → rerun to green →
   review `git diff` of the store.
+- Prefer *deleting* the dependency over re-freezing it. The `AFile` extraction
+  could have been a rename of 6 stored violations; putting the new class in
+  `atlantis.util` instead deleted those 6 baseline entries for real.
 
 ## Fat-jar recipe (game runs)
 

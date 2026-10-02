@@ -1,6 +1,6 @@
 package atlantis.cherryvis.ztsd;
 
-import atlantis.game.A;
+import atlantis.util.AFile;
 import com.github.luben.zstd.ZstdInputStream;
 
 import java.io.ByteArrayOutputStream;
@@ -20,7 +20,7 @@ public class AZstdReader {
 
             String content = out.toString();
 
-            A.saveToFile("D://clean.json", content, true);
+            AFile.saveToFile("D://clean.json", content, true);
 
             return content;
         }

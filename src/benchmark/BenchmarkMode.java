@@ -3,11 +3,11 @@ package benchmark;
 import atlantis.Atlantis;
 import atlantis.config.ActiveMap;
 import atlantis.debug.painter.APainter;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
 import atlantis.map.AMap;
 
+import atlantis.util.AFile;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ public class BenchmarkMode {
     }
 
     private static void initBenchmarkIfFirstRun() {
-        if (!A.fileExists(BENCHMARK_STATE_FILE)) {
+        if (!AFile.fileExists(BENCHMARK_STATE_FILE)) {
             // First run - initialize state file
             try {
                 // Create state file to track this is an ongoing benchmark session

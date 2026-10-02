@@ -8,7 +8,6 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.game.player.Enemy;
-import atlantis.util.log.ErrorLog;
 import bwapi.Game;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -244,21 +243,6 @@ public class A {
         return string != null && !string.isEmpty() && string.charAt(0) != ' ';
     }
 
-    /**
-     * @return true if given extension (like "png", "txt") is equal png, jpg, jpeg, bmp or gif
-     */
-    public static boolean isImage(String extension) {
-        extension = extension.toLowerCase();
-        return extension.equals("png") || extension.equals("jpg") || extension.equals("jpeg") || extension.equals("bmp")
-            || extension.equals("gif");
-    }
-
-    /**
-     * @return true if given file's extension (like "png", "txt") is equal png, jpg, jpeg, bmp or gif
-     */
-    public static boolean isFileImage(File file) {
-        return isImage(file.getName().substring(file.getName().lastIndexOf('.') + 1));
-    }
 
     /**
      * Displays given exception in user-friendly way (with exception name and stack).
@@ -535,27 +519,6 @@ public class A {
         return null;
     }
 
-    /**
-     * Returns extension of given file e.g. "jpg", "txt".
-     */
-    public static String getFileExtension(File fileImage) {
-        return fileImage.getName().substring(fileImage.getName().lastIndexOf('.') + 1);
-    }
-
-    /**
-     * Returns just the file name, without extension part e.g. for file "images/horse.png" it will return
-     * "horse".
-     */
-    public static String getFileNameWithoutExtension(File file) {
-        String fileName = file.getName().replace("/", "\\");
-
-        if (fileName.lastIndexOf("\\") == -1) {
-            return fileName.substring(0, fileName.lastIndexOf("."));
-        }
-        else {
-            return fileName.substring(fileName.lastIndexOf("\\"), fileName.lastIndexOf("."));
-        }
-    }
 
     /**
      * Returns scaled image.
@@ -567,110 +530,6 @@ public class A {
         g.dispose();
 
         return resizedImage;
-    }
-
-    /**
-     * Saves given string to file with path filePath.
-     */
-    public static PrintWriter saveToFile(String filePath, String stringToWrite, boolean closeTheStream) {
-        try {
-            File file = new File(filePath);
-            PrintWriter out = new PrintWriter(file);
-            out.print(stringToWrite);
-            if (closeTheStream) {
-                out.close();
-            }
-            else {
-                return out;
-            }
-        } catch (Exception e) {
-            A.errPrintln("Error while saving to file\n" + "Path(\"" + filePath
-                + "\", \"" + stringToWrite + "\")");
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static boolean appendToFile(String filePath, String stringToWrite) {
-        try {
-            File file = new File(filePath);
-            PrintWriter out = new PrintWriter(new FileOutputStream(file, true));
-            out.print(stringToWrite);
-            out.close();
-            return true;
-        } catch (Exception e) {
-            A.errPrintln("Error while appending to file\n" + "Path(\"" + filePath
-                + "\", \"" + stringToWrite + "\")");
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static boolean writeToFile(String filePath, String content) {
-        try {
-            FileWriter fw = new FileWriter(filePath, true);
-            fw.write(content + "\n");
-            fw.close();
-            return true;
-        } catch (IOException exception) {
-            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
-        }
-        return false;
-    }
-
-    public static void writeToFileWithHeader(String filePath, String content, String[] headers) {
-        try {
-            if (!fileExists(filePath)) {
-                content = String.join(";", headers) + "\n" + content;
-            }
-            FileWriter fw = new FileWriter(filePath, true);
-            fw.write(content + "\n");
-            fw.close();
-        } catch (IOException exception) {
-            ErrorLog.printErrorOnce("IOException: " + exception.getMessage());
-        }
-    }
-
-    /**
-     * @return number of all files (directory is not a file) in all these directory and all its
-     * subdirectories.
-     */
-    public static int countNumberOfFiles(File directory) {
-        int total = 0;
-        if (!directory.exists()) {
-            return 0;
-        }
-        for (File file : directory.listFiles()) {
-            if (!file.isDirectory()) {
-                total++;
-            }
-            else {
-                total += countNumberOfFiles(file);
-            }
-        }
-        return total;
-    }
-
-    /**
-     * @return number of all files (directory is not a file) in all these directory and all its
-     * subdirectories, having given extension.
-     */
-    public static int countNumberOfFiles(File directory, String extension) {
-        int total = 0;
-        if (!directory.exists()) {
-            return 0;
-        }
-        for (File file : directory.listFiles()) {
-            if (!file.isDirectory()) {
-                if (getFileExtension(file).equals(extension)) {
-                    total++;
-                }
-            }
-            else {
-                total += countNumberOfFiles(file);
-            }
-        }
-        return total;
     }
 
     /**
@@ -756,25 +615,6 @@ public class A {
         return null;
     }
 
-    /**
-     * Reads every line of given file into the array list.
-     */
-    public static ArrayList<String> readTextFileToList(String filePath) {
-        ArrayList<String> resultList = new ArrayList<>();
-        try {
-            File file = new File(filePath);
-            Scanner scanner = new Scanner(file);
-            while (scanner.hasNextLine()) {
-                resultList.add(scanner.nextLine());
-            }
-
-            scanner.close();
-        } catch (Exception e) {
-            A.errPrintln(e);
-            e.printStackTrace();
-        }
-        return resultList;
-    }
 
     /**
      * Returns value that is not less than min and not greater than max.
@@ -1107,62 +947,6 @@ public class A {
         return max;
     }
 
-    /**
-     * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
-     */
-    public static String[][] loadFile(String path, int numberOfFields, String delimiter) {
-        if (delimiter == null) {
-            delimiter = ";";
-        }
-
-        ArrayList<String[]> listOfArrays = new ArrayList<>();
-        Scanner inputStream;
-        try {
-            inputStream = new Scanner(new File(path));
-
-            while (inputStream.hasNextLine()) {
-                String line = inputStream.nextLine();
-                line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that hurt
-
-                String[] fields = line.split(delimiter);
-
-                if (fields.length == 1 && line.contains(" - ")) {
-                    fields = line.split(" - ");
-                }
-
-//                if (!line.isEmpty() && line.charAt(0) != '#' && !line.startsWith("//")) {
-//                    if (numberOfFields > 0 && fields.length < numberOfFields && !line.contains(" - ")) {
-//                        System.err.println("Invalid record in '" + path + "' CSV file: '" + line + "'");
-//                        System.err.println("fields.length = " + fields.length);
-//                        System.err.println("numberOfFields = " + numberOfFields);
-//                        System.exit(-1);
-//                    }
-//                }
-
-                if (!line.isEmpty() && !line.startsWith("//")) {
-                    listOfArrays.add(fields);
-                }
-            }
-
-            inputStream.close();
-        } catch (FileNotFoundException e) {
-            System.err.println("Error parsing CSV file: '" + path + "'");
-            System.exit(-1);
-            return null;
-        }
-
-        // =========================================================
-
-        String[][] result = new String[listOfArrays.size()][numberOfFields];
-
-        int counter = 0;
-        for (String[] columns : listOfArrays) {
-            result[counter] = columns;
-            counter++;
-        }
-
-        return result;
-    }
 
     public static int countSubstrings(String str, String subStr) {
         return (str.length() - str.replaceAll(Pattern.quote(subStr), "").length()) / subStr.length();
@@ -1345,87 +1129,6 @@ public class A {
         return Instant.now().getEpochSecond();
     }
 
-    public static boolean fileExists(String file) {
-        File f = new File(file);
-        return f.exists() && !f.isDirectory();
-    }
-
-    public static boolean directoryExists(String file) {
-        File f = new File(file);
-        return f.exists() && f.isDirectory();
-    }
-
-    public static boolean createDirectory(String file) {
-        File f = new File(file);
-        return f.mkdirs();
-    }
-
-    public static void moveDirectory(String source, String target) {
-        File sourceDir = new File(source);
-        File targetDir = new File(target);
-
-        if (!sourceDir.exists()) {
-            A.errPrintln("Source directory does not exist: " + source);
-            return;
-        }
-
-        if (targetDir.exists()) {
-            A.errPrintln("Target directory already exists: " + target + ", didn't move " + source);
-            return;
-        }
-
-        if (!sourceDir.renameTo(targetDir)) {
-            A.errPrintln("Failed to move directory from " + source + " to " + target);
-        }
-    }
-
-    public static void moveFile(String source, String target) {
-        File sourceFile = new File(source);
-        File targetFile = new File(target);
-
-        if (!sourceFile.exists()) {
-            A.errPrintln("Source file does not exist: " + source);
-            return;
-        }
-
-        if (targetFile.exists()) {
-            A.errPrintln("Target file already exists: " + target + ", didn't move " + source);
-            return;
-        }
-
-        if (!sourceFile.renameTo(targetFile)) {
-            A.errPrintln("Failed to move file from " + source + " to " + target);
-        }
-    }
-
-    public static boolean copy(String source, String target) {
-        File sourceFile = new File(source);
-        File targetFile = new File(target);
-
-        if (!sourceFile.exists()) {
-            return false;
-        }
-
-        if (targetFile.exists()) {
-            return false;
-        }
-
-        // Copy file
-        try {
-            Files.copy(sourceFile.toPath(), targetFile.toPath());
-            return true;
-        } catch (IOException e) {
-            A.errPrintln("Failed to copy file from " + source + " to " + target);
-        }
-        return false;
-    }
-
-    public static void removeFile(String filePath) {
-        if (fileExists(filePath)) {
-            File file = new File(filePath);
-            file.delete();
-        }
-    }
 
     public static boolean printErrorAndReturnTrue(String text) {
         A.println(text);
@@ -1470,9 +1173,6 @@ public class A {
         return ReservedResources.gas();
     }
 
-    public static String currentPath() {
-        return (new File("")).getAbsolutePath();
-    }
 
     public static void quit() {
         AGame.exit();
@@ -1628,20 +1328,6 @@ public class A {
         return minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
-    public static long fileSize(String filename) {
-        File file = new File(filename);
-        if (!file.exists()) {
-            return -1;
-        }
-
-        try {
-            long size = Files.size(file.toPath());
-            return size > 0 ? size : fileContent(filename).length();
-        } catch (IOException e) {
-            System.err.println("Error getting file size: " + e.getMessage());
-            return file.length();
-        }
-    }
 
     public static String mapToJson(Map<String, String> mapOfStrings) {
         StringBuilder sb = new StringBuilder();
@@ -1662,14 +1348,6 @@ public class A {
         return sb.toString();
     }
 
-    public static String fileContent(String filename) {
-        try {
-            return new String(Files.readAllBytes(new File(filename).toPath()));
-        } catch (IOException e) {
-            A.errPrintln("Error reading file: " + filename);
-            return "";
-        }
-    }
 
     /**
      * Returns value that gradually changes from minValue to maxValue, according to paramValue position

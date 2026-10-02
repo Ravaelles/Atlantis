@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 
+import atlantis.util.AFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,10 +25,10 @@ public class ParamTweakerEvaluator {
         String file = "param_tweaker/" + dateString() + ".csv";
 
         if (Env.isFirstRun()) {
-            A.removeFile(file);
+            AFile.removeFile(file);
         }
 
-        A.writeToFileWithHeader(file, resultString(winner), fileHeader());
+        AFile.writeToFileWithHeader(file, resultString(winner), fileHeader());
     }
 
     private static String[] fileHeader() {

@@ -1,6 +1,5 @@
 package atlantis.util;
 
-import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.position.HasPosition;
 
@@ -8,7 +7,7 @@ import java.util.List;
 
 public class PrintPositionsToFile {
     public static void printToFile(String file, List<? extends HasPosition> positions, HasPosition highlightThisOne) {
-        A.saveToFile(file, string(positions, highlightThisOne), true);
+        AFile.saveToFile(file, string(positions, highlightThisOne), true);
     }
 
     private static String string(List<? extends HasPosition> positions, HasPosition highlightThisOne) {

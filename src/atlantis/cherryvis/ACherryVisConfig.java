@@ -1,6 +1,6 @@
 package atlantis.cherryvis;
 
-import atlantis.game.A;
+import atlantis.util.AFile;
 
 public class ACherryVisConfig {
     private String cherryVisReplayDirectory = null;
@@ -22,7 +22,7 @@ public class ACherryVisConfig {
         String basePath = "bwapi-data/write";
         cherryVisReplayDirectory = basePath + "/" + config.useDirectoryName();
 
-        if (!A.directoryExists(cherryVisReplayDirectory)) A.createDirectory(cherryVisReplayDirectory);
+        if (!AFile.directoryExists(cherryVisReplayDirectory)) AFile.createDirectory(cherryVisReplayDirectory);
 
         return cherryVisReplayDirectory;
     }

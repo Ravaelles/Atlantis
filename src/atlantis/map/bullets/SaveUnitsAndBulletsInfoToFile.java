@@ -5,6 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.attacked_by.Bullets;
 import atlantis.units.select.Select;
 
+import atlantis.util.AFile;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -30,8 +31,8 @@ public class SaveUnitsAndBulletsInfoToFile {
         }
 
         String file = "units_n_bullets.txt";
-        if (A.now() <= 0) A.saveToFile(file, content, true);
-        else A.appendToFile(file, content);
+        if (A.now() <= 0) AFile.saveToFile(file, content, true);
+        else AFile.appendToFile(file, content);
     }
 
     private static String unitsString() {

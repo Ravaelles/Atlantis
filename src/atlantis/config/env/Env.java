@@ -1,10 +1,10 @@
 package atlantis.config.env;
 
 import atlantis.config.AtlantisIgniter;
-import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
 import atlantis.information.decisions.GGForEnemy;
+import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
 
@@ -31,14 +31,14 @@ public class Env {
     public static void readEnvFile(String[] mainArgs) {
         isBenchmark = BenchmarkMode.detectBenchmarkMode(mainArgs);
 
-        if (!A.fileExists(envFilePath())) {
+        if (!AFile.fileExists(envFilePath())) {
             AGame.exit(
                 "ENV file doesn't exist (" + (new File(envFilePath())).getAbsolutePath()
                     + ")\nPlease create it by copying ENV-EXAMPLE file and renaming it."
             );
         }
 
-        String[][] env = A.loadFile(envFilePath(), 2, "=");
+        String[][] env = AFile.loadFile(envFilePath(), 2, "=");
 
         for (String[] line : env) {
             convertEnvLineIntoFlag(line);
@@ -103,9 +103,9 @@ public class Env {
     }
 
     private static String envFilePath() {
-//        if (A.currentPath().contains("D:\\")) {
-        if (A.fileExists("bwapi-data/AI/ENV")) return "bwapi-data/AI/ENV";
-        if (A.fileExists("../bwapi-data/AI/ENV")) return "../bwapi-data/AI/ENV";
+//        if (AFile.currentPath().contains("D:\\")) {
+        if (AFile.fileExists("bwapi-data/AI/ENV")) return "bwapi-data/AI/ENV";
+        if (AFile.fileExists("../bwapi-data/AI/ENV")) return "../bwapi-data/AI/ENV";
 
         return "ENV";
     }

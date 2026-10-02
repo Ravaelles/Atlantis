@@ -25,6 +25,7 @@ import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
+import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
 import atlantis.cherryvis.ACherryVis;
@@ -155,7 +156,7 @@ public class OnGameStarted {
 
             A.errPrintln(
                 "Does file exist? "
-                    + (A.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
+                    + (AFile.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
                     + CurrentBuildOrder.get().getName()
             );
             A.errPrintln("Error: " + e.getMessage());

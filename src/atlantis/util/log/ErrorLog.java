@@ -2,6 +2,7 @@ package atlantis.util.log;
 
 import atlantis.game.A;
 
+import atlantis.util.AFile;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -67,6 +68,6 @@ public class ErrorLog {
     public static void printPlusToFile(String message) {
         System.err.println(message);
 
-        A.saveToFile("error-log.txt", message, true);
+        AFile.saveToFile("error-log.txt", message, true);
     }
 }

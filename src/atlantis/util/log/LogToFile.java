@@ -1,9 +1,9 @@
 package atlantis.util.log;
 
-import atlantis.game.A;
+import atlantis.util.AFile;
 
 public class LogToFile {
     public static void info(String text) {
-        A.appendToFile("debug-log.txt", text);
+        AFile.appendToFile("debug-log.txt", text);
     }
 }

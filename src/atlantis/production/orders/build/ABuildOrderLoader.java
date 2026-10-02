@@ -4,6 +4,7 @@ import atlantis.config.AtlantisIgniter;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.util.AFile;
 import atlantis.util.We;
 
 import java.io.File;
@@ -71,7 +72,7 @@ public class ABuildOrderLoader {
         };
 
         for (String candidate : candidates) {
-            if (A.directoryExists(candidate)) {
+            if (AFile.directoryExists(candidate)) {
                 return candidate;
             }
         }
@@ -91,7 +92,7 @@ public class ABuildOrderLoader {
         String buildOrdersFile = filePath;
 
         // Parse CSV
-        String[][] loadedFile = A.loadFile(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE, ";");
+        String[][] loadedFile = AFile.loadFile(buildOrdersFile, NUMBER_OF_COLUMNS_IN_FILE, ";");
 
         // We can display file here, if we want to
         //displayLoadedFile(loadedFile);
