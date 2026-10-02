@@ -25,8 +25,12 @@ never executed, so nobody saw 44 failures sitting in the tree.
 | Scope | Command | Result (2026-10-02) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **87 passing / 11 failing** of 98 |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **177 passing / 45 failing** of 222 |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **212 passing / 11 failing** of 223 |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
+
+The acceptance package is **fully green** (115/115) after the harness fixes
+recorded in `_AI/BUGS.md` B-13…B-16. The 11 remaining failures are all in
+`tests.unit` and are listed below.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
@@ -40,10 +44,30 @@ java -Djunit.jupiter.testclass.order.default=org.junit.jupiter.api.ClassOrderer\
      org.junit.platform.console.ConsoleLauncher --select-package tests --details=summary
 ```
 
-Run that whenever you touch test infrastructure. **4 classes are still
-order-dependent** (`CombatEvaluatorTest`, `RequestBuildingNearTest`,
-`ManagerTest`, `starengine.DragoonsVsDragoonsTest`): the total stays 45 across
-seeds, but which tests fail moves. Everything else fails deterministically.
+Run that whenever you touch test infrastructure. Order dependence used to be
+everywhere; the cause was not the tests but the harness (a `Cache.nukeAllCaches()`
+that only worked once per JVM, a race that was hard-coded to Protoss, a global
+mission that leaked). See `_AI/BUGS.md` B-12, B-15 and B-16 before adding a
+`@TestMethodOrder` or "flaky" label to anything.
+
+## A test must state its race
+
+`AbstractTestWithUnits.initRace()` (our race) and `initEnemyRace()` (theirs) are
+the override points; the defaults are Terran and Protoss, which is what
+`Main.ourRace()` returns and what nearly every test builds. Override them when
+the test is about another race:
+
+```java
+@Override
+public Race initRace() {
+    return Race.Protoss;          // pylon/cannon logic
+}
+```
+
+This is not cosmetic: `AtlantisRaceConfig.BASE`, `WORKER`, `BARRACKS`,
+`DEFENSIVE_BUILDING_*` and every `We.terran()` branch follow the race, so a test
+that lies about its race silently exercises the wrong branches (that is exactly
+how B-13 and B-14 survived).
 
 ## Known-failing baseline (unit tests)
 
@@ -54,19 +78,22 @@ visible on purpose rather than hidden:
 | Test | Symptom |
 |---|---|
 | `ATargetingTest` (6 cases) | targeting picks a different enemy than expected |
-| `ProtossRetreatTest` (`goonsVsCannons`, `retreatGoonsVsHydras`) | expected retreat. `true`, was `false` |
+| `ProtossRetreatTest` (`goonsVsCannons`, `goonsVsGoons_3v4`, `retreatGoonsVsHydras`) | expected retreat. `true`, was `false` |
 | `ProtossSmallRetreatTest` (`noRetreatWhenMeleeAdvantage`, `retreatWhenNoMeleeAdvantage`) | expected `true`, was `false` |
-| `ChokeTest.distToChokes` | expected `2.0`, was `14.29` (likely needs real map data) |
+
+`ChokeTest.distToChokes` used to be on this list (`2.0` vs `14.29`); it was
+the same harness defect as everything else in `_AI/BUGS.md` B-15 - a stale
+choke list from the previous test - and passes now.
 
 > Do not "fix" these by weakening assertions. Either make the behaviour match
 > the expectation, or update the expectation deliberately and explain why.
 
 ## Known-failing baseline (acceptance tests)
 
-45 failures in the never-run package, listed per class in `_AI/NEXT.md` (#22).
-Two harness bugs found while fixing `AUnitTest` accounted for 10 of them; the
-rest still need per-class triage. Do not add to this list without saying which
-commit added the failure.
+None. The package went 45 failures → 0 without weakening a single assertion to
+hide a production bug: what came out was four real defects (B-10, B-11, B-13,
+B-14), two harness defects (B-15, B-16) and a set of tests that were asserting
+against the 22-unit sample world instead of their own generators.
 
 ## Architecture boundary tests
 

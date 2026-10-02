@@ -23,29 +23,19 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Test health
 
-- **#1** Triage the 11 pre-existing unit-test failures
-  (6× `ATargetingTest`, 2× `ProtossRetreatTest`, 2× `ProtossSmallRetreatTest`,
-  1× `ChokeTest.distToChokes`, see `DOCS/TESTING.md`). Decide per failure:
-  fix production behaviour, fix the expectation deliberately, or pin as a
-  known-broken expectation with a comment. Do not weaken assertions to make
-  the suite green.
-- **#22** Triage the 45 failures in `tests.acceptance`, which
-  `scripts/run-tests.sh` never executed (it defaults to `--select-package
-  tests.unit`). Two harness bugs are already fixed (the `usingFake*` helpers
-  wiping the units under test; the clock field disagreeing with the mocked
-  `AGame.now()`); the remaining classes, largest first: `CombatEvaluatorTest`
-  (7–8), `RequestBuildingNearTest` (3–5), `Queue3Test` (2),
-  `AvoidCombatBuildingsTest` (2), and 15 classes with 1 each (full list per
-  class in the table produced by `DOCS/TESTING.md`'s random-order command).
-  Use the same method as `AUnitTest`: measure the production behaviour with a
-  throwaway probe test, then decide whether the test or the code is wrong.
-- **#23** Four acceptance classes are still order-dependent: the failure total
-  stays 45 across random-order seeds, but the *set* moves between
-  `CombatEvaluatorTest`, `RequestBuildingNearTest`, `ManagerTest` and
-  `starengine.DragoonsVsDragoonsTest`. Find the static that leaks between
-  methods (candidates: per-unit `cacheInt`/`cache`, `Select` micro-caches,
-  `Squad`/`AllSquads`, `AliveEnemies`, `Queue`) and add it to
-  `ClearAllCaches.clearAll()`.
+- **#1** Triage the 11 remaining unit-test failures
+  (6× `ATargetingTest`, 3× `ProtossRetreatTest`, 2× `ProtossSmallRetreatTest`;
+  see `DOCS/TESTING.md`). Decide per failure: fix production behaviour, fix the
+  expectation deliberately, or pin as a known-broken expectation with a comment.
+  Do not weaken assertions to make the suite green. `ChokeTest.distToChokes`
+  used to be the 11th and was the same harness defect as `_AI/BUGS.md` B-15, not
+  a targeting or choke bug at all - measure before assuming.
+- **#27** The retreat tests (`ProtossRetreatTest`, `ProtossSmallRetreatTest`,
+  5 failures) are the largest remaining group and the only ones left that assert
+  a *decision* rather than a value. They must be triaged after the harness is
+  trustworthy, and their expectations were written for the heuristic evaluator -
+  `AUnit.eval()` is JFAP now (`AUnit.combatEvalAbsolute()`), so check whether
+  "melee advantage" still means what the test thinks before touching code.
 - **#24** `AUnit.shieldPercent()` is `100 * shields / maxShields` with no zero
   guard, so it returns `NaN` for every unit without shields (Terran, buildings
   without upgrades). Production callers check `maxShields()` first, so it is
@@ -161,5 +151,7 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Housekeeping
 
 - **#15** Rebuild the deployed bot jars. Done for the `A`-split round
-  (`GAME_5AC1C438`, `GAME_5C6F3544`); repeat after the next backlog round so
-  `bots/AtlantisP` and `bots/AtlantisT` never lag behind the source.
+  (`GAME_5AC1C438`, `GAME_5C6F3544`) and for the race/harness round
+  (`GAME_7D1C5E57`, `is_crashed: false`, zero exceptions, 51 units built);
+  repeat after the next backlog round so `bots/AtlantisP` and `bots/AtlantisT`
+  never lag behind the source.

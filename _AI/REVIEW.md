@@ -780,6 +780,29 @@ leave the bot playable. Pooling: **A** and **B** can start immediately.
   the baseline by one violation.
 - **Stage B hardened:** new rule — `atlantis.application` must not depend on
   `bwapi`.
+- **Acceptance package: GREEN (115/115), 45 failures → 0.** Not by weakening
+  assertions: the triage (`_AI/NEXT.md` #22, #23) found that most failures were
+  harness defects, and each fix shrank the *problem*, not the assertion. Four
+  production defects came out of it (`_AI/BUGS.md` B-10 army strength saturating
+  at 999, B-11/B-13 Terran infantry treating ranged attackers as harmless,
+  B-14 two unguarded `Chokes.mainChoke()` dereferences that killed frames, B-12
+  an unreproducible decision). The two deepest ones were:
+  - **`Cache.nukeAllCaches()` only worked once per JVM** (B-15) — it emptied its
+    own instance registry, and cache objects are static, so from the second test
+    onwards nothing was cleared. This, not the tests, was the cause of the
+    order-dependence the backlog had been chasing.
+  - **The whole suite ran as Protoss while building Terran units** (B-16) —
+    `initRace()` existed but nothing called it. `AtlantisRaceConfig` said
+    `BASE = Protoss_Nexus` while tests created `Terran_Barracks`, and every
+    `We.terran()` branch was dead code in the test environment. Fixing it
+    immediately exposed B-13 and B-14, i.e. two real gameplay bugs were
+    invisible because of a test default.
+  Baselines now: `tests.unit` 87/11, full package 212/11 of 223, ArchUnit 7/7
+  with a store that **shrank** by 16 (`AttackState` moved from
+  `atlantis.combat.state` to `atlantis.units`, which is where a unit's attack
+  state belongs — the manager that *decides* it stays in combat). Verified in a
+  real game: `GAME_7D1C5E57` (Protoss), `is_crashed: false`, zero exceptions,
+  51 units built.
 
 ### 16.0 Summary
 

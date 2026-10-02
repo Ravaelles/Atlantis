@@ -87,6 +87,21 @@ public class Missions {
         return enforceGlobalMission(mission, buildOrderMission);
     }
 
+    /**
+     * Forget the mission decision, so the next reader picks one again.
+     *
+     * <p>A game starts without a global mission - {@link #globalMission()} decides
+     * one on the first read. Between tests that decision has to be forgotten too:
+     * {@code Squad.mission()} reports DEFEND for Alpha whenever the global mission
+     * is DEFEND, so one test that went on the offensive decided the missions of
+     * every test that ran after it.</p>
+     */
+    public static void reset() {
+        currentGlobalMission = null;
+        lastMissionChanged = 0;
+        lastMissionEnforcedAt = -1;
+    }
+
     public static Mission initialMission() {
 
         // === Handle UMS ==========================================
