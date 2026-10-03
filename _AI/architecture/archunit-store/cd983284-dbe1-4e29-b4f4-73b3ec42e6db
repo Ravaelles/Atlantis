@@ -11,6 +11,8 @@ Method <atlantis.architecture.BaseManager.initChildren([Latlantis.architecture.M
 Method <atlantis.architecture.BaseManager.toString()> calls method <atlantis.game.A.substring(java.lang.String, int, int)> in (BaseManager.java:83)
 Method <atlantis.architecture.Commander.invokedCommander()> calls method <atlantis.debug.profiler.CodeProfiler.endMeasuring(atlantis.architecture.Commander)> in (Commander.java:30)
 Method <atlantis.architecture.Commander.invokedCommander()> calls method <atlantis.debug.profiler.CodeProfiler.startMeasuring(atlantis.architecture.Commander)> in (Commander.java:23)
+Method <atlantis.architecture.Commander.invokedCommander()> calls method <atlantis.game.A.now()> in (Commander.java:20)
+Method <atlantis.architecture.Commander.invokedCommander()> calls method <atlantis.game.A.now()> in (Commander.java:21)
 Method <atlantis.architecture.Manager.invokedFor(atlantis.architecture.ManagerFactory, atlantis.units.AUnit)> calls method <atlantis.util.log.ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(java.lang.String)> in (Manager.java:33)
 Method <atlantis.architecture.Manager.invokedFor(atlantis.architecture.ManagerFactory, atlantis.units.AUnit)> has parameter of type <atlantis.units.AUnit> in (Manager.java:0)
 Method <atlantis.architecture.Manager.invokedManager(atlantis.architecture.ManagerFactory)> calls method <atlantis.util.log.ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(java.lang.String)> in (Manager.java:114)

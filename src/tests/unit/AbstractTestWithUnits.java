@@ -264,12 +264,15 @@ public class AbstractTestWithUnits extends UnitTest {
             Atlantis.getInstance().setGame(game);
         }
 
-        // Keep the clock fields in sync with the mocked AGame.now(). Production
-        // code reaches the frame number through A.now(), but tests read the
-        // public A.now field - and world tests set that field while unit tests
-        // did not. A test running after a world test therefore saw two
-        // different "now" values, and every "N frames ago" assertion was off by
-        // one. One source of truth, set here.
+        // One source of truth, set here. Production code reaches the frame
+        // number through A.now(), which delegates to the statically mocked
+        // AGame.now() - so the mock is stubbed here, for world-free tests as
+        // well (world tests re-stub it per frame in the override below). The
+        // public A.now field is legacy: nothing reads it any more, it is only
+        // written to keep the two in sync for anything that still looks.
+        if (aGame != null) {
+            aGame.when(AGame::now).thenReturn(framesNow);
+        }
         A.now = framesNow;
         A.s = framesNow / 30;
     }

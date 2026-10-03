@@ -232,9 +232,15 @@ the first is already done.
   wait for a game run rather than a blind edit.
 - **#18** Add the remaining ADR 0001 ports (`GameQuery`, `MapPort`,
   `ClockPort`) and migrate one subsystem each. `LogPort` is the precedent:
-  port + adapter + a test double, no call-site churn. Clock first — it is the
-  most-read global (`A.now`, `A.seconds()`, `A.minSec()`), and a port makes
-  TTL/frame logic testable without a game.
+  port + adapter + a test double, no call-site churn. Clock turned out not to
+  need a port at all: `A.now()` already delegates to the statically mocked
+  `AGame.now()`, and the only thing defeating it was 25-odd direct reads of
+  the public `A.now` field (plus a mock that stubbed `now()` for world tests
+  only). Those reads now go through the method - production-neutral, because
+  `AGame` syncs the field every frame - and the base `useFakeTime` stubs the
+  mock for world-free tests too. No `ClockPort`, no new abstraction; the field
+  stays as a write-only leftover until a follow-up deletes it with the two
+  test setup writes. `GameQuery` and `MapPort` are still open.
 
 ## Housekeeping
 
