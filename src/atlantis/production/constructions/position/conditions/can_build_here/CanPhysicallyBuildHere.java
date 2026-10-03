@@ -1,9 +1,9 @@
 package atlantis.production.constructions.position.conditions.can_build_here;
 
-import atlantis.Atlantis;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
+import atlantis.map.MapTiles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
@@ -88,14 +88,7 @@ public class CanPhysicallyBuildHere {
     }
 
     private static boolean isCanBuildHere(AUnit builder, AUnitType building, APosition position) {
-        if (Env.isTesting()) {
-            if (!apprxForTesting(building, position)) {
-                return false;
-            }
-            return true;
-        }
-
-        return Atlantis.game().canBuildHere(position.toTilePosition(), building.ut(), builder.u());
+        return MapTiles.canBuildHere(builder, building, position);
     }
 
     private static boolean allowEarlyForgeAndGatewayDuringForgeExpand(AUnitType building, APosition position) {
@@ -138,34 +131,5 @@ public class CanPhysicallyBuildHere {
             && !building.isCombatBuilding();
     }
 
-    private static boolean apprxForTesting(AUnitType building, APosition position) {
-//        System.err.println(Select.ourBasesWithUnfinished().distToNearest(position));
 
-        if (We.protoss() && building.needsPower()) {
-            if (Select.ourOfType(AUnitType.Protoss_Pylon).countInRadius(5.98, position) == 0) {
-                AbstractPositionFinder._STATUS = "[Testing] No power";
-                return false;
-            }
-        }
-
-        if (!position.isBuildableIncludeBuildings()) {
-            AbstractPositionFinder._STATUS = "[Testing] Not buildable";
-            return false;
-        }
-
-        int countNearBuildings = Select.ourBuildingsWithUnfinished().inRadius(2.95, position).count();
-        if (
-//            Select.ourBasesWithUnfinished().countInRadius(4.02, position) == 0
-//                && Select.ourBuildingsWithUnfinished().countInRadius(3.02, position) == 0
-            countNearBuildings == 0
-        ) {
-//            System.err.println("------- NOTHING " + position + " -------");
-            return true;
-        }
-
-//        System.err.println("countNearBuildings = " + countNearBuildings);
-
-        AbstractPositionFinder._STATUS = "[Testing] Can't physically build here";
-        return false;
-    }
 }

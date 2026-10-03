@@ -1,7 +1,10 @@
 package atlantis.map;
 
 import atlantis.Atlantis;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 
 /**
  * What the map knows about a single tile: is it walkable, has it been explored,
@@ -42,6 +45,17 @@ public class MapTiles {
          * bases 40 tiles apart without building a map for them.
          */
         boolean hasPathBetween(HasPosition from, HasPosition to);
+
+        /**
+         * Can {@code builder} put {@code building} down on this tile? A game asks
+         * the engine, which knows about power, terrain and the buildings already
+         * standing there. The stub world has no engine answer, so it approximates
+         * one from the units it does have ({@code tests.fakes.FakeMapTiles}).
+         *
+         * @param builder may be a double, which has no engine object; the harness's
+         *                 answer does not need one.
+         */
+        boolean canBuildHere(AUnit builder, AUnitType building, APosition at);
     }
 
     private static Source source = null;
@@ -85,6 +99,11 @@ public class MapTiles {
         public boolean hasPathBetween(HasPosition from, HasPosition to) {
             return Atlantis.game().hasPath(from.position().p(), to.position().p());
         }
+
+        @Override
+        public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
+            return Atlantis.game().canBuildHere(at.toTilePosition(), building.ut(), builder.u());
+        }
     };
 
     // =========================================================
@@ -107,5 +126,9 @@ public class MapTiles {
 
     public static boolean hasPathBetween(HasPosition from, HasPosition to) {
         return source().hasPathBetween(from, to);
+    }
+
+    public static boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
+        return source().canBuildHere(builder, building, at);
     }
 }
