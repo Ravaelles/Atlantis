@@ -312,9 +312,14 @@ public class AbstractFoggedUnit extends AUnit {
     /**
      * Stage E: last-known-state projection of this fogged unit.
      * Additive spike — no production reader migrated yet (see REVIEW §16).
+     *
+     * <p>Hit points behind the fog are unknown: the snapshot carries the
+     * compensated value ({@link #hp()}, i.e. {@code maxHp()} for army sums)
+     * with {@code hpKnown = false}, so no reader can mistake it for a
+     * full-health reading. See {@code _AI/NEXT.md} #2.</p>
      */
     public UnitSnapshot snapshot() {
-        return new UnitSnapshot(id(), type(), position(), hp(), shields());
+        return new UnitSnapshot(id(), type(), position(), hp(), shields(), false);
     }
 
     @Override

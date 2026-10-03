@@ -94,11 +94,6 @@ of the data behind it, not a red test.
 
 ## Stage E — read model (remaining)
 
-- **#2** Decide the representation of unknown hit points in the read model
-  (`AbstractFoggedUnit.hp()` returns the `-69` sentinel). Options: explicit
-  `OptionalInt`/nullable in `UnitSnapshot`, a dedicated `Hp` value object, or
-  a documented sentinel accessor on the snapshot. Needs a written rationale —
-  the current magic number leaks into every comparison site.
 - **#3** Migrate production readers of `FoggedUnit` to `UnitSnapshot`.
   Deliberately skipped before because a pure delegation switch has no value
   (same object, same values, worse GC). Do it only where it changes a

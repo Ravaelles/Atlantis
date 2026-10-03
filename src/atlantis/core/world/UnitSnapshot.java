@@ -22,12 +22,33 @@ public final class UnitSnapshot {
     private final int hp;
     private final int shields;
 
+    /**
+     * Whether {@link #hp()} is a reading or a stand-in. Live units always know
+     * theirs (even 0 for the dead is known); fogged units do not - their
+     * {@code hp()} carries the compensated value ({@code maxHp()}, for army
+     * sums) and must not be mistaken for "full health" by rules like
+     * most-wounded targeting.
+     *
+     * <p>Why a flag and not {@code OptionalInt} or a sentinel: a snapshot is
+     * built per unit per frame, so boxing allocates in the hot loop, and a
+     * bare sentinel (-69) leaks into every comparison site - the same failure
+     * mode as the old magic numbers. The flag keeps {@code hp()} a plain int
+     * for the readers that do not care, and an explicit question for the ones
+     * that do. See {@code _AI/NEXT.md} #2.</p>
+     */
+    private final boolean hpKnown;
+
     public UnitSnapshot(int id, AUnitType type, APosition position, int hp, int shields) {
+        this(id, type, position, hp, shields, true);
+    }
+
+    public UnitSnapshot(int id, AUnitType type, APosition position, int hp, int shields, boolean hpKnown) {
         this.id = id;
         this.type = type;
         this.position = position;
         this.hp = hp;
         this.shields = shields;
+        this.hpKnown = hpKnown;
     }
 
     public int id() {
@@ -44,6 +65,10 @@ public final class UnitSnapshot {
 
     public int hp() {
         return hp;
+    }
+
+    public boolean hasKnownHp() {
+        return hpKnown;
     }
 
     public int shields() {

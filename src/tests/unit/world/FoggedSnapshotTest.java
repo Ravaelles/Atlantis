@@ -29,4 +29,16 @@ public class FoggedSnapshotTest {
         assertEquals(fogged.hp(), snapshot.hp());
         assertEquals(fogged.shields(), snapshot.shields());
     }
+
+    @Test
+    void foggedHitPointsAreMarkedUnknown() {
+        FakeUnit zergling = new FakeUnit(AUnitType.Zerg_Zergling, 40, 20);
+        FakeFoggedUnit fogged = FakeFoggedUnit.fromFake(zergling);
+
+        // The value is the compensated maxHp (for army sums), not a reading:
+        // a rule that treats it as "full health, known" would misrank every
+        // wounded fogged unit. See _AI/NEXT.md #2.
+        assertEquals(false, fogged.snapshot().hasKnownHp());
+        assertEquals(fogged.maxHp(), fogged.snapshot().hp());
+    }
 }
