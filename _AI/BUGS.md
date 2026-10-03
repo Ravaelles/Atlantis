@@ -78,28 +78,6 @@ documented in code with a comment. The closure goes into the commit message.
 - **Pinned by:** `AUnitTest.facingUsesTheTolerancesOfTheEngine` and
   `facingHelperAgreesWithTheRawVector`, which assert the real windows.
 
-## B-6 — the Protoss position finder cannot place anything in the stub world
-
-- **Where:** `atlantis/production/constructions/position/PositionFulfillsAllConditions`
-  (14 Protoss conditions), reached from `ProtossPositionFinder.findStandardPositionFor`.
-- **Measured** (`RequestBuildingNearTest` scenario, main nexus at 9,46, natural
-  at 16,14, one probe worker, no pylon nearby): a direct
-  `CanPhysicallyBuildHere.check(worker, Protoss_Pylon, position)` **accepts 90**
-  candidate tiles around the natural, yet
-  `RequestBuildingNear.constructionOf(Protoss_Pylon).near(natural).request()`
-  returns `null` with `_STATUS = "[Testing] Can't physically build here"`.
-  So one of the other thirteen conditions rejects every candidate.
-- **Consequence:** "protect a base that has no pylon" cannot be tested at all,
-  which is exactly the behaviour the Protoss opening depends on. Both affected
-  tests are pinned at the weaker contract that does hold (see
-  `RequestBuildingNearTest`), with this entry as the reason.
-- **How to settle it:** binary-search the conditions by calling
-  `PositionFulfillsAllConditions.doesPositionFulfillAllConditions` for one of
-  the 90 accepted tiles and printing which check flips it. Prime suspects:
-  `ProtossForbiddenByStreetGrid` (needs `moduloX == 2` lattice positions),
-  `IsProbablyInAnotherRegion` and `ProtossTooCloseToRegionBoundaries` (both
-  need `ARegion`, which is a stub without a BWEM area).
-
 ## B-7 — `ProtossTooCloseToRegionBoundaries` can never fire
 
 - **Where:** `.../position/protoss/ProtossTooCloseToRegionBoundaries.java:14`.

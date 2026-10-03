@@ -1,5 +1,6 @@
 package tests.acceptance;
 
+import atlantis.game.A;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -65,37 +66,66 @@ public class RequestBuildingNearTest extends WorldStubForTests {
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
             ), fakeEnemies(), () -> {
+            // This natural is 32.8 ground tiles from the main and the bot refuses
+            // to put a pylon that far from its base before it has 40 supply -
+            // PylonTooFarFromBaseEarly, pinned on its own in
+            // testRequestingAPylon_farFromMainAndSupplyUnder40_pylonIsRefused.
+            initSupply(40, 42);
+
             assertEquals(0, ConstructionRequests.all().size());
             assertEquals("Init", AbstractPositionFinder._STATUS);
             assertNull(RequestBuildingNear.lastError);
             assertNull(BuildPylonFirst.lastError);
 
             HasPosition secure = natural;
+            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the natural");
+
             ProductionOrder order = securePositionWithCannon(secure);
 
             printOrder(order, secure);
 
-            // The stub world cannot satisfy the 14 Protoss position
-            // conditions: 90 tiles around this base pass
-            // CanPhysicallyBuildHere, but the request still fails - see
-            // _AI/BUGS.md B-6. What is verified here is the contract that
-            // does hold and is worth pinning: securing a base without power
-            // goes through BuildPylonFirst, and the failure is reported
-            // instead of silently queuing a cannon.
-            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the natural");
-            assertNull(order, "the cannon request is not reached without a pylon");
-            assertNotNull(BuildPylonFirst.lastError, "BuildPylonFirst reports the failure");
-            assertNotNull(RequestBuildingNear.lastError,
-                "and so does the position finder underneath it");
-            assertEquals(0, ConstructionRequests.all().size());
-            assertFalse(AbstractPositionFinder._STATUS.equals("OK"),
-                "the position finder did not succeed");
+            assertNotNull(order, "the pylon is placed");
+            assertNull(BuildPylonFirst.lastError);
+            assertNull(RequestBuildingNear.lastError);
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+            assertEquals(1, ConstructionRequests.all().size());
+            assertTrue(ConstructionRequests.all().get(0).buildingType().isPylon(),
+                "a base without power gets a pylon, not a cannon");
+        });
+    }
 
+    /**
+     * The rule that made the test above impossible before: a Protoss pylon is
+     * power *and* an expansion, so the bot refuses to build one more than 22
+     * ground tiles from its main while it still has less than 40 supply and has
+     * not committed to expanding. The refusal has to be reported, not silently
+     * drop the order.
+     */
+    @Test
+    public void testRequestingAPylon_farFromMainAndSupplyUnder40_pylonIsRefused() {
+        world(1, fakeOurs(
+                main = fake(AUnitType.Protoss_Nexus, 9, 46), // Main
+                natural = fake(AUnitType.Protoss_Nexus, 16, 14), // Natural, 32.8 tiles away
 
-//                assertNull(RequestBuildingNear.lastError);
-//                assertNotNull(order);
-//                assertEquals("OK", AbstractPositionFinder._STATUS);
-//                assertEquals(1, ConstructionRequests.all().size());
+                fake(AUnitType.Protoss_Pylon, 10, 45), // power next to the main
+
+                fake(AUnitType.Protoss_Probe, 7, 47)
+            ), fakeEnemies(), () -> {
+            assertEquals(4, A.supplyTotal());
+
+            // Close to the main: allowed.
+            assertNotNull(RequestBuildingNear.constructionOf(AUnitType.Protoss_Pylon).near(main).request(),
+                "a pylon near the main is built");
+            assertNull(RequestBuildingNear.lastError);
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+
+            // Same building, same world, 32.8 tiles away: refused.
+            ProductionOrder farAway = RequestBuildingNear.constructionOf(AUnitType.Protoss_Pylon)
+                .near(natural)
+                .request();
+
+            assertNull(farAway, "no pylon that far from the main before 40 supply");
+            assertNotNull(RequestBuildingNear.lastError, "and the reason is reported");
         });
     }
 
@@ -140,24 +170,27 @@ public class RequestBuildingNearTest extends WorldStubForTests {
 
                 fake(AUnitType.Protoss_Probe, 7, 47)
             ), fakeEnemies(), () -> {
+            // The third base is ~55 ground tiles from the main, so - exactly as
+            // for the natural above - it can only get power once the bot has the
+            // supply for it.
+            initSupply(40, 42);
+
             assertEquals(0, ConstructionRequests.all().size());
             assertEquals("Init", AbstractPositionFinder._STATUS);
             assertNull(RequestBuildingNear.lastError);
 
             HasPosition secure = third;
+            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the third base");
+
             ProductionOrder order = securePositionWithCannon(secure);
 
             printOrder(order, secure);
 
-            // Same limitation as above (_AI/BUGS.md B-6): the finder cannot
-            // place a pylon near a base that has none, so no cannon is
-            // requested either. Pinned here so the day it works, this test
-            // fails and asks for the stronger assertion back.
-            assertTrue(BuildPylonFirst.needsPylon(secure), "no pylon near the third base");
-            assertNull(order);
-            assertNotNull(RequestBuildingNear.lastError);
-            assertEquals(0, ConstructionRequests.all().size());
-            assertFalse(AbstractPositionFinder._STATUS.equals("OK"));
+            assertNotNull(order, "the pylon is placed at the third base");
+            assertNull(RequestBuildingNear.lastError);
+            assertEquals("OK", AbstractPositionFinder._STATUS);
+            assertEquals(1, ConstructionRequests.all().size());
+            assertTrue(ConstructionRequests.all().get(0).buildingType().isPylon());
         });
     }
 
