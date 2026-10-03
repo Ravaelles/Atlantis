@@ -1,6 +1,5 @@
 package atlantis.units.fogged;
 
-import atlantis.config.env.Env;
 import atlantis.core.world.UnitSnapshot;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -9,6 +8,7 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.UnitOrigin;
 import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
@@ -106,7 +106,11 @@ public class AbstractFoggedUnit extends AUnit {
     }
 
     private void updateLastPosition(AUnit unit) {
-        if (unit.u() == null && !Env.isTesting()) return;
+        // No engine object means the game has not shown us this unit, so there is
+        // nothing to remember. A double the harness put in the world is the
+        // exception: no engine object, but it does know where it is, and that is
+        // the position worth remembering (UnitOrigin).
+        if (unit.u() == null && !UnitOrigin.isSimulated(unit)) return;
 //        if (unit.x() <= 0 || unit.x() >= 32000) return;
 
         // If the unit.u is defined, it means it's visible, so it has valid x,y
