@@ -5,7 +5,8 @@ import atlantis.map.position.HasPosition;
 
 /**
  * What the map knows about a single tile: is it walkable, has it been explored,
- * is it visible now, can a building stand there.
+ * is it visible now, can a building stand there - and, for two tiles, can
+ * something walk from one to the other.
  *
  * <p>In a game these four answers come from the engine
  * ({@code bwapi.Game.isWalkable}, {@code isExplored}, {@code isVisible},
@@ -34,6 +35,13 @@ public class MapTiles {
          *                           like {@code Game.isBuildable(int, int, boolean)}.
          */
         boolean isBuildable(HasPosition at, boolean alsoCheckBuildings);
+
+        /**
+         * Is there a walkable path from one tile to the other? The stub world has
+         * no pathing graph, so it answers yes - which is what lets a test place two
+         * bases 40 tiles apart without building a map for them.
+         */
+        boolean hasPathBetween(HasPosition from, HasPosition to);
     }
 
     private static Source source = null;
@@ -72,6 +80,11 @@ public class MapTiles {
                 ? Atlantis.game().isBuildable(at.tx(), at.ty(), true)
                 : Atlantis.game().isBuildable(at.position().p().toTilePosition());
         }
+
+        @Override
+        public boolean hasPathBetween(HasPosition from, HasPosition to) {
+            return Atlantis.game().hasPath(from.position().p(), to.position().p());
+        }
     };
 
     // =========================================================
@@ -90,5 +103,9 @@ public class MapTiles {
 
     public static boolean isBuildable(HasPosition at, boolean alsoCheckBuildings) {
         return source().isBuildable(at, alsoCheckBuildings);
+    }
+
+    public static boolean hasPathBetween(HasPosition from, HasPosition to) {
+        return source().hasPathBetween(from, to);
     }
 }

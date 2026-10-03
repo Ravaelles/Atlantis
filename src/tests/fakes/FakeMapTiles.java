@@ -42,4 +42,11 @@ public class FakeMapTiles implements MapTiles.Source {
     public boolean isBuildable(HasPosition at, boolean alsoCheckBuildings) {
         return Select.all().countInRadius(1.98, at) == 0;
     }
+
+    @Override
+    public boolean hasPathBetween(HasPosition from, HasPosition to) {
+        // Everything is one connected map, which is what let tests place two
+        // bases 40 tiles apart before this question had a name.
+        return true;
+    }
 }

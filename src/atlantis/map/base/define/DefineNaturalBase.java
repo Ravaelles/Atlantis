@@ -2,6 +2,7 @@ package atlantis.map.base.define;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.map.MapTiles;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
@@ -63,8 +64,6 @@ public class DefineNaturalBase {
     }
 
     private static boolean isConnected(HasPosition nearestTo, ABaseLocation baseLocation) {
-        if (Env.isTesting()) return true;
-
-        return baseLocation.position().hasPathTo(nearestTo);
+        return MapTiles.hasPathBetween(baseLocation.position(), nearestTo);
     }
 }
