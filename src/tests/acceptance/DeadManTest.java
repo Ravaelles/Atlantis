@@ -48,19 +48,15 @@ public class DeadManTest extends AbstractTestWithWorld {
 //                System.err.println("DeadMan.isDeadMan(zergling) = " + DeadMan.isDeadMan(zergling));
 //                System.out.println(Bullets.against(zergling).size());
 
-            // One Phase Disruptor round does 4 against a small unit (8 damage,
-            // Explosive, halved) and 6 against a medium one, and one round is
+            // One Phase Disruptor round does 10 against a small unit (20 damage,
+            // Explosive, halved) and 15 against a medium one, and one round is
             // added per frame. A Zergling has 35 hit points plus the point of
-            // armour a non-Terran gets, so it dies on the 9th round; a Marine has
-            // 45 and no bonus, so the 12th; a Vulture 80, so the 14th.
-            //
-            // The thresholds this replaces (frames 3 and 7) came from the engine
-            // placeholder, whose Dragoon did 20 damage per round - one bullet was
-            // enough to kill anything, so the test could not tell a dead man from
-            // a lucky shot.
-            assertEquals(A.now() >= 9, DeadMan.isDeadMan(zergling), "35 hp, 4 a round");
-            assertEquals(A.now() >= 12, DeadMan.isDeadMan(marine), "45 hp, 4 a round");
-            assertEquals(A.now() >= 14, DeadMan.isDeadMan(vulture), "80 hp, 6 a round");
+            // armour a non-Terran gets, so it dies on the 4th round; a Marine
+            // has 40 and no bonus, so the 4th as well; a Vulture has 80, so
+            // the 6th (5 x 15 = 75 is not enough).
+            assertEquals(A.now() >= 4, DeadMan.isDeadMan(zergling), "35 hp, 10 a round");
+            assertEquals(A.now() >= 4, DeadMan.isDeadMan(marine), "40 hp, 10 a round");
+            assertEquals(A.now() >= 6, DeadMan.isDeadMan(vulture), "80 hp, 15 a round");
         });
     }
 

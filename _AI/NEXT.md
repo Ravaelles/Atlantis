@@ -23,51 +23,56 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Test health
 
-The suite is green: 235 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
+The suite is green: 237 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
 a serialized fixture and a `--add-opens` flag). What is still open is *quality*
 of the data behind it, not a red test.
 
-- **#29** The test harness had **no unit-type and no weapon-type data**. Done
-  for the numbers the suite depends on; the rest is still missing and now
-  *visible* instead of silent.
+- **#29** The test harness had **no unit-type and no weapon-type data** - or so
+  the suite believed. The truth, established by probing the vendored
+  `JBWAPI-Rav.jar` field by field and cross-checking against BWAPI's own
+  reference tests (`bwapi/BWAPILIBTest/unitTypesTest.cpp` on github.com/bwapi:
+  Marine 40 hit points, Ghost 45, Vulture 80, Goliath 125, Siege Tank 150,
+  Dragoon 100 + 80 shields, Photon Cannon 100 + 100, Sunken Colony 300, Spider
+  Mine 20 hit points), is that **the engine was the source all along** and an
+  intermediate `UnitStatsTable` overwrote it with some twenty hand-transcribed
+  fictions (Marine 45, Sunken Colony 150, Phase Disruptor 8 damage, Siege Tank
+  at 5 and 6 tiles, Mutalisk at 6, Ghost 125 hit points, a Terran *Banshee*).
+  The suite was green against that fiction; the episode is kept in git history
+  as a warning and in `UnitStatsTable`'s javadoc.
 
-  What landed:
+  What stands now:
   - `atlantis/units/UnitStats.java` - the seam. `hitPoints`, `shields`,
     `weaponRange`, `weaponDamage`, `weaponDamageFactor`, each answering a
     `UnitStats.Source` if one is installed and `bwapi` otherwise. Production
     installs nothing, so in a game this is delegation and nothing else changes.
-  - `tests/fakes/UnitStatsTable.java` - the numbers, **transcribed by hand** from
-    Brood War's unit data: 56 unit types, 30 weapons. Not read from a file,
-    because the file is inside an encrypted archive (below).
-  - `tests/unit/UnitStatsTableTest.java` - the guard: values pinned, every type
-    the sample world builds must have an entry or a documented `NOT_COVERED`
-    reason, every name in the table must match a real `bwapi` enum constant, and
-    the missing count is an upper bound (**133 types, 74 weapons**).
+  - `tests/fakes/UnitStatsTable.java` - a **correction table, currently
+    empty**. It holds one entry per engine field proven wrong, each with the
+    evidence; everything else falls back to the engine. The near-misses were
+    base-vs-upgraded confusion (a Dragoon shoots 4 tiles until Singularity
+    Charge, a Hydralisk 4 until Grooved Spines - the engine's 128 px is
+    correct, and upgrade-aware callers like `OurDragoonRange` live separately).
+  - `tests/unit/UnitStatsTableTest.java` - the guard: engine sanity pins for
+    every number the suite depends on (so a jar swap fails loudly instead of
+    drifting), a ban on unjustified corrections, a name-resolution check, and
+    the installation check.
   - 14 call sites rewired (all of `maxRange`/`damageAmount`/`damageFactor` in
-    production). `WeaponUtil` moved `atlantis.util` -> `atlantis.units` because it
-    reads unit data and `util` must not point upward; the ArchUnit store shrank
-    by 8 lines.
+    production). `WeaponUtil` moved `atlantis.util` -> `atlantis.units` because
+    it reads unit data and `util` must not point upward; the ArchUnit store
+    shrank by 8 lines.
 
-  Why the numbers are typed rather than read, measured:
-  1. `mpyq` reads the MPQ headers of `STARDAT.MPQ` but finds no file by name -
-     Brood War's archives hide their file names behind Blizzard's decryption
-     table, which no package on PyPI ships (`PyMS` there is a different, broken
-     package; `stormlib` is not on the machine);
-  2. even with the table, sectors compressed with PKWARE "implode" (type 0x08)
-     need a decompressor `mpyq` does not have - only none/zlib/bzip2;
-  3. `3rdparty/openbw/openbw/data_loading.h` has the exact `units.dat` and
-     `weapons.dat` layout (column-major, 228 unit types, 130 weapons, including
-     `hitpoints`, `shield_points`, `max_range`, `damage_amount`), so the *parser*
-     is not the hard part - only the archive is;
-  4. the vendored jar, BWAPI's `.dox` documentation and BWAPI's own reference
-     tests all carry the same fiction, so none of them is a source.
+  How to verify the engine from a checkout, without a game: compile a small
+  `Probe` against `lib/` and print `maxHitPoints/maxShields/isFlyer` for
+  `UnitType`, `maxRange/damageAmount/damageFactor/damageType` for
+  `WeaponType`. Full procedure in `UnitStatsTable`'s javadoc.
 
-  Still open, all visible through `UnitStatsTableTest`:
-  - 133 unit types and 74 weapons with no entry;
-  - `UnitType.isFlyer()` names 22 types and no heroes (see #33);
-  - `UnitType.isInvincible()` (see #32);
-  - the Vulture's own weapon, the Scarab and the Spider Mine - `NOT_COVERED`
-    with a reason each, because a guess would be worse than the placeholder.
+  Still open:
+  - `UnitType.isFlyer()` names 22 types and no heroes - but production covers
+    heroes through `ut.isFlyer()` itself (see #33, closed);
+  - the MPQ archives (`STARDAT.MPQ`/`BROODAT.MPQ` sit one directory above the
+    repo) remain unreadable from here: standard header geometry, encrypted
+    tables, no local tool for Blizzard's filename crypto plus PKWARE-implode
+    sectors. They would be the generator if they ever open; until then the
+    engine is the source and the table is the patch list.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
@@ -237,16 +242,3 @@ ArchUnit 7/7.
   Dragoon-vs-Cannon while its own javadoc admits `eval` 0.3 (3x worse) and the
   cannon outranges the dragoon. Retreat doctrine vs evaluator disagreement —
   needs a design decision, not a threshold tweak.
-- **#32** `UnitTest`/`SelectTest` counts pin the `isInvincible()` placeholder:
-  the 6th "ground unit" is a Vulture spider mine, real only because the fake
-  `isInvincible()` is wrong. `isInvincible()` has no number in `UnitStatsTable`
-  and no source, and `UnitStatsTableTest` names the Spider Mine in
-  `NOT_COVERED` for exactly that reason - so the fiction is now listed, but the
-  counts themselves still depend on it. When a source appears, the guard must
-  fail loudly instead of `GROUND_UNITS`/`AIR_UNITS`/`REAL_UNITS` shifting.
-- **#33** Hero flyers are still ground in the harness. Production is fixed
-  (`ut.isFlyer() ||` hand list), but the hand list has no `Hero_*` entries, so
-  e.g. a hero Scout/Mutri/Guardian counts as ground in tests. The seam for the
-  fix now exists - `UnitStats` with a `Source` the harness installs - so this is
-  a column in `UnitStatsTable` plus an `isAir()` delegation, not a new mechanism.
-  It still needs a source for the list.

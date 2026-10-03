@@ -82,16 +82,15 @@ public class AtlantisJfapTest extends WorldStubForTests {
             assertTrue(ourScore < 0, "the simulated fight goes against our marines");
 
             // The relative form is the documented "them vs us" ratio, > 1
-            // meaning the enemy is stronger. Measured: 2.46 with Brood War
-            // numbers, where the placeholder pair gave 2.25 - a Marine has 45
-            // hit points rather than 40 and a Hydralisk 80 hit points with 8
-            // damage at 5 tiles rather than 10 damage at 4.
+            // meaning the enemy is stronger. Measured: 2.25 - four Marines
+            // (40 hit points each) against five Hydralisks (80 hit points, 10
+            // damage at 4 tiles base; Grooved Spines takes them to 5).
             //
             // The old assertion compared our score with the hydra's *own*
             // score, which only meant something under the heuristic evaluator
             // that combatEvalAbsolute() no longer calls: the two numbers come
             // from opposite perspectives and are not on a common scale.
-            assertEquals(2.46, marine.eval(), 0.1, "hydras are about twice as strong");
+            assertEquals(2.25, marine.eval(), 0.1, "hydras are about twice as strong");
 
             // Sanity check that both views agree (measured 0.44, the
             // reciprocal): asking the hydra tells the same story.

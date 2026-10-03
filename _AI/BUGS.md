@@ -98,42 +98,44 @@ documented in code with a comment. The closure goes into the commit message.
   should be asserted somewhere. The first is safer; the second documents the
   coupling. Either way the invariant deserves a name and a test.
 
-> Fixed entries (B-3, B-5, B-7, B-10, B-11–B-16) were removed per the file's own
-> rule — the git history is the archive. Numbers are never reused, so the next
-> entry after B-16 is B-17.
+> Fixed entries (B-3, B-5, B-7, B-10, B-11–B-17) were removed per the file's
+> own rule — the git history is the archive. Numbers are never reused, so the
+> next entry after B-18 is B-19.
+
+## B-18 — the combat evaluator only sees the opening of a long fight
+
+- **Where:** `AUnit.eval()` -> `AtlantisJfap` (a ~60-frame simulation),
+  reached from
+  `CombatEvaluatorTest.fourMarinesAgainstOneSunkenColonyScoresAboutEven`.
+- **Measured:** four Marines (40 hit points, 6 damage, 4 tiles) starting
+  inside their own reach of a lone Sunken Colony (300 hit points, 40 damage a
+  shot, 7 tiles) score `eval() = 0.98` - about even, a hair our way.
+- **Over a full fight the colony wins that damage race.** Four 40-point
+  Marines put ~20 a volley into 300 hit points (about fifteen volleys); the
+  colony one-shots a Marine a shot and needs four shots. The marines are all
+  dead around frame 130 having dealt about half of what the colony needs -
+  and that is the *kind* variant, with no approach under fire. The 60-frame
+  window only ever sees the opening exchange, where the marines are still at
+  full strength, so it reports even.
+- **Why it matters:** `eval()` is what `weAreStronger()`, the fight/retreat
+  decisions and `CombatEvaluator` all read, and every one of them treats
+  ~1.0 as "safe to engage". A doctrine that reads a truncated window as a
+  won fight is expensive, and it is invisible: nothing crashes, the bot just
+  walks in.
+- **How to settle it:** either score the projected outcome (extend the window
+  past the longest relevant kill time, or extrapolate), or teach the callers
+  that `eval ~ 1` against defensive buildings means "undecided, not safe".
+  Until then the number is pinned in the test, so touching the horizon fails
+  the test and asks for the claim back.
+- **History:** this entry replaces B-17, whose premise ("the evaluator rates
+  marines below a sunken they beat") was measured with a fiction table that
+  had the colony at 150 hit points with a 6-damage, 2.5-tile tentacle. A
+  weaker colony scoring *worse* for us should have smelled; with engine data
+  the same scenario gives 0.98. The defect was in the data, not the model.
 
 ## How to add an entry
 
 ```
-## B-17 — the combat evaluator rates four Marines below one Sunken Colony
-
-- **Where:** `AUnit.eval()` -> `AtlantisJfap` (a 60-frame simulation), reached
-  from `CombatEvaluatorTest.fourMarinesLoseToOneSunkenColonyInThisEvaluator`.
-- **Measured:** four Marines (45 hit points each, 6 damage, 4 tiles) against a
-  lone Sunken Colony (150 hit points, one armour, 6 damage, 2.5 tiles) gives
-  `eval() = 2.1705` - the evaluator says the Marines lose by more than two to
-  one.
-- **In the game they win.** Four Marines put about 20 damage per volley into a
-  150-point building with one armour: roughly eight volleys, during which the
-  Sunken returns 6 damage a shot at one Marine at a time. Losing two Marines to
-  kill one defensive building is a trade Terran takes.
-- **What is *not* established:** which part of the model is wrong. `eval()` is a
-  simulation, not the old `Evaluate` heuristic, so the flat "defensive building
-  present" bonus and the 1.3 military-building multiplier are not the cause. The
-  candidates are the simulation's damage model, `AtlantisJfapModifier`'s
-  building handling, or the tentacle's numbers - and the tentacle is one of the
-  entries this project transcribed by hand (`NEXT.md` #29), so it cannot be
-  ruled out from here either.
-- **Why it matters:** `eval()` is what `weAreStronger()`, the fight/retreat
-  decisions and `CombatEvaluator` all read. A doctrine that turns down a won
-  fight is expensive, and it is invisible: nothing crashes, the bot just declines
-  to attack.
-- **How to settle it:** print the simulation's per-unit contribution for this one
-  matchup and compare it with the arithmetic above; then either correct the model
-  or, if the model is right and the doctrine is wrong, say so in a test name.
-  Until then the number is pinned in the test, so fixing the evaluator fails the
-  test and asks for the claim back.
-
 ## B-<n> — <one-line symptom>
 
 - **Where:** file:line

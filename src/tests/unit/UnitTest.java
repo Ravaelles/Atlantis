@@ -21,10 +21,10 @@ public class UnitTest {
      * Counts of the sample world built by {@link #generateUnits(boolean)}.
      *
      * <p>Six ground units - Zealot, Dragoon, SCV, Siege Tank in tank mode,
-     * Siege Tank in siege mode, and the Vulture spider mine, which counts as real
-     * only because {@code bwapi.UnitType.isInvincible()} is placeholder data -
-     * and five flying ones: Carrier, Dropship, Scourge, Mutalisk, Overlord.
-     * Ground + air adds up to {@code REAL_UNITS} = 11.</p>
+     * Siege Tank in siege mode, and the Vulture spider mine, which
+     * {@code isRealUnit()} does not exclude (only the combat-unit filters
+     * do) - and five flying ones: Carrier, Dropship, Scourge, Mutalisk,
+     * Overlord. Ground + air adds up to {@code REAL_UNITS} = 11.</p>
      */
     public static int REAL_UNITS = 11;
     public static int GROUND_UNITS = 6;

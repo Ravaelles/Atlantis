@@ -287,9 +287,11 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(dragoon.canAttackGroundUnits());
         assertTrue(dragoon.canAttackAirUnits());
         assertTrue(dragoon.hasAnyWeapon());
-        // 6 tiles: the Phase Disruptor reaches 192 px. The engine placeholder
-        // answered 128 px, the same fiction the bot's OurDragoonRange used.
-        assertEquals(6.0, dragoon.airWeaponRange(), 0.001);
+        // 4 tiles in the stub world: the Phase Disruptor's base reach is
+        // 128 px, and nothing here researches Singularity Charge (which takes
+        // it to 6). Upgrade-aware callers read OurDragoonRange instead; this
+        // getter answers the weapon's own numbers.
+        assertEquals(4.0, dragoon.airWeaponRange(), 0.001);
 
         FakeUnit observer = fake(AUnitType.Protoss_Observer);
         assertFalse(observer.canAttackGroundUnits());
@@ -355,11 +357,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertEquals(0, unit.woundHp());
         assertEquals(0.0, unit.woundPercent(), 0.001);
 
-        // A Marine has 45 hit points, so half of it is 22 and "half health" is
-        // 48%, not 50%. The engine placeholder answered 40, which divided evenly
-        // and made this look like a rounding question. The percentages are
-        // computed from maxHp here so the assertion pins the formula instead of
-        // the accident.
+        // A Marine has 40 hit points, so half of it is 20, exactly 50%. The
+        // percentages are computed from maxHp here so the assertion pins the
+        // formula instead of one unit's numbers.
         int woundedHp = maxHp / 2;
         unit.setHp(woundedHp);
         assertFalse(unit.isFullyHealthy());
@@ -760,8 +760,8 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit theirs = fake(AUnitType.Zerg_Zergling, 13);
         // Measured against the raw vectors: "facing us" compares their angle with
         // other -> ours (1.1 rad), "showing back" with ours -> other (0.95 rad).
-        double towardsUs = Vectors.fromPositionsBetween(ours, theirs).toAngle();
-        double awayFromUs = Vectors.fromPositionsBetween(theirs, ours).toAngle();
+        double towardsUs = Vectors.directionTowards(theirs, ours).toAngle();
+        double awayFromUs = Vectors.directionTowards(ours, theirs).toAngle();
 
         assertEquals(Math.PI, towardsUs, 0.001,
             "their unit is east of ours, so 'towards us' points west");

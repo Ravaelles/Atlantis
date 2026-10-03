@@ -31,12 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <h2>Why not absolute numbers</h2>
  * The previous version asserted values such as "ourEval ~= 0.73" or
- * "ourEval * 800 > enemyEval". Those numbers predate the Jfap-based evaluator:
- * measured today the same scenarios give 0.018, 7.56, 21.25, 55.03 and one
- * negative value. Absolute expectations on an unbounded score are not
- * maintainable, so they are documented in comments and the *relations* are
- * asserted instead. See `_AI/BUGS.md` (the threshold semantics that 228
- * production call sites rely on are still open).
+ * "ourEval * 800 > enemyEval". Those numbers predate the Jfap-based evaluator,
+ * and absolute expectations on an unbounded score are not maintainable anyway
+ * (a data change moves every one of them; the fiction-table episode proved
+ * it), so the absolute values live in per-test comments where they are
+ * measured and the *relations* are asserted instead. See `_AI/BUGS.md` (the
+ * threshold semantics that 228 production call sites rely on are still open).
  *
  * <p>Every test builds its own world explicitly: {@code world(1, ...)}
  * with no units silently creates the 22-unit sample world instead of calling
@@ -67,28 +67,22 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void fourMarinesLoseToOneSunkenColonyInThisEvaluator() {
+    public void fourMarinesAgainstOneSunkenColonyScoresAboutEven() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
         FakeUnit sunken = fake(Zerg_Sunken_Colony, 13);
 
         world(1, fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
                 marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
-            // In the game four Marines beat a lone Sunken Colony: it has 150 hit
-            // points and one armour, they have 45 each and about 20 damage a
-            // volley between them, so about eight volleys - during which the
-            // Sunken returns 6 damage a shot at one Marine at a time.
-            //
-            // The evaluator disagrees, which is a defect and not a question about
-            // the scenario: eval() is a 60-frame JFAP simulation of the fight
-            // (AUnit.freshCombatEvalRelative -> AtlantisJfap), so it is making a
-            // statement about the matchup rather than adding up two scores. What
-            // it gets wrong is not established yet - it could be the simulation's
-            // damage model, the building handling in AtlantisJfapModifier, or
-            // the tentacle's numbers, which this project still has no source for.
-            // Tracked as _AI/BUGS.md B-11 with the open question written down.
-            // The measured number is pinned so that fixing the evaluator fails
-            // this test and asks for the claim back.
-            assertEquals(2.1705, marine.eval(), 0.001, "measured with Brood War stats");
+            // Measured: ourEval = 0.9796 - about even, a hair our way. The
+            // marines start inside their own 4-tile reach, so the 60-frame
+            // window the simulation scores only sees the opening exchange.
+            // Over a full fight the colony wins that damage race (300 hit
+            // points against four 40-point Marines, one-shotting them at 40
+            // damage a shot), which the window cannot see - see _AI/BUGS.md
+            // B-18. The 2.17 this test used to pin came from a table that had
+            // the colony at 150 hit points with a 6-damage, 2.5-tile tentacle;
+            // a weaker colony scoring *worse* for us should have smelled.
+            assertEquals(0.98, marine.eval(), 0.01, "about even inside marine range");
         });
     }
 
@@ -143,19 +137,11 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
                 fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
-            // Measured: ourEval = 22.6682, enemyEval = 0.0500.
+            // Measured: ourEval far above 1, enemyEval far below, product within
+            // the reciprocal tolerance - the mixed group (three Marines and a
+            // Medic) scores like the plain groups, from opposite sides.
             assertTrue(marine.eval() > 1, "a medic in the group does not turn the fight around");
-
-            // The two directions do not multiply to 1 any more: 22.6682 * 0.05 =
-            // 1.133. eval() evaluates each side from its own point of view -
-            // AtlantisJfap scores the fight and then returns enemyScore/ourScore
-            // for our units and the other way round for theirs - and with Brood
-            // War numbers the two scorings no longer mirror each other. The
-            // plain marine-versus-hydralisk cases in this class still are
-            // reciprocal, so this is about the mixed group (three Marines and a
-            // Medic) rather than about the ratio itself. See _AI/BUGS.md B-1.
-            assertEquals(1.1334, marine.eval() * ((FakeUnit) marine.nearestEnemy()).eval(), 0.001,
-                "measured, no longer reciprocal");
+            assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
         });
     }
 

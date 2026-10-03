@@ -75,38 +75,35 @@ how B-13 and B-14 survived).
 
 ## Where the numbers come from (unit tests)
 
-Outside a game `bwapi` answers 0 or a plausible-looking fiction for every unit
-stat: hit points, shields, weapon range, weapon damage. A Marine had 40 hit
-points, a Sunken Colony 300 and a Creep Colony 400 - so a Dragoon preferred the
-Creep Colony to the Sunken, which is the opposite of the game - and
-`damageAmount()` was **0 for every weapon in the game**, which made every combat
-evaluation arithmetic on zeros.
+The vendored `bwapi` jar carries the real Brood War dataset: hit points,
+shields, weapon range, weapon damage. A Marine has 40 hit points, a Sunken
+Colony 300, a Tentacle 224 px of reach for 40 damage, a Dragoon 100 + 80 -
+every one of them cross-checked against BWAPI's own reference tests. An
+earlier `UnitStatsTable` overwrote some twenty of those with hand-transcribed
+fictions and the suite went green against them; the table is now a correction
+list (currently empty) and `UnitStatsTableTest` pins the engine values instead,
+so a jar swap fails loudly rather than drifting.
 
-`tests/fakes/UnitStatsTable` now supplies Brood War's numbers and
-`atlantis.units.UnitStats` is the seam: production asks it, and outside a game it
-is a plain delegation to the engine, so a real game reads the engine as before.
+`atlantis.units.UnitStats` is the seam: production asks it, and outside a game
+it is a plain delegation to the engine, so a real game reads the engine as
+before.
 
 ```
 UnitStats.hitPoints(AUnitType)      shields(...)      weaponRange(...)      weaponDamage(...)
-    -> UnitStats.Source installed by the harness, -1 for "unknown"
+    -> UnitStats.Source installed by the harness, -1 for "engine is right"
         -> falls back to bwapi.UnitType / bwapi.WeaponType
 ```
 
-`UnitStatsTableTest` guards it: the values are pinned, every type the sample world
-builds must have an entry or a documented exemption, every name in the table has
-to match a real `bwapi` enum constant (a typo there is invisible otherwise), and
-the amount still missing is asserted as an upper bound - **133 unit types and 74
-weapons** at the time of writing. Those keep the engine's answer on purpose:
-they are listed rather than guessed, because the table is transcribed by hand.
+`UnitStatsTableTest` guards it: engine sanity pins for every number the suite
+depends on, a ban on unjustified corrections, a name-resolution check (a typo
+in the table is invisible otherwise), and the installation check.
 `_AI/NEXT.md` #29 has the rest.
 
-What is still a placeholder, and pinned as such:
-
-- `UnitType.isFlyer()` names 22 types and no heroes (`NEXT.md` #33);
-- `UnitType.isInvincible()` is what makes a Vulture spider mine count as a real
-  unit in `UnitTest` (`NEXT.md` #32);
-- the Vulture's own weapon, the Scarab and the Spider Mine (`NOT_COVERED` in the
-  table, with the reason for each).
+Base values versus upgrades: the engine reports *unupgraded* stats. A Dragoon
+shoots 4 tiles until Singularity Charge (then 6) and a Hydralisk 4 tiles until
+Grooved Spines (then 5). Upgrade-aware callers (`OurDragoonRange`,
+`EnemyDragoonWeaponRange`) live separately; the stub world researches nothing,
+so tests measure base stats.
 
 Two harness lies were removed rather than papered over, and both were needed
 before any of the above could be measured:
@@ -137,10 +134,13 @@ have, and were corrected rather than made to pass:
   none for Sunken or Spore. The test is now
   `targetsTheNearestBuildingWhenNothingIsWounded`.
 - `CombatEvaluatorTest.fourMarinesBeatOneSunkenColony` expected the evaluator to
-  rate four Marines above a lone Sunken Colony, which is what happens in the
-  game. It does not: measured 2.17 the other way. The test is now
-  `fourMarinesLoseToOneSunkenColonyInThisEvaluator` and pins that number, and the
-  defect is `_AI/BUGS.md` B-17.
+  rate four Marines above a lone Sunken Colony. With engine data it scores
+  about even (0.98, inside marine range) - and over a full fight the colony
+  wins that damage race, which the simulation's ~60-frame window cannot see.
+  The test is now `fourMarinesAgainstOneSunkenColonyScoresAboutEven` and pins
+  that number; the horizon limitation is `_AI/BUGS.md` B-18. (An intermediate
+  version pinned 2.17 the other way, measured with a fiction table that had
+  the colony at 150 hit points with a 6-damage tentacle.)
 
 Two lists that used to be here are now green:
 
