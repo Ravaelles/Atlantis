@@ -17,7 +17,7 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Two scopes, two baselines — read this before trusting a green run
 
 **The default run only executes `tests.unit`.** The whole
-`tests.acceptance` package (world/squad/commander behaviour, ~119 tests) is
+`tests.acceptance` package (world/squad/commander behaviour, 127 tests) is
 **not** run by `bash scripts/run-tests.sh`. That was true for the whole
 architecture effort, and it hid a lot: acceptance tests were written against a
 broken harness and were never executed, so nobody saw 44 failures sitting in
@@ -27,14 +27,20 @@ is one command rather than a flag somebody has to remember.
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **105 passing / 0 failing** of 105 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **126 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **241 passing / 0 failing** of 241 (+4 skipped) |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **127 passing / 0 failing** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **242 passing / 0 failing** of 242 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
 fixture and a `--add-opens` JVM flag - see its javadoc). **The suite is green**:
-nothing is failing, and random order (seeds 7, 42, 99, 1234) gives the identical
-result.
+nothing is failing, and random order (seeds 7, 42, 99, 1234, three rounds each)
+gives the identical result.
+
+Run the seeds loop more than once. A single pass per seed is not enough evidence:
+an order-dependent failure that depends on a global being installed by an earlier
+class showed up in 2 of 6 runs and in none of the next 12, at the same seed either
+way. `--select-class` on the offending class reproduces that kind of thing
+deterministically, and is the first thing to try when a seed run is red.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
