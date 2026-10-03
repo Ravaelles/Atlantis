@@ -2,7 +2,7 @@ package tests.unit.world;
 
 import atlantis.core.world.UnitSnapshot;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.FakeFoggedUnit;
+import tests.fakes.FakeFoggedUnit;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 

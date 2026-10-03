@@ -4,7 +4,7 @@ import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
-import atlantis.units.fogged.FakeFoggedUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
@@ -58,8 +58,8 @@ public class PositionUtil {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
         }
-        else if (object1 instanceof FakeFoggedUnit) {
-            fromPosition = ((FakeFoggedUnit) object1).position().p();
+        else if (object1 instanceof AbstractFoggedUnit) {
+            fromPosition = ((AbstractFoggedUnit) object1).position().p();
             if (fromPosition == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
@@ -116,8 +116,8 @@ public class PositionUtil {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
             }
         }
-        else if (object2 instanceof FakeFoggedUnit) {
-            toPosition = ((FakeFoggedUnit) object2).position().p();
+        else if (object2 instanceof AbstractFoggedUnit) {
+            toPosition = ((AbstractFoggedUnit) object2).position().p();
         }
         else if (object2 instanceof AUnit) {
             toUnit = ((AUnit) object2).u();

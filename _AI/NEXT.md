@@ -76,13 +76,12 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness. **6 files left** (was 15),
+- **#28** Production code imports the test harness. **4 files left** (was 15),
   each needing an ADR-0001 port with the fakes as one adapter among several:
-  `AtlantisJfap` and `PositionUtil` (both `instanceof FakeUnit`),
-  `AUnit` and `AbstractFoggedUnit`
-  (`instanceof FakeUnit`), `AUnitOrders` (a fake order sink while `u()` is null),
-  plus `src/atlantis/units/fogged/FakeFoggedUnit`, which is a test double living
-  in the production tree at all.
+  `AtlantisJfap`, `PositionUtil` and `AUnit` (all `instanceof FakeUnit`) and
+  `AUnitOrders` (a fake order sink while `u()` is null). All four ask the same
+  kind of question - "is this a real game unit?" - so one predicate port may
+  serve all of them; the order of work is theirs to pick.
 
   The port shape is now written down twice - `UnitStats.Source` for unit and
   weapon data, and `Bullets.Source` for the bullets in flight:
@@ -95,11 +94,20 @@ of the data behind it, not a red test.
   // tests/fakes/FakeBullets.Source is the other adapter; setUp() installs it
   ```
 
-  Two ports are done, both of the same shape and both with the engine as the
+  Three ports are done, all of the same shape and all with the engine as the
   default: `Bullets.Source` (which bullets exist, and whether the engine object
-  behind one is still there - the two `Env.isTesting()` branches it used to have)
-  and `Regions.Source` (which region a tile is in, where the stub world has no
-  BWEM areas and answers one region per base). No call site changed in either.
+  behind one is still there - the two `Env.isTesting()` branches it used to have),
+  `Regions.Source` (which region a tile is in, where the stub world has no BWEM
+  areas and answers one region per base), and
+  `AbstractFoggedUnit.FoggedUnitFactory` (how a unit that went behind the fog is
+  wrapped). No call site changed in any of them.
+
+  The last one also moved `FakeFoggedUnit` out of `src/atlantis/units/fogged`
+  into `tests/fakes`: a test double no longer sits in the production tree, and the
+  `instanceof FakeUnit` branch that reached for it is now in the harness's own
+  adapter, where it belongs. `PositionUtil` was reading the fake type to get a
+  position; it now reads `AbstractFoggedUnit`, which is what the fake extends and
+  what the game's own fogged unit extends too.
 
   Gone earlier, and both were worse than an import:
   - `ClearCountCache` imported `tests.unit.helpers.ClearAllCaches` and **never

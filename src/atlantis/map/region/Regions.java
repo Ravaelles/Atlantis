@@ -1,6 +1,5 @@
 package atlantis.map.region;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.AMap;
 import atlantis.map.position.APosition;

@@ -21,7 +21,7 @@ import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.FakeFoggedUnit;
+import tests.fakes.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.AConsole;
 import atlantis.util.Options;
@@ -90,6 +90,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // fake list (see atlantis.units.attacked_by.Bullets.Source).
         tests.fakes.FakeBullets.installAsSource();
         tests.fakes.FakeRegion.installAsSource();
+
+        // A unit that goes behind the fog is wrapped by the harness, not by an
+        // instanceof check in production (AbstractFoggedUnit.FoggedUnitFactory).
+        FakeFoggedUnit.installAsFactory();
 
         clearCaches();
 

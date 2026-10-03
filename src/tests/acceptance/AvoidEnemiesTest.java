@@ -6,7 +6,7 @@ import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.fogged.FakeFoggedUnit;
+import tests.fakes.FakeFoggedUnit;
 import atlantis.util.Angle;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;

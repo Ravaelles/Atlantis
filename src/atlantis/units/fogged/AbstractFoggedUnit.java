@@ -12,7 +12,6 @@ import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
-import tests.fakes.FakeUnit;
 
 import java.util.TreeMap;
 
@@ -48,10 +47,34 @@ public class AbstractFoggedUnit extends AUnit {
         }
     }
 
+    /**
+     * How a unit that went behind the fog is wrapped.
+     *
+     * <p>In a game it is {@link FoggedUnit#from(AUnit)}, built from the engine
+     * object. A unit
+     * that has no engine object behind it - a test double - cannot be, which is
+     * why this used to be an {@code instanceof FakeUnit} branch here, with the
+     * fake subclass living in the production tree. Now the wrapping is a port:
+     * production installs nothing and gets {@code FoggedUnit}, the harness
+     * installs a factory that answers with its own subclass, and the production
+     * tree stops knowing what a fake is.</p>
+     */
+    public interface FoggedUnitFactory {
+        AbstractFoggedUnit wrap(AUnit unit);
+    }
+
+    private static FoggedUnitFactory factory = FoggedUnit::from;
+
+    public static void useFactory(FoggedUnitFactory newFactory) {
+        factory = newFactory;
+    }
+
+    public static void useGameFactory() {
+        factory = FoggedUnit::from;
+    }
+
     public static AbstractFoggedUnit from(AUnit enemyUnit) {
-        return enemyUnit instanceof FakeUnit
-            ? FakeFoggedUnit.fromFake((FakeUnit) enemyUnit)
-            : FoggedUnit.from(enemyUnit);
+        return factory.wrap(enemyUnit);
     }
 
     // =========================================================

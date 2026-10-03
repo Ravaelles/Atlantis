@@ -1,14 +1,34 @@
-package atlantis.units.fogged;
+package tests.fakes;
 
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
-import tests.fakes.FakePlayer;
-import tests.fakes.FakeUnit;
+import atlantis.units.fogged.AbstractFoggedUnit;
+import atlantis.units.fogged.FoggedUnit;
 
 /**
- * Used only in tests.
+ * The harness's "unit that went behind the fog": it has no engine object to read
+ * a position from, so it answers from the fake it was built on.
+ *
+ * <p>This class used to live in {@code src/atlantis/units/fogged}, which made the
+ * production jar ship a test double and forced
+ * {@code AbstractFoggedUnit.from()} to branch on {@code instanceof FakeUnit}.
+ * Both are gone: the wrapping is a port
+ * ({@link AbstractFoggedUnit.FoggedUnitFactory}) and this file is a test again.</p>
  */
 public class FakeFoggedUnit extends AbstractFoggedUnit {
+
+    /**
+     * Makes this class the answer to {@code AbstractFoggedUnit.from(...)} here.
+     * A unit that does have an engine object still gets the game's own fogged
+     * unit - the branching that used to sit in production now sits here, with the
+     * fakes.
+     */
+    public static void installAsFactory() {
+        AbstractFoggedUnit.useFactory(unit ->
+            unit instanceof FakeUnit
+                ? fromFake((FakeUnit) unit)
+                : FoggedUnit.from(unit));
+    }
 
 //    protected FakeFoggedUnit() {
 //        super(null);
@@ -40,7 +60,11 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
             _lastType = ((FakeUnit) unit).rawType;
         }
         else if (unit instanceof AbstractFoggedUnit) {
-            _lastType = ((AbstractFoggedUnit) unit)._lastType;
+            // type() rather than the protected field: this class no longer lives
+            // in the same package as AbstractFoggedUnit, so it has no access to
+            // a protected member through a base-typed reference. type() is what
+            // callers read anyway.
+            _lastType = ((AbstractFoggedUnit) unit).type();
         }
     }
 
