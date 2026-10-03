@@ -17,11 +17,22 @@ public class UnitTest {
 //    public static int OUR_GROUND_UNITS = 2;
 //    public static int OUR_AIR_UNITS = 2;
 
+    /**
+     * Counts of the sample world built by {@link #generateUnits(boolean)}.
+     *
+     * <p>Two of these were calibrated against a harness that said a Protoss
+     * Dragoon is not a flying unit. With the real flyer set ground is 5 (Zealot,
+     * SCV, Siege Tank in tank mode, Siege Tank in siege mode, and the Vulture
+     * spider mine, which counts as real here because
+     * {@code bwapi.UnitType.isInvincible()} is placeholder data) and air is 6
+     * (Dragoon, Carrier, Dropship, Scourge, Mutalisk, Overlord) - ground + air
+     * still adds up to {@code REAL_UNITS}.</p>
+     */
     public static int REAL_UNITS = 11;
-    public static int GROUND_UNITS = 6;
+    public static int GROUND_UNITS = 5;
     public static int BUILDINGS = 5;
     public static int COMBAT_BUILDINGS = 5;
-    public static int AIR_UNITS = 5;
+    public static int AIR_UNITS = 6;
     public static int SPELLS = 2;
 
     //    public static int NEUTRAL_UNITS = 5;

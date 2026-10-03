@@ -132,7 +132,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     /**
      * Get the current unit action.
      * Added to support CherryVis integration.
-     * 
+     *
      * @return The current unit action
      */
     public Action getUnitAction() {
@@ -1600,8 +1600,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * Returns true for flying Terran building.
      */
     public boolean isLifted() {
-        if (u == null) return false;
         if (!We.terran()) return false;
+        if (u == null) return false;
         return u.isLifted();
     }
 
@@ -1831,7 +1831,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
 
         Integer time = cacheInt.get(cacheKey);
-        
+
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) {
 //            System.err.println("ATTACK_UNIT time = " + time + " / " + (A.now() - time));
 //            System.out.println("------------------");

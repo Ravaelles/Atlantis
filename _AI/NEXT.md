@@ -27,49 +27,47 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   `ATargetingTest`**, and **blocked on missing engine data** (see #29). The five
   retreat failures are gone; `ChokeTest.distToChokes` turned out to be the
   harness defect of `_AI/BUGS.md` B-15, not a choke bug.
-- **#29** The test harness has **no unit-type data at all**, so every test that
-  depends on unit attributes measures a fiction. Measured: with
-  `bwapi.UnitType` read straight from the jar, `isFlyer()` is **false for every
-  single type** (a Protoss Dragoon is a ground unit), hit points are wrong
-  (marine 40, sunken colony 300, marine should be 45/150), and weapon ranges are
-  placeholders (Dragoon 128 px = 8 tiles instead of 6). `UnitType` reads those
-  from static arrays that a BWAPI client fills from the running game, and there
-  is no client - and no data file to load them from - in a test. That is why
-  `ATargetingTest` cannot pass: its subject is air-vs-ground targeting.
-  **The six failures are not about air.** They are Creep Colony over Sunken
-  Colony, Bunker over Marine, Drone over Creep Colony and one Hydralisk distance
-  tie - i.e. they need `isBuilding`, hit points and eval, all placeholders. So
-  fixing `isFlyer` cannot fix them, and `AUnitType.isAir()` *is* `ut.isFlyer()`
-  (so is `AUnit.isFlying()` = `isAir() || isLifted()`, which already exists):
-  there is no alternative call that returns the truth here.
-  Attempts and measurements, so nobody repeats them:
-  - Air-only table (the 23 SC1 flyers listed explicitly in `AUnitType`):
-    `ATargetingTest` goes **6 -> 11 failures**, not down. Six new ones:
-    `targetsWorkers`, `doesNotTargetLarvas`, `itAllowsTargetingOverlords`,
-    `targetsCannonOverOtherBuildingsAndWorkers`,
-    `targetsDoesNotTargetTooFarHighTemplars`,
-    `targetsZerglingsOverSunkensWhenSiegingZerg`. Correct air makes the bot
-    behave differently than the calibrated expectations expect.
-  - Filling the arrays from a hand-written table of real stats *and* the
-    Flyer/Building/Worker flags: **10 failures instead of 6** - giving Cocoons
-    real hit points turned them into valid targets, and marking buildings
-    changed the building-vs-worker priority. The jar's placeholder data and the
-    suite's expectations were calibrated together.
-  - Flags only, no hit points: also 10 failures (a Nexus started winning over a
-    Photon Cannon).
-  - Real data *is* on this machine - `starcraft/STARDAT.MPQ`, `StarCraft.mpq`,
-    `BROODAT.MPQ`, `patch_rt.mpq` - so option (a) needs an extractor, not a
-    game. `mpyq` cannot read those archives (no listfile, hashed lookup fails);
-    PyMS + StormLib, or a small dumper linked against the already-built
-    `libOpenBWData.so`, would. That is the one route on which today's
-    expectations survive unchanged, so it is the recommended next step.
-  So the choice is: (a) get real unit-type data - run a game with a patched
-  client that dumps `UnitTypeContainer`, or point the harness at a data file
-  from scbw/OpenBW; or (b) keep a maintained table **and** recalibrate every
-  expectation that depends on a unit attribute (ranges, hit points, air) - which
-  is most of `tests.unit`. Until then `ATargetingTest` stays red on purpose:
-  its expectations are right about the game and unreachable in this harness.
-  Do **not** "fix" them by rewriting the expectations to match the fake world.
+- **#29** The test harness has **no unit-type and no weapon-type data**, so every
+  test that depends on an attribute measures a fiction. Measured on 2026-10-03,
+  after the flyer set was made real (`AUnitType.isAirUnit()`): the suite is
+  **15 failing**, and every one of them is explained by the remaining
+  placeholders. What is wrong, by probe of `bwapi.UnitType` and
+  `bwapi.WeaponType` inside a test:
+
+  | field | harness value | StarCraft |
+  |---|---|---|
+  | `UnitType.isFlyer()` | false for everything (Scourge/Overlord excepted) | **fixed** in `AUnitType.isAirUnit()` |
+  | `UnitType.maxHitPoints()` | Marine 40, Bunker 350, Sunken Colony 300, Creep Colony 400, Overlord 200/0 shields | 45, 400, 150, 600, 200/**50** |
+  | `WeaponType.maxRange()` | Dragoon 128 px (4 tiles), Hydralisk 128, Lurker 192, Drone 32, Scourge 3 | 192 (6), 160 (5), 256 (8), 64 (2), 64 (2) |
+  | `WeaponType.damageAmount()` / `damageFactor()` | **0 for every weapon** (only `Psi_Blades` is special-cased to 16 in `WeaponUtil`) | real per-weapon values |
+  | `UnitType.isBuilding()`, `isWorker()` | correct | correct |
+
+  `BulletDamageAgainstTest` fails with "expected 5 but was 0" purely because
+  `WeaponUtil.damageNormalized()` multiplies two zeros.
+
+  **There is no authoritative source on this machine.** Checked three ways:
+  1. the jar itself - placeholders, as above;
+  2. `3rdparty/openbw/bwapi/Documentation/dox/unittypes.dox` - **identical**
+     values for all 205 comparable types, so it was generated from the same
+     uninitialised client;
+  3. `3rdparty/openbw/bwapi/bwapi/BWAPILIBTest/unitTypesTest.cpp` - also the
+     same values (`Assert_maxHitPoints(300)` for a Sunken Colony), i.e. BWAPI's
+     own reference tests encode the fiction.
+  The real numbers live only in `units.dat` / `weapons.dat` inside
+  `starcraft/STARDAT.MPQ`, and nothing here can read them: `mpyq` fails with
+  "Encryption is not supported yet" (StarCraft MPQs have encrypted tables),
+  PyMS is not installable from PyPI in a usable form, and StormLib is not on
+  the machine. Writing an MPQ reader with PKWARE-DCL decompression, or
+  installing StormLib, is the only way to get data that is not typed by hand.
+
+  So the remaining choice: (a) hand-write the table into the **harness**
+  (`tests/fakes`), not into production - roughly 8 hit-point values, 10 ranges
+  and 6 weapons - with a guard test that fails when a unit type used by a test
+  has no entry, and then re-check each of the 15 expectations against real
+  StarCraft behaviour; or (b) get StormLib and generate the table from
+  `units.dat`, which needs no judgement at all.
+  **Do not** "fix" a failure by rewriting the expectation to match the fake
+  world - `ATargetingTest`'s expectations are right about the game.
 - **#28** Production code imports the test harness: 15 files under
   `src/atlantis`/`src/main` import `tests.fakes.*` (`AUnit` -> `FakeUnit`,
   `Bullets` -> `FakeBullets`, `AbstractFoggedUnit`, `AUnitOrders` ->

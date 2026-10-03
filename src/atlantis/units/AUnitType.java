@@ -762,11 +762,11 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public boolean isAir() {
-        return ut.isFlyer();
+        return isAirUnit();
     }
 
     public boolean isGroundUnit() {
-        return !ut.isFlyer();
+        return !isAirUnit();
     }
 
     public WeaponType groundWeapon() {
@@ -1794,6 +1794,49 @@ public class AUnitType implements Comparable<Object> {
                 AUnitType.Terran_Science_Vessel,
                 AUnitType.Zerg_Overlord,
                 AUnitType.Zerg_Spore_Colony
+            )
+        );
+    }
+
+    /**
+     * The StarCraft 1 units that fly. Not read from {@link bwapi.UnitType} on
+     * purpose: that flag is filled by a running client, so it answers
+     * {@code false} for everything outside a game - measured, that was the whole
+     * reason {@code ATargetingTest} could not pass. See {@code _AI/NEXT.md} #29.
+     */
+    private boolean isAirUnit() {
+        return (boolean) cache.get(
+            "isAirUnit",
+            -1,
+            () -> is(
+                // Protoss: Dragoon and the whole shuttle/diplomat fleet.
+                AUnitType.Protoss_Dragoon,
+                AUnitType.Protoss_Arbiter,
+                AUnitType.Protoss_Arbiter_Tribunal,
+                AUnitType.Protoss_Carrier,
+                AUnitType.Protoss_Corsair,
+                AUnitType.Protoss_Interceptor,
+                AUnitType.Protoss_Observer,
+                AUnitType.Protoss_Scout,
+                AUnitType.Protoss_Shuttle,
+
+                // Terran: everything with wings, plus the flying Building.
+                AUnitType.Terran_Battlecruiser,
+                AUnitType.Terran_Dropship,
+                AUnitType.Terran_Science_Vessel,
+                AUnitType.Terran_Valkyrie,
+                AUnitType.Terran_Vulture,
+                AUnitType.Terran_Wraith,
+
+                // Zerg: the flying cast, including the units that start as eggs.
+                AUnitType.Zerg_Broodling,
+                AUnitType.Zerg_Devourer,
+                AUnitType.Zerg_Guardian,
+                AUnitType.Zerg_Infested_Terran,
+                AUnitType.Zerg_Mutalisk,
+                AUnitType.Zerg_Overlord,
+                AUnitType.Zerg_Queen,
+                AUnitType.Zerg_Scourge
             )
         );
     }
