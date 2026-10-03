@@ -169,6 +169,12 @@ and never from decompiling the game archives.
 3. **[JavaBWAPI/JBWAPI](https://github.com/JavaBWAPI/JBWAPI)** - the Java
    binding this project uses; authoritative for how types and weapons map to
    Java, not for the numbers themselves.
+- **Simulation dynamics** (how the game *plays*, as opposed to its numbers)
+  come from **[OpenBW/openbw](https://github.com/OpenBW/openbw)**: the
+  headless engine behind the E2E plan in `_AI/IDEA-E2E-TESTS.md` (scenario
+  and sweep tests run on it). It is a reimplementation - trust it for
+  dynamics, verify against real games occasionally (the parity games in that
+  plan), and never cite it for unit data (that is items 1-2 above).
 - **Not sources:** a number recalled from memory ("transcribed by hand") is a
   *hypothesis*, not data. It may enter a test or a table only with an
   independent source from the list above; otherwise the entry stays missing
