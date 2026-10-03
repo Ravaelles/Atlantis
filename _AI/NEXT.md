@@ -100,7 +100,7 @@ of the data behind it, not a red test.
   | inbound edges from production | **none** |
   | inbound edges from tests | 2 files: `tests/acceptance/AbstractWorldCreatingTest` (launches it) and `tests/fakes/FakeUnit` (borrows `AttackState`, `EngineUnitState`) |
   | `Env.isStarEngine()` | written by `AbstractWorldCreatingTest`, read by **nobody** - the one call site is commented out (`Select.java:93`) |
-  | tests that use it | 3 (`tests/acceptance/starengine/**`) |
+  | tests that use it | 3 (`tests/starengine/**`) |
   | what it imports from the harness | `tests.fakes.FakeUnit` (its input model), `tests.acceptance.AbstractWorldCreatingTest` (the launcher) |
 
   Options, with what the measurement says about each:
@@ -190,13 +190,16 @@ of the data behind it, not a red test.
 
 ## Scenario E2E (stub tier - runs today)
 
-- **#34** Real-opponent follow-ups for the stub-tier scenarios. Both twins
-  are done and pinned: `FourPoolDefenseTest` (6 lings from x=26: cannon
-  ~150, zealot ~250, nexus ~880, probes never engage, BUGS.md B-19) and
-  `NinePoolDefenseTest` (8 lings from x=32: cannon ~163, zealot ~214, nexus
-  ~631, B-19 reproduces). Remaining: real opponents (Steamhammer /
-  UAlbertaBot / scripted rusher) once the runner from
-  `_AI/IDEA-E2E-TESTS.md` can host Atlantis (its Stages 1-2). The scenarios
+- **#34** Real-opponent follow-ups for the stub-tier scenarios, now living in
+  `tests.e2e` (moved out of `tests.acceptance`, where they were invisible to any
+  tier selector). Both twins are done and pinned, re-measured from clean runs on
+  2026-10-03 after the B-19 fix: `FourPoolDefenseTest` (6 lings from x=26) **holds**
+  - lings dead frames 51-249, cannon on 10 hp after 11 strike rounds, nexus
+  untouched, one strike per probe where there used to be none - and
+  `NinePoolDefenseTest` (8 lings from x=32) still loses the base, but trades three
+  lings instead of two and lands six probe strikes instead of zero. Remaining:
+  real opponents (Steamhammer / UAlbertaBot / scripted rusher) once the runner
+  from `_AI/IDEA-E2E-TESTS.md` can host Atlantis (its Stages 1-2). The scenarios
   keep their forces, timing and assertions across that move; only the
   driver and the physics get swapped for the engine.
 

@@ -175,6 +175,33 @@ documented in code with a comment. The closure goes into the commit message.
   are pinned in the test, so touching the arbitration fails the test and
   asks for the claim back. Needs a game run before any production change
   counts as verified.
+- **Update (2026-10-03, scenario flip measured; game run still owed):** three
+  things, all in `WorkerDefence*`:
+  1. `WorkerDefenceHelpCannon.applies()` AND-ed
+     `laterInGameAgainstRangedEnemiesJustIgnore()` **positively** - the predicate
+     that says "ignore", un-negated, so the manager only ever fired after 9.5 game
+     minutes or against 5-6+ ranged enemies, i.e. never during the melee rush it
+     exists for. Now negated, as the name says.
+  2. `atlantis.units.BaseUnderAttack` is where "the attack is at home" is decided,
+     and `WorkerDefenceRun`, `WorkerDefenceFightCombatUnits` and
+     `WorkerHelpCombatUnitsFight` consult it: Run suppresses itself for a worker
+     that can help (artillery attackers - Reaver/Tank/Lurker - still outrule
+     holding ground), and the two fight managers lift the 300-frame run lockout
+     and the `id % 5` / `id % 3` skips while the base is being hit.
+  3. The scenarios' baselines were wrong, not just stale: they had been measured
+     with diagnostics inside the frame loop, which changes the outcome
+     (NOTES.md). Re-measured from a clean run, the 4pool **holds** (lings dead
+     between frames 51 and 249, cannon on 10 hp, nexus untouched, one strike per
+     probe where there used to be none) and the 9pool still loses the base but
+     trades three lings instead of two, with six probe strikes instead of zero.
+     Fixing the world harness was part of it: the stub world never removed dead
+     units from its unit lists, so corpses stayed selectable and the bot spent
+     frames attacking them.
+
+  What is left is the same as when this entry was written: a game run. The
+  stub world's physics is documented harness rules, not the game, so "the
+  scenario flips" is evidence that the arbitration changed, not that the bot
+  survives a real 4pool.
 
 ## How to add an entry
 

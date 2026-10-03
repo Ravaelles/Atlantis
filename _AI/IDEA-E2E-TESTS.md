@@ -39,20 +39,30 @@ tooling in the loop.
   `ProcessHelper` taskkill).
 - `src/starengine/` (~29 files: frame stepper, combat sim in `sc_logic/`,
   Swing canvas debug window, assets) plus its tests
-  (`tests/acceptance/starengine/`: `DragoonsVsDragoonsTest`,
+  (`tests/starengine/`: `DragoonsVsDragoonsTest`,
   `MoonFormationTest`, `bases/EnemyThirdBaseTest`) plus `isUsingEngine`
   branches in `AbstractWorldCreatingTest`, `FakeOnFrameEnd`, `FakeUnit`.
   Nothing outside `src/starengine` and `src/tests` imports it, but
   `scripts/build-bot-jar.sh` ships the package inside the game jar.
-- Tier 0 already runs: `tests.acceptance.e2e` (`ZombieAttacksNearestUnit` +
+- Tier 0 already runs: `tests.e2e` (`ZombieAttacksNearestUnit` +
   `ScenarioCombat`) plays the two scripted rush scenarios in the stub world
-  with documented harness physics, both green with their baselines pinned:
-  - `FourPoolDefenseTest` (6 lings from x=26): cannon falls ~150, zealot
-    ~250, nexus ~880, probes never engage (filed as BUGS.md B-19).
-  - `NinePoolDefenseTest` (8 lings from x=32, the 9pool twin, measured
-    2026-10-03): cannon ~163, zealot ~214, nexus ~631 - eight attackers kill
-    faster than six despite the later arrival - and B-19 reproduces (three
-    of four probes killed off at the very end, one escapes).
+  with documented harness physics, both green with their baselines pinned.
+  Baselines re-measured from a **clean** run on 2026-10-03 after the B-19 fix -
+  the first versions came from an instrumented run, which is not a baseline
+  (NOTES.md, "Scenario E2E probes are actuators, not sensors"):
+  - `FourPoolDefenseTest` (6 lings from x=26): **the defence holds**. The lings
+    die between frames 51 and 249, the cannon survives on 10 hit points after 11
+    strike rounds, the zealot never takes a hit, the nexus never loses one of its
+    1500 + 750, and each of the four probes lands exactly one strike - the
+    mechanism B-19 was about, which used to be zero strikes.
+  - `NinePoolDefenseTest` (8 lings from x=32, the 9pool twin): **the base still
+    falls**, and that is pinned on purpose - this scenario is about the mechanism.
+    The cannon trades three lings before falling at frame 192 (was ~163) and the
+    probes land six strikes between them (was none). The probes all die at the
+    end, which the assertions deliberately do not pin.
+  - The world harness now drops dead units from the unit lists, the way the
+    engine does. Without it every corpse stayed selectable for the rest of the
+    scenario, which is where "Probe AttackUnit got target.hp = 0" came from.
   Same forces/timing/assertions carry over to the OpenBW tiers below.
 - Stardust platform verified on this machine (2026-10-03): clean CMake build
   (`tests-steamhammer`, `tests-locutus`), `RushDefense.Steamhammer9PoolSpeed`
