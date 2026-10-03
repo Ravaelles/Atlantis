@@ -223,22 +223,3 @@ the first is already done.
   (`GAME_7D1C5E57`, `is_crashed: false`, zero exceptions, 51 units built);
   repeat after the next backlog round so `bots/AtlantisP` and `bots/AtlantisT`
   never lag behind the source.
-
-## Review 2026-10-03 — air/ground audit leftovers
-
-Sceptical pass over `feature/2025-12-t...feature/2026-10-ii` after the flyer
-fiction (Dragoon/Vulture/Broodling/Infested Terran treated as air). Fixed in
-this round: `isAirUnit()` now unions `ut.isFlyer()` (covers hero flyers in a
-real game), `hasBiggerWeaponRangeThan(Units)` compared ground-vs-air ranges,
-`isPurelyAntiAir()` listed the ground Goliath instead of the Devourer,
-`hasCloseRepairer()` had inverted air/ground thresholds,
-`CombatEvaluatorTest` names said "Beat" while asserting `eval > 1` (lose),
-`AvoidCombatBuildingsTest` comments said turrets/spores "cannot shoot at air"
-about a ground Dragoon (and copy-pasted "Dragoon" into the Wraith test).
-Verified: full suite 222/6 (same 6 `ATargetingTest` placeholders as #29),
-ArchUnit 7/7.
-
-- **#31** `ProtossRetreatTest.goonsVsCannons` pins no-retreat for 1v1..10v1
-  Dragoon-vs-Cannon while its own javadoc admits `eval` 0.3 (3x worse) and the
-  cannon outranges the dragoon. Retreat doctrine vs evaluator disagreement —
-  needs a design decision, not a threshold tweak.

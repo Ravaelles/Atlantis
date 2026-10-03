@@ -2078,9 +2078,9 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isOtherFacingThisUnit(AUnit otherUnit) {
         if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
 
-        Vector positionDifference = Vectors.fromPositionsBetween(this, otherUnit);
+        Vector pointingAtUs = Vectors.directionTowards(otherUnit, this);
 
-        return positionDifference.isAngleAlmostIdentical(otherUnit.getAngle());
+        return pointingAtUs.isAngleAlmostIdentical(otherUnit.getAngle());
     }
 
     /**
@@ -2098,18 +2098,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isOtherShowingBackToUs(AUnit otherUnit) {
         if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
 
-        Vector positionDifference = Vectors.fromPositionsBetween(otherUnit, this);
+        Vector pointingAwayFromUs = Vectors.directionTowards(this, otherUnit);
 
-        return positionDifference.angleDifference(otherUnit.getAngle()) <= 0.95;
+        return pointingAwayFromUs.angleDifference(otherUnit.getAngle()) <= 0.95;
     }
 
+    /**
+     * Is this unit pointing at {@code otherUnit}? Our own angle is compared with
+     * the direction that leads from us to it, within the engine's 1.1 rad
+     * window. This one asks about <b>us</b>; {@link #isOtherFacingThisUnit} asks
+     * about the other unit, from the other side.
+     */
     public boolean isFacing(AUnit otherUnit) {
         if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
         if (hasNoU() && !Env.isTesting()) return false;
 
-        Vector positionDifference = Vectors.fromPositionsBetween(otherUnit, this);
+        Vector pointingAtThem = Vectors.directionTowards(this, otherUnit);
 
-        return positionDifference.isAngleAlmostIdentical(this.getAngle());
+        return pointingAtThem.isAngleAlmostIdentical(this.getAngle());
     }
 
     /**

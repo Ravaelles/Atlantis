@@ -54,18 +54,6 @@ documented in code with a comment. The closure goes into the commit message.
   negative side score for fogged buildings, then decide whether a negative
   score is meaningful or a modelling artefact.
 
-## B-4 — `AUnit.isOtherUnitShowingBackToUs()` reads like its opposite
-
-- **Where:** `AUnit.isOtherUnitFacingThisUnit` / `isOtherUnitShowingBackToUs`.
-- **What they do:** both ask about the **other** unit's angle, but against
-  different reference directions — "is it facing us" within 1.1 rad of
-  other→this, versus "is it showing its back" within 0.95 rad of this→other.
-- **Why it matters:** reading the names as one question with one answer is how
-  the old `AUnitTest.facingLogic` ended up asserting angles that the
-  tolerances never produced. 46 call sites in production inherit the ambiguity.
-- **Pinned by:** `AUnitTest.facingUsesTheTolerancesOfTheEngine` and
-  `facingHelperAgreesWithTheRawVector`, which assert the real windows.
-
 ## B-8 — `APositionFinder` can still terminate the JVM
 
 - **Where:** `atlantis/production/constructions/position/APositionFinder.java:113`

@@ -35,9 +35,9 @@ public class ChokeToBlock {
 
 //        System.err.println("choke.center() = " + choke.center().toStringPixels());
 //        System.err.println("closerPoint = " + closerPoint.toStringPixels());
-//        System.err.println("vector = " + Vectors.fromPositionsBetween(choke.center(), closerPoint).normalizeTo(2.0).toString());
+//        System.err.println("vector = " + Vectors.directionTowards(closerPoint, choke.center()).normalizeTo(2.0).toString());
 
-        return Vectors.fromPositionsBetween(choke.center(), closerPoint).multiplyVector(vectorLength());
+        return Vectors.directionTowards(closerPoint, choke.center()).multiplyVector(vectorLength());
     }
 
     private static double vectorLength() {

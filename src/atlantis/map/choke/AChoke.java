@@ -151,7 +151,7 @@ public class AChoke implements HasPosition {
     }
 
     private void calculatePointsAB() {
-        Vector vector = Vectors.fromPositionsBetween(center(), firstPoint);
+        Vector vector = Vectors.directionTowards(firstPoint, center());
 
         pointA = center().translateByVector(vector.rotate(Angle.degreesToRadians(90)));
         pointB = center().translateByVector(vector.rotate(Angle.degreesToRadians(270)));

@@ -38,10 +38,16 @@ public class ProtossRetreatTest extends WorldStubForTests {
      * and still no retreat. The three "expect retreat" expectations this test
      * used to carry contradicted that rule, which is why it could not pass.</p>
      *
-     * <p>Whether that doctrine is right is a game question, not a unit-test
-     * question - a dragoon trades badly into a building that outranges it - so
-     * the rule is pinned as it is and the question is tracked in
-     * {@code _AI/NEXT.md}.</p>
+     * <p>This is a division of labor, not neglect: the same situation belongs
+     * to {@code ProtossCombatBuildingClose}, which fires for a lone ground
+     * unit near a cannon ({@code ShouldAvoidCannonAsProtoss} answers avoid
+     * when the chances look bad, and one dragoon is never "strong enough to
+     * attack") and moves it to a safety margin instead of routing the army.
+     * Retreat staying out is what keeps the two managers from fighting over
+     * the unit - pinned on the other side by
+     * {@code AvoidCombatBuildingsTest}. Whether standing off at the margin
+     * rather than leaving is right against a longer-ranged building is a game
+     * question, tracked separately in {@code _AI/BUGS.md} B-18.</p>
      */
     @Test
     public void goonsVsCannons() {
