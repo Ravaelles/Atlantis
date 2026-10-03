@@ -61,7 +61,11 @@ tooling in the loop.
 1. **Scenario tests** (`RushDefense`-style): fixed map + fixed seed, scripted
    or strategy-pinned opponent (Steamhammer 9PoolSpeed, a 4pool script),
    frame limit, assertions at the end. Deterministic, seconds-to-minutes.
-   This is the rush-defense answer.
+   This is the rush-defense answer. The opponent slot (`opponentModule`) fits
+   anything from a full bot down to a ~30-line suicide rusher (onFrame: every
+   combat unit attacks the nearest enemy) - the rusher is the *best* 4pool
+   oracle because its timing is exact, while a ladder bot "sometimes rushes".
+   Start with exactly two scenarios: 4pool and 9pool defense.
 2. **Sweeps** (`RunTwenty`-style): N full games on random maps/seeds vs a real
    bot, counting wins. A regression/balance signal, not a scenario. Slow;
    run before pushes and nightly.
@@ -107,9 +111,11 @@ New `scripts/run-e2e.sh <bot-jar> <opponent> <maps>`: build via
 `scripts/build-bot-jar.sh`, play fixed scenarios (Atlantis as Protoss vs
 Zerg rush on Python-like maps; Atlantis as Terran likewise), frame limit,
 then parse `~/.scbw/games/GAME_*/result.json` + logs into a verdict table
-(win/loss, survival frames, crash?). Record the first table as the baseline
-in `_AI/` (numbers, date, versions). Manual/periodic rhythm. Done when the
-same command reproduces the same table twice.
+(win/loss, units killed/lost, survival frames, crash?). Start with the two
+defense scenarios from §4 (4pool, 9pool). Record the first table as the
+baseline in `_AI/` (numbers, date, versions). Manual/periodic rhythm. Done
+when the same command reproduces the same table twice. The script also
+enforces replay retention (last 10 per suite, §7).
 
 ### Stage 2 — Atlantis hosted-game mode (the enabler for everything OpenBW)
 
@@ -162,11 +168,13 @@ not in this idea doc.
 
 ## 7. Metrics / assertion catalog (for scenario and sweep tests)
 
-Win/loss; survival frames vs frame limit; workers lost by frame N; static
-defense completed by frame N; scout arrival frame; first enemy tech seen;
-crash-free (process exit code, zero exceptions in `bot.log`); replay + log
-artefacts next to every verdict (copy the Stardust convention:
-`<Suite>_<Test>_<timestamp>_<PASS|FAIL>`).
+Win/loss; units killed and units lost totals per side; survival frames vs
+frame limit; workers lost by frame N; static defense completed by frame N;
+scout arrival frame; first enemy tech seen; crash-free (process exit code,
+zero exceptions in `bot.log`); replay + log artefacts next to every verdict
+(copy the Stardust convention: `<Suite>_<Test>_<timestamp>_<PASS|FAIL>`,
+retention: last 10 replays per suite, older deleted by the runner script -
+replays are already saved by default, the policy is the only new part).
 
 ## 8. Open questions (verify-first, not assume-first)
 
