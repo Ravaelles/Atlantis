@@ -26,13 +26,15 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 |
+| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 (+4 skipped) |
 | Acceptance | `bash scripts/run-acceptance-tests.sh` | **119 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **222 passing / 6 failing** of 229 |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **222 passing / 6 failing** of 228 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
-The 6 remaining failures are all in `tests.unit` and are listed below. Random
-order (seeds 7, 42, 99) gives the identical failure set.
+Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
+fixture and a `--add-opens` JVM flag - see its javadoc). The 6 failures are all
+in `tests.unit` and are listed below. Random order (seeds 7, 42, 99) gives the
+identical failure set.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
