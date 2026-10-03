@@ -144,3 +144,43 @@ by the language rule below.
 - A third-party tool installed to help (a package, a virtualenv) is a means, not
   a deliverable: do not add it to the repository and do not let the repository
   depend on it, unless the task is exactly about adding that dependency.
+
+## 9. StarCraft facts: source hierarchy (mandatory)
+
+Game numbers (hit points, shields, ranges, damage, cooldowns, behaviour) come
+from the list below, in order. They never come from memory - human or model -
+and never from decompiling the game archives.
+
+1. **The vendored `lib/JBWAPI-Rav.jar`.** This is the dataset the bot plays
+   real games with, so it is production truth, not a test double. When the jar
+   and anyone's memory disagree, the jar wins until a higher source says
+   otherwise. Probe it directly instead of quoting it from memory:
+   ```
+   CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
+   javac -cp "$CP" -d /tmp/opencode/probe Probe.java && java -cp "/tmp/opencode/probe:$CP" Probe
+   ```
+   where `Probe` prints `maxHitPoints/maxShields/isFlyer/groundWeapon/airWeapon`
+   for `UnitType` and `maxRange/damageAmount/damageFactor/damageType` for
+   `WeaponType`. Full procedure lives in `tests/fakes/UnitStatsTable`'s javadoc.
+2. **[bwapi/bwapi](https://github.com/bwapi/bwapi)** - the reference tests
+   `bwapi/BWAPILIBTest/unitTypesTest.cpp` and `weaponsTest.cpp` carry verified
+   per-type values (that file is 18k lines; read the `TEST_METHOD` for the type
+   in question, not the whole file). The `.dox` documentation is secondary.
+3. **[JavaBWAPI/JBWAPI](https://github.com/JavaBWAPI/JBWAPI)** - the Java
+   binding this project uses; authoritative for how types and weapons map to
+   Java, not for the numbers themselves.
+- **Not sources:** a number recalled from memory ("transcribed by hand") is a
+  *hypothesis*, not data. It may enter a test or a table only with an
+  independent source from the list above; otherwise the entry stays missing
+  and visible (the `UnitStatsTable` pattern: `-1` fallback plus a guard test).
+  Decompiling `STARDAT.MPQ`/`BROODAT.MPQ` is not a plan either: measured
+  standard header geometry but encrypted tables plus PKWARE-implode sectors
+  with no local tooling for either - a resource sink, not a next step.
+- **Every hand-maintained game-data table ships with a guard test**, following
+  `UnitStatsTableTest`: engine-value pins (a jar swap fails loudly instead of
+  drifting), a ban on unjustified entries, a name-resolution check, and an
+  installation check. A green suite against an unguarded hand table is not
+  evidence of anything.
+- Quantitative game-data claims in commit messages ("a tank reaches 5 and 6
+  tiles") must match the guard pins. If they do not, the claim is wrong, not
+  the pins - this exact inversion happened once and cost a full audit cycle.

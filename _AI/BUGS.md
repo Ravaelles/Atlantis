@@ -37,7 +37,9 @@ documented in code with a comment. The closure goes into the commit message.
 - **How to settle it:** not a test change. Needs a decision (ADR) whether the
   evaluator should be re-normalised to the documented scale, or the thresholds
   re-derived from a scenario sweep over the real evaluator. Do not "fix" it by
-  editing one threshold.
+  editing one threshold. Evidence first, decision second: the measurement
+  procedure is `_AI/work-orders/WO-B1-eval-evidence-sweep.md`, the draft to
+  fill is `DOCS/adr/0006-combat-eval-scale.md`.
 
 ## B-2 — additive Protoss tweaks can push `eval()` below zero
 

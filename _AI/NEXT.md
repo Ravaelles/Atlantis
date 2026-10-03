@@ -133,7 +133,9 @@ of the data behind it, not a red test.
 
 The full inventory is `DOCS/SELECT-CACHES.md` (46 entries, key → TTL → readers),
 generated rather than remembered. Three concrete starting points came out of it;
-the first is already done.
+the first is already done. The two behaviour-neutral ones have an executable
+procedure: `_AI/work-orders/WO-F-neutral-cache-cleanup.md` (the query service
+itself, #5, is design work and out of that order's scope).
 - `Select.clearCache()` never clears `cacheObject`, so
   `mainOrAnyBuildingPosition` lives purely on its 73-frame TTL. Decide whether
   that is an oversight before migrating anything.
@@ -206,6 +208,8 @@ the first is already done.
   The 267 and the 24 are structural - the Commander/Manager framework is
   unit-centric by design, so they are Stage E/H work, not a mechanical sweep.
   The 73 and the 66 are the mechanical ones; keep taking them smallest-first.
+  Executable procedure (one violation per commit, with traps and stop
+  rules): `_AI/work-orders/WO-13-mechanical-archunit-sweep.md`.
   Two traps, both paid for already:
   - A change must *remove* violations from one rule, not move them into
     another: moving `ScoutManager` into `atlantis.units.special` compiled,
