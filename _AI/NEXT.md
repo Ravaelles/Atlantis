@@ -105,11 +105,29 @@ of the data behind it, not a red test.
 ## Stage E — read model (remaining)
 
 - **#3** Migrate production readers of `FoggedUnit` to `UnitSnapshot`.
-  Deliberately skipped before because a pure delegation switch has no value
-  (same object, same values, worse GC). Do it only where it changes a
-  decision, e.g. code that needs the *last known* vs *current* distinction or
-  that can now be expressed without fog-awareness. List candidate sites
-  first, migrate the ones with a real payoff, and record the rest as rejected.
+  Candidate sites inventoried (24 files reference fogged types; most are
+  lifecycle, not reading). Verdicts:
+  - MIGRATE (need the last-known-vs-current distinction, real payoff):
+    `ProcessAttackUnit:56` (attack a last-known position without fog
+    awareness), `BuilderAvoidEnemies:27` (avoid a position), `DeadMan:25`
+    (a fogged unit cannot be a dead man - exactly what `hpKnown=false`
+    says), `AFocusPoint:111` (focus on a last-known position),
+    `DoAvoidEnemies:30` (filter on position-known, selection-level),
+    `AtlantisJfap.isValidUnit:71` (validity gate could be "has a position
+    snapshot" - borderline, decide at migration time).
+  - REJECTED (same object, same values, worse GC): `AUnitOrders:233,261`
+    (order issuance needs the target entity itself), `Selection:223,296`
+    and `Units.addFoggedUnits` (live-collection plumbing),
+    `PositionUtil:50` (pure position delegation),
+    `MissionAttackFocusPoint:125` (focus needs the entity identity),
+    `AAdvancedPainter` (debug reads everything anyway),
+    `OffensiveTurrets:41` (commented out).
+  - NOT #3 (lifecycle - dies with the World registry, Stage E core):
+    `AUnit:173-197` constructors, `UnitsArchive:141`, `EnemyUnits*`,
+    `NeutralUnits`, `OnUnitMorph:31`.
+  Migrate the first group when the World registry owns lifecycle; until
+  then a delegation switch has no value. This item closes with those
+  migrations, not before.
 
 ## Stage F — cache purge
 
