@@ -1,7 +1,6 @@
 package atlantis.information.decisions;
 
 import atlantis.game.A;
-import atlantis.production.dynamic.zerg.units.ProduceZerglings;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
@@ -34,14 +33,6 @@ public class Decisions {
 //            }
 //        );
 //    }
-
-    public static boolean shouldMakeZerglings() {
-        return cache.get(
-            "shouldMakeTerranBio",
-            97,
-            () -> ProduceZerglings.zerglings()
-        );
-    }
 
     public static boolean isEnemyGoingAirAndWeAreNotPreparedEnough() {
         return cache.get(
