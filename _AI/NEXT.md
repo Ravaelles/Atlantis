@@ -335,7 +335,37 @@ itself, #5, is design work and out of that order's scope).
   `AGame` syncs the field every frame - and the base `useFakeTime` stubs the
   mock for world-free tests too. No `ClockPort`, no new abstraction; the field
   stays as a write-only leftover until a follow-up deletes it with the two
-  test setup writes. `GameQuery` and `MapPort` are still open.
+  test setup writes.
+
+  **`MapPort` is in, for the tile questions.** `atlantis.map.MapTiles.Source`
+  answers four questions the map answers in a game (`isWalkable`, `isExplored`,
+  `isVisible`, `isBuildable`), the engine is the default and
+  `tests.fakes.FakeMapTiles` is the other adapter. `HasPosition` used to write
+  each of them as its own `if (Env.isTesting()) return ...` branch - the stub
+  world's rules were spelled out in the core - and the five branches are now one
+  file, with no call site changing behaviour. Two things fell out: the
+  core no longer reaches for `Select` to decide whether a tile is free (one fewer
+  frozen violation), and `APosition.TESTING_EXPLORED`, a public static the core
+  carried for one test, moved to the adapter that returns it - where setUp resets
+  it, which also fixed a leak in which `BaseLocationsTest` left the map "explored"
+  for every test that ran after it.
+
+  Two of the same question are still asked outside the port, both without a
+  harness answer written down, which is why they were left rather than folded in:
+  `HasPosition.isConnected()` (`Atlantis.game().isVisible`) and
+  `map/wall/LocationValidator` (`Atlantis.game().isBuildable`). Deciding what the
+  stub world should say for those is a decision, not a mechanical move.
+
+  `GameQuery` is still open, and the biggest remaining `Env` leak is the other
+  side of the same coin: **47 `Env.isTesting()` call sites in 38 files** under
+  `src/atlantis` (51 lines including the commented-out ones), spread one or two
+  per file across `combat`, `units`, `map`, `production` and `information`. A port for it is easy and would be worth little on its own -
+  `Env` is a static flag holder, so a port over it is indirection, not inversion.
+  It is worth doing only together with a real question, the way `MapTiles` was:
+  find a subsystem that asks the game something the stub world has to answer, and
+  put the environment flag in the same port.
+
+
 
 ## Housekeeping
 
