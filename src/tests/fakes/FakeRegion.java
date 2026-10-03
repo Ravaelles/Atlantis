@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegion;
+import atlantis.map.region.Regions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,6 +24,14 @@ public class FakeRegion extends ARegion {
     }
 
     // =========================================================
+
+    /**
+     * Installs the stub world's answer to "which region is this tile in", so
+     * {@link Regions} does not have to know that fakes exist.
+     */
+    public static void installAsSource() {
+        Regions.useSource((tx, ty) -> getByTxTy(tx, ty));
+    }
 
     public static ARegion getByTxTy(int tx, int ty) {
         Positions<ABaseLocation> basePositions = new Positions<>();

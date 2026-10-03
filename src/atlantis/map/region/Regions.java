@@ -11,13 +11,44 @@ import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwem.Area;
-import tests.fakes.FakeRegion;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Regions {
     private static Cache<Object> cache = new Cache<>();
+
+    /**
+     * Which region a tile belongs to.
+     *
+     * <p>In a game the answer comes from BWEM: {@code AMap.getMap().getArea(...)}
+     * and {@link ARegion#create}. The stub world has no areas at all - every
+     * inherited method that touches one would throw - so the harness answers with
+     * one region per base location ({@code tests.fakes.FakeRegion}). A port says
+     * which of those two is in charge, so this class no longer imports the fake
+     * and the jar no longer has to ship it.</p>
+     */
+    public interface Source {
+        /** @param tx tile x, @param ty tile y. */
+        ARegion regionAt(int tx, int ty);
+    }
+
+    private static Source source = null;
+
+    public static void useSource(Source newSource) {
+        source = newSource;
+    }
+
+    public static void useEngine() {
+        source = null;
+    }
+
+    private static Source source() {
+        return source != null ? source : EngineRegionsSource;
+    }
+
+    private static final Source EngineRegionsSource = (tx, ty) ->
+        ARegion.create(AMap.getMap().getArea(APosition.create(tx * 32, ty * 32).toTilePosition()));
 
     // =========================================================
 
@@ -134,9 +165,7 @@ public class Regions {
         try {
             if (position.getX() >= 31000) return null;
 
-            if (Env.isTesting()) return FakeRegion.getByTxTy(position.getX() / 32, position.getY() / 32);
-
-            ARegion region = ARegion.create(AMap.getMap().getArea(position.toTilePosition()));
+            ARegion region = source().regionAt(position.getX() / 32, position.getY() / 32);
             return region;
         } catch (Exception e) {
 //            if (!A.isUms() || Have.base()) {

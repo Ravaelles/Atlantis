@@ -76,10 +76,10 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness. **7 files left** (was 15),
+- **#28** Production code imports the test harness. **6 files left** (was 15),
   each needing an ADR-0001 port with the fakes as one adapter among several:
   `AtlantisJfap` and `PositionUtil` (both `instanceof FakeUnit`),
-  `Regions` (a fake region while testing), `AUnit` and `AbstractFoggedUnit`
+  `AUnit` and `AbstractFoggedUnit`
   (`instanceof FakeUnit`), `AUnitOrders` (a fake order sink while `u()` is null),
   plus `src/atlantis/units/fogged/FakeFoggedUnit`, which is a test double living
   in the production tree at all.
@@ -95,10 +95,11 @@ of the data behind it, not a red test.
   // tests/fakes/FakeBullets.Source is the other adapter; setUp() installs it
   ```
 
-  `Bullets` is the first port done: its two `Env.isTesting()` branches (the fake
-  bullet list, and the "does the engine object still exist" check that fake
-  bullets cannot answer) became two methods on that interface, with the engine
-  path as the default. No call site changed.
+  Two ports are done, both of the same shape and both with the engine as the
+  default: `Bullets.Source` (which bullets exist, and whether the engine object
+  behind one is still there - the two `Env.isTesting()` branches it used to have)
+  and `Regions.Source` (which region a tile is in, where the stub world has no
+  BWEM areas and answers one region per base). No call site changed in either.
 
   Gone earlier, and both were worse than an import:
   - `ClearCountCache` imported `tests.unit.helpers.ClearAllCaches` and **never

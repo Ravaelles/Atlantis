@@ -89,6 +89,7 @@ public class AbstractTestWithUnits extends UnitTest {
         // Bullets ask a port where the bullets are, instead of importing the
         // fake list (see atlantis.units.attacked_by.Bullets.Source).
         tests.fakes.FakeBullets.installAsSource();
+        tests.fakes.FakeRegion.installAsSource();
 
         clearCaches();
 
