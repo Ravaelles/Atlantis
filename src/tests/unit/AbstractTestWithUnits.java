@@ -26,6 +26,8 @@ import atlantis.units.select.BaseSelect;
 import atlantis.util.AConsole;
 import atlantis.util.Options;
 import atlantis.util.cache.Cache;
+import tests.fakes.UnitStatsTable;
+
 import bwapi.Game;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
@@ -79,6 +81,11 @@ public class AbstractTestWithUnits extends UnitTest {
         Env.markIsTesting(true);
         Env.readEnvFile(new String[]{});
 
+        // Outside a game bwapi.UnitType answers 0 hit points for every type, so
+        // the harness supplies Brood War's own numbers. Installed before anything
+        // can cache AUnitType.maxHp(). See tests/fakes/UnitStatsTable.
+        UnitStatsTable.install();
+
         clearCaches();
 
         (new MockEverything(this)).mockEverything();
@@ -116,6 +123,19 @@ public class AbstractTestWithUnits extends UnitTest {
      */
     public Race initEnemyRace() {
         return MockEverything.defaultEnemyRaceForTests();
+    }
+
+    /**
+     * Which race the enemy is in for one world. Set it in the test method, next
+     * to the units, and it applies from that moment on - the {@code EnemyRace}
+     * and {@code Enemy} mocks read it on every call, so it can change between
+     * frames the way the supply does. {@code null} means "whatever
+     * {@link #initEnemyRace()} says", which is the class-wide default.
+     */
+    protected Race enemyRaceInWorld = null;
+
+    public Race currentEnemyRace() {
+        return enemyRaceInWorld != null ? enemyRaceInWorld : initEnemyRace();
     }
 
     protected void setUpTestLogic() {

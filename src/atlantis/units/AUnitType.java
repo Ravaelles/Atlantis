@@ -373,7 +373,8 @@ public class AUnitType implements Comparable<Object> {
             -1,
             () -> isRealUnit() && !hasNoWeaponAtAll()
                 && !isCarrier() && !isBunker() && !isMine() && !isScarab()
-                && groundWeapon().maxRange() <= 64 && airWeapon().maxRange() <= 64
+                && UnitStats.weaponRange(groundWeapon()) <= 64
+                && UnitStats.weaponRange(airWeapon()) <= 64
         );
     }
 
@@ -822,7 +823,7 @@ public class AUnitType implements Comparable<Object> {
             "maxHp",
             -1,
             () -> {
-                int hp = ut.maxHitPoints() + maxShields();
+                int hp = UnitStats.hitPoints(this) + maxShields();
                 if (hp == 0 && !isSpell()) {
                     System.err.println("Max HP = 0 for");
                     System.err.println(this);
@@ -834,7 +835,7 @@ public class AUnitType implements Comparable<Object> {
     }
 
     public int maxShields() {
-        return ut.maxShields();
+        return UnitStats.shields(this);
     }
 
     public boolean isWorker() {
@@ -1227,7 +1228,7 @@ public class AUnitType implements Comparable<Object> {
                     }
                 }
 
-                return weaponAgainst(anotherUnit.type()).maxRange() / 32;
+                return UnitStats.weaponRangeInTiles(weaponAgainst(anotherUnit.type()));
             }
         );
     }
@@ -1332,7 +1333,8 @@ public class AUnitType implements Comparable<Object> {
             () -> {
                 if (isCarrier() || isReaver() || isBunker()) return false;
 
-                return groundWeapon().damageAmount() <= 0 && airWeapon().damageAmount() <= 0;
+                return UnitStats.weaponDamage(groundWeapon()) <= 0
+                    && UnitStats.weaponDamage(airWeapon()) <= 0;
             }
         );
     }
@@ -1674,7 +1676,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackGround",
             -1,
-            () -> groundWeapon().damageAmount() > 0 || isReaver() || isBunker() || isCarrier()
+            () -> UnitStats.weaponDamage(groundWeapon()) > 0 || isReaver() || isBunker() || isCarrier()
         );
     }
 
@@ -1682,7 +1684,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "canAttackAir",
             -1,
-            () -> airWeapon().damageAmount() > 0 || isBunker() || isCarrier()
+            () -> UnitStats.weaponDamage(airWeapon()) > 0 || isBunker() || isCarrier()
         );
     }
 
@@ -1762,7 +1764,7 @@ public class AUnitType implements Comparable<Object> {
 
                 if (canAttackGround()) {
                     WeaponType groundWeapon = groundWeapon();
-                    groundDps = (double) groundWeapon.damageAmount() / (double) groundWeapon.damageCooldown();
+                    groundDps = (double) UnitStats.weaponDamage(groundWeapon) / (double) groundWeapon.damageCooldown();
                 }
 
 //                if (canAttackAir()) {

@@ -26,15 +26,15 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 (+4 skipped) |
+| Unit (default) | `bash scripts/run-tests.sh` | **105 passing / 0 failing** of 105 (+4 skipped) |
 | Acceptance | `bash scripts/run-acceptance-tests.sh` | **120 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **223 passing / 6 failing** of 229 executed (+4 skipped) |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **235 passing / 0 failing** of 235 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
-fixture and a `--add-opens` JVM flag - see its javadoc). The 6 failures are all
-in `tests.unit` and are listed below. Random order (seeds 7, 42, 99) gives the
-identical failure set.
+fixture and a `--add-opens` JVM flag - see its javadoc). **The suite is green**:
+nothing is failing, and random order (seeds 7, 42, 99, 1234) gives the identical
+result.
 
 The vendored console launcher (1.10.0) has no `--order` flag, so order
 sensitivity must be checked with JVM properties:
@@ -73,37 +73,74 @@ This is not cosmetic: `AtlantisRaceConfig.BASE`, `WORKER`, `BARRACKS`,
 that lies about its race silently exercises the wrong branches (that is exactly
 how B-13 and B-14 survived).
 
-## Known-failing baseline (unit tests)
+## Where the numbers come from (unit tests)
 
-The suite is **not fully green yet**. Six `ATargetingTest` cases fail
-(`targetsSunken`, `targetsMarinesOverBunkerYup`, `targetsCreepOverBaseOrDrones`,
-`targetsUnfinishedSunken`, `targetsUnfinishedSunkenOverBaseOrDrones`,
-`nearHydrasOverWounded`): targeting picks a different enemy than expected.
+Outside a game `bwapi` answers 0 or a plausible-looking fiction for every unit
+stat: hit points, shields, weapon range, weapon damage. A Marine had 40 hit
+points, a Sunken Colony 300 and a Creep Colony 400 - so a Dragoon preferred the
+Creep Colony to the Sunken, which is the opposite of the game - and
+`damageAmount()` was **0 for every weapon in the game**, which made every combat
+evaluation arithmetic on zeros.
 
-This is not a wrong assertion and not a wrong bot — the harness has no unit-type
-and no weapon-type data. Which units fly is now stated explicitly
-(`AUnitType.isAirUnit()`) because `bwapi.UnitType.isFlyer()` answers `false`
-for everything outside a game. What is still missing is everything the six
-failures actually depend on:
+`tests/fakes/UnitStatsTable` now supplies Brood War's numbers and
+`atlantis.units.UnitStats` is the seam: production asks it, and outside a game it
+is a plain delegation to the engine, so a real game reads the engine as before.
 
-| Missing | Harness says | StarCraft |
-|---|---|---|
-| `UnitType.maxHitPoints()` | Marine 40, Sunken Colony 300, Creep Colony 400 | 45, 150, 600 |
-| `UnitType.maxShields()` | Overlord 0 | 50 |
-| `WeaponType.maxRange()` | Dragoon 128 px (4 tiles), Hydralisk 128, Lurker 192, Drone 32 | 192 (6), 160 (5), 256 (8), 64 (2) |
-| `WeaponType.damageAmount()` / `damageFactor()` | **0 for every weapon** | per-weapon values |
+```
+UnitStats.hitPoints(AUnitType)      shields(...)      weaponRange(...)      weaponDamage(...)
+    -> UnitStats.Source installed by the harness, -1 for "unknown"
+        -> falls back to bwapi.UnitType / bwapi.WeaponType
+```
 
-So the ordering these tests assert - a Dragoon shoots the Sunken Colony rather
-than the Creep Colony, prefers a wounded Marine, keeps its distance from a Bunker
-- cannot be evaluated: the numbers behind it are fiction.
+`UnitStatsTableTest` guards it: the values are pinned, every type the sample world
+builds must have an entry or a documented exemption, every name in the table has
+to match a real `bwapi` enum constant (a typo there is invisible otherwise), and
+the amount still missing is asserted as an upper bound - **133 unit types and 74
+weapons** at the time of writing. Those keep the engine's answer on purpose:
+they are listed rather than guessed, because the table is transcribed by hand.
+`_AI/NEXT.md` #29 has the rest.
 
-There is no authoritative source reachable from this machine. The jar's values,
-BWAPI's own `.dox` documentation and BWAPI's own reference tests in `3rdparty`
-all carry the **same** placeholder numbers, and the real ones live in
-`units.dat`/`weapons.dat` inside the encrypted `starcraft/STARDAT.MPQ`, which
-nothing installed here can read. `_AI/NEXT.md` #29 has the field-by-field table
-and the two ways forward: hand-write the numbers into the harness with a guard
-test, or generate them from `units.dat`.
+What is still a placeholder, and pinned as such:
+
+- `UnitType.isFlyer()` names 22 types and no heroes (`NEXT.md` #33);
+- `UnitType.isInvincible()` is what makes a Vulture spider mine count as a real
+  unit in `UnitTest` (`NEXT.md` #32);
+- the Vulture's own weapon, the Scarab and the Spider Mine (`NOT_COVERED` in the
+  table, with the reason for each).
+
+Two harness lies were removed rather than papered over, and both were needed
+before any of the above could be measured:
+
+- the enemy race was a value read once in `setUp()`, so a test full of drones
+  and creep colonies was silently a Protoss opponent and every `Enemy.zerg()`
+  branch answered for the wrong race. It is now `enemyRaceInWorld`, read on every
+  call like the supply, and `ATargetingTest` declares the race in each of its 26
+  scenarios;
+- `AUnit.leader()` returned `Select.ourCombatUnits().first()` when
+  `Env.isTesting()`, so a lone Dragoon had a leader in tests and none in a game,
+  and the targeting fallback fired where the bot's real doctrines would.
+
+Three expectations that used to be here described behaviour the bot does not
+have, and were corrected rather than made to pass:
+
+- `ATargetingTest.targetsMarinesOverBunkerYup` expected a Marine at 13.2 to be
+  chosen over a Bunker at 13.1. `ATargetingImportant` lists both in one bucket
+  and breaks the tie by distance, so the Bunker is right; the test is now
+  `targetsTheBunkerWhenTheBunkerIsNearer`. Its sibling
+  `targetsMarinesOverBunker` only ever passed because there the Marine was the
+  nearer of the two.
+- `ATargetingTest.targetsUnfinishedSunkenOverBaseOrDrones` expected an unfinished
+  Sunken Colony at 14.9 over a Creep Colony at 11.4. "Most wounded" compares hit
+  points to maximum hit points and an unfinished building still reports full hit
+  points, so the tie goes to the nearer building. The bot does have a
+  finish-defensive-buildings-first rule, but only for Creep Colonies; there is
+  none for Sunken or Spore. The test is now
+  `targetsTheNearestBuildingWhenNothingIsWounded`.
+- `CombatEvaluatorTest.fourMarinesBeatOneSunkenColony` expected the evaluator to
+  rate four Marines above a lone Sunken Colony, which is what happens in the
+  game. It does not: measured 2.17 the other way. The test is now
+  `fourMarinesLoseToOneSunkenColonyInThisEvaluator` and pins that number, and the
+  defect is `_AI/BUGS.md` B-17.
 
 Two lists that used to be here are now green:
 

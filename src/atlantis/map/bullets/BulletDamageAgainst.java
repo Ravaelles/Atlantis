@@ -2,7 +2,7 @@ package atlantis.map.bullets;
 
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.WeaponUtil;
+import atlantis.units.WeaponUtil;
 import bwapi.WeaponType;
 
 public class BulletDamageAgainst {

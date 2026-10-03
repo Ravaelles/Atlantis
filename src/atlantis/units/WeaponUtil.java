@@ -1,10 +1,16 @@
-package atlantis.util;
+package atlantis.units;
 
-import atlantis.units.AUnitType;
 import atlantis.util.cache.Cache;
 import bwapi.DamageType;
 import bwapi.WeaponType;
 
+/**
+ * Weapon numbers and the damage modifiers between two unit types.
+ *
+ * <p>Lives in {@code atlantis.units} rather than {@code atlantis.util} because it
+ * reads unit data through {@link UnitStats}: {@code util} is the shared kernel
+ * and must not point upward at {@code units} (ArchitectureBoundaryTest).</p>
+ */
 public class WeaponUtil {
 
     private static Cache<Double> cacheDouble = new Cache<>();
@@ -16,13 +22,16 @@ public class WeaponUtil {
             1,
             () -> {
                 if (weapon.equals(WeaponType.Psi_Blades)) {
-                    return 16;
+                    // A Zealot swings two blades: 8 damage each, 16 per attack.
+                    // That is the weapon's real damage, not a patch for missing
+                    // data - the table has one blade, the attack has two.
+                    return UnitStats.weaponDamageNormalized(weapon) * 2;
                 }
                 else {
 //                    System.err.println("weapon = " + weapon);
 //                    System.err.println("weapon.damageAmount() = " + weapon.damageAmount());
 //                    System.err.println("weapon.damageFactor() = " + weapon.damageFactor());
-                    return weapon.damageAmount() * weapon.damageFactor();
+                    return atlantis.units.UnitStats.weaponDamageNormalized(weapon);
                 }
             }
         );

@@ -551,7 +551,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public int maxShields() {
-        return type().ut().maxShields();
+        return type().maxShields();
     }
 
     public int minesCount() {
@@ -584,7 +584,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         int range = cacheInt.get(
             "groundWeaponRange",
             60,
-            () -> hasGroundWeapon() ? type().groundWeapon().maxRange() / 32 : -1
+            () -> hasGroundWeapon() ? UnitStats.weaponRangeInTiles(type().groundWeapon()) : -1
         );
 
         if (isMarine()) {
@@ -622,7 +622,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return cacheInt.get(
             "airWeaponRange",
             120,
-            () -> hasAirWeapon() ? type().airWeapon().maxRange() / 32 : -1
+            () -> hasAirWeapon() ? UnitStats.weaponRangeInTiles(type().airWeapon()) : -1
         );
     }
 
@@ -930,7 +930,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             return 0;
         }
 
-        return weapon.damageAmount() * weapon.damageFactor();
+        return UnitStats.weaponDamageNormalized(weapon);
     }
 
     public boolean distToLessThan(AUnit target, double maxDist) {
@@ -3292,10 +3292,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public AUnit leader() {
-        if (Env.isTesting()) {
-            return Select.ourCombatUnits().first();
-        }
-
         return squad != null ? squad.leader() : null;
     }
 

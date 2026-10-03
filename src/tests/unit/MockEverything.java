@@ -102,11 +102,17 @@ public class MockEverything {
         test.aGame.when(AGame::minerals).thenAnswer(invocation -> test.currentMinerals());
         test.aGame.when(AGame::gas).thenAnswer(invocation -> test.currentGas());
 
+        // Answered on every call, not stubbed once in setUp(): the enemy race is
+        // a property of the world, like the supply, and a test declares it where
+        // it declares the units - inside the test method, before world(...). A
+        // test that fills the enemy side with drones, lurkers and creep colonies
+        // and does not say so gets every Enemy.zerg() branch answering for a
+        // Protoss, which is how ATargetingTest's Zerg scenarios ended up
+        // unreachable.
         if (test.enemyRace == null) test.enemyRace = Mockito.mockStatic(EnemyRace.class);
-        Race enemy = test.initEnemyRace();
-        test.enemyRace.when(EnemyRace::isEnemyProtoss).thenReturn(enemy.equals(Race.Protoss));
-        test.enemyRace.when(EnemyRace::isEnemyTerran).thenReturn(enemy.equals(Race.Terran));
-        test.enemyRace.when(EnemyRace::isEnemyZerg).thenReturn(enemy.equals(Race.Zerg));
+        test.enemyRace.when(EnemyRace::isEnemyProtoss).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
+        test.enemyRace.when(EnemyRace::isEnemyTerran).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
+        test.enemyRace.when(EnemyRace::isEnemyZerg).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
     }
 
     /**
@@ -124,11 +130,10 @@ public class MockEverything {
         // Same race as EnemyRace above - the two mocks used to disagree, because
         // this one was hard-coded to "enemy is Protoss" while a test could change
         // the other one. Enemy.* is what production code actually calls.
-        Race enemyRace = test.initEnemyRace();
         if (test.enemy == null) test.enemy = Mockito.mockStatic(Enemy.class);
-        test.enemy.when(() -> Enemy.terran()).thenReturn(enemyRace.equals(Race.Terran));
-        test.enemy.when(() -> Enemy.protoss()).thenReturn(enemyRace.equals(Race.Protoss));
-        test.enemy.when(() -> Enemy.zerg()).thenReturn(enemyRace.equals(Race.Zerg));
+        test.enemy.when(() -> Enemy.terran()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Terran));
+        test.enemy.when(() -> Enemy.protoss()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Protoss));
+        test.enemy.when(() -> Enemy.zerg()).thenAnswer(invocation -> test.currentEnemyRace().equals(Race.Zerg));
     }
 
     private void mockBaseLocations() {

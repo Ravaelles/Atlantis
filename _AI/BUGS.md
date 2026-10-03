@@ -111,11 +111,41 @@ documented in code with a comment. The closure goes into the commit message.
   coupling. Either way the invariant deserves a name and a test.
 
 > Fixed entries (B-5, B-7, B-10, B-11–B-16) were removed per the file's own
-> rule — the git history is the archive.
+> rule — the git history is the archive. Numbers are never reused, so the next
+> entry after B-16 is B-17.
 
 ## How to add an entry
 
 ```
+## B-17 — the combat evaluator rates four Marines below one Sunken Colony
+
+- **Where:** `AUnit.eval()` -> `AtlantisJfap` (a 60-frame simulation), reached
+  from `CombatEvaluatorTest.fourMarinesLoseToOneSunkenColonyInThisEvaluator`.
+- **Measured:** four Marines (45 hit points each, 6 damage, 4 tiles) against a
+  lone Sunken Colony (150 hit points, one armour, 6 damage, 2.5 tiles) gives
+  `eval() = 2.1705` - the evaluator says the Marines lose by more than two to
+  one.
+- **In the game they win.** Four Marines put about 20 damage per volley into a
+  150-point building with one armour: roughly eight volleys, during which the
+  Sunken returns 6 damage a shot at one Marine at a time. Losing two Marines to
+  kill one defensive building is a trade Terran takes.
+- **What is *not* established:** which part of the model is wrong. `eval()` is a
+  simulation, not the old `Evaluate` heuristic, so the flat "defensive building
+  present" bonus and the 1.3 military-building multiplier are not the cause. The
+  candidates are the simulation's damage model, `AtlantisJfapModifier`'s
+  building handling, or the tentacle's numbers - and the tentacle is one of the
+  entries this project transcribed by hand (`NEXT.md` #29), so it cannot be
+  ruled out from here either.
+- **Why it matters:** `eval()` is what `weAreStronger()`, the fight/retreat
+  decisions and `CombatEvaluator` all read. A doctrine that turns down a won
+  fight is expensive, and it is invisible: nothing crashes, the bot just declines
+  to attack.
+- **How to settle it:** print the simulation's per-unit contribution for this one
+  matchup and compare it with the arithmetic above; then either correct the model
+  or, if the model is right and the doctrine is wrong, say so in a test name.
+  Until then the number is pinned in the test, so fixing the evaluator fails the
+  test and asks for the claim back.
+
 ## B-<n> — <one-line symptom>
 
 - **Where:** file:line

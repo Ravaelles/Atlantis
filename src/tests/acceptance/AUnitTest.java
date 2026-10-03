@@ -287,7 +287,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertTrue(dragoon.canAttackGroundUnits());
         assertTrue(dragoon.canAttackAirUnits());
         assertTrue(dragoon.hasAnyWeapon());
-        assertEquals(4.0, dragoon.airWeaponRange(), 0.001);
+        // 6 tiles: the Phase Disruptor reaches 192 px. The engine placeholder
+        // answered 128 px, the same fiction the bot's OurDragoonRange used.
+        assertEquals(6.0, dragoon.airWeaponRange(), 0.001);
 
         FakeUnit observer = fake(AUnitType.Protoss_Observer);
         assertFalse(observer.canAttackGroundUnits());
@@ -353,15 +355,20 @@ public class AUnitTest extends AbstractTestWithWorld {
         assertEquals(0, unit.woundHp());
         assertEquals(0.0, unit.woundPercent(), 0.001);
 
+        // A Marine has 45 hit points, so half of it is 22 and "half health" is
+        // 48%, not 50%. The engine placeholder answered 40, which divided evenly
+        // and made this look like a rounding question. The percentages are
+        // computed from maxHp here so the assertion pins the formula instead of
+        // the accident.
         int woundedHp = maxHp / 2;
         unit.setHp(woundedHp);
         assertFalse(unit.isFullyHealthy());
         assertTrue(unit.isWounded());
-        assertEquals(50, unit.hpPercent());
-        assertTrue(unit.hpPercent(50));
-        assertFalse(unit.hpPercent(51));
+        assertEquals(100 * woundedHp / maxHp, unit.hpPercent());
+        assertTrue(unit.hpPercent(100 * woundedHp / maxHp));
+        assertFalse(unit.hpPercent(100 * woundedHp / maxHp + 1));
         assertEquals(maxHp - woundedHp, unit.woundHp());
-        assertEquals(50.0, unit.woundPercent(), 0.001);
+        assertEquals(100.0 * (maxHp - woundedHp) / maxHp, unit.woundPercent(), 0.001);
 
         unit.setHp(1);
         assertTrue(unit.almostDead());

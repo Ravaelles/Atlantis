@@ -3,7 +3,7 @@ package atlantis.debug;
 import atlantis.game.A;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
-import atlantis.util.WeaponUtil;
+import atlantis.units.WeaponUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,14 +56,14 @@ public class AUnitTypesHelper {
         AConsole.println("===== Best ground damage =====");
         for (AUnitType unitType : bestGroundDamage.keySet()) {
             AConsole.println(unitType.name() + " (" + unitType.groundWeapon() + ", range "
-                + (unitType.groundWeapon().maxRange() / 32) + "), damage: " + bestGroundDamage.get(unitType));
+                + atlantis.units.UnitStats.weaponRangeInTiles(unitType.groundWeapon()) + "), damage: " + bestGroundDamage.get(unitType));
         }
         AConsole.println("");
 
         AConsole.println("===== Best air damage =====");
         for (AUnitType unitType : bestAirDamage.keySet()) {
             AConsole.println(unitType.name() + "(" + unitType.groundWeapon() + ", range "
-                + (unitType.airWeapon().maxRange() / 32) + "), damage: " + bestAirDamage.get(unitType));
+                + atlantis.units.UnitStats.weaponRangeInTiles(unitType.airWeapon()) + "), damage: " + bestAirDamage.get(unitType));
         }
         AConsole.println("");
 

@@ -29,18 +29,33 @@ public class BulletDamageAgainstTest extends AbstractTestWithWorld {
                 hydra = fake(AUnitType.Zerg_Hydralisk, 13.2),
                 zergling = fake(AUnitType.Zerg_Zergling, 13.4)
             ), () -> {
-            assertEquals(20, BulletDamageAgainst.forBullet(createBullet(dragoon, sunken)));
+            // A Phase Disruptor round does 8 damage and is Explosive, so what it
+            // does depends on the size of what it hits: full against a large unit,
+            // three quarters against a medium one, half against a small one. The
+            // 20/15/10 this test used to expect came from the engine placeholder,
+            // which claimed 20 damage against large targets - a number no Dragoon
+            // in the game ever has.
+            assertEquals(8, BulletDamageAgainst.forBullet(createBullet(dragoon, sunken)),
+                "Explosive, large target");
+            assertEquals(6, BulletDamageAgainst.forBullet(createBullet(dragoon, vulture)),
+                "Explosive, medium target");
+            assertEquals(6, BulletDamageAgainst.forBullet(createBullet(dragoon, hydra)),
+                "Explosive, medium target");
+            assertEquals(4, BulletDamageAgainst.forBullet(createBullet(dragoon, marine)),
+                "Explosive, small target");
+            assertEquals(4, BulletDamageAgainst.forBullet(createBullet(dragoon, zergling)),
+                "Explosive, small target");
 
-            assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, vulture)));
-            assertEquals(15, BulletDamageAgainst.forBullet(createBullet(dragoon, hydra)));
-
-            assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, marine)));
-            assertEquals(10, BulletDamageAgainst.forBullet(createBullet(dragoon, zergling)));
-
+            // Zergling claws are Normal damage: 5 whatever the target is.
             assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, sunken)));
             assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, dragoon)));
             assertEquals(5, BulletDamageAgainst.forBullet(createBullet(zergling, marine)));
 
+            // The Vulture's own weapon is the one number this project has no
+            // source for (tests/fakes/UnitStatsTable), so 20 below is still the
+            // engine placeholder - what these three pin is the Concussive
+            // modifier, which is real: full against a small unit, half against a
+            // medium one, a quarter against a large one.
             assertEquals(20, BulletDamageAgainst.forBullet(createBullet(vulture, marine)));
             assertEquals(10, BulletDamageAgainst.forBullet(createBullet(vulture, vulture)));
             assertEquals(5, BulletDamageAgainst.forBullet(createBullet(vulture, dragoon)));

@@ -179,14 +179,24 @@ public class SelectionTest extends WorldStubForTests {
         assertEquals(4, our.inRadius(5.3, zealot).size());
 
         assertEquals(1, zealot.friendsNear().canAttack(zealot, 0).size());
-        assertEquals(3, zealot.friendsNear().canAttack(zealot, 4.0).size());
+        // Only the Mutalisk. The two Siege Tanks were counted here because the
+        // engine placeholder gave them ranges of 7 and 12 tiles - their real ones
+        // are 5 and 6, and the Zealot stands 10.3 tiles away, so a 4-tile margin
+        // no longer reaches it. Everything else nearby either has no weapon
+        // against a ground target (Scourge, Overlord, Carrier) or is further
+        // than its own range.
+        assertEquals(1, zealot.friendsNear().canAttack(zealot, 4.0).size());
 
 //            muta.friendsNear().canBeAttackedBy(muta, 1).print("Test");
-        assertEquals(4, muta.friendsNear().inShootRangeOf(muta).size());
-        assertEquals(4, muta.friendsNear().canBeAttackedBy(muta, 1).size());
-//            muta.friendsNear().inRadius(5, muta).print("Muta targets");
-        assertEquals(6, muta.friendsNear().canBeAttackedBy(muta, 2).size());
-
+        // A Mutalisk shoots 6 tiles; the engine placeholder answered 3. Every
+        // unit `friendsNear()` holds is within 6 tiles of it, so a margin of 1 or
+        // 2 brings nobody new in - all three counts are the same set. The
+        // margin parameter is still what decides reach: at 0 only the units
+        // inside 3 tiles were in range before.
+        assertEquals(9, muta.friendsNear().inShootRangeOf(muta).size());
+        assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 1).size());
+//        muta.friendsNear().inRadius(5, muta).print("Muta targets");
+        assertEquals(9, muta.friendsNear().canBeAttackedBy(muta, 2).size());
         assertEquals(1, our.combatBuildingsAntiAir().size());
         assertEquals(2, our.combatBuildingsAntiLand().size());
         assertEquals(2, our.combatBuildings(false).size());

@@ -122,3 +122,30 @@ hard-won operational facts that do not belong anywhere else.
 - Fogged hp sentinel: `AbstractFoggedUnit.hp()` returns `-69` for unknown;
   snapshot projections stay faithful (no guessing) — representation of
   unknown state is open E-core design work.
+
+## Reading Brood War's own unit data (for NEXT #29)
+
+The real hit points, shields, ranges and damage live in `units.dat` and
+`weapons.dat` inside the installed archives. Four things were measured while
+trying to read them instead of transcribing them:
+
+- The archives in `starcraft/` are Brood War's, and **Brood War hides its file
+  names** behind Blizzard's decryption table. `mpyq` parses the header and the
+  hash/block tables of `STARDAT.MPQ` happily, then finds nothing by name -
+  which is not a bug in the library, it is the encryption.
+- No package on PyPI ships that table. `PyMS` installs as `pyms` 0.1.0 and fails
+  to build (it is a different package from the tool of that name);
+  `stormlib` is not on the machine; `unshield` is an Age of Empics extractor.
+- Even with the table, sectors compressed with PKWARE "implode" (type 0x08) need
+  a decompressor that `mpyq` does not implement - it handles none, zlib and
+  bzip2 only.
+- **`3rdparty/openbw/openbw/data_loading.h` has the exact layout** of both files:
+  column-major arrays, 228 unit types, 130 weapons, with `hitpoints`,
+  `shield_points`, `max_range`, `damage_amount` and `damage_cooldown` named. So
+  the parser is a half-hour of work and the archive is the whole problem.
+
+Conclusion recorded in NEXT #29: the harness table is transcribed by hand, every
+entry is guarded by `UnitStatsTableTest`, and the missing entries are listed
+rather than guessed. If StormLib or the table ever becomes available, the
+generator replaces the table and nothing else has to change - the seam
+(`atlantis.units.UnitStats`) is already where the numbers enter.
