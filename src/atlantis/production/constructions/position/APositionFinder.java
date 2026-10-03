@@ -109,9 +109,12 @@ public class APositionFinder {
                 }
 
                 else {
-                    System.err.println("Invalid race: " + AGame.playerUs().getRace());
-                    System.exit(-1);
-                    return null;
+                    // Unreachable in any working game: the race is always one of
+                    // the three above. It used to be System.exit(-1) here, which
+                    // let a leaf position finder kill the whole JVM; an
+                    // exception reports instead and lets the composition root
+                    // decide. See _AI/BUGS.md B-8.
+                    throw new IllegalStateException("Invalid race: " + AGame.playerUs().getRace());
                 }
             }
         );

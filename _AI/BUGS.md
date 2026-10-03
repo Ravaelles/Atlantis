@@ -75,6 +75,13 @@ documented in code with a comment. The closure goes into the commit message.
   `AtlantisRaceConfig`, `Atlantis` and `AKeyboard` (swept in NEXT.md #17).
 - **Why it matters:** a leaf position finder deciding to kill the process is the
   same violation already fixed in `AFile.loadFile`.
+- **Update:** the leaf now throws `IllegalStateException` instead of exiting.
+  The branch is unreachable in any working game (the race is always one of the
+  three above it), so no reachable behaviour changes; callers already handle
+  the race finders' nulls. Keep this entry until a game run confirms no exit
+  path regressed. The remaining three exits are triaged in #17: `Atlantis`
+  is the shutdown path (exiting is its job), the other two are fail-fast at
+  startup and need a game run to touch safely.
 
 ## B-9 — the queue never detects unit/building progress on its own
 

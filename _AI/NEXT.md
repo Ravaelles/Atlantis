@@ -214,7 +214,11 @@ the first is already done.
 - **#17** Remove `System.exit` from domain code: `AtlantisRaceConfig`,
   `APositionFinder`, `Atlantis`, `AKeyboard`. Same rule as the `AFile` fix —
   report and let the composition root decide. Verify each with a game run,
-  because a wrong exit path is invisible in unit tests.
+  because a wrong exit path is invisible in unit tests. Triaged: `APositionFinder`
+  (the only mid-game leaf) now throws - see BUGS.md B-8; `Atlantis.killProcesses`
+  is the shutdown path, where exiting is the job, not a violation; `AtlantisRaceConfig`
+  and `AKeyboard` are fail-fast at startup, equivalent outcome either way, so they
+  wait for a game run rather than a blind edit.
 - **#18** Add the remaining ADR 0001 ports (`GameQuery`, `MapPort`,
   `ClockPort`) and migrate one subsystem each. `LogPort` is the precedent:
   port + adapter + a test double, no call-site churn. Clock first — it is the
