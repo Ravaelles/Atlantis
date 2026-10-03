@@ -76,12 +76,34 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness. **4 files left** (was 15),
-  each needing an ADR-0001 port with the fakes as one adapter among several:
-  `AtlantisJfap`, `PositionUtil` and `AUnit` (all `instanceof FakeUnit`) and
-  `AUnitOrders` (a fake order sink while `u()` is null). All four ask the same
-  kind of question - "is this a real game unit?" - so one predicate port may
-  serve all of them; the order of work is theirs to pick.
+- **#28** Production code imports the test harness. **`src/atlantis`, `src/main`
+  and `src/jfap` are clean** - `grep -rl "^import tests\." src/atlantis src/main
+  src/jfap` returns nothing. This item's own count was off by one: it listed the
+  4 files left in `src/atlantis` but not `src/jfap/JfapCombatEvaluator`, which
+  re-asked `AtlantisJfap.isValidUnit`'s question one file away. Five were left
+  after the fogged-unit port; all five are now behind ports.
+  `src/starengine` still has 12, and they are **one finding, not twelve**:
+
+  > `src/starengine` is a fake-driven *simulator* that lives in the production
+  > tree. `UnitsFromFakes`, `FakeUnitToEngineUnits` and `StarEngineLauncher` take
+  > `tests.fakes.FakeUnit` as their *input model*, and `StarEngine` /
+  > `OnStarEngineFrameEnd` reach into `tests.acceptance.AbstractWorldCreatingTest`.
+  > Nothing outside `src/tests` uses the package except `Env.isStarEngine()`, a
+  > boolean flag.
+
+  So the mechanical sweep is done, and what remains is a placement question, not a
+  port question. Options, in the order I would take them:
+  1. **Ports** - the simulator asks for units, positions and hits instead of
+     casting fakes, the same shape as the five ports below. Keeps `starengine`
+     where the target architecture puts it: ring 1, "the starengine adapter".
+  2. **Move `src/starengine` under `src/tests`** - honest, because it is a test
+     tool, but it argues with `DOCS/ARCHITECTURE-CONTEXT-MAP.md`, which classifies
+     `starengine` as an *adapter*, and with REVIEW.md's "adapters implement ports
+     (bwapi, fake, starengine)".
+  3. Leave it, and keep shipping the harness in the jar.
+
+  This is an **ADR** (Stage E/H), not a mechanical sweep. Do not start it before the
+  decision is written down.
 
   The port shape is now written down twice - `UnitStats.Source` for unit and
   weapon data, and `Bullets.Source` for the bullets in flight:
@@ -94,20 +116,37 @@ of the data behind it, not a red test.
   // tests/fakes/FakeBullets.Source is the other adapter; setUp() installs it
   ```
 
-  Three ports are done, all of the same shape and all with the engine as the
-  default: `Bullets.Source` (which bullets exist, and whether the engine object
-  behind one is still there - the two `Env.isTesting()` branches it used to have),
+  Five ports are done, all of the same shape and all with the engine as the
+  default: `UnitStats.Source` (unit and weapon data),
+  `Bullets.Source` (which bullets exist, and whether the engine object behind one
+  is still there - the two `Env.isTesting()` branches it used to have),
   `Regions.Source` (which region a tile is in, where the stub world has no BWEM
-  areas and answers one region per base), and
+  areas and answers one region per base),
   `AbstractFoggedUnit.FoggedUnitFactory` (how a unit that went behind the fog is
-  wrapped). No call site changed in any of them.
+  wrapped), and
+  `UnitOrigin` ("is this unit simulated?" - the `instanceof FakeUnit` term in
+  `AUnit.init()`, `AUnit.cacheType()`, `AtlantisJfap.isValidUnit()` and
+  `JfapCombatEvaluator.addFriends()`).
+  No call site changed in any of them.
 
-  The last one also moved `FakeFoggedUnit` out of `src/atlantis/units/fogged`
-  into `tests/fakes`: a test double no longer sits in the production tree, and the
-  `instanceof FakeUnit` branch that reached for it is now in the harness's own
-  adapter, where it belongs. `PositionUtil` was reading the fake type to get a
-  position; it now reads `AbstractFoggedUnit`, which is what the fake extends and
-  what the game's own fogged unit extends too.
+  The fogged-unit port also moved `FakeFoggedUnit` out of
+  `src/atlantis/units/fogged` into `tests/fakes`: a test double no longer sits in
+  the production tree, and the branch that reached for it is now in the harness's
+  own adapter, where it belongs.
+
+  Two sites needed no port at all, which is the useful result of reading them
+  first:
+  - `PositionUtil` asked *which class* when the real question was *is there an
+    engine object*. Its `FakeUnit` branch existed only because the `AUnit` branch
+    assumed every `AUnit` has a `bwapi.Unit`. It now measures from the unit when it
+    has one and takes the position the unit reports when it does not, so a double
+    takes the path its branch used to take and a game unit is untouched.
+  - `AUnitOrders` was recording orders into `tests.fakes.FakeUnitData`. That is a
+    sink, not a predicate, so it became `OrderFallback`. Its default answers
+    `false`, because in a game every ordered unit has an engine object and the
+    branch is unreachable - "the game never received this order" is the honest
+    answer where the old `List.add` returned `true`.
+
 
   Gone earlier, and both were worse than an import:
   - `ClearCountCache` imported `tests.unit.helpers.ClearAllCaches` and **never
@@ -118,12 +157,17 @@ of the data behind it, not a red test.
     selector and **no command in `scripts/` ever executed them**. They live in
     `tests/acceptance` now and run (3 tests).
 
-  Consequence while any of the 9 remains: the game jar **must ship
-  `tests/fakes/**` and `tests/unit/helpers/**`**, otherwise
-  `NoClassDefFoundError: tests/fakes/FakeUnit` (`GAME_08792F08`). The seam added
-  with `UnitStats` (a `Source` the harness installs, production delegating to
-  the engine) is the shape to copy. Verify the end of it with a game run: the
-  jar size and `scripts/build-bot-jar.sh`'s assertions are the check.
+  Consequence while `src/starengine` remains: the game jar **must ship
+  `tests/fakes/**`**, otherwise `NoClassDefFoundError: tests/fakes/FakeUnit`
+  (`GAME_08792F08`) - the simulator is compiled into it. `scripts/build-bot-jar.sh`
+  *asserts* that three harness classes are present, and those assertions are still
+  true: **do not flip them to "must be absent"** before `src/starengine` is out.
+  When it is, the jar can stop shipping the harness and those assertions invert -
+  the end is verified with a game run (jar size plus the assertions), which is the
+  user's half of #15/#28.
+
+  `tests/unit/helpers/**` no longer has to ship: `ClearCountCache` was its last
+  importer.
 
 
 ## Stage E — read model (remaining)
