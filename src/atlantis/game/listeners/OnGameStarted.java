@@ -21,7 +21,9 @@ import atlantis.information.strategy.ZergStrategies;
 import atlantis.game.init.AInitialActions;
 import atlantis.map.AMap;
 import atlantis.information.generic.InitialMainPosition;
+import atlantis.map.scout.ScoutState;
 import atlantis.production.orders.build.ABuildOrderLoader;
+import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
@@ -132,6 +134,11 @@ public class OnGameStarted {
         try {
             StrategyChooser.initializeStrategy();
             QueueInitializer.initializeProductionQueue();
+
+            // Scouting asks which worker number may scout every frame. Reading the
+            // build-order setting here keeps that lookup in the game root, so
+            // atlantis.map.scout does not depend on atlantis.production.
+            ScoutState.scoutIsNthWorker = BuildOrderSettings.scoutIsNthWorker();
 
 //            AConsole.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {

@@ -1,7 +1,8 @@
-package atlantis.map.scout;
+package atlantis.combat.squad.positioning.scout;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.DoAvoidEnemies;
+import atlantis.map.scout.ScoutCommander;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

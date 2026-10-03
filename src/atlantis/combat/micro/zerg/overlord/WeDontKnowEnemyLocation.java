@@ -2,7 +2,7 @@ package atlantis.combat.micro.zerg.overlord;
 
 import atlantis.architecture.Manager;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.map.scout.ScoutManager;
+import atlantis.combat.squad.positioning.scout.ScoutUnitManagers;
 import atlantis.units.AUnit;
 
 public class WeDontKnowEnemyLocation extends Manager {
@@ -21,7 +21,7 @@ public class WeDontKnowEnemyLocation extends Manager {
         unit.setTooltipTactical("Find enemy");
 //        if (true) throw new RuntimeException("wut / " + this.parentsStack());
 
-        if ((new ScoutManager(unit)).forceHandle() != null) return usedManager(this);
+        if (new ScoutUnitManagers().create(unit).forceHandle() != null) return usedManager(this);
 
         return null;
     }

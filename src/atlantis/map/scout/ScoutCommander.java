@@ -4,7 +4,6 @@ import atlantis.architecture.Commander;
 import atlantis.architecture.Manager;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;
-import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
@@ -39,8 +38,7 @@ public class ScoutCommander extends Commander {
                 AUnit unit = iterator.next();
 
                 if (unit != null && unit.isAlive()) {
-                    Manager scoutManager = new ScoutManager(unit);
-                    scoutManager.invokeFrom(this);
+                    ScoutState.scoutUnitManager.create(unit).invokeFrom(this);
                 }
             }
         } catch (ConcurrentModificationException ignore) {
@@ -78,7 +76,7 @@ public class ScoutCommander extends Commander {
 //        removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
-        if (Count.workers() >= BuildOrderSettings.scoutIsNthWorker()) {
+        if (Count.workers() >= ScoutState.scoutIsNthWorker) {
             if (We.zerg()) return;
 
             // =========================================================

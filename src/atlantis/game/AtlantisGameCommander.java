@@ -4,6 +4,7 @@ import atlantis.application.FramePipeline;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.combat.CombatCommander;
+import atlantis.combat.squad.positioning.scout.ScoutUnitManagers;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
@@ -12,6 +13,7 @@ import atlantis.game.state.BulletsCommander;
 import atlantis.information.enemy.EnemyUnitsCommander;
 import atlantis.information.strategy.StrategyCommander;
 import atlantis.map.scout.ScoutCommander;
+import atlantis.map.scout.ScoutState;
 import atlantis.production.BuildingsCommander;
 import atlantis.production.ProductionCommander;
 import atlantis.production.constructions.ConstructionsCommander;
@@ -31,6 +33,14 @@ import atlantis.units.workers.WorkerCommander;
  * (Stage C, _AI/REVIEW.md §16).</p>
  */
 public class AtlantisGameCommander extends Commander {
+
+    public AtlantisGameCommander() {
+        // Scouting asks "what drives one scout unit?" through this seam, and the
+        // answer is Combat's wiring. Only the composition root may know that, or
+        // atlantis.map.scout would depend on atlantis.combat again.
+        ScoutState.scoutUnitManager = new ScoutUnitManagers();
+    }
+
     public static Class<? extends Commander>[] topLevelSubcommanders() {
         return FramePipeline.steps();
     }

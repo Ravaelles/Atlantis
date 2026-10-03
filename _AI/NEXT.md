@@ -147,7 +147,17 @@ the first is already done.
 
 - **#13** Reach a **zero-violation** ArchUnit baseline and flip
   `ArchitectureBoundaryTest` from frozen store to hard rules (keeping the
-  store only as a history of how far the ratchet got).
+  store only as a history of how far the ratchet got). **490 violations left**
+  (was 499); `map.scout -> combat/production` is already at 0, so three rules
+  still carry everything:
+  `core(units, units.., map.position.., decisions..) -> combat/production/
+  information/protoss/terran/map.scout/map.base/units.workers` = 267,
+  `util -> units/game/map/production/information/combat/debug` = 133,
+  `information -> combat/production` = 66,
+  `architecture -> combat/production/units/game/util/debug` = 24.
+  Work smallest-first and check that a change *removes* violations from one
+  rule instead of moving them into another - moving `ScoutManager` into
+  `atlantis.units.special` passed nothing and only grew the core rule by 13.
 - **#14** Add a benchmark guard for the frame pipeline
   (`scripts/benchmark-trees.sh` result checked in CI-style thresholds) so a
   Stage E/F/H refactor that slows the per-frame work fails visibly instead of
