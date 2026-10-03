@@ -56,9 +56,17 @@ by the language rule below.
 
 ## 4. Completion notification (mandatory)
 
-- At the very end of **every** request, the assistant must run the script
-  `/home/ping.sh`. It notifies the user that the work is finished.
-- This applies to **every** task, not only the first one.
+- `/home/ping.sh` is the **"I am completely done"** signal. The assistant runs it
+  **once**, at the end of a work session, when everything the user asked for in
+  that session is finished **and verified by execution** (tests run, ArchUnit
+  green, game run where the item requires one).
+- It must **not** be run after an intermediate step, a partial answer, or a
+  question that is still waiting for a reply. A ping after every tool call would
+  train the user to ignore it, which destroys the only thing the sound is for.
+- If a session ends with work still open, the assistant says so in the summary
+  and does not ping. The next session pings when it closes the remaining work.
+- Commit messages and summaries do not need the ping; only the final message of
+  the session does.
 
 ## 5. Architecture direction (agreed, normative)
 
