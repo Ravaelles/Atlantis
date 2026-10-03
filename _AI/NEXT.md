@@ -136,12 +136,9 @@ generated rather than remembered. Three concrete starting points came out of it;
 the first is already done. The two behaviour-neutral ones have an executable
 procedure: `_AI/work-orders/WO-F-neutral-cache-cleanup.md` (the query service
 itself, #5, is design work and out of that order's scope).
-- `Select.clearCache()` never clears `cacheObject`, so
-  `mainOrAnyBuildingPosition` lives purely on its 73-frame TTL. Decide whether
-  that is an oversight before migrating anything.
-- 24 of the 46 keys use `microCacheForFrames`, which is literally the constant
-  `1` - the same one-frame intent as TTL `0`, spelled twice. Replacing it is
-  behaviour-neutral and needs no game run.
+- In progress: both behaviour-neutral items below are being executed under
+  `_AI/work-orders/WO-F-neutral-cache-cleanup.md` (one commit each, suite green
+  at every step). They are removed from this list as each one lands.
 - Six TTLs above one frame (30, 31, 53, 73, 91, 293) have no stated reason
   anywhere. `Select.main()` - 90 call sites, the most-read method in the tree -
   is cached for 2.4 s.

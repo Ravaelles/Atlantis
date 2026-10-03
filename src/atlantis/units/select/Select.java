@@ -26,7 +26,14 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 
-    protected static int microCacheForFrames = 1;
+    /**
+     * TTL for the queries that are asked several times per frame and must agree
+     * within it: {@code Select.our()}, {@code Select.ourWorkers()} and 22 more.
+     * TTL 0 means "valid while the frame counter does not move", which is what
+     * every enemy-side query in this class already uses; it was 1, i.e. one
+     * frame longer, spelled as a field of its own.
+     */
+    protected static int microCacheForFrames = 0;
 
     // =====================================================================
 
