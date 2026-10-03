@@ -220,7 +220,11 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     public int maxHp() {
-        return type().maxHp() + type().maxShields();
+        // Hit points plus shields, exactly like AUnitType.maxHp(). Counting
+        // maxShields() a second time here inflated every shielded unit
+        // (a Zealot answered 220 instead of 160, a Nexus 2250 instead of 1500)
+        // and every combat evaluation built on it.
+        return type().maxHp();
     }
 
     @Override

@@ -44,6 +44,16 @@ tooling in the loop.
   branches in `AbstractWorldCreatingTest`, `FakeOnFrameEnd`, `FakeUnit`.
   Nothing outside `src/starengine` and `src/tests` imports it, but
   `scripts/build-bot-jar.sh` ships the package inside the game jar.
+- Tier 0 already runs: `tests.acceptance.e2e` (`ZombieAttacksNearestUnit` +
+  `ScenarioCombat` + `FourPoolDefenseTest`) plays Protoss-vs-4pool in the stub
+  world with documented harness physics. Measured baseline: cannon falls
+  ~150, zealot ~250, nexus ~880, probes never engage (filed as BUGS.md B-19).
+  Same forces/timing/assertions carry over to the OpenBW tiers below.
+- Stardust platform verified on this machine (2026-10-03): clean CMake build
+  (`tests-steamhammer`, `tests-locutus`), `RushDefense.Steamhammer9PoolSpeed`
+  runs a 2600-frame game in under 2 s wall time with replay+log artefacts.
+  The DemoAI loses to the 9pool (nexus down 1:24) - the orchestration is
+  proven, only the spawnable-Atlantis piece is missing.
 
 ## 3. Sources
 

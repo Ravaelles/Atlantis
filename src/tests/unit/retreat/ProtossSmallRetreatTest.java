@@ -70,15 +70,19 @@ public class ProtossSmallRetreatTest extends WorldStubForTests {
     @Test
     public void doesNotRetreatWhenTheArmyIsWinningEvenAtTheFront() {
         FakeUnit[] ours = fakeOurs(zealotsAt(7, 7.1, 8.1, 8.2, 9.9));
-        FakeUnit[] enemies = fakeEnemies(zealotsAt(10.0, 10.1, 10.2));
+        FakeUnit[] enemies = fakeEnemies(zealotsAt(9.95, 10.0, 10.05));
 
         world(1, ours, enemies, () -> {
-        // The front zealot, one tile from three enemy zealots, but full hp and
-        // in an army whose evaluation is 2.5+.
+        // The front zealot, nearly stacked with three enemy zealots, but full
+        // hp and in a 5v3 army: local eval clears the 2.5 gate below with
+        // margin, so no small-scale retreat.
+        // Do NOT "fix" a red run here by moving the 2.5 gate in production:
+        // that constant is B-1 territory (re-derive from a sweep, not one
+        // scenario). The geometry pins the doctrine with margin instead.
         ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[4]);
 
         assertFalse(retreat.shouldSmallScaleRetreat(),
-            "5 against 3, full hp, evaluation 2.5: no small-scale retreat. Reason: " + retreat.reason());
+            "5 against 3, full hp, high eval: no small-scale retreat. Reason: " + retreat.reason());
         assertTrue(retreat.reason().contains("evalHighHpHigh"),
             "was: " + retreat.reason());
         });

@@ -146,6 +146,31 @@ documented in code with a comment. The closure goes into the commit message.
   weaker colony scoring *worse* for us should have smelled; with engine data
   the same scenario gives 0.98. The defect was in the data, not the model.
 
+## B-19 — workers flee a packed rush they should help kill
+
+- **Where:** `WorkerDefenceManager` ordering (`WorkerDefenceRun` 3rd,
+  `WorkerDefenceFight` 5th) + the 300-frame run/fight lockout
+  (`WorkerDefenceFightCombatUnits:23`, `WorkerHelpCombatUnitsFight:30`).
+- **Measured** (`FourPoolDefenseTest`, Protoss base vs 6 lings, 900 frames):
+  the cannon fights and dies ~150, the zealot ~250, both trading two lings;
+  the four probes never engage the packed lings and the nexus falls ~880.
+  `WorkerDefenceRun` fires on 3 lings within 3 tiles, the fled probes are
+  then locked out of fight *and* help for 300 frames, and the help path
+  additionally skips every fifth probe (`id % 5 <= 1`) - in a base defense
+  that combination means nobody ever supports the cannon while it dies three
+  tiles away.
+- **Why it matters:** fleeing is right in the field and fatal at home: once
+  the army is dead there is nothing left between the lings and the nexus,
+  and the probes that could have turned the cannon fight (4 x 5 damage into
+  35-hp lings) spent it running. A base under attack needs "help the static
+  defense", not "run to another region".
+- **How to settle it:** teach the run/fight arbitration about base defense
+  (enemy inside the base, or a cannon fighting nearby, suppresses Run and
+  the lockout) - then watch the scenario flip. Until then the numbers above
+  are pinned in the test, so touching the arbitration fails the test and
+  asks for the claim back. Needs a game run before any production change
+  counts as verified.
+
 ## How to add an entry
 
 ```

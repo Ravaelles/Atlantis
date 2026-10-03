@@ -188,6 +188,19 @@ of the data behind it, not a red test.
   importer.
 
 
+## Scenario E2E (stub tier - runs today)
+
+- **#34** 9pool twin of the 4pool scenario + real-opponent follow-ups.
+  `FourPoolDefenseTest` (Protoss base vs 6 lings, `tests.acceptance.e2e`,
+  zombie driver + documented harness physics) pins the measured baseline:
+  cannon falls ~150, zealot ~250, nexus ~880, probes never engage (BUGS.md
+  B-19). Next: the same harness with 9pool forces (~8 lings, later arrival -
+  copy the test, change the forces, keep the assertions shape), then real
+  opponents (Steamhammer / UAlbertaBot / scripted rusher) once the OpenBW
+  runner from `_AI/IDEA-E2E-TESTS.md` can host Atlantis. The scenario keeps
+  its forces, timing and assertions across that move; only the driver and
+  the physics get swapped for the engine.
+
 ## Stage E — read model (remaining)
 
 - **#3** Migrate production readers of `FoggedUnit` to `UnitSnapshot`.
