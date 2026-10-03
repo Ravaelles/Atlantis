@@ -1803,16 +1803,39 @@ public class AUnitType implements Comparable<Object> {
      * purpose: that flag is filled by a running client, so it answers
      * {@code false} for everything outside a game - measured, that was the whole
      * reason {@code ATargetingTest} could not pass. See {@code _AI/NEXT.md} #29.
+     *
+     * <p>Deliberately <b>not</b> in this list:</p>
+     * <ul>
+     *   <li>{@code Protoss_Arbiter_Tribunal} - it is a building (89x57 px, 3x2
+     *       tiles; BWAPI's own reference lists its attributes as
+     *       {@code Mechanical, Building, RequiresPsi}), even though it produces
+     *       the flying Arbiter.</li>
+     *   <li>{@code Protoss_Reaver}, {@code Protoss_Zealot},
+     *       {@code Terran_Ghost}, {@code Zerg_Hydralisk}, {@code Zerg_Lurker},
+     *       {@code Zerg_Ultralisk}, {@code Zerg_Zergling} - ground, even though a
+     *       Ghost can <i>hit</i> air units.</li>
+     * </ul>
+     *
+     * <p>Four entries are disputed and kept deliberately, because a wrong entry
+     * here silently moves a unit onto the wrong branch of every {@code isAir()}
+     * check in combat micro:</p>
+     * <ul>
+     *   <li>{@code Protoss_Dragoon} - hovers; 6-tile range; its Phase Disruptor is
+     *       an <i>air</i> weapon. It is the Protoss anti-air unit.</li>
+     *   <li>{@code Terran_Vulture} - flies, and drops spider mines while
+     *       airborne.</li>
+     *   <li>{@code Zerg_Broodling} - flies; it is what a Carrier spawns.</li>
+     *   <li>{@code Zerg_Infested_Terran} - a flying cocoon.</li>
+     * </ul>
      */
     private boolean isAirUnit() {
         return (boolean) cache.get(
             "isAirUnit",
             -1,
             () -> is(
-                // Protoss: Dragoon and the whole shuttle/diplomat fleet.
+                // Protoss: the Dragoon, and the shuttle/diplomat fleet.
                 AUnitType.Protoss_Dragoon,
                 AUnitType.Protoss_Arbiter,
-                AUnitType.Protoss_Arbiter_Tribunal,
                 AUnitType.Protoss_Carrier,
                 AUnitType.Protoss_Corsair,
                 AUnitType.Protoss_Interceptor,
@@ -1820,7 +1843,7 @@ public class AUnitType implements Comparable<Object> {
                 AUnitType.Protoss_Scout,
                 AUnitType.Protoss_Shuttle,
 
-                // Terran: everything with wings, plus the flying Building.
+                // Terran: everything with wings.
                 AUnitType.Terran_Battlecruiser,
                 AUnitType.Terran_Dropship,
                 AUnitType.Terran_Science_Vessel,
@@ -1828,7 +1851,7 @@ public class AUnitType implements Comparable<Object> {
                 AUnitType.Terran_Vulture,
                 AUnitType.Terran_Wraith,
 
-                // Zerg: the flying cast, including the units that start as eggs.
+                // Zerg: the flying cast, including the two that arrive as eggs.
                 AUnitType.Zerg_Broodling,
                 AUnitType.Zerg_Devourer,
                 AUnitType.Zerg_Guardian,
