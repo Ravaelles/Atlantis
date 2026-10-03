@@ -2,7 +2,6 @@ package atlantis.units;
 
 import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
 import atlantis.combat.squad.Squad;
-import atlantis.config.env.Env;
 import atlantis.debug.DebugFlags;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
@@ -380,8 +379,6 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Stop);
 
-        if (Env.isTesting()) return true;
-
 //        if (unit().lastCommandIssuedAgo() <= 1) {
 //            AConsole.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 //            AConsole.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
@@ -608,8 +605,6 @@ public interface AUnitOrders {
         unit().setAction(Actions.LIFT);
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Lift);
-
-        if (Env.isTesting()) return true;
 
         return unit().orderSink().lift(unit());
     }

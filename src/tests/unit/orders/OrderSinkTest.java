@@ -48,6 +48,42 @@ public class OrderSinkTest extends WorldStubForTests {
         });
     }
 
+    /**
+     * stop() and lift() used to answer "true" in a test without reaching the
+     * sink, so a test could not see that the order had been issued at all. They
+     * route through it now. Two units, because a command issued in the current
+     * frame is refused by the next one ({@code lastCommandIssuedAgo() <= 1}) -
+     * a real game rule, not something to route around.
+     */
+    @Test
+    void stopAndLiftAreRoutedThroughTheSink() {
+        FakeUnit marine;
+        FakeUnit marine2;
+        FakeUnit[] ours = fakeOurs(
+            marine = fake(AUnitType.Terran_Marine, 20),
+            marine2 = fake(AUnitType.Terran_Marine, 21)
+        );
+        FakeUnit[] enemies = fakeEnemies(
+            fake(AUnitType.Zerg_Zergling, 40)
+        );
+
+        FakeOrderSink sink = (FakeOrderSink) marine.orderSink();
+        FakeOrderSink sink2 = (FakeOrderSink) marine2.orderSink();
+
+        world(1, ours, enemies, () -> {
+            assertTrue(marine.stop("test"), "stop reports the order as issued");
+            assertTrue(marine2.lift(), "lift reports the order as issued");
+
+            assertEquals(1, sink.orders().size());
+            assertEquals("stop", sink.orders().get(0).operation);
+            assertEquals(marine.id(), sink.orders().get(0).actorId);
+
+            assertEquals(1, sink2.orders().size());
+            assertEquals("lift", sink2.orders().get(0).operation);
+            assertEquals(marine2.id(), sink2.orders().get(0).actorId);
+        });
+    }
+
     @Test
     void attackUnitIsRoutedThroughTheSink() {
         FakeUnit marine;
