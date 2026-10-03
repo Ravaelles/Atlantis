@@ -86,6 +86,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // can cache AUnitType.maxHp(). See tests/fakes/UnitStatsTable.
         UnitStatsTable.install();
 
+        // Bullets ask a port where the bullets are, instead of importing the
+        // fake list (see atlantis.units.attacked_by.Bullets.Source).
+        tests.fakes.FakeBullets.installAsSource();
+
         clearCaches();
 
         (new MockEverything(this)).mockEverything();

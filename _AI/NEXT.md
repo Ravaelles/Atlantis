@@ -76,16 +76,31 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness. **9 files left** (was 15),
+- **#28** Production code imports the test harness. **7 files left** (was 15),
   each needing an ADR-0001 port with the fakes as one adapter among several:
   `AtlantisJfap` and `PositionUtil` (both `instanceof FakeUnit`),
-  `Regions` (a fake region while testing), `Bullets` (a fake bullet list while
-  testing), `AUnit` and `AbstractFoggedUnit` (`instanceof FakeUnit`),
-  `AUnitOrders` (a fake order sink while `u()` is null), plus
-  `src/atlantis/units/fogged/FakeFoggedUnit`, which is a test double living in
-  the production tree at all.
+  `Regions` (a fake region while testing), `AUnit` and `AbstractFoggedUnit`
+  (`instanceof FakeUnit`), `AUnitOrders` (a fake order sink while `u()` is null),
+  plus `src/atlantis/units/fogged/FakeFoggedUnit`, which is a test double living
+  in the production tree at all.
 
-  Gone in this round, and both were worse than an import:
+  The port shape is now written down twice - `UnitStats.Source` for unit and
+  weapon data, and `Bullets.Source` for the bullets in flight:
+
+  ```java
+  // production: a question, not a branch on the environment
+  public interface Source { Set<ABullet> currentBullets(); boolean bulletStillExists(ABullet b); }
+  private static Source source;            // null in a game
+  private static Source source() { return source != null ? source : engineSource; }
+  // tests/fakes/FakeBullets.Source is the other adapter; setUp() installs it
+  ```
+
+  `Bullets` is the first port done: its two `Env.isTesting()` branches (the fake
+  bullet list, and the "does the engine object still exist" check that fake
+  bullets cannot answer) became two methods on that interface, with the engine
+  path as the default. No call site changed.
+
+  Gone earlier, and both were worse than an import:
   - `ClearCountCache` imported `tests.unit.helpers.ClearAllCaches` and **never
     used it** - the dependency existed only in the import list, and the jar had to
     ship a test package for nothing;
