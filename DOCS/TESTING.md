@@ -60,6 +60,35 @@ that only worked once per JVM, a race that was hard-coded to Protoss, a global
 mission that leaked). See `_AI/BUGS.md` B-12, B-15 and B-16 before adding a
 `@TestMethodOrder` or "flaky" label to anything.
 
+### Isolation: one class per JVM
+
+Random order finds *order dependence* - two classes that fight over a global.
+This finds *leftovers*: a class that passes only because an earlier class left
+something installed. Compile the suite first, then:
+
+```bash
+CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
+find src/tests -name "*Test.java" | sed 's|src/||; s|\.java$||; s|/|.|g' | sort > /tmp/testclasses.txt
+while read -r cls; do
+  java -cp "out/production/Atlantis:.:$CP" org.junit.platform.console.ConsoleLauncher \
+      --select-class "$cls" --details=summary --disable-ansi-colors --disable-banner 2>/dev/null \
+    | grep -E "^\[ +[0-9]+ tests (successful|failed)"
+done < /tmp/testclasses.txt
+```
+
+Baseline (2026-10-03): **76 classes, 242 tests, 0 failures** - every class passes
+with nothing but its own `setUp()` behind it. Five classes run zero tests on
+purpose: `AbstractWorldCreatingTest` (abstract base), `RetreatScenarioTest` and
+`UnitsForRetreatTest` (helpers with no `@Test`), `UnitTest` (helper), and
+`ObjectToFileTest` (the four skipped ones).
+
+This is the check that would have caught the regression in commit `2b103237`'s
+predecessor the moment it was written: routing `AUnit`'s type through a port made
+the answer depend on a source the harness installs in `setUp()`, and
+`UnitRegistryTest` - which installs nothing - failed 4 of 4 in its own JVM while
+the full suite was green most of the time. A class that only passes in company is
+a class that documents nothing.
+
 ## A test must state its race
 
 `AbstractTestWithUnits.initRace()` (our race) and `initEnemyRace()` (theirs) are
