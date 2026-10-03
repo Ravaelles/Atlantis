@@ -131,7 +131,7 @@ hard-won operational facts that do not belong anywhere else.
   noise-proof and still catches the regressions worth seeing - a Stage E/F/H
   refactor that quietly doubled the per-frame work.
 
-## Reading Brood War's own unit data (for NEXT #29)
+## Reading Brood War's own unit data (a hunt that ended in "don't")
 
 The real hit points, shields, ranges and damage live in `units.dat` and
 `weapons.dat` inside the installed archives. Four things were measured while
@@ -152,8 +152,18 @@ trying to read them instead of transcribing them:
   `shield_points`, `max_range`, `damage_amount` and `damage_cooldown` named. So
   the parser is a half-hour of work and the archive is the whole problem.
 
-Conclusion recorded in NEXT #29: the harness table is transcribed by hand, every
-entry is guarded by `UnitStatsTableTest`, and the missing entries are listed
-rather than guessed. If StormLib or the table ever becomes available, the
-generator replaces the table and nothing else has to change - the seam
-(`atlantis.units.UnitStats`) is already where the numbers enter.
+**The hunt was the wrong road, and this is why the note says so.** It was
+started to get *real* numbers in place of the engine's, on an assumption carried
+over from an earlier round and never checked: that the vendored jar's tables were
+placeholders. They are not - `unitTypesTest.cpp` asserts Marine 40 hit points,
+Ghost 45, Vulture 80, Goliath 125, Siege Tank 150, SCV 60, and the jar answers
+exactly that. The engine was the source all along; the first hand-written table
+invented twenty numbers that contradicted it. `UnitStatsTable` is now a
+correction list (currently empty) and `UnitStatsTableTest` pins the engine's
+values, so a jar swap fails loudly instead of drifting.
+
+What survives from the hunt is still worth keeping: the archive cannot be read
+from here, and `data_loading.h` documents the layout of both files. If a value
+the engine gets wrong ever needs an independent source, that file plus an MPQ
+reader is where it comes from - and the correction belongs in
+`UnitStatsTable`, with its evidence next to it.

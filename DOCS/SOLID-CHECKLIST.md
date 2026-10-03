@@ -98,7 +98,8 @@ Taken from `src/atlantis` (1379 classes):
 
 ## Known violations (tracked, not tolerated silently)
 
-- `#1` 11 pre-existing unit-test failures — listed in `DOCS/TESTING.md`.
+- ~~`#1` pre-existing unit-test failures~~ — closed 2026-10-03. The suite is
+  green; `DOCS/TESTING.md` carries the baseline.
 - `#9` `A` still owns the resource/supply facades (~1400 call sites).
 - `#10`, `#11` `Selection` and `AUnit` still god classes.
 - `#16` `AUnit`/`Selection` need consumer-shaped interfaces (ISP).
