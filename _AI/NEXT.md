@@ -207,9 +207,32 @@ itself, #5, is design work and out of that order's scope).
   The 267 and the 24 are structural - the Commander/Manager framework is
   unit-centric by design, so they are Stage E/H work, not a mechanical sweep.
   The 73 and the 66 are the mechanical ones; keep taking them smallest-first.
-  In progress: the two mechanical rules (73 + 66) are being swept under
-  `_AI/work-orders/WO-13-mechanical-archunit-sweep.md`, one violation per commit;
-  the 267 and the 24 stay here as Stage E/H work.
+  The mechanical sweep under
+  `_AI/work-orders/WO-13-mechanical-archunit-sweep.md` took the two rules to
+  **60 and 65** (from 73 and 66) and then hit the design wall: what is left in
+  them is not mechanical. A scripted triage of every remaining entry for "does
+  anything call this" came back empty - all four util candidates and all
+  thirteen information candidates are `private` methods that their own class
+  calls. What remains, by class:
+  - `CacheKey.toKey` (13 entries) - a polymorphic key builder that knows about
+    units, positions, chokes, bases and constructions. Removing it means either
+    moving the knowledge to the callers or giving the cache a key type.
+  - `Cache` (5) - a generic cache that reads `A.now()` and clones `Selection`s.
+    Both are the clock and a domain type reaching into the kernel; the fix is a
+    clock port and a per-type copy hook.
+  - `Log`, `ErrorLog`, `ConsoleLog`, `TimeMoment` (11) - the logging kernel
+    reads the game clock, and `Log` also stores `debug.tools.LogMessage`
+    (tried: moving that class next to `Log` deletes 9 entries but the class
+    reads `A.now()` itself and arrives with 4 new ones, so it needs a
+    clock-free `LogMessage` first).
+  - `Vectors` (8) - a geometry helper whose signatures mention `AUnit`; it is
+    the one remaining class where "move it next to what it serves" is a real
+    option, once its three callers are counted as one change.
+  - `We.haveBase`, `BwapiAccessibility` and the `util/object` serialisation
+    cluster (5) - facades and a subsystem only a `@Disabled` test uses.
+
+  Every one of those is a design decision, not a mechanical edit, so the sweep
+  stops here; the 267 and the 24 stay as Stage E/H work.
   Two traps, both paid for already:
   - A change must *remove* violations from one rule, not move them into
     another: moving `ScoutManager` into `atlantis.units.special` compiled,
