@@ -78,21 +78,6 @@ documented in code with a comment. The closure goes into the commit message.
 - **Pinned by:** `AUnitTest.facingUsesTheTolerancesOfTheEngine` and
   `facingHelperAgreesWithTheRawVector`, which assert the real windows.
 
-## B-7 — `ProtossTooCloseToRegionBoundaries` can never fire
-
-- **Where:** `.../position/protoss/ProtossTooCloseToRegionBoundaries.java:14`.
-- **The code:** `if (!building.isPylon()) return false;` followed by
-  `if (!building.isCannon()) return false;`. A building that is both a pylon
-  and a cannon does not exist, so the whole condition is dead code.
-- **Why it matters:** it looks like a safety rule ("do not build pylons or
-  cannons near region borders") and is neither enforced nor documented as
-  disabled. Almost certainly one `||` was intended instead of two `&&` guards -
-  but which of the two was meant is a design question, not a typo fix, because
-  the rule would then apply to *every* Protoss building.
-- **How to settle it:** decide the intent, then either fix the condition or
-  delete it with a comment. Deleting is defensible: it currently has zero
-  effect and nobody noticed in a decade.
-
 ## B-8 — `APositionFinder` can still terminate the JVM
 
 - **Where:** `atlantis/production/constructions/position/APositionFinder.java:113`

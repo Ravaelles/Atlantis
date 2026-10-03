@@ -52,7 +52,16 @@ public class PositionFulfillsAllConditions {
             if (PylonTooFarFromBaseEarly.isTooFar(builder, building, position)) return failed();
             if (ProtossTooCloseToMapBoundaries.isTooClose(building, position)) return failed();
             if (ProtossTooCloseToOtherBuildings.isTooClose(builder, building, position)) return failed();
-            if (ProtossTooCloseToRegionBoundaries.isTooCloseToRegionBoundaries(building, position)) return failed();
+
+            // There is deliberately no "too close to a region boundary" check
+            // here. One used to sit in this spot and could never fire: it
+            // returned false unless the building was a pylon *and* a cannon
+            // (ProtossTooCloseToRegionBoundaries, disabled in ae31769d by adding
+            // the second guard, deleted in 2026-10 rather than left to look like
+            // a safety rule). Re-enabling it needs region data that no test can
+            // provide - APosition.region() is null outside a game - so it cannot
+            // be pinned by a test, and Protoss buildings are therefore not
+            // checked against region edges at all.
             if (ProtossCannonTooCloseToPylonFix.isTooClose(building, position)) return failed();
         }
 
