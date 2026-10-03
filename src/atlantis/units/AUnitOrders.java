@@ -18,7 +18,6 @@ import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
-import tests.fakes.FakeUnitData;
 
 /**
  * Class using default methods which are extracted from AUnit class to separate this functionality.
@@ -112,7 +111,7 @@ public interface AUnitOrders {
         unit().setProductionOrder(order);
         return u() != null
             ? processTrain(unitToTrain, order)
-            : FakeUnitData.TRAIN.add(unitToTrain);
+            : OrderFallback.train(unitToTrain);
     }
 
     default boolean trainForced(AUnitType unitToTrain) {
@@ -121,7 +120,7 @@ public interface AUnitOrders {
 //        AConsole.errPrintln("u() = " + u());
 //        AConsole.errPrintln("u().train(unitToTrain.ut()) = " + u().train(unitToTrain.ut()));
 //        AConsole.errPrintln("u().train(unitToTrain.ut()) = " + u().getTrainingQueue().add(unitToTrain.ut()));
-        return u() != null ? processTrain(unitToTrain, null) : FakeUnitData.TRAIN.add(unitToTrain);
+        return u() != null ? processTrain(unitToTrain, null) : OrderFallback.train(unitToTrain);
     }
 
     default boolean processTrain(AUnitType unitToTrain, ProductionOrder order) {
@@ -761,7 +760,9 @@ public interface AUnitOrders {
         else unit().lastCommandIssuedNow(UnitCommandType.Cancel_Construction);
 
 //        throw new RuntimeException("Cancel!");
-        return unit() != null && u() != null ? unit().orderSink().cancelConstruction(unit()) : FakeUnitData.CANCEL.add(unit());
+        return unit() != null && u() != null
+            ? unit().orderSink().cancelConstruction(unit())
+            : OrderFallback.cancelConstruction(unit());
     }
 
     /**

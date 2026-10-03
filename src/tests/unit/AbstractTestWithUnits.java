@@ -36,6 +36,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 import tests.acceptance.AbstractTestWithWorld;
+import tests.fakes.FakeOrderFallback;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitOrigin;
 import tests.unit.helpers.ClearAllCaches;
@@ -99,6 +100,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // AUnit and AtlantisJfap ask whether a unit is one of ours instead of
         // testing for the class (atlantis.units.UnitOrigin).
         FakeUnitOrigin.installAsSource();
+
+        // Orders to a unit the engine cannot see are recorded by the harness
+        // (atlantis.units.OrderFallback).
+        FakeOrderFallback.installAsSink();
 
         clearCaches();
 
