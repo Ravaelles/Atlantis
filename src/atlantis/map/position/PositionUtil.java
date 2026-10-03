@@ -11,7 +11,6 @@ import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
 import jbweb.JBWEB;
-import tests.fakes.FakeUnit;
 
 public class PositionUtil {
 
@@ -44,10 +43,7 @@ public class PositionUtil {
 
 //        System.err.println("object2 = " + object2 + " / " + (object2 instanceof AChoke));
 
-        if (object1 instanceof FakeUnit) {
-            fromPosition = ((FakeUnit) object1).position().p();
-        }
-        else if (object1 instanceof FoggedUnit) {
+        if (object1 instanceof FoggedUnit) {
             APosition foggedPosition = ((FoggedUnit) object1).position();
             if (foggedPosition == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
@@ -65,7 +61,18 @@ public class PositionUtil {
             }
         }
         else if (object1 instanceof AUnit) {
-            fromUnit = ((AUnit) object1).u();
+            AUnit unit = (AUnit) object1;
+
+            // A unit with no engine object behind it - a double the harness put in
+            // the world - has no bwapi Unit to measure from, but it does know
+            // where it is. Asking the unit covers both without this method
+            // knowing which kind it got.
+            if (unit.u() != null) {
+                fromUnit = unit.u();
+            }
+            else {
+                fromPosition = unit.position().p();
+            }
         }
         else if (object1 instanceof Unit) {
             fromUnit = (Unit) object1;
@@ -89,9 +96,6 @@ public class PositionUtil {
         else if (object1 instanceof ARegionBoundary) {
             fromPosition = ((ARegionBoundary) object1).position().p();
         }
-        else if (object1 instanceof FoggedUnit) {
-            fromPosition = ((FoggedUnit) object1).position().p();
-        }
 
         if (fromPosition == null && fromUnit == null) {
             throw new RuntimeException("Invalid class for argument `from`: " + object1);
@@ -102,10 +106,7 @@ public class PositionUtil {
         Position toPosition = null;
         Unit toUnit = null;
 
-        if (object2 instanceof FakeUnit) {
-            toPosition = ((FakeUnit) object2).position().p();
-        }
-        else if (object2 instanceof FoggedUnit) {
+        if (object2 instanceof FoggedUnit) {
             APosition pos = ((FoggedUnit) object2).position();
             if (pos == null) {
                 return DIST_RETURNED_FOR_FOGGED_UNITS_WITHOUT_POSITION;
@@ -120,7 +121,14 @@ public class PositionUtil {
             toPosition = ((AbstractFoggedUnit) object2).position().p();
         }
         else if (object2 instanceof AUnit) {
-            toUnit = ((AUnit) object2).u();
+            AUnit unit = (AUnit) object2;
+
+            if (unit.u() != null) {
+                toUnit = unit.u();
+            }
+            else {
+                toPosition = unit.position().p();
+            }
         }
         else if (object2 instanceof Unit) {
             toUnit = (Unit) object2;
