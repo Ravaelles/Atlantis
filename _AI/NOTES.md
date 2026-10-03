@@ -52,6 +52,23 @@ hard-won operational facts that do not belong anywhere else.
 - `FakeUnit.clearCache()` is still destructive by design (it also flips ids).
   Any new helper that touches unit state after a test built its units must not
   call `setUp()`.
+- **Two world tests that want the same strategy share one queue.** Measured
+  2026-10-04: 3 of 8 random-order runs went red, always in `tests.e2e`, always
+  with a different signature (the 9pool traded one zergling instead of three, the
+  4pool ended with a wounded nexus), and never in isolation. Cause:
+  `Strategy.setTo()` returns early when the strategy is already the one asked
+  for, and the test strategies are static singletons loaded from build-order
+  files - so `Queue.instance` and the build order's orders (consumed, reserved,
+  finished flags) survived into the next test. `WorldStubForTests.initQueue()`
+  had been patching exactly this per test, with a comment saying why; the patch now
+  lives once in `setUpTestLogic()`.
+- **Order dependence hides in the *strategy* and the *queue*, not in the unit
+  list.** When a world test's outcome moves with the class order, suspect what
+  `setUpTestLogic()` does *not* reset: `AtlantisRaceConfig.MY_RACE` (reset),
+  `Missions` (reset), `Alpha` (reset) - and `Strategy`/`Queue`, which used not to
+  be. Also: a dead unit must leave the world's unit list, because several
+  `Select` builders skip the `isAlive()` check and trust the engine's guarantee
+  (see the living-units answer in `AbstractWorldCreatingTest`).
 
 ## Mockito static-mock leak (fully fixed)
 
