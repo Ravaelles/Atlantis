@@ -92,17 +92,35 @@ of the data behind it, not a red test.
   > boolean flag.
 
   So the mechanical sweep is done, and what remains is a placement question, not a
-  port question. Options, in the order I would take them:
-  1. **Ports** - the simulator asks for units, positions and hits instead of
-     casting fakes, the same shape as the five ports below. Keeps `starengine`
-     where the target architecture puts it: ring 1, "the starengine adapter".
-  2. **Move `src/starengine` under `src/tests`** - honest, because it is a test
-     tool, but it argues with `DOCS/ARCHITECTURE-CONTEXT-MAP.md`, which classifies
-     `starengine` as an *adapter*, and with REVIEW.md's "adapters implement ports
-     (bwapi, fake, starengine)".
+  port question. Measured before deciding (2026-10-03):
+
+  | | |
+  |---|---|
+  | size | **26 files, 1209 lines** |
+  | inbound edges from production | **none** |
+  | inbound edges from tests | 2 files: `tests/acceptance/AbstractWorldCreatingTest` (launches it) and `tests/fakes/FakeUnit` (borrows `AttackState`, `EngineUnitState`) |
+  | `Env.isStarEngine()` | written by `AbstractWorldCreatingTest`, read by **nobody** - the one call site is commented out (`Select.java:93`) |
+  | tests that use it | 3 (`tests/acceptance/starengine/**`) |
+  | what it imports from the harness | `tests.fakes.FakeUnit` (its input model), `tests.acceptance.AbstractWorldCreatingTest` (the launcher) |
+
+  Options, with what the measurement says about each:
+  1. **Move `src/starengine` under `src/tests`** - 1209 lines with two inbound test
+     edges and no production consumer at all. This is the cheap one, and it is
+     also the honest one: the package plays a game *from fakes*, so it is part of
+     the fake world, not an adapter to StarCraft.
+  2. **Ports** - keep it where the target architecture puts it ("adapters implement
+     ports: bwapi, fake, starengine") and make it ask a world port for units,
+     positions and hits. Preserves a documented intent, at the price of a port for
+     a package nothing but tests run.
   3. Leave it, and keep shipping the harness in the jar.
 
-  This is an **ADR** (Stage E/H), not a mechanical sweep. Do not start it before the
+  The only thing arguing for option 2 is one line of
+  `DOCS/ARCHITECTURE-CONTEXT-MAP.md` §6, which classifies `starengine` as an
+  adapter - and that table says it is how packages are judged *until Stage I
+  physically moves files*, i.e. it is a provisional guess, not a decision. My
+  recommendation is option 1 plus one line in that document; the call is the
+  owner's, because it changes where a documented adapter lives. Either way it is
+  an **ADR** (Stage E/H), not a mechanical sweep: do not start it before the
   decision is written down.
 
   The port shape is now written down twice - `UnitStats.Source` for unit and
