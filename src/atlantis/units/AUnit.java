@@ -249,7 +249,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         cache.clear();
         cacheInt.clear();
         cacheBoolean.clear();
-        if (Env.isTesting()) Worlds.reset();
     }
 
     // =========================================================

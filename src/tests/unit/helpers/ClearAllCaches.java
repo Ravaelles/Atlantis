@@ -17,6 +17,7 @@ import atlantis.units.select.Select;
 import tests.fakes.FakeBullets;
 import tests.fakes.FakeUnit;
 import atlantis.combat.missions.Missions;
+import atlantis.core.world.Worlds;
 
 public class ClearAllCaches {
     /**
@@ -44,6 +45,13 @@ public class ClearAllCaches {
     }
 
     public static void clearAll() {
+        // Was production code's job: AUnit.clearAUnitCache() reset the shared
+        // registry whenever it ran, under `if (Env.isTesting())`. A cache-clearing
+        // method deciding that the world ends is the environment leaking into the
+        // core, and it fired once per fake unit. The harness that empties the
+        // fakes now empties the registry with them.
+        Worlds.reset();
+
         Missions.reset();
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
