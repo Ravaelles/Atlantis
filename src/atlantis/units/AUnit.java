@@ -200,8 +200,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private void init() {
         initManagers();
 
-        // Cached type helpers
-        if (!UnitOrigin.isSimulated(this)) refreshType();
+        // Cached type helpers. Only a unit the engine owns has a type to refresh
+        // from: for anything else (a double the harness put in the world, a unit
+        // behind the fog) the type was set by whoever created it, and asking
+        // again would overwrite it - with null, mid-constructor.
+        if (u != null) refreshType();
 
         // Repair & Heal
         this._repairableMechanically = isABuilding() || isVehicle();
@@ -278,10 +281,21 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         cacheType();
     }
 
+    /**
+     * The unit's type, from the engine when there is an engine object and from
+     * the wrapper itself when there is not.
+     *
+     * <p>Asking "is there an engine object?" ({@code u == null}) rather than "what
+     * class is this?" keeps the answer in the unit: a double the harness put in
+     * the world carries the type it was given, a unit that went behind the fog
+     * keeps its last known one, and neither depends on which test ran before it.
+     * {@link AbstractFoggedUnit} overrides {@link #type()} outright, so the fogged
+     * case is unaffected by this branch either way.</p>
+     */
     protected AUnitType cacheType() {
-        if (UnitOrigin.isSimulated(this)) return _lastType;
+        if (u == null) return _lastType;
 
-        _lastType = u != null ? AUnitType.from(u.getType()) : null;
+        _lastType = AUnitType.from(u.getType());
         return _lastType;
     }
 

@@ -361,8 +361,12 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     protected AUnitType cacheType() {
+        // Returns what it just stored. Returning null here worked only because
+        // every caller either ignored the value (refreshType) or never got here -
+        // AUnit.type() returns _lastType itself when it is already set - and it
+        // broke the moment something asked during construction.
         _lastType = rawType;
-        return null;
+        return _lastType;
     }
 
 //    @Override
