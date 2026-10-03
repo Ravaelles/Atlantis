@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Selection;
 
 import atlantis.architecture.Manager;
@@ -22,12 +23,16 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.id() % 5 <= 1) return false;
+        // In a base defence the modulo skip must not idle a fifth of the
+        // workforce (B-19: the skipped probes never supported the cannon).
+        if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
         if (unit.enemiesNear().combatUnits().empty()) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
         if (unit.lastActionLessThanAgo(30 * 5, Actions.GATHER_MINERALS)) return f();
-        if (!unit.lastStartedRunningMoreThanAgo(30 * 10)) return f();
+        // The run lockout applies in the field only; at home a worker that
+        // fled is wanted back in the defence (B-19).
+        if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return f();
 
         AUnit base = unit.friendsNear().bases().nearestTo(unit);
         if (base == null) return f();

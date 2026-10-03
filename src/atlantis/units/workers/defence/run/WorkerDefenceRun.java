@@ -6,6 +6,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.actions.Actions;
+import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
@@ -19,6 +20,13 @@ public class WorkerDefenceRun extends Manager {
 
     @Override
     public boolean applies() {
+        // Home is being attacked and this worker can help: fleeing is fatal at
+        // home (_AI/BUGS.md B-19) - nothing would be left between the
+        // attackers and the base once the army dies. Artillery attackers
+        // (Reaver/Tank/Lurker) still outrange workers, so run stays correct
+        // against them.
+        if (BaseUnderAttack.workerShouldHoldGround(unit)) return false;
+
         if (A.s <= 60 * 7 && unit.hp() >= 38) return false;
 
         if (unit.hp() <= 20 && unit.enemiesNear().notEmpty()) return true;

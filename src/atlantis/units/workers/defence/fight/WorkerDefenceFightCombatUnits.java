@@ -7,6 +7,7 @@ import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.AliveEnemies;
+import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -18,10 +19,15 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     @Override
     public boolean applies() {
-        return unit.enemiesNear().combatUnits().notEmpty()
-            && unit.hp() >= 21
-            && unit.lastStartedRunningMoreThanAgo(30 * 10)
-            && unit.friendsNear().bases().countInRadius(6, unit) > 0
+        if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
+        if (unit.hp() < 21) return false;
+
+        // A worker that fled during a base attack is not locked out of the
+        // defence: holding ground is the right answer at home (_AI/BUGS.md
+        // B-19), so the 300-frame run lockout applies in the field only.
+        if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return false;
+
+        return unit.friendsNear().bases().countInRadius(6, unit) > 0
             && unit.hp() >= (Enemy.protoss() ? 34 : 26)
             && unit.distToBase() <= 8;
 //            && !WorkerDoNotFight.doNotFight(unit);
@@ -56,8 +62,14 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
         int workers = Count.workers();
 
-        if (workers <= 9 && unit.id() % 3 == 0) return false;
-        if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
+        // The modulo skips spread workers across harassment responses in the
+        // field; in a base defence every hand is needed (B-19: the skipped
+        // probes were the ones that could have turned the cannon fight).
+        boolean holdGround = BaseUnderAttack.check();
+        if (!holdGround) {
+            if (workers <= 9 && unit.id() % 3 == 0) return false;
+            if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
+        }
 
         if (Select.enemyCombatUnits().ofType(
             AUnitType.Terran_Siege_Tank_Siege_Mode,

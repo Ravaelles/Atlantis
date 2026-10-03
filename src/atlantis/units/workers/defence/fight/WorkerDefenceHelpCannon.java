@@ -25,7 +25,14 @@ public class WorkerDefenceHelpCannon extends Manager {
             && (cannon = defineCannon()) != null
             && (enemiesNearCannon = cannon.enemiesNear().inRadius(7.8, cannon)).notEmpty()
             && enemiesNearCannon.countInRadius(7.8, cannon) >= 3
-            && laterInGameAgainstRangedEnemiesJustIgnore()
+            // "Ignore" means skip this manager: late game, or against enough
+            // ranged enemies that worker bodies would only feed them. The
+            // predicate returns true when helping must NOT happen, so it has
+            // to be negated here - AND-ing it positively meant this manager
+            // only ever fired after 9.5 game minutes or against 5-6+ ranged
+            // enemies, i.e. never against an early melee rush (_AI/BUGS.md
+            // B-19: nobody ever supported the cannon while it died).
+            && !laterInGameAgainstRangedEnemiesJustIgnore()
             && ourCombatUnitsTooWeak();
     }
 
