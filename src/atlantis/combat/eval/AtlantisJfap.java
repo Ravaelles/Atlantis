@@ -2,9 +2,9 @@ package atlantis.combat.eval;
 
 import atlantis.combat.eval.tweaks.AtlantisJfapModifier;
 import atlantis.units.AUnit;
+import atlantis.units.UnitOrigin;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import jfap.JfapCombatEvaluator;
-import tests.fakes.FakeUnit;
 
 /**
  * Fap fap fap.
@@ -68,7 +68,7 @@ public class AtlantisJfap {
             && unit.isCompleted()
             && !unit.isOverlord()
             && (
-            unit.u() != null || unit instanceof FakeUnit || unit instanceof AbstractFoggedUnit
+            unit.u() != null || UnitOrigin.isSimulated(unit) || unit instanceof AbstractFoggedUnit
         );
     }
 

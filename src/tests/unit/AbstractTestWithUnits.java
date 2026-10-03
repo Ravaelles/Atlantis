@@ -37,6 +37,7 @@ import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
+import tests.fakes.FakeUnitOrigin;
 import tests.unit.helpers.ClearAllCaches;
 
 import java.lang.reflect.Field;
@@ -94,6 +95,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // A unit that goes behind the fog is wrapped by the harness, not by an
         // instanceof check in production (AbstractFoggedUnit.FoggedUnitFactory).
         FakeFoggedUnit.installAsFactory();
+
+        // AUnit and AtlantisJfap ask whether a unit is one of ours instead of
+        // testing for the class (atlantis.units.UnitOrigin).
+        FakeUnitOrigin.installAsSource();
 
         clearCaches();
 

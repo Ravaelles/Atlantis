@@ -62,7 +62,6 @@ import atlantis.util.log.Log;
 import atlantis.debug.tools.LogUnitsToFiles;
 import bwapi.*;
 import atlantis.cherryvis.ACherryVis;
-import tests.fakes.FakeUnit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -202,7 +201,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         initManagers();
 
         // Cached type helpers
-        if (!(this instanceof FakeUnit)) refreshType();
+        if (!UnitOrigin.isSimulated(this)) refreshType();
 
         // Repair & Heal
         this._repairableMechanically = isABuilding() || isVehicle();
@@ -280,7 +279,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     protected AUnitType cacheType() {
-        if (this instanceof FakeUnit) return _lastType;
+        if (UnitOrigin.isSimulated(this)) return _lastType;
 
         _lastType = u != null ? AUnitType.from(u.getType()) : null;
         return _lastType;
