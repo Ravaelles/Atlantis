@@ -123,3 +123,24 @@ by the language rule below.
 - Items may be worked in any order, but an item counts as closed only when it
   is verified by execution (build, test run, game run) — not when it merely
   compiles.
+
+## 8. Workspace boundary (mandatory)
+
+- All work stays inside **`/ravaelles/JAVA/starcraft-ai`**: `Atlantis/`,
+  `StardustDevEnvironment/`, `bots/`, `starcraft/` and anything else in that
+  tree. Reading, searching, writing, building and running tests happen there.
+- **Never search, scan or read anything above that directory** - not the user's
+  home directory, not other projects, not system paths - even read-only, and
+  even when the goal is "find any data that would help". A `grep -r` or `find`
+  rooted in the home directory turns a task into a crawl of private files, and
+  whatever it finds is not evidence the project agreed to produce.
+- The only paths outside the workspace that may be used:
+  - `/home/ping.sh`, the completion notification of section 4, and only when
+    section 4 allows it;
+  - `/tmp/opencode`, the scratch directory the tooling provides, for throwaway
+    tooling of the current task (a virtualenv, a downloaded archive, an
+    intermediate file). Nothing produced there belongs to the repository;
+    anything that has to survive goes into `Atlantis/` and is committed.
+- A third-party tool installed to help (a package, a virtualenv) is a means, not
+  a deliverable: do not add it to the repository and do not let the repository
+  depend on it, unless the task is exactly about adding that dependency.
