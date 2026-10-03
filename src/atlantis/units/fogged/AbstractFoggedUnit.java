@@ -278,6 +278,16 @@ public class AbstractFoggedUnit extends AUnit {
         return position() != null && position().isPositionVisible();
     }
 
+    /**
+     * Unknown, deliberately reported as -69: the many {@code hp() <= 0} guards
+     * in combat code use it to skip units whose hit points cannot be read, so a
+     * fogged unit must not look alive here.
+     *
+     * <p>Both subclasses override this with {@code maxHp()}, because an army
+     * score that ignores every unit behind the fog is not an army score - see
+     * {@link FoggedUnit#hp()} and {@link FakeFoggedUnit#hp()}. A new subclass
+     * that forgets to will quietly deflate every total it appears in.</p>
+     */
     @Override
     public int hp() {
         return -69;

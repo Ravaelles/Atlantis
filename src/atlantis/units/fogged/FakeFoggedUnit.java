@@ -73,6 +73,29 @@ public class FakeFoggedUnit extends AbstractFoggedUnit {
         return FakePlayer.NEUTRAL;
     }
 
+    /**
+     * Must answer exactly what {@link FoggedUnit#hp()} answers.
+     *
+     * <p>{@link AbstractFoggedUnit#hp()} returns -69 to say "hit points behind
+     * the fog are unknown, do not treat me as a living target". The real game
+     * class overrides that with {@code maxHp()} so that sums like
+     * {@code EnemyArmyStrength} still count the unit. When this double did not,
+     * every fogged unit subtracted 69 from the enemy army score, the score hit
+     * its floor of 1 and {@code ArmyStrength.ourArmyRelativeStrength()}
+     * answered the 999 clamp - a strength reading no game could produce, pinned
+     * as if it were real by EnemyUnitsTest. A test double that disagrees with the
+     * class it stands in for is a bug in the double.</p>
+     */
+    @Override
+    public int hp() {
+        int hp = super.hp();
+        if (hp > 0) {
+            return hp;
+        }
+
+        return super.maxHp();
+    }
+
     @Override
     public int shields() {
         return 0;

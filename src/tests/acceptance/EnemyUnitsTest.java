@@ -154,13 +154,23 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
 //            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
 //        );
 
-        // Measured: 999 - the clamp. At this point the "enemy army" is mostly
-        // Zerg buildings, and Army/EnemyArmyStrength subtract 50 per combat
-        // building and 100 per base, which drives the enemy score to its floor
-        // of 1 and saturates the ratio. Tracked in _AI/BUGS.md B-10; the test
-        // pins today's behaviour instead of pretending the old 10..200 range.
+        // Measured: 8. One marine (40 hit points + 30 for being ranged) against
+        // a Zerg base: the enemy scores 945 hit points - three units behind the
+        // fog counted at their maximum, three still visible at the 40 they were
+        // created with - plus 4*30 for ranged and minus 4*50 for combat
+        // buildings, i.e. 865. 70*100/865 = 8.
+        //
+        // This used to be 999, the clamp, and B-10 blamed the building
+        // penalties. They were not to blame: AbstractFoggedUnit.hp() answers
+        // -69 for a unit behind the fog, so every fogged unit pushed the enemy
+        // score down by 69 and the Math.max(1, ...) floor in
+        // EnemyArmyStrength took over. FoggedUnit compensates for that by
+        // answering maxHp(), but the test double did not - so the 999 was an
+        // artefact of the fake world, not something a game could produce.
         armyStrengthA = armyStrengthUnchached();
-        assertEquals(999, armyStrengthA, "the ratio saturates - see _AI/BUGS.md B-10");
+        assertEquals(8, armyStrengthA, "one marine is 8% of a Zerg base");
+        assertTrue(ArmyStrength.weAreMuchWeaker(),
+            "and the bot must act on that, not believe it is 999% stronger");
 
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(hydra);
     }
@@ -175,13 +185,17 @@ public class EnemyUnitsTest extends AbstractTestWithWorld {
         armyStrengthB = armyStrengthUnchached();
 //        System.err.println("armyStrengthA = " + armyStrengthA);
 //        System.err.println("armyStrengthB = " + armyStrengthB);
-        // The subject of this test is the fogged-unit bookkeeping below; the
-        // strength ratio cannot show "we got weaker" here, because the enemy
-        // score is pinned at its floor of 1 by all those Zerg buildings and the
-        // ratio stays clamped at 999 on both sides (_AI/BUGS.md B-10). The old
-        // "A > B" and "10 < B < 110" expectations stopped being reachable when
-        // the scenario grew more buildings.
-        assertEquals(armyStrengthA, armyStrengthB, "both sides are clamped - see B-10");
+        // Discovering one more enemy unit has to make us relatively weaker: the
+        // hydralisk behind the fog is worth its 80 hit points plus 30 for being
+        // ranged, so the enemy scores 975 and we drop from 8 to 7.
+        //
+        // The subject of this test is the fogged-unit bookkeeping below; this is
+        // the arithmetic that bookkeeping feeds. Under the -69 sentinel this
+        // direction was unreachable - both sides read 999 and the assertion had
+        // to be "nothing changed" (_AI/BUGS.md B-10).
+        assertTrue(armyStrengthB < armyStrengthA,
+            "one more enemy makes us weaker: " + armyStrengthB + " < " + armyStrengthA);
+        assertEquals(7, armyStrengthB, "70*100/975");
 //        System.err.println("iii = " + armyStrengthUnchached()
 //            + " / ED:" + EnemyUnits.discovered().size() + " / Fresh:" + EnemyUnits.freshDiscovered().size()
 //        );
