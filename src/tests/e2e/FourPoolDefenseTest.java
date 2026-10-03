@@ -83,19 +83,39 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             combat.onFrame(A.now(), ourList, lingList);
         });
 
-        // Measured baseline (engine hit points, engine cooldowns, shields
-        // modelled): the cannon fights and dies around frame 150, the zealot
-        // around 250, both trading two lings between them. The probes never
-        // engage the packed lings - WorkerDefenceRun fires on 3 lings in 3
-        // tiles and the 300-frame run/fight lockout keeps them out afterwards
-        // (see _AI/BUGS.md B-19) - so the remaining four lings grind the lone
-        // nexus down around frame 880, losing two probes at the very end.
-        // A defense that holds must change that story, not these numbers.
-        assertTrue(!nexus.isAlive(), "six lings grind the base down by frame 900");
-        assertTrue(!cannon.isAlive(), "the cannon fought (and fell)");
-        assertTrue(!zealot.isAlive(), "the zealot fought (and fell)");
-        assertTrue(aliveCount(lings) <= 4, "the defense trades at least two lings, was: " + aliveCount(lings));
-        assertTrue(aliveCount(probes) >= 2, "at least half the probes escape, was: " + aliveCount(probes));
+        // Measured from a clean run of this scenario (2026-10-03, after the B-19
+        // fix: the un-inverted WorkerDefenceHelpCannon condition, base-defence
+        // suppression of the run lockout and the modulo skips, and a world that
+        // drops its dead units). No instrumentation inside the frame loop - a
+        // diagnostic there takes focus and attack turns the passive stub units
+        // never took on their own (NOTES.md), and the first version of these
+        // numbers did come from such a run, which is why they were wrong.
+        //
+        // The defence now holds outright: the six lings die between frames 51 and
+        // 249, the cannon survives on 10 hit points after 11 strike rounds, the
+        // zealot never takes a hit (it is still a tile short when the rush ends)
+        // and the nexus never loses a single hit point. Every probe gets one
+        // strike in, which is the whole of B-19: they used to never engage at all,
+        // locked out for 300 frames after fleeing and then skipped by id % 5.
+        assertTrue(nexus.isAlive() && nexus.hp() == nexus.type().maxHp() && nexus.shields() == nexus.type().maxShields(),
+            "the held base must come through untouched, was: " + nexus.hp() + "+" + nexus.shields());
+        assertTrue(cannon.isAlive(), "the cannon must survive the defence it leads, was: " + cannon.hp() + "+" + cannon.shields());
+        assertTrue(zealot.isAlive(), "the zealot must survive behind cannon and probes, was: " + zealot.hp());
+        assertTrue(aliveCount(lings) == 0, "a held 4pool kills the whole rush, was: " + aliveCount(lings) + " alive");
+
+        int lastLingDeath = 0;
+        for (FakeUnit ling : lings) {
+            lastLingDeath = Math.max(lastLingDeath, combat.diedAt(ling));
+        }
+        assertTrue(lastLingDeath > 0 && lastLingDeath <= 300,
+            "the rush is over early, was: last ling dead at frame " + lastLingDeath);
+
+        assertTrue(aliveCount(probes) >= 3, "the probe fight must not be a suicide, was: " + aliveCount(probes));
+        int probeStrikes = 0;
+        for (FakeUnit probe : probes) {
+            probeStrikes += combat.strikesBy(probe);
+        }
+        assertTrue(probeStrikes >= 4, "every probe must land at least one strike (B-19: they never did), was: " + probeStrikes);
     }
 
     @Test

@@ -42,11 +42,38 @@ public class ScenarioCombat {
     private final Map<Integer, Integer> lastStrikeAt = new HashMap<>();
 
     /**
+     * Strike rounds each attacker has dealt, and the frame it died on (0 = still
+     * standing). Both are pure records written from inside the resolver: reading
+     * unit fields and writing a counter cannot change what anybody decides, which
+     * is what a diagnostic that invokes managers would do (see NOTES.md, "Scenario
+     * E2E probes are actuators, not sensors").
+     */
+    private final Map<Integer, Integer> strikesByUnitId = new HashMap<>();
+    private final Map<Integer, Integer> diedAtFrame = new HashMap<>();
+
+    /** Frame currently being resolved; dealOneRound records deaths against it. */
+    private int damageFrame = 0;
+
+    /**
      * Resolve one frame of strikes for every unit on both sides.
      */
     public void onFrame(int frame, List<FakeUnit> ours, List<FakeUnit> enemies) {
         strikeForSide(frame, ours, enemies);
         strikeForSide(frame, enemies, ours);
+    }
+
+    /**
+     * Strike rounds this unit has dealt so far, on either side.
+     */
+    public int strikesBy(FakeUnit unit) {
+        return strikesByUnitId.getOrDefault(unit.id(), 0);
+    }
+
+    /**
+     * The frame this unit died on, or 0 if it is still standing.
+     */
+    public int diedAt(FakeUnit unit) {
+        return diedAtFrame.getOrDefault(unit.id(), 0);
     }
 
     private void strikeForSide(int frame, List<FakeUnit> attackers, List<FakeUnit> targets) {
@@ -67,6 +94,8 @@ public class ScenarioCombat {
             if (frame - lastStrike < cooldown) continue;
 
             lastStrikeAt.put(attacker.id(), frame);
+            strikesByUnitId.merge(attacker.id(), 1, Integer::sum);
+            damageFrame = frame;
             dealOneRound(attacker, target);
         }
     }
@@ -123,7 +152,12 @@ public class ScenarioCombat {
         // in parallel while any last, as an indicator for shield-specific
         // rules - not as a second pool. Absorbing into shields without
         // touching hp would count every shield point twice.
+        int frame = damageFrame;
         target.setHp(target.hp() - damage);
         target.setShields(Math.max(0, target.shields() - damage));
+
+        if (target.hp() <= 0) {
+            diedAtFrame.putIfAbsent(target.id(), frame);
+        }
     }
 }

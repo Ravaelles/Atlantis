@@ -81,22 +81,28 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             combat.onFrame(A.now(), ourList, lingList);
         });
 
-        // Measured baseline (engine hit points, engine cooldowns, shields
-        // modelled; instrumented run of 2026-10-03): the cannon starts killing
-        // lings in reach around frame 95, takes damage from ~105 and falls
-        // around frame 163; the zealot falls around 214. Between them they
-        // trade two lings, and the six survivors grind the lone nexus down
-        // around frame 631 - earlier than the 4pool's ~880, because eight
-        // attackers kill faster than six despite the later arrival. The probes
-        // never engage (the same WorkerDefenceRun + 300-frame lockout story as
-        // the 4pool, _AI/BUGS.md B-19): three of the four are killed off at
-        // the very end (frames ~660-825) and one escapes.
-        // A defense that holds must change that story, not these numbers.
-        assertTrue(!nexus.isAlive(), "eight lings grind the base down by frame 900");
-        assertTrue(!cannon.isAlive(), "the cannon fought (and fell)");
-        assertTrue(!zealot.isAlive(), "the zealot fought (and fell)");
-        assertTrue(aliveCount(lings) <= 6, "the defense trades at least two lings, was: " + aliveCount(lings));
-        assertTrue(aliveCount(probes) >= 1, "at least one probe escapes, was: " + aliveCount(probes));
+        // Measured from a clean run (2026-10-03), same conditions as the 4pool
+        // twin. Eight attackers arriving later still beat the defence, and that is
+        // pinned on purpose: the point of this scenario is not that the base
+        // survives, it is that the defence engages at all. What the B-19 fix
+        // changed is the mechanism - the cannon now trades three lings instead of
+        // two before falling at frame 192 (was ~163), and the probes land six
+        // strikes between them (they used to land none: locked out for 300 frames
+        // after fleeing, then skipped by id % 5).
+        //
+        // What is deliberately *not* pinned: the probes all dying. They do
+        // (frames 120-841, the last two in the final stand on the ruins), and
+        // that is the honest end of this scenario rather than a target - a fix
+        // that saved them must not have to fight these assertions.
+        assertTrue(!nexus.isAlive(), "eight lings still grind the base down, was: " + nexus.hp() + "+" + nexus.shields());
+        assertTrue(!cannon.isAlive() && combat.diedAt(cannon) > 0, "the cannon fought (and fell), frame: " + combat.diedAt(cannon));
+        assertTrue(aliveCount(lings) <= 5, "the defence trades at least three lings, was: " + aliveCount(lings));
+
+        int probeStrikes = 0;
+        for (FakeUnit probe : probes) {
+            probeStrikes += combat.strikesBy(probe);
+        }
+        assertTrue(probeStrikes >= 6, "the probes must engage the rush (B-19: they never did), was: " + probeStrikes);
     }
 
     @Test
