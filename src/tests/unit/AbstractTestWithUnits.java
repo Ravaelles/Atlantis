@@ -18,7 +18,11 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
+import atlantis.production.orders.build.ABuildOrder;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.production.orders.production.queue.ReservedResources;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import tests.fakes.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
@@ -180,6 +184,30 @@ public class AbstractTestWithUnits extends UnitTest {
 
         setUpBuildOrder();
         setUpStrategy();
+
+        // Strategy.setTo() does nothing when the strategy is already the one we
+        // want, and the test strategies are static singletons loaded from files -
+        // so a world could inherit the previous test's queue, with its orders
+        // consumed, reserved or finished, and its build order's runtime state
+        // already moved. WorldStubForTests.initQueue() has been patching exactly
+        // that per test; do it once here for every world test.
+        //
+        // Found by the isolation/random-order checks: with a foreign queue in
+        // place, tests.e2e.NinePoolDefenseTest traded one zergling instead of
+        // three, and tests.e2e.FourPoolDefenseTest could end with a wounded nexus.
+        resetProductionQueueForThisTest();
+    }
+
+    private void resetProductionQueueForThisTest() {
+        ABuildOrder buildOrder = Strategy.get().buildOrder();
+        if (buildOrder != null) {
+            for (ProductionOrder order : buildOrder.productionOrders()) {
+                order.resetRuntimeState();
+            }
+        }
+
+        QueueInitializer.initializeProductionQueue();
+        Queue.get().clearCache();
     }
 
     @AfterEach
