@@ -2089,7 +2089,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * (roughly 63 degrees each way).
      */
     public boolean isOtherFacingThisUnit(AUnit otherUnit) {
-        if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
+        if (otherUnit.weKnowNothingAboutIt()) return false;
 
         Vector pointingAtUs = Vectors.directionTowards(otherUnit, this);
 
@@ -2109,7 +2109,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * this. See {@code AUnitTest.facingHelperAgreesWithTheRawVector}.</p>
      */
     public boolean isOtherShowingBackToUs(AUnit otherUnit) {
-        if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
+        if (otherUnit.weKnowNothingAboutIt()) return false;
 
         Vector pointingAwayFromUs = Vectors.directionTowards(this, otherUnit);
 
@@ -2123,8 +2123,8 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * about the other unit, from the other side.
      */
     public boolean isFacing(AUnit otherUnit) {
-        if ((otherUnit.hasNoU() || otherUnit.noPosition()) && !Env.isTesting()) return false;
-        if (hasNoU() && !Env.isTesting()) return false;
+        if (otherUnit.weKnowNothingAboutIt()) return false;
+        if (weKnowNothingAboutIt()) return false;
 
         Vector pointingAtThem = Vectors.directionTowards(this, otherUnit);
 
@@ -2136,6 +2136,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      */
     public boolean hasNoU() {
         return u == null;
+    }
+
+    /**
+     * Do we know anything at all about this unit - is it worth asking geometric
+     * questions about it?
+     *
+     * <p>A unit with no engine object and no position is one the game has not
+     * shown us, so a comparison involving its angle would be arithmetic on
+     * nothing. A double the harness put in the world has no engine object either,
+     * but it does have an angle and a position, and the test is exactly where
+     * those numbers come from - so the answer there is yes. That distinction is
+     * the port ({@link UnitOrigin}); asking the environment instead meant three
+     * copies of the same condition in three methods.</p>
+     */
+    public boolean weKnowNothingAboutIt() {
+        if (UnitOrigin.isSimulated(this)) return false;
+
+        return hasNoU() || noPosition();
     }
 
     public boolean isFirstCombatUnit() {
