@@ -1,7 +1,4 @@
 Field <atlantis.util.log.Log.messages> has generic type <java.util.ArrayList<atlantis.debug.tools.LogMessage>> with type argument depending on <atlantis.debug.tools.LogMessage> in (Log.java:0)
-Method <atlantis.util.ACachedValue.getAliveCachedValue(java.lang.String)> calls method <atlantis.game.AGame.now()> in (ACachedValue.java:86)
-Method <atlantis.util.ACachedValue.insertDoubleValueForKey(java.lang.String, java.lang.Double)> calls method <atlantis.game.AGame.now()> in (ACachedValue.java:95)
-Method <atlantis.util.ACachedValue.insertNewValueForKey(java.lang.String, java.lang.Object)> calls method <atlantis.game.AGame.now()> in (ACachedValue.java:102)
 Method <atlantis.util.Helpers.canAfford([Ljava.lang.Integer;)> calls method <atlantis.game.A.canAfford(int, int)> in (Helpers.java:24)
 Method <atlantis.util.Helpers.canAfford(int, int)> calls method <atlantis.game.A.canAfford(int, int)> in (Helpers.java:28)
 Method <atlantis.util.Helpers.has(atlantis.units.AUnitType)> calls method <atlantis.units.select.Count.ofType(atlantis.units.AUnitType)> in (Helpers.java:12)

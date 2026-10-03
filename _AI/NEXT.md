@@ -201,14 +201,15 @@ itself, #5, is design work and out of that order's scope).
   geometry), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = 73,
+  `util -> units/game/map/production/information/combat/debug` = 70 (was 73),
   `information -> combat/production` = 66,
   `architecture -> combat/production/units/game/util/debug` = 24.
   The 267 and the 24 are structural - the Commander/Manager framework is
   unit-centric by design, so they are Stage E/H work, not a mechanical sweep.
   The 73 and the 66 are the mechanical ones; keep taking them smallest-first.
-  Executable procedure (one violation per commit, with traps and stop
-  rules): `_AI/work-orders/WO-13-mechanical-archunit-sweep.md`.
+  In progress: the two mechanical rules (73 + 66) are being swept under
+  `_AI/work-orders/WO-13-mechanical-archunit-sweep.md`, one violation per commit;
+  the 267 and the 24 stay here as Stage E/H work.
   Two traps, both paid for already:
   - A change must *remove* violations from one rule, not move them into
     another: moving `ScoutManager` into `atlantis.units.special` compiled,
