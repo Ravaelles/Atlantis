@@ -16,7 +16,7 @@ public class ACherryVisUnitLogger {
 
         // listeners.computeIfAbsent(event, k -> new ArrayList<>()).add(listener);
 
-        unitsManagerLogs.computeIfAbsent(unit.id(), k -> new TreeMap<>()).put(A.now, message);
+        unitsManagerLogs.computeIfAbsent(unit.id(), k -> new TreeMap<>()).put(A.now(), message);
 
 //        ArrayList<String> managerLogs = unitsManagerLogs.get(unit);
 //        if (managerLogs == null) {

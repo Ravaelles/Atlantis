@@ -218,13 +218,6 @@ the first is already done.
     reviewed, because a re-freeze can absorb violations whose text merely
     changed (the last one rewrote ten Log -> LogMessage entries because
     LogMessage moved package).
-- **#14** Add a benchmark guard for the frame pipeline
-  (`scripts/benchmark-trees.sh` result checked in CI-style thresholds) so a
-  Stage E/F/H refactor that slows the per-frame work fails visibly instead of
-  silently.
-
-## SOLID follow-ups (see `DOCS/SOLID-CHECKLIST.md`)
-
 - **#16** Give `AUnit` and `Selection` consumer-shaped interfaces. ISP cannot
   start before the split: 587 and 231 methods cannot be "just injected". Start
   with the two or three narrowest consumers (e.g. "something that can be

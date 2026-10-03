@@ -300,7 +300,7 @@ public class ARunningManager {
 
     public HasPosition setRunTo(HasPosition runTo) {
         this.runTo = runTo;
-        unit.unitState().setLastRunningPositionChange(A.now);
+        unit.unitState().setLastRunningPositionChange(A.now());
         return runTo;
     }
 

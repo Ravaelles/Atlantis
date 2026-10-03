@@ -312,7 +312,7 @@ public class OnEveryFrameHelper {
 
         String lastCommand = unit.lastCommandName();
         if (!"".equals(lastCommand)) {
-            System.err.println("@" + A.now + ":  " + unit.action().name()
+            System.err.println("@" + A.now() + ":  " + unit.action().name()
                 + (unit.isAttackFrame() ? " (" + unit.cooldown() + ")" : "")
                 + ", dist: " + A.digit(unit.distTo(enemy))
             );

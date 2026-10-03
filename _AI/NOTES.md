@@ -122,6 +122,14 @@ hard-won operational facts that do not belong anywhere else.
 - Fogged hp sentinel: `AbstractFoggedUnit.hp()` returns `-69` for unknown;
   snapshot projections stay faithful (no guessing) — representation of
   unknown state is open E-core design work.
+- Guard: `scripts/benchmark-trees.sh --save` records
+  `_AI/benchmarks/frame-pipeline.txt` (best ns/frame/unit plus the JVM and
+  kernel it was measured on), `--check` fails when a run is more than 20% slower
+  **on the recorded machine** and refuses to compare across machines instead of
+  reporting a failure nobody can act on. Measured variance on an idle run:
+  about 1% (4.32 ms vs 4.29 ms per frame per unit), so the 20% threshold is
+  noise-proof and still catches the regressions worth seeing - a Stage E/F/H
+  refactor that quietly doubled the per-frame work.
 
 ## Reading Brood War's own unit data (for NEXT #29)
 

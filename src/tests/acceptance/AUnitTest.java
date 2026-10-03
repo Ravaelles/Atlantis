@@ -785,7 +785,7 @@ public class AUnitTest extends AbstractTestWithWorld {
     @Test
     public void everyTimestampAccessorComparesTheSameWay() {
         FakeUnit unit = fake(AUnitType.Terran_Marine);
-        int now = A.now;
+        int now = A.now();
 
         // Each entry is one of the eight accessors that were migrated from
         // AUnit fields into UnitState (Stage E). They all follow the same
@@ -820,7 +820,7 @@ public class AUnitTest extends AbstractTestWithWorld {
     @Test
     public void combatTimingHistory() {
         FakeUnit unit = fake(AUnitType.Terran_Marine);
-        int now = A.now;
+        int now = A.now();
 
         unit.unitState().setLastAttackFrame(now - 10);
         assertTrue(unit.shotAgo(15), "shot 10 frames ago is within 15");

@@ -18,7 +18,7 @@ public class ProduceCitadelOfAdun {
         if (Have.a(type())) return false;
         if (Count.ofType(Protoss_Observatory) == 0) return false;
 
-        if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now % 41 == 0 && Have.notEvenPlanned(type())) {
+        if (A.supplyUsed() >= 140 && A.hasGas(180) && A.now() % 41 == 0 && Have.notEvenPlanned(type())) {
             AConsole.errPrintln("TEMP Citadel of Adun at " + A.s);
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }

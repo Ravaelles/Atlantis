@@ -41,7 +41,7 @@ public class ProtossZealotTooFarFromDragoon extends Manager {
         if (unit.shieldWound() <= 8 && unit.eval() >= 5) return false;
 
         if (Enemy.protoss()) {
-            if (A.now % 30 <= 10) return false;
+            if (A.now() % 30 <= 10) return false;
         }
 
         if (Enemy.zerg()) {

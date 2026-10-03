@@ -3930,7 +3930,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public void lastCommandIssuedNow(UnitCommandType command) {
-        unitState().setLastCommandIssued(A.now);
+        unitState().setLastCommandIssued(A.now());
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(

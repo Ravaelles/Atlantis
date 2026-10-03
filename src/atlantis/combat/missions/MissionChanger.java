@@ -185,7 +185,7 @@ public abstract class MissionChanger {
 
         if (lastMissionAt == null) lastMissionAt = new TreeMap<>();
         
-        lastMissionAt.put(newMission.name(), A.now);
+        lastMissionAt.put(newMission.name(), A.now());
 
         if (Missions.globalMission().equals(newMission)) {
             return;

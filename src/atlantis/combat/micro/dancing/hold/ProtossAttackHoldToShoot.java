@@ -28,7 +28,7 @@ public class ProtossAttackHoldToShoot {
             return t("justHeldToShoot");
         }
         if (
-            !target.isMoving() && unit.lastUnderAttackMoreThanAgo(50) && A.now >= 20
+            !target.isMoving() && unit.lastUnderAttackMoreThanAgo(50) && A.now() >= 20
         ) return f("targetNotMoving");
 
         if (

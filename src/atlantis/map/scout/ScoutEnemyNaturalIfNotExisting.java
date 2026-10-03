@@ -23,7 +23,7 @@ public class ScoutEnemyNaturalIfNotExisting extends Manager {
         enemyNatural = EnemyInfo.enemyNatural();
         if (enemyNatural == null) return false;
 
-        if (enemyNatural.isPositionVisible()) lastVisibleAt = A.now;
+        if (enemyNatural.isPositionVisible()) lastVisibleAt = A.now();
 
         if (A.s >= 30 * 7) return false;
 

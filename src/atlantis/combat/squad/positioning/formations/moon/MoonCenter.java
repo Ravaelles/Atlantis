@@ -31,7 +31,7 @@ public class MoonCenter {
         if (moonCenter != null) {
             if (shouldConsiderCurrentCenterAsDifferentOne(leader, moonCenter)) {
 //                System.err.println("Moon center changed at " + A.now());
-                _lastMoonCenterChangedAt = A.now;
+                _lastMoonCenterChangedAt = A.now();
             }
 
             lastMoons.put(leader.id(), moonCenter);

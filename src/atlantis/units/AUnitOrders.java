@@ -36,7 +36,7 @@ public interface AUnitOrders {
         AUnit unit = unit();
         if (target == null) {
 //            AConsole.errPrintln("Null attack unit target for " + this.unit().typeWithHash());
-            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now + ": Null attack unit target for " + unit.typeWithHash());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("@" + A.now() + ": Null attack unit target for " + unit.typeWithHash());
             return false;
         }
 

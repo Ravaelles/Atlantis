@@ -94,7 +94,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
 //            }
 //            unitsByFrame.get(now).add(props);
 
-            unitsSeenAt.put(A.now, new Integer[]{unit.id(), unit.type().id(), unit.x(), unit.y()});
+            unitsSeenAt.put(A.now(), new Integer[]{unit.id(), unit.type().id(), unit.x(), unit.y()});
         }
     }
 }

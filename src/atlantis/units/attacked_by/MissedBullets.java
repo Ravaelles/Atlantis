@@ -36,6 +36,6 @@ public class MissedBullets {
     }
 
     private static void yes(ABullet bullet, String message) {
-        AConsole.errPrintln("@" + A.now + ": Bullet#" + bullet.id() + ": " + message);
+        AConsole.errPrintln("@" + A.now() + ": Bullet#" + bullet.id() + ": " + message);
     }
 }

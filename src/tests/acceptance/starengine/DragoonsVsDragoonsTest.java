@@ -24,7 +24,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
 
         int runForSeconds = !isUsingEngine() ? 1 : 10;
         world(30 * runForSeconds, our, enemies, () -> {
-        if (isUsingEngine() && A.now % 30 == 0) AConsole.println("Frame: " + A.now);
+        if (isUsingEngine() && A.now() % 30 == 0) AConsole.println("Frame: " + A.now());
 //            Select.our().print();
 //            Select.enemy().print();
 
@@ -43,7 +43,7 @@ public class DragoonsVsDragoonsTest extends WorldStubForTests {
             boolean printUnit = unit == Select.ourCombatUnits().second();
 
             if (printUnit) {
-                System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
+                System.out.println(A.now() + " - " + unit.action() + " / " + unit.manager());
             }
 
 //                if (printUnit) {

@@ -396,14 +396,14 @@ public abstract class Squad extends Units {
     }
 
     public void markLastUnderAttackNow() {
-        _lastUnderAttack = A.now;
+        _lastUnderAttack = A.now();
     }
 
     public void markLastAttackedNow() {
-        _lastAttacked = A.now;
+        _lastAttacked = A.now();
     }
 
     public void markLastShotNow() {
-        _lastShot = A.now;
+        _lastShot = A.now();
     }
 }

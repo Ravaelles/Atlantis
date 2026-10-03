@@ -1,0 +1,4 @@
+# Recorded by scripts/benchmark-trees.sh --save on 2026-10-03
+# Machine: openjdk version "17.0.20.1" 2026-08-18 / Linux x86_64
+# best-ns-per-frame-per-unit; only comparable with a run on the same machine.
+4316887

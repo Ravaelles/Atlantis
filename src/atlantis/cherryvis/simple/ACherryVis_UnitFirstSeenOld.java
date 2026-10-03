@@ -85,7 +85,7 @@ public class ACherryVis_UnitFirstSeenOld extends AutomaticListener {
             props.put("x", unit.x());
             props.put("y", unit.y());
 
-            int now = A.now;
+            int now = A.now();
             if (!unitsByFrame.containsKey(now)) {
                 unitsByFrame.put(now, new ArrayList<>());
             }

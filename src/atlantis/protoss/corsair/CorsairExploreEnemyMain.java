@@ -42,7 +42,7 @@ public class CorsairExploreEnemyMain extends Manager {
 
     private void updateMainLastSeenAt() {
         if (enemyMain.isPositionVisible()) {
-            mainLastSeenAt = A.now;
+            mainLastSeenAt = A.now();
         }
     }
 }

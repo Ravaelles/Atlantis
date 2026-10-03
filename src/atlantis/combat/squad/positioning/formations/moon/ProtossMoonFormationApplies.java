@@ -61,7 +61,7 @@ public class ProtossMoonFormationApplies {
         if (unit.isRunningOrRetreating()) return f("Running/R");
         if (unit.squadSize() <= 2 && unit.eval() >= 1.2) return f("TooSmallSquad");
 
-        if (A.isUms() && A.now <= 25) return t("Force at init");
+        if (A.isUms() && A.now() <= 25) return t("Force at init");
         if (unit.friendsNear().combatUnits().countInRadius(3, unit) == 0) return false;
 
         if (
@@ -241,7 +241,7 @@ public class ProtossMoonFormationApplies {
     }
 
     private boolean dontApply() {
-        _lastF = A.now;
+        _lastF = A.now();
         return false;
     }
 

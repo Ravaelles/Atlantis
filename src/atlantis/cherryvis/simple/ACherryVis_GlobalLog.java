@@ -24,7 +24,7 @@ public class ACherryVis_GlobalLog {
     private int line = 0;
 
     private ACherryVis_GlobalLog(String message, String file) {
-        this.frame = A.now;
+        this.frame = A.now();
         this.message = message;
         this.file = file;
 

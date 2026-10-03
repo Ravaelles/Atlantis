@@ -25,7 +25,7 @@ public class ABullet implements HasPosition {
     public ABullet(AUnit attacker, AUnit target, boolean exists) {
         this.attacker = attacker;
         this.target = target;
-        this.createdAt = A.now;
+        this.createdAt = A.now();
         this.exists = exists;
     }
 

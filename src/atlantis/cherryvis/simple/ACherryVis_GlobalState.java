@@ -30,7 +30,7 @@ public class ACherryVis_GlobalState {
     private String value;
 
     private ACherryVis_GlobalState(String stateName, String stateValue) {
-        this.frame = A.now;
+        this.frame = A.now();
         this.key = stateName;
         this.value = stateValue;
 

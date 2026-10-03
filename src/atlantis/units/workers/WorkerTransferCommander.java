@@ -121,7 +121,7 @@ public class WorkerTransferCommander extends Commander {
             if (worker != null) {
                 transferWorkerTo(worker, baseWithFewestWorkers);
                 result = true;
-                _lastTransfer = A.now;
+                _lastTransfer = A.now();
             }
         }
 
