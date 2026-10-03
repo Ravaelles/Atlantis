@@ -5,6 +5,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.map.AMap;
+import atlantis.map.MapTiles;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.helpers.WalkableAround;
@@ -372,9 +373,7 @@ public interface HasPosition {
     }
 
     default boolean isWalkable() {
-        if (Env.isTesting()) return true;
-
-        return Atlantis.game().isWalkable(position().p().toWalkPosition());
+        return MapTiles.isWalkable(this);
     }
 
     default boolean isWalkable(int alsoCheckTilesInRadius) {
@@ -382,27 +381,19 @@ public interface HasPosition {
     }
 
     default boolean isExplored() {
-        if (Env.isTesting()) return APosition.TESTING_EXPLORED;
-
-        return Atlantis.game().isExplored(position().p().toTilePosition());
+        return MapTiles.isExplored(this);
     }
 
     default boolean isPositionVisible() {
-        if (Env.isTesting()) return true;
-
-        return Atlantis.game().isVisible(position().p().toTilePosition());
+        return MapTiles.isVisible(this);
     }
 
     default boolean isBuildableNotIncludingBuildings() {
-        if (Env.isTesting()) return Select.all().countInRadius(1.98, this) == 0;
-
-        return Atlantis.game().isBuildable(position().p().toTilePosition());
+        return MapTiles.isBuildable(this, false);
     }
 
     default boolean isBuildableIncludeBuildings() {
-        if (Env.isTesting()) return Select.all().countInRadius(1.98, this) == 0;
-
-        return Atlantis.game().isBuildable(tx(), ty(), true);
+        return MapTiles.isBuildable(this, true);
     }
 
     default boolean isConnected() {

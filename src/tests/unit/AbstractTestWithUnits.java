@@ -36,6 +36,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 import tests.acceptance.AbstractTestWithWorld;
+import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeOrderFallback;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitOrigin;
@@ -104,6 +105,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // Orders to a unit the engine cannot see are recorded by the harness
         // (atlantis.units.OrderFallback).
         FakeOrderFallback.installAsSink();
+
+        // The stub world has no map behind it, so the harness answers the tile
+        // questions (atlantis.map.MapTiles).
+        FakeMapTiles.installAsSource();
 
         clearCaches();
 
