@@ -356,15 +356,45 @@ itself, #5, is design work and out of that order's scope).
   `map/wall/LocationValidator` (`Atlantis.game().isBuildable`). Deciding what the
   stub world should say for those is a decision, not a mechanical move.
 
-  `GameQuery` is still open, and the biggest remaining `Env` leak is the other
-  side of the same coin: **47 `Env.isTesting()` call sites in 38 files** under
-  `src/atlantis` (51 lines including the commented-out ones), spread one or two
-  per file across `combat`, `units`, `map`, `production` and `information`. A port for it is easy and would be worth little on its own -
-  `Env` is a static flag holder, so a port over it is indirection, not inversion.
-  It is worth doing only together with a real question, the way `MapTiles` was:
-  find a subsystem that asks the game something the stub world has to answer, and
-  put the environment flag in the same port.
+  **`GameQuery` has its first slice too, and it came from a static mock.**
+  `ATech` - "what has our player researched and upgraded" - was mocked as a whole
+  class in every test (`Mockito.mockStatic(ATech.class)`, three stubbed methods),
+  so Mockito answered everything else with null or 0: `getCurrentlyResearching()`
+  returned null, `costOf(...)` returned null, `isResearchedWithOrder(...)` said
+  "not researched" for every tech including the one `isResearched(Lockdown)` said
+  was researched. Two questions are now `ATech.Source` (engine default,
+  `tests.fakes.FakeResearch` as the other adapter), the `Env.isTesting()` branch in
+  `getUpgradeLevel` is gone, and the rest of the facade runs for real. One test
+  (`TerranGhostTest`) had been relying on the mock's hidden "Lockdown is
+  researched" and now says so itself.
 
+  The payoff is a capability, not just a smaller dependency:
+  `TerranInfantryWeaponsTest` runs one world twice and changes only the researched
+  level (0 vs 3), which flips the doctrine's answer. Before, no test could get past
+  level 0.
+
+  **What is left in this item** is the biggest remaining `Env` leak - the other
+  side of the same coin. Counting `src/atlantis`: **44 `Env.isTesting()` call sites
+  in 24 files** (50 lines if the commented-out ones are counted), one or two per
+  file, across `combat`, `units`, `map`, `production` and `information`. A port for the flag itself would be indirection, not
+  inversion (`Env` is a static flag holder, so the port would be a static flag
+  holder). What is worth doing is the ATech shape: find a subsystem that asks the
+  game something real - "is this position walkable", "did we research this" - and
+  put the environment branch behind that question. Candidates already spotted, in
+  rough order of how real the question is:
+  - the seven `HasPosition.makeX()` methods, which return the position unchanged in
+    a test: a *position finder* port, where the harness would answer "this one will
+    do" and the port could later answer "here is a free spot". The algorithms behind
+    them are the code that would move into the adapter, so this is Stage E work with
+    tests (`HasPositionTest`, 6 tests);
+  - `CanPhysicallyBuildHere` and `IsProbablyInAnotherRegion` (production position
+    logic with a test shortcut);
+  - `AUnit`'s `hasNoU()/noPosition()` guards (`if (...) && !Env.isTesting()`), which
+    are really "do we know anything about this unit" - the fog question, and
+    therefore the same port `#3` wants;
+  - `EnemyUnits.discovered()`'s branch, which is not a game question at all but a
+    cache question (the test world has no staleness), so it belongs in the cache,
+    not in a port.
 
 
 ## Housekeeping

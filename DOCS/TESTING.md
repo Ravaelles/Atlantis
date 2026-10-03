@@ -17,7 +17,7 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Two scopes, two baselines — read this before trusting a green run
 
 **The default run only executes `tests.unit`.** The whole
-`tests.acceptance` package (world/squad/commander behaviour, 127 tests) is
+`tests.acceptance` package (world/squad/commander behaviour, 129 tests) is
 **not** run by `bash scripts/run-tests.sh`. That was true for the whole
 architecture effort, and it hid a lot: acceptance tests were written against a
 broken harness and were never executed, so nobody saw 44 failures sitting in
@@ -27,8 +27,8 @@ is one command rather than a flag somebody has to remember.
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **105 passing / 0 failing** of 105 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **127 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **242 passing / 0 failing** of 242 (+4 skipped) |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **129 passing / 0 failing** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **244 passing / 0 failing** of 244 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
@@ -76,7 +76,7 @@ while read -r cls; do
 done < /tmp/testclasses.txt
 ```
 
-Baseline (2026-10-03): **76 classes, 242 tests, 0 failures** - every class passes
+Baseline (2026-10-03): **78 classes, 244 tests, 0 failures** - every class passes
 with nothing but its own `setUp()` behind it. Five classes run zero tests on
 purpose: `AbstractWorldCreatingTest` (abstract base), `RetreatScenarioTest` and
 `UnitsForRetreatTest` (helpers with no `@Test`), `UnitTest` (helper), and
