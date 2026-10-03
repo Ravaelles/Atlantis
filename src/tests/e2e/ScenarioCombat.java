@@ -1,4 +1,4 @@
-package tests.acceptance.e2e;
+package tests.e2e;
 
 import atlantis.map.bullets.BulletDamageAgainst;
 import atlantis.units.AUnit;

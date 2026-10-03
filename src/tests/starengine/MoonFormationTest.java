@@ -1,4 +1,4 @@
-package tests.acceptance.starengine;
+package tests.starengine;
 
 import atlantis.combat.squad.positioning.formations.moon.MoonUnitPositionsCalculator;
 import atlantis.map.position.APosition;

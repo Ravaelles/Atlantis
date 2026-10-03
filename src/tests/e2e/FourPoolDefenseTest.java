@@ -1,4 +1,4 @@
-package tests.acceptance.e2e;
+package tests.e2e;
 
 import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;

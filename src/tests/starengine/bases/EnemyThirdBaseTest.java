@@ -1,4 +1,4 @@
-package tests.acceptance.starengine.bases;
+package tests.starengine.bases;
 
 import atlantis.game.listeners.OnEnemyNewUnitDiscovered;
 import atlantis.map.base.define.EnemyMainBase;

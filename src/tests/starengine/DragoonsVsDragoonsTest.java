@@ -1,4 +1,4 @@
-package tests.acceptance.starengine;
+package tests.starengine;
 
 import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
 import atlantis.combat.squad.squads.alpha.Alpha;

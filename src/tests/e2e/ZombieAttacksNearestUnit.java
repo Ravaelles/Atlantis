@@ -1,4 +1,4 @@
-package tests.acceptance.e2e;
+package tests.e2e;
 
 import atlantis.util.AMath;
 import tests.acceptance.FakeOnFrameEnd;
