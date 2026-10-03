@@ -166,17 +166,29 @@ the first is already done.
 
 - **#13** Reach a **zero-violation** ArchUnit baseline and flip
   `ArchitectureBoundaryTest` from frozen store to hard rules (keeping the
-  store only as a history of how far the ratchet got). **490 violations left**
-  (was 499); `map.scout -> combat/production` is already at 0, so three rules
-  still carry everything:
+  store only as a history of how far the ratchet got). **430 violations left**
+  (was 499). Two rules are already at 0 (`map.scout -> combat/production`, map
+  geometry), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = 133,
+  `util -> units/game/map/production/information/combat/debug` = 73,
   `information -> combat/production` = 66,
   `architecture -> combat/production/units/game/util/debug` = 24.
-  Work smallest-first and check that a change *removes* violations from one
-  rule instead of moving them into another - moving `ScoutManager` into
-  `atlantis.units.special` passed nothing and only grew the core rule by 13.
+  The 267 and the 24 are structural - the Commander/Manager framework is
+  unit-centric by design, so they are Stage E/H work, not a mechanical sweep.
+  The 73 and the 66 are the mechanical ones; keep taking them smallest-first.
+  Two traps, both paid for already:
+  - A change must *remove* violations from one rule, not move them into
+    another: moving `ScoutManager` into `atlantis.units.special` compiled,
+    passed every test, and only grew the core rule from 267 to 280.
+  - `rm -rf out` before `scripts/run-architecture-tests.sh` after moving a class
+    between packages. `javac -d` leaves the old `.class` behind, ArchUnit reads
+    both, and violations "come back" for a package that no longer exists in the
+    sources. ArchUnit also only prunes stale entries for the rule it re-writes,
+    so the store file has to be emptied and re-frozen by hand - and that diff
+    reviewed, because a re-freeze can absorb violations whose text merely
+    changed (the last one rewrote ten Log -> LogMessage entries because
+    LogMessage moved package).
 - **#14** Add a benchmark guard for the frame pipeline
   (`scripts/benchmark-trees.sh` result checked in CI-style thresholds) so a
   Stage E/F/H refactor that slows the per-frame work fails visibly instead of
