@@ -102,7 +102,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void fourMarinesBeatOneHydralisk() {
+    public void fourMarinesLoseToOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
@@ -114,20 +114,20 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void threeMarinesBeatTwoHydralisks() {
+    public void threeMarinesLoseToTwoHydralisks() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.2), fake(Zerg_Hydralisk, 13.3)), () -> {
             // Measured: ourEval = 3.3694, enemyEval = 0.2968. The old
             // expectation ("ourEval * 300 < enemyEval") asserted the exact
-            // opposite of what the test is named after.
-            assertTrue(marine.eval() > 1, "three marines should beat two hydralisks");
+            // opposite of what the previous name ("...Beat...") claimed.
+            assertTrue(marine.eval() > 1, "three marines lose to two hydralisks in this evaluator");
             assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
         });
     }
 
     @Test
-    public void marinesAndMedicBeatOneHydralisk() {
+    public void marinesAndMedicLoseToOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),

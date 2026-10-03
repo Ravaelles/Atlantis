@@ -215,3 +215,37 @@ the first is already done.
   (`GAME_7D1C5E57`, `is_crashed: false`, zero exceptions, 51 units built);
   repeat after the next backlog round so `bots/AtlantisP` and `bots/AtlantisT`
   never lag behind the source.
+
+## Review 2026-10-03 — air/ground audit leftovers
+
+Sceptical pass over `feature/2025-12-t...feature/2026-10-ii` after the flyer
+fiction (Dragoon/Vulture/Broodling/Infested Terran treated as air). Fixed in
+this round: `isAirUnit()` now unions `ut.isFlyer()` (covers hero flyers in a
+real game), `hasBiggerWeaponRangeThan(Units)` compared ground-vs-air ranges,
+`isPurelyAntiAir()` listed the ground Goliath instead of the Devourer,
+`hasCloseRepairer()` had inverted air/ground thresholds,
+`CombatEvaluatorTest` names said "Beat" while asserting `eval > 1` (lose),
+`AvoidCombatBuildingsTest` comments said turrets/spores "cannot shoot at air"
+about a ground Dragoon (and copy-pasted "Dragoon" into the Wraith test).
+Verified: full suite 222/6 (same 6 `ATargetingTest` placeholders as #29),
+ArchUnit 7/7.
+
+- **#30** Re-check the marine-vs-hydra evaluations once #29 lands. Renamed to
+  `fourMarinesLoseToOneHydralisk` / `threeMarinesLoseToTwoHydralisks` /
+  `marinesAndMedicLoseToOneHydralisk` (`eval` 7.56 / 3.37 / 21.25 = "we lose"),
+  but 4 marines vs 1 hydra losing 7:1 smells like placeholder damage (0 for
+  every weapon), not StarCraft. Do not re-pin numbers before the harness has
+  real damage; then decide whether the evaluator or the scenario is wrong.
+- **#31** `ProtossRetreatTest.goonsVsCannons` pins no-retreat for 1v1..10v1
+  Dragoon-vs-Cannon while its own javadoc admits `eval` 0.3 (3x worse) and the
+  cannon outranges the dragoon. Retreat doctrine vs evaluator disagreement —
+  needs a design decision, not a threshold tweak.
+- **#32** `UnitTest`/`SelectTest` counts pin the `isInvincible()` placeholder:
+  the 6th "ground unit" is a Vulture spider mine, real only because the fake
+  `isInvincible()` is wrong. When #29 fixes the harness, the guard test must
+  fail loudly here instead of silently shifting `GROUND_UNITS`/`AIR_UNITS`/
+  `REAL_UNITS`.
+- **#33** Hero flyers are still ground in the harness. Production is fixed
+  (`ut.isFlyer() ||` hand list), but the hand list has no `Hero_*` entries, so
+  e.g. a hero Scout/Mutri/Guardian counts as ground in tests. Add hero entries
+  (or engine-data-driven flags) with the #29 harness work.

@@ -357,75 +357,11 @@ all at once.
 
 ## 8. Migration plan (incremental, strangler)
 
-> Superseded for naming by §16. Kept for the rationale.
-
-Each phase is independently shippable and keeps the bot playable. Do not start a
-phase until the previous one is merged and verified by running the bot.
-
-### Phase 0 — Ratchet (1–2 weeks, low risk)
-
-Goal: stop the bleeding and make progress measurable.
-
-1. Add **ArchUnit** boundary tests (or plain test) encoding today's layering as
-   a *frozen baseline*: fail on **new** violations only.
-2. Fix the two confirmed defects: `BaseManager.equals/hashCode` and
-   `Cache.getIfValid` returning invalid values.
-3. Replace `System.exit`-from-arbitrary-depth with an exception + one top-level
-   handler.
-4. Add a benchmark/profiler baseline for a full game tick; you will need it to
-   prove the Entity phase helps.
-
-### Phase 1 — Explicit pipeline, no reflection (3–6 weeks, medium)
-
-Goal: make the good idea (ordered systems) explicit and cheap.
-
-1. Introduce `FramePipeline` with an **explicit, documented command list**;
-   delete `topLevelSubcommanders()` ordering surprises. Commanders become
-   pipeline steps with one documented contract.
-2. Replace reflective `Commander`/`Manager` instantiation with a registry of
-   **factories** (or plain constructors). Remove `InstantiateManager`,
-   `invokedFor`, and reflection from the hot path.
-3. Keep behavior identical; prove it with the existing acceptance tests and a
-   game run. **No behavior changes in this phase.**
-
-### Phase 2 — Entity rebuild behind an interface (4–8 weeks, medium-high)
-
-Goal: kill the fused `AUnit` without a big-bang rewrite.
-
-1. Introduce `UnitSnapshot` (immutable) and a `World` that produces snapshots
-   each frame. Back it initially by the existing `AUnit` (adapter) so nothing
-   else changes.
-2. Migrate `UnitStateManager`'s `public _last*` writes into `UnitState` behind a
-   small API. Delete the public fields one at a time.
-3. Make `FoggedUnit` a `UnitSnapshot`-based projection; delete the duplicate
-   model.
-4. Replace `AUnit.instances` with the `World` registry; delete
-   `forgetUnitEntirely` call sites.
-5. Delete the static `Select` caches in favor of per-frame query services with
-   explicit invalidation.
-
-### Phase 3 — Split the God classes (ongoing, 4–8 weeks)
-
-1. Dismantle `A`: `AString`, `AFile`, `ALog`, `ASwing`, `ATime`, `ANumbers`,
-   `AResources`. Keep a thin deprecated `A` facade during migration, then delete.
-2. Split `Selection` into a narrow core + composed capability interfaces
-   (filtering, geometry, ordering) so no caller sees 235 methods.
-3. Move AUnit's 623 behavior methods into behavior packs/systems (Phase 4 order).
-
-### Phase 4 — Bounded contexts + behavior packs (ongoing)
-
-1. Define the six context APIs; enforce with ArchUnit.
-2. Collapse race `if`-branches (241 files) into race **strategies** registered
-   per context. Adding a race must not touch 241 files.
-3. Convert per-unit-type Managers into behavior packs with the
-   `(UnitSnapshot, World) → Intention` contract.
-4. Route all `bwapi` order issuing through a single `OrderSink` adapter.
-
-### Phase 5 — Enforce & document
-
-1. Flip the ArchUnit baseline from "no new violations" to "zero violations".
-2. Write an ADR set (architecture decision records) in `DOCS/`.
-3. Delete the compatibility façades.
+> Superseded by §16. The phase letters below became the stage list; §16 wins
+> on every conflict. Kept as one paragraph of rationale: each phase is
+> independently shippable, keeps the bot playable, and must be verified by a
+> game run before the next one starts (ratchet → explicit pipeline →
+> read model → god-class split → bounded contexts → enforce).
 
 ---
 
@@ -604,74 +540,14 @@ five ports above plus the read model, not in abstracting everything.
 
 ## 15. Proposed architectural changes to the current approach
 
-> Superseded for naming by §16 — the letters below are the origin of the stage
-> list. Read §16 for the canonical, execution-ready plan.
-
-These are concrete, ordered, and each keeps the bot playable. They build on the
-phases in §8 but are expressed as changes *to what exists*, not to a blank
-canvas.
-
-**A. Declare six bounded contexts and a context map (no code moves).**
-`Economy`, `Production`, `Combat`, `Intelligence`, `Map`, `Scouting`.
-For each, decide the **published API** (the only types other contexts may
-import) and the **forbidden imports**. Publish it in `DOCS/`. This is a design
-artifact, not a refactor — cost is days, not weeks.
-
-**B. Freeze the boundary with ArchUnit (the enforcement ratchet).**
-Encode today's violations as a baseline and fail the build on *new*
-violations. Without this, steps C–H decay within weeks. This is the single
-highest-leverage change in the whole document.
-
-**C. Introduce a read model: `World` + `UnitSnapshot`.**
-One immutable projection per frame. Backed initially by the existing `AUnit`, so
-no behavior changes. This kills the need for static `instances` and gives systems
-a stable input.
-
-**D. Make the frame pipeline explicit and non-reflective.**
-Replace `topLevelSubcommanders()` arrays + reflective construction with an
-ordered, documented `FramePipeline`. Behavior identical; ordering finally
-visible in one place.
-
-**E. One `OrderSink` for all engine commands.**
-Every `unit.train(...)`, `unit.move(...)`, `unit.attack(...)` goes through one
-adapter. This is the seam that makes `FakeAdapter`/`StarEngineAdapter` possible
-and removes `bwapi` from the core.
-
-**F. Replace static `Select` caches with per-frame query services.**
-Explicit invalidation owned by the pipeline; no magic TTLs, no `clearCache()`
-discipline.
-
-**G. Make race a strategy dimension, not a package dimension.**
-Register race-specific strategies behind one interface per context. Adding a
-race must not touch 241 files; `protoss`/`terran` folders disappear into the
-contexts they belong to.
-
-**H. Then, and only then, move files.**
-Target layout (illustrative, reached incrementally):
-
-```
-src/atlantis/
-  core/          # no bwapi imports
-    world/       # World, UnitEntity, UnitSnapshot, UnitState
-    model/       # types, positions, resources, money
-    rules/       # pure game rules
-  ports/         # GameQuery, OrderSink, MapPort, ClockPort, LogPort
-  application/   # FramePipeline + stateless systems
-  contexts/
-    economy/ production/ combat/ intelligence/ map/ scouting/
-  adapters/
-    bwapi/ starengine/ fake/ debug/
-  bootstrap/     # Main, launcher, config, env
-```
-
-**What NOT to do at this stage (skeptical):**
-
-- Do not physically split all packages into `core/ports/adapters` in one move.
-- Do not create a port for everything; only the five above.
-- Do not create a `common`/`shared`/`utils` context — that is how God utilities are
-  reborn. Shared value objects live in `core/model`.
-- Do not chase a perfect dependency graph before the ArchUnit ratchet exists; you
-  will regress.
+> Superseded by §16 — the letters below are the origin of the stage list.
+> Read §16 for the canonical plan. In one line: declare six bounded contexts
+> with a context map (A), freeze the boundary with ArchUnit (B), introduce the
+> read model (C), an explicit non-reflective frame pipeline (D), one OrderSink
+> (E), per-frame query services instead of static caches (F), race as strategy
+> (G), and only then move files (H). What NOT to do: no big-bang moves, no port
+> for everything, no `common/shared/utils` context, no perfect graph before
+> the ratchet exists.
 
 ---
 
@@ -682,127 +558,22 @@ that work, branches, and issues can reference them unambiguously (e.g. a branch
 `stage-b/boundary-ratchet`). Each stage is independently shippable and must
 leave the bot playable. Pooling: **A** and **B** can start immediately.
 
-### 16.0 Status log
+### 16.0 Status log (compact — details in git history)
 
-- **Stage A — Boundary Contract: DONE.** `DOCS/ARCHITECTURE-CONTEXT-MAP.md`.
-- **Stage B — Boundary Ratchet: DONE.** ArchUnit vendored in `lib/`;
-  `src/tests/architecture/ArchitectureBoundaryTest.java`;
-  frozen baseline in `_AI/architecture/archunit-store/`; runner
-  `scripts/run-architecture-tests.sh`. New violations fail the build (verified).
-- **Stage C — Explicit Pipeline: STARTED.** Top-level ordering centralized in
-  `atlantis.application.FramePipeline` and pinned by `FramePipelineTest`;
-  `AtlantisGameCommander` now delegates. Still pending in Stage C: remove
-  reflection from `Commander`/`Manager` construction, unify the `handle()`
-  contract, and verify with a game run.
-- **Stage C — reflection removal: DONE (code), game-run verification pending.**
-  `Class[]` + reflective instantiation replaced by explicit
-  `CommanderFactory`/`ManagerFactory` constructor references
-  (`atlantis.architecture`); `InstantiateManager` deleted;
-  `invokedFor`/`invokedManager`/`usedManager` take factories; both `handle()`
-  contracts documented (semantics unchanged by design). Order and failure
-  semantics preserved — unit suite 62/73 identical to baseline, ArchUnit 7/7
-  after re-freeze (the conversion made 57 previously-invisible tree edges
-  visible to ArchUnit as constructor calls instead of class literals; coupling
-  itself is unchanged — verified 1:1 against the old baseline entries).
-  Remaining for Stage C: unify-or-document decision recorded (documented, not
-  unified — unification would change traversal behaviour); full game run to
-  confirm no behaviour change.
-- **Stage C — game-run verification: DONE.** Fresh `--release 8` jar
-  (`AtlantisC` vs Steamhammer, Benzene, `GAME_629230BF`): bot connects,
-  analyzes the map, plays to a natural defeat (Steamhammer rushed),
-  no exceptions, no crashes. Drive-by findings from the run, fixed: stale
-  `Atlantis.jar` missed classes newer than Oct 1 (`AutomaticListener`);
-  `ARegion` used private `bwapi` fields that only compiled via classpath
-  shadowing (fixed to `getId().intValue()`).
-- **Stage D — Order Sink: DONE.** `OrderSink` port + `BwapiOrderSink` adapter
-  in `atlantis.units`; all ~50 raw engine order calls (previously scattered
-  across `AUnitOrders` plus 2 strays) now flow through the sink, which guards
-  engine exceptions to `false` instead of propagating. `AUnit` carries the sink
-  (live by default); `FakeUnit` auto-wires a recording `FakeOrderSink`,
-  preserving existing fake behaviour. New `OrderSinkTest` (3 tests). Suite
-  65/76 with the same 11 pre-existing failures; ArchUnit 7/7, no baseline
-  change needed.
-- **Stage E — Read Model: STARTED.** Additive foundation only:
-  `atlantis.core.world.World` + immutable `UnitSnapshot` (+ `UnitSnapshots`
-  bridge backed by `AUnit`), `WorldTest` proving engine-free construction.
-  `UnitState` migrated: all 22 `public _last*` fields moved out of `AUnit`
-  behind get/set accessors (97 sites rewired mechanically; `Squad`'s own
-  `_lastUnderAttack` and other classes' own fields untouched). Suite 70/81
-  with identical 11 pre-existing failures; ArchUnit 7/7. Verified by
-  `GAME_A8A66EAC` (fresh Java 8 jar, factory trees + sink + UnitState live):
-  natural defeat, no exceptions. Suite now 74/85 (UnitRegistryTest) + WorldTest.
-- **Stage J — tree benchmark: DONE.** `TreeConstructionBenchmark` (+
-  `scripts/benchmark-trees.sh`) measures full combat-tree frame work in the
-  stub world. A/B across Stage C: ~6.1ms → ~4.6ms per frame per unit (-25%).
-  Numbers and harness caveats recorded in `_AI/NOTES.md`.
-- **Stage E — fogged spike: DONE.** `AbstractFoggedUnit.snapshot()` projects
-  last-known state (faithful, incl. the -69 unknown-hp sentinel — its
-  representation is open design work), covered by world-free
-  `FoggedSnapshotTest`. No production reader migrated yet.
-- **Test-hygiene finding:** `TestWithUnits` fails when a world-based test
-  leaves a static mock registered immediately before it (order-dependent,
-  pre-existing fragility). New tests prefer world-free construction where
-  possible. See `_AI/NOTES.md`.
-- **Stage E — registry: DONE.** `AUnit`'s static `instances` map replaced by
-  `core.world.UnitRegistry` (instantiable, engine-free testable) with
-  `Worlds` as the transitional production holder; all `createFrom`/`getById`/
-  `forgetUnitEntirely` sites rewired, `AUnit(Unit)` widened for the registry.
-  New `UnitRegistryTest` (4 tests). Suite 74/85, same 11 failures; ArchUnit
-  7/7, no baseline change. Verified by `GAME_5FFE12D5` (fresh jar, registry
-  live): natural defeat, no exceptions. Remaining for E: `FoggedUnit`
-  projection.
-- **Deferred defect #1 — Cache.getIfValid: FIXED + VERIFIED.** Stale-invalid
-  units/focus points are now dropped and recomputed; validity is a
-  `ValidityCheck` port (no new ArchUnit violations, 4 stale entries cleaned).
-  All 28 call sites audited for null-tolerance. Verified by `GAME_75B21379`
-  (see below): no new crashes, natural game end.
-- **Stage H — `A` split (first pass): DONE.** The god utility went from 163
-  public static methods / 1688 lines to **43 / 414**, with collaborators per
-  concern: `atlantis.util.AFile` (file/path I/O), `AGui` (the only 4 popups
-  that had callers — `A` no longer imports Swing/AWT at all), `AMath` (ranges
-  and statistics), `atlantis.game.ARandom` (stays in `game`: it shares the
-  mutable `A.random` stream), `atlantis.util.AConsole` (console writers, 140
-  files rewired). 56 methods with **zero** callers were deleted instead of
-  relocated, among them `formatDecimalPlaces`, which formatted the wrong
-  argument — dead code nobody noticed. Each extraction **shrank** the frozen
-  ArchUnit store (−6 for `AFile`, −7 for `AConsole`, incl. a real fix in
-  `BaseManager`, which now prints the failing exception itself instead of
-  dumping the current thread) and never grew it. Verified in real games:
-  `GAME_5AC1C438` (Protoss) and `GAME_5C6F3544` (Terran) vs Steamhammer —
-  natural defeat, `is_crashed: false`, zero exceptions in `bot.log`.
-  Remaining in `A`: resource/supply facades (~1400 call sites), clock
-  arithmetic and race predicates; see `_AI/NEXT.md` #9.
-- **Headless build & tests: DONE.** Whole project compiles from source and the
-  unit suite runs on Linux (`scripts/run-tests.sh`, `DOCS/TESTING.md`). Known
-  pre-existing failures are listed there rather than hidden.
-- **Stage J (partial): DONE.** ADRs in `DOCS/adr/`; test runner + arch runner.
-- **Defect fixed:** `BaseManager` equals/hashCode contract (REVIEW §4). Shrank
-  the baseline by one violation.
-- **Stage B hardened:** new rule — `atlantis.application` must not depend on
-  `bwapi`.
-- **Acceptance package: GREEN (115/115), 45 failures → 0.** Not by weakening
-  assertions: the triage (`_AI/NEXT.md` #22, #23) found that most failures were
-  harness defects, and each fix shrank the *problem*, not the assertion. Four
-  production defects came out of it (`_AI/BUGS.md` B-10 army strength saturating
-  at 999, B-11/B-13 Terran infantry treating ranged attackers as harmless,
-  B-14 two unguarded `Chokes.mainChoke()` dereferences that killed frames, B-12
-  an unreproducible decision). The two deepest ones were:
-  - **`Cache.nukeAllCaches()` only worked once per JVM** (B-15) — it emptied its
-    own instance registry, and cache objects are static, so from the second test
-    onwards nothing was cleared. This, not the tests, was the cause of the
-    order-dependence the backlog had been chasing.
-  - **The whole suite ran as Protoss while building Terran units** (B-16) —
-    `initRace()` existed but nothing called it. `AtlantisRaceConfig` said
-    `BASE = Protoss_Nexus` while tests created `Terran_Barracks`, and every
-    `We.terran()` branch was dead code in the test environment. Fixing it
-    immediately exposed B-13 and B-14, i.e. two real gameplay bugs were
-    invisible because of a test default.
-  Baselines now: `tests.unit` 87/11, full package 212/11 of 223, ArchUnit 7/7
-  with a store that **shrank** by 16 (`AttackState` moved from
-  `atlantis.combat.state` to `atlantis.units`, which is where a unit's attack
-  state belongs — the manager that *decides* it stays in combat). Verified in a
-  real game: `GAME_7D1C5E57` (Protoss), `is_crashed: false`, zero exceptions,
-  51 units built.
+| Stage | State | Evidence |
+|---|---|---|
+| A — Boundary Contract | DONE | `DOCS/ARCHITECTURE-CONTEXT-MAP.md` |
+| B — Boundary Ratchet | DONE | ArchUnit vendored, frozen baseline, `scripts/run-architecture-tests.sh`; later hardened (`application` must not depend on `bwapi`) |
+| C — Explicit Pipeline | DONE | `FramePipeline` + `FramePipelineTest`; reflection replaced by `CommanderFactory`/`ManagerFactory`; `handle()` contracts documented; verified `GAME_629230BF` (no exceptions, natural defeat) |
+| D — Order Sink | DONE | `OrderSink` port + `BwapiOrderSink`; ~50 order calls routed; `OrderSinkTest` (3 tests); ArchUnit 7/7 |
+| E — Read Model | PARTIAL | `World` + `UnitSnapshot` + `WorldTest`; `UnitState` migrated (22 `_last*` fields, 97 sites); `UnitRegistry` replaces `AUnit.instances`; fogged `snapshot()` spike (`FoggedSnapshotTest`); verified `GAME_A8A66EAC`, `GAME_5FFE12D5` |
+| H — `A` split (first pass) | DONE | `A`: 163 methods / 1688 lines → 43 / 414 (`AFile`, `AGui`, `AMath`, `ARandom`, `AConsole`); 56 dead methods deleted; store shrank; verified `GAME_5AC1C438`, `GAME_5C6F3544` |
+| J — benchmark / ADRs / runners | DONE | `TreeConstructionBenchmark` (-25% per frame per unit across Stage C); ADRs in `DOCS/adr/`; headless `run-tests.sh` |
+| Acceptance triage | DONE | 45 failures → 0 (harness defects: `Cache.nukeAllCaches` single-use, suite-wide wrong race default); 4 production defects fixed (BUGS B-10/B-11/B-13/B-14, since archived); verified `GAME_7D1C5E57` |
+| Deferred defect | DONE | `Cache.getIfValid` stale-invalid drop + `ValidityCheck` port; verified `GAME_75B21379` |
+| `BaseManager` equals/hashCode | DONE | Baseline shrank by one violation |
+
+Baselines at last full check: `tests.unit` 87/11, full package 212/11 of 223, ArchUnit 7/7.
 
 ### 16.0 Summary
 

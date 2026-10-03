@@ -2242,7 +2242,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             return enemies.stream().noneMatch(u -> u.groundWeaponRange() > this.groundWeaponRange());
         }
         else {
-            return enemies.stream().noneMatch(u -> u.groundWeaponRange() > this.airWeaponRange());
+            return enemies.stream().noneMatch(u -> u.airWeaponRange() > this.airWeaponRange());
         }
     }
 
@@ -3571,7 +3571,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().is(
             AUnitType.Protoss_Corsair,
             AUnitType.Terran_Valkyrie,
-            AUnitType.Terran_Goliath,
+            AUnitType.Zerg_Devourer,
             AUnitType.Zerg_Scourge
         );
     }
@@ -3579,8 +3579,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean hasCloseRepairer() {
         AUnit repairer = repairer();
 
+        // Same polarity as DoRepairsNearby and IssueRepairCommand: an air unit
+        // is repaired from a tight spot (2), a ground unit from wider (6).
         return repairer != null
-            && this.distTo(repairer) <= (isAir() ? 6 : 2)
+            && this.distTo(repairer) <= (isAir() ? 2 : 6)
             && (!repairer.isRepairing() || repairer.isTarget(this));
     }
 

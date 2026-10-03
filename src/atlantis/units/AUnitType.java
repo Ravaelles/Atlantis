@@ -1799,9 +1799,11 @@ public class AUnitType implements Comparable<Object> {
     }
 
     /**
-     * The units Atlantis treats as flying. Not read from {@link bwapi.UnitType}
-     * on purpose: that flag is filled by a running client, so it answers
-     * {@code false} for everything outside a game.
+     * The units Atlantis treats as flying. The hand list below is the fallback
+     * for tests: {@link bwapi.UnitType#isFlyer()} is filled by a running
+     * client, so it answers {@code false} for everything outside a game.
+     * In a real game the engine flag wins (it also covers hero flyers, which
+     * the list does not enumerate), hence the union.
      *
      * <p>Deliberately <b>not</b> in this list:</p>
      * <ul>
@@ -1822,7 +1824,7 @@ public class AUnitType implements Comparable<Object> {
         return (boolean) cache.get(
             "isAirUnit",
             -1,
-            () -> is(
+            () -> ut.isFlyer() || is(
                 // Protoss: the shuttle/diplomat fleet.
                 AUnitType.Protoss_Arbiter,
                 AUnitType.Protoss_Carrier,

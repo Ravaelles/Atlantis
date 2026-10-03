@@ -106,9 +106,9 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
 
         ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
 
-        // Only anti-air buildings matter to a Dragoon: a missile turret and a
-        // spore colony cannot shoot at air, so the cannon is the only
-        // candidate (measured).
+        // Only ground-capable buildings matter to a Dragoon (it is a ground
+        // unit): a missile turret and a spore colony are anti-air only, so
+        // the cannon is the only candidate (measured).
         Assertions.assertEquals(enemy4, manager.combatBuilding());
 
         // applies() is what picks the combat building (handle() only reads
@@ -121,9 +121,9 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         // what this test is really about.
         manager.applies();
         Assertions.assertEquals(enemy4, manager.combatBuilding(),
-            "the only anti-air building is the one to watch");
+            "the only ground-capable building is the one to watch");
         Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
-            "a missile turret cannot shoot at our dragoon");
+            "a missile turret cannot shoot at our ground dragoon");
         Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
             "nor can a spore colony");
         });
@@ -200,9 +200,9 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
 
         ProtossCombatBuildingClose manager = new ProtossCombatBuildingClose(our);
 
-        // Only anti-air buildings matter to a Dragoon: a missile turret and a
-        // spore colony cannot shoot at air, so the cannon is the only
-        // candidate (measured).
+        // Only air-capable buildings matter to a Wraith (it flies): a sunken
+        // colony and a bunker cannot shoot at air, so the spore colony is
+        // the picked candidate (measured).
         Assertions.assertEquals(enemy4, manager.combatBuilding());
 
         // applies() is what picks the combat building (handle() only reads
@@ -215,11 +215,11 @@ public class AvoidCombatBuildingsTest extends AbstractTestWithWorld {
         // what this test is really about.
         manager.applies();
         Assertions.assertEquals(enemy4, manager.combatBuilding(),
-            "the only anti-air building is the one to watch");
+            "the spore colony is the air-capable building to watch");
         Assertions.assertNotEquals(enemy2, manager.combatBuilding(),
-            "a missile turret cannot shoot at our dragoon");
+            "this assertion pins the picked instance, not that a turret is harmless to air");
         Assertions.assertNotEquals(enemy3, manager.combatBuilding(),
-            "nor can a spore colony");
+            "same here: a bunker cannot shoot at our wraith, the spore can");
         });
     }
 

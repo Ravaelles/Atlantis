@@ -78,13 +78,6 @@ documented in code with a comment. The closure goes into the commit message.
 - **Pinned by:** `AUnitTest.facingUsesTheTolerancesOfTheEngine` and
   `facingHelperAgreesWithTheRawVector`, which assert the real windows.
 
-## B-5 — `AUnit.cooldownRemaining()` had a guard that made tests unfalsifiable
-
-- **Fixed** (`da2b3f45`), listed here because the pattern is worth naming: a
-  redundant `u == null` check in a read path is not a no-op for the test
-  suite, it turns "measured" into "constant". When a getter looks suspiciously
-  constant in tests, look for a short-circuit in the getter.
-
 ## B-6 — the Protoss position finder cannot place anything in the stub world
 
 - **Where:** `atlantis/production/constructions/position/PositionFulfillsAllConditions`
@@ -175,103 +168,8 @@ documented in code with a comment. The closure goes into the commit message.
   penalties should be clamped separately. Either way `ourArmyRelativeStrength`
   should not return 999 for a base.
 
-## B-11 — Terran units kept no margin against combat buildings *(fixed as a side effect of B-13)*
-
-- **Where:** `TerranDontEngageWhenCombatBuildings.handle()`: inside 9 tiles it
-  calls `moveToSafety`, between 9 and 11 it holds position **only if not already
-  attacking**.
-- **Measured** (`AvoidCombatBuildingsTest.neverRunsIntoCombatBuildings`, 50
-  frames, marine vs two sunken colonies at 19 and 29): the marine walked up to
-  **2.875 tiles** - well inside the colony's 7 tile kill range - and attacked.
-  The test had been "fixed" earlier by pinning that number.
-- **Why it mattered:** the class-level javadoc of that test says a unit 0.1 tiles
-  outside a sunken colony's range already sees a much worse evaluation, and the
-  Protoss side (`ProtossCombatBuildingClose`) has an explicit
-  `moveAwayFrom(..., moveAwayDist())` branch.
-- **Resolution:** the margin was missing because the safety margin of a Terran
-  marine against *any* ranged attacker was garbage (B-13) - the colony was not
-  counted as a threat at all. With B-13 fixed, the marine retreats: measured
-  9.0 → 9.6 tiles over the first frames, and the test asserts its original
-  intent (`distToSunken > 7.05`) again.
-
-## B-12 — `ProtossCombatBuildingClose.applies()` was not reproducible across runs *(fixed)*
-
-- **Where:** `atlantis/combat/micro/avoid/buildings/protoss/ProtossCombatBuildingClose.applies()`.
-- **Measured:** the *same* scenario (lone dragoon at 10, missile turrets at 17/22,
-  spore colonies at 17/22, photon cannon at 21.1) gave `applies() == false`
-  three times in a row when the class ran alone and `applies() == true` after a
-  world-based test from the same class. Clearing `Select`, `ArmyStrength` and
-  `EnemyUnits` inside the test changed nothing.
-- **Root cause:** `Cache.nukeAllCaches()` cleared its own instance registry after
-  nuking (B-15), so from the second test in a JVM onwards *nothing* was cleared.
-  The deciding value was simply the previous test's, still inside its cache.
-- **What the test does now:** asserts the part that is reproducible (the finder
-  picks the anti-air building and never a turret or a spore colony against air)
-  and no longer asserts the fight decision.
-
-## B-13 — Terran infantry treated every ranged attacker as harmless *(fixed)*
-
-- **Where:** `atlantis/combat/micro/avoid/margin/SafetyMarginAgainstRanged.marginAgainst()`,
-  Terran branch: `return (new MarineSafetyMarginAgainstRanged(defender)).marginAgainst(attacker);`
-- **The bug:** `MarineSafetyMarginAgainstRanged` answers **-1 = "no opinion"** for
-  everything except mutalisks, and the caller returned that sentinel as if it
-  were a critical distance. `SafetyMargin.marginAgainst()` then computed
-  `base + distance - (-1)`.
-- **Measured** (`AvoidEnemiesTest.zergUnits`, marine vs hydras, before the fix):
-  a hydralisk 4 tiles away scored **+5.0** tiles of safety margin and a zergling
-  0.1 tiles away scored **-2.69**, i.e. inverted. Consequences: the hydra never
-  appeared in `EnemyUnitsToAvoid.enemiesDangerouslyClose()`, so nothing told the
-  marine to move away from it.
-- **Why it was invisible:** the test suite ran as Protoss, so `We.terran()` was
-  false and this branch never executed (see B-16).
-- **Fix:** check the sentinel (`if (marineMargin > -1) return marineMargin;`),
-  exactly like the melee path already does.
-
-## B-14 — two Terran paths dereferenced `Chokes.mainChoke()` unguarded *(fixed)*
-
-- **Where:** `TerranResponseEnemyHiddenUnits.buildAnywhere()` (runs for **every**
-  discovered enemy unit, inside `EnemyUnitsUpdater.weDiscoveredEnemyUnit`) and
-  `HaveBunkerAtMainChoke.applies()` (runs every frame of the main loop).
-- **Measured:** `java.lang.NullPointerException: Cannot invoke
-  "AChoke.translateTilesTowards(...)" because the return value of
-  "Chokes.mainChoke()" is null` - `DynamicProductionCommanderTest` and
-  `AtlantisGameCommanderTest` in an acceptance-package run.
-- **Why it matters:** `Chokes.mainChoke()` is null until the map analysis has run
-  and stays null on maps without a main choke. A frame that dies is a frame the
-  bot does not play.
-- **Fix:** `TerranResponseEnemyHiddenUnits` returns "no decision" without a main
-  choke; `HaveBunkerAtMainChoke.applies()` returns false without one.
-
-## B-15 — `Cache.nukeAllCaches()` only worked for the first test in a JVM *(fixed)*
-
-- **Where:** `atlantis/util/cache/Cache.nukeAllCaches()`.
-- **The bug:** cache instances register themselves in their constructor (in
-  testing mode) and `nukeAllCaches()` emptied the registry afterwards. Cache
-  objects are static fields, constructed once, so from the second call onwards
-  the registry was empty and **nothing at all was cleared**.
-- **Measured:** tests that pass alone failed inside a package run - e.g. the
-  Protoss cannon tests died with `FakeUnit.position() is null` on a unit they
-  never created, because `EnemyTooCloseToUnstartedConstruction` still held the
-  previous test's enemy selection.
-- **Fix:** do not empty the registry.
-- **Note:** no game impact - registration is guarded by `Env.isTesting()`, so in
-  a real game the registry is empty anyway.
-
-## B-16 — the whole test suite ran as Protoss while building Terran units *(fixed)*
-
-- **Where:** `AbstractTestWithUnits.setUpTestLogic()` read
-  `MockEverything.defaultRaceForTests()` directly instead of the overridable
-  `initRace()`, and `MockEverything.mockAtlantisConfig()` always called
-  `useConfigForProtoss()`. On top of that, `EnemyRace` could be told a race while
-  the `Enemy` mock next to it was hard-coded to "enemy is Protoss".
-- **What it hid:** `AtlantisRaceConfig` said BASE = Protoss_Nexus, WORKER =
-  Protoss_Probe, BARRACKS = Protoss_Gateway, DEFENSIVE_BUILDING_* =
-  Photon_Cannon while tests created Terran_Marine and Terran_Barracks; every
-  `We.terran()` branch was dead. Switching the default to Terran immediately
-  exposed B-13 and B-14 and invalidated several pinned numbers.
-- **Fix:** `initRace()` is honoured (default Terran, matching `Main.ourRace()`),
-  a new `initEnemyRace()` hook drives both enemy mocks, and the Protoss tests
-  say so.
+> Fixed entries (B-5, B-11–B-16) were removed per the file's own rule — the
+> git history is the archive.
 
 ## How to add an entry
 
