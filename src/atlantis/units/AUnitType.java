@@ -1799,33 +1799,23 @@ public class AUnitType implements Comparable<Object> {
     }
 
     /**
-     * The StarCraft 1 units that fly. Not read from {@link bwapi.UnitType} on
-     * purpose: that flag is filled by a running client, so it answers
-     * {@code false} for everything outside a game - measured, that was the whole
-     * reason {@code ATargetingTest} could not pass. See {@code _AI/NEXT.md} #29.
+     * The units Atlantis treats as flying. Not read from {@link bwapi.UnitType}
+     * on purpose: that flag is filled by a running client, so it answers
+     * {@code false} for everything outside a game.
      *
      * <p>Deliberately <b>not</b> in this list:</p>
      * <ul>
-     *   <li>{@code Protoss_Arbiter_Tribunal} - it is a building (89x57 px, 3x2
-     *       tiles; BWAPI's own reference lists its attributes as
-     *       {@code Mechanical, Building, RequiresPsi}), even though it produces
-     *       the flying Arbiter.</li>
+     *   <li>{@code Protoss_Arbiter_Tribunal} - it is a building, even though it
+     *       produces the flying Arbiter.</li>
+     *   <li>{@code Protoss_Dragoon} - a ground unit, even though its weapon is
+     *       the same one a Photon Cannon has.</li>
+     *   <li>{@code Terran_Vulture} - a hover unit: it travels over the ground
+     *       without touching it, but it is not a flying unit.</li>
+     *   <li>{@code Zerg_Broodling} - an ordinary ground unit.</li>
+     *   <li>{@code Zerg_Infested_Terran} - it walks.</li>
      *   <li>{@code Protoss_Reaver}, {@code Protoss_Zealot},
      *       {@code Terran_Ghost}, {@code Zerg_Hydralisk}, {@code Zerg_Lurker},
-     *       {@code Zerg_Ultralisk}, {@code Zerg_Zergling} - ground, even though a
-     *       Ghost can <i>hit</i> air units.</li>
-     * </ul>
-     *
-     * <p>Four entries are disputed and kept deliberately, because a wrong entry
-     * here silently moves a unit onto the wrong branch of every {@code isAir()}
-     * check in combat micro:</p>
-     * <ul>
-     *   <li>{@code Protoss_Dragoon} - hovers; 6-tile range; its Phase Disruptor is
-     *       an <i>air</i> weapon. It is the Protoss anti-air unit.</li>
-     *   <li>{@code Terran_Vulture} - flies, and drops spider mines while
-     *       airborne.</li>
-     *   <li>{@code Zerg_Broodling} - flies; it is what a Carrier spawns.</li>
-     *   <li>{@code Zerg_Infested_Terran} - a flying cocoon.</li>
+     *       {@code Zerg_Ultralisk}, {@code Zerg_Zergling} - ground.</li>
      * </ul>
      */
     private boolean isAirUnit() {
@@ -1833,8 +1823,7 @@ public class AUnitType implements Comparable<Object> {
             "isAirUnit",
             -1,
             () -> is(
-                // Protoss: the Dragoon, and the shuttle/diplomat fleet.
-                AUnitType.Protoss_Dragoon,
+                // Protoss: the shuttle/diplomat fleet.
                 AUnitType.Protoss_Arbiter,
                 AUnitType.Protoss_Carrier,
                 AUnitType.Protoss_Corsair,
@@ -1848,14 +1837,11 @@ public class AUnitType implements Comparable<Object> {
                 AUnitType.Terran_Dropship,
                 AUnitType.Terran_Science_Vessel,
                 AUnitType.Terran_Valkyrie,
-                AUnitType.Terran_Vulture,
                 AUnitType.Terran_Wraith,
 
-                // Zerg: the flying cast, including the two that arrive as eggs.
-                AUnitType.Zerg_Broodling,
+                // Zerg: the flying cast.
                 AUnitType.Zerg_Devourer,
                 AUnitType.Zerg_Guardian,
-                AUnitType.Zerg_Infested_Terran,
                 AUnitType.Zerg_Mutalisk,
                 AUnitType.Zerg_Overlord,
                 AUnitType.Zerg_Queen,

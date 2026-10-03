@@ -26,9 +26,9 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **red - see below** |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **red - see below** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **215 passing / 15 failing** of 230 (+4 skipped) |
+| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 (+4 skipped) |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **119 passing / 0 failing** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **222 passing / 6 failing** of 228 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
@@ -81,12 +81,29 @@ The suite is **not fully green yet**. Six `ATargetingTest` cases fail
 `nearHydrasOverWounded`): targeting picks a different enemy than expected.
 
 This is not a wrong assertion and not a wrong bot — the harness has no unit-type
-data at all. `bwapi.UnitType.isFlyer()` answers `false` for every type, hit
-points are placeholders (marine 40 vs 45, sunken colony 300 vs 150) and ranges
-are off (dragoon 128 px vs 96). Injecting a unit-type table flipped these 6
-into 10 failures, because the test expectations and the placeholders were
-calibrated against each other. Fixing it properly needs real engine data.
-Tracked as `_AI/NEXT.md` #29.
+and no weapon-type data. Which units fly is now stated explicitly
+(`AUnitType.isAirUnit()`) because `bwapi.UnitType.isFlyer()` answers `false`
+for everything outside a game. What is still missing is everything the six
+failures actually depend on:
+
+| Missing | Harness says | StarCraft |
+|---|---|---|
+| `UnitType.maxHitPoints()` | Marine 40, Sunken Colony 300, Creep Colony 400 | 45, 150, 600 |
+| `UnitType.maxShields()` | Overlord 0 | 50 |
+| `WeaponType.maxRange()` | Dragoon 128 px (4 tiles), Hydralisk 128, Lurker 192, Drone 32 | 192 (6), 160 (5), 256 (8), 64 (2) |
+| `WeaponType.damageAmount()` / `damageFactor()` | **0 for every weapon** | per-weapon values |
+
+So the ordering these tests assert - a Dragoon shoots the Sunken Colony rather
+than the Creep Colony, prefers a wounded Marine, keeps its distance from a Bunker
+- cannot be evaluated: the numbers behind it are fiction.
+
+There is no authoritative source reachable from this machine. The jar's values,
+BWAPI's own `.dox` documentation and BWAPI's own reference tests in `3rdparty`
+all carry the **same** placeholder numbers, and the real ones live in
+`units.dat`/`weapons.dat` inside the encrypted `starcraft/STARDAT.MPQ`, which
+nothing installed here can read. `_AI/NEXT.md` #29 has the field-by-field table
+and the two ways forward: hand-write the numbers into the harness with a guard
+test, or generate them from `units.dat`.
 
 Two lists that used to be here are now green:
 

@@ -20,19 +20,17 @@ public class UnitTest {
     /**
      * Counts of the sample world built by {@link #generateUnits(boolean)}.
      *
-     * <p>{@code GROUND_UNITS} was 6 and {@code AIR_UNITS} was 5 because the
-     * harness said a Protoss Dragoon does not fly. A Dragoon does fly, so ground
-     * is 5 (Zealot, SCV, Siege Tank in tank mode, Siege Tank in siege mode, and
-     * the Vulture spider mine, which counts as real only because
-     * {@code bwapi.UnitType.isInvincible()} is placeholder data) and air is 6
-     * (Dragoon, Carrier, Dropship, Scourge, Mutalisk, Overlord). Ground + air
-     * still adds up to {@code REAL_UNITS} = 11.</p>
+     * <p>Six ground units - Zealot, Dragoon, SCV, Siege Tank in tank mode,
+     * Siege Tank in siege mode, and the Vulture spider mine, which counts as real
+     * only because {@code bwapi.UnitType.isInvincible()} is placeholder data -
+     * and five flying ones: Carrier, Dropship, Scourge, Mutalisk, Overlord.
+     * Ground + air adds up to {@code REAL_UNITS} = 11.</p>
      */
     public static int REAL_UNITS = 11;
-    public static int GROUND_UNITS = 5;
+    public static int GROUND_UNITS = 6;
     public static int BUILDINGS = 5;
     public static int COMBAT_BUILDINGS = 5;
-    public static int AIR_UNITS = 6;
+    public static int AIR_UNITS = 5;
     public static int SPELLS = 2;
 
     //    public static int NEUTRAL_UNITS = 5;

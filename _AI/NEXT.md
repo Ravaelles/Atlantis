@@ -29,14 +29,14 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   harness defect of `_AI/BUGS.md` B-15, not a choke bug.
 - **#29** The test harness has **no unit-type and no weapon-type data**, so every
   test that depends on an attribute measures a fiction. Measured on 2026-10-03,
-  after the flyer set was made real (`AUnitType.isAirUnit()`): the suite is
-  **15 failing**, and every one of them is explained by the remaining
+  after `AUnitType.isAirUnit()` was introduced: the suite is
+  **7 failing**, and every one of them is explained by the remaining
   placeholders. What is wrong, by probe of `bwapi.UnitType` and
   `bwapi.WeaponType` inside a test:
 
   | field | harness value | StarCraft |
   |---|---|---|
-  | `UnitType.isFlyer()` | false for everything (Scourge/Overlord excepted) | **fixed** in `AUnitType.isAirUnit()` |
+  | `UnitType.isFlyer()` | false for everything (Scourge/Overlord excepted) | replaced by the explicit list in `AUnitType.isAirUnit()` |
   | `UnitType.maxHitPoints()` | Marine 40, Bunker 350, Sunken Colony 300, Creep Colony 400, Overlord 200/0 shields | 45, 400, 150, 600, 200/**50** |
   | `WeaponType.maxRange()` | Dragoon 128 px (4 tiles), Hydralisk 128, Lurker 192, Drone 32, Scourge 3 | 192 (6), 160 (5), 256 (8), 64 (2), 64 (2) |
   | `WeaponType.damageAmount()` / `damageFactor()` | **0 for every weapon** (only `Psi_Blades` is special-cased to 16 in `WeaponUtil`) | real per-weapon values |
