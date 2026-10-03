@@ -44,11 +44,18 @@ public class SelectTest extends WorldStubForTests {
 //            Select.our().print("Our");
 //            Select.ourWithUnfinished().print("Our with UNF");
 
+        // The bunker on 11 has 0 hit points: a corpse. The engine drops a unit
+        // from its player's unit list the moment it dies, so no selector in a
+        // game can see one - the world harness answers with the living units for
+        // exactly that reason (AbstractWorldCreatingTest.living). Every count
+        // below is therefore over the four living units, whether or not the
+        // selector bothers to check isAlive() itself.
         assertEquals(4, Select.ourWithUnfinished().size());
         assertEquals(3, Select.ourWithUnfinished().combatBuildings(true).size());
-        assertEquals(2, Select.ourWithUnfinished().bunkers().size());
-        assertEquals(2, Select.ourOfType(AUnitType.Terran_Bunker).size());
-        assertEquals(2, Select.our().bunkers().size());
+        assertEquals(2, Select.ourWithUnfinished().bunkers().size(), "10 and 12, the corpse on 11 is gone");
+        assertEquals(1, Select.ourOfType(AUnitType.Terran_Bunker).size(),
+            "only the completed living bunker: 12 is still under construction, 11 is dead");
+        assertEquals(1, Select.our().bunkers().size(), "same two filters, on Select.our()");
         });
     }
 
