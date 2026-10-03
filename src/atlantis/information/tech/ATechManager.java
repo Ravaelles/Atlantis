@@ -1,11 +1,12 @@
 package atlantis.information.tech;
 
+import atlantis.game.A;
 import atlantis.units.AUnitType;
-import atlantis.util.Helpers;
+import atlantis.units.select.Count;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
-public class ATechManager extends Helpers {
+public class ATechManager {
 
     public static void researchDynamically() {
         handleResearchAt(30, UpgradeType.Singularity_Charge);
@@ -23,12 +24,22 @@ public class ATechManager extends Helpers {
     private static void handleResearchAt(int minSupply, Object techOrUpgrade) {
         AUnitType required = whatMakes(techOrUpgrade);
 
-//        if (supplyUsedAtMost(minSupply) || !canAfford(ATech.costOf(techOrUpgrade)) || !hasFree(required)) {
+//        if (A.supplyUsed() <= minSupply || !canAfford(ATech.costOf(techOrUpgrade)) || !hasFree(required)) {
         if (!canAfford(ATech.costOf(techOrUpgrade)) || !hasFree(required)) {
             return;
         }
 
         ATechRequests.research(techOrUpgrade);
+    }
+
+    /** Was {@code Helpers.canAfford(Integer[])}, which only unwrapped the pair into {@link A#canAfford(int, int)}. */
+    private static boolean canAfford(Integer[] mineralsAndGas) {
+        return A.canAfford(mineralsAndGas[0], mineralsAndGas[1]);
+    }
+
+    /** Was {@code Helpers.hasFree(AUnitType)}, which only wrapped {@link Count#ofTypeFree(AUnitType)}. */
+    private static boolean hasFree(AUnitType type) {
+        return Count.ofTypeFree(type) > 0;
     }
 
     private static AUnitType whatMakes(Object techUpgradeOrUnit) {

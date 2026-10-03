@@ -201,7 +201,7 @@ itself, #5, is design work and out of that order's scope).
   geometry), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = 70 (was 73),
+  `util -> units/game/map/production/information/combat/debug` = 60 (was 73),
   `information -> combat/production` = 66,
   `architecture -> combat/production/units/game/util/debug` = 24.
   The 267 and the 24 are structural - the Commander/Manager framework is

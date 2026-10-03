@@ -10,8 +10,6 @@ import bwapi.TechType;
 
 import static atlantis.units.AUnitType.Protoss_Arbiter;
 import static atlantis.units.AUnitType.Protoss_Arbiter_Tribunal;
-import static atlantis.util.Helpers.has;
-import static atlantis.util.Helpers.hasFree;
 
 public class ProduceArbiterTribunal {
     public static boolean produce() {
@@ -26,7 +24,7 @@ public class ProduceArbiterTribunal {
 
         return DynamicCommanderHelpers.buildToHaveOne(90, type());
 
-//        if (hasFree(type()) && has(Protoss_Arbiter)) {
+//        if (Count.ofTypeFree(type()) > 0 && Count.ofType(AUnitType.Protoss_Arbiter) > 0) {
 //            ATechRequests.researchTech(TechType.Stasis_Field);
 //        }
 //        return false;

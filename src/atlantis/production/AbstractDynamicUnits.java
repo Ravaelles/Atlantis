@@ -9,9 +9,8 @@ import atlantis.production.orders.requirements.Requirements;
 import atlantis.production.orders.production.queue.SoonInQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
-import atlantis.util.Helpers;
 
-public class AbstractDynamicUnits extends Helpers {
+public class AbstractDynamicUnits {
     public static boolean buildToHave(AUnitType type, int haveN) {
         if (haveN <= 0) return false;
 
@@ -25,7 +24,7 @@ public class AbstractDynamicUnits extends Helpers {
     }
 
     public static boolean trainIfPossible(int minSupply, AUnitType type, boolean onlyOneAtTime) {
-//        if (supplyUsedAtMost(minSupply)) return false;
+//        if (A.supplyUsed() <= minSupply) return false;
 
         return trainIfPossible(type, onlyOneAtTime, type.mineralPrice(), type.gasPrice());
     }
