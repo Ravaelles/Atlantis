@@ -108,10 +108,12 @@ documented in code with a comment. The closure goes into the commit message.
   itself (re-enable the commented branch) or whether the construction invariant
   should be asserted somewhere. The first is safer; the second documents the
   coupling. Either way the invariant deserves a name and a test.
-
-> Fixed entries (B-3, B-5, B-7, B-10, B-11–B-17) were removed per the file's
-> own rule — the git history is the archive. Numbers are never reused, so the
-> next entry after B-18 is B-19.
+- **Test (done):** `tests/acceptance/QueueInProgressInvariantTest` states the
+  invariant as `isHeldByALivingConstruction()` and checks it after a real
+  `Queue.refresh()`, then removes the one link and shows the order falling back
+  to READY_TO_PRODUCE. So the second half of the question - the name and the test -
+  is answered; what is still open is the first half, the behaviour change, which
+  needs a game run to confirm no building is produced twice.
 
 ## B-18 — the combat evaluator only sees the opening of a long fight
 
