@@ -12,6 +12,25 @@ hard-won operational facts that do not belong anywhere else.
 - JUnit class execution order is not source order. New test classes can
   shift it.
 
+## Scenario E2E probes are actuators, not sensors
+
+- Directly invoking a manager inside a scenario loop
+  (`new CombatUnitManager(unit).invokeFrom(null)`,
+  `new WorkerManager(unit).invokeFrom(null)`) or running selection queries
+  in the frame body **changes the outcome it claims to observe**. Measured
+  2026-10-03: `FourPoolDefenseTest` with a diagnostic block that only
+  wanted to read (manager invocation, `squad()`, `Select.our()`) made the
+  nexus survive the 900 frames the green test pins as lost; the same test
+  without the block is green. The extra invocations take focus and
+  attack-state turns the passive stub units never took on their own.
+- Rule: instrument a scenario with pure unit-field reads only (`hp()`,
+  `shields()`, `isAlive()`, positions) - never with manager invocation,
+  `attackUnit` or selection builders. Measure the baseline, then delete the
+  probes and pin the numbers from the clean run; a reading that changes the
+  verdict cannot become a baseline.
+- The 9pool twin was measured exactly this way (instrumented first, pinned
+  from the clean run); the 4pool diagnostics block went back to HEAD.
+
 ## The acceptance package was never run
 
 - `scripts/run-tests.sh` defaults to `--select-package tests.unit`.

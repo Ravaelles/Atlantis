@@ -45,9 +45,14 @@ tooling in the loop.
   Nothing outside `src/starengine` and `src/tests` imports it, but
   `scripts/build-bot-jar.sh` ships the package inside the game jar.
 - Tier 0 already runs: `tests.acceptance.e2e` (`ZombieAttacksNearestUnit` +
-  `ScenarioCombat` + `FourPoolDefenseTest`) plays Protoss-vs-4pool in the stub
-  world with documented harness physics. Measured baseline: cannon falls
-  ~150, zealot ~250, nexus ~880, probes never engage (filed as BUGS.md B-19).
+  `ScenarioCombat`) plays the two scripted rush scenarios in the stub world
+  with documented harness physics, both green with their baselines pinned:
+  - `FourPoolDefenseTest` (6 lings from x=26): cannon falls ~150, zealot
+    ~250, nexus ~880, probes never engage (filed as BUGS.md B-19).
+  - `NinePoolDefenseTest` (8 lings from x=32, the 9pool twin, measured
+    2026-10-03): cannon ~163, zealot ~214, nexus ~631 - eight attackers kill
+    faster than six despite the later arrival - and B-19 reproduces (three
+    of four probes killed off at the very end, one escapes).
   Same forces/timing/assertions carry over to the OpenBW tiers below.
 - Stardust platform verified on this machine (2026-10-03): clean CMake build
   (`tests-steamhammer`, `tests-locutus`), `RushDefense.Steamhammer9PoolSpeed`

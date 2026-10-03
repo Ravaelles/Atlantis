@@ -159,6 +159,11 @@ documented in code with a comment. The closure goes into the commit message.
   additionally skips every fifth probe (`id % 5 <= 1`) - in a base defense
   that combination means nobody ever supports the cannon while it dies three
   tiles away.
+  Reproduced by the 9pool twin (`NinePoolDefenseTest`, 8 lings from x=32,
+  2026-10-03): cannon ~163, zealot ~214, nexus ~631, three of four probes
+  killed off at the very end, one escapes - the mechanism is scenario
+  independent, and more attackers still cost the base earlier despite the
+  later arrival.
 - **Why it matters:** fleeing is right in the field and fatal at home: once
   the army is dead there is nothing left between the lings and the nexus,
   and the probes that could have turned the cannon fight (4 x 5 damage into
