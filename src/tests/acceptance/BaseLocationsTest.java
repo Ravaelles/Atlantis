@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
+import tests.fakes.FakeMapTiles;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
@@ -33,9 +34,9 @@ public class BaseLocationsTest extends WorldStubForTests {
                 base,
                 fake(Protoss_Pylon, 11, 48)
             ), fakeExampleEnemies(), () -> {
-                APosition.TESTING_EXPLORED = false;
+                FakeMapTiles.EXPLORED = false;
                 APosition position = BaseLocations.nearestUnexploredStartingLocation(base);
-                APosition.TESTING_EXPLORED = true;
+                FakeMapTiles.EXPLORED = true;
 //                System.err.println("position = " + position);
 
                 assertNotNull(position);

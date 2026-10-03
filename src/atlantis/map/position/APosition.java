@@ -33,8 +33,6 @@ import java.io.Serializable;
  */
 //public class APosition extends Position implements HasPosition, Comparable<Point<Position>> {
 public class APosition extends Point<Position> implements HasPosition, Comparable<Point<Position>>, Serializable {
-    public static boolean TESTING_EXPLORED = false;
-
     //    private transient Position p;
     private Position p;
 

@@ -1,7 +1,6 @@
 package tests.fakes;
 
 import atlantis.map.MapTiles;
-import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.select.Select;
 
@@ -12,6 +11,14 @@ import atlantis.units.select.Select;
  * within 1.98 tiles", and explored is whatever the harness's flag says.
  */
 public class FakeMapTiles implements MapTiles.Source {
+    /**
+     * What {@link #isExplored} answers. Tests that need a position which has never
+     * been seen set it to {@code false} for the length of their world;
+     * {@code AbstractTestWithUnits.setUp()} puts it back, which is why one test
+     * leaving it set can no longer decide the next test's answers.
+     */
+    public static boolean EXPLORED = false;
+
     public static void installAsSource() {
         MapTiles.useSource(new FakeMapTiles());
     }
@@ -23,9 +30,7 @@ public class FakeMapTiles implements MapTiles.Source {
 
     @Override
     public boolean isExplored(HasPosition at) {
-        // Still the flag in APosition: tests/acceptance/BaseLocationsTest flips it
-        // to ask for a position that has never been seen.
-        return APosition.TESTING_EXPLORED;
+        return EXPLORED;
     }
 
     @Override

@@ -107,7 +107,9 @@ public class AbstractTestWithUnits extends UnitTest {
         FakeOrderFallback.installAsSink();
 
         // The stub world has no map behind it, so the harness answers the tile
-        // questions (atlantis.map.MapTiles).
+        // questions (atlantis.map.MapTiles). EXPLORED is reset here because a test
+        // that flips it must not decide the next test's answers.
+        FakeMapTiles.EXPLORED = false;
         FakeMapTiles.installAsSource();
 
         clearCaches();

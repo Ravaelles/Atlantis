@@ -18,7 +18,8 @@ import atlantis.map.position.HasPosition;
  *
  * <p>The answers are byte-for-byte the ones the branches gave: everything is
  * walkable and visible, buildable means "no unit within 1.98 tiles", and explored
- * is whatever {@code APosition.TESTING_EXPLORED} currently says.</p>
+ * is a flag the harness flips for the tests that need a position nobody
+ * has seen.</p>
  */
 public class MapTiles {
     public interface Source {
