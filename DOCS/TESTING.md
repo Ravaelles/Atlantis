@@ -26,9 +26,9 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **93 passing / 6 failing** of 99 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **119 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **222 passing / 6 failing** of 228 (+4 skipped) |
+| Unit (default) | `bash scripts/run-tests.sh` | **red - see below** |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **red - see below** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **215 passing / 15 failing** of 230 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
