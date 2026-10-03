@@ -1,5 +1,7 @@
-package atlantis.map.base;
+package tests.acceptance;
 
+import atlantis.map.base.ABaseLocation;
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.util.Options;
 import org.junit.jupiter.api.Test;

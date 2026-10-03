@@ -76,19 +76,29 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness: 15 files under
-  `src/atlantis`/`src/main` import `tests.fakes.*` (`AUnit` -> `FakeUnit`,
-  `Bullets` -> `FakeBullets`, `AbstractFoggedUnit`, `AUnitOrders` ->
-  `FakeUnitData`, ...) and `ClearCountCache` imports
-  `tests.unit.helpers.ClearAllCaches`. (The two JUnit classes that lived in the
-  production tree have moved to `src/tests/acceptance/production/`, and the one
-  whose only test was commented out now asserts something.) The
-  consequence is concrete: the game jar **must ship `tests/fakes/**` and
-  `tests/unit/helpers/**`**, otherwise
-  `NoClassDefFoundError: tests/fakes/FakeUnit` (`GAME_08792F08`). Fix it the
-  ADR 0001 way: give each of those call sites a port (a unit sink, a bullet
-  sink, a cache-clearing hook) with the fakes as one adapter among several,
-  and then the jar can stop shipping the harness. Verify with a game run: the
+- **#28** Production code imports the test harness. **9 files left** (was 15),
+  each needing an ADR-0001 port with the fakes as one adapter among several:
+  `AtlantisJfap` and `PositionUtil` (both `instanceof FakeUnit`),
+  `Regions` (a fake region while testing), `Bullets` (a fake bullet list while
+  testing), `AUnit` and `AbstractFoggedUnit` (`instanceof FakeUnit`),
+  `AUnitOrders` (a fake order sink while `u()` is null), plus
+  `src/atlantis/units/fogged/FakeFoggedUnit`, which is a test double living in
+  the production tree at all.
+
+  Gone in this round, and both were worse than an import:
+  - `ClearCountCache` imported `tests.unit.helpers.ClearAllCaches` and **never
+    used it** - the dependency existed only in the import list, and the jar had to
+    ship a test package for nothing;
+  - `BaseLocationsTest` and `ChokesTest` were JUnit classes inside
+    `src/atlantis/map/...`, so they were outside every `--select-package tests`
+    selector and **no command in `scripts/` ever executed them**. They live in
+    `tests/acceptance` now and run (3 tests).
+
+  Consequence while any of the 9 remains: the game jar **must ship
+  `tests/fakes/**` and `tests/unit/helpers/**`**, otherwise
+  `NoClassDefFoundError: tests/fakes/FakeUnit` (`GAME_08792F08`). The seam added
+  with `UnitStats` (a `Source` the harness installs, production delegating to
+  the engine) is the shape to copy. Verify the end of it with a game run: the
   jar size and `scripts/build-bot-jar.sh`'s assertions are the check.
 
 

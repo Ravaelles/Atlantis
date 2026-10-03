@@ -1,5 +1,6 @@
-package atlantis.map.choke;
+package tests.acceptance;
 
+import atlantis.map.choke.Chokes;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
