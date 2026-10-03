@@ -122,10 +122,12 @@ public class MockEverything {
 //        if (test.env == null) test.env = Mockito.mockStatic(Env.class);
 //        test.env.when(Env::isTesting).thenReturn(true);
 
-        if (test.aTech == null) test.aTech = Mockito.mockStatic(ATech.class);
-        test.aTech.when(() -> ATech.isResearched(TechType.Lockdown)).thenReturn(true);
-        test.aTech.when(() -> ATech.isResearched(null)).thenReturn(false);
-        test.aTech.when(() -> ATech.getUpgradeLevel(any())).thenReturn(0);
+        // ATech used to be mocked here, the whole class at once, with three
+        // stubbed methods. Every other method then answered null or 0 - including
+        // getCurrentlyResearching() and costOf(...) - so the tests were running
+        // against a facade that does nothing. The two questions the stub world
+        // genuinely cannot answer are behind ATech.Source now
+        // (tests.fakes.FakeResearch), and the rest of the class runs for real.
 
         // Same race as EnemyRace above - the two mocks used to disagree, because
         // this one was hard-coded to "enemy is Protoss" while a test could change

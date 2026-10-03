@@ -12,7 +12,6 @@ import atlantis.game.race.EnemyRace;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.Strategy;
 import atlantis.information.strategy.terran.TerranStrategies;
-import atlantis.information.tech.ATech;
 import atlantis.map.base.AllBaseLocations;
 import atlantis.map.choke.AllChokes;
 import atlantis.production.constructions.ConstructionRequests;
@@ -37,6 +36,7 @@ import org.mockito.Mockito;
 import org.mockito.exceptions.base.MockitoException;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeMapTiles;
+import tests.fakes.FakeResearch;
 import tests.fakes.FakeOrderFallback;
 import tests.fakes.FakeUnit;
 import tests.fakes.FakeUnitOrigin;
@@ -61,7 +61,6 @@ public class AbstractTestWithUnits extends UnitTest {
 
     public static MockedStatic<Env> env;
     public static MockedStatic<AGame> aGame;
-    public static MockedStatic<ATech> aTech;
     public static MockedStatic<Enemy> enemy;
     public static MockedStatic<EnemyRace> enemyRace;
     public static MockedStatic<AllBaseLocations> allBaseLocations;
@@ -111,6 +110,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // that flips it must not decide the next test's answers.
         FakeMapTiles.EXPLORED = false;
         FakeMapTiles.installAsSource();
+
+        // The stub world's player has researched nothing; a test says otherwise
+        // with FakeResearch.withResearched(...) (ATech.Source).
+        FakeResearch.installAsSource();
 
         clearCaches();
 

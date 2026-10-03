@@ -1,7 +1,9 @@
 package tests.acceptance;
 
 import atlantis.combat.micro.terran.infantry.TerranGhost;
+import bwapi.TechType;
 import org.junit.jupiter.api.Test;
+import tests.fakes.FakeResearch;
 import tests.fakes.FakeUnit;
 
 import static atlantis.units.AUnitType.*;
@@ -22,6 +24,12 @@ public class TerranGhostTest extends AbstractTestWithWorld {
 
     @Test
     public void ghostIsTargetingMechanicalUnitsForLockdown() {
+        // Lockdown is the reason a ghost exists at all, so it belongs to the world
+        // this test describes. It used to be true in every test in the suite,
+        // because the harness mocked ATech statically and hard-coded it
+        // (see tests.fakes.FakeResearch).
+        FakeResearch.withResearched(TechType.Lockdown);
+
         world(1, this.generateOur(), this.generateEnemies(), () -> {
             TerranGhost manager1 = new TerranGhost(ghost1);
             TerranGhost manager2 = new TerranGhost(ghost2);
