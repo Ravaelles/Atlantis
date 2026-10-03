@@ -1,9 +1,11 @@
 package atlantis.util.log;
 
+import atlantis.debug.tools.LogMessage;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
 import java.util.ArrayList;
+import atlantis.debug.tools.LogUnitsToFiles;
 
 public class Log {
     /**

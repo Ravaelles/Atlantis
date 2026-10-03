@@ -1,8 +1,9 @@
-package atlantis.util.log;
+package atlantis.debug.tools;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.util.AFile;
+import atlantis.util.log.Log;
 
 public class LogUnitsToFiles {
 

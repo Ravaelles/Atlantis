@@ -67,7 +67,7 @@ import atlantis.util.HasReason;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
-import atlantis.util.log.LogMessage;
+import atlantis.debug.tools.LogMessage;
 import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;

@@ -7,7 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
-import atlantis.util.TargetsForUnits;
+import atlantis.debug.tools.TargetsForUnits;
 import bwapi.TechType;
 
 public class TerranGhost extends Manager {

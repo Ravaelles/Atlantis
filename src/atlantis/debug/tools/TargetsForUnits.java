@@ -1,4 +1,4 @@
-package atlantis.util;
+package atlantis.debug.tools;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;

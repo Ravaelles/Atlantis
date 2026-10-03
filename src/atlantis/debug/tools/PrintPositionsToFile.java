@@ -1,9 +1,10 @@
-package atlantis.util;
+package atlantis.debug.tools;
 
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.position.HasPosition;
 
 import java.util.List;
+import atlantis.util.AFile;
 
 public class PrintPositionsToFile {
     public static void printToFile(String file, List<? extends HasPosition> positions, HasPosition highlightThisOne) {

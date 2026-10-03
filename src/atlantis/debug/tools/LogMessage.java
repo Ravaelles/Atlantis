@@ -1,4 +1,4 @@
-package atlantis.util.log;
+package atlantis.debug.tools;
 
 import atlantis.game.A;
 import bwapi.Color;

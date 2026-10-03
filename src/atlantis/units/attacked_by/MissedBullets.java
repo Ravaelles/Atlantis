@@ -4,7 +4,7 @@ import atlantis.game.A;
 import atlantis.map.bullets.ABullet;
 import atlantis.units.AUnit;
 import atlantis.util.AConsole;
-import atlantis.util.PauseAndCenter;
+import atlantis.debug.tools.PauseAndCenter;
 import bwapi.Color;
 
 public class MissedBullets {

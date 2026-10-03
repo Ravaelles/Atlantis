@@ -59,7 +59,7 @@ import atlantis.util.*;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
-import atlantis.util.log.LogUnitsToFiles;
+import atlantis.debug.tools.LogUnitsToFiles;
 import bwapi.*;
 import atlantis.cherryvis.ACherryVis;
 import tests.fakes.FakeUnit;

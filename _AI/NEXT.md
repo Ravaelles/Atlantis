@@ -36,7 +36,20 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
   from static arrays that a BWAPI client fills from the running game, and there
   is no client - and no data file to load them from - in a test. That is why
   `ATargetingTest` cannot pass: its subject is air-vs-ground targeting.
+  **The six failures are not about air.** They are Creep Colony over Sunken
+  Colony, Bunker over Marine, Drone over Creep Colony and one Hydralisk distance
+  tie - i.e. they need `isBuilding`, hit points and eval, all placeholders. So
+  fixing `isFlyer` cannot fix them, and `AUnitType.isAir()` *is* `ut.isFlyer()`
+  (so is `AUnit.isFlying()` = `isAir() || isLifted()`, which already exists):
+  there is no alternative call that returns the truth here.
   Attempts and measurements, so nobody repeats them:
+  - Air-only table (the 23 SC1 flyers listed explicitly in `AUnitType`):
+    `ATargetingTest` goes **6 -> 11 failures**, not down. Six new ones:
+    `targetsWorkers`, `doesNotTargetLarvas`, `itAllowsTargetingOverlords`,
+    `targetsCannonOverOtherBuildingsAndWorkers`,
+    `targetsDoesNotTargetTooFarHighTemplars`,
+    `targetsZerglingsOverSunkensWhenSiegingZerg`. Correct air makes the bot
+    behave differently than the calibrated expectations expect.
   - Filling the arrays from a hand-written table of real stats *and* the
     Flyer/Building/Worker flags: **10 failures instead of 6** - giving Cocoons
     real hit points turned them into valid targets, and marking buildings
@@ -44,6 +57,12 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
     suite's expectations were calibrated together.
   - Flags only, no hit points: also 10 failures (a Nexus started winning over a
     Photon Cannon).
+  - Real data *is* on this machine - `starcraft/STARDAT.MPQ`, `StarCraft.mpq`,
+    `BROODAT.MPQ`, `patch_rt.mpq` - so option (a) needs an extractor, not a
+    game. `mpyq` cannot read those archives (no listfile, hashed lookup fails);
+    PyMS + StormLib, or a small dumper linked against the already-built
+    `libOpenBWData.so`, would. That is the one route on which today's
+    expectations survive unchanged, so it is the recommended next step.
   So the choice is: (a) get real unit-type data - run a game with a patched
   client that dumps `UnitTypeContainer`, or point the harness at a data file
   from scbw/OpenBW; or (b) keep a maintained table **and** recalibrate every

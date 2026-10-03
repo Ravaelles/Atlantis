@@ -1,24 +1,28 @@
-package atlantis.util;
+package atlantis.debug.tools;
 
+import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.CameraCommander;
 import atlantis.game.GameSpeed;
-import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
-import atlantis.units.select.Select;
 import bwapi.Color;
 
-public class CenterCamera {
+public class PauseAndCenter {
+    private static int counter = 0;
+
     public static void on(HasPosition position) {
         on(position, false, null);
     }
 
-    public static void on(APosition position, boolean paintCircle) {
+    public static void on(HasPosition position, boolean paintCircle) {
         on(position, paintCircle, null);
     }
 
     public static void on(HasPosition position, boolean paintCircle, Color color) {
+        if (!Env.isLocal()) return;
+        if (counter >= 5) return;
+
         if (position == null) return;
         if (color == null) color = Color.Yellow;
 
@@ -32,13 +36,8 @@ public class CenterCamera {
         }
 
         CameraCommander.centerCameraOn(position);
-    }
+        GameSpeed.pauseGame();
 
-    public static void onFirstCombatUnit() {
-        on(Select.ourCombatUnits().first());
-    }
-
-    public static void onMainChoke() {
-        on(Chokes.mainChoke());
+        counter++;
     }
 }
