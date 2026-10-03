@@ -5,9 +5,9 @@ import atlantis.combat.eval.AtlantisJfap;
 import atlantis.debug.tweaker.Param;
 import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.units.UnitOrigin;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import atlantis.util.AConsole;
-import tests.fakes.FakeUnit;
 
 /**
  * Uses JFAP (with modifications to make it comptabile with JBWAPI).
@@ -83,7 +83,7 @@ public class JfapCombatEvaluator {
 //        }
 
         for (AUnit friend : unit.friendsNear().list()) {
-            if (friend.u() != null || friend instanceof FakeUnit || friend instanceof AbstractFoggedUnit) {
+            if (friend.u() != null || UnitOrigin.isSimulated(friend) || friend instanceof AbstractFoggedUnit) {
                 if (AtlantisJfap.isValidUnit(friend)) {
                     simulator.addUnitPlayer1(new JFAPUnit(friend));
                 }
