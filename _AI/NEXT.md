@@ -136,9 +136,11 @@ generated rather than remembered. Three concrete starting points came out of it;
 the first is already done. The two behaviour-neutral ones have an executable
 procedure: `_AI/work-orders/WO-F-neutral-cache-cleanup.md` (the query service
 itself, #5, is design work and out of that order's scope).
-- In progress: both behaviour-neutral items below are being executed under
-  `_AI/work-orders/WO-F-neutral-cache-cleanup.md` (one commit each, suite green
-  at every step). They are removed from this list as each one lands.
+- Both behaviour-neutral items are done (WO-F): `microCacheForFrames` is gone -
+  the 24 call sites say `0`, which is what the enemy-side queries have always
+  used - and `Select.clearCache()` clears `cacheObject`, so
+  `mainOrAnyBuildingPosition` no longer survives a unit-created event on a
+  73-frame TTL.
 - Six TTLs above one frame (30, 31, 53, 73, 91, 293) have no stated reason
   anywhere. `Select.main()` - 90 call sites, the most-read method in the tree -
   is cached for 2.4 s.

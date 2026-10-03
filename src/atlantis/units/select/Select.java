@@ -29,11 +29,19 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
     // =====================================================================
 
+    /**
+     * Drops every cached query. Called when our units change - a unit was
+     * created or a building finished - which is exactly when
+     * {@link #mainOrAnyBuildingPosition()} has to be recomputed: it answers
+     * "where is our main", and the event that fires the clear may be the event
+     * that moved the answer.
+     */
     public static void clearCache() {
         cache.clear();
         cacheList.clear();
         cacheInt.clear();
         cacheUnit.clear();
+        cacheObject.clear();
     }
 
     public static Cache cache() {
