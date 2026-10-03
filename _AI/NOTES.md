@@ -61,6 +61,15 @@ hard-won operational facts that do not belong anywhere else.
   `out/`. Running it after `rm -rf out` makes all 7 rules fail with
   "failed to check any classes" — that is a missing build, not a regression.
   Run the unit suite (or any compile) first.
+- **A failed compile rewrites the store.** If the sources do not compile, the run
+  sees fewer classes, and the "auto-remove stale entries" behaviour below deletes
+  the baseline: on 2026-10-03 one `MapTiles` compile error shrank three store files
+  (core 267 → 159 entries, util 60 → 35, information 65 → 61), and the next
+  *successful* run reported those missing entries as new violations. Recovery is
+  `git checkout _AI/architecture/archunit-store/` — the frozen baseline is the
+  only correct copy — and then re-run. **So: never run the architecture script
+  while the compile is red, and check `git status` after any red architecture
+  run before believing anything it says.**
 - Each test run **auto-removes stale entries** (violations that no longer
   exist) from `_AI/architecture/archunit-store/` but **never adds** new ones.
   It also does **not** recreate a deleted store file.
