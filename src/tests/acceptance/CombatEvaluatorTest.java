@@ -173,10 +173,15 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             assertEquals(2, wraith.enemiesNear().size(), "both cannons are near the wraith");
             assertEquals(1, cannon1.enemiesNear().size(), "but the cannons only see the wraith");
 
-            // Measured: ourEval = -0.3961, enemyEval = 169.06. The product is
-            // NOT 1 (it is -67), which means one of the two Jfap scores is
-            // negative - a negative side score makes every "eval >= x"
-            // comparison in production meaningless. Tracked in _AI/BUGS.md.
+            // Measured with engine data: as Terran the wraith scores 0.0066
+            // (absolute -760) - utterly doomed, and the number says so. As
+            // Protoss the same fight scores -0.3934: the raw ratio minus the
+            // additive Protoss tweaks (-0.1 enemy buildings near, -0.3 two
+            // anti-air combat buildings). The enemy side is unaffected either
+            // way (cannon eval 152.03; as Terran the pair is even reciprocal).
+            // A negative eval makes every "eval >= x" comparison in production
+            // meaningless - and in the dangerous direction. Tracked in
+            // _AI/BUGS.md B-2.
             assertTrue(cannon1.eval() > 0, "from the cannons' side we are the weaker number");
             assertTrue(cannon1.eval() > wraith.eval(), "the wraith is outnumbered 1 vs 2");
         });

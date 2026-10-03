@@ -39,20 +39,34 @@ documented in code with a comment. The closure goes into the commit message.
   re-derived from a scenario sweep over the real evaluator. Do not "fix" it by
   editing one threshold.
 
-## B-2 — `eval()` can be negative, which makes comparisons meaningless
+## B-2 — additive Protoss tweaks can push `eval()` below zero
 
-- **Where:** `AtlantisJfap.calculateToRelativeScoreIfNeeded`.
-- **Measured:** wraith vs two fogged photon cannons gives our eval **-0.3961**
-  and enemy eval **169.06**; the product is -67 instead of 1. A negative value
-  means the two Jfap side scores have opposite signs, i.e. the evaluator models
-  one side as *losing outright*.
+- **Where:** `AUnit.freshCombatEvalRelative` ->
+  `ProtossJfapTweaksConsiderChokesEtc.apply` (adds up to -0.4: -0.1 for enemy
+  buildings near, up to -0.3 for combat buildings, choke/cohesion/retreat
+  terms on top), applied to the `enemyScore / (ourScore + 0.001)` ratio.
+- **Measured** (scratch probe, since deleted): lone Wraith against two
+  (fogged, i.e. full-health) Photon Cannons. As Terran the ratio is **0.0066**,
+  absolute **-760** - the wraith is utterly doomed and the number says so. As
+  Protoss the same fight scores **-0.3934** = 0.0066 - 0.1 - 0.3. The enemy
+  side is unaffected (cannon eval **152.03** both ways; the pair is even
+  reciprocal as Terran: 0.0066 x 152 ~= 1), so the penalties break both the
+  sign and the reciprocity, exactly when the raw ratio is near zero.
 - **Why it matters:** every production guard of the form `unit.eval() >= 1.2`
-  or `<= 2.5` silently changes meaning for a negative score. It is also why the
-  old `CombatEvaluatorTest.takesIntoAccountFoggedUnits` could never pass: it
+  or `<= 2.5` silently changes meaning for a negative score - and in the
+  dangerous direction: `eval() <= 2.5` ("we are fine") is *true* for -0.39,
+  for a unit that loses 150-to-1. It is also why the old
+  `CombatEvaluatorTest.takesIntoAccountFoggedUnits` could never pass: it
   asserted `ourEval > 0`.
-- **How to settle it:** find which tweak in `AtlantisJfapModifier` produces a
-  negative side score for fogged buildings, then decide whether a negative
-  score is meaningful or a modelling artefact.
+- **History:** this entry used to blame "two Jfap side scores with opposite
+  signs". The scores are both negative (cost-like) and their ratio is fine;
+  the sign break happens one layer up, in the additive tweaks. The old
+  -0.3961/169.06 numbers were measured with a fiction table; the mechanism
+  above reproduces with engine data.
+- **How to settle it:** make the tweaks sign-safe - floor the tweaked eval at
+  0, apply them multiplicatively, or skip them when the raw ratio is already
+  near zero. Any of those changes live fight/avoid behaviour, so it needs a
+  game run, not just the suite.
 
 ## B-8 — `APositionFinder` can still terminate the JVM
 
