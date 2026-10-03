@@ -28,6 +28,11 @@
 - **Consequences:** thresholds keep their tuned meanings; the ratio stays
   unbounded above (fine - it is a ratio); the sign and no-data cases become
   total. All three steps change fight behaviour and need game runs.
+- **Follow-up regardless of the decision:** freeze the WO-B1 evidence table
+  as a golden test (like the ArchUnit store): any evaluator change that moves
+  a number fails the build until the table is deliberately re-frozen. The
+  fiction-table episode proved a green suite without that ratchet is not
+  evidence.
 - **Alternatives rejected:** re-normalising to a bounded scale (churn without
   fixing B-2/B-18/9874); re-deriving all thresholds from a sweep (re-tuning
   the bot by hand - years of game knowledge, no oracle).
