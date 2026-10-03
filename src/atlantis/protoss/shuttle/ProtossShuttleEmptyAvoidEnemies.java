@@ -18,9 +18,28 @@ public class ProtossShuttleEmptyAvoidEnemies extends Manager {
 
     @Override
     public boolean applies() {
-        enemies = unit.enemiesNear().canAttack(unit, 1.5 + unit.shieldWoundPercent() / 25.0);
+        enemies = unit.enemiesNear().canAttack(unit, marginToLeaveAgainstEnemies());
 
         return enemies.notEmpty();
+    }
+
+    /**
+     * How much room to leave around this unit: 1.5 tiles, and half a tile more
+     * for every percent of shield already gone (so a unit at half shields leaves
+     * 2.7).
+     *
+     * <p>{@code shieldWoundPercent()} is {@code NaN} for a unit that cannot have
+     * shields, and it used to be added straight into the margin.
+     * {@code canAttack(unit, NaN)} ends up comparing {@code dist <= range + NaN},
+     * which is false for every distance - so the selection came back empty and
+     * this manager never applied, whatever was standing next to the unit. A unit
+     * with no shields has no shields to lose, which is worth the base margin and
+     * nothing more.</p>
+     */
+    private double marginToLeaveAgainstEnemies() {
+        double shieldsAlreadyGone = unit.maxShields() > 0 ? unit.shieldWoundPercent() / 25.0 : 0;
+
+        return 1.5 + shieldsAlreadyGone;
     }
 
     @Override

@@ -54,18 +54,6 @@ documented in code with a comment. The closure goes into the commit message.
   negative side score for fogged buildings, then decide whether a negative
   score is meaningful or a modelling artefact.
 
-## B-3 — `AUnit.shieldPercent()` is `NaN` for units without shields
-
-- **Where:** `AUnit.shieldPercent()` = `100 * shields() / maxShields()` with no
-  zero guard.
-- **Measured:** a Terran marine returns `NaN`; a Protoss zealot returns 100.0.
-- **Why it matters:** harmless today only because every production caller checks
-  `maxShields()` first. A naive use silently poisons every comparison
-  (`NaN >= 0` is false, `NaN == NaN` is false), which is the worst failure mode
-  for a "percentage" getter.
-- **Pinned by:** `AUnitTest.shieldsOnAUnitThatHasNone` (deliberately asserts the
-  current behaviour so a fix is a conscious change).
-
 ## B-4 — `AUnit.isOtherUnitShowingBackToUs()` reads like its opposite
 
 - **Where:** `AUnit.isOtherUnitFacingThisUnit` / `isOtherUnitShowingBackToUs`.
@@ -110,7 +98,7 @@ documented in code with a comment. The closure goes into the commit message.
   should be asserted somewhere. The first is safer; the second documents the
   coupling. Either way the invariant deserves a name and a test.
 
-> Fixed entries (B-5, B-7, B-10, B-11–B-16) were removed per the file's own
+> Fixed entries (B-3, B-5, B-7, B-10, B-11–B-16) were removed per the file's own
 > rule — the git history is the archive. Numbers are never reused, so the next
 > entry after B-16 is B-17.
 
