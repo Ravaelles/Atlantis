@@ -392,9 +392,13 @@ itself, #5, is design work and out of that order's scope).
   level 0.
 
   **What is left in this item** is the biggest remaining `Env` leak - the other
-  side of the same coin. Counting `src/atlantis`: **44 `Env.isTesting()` call sites
-  in 24 files** (50 lines if the commented-out ones are counted), one or two per
-  file, across `combat`, `units`, `map`, `production` and `information`. A port for the flag itself would be indirection, not
+  side of the same coin. Counting `src/atlantis`: **37 `Env.isTesting()` call sites
+  in 23 files** (down from 44/24 when this paragraph was written), one or two per
+  file, across `combat`, `units`, `map`, `production` and `information`. Three of
+  them are already answered by ports added since: `AUnit`'s three facing helpers
+  through `UnitOrigin` (as `weKnowNothingAboutIt()`), `AbstractFoggedUnit`'s last
+  known position through `UnitOrigin`, and `DefineNaturalBase.isConnected()`
+  through `MapTiles.hasPathBetween`. A port for the flag itself would be indirection, not
   inversion (`Env` is a static flag holder, so the port would be a static flag
   holder). What is worth doing is the ATech shape: find a subsystem that asks the
   game something real - "is this position walkable", "did we research this" - and
