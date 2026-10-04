@@ -121,7 +121,7 @@ recipe), which needs the licensed game and the container runtime - both outside
 this workspace, and both the owner's side. Two ways forward:
 
   * run scbw yourself with the jar this repository builds
-    (bash scripts/build-bot-jar.sh bots/AtlantisP/atlantis.jar), then re-run this
+    (bash scripts/build-bot-jar.sh bots/AtlantisP/AI/Atlantis.jar), then re-run this
     script with --parse-only to turn the games it left in ~/.scbw/games into a
     verdict table;
   * or point --games-dir at a copy of those games inside the workspace.

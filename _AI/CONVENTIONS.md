@@ -150,6 +150,18 @@ by the language rule below.
     `bwapi-data/`, `docker/` - is opened, edited or enumerated as a way of
     finding something useful. That boundary is the point: the alternative is a
     grep rooted in the home directory, which is what the rule above forbids.
+  - **`~/.scbw/bots/AtlantisP` and `~/.scbw/bots/AtlantisT`**, the two bot
+    folders - added 2026-10-04 because `scbw run` resolves opponents only from
+    its own bots directory and ours was empty. Narrow by construction: each
+    folder holds only `bot.json` (race + `JAVA_MIRROR`), `BWAPI.dll`, an `AI/`
+    (`Atlantis.jar`, `build_orders`, machine-local `ENV` copied from the repo
+    template) and empty `read/` + `write/`. These are **real files, not
+    symlinks**: scbw bind-mounts the bot folder read-only into the container,
+    so links escaping it dangle (`Bot not found in '/app/bot/AI/Atlantis.jar'`,
+    measured). "Always newest" therefore means rebuilding straight into those
+    `AI/` folders (`build-bot-jar.sh <that path>`), not linking to the repo
+    jar. Opponent bots downloaded there by scbw itself (`SscaitBotStorage`)
+    are scbw's own cache, not ours - never enumerate or manage them from here.
 - A third-party tool installed to help (a package, a virtualenv) is a means, not
   a deliverable: do not add it to the repository and do not let the repository
   depend on it, unless the task is exactly about adding that dependency.
