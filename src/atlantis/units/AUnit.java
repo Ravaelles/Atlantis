@@ -2479,10 +2479,40 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     /**
-     * Relative local combat evaluation compared to enemy forces.
-     * 0.8 means that our army is 20% weaker than enemy.
-     * 1.0 means that our army is as strong.
-     * 1.3 means that our army is 30% stronger than enemy.
+     * Relative local combat evaluation, read as <b>"how much did the enemy lose,
+     * divided by how much did we lose"</b> in a ~60-frame
+     * {@link atlantis.combat.eval.AtlantisJfap} simulation of the fight.
+     *
+     * <p><b>For our own units</b>, higher is better: above 1.0 means the enemy lost more
+     * than we did in the simulated window. <b>For an enemy unit</b> the same formula runs
+     * from its side, so lower is better for us - {@code enemy.eval()} near 0.1 means we
+     * are winning comfortably. This direction was backwards in this javadoc until
+     * 2026-10-04, together with the entry it names; it is pinned by
+     * {@code CombatEvaluatorTest.higherEvalMeansWeAreBetter} (three Marines next to one
+     * Zergling, a fight we win, read 1.6667 before the hedge below).</p>
+     *
+     * <p>What the number is <i>not</i>: a percentage, and not bounded. The old promise
+     * here - "1.0 as strong, 1.3 thirty percent stronger" - describes a normalised ratio
+     * this is not: both sides' scores are cost-like negative numbers, so the ratio runs
+     * from 0 to arbitrarily large (measured 46.1 for a Wraith against two Dragoons) and
+     * a value of 7.56 means "the enemy lost seven and a half times what we lost", not
+     * "656% stronger". Three things distort it, all measured in
+     * {@code DOCS/adr/0006-combat-eval-scale.md}:
+     * <ul>
+     *   <li>the window is 60 frames, so a long fight is scored on its opening exchange -
+     *       four Marines against a Sunken Colony read 0.98 about even, and the colony
+     *       wins that fight outright (B-18);</li>
+     *   <li>our side is hedged by {@link CombatEvalScale#OUR_SIDE_HEDGE} (0.3), so an
+     *       even fight reads ~0.7 and only a raw 1.3 reads 1.0 (B-18);</li>
+     *   <li>with nothing in reach the reading is 9874.0 (and -1.0 absolute) - "no threat",
+     *       not "infinitely strong", though every {@code eval >= 2} guard reads it as
+     *       safe.</li>
+     * </ul>
+     *
+     * <p>So the 228 production comparisons against thresholds in {@code [0.6, 3]} mean
+     * "our side's hedged ratio", not percentages. Re-deriving them is B-1's open
+     * decision, argued in ADR 0006; the evidence tables are there, the decision is the
+     * owner's.</p>
      */
     public double eval() {
         if (!isOur()) return ownCombatEvalRelative();

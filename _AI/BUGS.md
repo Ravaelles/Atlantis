@@ -71,6 +71,22 @@ documented in code with a comment. The closure goes into the commit message.
   editing one threshold. Evidence first, decision second: the measurement
   procedure is `_AI/work-orders/WO-B1-eval-evidence-sweep.md`, the draft to
   fill is `DOCS/adr/0006-combat-eval-scale.md`.
+- **The "no documented scale" half is fixed (2026-10-04).** The javadoc is no longer the
+  thing that misleads: it now states what the number is (the ratio of what two sides
+  *lost* in a ~60-frame window, higher = our side better, unbounded above - 46.1 for a
+  Wraith against two Dragoons), what it is not (a percentage), and the three
+  distortions by name with their measured readings - the 0.98-versus-a-Sunken-Colony
+  window (B-18), the 0.3 our-side hedge, and 9874.0 meaning "no threat in reach" rather
+  than "infinitely strong". It points at ADR 0006 for the threshold question, which is
+  the owner's decision.
+- **Still open, and it is not a code change:** the 228 thresholds themselves. ADR 0006
+  argues against re-normalising (any monotonic re-map preserves order, so every
+  threshold moves anyway, and none of the three distortions is fixed by it) and for
+  three targeted steps instead - floor (done), document the no-threat reading and audit
+  the guards that must tell "safe" from "no data" (a dozen, not 228), and leave the
+  horizon to a simulation change. Accepting it, and the game runs its steps 2 and 3 need,
+  are the owner's. Two evidence sweeps are already frozen in the ADR (2026-10-03 and
+  2026-10-04, ten scenarios each).
 
 ## B-2 — additive Protoss tweaks can push `eval()` below zero (fixed 2026-10-04)
 
