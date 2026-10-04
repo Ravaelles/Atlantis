@@ -85,7 +85,7 @@ documented in code with a comment. The closure goes into the commit message.
   is the shutdown path (exiting is its job), the other two are fail-fast at
   startup and need a game run to touch safely.
 
-## B-9 — the queue never detects unit/building progress on its own
+## B-9 — the queue never detects unit/building progress on its own (fixed 2026-10-04, needs a game run)
 
 - **Where:** `IsOrderInProgress.isInProgress` and `IsOrderCompleted.isCompleted`
   (both have their **unit branch commented out**, with the notes "this will
@@ -108,12 +108,36 @@ documented in code with a comment. The closure goes into the commit message.
   itself (re-enable the commented branch) or whether the construction invariant
   should be asserted somewhere. The first is safer; the second documents the
   coupling. Either way the invariant deserves a name and a test.
-- **Test (done):** `tests/acceptance/QueueInProgressInvariantTest` states the
-  invariant as `isHeldByALivingConstruction()` and checks it after a real
-  `Queue.refresh()`, then removes the one link and shows the order falling back
-  to READY_TO_PRODUCE. So the second half of the question - the name and the test -
-  is answered; what is still open is the first half, the behaviour change, which
-  needs a game run to confirm no building is produced twice.
+- **Fixed 2026-10-04, needs a game run to confirm** (the owner's ruling: this is
+  testable, so pin it with a test rather than deferring it). `forUnit` is back in
+  `IsOrderInProgress`, so progress is derived from the units - N units of this
+  type against M other orders of the same type that are finished or in progress -
+  and the invariant above is gone: an unfinished building keeps its order whether
+  or not a `Construction` object exists. Completion still arrives as an engine
+  event (`OnOurNewUnitCompleted`); only the *start* of progress stopped depending
+  on it. Three expectations moved as a direct consequence, and each is re-derived
+  in the test that owns it rather than loosened:
+  - `PreventDuplicateOrders` counted "not started" orders under the name "in
+    queue" - with progress derived from the units that number stopped including
+    orders under way, and the guard against duplicate pylons read "none on the
+    way" and let a second pylon through. It now counts planned-or-building
+    (`Count.inQueue + CountInQueue.countInProgress`).
+  - `CountInQueueTest`: an unfinished bunker now consumes its own order, so
+    `count(Bunker)` is 0, `countInProgress` is 1 and `withPlanned` is 1 - the
+    bunker counted once instead of once as a unit and once as an order.
+  - `Queue3Test`: what the queue still owes is the build order minus what is
+    already under way. In the stub world the completed barracks' order stays
+    IN_PROGRESS because `OnOurNewUnitCompleted` is never emitted there, which is
+    also why the plan still needs topping up to 2.
+- **Test (done):** `QueueInProgressInvariantTest` pins the whole lifecycle now
+  rather than the invariant: a barracks at 3 hit points with most of its build
+  time left stays IN_PROGRESS across a refresh with both construction links
+  intact and with both removed (that frame used to fall back to
+  READY_TO_PRODUCE), a completion event finishes the order, and a destroyed
+  building - hp 0 and gone from the unit list, exactly what the engine leaves
+  behind - makes the order ready again, so progress detection cannot stall
+  production. What a game run still has to confirm is the part no stub can
+  reach: that no building is produced twice in a real game.
 
 ## B-18 — the combat evaluator only sees the opening of a long fight
 

@@ -39,24 +39,30 @@ public class CountInQueueTest extends WorldStubForTests {
     }
 
     private void frame2() {
-        // State carried over from frame 1: one unfinished bunker, one queued
-        // bunker order (see the measured values documented in frame1).
+        // State carried over from frame 1: one unfinished bunker, and the bunker
+        // order is IN_PROGRESS because of it (see the measured values in frame1).
         assertEquals(0, Count.bunkers(), "nothing completed yet");
-        assertEquals(1, CountInQueue.count(Terran_Bunker));
+        assertEquals(0, CountInQueue.count(Terran_Bunker), "the order is in progress, not queued");
         assertEquals(0, CountInQueue.count(Terran_Bunker, 10));
+        assertEquals(1, CountInQueue.countInProgress(Terran_Bunker));
         assertEquals(1, Count.bunkersWithUnfinished());
-        assertEquals(2, Count.withPlanned(Terran_Bunker));
+        assertEquals(1, Count.withPlanned(Terran_Bunker), "the rising bunker counted once");
 
         mockOurUnitsByAddingNewUnit(fakeOurs(
             newBunker = fake(Terran_Bunker, 44).setCompleted(true)
         ));
 
-        assertEquals(1, CountInQueue.count(Terran_Bunker),
-            "the order survives until the engine completion event arrives");
+        // The bunker is finished but the queue has not been told: completion arrives
+        // as an engine event (OnOurNewUnitCompleted) and the stub world does not emit
+        // it. Until it does, the order stays in progress - the direction that matters
+        // for B-9 is the one that stopped producing a second bunker.
+        assertEquals(0, CountInQueue.count(Terran_Bunker),
+            "still in progress: the completion event has not arrived");
+        assertEquals(1, CountInQueue.countInProgress(Terran_Bunker));
         assertEquals(0, CountInQueue.count(Terran_Bunker, 10));
         assertEquals(1, Count.bunkers(), "the completed bunker is counted");
         assertEquals(1, Count.bunkersWithUnfinished());
-        assertEquals(2, Count.withPlanned(Terran_Bunker));
+        assertEquals(1, Count.withPlanned(Terran_Bunker));
     }
 
     private void frame1() {
@@ -85,39 +91,40 @@ public class CountInQueueTest extends WorldStubForTests {
         // from the build order at some point in the past):
         //   * Count.bunkers() counts completed units only, so the building we
         //     just started is not there yet - bunkersWithUnfinished() sees it.
-        //   * the bunker order stays in the queue and ready, because the queue
-        //     learns about completion from the engine event only (_AI/BUGS.md
-        //     B-9), so an unfinished building does not consume the order;
-        //   * withPlanned therefore counts both: one order plus one building.
-        assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Bunker).size());
-        assertEquals(1, queue.nextOrders(50).ofType(Terran_Bunker).size(),
-            "and it is within the next 50 supply worth of orders");
+        //   * the bunker order is IN_PROGRESS, because the queue now derives
+        //     progress from the units (_AI/BUGS.md B-9): the rising bunker
+        //     consumes its own order instead of waiting next to it. It used to
+        //     stay READY here, which was the silent duplicate production.
+        //   * so nextOrders() - which skips in-progress orders - does not see
+        //     it either, and withPlanned counts the bunker once instead of
+        //     twice.
+        assertEquals(0, queue.readyToProduceOrders().ofType(Terran_Bunker).size(),
+            "the order is in progress, not ready");
+        assertEquals(0, queue.nextOrders(50).ofType(Terran_Bunker).size(),
+            "and next() skips in-progress orders, so it is not among the next 50 either");
         assertEquals(0, Count.bunkers(),
             "Count.bunkers() counts completed units only - the bunker is still building");
-        assertEquals(1, CountInQueue.count(Terran_Bunker), "the order is still queued");
+        assertEquals(0, CountInQueue.count(Terran_Bunker), "so the order is not in the queue");
         assertEquals(0, CountInQueue.count(Terran_Bunker, 10));
+        assertEquals(1, CountInQueue.countInProgress(Terran_Bunker),
+            "the queue does know what it is producing");
         assertEquals(1, Count.bunkersWithUnfinished());
-        assertEquals(2, Count.withPlanned(Terran_Bunker), "one order plus one unfinished bunker");
+        assertEquals(1, Count.withPlanned(Terran_Bunker),
+            "the unfinished bunker counted once, not once as a unit and once as an order");
 
         Queue.get().refresh();
 
-        // Measured behaviour (all values below come from the stub world, not
-        // from the build order at some point in the past):
-        //   * Count.bunkers() counts completed units only, so the building we
-        //     just started is not there yet - bunkersWithUnfinished() sees it.
-        //   * the bunker order stays in the queue and ready, because the queue
-        //     learns about completion from the engine event only (_AI/BUGS.md
-        //     B-9), so an unfinished building does not consume the order;
-        //   * withPlanned therefore counts both: one order plus one building.
-        assertEquals(1, queue.readyToProduceOrders().ofType(Terran_Bunker).size());
-        assertEquals(1, queue.nextOrders(50).ofType(Terran_Bunker).size(),
-            "and it is within the next 50 supply worth of orders");
-        assertEquals(0, Count.bunkers(),
-            "Count.bunkers() counts completed units only - the bunker is still building");
-        assertEquals(1, CountInQueue.count(Terran_Bunker), "the order is still queued");
-        assertEquals(0, CountInQueue.count(Terran_Bunker, 10));
+        // A refresh must not change any of it. This used to be the assertion that
+        // failed, and it failed for the right reason: before the fix a refresh
+        // turned the order back into READY_TO_PRODUCE and every number above with
+        // it, which is duplicate production once per frame.
+        assertEquals(0, queue.readyToProduceOrders().ofType(Terran_Bunker).size());
+        assertEquals(0, queue.nextOrders(50).ofType(Terran_Bunker).size());
+        assertEquals(0, Count.bunkers());
+        assertEquals(0, CountInQueue.count(Terran_Bunker));
+        assertEquals(1, CountInQueue.countInProgress(Terran_Bunker));
         assertEquals(1, Count.bunkersWithUnfinished());
-        assertEquals(2, Count.withPlanned(Terran_Bunker), "one order plus one unfinished bunker");
+        assertEquals(1, Count.withPlanned(Terran_Bunker));
     }
 
     // =========================================================

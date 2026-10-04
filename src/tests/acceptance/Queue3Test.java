@@ -1,6 +1,7 @@
 package tests.acceptance;
 
 import atlantis.game.AGame;
+import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.order.Orders;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
@@ -79,11 +80,24 @@ public class Queue3Test extends WorldStubForTests {
 
             assertEquals(0, Count.inProduction(Terran_Barracks));
             assertEquals(1, Count.existing(Terran_Barracks), "we placed exactly one barracks");
-            assertEquals(barracksInBuildOrder, Count.inProductionOrInQueue(Terran_Barracks));
+
+            // One of the build order's barracks is IN_PROGRESS, because the queue
+            // derives progress from the units (_AI/BUGS.md B-9) and that barracks
+            // exists. The stub world never emits OnOurNewUnitCompleted, so the
+            // order stays in progress here instead of being finished - which is
+            // why the queue still owes us the second one, and why the plan is
+            // topped up below rather than found to be satisfied at 1.
+            int barracksInProgress = CountInQueue.countInProgress(Terran_Barracks);
+            assertEquals(1, barracksInProgress, "the order for the barracks we already have is under way");
+            assertEquals(
+                barracksInBuildOrder - barracksInProgress,
+                Count.inProductionOrInQueue(Terran_Barracks),
+                "what we still owe is the build order minus what is already on the way"
+            );
             assertEquals(
                 Count.existing(Terran_Barracks) + Count.inProductionOrInQueue(Terran_Barracks),
                 Count.withPlanned(Terran_Barracks),
-                "withPlanned is existing + queued"
+                "withPlanned is existing + in progress + queued"
             );
 
             // buildToHave must be a no-op while the plan is already enough...

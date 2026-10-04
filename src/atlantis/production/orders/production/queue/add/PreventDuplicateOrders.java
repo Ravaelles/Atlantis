@@ -173,7 +173,15 @@ public class PreventDuplicateOrders {
     }
 
     private static boolean tooManyOrdersOfThisType(AUnitType type, HasPosition position) {
-        int existingInQueue = Count.inQueue(type);
+        // "Planned or being built", not "not started". The two used to be the same
+        // number because an order only left the not-started set when it was issued,
+        // and it stayed issued because nothing recomputed progress (_AI/BUGS.md
+        // B-9). Now that IsOrderInProgress derives progress from the units, an
+        // order whose building is rising is IN_PROGRESS - and a guard that counted
+        // only not-started orders would read that as "no pylon on the way" and
+        // request a second one. The test that pins the refusal is
+        // RequestBuildingNearTest.testRequestingAPylon_farFromMainAndSupplyUnder40.
+        int existingInQueue = Count.inQueue(type) + CountInQueue.countInProgress(type);
 
         int max = type.isABuilding() ? (type.isCombatBuilding() ? 5 : 2) : 4;
         if (type.isPylon() && A.supplyTotal() <= 32) max = 1;
