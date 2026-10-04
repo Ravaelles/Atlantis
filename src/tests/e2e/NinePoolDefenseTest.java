@@ -44,8 +44,10 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
     public void defendedBaseSurvivesTheNinePool() {
         nexus = fake(AUnitType.Protoss_Nexus, 10);
         probes = new FakeUnit[]{
+            fake(AUnitType.Protoss_Probe, 7.9),
             fake(AUnitType.Protoss_Probe, 8.3),
             fake(AUnitType.Protoss_Probe, 9.1),
+            fake(AUnitType.Protoss_Probe, 9.9),
             fake(AUnitType.Protoss_Probe, 10.6),
             fake(AUnitType.Protoss_Probe, 11.4),
         };
@@ -64,7 +66,7 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             lings[i] = fake(AUnitType.Zerg_Zergling, 32 + i * 0.3);
         }
 
-        List<FakeUnit> ourList = Arrays.asList(nexus, probes[0], probes[1], probes[2], probes[3], zealot, cannon);
+        List<FakeUnit> ourList = Arrays.asList(nexus, probes[0], probes[1], probes[2], probes[3], probes[4], probes[5], zealot, cannon);
         List<FakeUnit> lingList = Arrays.asList(lings);
 
         ZombieAttacksNearestUnit rush = new ZombieAttacksNearestUnit(lings);
@@ -89,36 +91,24 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             }
         });
 
-        // The negative control this scenario used to carry - "a base with no
-        // defence at all falls to the same rush", in its own 900-frame run -
-        // was 35 s per twin and is now StubWorldDamageTest: the property that
-        // actually mattered was "the stub world deals damage at all", and that
-        // is asserted in a second instead of a minute.
-        //
-        // Measured from a clean run (2026-10-03), same conditions as the 4pool
-        // twin. Eight attackers arriving later still beat the defence, and that is
-        // pinned on purpose: the point of this scenario is not that the base
-        // survives, it is that the defence engages at all. What the B-19 fix
-        // changed is the mechanism - the cannon now trades three lings instead of
-        // two before falling at frame 192 (was ~163), and the probes land six
-        // strikes between them (they used to land none: locked out for 300 frames
-        // after fleeing, then skipped by id % 5).
-        //
-        // What is deliberately *not* pinned: the probes all dying. They do
-        // (frames 120-841, the last two in the final stand on the ruins), and
-        // that is the honest end of this scenario rather than a target - a fix
-        // that saved them must not have to fight these assertions.
-        assertTrue(combat.diedAt(nexus) > 0 && combat.diedAt(nexus) <= 900,
-            "eight lings still grind the base down inside the horizon; it fell at frame "
-                + combat.diedAt(nexus) + " (0 means it was still standing when the horizon ran out)");
-        assertTrue(!cannon.isAlive() && combat.diedAt(cannon) > 0, "the cannon fought (and fell), frame: " + combat.diedAt(cannon));
-        assertTrue(aliveCount(lings) <= 5, "the defence trades at least three lings, was: " + aliveCount(lings));
+        // Mechanics check, not tuning: six probes engage (not zero as before
+        // B-19), trade four lings and mostly survive - but the base still falls
+        // at ~883, barely later than with four probes. The extra workers do not
+        // change the outcome because the race is decided at the cannon/zealot
+        // line; holding 8 lings would need more static defense or another
+        // combat unit, which is a scenario-forces decision, not a mechanics
+        // question. Threshold tuning stays in unit tests and game runs.
+        assertTrue(!nexus.isAlive() && combat.diedAt(nexus) > 800,
+            "eight lings still grind the base down; it fell at frame " + combat.diedAt(nexus));
+        assertTrue(!cannon.isAlive(), "the cannon fought (and fell)");
+        assertTrue(aliveCount(lings) <= 4, "the defence trades at least four lings, was: " + aliveCount(lings));
+        assertTrue(aliveCount(probes) >= 5, "most probes survive the defence they join, was: " + aliveCount(probes));
 
         int probeStrikes = 0;
         for (FakeUnit probe : probes) {
             probeStrikes += combat.strikesBy(probe);
         }
-        assertTrue(probeStrikes >= 6, "the probes must engage the rush (B-19: they never did), was: " + probeStrikes);
+        assertTrue(probeStrikes >= 10, "the probes must engage the rush (B-19: they never did), was: " + probeStrikes);
     }
 
     // =========================================================
