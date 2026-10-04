@@ -23,7 +23,7 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Test health
 
-The suite is green: 257 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
+The suite is green: 258 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
 a serialized fixture and a `--add-opens` flag). What is still open is *quality*
 of the data behind it, not a red test.
 
@@ -204,6 +204,11 @@ of the data behind it, not a red test.
   exceptions, replays kept) and the second baseline table
   `_AI/e2e/scbw-2026-10-04_154837.md` compares 6 games against the first.
   Real-opponent signal flows; scripted-rush pairs still need the runner.
+  Update 2026-10-04: four full games to a verdict, all losses
+  (`GAME_B978D4B7`, `GAME_2AD8C998`, `GAME_DD6EAB8E`, `GAME_366E9D6C` -
+  the last one kill_score 0 with 8 nexuses built), all `is_crashed: false`,
+  0 exceptions; third baseline table `_AI/e2e/scbw-2026-10-04_161236.md`
+  compares 8.
 
 ## Stage E — read model (remaining)
 
@@ -419,17 +424,25 @@ itself, #5, is design work and out of that order's scope).
   level 0.
 
   **What is left in this item** is the biggest remaining `Env` leak - the other
-  side of the same coin. Counting `src/atlantis`: **37 `Env.isTesting()` call sites
-  in 23 files** (down from 44/24 when this paragraph was written), one or two per
-  file, across `combat`, `units`, `map`, `production` and `information`. Three of
-  them are already answered by ports added since: `AUnit`'s three facing helpers
+  side of the same coin. Counting `src/atlantis` by grep, code lines only:
+  **34 `Env.isTesting()` call sites in 28 files** (41/29 before the
+  position-finder port below; 44/24 when this paragraph was first written),
+  one or two per file, across `combat`, `units`, `map`, `production` and
+  `information`. Three of them are already answered by ports added since: `AUnit`'s three facing helpers
   through `UnitOrigin` (as `weKnowNothingAboutIt()`), `AbstractFoggedUnit`'s last
   known position through `UnitOrigin`, and `DefineNaturalBase.isConnected()`
   through `MapTiles.hasPathBetween`. A port for the flag itself would be indirection, not
   inversion (`Env` is a static flag holder, so the port would be a static flag
   holder). What is worth doing is the ATech shape: find a subsystem that asks the
   game something real - "is this position walkable", "did we research this" - and
-  put the environment branch behind that question. Candidates already spotted, in
+  put the environment branch behind that question. The first one is done:
+  - ~~the seven `HasPosition.makeX()` methods~~ **done 2026-10-04.**
+    `atlantis.map.position.PositionFinder.Source` asks the seven questions,
+    the spiral searches moved verbatim into the engine default, and
+    `tests.fakes.FakePositionFinder` answers "this one will do" - the old
+    branch answers, byte for byte. Pinned by
+    `HasPositionTest.positionFinderReturnsOriginInTests`; suite 258/0/4,
+    ArchUnit 7/7, store unchanged. Candidates still open, in
   rough order of how real the question is:
   - the seven `HasPosition.makeX()` methods, which return the position unchanged in
     a test: a *position finder* port, where the harness would answer "this one will
@@ -500,6 +513,14 @@ itself, #5, is design work and out of that order's scope).
   behaviour watches, "the bot starts at all" is confirmed (four games, no
   nostart); duplicate buildings (B-9) and hedge caution/micro (B-18) are
   still game-run questions these capped games cannot answer.
+
+  Two more full losses 2026-10-04 (same jars): `GAME_DD6EAB8E` (vs
+  Steamhammer: 1 ling killed for 21 probes + 2 zealots + nexus, no Forge, no
+  cannons) and `GAME_366E9D6C` (vs Marine Hell: kill_score 0 for 14 probes
+  + 7 nexuses + gateway, 8 nexuses built while killing nothing). Both 0
+  exceptions, both clean production sequences (7 + 16 starts, no
+  duplicates). Third baseline table `_AI/e2e/scbw-2026-10-04_161236.md`
+  compares 8 games.
 
   Full games 2026-10-04 (same jars, no frame cap): `GAME_B978D4B7`
   (AtlantisP vs Marine Hell - loss, kill_score 500 vs 3000, 0 exceptions)

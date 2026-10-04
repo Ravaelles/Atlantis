@@ -250,6 +250,15 @@ documented in code with a comment. The closure goes into the commit message.
   to help. `GAME_B978D4B7` (vs Marine Hell, first marine 3504) never brought
   pressure either. Game-run confirmation still owed, and now it has a
   precondition: a game where static defense exists.
+- **Update (2026-10-04, four full games, pattern):** `GAME_DD6EAB8E` repeats
+  the Steamhammer shape (1 ling for 21 probes + 2 zealots, no Forge, no
+  cannons) and `GAME_366E9D6C` (Marine Hell, kill_score 0) never saw
+  pressure at all. Four real games, zero static defense built in any of
+  them - the help-path's precondition never occurs, so the question moves
+  one level up: it is no longer "do workers help the cannon" but "why does
+  no cannon ever exist to help". That is a strategy/production question,
+  not an arbitration one, and score lines cannot answer it - it needs a
+  replay read, which is the owner's half.
 
 ## How to add an entry
 
