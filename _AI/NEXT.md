@@ -23,7 +23,7 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Test health
 
-The suite is green: 237 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
+The suite is green: 257 passing, 0 failing, 4 skipped (`ObjectToFileTest` needs
 a serialized fixture and a `--add-opens` flag). What is still open is *quality*
 of the data behind it, not a red test.
 
@@ -189,6 +189,16 @@ of the data behind it, not a red test.
   from `_AI/IDEA-E2E-TESTS.md` can host Atlantis (its Stages 1-2). The scenarios
   keep their forces, timing and assertions across that move; only the
   driver and the physics get swapped for the engine.
+
+  Real games are playable now (2026-10-04): the two-day outage where no
+  match ever started was a map path without the `sscai/` prefix
+  (`/app/sc/maps/(3)TauCross.scx` does not exist in the container), fixed in
+  every `~/.scbw/bots/*.sh` shortcut. `scripts/run-e2e.sh --parse-only`
+  reads the real schema and the first baseline table is
+  `_AI/e2e/scbw-2026-10-04_154203.md` (control + three AtlantisP games, two
+  pre-B-20 with the NPE stacks honestly flagged, one post-fix clean).
+  Remaining: the fixed scenario pairs from `_AI/IDEA-E2E-TESTS.md` §4 (4pool,
+  9pool scripted) and the runner from Stages 1-2.
 
 ## Stage E — read model (remaining)
 
@@ -471,3 +481,17 @@ itself, #5, is design work and out of that order's scope).
   from HEAD, 6.1 MB / 3610 entries each, 0 `tests/**` classes (re-verified by
   hand on the artifact, not just by the build log). The table above is what
   those games are for.
+
+  Rebuilt twice more the same day, and the watch table got its games:
+  `GAME_9FC7B9A3` (AtlantisP vs Marine Hell) and `GAME_02EC7DF2` (AtlantisP
+  vs Steamhammer), both 5000 frames on `sscai/(3)TauCross.scx`, both
+  `is_crashed: false` - and both logging ~5000 `NullPointerException`s from
+  `DefineMainChoke` (fixed as B-20: a null region skipped the JBWEB
+  fallback, plus an unthrottled `printStackTrace` in the production catch).
+  `GAME_367376E7` re-ran the Marine Hell pairing with the fix: zero NPEs,
+  zero "Problem with", both replays present. `GAME_08C2DF7E` (Bereaver vs
+  Marine Hell, no Atlantis) is the control that proved the runner itself.
+  First baseline table: `_AI/e2e/scbw-2026-10-04_154203.md`. Of the three
+  behaviour watches, "the bot starts at all" is confirmed (four games, no
+  nostart); duplicate buildings (B-9) and hedge caution/micro (B-18) are
+  still game-run questions these capped games cannot answer.
