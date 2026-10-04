@@ -349,13 +349,10 @@ public class AbstractTestWithUnits extends UnitTest {
             aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
                 .thenAnswer(invocation -> framesNow % (Integer) invocation.getArgument(0) != 0);
         }
-        A.now = framesNow;
-        A.s = framesNow / 30;
-
-        // The same publish the game layer does, so kernel code that reads the clock
-        // through GameClock sees the frame the world is on (atlantis.util may not ask
-        // atlantis.game - that was seven frozen violations).
-        atlantis.util.GameClock.publish(framesNow, framesNow / 30);
+        // The one writer, so kernel code reading atlantis.util.GameClock sees the frame
+        // the world is on (atlantis.util may not ask atlantis.game - that was seven
+        // frozen violations).
+        A.setNow(framesNow, framesNow / 30);
     }
 
     public static FakeUnit fake(AUnitType type) {

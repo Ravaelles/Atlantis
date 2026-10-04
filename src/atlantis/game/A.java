@@ -15,6 +15,8 @@ import java.io.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.*;
+import atlantis.util.GameClock;
+
 import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
@@ -157,6 +159,35 @@ public class A {
 
     public static int now() {
         return AGame.now();
+    }
+
+    /**
+     * The only place the frame and second counters get written.
+     *
+     * <p>There are two views of them: these legacy public fields ({@code now} and
+     * {@code s}) and {@link atlantis.util.GameClock}, which the kernel reads because
+     * {@code atlantis.util} may not depend on {@code atlantis.game}. Both are written
+     * here, in one breath, so they cannot drift apart - which they did: the acceptance
+     * tier's {@code AbstractWorldCreatingTest.onFrameStart} wrote the fields without
+     * publishing, so kernel code reading the clock there saw the previous frame (found
+     * by the GLM review of 2026-10-04, F-1).</p>
+     *
+     * <p>Three writers, all here: the game layer once per frame
+     * ({@code AGame.calcSeconds}) and the two harnesses
+     * ({@code AbstractTestWithUnits.useFakeTime},
+     * {@code AbstractWorldCreatingTest.onFrameStart}).</p>
+     *
+     * <p>{@code now} itself has no production reader left - everything reads
+     * {@link #now()} - and {@code s} still has four
+     * ({@code NeedChokeBlockers}, {@code DontAttackOverlords},
+     * {@code ProtossForceFight}, {@code LeaderProgressFlagToNextFocusChoke}), so
+     * neither field is going away in this commit.</p>
+     */
+    public static void setNow(int framesNow, int secondsNow) {
+        now = framesNow;
+        s = secondsNow;
+
+        GameClock.publish(framesNow, secondsNow);
     }
 
 
