@@ -1,6 +1,5 @@
 package atlantis.production.constructions.position.conditions.can_build_here;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.MapTiles;
@@ -54,7 +53,12 @@ public class CanPhysicallyBuildHere {
                 return true;
             }
 
-            if (!Env.isTesting()) AbstractPositionFinder._STATUS = "Can't physically build here";
+            // The status is a diagnostic string, so it is written in tests too -
+            // it used to be guarded by Env.isTesting() on the grounds that tests
+            // do not look at it. They do (RequestBuildingNearTest asserts the
+            // status after each step), and a value that only exists in a game is a
+            // value nobody can pin.
+            AbstractPositionFinder._STATUS = "Can't physically build here";
             return false;
         }
 
