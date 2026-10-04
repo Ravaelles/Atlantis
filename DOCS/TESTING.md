@@ -26,11 +26,11 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-04) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **106 passing / 0 failing** of 106 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **127 passing / 0 failing** |
+| Unit (default) | `bash scripts/run-tests.sh` | **111 passing / 0 failing** of 111 (+4 skipped) |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **130 passing / 0 failing** |
 | Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **9 passing / 0 failing** (6 in `tests.e2e` + 3 in `tests.starengine`) |
 | StarEngine | `bash scripts/run-scenario-tests.sh` | included above |
-| Everything, one compile | `bash scripts/run-full-tests.sh` | **252 passing / 0 failing** of 252 (+4 skipped) |
+| Everything, one compile | `bash scripts/run-full-tests.sh` | **260 passing / 0 failing** of 260 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Two counts here are scope questions, not regressions. `--select-package
@@ -46,9 +46,9 @@ where the difference came from.
 | scope | test time | note |
 |---|---|---|
 | compile (1559 sources, every script) | **3.7 s** | unchanged; it was never the bottleneck |
-| `tests.unit` | **2.6 s** | what `run-tests.sh` runs by default |
-| `tests.architecture` | **2.0 s** | seven boundary rules |
-| `tests.acceptance` | **12.2 s** | world/squad/commander behaviour |
+| `tests.unit` | **3 s** | what `run-tests.sh` runs by default |
+| `tests.architecture` | **1-2 s** | ten boundary rules in the package, seven of them in `run-architecture-tests.sh` |
+| `tests.acceptance` | **7 s** (was 12.2 s) | world/squad/commander behaviour; the drop is the eval-hedge round, where the slower scenarios got faster |
 | `tests.starengine` | **8.2 s** | the stub-engine simulator |
 | `tests.e2e` | **39 s** (was 136 s) | four 900-frame stub games, two of which stop early |
 
