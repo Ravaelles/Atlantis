@@ -34,9 +34,18 @@ public class DefineMainChoke {
             return null;
         }
 
+        // Measured GAME_9FC7B9A3 / GAME_02EC7DF2 (TauCross): the main
+        // position can sit outside every BWEM area, so region() is null and
+        // the call below threw ~5000 NullPointerExceptions per game, one per
+        // frame, skipping the JBWEB/custom fallback this method's caller
+        // already handles. A missing region is "no answer", not an error.
         ARegion region = main.region();
+        if (region == null) {
+            return null;
+        }
+
         List<ARegion> reachableRegions = region.getReachableRegions();
-        if (reachableRegions.size() != 1) return null;
+        if (reachableRegions == null || reachableRegions.size() != 1) return null;
 
 //        List<AChoke> mainChokes = region.chokes();
 
