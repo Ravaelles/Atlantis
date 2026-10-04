@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -69,20 +70,28 @@ public class ProtossSmallRetreatTest extends WorldStubForTests {
 
     @Test
     public void doesNotRetreatWhenTheArmyIsWinningEvenAtTheFront() {
-        FakeUnit[] ours = fakeOurs(zealotsAt(7, 7.1, 8.1, 8.2, 9.9));
+        FakeUnit[] ours = fakeOurs(zealotsAt(7, 7.1, 8.1, 8.2, 9.9, 9.95));
         FakeUnit[] enemies = fakeEnemies(zealotsAt(9.95, 10.0, 10.05));
 
         world(1, ours, enemies, () -> {
         // The front zealot, nearly stacked with three enemy zealots, but full
-        // hp and in a 5v3 army: local eval clears the 2.5 gate below with
+        // hp and in a 6v3 army: local eval clears the 2.5 gate below with
         // margin, so no small-scale retreat.
         // Do NOT "fix" a red run here by moving the 2.5 gate in production:
         // that constant is B-1 territory (re-derive from a sweep, not one
         // scenario). The geometry pins the doctrine with margin instead.
-        ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[4]);
+        //
+        // The geometry was 5v3 until the our-side eval hedge landed
+        // (CombatEvalScale.OUR_SIDE_HEDGE = 0.3). There the raw ratio measures
+        // 2.6809, so the hedge put eval() at 2.3809 and the zealot retreated from a
+        // fight it was winning - a margin of 0.18 eaten by a doctrine, not a defect
+        // in either. 6v3 measures 3.6171 raw and 3.3171 hedged, which clears the
+        // gate the way this test means to.
+        ProtossMeleeSmallScaleRetreat retreat = new ProtossMeleeSmallScaleRetreat(ours[5]);
 
+        assertEquals(3.3171, ours[5].eval(), 0.01, "the hedge is part of the reading, so pin it here too");
         assertFalse(retreat.shouldSmallScaleRetreat(),
-            "5 against 3, full hp, high eval: no small-scale retreat. Reason: " + retreat.reason());
+            "6 against 3, full hp, high eval: no small-scale retreat. Reason: " + retreat.reason());
         assertTrue(retreat.reason().contains("evalHighHpHigh"),
             "was: " + retreat.reason());
         });

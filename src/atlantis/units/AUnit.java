@@ -2457,7 +2457,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             }
         }
 
-        return ownCombatEvalRelative();
+        // Hedged from here on: the leader's number above is already hedged, so this
+        // is the one place OUR_SIDE_HEDGE is subtracted. Every threshold in
+        // production compares against this reading, so "we are only as good as a 1.3
+        // fight" is a doctrine in one line.
+        return CombatEvalScale.hedgedForOurSide(ownCombatEvalRelative());
     }
 
     public double ownCombatEvalRelative() {

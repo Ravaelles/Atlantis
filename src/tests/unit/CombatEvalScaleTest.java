@@ -1,10 +1,12 @@
 package tests.unit;
 
-import atlantis.combat.eval.CombatEvalScale;
+import atlantis.units.CombatEvalScale;
 import org.junit.jupiter.api.Test;
 
-import static atlantis.combat.eval.CombatEvalScale.FLOOR;
-import static atlantis.combat.eval.CombatEvalScale.signSafe;
+import static atlantis.units.CombatEvalScale.FLOOR;
+import static atlantis.units.CombatEvalScale.OUR_SIDE_HEDGE;
+import static atlantis.units.CombatEvalScale.hedgedForOurSide;
+import static atlantis.units.CombatEvalScale.signSafe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,6 +35,25 @@ public class CombatEvalScaleTest {
         assertEquals(152.03, signSafe(152.03), 0.000001, "and the huge values");
         assertEquals(9874.0, signSafe(9874.0), 0.000001,
             "including the 'nothing to fight' shortcut, which must stay huge");
+    }
+
+    @Test
+    public void ourSideReadingPaysTheHedgeAndTheFloor() {
+        // The doctrine in one line: raw 1.0 reads 0.7, so only a raw 1.3 is "even".
+        assertEquals(0.3, OUR_SIDE_HEDGE, 0.000001, "the hedge the owner asked for");
+        assertEquals(0.7, hedgedForOurSide(1.0), 0.000001);
+        assertEquals(1.0, hedgedForOurSide(1.3), 0.000001, "only 1.3 gives 1.0");
+        assertEquals(0.6999, hedgedForOurSide(0.9999), 0.000001, "and the same just under");
+
+        // The hedge is subtractive, so it bites hardest around parity - which is
+        // where the decisions are - and least on the huge "no threat" reading.
+        assertEquals(5.0 - OUR_SIDE_HEDGE, hedgedForOurSide(5.0), 0.000001);
+        assertEquals(9874.0 - OUR_SIDE_HEDGE, hedgedForOurSide(9874.0), 0.000001,
+            "the no-threat shortcut still reads as nothing to fight here");
+
+        // And it never produces a number no threshold can read.
+        assertEquals(FLOOR, hedgedForOurSide(0.05), 0.000001, "a losing fight stays floored");
+        assertEquals(FLOOR, hedgedForOurSide(-0.3789), 0.000001);
     }
 
     @Test

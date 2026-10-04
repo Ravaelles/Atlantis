@@ -1,8 +1,15 @@
-package atlantis.combat.eval;
+package atlantis.units;
 
 /**
- * The scale of {@link atlantis.units.AUnit#eval()}, and the properties the number
- * must keep no matter which tweaks ran before it.
+ * The scale of {@link AUnit#eval()}, and the properties the number must keep no
+ * matter which tweaks ran before it and whatever doctrine reads it afterwards.
+ *
+ * <p>This lives in {@code atlantis.units} rather than next to the evaluator in
+ * {@code atlantis.combat.eval} for a boundary reason: {@code AUnit.eval()} has to
+ * apply the our-side hedge below, and {@code atlantis.units} may not depend on
+ * {@code atlantis.combat} (REVIEW §16 Stage E). The evaluator depends on units all
+ * day; the other way round is the frozen edge. A pure-arithmetic helper on both
+ * sides of that boundary belongs on the side that is allowed to be reached.</p>
  *
  * <h2>Which way is up</h2>
  * Higher is better, for both sides' own readings. eval() is
@@ -34,6 +41,33 @@ package atlantis.combat.eval;
  * for an unbounded ratio is B-1, and it stays open.
  */
 public class CombatEvalScale {
+
+    /**
+     * What we take off our own reading before anything compares it to a threshold.
+     *
+     * <p>The doctrine this encodes (the owner's, 2026-10-04): a fight that reads
+     * 1.01 is one we would probably win, which makes it exactly the fight we should
+     * not walk into. So "even" has to mean "we are clearly ahead" - the raw 1.0 reads
+     * 0.7, and only a raw 1.3 reads as 1.0.</p>
+     *
+     * <p>Subtracting (rather than scaling) is what makes the hedge bite hardest where
+     * the decisions are hard: at 1.0 it takes 30% off the margin, at 5.0 it takes 6%.
+     * Every one of the 236 call sites compares against an unchanged threshold, so
+     * every {@code eval >= x} guard fires later and every {@code eval <= x} guard
+     * stops firing later - all of them stricter, none of them relaxed.</p>
+     *
+     * <p>It applies to <b>our</b> readings only. An enemy unit's number already runs
+     * the other way, and the failure mode B-18's owner describes from the game is
+     * understating the enemy - so shifting that number down would make it worse.</p>
+     */
+    public static final double OUR_SIDE_HEDGE = 0.3;
+
+    /**
+     * The number production compares against thresholds: our own reading, hedged.
+     */
+    public static double hedgedForOurSide(double eval) {
+        return signSafe(eval - OUR_SIDE_HEDGE);
+    }
 
     /**
      * The lowest value eval() is allowed to take. Small, not zero: 0.0 is what a

@@ -81,16 +81,24 @@ public class AtlantisJfapTest extends WorldStubForTests {
             // against us. Measured: 4 marines against 5 hydras = -186.
             assertTrue(ourScore < 0, "the simulated fight goes against our marines");
 
-            // The relative form is the documented "them vs us" ratio, > 1
-            // meaning the enemy is stronger. Measured: 2.25 - four Marines
-            // (40 hit points each) against five Hydralisks (80 hit points, 10
-            // damage at 4 tiles base; Grooved Spines takes them to 5).
+            // The relative form is the enemy's loss over ours, so > 1 means the enemy
+            // lost more, i.e. we won (see CombatEvaluatorTest
+            // higherEvalMeansWeAreBetter). Measured raw: 2.25, and 1.95 through
+            // eval(), which takes the our-side hedge off.
             //
-            // The old assertion compared our score with the hydra's *own*
-            // score, which only meant something under the heuristic evaluator
-            // that combatEvalAbsolute() no longer calls: the two numbers come
-            // from opposite perspectives and are not on a common scale.
-            assertEquals(2.25, marine.eval(), 0.1, "hydras are about twice as strong");
+            // So the evaluator reads this fight as ours by more than two to one,
+            // while the damage arithmetic is not close - five Hydralisks (80 hit
+            // points, 10 damage a shot) against four Marines (40 hit points, 6) kill
+            // the marines in about four shots and need seventeen of their own. That
+            // gap is the shape of B-18; what this test pins is the number and the
+            // reciprocity, not the bot's chances.
+            //
+            // The old assertion compared our score with the hydra's *own* score,
+            // which only meant something under the heuristic evaluator that
+            // combatEvalAbsolute() no longer calls: the two numbers come from
+            // opposite perspectives and are not on a common scale.
+            assertEquals(2.25, marine.ownCombatEvalRelative(), 0.1, "the evaluator reads this as ours");
+            assertEquals(1.95, marine.eval(), 0.1, "hedged, for our own decisions");
 
             // Sanity check that both views agree (measured 0.44, the
             // reciprocal): asking the hydra tells the same story.

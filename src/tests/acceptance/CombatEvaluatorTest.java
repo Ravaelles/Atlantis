@@ -74,20 +74,20 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(winningMarine, winningMarine2, winningMarine3, losingMarine),
             fakeEnemies(zergling, zealot), () -> {
-                // Measured: 1.6667 with an absolute of -30 for three Marines against
-                // one Zergling, and 0.1300 with an absolute of -100 for one Marine
-                // against one Zealot. The abs side scores say the same thing the
-                // ratios do: the side that lost badly is the one with the big
+                // Measured raw: 1.6667 (absolute -30) for three Marines against one
+                // Zergling - a fight we win - and 0.1300 (absolute -100) for one
+                // Marine against one Zealot, a fight we lose. The abs side scores say
+                // the same thing the ratios do: the side that lost badly has the big
                 // magnitude, so a big number means "the enemy lost more than we did".
-                assertEquals(1.6667, winningMarine.eval(), 0.01,
-                    "three Marines next to one Zergling is a fight we win, and it reads above 1");
-                assertEquals(0.1300, losingMarine.eval(), 0.01,
-                    "one Marine next to one Zealot is a fight we lose, and it reads below 1");
+                assertEquals(1.6667, winningMarine.ownCombatEvalRelative(), 0.01,
+                    "three Marines next to one Zergling: raw above 1");
+                assertEquals(0.1300, losingMarine.ownCombatEvalRelative(), 0.01,
+                    "one Marine next to one Zealot: raw below 1");
                 assertTrue(winningMarine.eval() > losingMarine.eval(),
                     "which is the only ordering all 236 production call sites rely on");
 
                 // The other side of the same formula: an enemy unit's number runs the
-                // other way, so the same two fights invert.
+                // other way, and the our-side hedge does not touch it.
                 assertEquals(0.6000, zergling.eval(), 0.01, "from the Zergling's side it is 0.60");
                 assertEquals(7.6929, zealot.eval(), 0.01, "and from the Zealot's side it is 7.69");
             });
@@ -122,7 +122,8 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Terran_Marine, 10), fake(AUnitType.Terran_Marine, 11),
                 marine, fake(AUnitType.Terran_Marine, 12)), fakeEnemies(sunken), () -> {
-            // Measured: ourEval = 0.9796 - about even, a hair our way. The
+            // Measured: the raw ratio is 0.9796 - about even, a hair our way -
+            // and eval() reads 0.6796 after the our-side hedge. The
             // marines start inside their own 4-tile reach, so the 60-frame
             // window the simulation scores only sees the opening exchange.
             // Over a full fight the colony wins that damage race (300 hit
@@ -131,7 +132,8 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             // B-18. The 2.17 this test used to pin came from a table that had
             // the colony at 150 hit points with a 6-damage, 2.5-tile tentacle;
             // a weaker colony scoring *worse* for us should have smelled.
-            assertEquals(0.98, marine.eval(), 0.01, "about even inside marine range");
+            assertEquals(0.98, marine.ownCombatEvalRelative(), 0.01, "about even inside marine range");
+            assertEquals(0.68, marine.eval(), 0.01, "and our own reading is hedged by 0.3");
         });
     }
 
@@ -148,10 +150,11 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             // in its comment - ourEval = 0.7210 - came from a run in which the
             // whole suite pretended to be Protoss and used the Protoss
             // defensive-building config.
-            assertEquals(1.001, marine.eval(), 0.01,
+            assertEquals(1.001, marine.ownCombatEvalRelative(), 0.01,
                 "13.5 tiles is well outside a sunken colony's 7 tile range");
+            assertEquals(0.701, marine.eval(), 0.01, "and our own reading is hedged");
             assertEquals(1.001, sunken.eval(), 0.01,
-                "and from the colony's side we are no threat either");
+                "an enemy's reading is not hedged - that would understate the enemy");
         });
     }
 
@@ -214,10 +217,14 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
         FakeUnit enemyMarine = fakeEnemy(AUnitType.Terran_Marine, 11);
 
         world(1, fakeOurs(ourMarine), fakeEnemies(enemyMarine), () -> {
-            // Measured: eval = 1.00001 for both, absolute = -88.0 for both.
+            // Measured: raw eval = 1.00001 for both, absolute = -88.0 for both, and
+            // our own reading 0.7000 after the hedge - which is the whole doctrine in
+            // one number: a mirror fight is not "even enough", it reads 0.7, so the
+            // guards that want 1.0 or more do not treat it as safe.
             assertEquals(ourMarine.combatEvalAbsolute(), enemyMarine.combatEvalAbsolute(),
                 "mirror units have the same absolute score");
-            assertEquals(1.0, ourMarine.eval(), 0.01, "a mirror fight is exactly even");
+            assertEquals(1.0, ourMarine.ownCombatEvalRelative(), 0.01, "a mirror fight is exactly even");
+            assertEquals(0.7, ourMarine.eval(), 0.01, "but our own reading is hedged");
 
             // The assertion above cannot see a side asymmetry: combatEvalAbsolute()
             // returns one side's score, and both units' evaluations return the same
@@ -227,7 +234,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             // [-88, -88] and this passes, while a 120-frame horizon produces
             // [-100, -88] and it fails. See NEXT.md #35.
             assertReciprocal(ourMarine, enemyMarine);
-            assertEquals(1.0, enemyMarine.eval(), 0.01);
+            assertEquals(1.0, enemyMarine.eval(), 0.01, "the enemy's own reading is untouched");
             assertReciprocal(ourMarine, enemyMarine);
         });
     }
@@ -304,10 +311,17 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
      * both compute enemyScore/ourScore from opposite sides. This is the
      * invariant that survives a retune of the evaluator; absolute numbers do
      * not.
+     *
+     * <p>Asserted on the raw reading ({@code ownCombatEvalRelative}) rather than on
+     * {@code eval()}, and that is the point: {@code eval()} takes 0.3 off our own
+     * number ({@code CombatEvalScale.OUR_SIDE_HEDGE}) and leaves the enemy's alone,
+     * so the hedge makes the two readings deliberately non-reciprocal. Reciprocity is
+     * a property of the evaluator; the hedge is our doctrine about what to do with
+     * the answer it gives.</p>
      */
     private void assertReciprocal(FakeUnit ours, FakeUnit theirs) {
-        double ourEval = ours.eval();
-        double theirEval = theirs.eval();
+        double ourEval = ours.ownCombatEvalRelative();
+        double theirEval = theirs.ownCombatEvalRelative();
 
         assertEquals(1.0, ourEval * theirEval, 0.1,
             "our eval (" + ourEval + ") and their eval (" + theirEval + ") must be reciprocal");

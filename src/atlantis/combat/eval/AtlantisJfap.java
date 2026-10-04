@@ -2,6 +2,7 @@ package atlantis.combat.eval;
 
 import atlantis.combat.eval.tweaks.AtlantisJfapModifier;
 import atlantis.units.AUnit;
+import atlantis.units.CombatEvalScale;
 import atlantis.units.UnitOrigin;
 import atlantis.units.fogged.AbstractFoggedUnit;
 import jfap.JfapCombatEvaluator;

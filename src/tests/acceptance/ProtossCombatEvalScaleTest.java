@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.eval.CombatEvalScale;
+import atlantis.units.CombatEvalScale;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.select.Count;
 import bwapi.Race;

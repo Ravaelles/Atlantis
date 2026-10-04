@@ -1,9 +1,9 @@
 package atlantis.combat.eval.tweaks;
 
-import atlantis.combat.eval.CombatEvalScale;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.CombatEvalScale;
 
 public class ProtossJfapTweaksConsiderChokesEtc {
     private static double rawEval;
