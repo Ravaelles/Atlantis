@@ -142,7 +142,11 @@ public class OnGameStarted {
 
 //            AConsole.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {
-                if (Env.isLocal() && !Env.isTesting()) AConsole.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+                // Not un-gated with the rest: this is a banner per game start, not a
+        // diagnostic of a problem, and the stub world starts a game in every test -
+        // 99 lines in the acceptance tier (measured), against 1 for the three real
+        // diagnostics this round opened up.
+        if (Env.isLocal() && !Env.isTesting()) AConsole.println("Use build order: `" + CurrentBuildOrder.get() + "`");
             }
             else {
                 ErrorLog.printErrorOnce("Invalid (empty) build order in AtlantisRaceConfig!");

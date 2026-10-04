@@ -60,7 +60,7 @@ public class RebaseToNewMineralPatches extends Manager {
 
         ABaseLocation baseLocation = BaseLocations.expansionFreeBaseLocationNearestTo(oldestUnit);
 
-        if (baseLocation == null && !Env.isTesting()) {
+        if (baseLocation == null) {
             ErrorLog.printErrorOnce("No expansionFreeBaseLocationNearestTo for rebasing");
             return null;
         }

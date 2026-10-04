@@ -1,6 +1,5 @@
 package atlantis.map.base.define;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.MapTiles;
 import atlantis.map.base.ABaseLocation;
@@ -25,7 +24,7 @@ public class DefineNaturalBase {
             () -> {
                 ABaseLocation naturalLocation = naturalIfMainIsAt(Select.mainOrAnyBuildingPosition());
 
-                if (naturalLocation == null && !A.isUms() && !Env.isTesting()) {
+                if (naturalLocation == null && !A.isUms()) {
                     ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Natural base can not be determined");
                 }
 

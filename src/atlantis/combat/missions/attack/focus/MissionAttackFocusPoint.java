@@ -5,7 +5,6 @@ import atlantis.combat.advance.focus.MissionFocusPoint;
 import atlantis.combat.advance.focus_choke.MiddleFocusChoke;
 import atlantis.combat.micro.attack.DontAttackUnitScatteredOnMap;
 import atlantis.combat.squad.squads.alpha.Alpha;
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyNearBases;
@@ -388,7 +387,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
 //            }
 //        }
 
-        if (!A.isUms() && EnemyUnits.discovered().count() >= 1 && !Env.isTesting()) {
+        if (!A.isUms() && EnemyUnits.discovered().count() >= 1) {
             ErrorLog.printMaxOncePerMinute("No MissionAttack FocusPoint :-|");
         }
         return null;

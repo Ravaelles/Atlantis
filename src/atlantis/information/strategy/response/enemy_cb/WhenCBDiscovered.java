@@ -1,7 +1,6 @@
 package atlantis.information.strategy.response.enemy_cb;
 
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
@@ -21,7 +20,7 @@ public class WhenCBDiscovered {
                 && EnemyInfo.combatBuildingsAntiLand() >= 2
                 && Count.basesWithPlanned() <= 1
         ) {
-            if (!Env.isTesting()) AConsole.println(A.s + "s ----------- Enemy goes combat buildings, expand");
+            AConsole.println(A.s + "s ----------- Enemy goes combat buildings, expand");
 
             ShouldExpand.reason = "Enemy goes combat buildings, expand";
             AddToQueue.withTopPriority(AtlantisRaceConfig.BASE);
