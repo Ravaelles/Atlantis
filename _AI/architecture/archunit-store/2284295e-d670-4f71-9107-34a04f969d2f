@@ -1,5 +1,3 @@
 Method <atlantis.util.We.haveBase()> calls method <atlantis.units.select.Count.bases()> in (We.java:61)
 Method <atlantis.util.cache.Cache.get(java.lang.String, int, atlantis.util.Callback)> calls method <atlantis.units.select.Selection.clone()> in (Cache.java:66)
 Method <atlantis.util.cache.Cache.get(java.lang.String, int, atlantis.util.Callback)> checks instanceof <atlantis.units.select.Selection> in (Cache.java:65)
-Method <atlantis.util.log.Log.addMessage(java.lang.String, atlantis.units.AUnit, int)> has parameter of type <atlantis.units.AUnit> in (Log.java:0)
-Method <atlantis.util.log.Log.replaceLastWith(java.lang.String, atlantis.units.AUnit, int)> has parameter of type <atlantis.units.AUnit> in (Log.java:0)

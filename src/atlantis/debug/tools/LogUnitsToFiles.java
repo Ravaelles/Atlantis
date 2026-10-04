@@ -9,10 +9,10 @@ public class LogUnitsToFiles {
 
     public static void saveUnitLogToFile(String message, AUnit unit) {
         if (
-                Log.SAVE_UNIT_LOGS_TO_FILES == 0
+                AUnit.SAVE_UNIT_LOGS_TO_FILES == 0
                 || unit == null
 //                || Atlantis.KILLED <= 2
-                || ((!unit.isOur() || !unit.isCombatUnit()) && Log.SAVE_UNIT_LOGS_TO_FILES < 1)
+                || ((!unit.isOur() || !unit.isCombatUnit()) && AUnit.SAVE_UNIT_LOGS_TO_FILES < 1)
         ) {
             return;
         }

@@ -34,7 +34,7 @@ public class LogTest extends WorldStubForTests {
         assertTrue(log.toString().contains("0: A1"));
         assertTrue(log.toString().contains("0: A2"));
 
-        log.replaceLastWith("B2", unit, A.now());
+        log.replaceLastWith("B2", A.now());
 
         assertEquals(2, messages(log).size());
         assertTrue(log.lastMessageWas("B2"));

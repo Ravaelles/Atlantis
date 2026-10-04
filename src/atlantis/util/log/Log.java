@@ -1,18 +1,22 @@
 package atlantis.util.log;
 
-import atlantis.units.AUnit;
 import atlantis.util.GameClock;
 
 import java.util.ArrayList;
-import atlantis.debug.tools.LogUnitsToFiles;
 
 public class Log {
     /**
-     * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug things.
+     * Write every tooltip to logs/units/unit_file.txt, so it's possible to debug
+     * things.
+     *
+     * <p>The flag moved to the callers ({@code AUnit.addLogMessage} and
+     * {@code AUnit.replaceLastManagerMessage}), which is where the unit is: this
+     * class stores strings and frames, and {@code LogUnitsToFiles.saveUnitLogToFile}
+     * needs an {@code AUnit}, so it used to take one as a parameter it could not use
+     * while the flag was off - which is how the logging kernel ended up naming a unit
+     * type at all. Read the flag before calling it; it lives in
+     * {@code atlantis.units.AUnit} now.</p>
      */
-    public static final int SAVE_UNIT_LOGS_TO_FILES = 0; // 0 - Off
-//    public static final int SAVE_UNIT_LOGS_TO_FILES = 1; // 1 - Log our combat units
-
     /**
      * Helpful for logging of <b>unitAction</b> changes. Very helpful to get human-readable unit reasoning.
      */
@@ -41,16 +45,10 @@ public class Log {
      * at {@code atlantis.debug} and {@code atlantis.game}. Callers are unit and
      * construction code, which already know the frame.
      */
-    public void addMessage(String message, AUnit unit, int createdAtFrames) {
+    public void addMessage(String message, int createdAtFrames) {
         messages.add(new LogMessage(message, expireAfterFrames, createdAtFrames));
 
-        if (SAVE_UNIT_LOGS_TO_FILES > 0 && unit != null) LogUnitsToFiles.saveUnitLogToFile(message, unit);
-
         if (messages.size() > limit) messages.remove(0);
-
-//        if (ACherryVis.isEnabled() && unit != null) {
-//            ACherryVisLogUnit.logUnitData(unit, message);
-//        }
     }
 
     public ArrayList<LogMessage> messages(int nowFrames, long nowRealSeconds) {
@@ -76,14 +74,14 @@ public class Log {
         return messages.get(messages.size() - 1);
     }
 
-    public void replaceLastWith(String replaceWith, AUnit unit, int createdAtFrames) {
+    public void replaceLastWith(String replaceWith, int createdAtFrames) {
         if (messages.isEmpty()) {
-            addMessage(replaceWith, unit, createdAtFrames);
+            addMessage(replaceWith, createdAtFrames);
             return;
         }
 
         messages.remove(messages.size() - 1);
-        addMessage(replaceWith, unit, createdAtFrames);
+        addMessage(replaceWith, createdAtFrames);
     }
 
     public boolean isEmpty() {

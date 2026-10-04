@@ -39,7 +39,7 @@ public class CancelConstruction {
 
         ConstructionRequests.removeOrder(construction);
 
-        cancelLog.addMessage(type.name(), null, A.now());
+        cancelLog.addMessage(type.name(), A.now());
     }
 
     public static int countRecentCancellationsOf(AUnitType type) {

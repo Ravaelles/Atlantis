@@ -121,6 +121,19 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * Last type that this unit was seen with. It changes e.g. for Zerg Eggs.
      */
     protected AUnitType _lastType = null;
+    /**
+     * Write every manager log line to logs/units/unit_file.txt, so it is possible to
+     * debug what a unit was doing. 0 = off.
+     *
+     * <p>This used to live in {@code Log}, which is where the check ran - and it took
+     * an {@code AUnit} parameter it could not use while the flag was off, which is how
+     * the logging kernel ended up naming a unit type. The flag is here because this is
+     * the side that has the unit: {@code Log.addMessage(String, int)} stores strings
+     * and frames, and {@code LogUnitsToFiles.saveUnitLogToFile} is called from
+     * {@link #addLogMessage} / {@link #replaceLastManagerMessage}.</p>
+     */
+    public static final int SAVE_UNIT_LOGS_TO_FILES = 0;
+
     private Log log = new Log(Log.UNIT_LOG_EXPIRE_AFTER_FRAMES, Log.UNIT_LOG_SIZE);
     private Log managerLogs = new Log(30 * 30, 14);
     private Log commandHistory = new Log(-1, 10);
@@ -2988,7 +3001,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (Env.isTournament()) return true;
 
         if (!log.lastMessageWas(message)) {
-            log.addMessage(message, this, A.now());
+            log.addMessage(message, A.now());
         }
 
         return true;
@@ -3373,14 +3386,18 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             addLog(managerUsed.toString());
         }
         else {
-            managerLogs.replaceLastWith(managerUsed.toString(), this, A.now());
+            managerLogs.replaceLastWith(managerUsed.toString(), A.now());
         }
 
         this.tooltipForManager = message;
     }
 
     private void addManagerLogMessage(String message) {
-        managerLogs.addMessage(message, this, A.now());
+        managerLogs.addMessage(message, A.now());
+
+        // The unit-file debug dump lives here, not in Log: it needs the unit, and Log
+        // is a kernel class that stores strings and frames.
+        if (SAVE_UNIT_LOGS_TO_FILES > 0) LogUnitsToFiles.saveUnitLogToFile(message, this);
 
         if (ACherryVis.isEnabled()) {
             ACherryVis.logger().unitManager(message, this);
@@ -3985,7 +4002,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(
-            command.name() + "/a:" + action().name() + "/" + tooltip, this, A.now()
+            command.name() + "/a:" + action().name() + "/" + tooltip, A.now()
         );
     }
 
