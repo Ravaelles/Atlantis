@@ -460,6 +460,32 @@ documented in code with a comment. The closure goes into the commit message.
   no cannon ever exist to help". That is a strategy/production question,
   not an arbitration one, and score lines cannot answer it - it needs a
   replay read, which is the owner's half.
+- **Update (2026-10-05, the replay read, and the precondition chain):** the five games
+  in `~/.scbw/games` were read from `logs_*/unit_events.csv`, which records every
+  finished unit with its frame. The chain is now named, in code, from the army outwards -
+  and it starts at **B-22**, which stopped the bot's unit production in every one of
+  these games (two combat units all game, against every race):
+  1. `ProduceForge.produce()` needs `predictEnemyDT()` (the enemy went hidden units), or
+     `A.supplyUsed() <= 60 && (ourCombatUnits <= 11 || army <= 180)` to be false, and then
+     a supply threshold: **46-56 vs Zerg, 93 vs Terran, 73 vs Protoss**. With two combat
+     units the Zerg branch never opened - `GAME_631F4FE6` peaked at supply 48, ten short -
+     and the Terran branch should have opened at supply 100, which is the one link the
+     data does *not* explain and the reason this entry stays open rather than closed.
+  2. `ProtossSecureBasesCommander.applies()` then requires `Have.forge()` **and**
+     `Count.basesWithUnfinished() >= 2`. No Forge and no second base in any of the five:
+     `GAME_631F4FE6` never finished a Nexus at all.
+  3. So `ShouldSecureProtossBase.needsSecuring()` - the cannon requester - was never
+     asked, and the workers this entry is about had no static defense to help.
+  The missing natural is itself downstream: `ProtossShouldExpandToNaturalBase
+  .delayNaturalVsZerg()` holds the natural until `Count.ourCombatUnits() > 11`, which a
+  bot that built two combat units and stopped could never reach. So the precondition this
+  entry has been blocked on for four games is B-22's symptom three links up, and it
+  should be gone now - which only a game run can show.
+- **What is left here:** a game run against a rush with the rebuilt jar, and one
+  unexplained link (Terran games reaching supply 100 without a Forge). The
+  `ProtossProductionDiagnostics` line added by B-22 names the producer reasons in
+  `bot.log`, and `ProduceForge` already logs "Make FORGE: <reason>" through `ErrorLog`,
+  so the next game answers the Forge question without a replay read.
 
 ## How to add an entry
 
