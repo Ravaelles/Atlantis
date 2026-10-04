@@ -22,7 +22,7 @@ public class ProtossJfapTweaksConsiderChokesEtc {
             + (unit.lastRetreatedAgo() <= 150 ? -0.4 : 0)
 //            + (unit.lastStartedRunningLessThanAgo(30 * 4) ? 0.1 : 0)
             + (unit.distToMain() <= 8 ? +0.15 : 0)
-            + (unit.lastUnderAttackLessThanAgo(30 * 4) ? -0.05 : 0)
+//            + (unit.lastUnderAttackLessThanAgo(30 * 4) ? -0.05 : 0)
             + cohesionPenalty(unit)
             + enemyZerglingBonus(unit)
             + combatBuildingPenalty(unit);

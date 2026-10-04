@@ -33,7 +33,7 @@ public class AddToQueueTest extends WorldStubForTests {
             assertNotEquals(Terran_Marine, queue.nextOrders(1).list().get(0).unitType());
 
             added = AddToQueue.maxAtATime(Terran_Marine, 2);
-            AConsole.println("added = " + added);
+//            AConsole.println("added = " + added);
 
             queue.clearCache();
             assertEquals(1, queue.nextOrders(15).ofType(Terran_Marine).size());

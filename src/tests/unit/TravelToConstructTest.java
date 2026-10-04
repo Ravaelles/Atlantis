@@ -47,7 +47,7 @@ public class TravelToConstructTest extends WorldStubForTests {
                 currentSupplyUsed = 10;
             }
 
-            AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
+//            AConsole.println("=========== SUPPLY USED: " + currentSupplyUsed + " ===========");
 
             ProductionOrder pylonOrder = CurrentBuildOrder.get().productionOrders().get(0);
             assert pylonOrder.unitType().isPylon();
@@ -61,11 +61,11 @@ public class TravelToConstructTest extends WorldStubForTests {
             buildings.add(Protoss_Gateway);
 
             for (AUnitType building : buildings) {
-                AConsole.println("===== For " + building);
+//                AConsole.println("===== For " + building);
                 int mineralsNeeded = service.needThisMineralsForLongDistanceConstructionTravel(
                     20, Protoss_Pylon, pylonOrder
                 );
-                AConsole.println("Minerals needed: " + mineralsNeeded);
+//                AConsole.println("Minerals needed: " + mineralsNeeded);
 //                    for (int minerals = 0; minerals <= 90; minerals += 10) {
 //                    }
             }

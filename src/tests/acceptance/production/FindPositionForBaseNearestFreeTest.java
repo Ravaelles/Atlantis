@@ -23,7 +23,7 @@ public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Zergling, 20, 10));
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Hatchery, 90, 10));
 
-                EnemyUnits.discovered().print("Discovered enemies");
+//                EnemyUnits.discovered().print("Discovered enemies");
 
                 APosition location = FindPositionForBaseNearestFree.find(
                     AUnitType.Protoss_Nexus,
@@ -52,7 +52,7 @@ public class FindPositionForBaseNearestFreeTest extends WorldStubForTests {
                 EnemyUnitsUpdater.weDiscoveredEnemyUnit(fake(AUnitType.Zerg_Hatchery, 90, 10));
 
 //                Select.enemy().print("Visible enemies");
-                EnemyUnits.discovered().print("Discovered enemies");
+//                EnemyUnits.discovered().print("Discovered enemies");
 
 //                assertEquals(3, EnemyUnits.discovered().size());
 

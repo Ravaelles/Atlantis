@@ -23,7 +23,7 @@ public class CodeProfiler {
     private static long currentFrameLength = 0;
 
     // =========================================================
-    
+
     public static void startMeasuring(Commander commander) {
         if (!commander.shouldProfile()) return;
         if (!AtlantisConfig.USE_CODE_PROFILER) return;
@@ -66,7 +66,7 @@ public class CodeProfiler {
 
     public static void printSummary() {
         if (!AtlantisConfig.USE_CODE_PROFILER) {
-            System.err.println("### Code profiler is disabled in AtlantisConfig ###");
+//            System.err.println("### Code profiler is disabled in AtlantisConfig ###");
             return;
         }
 
