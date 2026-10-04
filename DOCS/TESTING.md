@@ -24,14 +24,22 @@ broken harness and were never executed, so nobody saw 44 failures sitting in
 the tree. There is now `scripts/run-acceptance-tests.sh` for that scope, so it
 is one command rather than a flag somebody has to remember.
 
-| Scope | Command | Result (2026-10-03) |
+| Scope | Command | Result (2026-10-04) |
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **106 passing / 0 failing** of 106 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **126 passing / 0 failing** |
-| Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **10 passing / 0 failing** |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **127 passing / 0 failing** |
+| Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **9 passing / 0 failing** (6 in `tests.e2e` + 3 in `tests.starengine`) |
 | StarEngine | `bash scripts/run-scenario-tests.sh` | included above |
-| Everything, one compile | `bash scripts/run-full-tests.sh` | **251 passing / 0 failing** of 251 (+4 skipped) |
+| Everything, one compile | `bash scripts/run-full-tests.sh` | **252 passing / 0 failing** of 252 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
+
+Two counts here are scope questions, not regressions. `--select-package
+tests.architecture` finds 10 tests while `run-architecture-tests.sh` runs 7 - the
+script names the rule classes it wants, the package selector takes everything
+under `tests.architecture`. And the scenario scope is `tests.e2e` (6) plus
+`tests.starengine` (3); the "10" this table used to quote predates the two
+`loneNexusFallsFast` controls being replaced by `StubWorldDamageTest`, which is
+where the difference came from.
 
 ### Where the time goes (measured 2026-10-04)
 
