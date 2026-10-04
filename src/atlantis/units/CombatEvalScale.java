@@ -17,7 +17,9 @@ package atlantis.units;
  * a side's score is what it <b>lost</b> in the simulated window - so the ratio reads
  * "how much did the enemy lose, divided by how much did we lose". Measured on the
  * stub world: three Marines next to one Zergling, a fight we win comfortably,
- * score 1.667; one Marine next to one Zealot, a fight we lose, score 0.130. For an
+ * score 1.667; one Marine next to one Zealot, a fight we lose, score 0.130. As a
+ * rule of thumb: 0.5 means about half as strong as the enemy, 2.0 about twice as
+ * strong. For an
  * <b>enemy</b> unit the same formula runs from that unit's side, so its number runs
  * the other way - high means the enemy is doing well, which is bad for us. When
  * nothing is in reach the pair is {@code {9874, -9874}} and eval() returns 9874.0:

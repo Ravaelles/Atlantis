@@ -460,3 +460,9 @@ itself, #5, is design work and out of that order's scope).
   The jar assertions that used to *require* the harness are inverted, so this
   round also removes a class of deploy mistakes: a jar that shipped without them
   used to be a build failure, and now it is the correct thing to build.
+
+  Rebuilt 2026-10-04 for the Zerg-rush verification games (owner's call: rush
+  first): `bots/AtlantisP/AI/Atlantis.jar` + `bots/AtlantisT/AI/Atlantis.jar`
+  from HEAD, 6.1 MB / 3610 entries each, 0 `tests/**` classes (re-verified by
+  hand on the artifact, not just by the build log). The table above is what
+  those games are for.
