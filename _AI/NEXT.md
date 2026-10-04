@@ -198,7 +198,12 @@ of the data behind it, not a red test.
   `_AI/e2e/scbw-2026-10-04_154203.md` (control + three AtlantisP games, two
   pre-B-20 with the NPE stacks honestly flagged, one post-fix clean).
   Remaining: the fixed scenario pairs from `_AI/IDEA-E2E-TESTS.md` §4 (4pool,
-  9pool scripted) and the runner from Stages 1-2.
+  9pool scripted) and the runner from Stages 1-2. Update 2026-10-04: two
+  full games to a verdict are in (`GAME_B978D4B7` lost to Marine Hell,
+  `GAME_2AD8C998` lost to Steamhammer, both `is_crashed: false`, 0
+  exceptions, replays kept) and the second baseline table
+  `_AI/e2e/scbw-2026-10-04_154837.md` compares 6 games against the first.
+  Real-opponent signal flows; scripted-rush pairs still need the runner.
 
 ## Stage E — read model (remaining)
 
@@ -495,3 +500,14 @@ itself, #5, is design work and out of that order's scope).
   behaviour watches, "the bot starts at all" is confirmed (four games, no
   nostart); duplicate buildings (B-9) and hedge caution/micro (B-18) are
   still game-run questions these capped games cannot answer.
+
+  Full games 2026-10-04 (same jars, no frame cap): `GAME_B978D4B7`
+  (AtlantisP vs Marine Hell - loss, kill_score 500 vs 3000, 0 exceptions)
+  and `GAME_2AD8C998` (AtlantisP vs Steamhammer - loss, 150 vs 2400, 0
+  exceptions). Second baseline table `_AI/e2e/scbw-2026-10-04_154837.md`
+  records all six games. Watch outcomes: B-9 closed (28 building starts
+  over three games, zero duplicates), B-8 closed (five games, no exit path,
+  no `IllegalStateException`; the three remaining exits stay in #17), B-18
+  still open (losses consistent with caution and with being out-macroed -
+  unscorable from ladder lines), B-19 still open (no static defense existed
+  in either game, so the repaired help-path was never engaged).

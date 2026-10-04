@@ -103,75 +103,6 @@ documented in code with a comment. The closure goes into the commit message.
   available and would change the *magnitude* of the tweaks rather than only
   their sign, but they are not needed for the defect this entry names.
 
-## B-8 — `APositionFinder` can still terminate the JVM
-
-- **Where:** `atlantis/production/constructions/position/APositionFinder.java:113`
-  (`System.exit(-1)` on an "Invalid race"), next to similar exits in
-  `AtlantisRaceConfig`, `Atlantis` and `AKeyboard` (swept in NEXT.md #17).
-- **Why it matters:** a leaf position finder deciding to kill the process is the
-  same violation already fixed in `AFile.loadFile`.
-- **Update:** the leaf now throws `IllegalStateException` instead of exiting.
-  The branch is unreachable in any working game (the race is always one of the
-  three above it), so no reachable behaviour changes; callers already handle
-  the race finders' nulls. Keep this entry until a game run confirms no exit
-  path regressed. The remaining three exits are triaged in #17: `Atlantis`
-  is the shutdown path (exiting is its job), the other two are fail-fast at
-  startup and need a game run to touch safely.
-
-## B-9 — the queue never detects unit/building progress on its own (fixed 2026-10-04, needs a game run)
-
-- **Where:** `IsOrderInProgress.isInProgress` and `IsOrderCompleted.isCompleted`
-  (both have their **unit branch commented out**, with the notes "this will
-  happen in OnOurUnitCreated / OnOurNewUnitCompleted").
-- **Measured:** after firing `OnOurNewUnitCompleted` for a completed depot the
-  order does become FINISHED (and `IsReadyToProduceOrder` refuses to move a
-  FINISHED order back), but for an **unfinished** building the order flips from
-  IN_PROGRESS back to READY_TO_PRODUCE on the next `Queue.refresh()` - the only
-  thing that keeps it IN_PROGRESS in a real game is the linked `Construction`
-  with `buildingUnit().hp() > 0`.
-- **Consequences:**
-  1. Correctness of the queue silently depends on the invariant "every
-     in-progress building has a construction with hp > 0". Nothing checks it,
-     and a missed construction silently turns into duplicate production
-     (order goes back to ready while the building is still rising).
-  2. `Queue2Test`, `CountInQueueTest`, `Queue3Test` could not observe queue
-     states by adding units to the mocked list; they now fire the engine
-     listeners, which is the faithful simulation.
-- **How to settle it:** decide whether the queue should verify unit progress
-  itself (re-enable the commented branch) or whether the construction invariant
-  should be asserted somewhere. The first is safer; the second documents the
-  coupling. Either way the invariant deserves a name and a test.
-- **Fixed 2026-10-04, needs a game run to confirm** (the owner's ruling: this is
-  testable, so pin it with a test rather than deferring it). `forUnit` is back in
-  `IsOrderInProgress`, so progress is derived from the units - N units of this
-  type against M other orders of the same type that are finished or in progress -
-  and the invariant above is gone: an unfinished building keeps its order whether
-  or not a `Construction` object exists. Completion still arrives as an engine
-  event (`OnOurNewUnitCompleted`); only the *start* of progress stopped depending
-  on it. Three expectations moved as a direct consequence, and each is re-derived
-  in the test that owns it rather than loosened:
-  - `PreventDuplicateOrders` counted "not started" orders under the name "in
-    queue" - with progress derived from the units that number stopped including
-    orders under way, and the guard against duplicate pylons read "none on the
-    way" and let a second pylon through. It now counts planned-or-building
-    (`Count.inQueue + CountInQueue.countInProgress`).
-  - `CountInQueueTest`: an unfinished bunker now consumes its own order, so
-    `count(Bunker)` is 0, `countInProgress` is 1 and `withPlanned` is 1 - the
-    bunker counted once instead of once as a unit and once as an order.
-  - `Queue3Test`: what the queue still owes is the build order minus what is
-    already under way. In the stub world the completed barracks' order stays
-    IN_PROGRESS because `OnOurNewUnitCompleted` is never emitted there, which is
-    also why the plan still needs topping up to 2.
-- **Test (done):** `QueueInProgressInvariantTest` pins the whole lifecycle now
-  rather than the invariant: a barracks at 3 hit points with most of its build
-  time left stays IN_PROGRESS across a refresh with both construction links
-  intact and with both removed (that frame used to fall back to
-  READY_TO_PRODUCE), a completion event finishes the order, and a destroyed
-  building - hp 0 and gone from the unit list, exactly what the engine leaves
-  behind - makes the order ready again, so progress detection cannot stall
-  production. What a game run still has to confirm is the part no stub can
-  reach: that no building is produced twice in a real game.
-
 ## B-18 — the combat evaluator only sees the opening of a long fight
 
 - **Where:** `AUnit.eval()` -> `AtlantisJfap` (a ~60-frame simulation),
@@ -239,6 +170,15 @@ documented in code with a comment. The closure goes into the commit message.
   owner reports from games. **Needs a game run**: this moves live fight and retreat
   decisions, and the scenario tier passing says the defended behaviours still hold,
   not that micro is unchanged.
+- **Update (2026-10-04, two full games, still open):** `GAME_B978D4B7`
+  (AtlantisP vs Marine Hell, loss, 0 exceptions) ended kill_score 500 vs
+  3000 - we killed 4 marines + 1 SCV and lost 23 probes, 4 nexuses, a
+  gateway, a zealot and a dragoon; `GAME_2AD8C998` (AtlantisP vs
+  Steamhammer, loss, 0 exceptions) ended 150 vs 2400. Both bots played
+  clean (no crash, no NPE), both lost every fight that mattered - which is
+  consistent with "too cautious" and with "out-macroed", and these score
+  lines cannot tell the two apart. The hedge question needs a fight where
+  the pre-hedge reading is known, i.e. a scenario, not a ladder score.
 - **History:** this entry replaces B-17, whose premise ("the evaluator rates
   marines below a sunken they beat") was measured with a fiction table that
   had the colony at 150 hit points with a 6-damage, 2.5-tile tentacle. A
@@ -301,6 +241,15 @@ documented in code with a comment. The closure goes into the commit message.
   stub world's physics is documented harness rules, not the game, so "the
   scenario flips" is evidence that the arbitration changed, not that the bot
   survives a real 4pool.
+- **Update (2026-10-04, full games, still open):** `GAME_2AD8C998`
+  (AtlantisP vs Steamhammer Zerg, loss, 0 exceptions) is the closest thing
+  to the rush this entry is about, and it does not test the fix: first
+  zergling at 4478, our zealot died at 5628, then 23 probes died in the
+  mineral line for 1 ling killed - but we built no Forge and no cannons at
+  all, so the repaired path ("help the static defense") never had a cannon
+  to help. `GAME_B978D4B7` (vs Marine Hell, first marine 3504) never brought
+  pressure either. Game-run confirmation still owed, and now it has a
+  precondition: a game where static defense exists.
 
 ## How to add an entry
 
