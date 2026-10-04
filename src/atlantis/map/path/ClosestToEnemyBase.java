@@ -7,7 +7,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import bwem.CPPath;
 
 public class ClosestToEnemyBase {

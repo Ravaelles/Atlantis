@@ -16,7 +16,7 @@ import atlantis.units.Units;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
 import atlantis.units.fogged.AbstractFoggedUnit;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 import java.util.*;

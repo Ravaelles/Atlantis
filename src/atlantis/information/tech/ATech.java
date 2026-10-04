@@ -4,7 +4,7 @@ import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 

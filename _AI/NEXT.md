@@ -310,7 +310,7 @@ itself, #5, is design work and out of that order's scope).
   and the fifth one), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = **34** (was 73),
+  `util -> units/game/map/production/information/combat/debug` = **21** (was 73),
   `information -> combat/production` = 65 (was 66),
   `architecture -> combat/production/units/game/util/debug` = 24.
   The 267 and the 24 are structural - the Commander/Manager framework is
@@ -323,9 +323,22 @@ itself, #5, is design work and out of that order's scope).
   anything call this" came back empty - all four util candidates and all
   thirteen information candidates are `private` methods that their own class
   calls. What remains, by class:
-  - `CacheKey.toKey` (13 entries) - a polymorphic key builder that knows about
-    units, positions, chokes, bases and constructions. Removing it means either
-    moving the knowledge to the callers or giving the cache a key type.
+  - ~~`CacheKey`~~ **done 2026-10-04, -18 - the biggest single win left.** It was
+    18 entries, not 13: `toKey(Object)` `instanceof`-checks thirteen domain types
+    and `create(AUnitType[])` formats them. A shared kernel that knows thirteen
+    domain types is not shared, so the class moved from `atlantis.util.cache` to
+    `atlantis.units.select` beside `Selection` (five of the thirteen call sites are
+    in that class) - **and that alone traded 18 violations for 4 new ones**, which
+    is the trap above in its purest form: `atlantis.units.select` is core, and
+    `Construction` and `ABaseLocation` are consumers. Two branches had to go for
+    the move to be honest rather than a shuffle:
+    - the two call sites that passed a `Construction` now pass `construction.id()`,
+      which is all the key ever read ("Constr#" was cosmetic);
+    - the `ABaseLocation` branch was a wrapper around `toString()`, so deleting it
+      changed no key anywhere.
+    The store diff is 18 deletions and zero additions - the first number that is
+    worth checking twice, because a placement change is exactly the kind that
+    hides a swap.
   - `Cache` (5) - a generic cache that reads `A.now()` and clones `Selection`s.
     Both are the clock and a domain type reaching into the kernel; the fix is a
     clock port and a per-type copy hook.

@@ -8,7 +8,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 
 public class GasBuildingPositionFinder {
     private static Cache<APosition> cache = new Cache<>();

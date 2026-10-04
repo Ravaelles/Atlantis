@@ -2,7 +2,7 @@ package atlantis.map.choke;
 
 import atlantis.units.AUnit;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 public class IsUnitWithinChoke {

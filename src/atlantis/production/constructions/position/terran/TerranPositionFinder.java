@@ -13,7 +13,7 @@ import atlantis.units.select.Select;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.AConsole;
 import atlantis.util.We;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import atlantis.util.log.ErrorLog;
 
 public class TerranPositionFinder extends AbstractPositionFinder {

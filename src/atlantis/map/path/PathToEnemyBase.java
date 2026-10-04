@@ -9,7 +9,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 import bwem.CPPath;
 import bwem.ChokePoint;
 

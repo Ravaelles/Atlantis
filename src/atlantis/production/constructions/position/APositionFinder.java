@@ -15,7 +15,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 
 public class APositionFinder {
     public static Cache<APosition> cache = new Cache<>();
@@ -63,7 +63,11 @@ public class APositionFinder {
         Construction construction,
         HasPosition nearTo, double maxDistance
     ) {
-        String cacheKey = CacheKey.create("findPositionForNew", building, nearTo, construction, A.digit(maxDistance));
+        // The key takes the construction's id, not the object: CacheKey formats
+        // what it knows and "does this cache key builder know what a Construction
+        // is" was one of the two things that stopped it being a kernel helper
+        // (_AI/NEXT.md #13).
+        String cacheKey = CacheKey.create("findPositionForNew", building, nearTo, construction.id(), A.digit(maxDistance));
 //        System.err.println("cacheKey = " + cacheKey);
 
 //        if (true) return FindPosition.findForBuilding(builder, building, construction, nearTo, maxDistance);

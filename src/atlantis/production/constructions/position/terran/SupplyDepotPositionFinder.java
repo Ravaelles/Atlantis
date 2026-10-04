@@ -12,7 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.cache.Cache;
-import atlantis.util.cache.CacheKey;
+import atlantis.units.select.CacheKey;
 
 import static atlantis.units.AUnitType.Terran_Supply_Depot;
 
@@ -23,7 +23,7 @@ public class SupplyDepotPositionFinder {
 //        if (Count.ofType(Terran_Supply_Depot) <= 3) return null;
 
         return cache.get(
-            CacheKey.create("findPosition", builder, construction, nearTo),
+            CacheKey.create("findPosition", builder, construction.id(), nearTo),
             91,
             () -> findNewPosition(builder, construction, nearTo)
         );
