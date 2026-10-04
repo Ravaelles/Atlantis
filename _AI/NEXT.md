@@ -505,6 +505,15 @@ itself, #5, is design work and out of that order's scope).
     tests (`HasPositionTest`, 6 tests);
   - `CanPhysicallyBuildHere` and `IsProbablyInAnotherRegion` (production position
     logic with a test shortcut);
+  - **The 25 that are left, classified (2026-10-04).** Four kinds, and they want
+    different things - which is why this item never got shorter by being counted:
+    | kind | what the branch does | sites | what it takes |
+    |---|---|---|---|
+    | A - a different *rule* | the test path takes another decision (never "only attack bases"; every ground combat unit is in Alpha; a retreat is 15 tiles right; comsat station acts every frame) | 10: `ATargeting.shouldOnlyAttackBases`, `AUnit.hasWeaponRangeByGame`/`squad`/`squadSize`/`squadCenter`/`squadCenterUnit`, `ProtossStartRetreat`, `Missions`, `UmsSpecialBehaviorCommander`, `TerranComsatStation` | the harness should get to answer the question, one subsystem at a time - the `WalkableAround` round is the template: find a question the harness can answer, put it behind the port that already exists, delete the branch |
+    | B - a different *data source* | the test path is handed a stub answer: a random build position, an approximation, a fresh enemy list | 4: `APositionFinder.findPositionForNew`, `IsProbablyInAnotherRegion`, `EnemyUnits.discovered`, `RebaseToNewMineralPatches` | same shape as A, but note `APositionFinder` is *non-deterministic* in tests today (random coordinates for every building), which is worth knowing before anything pins a position |
+    | C - a diagnostic the branch suppresses | production logs an error/warning that tests skip | 8: `DefineNaturalBase`, `RebaseToNewMineralPatches`, `MissionAttackFocusPoint`, `ProtossShouldFullRetreat`, `WhenCBDiscovered`, `OnGameStart`/`OnGameEnd` (3) | mechanical, and the precedent is set: `CanPhysicallyBuildHere` stopped branching and writes the diagnostic in tests too. 8 sites, no behaviour change, one commit |
+    | D - environment plumbing | the flag *is* the question: a test-only cache registry, a default race, a default bwapi path | 3: `Cache.allInstances`, `We.race()`, `AtlantisIgniter` | each needs its own argument; `Cache`'s registry is the cheapest (make it unconditional - a few hundred ints in a game that never reads it) |
+    Start with C: it is 8 sites, no decisions, and the rule is already written down.
   - ~~"is this position walkable"~~ **done 2026-10-04**: `WalkableAround` was the
     last hand-written `if (Env.isTesting()) return true;` in front of a tile question
     - it asked `position.isWalkable()`, which is itself a delegation to `MapTiles`, so
