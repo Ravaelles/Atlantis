@@ -478,8 +478,9 @@ itself, #5, is design work and out of that order's scope).
 
   **What is left in this item** is the biggest remaining `Env` leak - the other
   side of the same coin. Counting `src/atlantis` by grep, code lines only:
-  **34 `Env.isTesting()` call sites in 28 files** (41/29 before the
-  position-finder port below; 44/24 when this paragraph was first written),
+  **25 `Env.isTesting()` call sites in 19 files** (34 lines mention it, but 9 of
+  those are comments or javadoc - the previous counts here, 34/28 and 41/29 and
+  44/24, were raw grep hits and included them),
   one or two per file, across `combat`, `units`, `map`, `production` and
   `information`. Three of them are already answered by ports added since: `AUnit`'s three facing helpers
   through `UnitOrigin` (as `weKnowNothingAboutIt()`), `AbstractFoggedUnit`'s last
@@ -504,6 +505,12 @@ itself, #5, is design work and out of that order's scope).
     tests (`HasPositionTest`, 6 tests);
   - `CanPhysicallyBuildHere` and `IsProbablyInAnotherRegion` (production position
     logic with a test shortcut);
+  - ~~"is this position walkable"~~ **done 2026-10-04**: `WalkableAround` was the
+    last hand-written `if (Env.isTesting()) return true;` in front of a tile question
+    - it asked `position.isWalkable()`, which is itself a delegation to `MapTiles`, so
+    the branch was a second answer to a question the port had already answered. All
+    five tile checks go through `MapTiles.isWalkable` now, one fewer site and one fewer
+    place that decides what a stub world means.
   - `AUnit`'s `hasNoU()/noPosition()` guards (`if (...) && !Env.isTesting()`), which
     are really "do we know anything about this unit" - the fog question, and
     therefore the same port `#3` wants;
