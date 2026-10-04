@@ -54,23 +54,34 @@ and the whole simulator is gone as of 2026-10-04 (OpenBW replaces it -
 | `tests.unit` | **3 s** | what `run-tests.sh` runs by default |
 | `tests.architecture` | **1-2 s** | ten boundary rules in the package, seven of them in `run-architecture-tests.sh` |
 | `tests.acceptance` | **4-5 s** | world/squad/commander behaviour |
-| `tests.e2e` | **84-87 s** | six stub games; four 900-frame ones, two of which stop early |
+| `tests.e2e` | **65-67 s** | six stub games; four 900-frame ones, two of which stop early |
 
 So the fast loop is ~6 s end to end and never touches the slow tiers; the whole
-suite is ~95 s, and the scenario tier is ~85% of it.
+suite is ~72 s, and the scenario tier is ~90% of it.
 
-The e2e number is the one to be careful with, twice over. It is **not** the 39 s an
+The e2e number is the one to be careful with, three times over. It is **not** the 39 s an
 earlier version of this table claimed - that figure predates the scenarios driving real
 decisions instead of stubs (they run the actual combat micro and can therefore pay for
 the 60-frame Jfap simulation per unit per frame), which is the price of a scenario that
-can fail. And it is **noisy**: four consecutive runs of the same code and the same
+can fail. It is also **noisy**: four consecutive runs of the same code and the same
 class files read 84, 85, 85 and 87 s, while two readings minutes apart during the same
 session read 148 s (one class, standalone) and 201 s (the whole package), both taken
-while other JVMs were still running. So: compare a change against 84-87 s, and treat
-anything inside that band as no result at all. `_AI/BUGS.md` carried this as an entry
-until 2026-10-04, when the owner closed it as stale - the honest reason is not that the
-question was answered but that 86 s for six stub games is not worth more of anyone's
-attention.
+while other JVMs were still running. `_AI/BUGS.md` carried this as an entry until
+2026-10-04, when the owner closed it as stale.
+
+Then the mechanism was found and fixed the same day, and the entry turns out to have
+been real, not stale. JFR on `NinePoolDefenseTest` standalone (62.6 s wall, 125 s user
+CPU, 64 GB allocated on the main thread) put **65% of CPU samples inside Mockito** -
+LinkedList stubbing-list copies, not bot code - for one reason: the harness re-stubbed
+the clock mocks **every frame** (`useFakeTime` re-registered `AGame::now`,
+`everyNthGameFrame`, `notNthGameFrame` and `game.getFrameCount()`), a static mock scans
+its whole stubbing list on every intercepted call, so by frame 900 every `A.now()` paid
+a 900-entry scan - quadratic in frames. The stubbings are now registered once per test
+and answer from the published clock (`AbstractTestWithUnits.stubAGameClock`,
+`UnitTest.newGameMock`); same code, same assertions, standalone 62.6 -> 43.1 s (-31%),
+package 84-87 -> 65-67 s. What remains is the honest price of a scenario that can fail:
+real combat micro and the Jfap simulation behind it. The noise warning stands: compare
+against 65-67 s and treat anything inside that band as no result at all.
 
 `run-full-tests.sh` compiles once and prints this table per run, with
 `--skip-scenarios` for "everything but the slow tier" (~30 s).
