@@ -115,6 +115,12 @@ public class AbstractTestWithUnits extends UnitTest {
         FakeMapTiles.EXPLORED = false;
         FakeMapTiles.installAsSource();
 
+        // The stub world has no map behind it either, so the harness answers
+        // "this one will do" to every position-finder question
+        // (atlantis.map.position.PositionFinder) - the same answers the
+        // Env.isTesting() branches in HasPosition used to give.
+        tests.fakes.FakePositionFinder.installAsSource();
+
         // The stub world's player has researched nothing; a test says otherwise
         // with FakeResearch.withResearched(...) (ATech.Source).
         FakeResearch.installAsSource();

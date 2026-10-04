@@ -135,4 +135,22 @@ public class HasPositionTest extends AbstractTestWithWorld {
         
         // Let's assume TILES for now, as that's standard for AI logic separation.
     }
+
+    @Test
+    public void positionFinderReturnsOriginInTests() {
+        // The stub world has no map to search, so every position-finder
+        // question answers "this one will do" (FakePositionFinder) - the same
+        // answers the Env.isTesting() branches in HasPosition used to give.
+        HasPosition origin = APosition.create(10, 10);
+        FakeUnit unit = fake(AUnitType.Terran_Marine, 12);
+
+        assertEquals(origin.position(), origin.makeBuildable(5));
+        assertEquals(origin.position(), origin.ensureWithinBounds());
+        assertEquals(origin.position(), origin.makeValidFarFromBounds(3));
+        assertEquals(origin.position(), origin.makeBuildableFarFromBounds(3));
+        assertEquals(origin.position(), origin.makeWalkable(5, 1, null));
+        assertEquals(origin.position(), origin.makeLandableFor(unit));
+        assertEquals(origin.position(),
+            origin.makeWalkableAndFreeOfAnyGroundUnits(5.0, 1.0, unit));
+    }
 }

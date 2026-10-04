@@ -1,7 +1,6 @@
 package atlantis.map.position;
 
 import atlantis.Atlantis;
-import atlantis.config.env.Env;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.map.AMap;
@@ -87,180 +86,27 @@ public interface HasPosition {
     }
 
     default APosition makeBuildable(int maxRadius) {
-        if (Env.isTesting()) return position();
-
-        APosition position = this.position();
-        if (position.isBuildableIncludeBuildings()) {
-            return position;
-        }
-
-        int currentRadius = 0;
-        while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        position = this.translateByTiles(dtx, dty);
-                        if (position.isBuildableIncludeBuildings()) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
+        return PositionFinder.makeBuildable(this, maxRadius);
     }
 
     default APosition ensureWithinBounds() {
-        if (Env.isTesting()) return position();
-
-        APosition position = position();
-
-        if (!position.isCloseToMapBounds(0)) {
-            return position;
-        }
-
-        int atLeastTilesAwayFromBounds = 0;
-        int currentRadius = 0;
-        while (currentRadius <= 8) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx += 2) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty += 2) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        position = this.translateByTiles(dtx, dty);
-                        if (!position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius += 2;
-        }
-
-        return null;
+        return PositionFinder.ensureWithinBounds(this);
     }
 
     default APosition makeValidFarFromBounds(int atLeastTilesAwayFromBounds) {
-        if (Env.isTesting()) return position();
-
-        if (!position().isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
-            return position();
-        }
-
-        int currentRadius = 0;
-        while (currentRadius <= atLeastTilesAwayFromBounds) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        APosition position = this.translateByTiles(dtx, dty);
-                        if (!position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
+        return PositionFinder.makeValidFarFromBounds(this, atLeastTilesAwayFromBounds);
     }
 
     default APosition makeBuildableFarFromBounds(int atLeastTilesAwayFromBounds) {
-        if (Env.isTesting()) return position();
-
-        APosition position = this.position();
-        if (position.isBuildableIncludeBuildings()) {
-            return position;
-        }
-
-        int currentRadius = 0;
-        while (currentRadius <= atLeastTilesAwayFromBounds) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        position = this.translateByTiles(dtx, dty);
-                        if (position.isBuildableIncludeBuildings() && !position.isCloseToMapBounds(atLeastTilesAwayFromBounds)) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
+        return PositionFinder.makeBuildableFarFromBounds(this, atLeastTilesAwayFromBounds);
     }
 
     default APosition makeWalkable(int maxRadius, int step, ARegion sameRegion) {
-        if (Env.isTesting()) return position();
-
-        APosition position = this.position();
-        if (position.isWalkable()) {
-            return position;
-        }
-
-        int currentRadius = 0;
-        while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty += step) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        position = this.translateByTiles(dtx, dty);
-                        if (position.isWalkable() && (sameRegion == null || sameRegion.equals(position.region()))) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius += step;
-        }
-
-        return null;
+        return PositionFinder.makeWalkable(this, maxRadius, step, sameRegion);
     }
 
     default APosition makeLandableFor(AUnit building) {
-        if (Env.isTesting()) return position();
-
-        int currentRadius = 0;
-        int maxRadius = 8;
-        while (currentRadius <= maxRadius) {
-            for (int dtx = -currentRadius; dtx <= currentRadius; dtx++) {
-                for (int dty = -currentRadius; dty <= currentRadius; dty++) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        APosition position = this.translateByTiles(dtx, dty);
-                        if (!position.isExplored() || building.u().canLand(position.p().toTilePosition())) {
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
+        return PositionFinder.makeLandableFor(this, building);
     }
 
 //    default APosition makeFreeOfOurUnits(int maxRadius, double checkMargin, AUnit exceptUnit) {
@@ -290,35 +136,7 @@ public interface HasPosition {
 //    }
 
     default APosition makeWalkableAndFreeOfAnyGroundUnits(double maxRadius, double step, AUnit exceptUnit) {
-        if (Env.isTesting()) return position();
-
-        double currentRadius = 0;
-        double closenessMargin = 0.1;
-        Selection our = Select.our().groundUnits().inRadius(maxRadius + 1, this).exclude(exceptUnit);
-
-        while (currentRadius <= maxRadius) {
-            for (double dtx = -currentRadius; dtx <= currentRadius; dtx += step) {
-                for (double dty = -currentRadius; dty <= currentRadius; dty += step) {
-                    if (
-                        dtx == -currentRadius || dtx == currentRadius
-                            || dty == -currentRadius || dty == currentRadius
-                    ) {
-                        APosition position = this.translateByTiles(dtx, dty);
-                        if (
-                            position.isWalkable()
-                                && our.inRadius(closenessMargin, position).empty()
-                        ) {
-//                            System.err.println("position = " + position + " / " + position.distTo(exceptUnit));
-                            return position;
-                        }
-                    }
-                }
-            }
-
-            currentRadius++;
-        }
-
-        return null;
+        return PositionFinder.makeWalkableAndFreeOfAnyGroundUnits(this, maxRadius, step, exceptUnit);
     }
 
     // =========================================================
