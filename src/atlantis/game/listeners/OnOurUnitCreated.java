@@ -36,7 +36,11 @@ public class OnOurUnitCreated {
 
             if (unit.isBase()) {
                 ExpansionCommander.justExpanded();
-                CancelNotStartedBases.cancelNotStartedOrEarlyBases(
+                // "remove not started ones" is the whole of it: this pass runs
+                // because we have enough bases, not because we need the minerals, so
+                // it must not cancel a natural that is already being built (B-23 -
+                // it did, and the bot re-queued the same Nexus a minute later).
+                CancelNotStartedBases.cancelNotStartedBases(
                     unit, "New base created, remove not started ones"
                 );
             }

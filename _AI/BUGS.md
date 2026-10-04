@@ -103,6 +103,40 @@ documented in code with a comment. The closure goes into the commit message.
   available and would change the *magnitude* of the tweaks rather than only
   their sign, but they are not needed for the defect this entry names.
 
+## B-23 — the "new base created" pass cancels the natural it is supposed to keep
+
+- **Reported from a game (2026-10-04), verbatim:** a Nexus NATURAL queued at 4:13
+  (`Nexus ADDED TO QUEUE, min=593/ sup=26 / CanAfford`) is cancelled minutes later:
+  `7215 Cancelling pending base At 30 Nexus NATURAL* (IN_PROGRESS)(#176), Reason: New
+  base created, remove not started ones` -> `Cancel order ... at 5:03` ->
+  `Cancel construction: Nexus / ... / at:[103,37] / buildable:false`, and the bot
+  queues the same Nexus again at 5:15 (`min=799/ sup=31 / LimitedBases`). The
+  reported shape: "the algorithm sees that a new base was built and cancels the
+  others, but it cancels our own building".
+- **Where:** `OnOurUnitCreated` -> `CancelNotStartedBases.cancelNotStartedOrEarlyBases`,
+  condition `!construction.hasStarted() || construction.progressPercent() <= 49`.
+  The second half cancels anything **up to half built**, which is a different policy
+  under the same name, and it is the half that eats a natural with a builder on it.
+- **Fixed 2026-10-04:** the two are two methods.
+  `cancelNotStartedBases(newBase, reason)` is the doctrine its name describes and is
+  what `OnOurUnitCreated` calls; `cancelNotStartedOrEarlyBases` keeps the aggressive
+  half for the four callers whose reason is "give up on this expansion for minerals
+  or survival" - "Cancel base - much weaker", "Critical base cancel",
+  "HiddenEnemiesPressure", and the expansion veto in `ProtossShouldExpand.no(...)`.
+  Pinned by `CancelNotStartedBasesTest`, three ways: a rising natural survives the
+  new-base pass, a base we never started is still dropped by it, and the aggressive
+  pass still drops the half-built one.
+- **Measured along the way, worth knowing:** the pass looks at
+  `Queue.get().statusNotReady()`, which is the double negative - orders whose status
+  is *not* `NOT_READY`. So "not started" here means *ready to produce with no unit on
+  the construction yet*; an order already marked NOT_READY was never in scope. The
+  trigger unit's own construction is excluded, which is why the log's natural was a
+  *different* base than the one that had just finished.
+- **Still open (needs one line of the owner's log):** which base had completed. If it
+  was a **rebuild** of a base we already had (main lost and re-taken), the premise
+  "we have enough bases" is wrong in the first place and the pass should not run at
+  all - which is a separate fix, and the only thing this entry cannot decide alone.
+
 ## B-22 — "we build a zealot and a dragoon and then nothing"
 
 - **Reported from a game (2026-10-04):** the Protoss dynamic unit production
