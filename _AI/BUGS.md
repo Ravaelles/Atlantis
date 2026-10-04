@@ -8,6 +8,34 @@ what the consequence is.
 An entry leaves this file when the behaviour is either fixed or deliberately
 documented in code with a comment. The closure goes into the commit message.
 
+## B-24 — the scenario tier takes 150-210 s and nobody knows why (documented, not worked on)
+
+- **The owner's words:** "Time is a priority for us. We should make sure it takes
+  absolutely as short as possible. Question: how on earth does such a simple thing
+  take so long? Worth profiling it. It is a trivial problem. For now add it to the
+  bugs list at the top. Do not work on it, just document it."
+- **Measured 2026-10-04** (`rm -rf out && bash scripts/run-full-tests.sh`): unit 3 s,
+  architecture 1 s, acceptance 13 s, **scenarios 205 s** - about 90% of the whole
+  suite. Per class: `FourPoolDefenseTest` 53 s, `NinePoolDefenseTest` 100 s,
+  `StubWorldDamageTest` 1 s.
+- **Why it got slower, which is the only thing measured so far:** the scenarios now
+  drive real decisions. The stub world cannot run the full commander (measured
+  DoNothing for 200 frames with enemies 2 tiles away), so combat units are invoked
+  through their real `CombatUnitManager`, and every one of those decisions can run the
+  60-frame Jfap simulation. That is the price of a scenario that can fail.
+- **What is *not* the answer, so nobody tries it again:** skipping the rest of a
+  horizon is cheap, skipping the fight is not. Stopping `NinePoolDefenseTest` at its
+  decision frame (frame 310 of 900) took 30 s off 129 s, because the frames after the
+  last Zergling dies are an empty map with nothing to evaluate, while the 310 frames of
+  the fight are almost the whole cost.
+- **Open, and the point of the entry:** nobody has profiled where the time goes inside
+  those 310 frames. The candidates are the Jfap simulation per unit per frame (the
+  obvious suspect: ~7 combat units x a 60-frame simulation x 7-frame cache TTL), the
+  per-frame `Select`/`Count` cache rebuilds the commanders cause, and the stub world's
+  own bookkeeping. Any of the three could be a fix worth more than the 39 s the tier
+  used to cost, and none of them has been measured. Fast loop (6 s) and
+  `--skip-scenarios` (~25 s) are unaffected meanwhile.
+
 ## B-1 — `AUnit.eval()` has no documented scale, and 228 call sites assume one
 
 - **Where:** `atlantis/units/AUnit.java:2396` (javadoc) vs
@@ -171,14 +199,30 @@ documented in code with a comment. The closure goes into the commit message.
   frames**, one order every 7 frames. Dragoon answers first at this economy
   (`dragoons <= 4`, then `hasMinerals(125) && hasGas(150) && dragoons <= 17`) and
   zealots are last in the chain, so these gates do not stop production.
-- **What is still open:** the report is therefore *not* about these gates. It is
-  either about the frame around the commander (something throwing before
-  `ProtossDynamicUnitProductionCommander` runs - the same shape as B-20's per-frame
-  NPE, which did exactly that) or about state the stub world does not have (a gateway
-  that is not really free, a reserved one, no cybernetics core in the book). Reading
-  `reason` out of a real `bot.log` at a quiet moment decides it; the possible answers
-  are `CriticalStuff`, `ExpansionMinerals`, `MissingMinerals` and `KeepResources`,
-  and only the last two look like "we are rich but not allowed to spend".
+- **Then the owner sent the log (2026-10-04), and the answer is "no exceptions":**
+  the excerpt has mission lines, base queueing lines (`4:10`, `4:13`, `5:15`,
+  `6:33 Nexus ADDED TO QUEUE, min=2025/ sup=34`) and dying-unit logs, and nothing that
+  throws. So the "something throws before the commander" branch is out - which is the
+  same shape B-20 had (a per-frame NPE that killed the rest of each frame), so it was
+  worth ruling out.
+- **Re-measured with the log's own numbers** (2025 minerals, 300 gas, supply 34/40, one
+  gateway, a cybernetics core, 2 Marines + 1 SCV): **still produces** - 42 orders in
+  300 frames. And with the reported ending included (half of every produced unit dies,
+  which is what happened to zealot #132 and dragoon #153 at 5:21): **59 orders in 400
+  frames**, `freeGateways` never dropping to 0. So neither the resources, nor the
+  supply, nor a single gateway, nor losing the produced units stops this code.
+- **What is still open:** it is state only the game has. The two candidates the stub
+  world cannot produce are (a) a gateway the *engine* considers busy - `Count
+  .freeGateways()` asks `u.isIdle()`, and in a game that includes the real training
+  queue and the real last command, so one gateway that is not really free stops
+  everything (`ProduceDragoon.noProperBuildings()` and `ProduceZealot`'s
+  `freeGateways == 0` both bail on it) and (b) no cybernetics core in the book, which
+  kills dragoons outright while zealots are gated by `notEnoughZealots()` and
+  `ProduceDragoonInsteadZealot`. The log excerpt names neither. Reading
+  `ProtossDynamicUnitProductionCommander.reason` out of a real `bot.log` at a quiet
+  moment decides between them: `CriticalStuff` / `ExpansionMinerals` /
+  `MissingMinerals` / `KeepResources` for (b)'s gates, and for (a) the commander never
+  even asks - which is why the reason string is the thing to log.
 
 ## B-18 — the combat evaluator only sees the opening of a long fight
 
