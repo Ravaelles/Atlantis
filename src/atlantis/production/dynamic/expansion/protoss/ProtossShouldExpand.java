@@ -18,7 +18,16 @@ public class ProtossShouldExpand {
     protected static int basesInProduction;
 
     public static boolean shouldExpand() {
-        if (A.minerals() < 300) return false;
+        // A reason, not a bare false: this is the first gate a Protoss passes and it is
+        // the one a game sits behind for minutes while it probes (GAME_631F4FE6 queued
+        // its first Nexus at 4:30 with 778 minerals - the line in the log said
+        // "LimitedBases", and a "no" here would have left that string standing for
+        // minutes beforehand). Set directly, not through no(reason): that one also
+        // cancels not-started bases, and saving minerals is the opposite of that.
+        if (A.minerals() < 300) {
+            ShouldExpand.reason = "NotEnoughMinerals";
+            return false;
+        }
 
         bases = Count.existingOrInProductionOrInQueue(AtlantisRaceConfig.BASE);
 //        basesInProduction = Count.inProductionOrInQueue(AtlantisRaceConfig.BASE);
