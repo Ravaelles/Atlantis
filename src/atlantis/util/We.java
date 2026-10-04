@@ -2,7 +2,6 @@ package atlantis.util;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
-import atlantis.units.select.Count;
 import atlantis.util.cache.Cache;
 import atlantis.util.log.ErrorLog;
 import bwapi.Race;
@@ -55,9 +54,5 @@ public class We {
         if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(Main.ourRace());
 
         return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);
-    }
-
-    public static boolean haveBase() {
-        return Count.bases() >= 1;
     }
 }
