@@ -10,7 +10,3 @@ Method <atlantis.util.log.ErrorLog.theSameErrorWasLoggedLessThanMinuteAgo(java.l
 Method <atlantis.util.log.Log.addMessage(java.lang.String, atlantis.units.AUnit, int)> has parameter of type <atlantis.units.AUnit> in (Log.java:0)
 Method <atlantis.util.log.Log.messages(int, long)> calls method <atlantis.game.A.everyNthGameFrame(int)> in (Log.java:57)
 Method <atlantis.util.log.Log.replaceLastWith(java.lang.String, atlantis.units.AUnit, int)> has parameter of type <atlantis.units.AUnit> in (Log.java:0)
-Method <atlantis.util.object.not_needed.BwapiAccessibility.makeAllBwapiClassesAndFieldsAccessible(java.lang.Class, com.esotericsoftware.kryo.Kryo)> references class object <atlantis.game.AGame> in (BwapiAccessibility.java:42)
-Method <atlantis.util.object.not_needed.BwapiAccessibility.makeAllBwapiClassesAndFieldsAccessible(java.lang.Class, com.esotericsoftware.kryo.Kryo)> references class object <atlantis.map.AMap> in (BwapiAccessibility.java:41)
-Method <atlantis.util.object.not_needed.BwapiAccessibility.makeAllBwapiClassesAndFieldsAccessible(java.lang.Class, com.esotericsoftware.kryo.Kryo)> references class object <atlantis.units.AUnit> in (BwapiAccessibility.java:40)
-Method <atlantis.util.object.not_needed.BwapiAccessibility.makeAllBwapiClassesAndFieldsAccessible(java.lang.Class, com.esotericsoftware.kryo.Kryo)> references class object <atlantis.units.AUnitType> in (BwapiAccessibility.java:43)

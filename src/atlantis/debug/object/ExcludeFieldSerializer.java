@@ -1,4 +1,4 @@
-package atlantis.util.object.not_needed;
+package atlantis.debug.object;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;

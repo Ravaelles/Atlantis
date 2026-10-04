@@ -12,7 +12,7 @@ does not has to stay **out** of it.
 | `atlantis/**`, `main/**`, `jfap/**`, `bweb/**`, `jbweb/**`, `jps/**` | compiled from `src/` | the bot itself |
 | `tests/fakes/**`, `tests/unit/helpers/**`, `tests/acceptance/WorldStubForTests` | compiled from `src/` | **15 production classes import the test harness** (see below) |
 | `bwapi/**`, `bwem/**`, `com/sun/jna/**`, `win32-*/**` | `lib/JBWAPI-Rav.jar`, whole | the BWAPI bridge, JNA (jnativehook needs it), natives |
-| `com/esotericsoftware/**`, `org/objenesis/**`, `org/reflectasm/**`, `org/minlog/**` | `lib/kryo-5.6.2.jar`, `lib/kryo-deps/*` | `atlantis.util.object.ObjectToFile` |
+| `com/esotericsoftware/**`, `org/objenesis/**`, `org/reflectasm/**`, `org/minlog/**` | `lib/kryo-5.6.2.jar`, `lib/kryo-deps/*` | `atlantis.debug.object.ObjectToFile` |
 | `com/github/kwhat/jnativehook/**`, `org/slf4j/**` | `lib/jnativehook-2.2.1.jar`, `lib/slf4j-api-2.0.12.jar` | `atlantis.keyboard.AKeyboard` |
 | `javax/vecmath/**` | `lib/vecmath.jar` | `atlantis.util.Vector` |
 

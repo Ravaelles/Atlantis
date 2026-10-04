@@ -1,4 +1,4 @@
-package atlantis.util.object.not_needed;
+package atlantis.debug.object;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

@@ -1,4 +1,4 @@
-package atlantis.util.object.not_needed;
+package atlantis.debug.object;
 
 public class SerializedObjects {
     public static final String ROOT = "files/serialized/";

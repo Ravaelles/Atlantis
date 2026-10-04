@@ -1,7 +1,7 @@
-package atlantis.util.object;
+package atlantis.debug.object;
 
-import atlantis.util.object.not_needed.BwapiAccessibility;
-import atlantis.util.object.not_needed.SerializedObjects;
+import atlantis.debug.object.BwapiAccessibility;
+import atlantis.debug.object.SerializedObjects;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;

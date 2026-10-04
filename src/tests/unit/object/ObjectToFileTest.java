@@ -2,10 +2,10 @@ package tests.unit.object;
 
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
-import atlantis.util.object.ObjectToFile;
-import atlantis.util.object.TestAddress;
-import atlantis.util.object.TestObjectClass;
-import atlantis.util.object.not_needed.StaticFieldsToFile;
+import atlantis.debug.object.ObjectToFile;
+import atlantis.debug.object.TestAddress;
+import atlantis.debug.object.TestObjectClass;
+import atlantis.debug.object.StaticFieldsToFile;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tests.unit.UnitTest;
@@ -17,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * Serialisation round-trip for {@link ObjectToFile} / {@link StaticFieldsToFile}.
  *
  * <p>This class used to live in the production tree
- * ({@code atlantis/util/object/}), which means the suite - which selects
+ * ({@code atlantis/util/object/}, now atlantis/debug/object/), which means the
+ * suite - which selects
  * {@code tests.*} - had never run it. Executed for the first time, all three
  * tests fail, so they are disabled rather than quietly left out of sight:</p>
  *

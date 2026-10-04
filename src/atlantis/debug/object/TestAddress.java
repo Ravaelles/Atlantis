@@ -1,4 +1,4 @@
-package atlantis.util.object;
+package atlantis.debug.object;
 
 public class TestAddress {
     private final String street;

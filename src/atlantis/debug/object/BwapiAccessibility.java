@@ -1,4 +1,4 @@
-package atlantis.util.object.not_needed;
+package atlantis.debug.object;
 
 import atlantis.game.AGame;
 import atlantis.map.AMap;

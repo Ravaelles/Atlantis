@@ -359,8 +359,20 @@ itself, #5, is design work and out of that order's scope).
     diff is five deletions and nothing else: no rule picked up a new edge, because
     `units -> map.position` was already an edge and `map.position -> util` is not
     banned by any of the seven.
-  - `We.haveBase`, `BwapiAccessibility` and the `util/object` serialisation
-    cluster (5) - facades and a subsystem only a `@Disabled` test uses.
+  - ~~`BwapiAccessibility` and the `util/object` cluster~~ **done 2026-10-04,
+    -4.** The whole serialisation subsystem (9 files, 510 lines) moved from
+    `atlantis.util.object` to `atlantis.debug.object`: it names `AGame`, `AMap`,
+    `AUnit` and `AUnitType`, which a shared kernel may not, and it is a debug/IO
+    helper rather than a utility. Measured while looking for its callers, which is
+    the interesting part: the only production call site is
+    `OnEveryFrameHelper.serializeMapDataLikeRegionsToAFile()`, whose first line is
+    `if (true) return;`, and the only test is `@Disabled` - which is where the four
+    skipped tests in the suite come from. So the jar currently ships **kryo +
+    minlog + reflectasm + objenesis** for a capability no reachable code can call;
+    that is recorded as a question in `BUGS.md` rather than acted on, because
+    dropping runtime libraries from the bot jar is the owner's call.
+  - `We.haveBase` (1) - a one-method facade in `atlantis.util` that asks
+    `Count.bases()`, i.e. util reaching for a unit count.
 
   Every one of those is a design decision, not a mechanical edit, so the sweep
   stops here; the 267 and the 24 stay as Stage E/H work.

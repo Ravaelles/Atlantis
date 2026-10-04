@@ -31,7 +31,7 @@
 #     win32-*/ natives - jnativehook needs JNA at runtime
 #   - runtime libraries only: jnativehook (atlantis.keyboard.AKeyboard), slf4j
 #     (jnativehook's logging), kryo + minlog + reflectasm + objenesis
-#     (atlantis.util.object.ObjectToFile), vecmath (atlantis.util.Vector)
+#     (atlantis.debug.object.ObjectToFile), vecmath (atlantis.util.Vector)
 #   - nothing else: no JUnit, no Mockito, no ByteBuddy, no ArchUnit, no
 #     lib/lib-unused/jbwapi-2.1.0.jar, no Maps/ (the bot reads maps and build
 #     orders from the filesystem next to the jar, never from the classpath -

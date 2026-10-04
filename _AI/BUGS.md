@@ -8,6 +8,23 @@ what the consequence is.
 An entry leaves this file when the behaviour is either fixed or deliberately
 documented in code with a comment. The closure goes into the commit message.
 
+## B-25 — the bot jar ships four serialisation libraries for unreachable code (question, not a plan)
+
+- **Measured 2026-10-04** while moving the subsystem out of the kernel:
+  `atlantis.debug.object` (9 files, 510 lines, kryo-based) has exactly one production
+  call site, `OnEveryFrameHelper.serializeMapDataLikeRegionsToAFile()`, whose first
+  line is `if (true) return;`, and one test, which is `@Disabled` (that is where all
+  four skipped tests in the suite come from).
+- **Consequence:** `scripts/build-bot-jar.sh` ships `kryo`, `minlog`, `reflectasm` and
+  `objenesis` in every bot jar "for `ObjectToFile`" - i.e. four libraries, and their
+  size in the payload, for code nothing reachable can call. Measured jar: 6.1 MB fat,
+  3610 entries.
+- **Not decided here.** Three ways out, and the choice is the owner's: delete the
+  subsystem and the dead routine (smallest jar, loses a debugging capability that was
+  written for a reason), revive the routine behind a flag (keeps the capability,
+  keeps the libraries), or keep shipping them for a capability that may be revived.
+  What should not happen is shipping them *by accident*, which is the state now.
+
 ## B-24 — the scenario tier takes 150-210 s and nobody knows why (documented, not worked on)
 
 - **The owner's words:** "Time is a priority for us. We should make sure it takes
