@@ -140,7 +140,16 @@ by the language rule below.
   - `/tmp/opencode`, the scratch directory the tooling provides, for throwaway
     tooling of the current task (a virtualenv, a downloaded archive, an
     intermediate file). Nothing produced there belongs to the repository;
-    anything that has to survive goes into `Atlantis/` and is committed.
+    anything that has to survive goes into `Atlantis/` and is committed;
+  - **`~/.scbw/games/`**, **read-only**, and only the game result directories -
+    added 2026-10-04 so the scbw E2E tier of `_AI/IDEA-E2E-TESTS.md` Stage 1 can
+    parse real game verdicts. The scope is deliberately narrow: reading
+    `GAME_*/result.json`, `GAME_*/*.log` and the replays next to them. Writing
+    stays inside the workspace (the runner copies what it wants to keep into
+    `Atlantis/_AI/`), and nothing else under `~/.scbw` - `bots/`, `maps/`,
+    `bwapi-data/`, `docker/` - is opened, edited or enumerated as a way of
+    finding something useful. That boundary is the point: the alternative is a
+    grep rooted in the home directory, which is what the rule above forbids.
 - A third-party tool installed to help (a package, a virtualenv) is a means, not
   a deliverable: do not add it to the repository and do not let the repository
   depend on it, unless the task is exactly about adding that dependency.
