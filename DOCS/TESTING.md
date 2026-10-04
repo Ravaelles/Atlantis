@@ -53,16 +53,24 @@ and the whole simulator is gone as of 2026-10-04 (OpenBW replaces it -
 | compile (1534 sources, every script) | **3.7 s** | 29 fewer sources since StarEngine went; it was never the bottleneck |
 | `tests.unit` | **3 s** | what `run-tests.sh` runs by default |
 | `tests.architecture` | **1-2 s** | ten boundary rules in the package, seven of them in `run-architecture-tests.sh` |
-| `tests.acceptance` | **7 s** (was 12.2 s) | world/squad/commander behaviour; the drop is the eval-hedge round, where the slower scenarios got faster |
-| `tests.e2e` | **39 s** (was 136 s) | four 900-frame stub games, two of which stop early |
+| `tests.acceptance` | **4-5 s** | world/squad/commander behaviour |
+| `tests.e2e` | **84-87 s** | six stub games; four 900-frame ones, two of which stop early |
 
 So the fast loop is ~6 s end to end and never touches the slow tiers; the whole
-suite is ~70 s, and the scenario tier is the only thing worth thinking about. Two
-changes got it from 136 s to 39 s: the two `loneNexusFallsFast` controls were
-replaced by `StubWorldDamageTest` (they cost 70 s and asserted one property - that
-the stub world deals damage - which is now asserted in a second), and the
-surviving scenarios stop when their fight is decided instead of grinding out the
-rest of a 900-frame horizon.
+suite is ~95 s, and the scenario tier is ~85% of it.
+
+The e2e number is the one to be careful with, twice over. It is **not** the 39 s an
+earlier version of this table claimed - that figure predates the scenarios driving real
+decisions instead of stubs (they run the actual combat micro and can therefore pay for
+the 60-frame Jfap simulation per unit per frame), which is the price of a scenario that
+can fail. And it is **noisy**: four consecutive runs of the same code and the same
+class files read 84, 85, 85 and 87 s, while two readings minutes apart during the same
+session read 148 s (one class, standalone) and 201 s (the whole package), both taken
+while other JVMs were still running. So: compare a change against 84-87 s, and treat
+anything inside that band as no result at all. `_AI/BUGS.md` carried this as an entry
+until 2026-10-04, when the owner closed it as stale - the honest reason is not that the
+question was answered but that 86 s for six stub games is not worth more of anyone's
+attention.
 
 `run-full-tests.sh` compiles once and prints this table per run, with
 `--skip-scenarios` for "everything but the slow tier" (~30 s).

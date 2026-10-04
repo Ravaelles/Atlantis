@@ -570,7 +570,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 | F-3 `BaseUnderAttack` is all-static while everything around it becomes a `Manager` | **#36, not urgent** - it works, the scenario tier pins it, and the per-frame cost is bounded by the `enemiesNear` 5-frame cache. What it does lack is a seam: no test can force or stub the answer, and `check()` recomputes the same `Select.mainOrAnyBuilding()` query three times per frame per worker |
 | F-4 `ProtossJfapTweaksConsiderChokesEtc.rawEval` static mutable state | **done, differently than suggested** - the field was written and read nowhere, so it was deleted instead of threaded through the penalty helpers. The review's direction was right and its evidence was wrong (a grep for readers is two commands) |
 | F-5 "pressure" now has a second class (`BaseUnderAttack`, `ExpansionUnderPressure`) | **named, no merge** - thresholds, radius types and semantics differ, so they stay. If a third "is pressure real here" class appears, extract a shared threat assessment then, not now |
-| F-6 `CancelNotStartedBases` name drift after B-23's narrowing | **#37, cosmetic** - the class may deliberately keep the oldest pending base, so the name reads wider than the behaviour; the docstrings carry the nuance |
+| F-6 `CancelNotStartedBases` name drift after B-23's narrowing | **dropped 2026-10-04 (owner's ruling)** - cosmetic, and the drift is contained: the class may deliberately keep the oldest pending base, the docstrings carry the nuance, and callers say "not started ones" anyway |
 | F-7 `scripts/run-e2e.sh` write policy | **checked, no violation** - §8 allows read-only `~/.scbw`, the script writes into `_AI/e2e/`, and `--parse-only` matches its claim |
 | F-8 `Commander.applies()` is load-bearing for correctness, not filtering | **no action, recorded** - the OR-accumulated `handle()` and the non-null-stops `Manager.handle()` are documented where declared; the next contract addition should follow the same rule |
 
@@ -579,10 +579,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   force the answer. Cheapest honest version first (the cached `check()`), because the
   static-to-`Manager` conversion is a bigger change than the three duplicated queries
   it would remove. Not urgent: nothing is wrong with the behaviour today.
-- **#37** `CancelNotStartedBases` -> `PruneRedundantBaseOrders`, or one class-level
-  javadoc line saying it may keep one pending base on purpose. Do it when B-23 is next
-  touched, not on its own: a rename with no behaviour change is a distraction, and the
-  drift is contained (callers and BUGS.md say "not started ones").
+- **#38** Removal candidate (not a decision): `atlantis.debug.object` (9 files, 510
+  lines) plus the four libraries its one dead caller needs in the payload - kryo,
+  minlog, reflectasm, objenesis. `BUGS.md` B-25 has the measurements; the owner's
+  answer there was "note it as a candidate for removal, and if nothing plans to use it
+  it is probably a dead idea", and a search of `_AI/IDEA-E2E-TESTS.md`,
+  `_AI/REVIEW.md` and every stage found no plan that uses it. So the work is: decide
+  once, then either delete the subsystem + `serializeMapDataLikeRegionsToAFile()` +
+  `SAVE_UNIT_LOGS_TO_FILES`'s file dump and drop the four jars from
+  `scripts/build-bot-jar.sh`, or revive the routine behind a flag and keep them.
+  Nothing else in the tree reaches any of it.
 
 ## Housekeeping
 

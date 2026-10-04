@@ -92,6 +92,16 @@ public class MockEverything {
     private void mockAGameObject() {
         if (test.aGame == null) test.aGame = Mockito.mockStatic(AGame.class);
 
+        // The frame-clock questions (AGame::now, everyNthGameFrame,
+        // notNthGameFrame) are stubbed once, here - not re-stubbed by
+        // useFakeTime every frame. Every when(...) is a Mockito registration,
+        // and a static mock scans its whole stubbing list on every intercepted
+        // call, so per-frame re-stubbing made every A.now() call cost grow with
+        // the frame number - the quadratic cost behind BUGS.md B-24. The
+        // answers read the published clock at call time, so one registration
+        // per test is enough.
+        AbstractTestWithUnits.stubAGameClock(test.aGame);
+
         test.currentSupplyUsed = test.options == null ? 0 : test.options.getIntOr("supplyUsed", 0);
         test.currentSupplyTotal = test.options == null ? 4 : test.options.getIntOr("supplyTotal", 4);
 

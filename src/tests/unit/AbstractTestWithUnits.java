@@ -322,24 +322,22 @@ public class AbstractTestWithUnits extends UnitTest {
     protected void useFakeTime(int framesNow) {
         game = Atlantis.game() == null ? newGameMock(framesNow) : Atlantis.game();
 
-        when(game.getFrameCount()).thenReturn(framesNow);
+        // The Game mock's getFrameCount() is answered once, at creation
+        // (UnitTest.newGameMock), not re-stubbed per frame - every when(...) is a
+        // Mockito registration that every later intercepted call scans.
 
         if (Atlantis.game() == null) {
             Atlantis.getInstance().setGame(game);
         }
 
-        // One source of truth, set here. Production code reaches the frame
-        // number through A.now(), which delegates to the statically mocked
-        // AGame.now(); the stubbing itself lives in stubAGameClock below and
-        // happens once per test. The public A.now field is legacy: nothing
-        // reads it any more, it is only written to keep the two in sync for
-        // anything that still looks.
-        if (aGame != null) {
-            stubAGameClock(aGame);
-        }
-        // The one writer, so kernel code reading atlantis.util.GameClock sees the frame
-        // the world is on (atlantis.util may not ask atlantis.game - that was seven
-        // frozen violations).
+        // The AGame clock stubbing lives in stubAGameClock and happens once per
+        // test (MockEverything.mockAGameObject, where the mock is created) -
+        // never per frame: every when(...) is a Mockito registration that every
+        // later intercepted call scans.
+        //
+        // The one writer, so kernel code reading atlantis.util.GameClock sees the
+        // frame the world is on (atlantis.util may not ask atlantis.game - that
+        // was seven frozen violations).
         A.setNow(framesNow, framesNow / 30);
     }
 
@@ -358,7 +356,8 @@ public class AbstractTestWithUnits extends UnitTest {
      * published clock ({@code GameClock}, written by {@code A.setNow}) at call time,
      * so one registration per test is enough.</p>
      */
-    private static void stubAGameClock(MockedStatic<AGame> aGame) {
+    /** Called once per test, where the mock is created (MockEverything). */
+    static void stubAGameClock(MockedStatic<AGame> aGame) {
         // One source of truth: production reaches the frame number through
         // A.now(), which delegates to the statically mocked AGame.now().
         aGame.when(AGame::now).thenAnswer(invocation -> GameClock.frames());

@@ -19,52 +19,16 @@ documented in code with a comment. The closure goes into the commit message.
   `objenesis` in every bot jar "for `ObjectToFile`" - i.e. four libraries, and their
   size in the payload, for code nothing reachable can call. Measured jar: 6.1 MB fat,
   3610 entries.
-- **Not decided here.** Three ways out, and the choice is the owner's: delete the
-  subsystem and the dead routine (smallest jar, loses a debugging capability that was
-  written for a reason), revive the routine behind a flag (keeps the capability,
-  keeps the libraries), or keep shipping them for a capability that may be revived.
-  What should not happen is shipping them *by accident*, which is the state now.
-
-## B-24 — the scenario tier takes 150-210 s and nobody knows why (documented, not worked on)
-
-- **The owner's words:** "Time is a priority for us. We should make sure it takes
-  absolutely as short as possible. Question: how on earth does such a simple thing
-  take so long? Worth profiling it. It is a trivial problem. For now add it to the
-  bugs list at the top. Do not work on it, just document it."
-- **Measured 2026-10-04** (`rm -rf out && bash scripts/run-full-tests.sh`): unit 2-3 s,
-  architecture 2 s, acceptance 4-13 s, **scenarios 84-87 s** - about 85% of the whole
-  suite. Per class: `FourPoolDefenseTest` 53 s, `NinePoolDefenseTest` the rest,
-  `StubWorldDamageTest` 1 s.
-- **How noisy that number is, measured the hard way:** four consecutive runs of the
-  same code and the same class files read 84, 85, 85 and 87 s. Two readings taken
-  minutes apart during the same session read **148 s** (one class, standalone) and
-  **201 s** (the whole package) - both while other JVMs of mine were still running.
-  So the measurement noise on this tier is larger than most of the changes being made
-  to it, which is the strongest argument for profiling it properly rather than
-  shaving it: nobody can tell a 10% win from a noisy neighbour.
-- **One thing that is *not* the answer, measured:** the `GameClock` change (the seven
-  "what time is it?" violations, same commit) was suspected of halving the tier -
-  the scope had read 205 s before it and 84 s after. Measured both ways with the same
-  classes: `NinePoolDefenseTest` standalone took 154 s without it and 152 s with it,
-  and the package run in both trees produced byte-identical output (1283 lines,
-  121751 bytes). The speedup was this entry's own noise, not the clock.
-- **Why it got slower, which is the only thing measured so far:** the scenarios now
-  drive real decisions. The stub world cannot run the full commander (measured
-  DoNothing for 200 frames with enemies 2 tiles away), so combat units are invoked
-  through their real `CombatUnitManager`, and every one of those decisions can run the
-  60-frame Jfap simulation. That is the price of a scenario that can fail.
-- **What is *not* the answer, so nobody tries it again:** skipping the rest of a
-  horizon is cheap, skipping the fight is not. Stopping `NinePoolDefenseTest` at its
-  decision frame (frame 310 of 900) took 30 s off 129 s, because the frames after the
-  last Zergling dies are an empty map with nothing to evaluate, while the 310 frames of
-  the fight are almost the whole cost.
-- **Open, and the point of the entry:** nobody has profiled where the time goes inside
-  those 310 frames. The candidates are the Jfap simulation per unit per frame (the
-  obvious suspect: ~7 combat units x a 60-frame simulation x 7-frame cache TTL), the
-  per-frame `Select`/`Count` cache rebuilds the commanders cause, and the stub world's
-  own bookkeeping. Any of the three could be a fix worth more than the 39 s the tier
-  used to cost, and none of them has been measured. Fast loop (6 s) and
-  `--skip-scenarios` (~25 s) are unaffected meanwhile.
+- **The owner's answer (2026-10-04), verbatim:** *"Nie mam pojęcia, to zostało
+  dodane ostatnio; zanotuj to jako kandydata do potencjalnego usunięcia; jeśli nie ma
+  w planie tego używać, to zapewne jakiś martwy pomysł"* - I do not know, it was added
+  recently, note it as a candidate for removal, and if nothing plans to use it then it
+  is probably a dead idea. **Checked against the plans and found nowhere:** neither
+  `_AI/IDEA-E2E-TESTS.md`, `_AI/REVIEW.md` nor any stage mentions serialising maps or
+  unit lists, and the one routine that wanted it has been switched off in place. So it
+  is tracked as **NEXT #38** (a removal candidate, not a decision) rather than acted on
+  here: deleting 510 lines of debug code and four libraries from the payload is the
+  owner's call, and the entry stays until that call is made.
 
 ## B-1 — `AUnit.eval()` has no documented scale, and 228 call sites assume one
 

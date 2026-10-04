@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.util.GameClock;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Game;
@@ -129,7 +130,13 @@ public class UnitTest {
     public static Game newGameMock(int framesNow) {
         Game game = Mockito.mock(Game.class);
 
-        when(game.getFrameCount()).thenReturn(framesNow);
+        // Answered, not pinned: every when(...) is a Mockito registration, and
+        // a mock scans its whole stubbing list on every intercepted call. The
+        // world loop used to re-stub this per frame, which grew the list to
+        // thousands of entries over a 900-frame scenario - the quadratic cost
+        // behind BUGS.md B-24. The frame lives in GameClock (published by
+        // A.setNow once per frame), so one registration per test is enough.
+        when(game.getFrameCount()).thenAnswer(invocation -> GameClock.frames());
 
         return game;
     }
