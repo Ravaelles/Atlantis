@@ -322,10 +322,24 @@ itself, #5, is design work and out of that order's scope).
     Both are the clock and a domain type reaching into the kernel; the fix is a
     clock port and a per-type copy hook.
   - `Log`, `ErrorLog`, `ConsoleLog`, `TimeMoment` (11) - the logging kernel
-    reads the game clock, and `Log` also stores `debug.tools.LogMessage`
-    (tried: moving that class next to `Log` deletes 9 entries but the class
-    reads `A.now()` itself and arrives with 4 new ones, so it needs a
-    clock-free `LogMessage` first).
+    reads the game clock, and `Log` also stores `debug.tools.LogMessage`.
+    **Counted exactly on 2026-10-04, so the next round starts from facts:**
+    - the util store holds **10** entries, all `atlantis.util.log.Log ->
+      atlantis.debug.tools.LogMessage` (the `messages` field's generic type, a
+      constructor call, a return type, and six method calls). Moving `LogMessage`
+      to `atlantis.util.log` deletes all ten;
+    - to add none, `LogMessage` has to stop reading the clock. It reads it in
+      three places: the two constructors (`A.now()`, `A.realSecondsNow()`),
+      `expired()` (through `createdFramesAgo()` / `createdRealSecondsAgo()`) and
+      `color()`. Make it a value - the message plus its two creation timestamps -
+      and let `Log` pass "now" in, which it can already read: `messages()` calls
+      `A.everyNthGameFrame(...)`. That costs **2** new entries
+      (`Log.addMessage -> A.now`, `Log.messages -> A.now`), so the honest
+      prediction is **-8**, and those two additions must be reviewed in the store
+      diff rather than absorbed;
+    - the other callers are `GameLog` (`atlantis.game`, free to read the clock),
+      `AUnit.addManagerLogMessage`, and `AAdvancedPainter:301,1503` - the only
+      `color()` caller.
   - `Vectors` (8) - a geometry helper whose signatures mention `AUnit`; it is
     the one remaining class where "move it next to what it serves" is a real
     option, once its three callers are counted as one change.
