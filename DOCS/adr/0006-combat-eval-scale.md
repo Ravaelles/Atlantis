@@ -4,12 +4,15 @@
   for; it does not take it. Accepting needs a scenario sweep over the real
   evaluator plus game runs.
 - **Context:** `AUnit.eval()` returns `enemyScore / (ourScore + 0.001)` from a
-  ~60-frame JFAP simulation - an unbounded ratio where lower means stronger
-  for our units. 228 production call sites compare it against thresholds in
+  ~60-frame JFAP simulation - an unbounded ratio over cost-like negative scores,
+  where a side's score is what it lost, so a **higher** number means our side is
+  stronger (see `CombatEvaluatorTest.higherEvalMeansWeAreBetter`). 228 production
+  call sites compare it against thresholds in
   `[0.6, 3]`, while the javadoc promises "1.0 = even, 1.3 = 30% stronger".
   Three known distortions interact with any scale decision:
   - B-2: additive Protoss tweaks push near-zero ratios below zero (measured
-    -0.3934 for a 0.0066 fight), flipping every `eval <= y` guard;
+    -0.3789 for a 0.0211 fight), which no `eval >= y` or `eval <= y` guard can
+    read - floored since (2026-10-04);
   - B-18: the 60-frame window scores long fights as even (0.98) that the
     colony wins outright;
   - the no-enemy reading is 9874.0 (and -1.0 absolute), which every
@@ -20,7 +23,8 @@
 - **Decision (recommended):** do NOT re-normalise the ratio. Any monotonic
   re-map preserves order, so all 228 thresholds would need re-mapping anyway -
   same churn as re-deriving, with none of the three distortions fixed. Instead:
-  1. floor the tweaked eval at 0 (fixes B-2 at the source);
+  1. floor the tweaked eval at 0 (fixes B-2 at the source; **done** 2026-10-04,
+     `CombatEvalScale.FLOOR` = 0.01);
   2. document 9874.0 explicitly as "no threat in reach", not "infinitely
      strong", and audit the guards that must distinguish "safe" from "no
      data" (a dozen, not 228 - most high-eval reads are harmless when quiet);

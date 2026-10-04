@@ -13,10 +13,19 @@ documented in code with a comment. The closure goes into the commit message.
 - **Where:** `atlantis/units/AUnit.java:2396` (javadoc) vs
   `atlantis/combat/eval/AtlantisJfap.java:90`.
 - **What the code does:** `eval()` returns
-  `enemyScore / (ourScore + 0.001)` — an **unbounded ratio**. For our unit a
-  lower value means we are stronger; for an enemy unit the same formula runs
-  from its side, so a higher value means we are stronger. When no enemy is in
-  reach it returns **9874.0**, and `-1.0` absolute.
+  `enemyScore / (ourScore + 0.001)` — an **unbounded ratio** over cost-like
+  negative side scores, where a side's score is what it **lost** in the
+  simulated window. So the ratio reads "how much did the enemy lose, divided by
+  how much did we lose": for our unit a **higher** value means we are stronger;
+  for an enemy unit the same formula runs from its side, so a **lower** value
+  means we are stronger. When no enemy is in reach it returns **9874.0**, and
+  `-1.0` absolute. Pinned by `CombatEvaluatorTest.higherEvalMeansWeAreBetter`
+  (three Marines next to one Zergling — a fight we win — read 1.6667 with an
+  absolute of -30; one Marine next to one Zealot — a fight we lose — read 0.1300
+  with -100). This entry, and the test class it pointed at, had the direction
+  backwards until 2026-10-04; every threshold table below is about *where* the
+  numbers sit, not about which way they run, so the inversion did not corrupt
+  them.
 - **What the javadoc promises:** "1.0 means our army is as strong, 1.3 means our
   army is 30% stronger than enemy".
 - **Measured (one world each, `CombatEvaluatorTest` scenarios):**
@@ -72,10 +81,12 @@ documented in code with a comment. The closure goes into the commit message.
   so the dangerous direction B-2 opened (`eval() <= 2.5` is true for a fight lost
   150:1) is unchanged and remains B-1's problem. The B-18 combat-eval hedge is what
   actually tightens the guards.
-- **Why it matters:** every production guard of the form `unit.eval() >= 1.2`
-  or `<= 2.5` silently changes meaning for a negative score - and in the
-  dangerous direction: `eval() <= 2.5` ("we are fine") is *true* for -0.38,
-  for a fight the bot loses. It is also why the old
+- **Why it matters:** a ratio whose two sides had opposite signs is not a
+  strength comparison, so no threshold can read it: `eval() >= 1.2` (12 call
+  sites) answers "not a good fight" for a number that is not a fight, and
+  `eval() <= 2.5` answers "no better than even" — the two answers contradict each
+  other, and which one a given doctrine gets depends on the direction it happens
+  to compare in. It is also why the old
   `CombatEvaluatorTest.takesIntoAccountFoggedUnits` could never pass: it
   asserted `ourEval > 0` - which is now
   `ProtossCombatEvalScaleTest.aWraithAgainstTwoDiscoveredCannonsScoresAtTheFloorNotBelowIt`,
@@ -193,24 +204,40 @@ documented in code with a comment. The closure goes into the commit message.
   | horizon | our eval | reading |
   |---|---|---|
   | 60 (current) | 0.98 | "about even" - the opening exchange |
-  | 120 | 1.31 | moves against us, as the real fight does |
-  | 180 | 1.21 | converges |
+  | 120 | 1.31 | **moves in our favour, which is the wrong way** |
+  | 180 | 1.21 | converges, still our way |
   | 240 | 1.21 | unchanged - the fight has resolved inside 180 frames |
 
-  Two things follow. First, a longer window does move the number in the right
-  direction, but it plateaus at **1.21 for a fight we lose roughly 150-to-1** -
-  nowhere near the `eval >= 2` that the retreat and focus-point thresholds read as
-  dangerous. The score is a ratio of accumulated costs, not a win prediction, so
-  no horizon makes it one. Second, the change is not safe as a constant bump:
+  (The readings in this table were written before the direction of the scale was
+  settled; a higher number means the enemy lost more than we did, so "against us"
+  is 1.31 reading the wrong way for a fight the colony wins outright.)
+
+  Two things follow. First, a longer window moves the number *away* from the truth
+  here - it plateaus at **1.21 for a fight we lose roughly 150-to-1**, which reads
+  as a comfortable win and is nowhere near the `eval >= 2` that the retreat and
+  focus-point thresholds read as dangerous. The score is a ratio of accumulated
+  costs, not a win prediction, so no horizon makes it one. Second, the change is not safe as a constant bump:
   `oneMarineAgainstOneEnemyMarine`, an exactly symmetric fight, scores **1.0 at 60
   frames and 0.88 from 120 frames on**, while its absolute scores stay equal (that
   assertion passes) - so the horizon change breaks the mirror invariant somewhere
   in the tweak layer, not in the simulation. That asymmetry is unexplained and is
   tracked as NEXT #35.
 
-  So the remaining option is the second one: teach the callers that `eval ~ 1`
-  against a defensive building means "undecided", not "safe". That is a behaviour
-  change in live fight/retreat decisions, so it needs a game run.
+  So the horizon is out, and the remaining option is the second one: teach the
+  callers that `eval ~ 1` against a defensive building means "undecided", not
+  "safe".
+- **Update (2026-10-04, the owner's ruling, implemented):** instead of teaching
+  callers one building at a time, `CombatEvalScale.OUR_SIDE_HEDGE = 0.3` takes 0.3
+  off **our own** reading in `AUnit.eval()` - the raw 1.0 reads 0.7, so only a raw
+  1.3 is "even", and a fight that reads 1.01 stops being a fight we walk into. It
+  is subtractive, so it bites hardest where the decisions are: a 0.6 gate now needs
+  a raw 0.9 (50% stricter), a 4.0 gate needs 4.3 (7.5% stricter). Measured over the
+  195 literal comparisons in production (of 236 `eval()` call sites): 11 below 0.7,
+  39 in 0.7-0.99, 1 at exactly 1.0, 37 in 1.0-1.3 and 107 above 1.3. An enemy's
+  number is not hedged - that would understate the enemy, which is the failure the
+  owner reports from games. **Needs a game run**: this moves live fight and retreat
+  decisions, and the scenario tier passing says the defended behaviours still hold,
+  not that micro is unchanged.
 - **History:** this entry replaces B-17, whose premise ("the evaluator rates
   marines below a sunken they beat") was measured with a fiction table that
   had the colony at 150 hit points with a 6-damage, 2.5-tile tentacle. A

@@ -17,17 +17,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <h2>The contract</h2>
  * {@link atlantis.units.AUnit#eval()} returns
  * {@code enemyScore / (ourScore + 0.001)} from
- * {@link AtlantisJfap#evaluateCombatSituation()} - an <b>unbounded ratio</b>:
+ * {@link AtlantisJfap#evaluateCombatSituation()} - an <b>unbounded ratio</b> over
+ * cost-like negative side scores, where a side's score is what it lost in the
+ * simulated window. So the ratio reads "how much did the enemy lose, divided by how
+ * much did we lose":
  * <ul>
  *   <li>1.0 means the two sides score the same,</li>
- *   <li>for <b>our</b> unit a <b>lower</b> value means we are stronger
- *       (it is enemy/ours),</li>
+ *   <li>for <b>our</b> unit a <b>higher</b> value means we are stronger,</li>
  *   <li>for an <b>enemy</b> unit the same formula is evaluated from its side,
- *       so a <b>higher</b> value means we are stronger.</li>
+ *       so a <b>lower</b> value means we are stronger.</li>
  * </ul>
  * Therefore two units in the same situation satisfy
  * {@code ourUnit.eval() * enemyUnit.eval() ~= 1}. That relation is what this
  * class asserts, plus the ordering each scenario is named after.
+ *
+ * <p>The direction is not a matter of taste and this class used to have it backwards
+ * in its own prose - see {@link #higherEvalMeansWeAreBetter} for the measurement
+ * that settles it (three Marines next to one Zergling, a fight we win, score
+ * 1.667; one Marine next to one Zealot, a fight we lose, score 0.130). Three test
+ * names said "lose" about scenarios the evaluator scores as wins; they are named
+ * after what the number says now, and where the number disagrees with the damage
+ * arithmetic the comment says so.</p>
  *
  * <h2>Why not absolute numbers</h2>
  * The previous version asserted values such as "ourEval ~= 0.73" or
@@ -43,6 +53,45 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the generators, which is why this class used to throw NPEs on its own fields.
  */
 public class CombatEvaluatorTest extends AbstractTestWithWorld {
+
+    /**
+     * Which way is up, measured rather than assumed.
+     *
+     * <p>Two fights 40 tiles apart in one world, because {@code eval()} hands a
+     * unit in a squad the leader's number when they are within 7 tiles - with both
+     * fights close together every reading is the same number and the test proves
+     * nothing.</p>
+     */
+    @Test
+    public void higherEvalMeansWeAreBetter() {
+        FakeUnit winningMarine = fake(AUnitType.Terran_Marine, 10);
+        FakeUnit winningMarine2 = fake(AUnitType.Terran_Marine, 10.5);
+        FakeUnit winningMarine3 = fake(AUnitType.Terran_Marine, 11);
+        FakeUnit zergling = fakeEnemy(AUnitType.Zerg_Zergling, 12);
+
+        FakeUnit losingMarine = fake(AUnitType.Terran_Marine, 50);
+        FakeUnit zealot = fakeEnemy(AUnitType.Protoss_Zealot, 51);
+
+        world(1, fakeOurs(winningMarine, winningMarine2, winningMarine3, losingMarine),
+            fakeEnemies(zergling, zealot), () -> {
+                // Measured: 1.6667 with an absolute of -30 for three Marines against
+                // one Zergling, and 0.1300 with an absolute of -100 for one Marine
+                // against one Zealot. The abs side scores say the same thing the
+                // ratios do: the side that lost badly is the one with the big
+                // magnitude, so a big number means "the enemy lost more than we did".
+                assertEquals(1.6667, winningMarine.eval(), 0.01,
+                    "three Marines next to one Zergling is a fight we win, and it reads above 1");
+                assertEquals(0.1300, losingMarine.eval(), 0.01,
+                    "one Marine next to one Zealot is a fight we lose, and it reads below 1");
+                assertTrue(winningMarine.eval() > losingMarine.eval(),
+                    "which is the only ordering all 236 production call sites rely on");
+
+                // The other side of the same formula: an enemy unit's number runs the
+                // other way, so the same two fights invert.
+                assertEquals(0.6000, zergling.eval(), 0.01, "from the Zergling's side it is 0.60");
+                assertEquals(7.6929, zealot.eval(), 0.01, "and from the Zealot's side it is 7.69");
+            });
+    }
 
     @Test
     public void relativeScoreIsAReciprocalPair() {
@@ -107,39 +156,53 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void fourMarinesLoseToOneHydralisk() {
+    public void fourMarinesBeatOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
                 fake(AUnitType.Terran_Marine, 11.8), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
-            // Measured: ourEval = 7.5557, enemyEval = 0.1324
-            assertTrue(marine.eval() > 1, "four marines lose to a single hydralisk here");
+            // Measured: ourEval = 7.5557, enemyEval = 0.1324. This test used to be
+            // called "...Lose...", which was this file reading the scale backwards: a
+            // big number means the enemy lost more than we did, and by the damage
+            // arithmetic four Marines (24 a volley) do beat one Hydralisk (160 hit
+            // points, 8 a shot).
+            assertTrue(marine.eval() > 1, "four marines beat a single hydralisk here");
             assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
         });
     }
 
     @Test
-    public void threeMarinesLoseToTwoHydralisks() {
+    public void threeMarinesAgainstTwoHydralisksScoreOurWay() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.2), fake(Zerg_Hydralisk, 13.3)), () -> {
-            // Measured: ourEval = 3.3694, enemyEval = 0.2968. The old
-            // expectation ("ourEval * 300 < enemyEval") asserted the exact
-            // opposite of what the previous name ("...Beat...") claimed.
-            assertTrue(marine.eval() > 1, "three marines lose to two hydralisks in this evaluator");
+            // Measured: ourEval = 3.3694, enemyEval = 0.2968. The old expectation
+            // ("ourEval * 300 < enemyEval") asserted the exact opposite of what the
+            // previous name ("...Beat...") claimed, and the name after that ("...Lose
+            // ...") was this file reading the scale backwards.
+            //
+            // Worth stating plainly: 3.3694 is the evaluator saying the fight is
+            // clearly ours, while the damage arithmetic is a coin flip - three
+            // Marines (18 a volley) against two Hydralisks (16 a volley, 160 hit
+            // points) kill each other in about nine and about eight volleys. A gap
+            // like that is what B-18 is about; what this test pins is the number and
+            // the reciprocity, not the bot's chances.
+            assertTrue(marine.eval() > 1, "the evaluator reads three marines as the better side");
             assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
         });
     }
 
     @Test
-    public void marinesAndMedicLoseToOneHydralisk() {
+    public void marinesAndMedicBeatOneHydralisk() {
         FakeUnit marine = fake(AUnitType.Terran_Marine, 11.5);
 
         world(1, fakeOurs(marine, fake(AUnitType.Terran_Marine, 11.6),
                 fake(AUnitType.Terran_Medic, 11.7), fake(AUnitType.Terran_Marine, 12)), fakeEnemies(fake(Zerg_Hydralisk, 13.3)), () -> {
-            // Measured: ourEval far above 1, enemyEval far below, product within
-            // the reciprocal tolerance - the mixed group (three Marines and a
-            // Medic) scores like the plain groups, from opposite sides.
+            // Measured: ourEval = 21.2513, enemyEval = 0.0500, product 1.0626 within
+            // the reciprocal tolerance - the mixed group (three Marines and a Medic)
+            // scores like the plain groups, from opposite sides. The name used to say
+            // "Lose", which was the backwards reading again; a Medic is worth almost
+            // nothing to the ratio, which is why this row has the only product off 1.
             assertTrue(marine.eval() > 1, "a medic in the group does not turn the fight around");
             assertReciprocal(marine, (FakeUnit) marine.nearestEnemy());
         });
@@ -182,15 +245,14 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             assertEquals(2, wraith.enemiesNear().size(), "both cannons are near the wraith");
             assertEquals(1, cannon1.enemiesNear().size(), "but the cannons only see the wraith");
 
-            // Measured with engine data: as Terran the wraith scores 0.0066
-            // (absolute -760) - utterly doomed, and the number says so. As
-            // Protoss the same fight scores -0.3934: the raw ratio minus the
-            // additive Protoss tweaks (-0.1 enemy buildings near, -0.3 two
-            // anti-air combat buildings). The enemy side is unaffected either
-            // way (cannon eval 152.03; as Terran the pair is even reciprocal).
-            // A negative eval makes every "eval >= x" comparison in production
-            // meaningless - and in the dangerous direction. Tracked in
-            // _AI/BUGS.md B-2.
+            // Measured with engine data: as Terran the wraith scores 0.0211
+            // (absolute -760, the cannons -16) - the number says we are losing 47 to
+            // 1, and that is right. As Protoss the same fight scored -0.3789 before
+            // the floor landed: the raw ratio minus the additive Protoss tweaks (-0.1
+            // enemy buildings near, -0.3 two anti-air combat buildings). A negative
+            // eval cannot be compared with any threshold at all, which is what B-2
+            // was; the floor restores "as bad as it gets". Tracked in
+            // _AI/BUGS.md B-2, floored at CombatEvalScale.FLOOR.
             assertTrue(cannon1.eval() > 0, "from the cannons' side we are the weaker number");
             assertTrue(cannon1.eval() > wraith.eval(), "the wraith is outnumbered 1 vs 2");
         });
