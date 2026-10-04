@@ -103,6 +103,40 @@ documented in code with a comment. The closure goes into the commit message.
   available and would change the *magnitude* of the tweaks rather than only
   their sign, but they are not needed for the defect this entry names.
 
+## B-22 — "we build a zealot and a dragoon and then nothing"
+
+- **Reported from a game (2026-10-04):** the Protoss dynamic unit production
+  produces one zealot and one dragoon and then stops, with resources in the bank.
+  `ProtossDynamicUnitProductionCommander.reason` is the field to read in a log.
+- **Why nobody could tell from the suite:** the path was unreachable.
+  `ProtossDynamicUnitProductionCommander.handle()` opens with
+  `if (!AGame.everyNthGameFrame(7)) return false;`, and `AGame` is statically mocked
+  in every test with only `AGame::now` stubbed - so that throttle answered false
+  forever. **77 call sites in 65 files** share it, i.e. every frame-throttled path in
+  production was dead in tests. Measured: a 120-frame world where `A.now()` walked
+  1..120, the commander's reason string never left "-", and `ProduceDragoon.dragoon()`
+  called directly returned true every single frame.
+- **Two harness gaps, both fixed (2026-10-04):** `useFakeTime` now answers
+  `everyNthGameFrame`/`notNthGameFrame` from the same frame number as everything else,
+  and `AUnit.trainingQueue()` returns an empty list when there is no engine object
+  (it dereferenced `u` unguarded, so the first question the commander asked -
+  `Count.zealotsWithUnfinished()` -> `Selection.producing()` - threw an NPE from
+  inside a doctrine).
+- **Measured with both fixed** (`ProtossDynamicCombatProductionTest`, the reported
+  world: 800 minerals, 300 gas, supply 40/60, one zealot, one dragoon, gateway +
+  cybernetics core, 2 Marines + 1 SCV): **42 Dragoons and 0 zealots in 300
+  frames**, one order every 7 frames. Dragoon answers first at this economy
+  (`dragoons <= 4`, then `hasMinerals(125) && hasGas(150) && dragoons <= 17`) and
+  zealots are last in the chain, so these gates do not stop production.
+- **What is still open:** the report is therefore *not* about these gates. It is
+  either about the frame around the commander (something throwing before
+  `ProtossDynamicUnitProductionCommander` runs - the same shape as B-20's per-frame
+  NPE, which did exactly that) or about state the stub world does not have (a gateway
+  that is not really free, a reserved one, no cybernetics core in the book). Reading
+  `reason` out of a real `bot.log` at a quiet moment decides it; the possible answers
+  are `CriticalStuff`, `ExpansionMinerals`, `MissingMinerals` and `KeepResources`,
+  and only the last two look like "we are rich but not allowed to spend".
+
 ## B-18 — the combat evaluator only sees the opening of a long fight
 
 - **Where:** `AUnit.eval()` -> `AtlantisJfap` (a ~60-frame simulation),
