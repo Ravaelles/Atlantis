@@ -450,32 +450,18 @@ itself, #5, is design work and out of that order's scope).
 
 ## Combat evaluation
 
-- **#35** A symmetric fight stops scoring even when the Jfap horizon is raised.
-  Measured 2026-10-04 while settling B-18: `oneMarineAgainstOneEnemyMarine` scores
-  `eval() = 1.0` at the shipped 60-frame horizon and **0.88** at 120, 180 and 240
-  frames. Narrowed down with a scratch probe in `AtlantisJfapModifier`:
-
-  | horizon | raw JFAP pair (ours, theirs) | tweaks | clamp |
-  |---|---|---|---|
-  | 60 | `[-88, -88]` | 0.0 / 0.0 | inert |
-  | 120 | `[-100, -88]` | 0.0 / 0.0 | inert |
-
-  So it is **not** the tweak layer and **not** the "prevent positive AJFAP value"
-  clamp - both are no-ops for two Terran Marines. It is JFAP's own player-score
-  deltas: identical units at x=10 and x=11 score differently once the horizon is
-  long enough for the fight to resolve, which is tie handling inside the vendored
-  library (`JfapCombatEvaluator.fullEval` takes `postSimScores - preSimScores` per
-  player). Whether it is player-slot order, an off-by-one on the killing blow, or
-  a kiting difference has not been established, and JFAP is third-party code -
-  so the useful outcomes are either a JFAP-level explanation or a decision that
-  the horizon stays at 60 because longer horizons are not symmetric.
-
-  A second, independent defect turned up on the way, and it is fixed:
-  `oneMarineAgainstOneEnemyMarine` asserted "mirror units have the same absolute
-  score", which cannot fail - `combatEvalAbsolute()` returns *one* side's score and
-  both units' evaluations return the same pair, so it compared our side's score
-  with our side's score. The reciprocal assertion is the one that sees side
-  asymmetry, and it is now in the test (and passes at 60 frames).
+- **#35** ~~A symmetric fight stops scoring even when the Jfap horizon is raised.~~
+  **Closed 2026-10-04 by decision, not by a fix.** Measured: raw pair `[-88, -88]`
+  at the shipped 60-frame horizon, `[-100, -88]` from 120 frames on, with the
+  tweak deltas at 0.0 and the clamp inert - so the asymmetry is JFAP's own
+  per-player score deltas, i.e. tie handling in a vendored library.
+  The owner's ruling: `eval()` only matters from our own side, so a mirror fight
+  scoring 0.88 instead of 1.0 is not a defect worth chasing - and the doctrine
+  that came out of it ("1.01 means we should win, so that fight is too risky
+  unless we recognise 1:1 explicitly") is being implemented as a combat-eval
+  penalty, see B-18. What was worth taking from the hunt did get taken: the
+  mirror test's "same absolute score" assertion compared our side's score with
+  our side's score and could not fail, and it now asserts reciprocity instead.
 
 ## Housekeeping
 
