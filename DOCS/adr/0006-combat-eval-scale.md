@@ -80,3 +80,39 @@ Anomalies, one line each, arithmetic only:
   and a reminder that every number in this table needs coordinates to be
   re-measured (positions in tiles: wraith 90, cannons/dragoons 92-93,
   marines/hydras/sunken as in `CombatEvaluatorTest`).
+
+## Evidence (measured 2026-10-04)
+
+Procedure: `_AI/work-orders/WO-B1-eval-evidence-sweep.md`, same scenarios and
+coordinates as above, but one `world()` per test method (two scratch classes,
+`EvalSweepProbeTest` at the default race plus `EvalSweepProbeProtossTest` with
+`initRace()` overridden - the stub-world rules in `_AI/NOTES.md` forbid sharing
+state between measured runs), both deleted after measuring. `eval()` now
+carries the B-18 hedge (-0.3 our side) and the B-2 floor (0.01); `theirEval`
+is untouched by either. Values rounded to four decimals.
+
+| scenario | ourEval | theirEval | product | ourAbs | theirAbs |
+|---|---|---|---|---|---|
+| mirror: 1 marine vs 1 marine | 0.7000 | 1.0000 | 0.7000 | -88 | -88 |
+| 4 marines vs 1 hydralisk | 7.2557 | 0.1324 | 0.9603 | -45 | -340 |
+| 3 marines vs 2 hydralisks | 3.0694 | 0.2968 | 0.9110 | -111 | -374 |
+| 3 marines + medic vs 1 hydralisk | 20.9513 | 0.0500 | 1.0476 | -16 | -340 |
+| 4 marines vs 1 sunken colony, in range | 0.6796 | 1.0208 | 0.6938 | -98 | -96 |
+| 1 marine vs 1 sunken colony, out of range | 0.7010 | 1.0010 | 0.7017 | -1 | -1 |
+| wraith vs 2 free dragoons | 0.0100 | 46.0951 | 0.4610 | -507 | -11 |
+| wraith vs 2 fogged photon cannons (Terran) | 0.0100 | 47.5030 | 0.4750 | -760 | -16 |
+| wraith vs 2 fogged photon cannons (Protoss) | 0.0100 | 47.5030 | 0.4750 | -760 | -16 |
+| 1 marine, no enemies in reach | 9873.7000 | - | - | -1 | - |
+
+Anomalies, one line each, arithmetic only:
+
+- Every `ourEval` is exactly 0.3 below the 2026-10-03 value, except the three
+  rows where that would go at or below zero: `wraith vs 2 free dragoons`
+  (0.0217 - 0.3), `wraith vs 2 fogged cannons (Terran)` (0.0211 - 0.3) and
+  `(Protoss)` (-0.3789) all read the 0.01 floor instead.
+- The quiet value reads 9873.7, i.e. the hedge also applies to the no-threat
+  reading (9874.0 - 0.3); every `eval >= 2` guard still reads it as safe.
+- No product is ~1 anymore (mirror 0.7000, medic 1.0476); reciprocity now lives
+  in `ownCombatEvalRelative()`, which the tests assert, not in `eval()`.
+- All absolutes are identical to the 2026-10-03 table: the engine data did not
+  move, only the doctrine around it did.
