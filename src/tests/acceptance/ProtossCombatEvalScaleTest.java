@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * _AI/BUGS.md B-2 can be measured at all.</p>
  *
  * <p>Measured before the floor (same world, same engine data): the Wraith scored
- * <b>-0.3789</b> - the raw ratio 0.0066 minus -0.1 for enemy buildings near and -0.3
+ * <b>-0.3789</b> - the raw ratio 0.0211 minus -0.1 for enemy buildings near and -0.3
  * for two anti-air combat buildings - while the cannons' own side scored 47.50. The
  * absolute score was -760 on both the Terran and the Protoss reading, so the raw
  * ratio is not the thing that changed.</p>

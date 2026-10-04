@@ -35,8 +35,8 @@ documented in code with a comment. The closure goes into the commit message.
   | 4 marines vs 1 hydra | 7.5557 | 0.1324 |
   | 3 marines vs 2 hydras | 3.3694 | 0.2968 |
   | 4 marines + medic vs 1 hydra | 21.2513 | 0.0500 |
-  | 1 marine vs 1 sunken colony (far) | 0.7210 | 1.0010 |
-  | wraith vs 2 free dragoons | 0.0197 | — |
+  | 1 marine vs 1 sunken colony (far) | 1.0010 | 1.0010 |
+  | wraith vs 2 free dragoons | 0.0217 | — |
 - **Why it matters:** 228 production call sites compare against thresholds in
   `[0.6, 3]` (`ShouldStopRunning`, `TooFarFromFocusPoint`,
   `TerranMarineLongNotAttacked`, `ProtossLowEval`, …). Whether those thresholds
@@ -58,11 +58,11 @@ documented in code with a comment. The closure goes into the commit message.
   terms on top), applied to the `enemyScore / (ourScore + 0.001)` ratio.
 - **Measured** (re-measured 2026-10-04, stub world, `ProtossCombatEvalScaleTest`):
   lone Wraith against two (fogged, i.e. full-health) Photon Cannons. As Terran the
-  ratio is **0.0066**, absolute **-760** in both readings. As Protoss the same fight
-  scores **-0.3789** = 0.0066 - 0.1 - 0.3 - (choke/cohesion terms). The enemy side
-  is unaffected by the tweaks' sign (cannon eval **47.50** in the Protoss reading,
-  152.03 as Terran; the pair is even reciprocal as Terran), so the sign break
-  happens in the additive tweaks, exactly when the raw ratio is near zero.
+  ratio is **0.0211**, absolute **-760** in both readings. As Protoss the same fight
+  scores **-0.3789** = 0.0211 - 0.1 - 0.3 - (choke/cohesion terms). The enemy side
+  is unaffected by the tweaks' sign (cannon eval **47.50** on both readings; the
+  pair is even reciprocal as Terran), so the sign break happens in the additive
+  tweaks, exactly when the raw ratio is near zero.
 - **Fixed 2026-10-04 (the owner's ruling: `Math.max(0.01, eval)`).** The floor
   lives in `CombatEvalScale.signSafe` and is applied at the two places where the
   sign can still break: the ratio in `AtlantisJfap.calculateToRelativeScoreIfNeeded`
@@ -75,9 +75,10 @@ documented in code with a comment. The closure goes into the commit message.
 - **What the floor does and does not buy (measured):** the smallest number any
   production guard compares `eval()` against is **0.3** - over all 236 `eval()` call
   sites in `src/atlantis`, 34 distinct literals from 0.3 to 10 - so flooring at 0.01
-  is inert for every comparison and only removes the sign break. It also clamps one
-  genuine value: the 0.0066 of the Wraith fight now reads 0.01, which no guard can
-  distinguish. It does **not** make `eval() < 0.5` stricter - 0.01 is still below 0.5 -
+  is inert for every comparison and only removes the sign break. The smallest
+  measured Terran-side raw is 0.0211 (this fight), which passes through untouched -
+  the floor engages only the Protoss-tweaked negatives. It does **not** make
+  `eval() < 0.5` stricter - 0.01 is still below 0.5 -
   so the dangerous direction B-2 opened (`eval() <= 2.5` is true for a fight lost
   150:1) is unchanged and remains B-1's problem. The B-18 combat-eval hedge is what
   actually tightens the guards.

@@ -56,7 +56,7 @@ rounded to four decimals. `ourAbs` / `theirAbs` are the two JFAP side scores
 | 3 marines + medic vs 1 hydralisk | 21.2513 | 0.0500 | **1.0626** | -16 | -340 |
 | 4 marines vs 1 sunken colony, in range | 0.9796 | 1.0208 | 1.0000 | -98 | -96 |
 | 1 marine vs 1 sunken colony, out of range | 1.0010 | 1.0010 | **1.0020** | -1 | -1 |
-| wraith vs 2 free dragoons | 0.0197 | 50.7051 | 1.0001 | -507 | -10 |
+| wraith vs 2 free dragoons | 0.0217 | 46.0951 | 1.0001 | -507 | -11 |
 | wraith vs 2 fogged photon cannons (Terran) | 0.0211 | 47.5030 | 1.0001 | -760 | -16 |
 | wraith vs 2 fogged photon cannons (Protoss) | **-0.3789** | 47.5030 | **-18.0011** | -760 | -16 |
 | 1 marine, no enemies in reach | 9874.0000 | - | - | -1 | - |
@@ -73,7 +73,10 @@ Anomalies, one line each, arithmetic only:
 - `wraith vs 2 fogged photon cannons (Protoss)`: our eval is negative and the
   pair is not reciprocal (product -18.0011). Same fight as the Terran row,
   whose product is 1.0001 - the Protoss additive tweaks move our side only.
-- B-2's entry quotes 0.0066 / -0.3934 and 152.03 for the cannon side of this
-  fight. The engine data is now the source (CONVENTIONS §9), and with it the
-  Terran ratio reads 0.0211 and the cannon 47.5030; the wraith's absolute is
-  unchanged at -760. The two older numbers are stale, not contradicted.
+- B-2's first draft quoted 0.0066 / 152.03 for the cannon side of this
+  fight. Those were measurements from before the engine-data correction
+  (a 150-hp cannon era); with engine data the Terran ratio reads 0.0211 and
+  the cannon 47.5030 at the same test coordinates. Old numbers, superseded -
+  and a reminder that every number in this table needs coordinates to be
+  re-measured (positions in tiles: wraith 90, cannons/dragoons 92-93,
+  marines/hydras/sunken as in `CombatEvaluatorTest`).

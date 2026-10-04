@@ -267,7 +267,7 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
 
     /**
      * Measured, one world each: two free dragoons 2 tiles away give
-     * enemiesNear=2, eval=0.0197, absolute=-507. Locking one down and stasising
+     * enemiesNear=2, eval=0.0217, absolute=-507. Locking one down and stasising
      * the other leaves enemiesNear=2 as well - the *selection* does not filter -
      * but the evaluator returns its "nothing to fight" values (9874.0 and -1.0).
      * That difference is the behaviour worth pinning.

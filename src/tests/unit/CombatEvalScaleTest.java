@@ -32,7 +32,8 @@ public class CombatEvalScaleTest {
     public void aPositiveRatioIsLeftAlone() {
         assertEquals(0.05, signSafe(0.05), 0.000001);
         assertEquals(1.0, signSafe(1.0), 0.000001, "an even fight");
-        assertEquals(152.03, signSafe(152.03), 0.000001, "and the huge values");
+        assertEquals(47.5030, signSafe(47.5030), 0.000001,
+            "the biggest measured reading (cannon side) passes through");
         assertEquals(9874.0, signSafe(9874.0), 0.000001,
             "including the 'nothing to fight' shortcut, which must stay huge");
     }
@@ -64,11 +65,13 @@ public class CombatEvalScaleTest {
         // floor only ever changes the sign...
         assertTrue(FLOOR < 0.3, "below the smallest threshold in production");
 
-        // ...except that it also clamps genuine extreme ratios: the same Wraith
-        // fight scores 0.0066 as Terran, and the floor reports that as 0.01. Nothing
-        // can tell the two apart, so the clamp is harmless today - but it is a real
-        // clamp, and this is where it is written down.
-        assertEquals(FLOOR, signSafe(0.0066), 0.000001);
+        // ...except that it also bounds the domain from below: a tweaked ratio
+        // below 0.01 cannot survive, and the smallest measured Terran-side raw
+        // is 0.0211 (wraith vs fogged cannons), which passes through untouched.
+        // The floor engages only the Protoss-tweaked negatives, pinned in
+        // aNegativeRatioIsFlooredInsteadOfSurviving.
+        assertEquals(0.0211, signSafe(0.0211), 0.000001,
+            "the smallest measured Terran-side raw passes through");
     }
 
     @Test
