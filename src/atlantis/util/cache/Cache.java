@@ -1,7 +1,6 @@
 package atlantis.util.cache;
 
 import atlantis.config.env.Env;
-import atlantis.units.select.Selection;
 import atlantis.util.Callback;
 import atlantis.util.GameClock;
 
@@ -47,6 +46,10 @@ public class Cache<T> {
 
     /**
      * Get cached value or initialize it with given callback, cached for cacheForFrames.
+     *
+     * <p>A cached value that implements {@link Copyable} is handed out as a copy, so
+     * a caller that filters or sorts what it got does not rewrite the cached entry for
+     * the next caller. Everything else is returned as stored.</p>
      */
     public T get(String cacheKey, int cacheForFrames, Callback callback) {
 //        if (cacheKey == "completedOrders")
@@ -62,8 +65,8 @@ public class Cache<T> {
         }
 
         T result = data.get(cacheKey);
-        if (result instanceof Selection) {
-            return (T) ((Selection) result).clone();
+        if (result instanceof Copyable) {
+            return (T) ((Copyable<T>) result).copy();
         }
         else {
             return result;

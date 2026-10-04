@@ -2,13 +2,14 @@ package atlantis.units.select;
 
 import atlantis.units.AUnit;
 import atlantis.util.Callback;
+import atlantis.util.cache.Copyable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BaseSelection {
+public class BaseSelection implements Copyable<Selection> {
 
     protected List<AUnit> data;
 
@@ -37,8 +38,18 @@ public class BaseSelection {
 
     // === Clone ===============================================
 
-    public Selection clone() {
+    /**
+     * The cache hands cached selections out as copies ({@link Copyable}), so this is
+     * the same copy as {@link #clone()} - one implementation, two names, because
+     * {@code clone()} is what the ~7 call sites that want a filtered copy already say.
+     */
+    @Override
+    public Selection copy() {
         return new Selection(data, currentCachePath);
+    }
+
+    public Selection clone() {
+        return copy();
     }
 
     public Selection cloneByRemovingIf(Predicate<AUnit> newDataPredicate, String cachePathSuffix) {
