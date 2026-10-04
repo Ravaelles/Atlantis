@@ -25,12 +25,19 @@
 # full-game gates). The first table is a baseline to compare against, so the file
 # records the numbers, the date and the versions next to them.
 #
-# The result.json schema is NOT verified - this repo has no scbw run to read it
-# from, and CONVENTIONS §9 (never state a game fact from memory) applies to the
-# schema as much as to the numbers. So the parser is deliberately tolerant: it
-# uses the keys it recognises, prints every key it found, and marks a game
-# "schema-unknown" instead of guessing. The first real run rewrites this comment
-# with the schema that actually appeared.
+# The result.json schema was verified against real scbw runs on 2026-10-04
+# (GAME_08C2DF7E and later): keys are headless, game_name, map_name, game_type,
+# game_speed, seed_override, timeout, timeout_at_frame, hide_names,
+# drop_players, allow_input, auto_launch, random_names, game_dir, bot_dir,
+# map_dir, bwapi_data_bwta_dir, bwapi_data_bwta2_dir, vnc_base_port, vnc_host,
+# capture_movement, docker_image, nano_cpus, mem_limit, read_overwrite, bots
+# (list like ["AtlantisP:P", "Marine Hell:T"]), is_crashed, is_gametime_outed,
+# is_realtime_outed, game_time, winner, loser, winner_race, loser_race.
+# Frame-capped games end with winner=null plus is_gametime_outed=true (scbw
+# exits 1, "Game has gametime outed!") - that is a finished test game, not a
+# crash. Bot logs live in logs_0/bot.log and logs_1/bot.log under the game
+# dir, not next to result.json. A game with none of the recognised keys is
+# still reported as schema-unknown, not guessed at.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -87,6 +94,17 @@ LOG
     cat > "$WORK/games/GAME_ODD/result.json" <<'JSON'
 {"outcome": "weird-new-key", "turns": 42}
 JSON
+    # Real scbw shape (keys verified 2026-10-04): winner null, frame limit hit,
+    # an exception trace in one side's log.
+    mkdir -p "$WORK/games/GAME_REAL/logs_0" "$WORK/games/GAME_REAL/logs_1"
+    cat > "$WORK/games/GAME_REAL/result.json" <<'JSON'
+{"bots": ["AtlantisP:P", "Marine Hell:T"], "map_name": "sscai/(3)TauCross.scx", "timeout_at_frame": 5000, "is_crashed": null, "is_gametime_outed": true, "is_realtime_outed": false, "game_time": 31.6, "winner": null, "loser": null}
+JSON
+    cat > "$WORK/games/GAME_REAL/logs_0/bot.log" <<'LOG'
+java.lang.NullPointerException
+	at atlantis.map.choke.DefineMainChoke.defineFromMainBaseRegion(DefineMainChoke.java:38)
+LOG
+    echo "clean start, no exceptions here" > "$WORK/games/GAME_REAL/logs_1/bot.log"
 
     bash "$0" --parse-only --games-dir "$WORK/games" --out "$WORK/out" --keep 10
 
@@ -103,6 +121,8 @@ JSON
     expect "$WORK/table.md" "schema-unknown" "an unrecognised schema is not guessed at"
     expect "$WORK/table.md" "12345" "the frame count is read"
     expect "$WORK/table.md" "Steamhammer" "the opponent is read"
+    expect "$WORK/table.md" "gametime-out" "a frame-capped real game is not a crash"
+    expect "$WORK/table.md" "GAME_REAL" "the real-shape game is parsed"
 
     echo "OK: parser self-test passed (4 synthetic games: win, loss, crash, unknown schema)"
     exit 0
@@ -146,13 +166,15 @@ import json, os, re, sys, datetime
 
 games_dir, out_dir, keep = sys.argv[1], sys.argv[2], int(sys.argv[3])
 
-# Keys scbw's result.json is expected to use. Unverified - see the header of this
-# script: nothing here is asserted about the real schema until a real game has been
-# parsed, and a game whose keys we do not recognise is reported, not interpreted.
-VERDICT_KEYS = ('Result', 'result', 'verdict')
-FRAMES_KEYS = ('Frames', 'frames', 'FramesPlayed', 'frames_played')
-OPPONENT_KEYS = ('OpponentName', 'opponent', 'Opponent')
-MAP_KEYS = ('Map', 'map', 'MapName')
+# Keys scbw's result.json uses, verified against real runs 2026-10-04 (see the
+# header). The legacy spellings stay so the self-test's synthetic games keep
+# exercising the tolerant path; a game with none of these keys is reported,
+# not interpreted.
+VERDICT_KEYS = ('Result', 'result', 'verdict', 'winner')
+FRAMES_KEYS = ('Frames', 'frames', 'FramesPlayed', 'frames_played',
+               'game_time', 'timeout_at_frame')
+OPPONENT_KEYS = ('OpponentName', 'opponent', 'Opponent', 'bots')
+MAP_KEYS = ('Map', 'map', 'MapName', 'map_name')
 
 def first(d, keys):
     for k in keys:
@@ -160,17 +182,21 @@ def first(d, keys):
             return d[k]
     return None
 
-def bot_log(game_dir):
-    """The bot's own log, if scbw left one next to result.json."""
-    for name in sorted(os.listdir(game_dir)):
-        if name.endswith('.log'):
-            path = os.path.join(game_dir, name)
-            try:
-                with open(path, 'r', errors='replace') as f:
-                    return name, f.read()
-            except OSError:
-                continue
-    return None, ''
+def bot_logs(game_dir):
+    """All bot logs scbw left: logs_0/bot.log, logs_1/bot.log (real layout),
+    plus any *.log directly in the game dir (legacy/synthetic)."""
+    found = []
+    for root, _, files in os.walk(game_dir):
+        for name in sorted(files):
+            if name.endswith('.log'):
+                path = os.path.join(root, name)
+                rel = os.path.relpath(path, game_dir)
+                try:
+                    with open(path, 'r', errors='replace') as f:
+                        found.append((rel, f.read()))
+                except OSError:
+                    continue
+    return found
 
 CRASH = re.compile(r'^\s*(java\.lang\.\w+Exception|Exception in thread|\tat atlantis\.)', re.M)
 
@@ -189,15 +215,28 @@ if os.path.isdir(games_dir):
                          '', '', '', sorted(os.listdir(game_dir))))
             continue
 
-        log_name, log = bot_log(game_dir)
-        crashed = bool(CRASH.search(log))
+        logs = bot_logs(game_dir)
+        crashed_in = sorted(rel for rel, content in logs if CRASH.search(content))
         verdict = first(data, VERDICT_KEYS)
-        if verdict is None:
+        if verdict is None and not any(k in data for k in
+                VERDICT_KEYS + FRAMES_KEYS + OPPONENT_KEYS + MAP_KEYS
+                + ('is_crashed', 'is_gametime_outed', 'is_realtime_outed',
+                   'bots', 'game_time')):
             verdict = 'schema-unknown'          # never guess
-        elif crashed:
-            verdict = '%s + CRASH in %s' % (verdict, log_name)
+        elif verdict is None and data.get('is_crashed'):
+            verdict = 'crashed'
+        elif verdict is None and data.get('is_gametime_outed'):
+            verdict = 'gametime-out (frame limit), undecided'
+        elif verdict is None and data.get('is_realtime_outed'):
+            verdict = 'realtime-out'
+        elif verdict is None:
+            verdict = 'undecided (%s)' % ','.join(
+                k for k in ('winner', 'is_crashed', 'is_gametime_outed')
+                if k in data)
         elif verdict in ('NoResult', 'Error', 'Disconnect'):
             verdict = '%s (no verdict)' % verdict
+        if crashed_in:
+            verdict = '%s + CRASH in %s' % (verdict, ','.join(crashed_in))
 
         rows.append((game, str(verdict), str(first(data, FRAMES_KEYS) or ''),
                      str(first(data, OPPONENT_KEYS) or ''), str(first(data, MAP_KEYS) or ''),
