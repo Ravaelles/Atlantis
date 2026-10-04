@@ -371,8 +371,20 @@ itself, #5, is design work and out of that order's scope).
     minlog + reflectasm + objenesis** for a capability no reachable code can call;
     that is recorded as a question in `BUGS.md` rather than acted on, because
     dropping runtime libraries from the bot jar is the owner's call.
-  - `We.haveBase` (1) - a one-method facade in `atlantis.util` that asks
-    `Count.bases()`, i.e. util reaching for a unit count.
+  - The five that are left, named (2026-10-04): `We.haveBase` (1) - a one-method
+    facade in `atlantis.util` that asks `Count.bases()`; `Cache.get`'s copy hook for
+    `Selection` (2: `instanceof` + `clone()`); `Log.addMessage` /
+    `Log.replaceLastWith` taking an `AUnit` parameter (2). Two decisions, not a
+    sweep: who owns "copy this value", and whether the logging kernel needs the unit
+    or just the name of it.
+  - ~~the clock~~ **done 2026-10-04, -7.** Seven of the twelve were one question
+    asked upward (`A.now()`, `A.seconds()`, `A.everyNthGameFrame()` from the cache,
+    the log kernel and the error throttle). `atlantis.util.GameClock` now holds two
+    published ints; `AGame.calcSeconds` publishes them next to the `A.now`/`A.s`
+    writes it already did, and the harness publishes them in `useFakeTime`. A side
+    measurement worth keeping: `A.seconds()` returned **0 in every stub world**, so
+    `ErrorLog`'s once-a-minute throttle was comparing 0 against 0 and suppressing
+    everything after the first print - the throttle only works now.
 
   Every one of those is a design decision, not a mechanical edit, so the sweep
   stops here; the 267 and the 24 stay as Stage E/H work.
