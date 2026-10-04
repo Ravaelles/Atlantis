@@ -41,34 +41,55 @@ documented in code with a comment. The closure goes into the commit message.
   procedure is `_AI/work-orders/WO-B1-eval-evidence-sweep.md`, the draft to
   fill is `DOCS/adr/0006-combat-eval-scale.md`.
 
-## B-2 — additive Protoss tweaks can push `eval()` below zero
+## B-2 — additive Protoss tweaks can push `eval()` below zero (fixed 2026-10-04)
 
 - **Where:** `AUnit.freshCombatEvalRelative` ->
   `ProtossJfapTweaksConsiderChokesEtc.apply` (adds up to -0.4: -0.1 for enemy
   buildings near, up to -0.3 for combat buildings, choke/cohesion/retreat
   terms on top), applied to the `enemyScore / (ourScore + 0.001)` ratio.
-- **Measured** (scratch probe, since deleted): lone Wraith against two
-  (fogged, i.e. full-health) Photon Cannons. As Terran the ratio is **0.0066**,
-  absolute **-760** - the wraith is utterly doomed and the number says so. As
-  Protoss the same fight scores **-0.3934** = 0.0066 - 0.1 - 0.3. The enemy
-  side is unaffected (cannon eval **152.03** both ways; the pair is even
-  reciprocal as Terran: 0.0066 x 152 ~= 1), so the penalties break both the
-  sign and the reciprocity, exactly when the raw ratio is near zero.
+- **Measured** (re-measured 2026-10-04, stub world, `ProtossCombatEvalScaleTest`):
+  lone Wraith against two (fogged, i.e. full-health) Photon Cannons. As Terran the
+  ratio is **0.0066**, absolute **-760** in both readings. As Protoss the same fight
+  scores **-0.3789** = 0.0066 - 0.1 - 0.3 - (choke/cohesion terms). The enemy side
+  is unaffected by the tweaks' sign (cannon eval **47.50** in the Protoss reading,
+  152.03 as Terran; the pair is even reciprocal as Terran), so the sign break
+  happens in the additive tweaks, exactly when the raw ratio is near zero.
+- **Fixed 2026-10-04 (the owner's ruling: `Math.max(0.01, eval)`).** The floor
+  lives in `CombatEvalScale.signSafe` and is applied at the two places where the
+  sign can still break: the ratio in `AtlantisJfap.calculateToRelativeScoreIfNeeded`
+  (our side scoring nothing divides by ~0) and the sum in
+  `ProtossJfapTweaksConsiderChokesEtc.apply` (measured -0.3789 becomes 0.01). It is
+  in the evaluator rather than in `AUnit.eval()` on purpose: `atlantis.units` must
+  not depend on `atlantis.combat` (REVIEW §16 Stage E, and AUnit already leans on
+  one frozen edge), so a floor applied there would have cost a new core→consumer
+  violation.
+- **What the floor does and does not buy (measured):** the smallest number any
+  production guard compares `eval()` against is **0.3** - over all 236 `eval()` call
+  sites in `src/atlantis`, 34 distinct literals from 0.3 to 10 - so flooring at 0.01
+  is inert for every comparison and only removes the sign break. It also clamps one
+  genuine value: the 0.0066 of the Wraith fight now reads 0.01, which no guard can
+  distinguish. It does **not** make `eval() < 0.5` stricter - 0.01 is still below 0.5 -
+  so the dangerous direction B-2 opened (`eval() <= 2.5` is true for a fight lost
+  150:1) is unchanged and remains B-1's problem. The B-18 combat-eval hedge is what
+  actually tightens the guards.
 - **Why it matters:** every production guard of the form `unit.eval() >= 1.2`
   or `<= 2.5` silently changes meaning for a negative score - and in the
-  dangerous direction: `eval() <= 2.5` ("we are fine") is *true* for -0.39,
-  for a unit that loses 150-to-1. It is also why the old
+  dangerous direction: `eval() <= 2.5` ("we are fine") is *true* for -0.38,
+  for a fight the bot loses. It is also why the old
   `CombatEvaluatorTest.takesIntoAccountFoggedUnits` could never pass: it
-  asserted `ourEval > 0`.
+  asserted `ourEval > 0` - which is now
+  `ProtossCombatEvalScaleTest.aWraithAgainstTwoDiscoveredCannonsScoresAtTheFloorNotBelowIt`,
+  the same world with the bot playing Protoss, and it passes.
 - **History:** this entry used to blame "two Jfap side scores with opposite
   signs". The scores are both negative (cost-like) and their ratio is fine;
   the sign break happens one layer up, in the additive tweaks. The old
   -0.3961/169.06 numbers were measured with a fiction table; the mechanism
   above reproduces with engine data.
-- **How to settle it:** make the tweaks sign-safe - floor the tweaked eval at
-  0, apply them multiplicatively, or skip them when the raw ratio is already
-  near zero. Any of those changes live fight/avoid behaviour, so it needs a
-  game run, not just the suite.
+- **How to settle it:** settled - floored at both places the sign can break.
+  The other two options from the original question (apply the tweaks
+  multiplicatively, or skip them when the raw ratio is near zero) are still
+  available and would change the *magnitude* of the tweaks rather than only
+  their sign, but they are not needed for the defect this entry names.
 
 ## B-8 — `APositionFinder` can still terminate the JVM
 

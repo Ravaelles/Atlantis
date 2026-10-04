@@ -2477,6 +2477,12 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private double freshCombatEvalRelative() {
         double eval = (new AtlantisJfap(this, true)).evaluateCombatSituation();
 
+        // Both steps guarantee a positive eval (CombatEvalScale.signSafe): the
+        // ratio can break its own sign when our side scores nothing, and the
+        // Protoss tweaks are additive and can push it below zero (_AI/BUGS.md
+        // B-2). The guarantee lives with the evaluator rather than here, so that
+        // atlantis.units does not grow a new dependency on atlantis.combat just
+        // to be told about a number it does not compute.
         if (We.protoss()) return ProtossJfapTweaksConsiderChokesEtc.apply(this, eval);
 
         return eval;

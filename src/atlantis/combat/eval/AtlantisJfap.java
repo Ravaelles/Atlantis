@@ -88,7 +88,7 @@ public class AtlantisJfap {
 
             double ratio = enemyScore / (ourScore + 0.001);
 
-            return ratio;
+            return CombatEvalScale.signSafe(ratio);
         }
 
         return ourScore;

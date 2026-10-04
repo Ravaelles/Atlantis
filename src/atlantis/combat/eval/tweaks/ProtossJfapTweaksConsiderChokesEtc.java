@@ -1,5 +1,6 @@
 package atlantis.combat.eval.tweaks;
 
+import atlantis.combat.eval.CombatEvalScale;
 import atlantis.combat.squad.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -16,7 +17,13 @@ public class ProtossJfapTweaksConsiderChokesEtc {
     public static double apply(AUnit unit, double eval) {
         rawEval = eval;
 
-        return eval
+        // Every term below is additive, and together they reach -0.7, so the sum can
+        // leave the ratio through zero - which is how a fight the bot loses ends up
+        // with an eval that reads like an advantage (_AI/BUGS.md B-2, measured
+        // -0.3789). Floored here rather than in AUnit: this is the last thing that
+        // runs, so it is the only place a floor is a guarantee rather than a hope.
+        return CombatEvalScale.signSafe(
+            eval
             + EvalChokeTweaks.nearChokePenalty(unit)
             + penaltyCloseToEnemyBuildings(unit)
             + (unit.lastRetreatedAgo() <= 150 ? -0.4 : 0)
@@ -25,7 +32,8 @@ public class ProtossJfapTweaksConsiderChokesEtc {
 //            + (unit.lastUnderAttackLessThanAgo(30 * 4) ? -0.05 : 0)
             + cohesionPenalty(unit)
             + enemyZerglingBonus(unit)
-            + combatBuildingPenalty(unit);
+            + combatBuildingPenalty(unit)
+        );
     }
 
     // =========================================================
