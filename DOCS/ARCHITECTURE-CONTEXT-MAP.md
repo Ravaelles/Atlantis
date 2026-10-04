@@ -20,7 +20,7 @@ The architecture is a **modular monolith with a hexagonal core**:
 
 ```
 adapters  ──▶  application  ──▶  contexts  ──▶  core
-   (bwapi, starengine, fake)      (6 domains)      (no bwapi, no statics)
+   (bwapi, fake, openbw)          (6 domains)      (no bwapi, no statics)
 ```
 
 Dependencies point **inward only**. A context may depend on `core` and on the
@@ -43,7 +43,9 @@ Plus, outside the domains:
 
 - **core** — the domain model and rules; no `bwapi`, no static mutable state.
 - **application** — the frame pipeline and stateless systems.
-- **adapters** — engine/IO integrations (`bwapi`, `starengine`, fakes, debug UI).
+- **adapters** — engine/IO integrations (`bwapi`, fakes, the OpenBW launcher, debug UI).
+  (`starengine` was one of these until 2026-10-04, when it was deleted rather than
+  ported - OpenBW is the second engine now, and there is no third.)
 - **bootstrap** — entry point, config, launcher selection.
 
 **Rule:** every class belongs to exactly one context (or to core /
@@ -144,7 +146,7 @@ of an internal package is a boundary violation.
   call context APIs; issues engine orders **only** through the `OrderSink` port
   (Stage D). No static mutable caches.
 - **adapters**: the only place allowed to import `bwapi`, `jbweb`, `bweb`,
-  `jfap`, `jps`, `jnativehook`, or files/Swing. `starengine` and fakes are
+  `jfap`, `jps`, `jnativehook`, or files/Swing. The fakes are
   adapters too.
 - **bootstrap**: `main.Main`, `atlantis.Atlantis`, `atlantis.config.*`,
   `atlantis.keyboard.*`.
@@ -169,7 +171,7 @@ Until Stage I physically moves files, this is how existing packages are judged.
 | `atlantis.game`, `atlantis.config`, `atlantis.keyboard`, `atlantis.architecture`, `atlantis.util` | **infrastructure** (to be split in Stage H) |
 | `atlantis.debug`, `atlantis.cherryvis` | **adapters/presentation** |
 | `atlantis.protoss`, `atlantis.terran` | target: **Combat** strategies (Stage G) |
-| `bwapi`, `jbweb`, `bweb`, `bwem`, `jfap`, `jps`, `starengine` | **adapters** (external libs) |
+| `bwapi`, `jbweb`, `bweb`, `bwem`, `jfap`, `jps` | **adapters** (external libs) |
 
 Notes:
 - `atlantis.util` is a God-utility area (`A`, caches). It is **not** a context.

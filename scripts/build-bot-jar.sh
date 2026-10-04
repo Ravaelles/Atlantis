@@ -24,8 +24,9 @@
 #      in the IntelliJ setup even the jar itself - 62 MB -> 467 MB -> 540 MB).
 #
 # What goes in (everything else is deliberately left out, see scripts/lib-classpath.md):
-#   - production classes: atlantis/, main/, jfap/, starengine/, bweb/, jbweb/,
-#     jps/ (tests/ is compiled for the Java 8 check but never shipped)
+#   - production classes: atlantis/, main/, jfap/, bweb/, jbweb/, jps/ (tests/
+#     is compiled for the Java 8 check and then deliberately NOT shipped - the
+#     harness is not part of the bot)
 #   - everything in JBWAPI-Rav: bwapi/, bwem/, JNA (com/sun/jna/) and the
 #     win32-*/ natives - jnativehook needs JNA at runtime
 #   - runtime libraries only: jnativehook (atlantis.keyboard.AKeyboard), slf4j
@@ -77,11 +78,16 @@ javac --release 8 -nowarn -cp "$CP" -d "$WORK/classes" @"$WORK/sources.txt"
 for junk in "atlantis (copy)" bwapi bwta com META-INF; do
     rm -rf "$WORK/classes/$junk"
 done
-# src/tests IS packaged, unfortunately: 15 production classes import the test
-# harness (AUnit -> tests.fakes.FakeUnit, Bullets -> tests.fakes.FakeBullets,
-# ClearCountCache -> tests.unit.helpers.ClearAllCaches, ...). Classes load
-# lazily, so the test *frameworks* are not needed in a game - only these classes
-# are. Tracked in _AI/NEXT.md #28.
+# Nothing under tests/ is packaged, and nothing may reference it either: as of
+# 2026-10-04 production code imports no test class at all (the ports in
+# _AI/NEXT.md #28 closed the last five, and #28's starengine question ended with
+# the simulator deleted rather than given ports). Before that, 15 production
+# classes reached into the harness - AUnit -> tests.fakes.FakeUnit, Bullets ->
+# tests.fakes.FakeBullets, ClearCountCache -> tests.unit.helpers.ClearAllCaches -
+# and the jar had to carry 119 harness classes to keep them loadable. The
+# self-check below turns that from a comment into an invariant: if a production
+# class ever names tests/ again, the build fails here instead of shipping a
+# bigger jar.
 #
 # (The two JUnit classes that used to live in the production tree have moved to
 # src/tests/acceptance/production/, so nothing under atlantis/ is a test class
@@ -95,11 +101,18 @@ out_jar, classes, mode = sys.argv[1], sys.argv[2], sys.argv[3]
 runtime_libs = sys.argv[4:]
 
 # --- our compiled classes -------------------------------------------------
+# Everything under tests/ is dropped here, not filtered later: it is compiled so
+# the whole tree is type-checked as Java 8, and it is not part of the bot.
+NOT_SHIPPED = ('tests/', 'starengine/')
 ours = {}
+skipped = 0
 for root, _, files in os.walk(classes):
     for fn in files:
         full = os.path.join(root, fn)
         arc = os.path.relpath(full, classes).replace(os.sep, '/')
+        if arc.startswith(NOT_SHIPPED):
+            skipped += 1
+            continue
         if fn.endswith('.class'):
             ours[arc] = open(full, 'rb').read()
         else:  # resources: there are none in use, but never lose one silently
@@ -177,13 +190,17 @@ with zipfile.ZipFile(out_jar) as z:
     forbidden = [n for n in names
                  if 'Maps/' in n or n.endswith('.jar')
                  or n.startswith('org/junit') or n.startswith('org/mockito')
-                 or n.startswith('net/bytebuddy') or n.startswith('com/tngtech')]
-    assert not forbidden, 'test data or nested jars leaked in: %s' % forbidden[:5]
+                 or n.startswith('net/bytebuddy') or n.startswith('com/tngtech')
+                 or n.startswith('tests/') or n.startswith('starengine/')]
+    assert not forbidden, 'test data, harness classes or nested jars leaked in: %s' % forbidden[:5]
     assert 'main/Main.class' in names, 'entry point missing'
-    # production code reaches into the test harness - see the note above
-    for required in ('tests/fakes/FakeUnit.class', 'tests/fakes/FakeBullets.class',
-                     'tests/unit/helpers/ClearAllCaches.class'):
-        assert required in names, 'missing %s: production code imports it' % required
+
+    # The payload is only the right size if nothing in it still names the harness.
+    # A class can reference tests/ without importing it (reflection, a string), so
+    # the constant pool is scanned rather than the source.
+    ours_refs = [n for n in names
+                 if n.endswith('.class') and (b'tests/' in z.read(n) or b'starengine/' in z.read(n))]
+    assert not ours_refs, 'production classes reference the harness: %s' % ours_refs[:5]
     # our forked bwem.BWMap adds chokes() to the BWEM API; if JBWAPI-Rav's
     # version shadowed it, every choke lookup dies at runtime with
     # NoSuchMethodError: bwem.BWMap.chokes()Ljava/util/List; (GAME_BA5E7286)
@@ -203,5 +220,6 @@ with zipfile.ZipFile(out_jar) as z:
                 'thin mode: %s missing from lib/' % lib
 
 size_mb = os.path.getsize(out_jar) / 1024.0 / 1024.0
-print('OK: %s  %.1f MB  %d entries  mode=%s' % (out_jar, size_mb, len(names), mode))
+print('OK: %s  %.1f MB  %d entries  mode=%s  (%d harness/simulator classes not shipped)'
+      % (out_jar, size_mb, len(names), mode, skipped))
 EOF

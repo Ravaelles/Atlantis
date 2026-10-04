@@ -76,52 +76,34 @@ of the data behind it, not a red test.
 
   **Do not** "fix" a failure by rewriting the expectation to match the fake
   world. When a test failed for real, the reasoning is in the test's comment.
-- **#28** Production code imports the test harness. **`src/atlantis`, `src/main`
-  and `src/jfap` are clean** - `grep -rl "^import tests\." src/atlantis src/main
-  src/jfap` returns nothing. This item's own count was off by one: it listed the
-  4 files left in `src/atlantis` but not `src/jfap/JfapCombatEvaluator`, which
-  re-asked `AtlantisJfap.isValidUnit`'s question one file away. Five were left
-  after the fogged-unit port; all five are now behind ports.
-  `src/starengine` still has 12, and they are **one finding, not twelve**:
+- **#28** ~~Production code imports the test harness.~~ **Closed 2026-10-04.**
+  `src/atlantis`, `src/main` and `src/jfap` were cleaned one port at a time - the
+  last five behind `UnitStats.Source`, `Bullets.Source`, `Regions.Source`,
+  `AbstractFoggedUnit.FoggedUnitFactory` and `UnitOrigin`, no call site changed in
+  any of them. What was left was one finding rather than twelve:
+  `src/starengine`, a fake-driven simulator in the production tree, which the owner
+  decided to delete rather than give ports ("StarEngine is/will be unnecessary since
+  we can use OpenBW for tests or other approaches ... we should remove the StarEngine
+  code and replace it with OpenBW").
 
-  > `src/starengine` is a fake-driven *simulator* that lives in the production
-  > tree. `UnitsFromFakes`, `FakeUnitToEngineUnits` and `StarEngineLauncher` take
-  > `tests.fakes.FakeUnit` as their *input model*, and `StarEngine` /
-  > `OnStarEngineFrameEnd` reach into `tests.acceptance.AbstractWorldCreatingTest`.
-  > Nothing outside `src/tests` uses the package except `Env.isStarEngine()`, a
-  > boolean flag.
+  Removed in that commit: 26 files / 1209 lines of simulator, 3 assertion-free smoke
+  tests, the `isUsingEngine` branches in `AbstractWorldCreatingTest` /
+  `FakeOnFrameEnd` / `FakeUnit`, and `Env.markUsingStarEngine` / `isStarEngine`
+  (written by the launcher, read by a commented-out line in `Select`). `FakeUnit`'s
+  two StarEngine enums became plain flags - nothing but the simulator set them.
 
-  So the mechanical sweep is done, and what remains is a placement question, not a
-  port question. Measured before deciding (2026-10-03):
+  The payoff was the jar, and it is measured rather than assumed: production
+  bytecode has no reference to `tests/` or `starengine/` (0 of 3610 entries, checked
+  by scanning constant pools), so `scripts/build-bot-jar.sh` now drops both trees
+  from the payload and *fails the build* if a packaged class ever names `tests/`
+  again. Same machine, same script: 3755 entries -> 3610, i.e. 119 harness classes
+  and 26 simulator classes the game was shipping for nothing.
 
-  | | |
-  |---|---|
-  | size | **26 files, 1209 lines** |
-  | inbound edges from production | **none** |
-  | inbound edges from tests | 2 files: `tests/acceptance/AbstractWorldCreatingTest` (launches it) and `tests/fakes/FakeUnit` (borrows `AttackState`, `EngineUnitState`) |
-  | `Env.isStarEngine()` | written by `AbstractWorldCreatingTest`, read by **nobody** - the one call site is commented out (`Select.java:93`) |
-  | tests that use it | 3 (`tests/starengine/**`) |
-  | what it imports from the harness | `tests.fakes.FakeUnit` (its input model), `tests.acceptance.AbstractWorldCreatingTest` (the launcher) |
-
-  Options, with what the measurement says about each:
-  1. **Move `src/starengine` under `src/tests`** - 1209 lines with two inbound test
-     edges and no production consumer at all. This is the cheap one, and it is
-     also the honest one: the package plays a game *from fakes*, so it is part of
-     the fake world, not an adapter to StarCraft.
-  2. **Ports** - keep it where the target architecture puts it ("adapters implement
-     ports: bwapi, fake, starengine") and make it ask a world port for units,
-     positions and hits. Preserves a documented intent, at the price of a port for
-     a package nothing but tests run.
-  3. Leave it, and keep shipping the harness in the jar.
-
-  The only thing arguing for option 2 is one line of
-  `DOCS/ARCHITECTURE-CONTEXT-MAP.md` §6, which classifies `starengine` as an
-  adapter - and that table says it is how packages are judged *until Stage I
-  physically moves files*, i.e. it is a provisional guess, not a decision. My
-  recommendation is option 1 plus one line in that document; the call is the
-  owner's, because it changes where a documented adapter lives. Either way it is
-  an **ADR** (Stage E/H), not a mechanical sweep: do not start it before the
-  decision is written down.
+  What is lost, and what replaces it: nothing can assert on a simulated fight until
+  the OpenBW tiers in `_AI/IDEA-E2E-TESTS.md` Stage 3 land. The stub world plays
+  scripted scenarios with harness physics, which is enough for defence mechanisms
+  (B-19's cannon and probes) and not enough for "does this micro win the fight".
+  That is the open part, and it is not a port problem - it is the OpenBW stepper.
 
   The port shape is now written down twice - `UnitStats.Source` for unit and
   weapon data, and `Bullets.Source` for the bullets in flight:

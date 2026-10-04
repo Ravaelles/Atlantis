@@ -1,17 +1,11 @@
 package tests.acceptance;
 
-import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.game.GameSpeed;
-import atlantis.keyboard.AKeyboard;
 import atlantis.units.AUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.Options;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import starengine.StarEngine;
-import starengine.StarEngineLauncher;
-import starengine.events.OnStarEngineFrameEnd;
 import tests.fakes.FakeUnit;
 import tests.unit.AbstractTestWithUnits;
 import tests.unit.UnitTest;
@@ -27,7 +21,6 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
     protected FakeUnit ourFirst;
     protected FakeUnit[] enemies;
     protected FakeUnit[] neutral;
-    protected StarEngine engine = null;
     protected boolean shouldQuitNow = false;
 
     // =========================================================
@@ -82,8 +75,6 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
             AbstractTestWithWorld.baseSelect = Mockito.mockStatic(BaseSelect.class);
         }
 
-        boolean isUsingEngine = isUsingEngine();
-
         // Engine semantics: the game drops a unit from its player's unit list as
         // soon as it dies, so no selection Atlantis builds ever contains a corpse.
         // Several Select builders rely on that instead of re-checking isAlive()
@@ -111,12 +102,9 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
 
         int framesNow = 1;
         while (framesNow <= proceedUntilFrameReached && !shouldQuitNow) {
-            onFrameStart(onFrame, framesNow, isUsingEngine);
-            framesNow = onFrameEnd(onFrame, framesNow, isUsingEngine);
+            onFrameStart(onFrame, framesNow);
+            framesNow = onFrameEnd(onFrame, framesNow);
         }
-
-//        if (isUsingEngine && engine.game().isGameEnd()) engine.closeIfNeeded();
-        if (isUsingEngine) A.sleep(1 * 3000);
 
         closeStaticMocks();
     }
@@ -154,27 +142,18 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
 
     // =========================================================
 
-    private void onFrameStart(Runnable onFrame, int framesNow, boolean usingEngine) {
+    private void onFrameStart(Runnable onFrame, int framesNow) {
         A.s = framesNow / 30;
         A.now = framesNow;
     }
 
-    private int onFrameEnd(Runnable onFrame, int framesNow, boolean usingEngine) {
+    private int onFrameEnd(Runnable onFrame, int framesNow) {
         useFakeTime(framesNow);
 
         onFrame.run();
-        if (framesNow == 1 && usingEngine) launchEngine();
-
-        // Use StarEngine for onFrameEnd logic
-        if (usingEngine) {
-            OnStarEngineFrameEnd.onFrameEnd(this);
-            GameSpeed.keepGamePaused();
-        }
 
         // Simple implementation of onFrameEnd for tests, just move units
-        else {
-            FakeOnFrameEnd.onFrameEnd(this);
-        }
+        FakeOnFrameEnd.onFrameEnd(this);
 
         framesNow++;
         return framesNow;
@@ -189,37 +168,6 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
     protected FakeUnit[] generateNeutral() {
         return new FakeUnit[]{};
     }
-
-    // === StarEngine ===========================================
-
-    protected void useStarEngine() {
-        useStarEngine(createEngine());
-    }
-
-    protected void useStarEngine(StarEngine engine) {
-        this.engine = engine;
-        Env.markUsingStarEngine(true);
-    }
-
-    public StarEngine createEngine() {
-        StarEngine engine = new StarEngine(this);
-        return engine;
-    }
-
-    private void launchEngine() {
-        StarEngineLauncher.launchStarEngine(this);
-        AKeyboard.listenForKeyEvents();
-    }
-
-    public boolean isUsingEngine() {
-        return engine != null;
-    }
-
-    public StarEngine engine() {
-        return engine;
-    }
-
-    // === END OF StarEngine ====================================
 
     public void setShouldQuitGameLoopNow(boolean shouldQuitNow) {
         this.shouldQuitNow = shouldQuitNow;

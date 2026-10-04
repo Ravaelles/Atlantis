@@ -11,8 +11,6 @@ public class FakeOnFrameEnd {
         for (FakeUnit unit : game.our) {
             updatePosition(unit);
         }
-
-        if (game.isUsingEngine()) game.engine.updateOnFrameEnd();
     }
 
     // =========================================================

@@ -9,7 +9,6 @@
 #   tests.unit         2.6 s     the fast loop
 #   tests.architecture 2.0 s     seven boundary rules
 #   tests.acceptance   12.2 s    world/squad/commander behaviour
-#   tests.starengine   8.2 s     the stub-engine simulator
 #   tests.e2e          ~100 s    the stub-world rush scenarios (a 900-frame game
 #                                 per test; two of the four stop early)
 #
@@ -36,7 +35,6 @@ SCOPES=(
   "unit:tests.unit"
   "architecture:tests.architecture"
   "acceptance:tests.acceptance"
-  "starengine:tests.starengine"
   "scenarios:tests.e2e"
 )
 if [ "${1:-}" = "--skip-scenarios" ]; then

@@ -28,28 +28,30 @@ is one command rather than a flag somebody has to remember.
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **111 passing / 0 failing** of 111 (+4 skipped) |
 | Acceptance | `bash scripts/run-acceptance-tests.sh` | **130 passing / 0 failing** |
-| Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **9 passing / 0 failing** (6 in `tests.e2e` + 3 in `tests.starengine`) |
-| StarEngine | `bash scripts/run-scenario-tests.sh` | included above |
-| Everything, one compile | `bash scripts/run-full-tests.sh` | **260 passing / 0 failing** of 260 (+4 skipped) |
+| Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **6 passing / 0 failing** (all of `tests.e2e`) |
+| Everything, one compile | `bash scripts/run-full-tests.sh` | **257 passing / 0 failing** of 257 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
-Two counts here are scope questions, not regressions. `--select-package
+Two of these counts are scope questions, not regressions. `--select-package
 tests.architecture` finds 10 tests while `run-architecture-tests.sh` runs 7 - the
-script names the rule classes it wants, the package selector takes everything
-under `tests.architecture`. And the scenario scope is `tests.e2e` (6) plus
-`tests.starengine` (3); the "10" this table used to quote predates the two
-`loneNexusFallsFast` controls being replaced by `StubWorldDamageTest`, which is
-where the difference came from.
+script names the rule classes it wants, the package selector takes everything under
+`tests.architecture`. And the scenario scope is `tests.e2e` alone (6); the "10"
+this table used to quote predates the two `loneNexusFallsFast` controls being
+replaced by `StubWorldDamageTest`.
+
+A third scope no longer exists: `tests.starengine` was 3 assertion-free smoke runs,
+and the whole simulator is gone as of 2026-10-04 (OpenBW replaces it -
+`_AI/IDEA-E2E-TESTS.md` Stage 5). `scripts/run-full-tests.sh` and
+`scripts/run-scenario-tests.sh` no longer have a starengine row.
 
 ### Where the time goes (measured 2026-10-04)
 
 | scope | test time | note |
 |---|---|---|
-| compile (1559 sources, every script) | **3.7 s** | unchanged; it was never the bottleneck |
+| compile (1534 sources, every script) | **3.7 s** | 29 fewer sources since StarEngine went; it was never the bottleneck |
 | `tests.unit` | **3 s** | what `run-tests.sh` runs by default |
 | `tests.architecture` | **1-2 s** | ten boundary rules in the package, seven of them in `run-architecture-tests.sh` |
 | `tests.acceptance` | **7 s** (was 12.2 s) | world/squad/commander behaviour; the drop is the eval-hedge round, where the slower scenarios got faster |
-| `tests.starengine` | **8.2 s** | the stub-engine simulator |
 | `tests.e2e` | **39 s** (was 136 s) | four 900-frame stub games, two of which stop early |
 
 So the fast loop is ~6 s end to end and never touches the slow tiers; the whole

@@ -37,13 +37,12 @@ tooling in the loop.
   exists: Chaos vs OpenBW), but `Main` still assumes Chaos surroundings
   (`GAME_LAUNCHER=CHAOS`, `AtlantisRaceConfig`, `bwapi.ini` rewriting,
   `ProcessHelper` taskkill).
-- `src/starengine/` (~29 files: frame stepper, combat sim in `sc_logic/`,
-  Swing canvas debug window, assets) plus its tests
-  (`tests/starengine/`: `DragoonsVsDragoonsTest`,
-  `MoonFormationTest`, `bases/EnemyThirdBaseTest`) plus `isUsingEngine`
-  branches in `AbstractWorldCreatingTest`, `FakeOnFrameEnd`, `FakeUnit`.
-  Nothing outside `src/starengine` and `src/tests` imports it, but
-  `scripts/build-bot-jar.sh` ships the package inside the game jar.
+- ~~`src/starengine/` (frame stepper, combat sim in `sc_logic/`, Swing canvas
+  debug window, assets) plus its tests and the `isUsingEngine` branches~~ —
+  **removed 2026-10-04** (the owner's ruling: OpenBW replaces it, so repairing a
+  second engine is not worth it). See Stage 5 for what went with it and what was
+  measured; the game jar stopped shipping the test harness in the same commit,
+  which was the reason to do it now rather than after OpenBW lands.
 - Tier 0 already runs: `tests.e2e` (`ZombieAttacksNearestUnit` +
   `ScenarioCombat`) plays the two scripted rush scenarios in the stub world
   with documented harness physics, both green with their baselines pinned.
@@ -170,20 +169,48 @@ broken bot (e.g. previous release) fails it.
 - Same-seed-twice determinism check of the runner itself.
 - Occasional OpenBW-vs-scbw parity game.
 
-### Stage 5 — StarEngine removal (only after Stage 3 steps for its tests)
+### Stage 5 — StarEngine removal — **done 2026-10-04, ahead of Stage 3**
 
-StarEngine results do not resemble the game closely enough to assert on, so
-it goes - but its *tests* partly test Atlantis logic (formations), not the
-engine, and those survive by moving to the OpenBW stepper:
-1. Port `MoonFormationTest`, `DragoonsVsDragoonsTest`, `EnemyThirdBaseTest`
-   to the new stepper (or to stub-world where they do not need resolution).
-2. Delete `src/starengine/` (including the Swing canvas - replays + CherryVis
-   already cover debugging, see `DOCS/HOW-TESTS-WORK.md` §2.7).
-3. Remove the `isUsingEngine` branches (`AbstractWorldCreatingTest`,
-   `FakeOnFrameEnd`, `FakeUnit`) and stop shipping the package in
-   `scripts/build-bot-jar.sh`.
-4. Full suite + ArchUnit green with no starengine references left
-   (`grep -r starengine src/` empty).
+StarEngine results do not resemble the game closely enough to assert on, so it
+goes. The plan was to port its three tests to the OpenBW stepper first; the
+measurement said there was nothing to port:
+
+| what the three tests did | |
+|---|---|
+| `MoonFormationTest.moonShape` | printed positions and issued `MOVE_FORMATION` - no assertion |
+| `DragoonsVsDragoonsTest.goonsUseReasonableManagers` | ran the commander and printed one unit's action - no assertion |
+| `bases/EnemyThirdBaseTest` | a base-building scenario, again printing, not asserting |
+| `useStarEngine()` | commented out in all three, so they were already running in the stub world |
+
+So all three were smoke runs with zero assertions, and what was actually lost is
+the *option* of asserting on a simulated fight until OpenBW is here. That is a
+smaller loss than it looked, which is why the removal did not wait for Stage 3.
+
+What went in the commit:
+1. Deleted `src/starengine/` (26 files, 1209 lines, including the Swing canvas -
+   replays + CherryVis already cover debugging, see `DOCS/HOW-TESTS-WORK.md` §2.7)
+   and `tests/starengine/` (the three assertion-free smoke runs above).
+2. Removed the `isUsingEngine` branches (`AbstractWorldCreatingTest`,
+   `FakeOnFrameEnd`, `FakeUnit`) and `Env.markUsingStarEngine`/`isStarEngine`,
+   whose only writer was the launcher and whose only reader was a commented-out
+   line in `Select`.
+3. `FakeUnit`'s two StarEngine enums (`EngineUnitState`, `AttackState`) became
+   plain flags: nothing but the simulator ever set them, so every stub world saw
+   `false` and still does.
+4. `scripts/build-bot-jar.sh` now drops `tests/**` and `starengine/**` from the
+   payload and *fails the build* if any packaged class still names `tests/` in
+   its constant pool. Measured on the same machine: 3755 entries before, 3610
+   after - 119 harness classes and 26 simulator classes that the game never
+   needed - and the production-side scan found 0 references, which is why the
+   drop is safe rather than hopeful.
+5. Full suite + ArchUnit green with no `starengine` reference left in `src/`
+   except one sentence in `FakeUnit` explaining what the flags used to be.
+
+**Still open, and it is the reason the OpenBW tiers matter:** nothing can assert
+on a *simulated* fight yet. `tests.e2e` plays scripted scenarios with harness
+physics (units teleport-straight-line, damage per tick), which is enough for
+defence mechanisms like B-19 and not enough for "does this micro win the fight".
+Stage 3 is where that comes from.
 
 ### Stage 6 — cadence (write it down when Stage 1 lands)
 

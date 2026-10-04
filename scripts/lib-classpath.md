@@ -9,7 +9,7 @@ does not has to stay **out** of it.
 
 | What | From | Needed by |
 |---|---|---|
-| `atlantis/**`, `main/**`, `jfap/**`, `starengine/**`, `bweb/**`, `jbweb/**`, `jps/**` | compiled from `src/` | the bot itself |
+| `atlantis/**`, `main/**`, `jfap/**`, `bweb/**`, `jbweb/**`, `jps/**` | compiled from `src/` | the bot itself |
 | `tests/fakes/**`, `tests/unit/helpers/**`, `tests/acceptance/WorldStubForTests` | compiled from `src/` | **15 production classes import the test harness** (see below) |
 | `bwapi/**`, `bwem/**`, `com/sun/jna/**`, `win32-*/**` | `lib/JBWAPI-Rav.jar`, whole | the BWAPI bridge, JNA (jnativehook needs it), natives |
 | `com/esotericsoftware/**`, `org/objenesis/**`, `org/reflectasm/**`, `org/minlog/**` | `lib/kryo-5.6.2.jar`, `lib/kryo-deps/*` | `atlantis.util.object.ObjectToFile` |

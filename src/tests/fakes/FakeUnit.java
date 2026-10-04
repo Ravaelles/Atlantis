@@ -13,10 +13,7 @@ import atlantis.units.actions.Action;
 import bwapi.TechType;
 import bwapi.UnitType;
 import bwapi.UpgradeType;
-import starengine.sc_logic.AttackState;
-import starengine.units.state.EngineUnitState;
 
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +30,19 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean neutral = false;
     public APosition targetPosition = null;
 
-    public EngineUnitState state = EngineUnitState.STOP;
-    public EngineUnitState previousState = EngineUnitState.STOP;
-    public AttackState attackState = AttackState.READY;
+    // === StarEngine ==========================================
+
+    /**
+     * Whether this unit is in the frame it fires in / the frame it starts firing in.
+     *
+     * <p>These two used to be {@code starengine} enums the simulator set as it ran;
+     * nothing else ever wrote them, so they were false in every stub world. They are
+     * plain flags now that the simulator is gone - the open question they were part
+     * of ("does a stub unit know which attack frame it is on?") belongs to whatever
+     * engine the tests end up on.</p>
+     */
+    public boolean attackFrame = false;
+    public boolean startingAttack = false;
     public int attackStartedAt = -1;
 
     public double angle = 0;
@@ -112,20 +119,6 @@ public class FakeUnit extends AUnit implements Serializable {
         }
         return lastCommand;
     }
-
-    // === StarEngine ==========================================
-
-    private BufferedImage _image = null;
-
-    public BufferedImage image() {
-        return _image;
-    }
-
-    public void setImage(BufferedImage image) {
-        _image = image;
-    }
-
-    // === END OF StarEngine ===================================
 
     @Override
     public int id() {
@@ -279,12 +272,12 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     public boolean isAttackFrame() {
-        return isAttacking() && attackState.equals(AttackState.ATTACK_FRAME);
+        return isAttacking() && attackFrame;
     }
 
     @Override
     public boolean isStartingAttack() {
-        return isAttacking() && attackState.equals(AttackState.STARTING_ATTACK);
+        return isAttacking() && startingAttack;
     }
 
     @Override

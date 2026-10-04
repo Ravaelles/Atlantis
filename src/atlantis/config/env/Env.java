@@ -19,7 +19,6 @@ public class Env {
     private static boolean generateCherryVisReplay = false;
     private static boolean isBenchmark = false;
     private static boolean isLocal = false;
-    private static boolean isStarEngine = false;
     private static boolean isTesting = false;
     private static boolean modifyBwapiIni = false;
     private static boolean openBW = false;
@@ -177,10 +176,6 @@ public class Env {
         return isBenchmark;
     }
 
-    public static boolean isStarEngine() {
-        return isStarEngine;
-    }
-
     /**
      * OpenBW backend (Linux, headless server) selected via
      * {@code GAME_LAUNCHER=OPENBW} in {@code bwapi-data/AI/ENV}.
@@ -193,10 +188,6 @@ public class Env {
 
     public static void markIsTesting(boolean enabled) {
         isTesting = enabled;
-    }
-
-    public static void markUsingStarEngine(boolean enabled) {
-        isStarEngine = enabled;
     }
 
     public static String copyCherryVisDataTo() {
