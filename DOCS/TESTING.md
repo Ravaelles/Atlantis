@@ -9,6 +9,8 @@ bash scripts/run-tests.sh                    # unit tests (default scope!)
 bash scripts/run-acceptance-tests.sh         # acceptance tests
 bash scripts/run-tests.sh --select-package tests    # everything at once
 bash scripts/run-architecture-tests.sh       # architecture bounds only
+bash scripts/run-scenario-tests.sh           # the scenario tier (tests.e2e)
+bash scripts/run-e2e.sh --self-test      # scbw verdict parser, no game needed
 ```
 
 `scripts/run-tests.sh` compiles all sources to `out/production/Atlantis` and

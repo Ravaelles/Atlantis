@@ -129,7 +129,34 @@ and OpenBW in-process second (fast and deterministic, needs C++ work, the
 real platform). Keep both afterwards - different trade-offs, both useful
 (see the comparison table in `DOCS/HOW-TESTS-WORK.md` §4).
 
-### Stage 1 — scbw E2E script (days, no C++, no engine changes)
+### Stage 1 — scbw E2E script — **script written 2026-10-04, first real game pending**
+
+`scripts/run-e2e.sh` exists, split into the half that needs the owner's container
+(`--bot-jar`, runs `scbw run`) and the half this repository can verify on its own
+(`--parse-only`, reads `GAME_*/result.json` + logs into `_AI/e2e/*.md`). Two
+things came out of writing it rather than guessing at it:
+
+  - **The `result.json` schema is unverified.** This repo has never read one, and
+    CONVENTIONS §9 (never state a game fact from memory) covers schemas as much as
+    numbers. So the parser recognises a handful of key spellings, prints every key
+    it saw next to each game, and writes `schema-unknown` for anything else instead
+    of inventing a verdict. The first real run rewrites those key lists.
+  - **The parse half has a test; the play half cannot have one here.**
+    `--self-test` builds four synthetic games — a win, a loss, an exception in the
+    log, and an unknown schema — and asserts the table it gets back. scbw itself
+    needs the licensed game plus a container (`~/.scbw/docker/game.dockerfile`), so
+    the play half stops with an explanation and exit code 2 rather than pretending.
+
+CONVENTIONS §8 was amended (2026-10-04) to allow reading `~/.scbw/games`
+read-only for this tier, writing nothing outside the workspace.
+
+Still to do, in order: run one real game with the jar this repo builds, paste the
+first table into `_AI/e2e/` as the baseline (numbers, date, versions), fix the
+schema if it differs, then the fixed scenario pairs from §4 (4pool, 9pool) and the
+retention rule. "Done" is unchanged: the same command reproduces the same table
+twice.
+
+The plan it implements:
 
 New `scripts/run-e2e.sh <bot-jar> <opponent> <maps>`: build via
 `scripts/build-bot-jar.sh`, play fixed scenarios (Atlantis as Protoss vs
