@@ -6,6 +6,7 @@ import atlantis.combat.squad.Squad;
 import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -53,6 +54,7 @@ public class ClearAllCaches {
         Worlds.reset();
 
         Missions.reset();
+        UnitsArchive.reset();
         AbstractFoggedUnit.clearCache();
         FakeUnit.clearCache();
         AliveEnemies.clearCache();

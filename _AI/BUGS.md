@@ -163,10 +163,26 @@ documented in code with a comment. The closure goes into the commit message.
   the construction yet*; an order already marked NOT_READY was never in scope. The
   trigger unit's own construction is excluded, which is why the log's natural was a
   *different* base than the one that had just finished.
-- **Still open (needs one line of the owner's log):** which base had completed. If it
-  was a **rebuild** of a base we already had (main lost and re-taken), the premise
-  "we have enough bases" is wrong in the first place and the pass should not run at
-  all - which is a separate fix, and the only thing this entry cannot decide alone.
+- **The half this entry could not decide alone, fixed 2026-10-04.** It needed one line
+  of the owner's log: which base had completed. If it was a **rebuild** of a base we
+  already had (main lost and re-taken), then "we have enough bases" is false in the
+  first place and the pass should not run at all. Rather than wait for the line, the
+  distinction is now made where it can be made: `UnitsArchive` stamps the frame our
+  last base died (the same shape as the combat-unit stamp next to it), and
+  `worthPruningBases()` refuses to prune when the base that just finished is a rebuild
+  - four-minute window, deliberately wider than a base takes to build, because the
+  false-positive cost is that one pass does not run, and leaving a pending base alone
+  has cost this bot a queued Nexus while the opposite has cost it a mineral field.
+  The aggressive half (`cancelNotStartedOrEarlyBases`) deliberately still runs: its
+  callers are giving up on an expansion to free minerals or to survive, which never
+  depended on "we gained a base". Two tests: a rebuild prunes nothing, and a base that
+  finishes with nothing lost still prunes (the precondition is not a switch-off).
+  Checked that the first one fails without the fix: "expected 2 but was 1".
+- **Side effect worth having:** `UnitsArchive` had no reset, so "when did our last base
+  die" (and the combat-unit stamp, and every per-type counter) leaked between tests in
+  the same JVM - test-order dependence in the one question whose answer is per-game.
+  `UnitsArchive.reset()` now runs from `ClearAllCaches.clearAll()`, the shape
+  `ReservedResources.reset()` and `Missions.reset()` already had.
 
 ## B-22 — "we build a zealot and a dragoon and then nothing"
 

@@ -6,6 +6,7 @@ import atlantis.production.dynamic.expansion.decision.CancelNotStartedBases;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * cancel only when there are <b>two or more</b>, keeping the oldest of the ones nobody
  * has started on and never touching a construction that has a builder on it.</p>
  *
- * <p>The four tests are the four halves of that sentence.</p>
+ * <p>Four tests are the four halves of that sentence, and two more cover the
+ * precondition that came out of the same entry: a base that finishes right after we lost
+ * one is a <i>rebuild</i>, not an expansion, and nothing was gained - see
+ * {@link atlantis.information.enemy.UnitsArchive#lastTimeOurBaseDiedLessThanAgo(int)}.</p>
  */
 public class CancelNotStartedBasesTest extends WorldStubForTests {
 
@@ -109,6 +113,44 @@ public class CancelNotStartedBasesTest extends WorldStubForTests {
 
             assertEquals(0, pendingBases(),
                 "the aggressive policy still drops a half-built base");
+        });
+    }
+
+    @Test
+    public void aRebuildOfABaseWeLostDoesNotPruneAnything() {
+        world(1, ourWorld(), enemies(), () -> {
+            queue = initQueue();
+            queuePlannedBase();
+            queuePlannedBase();
+
+            // We lost a base a moment ago and now one finished. That is not "we have
+            // enough bases": it is what we had before, back again - which is the half of
+            // B-23 the report could not decide, because from inside this pass the two
+            // look identical.
+            UnitsArchive.markUnitAsDestroyed(fake(Protoss_Nexus, 70, 10));
+
+            CancelNotStartedBases.cancelNotStartedBases(
+                fake(Protoss_Nexus, 10, 10), "New base created, remove not started ones");
+
+            assertEquals(2, pendingBases(),
+                "a rebuilt base is not a new base, so the premise of this pass is false");
+        });
+    }
+
+    @Test
+    public void aBaseThatFinishesWithoutALostBaseStillPrunes() {
+        world(1, ourWorld(), enemies(), () -> {
+            queue = initQueue();
+            queuePlannedBase();
+            queuePlannedBase();
+
+            // The other half of the same sentence: the precondition above must not have
+            // turned the pass off. No base was lost here, so two pending bases is still
+            // one redundant base.
+            CancelNotStartedBases.cancelNotStartedBases(
+                fake(Protoss_Nexus, 10, 10), "New base created, remove not started ones");
+
+            assertEquals(1, pendingBases());
         });
     }
 

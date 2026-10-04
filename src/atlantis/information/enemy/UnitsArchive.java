@@ -21,6 +21,7 @@ public class UnitsArchive {
 
     protected static int enemyBasesDestroyed = 0;
     protected static int lastTimeOurCombatUnitDied = -9999;
+    protected static int lastTimeOurBaseDied = -9999;
 
     // =========================================================
 
@@ -131,6 +132,12 @@ public class UnitsArchive {
 
             if (unit.isCombatUnit()) lastTimeOurCombatUnitDied = A.now();
         }
+
+        // Which is how "a base finished" can be told apart from "a base we lost came
+        // back" (BUGS.md B-23): losing the main and re-taking it completes a base,
+        // and every "we have enough bases now, drop the pending ones" reader would
+        // read that as a gain. Same shape as the combat-unit stamp above.
+        if (unit.isBase()) lastTimeOurBaseDied = A.now();
     }
 
     public static void enemyUnitDestroyed(AUnit enemy) {
@@ -152,6 +159,28 @@ public class UnitsArchive {
         }
     }
 
+    /**
+     * Forget the archive: destroyed units, per-type counters and both "when did our
+     * last X die" stamps.
+     *
+     * <p>Same reason {@code ReservedResources.reset()} and {@code Missions.reset()}
+     * exist: this is per-game state, and the test harness runs many games in one JVM.
+     * Without it a base that died in one test is still "recently lost" in the next one,
+     * which is a question whose answer depends on the game - the most expensive kind of
+     * test order dependence.</p>
+     */
+    public static void reset() {
+        destroyedUnitIds.clear();
+        enemyLostTypes.map().clear();
+        ourLostTypes.map().clear();
+        ourKilledResourcesPerUnitTypes.map().clear();
+        ourLostResourcesPerUnitTypes.map().clear();
+        ourKillCountersPerUnitTypes.map().clear();
+        enemyBasesDestroyed = 0;
+        lastTimeOurCombatUnitDied = -9999;
+        lastTimeOurBaseDied = -9999;
+    }
+
     public static boolean isDestroyed(AUnit unit) {
         return destroyedUnitIds.containsKey(unit.id());
     }
@@ -168,6 +197,20 @@ public class UnitsArchive {
 
     public static boolean lastTimeOurCombatUnitDiedLessThanAgo(int frames) {
         return A.ago(lastTimeOurCombatUnitDied) < frames;
+    }
+
+    /**
+     * Did one of our own bases die within the last {@code frames}?
+     *
+     * <p>The question B-23 asks: a base that finishes right after we lost one is a
+     * rebuild, not an expansion, so nothing was gained and the "we have enough bases"
+     * premise of the pruning pass is false in the first place. The window is generous
+     * on purpose (the caller passes minutes, not seconds) because the only cost of a
+     * false positive is that one pass does not run - the aggressive pass, whose callers
+     * are giving up on an expansion anyway, does not ask.</p>
+     */
+    public static boolean lastTimeOurBaseDiedLessThanAgo(int frames) {
+        return A.ago(lastTimeOurBaseDied) < frames;
     }
 
     public static boolean lastTimeOurCombatUnitDiedMoreThanAgo(int frames) {

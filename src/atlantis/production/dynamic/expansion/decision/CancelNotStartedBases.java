@@ -2,6 +2,7 @@ package atlantis.production.dynamic.expansion.decision;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.information.enemy.UnitsArchive;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
@@ -15,6 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CancelNotStartedBases {
+    /**
+     * How long after losing a base a finished base still counts as its replacement.
+     * Four minutes at the game's ~23.81 frames per second: longer than a base takes to
+     * go up, and long enough to cover the walk home and the mineral income after it.
+     */
+    private static final int REBUILD_WINDOW_FRAMES = 4 * 60 * 24;
+
 
     /**
      * "We have enough bases, so drop the ones we never started" - but only when that
@@ -36,7 +44,7 @@ public class CancelNotStartedBases {
      * again a minute later - which is the churn this whole pass used to cause.</p>
      */
     public static void cancelNotStartedBases(AUnit newBase, String reason) {
-        if (!worthPruningBases()) return;
+        if (!worthPruningBases(newBase)) return;
 
         for (ProductionOrder order : redundantNotStartedBases(newBase)) {
             cancel(order, reason);
@@ -53,7 +61,7 @@ public class CancelNotStartedBases {
      * thing they are unhappy about, not the number of them.</p>
      */
     public static void cancelNotStartedOrEarlyBases(AUnit newBase, String reason) {
-        if (!worthPruningBases()) return;
+        if (!worthPruningBases(null)) return;
 
         Queue.get().statusNotReady().ofType(AtlantisRaceConfig.BASE).forEach((order) -> {
             Construction construction = order.construction();
@@ -65,8 +73,32 @@ public class CancelNotStartedBases {
 
     // =========================================================
 
-    private static boolean worthPruningBases() {
-        return A.seconds() < 700 && Count.bases() < 3;
+    private static boolean worthPruningBases(AUnit newBase) {
+        return A.seconds() < 700 && Count.bases() < 3 && !isRebuildOfALostBase(newBase);
+    }
+
+    /**
+     * Was the base that just finished one we already had?
+     *
+     * <p>Losing the main and re-taking it completes a base, and this pass reads a
+     * completed base as "we have enough bases now" - which is then false: we have
+     * what we had before, minus whatever we lost. B-23 reported a natural cancelled
+     * with the reason "New base created, remove not started ones" and could not say
+     * whether the completed base was a new one or a rebuild, because the two look
+     * identical from here. They are not: {@link UnitsArchive} stamps the frame our
+     * last base died, and a base that completes within {@link #REBUILD_WINDOW_FRAMES}
+     * of that is a rebuild.</p>
+     *
+     * <p>The window is deliberately wider than a base takes to build - it is the whole
+     * "we lost it and are putting it back" episode, not the build - and the only cost
+     * of a false positive is that this one pass does not run, which is the conservative
+     * direction: leaving a pending base alone has cost this bot a queued Nexus, never a
+     * lost mineral field.</p>
+     */
+    private static boolean isRebuildOfALostBase(AUnit newBase) {
+        return newBase != null
+            && newBase.isBase()
+            && UnitsArchive.lastTimeOurBaseDiedLessThanAgo(REBUILD_WINDOW_FRAMES);
     }
 
     /**
