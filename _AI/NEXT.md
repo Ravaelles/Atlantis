@@ -447,4 +447,16 @@ itself, #5, is design work and out of that order's scope).
   (`GAME_5AC1C438`, `GAME_5C6F3544`) and for the race/harness round
   (`GAME_7D1C5E57`, `is_crashed: false`, zero exceptions, 51 units built);
   repeat after the next backlog round so `bots/AtlantisP` and `bots/AtlantisT`
-  never lag behind the source.
+  never lag behind the source. **Due again after the 2026-10-04 round, and this
+  one is not only a version bump** - three of the changes in it are behaviour or
+  payload, and one game run would confirm all three:
+
+  | what to watch in the game | why it matters | how it was verified here |
+  |---|---|---|
+  | the bot starts at all | the jar no longer ships `tests/**` (119 classes) or `starengine/**` (26) | 0 of 3610 packaged classes reference either, and the build now fails if one ever does |
+  | no building is produced twice | B-9: production progress now comes from the units, not from a `Construction` link | unit + acceptance green; `QueueInProgressInvariantTest` pins the whole lifecycle |
+  | fewer suicide missions, more caution around even fights | B-18: our own combat eval reads 0.3 lower than the raw ratio | unit + acceptance + all six scenarios green; the doctrine itself is a game-run question |
+
+  The jar assertions that used to *require* the harness are inverted, so this
+  round also removes a class of deploy mistakes: a jar that shipped without them
+  used to be a build failure, and now it is the correct thing to build.
