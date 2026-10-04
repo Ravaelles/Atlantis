@@ -17,7 +17,7 @@ runs JUnit via `lib/junit-platform-console-standalone-1.10.0.jar`.
 ## Two scopes, two baselines — read this before trusting a green run
 
 **The default run only executes `tests.unit`.** The whole
-`tests.acceptance` package (world/squad/commander behaviour, 129 tests) is
+`tests.acceptance` package (world/squad/commander behaviour, 126 tests) is
 **not** run by `bash scripts/run-tests.sh`. That was true for the whole
 architecture effort, and it hid a lot: acceptance tests were written against a
 broken harness and were never executed, so nobody saw 44 failures sitting in
@@ -26,9 +26,10 @@ is one command rather than a flag somebody has to remember.
 
 | Scope | Command | Result (2026-10-03) |
 |---|---|---|
-| Unit (default) | `bash scripts/run-tests.sh` | **105 passing / 0 failing** of 105 (+4 skipped) |
-| Acceptance | `bash scripts/run-acceptance-tests.sh` | **129 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **244 passing / 0 failing** of 244 (+4 skipped) |
+| Unit (default) | `bash scripts/run-tests.sh` | **106 passing / 0 failing** of 106 (+4 skipped) |
+| Acceptance | `bash scripts/run-acceptance-tests.sh` | **126 passing / 0 failing** |
+| Scenario (stub-world E2E + StarEngine) | `bash scripts/run-scenario-tests.sh` | **7 passing / 0 failing** |
+| Everything | `bash scripts/run-tests.sh --select-package tests` | **249 passing / 0 failing** of 249 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
@@ -76,18 +77,19 @@ while read -r cls; do
 done < /tmp/testclasses.txt
 ```
 
-Baseline (2026-10-03): **78 classes, 244 tests, 0 failures** - every class passes
-with nothing but its own `setUp()` behind it. Five classes run zero tests on
-purpose: `AbstractWorldCreatingTest` (abstract base), `RetreatScenarioTest` and
+Baseline (2026-10-04): **79 classes, 0 failures** - every class passes with
+nothing but its own `setUp()` behind it. Five classes run zero tests on purpose:
+`AbstractWorldCreatingTest` (abstract base), `RetreatScenarioTest` and
 `UnitsForRetreatTest` (helpers with no `@Test`), `UnitTest` (helper), and
 `ObjectToFileTest` (the four skipped ones).
 
-This is the check that would have caught the regression in commit `2b103237`'s
-predecessor the moment it was written: routing `AUnit`'s type through a port made
-the answer depend on a source the harness installs in `setUp()`, and
-`UnitRegistryTest` - which installs nothing - failed 4 of 4 in its own JVM while
-the full suite was green most of the time. A class that only passes in company is
-a class that documents nothing.
+This is the check that catches what the seeds only catch sometimes. It found two
+real defects on 2026-10-04: `UnitRegistryTest`, which installs nothing and failed
+4 of 4 alone while the full suite was green most of the time, and - the harder one
+- a queue shared between tests through the static `Strategy`/`Queue` pair, which
+only ever showed up as "3 of 8 random-order runs red, always in the scenarios,
+never in isolation". A class that only passes in company is a class that documents
+nothing.
 
 ## A test must state its race
 
