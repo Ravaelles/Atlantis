@@ -1,6 +1,7 @@
 package atlantis.production.constructions.cancelling;
 
 import atlantis.map.position.APosition;
+import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
@@ -38,7 +39,7 @@ public class CancelConstruction {
 
         ConstructionRequests.removeOrder(construction);
 
-        cancelLog.addMessage(type.name(), null);
+        cancelLog.addMessage(type.name(), null, A.now());
     }
 
     public static int countRecentCancellationsOf(AUnitType type) {

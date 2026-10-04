@@ -1,6 +1,5 @@
 package atlantis.util.log;
 
-import atlantis.debug.tools.LogMessage;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 
@@ -36,8 +35,14 @@ public class Log {
 
     // =========================================================
 
-    public void addMessage(String message, AUnit unit) {
-        messages.add(new LogMessage(message, expireAfterFrames));
+    /**
+     * {@code createdAtFrames} is passed in rather than read here: reading the
+     * clock is what kept {@code LogMessage} (and through it this class) pointing
+     * at {@code atlantis.debug} and {@code atlantis.game}. Callers are unit and
+     * construction code, which already know the frame.
+     */
+    public void addMessage(String message, AUnit unit, int createdAtFrames) {
+        messages.add(new LogMessage(message, expireAfterFrames, createdAtFrames));
 
         if (SAVE_UNIT_LOGS_TO_FILES > 0 && unit != null) LogUnitsToFiles.saveUnitLogToFile(message, unit);
 
@@ -48,9 +53,9 @@ public class Log {
 //        }
     }
 
-    public ArrayList<LogMessage> messages() {
+    public ArrayList<LogMessage> messages(int nowFrames, long nowRealSeconds) {
         if (A.everyNthGameFrame(expireAfterFrames)) {
-            removeOldMessages();
+            removeOldMessages(nowFrames, nowRealSeconds);
         }
 
         return messages;
@@ -71,14 +76,14 @@ public class Log {
         return messages.get(messages.size() - 1);
     }
 
-    public void replaceLastWith(String replaceWith, AUnit unit) {
+    public void replaceLastWith(String replaceWith, AUnit unit, int createdAtFrames) {
         if (messages.isEmpty()) {
-            addMessage(replaceWith, unit);
+            addMessage(replaceWith, unit, createdAtFrames);
             return;
         }
 
         messages.remove(messages.size() - 1);
-        addMessage(replaceWith, unit);
+        addMessage(replaceWith, unit, createdAtFrames);
     }
 
     public boolean isEmpty() {
@@ -104,10 +109,10 @@ public class Log {
 
     // =========================================================
 
-    private void removeOldMessages() {
+    private void removeOldMessages(int nowFrames, long nowRealSeconds) {
         if (expireAfterFrames == -1) return;
 
-        messages.removeIf(LogMessage::expired);
+        messages.removeIf(message -> message.expired(nowFrames, nowRealSeconds));
     }
 
     public void print() {

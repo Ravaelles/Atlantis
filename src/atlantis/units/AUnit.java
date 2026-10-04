@@ -2967,7 +2967,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (Env.isTournament()) return true;
 
         if (!log.lastMessageWas(message)) {
-            log.addMessage(message, this);
+            log.addMessage(message, this, A.now());
         }
 
         return true;
@@ -3352,14 +3352,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             addLog(managerUsed.toString());
         }
         else {
-            managerLogs.replaceLastWith(managerUsed.toString(), this);
+            managerLogs.replaceLastWith(managerUsed.toString(), this, A.now());
         }
 
         this.tooltipForManager = message;
     }
 
     private void addManagerLogMessage(String message) {
-        managerLogs.addMessage(message, this);
+        managerLogs.addMessage(message, this, A.now());
 
         if (ACherryVis.isEnabled()) {
             ACherryVis.logger().unitManager(message, this);
@@ -3964,7 +3964,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 //        if (unitAction.equals(Actions.ATTACK_UNIT)) AConsole.printStackTrace("Attack Unit issued now");
 
         commandHistory.addMessage(
-            command.name() + "/a:" + action().name() + "/" + tooltip, this
+            command.name() + "/a:" + action().name() + "/" + tooltip, this, A.now()
         );
     }
 

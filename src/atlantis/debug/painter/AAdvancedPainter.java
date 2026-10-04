@@ -67,7 +67,7 @@ import atlantis.util.HasReason;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 import atlantis.util.log.Log;
-import atlantis.debug.tools.LogMessage;
+import atlantis.util.log.LogMessage;
 import bwapi.Color;
 import bwapi.TechType;
 import bwapi.UpgradeType;
@@ -295,10 +295,11 @@ public class AAdvancedPainter extends APainter {
 
 //        Log log = unit.log(); // Custom logs
         Log log = unit.managerLogs(); // Manager history logs
+        int nowFrames = A.now();
 
 //        for (int i = log.messages().size() - 1; i >= 0; i--) {
-        for (int i = 0; i < log.messages().size(); i++) {
-            LogMessage message = log.messages().get(i);
+        for (int i = 0; i < log.messages(nowFrames, A.realSecondsNow()).size(); i++) {
+            LogMessage message = log.messages(nowFrames, A.realSecondsNow()).get(i);
 //            unit.paintInfo(message.createdAtFrames() + "-" + message.message(), Color.Grey, offset);
 
             String text = message.createdAtFrames() + "-" + message.message();
@@ -310,7 +311,7 @@ public class AAdvancedPainter extends APainter {
                 unit,
                 text,
 //                i == 0 ? Color.Yellow : (i == 1 ? Color.White : Color.Grey),
-                i == log.messages().size() - 1 ? Yellow : Color.Grey,
+                i == log.messages(nowFrames, A.realSecondsNow()).size() - 1 ? Yellow : Color.Grey,
                 0,
                 (baseOffset + (8 * (counter++))) / 32.0
             );
@@ -1500,8 +1501,8 @@ public class AAdvancedPainter extends APainter {
 
         int counter = 0;
         setTextSizeSmall();
-        for (LogMessage log : GameLog.get().messages()) {
-            paintMessage(log.message(), log.color(), x, y - 12 * counter++, true);
+        for (LogMessage log : GameLog.get().messages(A.now(), A.realSecondsNow())) {
+            paintMessage(log.message(), log.color(A.realSecondsNow()), x, y - 12 * counter++, true);
         }
     }
 
