@@ -117,15 +117,24 @@ documented in code with a comment. The closure goes into the commit message.
   condition `!construction.hasStarted() || construction.progressPercent() <= 49`.
   The second half cancels anything **up to half built**, which is a different policy
   under the same name, and it is the half that eats a natural with a builder on it.
-- **Fixed 2026-10-04:** the two are two methods.
-  `cancelNotStartedBases(newBase, reason)` is the doctrine its name describes and is
-  what `OnOurUnitCreated` calls; `cancelNotStartedOrEarlyBases` keeps the aggressive
-  half for the four callers whose reason is "give up on this expansion for minerals
-  or survival" - "Cancel base - much weaker", "Critical base cancel",
-  "HiddenEnemiesPressure", and the expansion veto in `ProtossShouldExpand.no(...)`.
-  Pinned by `CancelNotStartedBasesTest`, three ways: a rising natural survives the
-  new-base pass, a base we never started is still dropped by it, and the aggressive
-  pass still drops the half-built one.
+- **Fixed 2026-10-04, in the owner's words:** *"see all unfinished bases / buildings
+  / units of that type and if there is more than one unfinished, cancel it. But only
+  if >= 2"*. So `cancelNotStartedBases` now counts everything unfinished of the base
+  type - rising buildings and units, constructions ordered but not started, and
+  constructions still only a request - and returns early when that count is below two.
+  Which one goes: only bases nobody has started on are prunable (the construction with
+  a builder keeps its minerals and its worker); if something is already going up the
+  pending ones all go, and if nothing has started the **oldest** pending base is kept
+  and the rest dropped, because cancelling every pending expansion only makes the bot
+  queue them again a minute later - which is the churn this pass used to cause.
+  `cancelNotStartedOrEarlyBases` keeps the aggressive half for the four callers whose
+  reason is "give up on this expansion for minerals or survival" - "Cancel base -
+  much weaker", "Critical base cancel", "HiddenEnemiesPressure", and the expansion
+  veto in `ProtossShouldExpand.no(...)`.
+- **Test (done):** `CancelNotStartedBasesTest`, four halves of that sentence - a
+  single pending base survives; of two pending bases only the newer is dropped; a
+  pending base is dropped when another one is already being built, and that one is
+  untouched; the aggressive pass still drops a half-built base.
 - **Measured along the way, worth knowing:** the pass looks at
   `Queue.get().statusNotReady()`, which is the double negative - orders whose status
   is *not* `NOT_READY`. So "not started" here means *ready to produce with no unit on
