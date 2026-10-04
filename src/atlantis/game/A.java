@@ -24,8 +24,13 @@ import java.util.regex.Pattern;
  * Utility helper class A(tlantis). Makes it much easier to execute many commonly used methods.
  */
 public class A {
-    public static int s; // Seconds - real time
-    public static int now; // Frames - game frames (~30 = 1s)
+    /**
+     * Seconds - real time. The only counter left as a public field; the frame number
+     * it used to sit next to had no production reader any more (everything reads
+     * {@link #now()}), so it went on 2026-10-04 and {@link #setNow} is the only writer
+     * of what is left.
+     */
+    public static int s;
 
     /**
      * <b>Random</b> object that can be used in any part of code.
@@ -164,11 +169,12 @@ public class A {
     /**
      * The only place the frame and second counters get written.
      *
-     * <p>There are two views of them: these legacy public fields ({@code now} and
-     * {@code s}) and {@link atlantis.util.GameClock}, which the kernel reads because
-     * {@code atlantis.util} may not depend on {@code atlantis.game}. Both are written
-     * here, in one breath, so they cannot drift apart - which they did: the acceptance
-     * tier's {@code AbstractWorldCreatingTest.onFrameStart} wrote the fields without
+     * <p>There are two views of the counters: this field ({@code s}, for the four
+     * production classes that still read it) and {@link atlantis.util.GameClock}, which
+     * the kernel reads because {@code atlantis.util} may not depend on
+     * {@code atlantis.game}. Both are written here, in one breath, so they cannot drift
+     * apart - which they did: the acceptance tier's
+     * {@code AbstractWorldCreatingTest.onFrameStart} wrote the fields without
      * publishing, so kernel code reading the clock there saw the previous frame (found
      * by the GLM review of 2026-10-04, F-1).</p>
      *
@@ -177,14 +183,13 @@ public class A {
      * ({@code AbstractTestWithUnits.useFakeTime},
      * {@code AbstractWorldCreatingTest.onFrameStart}).</p>
      *
-     * <p>{@code now} itself has no production reader left - everything reads
-     * {@link #now()} - and {@code s} still has four
-     * ({@code NeedChokeBlockers}, {@code DontAttackOverlords},
-     * {@code ProtossForceFight}, {@code LeaderProgressFlagToNextFocusChoke}), so
-     * neither field is going away in this commit.</p>
+     * <p>{@code s} still has four readers ({@code NeedChokeBlockers},
+     * {@code DontAttackOverlords}, {@code ProtossForceFight},
+     * {@code LeaderProgressFlagToNextFocusChoke}), so it stays a field; moving those
+     * four to {@link #seconds()} is a separate change, and unlike the frame field it
+     * is not a dead one.</p>
      */
     public static void setNow(int framesNow, int secondsNow) {
-        now = framesNow;
         s = secondsNow;
 
         GameClock.publish(framesNow, secondsNow);

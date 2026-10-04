@@ -147,10 +147,9 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
         // publishing to atlantis.util.GameClock, so every kernel reader of the clock
         // (the cache TTL, the log expiry, the error throttle) saw the previous frame in
         // the whole acceptance tier. Found by the GLM review of 2026-10-04, F-1.
-        // Through A.setNow, not two field writes: this class wrote A.s/A.now without
-        // publishing to atlantis.util.GameClock, so every kernel reader of the clock
-        // (the cache TTL, the log expiry, the error throttle) saw the previous frame in
-        // the whole acceptance tier. Found by the GLM review of 2026-10-04, F-1.
+        // Published here, before the body runs, and never re-stubbed: the AGame mock
+        // answers from this clock (AbstractTestWithUnits.stubAGameClock), so the
+        // per-frame publish is two field writes, not a Mockito registration.
         A.setNow(framesNow, framesNow / 30);
     }
 

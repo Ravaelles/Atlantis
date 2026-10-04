@@ -27,6 +27,7 @@ import atlantis.units.AUnitType;
 import tests.fakes.FakeFoggedUnit;
 import atlantis.units.select.BaseSelect;
 import atlantis.util.AConsole;
+import atlantis.util.GameClock;
 import atlantis.util.Options;
 import atlantis.util.cache.Cache;
 import tests.fakes.UnitStatsTable;
@@ -131,8 +132,8 @@ public class AbstractTestWithUnits extends UnitTest {
 //        HeuristicCombatEvaluator.clearCache();
 
         // Always reset the clock, including for world-based tests: AUnitTest
-        // (and others) mix world-free tests with world() tests, and the
-        // A.now field left behind by the previous test then disagreed with the
+        // (and others) mix world-free tests with world() tests, and the frame
+        // counter left behind by the previous test then disagreed with the
         // mocked AGame.now(). A "5 frames ago" assertion was off by one purely
         // because of which test ran before. Frame 0 also keeps every modulo
         // division in the bot returning 0.
@@ -329,30 +330,51 @@ public class AbstractTestWithUnits extends UnitTest {
 
         // One source of truth, set here. Production code reaches the frame
         // number through A.now(), which delegates to the statically mocked
-        // AGame.now() - so the mock is stubbed here, for world-free tests as
-        // well (world tests re-stub it per frame in the override below). The
-        // public A.now field is legacy: nothing reads it any more, it is only
-        // written to keep the two in sync for anything that still looks.
+        // AGame.now(); the stubbing itself lives in stubAGameClock below and
+        // happens once per test. The public A.now field is legacy: nothing
+        // reads it any more, it is only written to keep the two in sync for
+        // anything that still looks.
         if (aGame != null) {
-            aGame.when(AGame::now).thenReturn(framesNow);
-
-            // The same question asked a different way. 77 call sites in 65 files
-            // throttle on everyNthGameFrame(n) / notNthGameFrame(n), and a
-            // statically mocked method nobody stubs answers false - so every one
-            // of those code paths was dead in the test suite, quietly. It showed up
-            // as "the Protoss dynamic production commander never runs, so no test
-            // can say whether it produces anything": ProtossDynamicUnitProduction-
-            // Commander.handle() starts with `if (!AGame.everyNthGameFrame(7)) return
-            // false`, and its reason string stayed "-" through a whole world.
-            aGame.when(() -> AGame.everyNthGameFrame(Mockito.anyInt()))
-                .thenAnswer(invocation -> framesNow % (Integer) invocation.getArgument(0) == 0);
-            aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
-                .thenAnswer(invocation -> framesNow % (Integer) invocation.getArgument(0) != 0);
+            stubAGameClock(aGame);
         }
         // The one writer, so kernel code reading atlantis.util.GameClock sees the frame
         // the world is on (atlantis.util may not ask atlantis.game - that was seven
         // frozen violations).
         A.setNow(framesNow, framesNow / 30);
+    }
+
+    /**
+     * The AGame clock stubs, answered once per test - not re-stubbed per frame.
+     *
+     * <p>Every {@code aGame.when(...)} is a Mockito registration, and a static
+     * mock keeps its stubbings in a list it copies on every registration and
+     * scans on every intercepted call. The world loop used to re-register all
+     * three from {@code useFakeTime} every frame, which grew the list to
+     * thousands of entries over a 900-frame scenario and made every
+     * {@code A.now()} call pay a scan that grew with the frame number - the
+     * quadratic cost behind BUGS.md B-24 (JFR 2026-10-04: 65% of CPU samples
+     * inside Mockito internals, 64 GB allocated by one 900-frame scenario).
+     * Nothing re-registers them per frame any more: the three answers read the
+     * published clock ({@code GameClock}, written by {@code A.setNow}) at call time,
+     * so one registration per test is enough.</p>
+     */
+    private static void stubAGameClock(MockedStatic<AGame> aGame) {
+        // One source of truth: production reaches the frame number through
+        // A.now(), which delegates to the statically mocked AGame.now().
+        aGame.when(AGame::now).thenAnswer(invocation -> GameClock.frames());
+
+        // The same question asked a different way. 77 call sites in 65 files
+        // throttle on everyNthGameFrame(n) / notNthGameFrame(n), and a
+        // statically mocked method nobody stubs answers false - so every one of
+        // those code paths was dead in the test suite, quietly. It showed up
+        // as "the Protoss dynamic production commander never runs, so no test
+        // can say whether it produces anything": ProtossDynamicUnitProduction-
+        // Commander.handle() starts with `if (!AGame.everyNthGameFrame(7)) return
+        // false`, and its reason string stayed "-" through a whole world.
+        aGame.when(() -> AGame.everyNthGameFrame(Mockito.anyInt()))
+            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) == 0);
+        aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
+            .thenAnswer(invocation -> GameClock.frames() % (Integer) invocation.getArgument(0) != 0);
     }
 
     public static FakeUnit fake(AUnitType type) {

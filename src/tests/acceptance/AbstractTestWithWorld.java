@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.select.BaseSelect;
 import atlantis.units.select.Select;
@@ -55,12 +54,6 @@ public abstract class AbstractTestWithWorld extends AbstractWorldCreatingTest {
      */
     protected static FakeUnit[] units(FakeUnit... units) {
         return units;
-    }
-
-    protected void useFakeTime(int framesNow) {
-        super.useFakeTime(framesNow);
-
-        aGame.when(AGame::now).thenReturn(framesNow);
     }
 
     // =========================================================

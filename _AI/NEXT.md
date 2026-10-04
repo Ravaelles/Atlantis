@@ -436,9 +436,16 @@ itself, #5, is design work and out of that order's scope).
   the public `A.now` field (plus a mock that stubbed `now()` for world tests
   only). Those reads now go through the method - production-neutral, because
   `AGame` syncs the field every frame - and the base `useFakeTime` stubs the
-  mock for world-free tests too. No `ClockPort`, no new abstraction; the field
-  stays as a write-only leftover until a follow-up deletes it with the two
-  test setup writes.
+  mock for world-free tests too. **Clock is closed, in two steps:** the seven
+  kernel sites now read `atlantis.util.GameClock`, whose two ints the game layer
+  publishes once per frame, and `A.setNow` is the single writer of both that and
+  `A.s` (F-1 of `_AI/REVIEW-GLM.md`). The public `A.now` field itself was
+  deleted 2026-10-04 once `A.setNow` existed - it had no production reader left,
+  and the harness's three clock stubs now read `GameClock.frames()`. `A.s` stays
+  a field: four production classes still read it
+  (`NeedChokeBlockers`, `DontAttackOverlords`, `ProtossForceFight`,
+  `LeaderProgressFlagToNextFocusChoke`), which is a separate change and not a
+  dead one.
 
   **`MapPort` is in, for the tile questions.** `atlantis.map.MapTiles.Source`
   answers four questions the map answers in a game (`isWalkable`, `isExplored`,

@@ -11,9 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * The two views of the frame counters must never disagree (GLM review 2026-10-04,
  * F-1).
  *
- * <p>{@code A.s} / {@code A.now} are the legacy public fields that four production
- * classes still read; {@link GameClock} is what the kernel reads, because
- * {@code atlantis.util} may not depend on {@code atlantis.game}. The acceptance tier
+ * <p>{@code A.s} is the legacy public field four production classes still read;
+ * {@link GameClock} is what the kernel reads, because {@code atlantis.util} may not
+ * depend on {@code atlantis.game}. It used to be {@code A.s} *and* {@code A.now} - the
+ * frame field had no production reader left and was deleted on 2026-10-04, so
+ * {@code A.setNow} writes one field and publishes the rest. The acceptance tier
  * wrote the fields itself in {@code onFrameStart} instead of going through
  * {@code A.setNow}, so it was one edit away from the two views disagreeing - which is
  * what {@link #setNowMovesBothViewsTogether()} pins, and what
@@ -39,13 +41,12 @@ public class GameClockAgreementTest extends WorldStubForTests {
 
     @Test
     public void setNowMovesBothViewsTogether() {
-        int framesBefore = A.now;
         int secondsBefore = A.s;
+        int framesBefore = GameClock.frames();
 
         try {
             A.setNow(123, 4);
 
-            assertEquals(123, A.now);
             assertEquals(4, A.s);
             assertEquals(123, GameClock.frames(), "the kernel view moved with the fields");
             assertEquals(4, GameClock.seconds(), "the kernel view moved with the fields");
