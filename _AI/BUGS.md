@@ -380,6 +380,19 @@ documented in code with a comment. The closure goes into the commit message.
   consistent with "too cautious" and with "out-macroed", and these score
   lines cannot tell the two apart. The hedge question needs a fight where
   the pre-hedge reading is known, i.e. a scenario, not a ladder score.
+- **Update (2026-10-05, the hedge is still unverified, and now it can be verified):**
+  the hedge subtracts 0.3 from our side and every threshold with it, so it changes live
+  fight and retreat decisions - and until today it could not be judged from a game,
+  because B-22 had left the bot with two combat units and therefore almost nothing to
+  evaluate. With B-22 fixed the bot builds an army again, so the next Protoss game is
+  the first one where this entry's question ("does the hedge make the bot too cautious,
+  or is it reading fights right?") can be answered from a log instead of from a score
+  line. What to look for, since a ladder score cannot tell caution from being
+  out-macroed: zealot/dragoon counts per minute, how often a fight starts
+  (`ProtossContinueAttack` entries), and whether the retreat thresholds
+  (`ShouldStopRunning`, `TooFarFromFocusPoint`) fire while the army is ahead. The
+  evaluator numbers themselves do not need re-measuring - both evidence tables in ADR
+  0006 already carry the hedge.
 - **History:** this entry replaces B-17, whose premise ("the evaluator rates
   marines below a sunken they beat") was measured with a fiction table that
   had the colony at 150 hit points with a 6-damage, 2.5-tile tentacle. A
