@@ -1,7 +1,7 @@
 package atlantis.util.log;
 
-import atlantis.game.A;
 import atlantis.units.AUnit;
+import atlantis.util.GameClock;
 
 import java.util.ArrayList;
 import atlantis.debug.tools.LogUnitsToFiles;
@@ -54,7 +54,7 @@ public class Log {
     }
 
     public ArrayList<LogMessage> messages(int nowFrames, long nowRealSeconds) {
-        if (A.everyNthGameFrame(expireAfterFrames)) {
+        if (GameClock.everyNthFrame(expireAfterFrames)) {
             removeOldMessages(nowFrames, nowRealSeconds);
         }
 

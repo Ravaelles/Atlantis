@@ -239,6 +239,11 @@ public class AGame {
         _secondsNow = (int) (Atlantis.game().getFrameCount() / 23.81);
         A.s = _secondsNow;
         A.now = _framesNow;
+
+        // The kernel reads the counters from here rather than from atlantis.game:
+        // atlantis.util may not depend upward (REVIEW §13), and seven call sites
+        // were asking anyway (see atlantis.util.GameClock).
+        atlantis.util.GameClock.publish(_framesNow, _secondsNow);
     }
 
     // =========================================================

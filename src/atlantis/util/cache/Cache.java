@@ -1,9 +1,9 @@
 package atlantis.util.cache;
 
 import atlantis.config.env.Env;
-import atlantis.game.A;
 import atlantis.units.select.Selection;
 import atlantis.util.Callback;
+import atlantis.util.GameClock;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -143,13 +143,13 @@ public class Cache<T> {
         return cacheKey != null && (
             !cachedUntil.containsKey(cacheKey)
                 || cachedUntil.get(cacheKey) == -1
-                || cachedUntil.get(cacheKey) >= A.now()
+                || cachedUntil.get(cacheKey) >= GameClock.frames()
         );
     }
 
     protected void addCachedUntilEntry(String cacheKey, int cacheForFrames) {
         if (cacheForFrames > -1) {
-            cachedUntil.put(cacheKey, A.now() + cacheForFrames);
+            cachedUntil.put(cacheKey, GameClock.frames() + cacheForFrames);
         }
         else {
             cachedUntil.remove(cacheKey);

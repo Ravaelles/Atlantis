@@ -1,8 +1,8 @@
 package atlantis.util.log;
 
-import atlantis.game.A;
 
 import atlantis.util.AConsole;
+import atlantis.util.GameClock;
 import atlantis.util.AFile;
 import java.util.Map;
 import java.util.TreeMap;
@@ -50,7 +50,7 @@ public class ErrorLog {
     private static void print(String message) {
         AConsole.errPrintln(message);
 
-        errorTimestamps.put(message, A.seconds());
+        errorTimestamps.put(message, GameClock.seconds());
     }
 
     private static boolean theSameErrorHasBeenLogged(String message) {
@@ -58,7 +58,8 @@ public class ErrorLog {
     }
 
     private static boolean theSameErrorWasLoggedLessThanMinuteAgo(String message) {
-        return errorTimestamps.containsKey(message) && (A.seconds() - errorTimestamps.get(message) < 60);
+        return errorTimestamps.containsKey(message)
+            && (GameClock.seconds() - errorTimestamps.get(message) < 60);
     }
 
     private static void increaseErrorCount(String message) {

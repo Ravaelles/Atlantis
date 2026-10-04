@@ -351,6 +351,11 @@ public class AbstractTestWithUnits extends UnitTest {
         }
         A.now = framesNow;
         A.s = framesNow / 30;
+
+        // The same publish the game layer does, so kernel code that reads the clock
+        // through GameClock sees the frame the world is on (atlantis.util may not ask
+        // atlantis.game - that was seven frozen violations).
+        atlantis.util.GameClock.publish(framesNow, framesNow / 30);
     }
 
     public static FakeUnit fake(AUnitType type) {

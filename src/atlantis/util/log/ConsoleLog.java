@@ -1,9 +1,10 @@
 package atlantis.util.log;
 
-import atlantis.game.A;
+import atlantis.util.GameClock;
+
 
 public class ConsoleLog {
     public static void message(String text) {
-        System.err.println("@ " + A.now() + ":  " + text);
+        System.err.println("@ " + GameClock.frames() + ":  " + text);
     }
 }

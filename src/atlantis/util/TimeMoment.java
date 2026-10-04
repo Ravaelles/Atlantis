@@ -1,6 +1,5 @@
 package atlantis.util;
 
-import atlantis.game.A;
 
 public class TimeMoment {
     private int frames;
@@ -22,6 +21,6 @@ public class TimeMoment {
     }
 
     private int ago() {
-        return A.now() - frames;
+        return GameClock.framesSince(frames);
     }
 }

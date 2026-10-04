@@ -31,10 +31,23 @@ documented in code with a comment. The closure goes into the commit message.
   absolutely as short as possible. Question: how on earth does such a simple thing
   take so long? Worth profiling it. It is a trivial problem. For now add it to the
   bugs list at the top. Do not work on it, just document it."
-- **Measured 2026-10-04** (`rm -rf out && bash scripts/run-full-tests.sh`): unit 3 s,
-  architecture 1 s, acceptance 13 s, **scenarios 205 s** - about 90% of the whole
-  suite. Per class: `FourPoolDefenseTest` 53 s, `NinePoolDefenseTest` 100 s,
+- **Measured 2026-10-04** (`rm -rf out && bash scripts/run-full-tests.sh`): unit 2-3 s,
+  architecture 2 s, acceptance 4-13 s, **scenarios 84-87 s** - about 85% of the whole
+  suite. Per class: `FourPoolDefenseTest` 53 s, `NinePoolDefenseTest` the rest,
   `StubWorldDamageTest` 1 s.
+- **How noisy that number is, measured the hard way:** four consecutive runs of the
+  same code and the same class files read 84, 85, 85 and 87 s. Two readings taken
+  minutes apart during the same session read **148 s** (one class, standalone) and
+  **201 s** (the whole package) - both while other JVMs of mine were still running.
+  So the measurement noise on this tier is larger than most of the changes being made
+  to it, which is the strongest argument for profiling it properly rather than
+  shaving it: nobody can tell a 10% win from a noisy neighbour.
+- **One thing that is *not* the answer, measured:** the `GameClock` change (the seven
+  "what time is it?" violations, same commit) was suspected of halving the tier -
+  the scope had read 205 s before it and 84 s after. Measured both ways with the same
+  classes: `NinePoolDefenseTest` standalone took 154 s without it and 152 s with it,
+  and the package run in both trees produced byte-identical output (1283 lines,
+  121751 bytes). The speedup was this entry's own noise, not the clock.
 - **Why it got slower, which is the only thing measured so far:** the scenarios now
   drive real decisions. The stub world cannot run the full commander (measured
   DoNothing for 200 frames with enemies 2 tiles away), so combat units are invoked
