@@ -434,6 +434,22 @@ itself, #5, is design work and out of that order's scope).
     not in a port.
 
 
+## Combat evaluation
+
+- **#35** A symmetric fight stops scoring even when the Jfap horizon is raised.
+  Measured 2026-10-04 while settling B-18: `oneMarineAgainstOneEnemyMarine` scores
+  `eval() = 1.0` at the current 60-frame horizon and **0.88** at 120, 180 and 240
+  frames, while `combatEvalAbsolute()` stays equal on both sides (that assertion
+  passes). The simulation is therefore symmetric and something in the layer between
+  it and the ratio is not - `AtlantisJfapModifier.applyTweaks()` is the only
+  candidate, and the candidate terms are the choke penalty, the Protoss retreat
+  and mission-attack terms, i.e. ones that should be inert for two Terran Marines at
+  x=10 and x=11.
+  Worth knowing before anyone raises `NUM_OF_FRAMES_TO_SIMULATE` for any reason: it
+  is a one-line change with a second-order effect nobody has explained. Find the
+  term, then either fix it or write down why a symmetric fight may legitimately
+  score 0.88.
+
 ## Housekeeping
 
 - **#15** Rebuild the deployed bot jars. Done for the `A`-split round

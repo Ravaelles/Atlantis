@@ -140,6 +140,32 @@ documented in code with a comment. The closure goes into the commit message.
   that `eval ~ 1` against defensive buildings means "undecided, not safe".
   Until then the number is pinned in the test, so touching the horizon fails
   the test and asks for the claim back.
+- **Update (2026-10-04, the "extend the window" option measured and refuted):**
+  `AtlantisJfap.NUM_OF_FRAMES_TO_SIMULATE` is one constant, so the horizon can be
+  varied by editing it and re-running `CombatEvaluatorTest`. Measured on the
+  scenario above (4 Marines at x=11.5-12 vs 1 Sunken Colony at x=13):
+
+  | horizon | our eval | reading |
+  |---|---|---|
+  | 60 (current) | 0.98 | "about even" - the opening exchange |
+  | 120 | 1.31 | moves against us, as the real fight does |
+  | 180 | 1.21 | converges |
+  | 240 | 1.21 | unchanged - the fight has resolved inside 180 frames |
+
+  Two things follow. First, a longer window does move the number in the right
+  direction, but it plateaus at **1.21 for a fight we lose roughly 150-to-1** -
+  nowhere near the `eval >= 2` that the retreat and focus-point thresholds read as
+  dangerous. The score is a ratio of accumulated costs, not a win prediction, so
+  no horizon makes it one. Second, the change is not safe as a constant bump:
+  `oneMarineAgainstOneEnemyMarine`, an exactly symmetric fight, scores **1.0 at 60
+  frames and 0.88 from 120 frames on**, while its absolute scores stay equal (that
+  assertion passes) - so the horizon change breaks the mirror invariant somewhere
+  in the tweak layer, not in the simulation. That asymmetry is unexplained and is
+  tracked as NEXT #35.
+
+  So the remaining option is the second one: teach the callers that `eval ~ 1`
+  against a defensive building means "undecided", not "safe". That is a behaviour
+  change in live fight/retreat decisions, so it needs a game run.
 - **History:** this entry replaces B-17, whose premise ("the evaluator rates
   marines below a sunken they beat") was measured with a fiction table that
   had the colony at 150 hit points with a 6-damage, 2.5-tile tentacle. A
