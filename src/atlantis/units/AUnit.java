@@ -1476,6 +1476,16 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public List<AUnitType> trainingQueue() {
+        // No engine object means no training queue - as far as anything can tell,
+        // the unit is producing nothing. Order issuance has taken this shape for
+        // years (u() != null ? processTrain : OrderFallback), and the stub world only
+        // ever has the second half, so before this "which of our units are
+        // producing?" threw an NPE from inside a doctrine:
+        // Selection.producing -> Count.zealotsWithUnfinished -> ProduceZealot.
+        // Reachable only now that the harness answers everyNthGameFrame
+        // (_AI/BUGS.md B-22).
+        if (u == null) return new ArrayList<>();
+
         return (List<AUnitType>) AUnitType.convertToAUnitTypesCollection(u.getTrainingQueue());
     }
 

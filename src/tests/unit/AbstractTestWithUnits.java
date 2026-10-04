@@ -335,6 +335,19 @@ public class AbstractTestWithUnits extends UnitTest {
         // written to keep the two in sync for anything that still looks.
         if (aGame != null) {
             aGame.when(AGame::now).thenReturn(framesNow);
+
+            // The same question asked a different way. 77 call sites in 65 files
+            // throttle on everyNthGameFrame(n) / notNthGameFrame(n), and a
+            // statically mocked method nobody stubs answers false - so every one
+            // of those code paths was dead in the test suite, quietly. It showed up
+            // as "the Protoss dynamic production commander never runs, so no test
+            // can say whether it produces anything": ProtossDynamicUnitProduction-
+            // Commander.handle() starts with `if (!AGame.everyNthGameFrame(7)) return
+            // false`, and its reason string stayed "-" through a whole world.
+            aGame.when(() -> AGame.everyNthGameFrame(Mockito.anyInt()))
+                .thenAnswer(invocation -> framesNow % (Integer) invocation.getArgument(0) == 0);
+            aGame.when(() -> AGame.notNthGameFrame(Mockito.anyInt()))
+                .thenAnswer(invocation -> framesNow % (Integer) invocation.getArgument(0) != 0);
         }
         A.now = framesNow;
         A.s = framesNow / 30;
