@@ -527,6 +527,36 @@ itself, #5, is design work and out of that order's scope).
   mirror test's "same absolute score" assertion compared our side's score with
   our side's score and could not fail, and it now asserts reciprocity instead.
 
+## Review rounds
+
+Each review of the last window gets its findings and their dispositions here, so a
+later reader does not have to re-open the review to find out what was done about it.
+Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
+(SOLID + architecture, 2026-10-04, window `e8962bda`…`e4a2579c` plus the GameClock WIP).
+
+### GLM 2026-10-04
+
+| finding | disposition |
+|---|---|
+| F-1 two clocks, three writers, one of them bypassing the publish protocol | **done** - `A.setNow(framesNow, secondsNow)` is the only writer (game + both harnesses); `GameClockAgreementTest` (3) pins both views moving together. Measured, and worth knowing: the predicted drift does not reproduce, because the same frame is published in `onFrameEnd` before the frame body runs - it was ordering luck, not design |
+| F-2 race gates written per leaf | **done** - the rule ("a commander whose subcommanders are race-scoped gates itself in `applies()`") is now in `DOCS/SOLID-CHECKLIST.md` OCP, with the two commanders that had to remember and the crash it prevents |
+| F-3 `BaseUnderAttack` is all-static while everything around it becomes a `Manager` | **#36, not urgent** - it works, the scenario tier pins it, and the per-frame cost is bounded by the `enemiesNear` 5-frame cache. What it does lack is a seam: no test can force or stub the answer, and `check()` recomputes the same `Select.mainOrAnyBuilding()` query three times per frame per worker |
+| F-4 `ProtossJfapTweaksConsiderChokesEtc.rawEval` static mutable state | **done, differently than suggested** - the field was written and read nowhere, so it was deleted instead of threaded through the penalty helpers. The review's direction was right and its evidence was wrong (a grep for readers is two commands) |
+| F-5 "pressure" now has a second class (`BaseUnderAttack`, `ExpansionUnderPressure`) | **named, no merge** - thresholds, radius types and semantics differ, so they stay. If a third "is pressure real here" class appears, extract a shared threat assessment then, not now |
+| F-6 `CancelNotStartedBases` name drift after B-23's narrowing | **#37, cosmetic** - the class may deliberately keep the oldest pending base, so the name reads wider than the behaviour; the docstrings carry the nuance |
+| F-7 `scripts/run-e2e.sh` write policy | **checked, no violation** - §8 allows read-only `~/.scbw`, the script writes into `_AI/e2e/`, and `--parse-only` matches its claim |
+| F-8 `Commander.applies()` is load-bearing for correctness, not filtering | **no action, recorded** - the OR-accumulated `handle()` and the non-null-stops `Manager.handle()` are documented where declared; the next contract addition should follow the same rule |
+
+- **#36** `BaseUnderAttack`: give it the same treatment `ExpansionUnderPressure`'s
+  callers got - a per-frame cache of `check()`, or a tiny injectable seam so a test can
+  force the answer. Cheapest honest version first (the cached `check()`), because the
+  static-to-`Manager` conversion is a bigger change than the three duplicated queries
+  it would remove. Not urgent: nothing is wrong with the behaviour today.
+- **#37** `CancelNotStartedBases` -> `PruneRedundantBaseOrders`, or one class-level
+  javadoc line saying it may keep one pending base on purpose. Do it when B-23 is next
+  touched, not on its own: a rename with no behaviour change is a distraction, and the
+  drift is contained (callers and BUGS.md say "not started ones").
+
 ## Housekeeping
 
 - **#15** Rebuild the deployed bot jars. Done for the `A`-split round
