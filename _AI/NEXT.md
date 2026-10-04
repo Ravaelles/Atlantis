@@ -304,13 +304,13 @@ itself, #5, is design work and out of that order's scope).
 
 - **#13** Reach a **zero-violation** ArchUnit baseline and flip
   `ArchitectureBoundaryTest` from frozen store to hard rules (keeping the
-  store only as a history of how far the ratchet got). **395 violations left**
+  store only as a history of how far the ratchet got). **359 violations left**
   (was 499; re-counted from the store files on 2026-10-04, not from this note).
   Three rules are already at 0 (`map.scout -> combat/production`, map geometry,
   and the fifth one), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = **5** (was 73),
+  `util -> units/game/map/production/information/combat/debug` = **3** (was 73),
   `information -> combat/production` = 65 (was 66),
   `architecture -> combat/production/units/game/util/debug` = 24.
   The 267 and the 24 are structural - the Commander/Manager framework is
@@ -371,12 +371,17 @@ itself, #5, is design work and out of that order's scope).
     minlog + reflectasm + objenesis** for a capability no reachable code can call;
     that is recorded as a question in `BUGS.md` rather than acted on, because
     dropping runtime libraries from the bot jar is the owner's call.
-  - The five that are left, named (2026-10-04): `We.haveBase` (1) - a one-method
-    facade in `atlantis.util` that asks `Count.bases()`; `Cache.get`'s copy hook for
-    `Selection` (2: `instanceof` + `clone()`); `Log.addMessage` /
-    `Log.replaceLastWith` taking an `AUnit` parameter (2). Two decisions, not a
-    sweep: who owns "copy this value", and whether the logging kernel needs the unit
-    or just the name of it.
+  - Three left, named (2026-10-04, after two rounds):
+    - ~~`Log.addMessage` / `replaceLastWith` taking an `AUnit` parameter~~ **done,
+      -2.** `Log` stores strings and frames and never kept the unit; the parameter
+      existed only to feed a debug dump that is switched off
+      (`SAVE_UNIT_LOGS_TO_FILES = 0`). The flag and the call moved to
+      `AUnit.addManagerLogMessage`, the side that has the unit.
+    - `Cache.get`'s copy hook for `Selection` (2: `instanceof` + `clone()`) - one
+      decision: who owns "copy this value". A per-type copy hook on the cache is the
+      ADR 0001 shape; asking `Selection` for a `copyOf()` is the smaller one.
+    - `We.haveBase` (1) - a one-method facade in `atlantis.util` that asks
+      `Count.bases()`.
   - ~~the clock~~ **done 2026-10-04, -7.** Seven of the twelve were one question
     asked upward (`A.now()`, `A.seconds()`, `A.everyNthGameFrame()` from the cache,
     the log kernel and the error throttle). `atlantis.util.GameClock` now holds two
