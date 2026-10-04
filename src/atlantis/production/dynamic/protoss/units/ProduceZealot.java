@@ -30,13 +30,28 @@ public class ProduceZealot {
     private static int zealots;
     private static int freeGateways;
 
+    /**
+     * Why the last call did not produce a zealot. Set at every gate, for the same reason
+     * the commander keeps a reason: B-22 spent a week on "the bot stopped producing and
+     * nothing says why", and a reason nobody reads is a comment.
+     */
+    public static String reason = "-";
+
     public static boolean zealot() {
-        if (!A.hasMinerals(100)) return false;
+        if (!A.hasMinerals(100)) return no("Minerals");
 
         freeGateways = Count.freeGateways();
-        if (freeGateways == 0) return false;
+        if (freeGateways == 0) {
+            // Every gateway the engine calls busy - B-22, five games out of five, one
+            // zealot and one dragoon and then nothing until the game ended. Idle is a
+            // movement notion and this is a production question, so the capacity below
+            // counts the gateways we could *ask*, and GatewayClosestToEnemy asks one:
+            // the engine refuses if it truly cannot, which costs a call every 7 frames.
+            freeGateways = Count.gateways();
+            if (freeGateways == 0) return no("NoGateways");
+        }
 
-        if (!AllowProduceZealot.allowed()) return false;
+        if (!AllowProduceZealot.allowed()) return no("NotAllowed");
 
         if (ZealotInsteadDragoon.needZealot()) return produceZealot("ZealotInsteadOfDragoon");
 
@@ -87,6 +102,11 @@ public class ProduceZealot {
 //        if (ProtossArmyComposition.zealotsToDragoonsRatioTooLow()) return produceZealot();
         if (EnemyRace.isEnemyZerg() && Count.ofType(AUnitType.Protoss_Zealot) <= 0) return produceZealot("NoZealotsVsZ");
 
+        return no("NoRule");
+    }
+
+    private static boolean no(String reasonWhyNot) {
+        ProduceZealot.reason = reasonWhyNot;
         return false;
     }
 

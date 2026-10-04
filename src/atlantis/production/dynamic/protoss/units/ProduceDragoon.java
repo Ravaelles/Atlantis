@@ -26,11 +26,15 @@ public class ProduceDragoon {
     private static int dragoons;
     private static int strength;
 
+    /** See {@link ProduceZealot#reason}. */
+    public static String reason = "-";
+
     public static boolean dragoon() {
-        if (!A.hasGas(50) || !A.hasMinerals(125)) return false;
-        if (noProperBuildings()) return false;
-        if (!AllowProduceDragoon.allowed()) return false;
-        if (waitForDT()) return false;
+        if (!A.hasGas(50)) return no("Gas");
+        if (!A.hasMinerals(125)) return no("Minerals");
+        if (noProperBuildings()) return no("NoGatewaysOrCore");
+        if (!AllowProduceDragoon.allowed()) return no("NotAllowed");
+        if (waitForDT()) return no("WaitForDT");
 
         dragoons = Count.dragoons();
         strength = Army.strength();
@@ -128,8 +132,20 @@ public class ProduceDragoon {
             && A.seconds() <= 6 * 60;
     }
 
+    /**
+     * The tech building is a hard requirement; a free gateway is not (B-22): what used
+     * to be "no idle gateway means no dragoons" stopped the bot's whole unit production
+     * in five games out of five, so the capacity here is "a gateway exists to ask".
+     */
     private static boolean noProperBuildings() {
-        return Count.freeGateways() == 0 || !Have.cyberneticsCore();
+        if (!Have.cyberneticsCore()) return true;
+
+        return Count.freeGateways() == 0 && Count.gateways() == 0;
+    }
+
+    private static boolean no(String reasonWhyNot) {
+        ProduceDragoon.reason = reasonWhyNot;
+        return false;
     }
 
     private static boolean produceDragoon() {

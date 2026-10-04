@@ -668,12 +668,14 @@ public class AUnitTest extends AbstractTestWithWorld {
         cc.enemy = false;
         assertTrue(cc.isOur());
 
-        cc.idle = true;
+        // One knob, not two: isIdle() is !busy, as production's is. The harness used to
+        // carry a separate `idle` field that isIdle() answered instead, so a FakeUnit
+        // could be busy and idle at once - and a test could set `idle` and see nothing
+        // happen (which is what this very assertion did).
         cc.busy = false;
         assertTrue(cc.isIdle());
         assertFalse(cc.isBusy());
 
-        cc.idle = false;
         cc.busy = true;
         assertTrue(cc.isBusy());
         assertFalse(cc.isIdle());

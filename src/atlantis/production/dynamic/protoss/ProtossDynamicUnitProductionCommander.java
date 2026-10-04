@@ -127,8 +127,13 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceShuttle.shuttles();
         ProduceHighTemplar.ht();
 
-        ProduceDragoon.dragoon();
-        ProduceZealot.zealot();
+        boolean produced = ProduceDragoon.dragoon();
+        produced |= ProduceZealot.zealot();
+
+        // Once a minute, and only in the state B-22 was reported in: the numbers that
+        // decide between "no resources", "no tech" and "no gateway to ask".
+        ProtossProductionDiagnostics.reportRichButIdle(produced);
+
         return false;
     }
 

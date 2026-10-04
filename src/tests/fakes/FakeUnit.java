@@ -58,7 +58,6 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean effVisible = true;
     public int hp;
     public int shields = 0;
-    public boolean idle = false;
     public boolean isVisibleUnitOnMap = true;
     public boolean lifted = false;
     public boolean loaded = false;
@@ -543,9 +542,19 @@ public class FakeUnit extends AUnit implements Serializable {
         return morphing;
     }
 
+    /**
+     * {@code !busy}, like production's {@code AUnit.isIdle()} which is
+     * {@code !isBusy()}.
+     *
+     * <p>It used to answer a separate {@code idle} field that nothing ever set, so a
+     * FakeUnit claimed to be busy and not busy at the same time - which is how a test
+     * could "have a busy gateway" ({@code busy}) and still be asked
+     * "is it free?" ({@code free()} filters on {@code isBusy()}) and get two different
+     * answers. B-22's fix has a test that needs one answer.</p>
+     */
     @Override
     public boolean isIdle() {
-        return idle;
+        return !busy;
     }
 
     @Override

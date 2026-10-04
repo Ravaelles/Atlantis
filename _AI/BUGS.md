@@ -221,18 +221,72 @@ documented in code with a comment. The closure goes into the commit message.
   which is what happened to zealot #132 and dragoon #153 at 5:21): **59 orders in 400
   frames**, `freeGateways` never dropping to 0. So neither the resources, nor the
   supply, nor a single gateway, nor losing the produced units stops this code.
-- **What is still open:** it is state only the game has. The two candidates the stub
-  world cannot produce are (a) a gateway the *engine* considers busy - `Count
-  .freeGateways()` asks `u.isIdle()`, and in a game that includes the real training
-  queue and the real last command, so one gateway that is not really free stops
-  everything (`ProduceDragoon.noProperBuildings()` and `ProduceZealot`'s
-  `freeGateways == 0` both bail on it) and (b) no cybernetics core in the book, which
-  kills dragoons outright while zealots are gated by `notEnoughZealots()` and
-  `ProduceDragoonInsteadZealot`. The log excerpt names neither. Reading
-  `ProtossDynamicUnitProductionCommander.reason` out of a real `bot.log` at a quiet
-  moment decides between them: `CriticalStuff` / `ExpansionMinerals` /
-  `MissingMinerals` / `KeepResources` for (b)'s gates, and for (a) the commander never
-  even asks - which is why the reason string is the thing to log.
+- **The state only the game has, measured from the games themselves (2026-10-05).**
+  `~/.scbw/games/GAME_*/logs_*/unit_events.csv` records every unit that finished, with
+  its frame, so the claim can be checked instead of inferred. All five games the owner
+  ran on 2026-10-04:
+
+  | game | opponent | our combat units built | last one | game ended | gas gathered |
+  |---|---|---|---|---|---|
+  | `5B9FABC8` | Ecgberht (Terran) | 1 zealot + 1 dragoon | frame 5433 | 17136 | 1368 |
+  | `631F4FE6` | Steamhammer (Zerg) | 2 zealots | frame 4069 | 7896 | 72 |
+  | `A84A0F2C` | Tomas Cere (Protoss) | 1 zealot + 1 dragoon | frame 5511 | 13944 | 712 |
+  | `BD9184B0` | Zealot Hell (Protoss) | 1 zealot + 1 dragoon | frame 5424 | 11136 | 704 |
+  | `FCCD84AE` | Ecgberht (Terran) | 1 zealot + 1 dragoon | frame 5483 | 12576 | 640 |
+
+  So the report is not one unlucky game: it is **every game**, against every race, for 4
+  to 8 minutes after the last combat unit, with 640-1368 gas banked in four of the five.
+  "Not enough resources" is dead: in `631F4FE6` the whole game gathered 2810 minerals and
+  **72 gas, and spent 2100 minerals and 0 gas**, while queueing exactly one thing after
+  its 10-item book (a Nexus at 4:30 with 778 minerals, reason `LimitedBases` - that bot
+  never took a natural, never built a second assimilator, and so could never afford a
+  dragoon; that is a separate finding, not this entry). For the other four, gas was
+  there and the units still stopped.
+- **Root cause, by elimination through the code (2026-10-05):** with minerals ≥ 600 and
+  supply 40+ of 60, `freeToSpendResources()` returns true (`Minerals++`),
+  `AllowProduceZealot.allowed()` and `AllowProduceDragoon.allowed()` both return true
+  (minerals ≥ 500), the cybernetics core exists, and `ProduceZealot` has two gates that
+  fire on `freeGateways >= 1` or `>= 2` with the minerals the bot was sitting on. The
+  only gate both producers share, and the only one that can be true in all five games,
+  is **"no free gateway"** - `Count.freeGateways()` → `Select.free()` → `!isBusy()` →
+  `!AUnit.isIdle()` → the engine's `u.isIdle()`. The bot read a *movement* notion
+  ("this building has no orders") as a *production* one ("this building cannot take a
+  train order"), gave up silently, and had no recovery: the state is re-read every 7
+  frames and was still false at the end of every game.
+- **Fixed 2026-10-05, three parts:**
+  1. `GatewayClosestToEnemy` falls back to *any* of our gateways when none is free.
+     Whether a producer can take an order is the engine's question, so the bot asks
+     instead of guessing: if the engine refuses, the cost is one refused call every 7
+     frames and no state change.
+  2. `ProduceZealot` and `ProduceDragoon` measure capacity as "gateways we could ask"
+     (`Count.gateways()`) when none is free, and each carries a `reason` string naming
+     the gate that answered - `Minerals`, `Gas`, `NoGatewaysOrCore`, `NotAllowed`,
+     `NoRule` - so the next report is a log line rather than an investigation.
+  3. `ProtossProductionDiagnostics.reportRichButIdle(...)` logs one line a minute when
+     the bot can afford units, has a gateway and a core, and produced nothing: minerals,
+     gas, supply, gateways/free, the commander reason and both producer reasons. It goes
+     through `ErrorLog`, so it is rate-limited in games *and* stub worlds and lands in
+     `bot.log`.
+- **Test:** `ProtossBusyGatewayProductionTest` - every gateway `busy`, 800 minerals,
+  300 gas, 40/60 supply, 200 frames - production continues. Verified it fails with the
+  three parts reverted ("ordered: " is empty, i.e. nothing at all). Getting there needed
+  two harness/robustness fixes that the test exposed, both real:
+  - `FakeUnit.isIdle()` answered a separate `idle` field that nothing ever set, so a stub
+    unit claimed to be busy *and* idle at once and `free()` (which filters on
+    `isBusy()`) disagreed with it. It is now `!busy`, like production's, and the dead
+    field and the test assertion that set it are gone.
+  - `AUnit.hasNothingInQueue()` dereferenced `u()` unguarded
+    (`isFree() && u().getTrainingQueueCount() == 0`). It never fired only because
+    `isFree()` was false for every stub unit - a guard that held because a lie preceded
+    it. It now goes through `trainingQueue()`, which is the same question answered
+    without an engine object, exactly as the earlier B-22 harness fix did for
+    `Selection.producing()`. This is the B-20 shape (an exception from inside a
+    doctrine) in a spot where a game can never show it.
+- **Still open, and now cheap to answer:** whether the engine's `isIdle()` was false for
+  a reason the fallback can also clear (a finished order it still counts, a queued
+  action) or for one it cannot (an order the bot keeps re-issuing - if so, the report
+  above will now say "free=0 gateways=2" every minute and the re-issuing doctrine is the
+  next thing to look for).
 
 ## B-18 — the combat evaluator only sees the opening of a long fight
 

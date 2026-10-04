@@ -2306,8 +2306,22 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         }
     }
 
+    /**
+     * Is this unit free <i>and</i> not producing anything?
+     *
+     * <p>Through {@link #trainingQueue()} rather than {@code u().getTrainingQueueCount()}
+     * directly, for the reason that method documents: a unit without an engine object has
+     * no training queue, and asking the engine anyway threw an NPE from inside a
+     * doctrine. This one had the same unguarded {@code u()} call, and it was invisible for
+     * the same reason - {@code isFree()} was false for every stub unit, so the
+     * {@code &&} short-circuited before the dereference. The moment the harness started
+     * answering "idle" honestly ({@code FakeUnit.isIdle()} is {@code !busy}, as
+     * production's is), two acceptance tests failed with
+     * {@code Cannot invoke "bwapi.Unit.getTrainingQueueCount()" because ... u() is null}.
+     * A guard that only held because a lie preceded it is not a guard.</p>
+     */
     public boolean hasNothingInQueue() {
-        return isFree() && u().getTrainingQueueCount() == 0;
+        return isFree() && trainingQueue().isEmpty();
     }
 
     public boolean canCloak() {
