@@ -6,8 +6,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.CombatEvalScale;
 
 public class ProtossJfapTweaksConsiderChokesEtc {
-    private static double rawEval;
-
     /**
      * Basic eval isn't perfect. We need to be:
      * - way more cautious when crossing choke points,
@@ -15,8 +13,6 @@ public class ProtossJfapTweaksConsiderChokesEtc {
      * - be more defensive when just retreated
      */
     public static double apply(AUnit unit, double eval) {
-        rawEval = eval;
-
         // Every term below is additive, and together they reach -0.7, so the sum can
         // leave the ratio through zero - which is how a fight the bot loses ends up
         // with an eval that reads like an advantage (_AI/BUGS.md B-2, measured
