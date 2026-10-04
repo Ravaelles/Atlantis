@@ -155,6 +155,15 @@ public class CombatEvaluatorTest extends AbstractTestWithWorld {
             assertEquals(ourMarine.combatEvalAbsolute(), enemyMarine.combatEvalAbsolute(),
                 "mirror units have the same absolute score");
             assertEquals(1.0, ourMarine.eval(), 0.01, "a mirror fight is exactly even");
+
+            // The assertion above cannot see a side asymmetry: combatEvalAbsolute()
+            // returns one side's score, and both units' evaluations return the same
+            // [-100, -88] pair, so it compares our side's score with our side's
+            // score. The reciprocal check is the one that would catch it - measured
+            // while settling B-18: at the shipped 60-frame horizon the pair is
+            // [-88, -88] and this passes, while a 120-frame horizon produces
+            // [-100, -88] and it fails. See NEXT.md #35.
+            assertReciprocal(ourMarine, enemyMarine);
             assertEquals(1.0, enemyMarine.eval(), 0.01);
             assertReciprocal(ourMarine, enemyMarine);
         });
