@@ -521,6 +521,14 @@ itself, #5, is design work and out of that order's scope).
   exceptions, both clean production sequences (7 + 16 starts, no
   duplicates). Third baseline table `_AI/e2e/scbw-2026-10-04_161236.md`
   compares 8 games.
+- **Update 2026-10-04 (B-21 verification):** `GAME_060E6A25` (full loss vs
+  Marine Hell, 0 exceptions, 0 frame-deaths, 0 `HaveBunker` frames) confirms
+  both fixes: zero "Cancelling expansion due to enemy pressure" (was five in
+  a row in `GAME_366E9D6C`), the two naturals warped this game completed
+  (9063, 11766) and lived thousands of frames, and the two remaining
+  "Cancelling pending base" lines are the intended re-placement path (a new
+  warp elsewhere retires the old morph), not the self-cancel bonfire.
+  Fourth baseline table `_AI/e2e/scbw-2026-10-04_165556.md` compares 9.
 
   Full games 2026-10-04 (same jars, no frame cap): `GAME_B978D4B7`
   (AtlantisP vs Marine Hell - loss, kill_score 500 vs 3000, 0 exceptions)
