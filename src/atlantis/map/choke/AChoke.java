@@ -8,7 +8,7 @@ import atlantis.map.region.ARegion;
 import atlantis.units.select.Select;
 import atlantis.util.Angle;
 import atlantis.util.Vector;
-import atlantis.util.Vectors;
+import atlantis.map.position.Vectors;
 import bwapi.Pair;
 import bwapi.Position;
 import bwapi.WalkPosition;

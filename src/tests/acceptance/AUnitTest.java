@@ -6,7 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.UnderAttack;
 import atlantis.util.Angle;
-import atlantis.util.Vectors;
+import atlantis.map.position.Vectors;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -760,8 +760,8 @@ public class AUnitTest extends AbstractTestWithWorld {
         FakeUnit theirs = fake(AUnitType.Zerg_Zergling, 13);
         // Measured against the raw vectors: "facing us" compares their angle with
         // other -> ours (1.1 rad), "showing back" with ours -> other (0.95 rad).
-        double towardsUs = Vectors.directionTowards(theirs, ours).toAngle();
-        double awayFromUs = Vectors.directionTowards(ours, theirs).toAngle();
+        double towardsUs = Vectors.directionTowards(theirs.position(), ours.position()).toAngle();
+        double awayFromUs = Vectors.directionTowards(ours.position(), theirs.position()).toAngle();
 
         assertEquals(Math.PI, towardsUs, 0.001,
             "their unit is east of ours, so 'towards us' points west");

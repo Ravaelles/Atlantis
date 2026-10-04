@@ -38,6 +38,7 @@ import atlantis.map.choke.IsUnitWithinChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionUtil;
+import atlantis.map.position.Vectors;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -2090,7 +2091,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isOtherFacingThisUnit(AUnit otherUnit) {
         if (otherUnit.weKnowNothingAboutIt()) return false;
 
-        Vector pointingAtUs = Vectors.directionTowards(otherUnit, this);
+        Vector pointingAtUs = Vectors.directionTowards(otherUnit.position(), position());
 
         return pointingAtUs.isAngleAlmostIdentical(otherUnit.getAngle());
     }
@@ -2110,7 +2111,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isOtherShowingBackToUs(AUnit otherUnit) {
         if (otherUnit.weKnowNothingAboutIt()) return false;
 
-        Vector pointingAwayFromUs = Vectors.directionTowards(this, otherUnit);
+        Vector pointingAwayFromUs = Vectors.directionTowards(position(), otherUnit.position());
 
         return pointingAwayFromUs.angleDifference(otherUnit.getAngle()) <= 0.95;
     }
@@ -2125,7 +2126,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         if (otherUnit.weKnowNothingAboutIt()) return false;
         if (weKnowNothingAboutIt()) return false;
 
-        Vector pointingAtThem = Vectors.directionTowards(this, otherUnit);
+        Vector pointingAtThem = Vectors.directionTowards(position(), otherUnit.position());
 
         return pointingAtThem.isAngleAlmostIdentical(this.getAngle());
     }

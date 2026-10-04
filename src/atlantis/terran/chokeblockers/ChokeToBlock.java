@@ -7,7 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.Vector;
-import atlantis.util.Vectors;
+import atlantis.map.position.Vectors;
 
 public class ChokeToBlock {
     public static final double BASE_DIST_FROM_CHOKE_CENTER = 1.2;

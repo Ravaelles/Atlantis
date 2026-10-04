@@ -1,8 +1,17 @@
-package atlantis.util;
+package atlantis.map.position;
 
-import atlantis.map.position.APosition;
-import atlantis.units.AUnit;
+import atlantis.util.Vector;
 
+/**
+ * Vector arithmetic on positions.
+ *
+ * <p>Lives here, next to the type it reads, rather than in {@code atlantis.util}:
+ * a shared kernel that takes domain types as parameters is not a kernel, and the
+ * two overloads that took {@code AUnit} (three call sites in {@code AUnit} itself)
+ * made a geometry helper know what a unit is. Callers pass
+ * {@code unit.position()}, which is one word longer and one dependency
+ * lighter.</p>
+ */
 public class Vectors {
 
     /**
@@ -21,10 +30,6 @@ public class Vectors {
      * kind of thing that survives a decade and then gets "fixed" into a bug. See
      * {@code _AI/BUGS.md} B-4.</p>
      */
-    public static Vector directionTowards(AUnit from, AUnit to) {
-        return directionTowards(from.position(), to.position());
-    }
-
     public static Vector directionTowards(APosition from, APosition to) {
         return new Vector(to.x - from.x, to.y - from.y);
     }

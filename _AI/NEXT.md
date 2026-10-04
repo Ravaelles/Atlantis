@@ -285,7 +285,7 @@ itself, #5, is design work and out of that order's scope).
   and the fifth one), so what is left is:
   `core(units, units.., map.position.., decisions..) -> combat/production/
   information/protoss/terran/map.scout/map.base/units.workers` = 267,
-  `util -> units/game/map/production/information/combat/debug` = **39** (was 73),
+  `util -> units/game/map/production/information/combat/debug` = **34** (was 73),
   `information -> combat/production` = 65 (was 66),
   `architecture -> combat/production/units/game/util/debug` = 24.
   The 267 and the 24 are structural - the Commander/Manager framework is
@@ -313,9 +313,14 @@ itself, #5, is design work and out of that order's scope).
     `LogMessage.color -> A.now` from the one caller `AAdvancedPainter:301,1503`
     still gets it from. Those three were reviewed in the store diff rather than
     absorbed, which is why the util rule is 39 and not 47.
-  - `Vectors` (8) - a geometry helper whose signatures mention `AUnit`; it is
-    the one remaining class where "move it next to what it serves" is a real
-    option, once its three callers are counted as one change.
+  - ~~`Vectors`~~ **done 2026-10-04, -5.** It was 5 entries, not 8. The class moved
+    from `atlantis.util` to `atlantis.map.position` - next to `APosition`, the only
+    thing it actually read - and the `directionTowards(AUnit, AUnit)` overload is
+    gone, so the three call sites in `AUnit` pass `unit.position()` themselves. A
+    shared kernel that takes domain types as parameters is not a kernel. The store
+    diff is five deletions and nothing else: no rule picked up a new edge, because
+    `units -> map.position` was already an edge and `map.position -> util` is not
+    banned by any of the seven.
   - `We.haveBase`, `BwapiAccessibility` and the `util/object` serialisation
     cluster (5) - facades and a subsystem only a `@Disabled` test uses.
 
