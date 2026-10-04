@@ -52,6 +52,14 @@ Taken from `src/atlantis` (1379 classes):
 - Adding a race behaviour must not require an `if (We.protoss())` in an
   unrelated class. That is Stage G (`#7`, `#8`); until the seam exists, new
   race branches go into the race packages, never into shared code.
+- A commander whose subcommanders are race-scoped must gate itself in
+  `applies()`: race gates belong to the commander that owns the subtree,
+  not to each leaf. `ZergNewGasBuildingCommander` already does this; B-20
+  fixed the same omission in `DynamicBuildingsCommander` after
+  `ProtossSpecificBuildingsCommander`/`TerranSpecificBuildingsCommander` had
+  to remember the gate themselves. Without it the frame is not just
+  filtered, it crashes — `HaveBunkerAtMainChoke` once dereferenced a main
+  choke that a Protoss game does not have (F-8 of `_AI/REVIEW-GLM.md`).
 
 ### LSP — substitutability
 
