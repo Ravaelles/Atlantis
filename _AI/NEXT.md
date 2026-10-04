@@ -174,12 +174,17 @@ of the data behind it, not a red test.
 
 - **#34** Real-opponent follow-ups for the stub-tier scenarios, now living in
   `tests.e2e` (moved out of `tests.acceptance`, where they were invisible to any
-  tier selector). Both twins are done and pinned, re-measured from clean runs on
-  2026-10-03 after the B-19 fix: `FourPoolDefenseTest` (6 lings from x=26) **holds**
-  - lings dead frames 51-249, cannon on 10 hp after 11 strike rounds, nexus
+  tier selector). Both twins hold: `FourPoolDefenseTest` (6 lings from x=26) -
+  lings dead frames 51-249, cannon on 10 hp after 11 strike rounds, nexus
   untouched, one strike per probe where there used to be none - and
-  `NinePoolDefenseTest` (8 lings from x=32) still loses the base, but trades three
-  lings instead of two and lands six probe strikes instead of zero. Remaining:
+  `NinePoolDefenseTest` (8 lings from x=32, six probes) since the combat units
+  are driven directly (see below): nexus holds at 700, cannon and all six
+  probes live, all eight lings die, the zealot tanks two strikes and falls at
+  218. The full commander never gets past its orchestration in the stub world
+  (DoNothing for 200 frames, enemies 2 tiles away), so both scenarios invoke
+  `CombatUnitManager` per combat unit per frame - decisions are real Atlantis
+  code, only the dispatch is harness, and `ScenarioObserver` (every 15 frames:
+  pos, hp, manager, target, order) records what happened. Remaining:
   real opponents (Steamhammer / UAlbertaBot / scripted rusher) once the runner
   from `_AI/IDEA-E2E-TESTS.md` can host Atlantis (its Stages 1-2). The scenarios
   keep their forces, timing and assertions across that move; only the

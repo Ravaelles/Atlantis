@@ -4,6 +4,9 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
+import atlantis.combat.CombatUnitManager;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -71,6 +74,7 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
 
         ZombieAttacksNearestUnit rush = new ZombieAttacksNearestUnit(lings);
         ScenarioCombat combat = new ScenarioCombat();
+        ScenarioObserver observer = new ScenarioObserver(15);
         enemyRaceInWorld = Race.Zerg;
 
         world(900, fakeOurs(ours), fakeEnemies(lings), () -> {
@@ -79,8 +83,10 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             }
 
             (new AtlantisGameCommander()).invokedCommander();
+            driveCombatUnits();
             rush.onFrame(ourList);
             combat.onFrame(A.now(), ourList, lingList);
+            observer.onFrame(A.now(), ourList, lingList);
 
             // The verdict of this scenario is "the base falls": once it has, the
             // remaining frames cannot change it. Everything else it asserts (the
@@ -91,24 +97,44 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             }
         });
 
-        // Mechanics check, not tuning: six probes engage (not zero as before
-        // B-19), trade four lings and mostly survive - but the base still falls
-        // at ~883, barely later than with four probes. The extra workers do not
-        // change the outcome because the race is decided at the cannon/zealot
-        // line; holding 8 lings would need more static defense or another
-        // combat unit, which is a scenario-forces decision, not a mechanics
-        // question. Threshold tuning stays in unit tests and game runs.
-        assertTrue(!nexus.isAlive() && combat.diedAt(nexus) > 800,
-            "eight lings still grind the base down; it fell at frame " + combat.diedAt(nexus));
-        assertTrue(!cannon.isAlive(), "the cannon fought (and fell)");
-        assertTrue(aliveCount(lings) <= 4, "the defence trades at least four lings, was: " + aliveCount(lings));
-        assertTrue(aliveCount(probes) >= 5, "most probes survive the defence they join, was: " + aliveCount(probes));
+        // With the zealot driven, the defence holds: it steps into the pack at
+        // ~120, tanks and deals its two strikes, and dies at 218 - while it
+        // lives the lings chew it instead of the cannon, and the six probes
+        // drill uninterrupted (167 strikes) behind cannon fire (12 strikes).
+        // Nexus never drops below 700, all six probes live, all eight lings
+        // die. Bit-identical across runs. A defence that stops holding must
+        // change this story, not these numbers.
+        assertTrue(nexus.isAlive(), "the base holds against 9pool");
+        assertTrue(cannon.isAlive(), "the cannon leads the defence and lives, was: " + cannon.hp());
+        assertTrue(aliveCount(probes) >= 4, "at least four probes survive, was: " + aliveCount(probes));
+        assertTrue(aliveCount(lings) == 0, "every ling dies, left: " + aliveCount(lings));
+        assertTrue(combat.strikesBy(zealot) >= 2, "the zealot fights instead of watching, was: "
+            + combat.strikesBy(zealot));
 
         int probeStrikes = 0;
         for (FakeUnit probe : probes) {
             probeStrikes += combat.strikesBy(probe);
         }
-        assertTrue(probeStrikes >= 10, "the probes must engage the rush (B-19: they never did), was: " + probeStrikes);
+        assertTrue(probeStrikes >= 100, "the probe drill does the killing (B-19: they never did), was: "
+            + probeStrikes);
+    }
+
+    /**
+     * The full commander drives workers and production in the stub world, but
+     * combat units never get past its orchestration here (squad/mission wiring
+     * the stub does not provide), so they stand idle while the base dies around
+     * them - measured DoNothing for 200 frames with enemies 2 tiles away. What
+     * does work, here and in other acceptance tests, is invoking their manager
+     * directly: the decisions are real Atlantis code, only the dispatch is
+     * harness. Full-loop dispatch waits for the OpenBW runner
+     * (_AI/IDEA-E2E-TESTS.md); until then this is a decision-layer E2E.
+     */
+    private void driveCombatUnits() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.isAlive() && !unit.isABuilding() && unit instanceof FakeUnit) {
+                (new CombatUnitManager(unit)).invokeFrom(this);
+            }
+        }
     }
 
     // =========================================================

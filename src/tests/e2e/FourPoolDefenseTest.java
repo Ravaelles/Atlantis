@@ -4,6 +4,9 @@ import atlantis.combat.missions.MissionChanger;
 import atlantis.combat.missions.Missions;
 import atlantis.game.A;
 import atlantis.game.AtlantisGameCommander;
+import atlantis.combat.CombatUnitManager;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -71,6 +74,7 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
 
         ZombieAttacksNearestUnit rush = new ZombieAttacksNearestUnit(lings);
         ScenarioCombat combat = new ScenarioCombat();
+        ScenarioObserver observer = new ScenarioObserver(15);
         enemyRaceInWorld = Race.Zerg;
 
         world(900, fakeOurs(ours), fakeEnemies(lings), () -> {
@@ -79,8 +83,10 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             }
 
             (new AtlantisGameCommander()).invokedCommander();
+            driveCombatUnits();
             rush.onFrame(ourList);
             combat.onFrame(A.now(), ourList, lingList);
+            observer.onFrame(A.now(), ourList, lingList);
 
             // The fight is decided when the last attacker dies, and nothing can
             // change the end state after that - so the remaining ~650 frames of a
@@ -132,6 +138,24 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             probeStrikes += combat.strikesBy(probe);
         }
         assertTrue(probeStrikes >= 4, "every probe must land at least one strike (B-19: they never did), was: " + probeStrikes);
+    }
+
+    /**
+     * The full commander drives workers and production in the stub world, but
+     * combat units never get past its orchestration here (squad/mission wiring
+     * the stub does not provide), so they stand idle while the base dies around
+     * them - measured DoNothing for 200 frames with enemies 2 tiles away. What
+     * does work, here and in other acceptance tests, is invoking their manager
+     * directly: the decisions are real Atlantis code, only the dispatch is
+     * harness. Full-loop dispatch waits for the OpenBW runner
+     * (_AI/IDEA-E2E-TESTS.md); until then this is a decision-layer E2E.
+     */
+    private void driveCombatUnits() {
+        for (AUnit unit : Select.ourCombatUnits().list()) {
+            if (unit.isAlive() && !unit.isABuilding() && unit instanceof FakeUnit) {
+                (new CombatUnitManager(unit)).invokeFrom(this);
+            }
+        }
     }
 
     // =========================================================
