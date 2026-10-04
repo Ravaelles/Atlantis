@@ -126,14 +126,23 @@ by the language rule below.
 
 ## 8. Workspace boundary (mandatory)
 
-- All work stays inside **`/ravaelles/JAVA/starcraft-ai`**: `Atlantis/`,
-  `StardustDevEnvironment/`, `bots/`, `starcraft/` and anything else in that
-  tree. Reading, searching, writing, building and running tests happen there.
-- **Never search, scan or read anything above that directory** - not the user's
-  home directory, not other projects, not system paths - even read-only, and
+- All work stays inside **`/sc-ai`**: `Atlantis/`, `StardustDevEnvironment/`,
+  `bots/`, `starcraft/` and anything else in that tree. Reading, searching,
+  writing, building and running tests happen there. **`/sc-ai` is the name to
+  use** - in commands, in scripts, in documentation and in commit messages -
+  because it is stable; it is a symlink, and its target is the user's home
+  directory.
+- **`/ravaelles` is off limits, and so is asking for it** (added 2026-10-04).
+  That path is the user's home directory, not a workspace, so: never search,
+  scan, read, list or edit anything rooted there, not even read-only, and not
   even when the goal is "find any data that would help". A `grep -r` or `find`
-  rooted in the home directory turns a task into a crawl of private files, and
-  whatever it finds is not evidence the project agreed to produce.
+  rooted there turns a task into a crawl of private files, and whatever it finds
+  is not evidence the project agreed to produce. **Do not ask the user for
+  access to `/ravaelles`, or to any path under it**, in order to locate a file,
+  a log, a replay or a game. If something needed is not reachable from `/sc-ai`
+  or from `~/.scbw`, then ask *where it is* - one question is cheap, and a
+  crawl of the home directory is not. A tool call that needs a broader root
+  than those two is a mistake in the task, not a permission request.
 - The only paths outside the workspace that may be used:
   - `/home/ping.sh`, the completion notification of section 4, and only when
     section 4 allows it;
