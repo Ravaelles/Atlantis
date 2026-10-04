@@ -28,9 +28,32 @@ is one command rather than a flag somebody has to remember.
 |---|---|---|
 | Unit (default) | `bash scripts/run-tests.sh` | **106 passing / 0 failing** of 106 (+4 skipped) |
 | Acceptance | `bash scripts/run-acceptance-tests.sh` | **126 passing / 0 failing** |
-| Scenario (stub-world E2E + StarEngine) | `bash scripts/run-scenario-tests.sh` | **7 passing / 0 failing** |
-| Everything | `bash scripts/run-tests.sh --select-package tests` | **249 passing / 0 failing** of 249 (+4 skipped) |
+| Scenario (stub-world E2E) | `bash scripts/run-scenario-tests.sh` | **10 passing / 0 failing** |
+| StarEngine | `bash scripts/run-scenario-tests.sh` | included above |
+| Everything, one compile | `bash scripts/run-full-tests.sh` | **251 passing / 0 failing** of 251 (+4 skipped) |
 | Architecture | `bash scripts/run-architecture-tests.sh` | **7 passing / 0 failing** |
+
+### Where the time goes (measured 2026-10-04)
+
+| scope | test time | note |
+|---|---|---|
+| compile (1559 sources, every script) | **3.7 s** | unchanged; it was never the bottleneck |
+| `tests.unit` | **2.6 s** | what `run-tests.sh` runs by default |
+| `tests.architecture` | **2.0 s** | seven boundary rules |
+| `tests.acceptance` | **12.2 s** | world/squad/commander behaviour |
+| `tests.starengine` | **8.2 s** | the stub-engine simulator |
+| `tests.e2e` | **39 s** (was 136 s) | four 900-frame stub games, two of which stop early |
+
+So the fast loop is ~6 s end to end and never touches the slow tiers; the whole
+suite is ~70 s, and the scenario tier is the only thing worth thinking about. Two
+changes got it from 136 s to 39 s: the two `loneNexusFallsFast` controls were
+replaced by `StubWorldDamageTest` (they cost 70 s and asserted one property - that
+the stub world deals damage - which is now asserted in a second), and the
+surviving scenarios stop when their fight is decided instead of grinding out the
+rest of a 900-frame horizon.
+
+`run-full-tests.sh` compiles once and prints this table per run, with
+`--skip-scenarios` for "everything but the slow tier" (~30 s).
 
 Four tests are skipped on purpose (`ObjectToFileTest`: it needs a serialized
 fixture and a `--add-opens` JVM flag - see its javadoc). **The suite is green**:

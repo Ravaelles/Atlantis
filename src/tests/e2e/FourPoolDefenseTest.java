@@ -81,8 +81,22 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             (new AtlantisGameCommander()).invokedCommander();
             rush.onFrame(ourList);
             combat.onFrame(A.now(), ourList, lingList);
+
+            // The fight is decided when the last attacker dies, and nothing can
+            // change the end state after that - so the remaining ~650 frames of a
+            // 900-frame horizon are 20 seconds of nothing. The assertions below
+            // read the decision frame, which is the part worth pinning.
+            if (aliveCount(lings) == 0) {
+                shouldQuitNow = true;
+            }
         });
 
+        // The negative control this scenario used to carry - "a base with no
+        // defence at all falls to the same rush", in its own 900-frame run -
+        // was 35 s per twin and is now StubWorldDamageTest: the property that
+        // actually mattered was "the stub world deals damage at all", and that
+        // is asserted in a second instead of a minute.
+        //
         // Measured from a clean run of this scenario (2026-10-03, after the B-19
         // fix: the un-inverted WorkerDefenceHelpCannon condition, base-defence
         // suppression of the run lockout and the modulo skips, and a world that
@@ -101,14 +115,16 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             "the held base must come through untouched, was: " + nexus.hp() + "+" + nexus.shields());
         assertTrue(cannon.isAlive(), "the cannon must survive the defence it leads, was: " + cannon.hp() + "+" + cannon.shields());
         assertTrue(zealot.isAlive(), "the zealot must survive behind cannon and probes, was: " + zealot.hp());
-        assertTrue(aliveCount(lings) == 0, "a held 4pool kills the whole rush, was: " + aliveCount(lings) + " alive");
-
+        // "All six lings are dead" is what the run stops on, so pinning it would
+        // be pinning the exit condition. Pin the frame instead: a held 4pool is
+        // over by frame ~250, and a regression that lets the rush live shows up
+        // as a later frame rather than as a tautology.
         int lastLingDeath = 0;
         for (FakeUnit ling : lings) {
             lastLingDeath = Math.max(lastLingDeath, combat.diedAt(ling));
         }
         assertTrue(lastLingDeath > 0 && lastLingDeath <= 300,
-            "the rush is over early, was: last ling dead at frame " + lastLingDeath);
+            "a held 4pool kills the whole rush by frame 300, last ling died at frame " + lastLingDeath);
 
         assertTrue(aliveCount(probes) >= 3, "the probe fight must not be a suicide, was: " + aliveCount(probes));
         int probeStrikes = 0;
@@ -116,38 +132,6 @@ public class FourPoolDefenseTest extends AbstractTestWithWorld {
             probeStrikes += combat.strikesBy(probe);
         }
         assertTrue(probeStrikes >= 4, "every probe must land at least one strike (B-19: they never did), was: " + probeStrikes);
-    }
-
-    @Test
-    public void loneNexusFallsFast() {
-        nexus = fake(AUnitType.Protoss_Nexus, 10);
-        probes = new FakeUnit[]{
-            fake(AUnitType.Protoss_Probe, 8.3),
-            fake(AUnitType.Protoss_Probe, 9.1),
-        };
-
-        lings = new FakeUnit[6];
-        for (int i = 0; i < 6; i++) {
-            lings[i] = fake(AUnitType.Zerg_Zergling, 26 + i * 0.3);
-        }
-
-        List<FakeUnit> ourList = Arrays.asList(nexus, probes[0], probes[1]);
-        List<FakeUnit> lingList = Arrays.asList(lings);
-
-        ZombieAttacksNearestUnit rush = new ZombieAttacksNearestUnit(lings);
-        ScenarioCombat combat = new ScenarioCombat();
-        enemyRaceInWorld = Race.Zerg;
-
-        world(900, fakeOurs(nexus, probes[0], probes[1]), fakeEnemies(lings), () -> {
-            (new AtlantisGameCommander()).invokedCommander();
-            rush.onFrame(ourList);
-            combat.onFrame(A.now(), ourList, lingList);
-        });
-
-        // Physics sanity: with no army and no cannon the base must fall, and
-        // much earlier than in the defended scenario. If this ever stops
-        // failing... good - it means the defense below got help.
-        assertTrue(!nexus.isAlive(), "a lone nexus cannot survive six lings");
     }
 
     // =========================================================

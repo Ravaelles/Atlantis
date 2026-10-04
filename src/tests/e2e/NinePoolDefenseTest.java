@@ -79,8 +79,22 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             (new AtlantisGameCommander()).invokedCommander();
             rush.onFrame(ourList);
             combat.onFrame(A.now(), ourList, lingList);
+
+            // The verdict of this scenario is "the base falls": once it has, the
+            // remaining frames cannot change it. Everything else it asserts (the
+            // cannon fell at ~192, three lings traded, the probes engaged) is
+            // already decided by then.
+            if (!nexus.isAlive()) {
+                shouldQuitNow = true;
+            }
         });
 
+        // The negative control this scenario used to carry - "a base with no
+        // defence at all falls to the same rush", in its own 900-frame run -
+        // was 35 s per twin and is now StubWorldDamageTest: the property that
+        // actually mattered was "the stub world deals damage at all", and that
+        // is asserted in a second instead of a minute.
+        //
         // Measured from a clean run (2026-10-03), same conditions as the 4pool
         // twin. Eight attackers arriving later still beat the defence, and that is
         // pinned on purpose: the point of this scenario is not that the base
@@ -94,7 +108,9 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
         // (frames 120-841, the last two in the final stand on the ruins), and
         // that is the honest end of this scenario rather than a target - a fix
         // that saved them must not have to fight these assertions.
-        assertTrue(!nexus.isAlive(), "eight lings still grind the base down, was: " + nexus.hp() + "+" + nexus.shields());
+        assertTrue(combat.diedAt(nexus) > 0 && combat.diedAt(nexus) <= 900,
+            "eight lings still grind the base down inside the horizon; it fell at frame "
+                + combat.diedAt(nexus) + " (0 means it was still standing when the horizon ran out)");
         assertTrue(!cannon.isAlive() && combat.diedAt(cannon) > 0, "the cannon fought (and fell), frame: " + combat.diedAt(cannon));
         assertTrue(aliveCount(lings) <= 5, "the defence trades at least three lings, was: " + aliveCount(lings));
 
@@ -103,38 +119,6 @@ public class NinePoolDefenseTest extends AbstractTestWithWorld {
             probeStrikes += combat.strikesBy(probe);
         }
         assertTrue(probeStrikes >= 6, "the probes must engage the rush (B-19: they never did), was: " + probeStrikes);
-    }
-
-    @Test
-    public void loneNexusFallsFast() {
-        nexus = fake(AUnitType.Protoss_Nexus, 10);
-        probes = new FakeUnit[]{
-            fake(AUnitType.Protoss_Probe, 8.3),
-            fake(AUnitType.Protoss_Probe, 9.1),
-        };
-
-        lings = new FakeUnit[8];
-        for (int i = 0; i < 8; i++) {
-            lings[i] = fake(AUnitType.Zerg_Zergling, 32 + i * 0.3);
-        }
-
-        List<FakeUnit> ourList = Arrays.asList(nexus, probes[0], probes[1]);
-        List<FakeUnit> lingList = Arrays.asList(lings);
-
-        ZombieAttacksNearestUnit rush = new ZombieAttacksNearestUnit(lings);
-        ScenarioCombat combat = new ScenarioCombat();
-        enemyRaceInWorld = Race.Zerg;
-
-        world(900, fakeOurs(nexus, probes[0], probes[1]), fakeEnemies(lings), () -> {
-            (new AtlantisGameCommander()).invokedCommander();
-            rush.onFrame(ourList);
-            combat.onFrame(A.now(), ourList, lingList);
-        });
-
-        // Physics sanity: with no army and no cannon the base must fall, and
-        // much earlier than in the defended scenario. If this ever stops
-        // failing... good - it means the defense below got help.
-        assertTrue(!nexus.isAlive(), "a lone nexus cannot survive eight lings");
     }
 
     // =========================================================
