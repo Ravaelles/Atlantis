@@ -88,7 +88,26 @@ public final class BwapiOrderSink implements OrderSink {
 
     @Override
     public boolean gather(AUnit actor, AUnit target) {
-        return issue("gather", actor, () -> actor.u().gather(target.u()));
+        // OpenBW (Linux, JBWAPI-Rav) refuses a Gather command on a mineral
+        // field at the client side: canGather -> hasPath(getPosition()) returns
+        // false even though the mineral is visible and valid, so the command
+        // never reaches the engine and the economy stays frozen. rightClick on
+        // the same mineral is accepted and produces MoveToMinerals - the order
+        // a player actually gives. The fallback only runs when the engine
+        // refused gather, so in a real game (where gather succeeds) nothing
+        // changes.
+        // Measured 2026-10-05, probe /tmp/opencode/openbw-probe: gather=false,
+        // rightClick=true, gatheredMinerals 50 -> 226 over 1200 frames.
+        boolean issued = issue("gather", actor, () -> actor.u().gather(target.u()));
+        if (!issued && isResource(target)) {
+            return issue("gather/rightClick", actor, () -> actor.u().rightClick(target.u()));
+        }
+        return issued;
+    }
+
+    private static boolean isResource(AUnit target) {
+        return target != null
+            && (target.type().isMineralField() || target.type().isGasBuilding());
     }
 
     @Override
