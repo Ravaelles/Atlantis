@@ -199,6 +199,20 @@ documented in code with a comment. The closure goes into the commit message.
   the same JVM - test-order dependence in the one question whose answer is per-game.
   `UnitsArchive.reset()` now runs from `ClearAllCaches.clearAll()`, the shape
   `ReservedResources.reset()` and `Missions.reset()` already had.
+- **Update (2026-10-05, the owner's game re-proved the old rule on the stale jar):**
+  `09:59:30 Tomas Vajda.log`: Nexus queued 4:13 and 4:16, then "7592 Cancelling pending
+  base At 30 Nexus NATURAL* (IN_PROGRESS)(#172), Reason: New base created, remove not
+  started ones" - and `unit_events.csv` shows the first warp (id 173, warping since frame
+  7127, ~10% HP) destroyed three frames later, right after the second warp (id 179)
+  started. The deployed jar was built 16:53, all three B-23 commits landed 19:14+; the
+  jar's `CancelNotStartedBases` has only `cancelNotStartedOrEarlyBases` (checked with
+  `javap`), i.e. the old "up to half built" rule that eats a 10% natural. The current
+  source cannot do this - the narrow pass only takes constructions that never started -
+  and a test now pins the log's exact shape (`aTenPercentWarpSurvivesWhenTheSecondWarpStarts`:
+  two orders, first warp at 10%, trigger is the second warp; verified it fails with the
+  old condition restored, "expected 2 but was 1"). The "third base proceeds fine" the
+  owner noticed is the same rule behaving: with one pending base left there is nothing
+  redundant to prune. Same rebuild as B-22 (2026-10-05 10:22) carries this fix.
 
 ## B-22 — "we build a zealot and a dragoon and then nothing"
 
@@ -303,6 +317,20 @@ documented in code with a comment. The closure goes into the commit message.
   action) or for one it cannot (an order the bot keeps re-issuing - if so, the report
   above will now say "free=0 gateways=2" every minute and the re-issuing doctrine is the
   next thing to look for).
+- **Update (2026-10-05, both of today's games ran on the stale jar):** the owner reported
+  production stopped again (`GAME_35FFEF49` vs Steamhammer: 2 zealots, last combat unit
+  frame 3981 of 6501; `GAME_8A141282` vs Tomas Vajda: 1 zealot + 1 dragoon, last combat
+  unit frame 5479 of 22793 - twelve minutes of nothing). The deployed jar was built
+  2026-10-04 16:53; this fix landed 23:28, and `ProtossProductionDiagnostics` is absent
+  from the jar (checked with `javap`/`unzip -l`), so these two games re-proved the old
+  silence rather than a new one - including its shape (two combat units, then nothing).
+  The jar was rebuilt 2026-10-05 10:22 after this fix (6.1 MB, 3617 entries, 0
+  `tests/**`, fixes verified inside with `javap`), so the next game is the first one
+  that can falsify it. Two tests now cover it: `ProtossDragoonProductionTest`
+  (the owner's literal setup - Nexus, 4 Probes, 800/300, Pylon, Gateway, Core - through
+  the real commander, 4+ Dragoons; plus the same setup with both gateways busy, which
+  fails with the fix reverted and passes with it) alongside the earlier
+  `ProtossBusyGatewayProductionTest`.
 
 ## B-18 — the combat evaluator only sees the opening of a long fight
 
