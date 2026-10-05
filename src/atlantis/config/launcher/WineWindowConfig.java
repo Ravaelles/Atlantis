@@ -28,7 +28,7 @@ import atlantis.config.env.Env;
 public final class WineWindowConfig {
 
     /** Wine virtual-desktop name; fixed, it is an internal handle. */
-    public static final String DESKTOP_NAME = "scgame";
+    public static final String DESKTOP_NAME = "Default";
 
     public static int x = 0;
     public static int y = 0;
@@ -65,9 +65,31 @@ public final class WineWindowConfig {
         }
     }
 
-    /** The {@code /desktop=scgame,WxH} argument for {@code wine explorer}. */
+    /** The {@code /desktop=...} argument is no longer used; kept for docs. */
     public static String desktopArgument() {
         return "/desktop=" + DESKTOP_NAME + "," + width + "x" + height;
+    }
+
+    /**
+     * Command that turns on the Wine virtual desktop at our size.
+     *
+     * <p>Why the registry and not {@code wine explorer /desktop=}: measured
+     * 2026-10-05, {@code /desktop=scgame,WxH} creates a window that Mutter
+     * maximizes to the full screen (3840x2160), and neither {@code wmctrl -r}
+     * nor {@code xdotool windowsize} can resize it afterwards - the window is
+     * not managed by the WM. The registry desktop (this method) makes Wine
+     * create a normal window of the requested size that is left alone.</p>
+     *
+     * <p>Wine reads the setting at wineserver start, so a running server has to
+     * be killed first ({@code wineserver -k}).</p>
+     */
+    public static String[] enableVirtualDesktopCommands() {
+        String size = width + "x" + height;
+        return new String[]{
+            "wineserver -k",
+            "wine reg add 'HKCU\\Software\\Wine\\Explorer' /v Desktop /d " + DESKTOP_NAME + " /f",
+            "wine reg add 'HKCU\\Software\\Wine\\Explorer\\Desktops' /v " + DESKTOP_NAME + " /d " + size + " /f",
+        };
     }
 
     public static String describe() {

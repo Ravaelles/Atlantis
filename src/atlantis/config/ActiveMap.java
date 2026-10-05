@@ -43,7 +43,18 @@ public class ActiveMap {
     public static String activeMapPath() {
         if (_cachedMapPath != null) return _cachedMapPath;
 
-        return _cachedMapPath = ("maps/BroodWar/" + ActiveMap.mapName);
+        // The map name already carries its own folder, e.g. "ums/rav/..." or
+        // "sscai/(4)Python.scx". Prefixing it with "maps/BroodWar/" (the old
+        // Windows layout) produced "maps/BroodWar/ums/..." - a path that does
+        // not exist in the Wine install, where maps live under maps/ums and
+        // maps/sscai directly. BWAPI then failed to load the map and the game
+        // never started (measured 2026-10-05).
+        String name = ActiveMap.mapName;
+        if (name != null && name.startsWith("maps/")) {
+            return _cachedMapPath = name;
+        }
+
+        return _cachedMapPath = ("maps/" + name);
     }
 
     public static boolean isMap(String ...mapPartialName) {

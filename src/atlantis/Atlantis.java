@@ -225,6 +225,13 @@ public class Atlantis implements BWEventListener {
         AConsole.println("Killing Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
 
+        // On the Wine backend the two calls above are no-ops (there is no
+        // taskkill); the game host is a Wine process tree that has to be killed
+        // by name, and the virtual desktop (wineserver) with it. Doing it here
+        // as well keeps the game host dead even when the exit comes from the
+        // game ending rather than from Escape.
+        ProcessHelper.killWineProcessesIfOnWine();
+
         AConsole.println("Exit...");
         System.exit(0);
     }

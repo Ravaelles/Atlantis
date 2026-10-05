@@ -24,6 +24,14 @@ MAP="${1:-1a2a3a Micro 2.scx}"
 RACE="${RACE:-Protoss}"
 ENEMY_RACE="${ENEMY_RACE:-Zerg}"
 
+# StarCraft's own window inside the Wine desktop (see [window] in bwapi.ini).
+# windowed = OFF makes the game fill the whole Wine desktop - the desktop
+# itself is the window the host sees, so the game looks fullscreen while Wine
+# stays in a window on the host desktop.
+WINDOWED="${WINDOWED:-OFF}"
+WINE_WINDOW_WIDTH="${WINE_WINDOW_WIDTH:-1600}"
+WINE_WINDOW_HEIGHT="${WINE_WINDOW_HEIGHT:-1000}"
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="/sc-ai/Atlantis/out/wine"
 mkdir -p "$LOG_DIR"
@@ -63,33 +71,73 @@ if [ ! -f "$BWAPI_DATA/BWAPI.dll" ]; then
 fi
 
 # --- 3. Generate bwapi.ini
+#
+# Section layout matters (measured 2026-10-05): auto_menu, map, race,
+# enemy_race, game_type and save_replay live under [auto_menu], NOT under [ai].
+# With everything crammed into [ai] BWAPI ignored the auto-start entirely and
+# dropped the player into the StarCraft menu - the game never started and the
+# Java client printed "Game table mapping not found" forever.
+#
+# [ai] ai = BWAPI.dll on purpose: that DLL is the shared-memory SERVER
+# (its exports contain "Local\bwapi_shared_memory_*"), which is exactly what a
+# Java bot attaches to. It is not an in-process AI module, and it is not
+# ClientBWAPI.dll.
 INI="$BWAPI_DATA/bwapi.ini"
 cat > "$INI" <<EOF
 [ai]
-ai = bwapi-data/AI/ClientBWAPI.dll
+; BWAPI.dll is the shared-memory server a Java bot attaches to (its exports
+; contain "Local\\bwapi_shared_memory_*"). Not ClientBWAPI.dll, not an
+; in-process AI module.
+ai = bwapi-data/BWAPI.dll
+
+[auto_menu]
+; SINGLE_PLAYER is what actually starts the game; OFF drops into the menu.
 auto_menu = SINGLE_PLAYER
 character_name = FIRST
 pause_dbg = OFF
 map = maps/ums/$MAP
 game_type = USE_MAP_SETTINGS
 race = $RACE
+enemy_count = 1
 enemy_race = $ENEMY_RACE
 save_replay = $REPLAYS_DIR/%MAP%_\$Y\$m\$d_\$H\$M\$S.rep
+
+[config]
+; Wine-specific knob, documented in the 4.4.0 template: shared_memory = ON
+; is the BWAPI server itself. Left ON (that is what a Java client needs);
+; flip to OFF only if the server misbehaves under Wine.
+shared_memory = ON
+
+[window]
+; StarCraft's own window inside the Wine desktop. This is the size the game
+; renders at - separate from the wine explorer desktop size.
+windowed = $WINDOWED
+left = 0
+top = 0
+width = $WINE_WINDOW_WIDTH
+height = $WINE_WINDOW_HEIGHT
 EOF
 
 echo "[wine-game] bwapi.ini written:"
 cat "$INI"
 
-# --- 4. Copy the AI client DLL (Java mirror is started separately)
-# BWAPI 4.4.0 talks to the AI module in-process; for a Java bot the AI module
-# is a bridge (ClientBWAPI.dll) that talks to a separate JVM over the BWAPI
-# client protocol. The distribution ships ExampleAIModule only, so for now we
-# rely on BWAPI's own client-server bridge (java -jar starts separately).
+# --- 4. Wine virtual desktop via the registry (NOT wine explorer /desktop=).
+#
+# Measured 2026-10-05: wine explorer /desktop=scgame,WxH creates a window that
+# Mutter maximizes to the full screen, and neither wmctrl nor xdotool can
+# resize it afterwards. The registry desktop creates an ordinary 1600x1000
+# window that stays put. Wine reads it at wineserver start, so kill the server
+# first.
+wineserver -k 2>/dev/null || true
+sleep 1
+wine reg add 'HKCU\Software\Wine\Explorer' /v Desktop /d Default /f >/dev/null 2>&1
+wine reg add 'HKCU\Software\Wine\Explorer\Desktops' /v Default \
+  /d "${WINE_WINDOW_WIDTH}x${WINE_WINDOW_HEIGHT}" /f >/dev/null 2>&1
 
 # --- 5. Start ChaosLauncher under Wine. It injects BWAPI into StarCraft and
 #        (with "Run Starcraft on Startup") starts the game itself.
 cd "$GAME_ROOT"
-echo "[wine-game] starting ChaosLauncher..."
+echo "[wine-game] starting ChaosLauncher in a ${WINE_WINDOW_WIDTH}x${WINE_WINDOW_HEIGHT} Wine desktop..."
 env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" wine "$CHAOS_DIR/Chaoslauncher.exe" \
   > $LOG_DIR/chaoslauncher.log 2>&1 &
 CHAOS_PID=$!

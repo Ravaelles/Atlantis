@@ -67,19 +67,45 @@ public class ProcessHelper {
     }
 
     /**
-     * Starts ChaosLauncher inside a Wine virtual desktop. The virtual desktop
-     * is what protects the host: StarCraft 1.16.1 otherwise switches the X
-     * screen resolution and resets HiDPI scaling on exit.
+     * Wine-only cleanup, called from the game-exit path. Kills the game host
+     * and the whole virtual desktop, so no {@code wineserver} is left holding
+     * the {@code scgame} window after Escape or after the game ends.
+     */
+    public static void killWineProcessesIfOnWine() {
+        if (!Env.isWine()) return;
+
+        killWineProcesses();
+        executeInCommandLine("wineserver -k");
+    }
+
+    /**
+     * Starts ChaosLauncher inside a Wine virtual desktop of the configured
+     * size. The virtual desktop protects the host: StarCraft 1.16.1 run bare
+     * switches the X screen resolution and resets HiDPI scaling on exit.
+     *
+     * <p>The desktop is configured in the Wine registry (see
+     * {@link WineWindowConfig#enableVirtualDesktopCommands()}), not with
+     * {@code wine explorer /desktop=}, because the latter produces a window the
+     * window manager maximizes and no tool can resize afterwards. The registry
+     * way creates an ordinary window of the requested size.</p>
      */
     public static void startChaosLauncherUnderWine() {
+        for (String command : WineWindowConfig.enableVirtualDesktopCommands()) {
+            executeInCommandLine(command);
+        }
+        // wineserver was just killed; give it a moment before it is needed.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
+
         String gameRoot = wineGameRoot();
         String chaos = gameRoot + "/chaoslauncher/Chaoslauncher.exe";
 
         String command = String.format(
-            "cd %s && DISPLAY=%s wine explorer %s \"%s\"",
+            "cd %s && DISPLAY=%s wine \"%s\"",
             gameRoot,
             displayEnv(),
-            WineWindowConfig.desktopArgument(),
             chaos
         );
 
