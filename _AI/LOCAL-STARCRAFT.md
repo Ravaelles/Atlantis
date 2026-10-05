@@ -130,6 +130,25 @@ Run log kept at `/tmp/opencode/openbw-probe/atlantis-run.log`.
 
 ## Operational notes (cost me time, keep them)
 
+- **BWAPI version: the fork says 4.2.0, but the wire protocol IS 4.4.0.**
+  `OpenBW/bwapi` is a fork of BWAPI 4.2.0 with its own IPC (no upstream
+  shared-memory) and it does not work with real StarCraft - OpenBW only. The
+  version that matters is the handshake: JBWAPI-Rav (the jar Atlantis plays
+  with) hard-codes `sipush 10003` and compares it against
+  `GameData.client_version`; upstream BWAPI **4.4.0** defines
+  `CLIENT_VERSION = 10003`. That is why bumping the fork's constant to
+  `10003` was enough and why "we are on 4.2.0, we need 4.4.0" is a number,
+  not a merge - the fork is not on the 4.2.0->4.4.0 upstream line at all.
+  Do not start a "port to 4.4.0" project on the strength of the version
+  string alone.
+- **Exactly one BWAPILauncher at a time.** Two servers = the newer one
+  overwrites the game-table row with its PID while the older keeps the
+  listening socket, and the client connects to the stale PID and loops on
+  `Unable to open communications socket: /tmp/bwapi_socket_<dead-pid>`
+  (measured 2026-10-05: 1122835 listening, 1124737 stale, client chose
+  1124737). Looks like a protocol failure, is a process-hygiene one.
+  `run-openbw-server.sh` kills leftovers before hosting now; the tell is
+  `ss -xlp | grep bwapi` naming a *different* PID than the game table.
 - **The server needs `BWAPI_CONFIG_AUTO_MENU__AUTO_MENU=SINGLE_PLAYER`.**
   Without it `startGame()` does nothing (default `OFF`), the server sits idle
   and the client hangs at `Connected` with no game. Cost: the whole 2026-10-05
