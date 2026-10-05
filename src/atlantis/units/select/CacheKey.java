@@ -57,6 +57,7 @@ public class CacheKey {
 
         if (object instanceof String) return (String) object;
         if (object instanceof Double) return A.digit((Double) object);
+        if (object instanceof Integer) return object.toString();
         if (object instanceof AUnit) return ((AUnit) object).typeWithUnitId();
         if (object instanceof AUnitType) return ((AUnitType) object).name();
         if (object instanceof APosition) return ((APosition) object).toStringPixels();
