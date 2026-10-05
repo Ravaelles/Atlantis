@@ -22,6 +22,7 @@ public class Env {
     private static boolean isTesting = false;
     private static boolean modifyBwapiIni = false;
     private static boolean openBW = false;
+    private static boolean wine = false;
     private static boolean paramTweaker = false;
     private static String copyCherryVisDataTo = null;
 
@@ -94,11 +95,18 @@ public class Env {
                 copyCherryVisDataTo = value;
                 return true;
             case "GAME_LAUNCHER":
-                // CHAOS (default, Windows + ChaosLauncher) or OPENBW (Linux + BWAPILauncher server).
-                openBW = value != null && value.trim().equalsIgnoreCase("OPENBW");
+                // CHAOS (default, Windows + ChaosLauncher), OPENBW (Linux +
+                // BWAPILauncher server) or WINE (Linux + real StarCraft under
+                // Wine with ChaosLauncher).
+                String launcher = value == null ? "" : value.trim();
+                openBW = launcher.equalsIgnoreCase("OPENBW");
+                wine = launcher.equalsIgnoreCase("WINE");
                 return true;
+            default:
+                // Wine game-window geometry, tweakable without recompiling.
+                atlantis.config.launcher.WineWindowConfig.applyEnvValue(key, value);
+                return false;
         }
-        return false;
     }
 
     private static String envFilePath() {
@@ -184,6 +192,14 @@ public class Env {
      */
     public static boolean isOpenBW() {
         return openBW;
+    }
+
+    /**
+     * Wine backend (Linux, real StarCraft + ChaosLauncher) selected via
+     * {@code GAME_LAUNCHER=WINE} in {@code bwapi-data/AI/ENV}.
+     */
+    public static boolean isWine() {
+        return wine;
     }
 
     public static void markIsTesting(boolean enabled) {
