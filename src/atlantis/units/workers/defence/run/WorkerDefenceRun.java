@@ -10,6 +10,7 @@ import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
+import atlantis.util.We;
 
 import java.util.List;
 
@@ -46,11 +47,17 @@ public class WorkerDefenceRun extends Manager {
 
     @Override
     public Manager handle() {
-        if (runFromZealots()) return usedManager(this);
-        if (runFromDragoons()) return usedManager(this);
-        if (runFromMassLings()) return usedManager(this);
-        else if (runFromReaver()) return usedManager(this);
-        else if (runFromMutas()) return usedManager(this);
+        if (Enemy.protoss()) {
+            if (runFromZealots()) return usedManager(this);
+            if (runFromDragoons()) return usedManager(this);
+            if (runFromReaver()) return usedManager(this);
+            if (runFromCarrier()) return usedManager(this);
+        }
+
+        if (Enemy.zerg()) {
+            if (runFromMassLings()) return usedManager(this);
+            if (runFromMutas()) return usedManager(this);
+        }
 
         return null;
     }
@@ -157,6 +164,29 @@ public class WorkerDefenceRun extends Manager {
         }
 
         return false;
+    }
+
+    private boolean runFromCarrier() {
+        if (!Enemy.protoss()) return false;
+
+        // Early exit first: no carriers or interceptors around, nothing to run from.
+        Selection carriers = unit.enemiesNear().ofType(
+            AUnitType.Protoss_Carrier, AUnitType.Protoss_Interceptor
+        );
+        if (carriers.countInRadius(10, unit) == 0) return false;
+
+        // Terran exception: a Missile Turret or Goliath within 10 tiles handles air,
+        // so workers hold ground instead of fleeing the mineral line.
+        if (We.terran() && Select.our().ofType(
+            AUnitType.Terran_Missile_Turret, AUnitType.Terran_Goliath
+        ).inRadius(10, unit).notEmpty()) return false;
+
+        // Our Protoss exception: more than 2 nearby units with an anti-air weapon
+        // (Dragoons, Archons, Cannons) means the air threat is being answered.
+        if (We.protoss() && unit.friendsNear().havingAntiAirWeapon()
+            .countInRadius(10, unit) > 2) return false;
+
+        return runFromEnemyToAnotherRegion(unit, carriers.first());
     }
 
     private boolean runFromEnemyToAnotherRegion(AUnit worker, AUnit enemy) {
