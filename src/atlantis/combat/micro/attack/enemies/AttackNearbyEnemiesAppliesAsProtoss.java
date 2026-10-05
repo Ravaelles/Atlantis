@@ -15,6 +15,17 @@ public class AttackNearbyEnemiesAppliesAsProtoss {
         if (unit.isActiveManager(ProtossMoon.class)) return Decision.FORBIDDEN;
         if (unit.lastPositioningActionLessThanAgo(3)) return Decision.FORBIDDEN;
 
+        // Self-defense is not chasing - the same escape PreventAttacksInMissionDefend
+        // got one layer down, because this decision duplicates its leash one layer up:
+        // "enemy has ranged and the leader is 15+ tiles away" forbids even an adjacent
+        // fight (measured: a zealot 2 tiles from a marine, 18 from its idle leader,
+        // eval 7.7, held DoNothing for 30 frames while the mission itself authorized
+        // the fight at eval >= 1.3). Shots incoming, or an enemy inside 3 tiles, means
+        // the fight is here; everything below this line is about going to one farther
+        // away, and still applies there.
+        if (unit.lastUnderAttackLessThanAgo(45)) return Decision.ALLOWED;
+        if (unit.enemiesNear().nearestToDistLess(unit, 3)) return Decision.ALLOWED;
+
         if (
             unit.isMissionDefend()
                 && (unit.eval() <= 1.5 || unit.distToFocusPoint() >= 10)
