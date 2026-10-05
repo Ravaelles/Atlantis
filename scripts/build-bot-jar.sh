@@ -169,7 +169,18 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
                 for name in z.namelist():
                     if name.endswith('/') or name == 'META-INF/MANIFEST.MF':
                         continue
-                    if name.endswith('.class') or name.startswith('win32-x86'):
+                    # Runtime libraries ship classes plus their native payload.
+                    # The natives used to be filtered to win32-x86 only, which
+                    # silently dropped jnativehook's Linux library
+                    # (com/github/kwhat/jnativehook/lib/linux/x86_64/
+                    # libJNativeHook.so) - AKeyboard then died on Linux with
+                    # "UnsatisfiedLinkError: Unable to extract the native
+                    # library". Keep every platform's natives.
+                    native = (name.endswith('.so') or name.endswith('.dylib')
+                              or name.endswith('.dll') or name.startswith('win32-x86')
+                              or '/linux/' in name or '/darwin/' in name
+                              or '/freebsd/' in name)
+                    if name.endswith('.class') or native:
                         entries.setdefault(name, z.read(name))
     for arc, data in entries.items():
         zout.writestr(arc, data)
