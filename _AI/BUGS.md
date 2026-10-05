@@ -325,8 +325,27 @@ documented in code with a comment. The closure goes into the commit message.
   from the jar (checked with `javap`/`unzip -l`), so these two games re-proved the old
   silence rather than a new one - including its shape (two combat units, then nothing).
   The jar was rebuilt 2026-10-05 10:22 after this fix (6.1 MB, 3617 entries, 0
-  `tests/**`, fixes verified inside with `javap`), so the next game is the first one
-  that can falsify it. Two tests now cover it: `ProtossDragoonProductionTest`
+  `tests/**`, fixes verified inside with `javap`).
+- **Update (2026-10-05, first game with the fix inside - and production still
+  stopped):** `GAME_29A29B04` (AtlantisP vs Steamhammer, IDE-built jar 10:57, fix
+  verified inside) produced 2 zealots, last combat unit frame 4110 of 6960 - but this
+  is a *different* stop, measured, not the same silence:
+  - gas gathered all game: **0**. No assimilator was ever completed (the book's #9 at
+    supply 22 never fired and neither did the dynamic one), so dragoons were
+    impossible from the first frame - no gateway question was ever reached. The
+    producer `reason` strings added by this fix are not the missing piece here either:
+    they only print through the rich-but-idle report (minerals >= 600), and this bot
+    spent everything it mined (1906 gathered / 1800 spent).
+  - the two zealots fought until they died (manager histories: ContinueAttack,
+    AttackNearbyEnemies, ForceFight, AvoidEnemies) - no DoNothing anywhere in the log
+    (that manager prints "@ frame - Still DoNothing!" every frame it runs).
+  So the gateway-capacity fix held (nothing about idle gateways stopped anything -
+  there was nothing to stop *with*), and the blocker moved one level up to the
+  assimilator gating: `ProduceFirstAssimilator` needs a nearly-done core plus
+  `!(Strategy.isExpansion() && supply <= 44)` with supply peaking at 40. Which gate
+  held cannot be read from this log - tracked as **NEXT #42** (name the blocking gate
+  in the log first, same reason-pattern as the producers, no gating change blind).
+  Two tests now cover it: `ProtossDragoonProductionTest`
   (the owner's literal setup - Nexus, 4 Probes, 800/300, Pylon, Gateway, Core - through
   the real commander, 4+ Dragoons; plus the same setup with both gateways busy, which
   fails with the fix reverted and passes with it) alongside the earlier

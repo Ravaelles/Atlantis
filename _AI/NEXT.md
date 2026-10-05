@@ -618,6 +618,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `EvalHasReadingTest` - so the remaining work is one class at a time, three lines per row
   (reading / hasReading / decision). Changing a guard is a strategy decision, not a bug
   fix: the two guards above row 1 already handle the two target kinds that matter.
+- **#42** First assimilator never ordered despite a finished Cybernetics Core
+  (`GAME_29A29B04`: 0 gas mined all game, dragoons impossible from frame one, book #9
+  at supply 22 never fired and neither did the dynamic path). Suspects, in order:
+  `Strategy.isExpansion() && supply <= 44` (supply peaked at 40), the buildings
+  commander's `applies()` (minerals 220...), the core-timing gate. **Diagnostics
+  first:** name the blocking gate in the log with the same reason-pattern the producers
+  got in B-22, then decide. No gating change blind - the last three "production
+  stopped" reports were three different root causes (idle-gateway reading, stale jar,
+  no gas), and each looked like the others from the score line.
 
 ## Housekeeping
 
