@@ -1,0 +1,2 @@
+# JAR manifests require CRLF line endings; do not normalize.
+META-INF/MANIFEST.MF -text
