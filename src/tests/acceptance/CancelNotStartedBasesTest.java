@@ -18,6 +18,7 @@ import static atlantis.units.AUnitType.Protoss_Nexus;
 import static atlantis.units.AUnitType.Protoss_Pylon;
 import static atlantis.units.AUnitType.Protoss_Probe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * B-23: the "a new base appeared, drop the rest" pass drops the rest - and only the
@@ -151,6 +152,49 @@ public class CancelNotStartedBasesTest extends WorldStubForTests {
                 fake(Protoss_Nexus, 10, 10), "New base created, remove not started ones");
 
             assertEquals(1, pendingBases());
+        });
+    }
+
+    @Test
+    public void aTenPercentWarpSurvivesWhenTheSecondWarpStarts() {
+        // The exact shape of the 09:59:30 Tomas Vajda log (2026-10-05): two Nexus
+        // orders queued minutes apart (4:13, 4:16), the first warp rising at ~10% HP,
+        // then a second warp starts - and the pass, triggered by the *second* warp,
+        // cancelled the *first* one:
+        //   "7592 Cancelling pending base At 30 Nexus NATURAL* (IN_PROGRESS)(#172),
+        //    Reason: New base created, remove not started ones"
+        // three frames later the first warp was dead in unit_events.csv.
+        // That jar predated this whole file (built 16:53, the fix landed 19:14), so the
+        // game re-proved the old aggressive rule - but the shape is pinned here so no
+        // future "not started" reading can take a rising base again.
+        FakeUnit firstWarp = risingNatural(10);
+        FakeUnit secondWarp = risingNatural(0);
+
+        world(1, ourWorld(firstWarp, secondWarp), enemies(), () -> {
+            queue = initQueue();
+
+            ProductionOrder firstOrder = new ProductionOrder(Protoss_Nexus, 30);
+            firstOrder.setConstruction(firstWarp.construction());
+            firstOrder.setStatus(OrderStatus.IN_PROGRESS);
+            Queue.get().addNew(0, firstOrder);
+
+            ProductionOrder secondOrder = new ProductionOrder(Protoss_Nexus, 30);
+            secondOrder.setConstruction(secondWarp.construction());
+            secondOrder.setStatus(OrderStatus.IN_PROGRESS);
+            Queue.get().addNew(0, secondOrder);
+
+            // The trigger is the second warp, exactly as OnOurUnitCreated fires it:
+            // ProtossWarping has already linked it and marked it IN_PROGRESS.
+            CancelNotStartedBases.cancelNotStartedBases(
+                secondWarp, "New base created, remove not started ones");
+
+            assertEquals(2, pendingBases(),
+                "a warp at 10% HP is not 'not started' - it is the natural, rising");
+            assertEquals(ConstructionOrderStatus.IN_PROGRESS, firstWarp.construction().status(),
+                "and its construction was not touched");
+            assertTrue(firstWarp.isAlive(),
+                "cancelling its construction would kill the warp in the engine, "
+                    + "which is how the logged base died three frames later");
         });
     }
 
