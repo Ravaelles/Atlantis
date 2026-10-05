@@ -23,7 +23,7 @@ public class AtlantisJfap {
 
     private double[] jfapEval() {
         if (noEnemiesNear()) {
-            return new double[]{9874, -9874};
+            return new double[]{CombatEvalScale.NO_ENEMY_IN_REACH, -CombatEvalScale.NO_ENEMY_IN_REACH};
         }
 
         return JfapCombatEvaluator.eval(unit);
@@ -73,8 +73,14 @@ public class AtlantisJfap {
         );
     }
 
+    /**
+     * The evaluator's own "nothing to simulate" question, on the unit, so the callers
+     * that need to tell "strong" from "no data" ask exactly what the simulation asked
+     * ({@code atlantis.units} may not depend on {@code atlantis.combat}, so the
+     * predicate lives on the unit and this reads it rather than repeating it).
+     */
     protected boolean noEnemiesNear() {
-        return unit.enemiesNear().notImmobilized().havingWeapon().empty();
+        return !unit.hasEnemyForEval();
     }
 
     private double calculateToRelativeScoreIfNeeded(double ourScore, double enemyScore, boolean relativeToEnemy) {

@@ -116,3 +116,41 @@ Anomalies, one line each, arithmetic only:
   in `ownCombatEvalRelative()`, which the tests assert, not in `eval()`.
 - All absolutes are identical to the 2026-10-03 table: the engine data did not
   move, only the doctrine around it did.
+
+## Audit step 2 - "safe" versus "no reading" (started 2026-10-05)
+
+Step 2 of the decision above: document 9874.0 as "no threat in reach" and audit the
+guards that must be able to tell it apart from a real reading. The *machinery* is in
+place; the audit itself is not finished, and this section says exactly how far it got.
+
+**Why it can be told apart at all.** `AUnit.hasEnemyForEval()` asks the evaluator's own
+question ("is an enemy in reach with a weapon that is not immobilized"), and
+`CombatEvalScale.NO_ENEMY_IN_REACH` (9874.0) is the quiet reading as a named value -
+`eval()` answers 9873.7 for our own units because the hedge applies to it like any other.
+`AtlantisJfap.noEnemiesNear()` now reads the unit's predicate rather than repeating it,
+so there is one definition. `EvalHasReadingTest` (3 tests) pins both directions,
+including that an enemy without a weapon is not a reading.
+
+**The size of the audit.** 195 production comparisons of `eval()` against a numeric
+threshold: **105 are "our side is at least X"** (higher is safer for us, so the quiet
+reading passes them all) and 90 are "at most X" (the quiet reading fails them, which is
+the harmless direction - a unit that is not retreating because nothing is in reach is
+right). So the audit set is the 105, and within it the risky subset is the guards whose
+subject is a *chosen* target rather than what happens to be nearby: there the reading can
+be about an entirely different fight, or about none.
+
+**Row 1, measured** (`tests.acceptance` scratch probe, deleted after measuring):
+`ProtossMissionDefendAllowsToAttack.allowsToAttackEnemyUnit(enemy)` -
+`if (unit.eval() >= 1.3) return Decision.TRUE;`. A zealot on a defend mission whose
+assigned target is **30 tiles away** (`NEAR_DIST` is 15, so it is outside
+`enemiesNear()`) reads `eval() = 9873.7` with `hasEnemyForEval() == false` and gets
+`Decision.TRUE`: it will leave the spot it is defending for a target it has no reading
+on. The guards above it (`PreventChasingEnemyWorkerInBase`,
+`PreventChasingEnemyLingInBase`) cover two specific target kinds, which is why this is a
+per-site question and not a blanket change - and why changing it is a strategy decision
+rather than a bug fix. Recorded, not changed; tracked as NEXT #41.
+
+**What is left:** the rest of the 105, one class at a time, with the same three-line
+measurement (reading, hasReading, decision) per row. Nothing in the audit so far says a
+threshold is wrong - it says which ones cannot see the difference between "strong" and
+"nothing to fight".

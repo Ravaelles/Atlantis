@@ -2307,6 +2307,26 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     /**
+     * Does the combat simulation have anything to simulate for this unit - i.e. is an
+     * enemy within reach that has a weapon and is not immobilized?
+     *
+     * <p>The same question {@code AtlantisJfap} asks before it returns the pair
+     * {@code {9874, -9874}}, so {@link #eval()} reads
+     * {@link CombatEvalScale#NO_ENEMY_IN_REACH} exactly when this is false. It is a
+     * question about the <i>world</i>, not about the number, which is why it lives here
+     * and not on the evaluator: {@code atlantis.units} may not depend on
+     * {@code atlantis.combat}, and the callers that need to tell "we are strong" from
+     * "there is no reading" are unit-side (a defend mission deciding whether to chase a
+     * target 30 tiles away reads 9874 and concludes it is safe).</p>
+     *
+     * <p>Cheap by construction: {@code enemiesNear()} is a cached selection, and this is
+     * only called where an {@code eval()} reading is already being taken.</p>
+     */
+    public boolean hasEnemyForEval() {
+        return enemiesNear().notImmobilized().havingWeapon().notEmpty();
+    }
+
+    /**
      * Is this unit free <i>and</i> not producing anything?
      *
      * <p>Through {@link #trainingQueue()} rather than {@code u().getTrainingQueueCount()}

@@ -67,6 +67,25 @@ public class CombatEvalScale {
     /**
      * The number production compares against thresholds: our own reading, hedged.
      */
+    /**
+     * What {@link AUnit#eval()} returns when the simulation has nothing to simulate:
+     * no enemy within reach that has a weapon and is not immobilized. The evaluator
+     * returns the pair {@code {9874, -9874}} for that case, so the relative reading is
+     * the same "infinitely better" number a real fight reaches by winning every
+     * exchange - which is why it is a *named* value and not a literal, and why
+     * {@link AUnit#hasEnemyForEval()} exists next to it. {@link AUnit#eval()} then takes
+     * {@link #OUR_SIDE_HEDGE} off it like any other reading, so a unit of ours answers
+     * {@code 9873.7} and an enemy unit 9874.0.
+     *
+     * <p>Every {@code eval() >= x} guard reads this as "we are strong, proceed". That is
+     * harmless in most places (if there is no enemy in reach there is usually nothing to
+     * walk towards) and wrong where the guard is about a <i>chosen</i> target that may be
+     * out of reach - chasing is the case B-1's audit step 2 is about, and
+     * {@code ProtossMissionDefendAllowsToAttack.allowsToAttackEnemyUnit} is its first
+     * measured row.</p>
+     */
+    public static final double NO_ENEMY_IN_REACH = 9874.0;
+
     public static double hedgedForOurSide(double eval) {
         return signSafe(eval - OUR_SIDE_HEDGE);
     }
