@@ -589,6 +589,26 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `SAVE_UNIT_LOGS_TO_FILES`'s file dump and drop the four jars from
   `scripts/build-bot-jar.sh`, or revive the routine behind a flag and keep them.
   Nothing else in the tree reaches any of it.
+- **#39** The Protoss cannon producers are commented out in the buildings commander
+  (`// || ProduceCannon.produce()`, `// || ProduceCannonAtNatural.produce()`), disabled
+  2024-10-02 (`49a4536a`) and 2025-01-09 (`9a34add6`, `75d7650f`) with no recorded
+  reason, and `ProduceCannon` no longer exists in the tree. The two live cannon paths are
+  `ProtossSecureBasesCommander` (needs `Have.forge()` + two bases) and
+  `ProtossResponseEnemyHiddenUnits` -> `ProduceCannonAtNaturalOrMain`. **Decision, not a
+  chore:** re-enable (which mechanism should own "the base is being attacked", given two
+  exist), or delete the dead classes, or leave it and own the consequence in a comment at
+  the call site. `BUGS.md` B-19 carries the measurements - four games, zero cannons - and
+  the chain that leads there.
+- **#40** `ConstructionThatLooksBugged.handleConstructionThatLooksBugged()` has an
+  unreachable branch: the method returns unless `status() == NOT_STARTED`, and the inner
+  guard is `if (constr.status() != NOT_STARTED) constr.assignOptimalBuilder();`, so the
+  assignment never runs. The effect is that a planned construction with no builder is
+  *cancelled* ("Weird case, ... has no builder. Cancel.") rather than given one.
+  Builders are assigned at creation (`NewConstructionRequest` /
+  `DefineConstructionForNewUnit`), which is why it is invisible - and why it is recorded
+  rather than changed. Worth a test that says which of the two behaviours is intended
+  before anyone touches it: a construction whose builder is assigned a frame later would
+  be cancelled by the safety net.
 
 ## Housekeeping
 
