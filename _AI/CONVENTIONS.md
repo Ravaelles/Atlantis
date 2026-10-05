@@ -167,9 +167,15 @@ by the language rule below.
     template) and empty `read/` + `write/`. These are **real files, not
     symlinks**: scbw bind-mounts the bot folder read-only into the container,
     so links escaping it dangle (`Bot not found in '/app/bot/AI/Atlantis.jar'`,
-    measured). "Always newest" therefore means rebuilding straight into those
-    `AI/` folders (`build-bot-jar.sh <that path>`), not linking to the repo
-    jar. Opponent bots downloaded there by scbw itself (`SscaitBotStorage`)
+    measured). **Hard links count as links here, not as files** (measured
+    2026-10-05): both bot jars were hard-linked to one inode, something swapped
+    that inode for a foreign Maven-built jar (`Built-By: aleksabl`, no
+    `Main-Class`, tests and junit shipped inside), and every game failed with
+    `no main manifest attribute, in /app/sc/bwapi-data/AI/Atlantis.jar` - for
+    Protoss and Terran alike, with nothing in the log pointing at the swap.
+    "Always newest" therefore means rebuilding straight into those
+    `AI/` folders (`build-bot-jar.sh <that path>`, which writes `Main-Class:
+    main.Main` into the manifest), not linking to the repo jar. Opponent bots downloaded there by scbw itself (`SscaitBotStorage`)
     are scbw's own cache, not ours - never enumerate or manage them from here.
 - A third-party tool installed to help (a package, a virtualenv) is a means, not
   a deliverable: do not add it to the repository and do not let the repository
