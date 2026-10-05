@@ -71,6 +71,46 @@ are not part of any repo.
 
 ## The economy: solved 2026-10-05 (was the open item)
 
+### Map data in OpenBW: BWEM never initialises (measured 2026-10-05)
+
+All base/choke/region data comes from BWEM (`AMap.initMapAnalysis()` calls
+`new BWEM(game).initialize()` + `assignStartingLocationsToSuitableBases()`, and
+`AllBaseLocations` -> `jbweb.Stations.allBases()`). Measured with `Probe12`
+against a live Python 1.1 game:
+
+    bwem.BWEM.initialize -> java.lang.IllegalStateException:
+      At least one starting location was not assigned to a base.
+      at bwem.BWMap.assignStartingLocationsToSuitableBases(BWMap.java:94)
+
+`AMap.initMapAnalysis()` catches it and continues with an **uninitialised
+`bwem`**, so: `Stations.allBases()` is empty -> `BaseLocations` empty ->
+`natural()` null ("Natural base can not be determined"), `Chokes.chokes()`
+empty (mission focus falls back to a fake choke). One cause, every symptom.
+
+Not a code bug: OpenBW's map data does not satisfy BWEM. Same run shows the
+engine *does* expose the resources - `g.getMinerals()=9`, `g.getGeysers()=1`,
+`neutral=10` - so the data exists one layer below BWEM.
+
+Consequence: "fake natural / fake choke / fake base locations" is not a hack
+to avoid, it is the only working path until BWEM can see the map. The shape
+the project already has for this is the **Source port** (`MapTiles.Source`,
+`Regions.Source`, `PositionFinder.Source`, NEXT #18): an OpenBW adapter that
+answers base/choke questions from the engine's own units (`g.getMinerals()`,
+`g.getGeysers()`, `g.getStartLocations()`) instead of from BWEM. Hardcoding
+Tau Cross coordinates into production would be the wrong shape - it breaks
+the Map context and only ever answers for one map.
+
+**Open question for the owner (asked 2026-10-05, unanswered):** when we move
+from Python (for a working process) to Tau Cross (3 players, the real map),
+is a correct defeat/loss on Tau Cross acceptable as "success", or must the
+next session first make the map data path work on Tau Cross (so the loss is a
+true loss, not a null-data artefact)? The answer changes the plan: with "loss
+is fine" the session is: Python-process -> Tau Cross wiring -> play -> map
+fix. With "true loss required" the map-data port comes first and Python is
+only the smoke test.
+
+## The frozen economy (fixed 2026-10-05)
+
 **SOLVED 2026-10-05 (verified by execution, see below).** The frozen economy
 was the probe, not the engine: `Probe6` used `UnitCommand.gather(...)`, which
 this JBWAPI refuses at the client before it ever reaches the engine. The
@@ -130,25 +170,31 @@ Run log kept at `/tmp/opencode/openbw-probe/atlantis-run.log`.
 
 ## Operational notes (cost me time, keep them)
 
-- **BWAPI version: the fork says 4.2.0, but the wire protocol IS 4.4.0.**
-  `OpenBW/bwapi` is a fork of BWAPI 4.2.0 with its own IPC (no upstream
-  shared-memory) and it does not work with real StarCraft - OpenBW only. The
-  version that matters is the handshake: JBWAPI-Rav (the jar Atlantis plays
-  with) hard-codes `sipush 10003` and compares it against
-  `GameData.client_version`; upstream BWAPI **4.4.0** defines
-  `CLIENT_VERSION = 10003`. That is why bumping the fork's constant to
-  `10003` was enough and why "we are on 4.2.0, we need 4.4.0" is a number,
-  not a merge - the fork is not on the 4.2.0->4.4.0 upstream line at all.
-  Do not start a "port to 4.4.0" project on the strength of the version
-  string alone.
+- **There is a fixed ~30 s delay between server start and the first client
+  frame** in this setup (measured 2026-10-05: a client that attaches at t=3 s
+  saw frame 0 at t~33 s). A client that shows nothing for the first half
+  minute is not hung; wait it out before re-running. Two `Unable to open
+  communications socket` retries before the connection is normal.
+- **`bwapi.Unit.getDistance(Unit)` crashes on mineral fields in OpenBW.**
+  Probe11 died with an NPE inside `getDistance` while picking the nearest
+  mineral. Use `getDistance(Position)` or compute the difference by hand.
+- **`OpenBW/bwapi` is a fork of BWAPI 4.2.0** with its own IPC and no real-
+  StarCraft support; the version check is `GameData.client_version`, and
+  JBWAPI-Rav hard-codes `10003`. Upstream BWAPI **4.4.0** also defines
+  `CLIENT_VERSION = 10003`; that is why bumping the fork's constant to 10003
+  was enough and why "we are on 4.2.0, we need 4.4.0" is a number, not a
+  merge. Do not start a 4.4.0 port on the version string alone.
+- `bwapi.JBWEB` uses native `JNI` libraries that do not exist on Linux. On
+  OpenBW, `InitJBWEB.init()` fails quietly and `AMap` falls back to no ground
+  distance. This is a *second, independent* gap next to BWEM - fixing BWEM
+  will not make JBWEB work, so base/choke lookups must not depend on it.
 - **Exactly one BWAPILauncher at a time.** Two servers = the newer one
   overwrites the game-table row with its PID while the older keeps the
-  listening socket, and the client connects to the stale PID and loops on
+  listening socket; the client connects to the stale PID and loops on
   `Unable to open communications socket: /tmp/bwapi_socket_<dead-pid>`
   (measured 2026-10-05: 1122835 listening, 1124737 stale, client chose
-  1124737). Looks like a protocol failure, is a process-hygiene one.
-  `run-openbw-server.sh` kills leftovers before hosting now; the tell is
-  `ss -xlp | grep bwapi` naming a *different* PID than the game table.
+  1124737). `run-openbw-server.sh` kills leftovers before hosting now; the
+  tell is `ss -xlp | grep bwapi` naming a different PID than the game table.
 - **The server needs `BWAPI_CONFIG_AUTO_MENU__AUTO_MENU=SINGLE_PLAYER`.**
   Without it `startGame()` does nothing (default `OFF`), the server sits idle
   and the client hangs at `Connected` with no game. Cost: the whole 2026-10-05
