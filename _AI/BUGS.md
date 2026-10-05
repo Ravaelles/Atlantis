@@ -494,6 +494,33 @@ documented in code with a comment. The closure goes into the commit message.
   bot that built two combat units and stopped could never reach. So the precondition this
   entry has been blocked on for four games is B-22's symptom three links up, and it
   should be gone now - which only a game run can show.
+- **Update (2026-10-05, the part that was switched off):** the buildings commander does
+  not ask for cannons at all. In `ProtossDynamicBuildingsCommander.handle()` the two
+  cannon producers are commented out:
+
+  ```java
+  if (
+  //                || ProduceCannon.produce()
+  //                || ProduceCannonAtNatural.produce()
+      ProduceShieldBatteryAtNatural.produce()
+          || ProduceForge.produce()
+  ```
+
+  `git log -S` puts the first at `49a4536a` (2024-10-02, "Protoss building placement
+  improvements") and the second at `9a34add6`/`75d7650f` (2025-01-09, "Protoss
+  improvements" / "Numerous improvements") - **neither records why**, and
+  `ProduceCannon` no longer exists in the tree, so that line cannot come back as
+  written. So the only two live ways this bot gets a Photon Cannon are
+  `ProtossSecureBasesCommander` (needs `Have.forge()` and two bases) and
+  `ProtossResponseEnemyHiddenUnits` -> `ProduceCannonAtNaturalOrMain` (only when the
+  bot's strategy read says the enemy went hidden). A base being attacked with no Forge and
+  no hidden-units strategy is exactly the state where nothing asks for a cannon.
+- **Not re-enabled here, deliberately.** Turning those lines back on is a live-strategy
+  decision with no recorded rationale, it would add a *third* cannon mechanism next to
+  two that already exist (double-build risk), and the live path is no longer blocked
+  anyway: with B-22 fixed the bot has combat units, so `ProduceForge` opens
+  (`A.supplyUsed() <= 60 && (ourCombatUnits <= 11 || army <= 180)` is false at 12+ combat
+  units) and the reinforce path can fire. It is tracked as **NEXT #39**.
 - **What is left here:** a game run against a rush with the rebuilt jar, and one
   unexplained link (Terran games reaching supply 100 without a Forge). The
   `ProtossProductionDiagnostics` line added by B-22 names the producer reasons in
