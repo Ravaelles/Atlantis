@@ -280,25 +280,41 @@ Wine itself. It is separate from the headless OpenBW recipe above.
   `xdotool getdisplaygeometry` -> `3840 2160` on the primary screen), so the
   centering path has its tools; without `wmctrl` the positioner exits quietly
   and the window manager places the window as before.
-### W-MODE is the invisible-StarCraft bug (measured 2026-10-06)
+### W-MODE doublesize is the working window solution (measured 2026-10-06)
 
-The game played, the bot worked, and StarCraft was **not on screen**: a
-`BroodWar` entry in the task bar, nothing drawn, clicking it changed nothing.
+**This section corrects the claim below it, which was wrong.** The earlier
+version of this note said W-MODE was the cause of an invisible StarCraft and
+that it must be disabled (`WineWindowConfig.disableWModeCommands()`). The owner
+then tested both states by hand and disproved it:
 
-Cause: ChaosLauncher's own windowing plugin, **W-MODE**, was enabled
-(`HKCU\Software\Chaoslauncher\PluginsEnabled`, `"W-MODE 1.02"="1`) with a
-`wmode.ini` asking for a `1600x840` client window. It patches StarCraft's window
-directly, so the game does not fill the Wine virtual desktop - and with the
-desktop also active the two mechanisms fight over the same job. The desktop
-wins now: `WineWindowConfig.disableWModeCommands()` writes the plugin flag to
-`0` before ChaosLauncher starts. The **BWAPI injector is deliberately left
-enabled** - switching it off would remove the bot itself.
+- W-MODE **enabled**: the game window is visible and, with doublesize, large.
+- W-MODE **disabled**: the game renders at StarCraft's native 640x480 inside a
+  big Wine desktop - "unusably small", the owner's words.
+- `bwapi.ini [window] windowed = ON` (not W-MODE) was the other test the owner
+  ran; that produced a game window whose position was far off-screen ("a few
+  percent of the game visible, top left").
 
-Verified the write lands rather than assuming it: `wine reg query
-'HKCU\Software\Chaoslauncher\PluginsEnabled' /v 'W-MODE 1.02'` answers
-`REG_SZ 0` after the command. Note the value only reaches `user.reg` when
-wineserver flushes or exits, so reading the file immediately after the `reg
-add` still shows the old value - query it, do not read the file.
+So the actual window solution on Wine is: **W-MODE enabled, doublesize on**
+(`wmode.ini DblSizeMode=1`), **no Wine virtual desktop** (the registry
+`Desktop` value deleted). W-MODE is also where the only real scaling available
+on Wine lives - ALT+F9 toggles doublesize at runtime, documented in
+`Plugins/WModeReadme.txt`. The Wine-side DPI knob (`LogPixels`) was also
+checked and does not apply: Wine 9.0's binaries only implement non-client DPI
+scaling (`NtUserEnableNonClientDpiScaling`), which an application must opt into
+itself, and StarCraft 1.16.1 renders a fixed 640x480 through DirectDraw
+(`SetDisplayMode`, `vidblit.cpp`) and does not opt in. Wine is an API layer,
+not an image scaler - there is no way to force it to zoom a game.
+
+Verified live in the same session: with W-MODE on and the desktop off,
+`wmctrl -lGx` showed the game window `starcraft.exe` at `(2550,1056)` sized
+`1290x997` - on screen, doubled. Position/size are set in `wmode.ini`
+(`WindowClientX/Y`, `WindowClientXDblSized/YDblSized`); those keys are the
+right lever for "StarCraft fills the screen", not the Wine desktop registry.
+
+What remains true from the old note: the registry write pattern (`wine reg add
+... /f`, query with `wine reg query`, values reach `user.reg` only when
+wineserver flushes) and that the **BWAPI injector must stay enabled** -
+without it there is no bot.
 
 Two more facts from the same session:
 
