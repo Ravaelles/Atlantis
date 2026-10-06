@@ -46,6 +46,23 @@ public class UnixChaosGameLauncher implements GameLauncher {
     public void launch(String[] args) {
         ActiveMap.specifyMap(Main.defineMapToUse(args));
 
+        // The JVM itself decides this from the environment: if we are running
+        // under Wine (JAVA being a Windows exe), the game host is already up -
+        // the owner started it - and this process is a client that only needs
+        // to attach. Starting a second ChaosLauncher or pkill-ing Linux-side
+        // (no pkill exists inside Wine) would both be wrong here.
+        if (runningUnderWine()) {
+            System.out.println("===============================================");
+            System.out.println("[Atlantis] Backend: Wine client (JVM under Wine, attaching to the running game).");
+            System.out.println("[Atlantis] Map: " + ActiveMap.name());
+            System.out.println("===============================================");
+
+            warnIfMapMissing(ActiveMap.name());
+
+            AtlantisIgniter.modifyBwapiFileIfNeeded();
+            return; // Do NOT start ChaosLauncher, do NOT pkill.
+        }
+
         System.out.println("===============================================");
         System.out.println("[Atlantis] Backend: Wine + StarCraft + ChaosLauncher (Linux).");
         System.out.println("[Atlantis] Map: " + ActiveMap.name());
@@ -64,6 +81,17 @@ public class UnixChaosGameLauncher implements GameLauncher {
 
         AtlantisIgniter.modifyBwapiFileIfNeeded();
         ProcessHelper.startChaosLauncherUnderWine();
+    }
+
+    /**
+     * True when this JVM itself is a Windows process running under Wine -
+     * i.e. the owner started the bot with {@code wine java -jar Atlantis.jar}.
+     * Detected via the {@code winelauncher} environment marker Wine sets; the
+     * absence of /proc is not used on purpose, since that file also exists in
+     * some containers.
+     */
+    private static boolean runningUnderWine() {
+        return System.getenv("WINEDEBUG") != null || System.getenv("WINEDLLOVERRIDES") != null;
     }
 
     /**

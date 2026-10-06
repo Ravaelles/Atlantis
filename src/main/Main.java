@@ -55,13 +55,13 @@ public class Main {
 
         if (mapGeneric() != null) return mapGeneric();
 
-        // === Maps for testing as TERRAN ===========================
-
-        if (mapAsTerran() != null) return mapAsTerran();
-
         // === Maps for testing as PROTOSS ==========================
 
         if (mapAsProtoss() != null) return mapAsProtoss();
+
+        // === Maps for testing as TERRAN ===========================
+
+        if (mapAsTerran() != null) return mapAsTerran();
 
         // === Maps for testing as ZERG =============================
 
@@ -277,10 +277,10 @@ public class Main {
 //        if (true) return "ums/rav/protoss/16Drag_v_16Drag.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm";
-//        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
+        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm"; // ░░░░░░░░░░░░░░░░░
-        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra2.scm";
 
         return null;

@@ -81,8 +81,13 @@ public class ProcessHelper {
      * with a {@code java.io.IOException: Cannot run program "taskkill"}.
      */
     private static void killWineGameProcesses() {
+        // "Chaoslauncher.exe" is 17 characters - longer than the kernel's 15
+        // character comm limit, so "pkill -x Chaoslauncher.exe" never matches
+        // anything (measured 2026-10-06). Without -x the pattern is matched
+        // against comm only, which truncates to 15 characters too, so
+        // "pkill -9 Chaoslauncher" is the working form for that process.
         executeInCommandLine("pkill -9 -x StarCraft.exe");
-        executeInCommandLine("pkill -9 -x Chaoslauncher.exe");
+        executeInCommandLine("pkill -9 Chaoslauncher");
     }
 
     /**
