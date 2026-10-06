@@ -372,3 +372,65 @@ wine "C:\Java\bin\java.exe" "-Dos.name=Windows 10" -jar "Z:\sc-ai\Atlantis\bots\
 ```
 with `GAME_LAUNCHER=WINECLIENT` in `bw-data/AI/ENV` (the WineClientGameLauncher
 does not start or kill anything).
+
+### SOLVED: client first, then the game (verified end to end 2026-10-06)
+
+The order the owner predicted is what makes it work: **the CLIENT must start
+BEFORE the game.** With the game up first the client attached only to an
+already-finished match (`Connection successful` -> `failed, disconnecting`);
+with the client first, the server finds it in the game table as soon as the
+match starts.
+
+Verified client log of the successful run:
+
+```
+[Atlantis] Backend: Java under Wine (client only).
+[Atlantis] Waiting for the BWAPI game table...
+Game table mapping not found.        <- expected while no game runs
+...
+Connected
+Connection successful
+### Atlantis is working! ###
+HELLO_WORLD - BWAPI attached, Atlantis is playing!
+```
+
+Working one-shot recipe:
+
+```
+# 1. CLIENT FIRST - starts, prints the table-wait loop, stays alive:
+wine "C:\Java\bin\java.exe" "-Dos.name=Windows 10" \
+  -jar "Z:\sc-ai\Atlantis\bots\AtlantisP\AI\Atlantis.jar" \
+  2>&1 | tee /tmp/opencode/client.log
+# wait until it prints table rows / "Game table mapping not found"
+
+# 2. THEN the game (auto-menu starts the match on its own):
+cd ~/.wine/drive_c/sc && DISPLAY=:0 wine chaoslauncher/Chaoslauncher.exe
+
+# 3. HELLO_WORLD in the client log = attached; the bot plays the match.
+```
+
+Why each piece is needed:
+
+- `-Dos.name=Windows 10` - selects JBWAPI's `ClientConnectionW32`
+  (`OpenFileMapping` through wineserver); the POSIX backend searches
+  `/dev/shm`, which the Wine-side server never populates.
+- Windows JRE under Wine (`drive_c/Java`, Temurin 8 x64) - the client talks
+  Win32 IPC, so it must be a Windows process.
+- `GAME_LAUNCHER=WINECLIENT` in `bwapi-data/AI/ENV` - the Wine-side JVM must
+  not run the Linux launcher (no pkill/ChaosLauncher start); it only picks
+  the map and waits.
+- Client first - the BWAPI server registers a client slot during game start;
+  starting the client after the match is running attaches to a match that is
+  already over.
+
+Test-harness notes from the same session (both bit, both worth keeping):
+
+- **Long-running game processes must be started with `setsid ... < /dev/null
+  &`** and their logs redirected - a terminal session reaching its tool
+  timeout takes the game and the client down with it (this produced several
+  false "StarCraft died" observations; the game had been killed by the
+  session teardown, not by Wine).
+- **The owner kills StarCraft and ChaosLauncher by hand between attempts** -
+  a client left waiting loops forever otherwise. The one-shot script should
+  own the cleanup (start, watch, kill on exit) so no stray process survives
+  a failed attempt.
