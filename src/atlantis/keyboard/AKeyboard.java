@@ -94,8 +94,6 @@ public class AKeyboard implements NativeKeyListener {
             return;
         }
 
-        System.out.println("B keyCode=" + keyCode + ", keyLocation=" + keyLocation);
-
         switch (keyCode) {
 
             // ######### EXIT GAME #########
@@ -144,7 +142,6 @@ public class AKeyboard implements NativeKeyListener {
             case 3653:
             case 57:
             case 41:
-            case 29:
             case 3665:
                 GameSpeed.pauseModeToggle();
                 break;
