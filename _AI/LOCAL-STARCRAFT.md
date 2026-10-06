@@ -237,3 +237,46 @@ Run log kept at `/tmp/opencode/openbw-probe/atlantis-run.log`.
   rightClick, `Probe11` **the one that mines** (`rightClick`, economy climbs).
   Compile: `/home/rav/.jdks/corretto-1.8.0_492/bin/javac -cp
   /sc-ai/Atlantis/lib/JBWAPI-Rav.jar -d . ProbeN.java`.
+## The Wine desktop (real StarCraft), measured 2026-10-06
+
+This is the `GAME_LAUNCHER=WINE` backend, the Linux twin of the Windows F5
+workflow: `java -jar bots/AtlantisP/AI/Atlantis.jar` brings StarCraft up under
+Wine itself. It is separate from the headless OpenBW recipe above.
+
+- **BWAPI needs a map's exact path, not its file name.** `--map=<name>` where
+  the file lives in a subfolder made the game never start, and the bot printed
+  `Game table mapping not found` forever while StarCraft sat in its map list.
+  `ActiveMap.activeMapPath()` now resolves a bare name under `maps/ums` and
+  `maps/sscai` (recursively, name-exact) and only then falls back to
+  `maps/<name>`. Measured against the install: `M&M_v_Zealots.scx` lives at
+  `ums/rav/minimaps/M&M_v_Zealots.scx` - not at `ums/rav/terran/`, where the
+  owner expected it. Two files of the same name in different folders are left
+  unresolved on purpose (a loud BWAPI failure beats silently playing the wrong
+  map).
+- **Wine cannot position its virtual-desktop window.** There is no option for
+  it, so the position is set with `wmctrl` on the window titled
+  `Default - Wine desktop` (name is `WineWindowConfig.DESKTOP_NAME` + the
+  suffix Wine uses). The window appears a few seconds after ChaosLauncher
+  starts, so the positioner polls `wmctrl -x -l` for it (up to 8 s) instead of
+  setting and hoping. `WINE_WINDOW_X`/`Y` place it explicitly; empty means
+  centered on the primary X screen (`xdotool getdisplaygeometry`).
+- **The Wine desktop size and StarCraft's `windowed` flag are two settings,
+  owned by two places.** The size is the Wine registry
+  (`HKCU\Software\Wine\Explorer\Desktops`, written by
+  `WineWindowConfig.enableVirtualDesktopCommands()`, read by Wine at
+  `wineserver` start). `windowed = OFF` in `bwapi.ini` is what makes StarCraft
+  *fill* that desktop instead of drawing its own smaller window inside it. A
+  stock `bwapi.ini` ships `windowed = ON`, and a run that only patched races
+  and the map produced two windows (measured 2026-10-05); on Wine the flag is
+  now forced OFF from `AtlantisIgniter.updateWineWindowModeIfNeeded()`, so the
+  `java -jar` path and `scripts/run-wine-game.sh` end up in the same state.
+- **`taskkill` does not exist on Linux, and the exit path used to shell out to
+  it anyway**, so Escape printed two `java.io.IOException: Cannot run program
+  "taskkill"` stack traces before anything was actually killed. Both
+  `killStarcraftProcess()` and `killChaosLauncherProcess()` now answer the Wine
+  backend with `pkill -9 -x` (the `-x` matters, see above). The Windows path is
+  untouched.
+- `wmctrl` and `xdotool` are both installed on this machine (wmctrl 1.36,
+  `xdotool getdisplaygeometry` -> `3840 2160` on the primary screen), so the
+  centering path has its tools; without `wmctrl` the positioner exits quietly
+  and the window manager places the window as before.
