@@ -27,6 +27,9 @@ public final class GameLauncherFactory {
         if (Env.isWine()) {
             return new UnixChaosGameLauncher();
         }
+        if (Env.isWineClient()) {
+            return new WineClientGameLauncher();
+        }
         return new ChaosGameLauncher();
     }
 }

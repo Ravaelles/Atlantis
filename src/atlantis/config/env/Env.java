@@ -23,6 +23,7 @@ public class Env {
     private static boolean modifyBwapiIni = false;
     private static boolean openBW = false;
     private static boolean wine = false;
+    private static boolean wineClient = false;
     private static boolean paramTweaker = false;
     private static String copyCherryVisDataTo = null;
 
@@ -101,6 +102,7 @@ public class Env {
                 String launcher = value == null ? "" : value.trim();
                 openBW = launcher.equalsIgnoreCase("OPENBW");
                 wine = launcher.equalsIgnoreCase("WINE");
+                wineClient = launcher.equalsIgnoreCase("WINECLIENT");
                 return true;
             default:
                 // Wine game-window geometry, tweakable without recompiling.
@@ -200,6 +202,15 @@ public class Env {
      */
     public static boolean isWine() {
         return wine;
+    }
+
+    /**
+     * Wine-client backend ({@code GAME_LAUNCHER=WINECLIENT}): the JVM runs
+     * under Wine and only attaches to an already-running StarCraft - it must
+     * not start or kill anything.
+     */
+    public static boolean isWineClient() {
+        return wineClient;
     }
 
     public static void markIsTesting(boolean enabled) {

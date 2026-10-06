@@ -334,4 +334,41 @@ Two more facts from the same session:
   guards `game() != null` before delegating, but the keyboard shortcut path
   (`AKeyboard.changeSpeedAndFrameSkip` -> `changeSpeedTo`) skipped it, so
   pressing `3` before BWAPI attached threw an NPE on the JNativeHook dispatch
-  thread. Guarding the method every caller reaches is what fixed it.
+  thread. Guarding the method every caller reaches is what fixed it.### Java bot attaching to Wine StarCraft — the real mechanism (2026-10-06)
+
+Three JVM variants were tested against a live Wine StarCraft with BWAPI
+injected: native Linux JVM, Linux JVM run under Wine, and a Windows JRE run
+under Wine (`drive_c/Java`, Temurin 8 Windows x64 — the same shape sc-docker
+uses, verified in `sc-docker/docker/scripts/win_java32`). All three looped on
+`Game table mapping not found` — none ever saw the server's table.
+
+Root cause found in the vendored `JBWAPI-Rav.jar`: it ships **two connection
+backends**, `ClientConnectionPosix` (shm_open, `/dev/shm`) and
+`ClientConnectionW32` (Kernel32 `OpenFileMapping`), and `Client` picks between
+them from `os.name`. On Linux the POSIX backend is chosen — and BWAPI under
+Wine creates Windows named sections via wineserver, so `/dev/shm` stays empty
+(measured during a live game). Linux JVMs therefore search the wrong namespace
+forever; even a Windows JRE run under Wine is still a Linux JVM as far as
+`os.name` goes and gets the same POSIX backend.
+
+**The working override: launch the client with `-Dos.name=Windows 10`.** The
+W32 backend is then selected, the game table becomes visible
+(`0 | 280 | 0 | <pid>` rows print instead of the not-found loop), and one run
+reached `Connected`. This is the bridge between the two namespaces: Wine
+implements Kernel32, so both sides talk to the same server.
+
+Remaining blocker at the end of the session: the client then loops on
+`Unable to open communications pipe: \\.\pipe\bwapi_pipe_<serverpid>`. The
+most likely cause is that the server only exposes the pipe once a **match is
+running** — the earlier `Connected` happened with the game in its menu, and
+the failing runs could not confirm a started match. Next step: start a game
+(auto-menu), confirm the match is actually playing, then run the client; if
+the pipe still refuses, check Wine's named-pipe handling for
+`CreateNamedPipe`/server-side creation timing.
+
+Practical recipe so far (client side only, game must be up first):
+```
+wine "C:\Java\bin\java.exe" "-Dos.name=Windows 10" -jar "Z:\sc-ai\Atlantis\bots\AtlantisP\AI\Atlantis.jar"
+```
+with `GAME_LAUNCHER=WINECLIENT` in `bw-data/AI/ENV` (the WineClientGameLauncher
+does not start or kill anything).

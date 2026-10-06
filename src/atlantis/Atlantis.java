@@ -93,6 +93,12 @@ public class Atlantis implements BWEventListener {
         // =========================================================
 
         OnGameStarted.execute();
+
+        // HELLO_WORLD is the owner's connection marker: when this line
+        // prints, the BWAPI client is attached and the bot is actually playing.
+        // The Wine launcher kills SC+Chaos when it does NOT appear in time
+        // (see WineClientSupervisor), so silence has a loud consequence.
+        AConsole.println("HELLO_WORLD - BWAPI attached, Atlantis is playing!");
     }
 
     private void setBwapiFlags() {
@@ -220,6 +226,16 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
+        if (Env.isWineClient()) {
+            // The JVM itself is a Windows process under Wine: pkill/taskkill
+            // do not exist for it, and the game must keep running (it was
+            // started by a previous Linux-side bot start or by the script).
+            // Just exit this JVM.
+            AConsole.println("\nWine client: exiting (game left running)...");
+            System.exit(0);
+            return;
+        }
+
         if (Env.isWine()) {
             // There is no taskkill on Linux. Saying "Killing StarCraft process"
             // and then shelling out to taskkill is what produced the
