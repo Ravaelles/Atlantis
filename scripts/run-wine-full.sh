@@ -167,6 +167,6 @@ say "Bot is playing - watching until the game ends..."
 while kill -0 "$CLIENT_PID" 2>/dev/null; do
   sleep 2
 done
-say "Client JVM exited (game ended) - killing StarCraft and ChaosLauncher."
+say "Client JVM exit - game ended - killing SC & ChaosLauncher."
 cleanup
 exit 0
