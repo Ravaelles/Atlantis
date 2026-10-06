@@ -6,6 +6,7 @@ import atlantis.information.decisions.ForceEarlyGGOnlyLocally;
 import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
 import atlantis.information.decisions.GG;
 import atlantis.information.decisions.GGForEnemy;
+import atlantis.decisions.QuitWhenNoUnitsLeft;
 import atlantis.terran.chokeblockers.ChokeBlockersCommander;
 import atlantis.terran.repair.TerranRepairsCommander;
 import atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander;
@@ -23,6 +24,7 @@ public class SpecialCommander extends Commander {
             GGForEnemy::new,
             ForceEarlyGGOnlyLocally::new,
             ForceExitLocallyAfterRealSeconds::new,
+            QuitWhenNoUnitsLeft::new,
         };
     }
 }

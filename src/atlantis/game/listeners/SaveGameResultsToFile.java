@@ -27,6 +27,13 @@ public class SaveGameResultsToFile {
 
         // === Copy input first ===========================================
 
+        // The write (and read) directories are not part of the repo or the
+        // Wine install - a fresh checkout or a fresh Wine game dir has neither,
+        // and the write then fails with "Error writing to file" (measured
+        // 2026-10-06). Create them before touching the files.
+        AFile.createDirectory("bwapi-data/write");
+        AFile.createDirectory("bwapi-data/read");
+
         String input = "bwapi-data/read/game_results.txt";
         String output = "bwapi-data/write/game_results.txt";
         boolean copyResult = AFile.copy(input, output);

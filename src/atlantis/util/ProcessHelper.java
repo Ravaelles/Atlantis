@@ -109,15 +109,17 @@ public class ProcessHelper {
      * way creates an ordinary window of the requested size.</p>
      */
     public static void startChaosLauncherUnderWine() {
-        for (String command : WineWindowConfig.enableVirtualDesktopCommands()) {
+        // W-MODE owns the game window on Wine (it is the only thing here that
+        // can scale the game, and the owner's test showed the alternative -
+        // the Wine virtual desktop - gives an unusably small 640x480 game).
+        // enableWModeCommands turns the virtual desktop off and the plugin on;
+        // the virtual-desktop setup below is kept for the record but unused.
+        for (String command : WineWindowConfig.enableWModeCommands()) {
             executeInCommandLine(command);
         }
-        // W-MODE would fight the Wine desktop for the same job (both size the
-        // game window); the desktop wins, see disableWModeCommands().
-        for (String command : WineWindowConfig.disableWModeCommands()) {
-            executeInCommandLine(command);
-        }
-        // wineserver was just killed; give it a moment before it is needed.
+        writeWModeIni();
+
+        // wineserver needs a moment to pick up the registry change above.
         try {
             Thread.sleep(1000);
         } catch (InterruptedException ignored) {
@@ -137,6 +139,24 @@ public class ProcessHelper {
         executeInCommandLineDetached(command);
 
         positionWineWindowWhenReady();
+    }
+
+    /**
+     * Writes {@code C:\sc\wmode.ini} so W-MODE starts with our geometry
+     * instead of leftovers from a previous manual run. The file lives in the
+     * game root, not in {@code bwapi-data}.
+     */
+    private static void writeWModeIni() {
+        try {
+            java.io.File ini = new java.io.File(wineGameRoot(), "wmode.ini");
+            java.nio.file.Files.write(
+                ini.toPath(),
+                WineWindowConfig.wmodeIniContent().getBytes(java.nio.charset.StandardCharsets.UTF_8)
+            );
+            System.out.println("[Atlantis] Wrote W-MODE config: " + ini.getAbsolutePath());
+        } catch (Exception e) {
+            System.err.println("[Atlantis] Failed to write wmode.ini: " + e.getMessage());
+        }
     }
 
     /**
