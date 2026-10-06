@@ -21,10 +21,18 @@ public class ProcessHelper {
     // Windows (native) ========================================
 
     public static void killStarcraftProcess() {
+        if (Env.isWine()) {
+            killWineGameProcesses();
+            return;
+        }
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
 
     public static void killChaosLauncherProcess() {
+        if (Env.isWine()) {
+            killWineGameProcesses();
+            return;
+        }
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
     }
 
@@ -57,13 +65,24 @@ public class ProcessHelper {
      * (cost: a truncated command chain, measured 2026-10-05).</p>
      */
     public static void killWineProcesses() {
-        executeInCommandLine("pkill -9 -x StarCraft.exe");
-        executeInCommandLine("pkill -9 -x Chaoslauncher.exe");
+        killWineGameProcesses();
         // Give the window/X a moment to disappear before starting again.
         try {
             Thread.sleep(500);
         } catch (InterruptedException ignored) {
         }
+    }
+
+    /**
+     * Kills the Wine game host (StarCraft and ChaosLauncher) without touching
+     * {@code wineserver} or waiting. Shared by the two platform-specific kill
+     * surfaces above so neither of them can shell out to {@code taskkill} on
+     * Linux - a call that does not exist there and used to end the exit path
+     * with a {@code java.io.IOException: Cannot run program "taskkill"}.
+     */
+    private static void killWineGameProcesses() {
+        executeInCommandLine("pkill -9 -x StarCraft.exe");
+        executeInCommandLine("pkill -9 -x Chaoslauncher.exe");
     }
 
     /**
@@ -111,6 +130,63 @@ public class ProcessHelper {
 
         System.out.println("[Atlantis] Launching: " + command);
         executeInCommandLineDetached(command);
+
+        positionWineWindowWhenReady();
+    }
+
+    /**
+     * The desktop window takes a few seconds to appear, and a position set too
+     * early lands on nothing. There is no event to wait for, so this polls
+     * {@code wmctrl -x -l} for the window title up to ~8 s and positions it the
+     * moment it is there. Runs on a daemon thread so the bot can keep starting
+     * the game while the window is being placed.
+     */
+    private static void positionWineWindowWhenReady() {
+        final String command = WineWindowConfig.positionWindowCommand();
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!Env.isWine()) return;
+                String title = WineWindowConfig.DESKTOP_NAME + " - Wine desktop";
+
+                for (int attempt = 0; attempt < 80; attempt++) {
+                    if (wmctrlSeesWindow(title)) {
+                        executeInCommandLine(command);
+                        return;
+                    }
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ignored) {
+                        return;
+                    }
+                }
+            }
+        }, "wine-window-position");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private static boolean wmctrlSeesWindow(String title) {
+        try {
+            Process process = new ProcessBuilder("wmctrl", "-x", "-l").redirectErrorStream(true).start();
+            String output = readAll(process.getInputStream());
+            process.waitFor();
+            return output != null && output.contains(title);
+        } catch (Exception e) {
+            // wmctrl missing is not fatal - the WM places the window, as before.
+            return false;
+        }
+    }
+
+    private static String readAll(java.io.InputStream stream) throws java.io.IOException {
+        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[1024];
+        int read;
+        while ((read = stream.read(chunk)) != -1) {
+            buffer.write(chunk, 0, read);
+        }
+        return new String(buffer.toByteArray(), "UTF-8");
     }
 
     private static String wineGameRoot() {

@@ -31,6 +31,9 @@ ENEMY_RACE="${ENEMY_RACE:-Zerg}"
 WINDOWED="${WINDOWED:-OFF}"
 WINE_WINDOW_WIDTH="${WINE_WINDOW_WIDTH:-1600}"
 WINE_WINDOW_HEIGHT="${WINE_WINDOW_HEIGHT:-1000}"
+# Empty = center on the current X screen. Set both to place it explicitly.
+WINE_WINDOW_X="${WINE_WINDOW_X:-}"
+WINE_WINDOW_Y="${WINE_WINDOW_Y:-}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 LOG_DIR="/sc-ai/Atlantis/out/wine"
@@ -134,6 +137,36 @@ wine reg add 'HKCU\Software\Wine\Explorer' /v Desktop /d Default /f >/dev/null 2
 wine reg add 'HKCU\Software\Wine\Explorer\Desktops' /v Default \
   /d "${WINE_WINDOW_WIDTH}x${WINE_WINDOW_HEIGHT}" /f >/dev/null 2>&1
 
+# Wine gives no option for the desktop window POSITION, so place it with wmctrl
+# once the window exists (it appears a few seconds after ChaosLauncher starts).
+# Empty X/Y centers on the current X screen.
+position_window() {
+  if ! command -v wmctrl >/dev/null 2>&1; then
+    return 0
+  fi
+
+  local x y
+  if [ -n "$WINE_WINDOW_X" ] && [ -n "$WINE_WINDOW_Y" ]; then
+    x="$WINE_WINDOW_X"; y="$WINE_WINDOW_Y"
+  else
+    local sr sw sh
+    sr="$(xdotool getdisplaygeometry 2>/dev/null || echo '1920 1080')"
+    sw="${sr% *}"; sh="${sr#* }"
+    x=$(( (sw - WINE_WINDOW_WIDTH) / 2 ))
+    y=$(( (sh - WINE_WINDOW_HEIGHT) / 2 ))
+  fi
+
+  for _ in $(seq 1 80); do
+    if wmctrl -x -l | grep -q 'Default - Wine desktop'; then
+      wmctrl -x -r 'Default - Wine desktop' -e "0,$x,$y,-1,-1"
+      echo "[wine-game] Wine desktop placed at ($x,$y)."
+      return 0
+    fi
+    sleep 0.1
+  done
+  echo "[wine-game] Wine desktop window not seen; leaving placement to the WM."
+}
+
 # --- 5. Start ChaosLauncher under Wine. It injects BWAPI into StarCraft and
 #        (with "Run Starcraft on Startup") starts the game itself.
 cd "$GAME_ROOT"
@@ -141,6 +174,7 @@ echo "[wine-game] starting ChaosLauncher in a ${WINE_WINDOW_WIDTH}x${WINE_WINDOW
 env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" wine "$CHAOS_DIR/Chaoslauncher.exe" \
   > $LOG_DIR/chaoslauncher.log 2>&1 &
 CHAOS_PID=$!
+position_window &
 echo "[wine-game] ChaosLauncher PID=$CHAOS_PID, game window should appear on display ${DISPLAY:-:0}."
 echo "[wine-game] Log: $LOG_DIR/chaoslauncher.log"
 echo "[wine-game] Start the Java client when the game is running:"

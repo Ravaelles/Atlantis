@@ -2,6 +2,7 @@ package atlantis;
 
 import atlantis.core.world.Worlds;
 import atlantis.config.AtlantisConfig;
+import atlantis.config.env.Env;
 import atlantis.game.*;
 import atlantis.game.event.AutoRegisterEventListeners;
 import atlantis.game.event.Event;
@@ -219,18 +220,24 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
+        if (Env.isWine()) {
+            // There is no taskkill on Linux. Saying "Killing StarCraft process"
+            // and then shelling out to taskkill is what produced the
+            // IOException in the exit path; on Wine the game host is killed by
+            // ProcessHelper on the line below.
+            AConsole.println("\nKilling Wine game processes... ");
+            ProcessHelper.killWineProcessesIfOnWine();
+
+            AConsole.println("Exit...");
+            System.exit(0);
+            return;
+        }
+
         AConsole.println("\nKilling StarCraft process... ");
         ProcessHelper.killStarcraftProcess();
 
         AConsole.println("Killing Chaoslauncher process... ");
         ProcessHelper.killChaosLauncherProcess();
-
-        // On the Wine backend the two calls above are no-ops (there is no
-        // taskkill); the game host is a Wine process tree that has to be killed
-        // by name, and the virtual desktop (wineserver) with it. Doing it here
-        // as well keeps the game host dead even when the exit comes from the
-        // game ending rather than from Escape.
-        ProcessHelper.killWineProcessesIfOnWine();
 
         AConsole.println("Exit...");
         System.exit(0);

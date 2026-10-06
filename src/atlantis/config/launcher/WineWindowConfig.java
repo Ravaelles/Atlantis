@@ -30,8 +30,11 @@ public final class WineWindowConfig {
     /** Wine virtual-desktop name; fixed, it is an internal handle. */
     public static final String DESKTOP_NAME = "Default";
 
-    public static int x = 0;
-    public static int y = 0;
+    /** Sentinels: "no position requested", so the launcher may center the window. */
+    public static final int UNSET = Integer.MIN_VALUE;
+
+    private static int x = UNSET;
+    private static int y = UNSET;
     public static int width = 1600;
     public static int height = 1000;
 
@@ -41,10 +44,11 @@ public final class WineWindowConfig {
     public static void applyEnvValue(String key, String value) {
         switch (key) {
             case "WINE_WINDOW_X":
-                x = parseInt(value, x);
+                // Absent or empty means "not set": keep the sentinel and center.
+                if (hasValue(value)) x = parseInt(value, x);
                 break;
             case "WINE_WINDOW_Y":
-                y = parseInt(value, y);
+                if (hasValue(value)) y = parseInt(value, y);
                 break;
             case "WINE_WINDOW_WIDTH":
                 width = parseInt(value, width);
@@ -55,6 +59,10 @@ public final class WineWindowConfig {
             default:
                 // not ours
         }
+    }
+
+    private static boolean hasValue(String value) {
+        return value != null && !value.trim().isEmpty();
     }
 
     private static int parseInt(String value, int fallback) {
@@ -92,7 +100,52 @@ public final class WineWindowConfig {
         };
     }
 
+    /**
+     * Commands that place the Wine desktop window, run after the window exists.
+     *
+     * <p>Wine gives no option for the desktop position, so the position is set
+     * with {@code wmctrl} on the X window {@code "Default - Wine desktop"}. When
+     * {@code WINE_WINDOW_X}/{@code Y} are absent (the default) the window is
+     * centered on the primary X screen, whose size is read with
+     * {@code xdotool}.</p>
+     *
+     * <p>{@code wmctrl} takes gravity 0 (top-left anchor), so the window size
+     * never changes - only its position.</p>
+     *
+     * <p>The command is a shell fragment because the window title is matched by
+     * name; it uses only {@code ${...}} expansions and {@code $(( ))} arithmetic
+     * so a {@code sh -c} interpreter (dash) runs it the same as bash.</p>
+     */
+    public static String positionWindowCommand() {
+        String target = DESKTOP_NAME + " - Wine desktop";
+        StringBuilder script = new StringBuilder();
+
+        // Single-quote the title for an inner eval, and escape any single quote
+        // it might contain (it contains none today; the escape is cheap).
+        String quotedTarget = "'" + target.replace("'", "'\\''") + "'";
+        script.append("eval \"set -- ").append(quotedTarget).append("\" || exit 0; ");
+        script.append("test -n \"${DISPLAY:-}\" || exit 0; ");
+
+        if (x != UNSET && y != UNSET) {
+            script.append("command -v wmctrl >/dev/null 2>&1 || exit 0; ");
+            script.append("wmctrl -x -r \"$1\" -e 0,").append(x).append(',').append(y).append(",-1,-1");
+            return script.toString();
+        }
+
+        // Centering needs the screen size. The fallback 1920x1080 only applies
+        // when xdotool is missing, and wrong centering is cosmetic, never fatal.
+        script.append("command -v wmctrl >/dev/null 2>&1 || exit 0; ");
+        script.append("SR=$(xdotool getdisplaygeometry 2>/dev/null || echo '1920 1080'); ");
+        script.append("SW=${SR%% *}; SH=${SR#* }; ");
+        script.append("wmctrl -x -r \"$1\" -e 0,$(( (SW-").append(width).append(")/2 ))");
+        script.append(",$(( (SH-").append(height).append(")/2 ))-1,-1");
+        return script.toString();
+    }
+
     public static String describe() {
+        if (x == UNSET || y == UNSET) {
+            return "wine window " + width + "x" + height + " (centered)";
+        }
         return "wine window " + width + "x" + height + " at (" + x + "," + y + ")";
     }
 }

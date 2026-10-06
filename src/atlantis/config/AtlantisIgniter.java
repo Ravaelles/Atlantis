@@ -75,6 +75,7 @@ public class AtlantisIgniter {
         updateOurRace();
         updateEnemyRace();
         updateMapAndGameTypeIfNeeded();
+        updateWineWindowModeIfNeeded();
 
         // =========================================================
 
@@ -150,6 +151,35 @@ public class AtlantisIgniter {
         }
 
         fileContent = java.util.Arrays.stream(fileContent).distinct().toArray(String[]::new);
+    }
+
+    /**
+     * On the Wine backend StarCraft must fill the Wine virtual desktop, i.e. it
+     * must <b>not</b> run in its own windowed mode. A stock {@code bwapi.ini}
+     * ships {@code windowed = ON}, which produced two small windows (the desktop
+     * plus the game) instead of one game-sized window (measured 2026-10-05).
+     *
+     * <p>THE DESKTOP SIZE IS NOT SET HERE. It belongs to
+     * {@code WineWindowConfig.enableVirtualDesktopCommands()}, which patches the
+     * Wine registry, not this file - one owner per setting. The only thing this
+     * method writes is the windowed flag, and only when it is wrong, so a run
+     * that does not need it writes nothing.</p>
+     */
+    private static void updateWineWindowModeIfNeeded() {
+        if (!Env.isWine()) return;
+
+        for (int i = 0; i < fileContent.length; i++) {
+            String line = fileContent[i];
+            if (line.startsWith("windowed = ")) {
+                String desired = "windowed = OFF";
+                if (!fileContent[i].equals(desired)) {
+                    fileContent[i] = desired;
+                    shouldUpdateFileContent = true;
+                    AConsole.println("Updated windowed mode in bwapi.ini to: OFF (Wine desktop fills the window)");
+                }
+                return;
+            }
+        }
     }
 
     private static String[] enforceGameTypeToUseMapSettings() {
