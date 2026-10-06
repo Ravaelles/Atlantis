@@ -61,8 +61,9 @@ public class DanceAwayAsDragoonApplies extends HasUnit {
                 if (unit.hp() >= 150) return f("_GvG_A");
                 if (cooldown <= 16 && unit.hp() >= 140) return f("_GvG_B");
                 if (cooldown <= 14 && unit.hp() >= 130) return f("_GvG_C");
+                if (cooldown <= 8 && unit.hp() >= 81) return f("_GvG_D");
 
-                if (cooldown >= 6 && unit.hp() <= 22) return t("GvG_D");
+                if (cooldown >= 6 && unit.hp() <= 22) return t("GvG_H");
             }
         }
 

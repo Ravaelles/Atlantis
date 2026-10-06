@@ -28,6 +28,7 @@ public class ProtossForceCluster extends Manager {
         if (Enemy.zerg() && unit.isMissionDefendOrSparta()) return false;
         if (unit.cooldown() > 20) return false;
         if (unit.isRunningOrRetreating()) return false;
+        if (unit.cooldown() <= 5 && unit.enemiesICanAttack(0.7).notEmpty()) return false;
 
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(196) && unit.eval() >= 1.5) return false;
@@ -44,7 +45,6 @@ public class ProtossForceCluster extends Manager {
         if (unit.squad() != null && !unit.squad().isAlpha()) return false;
         if (unit.type().isTransport()) return false;
         if (unit.cooldown() <= 5 && unit.meleeEnemiesNearCount(3.7) >= 1) return false;
-        if (unit.cooldown() <= 5 && unit.enemiesICanAttack(2).notEmpty()) return false;
         if (unit.cooldown() <= 5 && unit.enemiesThatCanAttackMe(0.3).notEmpty()) return false;
 
         return true;
