@@ -2,6 +2,7 @@ package atlantis.config.launcher;
 
 import atlantis.config.ActiveMap;
 import atlantis.keyboard.AKeyboard;
+import atlantis.util.ProcessHelper;
 import main.Main;
 
 /**
@@ -36,6 +37,17 @@ public class OpenBWGameLauncher implements GameLauncher {
         System.out.println("[Atlantis] to host a game - see StardustDevEnvironment");
         System.out.println("[Atlantis] DOCS/HOW-ATLANTIS-OPENBW.md for the recipe.");
         System.out.println("===============================================");
+
+        // Kill any leftover host BEFORE waiting for it: a stale BWAPILauncher
+        // from a previous run still owns the game table, so this client would
+        // adopt its PID and then loop on "Unable to open shared memory mapping"
+        // against a dead segment (measured 2026-10-06, PID 647373). The same
+        // cleanup runs at exit, so a fresh start is always from a clean state.
+        ProcessHelper.killOpenBWProcesses();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ignored) {
+        }
 
         // The Linux keyboard hook (JNativeHook ships an x86_64 native) gives
         // this setup the same global Esc the Windows path has: kill everything.

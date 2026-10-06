@@ -25,12 +25,20 @@ public class ProcessHelper {
             killWineGameProcesses();
             return;
         }
+        if (Env.isOpenBW()) {
+            killOpenBWProcesses();
+            return;
+        }
         executeInCommandLine("taskkill /IM StarCraft.exe /T /F");
     }
 
     public static void killChaosLauncherProcess() {
         if (Env.isWine()) {
             killWineGameProcesses();
+            return;
+        }
+        if (Env.isOpenBW()) {
+            killOpenBWProcesses();
             return;
         }
         executeInCommandLine("taskkill /IM Chaoslauncher.exe /T /F");
@@ -247,6 +255,21 @@ public class ProcessHelper {
      */
     public static void killWineClientJvm() {
         executeInCommandLine("pkill -9 -f 'java.exe.*Atlantis.jar'");
+    }
+
+    /**
+     * Kills the OpenBW backend's processes: the game host (BWAPILauncher, the
+     * headless engine) and any leftover shared state. Called both at startup
+     * (a stale host would otherwise be adopted by the client and loop on a
+     * dead PID) and at exit - the OpenBW twin of the Wine/Windows kill pair.
+     *
+     * <p>Uses {@code pkill -9 -x} (exact name): {@code -f} with a loose
+     * pattern also matches the killing shell's own command line (measured
+     * 2026-10-05).</p>
+     */
+    public static void killOpenBWProcesses() {
+        executeInCommandLine("pkill -9 -x BWAPILauncher");
+        executeInCommandLine("sh -c 'rm -f /dev/shm/bwapi_shared_memory_* /tmp/bwapi_socket_*'");
     }
 
     /**

@@ -226,6 +226,19 @@ public class Atlantis implements BWEventListener {
     }
 
     private void killProcesses() {
+        if (Env.isOpenBW()) {
+            // The OpenBW twin of the Wine/Windows exit path: kill the game host
+            // and clear its shared state, then exit. Without this branch the
+            // code fell through to the Windows taskkill calls, which do not
+            // exist on Linux (IOException on every exit, measured 2026-10-06).
+            AConsole.println("\nKilling OpenBW game processes... ");
+            ProcessHelper.killOpenBWProcesses();
+
+            AConsole.println("Exit...");
+            System.exit(0);
+            return;
+        }
+
         if (Env.isWineClient()) {
             // This JVM is the bot under Wine: the game must die with it too,
             // win or lose - the owner's rule is that the end of the match is
