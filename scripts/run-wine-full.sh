@@ -48,10 +48,12 @@ cleanup() {
 
 say "Killing leftovers"
 pkill -9 -x StarCraft.exe 2>/dev/null
-pkill -9 -x Chaoslauncher.exe 2>/dev/null
+pkill -9 Chaoslauncher 2>/dev/null
 pkill -9 -f java.exe 2>/dev/null
-wineserver -k 2>/dev/null
-sleep 3
+wineserver -k 2>/dev/null &
+# No sleep: pkill is instant, wineserver -k runs in the background, and the
+# client's next Wine call spins up a fresh wineserver anyway. The old 3 s wait
+# here made every start pay 3 s for nothing (measured 2026-10-06).
 
 if [ ! -f "$JAVA_EXE" ]; then
   say "Windows Java not found at $JAVA_EXE - install Temurin 8 under Wine once"
@@ -114,13 +116,12 @@ pgrep -x StarCraft.exe >/dev/null && say "  StarCraft is running" || say "  WARN
 
 say "Step 3/3: watching for HELLO_WORLD (grace 120s)..."
 END=$(( $(date +%s) + 120 ))
+ATTACHED=0
 while [ "$(date +%s)" -lt "$END" ]; do
   if grep -q "HELLO_WORLD" "$CLIENT_LOG" 2>/dev/null; then
     say "SUCCESS: HELLO_WORLD - BWAPI attached, Atlantis is playing!"
-    say "Game stays up. Stop it with: pkill -x StarCraft.exe; pkill -x Chaoslauncher.exe; wineserver -k"
-    # Leave the game running; only this supervisor exits.
-    trap - EXIT
-    exit 0
+    ATTACHED=1
+    break
   fi
   if ! kill -0 "$CLIENT_PID" 2>/dev/null; then
     say "FAILED: client JVM died. Log tail:"
@@ -131,7 +132,22 @@ while [ "$(date +%s)" -lt "$END" ]; do
   sleep 2
 done
 
-say "FAILED: no HELLO_WORLD within the grace period. Client log tail:"
-tail -15 "$CLIENT_LOG" | sed 's/^/    /'
+if [ "$ATTACHED" -eq 0 ]; then
+  say "FAILED: no HELLO_WORLD within the grace period. Client log tail:"
+  tail -15 "$CLIENT_LOG" | sed 's/^/    /'
+  cleanup
+  exit 1
+fi
+
+# Keep watching while the bot plays. When the game ends - win or lose - the
+# BWAPI connection drops and the client JVM exits; that is the signal to tear
+# the whole session down. Without this watcher the result screen sat there
+# forever with StarCraft and ChaosLauncher still running (owner report,
+# 2026-10-06).
+say "Bot is playing - watching until the game ends..."
+while kill -0 "$CLIENT_PID" 2>/dev/null; do
+  sleep 2
+done
+say "Client JVM exited (game ended) - killing StarCraft and ChaosLauncher."
 cleanup
-exit 1
+exit 0
