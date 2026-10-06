@@ -262,3 +262,22 @@ and never from decompiling the game archives.
   recipes, `_AI/NOTES.md` for repo-internal learnings. CHALLENGES is the
   cross-system quick reference — when in doubt, put the one-liner there and
   the details in the specialist file.
+
+## 12. Test runtime budget (owner's ruling, 2026-10-06)
+
+- `scripts/run-tests.sh` is the model-facing inner loop: it must finish well
+  under 40 s. Its default scope is `tests.unit` + `tests.architecture`
+  (~11 s with the compile, measured). It **refuses** the slow scopes —
+  `tests.e2e` (64 s) and `tests.acceptance` (12 s) — and also the bare `tests`
+  root package, which would include them. Exit code 2 with a pointer to
+  `scripts/run-full-tests.sh`.
+- The slow scopes are **owner-only**: `scripts/run-full-tests.sh` runs every
+  scope with per-scope timings and is run by the owner manually, not by
+  models. `--allow-slow` overrides for a one-off debug run.
+- Measured budget (2026-10-06, do not trust these forever — re-measure before
+  widening any scope): compile ~8 s, unit 2 s, architecture 1 s, acceptance
+  12 s, e2e scenarios 64 s.
+- The eventual target is a single OpenBW mega-test covering most of the bot's
+  logic in one run (see §10). Until it exists, the stub scenarios stay in the
+  owner-only tier: they are the best signal we have, but too slow for the
+  inner loop.
