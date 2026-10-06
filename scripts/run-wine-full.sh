@@ -84,6 +84,21 @@ else
 fi
 
 say "step 2/3: GAME (map: $MAP)"
+
+# The map the launcher was given (from Main.defineMapToUse or --map=) is what
+# StarCraft must load; it lives in bwapi.ini, read once at game start. The
+# Wine-side bwapi.ini is the live file (the /sc-ai/BWAPI one is only the dist
+# template), and the client JVM patched nothing, so this script owns the map
+# line. Resolve the exact path first - BWAPI needs it, a bare name that lives
+# in a subfolder is not loadable (measured 2026-10-06).
+INI="$GAME_ROOT/bwapi-data/bwapi.ini"
+RESOLVED_MAP=$(cd "$GAME_ROOT" && find maps -type f -iname "$(basename "$MAP")" 2>/dev/null | head -1)
+if [ -n "$RESOLVED_MAP" ]; then
+  say "  setting map in bwapi.ini to $RESOLVED_MAP"
+  sed -i "s|^map = .*|map = $RESOLVED_MAP|" "$INI"
+else
+  say "  WARNING: map '$MAP' not found under $GAME_ROOT/maps - bwapi.ini left unchanged"
+fi
 cd "$GAME_ROOT"
 setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
   wine chaoslauncher/Chaoslauncher.exe \

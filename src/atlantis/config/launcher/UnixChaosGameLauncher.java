@@ -3,6 +3,8 @@ package atlantis.config.launcher;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
+import atlantis.keyboard.AKeyboard;
+import atlantis.util.ProcessHelper;
 import main.Main;
 
 import java.io.File;
@@ -68,6 +70,12 @@ public class UnixChaosGameLauncher implements GameLauncher {
         System.out.println("===============================================");
 
         warnIfMapMissing(ActiveMap.name());
+
+        // Escape must keep working the way it did on Windows: a global keypress
+        // kills the game and the launcher, wherever focus is. The IDE JVM runs
+        // long enough to be that supervisor, so the hook is registered here -
+        // JNativeHook ships a Linux x86_64 native, and this JVM is a Linux JVM.
+        AKeyboard.listenForKeyEvents();
 
         // This JVM is the IDE's Linux JVM - it can never BE the bot (JBWAPI
         // would select the POSIX connection backend and never see the Wine-side
