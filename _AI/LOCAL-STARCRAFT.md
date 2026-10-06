@@ -240,8 +240,29 @@ Run log kept at `/tmp/opencode/openbw-probe/atlantis-run.log`.
 ## The Wine desktop (real StarCraft), measured 2026-10-06
 
 This is the `GAME_LAUNCHER=WINE` backend, the Linux twin of the Windows F5
-workflow: `java -jar bots/AtlantisP/AI/Atlantis.jar` brings StarCraft up under
-Wine itself. It is separate from the headless OpenBW recipe above.
+workflow. It is separate from the headless OpenBW recipe above.
+
+**How to run (the whole thing, one command):**
+
+```
+cd /sc-ai/Atlantis && bash scripts/run-wine-full.sh            # default map
+bash scripts/run-wine-full.sh "ZealDrag_v_Lings.scm"           # any map name
+```
+
+It kills leftovers, starts the client (Windows JRE under Wine,
+`-Dos.name=Windows 10`), waits for the client to reach the BWAPI game table,
+starts the game, and watches the log for `HELLO_WORLD` (attached, playing).
+Success/failure is reported; on failure everything is killed. The game window
+stays up on success - stop it with
+`pkill -x StarCraft.exe; pkill -9 Chaoslauncher; wineserver -k`.
+
+**Why it cannot be started from the IDE the way Windows was:** the bot JVM
+must be a Windows process (running under Wine with the Windows JRE) or its
+JBWAPI never sees the BWAPI server's shared memory. IntelliJ runs the Linux
+JVM, which selects the POSIX connection backend, which searches `/dev/shm` -
+a namespace the Wine-side server never populates. The IDE therefore always
+loops on `Game table mapping not found`. The `run-wine-full.sh` script is the
+replacement for F5.
 
 - **BWAPI needs a map's exact path, not its file name.** `--map=<name>` where
   the file lives in a subfolder made the game never start, and the bot printed
