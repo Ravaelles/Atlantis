@@ -121,8 +121,7 @@ public class AKeyboard implements NativeKeyListener {
 
             // ######### TOGGLE PAINTING OF EXTRA INFO #########
             case 25:
-            case 41:
-                // Key "p" / "P"
+                // Key "p" / "P" (VC_P = 25 per NativeKeyEvent)
                 APainter.togglePainting();
                 break;
 
@@ -130,9 +129,13 @@ public class AKeyboard implements NativeKeyListener {
             case 3653:
             case 57:
             case 29:
-            case 96:
-                // 3653 - PauseBreak, 57 - Space, 29 - Right Control,
-                // 96 - tilde/backquote (the owner's pause key)
+            case 41:
+                // 3653 - PauseBreak, 57 - Space, 29 - Control (both left and
+                // right; JNativeHook reports one code for both),
+                // 41 - backquote/tilde (VC_BACKQUOTE; the owner's pause key).
+                // The old 96 here was never delivered: X11 keycodes in this
+                // library are the +8 style, and 96 was a guess that no real
+                // key produces.
                 GameSpeed.pauseModeToggle();
                 break;
 
