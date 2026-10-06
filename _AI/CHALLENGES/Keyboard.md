@@ -27,6 +27,13 @@
 - .dll (Windows) and .so (Linux x86_64) must both be in lib/. Which one loads
   follows os.name — under Wine that's the Windows one, by design.
 
+## Right Ctrl has its own code: 3665 (not 29 with a location)
+- Live hook output from the owner (2026-10-06): right Ctrl reports
+  keyCode=3665, keyLocation=1; left Ctrl reports 29/2. The library's
+  VC_* constants do not name 3665, and a keyLocation==3 gate never matched -
+  which is why right Ctrl was dead through two attempts. Wire right-side keys
+  by their OBSERVED code, and extend the pins in AKeyboardKeyCodesTest.
+
 ## Left vs right Ctrl: same keycode; a location-based split does NOT work
 - JNativeHook reports both Ctrl keys as VC_CONTROL=29 and exposes
   NativeKeyEvent.getKeyLocation() (2=left, 3=right) - but gating a shortcut on

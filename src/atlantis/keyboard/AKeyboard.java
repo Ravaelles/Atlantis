@@ -94,6 +94,8 @@ public class AKeyboard implements NativeKeyListener {
             return;
         }
 
+        System.out.println("B keyCode=" + keyCode + ", keyLocation=" + keyLocation);
+
         switch (keyCode) {
 
             // ######### EXIT GAME #########
@@ -135,16 +137,15 @@ public class AKeyboard implements NativeKeyListener {
 
             // ######### UN/PAUSE GAME #########
             // 3653 - PauseBreak, 57 - Space, 41 - tilde/backquote,
-            // 29 - Ctrl (both left and right).
-            // A left/right split was tried (keyLocation == 3 gates the pause)
-            // and had to be reverted (measured 2026-10-06): with it the RIGHT
-            // Ctrl stopped working entirely - the location reported on X11 for
-            // the right key is not reliably 3, so the filter cut the key the
-            // owner actually uses. The owner accepts both Ctrl keys pausing.
+            // 29 - LEFT Ctrl, 3665 - RIGHT Ctrl (measured 2026-10-06 from the
+            // owner's live hook output: right Ctrl reports its own code, not
+            // 29 with a right location - which is why every location-based
+            // gate killed it). Both Ctrl keys pause, owner's call.
             case 3653:
             case 57:
             case 41:
             case 29:
+            case 3665:
                 GameSpeed.pauseModeToggle();
                 break;
 

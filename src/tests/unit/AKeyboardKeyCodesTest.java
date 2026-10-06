@@ -89,12 +89,11 @@ public class AKeyboardKeyCodesTest {
         // by design (measured 2026-10-06 - this test itself proved it, by
         // killing the suite's JVM with "Exit was requested manually"), and a
         // test running under Env.isLocal() would take the whole suite down.
-        // Ctrl (29) runs with BOTH locations: a location==3-only gate was tried
-        // and killed the right key on X11 (see CHALLENGES/Keyboard.md), so both
-        // must dispatch cleanly.
+        // 3665 is the RIGHT Ctrl - an observed code (owner's live hook output),
+        // not a named library constant (see CHALLENGES/Keyboard.md).
         for (int code : new int[] {
                 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-                12, 13, 26, 27, 3658, 3662,
+                12, 13, 26, 27, 3658, 3662, 3665,
                 25, 46, 29, 41, 57, 3653,
         }) {
             for (int location : new int[]{1, 2, 3}) {
