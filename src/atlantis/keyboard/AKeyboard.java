@@ -135,19 +135,17 @@ public class AKeyboard implements NativeKeyListener {
 
             // ######### UN/PAUSE GAME #########
             // 3653 - PauseBreak, 57 - Space, 41 - tilde/backquote,
-            // 29 - Ctrl, but ONLY the RIGHT one (keyLocation 3): the owner
-            // pauses with the right Ctrl and does not want the left one, which
-            // shares the same keycode, to trigger the pause - a game that
-            // started paused was un-paused by an accidental left-Ctrl press
-            // (measured 2026-10-06).
+            // 29 - Ctrl (both left and right).
+            // A left/right split was tried (keyLocation == 3 gates the pause)
+            // and had to be reverted (measured 2026-10-06): with it the RIGHT
+            // Ctrl stopped working entirely - the location reported on X11 for
+            // the right key is not reliably 3, so the filter cut the key the
+            // owner actually uses. The owner accepts both Ctrl keys pausing.
             case 3653:
             case 57:
             case 41:
-                GameSpeed.pauseModeToggle();
-                break;
-
             case 29:
-                if (keyLocation == 3) GameSpeed.pauseModeToggle();
+                GameSpeed.pauseModeToggle();
                 break;
 
             // ######### GAME SPEED 1 (natural) #########

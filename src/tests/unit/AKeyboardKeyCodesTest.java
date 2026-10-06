@@ -89,23 +89,32 @@ public class AKeyboardKeyCodesTest {
         // by design (measured 2026-10-06 - this test itself proved it, by
         // killing the suite's JVM with "Exit was requested manually"), and a
         // test running under Env.isLocal() would take the whole suite down.
+        // Ctrl (29) runs with BOTH locations: a location==3-only gate was tried
+        // and killed the right key on X11 (see CHALLENGES/Keyboard.md), so both
+        // must dispatch cleanly.
         for (int code : new int[] {
                 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
                 12, 13, 26, 27, 3658, 3662,
                 25, 46, 29, 41, 57, 3653,
         }) {
-            int finalCode = code;
-            assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(finalCode, 1));
+            for (int location : new int[]{1, 2, 3}) {
+                int finalCode = code;
+                int finalLocation = location;
+                assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(finalCode, finalLocation));
+            }
         }
     }
 
     @Test
     public void onlyRightControlPauses() {
-        // The owner pauses with the RIGHT Ctrl: left Ctrl (same keycode,
-        // location 2) must do nothing, right Ctrl (location 3) must toggle.
-        // Both directions are safe to assert without a game - pauseModeToggle
-        // guards its own state.
+        // History: a location==3-only gate was tried to make left Ctrl inert
+        // and it killed the RIGHT key instead (X11's reported location for the
+        // right key is not reliably 3), so both Ctrl locations dispatch. The
+        // owner accepted both Ctrl keys pausing. This test keeps both paths
+        // covered; the left/right distinction is documented as unreliable in
+        // CHALLENGES/Keyboard.md.
         assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(29, 2));
         assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(29, 3));
+        assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(29, 1));
     }
 }

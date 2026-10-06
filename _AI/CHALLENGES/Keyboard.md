@@ -27,11 +27,13 @@
 - .dll (Windows) and .so (Linux x86_64) must both be in lib/. Which one loads
   follows os.name — under Wine that's the Windows one, by design.
 
-## Left vs right Ctrl: same keycode, distinguished by getKeyLocation()
-- JNativeHook reports both Ctrl keys as VC_CONTROL=29; the only difference is
-  NativeKeyEvent.getKeyLocation() (2=left, 3=right, 1=standard). Any shortcut
-  that must care about the side needs the location passed through dispatch -
-  and through KeyRelay too (file format: "code:location", legacy plain-code
-  lines still parse with location=standard).
-- Measured casualty (2026-10-06): a game that started paused was un-paused by
-  an accidental LEFT Ctrl press, because the handler ignored the location.
+## Left vs right Ctrl: same keycode; a location-based split does NOT work
+- JNativeHook reports both Ctrl keys as VC_CONTROL=29 and exposes
+  NativeKeyEvent.getKeyLocation() (2=left, 3=right) - but gating a shortcut on
+  location==3 silently killed the RIGHT key: the location reported on X11 for
+  the right key is not reliably 3 (measured 2026-10-06: right Ctrl stopped
+  pausing entirely with the filter in). Both Ctrl keys pause now, owner's
+  call. If a side split is ever needed again, debug what location the right
+  key actually reports before filtering.
+- KeyRelay still carries "code:location" lines - harmless, and the format is
+  ready if a reliable split ever lands.
