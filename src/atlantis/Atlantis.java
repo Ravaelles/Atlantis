@@ -227,11 +227,14 @@ public class Atlantis implements BWEventListener {
 
     private void killProcesses() {
         if (Env.isWineClient()) {
-            // The JVM itself is a Windows process under Wine: pkill/taskkill
-            // do not exist for it, and the game must keep running (it was
-            // started by a previous Linux-side bot start or by the script).
-            // Just exit this JVM.
-            AConsole.println("\nWine client: exiting (game left running)...");
+            // This JVM is the bot under Wine: the game must die with it too,
+            // win or lose - the owner's rule is that the end of the match is
+            // the end of the process tree. killWineHostProcesses runs on the
+            // host through sh, so it works from inside Wine as well.
+            AConsole.println("\nKilling Wine game processes... ");
+            ProcessHelper.killWineHostProcesses();
+
+            AConsole.println("Exit...");
             System.exit(0);
             return;
         }

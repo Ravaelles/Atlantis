@@ -249,6 +249,26 @@ public class ProcessHelper {
         executeInCommandLine("pkill -9 -f 'java.exe.*Atlantis.jar'");
     }
 
+    /**
+     * Force-kills the whole Wine session: the game, the launcher and the
+     * wineserver. Runs through {@code sh} on the HOST, so it works both from
+     * the Linux supervisor JVM and from the bot's JVM running under Wine (Wine
+     * passes unknown executables through to the host).
+     */
+    public static void killWineHostProcesses() {
+        String[] commands = {
+            "pkill -9 -x StarCraft.exe",
+            "pkill -9 Chaoslauncher",
+            "wineserver -k",
+        };
+        for (String command : commands) {
+            try {
+                Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
+            } catch (Exception ignored) {
+            }
+        }
+    }
+
     private static String wineGameRoot() {
         String prefix = System.getenv("WINEPREFIX");
         if (prefix == null || prefix.trim().isEmpty()) {

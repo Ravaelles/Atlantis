@@ -25,36 +25,17 @@ public class Exit {
             // (WINE supervisor and WINECLIENT bot) must do it - WINECLIENT does
             // not set isWine(), so it needs its own branch.
             if (Env.isWine()) {
-                ProcessHelper.killWineProcesses();
+                ProcessHelper.killWineHostProcesses();
                 ProcessHelper.killWineClientJvm();
             }
             if (Env.isWineClient()) {
-                // The client JVM is itself the process being killed, so this
-                // shell-out is the practical way to take SC and the launcher
-                // down from inside Wine (pkill/wineserver exist on the host).
-                executeHostKillCommands();
+                // The client JVM is itself the process being killed, so the
+                // host-side commands (run through sh) are the way to take SC
+                // and the launcher down from inside Wine.
+                ProcessHelper.killWineHostProcesses();
             }
             AGame.exit();
         }
     }
 
-    /**
-     * Force-kills the whole Wine session from the bot's JVM (running under
-     * Wine): the game, the launcher and the wineserver. The commands run on
-     * the HOST via sh, not inside Wine - Wine passes unknown executables
-     * through, and "pkill"/"wineserver" are host binaries.
-     */
-    private static void executeHostKillCommands() {
-        String[] commands = {
-            "pkill -9 -x StarCraft.exe",
-            "pkill -9 Chaoslauncher",
-            "wineserver -k",
-        };
-        for (String command : commands) {
-            try {
-                Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
-            } catch (Exception ignored) {
-            }
-        }
-    }
 }
