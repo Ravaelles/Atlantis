@@ -90,10 +90,18 @@ say "step 2/3: GAME (map: $MAP)"
 # line. Resolve the exact path first - BWAPI needs it, a bare name that lives
 # in a subfolder is not loadable (measured 2026-10-06).
 INI="$GAME_ROOT/bwapi-data/bwapi.ini"
-RESOLVED_MAP=$(cd "$GAME_ROOT" && find maps -type f -iname "$(basename "$MAP")" 2>/dev/null | head -1)
+# -L: maps/ is a symlink to the repo's map tree - without it find never
+# descends into it and the resolution silently fails (measured
+# 2026-10-06: the launcher passed 4Drag_v_4Drag.scm, the game kept
+# loading the previous map).
+RESOLVED_MAP=$(cd "$GAME_ROOT" && find -L maps -type f -iname "$(basename "$MAP")" 2>/dev/null | head -1)
 if [ -n "$RESOLVED_MAP" ]; then
   say "  setting map in bwapi.ini to $RESOLVED_MAP"
-  sed -i "s|^map = .*|map = $RESOLVED_MAP|" "$INI"
+  # Match both spellings: "map = X" (script-generated ini) and "map=X"
+# (written by AtlantisIgniter, which normalizes the separator). Measured
+# 2026-10-06: the sed silently missed the "map=X" form and the game kept
+# loading the previous map regardless of what the launcher passed.
+sed -i -E "s|^map *=.*|map=$RESOLVED_MAP|" "$INI"
 else
   say "  WARNING: map '$MAP' not found under $GAME_ROOT/maps - bwapi.ini left unchanged"
 fi

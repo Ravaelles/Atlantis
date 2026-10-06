@@ -130,7 +130,9 @@ public class AKeyboard implements NativeKeyListener {
             case 3653:
             case 57:
             case 29:
-                // 3653 - PauseBreak, 57 - Space, 29 - Right Control
+            case 96:
+                // 3653 - PauseBreak, 57 - Space, 29 - Right Control,
+                // 96 - tilde/backquote (the owner's pause key)
                 GameSpeed.pauseModeToggle();
                 break;
 

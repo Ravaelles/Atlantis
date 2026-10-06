@@ -249,3 +249,16 @@ and never from decompiling the game archives.
 - Concretely, the bar is: every **"X was broken and I fixed it"** commit names
   its test in the message (`Test: <ClassName>`), and a fix without a test is
   not closed until one exists - except when the fix is trivial per rule 2.
+
+## 11. Challenge log: `_AI/CHALLENGES/` (added 2026-10-06)
+
+- When a problem costs more than one research cycle (more than one prompt of
+  investigation), record its key insight in the matching
+  `_AI/CHALLENGES/<topic>.md` — Wine.md, ChaosLauncher.md, Bwapi.md, and
+  whatever else accumulates. One or two lines per insight, only what would
+  have saved the time: the fact, the measurement, the fix. No narrative.
+- If no file matches, create one named after the system, not the bug.
+- Existing sources stay authoritative: `_AI/LOCAL-STARCRAFT.md` for the full
+  recipes, `_AI/NOTES.md` for repo-internal learnings. CHALLENGES is the
+  cross-system quick reference — when in doubt, put the one-liner there and
+  the details in the specialist file.

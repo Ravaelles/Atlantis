@@ -60,6 +60,13 @@ public class UnixChaosGameLauncher implements GameLauncher {
             warnIfMapMissing(ActiveMap.name());
 
             AtlantisIgniter.modifyBwapiFileIfNeeded();
+
+            // This JVM has the game, so it executes the shortcut keys. Its own
+            // hook under Wine only sees keys typed into Wine windows, so the
+            // Linux supervisor forwards codes through KeyRelay (see
+            // AKeyboard.dispatchKeyCode). Without this drain the forwarded keys
+            // pile up in the relay file and C/P/1-9 do nothing.
+            atlantis.keyboard.KeyRelay.startDraining();
             return; // Do NOT start ChaosLauncher, do NOT pkill.
         }
 
