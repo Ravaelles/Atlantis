@@ -65,17 +65,28 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         consumeEvent(e);
+        dispatchKeyCode(e.getKeyCode());
+    }
 
-        // Speed/camera keys belong to the JVM that HAS the game (the bot under
-        // Wine). The Linux supervisor JVM has no BWAPI, so pressing 1/2/3 there
-        // only produced "Can't change game speed, bwapi is null" spam. The
-        // supervisor handles the one key it owns - Esc, kill everything.
+    /**
+     * Executes one key action. Used both directly from the keyboard hook and
+     * from the KeyRelay thread - the Wine setup has two JVMs and only the
+     * Linux supervisor's hook sees global keystrokes, so the supervisor
+     * forwards key codes to the bot, which owns the game.
+     */
+    public static void dispatchKeyCode(int keyCode) {
+        // The supervisor JVM (no game attached) cannot execute game actions -
+        // but its hook is the one that sees global keystrokes (the bot's hook
+        // under Wine only sees keys typed into Wine windows). Forward everything
+        // to the bot through the relay file; Escape stays here, because killing
+        // the game is exactly the supervisor's job.
         if (!isBotJvm()) {
-            if (e.getKeyCode() == 1) Exit.handle();       // Escape
+            if (keyCode == 1) Exit.handle();       // Escape
+            else KeyRelay.send(keyCode);
             return;
         }
 
-        switch (e.getKeyCode()) {
+        switch (keyCode) {
 
             // ######### EXIT GAME #########
             case 1:
@@ -228,7 +239,7 @@ public class AKeyboard implements NativeKeyListener {
         }
     }
 
-    private void changeSpeedAndFrameSkip(int speed, int frameSkip) {
+    private static void changeSpeedAndFrameSkip(int speed, int frameSkip) {
         GameSpeed.pauseGame();
 
         A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work

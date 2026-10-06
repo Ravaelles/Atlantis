@@ -2,6 +2,7 @@ package atlantis.config.launcher;
 
 import atlantis.config.ActiveMap;
 import atlantis.keyboard.AKeyboard;
+import atlantis.keyboard.KeyRelay;
 import main.Main;
 
 /**
@@ -47,10 +48,11 @@ public class WineClientGameLauncher implements GameLauncher {
         System.out.println("[Atlantis] Waiting for the BWAPI game table...");
         System.out.println("===============================================");
 
-        // This JVM has the game, so it owns the speed/camera shortcuts. JNative
-        // Hook ships a Windows x86_64 native, which works under Wine too. If it
-        // fails (no desktop access inside Wine) the game still runs - AKeyboard
-        // does not exit the JVM on failure.
+        // This JVM has the game, so it owns the speed/camera shortcuts. Its own
+        // hook under Wine only sees keys typed into Wine windows, so the Linux
+        // supervisor forwards key codes through KeyRelay - drain them and
+        // execute. AKeyboard no longer kills the JVM when its hook fails.
         AKeyboard.listenForKeyEvents();
+        KeyRelay.startDraining();
     }
 }
