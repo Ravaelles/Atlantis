@@ -226,3 +226,26 @@ and never from decompiling the game archives.
 - Quantitative game-data claims in commit messages ("a tank reaches 5 and 6
   tiles") must match the guard pins. If they do not, the claim is wrong, not
   the pins - this exact inversion happened once and cost a full audit cycle.
+
+## 10. Tests: TDD for key features, not for trivia (normative, added 2026-10-06)
+
+- **Key features are done only when a test proves them.** When something was
+  broken and got fixed ("X did not work"), or when a feature decides game
+  behaviour, a test is written **after** the fix lands - the test pins the
+  behaviour so the same break cannot return silently. This is TDD for the
+  critical path: write the test with the fix, not "some day".
+- **Trivial code gets no test on purpose.** Getters, log lines, plumbing,
+  constants, delegation one-liners - writing tests for these is noise and cost
+  with no regression-catching value. The rule is judgement, not dogma: if a
+  case cannot plausibly regress in a way that matters, skip it and say so in
+  the commit message instead.
+- **The mega-test is the goal for behaviour-wide coverage.** A single OpenBW
+  game run that exercises most of the bot's logic at once (economy, production,
+  combat, map analysis, base/choke data) is expensive - and a single run is
+  worth more than dozens of unit tests, because it proves the whole stack
+  together on real engine physics. Work towards it (see
+  `_AI/IDEA-E2E-TESTS.md` Stage 3), do not replace it with scattered unit
+  tests where the real question is "does the whole bot play".
+- Concretely, the bar is: every **"X was broken and I fixed it"** commit names
+  its test in the message (`Test: <ClassName>`), and a fix without a test is
+  not closed until one exists - except when the fix is trivial per rule 2.

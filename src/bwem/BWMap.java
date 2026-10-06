@@ -80,32 +80,44 @@ public abstract class BWMap {
     }
 
     public void assignStartingLocationsToSuitableBases() {
-        boolean atLeastOneFailed = false;
         for (final TilePosition startingLocation : getData().getMapData().getStartingLocations()) {
-            boolean isAssigned = false;
+            Base best = null;
+            int bestDist = Integer.MAX_VALUE;
 
             for (final Base base : getBases()) {
+                final int dist = BwemExt.queenWiseDist(base.getLocation(), startingLocation);
+
+                // The native rule: a base qualifies only if it is close to the
+                // start location AND has a geyser nearby. On real maps (and on
+                // real StarCraft) this always matches.
                 if (
-                    BwemExt.queenWiseDist(base.getLocation(), startingLocation)
-                        <= BwemExt.MAX_TILES_BETWEEN_STARTING_LOCATION_AND_ITS_ASSIGNED_BASE
+                    dist <= BwemExt.MAX_TILES_BETWEEN_STARTING_LOCATION_AND_ITS_ASSIGNED_BASE
                         && Select.geysers()
                         .inRadius(8, APosition.create(base.getLocation().toPosition()))
                         .isNotEmpty()
                 ) {
                     base.assignStartingLocation(startingLocation);
-                    isAssigned = true;
+                    best = null;
+                    break;
+                }
+
+                // Fallback tracking: remember the closest base so an unmatched
+                // start location can still be assigned below.
+                if (dist < bestDist) {
+                    best = base;
+                    bestDist = dist;
                 }
             }
 
-            if (!atLeastOneFailed && !isAssigned) {
-                atLeastOneFailed = true;
+            // Graceful degradation for engines whose map data doesn't satisfy
+            // the native rule (OpenBW on some maps, measured 2026-10-05: "At
+            // least one starting location was not assigned to a base"). A start
+            // location without a base breaks everything downstream - Stations,
+            // BaseLocations, natural() - so the nearest base wins over silence.
+            if (best != null) {
+                best.assignStartingLocation(startingLocation);
             }
         }
-
-        // @Overriden
-//        if (atLeastOneFailed) {
-//            asserter.throwIllegalStateException("At least one starting location was not assigned to a base.");
-//        }
     }
 
     public List<TilePosition> getUnassignedStartingLocations() {
