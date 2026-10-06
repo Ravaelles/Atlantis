@@ -49,6 +49,12 @@ public class KeyRelay {
 
     /** Supervisor side: record a key code for the bot to execute. Never throws. */
     public static void send(int keyCode, int keyLocation) {
+        // Deliberately loud: this is how a key's REAL code is discovered when a
+        // shortcut does not work (the right-Ctrl mystery was solved exactly by
+        // this line - its code 3665 has no library constant and no location
+        // signature anyone would guess). Remove only after wiring the key.
+        System.out.println("A keyCode=" + keyCode + ", keyLocation=" + keyLocation);
+
         try {
             File file = file();
             file.getParentFile().mkdirs();
