@@ -39,14 +39,14 @@ CLIENT_LOG="$LOG_DIR/client.log"
 say() { echo "[wine-full] $*"; }
 
 cleanup() {
-  say "cleaning up"
+  say "Cleaning up"
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -x Chaoslauncher.exe 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
 }
 
-say "killing leftovers"
+say "Killing leftovers"
 pkill -9 -x StarCraft.exe 2>/dev/null
 pkill -9 -x Chaoslauncher.exe 2>/dev/null
 pkill -9 -f java.exe 2>/dev/null
@@ -58,30 +58,30 @@ if [ ! -f "$JAVA_EXE" ]; then
   exit 1
 fi
 if [ ! -f "$JAR" ]; then
-  say "bot jar not found at $JAR - build it with scripts/build-bot-jar.sh"
+  say "Bot jar not found at $JAR - build it with scripts/build-bot-jar.sh"
   exit 1
 fi
 
-say "step 1/3: CLIENT first (jar: $JAR)"
+say "Step 1/3: jar: $JAR)"
 setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
   wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "Z:\\sc-ai\\Atlantis\\bots\\AtlantisP\\AI\\Atlantis.jar" \
   > "$CLIENT_LOG" 2>&1 < /dev/null &
 CLIENT_PID=$!
-say "  client PID $CLIENT_PID, log: $CLIENT_LOG"
+say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
 
 # The client-first order needs no wait: the client only reaches the BWAPI game
 # table once the GAME is up (before that it loops on "Game table mapping not
 # found", which is its normal idle state). Just make sure it is alive.
 sleep 3
 if kill -0 "$CLIENT_PID" 2>/dev/null; then
-  say "  client is running (it will reach the table once the game starts)"
+  say "  Client is running (it will reach the table once the game starts)"
 else
   say "  FAILED: client JVM died immediately. Log tail:"
   tail -15 "$CLIENT_LOG" | sed 's/^/    /'
   exit 1
 fi
 
-say "step 2/3: GAME (map: $MAP)"
+say "Step 2/3: GAME (map: $MAP)"
 
 # The map the launcher was given (from Main.defineMapToUse or --map=) is what
 # StarCraft must load; it lives in bwapi.ini, read once at game start. The
@@ -96,7 +96,7 @@ INI="$GAME_ROOT/bwapi-data/bwapi.ini"
 # loading the previous map).
 RESOLVED_MAP=$(cd "$GAME_ROOT" && find -L maps -type f -iname "$(basename "$MAP")" 2>/dev/null | head -1)
 if [ -n "$RESOLVED_MAP" ]; then
-  say "  setting map in bwapi.ini to $RESOLVED_MAP"
+  say "  Setting map in bwapi.ini to $RESOLVED_MAP"
   # Match both spellings: "map = X" (script-generated ini) and "map=X"
 # (written by AtlantisIgniter, which normalizes the separator). Measured
 # 2026-10-06: the sed silently missed the "map=X" form and the game kept
@@ -112,7 +112,7 @@ setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
 sleep 40
 pgrep -x StarCraft.exe >/dev/null && say "  StarCraft is running" || say "  WARNING: StarCraft not running (see $LOG_DIR/chaoslauncher.log)"
 
-say "step 3/3: watching for HELLO_WORLD (grace 120s)..."
+say "Step 3/3: watching for HELLO_WORLD (grace 120s)..."
 END=$(( $(date +%s) + 120 ))
 while [ "$(date +%s)" -lt "$END" ]; do
   if grep -q "HELLO_WORLD" "$CLIENT_LOG" 2>/dev/null; then
