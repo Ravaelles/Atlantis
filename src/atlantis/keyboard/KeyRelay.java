@@ -48,13 +48,13 @@ public class KeyRelay {
     }
 
     /** Supervisor side: record a key code for the bot to execute. Never throws. */
-    public static void send(int keyCode) {
+    public static void send(int keyCode, int keyLocation) {
         try {
             File file = file();
             file.getParentFile().mkdirs();
             Files.write(
                 file.toPath(),
-                (keyCode + "\n").getBytes(StandardCharsets.UTF_8),
+                (keyCode + ":" + keyLocation + "\n").getBytes(StandardCharsets.UTF_8),
                 java.nio.file.StandardOpenOption.CREATE,
                 java.nio.file.StandardOpenOption.APPEND
             );
@@ -62,16 +62,23 @@ public class KeyRelay {
         }
     }
 
-    /** Bot side: take every key code queued so far and remove the file. */
-    public static List<Integer> drain() {
-        List<Integer> codes = new ArrayList<>();
+    /** Bot side: take every key queued so far (code:location lines) and remove the file. */
+    public static List<int[]> drain() {
+        List<int[]> codes = new ArrayList<>();
         File file = file();
         if (!file.isFile()) return codes;
 
         try {
             for (String line : Files.readAllLines(file.toPath(), StandardCharsets.UTF_8)) {
                 try {
-                    codes.add(Integer.parseInt(line.trim()));
+                    String[] parts = line.trim().split(":", 2);
+                    if (parts.length == 2) {
+                        codes.add(new int[]{Integer.parseInt(parts[0]), Integer.parseInt(parts[1])});
+                    } else {
+                        // Legacy plain-code lines from an older supervisor: run
+                        // them with the standard location.
+                        codes.add(new int[]{Integer.parseInt(parts[0]), 1});
+                    }
                 } catch (NumberFormatException ignored) {
                 }
             }
@@ -89,8 +96,8 @@ public class KeyRelay {
     public static void startDraining() {
         Thread thread = new Thread(() -> {
             while (true) {
-                for (int keyCode : drain()) {
-                    AKeyboard.dispatchKeyCode(keyCode);
+                for (int[] key : drain()) {
+                    AKeyboard.dispatchKeyCode(key[0], key[1]);
                 }
                 try {
                     Thread.sleep(100);

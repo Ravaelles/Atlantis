@@ -65,7 +65,7 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         consumeEvent(e);
-        dispatchKeyCode(e.getKeyCode());
+        dispatchKeyCode(e.getKeyCode(), e.getKeyLocation());
     }
 
     /**
@@ -73,16 +73,24 @@ public class AKeyboard implements NativeKeyListener {
      * from the KeyRelay thread - the Wine setup has two JVMs and only the
      * Linux supervisor's hook sees global keystrokes, so the supervisor
      * forwards key codes to the bot, which owns the game.
+     *
+     * <p>{@code keyLocation} distinguishes left from right for keys that have
+     * both (Ctrl, Shift, Alt) - the hook's {@code NativeKeyEvent.getKeyLocation()}:
+     * 2 = left, 3 = right, 1 = standard, 0 = unknown. Keys with no location
+     * distinction (letters, digits) pass 1 and it is ignored.</p>
      */
     public static void dispatchKeyCode(int keyCode) {
-        // The supervisor JVM (no game attached) cannot execute game actions -
+        dispatchKeyCode(keyCode, 1);
+    }
+
+    public static void dispatchKeyCode(int keyCode, int keyLocation) {        // The supervisor JVM (no game attached) cannot execute game actions -
         // but its hook is the one that sees global keystrokes (the bot's hook
         // under Wine only sees keys typed into Wine windows). Forward everything
         // to the bot through the relay file; Escape stays here, because killing
         // the game is exactly the supervisor's job.
         if (!isBotJvm()) {
             if (keyCode == 1) Exit.handle();       // Escape
-            else KeyRelay.send(keyCode);
+            else KeyRelay.send(keyCode, keyLocation);
             return;
         }
 
@@ -126,17 +134,20 @@ public class AKeyboard implements NativeKeyListener {
                 break;
 
             // ######### UN/PAUSE GAME #########
+            // 3653 - PauseBreak, 57 - Space, 41 - tilde/backquote,
+            // 29 - Ctrl, but ONLY the RIGHT one (keyLocation 3): the owner
+            // pauses with the right Ctrl and does not want the left one, which
+            // shares the same keycode, to trigger the pause - a game that
+            // started paused was un-paused by an accidental left-Ctrl press
+            // (measured 2026-10-06).
             case 3653:
             case 57:
-            case 29:
             case 41:
-                // 3653 - PauseBreak, 57 - Space, 29 - Control (both left and
-                // right; JNativeHook reports one code for both),
-                // 41 - backquote/tilde (VC_BACKQUOTE; the owner's pause key).
-                // The old 96 here was never delivered: X11 keycodes in this
-                // library are the +8 style, and 96 was a guess that no real
-                // key produces.
                 GameSpeed.pauseModeToggle();
+                break;
+
+            case 29:
+                if (keyLocation == 3) GameSpeed.pauseModeToggle();
                 break;
 
             // ######### GAME SPEED 1 (natural) #########

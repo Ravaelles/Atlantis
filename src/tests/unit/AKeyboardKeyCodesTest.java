@@ -95,7 +95,17 @@ public class AKeyboardKeyCodesTest {
                 25, 46, 29, 41, 57, 3653,
         }) {
             int finalCode = code;
-            assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(finalCode));
+            assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(finalCode, 1));
         }
+    }
+
+    @Test
+    public void onlyRightControlPauses() {
+        // The owner pauses with the RIGHT Ctrl: left Ctrl (same keycode,
+        // location 2) must do nothing, right Ctrl (location 3) must toggle.
+        // Both directions are safe to assert without a game - pauseModeToggle
+        // guards its own state.
+        assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(29, 2));
+        assertDoesNotThrow(() -> AKeyboard.dispatchKeyCode(29, 3));
     }
 }

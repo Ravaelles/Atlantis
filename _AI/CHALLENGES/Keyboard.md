@@ -26,3 +26,12 @@
 ## JNativeHook natives are per-OS
 - .dll (Windows) and .so (Linux x86_64) must both be in lib/. Which one loads
   follows os.name — under Wine that's the Windows one, by design.
+
+## Left vs right Ctrl: same keycode, distinguished by getKeyLocation()
+- JNativeHook reports both Ctrl keys as VC_CONTROL=29; the only difference is
+  NativeKeyEvent.getKeyLocation() (2=left, 3=right, 1=standard). Any shortcut
+  that must care about the side needs the location passed through dispatch -
+  and through KeyRelay too (file format: "code:location", legacy plain-code
+  lines still parse with location=standard).
+- Measured casualty (2026-10-06): a game that started paused was un-paused by
+  an accidental LEFT Ctrl press, because the handler ignored the location.
