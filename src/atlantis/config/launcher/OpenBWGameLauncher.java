@@ -1,6 +1,7 @@
 package atlantis.config.launcher;
 
 import atlantis.config.ActiveMap;
+import atlantis.keyboard.AKeyboard;
 import main.Main;
 
 /**
@@ -35,5 +36,12 @@ public class OpenBWGameLauncher implements GameLauncher {
         System.out.println("[Atlantis] to host a game - see StardustDevEnvironment");
         System.out.println("[Atlantis] DOCS/HOW-ATLANTIS-OPENBW.md for the recipe.");
         System.out.println("===============================================");
+
+        // The Linux keyboard hook (JNativeHook ships an x86_64 native) gives
+        // this setup the same global Esc the Windows path has: kill everything.
+        // It used to be skipped entirely in this launcher, which is why Escape
+        // did nothing on OpenBW (measured 2026-10-06). Registration must not
+        // fail the JVM - AKeyboard keeps going when the hook is unavailable.
+        AKeyboard.listenForKeyEvents();
     }
 }
