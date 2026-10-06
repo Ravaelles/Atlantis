@@ -3,8 +3,6 @@ package atlantis.config.launcher;
 import atlantis.config.ActiveMap;
 import atlantis.config.AtlantisIgniter;
 import atlantis.config.env.Env;
-import atlantis.keyboard.AKeyboard;
-import atlantis.util.ProcessHelper;
 import main.Main;
 
 import java.io.File;
@@ -69,18 +67,42 @@ public class UnixChaosGameLauncher implements GameLauncher {
         System.out.println("[Atlantis] Game window: " + WineWindowConfig.describe());
         System.out.println("===============================================");
 
-        ProcessHelper.killWineProcesses();
-
         warnIfMapMissing(ActiveMap.name());
 
-        // Escape must kill the game host (Wine) and then the JVM - the same
-        // "Escape quits everything" the Windows setup had. JNativeHook ships a
-        // Linux x86_64 native library, so the hook works on the X display Wine
-        // runs on.
-        AKeyboard.listenForKeyEvents();
+        // This JVM is the IDE's Linux JVM - it can never BE the bot (JBWAPI
+        // would select the POSIX connection backend and never see the Wine-side
+        // BWAPI shared memory; measured 2026-10-06). Instead it acts as the
+        // supervisor: run the verified script, stream its output into this
+        // console so the IDE shows the progress, and exit when it finishes.
+        // The real bot is the Windows-JRE JVM the script starts under Wine;
+        // production/tournament is untouched - it always took the Windows
+        // ChaosGameLauncher path.
+        runWineFullScript(ActiveMap.name());
+    }
 
-        AtlantisIgniter.modifyBwapiFileIfNeeded();
-        ProcessHelper.startChaosLauncherUnderWine();
+    /**
+     * Runs {@code scripts/run-wine-full.sh} (client first, then the game,
+     * watches for HELLO_WORLD) with inherited I/O so the owner sees everything
+     * in the IDE console, and ends this JVM with the script's exit code.
+     */
+    private static void runWineFullScript(String mapName) {
+        String script = "scripts/run-wine-full.sh";
+        if (!new File(script).exists()) {
+            script = "/sc-ai/Atlantis/scripts/run-wine-full.sh";
+        }
+
+        ProcessBuilder pb = new ProcessBuilder("bash", script, mapName == null ? "" : mapName);
+        pb.inheritIO();
+
+        try {
+            int exitCode = pb.start().waitFor();
+            System.out.println("[Atlantis] run-wine-full.sh finished with exit code " + exitCode);
+            System.exit(exitCode);
+        } catch (Exception e) {
+            System.err.println("[Atlantis] Failed to run " + script + ": " + e.getMessage());
+            System.err.println("[Atlantis] Run it by hand: bash scripts/run-wine-full.sh");
+            System.exit(1);
+        }
     }
 
     /**
