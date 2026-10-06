@@ -14,7 +14,11 @@ public class CameraCommander extends Commander {
     protected static int SCREEN_WIDTH = 640;
     protected static int SCREEN_HEIGHT = 480;
     //    protected static boolean focusCameraOnFirstCombatUnit = true;
-    protected static boolean focusCameraOnFirstCombatUnit = false;
+    // Default ON: the camera follows the alpha leader every frame, and "C"
+    // toggles it off (and on again). It used to default to OFF, which made the
+    // toggle do nothing for the owner - the camera never followed, so there was
+    // nothing to switch (measured 2026-10-06).
+    protected static boolean focusCameraOnFirstCombatUnit = true;
 
     // =========================================================
 

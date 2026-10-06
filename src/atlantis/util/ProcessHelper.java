@@ -66,7 +66,10 @@ public class ProcessHelper {
      */
     public static void killWineProcesses() {
         killWineGameProcesses();
-        // Give the window/X a moment to disappear before starting again.
+        // wineserver must die too: it holds the whole Wine session (and after
+        // an Escape the owner wants nothing left). The sleep below gives X a
+        // moment to tear the windows down before anything starts again.
+        executeInCommandLine("wineserver -k");
         try {
             Thread.sleep(500);
         } catch (InterruptedException ignored) {
@@ -74,11 +77,11 @@ public class ProcessHelper {
     }
 
     /**
-     * Kills the Wine game host (StarCraft and ChaosLauncher) without touching
-     * {@code wineserver} or waiting. Shared by the two platform-specific kill
-     * surfaces above so neither of them can shell out to {@code taskkill} on
-     * Linux - a call that does not exist there and used to end the exit path
-     * with a {@code java.io.IOException: Cannot run program "taskkill"}.
+     * Kills the Wine game host (StarCraft and ChaosLauncher) without waiting.
+     * Shared by the two platform-specific kill surfaces so neither of them can
+     * shell out to {@code taskkill} on Linux - a call that does not exist there
+     * and used to end the exit path with
+     * {@code java.io.IOException: Cannot run program "taskkill"}.
      */
     private static void killWineGameProcesses() {
         // "Chaoslauncher.exe" is 17 characters - longer than the kernel's 15

@@ -19,6 +19,16 @@ import java.util.logging.Logger;
 
 public class AKeyboard implements NativeKeyListener {
     /**
+     * True when this JVM is the bot itself - the one running under Wine with
+     * the game attached (it has BWAPI, so speed/camera shortcuts can work).
+     * The Linux supervisor JVM starts with no game and stays without one.
+     */
+    private static boolean isBotJvm() {
+        if (System.getenv("WINEDEBUG") != null || System.getenv("WINEDLLOVERRIDES") != null) return true;
+        return atlantis.Atlantis.game() != null;
+    }
+
+    /**
      * It looks that Starcraft needs to receive a pause with a delay, otherwise the speed settings don't work.
      */
     public static final int MS_DELAY_FIX = 25;
@@ -29,10 +39,12 @@ public class AKeyboard implements NativeKeyListener {
         try {
             GlobalScreen.registerNativeHook();
         } catch (NativeHookException ex) {
+            // Not fatal: on the Windows/Wine side this means the hook failed
+            // inside Wine (no desktop access etc.) - the game still runs, only
+            // the shortcuts are dead. Say so and keep going instead of dying.
             System.err.println("There was a problem registering the native hook.");
             System.err.println(ex.getMessage());
-
-            System.exit(1);
+            return;
         }
 
         GlobalScreen.addNativeKeyListener(new AKeyboard());
@@ -53,6 +65,15 @@ public class AKeyboard implements NativeKeyListener {
     @Override
     public void nativeKeyPressed(NativeKeyEvent e) {
         consumeEvent(e);
+
+        // Speed/camera keys belong to the JVM that HAS the game (the bot under
+        // Wine). The Linux supervisor JVM has no BWAPI, so pressing 1/2/3 there
+        // only produced "Can't change game speed, bwapi is null" spam. The
+        // supervisor handles the one key it owns - Esc, kill everything.
+        if (!isBotJvm()) {
+            if (e.getKeyCode() == 1) Exit.handle();       // Escape
+            return;
+        }
 
         switch (e.getKeyCode()) {
 
