@@ -6,14 +6,14 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-public class DanceAwayDragoon extends DanceAway {
-    public DanceAwayDragoon(AUnit unit) {
+public class DanceAwayAsDragoon extends DanceAway {
+    public DanceAwayAsDragoon(AUnit unit) {
         super(unit);
     }
 
     @Override
     public boolean applies() {
-        boolean applies = (new DanceAwayDragoonApplies(unit)).applies();
+        boolean applies = (new DanceAwayAsDragoonApplies(unit)).applies();
 
         if (applies && unit.hp() >= 62) {
             Selection enemies = unit.enemiesThatCanAttackMe(1);

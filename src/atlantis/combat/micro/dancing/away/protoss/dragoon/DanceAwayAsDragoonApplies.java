@@ -11,12 +11,12 @@ import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Selection;
 import bwapi.Color;
 
-public class DanceAwayDragoonApplies extends HasUnit {
+public class DanceAwayAsDragoonApplies extends HasUnit {
     private int rangedEnemiesCount;
     private String _lastF = "";
     private String _lastT = "";
 
-    public DanceAwayDragoonApplies(AUnit unit) {
+    public DanceAwayAsDragoonApplies(AUnit unit) {
         super(unit);
     }
 
@@ -41,6 +41,8 @@ public class DanceAwayDragoonApplies extends HasUnit {
 //        unit.paintTextCentered(unit.enemiesNear().tanks().countInRadius(13, unit) + "", Color.Green, 2);
 
         int cooldown = unit.cooldown();
+
+        if (unit.cooldown() <= 2 && unit.hp() >= 61) return false;
 
 //        if (unit.isHealthy()) return f("_healthy");
         if (unit.lastAttackFrameMoreThanAgo(A.whenEnemyZerg(90, 60))) return f("_A");
