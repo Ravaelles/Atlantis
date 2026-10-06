@@ -73,9 +73,15 @@ say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
 
 # The client-first order needs no wait: the client only reaches the BWAPI game
 # table once the GAME is up (before that it loops on "Game table mapping not
-# found", which is its normal idle state). Just make sure it is alive.
-sleep 3
-if kill -0 "$CLIENT_PID" 2>/dev/null; then
+# found", which is its normal idle state). Just make sure it is alive. Poll
+# fast instead of sleeping 3 s: a JVM under Wine is up in well under a second,
+# and if it died we want to know at once (measured 2026-10-06).
+CLIENT_ALIVE=0
+for _ in $(seq 1 15); do
+  if kill -0 "$CLIENT_PID" 2>/dev/null; then CLIENT_ALIVE=1; break; fi
+  sleep 0.2
+done
+if [ "$CLIENT_ALIVE" -eq 1 ]; then
   say "  Client is running (it will reach the table once the game starts)"
 else
   say "  FAILED: client JVM died immediately. Log tail:"
@@ -111,8 +117,21 @@ cd "$GAME_ROOT"
 setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
   wine chaoslauncher/Chaoslauncher.exe \
   > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
-sleep 40
-pgrep -x StarCraft.exe >/dev/null && say "  StarCraft is running" || say "  WARNING: StarCraft not running (see $LOG_DIR/chaoslauncher.log)"
+
+# Poll for StarCraft instead of a fixed 40 s sleep: the game usually comes up
+# within seconds of ChaosLauncher starting, and the old constant wait made
+# every launch pay the full 40 s no matter how fast the game was (measured
+# 2026-10-06). 45 s cap is only the failure path.
+SC_UP=0
+for _ in $(seq 1 90); do
+  if pgrep -x StarCraft.exe >/dev/null; then SC_UP=1; break; fi
+  sleep 0.5
+done
+if [ "$SC_UP" -eq 1 ]; then
+  say "  StarCraft is running"
+else
+  say "  WARNING: StarCraft not running within 45 s (see $LOG_DIR/chaoslauncher.log)"
+fi
 
 say "Step 3/3: watching for HELLO_WORLD (grace 120s)..."
 END=$(( $(date +%s) + 120 ))
