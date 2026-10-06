@@ -112,6 +112,11 @@ public class ProcessHelper {
         for (String command : WineWindowConfig.enableVirtualDesktopCommands()) {
             executeInCommandLine(command);
         }
+        // W-MODE would fight the Wine desktop for the same job (both size the
+        // game window); the desktop wins, see disableWModeCommands().
+        for (String command : WineWindowConfig.disableWModeCommands()) {
+            executeInCommandLine(command);
+        }
         // wineserver was just killed; give it a moment before it is needed.
         try {
             Thread.sleep(1000);
@@ -142,7 +147,7 @@ public class ProcessHelper {
      * the game while the window is being placed.
      */
     private static void positionWineWindowWhenReady() {
-        final String command = WineWindowConfig.positionWindowCommand();
+        final String[] command = WineWindowConfig.positionWindowCommand();
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -152,7 +157,7 @@ public class ProcessHelper {
 
                 for (int attempt = 0; attempt < 80; attempt++) {
                     if (wmctrlSeesWindow(title)) {
-                        executeInCommandLine(command);
+                        executeDetached(command);
                         return;
                     }
                     try {
@@ -165,6 +170,22 @@ public class ProcessHelper {
         }, "wine-window-position");
         thread.setDaemon(true);
         thread.start();
+    }
+
+    /**
+     * Runs an already-split command vector without waiting. Used for the window
+     * positioner, whose script contains shell builtins ({@code eval},
+     * {@code command}) that only exist inside a shell - running the vector
+     * through {@code Runtime.exec(String)} word-splits it and tries to execute
+     * {@code eval} as a program (measured 2026-10-06: {@code IOException:
+     * Cannot run program "eval"}).
+     */
+    private static void executeDetached(String[] command) {
+        try {
+            Runtime.getRuntime().exec(command);
+        } catch (Exception err) {
+            err.printStackTrace();
+        }
     }
 
     private static boolean wmctrlSeesWindow(String title) {

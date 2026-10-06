@@ -137,6 +137,15 @@ wine reg add 'HKCU\Software\Wine\Explorer' /v Desktop /d Default /f >/dev/null 2
 wine reg add 'HKCU\Software\Wine\Explorer\Desktops' /v Default \
   /d "${WINE_WINDOW_WIDTH}x${WINE_WINDOW_HEIGHT}" /f >/dev/null 2>&1
 
+# W-MODE is ChaosLauncher's own windowing plugin and it fights the Wine desktop
+# for the same job: it patches StarCraft's window directly, so the game does not
+# fill the desktop and the user ends up with a "BroodWar" entry in the task bar
+# and nothing on screen (measured 2026-10-06). One mechanism must win; ours is
+# the Wine desktop, so W-MODE is switched off. The BWAPI injector stays on -
+# without it there is no bot at all.
+wine reg add 'HKCU\Software\Chaoslauncher\PluginsEnabled' \
+  /v 'W-MODE 1.02' /d 0 /f >/dev/null 2>&1
+
 # Wine gives no option for the desktop window POSITION, so place it with wmctrl
 # once the window exists (it appears a few seconds after ChaosLauncher starts).
 # Empty X/Y centers on the current X screen.

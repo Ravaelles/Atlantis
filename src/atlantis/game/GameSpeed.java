@@ -137,6 +137,15 @@ public class GameSpeed {
      * Changes game speed. 0 - fastest 1 - very quick 20 - around default
      */
     public static void changeSpeedTo(int speed) {
+        // The keyboard shortcut path reaches this method directly, without the
+        // game()!=null guard changeSpeed() has, so the guard belongs here too:
+        // pressing "3" before BWAPI is attached used to throw a
+        // NullPointerException on the JNativeHook dispatch thread.
+        if (game() == null) {
+            System.err.println("Can't change game speed, bwapi is null.");
+            return;
+        }
+
         if (A.now() > 5) MapSpecificCommander.initialSpeed = false;
         dynamicSlowdownIsActive = false;
 

@@ -73,6 +73,30 @@ public final class WineWindowConfig {
         }
     }
 
+    /**
+     * Commands that disable ChaosLauncher's own windowing plugin, W-MODE.
+     *
+     * <p>Measured 2026-10-06: W-MODE was enabled
+     * ({@code HKCU\Software\Chaoslauncher\PluginsEnabled}, key
+     * {@code "W-MODE 1.02"=1}) and its {@code wmode.ini} asked for a
+     * 1600x840 client window. It patches StarCraft's window directly, so the
+     * game does <b>not</b> fill the Wine virtual desktop: StarCraft ends up as
+     * a separate window, and with the desktop also present the user sees
+     * "BroodWar" in the task bar with nothing drawn on screen.</p>
+     *
+     * <p>The two mechanisms are alternatives for the same job, so exactly one
+     * must be on. Ours is the Wine desktop (it is what keeps the host's
+     * resolution and HiDPI scaling untouched), so W-MODE is switched off here.
+     * The BWAPI injector is deliberately left enabled - without it there is no
+     * bot at all.</p>
+     */
+    public static String[] disableWModeCommands() {
+        return new String[]{
+            "wine reg add 'HKCU\\Software\\Chaoslauncher\\PluginsEnabled' "
+                + "/v 'W-MODE 1.02' /d 0 /f",
+        };
+    }
+
     /** The {@code /desktop=...} argument is no longer used; kept for docs. */
     public static String desktopArgument() {
         return "/desktop=" + DESKTOP_NAME + "," + width + "x" + height;
@@ -116,7 +140,7 @@ public final class WineWindowConfig {
      * name; it uses only {@code ${...}} expansions and {@code $(( ))} arithmetic
      * so a {@code sh -c} interpreter (dash) runs it the same as bash.</p>
      */
-    public static String positionWindowCommand() {
+    public static String[] positionWindowCommand() {
         String target = DESKTOP_NAME + " - Wine desktop";
         StringBuilder script = new StringBuilder();
 
@@ -129,7 +153,7 @@ public final class WineWindowConfig {
         if (x != UNSET && y != UNSET) {
             script.append("command -v wmctrl >/dev/null 2>&1 || exit 0; ");
             script.append("wmctrl -x -r \"$1\" -e 0,").append(x).append(',').append(y).append(",-1,-1");
-            return script.toString();
+            return new String[]{"sh", "-c", script.toString()};
         }
 
         // Centering needs the screen size. The fallback 1920x1080 only applies
@@ -139,7 +163,7 @@ public final class WineWindowConfig {
         script.append("SW=${SR%% *}; SH=${SR#* }; ");
         script.append("wmctrl -x -r \"$1\" -e 0,$(( (SW-").append(width).append(")/2 ))");
         script.append(",$(( (SH-").append(height).append(")/2 ))-1,-1");
-        return script.toString();
+        return new String[]{"sh", "-c", script.toString()};
     }
 
     public static String describe() {
