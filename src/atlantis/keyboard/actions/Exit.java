@@ -19,7 +19,13 @@ public class Exit {
         AConsole.println("\nExit was requested manually. Cleaning up...");
 
         if (Env.isLocal()) {
-            if (Env.isWine()) ProcessHelper.killWineProcesses();
+            // Escape kills everything, the way the Windows setup did: the game
+            // host (Wine / ChaosLauncher / StarCraft), the bot's own JVM under
+            // Wine if one is running, and finally this JVM.
+            if (Env.isWine()) {
+                ProcessHelper.killWineProcesses();
+                ProcessHelper.killWineClientJvm();
+            }
             AGame.exit();
         }
     }

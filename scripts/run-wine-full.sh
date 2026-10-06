@@ -69,18 +69,16 @@ setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
 CLIENT_PID=$!
 say "  client PID $CLIENT_PID, log: $CLIENT_LOG"
 
-say "  waiting up to 60s for the client to reach the BWAPI game table..."
-REACHED=0
-for _ in $(seq 1 30); do
-  if grep -qE '^[0-9]+ \|' "$CLIENT_LOG" 2>/dev/null; then REACHED=1; break; fi
-  kill -0 "$CLIENT_PID" 2>/dev/null || break
-  sleep 2
-done
-if [ "$REACHED" = 1 ]; then
-  say "  client reached the game table"
+# The client-first order needs no wait: the client only reaches the BWAPI game
+# table once the GAME is up (before that it loops on "Game table mapping not
+# found", which is its normal idle state). Just make sure it is alive.
+sleep 3
+if kill -0 "$CLIENT_PID" 2>/dev/null; then
+  say "  client is running (it will reach the table once the game starts)"
 else
-  say "  WARNING: no table rows yet (client keeps trying - continuing)"
-  tail -3 "$CLIENT_LOG" | sed 's/^/    /'
+  say "  FAILED: client JVM died immediately. Log tail:"
+  tail -15 "$CLIENT_LOG" | sed 's/^/    /'
+  exit 1
 fi
 
 say "step 2/3: GAME (map: $MAP)"

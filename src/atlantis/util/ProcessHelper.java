@@ -235,6 +235,17 @@ public class ProcessHelper {
         return new String(buffer.toByteArray(), "UTF-8");
     }
 
+    /**
+     * Kills the bot's own JVM running under Wine, if one is up - the client
+     * half of the Wine setup. From the Linux supervisor JVM there is no way to
+     * name it directly (it is a Windows process inside Wine), so its command
+     * line is matched instead: the only java.exe this project launches runs
+     * the Atlantis jar.
+     */
+    public static void killWineClientJvm() {
+        executeInCommandLine("pkill -9 -f 'java.exe.*Atlantis.jar'");
+    }
+
     private static String wineGameRoot() {
         String prefix = System.getenv("WINEPREFIX");
         if (prefix == null || prefix.trim().isEmpty()) {
