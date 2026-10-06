@@ -36,7 +36,11 @@ done
 
 # --- fast default when nothing else was asked for
 if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
-  JUNIT_ARGS=(--select-package tests.unit --select-package tests.architecture)
+  JUNIT_ARGS=(
+    --select-package tests.unit
+    --select-package tests.architecture
+    --select-class tests.e2e.QuickEconomySmokeTest
+  )
 fi
 
 if [ "$ALLOW_SLOW" -eq 0 ]; then

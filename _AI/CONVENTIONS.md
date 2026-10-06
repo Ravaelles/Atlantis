@@ -249,6 +249,18 @@ and never from decompiling the game archives.
 - Concretely, the bar is: every **"X was broken and I fixed it"** commit names
   its test in the message (`Test: <ClassName>`), and a fix without a test is
   not closed until one exists - except when the fix is trivial per rule 2.
+- **Test-budget ruling (2026-10-06):** `scripts/run-tests.sh` (the
+  model-facing inner loop) must finish well under 40 s. It runs unit +
+  architecture + the quick e2e smoke (`QuickEconomySmokeTest`, ~1 s: the
+  commander runs 120 stub-world frames and the basics must happen - production
+  queue populated, workers alive, nothing throws). The slow scopes
+  (acceptance 12 s, e2e scenarios 64 s) are refused there and belong to
+  `scripts/run-full-tests.sh`, which only the owner runs. Models must not run
+  the full suite.
+- The future OpenBW mega-test slots into this same quick tier once it exists:
+  a single real-engine run asserting the basics (buildings queued, expansion
+  up, no exceptions) is worth more than dozens of unit tests - but it must fit
+  the same budget or it becomes an owner-only scope too.
 
 ## 11. Challenge log: `_AI/CHALLENGES/` (added 2026-10-06)
 
