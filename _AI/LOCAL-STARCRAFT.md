@@ -280,3 +280,42 @@ Wine itself. It is separate from the headless OpenBW recipe above.
   `xdotool getdisplaygeometry` -> `3840 2160` on the primary screen), so the
   centering path has its tools; without `wmctrl` the positioner exits quietly
   and the window manager places the window as before.
+### W-MODE is the invisible-StarCraft bug (measured 2026-10-06)
+
+The game played, the bot worked, and StarCraft was **not on screen**: a
+`BroodWar` entry in the task bar, nothing drawn, clicking it changed nothing.
+
+Cause: ChaosLauncher's own windowing plugin, **W-MODE**, was enabled
+(`HKCU\Software\Chaoslauncher\PluginsEnabled`, `"W-MODE 1.02"="1`) with a
+`wmode.ini` asking for a `1600x840` client window. It patches StarCraft's window
+directly, so the game does not fill the Wine virtual desktop - and with the
+desktop also active the two mechanisms fight over the same job. The desktop
+wins now: `WineWindowConfig.disableWModeCommands()` writes the plugin flag to
+`0` before ChaosLauncher starts. The **BWAPI injector is deliberately left
+enabled** - switching it off would remove the bot itself.
+
+Verified the write lands rather than assuming it: `wine reg query
+'HKCU\Software\Chaoslauncher\PluginsEnabled' /v 'W-MODE 1.02'` answers
+`REG_SZ 0` after the command. Note the value only reaches `user.reg` when
+wineserver flushes or exits, so reading the file immediately after the `reg
+add` still shows the old value - query it, do not read the file.
+
+Two more facts from the same session:
+
+- **`Runtime.exec(String)` word-splits, so a shell fragment cannot be passed to
+  it.** The window positioner builds `eval "set -- 'Default - Wine desktop'" ...`
+  and the first version handed that whole string to `exec`, which tried to
+  execute `eval` as a program: `IOException: Cannot run program "eval"`. The
+  method now returns `{"sh", "-c", script}` and the caller runs the vector.
+  Rule: if a command contains shell builtins (`eval`, `command`) or redirections,
+  it must be exec'd as a vector with the shell named.
+- **The window title Wine uses is `<desktop> - Wine desktop`**, confirmed live:
+  both `wine explorer /desktop=TestDesktop,800x600` and the registry desktop
+  produce `wmctrl -x -l` lines titled `Default - Wine desktop` /
+  `TestDesktop - Wine desktop`, class `explorer.exe.explorer.exe`. That is the
+  string the positioner matches.
+- **`GameSpeed.changeSpeedTo` needed the null guard itself.** `changeSpeed()`
+  guards `game() != null` before delegating, but the keyboard shortcut path
+  (`AKeyboard.changeSpeedAndFrameSkip` -> `changeSpeedTo`) skipped it, so
+  pressing `3` before BWAPI attached threw an NPE on the JNativeHook dispatch
+  thread. Guarding the method every caller reaches is what fixed it.
