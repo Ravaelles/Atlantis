@@ -86,13 +86,12 @@ fi
 #
 # MELEE is also what makes the game start by itself: with USE_MAP_SETTINGS on a
 # non-UMS map StarCraft treats the map's own settings as incomplete and waits.
-MAP_LOOKUP="$MAP"
 case "$MAP" in
   sscai/*|*/sscai/*) GAME_TYPE="MELEE" ;;
   *)                 GAME_TYPE="USE_MAP_SETTINGS" ;;
 esac
-MAP_PATH="maps/$MAP_LOOKUP"
-#
+MAP_PATH="maps/$MAP"
+
 echo "[wine-game] map=$MAP_PATH game_type=$GAME_TYPE"
 
 # Section layout matters (measured 2026-10-05): auto_menu, map, race,
