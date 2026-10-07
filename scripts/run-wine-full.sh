@@ -2,7 +2,7 @@
 # One command: attach the Atlantis bot to real StarCraft under Wine and play.
 #
 # This is the F5-from-IDE equivalent for Linux. It was verified end to end on
-# 2026-10-06 (client log reached HELLO_WORLD - BWAPI attached, Atlantis is
+# 2026-10-06 (client log reached HELLO_ATLANTIS - BWAPI attached, Atlantis is
 # playing) and encodes three facts that cost the whole session to find:
 #
 #   1. The bot JVM must run UNDER WINE with a WINDOWS JRE and
@@ -33,7 +33,7 @@
 #   BUILD=0         play the jar already on disk instead of rebuilding it
 #   JAR_OUT=...     where the jar is built and loaded from
 #
-# Exit code 0 = HELLO_WORLD seen (bot attached). Non-zero otherwise; on
+# Exit code 0 = HELLO_ATLANTIS seen (bot attached). Non-zero otherwise; on
 # failure everything is killed so no stray process survives.
 set -u
 
@@ -309,13 +309,13 @@ else
   say "  WARNING: StarCraft not running within 45 s (see $LOG_DIR/chaoslauncher.log)"
 fi
 
-say "Step 3/3: watching for HELLO_WORLD (grace 10s)..."
+say "Step 3/3: watching for HELLO_ATLANTIS (grace 10s)..."
 END=$(( $(date +%s) + 10 ))
 ATTACHED=0
 while [ "$(date +%s)" -lt "$END" ]; do
-  if grep -q "HELLO_WORLD" "$CLIENT_LOG" 2>/dev/null; then
+  if grep -q "HELLO_ATLANTIS" "$CLIENT_LOG" 2>/dev/null; then
     say "SUCCESS: BWAPI attached, Atlantis is playing!"
-    #since "client attached (HELLO_WORLD)"
+    #since "client attached (HELLO_ATLANTIS)"
     ATTACHED=1
     break
   fi
@@ -329,7 +329,7 @@ while [ "$(date +%s)" -lt "$END" ]; do
 done
 
 if [ "$ATTACHED" -eq 0 ]; then
-  say "FAILED: no HELLO_WORLD within the grace period. Client log tail:"
+  say "FAILED: no HELLO_ATLANTIS within the grace period. Client log tail:"
   tail -15 "$CLIENT_LOG" | sed 's/^/    /'
   cleanup
   exit 1
@@ -340,7 +340,8 @@ fi
 # the whole session down. Without this watcher the result screen sat there
 # forever with StarCraft and ChaosLauncher still running (owner report,
 # 2026-10-06).
-say "Bot is playing - watching until the game ends..."
+say "OK - The bot is playing..."
+say "###################################################################"
 while kill -0 "$CLIENT_PID" 2>/dev/null; do
   sleep 2
 done

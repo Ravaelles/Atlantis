@@ -142,7 +142,7 @@ public class GameSpeed {
         // pressing "3" before BWAPI is attached used to throw a
         // NullPointerException on the JNativeHook dispatch thread.
         if (game() == null) {
-            System.err.println("Can't change game speed, bwapi is null.");
+            if (A.now() >= 1) System.err.println("Can't change game speed, bwapi is null.");
             return;
         }
 

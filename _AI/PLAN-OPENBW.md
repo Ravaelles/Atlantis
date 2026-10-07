@@ -144,7 +144,7 @@ selects the transport matching what `BWAPILauncher` exposes.
 - If the server must be told to use shared memory (the client's default), that
   is a one-line config on the server side - still preferred over a client patch.
 
-**Verification:** `out/openbw/bot.log` reaches the Atlantis "HELLO_WORLD"
+**Verification:** `out/openbw/bot.log` reaches the Atlantis "HELLO_ATLANTIS"
 equivalent - i.e. the client prints that it connected and the game reached
 frame 1 - with no `Unable to open...` line.
 

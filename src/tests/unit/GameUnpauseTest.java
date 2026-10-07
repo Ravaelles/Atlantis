@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
  *
  * <p>
  * A game that sits paused looks exactly like a bot that attached and does
- * nothing: HELLO_WORLD prints, frames do not advance, no error anywhere. BWAPI
+ * nothing: HELLO_ATLANTIS prints, frames do not advance, no error anywhere. BWAPI
  * only exposes <em>pause</em> plus {@code resumeGame()} - there is no
  * {@code setPaused(false)} - so the bot must send the resume itself, and it
  * must do so on start and through the first frames (Wine re-pauses when the

@@ -94,11 +94,11 @@ public class Atlantis implements BWEventListener {
 
         OnGameStarted.execute();
 
-        // HELLO_WORLD is the owner's connection marker: when this line
+        // HELLO_ATLANTIS is the owner's connection marker: when this line
         // prints, the BWAPI client is attached and the bot is actually playing.
         // The Wine launcher kills SC+Chaos when it does NOT appear in time
         // (see WineClientSupervisor), so silence has a loud consequence.
-        AConsole.println("HELLO_WORLD - BWAPI attached, Atlantis is playing!");
+        AConsole.println("HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!");
 
         // Force the game out of StarCraft's pause. Without this a fresh game
         // sits paused until a human presses a key (owner report, twice:
@@ -112,7 +112,7 @@ public class Atlantis implements BWEventListener {
         // the vendored jar.
         //
         // Doing it here (onStart) is the earliest moment the game exists for the
-        // client, and it is the same moment HELLO_WORLD is printed, so the
+        // client, and it is the same moment HELLO_ATLANTIS is printed, so the
         // owner's marker now means "attached AND running" rather than
         // "attached, maybe still paused". unpauseIfPaused() also runs on the
         // first frames (see onFrame) because Wine can re-pause on focus loss.

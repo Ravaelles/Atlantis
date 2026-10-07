@@ -251,7 +251,7 @@ bash scripts/run-wine-full.sh "ZealDrag_v_Lings.scm"           # any map name
 
 It kills leftovers, starts the client (Windows JRE under Wine,
 `-Dos.name=Windows 10`), waits for the client to reach the BWAPI game table,
-starts the game, and watches the log for `HELLO_WORLD` (attached, playing).
+starts the game, and watches the log for `HELLO_ATLANTIS` (attached, playing).
 Success/failure is reported; on failure everything is killed. The game window
 stays up on success - stop it with
 `pkill -x StarCraft.exe; pkill -9 Chaoslauncher; wineserver -k`.
@@ -412,7 +412,7 @@ Game table mapping not found.        <- expected while no game runs
 Connected
 Connection successful
 ### Atlantis is working! ###
-HELLO_WORLD - BWAPI attached, Atlantis is playing!
+HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!
 ```
 
 Working one-shot recipe:
@@ -427,7 +427,7 @@ wine "C:\Java\bin\java.exe" "-Dos.name=Windows 10" \
 # 2. THEN the game (auto-menu starts the match on its own):
 cd ~/.wine/drive_c/sc && DISPLAY=:0 wine chaoslauncher/Chaoslauncher.exe
 
-# 3. HELLO_WORLD in the client log = attached; the bot plays the match.
+# 3. HELLO_ATLANTIS in the client log = attached; the bot plays the match.
 ```
 
 Why each piece is needed:

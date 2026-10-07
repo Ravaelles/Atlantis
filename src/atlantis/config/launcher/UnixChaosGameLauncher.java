@@ -53,7 +53,7 @@ public class UnixChaosGameLauncher implements GameLauncher {
         // (no pkill exists inside Wine) would both be wrong here.
         if (runningUnderWine()) {
             System.out.println("===============================================");
-            System.out.println("[Atlantis] Backend: Wine client (JVM under Wine, attaching to the running game).");
+            System.out.println("[Atlantis] Wine client (JVM under Wine, attaching to the game).");
             System.out.println("[Atlantis] Map: " + ActiveMap.name());
             System.out.println("===============================================");
 
@@ -97,7 +97,7 @@ public class UnixChaosGameLauncher implements GameLauncher {
 
     /**
      * Runs {@code scripts/run-wine-full.sh} (client first, then the game,
-     * watches for HELLO_WORLD) with inherited I/O so the owner sees everything
+     * watches for HELLO_ATLANTIS) with inherited I/O so the owner sees everything
      * in the IDE console, and ends this JVM with the script's exit code.
      */
     private static void runWineFullScript(String mapName) {
