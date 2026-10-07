@@ -109,6 +109,7 @@ public class DefineLeader {
             .havingWeapon()
             .notSpecialAction()
             .notRunning()
+            .nonBuildings()
             .excludeTypes(AUnitType.Protoss_Dark_Templar, AUnitType.Protoss_Reaver)
             .exclude(exceptUnit);
 

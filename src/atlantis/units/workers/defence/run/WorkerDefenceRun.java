@@ -22,6 +22,15 @@ public class WorkerDefenceRun extends Manager {
     /** Above this local combat eval we are winning; below it we are behind. */
     private static final double EVAL_WE_ARE_BEHIND = 1.5;
 
+    /** Early game: a worker at least this healthy stands and fights. */
+    private static final int EARLY_GAME_HP_ENOUGH = 38;
+
+    /**
+     * At home a worker holds ground above this health; below it, it runs even
+     * during a base attack, because it cannot survive the next exchange.
+     */
+    private static final int HOLD_GROUND_MIN_HP = 30;
+
     /** How far a helper will travel to answer a wounded fellow worker. */
     private static final double HELP_RADIUS = 2.2;
 
@@ -37,14 +46,21 @@ public class WorkerDefenceRun extends Manager {
 
     @Override
     public boolean applies() {
-        // Home is being attacked and this worker can help: fleeing is fatal at
-        // home (_AI/BUGS.md B-19) - nothing would be left between the
-        // attackers and the base once the army dies. Artillery attackers
-        // (Reaver/Tank/Lurker) still outrange workers, so run stays correct
-        // against them.
-        if (BaseUnderAttack.workerShouldHoldGround(unit)) return false;
+        // Hold ground at home while the base is attacked: fleeing then is fatal
+        // (B-19) - nothing would stand between the attackers and the base once
+        // the army dies. But a WOUNDED worker must still leave: a Probe at 12 hp
+        // is not holding anything, it is feeding the enemy.
+        if (BaseUnderAttack.workerShouldHoldGround(unit) && unit.hp() > HOLD_GROUND_MIN_HP) {
+            return false;
+        }
 
-        if (A.s <= 60 * 7 && unit.hp() >= 38) return false;
+        // Early game, healthy worker: stay. Six workers ARE the economy, and a
+        // Probe that runs from a single raider abandons more than the minerals -
+        // it leaves the raider free to pick the next one. The old threshold was
+        // hp >= 38 with the same shape but no way out for a hurt worker, which
+        // is why a Probe at 39 hp stood still until it died (owner's 6:44 and
+        // 6:46 death logs, inside this window).
+        if (A.s <= 60 * 7 && unit.hp() >= EARLY_GAME_HP_ENOUGH) return false;
 
         if (unit.hp() <= 20 && unit.enemiesNear().notEmpty()) return true;
 

@@ -135,6 +135,44 @@ public class WorkerSwarmTest extends AbstractTestWithWorld {
                                 "the old tight base radius must be relaxed");
         }
 
+        @Test
+        public void aWoundedWorkerRunsEvenAtHomeAndInTheEarlyGame() throws Exception {
+                // The owner's 6:44 and 6:46 death logs sit INSIDE the first 7 minutes,
+                // and WorkerDefenceRun is absent from both logs. Two gates did that,
+                // and neither had a way out for a hurt worker:
+                //
+                //   if (BaseUnderAttack.workerShouldHoldGround(unit)) return false;
+                //   if (A.s <= 60 * 7 && unit.hp() >= 38) return false;
+                //
+                // A Zealot kills a 40 hp Probe in three swings, so 'hold ground at
+                // 39 hp' is 'stand still and die'.
+                String run = read(RUN_SOURCE);
+
+                assertTrue(run.contains("HOLD_GROUND_MIN_HP"),
+                                "holding ground at home must have a health floor, or a nearly"
+                                                + " dead worker keeps feeding the enemy");
+                assertTrue(run.contains("EARLY_GAME_HP_ENOUGH"),
+                                "the early-game 'stay and fight' rule must have a health"
+                                                + " threshold a Zealot cannot delete in three swings");
+                assertTrue(!run.contains("unit.hp() >= 38) return false;"),
+                                "the old flat 'hp >= 38 -> do not run' rule must be gone: it"
+                                                + " covered the whole early game");
+        }
+
+        @Test
+        public void theHoldGroundFloorIsAboveTheDeathThreshold() throws Exception {
+                // `hp <= 20` alone is far too late: a Zealot does 16 per swing, so a
+                // worker at 20 hp is dead next swing. The floor must be higher than
+                // the only other way into run.
+                String run = read(RUN_SOURCE);
+
+                assertTrue(run.contains("HOLD_GROUND_MIN_HP = 30"),
+                                "the hold-ground floor must sit above the 20 hp death threshold");
+                assertTrue(run.contains("EARLY_GAME_HP_ENOUGH = 45"),
+                                "the early-game threshold must be high enough that a hurt"
+                                                + " worker is not told to stay");
+        }
+
         private static String read(String path) throws Exception {
                 return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(path)),
                                 java.nio.charset.StandardCharsets.UTF_8);

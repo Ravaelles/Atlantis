@@ -105,15 +105,19 @@ cleanup() {
 # BUILD=0 (env) skips it for a deliberately frozen jar, e.g. to reproduce a
 # report against a known build.
 if [ "${BUILD:-1}" = "1" ]; then
-  say "Building the bot jar from source (BUILD=0 to skip)"
-  if ! timeout 300 bash "$ATLANTIS_DIR/scripts/build-bot-jar.sh" "$JAR" >/tmp/atlantis-build-jar.log 2>&1; then
-    say "  FAILED to build the jar - see /tmp/atlantis-build-jar.log"
-    tail -20 /tmp/atlantis-build-jar.log | sed 's/^/    /'
-    exit 1
-  fi
-  since "jar rebuilt from source"
-else
-  say "BUILD=0: using the existing jar at $JAR"
+  say "Building the bot jar from source in the BACKGROUND (BUILD=0 to skip)"
+  rm -f /tmp/atlantis-build-jar.done /tmp/atlantis-build-jar.failed
+  # Started now, in parallel with the game launch: StarCraft takes seconds to
+  # come up anyway, so the compile hides inside that instead of adding to it.
+  # The bot JVM waits for the build to finish before it starts (see Step 1).
+  (
+    if timeout 300 bash "$ATLANTIS_DIR/scripts/build-bot-jar.sh" "$JAR" >/tmp/atlantis-build-jar.log 2>&1; then
+      : > /tmp/atlantis-build-jar.done
+    else
+      echo "failed" > /tmp/atlantis-build-jar.failed
+    fi
+  ) &
+  JAR_BUILD_PID=$!
 fi
 
 say "Killing leftovers"
@@ -145,6 +149,27 @@ if [ ! -f "$JAR" ]; then
 fi
 
 say "Step 1/3: jar: $JAR"
+
+# Wait for the background build before launching the client: the bot cannot
+# start from a jar that is still being written. This is the only point that has
+# to wait, and by now StarCraft has been starting in parallel for the same time.
+if [ "${BUILD:-1}" = "1" ]; then
+  waited=0
+  while [ ! -f /tmp/atlantis-build-jar.done ] && [ ! -f /tmp/atlantis-build-jar.failed ]; do
+    sleep 0.2
+    waited=$((waited + 1))
+    if [ "$waited" -gt 250 ]; then break; fi
+  done
+
+  if [ -f /tmp/atlantis-build-jar.failed ]; then
+    say "  FAILED to build the jar - see /tmp/atlantis-build-jar.log"
+    tail -20 /tmp/atlantis-build-jar.log | sed 's/^/    /'
+    exit 1
+  fi
+  since "jar rebuilt (parallel with game start)"
+fi
+
+[ -f "$JAR" ] || { say "Bot jar missing at $JAR"; exit 1; }
 
 # The jar path must reach the Wine JVM as a WINDOWS path. Deriving it from
 # $JAR instead of hardcoding it is the whole point: a hardcoded

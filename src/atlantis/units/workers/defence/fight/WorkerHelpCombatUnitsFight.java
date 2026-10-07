@@ -26,7 +26,9 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         if (unit.hp() <= 17) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
-        if (unit.lastActionLessThanAgo(3)) return f();
+        if (Enemy.protoss() && unit.hp() <= 20) return f();
+        if (Enemy.protoss() && unit.hp() <= 36 && unit.lastUnderAttackLessThanAgo(150)) return f();
+        if (unit.lastActionLessThanAgo(10)) return f();
         if (unit.enemiesNear().combatUnits().empty()) return f();
         if (unit.friendsNear().combatUnits().nonBuildings().countInRadius(10, unit) == 0) return f();
 
