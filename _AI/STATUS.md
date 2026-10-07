@@ -36,13 +36,21 @@
 
 ## Status
 
-- **2026-10-06 (session 1):** M1/M2 design read done (Stardust `Producer.cpp`
-  surveyed: timeline arrays per resource, `initializeResources`,
-  `frameWhenResourcesMet`, `shiftAll`, `handleGoal`, `issueOrders`; Atlantis
-  legacy: `ABuildOrderLoader` parses `build_orders/<race>/<strategy>.txt` →
-  `ProductionOrder` rows → mutable `Queue`; dynamic commanders insert orders
-  ad hoc). Starting M1 implementation now.
-- M1-M6: **in progress** (see updates below).
+- **M1 DONE** (commit `c36ce79f`): pure domain (`ResourceCost`, `Producible`,
+  `ProductionGoal`, `TargetPlacement`, `ProductionItem`, `ProductionPlan`),
+  `ResourceTimeline` with linear income + solvency check; `UnitProducible`
+  adapter over `AUnitType`. Test: `ResourceTimelineTest` (12 tests). Suite
+  149/0/4, ArchUnit 7/7, store unchanged.
+- **M2 DONE** (commit `401b29ea`): `ProductionScheduler` (stateless plan per
+  pass; prerequisites recursive; earliest-affordable-frame; shift-forward;
+  per-pass `plannedFacilityAvailableFrom` so a planned Robotics gates the
+  Reaver to its completion frame). Seam classes: `ProducerFacility`,
+  `ProducerFacilityRegistry`, `PlacementPlanner`, `PlacementReservation`.
+  Test: `ProductionSchedulerTest` (5 tests, fully fake-backed). Suite 154/0/4,
+  ArchUnit 7/7.
+- **M3 IN PROGRESS**: real `PlacementPlanner` over the existing
+  `APositionFinder`; tests with a fake map/port.
+- M4-M6: pending (dispatcher + ENV flag dry-run, goal sources, cutover).
 
 ## Verification protocol
 
