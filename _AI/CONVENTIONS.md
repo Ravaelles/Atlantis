@@ -275,6 +275,21 @@ and never from decompiling the game archives.
   cross-system quick reference — when in doubt, put the one-liner there and
   the details in the specialist file.
 
+## 13. Command timeout (owner's ruling, 2026-10-07)
+
+- **Every command must be run with a 15-minute (900 s) timeout.** A long-running
+  command that is not killed makes the session look hung, and the time is gone
+  for good. This has happened more than once (a game run left in the
+  foreground was the last one).
+- Concretely: prefix anything that can block with `timeout 900` (or a smaller
+  bound for a known-fast command), and prefer a background operation plus a
+  short poll over a foreground wait. `scripts/run-tests.sh` is already bounded
+  by its own 40 s budget; the rule matters for builds, game runs, downloads and
+  any script whose runtime is not obviously seconds.
+- When a command is killed by the timeout, say so in the summary and do not
+  claim its result. A timed-out run is not evidence of anything except that the
+  step needs a different shape (background + poll, or a shorter horizon).
+
 ## 12. Test runtime budget (owner's ruling, 2026-10-06)
 
 - `scripts/run-tests.sh` is the model-facing inner loop: it must finish well

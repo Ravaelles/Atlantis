@@ -76,6 +76,8 @@ public final class DynamicGoals {
 
         addWorkerGoal(goals, state);
         addSupplyGoal(goals, state);
+        addArmyGoal(goals, state);
+        addExpansionGoal(goals, state);
 
         return goals;
     }
@@ -130,6 +132,57 @@ public final class DynamicGoals {
                 TargetPlacement.anywhere()));
     }
 
+    /**
+     * Baseline army: always some combat units once we have a base and a
+     * facility that can train them. The count is a floor, not a ceiling - the
+     * strategic layer raises it through its own goals, and this generator exists
+     * so the bot is never caught with an empty army while tech is researched.
+     */
+    private static void addArmyGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        AUnitType army = armyType();
+        if (army == null)
+            return;
+
+        // Below this the economy cannot support an army at all; the worker and
+        // supply goals must win first.
+        if (state.supplyUsed < 12)
+            return;
+
+        int targetArmy = Math.max(1, state.workers / 4);
+
+        goals.add(new ProductionGoal(
+                UnitProducible.of(army),
+                ProductionGoal.PRIORITY_MAINARMYBASE,
+                targetArmy,
+                0,
+                TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Expansion: one more base is wanted as soon as the current one is close to
+     * saturated. Expressed as a goal, so the timeline decides whether the 400
+     * minerals belong to the expansion or to the defence this frame - the old
+     * commander decided that by issuing the order first and letting the queue
+     * sort it out.
+     */
+    private static void addExpansionGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        AUnitType base = baseType();
+        if (base == null)
+            return;
+
+        if (state.workers < WORKERS_PER_BASE * state.bases)
+            return;
+        if (state.bases >= 4)
+            return;
+
+        goals.add(new ProductionGoal(
+                UnitProducible.of(base),
+                ProductionGoal.PRIORITY_NORMAL,
+                1,
+                0,
+                TargetPlacement.anywhere()));
+    }
+
     private static AUnitType workerType() {
         if (We.protoss())
             return AUnitType.Protoss_Probe;
@@ -138,6 +191,26 @@ public final class DynamicGoals {
         if (We.zerg())
             return AUnitType.Zerg_Drone;
         return AtlantisRaceConfig.WORKER;
+    }
+
+    private static AUnitType armyType() {
+        if (We.protoss())
+            return AUnitType.Protoss_Zealot;
+        if (We.terran())
+            return AUnitType.Terran_Marine;
+        if (We.zerg())
+            return AUnitType.Zerg_Zergling;
+        return null;
+    }
+
+    private static AUnitType baseType() {
+        if (We.protoss())
+            return AUnitType.Protoss_Nexus;
+        if (We.terran())
+            return AUnitType.Terran_Command_Center;
+        if (We.zerg())
+            return AUnitType.Zerg_Hatchery;
+        return null;
     }
 
     private static AUnitType supplyProviderType() {

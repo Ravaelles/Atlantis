@@ -81,9 +81,56 @@ public class GoalSourcesTest {
 
     @Test
     public void noSupplyGoalWhenThereIsSlack() {
-        DynamicGoals.GameSnapshot plenty = new DynamicGoals.GameSnapshot(10, 1, 20, 20, 40, 500, false);
+        DynamicGoals.GameSnapshot plenty =
+                new DynamicGoals.GameSnapshot(10, 1, 20, 20, 40, 500, false);
 
         assertFalse(contains(DynamicGoals.contribute(plenty), supplyType()));
+    }
+
+    @Test
+    public void noArmyGoalBeforeTheEconomyCanSupportOne() {
+        DynamicGoals.GameSnapshot tooEarly =
+                new DynamicGoals.GameSnapshot(4, 1, 6, 6, 12, 100, true);
+
+        assertFalse(contains(DynamicGoals.contribute(tooEarly), armyType()),
+                "an army at 6 supply would starve the opening");
+    }
+
+    @Test
+    public void armyGoalScalesWithTheWorkerCount() {
+        DynamicGoals.GameSnapshot small =
+                new DynamicGoals.GameSnapshot(12, 1, 20, 10, 30, 500, false);
+        DynamicGoals.GameSnapshot large =
+                new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false);
+
+        int smallCount = firstOf(DynamicGoals.contribute(small), armyType()).count();
+        int largeCount = firstOf(DynamicGoals.contribute(large), armyType()).count();
+
+        assertTrue(largeCount > smallCount,
+                "a bigger economy asks for a bigger baseline army: "
+                        + smallCount + " vs " + largeCount);
+    }
+
+    @Test
+    public void expansionIsWantedOnlyWhenTheCurrentBasesAreSaturated() {
+        DynamicGoals.GameSnapshot notSaturated =
+                new DynamicGoals.GameSnapshot(10, 1, 15, 10, 25, 600, false);
+        DynamicGoals.GameSnapshot saturated =
+                new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false);
+
+        assertFalse(contains(DynamicGoals.contribute(notSaturated), baseType()),
+                "an unsaturated base does not ask for another one");
+        assertTrue(contains(DynamicGoals.contribute(saturated), baseType()),
+                "a saturated base does ask");
+    }
+
+    @Test
+    public void expansionStopsAtFourBases() {
+        DynamicGoals.GameSnapshot fourBases =
+                new DynamicGoals.GameSnapshot(100, 4, 180, 20, 200, 2000, false);
+
+        assertFalse(contains(DynamicGoals.contribute(fourBases), baseType()),
+                "four bases is the cap of this generator");
     }
 
     @Test
@@ -166,10 +213,17 @@ public class GoalSourcesTest {
         return UnitProducible.of(AUnitType.Protoss_Pylon).id();
     }
 
+    private static String armyType() {
+        return UnitProducible.of(AUnitType.Protoss_Zealot).id();
+    }
+
+    private static String baseType() {
+        return UnitProducible.of(AUnitType.Protoss_Nexus).id();
+    }
+
     private static AUnitType probe() {
         return AUnitType.Protoss_Probe;
     }
-
     /** Kept to make the ordering assertion above explicit about what it sorts. */
     private static final Comparator<ProductionGoal> BY_PRIORITY = new Comparator<ProductionGoal>() {
         @Override

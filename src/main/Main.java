@@ -75,6 +75,11 @@ public class Main {
     private static String mapGeneric() {
 //        if (true) return "sscai/(?)*.sc?"; // Default map-pack for SSCAIT
 
+        // Owner's test map (2026-10-07): a real SSCAIT map rather than a
+        // micro/UMS scenario - the v2 production track needs a map where an
+        // economy actually plays out.
+        if (true) return "sscai/(3)TauCross.scx";
+
         // === Popular SSCAIT maps ==================================
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
