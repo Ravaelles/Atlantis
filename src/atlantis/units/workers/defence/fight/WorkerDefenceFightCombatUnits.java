@@ -11,8 +11,13 @@ import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.units.actions.Actions;
 
 public class WorkerDefenceFightCombatUnits extends Manager {
+
+    /** From this many raiders the workers stop swarming (see WorkerDefenceRun). */
+    private static final int WORKERS_RUN_THRESHOLD = 3;
+
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
     }
@@ -22,23 +27,17 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
         if (unit.hp() < 21) return false;
 
-        // A worker that fled during a base attack is not locked out of the
-        // defence: holding ground is the right answer at home (_AI/BUGS.md
-        // B-19), so the 300-frame run lockout applies in the field only.
+        // Run lockout applies in the field only: at home a worker that fled is
+        // wanted back in the defence (B-19).
         if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return false;
 
-        // The gate below required a BASE within 6 tiles, so a worker attacked
-        // in the mineral line of a base we do not "have" (or just outside the
-        // radius) simply never fought back - the owner's "workers do not fight
-        // nearby Zealots even with friendly Dragoons around" (2026-10-07).
-        // Fighting is now allowed where the worker actually is: near any of our
-        // buildings, which covers the mineral line and the natural.
+        // Any of our buildings, not just a base within 6 tiles: a worker in the
+        // mineral line of an expansion used to be excluded from fighting.
         boolean nearOurBuildings = unit.friendsNear().buildings().countInRadius(8, unit) > 0;
-        boolean nearOurBase = unit.friendsNear().bases().countInRadius(6, unit) > 0;
-        if (!nearOurBuildings && !nearOurBase) return false;
+        if (!nearOurBuildings) return false;
 
         return unit.hp() >= (Enemy.protoss() ? 34 : 26)
-            && unit.distToBase() <= 12;
+            && unit.distToBase() <= 15;
     }
 
     @Override
@@ -70,11 +69,10 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
         int workers = Count.workers();
 
-        // The modulo skips spread workers across harassment responses in the
-        // field; in a base defence every hand is needed (B-19: the skipped
-        // probes were the ones that could have turned the cannon fight).
+        // Field harassment is spread across workers by id; at home every hand is
+        // needed (B-19). The 3-worker case must not lose a third of the defence.
         boolean holdGround = BaseUnderAttack.check();
-        if (!holdGround) {
+        if (!holdGround && workers >= 6) {
             if (workers <= 9 && unit.id() % 3 == 0) return false;
             if (workers >= 16 && unit.isWounded() && (unit.id() % 5 <= 1 || unit.hp() <= 30)) return false;
         }
@@ -102,12 +100,66 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         Selection potentialEnemies = potentialEnemies(unit);
         AUnit enemy = potentialEnemies.nearestTo(unit);
 
-        if (enemy != null && enemy.enemiesNear().bases().countInRadius(12, enemy) > 0) {
+        // A melee worker (a Probe attacks at range 1) cannot reach a Zealot that
+        // is still 2 tiles away, so `canBeAttackedBy` finds nothing and the
+        // worker never moves - which is exactly "a lone Zealot kills the mineral
+        // line while nobody reacts". When the swarm is on, walk into range and
+        // the attack follows next frame.
+        if (enemy == null) {
+            AUnit raider = nearestSwarmableRaider(unit);
+            if (raider == null) return false;
+
+            unit.setTooltipTactical("Swarm!");
+            return unit.move(raider, Actions.MOVE_ATTACK, "SwarmMove");
+        }
+
+        if (shouldSwarm(enemy)) {
+            unit.setTooltipTactical("Swarm!");
+            return unit.attackUnit(enemy);
+        }
+
+        // Fallback: an enemy raiding deep in our territory is attacked even when
+        // swarming does not apply.
+        if (enemy.enemiesNear().bases().countInRadius(12, enemy) > 0) {
             unit.setTooltipTactical("FurMotherland!");
             return unit.attackUnit(enemy);
         }
 
         return false;
+    }
+
+    /** The nearest raider worth walking towards, if the swarm is on. */
+    private static AUnit nearestSwarmableRaider(AUnit worker) {
+        Selection raiders = worker.enemiesNear().combatUnits().groundUnits().inRadius(9, worker);
+
+        for (AUnit raider : raiders.list()) {
+            if (shouldSwarm(raider)) return raider;
+        }
+
+        return null;
+    }
+
+    /**
+     * True when the nearby enemy is worth swarming: few enough raiders that the
+     * workers win, and enough workers around to finish it. Three raiders is the
+     * owner's line - from there the workers flee when the fight is also going
+     * badly (see WorkerDefenceRun.runFromZealots).
+     */
+    private static boolean shouldSwarm(AUnit enemy) {
+        if (!enemy.isGroundUnit()) return false;
+
+        // Not worth walking into: a heavy unit kills workers faster than they
+        // can surround it. Zealots and Zerglings - the raiders this rule exists
+        // for - are well under this.
+        if (enemy.hp() > 200) return false;
+
+        int raiders = enemy.enemiesNear().combatUnits().countInRadius(9, enemy);
+        if (raiders >= WORKERS_RUN_THRESHOLD) return false;
+
+        // Our workers, not the enemy's: friendsNear() answers from the asking
+        // unit's side, so on an ENEMY it returns the enemy's own friends.
+        int workersAround = Select.ourWorkers().inRadius(9, enemy).count();
+        return workersAround >= 2;
     }
 
     private static Selection potentialEnemies(AUnit worker) {

@@ -16,6 +16,12 @@ import java.util.List;
 
 public class WorkerDefenceRun extends Manager {
 
+    /** From this many raiders the workers flee, if the fight is also going badly. */
+    private static final int RAIDERS_THAT_MEAN_FLEE = 3;
+
+    /** Above this local combat eval we are winning; below it we are behind. */
+    private static final double EVAL_WE_ARE_BEHIND = 1.5;
+
     /** How far a helper will travel to answer a wounded fellow worker. */
     private static final double HELP_RADIUS = 2.2;
 
@@ -253,31 +259,28 @@ public class WorkerDefenceRun extends Manager {
         if (!Enemy.protoss()) return false;
 
         Selection zealots = unit.enemiesNear().zealots();
-        int zealotsNear = zealots.countInRadius(3.0, unit);
+        int zealotsNear = zealots.countInRadius(7.0, unit);
 
         if (zealotsNear == 0) return false;
 
-        // A Zealot does 16 damage per swing with a ~0.9 s cooldown and kills a
-        // 40 hp Probe in three swings (~2.7 s). The old thresholds let a worker
-        // stand still against TWO Zealots at full health, which is death with
-        // no escape: `zealotsNear == 2 && hp >= 38 -> return false`. That is the
-        // "workers do not even flee" half of the owner's report (2026-10-07).
-        //
-        // Fleeing is now the default; the only reason to hold is when friendly
-        // combat units are actually there to win the trade.
-        int friendsNear = unit.combatFriendsInRadiusCount(4);
-
-        if (zealotsNear == 1 && friendsNear >= 1 && unit.hp() >= 36) return false;
-        if (zealotsNear >= 2 && friendsNear >= 2 && unit.hp() >= 38) return false;
-
-        if (zealotsNear >= 2) {
+        // Three or more raiders is the point where the workers stop swarming -
+        // but only when we are actually losing the trade (eval <= 1.5, the
+        // project's "we are behind" threshold). Above that the mineral line can
+        // win, and fleeing would just hand over the base.
+        if (zealotsNear >= RAIDERS_THAT_MEAN_FLEE && unit.eval() <= EVAL_WE_ARE_BEHIND) {
             return runFromEnemyToAnotherRegion(unit, zealots.first());
         }
 
-        AUnit zealot = zealots.nearestTo(unit);
-        if (zealot != null) {
-            if (zealot.distTo(unit) <= 3 && unit.runOrMoveAway(zealot, 5)) return true;
-            if (unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot")) return true;
+        // Few raiders, or a fight we are winning: stay and swarm them
+        // (WorkerDefenceFightCombatUnits). A lone Zealot killing a whole mineral
+        // line is the owner's report (2026-10-07).
+        if (zealotsNear < RAIDERS_THAT_MEAN_FLEE) return false;
+
+        if (unit.eval() <= EVAL_WE_ARE_BEHIND) {
+            AUnit zealot = zealots.nearestTo(unit);
+            if (zealot != null && unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot")) {
+                return true;
+            }
         }
 
         return false;
