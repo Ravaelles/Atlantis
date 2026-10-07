@@ -19,6 +19,8 @@ public class GatherResources extends Manager {
             if (unit.lastPositionChangedLessThanAgo(10)) return false;
         }
 
+        if (unit.isAttacking() && unit.hasValidTarget()) return false;
+
         return !unit.isGatheringGas()
             && !unit.isGatheringMinerals()
             && !unit.isBuilder()

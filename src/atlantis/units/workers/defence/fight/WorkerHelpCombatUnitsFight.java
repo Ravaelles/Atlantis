@@ -23,13 +23,16 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.hp() <= 17) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
+        if (unit.lastActionLessThanAgo(3)) return f();
+        if (unit.enemiesNear().combatUnits().empty()) return f();
+        if (unit.friendsNear().combatUnits().empty()) return f();
 
         // In a base defence the modulo skip must not idle a fifth of the
         // workforce (B-19: the skipped probes never supported the cannon).
         if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
-        if (unit.enemiesNear().combatUnits().empty()) return f();
 
         // A WOUNDED worker must never be excluded here - it must be free to RUN.
         // The old order put two exclusions before this point that together meant
@@ -147,6 +150,8 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.hp() <= 17) return null;
+
         if (processFightEnemyCombatUnits(unit)) {
             unit.setTooltip("HelpCombatUnits");
             return usedManager(this);
