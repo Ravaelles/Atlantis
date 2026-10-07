@@ -26,6 +26,14 @@ public class Env {
     private static boolean wineClient = false;
     private static boolean paramTweaker = false;
     private static String copyCherryVisDataTo = null;
+    /**
+     * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
+     * new engine in parallel with the legacy queue and only logs what it would
+     * order; LIVE lets it issue the orders. {@code PRODUCTION_V2=false} (or a
+     * missing key) keeps the legacy engine alone - the default until a dry-run
+     * game has been read.
+     */
+    private static ProductionV2Mode productionV2 = ProductionV2Mode.OFF;
 
     // =========================================================
 
@@ -94,6 +102,9 @@ public class Env {
                 return true;
             case "POSTGAME_COPY_CHERRYVIS_TO":
                 copyCherryVisDataTo = value;
+                return true;
+            case "PRODUCTION_V2":
+                productionV2 = ProductionV2Mode.parse(value);
                 return true;
             case "GAME_LAUNCHER":
                 // CHAOS (default, Windows + ChaosLauncher), OPENBW (Linux +
@@ -180,6 +191,15 @@ public class Env {
 
     public static boolean isTesting() {
         return isTesting;
+    }
+
+    /**
+     * production-v2 mode from {@code PRODUCTION_V2} in ENV: OFF (default,
+     * legacy engine only), DRY_RUN (v2 plans in parallel and only logs), or
+     * LIVE (v2 issues the commands).
+     */
+    public static ProductionV2Mode productionV2() {
+        return productionV2;
     }
 
     public static boolean isBenchmark() {

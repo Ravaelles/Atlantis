@@ -109,8 +109,9 @@ public final class ProductionScheduler {
 
         int startFrame = affordableFrame;
 
+        PlacementReservation placementReservation = null;
         if (item.requiresPlacement()) {
-            PlacementReservation placementReservation = placementPlanner.reservePlacement(item, placement, startFrame);
+            placementReservation = placementPlanner.reservePlacement(item, placement, startFrame);
             if (!placementReservation.isSuccessful())
                 return false;
             startFrame = Math.max(startFrame, placementReservation.readyFrame());
@@ -125,7 +126,7 @@ public final class ProductionScheduler {
             plannedFacilityAvailableFrom.merge(item.id(), startFrame + item.buildDurationFrames(), Math::min);
         }
 
-        plan.add(new ProductionItem(item, startFrame, isPrerequisite));
+        plan.add(new ProductionItem(item, startFrame, isPrerequisite, placementReservation));
 
         return true;
     }
