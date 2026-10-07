@@ -39,6 +39,8 @@ public class AtlantisGameCommander extends Commander {
         // answer is Combat's wiring. Only the composition root may know that, or
         // atlantis.map.scout would depend on atlantis.combat again.
         ScoutState.scoutUnitManager = new ScoutUnitManagers();
+
+        System.out.println("lol?");
     }
 
     public static Class<? extends Commander>[] topLevelSubcommanders() {

@@ -24,10 +24,12 @@ public class ProductionCommander extends Commander {
         // that stay are not policy: ConstructionsCommander executes the builder
         // side of orders production-v2 issues (the strangler seam), and
         // ProductionOrdersCommander is the one that runs the v2 engine.
+        System.out.println("Production Commander = " + Env.productionV2().isLive());
         if (Env.productionV2().isLive()) {
             return new CommanderFactory[]{
                 ProductionOrdersCommander::new,
                 ConstructionsCommander::new,
+//                DynamicProductionCommander::new,
             };
         }
 

@@ -25,16 +25,46 @@
 # failure everything is killed so no stray process survives.
 set -u
 
-MAP="${1:-1a2a 3a Micro 2.scx}"
-MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
+# =============================================================================
+# CONFIGURATION - edit here, nothing below needs touching
+# =============================================================================
 
+# Where the built bot jar goes, and where the game loads it from.
+#
+# Point this at the bot folder the game uses. Two common values:
+#   $HOME/.scbw/bots/AtlantisP/AI/Atlantis.jar   the scbw container's bot slot
+#                                                (what IntelliJ's artifact used
+#                                                to write)
+#   /sc-ai/Atlantis/bots/AtlantisP/AI/Atlantis.jar   the in-repo bot folder
+#
+# This script BUILDS the jar at this path from src/ before every game, so the
+# jar can never be older than the sources. That is why the IntelliJ artifact
+# should be removed (Build > build-on-make = OFF for it): two builders writing
+# two different jars is how the owner spent a session testing code from hours
+# before - the IDE wrote one path, the game loaded another, and none of the new
+# prints appeared. One builder, one path, one jar.
+JAR_OUT="${JAR_OUT:-$HOME/.scbw/bots/AtlantisP/AI/Atlantis.jar}"
+
+# Rebuild the jar before playing. BUILD=0 uses whatever is already there
+# (useful to reproduce a report against a known build).
+BUILD="${BUILD:-1}"
+
+# The Wine setup.
 WINE_ROOT="${WINEPREFIX:-$HOME/.wine}"
 GAME_ROOT="$WINE_ROOT/drive_c/sc"
 JAVA_EXE="$WINE_ROOT/drive_c/Java/bin/java.exe"
-ATLANTIS_DIR="/sc-ai/Atlantis"
-JAR="$ATLANTIS_DIR/bots/AtlantisP/AI/Atlantis.jar"
+
+# This repository.
+ATLANTIS_DIR="${ATLANTIS_DIR:-/sc-ai/Atlantis}"
 LOG_DIR="$ATLANTIS_DIR/out/wine"
-mkdir -p "$LOG_DIR"
+
+# =============================================================================
+
+MAP="${1:-1a2a 3a Micro 2.scx}"
+MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
+
+JAR="$JAR_OUT"
+mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
 CLIENT_LOG="$LOG_DIR/client.log"
 
 say() { echo "[wine-full] $*"; }
@@ -52,6 +82,27 @@ cleanup() {
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
 }
+
+# The jar is what actually plays, and nothing rebuilt it: the IDE launches this
+# script, the script starts the jar, so a stale jar means the owner tests code
+# that is hours old while the sources say otherwise (measured 2026-10-07: the
+# jar was from 17:56 and the sources from 20:25, so none of the prints added in
+# between appeared and the whole session looked like "the commander never runs").
+# Rebuild it from source here, every time.
+#
+# BUILD=0 (env) skips it for a deliberately frozen jar, e.g. to reproduce a
+# report against a known build.
+if [ "${BUILD:-1}" = "1" ]; then
+  say "Building the bot jar from source (BUILD=0 to skip)"
+  if ! timeout 300 bash "$ATLANTIS_DIR/scripts/build-bot-jar.sh" "$JAR" >/tmp/atlantis-build-jar.log 2>&1; then
+    say "  FAILED to build the jar - see /tmp/atlantis-build-jar.log"
+    tail -20 /tmp/atlantis-build-jar.log | sed 's/^/    /'
+    exit 1
+  fi
+  since "jar rebuilt from source"
+else
+  say "BUILD=0: using the existing jar at $JAR"
+fi
 
 say "Killing leftovers"
 # Only what must die before a game can start, and only by exact name (-x): a
@@ -81,9 +132,24 @@ if [ ! -f "$JAR" ]; then
   exit 1
 fi
 
-say "Step 1/3: jar: $JAR)"
+say "Step 1/3: jar: $JAR"
+
+# The jar path must reach the Wine JVM as a WINDOWS path. Deriving it from
+# $JAR instead of hardcoding it is the whole point: a hardcoded
+# Z:\sc-ai\...\bots\AtlantisP\AI\Atlantis.jar here is how the game ended up
+# loading a DIFFERENT jar than the one being built, so changes never appeared
+# (measured 2026-10-07 - the owner tested hours-old code and the prints added in
+# between never showed up).
+WIN_JAR="$(winepath -w "$JAR" 2>/dev/null || true)"
+if [ -z "$WIN_JAR" ]; then
+  # Fallback if winepath is unavailable: map /sc-ai -> Z:\sc-ai by hand, which
+  # is what Wine's default Z: drive does for the filesystem root.
+  WIN_JAR="Z:$(echo "$JAR" | tr '/' '\\')"
+fi
+say "  Windows path: $WIN_JAR"
+
 setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-  wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "Z:\\sc-ai\\Atlantis\\bots\\AtlantisP\\AI\\Atlantis.jar" \
+  wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
   > "$CLIENT_LOG" 2>&1 < /dev/null &
 CLIENT_PID=$!
 say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
