@@ -31,12 +31,19 @@ MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
 WINE_ROOT="${WINEPREFIX:-$HOME/.wine}"
 GAME_ROOT="$WINE_ROOT/drive_c/sc"
 JAVA_EXE="$WINE_ROOT/drive_c/Java/bin/java.exe"
-JAR="/sc-ai/Atlantis/bots/AtlantisP/AI/Atlantis.jar"
-LOG_DIR="/sc-ai/Atlantis/out/wine"
+ATLANTIS_DIR="/sc-ai/Atlantis"
+JAR="$ATLANTIS_DIR/bots/AtlantisP/AI/Atlantis.jar"
+LOG_DIR="$ATLANTIS_DIR/out/wine"
 mkdir -p "$LOG_DIR"
 CLIENT_LOG="$LOG_DIR/client.log"
 
 say() { echo "[wine-full] $*"; }
+
+# Wall-clock markers. The owner asked why a start takes so long, and guessing is
+# what made this slow before: print one line per phase so the next run shows
+# where the time actually goes (setup, SC up, client attached).
+T0=$(date +%s)
+since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
   say "Cleaning up"
@@ -47,13 +54,23 @@ cleanup() {
 }
 
 say "Killing leftovers"
+# Only what must die before a game can start, and only by exact name (-x): a
+# -f pattern also matches this script's own command line.
+#
+# What is deliberately NOT killed:
+#   - java.exe: the CLIENT JVM is started a few lines below, and killing it here
+#     only makes this script wait for a fresh JVM under Wine (seconds).
+#   - wineserver: killing it makes every subsequent `wine` call pay for a cold
+#     server start, which is the single biggest fixed cost of a run.
+# The one thing that MUST go is a leftover StarCraft/ChaosLauncher, because a
+# second instance breaks the BWAPI injection.
 pkill -9 -x StarCraft.exe 2>/dev/null
-pkill -9 Chaoslauncher 2>/dev/null
-pkill -9 -f java.exe 2>/dev/null
-wineserver -k 2>/dev/null &
-# No sleep: pkill is instant, wineserver -k runs in the background, and the
-# client's next Wine call spins up a fresh wineserver anyway. The old 3 s wait
-# here made every start pay 3 s for nothing (measured 2026-10-06).
+pkill -9 -x Chaoslauncher.exe 2>/dev/null
+pkill -9 -x ChaosLauncher.exe 2>/dev/null
+
+# A leftover BWAPILauncher holds the game table for the OpenBW path; harmless
+# here but cheap to check, and it is never wanted during a Wine game.
+pkill -9 -x BWAPILauncher 2>/dev/null
 
 if [ ! -f "$JAVA_EXE" ]; then
   say "Windows Java not found at $JAVA_EXE - install Temurin 8 under Wine once"
@@ -90,6 +107,7 @@ else
 fi
 
 say "Step 2/3: GAME (map: $MAP)"
+since "client started, launching the game"
 
 # The map the launcher was given (from Main.defineMapToUse or --map=) is what
 # StarCraft must load; it lives in bwapi.ini, read once at game start. The
@@ -103,6 +121,7 @@ INI="$GAME_ROOT/bwapi-data/bwapi.ini"
 # 2026-10-06: the launcher passed 4Drag_v_4Drag.scm, the game kept
 # loading the previous map).
 RESOLVED_MAP=$(cd "$GAME_ROOT" && find -L maps -type f -iname "$(basename "$MAP")" 2>/dev/null | head -1)
+
 if [ -n "$RESOLVED_MAP" ]; then
   say "  Setting map in bwapi.ini to $RESOLVED_MAP"
   # Match both spellings: "map = X" (script-generated ini) and "map=X"
@@ -131,6 +150,37 @@ if [ -n "$RESOLVED_MAP" ]; then
 else
   say "  WARNING: map '$MAP' not found under $GAME_ROOT/maps - bwapi.ini left unchanged"
 fi
+# Our race is owned by the CLIENT (Main.ourRace()) but is READ by StarCraft
+# from bwapi.ini at game start, and this script is the only thing that rewrites
+# the live ini. Leaving it alone is why changing Main.ourRace() to Protoss still
+# produced a Terran game (owner report, 2026-10-07): the ini said race=Terran
+# and nothing ever changed it.
+#
+# The race is read straight from Main.java's ourRace() rather than duplicated
+# here, so the two cannot drift. That method commits its answer as
+#     if (true) return "Protoss";
+# so the FIRST returned literal after the method header is the active one.
+CLIENT_RACE=""
+if [ -f "$ATLANTIS_DIR/src/main/Main.java" ]; then
+  # The commented-out alternatives above the active one are the commit-a-race
+  # idiom, so a commented `return` must be skipped - matching it picked the
+  # WRONG race ("Terran" while the active line said "Protoss", measured).
+  CLIENT_RACE=$(sed -n '/public static String ourRace/,/^    }/p' "$ATLANTIS_DIR/src/main/Main.java" \
+    | grep -vE '^\s*//' \
+    | grep -oE 'return "(Protoss|Terran|Zerg)"' | head -1 | sed -E 's/.*"(.*)".*/\1/')
+fi
+
+if [ -z "$CLIENT_RACE" ]; then
+  say "  WARNING: could not read the client's race from Main.java; race= left unchanged"
+else
+  if grep -qE "^race *=" "$INI"; then
+    sed -i -E "s|^race *=.*|race=$CLIENT_RACE|" "$INI"
+  else
+    sed -i -E "s|^(enemy_race=.*)$|\1\nrace=$CLIENT_RACE|" "$INI"
+  fi
+  say "  Setting race to $CLIENT_RACE (from the client's Main.ourRace())"
+fi
+
 cd "$GAME_ROOT"
 setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
   wine chaoslauncher/Chaoslauncher.exe \
@@ -147,6 +197,7 @@ for _ in $(seq 1 90); do
 done
 if [ "$SC_UP" -eq 1 ]; then
   say "  StarCraft is running"
+  since "StarCraft is up"
 else
   say "  WARNING: StarCraft not running within 45 s (see $LOG_DIR/chaoslauncher.log)"
 fi
@@ -157,6 +208,7 @@ ATTACHED=0
 while [ "$(date +%s)" -lt "$END" ]; do
   if grep -q "HELLO_WORLD" "$CLIENT_LOG" 2>/dev/null; then
     say "SUCCESS: HELLO_WORLD - BWAPI attached, Atlantis is playing!"
+    since "client attached (HELLO_WORLD)"
     ATTACHED=1
     break
   fi
