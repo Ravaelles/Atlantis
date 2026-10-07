@@ -23,13 +23,40 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public boolean applies() {
+        // A WOUNDED worker must never be excluded here - it must be free to RUN.
+        // The old order put two exclusions before this point that together meant
+        // "a hurt worker gathering is told to keep gathering":
+        //
+        //   hp <= minHp()            -> not eligible to help
+        //   isGatheringResources()
+        //     && (recently attacked || shield wounded) -> not eligible either
+        //
+        // so a Probe being chewed on by a Zealot while mining fell through both
+        // and stood there (owner report, 2026-10-07: "even when wounded they do
+        // not flee, they just die without a reaction").
+        //
+        // A wounded worker in danger is handed back to the chain instead: this
+        // manager returns false, and the defence chain reaches
+        // WorkerDefenceRun next, which is where running belongs. (Calling the
+        // run manager from here would add a fight -> run dependency the
+        // architecture forbids: CONVENTIONS §5, ArchitectureBoundaryTest.)
+        if (isWoundedAndInDanger()) return false;
+
         // In a base defence the modulo skip must not idle a fifth of the
         // workforce (B-19: the skipped probes never supported the cannon).
         if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
         if (unit.enemiesNear().combatUnits().empty()) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
-        if (unit.lastActionLessThanAgo(30 * 5, Actions.GATHER_MINERALS)) return f();
+
+        // NOTE: `lastActionLessThanAgo(GATHER_MINERALS)` used to gate this out.
+        // Gathering is what a worker does by default, so "recently gathered"
+        // excluded almost every worker almost always - and the log showed the
+        // resulting flip-flop (GatherResources -> WorkerHelpCombatUnitsFight ->
+        // TrackEnemyEarlyScout -> GatherResources, forever, until the Probe
+        // died). A worker mining NEXT TO AN ENEMY is the case this whole class
+        // exists for, so mining is not a reason to stand down.
+
         // The run lockout applies in the field only; at home a worker that
         // fled is wanted back in the defence (B-19).
         if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return f();
@@ -38,10 +65,9 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         if (base == null) return f();
         if (unit.distTo(base) >= 12) return f();
 
-        if (
-            unit.isGatheringResources()
-                && (unit.lastUnderAttackLessThanAgo(30 * 10) || unit.shieldWounded())
-        ) return f();
+        // The old `isGatheringResources() && (recently attacked || shield
+        // wounded) -> return f()` lived here. It is gone: it told exactly the
+        // workers in the most danger to keep mining.
 
         if (woundedAndNoCombatNear()) return f();
 
@@ -66,6 +92,18 @@ public class WorkerHelpCombatUnitsFight extends Manager {
     private boolean woundedAndNoCombatNear() {
         return unit.woundHp() >= 9
             && unit.friendsNear().combatUnits().countInRadius(10, unit) == 0;
+    }
+
+    /**
+     * A worker that is hurt and has an enemy in reach must be allowed to run.
+     * This is the early-game survival rule: one Probe lost at 2 minutes costs
+     * more than any amount of mined minerals.
+     */
+    private boolean isWoundedAndInDanger() {
+        if (unit.hp() > 34) return false;
+
+        return unit.enemiesNear().combatUnits().canAttack(unit, 3.5).notEmpty()
+            || unit.lastUnderAttackLessThanAgo(30 * 3);
     }
 
     private boolean f() {

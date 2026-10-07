@@ -15,6 +15,19 @@ public class TrackEnemyEarlyScout extends Manager {
 
     @Override
     public boolean applies() {
+        // A worker must never chase a scout while a real enemy is in reach.
+        //
+        // The owner's death log (2026-10-07) shows the exact failure this line
+        // prevents: a Probe alternating between GatherResources,
+        // WorkerHelpCombatUnitsFight and TrackEnemyEarlyScout - following the
+        // scout - until a Zealot killed it. Chasing is a LUXURY: it is only
+        // allowed when nothing that can hurt us is nearby.
+        if (unit.enemiesNear().combatUnits().canAttack(unit, 4).notEmpty()) return false;
+
+        // The same reasoning for the worker's own health: a hurt Probe has no
+        // business following anything.
+        if (unit.hp() <= 30) return false;
+
         return enemyScout != null
             && unit != null
             && unit.hp() >= 18

@@ -15,6 +15,16 @@ import atlantis.util.We;
 import java.util.List;
 
 public class WorkerDefenceRun extends Manager {
+
+    /** How far a helper will travel to answer a wounded fellow worker. */
+    private static final double HELP_RADIUS = 6.0;
+
+    /** The helper must be this healthy, or it is just another victim. */
+    private static final int HELPER_MIN_HP = 34;
+
+    /** The victim must be at most this healthy to be worth helping. */
+    private static final int VICTIM_MAX_HP = 34;
+
     public WorkerDefenceRun(AUnit unit) {
         super(unit);
     }
@@ -47,6 +57,11 @@ public class WorkerDefenceRun extends Manager {
 
     @Override
     public Manager handle() {
+        // Help a wounded fellow first: this worker is healthy (checked inside),
+        // and the victim's own run manager handles its fleeing. Owner's request,
+        // 2026-10-07.
+        if (helpWoundedFriend()) return usedManager(this);
+
         if (Enemy.protoss()) {
             if (runFromZealots()) return usedManager(this);
             if (runFromDragoons()) return usedManager(this);
@@ -60,6 +75,123 @@ public class WorkerDefenceRun extends Manager {
         }
 
         return null;
+    }
+
+    /**
+     * A healthy worker helps a WOUNDED fellow instead of mining next to it.
+     *
+     * <p>
+     * Owner's request (2026-10-07): "it would be good if at least one Probe
+     * nearby helped, and the wounded one fled". Before this, an attacked Probe
+     * was on its own - the fight managers each decided for themselves whether to
+     * engage, and a Probe gathering at full health had no reason to join - so an
+     * enemy scout killed workers one at a time while the rest mined.
+     * </p>
+     *
+     * <p>
+     * It lives here rather than in a class of its own on purpose: the defence
+     * chain is assembled in {@code WorkerDefenceManager.managers()}, and the
+     * architecture rule freezes exactly those constructor references
+     * (ArchitectureBoundaryTest). A new manager class would mean a new frozen
+     * violation, which CONVENTIONS §5 forbids. The behaviour belongs to "run"
+     * anyway: both answer the same question - get this worker out of trouble, or
+     * make the trouble cost the enemy something.
+     * </p>
+     *
+     * <p>
+     * The rule is deliberately narrow, because workers are the economy:
+     * one helper per victim (the nearest healthy worker), only when the victim is
+     * genuinely hurt, only against a single attacker a Probe can fight, and only
+     * while the helper is healthy itself - so we trade one Probe for one kill
+     * instead of feeding a second corpse.
+     * </p>
+     */
+    private boolean helpWoundedFriend() {
+        if (unit.hp() < HELPER_MIN_HP) return false;
+        if (unit.isConstructing()) return false;
+        if (unit.isAttacking()) return false;
+
+        AUnit victim = victimToHelp();
+        if (victim == null) return false;
+
+        AUnit attacker = attackerOf(victim);
+        if (attacker == null) return false;
+
+        if (unit.attackUnit(attacker)) {
+            unit.setTooltip("HelpFriend");
+            return true;
+        }
+
+        // Could not reach it this frame (range, pathing): step towards the fight
+        // rather than ignoring it, so the helper arrives while the victim lives.
+        if (unit.move(attacker, Actions.MOVE_ATTACK, "HelpFriendMove")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * The one worker this unit should help, or null. Only the nearest healthy
+     * worker answers, so a whole mineral line does not abandon mining at once.
+     */
+    private AUnit victimToHelp() {
+        for (AUnit friend : unit.friendsNear().workers().inRadius(HELP_RADIUS, unit).list()) {
+            if (friend.equals(unit)) continue;
+            if (!isInTrouble(friend)) continue;
+            if (attackerOf(friend) == null) continue;
+            if (!isTheChosenHelper(friend)) continue;
+
+            return friend;
+        }
+
+        return null;
+    }
+
+    private boolean isInTrouble(AUnit friend) {
+        if (friend.hp() <= VICTIM_MAX_HP) return true;
+
+        return friend.lastUnderAttackLessThanAgo(30 * 2);
+    }
+
+    /**
+     * True when this unit is the closest eligible helper for {@code victim}.
+     * Ties are broken by id so the decision is stable frame to frame - a helper
+     * that flickers between victims helps neither.
+     */
+    private boolean isTheChosenHelper(AUnit victim) {
+        AUnit chosen = null;
+        double bestDistance = Double.MAX_VALUE;
+
+        for (AUnit candidate : Select.ourWorkers().inRadius(HELP_RADIUS, victim).list()) {
+            if (candidate.equals(victim)) continue;
+            if (candidate.hp() < HELPER_MIN_HP) continue;
+            if (candidate.isConstructing()) continue;
+
+            double distance = candidate.distTo(victim);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                chosen = candidate;
+            }
+        }
+
+        return chosen != null && chosen.equals(unit);
+    }
+
+    /**
+     * The enemy the victim is fighting, if it is something a Probe can answer.
+     * Air units and buildings are excluded on purpose: a Probe cannot hurt them,
+     * and "helping" there just walks workers into their death.
+     */
+    private AUnit attackerOf(AUnit victim) {
+        Selection attackers = victim.enemiesNear().combatUnits().canAttack(victim, 4.5);
+
+        if (attackers.empty()) return null;
+
+        // One attacker only: a Probe joining a 3-on-1 is a donation.
+        if (attackers.count() > 1) return null;
+
+        return attackers.nearestTo(victim);
     }
 
     private boolean runFromMutas() {
