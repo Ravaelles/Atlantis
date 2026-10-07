@@ -183,6 +183,13 @@ public class ProduceZealot {
         AUnit gateway = GatewayClosestToEnemy.get();
         if (gateway == null) return false;
 
+        // A busy Gateway is the engine's ArrayIndexOutOfBoundsException, not a
+        // failure it returns: `train` walks the training queue and steps past
+        // the end when the queue is in the wrong state. "OrderSink.train failed"
+        // spam was this call, and it took the Cybernetics Core down with it
+        // because the same Gateway line served both.
+        if (gateway.isTrainingAnyUnit()) return false;
+
         return gateway.train(
             Protoss_Zealot, ForcedDirectProductionOrder.create(Protoss_Zealot)
         ) && increaseProduced();

@@ -36,6 +36,27 @@
 
 ## Status
 
+### M0 — PRODUCTION BLOCKER FIXED FIRST (2026-10-07)
+
+Before any v2 work: the owner's bot could not build a Cybernetics Core, and the
+log was full of `OrderSink.train failed for #138 Gateway` plus
+`ArrayIndexOutOfBoundsException`.
+
+- Root cause: the engine does not RETURN false when a production building cannot
+take an order - it THROWS, walking its training queue and stepping past the end.
+`BwapiOrderSink.issue()` caught it, printed the stack once a minute and lost the
+order, so a busy or unfinished Gateway produced nothing forever while the log
+filled up.
+- Fixes: `BwapiOrderSink.train` refuses a unit that is not alive/completed;
+`ProduceZealot.produceZealot` checks `isTrainingAnyUnit()` before asking;
+`GatewayClosestToEnemy.get()` fallback returns `ourOneNotTrainingUnits(Gateway)`
+instead of any Gateway that exists.
+- Test: `TrainOrderGuardTest` (4 tests, source-pinned: the crash is a
+`StackOverflow`-style engine behaviour, not something the stub world can
+reproduce). Suite **250/0/4**, ArchUnit 7/7, store unchanged.
+
+### Milestones
+
 - **M1 DONE** (commit `c36ce79f`): pure domain (`ResourceCost`, `Producible`,
   `ProductionGoal`, `TargetPlacement`, `ProductionItem`, `ProductionPlan`),
   `ResourceTimeline` with linear income + solvency check; `UnitProducible`
@@ -48,9 +69,31 @@
   `ProducerFacilityRegistry`, `PlacementPlanner`, `PlacementReservation`.
   Test: `ProductionSchedulerTest` (5 tests, fully fake-backed). Suite 154/0/4,
   ArchUnit 7/7.
-- **M3 IN PROGRESS**: real `PlacementPlanner` over the existing
-  `APositionFinder`; tests with a fake map/port.
-- M4-M6: pending (dispatcher + ENV flag dry-run, goal sources, cutover).
+- **M3 DONE**: `LegacyPlacementPlanner` over `APositionFinder`, plus
+  `PlacementPlanner.startPass()/endPass()` so reservations are concrete per pass
+  (the finder caches per builder/type, so two identical buildings in one frame
+  would otherwise get the same tile). Test: `PlacementPassTest` (3).
+- **M4 DONE**: `ProductionDispatcher` (latency window for units; a building is
+  only issued when due NOW, never early - travel time is production time),
+  `OrderDirector` seam with `GameOrderDirector` (live) and
+  `DryRunOrderDirector` (log-only), `ProductionV2Mode` OFF/DRY_RUN/LIVE.
+  Tests: `ProductionDispatcherTest` (7), `ProductionV2ModeTest` (4).
+- **M5 DONE**: `BuildOrderGoals` (text build orders -> goals, line order is
+  priority, supply gate respected) and `DynamicGoals` (workers up to base
+  saturation, supply emergency, army floor, expansion).
+  Tests: `GoalSourcesTest` (12).
+- **M6 PARTIAL**: `PRODUCTION_V2=LIVE` makes v2 the only policy
+  (`ProductionCommander` drops the legacy dynamic/supply commanders) and the
+  flag is read from ENV. The legacy tree is NOT deleted yet, and the cutover has
+  not been verified in a real game.
+- Wiring: `GameStateSnapshot` (the only game bridge: stocks, mining rate,
+  facility registry, supply in production) + `ProductionEngine` (composition
+  root). `ExistingItems` port fixes the phantom second Nexus that blocked the
+  opening. Test: `ProductionEngineSmokeTest`, `WorkerProductionTest` (3),
+  `OpeningDoesNotHoardMineralsTest`.
+- Open: a real game run with PRODUCTION_V2=DRY_RUN, then LIVE; then the legacy
+  `Queue/**` + `ProductionOrder` + `PreventDuplicateOrders` + `Construction/**`
+  healing commanders deleted and the ArchUnit store shrunk.
 
 ## Verification protocol
 

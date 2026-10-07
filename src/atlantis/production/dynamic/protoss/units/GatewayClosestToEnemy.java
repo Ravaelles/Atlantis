@@ -40,8 +40,12 @@ public class GatewayClosestToEnemy {
 
         if (free != null) return free;
 
-        return enemyPosition == null
-            ? Select.ourOfType(Protoss_Gateway).random()
-            : Select.ourOfType(Protoss_Gateway).groundNearestTo(enemyPosition);
+        // Fallback: a Gateway that is completed and not already training. The
+        // plain `ourOfType` fallback used to be enough only by accident -
+        // Select filters completeness, but nothing checked whether the Gateway
+        // was already busy, and train() on a busy Gateway is what the engine
+        // rejected with ArrayIndexOutOfBoundsException (the "OrderSink.train
+        // failed" spam that blocked the owner's Cybernetics Core).
+        return Select.ourOneNotTrainingUnits(Protoss_Gateway);
     }
 }

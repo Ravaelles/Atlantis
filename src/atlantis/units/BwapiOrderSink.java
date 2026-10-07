@@ -33,6 +33,14 @@ public final class BwapiOrderSink implements OrderSink {
 
     @Override
     public boolean train(AUnit actor, UnitType type) {
+        // The engine's train() can throw ArrayIndexOutOfBoundsException instead of
+        // returning false - measured on a Gateway that is still being built or
+        // already training, where JBWAPI walks its training queue and steps past
+        // the end. issue() catches it, but the guard here keeps the call from
+        // being made at all: a Gateway that cannot accept an order is not an
+        // error worth a stack trace once a minute.
+        if (actor == null || !actor.isAlive() || !actor.isCompleted()) return false;
+
         return issue("train", actor, () -> actor.u().train(type));
     }
 
