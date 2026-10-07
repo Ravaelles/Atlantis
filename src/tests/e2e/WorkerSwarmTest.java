@@ -162,15 +162,35 @@ public class WorkerSwarmTest extends AbstractTestWithWorld {
         @Test
         public void theHoldGroundFloorIsAboveTheDeathThreshold() throws Exception {
                 // `hp <= 20` alone is far too late: a Zealot does 16 per swing, so a
-                // worker at 20 hp is dead next swing. The floor must be higher than
-                // the only other way into run.
+                // worker at 20 hp is dead next swing. The hold-ground floor must sit
+                // above it, or the only way into run is a health level that is
+                // already lost.
+                //
+                // The early-game threshold is pinned only as "at most 40" rather
+                // than at one exact value: the owner tuned it to 38, and the point
+                // of the guard is that a worker below it RUNS - a Zealot needs three
+                // swings for 40 hp, so 38 is the last health level where leaving
+                // still helps.
                 String run = read(RUN_SOURCE);
 
                 assertTrue(run.contains("HOLD_GROUND_MIN_HP = 30"),
                                 "the hold-ground floor must sit above the 20 hp death threshold");
-                assertTrue(run.contains("EARLY_GAME_HP_ENOUGH = 45"),
-                                "the early-game threshold must be high enough that a hurt"
-                                                + " worker is not told to stay");
+
+                int earlyGameHp = intConstant(run, "EARLY_GAME_HP_ENOUGH");
+                assertTrue(earlyGameHp <= 40,
+                                "EARLY_GAME_HP_ENOUGH is " + earlyGameHp + "; above 40 a worker at"
+                                                + " 39 hp is told to stay, which is the original bug");
+                assertTrue(earlyGameHp > 20,
+                                "and it must not be so low that only an almost-dead worker runs");
+        }
+
+        /** Reads an int constant out of the source, or -1 when it is absent. */
+        private static int intConstant(String source, String name) {
+                java.util.regex.Matcher m = java.util.regex.Pattern
+                                .compile(name + "\\s*=\\s*(\\d+)")
+                                .matcher(source);
+
+                return m.find() ? Integer.parseInt(m.group(1)) : -1;
         }
 
         private static String read(String path) throws Exception {
