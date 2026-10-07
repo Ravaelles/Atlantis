@@ -97,11 +97,22 @@ public class WorkerDefenceRun extends Manager {
     private boolean runFromDragoons() {
         if (!Enemy.protoss()) return false;
 
-        Selection dragoons = unit.enemiesNear().zealots();
-        int dragoonsNear = dragoons.countInRadius(3.1, unit);
+        // Was `.zealots()` - a copy-paste from runFromZealots() below, so this
+        // method never saw a Dragoon and workers stood still in front of them.
+        // Measured 2026-10-07 (owner report: workers neither fight nor flee
+        // nearby Zealots/Dragoons).
+        Selection dragoons = unit.enemiesNear().dragoons();
+        int dragoonsNear = dragoons.countInRadius(4.5, unit);
 
         if (dragoonsNear == 0) return false;
-        if (dragoonsNear == 1 && unit.hp() <= 38 && unit.runOrMoveAway(dragoons.first(), 4)) return false;
+
+        // A Dragoon outranges and outdamages a Probe badly: fleeing is the only
+        // sane answer, and it must happen BEFORE the shot lands (range ~4, so
+        // 4.5 tiles is already inside the danger zone).
+        if (dragoonsNear >= 1 && unit.hp() <= 40) {
+            AUnit dragoon = dragoons.nearestTo(unit);
+            if (dragoon != null && unit.runOrMoveAway(dragoon, 5)) return true;
+        }
 
         return false;
     }
@@ -113,22 +124,28 @@ public class WorkerDefenceRun extends Manager {
         int zealotsNear = zealots.countInRadius(3.0, unit);
 
         if (zealotsNear == 0) return false;
-        if (zealotsNear == 1 && unit.hp() >= 36) return false;
-        if (zealotsNear == 2 && unit.hp() >= 38) return false;
-        if (zealotsNear >= 3 && unit.hp() >= 37 && unit.combatFriendsInRadiusCount(4) >= 1)  {
-            return false;
-        }
 
-        if (zealotsNear >= (unit.isWounded() ? 2 : 3)) {
+        // A Zealot does 16 damage per swing with a ~0.9 s cooldown and kills a
+        // 40 hp Probe in three swings (~2.7 s). The old thresholds let a worker
+        // stand still against TWO Zealots at full health, which is death with
+        // no escape: `zealotsNear == 2 && hp >= 38 -> return false`. That is the
+        // "workers do not even flee" half of the owner's report (2026-10-07).
+        //
+        // Fleeing is now the default; the only reason to hold is when friendly
+        // combat units are actually there to win the trade.
+        int friendsNear = unit.combatFriendsInRadiusCount(4);
+
+        if (zealotsNear == 1 && friendsNear >= 1 && unit.hp() >= 36) return false;
+        if (zealotsNear >= 2 && friendsNear >= 2 && unit.hp() >= 38) return false;
+
+        if (zealotsNear >= 2) {
             return runFromEnemyToAnotherRegion(unit, zealots.first());
         }
 
-        if (zealotsNear >= (unit.isWounded() ? 0 : 1)) {
-            AUnit zealot = zealots.nearestTo(unit);
-            if (zealot != null) {
-                if (zealot.distTo(unit) <= 3 && unit.runOrMoveAway(zealot, 5)) return true;
-                if (unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot")) return true;
-            }
+        AUnit zealot = zealots.nearestTo(unit);
+        if (zealot != null) {
+            if (zealot.distTo(unit) <= 3 && unit.runOrMoveAway(zealot, 5)) return true;
+            if (unit.moveAwayFrom(zealot, 2, Actions.MOVE_AVOID, "RunFromZealot")) return true;
         }
 
         return false;

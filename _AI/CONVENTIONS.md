@@ -293,6 +293,12 @@ library that cannot run on Java 9+, several layers away).
   accidental StarCraft launches: why an "OpenBW" run started a real game
   (the bot directory's `ENV`), `pkill -f` killing the calling shell, and
   git-ignored `ENV` edits that silently vanish.
+- **`_AI/CHALLENGES/BuildAndLogging.md`** — the build/IDE/logging traps: the
+  game playing a DIFFERENT jar than the one being built (two builders + a
+  hardcoded Windows path), "my println does not appear" (the bot is a separate
+  process; the prints were in the log 13 524 times), one Java 9+ API in a test
+  breaking the game jar, and the two-sources-of-truth race bug. Starts with a
+  five-point checklist to run before concluding "the code does not run".
 
 Both files end in rules that are already in §13/§14; the files carry the
 measurements, this section is the pointer so nobody has to rediscover them.

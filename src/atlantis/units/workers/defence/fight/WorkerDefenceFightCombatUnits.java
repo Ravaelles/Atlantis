@@ -27,10 +27,18 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // B-19), so the 300-frame run lockout applies in the field only.
         if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return false;
 
-        return unit.friendsNear().bases().countInRadius(6, unit) > 0
-            && unit.hp() >= (Enemy.protoss() ? 34 : 26)
-            && unit.distToBase() <= 8;
-//            && !WorkerDoNotFight.doNotFight(unit);
+        // The gate below required a BASE within 6 tiles, so a worker attacked
+        // in the mineral line of a base we do not "have" (or just outside the
+        // radius) simply never fought back - the owner's "workers do not fight
+        // nearby Zealots even with friendly Dragoons around" (2026-10-07).
+        // Fighting is now allowed where the worker actually is: near any of our
+        // buildings, which covers the mineral line and the natural.
+        boolean nearOurBuildings = unit.friendsNear().buildings().countInRadius(8, unit) > 0;
+        boolean nearOurBase = unit.friendsNear().bases().countInRadius(6, unit) > 0;
+        if (!nearOurBuildings && !nearOurBase) return false;
+
+        return unit.hp() >= (Enemy.protoss() ? 34 : 26)
+            && unit.distToBase() <= 12;
     }
 
     @Override
