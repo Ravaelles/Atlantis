@@ -1,152 +1,147 @@
 package tests.unit;
 
+import atlantis.Atlantis;
+import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import atlantis.production.dynamic.protoss.ProtossDynamicUnitProductionCommander;
 import atlantis.util.We;
 import bwapi.Race;
 import main.Main;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The race wiring, which is where the "no units after the first two" bug lived
- * (owner report, 2026-10-07).
+ * Pins the single source of truth for the race (owner's ruling, 2026-10-07:
+ * "let Main.ourRace be the source of truth").
  *
  * <p>
- * Two different things answer the question "what race are we?", and every
- * race-specific branch follows the second:
+ * The bug this closes: the race had TWO owners. {@code Main.ourRace()} said what
+ * the bot wanted to play, while {@code AtlantisRaceConfig.MY_RACE} was filled
+ * from the game ({@code Atlantis.game().self().getRace()}) - so {@code bwapi.ini}
+ * decided, and every race branch followed {@code MY_RACE}. With the ini saying
+ * Terran and Main saying Protoss, {@code We.protoss()} was false for the whole
+ * game, the Protoss unit producer was never applicable, and production stopped
+ * after the opening with a full bank.
  * </p>
  *
- * <ul>
- * <li>{@code Main.ourRace()} - what the client <b>asks</b> to play. It is what
- * the Wine launcher writes into {@code bwapi.ini}.</li>
- * <li>{@code AtlantisRaceConfig.MY_RACE} - what the <b>game</b> made us, read
- * by {@code We.protoss()}/{@code We.terran()}/{@code We.zerg()}.</li>
- * </ul>
- *
  * <p>
- * When they disagree the bot runs the wrong race's code with no error: it was
- * Protoss in {@code Main} and Terran in {@code bwapi.ini}, so
- * {@code We.protoss()} was false all game,
- * {@code ProtossDynamicUnitProductionCommander.applies()} never ran, and unit
- * production stopped after the opening - with a full bank. This test pins the
- * relationship and the fact that the Protoss unit producer is reachable for the
- * race the client asks for.
+ * {@code We.*()} now reads {@code Main.ourRace()} directly and ignores
+ * {@code MY_RACE} for the race question, so the two cannot disagree about which
+ * race's code runs. {@code MY_RACE} keeps its other job: it carries the race's
+ * unit types ({@code BASE}, {@code WORKER}, ...).
  * </p>
  */
 public class RaceWiringTest {
 
-    @Test
-    public void theRaceBranchMatchesWhatTheClientAsksFor() {
-        // Build the race-specific tree the way the game does, from the client's
-        // own answer. Before MY_RACE is set (which happens on game start),
-        // We.*() must fall back to Main.ourRace() - that fallback is what makes
-        // the constructor-time branch correct.
-        Race previous = AtlantisRaceConfig.MY_RACE;
+    @AfterEach
+    public void restoreRace() {
         AtlantisRaceConfig.MY_RACE = null;
-
-        try {
-            String requested = Main.ourRace();
-            assertNotNull(requested, "Main.ourRace() must name a race");
-
-            boolean matchesRequest = requested.equalsIgnoreCase("Protoss") ? We.protoss()
-                    : requested.equalsIgnoreCase("Terran") ? We.terran()
-                            : We.zerg();
-
-            assertTrue(matchesRequest,
-                    "We.protoss()/terran()/zerg() must agree with Main.ourRace() = " + requested
-                            + " while MY_RACE is unset; otherwise the commander tree is built"
-                            + " for the wrong race and that race's production never runs");
-        } finally {
-            AtlantisRaceConfig.MY_RACE = previous;
-        }
     }
 
     @Test
-    public void protossTreeIsPopulatedWhenTheClientAsksForProtoss() {
-        Race previous = AtlantisRaceConfig.MY_RACE;
-        AtlantisRaceConfig.MY_RACE = Race.Protoss;
-
-        try {
-            DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
-            assertTrue(childrenOf(dynamic) > 0,
-                    "the Protoss branch must not be empty");
-
-            boolean hasUnitProducer = false;
-            for (atlantis.architecture.Commander child : children(dynamic)) {
-                if (child instanceof ProtossDynamicUnitProductionCommander)
-                    hasUnitProducer = true;
-            }
-
-            assertTrue(hasUnitProducer,
-                    "ProtossDynamicUnitProductionCommander must be constructed for Protoss -"
-                            + " without it the bot never asks for a Zealot or a Dragoon");
-        } finally {
-            AtlantisRaceConfig.MY_RACE = previous;
-        }
-    }
-
-    @Test
-    public void theGameRaceIsWhatEveryBranchFollows() {
-        // Documents the trap rather than asserting a wish: once MY_RACE is set,
-        // We.*() follows it and IGNORES Main.ourRace(). That is why a mismatch
-        // between bwapi.ini and Main silently disables a whole race's code - and
-        // why the launcher now writes the client's race into bwapi.ini and
-        // OnGameStarted warns loudly when they differ.
-        Race previous = AtlantisRaceConfig.MY_RACE;
+    public void weFollowsMainNotTheGameConfig() {
+        // The exact mismatch that stopped production: MY_RACE says Terran, Main
+        // says Protoss. Main must win, because Main is the source of truth.
         AtlantisRaceConfig.MY_RACE = Race.Terran;
 
-        try {
-            assertEquals(false, We.protoss(),
-                    "with MY_RACE=Terran, We.protoss() must be false even if Main asks for Protoss"
-                            + " - this is the mismatch that stopped unit production");
-            assertEquals(true, We.terran());
-        } finally {
-            AtlantisRaceConfig.MY_RACE = previous;
+        assertEquals("Protoss", Main.ourRace(),
+                "this test is only meaningful while Main asks for Protoss");
+        assertEquals(true, We.protoss(),
+                "We.protoss() must follow Main.ourRace(), not MY_RACE - the mismatch"
+                        + " between them is what silently disabled all Protoss code");
+        assertEquals(false, We.terran(),
+                "and it must not report the other race either");
+    }
+
+    @Test
+    public void weAgreesWithMainWhateverMainSays() {
+        String requested = Main.ourRace();
+        assertNotNull(requested);
+
+        boolean matchesRequest = requested.equalsIgnoreCase("Protoss") ? We.protoss()
+                : requested.equalsIgnoreCase("Terran") ? We.terran()
+                : We.zerg();
+
+        assertTrue(matchesRequest,
+                "We.protoss()/terran()/zerg() must agree with Main.ourRace() = " + requested);
+
+        // And exactly one of them is true - never zero (no race) and never two.
+        int howMany = (We.protoss() ? 1 : 0) + (We.terran() ? 1 : 0) + (We.zerg() ? 1 : 0);
+        assertEquals(1, howMany, "exactly one race must be selected, got " + howMany);
+    }
+
+    @Test
+    public void theConfigChangerBuildsTheRaceTypesFromMain() {
+        AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
+
+        if (We.protoss()) {
+            assertEquals(Race.Protoss, AtlantisRaceConfig.MY_RACE,
+                    "MY_RACE must be set from Main.ourRace(), not from the game");
+            assertNotNull(AtlantisRaceConfig.BASE, "BASE must be configured for the race");
+            assertNotNull(AtlantisRaceConfig.WORKER, "WORKER must be configured for the race");
         }
     }
 
     @Test
-    public void aRaceMismatchIsDetectableBeforeItCostsAGame() {
-        // The check OnGameStarted performs, expressed as an assertion here so
-        // the rule is pinned in the fast suite as well as in the game log.
-        String requested = Main.ourRace();
-        String inGame = Race.Protoss.toString();
+    public void theConfigChangerDoesNotConsultTheGame() {
+        // The old implementation read Atlantis.game().self().getRace(), which
+        // needs a running game and made bwapi.ini the authority. Assert the
+        // method works with NO game object at all - that is what proves the game
+        // is no longer consulted (and it is also why this can be a unit test
+        // instead of an E2E one).
+        Atlantis.getInstance().setGame(null);
 
-        if (!requested.equalsIgnoreCase(inGame)) {
-            // Only true when the owner deliberately switched races; the point is
-            // that the comparison is meaningful and cheap, not that it must pass.
-            assertNotNull(requested);
+        AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
+
+        assertNotNull(AtlantisRaceConfig.MY_RACE,
+                "the race config must be settable without a game object");
+    }
+
+    @Test
+    public void protossUnitProducerIsConstructedForTheRequestedRace() throws Exception {
+        // The end of the chain the owner watched: with the race sourced from
+        // Main, the Protoss producer must be in the tree AND applicable.
+        AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
+
+        DynamicUnitAndTechProducerCommander dynamic = new DynamicUnitAndTechProducerCommander();
+        boolean found = false;
+        for (atlantis.architecture.Commander child : children(dynamic)) {
+            if (child instanceof ProtossDynamicUnitProductionCommander) found = true;
         }
 
-        assertEquals(requested.toLowerCase(), Main.ourRace().toLowerCase(),
-                "Main.ourRace() must be stable - a value that changes between calls"
-                        + " would make the mismatch check itself unreliable");
+        assertTrue(found,
+                "ProtossDynamicUnitProductionCommander must be built when Main asks for Protoss -"
+                        + " its absence is the 'no units after the opening' symptom");
+
+        if (We.protoss()) {
+            ProtossDynamicUnitProductionCommander producer =
+                    new ProtossDynamicUnitProductionCommander();
+            assertTrue(producer.applies(),
+                    "applies() must be true for our own race, or the node is in the tree"
+                            + " but never runs");
+        }
     }
 
-    private static int childrenOf(Object commander) throws RuntimeException {
-        return children(commander).length;
-    }
+    // ---- helpers -----------------------------------------------------------
 
-    private static atlantis.architecture.Commander[] children(Object commander) {
-        try {
-            Class<?> type = commander.getClass();
-            while (type != null) {
-                try {
-                    java.lang.reflect.Field field = type.getDeclaredField("commanderObjects");
-                    field.setAccessible(true);
-                    return (atlantis.architecture.Commander[]) field.get(commander);
-                } catch (NoSuchFieldException e) {
-                    type = type.getSuperclass();
-                }
+    private static atlantis.architecture.Commander[] children(Object commander) throws Exception {
+        Class<?> type = commander.getClass();
+        while (type != null) {
+            try {
+                Field field = type.getDeclaredField("commanderObjects");
+                field.setAccessible(true);
+                return (atlantis.architecture.Commander[]) field.get(commander);
+            } catch (NoSuchFieldException e) {
+                type = type.getSuperclass();
             }
-            throw new NoSuchFieldException("commanderObjects");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
+        throw new NoSuchFieldException("commanderObjects on " + commander.getClass());
     }
 }

@@ -1,21 +1,45 @@
 package atlantis.config;
 
-import atlantis.Atlantis;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import main.Main;
 
 public class AtlantisConfigChanger {
 
+    /**
+     * Sets the race configuration from the CLIENT's own answer.
+     *
+     * <p>
+     * {@code Main.ourRace()} is the single source of truth for the race (owner's
+     * ruling, 2026-10-07). This used to read the race back from the GAME
+     * ({@code Atlantis.game().self().getRace()}), which made bwapi.ini the real
+     * authority: when the ini said Terran and Main said Protoss, the bot set
+     * MY_RACE = Terran, every race branch followed it, and all Protoss code -
+     * including the unit producer - silently never ran. Two sources of truth for
+     * one fact, with the wrong one winning.
+     * </p>
+     *
+     * <p>
+     * The game's race is still checked, but only to WARN: if StarCraft started us
+     * as something other than what we asked for, the launcher's ini is wrong and
+     * the bot says so loudly instead of quietly playing the wrong race. See
+     * {@code OnGameStarted.warnIfRequestedRaceDiffersFromTheGame()}.
+     * </p>
+     */
     public static void modifyRacesInConfigFileIfNeeded() {
-        Race racePlayed = Atlantis.game().self().getRace();
-        if (racePlayed.equals(Race.Protoss)) {
-            useConfigForProtoss();
-        }
-        else if (racePlayed.equals(Race.Terran)) {
-            useConfigForTerran();
-        }
-        else if (racePlayed.equals(Race.Zerg)) {
-            useConfigForZerg();
+        switch (Main.ourRace().toLowerCase()) {
+            case "protoss":
+                useConfigForProtoss();
+                return;
+            case "terran":
+                useConfigForTerran();
+                return;
+            case "zerg":
+                useConfigForZerg();
+                return;
+            default:
+                throw new IllegalStateException(
+                        "Main.ourRace() must name a race, got: " + Main.ourRace());
         }
     }
 

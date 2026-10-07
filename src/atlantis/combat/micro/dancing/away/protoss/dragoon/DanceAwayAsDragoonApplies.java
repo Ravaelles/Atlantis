@@ -141,9 +141,14 @@ public class DanceAwayAsDragoonApplies extends HasUnit {
         }
 
         if (Enemy.protoss()) {
+            if (cooldown <= 14 && unit.enemiesThatCanAttackMe(2.4).notShowingBackToUs(unit).empty()) {
+                return f("_vP_Eazy");
+            }
+
 //            if (cooldown >= 14 && unit.hp() >= 80) return f("_GvG");
 //            if (cooldown >= 18 && unit.shieldWound() <= 3) return f("_D");
-            if (unit.hp() >= 45 && unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(0.6).empty()) return true;
+            if (unit.hp() >= 45 && unit.cooldown() <= 12 && unit.enemiesThatCanAttackMe(0.6).empty()) return t(
+                "_vP_yup");
             if (unit.shieldWound() <= 6 && unit.friendsNear().countInRadius(3, unit) >= 1) return f("_D2");
 
             if (cooldown >= 7) {

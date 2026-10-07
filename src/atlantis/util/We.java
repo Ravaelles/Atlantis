@@ -39,20 +39,14 @@ public class We {
     }
 
     public static boolean terran() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Terran".equals(Main.ourRace());
-
-        return AtlantisRaceConfig.MY_RACE.equals(Race.Terran);
+        return "Terran".equals(Main.ourRace());
     }
 
     public static boolean protoss() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Protoss".equals(Main.ourRace());
-
-        return AtlantisRaceConfig.MY_RACE.equals(Race.Protoss);
+        return "Protoss".equals(Main.ourRace());
     }
 
     public static boolean zerg() {
-        if (AtlantisRaceConfig.MY_RACE == null) return "Zerg".equals(Main.ourRace());
-
-        return AtlantisRaceConfig.MY_RACE.equals(Race.Zerg);
+        return "Zerg".equals(Main.ourRace());
     }
 }
