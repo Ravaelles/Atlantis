@@ -202,13 +202,13 @@ else
   say "  WARNING: StarCraft not running within 45 s (see $LOG_DIR/chaoslauncher.log)"
 fi
 
-say "Step 3/3: watching for HELLO_WORLD (grace 120s)..."
-END=$(( $(date +%s) + 120 ))
+say "Step 3/3: watching for HELLO_WORLD (grace 10s)..."
+END=$(( $(date +%s) + 10 ))
 ATTACHED=0
 while [ "$(date +%s)" -lt "$END" ]; do
   if grep -q "HELLO_WORLD" "$CLIENT_LOG" 2>/dev/null; then
-    say "SUCCESS: HELLO_WORLD - BWAPI attached, Atlantis is playing!"
-    since "client attached (HELLO_WORLD)"
+    say "SUCCESS: BWAPI attached, Atlantis is playing!"
+    #since "client attached (HELLO_WORLD)"
     ATTACHED=1
     break
   fi
@@ -218,7 +218,7 @@ while [ "$(date +%s)" -lt "$END" ]; do
     cleanup
     exit 1
   fi
-  sleep 2
+  sleep 1
 done
 
 if [ "$ATTACHED" -eq 0 ]; then

@@ -1,4 +1,3 @@
-
 package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
@@ -22,6 +21,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     @Override
     public boolean applies() {
+        System.out.println("We.protoss() = " + We.protoss());
         return We.protoss();
 //            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }
@@ -117,6 +117,8 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceDarkTemplar.dt();
         ProduceCorsairs.corsairs();
 
+        System.out.println("At " + A.now() + " - freeToSpendResources=" + A.trueFalse(freeToSpendResources()));
+
         if (!freeToSpendResources()) {
             if (investInEarlyGoons()) ProduceDragoon.dragoon();
             return false;
@@ -128,6 +130,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
         ProduceHighTemplar.ht();
 
         boolean produced = ProduceDragoon.dragoon();
+        System.out.println("produced = " + produced);
         produced |= ProduceZealot.zealot();
 
         // Once a minute, and only in the state B-22 was reported in: the numbers that

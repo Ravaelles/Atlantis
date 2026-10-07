@@ -28,6 +28,8 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.QueueInitializer;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
+import bwapi.Race;
+import main.Main;
 import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
 import benchmark.BenchmarkMode;
@@ -54,6 +56,18 @@ public class OnGameStarted {
 
         // Atlantis can modify ChaosLauncher's config files treating AtlantisRaceConfig as the source-of-truth
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();
+
+        // The race the GAME says we are is authoritative for every race branch
+        // (We.protoss() and friends read AtlantisRaceConfig.MY_RACE), while
+        // Main.ourRace() is what the bot ASKS to be. When those disagree the bot
+        // plays the wrong race's code: it builds no units, and nothing errors.
+        //
+        // This is not hypothetical - it is exactly what happened (owner report,
+        // 2026-10-07): bwapi.ini still said race=Terran, Main.ourRace() said
+        // Protoss, so We.protoss() was false for the whole game and
+        // ProtossDynamicUnitProductionCommander.applies() never ran. The bot
+        // produced one Zealot and one Dragoon and then stopped asking forever.
+        warnIfRequestedRaceDiffersFromTheGame();
 
         // Validate AtlantisRaceConfig and exit if it's invalid
         if (Env.isLocal()) {
@@ -171,10 +185,49 @@ public class OnGameStarted {
                     + (AFile.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
                     + CurrentBuildOrder.get().getName()
             );
-            AConsole.errPrintln("Error: " + e.getMessage());
-            e.printStackTrace();
-            throw new RuntimeException("Exception when loading build orders file");
-        }
-    }
+                        AConsole.errPrintln("Error: " + e.getMessage());
+                        e.printStackTrace();
+                        throw new RuntimeException("Exception when loading build orders file");
+                    }
+                }
 
-}
+                /**
+                 * Warns when the race the game put us in differs from the one the client
+                 * asked for. This mismatch is silent and expensive: every race branch
+                 * ({@code We.protoss()} and friends) reads the game's race, so the bot runs
+                 * the wrong race's code and simply does nothing instead of failing.
+                 *
+                 * <p>Measured cause (owner report, 2026-10-07): {@code Main.ourRace()} said
+                 * Protoss while {@code bwapi.ini} still said {@code race=Terran}, so
+                 * StarCraft started us as Terran, {@code We.protoss()} was false all game,
+                 * and {@code ProtossDynamicUnitProductionCommander.applies()} never ran -
+                 * one Zealot, one Dragoon, then no units ever again with minerals banked.
+                 * The fix for the config is in the launcher (it now writes the client's
+                 * race into bwapi.ini); this warning is what makes a future recurrence
+                 * visible in the log instead of in a lost game.</p>
+                 */
+                private static void warnIfRequestedRaceDiffersFromTheGame() {
+                    try {
+                        String requested = Main.ourRace();
+                        Race inGame = Atlantis.game().self().getRace();
+                        if (requested == null || inGame == null) return;
+
+                        String inGameName = inGame.toString();
+                        if (!requested.equalsIgnoreCase(inGameName)) {
+                            AConsole.errPrintln("");
+                            AConsole.errPrintln("#######################################################");
+                            AConsole.errPrintln("RACE MISMATCH: the game started us as " + inGameName
+                                    + " but Main.ourRace() asks for " + requested + ".");
+                            AConsole.errPrintln("Every race-specific branch follows the GAME's race, so "
+                                    + requested + " code will not run at all");
+                            AConsole.errPrintln("(no units will be produced). Fix bwapi.ini's race= to match"
+                                    + " - the launcher scripts now do this automatically.");
+                            AConsole.errPrintln("#######################################################");
+                            AConsole.errPrintln("");
+                        }
+                    } catch (Exception e) {
+                        // A diagnostic must never break the game.
+                        AConsole.errPrintln("Could not compare the requested race with the game's: " + e);
+                    }
+                }
+            }

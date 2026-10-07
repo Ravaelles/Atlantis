@@ -2,6 +2,7 @@ package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
 import atlantis.combat.micro.attack.ProcessAttackUnit;
+import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
@@ -15,6 +16,7 @@ public class ChokeBlockerFight extends Manager {
     @Override
     public boolean applies() {
         if (unit.hp() <= 24) return false;
+        if (Enemy.protoss() && unit.eval() <= 0.75 && unit.hp() <= 41) return false;
 
         if (unit.isZealot()) {
             if (unit.lastUnderAttackLessThanAgo(40)) return true;

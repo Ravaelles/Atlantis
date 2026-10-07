@@ -194,7 +194,7 @@ public class MapSpecificCommander extends Commander {
                 || ActiveMap.isMap("exp_skilltest")
                 || ActiveMap.isMap("7th")
         ) {
-            if (_firstSettings && Count.ourCombatUnits() >= 1) {
+            if (_firstSettings && Count.ourCombatUnits() == 1) {
                 AUnit unit = Select.ourCombatUnits().first();
                 if (unit != null && unit.enemiesNear().combatUnits().notEmpty()) {
 //                    AAdvancedPainter.enablePainting();
