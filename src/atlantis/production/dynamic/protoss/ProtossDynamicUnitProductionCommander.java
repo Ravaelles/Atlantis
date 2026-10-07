@@ -21,7 +21,7 @@ public class ProtossDynamicUnitProductionCommander extends Commander implements 
 
     @Override
     public boolean applies() {
-        System.out.println("We.protoss() = " + We.protoss());
+        System.out.println("ProtossDynamicUnitProductionCommander = " + We.protoss());
         return We.protoss();
 //            && !ProtossShouldExpand.needToSaveMineralsForExpansion();
     }

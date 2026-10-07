@@ -34,7 +34,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LauncherBuildsTheJarTest {
 
     private static final Path WINE_FULL = Paths.get("scripts/run-wine-full.sh");
-    private static final Path JAR = Paths.get("bots/AtlantisP/AI/Atlantis.jar");
+
+    /**
+     * The jar the launcher actually plays: JAR_OUT in run-wine-full.sh, which
+     * defaults to the scbw bot slot. Kept in one place so this test checks the
+     * jar that matters instead of a path nothing writes any more (the in-repo
+     * bots/AtlantisP/AI/Atlantis.jar became vestigial when the owner moved the
+     * build target to ~/.scbw - checked 2026-10-07).
+     */
+    private static Path playedJar() {
+        String home = System.getProperty("user.home");
+        return Paths.get(home, ".scbw", "bots", "AtlantisP", "AI", "Atlantis.jar");
+    }
 
     @Test
     public void wineFullRebuildsTheJarBeforePlaying() throws IOException {
@@ -75,10 +86,10 @@ public class LauncherBuildsTheJarTest {
     public void theExistingJarIsNotOlderThanTheSources() throws IOException {
         // Only checks when a jar is present; a missing jar is the launcher's
         // problem (it builds one), not this test's.
-        if (!Files.exists(JAR))
-            return;
+        Path jar = playedJar();
+        if (!Files.exists(jar)) return;
 
-        long jarTime = Files.getLastModifiedTime(JAR).toMillis();
+        long jarTime = Files.getLastModifiedTime(jar).toMillis();
 
         // The sources that decide production behaviour. If any of these is newer
         // than the jar, whoever runs a game now is testing old code.
@@ -101,7 +112,7 @@ public class LauncherBuildsTheJarTest {
         }
 
         assertTrue(stale.isEmpty(),
-                "bots/AtlantisP/AI/Atlantis.jar is OLDER than these sources, so a game"
+                "the played jar (" + jar + ") is OLDER than these sources, so a game"
                         + " started now would run old code and hide the changes: " + stale
                         + " -- rebuild with scripts/build-bot-jar.sh (run-wine-full.sh"
                         + " now does it automatically)");

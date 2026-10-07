@@ -16,8 +16,6 @@ public class DynamicUnitAndTechProducerCommander extends Commander implements Ha
     protected CommanderFactory[] subcommanders() {
         CommanderFactory[] raceSpecific = null;
 
-        System.out.println("A = " + We.protoss() + " B = " + We.terran());
-
         if (We.protoss()) {
             raceSpecific = new CommanderFactory[]{
                 ProtossDynamicTechResearch::new,

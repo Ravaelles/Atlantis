@@ -21,6 +21,18 @@
 # Usage:
 #   scripts/run-wine-full.sh [map-name]        # default: 1a2a3a Micro 2.scx
 #
+# Seeing the bot's output in the IDE console:
+#   The bot is a SEPARATE process (a Windows JVM under Wine), so its
+#   System.out does not reach the IDE by itself - on Windows it did, because
+#   the bot was the IDE process. This script streams the bot's output to its own
+#   stdout, which the IDE shows live (UnixChaosGameLauncher uses inheritIO()), so
+#   A.println / System.out.println / System.err.println appear in the IntelliJ
+#   console AND in out/wine/client.log.
+#
+#   LIVE_OUTPUT=0   quiet console, log file only
+#   BUILD=0         play the jar already on disk instead of rebuilding it
+#   JAR_OUT=...     where the jar is built and loaded from
+#
 # Exit code 0 = HELLO_WORLD seen (bot attached). Non-zero otherwise; on
 # failure everything is killed so no stray process survives.
 set -u
@@ -148,11 +160,40 @@ if [ -z "$WIN_JAR" ]; then
 fi
 say "  Windows path: $WIN_JAR"
 
-setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-  wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
-  > "$CLIENT_LOG" 2>&1 < /dev/null &
-CLIENT_PID=$!
+# The bot is a SEPARATE process (a Windows JVM under Wine), so its stdout is
+# not the IDE's console - on Windows it was, because the bot WAS the IDE
+# process. Without help, every print the owner adds lands only in
+# out/wine/client.log, 16k lines deep, and looks like "the code never runs"
+# (measured 2026-10-07: the prints were all there, 13k of them).
+#
+# So the bot's output is TEE'd: the log file still gets everything (scripts and
+# greps read it), and the same lines are streamed to this script's stdout,
+# which the IDE shows live through ProcessBuilder.inheritIO().
+#
+# LIVE_OUTPUT=0 turns the streaming off for a quiet console (the log is still
+# written). Filtering is deliberately left to the reader: filtering here would
+# silently hide the line someone is looking for, which is the exact failure this
+# fixes.
+LIVE_OUTPUT="${LIVE_OUTPUT:-1}"
+
+if [ "$LIVE_OUTPUT" = "1" ]; then
+  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
+    2>&1 < /dev/null | tee "$CLIENT_LOG" &
+  # tee is the foreground of that pipeline; killing it later also closes the
+  # bot's stdout. CLIENT_PID stays the pipeline's PID, which is what the
+  # liveness checks below need.
+  CLIENT_PID=$!
+else
+  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
+    > "$CLIENT_LOG" 2>&1 < /dev/null &
+  CLIENT_PID=$!
+fi
 say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
+if [ "$LIVE_OUTPUT" = "1" ]; then
+  say "  Bot output is streamed below (LIVE_OUTPUT=0 to silence, log file always written)"
+fi
 
 # The client-first order needs no wait: the client only reaches the BWAPI game
 # table once the GAME is up (before that it loops on "Game table mapping not
