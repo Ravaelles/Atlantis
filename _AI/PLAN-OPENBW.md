@@ -1,12 +1,11 @@
 # PLAN: OpenBW as the primary game engine for every test and experiment
 
-Status: **in progress** (created 2026-10-07). Owner's intent: *"make OpenBW
-usable nearly 1:1 the way StarCraft under Wine is - this is your setup for all
-tests and experiments."*
+Status: **Step 1 diagnosed end to end, blocked on one server-side decision.**
+Created 2026-10-07. Owner's intent: *"make OpenBW usable nearly 1:1 the way
+StarCraft under Wine is - this is your setup for all tests and experiments."*
 
-This plan is written **after** probing the machine, not from assumption. Every
-claim below marked "measured" was checked with a command; the commands are
-quoted so anyone can re-run them.
+**Read `_AI/CHALLENGES/OpenBW.md` first** - it holds the measurements this plan
+is built on, and CONVENTIONS §11a points at it.
 
 ---
 
@@ -287,6 +286,39 @@ Option 1 is the same result without forking a library.
 **Where this leaves the plan:** steps 2-5 are blocked on one of the three
 options above. Everything else - the jar, the host script, the lifecycle rules,
 the challenge log - is done and verified.
+
+### Step 1 RESULT #3 (measured 2026-10-07): the server is built for late attach
+
+Reading the launcher's own source settles what the server does and does not do.
+`3rdparty/openbw/bwapi/bwapi/BWAPILauncher/Source/Main.cpp` is explicit:
+
+- A Java client is expected to attach **after** the game is already running
+  ("JVM start alone" takes seconds), so the first frames run module-less and
+  the client is adopted later, with `MatchStart` re-issued so the client calls
+  `Game.init()` and `onStart()`.
+- Two gates are required before the server advances frames for a client:
+  `server.isConnected()` (socket handshake done) and `server.hasSynced()` (one
+  full frame exchange done). Until then it prints
+  `Waiting for AI client to attach...` every 15 s, and exits after 300 s.
+- `BWAPI::Server::initializeSharedMemory()` **is** implemented (it creates
+  `/dev/shm/bwapi_shared_memory_<pid>` and the `game_list` registry), and
+  `GameImpl` holds a `Server` member - the capability is present and wired.
+
+So the pieces all exist. What is missing is the **order**:
+`initializeSharedMemory()` runs from the server's game-start path, which is only
+reached once the game is actually starting, while the client needs the registry
+**before** it will even attempt the socket. In our runs the launcher sits in
+`startGame()` (20 s, no output at all - measured) and the registry stays empty,
+so the client reads PID 0 and reports "No server proc ID".
+
+**This is now a server-side ordering question, not a client or packaging one.**
+Options 1-3 above still stand, and option 3 (a small change on the harness side,
+with the owner's agreement) is the most direct: the registry must be published
+before the client is expected to look, exactly as upstream BWAPI does it.
+
+**Where the plan stands:** step 1 is diagnosed end to end and blocked on that
+one decision. Steps 2-5 depend on it. The jar, the host script, the lifecycle
+rules and the challenge log are done and verified.
 
 ## 5. Risks, stated up front
 
