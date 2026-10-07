@@ -38,15 +38,24 @@ public class OpenBWGameLauncher implements GameLauncher {
         System.out.println("[Atlantis] DOCS/HOW-ATLANTIS-OPENBW.md for the recipe.");
         System.out.println("===============================================");
 
-        // Kill any leftover host BEFORE waiting for it: a stale BWAPILauncher
-        // from a previous run still owns the game table, so this client would
-        // adopt its PID and then loop on "Unable to open shared memory mapping"
-        // against a dead segment (measured 2026-10-06, PID 647373). The same
-        // cleanup runs at exit, so a fresh start is always from a clean state.
-        ProcessHelper.killOpenBWProcesses();
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
+        // A leftover host is poison (a stale BWAPILauncher owns the game table,
+        // so this client adopts its PID and loops on "Unable to open shared
+        // memory mapping" against a dead segment - measured 2026-10-06, PID
+        // 647373). But this launcher must NOT kill a host that is up and
+        // serving: the whole point of this backend is that someone else starts
+        // the game and the bot attaches to it, and an unconditional
+        // `pkill -9 -x BWAPILauncher` here kills the very host the client is
+        // about to join (measured 2026-07-10: the launcher's own kill ran
+        // between "host ready" and "client connects", and the client then
+        // reported "Unable to open communications socket" against a host it had
+        // just murdered). Kill only when nothing is hosting, and clear stale
+        // shared-memory names only then too.
+        if (!ProcessHelper.isOpenBWProcessRunning()) {
+            ProcessHelper.killOpenBWProcesses();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
         }
 
         // The Linux keyboard hook (JNativeHook ships an x86_64 native) gives

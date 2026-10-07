@@ -94,7 +94,17 @@ BOT_RUN_DIR="$ATLANTIS_DIR/bots/AtlantisOpenBW/AI"
 mkdir -p "$BOT_RUN_DIR"
 cp "$JAR" "$BOT_RUN_DIR/Atlantis.jar"
 
-cat > "$BOT_RUN_DIR/ENV" <<'EOF'
+# ENV must sit in the WORKING DIRECTORY (Env.envFilePath() tries
+# `bwapi-data/AI/ENV`, then `../bwapi-data/AI/ENV`, then `ENV`), so it has to
+# live in the directory the jar is started from. Missing it is not fatal but it
+# silently selects the DEFAULT backend - which is Chaos, and on Linux that ends
+# in `IOException: Cannot run program "taskkill"` (measured 2026-10-07).
+#
+# Written to both the bot root and its AI/ subdir: the jar may legitimately be
+# started from either (scbw starts it from the bot folder, a by-hand run often
+# from AI/), and a missing ENV is a silent wrong-backend, not a clear error.
+write_env() {
+  cat > "$1" <<'EOF'
 # Atlantis on the headless OpenBW engine (E2E tier).
 # Deliberately NOT the Wine ENV: GAME_LAUNCHER=OPENBW means the bot attaches
 # to an already-running BWAPILauncher and never starts a game itself.
@@ -104,10 +114,38 @@ GAME_LAUNCHER=OPENBW
 FORCE_GG_FOR_ENEMY=false
 POSTGAME_COPY_CHERRYVIS_TO=
 EOF
+}
+write_env "$BOT_RUN_DIR/ENV"
 
-# Build orders are read relative to the bot directory.
-if [ -d "$WINE_BOT_DIR/build_orders" ] && [ ! -e "$BOT_RUN_DIR/build_orders" ]; then
-  ln -s "$WINE_BOT_DIR/build_orders" "$BOT_RUN_DIR/build_orders"
+# The bot reads its build orders from BUILD_ORDERS_PATH = "AI/build_orders/",
+# resolved against its WORKING DIRECTORY (ABuildOrderLoader.buildOrdersDir()).
+# That makes the working directory part of the contract:
+#
+#   cwd = <botRoot>  ->  needs <botRoot>/AI/build_orders   (how scbw launches)
+#
+# Getting this wrong is fatal and looks like a connection problem: the attach
+# SUCCEEDS, then the client thread dies with
+#     RuntimeException: Current BUILD ORDER is NULL
+# while processing the first frame (measured 2026-10-07).
+#
+# So the launcher runs the jar from the bot ROOT (not from its AI/ subdir) and
+# this links the orders + the maps tree that the loader also expects.
+BOT_ROOT="$(dirname "$BOT_RUN_DIR")"
+mkdir -p "$BOT_ROOT/AI"
+write_env "$BOT_ROOT/ENV"
+write_env "$BOT_ROOT/AI/ENV"
+
+for candidate in "$ATLANTIS_DIR/bwapi-data/AI/build_orders" \
+                 "$WINE_BOT_DIR/build_orders"; do
+  if [ -d "$candidate" ] && [ ! -e "$BOT_ROOT/AI/build_orders" ]; then
+    ln -s "$candidate" "$BOT_ROOT/AI/build_orders"
+    say "linked build orders: $BOT_ROOT/AI/build_orders -> $candidate"
+    break
+  fi
+done
+
+if [ ! -d "$BOT_ROOT/AI/build_orders" ]; then
+  fail "no build_orders: link $ATLANTIS_DIR/bwapi-data/AI/build_orders or $WINE_BOT_DIR/build_orders into $BOT_ROOT/AI"
 fi
 
 if [ "$SELF_TEST" -eq 1 ]; then
@@ -144,13 +182,24 @@ setsid nohup timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!
 
-# Wait for the SHARED SEGMENT, which is the transport the client actually
-# opens first (`/dev/shm/bwapi_shared_memory_<pid>`, decompiled from
-# ClientConnectionPosix). The socket alone is not proof - it appears alongside
-# the segment, but the segment is what a missing one makes the client fail on.
+# Do NOT wait for the socket. The host publishes the shared segment and the
+# registry up front, but creates the socket only once a client is knocking -
+# its own log says so:
+#     Start the Java client now (it polls until the server is up).
+# Waiting for the socket before starting the client deadlocks: the host waits
+# for the client, and the client is not started yet (measured 2026-10-07 - the
+# run that failed here timed out at exactly this line, and the transcript that
+# showed why came from a manual run of the same two commands).
+#
+# What the host DOES publish immediately is the registry entry carrying its
+# PID, which is the first thing the client reads. That is what to wait for.
 HOSTED=0
 for _ in $(seq 1 60); do
-  if ls /dev/shm/bwapi_shared_memory_* >/dev/null 2>&1; then HOSTED=1; break; fi
+  if [ -f /dev/shm/bwapi_shared_memory_game_list ] \
+     && [ -n "$(xxd -p -l 8 /dev/shm/bwapi_shared_memory_game_list 2>/dev/null | tr -d '0')" ]; then
+    HOSTED=1
+    break
+  fi
   if ! kill -0 "$SERVER_WRAPPER_PID" 2>/dev/null && ! pgrep -x BWAPILauncher >/dev/null 2>&1; then
     say "server exited before hosting; log tail:"
     tail -20 "$SERVER_LOG" | sed 's/^/    /'
@@ -160,16 +209,18 @@ for _ in $(seq 1 60); do
 done
 
 if [ "$HOSTED" -ne 1 ]; then
-  say "server did not publish a shared segment within 30 s; log tail:"
+  say "server published no game registry entry within 30 s; log tail:"
   tail -20 "$SERVER_LOG" | sed 's/^/    /'
   exit 1
 fi
 
-say "game hosted: $(ls /dev/shm/bwapi_shared_memory_* 2>/dev/null | tr '\n' ' ')"
+say "game hosted (registry: $(xxd -p -l 8 /dev/shm/bwapi_shared_memory_game_list 2>/dev/null))"
 say "starting bot: $BOT_RUN_DIR (headless, GAME_LAUNCHER=OPENBW)"
-cd "$BOT_RUN_DIR"
+# cwd = the bot ROOT, because the build-order path is relative to the working
+# directory and is "AI/build_orders/" (see the link section above).
+cd "$BOT_ROOT"
 BOT_EXIT=0
-timeout 360 java -jar Atlantis.jar >"$BOT_LOG" 2>&1 &
+timeout 360 java -jar "$BOT_RUN_DIR/Atlantis.jar" >"$BOT_LOG" 2>&1 &
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 

@@ -273,6 +273,28 @@ public class ProcessHelper {
     }
 
     /**
+     * True when an OpenBW host is already running.
+     *
+     * <p>Used by {@code OpenBWGameLauncher} to decide whether a cleanup is
+     * needed: killing a live host is what breaks the attach, because the host
+     * is the one that owns the shared-memory game table and the socket this
+     * client is about to join (measured 2026-10-07).
+     */
+    public static boolean isOpenBWProcessRunning() {
+        try {
+            Process p = new ProcessBuilder("pgrep", "-x", "BWAPILauncher")
+                    .redirectErrorStream(true)
+                    .start();
+            p.waitFor();
+            return p.exitValue() == 0;
+        } catch (Exception e) {
+            // No pgrep (non-Linux) or it failed: assume nothing is running, so
+            // the caller falls back to the old cleanup behaviour.
+            return false;
+        }
+    }
+
+    /**
      * Force-kills the whole Wine session: the game, the launcher and the
      * wineserver. Runs through {@code sh} on the HOST, so it works both from
      * the Linux supervisor JVM and from the bot's JVM running under Wine (Wine

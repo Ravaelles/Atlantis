@@ -276,7 +276,6 @@ and never from decompiling the game archives.
   the details in the specialist file.
 
 ### 11a. READ FIRST: the game/process challenges (owner's ruling, 2026-10-07)
-
 **Before touching anything that starts a game, attaches a client to one, or
 packs the bot jar, read these files.** They are not optional background
 reading: every failure in them cost a full research cycle, and several of them
@@ -389,3 +388,27 @@ These are the rules distilled from the OpenBW investigation
 - **A jar that cannot attach is a build failure.** `build-bot-jar.sh` asserts
   the packaged junixsocket is the working one; a silent mispackage is worse
   than a red build, because it surfaces as "the bot never joins the game".
+
+## 16. Java version: the target is Java 8 (owner's ruling, 2026-10-07)
+
+- **Atlantis targets Java 8. There is no upgrade plan; do not propose one.**
+  `build-bot-jar.sh` compiles with `--release 8` and that is deliberate: a Java
+  9+ API in any compiled file (tests included, since the whole tree is compiled
+  in one `javac` invocation) breaks the game jar.
+- **Production runs on Java 8**: the Wine bot uses Temurin `1.8.0_504` at
+  `~/.wine/drive_c/Java/bin/java.exe` (measured 2026-10-07), and that is the
+  runtime that plays real games and tournaments.
+- **The native Linux JVM is a different thing.** This machine has only Java 17
+  installed (`/usr/lib/jvm/java-17-openjdk-amd64`), which is what a bare
+  `java -jar Atlantis.jar` uses outside Wine. A difference between a Wine game
+  and a native run may therefore be a **JVM difference (8 vs 17)**, not a bug in
+  the bot - check the Java version before investigating anything else.
+- **Consequence for vendored libraries:** JBWAPI-Rav bundles junixsocket 1.0.x,
+  whose `AFUNIXSocket` calls `java.net.Socket.setCreated()` - a method that
+  exists in Java 8 and was **removed after it**. On Java 8 the bundled version
+  works; on Java 9+ it throws and the client silently fails to attach. That is
+  why the OpenBW path (Java 17) needed a junixsocket 2.10.1 override while the
+  Wine path (Java 8) never did. A library that "is broken for us" must be
+  checked against **both** runtimes before it is changed.
+- Keep the override in `lib/` and the build assertions: they are what makes the
+  same jar attach on Java 17 without regressing Java 8.
