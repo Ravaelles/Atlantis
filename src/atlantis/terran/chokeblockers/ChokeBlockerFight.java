@@ -16,7 +16,7 @@ public class ChokeBlockerFight extends Manager {
     @Override
     public boolean applies() {
         if (unit.hp() <= 24) return false;
-        if (Enemy.protoss() && unit.eval() <= 0.75 && unit.hp() <= 41) return false;
+        if (Enemy.protoss() && unit.hp() <= 81 && (unit.eval() <= 0.99 || unit.hp() <= 41)) return false;
 
         if (unit.isZealot()) {
             if (unit.lastUnderAttackLessThanAgo(40)) return true;
