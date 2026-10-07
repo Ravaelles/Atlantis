@@ -226,6 +226,14 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
             # .so is packaged (measured 2026-10-07 - this was the last blocker).
             elif arc.startswith('META-INF/maven/no.fiken.oss.junixsocket/'):
                 del entries[arc]
+            # ... and the same fork's NAR metadata, which is the file that
+            # actually failed: META-INF/nar/no.fiken.oss.junixsocket/
+            # junixsocket-native/nar.properties names the 1.0.x artefact and
+            # NativeLibraryLoader reads it before anything else, so the client
+            # kept looking for a library that is no longer in the jar. Drop the
+            # whole META-INF/nar/ tree; the 2.10.1 jars carry no NAR metadata.
+            elif arc.startswith('META-INF/nar/'):
+                del entries[arc]
         for lib in override_libs:
             with zipfile.ZipFile(lib, 'r') as z:
                 for name in z.namelist():
@@ -339,6 +347,11 @@ assert any('junixsocket-native-2.10.1.so' in n for n in names), \
 assert any(n.startswith('META-INF/native-image/') and n.endswith('resource-config.json')
            for n in names), \
     'junixsocket native-image descriptors missing - the loader cannot pick a native'
+# The old fork's NAR metadata names the 1.0.x artefact and is read before
+# everything else; with it present the loader looks for a library that is no
+# longer packaged and the client silently never attaches.
+nar = [n for n in names if n.startswith('META-INF/nar/')]
+assert not nar, 'stale junixsocket NAR metadata in the jar: %s' % nar[:3]
 
 size_mb = os.path.getsize(out_jar) / 1024.0 / 1024.0
 print('OK: %s  %.1f MB  %d entries  mode=%s  (%d harness/simulator classes not shipped)'

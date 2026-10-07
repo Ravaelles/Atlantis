@@ -86,6 +86,34 @@ So on Linux the shared segment is what matters first; the socket line in the
 error message is a *consequence* of the segment being unreachable, not the
 cause. Do not chase the socket.
 
+## The fifth blocker, found after the jar was fixed (measured 2026-10-07)
+
+With the jar correct, the socket connects **from the packed Atlantis jar** as
+well as from a bare classpath (`CONNECTED OK` in both cases), so the transport
+is no longer the problem. The client still fails, now with **"No server proc
+ID"**, and the cause is one layer deeper:
+
+- `bwapi.Client.connect()` reads the server PID from the **shared-memory game
+table** (`clientConnector.getGameTable()` -> `gameInstances[0].serverProcessID`)
+and then calls `connectSharedLock(pid)`. Decompiled from the vendored jar; the
+socket path is only the second step.
+- This harness **never fills that table**. The host serves a working socket and
+  a `/dev/shm/bwapi_shared_memory_<pid>` segment, but
+  `/dev/shm/bwapi_shared_memory_game_list` stays 0 bytes, so the client reads
+  PID 0 and gives up.
+- `libBWAPI.so` in the harness *does* export
+  `BWAPI::Server::initializeSharedMemory()` and `updateSharedMemory()` - the
+  capability exists, `BWAPILauncher` simply does not create a `BWAPI::Server`.
+
+So the mismatch is: the client (JBWAPI-Rav, upstream BWAPI 4.4 protocol) needs
+the shared-memory game registry; this OpenBW launcher publishes only the socket.
+
+**Rejected while diagnosing:** the launcher's `RUNPATH` points at
+`/ravaelles/JAVA/starcraft-ai/...`, which looks alarming (and that path is off
+limits under CONVENTIONS §8) - but the libraries there are **byte-identical**
+(same size, same mtime), so it is a second path to the same build, not a stale
+copy. Confirmed before drawing any conclusion from it.
+
 ## Rules this produced
 
 - CONVENTIONS §14: never start StarCraft/ChaosLauncher/Wine; OpenBW is the E2E

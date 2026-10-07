@@ -238,6 +238,56 @@ result twice (the "reproduces twice" bar from IDEA-E2E-TESTS.md Stage 1).
 Step 3 could be done before step 2 in principle (the map exists at `onStart`),
 but a dump written from a game that never runs is unverifiable, so it follows.
 
+### Step 1 RESULT #2 (measured 2026-10-07): transport works, the registry does not
+
+After fixing the jar (see the four blockers in `_AI/CHALLENGES/OpenBW.md`) the
+socket connects from a bare classpath AND from the packed Atlantis jar:
+
+```
+SRV=1168435 SOCK=/tmp/bwapi_socket_1168435
+socket srwxrwxr-x
+--- connect test (server alive: YES) ---
+CONNECTED OK
+```
+
+So `ClientConnectionPosix`'s transport is not the remaining problem. The
+remaining problem is the **game registry**:
+
+- JBWAPI's `ClientConnectionPosix` first reads
+  `/dev/shm/bwapi_shared_memory_game_list` to discover the server PID, and
+  fails with **"No server proc ID"** when it is empty.
+- This harness's `libBWAPI.so` **does not write that file**: `strings` finds no
+  `game_list` literal in it, and the file stays 0 bytes while the host runs and
+  serves a working socket.
+- The two are a protocol-version mismatch: the client (JBWAPI-Rav, built
+  against upstream BWAPI 4.4) expects the shared-memory game registry; this
+  OpenBW fork publishes only the socket.
+
+**Options, in preference order** (none implemented yet - this is where step 1
+stands):
+
+1. **Make the client skip the registry.** JBWAPI takes the PID from
+   `game_list`; if a supported property or a small client-side shim can supply
+   the PID directly (the host prints it, and it is also the socket suffix), the
+   client attaches without the registry. Cleanest: no change to the shared
+   harness, no change to the engine.
+2. **Point the client at the socket explicitly.** `AFUNIXSocket` connects
+   directly (proven by the test above); if JBWAPI exposes a transport or a
+   socket-path override, use it.
+3. **Build the harness's BWAPI with the registry enabled** (upstream BWAPI
+   writes it; this fork may have it behind a flag). Touches
+   `StardustDevEnvironment/`, which is the shared platform - last resort, and
+   it needs the owner's agreement because other bots link against it.
+
+**Do not** patch JBWAPI's `bwapi/Client*.class` in the jar as a first move: it
+is a vendored dependency and CONVENTIONS §9 makes it the source of truth for
+the protocol, so a local fork of it would have to be maintained and documented.
+Option 1 is the same result without forking a library.
+
+**Where this leaves the plan:** steps 2-5 are blocked on one of the three
+options above. Everything else - the jar, the host script, the lifecycle rules,
+the challenge log - is done and verified.
+
 ## 5. Risks, stated up front
 
 - **Transport mismatch is the real one.** If the POSIX client cannot be made to
