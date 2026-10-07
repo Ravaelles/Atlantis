@@ -165,6 +165,76 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
                         + " line - requiring a base was why workers never fought back");
     }
 
+    @Test
+    public void aBuilderWalkingToASiteCanStillDefendItself() {
+        // The owner's dead-Probe pattern (2026-10-07): every corpse had
+        // `BuilderManager` as its first log entry and `GatherResources` after
+        // it, and WorkerDefenceManager was nowhere - because applies() rejected
+        // every worker with a construction assigned.
+        //
+        // For Protoss that is most of the early game: BuilderManager.isBuilder()
+        // is true while a Probe is merely WALKING to a build site
+        // (`We.protoss() && !worker.isStopped()`), so those workers were removed
+        // from the defence chain entirely.
+        //
+        // A worker that is not yet constructing must be eligible; one that IS
+        // constructing cannot walk away and stays excluded on purpose.
+        String source;
+        try {
+            source = read("src/atlantis/units/workers/defence/WorkerDefenceManager.java");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        assertTrue(!containsCode(source, "if (unit.isBuilder()) return false;"),
+                "a flat 'isBuilder -> return false' removes every assigned worker from"
+                        + " the defence chain, which is how Probes died while walking to a"
+                        + " Pylon with Zealots on top of them");
+
+        assertTrue(containsCode(source, "if (unit.isConstructing()) return false;"),
+                "only a worker that is actually CONSTRUCTING should be excluded - it"
+                        + " cannot walk away and BuilderManager owns it");
+    }
+
+    /**
+     * True when {@code needle} appears outside a comment. The bug being guarded
+     * is described in the surrounding javadoc (which quotes the old line), so a
+     * plain {@code contains} would match the explanation and fail against
+     * correct code - which it did on the first run of this test.
+     */
+    private static boolean containsCode(String source, String needle) {
+        for (String line : source.split("\n")) {
+            String trimmed = line.trim();
+            if (trimmed.startsWith("//") || trimmed.startsWith("*") || trimmed.startsWith("/*")) {
+                continue;
+            }
+            if (line.contains(needle)) return true;
+        }
+        return false;
+    }
+
+    @Test
+    public void anOrdinaryProbeIsStillEligibleAfterTheBuilderRelaxation() {
+        // The relaxation must not have gone too far: a plain mining probe with no
+        // enemies must still be handled (mining), so the manager applies and its
+        // sub-managers decide. If applies() were false for everyone, the defence
+        // would be dead in the other direction.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);
+
+        world(20, units(nexus, probe), new FakeUnit[0], () -> {
+            if (A.now() != 8) return;
+
+            AUnit myProbe = Select.ourWorkers().first();
+            if (myProbe == null) return;
+
+            WorkerDefenceManager defence = new WorkerDefenceManager(myProbe);
+            assertTrue(defence.applies(),
+                    "a quiet mining probe must still be eligible - the defence chain"
+                            + " decides what to do, it is not excluded up front");
+        });
+    }
+
     // ---- helpers -----------------------------------------------------------
 
     private static String methodBody(String path, String startMarker, String endMarker) throws Exception {

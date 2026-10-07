@@ -21,7 +21,27 @@ public class WorkerDefenceManager extends Manager {
     @Override
     public boolean applies() {
         if (!unit.isWorker()) return false;
-        if (unit.isBuilder()) return false;
+
+        // A BUILDER is still a worker, and it must still defend itself. This
+        // used to be a flat `if (unit.isBuilder()) return false;`, so the whole
+        // defence chain - run, fight, avoid - was skipped for any worker with a
+        // construction assigned. For Protoss that is most of the early game:
+        // `BuilderManager.isBuilder()` returns true while the worker is merely
+        // WALKING to a build site (`We.protoss() && !worker.isStopped()`), so a
+        // Probe on its way to a Pylon stood and mined with Zealots on top of it.
+        //
+        // The owner's evidence (2026-10-07) is exactly this: five dead Probes,
+        // each with `BuilderManager` as its first log entry and
+        // `GatherResources` after it - and no WorkerDefenceManager anywhere,
+        // because this line had removed it from the chain.
+        //
+        // A worker that is actually CONSTRUCTING cannot walk away (StarCraft
+        // holds it in place) and must not be told to flee: BuilderManager owns
+        // it and keeps its own under-attack handling. Everything else - walking
+        // to a site, waiting for resources, gathering while assigned - is free
+        // to run or fight.
+        if (unit.isConstructing()) return false;
+
         if (A.isUms() && !Have.main()) return false;
 
         return (!We.terran() || !unit.isRepairing())
