@@ -64,6 +64,22 @@ RUNTIME_LIBS=(
     "lib/vecmath.jar"
 )
 
+# Libraries that must OVERRIDE what JBWAPI-Rav bundles, not just fill gaps.
+#
+# junixsocket: JBWAPI-Rav ships junixsocket 1.0.x, whose
+# AFUNIXSocket.newInstance() calls java.net.Socket.setCreated() - a method that
+# does not exist after Java 8. On a modern JVM (this machine runs 17) the call
+# throws
+#     IllegalStateException: Cannot find method "setCreated" in java.net.Socket
+# and JBWAPI swallows it as a plain connection failure, so the bot loops on
+# "Unable to open communications socket" against a perfectly healthy OpenBW
+# server (measured 2026-10-07). That transport is the only way a POSIX client
+# attaches, so the fix is to ship a junixsocket that works on this JVM.
+OVERRIDE_LIBS=(
+    "lib/junixsocket-common-2.10.1.jar"
+    "lib/junixsocket-native-common-2.10.1.jar"
+)
+
 find src -name "*.java" \
     | grep -v "src/tests/unit/ATargetingTest.java" \
     | sort > "$WORK/sources.txt"
@@ -94,11 +110,21 @@ done
 # any more.)
 
 mkdir -p "$(dirname "$OUT_JAR")"
-python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "${RUNTIME_LIBS[@]}" <<'EOF'
+python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "${RUNTIME_LIBS[@]}" "--" "${OVERRIDE_LIBS[@]}" <<'EOF'
 import sys, zipfile, os, posixpath
 
 out_jar, classes, mode = sys.argv[1], sys.argv[2], sys.argv[3]
-runtime_libs = sys.argv[4:]
+rest = sys.argv[4:]
+sep = rest.index('--')
+runtime_libs = rest[:sep]
+override_libs = rest[sep + 1:]
+
+
+def _is_native(name):
+    """A library's platform payload: keep every platform's, not just win32."""
+    return (name.endswith('.so') or name.endswith('.dylib')
+            or name.endswith('.dll') or name.startswith('win32-x86')
+            or '/linux/' in name or '/darwin/' in name or '/freebsd/' in name)
 
 # --- our compiled classes -------------------------------------------------
 # Everything under tests/ is dropped here, not filtered later: it is compiled so
@@ -144,6 +170,15 @@ for name in rav.namelist():
 # script claimed.
 
 manifest = ['Manifest-Version: 1.0', 'Main-Class: main.Main']
+# Multi-Release MUST be declared: the packaged junixsocket is a multi-release
+# jar (META-INF/versions/9|21/...), and without this flag the JVM ignores those
+# entries. The loader then cannot resolve its NAR metadata and throws
+#     UnsatisfiedLinkError: Could not load native library junixsocket-native
+#     for architecture [amd64-Linux]
+# even with the .so present and correctly named (measured 2026-10-07). The
+# previous manifest had no such line, which is why the OpenBW client could
+# never attach while an isolated classpath test connected fine.
+manifest.append('Multi-Release: true')
 if mode == 'thin':
     # `java -jar` (that is how scbw starts a bot, see sc-docker
     # docker/scripts/play_common.sh) honours a relative Class-Path, so the
@@ -162,6 +197,63 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
         # anything we compiled.
         for arc, data in rav_entries.items():
             entries.setdefault(arc, data)
+        # Overrides BEFORE the plain runtime libs: these replace classes JBWAPI
+        # already contributed (junixsocket), so they must assign, not setdefault.
+        # See OVERRIDE_LIBS above for why.
+        #
+        # The whole org/newsclub package from JBWAPI-Rav is dropped first, and
+        # this is the part that is easy to get wrong: JBWAPI ships junixsocket
+        # 1.0.x (20 classes, AFUNIXSocket extends java.net.Socket), the override
+        # ships 2.10.1 (1500+ classes, AFUNIXSocket extends AFSocket). Overriding
+        # only the classes that exist in BOTH leaves a mix - the new
+        # AFUNIXSocket.next to the old AFUNIXSocketImpl - and the class loader
+        # then throws on the first call, which JBWAPI reports as a plain
+        # connection failure (measured 2026-10-07, "Cannot find method
+        # setCreated" and then a silent non-connection). Never a mix: drop the
+        # old package entirely, then lay the new one down.
+        for arc in list(entries):
+            if arc.startswith('org/newsclub/'):
+                del entries[arc]
+            # The 1.0.x NATIVE payload lives under lib/, not under
+            # org/newsclub/: lib/<arch>/jni/libjunixsocket-native-1.0.2.so. The
+            # 2.10.1 loader looks for its own .so by name and finds the old one
+            # first otherwise, throwing UnsatisfiedLinkError.
+            elif 'junixsocket-native-1.' in arc:
+                del entries[arc]
+            # The old fork's maven metadata (no.fiken.oss.junixsocket) is read by
+            # NativeLibraryLoader to decide WHICH native to load; leaving it in
+            # makes the loader look for the wrong artefact even when the right
+            # .so is packaged (measured 2026-10-07 - this was the last blocker).
+            elif arc.startswith('META-INF/maven/no.fiken.oss.junixsocket/'):
+                del entries[arc]
+        for lib in override_libs:
+            with zipfile.ZipFile(lib, 'r') as z:
+                for name in z.namelist():
+                    if name.endswith('/') or name == 'META-INF/MANIFEST.MF':
+                        continue
+                    # NOT just .class and natives: junixsocket 2.x decides WHICH
+                    # native to load from its META-INF/native-image/**/resource-config.json
+                    # descriptors. Dropping them made the loader throw
+                    #     UnsatisfiedLinkError: Could not load native library
+                    #     junixsocket-native for architecture [amd64-Linux]
+                    # even though the .so was right there in the jar (measured
+                    # 2026-10-07 - the .so alone is not enough).
+                    if name.endswith('.class') or _is_native(name) \
+                            or name.startswith('META-INF/native-image/') \
+                            or name.startswith('META-INF/maven/'):
+                        entries[name] = z.read(name)
+                        # junixsocket 2.10.1 ships its Linux natives under
+                        # lib/<arch>-<compiler>/jni/ (e.g. amd64-Linux-clang),
+                        # but the loader builds the path from the JVM's own
+                        # architecture string and looks under lib/amd64-Linux/jni/
+                        # - so it reports the architecture as unsupported even
+                        # though the .so is in the jar (measured 2026-10-07:
+                        # UnsatisfiedLinkError "Could not load native library
+                        # junixsocket-native for architecture [amd64-Linux]").
+                        # Alias every -clang native to the plain architecture
+                        # name, which is what the loader actually asks for.
+                        if '/jni/' in name and '-clang/' in name:
+                            entries[name.replace('-clang/', '/')] = z.read(name)
         for lib in runtime_libs:
             if lib.endswith('JBWAPI-Rav.jar'):
                 continue  # already merged above, and it must not overwrite our bwem fork
@@ -169,18 +261,7 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
                 for name in z.namelist():
                     if name.endswith('/') or name == 'META-INF/MANIFEST.MF':
                         continue
-                    # Runtime libraries ship classes plus their native payload.
-                    # The natives used to be filtered to win32-x86 only, which
-                    # silently dropped jnativehook's Linux library
-                    # (com/github/kwhat/jnativehook/lib/linux/x86_64/
-                    # libJNativeHook.so) - AKeyboard then died on Linux with
-                    # "UnsatisfiedLinkError: Unable to extract the native
-                    # library". Keep every platform's natives.
-                    native = (name.endswith('.so') or name.endswith('.dylib')
-                              or name.endswith('.dll') or name.startswith('win32-x86')
-                              or '/linux/' in name or '/darwin/' in name
-                              or '/freebsd/' in name)
-                    if name.endswith('.class') or native:
+                    if name.endswith('.class') or _is_native(name):
                         entries.setdefault(name, z.read(name))
     for arc, data in entries.items():
         zout.writestr(arc, data)
@@ -229,6 +310,35 @@ with zipfile.ZipFile(out_jar) as z:
             assert os.path.exists(os.path.join(os.path.dirname(os.path.abspath(out_jar)),
                                                'lib', os.path.basename(lib))), \
                 'thin mode: %s missing from lib/' % lib
+
+# The packaged junixsocket must be the Java-8+-compatible one, not the 1.0.x
+# JBWAPI-Rav bundles: the old AFUNIXSocket calls Socket.setCreated(), which
+# throws on any JVM after 8 and makes every POSIX client fail to attach
+# (measured 2026-10-07). Assert the override really won.
+# The whole junixsocket package must be the 2.10.1 one, never a mix with
+# JBWAPI's 1.0.x: the old AFUNIXSocketImpl next to the new AFSocket-based
+# AFUNIXSocket breaks the loader, and JBWAPI reports it as a plain
+# connection failure (measured 2026-10-07).
+afunix = zipfile.ZipFile(out_jar).read('org/newsclub/net/unix/AFUNIXSocket.class')
+assert b'setCreated' not in afunix, (
+    'junixsocket in the jar still calls Socket.setCreated() - the JBWAPI copy '
+    'was not overridden, and the OpenBW client will fail to attach on Java 9+')
+assert any('AFUNIXSocketAddress' in n for n in names), \
+    'junixsocket override not packaged (no AFUNIXSocketAddress class)'
+assert 'org/newsclub/net/unix/AFSocket.class' in names, \
+    'junixsocket 2.x base class missing - the package is a mix of 1.0.x and 2.10.1'
+# No 1.0.x native may survive next to the 2.10.1 classes: the loader picks
+# the wrong one and the client dies with UnsatisfiedLinkError.
+stale = [n for n in names if 'junixsocket-native-1.' in n]
+assert not stale, 'stale junixsocket 1.0.x native in the jar: %s' % stale[:3]
+assert any('junixsocket-native-2.10.1.so' in n for n in names), \
+    'junixsocket 2.10.1 native .so missing from the jar'
+# The native-image descriptors decide which .so the loader picks. Without
+# them the loader reports the architecture as unsupported even with the
+# library present (measured 2026-10-07).
+assert any(n.startswith('META-INF/native-image/') and n.endswith('resource-config.json')
+           for n in names), \
+    'junixsocket native-image descriptors missing - the loader cannot pick a native'
 
 size_mb = os.path.getsize(out_jar) / 1024.0 / 1024.0
 print('OK: %s  %.1f MB  %d entries  mode=%s  (%d harness/simulator classes not shipped)'

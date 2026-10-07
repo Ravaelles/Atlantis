@@ -38,7 +38,11 @@ SERVER_SCRIPT="$HARNESS_DIR/scripts/run-openbw-server.sh"
 WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 JAR="$WINE_BOT_DIR/Atlantis.jar"
 
-MAP_DEFAULT="maps/sscai/(4)Python.scx"
+# The harness serves maps from StardustDevEnvironment/build/test/maps/; the
+# owner's map is the COG TauCross (measured path 2026-10-07 - the sscai copy
+# has a different name, and a wrong path is what made the first server start
+# exit immediately).
+MAP_DEFAULT="maps/cog/(3)TauCross1.1.scx"
 MAP="${1:-$MAP_DEFAULT}"
 RACE="${2:-Protoss}"
 ENEMY_RACE="${3:-Zerg}"
@@ -49,17 +53,16 @@ SELF_TEST=0
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
 
-# Nothing may outlive the run: a leftover BWAPILauncher holds the shared-memory
-# game table, so the next run's client would attach to a dead game and the
-# failure would look random. "java -jar Atlantis.jar" is matched by the jar
-# path, not the bare word (which would also match the shell itself).
+# Teardown. A leftover host holds the game table, so the next run's client
+# adopts a dead PID and loops on "Unable to open communications socket"
+# (measured 2026-10-07). It runs on EXIT/INT/TERM and on the normal path.
+#
+# `pkill -9 -x BWAPILauncher` and never -f: a -f pattern also matches this
+# script's own command line and the shell kills itself before printing
+# anything (_AI/CHALLENGES/GameExecution.md #2).
 cleanup() {
-  [ -n "${SERVER_PID:-}" ] && kill "$SERVER_PID" 2>/dev/null || true
-  [ -n "${BOT_PID:-}" ] && kill "$BOT_PID" 2>/dev/null || true
-  # -x (exact process name), never -f: a -f pattern matches this script's own
-  # command line and the shell kills itself before it can print anything
-  # (measured 2026-10-07, _AI/CHALLENGES/GameExecution.md #2).
   pkill -9 -x BWAPILauncher 2>/dev/null || true
+  rm -f /tmp/bwapi_socket_* 2>/dev/null || true
   return 0
 }
 trap cleanup EXIT INT TERM
@@ -118,33 +121,51 @@ if [ "$SELF_TEST" -eq 1 ]; then
 fi
 
 # --- 4. Run: server first, bot second ------------------------------------
-# The server must be up before the client attaches (LOCAL-STARDRAFT.md); the
-# client itself polls, so a short head start is enough.
+# The client attaches to the SERVER's shared segment, and that segment exists
+# only while the server process is alive. So the order is: host the game, wait
+# for the segment (not a guessed sleep), then start the client, and only tear
+# the host down after the client is gone.
 SERVER_LOG="$ATLANTIS_DIR/out/openbw/server.log"
 BOT_LOG="$ATLANTIS_DIR/out/openbw/bot.log"
 mkdir -p "$(dirname "$SERVER_LOG")"
 
-# The client maps a socket named after the SERVER's PID, so no stale server or
-# socket may exist before hosting (the server script documents the same hazard
-# from its own side). Clearing here rather than relying on it keeps the run
-# self-contained.
+# Clear stale transport first: a leftover host or segment poisons this run.
+# Both namespaces are cleared because the server publishes a /dev/shm segment
+# AND a /tmp socket, both named after the hosting PID.
 pkill -9 -x BWAPILauncher 2>/dev/null || true
-rm -f /tmp/bwapi_socket_* 2>/dev/null || true
+rm -f /tmp/bwapi_socket_* /dev/shm/bwapi_shared_memory_* 2>/dev/null || true
 
 say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE"
 
-# Bounded to 6 minutes (CONVENTIONS §13). `timeout` also covers the server,
-# so a hung game cannot outlive the run.
-timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" >"$SERVER_LOG" 2>&1 &
-SERVER_PID=$!
-sleep 2
+# setsid + nohup: the host must survive this script's process group (the
+# harness script ends with `exec BWAPILauncher`, so its PID is the host's PID).
+# `timeout` bounds it (CONVENTIONS §13) so a hung game cannot outlive the run.
+setsid nohup timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
+  >"$SERVER_LOG" 2>&1 </dev/null &
+SERVER_WRAPPER_PID=$!
 
-if ! kill -0 "$SERVER_PID" 2>/dev/null; then
-  say "server exited immediately; log tail:"
+# Wait for the SHARED SEGMENT, which is the transport the client actually
+# opens first (`/dev/shm/bwapi_shared_memory_<pid>`, decompiled from
+# ClientConnectionPosix). The socket alone is not proof - it appears alongside
+# the segment, but the segment is what a missing one makes the client fail on.
+HOSTED=0
+for _ in $(seq 1 60); do
+  if ls /dev/shm/bwapi_shared_memory_* >/dev/null 2>&1; then HOSTED=1; break; fi
+  if ! kill -0 "$SERVER_WRAPPER_PID" 2>/dev/null && ! pgrep -x BWAPILauncher >/dev/null 2>&1; then
+    say "server exited before hosting; log tail:"
+    tail -20 "$SERVER_LOG" | sed 's/^/    /'
+    exit 1
+  fi
+  sleep 0.5
+done
+
+if [ "$HOSTED" -ne 1 ]; then
+  say "server did not publish a shared segment within 30 s; log tail:"
   tail -20 "$SERVER_LOG" | sed 's/^/    /'
   exit 1
 fi
 
+say "game hosted: $(ls /dev/shm/bwapi_shared_memory_* 2>/dev/null | tr '\n' ' ')"
 say "starting bot: $BOT_RUN_DIR (headless, GAME_LAUNCHER=OPENBW)"
 cd "$BOT_RUN_DIR"
 BOT_EXIT=0

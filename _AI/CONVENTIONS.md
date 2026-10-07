@@ -275,6 +275,48 @@ and never from decompiling the game archives.
   cross-system quick reference — when in doubt, put the one-liner there and
   the details in the specialist file.
 
+### 11a. READ FIRST: the game/process challenges (owner's ruling, 2026-10-07)
+
+**Before touching anything that starts a game, attaches a client to one, or
+packs the bot jar, read these files.** They are not optional background
+reading: every failure in them cost a full research cycle, and several of them
+looked like a different problem than they were (the OpenBW client, for
+instance, reported "cannot open socket" while the actual cause was a Java
+library that cannot run on Java 9+, several layers away).
+
+- **`_AI/CHALLENGES/OpenBW.md`** — attaching the Java client to the headless
+  engine. Four independent blockers that all present as the same symptom
+  ("the client does not attach"): an old junixsocket that cannot run on
+  Java 9+, a mixed junixsocket package, the native-library packaging rules
+  (version, compiler tag, descriptors, `Multi-Release: true`, stale NAR/maven
+  metadata), and the server/`game_list` lifetime trap.
+- **`_AI/CHALLENGES/GameExecution.md`** — Wine vs OpenBW setups and the
+  accidental StarCraft launches: why an "OpenBW" run started a real game
+  (the bot directory's `ENV`), `pkill -f` killing the calling shell, and
+  git-ignored `ENV` edits that silently vanish.
+
+Both files end in rules that are already in §13/§14; the files carry the
+measurements, this section is the pointer so nobody has to rediscover them.
+
+## 12. Test runtime budget (owner's ruling, 2026-10-06)
+
+- `scripts/run-tests.sh` is the model-facing inner loop: it must finish well
+  under 40 s. Its default scope is `tests.unit` + `tests.architecture`
+  (~11 s with the compile, measured). It **refuses** the slow scopes —
+  `tests.e2e` (64 s) and `tests.acceptance` (12 s) — and also the bare `tests`
+  root package, which would include them. Exit code 2 with a pointer to
+  `scripts/run-full-tests.sh`.
+- The slow scopes are **owner-only**: `scripts/run-full-tests.sh` runs every
+  scope with per-scope timings and is run by the owner manually, not by
+  models. `--allow-slow` overrides for a one-off debug run.
+- Measured budget (2026-10-06, do not trust these forever — re-measure before
+  widening any scope): compile ~8 s, unit 2 s, architecture 1 s, acceptance
+  12 s, e2e scenarios 64 s.
+- The eventual target is a single OpenBW mega-test covering most of the bot's
+  logic in one run (see §10). Until it exists, the stub scenarios stay in the
+  owner-only tier: they are the best signal we have, but too slow for the
+  inner loop.
+
 ## 13. Command timeout (owner's ruling, 2026-10-07; shortened same day)
 
 - **Every command must be run with a 6-minute (360 s) timeout.** A long-running
@@ -316,21 +358,34 @@ and never from decompiling the game archives.
   2026-10-07 - it happened three times). The OpenBW script uses its own bot
   directory for exactly this reason.
 
-## 12. Test runtime budget (owner's ruling, 2026-10-06)
+## 15. Game runs and client attachment: hard rules (owner's ruling, 2026-10-07)
 
-- `scripts/run-tests.sh` is the model-facing inner loop: it must finish well
-  under 40 s. Its default scope is `tests.unit` + `tests.architecture`
-  (~11 s with the compile, measured). It **refuses** the slow scopes —
-  `tests.e2e` (64 s) and `tests.acceptance` (12 s) — and also the bare `tests`
-  root package, which would include them. Exit code 2 with a pointer to
-  `scripts/run-full-tests.sh`.
-- The slow scopes are **owner-only**: `scripts/run-full-tests.sh` runs every
-  scope with per-scope timings and is run by the owner manually, not by
-  models. `--allow-slow` overrides for a one-off debug run.
-- Measured budget (2026-10-06, do not trust these forever — re-measure before
-  widening any scope): compile ~8 s, unit 2 s, architecture 1 s, acceptance
-  12 s, e2e scenarios 64 s.
-- The eventual target is a single OpenBW mega-test covering most of the bot's
-  logic in one run (see §10). Until it exists, the stub scenarios stay in the
-  owner-only tier: they are the best signal we have, but too slow for the
-  inner loop.
+These are the rules distilled from the OpenBW investigation
+(`_AI/CHALLENGES/OpenBW.md`); they exist so the same hours are not spent twice.
+
+- **One command owns the whole lifecycle.** A game host and the client that
+  attaches to it must be started, waited for and torn down **in a single
+  command**. Starting the host in one terminal call and the client in the next
+  loses the host (the session's process group is killed when the call ends),
+  and the client then chases a dead PID. `scripts/run-openbw-e2e.sh` is shaped
+  exactly this way and is the only supported entry point.
+- **Never trust a PID you did not just observe.** `BWAPILauncher` forks, so
+  `$!` is not necessarily the PID that owns the transport; compare
+  `pgrep -x BWAPILauncher` with the PID in
+  `/dev/shm/bwapi_shared_memory_game_list` before concluding anything.
+- **Clear stale state before hosting, never after.**
+  `pkill -9 -x BWAPILauncher`, then
+  `rm -f /dev/shm/bwapi_shared_memory_* /tmp/bwapi_socket_*`. A dead host leaves
+  its PID in `game_list` and the next client adopts it ("No server proc ID").
+  A stale entry is indistinguishable from a live one from the client's side.
+- **`pkill -x`, never `pkill -f`.** A `-f` pattern matches the command line of
+  the shell running it, so the shell SIGKILLs itself before it can print
+  anything - which reads as a mysterious hang, not as a self-kill.
+- **When a client will not attach, split the layers before changing anything.**
+  A 20-line program that opens the socket with the same library separates
+  "is the transport reachable" from "does the client work"; running it against
+  a bare classpath and against the packed jar is what located a five-part
+  packaging bug that the client log blamed on the socket.
+- **A jar that cannot attach is a build failure.** `build-bot-jar.sh` asserts
+  the packaged junixsocket is the working one; a silent mispackage is worse
+  than a red build, because it surfaces as "the bot never joins the game".
