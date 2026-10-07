@@ -36,12 +36,32 @@ public final class ProductionScheduler {
     private final ProducerFacilityRegistry facilityRegistry;
     private final PlacementPlanner placementPlanner;
 
+    /**
+     * "Do we already have one of these?" - the question the prerequisite step
+     * must ask before planning to build something we own.
+     *
+     * <p>
+     * Without it the scheduler re-planned the things a goal already had: a
+     * Probe's engine prerequisite is the Nexus, so every worker goal planned a
+     * second Nexus (400 minerals) before it would schedule a 50-mineral Probe.
+     * The plan looked busy and the opening was dead - measured on the real
+     * engine 2026-10-07, and the exact symptom the redesign was meant to
+     * remove.
+     */
+    private final ExistingItems existingItems;
+
     /** Planned buildings become facilities when they finish: type -> earliest available frame. */
     private final Map<String, Integer> plannedFacilityAvailableFrom = new HashMap<>();
 
     public ProductionScheduler(ProducerFacilityRegistry facilityRegistry, PlacementPlanner placementPlanner) {
+        this(facilityRegistry, placementPlanner, ExistingItems.NONE);
+    }
+
+    public ProductionScheduler(ProducerFacilityRegistry facilityRegistry, PlacementPlanner placementPlanner,
+            ExistingItems existingItems) {
         this.facilityRegistry = facilityRegistry;
         this.placementPlanner = placementPlanner;
+        this.existingItems = existingItems != null ? existingItems : ExistingItems.NONE;
     }
 
     public ProductionPlan schedule(List<ProductionGoal> goals, ResourceTimeline timeline) {
@@ -80,6 +100,12 @@ public final class ProductionScheduler {
     private void schedulePrerequisites(Producible item, ResourceTimeline timeline, ProductionPlan plan) {
         for (Producible prerequisite : item.immediatePrerequisites()) {
             if (plan.contains(prerequisite))
+                continue;
+
+            // Already built (or being built) in the game? Then it is not a
+            // prerequisite to plan - it is a prerequisite that is met. This is
+            // the check that stops a Nexus being planned for every Probe.
+            if (existingItems.have(prerequisite))
                 continue;
 
             // Recurse: a prerequisite can have prerequisites of its own.

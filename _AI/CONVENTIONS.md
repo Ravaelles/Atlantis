@@ -275,20 +275,46 @@ and never from decompiling the game archives.
   cross-system quick reference — when in doubt, put the one-liner there and
   the details in the specialist file.
 
-## 13. Command timeout (owner's ruling, 2026-10-07)
+## 13. Command timeout (owner's ruling, 2026-10-07; shortened same day)
 
-- **Every command must be run with a 15-minute (900 s) timeout.** A long-running
+- **Every command must be run with a 6-minute (360 s) timeout.** A long-running
   command that is not killed makes the session look hung, and the time is gone
-  for good. This has happened more than once (a game run left in the
-  foreground was the last one).
-- Concretely: prefix anything that can block with `timeout 900` (or a smaller
-  bound for a known-fast command), and prefer a background operation plus a
-  short poll over a foreground wait. `scripts/run-tests.sh` is already bounded
-  by its own 40 s budget; the rule matters for builds, game runs, downloads and
-  any script whose runtime is not obviously seconds.
+  for good. This has happened more than once. If a command needs more than six
+  minutes it is not slow, it is hung, misconfigured or headed for the wrong
+  approach - kill it and pick a different shape (background + poll, a shorter
+  horizon, or ask the owner for a decision).
+- Concretely: prefix anything that can block with `timeout 360`, and prefer a
+  background operation plus a short poll over a foreground wait.
+  `scripts/run-tests.sh` is already bounded by its own 40 s budget; the rule
+  matters for builds, game runs, downloads and any script whose runtime is not
+  obviously seconds.
 - When a command is killed by the timeout, say so in the summary and do not
   claim its result. A timed-out run is not evidence of anything except that the
-  step needs a different shape (background + poll, or a shorter horizon).
+  step needs a different shape.
+
+## 14. Never start StarCraft (owner's ruling, 2026-10-07)
+
+- **Do not launch StarCraft, ChaosLauncher or Wine (directly or via
+  `scripts/run-wine-*.sh`) unless the owner asks for exactly that.** They were
+  started several times in one session and had to be killed by hand. The owner
+  runs real games himself.
+- **The engine for E2E work is OpenBW**, headless and in-process: it needs no
+  Wine, no game window and no licensed install to drive, and it is what
+  `StardustDevEnvironment/` already runs. New E2E work targets OpenBW; the Wine
+  path stays available for the owner's own verification, not for model runs.
+- **The two setups are separate directories and must stay separate** (this is
+  the concrete split, not a promise):
+  - **Wine**: `scripts/run-wine-*.sh` → `bots/AtlantisP/AI/` (its `ENV` has
+    `GAME_LAUNCHER=WINE`) → real StarCraft 1.16.1 + ChaosLauncher vs Blizzard AI.
+  - **OpenBW**: `scripts/run-openbw-e2e.sh` → `bots/AtlantisOpenBW/AI/` (its
+    `ENV` has `GAME_LAUNCHER=OPENBW`) → `StardustDevEnvironment/`'s
+    `build/bin/BWAPILauncher` hosting a headless game; the bot attaches as a
+    BWAPI client.
+- **Never start the OpenBW bot from `bots/AtlantisP/AI/`.** That directory's
+  `ENV` says `GAME_LAUNCHER=WINE`, so the bot starts StarCraft itself: an
+  "OpenBW" run launched from there silently opens a real game (measured
+  2026-10-07 - it happened three times). The OpenBW script uses its own bot
+  directory for exactly this reason.
 
 ## 12. Test runtime budget (owner's ruling, 2026-10-06)
 

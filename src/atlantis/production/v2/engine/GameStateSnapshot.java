@@ -116,6 +116,24 @@ public final class GameStateSnapshot {
         };
     }
 
+    /**
+     * "Do we already have one?" answered from the live game - finished or under
+     * construction, so the scheduler never plans a second Nexus for its workers.
+     */
+    public atlantis.production.v2.ExistingItems existingItems() {
+        return new atlantis.production.v2.ExistingItems() {
+            @Override
+            public boolean have(atlantis.production.v2.Producible item) {
+                AUnitType type = AUnitType.getByName(item.id());
+                if (type == null) return false;
+
+                // Finished or being built: either way a new one is not a
+                // prerequisite to plan.
+                return Select.ourWithUnfinished().ofType(type).notEmpty();
+            }
+        };
+    }
+
     private int availableFromFrame(AUnit facility) {
         if (!facility.isCompleted()) {
             return Math.max(0, facility.getRemainingBuildTime());

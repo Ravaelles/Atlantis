@@ -75,7 +75,8 @@ public final class ProductionEngine {
         ResourceTimeline timeline = state.buildTimeline();
         List<ProductionGoal> goals = collectGoals(state);
 
-        ProductionScheduler scheduler = new ProductionScheduler(state.facilityRegistry(), placementPlanner);
+        ProductionScheduler scheduler = new ProductionScheduler(
+                state.facilityRegistry(), placementPlanner, state.existingItems());
         ProductionPlan plan = scheduler.schedule(goals, timeline);
         lastPlan = plan;
 
