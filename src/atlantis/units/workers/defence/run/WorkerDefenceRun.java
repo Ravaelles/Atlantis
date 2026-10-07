@@ -17,13 +17,13 @@ import java.util.List;
 public class WorkerDefenceRun extends Manager {
 
     /** How far a helper will travel to answer a wounded fellow worker. */
-    private static final double HELP_RADIUS = 6.0;
+    private static final double HELP_RADIUS = 2.2;
 
     /** The helper must be this healthy, or it is just another victim. */
-    private static final int HELPER_MIN_HP = 34;
+    private static final int HELPER_MIN_HP = 35;
 
     /** The victim must be at most this healthy to be worth helping. */
-    private static final int VICTIM_MAX_HP = 34;
+    private static final int VICTIM_MAX_HP = 25;
 
     public WorkerDefenceRun(AUnit unit) {
         super(unit);
