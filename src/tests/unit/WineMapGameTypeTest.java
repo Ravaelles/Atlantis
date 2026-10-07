@@ -7,8 +7,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -72,11 +72,17 @@ public class WineMapGameTypeTest {
 
     @Test
     public void neitherScriptHardcodesAMapFamilyGameType() throws IOException {
-        for (Path path : new Path[] { WINE_GAME, WINE_FULL }) {
-            List<String> hardcoded = read(path).lines()
-                    .filter(l -> l.trim().startsWith("game_type"))
-                    .filter(l -> !l.contains("$GAME_TYPE"))
-                    .collect(Collectors.toList());
+        // Java 8: no String.lines() (Java 11) and no stream collection here -
+        // this tree compiles with --release 8 as one unit, tests included, so a
+        // Java 9+ API in a test breaks the GAME JAR build, not just the test.
+        for (Path path : SCRIPTS) {
+            List<String> hardcoded = new ArrayList<>();
+            for (String line : read(path).split("\\n")) {
+                String trimmed = line.trim();
+                if (trimmed.startsWith("game_type") && !trimmed.contains("$GAME_TYPE")) {
+                    hardcoded.add(trimmed);
+                }
+            }
 
             assertTrue(hardcoded.isEmpty(),
                     path + " still hardcodes a game_type: " + hardcoded);
@@ -87,9 +93,17 @@ public class WineMapGameTypeTest {
     public void bothScriptsAreSyntacticallyUsable() throws IOException {
         // The mapping is worthless if the script does not parse. bash -n is the
         // cheapest guard, and it would have caught a broken sed/quote here.
-        for (Path path : new Path[] { WINE_GAME, WINE_FULL }) {
+        for (Path path : SCRIPTS) {
             assertEquals(0, bashSyntaxCheck(path), path + " does not parse as bash");
         }
+    }
+
+    /** The scripts this rule covers. A field, because Java 8 has no List.of(). */
+    private static final List<Path> SCRIPTS = new ArrayList<>();
+
+    static {
+        SCRIPTS.add(WINE_GAME);
+        SCRIPTS.add(WINE_FULL);
     }
 
     private static int bashSyntaxCheck(Path path) throws IOException {
