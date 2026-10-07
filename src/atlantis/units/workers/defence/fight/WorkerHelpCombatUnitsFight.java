@@ -23,6 +23,14 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public boolean applies() {
+        if (unit.hp() <= minHp()) return f();
+        if (unit.isBuilder()) return f();
+
+        // In a base defence the modulo skip must not idle a fifth of the
+        // workforce (B-19: the skipped probes never supported the cannon).
+        if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
+        if (unit.enemiesNear().combatUnits().empty()) return f();
+
         // A WOUNDED worker must never be excluded here - it must be free to RUN.
         // The old order put two exclusions before this point that together meant
         // "a hurt worker gathering is told to keep gathering":
@@ -41,13 +49,6 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // run manager from here would add a fight -> run dependency the
         // architecture forbids: CONVENTIONS §5, ArchitectureBoundaryTest.)
         if (isWoundedAndInDanger()) return false;
-
-        // In a base defence the modulo skip must not idle a fifth of the
-        // workforce (B-19: the skipped probes never supported the cannon).
-        if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
-        if (unit.enemiesNear().combatUnits().empty()) return f();
-        if (unit.hp() <= minHp()) return f();
-        if (unit.isBuilder()) return f();
 
         // NOTE: `lastActionLessThanAgo(GATHER_MINERALS)` used to gate this out.
         // Gathering is what a worker does by default, so "recently gathered"

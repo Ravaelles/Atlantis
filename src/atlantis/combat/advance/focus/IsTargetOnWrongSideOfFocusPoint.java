@@ -20,7 +20,12 @@ public class IsTargetOnWrongSideOfFocusPoint {
             // while every other gate already allowed the fight). The comparison
             // above still vetoes everything that would require actual travel.
             if (unit.isTargetInWeaponRangeAccordingToGame(target)) return false;
-            if (unit.distTo(target) <= 3) return false;
+
+            if (unit.isRanged()) {
+                if (unit.distTo(target) <= 3) return false;
+            }
+
+            if (unit.isMelee() && unit.distTo(target) <= 1.3) return false;
 
             return true;
         }

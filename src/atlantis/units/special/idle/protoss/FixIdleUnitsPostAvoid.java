@@ -13,10 +13,10 @@ public class FixIdleUnitsPostAvoid extends Manager {
     public boolean applies() {
         if (!unit.isActiveManager(ProtossAvoidEnemies.class)) return false;
         if (unit.lastUnderAttackLessThanAgo(50)) return false;
-        if (unit.lastPositionChangedAgo() <= 40) return false;
-        if (unit.lastActionLessThanAgo(1)) return false;
+//        if (unit.lastPositionChangedAgo() <= 40) return false;
+//        if (unit.lastActionLessThanAgo(1)) return false;
 
-        return (!unit.isMoving() || unit.enemiesThatCanAttackMe(2).empty())
+        return (!unit.isMoving() || unit.enemiesThatCanAttackMe(2.2).empty())
             || unit.lastPositionChangedAgo() >= 2
             || unit.targetPosition() == null
             || unit.distToTargetPosition() <= 0.05;
