@@ -91,6 +91,12 @@ reproduce). Suite **250/0/4**, ArchUnit 7/7, store unchanged.
   root). `ExistingItems` port fixes the phantom second Nexus that blocked the
   opening. Test: `ProductionEngineSmokeTest`, `WorkerProductionTest` (3),
   `OpeningDoesNotHoardMineralsTest`.
+- **Tech and upgrades DONE**: `TechProducible` and `UpgradeProducible` close the
+  §2-smell-2 gap - v2 planned units and buildings only, so a research goal would
+  have been sent to `train()` and silently done nothing. The dispatcher now
+  routes them to `OrderDirector.researchOrUpgrade`, and `GameOrderDirector`
+  implements it (with the same "is the facility able to take it" guard the train
+  path needed). Test: `TechAndUpgradeProducibleTest` (6).
 - Open: a real game run with PRODUCTION_V2=DRY_RUN, then LIVE; then the legacy
   `Queue/**` + `ProductionOrder` + `PreventDuplicateOrders` + `Construction/**`
   healing commanders deleted and the ArchUnit store shrunk.

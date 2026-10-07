@@ -6,9 +6,13 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.Producible;
+import atlantis.production.v2.TechProducible;
+import atlantis.production.v2.UpgradeProducible;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import bwapi.TechType;
+import bwapi.UpgradeType;
 
 /**
  * The live {@link OrderDirector}: the only place production-v2 touches the game.
@@ -76,11 +80,30 @@ public class GameOrderDirector implements OrderDirector {
 
     @Override
     public boolean researchOrUpgrade(String typeId, Producible item) {
-        // Techs and upgrades are a later v2 increment: until ProducedTech /
-        // ProducedUpgrade exist, the legacy dynamic commanders own them. The
-        // dispatcher only reaches this method for an item that declares a
-        // producer type, and today none does, so this is unreachable in the
-        // live game and reports failure instead of guessing.
+        AUnitType facilityType = resolveUnitType(typeId);
+        if (facilityType == null) return false;
+
+        // Same guard as train: the engine throws (rather than returning false)
+        // when a building is asked for work it cannot take, and a facility that
+        // is still being built has no research queue at all.
+        AUnit facility = Select.ourFree(facilityType).first();
+        if (facility == null) return false;
+        if (!facility.isCompleted()) return false;
+
+        if (item instanceof TechProducible) {
+            TechType tech = ((TechProducible) item).tech();
+            if (facility.isResearching()) return true;
+
+            return facility.research(tech);
+        }
+
+        if (item instanceof UpgradeProducible) {
+            UpgradeType upgrade = ((UpgradeProducible) item).upgrade();
+            if (facility.isUpgrading()) return true;
+
+            return facility.upgrade(upgrade);
+        }
+
         return false;
     }
 

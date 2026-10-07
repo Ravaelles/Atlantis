@@ -3,6 +3,9 @@ package atlantis.production.v2.execution;
 import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.ProductionPlan;
+import atlantis.production.v2.Producible;
+import atlantis.production.v2.TechProducible;
+import atlantis.production.v2.UpgradeProducible;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -121,7 +124,21 @@ public final class ProductionDispatcher {
             return new DispatchResult(item, false, "no producer type");
         }
 
+        // Tech and upgrades are researched, not trained: the facility answer is
+        // the same (producerTypeId), but the engine command is a different one.
+        // Without this branch a Dragoon's Singularity Charge would be sent to
+        // train(), which is how a research goal would silently do nothing.
+        if (isResearch(item.item())) {
+            boolean researched = director.researchOrUpgrade(producerTypeId, item.item());
+            return new DispatchResult(item, researched,
+                researched ? "researched" : "facility busy or missing");
+        }
+
         boolean ok = director.trainFacility(producerTypeId, item.item());
         return new DispatchResult(item, ok, ok ? "trained" : "no free facility");
+    }
+
+    private boolean isResearch(Producible item) {
+        return item instanceof TechProducible || item instanceof UpgradeProducible;
     }
 }
