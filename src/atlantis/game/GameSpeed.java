@@ -204,9 +204,6 @@ public class GameSpeed {
         if (game() != null) {
             changeSpeedTo(speed);
         }
-        else {
-            System.err.println("Can't change game speed, bwapi is null.");
-        }
     }
 
     /**
@@ -222,9 +219,6 @@ public class GameSpeed {
             frameSkip = newFrameSkip;
             game.setFrameSkip(frameSkip);
             game.setFrameSkip(frameSkip);
-        }
-        else {
-            System.err.println("Can't change game speed, bwapi is null.");
         }
     }
 
