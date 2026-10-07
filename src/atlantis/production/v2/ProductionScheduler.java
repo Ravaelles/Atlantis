@@ -48,12 +48,19 @@ public final class ProductionScheduler {
         ProductionPlan plan = new ProductionPlan();
         plannedFacilityAvailableFrom.clear();
 
+        // One pass = one fresh plan: the planner must forget the tiles the
+        // previous pass reserved, or the second Pylon of this frame would be
+        // planned onto the first Pylon's spot.
+        placementPlanner.startPass();
+
         List<ProductionGoal> sorted = new ArrayList<>(goals);
         Collections.sort(sorted);
 
         for (ProductionGoal goal : sorted) {
             scheduleGoal(goal, timeline, plan);
         }
+
+        placementPlanner.endPass();
         return plan;
     }
 
