@@ -75,6 +75,26 @@ fi
 
 # --- 3. Generate bwapi.ini
 #
+# GAME TYPE follows the map folder, and this is not cosmetic (measured
+# 2026-10-07, owner report: "the game stops at the map selection screen"):
+#
+#   sscai/...  -> MELEE               a real melee map; USE_MAP_SETTINGS leaves
+#                                     StarCraft waiting on the player at the map
+#                                     screen, so the bot never gets a game
+#   ums/...    -> USE_MAP_SETTINGS    a UMS scenario carries its own rules;
+#                                     MELEE would ignore them
+#
+# MELEE is also what makes the game start by itself: with USE_MAP_SETTINGS on a
+# non-UMS map StarCraft treats the map's own settings as incomplete and waits.
+MAP_LOOKUP="$MAP"
+case "$MAP" in
+  sscai/*|*/sscai/*) GAME_TYPE="MELEE" ;;
+  *)                 GAME_TYPE="USE_MAP_SETTINGS" ;;
+esac
+MAP_PATH="maps/$MAP_LOOKUP"
+#
+echo "[wine-game] map=$MAP_PATH game_type=$GAME_TYPE"
+
 # Section layout matters (measured 2026-10-05): auto_menu, map, race,
 # enemy_race, game_type and save_replay live under [auto_menu], NOT under [ai].
 # With everything crammed into [ai] BWAPI ignored the auto-start entirely and
@@ -98,8 +118,8 @@ ai = bwapi-data/BWAPI.dll
 auto_menu = SINGLE_PLAYER
 character_name = FIRST
 pause_dbg = OFF
-map = maps/ums/$MAP
-game_type = USE_MAP_SETTINGS
+map = $MAP_PATH
+game_type = $GAME_TYPE
 race = $RACE
 enemy_count = 1
 enemy_race = $ENEMY_RACE

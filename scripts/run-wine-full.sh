@@ -106,10 +106,28 @@ RESOLVED_MAP=$(cd "$GAME_ROOT" && find -L maps -type f -iname "$(basename "$MAP"
 if [ -n "$RESOLVED_MAP" ]; then
   say "  Setting map in bwapi.ini to $RESOLVED_MAP"
   # Match both spellings: "map = X" (script-generated ini) and "map=X"
-# (written by AtlantisIgniter, which normalizes the separator). Measured
-# 2026-10-06: the sed silently missed the "map=X" form and the game kept
-# loading the previous map regardless of what the launcher passed.
-sed -i -E "s|^map *=.*|map=$RESOLVED_MAP|" "$INI"
+  # (written by AtlantisIgniter, which normalizes the separator). Measured
+  # 2026-10-06: the sed silently missed the "map=X" form and the game kept
+  # loading the previous map regardless of what the launcher passed.
+  sed -i -E "s|^map *=.*|map=$RESOLVED_MAP|" "$INI"
+  # The game type follows the map FAMILY, and getting it wrong stops the game at
+  # the map-selection screen (owner report, 2026-10-07):
+  #   sscai/...  -> MELEE               a real melee map; USE_MAP_SETTINGS makes
+  #                                      StarCraft wait for the player instead
+  #                                      of starting
+  #   ums/...    -> USE_MAP_SETTINGS    a UMS scenario carries its own rules
+  # The resolved path already contains the family, so key off it rather than off
+  # the name the caller passed.
+  case "$RESOLVED_MAP" in
+    *sscai*) GAME_TYPE="MELEE" ;;
+    *)       GAME_TYPE="USE_MAP_SETTINGS" ;;
+  esac
+  if grep -qE "^game_type *=" "$INI"; then
+    sed -i -E "s|^game_type *=.*|game_type=$GAME_TYPE|" "$INI"
+  else
+    sed -i -E "s|^(map=.*)$|\1\ngame_type=$GAME_TYPE|" "$INI"
+  fi
+  say "  Setting game_type to $GAME_TYPE (map family)"
 else
   say "  WARNING: map '$MAP' not found under $GAME_ROOT/maps - bwapi.ini left unchanged"
 fi

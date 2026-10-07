@@ -242,6 +242,25 @@ is not used by anything.
 
 ## Rules this produced
 
+## Correction (owner asked, 2026-10-07): "not on my side" was too broad
+
+The earlier wording said the remaining blocker is "not on the model's side".
+That is wrong as stated, and the owner was right to push back:
+
+- **The Wine path worked from a model-run command before, and still does.** It
+  is `scripts/run-wine-*.sh` that starts the game; the model only starts the
+  script. Nothing about the Wine path changed, and the Java 8 runtime it uses is
+  exactly the one the bundled junixsocket needs.
+- **The OpenBW path is the one with the lifetime problem, and only because of
+  its shape**: the host must stay alive across the client's start, and a
+  model-run command's background processes are killed when the command returns.
+  That is an environment constraint of *this* harness arrangement, not a claim
+  that the work is someone else's.
+- The hand-run recipe is in `_AI/PLAN-OPENBW.md` §8, and the two real bugs found
+  on our side during this investigation (the launcher killing the host it was
+  about to join; ENV/build_orders written to the wrong directory) are fixed and
+  tested - those were ours, on our side, and are not "blocked" on anything.
+
 - CONVENTIONS §14: never start StarCraft/ChaosLauncher/Wine; OpenBW is the E2E
   engine, and the two setups live in separate directories
   (`bots/AtlantisP/AI` = Wine, `bots/AtlantisOpenBW/AI` = OpenBW).

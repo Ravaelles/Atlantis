@@ -352,3 +352,50 @@ Step 1, the transport probe. Concretely: read the vendored JBWAPI's connection
 classes, find how it chooses its transport, and compare with what
 `BWAPILauncher` publishes (socket in `/tmp/bwapi_socket_<pid>` vs a segment in
 `/dev/shm`). Everything else in this plan is downstream of that one answer.
+
+## 8. How to run the host by hand (the "you start the server" path)
+
+The blocker is that the host must stay alive while the client attaches, and a
+model-run terminal kills its background processes when the command returns. The
+host's own accept window is 5 s, and everything then runs on the connected
+socket.
+
+**Run these two commands in two terminals you own** (not in one model-run
+command). Terminal A, started first and left running:
+
+```bash
+cd /sc-ai/StardustDevEnvironment/build/test
+export LD_LIBRARY_PATH=/sc-ai/StardustDevEnvironment/build/lib
+export BWAPI_CONFIG_AUTO_MENU__AUTO_MENU=SINGLE_PLAYER
+export BWAPI_CONFIG_AUTO_MENU__MAP="maps/cog/(3)TauCross1.1.scx"
+export BWAPI_CONFIG_AUTO_MENU__RACE=Protoss
+export BWAPI_CONFIG_AUTO_MENU__ENEMY_RACE=Zerg
+/sc-ai/StardustDevEnvironment/build/bin/BWAPILauncher
+```
+
+Terminal B, once A prints (or after ~3 s) - never before, because the host
+creates the socket only when a client knocks:
+
+```bash
+cd /sc-ai/Atlantis/bots/AtlantisOpenBW
+java -jar AI/Atlantis.jar
+```
+
+Notes that make the difference between working and mysterious:
+
+- **Clear the transports first, in A:**
+  `pkill -9 -x BWAPILauncher; rm -f /dev/shm/bwapi_shared_memory_* /tmp/bwapi_socket_*`.
+  A leftover segment makes `Server` set `localOnly` and create **no socket at
+  all**, with nothing in any log.
+- **Do not use `timeout` around the host in A** - it must outlive the client.
+- **Never start the host with `bots/AtlantisP/AI` as the client's directory:**
+  that `ENV` says `GAME_LAUNCHER=WINE` and the bot starts a real game.
+- Atlantis's `ENV` must sit in the directory the jar runs from (Terminal B's
+  `cwd`), and `AI/build_orders` must resolve from there too; otherwise the bot
+  picks the Chaos backend (`taskkill` error on Linux) or dies with
+  `BUILD ORDER is NULL` **after** a successful attach.
+
+An alternative, when the model must own both sides: add a longer accept window
+on the harness side (`Server::checkForConnections`, currently 5 s in
+`StardustDevEnvironment/3rdparty/openbw/bwapi`). That is a change to our fork
+and is the option recorded for the owner's decision.

@@ -99,6 +99,42 @@ public class Atlantis implements BWEventListener {
         // The Wine launcher kills SC+Chaos when it does NOT appear in time
         // (see WineClientSupervisor), so silence has a loud consequence.
         AConsole.println("HELLO_WORLD - BWAPI attached, Atlantis is playing!");
+
+        // Force the game out of StarCraft's pause. Without this a fresh game
+        // sits paused until a human presses a key (owner report, twice:
+        // "the game starts paused, you have to press control"), and the bot
+        // then does nothing while looking perfectly attached.
+        //
+        // Why the bot can fix it and why it was left to a keypress before:
+        // BWAPI exposes resumeGame() (CommandType.ResumeGame) while
+        // pauseGame()/isPaused() only ever PAUSE - there is no "setPaused(false)"
+        // call, so the pause has to be lifted with this command. Measured from
+        // the vendored jar.
+        //
+        // Doing it here (onStart) is the earliest moment the game exists for the
+        // client, and it is the same moment HELLO_WORLD is printed, so the
+        // owner's marker now means "attached AND running" rather than
+        // "attached, maybe still paused". unpauseIfPaused() also runs on the
+        // first frames (see onFrame) because Wine can re-pause on focus loss.
+        unpauseIfPaused("onStart");
+    }
+
+    /**
+     * Lifts StarCraft's pause if the game is paused. Idempotent by design: it is
+     * called on start and for the first frames, and issuing resumeGame() when
+     * the game is already running is harmless but noisy in the log.
+     */
+    private void unpauseIfPaused(String where) {
+        try {
+            if (game != null && game.isPaused()) {
+                game.resumeGame();
+                AConsole.println("Game was paused - sent ResumeGame (" + where + ")");
+            }
+        } catch (Exception e) {
+            // A resume that fails must never take the bot down: the game may
+            // simply not be interactive yet on this frame.
+            AConsole.println("Could not resume game (" + where + "): " + e.getClass().getSimpleName());
+        }
     }
 
     private void setBwapiFlags() {
@@ -114,6 +150,14 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
+        // Wine (and any windowed run) can pause StarCraft when the window loses
+        // focus, which happens right after startup while the desktop is being
+        // arranged. Keep unpausing through the first seconds so the game cannot
+        // sit paused with the bot attached to it (owner report, twice).
+        if (game != null && game.getFrameCount() <= 120) {
+            unpauseIfPaused("frame " + game.getFrameCount());
+        }
+
         OnEveryFrame.update();
     }
 
