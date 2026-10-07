@@ -28,7 +28,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         if (unit.isBuilder()) return f();
         if (unit.lastActionLessThanAgo(3)) return f();
         if (unit.enemiesNear().combatUnits().empty()) return f();
-        if (unit.friendsNear().combatUnits().empty()) return f();
+        if (unit.friendsNear().combatUnits().nonBuildings().countInRadius(10, unit) == 0) return f();
 
         // In a base defence the modulo skip must not idle a fifth of the
         // workforce (B-19: the skipped probes never supported the cannon).

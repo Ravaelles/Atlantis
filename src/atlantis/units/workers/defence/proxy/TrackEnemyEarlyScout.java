@@ -28,6 +28,8 @@ public class TrackEnemyEarlyScout extends Manager {
         // business following anything.
         if (unit.hp() <= 30) return false;
 
+        if (unit.distToMain() >= 25) return false;
+
         return enemyScout != null
             && unit != null
             && unit.hp() >= 18

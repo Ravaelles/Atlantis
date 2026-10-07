@@ -25,7 +25,7 @@ public class IsTargetOnWrongSideOfFocusPoint {
                 if (unit.distTo(target) <= 3) return false;
             }
 
-            if (unit.isMelee() && unit.distTo(target) <= 1.3) return false;
+            if (unit.isMelee() && unit.distTo(target) <= 1.8) return false;
 
             return true;
         }

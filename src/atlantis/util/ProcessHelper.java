@@ -5,6 +5,7 @@ import atlantis.config.env.Env;
 import atlantis.config.launcher.WineWindowConfig;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Kills and starts processes: the Starcraft game itself and Chaoslauncher on
@@ -97,8 +98,11 @@ public class ProcessHelper {
         // anything (measured 2026-10-06). Without -x the pattern is matched
         // against comm only, which truncates to 15 characters too, so
         // "pkill -9 Chaoslauncher" is the working form for that process.
-        executeInCommandLine("pkill -9 -x StarCraft.exe");
-        executeInCommandLine("pkill -9 Chaoslauncher");
+        try {
+            executeInCommandLine("pkill -9 -x StarCraft.exe");
+            executeInCommandLine("pkill -9 Chaoslauncher");
+        }
+        catch (Exception ex) {}
     }
 
     /**

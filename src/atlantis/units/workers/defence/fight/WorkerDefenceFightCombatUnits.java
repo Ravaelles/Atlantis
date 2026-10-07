@@ -130,7 +130,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     /** The nearest raider worth walking towards, if the swarm is on. */
     private static AUnit nearestSwarmableRaider(AUnit worker) {
-        Selection raiders = worker.enemiesNear().combatUnits().groundUnits().inRadius(9, worker);
+        Selection raiders = worker.enemiesNear().combatUnits().groundUnits().inRadius(6, worker);
 
         for (AUnit raider : raiders.list()) {
             if (shouldSwarm(raider)) return raider;
