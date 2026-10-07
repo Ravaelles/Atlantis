@@ -40,6 +40,7 @@ if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
     --select-package tests.unit
     --select-package tests.architecture
     --select-class tests.e2e.QuickEconomySmokeTest
+    --select-class tests.e2e.ProductionEngineSmokeTest
   )
 fi
 

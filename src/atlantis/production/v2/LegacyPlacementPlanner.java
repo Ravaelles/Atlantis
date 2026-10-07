@@ -98,7 +98,11 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
                 return APosition.create(constraint.tileX() * 32, constraint.tileY() * 32);
             case ANYWHERE:
             default:
-                return null;
+                // The legacy finder requires a centre to search around (it
+                // asserts non-null), so "anywhere" means "around our base" -
+                // which is what the legacy pipeline does too.
+                AUnit base = Select.ourBases().first();
+                return base != null ? base : Select.ourBuildings().first();
         }
     }
 }
