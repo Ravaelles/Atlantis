@@ -43,6 +43,8 @@ if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
     --select-class tests.e2e.ProductionEngineSmokeTest
     --select-class tests.e2e.WorkerProductionTest
     --select-class tests.e2e.OpeningDoesNotHoardMineralsTest
+    --select-class tests.e2e.WorkerDefenceTest
+    --select-class tests.e2e.WorkerSwarmTest
   )
 fi
 

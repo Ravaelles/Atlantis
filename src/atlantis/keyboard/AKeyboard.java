@@ -19,13 +19,34 @@ import java.util.logging.Logger;
 
 public class AKeyboard implements NativeKeyListener {
     /**
-     * True when this JVM is the bot itself - the one running under Wine with
-     * the game attached (it has BWAPI, so speed/camera shortcuts can work).
-     * The Linux supervisor JVM starts with no game and stays without one.
+     * True when this JVM is the bot itself - the one running under Wine with the
+     * game attached (it has BWAPI, so speed/camera shortcuts can work). The Linux
+     * supervisor JVM starts with no game and stays without one.
+     *
+     * <p>
+     * The check is deliberately environment-only. It used to fall back to
+     * {@code atlantis.Atlantis.game() != null}, a hard reference to a bot class
+     * from a class the IDE also loads - and JNativeHook's dispatch thread then
+     * resolved it against a class loader that only accepts Java 8 bytecode:
+     * </p>
+     *
+     * <pre>
+     * UnsupportedClassVersionError: atlantis/Atlantis has been compiled by a more
+     * recent version of the Java Runtime (class file version 61.0), this version
+     * of the Java Runtime only recognizes class file versions up to 52.0
+     *     at atlantis.keyboard.AKeyboard.isBotJvm(AKeyboard.java:28)
+     * </pre>
+     *
+     * <p>
+     * Wine sets these variables for every process it starts, and the bot always
+     * runs under Wine on this setup, so the environment is a complete answer -
+     * and it cannot fail to load.
+     * </p>
      */
     private static boolean isBotJvm() {
-        if (System.getenv("WINEDEBUG") != null || System.getenv("WINEDLLOVERRIDES") != null) return true;
-        return atlantis.Atlantis.game() != null;
+        return System.getenv("WINEDEBUG") != null
+            || System.getenv("WINEDLLOVERRIDES") != null
+            || System.getenv("WINEPREFIX") != null;
     }
 
     /**

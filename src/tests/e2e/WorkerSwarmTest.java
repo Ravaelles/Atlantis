@@ -33,8 +33,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class WorkerSwarmTest extends AbstractTestWithWorld {
 
-        private static final String FIGHT_SOURCE = "src/atlantis/units/workers/defence/fight/WorkerDefenceFightCombatUnits.java";
-        private static final String RUN_SOURCE = "src/atlantis/units/workers/defence/run/WorkerDefenceRun.java";
+        private static final String FIGHT_SOURCE =
+                "src/atlantis/units/workers/defence/fight/WorkerDefenceFightCombatUnits.java";
+        private static final String RUN_SOURCE =
+                "src/atlantis/units/workers/defence/run/WorkerDefenceRun.java";
+        private static final String HELP_SOURCE =
+                "src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java";
 
         @Override
         public Race initRace() {
@@ -191,6 +195,43 @@ public class WorkerSwarmTest extends AbstractTestWithWorld {
                                 .matcher(source);
 
                 return m.find() ? Integer.parseInt(m.group(1)) : -1;
+        }
+
+        @Test
+        public void aHurtWorkerLeavesBeforeTheHealthGatesCanSendItBackToMining() throws Exception {
+                // The owner's log (5 hp Probe) shows GatherResources and
+                // WorkerHelpCombatUnitsFight alternating with NO run entry anywhere.
+                // The cause was ORDER inside applies():
+                //
+                //   if (unit.hp() <= 17) return f();
+                //   if (unit.hp() <= minHp()) return f();
+                //   if (Enemy.protoss() && unit.hp() <= 20) return f();
+                //
+                // every one of them ends in f(), which sends the worker back to
+                // gathering - so the wounded-worker escape (added below them) was
+                // unreachable, and WorkerDefenceRun never got a turn.
+                String help = read(HELP_SOURCE);
+
+                int firstGate = help.indexOf("if (unit.hp() <= 17) return f();");
+                int escape = help.indexOf("if (isWoundedAndInDanger()) return false;");
+
+                assertTrue(escape > 0, "the wounded-worker escape must exist");
+                assertTrue(firstGate > 0, "the health gates must exist");
+                assertTrue(escape < firstGate,
+                                "the escape must come BEFORE the hp gates; with the health rules"
+                                                + " first, a 5 hp worker is sent back to mining and the"
+                                                + " run manager never runs");
+        }
+
+        @Test
+        public void theEscapeRadiusIsWiderThanAttackRange() throws Exception {
+                // A Zealot closes 3.5 tiles in about a second, and the worker should
+                // already be moving by then - a radius equal to the attack range
+                // means the escape only triggers once the damage has started.
+                String help = read(HELP_SOURCE);
+
+                assertTrue(help.contains("inRadius(6, unit)"),
+                                "the danger radius must be wider than the attack range");
         }
 
         private static String read(String path) throws Exception {

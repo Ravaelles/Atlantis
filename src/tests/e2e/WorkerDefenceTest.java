@@ -137,21 +137,23 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
 
     @Test
     public void twoZealotsAtFullHealthDoNotMeanStandStill() throws Exception {
-        // Defect 2, also source-pinned: the old rule was
-        // `zealotsNear == 2 && hp >= 38 -> return false` (do not flee), which is
-        // a dead probe. Fleeing must not be gated on being wounded.
-        String source = read(RUN_SOURCE);
+            // Historical rule where this was wrong: the old code said
+            // "zealotsNear == 2 && hp >= 38 -> return false" (do not flee), which
+            // is a dead probe. The current rule ties fleeing to eval instead:
+            // from three raiders, a worker that is LOSING runs.
+            String source = read(RUN_SOURCE);
 
-        assertTrue(!source.contains("zealotsNear == 2 && unit.hp() >= 38"),
-                "the old 'two Zealots at full health -> do not flee' rule must be gone;"
-                        + " it let a probe stand still in front of two Zealots");
+            assertTrue(!source.contains("zealotsNear == 2 && unit.hp() >= 38"),
+                            "the old 'two Zealots at full health -> do not flee' rule must be gone;"
+                                            + " it let a probe stand still in front of two Zealots");
 
-        String runFromZealots = methodBody(RUN_SOURCE, "private boolean runFromZealots()", null);
+            String runFromZealots = methodBody(RUN_SOURCE, "private boolean runFromZealots()", null);
 
-        assertTrue(runFromZealots.contains("zealotsNear >= 2"),
-                "two or more Zealots must trigger a run");
-        assertTrue(runFromZealots.contains("combatFriendsInRadiusCount"),
-                "holding ground is only allowed when friendly combat units are actually there");
+            assertTrue(runFromZealots.contains("RAIDERS_THAT_MEAN_FLEE"),
+                            "the raider count must decide when the workers leave");
+            assertTrue(runFromZealots.contains("unit.eval() <= EVAL_WE_ARE_BEHIND"),
+                            "and leaving must also require a losing fight, so a winning"
+                                            + " mineral line is not abandoned for nothing");
     }
 
     @Test
@@ -312,12 +314,20 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void helpingAFriendIsWiredIntoTheWorkerDefenceChain() throws Exception {
-        String source = read("src/atlantis/units/workers/defence/WorkerDefenceManager.java");
+    public void aWoundedWorkerInDangerLeavesBeforeTheHealthGates() throws Exception {
+            // The helper behaviour moved into WorkerDefenceRun (the defence chain
+            // is frozen by ArchitectureBoundaryTest, so a new manager class meant
+            // a new frozen violation). What must hold is that a hurt worker has a
+            // way OUT before any health rule sends it back to mining.
+            String run = read(RUN_SOURCE);
 
-        assertTrue(source.contains("WorkerDefendsWoundedFriend::new"),
-                "WorkerDefendsWoundedFriend must be in the defence chain, or a wounded"
-                        + " probe is helped by nobody");
+            assertTrue(run.contains("helpWoundedFriend()"),
+                            "one healthy worker must help a wounded fellow");
+
+            String help = read("src/atlantis/units/workers/defence/fight/WorkerHelpCombatUnitsFight.java");
+            assertTrue(help.contains("if (isWoundedAndInDanger()) return false;"),
+                            "and a hurt worker must exit that manager before its health gates"
+                                            + " can send it back to gathering");
     }
 
     // ---- helpers -----------------------------------------------------------

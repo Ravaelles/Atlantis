@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.enemy.OurBuildingUnderAttack;
 import atlantis.information.generic.Army;
 import atlantis.units.AUnit;
@@ -29,6 +30,8 @@ public class ProtossForceCluster extends Manager {
         if (unit.cooldown() > 20) return false;
         if (unit.isRunningOrRetreating()) return false;
         if (unit.cooldown() <= 5 && unit.enemiesICanAttack(0.7).notEmpty()) return false;
+
+        if (unit.isMissionSparta() && EnemyUnitBreachedBase.someone()) return false;
 
 //        if (!unit.isMissionAttack()) return false;
         if (A.supplyUsed(196) && unit.eval() >= 1.5) return false;

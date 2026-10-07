@@ -23,6 +23,15 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 
     @Override
     public boolean applies() {
+        // FIRST, before every other rule: a wounded worker with an enemy on it is
+        // not "not helping", it is leaving. The lines below used to catch it
+        // first - `hp <= 17`, `hp <= minHp()` and the two Protoss health rules all
+        // end in f(), which sends the worker back to gathering. So a Probe at 5 hp
+        // was told to mine, and WorkerDefenceRun (next in the defence chain)
+        // never got a turn (owner's log: GatherResources/WorkerHelpCombatUnitsFight
+        // alternating with no run, WorkerDefenceRun absent entirely).
+        if (isWoundedAndInDanger()) return false;
+
         if (unit.hp() <= 17) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
@@ -35,25 +44,6 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // In a base defence the modulo skip must not idle a fifth of the
         // workforce (B-19: the skipped probes never supported the cannon).
         if (!BaseUnderAttack.check() && unit.id() % 5 <= 1) return false;
-
-        // A WOUNDED worker must never be excluded here - it must be free to RUN.
-        // The old order put two exclusions before this point that together meant
-        // "a hurt worker gathering is told to keep gathering":
-        //
-        //   hp <= minHp()            -> not eligible to help
-        //   isGatheringResources()
-        //     && (recently attacked || shield wounded) -> not eligible either
-        //
-        // so a Probe being chewed on by a Zealot while mining fell through both
-        // and stood there (owner report, 2026-10-07: "even when wounded they do
-        // not flee, they just die without a reaction").
-        //
-        // A wounded worker in danger is handed back to the chain instead: this
-        // manager returns false, and the defence chain reaches
-        // WorkerDefenceRun next, which is where running belongs. (Calling the
-        // run manager from here would add a fight -> run dependency the
-        // architecture forbids: CONVENTIONS §5, ArchitectureBoundaryTest.)
-        if (isWoundedAndInDanger()) return false;
 
         // NOTE: `lastActionLessThanAgo(GATHER_MINERALS)` used to gate this out.
         // Gathering is what a worker does by default, so "recently gathered"
@@ -105,11 +95,22 @@ public class WorkerHelpCombatUnitsFight extends Manager {
      * This is the early-game survival rule: one Probe lost at 2 minutes costs
      * more than any amount of mined minerals.
      */
+    /**
+     * A worker that is hurt and has an enemy nearby must be allowed to leave,
+     * before any other rule in {@link #applies()} can send it back to mining.
+     *
+     * <p>A Zealot kills a 40 hp Probe in three swings, so the window in which
+     * running helps is small: the radius here (6 tiles) is wider than the
+     * attack range on purpose, because a Zealot closes that distance in a
+     * second and the worker should already be moving.
+     */
     private boolean isWoundedAndInDanger() {
         if (unit.hp() > 34) return false;
 
-        return unit.enemiesNear().combatUnits().canAttack(unit, 3.5).notEmpty()
-            || unit.lastUnderAttackLessThanAgo(30 * 3);
+        boolean enemyClose = unit.enemiesNear().combatUnits().inRadius(6, unit).notEmpty();
+        boolean wasShot = unit.lastUnderAttackLessThanAgo(30 * 3);
+
+        return enemyClose || wasShot;
     }
 
     private boolean f() {

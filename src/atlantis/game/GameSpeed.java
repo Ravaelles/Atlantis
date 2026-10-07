@@ -5,6 +5,7 @@ import atlantis.combat.squad.squads.alpha.Alpha;
 import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.util.AConsole;
 import bwapi.Game;
 
 import static atlantis.Atlantis.game;
@@ -142,7 +143,7 @@ public class GameSpeed {
         // pressing "3" before BWAPI is attached used to throw a
         // NullPointerException on the JNativeHook dispatch thread.
         if (game() == null) {
-            if (A.now() >= 1) System.err.println("Can't change game speed, bwapi is null.");
+//            if (A.now() >= 2) AConsole.errPrintln("Can't change game speed, bwapi is null.");
             return;
         }
 
