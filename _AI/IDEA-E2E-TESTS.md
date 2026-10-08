@@ -91,9 +91,8 @@ this micro win the fight" - that is what OpenBW is for.
 ### 2.4 `src/starengine/` is gone
 
 Removed 2026-10-04: OpenBW replaces it, and repairing a second engine is not
-worth it. All three of its tests were assertion-free smoke runs, so what was
-lost is the *option* of asserting on a simulated fight, not coverage. The game
-jar stopped shipping the test harness in the same commit.
+worth it. Its three tests were assertion-free smoke runs, so what was lost is the
+option of asserting on a simulated fight, not coverage.
 
 ---
 
@@ -136,13 +135,12 @@ construction (or have the scheduler treat a dispatched-but-unstarted item as
 satisfied next frame), then re-run. The placement half is done; this is the
 Production V2 cutover half that M6 was always going to expose.
 
-### 3.1a What the rewrite does not cover yet (from that block)
+### 3.1a What the rewrite does not cover yet
 
-- **Terran/Zerg placement** are stubs (addon availability, lift/land, creep).
-- **The wall does not measure its gap** - a wall with a one-tile hole is accepted.
-- The **Pylon pull-forward is coarse** (asks for a Pylon, no `shiftOne`/buffer).
-- **`distanceToExit` is Chebyshev**, not a path.
-- Expansion and DT-detection policy (C14/C15) are unplaced.
+Listed once, in `_AI/redesign/03_PLACEMENT.md` (its "NOT FINISHED" section at the
+very top) - not repeated here, so there is one place to keep current. The parts
+that matter for E2E: Terran/Zerg placement are stubs, and the wall does not measure
+its gap.
 
 ### 3.2 `JBWEB` does not exist on OpenBW
 

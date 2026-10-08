@@ -1,214 +1,94 @@
-# Cycle learnings (operational notes, not architecture)
+# Operational notes
 
-Architecture lives in `_AI/REVIEW.md` §16 and `DOCS/`. This file records
-hard-won operational facts that do not belong anywhere else.
+Hard-won operational facts that do not belong anywhere else. Architecture lives in
+`_AI/REVIEW.md` §16 and `DOCS/`.
 
 ## Test runner hygiene
 
-- `scripts/run-tests.sh` does **not** clean `out/` before compiling.
-  Deleted/renamed test classes keep running as stale `.class` files, which
-  corrupts test counts and can flip order-dependent tests. For any
-  definitive run: `rm -rf out` first.
-- JUnit class execution order is not source order. New test classes can
-  shift it.
+- `scripts/run-tests.sh` does **not** clean `out/` before compiling, so a deleted
+  or renamed class keeps running as a stale `.class` file and corrupts counts (and
+  can flip order-dependent tests). For any definitive run: `rm -rf out` first.
+  Measured 2026-10-08: a deleted `Block8x8` class kept failing a test that no
+  longer had a source.
+- JUnit class execution order is not source order; a new test class can shift it.
 
 ## Scenario E2E probes are actuators, not sensors
 
-- Directly invoking a manager inside a scenario loop
-  (`new CombatUnitManager(unit).invokeFrom(null)`,
-  `new WorkerManager(unit).invokeFrom(null)`) or running selection queries
-  in the frame body **changes the outcome it claims to observe**. Measured
-  2026-10-03: `FourPoolDefenseTest` with a diagnostic block that only
-  wanted to read (manager invocation, `squad()`, `Select.our()`) made the
-  nexus survive the 900 frames the green test pins as lost; the same test
-  without the block is green. The extra invocations take focus and
-  attack-state turns the passive stub units never took on their own.
+- Directly invoking a manager inside a scenario loop, or running selection queries
+  in the frame body, **changes the outcome it claims to observe**. Measured
+  2026-10-03: a diagnostic block in `FourPoolDefenseTest` made a nexus survive 900
+  frames the green test pins as lost; the same test without the block is green.
 - Rule: instrument a scenario with pure unit-field reads only (`hp()`,
-  `shields()`, `isAlive()`, positions) - never with manager invocation,
-  `attackUnit` or selection builders. Measure the baseline, then delete the
-  probes and pin the numbers from the clean run; a reading that changes the
-  verdict cannot become a baseline.
-- The 9pool twin was measured exactly this way (instrumented first, pinned
-  from the clean run); the 4pool diagnostics block went back to HEAD.
+  `shields()`, `isAlive()`, positions) - never manager invocation, `attackUnit` or
+  selection builders. Measure, delete the probes, then pin the numbers from the
+  clean run.
 
-## The acceptance package was never run
+## A test that has never been run is not a test
 
-- `scripts/run-tests.sh` defaults to `--select-package tests.unit`.
-  `tests.acceptance` (~120 tests: world, squads, commanders) was therefore not
-  executed for the whole architecture effort - and it held 44 failures,
-  including tests whose assertions could not fail (`cooldownPercent()` was a
-  constant 100 for fake units) and tests that only passed because of leftovers
-  from earlier tests.
-- Two harness bugs explained 10 of them:
-  1. `usingFakeOursEnemiesAndNeutral()` called `setUp()` a second time; `setUp()`
-     ends in `FakeUnit.clearCache()`, which nulls position/hp/id of every
-     FakeUnit made so far - i.e. it destroyed the units under test.
-  2. `setUp()` reset the clock only for non-world tests, so the public `A.now`
-     field left by the previous test disagreed with the mocked `AGame.now()`.
-     Every "N frames ago" assertion was off by one depending on test order.
-- Lesson: a test that has never been executed is not a test. When adding
-  infrastructure, run the widest scope at least once, and when a class is
-  "fixed", run it alone *and* inside the full package *and* with random order.
-- `FakeUnit.clearCache()` is still destructive by design (it also flips ids).
-  Any new helper that touches unit state after a test built its units must not
-  call `setUp()`.
-- **Two world tests that want the same strategy share one queue.** Measured
-  2026-10-04: 3 of 8 random-order runs went red, always in `tests.e2e`, always
-  with a different signature (the 9pool traded one zergling instead of three, the
-  4pool ended with a wounded nexus), and never in isolation. Cause:
-  `Strategy.setTo()` returns early when the strategy is already the one asked
-  for, and the test strategies are static singletons loaded from build-order
-  files - so `Queue.instance` and the build order's orders (consumed, reserved,
-  finished flags) survived into the next test. `WorldStubForTests.initQueue()`
-  had been patching exactly this per test, with a comment saying why; the patch now
-  lives once in `setUpTestLogic()`.
-- **Order dependence hides in the *strategy* and the *queue*, not in the unit
-  list.** When a world test's outcome moves with the class order, suspect what
-  `setUpTestLogic()` does *not* reset: `AtlantisRaceConfig.MY_RACE` (reset),
-  `Missions` (reset), `Alpha` (reset) - and `Strategy`/`Queue`, which used not to
-  be. Also: a dead unit must leave the world's unit list, because several
-  `Select` builders skip the `isAlive()` check and trust the engine's guarantee
-  (see the living-units answer in `AbstractWorldCreatingTest`).
+- `scripts/run-tests.sh` defaults to `tests.unit`, so `tests.acceptance` was never
+  executed for a whole architecture effort and held 44 failures - including tests
+  whose assertions could not fail.
+- When adding infrastructure, run the widest scope at least once; when a class is
+  "fixed", run it alone, in the full package, and with random order.
+- **Order dependence hides in the strategy and the queue, not the unit list.**
+  `Strategy.setTo()` returns early when the strategy is already the one asked for,
+  and the test strategies are static singletons - so a previous test's queue and
+  order flags survived. The reset lives once in `setUpTestLogic()`.
 
-## Mockito static-mock leak (fully fixed)
+## Mockito static-mock leak (fixed)
 
-- World-based tests used to leave `Mockito.mockStatic(BaseSelect.class)`
-  registered. Root cause was in `AbstractTestWithUnits.cleanUp()`, reached from
-  `@AfterEach`: it called `MockedStatic.reset()`, which clears stubs but keeps
-  the mock **registered in the thread**. Any test that failed inside
-  `createWorld` (assertion error before the closing line) therefore leaked the
-  mock into whatever ran next - which is why failures looked order-dependent.
-- `cleanUp()` now `close()`s and nulls the field (reflection loop over public
-  `MockedStatic` fields). Both world entry points (`createWorld`,
-  `usingFakeOursEnemiesAndNeutral`) also close on the happy path, and
-  `BaseSelectTest.neutralUnits` owns its mock via try-with-resources.
-- Consequence: the suite is order-independent again - 11 failures are the
-  documented pre-existing ones, with or without a failing world test in front
-  of `TestWithUnits`.
-- Rule of thumb: `@AfterEach` owns mock lifecycle. A `finally`/close at the end
-  of a happy path is not enough, because the unhappy path is exactly when the
-  next test needs the thread back.
-- `MockEverything` statics (`aGame` etc.) are still unclosed suspects if an
-  order-dependent failure ever returns.
+- `@AfterEach` owns mock lifecycle. `cleanUp()` now `close()`s and nulls its
+  `MockedStatic` fields; a `finally` on the happy path is not enough, because the
+  unhappy path is exactly when the next test needs the thread back.
+- A test that stops re-stubbing `everyNthGameFrame` silently answers `false`
+  everywhere - 77 call sites depend on it, and a whole template stayed dead until
+  it was stubbed.
 
-## ArchUnit store mechanics (observed, vendored version)
+## ArchUnit store mechanics
 
-- `scripts/run-architecture-tests.sh` reads the **compiled** classes from
-  `out/`. Running it after `rm -rf out` makes all 7 rules fail with
-  "failed to check any classes" — that is a missing build, not a regression.
-  Run the unit suite (or any compile) first.
-- **A failed compile rewrites the store.** If the sources do not compile, the run
-  sees fewer classes, and the "auto-remove stale entries" behaviour below deletes
-  the baseline: on 2026-10-03 one `MapTiles` compile error shrank three store files
-  (core 267 → 159 entries, util 60 → 35, information 65 → 61), and the next
-  *successful* run reported those missing entries as new violations. Recovery is
-  `git checkout _AI/architecture/archunit-store/` — the frozen baseline is the
-  only correct copy — and then re-run. **So: never run the architecture script
-  while the compile is red, and check `git status` after any red architecture
-  run before believing anything it says.**
-- Each test run **auto-removes stale entries** (violations that no longer
-  exist) from `_AI/architecture/archunit-store/` but **never adds** new ones.
-  It also does **not** recreate a deleted store file.
-- Violation strings distinguish `Class[]` literals from constructor calls:
-  - `X.class` literals in arrays are (mostly) invisible to the rules;
-    `X::new` constructor references are flagged as dependencies. Converting
-    reflection to factories therefore *surfaces* previously frozen edges —
-    re-freeze explicitly and prove 1:1 mapping, do not silently absorb.
-- **Line numbers do NOT affect store matching** (verified: `ErrorLog` entries
-  in the store still carry `:18/:41/:49/:51/:59` while the code sits at
-  `:19/:42/:50/:52/:60`, and the rule is green). What matters is
-  origin-class → target-class/method. So editing a method body, adding
-  imports or shifting lines is free; only *changing which class a call
-  targets* (e.g. `A.saveToFile` → `AFile.saveToFile`) creates a new entry.
-- Re-freeze procedure used: capture failing entries per rule → verify each
-  maps to a moved (not new) edge → append exact lines → rerun to green →
-  review `git diff` of the store.
-- Prefer *deleting* the dependency over re-freezing it. The `AFile` extraction
-  could have been a rename of 6 stored violations; putting the new class in
-  `atlantis.util` instead deleted those 6 baseline entries for real.
+- `scripts/run-architecture-tests.sh` reads the **compiled** classes from `out/`.
+  Running it after `rm -rf out` fails all rules with "failed to check any classes"
+  - that is a missing build, not a regression.
+- **A failed compile rewrites the store.** Fewer classes are seen, the
+  auto-remove-stale-entries behaviour deletes the baseline, and the next
+  *successful* run reports those missing entries as new violations. Recovery is
+  `git checkout _AI/architecture/archunit-store/`. **Never run it while the
+  compile is red, and check `git status` after any red architecture run.**
+- Each run auto-removes stale entries but **never adds** new ones, and does not
+  recreate a deleted store file.
+- **Line numbers do not affect store matching** - origin-class to target-class
+  does. Editing a method body or shifting lines is free; changing *which class a
+  call targets* creates a new entry.
+- Prefer deleting a dependency over re-freezing it: moving a class to the right
+  package can delete baseline entries for real, where a rename just moves them.
 
-## Java 8 target applies to tests too
+## Java 8 applies to tests too
 
-- The game jar is built with a single `javac --release 8` over the **whole**
-  tree, tests included. A test using a Java 9+ API therefore breaks the game
-  build, not just itself.
-- This bit us with `FramePipelineTest`: `List.of(...)` (Java 9+) had to become
-  `Arrays.asList(...)`. Prefer Java 8 APIs in tests — `Arrays.asList`,
-  `Collections.unmodifiableList`, anonymous classes over lambdas where the
-  target matters.
-- Only `ATargetingTest` is excluded from the jar build (needs Nashorn, removed
-  in JDK 15).
+- The game jar is one `javac --release 8` over the **whole** tree, tests included,
+  so a Java 9+ API in a test breaks the game build. Use `Arrays.asList`, not
+  `List.of`. Only `ATargetingTest` (Nashorn) is excluded.
 
-## Fat-jar recipe (game runs)
+## Fat jar
 
-- Canonical: `scripts/build-bot-jar.sh <base-jar> <out-jar>`.
-- Production bytecode must be major 52 (container runs Corretto 8):
-  compile with `--release 8`; only `ATargetingTest` (Nashorn) and
-  `FramePipelineTest` (`List.of`) are excluded.
-- Layering that bit us twice: freshly compiled classes win; JBWAPI-Rav's
-  `bwapi`/`bwem` win over the stale ones frozen in old jars (compile-time
-  vs runtime classpath shadowing caused `IllegalAccessError`/`NoSuchMethodError`
-  in game). Never append to a zip (duplicates shadow); always rebuild fresh.
-- `bots/AtlantisP` / `bots/AtlantisT` jars are build artifacts refreshed
-  manually after verified cycles.
-
-## Benchmarks (Stage J)
-
-- Harness: `src/tests/benchmark/TreeConstructionBenchmark.java` (not a JUnit
-  test) + `scripts/benchmark-trees.sh`. Measures full combat-tree frame work
-  (construction + traversal) for 12 marines in the stub world; Mockito
-  inflates absolutes, so only relative A/B comparisons count.
-- Stage C payoff (same harness, worktree A/B): pre-reflection ~6.1ms vs
-  post-factories ~4.6ms per frame per unit (**-25%**).
-- Manager constructors are NOT pure: some read ambient statics (`Strategy`,
-  game handle). Standalone (world-free) tree construction throws; the harness
-  must run inside `createWorld`, which needs the JUnit `@BeforeEach`
-  scaffolding replicated (`setUp()` call) when driven from `main()`.
-- Fogged hp sentinel: `AbstractFoggedUnit.hp()` returns `-69` for unknown;
-  snapshot projections stay faithful (no guessing) — representation of
-  unknown state is open E-core design work.
-- Guard: `scripts/benchmark-trees.sh --save` records
-  `_AI/benchmarks/frame-pipeline.txt` (best ns/frame/unit plus the JVM and
-  kernel it was measured on), `--check` fails when a run is more than 20% slower
-  **on the recorded machine** and refuses to compare across machines instead of
-  reporting a failure nobody can act on. Measured variance on an idle run:
-  about 1% (4.32 ms vs 4.29 ms per frame per unit), so the 20% threshold is
-  noise-proof and still catches the regressions worth seeing - a Stage E/F/H
-  refactor that quietly doubled the per-frame work.
+- Canonical: `scripts/build-bot-jar.sh <output-jar> [--thin]`. Production bytecode
+  must be major 52. Freshly compiled classes win over what a jar froze in; never
+  append to a zip (duplicates shadow) - always rebuild fresh. Full detail is in
+  the script's own header and `_AI/CHALLENGES/BuildAndLogging.md`.
 
 ## Reading Brood War's own unit data (a hunt that ended in "don't")
 
-The real hit points, shields, ranges and damage live in `units.dat` and
-`weapons.dat` inside the installed archives. Four things were measured while
-trying to read them instead of transcribing them:
+The real hit points and damage live in `units.dat` / `weapons.dat` inside the
+installed archives; the hunt to read them instead of using the engine was the
+wrong road, and this is why the note exists:
 
-- The archives in `starcraft/` are Brood War's, and **Brood War hides its file
-  names** behind Blizzard's decryption table. `mpyq` parses the header and the
-  hash/block tables of `STARDAT.MPQ` happily, then finds nothing by name -
-  which is not a bug in the library, it is the encryption.
-- No package on PyPI ships that table. `PyMS` installs as `pyms` 0.1.0 and fails
-  to build (it is a different package from the tool of that name);
-  `stormlib` is not on the machine; `unshield` is an Age of Empics extractor.
-- Even with the table, sectors compressed with PKWARE "implode" (type 0x08) need
-  a decompressor that `mpyq` does not implement - it handles none, zlib and
-  bzip2 only.
-- **`3rdparty/openbw/openbw/data_loading.h` has the exact layout** of both files:
-  column-major arrays, 228 unit types, 130 weapons, with `hitpoints`,
-  `shield_points`, `max_range`, `damage_amount` and `damage_cooldown` named. So
-  the parser is a half-hour of work and the archive is the whole problem.
-
-**The hunt was the wrong road, and this is why the note says so.** It was
-started to get *real* numbers in place of the engine's, on an assumption carried
-over from an earlier round and never checked: that the vendored jar's tables were
-placeholders. They are not - `unitTypesTest.cpp` asserts Marine 40 hit points,
-Ghost 45, Vulture 80, Goliath 125, Siege Tank 150, SCV 60, and the jar answers
-exactly that. The engine was the source all along; the first hand-written table
-invented twenty numbers that contradicted it. `UnitStatsTable` is now a
-correction list (currently empty) and `UnitStatsTableTest` pins the engine's
-values, so a jar swap fails loudly instead of drifting.
-
-What survives from the hunt is still worth keeping: the archive cannot be read
-from here, and `data_loading.h` documents the layout of both files. If a value
-the engine gets wrong ever needs an independent source, that file plus an MPQ
-reader is where it comes from - and the correction belongs in
-`UnitStatsTable`, with its evidence next to it.
+- the archives hide their file names behind Blizzard's decryption table, no local
+  tool implements it, and the sectors are PKWARE-implode compressed;
+- **the vendored jar was never a placeholder.** `unitTypesTest.cpp` asserts Marine
+  40 hp, Ghost 45, Vulture 80, Goliath 125, Siege Tank 150, and the jar answers
+  exactly that. The engine was the source all along; the first hand-written table
+  invented twenty numbers that contradicted it.
+- `UnitStatsTable` is now a correction list (currently empty) and
+  `UnitStatsTableTest` pins the engine's values, so a jar swap fails loudly.
+- If an independent source is ever needed, `3rdparty/openbw/openbw/data_loading.h`
+  documents the exact layout of both files - the parser is easy, the archive is
+  the whole problem.

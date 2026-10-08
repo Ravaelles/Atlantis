@@ -7,10 +7,12 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 
 ## Current owner priorities (2026-10-08)
 
-1. **Finish Production V2** - `_AI/STATUS.md`, `_AI/__01_PRODUCTION_TODO.md`,
-   `_AI/redesign/01_PRODUCTION.md`.
-2. **Rewrite `PositionFinder`** - a blocker for (1) and for E2E;
-   `_AI/POSITION-FINDER.md` has the facts. Do not patch it in the meantime.
+1. **Finish Production V2** - `_AI/STATUS.md` and `_AI/redesign/01_PRODUCTION.md`.
+2. **Placement** - the rewrite landed (`_AI/redesign/03_PLACEMENT.md`); the
+   cut-over and the rest of Protoss are what remain.
+3. **OpenBW tests** - `_AI/IDEA-E2E-TESTS.md` §3.5 has the ordered steps.
+
+The index of which document answers which question is `_AI/README.md`.
 
 ## Process (normative)
 
@@ -34,41 +36,13 @@ The suite is green (332 passing, 2 known-failing, 4 skipped as of 2026-10-08;
 re-run `bash scripts/run-tests.sh` for the current numbers - do not trust a count
 written here). What is open is *quality* of the data behind it, not a red test.
 
-- **#29** Unit/weapon data: **the engine is the source.** An intermediate
-  `UnitStatsTable` had overwritten it with ~20 hand-transcribed fictions (Marine
-  45 hp, Sunken Colony 150, Siege Tank at 5 and 6 tiles, a Terran *Banshee*) and
-  the suite was green against them. Settled by probing the vendored
-  `JBWAPI-Rav.jar` field by field against BWAPI's own reference tests
-  (`bwapi/BWAPILIBTest/unitTypesTest.cpp`). What stands:
-  - `atlantis/units/UnitStats.java` - the seam; production installs no `Source`,
-    so in a game it is delegation to `bwapi` and nothing else changes;
-  - `tests/fakes/UnitStatsTable.java` - a **correction table, currently empty**:
-    one entry per engine field proven wrong, with its evidence;
-  - `tests/unit/UnitStatsTableTest.java` - the guard: sanity pins for every
-    number the suite depends on (a jar swap fails loudly), a ban on unjustified
-    corrections, name resolution, installation;
-  - 14 production call sites rewired; `WeaponUtil` moved `util` -> `units`
-    (`util` must not point upward); the store shrank by 8 lines.
-
-  To verify the engine without a game: compile a small `Probe` against `lib/`
-  printing `maxHitPoints/maxShields/isFlyer` for `UnitType` and
-  `maxRange/damageAmount/damageFactor/damageType` for `WeaponType` (procedure in
-  `UnitStatsTable`'s javadoc). **Do not** "fix" a failure by rewriting the
-  expectation to match the fake world - when a test failed for real, the reason is
-  in its comment. The MPQ archives stay unreadable from here (encrypted tables, no
-  local tool), so the engine remains the source.
-- **#28** ~~Production code imports the test harness.~~ **Closed 2026-10-04.**
-  Five ports of the same shape, each with the engine as the default:
-  `UnitStats.Source`, `Bullets.Source`, `Regions.Source`,
-  `AbstractFoggedUnit.FoggedUnitFactory`, `UnitOrigin`; `OrderFallback` replaced an
-  order *sink*; `PositionUtil` and `AUnitOrders` needed no port. No call site
-  changed. `src/starengine` (a fake-driven simulator in the production tree) was
-  deleted rather than given ports - 26 files / 1209 lines and 3 assertion-free
-  smoke tests - which also let `scripts/build-bot-jar.sh` drop `tests/**` and
-  `starengine/**` from the payload and **fail the build** if a packaged class ever
-  names `tests/` again (3755 entries -> 3610, measured). The cost: nothing can
-  assert on a simulated fight until OpenBW scenarios land, which is
-  `IDEA-E2E-TESTS.md`.
+- **#29 CLOSED** - unit/weapon data: the engine (the vendored jar) is the source.
+  An intermediate table had invented ~20 numbers and the suite was green against
+  them. Now: `UnitStats` seam, an **empty** correction table, and
+  `UnitStatsTableTest` pinning the engine's values. Full story in `NOTES.md`.
+- **#28 CLOSED** - production code no longer imports the test harness (five
+  `Source` ports, `src/starengine` deleted, the jar drops `tests/**` and fails the
+  build if a packaged class names it). Detail in `NOTES.md` and git history.
 
 ## Scenario E2E (stub tier - runs today)
 
@@ -231,14 +205,11 @@ itself, #5, is design work and out of that order's scope).
 
   The mechanical-sweep details and the per-class triage are in
   `_AI/work-orders/WO-13-mechanical-archunit-sweep.md` and in git history.
-- **#35** ~~A symmetric fight stops scoring even when the Jfap horizon is raised.~~
-  **Closed 2026-10-04 by decision.** Measured: raw pair `[-88, -88]` at the shipped
-  60-frame horizon, `[-100, -88]` from 120 frames on - the asymmetry is JFAP's own
-  per-player deltas, i.e. tie handling in a vendored library. The owner's ruling:
-  `eval()` only matters from our own side, so a mirror fight scoring 0.88 instead of
-  1.0 is not worth chasing; the doctrine that came out of it is a combat-eval
-  penalty (B-18). The mirror test now asserts reciprocity instead of comparing our
-  side's score with itself.
+- **#35 CLOSED** (2026-10-04, by decision) - a mirror fight scored 0.88 instead of
+  1.0; the asymmetry is JFAP's own per-player deltas, so it is tie handling in a
+  vendored library, not our bug. Our `eval()` only matters from our own side; the
+  doctrine that came out of it is the B-18 penalty. The mirror test now asserts
+  reciprocity instead of comparing our side with itself.
 
 ## Review rounds
 
@@ -354,7 +325,7 @@ that still stops a real game. Do not re-investigate the attach.
   2. delete the **dynamic commanders** (`production/dynamic/**`,
      `production/requests/DynamicBuildingCommander`, `RemoveExcessiveOrders`)
      only after v2 covers their behaviour (tech, race-specific army - still
-     open in `_AI/__01_PRODUCTION_TODO.md` P2);
+     open, see `_AI/STATUS.md` "what is still open");
   3. delete `Queue/**`, `ProductionOrder`, `PreventDuplicateOrders`,
      `ReservedResources`/`OrderReservations` last, when (2) is done and
      `Construction` no longer needs a `ProductionOrder` back-reference;

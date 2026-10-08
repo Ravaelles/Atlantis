@@ -6,9 +6,12 @@ Everything below this block is the design. **Protoss placement is implemented an
 acceptance-tested (28 tests); these are the gaps that remain.**
 
 1. **The cut-over has not happened.** `APositionFinder` is still the default
-   planner. `PLACEMENT=catalogue` selects the new one, but nothing has run the new
-   planner in a real game, and the old finder is not yet deleted (§4.6: the
-   deletion is meant to happen in the same cut-over as the Producer rewrite).
+   planner. `PLACEMENT=catalogue` selects the new one - and **it works in a live
+   game** (2026-10-08: the first Pylon that had blocked every OpenBW run is now
+   placed, `Can't find place for Pylon` zero) - but the flag is not yet the
+   default and the old finder is not yet deleted (§4.6: that deletion belongs to
+   the Producer cut-over). Note `PLACEMENT` must be read through `Env` (an ENV
+   FILE flag), not `System.getenv`.
 2. **Terran and Zerg placement are stubs.** `TerranPlacementStrategy` and
    `ZergPlacementStrategy` answer "available everywhere, no templates". Not
    implemented: Terran addon availability, lift/land (the grid has no `SOFT_USED`
@@ -47,26 +50,14 @@ fortification policy as goal generation, and the race extension point.
 
 ---
 
-> **Implementation status (2026-10-08): S1-S6 are implemented for Protoss in
-> `atlantis.placement`** - `core/` pure, `engine/` the only game reader, `race/`
-> the extension point, `policy/` the fortification policy, `blocks/` the template
-> table (24 normal + 4 start blocks, as data). **Protoss is complete; Terran and
-> Zerg are documented no-op stubs.** The legacy `APositionFinder` is still the
-> default; ENV `PLACEMENT=catalogue` selects the new planner, so the two can be
-> compared in one build.
->
-> What each stage delivered, and what it deliberately left out, is recorded inline
-> at the end of §5.4 - read that before continuing. The known gaps are: the wall's
-> gap measurement and inside/outside classification (§4.6), the expansion POLICY
-> (C14/C15), and the Terran/Zerg answers.
+> **Layout of this document:** §1-§3 are the Stardust algorithm as read from its
+> source - reference for the parts not yet ported, not a description of our code.
+> §4 is the port plan and the class breakdown (what `atlantis.placement` follows).
+> §5 is the legacy inventory and the staged plan, with each stage's status.
 >
 > Source of truth: `/sc-ai/Stardust/src/Builder/BuildingPlacement.{h,cpp}` (~1,270 lines),
-> `Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`,
-> consumed by `Producer/Producer.cpp` (`reserveBuildPositions`, `choosePylonBuildLocation`).
->
-> Purpose: Document the complete placement pipeline so it can be ported to Atlantis Java 1.8
-> as a clean `PlacementPlanner` implementation behind the existing
-> `PlacementPlanner` interface described in `01_PRODUCTION.md`.
+> `Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`.
+> Consumed by `Producer/Producer.cpp` (`reserveBuildPositions`, `choosePylonBuildLocation`).
 
 ---
 
@@ -503,8 +494,8 @@ Concrete legacy surface observed under `src/atlantis/production/`:
 | C9 | Choke geometry (main/natural chokes, exits) | `Map`/`Chokes` (keep) | Core `NeighbourhoodRegistry` | **S3 DONE** |
 | C10 | Forge/Gateway choke wall construction | partial | Race: dedicated wall strategy (own document) | **S4 DONE (no gap measurement)** |
 | C11 | Main-choke defensive cannon placement (DT detection) | none solid | Race: `ProtossPlacementStrategy` | **S4 DONE (cannon proximity)** |
-| C12 | "Secure a base with cannons" policy (how many, where, when) | `ProtossSecureBasesCommander` + `reinforce/**` | **Future policy layer** — not placement | **S5** |
-| C13 | Cannon count heuristics per matchup (mutas, zerg supply tiers, mineral thresholds) | `ShouldSecureProtossBase` | **Future policy layer** | **S5** |
+| C12 | "Secure a base with cannons" policy (how many, where, when) | `ProtossSecureBasesCommander` + `reinforce/**` | **Policy, not placement** - emitted as goals | **S5 DONE (count)** |
+| C13 | Cannon count heuristics per matchup (mutas, zerg supply tiers, mineral thresholds) | `ShouldSecureProtossBase` | `placement/policy/CannonFortificationPolicy` | **S5 DONE** |
 | C14 | Base expansion decision (when to take a base) | `dynamic/expansion/**` | Producer goals + a future `ExpansionPlay` (see `02_COMBAT.md`) | **S5** |
 | C15 | Cancel an in-progress/failed expansion | `ProtossCancelExpansionCommander` | Fall out of stateless recompute; no dedicated class | **S5** |
 | C16 | Build-order-driven building requests | build orders → queue | `BuildOrderGoals` (see `01_PRODUCTION.md`) | **S1** |
@@ -539,76 +530,24 @@ with N cannons, roughly here". That policy:
 Consequently, the legacy `ShouldSecureProtossBase` heuristics are archived as *requirements
 input for a future policy*, not ported into the planner.
 
-### 5.4 Staged plan
+### 5.4 Staged plan (status 2026-10-08)
 
-Stages are strictly ordered; each is shippable and testable on its own.
+Protoss is implemented; Terran/Zerg are contract-only. The exact gaps are in the
+"NOT FINISHED" block at the top of this file - this is the map of where the code
+lives, not a second list of what is missing.
 
-- **S1 — Core placement + generic building execution.**
-  `TileAvailabilityGrid`, `BuildLocation`/catalogue, `BuildLocationRanker`, `PlacementPlanner`
-  interface, and the Producer-side execution handoff (C1, C2, C8, C16). No Blocks yet; a naive
-  per-tile scan validated against the catalogue. Unblocks the whole production engine.
+| Stage | What it was | Where it is now |
+|---|---|---|
+| S1 | Core placement (grid, catalogue, ranker, seam) | `core/TileAvailabilityGrid`, `core/BuildLocation`, `core/BuildLocationCatalogue`, `engine/CataloguePlacementPlanner`, `engine/EngineTerrainSource` |
+| S2 | Blocks + builder timing | `core/BuildBlock` (+ `Spec`), `blocks/BlockTemplates` (24 normal + 4 start, as data), `core/StartBlockFinder`, `builderFrames` in `CataloguePlacementPlanner.refine` |
+| S3 | Protoss gating + ranking | `core/PsiGating`, `engine/EnginePowerSource`, `core/NeighbourhoodRegistry`, `engine/EngineNeighbourhoodSource`, `core/BuildLocationRanker` |
+| S4 | Defensive placement | `core/ForgeGatewayWall` + `engine/EngineWallFinder`, `engine/ChokeAffinityRanker` |
+| S5 | Base-fortification **policy** | `policy/CannonFortificationPolicy`, `policy/FortificationGoals`, wired into `DynamicGoals` |
+| S6 | Race extension point | `core/RacePlacementStrategy` + `race/ProtossPlacementStrategy` (real), `Terran/Zerg*` (stubs) |
 
-  **DONE 2026-10-08** (`atlantis.placement`): `core/TileAvailabilityGrid`,
-  `core/BuildLocation`, `core/BuildLocationCatalogue` (ranked candidates per
-  footprint, the thing the legacy finder never exposed),
-  `engine/EngineTerrainSource` (terrain through `MapTiles`/`Select`, never BWAPI),
-  `engine/CataloguePlacementPlanner` (implements the existing `PlacementPlanner`
-  seam; `EXACT_TILE` honoured only when the footprint is free). Selected by ENV
-  `PLACEMENT=catalogue`; legacy stays the default until a real game places a
-  Pylon. Blocks, `builderFrames` and `distanceToExit` are still stubs (0) - that
-  is S2.
-- **S2 — Blocks + builder timing.**
-  `BuildBlock` and a small template set (start-block variants + the 6 largest normal blocks),
-  `builderFrames` computation, dynamic goal emitters for structures (C3, C4, C6, C17).
-  This is where placement quality jumps.
-
-  **DONE (shape) 2026-10-08**: `core/BuildBlock` + `core/Slot` + `blocks/Block8x8`
-  (the workhorse 8x8), and the catalogue now stamps blocks first and fills the
-  gaps with the S1 per-tile scan. **Not done: the full template set** (one block
-  ships, not 24 + start-block variants) and `builderFrames` is still 0 - the
-  fields exist on `BuildLocation` and the ranker reads them, but nothing computes
-  a real travel time yet. Both are the remaining S2 work.
-- **S3 — Protoss gating + ranking depth.**
-  Psi gating, Pylon pull-forward/new-Pylon, distance-to-exit weighting, choke-aware ranking,
-  full 24-template list (C5, C7, C9). Protoss is now first-class.
-
-  **DONE (gating + ranking) 2026-10-08**: `core/PsiGating` +
-  `engine/EnginePowerSource` (a power-needing building only takes a tile powered
-  now or soon, never one nothing can power), `core/NeighbourhoodRegistry` +
-  `engine/EngineNeighbourhoodSource`, `core/BuildLocationRanker` (availability
-  first, then `builderFrames * 2 +/- distanceToExit` with the exit term flipped
-  for tech buildings). **Not done: Pylon pull-forward / new-Pylon creation** -
-  the gate refuses an unpower-able tile, it does not yet ask for an extra Pylon to
-  make a good tile usable.
-- **S4 — Defensive structures placement (choke/wall/DT).**
-  Forge/Gateway wall strategy, main-choke cannon placement and DT-detection priority
-  (C10, C11). Still placement, but race-specific and map-aware.
-
-  **DONE (cannon) 2026-10-08**: `engine/ChokeAffinityRanker` orders cannon
-  candidates by closeness to the choke. **Not done: the Forge/Gateway wall**
-  (C10), which is its own document per the spec.
-- **S5 — Base fortification & expansion POLICY (later stage).**
-  Re-derive "when to secure a base, with how many cannons, and when to expand" as
-  goal-emitting policy on top of the planner (C12, C13, C14, C15). Explicitly deferred:
-  cannons-securing-bases must land here, **not** in S1–S4.
-
-  **DONE (cannon policy) 2026-10-08**: `policy/CannonFortificationPolicy` (how
-  many cannons a base wants, re-derived from `ShouldSecureProtossBase`: mineral and
-  supply tiers, the zerg muta milestones, the Protoss cap) and
-  `policy/FortificationGoals` (turns it into `ProductionGoal`s carrying a
-  `TargetPlacement.inNeighbourhood(base)` constraint - the policy never computes a
-  tile, which is the §5.3 boundary expressed in types). **Not done: the expansion
-  policy** (C14) and the cancel-expansion path (C15).
-- **S6 — Other races.**
-  `TerranPlacementStrategy` (addons, lift/land, wall-off) and `ZergPlacementStrategy` (creep)
-  behind the same core contract (F1–F3). Design already accounted for in §4.5.
-
-  **DONE (contract) 2026-10-08**: `core/RacePlacementStrategy` (four questions:
-  templates, `framesUntilAvailable`, `requiresAvailability`, `extraRankingWeight`)
-  with `race/ProtossPlacementStrategy` real - the planner now goes through the
-  strategy instead of calling PsiGating directly - and Terran/Zerg as documented
-  no-ops. **Not done: the Terran and Zerg answers themselves** (addon availability
-  + `SOFT_USED`, projected creep); each is a new implementation, not a core change.
+The join with Production V2 is one-directional and lives in
+`DynamicGoals.addFortificationGoals`: policy emits goals with a neighbourhood
+constraint, the planner resolves the tile. That is §5.3 expressed in types.
 
 ### 5.5 Deletion list (burn the bridges)
 
