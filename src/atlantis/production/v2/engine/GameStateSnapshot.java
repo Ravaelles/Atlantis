@@ -17,6 +17,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.game.player.Enemy;
 import atlantis.util.We;
 
 import java.util.List;
@@ -124,7 +125,8 @@ public final class GameStateSnapshot {
     /** The dynamic goal generators for this frame. */
     public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
         int workers = Count.workers();
-        return DynamicGoals.contribute(new DynamicGoals.GameSnapshot(
+
+        DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
                 workers,
                 Math.max(1, Count.bases()),
                 A.supplyUsed(),
@@ -133,7 +135,28 @@ public final class GameStateSnapshot {
                 A.minerals(),
                 workers < 12,
                 Count.ofTypeWithUnfinished(armyType()),
-                Count.basesWithUnfinished()));
+                Count.basesWithUnfinished(),
+                cannonsAtMain(),
+                Enemy.zerg(),
+                Enemy.protoss(),
+                Count.ofType(AUnitType.Zerg_Mutalisk)
+        );
+
+        // Anchor the fortification goals to the main base. -1 (no base yet) leaves
+        // them off, which is right: there is nothing to fortify before a Nexus.
+        AUnit main = Select.main();
+        if (main != null) snapshot = snapshot.atBase(main.tx(), main.ty());
+
+        return DynamicGoals.contribute(snapshot);
+    }
+
+    /** Photon Cannons already standing at the main base. */
+    private static int cannonsAtMain() {
+        AUnit main = Select.main();
+        if (main == null) return 0;
+
+        return Select.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon)
+                .inRadius(20, main).count();
     }
 
     private static AUnitType armyType() {

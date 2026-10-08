@@ -51,6 +51,17 @@ public final class DynamicGoals {
         public final int armySize;
         public final boolean inEarlyGame;
 
+        /** Cannon count already standing at the main base. */
+        public final int cannonsAtMain;
+        /** Enemy race facts the fortification policy reads. */
+        public final boolean enemyIsZerg;
+        public final boolean enemyIsProtoss;
+        public final int enemyMutalisks;
+
+        /** The base the fortification goals are anchored to; -1 when unknown. */
+        public final int mainBaseTileX;
+        public final int mainBaseTileY;
+
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame) {
             this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
@@ -58,6 +69,19 @@ public final class DynamicGoals {
 
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, 0, false, false, 0);
+        }
+
+        /**
+         * The full snapshot, including the fortification inputs. Kept as one
+         * constructor rather than a builder: the goal layer is deliberately fed a
+         * handful of numbers, and a test that needs to say "zerg, twelve mutas"
+         * should be able to say exactly that.
+         */
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
             this.workers = workers;
             this.bases = bases;
             this.basesExisting = basesExisting;
@@ -67,6 +91,48 @@ public final class DynamicGoals {
             this.minerals = minerals;
             this.armySize = armySize;
             this.inEarlyGame = inEarlyGame;
+            this.cannonsAtMain = cannonsAtMain;
+            this.enemyIsZerg = enemyIsZerg;
+            this.enemyIsProtoss = enemyIsProtoss;
+            this.enemyMutalisks = enemyMutalisks;
+            this.mainBaseTileX = -1;
+            this.mainBaseTileY = -1;
+        }
+
+        /**
+         * The same snapshot anchored to a base, for the fortification policy. The
+         * 13-argument form leaves the anchor unknown, which is what a test that only
+         * cares about workers or supply wants - and what makes fortification emit
+         * nothing rather than guess a location.
+         */
+        public GameSnapshot atBase(int tileX, int tileY) {
+            return new GameSnapshot(
+                workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame,
+                armySize, basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                tileX, tileY
+            );
+        }
+
+        private GameSnapshot(
+                int workers, int bases, int supplyUsed, int supplyFree,
+                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
+                int mainBaseTileX, int mainBaseTileY) {
+            this.workers = workers;
+            this.bases = bases;
+            this.basesExisting = basesExisting;
+            this.supplyUsed = supplyUsed;
+            this.supplyFree = supplyFree;
+            this.supplyTotal = supplyTotal;
+            this.minerals = minerals;
+            this.armySize = armySize;
+            this.inEarlyGame = inEarlyGame;
+            this.cannonsAtMain = cannonsAtMain;
+            this.enemyIsZerg = enemyIsZerg;
+            this.enemyIsProtoss = enemyIsProtoss;
+            this.enemyMutalisks = enemyMutalisks;
+            this.mainBaseTileX = mainBaseTileX;
+            this.mainBaseTileY = mainBaseTileY;
         }
     }
 
@@ -88,8 +154,42 @@ public final class DynamicGoals {
         addSupplyGoal(goals, state);
         addArmyGoal(goals, state);
         addExpansionGoal(goals, state);
+        addFortificationGoals(goals, state);
 
         return goals;
+    }
+
+    /**
+     * Base fortification (Protoss): the cannon policy from
+     * {@code atlantis.placement.policy} expressed as ordinary goals.
+     *
+     * <p>
+     * This is where the placement rewrite and Production V2 meet, and the join is
+     * deliberately one-directional: the policy says "this base wants N cannons near
+     * here" and the planner resolves the constraint to a choke-aware tile (S4). No
+     * tile is computed here, which is the §5.3 boundary of
+     * {@code _AI/redesign/03_PLACEMENT.md} - policy emits intent, placement decides
+     * where.
+     * </p>
+     */
+    private static void addFortificationGoals(List<ProductionGoal> goals, GameSnapshot state) {
+        if (!We.protoss()) return;
+        if (state.mainBaseTileX < 0) return;
+
+        atlantis.placement.policy.CannonFortificationPolicy.Context context =
+            new atlantis.placement.policy.CannonFortificationPolicy.Context(
+                state.supplyTotal,
+                state.minerals,
+                state.cannonsAtMain,
+                state.enemyIsZerg,
+                state.enemyIsProtoss,
+                state.enemyMutalisks
+            );
+
+        goals.addAll(atlantis.placement.policy.FortificationGoals.forBase(
+            context, UnitProducible.of(AUnitType.Protoss_Photon_Cannon),
+            state.mainBaseTileX, state.mainBaseTileY
+        ));
     }
 
     /**
