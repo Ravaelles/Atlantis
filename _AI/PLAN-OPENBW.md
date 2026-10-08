@@ -399,3 +399,52 @@ An alternative, when the model must own both sides: add a longer accept window
 on the harness side (`Server::checkForConnections`, currently 5 s in
 `StardustDevEnvironment/3rdparty/openbw/bwapi`). That is a change to our fork
 and is the option recorded for the owner's decision.
+
+## 9. STATUS UPDATE (2026-10-08): step 1 is DONE - the client attaches
+
+The blocker is solved and it was **not** a harness change. One environment
+variable on the host makes the client attach:
+
+```
+BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON
+```
+
+`scripts/run-openbw-e2e.sh` sets it when it hosts. Measured end to end on
+`maps/cog/(3)TauCross1.1.scx` (Protoss vs Zerg):
+
+```
+[openbw-e2e] game hosted (registry: 278c230000000000)
+Connected
+Connection successful
+### mapFileName = (3)TauCross1.1.scx
+Analyzing map... Use build order: `Zealot into Goon`
+MISSION @0:15 TO Sparta: TooFewZealots - Focus{name='MainChoke', ...}
+HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!
+```
+
+So **steps 2-5 are unblocked**: the engine, the attach, the map analysis and the
+build order all work. `_AI/CHALLENGES/OpenBW.md` now carries the root cause and
+the two conclusions it corrects (the "sixth blocker" byte, and the "server-side
+ordering" claim).
+
+### What remains before this is a usable test tier (two issues, both measured)
+
+1. **The bot does not exit when the game ends - it polls forever.**
+   The host is killed by the script's 360 s `timeout`, the client is still
+   running, and `bot.log` fills with `No server proc ID` until the script
+   SIGTERMs it (`bot exit code: 143`). The run therefore reports failure even
+   though the bot played. Fix: the launcher must stop when the game ends /
+   the host disappears (or when a frame limit is reached), instead of
+   re-polling the registry. This is ours (`OpenBWGameLauncher` / `Main`).
+
+2. **`0:39: Can't find place for `Pylon` ... (reason: Can't physically build
+   here)` on OpenBW.** OpenBW's `Game.isBuildable`/`canBuildHere` refuse tiles
+   the map data accepts - exactly the unreliability `MapTiles.canBuildHere`
+   documents and falls back for. It is still failing here, so the fallback is
+   either not reached or not sufficient on this map. This is the first thing to
+   debug against a live game now that one can be run, and it is the same
+   subsystem as the recent "occupied tile" work.
+
+Both need a live game to verify, which is now possible - so they are the next
+two items, in this order (issue 1 first: a run that cannot report its verdict is
+not a usable test).
