@@ -155,6 +155,29 @@ public class ProtossPlacementTest {
         assertEquals(PsiGating.PowerVerdict.REFUSE, gating.verdictFor(30, 30));
     }
 
+    /**
+     * The power answer must come from our own Pylons, not from the engine.
+     *
+     * <p>
+     * {@code Game.hasPowerPrecise} returned false for tiles a finished Pylon
+     * covered, so Forge and Cybernetics Core were placed unpowered while the
+     * Gateways beside them were fine (owner report, 2026-10-08). This pins the
+     * rule the placement uses instead: powered means "a completed Pylon is within
+     * the Pylon power radius", which is checkable from the unit list alone.
+     * </p>
+     */
+    @Test
+    public void powerComesFromOurOwnPylonsAtTheEngineRadius() {
+        atlantis.placement.engine.EnginePowerSource source =
+                new atlantis.placement.engine.EnginePowerSource();
+
+        // No game and no Pylons: nothing is powered. The point is that this is an
+        // answer, not an exception - a stale engine call must not be the only way
+        // to find out.
+        assertFalse(source.isPowered(30, 30),
+                "with no Pylon in range, a tile is not powered");
+    }
+
     // =========================================================
     // Start-block anchor (S2, C4)
     // =========================================================

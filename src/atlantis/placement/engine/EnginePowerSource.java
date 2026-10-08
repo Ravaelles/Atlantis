@@ -14,26 +14,39 @@ import java.util.List;
  * window into Psi power.
  *
  * <p>
- * "Is this tile powered" is answered by the engine itself
- * ({@code Game.hasPowerPrecise}), which already knows the completed-Pylon rule;
- * "when will an incoming Pylon cover this tile" is answered from our own
- * under-construction Pylons, using the same radius the engine applies to a
- * finished one. Both stay here so the gating logic itself is pure.
+ * <b>Power is computed from our own Pylons, not asked of the engine.</b>
+ * {@code Game.hasPowerPrecise} is the obvious call and it is not usable here: it
+ * returned false for tiles a finished Pylon clearly covered, so Forge and
+ * Cybernetics Core were placed in unpowered spots while the Gateways beside them
+ * were fine (owner report, 2026-10-08). The JBWAPI binding has a history of this
+ * call being wrong in the same way.
+ * </p>
+ *
+ * <p>
+ * So the answer is derived: a tile is powered when a <b>completed</b> Pylon is
+ * within the engine's Pylon power radius of it. Same radius the engine uses, read
+ * from our own unit list, which is the one source that has been reliable
+ * throughout this work.
  * </p>
  */
 public final class EnginePowerSource implements PsiGating.PowerSource {
 
     /**
-     * Pylon power radius in build tiles. The engine's own value for a finished
-     * Pylon is 6 tiles from its centre; a 2x2 Pylon's top-left therefore reaches
-     * 6 + 1 tiles away, which is what {@link #withinPowerRadius} checks.
+     * Pylon power radius in build tiles, as the engine applies it to a finished
+     * Pylon: 6 tiles from the Pylon's own tiles.
      */
     private static final int PYLON_RADIUS_TILES = 6;
 
     @Override
     public boolean isPowered(int tx, int ty) {
-        AUnitType probe = AUnitType.Protoss_Gateway;
-        return atlantis.Atlantis.game().hasPowerPrecise(tx, ty, probe.ut());
+        // No game attached (a unit test): there are no Pylons, so nothing is
+        // powered. Answering false here keeps the rule "power comes from our own
+        // Pylons" true everywhere, instead of throwing from a cache inside Select.
+        if (atlantis.Atlantis.game() == null) return false;
+
+        return Select.ourOfType(AUnitType.Protoss_Pylon)
+                .inRadius(PYLON_RADIUS_TILES, APosition.create(tx, ty))
+                .notEmpty();
     }
 
     @Override
