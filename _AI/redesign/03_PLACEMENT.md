@@ -1,11 +1,64 @@
 # Track 3: Building Placement — Reverse Engineering Stardust's Algorithm
 
-> **Implementation status (2026-10-08): S1-S6 have a cut in `atlantis.placement`**
-> (`core/` pure, `engine/` the only game reader, `race/` the race extension point,
-> `policy/` the fortification policy, `blocks/` the template table). The legacy
-> `APositionFinder` is still the default; set ENV `PLACEMENT=catalogue` to use the
-> new planner. What each stage delivered, and what it deliberately left out, is
-> recorded inline at the end of §5.4 - read that before continuing.
+## NOT FINISHED (read this first — exact list, 2026-10-08)
+
+Everything below this block is the design. **Protoss placement is implemented and
+acceptance-tested (28 tests); these are the gaps that remain.**
+
+1. **The cut-over has not happened.** `APositionFinder` is still the default
+   planner. `PLACEMENT=catalogue` selects the new one, but nothing has run the new
+   planner in a real game, and the old finder is not yet deleted (§4.6: the
+   deletion is meant to happen in the same cut-over as the Producer rewrite).
+2. **Terran and Zerg placement are stubs.** `TerranPlacementStrategy` and
+   `ZergPlacementStrategy` answer "available everywhere, no templates". Not
+   implemented: Terran addon availability, lift/land (the grid has no `SOFT_USED`
+   flag), wall-off, and Zerg creep-based availability. Each is a strategy
+   implementation, not a core change.
+3. **The wall does not measure its gap.** `ForgeGatewayWall` returns three tiles
+   that fit, are non-overlapping and power each other - but it does not measure the
+   hole the wall leaves, does not classify tiles inside vs outside it, and does not
+   compute probe-blocking spots. **A wall with a one-tile gap that a unit can walk
+   through would still be accepted.** Stated in `limitations()`.
+4. **The Pylon pull-forward is coarse.** A candidate that needs power asks for a
+   Pylon near it through the legacy queue and re-decides next pass
+   (`NEEDS_NEW_PYLON`). Not implemented: Stardust's finer rules - comparing a new
+   Pylon against the current best by a builder-travel buffer, and pulling an
+   already-committed-but-unplaced Pylon earlier with `shiftOne`.
+5. **Expansion, and the rest of the base-fortification policy, are not placed.**
+   `CannonFortificationPolicy` covers how many cannons a base wants; the expansion
+   decision (C14), cancelling a failed expansion (C15), and the DT-detection Pylon
+   priority (part of C11) are not in the planner. C14/C15 are policy work (S5).
+6. **`distanceToExit` is Chebyshev tile distance, not a real path.** Stardust does
+   a pathing pass before its final ordering; this does not. Deliberate (a path per
+   candidate is the cost the catalogue exists to avoid), but it means the exit
+   weighting is approximate.
+7. **The block scan order is simplified.** One stamping pass, first fit wins per
+   origin, top-left to bottom-right. Stardust scans largest-template-first from the
+   map centre. Both are deterministic; the interior-biased ordering is not ported.
+8. **No start-block variant beyond four.** Stardust has ten; the six edge-case
+   variants for unusual mains are not ported.
+
+**What IS done and tested:** the tile grid and its margin rules, the 24 normal
+block templates as data, the start-block anchor, the catalogue (highest-quality
+candidates, blocks before scan), exact-tile handling (honoured only when free),
+Psi gating and the pull-forward verdict, availability ordering, the distance
+weighting, the choke-cannon preference, the Forge/Gateway wall geometry, the
+fortification policy as goal generation, and the race extension point.
+
+---
+
+> **Implementation status (2026-10-08): S1-S6 are implemented for Protoss in
+> `atlantis.placement`** - `core/` pure, `engine/` the only game reader, `race/`
+> the extension point, `policy/` the fortification policy, `blocks/` the template
+> table (24 normal + 4 start blocks, as data). **Protoss is complete; Terran and
+> Zerg are documented no-op stubs.** The legacy `APositionFinder` is still the
+> default; ENV `PLACEMENT=catalogue` selects the new planner, so the two can be
+> compared in one build.
+>
+> What each stage delivered, and what it deliberately left out, is recorded inline
+> at the end of §5.4 - read that before continuing. The known gaps are: the wall's
+> gap measurement and inside/outside classification (§4.6), the expansion POLICY
+> (C14/C15), and the Terran/Zerg answers.
 >
 > Source of truth: `/sc-ai/Stardust/src/Builder/BuildingPlacement.{h,cpp}` (~1,270 lines),
 > `Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`,
@@ -441,15 +494,15 @@ Concrete legacy surface observed under `src/atlantis/production/`:
 |---|---|---|---|---|
 | C1 | Choose a valid tile for a generic building (no Psi, no choke semantics) | `APositionFinder` + `construction*` | Core: `BuildLocationCatalogue` + `BuildLocationRanker` | **S1** |
 | C2 | Reserve/commit a tile so it can't be double-booked | `ConstructionRequests` / queue | Core: catalogue `tentative/commit` | **S1** |
-| C3 | Prefab base layouts (gateway/tech adjacency) | none (ad-hoc) | Core `BuildBlock` + race block templates | **S2** |
-| C4 | Start-block anchor for a base | none reliable | Race strategy: start-block templates | **S2** |
-| C5 | Protoss Psi gating (tile powered / soon-powered / Pylon pull-forward) | scattered in `constructions` | Race: `ProtossPlacementStrategy` | **S3** |
-| C6 | Probe travel-time estimate for a candidate tile (`builderFrames`) | partial, per-case | Core (compute) + Race (interpret) | **S2** |
-| C7 | Distance-to-exit weighting (map-facing vs. choke-facing) | `APositionFinder` heuristics | Core via `NeighbourhoodRegistry` + ranker rules | **S3** |
+| C3 | Prefab base layouts (gateway/tech adjacency) | none (ad-hoc) | Core `BuildBlock` + race block templates | **S2 DONE** |
+| C4 | Start-block anchor for a base | none reliable | Race strategy: start-block templates | **S2 DONE** |
+| C5 | Protoss Psi gating (tile powered / soon-powered / Pylon pull-forward) | scattered in `constructions` | Race: `ProtossPlacementStrategy` | **S3 DONE** |
+| C6 | Probe travel-time estimate for a candidate tile (`builderFrames`) | partial, per-case | Core (compute) + Race (interpret) | **S2 DONE** |
+| C7 | Distance-to-exit weighting (map-facing vs. choke-facing) | `APositionFinder` heuristics | Core via `NeighbourhoodRegistry` + ranker rules | **S3 DONE** |
 | C8 | Executing the build with a chosen worker (issue `build` command, handle death/retry) | `ConstructionsCommander` + `builders/**` | Producer `OrderIssuer` / `BuildingOrderDirector` (see `01_PRODUCTION.md`) | **S1** |
-| C9 | Choke geometry (main/natural chokes, exits) | `Map`/`Chokes` (keep) | Core `NeighbourhoodRegistry` | **S3** |
-| C10 | Forge/Gateway choke wall construction | partial | Race: dedicated wall strategy (own document) | **S4** |
-| C11 | Main-choke defensive cannon placement (DT detection) | none solid | Race: `ProtossPlacementStrategy` | **S4** |
+| C9 | Choke geometry (main/natural chokes, exits) | `Map`/`Chokes` (keep) | Core `NeighbourhoodRegistry` | **S3 DONE** |
+| C10 | Forge/Gateway choke wall construction | partial | Race: dedicated wall strategy (own document) | **S4 DONE (no gap measurement)** |
+| C11 | Main-choke defensive cannon placement (DT detection) | none solid | Race: `ProtossPlacementStrategy` | **S4 DONE (cannon proximity)** |
 | C12 | "Secure a base with cannons" policy (how many, where, when) | `ProtossSecureBasesCommander` + `reinforce/**` | **Future policy layer** — not placement | **S5** |
 | C13 | Cannon count heuristics per matchup (mutas, zerg supply tiers, mineral thresholds) | `ShouldSecureProtossBase` | **Future policy layer** | **S5** |
 | C14 | Base expansion decision (when to take a base) | `dynamic/expansion/**` | Producer goals + a future `ExpansionPlay` (see `02_COMBAT.md`) | **S5** |
