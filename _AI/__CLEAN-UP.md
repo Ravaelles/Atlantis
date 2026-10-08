@@ -1,11 +1,26 @@
-W ostatnim czasie (październik) mieliśmy wiele zmian, które wprowadziły do kodu bardzo długie komentarze, tak ja, które dodałeś teraz. Po czasie spowoduje to ogromne zwiększenie rozmiaru kodu. Przejdź proszę przez wszystkie nasze zmiany względem bazowej gałęzi feature/2025-12-t i zamieńmy długie komentarze z już naprawionych bugów na znacznie krótsze. Zazwyczaj 1-2 zdania wystarczą. Jeśli musimy, możemy przenieść komentarz do nagłówka metody. Przykładowo: teraz dodlaiśmy taki kod: if (isWoundedAndInDanger()) return false;
+# Working note: shrink the October comments
 
-Zamiast dodawac 15 linii komentarza, skróćmy to i wyjaśnijmy w nagłówku tej metody, dlaczego jest to istotne. Ale zwięźlej.
+Owner's request (kept as a working note; the `__` prefix marks it as not part of
+the reference set): the October changes added very long comments, several of them
+for bugs that were already fixed. Over time they will bloat the source. Go through
+the changes made since the base branch `feature/2025-12-t` and **replace long
+comments about already-fixed bugs with much shorter ones** - usually one or two
+sentences is enough. If a comment is genuinely needed, move it to the method's
+javadoc instead of leaving it inline.
 
-Zróbmy to dla wszystkich zmian wprowadzonych w ostatnich dwóch tygodniach.
+The example that started it:
 
-Mowa o ponad 500 plikach, więc podziel pracę na dwie fazy.
+```java
+if (isWoundedAndInDanger()) return false;
+```
 
-Faza A - stwórz listę wszystkich dotkniętnych plików, zapisuj tylko nazwy i nic więcej.
+This wants a short javadoc line on `isWoundedAndInDanger`, not a 15-line inline
+comment.
 
-Faza B - pracuj po jednym pliku na raz. Przeanalizuj komentarze i zrób zmiany, jak opisano powyżej.
+Scope: all changes from the last two weeks (500+ files). Work in two phases:
+
+- **Phase A** - list every touched file. Names only, nothing else.
+- **Phase B** - one file at a time: read the comments, shorten as described, keep
+  each change reviewable and commit in small steps.
+
+Language: English, per `_AI/CONVENTIONS.md` §1 (this note included).
