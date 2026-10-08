@@ -53,6 +53,12 @@ implementation. Its cause is not yet confirmed from the supplied stack trace.
 
 ## Priority 2 — Complete game adapters and goal coverage
 
+> **Owner's call (2026-10-08): stop the OpenBW loop, move forward, record the
+> hard part.** Six headless runs this session proved the *client attaches*
+> (`Connection successful`); the game is still unplayable because of bot-side
+> startup defects. Both are written down in `_AI/NEXT.md` **#43** (the game
+> path) and **#45** (why legacy cannot be deleted top-down: 149 depending
+> files). Nothing is deleted until a real game confirms v2 LIVE.
 - [x] **Pending work accounting:** `CommittedWork` models BWAPI accounting -
   an unpaid construction reserves its cost at the first affordable frame, a
   provider under construction adds supply at completion, a worker only starts
