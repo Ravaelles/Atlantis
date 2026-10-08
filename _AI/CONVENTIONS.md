@@ -395,26 +395,59 @@ These are the rules distilled from the OpenBW investigation
   the packaged junixsocket is the working one; a silent mispackage is worse
   than a red build, because it surfaces as "the bot never joins the game".
 
-## 16. Java version: the target is Java 8 (owner's ruling, 2026-10-07)
+## 16. Java version: always Java 1.8 (owner's ruling; restated 2026-10-08)
 
-- **Atlantis targets Java 8. There is no upgrade plan; do not propose one.**
-  `build-bot-jar.sh` compiles with `--release 8` and that is deliberate: a Java
-  9+ API in any compiled file (tests included, since the whole tree is compiled
-  in one `javac` invocation) breaks the game jar.
-- **Production runs on Java 8**: the Wine bot uses Temurin `1.8.0_504` at
-  `~/.wine/drive_c/Java/bin/java.exe` (measured 2026-10-07), and that is the
-  runtime that plays real games and tournaments.
-- **The native Linux JVM is a different thing.** This machine has only Java 17
-  installed (`/usr/lib/jvm/java-17-openjdk-amd64`), which is what a bare
-  `java -jar Atlantis.jar` uses outside Wine. A difference between a Wine game
-  and a native run may therefore be a **JVM difference (8 vs 17)**, not a bug in
-  the bot - check the Java version before investigating anything else.
+- **Always use Java 1.8. Everywhere.** This is a standing rule, not a preference:
+  not only the game jar, but the IDE's project/module SDK, the run configuration's
+  JRE, every `javac` invocation in `scripts/`, and the JDK a tool is told to use.
+  **There is no upgrade plan; do not propose one**, and do not "temporarily" run or
+  compile anything with a newer JDK.
+- **Every compile of this tree must pass `--release 8`.** That is the mechanism
+  that makes the rule enforceable rather than aspirational: it pins the class-file
+  version to 52 (Java 8) regardless of which JDK happens to be the machine default.
+  It applies to **all** scripts that compile into a directory a Java 8 runtime
+  loads - `build-bot-jar.sh`, `run-tests.sh`, `run-full-tests.sh`,
+  `run-architecture-tests.sh` - because they all write
+  `out/production/Atlantis`, which is exactly the directory the IDE launches
+  `main.Main` from.
+- **Why "always", and not just "the jar":** the Wine bot JVM and the IDE's
+  supervisor JVM are both **Java 8**, while the machine's default `javac` is
+  whatever is installed (17 on this machine, measured 2026-10-08). A single
+  compile that forgets `--release 8` therefore writes Java 17 classes into the
+  directory a Java 8 runtime loads, and the failure is not a compile error - it is
+  a dead keyboard or a bot that never attaches. Measured 2026-10-08, JNativeHook's
+  dispatch thread:
+
+  ```
+  UnsupportedClassVersionError: atlantis/keyboard/KeyRelay has been compiled by a
+  more recent version of the Java Runtime (class file version 61.0), this version
+  of the Java Runtime only recognizes class file versions up to 52.0
+  ```
+
+  The same class of failure had already hit `atlantis.Atlantis` once (see the note
+  in `AKeyboard.isBotJvm`). The rule exists so it cannot happen a third time.
+- **The guard is `tests.architecture.Java8BytecodeTest`** (in the fast suite): it
+  reads the class-file major version of the classes the Java 8 runtimes load
+  (`KeyRelay`, `AKeyboard`, `Atlantis`, `main.Main`) and fails if any is not 52.
+  A build that cannot load its own classes on the runtime it targets is a build
+  failure, and this test says so in seconds instead of leaving it to a game run.
+- **Production and the IDE runtimes:**
+  - the Wine bot uses Temurin `1.8.0_504` at
+    `~/.wine/drive_c/Java/bin/java.exe` (measured 2026-10-07) - the runtime that
+    plays real games and tournaments;
+  - the IDE project SDK is `corretto-1.8` with `languageLevel="JDK_1_8"`, and the
+    `Main` run configuration resolves its JRE from the module SDK - when a run
+    fails with a class-file-version error, check the project SDK first, because it
+    is machine-local (`.idea/` is git-ignored) and not enforced by the repository;
+  - a bare native `java -jar` outside Wine uses whatever the machine default is,
+    which is **not** necessarily 8 - a difference between a Wine game and a native
+    run may therefore be a JVM difference, not a bug in the bot.
 - **Consequence for vendored libraries:** JBWAPI-Rav bundles junixsocket 1.0.x,
   whose `AFUNIXSocket` calls `java.net.Socket.setCreated()` - a method that
   exists in Java 8 and was **removed after it**. On Java 8 the bundled version
   works; on Java 9+ it throws and the client silently fails to attach. That is
-  why the OpenBW path (Java 17) needed a junixsocket 2.10.1 override while the
-  Wine path (Java 8) never did. A library that "is broken for us" must be
-  checked against **both** runtimes before it is changed.
+  why the OpenBW path needed a junixsocket 2.10.1 override while the Wine path
+  never did. A library that "is broken for us" must be checked against **8 and
+  whatever newer JVM is in play** before it is changed.
 - Keep the override in `lib/` and the build assertions: they are what makes the
-  same jar attach on Java 17 without regressing Java 8.
+  same jar attach on a newer JVM without regressing Java 8.

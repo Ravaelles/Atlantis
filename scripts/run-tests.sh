@@ -76,7 +76,14 @@ CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':'
 
 mkdir -p "$OUT"
 echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
-javac -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java')
+# --release 8, for the same reason build-bot-jar.sh uses it: this tree compiles
+# into $OUT, which is the directory the IDE runs main.Main from. Without the flag
+# the local javac decides the class-file version, and on any machine whose default
+# JDK is newer than 8 the IDE output is that newer version - so the Wine bot's
+# Java 8 JVM dies on UnsupportedClassVersionError the moment JNativeHook's dispatch
+# thread reaches a class (measured 2026-10-08: atlantis/keyboard/KeyRelay, class
+# file 61.0 against a runtime that accepts up to 52.0, keyboard dead).
+javac --release 8 -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java')
 
 echo "[tests] running: ${JUNIT_ARGS[*]}"
 java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \

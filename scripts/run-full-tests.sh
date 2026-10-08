@@ -44,7 +44,9 @@ fi
 
 mkdir -p "$OUT"
 echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
-if ! javac -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java'); then
+# --release 8: see run-tests.sh. $OUT is shared with the IDE run, so the class
+# files must be Java 8 on every machine regardless of the local default JDK.
+if ! javac --release 8 -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java'); then
   echo "[tests] COMPILE FAILED - no scope was run" >&2
   exit 1
 fi

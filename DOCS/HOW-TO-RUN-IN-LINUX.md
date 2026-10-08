@@ -109,11 +109,37 @@ bash scripts/run-full-tests.sh     # owner-only: adds acceptance + e2e scenarios
 
 Remember: **every file in `src/`, tests included, must compile under
 `--release 8`** — one `javac` invocation produces the game jar, so a Java 9+ API
-in a test breaks the bot (CONVENTIONS §16).
+in a test breaks the bot (CONVENTIONS §16). This now includes the test scripts:
+they write `out/production/Atlantis`, which is the directory the IDE runs
+`main.Main` from, so they pass `--release 8` too.
 
 ---
 
-## 5. When something looks wrong
+## 5. "The keyboard does nothing" / `UnsupportedClassVersionError`
+
+Symptom: the bot starts and plays, but every shortcut is dead, and the console
+shows (from JNativeHook's dispatch thread):
+
+```
+UnsupportedClassVersionError: atlantis/keyboard/KeyRelay has been compiled by a
+more recent version of the Java Runtime (class file version 61.0), this version of
+the Java Runtime only recognizes class file versions up to 52.0
+```
+
+Cause: the classes in `out/production/Atlantis` were compiled with a newer JDK
+than the Java 8 runtime that loads them (61.0 = Java 17, 52.0 = Java 8). The
+usual way in is a compile that forgot `--release 8`, or an IDE project SDK that
+is not 1.8 (the IDE config is machine-local — `.idea/` is git-ignored — so it is
+not enforced by the repository).
+
+Fix: set the IDE project SDK to `corretto-1.8` (`File → Project Structure →
+Project`), run `bash scripts/run-tests.sh` once (it recompiles with `--release 8`
+and runs `Java8BytecodeTest`, which fails loudly if any loaded class is not Java
+8), and re-run. CONVENTIONS §16.
+
+---
+
+## 6. When something looks wrong
 
 Run this before reading any game logic:
 

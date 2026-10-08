@@ -29,12 +29,14 @@ if [ ! -d "$OUT/atlantis" ]; then
     find src -name '*.java' \
         | grep -v 'src/tests/unit/ATargetingTest.java' \
         | sort > out/arch-sources.txt
-    javac -nowarn -cp "$LIB_CP" -d "$OUT" @out/arch-sources.txt
+    # --release 8: $OUT is shared with the IDE run (main.Main is launched from it),
+    # so a newer local default JDK must not write newer class files here.
+    javac --release 8 -nowarn -cp "$LIB_CP" -d "$OUT" @out/arch-sources.txt
 fi
 
 echo "[arch] compiling boundary test..."
 mkdir -p "$OUT"
-javac -nowarn -cp "$CP" -d "$OUT" src/tests/architecture/ArchitectureBoundaryTest.java
+javac --release 8 -nowarn -cp "$CP" -d "$OUT" src/tests/architecture/ArchitectureBoundaryTest.java
 
 echo "[arch] running boundary test..."
 java -cp ".:$CP" org.junit.platform.console.ConsoleLauncher \
