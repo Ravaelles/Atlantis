@@ -3,7 +3,7 @@ package atlantis.production.v2.engine;
 import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.v2.goals.BuildOrderRow;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionPlan;
@@ -99,7 +99,7 @@ public final class ProductionEngine {
     private List<ProductionGoal> collectGoals(GameStateSnapshot state, ResourceTimeline timeline) {
         List<ProductionGoal> goals = new ArrayList<>();
 
-        List<ProductionOrder> buildOrderRows = buildOrderRows();
+        List<BuildOrderRow> buildOrderRows = buildOrderRows();
         if (!buildOrderRows.isEmpty()) {
             goals.addAll(state.buildOrderGoals(buildOrderRows));
         }
@@ -114,10 +114,10 @@ public final class ProductionEngine {
         return goals;
     }
 
-    private List<ProductionOrder> buildOrderRows() {
+    private List<BuildOrderRow> buildOrderRows() {
         if (CurrentBuildOrder.get() == null)
             return Collections.emptyList();
-        return CurrentBuildOrder.get().productionOrders();
+        return BuildOrderRow.fromLegacy(CurrentBuildOrder.get().productionOrders());
     }
 
     /** The plan of the last frame, for debug output and tests. Read-only. */

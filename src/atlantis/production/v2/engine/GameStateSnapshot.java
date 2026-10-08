@@ -177,15 +177,10 @@ public final class GameStateSnapshot {
                 desiredRefineries));
     }
 
-    /** The build-order goals for this frame, with a live supply projection. */
+    /** The build-order goals for this frame: only rows the game has not produced yet. */
     public List<atlantis.production.v2.ProductionGoal> buildOrderGoals(
-            List<atlantis.production.orders.production.queue.order.ProductionOrder> rows) {
-        return BuildOrderGoals.from(rows, new BuildOrderGoals.SupplyProjection() {
-            @Override
-            public int supplyWithWhatIsProduced() {
-                return A.supplyUsed() + supplyInProduction();
-            }
-        });
+            List<atlantis.production.v2.goals.BuildOrderRow> rows) {
+        return BuildOrderGoals.from(rows, new LiveBuildOrderProgress());
     }
 
     /**

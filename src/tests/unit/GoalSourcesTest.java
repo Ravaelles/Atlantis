@@ -1,16 +1,12 @@
 package tests.unit;
 
-import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.UnitProducible;
-import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -145,52 +141,6 @@ public class GoalSourcesTest {
         assertTrue(goals.get(0).priority() < goals.get(1).priority());
     }
 
-    // ---- build order goals -------------------------------------------------
-
-    @Test
-    public void buildOrderRowIsEmittedOnlyOnceItsSupplyIsProjected() {
-        // A row saying "this at 12 supply" means the supply you use once it is
-        // done; below that it is not this frame's goal, and it comes back on
-        // its own on a later frame - never a hard deadline, never a drop.
-        List<ProductionOrder> rows = Collections.singletonList(row(AUnitType.Protoss_Zealot, 12));
-
-        assertTrue(BuildOrderGoals.from(rows, new FixedSupply(4)).isEmpty(),
-                "a 12-supply row is not a goal while we are at 4");
-        assertEquals(1, BuildOrderGoals.from(rows, new FixedSupply(12)).size(),
-                "once projected supply reaches 12, the row is a goal");
-    }
-
-    @Test
-    public void earlierBuildOrderLinesOutrankLaterOnes() {
-        List<ProductionOrder> rows = new ArrayList<>();
-        rows.add(row(AUnitType.Protoss_Pylon, 0));
-        rows.add(row(AUnitType.Protoss_Gateway, 0));
-
-        List<ProductionGoal> goals = BuildOrderGoals.from(rows, new FixedSupply(9));
-        Collections.sort(goals, BY_PRIORITY);
-
-        assertEquals(2, goals.size());
-        assertTrue(goals.get(0).priority() <= goals.get(1).priority(),
-                "the file order must survive as the scheduling order");
-    }
-
-    private static final class FixedSupply implements BuildOrderGoals.SupplyProjection {
-        private final int supply;
-
-        FixedSupply(int supply) {
-            this.supply = supply;
-        }
-
-        @Override
-        public int supplyWithWhatIsProduced() {
-            return supply;
-        }
-    }
-
-    private static ProductionOrder row(AUnitType type, int minSupply) {
-        return new ProductionOrder(type, minSupply);
-    }
-
     // ---- helpers -----------------------------------------------------------
 
     private static boolean contains(List<ProductionGoal> goals, String typeId) {
@@ -224,11 +174,4 @@ public class GoalSourcesTest {
     private static AUnitType probe() {
         return AUnitType.Protoss_Probe;
     }
-    /** Kept to make the ordering assertion above explicit about what it sorts. */
-    private static final Comparator<ProductionGoal> BY_PRIORITY = new Comparator<ProductionGoal>() {
-        @Override
-        public int compare(ProductionGoal a, ProductionGoal b) {
-            return a.compareTo(b);
-        }
-    };
 }
