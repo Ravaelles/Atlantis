@@ -1,8 +1,18 @@
 # Production V2 — Remaining Work
-Status: open. This is the working checklist for completing
-`_AI/redesign/01_PRODUCTION.md`. The Gateway train failure is deliberately
-**deferred**; do not let investigation of that report block the remaining V2
-implementation. Its cause is not yet confirmed from the supplied stack trace.
+
+Status: open. Working checklist for `_AI/redesign/01_PRODUCTION.md`; milestone
+state is in `_AI/STATUS.md`.
+
+**Owner priorities (2026-10-08): finish Production V2, then rewrite
+`PositionFinder`.** These are linked: placement is how production puts a building
+on the map, so a broken finder blocks V2's cutover too. Priority 3 below (the
+OpenBW E2E scenario) therefore waits on the PositionFinder rewrite
+(`_AI/POSITION-FINDER.md`) - **do not extend the legacy finder while that is
+pending**.
+
+The Gateway train failure is deliberately **deferred**; do not let investigating
+it block the remaining V2 work. Its cause is not confirmed from the supplied stack
+trace.
 
 ## Deferred: Gateway `OrderSink.train` error
 
