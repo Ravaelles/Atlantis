@@ -67,6 +67,23 @@ SELF_TEST=0
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
 
+# Three nested timeouts, and the ORDER is the point:
+#
+#   GAME_SECONDS        the bot ends its own game (FORCE_END_GAME_AFTER_REAL_SECONDS)
+#   GAME_SECONDS + 30   hard kill for the bot JVM if it got stuck
+#   GAME_SECONDS + 90   hard kill for the host (CONVENTIONS §13's 360 s cap)
+#
+# The bot must finish FIRST, while the host is alive: ending the game is what lets
+# Atlantis exit cleanly (onEnd -> System.exit(0)). If the host dies first the
+# client is orphaned and loops on "No server proc ID" (measured 2026-10-08), and
+# the run reports failure although the game was played. Override with GAME_SECONDS.
+GAME_SECONDS="${GAME_SECONDS:-240}"
+BOT_KILL_SECONDS=$(( GAME_SECONDS + 30 ))
+HOST_KILL_SECONDS=$(( GAME_SECONDS + 90 ))
+if [ "$HOST_KILL_SECONDS" -gt 360 ]; then
+  fail "GAME_SECONDS=$GAME_SECONDS makes the host timeout exceed the 360 s cap (CONVENTIONS §13)"
+fi
+
 # Teardown. A leftover host holds the game table, so the next run's client
 # adopts a dead PID and loops on "Unable to open communications socket"
 # (measured 2026-10-07). It runs on EXIT/INT/TERM and on the normal path.
@@ -143,6 +160,13 @@ GAME_LAUNCHER=OPENBW
 BWAPI_DATA_PATH=$BWAPI_DATA_ROOT
 FORCE_GG_FOR_ENEMY=false
 POSTGAME_COPY_CHERRYVIS_TO=
+# The bot ends its own game before the HOST's timeout kills the host (measured
+# 2026-10-08: without this the host died first, the client was orphaned and
+# looped on "No server proc ID" until the script SIGTERM'd it, so a played game
+# still reported failure). ForceExitLocallyAfterRealSeconds calls
+# Atlantis.onEnd -> System.exit(0), which is the only exit that leaves the host
+# alive to be torn down cleanly. It must stay BELOW the host timeout below.
+FORCE_END_GAME_AFTER_REAL_SECONDS=$GAME_SECONDS
 EOF
 }
 write_env "$BOT_RUN_DIR/ENV"
@@ -223,7 +247,7 @@ say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE"
 # host, not what a live host writes: with this flag the slot is published with
 # isConnected=0, which is exactly what the client's free-slot search wants).
 setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
-  timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
+  timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!
 
@@ -270,7 +294,7 @@ BOT_EXIT=0
 # the bot analyses are the same one. Without it the bot's own default was used
 # while the harness hosted something else (measured 2026-10-08: the bot analysed
 # a UMS map and could place nothing on the real one).
-timeout 360 java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
+timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 
