@@ -15,7 +15,7 @@ AI assistant.
 |---|---|
 | know **what to work on next** | `NEXT.md` (live backlog) + the two priorities below |
 | **finish Production V2** (owner priority 1) | `STATUS.md`, then `__01_PRODUCTION_TODO.md`, then `redesign/01_PRODUCTION.md` |
-| **rewrite PositionFinder** (owner priority 2, blocks the above) | `POSITION-FINDER.md` |
+| **rewrite PositionFinder** (owner priority 2, blocks the above) | `POSITION-FINDER.md`, then `redesign/03_PLACEMENT.md` (the design; S1-S4 have a first cut in `atlantis.placement`) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md`, `CHALLENGES/OpenBW.md` |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |

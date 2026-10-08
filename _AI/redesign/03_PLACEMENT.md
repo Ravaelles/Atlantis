@@ -1,5 +1,11 @@
 # Track 3: Building Placement — Reverse Engineering Stardust's Algorithm
 
+> **Implementation status (2026-10-08): S1-S4 have a first cut in
+> `atlantis.placement` (`core/` pure, `engine/` the only game reader).** The
+> legacy `APositionFinder` is still the default; set ENV `PLACEMENT=catalogue` to
+> use the new planner. What each stage delivered, and what it deliberately left
+> out, is recorded inline at the end of §5.4 - read that before continuing.
+>
 > Source of truth: `/sc-ai/Stardust/src/Builder/BuildingPlacement.{h,cpp}` (~1,270 lines),
 > `Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`,
 > consumed by `Producer/Producer.cpp` (`reserveBuildPositions`, `choosePylonBuildLocation`).
@@ -501,12 +507,32 @@ Stages are strictly ordered; each is shippable and testable on its own.
   `BuildBlock` and a small template set (start-block variants + the 6 largest normal blocks),
   `builderFrames` computation, dynamic goal emitters for structures (C3, C4, C6, C17).
   This is where placement quality jumps.
+
+  **DONE (shape) 2026-10-08**: `core/BuildBlock` + `core/Slot` + `blocks/Block8x8`
+  (the workhorse 8x8), and the catalogue now stamps blocks first and fills the
+  gaps with the S1 per-tile scan. **Not done: the full template set** (one block
+  ships, not 24 + start-block variants) and `builderFrames` is still 0 - the
+  fields exist on `BuildLocation` and the ranker reads them, but nothing computes
+  a real travel time yet. Both are the remaining S2 work.
 - **S3 — Protoss gating + ranking depth.**
   Psi gating, Pylon pull-forward/new-Pylon, distance-to-exit weighting, choke-aware ranking,
   full 24-template list (C5, C7, C9). Protoss is now first-class.
+
+  **DONE (gating + ranking) 2026-10-08**: `core/PsiGating` +
+  `engine/EnginePowerSource` (a power-needing building only takes a tile powered
+  now or soon, never one nothing can power), `core/NeighbourhoodRegistry` +
+  `engine/EngineNeighbourhoodSource`, `core/BuildLocationRanker` (availability
+  first, then `builderFrames * 2 +/- distanceToExit` with the exit term flipped
+  for tech buildings). **Not done: Pylon pull-forward / new-Pylon creation** -
+  the gate refuses an unpower-able tile, it does not yet ask for an extra Pylon to
+  make a good tile usable.
 - **S4 — Defensive structures placement (choke/wall/DT).**
   Forge/Gateway wall strategy, main-choke cannon placement and DT-detection priority
   (C10, C11). Still placement, but race-specific and map-aware.
+
+  **DONE (cannon) 2026-10-08**: `engine/ChokeAffinityRanker` orders cannon
+  candidates by closeness to the choke. **Not done: the Forge/Gateway wall**
+  (C10), which is its own document per the spec.
 - **S5 — Base fortification & expansion POLICY (later stage).**
   Re-derive "when to secure a base, with how many cannons, and when to expand" as
   goal-emitting policy on top of the planner (C12, C13, C14, C15). Explicitly deferred:
