@@ -170,6 +170,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private BuildLocationCatalogue.LocationScorer rankerFor(AUnitType unitType, final APosition centre) {
         if (neighbourhoods == null) return nearestTo(centre);
 
+        // A Photon Cannon exists to shoot whatever comes through the choke, so
+        // proximity to it is the placement's whole point (S4; the DECISION to build
+        // one is policy and lives in S5). Expressed as a scorer, not as its own
+        // class, so the catalogue and the seam do not change for it.
+        if (unitType.isCannon()) {
+            return new ChokeAffinityRanker(neighbourhoods);
+        }
+
         return new BuildLocationRanker(
             neighbourhoods,
             false,
