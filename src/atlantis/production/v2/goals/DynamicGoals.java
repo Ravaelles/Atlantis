@@ -62,6 +62,13 @@ public final class DynamicGoals {
         public final int mainBaseTileX;
         public final int mainBaseTileY;
 
+        /**
+         * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
+         * finished. Counting them is what stops the supply goal being re-emitted
+         * every frame until one completes.
+         */
+        public int supplyProvidersComing;
+
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame) {
             this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
@@ -228,6 +235,13 @@ public final class DynamicGoals {
             return null;
 
         if (state.supplyFree > SUPPLY_WORRY_LEVEL)
+            return null;
+
+        // A provider already on the way counts: supply arrives when the Pylon
+        // finishes, so without this the goal is emitted every frame until then and
+        // the scheduler orders a Pylon per frame (the "2800 ordered Pylons" run).
+        // The same shape as the worker goal's workers-with-unfinished count.
+        if (state.supplyProvidersComing > 0)
             return null;
 
         int priority = state.supplyFree <= 0

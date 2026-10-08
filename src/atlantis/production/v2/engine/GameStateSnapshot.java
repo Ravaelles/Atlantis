@@ -124,10 +124,19 @@ public final class GameStateSnapshot {
 
     /** The dynamic goal generators for this frame. */
     public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
+        // Workers EXISTING PLUS those already in production. Using the existing
+        // count alone is what made the worker goal ask for another Probe every
+        // frame: the goal layer asked "do we have fewer than the cap", the answer
+        // stayed yes until the Probe hatched, and the scheduler issued one per
+        // frame (measured 2026-10-08: Probe@2, @332, @635, ... on the OpenBW run,
+        // and 2800+ Pylon issues before that). With the unfinished count the demand
+        // disappears the moment the first one is ordered - which is what "we have
+        // enough workers" actually means.
         int workers = Count.workers();
+        int workersWithUnfinished = Count.ofTypeWithUnfinished(workerType());
 
         DynamicGoals.GameSnapshot snapshot = new DynamicGoals.GameSnapshot(
-                workers,
+                workersWithUnfinished,
                 Math.max(1, Count.bases()),
                 A.supplyUsed(),
                 Math.max(0, A.supplyTotal() - A.supplyUsed()),
@@ -147,6 +156,10 @@ public final class GameStateSnapshot {
         AUnit main = Select.main();
         if (main != null) snapshot = snapshot.atBase(main.tx(), main.ty());
 
+        // Supply providers already on the way, so the supply goal is not re-emitted
+        // every frame (see DynamicGoals.supplyGoal).
+        snapshot.supplyProvidersComing = supplyProvidersComing();
+
         return DynamicGoals.contribute(snapshot);
     }
 
@@ -163,6 +176,31 @@ public final class GameStateSnapshot {
         if (We.protoss()) return AUnitType.Protoss_Zealot;
         if (We.terran()) return AUnitType.Terran_Marine;
         if (We.zerg()) return AUnitType.Zerg_Zergling;
+        return AtlantisRaceConfig.WORKER;
+    }
+
+    /**
+     * Supply providers (Pylons/Depots/Overlords) already ordered and not yet
+     * finished - existing plus in production plus in queue, minus what is done.
+     * A Pylon adds supply only at completion, so this is the count that says "we
+     * have enough supply coming".
+     */
+    private static int supplyProvidersComing() {
+        AUnitType provider = supplyProviderType();
+        if (provider == null) return 0;
+
+        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
+    }
+
+    private static AUnitType supplyProviderType() {
+        if (We.protoss()) return AUnitType.Protoss_Pylon;
+        if (We.terran()) return AUnitType.Terran_Supply_Depot;
+        if (We.zerg()) return AUnitType.Zerg_Overlord;
+        return null;
+    }
+
+    /** The worker type for this race, for the "workers we have or will have" count. */
+    private static AUnitType workerType() {
         return AtlantisRaceConfig.WORKER;
     }
 

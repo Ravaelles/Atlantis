@@ -61,6 +61,13 @@ MAP="${1:-$MAP_DEFAULT}"
 RACE="${2:-Protoss}"
 ENEMY_RACE="${3:-Zerg}"
 
+# ENEMY_COUNT=0 plays with NO opponent (every enemy slot closed - confirmed in
+# AutoMenuManager.cpp: enemyCount < autoMenuEnemyCount, else closeSlot()). That is
+# the undisturbed-economy run: our bot alone on a real melee map, so an economy,
+# production or placement bug shows up as itself instead of being masked by a
+# fight. Use ENEMY_COUNT=1 (the default) for a normal game.
+ENEMY_COUNT="${ENEMY_COUNT:-1}"
+
 SELF_TEST=0
 [ "${1:-}" = "--self-test" ] && SELF_TEST=1
 
@@ -241,7 +248,7 @@ mkdir -p "$(dirname "$SERVER_LOG")"
 pkill -9 -x BWAPILauncher 2>/dev/null || true
 rm -f /tmp/bwapi_socket_* /dev/shm/bwapi_shared_memory_* 2>/dev/null || true
 
-say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE"
+say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE enemy_count=$ENEMY_COUNT"
 
 # setsid + nohup: the host must survive this script's process group (the
 # harness script ends with `exec BWAPILauncher`, so its PID is the host's PID).
@@ -260,6 +267,7 @@ say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE"
 # host, not what a live host writes: with this flag the slot is published with
 # isConnected=0, which is exactly what the client's free-slot search wants).
 setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
+  BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
   timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!
