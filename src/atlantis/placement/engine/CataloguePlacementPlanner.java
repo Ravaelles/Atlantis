@@ -1,13 +1,14 @@
 package atlantis.placement.engine;
 
 import atlantis.map.position.APosition;
+import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
 import atlantis.placement.core.BuildLocationRanker;
 import atlantis.placement.core.NeighbourhoodRegistry;
-import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.RacePlacementStrategy;
+import atlantis.placement.core.StartBlockFinder;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -19,6 +20,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -92,7 +94,59 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this.grid = grid;
         this.strategy = strategy;
         this.neighbourhoods = neighbourhoods;
-        this.catalogue = new BuildLocationCatalogue(grid);
+        this.catalogue = new BuildLocationCatalogue(
+            grid,
+            factoriesFor(strategy),
+            startBlockFinderFor(grid, strategy),
+            ourBasePositions()
+        );
+    }
+
+    /**
+     * The block factories a strategy contributes. With no strategy (a test) the
+     * default Protoss-shaped table is used, so a bare-grid test still gets a
+     * populated catalogue.
+     */
+    private static List<BuildLocationCatalogue.BlockFactory> factoriesFor(RacePlacementStrategy strategy) {
+        final List<BuildBlock.Spec> specs = strategy != null
+            ? strategy.blockTemplates()
+            : atlantis.placement.blocks.BlockTemplates.normal();
+
+        List<BuildLocationCatalogue.BlockFactory> factories = new ArrayList<>();
+        for (final BuildBlock.Spec spec : specs) {
+            factories.add(new BuildLocationCatalogue.BlockFactory() {
+                @Override
+                public BuildBlock at(int left, int top) {
+                    return new BuildBlock(spec, left, top);
+                }
+            });
+        }
+        return factories;
+    }
+
+    /**
+     * The start-block finder (C4), or null when the strategy offers no start
+     * blocks - a race without an anchor layout, or a test.
+     */
+    private static StartBlockFinder startBlockFinderFor(
+        TileAvailabilityGrid grid, RacePlacementStrategy strategy
+    ) {
+        if (strategy == null) return null;
+
+        List<BuildBlock.Spec> starts = new ArrayList<>();
+        for (BuildBlock.Spec spec : strategy.blockTemplates()) {
+            if (spec.name.startsWith("Start")) starts.add(spec);
+        }
+        return starts.isEmpty() ? null : new StartBlockFinder(grid, starts);
+    }
+
+    /** Our bases as tile centres, so each gets a start-block anchor. */
+    private static List<int[]> ourBasePositions() {
+        List<int[]> bases = new ArrayList<>();
+        for (AUnit base : Select.ourBasesWithUnfinished().list()) {
+            if (base.position() != null) bases.add(new int[]{base.tx(), base.ty()});
+        }
+        return bases;
     }
 
     @Override

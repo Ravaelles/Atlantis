@@ -45,6 +45,17 @@ public final class BuildLocationCatalogue {
     private final List<BlockFactory> blockFactories;
     private final List<BuildLocation> all = new ArrayList<>();
 
+    /**
+     * Start-block anchoring (C4). Null in the minimal constructor, in which case no
+     * base is anchored and the normal blocks and the scan do all the work.
+     */
+    private final StartBlockFinder startBlockFinder;
+
+    /** Base centres to anchor, in tile coordinates. */
+    private final List<int[]> basePositions;
+
+    private final List<StartBlockFinder.Anchor> startBlockAnchors = new ArrayList<>();
+
     /** How a block is instantiated at a map position. */
     public interface BlockFactory {
         BuildBlock at(int left, int top);
@@ -55,8 +66,24 @@ public final class BuildLocationCatalogue {
     }
 
     public BuildLocationCatalogue(TileAvailabilityGrid grid, List<BlockFactory> blockFactories) {
+        this(grid, blockFactories, null, Collections.<int[]>emptyList());
+    }
+
+    /**
+     * Full constructor: the grid, the block factories, an optional start-block
+     * finder and the bases to anchor. The planner passes the game's bases; a test
+     * passes whatever it wants to exercise.
+     */
+    public BuildLocationCatalogue(
+        TileAvailabilityGrid grid,
+        List<BlockFactory> blockFactories,
+        StartBlockFinder startBlockFinder,
+        List<int[]> basePositions
+    ) {
         this.grid = grid;
         this.blockFactories = blockFactories;
+        this.startBlockFinder = startBlockFinder;
+        this.basePositions = basePositions;
         rebuild();
     }
 
@@ -104,13 +131,42 @@ public final class BuildLocationCatalogue {
     }
 
     /**
-     * Rebuilds from scratch: stamp every block that fits, then fill the gaps with
-     * the per-tile scan.
+     * Rebuilds from scratch: anchor each base with a start block, then stamp the
+     * normal blocks, then fill the gaps with the per-tile scan.
      */
     public void rebuild() {
         all.clear();
+        stampStartBlocks();
         stampBlocks();
         scanFreeTilesNotCoveredByBlocks();
+    }
+
+    /**
+     * The start-block anchors found in this rebuild, one per base that fits one.
+     * Kept so a caller (or a test) can ask which layout a base is built around
+     * (`_AI/redesign/03_PLACEMENT.md` §2 Step 1.1, C4).
+     */
+    public List<StartBlockFinder.Anchor> startBlockAnchors() {
+        return Collections.unmodifiableList(startBlockAnchors);
+    }
+
+    /**
+     * Anchoring: a start block defines where a base's Gateways, tech buildings and
+     * cannon spots go, so it is stamped before any normal block may claim those
+     * tiles. Each base is anchored at most once; a base whose shape fits no variant
+     * simply has none (the scan still serves it).
+     */
+    private void stampStartBlocks() {
+        if (startBlockFinder == null) return;
+
+        for (int[] base : basePositions) {
+            StartBlockFinder.Anchor anchor = startBlockFinder.findFor(base[0], base[1], 8);
+            if (anchor == null) continue;
+
+            anchor.block().stamp(grid);
+            all.addAll(anchor.block().locations());
+            startBlockAnchors.add(anchor);
+        }
     }
 
     /**
