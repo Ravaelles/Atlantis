@@ -209,7 +209,21 @@ say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE"
 # setsid + nohup: the host must survive this script's process group (the
 # harness script ends with `exec BWAPILauncher`, so its PID is the host's PID).
 # `timeout` bounds it (CONVENTIONS §13) so a hung game cannot outlive the run.
-setsid nohup timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
+#
+# BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON is THE FIX that makes the client attach
+# (measured 2026-10-08). The harness's BWAPI creates its shared-memory game
+# registry (`/dev/shm/bwapi_shared_memory_game_list`, the table the Java client
+# reads the server PID from) only when `Server::serverEnabled` is true, and that
+# is `LoadConfigStringUCase("config", "shared_memory", "ON") == "ON"`. With no
+# bwapi.ini present the setting has to come from the environment - Config.cpp
+# reads `BWAPI_CONFIG_<SECTION>__<KEY>` before the file - so without this the
+# host served a socket but published no registry, and the client failed with
+# "No server proc ID" (the blocker recorded in _AI/CHALLENGES/OpenBW.md as the
+# "sixth blocker", whose isConnected=1 reading was a stale entry from a dead
+# host, not what a live host writes: with this flag the slot is published with
+# isConnected=0, which is exactly what the client's free-slot search wants).
+setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
+  timeout 360 bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!
 

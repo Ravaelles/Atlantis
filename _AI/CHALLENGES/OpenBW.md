@@ -268,3 +268,71 @@ That is wrong as stated, and the owner was right to push back:
   no `setCreated`, `AFSocket` present, no `junixsocket-native-1.*`, descriptors
   and the plain-architecture alias present. A jar that fails these cannot
   attach, and the failure is silent - which is why it is a build error now.
+
+## SOLVED (2026-10-08): the "sixth blocker" was a missing config flag, not the harness
+
+**The client attaches.** One environment variable was the whole difference:
+
+```
+BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON
+```
+
+Set it on the host and the host publishes **all three** transports, the Java
+client finds a free registry slot, and the log reaches
+`Connection successful` -> `HELLO_ATLANTIS - BWAPI is playing!`. Verified by
+running the documented two-terminal recipe from `_AI/PLAN-OPENBW.md` §8.
+
+Measured with the flag on (host alive):
+
+```
+/dev/shm/bwapi_shared_memory_game_list     96 bytes
+/dev/shm/bwapi_shared_memory_2327589       33 MB
+/tmp/bwapi_socket_2327589                  present
+
+registry bytes: 25 84 23 00 | 00 | c3 e9 01 00 ...
+                ^PID=0x00238425=2327589  ^isConnected=0x00  ^keepAlive
+```
+
+### Why, from the harness source (not from inference)
+
+`BWAPI/Source/BWAPI/Server.cpp` creates the shared-memory registry **only when
+`serverEnabled` is true**:
+
+```cpp
+serverEnabled = LoadConfigStringUCase("config", "shared_memory", "ON") == "ON";
+```
+
+and `BWAPI/Source/Config.cpp` resolves that setting from
+`BWAPI_CONFIG_<SECTION>__<KEY>` **before** it ever reads `bwapi.ini`. There is no
+`bwapi.ini` in `StardustDevEnvironment/` at all, so the setting must come from
+the environment; `run-openbw-server.sh` never set it, so `serverEnabled` was
+false and the host served a socket with no registry. The client reads the
+registry first (`ClientConnectionPosix`), found nothing, and reported
+"No server proc ID" - while the socket it blamed was fine all along.
+
+### What this corrects in this file
+
+- **The "sixth blocker" section is wrong about a live host.** It recorded the
+  slot as published with `isConnected = 1`. A live host with shared memory
+  enabled writes `isConnected = 0` - the free slot the client's search wants.
+  The `isConnected = 1` reading came from a slot left behind by a **dead** host
+  (the file is not cleared on exit), which is a stale-state problem, and this
+  file already says so two sections earlier. Read those two sections together:
+  the byte's meaning was right, the source of the reading was not.
+- **`_AI/PLAN-OPENBW.md` §4 "Step 1 RESULT #3" is wrong** that this is a
+  server-side ordering question requiring a harness change. `Server.cpp` does
+  call `initializeSharedMemory()` from its constructor and does publish the
+  registry up front; it simply was not enabled. No harness change is needed, and
+  none was made.
+
+### The rules this adds
+
+- **The registry is created only when `shared_memory` resolves to ON.** Set
+  `BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON` on the host, always.
+  `scripts/run-openbw-e2e.sh` now does.
+- **Read the harness source before recording a blocker against it.** Two full
+  sessions went into a "protocol-version mismatch / needs a server-side change"
+  conclusion that one `grep serverEnabled` in `Server.cpp` overturned.
+- **A stale `/dev/shm` entry is the thing that looks like a live-host bug.**
+  Clear `game_list` and the segments before hosting (already the rule), and
+  never decode a registry slot without checking `pgrep -x BWAPILauncher` first.
