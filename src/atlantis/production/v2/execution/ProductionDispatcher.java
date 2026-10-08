@@ -129,12 +129,12 @@ public final class ProductionDispatcher {
         // Without this branch a Dragoon's Singularity Charge would be sent to
         // train(), which is how a research goal would silently do nothing.
         if (isResearch(item.item())) {
-            boolean researched = director.researchOrUpgrade(producerTypeId, item.item());
+            boolean researched = director.researchOrUpgrade(producerTypeId, item.producerId(), item.item());
             return new DispatchResult(item, researched,
                 researched ? "researched" : "facility busy or missing");
         }
 
-        boolean ok = director.trainFacility(producerTypeId, item.item());
+        boolean ok = director.trainFacility(producerTypeId, item.producerId(), item.item());
         return new DispatchResult(item, ok, ok ? "trained" : "no free facility");
     }
 

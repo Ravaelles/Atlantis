@@ -22,29 +22,61 @@ package atlantis.production.v2;
  * the balance never goes below zero at any frame - a negative balance would
  * mean the plan promises something the economy cannot pay for.
  * </p>
+ *
+ * <p>
+ * Every frame argument and result is an <b>absolute game frame</b>; the
+ * timeline covers {@code [originFrame, originFrame + horizon)}. Total supply
+ * is tracked so providers never raise it above {@link #MAX_SUPPLY}.
+ * </p>
  */
 public final class ResourceTimeline {
 
+    /** The game's supply cap, in the same halved units as {@code A.supplyTotal()}. */
+    public static final int MAX_SUPPLY = 200;
+
+    private final int originFrame;
     private final int horizon;
     private final int[] minerals;
     private final int[] gas;
     private final int[] supplyAvailable;
+    private final int[] supplyTotal;
 
     public ResourceTimeline(int horizon, int startMinerals, int startGas, int startSupplyAvailable) {
+        this(0, horizon, startMinerals, startGas, startSupplyAvailable, startSupplyAvailable);
+    }
+
+    public ResourceTimeline(int originFrame, int horizon, int startMinerals, int startGas,
+            int startSupplyAvailable, int startSupplyTotal) {
         if (horizon <= 0)
             throw new IllegalArgumentException("Horizon must be positive: " + horizon);
-        if (startMinerals < 0 || startGas < 0 || startSupplyAvailable < 0) {
+        if (startMinerals < 0 || startGas < 0 || startSupplyAvailable < 0 || startSupplyTotal < 0) {
             throw new IllegalArgumentException("Negative start stocks: "
-                    + startMinerals + "/" + startGas + "/" + startSupplyAvailable);
+                    + startMinerals + "/" + startGas + "/" + startSupplyAvailable + "/" + startSupplyTotal);
         }
 
+        this.originFrame = Math.max(0, originFrame);
         this.horizon = horizon;
         this.minerals = new int[horizon];
         this.gas = new int[horizon];
         this.supplyAvailable = new int[horizon];
+        this.supplyTotal = new int[horizon];
         java.util.Arrays.fill(this.minerals, startMinerals);
         java.util.Arrays.fill(this.gas, startGas);
         java.util.Arrays.fill(this.supplyAvailable, startSupplyAvailable);
+        java.util.Arrays.fill(this.supplyTotal, startSupplyTotal);
+    }
+
+    public int originFrame() {
+        return originFrame;
+    }
+
+    /** First absolute frame past the horizon. */
+    public int endFrame() {
+        return originFrame + horizon;
+    }
+
+    private int index(int absoluteFrame) {
+        return absoluteFrame - originFrame;
     }
 
     /**
@@ -53,8 +85,8 @@ public final class ResourceTimeline {
      * on fully saturated patches); accumulated as fractional and floored per
      * frame so the last frames do not lose a large remainder.
      */
-    public void addMiningIncome(int fromFrame, double mineralsPerFrame, double gasPerFrame) {
-        if (fromFrame < 0) fromFrame = 0;
+    public void addMiningIncome(int absoluteFromFrame, double mineralsPerFrame, double gasPerFrame) {
+        int fromFrame = Math.max(0, index(absoluteFromFrame));
 
         // Cumulative income floors: frame F holds floor(total income up to F).
         // Computing the cumulative total first (rather than per-frame deltas)
@@ -73,12 +105,28 @@ public final class ResourceTimeline {
         }
     }
 
-    /** Supply freed (or removed) from a given frame on, e.g. a Pylon finishing. */
-    public void addSupplyFrom(int fromFrame, int supplyDelta) {
-        if (fromFrame < 0)
-            fromFrame = 0;
+    /**
+     * Supply provided from a given frame on, e.g. a Pylon finishing. Total supply
+     * is capped at {@link #MAX_SUPPLY}, so a provider at the cap adds nothing.
+     */
+    public void addSupplyFrom(int absoluteFromFrame, int supplyDelta) {
+        int fromFrame = Math.max(0, index(absoluteFromFrame));
         for (int frame = fromFrame; frame < horizon; frame++) {
-            supplyAvailable[frame] += supplyDelta;
+            int newTotal = Math.min(MAX_SUPPLY, supplyTotal[frame] + supplyDelta);
+            int added = Math.max(0, newTotal - supplyTotal[frame]);
+            supplyTotal[frame] += added;
+            supplyAvailable[frame] += added;
+        }
+    }
+
+    /**
+     * Supply returned from a given frame on, e.g. a Zerg drone consumed by a
+     * building or a unit that is expected to die. Never exceeds the total.
+     */
+    public void releaseSupplyFrom(int absoluteFromFrame, int supply) {
+        int fromFrame = Math.max(0, index(absoluteFromFrame));
+        for (int frame = fromFrame; frame < horizon; frame++) {
+            supplyAvailable[frame] = Math.min(supplyTotal[frame], supplyAvailable[frame] + supply);
         }
     }
 
@@ -88,24 +136,33 @@ public final class ResourceTimeline {
      * (the caller shifts the goal forward into the next planning pass rather
      * than dropping it).
      */
-    public int findEarliestAffordableFrame(ResourceCost cost, int afterFrame) {
-        for (int frame = Math.max(0, afterFrame); frame < horizon; frame++) {
+    public int findEarliestAffordableFrame(ResourceCost cost, int absoluteAfterFrame) {
+        // Affordable at F means affordable at every later frame too: an
+        // allocation at F is a deduction for the whole tail, so a later item
+        // reserving at F+k must not be the reason this one fails afterwards.
+        int candidate = -1;
+        for (int frame = horizon - 1; frame >= Math.max(0, index(absoluteAfterFrame)); frame--) {
             if (minerals[frame] >= cost.minerals()
                     && gas[frame] >= cost.gas()
                     && supplyAvailable[frame] >= cost.supply()) {
-                return frame;
+                candidate = frame;
+            } else {
+                break;
             }
         }
-        return -1;
+        return candidate < 0 ? -1 : candidate + originFrame;
     }
 
-    /** True when the cost is covered at exactly this frame. */
-    public boolean canAffordAt(ResourceCost cost, int frame) {
+    /** True when the cost is covered at this frame and at every later one. */
+    public boolean canAffordAt(ResourceCost cost, int absoluteFrame) {
+        int frame = index(absoluteFrame);
         if (frame < 0 || frame >= horizon)
             return false;
-        return minerals[frame] >= cost.minerals()
-                && gas[frame] >= cost.gas()
-                && supplyAvailable[frame] >= cost.supply();
+        for (int f = frame; f < horizon; f++) {
+            if (minerals[f] < cost.minerals() || gas[f] < cost.gas() || supplyAvailable[f] < cost.supply())
+                return false;
+        }
+        return true;
     }
 
     /**
@@ -113,9 +170,8 @@ public final class ResourceTimeline {
      * for all later plans too). Call only after {@link #canAffordAt} - the
      * solvency assertion below is the guard.
      */
-    public void allocate(ResourceCost cost, int atFrame) {
-        if (atFrame < 0)
-            atFrame = 0;
+    public void allocate(ResourceCost cost, int absoluteAtFrame) {
+        int atFrame = Math.max(0, index(absoluteAtFrame));
         for (int frame = atFrame; frame < horizon; frame++) {
             minerals[frame] -= cost.minerals();
             gas[frame] -= cost.gas();
@@ -139,16 +195,20 @@ public final class ResourceTimeline {
         }
     }
 
-    public int mineralsAt(int frame) {
-        return minerals[clamp(frame)];
+    public int mineralsAt(int absoluteFrame) {
+        return minerals[clamp(index(absoluteFrame))];
     }
 
-    public int gasAt(int frame) {
-        return gas[clamp(frame)];
+    public int gasAt(int absoluteFrame) {
+        return gas[clamp(index(absoluteFrame))];
     }
 
-    public int supplyAvailableAt(int frame) {
-        return supplyAvailable[clamp(frame)];
+    public int supplyAvailableAt(int absoluteFrame) {
+        return supplyAvailable[clamp(index(absoluteFrame))];
+    }
+
+    public int supplyTotalAt(int absoluteFrame) {
+        return supplyTotal[clamp(index(absoluteFrame))];
     }
 
     public int horizon() {

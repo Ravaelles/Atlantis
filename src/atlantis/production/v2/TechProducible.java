@@ -72,6 +72,10 @@ public final class TechProducible implements Producible {
         if (facility != null)
             result.add(UnitProducible.of(facility));
 
+        AUnitType required = AUnitType.from(tech.requiredUnit());
+        if (required != null && !required.equals(facility))
+            result.add(UnitProducible.of(required));
+
         return result;
     }
 
@@ -91,6 +95,21 @@ public final class TechProducible implements Producible {
     @Override
     public boolean requiresPlacement() {
         return false;
+    }
+
+    @Override
+    public boolean becomesFacility() {
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof TechProducible && ((TechProducible) o).tech == tech;
+    }
+
+    @Override
+    public int hashCode() {
+        return tech.hashCode();
     }
 
     @Override

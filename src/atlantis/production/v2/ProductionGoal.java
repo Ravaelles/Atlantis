@@ -22,20 +22,45 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     public static final int PRIORITY_MAINARMY = 90;
     public static final int PRIORITY_LOWEST = 100;
 
+    /** Keep every allowed producer busy for the whole horizon. */
     public static final int COUNT_CONTINUOUS = -1;
+
+    /** No limit on how many facilities a goal may use at once. */
+    public static final int NO_PRODUCER_LIMIT = Integer.MAX_VALUE;
 
     private final Producible item;
     private final int priority;
     private final int count;
     private final int targetStartFrame;
     private final TargetPlacement placement;
+    private final int producerLimit;
 
+    /**
+     * @param count            how many MORE to produce (goal sources subtract what
+     *                         exists), or {@link #COUNT_CONTINUOUS}
+     * @param targetStartFrame absolute frame; nothing of this goal starts earlier
+     */
     public ProductionGoal(Producible item, int priority, int count, int targetStartFrame, TargetPlacement placement) {
+        this(item, priority, count, targetStartFrame, placement, NO_PRODUCER_LIMIT);
+    }
+
+    public ProductionGoal(Producible item, int priority, int count, int targetStartFrame,
+            TargetPlacement placement, int producerLimit) {
         this.item = item;
         this.priority = priority;
         this.count = count;
-        this.targetStartFrame = targetStartFrame;
-        this.placement = placement;
+        this.targetStartFrame = Math.max(0, targetStartFrame);
+        this.placement = placement != null ? placement : TargetPlacement.anywhere();
+        this.producerLimit = Math.max(1, producerLimit);
+    }
+
+    /** How many distinct facilities this goal may occupy. */
+    public int producerLimit() {
+        return producerLimit;
+    }
+
+    public boolean isContinuous() {
+        return count == COUNT_CONTINUOUS;
     }
 
     public static ProductionGoal emergency(Producible item) {
@@ -69,6 +94,7 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
 
     @Override
     public String toString() {
-        return "Goal{" + item.id() + " x" + count + " p" + priority + "}";
+        return "Goal{" + item.id() + " x" + (isContinuous() ? "inf" : String.valueOf(count)) + " p" + priority
+                + (targetStartFrame > 0 ? " @" + targetStartFrame : "") + "}";
     }
 }

@@ -39,8 +39,7 @@ public final class UnitProducible implements Producible {
 
     @Override
     public ResourceCost cost() {
-        int supply = Math.max(0, type.supplyNeeded());
-        return ResourceCost.of(type.mineralPrice(), type.gasPrice(), supply);
+        return ResourceCost.of(type.mineralPrice(), type.gasPrice(), halvedSupply(type.ut().supplyRequired()));
     }
 
     @Override
@@ -48,14 +47,21 @@ public final class UnitProducible implements Producible {
         return type.totalTrainTime();
     }
 
+    /**
+     * Every required unit except the producer's own consumables (worker,
+     * larva) - Dragoon needs Gateway AND Cybernetics Core. A building that
+     * needs psi also needs a Pylon.
+     */
     @Override
     public List<Producible> immediatePrerequisites() {
-        // The engine's whatIsRequired is exactly the missing dependency:
-        // Dragoon -> Cybernetics Core, Photon Cannon -> Forge, null when none.
-        AUnitType required = type.whatIsRequired();
         List<Producible> result = new ArrayList<>();
-        if (required != null) {
+        for (AUnitType required : type.requiredUnits().keys()) {
+            if (required == null || required.isWorker() || required.isLarva()) continue;
             result.add(UnitProducible.of(required));
+        }
+        if (type.ut().requiresPsi()) {
+            UnitProducible pylon = UnitProducible.of(AUnitType.Protoss_Pylon);
+            if (!containsId(result, pylon.id())) result.add(pylon);
         }
         return result;
     }
@@ -66,8 +72,52 @@ public final class UnitProducible implements Producible {
         return producer != null ? producer.name() : "Unknown";
     }
 
+    /** Only a building a worker builds needs a tile; addons and morphs do not. */
     @Override
     public boolean requiresPlacement() {
+        if (!type.isABuilding()) return false;
+        AUnitType producer = type.whatBuildsIt();
+        return producer != null && producer.isWorker();
+    }
+
+    @Override
+    public boolean becomesFacility() {
         return type.isABuilding();
+    }
+
+    @Override
+    public boolean consumesProducer() {
+        AUnitType producer = type.whatBuildsIt();
+        return producer != null && producer.isLarva();
+    }
+
+    @Override
+    public int supplyProvided() {
+        return halvedSupply(type.ut().supplyProvided());
+    }
+
+    /** BWAPI counts supply doubled (Zergling = 1); A.supplyUsed() halves it. */
+    static int halvedSupply(int raw) {
+        return Math.max(0, (raw + 1) / 2);
+    }
+
+    private static boolean containsId(List<Producible> list, String id) {
+        for (Producible p : list) if (p.id().equals(id)) return true;
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof UnitProducible && ((UnitProducible) o).type.equals(type);
+    }
+
+    @Override
+    public int hashCode() {
+        return type.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return id();
     }
 }

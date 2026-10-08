@@ -1,8 +1,10 @@
 package atlantis.production.v2;
 
 /**
- * "Do we already have one of these?" - the question the scheduler must ask
- * before planning a prerequisite.
+ * "From which frame is this item available?" - the question the scheduler
+ * asks before planning a prerequisite. A completed Core satisfies a Dragoon
+ * now, one under construction only from its completion frame, a missing one
+ * ({@link #MISSING}) must be planned.
  *
  * <p>
  * The engine's own prerequisite data says what a thing <em>requires</em>, never
@@ -16,22 +18,21 @@ package atlantis.production.v2;
  *
  * <p>
  * DIP: the scheduler is pure and asks this interface; the game adapter answers
- * from {@code Select}/{@code Count}, and a test answers from a set. Units and
- * buildings are both "existing" - a Gateway counts as satisfied whether it is
- * finished or under construction, because planning a second one is not what a
- * prerequisite check is for.
+ * from {@code Select}/{@code Count}, and a test answers from a map.
  * </p>
  */
 public interface ExistingItems {
 
-    /** True when the item exists in the game, or is under construction. */
-    boolean have(Producible item);
+    int MISSING = -1;
+
+    /** Absolute frame the item is available from, or {@link #MISSING}. */
+    int availableFrom(Producible item);
 
     /** Nothing exists: the answer for a hand-built scheduler (and for tests). */
     ExistingItems NONE = new ExistingItems() {
         @Override
-        public boolean have(Producible item) {
-            return false;
+        public int availableFrom(Producible item) {
+            return MISSING;
         }
     };
 }

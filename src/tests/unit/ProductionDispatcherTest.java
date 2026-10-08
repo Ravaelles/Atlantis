@@ -82,8 +82,8 @@ public class ProductionDispatcherTest {
         boolean trainsSucceed = true;
 
         @Override
-        public boolean trainFacility(String typeId, Producible item) {
-            commands.add("train:" + item.id() + "@" + typeId);
+        public boolean trainFacility(String typeId, int producerId, Producible item) {
+            commands.add("train:" + item.id() + "@" + typeId + "#" + producerId);
             return trainsSucceed;
         }
 
@@ -94,8 +94,8 @@ public class ProductionDispatcherTest {
         }
 
         @Override
-        public boolean researchOrUpgrade(String typeId, Producible item) {
-            commands.add("research:" + item.id() + "@" + typeId);
+        public boolean researchOrUpgrade(String typeId, int producerId, Producible item) {
+            commands.add("research:" + item.id() + "@" + typeId + "#" + producerId);
             return true;
         }
     }
@@ -135,7 +135,7 @@ public class ProductionDispatcherTest {
 
         assertEquals(1, results.size());
         assertTrue(results.get(0).issued());
-        assertEquals("train:Zealot@Gateway", director.commands.get(0));
+        assertEquals("train:Zealot@Gateway#0", director.commands.get(0));
     }
 
     @Test
@@ -202,8 +202,8 @@ public class ProductionDispatcherTest {
         RecordingDirector director = new RecordingDirector();
         new ProductionDispatcher(director).dispatch(plan, 200, LATENCY);
 
-        assertEquals("train:Zealot@Gateway", director.commands.get(0));
-        assertEquals("train:Dragoon@Gateway", director.commands.get(1));
+        assertEquals("train:Zealot@Gateway#0", director.commands.get(0));
+        assertEquals("train:Dragoon@Gateway#0", director.commands.get(1));
     }
 
     @Test

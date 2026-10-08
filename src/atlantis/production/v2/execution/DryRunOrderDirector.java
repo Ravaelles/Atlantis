@@ -31,8 +31,8 @@ public final class DryRunOrderDirector implements OrderDirector {
     private final List<String> orders = new ArrayList<>();
 
     @Override
-    public boolean trainFacility(String typeId, Producible item) {
-        orders.add("train " + item.id() + " at " + typeId);
+    public boolean trainFacility(String typeId, int producerId, Producible item) {
+        orders.add("train " + item.id() + " at " + typeId + "#" + producerId);
         return false;
     }
 
@@ -43,8 +43,8 @@ public final class DryRunOrderDirector implements OrderDirector {
     }
 
     @Override
-    public boolean researchOrUpgrade(String typeId, Producible item) {
-        orders.add("research " + item.id() + " at " + typeId);
+    public boolean researchOrUpgrade(String typeId, int producerId, Producible item) {
+        orders.add("research " + item.id() + " at " + typeId + "#" + producerId);
         return false;
     }
 

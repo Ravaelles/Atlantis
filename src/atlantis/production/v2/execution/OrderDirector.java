@@ -18,12 +18,19 @@ import atlantis.production.v2.Producible;
 public interface OrderDirector {
 
     /**
-     * Issues a train command on an existing production facility.
+     * Issues a train command on one concrete facility (a game unit id; 0 when
+     * the plan could not name one - the implementation may then pick any free
+     * facility of the type).
      *
      * @return true when a command was actually issued (false when the unit
      *         could not take it now, e.g. it is already training the same thing)
      */
-    boolean trainFacility(String typeId, Producible item);
+    boolean trainFacility(String typeId, int producerId, Producible item);
+
+    /**
+     * Starts a research or an upgrade on one concrete facility.
+     */
+    boolean researchOrUpgrade(String typeId, int producerId, Producible item);
 
     /**
      * Commits a builder to a planned building at its reserved tile. The same
@@ -35,11 +42,4 @@ public interface OrderDirector {
      */
     boolean buildAt(Producible building, PlacementReservation placement);
 
-    /**
-     * Starts a research or an upgrade on a facility. Only attempted when the
-     * item has a producer; techs and upgrades without one are skipped.
-     *
-     * @return true when the command was issued
-     */
-    boolean researchOrUpgrade(String typeId, Producible item);
 }

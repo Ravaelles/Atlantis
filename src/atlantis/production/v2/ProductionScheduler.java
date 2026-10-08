@@ -3,55 +3,51 @@ package atlantis.production.v2;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The scheduling engine: turns prioritized goals into a plan over a resource
- * timeline. Stateless - every call recomputes from scratch and nothing is
- * cached between frames (the invariant that kills the legacy Queue's whole
- * class of bugs).
+ * timeline. Stateless across frames - every {@link #schedule} recomputes from
+ * scratch; the only state is per pass.
  *
  * <p>
- * Per goal, in strict priority order: insert missing prerequisites first,
- * then schedule the item itself at the earliest affordable frame. When the
- * horizon cannot afford something, the item is <b>skipped this pass</b> (it
- * will be recomputed next frame) - never dropped from the strategy, and never
- * produced on credit. Lower-priority goals schedule from the resources the
- * higher-priority ones did not claim, which is exactly the
- * "reserve-for-tech-first, macro-from-the-surplus" behaviour the redesign
- * asks for.
- * </p>
- *
- * <p>
- * Prerequisites are inserted recursively with their earliest affordable
- * frame computed <b>independently of the final item</b>: a Dragoon goal at
- * frame 300 does not pull the Cybernetics Core to frame 300 - the Core is
- * scheduled as early as the economy allows, and the Dragoon starts no earlier
- * than the Core completes. That ordering is pinned by the tests.
+ * Invariants (pinned by {@code ProductionSchedulerTest}):
+ * <ul>
+ * <li>strict priority, stable order inside a priority;</li>
+ * <li>an item never starts before its goal's {@code targetStartFrame}, its
+ * prerequisites' availability, or a free slot on a concrete producer;</li>
+ * <li>one facility holds one item at a time, and a goal never uses more than
+ * its {@code producerLimit} facilities;</li>
+ * <li>placement is validated before resources are allocated (a failed
+ * placement leaves the timeline untouched);</li>
+ * <li>supply providers add supply at completion; nothing is planned on supply
+ * that does not exist yet;</li>
+ * <li>a prerequisite shared by several goals is planned once; a malformed
+ * recipe cycle is cut, not followed forever;</li>
+ * <li>an item without any producer is unschedulable, never "free at frame 0".</li>
+ * </ul>
  * </p>
  */
 public final class ProductionScheduler {
 
     private final ProducerFacilityRegistry facilityRegistry;
     private final PlacementPlanner placementPlanner;
-
-    /**
-     * "Do we already have one of these?" - the question the prerequisite step
-     * must ask before planning to build something we own.
-     *
-     * <p>
-     * Without it the scheduler re-planned the things a goal already had: a
-     * Probe's engine prerequisite is the Nexus, so every worker goal planned a
-     * second Nexus (400 minerals) before it would schedule a 50-mineral Probe.
-     * The plan looked busy and the opening was dead - measured on the real
-     * engine 2026-10-07, and the exact symptom the redesign was meant to
-     * remove.
-     */
     private final ExistingItems existingItems;
 
-    /** Planned buildings become facilities when they finish: type -> earliest available frame. */
-    private final Map<String, Integer> plannedFacilityAvailableFrom = new HashMap<>();
+    // ---- per-pass state, reset by schedule() ---------------------------------
+
+    /** Facility id -> frame it frees up, including what this pass assigned. */
+    private final Map<Integer, Integer> busyUntil = new HashMap<>();
+    /** Facility id -> facility, for everything known this pass (existing + planned). */
+    private final Map<String, List<ProducerFacility>> facilitiesByType = new HashMap<>();
+    /** Item id -> earliest frame it becomes available through this plan. */
+    private final Map<String, Integer> plannedAvailable = new HashMap<>();
+    /** Facility ids consumed this pass (larvae). */
+    private final Set<Integer> consumed = new HashSet<>();
+    private int nextPlannedFacilityId;
 
     public ProductionScheduler(ProducerFacilityRegistry facilityRegistry, PlacementPlanner placementPlanner) {
         this(facilityRegistry, placementPlanner, ExistingItems.NONE);
@@ -66,15 +62,16 @@ public final class ProductionScheduler {
 
     public ProductionPlan schedule(List<ProductionGoal> goals, ResourceTimeline timeline) {
         ProductionPlan plan = new ProductionPlan();
-        plannedFacilityAvailableFrom.clear();
+        busyUntil.clear();
+        facilitiesByType.clear();
+        plannedAvailable.clear();
+        consumed.clear();
+        nextPlannedFacilityId = -1;
 
-        // One pass = one fresh plan: the planner must forget the tiles the
-        // previous pass reserved, or the second Pylon of this frame would be
-        // planned onto the first Pylon's spot.
         placementPlanner.startPass();
 
         List<ProductionGoal> sorted = new ArrayList<>(goals);
-        Collections.sort(sorted);
+        Collections.sort(sorted); // stable: equal priorities keep list order
 
         for (ProductionGoal goal : sorted) {
             scheduleGoal(goal, timeline, plan);
@@ -84,105 +81,174 @@ public final class ProductionScheduler {
         return plan;
     }
 
+    // ---- goals ----------------------------------------------------------------
+
     private void scheduleGoal(ProductionGoal goal, ResourceTimeline timeline, ProductionPlan plan) {
         Producible item = goal.item();
+        int earliest = Math.max(goal.targetStartFrame(), timeline.originFrame());
 
-        // Prerequisites first, recursively.
-        schedulePrerequisites(item, timeline, plan);
+        int prerequisitesReady = ensurePrerequisites(item, earliest, timeline, plan, new HashSet<String>());
+        if (prerequisitesReady < 0) return;
 
-        for (int produced = 0; produced < countToProduce(goal); produced++) {
-            if (!scheduleItem(item, timeline, plan, goal.placement(), false)) {
-                return; // Cannot afford more within this pass - stop the goal.
-            }
-        }
-    }
+        Set<Integer> usedProducers = new HashSet<>();
+        int wanted = goal.isContinuous() ? Integer.MAX_VALUE : goal.count();
 
-    private void schedulePrerequisites(Producible item, ResourceTimeline timeline, ProductionPlan plan) {
-        for (Producible prerequisite : item.immediatePrerequisites()) {
-            if (plan.contains(prerequisite))
-                continue;
-
-            // Already built (or being built) in the game? Then it is not a
-            // prerequisite to plan - it is a prerequisite that is met. This is
-            // the check that stops a Nexus being planned for every Probe.
-            if (existingItems.have(prerequisite))
-                continue;
-
-            // Recurse: a prerequisite can have prerequisites of its own.
-            schedulePrerequisites(prerequisite, timeline, plan);
-            scheduleItem(prerequisite, timeline, plan, TargetPlacement.anywhere(), true);
+        for (int produced = 0; produced < wanted; produced++) {
+            ProductionItem scheduled = scheduleItem(item, Math.max(earliest, prerequisitesReady), timeline, plan,
+                    goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous());
+            if (scheduled == null) return;
         }
     }
 
     /**
-     * Schedules one item at the earliest affordable frame. Returns false when
-     * the horizon cannot cover it (the goal gives up this pass).
+     * Makes sure every prerequisite of {@code item} is available or planned.
+     * Returns the frame from which all of them are available, or -1 when one
+     * of them cannot be had within the horizon.
      */
-    private boolean scheduleItem(
-            Producible item, ResourceTimeline timeline, ProductionPlan plan,
-            TargetPlacement placement, boolean isPrerequisite) {
-        // Earliest start = when the producer is free: existing facilities from
-        // the registry, plus buildings planned earlier in this pass (the
-        // Robotics Facility the prerequisite step just added is not in the
-        // registry yet - Stardust's occupyUntil semantics; without this the
-        // Reaver would schedule at frame 0 against a Robotics that only
-        // finishes at 480).
-        int earliestStart = earliestProducerFreeFrame(item);
+    private int ensurePrerequisites(Producible item, int notBefore, ResourceTimeline timeline,
+            ProductionPlan plan, Set<String> path) {
+        if (!path.add(item.id())) return -1; // recipe cycle: cut it
 
-        int affordableFrame = timeline.findEarliestAffordableFrame(item.cost(), earliestStart);
-        if (affordableFrame < 0)
-            return false;
-
-        int startFrame = affordableFrame;
-
-        PlacementReservation placementReservation = null;
-        if (item.requiresPlacement()) {
-            placementReservation = placementPlanner.reservePlacement(item, placement, startFrame);
-            if (!placementReservation.isSuccessful())
-                return false;
-            startFrame = Math.max(startFrame, placementReservation.readyFrame());
+        int readyFrame = notBefore;
+        for (Producible prerequisite : item.immediatePrerequisites()) {
+            int available = availableFrom(prerequisite);
+            if (available < 0) {
+                int ownReady = ensurePrerequisites(prerequisite, timeline.originFrame(), timeline, plan, path);
+                if (ownReady < 0) {
+                    path.remove(item.id());
+                    return -1;
+                }
+                ProductionItem planned = scheduleItem(prerequisite, ownReady, timeline, plan,
+                        TargetPlacement.anywhere(), true, ProductionGoal.NO_PRODUCER_LIMIT,
+                        new HashSet<Integer>(), false);
+                if (planned == null) {
+                    path.remove(item.id());
+                    return -1;
+                }
+                available = planned.completionFrame();
+            }
+            readyFrame = Math.max(readyFrame, available);
         }
 
-        timeline.allocate(item.cost(), startFrame);
-
-        // A completed planned building becomes a facility of its own type from
-        // its completion frame: the Robotics added as a prerequisite makes the
-        // Reaver producible from 0+480, not from 0.
-        if (item.requiresPlacement()) {
-            plannedFacilityAvailableFrom.merge(item.id(), startFrame + item.buildDurationFrames(), Math::min);
-        }
-
-        plan.add(new ProductionItem(item, startFrame, isPrerequisite, placementReservation));
-
-        return true;
+        path.remove(item.id());
+        return readyFrame;
     }
 
-    private int earliestProducerFreeFrame(Producible item) {
-        String typeId = item.producerTypeId();
-
-        // Existing facilities: when this type can next start something. Empty
-        // = the type does not exist yet (nothing in the registry, nothing
-        // planned) - treated as "no facility at all", not as frame 0.
-        int existingEarliest = Integer.MAX_VALUE;
-        for (ProducerFacility facility : facilityRegistry.facilitiesOf(typeId)) {
-            if (facility.availableFromFrame() < existingEarliest)
-                existingEarliest = facility.availableFromFrame();
-        }
-
-        // Facilities planned earlier THIS pass (a Robotics built in this same
-        // plan enables Reavers from its completion frame).
-        Integer plannedAvailable = plannedFacilityAvailableFrom.get(typeId);
-
-        if (existingEarliest == Integer.MAX_VALUE) {
-            // No existing facility of this type: the planned one (if any) is
-            // the only producer, otherwise the item is unproducible here.
-            return plannedAvailable == null ? 0 : plannedAvailable;
-        }
-
-        return plannedAvailable == null ? existingEarliest : Math.min(existingEarliest, plannedAvailable);
+    /** From the game or from this plan, whichever is earlier; -1 when neither. */
+    private int availableFrom(Producible item) {
+        int inGame = existingItems.availableFrom(item);
+        Integer planned = plannedAvailable.get(item.id());
+        if (inGame < 0) return planned == null ? -1 : planned;
+        return planned == null ? inGame : Math.min(inGame, planned);
     }
 
-    private int countToProduce(ProductionGoal goal) {
-        return goal.count() == ProductionGoal.COUNT_CONTINUOUS ? 1 : goal.count();
+    // ---- one item -------------------------------------------------------------
+
+    private ProductionItem scheduleItem(Producible item, int notBefore, ResourceTimeline timeline,
+            ProductionPlan plan, TargetPlacement placement, boolean isPrerequisite,
+            int producerLimit, Set<Integer> usedProducers, boolean onlyFreeProducers) {
+        ResourceCost cost = item.cost();
+
+        ProducerFacility producer = null;
+        int start;
+
+        if (item.requiresPlacement()) {
+            start = timeline.findEarliestAffordableFrame(cost, notBefore);
+            if (start < 0) return null;
+        } else {
+            producer = chooseProducer(item, notBefore, producerLimit, usedProducers);
+            if (producer == null) return null;
+
+            start = timeline.findEarliestAffordableFrame(cost, Math.max(notBefore, freeFrom(producer)));
+            if (start < 0) return null;
+
+            // Continuous goals only fill producers that are free inside the
+            // horizon; they never queue a second item behind the first.
+            if (onlyFreeProducers && usedProducers.contains(producer.id())) return null;
+        }
+
+        // Placement BEFORE allocation: a failed reservation leaves the timeline as it was.
+        PlacementReservation reservation = null;
+        if (item.requiresPlacement()) {
+            reservation = placementPlanner.reservePlacement(item, placement, start);
+            if (reservation == null || !reservation.isSuccessful()) return null;
+            if (reservation.readyFrame() > start) {
+                start = timeline.findEarliestAffordableFrame(cost, reservation.readyFrame());
+                if (start < 0) return null;
+            }
+        }
+
+        timeline.allocate(cost, start);
+
+        ProductionItem scheduled = new ProductionItem(item, start, isPrerequisite, reservation,
+                producer != null && !producer.isPlanned() ? producer.id() : ProductionItem.NO_PRODUCER);
+        plan.add(scheduled);
+        commit(item, scheduled, producer, timeline, usedProducers);
+        return scheduled;
+    }
+
+    private void commit(Producible item, ProductionItem scheduled, ProducerFacility producer,
+            ResourceTimeline timeline, Set<Integer> usedProducers) {
+        if (producer != null) {
+            usedProducers.add(producer.id());
+            if (item.consumesProducer()) consumed.add(producer.id());
+            else busyUntil.put(producer.id(), scheduled.completionFrame());
+        }
+
+        if (item.supplyProvided() > 0) {
+            timeline.addSupplyFrom(scheduled.completionFrame(), item.supplyProvided());
+        }
+
+        plannedAvailable.merge(item.id(), scheduled.completionFrame(), Math::min);
+
+        if (item.becomesFacility()) {
+            ProducerFacility planned = new ProducerFacility(nextPlannedFacilityId--, item.id(),
+                    scheduled.completionFrame());
+            facilities(item.id()).add(planned);
+        }
+    }
+
+    // ---- producers ------------------------------------------------------------
+
+    /**
+     * The facility of the right type that frees up earliest (ties: registry
+     * order). A goal at its producer limit only reuses facilities it already
+     * holds.
+     */
+    private ProducerFacility chooseProducer(Producible item, int notBefore, int producerLimit,
+            Set<Integer> usedProducers) {
+        boolean atLimit = usedProducers.size() >= producerLimit;
+
+        ProducerFacility best = null;
+        int bestFrame = Integer.MAX_VALUE;
+        for (ProducerFacility facility : facilities(item.producerTypeId())) {
+            if (consumed.contains(facility.id())) continue;
+            if (atLimit && !usedProducers.contains(facility.id())) continue;
+
+            int frame = Math.max(notBefore, freeFrom(facility));
+            if (frame < bestFrame) {
+                bestFrame = frame;
+                best = facility;
+            }
+        }
+        return best;
+    }
+
+    private int freeFrom(ProducerFacility facility) {
+        Integer busy = busyUntil.get(facility.id());
+        return busy == null ? facility.availableFromFrame() : Math.max(busy, facility.availableFromFrame());
+    }
+
+    private List<ProducerFacility> facilities(String typeId) {
+        List<ProducerFacility> known = facilitiesByType.get(typeId);
+        if (known == null) {
+            known = new ArrayList<>();
+            if (typeId != null && facilityRegistry != null) {
+                List<ProducerFacility> existing = facilityRegistry.facilitiesOf(typeId);
+                if (existing != null) known.addAll(existing);
+            }
+            facilitiesByType.put(typeId, known);
+        }
+        return known;
     }
 }

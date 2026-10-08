@@ -2,18 +2,25 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.build.CurrentBuildOrder;
-import atlantis.production.v2.goals.BuildOrderRow;
 import atlantis.production.v2.PlacementPlanner;
+import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.ProductionGoal;
+import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.ProductionPlan;
 import atlantis.production.v2.ProductionScheduler;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.LegacyPlacementPlanner;
+import atlantis.production.v2.UnitProducible;
+import atlantis.production.v2.execution.DispatchResult;
 import atlantis.production.v2.execution.DryRunOrderDirector;
 import atlantis.production.v2.execution.GameOrderDirector;
 import atlantis.production.v2.execution.OrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
+import atlantis.production.v2.goals.BuildOrderRow;
+import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,6 +69,7 @@ public final class ProductionEngine {
 
     private final LegacyPlacementPlanner placementPlanner = new LegacyPlacementPlanner();
     private final DryRunOrderDirector dryRunDirector = new DryRunOrderDirector();
+    private final GameOrderDirector gameDirector = new GameOrderDirector();
 
     private ProductionPlan lastPlan = new ProductionPlan();
 
@@ -78,17 +86,60 @@ public final class ProductionEngine {
         ProductionScheduler scheduler = new ProductionScheduler(
                 state.facilityRegistry(), placementPlanner, state.existingItems());
         ProductionPlan plan = scheduler.schedule(goals, timeline);
+        plan = offerPendingConstructionsAgain(plan, state.frame());
         lastPlan = plan;
 
-        OrderDirector director = Env.productionV2().isDryRun() ? dryRunDirector : new GameOrderDirector();
-        new ProductionDispatcher(director).dispatch(plan, state.frame(), LATENCY_FRAMES);
+        boolean dryRun = Env.productionV2().isDryRun();
+        OrderDirector director = dryRun ? dryRunDirector : gameDirector;
+        gameDirector.startFrame();
+        List<DispatchResult> issued = new ProductionDispatcher(director).dispatch(plan, state.frame(), LATENCY_FRAMES);
 
-        if (director instanceof DryRunOrderDirector) {
-            ((DryRunOrderDirector) director).logSummary(state.frame(), plan.size());
-            ((DryRunOrderDirector) director).clear();
+        if (dryRun) {
+            dryRunDirector.logSummary(state.frame(), plan.size());
+        } else {
+            logFrame(state.frame(), plan, issued);
         }
+        dryRunDirector.clear();
 
         return plan;
+    }
+
+    /**
+     * Re-offers the buildings this frame's plan is waiting for: the plan is
+     * recomputed from scratch, and a construction whose builder died en route
+     * must be picked up again on the next frame instead of being lost with the
+     * previous plan.
+     */
+    private ProductionPlan offerPendingConstructionsAgain(ProductionPlan plan, int frame) {
+        ProductionPlan merged = new ProductionPlan();
+        for (ProductionItem item : plan.items()) merged.add(item);
+
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (construction.hasStarted() || construction.buildingType() == null) continue;
+            if (construction.buildPosition() == null) continue;
+
+            UnitProducible producible = UnitProducible.of(construction.buildingType());
+            if (plan.contains(producible)) continue;
+
+            PlacementReservation placement = PlacementReservation
+                    .success(construction.buildPosition().tx(), construction.buildPosition().ty(), frame)
+                    .committedAt(frame);
+            merged.add(new ProductionItem(producible, construction.timeOrdered(), false, placement));
+        }
+
+        return merged;
+    }
+
+    /** One line per frame with work in it: the plan, and what actually left. */
+    private void logFrame(int frame, ProductionPlan plan, List<DispatchResult> issued) {
+        if (issued.isEmpty()) return;
+
+        StringBuilder log = new StringBuilder("PRODUCTION_V2 @@" + frame + " plan=" + plan.size() + " [");
+        for (ProductionItem item : plan.items()) log.append(item).append(' ');
+        log.append("] issued:");
+        for (DispatchResult result : issued) log.append(' ').append(result);
+
+        ErrorLog.printMaxOncePerMinute(log.toString());
     }
 
     /**

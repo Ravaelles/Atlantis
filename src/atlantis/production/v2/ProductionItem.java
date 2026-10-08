@@ -17,9 +17,18 @@ public final class ProductionItem {
     private final int completionFrame;
     private final boolean isPrerequisite;
     private final PlacementReservation placement;
+    /** Id of the facility that produces it; {@link #NO_PRODUCER} for buildings and when unknown. */
+    private final int producerId;
+
+    public static final int NO_PRODUCER = 0;
 
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite) {
-        this(item, startFrame, isPrerequisite, null);
+        this(item, startFrame, isPrerequisite, null, NO_PRODUCER);
+    }
+
+    public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
+            PlacementReservation placement) {
+        this(item, startFrame, isPrerequisite, placement, NO_PRODUCER);
     }
 
     /**
@@ -27,8 +36,9 @@ public final class ProductionItem {
      *                  (units, techs, upgrades) and for hand-built test items
      */
     public ProductionItem(Producible item, int startFrame, boolean isPrerequisite,
-            PlacementReservation placement) {
+            PlacementReservation placement, int producerId) {
         this.item = item;
+        this.producerId = producerId;
         this.startFrame = startFrame;
         this.completionFrame = startFrame + item.buildDurationFrames();
         this.isPrerequisite = isPrerequisite;
@@ -64,8 +74,14 @@ public final class ProductionItem {
         return placement;
     }
 
+    /** The concrete facility (unit id) assigned to produce this, or {@link #NO_PRODUCER}. */
+    public int producerId() {
+        return producerId;
+    }
+
     @Override
     public String toString() {
-        return (isPrerequisite ? "[pre] " : "") + item.id() + "@" + startFrame + "-" + completionFrame;
+        return (isPrerequisite ? "[pre] " : "") + item.id() + "@" + startFrame + "-" + completionFrame
+                + (producerId != NO_PRODUCER ? " by#" + producerId : "");
     }
 }

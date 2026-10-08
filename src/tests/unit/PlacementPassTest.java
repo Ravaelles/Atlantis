@@ -81,9 +81,11 @@ public class PlacementPassTest {
     private static final class FakeRegistry implements ProducerFacilityRegistry {
         private final Map<String, List<ProducerFacility>> byType = new HashMap<>();
 
+        int nextId = 1;
+
         void add(String typeId, int availableFromFrame) {
             byType.computeIfAbsent(typeId, k -> new ArrayList<>())
-                    .add(new ProducerFacility(typeId, availableFromFrame));
+                    .add(new ProducerFacility(nextId++, typeId, availableFromFrame));
         }
 
         @Override

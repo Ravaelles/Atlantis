@@ -1,13 +1,18 @@
 package atlantis.production.v2;
 
+import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -47,9 +52,18 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
     /** Chosen once per pass: every building in a frame is served by one builder. */
     private AUnit passBuilder;
 
+    /**
+     * Reservations of the last pass, replayed to the dispatcher: a building
+     * whose builder is already walking keeps reporting its committed frame, so
+     * it is re-committed idempotently instead of being orphaned when the builder
+     * dies (01_PRODUCTION.md §5A).
+     */
+    private final List<PlacementReservation> lastPassReservations = new ArrayList<>();
+
     @Override
     public void startPass() {
         reservedTilesThisPass.clear();
+        lastPassReservations.clear();
         passBuilder = null;
     }
 
@@ -82,7 +96,27 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         if (!reservedTilesThisPass.add(tile))
             return PlacementReservation.failure();
 
-        return PlacementReservation.success(position.tx(), position.ty(), targetFrame);
+        PlacementReservation reservation = PlacementReservation.success(position.tx(), position.ty(), targetFrame);
+        lastPassReservations.add(reservation);
+        return reservation;
+    }
+
+    /**
+     * Reservation carried over from the previous pass for this item, already
+     * marked as committed, or null when the item is new or was never started.
+     */
+    public PlacementReservation carriedOver(Producible building, int now) {
+        AUnitType unitType = resolveUnitType(building);
+        if (unitType == null) return null;
+
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (construction.buildingType() != unitType || construction.buildPosition() == null) continue;
+            return PlacementReservation
+                    .success(construction.buildPosition().tx(), construction.buildPosition().ty()
+                            + 0, now)
+                    .committedAt(now);
+        }
+        return null;
     }
 
     private AUnit builderForThisPass() {
@@ -102,8 +136,11 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
     private HasPosition resolveNear(TargetPlacement constraint) {
         switch (constraint.mode()) {
             case EXACT_TILE:
+                return APosition.create(constraint.exactTileX() * 32, constraint.exactTileY() * 32);
             case NEIGHBOURHOOD:
                 return APosition.create(constraint.tileX() * 32, constraint.tileY() * 32);
+            case NAMED_AREA:
+                return areaCentre(constraint.areaName());
             case ANYWHERE:
             default:
                 // The legacy finder requires a centre to search around (it
@@ -112,5 +149,21 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
                 AUnit base = Select.ourBases().first();
                 return base != null ? base : Select.ourBuildings().first();
         }
+    }
+
+    /**
+     * Build-order position modifiers, deliberately a small subset: MAIN and
+     * NATURAL are what the shipped files use. Unknown names fall back to the
+     * main base rather than failing the pass.
+     */
+    private HasPosition areaCentre(String areaName) {
+        if ("NATURAL".equals(areaName)) {
+            APosition natural = BaseLocations.natural();
+            if (natural != null) return natural;
+        }
+        AUnit main = Select.main();
+        if (main != null) return main;
+        AUnit base = Select.ourBases().first();
+        return base != null ? base : Select.ourBuildings().first();
     }
 }
