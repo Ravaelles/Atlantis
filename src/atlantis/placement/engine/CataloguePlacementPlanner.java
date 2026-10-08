@@ -7,6 +7,7 @@ import atlantis.placement.core.BuildLocationRanker;
 import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
+import atlantis.placement.core.RacePlacementStrategy;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -52,7 +53,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     private final TileAvailabilityGrid grid;
     private final BuildLocationCatalogue catalogue;
-    private final PsiGating psiGating;
+    private final RacePlacementStrategy strategy;
     private final NeighbourhoodRegistry neighbourhoods;
 
     /**
@@ -68,26 +69,28 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     public CataloguePlacementPlanner() {
         this(
             new TileAvailabilityGrid(new EngineTerrainSource()),
-            new PsiGating(new EnginePowerSource()),
+            new atlantis.placement.race.ProtossPlacementStrategy(
+                new PsiGating(new EnginePowerSource())
+            ),
             new NeighbourhoodRegistry(new EngineNeighbourhoodSource())
         );
     }
 
-    /** Test seam: a grid over a synthetic terrain, no gating, no neighbourhood ranking. */
+    /** Test seam: a grid over a synthetic terrain, no strategy, no neighbourhood ranking. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
-        this(grid, null, null);
+        this(grid, (RacePlacementStrategy) null, null);
     }
 
-    /** Test seam with gating: a null {@code psiGating} disables the power check. */
-    public CataloguePlacementPlanner(TileAvailabilityGrid grid, PsiGating psiGating) {
-        this(grid, psiGating, null);
+    /** Test seam with a strategy: a null strategy disables the availability check. */
+    public CataloguePlacementPlanner(TileAvailabilityGrid grid, RacePlacementStrategy strategy) {
+        this(grid, strategy, null);
     }
 
     public CataloguePlacementPlanner(
-        TileAvailabilityGrid grid, PsiGating psiGating, NeighbourhoodRegistry neighbourhoods
+        TileAvailabilityGrid grid, RacePlacementStrategy strategy, NeighbourhoodRegistry neighbourhoods
     ) {
         this.grid = grid;
-        this.psiGating = psiGating;
+        this.strategy = strategy;
         this.neighbourhoods = neighbourhoods;
         this.catalogue = new BuildLocationCatalogue(grid);
     }
@@ -200,9 +203,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * that is powered now always beats one that must wait.
      */
     private int availabilityFrames(AUnitType unitType, BuildLocation candidate) {
-        if (psiGating == null || !unitType.needsPower()) return 0;
+        if (strategy == null || !strategy.requiresAvailability(unitType.name())) return 0;
 
-        return psiGating.framesUntilPowered(candidate.tileX(), candidate.tileY());
+        return strategy.framesUntilAvailable(candidate.tileX(), candidate.tileY(), unitType.name());
     }
 
     /**
@@ -237,13 +240,27 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * accepted; with gating disabled (a test seam, or a non-Protoss game) so is
      * every tile.
      */
+    /**
+     * Availability verdict for a candidate. The race strategy owns what "available"
+     * means (Protoss: Pylon power); a race that needs no availability concept, or a
+     * test without a strategy, accepts every tile.
+     */
     private PsiGating.PowerVerdict powerVerdict(AUnitType unitType, BuildLocation candidate) {
-        if (psiGating == null) return PsiGating.PowerVerdict.ACCEPT;
-        if (!unitType.needsPower()) return PsiGating.PowerVerdict.ACCEPT;
+        if (strategy == null) return PsiGating.PowerVerdict.ACCEPT;
+        if (!strategy.requiresAvailability(unitType.name())) return PsiGating.PowerVerdict.ACCEPT;
 
-        return psiGating.verdictFor(candidate.tileX(), candidate.tileY());
+        // The Protoss strategy is the one that answers NEEDS_NEW_PYLON; ask it
+        // through the gating seam when it has one, otherwise treat "available" as
+        // a boolean and refuse only what is never available.
+        if (strategy instanceof atlantis.placement.race.ProtossPlacementStrategy) {
+            return ((atlantis.placement.race.ProtossPlacementStrategy) strategy).gating()
+                .verdictFor(candidate.tileX(), candidate.tileY());
+        }
+
+        return strategy.framesUntilAvailable(candidate.tileX(), candidate.tileY(), unitType.name()) >= 0
+            ? PsiGating.PowerVerdict.ACCEPT
+            : PsiGating.PowerVerdict.REFUSE;
     }
-
     /**
      * Asks for a Pylon near a good-but-unpowered spot (S3 pull-forward).
      *
