@@ -38,6 +38,14 @@ public final class PsiGating {
          * will cover this tile once done, earliest first. Empty when none will.
          */
         List<Integer> incomingPowerFrames(int tx, int ty);
+
+        /**
+         * Could a Pylon we may place cover this tile - i.e. is there a free spot
+         * near enough that a new Pylon would reach it? False when the tile is
+         * walled off from every placeable spot, which is what makes it a hard
+         * refuse rather than "go build a Pylon".
+         */
+        boolean canBeCoveredByNewPylon(int tx, int ty);
     }
 
     /** Tiles a Pylon powers from its own tile (BWAPI's Pylon power radius). */
@@ -84,5 +92,49 @@ public final class PsiGating {
      */
     public boolean canEverBePowered(int tx, int ty) {
         return framesUntilPowered(tx, ty) >= 0;
+    }
+
+    /**
+     * What the planner should do about a candidate's power (`§2` Step 5.1 rule 3,
+     * S3's pull-forward):
+     * </p>
+     */
+    public enum PowerVerdict {
+        /** Powered now, or by a Pylon that will finish first anyway. */
+        ACCEPT,
+        /** Not powered, but a Pylon placed here would fix it - build one. */
+        NEEDS_NEW_PYLON,
+        /** Nothing can ever power this tile; refuse it. */
+        REFUSE
+    }
+
+    /**
+     * The verdict for a power-needing building at this tile.
+     *
+     * <p>
+     * A tile a <b>new</b> Pylon could power answers {@link PowerVerdict#NEEDS_NEW_PYLON}
+     * rather than {@code REFUSE} - that is the difference between "this spot is no
+     * good" and "this spot is good, go get a Pylon". Stardust models the same
+     * choice as "queue a new Pylon only if it can beat the current best by the
+     * builder-travel buffer"; the buffer is a policy constant, so it stays here as
+     * a parameter rather than being baked into the verdict.
+     * </p>
+     */
+    public PowerVerdict verdictFor(int tx, int ty) {
+        if (power.isPowered(tx, ty)) return PowerVerdict.ACCEPT;
+
+        List<Integer> incoming = power.incomingPowerFrames(tx, ty);
+        if (incoming != null && !incoming.isEmpty()) return PowerVerdict.ACCEPT;
+
+        return powerCouldReach(tx, ty) ? PowerVerdict.NEEDS_NEW_PYLON : PowerVerdict.REFUSE;
+    }
+
+    /**
+     * Could any Pylon we are allowed to place reach this tile? Answered by the
+     * source, because "where may a Pylon go" is a map question (it needs the
+     * catalogue), not a power question.
+     */
+    private boolean powerCouldReach(int tx, int ty) {
+        return power.canBeCoveredByNewPylon(tx, ty);
     }
 }

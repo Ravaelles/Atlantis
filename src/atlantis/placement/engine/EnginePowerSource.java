@@ -1,5 +1,6 @@
 package atlantis.placement.engine;
 
+import atlantis.map.position.APosition;
 import atlantis.placement.core.PsiGating;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -47,6 +48,46 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         }
 
         return frames;
+    }
+
+    /**
+     * Could a Pylon we may place cover this tile? True when any free 2x2 spot
+     * exists within the Pylon radius - the question the pull-forward verdict turns
+     * into "go build a Pylon" instead of "this spot is useless".
+     *
+     * <p>
+     * Deliberately a coarse check (free terrain in range), not a full placement
+     * decision: the real Pylon placement happens through this same planner on the
+     * next pass, so pretending to decide it here would duplicate that logic.
+     * </p>
+     */
+    @Override
+    public boolean canBeCoveredByNewPylon(int tx, int ty) {
+        int reach = PYLON_RADIUS_TILES + 1;
+
+        for (int x = tx - reach; x <= tx + reach; x += 2) {
+            for (int y = ty - reach; y <= ty + reach; y += 2) {
+                if (x < 0 || y < 0) continue;
+                if (isPylonSpotFree(x, y) && tileWithinRadius(x, y, tx, ty)) return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isPylonSpotFree(int x, int y) {
+        for (int dx = 0; dx < 2; dx++) {
+            for (int dy = 0; dy < 2; dy++) {
+                APosition tile = APosition.create(x + dx, y + dy);
+                if (tile.isOutOfBounds() || !tile.isWalkable()) return false;
+                if (!tile.isBuildableIncludeBuildings()) return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean tileWithinRadius(int pylonX, int pylonY, int tx, int ty) {
+        return Math.max(Math.abs(tx - pylonX), Math.abs(ty - pylonY)) <= PYLON_RADIUS_TILES + 1;
     }
 
     /** Would a Pylon at this unit's position power the tile once finished? */

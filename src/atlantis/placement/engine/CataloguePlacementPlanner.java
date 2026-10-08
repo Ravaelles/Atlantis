@@ -137,9 +137,11 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return PlacementReservation.failure();
 
         // Refine before ranking: the catalogue emits geometry it can know without
-        // workers, and the ranker needs builder travel and the exit distance. Both
-        // are estimates (§4.6) - they decide ORDER, never correctness.
+        // workers, and the ranker needs builder travel, the exit distance and when
+        // the tile becomes usable at all. All three are estimates (§4.6) - they
+        // decide ORDER, never correctness.
         List<BuildLocation> candidates = refine(
+            unitType,
             catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null)
         );
 
@@ -150,7 +152,17 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (reservedThisPass.contains(tile))
                 continue;
 
-            if (!isPowerAcceptable(unitType, candidate)) continue;
+            PsiGating.PowerVerdict power = powerVerdict(unitType, candidate);
+            if (power == PsiGating.PowerVerdict.REFUSE) continue;
+
+            if (power == PsiGating.PowerVerdict.NEEDS_NEW_PYLON) {
+                // The spot is good, it just needs power: ask for a Pylon near it and
+                // let the NEXT pass place this building on the now-powered tile. That
+                // is Stardust's pull-forward in its simplest form - nothing is
+                // reserved here, so a later frame re-decides with the Pylon coming.
+                requestPylonNear(candidate);
+                return PlacementReservation.failure();
+            }
 
             reservedThisPass.add(tile);
             grid.markUsed(candidate.tileX(), candidate.tileY(),
@@ -168,17 +180,29 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * same choice the legacy planner made), so every candidate is measured from the
      * same place and the ordering is stable frame to frame.
      */
-    private List<BuildLocation> refine(List<BuildLocation> candidates) {
+    private List<BuildLocation> refine(AUnitType unitType, List<BuildLocation> candidates) {
         AUnit builder = builderForThisPass();
 
         List<BuildLocation> refined = new java.util.ArrayList<>(candidates.size());
         for (BuildLocation candidate : candidates) {
-            refined.add(candidate.refined(
+            BuildLocation withTravel = candidate.refined(
                 builderTravelEstimate(builder, candidate),
                 exitDistanceFor(candidate)
-            ));
+            );
+            refined.add(withTravel.withFramesUntilAvailable(availabilityFrames(unitType, candidate)));
         }
         return refined;
+    }
+
+    /**
+     * When the tile becomes usable. For a power-needing building this is the
+     * Pylon's completion frame - the number the ranker sorts on first, so a tile
+     * that is powered now always beats one that must wait.
+     */
+    private int availabilityFrames(AUnitType unitType, BuildLocation candidate) {
+        if (psiGating == null || !unitType.needsPower()) return 0;
+
+        return psiGating.framesUntilPowered(candidate.tileX(), candidate.tileY());
     }
 
     /**
@@ -209,16 +233,37 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     }
 
     /**
-     * Psi check for a candidate. A building that needs no power passes; one that
-     * does passes when the tile is powered now or will be by a Pylon already under
-     * construction, and is refused when nothing can ever power it. With gating
-     * disabled (a test seam, or a non-Protoss game) every tile passes.
+     * Psi verdict for a candidate. A building that needs no power is always
+     * accepted; with gating disabled (a test seam, or a non-Protoss game) so is
+     * every tile.
      */
-    private boolean isPowerAcceptable(AUnitType unitType, BuildLocation candidate) {
-        if (psiGating == null) return true;
-        if (!unitType.needsPower()) return true;
+    private PsiGating.PowerVerdict powerVerdict(AUnitType unitType, BuildLocation candidate) {
+        if (psiGating == null) return PsiGating.PowerVerdict.ACCEPT;
+        if (!unitType.needsPower()) return PsiGating.PowerVerdict.ACCEPT;
 
-        return psiGating.canEverBePowered(candidate.tileX(), candidate.tileY());
+        return psiGating.verdictFor(candidate.tileX(), candidate.tileY());
+    }
+
+    /**
+     * Asks for a Pylon near a good-but-unpowered spot (S3 pull-forward).
+     *
+     * <p>
+     * The request goes through the ordinary production queue rather than a private
+     * channel: the Pylon is a normal goal the production engine will place and
+     * build, and this planner will then find the tile powered on a later pass. The
+     * queue call is guarded, so a build without the legacy queue (a unit test, a
+     * future v2-only build) simply records nothing.
+     * </p>
+     */
+    private void requestPylonNear(BuildLocation candidate) {
+        try {
+            atlantis.production.orders.production.queue.add.AddToQueue.withHighPriority(
+                AUnitType.Protoss_Pylon,
+                APosition.create(candidate.tileX(), candidate.tileY())
+            );
+        } catch (Throwable t) {
+            // A build without the legacy queue: the next pass re-decides anyway.
+        }
     }
 
     /**
