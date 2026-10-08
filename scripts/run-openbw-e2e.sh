@@ -167,7 +167,20 @@ POSTGAME_COPY_CHERRYVIS_TO=
 # Atlantis.onEnd -> System.exit(0), which is the only exit that leaves the host
 # alive to be torn down cleanly. It must stay BELOW the host timeout below.
 FORCE_END_GAME_AFTER_REAL_SECONDS=$GAME_SECONDS
+# Pass-through flags, so a run can be pointed at the new subsystems without
+# editing files: PLACEMENT=catalogue selects the rewritten planner
+# (03_PLACEMENT.md), PRODUCTION_V2=DRY_RUN/LIVE selects the v2 production policy.
+# Both are absent by default, which keeps the legacy path in charge.
 EOF
+
+  # Only written when the caller actually set them, so an unset variable does not
+  # become an empty one the bot has to interpret.
+  if [ -n "${PLACEMENT:-}" ]; then
+    echo "PLACEMENT=$PLACEMENT" >> "$1"
+  fi
+  if [ -n "${PRODUCTION_V2:-}" ]; then
+    echo "PRODUCTION_V2=$PRODUCTION_V2" >> "$1"
+  fi
 }
 write_env "$BOT_RUN_DIR/ENV"
 

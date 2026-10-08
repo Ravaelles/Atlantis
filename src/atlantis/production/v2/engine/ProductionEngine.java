@@ -81,7 +81,7 @@ public final class ProductionEngine {
     private final PlacementPlanner placementPlanner = createPlacementPlanner();
 
     private static PlacementPlanner createPlacementPlanner() {
-        if ("catalogue".equalsIgnoreCase(System.getenv("PLACEMENT"))) {
+        if (atlantis.config.env.Env.placementCatalogue()) {
             return new atlantis.placement.engine.CataloguePlacementPlanner();
         }
         return new LegacyPlacementPlanner();

@@ -35,6 +35,11 @@ public class Env {
      */
     private static ProductionV2Mode productionV2 = ProductionV2Mode.OFF;
 
+    /**
+     * PLACEMENT=CATALOGUE selects the rewritten planner; false keeps legacy.
+     */
+    private static boolean placementCatalogue = false;
+
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
@@ -111,6 +116,15 @@ public class Env {
                 return true;
             case "PRODUCTION_V2":
                 productionV2 = ProductionV2Mode.parse(value);
+                return true;
+            case "PLACEMENT":
+                // Which placement implementation answers the scheduler's seam:
+                // CATALOGUE selects the rewritten planner (_AI/redesign/03_PLACEMENT.md),
+                // anything else (or absent) keeps the legacy APositionFinder.
+                // Read here rather than from the process environment: ENV is a FILE
+                // parsed by this class, so System.getenv never sees it (measured
+                // 2026-10-08 - the flag was written to ENV and silently ignored).
+                placementCatalogue = "CATALOGUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
             case "GAME_LAUNCHER":
                 // CHAOS (default, Windows + ChaosLauncher), OPENBW (Linux +
@@ -206,6 +220,15 @@ public class Env {
      */
     public static ProductionV2Mode productionV2() {
         return productionV2;
+    }
+
+    /**
+     * True when {@code PLACEMENT=CATALOGUE} selected the rewritten placement
+     * planner. False (the default) keeps the legacy {@code APositionFinder}, so a
+     * build with no flag behaves exactly as before.
+     */
+    public static boolean placementCatalogue() {
+        return placementCatalogue;
     }
 
     public static boolean isBenchmark() {

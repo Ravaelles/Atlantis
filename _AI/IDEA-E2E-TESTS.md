@@ -104,30 +104,37 @@ makes a run report the wrong thing.
 
 ### 3.1 Placement on OpenBW (the blocker - the rewrite has landed, not yet cut over)
 
-The bot could not place its first Pylon on OpenBW, every run at the same frame:
+**STATUS 2026-10-08 (late): the rewritten planner WORKS on OpenBW.** With
+`PLACEMENT=catalogue PRODUCTION_V2=LIVE` the bot placed a Pylon - `Can't find
+place for Pylon` dropped from every run to **zero**, which is the blocker this
+section was about. The rewrite solved it.
 
-```
-0:39: Can't find place for `Pylon`, At 8 Pylon (READY_TO_PRODUCE)(#1)
-(reason: Can't physically build here)
-(Max search distance was: 36) near null
-```
+Two things surfaced from that first live run, and they are the new blockers:
 
-**Status (2026-10-08):** the placement subsystem has been **rewritten** -
-`atlantis.placement` implements the Stardust-style catalogued planner
-(`_AI/redesign/03_PLACEMENT.md`, S1-S6 for Protoss, 28 acceptance tests, and it is
-wired into Production V2 through the cannon-fortification policy). What has **not**
-happened is the **cut-over**: `APositionFinder` is still the default, and
-`PLACEMENT=catalogue` has not been tried in a real game.
+**A. The `PLACEMENT` flag was silently ignored (fixed).** `ProductionEngine` read
+`System.getenv("PLACEMENT")`, but ENV is a FILE parsed by `Env`, which never
+populates the process environment - so the flag was written and never seen, and
+the legacy planner silently stayed in charge. `PLACEMENT` is now an `Env` flag
+like `PRODUCTION_V2`. **This is the trap to remember: an ENV key only works if
+`Env.applyKeyAndValueToFlag` has a case for it.**
 
-So the blocker is now a switch and a run, not a rewrite:
+**B. A building is ordered over and over (open).** The first live run issued the
+same Pylon **2883 times**, on a tile that crept one step per frame
+(`Pylon@1125`, `@1129`, `@1130`, ...). Two causes, both in Production V2 rather
+than in placement:
 
-1. run the E2E with `PLACEMENT=catalogue` in the bot's ENV and see whether a
-   Pylon is placed (this is the first thing to do, and it is the whole point of
-   the rewrite);
-2. if it places, cut over (make the catalogue the default) and delete
-   `APositionFinder` with the Producer cut-over;
-3. if it does not, the remaining gap is named in `03_PLACEMENT.md`'s
-   "NOT FINISHED" block at the very top of that file.
+- the plan is rebuilt from scratch every frame and does **not** know that the
+  previous frame's order was accepted by the engine, so the demand never goes
+  away (the supply goal keeps asking);
+- `CataloguePlacementPlanner.carriedOver` was added to make a repeated request
+  return the tile an already-ordered construction owns, but no `Construction` is
+  ever registered on this path (`builder committed` repeats at a new tile every
+  frame, so the builder never actually starts), so `carriedOver` finds nothing.
+
+**Next step:** make the dispatcher's builder path actually register the
+construction (or have the scheduler treat a dispatched-but-unstarted item as
+satisfied next frame), then re-run. The placement half is done; this is the
+Production V2 cutover half that M6 was always going to expose.
 
 ### 3.1a What the rewrite does not cover yet (from that block)
 

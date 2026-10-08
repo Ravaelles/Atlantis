@@ -254,6 +254,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return reserveExact(constraint, unitType, targetFrame);
         }
 
+        // A building of this type already ordered and not yet started keeps its
+        // tile: the plan is recomputed every frame, so without this the planner
+        // would hand out a FRESH tile each frame and the dispatcher would re-issue
+        // the order endlessly (measured 2026-10-08: 1600+ "issued Pylon" lines in
+        // one game, the tile creeping one step per frame). The legacy planner had
+        // the same idea in carriedOver().
+        PlacementReservation alreadyOrdered = carriedOver(unitType, targetFrame);
+        if (alreadyOrdered != null) return alreadyOrdered;
+
         APosition centre = searchCentre(constraint);
         if (centre == null)
             return PlacementReservation.failure();
@@ -352,6 +361,36 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         NeighbourhoodRegistry.Neighbourhood area =
             neighbourhoods.forTile(candidate.tileX(), candidate.tileY());
         return NeighbourhoodRegistry.distanceToExit(area, candidate.tileX(), candidate.tileY());
+    }
+
+    /**
+     * A construction of this type already ordered and not yet started, as a
+     * reservation on the tile it already owns.
+     *
+     * <p>
+     * This is what makes the planner idempotent across frames: the plan is
+     * discarded and rebuilt every frame, so "start allocating a tile" must not mean
+     * "allocate a different tile each time". The tile is marked used in this pass's
+     * grid too, so a second building in the same frame cannot take it.
+     * </p>
+     */
+    private PlacementReservation carriedOver(AUnitType unitType, int targetFrame) {
+        for (atlantis.production.constructions.Construction construction
+                : atlantis.production.constructions.ConstructionRequests.constructions) {
+            if (construction.buildingType() != unitType) continue;
+            if (construction.hasStarted()) continue;
+            if (construction.buildPosition() == null) continue;
+
+            int x = construction.buildPosition().tx();
+            int y = construction.buildPosition().ty();
+
+            reservedThisPass.add(x + ":" + y);
+            grid.markUsed(x, y, unitType.getTilesWidth(), unitType.getTilesHeights());
+
+            return PlacementReservation.success(x, y, targetFrame).committedAt(targetFrame);
+        }
+
+        return null;
     }
 
     /**
