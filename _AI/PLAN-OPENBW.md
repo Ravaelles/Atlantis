@@ -1,6 +1,10 @@
 # PLAN: OpenBW as the primary game engine for every test and experiment
 
-Status: **Step 1 diagnosed end to end, blocked on one server-side decision.**
+Status: **step 1 DONE - the client attaches and the bot plays.** One blocker is
+left for a real game (placement, see `POSITION-FINDER.md`), and the plan's
+step-by-step narrative below is historical: **current state is in §9** (the attach
+fix) and in `_AI/IDEA-E2E-TESTS.md` §2-3.
+
 Created 2026-10-07. Owner's intent: *"make OpenBW usable nearly 1:1 the way
 StarCraft under Wine is - this is your setup for all tests and experiments."*
 
