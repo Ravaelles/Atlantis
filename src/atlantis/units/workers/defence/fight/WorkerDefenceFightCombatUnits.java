@@ -18,6 +18,21 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     /** From this many raiders the workers stop swarming (see WorkerDefenceRun). */
     private static final int WORKERS_RUN_THRESHOLD = 3;
 
+    /**
+     * Below this local combat eval we are losing badly - and a worker that attacks
+     * into a lost fight is not defending anything, it is donating a Probe.
+     *
+     * <p>
+     * {@code eval()} for one of our units is the ratio of what the enemy lost to
+     * what we lost in the simulation window, so HIGHER is better and ~1 is an even
+     * trade. 0.7 is the owner's line: at or below it the exchange is clearly going
+     * against us, and no swarm bonus is worth the unit. (The worker run rule uses
+     * 1.5 as "behind"; this is the stricter, do-not-even-try floor.) Owner's
+     * request, 2026-10-08: workers were dying en masse charging Zealot armies.
+     * </p>
+     */
+    private static final double EVAL_DO_NOT_FIGHT = 0.7;
+
     public WorkerDefenceFightCombatUnits(AUnit unit) {
         super(unit);
     }
@@ -98,6 +113,34 @@ public class WorkerDefenceFightCombatUnits extends Manager {
     }
 
     public static boolean processFightEnemyCombatUnits(AUnit unit) {
+        // Do not attack into a fight we are losing. This is the last gate before a
+        // worker issues an attack, and both callers (WorkerDefenceFightCombatUnits
+        // and WorkerHelpCombatUnitsFight) go through here, so one check covers both
+        // of the paths the owner saw in the death log
+        // (WorkerHelpCombatUnitsFight / WorkerDefenceFightCombatUnits alternating
+        // while a Probe died to Zealots).
+        //
+        // Owner's rule (2026-10-08): a worker must not fight at eval <= 0.7. The
+        // count floor is part of the same rule, not an exception to it: a Probe's
+        // eval is a RATIO of what each side lost, and probes lose to a Zealot
+        // one-for-one, so "three probes around one Zealot" also reads low (measured
+        // 0.145 in the stub world) even though it is a fight we win and the swarm
+        // exists to take it. eval alone therefore cannot tell "losing badly" from
+        // "individually weaker but more numerous"; the raider count can, and the two
+        // together are exactly "only fight when we are not both behind in the trade
+        // AND outnumbered".
+        //
+        // hasEnemyForEval() keeps the reading meaningful: with nothing to simulate,
+        // eval() is NO_ENEMY_IN_REACH (9874), far above the floor.
+        if (
+            unit.hasEnemyForEval()
+                && unit.eval() <= EVAL_DO_NOT_FIGHT
+                && outnumberedByNearbyRaiders(unit)
+        ) {
+            unit.setTooltipTactical("TooBadEval");
+            return false;
+        }
+
         Selection potentialEnemies = potentialEnemies(unit);
         AUnit enemy = potentialEnemies.nearestTo(unit);
 
@@ -127,6 +170,18 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         }
 
         return false;
+    }
+
+    /**
+     * True when the raiders around this worker outnumber the workers around them -
+     * i.e. when a low eval really does mean "we are losing", rather than "each of
+     * us is weaker than one Zealot but there are more of us".
+     */
+    private static boolean outnumberedByNearbyRaiders(AUnit worker) {
+        int raiders = worker.enemiesNear().combatUnits().groundUnits().countInRadius(6, worker);
+        int workers = Select.ourWorkers().inRadius(6, worker).count();
+
+        return raiders > workers;
     }
 
     /** The nearest raider worth walking towards, if the swarm is on. */

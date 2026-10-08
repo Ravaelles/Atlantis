@@ -99,6 +99,73 @@ public class WorkerSwarmTest extends AbstractTestWithWorld {
                                 "a swarm attack must actually be issued");
         }
 
+        /**
+         * Owner report 2026-10-08: workers were dying en masse charging Zealot
+         * armies, despite the many conditions that should have stopped them. The
+         * gate that was missing: none of the fight managers looked at how the local
+         * exchange was going before issuing an attack.
+         */
+        @Test
+        public void workersDoNotAttackIntoAFightWeAreLosing() throws Exception {
+                String fight = read(FIGHT_SOURCE);
+
+                assertTrue(fight.contains("EVAL_DO_NOT_FIGHT = 0.7"),
+                                "the do-not-fight floor must be the owner's line, eval <= 0.7");
+                assertTrue(fight.contains("unit.eval() <= EVAL_DO_NOT_FIGHT"),
+                                "the local eval must actually be compared before attacking");
+                assertTrue(fight.contains("unit.hasEnemyForEval()"),
+                                "the reading must be guarded by hasEnemyForEval(), or a unit with no"
+                                                + " enemy in reach (eval NO_ENEMY_IN_REACH) would be able"
+                                                + " to trip the floor");
+                assertTrue(fight.contains("outnumberedByNearbyRaiders(unit)"),
+                                "eval alone cannot tell a lost fight from a won swarm: a Probe's eval is"
+                                                + " a ratio and probes lose to a Zealot one-for-one, so"
+                                                + " three probes around one Zealot also read low (measured"
+                                                + " 0.145 in the stub world). The count is what separates"
+                                                + " the two, so the floor must only bite when we are also"
+                                                + " outnumbered.");
+
+                // The gate must sit in the shared attack routine, not in one caller:
+                // both WorkerDefenceFightCombatUnits (classic path) and
+                // WorkerHelpCombatUnitsFight (the path the death log shows) go through
+                // processFightEnemyCombatUnits, so one check covers both.
+                int gate = fight.indexOf("unit.eval() <= EVAL_DO_NOT_FIGHT");
+                int firstAttack = fight.indexOf("attackUnit(enemy)");
+                assertTrue(gate > 0 && firstAttack > 0 && gate < firstAttack,
+                                "the eval gate must come before any attack is issued");
+        }
+
+        @Test
+        public void aBadFightStopsTheWorkerFromAttacking() {
+                // Behavioural half: with a large enemy force around and little friendly
+                // support, a Probe must not be sent into the attack by either fight
+                // manager. The stub world simulates no swings, so this pins the
+                // decision - which is exactly the part that was missing.
+                FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+                FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);
+                FakeUnit zealot1 = fake(AUnitType.Protoss_Zealot, 11.4);
+                FakeUnit zealot2 = fake(AUnitType.Protoss_Zealot, 11.8);
+                FakeUnit zealot3 = fake(AUnitType.Protoss_Zealot, 12.2);
+                FakeUnit zealot4 = fake(AUnitType.Protoss_Zealot, 12.6);
+
+                world(20, units(nexus, probe), units(zealot1, zealot2, zealot3, zealot4), () -> {
+                        if (A.now() != 12)
+                                return;
+
+                        AUnit worker = Select.ourWorkers().first();
+                        if (worker == null)
+                                return;
+
+                        // Sanity: this is the losing position the rule is about.
+                        if (worker.hasEnemyForEval() && worker.eval() <= 0.7) {
+                                WorkerDefenceFightCombatUnits fight = new WorkerDefenceFightCombatUnits(worker);
+                                assertTrue(!fight.forceHandled(),
+                                                "a worker at eval <= 0.7 must not be sent into the fight"
+                                                                + " (eval=" + worker.eval() + ")");
+                        }
+                });
+        }
+
         @Test
         public void fleeingNeedsBothACrowdAndABadFight() throws Exception {
                 String run = read(RUN_SOURCE);
