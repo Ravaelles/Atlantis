@@ -694,3 +694,42 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   still open (losses consistent with caution and with being out-macroed -
   unscorable from ladder lines), B-19 still open (no static defense existed
   in either game, so the repaired help-path was never engaged).
+
+## Production v2 and the OpenBW E2E engine (2026-10-08)
+
+- **#43** OpenBW headless run: **the client attaches, the bot then does nothing.**
+  Measured (six runs, one command each, `scripts/run-openbw-e2e.sh`):
+  `scripts/run-openbw-e2e.sh` → `Connection successful` in
+  `out/openbw/bot.log` on every attempt, so the whole attach chain
+  (`_AI/CHALLENGES/OpenBW.md`) is **no longer the blocker**. What blocks a
+  playable game is one layer above, in the bot:
+
+  1. **No build order is reachable.** With `LOCAL=true` the loader resolves
+     `BWAPI_DATA_PATH` + `AI/build_orders/`, and the OpenBW bot directory has no
+     `bwapi-data/`, so `bwapi-data/AI/build_orders/` is never found. Symptom is
+     silence: `CurrentBuildOrder` stays null, every order is skipped with
+     "condition not met", nothing is logged.
+  2. **Strategy file-name mismatch.** `ABuildOrderLoader` uses the strategy
+     **name**, which `ProtossStrategies.initialize()` sets to the file name
+     (`"Zealot into Goon"`), while the *declaration-time* load happens before
+     that rename. So the file must exist under **both** names, or the load must
+     be deferred to `initialize()`. The repo actually ships
+     `Zealot into Goon.txt`; the constant-derived name
+     (`PROTOSS_Zealot_into_Goon`) does not exist.
+  3. **`AtlantisRaceConfig.validate()` can `System.exit(-1)` during game start**
+     when the config is incomplete - the process dies with a clean log.
+
+  **Deferred on purpose** (owner's call): stop chasing this loop. The fixes above
+  are understood but each attempt costs a ~5-minute game run and the diagnosis is
+  not yet complete end to end (the last run's genuine failure point was not
+  confirmed from the log). Revisit with a **stub-world test first** - a unit test
+  that drives the strategy/build-order startup path and asserts a non-null
+  `CurrentBuildOrder` for every strategy - so the fix is proven without a game.
+  Only then spend another OpenBW run.
+
+- **#44** Production v2: **cutover and legacy deletion are ready to do**
+  (`_AI/__01_PRODUCTION_TODO.md` P1 + most of P2 closed, `PRODUCTION_V2=LIVE`
+  already drops the legacy dynamic/supply policy). Deleting `Queue/**`,
+  `ProductionOrder`, `PreventDuplicateOrders`, `ReservedResources` and the
+  `Construction/**` healing commanders is the deliberate next step; it is
+  separate from #43 and does not need a game run, only the fast suite + ArchUnit.
