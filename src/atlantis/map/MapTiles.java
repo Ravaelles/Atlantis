@@ -160,21 +160,62 @@ public class MapTiles {
         // consult, so it keeps deciding for itself.
         if (!source().spawnsFromMapData()) return false;
 
-        // ...but the map-derived answer must not become a licence to build on top of
-        // what is already there. JBWEB's grid only knows that once the unit
-        // lifecycle keeps it current (Atlantis now calls onUnitDiscover/onUnitDestroy)
-        // - and if that wiring is ever lost again, isPlaceable would hand back an
-        // occupied tile. Asking the live unit list as well makes the fallback safe
-        // on its own: a tile with a unit standing on it is never "placeable",
-        // whoever answered first.
-        if (BuildingTilesAreOccupied.check(at, building)) return false;
+        // JBWEB.isPlaceable reads its own usedGrid, which is only as current as the
+        // unit lifecycle keeps it, so it can call an occupied tile free. The live
+        // building list is the independent guard for THAT path.
+        boolean jbwebUsable = JBWEB.isInitialized()
+            && JBWEB.isPlaceable(building.ut(), at.toTilePosition());
 
-        // JBWEB.isPlaceable needs a live game (it reads Game.isBuildable and its own
-        // grids). Where there is none - the stub world, and any caller before the map
-        // is loaded - it would NPE, so the fallback stops here instead. The engine
-        // answer above is all there is in that situation.
-        if (!JBWEB.isInitialized()) return false;
+        if (jbwebUsable && !BuildingTilesAreOccupied.check(at, building)) return true;
 
-        return JBWEB.isPlaceable(building.ut(), at.toTilePosition());
+        // JBWEB refused, or is not available at all (the OpenBW case: JBWEB is a JNI
+        // library whose natives do not exist on Linux, so InitJBWEB.init() fails and
+        // AMap catches it and continues - _AI/LOCAL-STARCRAFT.md 187-189). Without
+        // this branch every placement on OpenBW had no way left to say "yes": the
+        // engine's composite canBuildHere (unreliable, see above) and the occupancy
+        // guard (which can only say "not occupied"). That is why the bot could not
+        // place its first Pylon.
+        //
+        // So answer from the ENGINE at tile level: for a building to stand at `at`,
+        // every tile it covers must be walkable and buildable-including-buildings.
+        // That last part is the occupancy answer, from the engine itself - which is
+        // why this path does NOT also ask BuildingTilesAreOccupied: measured
+        // 2026-10-08 on (3)TauCross1.1, that guard's tile-rectangle math reported
+        // occupied=true for tiles the engine had just called buildable and empty
+        // (buildable-including-buildings=true), so it turned every valid Pylon
+        // position into a refusal. One source of truth per question.
+        return tilesCoveredAreBuildable(building, at);
+    }
+
+    /**
+     * Every tile the building would cover must be walkable and buildable, per the
+     * engine's own tile queries. Used when JBWEB is unavailable (OpenBW); the
+     * building's top-left sits at {@code at}.
+     */
+    /**
+     * Every tile the building would cover must be walkable and buildable, per the
+     * engine's own tile queries. Used when JBWEB cannot answer (OpenBW); the
+     * building's top-left sits at {@code at}.
+     *
+     * <p>
+     * {@code isBuildableIncludeBuildings()} is the engine's occupancy-aware answer,
+     * so this covers "is something already standing here" without a second,
+     * hand-rolled overlap test.
+     * </p>
+     */
+    private static boolean tilesCoveredAreBuildable(AUnitType building, APosition at) {
+        int left = at.tx();
+        int top = at.ty();
+
+        for (int x = left; x < left + building.getTilesWidth(); x++) {
+            for (int y = top; y < top + building.getTilesHeights(); y++) {
+                APosition tile = APosition.create(x, y);
+
+                if (!tile.isWalkable()) return false;
+                if (!tile.isBuildableIncludeBuildings()) return false;
+            }
+        }
+
+        return true;
     }
 }

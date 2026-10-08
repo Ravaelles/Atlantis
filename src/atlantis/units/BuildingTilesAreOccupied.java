@@ -37,9 +37,20 @@ import atlantis.units.select.Select;
 public class BuildingTilesAreOccupied {
 
     /**
-     * Returns true if any unit (ours, the enemy's, or neutral) overlaps any tile
-     * the given building type would occupy if placed with its top-left at
+     * Returns true if any building (ours or the enemy's) overlaps any tile the
+     * given building type would occupy if placed with its top-left at
      * {@code position}.
+     *
+     * <p>
+     * <b>Only buildings count.</b> A first version of this asked about every unit,
+     * and that broke the other way: in a mineral line a Pylon's tiles overlap a
+     * worker gathering on them or a patch two tiles over, so every sensible
+     * position came back "occupied" and the bot could not place its first Pylon
+     * (measured 2026-10-08: {@code occupied=true} on tiles that read walkable,
+     * buildable and buildable-including-buildings, i.e. empty). A worker on a tile
+     * is handled by the engine's own answer and by the builder stepping aside; a
+     * building already there is what this guard is for.
+     * </p>
      */
     public static boolean check(APosition position, AUnitType buildingType) {
         if (position == null || buildingType == null)
@@ -47,6 +58,8 @@ public class BuildingTilesAreOccupied {
 
         for (AUnit unit : Select.all().list()) {
             if (unit == null || !unit.isAlive())
+                continue;
+            if (!unit.isABuilding())
                 continue;
 
             if (overlaps(unit, position, buildingType))

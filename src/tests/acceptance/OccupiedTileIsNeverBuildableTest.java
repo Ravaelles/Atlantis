@@ -101,9 +101,17 @@ public class OccupiedTileIsNeverBuildableTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 26, 23) // a worker parked where we would build
         ), fakeEnemies(), () -> {
-            assertTrue(
+            // A worker on the tile must NOT read as occupied. It did in the first
+            // version of this guard, which asked about every unit - and that made
+            // every mineral-line position "occupied", so the bot could not place
+            // its first Pylon at all (measured 2026-10-08 on OpenBW:
+            // occupied=true on tiles the engine called walkable, buildable and
+            // empty). Only buildings count; a worker is handled by the engine's
+            // own answer and by the builder stepping aside.
+            assertFalse(
                 BuildingTilesAreOccupied.check(APosition.create(26, 23), AUnitType.Protoss_Pylon),
-                "a worker parked on the tile is exactly what makes the engine refuse a placement");
+                "a worker on the tile is not an existing building - counting it refused every "
+                    + "mineral-line position");
         });
     }
 }

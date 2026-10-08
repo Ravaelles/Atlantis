@@ -12,6 +12,12 @@ import java.util.List;
 public class JBWEB {
     static Game game;
     static BWEM mapBWEM;
+
+    /**
+     * True only once {@link #onStart} finished - see {@link #isInitialized()}. Kept
+     * separate from {@code game}, which is set before the grids are filled.
+     */
+    private static boolean fullyInitialized = false;
     private static Position mainPosition = Position.Invalid;
     private static Position naturalPosition = Position.Invalid;
     private static TilePosition mainTile = TilePosition.Invalid;
@@ -407,6 +413,28 @@ public class JBWEB {
         findMainChoke();
         findNaturalChoke();
         findLines();
+
+        // Set only HERE, at the end: `game` is assigned at the top, so a failure in
+        // any of the calls above (the JNI-backed ones especially - they do not exist
+        // on Linux, where InitJBWEB.init() throws and AMap catches it and continues,
+        // _AI/LOCAL-STARCRAFT.md 187-189) used to leave isInitialized() true with
+        // half-built grids. MapTiles.canBuildHere then took the JBWEB.isPlaceable
+        // path on OpenBW and refused every valid tile - "Can't find place for
+        // Pylon" (measured 2026-10-08, two separate runs).
+        fullyInitialized = true;
+    }
+
+    /**
+     * True only once {@link #onStart} has run <b>to completion</b>.
+     *
+     * <p>
+     * Distinct from a bare {@code game != null}: that is set early, so a partway
+     * failure (the OpenBW case) would otherwise report a usable JBWEB and the
+     * callers would trust grids that were never filled.
+     * </p>
+     */
+    public static boolean isInitialized() {
+        return fullyInitialized;
     }
 
     /// Stores used tiles if it is a building. Increments defense counters for any stations where the placed building is a static defense unit.
@@ -462,14 +490,6 @@ public class JBWEB {
     ///  Calls JBWEB::onUnitDiscover.
     public static void onUnitMorph(Unit unit) {
         onUnitDiscover(unit);
-    }
-
-    /**
-     * True once {@link #onStart} has run - i.e. in a real game, not in a stub-world
-     * test or before the map is loaded.
-     */
-    public static boolean isInitialized() {
-        return game != null;
     }
 
     /// Adds a section of BWAPI::TilePositions to the BWEB overlap grid.
