@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.util.AConsole;
 
 public class RefreshConstructionPosition {
@@ -63,6 +64,23 @@ public class RefreshConstructionPosition {
         if (positionForNewBuilding != null) {
             construction.setPositionToBuild(positionForNewBuilding);
             Construction.clearCache();
+
+            // The order must move with the construction, or the refresh is undone.
+            //
+            // A position requested explicitly (RequestBuildingNear ->
+            // markAsUsingExactPosition, which is how Protoss pylons, cannons and
+            // the Cybernetics Core are placed) is stored on the ProductionOrder as
+            // aroundPosition, and DefineExactPositionForNewConstruction hands that
+            // value back verbatim the next time the construction is built from the
+            // order - with no validation. Updating only the Construction therefore
+            // relocated it for one frame and the occupied tile returned on the next
+            // order pass: the builder walked to a tile it could never build on and
+            // was cancelled after ~57s ("CyberneticsC took too long"), because the
+            // exact position it was ordered to kept pointing at the occupied tile.
+            ProductionOrder order = construction.productionOrder();
+            if (order != null && order.isUsingExactPosition()) {
+                order.setAroundPosition(positionForNewBuilding);
+            }
         }
 
         return construction.buildPosition();
@@ -102,7 +120,6 @@ public class RefreshConstructionPosition {
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction) {
-        AUnit builder = construction.builder();
         AUnitType buildingType = construction.buildingType();
         APosition buildPosition = construction.buildPosition();
 
@@ -110,13 +127,34 @@ public class RefreshConstructionPosition {
             System.err.println("buildPosition IS NULL - refresh " + buildingType);
             return true;
         }
-        if (!buildPosition.isBuildableIncludeBuildings() && !construction.buildingType().isGasBuilding()) {
-//            System.err.println("buildPosition NOT BUILDABLE - refresh " + buildingType);
-            return true;
+
+        // The engine's raw tile query is the fast answer, but it is not the truth on
+        // OpenBW: it reports "not buildable" both when something really stands on the
+        // tile and when it merely refuses a valid one (see MapTiles.canBuildHere).
+        //
+        // The two cases need opposite handling, and asking the same query cannot tell
+        // them apart - which is what produced this bug's two opposite symptoms:
+        //   * trusting the query alone -> a valid empty tile is called "not good",
+        //     the finder re-finds it and the construction is cancelled in a loop
+        //     ("position still not good after refresh / buildable:false");
+        //   * trusting CanPhysicallyBuildHere (whose JBWEB fallback reads a usedGrid
+        //     that is only filled at game start - onUnitDiscover is never called) ->
+        //     an occupied tile is called "good", so the builder travels there and
+        //     never builds ("took too long (45s) / buildable:false").
+        //
+        // Occupancy is the discriminator, and the live unit list is the one source
+        // that is right in both cases, so that is what decides: refresh only when a
+        // unit is actually standing on the tiles.
+        if (buildingType != null && !buildingType.isGasBuilding() && !buildPosition.isBuildableIncludeBuildings()) {
+            return BuildingTilesAreOccupied.check(buildPosition, buildingType);
         }
 
+        // Same question on a timer, for the case where the tile was free when it was
+        // chosen and something moved onto it afterwards. CanPhysicallyBuildHere alone
+        // cannot see that here (its JBWEB fallback reads a usedGrid that is never
+        // updated in-game), so occupancy is asked directly again.
         return A.everyNthGameFrame(23)
             && buildPosition.isPositionVisible()
-            && !CanPhysicallyBuildHere.check(builder, buildingType, buildPosition);
+            && BuildingTilesAreOccupied.check(buildPosition, buildingType);
     }
 }

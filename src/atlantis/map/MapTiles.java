@@ -5,6 +5,8 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.BuildingTilesAreOccupied;
+import jbweb.JBWEB;
 
 /**
  * What the map knows about a single tile: is it walkable, has it been explored,
@@ -38,6 +40,16 @@ public class MapTiles {
          *                           like {@code Game.isBuildable(int, int, boolean)}.
          */
         boolean isBuildable(HasPosition at, boolean alsoCheckBuildings);
+
+        /**
+         * "Can a building of this type stand on this tile?" The engine answers in
+         * a game; the harness answers from its own rules. A <b>refusal that is
+         * neither an engine answer nor a harness rule</b> is what the default
+         * below is for - see the note in {@code canBuildHere}.
+         */
+        default boolean spawnsFromMapData() {
+            return true;
+        }
 
         /**
          * Is there a walkable path from one tile to the other? The stub world has
@@ -125,10 +137,44 @@ public class MapTiles {
     }
 
     public static boolean hasPathBetween(HasPosition from, HasPosition to) {
-        return source().hasPathBetween(from, to);
+        if (source().hasPathBetween(from, to)) return true;
+
+        // Same shape as canBuildHere: OpenBW's pathing query answered "no path"
+        // for every pair on (3)TauCross1.1, which left the natural base
+        // undetermined and stopped the bot from expanding. The map-derived answer
+        // applies only to the engine source, never to the harness.
+        if (!source().spawnsFromMapData()) return false;
+        if (!(to instanceof APosition)) return false;
+        return JBWEB.isWalkable(((APosition) to).toTilePosition());
     }
 
     public static boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
-        return source().canBuildHere(builder, building, at);
+        if (source().canBuildHere(builder, building, at)) return true;
+
+        // OpenBW's `Game.canBuildHere` is unreliable headless: it rejects tiles the
+        // map data says are fine, which stopped the bot from placing its first
+        // Pylon (measured 2026-10-08 on (3)TauCross1.1: "Can't find place for
+        // Pylon", reason "Can't physically build here", while JBWeb's own tile grid
+        // says the spot is placeable). Fall back to the map-derived answer, and only
+        // when the source is the engine: the harness has its own rules and no map to
+        // consult, so it keeps deciding for itself.
+        if (!source().spawnsFromMapData()) return false;
+
+        // ...but the map-derived answer must not become a licence to build on top of
+        // what is already there. JBWEB's grid only knows that once the unit
+        // lifecycle keeps it current (Atlantis now calls onUnitDiscover/onUnitDestroy)
+        // - and if that wiring is ever lost again, isPlaceable would hand back an
+        // occupied tile. Asking the live unit list as well makes the fallback safe
+        // on its own: a tile with a unit standing on it is never "placeable",
+        // whoever answered first.
+        if (BuildingTilesAreOccupied.check(at, building)) return false;
+
+        // JBWEB.isPlaceable needs a live game (it reads Game.isBuildable and its own
+        // grids). Where there is none - the stub world, and any caller before the map
+        // is loaded - it would NPE, so the fallback stops here instead. The engine
+        // answer above is all there is in that situation.
+        if (!JBWEB.isInitialized()) return false;
+
+        return JBWEB.isPlaceable(building.ut(), at.toTilePosition());
     }
 }

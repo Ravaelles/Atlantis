@@ -482,6 +482,17 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         usingExactPosition = true;
     }
 
+    /**
+     * Drops the exact-position request after the stored tile turned out to be
+     * unusable (something was built or parked on it). Keeping the flag with a stale
+     * position is what sent builders to a tile they could never build on. The
+     * position itself is kept as a search hint - several callers use it as the
+     * neighbourhood to look in again.
+     */
+    public void markAsNotUsingExactPosition() {
+        usingExactPosition = false;
+    }
+
     public boolean isUsingExactPosition() {
         return usingExactPosition;
     }
