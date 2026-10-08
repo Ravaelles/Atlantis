@@ -170,6 +170,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitCreate(Unit u) {
         OnUnitCreated.onUnitCreated(u);
+        keepJbwebGridCurrentOnCreate(u);
     }
 
     /**
@@ -179,6 +180,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitComplete(Unit u) {
         OnUnitCompleted.update(u);
+        keepJbwebGridCurrentOnCreate(u);
     }
 
     /**
@@ -187,6 +189,7 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onUnitDestroy(Unit u) {
         OnUnitDestroyed.onUnitDestroyed(Worlds.units().createFrom(u));
+        keepJbwebGridCurrentOnDestroy(u);
     }
 
     /**
@@ -267,6 +270,40 @@ public class Atlantis implements BWEventListener {
 
     public void exitGame(boolean winner) {
         killProcesses();
+    }
+
+    /**
+     * Keeps JBWEB's used-tile grid current when a building appears.
+     *
+     * <p>
+     * JBWEB fills that grid in {@code onStart} and expects the game to keep it up
+     * to date through {@code onUnitDiscover}/{@code onUnitDestroy} - but Atlantis
+     * never called them, so the grid only ever contained the buildings that existed
+     * at frame 0. Every building raised later was missing from it, and
+     * {@code JBWEB.isPlaceable} (the map-data fallback behind
+     * {@code MapTiles.canBuildHere}) then reported <b>occupied tiles as free</b>:
+     * the position finder placed new pylons, gateways and the Cybernetics Core on
+     * top of existing structures, the builder arrived, could not build, and the
+     * construction was cancelled ("Next PYLON/Next GATEWAY lands on an existing
+     * building", measured 2026-10-08).
+     * </p>
+     *
+     * <p>
+     * Guarded by {@code isInitialized()}: the stub world and OpenBW have no JBWEB
+     * game, and the grid is irrelevant there.
+     * </p>
+     */
+    private static void keepJbwebGridCurrentOnCreate(Unit u) {
+        if (u == null || !jbweb.JBWEB.isInitialized()) return;
+
+        jbweb.JBWEB.onUnitDiscover(u);
+    }
+
+    /** The mirror of {@link #keepJbwebGridCurrentOnCreate}: frees the tiles again. */
+    private static void keepJbwebGridCurrentOnDestroy(Unit u) {
+        if (u == null || !jbweb.JBWEB.isInitialized()) return;
+
+        jbweb.JBWEB.onUnitDestroy(u);
     }
 
     private void killProcesses() {

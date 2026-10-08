@@ -464,6 +464,14 @@ public class JBWEB {
         onUnitDiscover(unit);
     }
 
+    /**
+     * True once {@link #onStart} has run - i.e. in a real game, not in a stub-world
+     * test or before the map is loaded.
+     */
+    public static boolean isInitialized() {
+        return game != null;
+    }
+
     /// Adds a section of BWAPI::TilePositions to the BWEB overlap grid.
     public static void addReserve(TilePosition t, int w, int h) {
         for (int x = t.x; x < t.x + w; x++) {
