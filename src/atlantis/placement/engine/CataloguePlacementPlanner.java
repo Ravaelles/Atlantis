@@ -3,6 +3,8 @@ package atlantis.placement.engine;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
+import atlantis.placement.core.BuildLocationRanker;
+import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
@@ -50,6 +52,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private final TileAvailabilityGrid grid;
     private final BuildLocationCatalogue catalogue;
     private final PsiGating psiGating;
+    private final NeighbourhoodRegistry neighbourhoods;
 
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
@@ -59,18 +62,29 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private final Set<String> reservedThisPass = new HashSet<>();
 
     public CataloguePlacementPlanner() {
-        this(new TileAvailabilityGrid(new EngineTerrainSource()), new PsiGating(new EnginePowerSource()));
+        this(
+            new TileAvailabilityGrid(new EngineTerrainSource()),
+            new PsiGating(new EnginePowerSource()),
+            new NeighbourhoodRegistry(new EngineNeighbourhoodSource())
+        );
     }
 
-    /** Test seam: a grid over a synthetic terrain. */
+    /** Test seam: a grid over a synthetic terrain, no gating, no neighbourhood ranking. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
-        this(grid, null);
+        this(grid, null, null);
     }
 
     /** Test seam with gating: a null {@code psiGating} disables the power check. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid, PsiGating psiGating) {
+        this(grid, psiGating, null);
+    }
+
+    public CataloguePlacementPlanner(
+        TileAvailabilityGrid grid, PsiGating psiGating, NeighbourhoodRegistry neighbourhoods
+    ) {
         this.grid = grid;
         this.psiGating = psiGating;
+        this.neighbourhoods = neighbourhoods;
         this.catalogue = new BuildLocationCatalogue(grid);
     }
 
@@ -97,7 +111,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             return PlacementReservation.failure();
 
         List<BuildLocation> candidates = catalogue.candidates(
-                unitType.getTilesWidth(), unitType.getTilesHeights(), nearestTo(centre));
+                unitType.getTilesWidth(), unitType.getTilesHeights(), rankerFor(unitType, centre));
 
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
@@ -145,6 +159,22 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         reservedThisPass.add(x + ":" + y);
         grid.markUsed(x, y, type.getTilesWidth(), type.getTilesHeights());
         return PlacementReservation.success(x, y, targetFrame);
+    }
+
+    /**
+     * The preference order, from {@link BuildLocationRanker}: availability first,
+     * then the weighted distance score. The neighbourhood ranker is used when a
+     * registry is installed; without one (a test) it falls back to pure distance
+     * from the requested centre, which keeps tests independent of map geometry.
+     */
+    private BuildLocationCatalogue.LocationScorer rankerFor(AUnitType unitType, final APosition centre) {
+        if (neighbourhoods == null) return nearestTo(centre);
+
+        return new BuildLocationRanker(
+            neighbourhoods,
+            false,
+            BuildLocationRanker.isTechBuilding(unitType)
+        );
     }
 
     /** Ordering: closer to the requested neighbourhood first. */
