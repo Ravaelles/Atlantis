@@ -63,8 +63,16 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         if (builder == null)
             return PlacementReservation.failure();
 
-        // The finder is asked for one candidate; it excludes buildings already
-        // on the map and our own reservations of this pass on top of that.
+        // One candidate from the legacy finder, which already excludes buildings
+        // on the map and honours the constraint.
+        //
+        // NOTE for the next step (01_PRODUCTION.md's BuildPositionResolver):
+        // choosing among SEVERAL candidate tiles by Pylon power value needs a
+        // finder that can return more than one, which the legacy
+        // findStandardPosition does not expose. `PylonPlacementScore` is written
+        // and tested for that step; wiring it here would mean inventing
+        // candidates the finder never validated, which is worse than the single
+        // validated tile we get today.
         HasPosition near = resolveNear(constraint);
         APosition position = APositionFinder.findStandardPosition(builder, unitType, near, 12);
         if (position == null)

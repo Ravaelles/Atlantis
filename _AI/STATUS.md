@@ -102,6 +102,15 @@ reproduce). Suite **250/0/4**, ArchUnit 7/7, store unchanged.
   allow it, extra refineries are wanted before gas is short, and a maxed-out
   supply queue emits an emergency Pylon at `PRIORITY_EMERGENCY`.
   Test: `PullForwardGoalsTest`.
+- **Pylon scoring DONE**: `PylonPlacementScore` implements the
+  `BuildPositionResolver` rule from 01_PRODUCTION.md - a Pylon tile is worth the
+  number of buildable, still-unpowered tiles it unlocks, and ties keep the
+  finder's own order. Pure geometry (tiles in, a number out), so it is tested
+  without a game. Test: `PylonPlacementScoreTest` (8).
+  NOT wired into `LegacyPlacementPlanner` on purpose: choosing among several
+  candidates needs a finder that can return more than one, which the legacy
+  `findStandardPosition` does not expose - inventing candidates it never
+  validated would be worse than the one validated tile we place today.
 - Open: a real game run with PRODUCTION_V2=DRY_RUN, then LIVE; then the legacy
   `Queue/**` + `ProductionOrder` + `PreventDuplicateOrders` + `Construction/**`
   healing commanders deleted and the ArchUnit store shrunk.
