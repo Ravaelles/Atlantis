@@ -123,7 +123,11 @@ public class WorkerHelpCombatUnitsFight extends Manager {
 //            return false;
 //        }
 
-        if ((new ProtossAvoidEnemies(unit)).invokedFrom(this)) {
+        // Unit-level rather than the combat-side ProtossAvoidEnemies manager: this
+        // package is inside atlantis.units and must not reach into atlantis.combat
+        // (ArchUnit rule, and the layering is real - a worker manager should not
+        // depend on combat micro). moveToSafety is the same action at unit level.
+        if (unit.moveToSafety(atlantis.units.actions.Actions.MOVE_AVOID)) {
             usedManager(this);
             return true;
         }

@@ -50,6 +50,12 @@ public class OnGameStarted {
 
         APainter.assignBwapiInstance();
 
+        // Per-game state that must not leak between games (or between tests):
+        // the early-scout tracker holds a defender assignment in statics, and a
+        // leftover one made the bot treat a previous game's Probe as "still my
+        // defender" (owner report, 2026-10-08).
+        atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
+
         handleCheckIfUmsMap();
 
         System.out.println("### enemyName   = " + AGame.enemyName());

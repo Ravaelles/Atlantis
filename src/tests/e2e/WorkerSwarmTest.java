@@ -278,10 +278,8 @@ public class WorkerSwarmTest extends AbstractTestWithWorld {
                 // gathering - so the wounded-worker escape (added below them) was
                 // unreachable, and WorkerDefenceRun never got a turn.
                 String help = read(HELP_SOURCE);
-
-                int firstGate = help.indexOf("if (unit.hp() <= 17) return f();");
+                int firstGate = help.indexOf("if (unit.hp() <= 21) return f();");
                 int escape = help.indexOf("if (isWoundedAndInDanger()) return false;");
-
                 assertTrue(escape > 0, "the wounded-worker escape must exist");
                 assertTrue(firstGate > 0, "the health gates must exist");
                 assertTrue(escape < firstGate,
