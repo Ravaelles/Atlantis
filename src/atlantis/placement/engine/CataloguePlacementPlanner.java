@@ -3,6 +3,7 @@ package atlantis.placement.engine;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
+import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -19,31 +20,36 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * S1 of the placement rewrite (`_AI/redesign/03_PLACEMENT.md` §5.4): the
- * catalogue-backed {@link PlacementPlanner}.
+ * The catalogue-backed {@link PlacementPlanner} - S1-S3 of
+ * `_AI/redesign/03_PLACEMENT.md` §5.4.
  *
  * <p>
  * It answers the same seam the scheduler already consumes, so nothing outside
- * this class changes when the Block templates and Psi gating arrive (S2/S3).
- * What
- * it adds over {@link LegacyPlacementPlanner} - which returned one tile from
- * {@code APositionFinder} - is a <b>ranked list of validated candidates</b>:
- * the
- * catalogue knows every tile on the map a footprint fits on, and the planner
- * picks the one nearest the requested neighbourhood.
+ * this class changes as the stages land. What it adds over
+ * {@link LegacyPlacementPlanner} - which returned one tile from
+ * {@code APositionFinder} - is a <b>ranked list of validated candidates</b>: the
+ * catalogue knows every tile on the map a footprint fits on (Blocks first, then a
+ * per-tile scan), and the planner picks from it.
  * </p>
  *
  * <p>
- * Deliberately not here yet, and each is a later stage rather than a TODO in
- * this
- * class: Block prefab layouts (S2), Protoss Pylon power gating and pull-forward
- * (S3), choke/wall placement (S4). The catalogue is the seam they plug into.
+ * S3 adds Protoss Psi gating: a building that {@code needsPower} only takes a
+ * tile that is powered now (preferred) or will be powered by a Pylon already
+ * under construction. A tile nothing can ever power is refused rather than
+ * returned and discovered broken later - which is the failure mode
+ * `_AI/POSITION-FINDER.md` describes.
+ * </p>
+ *
+ * <p>
+ * Deliberately not here yet: choke/wall placement (S4) and the base-fortification
+ * <i>policy</i> (S5, which is goal generation, not placement).
  * </p>
  */
 public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     private final TileAvailabilityGrid grid;
     private final BuildLocationCatalogue catalogue;
+    private final PsiGating psiGating;
 
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
@@ -53,12 +59,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     private final Set<String> reservedThisPass = new HashSet<>();
 
     public CataloguePlacementPlanner() {
-        this(new TileAvailabilityGrid(new EngineTerrainSource()));
+        this(new TileAvailabilityGrid(new EngineTerrainSource()), new PsiGating(new EnginePowerSource()));
     }
 
     /** Test seam: a grid over a synthetic terrain. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
+        this(grid, null);
+    }
+
+    /** Test seam with gating: a null {@code psiGating} disables the power check. */
+    public CataloguePlacementPlanner(TileAvailabilityGrid grid, PsiGating psiGating) {
         this.grid = grid;
+        this.psiGating = psiGating;
         this.catalogue = new BuildLocationCatalogue(grid);
     }
 
@@ -92,6 +104,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (reservedThisPass.contains(tile))
                 continue;
 
+            if (!isPowerAcceptable(unitType, candidate)) continue;
+
             reservedThisPass.add(tile);
             grid.markUsed(candidate.tileX(), candidate.tileY(),
                     candidate.tileWidth(), candidate.tileHeight());
@@ -100,6 +114,19 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         }
 
         return PlacementReservation.failure();
+    }
+
+    /**
+     * Psi check for a candidate. A building that needs no power passes; one that
+     * does passes when the tile is powered now or will be by a Pylon already under
+     * construction, and is refused when nothing can ever power it. With gating
+     * disabled (a test seam, or a non-Protoss game) every tile passes.
+     */
+    private boolean isPowerAcceptable(AUnitType unitType, BuildLocation candidate) {
+        if (psiGating == null) return true;
+        if (!unitType.needsPower()) return true;
+
+        return psiGating.canEverBePowered(candidate.tileX(), candidate.tileY());
     }
 
     /**
