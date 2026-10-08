@@ -67,7 +67,26 @@ public final class ProductionEngine {
     /** Latency margin for issuing commands; BWAPI drops a command sent too late. */
     private static final int LATENCY_FRAMES = 3;
 
-    private final LegacyPlacementPlanner placementPlanner = new LegacyPlacementPlanner();
+    /**
+     * Which placement implementation answers the seam.
+     *
+     * <p>
+     * The default is the legacy {@code APositionFinder} adapter, unchanged, until
+     * the catalogue-backed planner (S1 of {@code _AI/redesign/03_PLACEMENT.md})
+     * has been seen to place a Pylon in a real game. {@code PLACEMENT=catalogue}
+     * in ENV switches it, so the two can be compared in one build - the same
+     * shape as {@code PRODUCTION_V2}'s OFF/DRY_RUN/LIVE cutover.
+     * </p>
+     */
+    private final PlacementPlanner placementPlanner = createPlacementPlanner();
+
+    private static PlacementPlanner createPlacementPlanner() {
+        if ("catalogue".equalsIgnoreCase(System.getenv("PLACEMENT"))) {
+            return new atlantis.placement.engine.CataloguePlacementPlanner();
+        }
+        return new LegacyPlacementPlanner();
+    }
+
     private final DryRunOrderDirector dryRunDirector = new DryRunOrderDirector();
     private final GameOrderDirector gameDirector = new GameOrderDirector();
 
