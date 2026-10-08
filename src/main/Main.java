@@ -373,6 +373,35 @@ public class Main {
 
     // =========================================================
 
+    /**
+     * Plays one complete headless OpenBW game from this line - host, attach, run.
+     *
+     * <p>
+     * Put this in {@link #main} instead of the normal setup when you want to watch
+     * a game yourself:
+     * </p>
+     *
+     * <pre>
+     * OpenBWGameLauncher.init()
+     *     .useConfig(OpenBWConfig.ofMap(defineMapToUse(args)))
+     *     .race(ourRace(), enemyRace())
+     *     .run();
+     * </pre>
+     *
+     * <p>
+     * It blocks until the game ends and returns a verdict ({@code isSuccess()},
+     * {@code lastFrame()}, logs); it never starts StarCraft or Wine
+     * (CONVENTIONS 14), and the whole run is bounded by the config's timeout
+     * (CONVENTIONS 13).
+     * </p>
+     */
+    public static atlantis.config.launcher.openbw.OpenBWRunResult runOpenBWGame(String[] args) {
+        return atlantis.config.launcher.openbw.OpenBWGameLauncher.init()
+            .useConfig(atlantis.config.launcher.openbw.OpenBWConfig.ofMap(defineMapToUse(args)))
+            .race(ourRace(), enemyRace())
+            .run();
+    }
+
     private static void localAtlantisSetup(String[] args) {
         // Backend chosen by bwapi-data/AI/ENV (GAME_LAUNCHER=OPENBW or default Chaos).
         // See atlantis.config.launcher.* (Strategy): Windows/ChaosLauncher starts

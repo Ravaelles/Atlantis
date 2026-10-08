@@ -1,0 +1,2 @@
+OpenBW: host published no game registry entry within 1 s; server log tail:
+(no server log)
