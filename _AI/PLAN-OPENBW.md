@@ -448,3 +448,57 @@ ordering" claim).
 Both need a live game to verify, which is now possible - so they are the next
 two items, in this order (issue 1 first: a run that cannot report its verdict is
 not a usable test).
+
+### Issue 2, diagnosed (2026-10-08): on OpenBW, JBWEB is not available at all
+
+The `Can't find place for Pylon ... Can't physically build here` is not a
+placement-logic bug. `_AI/LOCAL-STARCRAFT.md` (lines 187-189) recorded the gap
+and it is the explanation:
+
+> `bwapi.JBWEB` uses native JNI libraries that do not exist on Linux. On OpenBW,
+> `InitJBWEB.init()` fails quietly and `AMap` falls back to no ground distance.
+
+`AMap` catches that failure and continues (`AMap.java:57-66`, "We will
+continue"), so a game runs - but every path that decides "can a building stand
+here" degrades:
+
+```
+CanPhysicallyBuildHere.check
+  -> MapTiles.canBuildHere
+       -> engine Game.canBuildHere      (unreliable on OpenBW, see MapTiles)
+       -> BuildingTilesAreOccupied      (ours, live unit list - works)
+       -> JBWEB.isPlaceable             (BROKEN on OpenBW: no native lib)
+```
+
+So on OpenBW the only two answers left are the engine's own - which
+`MapTiles.canBuildHere` explicitly documents as refusing valid tiles - and the
+occupancy guard, which can only say "not occupied", never "yes, build here".
+A tile that is empty but refused by the engine therefore has no way to be
+accepted, and the Pylon cannot be placed.
+
+**This is why the Wine path and the OpenBW path cannot share the answer.** The
+fix is not to trust JBWEB on OpenBW; it is to decide placement from something
+that works there. Candidates, in order of how much they respect the existing
+design:
+
+1. **Use the engine's tile data instead of JBWEB's grids.** `Game.isBuildable`,
+   `isWalkable`, `getGroundHeight` are real OpenBW answers even headless; the
+   problem is only that `canBuildHere` (the composite type-aware query) is
+   unreliable. A tile-level check built from `isBuildable`/`isWalkable` for the
+   tiles the building would cover is the map-data answer, from the engine that
+   actually has the map.
+2. **Compute the used grid from the game's own unit list** rather than JBWEB's
+   `usedGrid` - we already do the occupancy half
+   (`atlantis.units.BuildingTilesAreOccupied`); the missing half is walkability
+   of the covered tiles, which (1) provides.
+3. Only if neither works: a small OpenBW-specific placement fallback, which is
+   a larger change and needs a decision.
+
+Whatever is chosen has to be **verified on a live OpenBW game** (now possible),
+and must not regress the Wine path, where JBWEB works and is the better answer.
+
+**Next session's first move:** run the E2E script once, capture `bot.log` from
+the *successful* run (before any orphaned client overwrites it), and read what
+`AbstractPositionFinder._STATUS` says for the first Pylon on OpenBW - then
+implement (1) behind the existing `MapTiles.Source` seam, where the harness and
+the engine already differ.
