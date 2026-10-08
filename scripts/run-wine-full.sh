@@ -365,11 +365,11 @@ fi
 # the whole session down. Without this watcher the result screen sat there
 # forever with StarCraft and ChaosLauncher still running (owner report,
 # 2026-10-06).
-say "OK - The bot is playing..."
-say "###################################################################"
+#say "OK - The bot is playing..."
+say "######################################################"
 while kill -0 "$CLIENT_PID" 2>/dev/null; do
   sleep 2
 done
-say "Client JVM exit - game ended - killing SC & ChaosLauncher."
+say "Client JVM exit, killing SC & ChaosLauncher."
 cleanup
 exit 0

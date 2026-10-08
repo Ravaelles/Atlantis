@@ -62,7 +62,7 @@ public class CancelTooLongConstructions {
     private static int timeoutInSeconds(Construction constr) {
         AUnitType type = constr.buildingType();
         AUnit main = Select.main();
-        int bonus = We.protoss() ? 8 : 0;
+        int bonus = We.protoss() ? 14 : 0;
         int timeoutSeconds = bonus + (
             14
                 + (type.isBase() || type.isCombatBuilding() ? 20 : 0)

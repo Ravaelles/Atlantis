@@ -111,6 +111,8 @@ public class FindPosition {
                     + "\n    / reason:" + AbstractPositionFinder._STATUS
                     + "\n    / building:" + building
                     + "\n    / near:" + nearTo
+                    + "\n    / bases:" + Select.ourBases().count()
+                    + " (unfinished: " + Select.ourWithUnfinished().bases().count() + ")"
                     + "\n    / freeSupply:" + AGame.supplyFree()
                     + " (" + AGame.supplyUsed() + "/" + AGame.supplyTotal() + ")"
                     + "\n    / minerals:" + A.minerals()

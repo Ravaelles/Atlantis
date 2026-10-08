@@ -15,13 +15,17 @@ public class ChokeBlockerRunAsProtoss extends Manager {
     @Override
     public boolean applies() {
         return We.protoss()
-            && Enemy.zerg()
+            && (Enemy.zerg() || (unit.eval() <= 1.1 && moreMeleeEnemiesThanOurs()))
             && Army.strength() <= 70
             && (unit.woundPercent() >= 10 || unit.meleeEnemiesNearCount(1.2) >= 2)
             && unit.lastUnderAttackLessThanAgo(30 * 5)
 //            && unit.lastAttackFrameLessThanAgo(30 * 4)
 //            && unit.friendsNear().combatUnits().countInRadius(3, unit) <= 3
-            && unit.distToMain() >= 2;
+            && unit.distToMain() >= 10;
+    }
+
+    private boolean moreMeleeEnemiesThanOurs() {
+        return unit.meleeEnemiesNearCount(1.1) > (1 + unit.friendsInRadiusCount(1.3));
     }
 
     @Override

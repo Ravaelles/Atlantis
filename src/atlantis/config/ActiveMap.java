@@ -28,16 +28,34 @@ public class ActiveMap {
 
     // =========================================================
 
-    public static String readMapFromCliArgument(String[] args) {
-        String mapName = null;
-
+    /**
+     * The map requested on the command line, or the default when none was.
+     *
+     * <p>
+     * The command line always wins over {@code Main.defineMapToUse}'s hard-coded
+     * choices, which is what makes those choices usable for a hand-run game while
+     * a scripted run (OpenBW, a test) picks its own map explicitly:
+     * </p>
+     *
+     * <pre>
+     * java -jar Atlantis.jar --map=maps/cog/(3)TauCross1.1.scx
+     * </pre>
+     */
+    public static String readMapFromCliArgument(String[] args, String defaultMap) {
         for (String arg : args) {
-            if (arg.startsWith("--map=")) {
-                mapName = arg.substring(6); // Remove "--map=" prefix
+            if (arg != null && arg.startsWith("--map=")) {
+                return arg.substring("--map=".length());
             }
         }
+        return defaultMap;
+    }
 
-        return mapName;
+    /**
+     * Compatibility overload: same question, no default, so a caller that only
+     * cares about the argument gets {@code null} when it is absent.
+     */
+    public static String readMapFromCliArgument(String[] args) {
+        return readMapFromCliArgument(args, null);
     }
 
     // =========================================================

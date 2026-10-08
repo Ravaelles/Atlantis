@@ -18,6 +18,16 @@ import atlantis.util.We;
  * the world has.
  */
 public class FakeMapTiles implements MapTiles.Source {
+
+    /**
+     * The harness answers from its own rules and has no map behind it, so the
+     * engine fallback in {@link MapTiles#canBuildHere} must not apply here.
+     */
+    @Override
+    public boolean spawnsFromMapData() {
+        return false;
+    }
+
     /**
      * What {@link #isExplored} answers. Tests that need a position which has never
      * been seen set it to {@code false} for the length of their world;

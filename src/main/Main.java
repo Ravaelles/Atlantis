@@ -46,7 +46,11 @@ public class Main {
     // =========================================================
 
     public static String defineMapToUse(String[] args) {
-        String mapFromCli = ActiveMap.readMapFromCliArgument(args);
+        // The map the caller passed wins over every hard-coded choice below, so
+        // a script or a test can point a run at any map without editing code:
+        //     java -jar Atlantis.jar --map=maps/cog/(3)TauCross1.1.scx
+        // The OpenBW launcher uses the same argument (Main.runOpenBWGame).
+        String mapFromCli = atlantis.config.ActiveMap.readMapFromCliArgument(args);
         if (mapFromCli != null) {
             return mapFromCli;
         }
@@ -159,7 +163,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/BulletTest.scm";
 //        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
-//        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm"; // ░░░░░░░░░░░░░░░░░
+        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/1Drag_v_4Zeal.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealZoo.scm";
 //        if (true) return "ums/rav/protoss/1DragWounded_v_1Zeal.scm";
@@ -172,7 +176,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/3Drag_v_3Drag.scm";
 //        if (true) return "ums/rav/protoss/4Drag_v_4Drag.scm";
 //        if (true) return "ums/rav/protoss/7Drag_v_8Drag.scm";
-        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
+//        if (true) return "ums/rav/protoss/8Drag_v_8Drag.scm";
 
 //        if (true) return "ums/rav/protoss/4Drag_v_Zeal.scm";
 //        if (true) return "ums/rav/protoss/3Drag_v_Zealots.scm";

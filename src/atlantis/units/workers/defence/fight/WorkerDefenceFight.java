@@ -23,6 +23,7 @@ public class WorkerDefenceFight extends Manager {
     protected ManagerFactory[] managers() {
         return new ManagerFactory[]{
             WorkerFightEnemyProxyBuilding::new,
+            WorkerDefenceStopFighting::new,
             WorkerDefenceFightCombatUnits::new,
             WorkerDefenceFightWorkers::new,
         };

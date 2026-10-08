@@ -1,5 +1,6 @@
 package atlantis.units.workers.defence.fight;
 
+import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;
@@ -32,7 +33,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // alternating with no run, WorkerDefenceRun absent entirely).
         if (isWoundedAndInDanger()) return false;
 
-        if (unit.hp() <= 17) return f();
+        if (unit.hp() <= 21) return f();
         if (unit.hp() <= minHp()) return f();
         if (unit.isBuilder()) return f();
         if (Enemy.protoss() && unit.hp() <= 20) return f();
@@ -114,30 +115,49 @@ public class WorkerHelpCombatUnitsFight extends Manager {
     }
 
     private boolean f() {
-        if (unit.action().isAttacking() || unit.lastCommandWasAttack()) {
-            GatherResources manager = new GatherResources(unit);
-            if (manager.forceHandle() != null) {
-                usedManager(this);
-                return true;
-            }
+        if (unit.isGatheringMinerals() || unit.isGatheringGas()) return false;
 
-            AUnit mineral = Select.minerals().nearestToMain();
-            if (mineral != null && unit.enemiesNear().combatUnits().nearestToDist(mineral) >= 5) {
-                unit.gather(mineral);
-//                ErrorLog.printMaxOncePerMinute("Shouldn't happen: WorkerHelpCombatUnitsFight Fix minerals");
-                return false;
-            }
+//        WorkerDefenceRun workerDefenceRun = new WorkerDefenceRun(unit);
+//        if (workerDefenceRun.invokedFrom(this)) {
+//            usedManager(workerDefenceRun);
+//            return false;
+//        }
 
-            ErrorLog.printMaxOncePerMinute("Shouldn't happen: WorkerHelpCombatUnitsFight 2Base");
-
-            WorkerDefenceRun workerDefenceRun = new WorkerDefenceRun(unit);
-            if (workerDefenceRun.invokedFrom(this)) {
-                usedManager(workerDefenceRun);
-                return false;
-            }
-
-            unit.moveToSafety(Actions.MOVE_AVOID);
+        if ((new ProtossAvoidEnemies(unit)).invokedFrom(this)) {
+            usedManager(this);
+            return true;
         }
+
+        GatherResources manager = new GatherResources(unit);
+        if (manager.forceHandle() != null) {
+            usedManager(this);
+            return false;
+        }
+
+//        if (unit.action().isAttacking() || unit.lastCommandWasAttack()) {
+//            GatherResources manager = new GatherResources(unit);
+//            if (manager.forceHandle() != null) {
+//                usedManager(this);
+//                return false;
+//            }
+//
+//            AUnit mineral = Select.minerals().nearestToMain();
+//            if (mineral != null && unit.enemiesNear().combatUnits().nearestToDist(mineral) >= 5) {
+//                unit.gather(mineral);
+////                ErrorLog.printMaxOncePerMinute("Shouldn't happen: WorkerHelpCombatUnitsFight Fix minerals");
+//                return false;
+//            }
+//
+//            ErrorLog.printMaxOncePerMinute("Shouldn't happen: WorkerHelpCombatUnitsFight 2Base");
+//
+//            WorkerDefenceRun workerDefenceRun = new WorkerDefenceRun(unit);
+//            if (workerDefenceRun.invokedFrom(this)) {
+//                usedManager(workerDefenceRun);
+//                return false;
+//            }
+//
+//            unit.moveToSafety(Actions.MOVE_AVOID);
+//        }
 
         return false;
     }

@@ -22,7 +22,7 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
     protected boolean handle() {
         if (detectEnemyScout()) {
             haveDefenderAssigned();
-            if (ourDefender != null && ourDefender.isAlive()) {
+            if (ourDefender != null && ourDefender.isAlive() && ourDefender.hp() >= 37) {
                 sendDefenderToFight();
             }
         }
@@ -32,8 +32,9 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
     private Manager sendDefenderToFight() {
         if (ourDefender.hp() <= 18) {
-            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
-            ourDefender = FreeWorkers.get().exclude(ourDefender).nearestTo(enemyScout);
+//            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
+            (new GatherResources(ourDefender)).invokeFrom(null);
+            ourDefender = FreeWorkers.get().exclude(ourDefender).havingAtLeastHp(36).nearestTo(enemyScout);
         }
 
         return (new TrackEnemyEarlyScout(ourDefender, enemyScout)).invokeFrom(this);
@@ -41,7 +42,8 @@ public class TrackEnemyEarlyScoutCommander extends Commander {
 
     private static void noDefenderNeeded() {
         if (ourDefender != null) {
-            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
+//            (new GatherResources(ourDefender)).invokeFrom(TrackEnemyEarlyScoutCommander.class);
+            (new GatherResources(ourDefender)).invokeFrom(null);
         }
 
         ourDefender = null;

@@ -712,6 +712,20 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * first discovered base.
      */
     public static AUnit main() {
+        AUnit main = mainFromCache();
+        if (main != null) return main;
+
+        // Why `ourWithUnfinished()` and not `ourBuildings()`: this runs during the
+        // first seconds, when the base is not yet completed. `ourBuildings()`
+        // excludes unfinished units, so it returned empty, `main()` returned null,
+        // and the null propagated into the position finders as "near = null" -
+        // which made every build position fail with "Can't physically build here"
+        // (measured 2026-10-08 on OpenBW, where the client attaches a few frames
+        // into the game: the bot produced nothing for the whole run).
+        return ourWithUnfinished().bases().first();
+    }
+
+    private static AUnit mainFromCache() {
         return cacheUnit.getIfValid(
             "main",
             73,

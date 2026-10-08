@@ -22,7 +22,7 @@ public class DanceAwayAsDragoonApplies extends HasUnit {
 
     private boolean f(String reason) {
 //        if (!reason.equals(_lastF) && unit.enemiesNear().notDeadMan().notEmpty()) {
-//            System.err.println("@" + A.now + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
+//            System.err.println("@" + A.now() + ":  " + unit.idWithHash() + " - NO DANCE: " + reason);
 //        }
 //        _lastF = reason;
 
@@ -48,7 +48,7 @@ public class DanceAwayAsDragoonApplies extends HasUnit {
         if (unit.lastAttackFrameMoreThanAgo(A.whenEnemyZerg(90, 60))) return f("_A");
         if (unit.isRunning()) return f("_R1");
         if (unit.isRetreating()) return f("_R2");
-        if (unit.isMissionSparta() && (unit.cooldown() <= 15 || unit.shieldWound() <= 17)) return f("_GSparta");
+        if (unit.isMissionSparta() && (unit.cooldown() <= 12 || unit.shieldWound() <= 17)) return f("_GSparta");
         if (unit.isActiveManager(ForceStopDancingDragoon.class)) return f("_FStop");
         if (unit.lastTarget() != null && unit.lastTarget().isCombatBuilding()) return f("_B5");
 

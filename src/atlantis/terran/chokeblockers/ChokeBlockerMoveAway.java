@@ -8,6 +8,7 @@ import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
+import atlantis.units.actions.Actions;
 import atlantis.units.select.Count;
 
 public class ChokeBlockerMoveAway extends Manager {
@@ -69,13 +70,18 @@ public class ChokeBlockerMoveAway extends Manager {
 
     @Override
     public Manager handle() {
-        if ((new ProtossAvoidEnemies(unit)).invokedFrom(this)) {
+//        if ((new ProtossAvoidEnemies(unit)).invokedFrom(this)) {
+//            return usedManager(this);
+//        }
+
+        if (unit.distTo(this.chokeBlockPoint) >= MOVE_AWAY_DISTANCE) return null;
+
+        if (unit.moveToMain(Actions.SPECIAL)) {
             return usedManager(this);
         }
 
         return null;
 
-//        if (unit.distTo(this.chokeBlockPoint) >= MOVE_AWAY_DISTANCE) return null;
 //
 //        HasPosition goTo = Select.mainOrAnyBuilding();
 //

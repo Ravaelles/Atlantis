@@ -43,7 +43,7 @@ public class OnGameStarted {
 //            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
 //        }
 
-        System.out.println("\n############### Starting Atlantis... ##############################");
+        System.out.println("\n########### Starting Atlantis... #################");
 
         // Uncomment this line to see list of units -> damage.
 //        AUnitTypesHelper.displayUnitTypesDamage();
@@ -52,8 +52,8 @@ public class OnGameStarted {
 
         handleCheckIfUmsMap();
 
-        System.out.println("%%% enemyName   = " + AGame.enemyName());
-        System.out.println("%%% mapFileName = " + Atlantis.game().mapFileName());
+        System.out.println("### enemyName   = " + AGame.enemyName());
+        System.out.println("### mapFileName = " + Atlantis.game().mapFileName());
 
         // Atlantis can modify ChaosLauncher's config files treating AtlantisRaceConfig as the source-of-truth
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();

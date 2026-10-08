@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+ATLANTIS_DIR="/sc-ai/Atlantis"
+HARNESS_DIR="/sc-ai/StardustDevEnvironment"
+GAME_DIR="$HARNESS_DIR/build/test"
+SERVER_SCRIPT="$HARNESS_DIR/scripts/run-openbw-server.sh"
+WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
+
 # E2E for Atlantis on the headless OpenBW engine - no Wine, no StarCraft, no
 # ChaosLauncher, ever (CONVENTIONS §14).
 #
@@ -31,12 +38,19 @@
 # hung or misconfigured, not slow - kill it and change the approach.
 set -euo pipefail
 
-ATLANTIS_DIR="/sc-ai/Atlantis"
-HARNESS_DIR="/sc-ai/StardustDevEnvironment"
-GAME_DIR="$HARNESS_DIR/build/test"
-SERVER_SCRIPT="$HARNESS_DIR/scripts/run-openbw-server.sh"
-WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
-JAR="$WINE_BOT_DIR/Atlantis.jar"
+
+# The bot jar to run. `/sc-ai/BOTS` is the real deployed bot tree (the owner's
+# shortcut), so an OpenBW run uses the *same* artifact the owner runs - a stale
+# copy in the repo's own bot folder is how a run silently tested old code
+# (measured 2026-10-08: the game ran a jar whose default map was
+# `ums/rav/7th_rav.scx`, from a build predating the fix, while the log said
+# everything was fine).
+BOTS_DIR="/sc-ai/BOTS"
+if [ -f "$BOTS_DIR/AtlantisP/AI/Atlantis.jar" ]; then
+  JAR="$BOTS_DIR/AtlantisP/AI/Atlantis.jar"
+else
+  JAR="$WINE_BOT_DIR/Atlantis.jar"
+fi
 
 # The harness serves maps from StardustDevEnvironment/build/test/maps/; the
 # owner's map is the COG TauCross (measured path 2026-10-07 - the sscai copy
@@ -237,7 +251,12 @@ say "starting bot: $BOT_RUN_DIR (headless, GAME_LAUNCHER=OPENBW)"
 # directory and is "AI/build_orders/" (see the link section above).
 cd "$BOT_ROOT"
 BOT_EXIT=0
-timeout 360 java -jar "$BOT_RUN_DIR/Atlantis.jar" >"$BOT_LOG" 2>&1 &
+# `--map=` wins over Main's hard-coded map choices
+# (ActiveMap.readMapFromCliArgument), so the map this script hosts and the map
+# the bot analyses are the same one. Without it the bot's own default was used
+# while the harness hosted something else (measured 2026-10-08: the bot analysed
+# a UMS map and could place nothing on the real one).
+timeout 360 java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 
