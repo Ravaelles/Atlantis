@@ -733,3 +733,31 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `ProductionOrder`, `PreventDuplicateOrders`, `ReservedResources` and the
   `Construction/**` healing commanders is the deliberate next step; it is
   separate from #43 and does not need a game run, only the fast suite + ArchUnit.
+
+- **#45** Production v2: **`Construction/**` cannot be deleted yet, only `Queue/**`
+  is a candidate.** Measured dependency count: **149 production files** reference
+  `Queue.get()`, `CurrentQueue`, `CountInQueue`, `AddToQueue` or
+  `QueueInitializer` ("who uses this" grep, 2026-10-08). They are the whole
+  `production/dynamic/**` tree (`DynamicProductionCommander`,
+  `AutoProduceWorkersCommander`, `SupplyCommander`, every
+  `ProduceXxx`/`ResearchXxx`), `production/requests/**`
+  (`DynamicBuildingCommander`, `RemoveExcessiveOrders`, ...), `ConstructionsCommander`
+  and the game listeners. In `PRODUCTION_V2=LIVE` the commander tree drops
+  `DynamicProductionCommander` + `SupplyCommander`, but **`ConstructionsCommander`
+  stays by design** (v2 delegates builder execution to it), so the `Construction`
+  subsystem is live, not dead.
+
+  Ordering that is actually safe (each step ends green, fast suite + ArchUnit):
+  1. keep LIVE as the default policy and verify it in a real game (#43);
+  2. delete the **dynamic commanders** (`production/dynamic/**`,
+     `production/requests/DynamicBuildingCommander`, `RemoveExcessiveOrders`)
+     only after v2 covers their behaviour (tech, race-specific army - still
+     open in `_AI/__01_PRODUCTION_TODO.md` P2);
+  3. delete `Queue/**`, `ProductionOrder`, `PreventDuplicateOrders`,
+     `ReservedResources`/`OrderReservations` last, when (2) is done and
+     `Construction` no longer needs a `ProductionOrder` back-reference;
+  4. keep `Construction/**` until v2 has its own builder (`GameOrderDirector`
+     currently *constructs* `Construction` objects to hand execution over).
+
+  **Do not** delete from the bottom of this list upward: step 3 before step 2 is
+  a bot that cannot research or build race-specific units.
