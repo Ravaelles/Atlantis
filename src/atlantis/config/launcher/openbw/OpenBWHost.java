@@ -127,6 +127,17 @@ public final class OpenBWHost {
         List<String> command = new ArrayList<>();
         command.add("setsid");
         command.add("nohup");
+        command.add("env");
+        // THE setting that makes the client attach (measured 2026-10-08, see
+        // _AI/CHALLENGES/OpenBW.md): the harness's BWAPI creates its shared-memory
+        // game registry - the table the Java client reads the server PID from -
+        // only when `Server::serverEnabled` is true, i.e. when
+        // LoadConfigStringUCase("config", "shared_memory", "ON") == "ON". That
+        // resolves from BWAPI_CONFIG_<SECTION>__<KEY> before any bwapi.ini is
+        // read, and StardustDevEnvironment has no bwapi.ini, so without this the
+        // host serves a socket but publishes no registry and the client loops on
+        // "No server proc ID". scripts/run-openbw-e2e.sh sets the same variable.
+        command.add("BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON");
         command.add("timeout");
         command.add(String.valueOf(config.gameTimeoutSeconds()));
         command.add("bash");

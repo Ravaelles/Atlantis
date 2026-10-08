@@ -158,6 +158,13 @@ public class OpenBWLauncherTest {
         assertTrue(command.contains("200"), "the timeout must be the configured one: " + command);
         assertTrue(command.contains("maps/cog/(3)TauCross1.1.scx"), command.toString());
         assertTrue(command.contains("Protoss") && command.contains("Zerg"), command.toString());
+
+        // Without this the harness publishes no game registry and the Java client
+        // never attaches (measured 2026-10-08, _AI/CHALLENGES/OpenBW.md). It is the
+        // one setting that makes the difference between "No server proc ID" forever
+        // and "Connection successful" / "HELLO_ATLANTIS", so it is pinned here.
+        assertTrue(command.contains("BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON"),
+                "the host must be told to publish the shared-memory registry: " + command);
     }
 
     @Test
