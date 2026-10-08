@@ -90,14 +90,59 @@ public final class ProductionScheduler {
         int prerequisitesReady = ensurePrerequisites(item, earliest, timeline, plan, new HashSet<String>());
         if (prerequisitesReady < 0) return;
 
+        // What the game already has, or already has coming, counts against the
+        // goal BEFORE anything is planned.
+        //
+        // This is the fix for the plan that re-planned itself forever: the plan is
+        // rebuilt every frame, and without this the scheduler placed a fresh item
+        // every frame at the earliest affordable frame - which slides forward as the
+        // minerals are spent, so the same Pylon was scheduled at 557, then 746, then
+        // 974, and never built (measured 2026-10-08 on OpenBW). One order per thing
+        // is a property of the SCHEDULER, not a rule every goal has to remember.
+        int wanted = alreadyAvailableOrComing(item, goal);
+        if (wanted <= 0) return;
+
         Set<Integer> usedProducers = new HashSet<>();
-        int wanted = goal.isContinuous() ? Integer.MAX_VALUE : goal.count();
 
         for (int produced = 0; produced < wanted; produced++) {
             ProductionItem scheduled = scheduleItem(item, Math.max(earliest, prerequisitesReady), timeline, plan,
                     goal.placement(), false, goal.producerLimit(), usedProducers, goal.isContinuous());
             if (scheduled == null) return;
         }
+    }
+
+    /**
+     * How many more of {@code goal}'s item are actually wanted, after subtracting
+     * what exists and what is already on its way.
+     *
+     * <p>
+     * A continuous goal ({@code count == -1}) wants one per free producer, so it is
+     * never satisfied by a count - it is answered by the producer it will be given.
+     * A counted goal wants {@code count}, satisfied by the per-type count the game
+     * reports ({@code availableFrom} covers finished, under construction and
+     * requested).
+     * </p>
+     */
+    private int alreadyAvailableOrComing(Producible item, ProductionGoal goal) {
+        if (goal.isContinuous()) return Integer.MAX_VALUE;
+
+        // UNITS are covered by the goal generators themselves (the worker goal
+        // counts workers existing PLUS in production, DynamicGoals.addWorkerGoal),
+        // and they are produced from a facility queue that re-asks every frame by
+        // design - so the scheduler must not subtract them here. Measured 2026-10-08:
+        // doing so suppressed Probe production entirely once a fourth worker
+        // existed (WorkerProductionTest.freshBasePlansWorkers).
+        if (!item.requiresPlacement()) return goal.count();
+
+        // A BUILDING is planned once and then exists on the map, so an item that is
+        // already there or already requested needs no second plan. This is the fix
+        // for the plan that re-planned itself forever: without it the scheduler
+        // placed a fresh Pylon every frame at the earliest affordable frame - which
+        // slides forward as the minerals are spent - so the same Pylon was scheduled
+        // at 557, then 746, then 974, and never built (measured 2026-10-08 on
+        // OpenBW). One order per building is a property of the SCHEDULER, not a rule
+        // every goal has to remember.
+        return existingItems.availableFrom(item) >= 0 ? 0 : goal.count();
     }
 
     /**
