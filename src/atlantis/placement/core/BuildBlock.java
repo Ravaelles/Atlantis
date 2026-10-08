@@ -5,52 +5,66 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * A prefab layout: a rectangle that knows where its Pylon goes and which tiles
- * are
- * suitable for small (2x2), medium (3x2) and large (4x3) buildings
+ * A prefab layout: a rectangle that knows where its Pylon goes and which of its
+ * tiles suit small (2x2), medium (3x2) and large (4x3) buildings
  * (`_AI/redesign/03_PLACEMENT.md` §1.1).
  *
  * <p>
  * This is the piece that encodes base-design knowledge for free: instead of
- * evaluating 1x1 tiles, a Block already knows the gateway spacing and which
- * spots
- * suit a tech building. Stardust ships 24 hand-designed templates; S2 ports the
- * shape and the few that pay for themselves, and more are added by writing
- * another
- * subclass - no caller changes.
+ * evaluating 1x1 tiles, a template already knows the gateway spacing and which
+ * spots suit a tech building. Stardust ships 24 hand-written C++ classes; here one
+ * template is a <b>data row</b> ({@link Spec}), so the whole set is a table rather
+ * than 24 classes - less code, and adding a template is adding a row.
  * </p>
  *
  * <p>
- * The Block itself is pure geometry: it is handed a
- * {@link TileAvailabilityGrid}
- * and either stamps itself or reports that it does not fit. It never reads the
- * game.
+ * Pure geometry: a template is handed a {@link TileAvailabilityGrid} and either
+ * stamps itself or reports that it does not fit. It never reads the game.
  * </p>
  */
-public abstract class BuildBlock {
+public final class BuildBlock {
 
+    /** One template's geometry. Offsets are from the block's top-left. */
+    public static final class Spec {
+        public final String name;
+        public final int width;
+        public final int height;
+        public final int pylonDx;
+        public final int pylonDy;
+        final int[][] small;
+        final int[][] medium;
+        final int[][] mediumNoExit;
+        final int[][] large;
+
+        public Spec(
+            String name, int width, int height, int pylonDx, int pylonDy,
+            int[][] small, int[][] medium, int[][] mediumNoExit, int[][] large
+        ) {
+            this.name = name;
+            this.width = width;
+            this.height = height;
+            this.pylonDx = pylonDx;
+            this.pylonDy = pylonDy;
+            this.small = small;
+            this.medium = medium;
+            this.mediumNoExit = mediumNoExit;
+            this.large = large;
+        }
+    }
+
+    private final Spec spec;
     private final int left;
     private final int top;
 
-    protected BuildBlock(int left, int top) {
+    public BuildBlock(Spec spec, int left, int top) {
+        this.spec = spec;
         this.left = left;
         this.top = top;
     }
 
-    public abstract int width();
-
-    public abstract int height();
-
-    /** The offsets of the Pylon that powers this block, from its top-left. */
-    protected abstract int powerPylonDx();
-
-    protected abstract int powerPylonDy();
-
-    protected abstract List<Slot> smallSlots();
-
-    protected abstract List<Slot> mediumSlots();
-
-    protected abstract List<Slot> largeSlots();
+    public String name() {
+        return spec.name;
+    }
 
     public int left() {
         return left;
@@ -60,12 +74,20 @@ public abstract class BuildBlock {
         return top;
     }
 
+    public int width() {
+        return spec.width;
+    }
+
+    public int height() {
+        return spec.height;
+    }
+
     public int powerPylonX() {
-        return left + powerPylonDx();
+        return left + spec.pylonDx;
     }
 
     public int powerPylonY() {
-        return top + powerPylonDy();
+        return top + spec.pylonDy;
     }
 
     /**
@@ -78,33 +100,42 @@ public abstract class BuildBlock {
     }
 
     /**
-     * Claims the block's tiles, so the next block cannot butt against it. The
-     * grid marks the rectangle used and its ring as border.
+     * Claims the block's tiles so the next block cannot butt against it. The grid
+     * marks the rectangle used and its ring as border.
      */
     public void stamp(TileAvailabilityGrid grid) {
         grid.markUsed(left, top, width(), height());
     }
 
-    /** Every candidate slot the block offers, as absolute tiles. */
+    /** Every candidate slot this template offers, as absolute tiles. */
     public List<BuildLocation> locations() {
         List<BuildLocation> all = new ArrayList<>();
-        addSlots(all, smallSlots(), 2, 2);
-        addSlots(all, mediumSlots(), 3, 2);
-        addSlots(all, largeSlots(), 4, 3);
+        add(all, spec.small, 2, 2, false, true);
+        add(all, spec.medium, 3, 2, true, true);
+        add(all, spec.mediumNoExit, 3, 2, true, false);
+        add(all, spec.large, 4, 3, true, true);
         return Collections.unmodifiableList(all);
     }
 
-    private void addSlots(List<BuildLocation> into, List<Slot> slots, int w, int h) {
-        for (Slot slot : slots) {
+    private void add(
+        List<BuildLocation> into, int[][] offsets, int w, int h, boolean tech, boolean hasExit
+    ) {
+        if (offsets == null) return;
+
+        for (int[] offset : offsets) {
             into.add(new BuildLocation(
-                    left + slot.dx, top + slot.dy, w, h,
-                    0, 0, 0, w >= 3));
+                left + offset[0], top + offset[1], w, h,
+                0,      // builderFrames: the planner refines it
+                0,      // available now: the grid already excluded used tiles
+                0,      // distanceToExit: the planner fills it from the neighbourhood
+                tech,   // medium/large suit tech buildings
+                hasExit
+            ));
         }
     }
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "(" + left + "," + top + " "
-                + width() + "x" + height() + ")";
+        return spec.name + "(" + left + "," + top + ")";
     }
 }

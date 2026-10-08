@@ -40,9 +40,24 @@ public final class BuildLocation {
     /** True for a location a tech building should prefer (see the ranker). */
     private final boolean techLocation;
 
+    /**
+     * Medium slots only: whether a building here can send units toward the map
+     * (Stardust's {@code hasExit}). Medium slots without an exit are preferred for
+     * buildings that do not need one, leaving exit-capable tiles free.
+     */
+    private final boolean hasExit;
+
     public BuildLocation(
             int tileX, int tileY, int tileWidth, int tileHeight,
             int builderFrames, int framesUntilAvailable, int distanceToExit, boolean techLocation) {
+        this(tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
+            distanceToExit, techLocation, true);
+    }
+
+    public BuildLocation(
+            int tileX, int tileY, int tileWidth, int tileHeight,
+            int builderFrames, int framesUntilAvailable, int distanceToExit,
+            boolean techLocation, boolean hasExit) {
         this.tileX = tileX;
         this.tileY = tileY;
         this.tileWidth = tileWidth;
@@ -51,6 +66,31 @@ public final class BuildLocation {
         this.framesUntilAvailable = framesUntilAvailable;
         this.distanceToExit = distanceToExit;
         this.techLocation = techLocation;
+        this.hasExit = hasExit;
+    }
+
+    /**
+     * The same tile with the two computed facts filled in. The catalogue emits
+     * geometry it can know without workers; the planner refines each candidate
+     * with a real travel estimate and the neighbourhood's exit distance.
+     */
+    public BuildLocation refined(int builderFrames, int distanceToExit) {
+        return new BuildLocation(
+            tileX, tileY, tileWidth, tileHeight,
+            builderFrames, framesUntilAvailable, distanceToExit, techLocation, hasExit
+        );
+    }
+
+    /** The same tile with its availability frame resolved. */
+    public BuildLocation withFramesUntilAvailable(int framesUntilAvailable) {
+        return new BuildLocation(
+            tileX, tileY, tileWidth, tileHeight, builderFrames, framesUntilAvailable,
+            distanceToExit, techLocation, hasExit
+        );
+    }
+
+    public boolean hasExit() {
+        return hasExit;
     }
 
     public int tileX() {

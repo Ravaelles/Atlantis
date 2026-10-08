@@ -5,6 +5,7 @@ import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
 import atlantis.placement.core.BuildLocationRanker;
 import atlantis.placement.core.NeighbourhoodRegistry;
+import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
@@ -61,6 +62,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private final Set<String> reservedThisPass = new HashSet<>();
 
+    /** The worker this pass measures travel from; chosen once, reset by startPass. */
+    private AUnit passBuilder;
+
     public CataloguePlacementPlanner() {
         this(
             new TileAvailabilityGrid(new EngineTerrainSource()),
@@ -91,6 +95,28 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     @Override
     public void startPass() {
         reservedThisPass.clear();
+        passBuilder = null;
+    }
+
+    /**
+     * The worker every candidate in this pass is measured from: the nearest free
+     * worker to our base. One per pass (not per building) so two candidates in one
+     * frame cannot disagree about travel time.
+     */
+    private AUnit builderForThisPass() {
+        if (passBuilder == null || !passBuilder.isAlive()) {
+            AUnit anchor = nearestBaseUnit();
+            passBuilder = anchor != null
+                ? Select.ourWorkers().nearestTo(anchor)
+                : Select.ourWorkers().first();
+            if (passBuilder == null) passBuilder = Select.ourWorkers().first();
+        }
+        return passBuilder;
+    }
+
+    private static AUnit nearestBaseUnit() {
+        AUnit base = Select.main();
+        return base != null ? base : Select.ourBases().first();
     }
 
     @Override
@@ -110,8 +136,14 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (centre == null)
             return PlacementReservation.failure();
 
-        List<BuildLocation> candidates = catalogue.candidates(
-                unitType.getTilesWidth(), unitType.getTilesHeights(), rankerFor(unitType, centre));
+        // Refine before ranking: the catalogue emits geometry it can know without
+        // workers, and the ranker needs builder travel and the exit distance. Both
+        // are estimates (§4.6) - they decide ORDER, never correctness.
+        List<BuildLocation> candidates = refine(
+            catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null)
+        );
+
+        java.util.Collections.sort(candidates, rankerFor(unitType, centre));
 
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
@@ -128,6 +160,52 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         }
 
         return PlacementReservation.failure();
+    }
+
+    /**
+     * Fills in the two facts the catalogue cannot know: the builder travel estimate
+     * and the distance to the neighbourhood's exit. One nearest worker per pass (the
+     * same choice the legacy planner made), so every candidate is measured from the
+     * same place and the ordering is stable frame to frame.
+     */
+    private List<BuildLocation> refine(List<BuildLocation> candidates) {
+        AUnit builder = builderForThisPass();
+
+        List<BuildLocation> refined = new java.util.ArrayList<>(candidates.size());
+        for (BuildLocation candidate : candidates) {
+            refined.add(candidate.refined(
+                builderTravelEstimate(builder, candidate),
+                exitDistanceFor(candidate)
+            ));
+        }
+        return refined;
+    }
+
+    /**
+     * How long the builder needs to get there, in frames. Ground distance in tiles
+     * at the slowest worker speed, plus a small floor - an estimate, deliberately
+     * cheap: the ranker only needs the candidates ORDERED, and a path query per
+     * candidate is the cost the catalogue exists to avoid (§4.6).
+     */
+    private int builderTravelEstimate(AUnit builder, BuildLocation candidate) {
+        if (builder == null) return 0;
+
+        double tiles = builder.groundDist(
+            APosition.create(candidate.tileX(), candidate.tileY())
+        );
+
+        // A Probe moves ~0.7 tiles/s at the default speed; 30 frames/s, so about
+        // 43 frames per tile. Rounded up, with a 20-frame floor for "already there".
+        int framesPerTile = 43;
+        return Math.max(20, (int) Math.ceil(tiles * framesPerTile));
+    }
+
+    private int exitDistanceFor(BuildLocation candidate) {
+        if (neighbourhoods == null) return 0;
+
+        NeighbourhoodRegistry.Neighbourhood area =
+            neighbourhoods.forTile(candidate.tileX(), candidate.tileY());
+        return NeighbourhoodRegistry.distanceToExit(area, candidate.tileX(), candidate.tileY());
     }
 
     /**

@@ -1,6 +1,6 @@
 package atlantis.placement.core;
 
-import atlantis.placement.blocks.Block8x8;
+import atlantis.placement.blocks.BlockTemplates;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -60,15 +60,28 @@ public final class BuildLocationCatalogue {
         rebuild();
     }
 
-    /** The templates this build ships; more is another entry here, nothing else. */
+    /** The templates this build ships (S2: all 24 normal + 4 start variants). */
     public static List<BlockFactory> defaultBlockFactories() {
         List<BlockFactory> factories = new ArrayList<>();
-        factories.add(new BlockFactory() {
-            @Override
-            public BuildBlock at(int left, int top) {
-                return new Block8x8(left, top);
-            }
-        });
+
+        for (final BuildBlock.Spec spec : BlockTemplates.normal()) {
+            factories.add(new BlockFactory() {
+                @Override
+                public BuildBlock at(int left, int top) {
+                    return new BuildBlock(spec, left, top);
+                }
+            });
+        }
+
+        for (final BuildBlock.Spec spec : BlockTemplates.startBlocks()) {
+            factories.add(new BlockFactory() {
+                @Override
+                public BuildBlock at(int left, int top) {
+                    return new BuildBlock(spec, left, top);
+                }
+            });
+        }
+
         return factories;
     }
 
