@@ -1,33 +1,40 @@
 package atlantis.placement.core;
 
+import atlantis.placement.blocks.Block8x8;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 /**
- * The catalogue of candidate build locations, grouped by footprint width
- * (`_AI/redesign/03_PLACEMENT.md` §2 Step 5.1).
+ * The catalogue of candidate build locations
+ * ({@code _AI/redesign/03_PLACEMENT.md} §2 Step 5.1, §5.4 S1-S2).
  *
  * <p>
- * S1 keeps this deliberately simple: instead of Stardust's 24 hand-designed
- * Block templates, it scans the free tiles of the map once and records every
- * origin where a {@code w x h} footprint fits. That already gives the scheduler
- * something the legacy finder never had - a <b>ranked list</b> of validated
- * tiles
- * to choose between - and it is the layer the Block templates plug into later
- * (S2) without changing any caller.
+ * Two sources feed it, in this order:
  * </p>
+ * <ol>
+ * <li><b>Blocks</b> (S2) - prefab layouts are tried over the map first, because
+ * their slots carry base-design knowledge a per-tile scan cannot express
+ * (gateway spacing, which tiles suit tech). Every tile a block occupies is
+ * stamped as used, so the next block cannot butt against it.</li>
+ * <li><b>A per-tile scan</b> (S1) - whatever the blocks did not cover, found by
+ * checking every free origin for each footprint. This is what makes the
+ * catalogue useful before the full 24-template set exists, and it is also
+ * the fallback for maps whose shape no template fits.</li>
+ * </ol>
  *
  * <p>
- * A location is validated against {@link TileAvailabilityGrid}, so "free" means
- * the whole footprint is free of terrain, resources, depots and earlier
- * reservations in the same pass.
+ * Rebuilt only when the grid changed (a building placed or removed) - the
+ * "lazy,
+ * event-driven" rule Stardust uses, which is what lets a whole-map scan be
+ * affordable.
  * </p>
  */
 public final class BuildLocationCatalogue {
 
-    /** Footprints the catalogue answers for: the sizes a building uses here. */
+    /** Footprints the fallback scan answers for: the sizes a building uses here. */
     private static final int[][] SIZES = {
             { 2, 2 }, // Pylon, Cannon, Supply Depot
             { 3, 2 }, // Gateway, Cybernetics Core, Forge, Barracks
@@ -35,11 +42,34 @@ public final class BuildLocationCatalogue {
     };
 
     private final TileAvailabilityGrid grid;
+    private final List<BlockFactory> blockFactories;
     private final List<BuildLocation> all = new ArrayList<>();
 
+    /** How a block is instantiated at a map position. */
+    public interface BlockFactory {
+        BuildBlock at(int left, int top);
+    }
+
     public BuildLocationCatalogue(TileAvailabilityGrid grid) {
+        this(grid, defaultBlockFactories());
+    }
+
+    public BuildLocationCatalogue(TileAvailabilityGrid grid, List<BlockFactory> blockFactories) {
         this.grid = grid;
-        rebuild(Collections.<LocationScorer>emptyList());
+        this.blockFactories = blockFactories;
+        rebuild();
+    }
+
+    /** The templates this build ships; more is another entry here, nothing else. */
+    public static List<BlockFactory> defaultBlockFactories() {
+        List<BlockFactory> factories = new ArrayList<>();
+        factories.add(new BlockFactory() {
+            @Override
+            public BuildBlock at(int left, int top) {
+                return new Block8x8(left, top);
+            }
+        });
+        return factories;
     }
 
     /** Everything found, unordered. */
@@ -55,17 +85,51 @@ public final class BuildLocationCatalogue {
                 matching.add(location);
             }
         }
-        return ranked(matching, scorer);
+        if (scorer != null)
+            Collections.sort(matching, scorer);
+        return matching;
     }
 
     /**
-     * Rebuilds by scanning every free tile for each footprint. O(map area x
-     * sizes), run only when the grid changed (a building placed or removed) -
-     * the same "lazy, event-driven" rule Stardust uses.
+     * Rebuilds from scratch: stamp every block that fits, then fill the gaps with
+     * the per-tile scan.
      */
-    public void rebuild(List<LocationScorer> scorers) {
+    public void rebuild() {
         all.clear();
+        stampBlocks();
+        scanFreeTilesNotCoveredByBlocks();
+    }
 
+    /**
+     * One pass, first fit wins per origin - deterministic, which is what the plan
+     * requires. Stardust scans largest-template-first from the map centre so big
+     * blocks get the interior; here the caller orders the factories and the origin
+     * loop runs top-left to bottom-right. The ordering refinement is polish, not a
+     * correctness question.
+     */
+    private void stampBlocks() {
+        for (BlockFactory factory : blockFactories) {
+            for (int x = 0; x <= grid.width(); x++) {
+                for (int y = 0; y <= grid.height(); y++) {
+                    BuildBlock block = factory.at(x, y);
+                    if (x + block.width() > grid.width() || y + block.height() > grid.height())
+                        continue;
+                    if (!block.fits(grid))
+                        continue;
+
+                    all.addAll(block.locations());
+                    block.stamp(grid);
+                }
+            }
+        }
+    }
+
+    /**
+     * Every free origin of each footprint the blocks did not already cover. The
+     * scan skips tiles the grid marks used, so a block slot and a scanned tile can
+     * never be the same candidate.
+     */
+    private void scanFreeTilesNotCoveredByBlocks() {
         for (int[] size : SIZES) {
             int w = size[0];
             int h = size[1];
@@ -77,21 +141,23 @@ public final class BuildLocationCatalogue {
 
                     all.add(new BuildLocation(
                             x, y, w, h,
-                            0, // builderFrames: unknown here, the planner refines it
-                            0, // free now: the grid already excluded used tiles
-                            0, // distanceToExit: filled by the planner when it has a neighbourhood
-                            false // tech-location: a Block-template concept (S2+)
+                            0, // builderFrames: the planner computes it (needs workers)
+                            0, // available now: the grid already excluded used tiles
+                            0, // distanceToExit: the planner fills it from the neighbourhood
+                            false // tech-location: a block concern
                     ));
                 }
             }
         }
     }
 
-    private List<BuildLocation> ranked(List<BuildLocation> candidates, LocationScorer scorer) {
-        if (scorer != null) {
-            Collections.sort(candidates, scorer);
-        }
-        return candidates;
+    /**
+     * Marks a tile reserved for the rest of the pass, so a second building in the
+     * same pass cannot take it (Stardust erases the location from its list; the
+     * grid flag is the same idea with one place to reset).
+     */
+    public void reserve(BuildLocation location) {
+        grid.markUsed(location.tileX(), location.tileY(), location.tileWidth(), location.tileHeight());
     }
 
     /**
