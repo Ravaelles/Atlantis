@@ -108,6 +108,22 @@ trap cleanup EXIT INT TERM
 # --- 1. Preconditions -----------------------------------------------------
 [ -x "$SERVER_SCRIPT" ] || fail "OpenBW server script not found: $SERVER_SCRIPT"
 [ -f "$JAR" ] || fail "bot jar not found: $JAR (build with scripts/build-bot-jar.sh)"
+
+# The jar must match the working tree. A play that runs old code is the one
+# failure this script cannot afford - the bug being hunted is often already fixed,
+# and the search goes somewhere it no longer lives (owner's report, 2026-10-08).
+# The check compares a hash of the whole source tree against the tag the jar
+# carries, so it catches EVERY source change, not the files someone listed.
+if ! bash scripts/check-jar-freshness.sh "$JAR" --quiet; then
+  say "the bot jar is stale (or untagged). Details:"
+  bash scripts/check-jar-freshness.sh "$JAR" 2>&1 | sed 's/^/    /'
+  say "Rebuilding it now, so this run uses your current code."
+  timeout 300 bash scripts/build-bot-jar.sh "$JAR" >/tmp/atlantis-e2e-build.log 2>&1 \
+    || { tail -20 /tmp/atlantis-e2e-build.log | sed 's/^/    /'; fail "rebuild failed"; }
+  bash scripts/check-jar-freshness.sh "$JAR" --quiet \
+    || fail "the rebuild did not produce a matching jar - check /tmp/atlantis-e2e-build.log"
+fi
+
 [ -d "$GAME_DIR" ] || fail "harness game dir not found: $GAME_DIR"
 for mpq in StarDat.mpq BrooDat.mpq Patch_rt.mpq; do
   [ -f "$GAME_DIR/$mpq" ] || fail "missing $mpq in $GAME_DIR (harness not built?)"

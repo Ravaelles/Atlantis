@@ -7,8 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -34,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class LauncherBuildsTheJarTest {
 
     private static final Path WINE_FULL = Paths.get("scripts/run-wine-full.sh");
+    private static final Path OPENBW_E2E = Paths.get("scripts/run-openbw-e2e.sh");
 
     /**
      * The jar the launcher actually plays: JAR_OUT in run-wine-full.sh, which
@@ -83,39 +82,40 @@ public class LauncherBuildsTheJarTest {
     }
 
     @Test
-    public void theExistingJarIsNotOlderThanTheSources() throws IOException {
-        // Only checks when a jar is present; a missing jar is the launcher's
-        // problem (it builds one), not this test's.
-        Path jar = playedJar();
-        if (!Files.exists(jar)) return;
+    public void everyRunnerChecksTheJarAgainstTheWorkingTree() throws IOException {
+        // The whole-tree fingerprint replaced the old 6-file timestamp list, which
+        // only caught the files someone remembered to name (a change anywhere else
+        // still ran old code silently). The mechanism has three parts, and all
+        // three must exist or the guarantee is lost:
+        //
+        //   1. build-bot-jar.sh tags the jar with a hash of every source file;
+        //   2. check-jar-freshness.sh recomputes that hash and refuses a mismatch;
+        //   3. the runners call the check before playing.
+        String build = read(Paths.get("scripts/build-bot-jar.sh"));
+        String check = read(Paths.get("scripts/check-jar-freshness.sh"));
+        String openbw = read(OPENBW_E2E);
 
-        long jarTime = Files.getLastModifiedTime(jar).toMillis();
+        assertTrue(build.contains("ATLANTIS_SOURCE_FINGERPRINT"),
+                "the build must tag the jar with the source fingerprint");
+        assertTrue(check.contains("ATLANTIS_SOURCE_FINGERPRINT"),
+                "the checker must read the tag it is comparing against");
+        assertTrue(openbw.contains("check-jar-freshness.sh"),
+                "the OpenBW runner must check the jar before it plays");
+    }
 
-        // The sources that decide production behaviour. If any of these is newer
-        // than the jar, whoever runs a game now is testing old code.
-        List<Path> watched = new ArrayList<>();
-        watched.add(Paths.get("src/atlantis/game/AtlantisGameCommander.java"));
-        watched.add(Paths.get("src/atlantis/production/ProductionCommander.java"));
-        watched.add(Paths.get("src/atlantis/util/We.java"));
-        watched.add(Paths.get("src/atlantis/config/AtlantisConfigChanger.java"));
-        watched.add(Paths.get("src/atlantis/Atlantis.java"));
-        watched.add(Paths.get("src/main/Main.java"));
+    @Test
+    public void theCheckRefusesAnUntaggedJar() throws Exception {
+        // A jar built before this mechanism, or by hand, carries no tag - and an
+        // untagged jar cannot be shown to match anything, so it must be refused
+        // rather than trusted.
+        Path temp = Files.createTempDirectory("jar-freshness");
+        Path fakeJar = temp.resolve("old.jar");
+        Files.write(fakeJar, new byte[]{0x50, 0x4b, 0x03, 0x04}); // a ZIP header, no tag
 
-        List<String> stale = new ArrayList<>();
-        for (Path source : watched) {
-            if (!Files.exists(source))
-                continue;
-            long sourceTime = Files.getLastModifiedTime(source).toMillis();
-            if (sourceTime > jarTime) {
-                stale.add(source + " (" + (sourceTime - jarTime) / 1000 + "s newer)");
-            }
-        }
-
-        assertTrue(stale.isEmpty(),
-                "the played jar (" + jar + ") is OLDER than these sources, so a game"
-                        + " started now would run old code and hide the changes: " + stale
-                        + " -- rebuild with scripts/build-bot-jar.sh (run-wine-full.sh"
-                        + " now does it automatically)");
+        Process p = new ProcessBuilder("bash", "scripts/check-jar-freshness.sh",
+                fakeJar.toAbsolutePath().toString())
+                .redirectErrorStream(true).start();
+        assertTrue(p.waitFor() != 0, "an untagged jar must not pass the freshness check");
     }
 
     @Test

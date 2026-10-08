@@ -84,6 +84,16 @@ find src -name "*.java" \
     | grep -v "src/tests/unit/ATargetingTest.java" \
     | sort > "$WORK/sources.txt"
 
+# A fingerprint of the tree this jar was built from. Every source file's path and
+# content hash, so the jar can say exactly which code it contains - and a runner
+# can refuse to play a jar that does not match the working tree. This exists
+# because "the game ran an old jar" cost real sessions: the code was changed, the
+# play used a previous build, and the bug being hunted was already fixed (owner's
+# report, 2026-10-08). A timestamp check only catches the files someone remembered
+# to list; a hash of the whole tree catches all of them.
+SOURCE_FINGERPRINT="$(while read -r f; do printf '%s ' "$f"; md5sum "$f" | cut -d' ' -f1; done < "$WORK/sources.txt" | md5sum | cut -d' ' -f1)"
+echo "[build-bot-jar] source fingerprint: $SOURCE_FINGERPRINT"
+
 CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
 mkdir -p "$WORK/classes"
 # Fail loudly instead of shipping a franken-jar.
@@ -110,11 +120,11 @@ done
 # any more.)
 
 mkdir -p "$(dirname "$OUT_JAR")"
-python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "${RUNTIME_LIBS[@]}" "--" "${OVERRIDE_LIBS[@]}" <<'EOF'
+python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "$SOURCE_FINGERPRINT" "${RUNTIME_LIBS[@]}" "--" "${OVERRIDE_LIBS[@]}" <<'EOF'
 import sys, zipfile, os, posixpath
 
-out_jar, classes, mode = sys.argv[1], sys.argv[2], sys.argv[3]
-rest = sys.argv[4:]
+out_jar, classes, mode, fingerprint = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+rest = sys.argv[5:]
 sep = rest.index('--')
 runtime_libs = rest[:sep]
 override_libs = rest[sep + 1:]
@@ -191,6 +201,10 @@ manifest_bytes = ('\r\n'.join(manifest) + '\r\n\r\n').encode('utf-8')
 
 with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
     zout.writestr('META-INF/MANIFEST.MF', manifest_bytes)
+    # The fingerprint of the tree this jar came from, readable without unpacking:
+    #   unzip -p <jar> ATLANTIS_SOURCE_FINGERPRINT
+    # scripts/check-jar-freshness.sh compares it against the working tree.
+    zout.writestr('ATLANTIS_SOURCE_FINGERPRINT', fingerprint + '\n')
     entries = dict(ours)
     if mode == 'fat':
         # JBWAPI-Rav whole (bwapi/, bwem/, JNA, natives), but without overwriting
