@@ -487,6 +487,16 @@ Stages are strictly ordered; each is shippable and testable on its own.
   `TileAvailabilityGrid`, `BuildLocation`/catalogue, `BuildLocationRanker`, `PlacementPlanner`
   interface, and the Producer-side execution handoff (C1, C2, C8, C16). No Blocks yet; a naive
   per-tile scan validated against the catalogue. Unblocks the whole production engine.
+
+  **DONE 2026-10-08** (`atlantis.placement`): `core/TileAvailabilityGrid`,
+  `core/BuildLocation`, `core/BuildLocationCatalogue` (ranked candidates per
+  footprint, the thing the legacy finder never exposed),
+  `engine/EngineTerrainSource` (terrain through `MapTiles`/`Select`, never BWAPI),
+  `engine/CataloguePlacementPlanner` (implements the existing `PlacementPlanner`
+  seam; `EXACT_TILE` honoured only when the footprint is free). Selected by ENV
+  `PLACEMENT=catalogue`; legacy stays the default until a real game places a
+  Pylon. Blocks, `builderFrames` and `distanceToExit` are still stubs (0) - that
+  is S2.
 - **S2 — Blocks + builder timing.**
   `BuildBlock` and a small template set (start-block variants + the 6 largest normal blocks),
   `builderFrames` computation, dynamic goal emitters for structures (C3, C4, C6, C17).
