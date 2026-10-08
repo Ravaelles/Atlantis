@@ -102,10 +102,9 @@ jar stopped shipping the test harness in the same commit.
 Four things. The first is the real blocker; the rest are smaller but each one
 makes a run report the wrong thing.
 
-### 3.1 Placement does not work on OpenBW (the blocker)
+### 3.1 Placement on OpenBW (the blocker - the rewrite has landed, not yet cut over)
 
-The bot **cannot place its first Pylon** on OpenBW. Every run, at the same
-frame:
+The bot could not place its first Pylon on OpenBW, every run at the same frame:
 
 ```
 0:39: Can't find place for `Pylon`, At 8 Pylon (READY_TO_PRODUCE)(#1)
@@ -113,16 +112,30 @@ frame:
 (Max search distance was: 36) near null
 ```
 
-A scenario that cannot get a Pylon up cannot exercise production, tech or
-expansion, so it is not a mega-test - it is a smoke test that mined for a while.
+**Status (2026-10-08):** the placement subsystem has been **rewritten** -
+`atlantis.placement` implements the Stardust-style catalogued planner
+(`_AI/redesign/03_PLACEMENT.md`, S1-S6 for Protoss, 28 acceptance tests, and it is
+wired into Production V2 through the cannon-fortification policy). What has **not**
+happened is the **cut-over**: `APositionFinder` is still the default, and
+`PLACEMENT=catalogue` has not been tried in a real game.
 
-This is **not** a small bug and it is not going to be patched. The owner's
-decision (2026-10-08) is that `PositionFinder` is **deleted and rewritten**. The
-measured facts and the traps for the rewrite are in **`_AI/POSITION-FINDER.md`**;
-in one line: the engine calls the refused tiles valid and empty, the refusal came
-from our own predicate disagreeing with the engine, and the standard finder was
-never even reached. Until that rewrite lands, the OpenBW mega-test is blocked at
-its first building.
+So the blocker is now a switch and a run, not a rewrite:
+
+1. run the E2E with `PLACEMENT=catalogue` in the bot's ENV and see whether a
+   Pylon is placed (this is the first thing to do, and it is the whole point of
+   the rewrite);
+2. if it places, cut over (make the catalogue the default) and delete
+   `APositionFinder` with the Producer cut-over;
+3. if it does not, the remaining gap is named in `03_PLACEMENT.md`'s
+   "NOT FINISHED" block at the very top of that file.
+
+### 3.1a What the rewrite does not cover yet (from that block)
+
+- **Terran/Zerg placement** are stubs (addon availability, lift/land, creep).
+- **The wall does not measure its gap** - a wall with a one-tile hole is accepted.
+- The **Pylon pull-forward is coarse** (asks for a Pylon, no `shiftOne`/buffer).
+- **`distanceToExit` is Chebyshev**, not a path.
+- Expansion and DT-detection policy (C14/C15) are unplaced.
 
 ### 3.2 `JBWEB` does not exist on OpenBW
 
@@ -156,6 +169,31 @@ Options, in the order worth trying:
 For the mega-test this does not block the first milestone: a game against a
 scripted rusher on a fixed map is enough to assert "the whole bot ran and did not
 crash".
+
+### 3.5 Next steps, in order (the answer to "what now?")
+
+Each step is small and ends with something a command proves.
+
+1. **Try the new planner in a real game.** Run the E2E with `PLACEMENT=catalogue`
+   in `bots/AtlantisOpenBW/AI/ENV`. Verification: a Pylon appears in `bot.log`
+   instead of `Can't find place for Pylon`. This is the single most valuable run
+   available, and it is a one-variable change.
+2. **Add the first assertion layer.** `scripts/run-openbw-e2e.sh` should accept a
+   scenario file (map, race, frame limit, expected facts) and exit non-zero when
+   an expected fact is missing. Verification: a scenario passes, and a
+   deliberately broken build fails the same scenario.
+3. **Write the mega-test** against that layer: one game, fixed map, scripted
+   rusher, asserting workers mined, a Pylon and a Gateway placed and built, the
+   production queue advanced, no exception, frames advanced. Verification: green
+   twice in a row, red against a known-broken build.
+4. **Port one rush scenario** (4pool) with survival assertions, not `expectWin`.
+   The stub-world twin in `tests.e2e` is the behaviour to reproduce.
+5. **Only then** the sweeps, replay playback and the OpenBW-vs-scbw parity game.
+
+Steps 1-2 are the whole of the next session's value; 3-5 are a tier, not a task.
+
+What NOT to do first: no new opponent work, no determinism sweeps, and no more
+placement refactoring - the planner needs a run before it needs anything else.
 
 ---
 
