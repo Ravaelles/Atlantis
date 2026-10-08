@@ -1,10 +1,11 @@
 # Track 3: Building Placement — Reverse Engineering Stardust's Algorithm
 
-> **Implementation status (2026-10-08): S1-S4 have a first cut in
-> `atlantis.placement` (`core/` pure, `engine/` the only game reader).** The
-> legacy `APositionFinder` is still the default; set ENV `PLACEMENT=catalogue` to
-> use the new planner. What each stage delivered, and what it deliberately left
-> out, is recorded inline at the end of §5.4 - read that before continuing.
+> **Implementation status (2026-10-08): S1-S6 have a cut in `atlantis.placement`**
+> (`core/` pure, `engine/` the only game reader, `race/` the race extension point,
+> `policy/` the fortification policy, `blocks/` the template table). The legacy
+> `APositionFinder` is still the default; set ENV `PLACEMENT=catalogue` to use the
+> new planner. What each stage delivered, and what it deliberately left out, is
+> recorded inline at the end of §5.4 - read that before continuing.
 >
 > Source of truth: `/sc-ai/Stardust/src/Builder/BuildingPlacement.{h,cpp}` (~1,270 lines),
 > `Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`,
@@ -537,9 +538,24 @@ Stages are strictly ordered; each is shippable and testable on its own.
   Re-derive "when to secure a base, with how many cannons, and when to expand" as
   goal-emitting policy on top of the planner (C12, C13, C14, C15). Explicitly deferred:
   cannons-securing-bases must land here, **not** in S1–S4.
+
+  **DONE (cannon policy) 2026-10-08**: `policy/CannonFortificationPolicy` (how
+  many cannons a base wants, re-derived from `ShouldSecureProtossBase`: mineral and
+  supply tiers, the zerg muta milestones, the Protoss cap) and
+  `policy/FortificationGoals` (turns it into `ProductionGoal`s carrying a
+  `TargetPlacement.inNeighbourhood(base)` constraint - the policy never computes a
+  tile, which is the §5.3 boundary expressed in types). **Not done: the expansion
+  policy** (C14) and the cancel-expansion path (C15).
 - **S6 — Other races.**
   `TerranPlacementStrategy` (addons, lift/land, wall-off) and `ZergPlacementStrategy` (creep)
   behind the same core contract (F1–F3). Design already accounted for in §4.5.
+
+  **DONE (contract) 2026-10-08**: `core/RacePlacementStrategy` (four questions:
+  templates, `framesUntilAvailable`, `requiresAvailability`, `extraRankingWeight`)
+  with `race/ProtossPlacementStrategy` real - the planner now goes through the
+  strategy instead of calling PsiGating directly - and Terran/Zerg as documented
+  no-ops. **Not done: the Terran and Zerg answers themselves** (addon availability
+  + `SOFT_USED`, projected creep); each is a new implementation, not a core change.
 
 ### 5.5 Deletion list (burn the bridges)
 
