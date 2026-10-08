@@ -94,6 +94,15 @@ public class ProtossStrategies extends AStrategy {
 
     // =========================================================
 
+    /** Every Protoss strategy instance, in declaration order. */
+    public static java.util.List<AStrategy> allProtossStrategies() {
+        java.util.List<AStrategy> protoss = new java.util.ArrayList<>();
+        for (AStrategy strategy : allStrategies) {
+            if (strategy.isProtoss()) protoss.add(strategy);
+        }
+        return protoss;
+    }
+
     public static void initialize() {
 
         // === Balanced ======================================

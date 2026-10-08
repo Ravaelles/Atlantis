@@ -761,3 +761,22 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
   **Do not** delete from the bottom of this list upward: step 3 before step 2 is
   a bot that cannot research or build race-specific units.
+
+- **#46** Three Protoss strategies declare a build order that does not exist
+  anywhere: `3 Gate`, `12 Nexus`, `Carrier Push` (found by
+  `tests/unit/StrategyBuildOrderTest`, which compares the names set in
+  `ProtossStrategies.initialize()` against the files shipped in
+  `bwapi-data/AI/build_orders/Protoss/`). Verified against both the repo tree and
+  `/sc-ai/BOTS/AtlantisP/AI/build_orders/Protoss` - the file is missing in both,
+  so this is not a version skew. Choosing one of those strategies (`3 Gate` is
+  the cheese entry, `12 Nexus` the expansion entry, both reachable through
+  `StrategyChooser`) starts a game with no build order at all: the bot mines and
+  does nothing, no error, which is the failure the OpenBW run showed.
+  Fix options, cheapest first: rename the entries to an existing file, add the
+  missing `.txt`, or delete the unreachable ones. Decide with the owner - this is
+  game policy, not a mechanical fix. `enemyStrategy()` no longer needs a premature
+  load: it reads `AStrategy.canProduceUnit`, which is race logic only.
+  Also fixed the design flaw behind it: `ProtossStrategies.initialize()` (naming
+  strategies after their build-order files) now runs **before**
+  `StrategyChooser.initializeStrategy()`, because a chosen strategy loads its
+  order while being selected.

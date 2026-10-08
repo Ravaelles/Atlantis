@@ -53,4 +53,13 @@ public class Strategy {
     public static boolean is(AStrategy strategy) {
         return strategy.equals(get());
     }
+
+    /**
+     * The strategy in play, or null before one is chosen. Used by diagnostics
+     * that must not throw on a half-initialised game (build-order load failure
+     * reporting runs before {@link #get()} would be safe).
+     */
+    public static AStrategy current() {
+        return ourStrategy;
+    }
 }

@@ -34,7 +34,25 @@ public class AtlantisRaceConfig {
     /**
      * Makes sure all necessary AtlantisRaceConfig variables are set (non-null).
      */
+    /**
+     * Validates the config and exits when something is unset.
+     *
+     * <p>
+     * Race-dependent: on an unknown race every constant is null, so the whole
+     * check would fail for a reason that has nothing to do with the config.
+     * That case is reported and skipped - a bot that exits silently during game
+     * start is far more expensive to debug than a wrong-race game (measured
+     * 2026-10-08: the OpenBW launcher set no race, {@code System.exit(-1)} fired
+     * inside game start, and the run read as a stalled bot with clean logs).
+     * </p>
+     */
     public static void validate() {
+        if (MY_RACE == null) {
+            AConsole.errPrintln("AtlantisRaceConfig: race is unknown (bwapi.ini/defaultRace?),"
+                + " skipping the config validation instead of exiting the process.");
+            return;
+        }
+
         validate("MY_RACE", MY_RACE);
         validate("BASE", BASE);
         validate("WORKER", WORKER);

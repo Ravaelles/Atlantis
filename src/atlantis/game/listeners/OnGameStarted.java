@@ -15,6 +15,7 @@ import atlantis.game.GameSpeed;
 import atlantis.game.init.DetectInitialTechs;
 import atlantis.game.race.EnemyRace;
 import atlantis.information.strategy.protoss.ProtossStrategies;
+import atlantis.information.strategy.Strategy;
 import atlantis.information.strategy.StrategyChooser;
 import atlantis.information.strategy.terran.TerranStrategies;
 import atlantis.information.strategy.ZergStrategies;
@@ -69,7 +70,10 @@ public class OnGameStarted {
         // produced one Zealot and one Dragoon and then stopped asking forever.
         warnIfRequestedRaceDiffersFromTheGame();
 
-        // Validate AtlantisRaceConfig and exit if it's invalid
+        // Validate AtlantisRaceConfig and exit if it's invalid. Skipped when the
+        // race is unknown: every race-dependent constant is null then, so the
+        // check would fail for a reason that has nothing to do with the config
+        // and kill the process during game start with a clean log.
         if (Env.isLocal()) {
             AtlantisRaceConfig.validate();
         }
@@ -86,7 +90,12 @@ public class OnGameStarted {
         // Remember enemy race - could be broken for UMS maps
         EnemyRace.enemyRace();
 
-        // Create list of all strategies in memory
+        // Create list of all strategies in memory AND give each one its real
+        // name (the build-order file name). This must happen BEFORE a strategy is
+        // chosen: the chosen strategy loads its build order while being selected,
+        // and it can only find the file under that name (measured 2026-10-08:
+        // choosing first meant every strategy was named after its constant, so
+        // "PROTOSS_Zealot_into_Goon.txt" was looked for and never existed).
         initializeAllStrategies();
 
         // Set strategy and unit production sequence (Build Order) to use. It can be later changed dynamically.
@@ -156,40 +165,31 @@ public class OnGameStarted {
 
 //            AConsole.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {
-                // Not un-gated with the rest: this is a banner per game start, not a
-        // diagnostic of a problem, and the stub world starts a game in every test -
-        // 99 lines in the acceptance tier (measured), against 1 for the three real
-        // diagnostics this round opened up.
-        if (Env.isLocal() && !Env.isTesting()) AConsole.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+                // Gated to a real local game: the stub world starts a game in every
+                // test, and 99 lines in the acceptance tier is log noise, not a signal.
+                if (Env.isLocal() && !Env.isTesting()) {
+                    AConsole.println("Use build order: `" + CurrentBuildOrder.get() + "`");
+                }
             }
             else {
                 ErrorLog.printErrorOnce("Invalid (empty) build order in AtlantisRaceConfig!");
                 AGame.exit();
             }
         } catch (Exception e) {
-            AConsole.errPrintln("");
-            AConsole.errPrintln("#######################################################");
-            AConsole.errPrintln(
-                "Make sure that " + ABuildOrderLoader.BUILD_ORDERS_PATH + " contains build_orders directory,"
-            );
-            AConsole.errPrintln("copy it from Atlantis/build_orders");
-            AConsole.errPrintln("#######################################################");
+            AConsole.errPrintln("Could not load build order "
+                + (CurrentBuildOrder.get() != null ? "`" + CurrentBuildOrder.get().getName() + "`" : "(none set)")
+                + " for strategy `" + Strategy.current() + "`: " + e);
+            AConsole.errPrintln("Build orders are resolved against BWAPI_DATA_PATH"
+                + " (ENV) and the working directory. Set BWAPI_DATA_PATH to the directory that"
+                + " holds AI/build_orders/ and Protoss|Terran|Zerg subdirectories.");
 
             if (CurrentBuildOrder.get() == null) {
-                AConsole.errPrintln("");
                 throw new RuntimeException("Current BUILD ORDER is NULL");
             }
-
-            AConsole.errPrintln(
-                "Does file exist? "
-                    + (AFile.fileExists(CurrentBuildOrder.get().getName()) ? "YES - " : "NO, IT DOESN'T! ")
-                    + CurrentBuildOrder.get().getName()
-            );
-                        AConsole.errPrintln("Error: " + e.getMessage());
-                        e.printStackTrace();
-                        throw new RuntimeException("Exception when loading build orders file");
-                    }
-                }
+            e.printStackTrace();
+            throw new RuntimeException("Exception when loading build orders file");
+        }
+    }
 
                 /**
                  * Warns when the race the game put us in differs from the one the client
