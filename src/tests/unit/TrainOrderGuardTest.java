@@ -41,6 +41,23 @@ public class TrainOrderGuardTest {
                         .get("src/atlantis/production/dynamic/protoss/units/ProduceZealot.java");
         private static final Path GATEWAY = Paths
                         .get("src/atlantis/production/dynamic/protoss/units/GatewayClosestToEnemy.java");
+        private static final Path V2_DIRECTOR = Paths
+                        .get("src/atlantis/production/v2/execution/GameOrderDirector.java");
+
+        @Test
+        public void theV2DirectorNeverAsksAFacilityThatCannotTakeWork() throws Exception {
+                // The same guard as the legacy call sites, at the v2 door: the
+                // engine throws (not returns false) when a building is asked for
+                // work it cannot take, so the director checks first.
+                String director = read(V2_DIRECTOR);
+
+                assertTrue(director.contains("!producer.isCompleted()"),
+                                "GameOrderDirector.trainFacility must refuse an unfinished facility");
+                assertTrue(director.contains("!facility.isCompleted()"),
+                                "and so must researchOrUpgrade");
+                assertTrue(director.contains("commandsThisFrame"),
+                                "and one facility must not take two commands in one frame");
+        }
 
         @Test
         public void theSinkRefusesToTrainOnAUnitThatIsNotCompleted() throws Exception {

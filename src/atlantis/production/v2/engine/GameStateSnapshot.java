@@ -17,6 +17,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
+import atlantis.util.We;
 
 import java.util.List;
 
@@ -122,14 +123,24 @@ public final class GameStateSnapshot {
 
     /** The dynamic goal generators for this frame. */
     public List<atlantis.production.v2.ProductionGoal> dynamicGoals() {
+        int workers = Count.workers();
         return DynamicGoals.contribute(new DynamicGoals.GameSnapshot(
-                Count.workers(),
+                workers,
                 Math.max(1, Count.bases()),
                 A.supplyUsed(),
                 Math.max(0, A.supplyTotal() - A.supplyUsed()),
                 A.supplyTotal(),
                 A.minerals(),
-                Count.workers() < 12));
+                workers < 12,
+                Count.ofTypeWithUnfinished(armyType()),
+                Count.basesWithUnfinished()));
+    }
+
+    private static AUnitType armyType() {
+        if (We.protoss()) return AUnitType.Protoss_Zealot;
+        if (We.terran()) return AUnitType.Terran_Marine;
+        if (We.zerg()) return AUnitType.Zerg_Zergling;
+        return AtlantisRaceConfig.WORKER;
     }
 
     /**
@@ -146,6 +157,7 @@ public final class GameStateSnapshot {
             new atlantis.production.v2.goals.PullForwardGoals.Snapshot(
                 Math.max(0, A.supplyTotal() - A.supplyUsed()),
                 A.minerals(),
+                Select.ourWorkersMiningMinerals(false).count(),
                 Count.ofTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING),
                 desiredRefineries));
     }

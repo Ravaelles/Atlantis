@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -139,6 +140,55 @@ public class GoalSourcesTest {
         assertEquals(supplyType(), goals.get(0).item().id(),
                 "the supply provider must be scheduled before the next worker");
         assertTrue(goals.get(0).priority() < goals.get(1).priority());
+    }
+
+    @Test
+    public void expansionIsNotAskedAgainWhileTheBaseIsUnderConstruction() {
+        // The regression: the generator counted only finished bases, so a base
+        // being built was "missing" every frame and a second one was declared.
+        DynamicGoals.GameSnapshot buildingNow =
+                new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false, 0, 2);
+        DynamicGoals.GameSnapshot missing = new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false, 0, 1);
+
+        assertFalse(contains(DynamicGoals.contribute(buildingNow), baseType()),
+                "a base under construction satisfies the expansion goal");
+        assertTrue(contains(DynamicGoals.contribute(missing), baseType()));
+    }
+
+    @Test
+    public void armyGoalAsksOnlyForTheMissingUnits() {
+        DynamicGoals.GameSnapshot noArmy =
+                new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false, 0, 2);
+        DynamicGoals.GameSnapshot halfArmy =
+                new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false, 5, 2);
+        DynamicGoals.GameSnapshot fullArmy =
+                new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false, 10, 2);
+
+        assertEquals(10, firstOf(DynamicGoals.contribute(noArmy), armyType()).count());
+        assertEquals(5, firstOf(DynamicGoals.contribute(halfArmy), armyType()).count(),
+                "existing units count towards the baseline");
+        assertFalse(contains(DynamicGoals.contribute(fullArmy), armyType()),
+                "a satisfied army goal asks for nothing");
+    }
+
+    @Test
+    public void theSupplyRuleIsDeclaredInExactlyOnePlace() {
+        // Two generators used to emit a Pylon for the same situation; the
+        // scheduler honours two goals as two buildings. One module owns the rule.
+        DynamicGoals.GameSnapshot low = new DynamicGoals.GameSnapshot(10, 1, 29, 1, 30, 500, false);
+
+        ProductionGoal fromDynamic = firstOf(DynamicGoals.contribute(low), supplyType());
+        ProductionGoal fromPullForward = atlantis.production.v2.goals.PullForwardGoals.supplyGoal(
+                new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1));
+
+        assertNotNull(fromDynamic);
+        assertEquals(fromDynamic.priority(), fromPullForward.priority(),
+                "the pull-forward rule defers to the same one implementation");
+        assertFalse(contains(atlantis.production.v2.goals.PullForwardGoals.contribute(
+                        new atlantis.production.v2.ResourceTimeline(0, 500, 500, 0, 1, 30),
+                        new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 0, 1)),
+                supplyType()),
+                "and does not declare a second Pylon of its own");
     }
 
     // ---- helpers -----------------------------------------------------------

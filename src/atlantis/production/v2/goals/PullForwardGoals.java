@@ -50,45 +50,25 @@ public final class PullForwardGoals {
      */
     private static final int LOOKAHEAD_FRAMES = 400;
 
-    /** Free supply below which a provider is pulled forward pre-emptively. */
-    private static final int SUPPLY_WORRY_LEVEL = 6;
-
     private PullForwardGoals() {
     }
 
     public static List<ProductionGoal> contribute(ResourceTimeline timeline, Snapshot state) {
         List<ProductionGoal> goals = new ArrayList<>();
 
-        addSupplyProviderIfWorthPullingForward(goals, timeline, state);
         addGasIfMineralRich(goals, timeline, state);
 
         return goals;
     }
 
     /**
-     * A supply provider is wanted while there is still room to build it; at the
-     * cap it becomes an emergency (step 4 of the engine).
+     * The supply rule lives in exactly one place ({@link DynamicGoals}), so the
+     * same Pylon is never declared twice in one frame - the scheduler would
+     * honour two goals as two buildings.
      */
-    private static void addSupplyProviderIfWorthPullingForward(
-            List<ProductionGoal> goals, ResourceTimeline timeline, Snapshot state) {
-        AUnitType provider = supplyProvider();
-        if (provider == null)
-            return;
-        if (state.supplyFree > SUPPLY_WORRY_LEVEL)
-            return;
-
-        int priority = state.supplyFree <= 0
-                ? ProductionGoal.PRIORITY_EMERGENCY
-                : ProductionGoal.PRIORITY_DEPOTS;
-
-        // Only worth planning if the economy can pay within the lookahead; the
-        // scheduler shifts it otherwise, which is the same outcome one pass later.
-        ResourceCost cost = UnitProducible.of(provider).cost();
-        int affordable = timeline.findEarliestAffordableFrame(cost, 0);
-        if (affordable < 0 || affordable > LOOKAHEAD_FRAMES) return;
-
-        goals.add(new ProductionGoal(UnitProducible.of(provider),
-            priority, 1, 0, TargetPlacement.anywhere()));
+    public static ProductionGoal supplyGoal(Snapshot state) {
+        return DynamicGoals.supplyGoal(new DynamicGoals.GameSnapshot(
+                state.mineralWorkers, 1, 0, state.supplyFree, 0, state.minerals, false));
     }
 
     /**
@@ -117,16 +97,6 @@ public final class PullForwardGoals {
     /** A mineral bank this large is not going to be spent on units alone. */
     private static final int RICH_MINERALS = 450;
 
-    private static AUnitType supplyProvider() {
-        if (We.protoss())
-            return AUnitType.Protoss_Pylon;
-        if (We.terran())
-            return AUnitType.Terran_Supply_Depot;
-        if (We.zerg())
-            return AUnitType.Zerg_Overlord;
-        return null;
-    }
-
     private static AUnitType gasBuilding() {
         if (We.protoss())
             return AUnitType.Protoss_Assimilator;
@@ -141,12 +111,14 @@ public final class PullForwardGoals {
     public static final class Snapshot {
         public final int supplyFree;
         public final int minerals;
+        public final int mineralWorkers;
         public final int refineries;
         public final int desiredRefineries;
 
-        public Snapshot(int supplyFree, int minerals, int refineries, int desiredRefineries) {
+        public Snapshot(int supplyFree, int minerals, int mineralWorkers, int refineries, int desiredRefineries) {
             this.supplyFree = supplyFree;
             this.minerals = minerals;
+            this.mineralWorkers = mineralWorkers;
             this.refineries = refineries;
             this.desiredRefineries = desiredRefineries;
         }

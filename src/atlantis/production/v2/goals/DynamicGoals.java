@@ -42,20 +42,30 @@ public final class DynamicGoals {
     public static final class GameSnapshot {
         public final int workers;
         public final int bases;
+        /** Bases finished, under construction and pending - what counts as "we have one". */
+        public final int basesExisting;
         public final int supplyUsed;
         public final int supplyFree;
         public final int supplyTotal;
         public final int minerals;
+        public final int armySize;
         public final boolean inEarlyGame;
 
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, 0, bases);
+        }
+
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting) {
             this.workers = workers;
             this.bases = bases;
+            this.basesExisting = basesExisting;
             this.supplyUsed = supplyUsed;
             this.supplyFree = supplyFree;
             this.supplyTotal = supplyTotal;
             this.minerals = minerals;
+            this.armySize = armySize;
             this.inEarlyGame = inEarlyGame;
         }
     }
@@ -112,24 +122,27 @@ public final class DynamicGoals {
      * runs low. It is emitted as an emergency only at the edge (so it never
      * outranks real defence early), otherwise it is a normal-priority goal.
      */
-    private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state) {
+    public static ProductionGoal supplyGoal(GameSnapshot state) {
         AUnitType supplyProvider = supplyProviderType();
         if (supplyProvider == null)
-            return;
+            return null;
 
-        if (state.supplyFree > 4)
-            return;
+        if (state.supplyFree > SUPPLY_WORRY_LEVEL)
+            return null;
 
-        int priority = state.supplyFree <= 1
+        int priority = state.supplyFree <= 0
                 ? ProductionGoal.PRIORITY_EMERGENCY
                 : ProductionGoal.PRIORITY_DEPOTS;
 
-        goals.add(new ProductionGoal(
-                UnitProducible.of(supplyProvider),
-                priority,
-                1,
-                0,
-                TargetPlacement.anywhere()));
+        return new ProductionGoal(UnitProducible.of(supplyProvider), priority, 1, 0, TargetPlacement.anywhere());
+    }
+
+    /** Free supply below which a provider is wanted at all. */
+    public static final int SUPPLY_WORRY_LEVEL = 4;
+
+    private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        ProductionGoal goal = supplyGoal(state);
+        if (goal != null) goals.add(goal);
     }
 
     /**
@@ -149,11 +162,14 @@ public final class DynamicGoals {
             return;
 
         int targetArmy = Math.max(1, state.workers / 4);
+        int missing = targetArmy - state.armySize;
+        if (missing <= 0)
+            return;
 
         goals.add(new ProductionGoal(
                 UnitProducible.of(army),
                 ProductionGoal.PRIORITY_MAINARMYBASE,
-                targetArmy,
+                missing,
                 0,
                 TargetPlacement.anywhere()));
     }
@@ -173,6 +189,12 @@ public final class DynamicGoals {
         if (state.workers < WORKERS_PER_BASE * state.bases)
             return;
         if (state.bases >= 4)
+            return;
+
+        // A base already under construction is not missing: without this the
+        // generator asks for a second Nexus every frame while the first is
+        // being built.
+        if (state.basesExisting > state.bases)
             return;
 
         goals.add(new ProductionGoal(

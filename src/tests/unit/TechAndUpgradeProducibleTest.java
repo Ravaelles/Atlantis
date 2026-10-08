@@ -81,12 +81,43 @@ public class TechAndUpgradeProducibleTest {
         UpgradeProducible upgrade = UpgradeProducible.of(legs);
 
         assertEquals(legs.toString(), upgrade.id());
+        assertEquals(1, upgrade.level(), "a fresh recipe is level 1");
         assertEquals(legs.mineralPrice(), upgrade.cost().minerals());
         assertEquals(legs.gasPrice(), upgrade.cost().gas());
         assertEquals(legs.upgradeTime(), upgrade.buildDurationFrames());
         assertEquals(legs.maxRepeats(), upgrade.levels(),
                 "an upgrade has levels, and the goal decides how many it asks for");
         assertFalse(upgrade.requiresPlacement());
+    }
+
+    @Test
+    public void theSecondLevelOfAnUpgradeIsItsOwnRecipe() {
+        // Level 2 has its own price, its own requirements (Protoss ground weapons
+        // +2 needs a Templar Archives) and depends on level 1.
+        UpgradeType weapons = UpgradeType.Protoss_Ground_Weapons;
+        UpgradeProducible level1 = UpgradeProducible.of(weapons, 1);
+        UpgradeProducible level2 = UpgradeProducible.of(weapons, 2);
+
+        assertFalse(level1.id().equals(level2.id()), "levels must not dedupe into each other");
+        assertEquals(weapons.mineralPrice(2), level2.cost().minerals());
+        assertEquals(weapons.gasPrice(2), level2.cost().gas());
+        assertEquals(weapons.upgradeTime(2), level2.buildDurationFrames());
+        assertTrue(level2.immediatePrerequisites().contains(level1),
+                "level 2 must wait for level 1: " + level2.immediatePrerequisites());
+
+        if (weapons.whatsRequired(2) != null) {
+            assertTrue(level2.immediatePrerequisites().contains(
+                            UnitProducible.of(AUnitType.from(weapons.whatsRequired(2)))),
+                    "the level's own requirement must be a prerequisite");
+        }
+    }
+
+    @Test
+    public void nthOccurrenceSelectsTheLevel() {
+        UpgradeType weapons = UpgradeType.Protoss_Ground_Weapons;
+
+        assertEquals(2, ((UpgradeProducible) UpgradeProducible.of(weapons).nthOccurrence(2)).level());
+        assertEquals(UpgradeProducible.of(weapons, 3).id(), UpgradeProducible.of(weapons).nthOccurrence(3).id());
     }
 
     @Test

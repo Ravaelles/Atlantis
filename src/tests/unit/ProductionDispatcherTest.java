@@ -5,6 +5,8 @@ import atlantis.production.v2.Producible;
 import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.ProductionPlan;
 import atlantis.production.v2.ResourceCost;
+import atlantis.production.v2.TechProducible;
+import atlantis.production.v2.UpgradeProducible;
 import atlantis.production.v2.execution.DispatchResult;
 import atlantis.production.v2.execution.OrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
@@ -219,5 +221,41 @@ public class ProductionDispatcherTest {
         assertEquals(1, results.size());
         assertFalse(results.get(0).issued());
         assertTrue(director.commands.isEmpty());
+    }
+
+    @Test
+    public void theNamedProducerIsPassedToTheDirector() {
+        // The plan names a facility (unit id): one Gateway must never take two
+        // items for the same slot, and a research must go to its own facility.
+        FakeProducible zealot = new FakeProducible("Zealot", false, "Gateway");
+        ProductionPlan plan = planOf(new ProductionItem(zealot, 0, false, null, 138));
+
+        RecordingDirector director = new RecordingDirector();
+        new ProductionDispatcher(director).dispatch(plan, 0, LATENCY);
+
+        assertEquals("train:Zealot@Gateway#138", director.commands.get(0));
+    }
+
+    @Test
+    public void aTechGoesToResearchNotToTrain() {
+        Producible charge = TechProducible.of(bwapi.TechType.Stim_Packs);
+        ProductionPlan plan = planOf(new ProductionItem(charge, 0, false, null, 42));
+
+        RecordingDirector director = new RecordingDirector();
+        new ProductionDispatcher(director).dispatch(plan, 0, LATENCY);
+
+        assertEquals("research:" + charge.id() + "@" + charge.producerTypeId() + "#42", director.commands.get(0),
+                "a research goal sent to train() would silently do nothing");
+    }
+
+    @Test
+    public void anUpgradeGoesToResearchToo() {
+        Producible legs = UpgradeProducible.of(bwapi.UpgradeType.Leg_Enhancements);
+        ProductionPlan plan = planOf(new ProductionItem(legs, 0, false, null, 7));
+
+        RecordingDirector director = new RecordingDirector();
+        new ProductionDispatcher(director).dispatch(plan, 0, LATENCY);
+
+        assertTrue(director.commands.get(0).startsWith("research:" + legs.id() + "@"));
     }
 }
