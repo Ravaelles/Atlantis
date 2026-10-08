@@ -94,6 +94,18 @@ BOT_RUN_DIR="$ATLANTIS_DIR/bots/AtlantisOpenBW/AI"
 mkdir -p "$BOT_RUN_DIR"
 cp "$JAR" "$BOT_RUN_DIR/Atlantis.jar"
 
+# The bot resolves build orders against BWAPI_DATA_PATH + AI/build_orders/, so
+# this must point at a bwapi-data root that actually has them. Prefer the
+# repository's own tree; fall back to a bot folder that has one.
+BWAPI_DATA_ROOT="$ATLANTIS_DIR/bwapi-data"
+if [ ! -d "$BWAPI_DATA_ROOT/AI/build_orders" ]; then
+  for candidate in "$WINE_BOT_DIR/.." "$ATLANTIS_DIR/bots/AtlantisP"; do
+    if [ -d "$candidate/bwapi-data/AI/build_orders" ]; then BWAPI_DATA_ROOT="$candidate/bwapi-data"; break; fi
+  done
+fi
+[ -d "$BWAPI_DATA_ROOT/AI/build_orders" ] || fail "no build_orders under $BWAPI_DATA_ROOT"
+say "build orders root: $BWAPI_DATA_ROOT"
+
 # ENV must sit in the WORKING DIRECTORY (Env.envFilePath() tries
 # `bwapi-data/AI/ENV`, then `../bwapi-data/AI/ENV`, then `ENV`), so it has to
 # live in the directory the jar is started from. Missing it is not fatal but it
@@ -104,13 +116,17 @@ cp "$JAR" "$BOT_RUN_DIR/Atlantis.jar"
 # started from either (scbw starts it from the bot folder, a by-hand run often
 # from AI/), and a missing ENV is a silent wrong-backend, not a clear error.
 write_env() {
-  cat > "$1" <<'EOF'
+  cat > "$1" <<EOF
 # Atlantis on the headless OpenBW engine (E2E tier).
 # Deliberately NOT the Wine ENV: GAME_LAUNCHER=OPENBW means the bot attaches
 # to an already-running BWAPILauncher and never starts a game itself.
 # See Atlantis/_AI/CONVENTIONS.md §14 and scripts/run-openbw-e2e.sh.
 LOCAL=true
 GAME_LAUNCHER=OPENBW
+# With LOCAL=true the bot resolves build orders from BWAPI_DATA_PATH; without it
+# every lookup misses and the game plays with no production at all (the run then
+# looks like a stalled bot, with no error line) - measured 2026-10-08.
+BWAPI_DATA_PATH=$BWAPI_DATA_ROOT
 FORCE_GG_FOR_ENEMY=false
 POSTGAME_COPY_CHERRYVIS_TO=
 EOF
@@ -132,6 +148,7 @@ write_env "$BOT_RUN_DIR/ENV"
 # this links the orders + the maps tree that the loader also expects.
 BOT_ROOT="$(dirname "$BOT_RUN_DIR")"
 mkdir -p "$BOT_ROOT/AI"
+write_env "$BOT_RUN_DIR/ENV"
 write_env "$BOT_ROOT/ENV"
 write_env "$BOT_ROOT/AI/ENV"
 

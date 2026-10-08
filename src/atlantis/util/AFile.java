@@ -96,6 +96,22 @@ public class AFile {
     }
 
     /**
+     * {@code String.split} drops a trailing empty field, so a value that legitimately
+     * ends in the delimiter (a directory path with a trailing slash in an
+     * {@code key=value} file) arrives one character short. Put it back.
+     */
+    private static void restoreTrailingDelimiter(String line, String delimiter, String[] fields) {
+        if (fields.length == 0 || delimiter.isEmpty()) return;
+
+        int last = fields.length - 1;
+        String withoutDelimiter = line.substring(0, line.length() - delimiter.length());
+        int expectedSegments = withoutDelimiter.split(delimiter, -1).length;
+        if (fields.length == expectedSegments && !fields[last].endsWith(delimiter)) {
+            fields[last] = fields[last] + delimiter;
+        }
+    }
+
+    /**
      * Loads .csv file or file formatted on csv base i.e. value1 delimiter value2 delimiter value3.
      *
      * @throws UncheckedIOException if the file cannot be read. A leaf utility
@@ -118,6 +134,14 @@ public class AFile {
                 line = line.replace("—", "-"); // Replace em dashes with hyphens - omfg, that hurt
 
                 String[] fields = line.split(delimiter);
+
+                // A value ending in the delimiter loses its last character to
+                // String.split ("BWAPI_DATA_PATH=/x/" -> "/x"), which silently
+                // produced paths like "/xread/build_orders" (measured
+                // 2026-10-08). Put the character back.
+                if (line.endsWith(delimiter)) {
+                    restoreTrailingDelimiter(line, delimiter, fields);
+                }
 
                 if (fields.length == 1 && line.contains(" - ")) {
                     fields = line.split(" - ");

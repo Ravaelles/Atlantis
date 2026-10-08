@@ -203,7 +203,20 @@ public class AtlantisIgniter {
     // =========================================================
 
     public static void setBwapiDataPath(String bwapiIniPath) {
-        AtlantisIgniter.bwapiDataPath = bwapiIniPath;
+        if (bwapiIniPath == null) {
+            AtlantisIgniter.bwapiDataPath = null;
+            return;
+        }
+
+        // Both "/x/bwapi-data" and "/x/bwapi-data/" must work: everything
+        // downstream concatenates ("... + AI/build_orders/"), and a missing
+        // separator silently produced "/x/bwapi-dataread/build_orders" - the bot
+        // then played a whole game with no build order (measured 2026-10-08).
+        String trimmed = bwapiIniPath.trim();
+        if (!trimmed.isEmpty() && !trimmed.endsWith("/") && !trimmed.endsWith("\\")) {
+            trimmed = trimmed + "/";
+        }
+        AtlantisIgniter.bwapiDataPath = trimmed;
     }
 
     public static void setChaosLauncherPath(String chaosLauncherPath) {

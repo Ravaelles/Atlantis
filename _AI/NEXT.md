@@ -780,3 +780,43 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   strategies after their build-order files) now runs **before**
   `StrategyChooser.initializeStrategy()`, because a chosen strategy loads its
   order while being selected.
+
+### OpenBW headless run — FIRST PLAYABLE GAME (2026-10-08)
+
+Command (one command, whole lifecycle, per CONVENTIONS §15):
+`timeout 300 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg`
+Log: `out/openbw/bot.log`. Result, quoted from the log:
+
+```
+Connection successful
+Analyzing map... Use build order: `Zealot into Goon`
+HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!
+MISSION @0:15 TO Sparta: TooFewZealots - Focus{name='MainChoke', choke=Choke{[117,35], width=2}}
+0:39: Can't find place for `Pylon`, At 8 Pylon (READY_TO_PRODUCE)(#1)
+```
+
+So the whole chain works: engine hosts, client attaches, map analysis runs, the
+**build order loads**, the bot enters its first mission, and its first real
+production order (a Pylon at 8 supply) reaches placement.
+
+Four root causes were found and fixed to get here, all of them silent (no error,
+just a bot that mines and does nothing):
+
+1. **Startup order**: `ProtossStrategies.initialize()` renames strategies to their
+   build-order file names, but `StrategyChooser` picked one BEFORE that, so the
+   chosen strategy looked for `PROTOSS_Zealot_into_Goon.txt`. Fixed by
+   initialising the strategies first. Test: `StrategyBuildOrderTest`.
+2. **`BWAPI_DATA_PATH` was never set for the OpenBW bot directory** (the wine bot
+   directory carries one in its `bwapi-data/AI/ENV`; ours did not). The E2E script
+   now writes it explicitly.
+3. **`AFile.loadFile` ate the last character of any value ending in the delimiter**
+   (`BWAPI_DATA_PATH=.../bwapi-data/` arrived as `.../bwapi-data`), producing
+   `.../bwapi-dataread/build_orders/`. Fixed in `AFile` and belt-and-braces in
+   `AtlantisIgniter.setBwapiDataPath`. Test: `AFileLoadFileTest`.
+4. **`AtlantisRaceConfig.validate()` called `System.exit(-1)` during game start**
+   whenever the race was unknown. It now reports and skips.
+
+Remaining, next (not touched this round, recorded as #46): placement.
+`Can't find place for 'Pylon' (Can't physically build here)` - `FindPosition`
+fails on this map in the OpenBW harness, and `DefineNaturalBase` cannot resolve a
+natural base.

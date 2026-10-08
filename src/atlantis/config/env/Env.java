@@ -72,7 +72,13 @@ public class Env {
         if (line.length < 2) {
             return;
         }
+        // AFile.loadFile keeps the separator as the last character of the value
+        // (`BWAPI_DATA_PATH=C:\x\` arrives as "C:\x\"" + "=""" - measured
+        // 2026-10-08, it produced a path ending in "/null"). Strip it.
         String value = line[1];
+        if (value != null && value.endsWith("=")) {
+            value = value.substring(0, value.length() - 1);
+        }
 
         applyKeyAndValueToFlag(key, value);
     }
