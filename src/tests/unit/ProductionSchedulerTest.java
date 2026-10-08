@@ -1,5 +1,7 @@
 package tests.unit;
 
+import atlantis.production.v2.CommittedWork;
+import atlantis.production.v2.EconomyModel;
 import atlantis.production.v2.ExistingItems;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -605,5 +607,51 @@ public class ProductionSchedulerTest {
         ResourceCost cost = ResourceCost.of(50, 0, 2);
 
         assertEquals(0, timeline.findEarliestAffordableFrame(cost, 0));
+    }
+
+    // ---- committed work (BWAPI accounting) ---------------------------------
+
+    @Test
+    public void anUnpaidConstructionReservesItsCostAtTheFrameItCanBePaid() {
+        // A requested building whose builder is still walking has not been paid
+        // yet: the cost must come off the timeline, at the frame income allows.
+        ResourceTimeline timeline = new ResourceTimeline(0, 1000, 100, 0, 0, 20);
+        timeline.addMiningIncome(0, 1.0, 0);
+
+        int paidAt = CommittedWork.reserveUnpaid(timeline, ResourceCost.of(150, 0, 0));
+
+        assertEquals(49, paidAt, "100 banked + one frame of income per frame: 150 is reached at frame 49");
+        assertEquals(0, timeline.mineralsAt(49), "and the money is gone there");
+        assertTrue(timeline.mineralsAt(48) <= 149, "not a frame earlier");
+    }
+
+    @Test
+    public void anUnaffordableConstructionLeavesTheStocksAlone() {
+        ResourceTimeline timeline = new ResourceTimeline(0, 100, 10, 0, 0, 20);
+
+        assertEquals(-1, CommittedWork.reserveUnpaid(timeline, ResourceCost.of(150, 0, 0)));
+        assertEquals(10, timeline.mineralsAt(0), "no credit: the stocks are untouched");
+    }
+
+    @Test
+    public void aProviderUnderConstructionAddsItsSupplyAtCompletion() {
+        ResourceTimeline timeline = new ResourceTimeline(0, 1000, 0, 0, 16, 16);
+
+        CommittedWork.providerCompletesAt(timeline, 200, 8);
+
+        assertEquals(16, timeline.supplyAvailableAt(199));
+        assertEquals(24, timeline.supplyAvailableAt(200));
+    }
+
+    @Test
+    public void aWorkerUnderConstructionStartsPayingAfterItsFirstTrip() {
+        ResourceTimeline timeline = new ResourceTimeline(0, 2000, 0, 0, 0, 20);
+
+        CommittedWork.workerCompletesAt(timeline, 100);
+
+        int firstPaidFrame = 100 + EconomyModel.NEW_WORKER_FIRST_TRIP_FRAMES;
+        assertEquals(0, timeline.mineralsAt(firstPaidFrame - 1),
+                "a worker that just popped does not mine instantly");
+        assertTrue(timeline.mineralsAt(firstPaidFrame + 100) > timeline.mineralsAt(firstPaidFrame));
     }
 }
