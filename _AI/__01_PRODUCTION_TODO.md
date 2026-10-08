@@ -23,82 +23,54 @@ implementation. Its cause is not yet confirmed from the supplied stack trace.
 
 ## Priority 1 — Make the scheduler satisfy the written invariants
 
-- [ ] **Build-order goals must not repeat completed or committed rows.**
-  `ProductionEngine` regenerates goals from build-order rows every frame.
-  `BuildOrderGoals.from(...)` currently walks rows and emits qualifying goals;
-  verify against completed units/buildings, production queues, and pending
-  constructions. Add a deterministic satisfaction snapshot/port and tests for
-  the same row across consecutive frames, including an item already queued or
-  under construction.
-- [ ] **Prerequisites and existing facilities must be modeled correctly.**
-  Verify that a missing Cybernetics Core is planned, a completed Core satisfies
-  the Dragoon prerequisite at the current frame, and an incomplete Core only
-  satisfies it at its completion frame. Do the same for Pylon/Gateway/Zealot.
-  `ExistingItems.have()` currently treats any unfinished type as present; check
-  how the scheduler obtains the availability frame for that facility.
-- [ ] **Make placement and resource allocation atomic.**
-  `ProductionScheduler.scheduleItem()` currently allocates resources before the
-  placement reservation is validated. A failed placement must leave the
-  timeline untouched so later goals can use the funds. Add a regression test
-  with a failed fake placement followed by an affordable valid item.
-- [ ] **Enforce producer assignment and frame uniqueness.** A registry currently
-  supplies availability by producer type, while the plan item does not identify
-  a concrete producer. Ensure one Gateway cannot receive two commands in one
-  frame, producer limits are respected, and busy/queued facilities do not get
-  assigned again. Add deterministic multi-Gateway and single-Gateway tests.
-- [ ] **Preserve absolute requested start frames and stable ordering.** Verify
-  `ProductionGoal.targetStartFrame()` is honored (rather than starting every
-  goal at frame zero), equal-priority order is deterministic, counts greater
-  than one are distinct, and continuous goals produce only the intended
-  per-frame item count.
-- [ ] **Supply timeline must be internally consistent.** Test available versus
-  total supply, queued unit supply, planned provider completion, supply release
-  on unit completion/death where represented, and solvency at every projected
-  frame. Include the emergency-provider case at the cap.
-- [ ] **Prevent prerequisite recursion loops and duplicate prerequisite items.**
-  Add a cycle guard for malformed recipe graphs, plus tests that shared
-  prerequisites (e.g. multiple Dragoon goals needing one Core) schedule once.
+- [x] **Build-order goals must not repeat completed or committed rows.**
+  `BuildOrderRow` + `BuildOrderProgress`: row K of item T is the N-th
+  occurrence of T and is emitted only while the game has fewer than N
+  (completed, building, queued or pending). Test: `BuildOrderGoalsTest` (9).
+- [x] **Prerequisites and existing facilities must be modeled correctly.**
+  `ExistingItems.availableFrom` returns the frame an item is available from
+  (a Core under construction gates the Dragoon until its completion frame);
+  `UnitProducible` lists every required building plus a Pylon for psi.
+  Tested in `ProductionSchedulerTest`.
+- [x] **Make placement and resource allocation atomic.** Placement is validated
+  before `timeline.allocate`; a failed reservation leaves the timeline
+  untouched (test: failed fake placement followed by an affordable item).
+- [x] **Enforce producer assignment and frame uniqueness.** Items carry a
+  concrete producer id, one facility holds one item per slot,
+  `producerLimit` is honoured, `GameOrderDirector` refuses a second command on
+  the same facility in one frame. Tests: single-Gateway serialization,
+  two-Gateway parallelism, producer limit, consumed larva.
+- [x] **Preserve absolute requested start frames and stable ordering.** All
+  timeline operations are absolute frames; `targetStartFrame` is a floor;
+  equal priority keeps the caller's order (stable sort). Tested.
+- [x] **Supply timeline must be internally consistent.** Available and total
+  supply are tracked, providers add supply at their completion frame, the
+  total is capped at 200, and an item is never scheduled on supply that never
+  arrives. Committed work is applied before scheduling. Tested.
+- [x] **Prevent prerequisite recursion loops and duplicate prerequisite
+  items.** A path guard cuts malformed recipe cycles; a shared prerequisite is
+  planned once. Tested.
 
 ## Priority 2 — Complete game adapters and goal coverage
 
-- [ ] **Pending work accounting:** review `GameStateSnapshot`'s pending-building
-  mineral/gas deductions against actual BWAPI accounting. Confirm whether costs
-  for started constructions have already left current stocks; avoid both
-  double-counting and omitting pending orders. Test the arithmetic in a pure
-  helper and the adapter with a controlled snapshot.
-- [ ] **Research and upgrade lifecycle:** verify facility availability, already
-  researched/upgraded state, upgrade level and maximum level, one active order
-  per facility, and repeated-frame idempotence. Current `GameOrderDirector`
-  only checks generic `isResearching()` / `isUpgrading()`; it must not report an
-  unrelated active job as success for this goal.
-- [ ] **Buildings:** preserve exact-tile/neighbourhood/base-location constraints,
-  builder reservation, travel readiness, pending-construction idempotence, and
-  reassignment when a builder dies. The current adapter delegates to legacy
-  `Construction`; do not remove that execution path until V2 live behavior is
-  verified.
-- [ ] **Build-order compatibility:** validate the text-file parser mapping for
-  every row kind (unit/building/tech/upgrade/mission/setting), counts, positions,
-  and supply gates. A currently unqualified row must return on a later frame,
-  not be forgotten.
-- [ ] **Dynamic goals:** replace the simplified worker/supply/army/expansion
-  rules with behavior-compatible goals for workers, supply, expansion, tech,
-  army, and race-specific mechanics. Use immutable snapshots and narrow policy
-  seams; avoid adding race branches to the pure scheduler.
-- [ ] **Strategic goal contribution:** the redesign mentions active Plays
-  contributing goals, but Atlantis currently has no equivalent Published API
-  established for this track. Inventory existing strategic requests, define a
-  narrow production-goal contribution interface, and add it only where a real
-  strategy source exists. Do not invent a `Play` subsystem from the combat
-  redesign.
-- [ ] **Placement scoring:** `PylonPlacementScore` is pure but is not wired into
-  `LegacyPlacementPlanner`, because the legacy finder returns one validated
-  candidate. Add a candidate-list placement port/resolver that validates every
-  candidate before scoring powered buildable tiles; retain the safe legacy
-  fallback until this exists.
-- [ ] **Economic model:** verify worker mining/gas rates, worker movement cost,
-  income from workers completing in the horizon, and projection boundaries.
-  Keep estimates configurable/testable and label approximations; the current
-  snapshot uses simple constants and does not model all reassignment events.
+- [x] **Pending work accounting:** `CommittedWork` models BWAPI accounting -
+  an unpaid construction reserves its cost at the first affordable frame, a
+  provider under construction adds supply at completion, a worker only starts
+  paying after its first trip. Placed buildings are not charged twice.
+- [x] **Research and upgrade lifecycle:** an upgrade level is its own recipe
+  with its own cost and requirements; the director answers success only for
+  our own tech/upgrade and refuses an unfinished or already-busy facility.
+- [x] **Dynamic goals:** one owner for the supply rule (the duplicate-Pylon
+  regression is pinned), expansion counts a base under construction, the army
+  goal is a gap to a floor. Tested in `GoalSourcesTest`.
+- [ ] **Buildings:** keep the legacy `Construction` execution path until V2 is
+  verified live (retained; a pending construction is re-offered every frame).
+- [ ] **Dynamic goals (full parity):** tech, race-specific army composition and
+  strategic (Play/Published API) contributions are still the simplified
+  versions; the `CandidateResolver` seam exists, `PylonPlacementScore` is not
+  yet wired to a multi-candidate finder.
+- [ ] **Economic model:** `EconomyModel` holds the rates and the first-trip
+  delay; worker/gas rates are still constants, not measurements.
 
 ## Priority 3 — Test the actual production path
 

@@ -57,6 +57,29 @@ reproduce). Suite **250/0/4**, ArchUnit 7/7, store unchanged.
 
 ### Milestones
 
+- **M1 DONE**: pure domain and `ResourceTimeline`.
+- **M2 DONE** (rewritten 2026-10-08): `ProductionScheduler` with concrete
+  producers, absolute frames, prerequisites by completion frame (a Core being
+  built gates a Dragoon until it finishes), one item per facility slot,
+  `producerLimit`, planned facilities usable from their completion frame,
+  shared-prerequisite dedup, recipe-cycle cut, placement validated before any
+  allocation, supply providers adding supply at completion; total supply capped
+  at 200. `ExistingItems` answers "available from which frame". Tests:
+  `ProductionSchedulerTest` (34).
+- **M3 DONE**: `LegacyPlacementPlanner` over `APositionFinder` (pass concrete) +
+  a `CandidateResolver` seam for ranking several validated candidates
+  (`PylonPlacementScore` is used to build such a resolver when a finder returns
+  a list; the legacy finder still returns one tile).
+- **M4 DONE**: `ProductionDispatcher` (latency window for units, due-now for
+  buildings), `OrderDirector` with named producer ids, `GameOrderDirector`
+  (frame-scoped de-dup, research detected by our own tech) and
+  `DryRunOrderDirector`; `ProductionV2Mode` OFF/DRY_RUN/LIVE.
+- **M5 DONE**: `BuildOrderGoals` (stateless rows satisfied by what the game has:
+  completed, building, queued, pending; `xN` multipliers; `@AREA` placements;
+  legacy supply lookahead) and `DynamicGoals`/`PullForwardGoals` (workers,
+  supply in one place, army floor, expansion that counts a base being built).
+- **M6 PARTIAL**: `PRODUCTION_V2=LIVE` makes v2 the only policy. The legacy tree
+  is not deleted and the cutover has not been run in a real game (owner step).
 - **M1 DONE** (commit `c36ce79f`): pure domain (`ResourceCost`, `Producible`,
   `ProductionGoal`, `TargetPlacement`, `ProductionItem`, `ProductionPlan`),
   `ResourceTimeline` with linear income + solvency check; `UnitProducible`

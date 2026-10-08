@@ -43,8 +43,37 @@ import java.util.Set;
  * refinements behind this same interface - they change the body of this class
  * and nothing else, which is the whole point of the seam.
  * </p>
+ * <p>
+ * Pass-scoped state is reset by {@link ResourceTimeline#originFrame()}-independent
+ * {@link #startPass()}: two identical buildings in one frame would otherwise
+ * receive the same tile.
+ * </p>
  */
 public class LegacyPlacementPlanner implements PlacementPlanner {
+
+    /**
+     * Ranking seam for candidates: the legacy finder returns one validated tile,
+     * so today there is nothing to choose between (see the NOTE in
+     * {@link #reservePlacement}). When a finder exposes several validated
+     * candidates, only this resolver is replaced - the scheduler does not
+     * change.
+     */
+    public interface CandidateResolver {
+        int choose(List<APosition> candidates, Producible building);
+    }
+
+    private static final CandidateResolver FIRST_CANDIDATE = new CandidateResolver() {
+        @Override
+        public int choose(List<APosition> candidates, Producible building) {
+            return candidates.isEmpty() ? -1 : 0;
+        }
+    };
+
+    private CandidateResolver candidateResolver = FIRST_CANDIDATE;
+
+    public void useCandidateResolver(CandidateResolver resolver) {
+        this.candidateResolver = resolver != null ? resolver : FIRST_CANDIDATE;
+    }
 
     /** Build tiles already claimed in the current pass: "x:y". */
     private final Set<String> reservedTilesThisPass = new HashSet<>();
@@ -91,6 +120,13 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         APosition position = APositionFinder.findStandardPosition(builder, unitType, near, 12);
         if (position == null)
             return PlacementReservation.failure();
+
+        List<APosition> candidates = new ArrayList<>();
+        candidates.add(position);
+        int chosen = candidateResolver.choose(candidates, building);
+        if (chosen < 0)
+            return PlacementReservation.failure();
+        position = candidates.get(chosen);
 
         String tile = position.tx() + ":" + position.ty();
         if (!reservedTilesThisPass.add(tile))
