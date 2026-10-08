@@ -44,26 +44,44 @@
 1. **The cutover has not been verified in a real game.** `PRODUCTION_V2=LIVE` is
    the only policy when set, but no LIVE run has been accepted as correct. The
    legacy tree stays as the fallback until one is.
-2. **The plan re-plans instead of remembering (the live blocker).** First OpenBW
-   run of LIVE: the same Pylon was scheduled at a **later frame every frame**
-   (`Pylon@557-1007`, then `@746-1196`, then `@974-1424`) and `issued:` never
-   listed it - so the dispatcher was not re-issuing it, the *scheduler* was
-   re-planning it against a timeline that never records what was already
-   committed. Fixing the goal layer's "count work already ordered" (done for
-   workers and supply) removed the thousands-of-orders symptom but not this one.
-   This is the "repeated goals / stateless recomputation" gap and it is why the
-   bot does not build on the live run.
+2. **The plan livelocks when an item is never affordable (THE blocker, measured
+   2026-10-08).** On a live OpenBW run the Pylon's scheduled start frame advanced
+   by **exactly one frame per frame** - `Pylon@979`, `@980`, `@981`, `@982` - so it
+   was never due and never built, while the game ran to frame 4500. Cause: the
+   Probe's training keeps the minerals below the Pylon's cost, so
+   `findEarliestAffordableFrame` answers "16 frames from now" every frame. The item
+   is always just out of reach and the plan slides forever. This is a **timeline /
+   arbitration** problem: something must decide that a cheaper, higher-priority item
+   (the Probe at 50 minerals) starving a needed building (the Pylon at 100) is a
+   livelock, not a schedule - likely a bounded look-ahead or a "reserve for the
+   higher-priority goal" rule. It is the last thing between us and a bot that
+   develops on OpenBW.
 3. **Full dynamic-goal parity**: tech, race-specific army composition and
    strategic (Play) contributions are still simplified.
 4. **The economic model is constants**: `EconomyModel` holds the rates and the
    first-trip delay, but worker/gas rates are not measured.
 5. **Legacy deletion** (`Queue/**`, `ProductionOrder`, `PreventDuplicateOrders`,
    `Construction/**` recovery) after LIVE passes. A previous count said **149
-   production files** reference the queue, so this is not a mechanical delete:
-   the dynamic commanders must be replaced by their v2 goals first.
-6. **The Gateway `OrderSink.train failed ... : 5` report**: unconfirmed. The `: 5`
-   text was never mapped to a BWAPI error code and the trace came from the catch
-   boundary, not the throw site. Do not add speculative guards for it.
+   production files** reference the queue, so this is not a mechanical delete.
+6. **The Gateway `OrderSink.train failed ... : 5` report**: unconfirmed, and no
+   speculative guards for it.
+
+### Fixed in this round (so nobody re-hunts them)
+
+- **The scheduler re-planned buildings forever.** `scheduleGoal` had no
+  "do we already have this" step, so a fresh building was planned every frame at a
+  sliding earliest-affordable frame. Buildings are now subtracted against what the
+  game already has or has coming; units are deliberately left to their goal
+  generators (worker goal = existing + in production).
+- **The demand loops in the goal layer** (measured first as 2883 ordered Pylons
+  and thousands of Probes): the worker goal counted existing workers only, and the
+  supply goal ignored Pylons already building. Both count what is on the way now.
+- **Placement works in a live game** with `PLACEMENT=catalogue` - the
+  `Can't find place for Pylon` failure is gone. See Placement below.
+- **The Pylon cancel that is left** (`took too long (36s) / buildable:true`) is a
+  *consequence* of (2): the construction is cancelled because the order never
+  became due, not because the builder or the tile is wrong. `buildable:true` in
+  that line is the placement working.
 
 ## Blocker outside this track
 
