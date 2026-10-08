@@ -820,3 +820,12 @@ Remaining, next (not touched this round, recorded as #46): placement.
 `Can't find place for 'Pylon' (Can't physically build here)` - `FindPosition`
 fails on this map in the OpenBW harness, and `DefineNaturalBase` cannot resolve a
 natural base.
+
+**Superseded, and to be solved by a rewrite (2026-10-08):** the owner's decision
+is that this subsystem is deleted and written from scratch, so the findings from
+one more session of debugging it live on OpenBW are recorded in
+**`_AI/POSITION-FINDER.md`** instead of as patches. That file has the measured
+facts (the engine calls the refused tiles valid and empty; the refusal came from
+our own occupancy predicate, which disagreed with the engine; JBWEB is unusable
+on OpenBW in two independent ways; the standard finder was never even reached)
+and the traps the rewrite must avoid. Read it before touching any of this.
