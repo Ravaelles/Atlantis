@@ -97,6 +97,11 @@ reproduce). Suite **250/0/4**, ArchUnit 7/7, store unchanged.
   routes them to `OrderDirector.researchOrUpgrade`, and `GameOrderDirector`
   implements it (with the same "is the facility able to take it" guard the train
   path needed). Test: `TechAndUpgradeProducibleTest` (6).
+- **Pull-forward DONE**: `PullForwardGoals` implements `Producer::update()` steps
+  3 and 4 (01_PRODUCTION.md): supply providers are pulled earlier while minerals
+  allow it, extra refineries are wanted before gas is short, and a maxed-out
+  supply queue emits an emergency Pylon at `PRIORITY_EMERGENCY`.
+  Test: `PullForwardGoalsTest`.
 - Open: a real game run with PRODUCTION_V2=DRY_RUN, then LIVE; then the legacy
   `Queue/**` + `ProductionOrder` + `PreventDuplicateOrders` + `Construction/**`
   healing commanders deleted and the ArchUnit store shrunk.

@@ -73,7 +73,7 @@ public final class ProductionEngine {
         GameStateSnapshot state = new GameStateSnapshot();
 
         ResourceTimeline timeline = state.buildTimeline();
-        List<ProductionGoal> goals = collectGoals(state);
+        List<ProductionGoal> goals = collectGoals(state, timeline);
 
         ProductionScheduler scheduler = new ProductionScheduler(
                 state.facilityRegistry(), placementPlanner, state.existingItems());
@@ -96,7 +96,7 @@ public final class ProductionEngine {
      * generators. They are all declarations; the scheduler resolves the
      * contention between them by priority and by time.
      */
-    private List<ProductionGoal> collectGoals(GameStateSnapshot state) {
+    private List<ProductionGoal> collectGoals(GameStateSnapshot state, ResourceTimeline timeline) {
         List<ProductionGoal> goals = new ArrayList<>();
 
         List<ProductionOrder> buildOrderRows = buildOrderRows();
@@ -105,6 +105,10 @@ public final class ProductionEngine {
         }
 
         goals.addAll(state.dynamicGoals());
+
+        // Pull-forward rules (01_PRODUCTION.md step 3): supply and gas structures
+        // are wanted a little before they are needed, not after the block.
+        goals.addAll(state.pullForwardGoals(timeline));
         Collections.sort(goals);
 
         return goals;

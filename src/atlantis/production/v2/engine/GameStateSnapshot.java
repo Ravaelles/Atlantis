@@ -1,11 +1,13 @@
 package atlantis.production.v2.engine;
 
+import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.v2.ProducerFacility;
 import atlantis.production.v2.ProducerFacilityRegistry;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.DynamicGoals;
+import atlantis.production.v2.goals.PullForwardGoals;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -155,6 +157,24 @@ public final class GameStateSnapshot {
                 A.supplyTotal(),
                 A.minerals(),
                 Count.workers() < 12));
+    }
+
+    /**
+     * The pull-forward rules (01_PRODUCTION.md step 3): supply and gas are wanted
+     * a little before they are needed, so the plan does not stall the moment the
+     * economy could have supported the next step.
+     */
+    public List<atlantis.production.v2.ProductionGoal> pullForwardGoals(
+            atlantis.production.v2.ResourceTimeline timeline) {
+        int desiredRefineries = Math.max(1, Math.min(2, Count.bases()));
+
+        return atlantis.production.v2.goals.PullForwardGoals.contribute(
+            timeline,
+            new atlantis.production.v2.goals.PullForwardGoals.Snapshot(
+                Math.max(0, A.supplyTotal() - A.supplyUsed()),
+                A.minerals(),
+                Count.ofTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING),
+                desiredRefineries));
     }
 
     /** The build-order goals for this frame, with a live supply projection. */
