@@ -53,10 +53,14 @@ import java.util.Set;
  */
 public final class CataloguePlacementPlanner implements PlacementPlanner {
 
-    private final TileAvailabilityGrid grid;
-    private final BuildLocationCatalogue catalogue;
+    private final TileAvailabilityGrid.TerrainSource terrain;
+    private TileAvailabilityGrid grid;
     private final RacePlacementStrategy strategy;
     private final NeighbourhoodRegistry neighbourhoods;
+    private final boolean withBlocks;
+
+    /** Rebuilt per pass, so reservations do not survive a frame. */
+    private BuildLocationCatalogue catalogue;
 
     /**
      * Tiles claimed in the current pass. The grid is rebuilt between passes (the
@@ -70,7 +74,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     public CataloguePlacementPlanner() {
         this(
-            new TileAvailabilityGrid(new EngineTerrainSource()),
+            new EngineTerrainSource(),
             new atlantis.placement.race.ProtossPlacementStrategy(
                 new PsiGating(new EnginePowerSource())
             ),
@@ -78,28 +82,66 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         );
     }
 
-    /** Test seam: a grid over a synthetic terrain, no strategy, no neighbourhood ranking. */
+    /** Test seam: terrain over a synthetic map, no strategy, no neighbourhood ranking. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
-        this(grid, (RacePlacementStrategy) null, null);
+        this(grid, (RacePlacementStrategy) null, null, true);
     }
 
     /** Test seam with a strategy: a null strategy disables the availability check. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid, RacePlacementStrategy strategy) {
-        this(grid, strategy, null);
+        this(grid, strategy, null, true);
     }
 
     public CataloguePlacementPlanner(
         TileAvailabilityGrid grid, RacePlacementStrategy strategy, NeighbourhoodRegistry neighbourhoods
     ) {
+        this(grid, strategy, neighbourhoods, true);
+    }
+
+    /** Production constructor: the terrain source is enough; pass 1 builds the grid. */
+    public CataloguePlacementPlanner(
+        TileAvailabilityGrid.TerrainSource terrain,
+        RacePlacementStrategy strategy,
+        NeighbourhoodRegistry neighbourhoods
+    ) {
+        this.terrain = terrain;
+        this.strategy = strategy;
+        this.neighbourhoods = neighbourhoods;
+        this.withBlocks = true;
+        this.grid = new TileAvailabilityGrid(terrain);
+        this.catalogue = buildCatalogue();
+    }
+
+    /**
+     * The full constructor. {@code withBlocks == false} builds the catalogue from the
+     * per-tile scan alone - the seam a test uses when it wants the planner's own
+     * rules (exact tiles, footprints, reservations) without whatever a Block happened
+     * to reserve.
+     */
+    public CataloguePlacementPlanner(
+        TileAvailabilityGrid grid, RacePlacementStrategy strategy,
+        NeighbourhoodRegistry neighbourhoods, boolean withBlocks
+    ) {
+        this.terrain = null;   // a caller-supplied grid is reused as-is across passes
         this.grid = grid;
         this.strategy = strategy;
         this.neighbourhoods = neighbourhoods;
-        this.catalogue = new BuildLocationCatalogue(
-            grid,
-            factoriesFor(strategy),
-            startBlockFinderFor(grid, strategy),
-            ourBasePositions()
-        );
+        this.withBlocks = withBlocks;
+        this.catalogue = buildCatalogue();
+    }
+
+    /**
+     * Builds the catalogue for the current pass. Called once at construction and
+     * again at every {@link #startPass()}, which is what makes the planner
+     * stateless per frame: reservations made in one pass are gone in the next, so a
+     * building that was skipped can be offered the same tile again tomorrow.
+     */
+    private BuildLocationCatalogue buildCatalogue() {
+        return withBlocks
+            ? new BuildLocationCatalogue(grid, factoriesFor(strategy),
+                startBlockFinderFor(grid, strategy), ourBasePositions())
+            : new BuildLocationCatalogue(grid, java.util.Collections
+                .<BuildLocationCatalogue.BlockFactory>emptyList());
     }
 
     /**
@@ -140,9 +182,21 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return starts.isEmpty() ? null : new StartBlockFinder(grid, starts);
     }
 
-    /** Our bases as tile centres, so each gets a start-block anchor. */
+    /**
+     * Our bases as tile centres, so each gets a start-block anchor. Answers an
+     * empty list when there is no game attached (a pure planner test) - anchoring
+     * is a refinement, not a precondition of placing a building.
+     *
+     * <p>
+     * The game check is explicit rather than a try/catch: {@code Select} answers
+     * from a lazy cache, so a failure inside it surfaces on a later cache call, not
+     * at the call site - which is exactly what a try/catch here would miss.
+     * </p>
+     */
     private static List<int[]> ourBasePositions() {
         List<int[]> bases = new ArrayList<>();
+        if (atlantis.Atlantis.game() == null) return bases;
+
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
             if (base.position() != null) bases.add(new int[]{base.tx(), base.ty()});
         }
@@ -153,6 +207,16 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     public void startPass() {
         reservedThisPass.clear();
         passBuilder = null;
+
+        // The plan is recomputed every frame, so the pass starts from a clean map:
+        // a tile a building took in the previous pass is free again, and a proxy that
+        // just finished changes the terrain answer. Where a terrain source is known
+        // (production) the grid is rebuilt; a caller-supplied grid (a test that wants
+        // to control the map) is kept as it was handed over.
+        if (terrain != null) {
+            this.grid = new TileAvailabilityGrid(terrain);
+        }
+        this.catalogue = buildCatalogue();
     }
 
     /**
@@ -162,11 +226,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
+            if (atlantis.Atlantis.game() == null) return null;
+
             AUnit anchor = nearestBaseUnit();
             passBuilder = anchor != null
                 ? Select.ourWorkers().nearestTo(anchor)
                 : Select.ourWorkers().first();
-            if (passBuilder == null) passBuilder = Select.ourWorkers().first();
         }
         return passBuilder;
     }
@@ -414,7 +479,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         }
     }
 
-    private static APosition areaCentre(String areaName) {
+    private APosition areaCentre(String areaName) {
         if ("NATURAL".equals(areaName)) {
             APosition natural = atlantis.map.base.BaseLocations.natural();
             if (natural != null)
@@ -423,7 +488,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return baseCentre();
     }
 
-    private static APosition baseCentre() {
+    private APosition baseCentre() {
+        // No game attached (a pure planner test): "anywhere" still has to mean
+        // something, and with no base to prefer, the grid centre is the honest
+        // answer - candidates are ranked by distance from whatever centre comes
+        // back, and on a flat map every one is equally valid.
+        if (atlantis.Atlantis.game() == null) {
+            return APosition.create(grid.width() / 2, grid.height() / 2);
+        }
+
         AUnit base = Select.main();
         if (base == null)
             base = Select.ourBases().first();
