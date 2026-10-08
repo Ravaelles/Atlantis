@@ -110,6 +110,135 @@ Real kiting distance depends on multiple state dimensions (weapon upgrade range,
 - **`DancePolicy` Implementations** (`DragoonDancePolicy`, `ZealotDancePolicy`, `MarineDancePolicy`): Encapsulate multi-factor decision logic cleanly.
 - **Registry & Defaults**: `Map<AUnitType, DancePolicy>` with fallback to physical speed/cooldown models.
 
+#### Attack Phase Is a Derivation, Not a Decision
+
+The attack phase ("shoot now" vs. "step back until cooldown resets") does not exist as a decision point anywhere in the command hierarchy. It **falls out deterministically** from three inputs:
+
+1. **The Order** (`Attack`/`Retreat`) — issued once by the `ClusterCommander`.
+2. **The Unit Profile** (`RangedProfile`/`MeleeProfile`) — determined by unit type, never by list ordering.
+3. **The Unit State** (weapon cooldown, distance to enemy, shields/HP) — read inside the `DancePolicy`.
+
+Manager-style ordering only becomes necessary when **two behaviors compete for the same movement command in the same frame**. In this architecture competition is structurally impossible: the profile pipeline halts at the *first behavior that actually issues a command*, and the pipeline order is mechanics (survival > kiting > firing), not policy.
+
+**Design smell to watch for**: if you ever feel the urge to *reorder* behaviors in a profile to fix behavior, that behavior is *deciding* rather than *executing* — move that decision up into the `DancePolicy` or the `ClusterCommander`.
+
+#### Example: Dragoon kiting a Zealot (Java 1.8)
+
+```java
+/** Generic reflex. Knows nothing about unit types. Never changes intent. */
+public class DanceAwayFromEnemy implements MicroBehavior {
+
+    private final DancePolicyProvider policies;
+
+    public DanceAwayFromEnemy(DancePolicyProvider policies) {
+        this.policies = policies;
+    }
+
+    @Override
+    public boolean act(AUnit unit, CombatOrder order, ClusterContext ctx) {
+        if (!order.isAttack()) return false;          // only kites within Attack intent
+        AUnit threat = ctx.mostDangerousAttackerOf(unit);
+        if (threat == null) return false;
+
+        DancePolicy policy = policies.forUnit(unit);  // DragoonDancePolicy for a dragoon
+        int desired = policy.danceAwayDistance(unit, threat);
+        if (desired < 0) return false;                // this matchup: stand and fight
+
+        boolean enemyInRangeBeforeWeCanFire =
+                unit.distTo(threat) < desired && unit.cooldownRemaining() > 0;
+        if (!enemyInRangeBeforeWeCanFire) return false;
+
+        unit.moveAwayFrom(threat, desired);           // the ONLY action this behavior may take
+        return true;                                  // halt pipeline; ShootWhenReady will not run
+    }
+}
+
+/** Tuned per unit. This is where "vsZealot / vsZergling" tuning lives. */
+public class DragoonDancePolicy implements DancePolicy {
+
+    @Override
+    public int danceAwayDistance(AUnit dragoon, AUnit enemy) {
+        int myRange = dragoon.groundWeaponRange();    // 4 tiles, 6 with Singularity Charge
+
+        switch (enemy.type().getRace()) {
+            case Zerg:                                // fast melee swarm: full kite
+                return myRange + (dragoon.shields() > 0 ? 0 : 32);
+            case Protoss:                             // mirror: trade willingly
+                return dragoon.shields() > 30 ? myRange : myRange + 32;
+            case Terran:                              // vultures/mines: conservative spacing
+                return myRange + 48;
+            default:
+                return myRange;
+        }
+    }
+}
+```
+
+Frame-by-frame outcome for the **same** dragoon under the **same** `Attack` order — no manager, no ordering, no phase switch:
+
+| Frame | Cooldown | Enemy dist | Policy result | Pipeline outcome |
+|---|---|---|---|---|
+| 100 | 0 | 5 tiles | in range | `ShootWhenReady` → fires |
+| 101–115 | > 0 | closing | kiting distance | `DanceAway` → steps back |
+| 116 | 0 | 6 tiles | in range | `ShootWhenReady` → fires again |
+
+#### Flow Diagram (Mermaid)
+
+```mermaid
+flowchart TB
+    CC["ClusterCommander<br/>Decision: Attack"] --> PIPE
+
+    subgraph PIPE["RangedProfile (fixed mechanical order)"]
+        B1["Unstick"] --> B2["DontInterruptReadyAction"]
+        B2 --> B3["DanceAwayFromEnemy"]
+        B3 --> B4["ShootWhenReady"]
+    end
+
+    B3 -->|"asks for distance"| REG["DancePolicyProvider"]
+    REG -->|"dragoon →"| POL["DragoonDancePolicy<br/>vsZerg / vsProtoss / vsTerran<br/>range, shields, HP"]
+    POL -->|"desired = N"| B3
+
+    B3 -->|"returns false<br/>(no kiting needed)"| B4
+    B3 -->|"returns true<br/>(moved away)"| DONE["Pipeline halts for this frame"]
+    B4 -->|"fires at assigned target"| DONE2["Order executed"]
+
+    style CC fill:#d4edda,stroke:#28a745
+    style PIPE fill:#e2eafc,stroke:#3b6ea5
+    style POL fill:#fff3cd,stroke:#ffc107
+```
+
+Key structural property visible in the diagram: `DanceAwayFromEnemy` and `ShootWhenReady` **never negotiate**. The policy output (`desired = N`) only decides whether the generic behavior fires this frame; the *intent* (`Attack`) set by the commander is immutable as it flows down.
+
+#### OCP Compliance Analysis: Where We Open, Where We Close, and Why
+
+The question "does this design follow Open/Closed Principle?" does not have a single yes/no answer — it depends on **which axis of extension** we consider. Three axes exist, with very different costs:
+
+**Axis 1 — New unit type / new race: OCP strictly satisfied.**
+Adding a Hydralist or a Zerg race means writing a new `DancePolicy` implementation and registering it in the `Map<UnitType, DancePolicy>`. Zero changes to `DanceAwayFromEnemy`, profiles, or commanders. This is textbook OCP — and it covers ~95% of day-to-day development (matchup tuning is the routine work).
+
+**Axis 2 — New matchup inside a policy: deliberately closed (OCP consciously violated).**
+`DragoonDancePolicy` switches on the enemy race — a new matchup requires editing that method. But the violation is **confined to one small class with one responsibility**. The formally "purer" alternative (separate classes per matchup: `DragoonVsZealotPolicy`, `DragoonVsZerglingPolicy`, ...) yields dozens of near-empty files where most matchups differ by a single integer. Here we choose readability over orthodoxy on purpose.
+
+**Axis 3 — New micro concern (new behavior): OCP partially violated — the real cost.**
+`RangedProfile.BEHAVIORS` is a modified list. A new behavior (e.g. `AvoidPsiStorm`) requires editing the profile class. This does break OCP formally — but note exactly *what* the modification touches: adding one line to an explicit list, **without modifying any existing behavior or the commander**. This is a much weaker form of violation than editing conditionals inside a decision method:
+
+- Editing the list cannot corrupt existing behaviors' logic — interactions surface only through ordering, which is visible in one place and testable.
+- In the legacy manager chain, adding a process meant editing a shared 37-element structure where repositioning anything changed behavior for everything below, invisibly.
+
+**Deliberate rejection of the "pure" alternative:** axis 3 *could* be formally closed (external behavior registry, per-profile configuration). We reject this intentionally: ordering would become implicit configuration rather than an explicit design decision, someone could insert a behavior "somewhere" without owning its position in the survival sequence, and we would return to a world where ordering is an accident of configuration. For a pipeline whose ordering is survival mechanics (unstick before firing, always), a closed list is the better engineering choice.
+
+**Why "slightly broken OCP + better readability" is a sound trade, not a rationalization:**
+
+OCP serves two practical goals: (a) extend without corrupting working code, (b) understand the system without reading all of it. A closed profile list delivers (b) fully and (a) ~90%; the missing 10% pays for itself in debugging, because in CherryVis traces and unit tests you *see* the full sequence a unit walked through, instead of reconstructing it from buried inter-class dependencies.
+
+**Decision rule for the future:** violate OCP when (and only when) all three hold:
+
+1. The modification is confined to one class with a single responsibility.
+2. It is an explicit list/configuration entry, not conditional logic.
+3. A test exists that catches ordering-interaction regressions.
+
+All three hold for behavior profiles. If any breaks, that is the signal to move that extension point to composition or a registry.
+
 ---
 
 ### Combat Simulation: FAP for Frame Gating, OpenBW for Deep Checks
