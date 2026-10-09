@@ -390,8 +390,11 @@ say "bot log:    $BOT_LOG"
 if [ "$BOT_EXIT" -ne 0 ]; then
   say "bot did not exit cleanly; log tail:"
   tail -20 "$BOT_LOG" | sed 's/^/    /'
+  # A timed-out or crashed bot is never a passing scenario, even when no
+  # optional expectations were supplied. Preserve timeout's exit code rather
+  # than printing SCENARIO PASSED from a partial GameSummary.
+  exit "$BOT_EXIT"
 fi
-
 # === Scenario assertions ===================================================
 # A run in which the client never attached is a failure, even without optional
 # expectations. Otherwise an empty/logless run can look like a pass.

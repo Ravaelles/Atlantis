@@ -319,3 +319,15 @@ manager history alternates `BuilderManager` and `WorkerHelpCombatUnitsFight` /
 unit test of `WorkerManager` does not yet explain the live manager-chain behavior.
 Per CONVENTIONS §18, inspect that worker's history before changing manager ordering.
 No placement or builder patch is justified yet; #47 and #48 remain open.
+
+
+### NEXT #47 progress: non-zero bot exit no longer becomes a scenario pass
+A fresh V2 OpenBW run returned bot exit 124 at the 110-second inner cap; the
+runner nevertheless ran `assert-openbw-scenario.sh`, which prints `SCENARIO PASSED`
+when no optional expectations are set, then only returns 124 at the very end.
+This made an aborted run look green in its transcript. `run-openbw-e2e.sh` now
+exits immediately with the bot's non-zero code after printing its log tail, before
+scenario assertions. Regression `LauncherBuildsTheJarTest.anUncleanOpenBwBotExitCannotBeReportedAsScenarioPassed`
+pins ordering; its shell syntax check also covers the OpenBW script. Verification:
+fast suite 346/346, ArchUnit 7/7. #47 remains open: Pylon/Gateway and survival
+assertions have not passed.

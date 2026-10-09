@@ -120,6 +120,25 @@ public class LauncherBuildsTheJarTest {
     }
 
     @Test
+    public void anUncleanOpenBwBotExitCannotBeReportedAsScenarioPassed() throws IOException {
+        String script = read(OPENBW_E2E);
+        int exitGuard = script.indexOf("if [ \"$BOT_EXIT\" -ne 0 ]; then");
+        int preservedExit = script.indexOf("exit \"$BOT_EXIT\"");
+        int scenarioAssertions = script.indexOf("# === Scenario assertions");
+        int passMessage = script.indexOf("say \"SCENARIO PASSED\"");
+
+        assertTrue(exitGuard >= 0, "the runner must fail immediately when the bot exits non-zero");
+        assertTrue(preservedExit > exitGuard && preservedExit < scenarioAssertions,
+                "preserve the bot's exit code before any scenario assertion can pass a partial log");
+        assertTrue(scenarioAssertions > exitGuard,
+                "a timeout/crash must not proceed to checks that can report a partial log as a pass");
+        assertTrue(passMessage > scenarioAssertions,
+                "the pass message belongs only after the scenario assertions");
+        assertTrue(preservedExit >= 0,
+                "preserve the bot's timeout/crash exit code for CI and callers");
+    }
+
+    @Test
     public void theCheckRefusesAnUntaggedJar() throws Exception {
         // A jar built before this mechanism, or by hand, carries no tag - and an
         // untagged jar cannot be shown to match anything, so it must be refused
@@ -136,7 +155,12 @@ public class LauncherBuildsTheJarTest {
 
     @Test
     public void scriptParses() throws Exception {
-        Process p = new ProcessBuilder("bash", "-n", WINE_FULL.toAbsolutePath().toString())
+        assertParsesAsBash(WINE_FULL, "run-wine-full.sh");
+        assertParsesAsBash(OPENBW_E2E, "run-openbw-e2e.sh");
+    }
+
+    private static void assertParsesAsBash(Path script, String label) throws Exception {
+        Process p = new ProcessBuilder("bash", "-n", script.toAbsolutePath().toString())
                 .redirectErrorStream(true).start();
         // Java 8: InputStream.readAllBytes() is Java 9+. Drain the stream by
         // hand - a Java 9+ API in a test breaks the GAME JAR build, because the
@@ -145,7 +169,7 @@ public class LauncherBuildsTheJarTest {
         while (p.getInputStream().read(chunk) != -1) {
             // drain
         }
-        assertEquals(0, p.waitFor(), "run-wine-full.sh must parse as bash");
+        assertEquals(0, p.waitFor(), label + " must parse as bash");
     }
 
     private static String read(Path path) throws IOException {
