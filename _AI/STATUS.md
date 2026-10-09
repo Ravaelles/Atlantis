@@ -40,20 +40,25 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **OpenBW hard limits (owner's ruling today — was NEXT #9, now a priority).**
-  OpenBW runs were hanging well past a sane duration. Two limits are now defined
-  once, at the top of `scripts/run-openbw-e2e.sh`: `TIMEOUT_SECONDS=120`
-  (wall-clock; the script refuses a larger value) and `INGAME_TIME=20 game
-  minutes` (`FORCE_END_GAME_AFTER_INGAME_SECONDS`, so the bot ends the game
-  itself at 20:00). `ForceExitLocallyAfterRealSeconds` now exits on either
-  limit, and `Env` re-caps the wall-clock value at 120 so a hand-edited ENV
-  cannot widen it. `OpenBWConfig.TIMEOUT_SECONDS` carries the same 120 as the
-  Java-side cap, and `gameTimeoutSeconds(>120)` throws. Documented as
-  CONVENTIONS §17.
-  Verified: full fast suite 336 passed / 0 failed (was 335), ArchUnit 7/7,
-  `OpenBWLauncherTest` 16/16 including the new cap-rejection test. The unfinished
-  `ATime` extraction was reverted (no `ATime`, `A` unchanged) so this lands as
-  one clean cycle.
+- **Owner ruling landed: 120 s everywhere (CONVENTIONS §13) and OpenBW
+  self-termination (CONVENTIONS §17).** §13 now requires `timeout 120` on every
+  command/script/test run unless the owner grants permission for that specific
+  run; the old 360 s allowance is gone. §17 fixes `TIMEOUT_SECONDS=120` and
+  `INGAME_TIME=60*20` (20 game minutes) at the top of
+  `scripts/run-openbw-e2e.sh`, refuses a widened value, and re-caps
+  `FORCE_END_GAME_AFTER_REAL_SECONDS` in `Env`.
+  Verified with the new limit itself: `timeout 120 bash scripts/run-tests.sh` ->
+  336 passed / 0 failed; `timeout 120 bash scripts/run-architecture-tests.sh` ->
+  7/7. Behaviour code and the runner landed in `d90a4ea2`; this cycle adds the
+  §13 rule and the `NEXT.md` housekeeping.
+- **Next up:** the OpenBW run itself (host + bot) still needs one bounded
+  end-to-end check after this, then back to the NEXT backlog.
+
+### Reverted: NEXT #9 wall-clock extraction attempt
+The `A` date/time formatter split into a new `ATime` was started and **reverted**:
+repeated text substitution edits consumed the budget without a behaviour change.
+`A` owns both methods again (clean tree, suite green). Recorded in `_AI/NEXT.md`
+under #9 so nobody repeats it blindly.
 
 ### Blocked: NEXT #8 — Production race strategy pilot
 ADR 0007 (`d12fd53b`) is explicitly Proposed. The ADR convention and the ADR's

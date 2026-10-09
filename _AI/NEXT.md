@@ -5,12 +5,16 @@ and for defects found along the way. This file is the single source of truth
 for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 `_AI/NOTES.md` keeps operational learnings.
 
-## Current owner priorities (2026-10-08)
+## Current owner priorities (2026-10-09)
 
-1. **Finish Production V2** - `_AI/STATUS.md` and `_AI/redesign/01_PRODUCTION.md`.
-2. **Placement** - the rewrite landed (`_AI/redesign/03_PLACEMENT.md`); the
+1. **OpenBW simulations must be fast and self-terminating** - CONVENTIONS §17:
+   `TIMEOUT_SECONDS=120` wall-clock and `INGAME_TIME=20` game minutes, both set
+   once at the top of `scripts/run-openbw-e2e.sh` (done, commit `d90a4ea2`).
+   Every future run mode gets the same pair.
+2. **Finish Production V2** - `_AI/STATUS.md` and `_AI/redesign/01_PRODUCTION.md`.
+3. **Placement** - the rewrite landed (`_AI/redesign/03_PLACEMENT.md`); the
    cut-over and the rest of Protoss are what remain.
-3. **OpenBW tests** - `_AI/IDEA-E2E-TESTS.md` §3.5 has the ordered steps.
+4. **OpenBW tests** - `_AI/IDEA-E2E-TESTS.md` §3.5 has the ordered steps.
 
 The index of which document answers which question is `_AI/README.md`.
 
@@ -158,6 +162,11 @@ itself, #5, is design work and out of that order's scope).
   the resource facades move to `AGame` (which already exposes minerals/gas)
   or become an `EconomyContext` port — that decision belongs with Stage G/I,
   so do not start it here.
+
+  The wall-clock formatters were attempted as an extraction and **reverted**
+  (2026-10-09): the split is trivial but the tooling spent many edits on a text
+  substitution and no behaviour changed, so it is not worth another attempt
+  until the edit path is reliable. `A` still owns both methods.
 - **#10** Split `Selection` (235 public methods) along its existing internal
   seams; verify with a test that pins selection semantics before and after.
 - **#11** Split `AUnit` (~623 methods) — start by extracting the order-emission

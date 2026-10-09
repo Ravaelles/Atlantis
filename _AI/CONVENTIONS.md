@@ -322,19 +322,27 @@ measurements, this section is the pointer so nobody has to rediscover them.
   owner-only tier: they are the best signal we have, but too slow for the
   inner loop.
 
-## 13. Command timeout (owner's ruling, 2026-10-07; shortened same day)
+## 13. Command timeout: 120 seconds, everywhere (owner's ruling, 2026-10-09)
 
-- **Every command must be run with a 6-minute (360 s) timeout.** A long-running
-  command that is not killed makes the session look hung, and the time is gone
-  for good. This has happened more than once. If a command needs more than six
-  minutes it is not slow, it is hung, misconfigured or headed for the wrong
-  approach - kill it and pick a different shape (background + poll, a shorter
-  horizon, or ask the owner for a decision).
-- Concretely: prefix anything that can block with `timeout 360`, and prefer a
-  background operation plus a short poll over a foreground wait.
-  `scripts/run-tests.sh` is already bounded by its own 40 s budget; the rule
-  matters for builds, game runs, downloads and any script whose runtime is not
-  obviously seconds.
+- **Every command, script and test run carries a hard 120-second (2-minute)
+  timeout. No exceptions without the owner's explicit permission for that
+  specific run.** This replaces the earlier 360 s rule and applies to everything:
+  builds, test suites, OpenBW simulations, `git`, greps, downloads. If a step
+  cannot finish in two minutes it is hung, misconfigured, or the wrong approach -
+  stop it and change the shape of the work (background + poll, a shorter horizon,
+  a narrower scope, or ask the owner).
+- **This is a work requirement, not a restriction.** Work that cannot complete in
+  two minutes is work that stalls the session: waiting 10-90 minutes has produced
+  no progress repeatedly. A time-out is the signal to shrink the step until it
+  fits, not to raise the limit.
+- Concretely: prefix anything that can block with `timeout 120`. Prefer a
+  background operation plus a short poll over a foreground wait. If a legitimate
+  step genuinely needs longer, **ask the owner first and name the exact command
+  and the reason** - do not silently pass `timeout 360`.
+- `scripts/run-tests.sh` is already bounded by its own 40 s budget, so the rule
+  bites on builds, game runs, downloads and any script whose runtime is not
+  obviously seconds. §17 states the same 120 s as a hard limit for OpenBW
+  simulations, where the script itself refuses a larger value.
 - When a command is killed by the timeout, say so in the summary and do not
   claim its result. A timed-out run is not evidence of anything except that the
   step needs a different shape.
@@ -455,8 +463,25 @@ These are the rules distilled from the OpenBW investigation
 
 ## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09)
 
-- **Every OpenBW game/simulation launched by an assistant has a hard 120-second wall-clock limit.** OpenBW is expected to complete rapidly; a run that has not completed after two minutes is hung, misconfigured, or exercising a broken path, not a valid long test.
-- Set the game’s own limit to at most 120 seconds (`GAME_SECONDS=120` for `scripts/run-openbw-e2e.sh`) and also place an outer process timeout no greater than 120 seconds around the complete runner command. Include setup/build time in that outer limit; if jar building is needed, build it separately with its own normal command timeout, then freshness-check it before starting the game.
-- Do not extend the timeout to get a result. A timed-out run is **inconclusive**, not a pass/fail verdict; record the timeout and inspect the logs. Do not claim game verification without a completed runner verdict.
-- This section narrows §13 for OpenBW simulation commands. §13 still applies to non-simulation commands (builds, downloads, test suites): 360 seconds maximum. §14 still forbids Wine/StarCraft unless the owner asks for exactly that.
-- Run OpenBW only through `scripts/run-openbw-e2e.sh` so host/client lifetime and cleanup remain one command (see §15). Never launch the host separately to evade the 120-second cap.
+- **Every OpenBW game/simulation has a hard 120-second wall-clock limit**
+  (`TIMEOUT_SECONDS=120`, set once at the top of `scripts/run-openbw-e2e.sh`).
+  OpenBW is expected to complete rapidly; a run that has not completed after two
+  minutes is hung, misconfigured, or exercising a broken path, not a valid long
+  test. This is the same 120 s as §13, applied to the simulation itself.
+- **The game also ends by itself at 20 game minutes** (`INGAME_TIME=60*20`,
+  passed as `FORCE_END_GAME_AFTER_INGAME_SECONDS`). Whichever limit is reached
+  first ends the game cleanly - the bot exits itself, so the host outlives the
+  client and is torn down by the script.
+- Pass an outer `timeout 120` around the complete runner command. Include
+  setup time in that limit; if a jar build is needed, build it as its own
+  command first, then freshness-check it before hosting the game.
+- Do not extend the timeout to get a result. A timed-out run is **inconclusive**,
+  not a pass/fail verdict; record the timeout and inspect the logs. Do not claim
+  game verification without a completed runner verdict.
+- The script refuses a widened `TIMEOUT_SECONDS`, and `Env` re-caps
+  `FORCE_END_GAME_AFTER_REAL_SECONDS` at 120 so a hand-edited ENV cannot widen
+  it. `OpenBWConfig.TIMEOUT_SECONDS` is the same 120 on the Java side.
+- Run OpenBW only through `scripts/run-openbw-e2e.sh` so host/client lifetime and
+  cleanup remain one command (see §15). Never launch the host separately to evade
+  the 120-second cap. §14 still forbids Wine/StarCraft unless the owner asks for
+  exactly that.
