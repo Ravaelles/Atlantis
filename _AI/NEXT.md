@@ -331,17 +331,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
   blamed only builder recognition (disproved by the still-looping run above).
 
-- **#49 - `OnGameEnd._executed` is a latch that never resets, and one branch
-  returns without setting it.** `OnGameEnd.execute` opens with
-  `if (_executed) return;`, and the `Env.isTesting()` branch calls `exitGame` and
-  returns **without** setting `_executed = true`. Two consequences:
-  (a) a first, spurious `onEnd` permanently disarms every later one - the real
-  end-of-game cleanup then never runs; (b) the flag is `static`, so it also leaks
-  between games in one JVM (the same class of leak `UnitsArchive.reset()` and
-  `ReservedResources.reset()` were fixed for).
-  Not proven to be the cause of #48 (instrumentation ruled that out), but it is a
-  real defect on the exit path and cheap to pin with a test.
-
 - **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
 

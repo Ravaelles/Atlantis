@@ -291,3 +291,31 @@ while that is pending.
   scripts/run-openbw-e2e.sh "<map>" Protoss Protoss` (see
   `_AI/IDEA-E2E-TESTS.md`). Never launch Wine/StarCraft (CONVENTIONS §14).
 - M6 closes with an owner-verified LIVE run and the legacy tree deleted.
+
+
+## Resumed NEXT work (2026-10-09, autonomous continuation)
+
+### NEXT #49 closure recorded
+The `OnGameEnd` reset/one-way latch fix is in commit `3d5c6dac`; `OnGameEndLatchTest`
+exercises the latch reset and one-way invariant, and the fast suite (345 passing,
+0 failing) plus ArchUnit (7/7) passed at the current tree. Removed #49 from `NEXT.md`
+per CONVENTIONS §7. This is independent from the outstanding OpenBW blocker.
+
+### NEXT #47/#48: fresh OpenBW evidence
+Rebuilt `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` with the canonical builder and
+confirmed freshness before the runs. The bounded 7-game-minute default-path run
+attached but failed the expected Pylon/Gateway/kills/balance assertions and logged
+`Can't find place for Pylon`; its log was subsequently overwritten by the V2 run,
+so no more detailed claim is based on that artifact.
+
+The bounded `PRODUCTION_V2=LIVE PLACEMENT=catalogue` run attached but hit the
+runner's 110-second bot cap (outer `timeout 120`; exit 124), before a verdict. Its
+log shows Pylon dispatch at a start frame already behind the current frame and
+repeated `builder committed` responses, with no completed Pylon/Gateway summary.
+The specific worker diagnostic (`BuilderManager` log in `out/openbw/bot.log`) shows
+worker #118 assigned to a Pylon at `[120,14]`, status `NOT_STARTED`; its retained
+manager history alternates `BuilderManager` and `WorkerHelpCombatUnitsFight` /
+`GatherResources` on successive frames. This is measured evidence that the simple
+unit test of `WorkerManager` does not yet explain the live manager-chain behavior.
+Per CONVENTIONS §18, inspect that worker's history before changing manager ordering.
+No placement or builder patch is justified yet; #47 and #48 remain open.
