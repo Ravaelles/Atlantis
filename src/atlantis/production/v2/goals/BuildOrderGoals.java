@@ -34,6 +34,7 @@ public final class BuildOrderGoals {
         int supplyUsed = progress.supplyUsed();
         Map<String, Integer> occurrences = new HashMap<>();
         Map<String, Integer> producedCache = new HashMap<>();
+        java.util.Set<String> emittedTypes = new java.util.HashSet<>();
 
         for (int line = 0; line < rows.size(); line++) {
             BuildOrderRow row = rows.get(line);
@@ -52,6 +53,14 @@ public final class BuildOrderGoals {
             int missing = after - Math.max(before, produced);
             if (missing <= 0) continue;
             if (!supplyGateOpen(row.minSupply(), supplyUsed)) continue;
+
+            // Build-order rows are sequential instructions, not independent
+            // requests. Several future Pylon rows may have open supply gates in
+            // the same frame; emitting every one gives the stateless scheduler
+            // duplicate goals for one construction (measured in OpenBW, NEXT #48).
+            // After the earliest outstanding row for this item is emitted, later
+            // occurrences wait for the game snapshot to count it as produced.
+            if (!emittedTypes.add(id)) continue;
 
             goals.add(new ProductionGoal(
                     row.item(),

@@ -166,6 +166,32 @@ public class ProductionSchedulerTest {
     // ---- priority and ordering --------------------------------------------
 
     @Test
+    public void openingSchedulesOnePylonBeforeGatewayDespiteDuplicateSupplyGoal() {
+        FakeProducible pylon = building("Pylon", 100, 0, 450, new ArrayList<>(), "Probe");
+        FakeProducible gateway = building("Gateway", 150, 0, 600,
+                Collections.<Producible>singletonList(pylon), "Probe");
+        FakePlanner planner = new FakePlanner();
+        ProductionGoal openingPylon = new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 1, 0,
+                TargetPlacement.anywhere());
+        ProductionGoal gatewayRow = new ProductionGoal(gateway, ProductionGoal.PRIORITY_BASEDEFENSE, 1, 0,
+                TargetPlacement.anywhere());
+        ProductionGoal dynamicSupplyDuplicate = new ProductionGoal(pylon, ProductionGoal.PRIORITY_EMERGENCY, 1, 0,
+                TargetPlacement.anywhere());
+
+        ProductionPlan plan = scheduler(new FakeRegistry(), planner, ExistingItems.NONE).schedule(
+                Arrays.asList(openingPylon, gatewayRow, dynamicSupplyDuplicate),
+                new ResourceTimeline(0, 2000, 500, 0, 8, 16));
+
+        assertEquals(1, countOf(plan, "Pylon"),
+                "build-order and dynamic supply sources must not reserve the same Pylon twice: " + plan);
+        assertEquals(1, countOf(plan, "Gateway"), "the opening must proceed to one Gateway: " + plan);
+        assertEquals(2, planner.reservations,
+                "the placement planner should reserve only the Pylon and Gateway, not the duplicate Pylon");
+        assertTrue(plan.firstOf(gateway).startFrame() >= plan.firstOf(pylon).completionFrame(),
+                "Gateway must remain gated by the first Pylon completing");
+    }
+
+    @Test
     public void higherPriorityGoalTakesTheEarlierFrame() {
         FakeRegistry registry = new FakeRegistry().add("Gateway", 0);
         FakeProducible first = unit("Zealot", 100, 0, 2, 240, "Gateway");

@@ -47,6 +47,8 @@ public final class ProductionScheduler {
     private final Map<String, Integer> plannedAvailable = new HashMap<>();
     /** Facility ids consumed this pass (larvae). */
     private final Set<Integer> consumed = new HashSet<>();
+    /** Building goals already accepted this pass, keyed by item and placement. */
+    private final Set<String> plannedBuildingGoals = new HashSet<>();
     private int nextPlannedFacilityId;
 
     public ProductionScheduler(ProducerFacilityRegistry facilityRegistry, PlacementPlanner placementPlanner) {
@@ -66,6 +68,7 @@ public final class ProductionScheduler {
         facilitiesByType.clear();
         plannedAvailable.clear();
         consumed.clear();
+        plannedBuildingGoals.clear();
         nextPlannedFacilityId = -1;
 
         placementPlanner.startPass();
@@ -85,6 +88,8 @@ public final class ProductionScheduler {
 
     private void scheduleGoal(ProductionGoal goal, ResourceTimeline timeline, ProductionPlan plan) {
         Producible item = goal.item();
+        if (item.requiresPlacement() && !plannedBuildingGoals.add(buildingGoalKey(item, goal.placement()))) return;
+
         int earliest = Math.max(goal.targetStartFrame(), timeline.originFrame());
 
         int prerequisitesReady = ensurePrerequisites(item, earliest, timeline, plan, new HashSet<String>());
@@ -123,6 +128,12 @@ public final class ProductionScheduler {
      * requested).
      * </p>
      */
+    private String buildingGoalKey(Producible item, TargetPlacement placement) {
+        return item.id() + "|" + placement.mode() + "|" + placement.areaName()
+                + "|" + placement.tileX() + "," + placement.tileY()
+                + "|" + placement.exactTileX() + "," + placement.exactTileY();
+    }
+
     private int alreadyAvailableOrComing(Producible item, ProductionGoal goal) {
         if (goal.isContinuous()) return Integer.MAX_VALUE;
 

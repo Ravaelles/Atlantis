@@ -115,16 +115,20 @@ public class BuildOrderGoalsTest {
     }
 
     @Test
-    public void aLaterRowWithAnOpenGateIsNotBlockedByAnEarlierUnfinishedOne() {
-        // Gateway at 10 is missing; supply is 16, so the second Pylon is also wanted.
-        Progress progress = new Progress(16).with(PYLON, 1);
+    public void laterRowsWaitForTheEarliestUnproducedOccurrenceOfTheirType() {
+        // Once supply 16 is reached, the build order has asked for its second
+        // Pylon, but the first one is still missing. The same type must not emit
+        // both rows as simultaneous goals; otherwise LIVE schedules duplicate
+        // Pylons on the same tile (NEXT #48, measured on OpenBW).
+        Progress progress = new Progress(16);
 
         List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), progress);
 
-        assertEquals(2, goals.size());
-        assertEquals(GATEWAY.id(), goals.get(0).item().id());
-        assertEquals(PYLON.id(), goals.get(1).item().id());
-        assertTrue(goals.get(0).priority() <= goals.get(1).priority(), "file order survives as priority");
+        assertEquals(2, goals.size(), "first Pylon and Gateway rows are due: " + goals);
+        assertEquals(PYLON.id(), goals.get(0).item().id());
+        assertEquals(1, goals.get(0).count());
+        assertEquals(GATEWAY.id(), goals.get(1).item().id());
+        assertEquals(1, goals.get(1).count());
     }
 
     @Test
