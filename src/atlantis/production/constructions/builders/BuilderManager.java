@@ -33,24 +33,16 @@ public class BuilderManager extends Manager {
 
     @Override
     protected Manager handle() {
-        if (update()) return usedManager(this);
+        // Don't disturb unit that are already constructing.
+        if (unit.isConstructing() || unit.isMorphing()) return usedManager(this);
 
-        return handleSubmanagers();
-    }
-
-    private boolean update() {
-
-        // Don't disturb unit that are already constructing
-        if (unit.isConstructing() || unit.isMorphing()) return true;
-
-        if (handleConstruction()) return true;
-
-        return false;
-    }
-
-    private boolean handleConstruction() {
         Construction construction = ConstructionRequests.constructionFor(unit);
         if (construction != null) {
+            if (atlantis.config.env.Env.isLocal() && A.now() % (30 * 60) == 0) {
+                ErrorLog.printMaxOncePerMinute("Builder diagnostic: unit=" + unit + " construction="
+                    + construction.buildingType() + " status=" + construction.status()
+                    + " pos=" + construction.buildPosition() + " managerHistory=" + unit.managerLogs());
+            }
 //            System.err.println("@ " + A.now() + " - construction.status() = " + construction.status());
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
@@ -60,7 +52,15 @@ public class BuilderManager extends Manager {
                     construction.assignOptimalBuilder();
                 }
 
-                return (new TravelToConstruct(unit)).travelWhenReady(construction);
+                boolean moved = (new TravelToConstruct(unit)).travelWhenReady(construction);
+                if (moved) return usedManager(this);
+
+                // The assignment itself owns this worker even on a frame when
+                // TravelToConstruct cannot issue a move (e.g. wait-for-resources).
+                // Preserve BuilderManager's safety/cancel submanagers, then claim
+                // the worker so WorkerDefence/WorkerHelp/Gather cannot hijack it.
+                Manager safetyManager = handleSubmanagers();
+                return safetyManager != null ? safetyManager : usedManager(this, "BuilderWaiting");
             }
 //            else if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
 //                // Do nothing - construction is pending
@@ -71,9 +71,9 @@ public class BuilderManager extends Manager {
         }
         else {
             ErrorLog.printMaxOncePerMinute("construction null for " + unit);
-            return false;
         }
-        return false;
+
+        return handleSubmanagers();
     }
 
     // =========================================================

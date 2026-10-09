@@ -39,16 +39,39 @@
   guarded in `BwapiOrderSink.train`, `ProduceZealot.produceZealot`,
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
-## Current work
-- **NEXT #48 is the live blocker (blocks #47 and the cut-over).** With
-  `PRODUCTION_V2=LIVE` the same building is re-issued on every frame
-  (`Pylon@1156` dispatched at frames 1990-2001, `builder committed` each time,
-  never built), so the game never reaches its end and the process is killed by the
-  outer timeout. Without LIVE the identical command ends itself cleanly
-  (`Total time: 188 seconds`, exit 0), so the defect is in the LIVE dispatch path.
-  Also confirmed: Pylon is 2x2 in the engine jar, not 4x3 as an earlier note said.
-  Depending on progress, see `PLACEMENT-CUTOVER-PLAN.md` for the ordered plan and
-  #49 for a separate exit-path latch defect found while investigating.
+## Current work: verify the interrupted worker-defense / E2E cycle
+The owner reports the manual StarCraft run builds both Pylon and Gateway. This is
+owner-observed behavior, not an OpenBW artifact; preserve that distinction.
+
+1. **Builder ownership rule implemented and tested.** `WorkerManager` gives
+   `BuilderManager` first priority; `BuilderManager` retains an assigned
+   `NOT_STARTED` construction even when `TravelToConstruct` cannot issue a move
+   in that frame, after its own safety submanagers. `WorkerDefenceManager` excludes
+   assigned builders and `WorkerHelpCombatUnitsFight` declines them. The regression
+   drives the actual `WorkerManager` chain and checks `unit.managerLogs()` contains
+   BuilderManager but not WorkerHelp/Gather. Focused `WorkerDefenceTest`: 12/12.
+   Commit pending this verification: this cycle.
+2. **#48 duplicate building goals.** `BuildOrderGoals` emits only the earliest
+   unsatisfied occurrence per type; `ProductionScheduler` deduplicates identical
+   building type+placement across sources. Regression test pins one Pylon and one
+   Gateway despite duplicate supply intent.
+3. **#47 actual-result assertions.** `GameSummary` reports Protoss Pylon/Gateway
+   counts; runner checks structures, time, kills, balance and placement refusal.
+   Offline self-test rejects the 0/0-building fixture.
+4. **Jar callback crash report.** Owner saw
+   `NoClassDefFoundError: atlantis/combat/squad/AssignUnitToSquad`. Exact crashed
+   artifact unavailable; current jar is fresh, contains both callback classes,
+   and the builder asserts they are packaged. Remains unreproduced.
+5. **Verification:** focused `WorkerDefenceTest` 12/12; prior fast suite 339/0
+   and ArchUnit 7/7. After the latest builder ownership change, rerun fast suite
+   and ArchUnit before commit. The fresh deployed jar passed fingerprint and
+   Java 8 checks; callback classes are packaged. OpenBW rerun was refused because
+   the owner’s StarCraft/ChaosLauncher was active; do not terminate it.
+6. **Owner manual-SC confirmation (not OpenBW):** Pylon and Gateway both built.
+   Record separately from engine-test evidence.
+7. **#47 remains open:** resume bounded OpenBW after the owner game ends. Require
+   Pylon>=1, Gateway>=1, game>=420s, kills>=12 and <=40, balance>=-200, and no
+   placement refusal. Inspect the assigned builder’s `managerLogs()` if it stalls.
 
 ### Reverted: NEXT #9 wall-clock extraction attempt
 The `A` date/time formatter split into a new `ATime` was started and **reverted**:
