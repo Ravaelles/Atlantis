@@ -485,3 +485,10 @@ These are the rules distilled from the OpenBW investigation
   cleanup remain one command (see §15). Never launch the host separately to evade
   the 120-second cap. §14 still forbids Wine/StarCraft unless the owner asks for
   exactly that.
+
+
+## 18. Unit-behaviour debugging: inspect manager history first (owner's ruling, 2026-10-09)
+
+- When diagnosing what a unit did, **inspect `unit.managerLogs()` before inferring behavior from current state or editing manager order**. It records the recent active manager sequence and often identifies the manager that took control or prevented a later manager from running.
+- Use the log for the specific unit and frame window under investigation; do not dump every unit's history or add per-frame logging unless the focused history is insufficient. Preserve the output in the test/run evidence when it establishes the cause.
+- A manager appearing in the history proves it ran; a later manager missing from the sequence may indicate that an earlier manager handled the unit first. Verify that interpretation against the manager chain and the actual return contract (`Commander` vs `Manager`) before changing ordering.

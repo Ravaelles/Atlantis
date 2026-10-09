@@ -28,17 +28,21 @@ WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 #
 # Usage:
 #   bash scripts/run-openbw-e2e.sh [map] [race] [enemy-race]
-#   bash scripts/run-openbw-e2e.sh --self-test     # no game, checks setup only
+#   bash scripts/run-openbw-e2e.sh --self-test              # setup only
+#   bash scripts/run-openbw-e2e.sh --self-test-assertions   # test scenario assertions, no game
 #
 # Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
 # extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
 #
-# Scenario assertions (all optional, all from the log `GameSummary` prints):
+# Scenario assertions (optional): game summary counters plus log checks.
 #   EXPECT_MIN_INGAME_SECONDS=<n>   fail if the game ended earlier than n
-#   EXPECT_MIN_KILLED=<n>           fail if we killed fewer than n units
-#   EXPECT_MAX_KILLED=<n>           fail if we killed more than n units
+#   EXPECT_MIN_KILLED=<n>           fail if we killed fewer units
+#   EXPECT_MAX_KILLED=<n>           fail if we killed more units
+#   EXPECT_MIN_PYLONS=<n>           fail if fewer Protoss Pylons exist at end
+#   EXPECT_MIN_GATEWAYS=<n>         fail if fewer Protoss Gateways exist at end
 #   EXPECT_MIN_RESOURCE_BALANCE=<n> fail if Resource killed/lost < n
+#   EXPECT_NO_PLACEMENT_FAILURES=1  fail if "Can't find place" is logged
 # When none is set the script only reports the verdict, as before.
 #
 # Requirements: a JDK, the bot jar, and the StardustDevEnvironment build tree.
@@ -79,7 +83,9 @@ ENEMY_RACE="${3:-Zerg}"
 ENEMY_COUNT="${ENEMY_COUNT:-1}"
 
 SELF_TEST=0
+ASSERTION_SELF_TEST=0
 [ "${1:-}" = "--self-test" ] && SELF_TEST=1
+[ "${1:-}" = "--self-test-assertions" ] && ASSERTION_SELF_TEST=1
 
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
@@ -96,6 +102,28 @@ if [ "$TIMEOUT_SECONDS" -gt 120 ]; then
 fi
 if [ "$TIMEOUT_SECONDS" -le 0 ]; then
   fail "TIMEOUT_SECONDS must be positive, got $TIMEOUT_SECONDS"
+fi
+
+if [ "$ASSERTION_SELF_TEST" -eq 1 ]; then
+  SELF_LOG="$(mktemp)"
+  printf '%s\n' '### Total time: 428 seconds. ###' \
+    '### Units killed/lost: 12/3 ###' '### Resource killed/lost: +450 ###' \
+    '### Protoss buildings: Pylons=1 Gateways=1 ###' > "$SELF_LOG"
+  EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
+    EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_MIN_RESOURCE_BALANCE=-200 \
+    bash scripts/assert-openbw-scenario.sh "$SELF_LOG"
+  printf '%s\n' '### Total time: 428 seconds. ###' \
+    '### Units killed/lost: 0/3 ###' '### Resource killed/lost: -300 ###' \
+    '### Protoss buildings: Pylons=0 Gateways=0 ###' "Can't find place for Pylon" > "$SELF_LOG"
+  if EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
+       EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_MIN_RESOURCE_BALANCE=-200 \
+       EXPECT_NO_PLACEMENT_FAILURES=1 bash scripts/assert-openbw-scenario.sh "$SELF_LOG"; then
+    rm -f "$SELF_LOG"
+    fail "scenario assertion self-test missed the broken fixture"
+  fi
+  rm -f "$SELF_LOG"
+  say "scenario assertion self-test OK (valid fixture passes; broken fixture fails)"
+  exit 0
 fi
 
 # Nested exits stay strictly ordered, and the host must OUTLIVE the client:
@@ -365,61 +393,17 @@ if [ "$BOT_EXIT" -ne 0 ]; then
 fi
 
 # === Scenario assertions ===================================================
-# Read the facts `GameSummary` already prints. Each is optional; with none set
-# this block is a no-op and the script only reports the verdict.
-log_number() {
-  local pattern="$1"
-  grep -oE "$pattern" "$BOT_LOG" 2>/dev/null | tail -1 | grep -oE '[-0-9]+' | tail -1
-}
-
-ASSERT_FAILED=0
-ASSERT_ANY=1
-INGAME_SECONDS="$(log_number 'Total time: [-0-9]+')"
-KILLED="$(log_number 'Units killed/lost: *[0-9]+')"
-RESOURCE_BALANCE="$(log_number 'Resource killed/lost: *[-+]?[0-9]+')"
-
-say "verdict: ingame=${INGAME_SECONDS:-?}s killed=${KILLED:-?} resourceBalance=${RESOURCE_BALANCE:-?}"
-
-# A run in which the client never attached is a FAILURE, not a pass. Without
-# this, a dead host (measured 2026-10-09: killed before the client connected)
-# reported `bot exit code: 0` and looked green while no game was ever played.
+# A run in which the client never attached is a failure, even without optional
+# expectations. Otherwise an empty/logless run can look like a pass.
 if ! grep -q 'HELLO_ATLANTIS' "$BOT_LOG" 2>/dev/null; then
   say "ASSERT FAILED: the bot never attached - no HELLO_ATLANTIS in $BOT_LOG"
-  ASSERT_FAILED=1
+  exit 1
 fi
-
-# assert_at_least <env-var-value> <actual> <label> <var-name-for-message>
-assert_at_least() {
-  [ -n "$1" ] || return 0
-  ASSERT_ANY=1
-  if [ -z "$2" ] || [ "$2" -lt "$1" ]; then
-    say "ASSERT FAILED: $3 was ${2:-?}, expected >= $1"
-    ASSERT_FAILED=1
-  fi
-}
-
-# assert_at_most <env-var-value> <actual> <label>
-assert_at_most() {
-  [ -n "$1" ] || return 0
-  ASSERT_ANY=1
-  if [ -z "$2" ] || [ "$2" -gt "$1" ]; then
-    say "ASSERT FAILED: $3 was ${2:-?}, expected <= $1"
-    ASSERT_FAILED=1
-  fi
-}
-
-assert_at_least "${EXPECT_MIN_INGAME_SECONDS:-}" "$INGAME_SECONDS" "in-game seconds"
-assert_at_least "${EXPECT_MIN_KILLED:-}" "$KILLED" "kills"
-assert_at_most  "${EXPECT_MAX_KILLED:-}" "$KILLED" "kills"
-assert_at_least "${EXPECT_MIN_RESOURCE_BALANCE:-}" "$RESOURCE_BALANCE" "resource balance"
-
-if [ "$ASSERT_FAILED" -ne 0 ]; then
+if ! bash "$ATLANTIS_DIR/scripts/assert-openbw-scenario.sh" "$BOT_LOG"; then
   say "SCENARIO FAILED (see $BOT_LOG)"
   exit 1
 fi
-
-if [ "$ASSERT_ANY" -ne 0 ]; then
+if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}${EXPECT_MIN_KILLED:-}${EXPECT_MAX_KILLED:-}${EXPECT_MIN_RESOURCE_BALANCE:-}${EXPECT_NO_PLACEMENT_FAILURES:-}" ]; then
   say "SCENARIO PASSED"
 fi
-
 exit "$BOT_EXIT"

@@ -6,6 +6,7 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 
@@ -32,7 +33,9 @@ public class GameSummary {
                 (totalS >= 90 ? "\n\n" : "\n### Total frames: " + A.now() + " frames. ###\n\n") +
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +
                 "### Resource killed/lost: " + (resourceBalance > 0 ? "+" + resourceBalance : resourceBalance) +
-                " ###\n"
+                " ###\n" +
+                "### Protoss buildings: Pylons=" + Select.ourWithUnfinished(AUnitType.Protoss_Pylon).count()
+                    + " Gateways=" + Select.ourWithUnfinished(AUnitType.Protoss_Gateway).count() + " ###\n"
         );
 
         if (A.isUms()) {

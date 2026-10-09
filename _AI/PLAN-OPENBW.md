@@ -32,6 +32,8 @@ verdict, exactly as before:
 | `EXPECT_MIN_INGAME_SECONDS` | the game ended earlier than this in-game time |
 | `EXPECT_MIN_KILLED` | we killed fewer units |
 | `EXPECT_MAX_KILLED` | we killed more units (e.g. the rush should be survivable, not farmed) |
+| `EXPECT_MIN_PYLONS` | fewer Protoss Pylons exist at game end (completed or unfinished) |
+| `EXPECT_MIN_GATEWAYS` | fewer Protoss Gateways exist at game end (completed or unfinished) |
 | `EXPECT_MIN_RESOURCE_BALANCE` | `Resource killed/lost` is below this (use `-200` for "roughly even") |
 
 Example - survive the opening for 7 game minutes with a near-even trade:
@@ -39,6 +41,7 @@ Example - survive the opening for 7 game minutes with a near-even trade:
 ```bash
 TIMEOUT_SECONDS=120 INGAME_TIME=$((60*7)) \
   EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
+  EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_NO_PLACEMENT_FAILURES=1 \
   EXPECT_MIN_RESOURCE_BALANCE=-200 \
   timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
@@ -48,8 +51,9 @@ non-zero (with `SCENARIO FAILED`) when an expectation is not met.
 
 **Measured 2026-10-09:** the run above finishes in ~5 s of wall clock for 428 s
 of game time (OpenBW is that fast), and the assertions work - the first run
-correctly reported `killed=0`, i.e. the bot killed nothing in 7 minutes because
-it never got a Pylon (`Can't find place for Pylon` at 0:39, CONVENTIONS §17 does
+correctly reported `killed=0`, Pylons=0, Gateways=0 and resourceBalance=-300 -
+the bot made no opening structures and killed nothing because it never got a Pylon
+(`Can't find place for Pylon` at 0:39, CONVENTIONS §17 does
 not hide that). `GameSummary` prints `Defeat` even on a deliberate limit stop,
 so read the verdict line, never `Defeat`.
 
