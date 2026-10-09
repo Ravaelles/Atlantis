@@ -136,9 +136,6 @@ itself, #5, is design work and out of that order's scope).
 
 ## Stage G — race strategies
 
-- **#7** Design the race-strategy seam (which decisions move out of the
-  `protoss`/`terran`/`zerg` packages into a `RaceStrategy` port) and record
-  it as an ADR before touching the 241 branching sites.
 - **#8** Implement the seam and migrate one subsystem end-to-end as proof
   (candidate: production), measuring that the branching-site count drops
   without behaviour change.

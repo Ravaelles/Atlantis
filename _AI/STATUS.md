@@ -40,15 +40,45 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **NEXT #15 partial — Protoss deployment verified, Terran target unresolved.**
-  `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` rebuilt with the canonical builder;
-  freshness check passed (`94e518…`) and classfile major is 52 (Java 8).
-  OpenBW verification: client attached and exited 0; `Total time: 843 seconds`,
-  no exception. It logged `Can't find place for Pylon` at 0:39, so the jar was
-  genuinely played but placement remains a separate open blocker. Terran output
-  `/sc-ai/BOTS/AtlantisT/AI/Atlantis.jar` is absent; scbw manages opponent cache.
-  #15 remains open pending the owner identifying/confirming the Terran deployed
-  target. Run logs: `out/openbw/bot.log`, `out/openbw/server.log`.
+- **NEXT #7 closed (ADR drafted, owner decision still required before #8).**
+  `DOCS/adr/0007-race-strategy-seams.md` defines context-local ports (not a
+  global RaceStrategy), documents the existing static Production V2 engine and
+  its concrete instance-injection change for #8, limits the pilot to five type
+  identities, preserves the earlier short-circuit/goal behavior, and sets tests
+  and branch-count evidence. Checked references to ADR 0001, the context map,
+  the Production V2 classes and placement precedent; no runtime code changed.
+  ADR remains Proposed, as required; #8 must not start until owner acceptance.
+
+### Blocked: NEXT #5 — per-frame query service
+`Select` exposes static methods backed by static caches, and the current
+`FramePipeline`/bootstrap does not construct or pass a per-frame query service.
+An instance-owned `core.world` cache cannot replace a static Select cache without
+threading a service through its static call graph; adding another static holder
+would violate the ownership intent and CONVENTIONS §5. #5 needs an explicit
+application-owned service lifecycle (or a decision on temporary resolution from
+the static facade) before a behavior-neutral migration is possible. Do not
+relabel a new static cache as a service.
+
+### Blocked: NEXT #34 — real-opponent scenario follow-ups
+The current OpenBW harness accepts exactly one BWAPI client; its opponent comes
+from the engine auto-menu and is race-only. A second Java bot cannot attach, and a
+scripted rusher requires a UMS map with units/triggers that is not present in this
+workspace. Wine/scbw opponent runs belong to the owner and cannot be launched by
+this model. A completed single-client OpenBW game vs engine AI verifies attachment
+but is not the requested 4pool/9pool real-opponent twin. Resume #34 when a scripted
+UMS map is supplied or the harness/owner provides the intended opponent runner.
+
+### Partial: NEXT #15 — deployed Protoss jar; Terran target unresolved
+`/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` rebuilt canonically; freshness fingerprint
+`94e518…` matches and bytecode major is 52 (Java 8). OpenBW completed: client
+attached, exit 0, `Total time: 843 seconds`, no exception. The log reports
+`Can't find place for Pylon` at 0:39, so this verifies the jar was played, not
+that placement works. The checked Terran output `/sc-ai/BOTS/AtlantisT/AI/Atlantis.jar`
+does not exist; scbw manages downloaded opponent caches. Workspace listing outside
+`/sc-ai/Atlantis` was refused by the boundary tool; did not attempt a workaround.
+#15 remains open until the owner identifies/approves the Terran deployment path.
+Evidence: `out/openbw/bot.log`, `out/openbw/server.log`. Commits:
+`bd451818` (Java 8 test fixture repair), `30f4d354` (partial jar verification).
 
 ### Closed: NEXT #41
 `ProtossMissionDefendAllowsToAttack` now requires `hasEnemyForEval()` for the
