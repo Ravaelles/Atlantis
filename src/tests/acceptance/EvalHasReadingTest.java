@@ -82,8 +82,8 @@ public class EvalHasReadingTest extends WorldStubForTests {
 
         world(2, new FakeUnit[]{nexus, probe, zealot}, fakeEnemies(distantMarine), () -> {
             Select.clearCache();
-            MissionDefend defend = new MissionDefend();
-            defend.setFocusPointManager(new FixedDefendFocusPoint(
+            TestMissionDefend defend = new TestMissionDefend();
+            defend.useFocusPoint(new FixedDefendFocusPoint(
                 new AFocusPoint(nexus.position(), nexus, "TestDefendFocus")));
             Squad squad = new TestSquad(defend);
             squad.addUnit(zealot);
@@ -99,6 +99,12 @@ public class EvalHasReadingTest extends WorldStubForTests {
                 new ProtossMissionDefendAllowsToAttack(zealot).allowsToAttackEnemyUnit(distantMarine),
                 "the independent recent-attack exception still permits targets near the defend focus");
         });
+    }
+
+    private static final class TestMissionDefend extends MissionDefend {
+        private void useFocusPoint(atlantis.combat.advance.focus.MissionFocusPoint focusPoint) {
+            this.focusPointManager = focusPoint;
+        }
     }
 
     private static final class TestSquad extends Squad {
