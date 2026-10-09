@@ -271,41 +271,58 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 
-- **#48 - under `PRODUCTION_V2=LIVE` the build order is re-issued every frame and
-  the run dies on the outer timeout (blocks #47).** Measured 2026-10-09, twice.
+- **#48 - under `PRODUCTION_V2=LIVE` the plan contains DUPLICATE buildings that are
+  re-dispatched every frame, so the game never ends and the run dies on the outer
+  timeout (blocks #47).** Measured 2026-10-09, three times.
 
-  **What the log shows (run at `TIMEOUT_SECONDS=60`, in-game 3 min):**
+  **What the log shows** (`TIMEOUT_SECONDS=90`, in-game 3 min):
   ```
-  PRODUCTION_V2 @@1990 plan=2 [Probe@2440-2740 by#70 Pylon@1156-1606 ] issued: OK Pylon@1156 (builder committed)
-  PRODUCTION_V2 @@1991 plan=2 [Probe@2441-2741 by#70 Pylon@1156-1606 ] issued: OK Pylon@1156 (builder committed)
-  ... to @@2001 ...
+  @@3214 plan=3 [Probe@3664-3964 by#70 Pylon@2234-2684 Pylon@2234-2684 ]
+       issued: OK Pylon@2234 (builder committed) OK Pylon@2234 (builder committed)
+  @@3215 ... identical ...
   ```
-  The Pylon's start frame is **1156** and it is dispatched "due now" at frames
-  1990-2001, reported as `builder committed` on **every** frame, and never built.
-  This is the same shape as the M6 blocker already recorded in `_AI/STATUS.md`
-  (the plan re-commits an item from the past instead of starting it once).
+  Two facts, both wrong:
+  1. **The same Pylon tile (2234) appears TWICE in one plan** and is dispatched
+     twice per frame. The goal layer asks for one Pylon, so the duplicate is
+     created inside the scheduler/dispatcher path.
+  2. **`startFrame` is ~1000 frames in the past** (2234 while the frame is 3214),
+     so `isDue` is permanently true and the item is re-issued forever - it never
+     completes and never leaves the plan.
 
-  **Consequence:** the run never reaches `Total time` / `Defeat`, the
-  `ForceExitLocallyAfterRealSeconds` line never appears, and the process is killed
-  by the outer `timeout` (exit 124 in the longer run, exit 1/no-verdict here).
-  Without LIVE the identical command ends itself cleanly (`Total time: 188
-  seconds`, exit 0), so **the defect is in the LIVE path, not in the runner**.
+  **Consequence:** the game never reaches `Total time`/`Defeat`, the
+  `ForceExitLocallyAfterRealSeconds` line never appears, and the outer `timeout`
+  kills the process (exit 124, or exit 1 with no verdict). Without LIVE the same
+  command ends itself cleanly (`Total time: 188 seconds`, exit 0), so the defect is
+  in the LIVE path.
 
-  **Two things to fix, in order:**
-  1. A dispatched building must be treated as satisfied (or its dispatch must be
-     de-duplicated per frame), so it is issued once - the M6 scheduler/dispatcher
-     fix;
-  2. Only then can the cut-over gate be judged (`PLACEMENT-CUTOVER-PLAN.md`).
+  **Root cause of the duplicate, measured in the source 2026-10-09:** the active
+  build order (`Zealot into Goon`) declares Pylons on **four separate rows**
+  (supply 8, 13, 20, 27). `BuildOrderGoals.from` emits one goal per row whose
+  supply gate is open, and its `supplyGateOpen` is `supplyUsed + lookahead >=
+  minSupply` - so once supply passes 27 **all four gates are open at the same
+  time** and four Pylon goals enter one pass. The scheduler then honours each as a
+  separate building, and the plan logs them at the same tile. This is the
+  "queue-like" behaviour the v2 design intended to remove: a build order row is a
+  *sequence*, not a set of independent wants, and the goal layer lost the ordering
+  between rows when it flattened them.
 
-  **Corrected mid-investigation:** an earlier reading of this item blamed a
-  caught init exception and the `OnGameEnd._executed` latch. Instrumentation
-  disproved it: `HELLO_ATLANTIS` is present and there is **no** exception, so the
-  game starts normally and the loop above is the whole cause. `OnGameEnd._executed`
-  being a non-resetting latch is still a real (separate) defect worth its own
-  entry.
+  **Fix so far (insufficient, measured):** `BuilderManager.isBuilder` now also
+  answers true for a `NOT_STARTED` construction, so a worker freshly assigned by
+  the v2 dispatcher is recognised as a builder before it has an order - without it
+  `BuilderManager.applies()` never ran and `TravelToConstruct` was never issued.
+  The suite is green (336/0) but the live run still loops.
 
-  Every earlier LIVE measurement - including the "Pylon placed" claim - came from
-  a process that had to be killed.
+  **Still to fix, in order:**
+  1. `BuildOrderGoals` must emit **only the next unproduced row** per item type
+     (a build order is ordered), or the scheduler must collapse goals that target
+     the same (type, placement) in one pass;
+  2. a dispatched building must stop being "due" - an item whose start frame has
+     passed and that already has a committed builder must not be re-issued by the
+     next frame's plan.
+
+  **Corrected twice mid-investigation:** an earlier reading blamed a caught init
+  exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
+  blamed only builder recognition (disproved by the still-looping run above).
 
 - **#49 - `OnGameEnd._executed` is a latch that never resets, and one branch
   returns without setting it.** `OnGameEnd.execute` opens with

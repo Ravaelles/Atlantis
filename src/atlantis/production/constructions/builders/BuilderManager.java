@@ -92,6 +92,17 @@ public class BuilderManager extends Manager {
             if (worker.equals(construction.builder())) {
                 if (construction.buildPosition() == null) return false;
 
+                // A worker assigned to a construction IS a builder, even before it
+                // has any order. Measured 2026-10-09 on OpenBW with
+                // PRODUCTION_V2=LIVE: the v2 dispatcher created the Construction and
+                // assigned this worker, but the worker had no command yet, so
+                // `isStopped()` was true, this method answered false,
+                // BuilderManager.applies() never ran, TravelToConstruct was never
+                // issued - and the same Pylon was re-dispatched every frame forever
+                // (NEXT #48). The assignment is the fact; the missing order is what
+                // TravelToConstruct exists to fix.
+                if (construction.status() == ConstructionOrderStatus.NOT_STARTED) return true;
+
                 if (We.protoss() && !worker.isStopped()) return true;
 
                 // Pending Protoss buildings allow unit to go away
