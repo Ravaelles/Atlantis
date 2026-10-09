@@ -274,11 +274,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 - **#47 — OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
 
-  1. **Attach is reliable.** Measured 2026-10-09: it is **intermittent**. Two
-     back-to-back runs attached and exited 0, while a run with
-     `PRODUCTION_V2=LIVE` sat on `No server proc ID` until the 120 s cap. The host
-     started every time (its log shows `Start the Java client now`). Cause unknown,
-     reproduce and fix; do not re-investigate "the attach is solved".
+  1. **Attach is unreliable, and the cause is now measured (2026-10-09).** The
+     host dies a few seconds after starting - observed directly: at t=4s
+     `pgrep -x BWAPILauncher` returned 1, at t=8s it returned 0, and the registry
+     entry it left behind stayed for the rest of the run. The client then reads
+     that dead PID and loops on `No server proc ID` until the 120 s cap. The run
+     log shows the host process as `Killed` before the bot had a chance to
+     attach, and `bot exit code: 0` anyway - **a false pass**. Why: the host's
+     own script says the server main-loops `while the game is not over`, so a
+     game that ends early kills the server. Two things to fix: give the host a
+     lifetime that strictly outlives the client (`HOST_KILL_SECONDS` is currently
+     equal to `TIMEOUT_SECONDS`), and make the runner treat "no attach" as a
+     failure instead of exit 0.
   2. **A Pylon is placed in a real run.** Currently NO: every run logs
      `0:39: Can't find place for Pylon` and produces nothing. **The reason is
      measured:** `PLACEMENT=catalogue` only affects Production V2, and V2 is

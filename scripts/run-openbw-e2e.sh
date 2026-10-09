@@ -98,10 +98,16 @@ if [ "$TIMEOUT_SECONDS" -le 0 ]; then
   fail "TIMEOUT_SECONDS must be positive, got $TIMEOUT_SECONDS"
 fi
 
-# Nested exits stay ordered: the bot ends its own game first, the bot JVM is
-# killed next, the host last - all within TIMEOUT_SECONDS.
-BOT_KILL_SECONDS="$TIMEOUT_SECONDS"
+# Nested exits stay strictly ordered, and the host must OUTLIVE the client:
+#   bot ends its own game  <  bot JVM killed  <  host killed
+# The host is killed last on purpose (measured 2026-10-09: with the same value
+# for both, the host died while the client was still starting), but everything
+# must still fit inside TIMEOUT_SECONDS.
 HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
+BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 10 ))
+if [ "$BOT_KILL_SECONDS" -lt 5 ]; then
+  BOT_KILL_SECONDS=5
+fi
 
 # Teardown. A leftover host holds the game table, so the next run's client
 # adopts a dead PID and loops on "Unable to open communications socket"
@@ -367,12 +373,20 @@ log_number() {
 }
 
 ASSERT_FAILED=0
-ASSERT_ANY=0
+ASSERT_ANY=1
 INGAME_SECONDS="$(log_number 'Total time: [-0-9]+')"
 KILLED="$(log_number 'Units killed/lost: *[0-9]+')"
 RESOURCE_BALANCE="$(log_number 'Resource killed/lost: *[-+]?[0-9]+')"
 
 say "verdict: ingame=${INGAME_SECONDS:-?}s killed=${KILLED:-?} resourceBalance=${RESOURCE_BALANCE:-?}"
+
+# A run in which the client never attached is a FAILURE, not a pass. Without
+# this, a dead host (measured 2026-10-09: killed before the client connected)
+# reported `bot exit code: 0` and looked green while no game was ever played.
+if ! grep -q 'HELLO_ATLANTIS' "$BOT_LOG" 2>/dev/null; then
+  say "ASSERT FAILED: the bot never attached - no HELLO_ATLANTIS in $BOT_LOG"
+  ASSERT_FAILED=1
+fi
 
 # assert_at_least <env-var-value> <actual> <label> <var-name-for-message>
 assert_at_least() {
