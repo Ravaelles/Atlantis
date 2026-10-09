@@ -16,6 +16,54 @@
 | M5 | Goal sources | **done** |
 | M6 | Cutover: LIVE verified in a game, legacy tree deleted | **partial** |
 
+## Session 2026-10-09 (later): exit-path crash, worker tweaks, NEXT sweep
+
+### Fixed: stack traces on the game-exit path (owner report)
+A run that ended through `ForceExitLocallyAfterRealSeconds` (started from the IDE)
+printed a full `java.io.IOException: Cannot run program "pkill"` traceback, through
+`ProcessHelper.killWineGameProcesses` -> `killWineProcesses` ->
+`killWineProcessesIfOnWine`. `executeInCommandLine`/`executeInCommandLineDetached`
+called `err.printStackTrace()` for failures that are **expected** on the exit path
+(no `taskkill` on Linux; the JVM cannot name Wine processes from the IDE; the
+process is exiting anyway). They now log a one-line note instead.
+- Test: `ProcessHelperExitPathTest` (3) - captures `System.err` and asserts no
+  `IOException` header, no `\tat ` frame, at most a few note lines.
+- Commit: `49f1c9dd`. Fast suite 342/0 (was 339), ArchUnit 7/7, store unchanged.
+
+### Applied: owner's `WorkerAvoidManager` (worker gather-hide under a crowd)
+The owner supplied the finished `runTowardsMineralsToBecomeTransparent` body
+(the branch stub returned `false`); applied verbatim plus the missing
+`Select` import. `MoveUnitsFromConstructionPlace` radius `6 -> 3.8` and the
+`GatherFallback` import cleanup were already in the branch (`25ab3618` "Worker
+tweaks"). Suite green.
+
+### NEXT #49 closed: `OnGameEnd._executed` latch (was one-way, and asymmetric)
+- `_executed` is now reset per game: new `OnGameEnd.reset()`, called from
+  `OnGameStarted.execute()` next to the other per-game resets. Without it the
+  latch leaked between games in one JVM (same class as
+  `UnitsArchive.reset()`/`ReservedResources.reset()`).
+- The `Env.isTesting()` branch no longer returns without setting the latch - it
+  now sets `_executed = true` before `exitGame`, so a first spurious `onEnd`
+  cannot leave the guard disarmed.
+- Seam `hasExecuted()` / `markExecutedForTest()` so the rule is assertable
+  without entering the `System.exit` path. Test: `OnGameEndLatchTest` (3).
+- Commit: (this session). Suite green, ArchUnit 7/7, store unchanged.
+
+### NEXT #48 - re-dispatch loop: root cause narrowed to `GameOrderDirector.buildAt`
+Investigated without a game run (the LIVE path is the blocker, and a bounded run
+is the gate). The plan item being **re-offered every frame is by design** (pinned
+by `ProductionDispatcherTest.committedBuildingIsReofferedEveryFrameUntilItIsFinished`),
+so re-offer is not the bug. The defect is that the re-offer is not **idempotent**:
+`GameOrderDirector.buildAt` de-dupes a pending construction only on
+`buildingType + exact tile` (lines 79-86), while `LiveExistingItems` counts a
+building as "coming" on `ConstructionRequests.countNotStartedOfType(type)` -
+which ignores the tile. When the planner hands a different tile each frame, a
+**second `Construction` for the same building is created**, and the same type
+gets dispatched again next frame. Not yet fixed; the next step is a regression
+that drives `buildAt` twice with two tiles and asserts one pending construction.
+
+## Prior session: verify the interrupted worker-defense / E2E cycle
+
 ## What exists
 
 - **Domain** (`atlantis.production.v2`): `ResourceCost`, `Producible`,

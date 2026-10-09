@@ -53,8 +53,11 @@ public class OnGameStarted {
         // Per-game state that must not leak between games (or between tests):
         // the early-scout tracker holds a defender assignment in statics, and a
         // leftover one made the bot treat a previous game's Probe as "still my
-        // defender" (owner report, 2026-10-08).
+        // defender" (owner report, 2026-10-08). The end-of-game latch is the same
+        // kind of state: without the reset a first, spurious onEnd disarms every
+        // later one and the real end-of-game cleanup never runs (NEXT #49).
         atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
+        atlantis.game.listeners.OnGameEnd.reset();
 
         handleCheckIfUmsMap();
 
