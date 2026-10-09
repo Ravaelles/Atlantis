@@ -1,15 +1,55 @@
 # OpenBW: how to run it, and what it is for
 
-Status 2026-10-08: **the client attaches and the bot plays.** One command owns the
-whole lifecycle:
+Status 2026-10-09: **the client attaches and the bot plays**, and every run is
+bounded by two hard limits (CONVENTIONS §17). One command owns the whole
+lifecycle:
 
 ```bash
-bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+TIMEOUT_SECONDS=120 INGAME_TIME=$((60*20)) \
+  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
-Optional env: `GAME_SECONDS` (default 240), `PLACEMENT=catalogue`,
-`PRODUCTION_V2=LIVE`, `ENEMY_COUNT=0|1`. All but `GAME_SECONDS` are written into
-the bot's ENV by the script.
+Limits, set once at the top of the script and refused when widened:
+
+| knob | default | meaning |
+|---|---|---|
+| `TIMEOUT_SECONDS` | `120` | wall-clock cap for the whole simulation |
+| `INGAME_TIME` | `60*20` (20 game minutes) | the bot ends the game itself at this in-game time |
+
+Other optional env: `PLACEMENT=catalogue`, `PRODUCTION_V2=LIVE`,
+`ENEMY_COUNT=0|1`. All of them (including both limits) are written into the bot's
+ENV by the script. `TIMEOUT_SECONDS > 120` is an error, by design; a longer run
+needs the owner's explicit permission for that specific command (CONVENTIONS §13).
+
+### Scenario assertions (optional)
+
+The script can also check *what happened*, by reading the facts `GameSummary`
+already prints into `bot.log`. With none of these set the script only reports the
+verdict, exactly as before:
+
+| env | fails when |
+|---|---|
+| `EXPECT_MIN_INGAME_SECONDS` | the game ended earlier than this in-game time |
+| `EXPECT_MIN_KILLED` | we killed fewer units |
+| `EXPECT_MIN_RESOURCE_BALANCE` | `Resource killed/lost` is below this (use `-200` for "roughly even") |
+
+Example - survive the opening for 7 game minutes with a near-even trade:
+
+```bash
+TIMEOUT_SECONDS=120 INGAME_TIME=$((60*7)) \
+  EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MIN_RESOURCE_BALANCE=-200 \
+  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+```
+
+The script prints `verdict: ingame=..s killed=.. resourceBalance=..` and exits
+non-zero (with `SCENARIO FAILED`) when an expectation is not met.
+
+**Measured 2026-10-09:** the run above finishes in ~5 s of wall clock for 428 s
+of game time (OpenBW is that fast), and the assertions work - the first run
+correctly reported `killed=0`, i.e. the bot killed nothing in 7 minutes because
+it never got a Pylon (`Can't find place for Pylon` at 0:39, CONVENTIONS §17 does
+not hide that). `GameSummary` prints `Defeat` even on a deliberate limit stop,
+so read the verdict line, never `Defeat`.
 
 For the *why* and the investigation that got here, read
 `_AI/CHALLENGES/OpenBW.md` first (CONVENTIONS §11a points at it). This file is the
@@ -36,11 +76,13 @@ Three settings make that true, all already in the script and in `OpenBWHost`:
    ships no `bwapi.ini` - so it must come from the environment. Without it the host
    serves a socket but publishes no registry and the client loops on "No server
    proc ID". Pinned by `OpenBWLauncherTest`.
-2. **The bot ends its own game.** `FORCE_END_GAME_AFTER_REAL_SECONDS` must be
-   below the host's timeout, or the host dies first, the client is orphaned and
-   the run reports failure after playing. The script sets three nested timeouts
-   (game < bot kill < host kill) and refuses a config over the 360 s cap
-   (CONVENTIONS §13).
+2. **The bot ends its own game, on either limit.**
+   `FORCE_END_GAME_AFTER_REAL_SECONDS` (wall clock) and
+   `FORCE_END_GAME_AFTER_INGAME_SECONDS` (game clock, 20 minutes) both call
+   `ForceExitLocallyAfterRealSeconds`, which ends the game while the host is still
+   alive. If the host dies first the client is orphaned and the run reports failure
+   after playing (measured 2026-10-08). `Env` re-caps the wall-clock value at 120,
+   so a hand-edited ENV cannot widen it.
 3. **`BWAPI_DATA_PATH` + `AI/build_orders` resolve from the directory the jar runs
    in**, or the bot plays with no production and says nothing.
 
@@ -65,7 +107,10 @@ bot. `auto_menu.enemy_race` (the default) gives a normal growing AI opponent.
 ## Hand-run recipe (owner's path)
 
 A model-run command cannot own both sides (its background processes die when the
-command returns), so two terminals:
+command returns), so two terminals. **The owner runs this path, not a model:**
+with two terminals the assistant cannot enforce the 120-second cap, and CONVENTIONS
+§14 keeps Wine/StarCraft off limits for models anyway. The bounded, one-command
+model path is `scripts/run-openbw-e2e.sh` above.
 
 Terminal A, first and left running:
 

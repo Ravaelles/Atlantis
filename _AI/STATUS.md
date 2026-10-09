@@ -40,19 +40,18 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **Owner ruling landed: 120 s everywhere (CONVENTIONS §13) and OpenBW
-  self-termination (CONVENTIONS §17).** §13 now requires `timeout 120` on every
-  command/script/test run unless the owner grants permission for that specific
-  run; the old 360 s allowance is gone. §17 fixes `TIMEOUT_SECONDS=120` and
-  `INGAME_TIME=60*20` (20 game minutes) at the top of
-  `scripts/run-openbw-e2e.sh`, refuses a widened value, and re-caps
-  `FORCE_END_GAME_AFTER_REAL_SECONDS` in `Env`.
-  Verified with the new limit itself: `timeout 120 bash scripts/run-tests.sh` ->
-  336 passed / 0 failed; `timeout 120 bash scripts/run-architecture-tests.sh` ->
-  7/7. Behaviour code and the runner landed in `d90a4ea2`; this cycle adds the
-  §13 rule and the `NEXT.md` housekeeping.
-- **Next up:** the OpenBW run itself (host + bot) still needs one bounded
-  end-to-end check after this, then back to the NEXT backlog.
+- **Backlog audit + OpenBW survival scenario.** Working through `_AI/` one file
+  at a time to make everything current (starting with `PLAN-OPENBW.md`, done).
+  The runner now supports optional scenario assertions read from the log
+  (`EXPECT_MIN_INGAME_SECONDS`, `EXPECT_MIN_KILLED`,
+  `EXPECT_MIN_RESOURCE_BALANCE`); verified on a real run.
+  **Measured 2026-10-09 (the finding that matters):** a 7-game-minute OpenBW run
+  completes in ~5 s wall clock and ends at in-game 428 s. The bot killed **0**
+  units and had resource balance 0, because it never placed its first Pylon
+  (`0:39: Can't find place for Pylon`). So the "survive an early rush" scenario
+  currently fails for the right reason, and placement - not the runner - is the
+  blocker to be fixed. Fixing that needs an owner-approved decision on the
+  placement cut-over (`redesign/03_PLACEMENT.md`).
 
 ### Reverted: NEXT #9 wall-clock extraction attempt
 The `A` date/time formatter split into a new `ATime` was started and **reverted**:

@@ -34,12 +34,17 @@ WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
 # extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
 #
+# Scenario assertions (all optional, all from the log `GameSummary` prints):
+#   EXPECT_MIN_INGAME_SECONDS=<n>   fail if the game ended earlier than n
+#   EXPECT_MIN_KILLED=<n>           fail if we killed fewer than n units
+#   EXPECT_MIN_RESOURCE_BALANCE=<n> fail if Resource killed/lost < n
+# When none is set the script only reports the verdict, as before.
+#
 # Requirements: a JDK, the bot jar, and the StardustDevEnvironment build tree.
 # Owner-only tier: a real game takes minutes, so it is not in the fast loop
 # (same ruling as scripts/run-full-tests.sh).
 #
-# CONVENTIONS §13: every command is bounded to 6 minutes. Past that the run is
-# hung or misconfigured, not slow - kill it and change the approach.
+# CONVENTIONS §13: every command is bounded to 120 seconds.
 set -euo pipefail
 
 
@@ -350,6 +355,51 @@ say "bot log:    $BOT_LOG"
 if [ "$BOT_EXIT" -ne 0 ]; then
   say "bot did not exit cleanly; log tail:"
   tail -20 "$BOT_LOG" | sed 's/^/    /'
+fi
+
+# === Scenario assertions ===================================================
+# Read the facts `GameSummary` already prints. Each is optional; with none set
+# this block is a no-op and the script only reports the verdict.
+log_number() {
+  local pattern="$1"
+  grep -oE "$pattern" "$BOT_LOG" 2>/dev/null | tail -1 | grep -oE '[-0-9]+' | tail -1
+}
+
+ASSERT_FAILED=0
+INGAME_SECONDS="$(log_number 'Total time: [-0-9]+')"
+KILLED="$(log_number 'Units killed/lost: *[0-9]+' )"
+RESOURCE_BALANCE="$(log_number 'Resource killed/lost: *[-+]?[0-9]+')"
+
+say "verdict: ingame=${INGAME_SECONDS:-?}s killed=${KILLED:-?} resourceBalance=${RESOURCE_BALANCE:-?}"
+
+if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}" ]; then
+  if [ -z "$INGAME_SECONDS" ] || [ "$INGAME_SECONDS" -lt "$EXPECT_MIN_INGAME_SECONDS" ]; then
+    say "ASSERT FAILED: game lasted ${INGAME_SECONDS:-?}s, expected >= $EXPECT_MIN_INGAME_SECONDS"
+    ASSERT_FAILED=1
+  fi
+fi
+
+if [ -n "${EXPECT_MIN_KILLED:-}" ]; then
+  if [ -z "$KILLED" ] || [ "$KILLED" -lt "$EXPECT_MIN_KILLED" ]; then
+    say "ASSERT FAILED: killed ${KILLED:-?}, expected >= $EXPECT_MIN_KILLED"
+    ASSERT_FAILED=1
+  fi
+fi
+
+if [ -n "${EXPECT_MIN_RESOURCE_BALANCE:-}" ]; then
+  if [ -z "$RESOURCE_BALANCE" ] || [ "$RESOURCE_BALANCE" -lt "$EXPECT_MIN_RESOURCE_BALANCE" ]; then
+    say "ASSERT FAILED: resource balance ${RESOURCE_BALANCE:-?}, expected >= $EXPECT_MIN_RESOURCE_BALANCE"
+    ASSERT_FAILED=1
+  fi
+fi
+
+if [ "$ASSERT_FAILED" -ne 0 ]; then
+  say "SCENARIO FAILED (see $BOT_LOG)"
+  exit 1
+fi
+
+if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}${EXPECT_MIN_KILLED:-}${EXPECT_MIN_RESOURCE_BALANCE:-}" ]; then
+  say "SCENARIO PASSED"
 fi
 
 exit "$BOT_EXIT"
