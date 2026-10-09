@@ -15,16 +15,21 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.TrimQueue;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
+import atlantis.units.select.Have;
 import atlantis.util.We;
 
 public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
     @Override
     public boolean applies() {
-        return We.protoss()
-            && AGame.everyNthGameFrame(17)
-            && (A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4)
-            && applyForStandardCases()
-            && ProtossCriticalStuffInQueue.hasEnoughResources();
+        ProduceFirstAssimilator.reason = "NotChecked";
+        if (!We.protoss()) return false;
+        if (!AGame.everyNthGameFrame(17)) return rejectForAssimilator("Throttle");
+        if (!(A.hasMinerals(220) || Queue.get().notStarted().buildings().size() <= 4))
+            return rejectForAssimilator("MineralsOrQueueSize");
+        if (!applyForStandardCases()) return rejectForAssimilator("StandardResourcesOrExpansion");
+        if (!ProtossCriticalStuffInQueue.hasEnoughResources())
+            return rejectForAssimilator("CriticalQueueResources");
+        return true;
     }
 
     private static boolean applyForStandardCases() {
@@ -33,19 +38,39 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
             || (A.hasMinerals(200) && !ShouldExpand.shouldExpand());
     }
 
+    private static boolean rejectForAssimilator(String gate) {
+        if (!Have.assimilator() && Have.cyberneticsCore()) {
+            atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                "First Assimilator diagnostic: commander=" + gate
+                    + " producer=" + ProduceFirstAssimilator.reason
+            );
+        }
+        return false;
+    }
+
     private static boolean topPriority() {
         TrimQueue.trimIfTooBig(CurrentQueue.get());
 
-        if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) return true;
+        if ((new ProduceFallbackPylonWhenSupplyLow()).produceIfNeeded()) {
+            reportFirstAssimilatorBlockedBy("FallbackPylon");
+            return true;
+        }
 
-        if (
-            ProduceCyberneticsCore.produce()
-                || ProduceFirstAssimilator.produce()
-                || ProduceObservatory.produce()
-                || ProduceRoboticsFacility.produce()
-        ) return true;
+        if (ProduceCyberneticsCore.produce()) {
+            reportFirstAssimilatorBlockedBy("CyberneticsCore");
+            return true;
+        }
+        if (ProduceFirstAssimilator.produce()) return true;
+        if (ProduceObservatory.produce()) return true;
+        return ProduceRoboticsFacility.produce();
+    }
 
-        return false;
+    private static void reportFirstAssimilatorBlockedBy(String reason) {
+        if (Have.assimilator() || !Have.cyberneticsCore()) return;
+        ProduceFirstAssimilator.reason = "EarlierPriority:" + reason;
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "First Assimilator diagnostic: producer=" + ProduceFirstAssimilator.reason
+        );
     }
 
     @Override

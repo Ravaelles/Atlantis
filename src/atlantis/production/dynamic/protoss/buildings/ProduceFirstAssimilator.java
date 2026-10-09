@@ -19,16 +19,20 @@ import static atlantis.units.AUnitType.Protoss_Assimilator;
 import static atlantis.units.AUnitType.Protoss_Cybernetics_Core;
 
 public class ProduceFirstAssimilator {
+    public static String reason = "-";
+
     public static boolean produce() {
-        if (Have.assimilator()) return false;
-        if (CountInQueue.count(type(), 2) > 0) return false;
-        if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return false;
+        reason = "Eligible";
+        if (Have.assimilator()) return blocked("AlreadyHaveAssimilator");
+        if (CountInQueue.count(type(), 2) > 0) return blocked("AlreadyQueued");
+        if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return blocked("ExpansionSupplyGate");
 //        if (!Have.existingOrUnfinished(Protoss_Cybernetics_Core)) return false;
 
         AUnit cc;
-        if ((cc = Select.ourWithUnfinished(Protoss_Cybernetics_Core).first()) == null) return false;
+        if ((cc = Select.ourWithUnfinished(Protoss_Cybernetics_Core).first()) == null)
+            return blocked("NoCyberneticsCore");
 //        System.err.println("cc.getRemainingBuildTimeInSeconds() = " + cc.getRemainingBuildTimeInSeconds());
-        if (cc.getRemainingBuildTimeInSeconds() >= 80) return false;
+        if (cc.getRemainingBuildTimeInSeconds() >= 80) return blocked("CyberneticsCoreNotNearCompletion");
 
 //        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
 //        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
@@ -49,13 +53,19 @@ public class ProduceFirstAssimilator {
             // print helper's `true` return silently doubled as the method result.
             // Written out, so the queue decision and the logging are separate.
             if (AddToQueue.withTopPriority(type()) != null) {
+                reason = "Queued";
                 AConsole.errPrintln("FORCE added first Assimilator to queue at " + A.minSec());
                 return true;
             }
-            return false;
+            return blocked("QueueRejected");
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 
+        return blocked("NoCyberneticsCore");
+    }
+
+    private static boolean blocked(String reason) {
+        ProduceFirstAssimilator.reason = reason;
         return false;
     }
 

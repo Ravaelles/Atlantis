@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss;
 
 import atlantis.game.A;
 import atlantis.information.generic.Army;
+import atlantis.production.dynamic.protoss.buildings.ProduceFirstAssimilator;
 import atlantis.production.dynamic.protoss.units.ProduceDragoon;
 import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.units.select.Count;
@@ -51,6 +52,12 @@ public class ProtossProductionDiagnostics {
                 + " dragoon=" + ProduceDragoon.reason
                 + " zealot=" + ProduceZealot.reason
         );
+
+        if (!Have.assimilator() && Have.cyberneticsCore()) {
+            ErrorLog.printMaxOncePerMinute(
+                "First Assimilator producer diagnostic: reason=" + ProduceFirstAssimilator.reason
+            );
+        }
     }
 
     /**
