@@ -355,16 +355,6 @@ all at once.
 
 ---
 
-## 8. Migration plan (incremental, strangler)
-
-> Superseded by §16. The phase letters below became the stage list; §16 wins
-> on every conflict. Kept as one paragraph of rationale: each phase is
-> independently shippable, keeps the bot playable, and must be verified by a
-> game run before the next one starts (ratchet → explicit pipeline →
-> read model → god-class split → bounded contexts → enforce).
-
----
-
 ## 9. Anti-goals (explicitly out of scope / not recommended)
 
 - **Full rewrite** of the bot. Not worth the risk; the strangler path reaches
@@ -535,19 +525,6 @@ only worth creating where you (a) will have more than one adapter, or (b) need
 isolation for tests. Do **not** wrap all of `bwapi` in fifty interfaces — that is
 "hexagonal theater". For a game bot the domain core is thin; the win is in the
 five ports above plus the read model, not in abstracting everything.
-
----
-
-## 15. Proposed architectural changes to the current approach
-
-> Superseded by §16 — the letters below are the origin of the stage list.
-> Read §16 for the canonical plan. In one line: declare six bounded contexts
-> with a context map (A), freeze the boundary with ArchUnit (B), introduce the
-> read model (C), an explicit non-reflective frame pipeline (D), one OrderSink
-> (E), per-frame query services instead of static caches (F), race as strategy
-> (G), and only then move files (H). What NOT to do: no big-bang moves, no port
-> for everything, no `common/shared/utils` context, no perfect graph before
-> the ratchet exists.
 
 ---
 

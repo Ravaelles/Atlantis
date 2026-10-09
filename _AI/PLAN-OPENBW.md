@@ -31,13 +31,15 @@ verdict, exactly as before:
 |---|---|
 | `EXPECT_MIN_INGAME_SECONDS` | the game ended earlier than this in-game time |
 | `EXPECT_MIN_KILLED` | we killed fewer units |
+| `EXPECT_MAX_KILLED` | we killed more units (e.g. the rush should be survivable, not farmed) |
 | `EXPECT_MIN_RESOURCE_BALANCE` | `Resource killed/lost` is below this (use `-200` for "roughly even") |
 
 Example - survive the opening for 7 game minutes with a near-even trade:
 
 ```bash
 TIMEOUT_SECONDS=120 INGAME_TIME=$((60*7)) \
-  EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MIN_RESOURCE_BALANCE=-200 \
+  EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
+  EXPECT_MIN_RESOURCE_BALANCE=-200 \
   timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 

@@ -37,6 +37,7 @@ WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 # Scenario assertions (all optional, all from the log `GameSummary` prints):
 #   EXPECT_MIN_INGAME_SECONDS=<n>   fail if the game ended earlier than n
 #   EXPECT_MIN_KILLED=<n>           fail if we killed fewer than n units
+#   EXPECT_MAX_KILLED=<n>           fail if we killed more than n units
 #   EXPECT_MIN_RESOURCE_BALANCE=<n> fail if Resource killed/lost < n
 # When none is set the script only reports the verdict, as before.
 #
@@ -366,39 +367,44 @@ log_number() {
 }
 
 ASSERT_FAILED=0
+ASSERT_ANY=0
 INGAME_SECONDS="$(log_number 'Total time: [-0-9]+')"
-KILLED="$(log_number 'Units killed/lost: *[0-9]+' )"
+KILLED="$(log_number 'Units killed/lost: *[0-9]+')"
 RESOURCE_BALANCE="$(log_number 'Resource killed/lost: *[-+]?[0-9]+')"
 
 say "verdict: ingame=${INGAME_SECONDS:-?}s killed=${KILLED:-?} resourceBalance=${RESOURCE_BALANCE:-?}"
 
-if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}" ]; then
-  if [ -z "$INGAME_SECONDS" ] || [ "$INGAME_SECONDS" -lt "$EXPECT_MIN_INGAME_SECONDS" ]; then
-    say "ASSERT FAILED: game lasted ${INGAME_SECONDS:-?}s, expected >= $EXPECT_MIN_INGAME_SECONDS"
+# assert_at_least <env-var-value> <actual> <label> <var-name-for-message>
+assert_at_least() {
+  [ -n "$1" ] || return 0
+  ASSERT_ANY=1
+  if [ -z "$2" ] || [ "$2" -lt "$1" ]; then
+    say "ASSERT FAILED: $3 was ${2:-?}, expected >= $1"
     ASSERT_FAILED=1
   fi
-fi
+}
 
-if [ -n "${EXPECT_MIN_KILLED:-}" ]; then
-  if [ -z "$KILLED" ] || [ "$KILLED" -lt "$EXPECT_MIN_KILLED" ]; then
-    say "ASSERT FAILED: killed ${KILLED:-?}, expected >= $EXPECT_MIN_KILLED"
+# assert_at_most <env-var-value> <actual> <label>
+assert_at_most() {
+  [ -n "$1" ] || return 0
+  ASSERT_ANY=1
+  if [ -z "$2" ] || [ "$2" -gt "$1" ]; then
+    say "ASSERT FAILED: $3 was ${2:-?}, expected <= $1"
     ASSERT_FAILED=1
   fi
-fi
+}
 
-if [ -n "${EXPECT_MIN_RESOURCE_BALANCE:-}" ]; then
-  if [ -z "$RESOURCE_BALANCE" ] || [ "$RESOURCE_BALANCE" -lt "$EXPECT_MIN_RESOURCE_BALANCE" ]; then
-    say "ASSERT FAILED: resource balance ${RESOURCE_BALANCE:-?}, expected >= $EXPECT_MIN_RESOURCE_BALANCE"
-    ASSERT_FAILED=1
-  fi
-fi
+assert_at_least "${EXPECT_MIN_INGAME_SECONDS:-}" "$INGAME_SECONDS" "in-game seconds"
+assert_at_least "${EXPECT_MIN_KILLED:-}" "$KILLED" "kills"
+assert_at_most  "${EXPECT_MAX_KILLED:-}" "$KILLED" "kills"
+assert_at_least "${EXPECT_MIN_RESOURCE_BALANCE:-}" "$RESOURCE_BALANCE" "resource balance"
 
 if [ "$ASSERT_FAILED" -ne 0 ]; then
   say "SCENARIO FAILED (see $BOT_LOG)"
   exit 1
 fi
 
-if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}${EXPECT_MIN_KILLED:-}${EXPECT_MIN_RESOURCE_BALANCE:-}" ]; then
+if [ "$ASSERT_ANY" -ne 0 ]; then
   say "SCENARIO PASSED"
 fi
 

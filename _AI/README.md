@@ -16,24 +16,26 @@ AI assistant.
 | know **what to work on next** | `NEXT.md` (open backlog) |
 | **finish Production V2** | `STATUS.md`, then `redesign/01_PRODUCTION.md` |
 | work on **placement** | `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `POSITION-FINDER.md` (why it was rewritten) |
-| run or fix an **OpenBW game** | `PLAN-OPENBW.md`, `CHALLENGES/OpenBW.md` |
+| run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
-| know a **rule I must follow** | `CONVENTIONS.md` (normative) |
-| understand **why the architecture is like this** | `REVIEW.md`, then `redesign/` |
+| know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit) |
+| understand **why the architecture is like this** | `REVIEW.md` §16, then `redesign/` and `DOCS/adr/` |
 | check **known defects** | `BUGS.md` |
 
 ---
 
-## The current priorities (owner's call, 2026-10-08)
+## The current priorities (owner's call, 2026-10-09)
 
-1. **Finish Production V2** - spec in `redesign/01_PRODUCTION.md`, state in
-   `STATUS.md`. M1-M5 done, M6 (cutover) partial; the live blocker is the plan
-   re-planning instead of remembering what it already ordered.
-2. **Placement** - the rewrite landed (`redesign/03_PLACEMENT.md`) and works in a
-   live game; what remains is the cut-over, Terran/Zerg, and the list at the top of
-   that file.
-3. **OpenBW tests** - `IDEA-E2E-TESTS.md` §3.5 has the ordered next steps.
+1. **OpenBW runs must be bounded and useful** - CONVENTIONS §13/§17 cap every
+   command at 120 s and every simulation at 20 game minutes; the runner can now
+   assert scenario facts (`PLAN-OPENBW.md`).
+2. **Placement is the live blocker** - no Pylon lands on TauCross, so the bot
+   produces nothing and every survival scenario fails. Fixing it needs the
+   cut-over decision in `redesign/03_PLACEMENT.md`.
+3. **Finish Production V2** - spec in `redesign/01_PRODUCTION.md`, state in
+   `STATUS.md`. M1-M5 done, M6 (cutover) partial.
+4. **E2E testing** - `IDEA-E2E-TESTS.md` §3.5 has the ordered next steps.
 
 ---
 
@@ -58,10 +60,13 @@ AI assistant.
   traps the rewrite had to avoid.
 - **`LOCAL-STARCRAFT.md`** - Wine/StarCraft setup and what OpenBW does and does not
   provide (e.g. the JBWEB JNI gap).
-- **`PLAN-OPENBW.md`** - how to run OpenBW, and what it cannot do.
-- **`IDEA-E2E-TESTS.md`** - what E2E means here, and the next steps.
-- **`__CLEAN-UP.md`** - a working note (the `__` prefix marks it as not part of
-  the reference set).
+- **`PLAN-OPENBW.md`** - how to run OpenBW: the two hard limits, the scenario
+  assertions, and what OpenBW cannot do.
+- **`IDEA-E2E-TESTS.md`** - what E2E means here, what exists today, and the next
+  steps (§3.5).
+- **`DOCS/adr/`** - accepted decisions (ADR 0001 modular monolith, 0003 DDD
+  strategic-only, 0006 combat eval scale, 0007 race strategy seams). Read these
+  before proposing a new architectural direction.
 
 ## `redesign/`
 

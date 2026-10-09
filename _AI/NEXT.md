@@ -50,43 +50,13 @@ written here). What is open is *quality* of the data behind it, not a red test.
 
 ## Scenario E2E (stub tier - runs today)
 
-- **#34** Real-opponent follow-ups for the stub-tier scenarios, now living in
-  `tests.e2e` (moved out of `tests.acceptance`, where they were invisible to any
-  tier selector). Both twins hold: `FourPoolDefenseTest` (6 lings from x=26) -
-  lings dead frames 51-249, cannon on 10 hp after 11 strike rounds, nexus
-  untouched, one strike per probe where there used to be none - and
-  `NinePoolDefenseTest` (8 lings from x=32, six probes) since the combat units
-  are driven directly (see below): nexus holds at 700, cannon and all six
-  probes live, all eight lings die, the zealot tanks two strikes and falls at
-  218. The full commander never gets past its orchestration in the stub world
-  (DoNothing for 200 frames, enemies 2 tiles away), so both scenarios invoke
-  `CombatUnitManager` per combat unit per frame - decisions are real Atlantis
-  code, only the dispatch is harness, and `ScenarioObserver` (every 15 frames:
-  pos, hp, manager, target, order) records what happened. Remaining:
-  real opponents (Steamhammer / UAlbertaBot / scripted rusher) once the runner
-  from `_AI/IDEA-E2E-TESTS.md` can host Atlantis (its Stages 1-2). The scenarios
-  keep their forces, timing and assertions across that move; only the
-  driver and the physics get swapped for the engine.
-
-  Real games are playable now (2026-10-04): the two-day outage where no
-  match ever started was a map path without the `sscai/` prefix
-  (`/app/sc/maps/(3)TauCross.scx` does not exist in the container), fixed in
-  every `~/.scbw/bots/*.sh` shortcut. `scripts/run-e2e.sh --parse-only`
-  reads the real schema and the first baseline table is
-  `_AI/e2e/scbw-2026-10-04_154203.md` (control + three AtlantisP games, two
-  pre-B-20 with the NPE stacks honestly flagged, one post-fix clean).
-  Remaining: the fixed scenario pairs from `_AI/IDEA-E2E-TESTS.md` §4 (4pool,
-  9pool scripted) and the runner from Stages 1-2. Update 2026-10-04: two
-  full games to a verdict are in (`GAME_B978D4B7` lost to Marine Hell,
-  `GAME_2AD8C998` lost to Steamhammer, both `is_crashed: false`, 0
-  exceptions, replays kept) and the second baseline table
-  `_AI/e2e/scbw-2026-10-04_154837.md` compares 6 games against the first.
-  Real-opponent signal flows; scripted-rush pairs still need the runner.
-  Update 2026-10-04: four full games to a verdict, all losses
-  (`GAME_B978D4B7`, `GAME_2AD8C998`, `GAME_DD6EAB8E`, `GAME_366E9D6C` -
-  the last one kill_score 0 with 8 nexuses built), all `is_crashed: false`,
-  0 exceptions; third baseline table `_AI/e2e/scbw-2026-10-04_161236.md`
-  compares 8.
+- **#34** Real opponents for the stub-tier scenarios. The two twins hold in
+  `tests.e2e` (`FourPoolDefenseTest` 6 lings, `NinePoolDefenseTest` 8 lings) with
+their baselines pinned; what is missing is a **real opponent**: OpenBW hosts one
+client, so a second bot cannot attach, and a scripted rusher needs a UMS map
+that does not exist here. The scbw tier has real verdicts in `_AI/e2e/` and is
+owner-run. Resume when a scripted UMS map is supplied or the opponent runner is
+agreed. Detail: `_AI/IDEA-E2E-TESTS.md` §3.4-§3.5.
 
 ## Stage E — read model (remaining)
 
@@ -300,6 +270,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `out/openbw/bot.log`, `out/openbw/server.log`.
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
+
+- **#47 — OpenBW E2E must be fully working (TOP priority).** The runner attaches,
+  is bounded (CONVENTIONS §13/§17) and can assert scenario facts, but an E2E test
+  is not "fully working" until: (a) the bot places a Pylon and builds a Gateway
+  in a real run, (b) a scenario file exists instead of loose env vars, (c) the
+  same scenario is proven to fail against a deliberately broken build, and
+  (d) the owner's 7-minute survival scenario passes with
+  `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
+  `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`.
+  **Current measurement (2026-10-09):** it fails at (a) -
+  `0:39: Can't find place for Pylon`, so nothing is produced and 0 units are
+  killed in 7 game minutes. That is the placement blocker, not the runner.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

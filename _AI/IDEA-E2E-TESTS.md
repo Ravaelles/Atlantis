@@ -1,14 +1,14 @@
 # E2E tests on a real engine
 
-Status: **the OpenBW loop works; the mega-test does not, and §3 says exactly why.**
-Rewritten 2026-10-08 (the previous version still described the client as unable to
-attach, which stopped being true that day).
+Status: **the OpenBW loop works and is bounded; the bot does not yet produce.**
+Audited 2026-10-09: the runner attaches, self-terminates on both limits
+(CONVENTIONS §17) and can assert scenario facts; a real run places no Pylon, so
+nothing is produced and every survival scenario fails for that reason.
 
-**On the old stage numbers:** this version replaces the Stage 0-6 list with
-Steps A-E, because Stages 0-3 were almost entirely about getting a Java client to
-attach to OpenBW - which is done. Other files still say "Stage 1" (the scbw tier),
-"Stage 3" (the OpenBW runner) and "Stage 5" (StarEngine removal); read those as:
-scbw tier = §2.2, OpenBW runner = §2.1 + Steps A-B, StarEngine removal = §2.4.
+The old stage numbering is gone; this file uses §-sections. Where another
+file says "Stage 1" (the scbw tier), "Stage 3" (the OpenBW runner) or "Stage 5"
+(StarEngine removal), read: scbw tier = §2.2, OpenBW runner = §2.1, StarEngine
+removal = §2.4 (deleted).
 
 ---
 
@@ -59,12 +59,13 @@ What that requires, all of it verified:
   publishes no game registry and the client loops on "No server proc ID". Set by
   the script and by `OpenBWHost`. Root cause and the two wrong conclusions it
   corrects: `_AI/CHALLENGES/OpenBW.md`.
-- **The bot ends its own game.** `FORCE_END_GAME_AFTER_REAL_SECONDS` (default
-  600 s) must sit *below* the host's timeout, or the host dies first, the client
-  is orphaned and the run reports failure after playing. The script sets three
-  nested timeouts (game < bot kill < host kill) and refuses a configuration
-  whose host timeout would exceed the 360 s cap (CONVENTIONS §13). Verified:
-  `bot exit code: 0` (was 143/SIGTERM).
+- **The bot ends its own game, on either limit.**
+  `FORCE_END_GAME_AFTER_REAL_SECONDS` (wall clock) and
+  `FORCE_END_GAME_AFTER_INGAME_SECONDS` (game clock) both end it cleanly while
+  the host is alive. CONVENTIONS §17 fixes these at 120 s and 20 game minutes and
+  the script refuses a wider value. Verified: `bot exit code: 0` (was 143/SIGTERM),
+  and a 7-game-minute run now finishes itself in ~5 s of wall clock (measured
+  2026-10-09).
 - **`BWAPI_DATA_PATH` and `AI/build_orders` resolved from the directory the jar
   runs in**, or the bot plays with no production at all and the log says nothing.
 
@@ -150,12 +151,19 @@ that production reads on the Wine path are simply absent on OpenBW, and any
 predicate that consults them answers nonsense there. Whatever the rewrite does,
 it must not depend on a library that cannot load on the engine the tests run on.
 
-### 3.3 No assertion framework on top of the run yet
+### 3.3 The first assertion layer exists (2026-10-09)
 
-`scripts/run-openbw-e2e.sh` reports a *verdict* (attached, frames, exit code,
-log paths), not assertions. There is no scenario file, no "assert this by frame
-N", and no broken-bot check (the test that proves the test can fail). The scbw
-tier has a parse-and-table layer; OpenBW has none.
+`scripts/run-openbw-e2e.sh` now takes optional expectations and exits non-zero
+when one is not met: `EXPECT_MIN_INGAME_SECONDS`, `EXPECT_MIN_KILLED`,
+`EXPECT_MAX_KILLED`, `EXPECT_MIN_RESOURCE_BALANCE`. They read the facts
+`GameSummary` already prints, so no scenario file is needed - see
+`PLAN-OPENBW.md` for the table and an example.
+
+What is still missing from a real harness: a scenario *file* (one place per
+scenario instead of env vars), and a deliberately broken bot that must fail the
+same scenario. The assertions have been shown to fail correctly on a real run
+(`EXPECT_MIN_KILLED=12` against a bot that killed 0), which is half of that
+proof.
 
 ### 3.4 The opponent is still an open question
 
@@ -179,26 +187,30 @@ crash".
 
 Each step is small and ends with something a command proves.
 
-1. **Try the new planner in a real game.** Run the E2E with `PLACEMENT=catalogue`
-   in `bots/AtlantisOpenBW/AI/ENV`. Verification: a Pylon appears in `bot.log`
-   instead of `Can't find place for Pylon`. This is the single most valuable run
-   available, and it is a one-variable change.
-2. **Add the first assertion layer.** `scripts/run-openbw-e2e.sh` should accept a
-   scenario file (map, race, frame limit, expected facts) and exit non-zero when
-   an expected fact is missing. Verification: a scenario passes, and a
-   deliberately broken build fails the same scenario.
-3. **Write the mega-test** against that layer: one game, fixed map, scripted
-   rusher, asserting workers mined, a Pylon and a Gateway placed and built, the
-   production queue advanced, no exception, frames advanced. Verification: green
-   twice in a row, red against a known-broken build.
-4. **Port one rush scenario** (4pool) with survival assertions, not `expectWin`.
-   The stub-world twin in `tests.e2e` is the behaviour to reproduce.
+1. ~~Try the new planner in a real game.~~ **Done** - a Pylon is placed with
+   `PLACEMENT=catalogue`, but the current runs still log
+   `Can't find place for Pylon` (measured 2026-10-09). See the blocker below.
+2. ~~Add the first assertion layer.~~ **Partly done (2026-10-09)** - the runner
+   takes expectation env vars and exits non-zero when one is not met
+   (§3.3). Still missing: a scenario file, and a deliberately broken build that
+   fails the same scenario.
+3. **Fix the Pylon, then the mega-test.** One game, fixed map, asserting workers
+   mined, a Pylon and a Gateway placed and built, production advanced, no
+   exception, frames advanced. Verification: green twice in a row, red against a
+   known-broken build.
+4. **Port the 7-minute survival scenario** with a near-even trade:
+   `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
+   `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`. This is the
+   owner's ask and the assertions are ready; it currently fails on the Pylon.
 5. **Only then** the sweeps, replay playback and the OpenBW-vs-scbw parity game.
 
-Steps 1-2 are the whole of the next session's value; 3-5 are a tier, not a task.
+**The blocker (measured 2026-10-09):** the bot never places a Pylon on TauCross,
+so it produces nothing, kills nothing, and the survival scenario cannot pass.
+That is placement, not the runner; the runner is now bounded (CONVENTIONS §17),
+fast (~5 s wall clock for 7 game minutes), and asserts.
 
 What NOT to do first: no new opponent work, no determinism sweeps, and no more
-placement refactoring - the planner needs a run before it needs anything else.
+placement refactoring until a Pylon actually lands in a run.
 
 ---
 
