@@ -30,6 +30,10 @@ public class WorkerManager extends Manager {
     @Override
     protected ManagerFactory[] managers() {
         return new ManagerFactory[]{
+            // An assigned builder's construction travel/avoid/cancel policies own
+            // that worker before the general worker-defense chain can fight with it.
+            BuilderManager::new,
+
             AvoidSpellsAndMines::new,
             ProtossAvoidCriticalUnits::new,
             ProtossCombatBuildingClose::new,
@@ -38,7 +42,7 @@ public class WorkerManager extends Manager {
             WorkerAvoidManager::new,
             ProtossAvoidEnemies::new,
 
-            BuilderManager::new,
+
             DynamicRepairsNearby::new,
 
             GatherResources::new,

@@ -1,17 +1,24 @@
 package tests.e2e;
 
 import atlantis.game.A;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.production.constructions.builders.BuilderManager;
+import atlantis.units.workers.WorkerManager;
 import atlantis.units.workers.defence.WorkerDefenceManager;
 import atlantis.units.workers.defence.fight.WorkerDefenceFightCombatUnits;
+import atlantis.units.workers.defence.fight.WorkerHelpCombatUnitsFight;
 import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -82,6 +89,42 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
                             + " (isWorker=" + myProbe.isWorker()
                             + " isBuilder=" + myProbe.isBuilder()
                             + " isSpecialMission=" + myProbe.isSpecialMission() + ")");
+        });
+    }
+
+    @Test
+    public void aBuilderIsNeverClaimedByCombatHelp() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 12.5);
+
+        world(4, units(nexus, probe), units(zealot), () -> {
+            if (A.now() != 2) return;
+
+            Construction construction = new Construction(AUnitType.Protoss_Pylon);
+            construction.setBuilder(probe);
+            construction.setPositionToBuild(atlantis.map.position.APosition.create(14, 10));
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            ConstructionRequests.constructions.add(construction);
+
+            assertTrue(probe.isBuilder(), "the construction assignment makes this worker a builder");
+            assertTrue(new BuilderManager(probe).applies(),
+                    "the construction manager must recognize its assigned worker");
+            assertFalse(new WorkerHelpCombatUnitsFight(probe).applies(),
+                    "a builder must not be taken over by combat-help");
+            assertFalse(new WorkerDefenceManager(probe).applies(),
+                    "assigned builders belong to construction, not the worker fight/run chain");
+
+            new WorkerManager(probe).forceHandle();
+            String managerHistory = String.valueOf(probe.managerLogs());
+            assertTrue(managerHistory.contains("BuilderManager"),
+                    "the worker manager chain must give construction ownership first: " + managerHistory);
+            assertTrue(!managerHistory.contains("WorkerHelpCombatUnitsFight"),
+                    "combat-help must never claim a builder while its assigned construction is pending: "
+                            + managerHistory);
+            assertTrue(!managerHistory.contains("GatherResources"),
+                    "an idle builder waiting for the build action must not be sent back to mining: "
+                            + managerHistory);
         });
     }
 
@@ -168,34 +211,23 @@ public class WorkerDefenceTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void aBuilderWalkingToASiteCanStillDefendItself() {
-        // The owner's dead-Probe pattern (2026-10-07): every corpse had
-        // `BuilderManager` as its first log entry and `GatherResources` after
-        // it, and WorkerDefenceManager was nowhere - because applies() rejected
-        // every worker with a construction assigned.
-        //
-        // For Protoss that is most of the early game: BuilderManager.isBuilder()
-        // is true while a Probe is merely WALKING to a build site
-        // (`We.protoss() && !worker.isStopped()`), so those workers were removed
-        // from the defence chain entirely.
-        //
-        // A worker that is not yet constructing must be eligible; one that IS
-        // constructing cannot walk away and stays excluded on purpose.
-        String source;
+    public void assignedBuildersStayInConstructionOwnershipNotWorkerDefence() {
+        // The current policy is explicit: a construction owns its assigned worker.
+        // BuilderManager is first in WorkerManager, and the defence chain refuses
+        // builders; the construction manager has its own avoid/abandon policies.
+        String defenceSource;
+        String workerSource;
         try {
-            source = read("src/atlantis/units/workers/defence/WorkerDefenceManager.java");
+            defenceSource = read("src/atlantis/units/workers/defence/WorkerDefenceManager.java");
+            workerSource = read("src/atlantis/units/workers/WorkerManager.java");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
-        assertTrue(!containsCode(source, "if (unit.isBuilder()) return false;"),
-                "a flat 'isBuilder -> return false' removes every assigned worker from"
-                        + " the defence chain, which is how Probes died while walking to a"
-                        + " Pylon with Zealots on top of them");
-
-        assertTrue(containsCode(source, "if (unit.isConstructing()) return false;"),
-                "only a worker that is actually CONSTRUCTING should be excluded - it"
-                        + " cannot walk away and BuilderManager owns it");
+        assertTrue(containsCode(defenceSource, "if (unit.isBuilder() || unit.isConstructing()) return false;"),
+                "builders must not enter the fight/run arbitration chain");
+        assertTrue(workerSource.indexOf("BuilderManager::new") < workerSource.indexOf("WorkerDefenceManager::new"),
+                "construction behavior must get first control of its assigned worker");
     }
 
     /**

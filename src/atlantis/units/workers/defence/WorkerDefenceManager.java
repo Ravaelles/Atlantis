@@ -17,13 +17,11 @@ public class WorkerDefenceManager extends Manager {
         super(unit);
     }
 
-    // A BUILDER is still a worker and must still defend itself: this used to be
-    // `if (unit.isBuilder()) return false;`, which removed every assigned worker
-    // from the whole defence chain (owner's death logs, 2026-10-07).
+    /** Construction owns assigned workers; the defence chain never takes them over. */
     @Override
     public boolean applies() {
         if (!unit.isWorker()) return false;
-        if (unit.isConstructing()) return false;
+        if (unit.isBuilder() || unit.isConstructing()) return false;
         if (A.isUms() && !Have.main()) return false;
         return (!We.terran() || !unit.isRepairing())
             && !unit.isSpecialMission();

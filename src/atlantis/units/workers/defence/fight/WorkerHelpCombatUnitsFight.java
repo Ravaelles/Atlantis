@@ -33,9 +33,17 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // alternating with no run, WorkerDefenceRun absent entirely).
         if (isWoundedAndInDanger()) return false;
 
+        // Construction owns assigned builders. Returning f() here can move them
+        // to safety or back to gathering; because this is a Manager chain, that
+        // non-null result stops the chain before BuilderManager gets to issue its
+        // move/build command. Builders do not join the worker-help fight path.
+        if (unit.isBuilder()) return false;
+
         if (unit.hp() <= 21) return f();
         if (unit.hp() <= minHp()) return f();
-        if (unit.isBuilder()) return f();
+        AUnit base = unit.friendsNear().bases().nearestTo(unit);
+        if (base == null) return f();
+        if (unit.distTo(base) >= 12) return f();
         if (Enemy.protoss() && unit.hp() <= 20) return f();
         if (Enemy.protoss() && unit.hp() <= 36 && unit.lastUnderAttackLessThanAgo(150)) return f();
         if (unit.lastActionLessThanAgo(10)) return f();
@@ -57,10 +65,6 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // The run lockout applies in the field only; at home a worker that
         // fled is wanted back in the defence (B-19).
         if (!BaseUnderAttack.check() && !unit.lastStartedRunningMoreThanAgo(30 * 10)) return f();
-
-        AUnit base = unit.friendsNear().bases().nearestTo(unit);
-        if (base == null) return f();
-        if (unit.distTo(base) >= 12) return f();
 
         // The old `isGatheringResources() && (recently attacked || shield
         // wounded) -> return f()` lived here. It is gone: it told exactly the
