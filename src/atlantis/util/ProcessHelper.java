@@ -337,7 +337,15 @@ public class ProcessHelper {
         try {
             Runtime.getRuntime().exec(command);
         } catch (Exception err) {
-            err.printStackTrace();
+            // A failed kill is never actionable and almost always expected: on
+            // Linux there is no taskkill, and on the game-exit path the process
+            // is gone anyway, so the outcome no longer matters. Logging the
+            // message (not a stack trace) keeps the console readable - the full
+            // `java.io.IOException: Cannot run program "pkill"` traceback used
+            // to be printed on every IDE run that ended through
+            // ForceExitLocallyAfterRealSeconds.
+            System.err.println("[Atlantis] Command failed (ignored): " + command
+                + " - " + err.getMessage());
         }
     }
 
@@ -349,7 +357,8 @@ public class ProcessHelper {
         try {
             Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
         } catch (Exception err) {
-            err.printStackTrace();
+            System.err.println("[Atlantis] Detached command failed (ignored): " + command
+                + " - " + err.getMessage());
         }
     }
 }
