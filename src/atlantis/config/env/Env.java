@@ -100,7 +100,12 @@ public class Env {
                 GGForEnemy.allowed = "true".equals(value);
                 return true;
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
-                ForceExitLocallyAfterRealSeconds.realSecondsLimit = toInt(value);
+                // Cap enforced again here, so a hand-edited ENV cannot widen the
+                // wall-clock limit past the OpenBW simulation cap (CONVENTIONS §17).
+                ForceExitLocallyAfterRealSeconds.realSecondsLimit = Math.min(toInt(value), 120);
+                return true;
+            case "FORCE_END_GAME_AFTER_INGAME_SECONDS":
+                ForceExitLocallyAfterRealSeconds.inGameSecondsLimit = toInt(value);
                 return true;
             case "LOCAL":
                 isLocal = trueFalse(value);

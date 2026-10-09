@@ -451,3 +451,12 @@ These are the rules distilled from the OpenBW investigation
   whatever newer JVM is in play** before it is changed.
 - Keep the override in `lib/` and the build assertions: they are what makes the
   same jar attach on a newer JVM without regressing Java 8.
+
+
+## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09)
+
+- **Every OpenBW game/simulation launched by an assistant has a hard 120-second wall-clock limit.** OpenBW is expected to complete rapidly; a run that has not completed after two minutes is hung, misconfigured, or exercising a broken path, not a valid long test.
+- Set the game’s own limit to at most 120 seconds (`GAME_SECONDS=120` for `scripts/run-openbw-e2e.sh`) and also place an outer process timeout no greater than 120 seconds around the complete runner command. Include setup/build time in that outer limit; if jar building is needed, build it separately with its own normal command timeout, then freshness-check it before starting the game.
+- Do not extend the timeout to get a result. A timed-out run is **inconclusive**, not a pass/fail verdict; record the timeout and inspect the logs. Do not claim game verification without a completed runner verdict.
+- This section narrows §13 for OpenBW simulation commands. §13 still applies to non-simulation commands (builds, downloads, test suites): 360 seconds maximum. §14 still forbids Wine/StarCraft unless the owner asks for exactly that.
+- Run OpenBW only through `scripts/run-openbw-e2e.sh` so host/client lifetime and cleanup remain one command (see §15). Never launch the host separately to evade the 120-second cap.

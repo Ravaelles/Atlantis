@@ -30,6 +30,10 @@ WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 #   bash scripts/run-openbw-e2e.sh [map] [race] [enemy-race]
 #   bash scripts/run-openbw-e2e.sh --self-test     # no game, checks setup only
 #
+# Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
+# INGAME_TIME=20 game minutes. Both are refused when widened, never silently
+# extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
+#
 # Requirements: a JDK, the bot jar, and the StardustDevEnvironment build tree.
 # Owner-only tier: a real game takes minutes, so it is not in the fast loop
 # (same ruling as scripts/run-full-tests.sh).
@@ -74,22 +78,24 @@ SELF_TEST=0
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
 
-# Three nested timeouts, and the ORDER is the point:
-#
-#   GAME_SECONDS        the bot ends its own game (FORCE_END_GAME_AFTER_REAL_SECONDS)
-#   GAME_SECONDS + 30   hard kill for the bot JVM if it got stuck
-#   GAME_SECONDS + 90   hard kill for the host (CONVENTIONS §13's 360 s cap)
-#
-# The bot must finish FIRST, while the host is alive: ending the game is what lets
-# Atlantis exit cleanly (onEnd -> System.exit(0)). If the host dies first the
-# client is orphaned and loops on "No server proc ID" (measured 2026-10-08), and
-# the run reports failure although the game was played. Override with GAME_SECONDS.
-GAME_SECONDS="${GAME_SECONDS:-240}"
-BOT_KILL_SECONDS=$(( GAME_SECONDS + 30 ))
-HOST_KILL_SECONDS=$(( GAME_SECONDS + 90 ))
-if [ "$HOST_KILL_SECONDS" -gt 360 ]; then
-  fail "GAME_SECONDS=$GAME_SECONDS makes the host timeout exceed the 360 s cap (CONVENTIONS §13)"
+# === Hard simulation limits (CONVENTIONS §17) ==============================
+# The two knobs live here, at the top, and nothing below may widen them.
+#   TIMEOUT_SECONDS  wall-clock cap for the whole simulation.
+#   INGAME_TIME      in-game seconds after which the bot ends the game itself
+#                    (20 real minutes of game time).
+TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-120}"
+INGAME_TIME="${INGAME_TIME:-$((60 * 20))}"
+if [ "$TIMEOUT_SECONDS" -gt 120 ]; then
+  fail "TIMEOUT_SECONDS=$TIMEOUT_SECONDS exceeds the OpenBW 120-second simulation cap (CONVENTIONS §17)"
 fi
+if [ "$TIMEOUT_SECONDS" -le 0 ]; then
+  fail "TIMEOUT_SECONDS must be positive, got $TIMEOUT_SECONDS"
+fi
+
+# Nested exits stay ordered: the bot ends its own game first, the bot JVM is
+# killed next, the host last - all within TIMEOUT_SECONDS.
+BOT_KILL_SECONDS="$TIMEOUT_SECONDS"
+HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
 
 # Teardown. A leftover host holds the game table, so the next run's client
 # adopts a dead PID and loops on "Unable to open communications socket"
@@ -188,8 +194,10 @@ POSTGAME_COPY_CHERRYVIS_TO=
 # looped on "No server proc ID" until the script SIGTERM'd it, so a played game
 # still reported failure). ForceExitLocallyAfterRealSeconds calls
 # Atlantis.onEnd -> System.exit(0), which is the only exit that leaves the host
-# alive to be torn down cleanly. It must stay BELOW the host timeout below.
-FORCE_END_GAME_AFTER_REAL_SECONDS=$GAME_SECONDS
+# alive to be torn down cleanly. TIMEOUT_SECONDS (120, see the top of this file)
+# is the wall-clock limit; INGAME_TIME is the in-game limit.
+FORCE_END_GAME_AFTER_REAL_SECONDS=$TIMEOUT_SECONDS
+FORCE_END_GAME_AFTER_INGAME_SECONDS=$INGAME_TIME
 # Pass-through flags, so a run can be pointed at the new subsystems without
 # editing files: PLACEMENT=catalogue selects the rewritten planner
 # (03_PLACEMENT.md), PRODUCTION_V2=DRY_RUN/LIVE selects the v2 production policy.

@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * The OpenBW run API, proven without launching a game.
@@ -73,7 +74,18 @@ public class OpenBWLauncherTest {
         assertTrue(config.launcherBinary().endsWith("/build/bin/BWAPILauncher"));
         assertTrue(config.serverScript().endsWith("run-openbw-server.sh"));
         assertTrue(config.gameDir().endsWith("build/test"));
-        assertTrue(config.gameTimeoutSeconds() <= 360, "CONVENTIONS 13 caps every command at 360 s");
+        assertEquals(120, config.gameTimeoutSeconds(), "OpenBW simulation default uses the hard two-minute cap");
+        assertTrue(config.gameTimeoutSeconds() <= OpenBWConfig.MAX_GAME_TIMEOUT_SECONDS,
+                "all OpenBW simulations must fit the hard two-minute cap");
+    }
+
+    @Test
+    public void gameTimeoutCannotExceedTheSimulationCap() {
+        assertThrows(IllegalArgumentException.class,
+                () -> OpenBWConfig.builder().gameTimeoutSeconds(121).build());
+        assertThrows(IllegalArgumentException.class,
+                () -> OpenBWConfig.builder().gameTimeoutSeconds(0).build());
+        assertEquals(120, OpenBWConfig.builder().gameTimeoutSeconds(120).build().gameTimeoutSeconds());
     }
 
     @Test
@@ -144,7 +156,7 @@ public class OpenBWLauncherTest {
         OpenBWConfig config = OpenBWConfig.builder()
                 .map("maps/cog/(3)TauCross1.1.scx")
                 .races("Protoss", "Zerg")
-                .gameTimeoutSeconds(200)
+                .gameTimeoutSeconds(119)
                 .hostWaitSeconds(1)
                 .logDir(tempDir().getAbsolutePath())
                 .build();
@@ -155,7 +167,7 @@ public class OpenBWLauncherTest {
         List<String> command = runner.started.get(0);
         assertTrue(command.contains("setsid"), "the host must survive this JVM: " + command);
         assertTrue(command.contains("nohup"), "and must not die with the parent shell: " + command);
-        assertTrue(command.contains("200"), "the timeout must be the configured one: " + command);
+        assertTrue(command.contains("119"), "the timeout must be the configured one: " + command);
         assertTrue(command.contains("maps/cog/(3)TauCross1.1.scx"), command.toString());
         assertTrue(command.contains("Protoss") && command.contains("Zerg"), command.toString());
 

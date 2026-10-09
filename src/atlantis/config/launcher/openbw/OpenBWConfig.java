@@ -31,8 +31,18 @@ public final class OpenBWConfig {
     public static final String DEFAULT_OUR_RACE = "Protoss";
     public static final String DEFAULT_ENEMY_RACE = "Zerg";
 
-    /** CONVENTIONS 13: no command may outlive six minutes. */
-    public static final int DEFAULT_GAME_TIMEOUT_SECONDS = 240;
+    /**
+     * The OpenBW simulation duration is capped at two minutes (CONVENTIONS §17).
+     * The name is kept for compatibility; TIMEOUT_SECONDS in
+     * {@code scripts/run-openbw-e2e.sh} is the same value, set once at the top of
+     * that file.
+     */
+    public static final int TIMEOUT_SECONDS = 120;
+
+    public static final int DEFAULT_GAME_TIMEOUT_SECONDS = TIMEOUT_SECONDS;
+
+    /** Hard upper bound for every OpenBW simulation, independent of caller timeout. */
+    public static final int MAX_GAME_TIMEOUT_SECONDS = TIMEOUT_SECONDS;
 
     /**
      * How long the host is given to publish its game registry before we give up.
@@ -179,6 +189,11 @@ public final class OpenBWConfig {
         }
 
         public Builder gameTimeoutSeconds(int value) {
+            if (value <= 0 || value > MAX_GAME_TIMEOUT_SECONDS) {
+                throw new IllegalArgumentException(
+                    "OpenBW simulation timeout must be between 1 and " + MAX_GAME_TIMEOUT_SECONDS + " seconds"
+                );
+            }
             this.gameTimeoutSeconds = value;
             return this;
         }

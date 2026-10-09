@@ -10,14 +10,20 @@ import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
 public class ForceExitLocallyAfterRealSeconds extends Commander {
+    /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */
     public static int realSecondsLimit = 60 * 10;
+
+    /** In-game limit in game seconds; 0 disables it. 20 game minutes by default. */
+    public static int inGameSecondsLimit = 60 * 20;
 
     @Override
     public boolean applies() {
-        return Env.isLocal()
-            && realSecondsLimit > 0
-            && A.now() % 300 == 0
-            && RealTime.gameLengthInRealSeconds() >= realSecondsLimit;
+        if (!Env.isLocal()) return false;
+        if (A.now() % 300 != 0) return false;
+
+        if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) return true;
+
+        return inGameSecondsLimit > 0 && AGame.timeSeconds() >= inGameSecondsLimit;
     }
 
     protected boolean handle() {
@@ -32,7 +38,8 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterRealSeconds");
-        ErrorLog.printErrorOnce("Prevent too long game. It ran " + RealTime.gameLengthInRealSeconds() + " real seconds");
+        ErrorLog.printErrorOnce("Prevent too long game. It ran " + RealTime.gameLengthInRealSeconds()
+            + " real seconds / " + AGame.timeSeconds() + " in-game seconds");
 
         Atlantis.getInstance().onEnd(false);
         return false;

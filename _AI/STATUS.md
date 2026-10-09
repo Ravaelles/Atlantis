@@ -40,14 +40,34 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **NEXT #7 closed (ADR drafted, owner decision still required before #8).**
-  `DOCS/adr/0007-race-strategy-seams.md` defines context-local ports (not a
-  global RaceStrategy), documents the existing static Production V2 engine and
-  its concrete instance-injection change for #8, limits the pilot to five type
-  identities, preserves the earlier short-circuit/goal behavior, and sets tests
-  and branch-count evidence. Checked references to ADR 0001, the context map,
-  the Production V2 classes and placement precedent; no runtime code changed.
-  ADR remains Proposed, as required; #8 must not start until owner acceptance.
+- **OpenBW hard limits (owner's ruling today — was NEXT #9, now a priority).**
+  OpenBW runs were hanging well past a sane duration. Two limits are now defined
+  once, at the top of `scripts/run-openbw-e2e.sh`: `TIMEOUT_SECONDS=120`
+  (wall-clock; the script refuses a larger value) and `INGAME_TIME=20 game
+  minutes` (`FORCE_END_GAME_AFTER_INGAME_SECONDS`, so the bot ends the game
+  itself at 20:00). `ForceExitLocallyAfterRealSeconds` now exits on either
+  limit, and `Env` re-caps the wall-clock value at 120 so a hand-edited ENV
+  cannot widen it. `OpenBWConfig.TIMEOUT_SECONDS` carries the same 120 as the
+  Java-side cap, and `gameTimeoutSeconds(>120)` throws. Documented as
+  CONVENTIONS §17.
+  Verified: full fast suite 336 passed / 0 failed (was 335), ArchUnit 7/7,
+  `OpenBWLauncherTest` 16/16 including the new cap-rejection test. The unfinished
+  `ATime` extraction was reverted (no `ATime`, `A` unchanged) so this lands as
+  one clean cycle.
+
+### Blocked: NEXT #8 — Production race strategy pilot
+ADR 0007 (`d12fd53b`) is explicitly Proposed. The ADR convention and the ADR's
+own consequence require owner acceptance before implementing its Production V2
+instance-injection seam. #8 must not start until that design decision is made.
+
+### Closed: NEXT #7
+`DOCS/adr/0007-race-strategy-seams.md` defines context-local ports (not a global
+RaceStrategy), documents the existing static Production V2 engine and its
+concrete composition change for #8, limits the pilot to five type identities,
+preserves the old goal-generation behavior, and sets tests/branch-count evidence.
+Cross-checked against the context map, placement strategy precedent,
+ProductionEngine, GameStateSnapshot, and goal generators; no runtime code changed.
+Commit `d12fd53b`; ADR remains Proposed pending owner approval for #8.
 
 ### Blocked: NEXT #5 — per-frame query service
 `Select` exposes static methods backed by static caches, and the current
