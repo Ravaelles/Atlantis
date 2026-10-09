@@ -281,13 +281,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      a log with no `HELLO_ATLANTIS` is an assertion failure. Verified: three
      consecutive runs attached and passed. Remaining: a run that fails for some
      other reason must still be distinguishable from a pass.
-  2. **A Pylon is placed in a real run.** Currently NO: every run logs
-     `0:39: Can't find place for Pylon` and produces nothing. **The reason is
-     measured:** `PLACEMENT=catalogue` only affects Production V2, and V2 is
-     **off** unless `PRODUCTION_V2=LIVE` is set, so the message comes from the
-     legacy `NewConstructionRequest` path. `redesign/03_PLACEMENT.md` claims the
-     flag fixed placement in a live game; that claim is **wrong** for the default
-     configuration and must be corrected there.
+  2. **A Pylon is placed in a real run.** NO, and the cause is now measured
+     2026-10-09. `MapTiles.canBuildHere` does have an OpenBW fallback, but the
+     fallback calls `tilesCoveredAreBuildable`, which asks
+     `isBuildableIncludeBuildings()` -> `MapTiles.isBuildable(at, true)` ->
+     `game().isBuildable(tx, ty, true)`. That engine query is **not** fallback-
+     protected, while its neighbours `isWalkable` and `hasPathBetween` are - and it
+     returns `false` for every tile near our base, so placement refuses with
+     reason `Can't physically build here`. Tiles 93-95 x 118-120 were probed and
+     all answered not-buildable. Two ways out, and it is a decision:
+     (a) give `isBuildable` the same map/JBWEB fallback its neighbours have, or
+     (b) cut over to Production V2, whose `CataloguePlacementPlanner` does not use
+     this path at all. Do not patch `APositionFinder` while the cut-over is pending
+     (`_AI/POSITION-FINDER.md`).
   3. **A scenario file** instead of loose env vars.
   4. **A deliberately broken build fails the same scenario.**
   5. **The 7-minute survival scenario passes:** `EXPECT_MIN_INGAME_SECONDS=420`,
