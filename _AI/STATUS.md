@@ -40,15 +40,14 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **NEXT #47 (TOP priority) - OpenBW E2E fully working.** Two blockers measured
-  2026-10-09: (a) the attach is **intermittent** - two runs attached and exited 0,
-  one run with `PRODUCTION_V2=LIVE` never attached and hit the 120 s cap on
-  `No server proc ID`, while the host started; (b) no Pylon is ever placed,
-  because `PLACEMENT=catalogue` only affects Production V2 and V2 is off by
-  default, so the message comes from the legacy `NewConstructionRequest` path.
+- **NEXT #47 (TOP priority) - OpenBW E2E fully working.** Attach fixed 2026-10-09
+  (host now outlives the client; a missing `HELLO_ATLANTIS` fails the run instead
+  of passing) - three consecutive runs attached. Remaining: no Pylon is ever
+  placed, because `PLACEMENT=catalogue` only affects Production V2 and V2 is off
+  by default, so the refusal comes from the legacy `NewConstructionRequest` path.
   Corrected the false claim in `redesign/03_PLACEMENT.md` that the flag fixed
-  placement in a live game. Next: find why attach is intermittent, then make the
-  default configuration place a Pylon.
+  placement in a live game. Next: make the default configuration place a Pylon,
+  then run the 7-minute survival scenario.
 
 ### Reverted: NEXT #9 wall-clock extraction attempt
 The `A` date/time formatter split into a new `ATime` was started and **reverted**:
