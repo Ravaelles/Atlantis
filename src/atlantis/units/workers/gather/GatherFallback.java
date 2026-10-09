@@ -5,9 +5,6 @@ import atlantis.units.AUnit;
 import atlantis.units.buildings.NumberOfGasWorkersCommander;
 import atlantis.units.select.Select;
 
-import atlantis.architecture.Manager;
-import atlantis.units.AUnit;
-
 public class GatherFallback extends Manager {
     public GatherFallback(AUnit unit) {
         super(unit);

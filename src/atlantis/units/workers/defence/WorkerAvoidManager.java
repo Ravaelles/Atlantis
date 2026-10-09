@@ -4,6 +4,7 @@ import atlantis.architecture.Manager;
 import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.select.Select;
 
 public class WorkerAvoidManager extends Manager {
     private boolean wasAttackedRecenty;
@@ -33,6 +34,12 @@ public class WorkerAvoidManager extends Manager {
 
     @Override
     public Manager handle() {
+        if (unit.allUnitsNear().groundUnits().countInRadius(1, unit) >= 3) {
+            if (runTowardsMineralsToBecomeTransparent(unit)) {
+                return usedManager(this);
+            }
+        }
+
         if ((new ProtossAvoidEnemies(unit)).forceHandle() != null) {
             return usedManager(this);
         }
@@ -41,15 +48,22 @@ public class WorkerAvoidManager extends Manager {
         return null;
     }
 
-    private Manager moveAwayFromEnemy() {
-        AUnit enemy = unit.enemiesNear().combatUnits().nearestTo(unit);
-//        if (unit.moveAwayFrom(enemy, 3, Actions.RUN_ENEMY, "AvoidHarass")) return usedManager(this);
-        if (unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false)) {
-            unit.setTooltip("AvoidHarass");
-            return usedManager(this);
-        }
+    private boolean runTowardsMineralsToBecomeTransparent(AUnit unit) {
+        AUnit mineral = Select.minerals().nearestTo(unit);
+        if (mineral == null) return false;
 
-        return null;
+        return unit.gather(mineral);
     }
+
+//    private Manager moveAwayFromEnemy() {
+//        AUnit enemy = unit.enemiesNear().combatUnits().nearestTo(unit);
+////        if (unit.moveAwayFrom(enemy, 3, Actions.RUN_ENEMY, "AvoidHarass")) return usedManager(this);
+//        if (unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false)) {
+//            unit.setTooltip("AvoidHarass");
+//            return usedManager(this);
+//        }
+//
+//        return null;
+//    }
 }
 

@@ -7,7 +7,7 @@ import atlantis.units.actions.Actions;
 
 public class MoveUnitsFromConstructionPlace {
     public static boolean move(AUnit unit, Construction construction, double distanceToConstruction) {
-        if (distanceToConstruction >= 6) return false;
+        if (distanceToConstruction >= 3.8) return false;
 
         APosition buildPosition = construction.buildPosition();
         if (buildPosition == null) return false;
