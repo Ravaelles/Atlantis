@@ -308,6 +308,12 @@ with zipfile.ZipFile(out_jar) as z:
                  or n.startswith('tests/') or n.startswith('starengine/')]
     assert not forbidden, 'test data, harness classes or nested jars leaked in: %s' % forbidden[:5]
     assert 'main/Main.class' in names, 'entry point missing'
+    # The BWAPI unit-completion callback reaches these classes asynchronously.
+    # If either is omitted, the bot can attach and play for minutes before a
+    # completed combat unit triggers NoClassDefFoundError (reported 2026-10-09).
+    for required in ('atlantis/combat/squad/AssignUnitToSquad.class',
+                     'atlantis/combat/squad/NewUnitsToSquadsAssigner.class'):
+        assert required in names, 'unit-completion callback class missing from bot jar: %s' % required
 
     # The payload is only the right size if nothing in it still names the harness.
     # A class can reference tests/ without importing it (reflection, a string), so

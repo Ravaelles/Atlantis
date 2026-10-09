@@ -47,6 +47,22 @@ public class LauncherBuildsTheJarTest {
     }
 
     @Test
+    public void workerCompletionCallbackClassesArePresentInProductionSources() throws IOException {
+        // Atlantis.onUnitComplete invokes this chain asynchronously from the
+        // JBWAPI client thread. A missing target is therefore a runtime
+        // NoClassDefFoundError in a callback, not a compile failure.
+        Path assignUnit = Paths.get("src/atlantis/combat/squad/AssignUnitToSquad.java");
+        Path assigner = Paths.get("src/atlantis/combat/squad/NewUnitsToSquadsAssigner.java");
+
+        assertTrue(Files.isRegularFile(assignUnit), "the unit-completion callback target must remain in production sources");
+        assertTrue(Files.isRegularFile(assigner), "the callback caller must remain in production sources");
+
+        String source = read(assigner);
+        assertTrue(source.contains("AssignUnitToSquad"),
+                "the completion callback depends on AssignUnitToSquad; the jar must ship both classes");
+    }
+
+    @Test
     public void wineFullRebuildsTheJarBeforePlaying() throws IOException {
         String script = read(WINE_FULL);
 
