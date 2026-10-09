@@ -266,15 +266,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   rather than changed. Worth a test that says which of the two behaviours is intended
   before anyone touches it: a construction whose builder is assigned a frame later would
   be cancelled by the safety net.
-- **#41** ADR 0006 audit step 2, continued: the 105 production guards of the form
-  `eval() >= X`, where the quiet reading (9873.7, "nothing in reach") passes them all.
-  Row 1 is measured and recorded in the ADR:
-  `ProtossMissionDefendAllowsToAttack` lets a defend-mission unit chase a target 30 tiles
-  away on a reading that is not about that target. The method is in place -
-  `AUnit.hasEnemyForEval()` and `CombatEvalScale.NO_ENEMY_IN_REACH`, pinned by
-  `EvalHasReadingTest` - so the remaining work is one class at a time, three lines per row
-  (reading / hasReading / decision). Changing a guard is a strategy decision, not a bug
-  fix: the two guards above row 1 already handle the two target kinds that matter.
+
 - **#42** First assimilator never ordered despite a finished Cybernetics Core
   (`GAME_29A29B04`: 0 gas mined all game, dragoons impossible from frame one, book #9
   at supply 22 never fired and neither did the dynamic path). Suspects, in order:

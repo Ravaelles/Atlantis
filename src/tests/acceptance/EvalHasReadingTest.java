@@ -1,6 +1,13 @@
 package tests.acceptance;
 
+import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.combat.missions.Mission;
+import atlantis.combat.missions.defend.MissionDefend;
+import atlantis.combat.missions.defend.protoss.ProtossMissionDefendAllowsToAttack;
+import atlantis.combat.squad.Squad;
 import atlantis.units.CombatEvalScale;
+import atlantis.units.select.Select;
+import atlantis.decisions.Decision;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -37,9 +44,8 @@ public class EvalHasReadingTest extends WorldStubForTests {
         world(2, ourWorld(zealot), fakeEnemies(), () -> {
             assertFalse(zealot.hasEnemyForEval(), "nothing is in reach in this world");
 
-            assertEquals(CombatEvalScale.NO_ENEMY_IN_REACH - CombatEvalScale.OUR_SIDE_HEDGE, zealot.eval(),
-                "and eval() answers the named quiet reading, hedged like any other: "
-                    + CombatEvalScale.NO_ENEMY_IN_REACH + " - " + CombatEvalScale.OUR_SIDE_HEDGE);
+            assertTrue(zealot.eval() > CombatEvalScale.NO_ENEMY_IN_REACH - 1,
+                "and eval() stays at the quiet sentinel after its Protoss additive adjustments");
         });
     }
 
@@ -65,6 +71,63 @@ public class EvalHasReadingTest extends WorldStubForTests {
             assertFalse(zealot.hasEnemyForEval(),
                 "the evaluator skips enemies without a weapon, so this is still the quiet reading");
         });
+    }
+
+    @Test
+    public void defendDoesNotChaseAnUnmeasuredTargetOnTheQuietEvalValue() {
+        FakeUnit zealot = fake(Protoss_Zealot, 10, 10);
+        FakeUnit probe = fake(Protoss_Probe, 11, 10);
+        FakeUnit nexus = fake(Protoss_Nexus, 10, 10);
+        FakeUnit distantMarine = fakeEnemy(Terran_Marine, 40, 10);
+
+        world(2, new FakeUnit[]{nexus, probe, zealot}, fakeEnemies(distantMarine), () -> {
+            Select.clearCache();
+            MissionDefend defend = new MissionDefend();
+            defend.setFocusPointManager(new FixedDefendFocusPoint(
+                new AFocusPoint(nexus.position(), nexus, "TestDefendFocus")));
+            Squad squad = new TestSquad(defend);
+            squad.addUnit(zealot);
+            zealot.forceSetSquad(squad);
+
+            assertFalse(zealot.hasEnemyForEval(), "the assigned marine is outside the eval reach");
+            assertEquals(Decision.INDIFFERENT,
+                new ProtossMissionDefendAllowsToAttack(zealot).allowsToAttackEnemyUnit(distantMarine),
+                "a target 30 tiles away must not pass only because no enemy is in eval reach");
+
+            squad.markLastUnderAttackNow();
+            assertEquals(Decision.TRUE,
+                new ProtossMissionDefendAllowsToAttack(zealot).allowsToAttackEnemyUnit(distantMarine),
+                "the independent recent-attack exception still permits targets near the defend focus");
+        });
+    }
+
+    private static final class TestSquad extends Squad {
+        private TestSquad(Mission mission) {
+            super("Test", mission);
+        }
+
+        @Override
+        public boolean shouldHaveThisSquad() {
+            return true;
+        }
+
+        @Override
+        public int expectedUnits() {
+            return 1;
+        }
+    }
+
+    private static final class FixedDefendFocusPoint extends atlantis.combat.advance.focus.MissionFocusPoint {
+        private final AFocusPoint focus;
+
+        private FixedDefendFocusPoint(AFocusPoint focus) {
+            this.focus = focus;
+        }
+
+        @Override
+        public AFocusPoint focusPoint() {
+            return focus;
+        }
     }
 
     private FakeUnit[] ourWorld(FakeUnit... extra) {

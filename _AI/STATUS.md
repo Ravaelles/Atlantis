@@ -40,26 +40,34 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **NEXT #42 — first Assimilator diagnostics, no policy change.** Added reason
-  labels for producer rejections (`AlreadyHaveAssimilator`, `AlreadyQueued`,
-  `ExpansionSupplyGate`, `NoCyberneticsCore`, `CyberneticsCoreNotNearCompletion`,
-  `QueueRejected`) and an `applies()` report for the first blocking commander
-  gate (`Throttle`, `MineralsOrQueueSize`, `StandardResourcesOrExpansion`,
-  `CriticalQueueResources`), plus earlier short-circuiting producers
-  (`FallbackPylon` / `CyberneticsCore`) that can prevent reaching the Assimilator
-  producer. The diagnostic preserves producer order and short-circuit semantics;
-  no eligibility gate was intentionally changed.
-  Fast suite: 335 passed, 0 failed; ArchUnit: 7/7; canonical jar build passed
-  with Java 8 bytecode and a fresh source fingerprint. A 90-second OpenBW game
-  attached and completed but lost its only Probe at 48:28 game time; it did not
-  meet the diagnostic precondition, so no Assimilator diagnostic line was
-  expected. A second runner invocation was still active after the command channel's
-  six-minute limit and yielded no captured verdict; a check for the exact host
-  and bot process names found neither still running, and the log contains no
-  usable game-end or Assimilator-gate evidence. The attempted game is
-  inconclusive. #42 remains open until a completed run reaches the historic
-  Core/no-Assimilator state and captures the blocking gate. The current cycle
-  only adds and builds the instrumentation; it does not close #42.
+- **#41 closed:** `ProtossMissionDefendAllowsToAttack` now requires
+  `hasEnemyForEval()` for the `eval() >= 1.3` shortcut. The earlier independent
+  recent-attack/focus override is unchanged. Regression test
+  `EvalHasReadingTest.defendDoesNotChaseAnUnmeasuredTargetOnTheQuietEvalValue`
+  failed with the old guard (4 tests found, 1 failed; it returned TRUE on the
+  quiet sentinel) and passes with the guard. Fast suite: 335 passed, 0 failed;
+  ArchUnit: 7/7. No numeric threshold changed. Closed #41 in `_AI/NEXT.md`.
+
+### Next up: NEXT #42 diagnostic evidence
+See “Completed partial cycle: NEXT #42 instrumentation” below. Reason logging is
+implemented and verified, but the required completed game reaching a finished
+Cybernetics Core with no Assimilator has not been captured yet.
+
+### Completed partial cycle: NEXT #42 instrumentation
+Added reason labels for producer rejections (`AlreadyHaveAssimilator`,
+`AlreadyQueued`, `ExpansionSupplyGate`, `NoCyberneticsCore`,
+`CyberneticsCoreNotNearCompletion`, `QueueRejected`) and an `applies()` report for
+the first blocking commander gate (`Throttle`, `MineralsOrQueueSize`,
+`StandardResourcesOrExpansion`, `CriticalQueueResources`), plus earlier
+short-circuiting producers (`FallbackPylon` / `CyberneticsCore`) that can prevent
+reaching the Assimilator producer. No eligibility gate was intentionally changed.
+Fast suite: 335 passed, 0 failed; ArchUnit: 7/7; canonical jar build passed with
+Java 8 bytecode and a fresh source fingerprint. A 90-second OpenBW game attached
+and completed but lost its only Probe at 48:28 game time, before the diagnostic
+precondition. A second invocation yielded no captured verdict; no bot/host process
+remained and the log contains no usable end state. #42 remains open pending a
+completed run that reaches the historic Core/no-Assimilator state and captures
+the blocking gate.
 
 ### Deferred: NEXT #40 — construction recovery branch characterization
 `ConstructionThatLooksBugged` has a branch that cannot run: it returns unless

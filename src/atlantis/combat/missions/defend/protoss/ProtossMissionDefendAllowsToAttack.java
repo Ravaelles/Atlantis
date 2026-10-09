@@ -35,7 +35,7 @@ public class ProtossMissionDefendAllowsToAttack extends HasUnit {
                 && unit.distToFocusPoint() <= 20
         ) return Decision.TRUE;
 
-        if (unit.eval() >= 1.3) return Decision.TRUE;
+        if (unit.eval() >= 1.3 && unit.hasEnemyForEval()) return Decision.TRUE;
 
         if (unit.isDragoon()) {
             if (A.s >= 60 * 7) return Decision.TRUE;
