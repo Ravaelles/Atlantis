@@ -306,19 +306,26 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   *sequence*, not a set of independent wants, and the goal layer lost the ordering
   between rows when it flattened them.
 
-  **Fix so far (insufficient, measured):** `BuilderManager.isBuilder` now also
-  answers true for a `NOT_STARTED` construction, so a worker freshly assigned by
-  the v2 dispatcher is recognised as a builder before it has an order - without it
-  `BuilderManager.applies()` never ran and `TravelToConstruct` was never issued.
-  The suite is green (336/0) but the live run still loops.
+  **Implemented and unit-tested, live status still open:**
+  - `BuildOrderGoals` emits only the earliest unsatisfied occurrence per item type;
+    `ProductionScheduler` deduplicates same building type+placement across sources.
+    Regression test `openingSchedulesOnePylonBeforeGatewayDespiteDuplicateSupplyGoal`.
+  - Assigned builders are owned by construction: `BuilderManager` is first in
+    `WorkerManager`; `BuilderManager.handle()` claims a pending assignment even
+    when `TravelToConstruct` cannot issue an order that frame; worker defense and
+    `WorkerHelpCombatUnitsFight` decline assigned builders. Regression forces the
+    WorkerManager chain and asserts `unit.managerLogs()` contains BuilderManager,
+    not WorkerHelpCombatUnitsFight/GatherResources (`WorkerDefenceTest`: 12/12).
+  - `GameSummary` reports Pylon/Gateway counts, and runner assertions cover them;
+    offline assertion self-test rejects a 0/0 building fixture.
 
-  **Still to fix, in order:**
-  1. `BuildOrderGoals` must emit **only the next unproduced row** per item type
-     (a build order is ordered), or the scheduler must collapse goals that target
-     the same (type, placement) in one pass;
-  2. a dispatched building must stop being "due" - an item whose start frame has
-     passed and that already has a committed builder must not be re-issued by the
-     next frame's plan.
+  **Manual owner confirmation:** owner reports that a real StarCraft game built
+  both Pylon and Gateway. This confirms the default/legacy gameplay on that run,
+  but does not verify the Production V2 LIVE path. The most recent LIVE OpenBW run
+  before the builder ownership change dispatched Pylon repeatedly and timed out.
+  The next bounded LIVE run is blocked while the runner detects an active owner
+  `StarCraft.exe`/ChaosLauncher; never terminate it. Resume after it closes and
+  inspect the specific assigned worker's `managerLogs()` if construction stalls.
 
   **Corrected twice mid-investigation:** an earlier reading blamed a caught init
   exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
@@ -352,22 +359,25 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      occupied. So `MapTiles.isBuildable` needs no fallback, and the earlier
      "engine lies" note in this item was wrong.
 
-     What actually happens: `CanPhysicallyBuildHere` requires EVERY tile of the
-     4x3 Pylon to be buildable-including-buildings (or one of its allow-early
-     exceptions), and the position search keeps returning candidates whose 4x3
-     footprint covers (7,44) - a tile that is occupied. The refusal is correct;
-     the **candidate search** is what fails to find a clear footprint.
+     Verified from the engine jar: a Pylon is **2x2** (Gateway is 4x3).
+     `CanPhysicallyBuildHere` correctly requires each footprint tile to be
+     buildable-including-buildings; the sampled candidate included occupied tile
+     (7,44). The owner confirms a manual SC run builds Pylon and Gateway; this is
+     owner evidence for the legacy path, not an OpenBW verdict. The next bounded
+     OpenBW run must decide whether the legacy-path failure persists; do not
+     patch `APositionFinder` without a fresh reproducer.
 
-     So the fix is in position selection, not in `isBuildable`. Ways out:
-     (a) find out why the search cannot step past the occupied tile (it is the
-     legacy `APositionFinder`, scheduled for deletion), or (b) cut over to
-     Production V2, whose `CataloguePlacementPlanner` does not use this path at
-     all. (b) is the plan; see `_AI/PLACEMENT-CUTOVER-PLAN.md`.
-  3. **A scenario file** instead of loose env vars.
-  4. **A deliberately broken build fails the same scenario.**
-  5. **The 7-minute survival scenario passes:** `EXPECT_MIN_INGAME_SECONDS=420`,
-     `EXPECT_MIN_KILLED=12`, `EXPECT_MAX_KILLED=40`,
-     `EXPECT_MIN_RESOURCE_BALANCE=-200`. It cannot pass before (2).
+     If the default legacy path still refuses after the owner's latest changes,
+     diagnose its candidate search from a fresh bounded run. The planned long-term
+     option remains the Production V2 cut-over in `_AI/PLACEMENT-CUTOVER-PLAN.md`,
+     but its LIVE path currently re-dispatches pending buildings and times out;
+     #48 tracks that separate V2 issue.
+  3. A scenario file instead of loose environment variables (not implemented).
+  4. A deliberately broken build fails the same scenario (not verified).
+  5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
+     `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
+     `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
+     refusals. Still not verified on OpenBW.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

@@ -47,10 +47,10 @@ owner-observed behavior, not an OpenBW artifact; preserve that distinction.
    `BuilderManager` first priority; `BuilderManager` retains an assigned
    `NOT_STARTED` construction even when `TravelToConstruct` cannot issue a move
    in that frame, after its own safety submanagers. `WorkerDefenceManager` excludes
-   assigned builders and `WorkerHelpCombatUnitsFight` declines them. The regression
-   drives the actual `WorkerManager` chain and checks `unit.managerLogs()` contains
+   assigned builders and `WorkerHelpCombatUnitsFight` declines them. Regression
+   drives the real `WorkerManager` chain and asserts `unit.managerLogs()` contains
    BuilderManager but not WorkerHelp/Gather. Focused `WorkerDefenceTest`: 12/12.
-   Commit pending this verification: this cycle.
+   Commit: `b8f6a611`.
 2. **#48 duplicate building goals.** `BuildOrderGoals` emits only the earliest
    unsatisfied occurrence per type; `ProductionScheduler` deduplicates identical
    building type+placement across sources. Regression test pins one Pylon and one
@@ -62,11 +62,12 @@ owner-observed behavior, not an OpenBW artifact; preserve that distinction.
    `NoClassDefFoundError: atlantis/combat/squad/AssignUnitToSquad`. Exact crashed
    artifact unavailable; current jar is fresh, contains both callback classes,
    and the builder asserts they are packaged. Remains unreproduced.
-5. **Verification:** focused `WorkerDefenceTest` 12/12; prior fast suite 339/0
-   and ArchUnit 7/7. After the latest builder ownership change, rerun fast suite
-   and ArchUnit before commit. The fresh deployed jar passed fingerprint and
-   Java 8 checks; callback classes are packaged. OpenBW rerun was refused because
-   the owner’s StarCraft/ChaosLauncher was active; do not terminate it.
+5. **Verification (2026-10-09):** focused `WorkerDefenceTest` 12/12; latest full
+   suite 339/0 (8.5 s); ArchUnit 7/7 (2.8 s). Deployed jar rebuilt and
+   freshness-checked; callback class entries are present. The full-game OpenBW
+   runner refused to start because the owner's StarCraft/ChaosLauncher is active.
+   The fast-suite host smoke warned that no registry appeared in its 1 s smoke
+   window; that is not an E2E result. Do not terminate the owner's game.
 6. **Owner manual-SC confirmation (not OpenBW):** Pylon and Gateway both built.
    Record separately from engine-test evidence.
 7. **#47 remains open:** resume bounded OpenBW after the owner game ends. Require
