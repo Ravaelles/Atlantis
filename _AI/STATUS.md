@@ -331,3 +331,33 @@ scenario assertions. Regression `LauncherBuildsTheJarTest.anUncleanOpenBwBotExit
 pins ordering; its shell syntax check also covers the OpenBW script. Verification:
 fast suite 346/346, ArchUnit 7/7. #47 remains open: Pylon/Gateway and survival
 assertions have not passed.
+
+
+### NEXT #47/#48: Pylon command failure measured on the live selected tile
+Additional temporary diagnostics were removed after use; the deployed bot jar was
+rebuilt from the clean source tree and freshness-checked (`87aa649a...`). On the
+LIVE OpenBW run, an actual `Unit.build(Pylon, tile)` returned false even though
+`AUnitOrders` reported `ErRoR:b` (the origin tile is buildable including
+buildings). The focused probe sampled the Pylon's 2x2 footprint: every tile was
+`MapTiles.isBuildableIncludeBuildings=true` and `Game.isBuildable(..., true)=true`,
+there were no other units overlapping the footprint, and Atlantis could afford
+it; nevertheless `Game.canBuildHere(tile, Pylon, builder)=false`. This shows the
+failure is not explained by occupied/unbuildable terrain or low minerals, but the
+available evidence does not yet identify which `canBuildHere` condition is false.
+Do not add a map-grid fallback or alter `APositionFinder` based on these signals;
+the exact live command is rejected. #47/#48 remain open pending a targeted
+reproducer that identifies the builder-specific/site-specific rejection and a
+completed bounded game verdict.
+
+
+### Correction to earlier #48 manager-history inference
+The earlier note said the alternating names in `managerLogs()` implied that
+WorkerHelp/Gather hijacked the assigned builder. That inference is not established:
+a later focused sample of the assigned Pylon worker (frame 5040) shows
+`isBuilder=true`, Construction status `NOT_STARTED`, and only `BuilderManager` in
+its active history, while the building still has not appeared. Do not change the
+manager order on that basis. `PylonBuildReject` samples at the current candidate
+show `canBuildHere=false` with no builder and with the assigned builder, while all
+2x2 cells are map/engine-buildable and there are no overlapping units; the precise
+engine precondition remains unidentified. Temporary probes were removed and the
+deployed jar rebuilt/freshness-checked from clean source.

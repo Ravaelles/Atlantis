@@ -340,8 +340,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      JVM is now killed 10 s before the host, so the host outlives the client, and
      a log with no `HELLO_ATLANTIS` is an assertion failure. Verified: three
      consecutive runs attached and passed. Remaining: a run that fails for some
-     other reason must still be distinguishable from a pass.
-  2. **A Pylon is placed in a real run.** NO, and the cause is measured
+        other reason must still be distinguishable from a pass. **Non-zero bot exits
+        now fail before scenario assertions** (a timed-out run previously printed
+        `SCENARIO PASSED` with no expectations); this is pinned by
+        `LauncherBuildsTheJarTest` and fast suite 346/346. A real non-zero process-exit
+        integration run is still unverified.
+     2. **A Pylon is placed in a real run.** NO, and the cause is measured
      2026-10-09 - but **not** what the first reading suggested. The engine is
      telling the truth: on the probed tiles `engBuild=true` and only the occupancy
      variant `engBuildInc=false` for the one tile (7,44) that is genuinely
@@ -356,11 +360,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      OpenBW run must decide whether the legacy-path failure persists; do not
      patch `APositionFinder` without a fresh reproducer.
 
+     **Fresh LIVE OpenBW evidence (2026-10-09):** the selected catalogue tile's
+     `Unit.build(Pylon, tile)` returned false; the 2x2 footprint's four tiles were
+     individually buildable in both the map grid and `Game.isBuildable(..., true)`,
+     no other unit overlapped the footprint, and minerals were sufficient. Yet
+     `Game.canBuildHere(tile, Pylon, builder)` was false. This is a fresh command
+     rejection, but its cause is still unknown; do not add a map fallback or alter
+     `APositionFinder` based on the map-only values.
+
      If the default legacy path still refuses after the owner's latest changes,
      diagnose its candidate search from a fresh bounded run. The planned long-term
-     option remains the Production V2 cut-over in `_AI/PLACEMENT-CUTOVER-PLAN.md`,
-     but its LIVE path currently re-dispatches pending buildings and times out;
-     #48 tracks that separate V2 issue.
+     option remains the Production V2 cut-over in `_AI/PLACEMENT-CUTOVER-PLAN.md`;
+     #48 tracks the separate LIVE scheduler/dispatch blocker.
   3. A scenario file instead of loose environment variables (not implemented).
   4. A deliberately broken build fails the same scenario (not verified).
   5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
