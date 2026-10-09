@@ -271,7 +271,54 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 
-- **#47 — OpenBW E2E must be fully working (TOP priority).** The runner attaches
+- **#48 - under `PRODUCTION_V2=LIVE` the build order is re-issued every frame and
+  the run dies on the outer timeout (blocks #47).** Measured 2026-10-09, twice.
+
+  **What the log shows (run at `TIMEOUT_SECONDS=60`, in-game 3 min):**
+  ```
+  PRODUCTION_V2 @@1990 plan=2 [Probe@2440-2740 by#70 Pylon@1156-1606 ] issued: OK Pylon@1156 (builder committed)
+  PRODUCTION_V2 @@1991 plan=2 [Probe@2441-2741 by#70 Pylon@1156-1606 ] issued: OK Pylon@1156 (builder committed)
+  ... to @@2001 ...
+  ```
+  The Pylon's start frame is **1156** and it is dispatched "due now" at frames
+  1990-2001, reported as `builder committed` on **every** frame, and never built.
+  This is the same shape as the M6 blocker already recorded in `_AI/STATUS.md`
+  (the plan re-commits an item from the past instead of starting it once).
+
+  **Consequence:** the run never reaches `Total time` / `Defeat`, the
+  `ForceExitLocallyAfterRealSeconds` line never appears, and the process is killed
+  by the outer `timeout` (exit 124 in the longer run, exit 1/no-verdict here).
+  Without LIVE the identical command ends itself cleanly (`Total time: 188
+  seconds`, exit 0), so **the defect is in the LIVE path, not in the runner**.
+
+  **Two things to fix, in order:**
+  1. A dispatched building must be treated as satisfied (or its dispatch must be
+     de-duplicated per frame), so it is issued once - the M6 scheduler/dispatcher
+     fix;
+  2. Only then can the cut-over gate be judged (`PLACEMENT-CUTOVER-PLAN.md`).
+
+  **Corrected mid-investigation:** an earlier reading of this item blamed a
+  caught init exception and the `OnGameEnd._executed` latch. Instrumentation
+  disproved it: `HELLO_ATLANTIS` is present and there is **no** exception, so the
+  game starts normally and the loop above is the whole cause. `OnGameEnd._executed`
+  being a non-resetting latch is still a real (separate) defect worth its own
+  entry.
+
+  Every earlier LIVE measurement - including the "Pylon placed" claim - came from
+  a process that had to be killed.
+
+- **#49 - `OnGameEnd._executed` is a latch that never resets, and one branch
+  returns without setting it.** `OnGameEnd.execute` opens with
+  `if (_executed) return;`, and the `Env.isTesting()` branch calls `exitGame` and
+  returns **without** setting `_executed = true`. Two consequences:
+  (a) a first, spurious `onEnd` permanently disarms every later one - the real
+  end-of-game cleanup then never runs; (b) the flag is `static`, so it also leaks
+  between games in one JVM (the same class of leak `UnitsArchive.reset()` and
+  `ReservedResources.reset()` were fixed for).
+  Not proven to be the cause of #48 (instrumentation ruled that out), but it is a
+  real defect on the exit path and cheap to pin with a test.
+
+- **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
 
   1. **Attach is now reliable - fixed 2026-10-09.** The host was killed a few

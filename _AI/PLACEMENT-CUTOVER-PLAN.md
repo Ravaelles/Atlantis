@@ -13,12 +13,32 @@ it produces nothing and every E2E scenario fails. Measured 2026-10-09:
   `isBuildable(tx, ty, true)` is `false` - and only for tile (7,44), which is
   genuinely occupied.
 - The refusal therefore comes from the legacy path: `CanPhysicallyBuildHere`
-  requires every tile of the 4x3 Pylon footprint to be free, and the legacy
+  requires every tile of the building's footprint to be free, and the legacy
   `APositionFinder` keeps handing it candidates whose footprint covers the
   occupied tile. The search fails to step past it.
+  **Footprint, verified from the engine jar 2026-10-09:** Pylon is **2x2**
+  (`Protoss_Pylon = 2x2`; 4x3 is Nexus/Gateway, 4x2 is Assimilator). An earlier
+  version of this file said "4x3 Pylon", which was wrong - sizes come from
+  `bwapi.UnitType.tileWidth()/tileHeight()` (CONVENTIONS §9), never from memory.
 - `PLACEMENT=catalogue` cannot help, because it only selects the planner for
   **Production V2**, and V2 is off unless `PRODUCTION_V2=LIVE` is set. In the
   default configuration the legacy planner is in charge.
+
+## Gate result (step 1, measured 2026-10-09): does V2+LIVE work?
+
+**No.** Two runs with `PRODUCTION_V2=LIVE PLACEMENT=catalogue` never completed:
+`exit 124` (outer timeout) in one, `exit 1` with no verdict in the other. The
+cause is recorded as **NEXT #48**: the same building is re-dispatched on every
+frame - `Pylon@1156` is issued as "due now" at frames 1990-2001, reported as
+`builder committed` each time, and never built - so the game never reaches its end
+and the process is killed from outside. Without LIVE the identical command ends
+itself cleanly (`Total time: 188 seconds`, exit 0), so this is a LIVE-path defect,
+not a runner defect.
+
+**Consequence for this plan:** step 1 cannot pass until #48 is fixed. Note also
+that the building **is being committed to a builder**, which is more than the
+default path achieves - so the catalogue planner looks healthy and the blocker is
+the dispatch loop, not the placement search.
 
 The option-A shortcut (a fallback inside `isBuildable`) was investigated and
 abandoned: it is not a fallback problem, and patching the legacy finder is

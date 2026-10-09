@@ -40,14 +40,15 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **NEXT #47 (TOP priority) - OpenBW E2E fully working.** Attach fixed 2026-10-09
-  (host now outlives the client; a missing `HELLO_ATLANTIS` fails the run instead
-  of passing) - three consecutive runs attached. Remaining: no Pylon is ever
-  placed, because `PLACEMENT=catalogue` only affects Production V2 and V2 is off
-  by default, so the refusal comes from the legacy `NewConstructionRequest` path.
-  Corrected the false claim in `redesign/03_PLACEMENT.md` that the flag fixed
-  placement in a live game. Next: make the default configuration place a Pylon,
-  then run the 7-minute survival scenario.
+- **NEXT #48 is the live blocker (blocks #47 and the cut-over).** With
+  `PRODUCTION_V2=LIVE` the same building is re-issued on every frame
+  (`Pylon@1156` dispatched at frames 1990-2001, `builder committed` each time,
+  never built), so the game never reaches its end and the process is killed by the
+  outer timeout. Without LIVE the identical command ends itself cleanly
+  (`Total time: 188 seconds`, exit 0), so the defect is in the LIVE dispatch path.
+  Also confirmed: Pylon is 2x2 in the engine jar, not 4x3 as an earlier note said.
+  Depending on progress, see `PLACEMENT-CUTOVER-PLAN.md` for the ordered plan and
+  #49 for a separate exit-path latch defect found while investigating.
 
 ### Reverted: NEXT #9 wall-clock extraction attempt
 The `A` date/time formatter split into a new `ATime` was started and **reverted**:
