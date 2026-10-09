@@ -281,19 +281,24 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      a log with no `HELLO_ATLANTIS` is an assertion failure. Verified: three
      consecutive runs attached and passed. Remaining: a run that fails for some
      other reason must still be distinguishable from a pass.
-  2. **A Pylon is placed in a real run.** NO, and the cause is now measured
-     2026-10-09. `MapTiles.canBuildHere` does have an OpenBW fallback, but the
-     fallback calls `tilesCoveredAreBuildable`, which asks
-     `isBuildableIncludeBuildings()` -> `MapTiles.isBuildable(at, true)` ->
-     `game().isBuildable(tx, ty, true)`. That engine query is **not** fallback-
-     protected, while its neighbours `isWalkable` and `hasPathBetween` are - and it
-     returns `false` for every tile near our base, so placement refuses with
-     reason `Can't physically build here`. Tiles 93-95 x 118-120 were probed and
-     all answered not-buildable. Two ways out, and it is a decision:
-     (a) give `isBuildable` the same map/JBWEB fallback its neighbours have, or
-     (b) cut over to Production V2, whose `CataloguePlacementPlanner` does not use
-     this path at all. Do not patch `APositionFinder` while the cut-over is pending
-     (`_AI/POSITION-FINDER.md`).
+  2. **A Pylon is placed in a real run.** NO, and the cause is measured
+     2026-10-09 - but **not** what the first reading suggested. The engine is
+     telling the truth: on the probed tiles `engBuild=true` and only the occupancy
+     variant `engBuildInc=false` for the one tile (7,44) that is genuinely
+     occupied. So `MapTiles.isBuildable` needs no fallback, and the earlier
+     "engine lies" note in this item was wrong.
+
+     What actually happens: `CanPhysicallyBuildHere` requires EVERY tile of the
+     4x3 Pylon to be buildable-including-buildings (or one of its allow-early
+     exceptions), and the position search keeps returning candidates whose 4x3
+     footprint covers (7,44) - a tile that is occupied. The refusal is correct;
+     the **candidate search** is what fails to find a clear footprint.
+
+     So the fix is in position selection, not in `isBuildable`. Ways out:
+     (a) find out why the search cannot step past the occupied tile (it is the
+     legacy `APositionFinder`, scheduled for deletion), or (b) cut over to
+     Production V2, whose `CataloguePlacementPlanner` does not use this path at
+     all. (b) is the plan; see `_AI/PLACEMENT-CUTOVER-PLAN.md`.
   3. **A scenario file** instead of loose env vars.
   4. **A deliberately broken build fails the same scenario.**
   5. **The 7-minute survival scenario passes:** `EXPECT_MIN_INGAME_SECONDS=420`,

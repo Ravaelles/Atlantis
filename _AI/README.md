@@ -15,7 +15,7 @@ AI assistant.
 |---|---|
 | know **what to work on next** | `NEXT.md` (open backlog) |
 | **finish Production V2** | `STATUS.md`, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `POSITION-FINDER.md` (why it was rewritten) |
+| work on **placement** | `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `PLACEMENT-CUTOVER-PLAN.md` (the V2 cut-over plan), `POSITION-FINDER.md` (why it was rewritten) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
