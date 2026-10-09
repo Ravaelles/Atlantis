@@ -279,10 +279,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Housekeeping
 
-- **#15** Rebuild the deployed bot jars (`bots/AtlantisP/AI`, `bots/AtlantisT/AI`) so
-they never lag the source. Done repeatedly; the last rebuild followed the
-production-v2 and placement work. Verify with one scbw or OpenBW game run
-(`_AI/e2e/*.md` carries the verdict tables; the run journal is in git history).
+- **#15 PARTIAL — deployed Protoss jar freshness.** Rebuilt
+  `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` with the canonical builder; freshness
+  fingerprint matches the source tree (`94e518…`) and bytecode major is 52
+  (Java 8). OpenBW run `GAME_SECONDS=90 PLACEMENT=catalogue`, map
+  `(3)TauCross1.1.scx`, Protoss vs Zerg: client attached, bot exited 0,
+  `Total time: 843 seconds`, no exception; it still logged
+  `Can't find place for Pylon` at 0:39, so this verifies the jar was played, not
+  that placement works. **Terran remains blocked:**
+  `/sc-ai/BOTS/AtlantisT/AI/Atlantis.jar` does not exist and the scbw opponent
+  cache is owned by scbw; no approved Terran deployed target was found. Do not
+  close #15 until the intended Terran artifact path is supplied or the owner
+  verifies that no deployed Terran jar is required. Run artefacts:
+  `out/openbw/bot.log`, `out/openbw/server.log`.
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 

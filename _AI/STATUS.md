@@ -40,18 +40,30 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **#41 closed:** `ProtossMissionDefendAllowsToAttack` now requires
-  `hasEnemyForEval()` for the `eval() >= 1.3` shortcut. The earlier independent
-  recent-attack/focus override is unchanged. Regression test
-  `EvalHasReadingTest.defendDoesNotChaseAnUnmeasuredTargetOnTheQuietEvalValue`
-  failed with the old guard (4 tests found, 1 failed; it returned TRUE on the
-  quiet sentinel) and passes with the guard. Fast suite: 335 passed, 0 failed;
-  ArchUnit: 7/7. No numeric threshold changed. Closed #41 in `_AI/NEXT.md`.
+- **NEXT #15 partial — Protoss deployment verified, Terran target unresolved.**
+  `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` rebuilt with the canonical builder;
+  freshness check passed (`94e518…`) and classfile major is 52 (Java 8).
+  OpenBW verification: client attached and exited 0; `Total time: 843 seconds`,
+  no exception. It logged `Can't find place for Pylon` at 0:39, so the jar was
+  genuinely played but placement remains a separate open blocker. Terran output
+  `/sc-ai/BOTS/AtlantisT/AI/Atlantis.jar` is absent; scbw manages opponent cache.
+  #15 remains open pending the owner identifying/confirming the Terran deployed
+  target. Run logs: `out/openbw/bot.log`, `out/openbw/server.log`.
 
-### Next up: NEXT #42 diagnostic evidence
-See “Completed partial cycle: NEXT #42 instrumentation” below. Reason logging is
-implemented and verified, but the required completed game reaching a finished
-Cybernetics Core with no Assimilator has not been captured yet.
+### Closed: NEXT #41
+`ProtossMissionDefendAllowsToAttack` now requires `hasEnemyForEval()` for the
+`eval() >= 1.3` shortcut. The earlier independent recent-attack/focus override
+is unchanged. Regression test `EvalHasReadingTest.defendDoesNotChaseAnUnmeasuredTargetOnTheQuietEvalValue`
+failed with the old guard (3/4; expected INDIFFERENT but got TRUE) and passes
+with the guard (4/4). Full fast suite: 335 passed, 0 failed; ArchUnit: 7/7.
+No numeric threshold changed. Commit: `164c377f`.
+
+### Blocked: NEXT #42 diagnostic evidence
+Reason diagnostics are committed (`7cbe31fe`) and tests/build pass, but OpenBW
+attempts did not complete a qualifying game with a finished Cybernetics Core and
+no Assimilator. One game lost the only Probe before the condition; another yielded
+no captured verdict. Do not change eligibility gates or close #42 until the
+blocking reason is captured in a completed qualifying game.
 
 ### Completed partial cycle: NEXT #42 instrumentation
 Added reason labels for producer rejections (`AlreadyHaveAssimilator`,
