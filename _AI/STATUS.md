@@ -40,18 +40,15 @@
   `GatewayClosestToEnemy.get()`. Test: `TrainOrderGuardTest`.
 
 ## Current work
-- **Backlog audit + OpenBW survival scenario.** Working through `_AI/` one file
-  at a time to make everything current (starting with `PLAN-OPENBW.md`, done).
-  The runner now supports optional scenario assertions read from the log
-  (`EXPECT_MIN_INGAME_SECONDS`, `EXPECT_MIN_KILLED`,
-  `EXPECT_MIN_RESOURCE_BALANCE`); verified on a real run.
-  **Measured 2026-10-09 (the finding that matters):** a 7-game-minute OpenBW run
-  completes in ~5 s wall clock and ends at in-game 428 s. The bot killed **0**
-  units and had resource balance 0, because it never placed its first Pylon
-  (`0:39: Can't find place for Pylon`). So the "survive an early rush" scenario
-  currently fails for the right reason, and placement - not the runner - is the
-  blocker to be fixed. Fixing that needs an owner-approved decision on the
-  placement cut-over (`redesign/03_PLACEMENT.md`).
+- **NEXT #47 (TOP priority) - OpenBW E2E fully working.** Two blockers measured
+  2026-10-09: (a) the attach is **intermittent** - two runs attached and exited 0,
+  one run with `PRODUCTION_V2=LIVE` never attached and hit the 120 s cap on
+  `No server proc ID`, while the host started; (b) no Pylon is ever placed,
+  because `PLACEMENT=catalogue` only affects Production V2 and V2 is off by
+  default, so the message comes from the legacy `NewConstructionRequest` path.
+  Corrected the false claim in `redesign/03_PLACEMENT.md` that the flag fixed
+  placement in a live game. Next: find why attach is intermittent, then make the
+  default configuration place a Pylon.
 
 ### Reverted: NEXT #9 wall-clock extraction attempt
 The `A` date/time formatter split into a new `ATime` was started and **reverted**:

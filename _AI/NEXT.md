@@ -271,17 +271,26 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 
-- **#47 — OpenBW E2E must be fully working (TOP priority).** The runner attaches,
-  is bounded (CONVENTIONS §13/§17) and can assert scenario facts, but an E2E test
-  is not "fully working" until: (a) the bot places a Pylon and builds a Gateway
-  in a real run, (b) a scenario file exists instead of loose env vars, (c) the
-  same scenario is proven to fail against a deliberately broken build, and
-  (d) the owner's 7-minute survival scenario passes with
-  `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
-  `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`.
-  **Current measurement (2026-10-09):** it fails at (a) -
-  `0:39: Can't find place for Pylon`, so nothing is produced and 0 units are
-  killed in 7 game minutes. That is the placement blocker, not the runner.
+- **#47 — OpenBW E2E must be fully working (TOP priority).** The runner attaches
+  and is bounded, but an E2E test is not "fully working" until all of these hold:
+
+  1. **Attach is reliable.** Measured 2026-10-09: it is **intermittent**. Two
+     back-to-back runs attached and exited 0, while a run with
+     `PRODUCTION_V2=LIVE` sat on `No server proc ID` until the 120 s cap. The host
+     started every time (its log shows `Start the Java client now`). Cause unknown,
+     reproduce and fix; do not re-investigate "the attach is solved".
+  2. **A Pylon is placed in a real run.** Currently NO: every run logs
+     `0:39: Can't find place for Pylon` and produces nothing. **The reason is
+     measured:** `PLACEMENT=catalogue` only affects Production V2, and V2 is
+     **off** unless `PRODUCTION_V2=LIVE` is set, so the message comes from the
+     legacy `NewConstructionRequest` path. `redesign/03_PLACEMENT.md` claims the
+     flag fixed placement in a live game; that claim is **wrong** for the default
+     configuration and must be corrected there.
+  3. **A scenario file** instead of loose env vars.
+  4. **A deliberately broken build fails the same scenario.**
+  5. **The 7-minute survival scenario passes:** `EXPECT_MIN_INGAME_SECONDS=420`,
+     `EXPECT_MIN_KILLED=12`, `EXPECT_MAX_KILLED=40`,
+     `EXPECT_MIN_RESOURCE_BALANCE=-200`. It cannot pass before (2).
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

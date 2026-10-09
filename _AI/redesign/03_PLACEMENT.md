@@ -6,12 +6,17 @@ Everything below this block is the design. **Protoss placement is implemented an
 acceptance-tested (28 tests); these are the gaps that remain.**
 
 1. **The cut-over has not happened.** `APositionFinder` is still the default
-   planner. `PLACEMENT=catalogue` selects the new one - and **it works in a live
-   game** (2026-10-08: the first Pylon that had blocked every OpenBW run is now
-   placed, `Can't find place for Pylon` zero) - but the flag is not yet the
-   default and the old finder is not yet deleted (§4.6: that deletion belongs to
-   the Producer cut-over). Note `PLACEMENT` must be read through `Env` (an ENV
-   FILE flag), not `System.getenv`.
+   planner. `PLACEMENT=catalogue` selects the new one, but it **only applies to
+   Production V2**, and V2 is off unless `PRODUCTION_V2=LIVE` is also set. So in
+   the default configuration the new planner is never reached, and the legacy
+   path still fails: every 2026-10-09 OpenBW run logs
+   `0:39: Can't find place for Pylon` from `NewConstructionRequest`.
+   **Corrected 2026-10-09:** an earlier version of this list claimed the flag
+   fixed placement in a live game (`Can't find place for Pylon` zero). That was
+   measured with `PRODUCTION_V2=LIVE` in the same command and is **not** the
+   default; treat the fix as unverified until an end-to-end run (see NEXT #47)
+   places a Pylon without special flags. Note `PLACEMENT` must be read through
+   `Env` (an ENV FILE flag), not `System.getenv`.
 2. **Terran and Zerg placement are stubs.** `TerranPlacementStrategy` and
    `ZergPlacementStrategy` answer "available everywhere, no templates". Not
    implemented: Terran addon availability, lift/land (the grid has no `SOFT_USED`
