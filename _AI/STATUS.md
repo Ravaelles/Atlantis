@@ -634,3 +634,45 @@ so the plan display is honest now.
 the legacy `BuilderManager` also drives the same worker. Per CONVENTIONS §18 the
 next diagnosis is the assigned worker's `managerLogs()` over the stall window plus
 the `lastCommandIssued` writer, not another guess at the position logic.
+
+### #48 third pass: no double drive - the manager chain is a single `BuilderManager` (2026-10-10)
+
+Per CONVENTIONS §18 the assigned worker's history was inspected before changing
+anything else. From the last run's `Builder diagnostic` line (the log's own
+periodic dump, no new probe needed):
+
+```
+Builder diagnostic: unit=#75 Probe @[6,47] (BuilderManager) construction=Pylon
+  status=NOT_STARTED pos=[6,47] managerHistory=Log{ 1799: BuilderManager, }
+CONSIDER_ENTER type=Pylon pos=[6,47] canAfford=true constructing=false
+  lastActionGt20BUILD=false lastCommandAgo=7
+PRODUCTION_V2 @@1800 plan=2 [Probe@2250-2550 by#77 Pylon@1800-2250 ] issued: OK Pylon@1800 (builder committed)
+PRODUCTION_V2 @@1801 ... Pylon@1801 ... (builder committed)
+```
+
+**Two things this settles - and one hypothesis it kills:**
+
+1. **There is no double drive.** `managerHistory` contains exactly one manager,
+   `BuilderManager`, over the whole stall window. The earlier "two drivers
+   fighting" reading (from `lastCommandAgo` oscillating `1140 -> 0 -> 20 -> 0`)
+   was **wrong**: the commands come from the single `BuilderManager` chain, whose
+   own `TravelToConstruct` -> `IssueBuildOrder` cycle both stamps BUILD and lets
+   the engine call happen.
+2. **The plan is now honest and stable per frame.** `startFrame = frame` (the
+   `offerPendingConstructionsAgain` fix) - `Pylon@1800` at frame 1800, `@1801` at
+   1801. Before the fix the window sat ~1000 frames behind the frame.
+3. **The remaining blocker is not a manager conflict.** `IssueBuildOrder` is
+   reached (`CONSIDER_ENTER` prints), the tile is valid and affordable, and
+   `unit.build(...)` is now called - yet no building appears, and the construction
+   is still cancelled at 36 s.
+
+**What is left to find (not done - this is the open #48 work):** whether
+`orderSink().build(...)` returns `false` (engine refusal) or `true` (accepted but
+the engine places nothing). The discriminating measurement is the return value of
+`unit.build(...)` at the call site plus `BWAPI::getLastError()` if JBWAPI exposes
+it - a 3-line probe at `IssueBuildOrder:101`. Do not change position logic,
+manager order or the dispatcher before that value is known.
+
+**Budget note:** this session's remaining runs were spent on the five bounded
+OpenBW attempts recorded above; the return-value probe is the next session's first
+step, not a guess to be made now (CONVENTIONS §13, §3).

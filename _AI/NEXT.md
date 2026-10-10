@@ -350,12 +350,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
   **Where it stands: the build command is now issued (4 `BUILD_CALL`s, zero in all
   earlier runs) but still does not produce a building, and the Pylon is still
-  cancelled at 36 s.** The remaining cause is a DOUBLE DRIVE of one worker:
-  `lastCommandAgo` oscillates `1140 -> 0 -> 20 -> 0`, one driver issuing a command
-  every ~7 frames while the other waits for the 20-frame BUILD guard, so the guard
-  only opens intermittently. Next diagnosis (CONVENTIONS §18): the assigned
-  worker's `managerLogs()` across the stall window plus whatever writes
-  `lastCommandIssued` - not more position logic.
+  cancelled at 36 s.** A per-§18 look at the assigned worker's `managerHistory`
+  killed the "double drive" reading - exactly one manager, `BuilderManager`, runs
+  across the stall (`Log{ 1799: BuilderManager, }`) - so the conflict is not
+  another manager. `IssueBuildOrder` is reached, the tile is valid and affordable,
+  `unit.build(...)` is called, and nothing is built.
+
+  **Next step, and it is a measurement, not a guess:** print the return value of
+  `orderSink().build(...)` (and `getLastError()` if JBWAPI exposes it) at
+  `IssueBuildOrder:101` in one bounded run. `false` means an engine refusal to hunt
+  down; `true` means the engine accepted the command and placed nothing, which is a
+  different problem. Do not touch the position logic, manager order or the
+  dispatcher until that value is known.
 
 - **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
