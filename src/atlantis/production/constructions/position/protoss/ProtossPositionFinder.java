@@ -48,6 +48,38 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
      * it later), so those are left to the other conditions.
      * </p>
      */
+    /**
+     * Does this Protoss building need to stand inside a finished Pylon's power
+     * field?
+     *
+     * <p>
+     * <b>Exactly three Protoss buildings do not</b> (owner's ruling, 2026-10-10):
+     * the <b>Pylon</b> itself (it is the power source), the <b>Nexus</b> (it is the
+     * base - it cannot depend on something built from itself) and the
+     * <b>Assimilator</b> (gas is taken from a geyser the Nexus already touches, and
+     * the game lets it be built unpowered). Everything else Protoss, including the
+     * Photon Cannon, needs power.
+     * </p>
+     *
+     * <p>
+     * Written out here in full rather than delegating to
+     * {@code AUnitType.needsPower()} alone. That method already excludes these
+     * three - and it also excludes a Cannon, on the reasoning that a Cannon may sit
+     * unpowered until a Pylon arrives for it. The placement rule the owner wants is
+     * stricter for a Cannon, so the two questions are deliberately not the same
+     * one, and a change to {@code needsPower()} must not silently change placement.
+     * </p>
+     */
+    private static boolean needsPylonPower(AUnitType building) {
+        if (!building.isProtoss()) return false;
+
+        return !building.is(
+            AUnitType.Protoss_Pylon,
+            AUnitType.Protoss_Nexus,
+            AUnitType.Protoss_Assimilator
+        );
+    }
+
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _STATUS = "None";
 
@@ -87,15 +119,8 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
                         // Race rule, checked before the shared chain (see the javadoc):
                         // a Protoss building that needs power must stand inside a
-                        // finished Pylon's field. A Pylon powers its own tile and does
-                        // not depend on one, and a Cannon may legitimately sit
-                        // unpowered until a Pylon is placed for it.
-                        if (
-                            building.needsPower()
-                                && !building.isPylon()
-                                && !building.isCannon()
-                                && !IsPoweredByAPylon.check(constructionPosition)
-                        ) {
+                        // finished Pylon's field.
+                        if (needsPylonPower(building) && !IsPoweredByAPylon.check(constructionPosition)) {
                             AbstractPositionFinder._STATUS = "Not powered by a Pylon";
                             continue;
                         }
