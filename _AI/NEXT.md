@@ -355,10 +355,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      Verified from the engine jar: a Pylon is **2x2** (Gateway is 4x3).
      `CanPhysicallyBuildHere` correctly requires each footprint tile to be
      buildable-including-buildings; the sampled candidate included occupied tile
-     (7,44). The owner confirms a manual SC run builds Pylon and Gateway; this is
-     owner evidence for the legacy path, not an OpenBW verdict. The next bounded
-     OpenBW run must decide whether the legacy-path failure persists; do not
-     patch `APositionFinder` without a fresh reproducer.
+     (7,44). **Latest owner observation:** building works when testing from the
+     IDE on this map. The IDE backend/game version was not specified, so this is
+     evidence for that path only, not a completed OpenBW verdict. Together with
+     the OpenBW rejection below, a backend-specific difference is plausible, but
+     it does not prove OpenBW is the only failing backend. Do not patch
+     `APositionFinder` without a fresh reproducer.
 
      **Fresh LIVE OpenBW evidence (2026-10-09):** the selected catalogue tile's
      `Unit.build(Pylon, tile)` returned false; the 2x2 footprint's four tiles were
