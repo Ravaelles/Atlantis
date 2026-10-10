@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.game.A;
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.protoss.ProtossStrategies;
+import atlantis.map.position.APosition;
 import atlantis.production.constructions.builders.TravelToConstruct;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.orders.production.queue.Queue;
@@ -72,6 +73,54 @@ public class TravelToConstructTest extends WorldStubForTests {
                 .isStillTravellingForTest(40.0, 1.4),
             "a builder 40 tiles away is genuinely travelling"
         );
+    }
+
+    /**
+     * The second measured OpenBW failure on the same path: read against the
+     * building's <b>centre</b>, a worker standing on the tile just outside a 2x2
+     * Pylon's footprint counts as travelling (groundDist to the centre ~2.2 > 1.4),
+     * so it re-walks forever and never builds.
+     *
+     * <p>
+     * Measured 2026-10-10: builder pinned at {@code [6,46]} for a Pylon whose
+     * top-left was {@code [6,47]}; {@code unit.build(...)} was never called
+     * ({@code SINK_BUILD} never printed) and the construction was cancelled at 36 s.
+     * Readiness must be measured to the nearest <b>footprint tile</b>.
+     * </p>
+     */
+    @Test
+    public void buildReadinessIsMeasuredToTheFootprintNotTheBuildingCentre() {
+        // The Pylon is 2x2 with its top-left at [6,47], so its footprint tiles are
+        // [6,47], [7,47], [6,48], [7,48]. A worker on [6,46] touches the footprint
+        // exactly - it must be treated as AT the site.
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 6, 46);
+        FakeUnit[] our = fakeOurs(fake(AUnitType.Protoss_Nexus, 8), builder);
+
+        world(2, our, units(new FakeUnit[0]), () -> {
+            APosition nearest = atlantis.production.constructions.builders.TravelToConstruct
+                .nearestFootprintTile(builder, APosition.create(6, 47), AUnitType.Protoss_Pylon);
+
+            assertTrue(
+                nearest.tx() >= 6 && nearest.tx() <= 7 && nearest.ty() >= 47 && nearest.ty() <= 48,
+                "the nearest footprint tile must be inside the Pylon's 2x2 footprint, "
+                    + "got [" + nearest.tx() + "," + nearest.ty() + "]"
+            );
+
+            // The worker touches the footprint, so the distance to it is a single
+            // tile - inside the 1.4 build threshold once measured to the edge, and
+            // NOT the ~2.2 the centre measure produced.
+            assertTrue(
+                builder.groundDist(nearest) <= 1.4,
+                "a worker adjacent to the footprint must read as close enough to build, "
+                    + "got " + builder.groundDist(nearest)
+            );
+
+            assertTrue(
+                builder.groundDist(nearest) < builder.groundDist(APosition.create(7, 48)),
+                "measuring to the footprint must be strictly closer than measuring to "
+                    + "the building centre - that difference is the bug"
+            );
+        });
     }
 
     @Override

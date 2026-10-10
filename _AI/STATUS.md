@@ -676,3 +676,72 @@ manager order or the dispatcher before that value is known.
 **Budget note:** this session's remaining runs were spent on the five bounded
 OpenBW attempts recorded above; the return-value probe is the next session's first
 step, not a guess to be made now (CONVENTIONS §13, §3).
+
+### #48 FINAL root cause: the engine's `canBuildHere` requires a path, and OpenBW's pathing is broken (2026-10-10)
+
+The discriminating probe (`BwapiOrderSink.build`, temporary, removed after use)
+finally named the failing precondition. On every sampled frame:
+
+```
+SINK_BUILD unit=Probe#76 type=Protoss_Pylon tile=[6,47]
+  canIssue=false canBuildHere4=false rawBuild=false err=-
+  (6,47)b=true e=true (6,48)b=true e=true (7,47)b=true e=true (7,48)b=true e=true
+```
+
+**The `w=false` in an earlier version of this probe was my own coordinate bug**, not
+an engine answer: JBWAPI's `isWalkable(int,int)` takes *walk* coordinates, and the
+probe passed *tile* coordinates. Corrected, all four footprint tiles are
+buildable and explored.
+
+**The real rejection is the last check in `Templates::canBuildHere`**
+(`StardustDevEnvironment/3rdparty/openbw/bwapi/bwapi/Shared/Templates.h:196-201`):
+
+```cpp
+if ( builder ) {
+  if ( !builder->getType().isBuilding() ) {
+    if ( !builder->hasPath( Position(lt) + Position(type.tileSize())/2 ) )
+      return false;   // "Check if builder is capable of reaching the building site"
+  }
+  ...
+}
+```
+
+`canBuildHere` requires the **builder to have a path to the site's centre**. And
+`_AI/NEXT.md` #43 already recorded the decisive fact, independently: **"OpenBW's
+pathing query answered 'no path' for every pair on (3)TauCross1.1"** - which is
+why `MapTiles.hasPathBetween` carries a JBWEB/map-data fallback in the first place.
+
+**So the chain is:** OpenBW's `hasPath` returns false for every query on this map
+-> `Templates::canBuildHere` returns false for every tile -> `Unit.canBuild` ->
+`canIssueCommand` -> `Unit.build` returns false -> the Pylon is never placed, the
+construction sits at `NOT_STARTED`, `CancelTooLongConstructions` cancels it at 36 s,
+and v2 re-plans it forever. That is the entire #47/#48 blocker, and it is an
+**engine/pathing** problem, not a placement, exploration, occupancy or throttle
+problem.
+
+**Every earlier fix in this chain was still real and correct** (they were each
+necessary to get the command as far as the engine): the explored term (#50), the
+BUILD-action throttle, the travel/arrival reorder, the honest `startFrame`, and the
+builder re-attach in `buildAt`. They are what made the probe reach the engine call
+and expose this last precondition - before them, `Unit.build` was never even
+invoked.
+
+**Not implemented - needs the owner (it is a policy decision, CONVENTIONS §3).**
+Three options, none taken yet:
+
+1. **Make the engine's pathing work** (the real fix, but it is in
+   `StardustDevEnvironment`'s OpenBW, not in this repo, and the 2026-10-08 note
+   says the map's pathing query is broken for *every* pair - this needs its own
+   investigation, likely a map-init/bridge issue in the harness).
+2. **Give the v2 path its own builder that issues the command without relying on
+   `canBuildHere`** (V2 `GameOrderDirector` currently delegates execution to the
+   legacy `Construction`/`BuilderManager`, which goes through `Unit.build`, i.e.
+   through the broken check). This is the "V2 owns its builder" step already
+   planned in `_AI/NEXT.md` #45 step 4.
+3. **Accept the map's pathing as unusable for E2E building and pin the scenario to
+   a map where OpenBW's `hasPath` works** - cheapest, but it tests less.
+
+Option 2 is the one that matches the architecture direction and stops depending on
+a legacy path we intend to delete. Recommend doing that; do not start it without the
+owner's decision, because it is a scope change from "fix placement" to "V2 gets its
+own builder".
