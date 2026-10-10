@@ -132,6 +132,18 @@ by the language rule below.
   use** - in commands, in scripts, in documentation and in commit messages -
   because it is stable; it is a symlink, and its target is the user's home
   directory.
+- **Three reference projects are part of the workspace and may be read AND
+  edited** (owner's ruling, 2026-10-10): **`/sc-ai/Stardust`**,
+  **`/sc-ai/StardustDevEnvironment`** and **`/sc-ai/PurpleWave`**. They are
+  separate git repositories and are symlinked into the user's home directory, so
+  `readlink -f` lands outside `/sc-ai` - **that does not make them off limits**;
+  the rule below is about the home directory in general, not about these three
+  trees. Always address them by their `/sc-ai/...` path, never by the resolved
+  target, so commands and commits stay stable. Editing them is normal work: the
+  harness (`run-openbw-server.sh`, the region code) and the reference bots are
+  where the answers to engine questions live, and a fix there is part of the same
+  task as a fix in `Atlantis/`. Their own commit rules still apply - one logical
+  change per commit, and never `git push`.
 - **`/ravaelles` is off limits, and so is asking for it** (added 2026-10-04).
   That path is the user's home directory, not a workspace, so: never search,
   scan, read, list or edit anything rooted there, not even read-only, and not
