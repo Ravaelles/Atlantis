@@ -89,19 +89,30 @@ assistant's assumption that every turn must deliver a finding.
   the item open rather than closing it. Admitting this early costs one message;
   admitting it late costs a session and the owner's trust.
 
-## 4. Completion notification (mandatory)
+## 4. Notification when the user's turn begins (mandatory; clarified 2026-10-10)
 
-- `/home/ping.sh` is the **"I am completely done"** signal. The assistant runs it
-  **once**, at the end of a work session, when everything the user asked for in
-  that session is finished **and verified by execution** (tests run, ArchUnit
-  green, game run where the item requires one).
-- It must **not** be run after an intermediate step, a partial answer, or a
-  question that is still waiting for a reply. A ping after every tool call would
-  train the user to ignore it, which destroys the only thing the sound is for.
-- If a session ends with work still open, the assistant says so in the summary
-  and does not ping. The next session pings when it closes the remaining work.
-- Commit messages and summaries do not need the ping; only the final message of
-  the session does.
+- `/home/ping.sh` is the **"I have written to you and I am waiting for your
+  reaction"** signal. The assistant runs it when it ends a message that hands the
+  turn back to the user - whether that message is a finished stage, a partial
+  answer, a question, or a report that work is blocked.
+- **The test is "did I just hand the turn back?", not "am I finished?"** A message
+  that ends a stage of work and waits for the owner is exactly the case this is
+  for, even when the work itself is still open.
+- Run it **once per message**, at the end, never mid-message and never after every
+  tool call. The point of the sound is that it means something; a ping per tool
+  call destroys it.
+- **Superseded, and worth knowing why** (owner's correction, 2026-10-10): this
+  section used to read "run it once, at the end of a session, when everything is
+  finished **and verified by execution**" and "if a session ends with work still
+  open, the assistant says so and **does not ping**". The assistant then applied
+  that strictly and stopped pinging for many turns in which it was in fact waiting
+  for the owner, which is the opposite of what the sound is for. The old wording is
+  kept in this note rather than deleted: it is the wording that caused the mistake,
+  and a future reader deserves to see what was actually written.
+- The ping is **not** an "I am done" claim, so it does not need the work to be
+  verified by execution. "I am paused, blocked, or asking" is a complete reason to
+  ping. The verification duty lives in §7 (an item is closed only when verified),
+  not here.
 
 ## 5. Architecture direction (agreed, normative)
 
@@ -191,8 +202,8 @@ assistant's assumption that every turn must deliver a finding.
   crawl of the home directory is not. A tool call that needs a broader root
   than those two is a mistake in the task, not a permission request.
 - The only paths outside the workspace that may be used:
-  - `/home/ping.sh`, the completion notification of section 4, and only when
-    section 4 allows it;
+  - `/home/ping.sh`, the turn-handover notification of section 4, once at the end
+    of a message that hands the turn back to the owner;
   - `/tmp/opencode`, the scratch directory the tooling provides, for throwaway
     tooling of the current task (a virtualenv, a downloaded archive, an
     intermediate file). Nothing produced there belongs to the repository;
