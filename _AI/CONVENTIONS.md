@@ -54,23 +54,19 @@ by the language rule below.
 - If the user overrules a well-argued objection after hearing it, the assistant
   proceeds and implements the user's decision without re-litigating it.
 
-## 4. Incoming-message notification (owner's ruling, 2026-10-10)
+## 4. Completion notification (mandatory)
 
-- `/home/ping.sh` signals **an incoming message from the assistant**. The
-  assistant runs it **exactly once, at the end of every turn** in which it sends
-  the owner a message - whether that message is a completed-work summary, an
-  intermediate status, a partial answer or a question that still awaits a reply.
-- The ping is a **new-message indicator, not a "done" indicator**. The sound means
-  "the assistant has answered, look at the screen", never "the project is
-  finished". Do not use the completion wording for it.
-- Do not ping more than once per turn, and never mid-turn: one message, one ping,
-  at the end.
-- Superseded rule (kept for the history): the previous text made the ping a pure
-  "I am completely done" signal, run once per session only when everything was
-  finished and verified. The owner replaced it on 2026-10-10 because the ping is
-  wanted on every incoming message.
-- Commit messages and summaries still do not need any ping of their own beyond the
-  one that closes their turn.
+- `/home/ping.sh` is the **"I am completely done"** signal. The assistant runs it
+  **once**, at the end of a work session, when everything the user asked for in
+  that session is finished **and verified by execution** (tests run, ArchUnit
+  green, game run where the item requires one).
+- It must **not** be run after an intermediate step, a partial answer, or a
+  question that is still waiting for a reply. A ping after every tool call would
+  train the user to ignore it, which destroys the only thing the sound is for.
+- If a session ends with work still open, the assistant says so in the summary
+  and does not ping. The next session pings when it closes the remaining work.
+- Commit messages and summaries do not need the ping; only the final message of
+  the session does.
 
 ## 5. Architecture direction (agreed, normative)
 
@@ -148,8 +144,8 @@ by the language rule below.
   crawl of the home directory is not. A tool call that needs a broader root
   than those two is a mistake in the task, not a permission request.
 - The only paths outside the workspace that may be used:
-  - `/home/ping.sh`, the incoming-message notification of section 4, once per
-    turn that ends with a message to the owner;
+  - `/home/ping.sh`, the completion notification of section 4, and only when
+    section 4 allows it;
   - `/tmp/opencode`, the scratch directory the tooling provides, for throwaway
     tooling of the current task (a virtualenv, a downloaded archive, an
     intermediate file). Nothing produced there belongs to the repository;
@@ -287,19 +283,6 @@ looked like a different problem than they were (the OpenBW client, for
 instance, reported "cannot open socket" while the actual cause was a Java
 library that cannot run on Java 9+, several layers away).
 
-- **`_AI/CHALLENGES/TerrainAnalysis.md`** — where the bot's map knowledge comes
-  from and why it is *ours*, not the engine's: regions/areas/chokes are computed by
-  `bwem.BWEM` from tiles and **work on OpenBW** (the main choke is found), while the
-  engine's own region table is empty. **Never** decide terrain with
-  `hasPath`/`getGroundDistance`/`canBuildHere` on OpenBW; use our model, and for a
-  real path use a tile BFS (the shape PurpleWave's `GridGroundDistance` uses).
-- **`_AI/CHALLENGES/OpenBW-API.md`** — **which BWAPI queries answer correctly on
-  OpenBW** (measured 2026-10-10). Read this before trusting any engine query:
-  every map query (`isWalkable`/`isBuildable`/`isExplored`/`isVisible`) is fine,
-  and **`hasPath` is always false** — even from a point to itself — which takes
-  `canBuildHere`, `Unit.canBuild` and `Unit.build` with it, so no building can be
-  placed through the normal BWAPI call on this engine. Reproduce the table with
-  `OPENBW_PROBE=1` (the survey runs in seconds).
 - **`_AI/CHALLENGES/OpenBW.md`** — attaching the Java client to the headless
   engine. Four independent blockers that all present as the same symptom
   ("the client does not attach"): an old junixsocket that cannot run on
@@ -478,33 +461,13 @@ These are the rules distilled from the OpenBW investigation
   same jar attach on a newer JVM without regressing Java 8.
 
 
-## 17. OpenBW simulation runtime: 20 s normal, 120 s hard ceiling (owner's ruling;
-restated 2026-10-10)
+## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09)
 
-- **Two different limits, and they are not interchangeable:**
-  - **20 seconds is the normal budget for a single OpenBW test.** Any individual
-    run that is not the mega-test is expected to finish well inside it - a
-    building-placement test in particular is a short run and has no reason to
-    approach 20 s. A single run that has not finished in 20 s is not "a slow
-    test": it is a bot stuck in a loop, a hung host, or a broken path. Stop it
-    and diagnose; do not wait longer and do not widen the limit.
-  - **120 seconds is the hard ceiling, and only two things may use it:** the
-    single OpenBW **mega-test** (`_AI/IDEA-E2E-TESTS.md` Stage 3) and the **full
-    end-to-end scenario sweep**. Nothing else gets 120 s, and the ceiling is a
-    cap, never a target.
-- **A run that hits its limit is inconclusive, not a verdict** - record the
-  timeout and inspect the logs. In particular, a non-mega run that reaches 20 s is
-  evidence of a defect; treat it as a finding, not as a test to be waited out.
-- **Never wait blind.** Do not `sleep <seconds>` to "let a run finish": that
-  wastes the whole interval even when the run ends early and it hides a stuck run.
-  Poll with a condition and a stop, e.g.
-  `for i in $(seq 1 10); do pgrep -x BWAPILauncher >/dev/null || break; sleep 2; done`,
-  or start the run in the background and inspect it after its own budget has
-  elapsed. The measured cost of the blind-wait habit: most of one session spent in
-  `sleep 118` calls against runs that never produced a verdict.
-- `TIMEOUT_SECONDS` (120) is set once at the top of `scripts/run-openbw-e2e.sh`;
-  the per-test 20 s budget is `RUN_BUDGET_SECONDS` in the same place, and a single
-  run is expected to use a fraction of it.
+- **Every OpenBW game/simulation has a hard 120-second wall-clock limit**
+  (`TIMEOUT_SECONDS=120`, set once at the top of `scripts/run-openbw-e2e.sh`).
+  OpenBW is expected to complete rapidly; a run that has not completed after two
+  minutes is hung, misconfigured, or exercising a broken path, not a valid long
+  test. This is the same 120 s as §13, applied to the simulation itself.
 - **The game also ends by itself at 20 game minutes** (`INGAME_TIME=60*20`,
   passed as `FORCE_END_GAME_AFTER_INGAME_SECONDS`). Whichever limit is reached
   first ends the game cleanly - the bot exits itself, so the host outlives the

@@ -327,65 +327,9 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `StarCraft.exe`/ChaosLauncher; never terminate it. Resume after it closes and
   inspect the specific assigned worker's `managerLogs()` if construction stalls.
 
-  **Corrected three times mid-investigation:** an earlier reading blamed a caught
-  init exception (disproved - `HELLO_ATLANTIS` present, no exception); a later one
-  blamed only builder recognition (disproved by the still-looping run above); and a
-  third blamed the dispatcher's re-offer (which is by design).
-
-  **Two real defects found and fixed 2026-10-10 (see `_AI/STATUS.md` for the
-  measurements):**
-  1. `IssueBuildOrder` gated the build on `unit.lastActionMoreThanAgo(20)`, which
-     reads the age of the unit's CURRENT action - MOVE_BUILD while travelling,
-     re-stamped every ~15 frames - so the guard never opened and the build command
-     was never issued. Now gated on the BUILD action's own age.
-  2. `TravelToConstruct` ran the "do not switch constructions" throttle before the
-     distance check, so a builder standing ON its tile was treated as travelling.
-     The throttle now applies only while genuinely travelling.
-     Test: `TravelToConstructTest.aBuilderAlreadyOnItsTileIsNotThrottledByARecentMoveBuild`
-     (fails 1/3 pre-fix, passes 3/3 post-fix).
-  3. `ProductionEngine.offerPendingConstructionsAgain` used
-     `construction.timeOrdered()` (a past frame) as the re-offered item's
-     `startFrame`, so the plan showed a window behind the present
-     (`Pylon@2224-2674` at frame 2555). Now `startFrame = frame`.
-
-  **Where it stands: the build command is now issued (4 `BUILD_CALL`s, zero in all
-  earlier runs) but still does not produce a building, and the Pylon is still
-  cancelled at 36 s.** A per-§18 look at the assigned worker's `managerHistory`
-  killed the "double drive" reading - exactly one manager, `BuilderManager`, runs
-  across the stall (`Log{ 1799: BuilderManager, }`) - so the conflict is not
-  another manager. `IssueBuildOrder` is reached, the tile is valid and affordable,
-  `unit.build(...)` is called, and nothing is built.
-
-  **FINAL CAUSE - measured 2026-10-10, the command now reaches the engine.** With
-  five fixes in place (BUILD-label stamped only after the command leaves; the
-  throttle reading the BUILD action rather than the current one; the travel
-  throttle after the distance check; build-readiness measured to the nearest
-  footprint tile; `buildAt` re-attaching an orphaned builder), a temporary probe at
-  the engine call showed the truth:
-
-  ```
-  SINK_BUILD tile=[6,47] canIssue=false canBuildHere4=false rawBuild=false err=-
-    (6,47)b=true e=true (6,48)b=true e=true (7,47)b=true e=true (7,48)b=true e=true
-  ```
-
-  Every footprint tile is buildable and explored, and the command still fails.
-  `Templates::canBuildHere`'s **last** check (Shared/Templates.h:196-201) requires
-  the builder to have a **path to the site** (`builder->hasPath(...)`), and
-  **OpenBW's `hasPath` returns false for every pair on (3)TauCross1.1** - already
-  recorded in #43, and the reason `MapTiles.hasPathBetween` has a map-data fallback.
-  So `canBuildHere` refuses every tile on this map and `Unit.build` can never
-  succeed.
-
-  **#47/#48 is therefore an engine-pathing blocker, not placement, exploration,
-  occupancy or a throttle.** Three options, none taken - this is a scope decision
-  for the owner (CONVENTIONS §3):
-  1. fix OpenBW's pathing in `StardustDevEnvironment` (the real fix, but it is the
-     harness, not this repo);
-  2. give Production V2 its own builder that does not rely on `canBuildHere` (the
-     "V2 owns its builder" step of #45 step 4 - matches the architecture direction);
-  3. pin the E2E scenario to a map where OpenBW's `hasPath` works (cheapest, tests
-     least).
-  Recommendation: option 2. Do not start any of them before the owner chooses.
+  **Corrected twice mid-investigation:** an earlier reading blamed a caught init
+  exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
+  blamed only builder recognition (disproved by the still-looping run above).
 
 - **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
@@ -401,11 +345,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
         `SCENARIO PASSED` with no expectations); this is pinned by
         `LauncherBuildsTheJarTest` and fast suite 346/346. A real non-zero process-exit
         integration run is still unverified.
-     2. **A Pylon is placed in a real run.** Not yet, but the refusal cause is now
-     known and fixed in code (see the ROOT CAUSE block below and #50): the
-     command path enforces `checkExplored=true`, and the search was committing to
-     a tile ~23 tiles out that the engine had never explored. A bounded run is the
-     last step. Earlier reading: the cause is measured
+     2. **A Pylon is placed in a real run.** NO, and the cause is measured
      2026-10-09 - but **not** what the first reading suggested. The engine is
      telling the truth: on the probed tiles `engBuild=true` and only the occupancy
      variant `engBuildInc=false` for the one tile (7,44) that is genuinely
@@ -415,39 +355,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      Verified from the engine jar: a Pylon is **2x2** (Gateway is 4x3).
      `CanPhysicallyBuildHere` correctly requires each footprint tile to be
      buildable-including-buildings; the sampled candidate included occupied tile
-     (7,44). **Latest owner observation:** building works when testing from the
-     IDE on this map. The IDE backend/game version was not specified, so this is
-     evidence for that path only, not a completed OpenBW verdict. Together with
-     the OpenBW rejection below, a backend-specific difference is plausible, but
-     it does not prove OpenBW is the only failing backend. Do not patch
-     `APositionFinder` without a fresh reproducer.
+     (7,44). The owner confirms a manual SC run builds Pylon and Gateway; this is
+     owner evidence for the legacy path, not an OpenBW verdict. The next bounded
+     OpenBW run must decide whether the legacy-path failure persists; do not
+     patch `APositionFinder` without a fresh reproducer.
 
      **Fresh LIVE OpenBW evidence (2026-10-09):** the selected catalogue tile's
      `Unit.build(Pylon, tile)` returned false; the 2x2 footprint's four tiles were
      individually buildable in both the map grid and `Game.isBuildable(..., true)`,
      no other unit overlapped the footprint, and minerals were sufficient. Yet
-     `Game.canBuildHere(tile, Pylon, builder)` was false.
-
-     **CAUSE IDENTIFIED 2026-10-10 - it is `checkExplored`, and the engine was never
-     lying.** Read from source, no game run needed. `Unit.build` -> `issueCommand` ->
-     `canIssueCommand` -> `Unit.canBuild(type, tile, /*checkCanBuildHere=*/true, ...)`
-     -> `Game.canBuildHere(tile, type, unit, /*checkExplored=*/true)` -> OpenBW
-     `Templates::canBuildHere`, whose tile loop is `if (!isBuildable(x,y) ||
-     (checkExplored && !isExplored(x,y))) return false;`
-     (`StardustDevEnvironment/3rdparty/openbw/bwapi/bwapi/Shared/Templates.h:186-192`).
-     So a Pylon is refused when any of its 2x2 tiles is **unexplored** - a condition
-     none of the earlier probes measured, and the two-argument
-     `Game.canBuildHere(tile, type)` used by those probes defaults `checkExplored` to
-     false, which is why they saw a valid tile. Our own `MapTiles`
-     fallback (`tilesCoveredAreBuildable`) does not ask `isExplored` either, so our
-     answer and the command path disagree by exactly this flag. Full trace:
-     `_AI/STATUS.md` "ROOT CAUSE FOUND".
-
-     The fix is small and local: make the placement candidate **explored on its whole
-     footprint** before it is reserved, and align `MapTiles.tilesCoveredAreBuildable`
-     with the engine’s command path. Do **not** add a map fallback and do **not** patch
-     `APositionFinder` - the engine is correct, the candidate search asked the wrong
-     question. See new item **#50**.
+     `Game.canBuildHere(tile, Pylon, builder)` was false. This is a fresh command
+     rejection, but its cause is still unknown; do not add a map fallback or alter
+     `APositionFinder` based on the map-only values.
 
      If the default legacy path still refuses after the owner's latest changes,
      diagnose its candidate search from a fresh bounded run. The planned long-term
@@ -455,44 +374,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      #48 tracks the separate LIVE scheduler/dispatch blocker.
   3. A scenario file instead of loose environment variables (not implemented).
   4. A deliberately broken build fails the same scenario (not verified).
-
-- **#50 - Require an explored footprint before reserving a building tile (the
-  OpenBW placement fix). IMPLEMENTED 2026-10-10; one bounded run still owed.**
-  Measured from the engine/JBWAPI source: `Unit.build` -> `canIssueCommand` ->
-  `Unit.canBuild(..., checkCanBuildHere=true, ...)` ->
-  `Game.canBuildHere(tile, type, unit, checkExplored=true)` -> OpenBW
-  `Templates::canBuildHere`, whose per-tile loop is
-  `if (!isBuildable(x,y) || (checkExplored && !isExplored(x,y))) return false;`.
-  Full call chain and the measured run (Pylon assigned to `[95,123]`, ~23 tiles
-  from the main, `Unit.build` rejected 190x while the grid said
-  `buildable:true`) are in `_AI/STATUS.md` "ROOT CAUSE FOUND".
-
-  Done: `MapTiles.tilesCoveredAreBuildable` now requires `tile.isExplored()` for
-  every covered tile, so our oracle and the command path agree and the
-  ring-by-ring search (`PylonPosition.nextPosition`, `maxDistance = 37`) can no
-  longer commit to a tile the command will refuse. Test
-  `OpenBWPlacementWithoutJbwebTest.anUnexploredFootprintIsNotPlaceableOnTheOpenBWPath`
-  (fails 4/5 without the fix, passes 5/5 with it). Fast suite 346/346, acceptance
-  5/5, ArchUnit 7/7, store unchanged.
-
-  **Measured in a bounded OpenBW run 2026-10-10:** the placement refusal is gone -
-  `Can't find place for Pylon` and `ErRoR:b`/`ErRoR:NB` are all **zero** in
-  `out/openbw/bot.log`, and the Pylon appears at distinct increasing plan windows
-  (`557`, `750`, `1125`, `2224`, `3305`). The run still ended on the outer timeout,
-  because the Pylon window sits behind the current frame and is re-offered every
-  frame with `builder committed` - that is **#48**, not placement. So the last
-  step for #50 is to close #48 and then observe a *finished* Pylon/Gateway in the
-  scenario verdict (also #47 point 2). Details in `_AI/STATUS.md` "Bounded OpenBW
-  run after the explored fix".
-
-  Two harness facts measured in the same session: `ENEMY_COUNT=0` crashes the
-  client (`bwapi.Game.init` index -1), and a 1-enemy run can end in Defeat at ~36
-  in-game seconds before any building is due - neither is a placement result.
-
-  Deliberately untouched: the `-7` offset in
-  `PylonPosition.nearToPositionForFirstPylon` is a gameplay-policy constant, not a
-  proven bug - the explored term already prevents the failure, and changing the
-  offset is a doctrine change needing the owner (CONVENTIONS §3).
   5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
      `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
      `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement

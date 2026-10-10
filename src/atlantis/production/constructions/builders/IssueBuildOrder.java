@@ -86,17 +86,7 @@ public class IssueBuildOrder extends HasUnit {
                     RefreshConstructionPosition.refreshIfNeeded(construction);
                 }
 
-                // The throttle is "has a Build command left recently?", NOT "has this
-                // unit acted recently?". `lastActionMoreThanAgo(20)` reads the age of
-                // the unit's CURRENT action, which while travelling is MOVE_BUILD -
-                // and MOVE_BUILD is re-stamped every ~15 frames, so the guard could
-                // never open and the build command was never issued (measured on
-                // OpenBW 2026-10-10: builder standing on tile [95,123], tile fully
-                // valid and affordable, `constructing=false` for 36 s until the
-                // timeout cancelled it, `lastActionGt20=false` and `lastCommandAgo`
-                // pinned at 15 forever). Checking the Build action's own age is what
-                // the guard means: do not spam the engine with the same command.
-                if (unit.lastActionMoreThanAgo(20, atlantis.units.actions.Actions.BUILD)) {
+                if (unit.lastActionMoreThanAgo(20)) {
                     TilePosition buildTilePosition = new TilePosition(buildPosition.tx(), buildPosition.ty());
 
                     if (TravelToConstruct.cantBuildHere(construction, buildingType)) {

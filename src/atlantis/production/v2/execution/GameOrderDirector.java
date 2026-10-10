@@ -81,19 +81,7 @@ public class GameOrderDirector implements OrderDirector {
                     && construction.buildPosition() != null
                     && construction.buildPosition().tx() == placement.tileX()
                     && construction.buildPosition().ty() == placement.tileY()) {
-                // Re-committing is idempotent only in the sense of "do not create a
-                // second construction for this tile". It must NOT mean "the builder
-                // is fine": a construction can be left with no builder at all -
-                // IssueBuildOrder clears it (`construction.setBuilder(null)`) when
-                // the position is repaired, and the worker can die or be claimed by
-                // another manager. Nothing else in the v2 path re-assigns one, so
-                // returning true for a builder-less construction produced the
-                // measured forever-loop: `Pylon@<frame>` re-offered every frame,
-                // `builder committed` logged every frame, no worker ever building it,
-                // 3823 lines and a 36 s cancel (2026-10-10). Re-attach a builder
-                // before reporting success.
-                construction.assignOptimalBuilder();
-                return construction.builder() != null;
+                return true;
             }
         }
 

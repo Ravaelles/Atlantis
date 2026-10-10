@@ -3,24 +3,6 @@
 Hard-won operational facts that do not belong anywhere else. Architecture lives in
 `_AI/REVIEW.md` §16 and `DOCS/`.
 
-## Waiting for a run: poll with a condition, never `sleep` (measured 2026-10-10)
-
-- **Never `sleep <seconds>` to wait for a run to finish.** A blind sleep wastes the
-  entire interval even when the run ends early, and it *hides* a stuck run by
-  making "slow" look the same as "hung". The cost is real and was paid: most of
-  one session went into `sleep 118` calls against OpenBW runs that never produced
-  a verdict.
-- Poll with a condition and a stop:
-  ```bash
-  for i in $(seq 1 10); do pgrep -x BWAPILauncher >/dev/null || break; sleep 2; done
-  ```
-  or start the run in the background and inspect it once its own budget elapsed.
-- **A run that reaches its budget is stuck, not slow** (CONVENTIONS §17): 20 s is
-  the normal budget for a single OpenBW test and 120 s is the mega-test ceiling.
-  `scripts/run-openbw-e2e.sh` now prints `runtime: <n>s of <budget>s` and says
-  `BUDGET EXHAUSTED` when a non-mega run spends its whole budget, so the failure is
-  loud instead of quiet.
-
 ## Test runner hygiene
 
 - `scripts/run-tests.sh` does **not** clean `out/` before compiling, so a deleted

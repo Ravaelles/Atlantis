@@ -149,19 +149,9 @@ public interface AUnitOrders {
     }
 
     default boolean build(AUnitType buildingType, TilePosition buildTilePosition, Construction construction) {
-        // The BUILD action label is the clock `IssueBuildOrder`'s throttle reads
-        // (`lastActionMoreThanAgo(20, Actions.BUILD)`), so it must be stamped only
-        // when the command actually leaves. Stamping it up front deadlocked the
-        // builder on OpenBW (measured 2026-10-10): every frame this method set
-        // action=BUILD, then returned false at the command-delay gate below, so the
-        // label stayed fresh forever and the throttle never opened - `action=BUILD`
-        // with `passBuildGate=false` and `SINK_BUILD` never printed, while the Pylon
-        // was cancelled at 36 s. The delay gate runs first now, and the label is a
-        // record of a sent command rather than of an attempt.
-        if (unit().lastCommandIssuedAgo() <= 1) return false;
-
         unit().setAction(Actions.BUILD);
-        unit().lastCommandIssuedNow(UnitCommandType.Build);
+        if (unit().lastCommandIssuedAgo() <= 1) return false;
+        else unit().lastCommandIssuedNow(UnitCommandType.Build);
 
         boolean result = unit().orderSink().build(unit(), buildingType.ut(), buildTilePosition);
 

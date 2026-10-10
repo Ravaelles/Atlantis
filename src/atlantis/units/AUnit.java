@@ -29,7 +29,6 @@ import atlantis.information.enemy.UnitsArchive;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.information.tech.SpellCoordinator;
-import atlantis.map.MapTiles;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.bullets.ABullet;
 import atlantis.map.bullets.DeadMan;
@@ -1695,28 +1694,17 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     /**
      * Returns true if given position has land connection to given point.
-     *
-     * <p>
-     * Answered from this unit's tile to the target's tile via
-     * {@link MapTiles#hasPathBetween}, not from the engine's {@code Unit.hasPath}.
-     * The engine query is a region-group comparison whose region table is empty on
-     * OpenBW, so it returns {@code false} for every pair there and silently disabled
-     * expansion, attack targeting and worker retreat
-     * ({@code _AI/CHALLENGES/OpenBW-API.md}); {@code MapTiles} falls back to our own
-     * flood fill over {@code walkGrid}.
-     * </p>
      */
     public boolean hasPathTo(HasPosition point) {
-        if (point == null || point.position() == null) return false;
-        if (position() == null) return false;
+        if (u == null || point == null || point.position() == null || point.position().p() == null) return false;
 
-        return MapTiles.hasPathBetween(position(), point.position());
+        return u.hasPath(point.position().p());
     }
 
     public boolean hasPathTo(AUnit unit) {
-        if (unit == null || unit.position() == null) return false;
+        if (u == null || unit == null || unit.position() == null) return false;
 
-        return hasPathTo(unit.position());
+        return u.hasPath(unit.position().toP());
     }
 
     public boolean isTrainingAnyUnit() {

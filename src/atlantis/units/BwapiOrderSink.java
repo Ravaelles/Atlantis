@@ -49,28 +49,6 @@ public final class BwapiOrderSink implements OrderSink {
         return issue("morph", actor, () -> actor.u().morph(type));
     }
 
-    /**
-     * Places a building.
-     *
-     * <p>
-     * <b>There is no Java-side workaround on OpenBW</b> - this was tried and
-     * measured, not assumed. {@code Unit.build} and {@code Unit.issueCommand} both
-     * end in {@code canIssueCommand}, which for a Build command calls
-     * {@code canBuildHere(..., checkExplored=true)} with the flag
-     * <b>hardcoded true</b> (bytecode of {@code bwapi.Unit.canIssueCommand}, and
-     * confirmed in a game: a branch that decided placement from our own oracle and
-     * sent a {@link bwapi.UnitCommand} directly still had the Pylon cancelled at
-     * 36 s, because {@code issueCommand} re-checks internally). The engine will
-     * therefore refuse every build on this engine until the region graph exists.
-     * </p>
-     *
-     * <p>
-     * See {@code _AI/CHALLENGES/OpenBW-API.md} for the full chain and its cause:
-     * OpenBW's {@code hasPath} is a region-group comparison and this headless run
-     * has <b>zero regions</b>, so it answers false for every pair - including a
-     * point against itself.
-     * </p>
-     */
     @Override
     public boolean build(AUnit actor, UnitType type, TilePosition position) {
         return issue("build", actor, () -> actor.u().build(type, position));

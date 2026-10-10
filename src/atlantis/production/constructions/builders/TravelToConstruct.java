@@ -41,40 +41,16 @@ public class TravelToConstruct extends HasUnit {
             return false;
         }
 
+        if (asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
+
+        // =========================================================
+
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(type);
         double distanceToConstruction = unit.groundDist(buildPositionCenter);
 
-        // "Close enough to build" is measured to the building's NEAREST FOOTPRINT
-        // TILE, not to its centre. Measuring to the centre of a 2x2 Pylon puts the
-        // threshold about two ground tiles from the top-left corner, so a worker
-        // standing on the tile immediately north of the footprint is read as "still
-        // travelling" (groundDist ~2.2 > 1.4) and re-walks forever instead of
-        // building. Measured 2026-10-10 on OpenBW: builder pinned at [6,46] for a
-        // Pylon whose top-left was [6,47], issuing MOVE_BUILD every few frames while
-        // `unit.build(...)` was never called (`SINK_BUILD` never printed) and the
-        // construction was cancelled at 36 s. The centre distance is still what the
-        // MOVE target uses - only the build-readiness test changes.
-        double distanceToFootprint = unit.groundDist(nearestFootprintTile(unit, buildPosition, type));
-
-        // The "a Protoss builder mid-travel does not switch constructions" throttle
-        // must NOT apply once the builder has arrived: it used to return here
-        // unconditionally (measured 2026-10-10, OpenBW, PRODUCTION_V2=LIVE), and
-        // because the MOVE_BUILD action is re-stamped while the worker sits on the
-        // tile, the guard stayed true forever - so `IssueBuildOrder` below was never
-        // reached, `unit.build(...)` was never called, the construction sat at
-        // NOT_STARTED until the 36 s timeout cancelled it, and the same Pylon was
-        // re-planned every frame. The probe showed it exactly: builder on tile
-        // [6,47], tile fully valid (engIncBuild/engBuild/explored all true, not
-        // occupied), affordable, `constructing=false`, and `lastActionMoreThanAgo(20)`
-        // permanently false with `lastCommandAgo` pinned at 15.
-        boolean stillTravelling = isStillTravellingForTest(distanceToFootprint, minDistanceToIssueBuildOrder)
-            && shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder);
-
-        if (stillTravelling && asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
-
         MoveUnitsFromConstructionPlace.move(unit, construction, distanceToConstruction);
 
-        if (stillTravelling) {
+        if (shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder)) {
             return moveToConstruct(construction, type, distanceToConstruction);
         }
 
@@ -113,33 +89,6 @@ public class TravelToConstruct extends HasUnit {
         if (builder.lastActionLessThanAgo(20, Actions.MOVE_BUILD)) return true;
 
         return false;
-    }
-
-    /**
-     * The tile of {@code building}'s footprint that is closest to {@code builder}.
-     * Build-readiness is a question about the footprint, not its centre: a worker
-     * standing against any edge of the building can place it.
-     */
-    public static APosition nearestFootprintTile(AUnit builder, APosition topLeft, AUnitType type) {
-        int bx = builder.tx();
-        int by = builder.ty();
-
-        int clampedX = Math.max(topLeft.tx(), Math.min(bx, topLeft.tx() + type.getTilesWidth() - 1));
-        int clampedY = Math.max(topLeft.ty(), Math.min(by, topLeft.ty() + type.getTilesHeights() - 1));
-
-        return APosition.create(clampedX, clampedY);
-    }
-
-    /**
-     * The distance test my fix reordered: a builder within
-     * {@code minDistanceToIssueBuildOrder} of the site is <b>not</b> travelling, so
-     * the "do not switch constructions" throttle must not run for it. Before the
-     * fix the throttle ran first and unconditionally, which starved the build order
-     * on OpenBW (NEXT #48) - this predicate is the control-flow invariant, exposed
-     * so a unit test can pin it without a game.
-     */
-    public static boolean isStillTravellingForTest(double distance, double minDistanceToIssueBuildOrder) {
-        return distance > minDistanceToIssueBuildOrder;
     }
 
     public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {

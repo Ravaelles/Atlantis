@@ -128,19 +128,6 @@ public final class ProductionEngine {
      * recomputed from scratch, and a construction whose builder died en route
      * must be picked up again on the next frame instead of being lost with the
      * previous plan.
-     *
-     * <p>
-     * <b>The re-offered item starts at {@code frame}, not at the construction's
-     * creation frame.</b> {@code construction.timeOrdered()} is when the request
-     * was created - by the time a builder is walking it is hundreds of frames old.
-     * Using it as {@code startFrame} produced the measured #48 symptom: the plan
-     * showed {@code Pylon@2224-2674} while the game was at frame 2555, i.e. a
-     * window behind the present, so {@code isDue} was permanently true, the item
-     * was re-offered forever, and the plan could never show that the construction
-     * was stuck rather than progressing. A pending construction is due <b>now</b>;
-     * that is exactly what "re-offer" means, and the committed reservation already
-     * keeps {@code isDue} true on subsequent frames.
-     * </p>
      */
     private ProductionPlan offerPendingConstructionsAgain(ProductionPlan plan, int frame) {
         ProductionPlan merged = new ProductionPlan();
@@ -156,7 +143,7 @@ public final class ProductionEngine {
             PlacementReservation placement = PlacementReservation
                     .success(construction.buildPosition().tx(), construction.buildPosition().ty(), frame)
                     .committedAt(frame);
-            merged.add(new ProductionItem(producible, frame, false, placement));
+            merged.add(new ProductionItem(producible, construction.timeOrdered(), false, placement));
         }
 
         return merged;
