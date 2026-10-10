@@ -2,8 +2,14 @@
 # Build a game-ready Atlantis.jar from current sources.
 #
 # Usage:
+#   bash scripts/build-bot-jar.sh                         # default target (see below)
 #   bash scripts/build-bot-jar.sh <output-jar>            # fat jar, one file to deploy
 #   bash scripts/build-bot-jar.sh <output-jar> --thin     # small jar + lib/ folder next to it
+#
+# With no argument the jar is written to the deployed Protoss path the game
+# actually plays, DEFAULT_OUT_JAR, and the script says so - so the common case is
+# `bash scripts/build-bot-jar.sh` and nobody has to remember the path. Passing a
+# path still works exactly as before.
 #
 # Why this script exists instead of hand-rolled zip commands (each invariant
 # below broke a game run in the past, see _AI/REVIEW.md Stage C notes):
@@ -40,9 +46,22 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-OUT_JAR="${1:?usage: build-bot-jar.sh <output-jar> [--thin]}"
+# The jar the OpenBW runs and the owner's game play. Named once, here, so the
+# default and the documentation cannot drift apart.
+DEFAULT_OUT_JAR="/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar"
+
+# `--thin` may arrive as the FIRST argument when the path is defaulted, so it is
+# treated as "no path given" rather than becoming the output path.
+if [ -z "${1:-}" ] || [ "${1:-}" = "--thin" ]; then
+  OUT_JAR="$DEFAULT_OUT_JAR"
+  echo "[build-bot-jar] no output path given - using default: $DEFAULT_OUT_JAR"
+else
+  OUT_JAR="$1"
+fi
+
 MODE="fat"
-if [ "${2:-}" = "--thin" ]; then
+# `--thin` may be given as the 2nd argument (with a path) or the 1st (without one).
+if [ "${2:-}" = "--thin" ] || [ "${1:-}" = "--thin" ]; then
     MODE="thin"
 elif [ -n "${2:-}" ]; then
     echo "unknown option: $2" >&2
