@@ -366,7 +366,7 @@ fi
 # forever with StarCraft and ChaosLauncher still running (owner report,
 # 2026-10-06).
 #say "OK - The bot is playing..."
-say "######################################################"
+say "###############################################"
 while kill -0 "$CLIENT_PID" 2>/dev/null; do
   sleep 2
 done

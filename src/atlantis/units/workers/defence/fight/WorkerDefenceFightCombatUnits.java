@@ -186,7 +186,10 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     /** The nearest raider worth walking towards, if the swarm is on. */
     private static AUnit nearestSwarmableRaider(AUnit worker) {
-        Selection raiders = worker.enemiesNear().combatUnits().groundUnits().inRadius(6, worker);
+        Selection raiders = worker.enemiesNear()
+            .combatUnits()
+            .groundUnits()
+            .canBeAttackedBy(worker, 8);
 
         for (AUnit raider : raiders.list()) {
             if (shouldSwarm(raider)) return raider;
@@ -207,7 +210,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         // Not worth walking into: a heavy unit kills workers faster than they
         // can surround it. Zealots and Zerglings - the raiders this rule exists
         // for - are well under this.
-        if (enemy.hp() > 200) return false;
+//        if (enemy.hp() > 200) return false;
 
         int raiders = enemy.enemiesNear().combatUnits().countInRadius(9, enemy);
         if (raiders >= WORKERS_RUN_THRESHOLD) return false;

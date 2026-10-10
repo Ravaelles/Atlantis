@@ -34,7 +34,7 @@ public class WorkerAvoidManager extends Manager {
 
     @Override
     public Manager handle() {
-        if (unit.allUnitsNear().groundUnits().countInRadius(1, unit) >= 3) {
+        if (unit.distToBase() <= 20 && unit.allUnitsNear().groundUnits().countInRadius(1.5, unit) >= 3) {
             if (runTowardsMineralsToBecomeTransparent(unit)) {
                 return usedManager(this);
             }

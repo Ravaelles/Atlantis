@@ -133,7 +133,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         // depend on combat micro). moveToSafety is the same action at unit level.
         if (unit.moveToSafety(atlantis.units.actions.Actions.MOVE_AVOID)) {
             usedManager(this);
-            return true;
+            return false;
         }
 
         GatherResources manager = new GatherResources(unit);
