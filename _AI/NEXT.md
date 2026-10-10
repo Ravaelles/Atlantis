@@ -356,12 +356,36 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   another manager. `IssueBuildOrder` is reached, the tile is valid and affordable,
   `unit.build(...)` is called, and nothing is built.
 
-  **Next step, and it is a measurement, not a guess:** print the return value of
-  `orderSink().build(...)` (and `getLastError()` if JBWAPI exposes it) at
-  `IssueBuildOrder:101` in one bounded run. `false` means an engine refusal to hunt
-  down; `true` means the engine accepted the command and placed nothing, which is a
-  different problem. Do not touch the position logic, manager order or the
-  dispatcher until that value is known.
+  **FINAL CAUSE - measured 2026-10-10, the command now reaches the engine.** With
+  five fixes in place (BUILD-label stamped only after the command leaves; the
+  throttle reading the BUILD action rather than the current one; the travel
+  throttle after the distance check; build-readiness measured to the nearest
+  footprint tile; `buildAt` re-attaching an orphaned builder), a temporary probe at
+  the engine call showed the truth:
+
+  ```
+  SINK_BUILD tile=[6,47] canIssue=false canBuildHere4=false rawBuild=false err=-
+    (6,47)b=true e=true (6,48)b=true e=true (7,47)b=true e=true (7,48)b=true e=true
+  ```
+
+  Every footprint tile is buildable and explored, and the command still fails.
+  `Templates::canBuildHere`'s **last** check (Shared/Templates.h:196-201) requires
+  the builder to have a **path to the site** (`builder->hasPath(...)`), and
+  **OpenBW's `hasPath` returns false for every pair on (3)TauCross1.1** - already
+  recorded in #43, and the reason `MapTiles.hasPathBetween` has a map-data fallback.
+  So `canBuildHere` refuses every tile on this map and `Unit.build` can never
+  succeed.
+
+  **#47/#48 is therefore an engine-pathing blocker, not placement, exploration,
+  occupancy or a throttle.** Three options, none taken - this is a scope decision
+  for the owner (CONVENTIONS §3):
+  1. fix OpenBW's pathing in `StardustDevEnvironment` (the real fix, but it is the
+     harness, not this repo);
+  2. give Production V2 its own builder that does not rely on `canBuildHere` (the
+     "V2 owns its builder" step of #45 step 4 - matches the architecture direction);
+  3. pin the E2E scenario to a map where OpenBW's `hasPath` works (cheapest, tests
+     least).
+  Recommendation: option 2. Do not start any of them before the owner chooses.
 
 - **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:
