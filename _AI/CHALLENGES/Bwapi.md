@@ -27,36 +27,41 @@
   "Unable to open communications socket" retries are normal; more = the socket
   is gone (server died).
 
-## `isBuildableIncludeBuildings` says occupied where nothing stands (measured 2026-10-10)
+## `bi=0` means a UNIT is standing there - the engine is right (measured 2026-10-10)
 
 - **Symptom:** every Pylon placement is refused with
-  `Can't find place for \`Pylon\``, `(reason: Can't physically build here)`;
-  `MapTiles.canBuildHere` is false while the tile looks fine.
-- **What the engine actually answers**, printed per footprint tile of a refused
-  2x2 position at `[117,8]` on TauCross:
+  `Can't find place for \`Pylon\``, `(reason: Can't physically build here)`, and
+  `MapTiles.canBuildHere` is false while the tile's own queries look fine.
+- **What the engine answers**, printed per footprint tile of a refused position,
+  together with the tile's own state:
 
   ```
-  (117,8) w1 b1 bi1    (118,8) w1 b1 bi1
-  (117,9) w1 b1 bi0    (118,9) w1 b1 bi0
+  BI0_TILES Pylon at=[7,43]  (7,44) explored=1 visible=1 unitOnTile=2
+                             (8,44) explored=1 visible=1 unitOnTile=1
   ```
 
-  `w` = isWalkable, `b` = isBuildable, `bi` = isBuildable(...,true). Two tiles read
-  walkable AND buildable but **not** buildable-with-buildings.
-- **The trap:** `bi=0` reads as "a building stands here", and that is how it was
-  interpreted - which sent the investigation into occupancy code. It is not true.
-  The refused tiles are `[117,9]` and `[118,9]`, and the only units nearby were
-  `Nexus#77@[119,10]` (4x3, covering x 119..122, y 10..12) and
-  `VespeneG#7@[119,5]` (4x2, x 119..122, y 5..6). **Neither covers x=117 or x=118.**
-  The tiles are empty; the engine still reports them occupied-with-buildings.
-- **So a building can be refused a tile that is empty, walkable and buildable.**
-  `BuildingTilesAreOccupied.check` (our own live-unit-list guard) correctly says
-  `false` for the same tile, which is the contradiction that identifies this.
-- **Rule:** when `MapTiles.canBuildHere` is false on a tile that is walkable,
-  buildable and empty, print `bi` **per footprint tile plus the units within ~4
-  tiles** before touching occupancy logic. `bi=0` alone is not evidence of a
-  building, and believing it costs a session.
-- **Unresolved:** whether `bi` is wrong everywhere or only near units/structure
-  edges, and whether it is the same defect as the region/`hasPath` emptiness. The
-  next measurement is a scan of `bi` across a known-empty area with no units
-  nearby: if `bi=0` appears there too, the query is unusable on OpenBW the way
-  `hasPath` is.
+  `isBuildable(...,true)` - `bi` - counts **units**, not just buildings. The refused
+  tiles are walked by our own workers around the mineral line, so the engine refuses
+  them correctly and the refusal is **our candidate search's fault, not the
+  engine's**.
+- **An earlier reading of this was wrong and is withdrawn.** A first probe sampled
+  only the origin tile and units within ~4 tiles of the *origin*, concluded the
+  tiles were empty, and recorded "the engine reports occupied where nothing stands".
+  That was an artefact of where the probe looked: per-tile counting shows the units
+  immediately. **Do not repeat it - `bi=0` is not evidence of a bug.**
+- **The real defect this exposes:** the two occupancy answers disagree by design.
+  `bi` (`isBuildableIncludeBuildings`) counts **all units**; our
+  `BuildingTilesAreOccupied.check` counts **buildings only**. `POSITION-FINDER.md`
+  point 2 records the other half of this history: the guard once counted every unit,
+  was narrowed to buildings because "a worker or a patch two tiles over overlapped a
+  Pylon's footprint", and that narrowing is what left the engine and our oracle
+  answering different questions.
+- **Rule:** when `canBuildHere` is false on a tile that reads walkable and
+  buildable, count units **per refused footprint tile** (`Select.all().inRadius(0.5,
+  tile)`) before concluding anything about the engine. Then decide the policy: a
+  worker on a tile is transient and the builder can be sent to shoo it away, but a
+  search that never accounts for it re-picks the same tile forever.
+- **Still open:** why the search does not move past a tile a worker occupies. The
+  builder picks a candidate, a worker is standing on it, and nothing makes either
+  the worker move or the search advance - which is the shape of the 36 s
+  `took too long` cancel.
