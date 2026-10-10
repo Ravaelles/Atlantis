@@ -745,3 +745,59 @@ Option 2 is the one that matches the architecture direction and stops depending 
 a legacy path we intend to delete. Recommend doing that; do not start it without the
 owner's decision, because it is a scope change from "fix placement" to "V2 gets its
 own builder".
+
+### #48 PROVEN: the blocker is a client-side `hasPath` pre-check, and the server accepts the command (2026-10-10)
+
+Consulted `Stardust` and `StardustDevEnvironment` as the owner asked. The result
+is a complete, measured diagnosis and a fix that does not require changing the
+engine.
+
+**Measured with a temporary probe** (`MapTiles.canBuildHere`, removed after use):
+
+```
+PATHPROBE type=Pylon tile=[6,47] engCanBuildHere=false engHasPath=false unitHasPath=false
+  from=[152,1496] to=[224,1536]
+PATHPROBE type=Pylon tile=[6,47] engCanBuildHere=false engHasPath=false unitHasPath=false
+  from=[172,1536] to=[224,1536]
+```
+
+The second line is the killer: **two positions 52 px (1.6 tiles) apart in the same
+row, on open terrain, have no path** according to OpenBW. So `hasPath` is not
+"sometimes wrong" - it answers *false* for adjacent, walkable tiles.
+
+**The chain, verified in the engine and client sources:**
+
+1. `Templates::canBuildHere`'s last check
+   (`bwapi/Shared/Templates.h:196-201`):
+   `if (!builder->hasPath(Position(lt) + Position(type.tileSize())/2)) return false;`
+2. `UnitImpl::issueCommand` (`BWAPIClient/Source/UnitImpl.cpp:21`) is the **only**
+   gate: `if (!canIssueCommand(command)) return false;` - and `canIssueCommand`
+   runs that `canBuildHere`.
+3. **The server never re-checks.** Once the command is sent, the server's handler
+   (`BWAPI/Source/BWAPI/GameCommands.cpp:65-74`) goes straight to
+   `bwgame.QueueCommand<BW::Orders::MakeBuilding>(...)` with **no `canBuildHere`**.
+
+So the refusal is **entirely client-side**, in the BWAPI/BWAPI-library layer that
+JBWAPI mirrors - it is not the map, not our placement logic, not the server.
+
+**How Stardust does it (the consulted reference):** `src/Builder/Builder.cpp:40`
+calls `builder->build(type, tile)` and reacts to the result (`getLastError`); it
+does not gate on its own `canBuildHere`, and it measures build-readiness
+**edge-to-edge** (`Geo::EdgeToEdgeDistance`) with a **24 px (0.75 tile)** threshold
+- the same edge-not-centre idea that fixed our `TravelToConstruct`. Stardust's
+building works because it runs against **real BWAPI** (the harness README builds
+BWAPILIB on MSVC for StarCraft; the OpenBW config is a separate macOS/CLion path),
+where `hasPath` is answered by the actual game.
+
+**Consequence - the fix is ours to make, and it is option 2 from the earlier note:**
+the v2 path must issue the build command **without** the client-side
+`canBuildHere`/`hasPath` pre-check, because the server accepts that command. The
+legacy `Unit.build` cannot be used as-is on OpenBW, which is exactly the case for
+giving Production V2 its own builder (the step already planned as #45 item 4, and
+consistent with the architecture direction).
+
+**Not implemented yet - it is a scope decision for the owner.** What is now
+*settled* is that no engine/harness change is required: the information needed to
+choose the fix is complete, and the three earlier options collapse to one sane
+choice (v2 owns the builder). Option 3 (pin another map) is unnecessary - the
+engine would break there too, because `hasPath` is broken for adjacent tiles.

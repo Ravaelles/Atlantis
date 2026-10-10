@@ -46,3 +46,29 @@
   `3rdparty/openbw/bwapi/bwapi/Shared/Templates.h` (`canBuildHere`) and the
   tile query pair `isBuildable` (terrain+occupancy) vs `isExplored` (fog) - they
   are independent answers and the command requires both.
+
+## OpenBW: `Unit.build` fails on walkable open terrain - `hasPath` (2026-10-10)
+
+- **Symptom:** `Unit.build(Pylon, tile)` returns `false`, with no exception, on a
+  tile that is buildable and explored; every earlier probe (terrain, exploration,
+  occupancy, minerals, position) passes.
+- **Cause:** `Templates::canBuildHere` ends with a path check -
+  `if (!builder->hasPath(Position(lt) + Position(type.tileSize())/2)) return false;`
+  - and **OpenBW's `hasPath` returns false for adjacent, walkable tiles** on
+  `(3)TauCross1.1`. Measured: two positions 52 px (1.6 tiles) apart in the same row
+  on open terrain -> `hasPath=false`.
+- **Why it looks like a placement bug:** the refusal surfaces at
+  `Unit.build`, so every map/occupancy/exploration theory looks plausible first.
+  The gate is one call deep: `UnitImpl::issueCommand` ->
+  `canIssueCommand` -> `Unit.canBuild` -> `Game.canBuildHere(checkExplored=true)`
+  -> `Templates::canBuildHere` -> `builder->hasPath(...)`.
+- **The client-only trap:** the server **does not re-check**. Once the command is
+  sent, `GameCommands.cpp` queues `MakeBuilding` directly. So the refusal is
+  entirely in the client library; a path that issues the command without the
+  pre-check succeeds. Do not go looking for a server-side or map-side cause.
+- **Reference:** Stardust calls `builder->build(...)` and inspects the result; it
+  does not gate on its own `canBuildHere`, and it measures readiness
+  **edge-to-edge** with a 24 px (0.75 tile) threshold. Its building works against
+  real BWAPI, where `hasPath` is real.
+- **Rule:** when a build command is refused on a tile that reads valid, probe
+  `hasPath` **before** re-examining terrain or occupancy.
