@@ -177,8 +177,10 @@ public class MapTiles {
         // place its first Pylon.
         //
         // So answer from the ENGINE at tile level: for a building to stand at `at`,
-        // every tile it covers must be walkable and buildable-including-buildings.
-        // That last part is the occupancy answer, from the engine itself - which is
+        // every tile it covers must be walkable, buildable-including-buildings and
+        // explored - the same three terms the command path enforces (see
+        // tilesCoveredAreBuildable). The buildable term is the occupancy answer,
+        // from the engine itself - which is
         // why this path does NOT also ask BuildingTilesAreOccupied: measured
         // 2026-10-08 on (3)TauCross1.1, that guard's tile-rectangle math reported
         // occupied=true for tiles the engine had just called buildable and empty
@@ -188,19 +190,30 @@ public class MapTiles {
     }
 
     /**
-     * Every tile the building would cover must be walkable and buildable, per the
-     * engine's own tile queries. Used when JBWEB is unavailable (OpenBW); the
-     * building's top-left sits at {@code at}.
-     */
-    /**
-     * Every tile the building would cover must be walkable and buildable, per the
-     * engine's own tile queries. Used when JBWEB cannot answer (OpenBW); the
-     * building's top-left sits at {@code at}.
+     * Every tile the building would cover must be walkable, buildable and
+     * <b>explored</b>, per the engine's own tile queries. Used when JBWEB cannot
+     * answer (OpenBW); the building's top-left sits at {@code at}.
      *
      * <p>
      * {@code isBuildableIncludeBuildings()} is the engine's occupancy-aware answer,
      * so this covers "is something already standing here" without a second,
      * hand-rolled overlap test.
+     * </p>
+     *
+     * <p>
+     * <b>The explored term is not optional - it mirrors the engine exactly.</b> The
+     * path a real build command takes is {@code Unit.build} -> {@code issueCommand}
+     * -> {@code canIssueCommand} -> {@code Unit.canBuild(..., checkCanBuildHere=true,
+     * ...)} -> {@code Game.canBuildHere(tile, type, unit, checkExplored=true)}, whose
+     * per-tile loop is
+     * {@code if (!isBuildable(x,y) || (checkExplored && !isExplored(x,y))) return false;}
+     * (OpenBW {@code Templates::canBuildHere}). Without this term the placement
+     * search accepts a footprint the command path will refuse, which is the measured
+     * OpenBW failure: a Pylon was assigned to tile {@code [95,123]} - ~23 tiles from
+     * the main and well outside the explored ring - the builder walked there and
+     * {@code Unit.build} was rejected 190 times while the map grid said
+     * {@code buildable:true}. The engine was answering {@code isExplored=false} to a
+     * question the search never asked.
      * </p>
      */
     private static boolean tilesCoveredAreBuildable(AUnitType building, APosition at) {
@@ -213,6 +226,7 @@ public class MapTiles {
 
                 if (!tile.isWalkable()) return false;
                 if (!tile.isBuildableIncludeBuildings()) return false;
+                if (!tile.isExplored()) return false;
             }
         }
 

@@ -345,7 +345,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
         `SCENARIO PASSED` with no expectations); this is pinned by
         `LauncherBuildsTheJarTest` and fast suite 346/346. A real non-zero process-exit
         integration run is still unverified.
-     2. **A Pylon is placed in a real run.** NO, and the cause is measured
+     2. **A Pylon is placed in a real run.** Not yet, but the refusal cause is now
+     known and fixed in code (see the ROOT CAUSE block below and #50): the
+     command path enforces `checkExplored=true`, and the search was committing to
+     a tile ~23 tiles out that the engine had never explored. A bounded run is the
+     last step. Earlier reading: the cause is measured
      2026-10-09 - but **not** what the first reading suggested. The engine is
      telling the truth: on the probed tiles `engBuild=true` and only the occupancy
      variant `engBuildInc=false` for the one tile (7,44) that is genuinely
@@ -397,25 +401,42 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   4. A deliberately broken build fails the same scenario (not verified).
 
 - **#50 - Require an explored footprint before reserving a building tile (the
-  OpenBW placement fix).** Measured 2026-10-10 from the engine/JBWAPI source: the
-  `canBuildHere=false` that blocked every Pylon on OpenBW is the
-  `checkExplored=true` term of `Templates::canBuildHere` (details and full call
-  chain in `_AI/STATUS.md` "ROOT CAUSE FOUND"). Two narrow changes, both testable
-  without a game:
-  1. `MapTiles.tilesCoveredAreBuildable` must also require `tile.isExplored()` for
-     every covered tile, matching the engine’s per-tile loop, so our answer and the
-     command path stop disagreeing.
-  2. The candidate search must not offer a tile whose footprint is not fully
-     explored - in `atlantis.placement` (the catalogue path builds its grid from
-     terrain only) and, if the legacy finder is still in charge, in its condition
-     set. One place, one rule: a tile is a candidate only if the whole footprint is
-     explored *and* free.
-  Verification: a unit/acceptance test pinning "unexplored footprint -> not a
-  candidate, and `MapTiles.canBuildHere` says false", then one bounded OpenBW run
-  (`PLACEMENT=catalogue PRODUCTION_V2=LIVE`) to close #47 point 2. **Residual to
-  settle first:** whether base-spot tiles are unexplored at the moment the first
-  Pylon is planned on this map - if they are, the real fix is to stop planning
-  outside the explored area, not merely to reject such tiles.
+  OpenBW placement fix). IMPLEMENTED 2026-10-10; one bounded run still owed.**
+  Measured from the engine/JBWAPI source: `Unit.build` -> `canIssueCommand` ->
+  `Unit.canBuild(..., checkCanBuildHere=true, ...)` ->
+  `Game.canBuildHere(tile, type, unit, checkExplored=true)` -> OpenBW
+  `Templates::canBuildHere`, whose per-tile loop is
+  `if (!isBuildable(x,y) || (checkExplored && !isExplored(x,y))) return false;`.
+  Full call chain and the measured run (Pylon assigned to `[95,123]`, ~23 tiles
+  from the main, `Unit.build` rejected 190x while the grid said
+  `buildable:true`) are in `_AI/STATUS.md` "ROOT CAUSE FOUND".
+
+  Done: `MapTiles.tilesCoveredAreBuildable` now requires `tile.isExplored()` for
+  every covered tile, so our oracle and the command path agree and the
+  ring-by-ring search (`PylonPosition.nextPosition`, `maxDistance = 37`) can no
+  longer commit to a tile the command will refuse. Test
+  `OpenBWPlacementWithoutJbwebTest.anUnexploredFootprintIsNotPlaceableOnTheOpenBWPath`
+  (fails 4/5 without the fix, passes 5/5 with it). Fast suite 346/346, acceptance
+  5/5, ArchUnit 7/7, store unchanged.
+
+  **Measured in a bounded OpenBW run 2026-10-10:** the placement refusal is gone -
+  `Can't find place for Pylon` and `ErRoR:b`/`ErRoR:NB` are all **zero** in
+  `out/openbw/bot.log`, and the Pylon appears at distinct increasing plan windows
+  (`557`, `750`, `1125`, `2224`, `3305`). The run still ended on the outer timeout,
+  because the Pylon window sits behind the current frame and is re-offered every
+  frame with `builder committed` - that is **#48**, not placement. So the last
+  step for #50 is to close #48 and then observe a *finished* Pylon/Gateway in the
+  scenario verdict (also #47 point 2). Details in `_AI/STATUS.md` "Bounded OpenBW
+  run after the explored fix".
+
+  Two harness facts measured in the same session: `ENEMY_COUNT=0` crashes the
+  client (`bwapi.Game.init` index -1), and a 1-enemy run can end in Defeat at ~36
+  in-game seconds before any building is due - neither is a placement result.
+
+  Deliberately untouched: the `-7` offset in
+  `PylonPosition.nearToPositionForFirstPylon` is a gameplay-policy constant, not a
+  proven bug - the explored term already prevents the failure, and changing the
+  offset is a doctrine change needing the owner (CONVENTIONS §3).
   5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
      `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
      `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement

@@ -53,10 +53,16 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
     private static class EngineSourceRefusingComposite implements MapTiles.Source {
         final boolean walkable;
         final boolean buildableTile;
+        final boolean exploredTile;
 
         EngineSourceRefusingComposite(boolean walkable, boolean buildableTile) {
+            this(walkable, buildableTile, true);
+        }
+
+        EngineSourceRefusingComposite(boolean walkable, boolean buildableTile, boolean exploredTile) {
             this.walkable = walkable;
             this.buildableTile = buildableTile;
+            this.exploredTile = exploredTile;
         }
 
         @Override
@@ -66,7 +72,7 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
 
         @Override
         public boolean isExplored(HasPosition at) {
-            return true;
+            return exploredTile;
         }
 
         @Override
@@ -150,6 +156,30 @@ public class OpenBWPlacementWithoutJbwebTest extends WorldStubForTests {
                 fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
                     assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
                             "a non-buildable tile is not placeable");
+                });
+    }
+
+    /**
+     * The measured OpenBW failure: a Pylon was assigned to tile {@code [95,123]},
+     * ~23 tiles from the main and outside the explored ring; the builder walked
+     * there and {@code Unit.build} was rejected 190 times while the map grid said
+     * {@code buildable:true}. The engine's command path is
+     * {@code Unit.build -> canIssueCommand -> canBuild(..., checkCanBuildHere=true)
+     * -> Game.canBuildHere(tile, type, unit, checkExplored=true)}, whose tile loop
+     * also requires {@code isExplored}. If our answer ignores that term, the search
+     * keeps offering tiles the command can never accept - the two-sources-of-truth
+     * split that produced "does not work, and nothing says why".
+     */
+    @Test
+    public void anUnexploredFootprintIsNotPlaceableOnTheOpenBWPath() {
+        MapTiles.useSource(new EngineSourceRefusingComposite(true, true, false));
+
+        world(1, fakeOurs(
+                fake(AUnitType.Protoss_Nexus, 20, 20),
+                fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
+                    assertFalse(MapTiles.canBuildHere(null, AUnitType.Protoss_Pylon, APosition.create(26, 23)),
+                            "a footprint the engine has not explored must not be offered - Unit.build would "
+                                    + "refuse it via checkExplored, which is the tile [95,123] failure");
                 });
     }
 

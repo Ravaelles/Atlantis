@@ -442,21 +442,84 @@ them**, which is exactly why the rejection looked impossible.
   the near tiles are not. The catalogue/legacy planner accept such a candidate
   because they never ask `isExplored`.
 
+**Verified against the measured run - the residual is settled.** The owner
+confirmed that on this map everything within roughly 8 tiles of the base is
+explored, so the question is not "is the base itself unexplored" but "does the
+search wander outside the explored ring". It does, and the log says so:
+main choke `[67,114]`, and the Pylon was assigned to tile **`[95,123]`** - about
+23 tiles from the main, far beyond the explored radius - where worker `#118`
+walked and `Unit.build` was rejected **190 times** while the map grid reported
+`buildable:true`. The legacy finder's `nextPosition()` uses
+`maxDistance = 37` (`PylonPosition.nextPosition`), expanding ring by ring, so
+once the near rings are refused it commits to a tile the command can never
+accept. That is the whole failure: a search with no explored-boundary condition
+plus an oracle that never asked `isExplored`.
+
 **Consequence, and what NOT to do:**
 
 - This is **not** a map-data bug and **not** an `APositionFinder` bug: the engine
   is answering a question we never asked it correctly. Do **not** add a
   `isBuildable`/map fallback and do **not** patch `APositionFinder`
   (`_AI/PLACEMENT-CUTOVER-PLAN.md` "What must not happen" still stands).
-- The fix belongs where the tile is chosen: a candidate must be **explored on its
-  whole footprint** before it is reserved, and `MapTiles.canBuildHere` should agree
-  with the command path (add the `isExplored` requirement to
-  `tilesCoveredAreBuildable`, matched to the engine’s per-tile loop). Both are
-  small and behaviour-narrow; they need a regression test plus one bounded OpenBW
-  run to close #47.
-- One residual to check before coding: whether Atlantis’s start-of-game
-  exploration state on this map leaves normal base-spot tiles unexplored at the
-  moment the first Pylon is planned. If it does, the real fix is to stop planning
-  on unexplored tiles at all; if it does not, the candidate search is picking
-  marginal tiles outside the explored area and must be constrained to the
-  explored set.
+
+**Implemented (this session):**
+
+- `MapTiles.tilesCoveredAreBuildable` now requires `tile.isExplored()` for every
+  covered tile, matching the engine’s per-tile loop - so our oracle and the command
+  path agree, and a far/explored-less tile is no longer offered by the search.
+- Regression test
+  `OpenBWPlacementWithoutJbwebTest.anUnexploredFootprintIsNotPlaceableOnTheOpenBWPath`:
+  fails with the old code (4/5) and passes now (5/5), so the guard is not vacuous.
+- Verification: fast suite 346/346, acceptance class 5/5, ArchUnit 7/7, store
+  unchanged. A bounded OpenBW run is still owed to close #47 point 2 (until then
+  this is a fix verified by test, not by game).
+
+**Still deliberately out of scope:** the `-7` offset in
+`PylonPosition.nearToPositionForFirstPylon` (`base.translateTilesTowards(-7,
+centerOfResources)` - 7 tiles *away* from the mineral line) is a gameplay-policy
+constant, not a bug proven by this evidence: with the explored term in place the
+search can no longer commit to an unexplored tile, so the offset only shifts which
+*explored* tiles are tried. Changing it would be a doctrine change and needs the
+owner, per CONVENTIONS §3.
+
+### Bounded OpenBW run after the explored fix (2026-10-10)
+
+Command: `PLACEMENT=catalogue PRODUCTION_V2=LIVE bash scripts/run-openbw-e2e.sh
+"maps/cog/(3)TauCross1.1.scx" Protoss Zerg`, jar rebuilt and freshness-checked
+first. The run attached and played; it ended on the outer `timeout` (the known
+#48 path), so it is **not** a passing scenario - but its log answers the
+placement question that mattered.
+
+**The placement refusal is gone.** In `out/openbw/bot.log`:
+
+- `Can't find place for Pylon` - **0 occurrences** (this was the constant
+  failure on every earlier run).
+- `ErRoR:b` and `ErRoR:NB` (the "build command rejected the tile" markers from
+  `AUnitOrders.build`) - **0 and 0**.
+- The Pylon appears at **distinct, increasing plan windows**: `557`, `750`,
+  `1125`, `2224`, `3305` - the planner re-plans forward instead of jamming on
+  one impossible tile.
+
+**What still blocks a verdict is #48/M6, not placement.** The log shows the
+Pylon window already behind the current frame and re-offered every frame:
+
+```
+@@3945 plan=2 [Probe@4395-4695 by#70 Pylon@3305-3755 ] issued: OK Pylon@3305 (builder committed)
+```
+
+The builder is assigned and holds the construction (`builder committed` every
+frame, no error), but the item never becomes due - the same "startFrame in the
+past -> permanently `isDue` -> re-offered forever" shape recorded in #48. It is
+the arbitration/dispatch blocker, separate from the placement fix in #50.
+
+**Two side facts measured, worth keeping:**
+
+- `ENEMY_COUNT=0` (the "undisturbed economy" mode) **crashes the client** on this
+  harness: `ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 2`
+  at `bwapi.Game.init(Game.java:202)`, i.e. the engine has no enemy slot to map.
+  It is not a placement signal - do not use it as the clean-economy run until
+  that is fixed on the harness side.
+- A run with 1 enemy can end in **Defeat at ~36 in-game seconds** (a lone Probe
+  killed by lings), before any building was due; that is not a placement result
+  either. The scenario needs the survival horizon from #47 point 5, not a short
+  default.
