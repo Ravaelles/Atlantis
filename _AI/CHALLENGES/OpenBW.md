@@ -129,3 +129,27 @@ attach":
 - the launcher killed the host it was about to join;
 - `ENV`/`build_orders` were written to the wrong directory, so the bot played
   with no production and said nothing.
+
+## Map knowledge on OpenBW: measured 2026-10-10
+
+- **BWEM works.** `MAP_ANALYSIS areas=21 chokes=42` on TauCross, no exception, and
+  real coordinates reach the mission line (`Choke{[117,35], width=2}`). This
+  contradicts `_AI/LOCAL-STARCRAFT.md`'s 2026-10-05 claim that BWEM never
+  initialises here - that section now carries a SUPERSEDED note. Do not spend a
+  session on "the map model is missing": it is not, on this map.
+- **Check the model, do not assume it.** `AMap.verifyMapAnalysisIsUsable()` counts
+  areas and chokes and prints `MAP_ANALYSIS areas=.. chokes=..`; on OpenBW an empty
+  model exits 43 and a missing BWEM exits 42 (`AMap.handleBwemFailure`). Both are
+  non-zero so the runner reports a failed run; neither is silent.
+- **`src/bwem/BWMap` shadows the jar's `bwem.BWMap`, and they differ.** The local
+  one has `getAreas()` and `getPath()` but **no `getChokePoints()`** - chokes are
+  read per `Area` (`area.getChokePoints()`). A compile error naming a method that
+  `javap` shows on the jar is almost always this shadowing, not a missing library.
+- **The remaining OpenBW blocker is not map knowledge.** A bounded run ends with
+  `Can't find place for \`Pylon\`, At 8 Pylon (READY_TO_PRODUCE)(#1)`,
+  `(reason: Can't physically build here)`, `(Max search distance was: 36) near
+  null`, then `ForceExitLocallyAfterRealSeconds`. So the placement search runs, the
+  map is fine, and the refusal is inside the placement conditions - `near null`
+  says `order.aroundPosition()` was never set. Start there, and note that the
+  message has changed shape over time, so grep for `Can't find place` rather than
+  an exact older wording.

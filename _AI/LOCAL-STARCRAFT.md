@@ -73,6 +73,21 @@ are not part of any repo.
 
 ### Map data in OpenBW: BWEM never initialises (measured 2026-10-05)
 
+> **SUPERSEDED 2026-10-10 - BWEM DOES initialise on OpenBW. Do not act on this
+> section.** Measured on TauCross with the assertion added in the same change:
+> `MAP_ANALYSIS areas=21 chokes=42`, no exception, and real coordinates reach the
+> mission line (`Choke{[117,35], width=2}`). Whatever made
+> `assignStartingLocationsToSuitableBases` throw on the Python 1.1 map in October
+> is either fixed or map-specific; on the map the E2E runs use, the model is
+> healthy. The advice below to continue with an uninitialised BWEM and rely on
+> "fake natural / fake choke" is **withdrawn** - `AMap` now fails fast instead
+> (exit 42, or 43 for an empty model; see `AMap.handleBwemFailure`).
+>
+> The section is kept because the failure mode it describes is real and the
+> counter-measure it recommends (the `Source` port) is still the right shape *if*
+> the model ever does come back empty. What is wrong is treating it as the current
+> state.
+
 All base/choke/region data comes from BWEM (`AMap.initMapAnalysis()` calls
 `new BWEM(game).initialize()` + `assignStartingLocationsToSuitableBases()`, and
 `AllBaseLocations` -> `jbweb.Stations.allBases()`). Measured with `Probe12`

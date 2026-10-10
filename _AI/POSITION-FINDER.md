@@ -28,6 +28,17 @@ and would cost it again.
    Anything consulting it answers nonsense there. The rewrite does not depend on
    it.
 
+   > **NOT VERIFIED as of 2026-10-10 - check before relying on either reading.**
+   > `src/jbweb/` is plain Java source in this repo (`JBWEB.java`, `Path.java`,
+   > `Pathfinding.java` and the rest) with no `native` declaration and no
+   > `System.loadLibrary`, which reads as pure Java and would mean the failure this
+   > point describes no longer applies. That is a reading of the source, not a
+   > measurement: nobody has checked whether `InitJBWEB.init()` completes on
+   > OpenBW, and `AMap` swallows its exception either way, so a failure there is
+   > invisible in a log. **Measure it before depending on JBWEB or on this
+   > paragraph.** The conclusion that does hold unchanged is the one the rewrite
+   > acted on: the placement path must not depend on JBWEB's grids.
+
 4. **`Game.hasPowerPrecise` is not usable either** (JBWAPI): it returned false for
    tiles a finished Pylon covered, so Forge and Cybernetics Core were placed
    unpowered. Power is now computed from our own Pylons at the engine's 6-tile
