@@ -276,6 +276,12 @@ EOF
   if [ -n "${PRODUCTION_V2:-}" ]; then
     echo "PRODUCTION_V2=$PRODUCTION_V2" >> "$1"
   fi
+  # OPENBW_PROBE=1 runs the engine capability survey (OpenBwCapabilityProbe):
+  # every map/path/build query the bot uses, answered from a Probe's point of
+  # view, printed as OPENBW_PROBE lines. Diagnostic only.
+  if [ -n "${OPENBW_PROBE:-}" ]; then
+    echo "OPENBW_PROBE=$OPENBW_PROBE" >> "$1"
+  fi
 }
 write_env "$BOT_RUN_DIR/ENV"
 

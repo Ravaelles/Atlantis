@@ -17,6 +17,11 @@
   when no server is alive.
 
 ## OpenBW (the headless engine)
+- **Read `_AI/CHALLENGES/OpenBW-API.md` first** - the measured table of which
+  BWAPI queries answer correctly on this engine. Short version: every map query
+  (`isWalkable`/`isBuildable`/`isExplored`/`isVisible`) is fine, and **`hasPath`
+  is always false** (even from a point to itself), which takes `canBuildHere`,
+  `Unit.canBuild` and `Unit.build` down with it. Reproduce with `OPENBW_PROBE=1`.
 - BWEM on OpenBW: `assignStartingLocationsToSuitableBases` can leave start
   locations unassigned (its rule needs a geyser near the base); the fix is in
   our `src/bwem/BWMap.java` — nearest-base fallback.

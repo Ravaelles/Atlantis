@@ -287,6 +287,13 @@ looked like a different problem than they were (the OpenBW client, for
 instance, reported "cannot open socket" while the actual cause was a Java
 library that cannot run on Java 9+, several layers away).
 
+- **`_AI/CHALLENGES/OpenBW-API.md`** — **which BWAPI queries answer correctly on
+  OpenBW** (measured 2026-10-10). Read this before trusting any engine query:
+  every map query (`isWalkable`/`isBuildable`/`isExplored`/`isVisible`) is fine,
+  and **`hasPath` is always false** — even from a point to itself — which takes
+  `canBuildHere`, `Unit.canBuild` and `Unit.build` with it, so no building can be
+  placed through the normal BWAPI call on this engine. Reproduce the table with
+  `OPENBW_PROBE=1` (the survey runs in seconds).
 - **`_AI/CHALLENGES/OpenBW.md`** — attaching the Java client to the headless
   engine. Four independent blockers that all present as the same symptom
   ("the client does not attach"): an old junixsocket that cannot run on

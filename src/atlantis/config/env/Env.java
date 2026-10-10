@@ -40,6 +40,15 @@ public class Env {
      */
     private static boolean placementCatalogue = false;
 
+    /**
+     * OPENBW_PROBE=1 runs the one-shot OpenBW capability survey at game start:
+     * it asks the engine every query we depend on, from a Probe's point of view,
+     * and prints the answers. Diagnostic only - never set in a real game or a
+     * tournament run. See {@code atlantis.debug.OpenBwCapabilityProbe} and
+     * {@code _AI/CHALLENGES/OpenBW.md} for what it found.
+     */
+    private static boolean openBwProbe = false;
+
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
@@ -130,6 +139,15 @@ public class Env {
                 // parsed by this class, so System.getenv never sees it (measured
                 // 2026-10-08 - the flag was written to ENV and silently ignored).
                 placementCatalogue = "CATALOGUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                return true;
+            case "OPENBW_PROBE":
+                // Accepts both "true" and "1": this is a diagnostic switch a human
+                // flips by hand on the command line, and silently ignoring "1" is
+                // exactly the kind of miss that costs a session (trueFalse() only
+                // accepts the literal string "true" - measured 2026-10-10, the
+                // probe looked like it did not run because of it).
+                openBwProbe = trueFalse(value)
+                    || (value != null && value.trim().equals("1"));
                 return true;
             case "GAME_LAUNCHER":
                 // CHAOS (default, Windows + ChaosLauncher), OPENBW (Linux +
@@ -234,6 +252,14 @@ public class Env {
      */
     public static boolean placementCatalogue() {
         return placementCatalogue;
+    }
+
+    /**
+     * True when the OpenBW capability survey was requested (OPENBW_PROBE=1).
+     * Diagnostic only, read once at game start.
+     */
+    public static boolean openBwProbe() {
+        return openBwProbe;
     }
 
     public static boolean isBenchmark() {
