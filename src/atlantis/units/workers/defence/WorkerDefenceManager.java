@@ -31,7 +31,7 @@ public class WorkerDefenceManager extends Manager {
     protected ManagerFactory[] managers() {
         return new ManagerFactory[]{
             WorkerDefenceHelpCannon::new,
-            WorkerHelpCombatUnitsFight::new,
+//            WorkerHelpCombatUnitsFight::new,
             WorkerDefenceRun::new,
             WorkerDefenceStopFighting::new,
             WorkerDefenceFight::new,

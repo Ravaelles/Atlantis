@@ -142,15 +142,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private Action _prevAction = null;
     private AttackState attackState = AttackState.getDefault();
 
-    /**
-     * Get the current unit action.
-     * Added to support CherryVis integration.
-     *
-     * @return The current unit action
-     */
-    public Action getUnitAction() {
-        return unitAction;
-    }
     private ABullet _lastBullet = null;
 
     /**
