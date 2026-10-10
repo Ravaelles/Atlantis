@@ -26,3 +26,23 @@
 - ~30s between server start and first client frame is normal; 2
   "Unable to open communications socket" retries are normal; more = the socket
   is gone (server died).
+
+## `canBuildHere` refuses a valid tile: `checkExplored` (cost: two sessions)
+
+- **Symptom:** on OpenBW, `Unit.build(Pylon, tile)` returns `false` while every
+  footprint tile probes as walkable, buildable, buildable-including-buildings and
+  empty, and minerals suffice. Looks like the engine lying.
+- **Cause:** the command path turns on an exploration check the probes did not.
+  `Unit.build` -> `issueCommand` -> `canIssueCommand` -> `canBuild(type, tile,
+  /*checkCanBuildHere=*/true, ...)` -> `Game.canBuildHere(tile, type, unit,
+  checkExplored=TRUE)` -> OpenBW `Templates::canBuildHere`:
+  `if (!isBuildable(x,y) || (checkExplored && !isExplored(x,y))) return false;`.
+  One unexplored tile of the footprint is enough.
+- **The trap:** the two-argument `Game.canBuildHere(tile, type)` defaults
+  `checkExplored` to **false**, so a probe built on it reports a tile the actual
+  command refuses. Always probe the same overload `Unit.build` reaches
+  (4-arg, `checkExplored=true`), or probe `isExplored` per footprint tile.
+- **Structure:** the Java overloads all bottom out in the C++ template; read
+  `3rdparty/openbw/bwapi/bwapi/Shared/Templates.h` (`canBuildHere`) and the
+  tile query pair `isBuildable` (terrain+occupancy) vs `isExplored` (fog) - they
+  are independent answers and the command requires both.

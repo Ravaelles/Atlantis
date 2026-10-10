@@ -387,3 +387,76 @@ Atlantis's latest probe saw `Game.canBuildHere=false` despite each footprint til
 being buildable. Stardust is native C++ and its error/command behavior cannot be
 assumed equivalent to JBWAPI/OpenBW. No runtime code changed; verify whether the
 JBWAPI surface exposes a comparable last-error reason before designing a port.
+
+### ROOT CAUSE FOUND: the OpenBW `canBuildHere=false` is `checkExplored`
+
+**Status 2026-10-10: solved by reading the engine source, no game run needed for the
+diagnosis.** The unexplained `Unit.build(Pylon, tile) == false` on OpenBW is now
+attributed to one specific precondition of `canBuildHere`, and it is the only one
+the earlier probes did not measure. This corrects the "precise engine precondition
+remains unidentified" line above.
+
+**The exact call chain (all read from source, nothing inferred):**
+
+1. `AUnitOrders.build` -> `BwapiOrderSink.build` -> `bwapi.Unit.build(type, tile)`.
+2. `Unit.build` -> `UnitCommand.build` -> `issueCommand`.
+3. `issueCommand` first calls `canIssueCommand` (`bwapi.Unit`, javap’d from
+   `lib/JBWAPI-Rav.jar`) and **returns `false` when it is false** - so the
+   client-side gate is what answers, not the engine directly.
+4. `canIssueCommand` for `UnitCommandType.Build` -> `canBuild(type, tile, true,
+   false, false)`.
+5. `Unit.canBuild(..., checkCanBuildHere=true, ...)` ends with
+   `game.canBuildHere(tile, type, this, /*checkExplored=*/true)` - note the
+   **`true`**.
+6. `bwapi.Game.canBuildHere` (same jar, bytecode read) delegates straight to
+   OpenBW’s `Templates::canBuildHere`, whose tile loop is:
+   ```cpp
+   if ( !Broodwar->isBuildable(x, y) || ( checkExplored && !Broodwar->isExplored(x,y)) )
+     return false;
+   ```
+   `.../bwapi/bwapi/Shared/Templates.h:186-192`.
+
+So a Pylon is refused by the client whenever **any** of the 2x2 footprint tiles is
+**explored==false**, independently of `isBuildable`, of units overlapping and of
+minerals. Every earlier probe listed `isWalkable`, `isBuildable`,
+`isBuildableIncludeBuildings`, occupancy and cost - **`isExplored` was never among
+them**, which is exactly why the rejection looked impossible.
+
+**Why `isExplored` alone explains each recorded symptom:**
+
+- The probe that said "every footprint tile is buildable and empty yet
+  `canBuildHere=false`" is consistent: `isBuildable` and `isExplored` are
+  different engine queries, and only the second one gated the command.
+- `MapTiles.tilesCoveredAreBuildable` (the OpenBW fallback) checks `isWalkable`
+  and `isBuildableIncludeBuildings` but **not** `isExplored`
+  (`src/atlantis/map/MapTiles.java:206-220`), so our own "would this stand here"
+  answer says *yes* on a tile the engine's command path says *no* to. That is the
+  two-sources-of-truth split `_AI/POSITION-FINDER.md` warns about, still present.
+- `Game.canBuildHere(tile, type)` (the 2-arg overload, used by the diagnostic
+  probes) defaults `checkExplored` to **false**, while `Unit.build` reaches the
+  4-arg overload with `checkExplored=true`. Two engine answers to the same
+  question differ by that one flag - so a probe built on the 2-arg overload can
+  report a valid tile for a command that is in fact refused.
+- A 2x2 footprint is four tiles; on an OpenBW run started with a single spawned
+  Probe, the far corner of a marginal candidate can still be unexplored even when
+  the near tiles are not. The catalogue/legacy planner accept such a candidate
+  because they never ask `isExplored`.
+
+**Consequence, and what NOT to do:**
+
+- This is **not** a map-data bug and **not** an `APositionFinder` bug: the engine
+  is answering a question we never asked it correctly. Do **not** add a
+  `isBuildable`/map fallback and do **not** patch `APositionFinder`
+  (`_AI/PLACEMENT-CUTOVER-PLAN.md` "What must not happen" still stands).
+- The fix belongs where the tile is chosen: a candidate must be **explored on its
+  whole footprint** before it is reserved, and `MapTiles.canBuildHere` should agree
+  with the command path (add the `isExplored` requirement to
+  `tilesCoveredAreBuildable`, matched to the engine’s per-tile loop). Both are
+  small and behaviour-narrow; they need a regression test plus one bounded OpenBW
+  run to close #47.
+- One residual to check before coding: whether Atlantis’s start-of-game
+  exploration state on this map leaves normal base-spot tiles unexplored at the
+  moment the first Pylon is planned. If it does, the real fix is to stop planning
+  on unexplored tiles at all; if it does not, the candidate search is picking
+  marginal tiles outside the explored area and must be constrained to the
+  explored set.

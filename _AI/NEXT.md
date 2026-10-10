@@ -366,9 +366,28 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      `Unit.build(Pylon, tile)` returned false; the 2x2 footprint's four tiles were
      individually buildable in both the map grid and `Game.isBuildable(..., true)`,
      no other unit overlapped the footprint, and minerals were sufficient. Yet
-     `Game.canBuildHere(tile, Pylon, builder)` was false. This is a fresh command
-     rejection, but its cause is still unknown; do not add a map fallback or alter
-     `APositionFinder` based on the map-only values.
+     `Game.canBuildHere(tile, Pylon, builder)` was false.
+
+     **CAUSE IDENTIFIED 2026-10-10 - it is `checkExplored`, and the engine was never
+     lying.** Read from source, no game run needed. `Unit.build` -> `issueCommand` ->
+     `canIssueCommand` -> `Unit.canBuild(type, tile, /*checkCanBuildHere=*/true, ...)`
+     -> `Game.canBuildHere(tile, type, unit, /*checkExplored=*/true)` -> OpenBW
+     `Templates::canBuildHere`, whose tile loop is `if (!isBuildable(x,y) ||
+     (checkExplored && !isExplored(x,y))) return false;`
+     (`StardustDevEnvironment/3rdparty/openbw/bwapi/bwapi/Shared/Templates.h:186-192`).
+     So a Pylon is refused when any of its 2x2 tiles is **unexplored** - a condition
+     none of the earlier probes measured, and the two-argument
+     `Game.canBuildHere(tile, type)` used by those probes defaults `checkExplored` to
+     false, which is why they saw a valid tile. Our own `MapTiles`
+     fallback (`tilesCoveredAreBuildable`) does not ask `isExplored` either, so our
+     answer and the command path disagree by exactly this flag. Full trace:
+     `_AI/STATUS.md` "ROOT CAUSE FOUND".
+
+     The fix is small and local: make the placement candidate **explored on its whole
+     footprint** before it is reserved, and align `MapTiles.tilesCoveredAreBuildable`
+     with the engine’s command path. Do **not** add a map fallback and do **not** patch
+     `APositionFinder` - the engine is correct, the candidate search asked the wrong
+     question. See new item **#50**.
 
      If the default legacy path still refuses after the owner's latest changes,
      diagnose its candidate search from a fresh bounded run. The planned long-term
@@ -376,6 +395,27 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      #48 tracks the separate LIVE scheduler/dispatch blocker.
   3. A scenario file instead of loose environment variables (not implemented).
   4. A deliberately broken build fails the same scenario (not verified).
+
+- **#50 - Require an explored footprint before reserving a building tile (the
+  OpenBW placement fix).** Measured 2026-10-10 from the engine/JBWAPI source: the
+  `canBuildHere=false` that blocked every Pylon on OpenBW is the
+  `checkExplored=true` term of `Templates::canBuildHere` (details and full call
+  chain in `_AI/STATUS.md` "ROOT CAUSE FOUND"). Two narrow changes, both testable
+  without a game:
+  1. `MapTiles.tilesCoveredAreBuildable` must also require `tile.isExplored()` for
+     every covered tile, matching the engine’s per-tile loop, so our answer and the
+     command path stop disagreeing.
+  2. The candidate search must not offer a tile whose footprint is not fully
+     explored - in `atlantis.placement` (the catalogue path builds its grid from
+     terrain only) and, if the legacy finder is still in charge, in its condition
+     set. One place, one rule: a tile is a candidate only if the whole footprint is
+     explored *and* free.
+  Verification: a unit/acceptance test pinning "unexplored footprint -> not a
+  candidate, and `MapTiles.canBuildHere` says false", then one bounded OpenBW run
+  (`PLACEMENT=catalogue PRODUCTION_V2=LIVE`) to close #47 point 2. **Residual to
+  settle first:** whether base-spot tiles are unexplored at the moment the first
+  Pylon is planned on this map - if they are, the real fix is to stop planning
+  outside the explored area, not merely to reject such tiles.
   5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
      `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
      `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
