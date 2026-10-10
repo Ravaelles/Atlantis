@@ -31,9 +31,14 @@ WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
 #   bash scripts/run-openbw-e2e.sh --self-test              # setup only
 #   bash scripts/run-openbw-e2e.sh --self-test-assertions   # test scenario assertions, no game
 #
-# Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
-# INGAME_TIME=20 game minutes. Both are refused when widened, never silently
-# extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
+# Runtime limits (top of the file, CONVENTIONS §17): a single run gets
+# RUN_BUDGET_SECONDS=20 wall-clock by default - a redirecting or placement test
+# is short, and one that needs longer is stuck, not slow. The 120 s ceiling is
+# for the mega-test and the full E2E sweep only, selected with MEGA_TEST=1.
+# INGAME_TIME=20 game minutes is the in-game self-termination. Widening either is
+# refused rather than honoured; the outer command must cap the run at
+# TIMEOUT_SECONDS and must never use a blind `sleep` to wait for it (poll with a
+# condition - CONVENTIONS §17).
 #
 # Scenario assertions (optional): game summary counters plus log checks.
 #   EXPECT_MIN_INGAME_SECONDS=<n>   fail if the game ended earlier than n
@@ -90,15 +95,34 @@ ASSERTION_SELF_TEST=0
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
 
-# === Hard simulation limits (CONVENTIONS §17) ==============================
-# The two knobs live here, at the top, and nothing below may widen them.
-#   TIMEOUT_SECONDS  wall-clock cap for the whole simulation.
+# === Simulation runtime limits (CONVENTIONS §17) ===========================
+# Three knobs live here, at the top, and nothing below may widen them.
+#   MEGA_TEST        set to 1 only for the single OpenBW mega-test and the full
+#                    E2E sweep - the only runs allowed to use the 120 s ceiling.
+#   TIMEOUT_SECONDS  wall-clock cap for the whole simulation. 120 s is the HARD
+#                    CEILING and applies only when MEGA_TEST=1; otherwise the
+#                    normal per-test budget below is the limit.
+#   RUN_BUDGET_SECONDS  the normal budget for a single OpenBW test. A redirecting
+#                    or placement test is short; one that needs more than this is
+#                    stuck, not slow (CONVENTIONS §17).
 #   INGAME_TIME      in-game seconds after which the bot ends the game itself
 #                    (20 real minutes of game time).
-TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-120}"
+MEGA_TEST="${MEGA_TEST:-0}"
+RUN_BUDGET_SECONDS="${RUN_BUDGET_SECONDS:-20}"
+if [ "$MEGA_TEST" = "1" ]; then
+  TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-120}"
+else
+  # A normal run gets the 20 s budget, never the 120 s ceiling. Asking for more
+  # without MEGA_TEST=1 is refused rather than silently granted: the ceiling is
+  # for the mega-test, not for a single scenario that is having a bad day.
+  if [ "${TIMEOUT_SECONDS:-$RUN_BUDGET_SECONDS}" -gt "$RUN_BUDGET_SECONDS" ]; then
+    fail "TIMEOUT_SECONDS=${TIMEOUT_SECONDS} exceeds the ${RUN_BUDGET_SECONDS}s single-test budget; set MEGA_TEST=1 only for the mega-test/full sweep (CONVENTIONS §17)"
+  fi
+  TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-$RUN_BUDGET_SECONDS}"
+fi
 INGAME_TIME="${INGAME_TIME:-$((60 * 20))}"
 if [ "$TIMEOUT_SECONDS" -gt 120 ]; then
-  fail "TIMEOUT_SECONDS=$TIMEOUT_SECONDS exceeds the OpenBW 120-second simulation cap (CONVENTIONS §17)"
+  fail "TIMEOUT_SECONDS=$TIMEOUT_SECONDS exceeds the OpenBW 120-second simulation ceiling (CONVENTIONS §17)"
 fi
 if [ "$TIMEOUT_SECONDS" -le 0 ]; then
   fail "TIMEOUT_SECONDS must be positive, got $TIMEOUT_SECONDS"
@@ -312,6 +336,13 @@ mkdir -p "$(dirname "$SERVER_LOG")"
 pkill -9 -x BWAPILauncher 2>/dev/null || true
 rm -f /tmp/bwapi_socket_* /dev/shm/bwapi_shared_memory_* 2>/dev/null || true
 
+if [ "$MEGA_TEST" = "1" ]; then
+  say "runtime budget: ${TIMEOUT_SECONDS}s (MEGA_TEST=1 - the mega-test/full sweep ceiling)"
+else
+  say "runtime budget: ${TIMEOUT_SECONDS}s (single-test budget; a run that reaches it is stuck, not slow)"
+fi
+RUN_STARTED_AT=$(date +%s)
+
 say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE enemy_count=$ENEMY_COUNT"
 
 # setsid + nohup: the host must survive this script's process group (the
@@ -383,9 +414,20 @@ timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 
+RUN_ELAPSED=$(( $(date +%s) - RUN_STARTED_AT ))
 say "bot exit code: $BOT_EXIT"
+say "runtime: ${RUN_ELAPSED}s of ${TIMEOUT_SECONDS}s budget"
 say "server log: $SERVER_LOG"
 say "bot log:    $BOT_LOG"
+
+# A non-mega run that spends its whole budget did not "need more time": it was
+# stuck (CONVENTIONS §17). Say so loudly, because the loudest failure here is a
+# run that is quietly slow rather than one that is short and red.
+if [ "$MEGA_TEST" != "1" ] && [ "$RUN_ELAPSED" -ge "$TIMEOUT_SECONDS" ]; then
+  say "BUDGET EXHAUSTED: a single test used its whole ${TIMEOUT_SECONDS}s budget."
+  say "  That is a stuck run (loop / hung host / broken path), not a slow one -"
+  say "  inspect the logs above instead of re-running with a larger limit."
+fi
 
 if [ "$BOT_EXIT" -ne 0 ]; then
   say "bot did not exit cleanly; log tail:"

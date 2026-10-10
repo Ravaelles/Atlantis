@@ -465,13 +465,33 @@ These are the rules distilled from the OpenBW investigation
   same jar attach on a newer JVM without regressing Java 8.
 
 
-## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09)
+## 17. OpenBW simulation runtime: 20 s normal, 120 s hard ceiling (owner's ruling;
+restated 2026-10-10)
 
-- **Every OpenBW game/simulation has a hard 120-second wall-clock limit**
-  (`TIMEOUT_SECONDS=120`, set once at the top of `scripts/run-openbw-e2e.sh`).
-  OpenBW is expected to complete rapidly; a run that has not completed after two
-  minutes is hung, misconfigured, or exercising a broken path, not a valid long
-  test. This is the same 120 s as §13, applied to the simulation itself.
+- **Two different limits, and they are not interchangeable:**
+  - **20 seconds is the normal budget for a single OpenBW test.** Any individual
+    run that is not the mega-test is expected to finish well inside it - a
+    building-placement test in particular is a short run and has no reason to
+    approach 20 s. A single run that has not finished in 20 s is not "a slow
+    test": it is a bot stuck in a loop, a hung host, or a broken path. Stop it
+    and diagnose; do not wait longer and do not widen the limit.
+  - **120 seconds is the hard ceiling, and only two things may use it:** the
+    single OpenBW **mega-test** (`_AI/IDEA-E2E-TESTS.md` Stage 3) and the **full
+    end-to-end scenario sweep**. Nothing else gets 120 s, and the ceiling is a
+    cap, never a target.
+- **A run that hits its limit is inconclusive, not a verdict** - record the
+  timeout and inspect the logs. In particular, a non-mega run that reaches 20 s is
+  evidence of a defect; treat it as a finding, not as a test to be waited out.
+- **Never wait blind.** Do not `sleep <seconds>` to "let a run finish": that
+  wastes the whole interval even when the run ends early and it hides a stuck run.
+  Poll with a condition and a stop, e.g.
+  `for i in $(seq 1 10); do pgrep -x BWAPILauncher >/dev/null || break; sleep 2; done`,
+  or start the run in the background and inspect it after its own budget has
+  elapsed. The measured cost of the blind-wait habit: most of one session spent in
+  `sleep 118` calls against runs that never produced a verdict.
+- `TIMEOUT_SECONDS` (120) is set once at the top of `scripts/run-openbw-e2e.sh`;
+  the per-test 20 s budget is `RUN_BUDGET_SECONDS` in the same place, and a single
+  run is expected to use a fraction of it.
 - **The game also ends by itself at 20 game minutes** (`INGAME_TIME=60*20`,
   passed as `FORCE_END_GAME_AFTER_INGAME_SECONDS`). Whichever limit is reached
   first ends the game cleanly - the bot exits itself, so the host outlives the
