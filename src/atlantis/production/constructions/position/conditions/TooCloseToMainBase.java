@@ -34,8 +34,9 @@ public class TooCloseToMainBase {
             if (We.terran()) base = base.translateByTiles(2, 0);
 
 //            System.err.println("distFromBase = " + base.distTo(position) + " / " + minDistFromBase);
-            if (base.distTo(position) <= minDistFromBase) {
-                return failed("Too close to main base");
+            double dist = base.distTo(position);
+            if (dist <= minDistFromBase) {
+                return failed("Too close to main base (" + (int) dist + ")");
             }
         }
 

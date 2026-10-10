@@ -10,11 +10,14 @@ import atlantis.production.constructions.position.terran.TerranPositionFinder;
 import atlantis.production.constructions.position.terran.TooCloseToBunker;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class PositionFulfillsAllConditions {
-    public static int currentSearchRadius = -1;
+//    public static int currentSearchRadius = -1;
+    private static int _currentTX = -1;
+    private static int _currentTY = -1;
     private static AUnitType building;
 
     /**
@@ -25,6 +28,8 @@ public class PositionFulfillsAllConditions {
         AUnit builder, AUnitType building, APosition position, HasPosition nearTo
     ) {
         PositionFulfillsAllConditions.building = building;
+        PositionFulfillsAllConditions._currentTX = position.ty();
+        PositionFulfillsAllConditions._currentTY = position.ty();
 
 //        System.out.println("Conditions: " + position);
 //        if (building.isForge())
@@ -92,6 +97,8 @@ public class PositionFulfillsAllConditions {
 
     private static boolean success() {
         AbstractPositionFinder._STATUS = "OK";
+        AConsole.errPrintln("SUCCESS FOR " + building.name() + " at " + _currentTX + "," + _currentTY);
+
         return true;
     }
 
@@ -100,6 +107,9 @@ public class PositionFulfillsAllConditions {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "failed() called for " + PositionFulfillsAllConditions.building + ", but no _STATUS was set"
             );
+        }
+        else {
+            AConsole.errPrintln("(" + _currentTX + "," + _currentTY + "): " + AbstractPositionFinder._STATUS);
         }
 
         return false;

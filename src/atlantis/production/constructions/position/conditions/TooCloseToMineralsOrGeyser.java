@@ -21,30 +21,32 @@ public class TooCloseToMineralsOrGeyser {
 //        AUnit nearestBase = Select.ourBasesWithUnfinished().nearestTo(position);
 //        if (nearestBase == null && !building.isPylon() && !building.isCannon()) return false;
 
+        double dist;
+
         Selection allMinerals = Select.minerals();
-        int minerals = allMinerals.countInRadius(minDistToMineral(building, position), position);
+        int minerals = allMinerals.countInRadius(dist = minDistToMineral(building, position), position);
 //        if (minerals > 0 && !allowCloseToBase(nearestBase, building, position)) {
         if (minerals > 0) {
-            return failed("Too close to mineral");
+            return failed("Too close to mineral (" + (int) dist + ")");
         }
 
         AUnit gasBuilding = Select.geysersAndGasBuildings().nearestTo(position);
         if (
             gasBuilding != null
-                && gasBuilding.distTo(position) <= minDistToGeyser(building)
+                && (dist = gasBuilding.distTo(position)) <= minDistToGeyser(building)
 //                && !allowCloseToBase(nearestBase, building, position)
         ) {
-            return failed("Too close to geyser");
+            return failed("Too close to geyser (" + (int) dist + ")");
         }
 
         if (
             building.isCannon()
                 && allMinerals.notEmpty()
                 && Bases.natural() != null
-                && position.distTo(Bases.natural()) <= 7
+                && (dist = position.distTo(Bases.natural())) <= 7
                 && allMinerals.countInRadius(4, position) > 0
         ) {
-            return failed("Cannon too close natural minerals");
+            return failed("Cannon too close natural minerals (" + (int) dist + ")");
         }
 
         return false;
