@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
+import atlantis.map.MapTiles;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
@@ -355,9 +356,21 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
 
     /**
      * Returns true if given position has land connection to given position.
+     *
+     * <p>
+     * Goes through {@link MapTiles#hasPathBetween} rather than the engine's
+     * {@code hasPath} directly. On OpenBW the engine query is a region-group
+     * comparison and its region table is empty, so it answers {@code false} for
+     * every pair - including a tile to itself - which silently disabled expansion,
+     * attack targeting and worker retreat on that engine
+     * ({@code _AI/CHALLENGES/OpenBW-API.md}). {@code MapTiles} falls back to our own
+     * flood fill over {@code walkGrid} when the engine cannot answer.
+     * </p>
      */
     public boolean hasPathTo(HasPosition position) {
-        return Atlantis.game().hasPath(this.p(), position.position().p());
+        if (position == null) return false;
+
+        return MapTiles.hasPathBetween(this, position);
     }
 
     public TilePosition toTilePosition() {

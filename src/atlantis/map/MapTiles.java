@@ -157,9 +157,52 @@ public class MapTiles {
         if (!source().spawnsFromMapData()) return false;
         if (from == null || to == null) return false;
 
+        // Our BWEM already answers this for whole areas, and answers it the same way
+        // the engine was supposed to: an area graph built from tiles, with
+        // isAccessibleFrom for connectivity and chokepoint paths for the route
+        // (bwem.Area, used by ARegion and PathToEnemyBase). It is cheap - a graph
+        // walk, no per-tile fill - so it is asked first, and the tile flood fill
+        // below is the fallback for the cases the area graph cannot speak about:
+        // a point outside any area, or two points inside the SAME area, where
+        // "accessible" says nothing about a local obstacle (a wall, a building).
+        Boolean byArea = accessibleThroughAreas(from, to);
+        if (byArea != null) return byArea;
+
         return jbweb.Pathfinding.reachable(
             asTile(from), asTile(to)
         );
+    }
+
+    /**
+     * The area-graph answer, or {@code null} when the areas cannot decide.
+     *
+     * <p>
+     * Returns {@code true} only for two points in <b>different</b> areas that BWEM
+     * says are mutually accessible - a whole-map question the area graph is exactly
+     * right for. Same-area and out-of-area pairs return {@code null} so the caller
+     * falls through to the tile flood fill: two points in one area can still be
+     * separated by a wall or a building, and the area graph knows nothing about
+     * those.
+     * </p>
+     */
+    private static Boolean accessibleThroughAreas(HasPosition from, HasPosition to) {
+        try {
+            if (atlantis.map.AMap.getMap() == null) return null;
+
+            bwem.Area fromArea = atlantis.map.AMap.getMap()
+                .getArea(new bwapi.WalkPosition(asTile(from).toWalkPosition()));
+            bwem.Area toArea = atlantis.map.AMap.getMap()
+                .getArea(new bwapi.WalkPosition(asTile(to).toWalkPosition()));
+
+            if (fromArea == null || toArea == null) return null;
+            if (fromArea.equals(toArea)) return null;
+
+            return fromArea.isAccessibleFrom(toArea);
+        } catch (Throwable t) {
+            // Never let a model question break an order path: fall through to the
+            // tile answer, which has no dependencies beyond our own grid.
+            return null;
+        }
     }
 
     /** A tile for the engine coordinate system, whichever position type we were handed. */

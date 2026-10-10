@@ -116,6 +116,43 @@ Tests: `tests.unit.PathfindingReachableTest` (7) - isolation, symmetry, a wall w
 a gap, a wall without one, self-reachability, cache reuse. They drive the grid
 directly, so they run with the fast suite (355/355) instead of needing a game.
 
+### The whole class of the bug, closed in three places
+
+`hasPathBetween` was only the first site. The same wrong shape - asking the engine
+for a path - was in two more places, both used widely in production:
+
+- `APosition.hasPathTo` called `Atlantis.game().hasPath(...)` directly;
+- `AUnit.hasPathTo` (both overloads) called `u.hasPath(...)`.
+
+Twelve production call sites reach them: start-location choice, expansion, attack
+targeting, worker retreat and combat missions. On OpenBW all of them were silently
+fed `false`. Both now go through `MapTiles.hasPathBetween`, so there is **one** place
+that answers the question, and it is ours.
+
+### Area graph first, tile flood fill second
+
+`MapTiles.hasPathBetween` now asks our BWEM area graph first, because that is the
+same shape the engine was supposed to provide and it already exists:
+`bwem.Area.isAccessibleFrom` (used by `ARegion` and `PathToEnemyBase`). It answers
+only for two points in **different** areas; same-area and out-of-area pairs fall
+through to the tile flood fill, because the area graph knows nothing about a local
+wall or a building inside one area. Measured live: every probed pair now answers
+`ours=1 engine=0`, where before the tile-only fallback returned `0` for some.
+
+### Measured effect on the E2E run
+
+With the reachability fix plus a corrected teardown margin (the bot used to get
+only half of a 20 s budget), a bounded run now **ends the game itself**:
+
+```
+verdict: ingame=1209s killed=0 resourceBalance=0 pylons=0 gateways=0
+Total time / Defeat, bot exit 0, zero exceptions, runtime 16s of 20s budget
+```
+
+So the engine, the bot and the map analysis are all healthy - the bot plays 20
+game-minutes and finishes cleanly. `pylons=0` is the **remaining** half: the
+command gate, which no Java code can bypass (`OpenBW-API.md`).
+
 ## The consequence for building on OpenBW
 
 Since our model is healthy, the `hasPath` problem stops being an engine-repair

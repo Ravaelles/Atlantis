@@ -155,8 +155,15 @@ fi
 # The host is killed last on purpose (measured 2026-10-09: with the same value
 # for both, the host died while the client was still starting), but everything
 # must still fit inside TIMEOUT_SECONDS.
+#
+# The teardown margin is 2 s, not the 10 s this used to reserve. Ten seconds was
+# sized for the 120 s ceiling and is far too much for a 20 s single-test budget: it
+# left the bot only 10 s of play, so a scenario could not reach the frame it cared
+# about (measured 2026-10-10 - a Pylon due at frame 557 needs ~17 s of bot runtime
+# at ~33 frames/wall-second, and every short run was cut off before it). Two seconds
+# is enough for the host to outlive the client, which is all the ordering needs.
 HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
-BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 10 ))
+BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 2 ))
 if [ "$BOT_KILL_SECONDS" -lt 5 ]; then
   BOT_KILL_SECONDS=5
 fi
