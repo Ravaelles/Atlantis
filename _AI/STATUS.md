@@ -801,3 +801,38 @@ consistent with the architecture direction).
 choose the fix is complete, and the three earlier options collapse to one sane
 choice (v2 owns the builder). Option 3 (pin another map) is unnecessary - the
 engine would break there too, because `hasPath` is broken for adjacent tiles.
+
+### #48: there is no JBWAPI bypass - the fix needs a decision (2026-10-10)
+
+Checked whether the client-side `canBuildHere`/`hasPath` gate can be sidestepped
+from `atlantis.*`, since the server accepts the command. It cannot:
+
+- `bwapi.Unit.issueCommand(UnitCommand)` is **public**, but it runs
+  `canIssueCommand` (`UnitImpl.cpp:21`).
+- `bwapi.Game.issueCommand(Collection<Unit>, UnitCommand)` is public too, and its
+  lambda (`Game.lambda$issueCommand$25`, bytecode line 4815-4821) calls
+  `Unit.issueCommand` per unit - **the same gate**.
+- The only unchecked enqueue, `Game.addUnitCommand(int,...)`, is **package-private**
+  (`void addUnitCommand`, no `public`) - not callable from `atlantis.*`.
+- `BWAPI::Unit::build` in C++ (what Stardust calls) goes through the same
+  `issueCommand` -> `canIssueCommand` path; Stardust only works because it runs
+  against **real BWAPI** where `hasPath` is real.
+
+**So the five fixes made earlier are necessary but not sufficient**, and the last
+step is a decision that is not mine to take:
+
+1. **Patch the vendored `lib/JBWAPI-Rav.jar`** so the OpenBW path issues Build
+   without the `hasPath` precondition (or so `hasPath` falls back to the map-data
+   answer we already trust in `MapTiles.hasPathBetween`). Cheapest, keeps the
+   legacy builder alive - but it edits a vendored library, which needs the owner's
+   explicit approval and a guard test.
+2. **Give Production V2 its own builder** that encodes and sends the command
+   itself (a `UnitCommand` built through a small `bwapi` seam), so the v2 path
+   stops depending on `Unit.build`. Larger, but it is the direction #45 step 4
+   already plans and it removes the legacy dependency for good.
+3. **Feed the OpenBW harness a `bwapi.ini`/map setup where `hasPath` works** -
+   unverified, and the measurement (adjacent tiles unreachable) says the query
+   itself is broken, so this is the least likely to be enough.
+
+Recommendation unchanged: **(2)**, with (1) as a stopgap if a game verdict is needed
+sooner. Owner's call, per CONVENTIONS §3 - this session stops at the evidence.
