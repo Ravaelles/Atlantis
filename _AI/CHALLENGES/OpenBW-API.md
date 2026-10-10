@@ -27,6 +27,98 @@ engine answers, never issues an order, so it does not disturb the game it measur
 | `Unit.canBuild(type, tile)` | `false` everywhere (same reason) | **NO** |
 | `Unit.build(type, tile)` | `false` everywhere (same reason) | **NO** |
 
+## WHY: the engine has no regions at all (found in the OpenBW sources, 2026-10-10)
+
+The headless run has **zero regions**. Measured by scanning the whole map, not by
+sampling one point:
+
+```
+OPENBW_PROBE REGIONS probes=256 nonNull=0 distinctGroups=0 groups=[]
+OPENBW_PROBE REGION p=280,1510 region=null || p=312,1510 region=null
+```
+
+256 samples across the map, **every one returns no region**. The chain that turns
+that into `false` is short and fully documented in the sources, and it is worth
+knowing because it means `hasPath` is not buggy - it is *honest about an engine that
+was never initialised for pathing*:
+
+1. `region` has `size_t index = ~(size_t)0;` as its default
+   (`openbw/game_types.h:259-300`), and BWAPI's `Region::operator bool()` is
+   `index != (size_t)-1` (`bwapi/Shared/RegionShared.cpp`). So a region that was
+   never assigned answers **false**.
+2. `Regions::tile_region_index` is `a_vector<size_t>(256 * 256)`, zero-filled
+   (`game_types.h`). A tile that was never claimed by a region reads back as
+   index `0`.
+3. With `regions.regions` **empty**, index `0` has no backing region, so
+   `getRegionAt` returns the default (`index = -1`) - which is `null` to BWAPI.
+4. `Game::hasPath` is `if (rgnA && rgnB && rgnA->getRegionGroupID() ==
+   rgnB->getRegionGroupID()) return ok; return Unreachable_Location;`
+   (`bwapi/BWAPILIB/Source/Game.cpp`). Both regions are null, so it **always**
+   returns `Unreachable_Location` - including for a point against itself, which is
+   exactly what the survey measured.
+5. `Region::getRegionGroupID()` is `self->islandID`, set from OpenBW's
+   `Regions::group_index`, which is only assigned to regions with `tile_count > 0`
+   during the neighbour BFS in `create_regions()` (`openbw/bwgame.h:20425-20445`).
+   No regions means nothing to group.
+
+**So this is not "pathing is broken" - it is "the region graph was never built".**
+`hasPath` is a region-group comparison, not a path search, and on a run with no
+regions it can only answer no.
+
+## There is no Java-side workaround (tried and measured, 2026-10-10)
+
+Do not spend time looking for one. A `BwapiOrderSink.build` branch was written that
+decided placement from **our own** oracle (`MapTiles.canBuildHere`, which the survey
+proved is right about terrain) and then sent a `bwapi.UnitCommand` directly via
+`Unit.issueCommand` - i.e. the command, with the broken check bypassed. It did
+**not** work: the Pylon was still cancelled at 36 s. The reason is in the bytecode:
+`Unit.issueCommand(command)` calls `canIssueCommand(command, true)` with
+`checkCanBuildHere` **hardcoded `true`**, so the internal re-check runs the same
+`canBuildHere` -> `hasPath` that fails. Reverted; the branch is documented at its
+old site in `BwapiOrderSink.build` so the next person does not retry it.
+
+The only unchecked enqueue, `Game.addUnitCommand(int, ...)`, is **package-private**
+and unreachable from `atlantis.*`. So the options are: build the region graph in the
+harness/engine, or patch the vendored `JBWAPI-Rav.jar`.
+
+**One more trap found on the way, worth knowing (it is easy to misread as the
+bug):** `create_regions()` writes the index table with a **hardcoded stride of 256**
+while reading the tile array with `map_tile_width`, in two adjacent lines
+(`openbw/bwgame.h:20797-20798`):
+
+```cpp
+auto& index = game_st.regions.tile_region_index[y * 256 + x];   // fixed stride
+auto& t     = st.tiles[y * game_st.map_tile_width + x];         // map stride
+```
+
+That looks like an off-by-a-map-width bug and it was my first theory, but it is
+**not** the cause here: `tile_region_index` is allocated `256 * 256`
+(`game_types.h`) and `get_region_at` reads it back with the *same* 256 stride, so
+write and read agree. The mismatch is only a wasted-memory convention for maps
+narrower than 256 tiles. The measured fact - **zero regions** - is what breaks
+`hasPath`, not the stride.
+
+Whether `create_regions()` is skipped or its result is not published to the client
+in this harness is a separate question. What is settled: **the query is unusable,
+deterministically, for the whole run**, and no Java-side trick avoids it.
+
+## The decision this leaves (owner's call)
+
+1. **Make the harness build the region graph.** The real fix, and the only one that
+   makes the E2E engine whole: after it, `hasPath` and `canBuildHere` work and the
+   ordinary `Unit.build` path is usable by any bot, not just ours. It is in
+   `StardustDevEnvironment`'s OpenBW (`create_regions()` in `openbw/bwgame.h`,
+   called from map load) - not in this repo.
+2. **Patch the vendored `lib/JBWAPI-Rav.jar`** so the OpenBW path skips the
+   `canBuildHere` precondition. Cheap, unblocks a verdict now, but it edits a
+   vendored library and leaves the engine still unable to answer `hasPath` for
+   anything else that needs it.
+3. **Accept that OpenBW cannot place buildings and test building on Wine only.**
+   Honest, but it gives up the headless E2E goal.
+
+Recommendation: **(1)**, with (2) as a stopgap if a game verdict is needed before
+it lands. (3) is a fallback, not a plan.
+
 ## The one fact that matters
 
 **`hasPath` is not "sometimes wrong" - it is always false, including from a point

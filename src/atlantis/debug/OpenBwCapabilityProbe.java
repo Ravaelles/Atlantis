@@ -199,11 +199,65 @@ public final class OpenBwCapabilityProbe {
 
         line("PATH from=" + from.getX() + "," + from.getY() + sb);
 
-        // And the diagonal/self cases, where a sane engine answers true.
-        Position self = new Position(from.getX(), from.getY());
-        line("PATH self: game=" + (game.hasPath(from, self) ? 1 : 0)
+            // And the diagonal/self cases, where a sane engine answers true.
+            Position self = new Position(from.getX(), from.getY());
+            line("PATH self: game=" + (game.hasPath(from, self) ? 1 : 0)
                 + " unit=" + (probe.u().hasPath(self) ? 1 : 0));
-    }
+
+            // WHY. `hasPath` is `getRegionAt(a)->groupID == getRegionAt(b)->groupID`
+            // (BWAPI Game::hasPath -> RegionImpl::getRegionGroupID -> OpenBW
+            // Regions::group_index), so name the two regions and their groups rather
+            // than inferring them from a boolean.
+                line("REGION " + describeRegion(game, from) + " || " + describeRegion(game, to32(from)));
+
+                // The decisive question: does the engine have ANY regions at all? If every
+                // region lookup returns nothing, regions were never built in this run, and
+                // that - not our code - is why hasPath is false. Count what comes back over
+                // the whole map rather than trusting one sample.
+                int nonNull = 0;
+                int distinctGroups = 0;
+                java.util.Set<Integer> groups = new java.util.TreeSet<>();
+                int step = 8;
+                int probes = 0;
+                for (int tx = 0; tx < game.mapWidth(); tx += step) {
+                    for (int ty = 0; ty < game.mapHeight(); ty += step) {
+                        probes++;
+                        try {
+                            bwapi.Region r = game.getRegionAt(new Position(tx * 32, ty * 32));
+                            if (r != null) {
+                                nonNull++;
+                                groups.add(r.regionGroupID);
+                            }
+                        } catch (Throwable ignored) {
+                            // treated as null
+                        }
+                    }
+                }
+                distinctGroups = groups.size();
+                line("REGIONS probes=" + probes + " nonNull=" + nonNull
+                    + " distinctGroups=" + distinctGroups
+                    + " groups=" + groups);
+            }
+
+        private static Position to32(Position p) {
+            return new Position(p.getX() + 32, p.getY());
+        }
+
+        private static String describeRegion(Game game, Position p) {
+            try {
+                bwapi.Region r = game.getRegionAt(p);
+                if (r == null) return "p=" + p.getX() + "," + p.getY() + " region=null";
+                return "p=" + p.getX() + "," + p.getY()
+                    + " regionId=" + r.getID()
+                    + " groupId=" + r.regionGroupID
+                    + " accessible=" + r.isAccessible()
+                    + " higherGround=" + r.isHigherGround()
+                    + " neighbors=" + (r.neighbours == null ? -1 : r.neighbours.size())
+                    + " bounds=[" + r.boundsLeft + "," + r.boundsTop + "," + r.boundsRight + "," + r.boundsBottom + "]";
+            } catch (Throwable t) {
+                return "p=" + p.getX() + "," + p.getY() + " region=EXCEPTION(" + t + ")";
+            }
+        }
 
     // ---------------------------------------------------------------------------
     // The build question: canBuildHere and the preconditions it is built from
