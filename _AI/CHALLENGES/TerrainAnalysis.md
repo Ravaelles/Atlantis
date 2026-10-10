@@ -91,28 +91,48 @@ is why the bot can analyse the map, find chokes and plan expansion. What is miss
 is the **engine's** region table, which only the engine's own `hasPath` depends on.
 No bot that computes terrain itself notices it.
 
+## Done: our own reachability replaced the engine query (2026-10-10)
+
+`MapTiles.hasPathBetween` no longer falls back to `JBWEB.isWalkable(to)` (a
+walkability check on the destination tile only - it said "yes" for a tile across an
+impassable wall). It now asks `jbweb.Pathfinding.reachable(from, to)`, a flood fill
+over our own `walkGrid`, the same shape PurpleWave's `GridGroundDistance` and this
+repo's own unused `Path.bfsPath` use.
+
+Measured, our answer next to the engine's on the same pair:
+
+```
+OPENBW_PROBE OURPATH from=[120,12] to=[126,18] ours=1 engine=0
+OPENBW_PROBE OURPATH from=[123,12] to=[129,18] ours=0 engine=0
+```
+
+The first line is the fix: **we answer yes where the engine cannot answer at all**.
+The second is not a regression - a destination outside the walkable area is
+genuinely unreachable, and saying so is the point of asking a real question
+instead of a walkability flag. The engine says `no` for both, which is why its
+answer carried no information.
+
+Tests: `tests.unit.PathfindingReachableTest` (7) - isolation, symmetry, a wall with
+a gap, a wall without one, self-reachability, cache reuse. They drive the grid
+directly, so they run with the fast suite (355/355) instead of needing a game.
+
 ## The consequence for building on OpenBW
 
 Since our model is healthy, the `hasPath` problem stops being an engine-repair
-problem and becomes a **use-our-own-model** problem. Concretely:
+problem and becomes a **use-our-own-model** problem:
 
-1. `MapTiles.hasPathBetween` currently falls back to `JBWEB.isWalkable(
-   to.toTilePosition())` - that is a *walkability* check masquerading as a
-   *reachability* answer, and it only ever tests the destination tile. It should
-   ask a real question over our grid.
-2. A real answer is a **tile BFS/flood fill** over `walkGrid` (or
-   `Game.isWalkable(walkPosition)`), starting from the builder and testing whether
-   the site's tiles are reached - the exact shape PurpleWave's
-   `GridGroundDistance` uses. Our `walkGrid` is already built and correct.
-3. `MapTiles.canBuildHere` must then stop depending on the engine's
-   `canBuildHere` for the OpenBW case (it already has the `tilesCoveredAreBuildable`
-   fallback; the missing piece is that `Unit.build` itself still goes through the
-   broken client-side check - see `OpenBW-API.md` for why that needs a jar patch or
-   a harness fix, and why a Java-only bypass does not exist).
+1. **DONE** - `MapTiles.hasPathBetween` asks `jbweb.Pathfinding.reachable` (a flood
+   fill over `walkGrid`) instead of the destination-tile `JBWEB.isWalkable` check it
+   used to do. See the section above for the measurement.
+2. **Open** - `Unit.build` still goes through the engine's client-side
+   `canBuildHere`, which is refused because the engine's region table is empty.
+   That is the piece no Java code can bypass (`OpenBW-API.md`: `issueCommand`
+   hardcodes the check, and the only unchecked enqueue is package-private), so it
+   needs either the region graph built in the harness or a patch to the vendored
+   jar.
 
-So the honest split is: **terrain we can fix ourselves** (and should - the model is
-ours and works), while the **engine call that refuses the command** is the piece
-that needs the jar patch or the harness's region table.
+So the honest split is: **the terrain half is fixed here** (the model is ours and
+now actually used), while the **command half** remains the owner's decision.
 
 ## Rules that come out of this
 

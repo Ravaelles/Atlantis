@@ -215,6 +215,11 @@ public final class OpenBwCapabilityProbe {
                 // to use ours (TerrainAnalysis.md) rather than to repair the engine.
                 line("OURS " + describeOurModel(probe));
 
+                // Our path answer next to the engine's, on the same pair. If ours
+                // says yes where the engine says no, the replacement works and the
+                // remaining blocker is the command gate, not terrain.
+                line("OURPATH " + describeOurPath(probe));
+
                 // The decisive question: does the engine have ANY regions at all? If every
                 // region lookup returns nothing, regions were never built in this run, and
                 // that - not our code - is why hasPath is false. Count what comes back over
@@ -253,7 +258,31 @@ public final class OpenBwCapabilityProbe {
          * Kept next to the engine's answers so the two are never confused: they are
          * different region models (see {@code _AI/CHALLENGES/TerrainAnalysis.md}).
          */
-        private static String describeOurModel(AUnit probe) {
+        /**
+     * Our path answer vs the engine's, on one pair: the comparison that shows the
+     * replacement is doing its job. Both are asked about the Probe's own tile and a
+     * tile a few steps away on open ground.
+     */
+    private static String describeOurPath(AUnit probe) {
+        try {
+            atlantis.map.position.APosition from = probe.position();
+            atlantis.map.position.APosition far =
+                atlantis.map.position.APosition.create(probe.tx() + 6, probe.ty() + 6);
+
+            boolean ours = atlantis.map.MapTiles.hasPathBetween(from, far);
+            boolean engine = atlantis.Atlantis.game().hasPath(
+                from.p(), far.p());
+
+            return "from=[" + probe.tx() + "," + probe.ty() + "]"
+                + " to=[" + far.tx() + "," + far.ty() + "]"
+                + " ours=" + (ours ? 1 : 0)
+                + " engine=" + (engine ? 1 : 0);
+        } catch (Throwable t) {
+            return "ERR(" + t.getClass().getSimpleName() + ":" + t.getMessage() + ")";
+        }
+    }
+
+    private static String describeOurModel(AUnit probe) {
             StringBuilder sb = new StringBuilder();
             try {
                 sb.append("bwemAreas=").append(atlantis.map.AMap.getMap().getAreas().size());

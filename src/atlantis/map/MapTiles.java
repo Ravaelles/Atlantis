@@ -139,13 +139,33 @@ public class MapTiles {
     public static boolean hasPathBetween(HasPosition from, HasPosition to) {
         if (source().hasPathBetween(from, to)) return true;
 
-        // Same shape as canBuildHere: OpenBW's pathing query answered "no path"
-        // for every pair on (3)TauCross1.1, which left the natural base
-        // undetermined and stopped the bot from expanding. The map-derived answer
-        // applies only to the engine source, never to the harness.
+        // OpenBW's pathing query answers "no path" for every pair on
+        // (3)TauCross1.1, which left the natural base undetermined and stopped the
+        // bot from expanding. The reason is now known and is not a bad map: the
+        // engine's hasPath is a region-group comparison and its region table is
+        // empty in this harness, so it cannot reach even a tile to itself
+        // (_AI/CHALLENGES/OpenBW-API.md).
+        //
+        // So the fallback asks OUR OWN model instead - a flood fill over our walkGrid
+        // (jbweb.Pathfinding.reachable, built from Game.isWalkable, which the engine
+        // answers correctly). This used to be `JBWEB.isWalkable(to)`: a walkability
+        // check on the DESTINATION TILE ONLY, which says "yes" for a tile across an
+        // unpassable wall and so was never a reachability answer at all.
+        //
+        // The map-derived answer applies only to the engine source, never to the
+        // harness: the harness has its own rules and no map to consult.
         if (!source().spawnsFromMapData()) return false;
-        if (!(to instanceof APosition)) return false;
-        return JBWEB.isWalkable(((APosition) to).toTilePosition());
+        if (from == null || to == null) return false;
+
+        return jbweb.Pathfinding.reachable(
+            asTile(from), asTile(to)
+        );
+    }
+
+    /** A tile for the engine coordinate system, whichever position type we were handed. */
+    private static bwapi.TilePosition asTile(HasPosition at) {
+        if (at instanceof APosition) return ((APosition) at).toTilePosition();
+        return at.position().p().toTilePosition();
     }
 
     public static boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
