@@ -1,6 +1,7 @@
 package atlantis.production.v2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,8 +17,9 @@ public final class ProductionPlan {
         items.add(item);
     }
 
+    /** Read-only view: callers may inspect a plan but cannot invalidate its invariants. */
     public List<ProductionItem> items() {
-        return items;
+        return Collections.unmodifiableList(items);
     }
 
     public boolean isEmpty() {

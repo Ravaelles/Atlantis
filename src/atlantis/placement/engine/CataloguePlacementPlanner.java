@@ -53,11 +53,36 @@ import java.util.Set;
  */
 public final class CataloguePlacementPlanner implements PlacementPlanner {
 
+    /**
+     * Whether this planner is running against a live game. A seam so the planner's
+     * own rules (blocks, tiles, reservations) can be exercised with no game at all,
+     * instead of the core asking {@code atlantis.Atlantis} statically (DIP; the same
+     * shape as every other port in {@code placement.core}).
+     */
+    public interface GameContext {
+        boolean inGame();
+    }
+
+    private static final GameContext LIVE_GAME = new GameContext() {
+        @Override
+        public boolean inGame() {
+            return atlantis.Atlantis.game() != null;
+        }
+    };
+
+    private static final GameContext NO_GAME = new GameContext() {
+        @Override
+        public boolean inGame() {
+            return false;
+        }
+    };
+
     private final TileAvailabilityGrid.TerrainSource terrain;
     private TileAvailabilityGrid grid;
     private final RacePlacementStrategy strategy;
     private final NeighbourhoodRegistry neighbourhoods;
     private final boolean withBlocks;
+    private final GameContext gameContext;
 
     /** Rebuilt per pass, so reservations do not survive a frame. */
     private BuildLocationCatalogue catalogue;
@@ -84,18 +109,18 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
     /** Test seam: terrain over a synthetic map, no strategy, no neighbourhood ranking. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid) {
-        this(grid, (RacePlacementStrategy) null, null, true);
+        this(grid, (RacePlacementStrategy) null, null, true, NO_GAME);
     }
 
     /** Test seam with a strategy: a null strategy disables the availability check. */
     public CataloguePlacementPlanner(TileAvailabilityGrid grid, RacePlacementStrategy strategy) {
-        this(grid, strategy, null, true);
+        this(grid, strategy, null, true, NO_GAME);
     }
 
     public CataloguePlacementPlanner(
         TileAvailabilityGrid grid, RacePlacementStrategy strategy, NeighbourhoodRegistry neighbourhoods
     ) {
-        this(grid, strategy, neighbourhoods, true);
+        this(grid, strategy, neighbourhoods, true, NO_GAME);
     }
 
     /** Production constructor: the terrain source is enough; pass 1 builds the grid. */
@@ -108,6 +133,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         this.strategy = strategy;
         this.neighbourhoods = neighbourhoods;
         this.withBlocks = true;
+        this.gameContext = LIVE_GAME;
         this.grid = new TileAvailabilityGrid(terrain);
         this.catalogue = buildCatalogue();
     }
@@ -122,11 +148,20 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         TileAvailabilityGrid grid, RacePlacementStrategy strategy,
         NeighbourhoodRegistry neighbourhoods, boolean withBlocks
     ) {
+        this(grid, strategy, neighbourhoods, withBlocks, LIVE_GAME);
+    }
+
+    /** The full constructor with an explicit game context (the last test seam). */
+    public CataloguePlacementPlanner(
+        TileAvailabilityGrid grid, RacePlacementStrategy strategy,
+        NeighbourhoodRegistry neighbourhoods, boolean withBlocks, GameContext gameContext
+    ) {
         this.terrain = null;   // a caller-supplied grid is reused as-is across passes
         this.grid = grid;
         this.strategy = strategy;
         this.neighbourhoods = neighbourhoods;
         this.withBlocks = withBlocks;
+        this.gameContext = gameContext != null ? gameContext : LIVE_GAME;
         this.catalogue = buildCatalogue();
     }
 
@@ -193,12 +228,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * at the call site - which is exactly what a try/catch here would miss.
      * </p>
      */
-    private static List<int[]> ourBasePositions() {
+    private List<int[]> ourBasePositions() {
         List<int[]> bases = new ArrayList<>();
-        if (atlantis.Atlantis.game() == null) return bases;
+        if (!gameContext.inGame()) return bases;
 
         for (AUnit base : Select.ourBasesWithUnfinished().list()) {
-            if (base.position() != null) bases.add(new int[]{base.tx(), base.ty()});
+            if (base.position() != null) bases.add(new int[] { base.tx(), base.ty() });
         }
         return bases;
     }
@@ -213,6 +248,12 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // just finished changes the terrain answer. Where a terrain source is known
         // (production) the grid is rebuilt; a caller-supplied grid (a test that wants
         // to control the map) is kept as it was handed over.
+        //
+        // NOTE: the grid must be rebuilt on EVERY pass regardless of withBlocks. The
+        // withBlocks flag only decides whether the block templates contribute, while
+        // the fresh TileAvailabilityGrid is what clears the previous pass's
+        // markUsed reservations - dropping it was measured to let a footprint
+        // overlap a tile a building already took (PlacementPlannerTest).
         if (terrain != null) {
             this.grid = new TileAvailabilityGrid(terrain);
         }
@@ -226,7 +267,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      */
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
-            if (atlantis.Atlantis.game() == null) return null;
+            if (!gameContext.inGame()) return null;
 
             AUnit anchor = nearestBaseUnit();
             passBuilder = anchor != null
@@ -283,15 +324,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (reservedThisPass.contains(tile))
                 continue;
 
-            PsiGating.PowerVerdict power = powerVerdict(unitType, candidate);
-            if (power == PsiGating.PowerVerdict.REFUSE) continue;
+            RacePlacementStrategy.AvailabilityVerdict availability = availabilityVerdict(unitType, candidate);
+            if (availability == RacePlacementStrategy.AvailabilityVerdict.REFUSE) continue;
 
-            if (power == PsiGating.PowerVerdict.NEEDS_NEW_PYLON) {
-                // The spot is good, it just needs power: ask for a Pylon near it and
-                // let the NEXT pass place this building on the now-powered tile. That
-                // is Stardust's pull-forward in its simplest form - nothing is
-                // reserved here, so a later frame re-decides with the Pylon coming.
-                requestPylonNear(candidate);
+            if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
+                // Race-specific support (e.g. a Pylon) is requested by the strategy;
+                // the generic planner does not know the support unit's identity.
+                strategy.requestAvailabilitySupport(candidate.tileX(), candidate.tileY(), unitType.name());
                 return PlacementReservation.failure();
             }
 
@@ -393,52 +432,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         return null;
     }
 
-    /**
-     * Psi verdict for a candidate. A building that needs no power is always
-     * accepted; with gating disabled (a test seam, or a non-Protoss game) so is
-     * every tile.
-     */
-    /**
-     * Availability verdict for a candidate. The race strategy owns what "available"
-     * means (Protoss: Pylon power); a race that needs no availability concept, or a
-     * test without a strategy, accepts every tile.
-     */
-    private PsiGating.PowerVerdict powerVerdict(AUnitType unitType, BuildLocation candidate) {
-        if (strategy == null) return PsiGating.PowerVerdict.ACCEPT;
-        if (!strategy.requiresAvailability(unitType.name())) return PsiGating.PowerVerdict.ACCEPT;
-
-        // The Protoss strategy is the one that answers NEEDS_NEW_PYLON; ask it
-        // through the gating seam when it has one, otherwise treat "available" as
-        // a boolean and refuse only what is never available.
-        if (strategy instanceof atlantis.placement.race.ProtossPlacementStrategy) {
-            return ((atlantis.placement.race.ProtossPlacementStrategy) strategy).gating()
-                .verdictFor(candidate.tileX(), candidate.tileY());
+    /** Race-neutral availability seam; each strategy owns its own support policy. */
+    private RacePlacementStrategy.AvailabilityVerdict availabilityVerdict(
+            AUnitType unitType, BuildLocation candidate) {
+        if (strategy == null || !strategy.requiresAvailability(unitType.name())) {
+            return RacePlacementStrategy.AvailabilityVerdict.AVAILABLE;
         }
-
-        return strategy.framesUntilAvailable(candidate.tileX(), candidate.tileY(), unitType.name()) >= 0
-            ? PsiGating.PowerVerdict.ACCEPT
-            : PsiGating.PowerVerdict.REFUSE;
-    }
-    /**
-     * Asks for a Pylon near a good-but-unpowered spot (S3 pull-forward).
-     *
-     * <p>
-     * The request goes through the ordinary production queue rather than a private
-     * channel: the Pylon is a normal goal the production engine will place and
-     * build, and this planner will then find the tile powered on a later pass. The
-     * queue call is guarded, so a build without the legacy queue (a unit test, a
-     * future v2-only build) simply records nothing.
-     * </p>
-     */
-    private void requestPylonNear(BuildLocation candidate) {
-        try {
-            atlantis.production.orders.production.queue.add.AddToQueue.withHighPriority(
-                AUnitType.Protoss_Pylon,
-                APosition.create(candidate.tileX(), candidate.tileY())
-            );
-        } catch (Throwable t) {
-            // A build without the legacy queue: the next pass re-decides anyway.
-        }
+        return strategy.availabilityVerdict(candidate.tileX(), candidate.tileY(), unitType.name());
     }
 
     /**
@@ -532,7 +532,7 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // something, and with no base to prefer, the grid centre is the honest
         // answer - candidates are ranked by distance from whatever centre comes
         // back, and on a flat map every one is equally valid.
-        if (atlantis.Atlantis.game() == null) {
+        if (!gameContext.inGame()) {
             return APosition.create(grid.width() / 2, grid.height() / 2);
         }
 
@@ -541,7 +541,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             base = Select.ourBases().first();
         if (base == null)
             base = Select.ourBuildings().first();
-        return base != null ? base.position() : null;
+        if (base != null)
+            return base.position();
+
+        // In game, but nothing stands yet (first frame of a game): fall back to
+        // the map centre, which the legacy finder's "near" argument does not
+        // tolerate being null.
+        return APosition.create(grid.width() / 2, grid.height() / 2);
     }
 
     private static AUnitType resolveUnitType(Producible producible) {

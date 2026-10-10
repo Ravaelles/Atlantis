@@ -2,18 +2,14 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.v2.PlacementPlanner;
-import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.ProductionPlan;
 import atlantis.production.v2.ProductionScheduler;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.LegacyPlacementPlanner;
-import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.execution.DispatchResult;
 import atlantis.production.v2.execution.DryRunOrderDirector;
 import atlantis.production.v2.execution.GameOrderDirector;
@@ -105,7 +101,7 @@ public final class ProductionEngine {
         ProductionScheduler scheduler = new ProductionScheduler(
                 state.facilityRegistry(), placementPlanner, state.existingItems());
         ProductionPlan plan = scheduler.schedule(goals, timeline);
-        plan = offerPendingConstructionsAgain(plan, state.frame());
+        plan = CommittedConstructions.mergeInto(plan, state.frame());
         lastPlan = plan;
 
         boolean dryRun = Env.productionV2().isDryRun();
@@ -121,32 +117,6 @@ public final class ProductionEngine {
         dryRunDirector.clear();
 
         return plan;
-    }
-
-    /**
-     * Re-offers the buildings this frame's plan is waiting for: the plan is
-     * recomputed from scratch, and a construction whose builder died en route
-     * must be picked up again on the next frame instead of being lost with the
-     * previous plan.
-     */
-    private ProductionPlan offerPendingConstructionsAgain(ProductionPlan plan, int frame) {
-        ProductionPlan merged = new ProductionPlan();
-        for (ProductionItem item : plan.items()) merged.add(item);
-
-        for (Construction construction : ConstructionRequests.constructions) {
-            if (construction.hasStarted() || construction.buildingType() == null) continue;
-            if (construction.buildPosition() == null) continue;
-
-            UnitProducible producible = UnitProducible.of(construction.buildingType());
-            if (plan.contains(producible)) continue;
-
-            PlacementReservation placement = PlacementReservation
-                    .success(construction.buildPosition().tx(), construction.buildPosition().ty(), frame)
-                    .committedAt(frame);
-            merged.add(new ProductionItem(producible, construction.timeOrdered(), false, placement));
-        }
-
-        return merged;
     }
 
     /** One line per frame with work in it: the plan, and what actually left. */

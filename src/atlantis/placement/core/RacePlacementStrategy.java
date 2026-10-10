@@ -25,6 +25,13 @@ package atlantis.placement.core;
  */
 public interface RacePlacementStrategy {
 
+    /** Generic result of checking whether a candidate can be used. */
+    enum AvailabilityVerdict {
+        AVAILABLE,
+        NEEDS_SUPPORT,
+        REFUSE
+    }
+
     /**
      * The block templates this race uses, in the order they should be tried.
      * Protoss ships 24 normal blocks and four start variants (S2); Terran and Zerg
@@ -46,6 +53,27 @@ public interface RacePlacementStrategy {
      * addon. Zerg: anything off creep.
      */
     boolean requiresAvailability(String buildableTypeId);
+
+    /**
+     * Evaluates a candidate that requires race-specific availability. The default
+     * implementation uses the projected availability frame; races that can request
+     * missing support may return {@link AvailabilityVerdict#NEEDS_SUPPORT}.
+     */
+    default AvailabilityVerdict availabilityVerdict(int tx, int ty, String buildableTypeId) {
+        return framesUntilAvailable(tx, ty, buildableTypeId) >= 0
+            ? AvailabilityVerdict.AVAILABLE
+            : AvailabilityVerdict.REFUSE;
+    }
+
+    /**
+     * Requests this race's support for a candidate whose verdict was
+     * {@link AvailabilityVerdict#NEEDS_SUPPORT}: Protoss asks for a Pylon, a race
+     * that can never create support simply does nothing. The planner never needs to
+     * know which building that is.
+     */
+    default void requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
+        // Default: a race with no support channel has nothing to request.
+    }
 
     /**
      * Optional extra ordering weight for a candidate. Returning 0 means "no

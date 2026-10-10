@@ -1,9 +1,12 @@
 package atlantis.placement.race;
 
+import atlantis.map.position.APosition;
 import atlantis.placement.blocks.BlockTemplates;
 import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.RacePlacementStrategy;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +28,6 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
     /** Test seam: a null gate answers "available everywhere" (no Psi check). */
     public ProtossPlacementStrategy(PsiGating psiGating) {
         this.psiGating = psiGating;
-    }
-
-    /** The gate itself, for a caller that needs the pull-forward verdict. */
-    public PsiGating gating() {
-        return psiGating;
     }
 
     @Override
@@ -54,7 +52,38 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
      */
     @Override
     public boolean requiresAvailability(String buildableTypeId) {
-        atlantis.units.AUnitType type = atlantis.units.AUnitType.getByName(buildableTypeId);
+        AUnitType type = AUnitType.getByName(buildableTypeId);
         return type != null && type.needsPower();
+    }
+
+    @Override
+    public AvailabilityVerdict availabilityVerdict(int tx, int ty, String buildableTypeId) {
+        if (psiGating == null) return AvailabilityVerdict.AVAILABLE;
+
+        PsiGating.PowerVerdict verdict = psiGating.verdictFor(tx, ty);
+        switch (verdict) {
+            case NEEDS_NEW_PYLON:
+                return AvailabilityVerdict.NEEDS_SUPPORT;
+            case REFUSE:
+                return AvailabilityVerdict.REFUSE;
+            case ACCEPT:
+            default:
+                return AvailabilityVerdict.AVAILABLE;
+        }
+    }
+
+    /**
+     * Protoss support is a Pylon: the one building that makes a good-but-unpowered
+     * spot usable. It goes through the ordinary production queue, so the production
+     * engine places and builds it like any other goal.
+     */
+    @Override
+    public void requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
+        try {
+            AddToQueue.withHighPriority(AUnitType.Protoss_Pylon, APosition.create(tx, ty));
+        } catch (Throwable t) {
+            // A build without the legacy queue (a unit test, a future v2-only build):
+            // the next placement pass re-decides anyway.
+        }
     }
 }

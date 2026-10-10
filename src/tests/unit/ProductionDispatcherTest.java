@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -246,6 +247,17 @@ public class ProductionDispatcherTest {
 
         assertEquals("research:" + charge.id() + "@" + charge.producerTypeId() + "#42", director.commands.get(0),
                 "a research goal sent to train() would silently do nothing");
+    }
+
+    @Test
+    public void productionPlanItemsCannotBeMutatedByConsumers() {
+        FakeProducible zealot = new FakeProducible("Zealot", false, "Gateway");
+        ProductionPlan plan = planOf(new ProductionItem(zealot, 0, false));
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> plan.items().clear(),
+                "a consumer must not be able to invalidate the scheduler's result");
+        assertEquals(1, plan.size());
     }
 
     @Test

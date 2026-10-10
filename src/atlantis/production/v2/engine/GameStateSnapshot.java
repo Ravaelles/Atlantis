@@ -29,7 +29,7 @@ import java.util.List;
  * <p>
  * The scheduler, the timeline and the dispatcher are pure: they know nothing
  * about BWAPI, and that stays true. This class is the opposite - it is the only
- * bridge, and it is deliberately dumb. It answers four questions and invents
+ * bridge, and it is deliberately dumb. It gathers the frame's numbers and invents
  * nothing:
  * <ul>
  * <li>what we have right now (minerals, gas, supply) and what we are mining
@@ -46,6 +46,14 @@ import java.util.List;
  * Keeping the game access in this one class is what makes the rest of the layer
  * testable, and it is also what makes the eventual cutover reviewable: if the
  * plan is wrong, this class is where the numbers came from.
+ * </p>
+ *
+ * <p>
+ * Gathering and goal generation are two responsibilities, so the pure goal
+ * sources are delegated to rather than inlined here: this class only extracts the
+ * numbers and hands them over. That keeps the race/type mapping (which Producible
+ * a goal names) out of the live bridge and testable without a game - ADR 0007's
+ * direction, applied only as far as the existing types allow.
  * </p>
  */
 public final class GameStateSnapshot {

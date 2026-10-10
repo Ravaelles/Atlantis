@@ -72,16 +72,18 @@ public final class ProductionScheduler {
         nextPlannedFacilityId = -1;
 
         placementPlanner.startPass();
-
-        List<ProductionGoal> sorted = new ArrayList<>(goals);
-        Collections.sort(sorted); // stable: equal priorities keep list order
-
-        for (ProductionGoal goal : sorted) {
-            scheduleGoal(goal, timeline, plan);
+        try {
+            List<ProductionGoal> sorted = new ArrayList<>(goals);
+            Collections.sort(sorted); // stable: equal priorities keep list order
+            for (ProductionGoal goal : sorted) {
+                scheduleGoal(goal, timeline, plan);
+            }
+            return plan;
+        } finally {
+            // Placement planners may own pass-scoped reservations/resources. Always
+            // close the pass, including when a malformed goal or adapter fails.
+            placementPlanner.endPass();
         }
-
-        placementPlanner.endPass();
-        return plan;
     }
 
     // ---- goals ----------------------------------------------------------------
