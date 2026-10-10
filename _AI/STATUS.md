@@ -361,3 +361,29 @@ show `canBuildHere=false` with no builder and with the assigned builder, while a
 2x2 cells are map/engine-buildable and there are no overlapping units; the precise
 engine precondition remains unidentified. Temporary probes were removed and the
 deployed jar rebuilt/freshness-checked from clean source.
+
+
+### Stardust reference check (2026-10-10; read-only)
+Inspected `/sc-ai/Stardust/src/Builder/Builder.cpp` and
+`Builder/BuildingPlacement.cpp` for the OpenBW construction symptom.
+
+- Stardust does not treat "builder committed" as proof the building started:
+  `issueOrders` checks the result of `builder->build(...)`; success and failure
+  are counted separately. A failed command reads `BWAPI::Broodwar->getLastError()`;
+  insufficient minerals/gas do not count as a placement failure, while other
+  failures accumulate. The builder continues moving to the selected position.
+- After 240 failed build-command frames, Stardust logs the failure, releases the
+  builder, removes the no-go reservation, and removes that pending building from
+  its queue. Construction start is detected separately by matching an owned,
+  unfinished building's type and tile, then releasing the builder.
+- Placement availability is a precomputed grid initialized from map walkability
+  and BWAPI buildability, with adjacent margins and explicit base/resource
+  reservations; catalogue candidates are not themselves evidence that the engine
+  accepted a later build command.
+
+This comparison supports improving failure observability and having a bounded
+recovery path, but it does **not** explain Atlantis/OpenBW's current refusal:
+Atlantis's latest probe saw `Game.canBuildHere=false` despite each footprint tile
+being buildable. Stardust is native C++ and its error/command behavior cannot be
+assumed equivalent to JBWAPI/OpenBW. No runtime code changed; verify whether the
+JBWAPI surface exposes a comparable last-error reason before designing a port.
