@@ -379,6 +379,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
        `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
        refusals. Still not verified on OpenBW.
 
+  - **#49 is the single blocker that gates everything else on OpenBW.** Measured
+    2026-10-10 with a fresh bounded run (bot exit 0, `ingame=251s`, and
+    `MAP_ANALYSIS areas=21 chokes=42` so the map model is healthy): the only
+    building the bot ever tried to place was the Pylon, and it was refused once
+    (`Can't find place for \`Pylon\`, At 8 Pylon (READY_TO_PRODUCE)(#1)`) after
+    which no further construction was requested at all. So nothing downstream can
+    be exercised - a Cybernetics Core never gets far enough to test the power rule
+    (#50), and the mineral-distance rule (#51) never gets a candidate to reject.
+    **Do not read a green suite or a clean run as evidence that #50/#51 work in a
+    game: they are behind this item and currently unexercised.**
+
   - **#49 - A candidate tile may contain the assigned builder and nothing else.**
     Measured 2026-10-10, and it is the mechanism behind the Pylon refusal:
 
