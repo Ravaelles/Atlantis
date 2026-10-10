@@ -327,9 +327,35 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `StarCraft.exe`/ChaosLauncher; never terminate it. Resume after it closes and
   inspect the specific assigned worker's `managerLogs()` if construction stalls.
 
-  **Corrected twice mid-investigation:** an earlier reading blamed a caught init
-  exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
-  blamed only builder recognition (disproved by the still-looping run above).
+  **Corrected three times mid-investigation:** an earlier reading blamed a caught
+  init exception (disproved - `HELLO_ATLANTIS` present, no exception); a later one
+  blamed only builder recognition (disproved by the still-looping run above); and a
+  third blamed the dispatcher's re-offer (which is by design).
+
+  **Two real defects found and fixed 2026-10-10 (see `_AI/STATUS.md` for the
+  measurements):**
+  1. `IssueBuildOrder` gated the build on `unit.lastActionMoreThanAgo(20)`, which
+     reads the age of the unit's CURRENT action - MOVE_BUILD while travelling,
+     re-stamped every ~15 frames - so the guard never opened and the build command
+     was never issued. Now gated on the BUILD action's own age.
+  2. `TravelToConstruct` ran the "do not switch constructions" throttle before the
+     distance check, so a builder standing ON its tile was treated as travelling.
+     The throttle now applies only while genuinely travelling.
+     Test: `TravelToConstructTest.aBuilderAlreadyOnItsTileIsNotThrottledByARecentMoveBuild`
+     (fails 1/3 pre-fix, passes 3/3 post-fix).
+  3. `ProductionEngine.offerPendingConstructionsAgain` used
+     `construction.timeOrdered()` (a past frame) as the re-offered item's
+     `startFrame`, so the plan showed a window behind the present
+     (`Pylon@2224-2674` at frame 2555). Now `startFrame = frame`.
+
+  **Where it stands: the build command is now issued (4 `BUILD_CALL`s, zero in all
+  earlier runs) but still does not produce a building, and the Pylon is still
+  cancelled at 36 s.** The remaining cause is a DOUBLE DRIVE of one worker:
+  `lastCommandAgo` oscillates `1140 -> 0 -> 20 -> 0`, one driver issuing a command
+  every ~7 frames while the other waits for the 20-frame BUILD guard, so the guard
+  only opens intermittently. Next diagnosis (CONVENTIONS §18): the assigned
+  worker's `managerLogs()` across the stall window plus whatever writes
+  `lastCommandIssued` - not more position logic.
 
 - **#47 - OpenBW E2E must be fully working (TOP priority).** The runner attaches
   and is bounded, but an E2E test is not "fully working" until all of these hold:

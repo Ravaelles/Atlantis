@@ -41,16 +41,28 @@ public class TravelToConstruct extends HasUnit {
             return false;
         }
 
-        if (asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
-
-        // =========================================================
-
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(type);
         double distanceToConstruction = unit.groundDist(buildPositionCenter);
 
+        // The "a Protoss builder mid-travel does not switch constructions" throttle
+        // must NOT apply once the builder has arrived: it used to return here
+        // unconditionally (measured 2026-10-10, OpenBW, PRODUCTION_V2=LIVE), and
+        // because the MOVE_BUILD action is re-stamped while the worker sits on the
+        // tile, the guard stayed true forever - so `IssueBuildOrder` below was never
+        // reached, `unit.build(...)` was never called, the construction sat at
+        // NOT_STARTED until the 36 s timeout cancelled it, and the same Pylon was
+        // re-planned every frame. The probe showed it exactly: builder on tile
+        // [6,47], tile fully valid (engIncBuild/engBuild/explored all true, not
+        // occupied), affordable, `constructing=false`, and `lastActionMoreThanAgo(20)`
+        // permanently false with `lastCommandAgo` pinned at 15.
+        boolean stillTravelling = isStillTravellingForTest(distanceToConstruction, minDistanceToIssueBuildOrder)
+            && shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder);
+
+        if (stillTravelling && asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
+
         MoveUnitsFromConstructionPlace.move(unit, construction, distanceToConstruction);
 
-        if (shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder)) {
+        if (stillTravelling) {
             return moveToConstruct(construction, type, distanceToConstruction);
         }
 
@@ -89,6 +101,18 @@ public class TravelToConstruct extends HasUnit {
         if (builder.lastActionLessThanAgo(20, Actions.MOVE_BUILD)) return true;
 
         return false;
+    }
+
+    /**
+     * The distance test my fix reordered: a builder within
+     * {@code minDistanceToIssueBuildOrder} of the site is <b>not</b> travelling, so
+     * the "do not switch constructions" throttle must not run for it. Before the
+     * fix the throttle ran first and unconditionally, which starved the build order
+     * on OpenBW (NEXT #48) - this predicate is the control-flow invariant, exposed
+     * so a unit test can pin it without a game.
+     */
+    public static boolean isStillTravellingForTest(double distance, double minDistanceToIssueBuildOrder) {
+        return distance > minDistanceToIssueBuildOrder;
     }
 
     public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {

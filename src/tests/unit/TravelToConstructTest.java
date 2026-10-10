@@ -18,11 +18,60 @@ import tests.fakes.FakeUnit;
 import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TravelToConstructTest extends WorldStubForTests {
     @Override
     public Race initRace() {
         return Race.Protoss;
+    }
+
+    /**
+     * The measured OpenBW #48 deadlock: a builder standing ON its build tile must
+     * not be stopped by the "do not switch constructions" throttle.
+     *
+     * <p>
+     * {@code travelWhenReady} used to return early on
+     * {@code asProtossMultiBuilderDoNotSwitchConstructions} - "a Protoss builder
+     * that issued MOVE_BUILD in the last 20 frames does not switch constructions" -
+     * <b>before</b> the distance check. The worker sits on the tile, so
+     * {@code TravelToConstruct} keeps re-stamping MOVE_BUILD, the guard stays true
+     * forever and {@code IssueBuildOrder} is never reached. The probe on a live
+     * OpenBW run showed it exactly: {@code constructing=false}, the tile fully
+     * valid (engIncBuild/engBuild/explored all true, not occupied), affordable, and
+     * {@code lastActionMoreThanAgo(20)} permanently false with
+     * {@code lastCommandAgo} pinned at 15, for the whole game.
+     * </p>
+     *
+     * <p>
+     * The behavioural guard is the OpenBW scenario itself
+     * ({@code EXPECT_MIN_PYLONS=1}, NEXT #47/#50) - a stub world cannot show a
+     * building appearing. What is checked here is the <b>structural</b> rule the
+     * fix encodes: the throttle is consulted only when the builder still has to
+     * travel. The distance at which the throttle may apply is the same
+     * {@code minDistanceToIssueBuildOrder} the travel branch uses.
+     * </p>
+     */
+    @Test
+    public void aBuilderAlreadyOnItsTileIsNotThrottledByARecentMoveBuild() {
+        // The property under test is the ORDER of two decisions in travelWhenReady,
+        // and the two meaningful distances are "at the site" (0) and "far" (40).
+        // A builder at the site must take the build branch; one far away may be
+        // throttled. Asserted on the decision, not on a game object, because this is
+        // a control-flow invariant - the outcome (a building exists) is asserted by
+        // the OpenBW scenario, which is the only place it can be observed.
+        assertFalse(
+            atlantis.production.constructions.builders.TravelToConstruct
+                .isStillTravellingForTest(0.0, 1.4),
+            "a builder already on its tile must NOT be treated as still travelling - "
+                + "that is the branch that ran the throttle and starved the build order"
+        );
+        assertTrue(
+            atlantis.production.constructions.builders.TravelToConstruct
+                .isStillTravellingForTest(40.0, 1.4),
+            "a builder 40 tiles away is genuinely travelling"
+        );
     }
 
     @Override

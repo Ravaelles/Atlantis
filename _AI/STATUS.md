@@ -523,3 +523,114 @@ the arbitration/dispatch blocker, separate from the placement fix in #50.
   killed by lings), before any building was due; that is not a placement result
   either. The scenario needs the survival horizon from #47 point 5, not a short
   default.
+
+### #48 root cause: the build order was never issued (2026-10-10)
+
+The re-dispatch loop is **not** a dispatcher duplicate and **not** a stuck
+builder. It is a control-flow deadlock in the legacy builder that the v2
+dispatcher exposed, and it is measured, not inferred.
+
+**Measured with a temporary probe on a live OpenBW run**
+(`PLACEMENT=catalogue PRODUCTION_V2=LIVE`, Pylon at tile `[6,47]`), identical on
+every sampled frame:
+
+```
+ISSUE_PROBE unit=Probe#76 pos=[6,47] tile=[6,47] dist=0.625
+  engIncBuild=true engBuild=true explored=true occupied=false
+  canAfford=true minerals=736 constructing=false lastCommandAgo=15
+  lastActionGt20=false
+```
+
+Read it in order:
+
+- the builder stands **on** its build tile (`dist=0.625`);
+- the tile is valid by **every** measure - engine-terrain, engine-including-
+  buildings, explored, not occupied (so the #50 explored fix is not the blocker
+  here);
+- minerals are ample; and
+- **`lastActionGt20=false`, `lastCommandAgo` pinned at 15, forever**.
+
+`lastActionGt20` is `unit.lastActionMoreThanAgo(20)` at
+`IssueBuildOrder:89` - the guard that must be true before `unit.build(...)` is
+called at line 101. It is **permanently false**, so the build command is never
+issued at all. A second probe confirmed it: `BUILD_CALL` (inside
+`AUnitOrders.build`) never printed once, while `ISSUE_PROBE` printed on schedule.
+
+**Why it is permanently false:** `TravelToConstruct.travelWhenReady` returned
+early at the top on
+
+```java
+if (asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
+```
+
+which is `builder.lastActionLessThanAgo(20, Actions.MOVE_BUILD)`. The worker is
+sitting on the site with the build never issued, so `TravelToConstruct` keeps
+re-issuing MOVE_BUILD, which keeps the guard true, which keeps
+`IssueBuildOrder` unreached - a closed loop. The construction therefore sits at
+`NOT_STARTED`, `CancelTooLongConstructions` cancels it at the ~36 s timeout
+(`Cancel constr of Pylon (Took too long) buildable:true`), the legacy
+`AddToQueue.withHighPriority` re-requests it, v2 re-plans it next frame, and the
+cycle repeats until the outer `timeout` kills the run. That is exactly the
+observed "Pylon window slides +1/frame, `builder committed` every frame, game
+never ends".
+
+**Fixed:** the throttle is now consulted only when the builder is genuinely
+still travelling, and only after the distance decision that already existed:
+
+```java
+boolean stillTravelling = isStillTravellingForTest(distanceToConstruction, minDistanceToIssueBuildOrder)
+    && shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder);
+if (stillTravelling && asProtossMultiBuilderDoNotSwitchConstructions(builder)) return false;
+```
+
+A builder at the site now falls through to `IssueBuildOrder`.
+
+**Also fixed in the same pass:** `ProductionEngine.offerPendingConstructionsAgain`
+used `construction.timeOrdered()` (the frame the request was *created*, often
+hundreds of frames old) as the re-offered item's `startFrame`. That made the plan
+show a window behind the present (`Pylon@2224-2674` while the game was at frame
+2555), so `isDue` was permanently true and the plan could never show that the
+construction was stuck rather than progressing. A pending construction is due
+**now**; the item is now created at `frame`.
+
+**Regression test:**
+`TravelToConstructTest.aBuilderAlreadyOnItsTileIsNotThrottledByARecentMoveBuild`
+pins the reordered distance decision; it fails (1/3) with the pre-fix behaviour
+and passes (3/3) with the fix. Full fast suite: **347/347**.
+
+### #48 second pass: the build command is now issued, but nothing is built (2026-10-10)
+
+Fixing the `IssueBuildOrder` throttle (see above) **moved the failure one step
+further** and produced the first `unit.build(...)` calls ever seen on this path.
+Measured with a temporary probe (`BUILD_CALL`, removed after use):
+
+```
+BUILD_CALL unit=Probe#72 tile=[6,47] lastCommandAgo=1140 blockedByCommandDelay=false
+BUILD_CALL unit=Probe#72 tile=[6,47] lastCommandAgo=0    blockedByCommandDelay=true
+BUILD_CALL unit=Probe#74 tile=[6,47] lastCommandAgo=20   blockedByCommandDelay=false
+BUILD_CALL unit=Probe#74 tile=[6,47] lastCommandAgo=0    blockedByCommandDelay=true
+```
+
+Three facts, all new:
+
+1. **`unit.build(...)` is now reached** (4 calls). Before the guard fix it was
+   never called at all - `BUILD_CALL` printed zero times across every earlier run.
+   So the throttle fix is real and necessary.
+2. **The command is still not effective.** `blockedByCommandDelay=false` means the
+   call went past `AUnitOrders.build`'s own `lastCommandIssuedAgo() <= 1` gate and
+   into `orderSink().build(...)`, yet no building appears on tile `[6,47]`.
+3. **Two drivers are fighting over the same worker.** `lastCommandAgo` oscillates
+   `1140 -> 0 -> 20 -> 0`: one driver issues a command every ~7 frames while the
+   other waits for `lastActionMoreThanAgo(20, BUILD)`. The 20-frame guard therefore
+   only opens intermittently, and `CancelTooLongConstructions` still fires at 36 s.
+
+Also confirmed: the tile in this run is `[6,47]`, fully valid and affordable, and
+the Pylon window now tracks the current frame (`startFrame = frame`, the
+`offerPendingConstructionsAgain` fix) instead of sitting ~1000 frames behind -
+so the plan display is honest now.
+
+**Next step (not done):** find what issues a command to the assigned builder every
+~7 frames and stop the double drive - the v2 dispatcher re-offering the tile while
+the legacy `BuilderManager` also drives the same worker. Per CONVENTIONS §18 the
+next diagnosis is the assigned worker's `managerLogs()` over the stall window plus
+the `lastCommandIssued` writer, not another guess at the position logic.
