@@ -102,6 +102,15 @@ Whether `create_regions()` is skipped or its result is not published to the clie
 in this harness is a separate question. What is settled: **the query is unusable,
 deterministically, for the whole run**, and no Java-side trick avoids it.
 
+## Read next: `_AI/CHALLENGES/TerrainAnalysis.md`
+
+Before writing any workaround, read that file. Short version: **our own terrain
+analysis works on OpenBW** (`bwem.BWEM` from tiles; the main choke is found), and so
+does PurpleWave's (BWTA). The engine's region table is a *different* thing and is
+empty. Every bot that computes terrain itself is unaffected by this - which is why
+the fix is not "ask the engine differently" but "keep using our own model", and
+for anything path-shaped, a tile BFS like PurpleWave's `GridGroundDistance`.
+
 ## The decision this leaves (owner's call)
 
 1. **Make the harness build the region graph.** The real fix, and the only one that

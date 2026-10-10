@@ -287,6 +287,12 @@ looked like a different problem than they were (the OpenBW client, for
 instance, reported "cannot open socket" while the actual cause was a Java
 library that cannot run on Java 9+, several layers away).
 
+- **`_AI/CHALLENGES/TerrainAnalysis.md`** — where the bot's map knowledge comes
+  from and why it is *ours*, not the engine's: regions/areas/chokes are computed by
+  `bwem.BWEM` from tiles and **work on OpenBW** (the main choke is found), while the
+  engine's own region table is empty. **Never** decide terrain with
+  `hasPath`/`getGroundDistance`/`canBuildHere` on OpenBW; use our model, and for a
+  real path use a tile BFS (the shape PurpleWave's `GridGroundDistance` uses).
 - **`_AI/CHALLENGES/OpenBW-API.md`** — **which BWAPI queries answer correctly on
   OpenBW** (measured 2026-10-10). Read this before trusting any engine query:
   every map query (`isWalkable`/`isBuildable`/`isExplored`/`isVisible`) is fine,

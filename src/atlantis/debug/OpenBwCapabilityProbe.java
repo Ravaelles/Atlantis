@@ -210,6 +210,11 @@ public final class OpenBwCapabilityProbe {
             // than inferring them from a boolean.
                 line("REGION " + describeRegion(game, from) + " || " + describeRegion(game, to32(from)));
 
+                // OUR model, next to the engine's. This is the comparison that matters:
+                // if our own analysis is healthy while the engine's is empty, the fix is
+                // to use ours (TerrainAnalysis.md) rather than to repair the engine.
+                line("OURS " + describeOurModel(probe));
+
                 // The decisive question: does the engine have ANY regions at all? If every
                 // region lookup returns nothing, regions were never built in this run, and
                 // that - not our code - is why hasPath is false. Count what comes back over
@@ -241,6 +246,36 @@ public final class OpenBwCapabilityProbe {
 
         private static Position to32(Position p) {
             return new Position(p.getX() + 32, p.getY());
+        }
+
+        /**
+         * What OUR terrain analysis produced - the thing the bot actually plans with.
+         * Kept next to the engine's answers so the two are never confused: they are
+         * different region models (see {@code _AI/CHALLENGES/TerrainAnalysis.md}).
+         */
+        private static String describeOurModel(AUnit probe) {
+            StringBuilder sb = new StringBuilder();
+            try {
+                sb.append("bwemAreas=").append(atlantis.map.AMap.getMap().getAreas().size());
+            } catch (Throwable t) {
+                sb.append("bwemAreas=ERR(").append(t.getClass().getSimpleName()).append(")");
+            }
+            try {
+                sb.append(" ourRegions=").append(atlantis.map.region.Regions.regions().size());
+            } catch (Throwable t) {
+                sb.append(" ourRegions=ERR(").append(t.getClass().getSimpleName()).append(")");
+            }
+            try {
+                sb.append(" jbwebInit=").append(jbweb.JBWEB.isInitialized());
+            } catch (Throwable t) {
+                sb.append(" jbwebInit=ERR(").append(t.getClass().getSimpleName()).append(")");
+            }
+            try {
+                sb.append(" mainChoke=").append(atlantis.map.choke.Chokes.mainChoke());
+            } catch (Throwable t) {
+                sb.append(" mainChoke=ERR(").append(t.getClass().getSimpleName()).append(")");
+            }
+            return sb.toString();
         }
 
         private static String describeRegion(Game game, Position p) {
