@@ -54,19 +54,23 @@ by the language rule below.
 - If the user overrules a well-argued objection after hearing it, the assistant
   proceeds and implements the user's decision without re-litigating it.
 
-## 4. Completion notification (mandatory)
+## 4. Incoming-message notification (owner's ruling, 2026-10-10)
 
-- `/home/ping.sh` is the **"I am completely done"** signal. The assistant runs it
-  **once**, at the end of a work session, when everything the user asked for in
-  that session is finished **and verified by execution** (tests run, ArchUnit
-  green, game run where the item requires one).
-- It must **not** be run after an intermediate step, a partial answer, or a
-  question that is still waiting for a reply. A ping after every tool call would
-  train the user to ignore it, which destroys the only thing the sound is for.
-- If a session ends with work still open, the assistant says so in the summary
-  and does not ping. The next session pings when it closes the remaining work.
-- Commit messages and summaries do not need the ping; only the final message of
-  the session does.
+- `/home/ping.sh` signals **an incoming message from the assistant**. The
+  assistant runs it **exactly once, at the end of every turn** in which it sends
+  the owner a message - whether that message is a completed-work summary, an
+  intermediate status, a partial answer or a question that still awaits a reply.
+- The ping is a **new-message indicator, not a "done" indicator**. The sound means
+  "the assistant has answered, look at the screen", never "the project is
+  finished". Do not use the completion wording for it.
+- Do not ping more than once per turn, and never mid-turn: one message, one ping,
+  at the end.
+- Superseded rule (kept for the history): the previous text made the ping a pure
+  "I am completely done" signal, run once per session only when everything was
+  finished and verified. The owner replaced it on 2026-10-10 because the ping is
+  wanted on every incoming message.
+- Commit messages and summaries still do not need any ping of their own beyond the
+  one that closes their turn.
 
 ## 5. Architecture direction (agreed, normative)
 
@@ -144,8 +148,8 @@ by the language rule below.
   crawl of the home directory is not. A tool call that needs a broader root
   than those two is a mistake in the task, not a permission request.
 - The only paths outside the workspace that may be used:
-  - `/home/ping.sh`, the completion notification of section 4, and only when
-    section 4 allows it;
+  - `/home/ping.sh`, the incoming-message notification of section 4, once per
+    turn that ends with a message to the owner;
   - `/tmp/opencode`, the scratch directory the tooling provides, for throwaway
     tooling of the current task (a virtualenv, a downloaded archive, an
     intermediate file). Nothing produced there belongs to the repository;
