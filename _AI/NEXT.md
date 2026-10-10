@@ -374,10 +374,96 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      #48 tracks the separate LIVE scheduler/dispatch blocker.
   3. A scenario file instead of loose environment variables (not implemented).
   4. A deliberately broken build fails the same scenario (not verified).
-  5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
-     `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
-     `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
-     refusals. Still not verified on OpenBW.
+    5. The 7-minute survival scenario passes with Pylon>=1, Gateway>=1,
+       `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
+       `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
+       refusals. Still not verified on OpenBW.
+
+  - **#49 - A candidate tile may contain the assigned builder and nothing else.**
+    Measured 2026-10-10, and it is the mechanism behind the Pylon refusal:
+
+    ```
+    BI0_TILES Pylon at=[7,43]  (7,44) explored=1 visible=1 unitOnTile=2
+                               (8,44) explored=1 visible=1 unitOnTile=1
+    ```
+
+    The refused footprint tiles are walked by our own mining workers. The engine is
+    right to refuse them: `isBuildable(...,true)` counts **units**, not just
+    buildings, and a mining worker on the footprint is a real blocker.
+
+    **The rule (owner's ruling):** StarCraft allows a building to be placed **under
+    the unit that is about to build it** - the builder is not an obstacle, because
+    the engine moves it onto the site. Every **other** unit on the footprint blocks.
+    When the search runs for the first time no builder is assigned yet, so then
+    nothing may be on the footprint at all.
+
+    **Why this is not a one-line fix:** the two existing answers are each wrong in a
+    different direction, so neither can be adjusted into the correct one.
+    - `isBuildableIncludeBuildings` counts **all** units, so it also refuses a tile
+      occupied only by our own builder - a placement the game allows.
+    - `BuildingTilesAreOccupied.check` counts **buildings only**, so it accepts a
+      tile with a mining worker on it - a placement the game refuses.
+    `_AI/POSITION-FINDER.md` point 2 explains why the guard was narrowed to
+    buildings (a worker or a patch two tiles over "overlapped" a Pylon's footprint),
+    and that narrowing traded a false negative for a false positive instead of
+    encoding the real rule. The contract to change is `BuildingTilesAreOccupied.check
+    (position, buildingType)` -> it needs to know the builder (excludable) and to
+    count units, not only buildings; 6 call sites.
+
+    **Second half, and it is why a strict rule alone is not enough:** a mineral line
+    is saturated with workers and a Pylon is 2x2, so "no unit may be here" refuses
+    the whole area. The answer is to **ask the blocking workers to move** -
+    `MoveUnitsFromConstructionPlace` already tries (`moveAwayFrom(buildPosition, 2)`
+    at `TravelToConstruct:51`), but it (a) only runs while the builder is still
+    travelling (`distanceToConstruction >= 3.8` returns early, i.e. not when the
+    builder is already at the site) and (b) shoves every nearby unit with no notion of
+    "except the builder". Extending that to run at the site and to exclude the builder
+    is the other half of this item.
+
+    **Test to write with the fix:** a footprint with the assigned builder on it is
+    placeable; the same footprint with a *mining* worker on it is not, until the
+    worker is sent away. The existing test to reconcile is
+    `OccupiedTileIsNeverBuildableTest.aUnitStandingOnTheTileOccupiesIt`: its NAME says
+    a standing unit occupies the tile, but its BODY asserts the opposite for a worker
+    (``"a worker on the tile is not an existing building - counting it refused every
+    mineral-line position"``), reasoning that a worker "is handled by the engine's
+    own answer and by the builder stepping aside". This measurement shows that
+    reasoning is not true today: the engine refuses, and nothing steps aside. Name and
+    body have to be reconciled with the rule above.
+
+  - **#50 - The legacy planner never checks Pylon power, so a Protoss building can be
+  placed outside a pylon's field.** Found from the owner's IDE game: a Cybernetics
+  Core was sent to a position with **no pylon covering it**. Verified in the source -
+  power is checked in exactly two places, and neither is the default path:
+  - `ProtossAllowHereEarlyEvenWithoutRequirements:23` does check
+    `needsPower() && !IsPoweredByAPylon.check(position)`, but it is only reached for
+    buildings `AllowToProduceEarlyWithoutRequirements.isAllowedForProtoss()` admits,
+    and line 29 restricts the "early" branch to gateways;
+  - `placement/core/PsiGating` gates power in the **rewritten** planner, which only
+    runs with `PLACEMENT=catalogue`.
+  `PositionFulfillsAllConditions` - the condition chain the default
+  `APositionFinder` uses - does **not** check power at all, and `FindPosition:136`
+  has the check **commented out**.
+  So with the default planner a power-needing building is placed wherever the other
+  conditions allow. This is the same gap `_AI/POSITION-FINDER.md` point 4 records
+  from the other end ("`Game.hasPowerPrecise` is not usable... Power is now computed
+  from our own Pylons at the engine's 6-tile radius") - the fix landed in the new
+  planner and never in the old one.
+  Fix: add the power condition to the shared chain (or to `ProtossPositionFinder`)
+  so both planners agree, then a test that a Cybernetics Core is refused on a tile
+  no finished pylon covers.
+
+- **#51 - Protoss buildings are allowed 2.8 tiles from minerals, which reads as "on
+  top of the mineral line".** Owner's report, same IDE game: the position was
+  otherwise fine but sat about two tiles from the minerals. The number is
+  `TooCloseToMineralsOrGeyser.minDistToMineral`: for Protoss it returns **2.8** by
+  default, and only rises with supply (5.2 at `supplyTotal >= 40` under some
+  conditions, 6 at `>= 60`). A building 2.8 tiles from a mineral patch crowds the
+  mining workers' path.
+  Decision needed (owner's call, it is a gameplay constant): raise the Protoss
+  default, e.g. to ~3.5-4, or key it off the building's own footprint plus a worker
+  gap rather than a flat radius. `minDistToGeyser` is the parallel value (5.1 for
+  Pylon/Gateway/Cannon, 4.1 otherwise) and should be re-checked in the same pass.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

@@ -44,18 +44,41 @@
   tiles are walked by our own workers around the mineral line, so the engine refuses
   them correctly and the refusal is **our candidate search's fault, not the
   engine's**.
+- **Which units block, and which do not (owner's ruling, 2026-10-10).** StarCraft
+  lets a building be placed **under its own builder**: the builder alone is not an
+  obstacle, because it is the unit that is about to start the construction and the
+  engine moves it onto the site. Every **other** unit on the footprint is a real
+  blocker - in particular the workers mining at the mineral line, which is exactly
+  the case above (`unitOnTile=2` and `=1` near the minerals).
+  So the rule for a candidate is: **the footprint may contain the assigned builder
+  and nothing else.** When the search runs for the first time there is no assigned
+  builder yet, so nothing may be on the footprint at all.
+  This is the piece the two occupancy answers were each missing one half of: `bi`
+  refuses on *any* unit including our own builder (too strict), and our
+  `BuildingTilesAreOccupied` ignores units entirely (too loose). Correct is neither
+  - it is "every unit except the one worker that will build it".
 - **An earlier reading of this was wrong and is withdrawn.** A first probe sampled
   only the origin tile and units within ~4 tiles of the *origin*, concluded the
   tiles were empty, and recorded "the engine reports occupied where nothing stands".
   That was an artefact of where the probe looked: per-tile counting shows the units
   immediately. **Do not repeat it - `bi=0` is not evidence of a bug.**
-- **The real defect this exposes:** the two occupancy answers disagree by design.
-  `bi` (`isBuildableIncludeBuildings`) counts **all units**; our
-  `BuildingTilesAreOccupied.check` counts **buildings only**. `POSITION-FINDER.md`
-  point 2 records the other half of this history: the guard once counted every unit,
-  was narrowed to buildings because "a worker or a patch two tiles over overlapped a
-  Pylon's footprint", and that narrowing is what left the engine and our oracle
-  answering different questions.
+- **The real defect this exposes:** the two occupancy answers disagree by design,
+  and *each is wrong in a different direction*. `bi`
+  (`isBuildableIncludeBuildings`) counts **all units**, so it also refuses a tile
+  occupied only by the builder that is about to build there - which the game allows.
+  Our `BuildingTilesAreOccupied.check` counts **buildings only**, so it happily
+  accepts a tile with a mining worker on it - which the game does not allow.
+  `POSITION-FINDER.md` point 2 records why the guard was narrowed (a worker or a
+  patch two tiles over "overlapped" a Pylon's footprint), and that narrowing traded
+  one false negative for one false positive instead of encoding the real rule
+  ("the builder may be there; nobody else may").
+
+  A note on the mining case specifically, because it looks impossible at first:
+  a mineral line is saturated with workers and a Pylon is 2x2, so a naive "no unit
+  on any footprint tile" rule will refuse the whole area. That is not a reason to
+  weaken the rule - it is a reason to **ask the blocking workers to move**, which is
+  a move order the bot can issue, and to keep the rule strict so the engine does not
+  refuse the command afterwards.
 - **Rule:** when `canBuildHere` is false on a tile that reads walkable and
   buildable, count units **per refused footprint tile** (`Select.all().inRadius(0.5,
   tile)`) before concluding anything about the engine. Then decide the policy: a
