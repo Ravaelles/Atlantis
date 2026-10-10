@@ -109,14 +109,48 @@ public class MapTiles {
 
         @Override
         public boolean hasPathBetween(HasPosition from, HasPosition to) {
-            return Atlantis.game().hasPath(from.position().p(), to.position().p());
+            // This is the ONE place allowed to swallow the guard's exception: it is
+            // the seam whose contract is "ask the engine, else I have nothing", and
+            // the caller above turns that into our own answer. Everywhere else the
+            // exception must reach the caller.
+            try {
+                return EngineQueries.hasPath(Atlantis.game(), from.position().p(), to.position().p());
+            } catch (EngineQueries.UnreliableOnOpenBw e) {
+                announceFallbackOnce("Game.hasPath", "our own walkGrid flood fill");
+                return false;
+            }
         }
 
         @Override
         public boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
-            return Atlantis.game().canBuildHere(at.toTilePosition(), building.ut(), builder.u());
+            try {
+                return EngineQueries.canBuildHere(Atlantis.game(), at.toTilePosition(), building.ut(), builder.u());
+            } catch (EngineQueries.UnreliableOnOpenBw e) {
+                announceFallbackOnce("Game.canBuildHere", "our terrain + exploration + occupancy answer");
+                return false;
+            }
         }
     };
+
+    /**
+     * Says once, loudly, that the engine could not answer and we are using our own
+     * model. Once per game, not per call: this fires on a hot path, but silence is
+     * what made the original bug invisible, so it must not be silent either.
+     */
+    private static final java.util.Set<String> announcedFallbacks = new java.util.HashSet<>();
+
+    private static void announceFallbackOnce(String query, String usingInstead) {
+        if (!announcedFallbacks.add(query)) return;
+
+        System.out.println("MAPTILES: the engine cannot answer " + query
+            + " (OpenBW returns a constant - _AI/CHALLENGES/OpenBW-API.md);"
+            + " using " + usingInstead + " instead. This is expected on OpenBW.");
+    }
+
+    /** Test hook: the fallback notice is once per game, so tests must reset it. */
+    public static void resetFallbackNotices() {
+        announcedFallbacks.clear();
+    }
 
     // =========================================================
 

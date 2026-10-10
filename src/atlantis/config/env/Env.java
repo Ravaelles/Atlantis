@@ -277,6 +277,16 @@ public class Env {
     }
 
     /**
+     * Test seam for the backend flag. Production never calls this: the flag comes
+     * from {@code GAME_LAUNCHER} in ENV (see {@link #isOpenBW()}). It exists so a
+     * test can pin what the OpenBW guards do - {@code EngineQueries} throws there and
+     * must not anywhere else - without a game. Tests must reset it to {@code false}.
+     */
+    public static void setOpenBwForTest(boolean value) {
+        openBW = value;
+    }
+
+    /**
      * Wine backend (Linux, real StarCraft + ChaosLauncher) selected via
      * {@code GAME_LAUNCHER=WINE} in {@code bwapi-data/AI/ENV}.
      */

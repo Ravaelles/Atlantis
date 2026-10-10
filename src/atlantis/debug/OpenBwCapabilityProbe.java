@@ -55,6 +55,12 @@ import bwapi.TilePosition;
  */
 public final class OpenBwCapabilityProbe {
 
+    // This class deliberately calls the engine directly (hasPath, getRegionAt) and
+    // bypasses atlantis.map.EngineQueries: it exists to MEASURE what the engine
+    // answers, so routing it through the guard - which now throws on OpenBW - would
+    // defeat its only purpose. It is the one sanctioned exception, it runs only when
+    // OPENBW_PROBE is set, and it never feeds a decision.
+
     /**
      * Lines carry this prefix so one grep pulls the whole survey out of the log.
      */
