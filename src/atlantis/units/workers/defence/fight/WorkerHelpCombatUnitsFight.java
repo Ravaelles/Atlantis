@@ -43,7 +43,7 @@ public class WorkerHelpCombatUnitsFight extends Manager {
         if (unit.hp() <= minHp()) return f();
         AUnit base = unit.friendsNear().bases().nearestTo(unit);
         if (base == null) return f();
-        if (unit.distTo(base) >= 12) return f();
+        if (unit.distTo(base) >= 9) return f();
         if (Enemy.protoss() && unit.hp() <= 20) return f();
         if (Enemy.protoss() && unit.hp() <= 36 && unit.lastUnderAttackLessThanAgo(150)) return f();
         if (unit.lastActionLessThanAgo(10)) return f();
