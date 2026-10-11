@@ -6,7 +6,6 @@ import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.GameSpeed;
-import atlantis.production.constructions.builders.BuilderDiagnostics;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.cherryvis.ACherryVis;
 
@@ -47,8 +46,6 @@ public class OnEveryFrame {
         }
 
         OnEveryFrameHelper.handle();
-
-        BuilderDiagnostics.logBuildersIfEnabled();
 
         CodeProfiler.endMeasuringTotalFrame();
         LongFrames.reportFrameLength(CodeProfiler.lastFrameLength());

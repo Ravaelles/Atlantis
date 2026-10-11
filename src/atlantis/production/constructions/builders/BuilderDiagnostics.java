@@ -4,78 +4,26 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
-import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
 import bwapi.TilePosition;
 
 /**
- * Per-frame trace of every unit that has a construction assigned to it: the
- * manager
- * currently handling the unit, the last command it actually issued, and where
- * that
- * command points.
+ * Diagnostics for the build command itself: whether the engine accepted it, and under what
+ * preconditions.
  *
  * <p>
- * <b>Why this exists.</b> The failure it was written for looks like this in the
- * log:
- * </p>
- *
- * <pre>
- *   SUCCESS FOR Pylon at 113,15        &lt;- placement found a valid tile
- *   Builder diagnostic: unit=#118 Probe @[113,15] ... status=NOT_STARTED
- *   Cancel construction: Pylon took too long (44s) / at:[113,15] / buildable:true
- * </pre>
- *
- * <p>
- * Nothing throws, the tile is valid, the builder is assigned - and the building
- * never
- * starts. The two facts that separate the possible causes are not in any log
- * today:
- * <b>which manager is actually running the unit</b> (a manager that never
- * issues the
- * order keeps the unit "busy" forever, and looks identical to one that does)
- * and
- * <b>what the most recent command was and where it pointed</b> (an order issued
- * to the
- * wrong place looks the same as no order at all, from the outside).
- * </p>
- *
- * <p>
- * <b>Off by default.</b> {@code BUILDER_LOG=1} in ENV enables it. Printing this
- * every
- * frame for every builder is noisy and costs time in the frame budget, so it is
- * a
- * diagnostic switch, not a feature - the same shape as {@code PRODUCTION_V2}
- * and
- * {@code PLACEMENT}.
- * </p>
- *
- * <p>
- * Read the output as: a unit stuck on one manager with a stale or empty
- * {@code lastCommand} means the order is never issued (look at that manager); a
- * unit
- * whose {@code lastCommand} changes but points away from {@code nearestToBuild}
- * means the order is issued to the wrong place (look at how the target is
- * chosen).
+ * <b>The per-frame builder trace was removed on 2026-10-11, once it had done its job.</b> It
+ * printed one line per builder per frame (the {@code BUILDER @...} line) and existed to
+ * separate "the order is never issued" from "the order is issued and refused". Measured with
+ * it, the refusal turned out to be an accepted command whose <em>status</em> never advanced,
+ * which was fixed in {@code ProtossWarping} and {@code ConstructionStatusChanger}
+ * ({@code NEXT.md} #53). With that closed the trace was 10 283 lines of noise costing frame
+ * budget on every run, so it is gone rather than left switched off. What stays is the one line
+ * the fix depended on - {@link #logBuildAttempt} - which fires only when a build is actually
+ * attempted and so is cheap and decisive.
  * </p>
  */
 public class BuilderDiagnostics {
-
-    /** Prints one line per builder with a construction, once per frame. */
-    public static void logBuildersIfEnabled() {
-        if (!Env.builderLog())
-            return;
-
-        for (AUnit unit : Select.ourWorkers().list()) {
-            Construction construction = ConstructionRequests.constructionFor(unit);
-            if (construction == null)
-                continue;
-
-            System.err.println(describe(unit, construction));
-        }
-    }
 
     /**
      * The result of the actual `unit.build(...)` call, printed at the moment it is
@@ -84,9 +32,9 @@ public class BuilderDiagnostics {
      *
      * <p>
      * This is the line that answers "the builder is standing on a valid, explored tile
-     * and can afford the building, so why is there no Pylon": the per-frame trace
-     * proves the preconditions, this proves what the engine answered. Enabled by the
-     * same {@code BUILDER_LOG=1}.
+     * and can afford the building, so why is there no Pylon": the per-frame trace used
+     * to prove the preconditions; this proves what the engine answered. Enabled by
+     * {@code BUILDER_LOG=1}.
      * </p>
      *
      * <p>
@@ -95,7 +43,7 @@ public class BuilderDiagnostics {
      * {@code ArchitectureBoundaryTest.coreMustNotDependOnOtherContexts} caught exactly
      * that when this was first wired the other way (measured 2026-10-10). The debounce
      * exit inside {@code AUnitOrders.build} is therefore visible here only as a missing
-     * attempt, not as its own line; the trace's two-frame rhythm shows it.
+     * attempt, not as its own line.
      * </p>
      */
     public static void logBuildAttempt(AUnit unit, Construction construction, TilePosition tile, boolean result) {
@@ -125,35 +73,6 @@ public class BuilderDiagnostics {
             + " isLockedDown=" + unit.u().isLockedDown()
             + " getOrder=" + unit.u().getOrder()
             + " isCompleted=" + unit.isCompleted());
-    }
-
-    /**
-     * One line: unit, its current manager, the last issued command, the command's
-     * target, and where the construction it owns actually is.
-     */
-    public static String describe(AUnit unit, Construction construction) {
-        AUnit target = unit.target();
-        APosition targetPosition = unit.targetPosition();
-
-        return "BUILDER @" + A.now()
-                + " unit=#" + unit.id() + " " + unit.type().name() + " @[" + unit.tx() + "," + unit.ty() + "]"
-                + " manager=" + currentManagerName(unit)
-                + " lastCommand=" + unit.lastCommandName()
-                + " targetPosition=" + (targetPosition == null
-                    ? "none" : "[" + targetPosition.tx() + "," + targetPosition.ty() + "]")
-                + " target=" + (target == null ? "none" : target.type().name() + "#" + target.id())
-                + " || construction=" + construction.buildingType().name()
-                + " status=" + construction.status()
-                + " at=[" + construction.buildPosition().tx() + "," + construction.buildPosition().ty() + "]"
-                + " buildable=" + construction.buildPosition().isBuildableIncludeBuildings()
-                + " distToBuild=" + A.digit(unit.distTo(construction.buildPosition()))
-                + " canAfford=" + A.canAfford(construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
-                + " isMoving=" + unit.isMoving()
-                + " isConstructing=" + unit.isConstructing()
-                + " action=" + unit.action().name()
-                + " lastActionAgo=" + unit.lastActionAgo(unit.action())
-                + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
-                + " exploredOnFootprint=" + exploredFootprint(construction);
     }
 
     /**
@@ -191,19 +110,4 @@ public class BuilderDiagnostics {
 
         return explored + "/" + (w * h) + (missing.length() == 0 ? "" : " missing=" + missing);
     }
-
-    /**
-     * The manager that handled the unit this frame. {@code manager()} is the active
-     * one; {@code runningManager().lastRunMode()} names the running behaviour when
-     * the
-     * unit is in the running subsystem, which is otherwise invisible here.
-     */
-    private static String currentManagerName(AUnit unit) {
-        String manager = unit.manager() != null ? unit.manager().getClass().getSimpleName() : "null";
-        String running = unit.runningManager() != null ? unit.runningManager().lastRunMode() : "null";
-
-        return manager + "(running=" + running + ")";
-    }
-
-    
 }
