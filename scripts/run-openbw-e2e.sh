@@ -11,6 +11,12 @@ SERVER_SCRIPT="$HARNESS_DIR/scripts/run-openbw-server.sh"
 # AtlantisP; AtlantisOpenBW joined it in the same change.
 WINE_BOT_DIR="/sc-ai/BOTS/AtlantisP/AI"
 
+# Where per-run E2E logs go. Deliberately NOT under `_AI/`: that directory is the readable
+# knowledge base (owner's ruling, 2026-10-11) and a growing pile of raw run logs makes it
+# unreadable. The deployed bot tree already holds machine-local, git-ignored bulk, so the
+# logs live next to the bot that produced them, with a stable `latest` symlink inside.
+E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
+
 # E2E for Atlantis on the headless OpenBW engine - no Wine, no StarCraft, no
 # ChaosLauncher, ever (CONVENTIONS §14).
 #
@@ -460,21 +466,21 @@ fi
 # recommends before a definitive run) deleted it. So a log that mattered was gone exactly
 # when it was wanted.
 #
-# Now every run writes into its own directory under `_AI/e2e/runs/`, named by
-# timestamp + scenario + map, so:
+# Now every run writes into its own directory under $E2E_LOGS_DIR, named by
+# timestamp + scenario, so:
 #   * runs never overwrite each other;
-#   * the directory is inside the repo, survives `rm -rf out`, and is the same tree the
-#     verdict tables live in (`_AI/e2e/README.md`);
-#   * `_AI/e2e/runs/latest` is a stable symlink, so "where is the log?" has one answer
-#     that does not change between runs.
+#   * the directory is the deployed bot tree (owner's ruling, 2026-10-11), NOT `_AI/`:
+#     `_AI/` is the readable knowledge base and per-run bulk does not belong in it;
+#   * `latest` is a stable symlink inside that directory, so "where is the log?" has one
+#     answer that does not change between runs.
 RUN_STAMP="$(date +%Y%m%d_%H%M%S)"
 RUN_TIER="adhoc"
 if [ "$SHORT_GATE" -eq 1 ]; then RUN_TIER="short";
 elif [ "$SCENARIO" -eq 1 ]; then RUN_TIER="long"; fi
 RUN_TAG="${RUN_TIER}-${RACE}-vs-${ENEMY_RACE}"
-RUN_DIR="$ATLANTIS_DIR/_AI/e2e/runs/${RUN_STAMP}_${RUN_TAG}"
+RUN_DIR="$E2E_LOGS_DIR/${RUN_STAMP}_${RUN_TAG}"
 mkdir -p "$RUN_DIR"
-ln -sfn "$RUN_DIR" "$ATLANTIS_DIR/_AI/e2e/runs/latest"
+ln -sfn "$RUN_DIR" "$E2E_LOGS_DIR/latest"
 
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/bot.log"

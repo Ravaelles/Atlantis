@@ -33,12 +33,8 @@ replay_pid*
 bots/AtlantisOpenBW/
 /bots/AtlantisP/AI/bwapi-data/write/game_results.txt
 
-# Per-run E2E artefacts (scripts/run-openbw-e2e.sh writes _AI/e2e/runs/<stamp>_<tier>/).
-# The raw logs and server output are per-run bulk and belong to the run, not the repo;
-# the verdict tables that SUMMARISE them do belong (see _AI/e2e/README.md). run.txt is
-# kept because it is the run's identity: map, tier, jar and the expectations that were
-# asserted, which is what a later reader needs to reproduce or trust a table entry.
-/_AI/e2e/runs/*/bot.log
-/_AI/e2e/runs/*/server.log
-/_AI/e2e/runs/latest
-_AI/e2e/runs/20*
+# Per-run E2E logs live in the DEPLOYED bot tree now (owner's ruling, 2026-10-11):
+# /sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS, next to the bot that produced them. They are
+# machine-local bulk and never enter this repo - `_AI/` holds only the summary verdict
+# tables that reference them (_AI/e2e/README.md). Nothing to ignore here: the BOTS tree
+# is outside the repository entirely.

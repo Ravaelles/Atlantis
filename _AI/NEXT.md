@@ -1067,7 +1067,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
   **REPRODUCED ON OpenBW 2026-10-11, and it is now THE blocker for the first Dragoon.** The
   earlier "`FOUND PLACE` = 0, needs the IDE path" reading was wrong - it is fully reproducible
-  on the headless engine, measured in `_AI/e2e/runs/*/bot.log`:
+  on the headless engine, measured in `/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS/*/bot.log`:
 
   ```
   5:58 Refresh CyberneticsC position
