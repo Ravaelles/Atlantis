@@ -88,6 +88,27 @@ assistant's assumption that every turn must deliver a finding.
   commit, not a history rewrite - the attempt is part of the process), and leave
   the item open rather than closing it. Admitting this early costs one message;
   admitting it late costs a session and the owner's trust.
+- **Knowledge is the deliverable; a wrong decision is cheap, a wrong belief is not**
+  (owner's ruling, 2026-10-10). Research and verified understanding are worth more
+  than a fast decision, and worth more than visible progress. The project can absorb
+  a decision made on incomplete knowledge and corrected later; what it cannot absorb
+  is a *belief* that nobody checked, because every later step is built on it and it
+  is quoted as fact in the documents above. Therefore: when the honest state of the
+  work is "I do not know yet, and here is how I will find out", that is the correct
+  thing to report - and it is worth more than a confident answer. Never trade a
+  measurement for a plausible-sounding explanation, and never let "we need to decide"
+  rush a question that one command or one file would settle.
+- **The failure this rule is written against, named so it is recognisable:** the
+  assistant explained a live placement blocker as "the bot has a small disc of
+  vision around the Nexus early in the game, so the first candidate is routinely
+  unseen". It was phrased as a mechanism and read as a measured fact, but it was
+  invented - inferred from the *existence* of an `isVisible` branch in an API, and
+  never checked against the fog code. The owner challenged it; the source refuted
+  it (`checkExplored=false` by default, so exploration is not consulted at all; and
+  the project's own probe data showed 1149 **invisible** tiles answering
+  `buildInc=true`, i.e. invisibility alone never caused the refusal). One question
+  from the owner, one `grep`, and it fell. **A mechanism "explained" from an API
+  signature is a hypothesis, not knowledge.**
 
 ## 4. Notification when the user's turn begins (mandatory; clarified 2026-10-10)
 
@@ -245,10 +266,21 @@ Game numbers (hit points, shields, ranges, damage, cooldowns, behaviour) come
 from the list below, in order. They never come from memory - human or model -
 and never from decompiling the game archives.
 
-1. **The vendored `lib/JBWAPI-Rav.jar`.** This is the dataset the bot plays
-   real games with, so it is production truth, not a test double. When the jar
-   and anyone's memory disagree, the jar wins until a higher source says
+1. **The vendored BWAPI binding, `lib/jbwapi-2.2.0.jar`.** This is the dataset the
+   bot plays real games with, so it is production truth, not a test double. When
+   the jar and anyone's memory disagree, the jar wins until a higher source says
    otherwise. Probe it directly instead of quoting it from memory:
+
+   > **Library history (2026-10-10):** the previous binding was a local fork,
+   > `lib/JBWAPI-Rav.jar`, and it has been removed from the repository in favour of
+   > stock JBWAPI 2.2.0. The swap was checked, not assumed: `bwapi/UnitType.class`
+   > is **byte-identical** between the two (same md5), so the unit data behind
+   > `UnitStatsTableTest` and this section is unchanged; the class-file major is 52
+   > (Java 8), so §16 still holds; and the bot was run on OpenBW with the new jar
+   > (attached, played, exit 0). What did change is API surface - most notably a
+   > `bwapi.Pair` whose `first`/`second` fields became **private**, which is why the
+   > code uses `getFirst()`/`getSecond()`.
+
    ```
    CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
    javac -cp "$CP" -d /tmp/opencode/probe Probe.java && java -cp "/tmp/opencode/probe:$CP" Probe

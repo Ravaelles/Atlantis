@@ -13,29 +13,15 @@ AI assistant.
 
 | I want to… | Read |
 |---|---|
-| know **what to work on next** | `NEXT.md` (open backlog) |
+| know **what to work on next** | `NEXT.md` (open backlog; the top item, next priority and current plan are named at the top of the file) |
 | **finish Production V2** | `STATUS.md`, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `PLACEMENT-CUTOVER-PLAN.md` (the V2 cut-over plan), `POSITION-FINDER.md` (why it was rewritten) |
+| work on **placement** | `NEXT.md` #49 (the measured blocker), `PLAN-REGION-DETECTION.md` (own reachability, so placement stops needing engine regions), `PLACEMENT-CUTOVER-PLAN.md` (the V2 cut-over plan), `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `POSITION-FINDER.md` (why it was rewritten) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
-| know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit) |
+| know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit — read §3a before continuing a long investigation) |
 | understand **why the architecture is like this** | `REVIEW.md` §16, then `redesign/` and `DOCS/adr/` |
-| check **known defects** | `BUGS.md` |
-
----
-
-## The current priorities (owner's call, 2026-10-09)
-
-1. **OpenBW runs must be bounded and useful** - CONVENTIONS §13/§17 cap every
-   command at 120 s and every simulation at 20 game minutes; the runner can now
-   assert scenario facts (`PLAN-OPENBW.md`).
-2. **Placement is the live blocker** - no Pylon lands on TauCross, so the bot
-   produces nothing and every survival scenario fails. Fixing it needs the
-   cut-over decision in `redesign/03_PLACEMENT.md`.
-3. **Finish Production V2** - spec in `redesign/01_PRODUCTION.md`, state in
-   `STATUS.md`. M1-M5 done, M6 (cutover) partial.
-4. **E2E testing** - `IDEA-E2E-TESTS.md` §3.5 has the ordered next steps.
+| check **known defects** | `BUGS.md` (things still wrong today, not a history) |
 
 ---
 
@@ -47,8 +33,15 @@ AI assistant.
 - **`STATUS.md`** - Production V2 status (the old `__01_PRODUCTION_TODO.md` was
   folded into it and deleted, 2026-10-08).
 - **`BUGS.md`** - things that are wrong *today*, each with how it was measured.
-  Not a TODO list.
+  Not a TODO list; a fixed defect is **deleted**, so absence is not proof it never
+  existed (the git log is the archive).
 - **`NOTES.md`** - operational learnings that do not fit anywhere else.
+- **`PLACEMENT-CUTOVER-PLAN.md`** - the cut-over plan behind NEXT #47/#49; it
+  changes with the blocker, so re-read it rather than trusting a quotation.
+
+`STATUS.md` keeps its session entries oldest-first: the **bottom** of the file is
+where the latest session's findings are, so read it from the end when you want the
+current state rather than the history (its milestone table at the top is the map).
 
 ## Reference documents (change rarely)
 
@@ -62,6 +55,8 @@ AI assistant.
   provide (e.g. the JBWEB JNI gap).
 - **`PLAN-OPENBW.md`** - how to run OpenBW: the two hard limits, the scenario
   assertions, and what OpenBW cannot do.
+- **`PLAN-REGION-DETECTION.md`** - why the first Pylon is refused (engine regions),
+  what Stardust/PurpleWave do instead, and the staged plan for our own reachability.
 - **`IDEA-E2E-TESTS.md`** - what E2E means here, what exists today, and the next
   steps (§3.5).
 - **`DOCS/adr/`** - accepted decisions (ADR 0001 modular monolith, 0003 DDD

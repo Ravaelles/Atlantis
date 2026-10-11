@@ -368,6 +368,73 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      rejection, but its cause is still unknown; do not add a map fallback or alter
      `APositionFinder` based on the map-only values.
 
+     **Cause now MEASURED (2026-10-10, three live runs + two temporary probes; probes
+     removed, fast suite 372/372).** The full numbers are in `_AI/CHALLENGES/OpenBW.md`
+     ("The real cause, measured: the search area is the base itself"). In short:
+
+     - The engine is not at fault. A probe of the search square found **2422
+       buildable tiles** around `nearTo` with the nearest at distance 0.
+     - **The first-Pylon `nearTo` is the base coordinate, 7 tiles from the left map
+       edge** (`nearTo=[7,43]` on TauCross), and a Pylon at `supplyUsed <= 30`
+       reserves exactly a **7-tile** boundary margin. So the search starts in a
+       corner of its own base and its first rings are consumed by
+       `Too close to left map boundary` (944 log lines), `Too close to main base`,
+       and the base/mineral occupancy tiles. The open ground exists but sits behind
+       those rings. **This is the blocker: a `nearTo`/margin-geometry problem, not
+       terrain, not fog, not regions.**
+     - Two earlier readings in my own notes were wrong and are withdrawn:
+       invisibility (`checkExplored=false` by default; the probe found 1149
+       *invisible* tiles answering `buildInc=true`) and "the search area is
+       unbuildable terrain" (an artefact of a diagnostics bug - see below).
+     - **Our own failure print lied about coordinates**: `PositionFulfillsAllConditions`
+       set `_currentTX = position.ty()` as well as `_currentTY`, so every logged
+       `(x,y)` read `x == y`. Fixed; the fields are print-only, so no behaviour changed.
+       Any analysis based on that print before 2026-10-10 is invalid.
+
+     **PLACEMENT NOW SUCCEEDS - two roots fixed, one new blocker exposed (2026-10-10).**
+     Measured, live run: the log now prints **`SUCCESS FOR Pylon at 113,15`** and the
+     placement failures went to **zero** (`Can't find place` was 2208+; `Region mismatch`
+     549 -> 0). Nothing was patched blind - both fixes came from probes.
+
+     **Root 1 - the search origin was the Nexus (fixed).**
+     `PylonPosition.nearToPositionForFirstPylon()` computed
+     `geyser.translateTilesTowards(mineralsCenter, 50)`, which on TauCross landed
+     **36 tiles outside the map** (`raw=[-36,88]`); `ensureWithinBounds()` then returned
+     **null**, the `if (centerOfResources != null)` guard skipped the step meant to move
+     the origin off the base, and `nearTo` became the Nexus itself
+     (`distBase = 0.84`). The method was rewritten to the stated intent: the base moved
+     `FIRST_PYLON_TILES_FROM_BASE` (7) tiles **towards the resource line when that has
+     room**, otherwise **away from the nearest edge** (a corner base points its mineral
+     line at the edge its own 7-tile Pylon margin guards).
+
+     **Root 2 - `Region mismatch` fired on every candidate (fixed).**
+     `IsProbablyInAnotherRegion` used bare `position.hasPathTo(...)` = `Game.hasPath`,
+     which on OpenBW is region-based and answers **false for every pair** (the server
+     publishes no regions). A probe showed **all 549 rejections** were
+     `directHasPathTo=false / MapTilesHasPathBetween=true` with the candidate 1-3 tiles
+     from `nearTo`. It now uses `MapTiles.hasPathBetween`, which already carried the
+     engine-then-map fallback `MapTiles` needed for exactly this reason and which this
+     condition never used.
+
+     **NEW BLOCKER (open, and it is #48's territory): the builder never starts.**
+     With placement working, the log shows the construction is created and assigned -
+     `Builder diagnostic: unit=#118 Probe @[113,15] (BuilderManager) construction=Pylon
+     status=NOT_STARTED`, 1799 frames of `BuilderManager` in its history - and then
+     `Cancel construction: Pylon took too long (44s) / at:[113,15] / buildable:true`.
+     So the tile is good, the builder is assigned and in `BuilderManager`, and the order
+     is never issued. **`Pylons=0` is now this, not placement.**
+
+     **Do not re-open the placement hunt on account of `Pylons=0`:** placement benefits
+     from `canBuildHere`, `BuildingTilesAreOccupied`, the terrain flags and visibility
+     were all measured and none of them was the cause; the remaining failure is
+     builder execution.
+
+     A second, independent defect is confirmed but is not the blocker: 549 log lines
+     of `Region mismatch` (`IsProbablyInAnotherRegion` asks `hasPathTo`, which is
+     region-based and always false on OpenBW because the server publishes no
+     regions - `OpenBW.md`). It is reached after `CanBuildHere`, so it is a
+     follow-up once placement accepts tiles at all.
+
      If the default legacy path still refuses after the owner's latest changes,
      diagnose its candidate search from a fresh bounded run. The planned long-term
      option remains the Production V2 cut-over in `_AI/PLACEMENT-CUTOVER-PLAN.md`;

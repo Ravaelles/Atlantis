@@ -29,6 +29,17 @@
 
 ## `bi=0` means a UNIT is standing there - the engine is right (measured 2026-10-10)
 
+> **PARTIAL - the probe runs of 2026-10-10 both confirm and shrink this entry (see
+> `OpenBW.md`, "The real cause, measured: the search area is the base itself").**
+> Correct about `bi` and about the mineral-line case: a unit on the footprint does
+> refuse a tile. But it is **not the blocker**. The measured blocker is that the
+> first-Pylon search centres on the base coordinate (7 tiles from the map edge) while
+> a Pylon reserves a 7-tile boundary margin, so its first rings are eaten by the
+> boundary and main-base rules before it reaches open, buildable ground. Occupancy
+> (`buildInc=false` with `build=true`) is a real minority case (296 tiles). Two
+> earlier explanations - visibility, and "the search area is unbuildable terrain" -
+> were both wrong and are withdrawn. Read `OpenBW.md` for the numbers.
+
 - **Symptom:** every Pylon placement is refused with
   `Can't find place for \`Pylon\``, `(reason: Can't physically build here)`, and
   `MapTiles.canBuildHere` is false while the tile's own queries look fine.

@@ -17,9 +17,65 @@ Limits, set once at the top of the script and refused when widened:
 | `INGAME_TIME` | `60*20` (20 game minutes) | the bot ends the game itself at this in-game time |
 
 Other optional env: `PLACEMENT=catalogue`, `PRODUCTION_V2=LIVE`,
-`ENEMY_COUNT=0|1`. All of them (including both limits) are written into the bot's
-ENV by the script. `TIMEOUT_SECONDS > 120` is an error, by design; a longer run
-needs the owner's explicit permission for that specific command (CONVENTIONS §13).
+`ENEMY_COUNT=0|1`, `BUILDER_LOG=1`. All of them (including both limits) are written
+into the bot's ENV by the script. `TIMEOUT_SECONDS > 120` is an error, by design; a
+longer run needs the owner's explicit permission for that specific command
+(CONVENTIONS §13).
+
+### `--save-replay` - record the game to `/sc-ai/REPLAYS` (added 2026-10-10)
+
+```bash
+TIMEOUT_SECONDS=120 INGAME_TIME=120 \
+  timeout 120 bash scripts/run-openbw-e2e.sh --save-replay "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+ls -lat /sc-ai/REPLAYS/ | head
+```
+
+**WORKING (2026-10-10).** A bounded run now writes a real replay, verified:
+`/sc-ai/REPLAYS/atlantis_20261010_223617_Protoss_vs_Zerg.rep`, 34 KB, Brood War header
+(`a77e 7e2b` + `reRS`). Two things were needed, and they are both in the runner now:
+
+1. **The path reaches the host** via `BWAPI_CONFIG_AUTO_MENU__SAVE_REPLAY`
+   (`AutoMenuManager.cpp:141`), written as a plain ASCII name - the engine runs the
+   configured path through `strftime` and strips characters outside `[A-Za-z0-9-_. /]`
+   (`GameEvents.cpp:375-390`), so a map name like `(3)TauCross1.1` mangles the output.
+2. **The bot must let the engine end the match** (`END_GAME_VIA_ENGINE=true`, set only
+   for a `--save-replay` run). The engine writes the `.rep` in `onGameEnd()`, which the
+   launcher reaches **after** its game loop exits (`BWAPILauncher/Source/Main.cpp:76`);
+   a bot that `System.exit`s first (`FORCE_END_GAME_AFTER_REAL_SECONDS` -> `LOCAL=true`
+   -> `exitGame`) takes the JVM down before that, and no file appears. With the flag,
+   `OnGameEnd` calls `leaveGame()` instead.
+
+`cleanup()` also stops the host gently (then `-9`s it) when recording, so the flush is
+not lost - the `-9` fallback stays, because a leftover host poisons the next run
+(`_AI/CHALLENGES/GameExecution.md` #4).
+
+Notes: the run exits `124` (the outer `timeout`) because ending via the engine means the
+bot no longer returns promptly - the game ends and the replay is written, but the
+process lingers until the cap. **Inspect the `.rep`, not only the exit code, for a
+recording run.** `END_GAME_VIA_ENGINE` stays off for ordinary runs: the self-exit is the
+shape CONVENTIONS §17 relies on.
+
+### `BUILDER_LOG=1` - per-frame builder trace (added 2026-10-10)
+
+```bash
+BUILDER_LOG=1 TIMEOUT_SECONDS=120 INGAME_TIME=120 \
+  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+```
+
+Prints one `BUILDER @<frame> …` line per frame for every worker that owns a
+construction (`BuilderDiagnostics`): its active manager, the last command it issued,
+the command's target, and the construction's tile, status, `buildable` and
+`distToBuild`, plus `canAfford` / `isMoving` / `isConstructing` / `action` /
+`lastActionAgo`. Off by default - it is a diagnostic switch, and it costs frame time.
+
+It exists because a construction that silently never starts leaves **no** trace in a
+normal log (nothing throws): the builder simply keeps being handled by a manager that
+never issues the order, which looks identical to one that does. The two facts that
+separate the cases - *which manager is running the unit* and *what the last command
+was and where it pointed* - are what this prints. Read it as: `action=BUILD` with
+`isConstructing=false` means the command was issued and the engine refused it;
+`action=GATHER_MINERALS` with `canAfford=false` means the bot is simply waiting for
+minerals.
 
 ### Scenario assertions (optional)
 
