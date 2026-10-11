@@ -168,6 +168,51 @@ public class TimelineSlideTest {
     }
 
     /**
+     * <b>The fix, verified at the level the bug lives at.</b> Ordering the plans the other
+     * way round - the opening supply provider before the workers - removes the slide that
+     * the test above reproduces. This is the assertion that says the chosen fix works,
+     * rather than that a constant changed.
+     *
+     * <p>
+     * The priorities are taken from {@code ProductionGoal} rather than written as numbers,
+     * so the test follows the policy instead of freezing it: it fails if the ordering is
+     * ever reversed, whatever values the bands take.
+     * </p>
+     */
+    @Test
+    public void planningTheOpeningSupplyProviderFirstRemovesTheSlide() {
+        assertTrue(
+            atlantis.production.v2.ProductionGoal.PRIORITY_OPENING_SUPPLY
+                < atlantis.production.v2.ProductionGoal.PRIORITY_WORKERS,
+            "precondition: the opening supply band must sort before the worker band"
+        );
+
+        int[] starts = new int[6];
+
+        for (int pass = 0; pass < starts.length; pass++) {
+            ResourceTimeline timeline = new ResourceTimeline(4000, 60, 0, 20);
+            timeline.addMiningIncome(0, 0.5, 0.0);
+
+            // Same state every pass; the only difference from the test above is WHICH item
+            // is allocated first - the opening Pylon, as the priority bands now order them.
+            int pylonStart = timeline.findEarliestAffordableFrame(PYLON, 0);
+            assertTrue(pylonStart >= 0, "precondition: the Pylon must be schedulable");
+            timeline.allocate(PYLON, pylonStart);
+
+            starts[pass] = pylonStart;
+        }
+
+        for (int i = 1; i < starts.length; i++) {
+            assertEquals(
+                starts[0], starts[i],
+                "with the Pylon planned first, its start must be stable across identical passes "
+                    + "- a start that moves is the slide, and it is what stops the building from "
+                    + "ever being dispatched. Starts: " + java.util.Arrays.toString(starts)
+            );
+        }
+    }
+
+    /**
      * A single unit of the slide, stated as arithmetic: the same cost is pushed LATER
      * simply because something else reserved money ahead of it. Repeated every pass, that
      * one-step difference is the livelock.

@@ -1,5 +1,6 @@
 package atlantis.production.v2.goals;
 
+import atlantis.production.v2.Producible;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.TargetPlacement;
 
@@ -64,7 +65,7 @@ public final class BuildOrderGoals {
 
             goals.add(new ProductionGoal(
                     row.item(),
-                    priorityForLine(line),
+                    priorityFor(row, line, supplyUsed),
                     missing,
                     0,
                     TargetPlacement.namedArea(row.positionModifier())));
@@ -84,12 +85,83 @@ public final class BuildOrderGoals {
     }
 
     /**
-     * Earlier lines are higher priority within coarse bands; the stable sort in
-     * the scheduler keeps the file order inside a band.
+     * Priority for one build-order row.
+     *
+     * <p>
+     * <b>The opening supply provider is asked for before the workers are</b> (see
+     * {@link ProductionGoal#PRIORITY_OPENING_SUPPLY}). The default opening is "Pylon at
+     * supply 8", and there the Pylon is not a depot among others: nothing can be produced
+     * without it, so it must not queue behind a Probe. This was a measured livelock - at
+     * {@code PRIORITY_DEPOTS} the Pylon's start moved +1 per frame and it was never
+     * dispatched, because the worker goal (scheduled first every pass) kept the bank below
+     * its cost (`NEXT.md` #52).
+     * </p>
+     *
+     * <p>
+     * <b>Only the opening</b>, and that is the point of the threshold: a Pylon at supply
+     * 40 is a depot like any other and keeps {@link ProductionGoal#PRIORITY_DEPOTS}. The
+     * rule is about the building that unlocks production, not about the building type.
+     * </p>
+     *
+     * <p>
+     * The rest is still "earlier lines matter more", which is why the line number
+     * survives as a fallback - but the opening case above is decided by what the row
+     * <b>is</b>, not by where it sits in the file. Line-number-only priority meant a supply
+     * Pylon on line 5 would silently outrank one on line 2 by band, which is not a rule
+     * anybody chose.
+     * </p>
      */
-    private static int priorityForLine(int line) {
+    private static int priorityFor(BuildOrderRow row, int line, int supplyUsed) {
+        if (isOpeningSupplyProvider(row, supplyUsed)) {
+            return ProductionGoal.PRIORITY_OPENING_SUPPLY;
+        }
+
         if (line < 4) return ProductionGoal.PRIORITY_DEPOTS;
         if (line < 12) return ProductionGoal.PRIORITY_BASEDEFENSE;
         return ProductionGoal.PRIORITY_NORMAL;
+    }
+
+    /**
+     * The supply gate up to which a supply provider counts as the OPENING one - the "Pylon
+     * at 8" that every Protoss build order in this repository starts with.
+     *
+     * <p>
+     * <b>Chosen from the build orders, not guessed.</b> Checked against
+     * {@code bwapi-data/AI/build_orders/Protoss/*.txt}: the first Pylon is at supply <b>8</b>
+     * in every file, and the second one is at <b>15</b> or <b>16</b>. So the opening is a
+     * narrow band, and 12 sits between it and the second provider - it covers the real
+     * opening with headroom for a build order that asks a few supply earlier or later,
+     * and excludes the first top-up. A threshold of 16 was tried first and the test caught
+     * it: it silently promoted the supply-16 Pylon too, which is exactly the depot the
+     * rule must not touch.
+     * </p>
+     */
+    static final int OPENING_SUPPLY_THRESHOLD = 12;
+
+    /**
+     * Is this row the supply provider that unlocks production, rather than a later top-up?
+     *
+     * <p>
+     * Answered from the row's own supply gate, not from its position in the file, so a build
+     * order may list its Pylon anywhere and still be understood. A row with no gate ({@code
+     * minSupply <= 0}) does not count - it is not being asked for at a specific supply, so
+     * there is no opening to protect.
+     * </p>
+     */
+    private static boolean isOpeningSupplyProvider(BuildOrderRow row, int supplyUsed) {
+        if (row.minSupply() <= 0) return false;
+        if (row.minSupply() > OPENING_SUPPLY_THRESHOLD) return false;
+
+        return suppliesPopulation(row.item());
+    }
+
+    /**
+     * Does this item provide supply? Asked of the producible's own contract rather than by
+     * comparing against {@code AUnitType.Protoss_Pylon} here: the goal layer serves all
+     * three races, and a rule written as "is a Pylon" would be a Protoss assumption in
+     * shared code (the same reason {@code PlacementPlanner} takes a strategy).
+     */
+    private static boolean suppliesPopulation(Producible item) {
+        return item.supplyProvided() > 0;
     }
 }

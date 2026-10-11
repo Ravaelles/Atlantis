@@ -14,6 +14,32 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
 
     /** Priority bands from 01_PRODUCTION.md §5B. */
     public static final int PRIORITY_EMERGENCY = 10;
+
+    /**
+     * An opening supply provider - the Pylon a build order asks for at supply 8, before
+     * anything can be produced at all.
+     *
+     * <p>
+     * <b>Why this is its own band, and above {@link #PRIORITY_WORKERS}.</b> The default
+     * opening is "Pylon at supply 8", and at that point the Pylon is not a depot among
+     * others - it is the <b>precondition for everything else</b>: no Pylon, no Gateway, no
+     * units, and the base cannot spend its minerals at all. A Probe costs more in
+     * opportunity than the building that lets the base function.
+     * </p>
+     *
+     * <p>
+     * The band exists because of a measured livelock (`NEXT.md` #52): the worker goal is
+     * scheduled first every pass, `ResourceTimeline.allocate` deducts its minerals from the
+     * chosen frame and the whole tail, and a build-order Pylon at
+     * {@link #PRIORITY_DEPOTS} (30) could therefore never reach an affordable frame - its
+     * start moved +1 per frame forever, so it was never dispatched. Sorting the opening
+     * Pylon ahead of the workers is what breaks that ordering, and it is a statement about
+     * the opening specifically: a Pylon at supply 40 is a depot and stays at
+     * {@link #PRIORITY_DEPOTS}.
+     * </p>
+     */
+    public static final int PRIORITY_OPENING_SUPPLY = 15;
+
     public static final int PRIORITY_WORKERS = 20;
     public static final int PRIORITY_DEPOTS = 30;
     public static final int PRIORITY_BASEDEFENSE = 40;

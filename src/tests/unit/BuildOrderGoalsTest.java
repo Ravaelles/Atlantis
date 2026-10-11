@@ -61,6 +61,85 @@ public class BuildOrderGoalsTest {
                 BuildOrderRow.of(PYLON, 16));
     }
 
+    /**
+     * <b>The opening Pylon must outrank the workers</b> - the fix for the measured livelock
+     * (`NEXT.md` #52), where the worker goal was scheduled first every pass, ate the bank on
+     * the tail of the timeline, and the Pylon's start moved +1 per frame forever.
+     *
+     * <p>
+     * Asserted against {@code PRIORITY_WORKERS} rather than against the constant's literal
+     * value: the claim is about the ORDERING (the Pylon is planned first), not about what
+     * number someone chose.
+     * </p>
+     */
+    @Test
+    public void theSupplyProviderAtTheOpeningIsPrioritisedAboveWorkers() {
+        List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), new Progress(8));
+
+        ProductionGoal pylon = goals.stream()
+                .filter(g -> g.item().id().equals(PYLON.id()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("the opening Pylon must be planned at supply 8"));
+
+        assertTrue(
+                pylon.priority() < ProductionGoal.PRIORITY_WORKERS,
+                "the Pylon that unlocks production must be allocated BEFORE the workers "
+                        + "(priority " + pylon.priority() + " must beat " + ProductionGoal.PRIORITY_WORKERS
+                        + ") - otherwise its start slides and it is never built");
+    }
+
+    /**
+     * The other half, and the reason the rule is about the OPENING rather than the building
+     * type: a Pylon asked for later in the order is an ordinary depot and must stay at
+     * {@code PRIORITY_DEPOTS}. Raising every Pylon would starve the workers for the whole
+     * game, which is a different bug from the one being fixed.
+     */
+    @Test
+    public void aLaterSupplyProviderIsStillAnOrdinaryDepot() {
+        // A bank of 16 with the opening already built, so the row under test is the supply-16
+        // one: the supply-8 Pylon is counted as produced, which is why `emittedTypes` lets the
+        // later row through at all.
+        Progress progress = new Progress(16).with(PYLON, 1);
+
+        List<ProductionGoal> goals = BuildOrderGoals.from(coreOpening(), progress);
+
+        ProductionGoal laterPylon = goals.stream()
+                .filter(g -> g.item().id().equals(PYLON.id()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("the supply-16 Pylon must be planned at supply 16"));
+
+        assertEquals(
+                ProductionGoal.PRIORITY_DEPOTS, laterPylon.priority(),
+                "a supply provider asked for at supply 16 is a depot, not the opening - only the "
+                        + "building that unlocks production gets the higher band");
+    }
+
+    /**
+     * The opening rule reads the ROW's supply gate, not its position in the file. A build
+     * order may list its Pylon anywhere; with line-number priority a Pylon on line 5 would
+     * have silently landed in a lower band and the livelock would come back for that file
+     * only - the kind of defect that shows up as \"that one build order is broken\".
+     */
+    @Test
+    public void theOpeningRuleDoesNotDependOnThePositionInTheFile() {
+        List<BuildOrderRow> pylonLate = Arrays.asList(
+                BuildOrderRow.of(GATEWAY, 9),
+                BuildOrderRow.of(ZEALOT, 10),
+                BuildOrderRow.of(PYLON, 8));
+
+        List<ProductionGoal> goals = BuildOrderGoals.from(pylonLate, new Progress(8));
+
+        ProductionGoal anywhere = goals.stream()
+                .filter(g -> g.item().id().equals(PYLON.id()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("the opening Pylon must be planned wherever it sits"));
+
+        assertTrue(
+                anywhere.priority() < ProductionGoal.PRIORITY_WORKERS,
+                "the opening Pylon keeps its band on line 3 as well as on line 1 - the rule is "
+                        + "about what the row IS, not where it is written");
+    }
+
     @Test
     public void theSameRowIsEmittedEveryFrameUntilItIsProduced() {
         Progress progress = new Progress(8);

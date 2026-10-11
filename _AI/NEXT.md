@@ -632,13 +632,38 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   allocation. A fix has to answer "who gets the reserves first when both are wanted",
   which is a policy decision and is the owner's call - not a timeline tweak.
 
-  **Open question for the owner (the decision #52 needs):** a supply Pylon that a build
-  order asks for at supply 8/13/20/27 is arguably not `PRIORITY_DEPOTS` at all - at
-  supply 8 it is the *precondition for everything else*, and a Probe is not worth more
-  than the building that lets the base function. Candidate answers: raise a
-  build-order-supply Pylon above `PRIORITY_WORKERS`, or make the timeline reserve for a
-  building that is a prerequisite of the current supply gate. Both are policy, and the
-  test above is what will say whether the chosen one actually removes the slide.
+  **FIXED and verified in a live run (2026-10-10).** The owner's ruling: the default
+  opening is "Pylon at supply 8", so a build-order supply provider at low supply is the
+  precondition for everything and is planned before the workers.
+
+  - New band `ProductionGoal.PRIORITY_OPENING_SUPPLY` (15, ahead of
+    `PRIORITY_WORKERS` = 20). It is deliberately narrow: only a **supply provider whose
+    row gate is at or below `OPENING_SUPPLY_THRESHOLD` (12)** gets it. Checked against
+    `bwapi-data/AI/build_orders/Protoss/*.txt`: the first Pylon is at supply **8** in every
+    file, the second at **15-16** - so 12 covers the real opening and excludes the first
+    top-up. (A threshold of 16 was tried first; the test caught that it silently promoted
+    the supply-16 depot too, which is exactly what the rule must not do.)
+  - `BuildOrderGoals.priorityFor(row, line, supplyUsed)` decides from **what the row is**
+    (a supply provider, at a gate that means "opening") rather than from its line number
+    alone. The old `priorityForLine` gave "line < 4" a depot band, so the same Pylon on
+    line 5 landed in a lower band - a rule nobody chose. Line order survives only as the
+    fallback for everything else.
+
+  **Live evidence:** `@@914 plan=2 [Pylon@914-1364 Probe@...] issued: OK Pylon@914
+  (builder committed)` - the Pylon now **leaves the plan as a dispatched order**, and its
+  start is stable at 914 across frames 915-920 instead of sliding +1 per frame. 2087
+  `issued: OK Pylon` lines in the run, against 7 for the Probe.
+
+  **What is left is NOT #52** - it is the stage-4 library refusal, now reached for the
+  first time: `unit=#72 Probe @[120,14] construction=Pylon status=NOT_STARTED
+  pos=[120,14]` - the builder is standing exactly on the site and the construction stays
+  `NOT_STARTED` because `Unit.build(...)` returns false (the region-based `hasPath` inside
+  the library's `canBuild`, `_AI/PLAN-STAGE4-COMMAND-PATH.md`). So `Pylons=0` in the end
+  state is stage 4, not a priority or scheduling problem.
+
+  **Three defects have now been peeled off this one symptom, in order:** the duplicate
+  goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
+  command refusal (stage 4, open). None of them was the one the previous note suspected.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions
