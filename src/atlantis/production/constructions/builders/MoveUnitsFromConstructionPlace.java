@@ -30,7 +30,7 @@ public class MoveUnitsFromConstructionPlace {
      * </p>
      */
     public static boolean move(AUnit unit, Construction construction, double distanceToConstruction) {
-        if (distanceToConstruction >= 3.8) return false;
+        if (distanceToConstruction >= 4) return false;
 
         APosition buildPosition = construction.buildPosition();
         if (buildPosition == null) return false;
@@ -41,8 +41,11 @@ public class MoveUnitsFromConstructionPlace {
             if (otherUnit.distTo(buildPosition) >= 3) continue;
             if (otherUnit.isAttacking() || otherUnit.isRunningOrRetreating() || otherUnit.hasCooldown()) continue;
 
-            if (otherUnit.moveAwayFrom(buildPosition, 2, Actions.MOVE_SPACE)) {
-                otherUnit.setTooltip("MovingFromConstructionPlace");
+            if (otherUnit.moveAwayFrom(buildPosition, 3, Actions.MOVE_SPACE)) {
+                otherUnit.setTooltip("MovingFromConstructionPlaceA");
+            }
+            else if (otherUnit.moveAwayFrom(buildPosition, 1, Actions.MOVE_SPACE)) {
+                otherUnit.setTooltip("MovingFromConstructionPlaceB");
             }
         }
 
