@@ -39,6 +39,59 @@ region-based `Game.hasPath` -> **false**, because OpenBW publishes no regions.
 **A is the plan.** B and C are recorded because A is not small, and a future session
 deserves to know what the alternatives cost rather than rediscovering them.
 
+## The refusal is now traced to the exact line (2026-10-10)
+
+Every gate on the way to it was checked, by disassembly and by a probe that printed the
+client's own state at the moment of refusal. The result rules out four suspects that each
+looked plausible, and it is worth recording because three of them cost real time:
+
+**What the client reports at the refusal** (live run, `BUILD_STATE` probe):
+
+```
+BUILD_STATE tile=[120,14] tileIsValid=true canCommand=true
+             isBuilding=false isInterruptible=true isConstructing=false
+             isCompleted=true isIdle=true isHallucination=false getOrder=PlayerGuard
+```
+
+Every one of those is what a healthy builder about to start a building looks like.
+
+**The chain, from `Unit.build` down** (`javap` of `bwapi/Unit.class` and
+`bwapi/Game.class` in `jbwapi-2.2.0.jar`):
+
+1. `build(type, tile)` -> `issueCommand(cmd)` -> `canIssueCommand(cmd)` -> ... -> the
+   7-argument form with **all six flags `true`** (each overload fills the next one with
+   `iconst_1`; there is no relaxed entry point, so there is no bypass to call).
+2. Gate 1, `canCommand()`: **true** - confirmed by probe.
+3. Gate 2, `canIssueCommandType(type)`: passes.
+4. `tableswitch` case 3 (`Build`) -> `canBuild(type, tile, flag4, false, false)`.
+5. Inside `canBuild`, in order: `flag5 && !canCommand()` (**passes**),
+   `flag4 && !canBuild(boolean)` (**passes** - and inside that: `isBuilding ||
+   isInterruptible`, where `isInterruptible=true` was confirmed by probe),
+   `flag3 && !canBuild(type, Z, Z)` (**skipped**, flag is false),
+   `!tile.isValid(game)` (**passes** - `tileIsValid=true`), and finally
+6. **`return Game.canBuildHere(tile, type, this, TRUE)`** - the last line, and the one
+   that returns false.
+
+**So the refusal is `canBuildHere` with `checkExplored = true`**, i.e. exactly the call
+identified earlier: inside it, `if (builder)` takes the builder-reachability branch and
+calls `builder->hasPath(site)`, and on OpenBW `hasPath` is region-based with
+`regionCount = 0`, so it answers false for **every** pair - including a tile against
+itself.
+
+**Suspects ruled out, each with the measurement that killed it** (these are the ones to
+not re-investigate):
+
+| suspect | how it was killed |
+|---|---|
+| map dimensions / `TilePosition.isValid` returning zero-sized | probe: `tileIsValid=true`, map 128x128 |
+| `canCommand()` (power, lock-down, order state) | probe: `canCommand=true` |
+| `isInterruptible` / `isBuilding` (the `canBuild(boolean)` branch) | probe: `isBuilding=false` **but** `isInterruptible=true` |
+| the exploration term of `canBuildHere` | the terrain probe: `explored=4/4` on every refused footprint, and `checkExplored` is not what `hasPath` consults |
+
+**There is no client-side flag to relax it and no second entry point.** The four options
+above are therefore the complete set - in particular, "issue the command without
+validation" is not available through the public API of this library.
+
 ## MEASURED (2026-10-10): the order is issued by the LEGACY path, not by V2
 
 First task done - a stack trace at `BwapiOrderSink.build` on a live run. All **46** build
