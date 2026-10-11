@@ -35,7 +35,22 @@ public class AutoProduceWorkersCommander extends Commander {
      */
     @Override
     protected boolean handle() {
-        if (!shouldProduceWorkers()) return false;
+        if (!shouldProduceWorkers()) {
+            // PROBE (NEXT.md #53): a run ends with Probe=15 after 10 game-minutes, which is the
+            // shape of a worker-gate that never opens - and the file already carries a
+            // documented case of it (line 54's 250-mineral gate). `REASON` was written and read
+            // nowhere, so the refusing gate was invisible. One line per second under
+            // BUILDER_LOG=1 turns "the economy is slow" into a named gate.
+            if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
+                System.err.println("WORKER_GATE @" + A.now()
+                    + " reason=" + REASON
+                    + " workers=" + Count.workers()
+                    + " minerals=" + A.minerals()
+                    + " reserved=" + ReservedResources.minerals()
+                    + " supply=" + A.supplyUsed() + "/" + A.supplyTotal());
+            }
+            return false;
+        }
 
         ProduceWorker.produceWorker();
         return false;
