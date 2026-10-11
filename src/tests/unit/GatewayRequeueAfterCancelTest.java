@@ -43,6 +43,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class GatewayRequeueAfterCancelTest {
 
+    private static final String TRAVEL =
+        "src/atlantis/production/constructions/builders/TravelToConstruct.java";
+
+    @Test
+    public void theTravelThresholdComparesAPlainDistanceNotAJbwebOrCentreDistance()
+        throws Exception {
+        String source = new String(Files.readAllBytes(Paths.get(TRAVEL)), StandardCharsets.UTF_8);
+
+        assertTrue(source.contains("double distanceToConstruction = unit.distTo(buildPosition);"),
+            "the travel threshold must compare a PLAIN distance to the TILE. Two measured mistakes"
+                + " kept 'shouldMoveToConstruct' true while the worker stood on its site:"
+                + " (1) positionToBuildCenter(), offset by the building's tile dimensions (~1.8"
+                + " tiles for a 4x3 Gateway), and (2) groundDist, which goes through JBWEB -"
+                + " documented unusable on OpenBW in _AI/POSITION-FINDER.md - and measured 1.8"
+                + " against distTo's 1.3 on the same worker and tile. Either one exceeds the"
+                + " 1.4-tile threshold forever, so moveToConstruct claimed every frame and"
+                + " IssueBuildOrder - the only path to unit.build - was never reached.");
+    }
+
     private static final String SOURCE =
         "src/atlantis/production/constructions/commanders/CancelTooLongConstructions.java";
 

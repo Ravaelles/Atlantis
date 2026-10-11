@@ -54,6 +54,8 @@ public class BuilderManager extends Manager {
                         : construction.buildPosition().tx() + "," + construction.buildPosition().ty()) + "]"
                     + " distToSite=" + (construction.buildPosition() == null ? "-"
                         : A.digit(unit.distTo(construction.buildPosition())))
+                    + " groundDistToSite=" + (construction.buildPosition() == null ? "-"
+                        : A.digit(unit.groundDist(construction.buildPosition())))
                     + " action=" + unit.action().name()
                     + " lastActionAgo=" + unit.lastActionAgo(unit.action())
                     + " lastCommand=" + unit.lastCommandName()

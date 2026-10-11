@@ -23,6 +23,19 @@ public class IssueBuildOrder extends HasUnit {
     protected boolean considerIssuingNow(Construction construction) {
         AUnitType buildingType = construction.buildingType();
 
+        // PROBE (NEXT.md #59): was this method reached at all? "The build was never attempted"
+        // has two very different causes - this path never ran (the mover claimed the worker),
+        // or it ran and the gates inside refused. The Gateway soak could not be told apart
+        // without it. Under BUILDER_LOG=1 only.
+        if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
+            System.err.println("ISSUE_BUILD_REACHED " + buildingType.name()
+                + " unit=#" + unit.id() + " action=" + unit.action().name()
+                + " lastActionAgo=" + unit.lastActionAgo(unit.action())
+                + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
+                + " isConstructing=" + unit.isConstructing()
+                + " isMoving=" + unit.isMoving());
+        }
+
         AUnit builder = construction.builder();
         if (builder != null && builder.buildUnit() != null) {
             System.err.println("builder = " + builder);
@@ -87,7 +100,23 @@ public class IssueBuildOrder extends HasUnit {
                     RefreshConstructionPosition.refreshIfNeeded(construction);
                 }
 
-                if (unit.lastActionMoreThanAgo(20)) {
+                // `lastCommandIssuedAgo`, NOT `lastActionMoreThanAgo(20)`.
+                //
+                // The action age is reset by the very path this worker came through:
+                // `AUnitOrders.move` calls `setLastActionReceivedNow().setAction(...)` on every
+                // invocation, so a builder whose last command was MOVE_BUILD has
+                // `lastActionAgo(MOVE_BUILD)` driven back towards 0 constantly, and this gate
+                // was false on nearly every frame - measured as a soak at `distToSite=1.3` with
+                // the age sawtoothing 2, 5, 8, 11, 14, 17, 20 and exactly one build attempt in
+                // the whole run, then "Gateway took too long (43s)".
+                //
+                // The command age is different in the way that matters: `lastCommandIssuedNow`
+                // is called only when a command is ACTUALLY issued (`AUnitOrders.move` returns
+                // early on its own debounce without calling it), so it measures "how long since
+                // this worker last did anything new" - which is what the settle-before-build
+                // wait was always meant to be. It is also the same class of fix the file already
+                // carries twice: a debounce must not read a value the code path itself refreshes.
+                if (unit.lastCommandIssuedAgo() >= 3 || unit.isConstructing()) {
                     TilePosition buildTilePosition = new TilePosition(buildPosition.tx(), buildPosition.ty());
 
                     if (TravelToConstruct.cantBuildHere(construction, buildingType)) {

@@ -47,19 +47,25 @@ public class TravelToConstruct extends HasUnit {
 
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(type);
 
-        // THE distance is to the TILE the worker must stand on, NOT to the building's CENTER.
+        // THE distance is a PLAIN distance to the TILE the worker must stand on. Two mistakes
+        // were measured here (NEXT.md #59), and both kept `shouldMoveToConstruct` true while the
+        // worker was already standing on its site, so `moveToConstruct` ran every frame,
+        // `IssueBuildOrder` - the only path that calls `unit.build` - was never reached, and the
+        // construction was cancelled at 35-43s as "took too long / buildable:true":
         //
-        // `positionToBuildCenter()` offsets the tile by the building's tile dimensions
-        // (`dimensionLeftPixels`/`dimensionUpPixels`), so for a Gateway (4x3) the center sits
-        // ~1.8 tiles from the tile it belongs to. Comparing THAT against the 1.4-tile
-        // threshold keeps `shouldMoveToConstruct` true even when the Probe is standing exactly
-        // on the site, so `moveToConstruct` runs every frame and returns true (it always
-        // does), and `IssueBuildOrder` - the only thing that actually calls `unit.build` - is
-        // never reached. Measured 2026-10-11 with the real manager chain: Probe on the site
-        // (`distToBuildPos=0.0`), `groundDist(center)=1.80 > 1.4`, `action=MOVE_BUILD`
-        // refreshed every frame, `status=NOT_STARTED` - until "Gateway took too long (43s) /
-        // buildable:true" cancelled it, at the same tile, over and over.
-        double distanceToConstruction = unit.groundDist(buildPosition);
+        //  1. the CENTRE of the building instead of its tile. `positionToBuildCenter()` is
+        //     offset by the building's tile dimensions, so for a 4x3 Gateway the centre is
+        //     ~1.8 tiles from the tile it belongs to - and 1.8 > the 1.4 threshold, forever.
+        //  2. `groundDist` instead of `distTo`. `groundDistanceTo` goes through JBWEB
+        //     (`PositionUtil`), which `_AI/POSITION-FINDER.md` point 3 already records as
+        //     unusable on OpenBW. Measured side by side on the same worker and tile:
+        //     `distTo=1.3` but `groundDist=1.8` - the JBWEB-mediated number is inflated, and it
+        //     was the one being compared against a 1.4-tile threshold.
+        //
+        // `distTo` is a plain geometric distance and is the metric the threshold was written
+        // for. The worker at `distTo=1.3` is within reach; at 1.8 it was told to keep walking to
+        // the tile it was already on.
+        double distanceToConstruction = unit.distTo(buildPosition);
 
         MoveUnitsFromConstructionPlace.move(unit, construction, unit.groundDist(buildPositionCenter));
 
