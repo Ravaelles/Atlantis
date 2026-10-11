@@ -79,7 +79,37 @@ trap 'rm -rf "$WORK"' EXIT
 #     BWAPI_JAR=lib/jbwapi-2.2.0.jar bash scripts/build-bot-jar.sh
 # which is the point: trying a newer binding should not require touching the script that
 # has five measured packaging rules encoded in it.
-BWAPI_JAR="${BWAPI_JAR:-lib/jbwapi-2.2.0.jar}"
+# The BWAPI binding. This is NOT stock JBWAPI - it is stock jbwapi-2.2.0 plus one
+# measured fix, and the name says so on purpose so nobody has to guess why a local jar
+# exists.
+#
+# WHAT THE PATCH IS: `Game.hasPath(Position, Position)` answers over BWAPI *regions*, and
+# OpenBW (the headless engine every E2E run uses) publishes `regionCount = 0`, so the
+# method returned false for EVERY pair of positions - including a position paired with
+# itself. `Game.canBuildHere` consults it as the builder-reachability check, so
+# `Unit.build(...)` refused a tile the builder was standing on and the bot could not place
+# a single building. Measured in Atlantis: 104 of 104 build attempts refused while every
+# other precondition read true (_AI/CHALLENGES/OpenBW.md,
+# _AI/PLAN-STAGE4-COMMAND-PATH.md).
+#
+# WHAT THE PATCH DOES: when the region graph is absent (`regions.length == 0`) or silent
+# for a pair, `hasPath` answers from terrain instead, by walking the square between the two
+# points on the walk grid. Detected from the DATA, never from a version string or a flag,
+# so a host that publishes regions keeps the exact behaviour it had and this becomes
+# inert. The fallback rule is deliberately the same one Atlantis' own `ReachableTiles` port
+# uses, so the library and the application cannot disagree.
+#
+# SOURCE: /sc-ai/JBWAPI (a checkout of github.com/JavaBWAPI/JBWAPI at 2.2.0), file
+# `src/main/java/bwapi/Game.java`, built with `mvn package -DskipTests` and the
+# `-jar-with-dependencies` artefact copied here as `jbwapi-2.2.0-atlantis.jar`. Bytecode
+# major is 52 (Java 8), so CONVENTIONS §16 holds. REBUILD WITH:
+#     cd /sc-ai/JBWAPI && mvn package -DskipTests
+#     cp target/jbwapi-2.2.0-jar-with-dependencies.jar /sc-ai/Atlantis/lib/jbwapi-2.2.0-atlantis.jar
+# The patch is marked in the source with "Atlantis patch" comments.
+#
+# STOCK STAYS AVAILABLE: `BWAPI_JAR=lib/jbwapi-2.2.0.jar` builds against unpatched JBWAPI,
+# which is how the difference is measured rather than assumed.
+BWAPI_JAR="${BWAPI_JAR:-lib/jbwapi-2.2.0-atlantis.jar}"
 
 # Libraries the game actually loads. Keep in sync with scripts/lib-classpath.md.
 RUNTIME_LIBS=(
