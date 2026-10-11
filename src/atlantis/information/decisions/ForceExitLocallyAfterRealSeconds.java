@@ -40,8 +40,11 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("ForceExitLocallyAfterRealSeconds");
-        ErrorLog.printErrorOnce("Prevent too long game. It ran " + RealTime.gameLengthInRealSeconds()
-            + " real seconds / " + AGame.timeSeconds() + " in-game seconds");
+        ErrorLog.printErrorOnce(
+            "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
+            + " real seconds, " + AGame.timeSeconds() + " in-game seconds,"
+            + " supply: " + A.supplyUsed() + "/" + A.supplyTotal()
+        );
 
         Atlantis.getInstance().onEnd(false);
         return false;
