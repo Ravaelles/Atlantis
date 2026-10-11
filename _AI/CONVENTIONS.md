@@ -170,6 +170,18 @@ assistant's assumption that every turn must deliver a finding.
 - **Boundaries are enforced mechanically** by
   `src/tests/architecture/ArchitectureBoundaryTest.java`. Never grow the frozen
   baseline in `_AI/architecture/archunit-store/`; fix the dependency instead.
+- **In the fast inner loop the architecture scope is ADVISORY** (owner's ruling,
+  2026-10-11): *"we should be moving towards fixing it, but it should not break
+  whole builds - that slows the work down; it is a hint, not a requirement."*
+  `scripts/run-tests.sh` therefore runs the architecture scope in its own pass and
+  reports a boundary failure as `ARCHITECTURE WARNING` with a zero exit code, after
+  the normal scope has already been run and its exit code preserved. The rule still
+  fires and still names the dependency; what changes is that it no longer stops the
+  build. **The authoritative gate is `scripts/run-architecture-tests.sh`** (strict,
+  unchanged), and the underlying rule is unchanged: fix the dependency, never grow
+  the store. The scope is split rather than the failure downgraded in place, so a
+  REAL unit-test regression in the same invocation still fails the build - that was
+  verified by planting one.
 - **VSA is not the system architecture** (only per-unit behavior packs).
   **DDD is strategic only** (bounded contexts + ubiquitous language), not
   tactical (no aggregates/repositories).

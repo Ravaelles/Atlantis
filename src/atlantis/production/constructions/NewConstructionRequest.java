@@ -141,7 +141,7 @@ public class NewConstructionRequest {
             // Add to list of pending orders
             ConstructionRequests.constructions.add(newConstruction);
             if (atlantis.config.env.Env.builderLog()) {
-                System.err.println("REQUEST_ACCEPTED " + building
+                System.err.println("REQUEST_ACCEPTED at " + A.minSec() + ": " + building
                     + " at=" + newConstruction.buildPosition()
                     + " totalOfType=" + ConstructionRequests.countAllOfType(building));
             }

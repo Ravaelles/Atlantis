@@ -54,6 +54,7 @@ public class ForceExitLocallyInOpenBW extends Commander {
         AConsole.errPrintln("####### ForceExitLocallyInOpenBW ###################");
         AConsole.errPrintln("####### min:" + A.minerals() + ", supply:"
                 + A.supplyUsed() + "/" + A.supplyTotal() + "######################");
+        AConsole.errPrintln("####### At:" + A.minSec() + ", real " + RealTime.gameLengthInRealSeconds() + "s");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");

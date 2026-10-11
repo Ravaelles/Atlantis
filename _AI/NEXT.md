@@ -728,7 +728,48 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   logged with `log("...")`), or is the request made and rejected as a duplicate
   (`alreadyExists`, #57)?
 
-- **#60 (2026-10-11, NEW - top economy blocker) - THE WORKER GATE OSCILLATES BETWEEN TWO
+- **#61 (2026-10-11, NEW) - WORKERS THAT STAND STILL AND NEVER MINE (`manager=GatherResources`,
+  `lastCommand=NO_COMMAND`, `lastCommandIssuedAgo=1`, `isGathering=true`, `isIdle=true`).**
+  Owner's report: "many workers just stand there doing nothing after being produced; in the
+  earlier game it happened after 10-12 of them, here even the first few (5, 6) stand still -
+  and there is NOTHING in the log".
+
+  **Measured** with a purpose-built probe (`WorkerHandlerCommander.reportStuckWorker`, one line
+  per second per worker whose position has not changed for 10 frames, `BUILDER_LOG=1` - written
+  because this class of bug is invisible everywhere else: nothing throws and no manager reports
+  a refusal):
+
+  ```
+  STUCK_WORKER @90 unit=#116 @[95,119] stoodStillFor=25f manager=GatherResources
+    lastCommand=NO_COMMAND lastCommandIssuedAgo=1 action=BUILD isIdle=true isStopped=true
+    isGathering=true distToMineral=4.4 mineralsNear=9
+  ```
+
+  **1003 such lines in one run, the same 5 workers from frame 30 to the end.** `lastCommand=NO_COMMAND`
+  with `lastCommandIssuedAgo=1` means something calls `lastCommandIssuedNow()` every frame while
+  the engine records no command - and the worker is 4.4 tiles from 9 minerals, idle and stopped.
+
+  **Three hypotheses were checked and are RULED OUT** (recorded so they are not re-tried):
+  1. **stale `isGathering*` flags** - a `AMineralGathering`/`GatherResources` relaxation
+     (`stalledWhileClaimingToGather`) was written on the strength of the reading above and **did
+     not change the behaviour**; reverted, not shipped;
+  2. **`TreeSet` identity in `Select.ourWorkers()`** - it collects into a `TreeSet` ordered by
+     `AUnit.compareTo`, which compares `hashCode()`, so colliding workers would be silently
+     dropped. Ruled out: `hashCode()` IS `id()` and ids are unique per game;
+  3. **the worker is not iterated at all** - ruled out: the probe sits inside
+     `WorkerHandlerCommander`'s iteration and reports it every frame.
+
+  **This is also an economy explanation, not just a curiosity:** a worker that never mines is a
+  lost miner for the whole game, which is how #60's `CantAfford -> NoSupply` oscillation starts.
+
+  **Next measurement (the one that ends the guessing):** print, on a stuck worker,
+  `new GatherResources(worker).applies()`, `new IdleWorker(worker).applies()` and
+  `new WorkerManager(worker).applies()` - the managers' OWN answers, not the state they read.
+  **Careful with placement:** these must be called from a class in a package that may depend on
+  `atlantis.production`; putting them in `WorkerHandlerCommander` (core, `atlantis.units..`)
+  trips `ArchitectureBoundaryTest` - it did, twice in one session.
+
+- **#60 (2026-10-11, top economy blocker) - THE WORKER GATE OSCILLATES BETWEEN TWO
   OPPOSITE FAILURES, and it explains "the test takes forever", the 8000-mineral bank and the
   stuck Pylon at once.**
 

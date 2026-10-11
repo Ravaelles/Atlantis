@@ -85,6 +85,79 @@ echo "[tests] compiling $(find src -name '*.java' | wc -l) sources..."
 # file 61.0 against a runtime that accepts up to 52.0, keyboard dead).
 javac --release 8 -nowarn -cp "$CP" -d "$OUT" $(find src -name '*.java')
 
-echo "[tests] running: ${JUNIT_ARGS[*]}"
-java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
-  "${JUNIT_ARGS[@]}" --details=summary --disable-ansi-colors
+# The architecture scope is split out so it can be ADVISORY without weakening
+# anything else (owner's ruling, 2026-10-11): "we should be moving towards fixing
+# it, but it should not break whole builds - that slows the work down; it is a hint,
+# not a requirement."
+#
+# The split is the important part. Running everything in ONE pass and downgrading
+# any failure that mentions `tests.architecture` would also silence a REAL unit-test
+# regression in the same invocation - a red unit test is not a hint, it is a broken
+# build. So: the non-architecture scope keeps its exit code untouched, and only the
+# architecture pass is advisory.
+#
+# What this does NOT do: hide a violation. The rule still runs, still prints the
+# dependency that broke it, and `scripts/run-architecture-tests.sh` stays the
+# authoritative gate for the owner. CONVENTIONS §5 is unchanged - never grow the
+# frozen store, fix the dependency.
+# Filter the PAIR, not the value: `--select-package tests.architecture` is a flag plus
+# its argument, and separating them leaves a dangling `--select-package` that swallows
+# the next flag (measured: ConsoleLauncher answered "Expected parameter for option
+# '--select-package' but found '--select-class'" and printed its help instead of
+# running). Walk the args and drop the flag together with its architecture value.
+RUN_ARGS=()
+ARCH_ARGS=()
+i=0
+while [ "$i" -lt "${#JUNIT_ARGS[@]}" ]; do
+  arg="${JUNIT_ARGS[$i]}"
+  case "$arg" in
+    --select-package|--select-class|--select-method)
+      next="${JUNIT_ARGS[$((i + 1))]:-}"
+      case "$next" in
+        tests.architecture|tests.architecture.*)
+          ARCH_ARGS+=("$arg" "$next") ;;
+        *)
+          RUN_ARGS+=("$arg" "$next") ;;
+      esac
+      i=$((i + 2))
+      ;;
+    *)
+      RUN_ARGS+=("$arg")
+      i=$((i + 1))
+      ;;
+  esac
+done
+
+# `--select-package tests.architecture` in the default set is the common case; a run
+# that only asked for architecture has nothing else to run.
+ARCH_ADVISORY=0
+[ ${#ARCH_ARGS[@]} -gt 0 ] && ARCH_ADVISORY=1
+
+if [ ${#RUN_ARGS[@]} -gt 0 ]; then
+  echo "[tests] running: ${RUN_ARGS[*]}"
+  java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
+    "${RUN_ARGS[@]}" --details=summary --disable-ansi-colors || exit $?
+fi
+
+if [ "$ARCH_ADVISORY" -eq 1 ]; then
+  echo "[tests] running (advisory): ${ARCH_ARGS[*]}"
+  if java -cp "$OUT:.:$CP" org.junit.platform.console.ConsoleLauncher \
+       "${ARCH_ARGS[@]}" --details=summary --disable-ansi-colors; then
+    echo "[tests] architecture: clean"
+  else
+    # Plain stdout - NOT `tee /dev/stderr`. The first version piped the message through
+    # tee, and under `>log 2>&1` the warning text vanished entirely (measured: only the
+    # separator lines survived, so the one thing the warning exists to say was lost).
+    echo ""
+    echo "[tests] ============================================================"
+    echo "[tests] ARCHITECTURE WARNING (advisory - this did NOT fail the build)"
+    echo "[tests] A boundary rule fired. Treat it as a hint to fix the dependency, not"
+    echo "[tests] a blocker. See the failing rule above and _AI/CONVENTIONS.md §5:"
+    echo "[tests] fix the dependency - never grow _AI/architecture/archunit-store/."
+    echo "[tests] Authoritative gate: bash scripts/run-architecture-tests.sh"
+    echo "[tests] ============================================================"
+    echo ""
+  fi
+fi
+
+exit 0
