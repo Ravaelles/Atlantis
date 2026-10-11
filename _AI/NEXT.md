@@ -708,6 +708,57 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
   command refusal (stage 4, open). None of them was the one the previous note suspected.
 
+- **#53 - ECONOMIC LIVELOCK: the bot stops making workers, and then cannot afford
+  anything else. This is now the top gameplay blocker, and it is why `Reactors`/Gateways
+  can end at zero in a long run.** Found 2026-10-11 by the owner asking why no Gateways
+  were built (`pylons=5 gateways=0`, ingame=1209 s).
+
+  **It is not a Gateway bug and not a build-order bug.** The build order does list them
+  (`8 - Pylon`, `9 - Gateway`, `10 - Gateway`), and in a shorter run they ARE built -
+  measured: `### Protoss buildings: Pylons=2 Gateways=2 ###` with
+  `construction=Gateway isConstructing=true lastCommand=Build action=BUILD`. The long run
+  differs in one respect:
+
+  ```
+  issued: OK Probe  = 0        <- the bot never trains another worker
+  canAfford=false 2587 vs true 195
+  construction=Gateway status=NOT_STARTED  canAfford=false  action=GATHER_MINERALS
+  ```
+
+  **The mechanism, at its line** (`AutoProduceWorkersCommander.shouldProduceWorkers`):
+
+  ```java
+  if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals())
+      return dont("CriticalStuff");
+  ```
+
+  Below 250 minerals - and with nothing "critical" queued - the bot refuses to train a
+  worker. So a base that is short of minerals does not buy the thing that would earn it
+  more: it waits. Every other gate above it (`NoSupply`, `CantAfford` at 50, `RushPriority`,
+  `FollowBO`, the Protoss `MineralsMargin` at 175) is a variation on the same shape -
+  "not rich enough yet" - so the whole worker path is gated on being rich, which is the
+  one state a young base is not in.
+
+  **Why this only surfaced now:** before the placement fix, nothing could be built at all,
+  so the economy never got far enough for the difference between "a worker early" and "a
+  worker 250 minerals later" to matter. The library patch made building work and exposed
+  the layer underneath it.
+
+  **Not a regression from this session's work:** none of the commits here touch
+  `production/dynamic/**` (checked with `git log` over those paths).
+
+  **Why it is a livelock rather than a slow start:** the output of waitng is fewer
+  minerals, so the condition that stops the worker also prevents the state that would
+  release it. Nothing in the tree breaks the cycle, because each gate is individually
+  reasonable.
+
+  **Decision needed (owner's call - it is a strategy question, not a bug fix):** which
+  gate should yield. Candidates: exempt a base below N workers from the mineral-margin
+  gates (a worker is only worth refusing if there is something better to buy), or make
+  the worker goal a V2 `DynamicGoals` contributor at `PRIORITY_WORKERS` and let the
+  scheduler's arbitration decide instead of the commanders' vetoes - which is what
+  Production V2 was built to do.
+
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions
 running. The one missing setting was `BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON` on

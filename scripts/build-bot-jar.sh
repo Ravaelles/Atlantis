@@ -99,12 +99,12 @@ trap 'rm -rf "$WORK"' EXIT
 # inert. The fallback rule is deliberately the same one Atlantis' own `ReachableTiles` port
 # uses, so the library and the application cannot disagree.
 #
-# SOURCE: /sc-ai/_JBWAPI - a clone of **https://github.com/Ravaelles/JBWAPI**, branch
+# SOURCE: /sc-ai/JBWAPI-Atlantis - a clone of **https://github.com/Ravaelles/JBWAPI**, branch
 # `feature/fix-regions-for-openbw`, commit 9f58727. The patch is marked in the source with
 # "Atlantis patch" comments and lives in `src/main/java/bwapi/Game.java`.
 #
 # REBUILD WITH (one command, and it verifies what it produced):
-#     bash /sc-ai/_JBWAPI/_BUILD-SCRIPT/build-atlantis-jar.sh
+#     bash /sc-ai/JBWAPI-Atlantis/_BUILD-SCRIPT/build-atlantis-jar.sh
 # It builds with Maven, checks the bytecode is major 52 (Java 8) both by byte inspection
 # and with javap, and installs the artefact here. It refuses to run if the patch is absent,
 # so it cannot ship stock JBWAPI under a name that promises a fix.
