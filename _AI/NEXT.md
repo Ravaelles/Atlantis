@@ -1065,10 +1065,39 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   something other than the tile - therefore cancels by construction. The board says the
   position is fine; the guard disagrees; nothing between them can reconcile it.
 
-  **Not reproduced on OpenBW:** a bounded run has `FOUND PLACE` = 0, so this needs the IDE
-  path (real StarCraft, different timing) to show itself. It is recorded rather than fixed
-  for that reason - a fix without a reproducer here would be guesswork, and this file has
-  the scars to prove it.
+  **REPRODUCED ON OpenBW 2026-10-11, and it is now THE blocker for the first Dragoon.** The
+  earlier "`FOUND PLACE` = 0, needs the IDE path" reading was wrong - it is fully reproducible
+  on the headless engine, measured in `_AI/e2e/runs/*/bot.log`:
+
+  ```
+  5:58 Refresh CyberneticsC position
+  5:58 WTF?!? Cancel and request again.
+  This got re-requested: null
+  Re-re-requesting: At 12 CyberneticsC* (#526) @ [17,40]
+  ```
+
+  **Quantified:** 46 cancel/re-request cycles in one 30s run (50 in the next), **every single
+  one at the same tile `[17,40]`**. The Cybernetics Core therefore never finishes:
+  `construction=CyberneticsC status=IN_PROGRESS` with a Probe standing on it for the whole
+  game, `CyberneticsCore=0` in the summary, no Dragoon, and the `--short` tier's success gate
+  can never fire. This is the concrete production defect between the bot and its first tech
+  unit - not the placement search, not the builder, not supply.
+
+  **The two-call shape is the mechanism, and it is now measured rather than inferred:**
+  `handleRefreshingPositionIfNeeded` asks `shouldRefreshConstructionPosition`, refreshes, then
+  asks the SAME predicate again and cancels when it still says yes. `refreshPosition` cannot
+  fix this case because the predicate depends on something other than the tile (the docs say
+  the tile reads `buildable:true` in the same log line), so the second call is guaranteed to
+  fail and the cancel is structural. A predicate used to ACCEPT must be the one used to
+  REJECT, or the gap is invisible until a game trips it.
+
+  **Next measurement (cheap, and it decides the fix):** instrument
+  `shouldRefreshConstructionPosition` to print WHICH of its two branches said yes on the
+  second call - `isBuildableIncludeBuildings()` false, or the `everyNthGameFrame(23) &&
+  isPositionVisible() && BuildingTilesAreOccupied.check(...)` branch. The two branches need
+  opposite fixes (the first is a tile/engine disagreement, the second an occupancy false
+  positive), and the log line does not distinguish them yet. Do not patch either branch
+  before that probe.
 
   **Related, and it is the same shape as #52's lesson:** a predicate used to ACCEPT must be
   the same one used to REJECT, or the gap between them is invisible until a game trips it.
