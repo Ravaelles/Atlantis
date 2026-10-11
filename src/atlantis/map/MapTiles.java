@@ -171,7 +171,11 @@ public class MapTiles {
         boolean jbwebUsable = JBWEB.isInitialized()
             && JBWEB.isPlaceable(building.ut(), at.toTilePosition());
 
-        if (jbwebUsable && !BuildingTilesAreOccupied.check(at, building)) return true;
+        // The builder is passed in: the footprint may contain the unit that will build it
+        // and nothing else (NEXT.md #49). Leaving it out here called a tile "occupied"
+        // when the only thing on it was the builder that had walked there to build -
+        // a placement the game allows, refused by us.
+        if (jbwebUsable && !BuildingTilesAreOccupied.check(at, building, builder)) return true;
 
         // JBWEB refused, or is not available at all (the OpenBW case: JBWEB is a JNI
         // library whose natives do not exist on Linux, so InitJBWEB.init() fails and

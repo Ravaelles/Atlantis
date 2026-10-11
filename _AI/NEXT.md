@@ -492,8 +492,29 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     **Do not read a green suite or a clean run as evidence that #50/#51 work in a
     game: they are behind this item and currently unexercised.**
 
-  - **#49 - A candidate tile may contain the assigned builder and nothing else.**
-    Measured 2026-10-10, and it is the mechanism behind the Pylon refusal:
+  - **#49 - IMPLEMENTED 2026-10-10 (contract + wiring); it does not change the outcome
+    yet, because the library still refuses the command (#49's own note, below, predicted
+    this shape).** `BuildingTilesAreOccupied.check(position, type, builder)` now asks the
+    rule the game enforces - the footprint may contain the assigned **builder** and
+    nothing else - and the two production call sites that have a builder pass it:
+    `RefreshConstructionPosition.shouldRefreshConstructionPosition` (which had
+    `construction.builder()` in hand and was asking "is a unit on the tiles" without it,
+    so a builder arriving at its own site looked like an obstacle) and
+    `MapTiles.canBuildHere` (whose occupancy guard called a tile occupied by the builder
+    that had walked there to build). `checkBuildingsOnly` keeps the old question for
+    callers that genuinely ask it.
+
+    Verified: 8 cases in `PlacementSearchMatchesCommandTest` (mutation-checked - dropping
+    the builder exemption fails one), 405/405 fast suite, ArchUnit 7/7.
+
+    **Live result, stated plainly: `Pylons=0` is unchanged**, and `construction=Pylon
+    status=NOT_STARTED` is logged 2038 times. That is the expected consequence of the
+    stage-4 blocker, not a failure of this fix: the order IS issued and the library
+    refuses it, so the construction status cannot advance whatever occupancy says. #49 is
+    correct and necessary; it is behind the same wall as everything else on this path.
+    Do not read the unchanged `Pylons=0` as evidence against the rule.
+
+  **The mechanism behind the Pylon refusal, as originally measured:**
 
     ```
     BI0_TILES Pylon at=[7,43]  (7,44) explored=1 visible=1 unitOnTile=2

@@ -53,6 +53,62 @@ public class BuildingTilesAreOccupied {
      * </p>
      */
     public static boolean check(APosition position, AUnitType buildingType) {
+        return check(position, buildingType, null);
+    }
+
+    /**
+     * The full question, with the rule the owner stated (2026-10-10,
+     * {@code NEXT.md} #49):
+     *
+     * <p>
+     * <b>StarCraft allows a building to be placed under the unit that is about to build
+     * it.</b> The engine moves that unit onto the site, so the builder is not an obstacle.
+     * Every <b>other</b> unit on the footprint is: in particular a worker mining at the
+     * mineral line, which is the case that made the first Pylon unbuildable and whose
+     * correct answer is "ask it to move", not "weaken the rule".
+     * </p>
+     *
+     * <p>
+     * <b>Why this signature exists.</b> The two older answers were each wrong in a
+     * different direction, so neither could be adjusted into the right one:
+     * {@code Game.isBuildable(..., true)} counts <i>every</i> unit and therefore also
+     * refuses a tile occupied only by the builder (a placement the game allows), while the
+     * buildings-only version below accepted a tile a mining worker stood on (a placement
+     * the game refuses). One rule, one question: <b>the footprint may contain the assigned
+     * builder and nothing else</b>. When no builder is assigned yet, nothing may be on the
+     * footprint at all - hence {@code builder == null} means "buildings and units both
+     * block".
+     * </p>
+     *
+     * @param builder the unit that will build, excluded from the check; {@code null} when
+     *                no builder has been chosen yet, in which case nothing is excluded
+     */
+    public static boolean check(APosition position, AUnitType buildingType, AUnit builder) {
+        if (position == null || buildingType == null)
+            return false;
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive())
+                continue;
+            if (builder != null && unit.id() == builder.id())
+                continue;
+            if (!unit.isABuilding() && !unit.isGroundUnit())
+                continue;
+
+            if (overlaps(unit, position, buildingType))
+                return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * The buildings-only question, kept for the callers that genuinely ask it (a tile is
+     * free of <i>structures</i>, say before any builder exists). It is no longer the whole
+     * answer to "can this building stand here" - see {@link #check(APosition, AUnitType,
+     * AUnit)} for that, and note the difference is exactly the mining-worker case.
+     */
+    public static boolean checkBuildingsOnly(APosition position, AUnitType buildingType) {
         if (position == null || buildingType == null)
             return false;
 
@@ -71,8 +127,7 @@ public class BuildingTilesAreOccupied {
 
     /**
      * Tile-rectangle overlap between the unit and the building placed at
-     * {@code position}. Ground units count too: a probe standing on the tile is
-     * exactly what makes the engine refuse a placement.
+     * {@code position}.
      */
     private static boolean overlaps(AUnit unit, APosition position, AUnitType buildingType) {
         int buildingLeft = position.tx();

@@ -89,30 +89,77 @@ public class PlacementSearchMatchesCommandTest extends WorldStubForTests {
     }
 
     /**
-     * The rule the owner stated (2026-10-10) and the measured case that motivated
-     * it: a
-     * building may be placed under the unit that is about to build it, because the
-     * engine
-     * moves that unit onto the site. Every other unit blocks.
+     * <b>The rule from {@code NEXT.md} #49, first half:</b> the footprint MAY contain the
+     * builder. StarCraft places a building under the unit that is about to build it - the
+     * engine moves that unit onto the site - so the builder must not read as an obstacle.
+     */
+    @Test
+    public void theAssignedBuilderOnTheFootprintDoesNotBlockIt() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        world(1, fakeOurs(builder), fakeEnemies(), () -> {
+            assertFalse(
+                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
+                    "the builder is not an obstacle: the game places the building under it and "
+                            + "moves it onto the site. Counting it refused every mineral-line tile");
+        });
+    }
+
+    /**
+     * <b>The second half, and the one that was wrong before:</b> every OTHER unit on the
+     * footprint blocks.
      *
      * <p>
-     * The guard currently counts <b>buildings only</b>, so this test states the
-     * rule at
-     * the level the guard can express today: a building blocks. The worker half is
-     * the
-     * open item in {@code _AI/NEXT.md} #49 and needs the contract to grow a builder
-     * parameter - pinning the incorrect behaviour now would freeze the bug.
+     * The buildings-only version of this guard answered "free" for a tile a mining worker
+     * stood on - a placement the engine refuses - so the search could pick a tile, walk a
+     * builder to it and then wait for a construction that never started (`NEXT.md` #49).
+     * The miner here is a DIFFERENT unit from the builder, so it must be counted.
      * </p>
      */
     @Test
-    public void aWorkerStandingOnTheFootprintDoesNotCountAsABuilding() {
-        FakeUnit miningProbe = fake(AUnitType.Protoss_Probe, 30, 30);
+    public void anotherUnitOnTheFootprintBlocksEvenWhenABuilderIsAssigned() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 30);
+        FakeUnit miningProbe = fake(AUnitType.Protoss_Probe, 31, 30);
 
-        world(1, fakeOurs(miningProbe), fakeEnemies(), () -> {
-            assertFalse(
-                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON),
-                    "a worker is not a building - the guard is buildings-only by design, "
-                            + "and #49 is where the worker rule belongs");
+        world(1, fakeOurs(builder, miningProbe), fakeEnemies(), () -> {
+            assertTrue(
+                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, builder),
+                    "a worker that is NOT the builder is a real obstacle - this is the "
+                            + "mineral-line case the old buildings-only guard accepted");
+        });
+    }
+
+    /**
+     * With no builder assigned yet, nothing is exempt: the whole footprint must be empty.
+     * That is the state the first search runs in, so a worker on the tile must refuse it
+     * rather than be waived through by a rule about a builder that does not exist yet.
+     */
+    @Test
+    public void withNoBuilderAssignedAnyUnitOnTheFootprintBlocks() {
+        FakeUnit someWorker = fake(AUnitType.Protoss_Probe, 30, 30);
+
+        world(1, fakeOurs(someWorker), fakeEnemies(), () -> {
+            assertTrue(
+                    BuildingTilesAreOccupied.check(APosition.create(30, 30), PYLON, null),
+                    "before a builder is chosen there is nothing to exempt, so a unit on the "
+                            + "footprint makes the tile unusable");
+        });
+    }
+
+    /**
+     * A building on the footprint blocks regardless of who the builder is - the exemption
+     * is about the unit that will walk there, never about structures.
+     */
+    @Test
+    public void aBuildingOnTheFootprintBlocksEvenForItsOwnBuilder() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 40, 40);
+        FakeUnit pylonAlreadyThere = fake(AUnitType.Protoss_Pylon, 40, 40);
+
+        world(1, fakeOurs(builder, pylonAlreadyThere), fakeEnemies(), () -> {
+            assertTrue(
+                    BuildingTilesAreOccupied.check(APosition.create(40, 40), PYLON, builder),
+                    "the builder exemption is for the builder UNIT, not for what already "
+                            + "stands there");
         });
     }
 
