@@ -729,10 +729,23 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
   command refusal (stage 4, open). None of them was the one the previous note suspected.
 
-- **#53 - ECONOMIC LIVELOCK: the bot stops making workers, and then cannot afford
-  anything else. This is now the top gameplay blocker, and it is why `Reactors`/Gateways
-  can end at zero in a long run.** Found 2026-10-11 by the owner asking why no Gateways
-  were built (`pylons=5 gateways=0`, ingame=1209 s).
+- **#53 CLOSED 2026-10-11: the finish path was the missing half - `ProtossWarping`.**
+  Verified by execution: the same bounded OpenBW run that used to end at `Pylons=0/5
+  gateways=0` now finishes `### Protoss: Nexus=1 Probe=13 Pylon=2 Gateway=1 ###`
+  (`Total time: 125 seconds`, exit 0), with `CANNOT define construction` 0 (was a 1799-frame
+  wall), stuck `Gateway NOT_STARTED` frames 3534 -> 86, and build attempts reaching the
+  engine 0 accepted -> 3/3 `engineAccepted=true`. Tests: `OrphanedConstructionTest` (2),
+  fast suite 418/418, ArchUnit 7/7. The per-frame `BUILDER` trace was removed in the same
+  cycle (10 283 log lines -> 64, `BUILDER @` = 0). What stays open under the item below is
+  the strategy half (should a worker held at a site that cannot start return to mining).
+
+  ---
+
+  **Original report (kept as the record of the hunt):**
+
+  **ECONOMIC LIVELOCK: the bot stops making workers, and then cannot afford anything else.**
+  Found 2026-10-11 by the owner asking why no Gateways were built (`pylons=5 gateways=0`,
+  ingame=1209 s).
 
   **It is not a Gateway bug and not a build-order bug.** The build order does list them
   (`8 - Pylon`, `9 - Gateway`, `10 - Gateway`), and in a shorter run they ARE built -

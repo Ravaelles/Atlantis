@@ -76,6 +76,22 @@ a long post-mortem belongs in an ADR or a commit message.
   is being attacked"), delete the dead references, or leave them and own the
   consequence in a comment at the call site. Tracked as NEXT #39.
 
+## B-41 — a construction whose building was warped was never finished, holding its worker
+
+> **FIXED 2026-10-11 (`NEXT.md` #53).** `ProtossWarping.updateNewBuildingJustWarped` marked
+> the construction `IN_PROGRESS`, never `FINISHED` - and `FINISHED` is the only status that
+> removes it from `ConstructionRequests` - so it survived for the rest of the game, with
+> `countPendingOfType` counting a standing building and `BuilderManager.isBuilder` refusing
+> its worker. A building that appeared away from its reserved tile (site moved by
+> `RefreshConstructionPosition`, or a snapped footprint) matched no construction at all and
+> leaked the same way, because the lookup is positional (2.5 tiles). Both fixed: `FINISHED`
+> on warp, and a fallback that adopts the oldest waiting construction of the same type on a
+> positional miss. Measured: the same bounded run went from `Pylons=0/5 gateways=0` to
+> `Pylon=2 Gateway=1`, and `CANNOT define construction` from a 1799-frame wall to 0. Test:
+> `OrphanedConstructionTest` (2). `TerranNewBuilding` has the same two defects and is tracked
+> as `NEXT.md` #56, not fixed blind (the Terran worker is consumed by the construction rather
+> than released).
+
 ## B-40 — `ConstructionThatLooksBugged` has an unreachable branch
 
 - **Where:** `ConstructionThatLooksBugged.handleConstructionThatLooksBugged()` -
