@@ -74,7 +74,12 @@ public class OnGameEnd {
 
         _executed = true;
 
-        if (Env.isLocal()) Atlantis.getInstance().exitGame(won);
+        // END_GAME_VIA_ENGINE lets the engine end the match instead of this JVM killing
+        // itself, which is what lets the engine flush its replay (it writes the file in
+        // onGameEnd(), reached only after the launcher's game loop exits). Off by
+        // default - the self-exit is the bounded-run shape CONVENTIONS §17 relies on.
+        if (Env.endGameViaEngine()) Atlantis.game().leaveGame();
+        else if (Env.isLocal()) Atlantis.getInstance().exitGame(won);
         else Atlantis.game().leaveGame();
     }
 }

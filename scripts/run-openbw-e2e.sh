@@ -66,6 +66,32 @@ else
   JAR="$WINE_BOT_DIR/Atlantis.jar"
 fi
 
+# --save-replay is handled BEFORE the positional arguments are read: a flag left in
+# `$1` would otherwise be taken as the map name ("Map not found: --save-replay").
+#
+# The engine already supports recording - AutoMenuManager reads the path from
+# BWAPI_CONFIG_AUTO_MENU__SAVE_REPLAY (AutoMenuManager.cpp:141) and GameEvents writes
+# the replay when the game ends (GameEvents.cpp:330) - so this needs no C++ change.
+# The flag exists so a normal run does not litter the tree and so the output location
+# has a stable name ("where is my replay?" should not be a question).
+SAVE_REPLAY=0
+for arg in "$@"; do
+  [ "$arg" = "--save-replay" ] && SAVE_REPLAY=1
+done
+if [ "${1:-}" = "--save-replay" ]; then
+  shift
+fi
+REPLAY_DIR="/sc-ai/REPLAYS"
+
+# Set here, not near the host command: write_env (which produces the ENV the bot reads)
+# runs earlier in the script than the host launch, so a variable assigned next to the
+# `setsid env ...` line never reaches the bot's ENV. Measured 2026-10-10 - the first
+# attempt wrote the ENV without this key and the bot still killed its own JVM.
+END_GAME_VIA_ENGINE=0
+if [ "$SAVE_REPLAY" -eq 1 ]; then
+  END_GAME_VIA_ENGINE=1
+fi
+
 # The harness serves maps from StardustDevEnvironment/build/test/maps/; the
 # owner's map is the COG TauCross (measured path 2026-10-07 - the sscai copy
 # has a different name, and a wrong path is what made the first server start
@@ -145,6 +171,17 @@ fi
 # script's own command line and the shell kills itself before printing
 # anything (_AI/CHALLENGES/GameExecution.md #2).
 cleanup() {
+  # A --save-replay run needs the host to reach onGameEnd(), which is where the engine
+  # writes the .rep. SIGKILLing it here would lose exactly the run being recorded, so in
+  # that mode it is asked to stop first and given a moment; the -9 stays as the fallback
+  # that prevents the stale-host problem GameExecution.md #4 describes.
+  if [ "${SAVE_REPLAY:-0}" = "1" ]; then
+    pkill -x BWAPILauncher 2>/dev/null || true
+    for _ in $(seq 1 20); do
+      pgrep -x BWAPILauncher >/dev/null 2>&1 || break
+      sleep 0.25
+    done
+  fi
   pkill -9 -x BWAPILauncher 2>/dev/null || true
   rm -f /tmp/bwapi_socket_* 2>/dev/null || true
   return 0
@@ -252,6 +289,14 @@ EOF
   if [ -n "${PRODUCTION_V2:-}" ]; then
     echo "PRODUCTION_V2=$PRODUCTION_V2" >> "$1"
   fi
+  if [ -n "${BUILDER_LOG:-}" ]; then
+    echo "BUILDER_LOG=$BUILDER_LOG" >> "$1"
+  fi
+  if [ "${END_GAME_VIA_ENGINE:-0}" = "1" ]; then
+    # Only written for a --save-replay run: the engine needs to outlive the bot long
+    # enough to flush the replay, and the bot must leave the game instead of exiting.
+    echo "END_GAME_VIA_ENGINE=true" >> "$1"
+  fi
 }
 write_env "$BOT_RUN_DIR/ENV"
 
@@ -330,10 +375,53 @@ say "hosting OpenBW game: map=$MAP race=$RACE enemy=$ENEMY_RACE enemy_count=$ENE
 # "sixth blocker", whose isConnected=1 reading was a stale entry from a dead
 # host, not what a live host writes: with this flag the slot is published with
 # isConnected=0, which is exactly what the client's free-slot search wants).
-setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
-  BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
-  timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
-  >"$SERVER_LOG" 2>&1 </dev/null &
+# --save-replay: the engine writes the .rep itself when the game ends
+# (GameEvents.cpp:330, driven by AutoMenuManager's `save_replay` path), so all this
+# does is give it a path. The file is written INTO the replay directory rather than
+# copied afterwards, so a run that is killed (timeout, SIGKILL) still leaves whatever
+# the engine had flushed - a copy step at the end would lose exactly the runs worth
+# inspecting.
+REPLAY_ENV=()
+if [ "$SAVE_REPLAY" -eq 1 ]; then
+  mkdir -p "$REPLAY_DIR"
+  # The engine runs the configured path through strftime and then strips every
+  # character that is not [A-Za-z0-9-_. /] (GameEvents.cpp:375-390), so a map name
+  # with parentheses - `(3)TauCross1.1` - comes out mangled or empty and the file is
+  # written somewhere unexpected. Use a plain ASCII name with no `%`/`$`/brackets.
+  REPLAY_NAME="atlantis_$(date +%Y%m%d_%H%M%S)_${RACE}_vs_${ENEMY_RACE}"
+  REPLAY_FILE="$REPLAY_DIR/$REPLAY_NAME.rep"
+  # An array, not a string: `env` is exec'd directly (no shell between `setsid` and
+  # `env`), so a "$VAR=value" string would be passed through literally and the setting
+  # would never reach the process. Measured 2026-10-10.
+  #
+  # NOTE: the engine setting arrives, but a bounded run still produces NO .rep, because
+  # the launcher kills the host before its game loop reaches onGameEnd() - the full
+  # explanation and the three ways to fix it are in _AI/PLAN-OPENBW.md (
+  # "--save-replay"). The flag is kept because it is correct as far as it goes and is
+  # the half that needs no policy decision.
+  REPLAY_ENV=(BWAPI_CONFIG_AUTO_MENU__SAVE_REPLAY="$REPLAY_FILE")
+  # END_GAME_VIA_ENGINE (set at the top of the script, so write_env saw it) makes the
+  # bot ask the engine to end the match instead of System.exit-ing out from under the
+  # replay flush. See Env.endGameViaEngine.
+  say "recording replay to: $REPLAY_FILE (bot will end the game via the engine)"
+fi
+
+if [ "$SAVE_REPLAY" -eq 1 ]; then
+  # Two separate invocations rather than one with a possibly-empty array: quoting
+  # "${REPLAY_ENV[@]}" on an EMPTY array passes a single empty argument to `env`,
+  # which it rejects ("env: '': No such file or directory") - i.e. enabling nothing
+  # would break the default run.
+  setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
+    BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
+    "${REPLAY_ENV[@]}" \
+    timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
+    >"$SERVER_LOG" 2>&1 </dev/null &
+else
+  setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
+    BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
+    timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
+    >"$SERVER_LOG" 2>&1 </dev/null &
+fi
 SERVER_WRAPPER_PID=$!
 
 # Do NOT wait for the socket. The host publishes the shared segment and the
