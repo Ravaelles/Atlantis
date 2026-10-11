@@ -892,10 +892,28 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
      still wins, and on a miss the oldest unfinished construction of the same type is adopted
      - the one whose worker has been claimed longest, which is the point.
 
-  **Evidence:** `tests/unit/OrphanedConstructionTest` (2) - a Pylon on its reserved tile and a
-  Pylon 8 tiles away both leave `constructions` empty with `builder=null`; the first was green
-  before the fix for the wrong reason, which is why both cases are pinned. Fast suite
+  **Evidence, unit tier:** `tests/unit/OrphanedConstructionTest` (2) - a Pylon on its reserved
+  tile and a Pylon 8 tiles away both leave `constructions` empty with `builder=null`; the first
+  was green before the fix for the wrong reason, which is why both cases are pinned. Fast suite
   418/418 (was 405 + these 2 and the suite's own count), ArchUnit 7/7, store unchanged.
+
+  **Evidence, game tier (bounded OpenBW run, `BUILDER_LOG=1`, TauCross, Protoss vs Protoss,
+  `Total time: 125 seconds`, exit 0):** the run finishes with
+  `### Protoss: Nexus=1 Probe=13 Pylon=2 Gateway=1 ###` - **two Pylons and a Gateway actually
+  built**, which is the thing the item was about. Before/after on the same command:
+
+  | measure | before | after |
+  |---|---|---|
+  | `BUILDER @` diagnostic lines | 10 283 | 654 |
+  | stuck `Gateway status=NOT_STARTED` frames | 3 534 | 86 |
+  | stuck `CyberneticsC status=NOT_STARTED` frames | 1 084 | 139 |
+  | `CANNOT define construction` | a 1799-frame wall | **0** |
+  | buildings built | `Pylons=0/5 gateways=0` | **`Pylon=2 Gateway=1`** |
+  | build attempts reaching the engine | 0 accepted | 3/3 `engineAccepted=true` |
+
+  The status now advances in a live game (`NOT_STARTED -> IN_PROGRESS` on a Pylon at `@1137`,
+  immediately after `engineAccepted=true` and `getOrder=PlaceBuilding`), which is exactly what
+  never happened before. **This is the measurement that closes the finish half of #53.**
 
   **What is still open under #53:** the *engine-side* half. `buildUnit()` is null on OpenBW
   (the harness's `getUnitFromBWAPI` id lookup fails - see `CHALLENGES/OpenBW.md`), so

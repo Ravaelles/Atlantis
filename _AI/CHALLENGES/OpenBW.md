@@ -788,3 +788,16 @@ The run did not commit anything, so the tree is clean apart from the `_AI/` edit
   radius (site moved by `RefreshConstructionPosition`, or a snapped footprint) matched
   nothing at all and leaked the same way. Fixed: `FINISHED` on warp, and a fallback that
   adopts the oldest waiting construction of the same type when the positional lookup misses.
+- **Measured effect of the fix** (bounded OpenBW run, `BUILDER_LOG=1`, TauCross, Protoss vs
+  Protoss, `Total time: 125 seconds`, exit 0): `### Protoss: Nexus=1 Probe=13 Pylon=2
+  Gateway=1 ###` - two Pylons and a Gateway build. `BUILDER @` diagnostic lines 10 283 -> 654,
+  stuck `Gateway NOT_STARTED` frames 3534 -> 86, `CANNOT define construction` -> 0, and build
+  attempts reaching the engine 0 accepted -> 3/3 `engineAccepted=true` with
+  `getOrder=PlaceBuilding`.
+- **Parsing trap, cost me a wrong reading mid-session:** the run summary line is
+  `### Protoss: Nexus=1 Probe=13 Pylon=2 Gateway=1 ###`, **not** `Pylons=N Gateways=N`. A grep
+  for `Pylons=` / `SUCCESS FOR` returns zero on a run that built two Pylons, which reads as
+  "nothing was built" if you trust the grep. Grep the exact summary format, or `tail` the log.
+- **`BUILDER_LOG` throttles `BUILD_ATTEMPT`** (it is `printMaxOncePerMinute`-ish through the
+  diagnostic path), so its count is a lower bound, not the number of build attempts. Use the
+  `BUILDER @` status census for frequency questions, not the attempt lines.
