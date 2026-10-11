@@ -20,6 +20,7 @@ AI assistant.
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
 | know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit — read §3a before continuing a long investigation) |
+| understand a **resolved defect's cause** | `CASE-STUDIES.md`, then `CHALLENGES/` for the system-level traps |
 | understand **why the architecture is like this** | `REVIEW.md` §16, then `redesign/` and `DOCS/adr/` |
 | check **known defects** | `BUGS.md` (things still wrong today, not a history) |
 
@@ -29,7 +30,11 @@ AI assistant.
 
 - **`NEXT.md`** - the single source of truth for open work. Stable numbers, never
   renumbered; a closed item's line is **deleted** and the commit says
-  `Closes #<n>` with the evidence (CONVENTIONS §7).
+  `Closes #<n>` with the evidence (CONVENTIONS §7). It is meant to be **scannable**:
+  long post-mortems of resolved defects live in `CASE-STUDIES.md`, not here.
+- **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
+  withdrawn readings, traps), moved out of `NEXT.md` so the backlog stays readable.
+  Read it when a symptom looks familiar and the git log is not enough.
 - **`STATUS.md`** - Production V2 status (the old `__01_PRODUCTION_TODO.md` was
   folded into it and deleted, 2026-10-08).
 - **`BUGS.md`** - things that are wrong *today*, each with how it was measured.
