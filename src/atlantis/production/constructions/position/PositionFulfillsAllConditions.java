@@ -97,7 +97,7 @@ public class PositionFulfillsAllConditions {
 
     private static boolean success() {
         AbstractPositionFinder._STATUS = "OK";
-        AConsole.errPrintln("FOUND PLACE FOR " + building.name() + " at " + _currentTX + "," + _currentTY);
+//        AConsole.errPrintln("FOUND PLACE FOR " + building.name() + " at " + _currentTX + "," + _currentTY);
 
         return true;
     }
