@@ -604,11 +604,41 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   stands between V2 LIVE and a built Pylon - and it is also why the stage-4 command-path
   question is currently moot under V2 (nothing is ever dispatched to be refused).
 
-  **Not investigated further yet, and deliberately not patched:** `_AI/STATUS.md` records
-  two attempted fixes that were reverted (subtracting `ExistingItems.availableFrom`
-  suppressed worker production; raising only the dynamic supply goal did not address a
-  build-order Pylon), so the next step is a measurement of the goal ordering and the
-  timeline at the moment of the slide, not another guess.
+  **Mechanism now MEASURED and confirmed in the production code (2026-10-10).** It is an
+  ordering problem, and it reproduces deterministically without a game
+  (`tests.unit.TimelineSlideTest`, 5 cases, mutation-checked):
+
+  - `DynamicGoals:221` gives the worker goal **`PRIORITY_WORKERS = 20`**;
+  - `BuildOrderGoals:91` gives a build-order Pylon line **`PRIORITY_DEPOTS = 30`**;
+  - the scheduler sorts by priority, so the Probe is planned FIRST every pass, and
+    `ResourceTimeline.allocate` deducts its 50 minerals from the chosen frame **and the
+    whole tail** (deliberately - reserved money is gone for the rest of the plan);
+  - `findEarliestAffordableFrame` requires the cost covered across that tail, so the
+    Pylon's earliest affordable frame moves later with each pass. Rebuilt from scratch
+    every frame, it moves every frame: the slide.
+
+  **The measurement that had to be made first, and it corrected the framing:** the slide
+  needs **income**. With a flat bank the expensive item is not "late", it is unplannable
+  (`-1`) - a different defect. The first draft of the test used a flat bank and proved
+  nothing; the corrected one gives each pass the same bank *plus mining income*, so the
+  pass-to-pass movement is the scheduler's doing and not the fixture's. Both cases are
+  pinned now so a future fix is not aimed at the wrong one.
+
+  **Not patched, deliberately.** `_AI/STATUS.md` records two attempts that were already
+  reverted (subtracting `ExistingItems.availableFrom` suppressed worker production;
+  raising only the dynamic supply goal did not address a build-order Pylon). The
+  mechanism above suggests why both failed: neither changes the **priority relationship**
+  between the worker goal and the build-order Pylon, which is what decides the order of
+  allocation. A fix has to answer "who gets the reserves first when both are wanted",
+  which is a policy decision and is the owner's call - not a timeline tweak.
+
+  **Open question for the owner (the decision #52 needs):** a supply Pylon that a build
+  order asks for at supply 8/13/20/27 is arguably not `PRIORITY_DEPOTS` at all - at
+  supply 8 it is the *precondition for everything else*, and a Probe is not worth more
+  than the building that lets the base function. Candidate answers: raise a
+  build-order-supply Pylon above `PRIORITY_WORKERS`, or make the timeline reserve for a
+  building that is a prerequisite of the current supply gate. Both are policy, and the
+  test above is what will say whether the chosen one actually removes the slide.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions
