@@ -617,9 +617,46 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
   ---
 
-  **STILL OPEN, and the cause is now NAMED AND MEASURED (not inferred): the engine refuses
-  `Build` while our own last accepted order for that worker is `Move`.** From a `BUILDER_LOG=1`
-  run, the build-attempt lines side by side:
+  **FIXED 2026-10-11 (commit `7278d55d`) - and the cause was NOT the engine, it was our own
+  distance comparison. `travelWhenReady` compared `groundDist(positionToBuildCenter())` against
+  the 1.4-tile "close enough to build" threshold, and both halves of that expression were wrong
+  for the question being asked:**
+
+  - **centre, not tile**: `positionToBuildCenter()` is offset by the building's tile dimensions
+    (~1.8 tiles for a 4x3 Gateway), so it can never be within 1.4 of a worker standing ON the
+    tile;
+  - **`groundDist`, not `distTo`**: `groundDistanceTo` routes through JBWEB
+    (`PositionUtil`), which `_AI/POSITION-FINDER.md` point 3 already records as unusable on
+    OpenBW. Measured side by side on the same worker and tile: **`distTo=1.3`,
+    `groundDist=1.8`** - the JBWEB-mediated number is inflated, and THAT was the one compared
+    against the 1.4 threshold.
+
+  So `shouldMoveToConstruct` stayed true while the worker stood on its site, `moveToConstruct`
+  ran every frame, and `IssueBuildOrder` - the only path to `unit.build` - was never reached:
+  the measured 35-43s cancels. **Verified in a game: the run that produced `Gateway=0` now
+  produces `Gateway=2`, and in one run `CyberneticsC=1 Dragoon=3` - the full opening.**
+
+  **A second, independent bug was found by the same trace and fixed:** `IssueBuildOrder` gated
+  the build attempt on `unit.lastActionMoreThanAgo(20)`, an action age that `AUnitOrders.move`
+  resets on every call (`setLastActionReceivedNow().setAction(...)`) - so for a worker whose
+  last command is `MOVE_BUILD` it was false on nearly every frame (measured: `lastActionAgo`
+  sawtoothing 2,5,8,11,14,17,20, one build attempt in the whole run). It now uses
+  `lastCommandIssuedAgo`, which is only updated when a command is actually issued. **This is the
+  third instance of that shape** (a debounce reading a value the path itself refreshes); the
+  other two are already documented in `TravelToConstruct`.
+
+  **Honest limit: reproducible improvement, not determinism.** Two verification runs after the
+  fix: `Gateway=2 + Dragoon=3` (passes) and `Gateway=0` (fails). Before the fix, vs-Zerg runs
+  gave `Gateway=0` consistently. Strictly better, not solved - the remaining variance is the
+  next item's territory (`#54`'s Cybernetics-Core refresh loop, which is what stops the
+  Dragoon).
+
+  ---
+
+  **Superseded diagnosis, kept because it is the record of the hunt** (it was wrong about the
+  cause being the engine's refusal - the refusal was a *symptom* of never getting there, and
+  the one `BUILD_ATTEMPT` that did happen was an `engineAccepted=false` on a worker whose last
+  command was still `Move`):
 
   ```
   Pylon    engineAccepted=true   distToBuild=0.0  isMoving=true  lastCommand=Build
