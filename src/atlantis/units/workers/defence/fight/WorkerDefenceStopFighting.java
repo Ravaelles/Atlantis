@@ -14,9 +14,12 @@ public class WorkerDefenceStopFighting extends Manager {
 
     @Override
     public boolean applies() {
+        if (!unit.isAttacking()) return false;
         if (unit.isGatheringResources()) return false;
 
-        if (unit.distToBase() >= 12) return true;
+        double distToBase = unit.distToBase();
+        if (distToBase >= 14) return true;
+        if (distToBase >= 10 && unit.enemiesNear().combatUnits().countInRadius(2, unit) == 0) return true;
 
         if (unit.isAttacking() || unit.action().isAttacking() || unit.lastAttackFrameLessThanAgo(60)) {
             if (Enemy.protoss()) {

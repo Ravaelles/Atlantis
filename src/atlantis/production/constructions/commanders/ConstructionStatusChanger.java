@@ -142,8 +142,28 @@ public class ConstructionStatusChanger extends Commander {
         // The builder is also required to be at the site: a worker that has merely been
         // assigned and is still walking is NOT building yet, and marking it early would
         // stop `TravelToConstruct` from finishing the walk.
+        //
+        // TWO signals, and the second one is why this works at all.
+        //
+        // `isConstructing` alone is not enough, and the reason is the same class of defect
+        // as everything else on this engine: it is computed from the unit's ORDER
+        // (`UnitUpdate.cpp:359`), and its last clause is
+        // `(!isCompleted && buildUnit != -1)` - the `buildUnit` field OpenBW leaves at -1
+        // (NEXT.md #53). Measured 2026-10-11: a Probe standing 1.3 tiles from its own Pylon
+        // site reported `isConstructing=false` with `order=PlayerGuard`, so the status never
+        // advanced, the worker was held forever, and builders sat on `NOT_STARTED` for 701
+        // frames against 38 of `IN_PROGRESS` - while four Pylons DID get built.
+        //
+        // The reliable signal is the one the game cannot fake: a building of this type now
+        // stands at the reserved tile. That is exactly what `buildingFinishedAtSite` asks, it
+        // is already used for the completion half, and it reads the live unit list rather than
+        // engine fields this engine fills differently from StarCraft.
         if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-            if (builder != null && builder.isConstructing() && builderAtConstructionSite(builder, construction)) {
+            boolean engineSaysStarted = builder != null
+                && builder.isConstructing()
+                && builderAtConstructionSite(builder, construction);
+
+            if (engineSaysStarted || buildingFinishedAtSite(construction)) {
                 construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
             }
         }
@@ -191,7 +211,15 @@ public class ConstructionStatusChanger extends Commander {
 //    }
 
     /**
-     * Is a COMPLETED building of this type standing on the construction's tile?
+     * Is a building of this type standing on the construction's tile?
+     *
+     * <p>
+     * Used for two questions, and the name says which half it was written for: the completion
+     * check cares whether it is finished, the status check (below) only whether it EXISTS. Both
+     * ask the live unit list rather than the construction's own {@code buildingUnit()}
+     * reference, because that reference is only filled from {@code builder.buildUnit()} - the
+     * shared-memory field OpenBW leaves empty ({@code NEXT.md} #53).
+     * </p>
      *
      * <p>
      * Asked of the live unit list rather than of the construction's own {@code buildingUnit()}
