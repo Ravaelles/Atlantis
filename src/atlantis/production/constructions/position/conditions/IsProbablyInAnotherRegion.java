@@ -2,7 +2,7 @@ package atlantis.production.constructions.position.conditions;
 
 import atlantis.config.env.Env;
 import atlantis.game.A;
-import atlantis.map.MapTiles;
+import atlantis.map.ReachableTiles;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -40,7 +40,7 @@ public class IsProbablyInAnotherRegion {
         // said otherwise. It was the last condition blocking the first Pylon once the
         // search origin was fixed.
         if (
-            !MapTiles.hasPathBetween(position, nearTo)
+            !ReachableTiles.between(position, nearTo)
 //                ||
 //                position.groundDist(nearTo.position()) >= 40
         ) {

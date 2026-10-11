@@ -5,6 +5,7 @@ import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.map.choke.AChoke;
 import atlantis.map.AMap;
+import atlantis.map.ReachableTiles;
 import atlantis.map.region.ARegion;
 import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
@@ -357,7 +358,22 @@ public class APosition extends Point<Position> implements HasPosition, Comparabl
      * Returns true if given position has land connection to given position.
      */
     public boolean hasPathTo(HasPosition position) {
-        return Atlantis.game().hasPath(this.p(), position.position().p());
+        if (position == null || position.position() == null) return false;
+
+        // Through the port, not `Atlantis.game().hasPath` directly.
+        //
+        // The engine's query is implemented over BWAPI regions and OpenBW publishes no
+        // regions (regionCount = 0), so it answers false for EVERY pair of tiles -
+        // including a tile against itself (measured 2026-10-10,
+        // _AI/CHALLENGES/OpenBW.md). That answer is not merely wrong for placement; it is
+        // wrong for every caller below, which is why this delegates to the one
+        // implementation that is chosen at startup rather than being patched here.
+        //
+        // Note this is deliberately NOT a local fallback: an earlier fix put an
+        // engine-then-map fallback in MapTiles.hasPathBetween and left this method raw, so
+        // the placement condition kept asking the broken question while its neighbour
+        // asked the fixed one. One question, one implementation.
+        return atlantis.map.ReachableTiles.between(this, position);
     }
 
     public TilePosition toTilePosition() {

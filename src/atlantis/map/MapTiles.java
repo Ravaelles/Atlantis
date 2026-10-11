@@ -137,15 +137,20 @@ public class MapTiles {
     }
 
     public static boolean hasPathBetween(HasPosition from, HasPosition to) {
-        if (source().hasPathBetween(from, to)) return true;
+        // The harness decides for itself: it has no map and, deliberately, no engine to
+        // ask. That keeps stub tests able to place two bases 40 tiles apart.
+        if (!source().spawnsFromMapData()) return source().hasPathBetween(from, to);
 
-        // Same shape as canBuildHere: OpenBW's pathing query answered "no path"
-        // for every pair on (3)TauCross1.1, which left the natural base
-        // undetermined and stopped the bot from expanding. The map-derived answer
-        // applies only to the engine source, never to the harness.
-        if (!source().spawnsFromMapData()) return false;
-        if (!(to instanceof APosition)) return false;
-        return JBWEB.isWalkable(((APosition) to).toTilePosition());
+        // In a game, one implementation answers this - chosen by measurement, not by a
+        // flag. `ReachableTiles` asks the engine whether a walkable tile reaches itself:
+        // on OpenBW it does not (no regions), and the answer is then computed from
+        // terrain instead.
+        //
+        // This replaces an engine-then-JBWEB fallback that could not work here: JBWEB is
+        // a JNI library whose natives do not exist on Linux, so `JBWEB.isWalkable` was a
+        // dead last resort that silently answered for nothing (see
+        // _AI/POSITION-FINDER.md point 3 and _AI/LOCAL-STARCRAFT.md 187-189).
+        return ReachableTiles.between(from, to);
     }
 
     public static boolean canBuildHere(AUnit builder, AUnitType building, APosition at) {
