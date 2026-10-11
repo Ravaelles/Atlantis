@@ -136,9 +136,38 @@ public class Construction implements Comparable<Construction> {
         return this.ID == other.ID;
     }
 
+    /**
+     * Is this the same construction request as another one - i.e. one we already have?
+     *
+     * <p>
+     * <b>The position is deliberately NOT part of this (NEXT.md #53).</b> It used to be,
+     * requiring the two sites to be exactly equal, and that made the duplicate check
+     * useless in the one case it exists for. Measured: two Gateways alive at the same time
+     * at `[94,111]` and `[98,111]` - four tiles apart, the same type, the same supply gate -
+     * and `sameAs` answered <b>false</b> because the tiles differed. One of them was built,
+     * the other waited forever for a building that was already going up four tiles away,
+     * holding its worker for the rest of the game.
+     * </p>
+     *
+     * <p>
+     * It was also self-contradictory with its only caller.
+     * {@code ConstructionRequests.alreadyExists} requires {@code sameAs(...)} <b>and</b>
+     * {@code positionToBuildCenter().distTo(...) <= 6} - so the distance test could never
+     * do anything: if this method demanded identical tiles, the distance was always 0. The
+     * caller's distance term is the "close enough to be the same request" rule, and it can
+     * only work if this method lets near-but-not-identical sites through.
+     * </p>
+     *
+     * <p>
+     * Two constructions of the same type, for the same supply gate, within the caller's
+     * six tiles ARE the same request: a building can only stand in one place, and the whole
+     * point of the check is to notice that we are already building it.
+     * </p>
+     */
     public boolean sameAs(Construction other) {
+        if (other == null || other.buildingType == null || this.buildingType == null) return false;
+
         return this.buildingType.equals(other.buildingType)
-            && (positionToBuild == other.positionToBuild || positionToBuild.equals(other.positionToBuild))
             && (
             this.productionOrder().minSupply() == other.productionOrder().minSupply()
                 || (!this.buildingType.isCannon() && !other.buildingType.isCannon())

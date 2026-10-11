@@ -75,6 +75,23 @@ assistant's assumption that every turn must deliver a finding.
   command's result is not in hand, say so and wait for it. Do not "recall" an
   output, do not fill in a plausible value, do not describe what a file "would"
   say. This is the single hard rule of this section, and it is not negotiable.
+- **Thinking aloud is the expected form of work; only the closing state is a claim**
+  (owner's ruling, 2026-10-11). Reasoning in the open - stating a hypothesis, naming what
+  would confirm or kill it, reporting an intermediate reading that later turns out wrong -
+  is how the owner follows the direction the work is taking, and it is explicitly wanted.
+  It is not a promise and not a result. What counts is what the turn closes on: the last
+  state must be the verified one, and it must say which parts are measured and which are
+  still open. A message that lists four wrong readings and then the measurement that
+  settled it is a good message - provided the wrong readings are *marked* as superseded
+  rather than left standing in the same voice as the conclusion.
+- **Never guess where a check is cheap.** Every claim should rest on knowledge or on
+  something checked in the same breath. "I think", "probably", "it must be that" are
+  welcome at the START of an investigation - that is the hypothesis doing its job - but
+  they may not be the last word on a cause, a number, or a behaviour. If a command, a
+  grep, a `javap` or one run would settle it, run it before writing the conclusion; the
+  cost of that check is minutes, and the cost of a wrong belief is every step built on it.
+  This is the operational half of the rule above: research is not a stage before the work,
+  it is the work.
 - **A hypothesis is stated as a hypothesis in the same breath as the evidence.**
   "I suspect X because of Y" is fine; "X is the cause" requires a result that was
   actually observed. When a wrong answer would cost days, treat it as a claim that

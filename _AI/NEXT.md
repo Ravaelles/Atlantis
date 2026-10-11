@@ -871,14 +871,40 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   to or standing on - and the `ourOfTypeWithUnfinished=0` measurement above comes from AFTER
   that guard.
 
-  **The next step is a measurement, and it is specific:** instrument
-  `Construction.setPositionToBuild` and `ConstructionRequests.constructions.add` to print
-  every assignment of a site with the calling path, then compare the tile a construction
-  holds against the tile its builder actually walks to in the same frames. The two are
-  known to differ; what is not yet known is whether the construction is created with one
-  and then mutated, or whether two constructions exist for one building and the worker is
-  claimed by the wrong one. `ConstructionRequests.alreadyExists` (which cancels on a
-  same-type construction within 6 tiles) is the second candidate and is still open.
+  **MEASURED AND IDENTIFIED: there are TWO constructions for one building.**
+
+  `Construction.setPositionToBuild` was instrumented to print every site assignment with its
+  caller chain. It printed **nothing** - no code ever moves a construction's site after
+  creation, so "the site was mutated" is ruled out. The status census then showed what is
+  actually there:
+
+  ```
+  construction=Gateway status=IN_PROGRESS at=[94,111]  1460   <- being built
+  construction=Gateway status=NOT_STARTED at=[98,111]  1410   <- a SECOND one, 4 tiles away
+  construction=Pylon   status=IN_PROGRESS at=[79,114]   498
+  construction=Pylon   status=IN_PROGRESS at=[90,112]   535
+  construction=Pylon   status=NOT_STARTED at=[79,114]   122   <- duplicates here too
+  construction=Pylon   status=NOT_STARTED at=[90,112]   372
+  ```
+
+  Two constructions of the same type, alive at the same time, four tiles apart. One is
+  being built; the other waits forever for a building that is already going up elsewhere,
+  holding its worker while it waits. **That is the deadlock, and it is the same thing the
+  owner saw in the IDE** - `FOUND PLACE FOR Gateway at 118,37` alternating with
+  `Pylon at 101,30`: two entries for one intent, each re-finding its own tile.
+
+  **Why `alreadyExists` does not catch it:** `ConstructionRequests.alreadyExists` requires
+  `sameAs(...)` AND `positionToBuildCenter().distTo(...) <= 6` - the two Gateways are 4
+  tiles apart, so that part passes - but it is consulted on the path that creates a new
+  construction (`NewConstructionRequest.requestConstructionOf`), and the second one is
+  evidently created through a path that does not reach that check, or reached it before the
+  first was registered. **The next measurement is the creation side**, not the site side:
+  instrument `ConstructionRequests.constructions.add` with the caller chain and the
+  building type, and the two creation paths will be named.
+
+  **Note the severity:** this affects every building, not just the opening. A duplicated
+  construction is a permanently employed worker and one permanently unsatisfiable task, so
+  the base loses a miner for the rest of the game each time it happens.
 
   **The builder-ownership rule from `NEXT.md` #48 made this reachable.** That change gave
   `BuilderManager` first priority in `WorkerManager` and made it hold an assigned builder

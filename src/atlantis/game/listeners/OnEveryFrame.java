@@ -47,6 +47,7 @@ public class OnEveryFrame {
         }
 
         OnEveryFrameHelper.handle();
+
         BuilderDiagnostics.logBuildersIfEnabled();
 
         CodeProfiler.endMeasuringTotalFrame();
