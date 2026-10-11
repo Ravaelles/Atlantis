@@ -820,7 +820,40 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   else**. So the construction and the building it produces have lost track of each other,
   and the worker is held by a construction whose site is empty forever.
 
-  **That is the same disagreement the owner's log shows from the other side:**
+  **FOUR FIXES LANDED, and the measurement that closes the loop (2026-10-11).** Each was
+  verified by a run, not by reading:
+
+  1. status advances on `isConstructing` (not on the null `buildUnit()`) - `IN_PROGRESS`
+     went from zero to 2631 occurrences;
+  2. the "was destroyed" guard no longer cancels a building it never saw - 5 false cancels
+     measured before, none after;
+  3. a finished construction is removed - **still does not fire, and now we know why**;
+  4. **the Protoss "do not switch while moving" guard no longer blocks an ARRIVED builder**
+     (`TravelToConstruct.asProtossMultiBuilderDoNotSwitchConstructions`): its check is
+     `lastActionLessThanAgo(20, MOVE_BUILD)` and `moveToConstruct` refreshes that action
+     every 13 frames, so it was true forever and `IssueBuildOrder` was never reached.
+     Measured before: a builder one tile from its Gateway with `action=MOVE_BUILD`,
+     `lastActionAgo` climbing 0..44, never `Build`.
+
+  **Fix 4 is the one that made the bot build both types reliably:** `Pylons=2 Gateways=2`,
+  `Gateway status=IN_PROGRESS` 1344 frames, exit 0.
+
+  ### The last thing, and it is NOT in the status logic
+
+  Fix 3's probe printed the whole picture:
+
+  ```
+  FINISH_WHY Pylon site=[16,46] status=NOT_STARTED ourOfTypeWithUnfinished=0 within12=
+  FINISH_WHY_ALL ourBuildings=3 ourOfType(Pylon)=1 all=27 ourUnits=14
+  ```
+
+  **`ourOfType(Pylon) = 1` and `ourOfTypeWithUnfinished=0` in the same breath** - a Pylon
+  exists, and the construction waiting at `[16,46]` has no Pylon within 12 tiles of its
+  site. So the construction's recorded site is not where its building was put, the finder
+  keeps re-offering the same tile, and the worker stays claimed by a site that will never
+  have a building. **`FINISHED` stays 0 for that reason alone.**
+
+  That is the same disagreement the owner's log shows from the other side:
 
   ```
   FOUND PLACE FOR Gateway at 118,37
@@ -830,12 +863,22 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   ```
 
   The finder keeps returning the same tile, so the tile is not the problem - but the
-  construction that ends up recorded is not the one the builder went to. Two candidate
-  places to look, and the next step is a measurement rather than a guess: whether
-  `ConstructionRequests.alreadyExists` replaces the construction with a new object (the
-  "Cancel as construction already exists" path), or whether `RefreshConstructionPosition`
-  moves `buildPosition` after the builder has been sent (the `setPositionToBuild` call that
-  exists to keep a construction valid).
+  construction that ends up recorded is not the one the builder went to.
+
+  **`RefreshConstructionPosition.refreshPosition` was ruled OUT as the cause** by a probe:
+  it does move the site (`REFRESH_MOVE Gateway from=[16,48] to=[17,41]`, seven tiles of
+  drift), but that is now guarded - it refuses to move a site the builder is already moving
+  to or standing on - and the `ourOfTypeWithUnfinished=0` measurement above comes from AFTER
+  that guard.
+
+  **The next step is a measurement, and it is specific:** instrument
+  `Construction.setPositionToBuild` and `ConstructionRequests.constructions.add` to print
+  every assignment of a site with the calling path, then compare the tile a construction
+  holds against the tile its builder actually walks to in the same frames. The two are
+  known to differ; what is not yet known is whether the construction is created with one
+  and then mutated, or whether two constructions exist for one building and the worker is
+  claimed by the wrong one. `ConstructionRequests.alreadyExists` (which cancels on a
+  same-type construction within 6 tiles) is the second candidate and is still open.
 
   **The builder-ownership rule from `NEXT.md` #48 made this reachable.** That change gave
   `BuilderManager` first priority in `WorkerManager` and made it hold an assigned builder

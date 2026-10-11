@@ -57,6 +57,29 @@ public class RefreshConstructionPosition {
     protected static APosition refreshPosition(Construction construction) {
         if (doNotRefreshPosition(construction)) return construction.buildPosition();
 
+        // NEVER move the site out from under a builder that is already on its way there.
+        //
+        // This is the remaining half of NEXT.md #53, and it is the same shape as #52: a
+        // decision made twice, disagreeing. The construction's site can be re-found at any
+        // time, but once a worker has been sent, moving the site leaves the worker walking
+        // to the old tile and the construction waiting at the new one - forever, because
+        // nothing reconciles the two. Measured before this guard:
+        //
+        //     REFRESH_MOVE Gateway from=[16,48] to=[17,41] builder=#122@9,45
+        //                  builderIsMoving=false status=NOT_STARTED
+        //
+        // seven tiles of drift, with the builder twelve tiles away and no order that would
+        // ever take it to either tile. The owner's log shows the same from the other side:
+        // `FOUND PLACE FOR Gateway at 118,37` alternating with `Pylon at 101,30`, the same
+        // two tiles over and over - the finder is honest, the construction keeps changing
+        // its mind.
+        //
+        // A builder that is assigned but has NOT started moving is still fair game: nothing
+        // has been committed yet, and that is the case this refresh exists for.
+        if (builderHasCommittedToTheSite(construction)) {
+            return construction.buildPosition();
+        }
+
         Construction.clearCache();
         AbstractPositionFinder.clearCache();
 
@@ -84,6 +107,33 @@ public class RefreshConstructionPosition {
         }
 
         return construction.buildPosition();
+    }
+
+    /**
+     * Has a worker been sent to this construction's tile already - or is it standing there?
+     *
+     * <p>
+     * True when the builder is moving (it has a destination and a commitment to it) or when
+     * it is already within the site's neighbourhood. A merely assigned builder that is idle
+     * at the base does NOT count: no order has been issued, so relocating the site costs
+     * nothing and is exactly what the refresh is for.
+     * </p>
+     *
+     * <p>
+     * Deliberately generous about "at the site" (3.5 tiles, the same radius the status
+     * change uses): the engine shifts a worker onto the footprint as the building goes up, so
+     * a tight comparison would declare the builder uncommitted at the very moment it is
+     * building.
+     * </p>
+     */
+    private static boolean builderHasCommittedToTheSite(Construction construction) {
+        AUnit builder = construction.builder();
+        if (builder == null) return false;
+        if (construction.buildPosition() == null) return false;
+
+        if (builder.isMoving()) return true;
+
+        return builder.distTo(construction.buildPosition()) <= 3.5;
     }
 
     protected static boolean doNotRefreshPosition(Construction construction) {

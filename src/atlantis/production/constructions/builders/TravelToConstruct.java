@@ -83,12 +83,40 @@ public class TravelToConstruct extends HasUnit {
         return true;
     }
 
+    /**
+     * "Do not switch this Protoss builder to another construction while it is still
+     * moving" - which is a rule about a worker IN TRANSIT, and it was being applied to a
+     * worker that had ARRIVED.
+     *
+     * <p>
+     * The check is `lastActionLessThanAgo(20, MOVE_BUILD)`, and the problem is who refreshes
+     * that action: `moveToConstruct` re-issues the move every time the unit is not moving
+     * (or every 13th frame), so a builder standing at its site with an unfinished walk has a
+     * `MOVE_BUILD` action that is ALWAYS younger than 20 frames. The method therefore
+     * returned true forever, `travelWhenReady` returned false before reaching
+     * `IssueBuildOrder`, and the build order was never issued. Measured (NEXT.md #53): a
+     * builder one tile from its Gateway with `lastCommand=Move`, `action=MOVE_BUILD` and
+     * `lastActionAgo` climbing 0..44 frame after frame, never `Build`.
+     * </p>
+     *
+     * <p>
+     * The rule's own intent survives in the guard added here: a builder is only "still
+     * travelling" if it is actually some distance from the site. Once it is close enough to
+     * be issuing the order, holding it back protects nothing - it is the state the order is
+     * waiting for.
+     * </p>
+     */
     private boolean asProtossMultiBuilderDoNotSwitchConstructions(AUnit builder) {
         if (!We.protoss()) return false;
 
-        if (builder.lastActionLessThanAgo(20, Actions.MOVE_BUILD)) return true;
+        // Arrived (or close enough to build): never block the order on a rule about transit.
+        Construction construction = builder.construction();
+        if (construction != null && construction.buildPosition() != null
+            && builder.distTo(construction.buildPosition()) <= 2.5) {
+            return false;
+        }
 
-        return false;
+        return builder.lastActionLessThanAgo(20, Actions.MOVE_BUILD);
     }
 
     public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {
