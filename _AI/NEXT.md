@@ -874,6 +874,40 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   keeps re-offering the same tile, and the worker stays claimed by a site that will never
   have a building. **`FINISHED` stays 0 for that reason alone.**
 
+  ### CLOSED 2026-10-11: the finish path was the missing half - `ProtossWarping`
+
+  **This was it.** `ProtossWarping.updateNewBuildingJustWarped` runs from `OnOurUnitCreated`
+  for a building that now exists - i.e. exactly when a construction is over - and it did two
+  things wrong, both measured and both fixed:
+
+  1. **It marked the construction `IN_PROGRESS`, never `FINISHED`.** `setStatus(FINISHED)` is
+     the only status that removes it from `ConstructionRequests`, so an `IN_PROGRESS`
+     construction lasted the rest of the game: `countPendingOfType` counted a building that
+     already stood, and `BuilderManager.isBuilder` kept treating it as a reason to hold its
+     worker. Now `FINISHED` - which is also what the method's own javadoc claimed all along
+     ("remove them from construction queue").
+  2. **A building that appeared away from its reserved tile matched no construction at all.**
+     The lookup is positional (`DefineConstructionForNewUnit`, 2.5 tiles), and the site moves
+     (`RefreshConstructionPosition`) or the engine snaps a footprint. Now the positional hit
+     still wins, and on a miss the oldest unfinished construction of the same type is adopted
+     - the one whose worker has been claimed longest, which is the point.
+
+  **Evidence:** `tests/unit/OrphanedConstructionTest` (2) - a Pylon on its reserved tile and a
+  Pylon 8 tiles away both leave `constructions` empty with `builder=null`; the first was green
+  before the fix for the wrong reason, which is why both cases are pinned. Fast suite
+  418/418 (was 405 + these 2 and the suite's own count), ArchUnit 7/7, store unchanged.
+
+  **What is still open under #53:** the *engine-side* half. `buildUnit()` is null on OpenBW
+  (the harness's `getUnitFromBWAPI` id lookup fails - see `CHALLENGES/OpenBW.md`), so
+  `isConstructing` and "the building stands at the site" are the only working signals. The
+  status logic and the finish path now use those; whether an ORPHANED worker also needs the
+  `ShouldNotTravelToConstructYet` release (a worker held at a site that cannot start should
+  return to mining) is a strategy decision the owner must make, and the 250-mineral worker
+  gate is still worth re-examining - a base short of minerals refuses to buy the thing that
+  would earn it more.
+
+  **Superseded, kept as the record of the hunt (the duplicate-construction theory):**
+
   That is the same disagreement the owner's log shows from the other side:
 
   ```
@@ -1078,6 +1112,29 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   building EXISTS at the site (which `buildingFinishedAtSite` already detects for the other
   half), or the engine's `isConstructing` needs a second condition. Do not guess which - the
   probe is cheap and the two have different consequences.
+
+- **#56 - `TerranNewBuilding` has the same two finish-path defects `ProtossWarping` had,**
+  and they were not touched because they need their own measurement (found 2026-10-11 while
+  fixing #53).
+
+  `TerranNewBuilding.updateNewBuilding` is the Terran twin, and it differs from the fixed
+  Protoss path in exactly two ways, both visible in the source:
+
+  1. **No fallback when the positional lookup misses** - `defineConstruction` returns null and
+     the method simply `return`s, so a Terran building that went up away from its reserved
+     tile leaves its construction in the queue.
+  2. **`IN_PROGRESS`, never `FINISHED`** - and `setStatus(FINISHED)` is the only status that
+     removes a construction, so a Terran construction that produced its building is still
+     counted by `countPendingOfType` for the rest of the game.
+
+  **Why this is a separate item and not a copy of the Protoss fix:** the Terran worker does
+  not walk away when the building starts - it is walked INTO the building (the SCV is consumed
+  by the construction and `ConstructionStatusChanger` reads `builder.buildType()` for the
+  "builder became the building" case) - so the deadlock shape and the correct release point
+  are different, and the Protoss fix's `GatherResources(builder)` would be wrong here. Measure
+  first: a Terran OpenBW run, `BUILDER_LOG=1`, and check whether `No construction for <unit>`
+  and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
+  `CONVENTIONS.md` §3a.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

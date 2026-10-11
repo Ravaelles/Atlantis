@@ -762,3 +762,29 @@ candidates of both would settle it.
 **Probe hygiene:** the probe was temporary, printed only refused candidates, and was
 **removed** after the run (verified: `git diff` shows no production file changed).
 The run did not commit anything, so the tree is clean apart from the `_AI/` edits.
+
+### The fourth "field OpenBW fills differently": `buildUnit` and the warp finish (2026-10-11)
+
+- **`Unit.getBuildUnit()` is null on OpenBW** even while the worker is on the site with
+  `order=Build` and `isConstructing=true`. Cause traced to the harness:
+  `UnitUpdate.cpp:333` converts through `getUnitFromBWUnit(...)`, OpenBW's `current_build_unit`
+  does not resolve in the BWAPI id table, `getUnitID` returns -1, the client reads null.
+  Same shape as `regionCount`, `isOccupied` and `hasPath` - a shared-memory field that
+  StarCraft fills and OpenBW does not fill the way BWAPI expects.
+- **Consequence that cost the session:** `Construction` status advanced only on
+  `buildUnit() != null`, so it sat on `NOT_STARTED` forever, `BuilderManager` held the worker,
+  the worker never mined, and the base deadlocked (measured: `Pylons=5 gateways=0` at
+  ingame=1209 s, `BuilderManager` 2631 frames against `GatherResources` 3).
+- **The fix belongs on our side of the seam, and there is a signal that works:**
+  `isConstructing` (published correctly, `UnitUpdate.cpp:359`) plus "a building of this type
+  now stands within 2.5 tiles of the reserved tile" (read from the live unit list). Do not
+  fork the library for this one.
+- **Second, independent defect found in the same path:** `ProtossWarping` used
+  `DefineConstructionForNewUnit.defineConstruction`, which matches the construction
+  **positionally** (2.5 tiles), and marked the match `IN_PROGRESS` - never `FINISHED`.
+  `setStatus(FINISHED)` is the only status that removes a construction, so an `IN_PROGRESS`
+  one lasted the rest of the game: `countPendingOfType` counted a standing building,
+  `BuilderManager.isBuilder` kept refusing the worker. A building that appears outside the
+  radius (site moved by `RefreshConstructionPosition`, or a snapped footprint) matched
+  nothing at all and leaked the same way. Fixed: `FINISHED` on warp, and a fallback that
+  adopts the oldest waiting construction of the same type when the positional lookup misses.

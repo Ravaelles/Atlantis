@@ -210,8 +210,9 @@ public class Construction implements Comparable<Construction> {
         return builder;
     }
 
-    public void setBuilder(AUnit builder) {
+    public Construction setBuilder(AUnit builder) {
         this.builder = builder;
+        return this;
     }
 
     public ConstructionOrderStatus status() {
