@@ -5,6 +5,7 @@ import atlantis.game.AGame;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.builders.BuilderDiagnostics;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -98,7 +99,9 @@ public class IssueBuildOrder extends HasUnit {
                         buildTilePosition = new TilePosition(buildPosition.tx(), buildPosition.ty());
                     }
 
-                    if (unit.build(buildingType, buildTilePosition, construction)) {
+                    boolean buildResult = unit.build(buildingType, buildTilePosition, construction);
+                    BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
+                    if (buildResult) {
                         return true;
                     }
 
@@ -114,12 +117,11 @@ public class IssueBuildOrder extends HasUnit {
                         );
                     }
 
-                    if (unit.build(buildingType, buildTilePosition, construction)) {
+                    buildResult = unit.build(buildingType, buildTilePosition, construction);
+                    BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
+                    if (buildResult) {
                         return true;
                     }
-//                    else {
-//                        if (unit.lastPositionChangedMoreThanAgo(30 * 2)) construction.cancel();
-//                    }
                 }
 //                System.err.println("unit.A = " + unit.action().name());
 //                System.err.println("unit.B = " + unit.getLastCommandRaw().getType().name());

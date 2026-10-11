@@ -40,6 +40,41 @@ public class Env {
      */
     private static boolean placementCatalogue = false;
 
+    /**
+     * BUILDER_LOG=1 prints, every frame, each builder's active manager, its last
+     * issued command and its target position.
+     *
+     * <p>
+     * A debugging switch, off by default, for the "the construction is assigned and
+     * buildable but never starts" class of bug: those failures are invisible in a
+     * normal log because nothing throws - the builder simply keeps being handled by a
+     * manager that never issues the order. The active manager and the last command are
+     * the two facts that separate "no order is issued" from "an order is issued to the
+     * wrong place", and neither is in the log today. See {@code BuilderDiagnostics}.
+     * </p>
+     */
+    private static boolean builderLog = false;
+
+    /**
+     * END_GAME_VIA_ENGINE=true makes the bot ask the engine to leave the game instead of
+     * killing its own JVM at game end.
+     *
+     * <p>
+     * Why it exists: a replay is written by the engine in {@code onGameEnd()}, which the
+     * launcher calls only after its game loop exits - and a bot that {@code System.exit}s
+     * (the {@code LOCAL=true} path) is killed from under it first, so a bounded run
+     * produces no {@code .rep} (measured 2026-10-10, {@code _AI/PLAN-OPENBW.md}). Letting
+     * the engine end the game is what makes the file appear.
+     * </p>
+     *
+     * <p>
+     * <b>Off by default, deliberately.</b> The self-exit is the shape CONVENTIONS §17
+     * relies on for a bounded run (the bot ends its own game, the host outlives it and is
+     * torn down cleanly), so this is a diagnostic mode for recording, not the new normal.
+     * </p>
+     */
+    private static boolean endGameViaEngine = false;
+
     // =========================================================
 
     public static void readEnvFile(String[] mainArgs) {
@@ -110,6 +145,9 @@ public class Env {
             case "LOCAL":
                 isLocal = trueFalse(value);
                 return true;
+            case "END_GAME_VIA_ENGINE":
+                endGameViaEngine = trueFalse(value);
+                return true;
             case "GENERATE_CHERRYVIS_REPLAY":
                 generateCherryVisReplay = trueFalse(value);
                 return true;
@@ -121,6 +159,10 @@ public class Env {
                 return true;
             case "PRODUCTION_V2":
                 productionV2 = ProductionV2Mode.parse(value);
+                return true;
+            case "BUILDER_LOG":
+                builderLog = "1".equals(value == null ? "" : value.trim())
+                    || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
             case "PLACEMENT":
                 // Which placement implementation answers the scheduler's seam:
@@ -234,6 +276,24 @@ public class Env {
      */
     public static boolean placementCatalogue() {
         return placementCatalogue;
+    }
+
+    /**
+     * True when {@code BUILDER_LOG=1} is set in ENV: print each builder's active
+     * manager, last command and target every frame. Off by default; it is a
+     * diagnostic switch, not a feature.
+     */
+    public static boolean builderLog() {
+        return builderLog;
+    }
+
+    /**
+     * True when {@code END_GAME_VIA_ENGINE=true}: end the match through the engine
+     * ({@code leaveGame()}) rather than exiting the JVM, so the engine gets to flush its
+     * replay. See the flag's own javadoc for why this is off by default.
+     */
+    public static boolean endGameViaEngine() {
+        return endGameViaEngine;
     }
 
     public static boolean isBenchmark() {
