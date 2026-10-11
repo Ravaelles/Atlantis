@@ -96,7 +96,7 @@ public final class BwapiOrderSink implements OrderSink {
 
     @Override
     public boolean gather(AUnit actor, AUnit target) {
-        // OpenBW (Linux, JBWAPI-Rav) refuses a Gather command on a mineral
+        // OpenBW (Linux, JBWAPI) refuses a Gather command on a mineral
         // field at the client side: canGather -> hasPath(getPosition()) returns
         // false even though the mineral is visible and valid, so the command
         // never reaches the engine and the economy stays frozen. rightClick on

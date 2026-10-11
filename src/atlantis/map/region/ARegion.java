@@ -151,10 +151,26 @@ public class ARegion implements HasPosition {
         List<AChoke> chokes = chokes();
         for (AChoke choke : chokes) {
             Pair<ARegion, ARegion> regions = choke.regions();
-            if (
-                (regions.first == this || regions.second == otherRegion)
-                    && (regions.first == otherRegion || regions.second == otherRegion)
-            ) {
+
+            // Accessors, not the public fields: `Pair.first`/`second` were public in the
+            // old vendored jar and are private in stock JBWAPI 2.2.0, while `getFirst()`/
+            // `getSecond()` exist in both - so this stayed compilable across the swap
+            // instead of turning a library upgrade into a code change.
+            ARegion first = regions.getFirst();
+            ARegion second = regions.getSecond();
+
+            // The condition this used to carry was wrong and could not match a choke
+            // unless the two regions were the same object:
+            //   (first == this || second == otherRegion) && (first == otherRegion || second == otherRegion)
+            // mixes `this` into the first half and `otherRegion` into both, so for
+            // distinct regions it required `second == otherRegion` twice and never
+            // checked that `this` was on the choke at all. The question the method name
+            // asks is "does this choke join these two regions?", i.e. one side is us and
+            // the other is the region we were asked about - in either order.
+            boolean joinsThem = (first == this && second == otherRegion)
+                || (second == this && first == otherRegion);
+
+            if (joinsThem) {
                 return choke;
             }
         }

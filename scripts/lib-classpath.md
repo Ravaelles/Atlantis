@@ -11,7 +11,7 @@ does not has to stay **out** of it.
 |---|---|---|
 | `atlantis/**`, `main/**`, `jfap/**`, `bweb/**`, `jbweb/**`, `jps/**` | compiled from `src/` | the bot itself |
 | `tests/fakes/**`, `tests/unit/helpers/**`, `tests/acceptance/WorldStubForTests` | compiled from `src/` | **15 production classes import the test harness** (see below) |
-| `bwapi/**`, `bwem/**`, `com/sun/jna/**`, `win32-*/**` | `lib/JBWAPI-Rav.jar`, whole | the BWAPI bridge, JNA (jnativehook needs it), natives |
+| `bwapi/**`, `bwem/**`, `com/sun/jna/**`, `win32-*/**` | `lib/jbwapi-2.2.0.jar`, whole | the BWAPI bridge, JNA (jnativehook needs it), natives |
 | `com/esotericsoftware/**`, `org/objenesis/**`, `org/reflectasm/**`, `org/minlog/**` | `lib/kryo-5.6.2.jar`, `lib/kryo-deps/*` | `atlantis.debug.object.ObjectToFile` |
 | `com/github/kwhat/jnativehook/**`, `org/slf4j/**` | `lib/jnativehook-2.2.1.jar`, `lib/slf4j-api-2.0.12.jar` | `atlantis.keyboard.AKeyboard` |
 | `javax/vecmath/**` | `lib/vecmath.jar` | `atlantis.util.Vector` |
@@ -24,7 +24,7 @@ does not has to stay **out** of it.
 | `lib/*.jar` as nested files | double packaging — the classes are already extracted at the root |
 | `tests/**` **beyond what production imports** | production code reaches into `tests.fakes` / `tests.unit.helpers`, so those classes must be in the jar; the rest of the harness only needs to be *compiled* |
 | JUnit, Mockito, ByteBuddy, Hamcrest, ArchUnit (~15 MB of classes) | test toolchain, never loaded by the game |
-| `lib/lib-unused/jbwapi-2.1.0.jar` | unused, and it *shadows* the JBWAPI-Rav classes if it ever wins on the classpath |
+| `lib/lib-unused/jbwapi-2.1.0.jar` | unused, and it *shadows* the jbwapi-2.2.0 classes if it ever wins on the classpath |
 | the artifact's own output | see below |
 
 ## How the size stayed stable (and how it blew up before)
@@ -52,12 +52,12 @@ them leaves the jar growing:
 
 Both were found by running the game, not by reading the jar:
 
-* **`com/sun/jna/**` (JNA, ~1.5 MB with natives) is inside `JBWAPI-Rav.jar`**
+* **`com/sun/jna/**` (JNA, ~1.5 MB with natives) is inside `jbwapi-2.2.0.jar`**
   and jnativehook needs it at runtime. Packaging "only bwapi/bwem" produced a
   jar that connected and then died with
   `UnsatisfiedLinkError: Native library (com/sun/jna/win32-x86/jnidispatch.dll)
   not found in resource path ([file:/.../AI/Atlantis.jar])` (`GAME_C628E0B7`).
-  Package JBWAPI-Rav **whole**.
+  Package jbwapi-2.2.0 **whole**.
 * **`tests/fakes/**` has to ship**: `AUnit` imports `tests.fakes.FakeUnit`,
   `Bullets` imports `tests.fakes.FakeBullets`, `ClearCountCache` imports
   `tests.unit.helpers.ClearAllCaches`, and two JUnit tests even live in the
@@ -69,10 +69,10 @@ Both were found by running the game, not by reading the jar:
   (`_AI/NEXT.md` #28).
 * **`bwem/**` must be OUR compiled version.** `src/bwem/BWMap.java` is a fork of
   the BWEM API that adds `chokes()`, and `Chokes.chokes()` /
-  `TooCloseToChoke` / `HasPosition` call it. If JBWAPI-Rav's `bwem` wins the
+  `TooCloseToChoke` / `HasPosition` call it. If jbwapi-2.2.0's `bwem` wins the
   merge, the bot connects to the game and then dies with
   `NoSuchMethodError: bwem.BWMap.chokes()Ljava/util/List;` (`GAME_BA5E7286`).
-  Merge order is therefore: **our classes first, JBWAPI-Rav only fills the
+  Merge order is therefore: **our classes first, jbwapi-2.2.0 only fills the
   gaps** (`setdefault`), and the build asserts that the packaged `bwem.BWMap`
   really declares `chokes()`. An older comment in the script claimed the
   opposite layering - that comment was wrong, and the deployed jar it produced

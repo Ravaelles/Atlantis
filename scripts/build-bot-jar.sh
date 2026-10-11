@@ -21,7 +21,7 @@
 #      so a test using a Java 9+ API (e.g. List.of) breaks the game jar. The
 #      only exclusion is ATargetingTest, which needs the Nashorn engine.
 #   3. No duplicate entries (zip appends shadows old classes) -> fresh zip.
-#   4. bwapi/bwem and the native libraries come from JBWAPI-Rav, and its version
+#   4. bwapi/bwem and the native libraries come from the BWAPI jar, and its version
 #      wins over anything stale (classpath shadowing otherwise crashes at
 #      runtime).
 #   5. The jar is built FROM SCRATCH - never on top of a previously built one.
@@ -33,8 +33,8 @@
 #   - production classes: atlantis/, main/, jfap/, bweb/, jbweb/, jps/ (tests/
 #     is compiled for the Java 8 check and then deliberately NOT shipped - the
 #     harness is not part of the bot)
-#   - everything in JBWAPI-Rav: bwapi/, bwem/, JNA (com/sun/jna/) and the
-#     win32-*/ natives - jnativehook needs JNA at runtime
+#   - everything in the BWAPI jar (lib/jbwapi-2.2.0.jar): bwapi/, bwem/, JNA
+#     (com/sun/jna/) and the win32-*/ natives - jnativehook needs JNA at runtime
 #   - runtime libraries only: jnativehook (atlantis.keyboard.AKeyboard), slf4j
 #     (jnativehook's logging), kryo + minlog + reflectasm + objenesis
 #     (atlantis.debug.object.ObjectToFile), vecmath (atlantis.util.Vector)
@@ -71,9 +71,19 @@ fi
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 
+# The BWAPI binding that supplies bwapi/, bwem/ (partially), JNA and the natives.
+#
+# Named once, here, because the packaging step merges this jar WHOLE - it is not just
+# another entry on the classpath - so swapping it means changing this variable, not the
+# merge logic. `BWAPI_JAR` may be pointed at a different build without editing the script:
+#     BWAPI_JAR=lib/jbwapi-2.2.0.jar bash scripts/build-bot-jar.sh
+# which is the point: trying a newer binding should not require touching the script that
+# has five measured packaging rules encoded in it.
+BWAPI_JAR="${BWAPI_JAR:-lib/jbwapi-2.2.0.jar}"
+
 # Libraries the game actually loads. Keep in sync with scripts/lib-classpath.md.
 RUNTIME_LIBS=(
-    "lib/JBWAPI-Rav.jar"
+    "$BWAPI_JAR"
     "lib/jnativehook-2.2.1.jar"
     "lib/slf4j-api-2.0.12.jar"
     "lib/kryo-5.6.2.jar"
@@ -83,9 +93,14 @@ RUNTIME_LIBS=(
     "lib/vecmath.jar"
 )
 
-# Libraries that must OVERRIDE what JBWAPI-Rav bundles, not just fill gaps.
+# Libraries that must OVERRIDE what the BWAPI jar bundles, not just fill gaps.
 #
-# junixsocket: JBWAPI-Rav ships junixsocket 1.0.x, whose
+# These stay whatever BWAPI_JAR is set to: measured 2026-07-11, stock `jbwapi-2.2.0.jar`
+# ships the same junixsocket 1.0.x build as the vendored jar did (identical class
+# sizes and hashes both checked, and
+# `setCreated` in the same three classes), so the override is needed for both.
+#
+# junixsocket: the jar ships junixsocket 1.0.x, whose
 # AFUNIXSocket.newInstance() calls java.net.Socket.setCreated() - a method that
 # does not exist after Java 8. On a modern JVM (this machine runs 17) the call
 # throws
@@ -139,11 +154,16 @@ done
 # any more.)
 
 mkdir -p "$(dirname "$OUT_JAR")"
-python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "$SOURCE_FINGERPRINT" "${RUNTIME_LIBS[@]}" "--" "${OVERRIDE_LIBS[@]}" <<'EOF'
+# $5 is the BWAPI jar explicitly, as well as being the first RUNTIME_LIBS entry: the
+# packaging step treats it differently from every other library (it is merged whole, and
+# its bwem classes must lose to our fork), so it must not be discovered by position.
+python3 - "$OUT_JAR" "$WORK/classes" "$MODE" "$SOURCE_FINGERPRINT" "$BWAPI_JAR" \
+    "${RUNTIME_LIBS[@]}" "--" "${OVERRIDE_LIBS[@]}" <<'EOF'
 import sys, zipfile, os, posixpath
 
 out_jar, classes, mode, fingerprint = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
-rest = sys.argv[5:]
+bwapi_jar = sys.argv[5]
+rest = sys.argv[6:]
 sep = rest.index('--')
 runtime_libs = rest[:sep]
 override_libs = rest[sep + 1:]
@@ -173,19 +193,19 @@ for root, _, files in os.walk(classes):
         else:  # resources: there are none in use, but never lose one silently
             print('WARN: packaged resource %s' % arc)
 
-# --- everything JBWAPI-Rav brings -----------------------------------------
+# --- everything the BWAPI jar brings ---------------------------------------
 # All of it, not just bwapi/bwem: the jar also carries JNA (com/sun/jna/**)
 # with its win32/x86-64 natives, and jnativehook (atlantis.keyboard.AKeyboard)
 # needs it at runtime. Taking only bwapi/bwem produced a jar that died in the
 # game with:
 #   UnsatisfiedLinkError: Native library (com/sun/jna/win32-x86/jnidispatch.dll)
 #   not found in resource path ([file:/.../AI/Atlantis.jar])  (GAME_C628E0B7)
-rav = zipfile.ZipFile('lib/JBWAPI-Rav.jar', 'r')
+rav = zipfile.ZipFile(bwapi_jar, 'r')
 rav_entries = {}
 for name in rav.namelist():
     if name.endswith('/') or name == 'META-INF/MANIFEST.MF':
         continue
-    # JBWAPI-Rav itself ships a stray maven-wrapper.jar at its root - build
+    # The BWAPI jar itself ships a stray maven-wrapper.jar at its root - build
     # detritus of whoever assembled that jar, 48 KB of nothing.
     if name.startswith('maven-wrapper'):
         continue
@@ -193,7 +213,7 @@ for name in rav.namelist():
 
 # src/bwem/BWMap.java is a FORK of the BWEM API - it adds chokes(), which the
 # atlantis code calls (Chokes.chokes() and friends). So *our* compiled bwem must
-# win over JBWAPI-Rav's; JBWAPI-Rav only fills the gaps (bwapi/**, JNA, natives,
+# win over the library's; the library only fills the gaps (bwapi/**, JNA, natives,
 # and every bwem class we do not compile). The deployed jar that worked before
 # had exactly this layering, whatever a stale comment in an older version of this
 # script claimed.
@@ -212,7 +232,7 @@ if mode == 'thin':
     # `java -jar` (that is how scbw starts a bot, see sc-docker
     # docker/scripts/play_common.sh) honours a relative Class-Path, so the
     # libraries live in a lib/ folder next to the jar and stay replaceable -
-    # JBWAPI-Rav included, so the jar itself stays ~2.4 MB.
+    # the BWAPI jar included, so the jar itself stays ~2.4 MB.
     manifest.append('Class-Path: ' + ' '.join(
         'lib/' + posixpath.basename(lib) for lib in runtime_libs
     ))
@@ -226,7 +246,7 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
     zout.writestr('ATLANTIS_SOURCE_FINGERPRINT', fingerprint + '\n')
     entries = dict(ours)
     if mode == 'fat':
-        # JBWAPI-Rav whole (bwapi/, bwem/, JNA, natives), but without overwriting
+        # the BWAPI jar whole (bwapi/, bwem/, JNA, natives), but without overwriting
         # anything we compiled.
         for arc, data in rav_entries.items():
             entries.setdefault(arc, data)
@@ -234,7 +254,7 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
         # already contributed (junixsocket), so they must assign, not setdefault.
         # See OVERRIDE_LIBS above for why.
         #
-        # The whole org/newsclub package from JBWAPI-Rav is dropped first, and
+        # The whole org/newsclub package the jar ships is dropped first, and
         # this is the part that is easy to get wrong: JBWAPI ships junixsocket
         # 1.0.x (20 classes, AFUNIXSocket extends java.net.Socket), the override
         # ships 2.10.1 (1500+ classes, AFUNIXSocket extends AFSocket). Overriding
@@ -296,7 +316,7 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
                         if '/jni/' in name and '-clang/' in name:
                             entries[name.replace('-clang/', '/')] = z.read(name)
         for lib in runtime_libs:
-            if lib.endswith('JBWAPI-Rav.jar'):
+            if lib.endswith(posixpath.basename(bwapi_jar)):
                 continue  # already merged above, and it must not overwrite our bwem fork
             with zipfile.ZipFile(lib, 'r') as z:
                 for name in z.namelist():
@@ -340,26 +360,27 @@ with zipfile.ZipFile(out_jar) as z:
     ours_refs = [n for n in names
                  if n.endswith('.class') and (b'tests/' in z.read(n) or b'starengine/' in z.read(n))]
     assert not ours_refs, 'production classes reference the harness: %s' % ours_refs[:5]
-    # our forked bwem.BWMap adds chokes() to the BWEM API; if JBWAPI-Rav's
+    # our forked bwem.BWMap adds chokes() to the BWEM API; if the library's
     # version shadowed it, every choke lookup dies at runtime with
     # NoSuchMethodError: bwem.BWMap.chokes()Ljava/util/List; (GAME_BA5E7286)
     bwmap = zipfile.ZipFile(out_jar).read('bwem/BWMap.class')
     assert b'chokes' in bwmap, 'bwem.BWMap in the jar has no chokes() - wrong version packaged'
     if mode == 'fat':
         for required in ('bwapi/BWClient.class', 'bwem/BWEM.class', 'com/sun/jna/Native.class'):
-            assert required in names, 'missing %s (JBWAPI-Rav must be packaged whole)' % required
+            assert required in names, 'missing %s (the BWAPI jar must be packaged whole)' % required
     else:
-        # thin: JBWAPI-Rav stays a library, so it must be on the Class-Path and
+        # thin: the BWAPI jar stays a library, so it must be on the Class-Path and
         # really present next to the jar
         class_path = zipfile.ZipFile(out_jar).read('META-INF/MANIFEST.MF').decode()
-        assert 'JBWAPI-Rav.jar' in class_path, 'thin jar without JBWAPI-Rav on the Class-Path'
+        assert posixpath.basename(bwapi_jar) in class_path, \
+            'thin jar without %s on the Class-Path' % posixpath.basename(bwapi_jar)
         for lib in runtime_libs:
             assert os.path.exists(os.path.join(os.path.dirname(os.path.abspath(out_jar)),
                                                'lib', os.path.basename(lib))), \
                 'thin mode: %s missing from lib/' % lib
 
 # The packaged junixsocket must be the Java-8+-compatible one, not the 1.0.x
-# JBWAPI-Rav bundles: the old AFUNIXSocket calls Socket.setCreated(), which
+# the BWAPI jar bundles: the old AFUNIXSocket calls Socket.setCreated(), which
 # throws on any JVM after 8 and makes every POSIX client fail to attach
 # (measured 2026-10-07). Assert the override really won.
 # The whole junixsocket package must be the 2.10.1 one, never a mix with
