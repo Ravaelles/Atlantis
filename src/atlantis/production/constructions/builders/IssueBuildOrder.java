@@ -105,6 +105,33 @@ public class IssueBuildOrder extends HasUnit {
                         return true;
                     }
 
+                    // REFUSED, and the reason is measured: the engine will not accept a Build
+                    // while the worker's own order is still `Move`. A refused Gateway attempt
+                    // reads `lastCommand=Move getOrder=Move isMoving=true distToBuild=0.6`,
+                    // while every Pylon that succeeds reads `lastCommand=Build
+                    // getOrder=PlaceBuilding` - because a Pylon is issued after the worker has
+                    // arrived and stopped.
+                    //
+                    // So the sequence has to be explicit: stop first, build next frame. It
+                    // must NOT be done by moving away (the worker is already ~1 tile from the
+                    // site, which is why `moveToConstruct` stops issuing moves) and it must not
+                    // be skipped, or the construction sits NOT_STARTED until
+                    // `CancelTooLongConstructions` kills it - the measured 35-43s cancels.
+                    // PROBE (NEXT.md #59): WHICH engine gate refused a refused build.
+                    // `canCommand` and `canBuildHere` are already known true from
+                    // logBuildAttempt, so what is left to separate is the type check and the
+                    // `isBuilding || isInterruptible` term. Printed only under BUILDER_LOG=1,
+                    // and only on a REFUSAL, so it costs nothing on the working path.
+                    if (atlantis.config.env.Env.builderLog()) {
+                        System.err.println("BUILD_REFUSED_WHY " + buildingType.name()
+                            + " canBuild=" + unit.u().canBuild(buildingType.ut(), buildTilePosition)
+                            + " isInterruptible=" + unit.u().isInterruptible()
+                            + " isBuilding=" + unit.u().getType().isBuilding()
+                            + " isMoving=" + unit.u().isMoving()
+                            + " getOrder=" + unit.u().getOrder()
+                            + " lastCommand=" + unit.lastCommandName());
+                    }
+
                     if (
                         A.canAfford(buildingType.mineralPrice() - 8, buildingType.gasPrice())
                             && TravelToConstruct.cantBuildHere(construction, buildingType)

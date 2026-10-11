@@ -38,6 +38,32 @@ public class BuilderManager extends Manager {
 
         Construction construction = ConstructionRequests.constructionFor(unit);
         if (construction != null) {
+            // Per-second while BUILDER_LOG=1, because the old gate was once per 30 GAME MINUTES
+            // (and `printMaxOncePerMinute` on top of that): a 20-minute game produced ONE line,
+            // which cannot answer "what did this worker do for the 43 seconds before its
+            // construction was cancelled" - the exact question NEXT.md #59 is blocked on. The
+            // state that matters is a TRIO over time: the action, the last command and whether
+            // the engine says the worker is constructing. Kept behind the env flag so a normal
+            // run is silent.
+            if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
+                System.err.println("BUILDER_STATE @" + A.now()
+                    + " unit=#" + unit.id() + " " + unit.type().name() + " @[" + unit.tx() + "," + unit.ty() + "]"
+                    + " construction=" + construction.buildingType().name()
+                    + " status=" + construction.status()
+                    + " site=[" + (construction.buildPosition() == null ? "null"
+                        : construction.buildPosition().tx() + "," + construction.buildPosition().ty()) + "]"
+                    + " distToSite=" + (construction.buildPosition() == null ? "-"
+                        : A.digit(unit.distTo(construction.buildPosition())))
+                    + " action=" + unit.action().name()
+                    + " lastActionAgo=" + unit.lastActionAgo(unit.action())
+                    + " lastCommand=" + unit.lastCommandName()
+                    + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
+                    + " isConstructing=" + unit.isConstructing()
+                    + " isMoving=" + unit.isMoving()
+                    + " canAfford=" + A.canAfford(construction.buildingType().mineralPrice(),
+                        construction.buildingType().gasPrice())
+                    + " manager=" + unit.manager());
+            }
             if (atlantis.config.env.Env.isLocal() && A.now() % (30 * 60) == 0) {
                 ErrorLog.printMaxOncePerMinute("Builder diagnostic: unit=" + unit + " construction="
                     + construction.buildingType() + " status=" + construction.status()

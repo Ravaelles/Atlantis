@@ -617,21 +617,41 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
   ---
 
-  **STILL OPEN, and it is the real blocker now (measured, not inferred):** the Gateway
-  construction is created and its builder walks to it, and `unit.build` is **never called for
-  it**, while a *Pylon* in the same run gets `engineAccepted=true`. Observed: a Probe at
-  `[113,11]` with the site at `[112,10]` - one tile, `distToBuild≈1`, `buildable:true`,
-  `min=834` - and no `BUILD_ATTEMPT` for the Gateway at all, then a 29s/43s cancel. Two Gateways
-  were requested at different tiles (`[112,10]`, `[112,17]`) and both were cancelled.
+  **STILL OPEN, and the cause is now NAMED AND MEASURED (not inferred): the engine refuses
+  `Build` while our own last accepted order for that worker is `Move`.** From a `BUILDER_LOG=1`
+  run, the build-attempt lines side by side:
 
-  **Next measurement (narrow, ~5 lines):** the builder diagnostic is `printMaxOncePerMinute`-
-  throttled, so a run yields **one** line for the whole game and cannot answer "what was this
-  worker doing for 43 seconds". Change `BuilderDiagnostics`/`BuilderManager`'s diagnostic to
-  print once per second per builder (or gate it on `Env.builderLog()` only), then read the
-  Gateway builder's action/`lastCommand`/`isConstructing` over the window. The question is
-  exact: is `IssueBuildOrder.considerIssuingNow` unreachable for this worker (a gate), or is it
-  reached and `unit.build` returns false (a command refusal - then `BUILD_ATTEMPT` would appear,
-  and it does not).
+  ```
+  Pylon    engineAccepted=true   distToBuild=0.0  isMoving=true  lastCommand=Build
+  Pylon    engineAccepted=true   distToBuild=0.9  isMoving=true  lastCommand=Build
+  Pylon    engineAccepted=true   distToBuild=0.6  isMoving=true  lastCommand=Build
+  Gateway  engineAccepted=false  distToBuild=0.4  isMoving=true  lastCommand=Move   <- refused
+  ```
+
+  **`distToBuild`, `isMoving` and the action are identical** for the Pylons that work and the
+  Gateway that does not. **The only difference is `lastCommand`**: `Build` vs `Move` - and
+  `lastCommandName()` reads the ENGINE's own `getLastCommand()`, so it is the engine telling us
+  our last accepted order was a move. The Gateway therefore sits `NOT_STARTED` until
+  `CancelTooLongConstructions` kills it at 35-43s, which is the churn the owner sees.
+
+  **Why Pylons are immune:** a Pylon's site is chosen in open ground and the worker arrives and
+  its move settles (`getOrder=PlaceBuilding` in the working trace); the Gateway site shares its
+  area with other builders/units, so `moveToConstruct` keeps re-issuing moves into the frames
+  where `IssueBuildOrder` then tries the build.
+
+  **A `stop`-then-build attempt was added and did NOT fix it** (`IssueBuildOrder`: on a refused
+  build, if `unit.isMoving()` stop and return). Measured: `stop` was never even reached in the
+  following run, and `gateways=0` again - so the assumption behind it (that the worker is moving
+  at that moment) is not what holds. **Do not repeat that patch without a trace showing the
+  stop being issued.**
+
+  **Next measurement, exact and cheap:** in `IssueBuildOrder`, the moment `unit.build(...)`
+  returns false, print `unit.u().canBuild(type, tile)`, `unit.u().canIssueCommand(canBuild(
+  type, tile))` and `unit.u().getOrder()` - i.e. WHICH engine gate says no, rather than assuming
+  it is the order type. The one thing already known is `canCommand=true` (printed) and
+  `canBuildHere=true` (printed), so the remaining terms are `canIssueCommandType` and the
+  `isBuilding || isInterruptible` branch - and `isInterruptible` was measured true earlier in
+  `PLAN-STAGE4-COMMAND-PATH.md`, which makes `canIssueCommandType` the last candidate standing.
 
   **Superseded framing, kept for the record: "it worked hours ago, now it does not".**
 
