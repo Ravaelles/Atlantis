@@ -39,6 +39,32 @@ region-based `Game.hasPath` -> **false**, because OpenBW publishes no regions.
 **A is the plan.** B and C are recorded because A is not small, and a future session
 deserves to know what the alternatives cost rather than rediscovering them.
 
+## WITHDRAWN: patching the harness (option C) would change nothing
+
+Option C above proposed patching `Shared/Templates.h` to skip the reachability check
+when the engine has no regions. **It cannot work, and the reason is a correction to
+this plan's own earlier claim.**
+
+`Shared/Templates.h` is compiled into `libBWAPIClient.a` and the **C++** client
+(`BWAPIClient/Source/GameImpl.cpp` and `UnitImpl.cpp` include it, as do
+`BWAPI/Source/BWAPI/*`). **Our bot is the Java client.** It has its own, purely-Java
+implementation of the same methods:
+
+- `bwapi/Game.class` contains 7 `canBuildHere` references - Java logic, no native call;
+- `bwapi/Client.class` picks `bwapi/ClientConnectionPosix` / `ClientConnectionW32` for its
+  transport - Java and junixsocket, no C++ client library;
+- nothing in the Java path loads `libBWAPIClient.a` or `libBWAPILIB.so`.
+
+So the refusal happens entirely inside the JVM, in `Unit.issueCommand` ->
+`canIssueCommand` (**offset 2**, confirmed by disassembly: `canIssueCommand(cmd)` /
+`ireturn`), and the *server* never sees the command at all - `Server.cpp` has no
+`canBuildHere` handling, and `GameCommands.cpp` queues `MakeBuilding` unconditionally once
+a command arrives.
+
+**Consequence:** a C++ patch would cost a harness rebuild and change not one line that
+executes in our runs. That option is removed, not deferred. The four options are now
+effectively three, and the library's Java validation is the wall.
+
 ## The refusal is now traced to the exact line (2026-10-10)
 
 Every gate on the way to it was checked, by disassembly and by a probe that printed the
