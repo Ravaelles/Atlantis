@@ -1035,12 +1035,49 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Nexus added to the queue AGAIN. Either the first Nexus was never built, or it was built and
   `basesWithPlanned()` does not count it, and both read the same in the log.
 
-  **Not reproduced yet.** A run that reaches 777+ minerals is needed, and the bounded runs so
-  far have not (the 150 s run above ended at `Probe=14` with the opening still going). The
-  first measurement is to make that happen - `INGAME_TIME` long enough for the economy to
-  reach the threshold - then watch whether a Nexus appears in `ConstructionRequests` once and
-  completes, or appears twice. `Count.basesWithPlanned()` and `Count.existingOrInProductionOrInQueue`
-  are the two functions to instrument, since they are what the second decision reads.
+  **REPRODUCED AND THE CAUSE FOUND: `isOverdue` was cancelling the whole plan.** A 1209-second
+  run reproduced the re-queue (7× `Nexus ADDED TO QUEUE`, three seconds apart), and the log
+  around it named the mechanism:
+
+  ```
+  Cancel construction: Pylon    / Pylon is overdue                / buildable:true
+  Cancel construction: Gateway  / Last resort - cancelling ALL not started
+  Cancel construction: Nexus    / Last resort - cancelling ALL not started
+  ```
+
+  `Construction.isOverdue()`:
+
+  ```java
+  if (hasStarted()) return false;                    // status != NOT_STARTED || buildingUnit() != null
+  ...
+  return A.ago(timeOrdered) > 30 * 22;               // 22 seconds
+  ```
+
+  `buildingUnit()` is always null on OpenBW (the `buildUnit()` defect, this item), so the
+  status carried the entire decision - and a construction whose builder is still WALKING is
+  `NOT_STARTED` by definition, because the status advances when the worker starts building,
+  not when it is dispatched. A Nexus site 26 tiles away therefore looked exactly like a worker
+  that had given up.
+
+  The reaction is what makes it severe: `OverdueConstructions.whenDoesNotRequirePower` cancels
+  the construction, cancels every other not-started building, re-queues, and if the re-queue
+  returns null runs `Last resort - cancelling ALL not started`. **One slow walk flushed the
+  entire plan**, which is why the same Nexus was ordered seven times and almost nothing was
+  ever finished.
+
+  **Fixed in `isOverdue`: an assigned, living builder means it is not overdue.** That is what
+  "overdue" means - nobody is working on it. Measured after: `Last resort - cancelling ALL`
+  goes 0, `is overdue` 0, `Nexus ADDED TO QUEUE` 2 (a normal re-plan), on the same 1209-second
+  run.
+
+  **Still open, and it is the next layer:** with the cancellations gone the bot stops at
+  `Probe=25 Pylon=4` and builders sit on `Pylon status=NOT_STARTED` 701 frames against 38
+  frames of `IN_PROGRESS` - while four Pylons did get built, so `isConstructing` is not a
+  reliable "has this worker started" signal either. The completion path from #53 uses it, so
+  that is where the next measurement goes: either the status should also advance when the
+  building EXISTS at the site (which `buildingFinishedAtSite` already detects for the other
+  half), or the engine's `isConstructing` needs a second condition. Do not guess which - the
+  probe is cheap and the two have different consequences.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

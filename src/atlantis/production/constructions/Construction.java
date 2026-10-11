@@ -311,10 +311,49 @@ public class Construction implements Comparable<Construction> {
         cache.clear();
     }
 
+    /**
+     * Has this construction waited long enough to be considered stuck?
+     *
+     * <p>
+     * <b>"Not started yet" is not the same as "stuck", and the difference is the whole of
+     * this method.</b> It is called from {@code OverdueConstructions}, whose reaction is
+     * destructive: cancel the construction, cancel every other not-started one, and re-queue -
+     * so a false positive here does not cost one building, it flushes the plan.
+     * </p>
+     *
+     * <p>
+     * <b>What went wrong (measured 2026-10-11, owner's log):</b> the only states recognised as
+     * "progressing" were {@code status != NOT_STARTED} and {@code buildingUnit() != null}. The
+     * second is always null on OpenBW (the {@code buildUnit()} defect, {@code NEXT.md} #53), so
+     * in practice the status carried the whole decision - and a construction whose builder is
+     * still WALKING has {@code NOT_STARTED} by definition, because the status advances when the
+     * worker starts building, not when it is dispatched. A worker sent across the map therefore
+     * looked exactly like a worker that gave up:
+     * </p>
+     *
+     * <pre>
+     *   Cancel construction: Pylon       / Pylon is overdue                / buildable:true
+     *   Cancel construction: Gateway     / Last resort - cancelling ALL not started
+     *   Cancel construction: Nexus       / Last resort - cancelling ALL not started
+     * </pre>
+     *
+     * <p>
+     * <b>The fix is to ask whether anyone is still working on it</b>, which is what "overdue"
+     * actually means. An assigned, living builder that has been getting closer is progress even
+     * while the status says NOT_STARTED; nothing assigned is not.
+     * </p>
+     */
     public boolean isOverdue() {
         if (hasStarted()) return false;
         if (buildingType != null && buildingType.isBase()) return false;
         if (!A.canAfford(buildingType)) return false;
+
+        // A builder is on its way, or already here and about to start: give it the time.
+        // Without this a long walk across the map is indistinguishable from a stall, and the
+        // reaction to a stall is to cancel everything that has not started.
+        if (builder != null && builder.isAlive()) {
+            return false;
+        }
 
 //        int secondsSinceStarted = A.ago(timeOrdered) / 30;
 //        if (secondsSinceStarted >= 12) {
