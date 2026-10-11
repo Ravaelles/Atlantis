@@ -254,7 +254,20 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   before anyone touches it: a construction whose builder is assigned a frame later would
   be cancelled by the safety net.
 
-- **#42** First assimilator never ordered despite a finished Cybernetics Core
+- **#42 CLOSED 2026-10-11 (by execution, without a dedicated fix) - the first Assimilator is
+  built.** Measured on a 251-second OpenBW run:
+  `### Protoss: Nexus=1 Probe=21 Pylon=4 Gateway=2 Zealot=6 CyberneticsC=1 Assimilator=1
+  (1 lost) ###`. The item had tracked "0 gas mined all game, dragoons impossible from frame
+  one" and suspected the `Strategy.isExpansion() && supply <= 44` gate or the buildings
+  commander's `applies()`. **Neither was the cause**: the bot simply never got that far,
+  because the construction pipeline could not match a finished building to its construction
+  and deadlocked its workers before the tech tree was reached. Once that was fixed (see the
+  `DefineConstructionForNewUnit` note under #49) the assimilator appeared on its own, with no
+  change to any gate. The diagnostics added for this item (reason labels on producer
+  rejections) stay - they are what a future "production stopped" report will be read from.
+
+  **Superseded description, kept as the record of the hunt:** First assimilator never ordered
+  despite a finished Cybernetics Core
   (`GAME_29A29B04`: 0 gas mined all game, dragoons impossible from frame one, book #9
   at supply 22 never fired and neither did the dynamic path). Suspects, in order:
   `Strategy.isExpansion() && supply <= 44` (supply peaked at 40), the buildings
@@ -492,7 +505,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
        `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
        refusals. Still not verified on OpenBW.
 
-  - **#49 CLOSED 2026-10-11 - A PYLON IS BUILT.** `### Protoss buildings: Pylons=1 ###`,
+  - **#49 CLOSED 2026-10-11 - A PYLON IS BUILT, AND THE CHAIN RUNS.** The fix that finished
+    it is written up in the commit that follows the library patch: `DefineConstructionForNewUnit`
+    matched a new building to its construction by NOT_STARTED status, while the building's own
+    construction was already IN_PROGRESS by then - so every building logged
+    `CANNOT define construction` and its worker stayed claimed forever. Matching is positional
+    now. With that, `CANNOT define construction`, `No construction for`, the
+    `Refresh .. position` / `WTF?!? Cancel and request again` loop and `Can't find place` are
+    all ZERO in a run, and the bot completes a tech chain:
+    `Pylon=4 Gateway=2 CyberneticsC=1 Assimilator=1`. `### Protoss buildings: Pylons=1 ###`,
     with `engineAccepted=true`, `getOrder=PlaceBuilding`, and the bot continuing to the
     next build-order item (a Forge). The remaining blocker turned out to be one line in
     JBWAPI (`Game.hasPath` is region-based; OpenBW publishes no regions, so it answered
