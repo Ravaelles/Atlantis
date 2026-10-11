@@ -60,7 +60,9 @@ current state rather than the history (its milestone table at the top is the map
   Stages 1-3 are done; stage 4 moved to its own file.
 - **`PLAN-STAGE4-COMMAND-PATH.md`** - the remaining blocker: the library's own
   `canBuild` refuses the order, whatever our reachability says. The four options with
-  their costs, and the first task (a stack trace, not an edit).
+  their costs; the issuing path is now measured (the legacy builder chain, not V2).
+- **`IDEA-TERRAIN-CACHE.md`** - whether to cache the per-map region analysis. Measured
+  (~0.7 ms once per game) and recommended **not yet**, with the trigger to revisit.
 - **`IDEA-E2E-TESTS.md`** - what E2E means here, what exists today, and the next
   steps (§3.5).
 - **`DOCS/adr/`** - accepted decisions (ADR 0001 modular monolith, 0003 DDD

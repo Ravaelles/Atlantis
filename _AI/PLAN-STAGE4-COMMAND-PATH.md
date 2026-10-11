@@ -39,16 +39,40 @@ region-based `Game.hasPath` -> **false**, because OpenBW publishes no regions.
 **A is the plan.** B and C are recorded because A is not small, and a future session
 deserves to know what the alternatives cost rather than rediscovering them.
 
+## MEASURED (2026-10-10): the order is issued by the LEGACY path, not by V2
+
+First task done - a stack trace at `BwapiOrderSink.build` on a live run. All **46** build
+attempts have **one identical chain**:
+
+```
+BUILD_ISSUER engineAccepted=false building=Protoss_Pylon tile=[16,46]
+  atlantis.units.BwapiOrderSink.build
+  < atlantis.units.AUnitOrders.build                    <-- the debounce guard
+  < atlantis.production.constructions.builders.IssueBuildOrder.considerIssuingNow
+  < atlantis.production.constructions.builders.TravelToConstruct.travelWhenReady
+  < atlantis.production.constructions.builders.BuilderManager.handle
+  < atlantis.architecture.Manager.invokeFrom ...
+  < atlantis.units.workers.WorkerHandlerCommander.handle
+  < atlantis.architecture.Commander.invokedCommander
+```
+
+**`GameOrderDirector` does not appear at all.** So in this configuration the V2
+`OrderDirector` is not what calls `Unit.build` - the legacy `BuilderManager ->
+TravelToConstruct -> IssueBuildOrder` chain is, and V2 (if it is engaged at all here)
+hands execution to `Construction`, which is exactly what `NEXT.md` #45 says it does
+("V2 delegates builder execution to it").
+
+**What that means for the edit, and why it is good news:** the single place to change is
+`IssueBuildOrder.considerIssuingNow` / `TravelToConstruct` - one method chain, reached
+from one `BuilderManager` - and not a scattered set of directors. It is also the chain
+`PLACEMENT-CUTOVER-PLAN.md` already scheduled for deletion, so the change is on the
+path of the cut-over rather than beside it.
+
 ## What A actually requires (the concrete steps)
 
-1. **Identify the one call that must change.** In the V2 path the builder order is issued
-   by `GameOrderDirector` -> `Construction` -> `TravelToConstruct` ->
-   `IssueBuildOrder` -> `unit.build(...)`. The edit is not "delete validation" - it is
-   "route the placement decision through the planner that already decided the tile is
-   reachable", i.e. the V2 dispatcher's own order path. **First measurement:** print the
-   full call stack at `BwapiOrderSink.build` in a LIVE run (`PLACEMENT=catalogue
-   PRODUCTION_V2=LIVE`) to see which path issues it today. Do not guess this from source
-   reading - the legacy and V2 paths overlap on purpose during the cut-over.
+1. **DONE - the issuing path is identified** (above): the legacy builder chain, one
+   call site. The remaining question is not *where* but *what to replace it with*, and
+   that is the cut-over, not a patch.
 2. **Prove V2+LIVE issues a build at all.** Still gated on `NEXT.md` #48 (the re-dispatch
    loop) - a LIVE run currently never reaches a stable "issue once" state. #48 is
    therefore the real first task of stage 4, not a side quest.
