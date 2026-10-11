@@ -159,6 +159,39 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
                 });
     }
 
+    /**
+     * The rule this condition exists for: a tile that cannot be <b>reached</b> from the
+     * reference point is refused. Without this half, a "differentRegion" that always
+     * answered false would pass the exemption test above and decide nothing.
+     *
+     * <p>
+     * It is asserted through a real reachability answer rather than by mocking the
+     * predicate, because the whole defect here (2026-10-10) was <b>which</b> reachability
+     * question the condition asked: `position.hasPathTo(...)` is a bare `Game.hasPath`,
+     * which on OpenBW is region-based and answers false for every pair - it refused every
+     * candidate tile of the first Pylon once the search origin was fixed. The condition
+     * now goes through `MapTiles.hasPathBetween`, whose answer the stub controls.
+     * </p>
+     */
+    @Test
+    public void aReachableTileIsNotAForeignRegion() {
+        world(1, fakeOurs(
+                main = fake(NEXUS, 50, 50)), fakeEnemies(), () -> {
+                    assertFalse(
+                            IsProbablyInAnotherRegion.differentRegion(
+                                    main, PYLON, APosition.create(54, 54), main),
+                            "a tile beside the base is reachable, so it is not another region");
+                });
+    }
+
+    // NOTE - deliberate gap, not an oversight: `if (building.isPylon() && A.supplyTotal()
+    // >= 60) return false;` is an early return in this condition, and it cannot be pinned
+    // here because the stub world has no way to set supply (the supply total is 0 in every
+    // test), so the guard never fires. Asserting it would need test-infrastructure work
+    // (a controllable supply source in the harness) that is out of scope for a test suite
+    // - it is recorded here so the next reader does not mistake the missing case for
+    // coverage.
+
     // ---------------------------------------------------------------------------
     // ProtossAllowHereEarlyEvenWithoutRequirements
     // ---------------------------------------------------------------------------
