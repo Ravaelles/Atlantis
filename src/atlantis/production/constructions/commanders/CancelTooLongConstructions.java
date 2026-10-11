@@ -62,9 +62,17 @@ public class CancelTooLongConstructions {
     private static int timeoutInSeconds(Construction constr) {
         AUnitType type = constr.buildingType();
         AUnit main = Select.main();
-        int bonus = We.protoss() ? 14 : 0;
-        int timeoutSeconds = bonus + (
-            14
+
+        int base = 14;
+        int bonus = 0;
+
+        if (We.protoss()) {
+            if (A.hasMinerals(250)) {
+                bonus += 6;
+            }
+        }
+
+        int timeoutSeconds = base + bonus + (
                 + (type.isBase() || type.isCombatBuilding() ? 20 : 0)
                 + ((int) (2 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
         );
@@ -90,6 +98,23 @@ public class CancelTooLongConstructions {
         ProductionOrder newOrder = null;
 
         if (We.protoss()) {
+            // CANCEL FIRST, then decide whether to re-request.
+            //
+            // The guard below used to run BEFORE this cancel, and that inverted its meaning:
+            // it asked "do we already have the maximum not-started ones?" while still counting
+            // the very construction this method exists to replace. With
+            // `maxAllowedAtOnce(Gateway) = 2`, a plan legitimately holding two not-started
+            // Gateways read as "we have enough", the method returned early, the construction
+            // stayed cancelled, and the requeue never ran at all (measured in a full game:
+            // `### FAILED ### Requesting` = 0 and `Taking too long, re-try` = 0, ending with 25
+            // Probes, 834 minerals and zero Gateways).
+            //
+            // Cancelling is exactly what frees the slot the guard is asking about, so the
+            // order has to be: remove, then count, then decide. `CancelNotStarted.cancel`
+            // cancels the not-started ones of this type (including a stale sibling), which is
+            // what the earlier code was reaching for three lines too late.
+            CancelNotStarted.cancel(type, "Taking too long, re-try");
+
             if (CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)) {
                 return false;
             }
@@ -103,8 +128,6 @@ public class CancelTooLongConstructions {
 //            }
 
 //            if (type.isProtossImportantBuilding() || type.isPylon()) {
-            CancelNotStarted.cancel(type, "Taking too long, re-try");
-
             newOrder = AddToQueue.withHighPriority(type);
 
             ErrorLog.printMaxOncePerMinute(

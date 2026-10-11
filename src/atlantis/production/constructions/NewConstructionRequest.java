@@ -127,11 +127,24 @@ public class NewConstructionRequest {
             newConstruction.cancel(building + " already being constructed");
 //            if (order.isBuilding() && !order.unitType().isMissileTurret()) {
 //            }
+            // Kept (not temporary): a request refused as a duplicate is otherwise invisible,
+            // and "no new construction appeared" then has two indistinguishable causes - the
+            // producer was gated out, or the request was made and rejected. NEXT.md #59 could
+            // not be diagnosed without this line; it fires only under BUILDER_LOG=1.
+            if (atlantis.config.env.Env.builderLog()) {
+                System.err.println("REQUEST_REFUSED_DUPLICATE " + building
+                    + " existing=" + ConstructionRequests.countAllOfType(building));
+            }
             return null;
         }
         else {
             // Add to list of pending orders
             ConstructionRequests.constructions.add(newConstruction);
+            if (atlantis.config.env.Env.builderLog()) {
+                System.err.println("REQUEST_ACCEPTED " + building
+                    + " at=" + newConstruction.buildPosition()
+                    + " totalOfType=" + ConstructionRequests.countAllOfType(building));
+            }
         }
 
 //            AConsole.printStackTrace("AFTER ADDED");

@@ -589,8 +589,51 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   next run logs `Gateway took too long (43s) / buildable:true` nine times, and the cause is the
   duplicate constructions below, not the refresh loop.
 
-- **#59 (new, 2026-10-11) - "it worked hours ago, now it does not" ANSWERED: no code regression,
-  the Gateway churn is one defect and it is #57/#58's family.**
+- **#59 (2026-10-11) - THE REQUEUE GATE (fixed) + the builder that never fires (open, top
+  blocker). Answering the owner's "it worked hours ago, now it does not": there was NO code
+  regression - see the table below - and the fixable half is now fixed.**
+
+  **FIXED AND VERIFIED IN A GAME: a Gateway cancelled for "taking too long" was never
+  re-requested.** `CancelTooLongConstructions.constructionCancelledRequestAgainBecauseItsImportant`
+  asked "do we already have the maximum not-started ones?" **before** the call that frees the
+  slot:
+
+  ```java
+  if (CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)) return false;
+  ...
+  CancelNotStarted.cancel(type, "Taking too long, re-try");   // frees the slot, too late
+  ```
+
+  `maxAllowedAtOnce(Gateway)` is 2, so a plan holding two not-started Gateways vetoed its own
+  replacement. Measured in a full game before the fix: `### FAILED ### Requesting` = **0** and
+  `Taking too long, re-try` = **0** - the requeue path never executed at all. After the fix, on
+  the same command: **2 and 2**. Test `GatewayRequeueAfterCancelTest` (source-pinned on the
+  ORDER, which is the whole defect; proven to fail on the old order and pass on the new one).
+
+  **A probe kept, deliberately:** `NewConstructionRequest` now logs `REQUEST_ACCEPTED` /
+  `REQUEST_REFUSED_DUPLICATE` under `BUILDER_LOG=1`, because "no new construction appeared" had
+  two indistinguishable causes (producer gated out vs request rejected as duplicate) and this
+  item could not be diagnosed without it.
+
+  ---
+
+  **STILL OPEN, and it is the real blocker now (measured, not inferred):** the Gateway
+  construction is created and its builder walks to it, and `unit.build` is **never called for
+  it**, while a *Pylon* in the same run gets `engineAccepted=true`. Observed: a Probe at
+  `[113,11]` with the site at `[112,10]` - one tile, `distToBuild≈1`, `buildable:true`,
+  `min=834` - and no `BUILD_ATTEMPT` for the Gateway at all, then a 29s/43s cancel. Two Gateways
+  were requested at different tiles (`[112,10]`, `[112,17]`) and both were cancelled.
+
+  **Next measurement (narrow, ~5 lines):** the builder diagnostic is `printMaxOncePerMinute`-
+  throttled, so a run yields **one** line for the whole game and cannot answer "what was this
+  worker doing for 43 seconds". Change `BuilderDiagnostics`/`BuilderManager`'s diagnostic to
+  print once per second per builder (or gate it on `Env.builderLog()` only), then read the
+  Gateway builder's action/`lastCommand`/`isConstructing` over the window. The question is
+  exact: is `IssueBuildOrder.considerIssuingNow` unreachable for this worker (a gate), or is it
+  reached and `unit.build` returns false (a command refusal - then `BUILD_ATTEMPT` would appear,
+  and it does not).
+
+  **Superseded framing, kept for the record: "it worked hours ago, now it does not".**
 
   **There is no commit between the working run and the broken one that changed any behaviour.**
   Verified with `git log --name-only` over the window: the only commit in between (`e657b83f`
