@@ -725,7 +725,131 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction=Gateway status=NOT_STARTED  canAfford=false  action=GATHER_MINERALS
   ```
 
-  **The mechanism, at its line** (`AutoProduceWorkersCommander.shouldProduceWorkers`):
+  **CORRECTED 2026-10-11 (measurement replaced the first reading). The worker gate is a
+  symptom, not the cause.** A probe on `AutoProduceWorkersCommander.dont(...)` printed the
+  refusing gate and the state every second:
+
+  ```
+  WORKER_GATE @24 reason=CantAfford workers=5 minerals=0 reserved=0 supply=5/9
+  ... identical for 180+ frames
+  ```
+
+  `minerals=0` with 5 workers means the workers are not MINING, and the manager census says
+  why:
+
+  ```
+  manager=BuilderManager  2631     <- the workers are 'building'
+  manager=GatherResources    3     <- and almost never mining
+  ```
+
+  **So the real defect is a cyclic deadlock, not a mineral threshold:** constructions wait
+  for
+  minerals (`canAfford=false`), `BuilderManager` holds every worker at those sites, the
+  workers therefore do not mine, no minerals arrive, and the constructions keep waiting.
+  `CantAfford` on the worker goal is the next link in the chain, not its start - a first
+  reading of this item blamed the `hasMinerals(250)` gate below, and that gate is real but
+  secondary: with workers not mining, no threshold would have been reached either.
+
+  **CORRECTED AGAIN 2026-10-11, and this time it is the real cause - `buildUnit()` is
+  null on OpenBW, so a construction that HAS started is never marked started.**
+
+  The probe that settled it (`BUILDER_LOG=1`):
+
+  ```
+  unit=#123 Probe @[13,58] construction=Pylon status=NOT_STARTED at=[13,58]
+  distToBuild=0.3 buildable=true canAfford=true action=BUILD
+  isConstructing=TRUE lastCommand=Build
+  ```
+
+  Everything is fine - the Probe is ON the site, the tile is buildable, the minerals are
+  there, the order was issued, **and the engine reports the unit as constructing**. Yet our
+  `Construction` still says `NOT_STARTED`, so `BuilderManager` keeps the worker assigned to
+  it, and the worker does not return to mining. That is the deadlock: not a mineral
+  threshold and not a worker gate, but a status that never advances.
+
+  **Why it never advances, traced through the layers:**
+
+  - `ConstructionStatusChanger` advances `NOT_STARTED -> IN_PROGRESS` from
+    `builder.buildUnit() != null` (the Zerg metamorphosis branch at line 143 is a
+    different, correctly `We.zerg()`-gated path);
+  - `Unit.getBuildUnit()` reads `unitData.getBuildUnit()` - a shared-memory field;
+  - the harness fills it at `UnitUpdate.cpp:333`:
+    `self->buildUnit = o.currentBuildUnit() ? server.getUnitID(getUnitFromBWUnit(o.currentBuildUnit())) : -1`;
+  - OpenBW **does** set `u->current_build_unit` (`bwgame.h:8203`), so the field exists -
+    what fails is the conversion: `getUnitFromBWUnit(...)` yields a unit the BWAPI id table
+    does not know, `getUnitID` returns -1, and the client reads `null`.
+
+  **This is the fourth instance of one pattern in this engine**: a shared-memory field that
+  StarCraft fills and OpenBW does not fill the way BWAPI expects.
+  `regionCount = 0` broke pathing, `isOccupied` broke the occupancy grid, `hasPath` broke
+  placement, and now `buildUnit` breaks construction status. The first three each cost a
+  session; recognising the shape is the point of writing it down.
+
+  **The good news, and the reason to fix it in Atlantis rather than in the library:**
+  `isConstructing` IS published correctly (`UnitUpdate.cpp:359` computes it in the client)
+  and reads `true` at the moment above. Atlantis does not need `buildUnit` to know that a
+  construction started - it can use the field that works, or the plain fact that the
+  builder is standing on the reserved tile with the building absent. That is a change on
+  our side of the seam and does not require another fork.
+
+  ### Three fixes landed, and the last probe showed the real shape
+
+  What was implemented and measured, in order:
+
+  1. **Status advances on `isConstructing` + builder at the site** (not on `buildUnit()`).
+     Verified: `status=IN_PROGRESS` appears 150 times in a run where it was zero before, and
+     the run reached `Pylons=3 Gateways=2` with minerals peaking at 306 (was ~46).
+  2. **The "was destroyed" guard no longer fires when the building was simply never seen.**
+     It read `(building == null || !building.isAlive())`, and `buildingUnit()` is null on
+     OpenBW for the whole construction, so it cancelled live Pylons 30 frames after they
+     started - measured 5 such cancels. Now it requires a building that WAS seen and has
+     since died.
+  3. **A finished construction is now removed** (`FINISHED` + `removeOrder`), which is what
+     gives the worker back to mining.
+
+  **Fix 3 does not fire yet, and the probe says why - this is the actual remaining
+  defect, and it is not in the status logic at all:**
+
+  ```
+  FINISH_CHECK Pylon at=[16,46] found=null isCompleted=false
+               status=NOT_STARTED builderAtSite=false
+  ```
+
+  On the tile the construction reserved there is **no building**, and the builder is not
+  there either - `Pylons=3` in the same run proves Pylons were built, just **somewhere
+  else**. So the construction and the building it produces have lost track of each other,
+  and the worker is held by a construction whose site is empty forever.
+
+  **That is the same disagreement the owner's log shows from the other side:**
+
+  ```
+  FOUND PLACE FOR Gateway at 118,37
+  FOUND PLACE FOR Pylon at 101,30
+  FOUND PLACE FOR Gateway at 118,37     <- same tile again
+  FOUND PLACE FOR Pylon at 101,30
+  ```
+
+  The finder keeps returning the same tile, so the tile is not the problem - but the
+  construction that ends up recorded is not the one the builder went to. Two candidate
+  places to look, and the next step is a measurement rather than a guess: whether
+  `ConstructionRequests.alreadyExists` replaces the construction with a new object (the
+  "Cancel as construction already exists" path), or whether `RefreshConstructionPosition`
+  moves `buildPosition` after the builder has been sent (the `setPositionToBuild` call that
+  exists to keep a construction valid).
+
+  **The builder-ownership rule from `NEXT.md` #48 made this reachable.** That change gave
+  `BuilderManager` first priority in `WorkerManager` and made it hold an assigned builder
+  even when it cannot issue an order that frame - correct for "do not steal the builder",
+  but it did not bound how many workers can be claimed at once, so a construction whose
+  status never advances claims a worker forever.
+
+  **What it should do instead (owner's call, it is a strategy question):** a worker held at
+  a site that cannot start should return to mining until the site is affordable. The
+  existing `ShouldNotTravelToConstructYet` is exactly that idea for the *travel* half
+  (it refuses to set off when the building is not yet affordable) - the gap is the worker
+  that has already arrived, or that is claimed before the check runs.
+
+  **Superseded detail, kept because the gate is still worth fixing:**
 
   ```java
   if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals())
@@ -758,6 +882,53 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   the worker goal a V2 `DynamicGoals` contributor at `PRIORITY_WORKERS` and let the
   scheduler's arbitration decide instead of the commanders' vetoes - which is what
   Production V2 was built to do.
+
+- **#54 - `RefreshConstructionPosition` can cancel a construction on a tile it calls
+  `buildable:true`, in a `FOUND PLACE` -> `WTF?!? Cancel and request again` loop.**
+  Owner's IDE game, 2026-10-11:
+
+  ```
+  FOUND PLACE FOR Gateway at 118,37
+  FOUND PLACE FOR Pylon at 101,30
+  FOUND PLACE FOR Gateway at 118,37      <- same two tiles, alternating
+  3:21 Refresh CyberneticsC position
+  FOUND PLACE FOR CyberneticsC at 118,37
+  3:21 WTF?!? Cancel and request again.
+  Cancel construction: CyberneticsC / position still not good after refresh
+    / at:[118,37] / buildable:true        <- the tile is called GOOD and refused anyway
+  ```
+
+  **What the log proves:** the finder returns the SAME tile, the refresh asks again, the
+  second `shouldRefreshConstructionPosition` call still answers "refresh needed", and the
+  construction is cancelled and re-requested - landing on the same tile, forever. The
+  tile's own `buildable` reads true while this happens, so the deciding predicate is not
+  the engine's buildability.
+
+  **Why it is two calls to the same predicate, not one:** `handleRefreshingPositionIfNeeded`
+  checks `shouldRefreshConstructionPosition`, refreshes, then checks it AGAIN and cancels
+  when it still says yes. Anything the refresh cannot fix - a predicate that depends on
+  something other than the tile - therefore cancels by construction. The board says the
+  position is fine; the guard disagrees; nothing between them can reconcile it.
+
+  **Not reproduced on OpenBW:** a bounded run has `FOUND PLACE` = 0, so this needs the IDE
+  path (real StarCraft, different timing) to show itself. It is recorded rather than fixed
+  for that reason - a fix without a reproducer here would be guesswork, and this file has
+  the scars to prove it.
+
+  **Related, and it is the same shape as #52's lesson:** a predicate used to ACCEPT must be
+  the same one used to REJECT, or the gap between them is invisible until a game trips it.
+  Worth checking at the same time whether `buildable:true` should short-circuit the second
+  call outright.
+
+- **#55 - the map analysis runs on the IDE path too (`MAP_ANALYSIS areas=38 chokes=54`),
+  which the owner does not expect outside OpenBW.** Reported 2026-10-11: "we normally did
+  not do this, it was not needed". It is not obviously a defect - `AMap.initMapAnalysis()`
+  is unconditional in the pipeline and `verifyMapAnalysisIsUsable()` was added as a
+  diagnosis for OpenBW - but it costs time at startup on every backend and nobody has
+  measured whether that cost is wanted. **Not investigated yet**, and recorded because the
+  owner flagged it as a change in behaviour: either it was always there and went unnoticed
+  (most likely, since the log line is old), or something started calling it. Check with
+  `git log` on `AMap.initMapAnalysis` callers before assuming either.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions

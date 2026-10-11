@@ -128,9 +128,7 @@ public class AutoProduceWorkersCommander extends Commander {
 
     private static boolean dont(String reason) {
         REASON = reason;
-//        if (Select.ourBases().free().notEmpty() && A.hasMinerals(50)) {
-//            System.err.println("No worker: " + REASON);
-//        }
+
         return false;
     }
 

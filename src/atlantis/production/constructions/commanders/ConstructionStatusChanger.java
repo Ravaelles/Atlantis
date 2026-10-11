@@ -10,6 +10,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
@@ -32,11 +33,24 @@ public class ConstructionStatusChanger extends Commander {
     private void checkForConstructionStatusChange(Construction construction) {
         AUnit building = construction.buildingUnit();
 
+        // A construction whose building is GONE - when the building was actually seen.
+        //
+        // `buildingUnit()` is only ever set from `builder.buildUnit()` (below), which reads
+        // a shared-memory field OpenBW does not fill (NEXT.md #53). So on OpenBW it stays
+        // null for the whole construction, and the old form of this guard -
+        // `(building == null || !building.isAlive())` - cancelled every construction 30
+        // frames after it started, with the reason "was destroyed", while the building was
+        // standing and going up. Measured: 5 such cancels in one run.
+        //
+        // The condition is now only about a building we HAVE seen and that has since died.
+        // "We never learned which unit it is" is a fact about the engine, not about the
+        // building, and must not be read as destruction.
         if (
             !We.zerg()
                 && construction.status() == ConstructionOrderStatus.IN_PROGRESS
                 && construction.startedAgo() >= 30
-                && (building == null || !building.isAlive())
+                && building != null
+                && !building.isAlive()
         ) {
             construction.cancel(construction.buildingType() + " was destroyed");
             AConsole.errPrintln("Building destroyed - cancel construction");
@@ -93,6 +107,47 @@ public class ConstructionStatusChanger extends Commander {
 //            }
         }
 
+        // FINISHED: the building type is standing where the construction asked for it, so
+        // the construction is done and must be removed.
+        //
+        // This is the other half of the deadlock (NEXT.md #53): without it a completed
+        // construction stays in `ConstructionRequests` forever, `BuilderManager` keeps
+        // holding its worker, and that worker never returns to mining. Measured: 526 builder
+        // frames on a Pylon whose status was still NOT_STARTED, and `GatherResources`
+        // appearing 5 times against `BuilderManager` 1331.
+        //
+        // It cannot be written against `building.isCompleted()` on the `buildingUnit` the
+        // legacy path uses - that is the null field again. The question asked instead is the
+        // one the game answers: is a finished building of this type sitting on the reserved
+        // tile?
+        if (construction.status() != ConstructionOrderStatus.FINISHED
+            && buildingFinishedAtSite(construction)) {
+            construction.setStatus(ConstructionOrderStatus.FINISHED);
+            ConstructionRequests.removeOrder(construction);
+        }
+
+        // A construction whose builder HAS STARTED BELONGING TO IT must be marked
+        // IN_PROGRESS - otherwise the worker is held at a site it is already building, does
+        // not return to mining, and the base deadlocks (NEXT.md #53).
+        //
+        // This is written against `isConstructing`, NOT against `buildUnit()`, and that is
+        // the whole point: `buildUnit()` reads a shared-memory field that OpenBW does not
+        // fill the way BWAPI expects (`UnitUpdate.cpp:333` converts through
+        // `getUnitFromBWUnit`, the id lookup fails, the client reads null - measured: the
+        // Probe reports `isConstructing=true`, `lastCommand=Build` and `distToBuild=0.3`
+        // while `buildUnit()` returns null). `isConstructing` IS published correctly
+        // (`UnitUpdate.cpp:359`), so the question "did this worker start?" has a usable
+        // answer and does not need the broken field.
+        //
+        // The builder is also required to be at the site: a worker that has merely been
+        // assigned and is still walking is NOT building yet, and marking it early would
+        // stop `TravelToConstruct` from finishing the walk.
+        if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
+            if (builder != null && builder.isConstructing() && builderAtConstructionSite(builder, construction)) {
+                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            }
+        }
+
         // Building doesn't exist yet, means builder is travelling to the construction place
         else if (builder != null && !builder.isMoving()) {
             if (construction.buildPosition() == null) {
@@ -134,6 +189,47 @@ public class ConstructionStatusChanger extends Commander {
 //
 //        return builder;
 //    }
+
+    /**
+     * Is a COMPLETED building of this type standing on the construction's tile?
+     *
+     * <p>
+     * Asked of the live unit list rather than of the construction's own {@code buildingUnit()}
+     * reference, because that reference is only filled from {@code builder.buildUnit()} -
+     * the shared-memory field OpenBW leaves empty ({@code NEXT.md} #53). The unit list is
+     * the source that works on both engines.
+     * </p>
+     *
+     * <p>
+     * The radius allows for the engine shifting a building whose footprint overlaps the
+     * reserved origin, which is why it is not an exact tile comparison.
+     * </p>
+     */
+    private static boolean buildingFinishedAtSite(Construction construction) {
+        if (construction.buildPosition() == null) return false;
+
+        AUnit finished = Select.ourOfTypeWithUnfinished(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition())
+            .nearestTo(construction.buildPosition());
+
+        return finished != null && finished.isCompleted();
+    }
+
+    /**
+     * Is the builder standing on (or beside) the tile it is building on?
+     *
+     * <p>
+     * Used only to decide whether a started construction should be marked in progress, so a
+     * generous radius is right: the engine moves the worker onto the site as the building
+     * goes up, and refusing to notice because it is one tile off would leave the deadlock
+     * in place. What must NOT count is a worker still walking to a distant site.
+     * </p>
+     */
+    private static boolean builderAtConstructionSite(AUnit builder, Construction construction) {
+        if (construction.buildPosition() == null) return false;
+
+        return builder.distTo(construction.buildPosition()) <= 3.5;
+    }
 
     /**
      * The moment zerg drone starts building a building we're not detecting it without this method. This
