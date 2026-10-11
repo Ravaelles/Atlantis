@@ -73,6 +73,11 @@ planner replaces the legacy finder, and the placement decision moves into our co
 which is exactly what makes Stardust immune. The work below is the piece of that
 cut-over that this investigation proved is needed.
 
+> **Stages 1-3 are done and the plan has moved to
+> `_AI/PLAN-STAGE4-COMMAND-PATH.md`**, which restates the four options with their real
+> costs and names the first task (a stack trace at the LIVE build call site, not an
+> edit). Read that one for what to do next; this file explains why the work exists.
+
 ## Target design (SOLID, mirroring Stardust without copying its shape)
 
 Stardust's A\* is the *algorithm*; its `tileValidator` is the *seam*. We take the seam
@@ -110,20 +115,26 @@ asks for.
 
 ## Staged delivery, each step shippable
 
-1. **`WalkabilityGrid` + `ConnectivityRegions` (core, unit-tested).** Pure, no bwapi:
-   a synthetic tile array in, region ids out. Tests: two disconnected areas get
-   different ids; a diagonal gap does not connect; a building added splits a region.
-2. **`Reachability` port + the engine-incapability probe.** Detection only, no
-   behaviour change: it reports whether the engine's `hasPath` works here (the
-   self-neighbour query), and logs it once. Verifiable in a run without touching
-   placement.
-3. **`MapDataReachability` and switch `MapTiles.hasPathBetween` /
-   `IsProbablyInAnotherRegion` to it.** Behaviour-visible, so: a test that the
-   answer is stable and two-sided, then a bounded OpenBW run.
-4. **The command path.** This is the step that actually unblocks the Pylon: once
-   reachability is ours, placement can stop routing the *build command* through a
-   library that re-validates with the engine's broken query - i.e. finish the
-   catalogue cut-over.
+**Status 2026-10-10: steps 1-3 are DONE and committed; step 4 has its own plan
+(`_AI/PLAN-STAGE4-COMMAND-PATH.md`); step 5 is not started.**
+
+1. **`WalkabilityGrid` + `ConnectivityRegions` (core, unit-tested).** DONE - pure, no
+   bwapi, 10 tests, mutation-checked. `ConnectivityRegionsTest` pins the property the
+   engine violates: a tile must reach itself.
+2. **`Reachability` port + `RegionReachability` + the engine-incapability probe.**
+   DONE - `EngineReachabilityProbe` asks whether a walkable tile reaches itself, which is
+   a capability measurement, not a version check; 9 tests over both outcomes.
+3. **Route every caller through the port.** DONE - `ReachableTiles` resolves the
+   implementation once per game and `MapTiles.hasPathBetween`,
+   `IsProbablyInAnotherRegion` and `APosition.hasPathTo` all go through it. Verified in a
+   live run: the probe logged `engine publishes no regions - answered from terrain` on its
+   own, `Region mismatch` fell from 549 to **0**, `Can't find place` stayed at 0.
+4. **The command path.** NOT STARTED - this is the step that actually unblocks the
+   Pylon. Stage 3 changed what *we* believe; the library still runs its own
+   builder-reachability check inside `canBuild`, and a live run confirms it:
+   `engineAccepted=false` on 112 of 112 attempts with every precondition true. Four
+   options with their costs are laid out in `_AI/PLAN-STAGE4-COMMAND-PATH.md`; the plan
+   of record is finishing the catalogue cut-over, and its first task is `NEXT.md` #48.
 5. **`TilePath` (A\*) only if something still needs a real path** - travel time and
    wall/choke routing. Deliberately last: it is the expensive part and nothing in
    this investigation needed it.

@@ -15,7 +15,7 @@ AI assistant.
 |---|---|
 | know **what to work on next** | `NEXT.md` (open backlog; the top item, next priority and current plan are named at the top of the file) |
 | **finish Production V2** | `STATUS.md`, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `NEXT.md` #49 (the measured blocker), `PLAN-REGION-DETECTION.md` (own reachability, so placement stops needing engine regions), `PLACEMENT-CUTOVER-PLAN.md` (the V2 cut-over plan), `redesign/03_PLACEMENT.md` (design + "NOT FINISHED" at the top), `POSITION-FINDER.md` (why it was rewritten) |
+| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #49, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md` |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
@@ -57,6 +57,10 @@ current state rather than the history (its milestone table at the top is the map
   assertions, and what OpenBW cannot do.
 - **`PLAN-REGION-DETECTION.md`** - why the first Pylon is refused (engine regions),
   what Stardust/PurpleWave do instead, and the staged plan for our own reachability.
+  Stages 1-3 are done; stage 4 moved to its own file.
+- **`PLAN-STAGE4-COMMAND-PATH.md`** - the remaining blocker: the library's own
+  `canBuild` refuses the order, whatever our reachability says. The four options with
+  their costs, and the first task (a stack trace, not an edit).
 - **`IDEA-E2E-TESTS.md`** - what E2E means here, what exists today, and the next
   steps (§3.5).
 - **`DOCS/adr/`** - accepted decisions (ADR 0001 modular monolith, 0003 DDD
