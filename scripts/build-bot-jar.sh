@@ -86,12 +86,16 @@ RUNTIME_LIBS=(
     "$BWAPI_JAR"
     "lib/jnativehook-2.2.1.jar"
     "lib/slf4j-api-2.0.12.jar"
-    "lib/kryo-5.6.2.jar"
-    "lib/kryo-deps/minlog-1.3.1.jar"
-    "lib/kryo-deps/reflectasm-1.11.9.jar"
-    "lib/kryo-deps/objenesis-3.2.jar"
     "lib/vecmath.jar"
 )
+
+# Removed 2026-10-11 (NEXT.md #38, owner's ruling): kryo, minlog, reflectasm and
+# objenesis. They existed in every bot jar for `atlantis.debug.object`, which was
+# unreachable from production on two independent counts - `OnEveryFrameHelper.handle()`
+# began with `if (true) return;` and the one call into the subsystem,
+# `serializeMapDataLikeRegionsToAFile()`, opened with the same. A grep for the four
+# packages found no other user. Measured cost of carrying them: ~1 MB of the fat jar
+# for code nothing could call.
 
 # Libraries that must OVERRIDE what the BWAPI jar bundles, not just fill gaps.
 #

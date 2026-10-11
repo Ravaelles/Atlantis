@@ -12,7 +12,7 @@ does not has to stay **out** of it.
 | `atlantis/**`, `main/**`, `jfap/**`, `bweb/**`, `jbweb/**`, `jps/**` | compiled from `src/` | the bot itself |
 | `tests/fakes/**`, `tests/unit/helpers/**`, `tests/acceptance/WorldStubForTests` | compiled from `src/` | **15 production classes import the test harness** (see below) |
 | `bwapi/**`, `bwem/**`, `com/sun/jna/**`, `win32-*/**` | `lib/jbwapi-2.2.0.jar`, whole | the BWAPI bridge, JNA (jnativehook needs it), natives |
-| `com/esotericsoftware/**`, `org/objenesis/**`, `org/reflectasm/**`, `org/minlog/**` | `lib/kryo-5.6.2.jar`, `lib/kryo-deps/*` | `atlantis.debug.object.ObjectToFile` |
+| ~~`com/esotericsoftware/**`, `org/reflectasm/**`, `org/minlog/**`~~ | **removed 2026-10-11** (`NEXT.md` #38) | they existed only for `atlantis.debug.object`, which was unreachable: `OnEveryFrameHelper.handle()` opened with `if (true) return;` and the single call in, `serializeMapDataLikeRegionsToAFile()`, did too. `lib/objenesis-3.2.jar` STAYS in the project - Mockito needs it reflectively for tests - it is simply no longer packaged into the bot jar |
 | `com/github/kwhat/jnativehook/**`, `org/slf4j/**` | `lib/jnativehook-2.2.1.jar`, `lib/slf4j-api-2.0.12.jar` | `atlantis.keyboard.AKeyboard` |
 | `javax/vecmath/**` | `lib/vecmath.jar` | `atlantis.util.Vector` |
 
@@ -25,6 +25,7 @@ does not has to stay **out** of it.
 | `tests/**` **beyond what production imports** | production code reaches into `tests.fakes` / `tests.unit.helpers`, so those classes must be in the jar; the rest of the harness only needs to be *compiled* |
 | JUnit, Mockito, ByteBuddy, Hamcrest, ArchUnit (~15 MB of classes) | test toolchain, never loaded by the game |
 | `lib/lib-unused/jbwapi-2.1.0.jar` | unused, and it *shadows* the jbwapi-2.2.0 classes if it ever wins on the classpath |
+| `kryo`, `reflectasm`, `minlog` | **removed from `lib/` 2026-10-11** (`NEXT.md` #38): their only consumer was the unreachable `atlantis.debug.object` subsystem. Measured jar effect: 10.83 MB -> 10.34 MB. `lib/objenesis-3.2.jar` stays, because Mockito needs it for tests - it is just no longer packaged |
 | the artifact's own output | see below |
 
 ## How the size stayed stable (and how it blew up before)

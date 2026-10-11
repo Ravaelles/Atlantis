@@ -212,16 +212,27 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   force the answer. Cheapest honest version first (the cached `check()`), because the
   static-to-`Manager` conversion is a bigger change than the three duplicated queries
   it would remove. Not urgent: nothing is wrong with the behaviour today.
-- **#38** Removal candidate (not a decision): `atlantis.debug.object` (9 files, 510
-  lines) plus the four libraries its one dead caller needs in the payload - kryo,
-  minlog, reflectasm, objenesis. `BUGS.md` B-25 has the measurements; the owner's
-  answer there was "note it as a candidate for removal, and if nothing plans to use it
-  it is probably a dead idea", and a search of `_AI/IDEA-E2E-TESTS.md`,
-  `_AI/REVIEW.md` and every stage found no plan that uses it. So the work is: decide
-  once, then either delete the subsystem + `serializeMapDataLikeRegionsToAFile()` +
-  `SAVE_UNIT_LOGS_TO_FILES`'s file dump and drop the four jars from
-  `scripts/build-bot-jar.sh`, or revive the routine behind a flag and keep them.
-  Nothing else in the tree reaches any of it.
+- **#38 CLOSED 2026-10-11: `atlantis.debug.object` removed, with three of its four
+  libraries.** The owner's ruling was "if nothing plans to use it it is probably a dead
+  idea", and the audit confirmed it twice over - `OnEveryFrameHelper.handle()` opened
+  with `if (true) return;` **and** the single call into the subsystem,
+  `serializeMapDataLikeRegionsToAFile()`, opened with the same. Both had to be true for
+  the code to be reachable, so neither could run.
+
+  Deleted: `src/atlantis/debug/object/**` (9 classes, 510 lines),
+  `tests/unit/object/ObjectToFileTest` (the suite's only `@Disabled` tests),
+  `serializeMapDataLikeRegionsToAFile`, and `kryo`, `reflectasm`, `minlog` from `lib/`
+  and `RUNTIME_LIBS`. **Measured jar effect: 10.83 MB -> 10.34 MB.**
+
+  **`lib/objenesis-3.2.jar` deliberately stays**: Mockito needs it reflectively for
+  tests (verified - one reference in its jar, and the suite is green with it present). It
+  is only no longer *packaged into the bot jar*; removing it from the project would break
+  the test toolchain, which is a different question from shipping dead code to a game.
+
+  A grep for the four packages found no other user anywhere in `src/`, and the fast suite
+  is green with the subsystem gone (405/405). `BUGS.md` B-25 can be closed with this -
+  the measurement there (6.1 MB fat, 3610 entries, four libraries shipped for unreachable
+  code) is what this resolves.
 - **#39** The Protoss cannon producers are commented out in the buildings commander
   (`// || ProduceCannon.produce()`, `// || ProduceCannonAtNatural.produce()`), disabled
   2024-10-02 (`49a4536a`) and 2025-01-09 (`9a34add6`, `75d7650f`) with no recorded

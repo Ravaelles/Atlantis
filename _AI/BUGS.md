@@ -45,6 +45,12 @@ a long post-mortem belongs in an ADR or a commit message.
 
 ## B-25 — the bot jar ships four serialisation libraries for unreachable code
 
+> **FIXED 2026-10-11 (`NEXT.md` #38).** `atlantis.debug.object` and three of the four
+> libraries are deleted; the jar went from 10.83 MB to 10.34 MB. `objenesis` stays in the
+> project because Mockito needs it for tests, but it is no longer packaged. Kept here as a
+> one-line record rather than a post-mortem - the git log is the archive. The entry that
+> follows is the original report.
+
 - **Measured 2026-10-04:** `atlantis.debug.object` (9 files, 510 lines,
   kryo-based) has exactly one production call site,
   `OnEveryFrameHelper.serializeMapDataLikeRegionsToAFile()`, whose first line is

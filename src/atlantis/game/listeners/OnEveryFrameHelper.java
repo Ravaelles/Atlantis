@@ -40,8 +40,6 @@ import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.AConsole;
 import atlantis.util.Vector;
-import atlantis.debug.object.NamespaceAccessibility;
-import atlantis.debug.object.ObjectToFile;
 import bwapi.Bullet;
 import bwapi.Color;
 import jbweb.Block;
@@ -205,7 +203,6 @@ public class OnEveryFrameHelper {
 
 //        printChokesForTests();
 //        printBaseLocationsDistancesForTests();
-//        serializeMapDataLikeRegionsToAFile();
 
 //        paintBasePositionAndBuildCoordinates();
 
@@ -378,23 +375,6 @@ public class OnEveryFrameHelper {
         System.err.println("base = " + base);
         System.err.println("main = " + main);
         System.err.println("mainPosition = " + mainPosition);
-    }
-
-    private static void serializeMapDataLikeRegionsToAFile() {
-        if (true) return;
-
-        if (A.now() == 10) {
-            Selection selection = Select.all();
-
-            // Make all classes in the "bwapi" namespace accessible
-            NamespaceAccessibility.makeAllAccessibleForNamespace(bwapi.Game.class);
-
-            ObjectToFile.saveToFile(Chokes.chokes());
-//            ObjectToFile.saveToFile(selection);
-//            ObjectToFile.saveToFile(AMap.bwem());
-//            ObjectToFile.saveToFile(Regions.regions());
-            A.quit();
-        }
     }
 
     private static void printBaseLocationsDistancesForTests() {
