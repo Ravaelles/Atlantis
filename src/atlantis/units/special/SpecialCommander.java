@@ -21,7 +21,11 @@ public class SpecialCommander extends Commander {
             GGForEnemy::new,
             ForceEarlyGGOnlyLocally::new,
             ForceExitLocallyAfterRealSeconds::new,
-            ForceExitLocallyInOpenBW::new,
+            // ForceExitLocallyInOpenBW is NOT here: registering it from core added a new
+            // core -> information violation, which CONVENTIONS §5 forbids (never grow the
+            // frozen baseline). It is registered from ProductionCommander instead, in a
+            // package allowed to depend on information - same move as
+            // ForceExitWhenOpeningProven.
             QuitWhenNoUnitsLeft::new,
         };
     }

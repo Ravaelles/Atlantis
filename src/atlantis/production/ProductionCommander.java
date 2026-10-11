@@ -29,6 +29,7 @@ public class ProductionCommander extends Commander {
                 ProductionOrdersCommander::new,
                 ConstructionsCommander::new,
                 ForceExitWhenOpeningProven::new,
+                ForceExitLocallyInOpenBW::new,
             };
         }
 
@@ -39,6 +40,8 @@ public class ProductionCommander extends Commander {
             DynamicProductionCommander::new,
             // The --short E2E gate: no-op unless CORE_AND_DRAGOON_GATE=true in ENV.
             ForceExitWhenOpeningProven::new,
+            // The >=700-mineral tripwire: no-op unless we are on OpenBW.
+            ForceExitLocallyInOpenBW::new,
 //            RemoveExcessiveOrders.class,
         };
     }
