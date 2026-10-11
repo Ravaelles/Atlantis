@@ -33,7 +33,7 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("### ForceExitLocallyAfterRealSeconds #########");
+        AConsole.errPrintln("####### ForceExitLocallyAfterRealSeconds ###########");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
