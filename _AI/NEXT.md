@@ -271,9 +271,44 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 
-- **#48 - under `PRODUCTION_V2=LIVE` the plan contains DUPLICATE buildings that are
-  re-dispatched every frame, so the game never ends and the run dies on the outer
-  timeout (blocks #47).** Measured 2026-10-09, three times.
+- **#48 - SPLIT AND RE-MEASURED 2026-10-10: the duplicate/re-dispatch defect is FIXED;
+  what remains is the sliding `startFrame` (a different bug, now #52).** Live evidence
+  below; the original description is kept after it as the record.
+
+  **Measured 2026-10-10** (`PRODUCTION_V2=LIVE PLACEMENT=catalogue`, bounded run, fresh
+  jar, exit **0** not 124):
+  - **No duplicate Pylon in any single plan** - the old signature
+    (`plan=3 [.. Pylon@2234 Pylon@2234]`) does not occur. Plan size is 2, and the
+    duplicate-goal fix in `BuildOrderGoals`/`ProductionScheduler` holds in a live game,
+    not only in its unit test.
+  - **The game ends itself**: `ForceExitLocallyAfterRealSeconds`, `Total time: 100
+    seconds`, `Defeat`, exit 0. The "never ends, outer timeout kills it" consequence is
+    gone.
+  - **`engineAccepted=false` does not appear at all under V2 LIVE** - because V2 issues
+    only `trained` orders here, never a build, so the library's broken
+    builder-reachability check is never reached.
+
+  **What remains, and it is a DIFFERENT defect (#52):** the Pylon's `startFrame` slides
+  forward frame by frame and the item is therefore never dispatched:
+
+  ```
+  @@633 Pylon@978-1428   @@637 Pylon@992-1442
+  @@937 Pylon@1129-1579  @@938 Pylon@1130-1580  @@940 Pylon@1132-1582
+  ```
+
+  Every line reads `issued: OK Probe@NNN (trained)` - the worker orders are issued, the
+  Pylon is planned and re-planned with a moving start. This is the same relative-frame
+  slide `_AI/STATUS.md` recorded as "planned Pylon start moved 449, 450, 451, 452", and it
+  is an arbitration/livelock problem (a cheaper higher-priority item keeps the bank below
+  the Pylon's cost), **not** a duplicate-dispatch problem. It is tracked separately so the
+  two are not confused a third time.
+
+  ---
+
+  **Original report (kept as the record of what was fixed):** under
+  `PRODUCTION_V2=LIVE` the plan contained DUPLICATE buildings re-dispatched every frame,
+  so the game never ended and the run died on the outer timeout. Measured 2026-10-09,
+  three times.
 
   **What the log shows** (`TIMEOUT_SECONDS=90`, in-game 3 min):
   ```
@@ -542,6 +577,38 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   default, e.g. to ~3.5-4, or key it off the building's own footprint plus a worker
   gap rather than a flat radius. `minDistToGeyser` is the parallel value (5.1 for
   Pylon/Gateway/Cannon, 4.1 otherwise) and should be re-checked in the same pass.
+
+- **#52 - Production V2: a planned building's `startFrame` slides forward every frame,
+  so the item is never dispatched. Split out of #48 (2026-10-10), which fixed the
+  duplicate/re-dispatch half.**
+
+  Measured under `PRODUCTION_V2=LIVE PLACEMENT=catalogue`: the plan is correct (one
+  Pylon, no duplicate), the game ends itself (exit 0), every worker order is issued -
+  and the building never is, because its window keeps moving:
+
+  ```
+  @@937 plan=2 [Probe@940-1240 by#70 Pylon@1129-1579 ] issued: OK Probe@940 (trained)
+  @@938 plan=2 [Probe@940-1240 by#70 Pylon@1130-1580 ] issued: OK Probe@940 (trained)
+  @@940 plan=2 [Probe@940-1240 by#70 Pylon@1132-1582 ] issued: OK Probe@940 (trained)
+  @@941 plan=2 [Probe@941-1241 by#70 Pylon@1125-1575 ] issued: OK Probe@941 (trained)
+  ```
+
+  `startFrame` moves +1 per frame while the frame under it also advances, so the item is
+  due "16 frames from now" forever. This is the same relative-frame slide
+  `_AI/STATUS.md` recorded ("planned Pylon start moved 449, 450, 451, 452"), and it is an
+  **arbitration** problem: the Probe (50 minerals, higher priority, `PRIORITY_WORKERS`)
+  is scheduled first every pass and keeps the bank below the Pylon's 100, so the
+  Pylon's earliest-affordable frame is always just out of reach.
+
+  **Why this is now the top V2 blocker:** with #48's duplicate defect fixed, this is what
+  stands between V2 LIVE and a built Pylon - and it is also why the stage-4 command-path
+  question is currently moot under V2 (nothing is ever dispatched to be refused).
+
+  **Not investigated further yet, and deliberately not patched:** `_AI/STATUS.md` records
+  two attempted fixes that were reverted (subtracting `ExistingItems.availableFrom`
+  suppressed worker production; raising only the dynamic supply goal did not address a
+  build-order Pylon), so the next step is a measurement of the goal ordering and the
+  timeline at the moment of the slide, not another guess.
 
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions
