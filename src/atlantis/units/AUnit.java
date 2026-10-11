@@ -268,6 +268,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             return _lastType;
         }
 
+
         return cacheType();
     }
 
