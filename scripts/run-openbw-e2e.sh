@@ -48,6 +48,14 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
 # extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
 #
+# Wall-clock reporting (owner's request, 2026-10-11): the run prints
+#   bot started playing at HH:MM:SS
+#   bot finished playing at HH:MM:SS, took Ns
+# and copies the finished log to a stable path, $E2E_LOGS_DIR/last-bot.log
+# (plus last-server.log), so "the last run" is one path that does not change.
+# The copy is a snapshot with a one-line header, not a symlink: a symlink changes
+# target under a reader who opened it mid-run.
+#
 # Scenario assertions (optional): game summary counters plus log checks.
 #   EXPECT_MIN_INGAME_SECONDS=<n>   fail if the game ended earlier than n
 #   EXPECT_MIN_KILLED=<n>           fail if we killed fewer units
@@ -604,7 +612,15 @@ if [ "$HOSTED" -ne 1 ]; then
 fi
 
 say "game hosted (registry: $(xxd -p -l 8 /dev/shm/bwapi_shared_memory_game_list 2>/dev/null))"
+
+# === Timing (owner's request, 2026-10-11) ==================================
+# When the run started and stopped in WALL-CLOCK terms, and how long it took.
+# `SECONDS` is bash's own counter and cannot be affected by the clock shifting,
+# so the duration is exact even if the machine's time steps mid-run.
+SECONDS=0
+BOT_STARTED_AT="$(date +%H:%M:%S)"
 say "starting bot: $BOT_RUN_DIR (headless, GAME_LAUNCHER=OPENBW)"
+say "bot started playing at $BOT_STARTED_AT"
 # cwd = the bot ROOT, because the build-order path is relative to the working
 # directory and is "AI/build_orders/" (see the link section above).
 cd "$BOT_ROOT"
@@ -618,9 +634,36 @@ timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 
+BOT_TOOK_SECONDS="$SECONDS"
+BOT_FINISHED_AT="$(date +%H:%M:%S)"
+say "bot finished playing at $BOT_FINISHED_AT, took ${BOT_TOOK_SECONDS}s"
 say "bot exit code: $BOT_EXIT"
 say "server log: $SERVER_LOG"
 say "bot log:    $BOT_LOG"
+
+# NOTE for the result block below: `ForceExitLocallyInOpenBW` (owner's, added
+# 2026-10-11) ends an OpenBW game the moment we hold >= 700 minerals - a deliberate
+# "if we are hoarding, the run is broken" tripwire. So a run that reports
+# "Prevented too long game ... min:7xx" STOPPED ITSELF, and its `E2E FAIL` means the
+# success gate was not reached before the tripwire fired - not that the runner broke.
+# Look for that line before concluding a short game was a crash.
+
+# === The last run, at a stable path (owner's request, 2026-10-11) ==========
+# A copy, not a symlink: the run directory is timestamped and a symlink would
+# change target under a reader who opened it mid-run, while a copy is a snapshot
+# of one specific run. Written after every run, including a failed one - a crash
+# is exactly when the file is wanted.
+cp -f "$BOT_LOG" "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
+cp -f "$SERVER_LOG" "$E2E_LOGS_DIR/last-server.log" 2>/dev/null || true
+
+# A one-line header so the copy explains itself: a reader who finds
+# last-bot.log days later needs to know which run it was and when it played.
+{
+  echo "# last E2E run: $RUN_TIER | $MAP | $RACE vs $ENEMY_RACE | started $BOT_STARTED_AT, finished $BOT_FINISHED_AT, took ${BOT_TOOK_SECONDS}s, exit $BOT_EXIT"
+  echo "# full run: $RUN_DIR"
+  echo "#"
+  cat "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
+} > "$E2E_LOGS_DIR/last-bot.log.tmp" 2>/dev/null && mv -f "$E2E_LOGS_DIR/last-bot.log.tmp" "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
 
 # === The result block ======================================================
 # Printed on EVERY exit path from here on, pass or fail (owner's ruling 2026-10-11): the
@@ -632,8 +675,10 @@ print_result_block() {
   local detail="$2"
   echo "============================================================"
   echo "E2E $status  [$RUN_TIER]  $detail"
-  echo "  map : $MAP"
-  echo "  log : $BOT_LOG"
+  echo "  map  : $MAP"
+  echo "  time : started $BOT_STARTED_AT, finished $BOT_FINISHED_AT, took ${BOT_TOOK_SECONDS}s"
+  echo "  log  : $BOT_LOG"
+  echo "  last : $E2E_LOGS_DIR/last-bot.log"
   echo "============================================================"
 }
 
