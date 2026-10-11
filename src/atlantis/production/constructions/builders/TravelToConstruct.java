@@ -46,9 +46,22 @@ public class TravelToConstruct extends HasUnit {
         // =========================================================
 
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(type);
-        double distanceToConstruction = unit.groundDist(buildPositionCenter);
 
-        MoveUnitsFromConstructionPlace.move(unit, construction, distanceToConstruction);
+        // THE distance is to the TILE the worker must stand on, NOT to the building's CENTER.
+        //
+        // `positionToBuildCenter()` offsets the tile by the building's tile dimensions
+        // (`dimensionLeftPixels`/`dimensionUpPixels`), so for a Gateway (4x3) the center sits
+        // ~1.8 tiles from the tile it belongs to. Comparing THAT against the 1.4-tile
+        // threshold keeps `shouldMoveToConstruct` true even when the Probe is standing exactly
+        // on the site, so `moveToConstruct` runs every frame and returns true (it always
+        // does), and `IssueBuildOrder` - the only thing that actually calls `unit.build` - is
+        // never reached. Measured 2026-10-11 with the real manager chain: Probe on the site
+        // (`distToBuildPos=0.0`), `groundDist(center)=1.80 > 1.4`, `action=MOVE_BUILD`
+        // refreshed every frame, `status=NOT_STARTED` - until "Gateway took too long (43s) /
+        // buildable:true" cancelled it, at the same tile, over and over.
+        double distanceToConstruction = unit.groundDist(buildPosition);
+
+        MoveUnitsFromConstructionPlace.move(unit, construction, unit.groundDist(buildPositionCenter));
 
         if (shouldMoveToConstruct(construction, distanceToConstruction, minDistanceToIssueBuildOrder)) {
             return moveToConstruct(construction, type, distanceToConstruction);
@@ -198,6 +211,13 @@ public class TravelToConstruct extends HasUnit {
             )) return true;
         }
 
-        return true;
+        // NOT `true` unconditionally. The old `return true` (and the same on the branch above)
+        // told the caller "the worker was handled" on every frame - including frames where no
+        // move was issued - so `travelWhenReady` never fell through to `IssueBuildOrder` while
+        // the distance test above said "still moving". Measured 2026-10-11: a Probe parked on
+        // its own Gateway tile for 43s, `MOVE_BUILD` refreshed every 13th frame, no build ever
+        // attempted. `true` now means "an order was issued this frame"; false lets the caller
+        // try the build.
+        return false;
     }
 }
