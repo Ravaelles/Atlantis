@@ -4,7 +4,12 @@ ATLANTIS_DIR="/sc-ai/Atlantis"
 HARNESS_DIR="/sc-ai/StardustDevEnvironment"
 GAME_DIR="$HARNESS_DIR/build/test"
 SERVER_SCRIPT="$HARNESS_DIR/scripts/run-openbw-server.sh"
-WINE_BOT_DIR="$ATLANTIS_DIR/bots/AtlantisP/AI"
+# The deployed bot tree. **Outside the repository on purpose** (owner's ruling, 2026-10-11):
+# `Atlantis/bots/` held generated ENVs, copies of the jar and game-result files - all ignored
+# by git - and duplicating the two things that must not drift (the jar and the ENV). The
+# deployed bots live in /sc-ai/BOTS, which is the owner's shortcut and already contained
+# AtlantisP; AtlantisOpenBW joined it in the same change.
+WINE_BOT_DIR="/sc-ai/BOTS/AtlantisP/AI"
 
 # E2E for Atlantis on the headless OpenBW engine - no Wine, no StarCraft, no
 # ChaosLauncher, ever (CONVENTIONS §14).
@@ -227,7 +232,7 @@ fi
 # bots/AtlantisP/AI (the WINE folder, GAME_LAUNCHER=WINE) is exactly what used
 # to launch a real game, so the OpenBW run gets its own directory with its own
 # ENV, GAME_LAUNCHER=OPENBW.
-BOT_RUN_DIR="$ATLANTIS_DIR/bots/AtlantisOpenBW/AI"
+BOT_RUN_DIR="/sc-ai/BOTS/AtlantisOpenBW/AI"
 mkdir -p "$BOT_RUN_DIR"
 cp "$JAR" "$BOT_RUN_DIR/Atlantis.jar"
 
@@ -236,7 +241,7 @@ cp "$JAR" "$BOT_RUN_DIR/Atlantis.jar"
 # repository's own tree; fall back to a bot folder that has one.
 BWAPI_DATA_ROOT="$ATLANTIS_DIR/bwapi-data"
 if [ ! -d "$BWAPI_DATA_ROOT/AI/build_orders" ]; then
-  for candidate in "$WINE_BOT_DIR/.." "$ATLANTIS_DIR/bots/AtlantisP"; do
+  for candidate in "$WINE_BOT_DIR/.." "/sc-ai/BOTS/AtlantisP"; do
     if [ -d "$candidate/bwapi-data/AI/build_orders" ]; then BWAPI_DATA_ROOT="$candidate/bwapi-data"; break; fi
   done
 fi

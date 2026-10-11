@@ -1020,6 +1020,28 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   (most likely, since the log line is old), or something started calling it. Check with
   `git log` on `AMap.initMapAnalysis` callers before assuming either.
 
+- **#54 - Expansion is DECIDED but the Nexus is re-queued instead of finished.** Owner's
+  log (2026-10-11), two lines a few seconds apart:
+
+  ```
+  2:57: Nexus ADDED TO QUEUE, min=792/ sup=17 / LimitedBases
+  3:00: Nexus ADDED TO QUEUE, min=832/ sup=17 / LimitedBases
+  ```
+
+  **`LimitedBases` is not a reason to expand, it is the label ON a yes** -
+  `ProtossShouldExpand:38` is `if (A.hasMinerals(777) && Count.basesWithPlanned() <= 3) return
+  yes("LimitedBases")`. So the decision is correct: 792 minerals, one base, expand. The
+  interesting part is the SECOND line - three seconds later, still `<= 3` bases planned, the
+  Nexus added to the queue AGAIN. Either the first Nexus was never built, or it was built and
+  `basesWithPlanned()` does not count it, and both read the same in the log.
+
+  **Not reproduced yet.** A run that reaches 777+ minerals is needed, and the bounded runs so
+  far have not (the 150 s run above ended at `Probe=14` with the opening still going). The
+  first measurement is to make that happen - `INGAME_TIME` long enough for the economy to
+  reach the threshold - then watch whether a Nexus appears in `ConstructionRequests` once and
+  completes, or appears twice. `Count.basesWithPlanned()` and `Count.existingOrInProductionOrInQueue`
+  are the two functions to instrument, since they are what the second decision reads.
+
 - **#43** OpenBW headless run - **resolved 2026-10-08.** The client attaches and
 the bot plays: `HELLO_ATLANTIS`, map analysed, build order loaded, missions
 running. The one missing setting was `BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON` on
