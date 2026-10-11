@@ -63,6 +63,13 @@ public class OnGameStarted {
         // leak one game's completion history into the next in the same JVM.
         atlantis.game.util.CompletedUnitsHistory.reset();
 
+        // And so are the KILL/LOSS archives. `UnitsArchive.reset()` has existed with a javadoc
+        // explaining exactly why it is needed ("the test harness runs many games in one JVM",
+        // "a base that died in one test is still recently lost in the next") - and nothing
+        // called it, so that leak was live. Found by an end-of-game test that expected one lost
+        // Zealot and read four, the other three left over from earlier tests.
+        atlantis.information.enemy.UnitsArchive.reset();
+
         handleCheckIfUmsMap();
 
         System.out.println("### enemyName   = " + AGame.enemyName());

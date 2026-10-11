@@ -107,6 +107,14 @@ public abstract class AbstractWorldCreatingTest extends AbstractTestWithUnits {
         }
 
         closeStaticMocks();
+
+        // Kill/loss archives are static accumulators, and the harness runs many worlds in one
+        // JVM, so without this a unit killed in one test is still counted as lost in the next.
+        // Found by a test that expected one lost Zealot and read four: the other three were
+        // left over from earlier tests in the same class. `UnitsArchive.reset()` already
+        // documents exactly this hazard and nothing was calling it - the same leak existed in
+        // production until `OnGameStarted` was made to reset it.
+        atlantis.information.enemy.UnitsArchive.reset();
     }
 
     /**

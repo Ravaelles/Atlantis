@@ -75,34 +75,26 @@ public class GameSummary {
         );
 
         for (AUnitType type : CompletedUnitsHistory.typesByFirstCompletion()) {
-            int built = CompletedUnitsHistory.completedCount(type);
             int alive = Select.ourWithUnfinished(type).count();
-
-            // What the GAME handed us at the start is shown separately, because it is not
-            // something the bot built and mixing the two makes the line look wrong.
-            // `Probe=18/17` reads like an off-by-one bug; it is not - the bot built 17 and
-            // the game gave it 4 (Protoss), so 18 alive means it lost three of its own.
-            //
-            // The starting counts are measured from the engine, not assumed: OpenBW creates
-            // them in `create_starting_units` (bwgame.h:21138-21176) - one resource depot
-            // and a `for (i != 4)` loop of workers. Terran and Zerg get the same four workers
-            // plus one depot, and Zerg additionally an Overlord.
-            int given = StartingUnits.of(type);
+            int lost = UnitsArchive.ourLost(type);
 
             // `AUnitType.name()` already strips the race prefix, which is why this report can
             // be written once rather than per race.
-            line.append(type.name()).append("=").append(alive).append("/").append(built);
+            line.append(type.name()).append("=").append(alive);
 
-            if (given > 0) {
-                line.append("(+").append(given).append(" start)");
+            // `(1 lost)` only when something was actually lost, and only when that is not
+            // already the whole story: a unit with nothing destroyed reads as a plain count
+            // rather than as `Zealot=3 (0 lost)`, which is noise.
+            //
+            // The loss count is NOT `built - alive`. A unit can be lost and rebuilt, and the
+            // difference of the two totals would then report the rebuild as if nothing had
+            // been killed - `UnitsArchive` counts destruction events, which is the number a
+            // player would quote.
+            if (lost > 0) {
+                line.append(" (").append(lost).append(" lost)");
             }
 
             line.append(" ");
-        }
-
-        int givenTotal = StartingUnits.totalGiven();
-        if (givenTotal > 0) {
-            line.append("|| start given: ").append(givenTotal).append(" ");
         }
 
         // Kept from the old line so a run that produced nothing still says so explicitly

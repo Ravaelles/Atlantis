@@ -171,11 +171,18 @@ public class UnitsArchive {
      */
     public static void reset() {
         destroyedUnitIds.clear();
-        enemyLostTypes.map().clear();
-        ourLostTypes.map().clear();
-        ourKilledResourcesPerUnitTypes.map().clear();
-        ourLostResourcesPerUnitTypes.map().clear();
-        ourKillCountersPerUnitTypes.map().clear();
+
+        // `clear()` on the Counter, NOT `map().clear()`.
+        //
+        // `map()` returns a copy, so `x.map().clear()` cleared a temporary map and left the
+        // counter untouched - six silent no-ops in the one method whose entire job is to stop
+        // one game's kills and losses leaking into the next. It is why the javadoc above could
+        // promise a reset that never happened.
+        enemyLostTypes.clear();
+        ourLostTypes.clear();
+        ourKilledResourcesPerUnitTypes.clear();
+        ourLostResourcesPerUnitTypes.clear();
+        ourKillCountersPerUnitTypes.clear();
         enemyBasesDestroyed = 0;
         lastTimeOurCombatUnitDied = -9999;
         lastTimeOurBaseDied = -9999;
@@ -193,6 +200,20 @@ public class UnitsArchive {
         return enemyLostTypes.getValueFor(AUnitType.Terran_SCV)
             + enemyLostTypes.getValueFor(AUnitType.Protoss_Probe)
             + enemyLostTypes.getValueFor(AUnitType.Zerg_Drone);
+    }
+
+    /**
+     * How many of OUR units of this type have been destroyed over the game.
+     *
+     * <p>
+     * The end-of-game report uses this to say `Zealot=3 (1 lost)`, and it is the count of
+     * destruction EVENTS rather than anything that can be derived from the board - a unit
+     * lost and rebuilt leaves no trace of the loss in what is standing.
+     * </p>
+     */
+    public static int ourLost(AUnitType type) {
+        if (type == null) return 0;
+        return ourLostTypes.getValueFor(type);
     }
 
     public static boolean lastTimeOurCombatUnitDiedLessThanAgo(int frames) {
