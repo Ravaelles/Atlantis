@@ -34,8 +34,7 @@ public class GameSummary {
                 "### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +
                 "### Resource killed/lost: " + (resourceBalance > 0 ? "+" + resourceBalance : resourceBalance) +
                 " ###\n" +
-                "### Protoss buildings: Pylons=" + Select.ourWithUnfinished(AUnitType.Protoss_Pylon).count()
-                    + " Gateways=" + Select.ourWithUnfinished(AUnitType.Protoss_Gateway).count() + " ###\n"
+                buildingsLine()
         );
 
         if (A.isUms()) {
@@ -45,6 +44,74 @@ public class GameSummary {
             UnitsArchive.paintKilledUnits();
         }
         UnitsArchive.paintKillLossResources();
+    }
+
+    /**
+     * What we built, as `Type=remaining/built` - and only the types we actually built.
+     *
+     * <p>
+     * The line used to be two hardcoded counts of what stands on the board
+     * ({@code Pylons=.. Gateways=..}), which threw away the more useful half. Now each entry
+     * is `remaining/built`, so the gap between them is what was destroyed: a game ending
+     * `Pylon=3/4 Gateway=2/8` built four Pylons and lost one, built eight Gateways and lost
+     * six - and it is immediately obvious that the army was doing something, which the old
+     * line could not say at all.
+     * </p>
+     *
+     * <p>
+     * <b>The order is the game's order.</b> Types appear in the sequence their FIRST unit
+     * finished ({@code CompletedUnitsHistory.typesByFirstCompletion}), so the line reads
+     * like the build progression did - the opening first, tech later - instead of following
+     * a hand-written list in this class that would need editing whenever the bot's opening
+     * changes.
+     * </p>
+     */
+    private static String buildingsLine() {
+        // The race comes from AtlantisRaceConfig, which is the single source of truth for
+        // "which race are we" (an earlier two-sources-of-truth bug read it back from the game
+        // and disabled a whole race's code - see _AI/CHALLENGES/BuildAndLogging.md).
+        StringBuilder line = new StringBuilder(
+            "### " + atlantis.config.AtlantisRaceConfig.MY_RACE.name() + ": "
+        );
+
+        for (AUnitType type : CompletedUnitsHistory.typesByFirstCompletion()) {
+            int built = CompletedUnitsHistory.completedCount(type);
+            int alive = Select.ourWithUnfinished(type).count();
+
+            // What the GAME handed us at the start is shown separately, because it is not
+            // something the bot built and mixing the two makes the line look wrong.
+            // `Probe=18/17` reads like an off-by-one bug; it is not - the bot built 17 and
+            // the game gave it 4 (Protoss), so 18 alive means it lost three of its own.
+            //
+            // The starting counts are measured from the engine, not assumed: OpenBW creates
+            // them in `create_starting_units` (bwgame.h:21138-21176) - one resource depot
+            // and a `for (i != 4)` loop of workers. Terran and Zerg get the same four workers
+            // plus one depot, and Zerg additionally an Overlord.
+            int given = StartingUnits.of(type);
+
+            // `AUnitType.name()` already strips the race prefix, which is why this report can
+            // be written once rather than per race.
+            line.append(type.name()).append("=").append(alive).append("/").append(built);
+
+            if (given > 0) {
+                line.append("(+").append(given).append(" start)");
+            }
+
+            line.append(" ");
+        }
+
+        int givenTotal = StartingUnits.totalGiven();
+        if (givenTotal > 0) {
+            line.append("|| start given: ").append(givenTotal).append(" ");
+        }
+
+        // Kept from the old line so a run that produced nothing still says so explicitly
+        // rather than printing an empty list that reads like a formatting bug.
+        if (CompletedUnitsHistory.typesByFirstCompletion().isEmpty()) {
+            line.append("(nothing completed) ");
+        }
+
+        return line.append("###\n").toString();
     }
 
     private static void paintCombatStatistics() {

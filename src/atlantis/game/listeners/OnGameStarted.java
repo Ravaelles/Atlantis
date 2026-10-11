@@ -59,6 +59,10 @@ public class OnGameStarted {
         atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
         atlantis.game.listeners.OnGameEnd.reset();
 
+        // What we built is per-game, like everything else here: as a plain static it would
+        // leak one game's completion history into the next in the same JVM.
+        atlantis.game.util.CompletedUnitsHistory.reset();
+
         handleCheckIfUmsMap();
 
         System.out.println("### enemyName   = " + AGame.enemyName());
