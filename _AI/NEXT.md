@@ -589,7 +589,46 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   next run logs `Gateway took too long (43s) / buildable:true` nine times, and the cause is the
   duplicate constructions below, not the refresh loop.
 
-- **#57 (new, 2026-10-11) - the duplicate-construction leak is the single root cause behind
+- **#59 (new, 2026-10-11) - "it worked hours ago, now it does not" ANSWERED: no code regression,
+  the Gateway churn is one defect and it is #57/#58's family.**
+
+  **There is no commit between the working run and the broken one that changed any behaviour.**
+  Verified with `git log --name-only` over the window: the only commit in between (`e657b83f`
+  "Tweaks", 20:40) **deleted one `_AI/e2e/*.md` file and touched no source**. The jar was
+  freshness-checked fresh against the working tree in both runs.
+
+  **What actually differs between "worked" and "did not", measured with the same jar:**
+
+  | run | budget | opponent | result |
+  |---|---|---|---|
+  | 20:03 | 120 s | Protoss | `Gateway=2` + CyberneticsC + Dragoon (worked) |
+  | 20:39 (owner) | 1200 s in-game | Zerg | 0 Gateway, 0 army |
+  | mine now | 120 s | Protoss | 0 Gateway |
+  | mine now | 120 s | Zerg | `Pylon=3 Gateway=0 Zealot=0 Dragoon=0`, ingame=1209 s |
+
+  **The discriminator is not the race and not the code - it is whether the construction
+  pipeline happens to get a Gateway started before the run ends.** The failure signature is
+  identical in every failing run: a Gateway construction exists, its builder walks to it,
+  and 43 game-seconds later `Cancel construction: Gateway / Gateway took too long (43s) /
+  at:[14,51] / buildable:true`, after which it is **never re-requested** (the log has no
+  second `ADDED TO QUEUE` for Gateway). Two Gateway constructions, two cancels, then silence -
+  at `min=834`, `sup=20`, with 25 Probes. So the bot has the economy and the intent and still
+  ends at zero Gateways.
+
+  **This is why the earlier "it works" result was real but not reproducible:** the fix to
+  `TravelToConstruct` (the 1.4-tile center-vs-tile distance) removed the `WTF?!?` refresh loop
+  (46-50 -> 0, measured), which was enough for ONE run to get a Gateway through. It did not
+  remove the cancel-and-never-requeue, which is the same construction-lifecycle defect as #57.
+  **Do not re-open the distance fix - it is verified. The remaining blocker is the requeue.**
+
+  **Next measurement (names the bug, ~20 lines):** instrument `Construction.cancel` to print
+  the caller chain, and `AddToQueue`/`NewConstructionRequest` to print when a Gateway request
+  is refused. The question to answer is narrow: after `CancelTooLongConstructions` cancels the
+  Gateway, why is there no new request - is `ProduceGateway` gated out (it has ~20 gates, all
+  logged with `log("...")`), or is the request made and rejected as a duplicate
+  (`alreadyExists`, #57)?
+
+- **#57 (2026-10-11) - the duplicate-construction leak is the single root cause behind
   both symptoms the owner reported (Gateway churn AND minerals above 600).**
 
   **Measured:** three constructions of a Gateway at the SAME tile `[92,113]` plus one at
