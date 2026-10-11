@@ -492,7 +492,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
        `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`, and no placement
        refusals. Still not verified on OpenBW.
 
-  - **#49 is the single blocker that gates everything else on OpenBW.** Measured
+  - **#49 CLOSED 2026-10-11 - A PYLON IS BUILT.** `### Protoss buildings: Pylons=1 ###`,
+    with `engineAccepted=true`, `getOrder=PlaceBuilding`, and the bot continuing to the
+    next build-order item (a Forge). The remaining blocker turned out to be one line in
+    JBWAPI (`Game.hasPath` is region-based; OpenBW publishes no regions, so it answered
+    false for every pair); it is fixed in a local source checkout and shipped as
+    `lib/jbwapi-2.2.0-atlantis.jar`, with the reasoning in
+    `_AI/PLAN-STAGE4-COMMAND-PATH.md`. **Do not look for a placement bug here any more -
+    the three that existed are all closed** (#48 duplicates, #52 slide, occupancy rule),
+    and the search was already finding valid tiles (`Region mismatch` 549 -> 0).
+
+  - **Superseded note (kept as the record of the investigation): #49 is the single
+    blocker that gates everything else on OpenBW.** Measured
     2026-10-10 with a fresh bounded run (bot exit 0, `ingame=251s`, and
     `MAP_ANALYSIS areas=21 chokes=42` so the map model is healthy): the only
     building the bot ever tried to place was the Pylon, and it was refused once

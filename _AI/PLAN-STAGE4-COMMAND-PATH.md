@@ -168,12 +168,79 @@ path of the cut-over rather than beside it.
 - **Do not treat `engineAccepted=false` as a placement bug.** It is not: placement is
   fixed and measured. The remaining refusal is the command path.
 
+## RESOLVED 2026-10-11: option B, in source form - and the cut-over was withdrawn
+
+**A Pylon is built.** `### Protoss buildings: Pylons=1 ###` with `engineAccepted=true`,
+`getOrder=PlaceBuilding`, and the bot goes on to the next build-order item (a Forge) -
+which only happens because the Pylon exists and supplied the base.
+
+**What resolved it is option B, done properly.** Not a byte-patched jar: a local source
+checkout of JBWAPI at `/sc-ai/JBWAPI`, one fix in `bwapi/Game.java`, built with Maven and
+committed as `lib/jbwapi-2.2.0-atlantis.jar`. `Game.hasPath` now answers from terrain when
+the host publishes no regions (`regions.length == 0`), detected from the DATA rather than
+from a version or a flag - so a host that publishes regions is unaffected and the patch
+becomes inert. The fallback is the same rule Atlantis' own `ReachableTiles` port uses, so
+the library and the application cannot disagree. Rebuild instructions live next to the jar
+name in `build-bot-jar.sh`.
+
+**Option A (the catalogue cut-over) was started, measured, and withdrawn - deliberately.**
+A `V2BuildExecutor` was written so the V2 dispatcher would issue build orders itself and
+skip the legacy chain, behind a `V2_ISSUES_BUILD_ORDERS` flag. It never built a Pylon in
+three live runs, and along the way it produced two instructive failures of my own: a third
+occupancy predicate that refused every tile the builder was standing on, and a
+per-frame guard that was never cleared, so after the first issue it returned "success"
+while doing nothing. With the library patch in place, the LEGACY path also builds the
+Pylon (`Pylons=1`), so the cut-over was no longer needed to unblock anything.
+
+**Withdrawn, not deferred**, on the same principle this whole sequence has been applying:
+two ways to issue a build order is two sources of truth, and keeping an unproven second
+path alive because it was expensive to write is how a codebase acquires the problem this
+one has been curing. The cut-over remains a desirable cleanup for its own reasons
+(**#45** ordering, deleting the legacy tree) and is planned there - not as a bug fix.
+
+**The `AUnitOrders.build` debounce is worth a look when that cleanup happens:** the live
+trace shows attempts on alternating frames, which is `lastCommandIssuedAgo() <= 1`
+refusing every second attempt. Harmless for correctness, but it doubles the time to issue.
+
 ## Order of work, and the first thing to do
 
-1. `NEXT.md` #48 (LIVE re-dispatch loop) - without it the V2 path never issues once.
-2. Stack-trace the LIVE build attempt to find which director issues the order (step 1
-   above). This is cheap and decides the shape of the actual edit.
-3. Make that director the only issuer, then run the cut-over gate.
+**Owner's decision 2026-10-11: option A is the road.** With C withdrawn (it cannot work)
+and B rejected (it re-creates the fork we just removed), A is the only path that reaches a
+built Pylon without carrying a patched library - and it is what the architecture already
+committed to.
 
-**The first concrete action is a measurement, not an edit:** a LIVE run with a stack trace
-at the build call site. Everything else in this plan depends on which path that names.
+Steps 1 and 2 are DONE:
+
+1. ~~`NEXT.md` #48 (LIVE re-dispatch loop)~~ - **done**: the duplicate/re-dispatch half is
+   fixed and the sliding start (#52) with it.
+2. ~~Stack-trace the LIVE build attempt~~ - **done**: all 46 attempts go through the
+   legacy chain `BuilderManager -> TravelToConstruct -> IssueBuildOrder -> Unit.build`.
+   `GameOrderDirector` never appears, i.e. V2 delegates builder execution to
+   `Construction`, exactly as `NEXT.md` #45 says.
+
+**What is left is step 3, and it is the real work of A:** make the V2 dispatcher issue the
+build itself instead of handing a `Construction` to the legacy pipeline, so the command no
+longer passes through the library's `canBuild` at all.
+
+The sequence, smallest safe increment first:
+
+1. **Give `GameOrderDirector.buildAt` its own execution path** - it already receives a
+   validated `PlacementReservation` (a tile the V2 planner chose), so it does not need the
+   legacy `TravelToConstruct -> IssueBuildOrder` chain to re-validate it. SHIPPING NOTE:
+   this is where the library refusal is bypassed, and it is deliberate - the reservation
+   exists precisely because the tile was already decided.
+2. **A test that pins the new path**: a build order from the V2 director reaches an order
+   issue without going through `AUnitOrders.build`, asserted structurally rather than by a
+   game run (the existing `BUILDER_LOG` stack already shows the chain).
+3. **The cut-over gate** from `PLACEMENT-CUTOVER-PLAN.md`: a bounded LIVE run that builds
+   a Pylon without special flags.
+4. Then the parity gap and the deletion order (#45), unchanged.
+
+**Risk to watch, and it is the reason this is staged:** the legacy chain does more than
+validate - it also re-finds the position when the builder is blocked and it shoves units
+out of the way. Step 1 must either keep those behaviours or consciously drop them; the
+reservation covers the first (the tile is fixed) and `MoveUnitsFromConstructionPlace`
+covers the second (it is already called from `IssueBuildOrder`).
+
+**What must NOT happen:** no patched jar, and no second placement path. Two answers to
+"where does this building go" is the disease this whole sequence has been curing.
