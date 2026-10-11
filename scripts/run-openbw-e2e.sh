@@ -35,6 +35,8 @@ WINE_BOT_DIR="/sc-ai/BOTS/AtlantisP/AI"
 #   bash scripts/run-openbw-e2e.sh [map] [race] [enemy-race]
 #   bash scripts/run-openbw-e2e.sh --self-test              # setup only
 #   bash scripts/run-openbw-e2e.sh --self-test-assertions   # test scenario assertions, no game
+#   bash scripts/run-openbw-e2e.sh --short [map] [race] [enemy-race]   # opening gate
+#   bash scripts/run-openbw-e2e.sh --long  [map] [race] [enemy-race]   # full economy
 #
 # Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
@@ -46,9 +48,25 @@ WINE_BOT_DIR="/sc-ai/BOTS/AtlantisP/AI"
 #   EXPECT_MAX_KILLED=<n>           fail if we killed more units
 #   EXPECT_MIN_PYLONS=<n>           fail if fewer Protoss Pylons exist at end
 #   EXPECT_MIN_GATEWAYS=<n>         fail if fewer Protoss Gateways exist at end
+#   EXPECT_MIN_ZEALOTS=<n>          fail if fewer Protoss Zealots exist at end
+#   EXPECT_MIN_DRAGOONS=<n>         fail if fewer Protoss Dragoons exist at end
+#   EXPECT_MIN_ASSIMILATORS=<n>     fail if fewer Protoss Assimilators exist at end
+#   EXPECT_MIN_NEXUS=<n>            fail if fewer Protoss Nexus exist at end
 #   EXPECT_MIN_RESOURCE_BALANCE=<n> fail if Resource killed/lost < n
 #   EXPECT_NO_PLACEMENT_FAILURES=1  fail if "Can't find place" is logged
 # When none is set the script only reports the verdict, as before.
+#
+# Two named build tiers, because "does the bot build" has two honest questions:
+#
+#   --short   the opening works: Cybernetics Core and the first Dragoon exist. The
+#             bot exits ITSELF the moment that is true (CORE_AND_DRAGOON_GATE), so
+#             the run is as long as the opening needs and no longer.
+#   --long    the economy runs: >=5 Pylons, >=3 Gateways, >=1 Zealot, >=5 Dragoons,
+#             >=2 Assimilators, >=3 Nexus at the end of a full-length game.
+#
+# The numbers are scenario expectations (CONVENTIONS §10), not a game difficulty:
+# they are the smallest structure set that proves production, tech and expansion all
+# happened, and they are asserted at the END of the run against the GameSummary line.
 #
 # Requirements: a JDK, the bot jar, and the StardustDevEnvironment build tree.
 # Owner-only tier: a real game takes minutes, so it is not in the fast loop
@@ -86,6 +104,33 @@ done
 if [ "${1:-}" = "--save-replay" ]; then
   shift
 fi
+
+# Read the scenario flags BEFORE the positional arguments are stripped, then strip them,
+# then read map/race from what is left. Two passes on purpose: the strip must not be the
+# thing that decides the scenario (that inversion is what made `--short` a no-op on the
+# first run, 2026-10-11 - `set --` removed the flag before the scan saw it).
+SCENARIO=0
+SHORT_GATE=0
+for arg in "$@"; do
+  case "$arg" in
+    --short) SCENARIO=1; SHORT_GATE=1 ;;
+    --long)  SCENARIO=1 ;;
+  esac
+done
+
+# Keep the original argv for the flags that are read AFTER the strip (--self-test*).
+ORIGINAL_ARGS=("$@")
+
+# A flag left in `$1` would be taken as the map name ("Map not found: --short") - the same
+# trap the --save-replay handling above documents.
+POSITIONAL=()
+for arg in "$@"; do
+  case "$arg" in
+    --short|--long) ;;
+    *) POSITIONAL+=("$arg") ;;
+  esac
+done
+set -- "${POSITIONAL[@]:-}"
 REPLAY_DIR="/sc-ai/REPLAYS"
 
 # Set here, not near the host command: write_env (which produces the ENV the bot reads)
@@ -113,10 +158,45 @@ ENEMY_RACE="${3:-Zerg}"
 # fight. Use ENEMY_COUNT=1 (the default) for a normal game.
 ENEMY_COUNT="${ENEMY_COUNT:-1}"
 
+# Read from the ORIGINAL argv, before the positional strip removed the flags: the strip at
+# the top of the file is what made `--self-test-assertions` a silent no-op for a while
+# (measured 2026-10-11 - `$1` was already empty by the time this line read it).
 SELF_TEST=0
 ASSERTION_SELF_TEST=0
-[ "${1:-}" = "--self-test" ] && SELF_TEST=1
-[ "${1:-}" = "--self-test-assertions" ] && ASSERTION_SELF_TEST=1
+for arg in "${ORIGINAL_ARGS[@]:-}"; do
+  [ "$arg" = "--self-test" ] && SELF_TEST=1
+  [ "$arg" = "--self-test-assertions" ] && ASSERTION_SELF_TEST=1
+done
+
+# === Named build tiers (owner's ruling, 2026-10-11) ========================
+# Two scenarios, because "does the bot build" has two honest answers. Both assert
+# the end-of-game structure set; --short additionally stops the bot as soon as the
+# opening is proven, so iterating on production does not cost a 20-minute game.
+# (SCENARIO/SHORT_GATE are set above, before the positional strip.)
+if [ "$SHORT_GATE" -eq 1 ]; then
+  # The gate the bot exits on: a finished Cybernetics Core and at least one Dragoon.
+  # Written into the bot's ENV (see write_env) as CORE_AND_DRAGOON_GATE=1.
+  #
+  # Fail-FAST clock (owner's ruling, 2026-10-11): the short tier gets 30 wall-clock
+  # seconds, not 120. A working opening proves itself in well under that (the gate ends
+  # the run itself), so 30 s is the SLOWEST this tier is allowed to be - and a run that
+  # hits it has not proven the opening, which is a failure to report, not a run to wait
+  # out. Overridable for a one-off debug run, never widened silently.
+  TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
+  # The gate's own condition, asserted at the end: a Core and a Dragoon. Without asserting
+  # the Core, a run could reach the gate, lose the Core, and still pass on the Dragoon alone.
+  EXPECT_MIN_DRAGOONS="${EXPECT_MIN_DRAGOONS:-1}"
+  EXPECT_MIN_ZEALOTS="${EXPECT_MIN_ZEALOTS:-1}"
+  EXPECT_MIN_CORES="${EXPECT_MIN_CORES:-1}"
+else
+  # Full expectations for the long tier; overridable, never silently lowered.
+  EXPECT_MIN_PYLONS="${EXPECT_MIN_PYLONS:-5}"
+  EXPECT_MIN_GATEWAYS="${EXPECT_MIN_GATEWAYS:-3}"
+  EXPECT_MIN_ZEALOTS="${EXPECT_MIN_ZEALOTS:-1}"
+  EXPECT_MIN_DRAGOONS="${EXPECT_MIN_DRAGOONS:-5}"
+  EXPECT_MIN_ASSIMILATORS="${EXPECT_MIN_ASSIMILATORS:-2}"
+  EXPECT_MIN_NEXUS="${EXPECT_MIN_NEXUS:-3}"
+fi
 
 say() { echo "[openbw-e2e] $*"; }
 fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
@@ -137,17 +217,31 @@ fi
 
 if [ "$ASSERTION_SELF_TEST" -eq 1 ]; then
   SELF_LOG="$(mktemp)"
+  # The fixture is in GameSummary's REAL format (`### Protoss: Pylon=1 Gateway=1 ###`),
+  # not the old `Protoss buildings: Pylons=N` - the patterns must be exercised against
+  # the text the bot actually prints, or this self-test would pass while the verdict
+  # printed `?` (which is exactly what happened, 2026-10-11).
   printf '%s\n' '### Total time: 428 seconds. ###' \
     '### Units killed/lost: 12/3 ###' '### Resource killed/lost: +450 ###' \
-    '### Protoss buildings: Pylons=1 Gateways=1 ###' > "$SELF_LOG"
-  EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
-    EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_MIN_RESOURCE_BALANCE=-200 \
-    bash scripts/assert-openbw-scenario.sh "$SELF_LOG"
+    '### Protoss: Nexus=3 Probe=20 Pylon=6 Gateway=4 CyberneticsC=1 Zealot=2 Dragoon=5 Assimilator=2 ###' > "$SELF_LOG"
+  # Explicitly required to succeed: under `set -e` a plain command's failure should exit,
+  # but this one printed ASSERT FAILED and the script continued (measured 2026-10-11),
+  # and a self-test that survives the case it exists to catch is not a self-test.
+  if ! EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
+       EXPECT_MIN_PYLONS=5 EXPECT_MIN_GATEWAYS=3 EXPECT_MIN_ZEALOTS=1 \
+       EXPECT_MIN_DRAGOONS=5 EXPECT_MIN_ASSIMILATORS=2 EXPECT_MIN_NEXUS=3 \
+       EXPECT_MIN_RESOURCE_BALANCE=-200 \
+       bash scripts/assert-openbw-scenario.sh "$SELF_LOG"; then
+    rm -f "$SELF_LOG"
+    fail "scenario assertion self-test: the VALID fixture must pass"
+  fi
   printf '%s\n' '### Total time: 428 seconds. ###' \
     '### Units killed/lost: 0/3 ###' '### Resource killed/lost: -300 ###' \
-    '### Protoss buildings: Pylons=0 Gateways=0 ###' "Can't find place for Pylon" > "$SELF_LOG"
+    '### Protoss: Nexus=1 Probe=5 Pylon=1 ###' "Can't find place for Pylon" > "$SELF_LOG"
   if EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
-       EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_MIN_RESOURCE_BALANCE=-200 \
+       EXPECT_MIN_PYLONS=5 EXPECT_MIN_GATEWAYS=3 EXPECT_MIN_DRAGOONS=5 \
+       EXPECT_MIN_ASSIMILATORS=2 EXPECT_MIN_NEXUS=3 \
+       EXPECT_MIN_RESOURCE_BALANCE=-200 \
        EXPECT_NO_PLACEMENT_FAILURES=1 bash scripts/assert-openbw-scenario.sh "$SELF_LOG"; then
     rm -f "$SELF_LOG"
     fail "scenario assertion self-test missed the broken fixture"
@@ -297,6 +391,14 @@ EOF
   if [ -n "${BUILDER_LOG:-}" ]; then
     echo "BUILDER_LOG=$BUILDER_LOG" >> "$1"
   fi
+  if [ "${SHORT_GATE:-0}" = "1" ]; then
+    # --short: end the game the moment the opening is PROVEN (a finished Cybernetics Core
+    # and at least one Dragoon). Scoring that early turns the tier from "wait 20 minutes
+    # and hope" into "does the opening get there at all", which is what iterating on
+    # production needs. The bot owns the check (it can see its own buildings); the shell
+    # only asserts the same facts at the end so a run that exits early without them fails.
+    echo "CORE_AND_DRAGOON_GATE=true" >> "$1"
+  fi
   if [ "${END_GAME_VIA_ENGINE:-0}" = "1" ]; then
     # Only written for a --save-replay run: the engine needs to outlive the bot long
     # enough to flush the replay, and the bot must leave the game instead of exiting.
@@ -352,9 +454,43 @@ fi
 # only while the server process is alive. So the order is: host the game, wait
 # for the segment (not a guessed sleep), then start the client, and only tear
 # the host down after the client is gone.
-SERVER_LOG="$ATLANTIS_DIR/out/openbw/server.log"
-BOT_LOG="$ATLANTIS_DIR/out/openbw/bot.log"
+# === Log location (owner's report 2026-10-11: "the bot log disappeared") =====
+# It used to be the single path `out/openbw/bot.log`, and `out/` is a BUILD directory:
+# the next run truncated it and `rm -rf out` (which the test runner's own hygiene rule
+# recommends before a definitive run) deleted it. So a log that mattered was gone exactly
+# when it was wanted.
+#
+# Now every run writes into its own directory under `_AI/e2e/runs/`, named by
+# timestamp + scenario + map, so:
+#   * runs never overwrite each other;
+#   * the directory is inside the repo, survives `rm -rf out`, and is the same tree the
+#     verdict tables live in (`_AI/e2e/README.md`);
+#   * `_AI/e2e/runs/latest` is a stable symlink, so "where is the log?" has one answer
+#     that does not change between runs.
+RUN_STAMP="$(date +%Y%m%d_%H%M%S)"
+RUN_TIER="adhoc"
+if [ "$SHORT_GATE" -eq 1 ]; then RUN_TIER="short";
+elif [ "$SCENARIO" -eq 1 ]; then RUN_TIER="long"; fi
+RUN_TAG="${RUN_TIER}-${RACE}-vs-${ENEMY_RACE}"
+RUN_DIR="$ATLANTIS_DIR/_AI/e2e/runs/${RUN_STAMP}_${RUN_TAG}"
+mkdir -p "$RUN_DIR"
+ln -sfn "$RUN_DIR" "$ATLANTIS_DIR/_AI/e2e/runs/latest"
+
+SERVER_LOG="$RUN_DIR/server.log"
+BOT_LOG="$RUN_DIR/bot.log"
 mkdir -p "$(dirname "$SERVER_LOG")"
+
+# The run's identity, written next to the log so a later reader does not have to guess
+# which command produced it (the verdict table's whole purpose, _AI/e2e/README.md).
+cat > "$RUN_DIR/run.txt" <<EOF
+map=$MAP race=$RACE enemy_race=$ENEMY_RACE enemy_count=$ENEMY_COUNT
+scenario=${RUN_TAG}
+timeout_seconds=$TIMEOUT_SECONDS ingame_time=$INGAME_TIME
+jar=$JAR
+expect_min_pylons=${EXPECT_MIN_PYLONS:-} expect_min_gateways=${EXPECT_MIN_GATEWAYS:-} expect_min_zealots=${EXPECT_MIN_ZEALOTS:-}
+expect_min_dragoons=${EXPECT_MIN_DRAGOONS:-} expect_min_assimilators=${EXPECT_MIN_ASSIMILATORS:-} expect_min_nexus=${EXPECT_MIN_NEXUS:-}
+expect_min_cores=${EXPECT_MIN_CORES:-}
+EOF
 
 # Clear stale transport first: a leftover host or segment poisons this run.
 # Both namespaces are cleared because the server publishes a /dev/shm segment
@@ -480,26 +616,73 @@ say "bot exit code: $BOT_EXIT"
 say "server log: $SERVER_LOG"
 say "bot log:    $BOT_LOG"
 
+# === The result block ======================================================
+# Printed on EVERY exit path from here on, pass or fail (owner's ruling 2026-10-11): the
+# tier, whether the run stopped itself at the success gate, the full roster, and the
+# reason for a failure. A verdict that only appears on success teaches nothing from the
+# runs that matter - and the runs that matter are the failures.
+print_result_block() {
+  local status="$1"       # OK | FAIL
+  local detail="$2"
+  echo "============================================================"
+  echo "E2E $status  [$RUN_TIER]  $detail"
+  echo "  map : $MAP"
+  echo "  log : $BOT_LOG"
+  echo "============================================================"
+}
+
 if [ "$BOT_EXIT" -ne 0 ]; then
   say "bot did not exit cleanly; log tail:"
   tail -20 "$BOT_LOG" | sed 's/^/    /'
   # A timed-out or crashed bot is never a passing scenario, even when no
   # optional expectations were supplied. Preserve timeout's exit code rather
   # than printing SCENARIO PASSED from a partial GameSummary.
+  if [ "$BOT_EXIT" = "124" ]; then
+    print_result_block "FAIL" "bot hit the ${BOT_KILL_SECONDS}s bot-cap (TIMEOUT_SECONDS=${TIMEOUT_SECONDS}) without reaching the success gate"
+  else
+    print_result_block "FAIL" "bot exited with code $BOT_EXIT (crash or unclean exit)"
+  fi
   exit "$BOT_EXIT"
 fi
-# === Scenario assertions ===================================================
 # A run in which the client never attached is a failure, even without optional
 # expectations. Otherwise an empty/logless run can look like a pass.
 if ! grep -q 'HELLO_ATLANTIS' "$BOT_LOG" 2>/dev/null; then
   say "ASSERT FAILED: the bot never attached - no HELLO_ATLANTIS in $BOT_LOG"
+  print_result_block "FAIL" "the bot never attached (no HELLO_ATLANTIS in the log)"
   exit 1
 fi
+# === Scenario assertions ===================================================
+# A run in which the client never attached is a failure, even without optional
+# expectations. Otherwise an empty/logless run can look like a pass.
+# (The marker above is asserted by LauncherBuildsTheJarTest: it checks that the preserved
+# bot exit code comes before this section, so a crash can never reach a passing assertion.
+# Keep the exact text `# === Scenario assertions`.)
+
+# The EXPECT_* variables MUST be exported: the assertion script is a child process, and an
+# unexported shell variable is invisible to it - which is exactly why every real run printed
+# a verdict and then SCENARIO PASSED regardless of the numbers (measured 2026-10-11: a
+# `--short` run with dragoons=0 passed its `EXPECT_MIN_DRAGOONS=1`). The inline `VAR=... bash`
+# form used by --self-test-assertions hid it, because inline assignments ARE inherited.
+export EXPECT_MIN_INGAME_SECONDS EXPECT_MIN_KILLED EXPECT_MAX_KILLED \
+  EXPECT_MIN_PYLONS EXPECT_MIN_GATEWAYS EXPECT_MIN_ZEALOTS EXPECT_MIN_DRAGOONS \
+  EXPECT_MIN_ASSIMILATORS EXPECT_MIN_NEXUS EXPECT_MIN_CORES EXPECT_MIN_RESOURCE_BALANCE \
+  EXPECT_NO_PLACEMENT_FAILURES 2>/dev/null || true
+
+# The gate the bot stops on (when armed) is reported separately from the assertions: a run
+# can reach the gate and still be missing something the shell expects, and saying which is
+# which is the difference between "the opening never got there" and "it got there but the
+# building set is incomplete".
+GATE_MARK=""
+if grep -q 'ForceExitWhenOpeningProven' "$BOT_LOG" 2>/dev/null; then
+  GATE_MARK="success gate reached (Core + Dragoon)"
+fi
+
 if ! bash "$ATLANTIS_DIR/scripts/assert-openbw-scenario.sh" "$BOT_LOG"; then
   say "SCENARIO FAILED (see $BOT_LOG)"
+  print_result_block "FAIL" "${GATE_MARK:-success gate NOT reached} - an expected structure/unit is missing (see reasons above)"
   exit 1
 fi
-if [ -n "${EXPECT_MIN_INGAME_SECONDS:-}${EXPECT_MIN_KILLED:-}${EXPECT_MAX_KILLED:-}${EXPECT_MIN_RESOURCE_BALANCE:-}${EXPECT_NO_PLACEMENT_FAILURES:-}" ]; then
-  say "SCENARIO PASSED"
-fi
+say "SCENARIO PASSED"
+say "  log: $BOT_LOG"
+print_result_block "OK" "${GATE_MARK:-success gate not armed - full expectations met at game end}"
 exit "$BOT_EXIT"

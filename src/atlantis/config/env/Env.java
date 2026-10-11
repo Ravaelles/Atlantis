@@ -56,6 +56,19 @@ public class Env {
     private static boolean builderLog = false;
 
     /**
+     * CORE_AND_DRAGOON_GATE=true ends the game as soon as the opening is proven.
+     *
+     * <p>
+     * The {@code --short} tier of {@code run-openbw-e2e.sh}: a finished Cybernetics Core and
+     * at least one Dragoon. Waiting the full game length to learn that the opening never got
+     * there is the expensive way to ask the question, and a production change is usually
+     * checked with exactly this question. The shell asserts the same two facts at the end, so
+     * this only shortens a run that would have passed anyway - it cannot turn a failure green.
+     * </p>
+     */
+    private static boolean coreAndDragoonGate = false;
+
+    /**
      * END_GAME_VIA_ENGINE=true makes the bot ask the engine to leave the game instead of
      * killing its own JVM at game end.
      *
@@ -163,6 +176,13 @@ public class Env {
             case "BUILDER_LOG":
                 builderLog = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                return true;
+            case "CORE_AND_DRAGOON_GATE":
+                // --short tier of the OpenBW E2E: end the game as soon as the opening is
+                // PROVEN (a finished Cybernetics Core and at least one Dragoon), instead of
+                // playing the full game length. The shell asserts the same facts at the end,
+                // so a run that exits early without them is still a failure.
+                coreAndDragoonGate = trueFalse(value);
                 return true;
             case "PLACEMENT":
                 // Which placement implementation answers the scheduler's seam:
@@ -285,6 +305,15 @@ public class Env {
      */
     public static boolean builderLog() {
         return builderLog;
+    }
+
+    /**
+     * True when {@code CORE_AND_DRAGOON_GATE=true}: end the game as soon as the opening is
+     * proven (a finished Cybernetics Core and at least one Dragoon). The {@code --short} tier
+     * of the OpenBW E2E runner; off by default.
+     */
+    public static boolean coreAndDragoonGate() {
+        return coreAndDragoonGate;
     }
 
     /**

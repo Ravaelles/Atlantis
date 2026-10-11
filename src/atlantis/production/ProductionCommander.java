@@ -28,6 +28,7 @@ public class ProductionCommander extends Commander {
             return new CommanderFactory[]{
                 ProductionOrdersCommander::new,
                 ConstructionsCommander::new,
+                ForceExitWhenOpeningProven::new,
             };
         }
 
@@ -36,6 +37,8 @@ public class ProductionCommander extends Commander {
             SupplyCommander::new,
             ConstructionsCommander::new,
             DynamicProductionCommander::new,
+            // The --short E2E gate: no-op unless CORE_AND_DRAGOON_GATE=true in ENV.
+            ForceExitWhenOpeningProven::new,
 //            RemoveExcessiveOrders.class,
         };
     }
