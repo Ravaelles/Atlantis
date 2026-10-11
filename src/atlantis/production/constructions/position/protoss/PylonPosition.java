@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.map.AMap;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.Bases;
 import atlantis.map.choke.AChoke;
@@ -39,32 +40,125 @@ public class PylonPosition {
         return Select.mainOrAnyBuilding();
     }
 
+    /**
+     * Search origin for the first Pylon: the base, moved a short way towards the
+     * resource line, so the Pylon ends up beside the Nexus rather than on top of it.
+     *
+     * <p>
+     * <b>This used to compute a "centre of resources" and then step back from it,
+     * and the whole chain is gone (measured 2026-10-10, `_AI/CHALLENGES/OpenBW.md`).</b>
+     * It did `geyser.translateTilesTowards(mineralsCenter, 50)` - fifty tiles past the
+     * mineral centre, which on TauCross produced a point
+     * <b>36 tiles outside the map</b> (`raw=[-36,88]`). `ensureWithinBounds()` then
+     * returned <b>null</b> (nothing within its 8-tile radius of a tile off the map),
+     * the `if (centerOfResources != null)` guard skipped the step that was supposed to
+     * move the origin off the base, and the method silently returned
+     * <b>the Nexus position itself</b> (`distBase = 0.84`). The placement search then
+     * started on top of the Nexus, every low-radius candidate was legitimately
+     * "occupied", and the bot never placed its first Pylon.
+     * </p>
+     *
+     * <p>
+     * The intent was always "a few tiles to the side of the base" - the 50-tile
+     * detour through a "resource centre" was never needed to express it. The
+     * direction is kept (towards the resource line, away from the map corner) and the
+     * distance is the 7 tiles the old code was trying to reach.
+     * </p>
+     */
     public static APosition nearToPositionForFirstPylon() {
         AUnit base = Select.main();
         if (base == null) {
             return fallback();
         }
 
-        APosition position = base.position();
-        HasPosition geyser = Select.geysers().inRadius(10, base).first();
-        HasPosition mineralsCenter = ABaseLocation.mineralsCenter(base);
+        // The direction towards the resource line is the natural first choice, but it
+        // is only a candidate: on a corner base (measured on TauCross: Nexus at
+        // (117,7)-(120,9), i.e. 7 tiles from the top edge) the minerals sit *towards*
+        // that edge, and 7 tiles that way lands straight inside the 7-tile margin
+        // `ProtossTooCloseToMapBoundaries` reserves for a Pylon. A blind direction is
+        // what kept the search in a corner; the direction must be one that has room.
+        HasPosition towards = ABaseLocation.mineralsCenter(base);
+        if (towards == null) {
+            towards = Select.geysers().inRadius(10, base).first();
+        }
 
-        if (geyser == null || mineralsCenter == null) return fallback();
+        return firstPylonOriginNear(base, towards);
+    }
 
-        APosition centerOfResources = geyser.translateTilesTowards(mineralsCenter, 50);
+    /**
+     * The base, moved {@link #FIRST_PYLON_TILES_FROM_BASE} tiles away from itself, in
+     * a direction that actually leads somewhere: towards the resources when that has
+     * room, otherwise away from the nearest map edge.
+     *
+     * <p>
+     * A base in a corner is the case that matters. Its resource line commonly points
+     * at the very edge the base is near, so "towards the minerals" and "into the
+     * boundary margin" are the same direction - and the search then spends every ring
+     * on tiles the boundary rule will refuse. Preferring the resource direction only
+     * when the result is comfortably inside the map keeps the intended Protoss layout
+     * where it is possible and degrades to "straight into open ground" where it is not.
+     * </p>
+     */
+    private static APosition firstPylonOriginNear(AUnit base, HasPosition towards) {
+        // "Towards something" only means something if it is a DIFFERENT point. When the
+        // map has no minerals to measure from, `ABaseLocation.mineralsCenter` returns the
+        // base itself (`if (center == null) return base`), and translating towards
+        // yourself moves by exactly zero - which puts the origin back on the Nexus and
+        // recreates the whole original failure one level deeper. Measured 2026-10-10 in
+        // the stub world: mineralsCenter = the Nexus, origin = the Nexus, dist = 0.0.
+        if (towards != null && base.distTo(towards) > 1) {
+            APosition towardsResources = base.translateTilesTowards(FIRST_PYLON_TILES_FROM_BASE, towards);
+            if (isWellInsideMap(towardsResources)) {
+                return towardsResources.makeBuildableFarFromBounds(5);
+            }
+        }
 
-        if (position == null) {
-            System.err.println("Unable to position first Pylon... " + Select.minerals().inRadius(10, base).size());
+        // Resources are absent or point into an edge: step away from the closest edge
+        // instead, which is the direction with room by construction.
+        APosition awayFromEdge = base.translateTilesTowards(
+            FIRST_PYLON_TILES_FROM_BASE, awayFromNearestEdge(base)
+        );
+        if (!isWellInsideMap(awayFromEdge)) {
             return fallback();
         }
 
-        if (centerOfResources != null) {
-            position = base.translateTilesTowards(-7, centerOfResources);
-        }
-        position = position.makeBuildableFarFromBounds(5);
-
-        return position;
+        return awayFromEdge.makeBuildableFarFromBounds(5);
     }
+
+    /**
+     * True when the position is inside the map with a Pylon's own margin to spare, so
+     * the boundary rule cannot refuse every tile the search would reach from it.
+     */
+    private static boolean isWellInsideMap(APosition position) {
+        if (position == null || position.isOutOfBounds()) return false;
+
+        return position.distToMapBorders() > PYLON_EDGE_MARGIN_TILES;
+    }
+
+    /**
+     * The map centre as seen from the base - i.e. the direction away from the nearest
+     * edge. Used when the resource line has no room.
+     */
+    private static HasPosition awayFromNearestEdge(AUnit base) {
+        return APosition.create(
+            AMap.getMapWidthInTiles() / 2,
+            AMap.getMapHeightInTiles() / 2
+        );
+    }
+
+    /**
+     * The Pylon's reserved distance from a map edge while supply is low - the same
+     * number {@code ProtossTooCloseToMapBoundaries} enforces (7 tiles), kept here so
+     * the origin and the rule that judges candidates agree.
+     */
+    public static final int PYLON_EDGE_MARGIN_TILES = 7;
+
+    /**
+     * How far the first Pylon's search origin sits from the Nexus. The old code was
+     * reaching for 7 tiles (`translateTilesTowards(-7, ...)`) before that step was
+     * skipped; kept as a named constant so the number is visible where it is decided.
+     */
+    public static final double FIRST_PYLON_TILES_FROM_BASE = 7;
 
     public static APosition nearToPositionForSecondPylon() {
 //        return initialNearTo;
@@ -78,6 +172,11 @@ public class PylonPosition {
 
     // =========================================================
 
+    /**
+     * Fallback origin when the map cannot answer: our first building's position.
+     * Non-null in a live game (the Nexus exists), and the placement search handles a
+     * base-centred origin by walking outwards from it.
+     */
     private static APosition fallback() {
         AUnit first = Select.ourBuildings().first();
         return first != null ? first.position() : null;

@@ -28,7 +28,7 @@ public class PositionFulfillsAllConditions {
         AUnit builder, AUnitType building, APosition position, HasPosition nearTo
     ) {
         PositionFulfillsAllConditions.building = building;
-        PositionFulfillsAllConditions._currentTX = position.ty();
+        PositionFulfillsAllConditions._currentTX = position.tx();
         PositionFulfillsAllConditions._currentTY = position.ty();
 
 //        System.out.println("Conditions: " + position);
@@ -97,7 +97,7 @@ public class PositionFulfillsAllConditions {
 
     private static boolean success() {
         AbstractPositionFinder._STATUS = "OK";
-        AConsole.errPrintln("SUCCESS FOR " + building.name() + " at " + _currentTX + "," + _currentTY);
+        AConsole.errPrintln("FOUND PLACE FOR " + building.name() + " at " + _currentTX + "," + _currentTY);
 
         return true;
     }
@@ -108,9 +108,9 @@ public class PositionFulfillsAllConditions {
                 "failed() called for " + PositionFulfillsAllConditions.building + ", but no _STATUS was set"
             );
         }
-        else {
-            AConsole.errPrintln("(" + _currentTX + "," + _currentTY + "): " + AbstractPositionFinder._STATUS);
-        }
+//        else {
+//            AConsole.errPrintln("(" + _currentTX + "," + _currentTY + "): " + AbstractPositionFinder._STATUS);
+//        }
 
         return false;
     }
