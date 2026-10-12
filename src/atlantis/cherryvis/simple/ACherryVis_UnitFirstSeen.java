@@ -73,8 +73,13 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     /**
      * Test seam (no CherryVis frontend needed): records are pure data, so the
      * format test pins the exact JSON string without running a game.
+     *
+     * <p>Frames start at 1, never 0 (Stardust does the same: the replay has no
+     * visible units on frame 0 yet, so frame-0 seeds match nothing and are lost
+     * forever - every starting unit then reads "i???". NEXT #68.</p>
      */
     public static void record(int frame, int id, int type, int x, int y) {
+        if (frame <= 0) frame = 1;
         if (!seenUnitIds.contains(id)) {
             seenUnitIds.add(id);
             if (!unitsByFrame.containsKey(frame)) {
