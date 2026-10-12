@@ -53,6 +53,7 @@ public class WineClientGameLauncher implements GameLauncher {
         // supervisor forwards key codes through KeyRelay - drain them and
         // execute. AKeyboard no longer kills the JVM when its hook fails.
         AKeyboard.listenForKeyEvents();
+        KeyRelay.purge();
         KeyRelay.startDraining();
     }
 }

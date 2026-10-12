@@ -509,11 +509,23 @@ Owner's direction: bmnielsen's `cherryvis-docker` instead of the native install
 (which moved to `_OLD`). Verified the user's `python:3.10` base (django 2.1.7
 clean of 3.10 breakers by sdist grep), bumped the provably-dead
 `zstandard==0.11.0` to 0.21.0, added the missing `zstd`, and patched
-`views.py` to the modern one-shot API (serves compressed and plain). Image
+`views.py` to `zstandard`'s streaming reader with plain-file fallback (a first
+one-shot attempt failed size-less streams - measured `length mismatch`, empty
+side panel with no console error as the symptom). Image
 builds, container `cvis` runs on :8770 with `/sc-ai/REPLAYS` mounted: our game
 pairs (`has_cvis_data: true`) and its trace serves as valid JSON both plain and
 via `.zst`. Runner now pairs `.rep.cvis` with the on-disk `.rep` (engine
 mangles the configured name). Container left running for the owner.
+
+## Session 2026-10-12 (continued): game starts paused (NEXT #66, CLOSED)
+
+Owner's IDE/Wine report (40 s frozen, first "2" starts it) is our own
+`GameSpeed` flag, not the engine: both speed-change paths paused first and
+unpaused last with no `finally`, and a keys file left by a killed session
+replayed Pause into the next game. Fixed with `try/finally`
+(`KeyboardPauseReleaseTest` fails pre-fix with a throwing game mock) and
+`KeyRelay.purge()` at both launcher starts. Unit scope 396/396. The
+engine-pause `resumeGame` path was already covered and is untouched.
 
 ## Session 2026-10-12 (continued): viewer 500 + --run-only + viewable pair (NEXT #65)
 

@@ -959,6 +959,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
+- **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
+  Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
+  Two real traps, both fixed without behavior change: (1) speed changes paused
+  first and unpaused last with no `finally` - anything throwing in between left
+  `GameSpeed` paused forever while `OnEveryFrame` spins (`KeyboardPauseReleaseTest`
+  pins it with a throwing game mock, fails pre-fix); (2) a keys file left by a
+  killed session replayed Pause into the next game - `KeyRelay.purge()` at both
+  launcher starts drops it unexecuted. Engine-pause (`resumeGame`) path kept as
+  is - it already covers its case with a test.
+
 - **#65 (2026-10-12) - CherryVis per-unit reporting: first-seen fixed, two format
   questions open.** Owner's report: whole-bot reporting worked, per-unit never did
   ("format was wrong or something"). Measured in source, no frontend needed:

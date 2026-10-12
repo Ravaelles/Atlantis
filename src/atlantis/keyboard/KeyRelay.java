@@ -92,6 +92,19 @@ public class KeyRelay {
     }
 
     /**
+     * Bot side: drop queued keys WITHOUT executing them. A keys file left behind
+     * by a killed session would otherwise replay its keystrokes (e.g. Pause) into
+     * the next game, freezing it from frame 0 with no key pressed - call this at
+     * launcher start, before {@link #startDraining()}. Never throws.
+     */
+    public static void purge() {
+        try {
+            Files.deleteIfExists(file().toPath());
+        } catch (IOException ignored) {
+        }
+    }
+
+    /**
      * Bot side: start a daemon thread that executes drained keys on the real
      * handler. Polling every 100 ms is plenty for human keystrokes.
      */

@@ -66,6 +66,7 @@ public class UnixChaosGameLauncher implements GameLauncher {
             // Linux supervisor forwards codes through KeyRelay (see
             // AKeyboard.dispatchKeyCode). Without this drain the forwarded keys
             // pile up in the relay file and C/P/1-9 do nothing.
+            atlantis.keyboard.KeyRelay.purge();
             atlantis.keyboard.KeyRelay.startDraining();
             return; // Do NOT start ChaosLauncher, do NOT pkill.
         }

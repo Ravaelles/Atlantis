@@ -237,15 +237,27 @@ public class AKeyboard implements NativeKeyListener {
         changeGameSpeed(-1);
     }
 
-    private static void changeGameSpeed(int positiveForQuickerNegativeForSlower) {
+    /**
+     * Test seam (public so tests can prove the pause always lifts): keyboard
+     * shortcuts are unreachable from tests - dispatching needs a Wine JVM -
+     * but the pause discipline they rely on is assertable here directly.
+     */
+    public static void changeGameSpeed(int positiveForQuickerNegativeForSlower) {
         GameSpeed.pauseGame();
-        A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+        try {
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
 
-        int deltaChangeSpeed = 15;
-        GameSpeed.changeSpeed(deltaChangeSpeed * (positiveForQuickerNegativeForSlower > 0 ? -1 : +1));
+            int deltaChangeSpeed = 15;
+            GameSpeed.changeSpeed(deltaChangeSpeed * (positiveForQuickerNegativeForSlower > 0 ? -1 : +1));
 
-        A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
-        GameSpeed.unpauseGame();
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+        }
+        finally {
+            // The pause MUST lift even when the speed change throws (e.g. no game
+            // attached yet): otherwise OnEveryFrame spins in its pause loop forever
+            // and the bot looks paused from that moment on.
+            GameSpeed.unpauseGame();
+        }
     }
 
     @Override
@@ -272,17 +284,24 @@ public class AKeyboard implements NativeKeyListener {
         }
     }
 
-    private static void changeSpeedAndFrameSkip(int speed, int frameSkip) {
+    /**
+     * Test seam, same reason as {@link #changeGameSpeed(int)}.
+     */
+    public static void changeSpeedAndFrameSkip(int speed, int frameSkip) {
         GameSpeed.pauseGame();
 
-        A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+        try {
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
 
-        GameSpeed.changeSpeedTo(speed);
-        GameSpeed.changeFrameSkipTo(frameSkip);
+            GameSpeed.changeSpeedTo(speed);
+            GameSpeed.changeFrameSkipTo(frameSkip);
 
-        A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
-
-        GameSpeed.unpauseGame();
+            A.sleep(MS_DELAY_FIX); // Needed otherwise for some reason it doesn't work
+        }
+        finally {
+            // Same rule as changeGameSpeed above: never stay paused.
+            GameSpeed.unpauseGame();
+        }
     }
 
 //    @Override
