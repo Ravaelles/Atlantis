@@ -610,3 +610,11 @@ placement are exonerated by one measured line; the engine refuses because the
 bot is broke. Upstream defect: ~10 workers bank ~30 minerals, Gateway attempted
 broke, refused, cancelled at 35s. The [14,51] site (`noBuilder=false`) is a
 different mechanism (power or occupancy) and still needs its own split run.
+
+## Session 2026-10-12 (continued): BUILDING-BLOCKERS.md opened (NEXT #59/#62)
+
+Owner's ruling, honoring it: poverty is A cause, not THE cause (400-600
+minerals banked just as often). New living file `_AI/BUILDING-BLOCKERS.md`
+splits the hunt into Certain (6 items, evidence named), Refuted (7 readings
+with what killed each), Open (O1 [14,51] power-vs-occupancy split run, O2 bank
+sampling, O3 jstack, O4 gas equality). Indexed from `_AI/README.md`.
