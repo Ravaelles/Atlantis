@@ -74,6 +74,25 @@ public class WorkerHandlerCommander extends Commander {
 
         AUnit mineral = Select.all().minerals().nearestTo(worker);
 
+        // NEXT #63: on a stuck worker separate OUR flag (action) from the ENGINE's
+        // answer. A worker with NO_COMMAND that keeps re-issuing Gather every 2nd
+        // frame (throttle) while the engine refuses needs canGather/canRightClick
+        // to name the refusing term; a worker with an accepted Gather standing on
+        // the patch (distToMineral=0.0) is mining, not stuck - the 10-frame
+        // standstill threshold false-positives on miners pausing on the patch.
+        String engineAnswers = "";
+        try {
+            boolean canGather = mineral != null && worker.u() != null && mineral.u() != null
+                && worker.u().canGather(mineral.u());
+            boolean canRightClick = mineral != null && worker.u() != null && mineral.u() != null
+                && worker.u().canRightClick(mineral.u());
+            engineAnswers = " canGather=" + canGather + " canRightClick=" + canRightClick
+                + " order=" + (worker.u() == null ? "no-u" : worker.u().getOrder())
+                + " tileWalkable=" + atlantis.map.MapTiles.isWalkable(worker);
+        } catch (Throwable t) {
+            engineAnswers = " engineProbeThrew=" + t.getClass().getSimpleName();
+        }
+
         System.err.println("STUCK_WORKER @" + A.now()
             + " unit=#" + worker.id() + " " + worker.type().name() + " @[" + worker.tx() + "," + worker.ty() + "]"
             + " stoodStillFor=" + worker.lastPositionChangedAgo() + "f"
@@ -87,6 +106,6 @@ public class WorkerHandlerCommander extends Commander {
             + " isBuilder=" + worker.isBuilder()
             + " distToMineral=" + (mineral == null ? "none" : A.digit(worker.distTo(mineral)))
             + " mineralsNear=" + Select.all().minerals().countInRadius(8, worker)
-            + " bases=" + Select.ourBases().count());
+            + " bases=" + Select.ourBases().count() + engineAnswers);
     }
 }
