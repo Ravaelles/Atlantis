@@ -100,10 +100,11 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      */
     public static void seedCurrentUnits() {
         for (AUnit unit : atlantis.units.select.Select.ourUnitsWithUnfinishedList()) {
-            record(A.now(), unit.id(), unit.type().id(), unit.x(), unit.y());
+            // Engine type id - see onEvent (NEXT #68).
+            record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
         }
         for (AUnit mineral : atlantis.units.select.Select.mineralsAndGeysers().list()) {
-            record(A.now(), mineral.id(), mineral.type().id(), mineral.x(), mineral.y());
+            record(A.now(), mineral.id(), mineral.type().ut().id, mineral.x(), mineral.y());
         }
     }
 
@@ -121,7 +122,10 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         AUnit unit = (AUnit) data[0];
 
         if (!unit.isNeutral()) {
-            record(A.now(), unit.id(), unit.type().id(), unit.x(), unit.y());
+            // Engine type id (bwapi), NOT AUnitType.id() (ours, 1000+): the viewer
+            // matches units against the replay by BWAPI type, and anything else
+            // matches nothing - every clicked unit then reads "i???" (NEXT #68).
+            record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
         }
     }
 }

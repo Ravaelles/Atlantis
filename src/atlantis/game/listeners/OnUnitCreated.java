@@ -16,10 +16,11 @@ public class OnUnitCreated {
 
         // CherryVis first-seen for our own units (Stardust records at creation,
         // not at discovery - BWAPI never "discovers" our own units, so the
-        // UNIT_DISCOVERED path misses the whole army).
+        // UNIT_DISCOVERED path misses the whole army). Engine type id, not
+        // AUnitType.id() (NEXT #68).
         if (unit.isOur() && atlantis.cherryvis.ACherryVis.isEnabled()) {
             atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
-                A.now(), unit.id(), unit.type().id(), unit.x(), unit.y()
+                A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
             );
         }
 

@@ -535,6 +535,15 @@ the true owner with a stale leaf tooltip. Now returns `this` (chain still
 stops); `unit.manager()` untouched. `SleepGateOwnershipTest` fails pre-fix.
 Unit scope 397/397.
 
+## Session 2026-10-12 (continued): per-unit "i???" type ids (NEXT #68)
+
+Owner: clicked units show "i???" and no per-unit data attaches. Frontend reads
+`'i' + (id>=0 ? id : '???')` after `bw2id` mapping; the mapping comes from fuzzy
+matching (frame, type, x, y) and our type was ours-not-BWAPI (1210 vs 64), so
+nothing matched. Fixed at all write sites; `types_names` already engine-side.
+Test pins 64, fails pre-fix. Pending: fresh-trace viewer check + per-frame
+manager/order lines for non-buildings (via `units_logs`, the rendered channel).
+
 ## Session 2026-10-12 (continued): viewer 500 + --run-only + viewable pair (NEXT #65)
 
 Owner installed the viewer; every page returned HTTP 500 - root cause

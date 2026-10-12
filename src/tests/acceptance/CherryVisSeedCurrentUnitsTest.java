@@ -36,6 +36,15 @@ public class CherryVisSeedCurrentUnitsTest extends WorldStubForTests {
             String json = ACherryVis_UnitFirstSeen.get();
             assertTrue(json.contains("\"id\":" + probe.id()), "own unit seeded, got: " + json);
             assertTrue(json.contains("\"id\":" + mineral.id()), "mineral seeded, got: " + json);
+            // BWAPI engine ids (JBWAPI UnitType enum), NOT AUnitType.id() (ours,
+            // 1000+): the viewer matches units against the replay by engine type,
+            // and anything else matches nothing - every clicked unit reads "i???"
+            // (NEXT #68).
+            assertTrue(json.contains("\"type\":64"), "probe must carry engine id 64, got: " + json);
+            assertTrue(
+                json.contains("\"type\":" + AUnitType.Resource_Mineral_Field.ut().id),
+                "mineral must carry its engine id, got: " + json
+            );
 
             ACherryVis_UnitFirstSeen.clear();
         });

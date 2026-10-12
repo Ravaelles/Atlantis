@@ -970,6 +970,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   (`SleepGateOwnershipTest`, fails pre-fix). `unit.manager()` semantics kept -
   dozens of `isActiveManager` gates depend on it.
 
+- **#68 (2026-10-12) - per-unit data never attaches ("i???" on click). ROOT CAUSE
+  FOUND, fix in.** The viewer fuzzy-matches cvis units against replay units by
+  (frame, type, x, y); our `units_first_seen[].type` carried `AUnitType.id()`
+  (ours, auto-assigned from 1000 - the trace showed `"type": 1210` for a Probe)
+  while everything else speaks BWAPI ids (Probe 64). Zero units matched, every
+  click resolved to a negative id. Fix: record `ut().id` at all three write
+  sites (discovery, creation hook, seed); the `types_names` table already uses
+  engine ids (verified against the JBWAPI enum). Test pins literal 64/176,
+  fails pre-fix. Game verification (fresh trace + viewer match) pending.
+  Follow-up in this item: per-frame manager+order lines for non-building units
+  (viewer renders `units_logs`, not the `manager` update field - wire order
+  issue points behind a flag).
+
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
   Two real traps, both fixed without behavior change: (1) speed changes paused
