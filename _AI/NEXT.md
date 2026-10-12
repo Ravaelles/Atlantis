@@ -1038,6 +1038,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `CHERRYVIS_UNIT_ORDERS`; proven in game (16 units, 30 manager + 1272 order
   lines), flag reverted after. A killed run once "collected" the previous
   run's trace and passed - source dir is now purged pre-run.
+  Reference analysis 2026-10-12 (`cherryvisdumper.cpp/.h`): shapes confirmed -
+  first_seen `{id,type,x,y}` per frame arrays, updates `{task|type}` on change,
+  logs `{frame,message,sev,file,line,attachments}`, board `{frame:{k:v}}`
+  changed-only, tasks list (absent for us - no UPC system, panel shows None by
+  design). Our `units_logs {frame,message}` subset renders (renderer needs only
+  those two). Known-minor, not fixed: `board_updates` emits duplicate frame
+  keys when two states change on one frame (last wins).
 
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
