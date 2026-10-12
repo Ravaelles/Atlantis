@@ -748,9 +748,18 @@ if [ "${CVIS:-0}" = "1" ]; then
     say "cherryvis trace missing: $CVIS_SRC was never written (was GENERATE_CHERRYVIS_REPLAY seen by the bot?)"
   fi
   if [ "${SAVE_REPLAY:-0}" = "1" ] && [ -n "${REPLAY_FILE:-}" ]; then
-    mkdir -p "$REPLAY_FILE.cvis"
-    cp -f "$CVIS_DEST"/trace.json "$CVIS_DEST"/trace.json.zst "$CVIS_DEST"/trace_raw.json "$CVIS_DEST"/game_summary.json "$REPLAY_FILE.cvis/" 2>/dev/null || true
-    say "cherryvis trace next to replay: $REPLAY_FILE.cvis"
+    # Pair with the ACTUAL .rep on disk, not the configured name: the engine
+    # runs the path through strftime and strips every char outside
+    # [A-Za-z0-9-_. /] (measured: colons vanish, so REPLAY_FILE never exists
+    # and a cvis dir named after it would sit next to nothing). Newest .rep wins.
+    ACTUAL_REP="$(ls -t "$REPLAY_DIR"/*.rep 2>/dev/null | head -1 || true)"
+    if [ -n "$ACTUAL_REP" ]; then
+      mkdir -p "$ACTUAL_REP.cvis"
+      cp -f "$CVIS_DEST"/trace.json "$CVIS_DEST"/trace.json.zst "$CVIS_DEST"/trace_raw.json "$CVIS_DEST"/game_summary.json "$ACTUAL_REP.cvis/" 2>/dev/null || true
+      say "cherryvis trace next to replay: $ACTUAL_REP.cvis"
+    else
+      say "cherryvis trace has no .rep to pair with (no .rep in $REPLAY_DIR)"
+    fi
   fi
   if ! assert_cvis_artifacts "$CVIS_DEST"; then
     # Do not fail here: when the bot was killed or crashed, onGameEnd never ran

@@ -94,6 +94,29 @@ trace (22 first-seen frames, 107 units seeded at frame 0, 21 units with manager
 updates). Per-unit free-text lines additionally need
 `DebugFlags.CHERRYVIS_BUILDER_ACTIONS=true` (recompile + rebuild the jar).
 
+### Viewing a trace: CherryVis in Docker (added 2026-10-12)
+
+Native install works (`scripts/install_cherryvis.sh`, plus `--run-only` for
+server-only starts), but the reproducible path is bmnielsen's image, fixed up
+locally in `/sc-ai/CherryVis/cherryvis-docker`: `python:3.10-alpine` kept (3.14
+breaks the old pins), `zstandard==0.21.0` (0.11.0 cannot compile on 3.10+ -
+`Py_TYPE` assignment, measured), the missing `zstd` added (the HTTP 500 we fixed
+natively), and `cvis-views-zstd-compat.diff` (the shipped `zstd` dropped the
+streaming API `views.py` was written against; the endpoint now serves both
+compressed partitions and plain files).
+
+```bash
+docker build -t cvis /sc-ai/CherryVis/cherryvis-docker
+docker run -d -p 8770:8770 -v /sc-ai/REPLAYS:/my-replays --name cvis cvis
+```
+
+Then `http://127.0.0.1:8770/` shows the samples; our games need the glob
+(`/list/?pattern=/my-replays/*.rep`) and pair via `<name>.rep` +
+`<name>.rep.cvis/` (`has_cvis_data: true`). Pairing is by the file the engine
+really wrote - it strips colons from the configured name, and the runner now
+pairs with the newest on-disk `.rep` for exactly that reason. Verified: our
+trace serves as valid JSON through `/get/cvis/` both plain and via `.zst`.
+
 ### Opening the trace locally (CherryVis viewer install)
 
 Upstream repo is archived (2022), but the viewer still builds. From

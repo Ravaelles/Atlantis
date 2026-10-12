@@ -503,6 +503,18 @@ django venv, emscripten, `server.py`, single-file vs partitioned caveat).
 Left in #65: the owner opening a real trace in the viewer (needs the frontend),
 and wider per-unit call-site coverage behind `CHERRYVIS_BUILDER_ACTIONS`.
 
+## Session 2026-10-12 (continued): CherryVis in Docker serves our trace (NEXT #65)
+
+Owner's direction: bmnielsen's `cherryvis-docker` instead of the native install
+(which moved to `_OLD`). Verified the user's `python:3.10` base (django 2.1.7
+clean of 3.10 breakers by sdist grep), bumped the provably-dead
+`zstandard==0.11.0` to 0.21.0, added the missing `zstd`, and patched
+`views.py` to the modern one-shot API (serves compressed and plain). Image
+builds, container `cvis` runs on :8770 with `/sc-ai/REPLAYS` mounted: our game
+pairs (`has_cvis_data: true`) and its trace serves as valid JSON both plain and
+via `.zst`. Runner now pairs `.rep.cvis` with the on-disk `.rep` (engine
+mangles the configured name). Container left running for the owner.
+
 ## Session 2026-10-12 (continued): viewer 500 + --run-only + viewable pair (NEXT #65)
 
 Owner installed the viewer; every page returned HTTP 500 - root cause
