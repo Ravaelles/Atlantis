@@ -974,6 +974,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     other order mislabeled every manager in the viewer, and managers past the table
     had no name. The legend is now built from the runtime table
     (`CherryVisCustomNamesTest` pins it, no frontend needed).
+  - FIXED: empty `units_first_seen` in real games. Our listener only recorded
+    `UNIT_DISCOVERED`, which BWAPI never fires for our own units - and on OpenBW
+    (late attach) that is every unit that matters. Record at creation
+    (`OnUnitCreated`, Stardust does the same) plus a start-of-game seed sweep of
+    ours and minerals (`OnGameStarted`, Stardust marks static neutrals the same
+    way); id dedup makes the overlap harmless. `CherryVisSeedCurrentUnitsTest`.
   - FIXED: `units_logs` is no longer `{}`. New `CV.unitLog(message, unit)` API
     (Stardust's `CherryVis::log(unitId)`), stored per unit, rendered inline in the
     legacy single-file shape; `CherryVisUnitLogsTest` pins the exact JSON. First

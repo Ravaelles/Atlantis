@@ -483,3 +483,13 @@ into the run dir and `<name>.rep.cvis/` next to `--save-replay` output (default
 `/sc-ai/REPLAYS`), fails a clean run with no trace; `--self-test-cvis` pins the
 checks with no game. Verified: both self-tests green, unit 395/395. A proving
 run (clean exit -> real trace.json) still pending.
+
+## Session 2026-10-12 (continued): CherryVis first-seen seed (NEXT #65)
+
+First proving run wrote a valid trace.json (all 14 keys) but `units_first_seen`
+was empty with 16 logged units: our listener only recorded `UNIT_DISCOVERED`,
+which never fires for our own units. Fixed Stardust-style: record at creation
+(`OnUnitCreated`) + seed sweep of ours and minerals at game start
+(`OnGameStarted`); dedup by id. Test `CherryVisSeedCurrentUnitsTest`. Unit
+395/395, arch unchanged (same single pre-existing failure). Left in #65: the
+viewer end-to-end check the owner runs locally (install notes below).

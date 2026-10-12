@@ -148,6 +148,9 @@ public class OnGameStarted {
 //        AUnitTypesHelper.printUnitsAndRequirements();
 
         if (ACherryVis.isEnabled()) ACherryVis.initialize();
+        if (ACherryVis.isEnabled()) {
+            atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.seedCurrentUnits();
+        }
         if (Env.isParamTweaker()) ParamTweakerFactory.init();
         if (Env.isBenchmark()) BenchmarkMode.onGameStarted();
 

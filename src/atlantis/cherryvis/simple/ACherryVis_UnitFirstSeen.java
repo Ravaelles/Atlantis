@@ -90,6 +90,23 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         unitsByFrame.clear();
     }
 
+    /**
+     * Records every unit already on the board (Stardust marks static neutrals
+     * at initialize for the same reason): creation events only fire for units
+     * born mid-game, so starting armies and mineral lines would otherwise never
+     * appear in {@code units_first_seen} - on OpenBW, where the client attaches
+     * late, that is every unit that matters. No Env gate inside; call sites
+     * decide (production gates on {@code ACherryVis.isEnabled()}).
+     */
+    public static void seedCurrentUnits() {
+        for (AUnit unit : atlantis.units.select.Select.ourUnitsWithUnfinishedList()) {
+            record(A.now(), unit.id(), unit.type().id(), unit.x(), unit.y());
+        }
+        for (AUnit mineral : atlantis.units.select.Select.mineralsAndGeysers().list()) {
+            record(A.now(), mineral.id(), mineral.type().id(), mineral.x(), mineral.y());
+        }
+    }
+
     // =========================================================
 
     @Override
