@@ -19,8 +19,11 @@ public class GasBuildingFix extends HasUnit {
      * From reasons impossible to explain sometimes it happens that we need to build Extractor
      * one tile left from the top left position. Sometimes not. This method takes care of
      * these cases and ensures the position is valid.
+     *
+     * <p>Public as the gas-tile seam: a refinery is only ever built on its geyser's
+     * own tile, and tests pin that contract here rather than through a game.</p>
      */
-    protected APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
+    public APosition applyGasBuildingFixIfNeeded(APosition position, AUnitType building) {
         if (position == null) {
             AConsole.errPrintln("Gas building FIX got NULL");
             return null;
@@ -38,11 +41,12 @@ public class GasBuildingFix extends HasUnit {
                     + A.digit(geyserNear.distTo(position))));
         }
 
-        // Fix geyser position problem
+        // Fix geyser position problem: snap to the geyser's OWN tile (see
+        // GasBuildingPositionFinder - the engine only accepts exactly it).
         if (building.isGasBuilding() && Select.geysers().inRadius(2, position).isEmpty()) {
             AUnit geyser = Select.geysers().inRadius(12, position).nearestTo(position);
-            if (geyser != null) {
-                position = geyser.position();
+            if (geyser != null && geyser.tilePosition() != null) {
+                position = APosition.create(geyser.tilePosition());
             }
         }
 
@@ -68,9 +72,9 @@ public class GasBuildingFix extends HasUnit {
             AConsole.errPrintln("Gas building FIX got position too far from geyser");
             geyser = Select.geysers().inRadius(10, position).nearestTo(position);
 
-            if (geyser == null) return null;
+            if (geyser == null || geyser.tilePosition() == null) return null;
 
-            position = geyser.position();
+            position = APosition.create(geyser.tilePosition());
         }
 
         // =========================================================

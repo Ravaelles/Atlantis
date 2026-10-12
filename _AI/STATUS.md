@@ -504,7 +504,6 @@ Left in #65: the owner opening a real trace in the viewer (needs the frontend),
 and wider per-unit call-site coverage behind `CHERRYVIS_BUILDER_ACTIONS`.
 
 ## Session 2026-10-12 (continued): CherryVis in Docker serves our trace (NEXT #65)
-
 Owner's direction: bmnielsen's `cherryvis-docker` instead of the native install
 (which moved to `_OLD`). Verified the user's `python:3.10` base (django 2.1.7
 clean of 3.10 breakers by sdist grep), bumped the provably-dead
@@ -576,3 +575,16 @@ compressed bytes - one-shot `zstd.decompress` fails size-less streams
 (which has the API) with plain-file fallback, via the Dockerfile patch.
 Verified: sample serves 6.4 MB valid JSON (all 13 keys), ours 23 first-seen
 frames. Container `cvis` left running with `/sc-ai/REPLAYS` mounted.
+
+## Session 2026-10-12 (continued): gas tile from the geyser itself (NEXT #62)
+
+Stardust settles the code side: a refinery site is `geyser->tile`, never
+center-math. Ours recomputed it (finder) and snapped to the center (fix) -
+right where rounding agrees, 2-off where it does not. New `AUnit.tilePosition()`
+(engine value, footprint fallback), all three sites answer the geyser tile.
+`GasTileIsGeyserTileTest` mutation-proven (fix case fails pre-fix). The live
+engine-equality half stays with the GAS_REFUSED probe. Not verified in game:
+OpenBW never requests gas (no Gateway yet); owner's IDE run is the next
+evidence (`noBuilder=` line). Unrelated observation while here: another session
+is editing this tree concurrently (`ForceExitLocallyAfterSomeTime.java`) -
+commits list files explicitly, never `git add -A`.

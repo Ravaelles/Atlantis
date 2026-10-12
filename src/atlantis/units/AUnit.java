@@ -320,6 +320,33 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return APosition.create(u.getPosition());
     }
 
+    /**
+     * The engine's top-left tile of this unit - the value the refinery rule
+     * compares (`getTilePosition() == position`), NOT the center tile.
+     *
+     * <p>Center math (`translateByPixels(-64, -32)` for a 4x2 geyser) recomputes
+     * exactly this when the center is known - but only when it is, and only for
+     * callers that get the footprint right. Ask the engine when there is one;
+     * otherwise derive top-left from center and footprint (NEXT #62).</p>
+     */
+    public TilePosition tilePosition() {
+        if (u != null) {
+            try {
+                return u.getTilePosition();
+            } catch (Exception ignored) {
+            }
+        }
+
+        APosition center = position();
+        AUnitType type = type();
+        if (center == null || center.p() == null || type == null) return null;
+
+        return new TilePosition(
+            (center.x() - type.getTilesWidth() * 16) / 32,
+            (center.y() - type.getTilesHeights() * 16) / 32
+        );
+    }
+
     public int lastPositionUpdatedAgo() {
         return -1;
     }

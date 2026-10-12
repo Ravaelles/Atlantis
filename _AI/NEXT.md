@@ -948,6 +948,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and `distToBuild`. The tile math says the refinery term should pass, so the refusal
   is elsewhere - the probe names where instead of a third static theory.
 
+  **FIXED 2026-10-12 (Stardust pattern) WITHOUT waiting for the run.** Reading
+  Stardust's placement settled the code side: a refinery site is its geyser's OWN
+  tile (`Block::Location(geyser->tile)`), never center-math. Our finder recomputed
+  it as `center-(2,1)` and both `GasBuildingFix` snaps used the center itself -
+  right on some maps, 2-off wherever center and tile disagree about rounding, and
+  wrong-by-construction for the snap. New `AUnit.tilePosition()` (engine value,
+  footprint-derived fallback), finder and both snaps answer the geyser tile.
+  Test `GasTileIsGeyserTileTest` (fix case fails pre-fix). The engine-equality
+  half still belongs to the GAS_REFUSED probe above - if it ever reads
+  `noBuilder=false` on this tile, the term after the tile is next.
+
 - **#64 CLOSED 2026-10-12 - StackOverflowError in the Pylon relaxed-margin fallback.**
   Owner's log tail: `findStandardPositionFor:189` <-> `findWithRelaxedBoundaryMargin:206`
   alternating until the stack overflowed, bot dead instead of "no tile". Mechanism:
