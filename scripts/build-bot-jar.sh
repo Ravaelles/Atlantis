@@ -119,6 +119,11 @@ RUNTIME_LIBS=(
     "lib/jnativehook-2.2.1.jar"
     "lib/slf4j-api-2.0.12.jar"
     "lib/vecmath.jar"
+    # CherryVis trace writer (AZstdWriter): without it onGameEnd dies with
+    # NoClassDefFoundError: com/github/luben/zstd/Zstd the moment a --cvis run
+    # ends (measured 2026-10-12 - the trace never got written and the game-end
+    # report died with it).
+    "lib/zstd-jni-1.3.3-4.jar"
 )
 
 # Removed 2026-10-11 (NEXT.md #38, owner's ruling): kryo, minlog, reflectasm and
@@ -448,6 +453,10 @@ assert any(n.startswith('META-INF/native-image/') and n.endswith('resource-confi
 # longer packaged and the client silently never attaches.
 nar = [n for n in names if n.startswith('META-INF/nar/')]
 assert not nar, 'stale junixsocket NAR metadata in the jar: %s' % nar[:3]
+# The CherryVis trace writer needs zstd at game end; without it onGameEnd dies
+# with NoClassDefFoundError and no trace is written (measured 2026-10-12).
+assert 'com/github/luben/zstd/Zstd.class' in names, \
+    'zstd-jni missing from the jar - CherryVis trace write will crash onGameEnd'
 
 size_mb = os.path.getsize(out_jar) / 1024.0 / 1024.0
 print('OK: %s  %.1f MB  %d entries  mode=%s  (%d harness/simulator classes not shipped)'

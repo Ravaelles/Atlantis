@@ -470,3 +470,16 @@ producers: build issued/refused in `IssueBuildOrder` behind const-false
 `DebugFlags.CHERRYVIS_BUILDER_ACTIONS` - zero cost when off, per-line opt-in as
 requested. Unit scope 395/395. Left in #65: an end-to-end viewer check of a real
 trace.json (needs the CherryVis frontend + a game with the flag on).
+
+## Session 2026-10-12 (continued): CherryVis E2E --cvis (NEXT #65)
+
+Owner found the load-bearing defect: `zstd-jni` was never packaged, so `onGameEnd`
+died with `NoClassDefFoundError` and the game-end report died with it - no run
+could ever leave a trace. Fixed in three places: lib packaged (build asserts it),
+writer path guarded in `ACherryVis.finish()`, plain JSON to `trace.json` with the
+zstd copy as `trace.json.zst` (plus the backslash-in-filename Linux bug in the
+summary writer). Runner: `--cvis` sets ENV `GENERATE_CHERRYVIS_REPLAY`, collects
+into the run dir and `<name>.rep.cvis/` next to `--save-replay` output (default
+`/sc-ai/REPLAYS`), fails a clean run with no trace; `--self-test-cvis` pins the
+checks with no game. Verified: both self-tests green, unit 395/395. A proving
+run (clean exit -> real trace.json) still pending.

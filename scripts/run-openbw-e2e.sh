@@ -43,6 +43,9 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 #   bash scripts/run-openbw-e2e.sh --self-test-assertions   # test scenario assertions, no game
 #   bash scripts/run-openbw-e2e.sh --short [map] [race] [enemy-race]   # opening gate
 #   bash scripts/run-openbw-e2e.sh --long  [map] [race] [enemy-race]   # full economy
+#   bash scripts/run-openbw-e2e.sh --short --cvis [map] [race] [enemy-race]
+#       # opening gate + CherryVis trace (see --cvis below)
+#   bash scripts/run-openbw-e2e.sh --self-test-cvis   # test cvis artifact checks, no game
 #
 # Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
@@ -77,6 +80,14 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 #             the run is as long as the opening needs and no longer.
 #   --long    the economy runs: >=5 Pylons, >=3 Gateways, >=1 Zealot, >=5 Dragoons,
 #             >=2 Assimilators, >=3 Nexus at the end of a full-length game.
+#
+#   --cvis    also record a CherryVis trace for the run (GENERATE_CHERRYVIS_REPLAY
+#             in the bot's ENV). The bot writes bwapi-data/write/cherryvis_dir.rep.cvis/
+#             next to where it ran; this script copies it into the run directory
+#             (and next to the .rep when combined with --save-replay, as
+#             <name>.rep.cvis/, which is the layout the viewer opens) and FAILS the
+#             run when the trace is missing - a silent no-trace would otherwise look
+#             like a pass. Replays default to /sc-ai/REPLAYS.
 #
 # The numbers are scenario expectations (CONVENTIONS §10), not a game difficulty:
 # they are the smallest structure set that proves production, tech and expansion all
@@ -125,10 +136,12 @@ fi
 # first run, 2026-10-11 - `set --` removed the flag before the scan saw it).
 SCENARIO=0
 SHORT_GATE=0
+CVIS=0
 for arg in "$@"; do
   case "$arg" in
     --short) SCENARIO=1; SHORT_GATE=1 ;;
     --long)  SCENARIO=1 ;;
+    --cvis)  CVIS=1 ;;
   esac
 done
 
@@ -140,7 +153,7 @@ ORIGINAL_ARGS=("$@")
 POSITIONAL=()
 for arg in "$@"; do
   case "$arg" in
-    --short|--long) ;;
+    --short|--long|--cvis) ;;
     *) POSITIONAL+=("$arg") ;;
   esac
 done
@@ -177,9 +190,11 @@ ENEMY_COUNT="${ENEMY_COUNT:-1}"
 # (measured 2026-10-11 - `$1` was already empty by the time this line read it).
 SELF_TEST=0
 ASSERTION_SELF_TEST=0
+SELF_TEST_CVIS=0
 for arg in "${ORIGINAL_ARGS[@]:-}"; do
   [ "$arg" = "--self-test" ] && SELF_TEST=1
   [ "$arg" = "--self-test-assertions" ] && ASSERTION_SELF_TEST=1
+  [ "$arg" = "--self-test-cvis" ] && SELF_TEST_CVIS=1
 done
 
 # === Named build tiers (owner's ruling, 2026-10-11) ========================
@@ -266,6 +281,47 @@ if [ "$ASSERTION_SELF_TEST" -eq 1 ]; then
   fi
   rm -f "$SELF_LOG"
   say "scenario assertion self-test OK (valid fixture passes; broken fixture fails)"
+  exit 0
+fi
+
+# What counts as a CherryVis trace: trace.json (plain, what the viewer opens),
+# trace.json.zst (compressed copy), trace_raw.json (grep-able copy) and
+# game_summary.json, all in one directory.
+assert_cvis_artifacts() {
+  local dir="$1" fail=0
+  for f in trace.json trace.json.zst trace_raw.json game_summary.json; do
+    if [ -s "$dir/$f" ]; then
+      : ok
+    else
+      say "CVIS MISSING: $dir/$f absent or empty"
+      fail=1
+    fi
+  done
+  if ! grep -q 'units_first_seen' "$dir/trace.json" 2>/dev/null; then
+    say "CVIS MISSING: no units_first_seen section in $dir/trace.json"
+    fail=1
+  fi
+  return "$fail"
+}
+
+if [ "$SELF_TEST_CVIS" -eq 1 ]; then
+  SELF_CVIS="$(mktemp -d)"
+  mkdir -p "$SELF_CVIS/good" "$SELF_CVIS/bad"
+  printf '{"units_first_seen":{"10":[{"id":1}]},"units_logs":{}}' > "$SELF_CVIS/good/trace.json"
+  printf 'zstd-bytes' > "$SELF_CVIS/good/trace.json.zst"
+  printf '{"units_first_seen":{"10":[{"id":1}]},"units_logs":{}}' > "$SELF_CVIS/good/trace_raw.json"
+  printf '{"game_duration_frames": 100}' > "$SELF_CVIS/good/game_summary.json"
+  printf '' > "$SELF_CVIS/bad/trace_raw.json"
+  if ! assert_cvis_artifacts "$SELF_CVIS/good"; then
+    rm -rf "$SELF_CVIS"
+    fail "cvis self-test: the VALID fixture must pass"
+  fi
+  if assert_cvis_artifacts "$SELF_CVIS/bad"; then
+    rm -rf "$SELF_CVIS"
+    fail "cvis self-test missed the broken fixture"
+  fi
+  rm -rf "$SELF_CVIS"
+  say "cvis artifact self-test OK (valid fixture passes; broken fixture fails)"
   exit 0
 fi
 
@@ -408,6 +464,11 @@ EOF
   fi
   if [ -n "${BUILDER_LOG:-}" ]; then
     echo "BUILDER_LOG=$BUILDER_LOG" >> "$1"
+  fi
+  if [ "${CVIS:-0}" = "1" ]; then
+    # --cvis: the bot records its CherryVis trace for this run. Written only
+    # when asked - the trace costs per-frame bookkeeping the normal tiers skip.
+    echo "GENERATE_CHERRYVIS_REPLAY=true" >> "$1"
   fi
   if [ "${SHORT_GATE:-0}" = "1" ]; then
     # --short: end the game the moment the opening is PROVEN (a finished Cybernetics Core
@@ -670,6 +731,39 @@ cp -f "$SERVER_LOG" "$E2E_LOGS_DIR/last-server.log" 2>/dev/null || true
   cat "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
 } > "$E2E_LOGS_DIR/last-bot.log.tmp" 2>/dev/null && mv -f "$E2E_LOGS_DIR/last-bot.log.tmp" "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
 
+# === CherryVis trace collection (only with --cvis) ==========================
+# The bot writes bwapi-data/write/cherryvis_dir.rep.cvis/ next to where it ran
+# (BOT_ROOT, its working directory). A trace left there is machine-local dust;
+# copy it into the run directory (durable, next to the logs) and, when the run
+# also recorded a replay, next to the .rep as <name>.rep.cvis/ - the layout the
+# viewer opens. A --cvis run with no trace is a failure, not a pass.
+if [ "${CVIS:-0}" = "1" ]; then
+  CVIS_SRC="$BOT_ROOT/bwapi-data/write/cherryvis_dir.rep.cvis"
+  CVIS_DEST="$RUN_DIR/cvis"
+  mkdir -p "$CVIS_DEST"
+  if [ -d "$CVIS_SRC" ]; then
+    cp -f "$CVIS_SRC"/trace.json "$CVIS_SRC"/trace.json.zst "$CVIS_SRC"/trace_raw.json "$CVIS_SRC"/game_summary.json "$CVIS_DEST/" 2>/dev/null || true
+    say "cherryvis trace collected: $CVIS_DEST"
+  else
+    say "cherryvis trace missing: $CVIS_SRC was never written (was GENERATE_CHERRYVIS_REPLAY seen by the bot?)"
+  fi
+  if [ "${SAVE_REPLAY:-0}" = "1" ] && [ -n "${REPLAY_FILE:-}" ]; then
+    mkdir -p "$REPLAY_FILE.cvis"
+    cp -f "$CVIS_DEST"/trace.json "$CVIS_DEST"/trace.json.zst "$CVIS_DEST"/trace_raw.json "$CVIS_DEST"/game_summary.json "$REPLAY_FILE.cvis/" 2>/dev/null || true
+    say "cherryvis trace next to replay: $REPLAY_FILE.cvis"
+  fi
+  if ! assert_cvis_artifacts "$CVIS_DEST"; then
+    # Do not fail here: when the bot was killed or crashed, onGameEnd never ran
+    # and a trace cannot exist by design (measured: a run killed at the bot-cap
+    # mid-opening). Record the miss; the gate below fails it on a clean run.
+    CVIS_MISSING=1
+    say "CVIS MISSING: trace artifacts absent - see paths above"
+  else
+    CVIS_MISSING=0
+    say "CVIS OK: trace artifacts present"
+  fi
+fi
+
 # === The result block ======================================================
 # Printed on EVERY exit path from here on, pass or fail (owner's ruling 2026-10-11): the
 # tier, whether the run stopped itself at the success gate, the full roster, and the
@@ -736,6 +830,14 @@ fi
 if ! bash "$ATLANTIS_DIR/scripts/assert-openbw-scenario.sh" "$BOT_LOG"; then
   say "SCENARIO FAILED (see $BOT_LOG)"
   print_result_block "FAIL" "${GATE_MARK:-success gate NOT reached} - an expected structure/unit is missing (see reasons above)"
+  exit 1
+fi
+# A --cvis run whose bot exited cleanly must have left a trace: onGameEnd writes
+# it on every clean exit, so absence here means the writer never ran, not that
+# the game was short. (A killed/crashed bot is already failed above.)
+if [ "${CVIS:-0}" = "1" ] && [ "${CVIS_MISSING:-0}" = "1" ]; then
+  say "SCENARIO FAILED: --cvis asked for a trace and none was written (see $BOT_LOG)"
+  print_result_block "FAIL" "cherryvis trace missing on a clean run"
   exit 1
 fi
 say "SCENARIO PASSED"

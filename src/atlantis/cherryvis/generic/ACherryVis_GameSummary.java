@@ -35,7 +35,7 @@ public class ACherryVis_GameSummary {
         String cherryVisDirPath = config.cherryVisDirReplayPath();
 
         AFile.saveToFile(
-            cherryVisDirPath + "\\game_summary.json",
+            cherryVisDirPath + "/game_summary.json",
             content,
             true
         );

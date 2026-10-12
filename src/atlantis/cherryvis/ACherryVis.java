@@ -41,6 +41,14 @@ public class ACherryVis {
         if (A.s <= 2) return;
 
         AConsole.println("CherryVis finishing...");
-        logger().onGameEnd();
+        try {
+            logger().onGameEnd();
+        } catch (Throwable t) {
+            // A debug artifact must never kill the game-end report: the summary,
+            // the verdict and the replay flush matter more than the trace.
+            // (Measured 2026-10-12: a missing zstd class in the jar crashed
+            // onGameEnd with NoClassDefFoundError and took the report with it.)
+            AConsole.errPrintln("CherryVis trace failed (game-end report continues): " + t);
+        }
     }
 }

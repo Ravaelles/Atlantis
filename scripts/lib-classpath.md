@@ -15,6 +15,7 @@ does not has to stay **out** of it.
 | ~~`com/esotericsoftware/**`, `org/reflectasm/**`, `org/minlog/**`~~ | **removed 2026-10-11** (`NEXT.md` #38) | they existed only for `atlantis.debug.object`, which was unreachable: `OnEveryFrameHelper.handle()` opened with `if (true) return;` and the single call in, `serializeMapDataLikeRegionsToAFile()`, did too. `lib/objenesis-3.2.jar` STAYS in the project - Mockito needs it reflectively for tests - it is simply no longer packaged into the bot jar |
 | `com/github/kwhat/jnativehook/**`, `org/slf4j/**` | `lib/jnativehook-2.2.1.jar`, `lib/slf4j-api-2.0.12.jar` | `atlantis.keyboard.AKeyboard` |
 | `javax/vecmath/**` | `lib/vecmath.jar` | `atlantis.util.Vector` |
+| `com/github/luben/zstd/**` | `lib/zstd-jni-1.3.3-4.jar` | CherryVis trace writer (`AZstdWriter`); without it `onGameEnd` dies with `NoClassDefFoundError` on a `--cvis` run (measured 2026-10-12) |
 
 ## Never in the jar
 

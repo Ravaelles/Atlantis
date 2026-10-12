@@ -980,6 +980,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     gated call sites: build issued/refused in `IssueBuildOrder`, behind the new
     const-false `DebugFlags.CHERRYVIS_BUILDER_ACTIONS` (compiled away when off -
     the per-line flag pattern the owner asked for).
+  - FIXED (owner-found 2026-10-12): `zstd-jni` was missing from the bot jar, so
+    `onGameEnd` died with `NoClassDefFoundError` and no trace was ever written.
+    The lib is packaged now (build asserts `Zstd.class`), the writer path is
+    guarded so a debug artifact can never kill the game-end report again, and
+    `trace.json` is plain JSON with the zstd copy next to it as `trace.json.zst`.
+  - E2E: `--cvis` flag in `run-openbw-e2e.sh` (ENV `GENERATE_CHERRYVIS_REPLAY`),
+    artifacts collected into the run dir and next to the `.rep` as `.rep.cvis/`,
+    missing trace fails a clean run; `--self-test-cvis` covers the checks.
   Next: decide per-unit logs shape (files like Stardust vs inline), then pin
   `units_updates`+`custom_names` agreement with the same no-frontend string test.
 

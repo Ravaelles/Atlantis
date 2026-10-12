@@ -89,14 +89,16 @@ public class ACherryVisLogger_TraceJson {
 
     protected void saveToFile() {
         String cherryVisDirPath = config.cherryVisDirReplayPath();
-        String filePath = cherryVisDirPath + "/trace.json";
         String content = content();
 
-        // AFile.saveToFile("D:\\last_trace.json", content, true);
+        // trace.json is plain JSON (what the viewer opens); the zstd-compressed
+        // copy lives next to it as trace.json.zst. trace_raw.json stays as the
+        // grep-able artifact the E2E checks read.
+        AFile.saveToFile(cherryVisDirPath + "/trace.json", content, true);
 
         String rawFilePath = cherryVisDirPath + "/trace_raw.json";
         AFile.saveToFile(rawFilePath, content, true);
 
-        AZstdWriter.writeZstdFile(filePath, content);
+        AZstdWriter.writeZstdFile(cherryVisDirPath + "/trace.json.zst", content);
     }
 }
