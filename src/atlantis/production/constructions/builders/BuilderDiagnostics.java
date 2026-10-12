@@ -124,6 +124,10 @@ public class BuilderDiagnostics {
             + " withBuilder=" + atlantis.Atlantis.game().canBuildHere(tile, type, builder)
             + " withBuilderExplored=" + atlantis.Atlantis.game().canBuildHere(tile, type, builder, true)
             + " canBuild=" + builder.canBuild(type, tile)
+            + " canBuild000=" + builder.canBuild(type, tile, false, false, false)
+            + " canBuild100=" + builder.canBuild(type, tile, true, false, false)
+            + " canBuild010=" + builder.canBuild(type, tile, false, true, false)
+            + " canBuild001=" + builder.canBuild(type, tile, false, false, true)
             + " explored=" + exploredFootprint(construction)
             + " canAfford=" + A.canAfford(
                 construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
