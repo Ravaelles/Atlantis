@@ -16,6 +16,51 @@ public class GasBuildingFix extends HasUnit {
     }
 
     /**
+     * TEMPORARY experiment (NEXT #62, owner's ask): which tile does the engine
+     * accept for a refinery - the geyser tile, its center, or shifted neighbors?
+     * Cycles one variant per 15-frame window of each 60-frame period and prints
+     * on every window change, so a game log shows which variant was active when
+     * an attempt was accepted. Frame is explicit for testability; production
+     * passes {@code A.now()}. REMOVE once the accepting tile is measured (the
+     * answer becomes the single request tile, no windows).
+     */
+    public static APosition experimentalVariantTile(APosition geyserTile, AUnitType building, int now) {
+        int w = building.getTilesWidth();
+        int h = building.getTilesHeights();
+        int window = (now % 60) / 15;
+
+        APosition variant;
+        String meaning;
+        switch (window) {
+            case 1:
+                variant = APosition.create(geyserTile.tx() + w / 2, geyserTile.ty() + h / 2);
+                meaning = "center-inside-footprint";
+                break;
+            case 2:
+                variant = APosition.create(geyserTile.tx() + w, geyserTile.ty());
+                meaning = "right-adjacent";
+                break;
+            case 3:
+                variant = APosition.create(geyserTile.tx(), geyserTile.ty() + h);
+                meaning = "below-adjacent";
+                break;
+            default:
+                variant = geyserTile;
+                meaning = "exact-geyser-tile";
+                break;
+        }
+
+        if (window != lastVariantWindow) {
+            lastVariantWindow = window;
+            System.err.println("GAS_VARIANT win=" + window + " tile=" + variant + " (" + meaning + ")");
+        }
+
+        return variant;
+    }
+
+    private static int lastVariantWindow = -1;
+
+    /**
      * From reasons impossible to explain sometimes it happens that we need to build Extractor
      * one tile left from the top left position. Sometimes not. This method takes care of
      * these cases and ensures the position is valid.

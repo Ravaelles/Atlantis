@@ -78,6 +78,16 @@ public class IssueBuildOrder extends HasUnit {
             // If place is ok, unit isn't constructing, and we can afford it, issue the build command.
             buildPosition = (new GasBuildingFix(unit)).applyGasBuildingFixIfNeeded(buildPosition, buildingType);
 
+            // TEMPORARY experiment (NEXT #62, owner's ask): cycle refinery tile
+            // variants across 15-frame windows so the log shows which tile the
+            // engine accepts. Ungated like GAS_FIX (owner reads IDE logs without
+            // flags); REMOVE with experimentalVariantTile once measured.
+            if (buildingType.isGasBuilding() && buildPosition != null) {
+                buildPosition = GasBuildingFix.experimentalVariantTile(
+                    buildPosition, buildingType, A.now()
+                );
+            }
+
             if (buildPosition == null) {
                 if (construction.buildingUnit() == null) {
                     construction.cancel(buildingType + " has null buildPosition");
