@@ -42,7 +42,7 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         AGame.sendMessage("ForceExitLocallyAfterRealSeconds");
         ErrorLog.printErrorOnce(
             "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
-            + " real seconds, " + AGame.timeSeconds() + " in-game seconds,"
+            + " real seconds, " + A.minSec() + " in-game time,"
             + " supply: " + A.supplyUsed() + "/" + A.supplyTotal()
         );
 
