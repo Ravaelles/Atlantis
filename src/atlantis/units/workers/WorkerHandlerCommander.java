@@ -86,9 +86,29 @@ public class WorkerHandlerCommander extends Commander {
                 && worker.u().canGather(mineral.u());
             boolean canRightClick = mineral != null && worker.u() != null && mineral.u() != null
                 && worker.u().canRightClick(mineral.u());
+            // NEXT #63: worker-side vs target-side. Both-false gather+rightClick
+            // fits two different faults: our worker not commandable (exists,
+            // completed, canCommand) or its ASSIGNED target unknown to the
+            // client (!exists / not completed) - print both sides, and the
+            // assigned target id (it need not be the nearest mineral sampled).
+            AUnit assigned = worker.target();
+            String targetSide;
+            if (assigned == null || assigned.u() == null) {
+                targetSide = "assignedTarget=none";
+            } else {
+                targetSide = "assignedTarget=#" + assigned.id() + ":" + assigned.type().name()
+                    + " exists=" + assigned.u().exists()
+                    + " completed=" + assigned.u().isCompleted()
+                    + " visible=" + assigned.u().isVisible();
+            }
+            String workerSide = worker.u() == null ? "workerU=null"
+                : "workerExists=" + worker.u().exists()
+                + " workerCompleted=" + worker.u().isCompleted()
+                + " workerCanCommand=" + worker.u().canCommand();
             engineAnswers = " canGather=" + canGather + " canRightClick=" + canRightClick
                 + " order=" + (worker.u() == null ? "no-u" : worker.u().getOrder())
-                + " tileWalkable=" + atlantis.map.MapTiles.isWalkable(worker);
+                + " tileWalkable=" + atlantis.map.MapTiles.isWalkable(worker)
+                + " " + workerSide + " " + targetSide;
         } catch (Throwable t) {
             engineAnswers = " engineProbeThrew=" + t.getClass().getSimpleName();
         }
