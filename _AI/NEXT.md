@@ -1055,6 +1055,9 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   (match nothing, all ???); traces ≥19:59 carry engine ids. If ??? persists on
   a NEW trace, the needed datum is the browser's `[BW<->CP Matching] Unable to
   match N units` console line (names the failing axis: type/position/frame).
+  FIXED 2026-10-12 part 2: frame-0 seeds never match (replay has no visible
+  units on frame 0; Stardust bumps 0->1 for the same reason) - our `record()`
+  clamps to 1, fresh traces seed 107 units at frame "1", no "0" key.
 
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
