@@ -66,7 +66,12 @@ public class ForceExitWhenOpeningProven extends Commander {
         // the check off the hot path (this runs every frame otherwise).
         if (A.now() % 30 != 0) return false;
 
-        return Count.dragoons() >= 2;
+        // Both halves of the documented condition: a finished Core AND Dragoons.
+        // Dragoons alone used to end the run, which is exactly how a phantom
+        // Dragoon count (no gas, no refinery, no Core) proved an opening that
+        // never happened.
+        return Count.existing(AUnitType.Protoss_Cybernetics_Core) >= 1
+            && Count.dragoons() >= 2;
     }
 
     @Override

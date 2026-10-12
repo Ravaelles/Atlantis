@@ -202,6 +202,10 @@ if [ "$SHORT_GATE" -eq 1 ]; then
   EXPECT_MIN_DRAGOONS="${EXPECT_MIN_DRAGOONS:-1}"
   EXPECT_MIN_ZEALOTS="${EXPECT_MIN_ZEALOTS:-1}"
   EXPECT_MIN_CORES="${EXPECT_MIN_CORES:-1}"
+  # A Dragoon costs gas, so an opening that proved Dragoons without proving the
+  # refinery is broken by definition (measured: a run reporting Dragoon=3 with no
+  # Assimilator ever built). Without this the tier passes gas-less phantoms.
+  EXPECT_MIN_ASSIMILATORS="${EXPECT_MIN_ASSIMILATORS:-1}"
 else
   # Full expectations for the long tier; overridable, never silently lowered.
   EXPECT_MIN_PYLONS="${EXPECT_MIN_PYLONS:-5}"
