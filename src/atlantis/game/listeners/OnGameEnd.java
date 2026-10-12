@@ -81,7 +81,8 @@ public class OnGameEnd {
         // trace write, two kills). A run that reaches here must be gone seconds
         // later - if it is not, something in the path is hung and the run would
         // otherwise burn the whole bot-cap (measured 101 s of silence after a
-        // 9 s game). The timer fires only then. halt(), not exit(): a hang can
+        // 9 s game). The timer fires only then: 15 s keeps the worst case under
+        // the owner's 60 s ask (43 s game + 15). halt(), not exit(): a hang can
         // sit inside a shutdown hook, which exit() would run again.
         // Skipped for END_GAME_VIA_ENGINE (the bot is supposed to linger there)
         // and in tests (a halted test JVM helps nobody).
@@ -91,11 +92,11 @@ public class OnGameEnd {
                 @Override
                 public void run() {
                     AConsole.errPrintln(
-                        "OnGameEnd backstop: exit path did not finish in 20s - forcing halt"
+                        "OnGameEnd backstop: exit path did not finish in 15s - forcing halt"
                     );
                     Runtime.getRuntime().halt(1);
                 }
-            }, 20000);
+            }, 15000);
         }
 
         // END_GAME_VIA_ENGINE lets the engine end the match instead of this JVM killing

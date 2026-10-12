@@ -588,3 +588,14 @@ OpenBW never requests gas (no Gateway yet); owner's IDE run is the next
 evidence (`noBuilder=` line). Unrelated observation while here: another session
 is editing this tree concurrently (`ForceExitLocallyAfterSomeTime.java`) -
 commits list files explicitly, never `git add -A`.
+
+## Session 2026-10-12 (continued): stop-before-build widened, backstop 15s (NEXT #59/#69)
+
+Owner's run: Gateway cancelled 35s at [14,51] on `buildable:true`, and asked why
+110 s for a 43 s game plus a 60 s cap. Three changes: (1) stop-then-build fires
+on bare `lastCommand==Move` (the moving twin the old gate excluded; the "do not
+repeat" note in #59 is superseded WITH the trace it demanded); (2) backstop
+20 s -> 15 s so the worst case fits the owner's 60 s ask; the 120 s hard cap
+stays (CONVENTIONS §17, long tier needs it) and `TIMEOUT_SECONDS=60` already
+narrows any single run. No stub test possible for the stop (needs engine order
+state) - the game run below is the test.

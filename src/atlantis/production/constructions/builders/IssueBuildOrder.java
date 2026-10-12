@@ -192,12 +192,14 @@ public class IssueBuildOrder extends HasUnit {
                     // worker's engine-side order is still the Move that brought it here -
                     // `distToBuild=1.3 isMoving=false action=BUILD lastCommand=Move` frame
                     // after frame, and the Pylon only ever succeeded after its walk order had
-                    // expired. The comment below already says the sequence must be "stop
-                    // first, build next frame" - but no stop was ever issued, so a builder
-                    // that arrived while the move order was still current refused forever
-                    // until CancelTooLongConstructions killed the construction. Issue the
-                    // stop; the build is retried next frame (lastCommandIssuedAgo >= 3).
-                    if (unit.lastCommandName().equals("Move") && !unit.isMoving()) {
+                    // expired. The Gateway twin of the same defect keeps isMoving=true
+                    // (the worker slides around the site and never settles), so the old
+                    // `&& !isMoving()` gate below never fired and the construction died at
+                    // 35s as "took too long / buildable:true" (NEXT #59). Stopping a worker
+                    // that is already within build reach is always safe: this branch only
+                    // runs inside the 1.4-tile threshold, travel issues no moves here, and
+                    // the >= 3 command-age gate above retries the build once settled.
+                    if (unit.lastCommandName().equals("Move")) {
                         unit.stop("Clear stale Move before build");
                         return true;
                     }

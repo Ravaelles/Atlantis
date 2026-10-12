@@ -682,6 +682,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   at that moment) is not what holds. **Do not repeat that patch without a trace showing the
   stop being issued.**
 
+  **Superseded 2026-10-12 by the trace that DID show it:** later `BUILD_ATTEMPT` lines read
+  `distToBuild=1.3 isMoving=true lastCommand=Move` refused every frame - the worker IS moving
+  at refusal, it just never settles, so the old `lastCommand==Move && !isMoving` gate (added
+  for the stale-move twin of this defect) never fires. The condition is now bare
+  `lastCommand==Move`: stopping inside the 1.4-tile threshold is always safe (travel
+  issues no moves there; the >= 3 age gate retries once settled). Different trigger,
+  same sequence - the "do not repeat" above meant the moving-worker variant, which is
+  exactly what the new trace demanded.
+
   **Next measurement, exact and cheap:** in `IssueBuildOrder`, the moment `unit.build(...)`
   returns false, print `unit.u().canBuild(type, tile)`, `unit.u().canIssueCommand(canBuild(
   type, tile))` and `unit.u().getOrder()` - i.e. WHICH engine gate says no, rather than assuming
