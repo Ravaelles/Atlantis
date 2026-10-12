@@ -3,15 +3,21 @@ package atlantis.production.dynamic.terran.bunker;
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.information.generic.AllOfOurBasePositions;
 import atlantis.information.generic.ArmyStrength;
 import atlantis.map.choke.AChoke;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.dynamic.expansion.PendingNextBase;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.units.select.Select;
 import atlantis.util.We;
+
+import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.Terran_Bunker;
 
@@ -40,13 +46,39 @@ public class TerranReinforceBasesWithBunkers extends Commander {
 
     @Override
     protected boolean handle() {
-        for (HasPosition position : AllOfOurBasePositions.allBases(true, true)) {
+        for (HasPosition position : allBases(true, true)) {
             if (position == null) continue;
 
             if (ensurePositionHasBunker(position)) return true;
         }
 
         return false;
+    }
+
+    /**
+     * Moved here from {@code information.generic.AllOfOurBasePositions} (WO-13):
+     * its only caller was this commander, and the information->production edges
+     * inside it (pending base, not-started constructions) belong to the
+     * production side that consumes them.
+     */
+    private static ArrayList<HasPosition> allBases(boolean includeNotStarted, boolean includeNotFinished) {
+        ArrayList<HasPosition> positions = new ArrayList<>();
+
+        if (includeNotStarted) {
+            HasPosition nextBase = PendingNextBase.basePositionOrNull();
+            positions.add(nextBase);
+        }
+
+        if (includeNotFinished) {
+            for (Construction construction : ConstructionRequests.notStartedOfType(AtlantisRaceConfig.BASE)) {
+                APosition position = construction.buildPosition();
+                positions.add(position);
+            }
+        }
+
+        positions.addAll(Select.ourBasesWithUnfinished().list());
+
+        return positions;
     }
 
     private boolean ensurePositionHasBunker(HasPosition position) {

@@ -159,9 +159,11 @@ itself, #5, is design work and out of that order's scope).
   **State (2026-10-04): 356 violations, down from 499.** Three rules are at 0
   (`map.scout -> combat/production`, map geometry, and one more). The rest:
   `core -> combat/production/information/...` = 267, `information -> combat/production`
-  = 63 (65 on 2026-10-04; -1 on 2026-10-13: dead `notEnoughZealots()` branch in
+  = 60 (65 on 2026-10-04; -1 on 2026-10-13: dead `notEnoughZealots()` branch in
   `DragoonInsteadZealotVsZerg`, WO-13 cycle 1; -1 more: dead `enoughZealots()`
-  branch + unused import, WO-13 cycle 2), `architecture -> ...` = 24,
+  branch + unused import, WO-13 cycle 2; -3: moved `AllOfOurBasePositions.allBases`
+  to its only caller `TerranReinforceBasesWithBunkers`, WO-13 cycle 3),
+  `architecture -> ...` = 24,
   `util -> ...` = 0 (was 73).
 
   **The 267 and the 24 are structural**, not a sweep: the Commander/Manager
