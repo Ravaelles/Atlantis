@@ -56,7 +56,6 @@ recording run.** `END_GAME_VIA_ENGINE` stays off for ordinary runs: the self-exi
 shape CONVENTIONS §17 relies on.
 
 ### `BUILDER_LOG=1` - per-frame builder trace (added 2026-10-10)
-
 ```bash
 BUILDER_LOG=1 TIMEOUT_SECONDS=120 INGAME_TIME=120 \
   timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
@@ -76,6 +75,47 @@ was and where it pointed* - are what this prints. Read it as: `action=BUILD` wit
 `isConstructing=false` means the command was issued and the engine refused it;
 `action=GATHER_MINERALS` with `canAfford=false` means the bot is simply waiting for
 minerals.
+
+### `--cvis` - CherryVis trace for the run (added 2026-10-12)
+
+```bash
+timeout 120 bash scripts/run-openbw-e2e.sh --short --cvis "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+```
+
+Sets `GENERATE_CHERRYVIS_REPLAY=true` in the bot's ENV. The bot writes
+`bwapi-data/write/cherryvis_dir.rep.cvis/` (`trace.json` plain, `trace.json.zst`
+compressed copy, `trace_raw.json`, `game_summary.json`); the script copies it
+into the run dir and, with `--save-replay`, next to the replay as
+`/sc-ai/REPLAYS/<name>.rep.cvis/` - the layout the viewer opens. A clean run
+with no trace fails (a killed/crashed bot cannot have one - `onGameEnd` never
+ran - so that case reports its own reason first). `--self-test-cvis` pins the
+artifact checks with no game. Verified 2026-10-12: clean 5 s run leaves a valid
+trace (22 first-seen frames, 107 units seeded at frame 0, 21 units with manager
+updates). Per-unit free-text lines additionally need
+`DebugFlags.CHERRYVIS_BUILDER_ACTIONS=true` (recompile + rebuild the jar).
+
+### Opening the trace locally (CherryVis viewer install)
+
+Upstream repo is archived (2022), but the viewer still builds. From
+`TorchCraft/TorchCraftAI/scripts/cherryvis/README.md`:
+
+```bash
+git clone https://github.com/TorchCraft/TorchCraftAI.git && cd TorchCraftAI/scripts/cherryvis
+virtualenv -p python3 venv_django && source venv_django/bin/activate
+pip install django zstandard
+# emscripten from source (kripken docs), then:
+./build_js.sh
+./server.py   # http://127.0.0.1:8770/
+```
+
+Caveats measured against our output: the viewer was built for Stardust's
+partitioned layout (trace.json with file references); ours is the legacy
+single-file layout (everything inline, from `cherryvisdumper.cpp`'s
+`writeGameSummary` shape), which is what the blog's "a zstd compressed JSON
+trace file can be provided" paragraph describes - point the server at a
+directory containing our `trace.json` + `game_summary.json` (e.g. a run's
+`cvis/` copy or `/sc-ai/REPLAYS/<name>.rep.cvis/`). `server.py` only accepts
+local connections by default (it is a window into the filesystem).
 
 ### Scenario assertions (optional)
 

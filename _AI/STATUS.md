@@ -493,3 +493,12 @@ which never fires for our own units. Fixed Stardust-style: record at creation
 (`OnGameStarted`); dedup by id. Test `CherryVisSeedCurrentUnitsTest`. Unit
 395/395, arch unchanged (same single pre-existing failure). Left in #65: the
 viewer end-to-end check the owner runs locally (install notes below).
+
+## Session 2026-10-12 (continued): CherryVis E2E proven in game (NEXT #65)
+
+Clean 5 s `--short --cvis` run exits 0 with `CVIS OK`: trace.json parses, 22
+first-seen frames (107 units seeded at frame 0), 21 units with manager updates.
+Install notes for the local viewer added to `PLAN-OPENBW.md` (`--cvis` section:
+django venv, emscripten, `server.py`, single-file vs partitioned caveat).
+Left in #65: the owner opening a real trace in the viewer (needs the frontend),
+and wider per-unit call-site coverage behind `CHERRYVIS_BUILDER_ACTIONS`.
