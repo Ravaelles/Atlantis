@@ -45,7 +45,7 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####### ForceExitLocallyAfterSomeTime ###########");
+        AConsole.errPrintln("####### ForceExitLocallyAfterSomeTime ##############");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
