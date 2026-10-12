@@ -248,13 +248,25 @@ public final class BwapiOrderSink implements OrderSink {
     }
 
     private boolean issue(String operation, AUnit actor, EngineCall call) {
+        boolean result;
         try {
-            return call.call();
+            result = call.call();
         } catch (Exception e) {
             ErrorLog.printMaxOncePerMinutePlusPrintStackTrace(
                 "OrderSink." + operation + " failed for " + actor + ": " + e.getMessage()
             );
-            return false;
+            result = false;
         }
+
+        // Per-order unit narrative for CherryVis (NEXT #68): every engine order
+        // of every unit in one place. Const-false when off, so a normal game
+        // pays nothing; enable DebugFlags.CHERRYVIS_UNIT_ORDERS for a traced run.
+        if (atlantis.debug.DebugFlags.CHERRYVIS_UNIT_ORDERS) {
+            atlantis.cherryvis.CV.unitLog(
+                "order:" + operation + (result ? " OK" : " REFUSED"), actor
+            );
+        }
+
+        return result;
     }
 }

@@ -3444,6 +3444,14 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             message = managerUsed.toString() + tooltipString;
             addManagerLogMessage(message);
 
+            // Per-unit manager narrative for CherryVis (NEXT #68): the viewer
+            // renders units_logs, not the manager update field, so the active
+            // manager only becomes visible when mirrored here. Non-buildings -
+            // that is the traced population.
+            if (atlantis.debug.DebugFlags.CHERRYVIS_UNIT_ORDERS && !isABuilding()) {
+                atlantis.cherryvis.CV.unitLog("manager:" + managerUsed.toString(), this);
+            }
+
             this.manager = managerUsed;
 
             addLog(managerUsed.toString());

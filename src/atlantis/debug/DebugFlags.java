@@ -13,4 +13,10 @@ public class DebugFlags {
      * {@code CV.unitLog} line costs nothing in a normal game.
      */
     public static final boolean CHERRYVIS_BUILDER_ACTIONS = false;
+
+    /**
+     * Every order of every non-building unit, as CherryVis per-unit lines.
+     * Same deal as above: flip for a traced run, keep off otherwise.
+     */
+    public static final boolean CHERRYVIS_UNIT_ORDERS = false;
 }

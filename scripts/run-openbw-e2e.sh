@@ -555,6 +555,13 @@ RUN_DIR="$E2E_LOGS_DIR/${RUN_STAMP}_${RUN_TAG}"
 mkdir -p "$RUN_DIR"
 ln -sfn "$RUN_DIR" "$E2E_LOGS_DIR/latest"
 
+# A previous --cvis run's trace sits in the bot's write dir; without clearing,
+# a killed/crashed run would "collect" that stale trace and pass the artifact
+# check on files it never produced (measured 2026-10-12).
+if [ "${CVIS:-0}" = "1" ]; then
+  rm -rf "$BOT_ROOT/bwapi-data/write/cherryvis_dir.rep.cvis"
+fi
+
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/bot.log"
 mkdir -p "$(dirname "$SERVER_LOG")"
