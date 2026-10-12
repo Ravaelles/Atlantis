@@ -981,7 +981,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   fails pre-fix. Game verification (fresh trace + viewer match) pending.
   Follow-up in this item: per-frame manager+order lines for non-building units
   (viewer renders `units_logs`, not the `manager` update field - wire order
-  issue points behind a flag).
+  issue points behind a flag). DONE 2026-10-12: `CV.unitLog` at `BwapiOrderSink`
+  (every order, OK/REFUSED) + on manager change, behind const-false
+  `CHERRYVIS_UNIT_ORDERS`; proven in game (16 units, 30 manager + 1272 order
+  lines), flag reverted after. A killed run once "collected" the previous
+  run's trace and passed - source dir is now purged pre-run.
 
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
