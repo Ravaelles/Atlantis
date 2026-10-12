@@ -974,8 +974,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     other order mislabeled every manager in the viewer, and managers past the table
     had no name. The legend is now built from the runtime table
     (`CherryVisCustomNamesTest` pins it, no frontend needed).
-  - OPEN: `units_logs` is `{}` (per-unit narrative lives nowhere - Stardust writes
-    per-unit LOG FILES and references paths in trace.json, we write nothing).
+  - FIXED: `units_logs` is no longer `{}`. New `CV.unitLog(message, unit)` API
+    (Stardust's `CherryVis::log(unitId)`), stored per unit, rendered inline in the
+    legacy single-file shape; `CherryVisUnitLogsTest` pins the exact JSON. First
+    gated call sites: build issued/refused in `IssueBuildOrder`, behind the new
+    const-false `DebugFlags.CHERRYVIS_BUILDER_ACTIONS` (compiled away when off -
+    the per-line flag pattern the owner asked for).
   Next: decide per-unit logs shape (files like Stardust vs inline), then pin
   `units_updates`+`custom_names` agreement with the same no-frontend string test.
 

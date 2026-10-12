@@ -26,4 +26,12 @@ public class CV {
 
         return true;
     }
+
+    public static boolean unitLog(String message, AUnit unit) {
+        if (!ACherryVis.isEnabled()) return true;
+
+        ACherryVis.logger().unitLog(message, unit);
+
+        return true;
+    }
 }

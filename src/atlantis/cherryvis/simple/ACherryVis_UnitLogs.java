@@ -5,6 +5,40 @@ import java.util.Set;
 
 public class ACherryVis_UnitLogs {
     /**
+     * "units_logs": {
+     * "123": [{"frame":4500,"message":"Build issued"}, ...],
+     * "124": [...]
+     * }
+     *
+     * <p>Unit ids sort ascending (TreeMap); entries keep insertion (frame) order.</p>
+     */
+    public static String buildUnitLogs(ACherryVisUnitLogger logger) {
+        StringBuilder result = new StringBuilder();
+
+        boolean firstUnit = true;
+        for (Map.Entry<Integer, java.util.List<ACherryVisUnitLogger.UnitLogEntry>> unit
+            : logger.unitsFreetextLogs.entrySet()) {
+            if (!firstUnit) {
+                result.append(",");
+            }
+            firstUnit = false;
+
+            result.append("\"").append(unit.getKey()).append("\":[");
+
+            boolean firstEntry = true;
+            for (ACherryVisUnitLogger.UnitLogEntry entry : unit.getValue()) {
+                if (!firstEntry) {
+                    result.append(",");
+                }
+                firstEntry = false;
+                result.append(entry.toJson());
+            }
+            result.append("]");
+        }
+
+        return result.toString();
+    }
+    /**
      * "units_updates": {
      * "123": {
      * "4500": {

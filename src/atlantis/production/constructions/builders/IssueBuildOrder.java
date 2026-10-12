@@ -131,6 +131,13 @@ public class IssueBuildOrder extends HasUnit {
 
                     boolean buildResult = unit.build(buildingType, buildTilePosition, construction);
                     BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
+                    if (atlantis.debug.DebugFlags.CHERRYVIS_BUILDER_ACTIONS) {
+                        atlantis.cherryvis.CV.unitLog(
+                            (buildResult ? "Build issued " : "Build refused ") + buildingType.name()
+                                + " at " + buildTilePosition,
+                            unit
+                        );
+                    }
                     if (buildResult) {
                         // Order-latency gate (owner recommendation 2026-10-12): the engine
                         // registers the Build after getRemainingLatencyFrames(); until then

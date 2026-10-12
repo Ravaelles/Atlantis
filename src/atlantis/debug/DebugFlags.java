@@ -6,4 +6,11 @@ public class DebugFlags {
 
     public static boolean DEBUG_TARGETING = false;
 //    public static boolean DEBUG_TARGETING = true;
+
+    /**
+     * Per-unit CherryVis narrative (builder issues, refusals, reassignments).
+     * Const-false like the rest here: compiled away when off, so a gated
+     * {@code CV.unitLog} line costs nothing in a normal game.
+     */
+    public static final boolean CHERRYVIS_BUILDER_ACTIONS = false;
 }

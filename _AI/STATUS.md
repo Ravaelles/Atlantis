@@ -461,3 +461,12 @@ fixed to build the legend from the runtime strings table
 (`CherryVisCustomNamesTest`). Unit scope 394/394. Left in #65: empty
 `units_logs` (Stardust writes per-unit log files; we write none) and an
 end-to-end viewer check, plus the per-line debug flags the owner suggested.
+
+## Session 2026-10-12 (continued): CherryVis per-unit logs (NEXT #65)
+
+`units_logs` now renders per-unit free-text lines (`CV.unitLog`, stored per unit
+id, inline legacy shape, `CherryVisUnitLogsTest` pins the string). First
+producers: build issued/refused in `IssueBuildOrder` behind const-false
+`DebugFlags.CHERRYVIS_BUILDER_ACTIONS` - zero cost when off, per-line opt-in as
+requested. Unit scope 395/395. Left in #65: an end-to-end viewer check of a real
+trace.json (needs the CherryVis frontend + a game with the flag on).
