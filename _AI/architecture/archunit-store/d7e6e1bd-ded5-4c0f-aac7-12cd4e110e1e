@@ -1,6 +1,5 @@
 Field <atlantis.information.strategy.AStrategy.buildOrder> has type <atlantis.production.orders.build.ABuildOrder> in (AStrategy.java:0)
 Method <atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot_vZ()> calls method <atlantis.production.dynamic.protoss.units.ProduceZealot.enoughZealots()> in (DragoonInsteadZealotVsZerg.java:21)
-Method <atlantis.information.decisions.protoss.dragoon.DragoonInsteadZealotVsZerg.dragoonInsteadOfZealot_vZ()> calls method <atlantis.production.dynamic.protoss.units.ProduceZealot.notEnoughZealots()> in (DragoonInsteadZealotVsZerg.java:20)
 Method <atlantis.information.decisions.protoss.dragoon.ZealotFocus.check()> gets field <atlantis.production.dynamic.protoss.units.ProduceZealot.producedCount> in (ZealotFocus.java:11)
 Method <atlantis.information.enemy.EnemyUnitBreachedBase.get()> calls method <atlantis.combat.missions.Missions.isGlobalMissionAttack()> in (EnemyUnitBreachedBase.java:13)
 Method <atlantis.information.generic.AllOfOurBasePositions.allBases(boolean, boolean)> calls method <atlantis.production.constructions.Construction.buildPosition()> in (AllOfOurBasePositions.java:24)

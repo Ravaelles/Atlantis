@@ -17,7 +17,6 @@ public class DragoonInsteadZealotVsZerg {
 
         if (A.hasGas(30) && Count.cannonsWithUnfinished() >= 3) return true;
 
-        if (ProduceZealot.notEnoughZealots()) return false;
         if (ProduceZealot.enoughZealots()) return false;
 
 //        if (A.minerals() >= 170 && Count.gateways() >= 3) return true;

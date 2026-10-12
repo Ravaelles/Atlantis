@@ -159,7 +159,9 @@ itself, #5, is design work and out of that order's scope).
   **State (2026-10-04): 356 violations, down from 499.** Three rules are at 0
   (`map.scout -> combat/production`, map geometry, and one more). The rest:
   `core -> combat/production/information/...` = 267, `information -> combat/production`
-  = 65, `architecture -> ...` = 24, `util -> ...` = 0 (was 73).
+  = 64 (65 on 2026-10-04; -1 on 2026-10-13: dead `notEnoughZealots()` branch in
+  `DragoonInsteadZealotVsZerg`, WO-13 cycle 1), `architecture -> ...` = 24,
+  `util -> ...` = 0 (was 73).
 
   **The 267 and the 24 are structural**, not a sweep: the Commander/Manager
   framework is unit-centric by design, so they belong to Stages E/H. What is left
@@ -1058,6 +1060,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   FIXED 2026-10-12 part 2: frame-0 seeds never match (replay has no visible
   units on frame 0; Stardust bumps 0->1 for the same reason) - our `record()`
   clamps to 1, fresh traces seed 107 units at frame "1", no "0" key.
+  MATCHER mechanics (read from `openbw/ui/unit_matcher.cpp`, not guessed):
+  per-frame, nearest same-type within 25px, ambiguity guards (18-25px needs
+  uniqueness in 30px, 10-18px in 20px), one-to-one consumption, NO retry of a
+  missed frame. Fragile cases: dense mineral lines, same-spot warps; a WASM
+  throw mid-run freezes all later units while early ones keep working.
 
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
