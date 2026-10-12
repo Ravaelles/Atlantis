@@ -3844,6 +3844,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return getLastCommandRaw().getType().name();
     }
 
+    public boolean noCommand() {
+        return getLastCommandRaw() == null;
+    }
+
     public AFocusPoint focusPoint() {
         if (mission() == null) return null;
         return mission().focusPoint();

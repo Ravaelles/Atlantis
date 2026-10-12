@@ -39,14 +39,11 @@ public class GatherFallback extends Manager {
         AUnit base = Select.ourBases().nearestTo(unit);
         if (base == null) return null;
 
-        // Get minerals near to our main base and sort them from closest to most distant one
-        AUnit mineral = Select.minerals().nearestTo(base);
-        if (mineral == null) return null;
-
-        // Randomize
-        AUnit randomMineral = Select.minerals().inRadius(12, base).random();
-        if (randomMineral != null) return randomMineral;
-
-        return mineral;
+        // The nearest mineral to the base, deterministically. This was `random()` over the
+        // minerals in radius 12, which made the fallback re-target the worker to a DIFFERENT
+        // mineral every frame (owner's report: "in every time unit we send workers to a
+        // different mineral, so there is no mining at all"). Gather is idempotent only when
+        // the target is stable; a random pick per frame is a permanent cancel/re-issue loop.
+        return Select.minerals().nearestTo(base);
     }
 }

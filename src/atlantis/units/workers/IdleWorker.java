@@ -17,7 +17,7 @@ public class IdleWorker extends Manager {
 //            && !unit.isGatheringMinerals()
 //            && !unit.isGatheringGas()
 //            && unit.lastActionMoreThanAgo(60)
-            && (unit.isIdle() || unit.isStopped())
+            && (unit.isIdle() || unit.isStopped() || unit.noCommand())
             && !unit.isConstructing()
             && !unit.isBuilder()
             && !unit.isRepairing()

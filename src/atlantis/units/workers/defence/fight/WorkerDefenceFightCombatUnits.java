@@ -42,6 +42,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
         if (unit.hp() <= 20) return false;
         if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
         if (unit.distToMain() >= 8) return false;
+        if (unit.lastStartedRunningLessThanAgo(30 * 5)) return false;
 
         // Run lockout applies in the field only: at home a worker that fled is
         // wanted back in the defence (B-19).

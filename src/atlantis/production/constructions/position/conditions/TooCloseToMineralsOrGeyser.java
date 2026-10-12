@@ -14,6 +14,18 @@ public class TooCloseToMineralsOrGeyser {
     public static boolean isTooCloseToMineralsOrGeyser(AUnitType building, APosition position) {
         if (building.isMissileTurret()) return false;
         if (building.isBase()) return false;
+
+        // A gas building (Assimilator / Refinery / Extractor) is BUILT ON the geyser: the
+        // finder returns the geyser's own tile (GasBuildingPositionFinder), so the nearest
+        // "gas building" from the candidate position is the geyser itself at ~2.2 tiles
+        // (geyser centre to its top-left corner). With any geyser-distance threshold above
+        // that (it has been 4.1 for Protoss), this condition rejected the ONLY valid site
+        // the gas building has - every time, on every map: the owner's real-game report
+        // ("the only problem is the Assimilator can't be built on the geyser") and OpenBW's
+        // "Assimilator took too long (33s) / buildable:false" are the same defect. A geyser
+        // distance rule cannot apply to the building that stands on a geyser by design,
+        // same exemption as a base (returns false above).
+        if (building.isGasBuilding()) return false;
 //        if (building.isCombatBuilding() && !building.isCannon()) return false;
 //        if (Select.main() == null) return false;
 

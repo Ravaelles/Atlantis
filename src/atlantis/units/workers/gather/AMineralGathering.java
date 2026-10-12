@@ -96,15 +96,26 @@ public class AMineralGathering {
                 }
             }
 
-            // Get the least gathered mineral
-            AUnit leastGatheredMineral = mineralsToWorkerCount.unitWithLowestValue();
+            // Get the least gathered mineral. Ties (and with few workers most minerals tie at
+            // 0-1 gatherers) must NOT fall back to list order, which is base distance - every
+            // worker then targets the same patch, the counts flip frame to frame, and the
+            // "least gathered" pick changes every frame, re-targeting each worker constantly.
+            // Among equally gathered minerals pick the one closest to THIS worker: that is a
+            // total order (worker, mineral) that is stable across frames.
+            AUnit bestMineral = null;
+            double lowestCount = Double.MAX_VALUE;
+            double bestDist = Double.MAX_VALUE;
+            for (AUnit mineral : minerals) {
+                double count = mineralsToWorkerCount.valueFor(mineral);
+                double dist = mineral.distTo(worker);
+                if (count < lowestCount || (count == lowestCount && dist < bestDist)) {
+                    lowestCount = count;
+                    bestDist = dist;
+                    bestMineral = mineral;
+                }
+            }
 
-//            if (leastGatheredMineral != null && leastGatheredMineral.distTo(worker) >= 40) {
-//                System.err.println("Fucked up mineral? Dist to worker = " + leastGatheredMineral.distTo(worker));
-//            }
-
-            // This is our optimal mineral to gather near given unit
-            if (leastGatheredMineral != null) return leastGatheredMineral;
+            if (bestMineral != null) return bestMineral;
         }
 
         // If no minerals found, return nearest mineral
