@@ -927,6 +927,34 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
   `CONVENTIONS.md` §3a.
 
+- **#62 (2026-10-12) - the Assimilator is never built on OpenBW; the request tile is right,
+  the engine still refuses.** Owner's log has only `GAS_FIX in=[86,118] geysersIn6=1
+  nearest=[88,119] d=0.0` and `out(ok)=[86,118]`; the construction then dies
+  `took too long (33-39s) / buildable:false`.
+
+  **Checked in the source, and both easy readings are wrong:**
+  - `GasBuildingPositionFinder:36` returns `geyser.translateByPixels(-64, -32)` - for a
+    4x2 geyser that is exactly the centre-to-top-left conversion, so the request tile
+    EQUALS the engine's geyser tile by construction. The offset is not the bug.
+  - `d=0.0` is correct edge-distance (BWAPI `getDistance` is edge-to-edge; the site is
+    adjacent to the geyser), not a broken `distTo`.
+  - Exonerated too: the JBWAPI `hasPathOverTerrain` fallback (`Game.java:2491-2507`)
+    errs towards reachable, so the builder-path branch passes next to a geyser; and
+    the `TooCloseToGeyser` exemption (`TooCloseToMineralsOrGeyser:28`) is in place.
+
+  **Next measurement (one bounded run, no patch before it):** at the refusal, print
+  requestTile vs the engine geyser tile equality plus the Java client's `canBuildHere`
+  components (refinery branch, builder `hasPath`, explored, power) with `lastCommand`
+  and `distToBuild`. The tile math says the refinery term should pass, so the refusal
+  is elsewhere - the probe names where instead of a third static theory.
+
+- **#63 (2026-10-12) - workers past roughly the 16th stop being handled; nothing in the
+  log.** Owner's report, possibly related to another defect, so recorded separately
+  rather than folded into #60/#61. Candidates, both unproven: the `CantAfford` /
+  `NoSupply` oscillation (#60) and the Gather/Idle flag self-deception (#61).
+  Next: one bounded `--short` run with `BUILDER_LOG=1`, read the `STUCK_WORKER` and
+  `WORKER_GATE` lines; name the refusing gate before any fix.
+
 - **#45** Production v2: **`Construction/**` cannot be deleted yet, only `Queue/**`
   is a candidate.** Measured dependency count: **149 production files** reference
   `Queue.get()`, `CurrentQueue`, `CountInQueue`, `AddToQueue` or

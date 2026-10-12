@@ -361,3 +361,34 @@ show `canBuildHere=false` with no builder and with the assigned builder, while a
 2x2 cells are map/engine-buildable and there are no overlapping units; the precise
 engine precondition remains unidentified. Temporary probes were removed and the
 deployed jar rebuilt/freshness-checked from clean source.
+
+
+## Session 2026-10-12 (autonomous): own-algorithm cutover step 1 + short-tier honesty
+
+### Committed
+- `DeprecatedCodeException` (unchecked fail-fast for banned engine shortcuts) +
+  `AUnit.hasPathTo` x2 routed through `ReachableTiles.between`, mirroring
+  `APosition.hasPathTo`. Raw `u.hasPath` answered false for every pair on OpenBW;
+  the port answers from terrain when regions are absent. No new ArchUnit
+  violation (units -> map root is allowed); the one arch failure
+  (`Manager -> SleepUntilFrameGate`) reproduces on the clean tree, so it
+  pre-exists. Unit scope 389/389 green.
+- `--short` honesty: `EXPECT_MIN_ASSIMILATORS=1` in the short tier and
+  `Core>=1 (completed)` conjoined into `ForceExitWhenOpeningProven.applies()`,
+  which promised "Core + Dragoon" but exited on Dragoons alone. A gas-less
+  "proven opening" can no longer pass. Assertion self-test OK, unit 389/389.
+
+### Investigated, not patched (refutations recorded in NEXT #62/#63)
+- Assimilator: the request tile equals the engine geyser tile by construction
+  (the -64/-32 offset is the centre-to-top-left conversion for 4x2); `d=0.0` is
+  correct edge-distance; the JBWAPI terrain fallback errs towards reachable, so
+  the builder-path passes. The refusal is elsewhere - the refusal-time probe
+  (requestTile vs geyser tile equality + Java `canBuildHere` components) is
+  named in #62 and needs one bounded run.
+- Worker stall past ~16: unproven; candidates are #60 (gate oscillation) and
+  #61 (flag self-deception). One bounded `--short` run with `BUILDER_LOG=1`
+  (`STUCK_WORKER` + `WORKER_GATE`) decides it (#63).
+
+### Next
+Gas-refusal probe in `IssueBuildOrder` (gas-only, throttled), then a bounded
+`--short` OpenBW run reading GAS tile-equality + `STUCK_WORKER`/`WORKER_GATE`.
