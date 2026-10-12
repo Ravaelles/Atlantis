@@ -33,7 +33,7 @@ public class ACherryVisLogger_TraceJson {
             + line("_version", 0) + ","
 //            + emptyLineMap("board_updates") + ","
             + "\"board_updates\": {" + ACherryVis_GlobalStates.build() + "},"
-            + "\"custom_names\": {" + customNames() + "},"
+            + "\"custom_names\": {" + customNames(strings) + "},"
             + emptyLineMap("draw_commands") + ","
             + "\"game_values\": {" + ACherryVis_GlobalValues.build(logger) + "},"
             + emptyLineArray("heatmaps") + ","
@@ -51,16 +51,17 @@ public class ACherryVisLogger_TraceJson {
             + "}";
     }
 
-    private static String customNames() {
-        return
-            " \"manager\": {"
-//            "    \"10000\": \"AttackManager\",\n" +
-//            "    \"10001\": \"DefendManager\"\n" +
-            +"\"10000\":\"GatherResources\",\"10001\":\"ScoutTryFindingEnemy\","
-            + "\"10002\":\"ScoutUnexploredBasesNearEnemy\",\"10003\":\"ScoutSeparateFromCloseEnemies\"," +
-            "\"10004\":\"ScoutEnemyThird\",\"10005\":\"ProtossAvoidEnemies\",\"10006\":\"ScoutFreeBases\",\"10007\":\"BuilderManager\",\"10008\":\"WorkerDefenceRun\",\"10009\":\"IdleWorker\",\"10010\":\"WorkerDefenceStopFighting\",\"10011\":\"WorkerAvoidManager\",\"10012\":\"TooFarFromFocusPoint\",\"10013\":\"AttackNearbyEnemies\",\"10014\":\"ProtossContinueAttack\",\"10015\":\"ProtossLowEval\",\"10016\":\"ProtossForceFight\",\"10017\":\"ProtossZealotTooFarFromDragoon\",\"10018\":\"ProtossTooFarFromLeader\",\"10019\":\"ProtossUnfreezeGeneric\",\"10020\":\"ProtossShouldStopRunningMelee\",\"10021\":\"ProtossForceRetreatDuringDefen\",\"10022\":\"OnWrongSideOfFocusPoint\",\"10023\":\"TooCloseToFocusPoint\",\"10024\":\"ProtossTooFarAhead\",\"10025\":\"ZealotAvoidLingsWhenWounded\",\"10026\":\"ProtossFullRetreat\",\"10027\":\"ProtossContinueUnfreeze\",\"10028\":\"ProtossForceCluster\",\"10029\":\"DanceAwayDragoon\",\"10030\":\"UnfreezeDragoon\",\"10031\":\"FixIdleUnitsPostAttack\",\"10032\":\"FixIdleUnitsPostAvoid\",\"10033\":\"ProtossFixInvalidTargets\",\"10034\":\"ShouldStopRunningZealot\",\"10035\":\"CorsairHuntMutas\",\"10036\":\"AsAirAvoidAntiAir\",\"10037\":\"ShouldStopRunningProtossAir\",\"10038\":\"CorsairExploreEnemyMain\",\"10039\":\"BuilderAvoidEnemies\",\"10040\":\"AsAirAttackAnyone\",\"10041\":\"PreventAirCornerStucking\""
-            + "}";
+    /**
+     * The viewer resolves a unit's {@code manager} integer through this legend,
+     * so it must be the runtime table - the ids in {@code units_updates} are
+     * assigned at runtime in first-logged order. A hardcoded table only matches
+     * if managers happen to log in one exact order, and it has no names at all
+     * past its last row.
+     */
+    public static String customNames(ACherryVis_Strings strings) {
+        return " \"manager\": {" + strings.getJson() + "}";
     }
+
 
     private String typesToString(ACherryVis_Strings strings) {
         String original = ACherryVis_TypesNames.get();

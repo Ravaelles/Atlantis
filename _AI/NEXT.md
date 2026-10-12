@@ -969,11 +969,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     id dedup (the shape Stardust writes and the viewer parses); dead predecessor
     `ACherryVis_UnitFirstSeenOld` deleted. Test `CherryVisUnitFirstSeenTest` pins
     the exact JSON without running CherryVis.
+  - FIXED: `units_updates` legend. Manager ids are runtime-assigned from 10000 in
+    first-logged order, but `custom_names.manager` hardcoded one exact order - any
+    other order mislabeled every manager in the viewer, and managers past the table
+    had no name. The legend is now built from the runtime table
+    (`CherryVisCustomNamesTest` pins it, no frontend needed).
   - OPEN: `units_logs` is `{}` (per-unit narrative lives nowhere - Stardust writes
-    per-unit LOG FILES and references paths in trace.json, we write nothing), and
-    `units_updates` manager ids are runtime-assigned from 10000 while `custom_names`
-    hardcodes a 10000-10041 table that only matches if managers appear in one exact
-    order - any other order mislabels every manager in the viewer.
+    per-unit LOG FILES and references paths in trace.json, we write nothing).
   Next: decide per-unit logs shape (files like Stardust vs inline), then pin
   `units_updates`+`custom_names` agreement with the same no-frontend string test.
 

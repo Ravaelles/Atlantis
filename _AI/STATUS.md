@@ -453,3 +453,11 @@ lost). Rewritten frame-to-list with id dedup; dead `...FirstSeenOld` deleted.
 `CherryVisUnitFirstSeenTest` pins the exact JSON with no frontend running.
 Unit scope 393/393. Still open in #65: empty `units_logs` and the
 runtime-vs-hardcoded manager-id table behind `custom_names`.
+
+## Session 2026-10-12 (continued): CherryVis legend follows runtime (NEXT #65)
+
+`custom_names.manager` hardcoded one manager order while ids assign at runtime -
+fixed to build the legend from the runtime strings table
+(`CherryVisCustomNamesTest`). Unit scope 394/394. Left in #65: empty
+`units_logs` (Stardust writes per-unit log files; we write none) and an
+end-to-end viewer check, plus the per-line debug flags the owner suggested.
