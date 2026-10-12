@@ -167,6 +167,20 @@ public class IssueBuildOrder extends HasUnit {
                             + " lastCommand=" + unit.lastCommandName());
                     }
 
+                    // PROBE (NEXT.md #62): gas refusal terms, throttled and ungated like
+                    // GAS_FIX so a plain run captures it. The tile math says the request
+                    // equals the geyser tile and the terrain fallback passes the builder
+                    // next to a geyser, so a refusal is elsewhere: the no-builder answer
+                    // encodes the refinery exact-tile rule, the with-builder answer adds
+                    // reachability, and canBuild is the full command gate.
+                    if (buildingType.isGasBuilding()) {
+                        ErrorLog.printMaxOncePerMinute("GAS_REFUSED tile=" + buildTilePosition
+                            + " noBuilder=" + atlantis.Atlantis.game().canBuildHere(buildTilePosition, buildingType.ut())
+                            + " withBuilder=" + atlantis.Atlantis.game().canBuildHere(buildTilePosition, buildingType.ut(), unit.u())
+                            + " canBuild=" + unit.u().canBuild(buildingType.ut(), buildTilePosition)
+                            + " lastCommand=" + unit.lastCommandName());
+                    }
+
                     // MEASURED (610 refusals in one run): the engine refuses a Build while the
                     // worker's engine-side order is still the Move that brought it here -
                     // `distToBuild=1.3 isMoving=false action=BUILD lastCommand=Move` frame
