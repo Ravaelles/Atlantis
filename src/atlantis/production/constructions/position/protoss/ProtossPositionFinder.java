@@ -141,6 +141,16 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                             continue;
                         }
 
+                        // Edge-margin rule: honour the relaxation ONLY when it is the Pylon
+                        // fallback sweep asking (see the fallback javadoc). The condition
+                        // lives here because the margin class must keep its unconditional
+                        // 7-tile pin for the unit test.
+                        if (ProtossTooCloseToMapBoundaries.isTooClose(building, constructionPosition)
+                            && !(ProtossPositionFinder.relaxedBoundaryMargin && building.isPylon())) {
+                            if (reasons != null) reasons.merge(AbstractPositionFinder._STATUS, 1, Integer::sum);
+                            continue;
+                        }
+
                         if (building.isCombatBuilding()) {
                             // Turret fix - make sure to build in the same region
                             if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
@@ -149,6 +159,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                         }
 
                         AbstractPositionFinder._STATUS = "OK";
+                        lastFound = constructionPosition;
                         return constructionPosition;
 
 //                        if (building.isPylon() && A.supplyUsed() <= 18) {
@@ -167,6 +178,49 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                 + " reasons=" + reasons);
         }
 
+        // Pylon-only fallback (measured on TauCross: a corner Nexus at [119,10] with a
+        // 7-tile edge margin leaves ZERO candidates that also survive the street grid -
+        // ~3000 consecutive refusals, PYLON_FIND_FAILED with supply 20/25). The relaxed
+        // margin must NOT be the default (ProtossTooCloseToMapBoundariesTest pins the
+        // 7-tile margin unconditionally), so it lives here as a SECOND PASS that runs only
+        // when the normal search found nothing.
+        if (building.isPylon()) {
+            _STATUS = "Second pass (relaxed edge margin)";
+            if (findWithRelaxedBoundaryMargin(builder, building, nearTo, maxDistance)) {
+                return lastFoundPosition();
+            }
+        }
+
         return null;
     }
+
+    /**
+     * One full sweep of the same search with the Pylon edge margin relaxed to 4 tiles.
+     * Sets _STATUS and stores the position when a tile passes.
+     */
+    private static boolean findWithRelaxedBoundaryMargin(
+        AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
+    ) {
+        relaxedBoundaryMargin = true;
+        try {
+            APosition found = findStandardPositionFor(builder, building, nearTo, maxDistance);
+            return found != null;
+        }
+        finally {
+            relaxedBoundaryMargin = false;
+        }
+    }
+
+    /**
+     * True only during the Pylon fallback sweep (see the javadoc above) - it is what
+     * {@code ProtossTooCloseToMapBoundaries} reads to relax its 7-tile margin to 4.
+     * Thread-local not needed: the finder is single-threaded per frame.
+     */
+    public static boolean relaxedBoundaryMargin = false;
+
+    private static APosition lastFoundPosition() {
+        return lastFound;
+    }
+
+    private static APosition lastFound;
 }

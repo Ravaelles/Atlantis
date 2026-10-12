@@ -59,17 +59,14 @@ public class ForceExitWhenOpeningProven extends Commander {
 
     @Override
     public boolean applies() {
-        if (!Env.coreAndDragoonGate())
-            return false;
+        if (!Env.coreAndDragoonGate()) return false;
 
         // Once a second is plenty for a condition that only becomes true once, and it
         // keeps
         // the check off the hot path (this runs every frame otherwise).
-        if (A.now() % 30 != 0)
-            return false;
+        if (A.now() % 30 != 0) return false;
 
-        return Count.existing(AUnitType.Protoss_Cybernetics_Core) >= 1
-                && completedDragoons() >= 1;
+        return Count.dragoons() >= 2;
     }
 
     @Override

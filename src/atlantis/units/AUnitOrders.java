@@ -15,6 +15,7 @@ import atlantis.units.actions.Actions;
 import atlantis.units.fogged.FoggedUnit;
 import atlantis.util.AConsole;
 import atlantis.util.We;
+import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.util.log.ErrorLog;
 import bwapi.*;
 
@@ -85,7 +86,15 @@ public interface AUnitOrders {
         }
 
         unit.lastCommandIssuedNow(UnitCommandType.Attack_Unit);
-        return unit().orderSink().attackUnit(unit(), target);
+
+        boolean issued = unit().orderSink().attackUnit(unit(), target);
+
+        // Order-latency gate (owner recommendation 2026-10-12): never trust
+        // isAttacking() in the first frames after the command - the engine registers the
+        // Attack after getRemainingLatencyFrames(). Hold the unit until it lands.
+        if (issued) SleepUntilFrameGate.holdAfterOrder(unit());
+
+        return issued;
     }
 
     // To avoid confusion: NEVER USE IT.
@@ -428,7 +437,14 @@ public interface AUnitOrders {
         if (unit().lastCommandIssuedAgo() <= 1) return false;
         else unit().lastCommandIssuedNow(UnitCommandType.Gather);
 
-        return unit().orderSink().gather(unit(), target);
+        boolean issued = unit().orderSink().gather(unit(), target);
+
+        // Order-latency gate (owner recommendation 2026-10-12): the engine registers the
+        // Gather after getRemainingLatencyFrames(); re-issuing before that reads stale
+        // state and was refused (NEXT.md #61). Hold the worker for that window.
+        if (issued) SleepUntilFrameGate.holdAfterOrder(unit());
+
+        return issued;
     }
 
     /**

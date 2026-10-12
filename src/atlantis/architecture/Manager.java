@@ -3,6 +3,7 @@ package atlantis.architecture;
 import atlantis.game.A;
 import atlantis.architecture.ManagerFactory;
 import atlantis.units.AUnit;
+import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.util.log.ErrorLog;
 
 /**
@@ -57,6 +58,17 @@ public abstract class Manager extends BaseManager {
     }
 
     private Manager invokeFromParent(Manager parent) {
+        // Order-latency gate, ABOVE every manager: a unit with an order still in flight is
+        // not asked anything at all. The engine registers a command after
+        // getRemainingLatencyFrames(); until then every isAttacking()/isGathering()/order
+        // read is stale and the managers below act on it (measured: GatherResources
+        // re-issued every frame at lastCommandIssuedAgo=1 was refused by the engine, the
+        // same re-issue at >= 3 was accepted - owner recommendation 2026-10-12, applied to
+        // workers and combat units alike).
+        if (SleepUntilFrameGate.mustSleep(unit)) {
+            return usedManager(this, "SleepUntilFrame");
+        }
+
         if (!applies()) {
             return null;
         }

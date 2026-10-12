@@ -42,10 +42,18 @@ public class ForceExitLocallyInOpenBW extends Commander {
     public boolean applies() {
         if (!Env.isOpenBW()) return false;
 
-        if (A.minerals() >= 700) return true;
-        if (A.supplyUsed() <= 6 && A.now() >= 30 * 60 * 3) return true;
+        // 450 minerals = production is not spending (owner's ruling, 2026-10-12: "we should
+        // never reach 450"). BUT only after the opening had time to spend: the measured
+        // run reached 600 minerals at 254 in-game seconds WITH a healthy board
+        // (Pylon=2 Gateway=2 Zealot=5 Core=1) - the bot had just finished the opening and
+        // was between buildings. Killing it there proves nothing except that the opening
+        // completed. The time guard gives the next building's order ~a minute to appear
+        // and drain the bank; a genuinely broken production stays above 450 through that
+        // window and dies, as it should.
+        if (A.minerals() < 450) return false;
+        if (AGame.timeSeconds() < 240) return false;
 
-        return false;
+        return true;
     }
 
     protected boolean handle() {

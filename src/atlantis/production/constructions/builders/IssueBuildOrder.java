@@ -6,6 +6,7 @@ import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.builders.BuilderDiagnostics;
+import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -131,6 +132,11 @@ public class IssueBuildOrder extends HasUnit {
                     boolean buildResult = unit.build(buildingType, buildTilePosition, construction);
                     BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
                     if (buildResult) {
+                        // Order-latency gate (owner recommendation 2026-10-12): the engine
+                        // registers the Build after getRemainingLatencyFrames(); until then
+                        // `lastCommand` still reads the older order and IssueBuildOrder
+                        // re-attempted the build every frame against its own refusal.
+                        SleepUntilFrameGate.holdAfterOrder(unit);
                         return true;
                     }
 

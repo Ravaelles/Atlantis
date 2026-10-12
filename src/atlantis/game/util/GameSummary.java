@@ -10,6 +10,12 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class GameSummary {
     public static void print(boolean winner) {
         String result = "#####################################\n";
@@ -66,6 +72,33 @@ public class GameSummary {
      * changes.
      * </p>
      */
+    /**
+     * What stands on the board, as `Type=alive` - only the types present right now.
+     *
+     * <p>
+     * <b>The live board is the only source (owner's ruling, 2026-10-12): "no history for
+     * counting - it is NOT and will never be the truth".</b> The former implementation read
+     * `CompletedUnitsHistory` (onUnitComplete events) for the built total and it LIED on
+     * OpenBW in both directions: the engine's `rearmUnitDiscovery()` re-delivers
+     * UnitComplete for units that predate the bot's attach (duplicates), and units
+     * completing while detached are delivered late or never (gaps). Measured in one run:
+     * history said 15 buildings / the board held 9; for the same Gateway type one engine
+     * reported alive=3 hist=2. `Select.ourWithUnfinishedOfType` reads
+     * `playerUs().getUnits()` directly at print time, which is what the replay shows.
+     * </p>
+     *
+     * <p>
+     * <b>The order is the engine's own unit-list order</b> - deterministic per game, close
+     * enough to build progression, and it needs no extra bookkeeping. (The previous order
+     * came from UnitComplete events, which OpenBW distorts - see above.)
+     * </p>
+     *
+     * <p>
+     * Unfinished units are INCLUDED: a building still warping is on the board and the
+     * player sees it in the replay - hiding it would make the line disagree with the
+     * replay for the most interesting case, a game that ends mid-build.
+     * </p>
+     */
     private static String buildingsLine() {
         // The race comes from AtlantisRaceConfig, which is the single source of truth for
         // "which race are we" (an earlier two-sources-of-truth bug read it back from the game
@@ -74,33 +107,36 @@ public class GameSummary {
             "### " + atlantis.config.AtlantisRaceConfig.MY_RACE.name() + ": "
         );
 
-        for (AUnitType type : CompletedUnitsHistory.typesByFirstCompletion()) {
-            int alive = Select.ourWithUnfinished(type).count();
-            int lost = UnitsArchive.ourLost(type);
+        // Types present on the board, in the order the engine's own unit list presents them
+        // (deterministic per game). A "first created frame" field would be nicer but does
+        // not exist on AUnit and adding one just for the report is scope creep.
+        List<AUnitType> types = new ArrayList<>();
+        Map<AUnitType, Integer> firstSeenOrder = new HashMap<>();
+        int order = 0;
+        for (AUnit unit : Select.our().list()) {
+            if (!firstSeenOrder.containsKey(unit.type())) {
+                // The board list is order-stable enough for our purpose: the first time a
+                // type is met in `playerUs().getUnits()` is deterministic per game (the same
+                // list the engine returns). A `createdFrame` field would be nicer but does
+                // not exist on AUnit and adding one just for the report is scope creep.
+                firstSeenOrder.put(unit.type(), order++);
+                types.add(unit.type());
+            }
+        }
+        types.sort(Comparator.comparingInt(firstSeenOrder::get));
+
+        for (AUnitType type : types) {
+            int alive = Select.ourWithUnfinishedOfType(type).count();
 
             // `AUnitType.name()` already strips the race prefix, which is why this report can
             // be written once rather than per race.
-            line.append(type.name()).append("=").append(alive);
-
-            // `(1 lost)` only when something was actually lost, and only when that is not
-            // already the whole story: a unit with nothing destroyed reads as a plain count
-            // rather than as `Zealot=3 (0 lost)`, which is noise.
-            //
-            // The loss count is NOT `built - alive`. A unit can be lost and rebuilt, and the
-            // difference of the two totals would then report the rebuild as if nothing had
-            // been killed - `UnitsArchive` counts destruction events, which is the number a
-            // player would quote.
-            if (lost > 0) {
-                line.append(" (").append(lost).append(" lost)");
-            }
-
-            line.append(" ");
+            line.append(type.name()).append("=").append(alive).append(" ");
         }
 
         // Kept from the old line so a run that produced nothing still says so explicitly
         // rather than printing an empty list that reads like a formatting bug.
-        if (CompletedUnitsHistory.typesByFirstCompletion().isEmpty()) {
-            line.append("(nothing completed) ");
+        if (types.isEmpty()) {
+            line.append("(nothing on board) ");
         }
 
         return line.append("###\n").toString();

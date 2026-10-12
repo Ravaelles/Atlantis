@@ -26,6 +26,18 @@ public class GasBuildingFix extends HasUnit {
             return null;
         }
 
+        // TEMPORARY measurement (Assimilator "took too long (39s) / buildable:false" on
+        // OpenBW after the TooCloseToGeyser exemption landed): print the whole fix path -
+        // which geyser, which tile came in, what the fix loop returned. Remove after the
+        // cause is named.
+        if (building.isGasBuilding()) {
+            AUnit geyserNear = Select.geysers().inRadius(6, position).nearestTo(position);
+            System.err.println("GAS_FIX in=" + position
+                + " geysersIn6=" + Select.geysers().inRadius(6, position).count()
+                + " nearest=" + (geyserNear == null ? "none" : geyserNear.position() + " d="
+                    + A.digit(geyserNear.distTo(position))));
+        }
+
         // Fix geyser position problem
         if (building.isGasBuilding() && Select.geysers().inRadius(2, position).isEmpty()) {
             AUnit geyser = Select.geysers().inRadius(12, position).nearestTo(position);
@@ -63,7 +75,11 @@ public class GasBuildingFix extends HasUnit {
 
         // =========================================================
 
-        if (CanPhysicallyBuildHere.check(unit, building, position)) return position;
+        if (CanPhysicallyBuildHere.check(unit, building, position)) {
+            if (building.isGasBuilding()) System.err.println("GAS_FIX out(ok)=" + position);
+            return position;
+        }
+        if (building.isGasBuilding()) System.err.println("GAS_FIX in-position NOT buildable, entering loop at " + position);
 
         // === Loop ================================================
 
