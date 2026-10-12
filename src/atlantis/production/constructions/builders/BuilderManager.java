@@ -80,6 +80,10 @@ public class BuilderManager extends Manager {
                     construction.assignOptimalBuilder();
                 }
 
+                // Standstill decomposition (NEXT #59): when the builder stops moving
+                // on a site that never starts, print WHICH canBuild term refuses.
+                BuilderDiagnostics.logStandstillBreakdown(unit, construction);
+
                 boolean moved = (new TravelToConstruct(unit)).travelWhenReady(construction);
                 if (moved) return usedManager(this);
 

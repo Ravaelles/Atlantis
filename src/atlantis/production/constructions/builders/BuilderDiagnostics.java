@@ -76,6 +76,62 @@ public class BuilderDiagnostics {
     }
 
     /**
+     * Full decomposition of the engine's refusal, printed when a builder stands
+     * still on a NOT_STARTED site (NEXT #59): the ordinary attempt line proves
+     * preconditions, this one names WHICH {@code canBuild} term says no by
+     * calling every level of the chain separately - the no-builder tile rule,
+     * the with-builder reachability (patched terrain fallback vs raw engine),
+     * our own port's answer on the same pair, and the full gate.
+     *
+     * <p>Same cost rules as {@link #logBuildAttempt}: {@code BUILDER_LOG=1} and
+     * only on a 60+ frame standstill, so a healthy run never pays for it.</p>
+     */
+    public static void logStandstillBreakdown(AUnit unit, Construction construction) {
+        if (!Env.builderLog()) return;
+        if (!A.everyNthGameFrame(30)) return;
+        if (unit == null || unit.u() == null) return;
+        if (construction.buildPosition() == null) return;
+        if (!unit.lastPositionChangedMoreThanAgo(60)) return;
+
+        APosition at = construction.buildPosition();
+        TilePosition tile = new TilePosition(at.tx(), at.ty());
+        bwapi.Unit builder = unit.u();
+        bwapi.UnitType type = construction.buildingType().ut();
+        bwapi.Position siteCenter = new bwapi.Position(
+            at.tx() * 32 + construction.buildingType().getTilesWidth() * 16,
+            at.ty() * 32 + construction.buildingType().getTilesHeights() * 16
+        );
+
+        System.err.println("BUILD_BREAKDOWN @" + A.now()
+            + " unit=#" + unit.id()
+            + " building=" + construction.buildingType().name()
+            + " tile=[" + tile.getX() + "," + tile.getY() + "]"
+            + " stoodStillFor=" + unit.lastPositionChangedAgo() + "f"
+            + " || worker: canCommand=" + builder.canCommand()
+            + " isCompleted=" + builder.isCompleted()
+            + " isLockedDown=" + builder.isLockedDown()
+            + " isConstructing=" + builder.isConstructing()
+            + " isMoving=" + builder.isMoving()
+            + " isInterruptible=" + builder.isInterruptible()
+            + " order=" + builder.getOrder()
+            + " lastCommand=" + unit.lastCommandName()
+            + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
+            + " distToBuild=" + A.digit(unit.distTo(at))
+            + " || reachability: unitHasPath=" + builder.hasPath(siteCenter)
+            + " gameHasPath=" + atlantis.Atlantis.game().hasPath(builder.getPosition(), siteCenter)
+            + " ourPort=" + atlantis.map.ReachableTiles.between(unit, at)
+            + " || buildability: noBuilder=" + atlantis.Atlantis.game().canBuildHere(tile, type)
+            + " withBuilder=" + atlantis.Atlantis.game().canBuildHere(tile, type, builder)
+            + " withBuilderExplored=" + atlantis.Atlantis.game().canBuildHere(tile, type, builder, true)
+            + " canBuild=" + builder.canBuild(type, tile)
+            + " explored=" + exploredFootprint(construction)
+            + " canAfford=" + A.canAfford(
+                construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
+            + " minerals=" + A.minerals()
+            + " supply=" + A.supplyUsed() + "/" + A.supplyTotal());
+    }
+
+    /**
      * Whether every footprint tile of the construction is explored, and which tiles are
      * not.
      *

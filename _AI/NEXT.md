@@ -691,6 +691,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   same sequence - the "do not repeat" above meant the moving-worker variant, which is
   exactly what the new trace demanded.
 
+  **Standstill probe 2026-10-12 (owner's ask):** `BUILD_BREAKDOWN` in
+  `BuilderDiagnostics`, fired from `BuilderManager` when a builder stands still
+  60+ frames on a NOT_STARTED site (`BUILDER_LOG=1`, every 30th frame). It calls
+  every `canBuild` level separately - worker gates, unit/game/our-port
+  reachability, no-builder/with-builder tile rule, full gate, explored,
+  affordability - so the refusing term is read, not inferred. A short
+  building-only run is the existing `--short` tier with this flag; no new
+  harness was needed for it.
+
   **Next measurement, exact and cheap:** in `IssueBuildOrder`, the moment `unit.build(...)`
   returns false, print `unit.u().canBuild(type, tile)`, `unit.u().canIssueCommand(canBuild(
   type, tile))` and `unit.u().getOrder()` - i.e. WHICH engine gate says no, rather than assuming
