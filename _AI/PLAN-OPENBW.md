@@ -117,6 +117,14 @@ really wrote - it strips colons from the configured name, and the runner now
 pairs with the newest on-disk `.rep` for exactly that reason. Verified: our
 trace serves as valid JSON through `/get/cvis/` both plain and via `.zst`.
 
+To list host replays by default instead of the samples (the UI also has a
+search box that takes the same glob and persists it in the URL):
+
+```bash
+docker run -d -p 8770:8770 -v /sc-ai/REPLAYS:/my-replays --name cvis \
+  cvis ./server.py --host 0.0.0.0:8770 --replays_pattern '/my-replays/*.rep'
+```
+
 ### Opening the trace locally (CherryVis viewer install)
 
 Upstream repo is archived (2022), but the viewer still builds. From
