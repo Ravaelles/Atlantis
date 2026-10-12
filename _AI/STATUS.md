@@ -526,3 +526,14 @@ Verified HTTP 200. Proving run `--short --cvis --save-replay` leaves
 `/sc-ai/REPLAYS/<name>.rep` (39 KB) + `<name>.rep.cvis/` (valid trace.json, 23
 first-seen frames, 16 updated units) - the file pair the editor opens. Left in
 #65: the owner clicking through the viewer.
+
+## Session 2026-10-12 (continued): empty side panel (NEXT #65)
+
+Owner: game replays, right-side CherryVis panel invisible, no console error
+about cvis. The panel fetches `/get/cvis/` while the canvas does not, so a
+data failure is silent by design. Measured: the endpoint returned 200 with raw
+compressed bytes - one-shot `zstd.decompress` fails size-less streams
+(`length mismatch` on the sample). Fix: streaming reader from `zstandard`
+(which has the API) with plain-file fallback, via the Dockerfile patch.
+Verified: sample serves 6.4 MB valid JSON (all 13 keys), ours 23 first-seen
+frames. Container `cvis` left running with `/sc-ai/REPLAYS` mounted.

@@ -985,6 +985,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     `install_cherryvis.sh`) installed only `zstandard`. The script installs both
     now, and gained `--run-only` (server without reinstall, prints "Starting
     CherryVis server without installation..."). Verified: HTTP 200.
+  - FIXED (empty side panel, owner report): the panel loads cvis data through
+    `/get/cvis/` while the game canvas does not - so the game played and the
+    panel stayed empty with no console error. Root cause in two layers: the
+    shipped `zstd` lost the streaming API (first compat patch), and its one-shot
+    replacement cannot decode size-less streams (measured `length mismatch` on
+    the sample). The endpoint now uses `zstandard`'s streaming reader with a
+    plain-file fallback. Verified: sample serves 6.4 MB valid JSON, ours 23
+    first-seen frames.
   - PROVEN (2026-10-12): `--short --cvis --save-replay` leaves the viewable pair
     `/sc-ai/REPLAYS/<name>.rep` + `<name>.rep.cvis/` (valid trace.json, 23
     first-seen frames, 16 updated units).
