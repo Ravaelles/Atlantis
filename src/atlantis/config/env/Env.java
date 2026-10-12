@@ -2,7 +2,7 @@ package atlantis.config.env;
 
 import atlantis.config.AtlantisIgniter;
 import atlantis.game.AGame;
-import atlantis.information.decisions.ForceExitLocallyAfterRealSeconds;
+import atlantis.information.decisions.ForceExitLocallyAfterSomeTime;
 import atlantis.information.decisions.GGForEnemy;
 import atlantis.util.AFile;
 import atlantis.util.log.ErrorLog;
@@ -150,10 +150,10 @@ public class Env {
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
                 // Cap enforced again here, so a hand-edited ENV cannot widen the
                 // wall-clock limit past the OpenBW simulation cap (CONVENTIONS §17).
-                ForceExitLocallyAfterRealSeconds.realSecondsLimit = Math.min(toInt(value), 120);
+                ForceExitLocallyAfterSomeTime.realSecondsLimit = Math.min(toInt(value), 120);
                 return true;
             case "FORCE_END_GAME_AFTER_INGAME_SECONDS":
-                ForceExitLocallyAfterRealSeconds.inGameSecondsLimit = toInt(value);
+                ForceExitLocallyAfterSomeTime.inGameSecondsLimit = toInt(value);
                 return true;
             case "LOCAL":
                 isLocal = trueFalse(value);

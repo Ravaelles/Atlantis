@@ -38,7 +38,7 @@ import atlantis.util.log.ErrorLog;
  * <p>
  * <b>Why it lives in {@code atlantis.production} and not next to the other exit
  * governors</b>
- * ({@code atlantis.information.decisions.ForceExitLocallyAfterRealSeconds}):
+ * ({@code atlantis.information.decisions.ForceExitLocallyAfterSomeTime}):
  * those are
  * referenced from {@code atlantis.units.special}, which is core, and
  * {@code ArchitectureBoundaryTest} forbids core from depending on

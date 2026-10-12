@@ -9,7 +9,7 @@ import atlantis.game.AGame;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
-public class ForceExitLocallyAfterRealSeconds extends Commander {
+public class ForceExitLocallyAfterSomeTime extends Commander {
     /** Wall-clock limit in real seconds; set from ENV, never widened past the cap. */
     public static int realSecondsLimit = 60 * 10;
 
@@ -21,11 +21,23 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         if (!Env.isLocal()) return false;
         if (A.now() % 300 != 0) return false;
 
-        if (A.supplyUsed() == 4 && A.minerals() >= 1000) return true;
+        if (A.supplyUsed() <= 5 && A.minerals() >= 1000) return true;
 
-        if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) return true;
+        if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) {
+            AConsole.errPrintln(
+                "### realSecondsLimit = " + RealTime.gameLengthInRealSeconds() + "/" + realSecondsLimit
+            );
+            return true;
+        }
 
-        return inGameSecondsLimit > 0 && AGame.timeSeconds() >= inGameSecondsLimit;
+        if (inGameSecondsLimit > 0 && AGame.timeSeconds() >= inGameSecondsLimit) {
+            AConsole.errPrintln(
+                "### inGameSecondsLimit = " + AGame.timeSeconds() + "/" + inGameSecondsLimit
+            );
+            return true;
+        }
+
+        return false;
     }
 
     protected boolean handle() {
@@ -33,13 +45,13 @@ public class ForceExitLocallyAfterRealSeconds extends Commander {
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("####### ForceExitLocallyAfterRealSeconds ###########");
+        AConsole.errPrintln("####### ForceExitLocallyAfterSomeTime ###########");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
         AConsole.errPrintln("####################################################");
 
-        AGame.sendMessage("ForceExitLocallyAfterRealSeconds");
+        AGame.sendMessage("ForceExitLocallyAfterSomeTime");
         ErrorLog.printErrorOnce(
             "Prevented too long game. It took " + RealTime.gameLengthInRealSeconds()
             + " real seconds, " + A.minSec() + " in-game time,"

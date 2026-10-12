@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>
  * Report (owner, 2026-10-09): a run that ended through
- * {@code ForceExitLocallyAfterRealSeconds} (started from the IDE) printed
+ * {@code ForceExitLocallyAfterSomeTime} (started from the IDE) printed
  *
  * <pre>
  * Killing Wine game processes...

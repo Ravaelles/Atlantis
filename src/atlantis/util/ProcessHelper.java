@@ -343,7 +343,7 @@ public class ProcessHelper {
             // message (not a stack trace) keeps the console readable - the full
             // `java.io.IOException: Cannot run program "pkill"` traceback used
             // to be printed on every IDE run that ended through
-            // ForceExitLocallyAfterRealSeconds.
+            // ForceExitLocallyAfterSomeTime.
             System.err.println("[Atlantis] Command failed (ignored): " + command
                 + " - " + err.getMessage());
         }
