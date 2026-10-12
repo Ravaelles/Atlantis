@@ -599,3 +599,14 @@ repeat" note in #59 is superseded WITH the trace it demanded); (2) backstop
 stays (CONVENTIONS §17, long tier needs it) and `TIMEOUT_SECONDS=60` already
 narrows any single run. No stub test possible for the stop (needs engine order
 state) - the game run below is the test.
+
+## Session 2026-10-12 (continued): canBuild bisection says poverty (NEXT #59)
+
+Owner's demand to settle regions-vs-placement: the standstill probe plus a
+sub-flag bisection (`canBuild000/100/010/001`) isolated `Game.canMake` failing
+on `minerals(28) < 150` with every reachability, tile, power, occupancy and
+terrain answer true. Regions (and the hasPath patch), power, occupancy and
+placement are exonerated by one measured line; the engine refuses because the
+bot is broke. Upstream defect: ~10 workers bank ~30 minerals, Gateway attempted
+broke, refused, cancelled at 35s. The [14,51] site (`noBuilder=false`) is a
+different mechanism (power or occupancy) and still needs its own split run.

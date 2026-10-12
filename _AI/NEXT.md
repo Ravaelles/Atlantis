@@ -700,6 +700,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   building-only run is the existing `--short` tier with this flag; no new
   harness was needed for it.
 
+  **BISECTION RESULT 2026-10-12 - it is poverty, exonerating regions, power,
+  occupancy and placement in one line.** Gateway at [96,111]: `unitHasPath`,
+  `gameHasPath`, `ourPort` all true; `noBuilder/withBuilder/withBuilderExplored`
+  all true; `hasPower=true`, `unitsInRect=0`, terrain ok; but `canBuild=false`.
+  Flag bisection (`000=true`, `100=false`, `010/001=true`) isolated the third
+  sub-flag: `Game.canMake` -> `minerals(28) < 150`. The engine is right - the bot
+  is broke when it attempts. Regions, power, occupancy, placement and the patched
+  fallback are all cleared by the same line. The defect is upstream: ~10 workers
+  hold ~30 minerals (spent as fast as mined on the worker pump?), so the Gateway
+  is attempted broke, refused, and cancelled at 35s. Different site, different
+  mechanism than [14,51] (`noBuilder=false` there - power or occupancy, still
+  needs its own split run).
+
   **Next measurement, exact and cheap:** in `IssueBuildOrder`, the moment `unit.build(...)`
   returns false, print `unit.u().canBuild(type, tile)`, `unit.u().canIssueCommand(canBuild(
   type, tile))` and `unit.u().getOrder()` - i.e. WHICH engine gate says no, rather than assuming
