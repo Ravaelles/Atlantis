@@ -1051,6 +1051,10 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   design). Our `units_logs {frame,message}` subset renders (renderer needs only
   those two). Known-minor, not fixed: `board_updates` emits duplicate frame
   keys when two states change on one frame (last wins).
+  Viewer-side check 2026-10-12: traces ≤19:43 carry pre-fix 1000+ type ids
+  (match nothing, all ???); traces ≥19:59 carry engine ids. If ??? persists on
+  a NEW trace, the needed datum is the browser's `[BW<->CP Matching] Unable to
+  match N units` console line (names the failing axis: type/position/frame).
 
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
