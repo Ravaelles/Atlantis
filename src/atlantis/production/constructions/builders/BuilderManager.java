@@ -76,7 +76,7 @@ public class BuilderManager extends Manager {
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
                 AUnit builder = construction.builder();
-                if (builder != null && builder.isStuck() && A.now() % 96 == 0) {
+                if (builder != null && shouldReplaceBuilder(builder) && A.now() % 96 == 0) {
                     construction.assignOptimalBuilder();
                 }
 
@@ -105,6 +105,17 @@ public class BuilderManager extends Manager {
     }
 
     // =========================================================
+
+    /**
+     * True when the assigned builder must be replaced. A stuck builder is the
+     * old case; an uncompleted one is the NEXT #63 case: it takes no order at
+     * all (canCommand=false), so holding the assignment only delays the build
+     * until CancelTooLong kills it. Package-visible as a seam so the rule is
+     * assertable without running a game.
+     */
+    public static boolean shouldReplaceBuilder(AUnit builder) {
+        return builder.isStuck() || !builder.isCompleted();
+    }
 
     /**
      * Returns true if given worker has been assigned to construct new building or if the constructions is

@@ -416,3 +416,16 @@ false-positives on real miners (`MiningMinerals`, accepted Gather, on the patch)
 - probe issue, noted in #63. Still to verify in a game: minerals from minute one,
 zero `NO_COMMAND` stalls; then close #63. `FreeWorkers`/builder exposure noted
 as the follow-up check.
+
+## Session 2026-10-12 (continued): same root in the builder path (NEXT #63)
+
+Verified run showed Gateway=2/Zealot=5 (was 0/0) but still 131 NO_COMMAND lines:
+all now `DoNothing` or `BuilderManager` on `workerCompleted=false` units - the
+gather churn is gone (no small-ago retries, `ago` grows), confirmed by grep.
+Measured #118: assigned builder uncompleted, never stuck, holding a Gateway site.
+Fixed in cycle: `FreeWorkers.get()` is `onlyCompleted()` (25 consumers all pick
+units to command something with), `BuilderManager.shouldReplaceBuilder` adds
+`!isCompleted()` to the `isStuck` rule (existing `assignOptimalBuilder` heals).
+Tests: `BuilderManagerShouldReplaceTest` 2/2, FreeWorkers case in the acceptance
+test (fails pre-fix); unit scope 391/391. Game verification of #63 still open:
+minerals from minute one, zero churning stalls.

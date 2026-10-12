@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 
 /**
@@ -39,6 +40,24 @@ public class UncompletedWorkerIsLeftAloneTest extends WorldStubForTests {
             assertFalse(
                 new IdleWorker(trainee).applies(),
                 "the idle fallback must not claim an uncompleted worker either"
+            );
+        });
+    }
+
+    @Test
+    public void freeWorkersNeverOfferUncompletedUnits() {
+        FakeUnit veteran = fake(AUnitType.Protoss_Probe, 10);
+        FakeUnit trainee = fake(AUnitType.Protoss_Probe, 12);
+        trainee.setCompleted(false);
+
+        world(1, units(veteran, trainee), units(), () -> {
+            assertFalse(
+                atlantis.units.workers.FreeWorkers.get().list().contains(trainee),
+                "an uncompleted unit takes no order, so it must never be picked as a builder"
+            );
+            assertTrue(
+                atlantis.units.workers.FreeWorkers.get().list().contains(veteran),
+                "completed workers are still offered"
             );
         });
     }
