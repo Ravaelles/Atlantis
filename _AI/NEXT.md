@@ -959,6 +959,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
+- **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
+  Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
+  written, then no "Killing"/"Exit" prints, one more silent ForceExit (latch),
+  frames stopped, timeout killed the JVM at 110 s. Location unproven - candidates
+  are `SaveGameResultsToFile` and the kill branch, all silent/fast by inspection.
+  Mitigated, not diagnosed: `OnGameEnd` arms a 20 s daemon backstop (`halt(1)`,
+  hooks skipped) on the self-exit path, so a hung teardown fails in ~30 s instead
+  of burning the cap. Skipped for `END_GAME_VIA_ENGINE` and in tests. Still open:
+  catch one hanging run with `jstack` and name the frame.
+
 - **#67 (2026-10-12) - sleep gate overwrote the owner in history (CLOSED).**
   Owner's question: `UnitStateManager`/`WorkerManager` lines in a builder's
   history, alternating with the leaf - dispatchers that only forward. Mechanism:

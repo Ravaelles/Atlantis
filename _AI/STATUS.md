@@ -535,6 +535,16 @@ the true owner with a stale leaf tooltip. Now returns `this` (chain still
 stops); `unit.manager()` untouched. `SleepGateOwnershipTest` fails pre-fix.
 Unit scope 397/397.
 
+## Session 2026-10-12 (continued): exit-path backstop (NEXT #69)
+
+Owner's question: 9 s game, 110 s run. Log forensics proves the JVM hung
+between the trace write and `System.exit` (trace files exist, no Killing/Exit
+prints, one silent second ForceExit, frames stopped) - but the exact frame is
+unproven, and theorizing further is guesswork. Mitigation committed: 20 s
+daemon backstop in `OnGameEnd` (`halt(1)`, self-exit path only). Not
+unit-tested by construction (it halts the JVM); verified by suite green +
+review. Still open in #69: jstack one hanging run.
+
 ## Session 2026-10-12 (continued): per-unit "i???" type ids (NEXT #68)
 
 Owner: clicked units show "i???" and no per-unit data attaches. Frontend reads

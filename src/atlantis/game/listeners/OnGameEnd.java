@@ -10,6 +10,9 @@ import atlantis.util.AConsole;
 import benchmark.BenchmarkMode;
 import atlantis.cherryvis.ACherryVis;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class OnGameEnd {
     /**
      * Guards the end-of-game cleanup so it runs once per game, not once per
@@ -73,6 +76,27 @@ public class OnGameEnd {
         if (!Env.isLocal()) AConsole.println("Game ended at: " + A.getCurrentTimeAsString());
 
         _executed = true;
+
+        // Backstop: the exit path below is millisecond-scale IO (summary print,
+        // trace write, two kills). A run that reaches here must be gone seconds
+        // later - if it is not, something in the path is hung and the run would
+        // otherwise burn the whole bot-cap (measured 101 s of silence after a
+        // 9 s game). The timer fires only then. halt(), not exit(): a hang can
+        // sit inside a shutdown hook, which exit() would run again.
+        // Skipped for END_GAME_VIA_ENGINE (the bot is supposed to linger there)
+        // and in tests (a halted test JVM helps nobody).
+        if (!Env.endGameViaEngine()) {
+            Timer backstop = new Timer("onend-backstop", true);
+            backstop.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    AConsole.errPrintln(
+                        "OnGameEnd backstop: exit path did not finish in 20s - forcing halt"
+                    );
+                    Runtime.getRuntime().halt(1);
+                }
+            }, 20000);
+        }
 
         // END_GAME_VIA_ENGINE lets the engine end the match instead of this JVM killing
         // itself, which is what lets the engine flush its replay (it writes the file in
