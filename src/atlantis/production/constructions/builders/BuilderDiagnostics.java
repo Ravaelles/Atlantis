@@ -128,7 +128,62 @@ public class BuilderDiagnostics {
             + " canAfford=" + A.canAfford(
                 construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
             + " minerals=" + A.minerals()
-            + " supply=" + A.supplyUsed() + "/" + A.supplyTotal());
+            + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
+            + " || tileRuleSplit: hasPower=" + atlantis.Atlantis.game().hasPower(tile, type)
+            + " unitsInRect=" + unitsInFootprint(builder, type, tile)
+            + " terrainOnly=" + terrainFootprint(construction)
+        );
+    }
+
+    /**
+     * What stands on the building's pixel footprint, builder included: if this
+     * is non-empty while the tile rule refuses, the blocker is occupancy (and
+     * the first entry names it); if it is empty, the refusal is terrain, creep
+     * or power. Format per unit: {@code id:typeName:BUILDER?}.
+     */
+    private static String unitsInFootprint(bwapi.Unit builder, bwapi.UnitType type, TilePosition tile) {
+        bwapi.Position center = tile.toPosition().add(type.tileSize().toPosition().divide(2));
+        java.util.List<bwapi.Unit> units = atlantis.Atlantis.game().getUnitsInRectangle(
+            center.subtract(new bwapi.Position(type.dimensionLeft(), type.dimensionUp())),
+            center.add(new bwapi.Position(type.dimensionRight(), type.dimensionDown())),
+            u -> !u.isFlying() && !u.isLoaded()
+        );
+
+        StringBuilder result = new StringBuilder();
+        result.append(units.size()).append("[");
+        for (int i = 0; i < units.size(); i++) {
+            bwapi.Unit unit = units.get(i);
+            if (i > 0) result.append(",");
+            result.append(unit.getID()).append(":").append(unit.getType())
+                .append(unit == builder ? ":BUILDER" : "");
+        }
+        return result.append("]").toString();
+    }
+
+    /**
+     * Terrain-only footprint answer (no units, no power): separates terrain
+     * from everything the tile rule adds on top.
+     */
+    private static String terrainFootprint(Construction construction) {
+        APosition at = construction.buildPosition();
+        if (at == null) return "no-position";
+
+        int bad = 0;
+        StringBuilder which = new StringBuilder();
+        int w = construction.buildingType().getTilesWidth();
+        int h = construction.buildingType().getTilesHeights();
+
+        for (int dx = 0; dx < w; dx++) {
+            for (int dy = 0; dy < h; dy++) {
+                APosition tile = APosition.create(at.tx() + dx, at.ty() + dy);
+                if (!tile.isWalkable() || !atlantis.Atlantis.game().isBuildable(tile.tx(), tile.ty())) {
+                    bad++;
+                    which.append("[").append(tile.tx()).append(",").append(tile.ty()).append("]");
+                }
+            }
+        }
+
+        return (bad == 0 ? "ok" : "BAD:" + bad) + which;
     }
 
     /**
