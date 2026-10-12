@@ -1686,17 +1686,24 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     /**
      * Returns true if given position has land connection to given point.
+     *
+     * <p>Through the port, not {@code u.hasPath} directly. The engine's query
+     * is region-based and OpenBW publishes no regions, so the raw call answers
+     * false for every pair - including a tile against itself. Same delegation
+     * as {@code APosition.hasPathTo}.</p>
      */
     public boolean hasPathTo(HasPosition point) {
         if (u == null || point == null || point.position() == null || point.position().p() == null) return false;
+        if (position() == null || position().p() == null) return false;
 
-        return u.hasPath(point.position().p());
+        return atlantis.map.ReachableTiles.between(this, point);
     }
 
     public boolean hasPathTo(AUnit unit) {
         if (u == null || unit == null || unit.position() == null) return false;
+        if (position() == null || position().p() == null) return false;
 
-        return u.hasPath(unit.position().toP());
+        return atlantis.map.ReachableTiles.between(this, unit);
     }
 
     public boolean isTrainingAnyUnit() {
