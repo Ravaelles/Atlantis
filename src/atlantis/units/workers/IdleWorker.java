@@ -13,6 +13,12 @@ public class IdleWorker extends Manager {
 
     @Override
     public boolean applies() {
+        // Same rule as GatherResources (NEXT #63): an uncompleted unit cannot
+        // take orders, so the idle fallback must not claim it either - claiming
+        // it re-issues a gather the engine refuses and sets the GATHER action
+        // flag that locks the real re-try path.
+        if (!unit.isCompleted()) return false;
+
         return unit.isWorker()
 //            && !unit.isGatheringMinerals()
 //            && !unit.isGatheringGas()

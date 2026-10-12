@@ -404,3 +404,15 @@ relaxed one) recursed to overflow instead of returning null. Fix is one conditio
 with `StackOverflowError` on the old code and passes on the new, flag reset
 included. Closes #64. Next: read the STUCK_WORKER engine answers from the
 15:53 run for #63.
+
+## Session 2026-10-12 (continued): stuck workers root cause (NEXT #63)
+
+The engine-answers probe named it: stuck Probe `workerCompleted=false` ->
+`workerCanCommand=false` (JBWAPI `canCommand` false until completion), both
+orders refused, `order=Nothing`, while our action flag claimed gathering.
+Fix committed: both mining managers decline `!isCompleted()`
+(`UncompletedWorkerIsLeftAloneTest` mutation-proven). The 10-frame probe
+false-positives on real miners (`MiningMinerals`, accepted Gather, on the patch)
+- probe issue, noted in #63. Still to verify in a game: minerals from minute one,
+zero `NO_COMMAND` stalls; then close #63. `FreeWorkers`/builder exposure noted
+as the follow-up check.

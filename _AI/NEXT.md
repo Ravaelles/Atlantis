@@ -959,12 +959,24 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
-- **#63 (2026-10-12) - workers past roughly the 16th stop being handled; nothing in the
-  log.** Owner's report, possibly related to another defect, so recorded separately
-  rather than folded into #60/#61. Candidates, both unproven: the `CantAfford` /
-  `NoSupply` oscillation (#60) and the Gather/Idle flag self-deception (#61).
-  Next: one bounded `--short` run with `BUILDER_LOG=1`, read the `STUCK_WORKER` and
-  `WORKER_GATE` lines; name the refusing gate before any fix.
+- **#63 (2026-10-12) - WORKERS THAT STAND STILL: ROOT CAUSE MEASURED
+  (`workerCompleted=false` -> `canCommand=false`), fix in, game verification pending.**
+  Owner's report: workers past roughly the 16th stop being handled (this run: one of
+  the first 5). A purpose-built probe (`STUCK_WORKER` + engine answers) settled it in
+  two runs: the stuck Probe reads `workerExists=true workerCompleted=false
+  workerCanCommand=false`, `canGather=false canRightClick=false`, `order=Nothing`,
+  `tileWalkable=true` from frame 30 to the end. JBWAPI `canCommand` is false until
+  completion (`Unit.java:3221`), so a Probe the engine still reports as training takes
+  NO order - and our `GATHER_MINERALS` action flag (set before the engine call)
+  claimed it was gathering, locking the `!isGatheringResources` re-try path.
+  Fix: `GatherResources.applies` and `IdleWorker.applies` decline `!isCompleted()`
+  (regression `UncompletedWorkerIsLeftAloneTest`, fails pre-fix, passes post-fix).
+  Side finding Honestly kept: the 10-frame standstill threshold false-positives on
+  real miners (`order=MiningMinerals/WaitForMinerals`, accepted Gather 1400+ frames
+  ago, `distToMineral=0.0`) - the probe, not the bot, is wrong there.
+  Closes when a bounded run shows minerals climbing from the first minute with zero
+  `NO_COMMAND` stalls. Follow-up already visible: `FreeWorkers`/`BuilderManager`
+  have no completed guard either - check before closing.
 
 - **#45** Production v2: **`Construction/**` cannot be deleted yet, only `Queue/**`
   is a candidate.** Measured dependency count: **149 production files** reference

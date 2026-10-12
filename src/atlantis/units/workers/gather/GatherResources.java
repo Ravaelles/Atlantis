@@ -15,6 +15,15 @@ public class GatherResources extends Manager {
         if (unit == null || unit.isDead()) return false;
         if (!unit.isWorker()) return false;
 
+        // A unit the engine still reports as not completed (a Probe still training
+        // in the Nexus) cannot take ANY order: JBWAPI canCommand is false until
+        // completion, so every gather/rightClick is refused and lastCommand stays
+        // NO_COMMAND forever (measured on OpenBW: one such worker stood from frame
+        // 30 to the end, NEXT #63). Issuing anyway only poisons our own
+        // GATHER_MINERALS action flag, which then locks the re-try path that
+        // checks !isGatheringResources. Leave it alone until it is born.
+        if (!unit.isCompleted()) return false;
+
         if (!unit.isStopped() && unit.isGatheringResources()) {
             if (unit.lastPositionChangedLessThanAgo(10)) return false;
         }
