@@ -183,8 +183,11 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         // ~3000 consecutive refusals, PYLON_FIND_FAILED with supply 20/25). The relaxed
         // margin must NOT be the default (ProtossTooCloseToMapBoundariesTest pins the
         // 7-tile margin unconditionally), so it lives here as a SECOND PASS that runs only
-        // when the normal search found nothing.
-        if (building.isPylon()) {
+        // when the normal search found nothing. The re-entry guard is load-bearing:
+        // without it the relaxed pass re-enters this same branch and the two methods
+        // recurse until the stack overflows (measured: StackOverflowError alternating
+        // findStandardPositionFor:189 <-> findWithRelaxedBoundaryMargin:206).
+        if (building.isPylon() && !relaxedBoundaryMargin) {
             _STATUS = "Second pass (relaxed edge margin)";
             if (findWithRelaxedBoundaryMargin(builder, building, nearTo, maxDistance)) {
                 return lastFoundPosition();

@@ -948,6 +948,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and `distToBuild`. The tile math says the refinery term should pass, so the refusal
   is elsewhere - the probe names where instead of a third static theory.
 
+- **#64 CLOSED 2026-10-12 - StackOverflowError in the Pylon relaxed-margin fallback.**
+  Owner's log tail: `findStandardPositionFor:189` <-> `findWithRelaxedBoundaryMargin:206`
+  alternating until the stack overflowed, bot dead instead of "no tile". Mechanism:
+  the fallback branch fired on every failed Pylon sweep with no re-entry guard, so
+  the relaxed pass re-entered the same branch forever. One-corner case that triggers
+  it: a sweep that fails even relaxed (dense base / corner geometry).
+  Fix: `&& !relaxedBoundaryMargin` on the fallback branch. Proof: new
+  `PylonFallbackNoRecursionTest` (zero search radius fails both passes by
+  construction) throws `StackOverflowError` on the old code and passes on the new;
+  flag reset asserted. Unit scope green.
+
 - **#63 (2026-10-12) - workers past roughly the 16th stop being handled; nothing in the
   log.** Owner's report, possibly related to another defect, so recorded separately
   rather than folded into #60/#61. Candidates, both unproven: the `CantAfford` /

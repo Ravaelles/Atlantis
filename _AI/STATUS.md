@@ -392,3 +392,15 @@ deployed jar rebuilt/freshness-checked from clean source.
 ### Next
 Gas-refusal probe in `IssueBuildOrder` (gas-only, throttled), then a bounded
 `--short` OpenBW run reading GAS tile-equality + `STUCK_WORKER`/`WORKER_GATE`.
+
+## Session 2026-10-12 (continued): StackOverflowError in the Pylon fallback (NEXT #64)
+
+Owner's log tail showed the bot dying in mutual recursion
+`findStandardPositionFor:189` <-> `findWithRelaxedBoundaryMargin:206`. Root cause,
+fully in hand: the relaxed-margin second pass re-entered the same method, whose
+Pylon-fallback branch had no re-entry guard - any sweep failing twice (even the
+relaxed one) recursed to overflow instead of returning null. Fix is one condition
+(`&& !relaxedBoundaryMargin`); regression `PylonFallbackNoRecursionTest` fails
+with `StackOverflowError` on the old code and passes on the new, flag reset
+included. Closes #64. Next: read the STUCK_WORKER engine answers from the
+15:53 run for #63.
