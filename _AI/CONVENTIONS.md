@@ -611,3 +611,17 @@ These are the rules distilled from the OpenBW investigation
 - When diagnosing what a unit did, **inspect `unit.managerLogs()` before inferring behavior from current state or editing manager order**. It records the recent active manager sequence and often identifies the manager that took control or prevented a later manager from running.
 - Use the log for the specific unit and frame window under investigation; do not dump every unit's history or add per-frame logging unless the focused history is insufficient. Preserve the output in the test/run evidence when it establishes the cause.
 - A manager appearing in the history proves it ran; a later manager missing from the sequence may indicate that an earlier manager handled the unit first. Verify that interpretation against the manager chain and the actual return contract (`Commander` vs `Manager`) before changing ordering.
+
+
+## 19. Work rhythm: small steps, one-sentence next step (owner's ruling, 2026-10-12)
+
+- **Break work into small factors and report the next step in one short sentence.**
+  A turn that spends a very long time thinking over a single issue with no visible
+  result is not acceptable; the owner must see the direction of the work while it
+  is happening, not only its conclusion. Each step is: name the next action in a
+  sentence, do it, report the outcome in a sentence, name the next action again.
+- This is the operational companion of §3a: long research is fine, but it must be
+  *communicated as it happens* in small, readable increments, not delivered as one
+  block at the end (or, worse, never).
+- Thinking aloud (§3a) satisfies this only when it is broken into these increments;
+  a long silent reasoning stretch does not, even if the final analysis is correct.

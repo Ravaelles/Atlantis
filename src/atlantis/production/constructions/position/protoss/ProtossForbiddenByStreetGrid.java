@@ -150,6 +150,16 @@ public class ProtossForbiddenByStreetGrid {
     }
 
     private static boolean forPylon(int moduloX, int moduloY, APosition position) {
+        // Escape hatch (owner report: the third Pylon was never built; measured on
+        // TauCross at supply 20/25 - out of ~3000 refused candidates, "Can't physically
+        // build here" = 1948, "PTX/PTY modulo is 0" = 887, and no tile survived the
+        // grid AND the map-boundary margin at all). The grid is a spacing preference,
+        // not a correctness rule; when supply is actually blocked the game needs the
+        // Pylon more than it needs a pretty layout. Same spirit as
+        // allowPylonWhenOutOfSupply below, but supply-20-style (blocked NOW) rather
+        // than supplyTotal>=30.
+        if (A.supplyFree() <= 2 && A.hasMinerals(100) && buildingsNear(3, position) <= 1) return false;
+
         if (moduloX != 2) {
             if (A.supplyUsed() >= 15 && !A.hasFreeSupply(1) && A.minerals() >= 300) {
                 if (moduloX != 4 && moduloX != 6) return failed("TX modulo Pyl_X_Special_1 = " + moduloX);

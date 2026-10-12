@@ -161,6 +161,20 @@ public class IssueBuildOrder extends HasUnit {
                             + " lastCommand=" + unit.lastCommandName());
                     }
 
+                    // MEASURED (610 refusals in one run): the engine refuses a Build while the
+                    // worker's engine-side order is still the Move that brought it here -
+                    // `distToBuild=1.3 isMoving=false action=BUILD lastCommand=Move` frame
+                    // after frame, and the Pylon only ever succeeded after its walk order had
+                    // expired. The comment below already says the sequence must be "stop
+                    // first, build next frame" - but no stop was ever issued, so a builder
+                    // that arrived while the move order was still current refused forever
+                    // until CancelTooLongConstructions killed the construction. Issue the
+                    // stop; the build is retried next frame (lastCommandIssuedAgo >= 3).
+                    if (unit.lastCommandName().equals("Move") && !unit.isMoving()) {
+                        unit.stop("Clear stale Move before build");
+                        return true;
+                    }
+
                     if (
                         A.canAfford(buildingType.mineralPrice() - 8, buildingType.gasPrice())
                             && TravelToConstruct.cantBuildHere(construction, buildingType)

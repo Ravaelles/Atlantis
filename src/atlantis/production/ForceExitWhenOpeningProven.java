@@ -68,7 +68,7 @@ public class ForceExitWhenOpeningProven extends Commander {
         if (A.now() % 30 != 0)
             return false;
 
-        return Count.existingOrInProduction(AUnitType.Protoss_Cybernetics_Core) >= 1
+        return Count.existing(AUnitType.Protoss_Cybernetics_Core) >= 1
                 && completedDragoons() >= 1;
     }
 

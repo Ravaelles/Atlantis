@@ -40,10 +40,12 @@ public class ForceExitLocallyInOpenBW extends Commander {
 
     @Override
     public boolean applies() {
-        if (!Env.isOpenBW())
-            return false;
+        if (!Env.isOpenBW()) return false;
 
-        return A.minerals() >= 700;
+        if (A.minerals() >= 700) return true;
+        if (A.supplyUsed() <= 6 && A.now() >= 30 * 60 * 3) return true;
+
+        return false;
     }
 
     protected boolean handle() {

@@ -543,7 +543,8 @@ if [ "$SAVE_REPLAY" -eq 1 ]; then
   # character that is not [A-Za-z0-9-_. /] (GameEvents.cpp:375-390), so a map name
   # with parentheses - `(3)TauCross1.1` - comes out mangled or empty and the file is
   # written somewhere unexpected. Use a plain ASCII name with no `%`/`$`/brackets.
-  REPLAY_NAME="atlantis_$(date +%Y%m%d_%H%M%S)_${RACE}_vs_${ENEMY_RACE}"
+  #REPLAY_NAME="atlantis_$(date +%Y-%m-%d_%H:%M:%S)_${RACE}_vs_${ENEMY_RACE}"
+  REPLAY_NAME="atlantis_$(date +%Y-%m-%d_%H:%M:%S)_E2E"
   REPLAY_FILE="$REPLAY_DIR/$REPLAY_NAME.rep"
   # An array, not a string: `env` is exec'd directly (no shell between `setsid` and
   # `env`), so a "$VAR=value" string would be passed through literally and the setting

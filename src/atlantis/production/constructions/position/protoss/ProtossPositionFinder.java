@@ -83,6 +83,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _STATUS = "None";
 
+        // TEMPORARY diagnostic (owner's report: the third Pylon is never built): count why
+        // each candidate tile was refused, print once when the whole search fails. Remove
+        // after the cause is named.
+        java.util.Map<String, Integer> reasons = building.isPylon() ? new java.util.HashMap<>() : null;
+        java.util.Map<String, Integer> finalStatus = reasons;
+
         // =========================================================
 
         if (builder == null) {
@@ -122,22 +128,28 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                         // finished Pylon's field.
                         if (needsPylonPower(building) && !IsPoweredByAPylon.check(constructionPosition)) {
                             AbstractPositionFinder._STATUS = "Not powered by a Pylon";
+                            if (reasons != null) reasons.merge(AbstractPositionFinder._STATUS, 1, Integer::sum);
                             continue;
                         }
 
-                        if (PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+                        if (!PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
                             builder, building, constructionPosition, nearTo
                         )) {
-                            if (building.isCombatBuilding()) {
-                                // Turret fix - make sure to build in the same region
-                                if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
-                                    continue;
-                                }
+                            if (reasons != null && AbstractPositionFinder._STATUS != null) {
+                                reasons.merge(AbstractPositionFinder._STATUS, 1, Integer::sum);
                             }
-
-                            AbstractPositionFinder._STATUS = "OK";
-                            return constructionPosition;
+                            continue;
                         }
+
+                        if (building.isCombatBuilding()) {
+                            // Turret fix - make sure to build in the same region
+                            if (constructionPosition.groundDistanceTo(nearTo) > 1.6 * searchRadius) {
+                                continue;
+                            }
+                        }
+
+                        AbstractPositionFinder._STATUS = "OK";
+                        return constructionPosition;
 
 //                        if (building.isPylon() && A.supplyUsed() <= 18) {
 //                            System.out.println("Fail: " + _STATUS);
@@ -147,6 +159,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             }
 
             searchRadius++;
+        }
+
+        if (reasons != null && !reasons.isEmpty()) {
+            System.err.println("PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
+                + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
+                + " reasons=" + reasons);
         }
 
         return null;
