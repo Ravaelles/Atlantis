@@ -527,6 +527,14 @@ replayed Pause into the next game. Fixed with `try/finally`
 `KeyRelay.purge()` at both launcher starts. Unit scope 396/396. The
 engine-pause `resumeGame` path was already covered and is untouched.
 
+## Session 2026-10-12 (continued): sleep gate ownership (NEXT #67, CLOSED)
+
+Owner's question why dispatchers appear in `managerHistory`: the latency gate
+claimed ownership via `usedManager`, stamping alternating dispatcher names over
+the true owner with a stale leaf tooltip. Now returns `this` (chain still
+stops); `unit.manager()` untouched. `SleepGateOwnershipTest` fails pre-fix.
+Unit scope 397/397.
+
 ## Session 2026-10-12 (continued): viewer 500 + --run-only + viewable pair (NEXT #65)
 
 Owner installed the viewer; every page returned HTTP 500 - root cause

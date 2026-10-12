@@ -959,6 +959,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
+- **#67 (2026-10-12) - sleep gate overwrote the owner in history (CLOSED).**
+  Owner's question: `UnitStateManager`/`WorkerManager` lines in a builder's
+  history, alternating with the leaf - dispatchers that only forward. Mechanism:
+  the latency gate returned `usedManager(this, "SleepUntilFrame")`, stamping
+  whichever dispatcher ran (UnitState one frame, Worker the next) over the true
+  owner, with the leaf's stale tooltip attached. That alternation read as hijack
+  and cost two withdrawn readings (#48/#61). Fix: the gate returns `this`
+  (chain still stops) without touching owner or history
+  (`SleepGateOwnershipTest`, fails pre-fix). `unit.manager()` semantics kept -
+  dozens of `isActiveManager` gates depend on it.
+
 - **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
   Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
   Two real traps, both fixed without behavior change: (1) speed changes paused

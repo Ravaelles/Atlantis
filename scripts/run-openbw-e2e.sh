@@ -153,7 +153,7 @@ ORIGINAL_ARGS=("$@")
 POSITIONAL=()
 for arg in "$@"; do
   case "$arg" in
-    --short|--long|--cvis) ;;
+    --short|--long|--cvis|--save-replay) ;;
     *) POSITIONAL+=("$arg") ;;
   esac
 done
@@ -372,7 +372,7 @@ trap cleanup EXIT INT TERM
 # carries, so it catches EVERY source change, not the files someone listed.
 if ! bash scripts/check-jar-freshness.sh "$JAR" --quiet; then
   say "the bot jar is stale (or untagged). Details:"
-  bash scripts/check-jar-freshness.sh "$JAR" 2>&1 | sed 's/^/    /'
+  bash scripts/check-jar-freshness.sh "$JAR" 2>&1 | sed 's/^/    /' || true
   say "Rebuilding it now, so this run uses your current code."
   timeout 300 bash scripts/build-bot-jar.sh "$JAR" >/tmp/atlantis-e2e-build.log 2>&1 \
     || { tail -20 /tmp/atlantis-e2e-build.log | sed 's/^/    /'; fail "rebuild failed"; }

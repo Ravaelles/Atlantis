@@ -65,8 +65,15 @@ public abstract class Manager extends BaseManager {
         // re-issued every frame at lastCommandIssuedAgo=1 was refused by the engine, the
         // same re-issue at >= 3 was accepted - owner recommendation 2026-10-12, applied to
         // workers and combat units alike).
+        //
+        // The gate stops the chain WITHOUT claiming ownership: it returns this (non-null
+        // stops traversal) instead of usedManager(), so unit.manager() and the history
+        // keep pointing at whoever issued the in-flight order. Claiming here overwrote
+        // both with whichever dispatcher happened to run - UnitStateManager one frame,
+        // WorkerManager the next - which is what made alternating dispatcher names look
+        // like the builder being hijacked (NEXT #48/#61 withdrew that reading).
         if (SleepUntilFrameGate.mustSleep(unit)) {
-            return usedManager(this, "SleepUntilFrame");
+            return this;
         }
 
         if (!applies()) {
