@@ -6,14 +6,16 @@ import atlantis.game.event.AutomaticListener;
 import atlantis.game.event.Event;
 import atlantis.units.AUnit;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
 public class ACherryVis_UnitFirstSeen extends AutomaticListener {
-    //    private static Set<Integer> knownUnitIds = new HashSet<>();
-//    private static Map<Integer, List<Map<String, Integer>>> unitsByFrame = new TreeMap<>();
-    private static Map<Integer, Integer[]> unitsSeenAt = new TreeMap<>();
+    private static final Set<Integer> seenUnitIds = new HashSet<>();
+    private static final Map<Integer, List<int[]>> unitsByFrame = new TreeMap<>();
 
     /**
      * "10203": [
@@ -32,40 +34,60 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
      * "y": 2864
      * }
      * ],
+     *
+     * <p>One array per frame (several units can be discovered on the same
+     * frame), each unit exactly once. This is the shape the CherryVis viewer
+     * parses - a single object instead of an array, or a lookup by counter
+     * instead of by frame, silently drops units or crashes the trace write.</p>
      */
     public static String get() {
         StringBuilder result = new StringBuilder();
 
         boolean firstFrame = true;
-        int i = 0;
-        int total = unitsSeenAt.size();
-        Set<Integer> frames = unitsSeenAt.keySet();
-        for (Integer frame : frames) {
+        for (Integer frame : unitsByFrame.keySet()) {
             if (!firstFrame) {
                 result.append(",");
             }
             firstFrame = false;
 
-            result.append("\"").append(frame).append("\":");
+            result.append("\"").append(frame).append("\":[");
 
-//            List<Map<String, Integer>> units = unitsSeenAt.get(frame);
-//            for (int i = 0; i < units.size(); i++) {
-//                Map<String, Integer> props = unitsSet.get(i);
-            Integer[] record = unitsSeenAt.get(i);
-            result.append("{");
-            result.append("\"id\":").append(record[0]).append(",");
-            result.append("\"type\":").append(record[1]).append(",");
-            result.append("\"x\":").append(record[2]).append(",");
-            result.append("\"y\":").append(record[3]);
-            result.append("}");
-//            if (i < total - 1) {
-//                result.append(",");
-//            }
-//            }
-//            result.append("}");
+            List<int[]> records = unitsByFrame.get(frame);
+            for (int i = 0; i < records.size(); i++) {
+                int[] record = records.get(i);
+                result.append("{\"id\":").append(record[0])
+                    .append(",\"type\":").append(record[1])
+                    .append(",\"x\":").append(record[2])
+                    .append(",\"y\":").append(record[3])
+                    .append("}");
+                if (i < records.size() - 1) {
+                    result.append(",");
+                }
+            }
+            result.append("]");
         }
 
         return result.toString();
+    }
+
+    /**
+     * Test seam (no CherryVis frontend needed): records are pure data, so the
+     * format test pins the exact JSON string without running a game.
+     */
+    public static void record(int frame, int id, int type, int x, int y) {
+        if (!seenUnitIds.contains(id)) {
+            seenUnitIds.add(id);
+            if (!unitsByFrame.containsKey(frame)) {
+                unitsByFrame.put(frame, new ArrayList<>());
+            }
+            unitsByFrame.get(frame).add(new int[]{id, type, x, y});
+        }
+    }
+
+    /** Test seam: static maps leak between tests in one JVM, so clear it. */
+    public static void clear() {
+        seenUnitIds.clear();
+        unitsByFrame.clear();
     }
 
     // =========================================================
@@ -81,20 +103,8 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
 
         AUnit unit = (AUnit) data[0];
 
-        if (!unit.isNeutral() && !unitsSeenAt.containsKey(unit.id())) {
-//            Map<String, Integer> props = new HashMap<>();
-//            props.put("id", unit.id());
-//            props.put("type", unit.type().id());
-//            props.put("x", unit.x());
-//            props.put("y", unit.y());
-
-//            int now = A.now;
-//            if (!unitsByFrame.containsKey(now)) {
-//                unitsByFrame.put(now, new ArrayList<>());
-//            }
-//            unitsByFrame.get(now).add(props);
-
-            unitsSeenAt.put(A.now(), new Integer[]{unit.id(), unit.type().id(), unit.x(), unit.y()});
+        if (!unit.isNeutral()) {
+            record(A.now(), unit.id(), unit.type().id(), unit.x(), unit.y());
         }
     }
 }

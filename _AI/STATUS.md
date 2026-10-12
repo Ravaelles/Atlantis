@@ -440,3 +440,16 @@ readings archived in `CASE-STUDIES.md` (#63), engine-side note (fifth field:
 `isCompleted` at start) in `CHALLENGES/OpenBW.md`. Residual early-minerals window
 is engine attach latency, waited out - not churned. Gateway variance between runs
 (2 vs 0, same far site [14,51], moving-refusal) stays with #59.
+
+## Session 2026-10-12 (continued): CherryVis per-unit first-seen (NEXT #65)
+
+Owner's report: whole-bot CherryVis worked, per-unit never did. Compared our
+`trace.json` writer against Stardust's `Instrumentation/CherryVis.cpp` and the
+documented format (zstd JSON trace; Stardust keeps per-unit LOG FILES + path
+references, we inline everything). Found and fixed: `ACherryVis_UnitFirstSeen`
+indexed its frame-keyed map by loop counter (NPE on any real game, killing the
+whole trace write) and emitted one object per frame (same-frame discoveries
+lost). Rewritten frame-to-list with id dedup; dead `...FirstSeenOld` deleted.
+`CherryVisUnitFirstSeenTest` pins the exact JSON with no frontend running.
+Unit scope 393/393. Still open in #65: empty `units_logs` and the
+runtime-vs-hardcoded manager-id table behind `custom_names`.

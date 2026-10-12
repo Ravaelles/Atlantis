@@ -959,6 +959,24 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
+- **#65 (2026-10-12) - CherryVis per-unit reporting: first-seen fixed, two format
+  questions open.** Owner's report: whole-bot reporting worked, per-unit never did
+  ("format was wrong or something"). Measured in source, no frontend needed:
+  - FIXED: `ACherryVis_UnitFirstSeen.get()` indexed a frame-keyed map by loop
+    counter (`unitsSeenAt.get(i)`) - NPE on any real game, killing the whole
+    `trace.json` write at game end - and emitted one object per frame instead of an
+    array (two discoveries on one frame lost one). Rewritten as frame-to-list with
+    id dedup (the shape Stardust writes and the viewer parses); dead predecessor
+    `ACherryVis_UnitFirstSeenOld` deleted. Test `CherryVisUnitFirstSeenTest` pins
+    the exact JSON without running CherryVis.
+  - OPEN: `units_logs` is `{}` (per-unit narrative lives nowhere - Stardust writes
+    per-unit LOG FILES and references paths in trace.json, we write nothing), and
+    `units_updates` manager ids are runtime-assigned from 10000 while `custom_names`
+    hardcodes a 10000-10041 table that only matches if managers appear in one exact
+    order - any other order mislabels every manager in the viewer.
+  Next: decide per-unit logs shape (files like Stardust vs inline), then pin
+  `units_updates`+`custom_names` agreement with the same no-frontend string test.
+
 - **#45** Production v2: **`Construction/**` cannot be deleted yet, only `Queue/**`
   is a candidate.** Measured dependency count: **149 production files** reference
   `Queue.get()`, `CurrentQueue`, `CountInQueue`, `AddToQueue` or
