@@ -567,3 +567,35 @@ and `PLAN-OPENBW.md` §9.
 Measured afterwards it was wrong: only `Queue/**` is a candidate, after the ordering in
 `#45`. The line was removed from `NEXT.md`; `#45` carries what is true. Recorded here
 only so a reader who finds `#44` quoted in an old commit knows it was withdrawn.
+
+## #63 — workers that stood still and never mined (resolved 2026-10-12)
+
+Symptom: newly produced workers stood by the base forever (`manager=GatherResources`,
+`lastCommand=NO_COMMAND`, `lastCommandIssuedAgo=1`, `isGathering=true`,
+`isIdle=true`), and the economy froze at `minerals=0` with 5 "workers".
+
+Mechanism, measured with a purpose-built probe in two bounded runs: the stuck Probe
+read `workerExists=true workerCompleted=false workerCanCommand=false`,
+`canGather=false canRightClick=false`, `order=Nothing` on a walkable tile - JBWAPI
+`canCommand` is false until completion, so NO order can land, while our own
+`GATHER_MINERALS` action flag (set before the engine call) claimed it was gathering
+and locked the `!isGatheringResources` re-try path. The throttle made it retry every
+2nd frame, re-marking each time, which is why `ago` read 1 on every 30-frame sample.
+
+Withdrawn readings: stale `isGathering` flags (a relaxation was written on that
+reading and changed nothing - reverted); `TreeSet` identity (hashCode IS id, ruled
+out); "worker never iterated" (the probe sits inside the iteration); the request
+tile for gas (refuted separately under #62, kept there). A second population on the
+same lines - accepted Gather, `order=MiningMinerals`, on the patch - is healthy
+mining, and the 10-frame standstill threshold false-positives on it; that is a probe
+threshold issue, not a bot defect.
+
+Fix (our side): decline `!isCompleted()` in both mining managers, `onlyCompleted()`
+in `FreeWorkers` (all 25 consumers pick units to command something with), replace
+`isStuck-or-uncompleted` builders via the existing `assignOptimalBuilder` path.
+Verified: mutation-proven unit/acceptance tests, unit scope 391/391, and a bounded
+run with zero churning stalls whose managers read `DoNothing` on the uncompleted
+(they wait instead of churning) and mining recovers (`Pylon=3`, 22 Probes from 0
+minerals). Trap to keep: an order-issuing manager must never set its "I am doing
+X" flag before the engine accepts the order - the flag becomes the evidence that
+blocks the re-try.

@@ -801,3 +801,16 @@ The run did not commit anything, so the tree is clean apart from the `_AI/` edit
 - **`BUILDER_LOG` throttles `BUILD_ATTEMPT`** (it is `printMaxOncePerMinute`-ish through the
   diagnostic path), so its count is a lower bound, not the number of build attempts. Use the
   `BUILDER @` status census for frequency questions, not the attempt lines.
+
+### The fifth "field OpenBW fills differently": `isCompleted` at game start (2026-10-12)
+
+- **Starting workers read `isCompleted=false`** (hence `canCommand=false`,
+  JBWAPI `Unit.java:3221`) into the early game, so every gather/rightClick/move is
+  refused and `lastCommand` stays `NO_COMMAND` from frame 30. Same shape as the four
+  above - a shared-memory field StarCraft fills and OpenBW does not fill the way
+  BWAPI expects, at least not at attach time.
+- **Our-side fix, no harness change:** never assign or order an uncompleted unit -
+  `GatherResources`/`IdleWorker` decline it, `FreeWorkers` offers `onlyCompleted()`,
+  `BuilderManager` replaces it. The residual early-minerals window is waited out
+  with `DoNothing`, not churned through (a churning worker re-marks Gather every
+  2nd frame and poisons our own gathering flag, locking the re-try path).

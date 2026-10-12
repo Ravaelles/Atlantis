@@ -429,3 +429,14 @@ units to command something with), `BuilderManager.shouldReplaceBuilder` adds
 Tests: `BuilderManagerShouldReplaceTest` 2/2, FreeWorkers case in the acceptance
 test (fails pre-fix); unit scope 391/391. Game verification of #63 still open:
 minerals from minute one, zero churning stalls.
+
+## Session 2026-10-12 (continued): Closes #63 - verified in game
+
+Final bounded `--short` run: zero churning stalls (no small-ago `NO_COMMAND` with a
+claiming manager - every remaining such line is `DoNothing` on a genuinely
+uncompleted unit, `ago` growing), mining recovers from the 0-mineral start
+(`Pylon=3`, 22 Probes), Gateway/Zealot production resumes. Mechanism + withdrawn
+readings archived in `CASE-STUDIES.md` (#63), engine-side note (fifth field:
+`isCompleted` at start) in `CHALLENGES/OpenBW.md`. Residual early-minerals window
+is engine attach latency, waited out - not churned. Gateway variance between runs
+(2 vs 0, same far site [14,51], moving-refusal) stays with #59.
