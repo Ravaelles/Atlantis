@@ -502,3 +502,15 @@ Install notes for the local viewer added to `PLAN-OPENBW.md` (`--cvis` section:
 django venv, emscripten, `server.py`, single-file vs partitioned caveat).
 Left in #65: the owner opening a real trace in the viewer (needs the frontend),
 and wider per-unit call-site coverage behind `CHERRYVIS_BUILDER_ACTIONS`.
+
+## Session 2026-10-12 (continued): viewer 500 + --run-only + viewable pair (NEXT #65)
+
+Owner installed the viewer; every page returned HTTP 500 - root cause
+`import zstd` in `replays/views.py` while only `zstandard` was installed
+(different packages). `install_cherryvis.sh` installs both now and gained
+`--run-only` (prints "Starting CherryVis server without installation..." and
+execs the server, failing fast with install hints when parts are missing).
+Verified HTTP 200. Proving run `--short --cvis --save-replay` leaves
+`/sc-ai/REPLAYS/<name>.rep` (39 KB) + `<name>.rep.cvis/` (valid trace.json, 23
+first-seen frames, 16 updated units) - the file pair the editor opens. Left in
+#65: the owner clicking through the viewer.

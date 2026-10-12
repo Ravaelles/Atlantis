@@ -980,6 +980,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
     (`OnUnitCreated`, Stardust does the same) plus a start-of-game seed sweep of
     ours and minerals (`OnGameStarted`, Stardust marks static neutrals the same
     way); id dedup makes the overlap harmless. `CherryVisSeedCurrentUnitsTest`.
+  - FIXED (owner's install, 2026-10-12): the viewer returned HTTP 500 on every
+    page - `replays/views.py` does `import zstd` but the README (and our
+    `install_cherryvis.sh`) installed only `zstandard`. The script installs both
+    now, and gained `--run-only` (server without reinstall, prints "Starting
+    CherryVis server without installation..."). Verified: HTTP 200.
+  - PROVEN (2026-10-12): `--short --cvis --save-replay` leaves the viewable pair
+    `/sc-ai/REPLAYS/<name>.rep` + `<name>.rep.cvis/` (valid trace.json, 23
+    first-seen frames, 16 updated units).
   - FIXED: `units_logs` is no longer `{}`. New `CV.unitLog(message, unit)` API
     (Stardust's `CherryVis::log(unitId)`), stored per unit, rendered inline in the
     legacy single-file shape; `CherryVisUnitLogsTest` pins the exact JSON. First
