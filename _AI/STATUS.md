@@ -746,3 +746,17 @@ Viewer check (owner opens the trace) still pending.
   on next frame, so one bad scout never kills the game. Trivial guard, no test.
 - Owner's E2E `20261013_104858_adhoc` (411 s): `Pylon=6 Dragoon=6
   Assimilator=1`, zero `AN ERROR HAS OCCURRED` - the NPE is Wine-only so far.
+
+## Session 2026-10-13 (autonomous): power rule follows the engine mask (NEXT #50)
+
+`20261013_112034_long` died on Gateway [14,51] (315 power refusals, finished
+Pylon at [16,46], game over at 165 s). Root cause read in
+`/sc-ai/OpenBW/openbw/bwgame.h` (`is_in_psionic_matrix_range` +
+`psi_field_mask`): |dx|<256px by |dy|<160px plus an 8x5 tapered mask - our
+Chebyshev-6 allowed 6 vertically (engine: under 5; [14,51] is exactly 160px
+below) and cut 8 horizontally down to 6. New pure `map.position.PsiField`
+used by both planners; dead Chebyshev helpers and radius constants removed.
+`PsiFieldTest` 3/3, rewritten `PylonPowerRadiusTest` 2/2, unit 408/408, arch
+store unchanged. Legacy path NOT deleted (22 files use it; default runs on
+it) - deletion stays behind the catalogue cutover; only provably-dead code
+goes. Next: E2E must show Gateway avoiding [14,51].
