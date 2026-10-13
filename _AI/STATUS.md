@@ -1163,3 +1163,19 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   itself never matched (no-retry matcher), not trace content. Filed #76
   (direct unit_ids pairs); the per-type console breakdown is gone with the
   logs, the offline numbers stand in its place.
+
+## Session 2026-10-13 (owner asks: cherryvis-docker setup + #76 in game)
+
+- Closes #76 (deleted): `unit_ids` pairs emitted at every first-seen write and
+  verified in a real trace (`20261013_201745 --short --cvis`, exit 124 on the
+  engine-handoff cap - trace written before it: `CVIS OK`) - 139 pairs, 100%
+  first_seen coverage, engine ids only, Probe-21/Mineral-93/Nexus-1 plausible.
+  `CherryVisUnitIdsTest` 2/2 pins the shape. Suite 463/0 after.
+- Viewer reloaded: `cvis_dbg_matching.js` console.logs removed live AND baked
+  as `cvis-matching-no-console.diff` (repo pattern); first rebuild failed on
+  the diff path prefix (`src/` stripped), second passed detached (pip ~90 s -
+  over the 120 s foreground shape, background + poll). Image `42123ae9`,
+  container restarted with identical args, served js grep-clean, homepage 200,
+  newest pair listed. Owner: hard-refresh the browser (cached js).
+- New `_AI/CHERRYVIS-DOCKER.md` (setup we use + links + patch pattern),
+  indexed in `_AI/README.md`. The missing setup file the owner asked for.

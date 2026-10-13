@@ -62,6 +62,9 @@ current state rather than the history (its milestone table at the top is the map
   provide (e.g. the JBWEB JNI gap).
 - **`PLAN-OPENBW.md`** - how to run OpenBW: the two hard limits, the scenario
   assertions, and what OpenBW cannot do.
+- **`CHERRYVIS-DOCKER.md`** - the Docker viewer setup we use
+  (Ravaelles/cherryvis-docker): build/run/reload, the `.diff` patch pattern
+  for viewer fixes, and the links.
 - **`PLAN-REGION-DETECTION.md`** - why the first Pylon is refused (engine regions),
   what Stardust/PurpleWave do instead, and the staged plan for our own reachability.
   Stages 1-3 are done; stage 4 moved to its own file.
