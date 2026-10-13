@@ -946,3 +946,17 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   tree clean, jar fresh. Nothing further advances without owner-side
   evidence (Wine BUILDER_LOG game, jstack hang, viewer checks, 700 s+ game)
   - standing by for the Wine files.
+
+## Session 2026-10-13 (autonomous, continued): re-place before cancel (owner ask)
+
+- `CancelTooLongConstructions.tryReplaceWithFreshSite`: a timed-out
+  construction first gets a fresh request with the old one still alive (the
+  duplicate guard sees it); only a genuinely different site (footprint
+  separation) cancels the old, with the queue order transferred. Same site or
+  no site keeps the old - placement blocking us is status quo, as specified.
+  Also null-safe `Construction.sameAs` (order-less V2 constructions NPEd the
+  duplicate check; found by the new test). `ReplaceStuckConstructionTest`
+  3/3, unit 417/417.
+- 163040_short: no timeouts, no REPLACED (nothing stuck - healthy run),
+  Core@178s Gas@198s, Dragoon=0 at 285s - timing again, gate correctly
+  failed. Re-place awaits a game with a genuinely stuck construction.
