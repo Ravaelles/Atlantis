@@ -22,6 +22,17 @@ public class QueueRefresher {
         for (ProductionOrder order : queue.notFinished().list()) {
             if (order.shouldIgnore()) continue;
 
+            // Diagnostic: base orders vanish silently between ADDED TO QUEUE
+            // and any REQUEST/cancel (measured twice: 6:19 order, nothing
+            // after). Throttled; shows whether refresh even sees the order.
+            if (order.unitType() != null && order.unitType().isBase()) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "QUEUE_BASE " + order.unitType().name()
+                        + " status=" + order.status()
+                        + " min=" + atlantis.game.A.minerals()
+                        + " supply=" + atlantis.game.A.supplyUsed() + "/" + atlantis.game.A.supplyTotal());
+            }
+
             updateOrderStatus(order);
         }
 
