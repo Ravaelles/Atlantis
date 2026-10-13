@@ -35,10 +35,8 @@ public class OnEveryFrame {
 
         // === Catch any exception that occur not to "kill" the bot with one trivial error ===================
         catch (Exception e) {
-//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("### AN ERROR HAS OCCURRED ###");
             System.err.println("### AN ERROR HAS OCCURRED ###");
             e.printStackTrace();
-//            if (true) throw e;
         }
 
         if (A.notUms() && A.now() == 1) {
@@ -50,16 +48,6 @@ public class OnEveryFrame {
         CodeProfiler.endMeasuringTotalFrame();
         LongFrames.reportFrameLength(CodeProfiler.lastFrameLength());
 
-//        CodeProfiler.printSummary();
 
-//        APosition natural = Bases.natural();
-//        if (natural != null) {
-//            APosition highGround = FindHighGround.findNear(natural, 10);
-//            System.err.println("natural = " + natural + ", highGround " + highGround);
-//            if (highGround != null) {
-//                CameraCommander.centerCameraOn(highGround);
-//                AAdvancedPainter.paintCircleFilled(highGround, 8, Color.Purple);
-//            }
-//        }
     }
 }

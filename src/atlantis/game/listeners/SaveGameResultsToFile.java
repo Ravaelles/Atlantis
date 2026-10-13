@@ -13,7 +13,6 @@ public class SaveGameResultsToFile {
     public static void createAndSave(boolean winner) {
         String[] headers = {"Date", "Result", "Enemy", "Map", "Time [s]", "Killed/Lost", "Resource balance"};
 
-//        String formatting = "%-18s %-8s %-16s %-32s %-9s %-14s %-16s";
 
         String[] values = {
             A.getCurrentDateInFormatYMDHHmm(),
@@ -37,24 +36,13 @@ public class SaveGameResultsToFile {
         String input = "bwapi-data/read/game_results.txt";
         String output = "bwapi-data/write/game_results.txt";
         boolean copyResult = AFile.copy(input, output);
-//        System.err.println("A copyResult = " + copyResult);
-//        System.err.println("A fileExists(output) = " + AFile.fileExists(output));
 
-//        copyResult = AFile.copy(output, input);
-//        System.err.println("B copyResult = " + copyResult);
-//        System.err.println("B fileExists(output) = " + AFile.fileExists(output));
 
         // =========================================================
 
-//        boolean result = AFile.appendToFile(output, content);
         boolean result = WriteJsonToFile.writeOrAppend(
             output, headers, values, 32, true
         );
 
-//        AConsole.println("@@@@@@@@@@@@@@@@@@@@ Game result saved to: " + output
-//            + " / result:" + (result ? "OK" : "FAILED")
-//            + " / exists:" + AFile.fileExists(output)
-//            + " / current working directory:" + System.getProperty("user.dir")
-//        );
     }
 }

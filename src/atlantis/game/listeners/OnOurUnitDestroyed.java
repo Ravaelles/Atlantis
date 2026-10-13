@@ -47,24 +47,15 @@ public class OnOurUnitDestroyed {
     }
 
     private static void printOurDeadUnit(AUnit unit) {
-//        if (true) return;
-//        if (!unit.type().isDragoon()) return;
-//        if (unit.type().isDragoon() || unit.type().isZealot() || unit.isWorker()) return;
         if (unit.isABuilding()) return;
-//        if (unit.type().isZealot()) return;
-//        if (!unit.isCombatUnit()) return;
-//        if (A.s >= 60 * 7.5 && !unit.isRanged() && !unit.isWorker()) return;
 
         String prefix = "";
         String string1 = unit.managerLogs().toString();
-//        String string2 = unit.log().toString();
-//        String string2 = unit.commandHistory().toString();
 
         if (!Env.isLocal()) {
             prefix = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
             string1 = string1.replace("\n", "\n" + prefix);
-//            string2 = string2.replace("\n", "\n" + prefix);
         }
 
         String leader = unit.isLeader() ? " LEADER!!!" : "";
@@ -73,8 +64,6 @@ public class OnOurUnitDestroyed {
         System.out.println(prefix + A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED [*]" + leader);
         System.out.println(prefix + "Tooltip: " + unit.tooltip());
         System.out.println(prefix + string1);
-//        System.out.println(prefix + "---");
-//        System.out.println(prefix + string2);
         System.out.println(prefix + "_____________________________");
     }
 }

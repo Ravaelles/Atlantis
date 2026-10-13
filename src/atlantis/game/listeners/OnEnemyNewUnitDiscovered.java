@@ -30,16 +30,4 @@ public class OnEnemyNewUnitDiscovered {
         }
     }
 
-//    private static boolean weAreMuchWeaker() {
-//        if (Army.strength() >= 0.9) return false;
-//
-//        if (Enemy.protoss()) {
-//            if (Count.ourCombatUnits() <= 15 && EnemyUnits.discovered().combatUnits().atLeast(20)) return true;
-//        }
-//
-//        int n = (Enemy.protoss() ? 4 : 7) - Count.ourCombatUnits();
-//        if (EnemyUnits.discovered().combatUnits().atMost(n)) return false;
-//
-//        return true;
-//    }
 }

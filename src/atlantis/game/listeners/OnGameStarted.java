@@ -39,14 +39,10 @@ import atlantis.cherryvis.ACherryVis;
 public class OnGameStarted {
 
     public static void execute() {
-//        if (Env.isLocal() && Env.isFirstRun()) {
-//            AForcedClicks.clickAltF9(); // Make ChaosLauncher double size
-//        }
 
         System.out.println("\n########### Starting Atlantis... #################");
 
         // Uncomment this line to see list of units -> damage.
-//        AUnitTypesHelper.displayUnitTypesDamage();
 
         APainter.assignBwapiInstance();
 
@@ -134,10 +130,7 @@ public class OnGameStarted {
         }
 
         DetectInitialTechs.update();
-//        if (A.isUms()) {
-//        }
 
-//        Alpha.get().setMission(Missions.globalMission());
 
         System.out.println("### Atlantis is working! ###\n");
         if (Env.isTournament()) {
@@ -145,7 +138,6 @@ public class OnGameStarted {
             System.out.println("### Playing against: " + opponent + " ###\n");
         }
 
-//        AUnitTypesHelper.printUnitsAndRequirements();
 
         if (ACherryVis.isEnabled()) ACherryVis.initialize();
         if (ACherryVis.isEnabled()) {
@@ -158,13 +150,8 @@ public class OnGameStarted {
     }
 
     private static void handleCheckIfUmsMap() {
-//        if (Atlantis.game().mapPathName().contains("/ums/")) {
-//            AGame.setUmsMode();
-//        }
 
-//        int ours = Select.our().count();
 
-//        if (We.zerg() ? ours != 9 : ours != 5) {
         if (Select.our().workers().atMost(3) || Select.ourBases().empty()) {
             AGame.setUmsMode();
         }
@@ -186,7 +173,6 @@ public class OnGameStarted {
             // atlantis.map.scout does not depend on atlantis.production.
             ScoutState.scoutIsNthWorker = BuildOrderSettings.scoutIsNthWorker();
 
-//            AConsole.println("CurrentBuildOrder.get() = " + CurrentBuildOrder.get());
             if (CurrentBuildOrder.get() != null) {
                 // Gated to a real local game: the stub world starts a game in every
                 // test, and 99 lines in the acceptance tier is log noise, not a signal.

@@ -55,17 +55,10 @@ import java.util.Set;
 public class OnEveryFrameHelper {
 
     public static void handle() {
-//        MissedBullets.print();
 
-//        if (A.everyNthGameFrame(29)) {
-//            System.out.println("Mission: " + MissionChanger.reason + " / EC:" + EnemyUnits.combatUnits());
-//        }
 
         if (true) return;
 
-//        Selection units = Select.ourOfType(AUnitType.Protoss_Dark_Templar);
-//        Selection units = Select.from(new Units()).add(Alpha.alphaLeader());
-//        Selection units = Select.ourCombatUnits().groundUnits();
         Selection units = Select.ourCombatUnits().havingWeapon();
         for (AUnit unit : units.list()) {
             unit.paintTextCentered(unit.attackState().toString(), Color.Green, -1.4);
@@ -73,236 +66,72 @@ public class OnEveryFrameHelper {
             if (unit.lastPositionChangedAgo() <= 10) continue;
             if (unit.attackState().none()) continue;
 
-//            System.out.println(unit + " " + unit.manager() + " / " + unit.action() + " / " + unit.lastCommandName()
-//                + " / actAgo:" + unit.lastActionFramesAgo() + " / cmdAgo:" + unit.lastCommandIssuedAgo());
-//
-//            CenterCamera.on(unit);
 
-//            System.err.println("Cooldown: " + unit.cooldown());
-//            unit.paintTextCentered(A.digit(unit.getAngle()), Color.Orange, 1);
 
-//            System.out.println(unit + ", detected: " + unit.isDetected()
-//                + ", effUnd:" + unit.effUndetected()
-//                + ", effVis:" + unit.effVisible()
-//            );
-//            if (
-//                unit.isMoving()
-//                    || unit.lastPositionChangedAgo() <= 50
-//                    || unit.shotSecondsAgo(2)
-//            ) continue;
 
-//            System.out.println(A.now() + "    cool:" + unit.cooldown()
-//                + ", st:" + unit.isStartingAttack()
-//                + ", af:" + unit.isAttackFrame()
-//                + ", state:" + unit.attackState()
-//            );
 
-//            unit.paintTextCentered(unit.cooldown() + "", Color.Blue, -1.3);
 
-//            unit.paintCircle(unit.groundWeaponRange() * 32, Color.Grey);
-//
-//            if (unit.isAttacking() && unit.hasTarget() && unit.target().isRanged()) {
-//                if (unit.meleeEnemiesNearCount(2.6) >= 1) {
-//                    unit.paintCircleFilled(10, Color.Yellow);
-//                    unit.paintCircle(6, Color.Orange);
-//                    unit.paintCircle(7, Color.Orange);
-//                }
-//            }
 
-//            unit.paintTextCentered(
-////                unit.lastCommandIssuedAgo() + " / " +
-//                    unit.lastActionFramesAgo() + "/"
-////                    + unit.lastCommandName(),
-//                    + unit.manager(),
-//                Color.Orange,
-//                -2
-//            );
         }
 
-//
-//            if (!unit.isActiveManager(ProtossMoon.class)) {
-//                System.out.println("@ " + A.now());
-//
-//                System.out.println(
-//                    unit.manager()
-//                        + "/" + unit.tooltip()
-//                        + "/ lastAct:" + unit.lastActionFramesAgo()
-//                        + "/ lastComm:" + unit.lastCommandIssuedAgo()
-//                        + " / targ:" + unit.target()
-//                        + " / toTarg:" + unit.distToTargetPositionDigit()
-//                );
-//            }
-//
-////            if (unit.isActiveManager(ProtossAvoidEnemies.class)) {
-//            if (unit.isActiveManager(AttackNearbyEnemies.class)) {
-//                ProtossAvoidEnemies avoidEnemies = new ProtossAvoidEnemies(unit);
-//                System.err.println(
-//                    "Tlt:" + unit.tooltip() + " / "
-//                    + "Man:" + unit.manager() + " / "
-//                    + "Act:" + unit.action() + " / "
-//                    + "Comm:" + unit.lastCommandName() + " / "
-//                    + "PosChng:" + unit.lastPositionChangedAgo() + " / "
-//                );
-//            }
-//        }
-//        System.err.println(A.now + " - leader - " + Alpha.alphaLeader());
-//        System.err.println(A.now + " - leader - " + Alpha.get().cohesionPercent());
 
-//        for (AUnit enemy : Select.enemy().list()) {
-//            if (enemy.isDeadMan()) enemy.paintCircle(10, Color.Orange);
-//            if (enemy.isDeadMan()) enemy.paintCircle(9, Color.Orange);
-//            if (enemy.isDeadMan()) enemy.paintCircle(8, Color.Orange);
-//        }
 
-//        CenterCamera.on(units.first());
-//        CenterCamera.on(Alpha.get().mission().focusPoint());
 
-//        enemyOnCloseIslandDebug();
-//        debugDragoonHoldToShoot();
 
-//        DefineNaturalChoke.defineByReturningChokeBelongingToRegionCloseToMain();
 
-//        AUnit unit = Select.ourCombatUnits().second();
-//        System.out.println(A.now + " - " + unit.action() + " / " + unit.manager());
 
-//        paintUnitTargets();
 
-//        updateTooltips();
 
-//        paintAllUnitEvals();
 
-//        AAdvancedPainter.togglePainting();
-//        AAdvancedPainter.paintConstructionPlaces();
-//        AAdvancedPainter.togglePainting();
 
-//        UnitStateHelper.identifyUnitBrakingDistance(Select.our().groundUnits().first());
-//
-//        paintEnemiesFacingOurDirection();
-//        paintEnemiesTargets();
 
-//        int counter = 0;
-//        for (AUnit unit : Select.ourCombatUnits().havingWeapon().list()) {
-////            unit.addLog(unit.cooldown() + ".");
-////            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + unit.cooldown() + " / AF:" + unit.isAttackFrame() + " / SA:" + unit.isStartingAttack());
-////            if (counter++ > 0) continue;
-//            AUnit enemy = unit.nearestEnemy();
-//
-//            String dist = A.dist(unit, enemy);
-//            unit.setTooltip(dist);
-//            System.out.println(unit.combatEvalRelative());
-//
-////            System.err.println("@ " + A.now() + " - " + unit.typeWithUnitId() + " - " + dist + " / " + unit.action());
-//        }
 
-//        APosition next = OurNextFreeExpansionMostDistantToEnemy.find();
-//        System.out.println("next = " + next);
-//        System.out.println("natural = " + BaseLocations.natural());
-//        if (next != null) {
-//            AAdvancedPainter.paintCircleFilled(next, 20, Color.Orange);
-//        }
 
-//        printChokesForTests();
-//        printBaseLocationsDistancesForTests();
 
-//        paintBasePositionAndBuildCoordinates();
 
-//        AUnit hydra = Select.enemies(AUnitType.Zerg_Hydralisk).first();
-//        AUnit goon = Select.ourOfType(AUnitType.Protoss_Dragoon).first();
-//        System.out.println("Goon SMALLER = " + goon.weaponRangeAgainst(hydra));
-//        System.out.println("Goon range = " + goon.weaponRangeAgainst(hydra));
-//        System.out.println("hydra range = " + hydra.weaponRangeAgainst(goon));
 
-//        paintOverUnits();
 
-//        SaveUnitsAndBulletsInfoToFile.save();
 
-//        paintMissionAttackFocusPoint();
-//        pathToEnemyBase();
 
-//        paintUnitTargets();
 
-//        paintJbwebBlocks();
 
-//        CurrentProductionQueue.print();
 
-//        if (A.supplyUsed() >= 41 && A.now() % 30 == 0) {
-//            Queue.get().readyToProduceOrders().print("All orders");
-//        }
 
-//        combatUnitInfo();
 
-//        paintMyOwnWallInSolution(); // <<<<<<<<<<<<<<<<<
 
-//        testScvMoveAwayFrom();
 
-//        paintNearestBaseToEnemy();
 
-//        paintMainChokeDetails();
 
-//        printQueue();
 
-//        validateNextDepotPosition();
 
-//        printFirstCombatUnitStatus();
 
-//        printMarineManagers();
 
-//        paintAllConstructions();
 
-//        printObserverStatus();
 
-//        paintAttackTargetsForOur();
 
-//        paintNextBasePosition();
 
-//        printCombatUnitStatus();
 
-//        paintChokeBlock();
 
-//        printNextGateway();
-//        printNextBarracks();
 
-//        paintWalkableTiles();
-//        paintAllowedGatewayPositions();
 
-//        printUnitManagers();
 
-//        printBullets();
 
-//        printLastActions();
 
-//        paintBullets();
 
-//        paintUnitSpeeding();
     }
 
     private static void enemyOnCloseIslandDebug() {
         HasPosition enemyOnCloseIsland = EnemyOnCloseIsland.get();
         if (enemyOnCloseIsland != null) {
             if (A.everyNthGameFrame(60)) {
-//                System.err.println(A.minSec() + "-EILand- "
-//                        + enemyOnCloseIsland.toString()
-//                        + " / hasPosition:" + enemyOnCloseIsland.hasPosition()
-//                        + " / visible:" + enemyOnCloseIsland.isVisibleUnitOnMap()
-//                        + " / dead:" + enemyOnCloseIsland.isDead()
-//                        + " / hp:" + enemyOnCloseIsland.hp()
-//                        + "/en:" + enemyOnCloseIsland.isEnemy()
-//                );
             }
             enemyOnCloseIsland.paintCircleFilled(8, Color.Purple);
         }
 
-//        for (AUnit shuttle : Select.ourOfType(AUnitType.Protoss_Shuttle).list()) {
-//            System.err.println("   " + shuttle
-//                + " / " + shuttle.manager()
-//                + " / " + shuttle.action()
-//                + " / " + shuttle.lastCommandName());
-//        }
     }
 
     private static void debugDragoonHoldToShoot() {
         AUnit unit = Select.ourOfType(AUnitType.Protoss_Dragoon).first();
-//        CenterCamera.on(unit);
 
         AUnit enemy = unit.enemiesThatCanAttackMe(100).nearestTo(unit);
         if (enemy == null) return;
@@ -339,14 +168,11 @@ public class OnEveryFrameHelper {
             our.paintLine(our.target(), Color.Orange);
         }
 
-//        System.err.println("ORDER : " + our.orderTarget());
-//        System.err.println("TARGET: " + our.target());
 
         for (AUnit enemy : our.enemiesNear().list()) {
             enemy.paintTextCentered(enemy.idWithHash() + " (" + enemy.hp() + ")", Color.Orange, -1);
         }
 
-//        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
     }
 
     private static void paintEnemiesFacingOurDirection() {
@@ -359,7 +185,6 @@ public class OnEveryFrameHelper {
             enemy.paintCircleFilled(8, our.isOtherFacingThisUnit(enemy) ? Color.Red : Color.Green);
         }
 
-//        System.err.println("@ " + A.now() + " - " + our.lastPositionChangedAgo());
     }
 
     private static void paintBasePositionAndBuildCoordinates() {
@@ -383,18 +208,10 @@ public class OnEveryFrameHelper {
         ABaseLocation mainBase = BaseLocations.main();
         System.out.println("mainBase = " + mainBase);
         for (ABaseLocation location : BaseLocations.baseLocations()) {
-//            System.err.println("location = " + location);
-//            System.err.println("locationPos = " + location.position());
             System.out.println(
                 location.tx() + ", " + location.ty() + ": "
                     + ", GD: " + A.digit(location.groundDist(mainBase))
             );
-//                + ", DI: " + A.digit(location.distTo(mainBase))
-//                + ", " + location.isStartLocation());
-//            System.out.println(location
-//                + ", GD: " + A.digit(location.groundDist(mainBase))
-//                + ", DI: " + A.digit(location.distTo(mainBase))
-//                + ", " + location.isStartLocation());
         }
         System.out.println("-------------------");
 
@@ -402,18 +219,8 @@ public class OnEveryFrameHelper {
     }
 
     private static void printChokesForTests() {
-//        BaseLocations.main().paintTextCentered("Main BAZE", Color.Orange, 1);
 
-//        ABaseLocation mainBase = BaseLocations.main();
-//        System.out.println("mainBase = " + mainBase);
         for (AChoke choke : Chokes.chokes()) {
-//            System.err.println("c hoke = " + choke);
-//            System.err.println("l ocationPos = " + choke.position());
-//            System.err.println(choke.tx() + ", " + choke.ty() + ", " + choke.width()
-//                + ", GD: " + A.digit(choke.groundDist(mainBase))
-//                + ", DI: " + A.digit(choke.distTo(mainBase))
-//                + ", " + choke.isStartLocation()
-//            );
         }
         System.err.println("-----------------");
     }
@@ -428,11 +235,9 @@ public class OnEveryFrameHelper {
         for (AUnit unit : Select.ourCombatUnits().list()) {
             if (unit.target() != null) {
                 unit.paintLine(unit.target(), Color.Orange);
-//                System.out.println("Target = " + unit.target());
             }
             else if (unit.targetPosition() != null) {
                 unit.paintLine(unit.target(), Color.Cyan);
-//                System.out.println("TargetPOS = " + unit.targetPosition() + " / " + A.digit(unit.distTo(unit.targetPosition())));
             }
         }
     }
@@ -460,12 +265,10 @@ public class OnEveryFrameHelper {
         System.err.println("@ " + A.now());
         for (AUnit unit : Select.ourCombatUnits().dragoons().list()) {
             System.err.println(unit.typeWithUnitId() + " - " + unit.manager() + " / " + unit.orderTarget());
-//            System.err.println(unit.typeWithUnitId() + " - " + unit.distToNearestChoke());
         }
     }
 
     private static void printBullets() {
-//        Bullets.updateKnown();
 
         List<Bullet> bullets = AGame.get().getBullets();
         if (bullets.isEmpty()) return;
@@ -476,7 +279,6 @@ public class OnEveryFrameHelper {
                     + " to " + b.getTarget()
                     + ", pos:" + b.getPosition()
                     + ", dist:" + b.getPosition().getApproxDistance(b.getTargetPosition())
-//                + ", :" + b.
             );
         }
     }
@@ -568,7 +370,6 @@ public class OnEveryFrameHelper {
     }
 
     private static void printCombatUnitStatus() {
-//        System.out.println("@ " + A.now() + " - ");
 
         for (AUnit unit : Select.ourCombatUnits().list()) {
             unit.paintLine(unit.position().translateByTiles(0, 2), Color.Black);
@@ -578,17 +379,12 @@ public class OnEveryFrameHelper {
                 Color.Black
             );
 
-//            System.out.println(
-//                unit.typeWithUnitId() + " - " + unit.manager() + " - " + unit.lastCommandName()
-//                    + " / target:" + unit.target() + " / orderTarget=" + unit.orderTarget()
-//            );
         }
     }
 
     private static void paintNextBasePosition() {
         APosition nextBase = NextBasePosition.nextBasePosition();
 
-//        System.out.println("NextBasePosition = " + nextBase);
 
         if (nextBase == null) return;
 
@@ -621,9 +417,6 @@ public class OnEveryFrameHelper {
 
     private static void printMarineManagers() {
         for (AUnit unit : Select.ourOfType(AUnitType.Terran_Marine).list()) {
-//            System.out.println("@ " + A.now() + " - Marine#" + unit.id() + " - " + unit.manager());
-//            System.out.println(unit.managerLogs().toString());
-//            System.out.println(unit.target());
         }
     }
 
@@ -633,34 +426,13 @@ public class OnEveryFrameHelper {
         AUnit unit = Select.ourCombatUnits().first();
         if (unit == null) return;
 
-//        double enemyDist = unit.nearestEnemyDist();
-//        System.err.println("@ " + A.now() + ": " + unit.manager()
-//            + " \\ dist: " + A.digit(enemyDist)
-//            + " \\ cool:" + unit.cooldown());
 
         System.err.println("@ " + A.now() + " - " + unit.managerLogs().toString());
 
-//        unit.setTooltip("Cooldown:" + unit.cooldown());
 
-//        if (unit.isAttacking()) {
-//            AAdvancedPainter.paintCircle(unit, 12, Color.Orange);
-//            AAdvancedPainter.paintCircle(unit, 11, Color.Orange);
-//            AAdvancedPainter.paintCircle(unit, 8, Color.Orange);
-//            AAdvancedPainter.paintCircle(unit, 7, Color.Orange);
-//        }
 
-//        if ((new ContinueOldBroklenShootingOld(unit)).applies()) {
-//            AAdvancedPainter.paintCircle(unit, 10, Color.Teal);
-//            AAdvancedPainter.paintCircle(unit, 9, Color.Teal);
-//            AAdvancedPainter.paintCircle(unit, 6, Color.Teal);
-//            AAdvancedPainter.paintCircle(unit, 5, Color.Teal);
-//            AAdvancedPainter.paintCircle(unit, 4, Color.Teal);
-//        }
     }
 
-//    private static void validateNextDepotPosition() {
-//        SupplyDepotPositionFinder.findPosition(null, null, null);
-//    }
 
     private static void printQueue() {
         if (A.everyNthGameFrame(30 * 9)) {
@@ -683,12 +455,9 @@ public class OnEveryFrameHelper {
         APosition point1 = choke.firstPoint();
         APosition point2 = choke.lastPoint();
 
-//        AAdvancedPainter.paintCircleFilled(point1, 4, Color.Yellow);
-//        AAdvancedPainter.paintCircleFilled(point2, 4, Color.Orange);
 
         ARegion regionA = choke.firstRegion();
         ARegion regionB = choke.secondRegion();
-//        System.err.println(regionA + " / " + regionB + " / " + Select.main().position().region());
 
         boolean regionAIsMain = MainRegion.isMainRegion(regionA);
         boolean regionBIsMain = MainRegion.isMainRegion(regionB);
@@ -712,9 +481,7 @@ public class OnEveryFrameHelper {
         );
 
         if (position1 != null) AAdvancedPainter.paintRectangle(position1, 2 * 32, 2 * 32, Color.Cyan);
-//        if (position2 != null) AAdvancedPainter.paintRectangle(position2, 2 * 32, 2 * 32, Color.Teal);
 
-//        sendWorkersToBlockChoke(point1, point2);
     }
 
     private static void sendWorkersToBlockChoke(APosition point1, APosition point2) {
@@ -756,13 +523,9 @@ public class OnEveryFrameHelper {
 
         AConsole.println(first.typeWithHash() + " / " + first.manager() + " / " + first.eval());
 
-//        if (first.combatEvalRelative() < 1 && first.isActiveManager(AttackNearbyEnemies.class)) {
-//            AConsole.printStackTrace("Why is this unit attacking?");
-//        }
     }
 
     private static void paintJbwebBlocks() {
-//        Blocks.draw();
 
         for (Block block : Blocks.getAllBlocks()) {
             AAdvancedPainter.paintRectangle(
@@ -781,13 +544,7 @@ public class OnEveryFrameHelper {
         if (focusChoke != null) {
             AAdvancedPainter.paintCircleFilled(focusChoke.center(), 13, Color.Cyan);
 
-//            System.out.println("Main = " + Select.main());
-//            System.out.println("TargetChoke = " + focusChoke);
-//            System.out.println("Dist = " + Select.main().distTo(focusChoke));
         }
-//        else {
-//            System.out.println("--------- No focus choke at " + A.s);
-//        }
     }
 
     private static void paintPathToEnemyBase(ArrayList<AChoke> chokes) {
@@ -806,15 +563,6 @@ public class OnEveryFrameHelper {
         }
     }
 
-//    private static void paintMissionAttackFocusPoint() {
-//        AFocusPoint focusPoint = Alpha.get().mission().focusPoint();
-//        AUnit unit = Alpha.get().first();
-//
-//        if (focusPoint != null) {
-//            APainter.paintLine(unit, focusPoint, Color.Cyan);
-//        }
 
-//        AAdvancedPainter.paintSideMessage("Focus: x:" + focusPoint.x() + ", y:" + focusPoint.y(), Color.Yellow);
-//    }
 
 }
