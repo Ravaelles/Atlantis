@@ -41,10 +41,6 @@ known structural failure, as of 2026-10-13 autonomous session;
 re-run `bash scripts/run-tests.sh` for the current numbers - do not trust a count
 written here). What is open is *quality* of the data behind it, not a red test.
 
-- **#29 CLOSED** - unit/weapon data: the engine (the vendored jar) is the source.
-  An intermediate table had invented ~20 numbers and the suite was green against
-  them. Now: `UnitStats` seam, an **empty** correction table, and
-  `UnitStatsTableTest` pinning the engine's values. Full story in `NOTES.md`.
 - **#28 CLOSED** - production code no longer imports the test harness (five
   `Source` ports, `src/starengine` deleted, the jar drops `tests/**` and fails the
   build if a packaged class names it). Detail in `NOTES.md` and git history.
@@ -220,27 +216,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   force the answer. Cheapest honest version first (the cached `check()`), because the
   static-to-`Manager` conversion is a bigger change than the three duplicated queries
   it would remove. Not urgent: nothing is wrong with the behaviour today.
-- **#38 CLOSED 2026-10-11: `atlantis.debug.object` removed, with three of its four
-  libraries.** The owner's ruling was "if nothing plans to use it it is probably a dead
-  idea", and the audit confirmed it twice over - `OnEveryFrameHelper.handle()` opened
-  with `if (true) return;` **and** the single call into the subsystem,
-  `serializeMapDataLikeRegionsToAFile()`, opened with the same. Both had to be true for
-  the code to be reachable, so neither could run.
-
-  Deleted: `src/atlantis/debug/object/**` (9 classes, 510 lines),
-  `tests/unit/object/ObjectToFileTest` (the suite's only `@Disabled` tests),
-  `serializeMapDataLikeRegionsToAFile`, and `kryo`, `reflectasm`, `minlog` from `lib/`
-  and `RUNTIME_LIBS`. **Measured jar effect: 10.83 MB -> 10.34 MB.**
-
-  **`lib/objenesis-3.2.jar` deliberately stays**: Mockito needs it reflectively for
-  tests (verified - one reference in its jar, and the suite is green with it present). It
-  is only no longer *packaged into the bot jar*; removing it from the project would break
-  the test toolchain, which is a different question from shipping dead code to a game.
-
-  A grep for the four packages found no other user anywhere in `src/`, and the fast suite
-  is green with the subsystem gone (405/405). `BUGS.md` B-25 can be closed with this -
-  the measurement there (6.1 MB fat, 3610 entries, four libraries shipped for unreachable
-  code) is what this resolves.
 - **#39** The Protoss cannon producers are commented out in the buildings commander
   (`// || ProduceCannon.produce()`, `// || ProduceCannonAtNatural.produce()`), disabled
   2024-10-02 (`49a4536a`) and 2025-01-09 (`9a34add6`, `75d7650f`) with no recorded
@@ -474,10 +449,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   **Three defects have now been peeled off this one symptom, in order:** the duplicate
   goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
   command refusal (stage 4, open). None of them was the one the previous note suspected.
-
-- **#53 CLOSED 2026-10-11** - the construction finish path (`ProtossWarping`), verified by a bounded run
-  (`Pylon=2 Gateway=1`; `CANNOT define construction` 0). Full mechanism and the withdrawn readings:
-  `_AI/CASE-STUDIES.md` (#53). Still open: the duplicate-construction leak, now #57.
 
 - **#59 (2026-10-11) - THE REQUEUE GATE (fixed) + the builder that never fires (open, top
   blocker). Answering the owner's "it worked hours ago, now it does not": there was NO code
@@ -950,6 +921,28 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   policy, not a mechanical fix.** The design flaw behind it is fixed:
   `ProtossStrategies.initialize()` now runs before `StrategyChooser` selects, since
   a chosen strategy loads its order while being selected.
+- **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
+  `IsReadyToProduceOrder:172` blocks every order when the bank is ABOVE 550
+  late (700 s+) on one base - the name says "cant afford". Probably missing a
+  `!`, but it fires only where no bounded run reaches, so no blind one-char
+  fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
+  flip with that log as evidence.
+
+- **#72 (2026-10-13) - `ATechManager.researchDynamically` has no callers: Singularity
+  Charge is never researched.** The only dynamic upgrade path (Core, supply-gated,
+  affordability-checked) is referenced nowhere - Dragoons fight without range
+  all game. Wire it (free, big combat value, needs a long-game verification
+  that research completes) or delete it (dead code). Owner call either way.
+
+- **#73 (2026-10-13) - acceptance tier is red on pre-existing failures (not the fast suite).**
+  11 failures, all reproduced on the pre-session tree (worktree at 683b9678,
+  removed after): 3 stale sunken-colony eval pins in CombatEvaluatorTest,
+  FakeUnit NPEs (`u` null: Dragoon/DynamicUnit production, Terran commanders),
+  ZealotSelfDefense, OccupiedTile, TerranInfantryWeapons. Fast suite
+  (tests.unit 428/428) and games are green; these fail identically with and
+  without this session's changes. Fix pins vs harden fakes (owner call -
+  combat-eval numbers touch ADR 0006 doctrine).
+
 
 ### OpenBW headless run (2026-10-08)
 
@@ -984,15 +977,5 @@ our own occupancy predicate, which disagreed with the engine; JBWEB is unusable
 on OpenBW in two independent ways; the standard finder was never even reached)
 and the traps the rewrite must avoid. Read it before touching any of this.
 
-- **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
-  `IsReadyToProduceOrder:172` blocks every order when the bank is ABOVE 550
-  late (700 s+) on one base - the name says "cant afford". Probably missing a
-  `!`, but it fires only where no bounded run reaches, so no blind one-char
-  fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
-  flip with that log as evidence.
 
-- **#72 (2026-10-13) - `ATechManager.researchDynamically` has no callers: Singularity
-  Charge is never researched.** The only dynamic upgrade path (Core, supply-gated,
-  affordability-checked) is referenced nowhere - Dragoons fight without range
-  all game. Wire it (free, big combat value, needs a long-game verification
-  that research completes) or delete it (dead code). Owner call either way.
+

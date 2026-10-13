@@ -1071,3 +1071,13 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (Assimilator built in 5+ runs since, incl. Terran Refinery). Full narratives
   stay in git history per process. Corrected stale #68 text (manager mirror
   unconditional since 2026-10-13, not flag-gated).
+
+## Session 2026-10-13 (autonomous: 4 more closes + #73)
+
+- Deleted CLOSED lines #29 (UnitStatsTableTest 5/5, correction table empty),
+  #38 (debug.object dir + kryo/reflectasm/minlog gone), #53
+  (OrphanedConstructionTest 2/2). #35 NOT deleted: reciprocity holds but its
+  class is red on unrelated stale sunken pins - see #73.
+- Filed #73: acceptance tier red on 11 pre-existing failures (proven on a
+  clean pre-session worktree, removed after). Also fixed NEXT structure:
+  #71-73 had landed past the appendix, moved with the items.
