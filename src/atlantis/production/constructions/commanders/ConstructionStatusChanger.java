@@ -90,23 +90,6 @@ public class ConstructionStatusChanger extends Commander {
             handleZergConstructionsWhichBecameBuildings();
         }
 
-        // If building exists
-        if (building != null && !building.isNeutral()) {
-
-//            System.err.println("building = " + building + " / " + building.isCompleted() + " / " + building.construction() + " / " + building.getRemainingBuildTime());
-
-//            if (!We.protoss())
-//            // Finished: building is completed, remove the construction object
-//            if (building.isCompleted()) {
-//                construction.setStatus(ConstructionOrderStatus.COMPLETED);
-//                ConstructionRequests.removeOrder(construction);
-//            }
-//            // In progress
-//            if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-//                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
-//            }
-        }
-
         // FINISHED: the building type is standing where the construction asked for it, so
         // the construction is done and must be removed.
         //
