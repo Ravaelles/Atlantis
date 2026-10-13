@@ -843,3 +843,12 @@ in a game, not just in its test.
   accepted while no completed pylon covered it under either math. Never
   recurred in 4 subsequent runs (all POWER_AT_REQUEST agree). Per CONVENTIONS
   section 3a noted, not patched.
+
+## Session 2026-10-13 (autonomous, continued): Terran re-pass, #59 stability note
+
+- Vs Terran re-run with the center rule: **SCENARIO PASSED** (`Pylon=4
+  Gateway=1 Zealot=4 Dragoon=3 Assimilator=1 Core=1`; Core accepted at
+  [112,11], Gateway at [112,19] - powered sites on the western pylon line).
+  Five of the last six --short runs pass.
+- NEXT #59 annotated: OpenBW half stable, Wine half + threshold-boundary
+  still owner-side.

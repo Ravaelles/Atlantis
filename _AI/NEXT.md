@@ -742,6 +742,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   logged with `log("...")`), or is the request made and rejected as a duplicate
   (`alreadyExists`, #57)?
 
+  **Stability note 2026-10-13 (autonomous): five of the last six --short runs
+  PASS (4 vs Zerg, 1 vs Terran re-run), all with Core+Dragoons+gas; the single
+  failure was the pre-center-rule Terran power case ([15,51]) that the mask
+  work has since explained and re-passed. The OpenBW half of this variance
+  item is stable; what remains is the Wine half (owner runs) and the
+  threshold-boundary question for builders parked at exactly the issue
+  distance (needs a BUILDER_LOG Wine game).**
+
 - **#61 (2026-10-11, NEW) - WORKERS THAT STAND STILL AND NEVER MINE (`manager=GatherResources`,
   `lastCommand=NO_COMMAND`, `lastCommandIssuedAgo=1`, `isGathering=true`, `isIdle=true`).**
   Owner's report: "many workers just stand there doing nothing after being produced; in the
