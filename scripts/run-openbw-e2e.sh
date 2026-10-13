@@ -704,7 +704,31 @@ BOT_EXIT=0
 # a UMS map and could place nothing on the real one).
 timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
 BOT_PID=$!
+# Hang catcher (NEXT #69): the one hanging run died between the trace write
+# and System.exit with no frame to name. While the bot runs, a background poll
+# watches log growth: if the java child is alive but the log has not grown for
+# 30 s, its stacks are dumped once to the run dir - then the watcher gets out
+# of the way (the 15 s backstop / the outer timeout still end the run).
+# Silent unless it fires; skipped entirely when jstack is missing.
+HANG_WATCHER_PID=""
+if command -v jstack >/dev/null 2>&1; then
+  (
+    i=0
+    while [ "$i" -lt 9 ]; do
+      sleep 10
+      i=$(( i + 1 ))
+      BOT_JAVA_PID="$(pgrep -P "$BOT_PID" 2>/dev/null | head -1)"
+      if [ -n "$BOT_JAVA_PID" ] && kill -0 "$BOT_JAVA_PID" 2>/dev/null \
+        && [ $(( $(date +%s) - $(stat -c %Y "$BOT_LOG" 2>/dev/null || echo 0) )) -gt 30 ]; then
+        jstack -l "$BOT_JAVA_PID" > "$RUN_DIR/jstack-hang.txt" 2>&1 || true
+        break
+      fi
+    done
+  ) &
+  HANG_WATCHER_PID=$!
+fi
 wait "$BOT_PID" || BOT_EXIT=$?
+[ -n "$HANG_WATCHER_PID" ] && kill "$HANG_WATCHER_PID" 2>/dev/null || true
 
 BOT_TOOK_SECONDS="$SECONDS"
 BOT_FINISHED_AT="$(date +%H:%M:%S)"
