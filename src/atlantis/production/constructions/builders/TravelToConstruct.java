@@ -65,7 +65,17 @@ public class TravelToConstruct extends HasUnit {
         // `distTo` is a plain geometric distance and is the metric the threshold was written
         // for. The worker at `distTo=1.3` is within reach; at 1.8 it was told to keep walking to
         // the tile it was already on.
-        double distanceToConstruction = unit.distTo(buildPosition);
+        //
+        // Gas buildings measure to the footprint CENTER, not the tile origin (NEXT #70):
+        // a refinery is 4x2, so its center sits ~2.2 tiles from its origin tile and a
+        // worker adjacent to the geyser reads ~3.6 from the origin - past the 3.5 gas
+        // threshold forever ("took too long (34s)", measured 20261013_100226: worker
+        // plateaued at 3.7 with every canBuild gate true, zero attempts). The engine
+        // answers reachability itself (`canBuild` was true there); our heuristic must
+        // not veto what the engine allows. Other types keep the tile metric - for a
+        // 2x2 Pylon the center sits exactly ON the 1.4 boundary and re-metricing it
+        // would churn a working path.
+        double distanceToConstruction = distanceForBuildOrderIssue(unit, construction, type);
 
         MoveUnitsFromConstructionPlace.move(unit, construction, unit.groundDist(buildPositionCenter));
 
@@ -163,6 +173,20 @@ public class TravelToConstruct extends HasUnit {
 //        }
 
         return needMinerals;
+    }
+
+    /**
+     * The distance the issue-threshold is compared against. Plain tile distance
+     * for most buildings; footprint-center distance for gas (NEXT #70 - a 4x2
+     * refinery's center is ~2.2 tiles from its origin, so tile distance reads
+     * ~3.6 for an adjacent worker and never crosses the 3.5 gas threshold).
+     * Package-visible as a seam so the metric choice is assertable.
+     */
+    public static double distanceForBuildOrderIssue(AUnit unit, Construction construction, AUnitType type) {
+        if (type.isGasBuilding() && construction.positionToBuildCenter() != null) {
+            return unit.distTo(construction.positionToBuildCenter());
+        }
+        return unit.distTo(construction.buildPosition());
     }
 
     private static double minDistanceToIssueBuildOrder(AUnitType buildingType) {

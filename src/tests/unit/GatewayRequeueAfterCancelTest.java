@@ -51,7 +51,7 @@ public class GatewayRequeueAfterCancelTest {
         throws Exception {
         String source = new String(Files.readAllBytes(Paths.get(TRAVEL)), StandardCharsets.UTF_8);
 
-        assertTrue(source.contains("double distanceToConstruction = unit.distTo(buildPosition);"),
+        assertTrue(source.contains("double distanceToConstruction = distanceForBuildOrderIssue(unit, construction, type);"),
             "the travel threshold must compare a PLAIN distance to the TILE. Two measured mistakes"
                 + " kept 'shouldMoveToConstruct' true while the worker stood on its site:"
                 + " (1) positionToBuildCenter(), offset by the building's tile dimensions (~1.8"
@@ -59,7 +59,11 @@ public class GatewayRequeueAfterCancelTest {
                 + " documented unusable on OpenBW in _AI/POSITION-FINDER.md - and measured 1.8"
                 + " against distTo's 1.3 on the same worker and tile. Either one exceeds the"
                 + " 1.4-tile threshold forever, so moveToConstruct claimed every frame and"
-                + " IssueBuildOrder - the only path to unit.build - was never reached.");
+                + " IssueBuildOrder - the only path to unit.build - was never reached."
+                + " The helper keeps that rule for standard buildings; its ONE exception is gas,"
+                + " which measures to the footprint center (NEXT #70 - a 4x2 refinery's origin"
+                + " is ~2.2 tiles from its center, so tile distance never crosses 3.5)."
+                + " Behavioural pins: GasBuildIssueDistanceTest.");
     }
 
     private static final String SOURCE =
