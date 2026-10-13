@@ -219,8 +219,15 @@ public class TravelToConstruct extends HasUnit {
                 buildCenter = construction.positionToBuildCenter();
             }
 
+            // Move to the TILE ORIGIN, not the footprint center: the issue
+            // decision above measures distTo(buildPosition), and a target the
+            // metric never reaches walks forever (Terran Barracks stall, #56:
+            // a 4x3 center sits ~2 tiles from its origin, past the 1.4 line,
+            // so the SCV re-moved every 13th frame at distToSite=1.4 with zero
+            // attempts). Arrival at the origin IS arrival by the decision's
+            // own metric; the engine seats the builder itself from there.
             if (unit.move(
-                buildCenter,
+                construction.buildPosition(),
                 Actions.MOVE_BUILD,
                 "Build " + buildingType.name() + A.digit(dist),
                 true
