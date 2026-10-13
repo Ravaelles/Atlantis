@@ -3471,11 +3471,15 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             message = managerUsed.toString() + tooltipString;
             addManagerLogMessage(message);
 
-            // Per-unit manager narrative for CherryVis (NEXT #68): the viewer
-            // renders units_logs, not the manager update field, so the active
-            // manager only becomes visible when mirrored here. Non-buildings -
-            // that is the traced population.
-            if (atlantis.debug.DebugFlags.CHERRYVIS_UNIT_ORDERS && !isABuilding()) {
+            // Per-unit manager narrative for CherryVis (NEXT #68, owner's ask):
+            // every manager change lands in the unit's log - the viewer renders
+            // units_logs, not the manager update field, so without this mirror
+            // the panel stays empty. Always on (not behind CHERRYVIS_UNIT_ORDERS
+            // - that flag is for the per-ORDER chatter in BwapiOrderSink, which
+            // fires every frame; a manager change is rare). CV.unitLog is
+            // itself a no-op unless CherryVis is enabled, so normal games pay
+            // nothing. Non-buildings - that is the traced population.
+            if (!isABuilding()) {
                 atlantis.cherryvis.CV.unitLog("manager:" + managerUsed.toString(), this);
             }
 
