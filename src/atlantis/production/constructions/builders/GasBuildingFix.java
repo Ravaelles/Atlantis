@@ -17,12 +17,22 @@ public class GasBuildingFix extends HasUnit {
 
     /**
      * TEMPORARY experiment (NEXT #62, owner's ask): which tile does the engine
-     * accept for a refinery - the geyser tile, its center, or shifted neighbors?
-     * Cycles one variant per 15-frame window of each 60-frame period and prints
-     * on every window change, so a game log shows which variant was active when
-     * an attempt was accepted. Frame is explicit for testability; production
-     * passes {@code A.now()}. REMOVE once the accepting tile is measured (the
-     * answer becomes the single request tile, no windows).
+     * accept for a refinery? One variant per 15-frame window of each 60-frame
+     * period ({@code A.now() % 60}: 0-15 exact, 15-30 center, 30-45 shifted
+     * -2,-1, 45-60 shifted +1,0) and prints on every window change, so a game
+     * log shows which variant was active when an attempt was accepted - and
+     * `IssueBuildOrder` prints GAS_ACCEPTED with the winning window. Frame is
+     * explicit for testability; production passes {@code A.now()}. REMOVE once
+     * the accepting tile is measured (the answer becomes the single request
+     * tile, no windows).
+     *
+     * <p>Code-side prediction from {@code /sc-ai/OpenBW/openbw/bwgame.h}: only
+     * the exact tile can pass. The server's {@code can_place_building} for a
+     * refinery demands a geyser under the sent position's center
+     * ({@code get_building_at_center_position}), and {@code build_refinery}
+     * needs the geyser in the order target the same way - any shift fails
+     * server-side even when the client accepts it. The experiment measures
+     * rather than assumes.</p>
      */
     public static APosition experimentalVariantTile(APosition geyserTile, AUnitType building, int now) {
         int w = building.getTilesWidth();
@@ -37,12 +47,12 @@ public class GasBuildingFix extends HasUnit {
                 meaning = "center-inside-footprint";
                 break;
             case 2:
-                variant = APosition.create(geyserTile.tx() + w, geyserTile.ty());
-                meaning = "right-adjacent";
+                variant = APosition.create(geyserTile.tx() - 2, geyserTile.ty() - 1);
+                meaning = "shifted-minus-2-minus-1";
                 break;
             case 3:
-                variant = APosition.create(geyserTile.tx(), geyserTile.ty() + h);
-                meaning = "below-adjacent";
+                variant = APosition.create(geyserTile.tx() + 1, geyserTile.ty());
+                meaning = "shifted-plus-1-zero";
                 break;
             default:
                 variant = geyserTile;

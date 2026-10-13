@@ -149,6 +149,15 @@ public class IssueBuildOrder extends HasUnit {
                         );
                     }
                     if (buildResult) {
+                        // TEMPORARY experiment readout (NEXT #62, owner's ask): which
+                        // 15-frame variant window was active when the engine took a
+                        // refinery. Correlate with the GAS_VARIANT lines (same win
+                        // numbering from A.now() % 60). Ungated like GAS_VARIANT -
+                        // an accepted refinery happens at most twice a game.
+                        if (buildingType.isGasBuilding()) {
+                            System.err.println("GAS_ACCEPTED win=" + ((A.now() % 60) / 15)
+                                + " tile=" + buildTilePosition);
+                        }
                         // Order-latency gate (owner recommendation 2026-10-12): the engine
                         // registers the Build after getRemainingLatencyFrames(); until then
                         // `lastCommand` still reads the older order and IssueBuildOrder
