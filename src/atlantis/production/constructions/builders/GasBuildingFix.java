@@ -106,40 +106,4 @@ public class GasBuildingFix extends HasUnit {
 
         return position;
     }
-
-//    if (
-//        building.isGasBuilding()
-//        && !CanPhysicallyBuildHere.check(unit, building, position)
-//        ) {
-//        if (CanPhysicallyBuildHere.check(
-//            unit, building, position.translateByTiles(-1, 0))
-//        ) {
-//            AConsole.errPrintln("Gas building FIX A was applied");
-//            return position.translateByTiles(-1, 0);
-//        }
-//        if (CanPhysicallyBuildHere.check(
-//            unit, building, position.translateByTiles(1, 0))
-//        ) {
-//            AConsole.errPrintln("Gas building FIX B was applied");
-//            return position.translateByTiles(1, 0);
-//        }
-//        if (CanPhysicallyBuildHere.check(
-//            unit, building, position.translateByTiles(-2, -1))
-//        ) {
-//            AConsole.errPrintln("Gas building FIX C was applied");
-//            return position.translateByTiles(-2, -1);
-//        }
-//        if (CanPhysicallyBuildHere.check(
-//            unit, building, position.translateByTiles(2, 1))
-//        ) {
-//            AConsole.errPrintln("Gas building FIX D was applied");
-//            return position.translateByTiles(2, 1);
-//        }
-//
-////            if (building.isGasBuilding()) {
-////                GameSpeed.pauseGame();
-////            }
-//
-//        ErrorLog.printMaxOncePerMinute("Gas building FIX was not applied. This can halt gas building");
-//    }
 }
