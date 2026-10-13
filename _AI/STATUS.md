@@ -683,9 +683,7 @@ Two bounded --short runs on the fresh jars (BUILDER_LOG=1, exit 0):
   (worker already still). The gas fix is therefore still game-unverified: no
   run has reached gas since it landed.
 
-## Session 2026-10-13 (continued): gas needs no power, rotation resolves to exact, server mechanism read
-
-- Power: CLOSED by code reading, no run needed. `AUnitType.needsPower()`
+## Session 2026-10-13 (continued): gas needs no power, rotation resolves to exact, server mechanism read- Power: CLOSED by code reading, no run needed. `AUnitType.needsPower()`
   excludes Pylon/Nexus/Assimilator; `ProtossPositionFinder.needsPylonPower`
   repeats the same three (owner's ruling 2026-10-10); the engine agreed live
   (`hasPower=true` on the Assimilator footprint). Gas is unpowered by rule.
@@ -712,3 +710,22 @@ Two bounded --short runs on the fresh jars (BUILDER_LOG=1, exit 0):
   position's center (`get_building_at_center_position`) - only the exact tile
   passes, which is what win=0 measured. Recorded in `_AI/BUILDING-BLOCKERS.md`
   Certain; NEXT #62 closed.
+
+## Session 2026-10-13 (continued): CherryVis late units read own positions (NEXT #68 follow-up)
+
+Owner: only pre-existing units match in the viewer, future ones read "???".
+Measured in `102220` trace: every late Probe first-seen at the Nexus
+(288,1456) - a unit being trained reports its PRODUCER's position even at
+completion (instrumented run proved `via=completed` fires with the Nexus
+position), and the viewer (nearest same-type within 25px, no retry) matches
+nothing in the base crowd. Stardust records at incomplete->complete because
+its units report own positions there; ours do not.
+
+Fix: mobile units defer 7 frames past completion (`defer`/`processPending` in
+`ACherryVis_UnitFirstSeen`, driven per frame from `ACherryVis.update`), until
+they walk out with their own position - same frame in trace and replay means
+distance zero, so the delay cannot hurt. Buildings record at completion (a
+warp never moves). `CherryVisDeferredFirstSeenTest` 2/2, unit 405/405.
+Verified in game `20261013_104050_short --cvis` (15 deferred + 3 via):
+late units now spread around the base, none shares the Nexus position.
+Viewer check (owner opens the trace) still pending.
