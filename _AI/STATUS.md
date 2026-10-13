@@ -804,3 +804,22 @@ in a game, not just in its test.
 - Cleanup: dead commented blocks removed (GasBuildingFix 35 lines,
   IssueBuildOrder ~30, ConstructionStatusChanger status block) + 4 unused
   imports. Legacy position path kept (live, 22 files) - see refusal rationale.
+
+## Session 2026-10-13 (autonomous, continued): expansion never decided + suspect 700s gate
+
+- `20261013_114519_long` (381 s): full tech, Nexus=1 all game. The expansion
+  order never even entered the queue this time (no ADDED line; previous run
+  queued one at 6:19 that sat unbuilt). Decision chain
+  (`ProtossShouldExpandToNaturalBase.forSecondBase`) explains it without any
+  bug: 3 gateways (< 4 for `2ndManyMinerals`), ~25 workers (< 44 for
+  `ManyWorkers`), game 381 s (< 630 s `GettingLate`). Thresholds, not defects
+  - strategy tuning stays the owner's call (same class as #51). No change.
+- SUSPECT, unpatched: `IsReadyToProduceOrder.cantAffordAndDidntExpandYet`
+  blocks EVERY order when `hasMinerals(550) && seconds >= 700 && bases <= 1` -
+  i.e. precisely when rich and late on one base, the name says the opposite
+  ("cant afford"). Probably inverted (`!hasMinerals`), but it only fires in
+  700 s+ games, which no bounded OpenBW run reaches and Wine is owner-only -
+  so it is filed as NEXT #71 with the evidence instead of patched blind.
+- New probe this cycle: `ORDER_NOT_READY` names the refusing queue term
+  (supply/resources/requirements + numbers) for stuck building orders, so the
+  next silent-queue case (like the 6:19 Nexus) is diagnosable in one game.

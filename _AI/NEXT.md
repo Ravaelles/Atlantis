@@ -1171,3 +1171,10 @@ facts (the engine calls the refused tiles valid and empty; the refusal came from
 our own occupancy predicate, which disagreed with the engine; JBWEB is unusable
 on OpenBW in two independent ways; the standard finder was never even reached)
 and the traps the rewrite must avoid. Read it before touching any of this.
+
+- **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
+  `IsReadyToProduceOrder:172` blocks every order when the bank is ABOVE 550
+  late (700 s+) on one base - the name says "cant afford". Probably missing a
+  `!`, but it fires only where no bounded run reaches, so no blind one-char
+  fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
+  flip with that log as evidence.
