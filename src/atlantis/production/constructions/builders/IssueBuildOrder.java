@@ -78,15 +78,12 @@ public class IssueBuildOrder extends HasUnit {
             // If place is ok, unit isn't constructing, and we can afford it, issue the build command.
             buildPosition = (new GasBuildingFix(unit)).applyGasBuildingFixIfNeeded(buildPosition, buildingType);
 
-            // TEMPORARY experiment (NEXT #62, owner's ask): cycle refinery tile
-            // variants across 15-frame windows so the log shows which tile the
-            // engine accepts. Ungated like GAS_FIX (owner reads IDE logs without
-            // flags); REMOVE with experimentalVariantTile once measured.
-            if (buildingType.isGasBuilding() && buildPosition != null) {
-                buildPosition = GasBuildingFix.experimentalVariantTile(
-                    buildPosition, buildingType, A.now()
-                );
-            }
+            // The refinery tile is always the geyser's own tile (NEXT #62, measured
+            // 20261013_101406: GAS_ACCEPTED win=0 exact + the server's
+            // can_place_building/build_refinery demand a geyser under the sent
+            // position's center - any shift fails server-side even when the
+            // client accepts it). The 15-frame rotation experiment that proved
+            // this is removed; this is the answer it found.
 
             if (buildPosition == null) {
                 if (construction.buildingUnit() == null) {
@@ -149,15 +146,6 @@ public class IssueBuildOrder extends HasUnit {
                         );
                     }
                     if (buildResult) {
-                        // TEMPORARY experiment readout (NEXT #62, owner's ask): which
-                        // 15-frame variant window was active when the engine took a
-                        // refinery. Correlate with the GAS_VARIANT lines (same win
-                        // numbering from A.now() % 60). Ungated like GAS_VARIANT -
-                        // an accepted refinery happens at most twice a game.
-                        if (buildingType.isGasBuilding()) {
-                            System.err.println("GAS_ACCEPTED win=" + ((A.now() % 60) / 15)
-                                + " tile=" + buildTilePosition);
-                        }
                         // Order-latency gate (owner recommendation 2026-10-12): the engine
                         // registers the Build after getRemainingLatencyFrames(); until then
                         // `lastCommand` still reads the older order and IssueBuildOrder

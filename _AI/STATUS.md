@@ -682,3 +682,33 @@ Two bounded --short runs on the fresh jars (BUILDER_LOG=1, exit 0):
   trigger). No Unwalkable-center lines; the stop-then-build is irrelevant here
   (worker already still). The gas fix is therefore still game-unverified: no
   run has reached gas since it landed.
+
+## Session 2026-10-13 (continued): gas needs no power, rotation resolves to exact, server mechanism read
+
+- Power: CLOSED by code reading, no run needed. `AUnitType.needsPower()`
+  excludes Pylon/Nexus/Assimilator; `ProtossPositionFinder.needsPylonPower`
+  repeats the same three (owner's ruling 2026-10-10); the engine agreed live
+  (`hasPower=true` on the Assimilator footprint). Gas is unpowered by rule.
+- Rotation (owner's spec: `A.now()%60` windows exact/center/-2,-1/+1,0, print
+  the winner): `20261013_101406` resolves it. `GAS_ACCEPTED win=0
+  tile=[117,4]` - the EXACT geyser tile; both shifts refused client-side
+  already (`GAS_REFUSED ... noBuilder=false`). Roster: `Assimilator=1` (first),
+  `CyberneticsC=1`, `Gateway=2` - only Dragoon missing (gas flowed too late:
+  accepted @4865/202 s, game over at 248 s). Rotation + GAS_ACCEPTED +
+  `GasVariantTileTest` REMOVED the same turn; the request tile is exact, no
+  windows. O4 closed.
+- Server mechanism for accepted-but-no-building (read in
+  `/sc-ai/OpenBW/openbw/bwgame.h`, not guessed): `order_PlaceProtossBuilding`
+  walks the worker to `order_target.pos`, and only within 70 px (88 px for
+  Assimilator) checks `player_has_supply_and_resources_for` NOW plus
+  `can_place_building` NOW - on NO it does a silent `order_done`
+  (worker `return_to_idle`, our `order=PlayerGuard` with stale
+  `lastCommand=Build`). That is the Core @4697 signature exactly, and the
+  prime suspect is the bank between issue and warp: minerals 194 (@4680) ->
+  68 (@4710) while the worker pump kept training - the server re-checks the
+  200 in the arrival frame, after the client said yes. JBWAPI's own javadoc
+  warns of it ("a small chance for a command to fail after passed to
+  Broodwar"). Refinery twin: `build_refinery` needs the geyser under the sent
+  position's center (`get_building_at_center_position`) - only the exact tile
+  passes, which is what win=0 measured. Recorded in `_AI/BUILDING-BLOCKERS.md`
+  Certain; NEXT #62 closed.

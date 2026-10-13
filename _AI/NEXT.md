@@ -967,44 +967,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
   `CONVENTIONS.md` §3a.
 
-- **#62 (2026-10-12) - the Assimilator is never built on OpenBW; the request tile is right,
-  the engine still refuses.** Owner's log has only `GAS_FIX in=[86,118] geysersIn6=1
-  nearest=[88,119] d=0.0` and `out(ok)=[86,118]`; the construction then dies
-  `took too long (33-39s) / buildable:false`.
-
-  **Checked in the source, and both easy readings are wrong:**
-  - `GasBuildingPositionFinder:36` returns `geyser.translateByPixels(-64, -32)` - for a
-    4x2 geyser that is exactly the centre-to-top-left conversion, so the request tile
-    EQUALS the engine's geyser tile by construction. The offset is not the bug.
-  - `d=0.0` is correct edge-distance (BWAPI `getDistance` is edge-to-edge; the site is
-    adjacent to the geyser), not a broken `distTo`.
-  - Exonerated too: the JBWAPI `hasPathOverTerrain` fallback (`Game.java:2491-2507`)
-    errs towards reachable, so the builder-path branch passes next to a geyser; and
-    the `TooCloseToGeyser` exemption (`TooCloseToMineralsOrGeyser:28`) is in place.
-
-  **Next measurement (one bounded run, no patch before it):** at the refusal, print
-  requestTile vs the engine geyser tile equality plus the Java client's `canBuildHere`
-  components (refinery branch, builder `hasPath`, explored, power) with `lastCommand`
-  and `distToBuild`. The tile math says the refinery term should pass, so the refusal
-  is elsewhere - the probe names where instead of a third static theory.
-
-  **FIXED 2026-10-12 (Stardust pattern) WITHOUT waiting for the run.** Reading  Stardust's placement settled the code side: a refinery site is its geyser's OWN
-  tile (`Block::Location(geyser->tile)`), never center-math. Our finder recomputed
-  it as `center-(2,1)` and both `GasBuildingFix` snaps used the center itself -
-  right on some maps, 2-off wherever center and tile disagree about rounding, and
-  wrong-by-construction for the snap. New `AUnit.tilePosition()` (engine value,
-  footprint-derived fallback), finder and both snaps answer the geyser tile.
-  Test `GasTileIsGeyserTileTest` (fix case fails pre-fix). The engine-equality
-  half still belongs to the GAS_REFUSED probe above - if it ever reads
-  `noBuilder=false` on this tile, the term after the tile is next.
-
-  **EXPERIMENT 2026-10-12 (owner's ask, TEMPORARY):** the attempt tile cycles
-  exact/center/right-adjacent/below-adjacent across 15-frame windows
-  (`GasBuildingFix.experimentalVariantTile`, `GAS_VARIANT` log on change,
-  `GasVariantTileTest` pins the rotation). The log then shows which tile an
-  accepted attempt used. REMOVE with the experiment once measured - the answer
-  becomes the single request tile.
-
 - **#64 CLOSED 2026-10-12 - StackOverflowError in the Pylon relaxed-margin fallback.**
   Owner's log tail: `findStandardPositionFor:189` <-> `findWithRelaxedBoundaryMargin:206`
   alternating until the stack overflowed, bot dead instead of "no tile". Mechanism:

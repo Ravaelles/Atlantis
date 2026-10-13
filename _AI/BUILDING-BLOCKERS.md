@@ -16,8 +16,7 @@ the numbers decide which mechanism it is - never the shape alone.
 
 ## Certain
 
-1. **Poverty refuses through `Game.canMake`.** Measured on Gateway [96,111]:
-   every reachability answer true, every tile-rule answer true, power true,
+1. **Poverty refuses through `Game.canMake`.** Measured on Gateway [96,111]:   every reachability answer true, every tile-rule answer true, power true,
    empty footprint, terrain ok - and `canBuild=false` with the sub-flag
    bisection isolating `minerals(28) < 150` (`canBuild000=true`,
    `100=false`, `010/001=true`). Evidence: `BUILD_BREAKDOWN` lines in
@@ -50,6 +49,22 @@ the numbers decide which mechanism it is - never the shape alone.
    All measured, all fixed with mutation-proven tests: #57 (leak), #59 requeue
    gate (cancel-before-count), #64 (`!relaxedBoundaryMargin` guard). Archive:
    `CASE-STUDIES.md`, this file does not repeat them.
+7. **A refinery builds only on its geyser's exact tile.** Measured
+   `20261013_101406`: `GAS_ACCEPTED win=0 tile=[117,4]`, both shifts refused
+   client-side (`noBuilder=false`); the server demands a geyser under the sent
+   position's center (`can_place_building` + `build_refinery` via
+   `get_building_at_center_position`, `/sc-ai/OpenBW/openbw/bwgame.h`). Gas
+   needs no power (code + live `hasPower=true`). Rotation experiment removed;
+   the request tile is exact. Roster proof: `Assimilator=1`.
+8. **An accepted Protoss order can die silently server-side.** Read in
+   `/sc-ai/OpenBW/openbw/bwgame.h` (`order_PlaceProtossBuilding`): within
+   70 px (88 px refinery) of the target the server re-checks supply+resources
+   and `can_place_building` NOW - on NO, silent `order_done` to
+   `return_to_idle` (our `order=PlayerGuard` + stale `lastCommand=Build`).
+   Matches the Core @4697 signature; prime suspect the bank between issue and
+   warp (minerals 194 -> 68, worker pump training through it). JBWAPI warns of
+   exactly this ("a small chance for a command to fail after passed to
+   Broodwar", `Unit.build` javadoc).
 
 ## Refuted (do not re-open without new evidence)
 
@@ -83,6 +98,3 @@ the numbers decide which mechanism it is - never the shape alone.
   read it, do not add another probe yet).
 - **O3. Exit-path hang frame (#69).** Proven to hang between trace write and
   exit; 20 s (now 15 s) backstop bounds it. Still needs one `jstack` catch.
-- **O4. Assimilator engine equality (#62).** Tile now exact by construction;
-  needs the `GAS_REFUSED` line (`noBuilder=` term) from a run that reaches gas
-  (blocked behind Gateway progress on OpenBW; owner's IDE run is the evidence).
