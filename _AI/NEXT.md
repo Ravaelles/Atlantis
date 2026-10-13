@@ -693,6 +693,20 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   our OpenBW version has no fix to update to. Reinstall changes nothing.
 
 
+- **#79 (2026-10-13) - OpenBW replay desync (upstream issue #27): cheap questions first.**
+  Confirmed real class (log-true, replay desyncs early; open 2019, second
+  Linux confirmation 2021, unassigned, no fix). Our engine is the vendored
+  `3rdparty/openbw` (frozen at vendoring + local late-attach patch), NOT
+  upstream HEAD; `/sc-ai/OpenBW` is a pristine reference, not what runs.
+  Before any engine surgery, in order: (1) minimal repro WITHOUT our bot
+  (does a no-bot/scripted game desync?); (2) first-divergent-frame (live
+  trace counts vs replay parse - which action type goes missing: morph,
+  cancel, warp?); (3) diff vendored replay_saver.h/bwgame.h action paths vs
+  upstream (a fix to pull?). Only then patch; every engine change
+  re-verifies placement physics + full E2E. Owner priority: fully working
+  OpenBW, separate model on it.
+
+
 ### OpenBW headless run (2026-10-08)
 
 The client attaches and the bot plays - see `_AI/PLAN-OPENBW.md` §9 for the

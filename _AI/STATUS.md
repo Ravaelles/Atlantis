@@ -1275,3 +1275,12 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   Military never-gatherers expected.
 - Unit logs now `@minSec()` (owner spec): `#Move@0:12`, `-GatherResources@0:12`
   - watcher + manager mirror. Suite gate next.
+
+## Session 2026-10-13 (engine question: what fixing OpenBW replay desync takes)
+
+- Filed #79 (owner priority, separate model): replay = header (frame count,
+  map, players, hardcoded seed) + compressed per-frame ACTION history
+  (`replay_saver.h: add_action`) + map data; playback re-simulates, so
+  desync = missing/misordered actions, nondeterminism, or initial-state
+  mismatch. Cheap-first plan recorded in the item (no-bot repro,
+  first-divergent-frame, vendored-vs-upstream diff) before any surgery.
