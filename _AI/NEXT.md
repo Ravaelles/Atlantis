@@ -167,11 +167,12 @@ itself, #5, is design work and out of that order's scope).
   `util -> ...` = 0 (was 73).
 
   **The 267 and the 24 are structural**, not a sweep: the Commander/Manager
-  framework is unit-centric by design, so they belong to Stages E/H. What is left
-  that is mechanical has already been taken: the util rule (73 -> 0) and most of
-  information. The remaining entries in `information` are `private` methods their
-  own class calls - nothing to rewire - so this item is **blocked on the Stage E/H
-  design work, not on effort**.
+  framework is unit-centric by design, so they belong to Stages E/H. The
+  information rule swept 65 -> 60 on 2026-10-13 (WO-13 cycles 1-3: two dead
+  `ProduceZealot` branches, one single-caller helper folded into its caller);
+  every remaining entry was triaged and is live strategy-response logic
+  (race responses ordering production, forcing missions, reading queue/tech
+  state) - the seams Stage G exists to redesign, not to delete line by line.
 
   Two traps, both paid for:
   - A change must *remove* violations from one rule, not move them into another.
