@@ -1238,3 +1238,22 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   the chain it reports on) + game-verified: 2397 lines, full trails
   (Nothing→MoveToMinerals→MiningMinerals→Move→PlaceBuilding), 82
   dash-managers interleaved, unit_ids coverage still 100%. Suite 464/0.
+
+## Session 2026-10-13 (owner overrides: completed-only, Pylon-at-8, #form)
+
+- Counting pipeline EXONERATED by raw-engine dump (28/28 exists+completed,
+  1:1 with roster - temporary probe, removed after reading). Our counts do
+  not invent units; #78 rewritten to the replay-pairing suspect (stale `.rep`
+  opened for the logged game?) - needs the owner: which `.rep` timestamp,
+  does it match the run dir? Completed-only roster implemented anyway (D9
+  executed and deleted) - gates honest from now on.
+- Pylon-at-8 gate implemented + 3 tests (`PylonAt8` reason): supply>=8, no
+  Pylon at all, bank<150 → workers wait; released by warping Pylon or 150.
+  Suite 467/0 (incl. new tests). Other races untouched, Zealot/Dragoon
+  impossible at 8 anyway (no Gateway).
+- Watcher switched to owner spec `#<lastCommandName>@<frame>` (engine's own
+  getLastCommand, null-safe) + game-verified: 120 `#`-lines (#Move 42,
+  #Stop 30, #Gather 25, #NO_COMMAND 17, #Build 6), dash-managers intact.
+- Admission stands: "unfinished explains everything" was wrong (Zealot=6 at
+  zero gateways killed it), file-confusion dismissals were wrong. The remaining
+  open question is owned explicitly in #78 instead of explained away.
