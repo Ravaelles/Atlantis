@@ -32,6 +32,16 @@ public class CancelTooLongConstructions {
 //            }
 
             APosition buildPosition = constr.buildPosition();
+
+            // Replace-before-cancel (owner's ask): a stuck construction may sit
+            // on a site that will never work (unpowered, crowded) while free
+            // tiles exist nearby - blindly cancelling it loses the worker
+            // assignment and the requeue may land on the same tile. So first
+            // send a fresh request with the old construction still alive (the
+            // duplicate guard inside sees it): a genuinely different site
+            // replaces the old one, anything else keeps it.
+            if (tryReplaceWithFreshSite(constr, type, buildPosition)) return;
+
             constr.cancel(type + " took too long (" + tookSeconds(constr) + "s)");
 //            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeoutSeconds);
             ErrorLog.printMaxOncePerMinute(
@@ -52,6 +62,90 @@ public class CancelTooLongConstructions {
 //            || type.isObservatory()
 //            || type.isGasBuilding();
 //    }
+
+    /**
+     * Sends a fresh construction request for the same building while the stuck
+     * one is still alive, and cancels the old one only when the fresh request
+     * lands somewhere else.
+     *
+     * <p>
+     * The old construction is the duplicate guard's reference point: a fresh
+     * search that can do no better returns the same tile (or nothing), the
+     * request path cancels the duplicate itself, and the old construction
+     * survives untouched - "placement blocks us" keeps the status quo, exactly
+     * as specified. A different site means the new construction owns a builder
+     * already, so releasing the old worker is safe.
+     * </p>
+     *
+     * @return true when the old construction was replaced.
+     */
+    public static boolean tryReplaceWithFreshSite(
+        Construction old, AUnitType type, APosition oldPosition
+    ) {
+        java.util.Set<Construction> before = new java.util.HashSet<>(
+            atlantis.production.constructions.ConstructionRequests.constructions);
+
+        // A freestanding probe order: the search refuses to run without one
+        // (no order -> no position, by construction), and it never enters the
+        // queue - it only carries the request. If the replace succeeds, the
+        // old construction's real queue order is transferred to the fresh one.
+        atlantis.production.orders.production.queue.order.ProductionOrder probeOrder =
+            new atlantis.production.orders.production.queue.order.ProductionOrder(
+                type, oldPosition, 0);
+
+        atlantis.production.constructions.NewConstructionRequest.requestConstructionOf(
+            type, oldPosition, probeOrder);
+
+        // Only what the request above ADDED counts: a pre-existing sibling at
+        // a different site must never be mistaken for the replacement (it has
+        // its own builder and its own life).
+        Construction fresh = null;
+        for (Construction construction : atlantis.production.constructions.ConstructionRequests.constructions) {
+            if (before.contains(construction)) continue;
+            if (!construction.buildingType().equals(type)) continue;
+            if (construction.buildPosition() == null) continue;
+            fresh = construction;
+        }
+        if (!shouldReplace(oldPosition, fresh, type)) {
+            if (fresh != null) {
+                fresh.cancel(type + " re-place landed on the same site, keeping the original");
+            }
+            return false;
+        }
+
+        atlantis.production.orders.production.queue.order.ProductionOrder oldOrder = old.productionOrder();
+        if (oldOrder != null) {
+            old.setProductionOrder(null);
+            fresh.setProductionOrder(oldOrder);
+        }
+        old.cancel(type + " re-placed to a fresh site at " + fresh.buildPosition());
+        ErrorLog.printMaxOncePerMinute(
+            "REPLACED " + type.name() + " " + oldPosition + " -> " + fresh.buildPosition());
+        return true;
+    }
+
+    /**
+     * Replace only with a live replacement at a genuinely different site. A
+     * missing replacement (placement blocks us) or the same site keeps the
+     * original: cancelling without something better in hand is strictly worse.
+     * Pure decision, pinned directly.
+     */
+    public static boolean shouldReplace(APosition oldPosition, Construction fresh, AUnitType type) {
+        if (fresh == null || fresh.buildPosition() == null) return false;
+        return isDifferentSite(oldPosition, fresh.buildPosition(), type);
+    }
+
+    /**
+     * Two sites are the same request when they overlap the building's own
+     * footprint - anything closer would have been caught by the duplicate
+     * guard, and anything farther is a genuinely different placement.
+     * Package-visible as a seam so the replace rule is assertable.
+     */
+    public static boolean isDifferentSite(APosition oldPosition, APosition freshPosition, AUnitType type) {
+        if (oldPosition == null || freshPosition == null) return false;
+        double minSeparation = Math.max(type.getTilesWidth(), type.getTilesHeights());
+        return oldPosition.distTo(freshPosition) > minSeparation;
+    }
 
     private static boolean tookTooLong(Construction constr) {
         int timeoutSeconds = timeoutInSeconds(constr);

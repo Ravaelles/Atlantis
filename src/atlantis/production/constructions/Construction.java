@@ -167,9 +167,15 @@ public class Construction implements Comparable<Construction> {
     public boolean sameAs(Construction other) {
         if (other == null || other.buildingType == null || this.buildingType == null) return false;
 
+        // Null-safe supply gates (a construction without a queue order - e.g. from
+        // the V2 director - used to NPE the whole duplicate check, and the crash
+        // surfaced far away as a skipped request).
+        int mySupply = this.productionOrder() != null ? this.productionOrder().minSupply() : 0;
+        int otherSupply = other.productionOrder() != null ? other.productionOrder().minSupply() : 0;
+
         return this.buildingType.equals(other.buildingType)
             && (
-            this.productionOrder().minSupply() == other.productionOrder().minSupply()
+            mySupply == otherSupply
                 || (!this.buildingType.isCannon() && !other.buildingType.isCannon())
         );
     }
