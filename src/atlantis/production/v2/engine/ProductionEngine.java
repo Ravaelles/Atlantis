@@ -98,6 +98,20 @@ public final class ProductionEngine {
         ResourceTimeline timeline = state.buildTimeline();
         List<ProductionGoal> goals = collectGoals(state, timeline);
 
+        // Goal bands in input order (NEXT #52 watch): the slide is back under
+        // LIVE despite PRIORITY_OPENING_SUPPLY, so the next measurement needs
+        // each goal's band next to its item - whether the Pylon is classified
+        // opening-supply and whether the band decides allocation order.
+        // BuilderLog-gated and throttled; the plan line itself stays as is.
+        if (Env.builderLog() && A.everyNthGameFrame(30)) {
+            StringBuilder bands = new StringBuilder("V2_GOALS @" + state.frame());
+            for (ProductionGoal goal : goals) {
+                bands.append(" [").append(goal.item().id())
+                    .append(":").append(goal.priority()).append(']');
+            }
+            System.err.println(bands);
+        }
+
         ProductionScheduler scheduler = new ProductionScheduler(
                 state.facilityRegistry(), placementPlanner, state.existingItems());
         ProductionPlan plan = scheduler.schedule(goals, timeline);
