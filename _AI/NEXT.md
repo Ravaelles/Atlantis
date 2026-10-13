@@ -348,42 +348,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   fixed (465 plans, zero duplicate buildings). Next: print the goal's band in
   the plan line, then re-read the scheduler's sort-vs-allocate order.**
 
-- **#60 (2026-10-11, top economy blocker) - THE WORKER GATE OSCILLATES BETWEEN TWO
-  OPPOSITE FAILURES, and it explains "the test takes forever", the 8000-mineral bank and the
-  stuck Pylon at once.**
-
-  **Measured** with a new `WORKER_GATE` probe (one line per second, `BUILDER_LOG=1`;
-  `AutoProduceWorkersCommander.REASON` was written and read nowhere, so the refusing gate was
-  literally unobservable):
-
-  ```
-  WORKER_GATE @30     reason=CantAfford workers=5   minerals=0      supply=5/9
-  WORKER_GATE @17910  reason=NoSupply   workers=23  minerals=8554   supply=33/33
-  ```
-
-  1. **Early: `CantAfford`** - 5 workers, **0 minerals** - the bot cannot afford the 50-mineral
-     Probe that would fix that. `reserved=0`, so nothing else is holding the money.
-  2. **Late: `NoSupply`** - 23 workers, **8554 minerals**, `supply=33/33` - supply-capped with a
-     bank it cannot spend, which is the owner's "never more than 600 minerals" at its worst and
-     the reason the run crawls.
-
-  **The link between them, measured the same run:** the bot reaches `supply=33/33` because its
-  **Pylon construction sits `NOT_STARTED`** while the worker stands ON the site
-  (`distToSite=0.2`, `lastActionAgo=193`, `isMoving=false`). A Pylon that never completes means
-  supply never rises, so workers stop, so mining stops, so the next Pylon is unaffordable - the
-  cycle closes. (The one Pylon that DID complete shows the healthy path working: at `@1127`
-  `engineAccepted=true getOrder=PlaceBuilding isConstructing=true` - so the build path itself is
-  fine; it is the construction lifecycle around it that stalls.)
-
-  **Also from the owner's adhoc run:** `Assimilator took too long (33s) / buildable:false` - the
-  first genuinely-not-buildable tile seen (the Gateway case was `buildable:true`), so the
-  Assimilator tile selection is a separate, real defect.
-
-  **Next measurement (narrow):** print, on the Pylon whose `canAfford=false`, the value
-  `AGame.minerals()` **in the same line** - the two readings above come from different frames,
-  and `minerals >= 100` with a large bank is impossible, so one of the two numbers is being read
-  at the wrong moment. Until that is settled, do not change any affordability gate.
-
 - **#57 (2026-10-11) - the duplicate-construction leak is the single root cause behind
   both symptoms the owner reported (Gateway churn AND minerals above 600).**
 
@@ -472,6 +436,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   building EXISTS at the site (which `buildingFinishedAtSite` already detects for the other
   half), or the engine's `isConstructing` needs a second condition. Do not guess which - the
   probe is cheap and the two have different consequences.
+
+  **2026-10-13 --long game (`20261013_193330`, 409 s, exit 0, SCENARIO FAILED
+  only on Assimilators=1/Nexus=1 vs ≥2/≥3): still no Nexus decision -
+  `Nexus ADDED TO QUEUE` 0, `QUEUE_BASE` 0, 13 `REQUEST_ACCEPTED` all distinct
+  type+tile, zero cancels, DEMOTE fired once (Pylon [79,114], completed anyway).
+  Two findings: (a) the legacy path emits no queue markers at all, so part of
+  the "silence" is an instrumentation gap - QUEUE_BASE can only fire where
+  refresh sees the order, and nothing logs whether it does; (b) 409 s
+  undisturbed with no expansion attempt is the D5 threshold shape (3 gateways,
+  <630 s), not a queue bug. Next: legacy-path queue logging, or a V2-path run
+  where the markers exist.**
 
 - **#56 - `TerranNewBuilding` has the same two finish-path defects `ProtossWarping` had,**
   and they were not touched because they need their own measurement (found 2026-10-11 while

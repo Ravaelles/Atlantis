@@ -1114,3 +1114,26 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   set as exactly the three tracked). #75 keeps the owner-policy remainder.
 - Not touched: #52 (another session has the fix in flight in its dirty tree -
   `DynamicGoals`/`PullForwardGoals`/`GameStateSnapshot`/`GoalSourcesTest`).
+
+## Session 2026-10-13 (autonomous: #60 closed, #58 measured, E2E step 3 done)
+
+- Closes #60 (deleted): the narrow reading settled by 239 same-line WORKER_GATE
+  lines (`20261013_193330_long`, 409 s, exit 0, jar `505e914b`) - 0/50 CantAfford
+  with same-line minerals>=100 (affordability gate reads clean); 8 NoSupply with
+  minerals<100 all at genuine 17/17 or 33/33 (both gates closed at once, the label
+  is check order, not a false reading). Defect half refuted; the threshold half
+  already lives in D5. Watchdogs quiet: took-too-long 0, Last resort 0,
+  is-overdue 0, DEMOTE 1 (Pylon [79,114], healed and completed).
+- #58 recorded, kept open: 0 `Nexus ADDED TO QUEUE`, 0 `QUEUE_BASE`, 13 distinct
+  accepts, 0 cancels - plus the instrumentation gap (legacy path emits no queue
+  markers at all, so QUEUE_BASE cannot distinguish "never queued" from "never
+  logged"). No expansion in 409 s undisturbed reads as D5 thresholds, not a queue
+  bug. Next: legacy-path queue logging or a V2-path run where markers exist.
+- IDEA-E2E-TESTS §3.5 step 3 marked done (Pylon fixed, green many in a row,
+  red-against-broken proven both halves). Step 4 (7-min survival) still open:
+  this run 409 s / 0 kills vs 420 s / 12 kills.
+- #57 health: 1 REFUSED_DUPLICATE (dedupe working as designed), 13 distinct
+  accepts, 0 cancels - no leak symptoms; the tripwire stays.
+- Disclosure: the run jar contained the other session's uncommitted V2-goals
+  edits; the run used the default legacy path (no PLACEMENT/PRODUCTION_V2),
+  where that code is inert. Nothing of theirs staged, touched or claimed.

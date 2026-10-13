@@ -195,10 +195,13 @@ Each step is small and ends with something a command proves.
    (§3.3). Broken-build half DONE 2026-10-13 (grid forced to refuse:
    Pylon=0 everything, SCENARIO FAILED; reverted same turn and re-verified
    PASS). Still missing: a scenario file.
-3. **Fix the Pylon, then the mega-test.** One game, fixed map, asserting workers
-   mined, a Pylon and a Gateway placed and built, production advanced, no
-   exception, frames advanced. Verification: green twice in a row, red against a
-   known-broken build.
+3. ~~Fix the Pylon, then the mega-test.~~ **Done 2026-10-13** - Pylon and Gateway
+   placed and built in every recent run (Pylon=5-6, Gateway=3, Core+Dragoons+gas
+   when they pass), green many in a row (7/9 PASS, both misses honest timing
+   gates), red against broken proven both halves (absurd-99-Gateways fails, a
+   deliberately broken grid build SCENARIO FAILED, reverted same turn and
+   re-verified PASS). What remains of the mega-test is step 4 (survival
+   numbers), not placement.
 4. **Port the 7-minute survival scenario** with a near-even trade:
    `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
    `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`. This is the
