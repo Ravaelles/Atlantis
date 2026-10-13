@@ -438,7 +438,6 @@ GAME_LAUNCHER=OPENBW
 # looks like a stalled bot, with no error line) - measured 2026-10-08.
 BWAPI_DATA_PATH=$BWAPI_DATA_ROOT
 FORCE_GG_FOR_ENEMY=false
-POSTGAME_COPY_CHERRYVIS_TO=
 # The bot ends its own game before the HOST's timeout kills the host (measured
 # 2026-10-08: without this the host died first, the client was orphaned and
 # looped on "No server proc ID" until the script SIGTERM'd it, so a played game

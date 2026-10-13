@@ -25,7 +25,6 @@ public class Env {
     private static boolean wine = false;
     private static boolean wineClient = false;
     private static boolean paramTweaker = false;
-    private static String copyCherryVisDataTo = null;
     /**
      * production-v2 mode (M4 of _AI/redesign/01_PRODUCTION.md): DRY_RUN runs the
      * new engine in parallel with the legacy queue and only logs what it would
@@ -166,9 +165,6 @@ public class Env {
                 return true;
             case "MODIFY_BWAPI_INI":
                 modifyBwapiIni = trueFalse(value);
-                return true;
-            case "POSTGAME_COPY_CHERRYVIS_TO":
-                copyCherryVisDataTo = value;
                 return true;
             case "PRODUCTION_V2":
                 productionV2 = ProductionV2Mode.parse(value);
@@ -363,10 +359,6 @@ public class Env {
     /** Test seam (the --short gate is ENV-driven and has no other writer). */
     public static void setCoreAndDragoonGateForTest(boolean enabled) {
         coreAndDragoonGate = enabled;
-    }
-
-    public static String copyCherryVisDataTo() {
-        return copyCherryVisDataTo;
     }
 
     public static boolean shouldModifyBwapiIni() {

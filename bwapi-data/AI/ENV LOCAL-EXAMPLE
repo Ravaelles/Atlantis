@@ -5,7 +5,6 @@ FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
 GENERATE_CHERRYVIS_REPLAY=true
 MODIFY_BWAPI_INI=true
-POSTGAME_COPY_CHERRYVIS_TO=
 # After every local Wine game, copy the client log here when non-empty.
 # Wine runs only (the runner checks GAME_LAUNCHER=WINE in the same file).
 WINE_LOG_COPY=
