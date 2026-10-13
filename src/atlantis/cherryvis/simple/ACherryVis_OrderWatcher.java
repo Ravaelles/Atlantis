@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * each own non-building unit's LAST COMMAND ({@code lastCommandName}, the
  * engine's own getLastCommand: Move, Gather, Build, Train, Attack_Unit, ...)
  * is compared with the previous frame; a change lands in the unit's log as
- * {@code #Move@3910} - hash, command, frame.
+ * {@code #Move@0:12} - hash, command, game time.
  *
  * <p>Deliberately NOT a manager: it only observes and never takes control, so
  * it cannot perturb the chain it reports on (a manager in the chain would
@@ -29,12 +29,12 @@ public class ACherryVis_OrderWatcher {
         for (AUnit unit : Select.ourUnitsWithUnfinishedList()) {
             if (unit == null || unit.isABuilding() || unit.u() == null) continue;
 
-            // Owner spec: "#Move@3910" from the unit's last command name (the
+            // Owner spec: "#Move@0:12" from the unit's last command name (the
             // engine's own getLastCommand, null-safe inside).
             String command = "#" + unit.lastCommandName();
             if (!command.equals(lastOrders.get(unit.id()))) {
                 lastOrders.put(unit.id(), command);
-                CV.unitLog(command + "@" + A.now(), unit);
+                CV.unitLog(command + "@" + A.minSec(), unit);
             }
         }
     }

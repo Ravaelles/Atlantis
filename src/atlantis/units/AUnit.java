@@ -3482,11 +3482,11 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             // fires every frame; a manager change is rare). CV.unitLog is
             // itself a no-op unless CherryVis is enabled, so normal games pay
             // nothing. Non-buildings - that is the traced population.
-            // Shape (owner ask): "-GatherResources@1128" - the name, the frame,
-            // and a leading "-" marking the active manager, so manager lines
-            // sort apart from engine-order lines in the viewer.
+            // Shape (owner ask): "-GatherResources@0:12" - the name, the game
+            // time, and a leading "-" marking the active manager, so manager
+            // lines sort apart from engine-order lines in the viewer.
             if (!isABuilding()) {
-                atlantis.cherryvis.CV.unitLog("-" + managerUsed.toString() + "@" + A.now(), this);
+                atlantis.cherryvis.CV.unitLog("-" + managerUsed.toString() + "@" + A.minSec(), this);
             }
 
             this.manager = managerUsed;
