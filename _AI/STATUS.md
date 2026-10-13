@@ -1294,3 +1294,17 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (javadoc) - our order-timing sagas live in these semantics. LATCOM line
   now logs latCom/latencyFrames/remaining at every game start. Filed #80
   (one bounded setLatCom(false) experiment, reverted after).
+
+## Session 2026-10-13 (dragoon ASAP test, LatCom A/B kept, #81 filed)
+
+- Dragoon verdict: no production defect existed - the Wine log never reached
+  50 gas (Assimilator online ~3:58, ~32 gas by the 4:57 end), so the price
+  gate never opened; gates were always price-correct. `DragoonProductionAsapTest`
+  pins first-call ordering at exactly 125/50. Suite 468/0 (1 skipped).
+- LatCom A/B kept per owner instruction (latCom=false on the LATCOM line):
+  Pylon timing SAME (@1301 at 9/9), flapping SAME (none), Dragoon=0
+  confounded by #81 (25/25 cap from 3:02). Verdict inconclusive, not harmful.
+  Closes #80 (deleted).
+- Filed #81: late Pylon search refuses the corner neighborhood (1953x
+  physical + grid modulo); Pylon-1 in the same run was poverty-held
+  (40-88 min, all reachability/power true) - consistent with PylonAt8.

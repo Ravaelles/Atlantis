@@ -706,16 +706,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   re-verifies placement physics + full E2E. Owner priority: fully working
   OpenBW, separate model on it.
 
-- **#80 (2026-10-13) - latency-semantics experiment: setLatCom(false) for one game.**
-  Measured: PurpleWave runs `setLatCom(false)` + manual latency math
-  everywhere (`With.latency`); we run the JBWAPI default ON (never set, never
-  printed - now logged at start as LATCOM). LatCom=ON predicts unit state the
-  moment an order is issued (our #59 timing sagas play out in these
-  semantics); OFF reports only applied state. Steamhammer/McRave run ON,
-  Stardust tests run OFF. Protocol: one bounded --short with setLatCom(false)
-  (one line in setBwapiFlags, reverted right after), compare Pylon timing +
-  manager flapping + order-echo demotes. Blast radius covers every timing
-  assumption - the game verdict decides, no blind flip.
+- **#81 (2026-10-13) - late Pylon search refuses the whole neighborhood (OpenBW).**
+  `20261013_223821_short` (LatCom-OFF A/B): 3rd Pylon "Can't find place" at
+  3:02 with bank; `PYLON_FIND_FAILED` counts: `Can't physically build here`
+  =1953 plus hundreds of street-grid modulo rejections near the top-right
+  corner base [119,10]. The zero-supply grid yield (owner ask) doesn't cover
+  21/25 - supply capped to the 4:13 ForceExit, nothing trained (Dragoon=0).
+  Same family as #59/#50 (a different refusing predicate each time). Next:
+  attribute the 1953 in code (terrain vs grid footprint), then extend the
+  yield below a free-supply threshold (owner call - same class as the
+  zero-supply yield) or relax the grid near the corner. (Pylon-1 breakdown in
+  the same run shows poverty-held 40-88 min, not placement - consistent with
+  PylonAt8.)
 
 
 ### OpenBW headless run (2026-10-08)
