@@ -25,6 +25,13 @@ public class ProtossForbiddenByStreetGrid {
     public static boolean isForbiddenByStreetGrid(AUnit builder, AUnitType building, APosition position) {
         if (ignore(building)) return false;
 
+        // Aesthetics yield to a hard supply block: with zero free supply the
+        // game needs a Pylon anywhere buildable, not a pretty layout (measured
+        // on Wine: ~1600 grid refusals on a crowded base while capped 49/49,
+        // no Pylon ever again). Other conditions (minerals, occupancy, power)
+        // still apply - only the street grid steps aside.
+        if (building.isPylon() && A.supplyFree() == 0) return false;
+
         int moduloX = (position.tx() % GRID_SIZE_X);
         int moduloY = (position.ty() % GRID_SIZE_Y);
 

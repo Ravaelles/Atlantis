@@ -20,6 +20,11 @@ public class ProtossCriticalStuffInQueue {
         if (!A.hasMinerals(250)) {
             if (CountInQueue.countNotStarted(AUnitType.Protoss_Robotics_Facility) > 0) return false;
             if (CountInQueue.countNotStarted(AUnitType.Protoss_Photon_Cannon) > 0) return false;
+            // A queued Cybernetics Core pauses the worker pump below 250 minerals
+            // (owner ask: no reservation existed, so the pump ate the bank and the
+            // Core waited until a supply block accidentally stopped workers - the
+            // Core is the tech the whole early game pivots on, like Robo/Cannon).
+            if (CountInQueue.countNotStarted(AUnitType.Protoss_Cybernetics_Core) > 0) return false;
         }
 
         return true;
