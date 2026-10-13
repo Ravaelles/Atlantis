@@ -179,12 +179,6 @@ itself, #5, is design work and out of that order's scope).
 
   The mechanical-sweep details and the per-class triage are in
   `_AI/work-orders/WO-13-mechanical-archunit-sweep.md` and in git history.
-- **#35 CLOSED** (2026-10-04, by decision) - a mirror fight scored 0.88 instead of
-  1.0; the asymmetry is JFAP's own per-player deltas, so it is tie handling in a
-  vendored library, not our bug. Our `eval()` only matters from our own side; the
-  doctrine that came out of it is the B-18 penalty. The mirror test now asserts
-  reciprocity instead of comparing our side with itself.
-
 ## Review rounds
 
 Each review of the last window gets its findings and their dispositions here, so a
@@ -353,184 +347,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   or the band does not decide allocation order as assumed. #48's half stays
   fixed (465 plans, zero duplicate buildings). Next: print the goal's band in
   the plan line, then re-read the scheduler's sort-vs-allocate order.**
-
-- **#59 (2026-10-11) - THE REQUEUE GATE (fixed) + the builder that never fires (open, top
-  blocker). Answering the owner's "it worked hours ago, now it does not": there was NO code
-  regression - see the table below - and the fixable half is now fixed.**
-
-  **FIXED AND VERIFIED IN A GAME: a Gateway cancelled for "taking too long" was never
-  re-requested.** `CancelTooLongConstructions.constructionCancelledRequestAgainBecauseItsImportant`
-  asked "do we already have the maximum not-started ones?" **before** the call that frees the
-  slot:
-
-  ```java
-  if (CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)) return false;
-  ...
-  CancelNotStarted.cancel(type, "Taking too long, re-try");   // frees the slot, too late
-  ```
-
-  `maxAllowedAtOnce(Gateway)` is 2, so a plan holding two not-started Gateways vetoed its own
-  replacement. Measured in a full game before the fix: `### FAILED ### Requesting` = **0** and
-  `Taking too long, re-try` = **0** - the requeue path never executed at all. After the fix, on
-  the same command: **2 and 2**. Test `GatewayRequeueAfterCancelTest` (source-pinned on the
-  ORDER, which is the whole defect; proven to fail on the old order and pass on the new one).
-
-  **A probe kept, deliberately:** `NewConstructionRequest` now logs `REQUEST_ACCEPTED` /
-  `REQUEST_REFUSED_DUPLICATE` under `BUILDER_LOG=1`, because "no new construction appeared" had
-  two indistinguishable causes (producer gated out vs request rejected as duplicate) and this
-  item could not be diagnosed without it.
-
-  ---
-
-  **FIXED 2026-10-11 (commit `7278d55d`) - and the cause was NOT the engine, it was our own
-  distance comparison. `travelWhenReady` compared `groundDist(positionToBuildCenter())` against
-  the 1.4-tile "close enough to build" threshold, and both halves of that expression were wrong
-  for the question being asked:**
-
-  - **centre, not tile**: `positionToBuildCenter()` is offset by the building's tile dimensions
-    (~1.8 tiles for a 4x3 Gateway), so it can never be within 1.4 of a worker standing ON the
-    tile;
-  - **`groundDist`, not `distTo`**: `groundDistanceTo` routes through JBWEB
-    (`PositionUtil`), which `_AI/POSITION-FINDER.md` point 3 already records as unusable on
-    OpenBW. Measured side by side on the same worker and tile: **`distTo=1.3`,
-    `groundDist=1.8`** - the JBWEB-mediated number is inflated, and THAT was the one compared
-    against the 1.4 threshold.
-
-  So `shouldMoveToConstruct` stayed true while the worker stood on its site, `moveToConstruct`
-  ran every frame, and `IssueBuildOrder` - the only path to `unit.build` - was never reached:
-  the measured 35-43s cancels. **Verified in a game: the run that produced `Gateway=0` now
-  produces `Gateway=2`, and in one run `CyberneticsC=1 Dragoon=3` - the full opening.**
-
-  **A second, independent bug was found by the same trace and fixed:** `IssueBuildOrder` gated
-  the build attempt on `unit.lastActionMoreThanAgo(20)`, an action age that `AUnitOrders.move`
-  resets on every call (`setLastActionReceivedNow().setAction(...)`) - so for a worker whose
-  last command is `MOVE_BUILD` it was false on nearly every frame (measured: `lastActionAgo`
-  sawtoothing 2,5,8,11,14,17,20, one build attempt in the whole run). It now uses
-  `lastCommandIssuedAgo`, which is only updated when a command is actually issued. **This is the
-  third instance of that shape** (a debounce reading a value the path itself refreshes); the
-  other two are already documented in `TravelToConstruct`.
-
-  **Honest limit: reproducible improvement, not determinism.** Two verification runs after the
-  fix: `Gateway=2 + Dragoon=3` (passes) and `Gateway=0` (fails). Before the fix, vs-Zerg runs
-  gave `Gateway=0` consistently. Strictly better, not solved - the remaining variance is the
-  next item's territory (`#54`'s Cybernetics-Core refresh loop, which is what stops the
-  Dragoon).
-
-  ---
-
-  **Superseded diagnosis, kept because it is the record of the hunt** (it was wrong about the
-  cause being the engine's refusal - the refusal was a *symptom* of never getting there, and
-  the one `BUILD_ATTEMPT` that did happen was an `engineAccepted=false` on a worker whose last
-  command was still `Move`):
-
-  ```
-  Pylon    engineAccepted=true   distToBuild=0.0  isMoving=true  lastCommand=Build
-  Pylon    engineAccepted=true   distToBuild=0.9  isMoving=true  lastCommand=Build
-  Pylon    engineAccepted=true   distToBuild=0.6  isMoving=true  lastCommand=Build
-  Gateway  engineAccepted=false  distToBuild=0.4  isMoving=true  lastCommand=Move   <- refused
-  ```
-
-  **`distToBuild`, `isMoving` and the action are identical** for the Pylons that work and the
-  Gateway that does not. **The only difference is `lastCommand`**: `Build` vs `Move` - and
-  `lastCommandName()` reads the ENGINE's own `getLastCommand()`, so it is the engine telling us
-  our last accepted order was a move. The Gateway therefore sits `NOT_STARTED` until
-  `CancelTooLongConstructions` kills it at 35-43s, which is the churn the owner sees.
-
-  **Why Pylons are immune:** a Pylon's site is chosen in open ground and the worker arrives and
-  its move settles (`getOrder=PlaceBuilding` in the working trace); the Gateway site shares its
-  area with other builders/units, so `moveToConstruct` keeps re-issuing moves into the frames
-  where `IssueBuildOrder` then tries the build.
-
-  **A `stop`-then-build attempt was added and did NOT fix it** (`IssueBuildOrder`: on a refused
-  build, if `unit.isMoving()` stop and return). Measured: `stop` was never even reached in the
-  following run, and `gateways=0` again - so the assumption behind it (that the worker is moving
-  at that moment) is not what holds. **Do not repeat that patch without a trace showing the
-  stop being issued.**
-
-  **Superseded 2026-10-12 by the trace that DID show it:** later `BUILD_ATTEMPT` lines read
-  `distToBuild=1.3 isMoving=true lastCommand=Move` refused every frame - the worker IS moving
-  at refusal, it just never settles, so the old `lastCommand==Move && !isMoving` gate (added
-  for the stale-move twin of this defect) never fires. The condition is now bare
-  `lastCommand==Move`: stopping inside the 1.4-tile threshold is always safe (travel
-  issues no moves there; the >= 3 age gate retries once settled). Different trigger,
-  same sequence - the "do not repeat" above meant the moving-worker variant, which is
-  exactly what the new trace demanded.
-
-  **Standstill probe 2026-10-12 (owner's ask):** `BUILD_BREAKDOWN` in
-  `BuilderDiagnostics`, fired from `BuilderManager` when a builder stands still
-  60+ frames on a NOT_STARTED site (`BUILDER_LOG=1`, every 30th frame). It calls
-  every `canBuild` level separately - worker gates, unit/game/our-port
-  reachability, no-builder/with-builder tile rule, full gate, explored,
-  affordability - so the refusing term is read, not inferred. A short
-  building-only run is the existing `--short` tier with this flag; no new
-  harness was needed for it.
-
-  **BISECTION RESULT 2026-10-12 - it is poverty, exonerating regions, power,
-  occupancy and placement in one line.** Gateway at [96,111]: `unitHasPath`,
-  `gameHasPath`, `ourPort` all true; `noBuilder/withBuilder/withBuilderExplored`
-  all true; `hasPower=true`, `unitsInRect=0`, terrain ok; but `canBuild=false`.
-  Flag bisection (`000=true`, `100=false`, `010/001=true`) isolated the third
-  sub-flag: `Game.canMake` -> `minerals(28) < 150`. The engine is right - the bot
-  is broke when it attempts. Regions, power, occupancy, placement and the patched
-  fallback are all cleared by the same line. The defect is upstream: ~10 workers
-  hold ~30 minerals (spent as fast as mined on the worker pump?), so the Gateway
-  is attempted broke, refused, and cancelled at 35s. Different site, different
-  mechanism than [14,51] (`noBuilder=false` there - power or occupancy, still
-  needs its own split run).
-
-  **Next measurement, exact and cheap:** in `IssueBuildOrder`, the moment `unit.build(...)`
-  returns false, print `unit.u().canBuild(type, tile)`, `unit.u().canIssueCommand(canBuild(
-  type, tile))` and `unit.u().getOrder()` - i.e. WHICH engine gate says no, rather than assuming
-  it is the order type. The one thing already known is `canCommand=true` (printed) and
-  `canBuildHere=true` (printed), so the remaining terms are `canIssueCommandType` and the
-  `isBuilding || isInterruptible` branch - and `isInterruptible` was measured true earlier in
-  `PLAN-STAGE4-COMMAND-PATH.md`, which makes `canIssueCommandType` the last candidate standing.
-
-  **Superseded framing, kept for the record: "it worked hours ago, now it does not".**
-
-  **There is no commit between the working run and the broken one that changed any behaviour.**
-  Verified with `git log --name-only` over the window: the only commit in between (`e657b83f`
-  "Tweaks", 20:40) **deleted one `_AI/e2e/*.md` file and touched no source**. The jar was
-  freshness-checked fresh against the working tree in both runs.
-
-  **What actually differs between "worked" and "did not", measured with the same jar:**
-
-  | run | budget | opponent | result |
-  |---|---|---|---|
-  | 20:03 | 120 s | Protoss | `Gateway=2` + CyberneticsC + Dragoon (worked) |
-  | 20:39 (owner) | 1200 s in-game | Zerg | 0 Gateway, 0 army |
-  | mine now | 120 s | Protoss | 0 Gateway |
-  | mine now | 120 s | Zerg | `Pylon=3 Gateway=0 Zealot=0 Dragoon=0`, ingame=1209 s |
-
-  **The discriminator is not the race and not the code - it is whether the construction
-  pipeline happens to get a Gateway started before the run ends.** The failure signature is
-  identical in every failing run: a Gateway construction exists, its builder walks to it,
-  and 43 game-seconds later `Cancel construction: Gateway / Gateway took too long (43s) /
-  at:[14,51] / buildable:true`, after which it is **never re-requested** (the log has no
-  second `ADDED TO QUEUE` for Gateway). Two Gateway constructions, two cancels, then silence -
-  at `min=834`, `sup=20`, with 25 Probes. So the bot has the economy and the intent and still
-  ends at zero Gateways.
-
-  **This is why the earlier "it works" result was real but not reproducible:** the fix to
-  `TravelToConstruct` (the 1.4-tile center-vs-tile distance) removed the `WTF?!?` refresh loop
-  (46-50 -> 0, measured), which was enough for ONE run to get a Gateway through. It did not
-  remove the cancel-and-never-requeue, which is the same construction-lifecycle defect as #57.
-  **Do not re-open the distance fix - it is verified. The remaining blocker is the requeue.**
-
-  **Next measurement (names the bug, ~20 lines):** instrument `Construction.cancel` to print
-  the caller chain, and `AddToQueue`/`NewConstructionRequest` to print when a Gateway request
-  is refused. The question to answer is narrow: after `CancelTooLongConstructions` cancels the
-  Gateway, why is there no new request - is `ProduceGateway` gated out (it has ~20 gates, all
-  logged with `log("...")`), or is the request made and rejected as a duplicate
-  (`alreadyExists`, #57)?
-
-  **Stability note 2026-10-13 (autonomous): six of the last eight --short runs
-  PASS across two maps and two matchups, all with Core+Dragoons+gas when they
-  pass; both failures are timing (gas flowed too late for sub-330 s horizons,
-  gates correctly failed), none structural since the center rule. The OpenBW
-  half of this variance item is stable; what remains is the Wine half (owner
-  runs) and the threshold-boundary question for builders parked at exactly
-  the issue distance (needs a BUILDER_LOG Wine game).**
 
 - **#60 (2026-10-11, top economy blocker) - THE WORKER GATE OSCILLATES BETWEEN TWO
   OPPOSITE FAILURES, and it explains "the test takes forever", the 8000-mineral bank and the
@@ -813,18 +629,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   **Do not** delete from the bottom of this list upward: step 3 before step 2 is
   a bot that cannot research or build race-specific units.
 
-- **#46** Three Protoss strategies declare a build order that does not exist:
-  `3 Gate`, `12 Nexus`, `Carrier Push` (found by `tests/unit/StrategyBuildOrderTest`,
-  which compares the names set in `ProtossStrategies.initialize()` against the files
-  in `bwapi-data/AI/build_orders/Protoss/`). Missing in both the repo and
-  `/sc-ai/BOTS/AtlantisP/AI/build_orders`, so not a version skew. Choosing one of
-  them starts a game with **no build order at all**: the bot mines and does nothing,
-  no error - the failure the OpenBW run showed.
-  Fix options, cheapest first: rename the entries to an existing file, add the
-  missing `.txt`, or delete the unreachable entries. **Needs the owner - game
-  policy, not a mechanical fix.** The design flaw behind it is fixed:
-  `ProtossStrategies.initialize()` now runs before `StrategyChooser` selects, since
-  a chosen strategy loads its order while being selected.
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:172` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
@@ -840,12 +644,38 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 - **#73 (2026-10-13) - acceptance tier is red on pre-existing failures (not the fast suite).**
   11 failures, all reproduced on the pre-session tree (worktree at 683b9678,
-  removed after): 3 stale sunken-colony eval pins in CombatEvaluatorTest,
+  removed after): 3 stale eval pins in CombatEvaluatorTest (two sunken-colony plus
+  the Marines-vs-Zergling/Zealot direction pin),
   FakeUnit NPEs (`u` null: Dragoon/DynamicUnit production, Terran commanders),
   ZealotSelfDefense, OccupiedTile, TerranInfantryWeapons. Fast suite
   (tests.unit 428/428) and games are green; these fail identically with and
   without this session's changes. Fix pins vs harden fakes (owner call -
   combat-eval numbers touch ADR 0006 doctrine).
+
+
+- **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
+  #59's fixed halves are verified and its line is deleted: requeue cancel-before-count
+  (`GatewayRequeueAfterCancelTest` 2/2, order in `CancelTooLongConstructions:192-194`),
+  distTo-vs-center distance (`GatewayRequeueAfterCancelTest` travel case),
+  `lastCommandIssuedAgo` debounce (`BuildOrderStarvedByMoveDebounceTest` 1/1, no
+  `lastActionMoreThanAgo` left under `production/constructions`), bare-`Move` stop
+  (`IssueBuildOrder:184-185`) and the `BUILD_BREAKDOWN` probe
+  (`BuilderDiagnostics:105`, via `BuilderManager:85`) - plus the OpenBW stability
+  (6/8 recent --short PASS, hold + builderless-demote game-verified). What remains
+  needs a Wine `BUILDER_LOG=1` game: builders alternating Builder/Gather on a site
+  (the steal-gone confirmation for the hold fix) and builders parked exactly at
+  the 1.4-tile issue distance. No bounded OpenBW run reaches either; do not patch
+  blind.
+
+- **#75 (2026-10-13) - three Protoss strategies name build orders that do not exist (remainder of #46).**
+  `3 Gate`, `12 Nexus`, `Carrier Push` - choosing one starts a game with no build
+  order at all (the bot mines and does nothing, no error). The init-order half is
+  verified and #46's line is deleted: `ProtossStrategies.initialize()` runs before
+  `StrategyChooser` (`OnGameStarted.java:115` before `:118`), and
+  `StrategyBuildOrderTest` 5/5 pins the missing set as exactly these three (any
+  fourth missing file, or any of the three landing on disk, fails it). What remains
+  is owner policy (D5): rename the entries, add the `.txt` files, or delete the
+  entries.
 
 
 ### OpenBW headless run (2026-10-08)

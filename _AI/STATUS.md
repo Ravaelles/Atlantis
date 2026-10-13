@@ -1092,3 +1092,25 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   builderLog-gated) names the next measurement: classification vs allocation
   order. #35 kept (reciprocity holds, class red on unrelated stale pins -
   filed #73 with pre-session-tree proof).
+
+## Session 2026-10-13 (autonomous: #35 closed, #59/#46 split off)
+
+- Closes #35 (deleted): reciprocity re-verified, not just re-read - all 5
+  `assertReciprocal` tests in `CombatEvaluatorTest` pass
+  (`relativeScoreIsAReciprocalPair`, `fourMarinesBeatOneHydralisk`,
+  `threeMarinesAgainstTwoHydralisksScoreOurWay`, `marinesAndMedicBeatOneHydralisk`,
+  `oneMarineAgainstOneEnemyMarine` - the mirror test, twice) plus
+  `AtlantisJfapTest` 2/2; B-18 hedge `OUR_SIDE_HEDGE = 0.3` confirmed our-side-only
+  (`CombatEvalScale:65`, applied `AUnit:2578`, skipped for enemies `:2564`).
+  The class's only red is the 3 known pre-existing pin failures, tracked in #73
+  (label corrected: two sunken-colony + one direction pin, not three sunken).
+- Retires #59's line, files #74: fixed halves re-verified (12/12 unit green -
+  requeue, strategy orders, move-debounce, gas distance, travel; cancel-before-count
+  `CancelTooLongConstructions:192-194`, `lastCommandIssuedAgo` `IssueBuildOrder:102`,
+  bare-`Move` stop `:184-185`, `BUILD_BREAKDOWN` `BuilderDiagnostics:105`).
+  #74 keeps the Wine-only remainder (Builder/Gather alternation, 1.4-tile boundary).
+- Retires #46's line, files #75: init-before-chooser verified
+  (`OnGameStarted:115` before `:118`, `StrategyBuildOrderTest` 5/5 pins the missing
+  set as exactly the three tracked). #75 keeps the owner-policy remainder.
+- Not touched: #52 (another session has the fix in flight in its dirty tree -
+  `DynamicGoals`/`PullForwardGoals`/`GameStateSnapshot`/`GoalSourcesTest`).
