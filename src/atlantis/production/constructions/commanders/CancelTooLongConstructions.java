@@ -116,18 +116,17 @@ public class CancelTooLongConstructions {
             CancelNotStarted.cancel(type, "Taking too long, re-try");
 
             if (CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)) {
+                // Diagnostic, not a behavior change (owner's Wine game: a Nexus
+                // cancelled after 130s was never re-requested, and the log could
+                // not say whether the producer was gated out or the request was
+                // refused). Names the veto with its counts.
+                ErrorLog.printMaxOncePerMinute(
+                    "REQUEUE_VETO " + type.name()
+                        + " notStartedInQueue=" + CountInQueue.countNotStarted(type)
+                        + " maxAllowedAtOnce=" + maxAllowedAtOnce(type));
                 return false;
             }
-//            if (type.isPylon()) return false;
 
-//            if (type.isCyberneticsCore()) {
-//                AUnit pylon = Select.ourBuildingsWithUnfinished()
-//                        .ofType(AUnitType.Protoss_Pylon).nearestTo(oldPosition);
-//
-//                System.out.println("CC dist to pylon: " + (pylon != null ? pylon.distToDigit(oldPosition) : "no pylon"));
-//            }
-
-//            if (type.isProtossImportantBuilding() || type.isPylon()) {
             newOrder = AddToQueue.withHighPriority(type);
 
             ErrorLog.printMaxOncePerMinute(
