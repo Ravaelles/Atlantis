@@ -970,3 +970,21 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   one was caught by the standalone test and removed from the list). Live path
   set in both git-ignored machine ENVs; tracked LOCAL-EXAMPLE documents the
   key empty. Next Wine game lands at `/sc-ai/E2E OpenBW LOGS/last-wine.log`.
+
+## Session 2026-10-13 (owner asks): Core reservation + grid yield, verified in game
+
+- Owner's Wine log (manual.log, 6:55, 49/49 cap): Pylon search dead late,
+  Core never reserved, builders ping-pong Builder/Gather on every site.
+- Committed: (1) queued Cybernetics Core pauses the worker pump below 250
+  (joins Robo/Cannon in ProtossCriticalStuffInQueue - existing machinery, no
+  new bookkeeping); (2) Pylon street grid yields at zero free supply
+  (aesthetics yield to correctness; minerals/occupancy/power still apply).
+  Tests: CriticalStuffCoreTest + GridYieldsWhenSupplyBlockedTest 2/2 each,
+  unit 425/425, arch store unchanged.
+- Verified `--short` with both live: PASS (`Core=1 Dragoon=3`), Core attempts
+  at 125 s (was ~190 s), 86 CriticalStuff pump pauses in log. No regression.
+- Declined with reasons (CONVENTIONS section 3): fallback threshold table
+  (early Pylons build fine - 5 by 49 supply - the miss is late-search, not
+  timing) and producer-early-creation (queueing Core at 18 without bank
+  reserves nothing - reservations attach at READY - so it needs a redesign
+  of reserve timing with Wine-length A/B, not a one-line change).
