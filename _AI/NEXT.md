@@ -262,31 +262,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   before anyone touches it: a construction whose builder is assigned a frame later would
   be cancelled by the safety net.
 
-- **#42 CLOSED 2026-10-11 (by execution, without a dedicated fix) - the first Assimilator is
-  built.** Measured on a 251-second OpenBW run:
-  `### Protoss: Nexus=1 Probe=21 Pylon=4 Gateway=2 Zealot=6 CyberneticsC=1 Assimilator=1
-  (1 lost) ###`. The item had tracked "0 gas mined all game, dragoons impossible from frame
-  one" and suspected the `Strategy.isExpansion() && supply <= 44` gate or the buildings
-  commander's `applies()`. **Neither was the cause**: the bot simply never got that far,
-  because the construction pipeline could not match a finished building to its construction
-  and deadlocked its workers before the tech tree was reached. Once that was fixed (see the
-  `DefineConstructionForNewUnit` note under #49) the assimilator appeared on its own, with no
-  change to any gate. The diagnostics added for this item (reason labels on producer
-  rejections) stay - they are what a future "production stopped" report will be read from.
-
-  **Superseded description, kept as the record of the hunt:** First assimilator never ordered
-  despite a finished Cybernetics Core
-  (`GAME_29A29B04`: 0 gas mined all game, dragoons impossible from frame one, book #9
-  at supply 22 never fired and neither did the dynamic path). Suspects, in order:
-  `Strategy.isExpansion() && supply <= 44` (supply peaked at 40), the buildings
-  commander's `applies()` (minerals 220...), the core-timing gate. **Diagnostics
-  first:** name the blocking gate in the log with the same reason-pattern the producers
-  got in B-22, then decide. No gating change blind - the last three "production
-  stopped" reports were three different root causes (idle-gateway reading, stale jar,
-  no gas), and each looked like the others from the score line.
-
-## Housekeeping
-
 - **#15 PARTIAL — deployed Protoss jar freshness.** Rebuilt
   `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` with the canonical builder; freshness
   fingerprint matches the source tree (`94e518…`) and bytecode major is 52
@@ -835,17 +810,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
   `CONVENTIONS.md` §3a.
 
-- **#64 CLOSED 2026-10-12 - StackOverflowError in the Pylon relaxed-margin fallback.**
-  Owner's log tail: `findStandardPositionFor:189` <-> `findWithRelaxedBoundaryMargin:206`
-  alternating until the stack overflowed, bot dead instead of "no tile". Mechanism:
-  the fallback branch fired on every failed Pylon sweep with no re-entry guard, so
-  the relaxed pass re-entered the same branch forever. One-corner case that triggers
-  it: a sweep that fails even relaxed (dense base / corner geometry).
-  Fix: `&& !relaxedBoundaryMargin` on the fallback branch. Proof: new
-  `PylonFallbackNoRecursionTest` (zero search radius fails both passes by
-  construction) throws `StackOverflowError` on the old code and passes on the new;
-  flag reset asserted. Unit scope green.
-
 - **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
   Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
   written, then no "Killing"/"Exit" prints, one more silent ForceExit (latch),
@@ -855,17 +819,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   hooks skipped) on the self-exit path, so a hung teardown fails in ~30 s instead
   of burning the cap. Skipped for `END_GAME_VIA_ENGINE` and in tests. Still open:
   catch one hanging run with `jstack` and name the frame.
-
-- **#67 (2026-10-12) - sleep gate overwrote the owner in history (CLOSED).**
-  Owner's question: `UnitStateManager`/`WorkerManager` lines in a builder's
-  history, alternating with the leaf - dispatchers that only forward. Mechanism:
-  the latency gate returned `usedManager(this, "SleepUntilFrame")`, stamping
-  whichever dispatcher ran (UnitState one frame, Worker the next) over the true
-  owner, with the leaf's stale tooltip attached. That alternation read as hijack
-  and cost two withdrawn readings (#48/#61). Fix: the gate returns `this`
-  (chain still stops) without touching owner or history
-  (`SleepGateOwnershipTest`, fails pre-fix). `unit.manager()` semantics kept -
-  dozens of `isActiveManager` gates depend on it.
 
 - **#68 (2026-10-12) - per-unit data never attaches ("i???" on click). ROOT CAUSE
   FOUND, fix in.** The viewer fuzzy-matches cvis units against replay units by
@@ -879,9 +832,9 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Follow-up in this item: per-frame manager+order lines for non-building units
   (viewer renders `units_logs`, not the `manager` update field - wire order
   issue points behind a flag). DONE 2026-10-12: `CV.unitLog` at `BwapiOrderSink`
-  (every order, OK/REFUSED) + on manager change, behind const-false
-  `CHERRYVIS_UNIT_ORDERS`; proven in game (16 units, 30 manager + 1272 order
-  lines), flag reverted after. A killed run once "collected" the previous
+  (every order, OK/REFUSED) + on manager change; since 2026-10-13 the manager
+  mirror is unconditional (owner ask - the flag stays only for per-order
+  chatter), verified 22 units with logs in game. A killed run once "collected" the previous
   run's trace and passed - source dir is now purged pre-run.
   Reference analysis 2026-10-12 (`cherryvisdumper.cpp/.h`): shapes confirmed -
   first_seen `{id,type,x,y}` per frame arrays, updates `{task|type}` on change,
@@ -902,16 +855,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   uniqueness in 30px, 10-18px in 20px), one-to-one consumption, NO retry of a
   missed frame. Fragile cases: dense mineral lines, same-spot warps; a WASM
   throw mid-run freezes all later units while early ones keep working.
-
-- **#66 (2026-10-12) - game starts paused, keypress "2" unfreezes it (CLOSED).**
-  Owner's IDE/Wine report: 40 s frozen from the start, first "2" starts the game.
-  Two real traps, both fixed without behavior change: (1) speed changes paused
-  first and unpaused last with no `finally` - anything throwing in between left
-  `GameSpeed` paused forever while `OnEveryFrame` spins (`KeyboardPauseReleaseTest`
-  pins it with a throwing game mock, fails pre-fix); (2) a keys file left by a
-  killed session replayed Pause into the next game - `KeyRelay.purge()` at both
-  launcher starts drops it unexecuted. Engine-pause (`resumeGame`) path kept as
-  is - it already covers its case with a test.
 
 - **#65 (2026-10-12) - CherryVis per-unit reporting: first-seen fixed, two format
   questions open.** Owner's report: whole-bot reporting worked, per-unit never did

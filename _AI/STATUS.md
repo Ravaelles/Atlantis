@@ -1063,3 +1063,11 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 3. **Cleanup**: dead commented methods in `Decision`, 89-line batch earlier.
 4. **E2E stability**: another PASS (`Pylon=5 Gateway=3 Dragoon=3`), 7/9
    overall, both misses timing with honest gates.
+
+## Session 2026-10-13 (autonomous: 4 closed-line deletions with re-verification)
+
+- Deleted CLOSED lines #64 (guard present, PylonFallbackNoRecursionTest 1/1),
+  #67 (SleepGateOwnershipTest 1/1), #66 (KeyboardPauseReleaseTest 1/1), #42
+  (Assimilator built in 5+ runs since, incl. Terran Refinery). Full narratives
+  stay in git history per process. Corrected stale #68 text (manager mirror
+  unconditional since 2026-10-13, not flag-gated).
