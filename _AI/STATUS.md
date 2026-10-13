@@ -1039,3 +1039,14 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
    owner call).
 3. **Sweep**: game/information/application trees show no more dead classes
    (one candidate triaged, kept deliberately).
+
+## Session 2026-10-13 (autonomous: DECISIONS.md + 3 items)
+
+- New `_AI/DECISIONS.md` (indexed in README): D1 legacy deletion, D2 fallback
+  table, D3 early-creation redesign, D4 Singularity, D5 thresholds+expansion,
+  D6 ADR seam, D7 cache/intent seams, D8 Terran target. Deleted on approve.
+- (1) game/information/application sweep: only ATechManager zero-ref -
+  triaged live (sole Singularity path, filed #72) instead of deleted.
+- (2) 180949_long (429 s): Dragoon=7, still Nexus=1 - expansion is
+  threshold-gated (3 gateways, 429 s < 630), not broken. Folded into D5.
+- (3) 313 dead comment lines removed in game listeners, suite green.

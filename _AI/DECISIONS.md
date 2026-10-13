@@ -38,10 +38,11 @@ existing machinery.
 zero callers - Dragoons fight without range all game. Wire (free combat
 value, needs a long-game proof research completes) or delete (dead code).
 
-## D5 - Worker-gate and mineral-distance thresholds (NEXT #60, #51)
+## D5 - Worker-gate, mineral-distance and expansion-timing thresholds (NEXT #60, #51, #58-timing)
 
-Strategy tuning, not defects. Same for cannon producers (#39) and the three
-missing build orders (#46: rename entries, add files, or delete).
+Strategy tuning, not defects (`--long` games confirm: 7 Dragoons at 429 s
+with no expansion - gates, not bugs). Same for cannon producers (#39) and
+the three missing build orders (#46: rename entries, add files, or delete).
 
 ## D6 - Production race-strategy seam (NEXT #8)
 
