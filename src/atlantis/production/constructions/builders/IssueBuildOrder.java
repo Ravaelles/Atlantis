@@ -47,31 +47,13 @@ public class IssueBuildOrder extends HasUnit {
             }
         }
 
-//        if (We.protoss()) {
-//            AUnit newBuilding = Select.ourUnfinished()
-//                .ofType(buildingType)
-//                .inRadius(2, unit).nearestTo(unit);
-//            if (newBuilding != null) {
-//                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
-//                construction.setBuilder(null);
-//                unit.stop("Finished!");
-//                return false;
-//            }
-//        }
-
         if (A.canAfford(buildingType.mineralPrice(), buildingType.gasPrice())) {
-//            System.err.println("buildPosition PRE = " + construction.buildPosition());
-//            APosition buildPosition = refreshBuildPosition(construction);
-//            APosition buildPosition = refreshConstructionPositionIfNeeded(construction, buildingType);
             APosition buildPosition = construction.buildPosition();
 
             if (buildPosition == null) {
                 ErrorLog.printMaxOncePerMinute("Cancel constr of " + buildingType + " because position null");
                 return false;
             }
-
-//            System.err.println("buildPosition POST = " + buildPosition);
-//            System.err.println("buildPosition.translateByTiles(1, 1) = " + buildPosition.translateByTiles(1, 1));
 
             moveOtherUnitsOutOfConstructionPlace(buildPosition.translateByTiles(-3, -3));
 
@@ -96,13 +78,7 @@ public class IssueBuildOrder extends HasUnit {
                 return false;
             }
 
-//            if (Select.ourWithUnfinishedOfType(AtlantisRaceConfig.GAS_BUILDING).inRadius(3, buildPosition).notEmpty()) {
-//                construction.cancel();
-//                return false;
-//            }
-
             if (!unit.isConstructing() || AGame.now() % 37 == 0) {
-//                AConsole.println("_CONSTRUCT_ " + buildingType + " at " + buildTilePosition + ", construction: " + construction);
 
                 if (Strategy.get().isExpansion() && A.supplyUsed() <= 17) {
                     RefreshConstructionPosition.refreshIfNeeded(construction);
@@ -229,8 +205,6 @@ public class IssueBuildOrder extends HasUnit {
                         return true;
                     }
                 }
-//                System.err.println("unit.A = " + unit.action().name());
-//                System.err.println("unit.B = " + unit.getLastCommandRaw().getType().name());
                 return true;
             }
         }
