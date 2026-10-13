@@ -1257,3 +1257,21 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Admission stands: "unfinished explains everything" was wrong (Zealot=6 at
   zero gateways killed it), file-confusion dismissals were wrong. The remaining
   open question is owned explicitly in #78 instead of explained away.
+
+## Session 2026-10-13 (desync verdict + @minSec + idle-workers solved)
+
+- OpenBW #27 confirmed real ("openbw creates desynced replay", 2019,
+  unassigned, second Linux confirmation 2021): bot log correct, replays
+  desync early. Verdict: LIVE is truth (roster, gates, traces), replays are
+  position-viewing only. #78 rewritten accordingly; engine replay-writer fix
+  out of scope (no upstream fix to update to; reinstall pointless).
+- Pylon-2 "refusal" NOT reproduced: owner's snippet (#Build→-Gather→#Gather
+  in 3-4f) is the normal warp-and-release signature, and no run shows an
+  engine Pylon refusal (all BUILD_ATTEMPT accepted). Newest run Pylon=4.
+- Idle fresh workers SOLVED, not desync: 19/19 probes idle EXACTLY 302f
+  (#NO_COMMAND→#Gather, zero Move between) = training time - the watcher sees
+  units still inside the Nexus (training units are listed incomplete), then
+  they pop out and mine. Uniform, self-healing, engine-not-ready (#63 class).
+  Military never-gatherers expected.
+- Unit logs now `@minSec()` (owner spec): `#Move@0:12`, `-GatherResources@0:12`
+  - watcher + manager mirror. Suite gate next.

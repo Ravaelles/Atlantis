@@ -678,19 +678,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   either way).
 
 
-- **#78 (2026-10-13) - roster-vs-replay divergence: counting exonerated, pairing suspect.**
-  The phantom theory is DEAD for the counting pipeline: `RAW_ENGINE_UNITS`
-  dump (`20261013_214302`, temporary probe, removed after reading) shows the
-  raw `getUnits()` list matching the roster 1:1 - 28/28 entries exists=true
-  completed=true (2 Gateways, 4 Zealots, Core all REALLY there). Our counts do
-  not invent units. What remains unexplained is the OWNER's replay showing
-  zero gateways for a logged game: the prime suspect is a replay-pairing
-  mixup (a stale `.rep` opened for the logged game - the engine mangles
-  configured names, REPLAYS accumulates). Needs the owner: which `.rep`
-  timestamp was opened, and does it match the run dir? If the timestamps
-  match and the replay still shows nothing, the suspect moves to OpenBW
-  replay-writing itself. Completed-only roster (D9 executed) stands
-  regardless - gates are honest now.
+- **#78 (2026-10-13) - replay-vs-live divergence: OpenBW #27, live is truth.**
+  Counting exonerated by raw dump (28/28 exists+completed, 1:1). The pairing
+  mixup is DEAD (owner cleared REPLAYS, single file, timestamps match) - and
+  the replacement suspect is confirmed REAL: OpenBW issue #27 ("openbw
+  creates desynced replay", open since 2019, confirmed by a second user on
+  Linux) - bot log correct, generated replays desync shortly into the game.
+  Standing consequences: (1) roster/E2E gates read LIVE truth - valid;
+  (2) replays are position-viewing only, never unit-existence truth;
+  (3) viewer fuzzy-matching compares live-true traces against desynced
+  replays, so residual "unmatched" on --save-replay pairs is expected -
+  direct unit_ids pairs bypass it for per-unit panels. Fixing the engine's
+  replay writer is out of scope (upstream C++, open since 2019, unassigned);
+  our OpenBW version has no fix to update to. Reinstall changes nothing.
 
 
 ### OpenBW headless run (2026-10-08)
