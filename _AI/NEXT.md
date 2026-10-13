@@ -1047,3 +1047,9 @@ and the traps the rewrite must avoid. Read it before touching any of this.
   `!`, but it fires only where no bounded run reaches, so no blind one-char
   fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
   flip with that log as evidence.
+
+- **#72 (2026-10-13) - `ATechManager.researchDynamically` has no callers: Singularity
+  Charge is never researched.** The only dynamic upgrade path (Core, supply-gated,
+  affordability-checked) is referenced nowhere - Dragoons fight without range
+  all game. Wire it (free, big combat value, needs a long-game verification
+  that research completes) or delete it (dead code). Owner call either way.
