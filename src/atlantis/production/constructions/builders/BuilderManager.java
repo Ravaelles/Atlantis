@@ -71,7 +71,6 @@ public class BuilderManager extends Manager {
                     + construction.buildingType() + " status=" + construction.status()
                     + " pos=" + construction.buildPosition() + " managerHistory=" + unit.managerLogs());
             }
-//            System.err.println("@ " + A.now() + " - construction.status() = " + construction.status());
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
@@ -94,12 +93,6 @@ public class BuilderManager extends Manager {
                 Manager safetyManager = handleSubmanagers();
                 return safetyManager != null ? safetyManager : usedManager(this, "BuilderWaiting");
             }
-//            else if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
-//                // Do nothing - construction is pending
-//            }
-//            else if (construction.status() == ConstructionOrderStatus.FINISHED) {
-//                // Do nothing - construction is finished
-//            }
         }
         else {
             ErrorLog.printMaxOncePerMinute("construction null for " + unit);

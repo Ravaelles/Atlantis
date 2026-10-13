@@ -25,9 +25,6 @@ public class TravelToConstruct extends HasUnit {
         AUnitType type = construction.buildingType();
         AUnit builder = construction.builder();
 
-//        if (construction.buildingType().isCyberneticsCore()) {
-//            System.err.println(A.minSec() + " Travel? CyberneticsCore");
-//        }
 
         if (unit == null) {
             throw new RuntimeException("unit empty");
@@ -81,7 +78,6 @@ public class TravelToConstruct extends HasUnit {
         }
 
         else {
-//            if (type.isCyberneticsCore()) System.err.println(A.minSec() + " Dont MOVE TO CyberneticsCore");
 
             if (RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
                 unit, construction, type, buildPosition, builder)
@@ -98,10 +94,8 @@ public class TravelToConstruct extends HasUnit {
 
         AUnitType type = construction.buildingType();
 
-//        if (type.isCyberneticsCore()) System.err.println(A.minSec() + " Travel? CyberneticsCore");
 
         if (ShouldNotTravelToConstructYet.check(type, distance)) {
-//            if (type.isCyberneticsCore()) System.err.println(A.minSec() + "     ########## NO !!!");
             construction.builder().setTooltipTactical("Wait to build " + type.name() + "(" + A.digit(distance) + ")");
             return false;
         }
@@ -146,7 +140,6 @@ public class TravelToConstruct extends HasUnit {
     }
 
     public int needThisMineralsForLongDistanceConstructionTravel(double distance, AUnitType type, ProductionOrder order) {
-//        return (!type.isGateway() ? 0 : ReservedResources.minerals())
 
         Orders notStartedEarlierOrders = Queue.get()
             .notStarted()
@@ -154,7 +147,6 @@ public class TravelToConstruct extends HasUnit {
 
         int penaltyIfManyOtherOrders = 0;
         if (notStartedEarlierOrders.size() > 0) {
-//            notStartedEarlierOrders.print("Not started earlier orders that " + type);
 
             if (notStartedEarlierOrders.size() >= 2) penaltyIfManyOtherOrders = 130;
             else if (notStartedEarlierOrders.size() >= 1) penaltyIfManyOtherOrders = 40;
@@ -165,9 +157,6 @@ public class TravelToConstruct extends HasUnit {
             + penaltyIfManyOtherOrders
             + (A.supplyUsed(9) ? -150 : -96); // Quicker-bonus when have more workers
 
-//        if (type.isGateway()) {
-//            System.err.println("needMinerals = " + needMinerals + " / " + type + " / penalty:" + penaltyIfManyOtherOrders);
-//        }
 
         return needMinerals;
     }
