@@ -929,3 +929,5 @@ in a game, not just in its test.
   race/combat micro (AttackAsWraith, TerranInfantryShouldRetreat,
   ZergRetreating, ProtossZealotLongNotAttacked) - owner eyes first.
 - Live legacy position path kept (refusal logged); only dead code goes.
+
+Store note: core rule 267 -> 264 via deletions (ratchet holds, +0/-3).
