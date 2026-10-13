@@ -399,32 +399,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 - **#47 CLOSED** - the OpenBW E2E loop works end to end: the runner attaches, is bounded, self-terminates
   and asserts a scenario. The long history of the attach/placement blockers is in `_AI/CASE-STUDIES.md` (#47),
   and the tooling that replaced it (two tiers, explicit OK/FAIL report, durable logs) is `scripts/run-openbw-e2e.sh`.
-
-  - **#50 - The legacy planner never checks Pylon power, so a Protoss building can be
-  placed outside a pylon's field.** Found from the owner's IDE game: a Cybernetics
-  Core was sent to a position with **no pylon covering it**. Verified in the source -
-  power is checked in exactly two places, and neither is the default path:
-  - `ProtossAllowHereEarlyEvenWithoutRequirements:23` does check
-    `needsPower() && !IsPoweredByAPylon.check(position)`, but it is only reached for
-    buildings `AllowToProduceEarlyWithoutRequirements.isAllowedForProtoss()` admits,
-    and line 29 restricts the "early" branch to gateways;
-  - `placement/core/PsiGating` gates power in the **rewritten** planner, which only
-    runs with `PLACEMENT=catalogue`.
-  `PositionFulfillsAllConditions` - the condition chain the default
-  `APositionFinder` uses - does **not** check power at all, and `FindPosition:136`
-  has the check **commented out**.
-  So with the default planner a power-needing building is placed wherever the other
-  conditions allow. This is the same gap `_AI/POSITION-FINDER.md` point 4 records
-  from the other end ("`Game.hasPowerPrecise` is not usable... Power is now computed
-  from our own Pylons at the engine's 6-tile radius") - the fix landed in the new
-  planner and never in the old one.
-  Fix: add the power condition to the shared chain (or to `ProtossPositionFinder`)
-  so both planners agree, then a test that a Cybernetics Core is refused on a tile
-  no finished pylon covers. Measured trigger 2026-10-13 (`20261013_100525`,
-  Gateway [14,51], 315 refusals): `hasPower=false`, `unitsInRect=1 [BUILDER]`,
-  `canBuild000=false` - the O1 split run settled it as POWER (see
-  `_AI/BUILDING-BLOCKERS.md` Certain 3). The refusal is correct; the site is wrong.
-
 - **#51 - Protoss buildings are allowed 2.8 tiles from minerals, which reads as "on
   top of the mineral line".** Owner's report, same IDE game: the position was
   otherwise fine but sat about two tiles from the minerals. The number is

@@ -760,3 +760,27 @@ used by both planners; dead Chebyshev helpers and radius constants removed.
 store unchanged. Legacy path NOT deleted (22 files use it; default runs on
 it) - deletion stays behind the catalogue cutover; only provably-dead code
 goes. Next: E2E must show Gateway avoiding [14,51].
+
+## Session 2026-10-13 (autonomous): first --short PASS, #50 and #70 closed
+
+`20261013_112638_short` (fresh jar with the psi-mask rule): **SCENARIO
+PASSED** - `Pylon=6 Gateway=3 Zealot=8 Dragoon=3 Assimilator=1 Core=1`, zero
+`Can't find place`, Gateways at [92,107] [92,111] [96,111] (all accepted
+first try; [14,51] never requested). DEMOTE fired once (CyberneticsC
+[87,111], 456f standstill) and the Core still built - the safety net works
+in a game, not just in its test.
+- Closes #70 (deleted from NEXT): stalled-IN_PROGRESS demote (game-verified)
+  + gas center-distance (Assimilator=1 in two runs now).
+- Closes #50 (deleted from NEXT): engine-mask PsiField shared by both
+  planners + power gate in the shared chain (power-first, named reason) +
+  chain test. The letter of #50 (Core refused on an unpowered tile with a
+  test) is the Gateway case in PylonPowerRadiusTest.
+- NOT closed: #59 builder/Gateway variance (single-run evidence so far -
+  needs a second green run to call it stable), #69 (jstack), #65/#68 (owner
+  opens traces in the viewer), #34 (needs UMS map), #8/#36/#40 (need design
+  decisions), #51/#39 (gameplay constants, owner's call).
+- Legacy position path NOT deleted: 22 files use it and default runs play
+  on it. Owner's removal ask is recorded but refused as stated - deleting
+  the live path without cutover breaks the bot (CONVENTIONS section 3);
+  only provably-dead code (Chebyshev helpers, radius constants, dead
+  branches) was removed.
