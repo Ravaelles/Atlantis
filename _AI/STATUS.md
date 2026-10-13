@@ -988,3 +988,18 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   timing) and producer-early-creation (queueing Core at 18 without bank
   reserves nothing - reservations attach at READY - so it needs a redesign
   of reserve timing with Wine-length A/B, not a one-line change).
+
+## Session 2026-10-13 (autonomous tuning round)
+
+- Hold-IN_PROGRESS fix (Builder/Gather theft): committed with rule test,
+  verified no-regression in game (PASS). Awaits a Wine game (the log it was
+  built from) for the steal-gone confirmation.
+- Owner asks delivered: Core critical reservation + grid yield at hard block
+  (both game-verified PASS, Core attempts at 125 s), live Wine log tee
+  (crash/IDE-kill safe, tested standalone + pinned).
+- Declined with reasons: fallback threshold table, producer-early-creation
+  (needs reserve-timing redesign + Wine-length A/B).
+- Cleanup: ~200 dead comment lines + 7 unused imports + 39 dead classes
+  (compile-gated, one live near-miss caught and restored).
+- Board: unit 425/425, arch store untouched since the -3, jar fresh,
+  6/8 recent --short PASS (2 timing misses, gates honest).

@@ -674,14 +674,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   logged with `log("...")`), or is the request made and rejected as a duplicate
   (`alreadyExists`, #57)?
 
-  **Stability note 2026-10-13 (autonomous): five of the last seven --short runs
+  **Stability note 2026-10-13 (autonomous): six of the last eight --short runs
   PASS across two maps and two matchups, all with Core+Dragoons+gas when they
-  pass; the two failures are understood (pre-center-rule Terran power case,
-  since re-passed; one timing miss where gas flowed too late for the 318 s
-  horizon and the gate correctly failed). The OpenBW half of this variance
-  item is stable; what remains is the Wine half (owner runs) and the
-  threshold-boundary question for builders parked at exactly the issue
-  distance (needs a BUILDER_LOG Wine game).**
+  pass; both failures are timing (gas flowed too late for sub-330 s horizons,
+  gates correctly failed), none structural since the center rule. The OpenBW
+  half of this variance item is stable; what remains is the Wine half (owner
+  runs) and the threshold-boundary question for builders parked at exactly
+  the issue distance (needs a BUILDER_LOG Wine game).**
 
 - **#60 (2026-10-11, top economy blocker) - THE WORKER GATE OSCILLATES BETWEEN TWO
   OPPOSITE FAILURES, and it explains "the test takes forever", the 8000-mineral bank and the
