@@ -132,8 +132,35 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
 
     // =========================================================
 
+    private Construction aging;
+    private FakeUnit agingProbe;
+
     @Test
-    public void aDeadBuilderIsNotOursToDemote() {
+    public void aBuilderlessStallRearmsWhenOld() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        agingProbe = fake(AUnitType.Protoss_Probe, 12, 10);
+        agingProbe.setHp(0);
+
+        world(130, units(nexus, agingProbe), new FakeUnit[0], () -> {
+            // Flip early: by frame 120 it is 110 frames old with no builder
+            // and no building - the Wine shape (setStatus releases the Protoss
+            // builder on the flip, so a refused echo leaves no one holding it).
+            if (A.now() == 10) {
+                aging = stalledCoreAt(agingProbe, 12, 10);
+            }
+
+            if (A.now() == 120) {
+                assertTrue(
+                    ConstructionStatusChanger.demoteStalledInProgress(aging, agingProbe),
+                    "old, builderless and building-less: re-arm to NOT_STARTED so a new builder is assigned");
+                assertEquals(
+                    ConstructionOrderStatus.NOT_STARTED, aging.status());
+            }
+        });
+    }
+
+    @Test
+    public void aFreshFlipIsGivenTime() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 12, 10);
         probe.setHp(0);
@@ -145,8 +172,7 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
 
             assertFalse(
                 ConstructionStatusChanger.demoteStalledInProgress(construction, probe),
-                "a dead builder belongs to the destroy/cancel path, not the stall path"
-            );
+                "freshly flipped: a real warp shows its building within frames");
         });
     }
 

@@ -224,31 +224,48 @@ public class ConstructionStatusChanger extends Commander {
      * (NEXT #70). Every exclusion is a healthy shape that must NOT demote: a
      * constructing or travelling worker, a non-worker builder (Zerg morph), a
      * worker that walked away from a warping building, a recently arrived
-     * worker, and a site with a building on it.</p>
+     * worker, a young IN_PROGRESS, and a site with a building on it.</p>
      *
      * @return true when the construction was demoted.
      */
     public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
         if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
-        if (builder == null || builder.isDead() || !builder.isWorker()) return false;
-        if (builder.isConstructing() || builder.isMoving()) return false;
         if (construction.buildPosition() == null) return false;
-        if (builder.distTo(construction.buildPosition()) > 3.5) return false;
-        if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
-        if (Select.ourWithUnfinishedOfType(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition())
-            .notEmpty()
-        ) return false;
+        if (buildingNearSite(construction)) return false;
 
-        if (atlantis.config.env.Env.builderLog()) {
-            System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
-                + " at=" + construction.buildPosition()
-                + " builder=#" + builder.id()
-                + " stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
+        // No builder at all (measured on Wine: setStatus(IN_PROGRESS) releases
+        // the Protoss builder the moment the status flips - correct for a real
+        // warp, fatal for a refused attempt's order echo, which leaves
+        // IN_PROGRESS + no builder + no building + no recovery). Re-arm once
+        // old enough that a real warp would have shown its building; the
+        // NOT_STARTED state reassigns a builder on the next pass.
+        if (builder == null || builder.isDead() || !builder.isWorker()) {
+            if (construction.startedAgo() < STALLED_IN_PROGRESS_DEMOTE_FRAMES) return false;
+
+            logDemote(construction, "builder gone");
+            construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            return true;
         }
 
+        if (builder.isConstructing() || builder.isMoving()) return false;
+        if (builder.distTo(construction.buildPosition()) > 3.5) return false;
+        if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
+
+        logDemote(construction, "stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
         construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
         return true;
+    }
+
+    private static boolean buildingNearSite(Construction construction) {
+        return Select.ourWithUnfinishedOfType(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition()).notEmpty();
+    }
+
+    private static void logDemote(Construction construction, String detail) {
+        if (atlantis.config.env.Env.builderLog()) {
+            System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
+                + " at=" + construction.buildPosition() + " " + detail);
+        }
     }
 
     /**
