@@ -852,3 +852,21 @@ in a game, not just in its test.
   Five of the last six --short runs pass.
 - NEXT #59 annotated: OpenBW half stable, Wine half + threshold-boundary
   still owner-side.
+
+## Session 2026-10-13 (autonomous, continued): Terran expedition (#56 measured, race reverted)
+
+- Temporary race flip (Main.ourRace Terran, rebuilt jar, one --short) then
+  REVERTED same turn (diff verified empty, Protoss jar rebuilt, Protoss
+  re-verified playing with no RACE MISMATCH). Never leave a flipped jar
+  behind - this is the procedure if it is ever needed again.
+- Terran game (258 s): `SCV=21 Marine=5 Academy=1 Refinery=1 CommandC=1
+  SupplyD=2 Barracks=1`. #56 symptoms ABSENT: zero `No construction for`,
+  zero `CANNOT define`, every build attempt accepted. The predicted defects
+  are real in source but did not trigger (positional miss needs site drift
+  that did not occur). #56 stays open with this measurement - not fixed
+  blind, not closed on one clean game. Side observation: Terran starting
+  SCVs show the same OpenBW uncompleted window (`workerCompleted=false` at
+  frame 30); DoNothing waits it out and mining recovers, same as Protoss.
+- Protoss re-verify run: Core=1 Assimilator=1 but Dragoon=0 at 318 s (gate
+  correctly FAILED - refinery->100 gas->Dragoon chain is longer than the
+  ForceExit horizon when the Core lands late). Timing, not a defect.
