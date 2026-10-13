@@ -823,3 +823,23 @@ in a game, not just in its test.
 - New probe this cycle: `ORDER_NOT_READY` names the refusing queue term
   (supply/resources/requirements + numbers) for stuck building orders, so the
   next silent-queue case (like the 6:19 Nexus) is diagnosable in one game.
+
+## Session 2026-10-13 (autonomous, continued): center-rule PASS, all POWER_AT_REQUEST agree
+
+- `POWER_AT_REQUEST` probe (new jar): every requested site this run reads
+  ourCheck=true engineHasPower=true (4 sites), game PASSED again
+  (`Pylon=6 Gateway=2 Dragoon=3 Assimilator=1 Core=1`, zero Can't-find-place).
+- Center correction committed: the client enforces power at the footprint
+  CENTER (`bwapi/Game: canBuildHere -> hasPower(lt, type)`), pylon anchor is
+  its tile origin. `PsiField` takes the footprint; legacy checks it exactly;
+  catalogue keeps a documented tile-point approximation (no footprint at its
+  call site; NEEDS_NEW_PYLON degrades misses instead of deadlocking).
+  `PsiFieldTest` + `PylonPowerRadiusTest` updated to center math (3/3),
+  unit 411/411, arch store unchanged.
+- Coverage audit: FindPosition funnels through the gated sweep
+  (sweep gate + shared-chain gate); the only ungated path is exact-position
+  verbatim (occupancy-only, by design). No third power path exists.
+- Watch item (open, no action): the 115258 Terran-run Core at [15,51] was
+  accepted while no completed pylon covered it under either math. Never
+  recurred in 4 subsequent runs (all POWER_AT_REQUEST agree). Per CONVENTIONS
+  section 3a noted, not patched.
