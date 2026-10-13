@@ -1050,3 +1050,16 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - (2) 180949_long (429 s): Dragoon=7, still Nexus=1 - expansion is
   threshold-gated (3 gateways, 429 s < 630), not broken. Folded into D5.
 - (3) 313 dead comment lines removed in game listeners, suite green.
+
+## Session 2026-10-13 (autonomous: 4 more NEXT items)
+
+1. **WO-13 re-triage (#13)**: all 60 remaining information-rule entries are
+   live strategy-response logic (race responses, queue/mission/tech calls) -
+   nothing mechanical left. Triage stands, no change.
+2. **#40 intent test + NPE guard**: `BuilderlessConstructionTest` 2/2 pins
+   cancel-not-adopt for builderless NOT_STARTED (intended? still owner call)
+   and covers the order-less V2 shape that NPEd `sameAs`'s neighborhood
+   (`productionOrder().cancel` guarded).
+3. **Cleanup**: dead commented methods in `Decision`, 89-line batch earlier.
+4. **E2E stability**: another PASS (`Pylon=5 Gateway=3 Dragoon=3`), 7/9
+   overall, both misses timing with honest gates.
