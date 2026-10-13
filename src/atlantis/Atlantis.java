@@ -144,6 +144,11 @@ public class Atlantis implements BWEventListener {
         game.enableFlag(Flag.UserInput);                      // Without this flag you can't control units with mouse
 //        game.enableFlag(Flag.CompleteMapInformation);       // See entire map - must be disabled for real games
 
+        // PurpleWave and Stardust run LatCom OFF (we ran the JBWAPI default
+        // ON). OpenBW experiment (NEXT #80, owner ask): OFF on OpenBW, so unit
+        // state reports only applied orders; Wine untouched.
+        if (Env.isOpenBW()) game.setLatCom(false);
+
         // One line per game: the latency semantics every timing assumption in
         // the bot stands on (NEXT #80). PurpleWave runs setLatCom(false) and
         // compensates manually; we run the JBWAPI default and never printed it.
