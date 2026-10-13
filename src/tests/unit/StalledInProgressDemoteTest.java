@@ -132,6 +132,26 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
 
     // =========================================================
 
+    @Test
+    public void aDeadBuilderIsNotOursToDemote() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 12, 10);
+        probe.setHp(0);
+
+        world(130, units(nexus, probe), new FakeUnit[0], () -> {
+            if (A.now() != 120) return;
+
+            Construction construction = stalledCoreAt(probe, 12, 10);
+
+            assertFalse(
+                ConstructionStatusChanger.demoteStalledInProgress(construction, probe),
+                "a dead builder belongs to the destroy/cancel path, not the stall path"
+            );
+        });
+    }
+
+    // =========================================================
+
     private Construction stalledCoreAt(FakeUnit probe, int tx, int ty) {
         Construction construction = new Construction(AUnitType.Protoss_Cybernetics_Core);
         construction.setBuilder(probe);

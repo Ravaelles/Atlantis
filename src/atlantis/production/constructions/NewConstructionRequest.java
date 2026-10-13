@@ -7,6 +7,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
+import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -17,6 +18,7 @@ import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import bwapi.TilePosition;
 
 public class NewConstructionRequest {
     /**
@@ -151,12 +153,12 @@ public class NewConstructionRequest {
             // Rare (once per construction), builderLog-gated like the line above.
             if (building.needsPower() && atlantis.config.env.Env.builderLog()) {
                 System.err.println("POWER_AT_REQUEST site=" + newConstruction.buildPosition()
-                    + " ourCheck=" + atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon.check(newConstruction.buildPosition(), building)
+                    + " ourCheck=" + IsPoweredByAPylon.check(newConstruction.buildPosition(), building)
                     + " engineHasPower=" + atlantis.Atlantis.game().hasPower(
-                        new bwapi.TilePosition(
+                        new TilePosition(
                             newConstruction.buildPosition().tx(), newConstruction.buildPosition().ty()),
                         building.ut())
-                    + " pylons=" + atlantis.units.select.Select.ourOfType(atlantis.units.AUnitType.Protoss_Pylon).list());
+                    + " pylons=" + Select.ourOfType(AUnitType.Protoss_Pylon).list());
             }
         }
 
