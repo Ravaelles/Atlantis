@@ -626,7 +626,7 @@ cancel). Three different mechanisms wore this one shape, in order:
 Withdrawn along the way: fog/visibility (explored 12/12 on refused
 footprints), regions (all reachability true), occupancy (footprint empty),
 poverty (bank 150+), builder movement (idle at 1.0 tiles). Every one of them
-was true-and-irrelevant; only the bisection плюс the engine source named the
+was true-and-irrelevant; only the bisection plus the engine source named the
 term.
 
 Traps to keep: a tile rule must be read from the enforcer (server mask for
