@@ -32,6 +32,8 @@ AI assistant.
   renumbered; a closed item's line is **deleted** and the commit says
   `Closes #<n>` with the evidence (CONVENTIONS §7). It is meant to be **scannable**:
   long post-mortems of resolved defects live in `CASE-STUDIES.md`, not here.
+- **`DECISIONS.md`** - choices only the owner can make, one per entry. Approve
+  by saying so; the entry is then executed and deleted.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
   withdrawn readings, traps), moved out of `NEXT.md` so the backlog stays readable.
   Read it when a symptom looks familiar and the git log is not enough.
