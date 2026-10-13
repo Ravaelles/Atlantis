@@ -93,6 +93,57 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     public static void clear() {
         seenUnitIds.clear();
         unitsByFrame.clear();
+        pendingFirstSeen.clear();
+    }
+
+    /**
+     * Units whose own position is not known yet (NEXT #68 follow-up): a mobile
+     * unit at completion still reports its PRODUCER's position - every late
+     * Probe recorded at the Nexus, and the viewer (nearest same-type within
+     * 25px, no retry) matches nothing in the crowd. The id is parked here with
+     * its completion frame; {@link #processPending} records it a few frames
+     * later, when the unit has walked out with a position of its own. Same
+     * frame in the trace and in the replay means distance zero, so the delay
+     * cannot hurt matching - only a wrong position can.
+     */
+    private static final Map<Integer, Integer> pendingFirstSeen = new TreeMap<>();
+
+    /** Frames between completion and the deferred first-seen record. */
+    private static final int DEFER_FRAMES = 7;
+
+    public static void defer(int id) {
+        defer(id, A.now());
+    }
+
+    /** Explicit frame for tests (production stamps the current frame). */
+    public static void defer(int id, int frame) {
+        pendingFirstSeen.put(id, frame);
+    }
+
+    /**
+     * Records deferred units whose position is their own by now. The lookup is
+     * a parameter so the rule is assertable without a game; production passes
+     * the live registry. Dead or unknown units are dropped silently.
+     */
+    public static void processPending(java.util.function.Function<Integer, AUnit> lookup, int now) {
+        if (pendingFirstSeen.isEmpty()) return;
+
+        java.util.Iterator<Map.Entry<Integer, Integer>> it = pendingFirstSeen.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<Integer, Integer> entry = it.next();
+            if (now - entry.getValue() < DEFER_FRAMES) continue;
+
+            it.remove();
+            AUnit unit;
+            try {
+                unit = lookup.apply(entry.getKey());
+            } catch (Exception e) {
+                continue;
+            }
+            if (unit == null || unit.isDead() || !unit.isCompleted()) continue;
+
+            record(now, unit.id(), unit.type().ut().id, unit.x(), unit.y());
+        }
     }
 
     /**

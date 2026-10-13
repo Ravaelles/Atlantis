@@ -34,6 +34,11 @@ public class ACherryVis {
 
     public static void update() {
         logger().onFrameStart(A.now());
+        if (isEnabled()) {
+            atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.processPending(
+                id -> atlantis.core.world.Worlds.units().entity(id), A.now()
+            );
+        }
     }
 
     public static void finish() {
