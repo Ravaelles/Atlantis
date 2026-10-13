@@ -915,3 +915,17 @@ in a game, not just in its test.
   OldCrucialRepairsNearby, DynamicTech, NonReinforcedBases, all three race
   SupplyCommanders (superseded by the fallback-supply path),
   ProtossLimitExistingConstructions. Suite 414/414 throughout.
+
+## Session 2026-10-13 (autonomous, continued): dead-code sweep (39 classes)
+
+- Deleted 39 zero-reference classes in 4 commits (grid helpers, supply
+  commanders, fix/repair managers, scout listener, wall logic, combat
+  corpses/tiny helpers, zstd reader, shuttle stub, self-recursive
+  SquadsInitializer). Gate: exact-filename grep for candidates, green
+  compile as proof (caught one grep -v trap live: PositionsAroundMainBase
+  restored). Suite 443/443 unit, arch store unchanged, jar rebuilt
+  (5028 entries, was 5062).
+- Spared deliberately: new-arch placement files, ATechManager, larger
+  race/combat micro (AttackAsWraith, TerranInfantryShouldRetreat,
+  ZergRetreating, ProtossZealotLongNotAttacked) - owner eyes first.
+- Live legacy position path kept (refusal logged); only dead code goes.
