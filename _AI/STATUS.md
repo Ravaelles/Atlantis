@@ -930,4 +930,4 @@ in a game, not just in its test.
   ZergRetreating, ProtossZealotLongNotAttacked) - owner eyes first.
 - Live legacy position path kept (refusal logged); only dead code goes.
 
-Store note: core rule 267 -> 264 via deletions (ratchet holds, +0/-3).
+Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from this batch, rest from earlier removals; ratchet holds, this batch +0/-3).

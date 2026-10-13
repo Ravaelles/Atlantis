@@ -158,8 +158,9 @@ itself, #5, is design work and out of that order's scope).
   only as a history of how far the ratchet got).
 
   **State (2026-10-04): 356 violations, down from 499.** Three rules are at 0
-  (`map.scout -> combat/production`, map geometry, and one more). The rest:
-  `core -> combat/production/information/...` = 267, `information -> combat/production`
+  (`map.scout -> combat/production`, map geometry, and one more). The rest
+  (2026-10-13 recount: core file holds 255 entries, was 267):
+  `core -> combat/production/information/...` = 255, `information -> combat/production`
   = 60 (65 on 2026-10-04; -1 on 2026-10-13: dead `notEnoughZealots()` branch in
   `DragoonInsteadZealotVsZerg`, WO-13 cycle 1; -1 more: dead `enoughZealots()`
   branch + unused import, WO-13 cycle 2; -3: moved `AllOfOurBasePositions.allBases`
@@ -167,7 +168,7 @@ itself, #5, is design work and out of that order's scope).
   `architecture -> ...` = 24,
   `util -> ...` = 0 (was 73).
 
-  **The 267 and the 24 are structural**, not a sweep: the Commander/Manager
+  **The 255 and the 24 are structural**, not a sweep: the Commander/Manager
   framework is unit-centric by design, so they belong to Stages E/H. The
   information rule swept 65 -> 60 on 2026-10-13 (WO-13 cycles 1-3: two dead
   `ProduceZealot` branches, one single-caller helper folded into its caller);
