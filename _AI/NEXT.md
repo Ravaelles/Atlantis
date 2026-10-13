@@ -41,12 +41,6 @@ known structural failure, as of 2026-10-13 autonomous session;
 re-run `bash scripts/run-tests.sh` for the current numbers - do not trust a count
 written here). What is open is *quality* of the data behind it, not a red test.
 
-- **#28 CLOSED** - production code no longer imports the test harness (five
-  `Source` ports, `src/starengine` deleted, the jar drops `tests/**` and fails the
-  build if a packaged class names it). Detail in `NOTES.md` and git history.
-
-## Scenario E2E (stub tier - runs today)
-
 - **#34** Real opponents for the stub-tier scenarios. The two twins hold in
   `tests.e2e` (`FourPoolDefenseTest` 6 lings, `NinePoolDefenseTest` 8 lings) with
 their baselines pinned; what is missing is a **real opponent**: OpenBW hosts one
@@ -253,104 +247,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
 
-- **#48 - SPLIT AND RE-MEASURED 2026-10-10: the duplicate/re-dispatch defect is FIXED;
-  what remains is the sliding `startFrame` (a different bug, now #52).** Live evidence
-  below; the original description is kept after it as the record.
-
-  **Measured 2026-10-10** (`PRODUCTION_V2=LIVE PLACEMENT=catalogue`, bounded run, fresh
-  jar, exit **0** not 124):
-  - **No duplicate Pylon in any single plan** - the old signature
-    (`plan=3 [.. Pylon@2234 Pylon@2234]`) does not occur. Plan size is 2, and the
-    duplicate-goal fix in `BuildOrderGoals`/`ProductionScheduler` holds in a live game,
-    not only in its unit test.
-  - **The game ends itself**: `ForceExitLocallyAfterRealSeconds`, `Total time: 100
-    seconds`, `Defeat`, exit 0. The "never ends, outer timeout kills it" consequence is
-    gone.
-  - **`engineAccepted=false` does not appear at all under V2 LIVE** - because V2 issues
-    only `trained` orders here, never a build, so the library's broken
-    builder-reachability check is never reached.
-
-  **What remains, and it is a DIFFERENT defect (#52):** the Pylon's `startFrame` slides
-  forward frame by frame and the item is therefore never dispatched:
-
-  ```
-  @@633 Pylon@978-1428   @@637 Pylon@992-1442
-  @@937 Pylon@1129-1579  @@938 Pylon@1130-1580  @@940 Pylon@1132-1582
-  ```
-
-  Every line reads `issued: OK Probe@NNN (trained)` - the worker orders are issued, the
-  Pylon is planned and re-planned with a moving start. This is the same relative-frame
-  slide `_AI/STATUS.md` recorded as "planned Pylon start moved 449, 450, 451, 452", and it
-  is an arbitration/livelock problem (a cheaper higher-priority item keeps the bank below
-  the Pylon's cost), **not** a duplicate-dispatch problem. It is tracked separately so the
-  two are not confused a third time.
-
-  ---
-
-  **Original report (kept as the record of what was fixed):** under
-  `PRODUCTION_V2=LIVE` the plan contained DUPLICATE buildings re-dispatched every frame,
-  so the game never ended and the run died on the outer timeout. Measured 2026-10-09,
-  three times.
-
-  **What the log shows** (`TIMEOUT_SECONDS=90`, in-game 3 min):
-  ```
-  @@3214 plan=3 [Probe@3664-3964 by#70 Pylon@2234-2684 Pylon@2234-2684 ]
-       issued: OK Pylon@2234 (builder committed) OK Pylon@2234 (builder committed)
-  @@3215 ... identical ...
-  ```
-  Two facts, both wrong:
-  1. **The same Pylon tile (2234) appears TWICE in one plan** and is dispatched
-     twice per frame. The goal layer asks for one Pylon, so the duplicate is
-     created inside the scheduler/dispatcher path.
-  2. **`startFrame` is ~1000 frames in the past** (2234 while the frame is 3214),
-     so `isDue` is permanently true and the item is re-issued forever - it never
-     completes and never leaves the plan.
-
-  **Consequence:** the game never reaches `Total time`/`Defeat`, the
-  `ForceExitLocallyAfterRealSeconds` line never appears, and the outer `timeout`
-  kills the process (exit 124, or exit 1 with no verdict). Without LIVE the same
-  command ends itself cleanly (`Total time: 188 seconds`, exit 0), so the defect is
-  in the LIVE path.
-
-  **Root cause of the duplicate, measured in the source 2026-10-09:** the active
-  build order (`Zealot into Goon`) declares Pylons on **four separate rows**
-  (supply 8, 13, 20, 27). `BuildOrderGoals.from` emits one goal per row whose
-  supply gate is open, and its `supplyGateOpen` is `supplyUsed + lookahead >=
-  minSupply` - so once supply passes 27 **all four gates are open at the same
-  time** and four Pylon goals enter one pass. The scheduler then honours each as a
-  separate building, and the plan logs them at the same tile. This is the
-  "queue-like" behaviour the v2 design intended to remove: a build order row is a
-  *sequence*, not a set of independent wants, and the goal layer lost the ordering
-  between rows when it flattened them.
-
-  **Implemented and unit-tested, live status still open:**
-  - `BuildOrderGoals` emits only the earliest unsatisfied occurrence per item type;
-    `ProductionScheduler` deduplicates same building type+placement across sources.
-    Regression test `openingSchedulesOnePylonBeforeGatewayDespiteDuplicateSupplyGoal`.
-  - Assigned builders are owned by construction: `BuilderManager` is first in
-    `WorkerManager`; `BuilderManager.handle()` claims a pending assignment even
-    when `TravelToConstruct` cannot issue an order that frame; worker defense and
-    `WorkerHelpCombatUnitsFight` decline assigned builders. Regression forces the
-    WorkerManager chain and asserts `unit.managerLogs()` contains BuilderManager,
-    not WorkerHelpCombatUnitsFight/GatherResources (`WorkerDefenceTest`: 12/12).
-  - `GameSummary` reports Pylon/Gateway counts, and runner assertions cover them;
-    offline assertion self-test rejects a 0/0 building fixture.
-
-  **Manual owner confirmation:** owner reports that a real StarCraft game built
-  both Pylon and Gateway. This confirms the default/legacy gameplay on that run,
-  but does not verify the Production V2 LIVE path. The most recent LIVE OpenBW run
-  before the builder ownership change dispatched Pylon repeatedly and timed out.
-  The next bounded LIVE run is blocked while the runner detects an active owner
-  `StarCraft.exe`/ChaosLauncher; never terminate it. Resume after it closes and
-  inspect the specific assigned worker's `managerLogs()` if construction stalls.
-
-  **Corrected twice mid-investigation:** an earlier reading blamed a caught init
-  exception (disproved - `HELLO_ATLANTIS` present, no exception), and a later one
-  blamed only builder recognition (disproved by the still-looping run above).
-
-- **#47 CLOSED** - the OpenBW E2E loop works end to end: the runner attaches, is bounded, self-terminates
-  and asserts a scenario. The long history of the attach/placement blockers is in `_AI/CASE-STUDIES.md` (#47),
-  and the tooling that replaced it (two tiers, explicit OK/FAIL report, durable logs) is `scripts/run-openbw-e2e.sh`.
 - **#51 - Protoss buildings are allowed 2.8 tiles from minerals, which reads as "on
   top of the mineral line".** Owner's report, same IDE game: the position was
   otherwise fine but sat about two tiles from the minerals. The number is
@@ -449,6 +345,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   **Three defects have now been peeled off this one symptom, in order:** the duplicate
   goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
   command refusal (stage 4, open). None of them was the one the previous note suspected.
+
+  **REGRESSION WATCH 2026-10-13 (autonomous LIVE run, `20261013_184412`): the
+  slide is BACK under V2 LIVE - `Pylon@557` @2, `@777` @360, `@979` @660
+  (never dispatched, only the Probe trains, exit 124 on the cap). The
+  PRIORITY_OPENING_SUPPLY band did not hold: either the Pylon is misclassified
+  or the band does not decide allocation order as assumed. #48's half stays
+  fixed (465 plans, zero duplicate buildings). Next: print the goal's band in
+  the plan line, then re-read the scheduler's sort-vs-allocate order.**
 
 - **#59 (2026-10-11) - THE REQUEUE GATE (fixed) + the builder that never fires (open, top
   blocker). Answering the owner's "it worked hours ago, now it does not": there was NO code

@@ -1081,3 +1081,14 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Filed #73: acceptance tier red on 11 pre-existing failures (proven on a
   clean pre-session worktree, removed after). Also fixed NEXT structure:
   #71-73 had landed past the appendix, moved with the items.
+
+## Session 2026-10-13 (autonomous: 4 more closes)
+
+- Deleted CLOSED lines #28 (no test-harness imports in production, build
+  asserts), #47 (E2E loop proven by ~15 runs), #48 (465 LIVE plans, zero
+  duplicate buildings), #53 (OrphanedConstructionTest green).
+- #52 slide is BACK under V2 LIVE (Pylon@557 @2, @777 @360, @979 @660, exit
+  124) despite PRIORITY_OPENING_SUPPLY - new V2_GOALS probe (bands per goal,
+  builderLog-gated) names the next measurement: classification vs allocation
+  order. #35 kept (reciprocity holds, class red on unrelated stale pins -
+  filed #73 with pre-session-tree proof).
