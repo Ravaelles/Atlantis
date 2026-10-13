@@ -1016,3 +1016,14 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Game proof (fresh jar): PASS with Dragoon=4 (best yet), DEMOTE fired on a
   stalled Pylon, zero took-too-long cancels. The safety net heals before the
   cancel path is reached.
+
+## Session 2026-10-13 (autonomous: 3 NEXT items)
+
+1. **#57 creation-path measurement**: single `addConstruction` door + temporary
+   caller stacks. Result: both Cores via NewConstructionRequest (V2 path
+   silent, V2 off) - first refused 6x, refresh-cancelled, rebuilt elsewhere,
+   PASS. Cancel+retry working, not the leak. Door kept, print removed.
+2. **Case study**: power-refusal saga (mask, center, withdrawn readings) into
+   CASE-STUDIES.md.
+3. **Cleanup**: 80 dead commented gates in Protoss building producers.
+   Suite 426/426 throughout, tree clean.
