@@ -88,11 +88,42 @@ T0=$(date +%s)
 since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
+  copy_wine_log
   say "Cleaning up"
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -x Chaoslauncher.exe 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
+}
+
+# After every Wine game (clean exit or kill), leave the client log where the
+# owner looks for it. The destination comes from WINE_LOG_COPY in the bot's
+# ENV file (machine-local, git-ignored); empty or missing means no copy.
+# Wine-script only (local, non-OpenBW by construction) plus a GAME_LAUNCHER
+# guard in the same file, so an OpenBW ENV can never trigger it.
+copy_wine_log() {
+  local env_file=""
+  local candidate
+  # Same order the bot itself resolves ENV in (Env.java): the first file that
+  # exists is the one the game played with, so its GAME_LAUNCHER and
+  # WINE_LOG_COPY are authoritative. No scbw path here - that belongs to a
+  # different runner which never reads it.
+  for candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
+    if [ -f "$candidate" ]; then env_file="$candidate"; break; fi
+  done
+  [ -z "$env_file" ] && return 0
+  grep -q "^GAME_LAUNCHER=WINE" "$env_file" || return 0
+
+  local dest
+  dest=$(grep "^WINE_LOG_COPY=" "$env_file" | tail -1 | cut -d= -f2-)
+  [ -z "$dest" ] && return 0
+
+  mkdir -p "$(dirname "$dest")" 2>/dev/null
+  if cp -f "$CLIENT_LOG" "$dest" 2>/dev/null; then
+    say "Wine log copied to $dest"
+  else
+    say "  WARNING: could not copy Wine log to $dest"
+  fi
 }
 
 # The jar is what actually plays, and nothing rebuilt it: the IDE launches this

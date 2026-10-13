@@ -6,6 +6,9 @@ FORCE_END_GAME_AFTER_REAL_SECONDS=1200
 GENERATE_CHERRYVIS_REPLAY=true
 MODIFY_BWAPI_INI=true
 POSTGAME_COPY_CHERRYVIS_TO=
+# After every local Wine game, copy the client log here when non-empty.
+# Wine runs only (the runner checks GAME_LAUNCHER=WINE in the same file).
+WINE_LOG_COPY=
 # Game backend: CHAOS (default, Windows + ChaosLauncher + live StarCraft)
 # or OPENBW (Linux + external BWAPILauncher server, see ENV OPENBW-EXAMPLE).
 # Any value other than OPENBW (including empty/missing) keeps Chaos behavior.
