@@ -784,3 +784,23 @@ in a game, not just in its test.
   the live path without cutover breaks the bot (CONVENTIONS section 3);
   only provably-dead code (Chebyshev helpers, radius constants, dead
   branches) was removed.
+
+## Session 2026-10-13 (autonomous, continued): third --short PASS, old-suspect sweep
+
+- `20261013_114308_short`: **SCENARIO PASSED** (third in a row) -
+  `Pylon=5 Gateway=3 Zealot=8 Dragoon=3 Assimilator=1 Core=1`. Gateway variance
+  (#59, OpenBW half) stable across three runs since the psi-mask fix.
+- Suspect sweep over 10 recent run logs (`--short` with and without
+  BUILDER_LOG): `WTF?!?` 0-1 per run (refresh loop dead), `took too long`
+  0-1, STUCK_WORKER lines are healthy miners now (order=MiningMinerals,
+  on-patch, growing ago - the documented probe false-positive, no churning),
+  WORKER_GATE still oscillates CantAfford-early/NoSupply-late but games pass
+  (economy outgrows it). No action; #61 stays closed, #60 stays open.
+- One unresolved observation (NOT a defect yet): two `REQUEST_ACCEPTED Pylon
+  [116,16]` one second apart (100226, no cancel between, no further trace).
+  Games pass and no leak symptoms accompany it, so per CONVENTIONS section 3a
+  no fix is attempted; #57's prescribed measurement (caller stack at
+  `constructions.add`) stands as its next step if leak symptoms return.
+- Cleanup: dead commented blocks removed (GasBuildingFix 35 lines,
+  IssueBuildOrder ~30, ConstructionStatusChanger status block) + 4 unused
+  imports. Legacy position path kept (live, 22 files) - see refusal rationale.
