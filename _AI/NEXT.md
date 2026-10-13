@@ -847,31 +847,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   construction) throws `StackOverflowError` on the old code and passes on the new;
   flag reset asserted. Unit scope green.
 
-- **#70 (2026-10-13) - stalled IN_PROGRESS with no building holds its worker
-  forever (the --short Core blocker).** Measured `20261013_095545_short`
-  (fresh jar, exit 0): Core accepted @4697 (`engineAccepted=true`,
-  `isConstructing=true` order echo), status NOT_STARTED -> IN_PROGRESS, then
-  engine order reverts to PlayerGuard, no Core unit ever exists (summary counts
-  unfinished too), worker #83 stands at [87,111] 2400 frames with zero
-  re-issues. Structural: `BuilderManager` drives only NOT_STARTED while
-  `isBuilder` still claims the worker; `ConstructionThatLooksBugged` requires
-  NOT_STARTED so `CancelTooLong` never fires. Fix: demote stalled IN_PROGRESS
-  (idle builder at site, no building of type near site) to NOT_STARTED so the
-  existing travel/issue/cancel/requeue machinery resumes. OPEN underneath: why
-  the server-side warp aborted with all client preconditions true.
-  Detail: `_AI/STATUS.md` 2026-10-13 entry. Fix committed 2026-10-13
-  (`ConstructionStatusChanger.demoteStalledInProgress`, 90-frame stillness,
-  same 3.5/2.5 radii as the site checks), `StalledInProgressDemoteTest` 3/3,
-  unit scope 403/403, arch store unchanged (only the pre-existing structural
-  Manager->SleepUntilFrameGate failure). Game result: Core=1 first time
-  (`20261013_100226`, first-attempt accept - DEMOTE fired 0x, warp-drop is
-  intermittent, demote stays unit-pinned). Gas twin in the same run:
-  Assimilator cancelled 34 s with zero attempts at tile-distance 3.7 vs 3.5
-  threshold - fix: gas measures to footprint center
-  (`distanceForBuildOrderIssue`, `GasBuildIssueDistanceTest` 2/2, unit
-  405/405). Both fixes await a gas-reaching run (`20261013_100525` died at
-  Gateway [14,51] first - power, see #50).
-
 - **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
   Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
   written, then no "Killing"/"Exit" prints, one more silent ForceExit (latch),
