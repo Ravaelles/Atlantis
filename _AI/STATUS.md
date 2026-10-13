@@ -1027,3 +1027,15 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
    CASE-STUDIES.md.
 3. **Cleanup**: 80 dead commented gates in Protoss building producers.
    Suite 426/426 throughout, tree clean.
+
+## Session 2026-10-13 (autonomous: 3 more NEXT-adjacent items)
+
+1. **E2E teeth (#34/IDEA-E2E-TESTS §3.3)**: absurd expectation (99 Gateways)
+   fails correctly; deliberately broken build (grid refuses everything:
+   Pylon=0, all zero) SCENARIO FAILED; reverted same turn (diff verified
+   empty), jar rebuilt, re-verified PASS. Both halves of "red against
+   broken" now proven. Mirror matchup (Protoss) also PASSES.
+2. **Filed #72**: orphaned Singularity Charge researcher (wire or delete,
+   owner call).
+3. **Sweep**: game/information/application trees show no more dead classes
+   (one candidate triaged, kept deliberately).

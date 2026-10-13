@@ -192,8 +192,9 @@ Each step is small and ends with something a command proves.
    `Can't find place for Pylon` (measured 2026-10-09). See the blocker below.
 2. ~~Add the first assertion layer.~~ **Partly done (2026-10-09)** - the runner
    takes expectation env vars and exits non-zero when one is not met
-   (§3.3). Still missing: a scenario file, and a deliberately broken build that
-   fails the same scenario.
+   (§3.3). Broken-build half DONE 2026-10-13 (grid forced to refuse:
+   Pylon=0 everything, SCENARIO FAILED; reverted same turn and re-verified
+   PASS). Still missing: a scenario file.
 3. **Fix the Pylon, then the mega-test.** One game, fixed map, asserting workers
    mined, a Pylon and a Gateway placed and built, production advanced, no
    exception, frames advanced. Verification: green twice in a row, red against a
