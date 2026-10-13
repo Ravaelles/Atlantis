@@ -23,8 +23,19 @@ package atlantis.map.position;
  * </p>
  *
  * <p>
- * Pure and dependency-free on purpose: both placement paths (legacy and
- * catalogue) ask the same question and must get the same answer.
+ * The client enforces the same rule at issue time ({@code bwapi/Game.java}:
+ * {@code canBuildHere} tests power via {@code hasPower(lt, type)}, which
+ * resolves to the footprint CENTER, not the origin tile) - so the mask is
+ * applied to the SITE CENTER here too. A site whose origin is inside but
+ * whose center is outside (Gateway [14,50] with a Pylon at [16,46]: origin
+ * dy=128px in, center dy=176px out) is refused by the engine; testing the
+ * origin would repeat the old mistake one tile over.
+ * </p>
+ *
+ * <p>
+ * Pure and dependency-free on purpose: both placement paths (legacy exactly,
+ * catalogue approximately - its power source has no footprint at the call
+ * site) consult this rather than keeping their own radius guesses.
  * </p>
  */
 public class PsiField {
@@ -41,17 +52,22 @@ public class PsiField {
     private static final int HALF_HEIGHT_PX = 160;
 
     /**
-     * Does a finished Pylon at (pylonTx, pylonTy) power the tile (tx, ty)?
+     * Does a finished Pylon at (pylonTx, pylonTy) power a building of the
+     * given footprint placed at (siteTx, siteTy)?
      *
      * <p>
-     * Tile arithmetic mirrors the engine: positions are tile origins in pixels,
-     * the field is symmetric (absolute offsets), and the mask is indexed by
-     * whole tiles.
+     * The mask is applied to the footprint CENTER, mirroring the client. See
+     * the class javadoc for why the origin tile is the wrong input.
      * </p>
      */
-    public static boolean covers(int pylonTx, int pylonTy, int tx, int ty) {
-        int dx = Math.abs(tx * 32 - pylonTx * 32);
-        int dy = Math.abs(ty * 32 - pylonTy * 32);
+    public static boolean covers(
+        int pylonTx, int pylonTy, int siteTx, int siteTy, int siteWTiles, int siteHTiles
+    ) {
+        int centerX = siteTx * 32 + siteWTiles * 16;
+        int centerY = siteTy * 32 + siteHTiles * 16;
+
+        int dx = Math.abs(centerX - pylonTx * 32);
+        int dy = Math.abs(centerY - pylonTy * 32);
 
         if (dx >= HALF_WIDTH_PX || dy >= HALF_HEIGHT_PX) return false;
 

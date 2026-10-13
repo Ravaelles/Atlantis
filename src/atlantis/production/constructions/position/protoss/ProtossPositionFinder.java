@@ -126,7 +126,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
                         // Race rule, checked before the shared chain (see the javadoc):
                         // a Protoss building that needs power must stand inside a
                         // finished Pylon's field.
-                        if (needsPylonPower(building) && !IsPoweredByAPylon.check(constructionPosition)) {
+                        if (needsPylonPower(building) && !IsPoweredByAPylon.check(constructionPosition, building)) {
                             AbstractPositionFinder._STATUS = "Not powered by a Pylon";
                             if (reasons != null) reasons.merge(AbstractPositionFinder._STATUS, 1, Integer::sum);
                             continue;

@@ -56,7 +56,7 @@ public class PositionFulfillsAllConditions {
         // Power runs before terrain: it is a property of the site (cheap and
         // global), and the sweep already checks in this order, so both paths
         // name the same cause.
-        if (We.protoss() && building.needsPower() && !IsPoweredByAPylon.check(position)) {
+        if (We.protoss() && building.needsPower() && !IsPoweredByAPylon.check(position, building)) {
             AbstractPositionFinder._STATUS = "Not powered by a Pylon";
             return failed();
         }

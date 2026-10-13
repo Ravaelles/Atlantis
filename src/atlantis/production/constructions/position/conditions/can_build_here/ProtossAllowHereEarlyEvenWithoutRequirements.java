@@ -20,7 +20,7 @@ public class ProtossAllowHereEarlyEvenWithoutRequirements {
 
         if (allowEarlyPlacementEvenWithoutFinishedPylon(building, position)) return true;
 
-        if (building.needsPower() && !IsPoweredByAPylon.check(position)) return false;
+        if (building.needsPower() && !IsPoweredByAPylon.check(position, building)) return false;
 
         return isBuildable(position, 3, 2);
     }

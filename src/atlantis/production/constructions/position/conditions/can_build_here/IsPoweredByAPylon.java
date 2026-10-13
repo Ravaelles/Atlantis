@@ -42,11 +42,14 @@ public class IsPoweredByAPylon {
      * rule ({@link PsiField})? Completed Pylons only - a warping Pylon powers
      * nothing, and counting it would pass sites the engine refuses.
      */
-    public static boolean check(APosition position) {
+    public static boolean check(APosition position, AUnitType building) {
         if (position == null) return false;
 
         for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
-            if (PsiField.covers(pylon.tx(), pylon.ty(), position.tx(), position.ty())) return true;
+            if (PsiField.covers(
+                pylon.tx(), pylon.ty(), position.tx(), position.ty(),
+                building.getTilesWidth(), building.getTilesHeights()
+            )) return true;
         }
 
         return false;

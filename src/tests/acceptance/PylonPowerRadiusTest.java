@@ -46,11 +46,11 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
 
         world(1, fakeOurs(pylon), fakeEnemies(), () -> {
             assertTrue(
-                    IsPoweredByAPylon.check(APosition.create(52, 50)),
+                    IsPoweredByAPylon.check(APosition.create(52, 50), AUnitType.Protoss_Gateway),
                     "a tile two tiles from the Pylon is inside its field");
 
             assertFalse(
-                    IsPoweredByAPylon.check(APosition.create(50 + 12, 50)),
+                    IsPoweredByAPylon.check(APosition.create(50 + 12, 50), AUnitType.Protoss_Gateway),
                     "a tile 12 tiles away is well outside the field");
         });
     }
@@ -67,12 +67,12 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
 
         world(1, fakeOurs(pylon), fakeEnemies(), () -> {
             assertFalse(
-                    IsPoweredByAPylon.check(APosition.create(14, 51)),
+                    IsPoweredByAPylon.check(APosition.create(14, 51), AUnitType.Protoss_Gateway),
                     "5 tiles below the Pylon is outside the engine's 160px vertical bound");
 
             assertTrue(
-                    IsPoweredByAPylon.check(APosition.create(14, 50)),
-                    "one tile nearer is inside - the boundary is razor-thin here");
+                    IsPoweredByAPylon.check(APosition.create(14, 48), AUnitType.Protoss_Gateway),
+                    "two tiles nearer is inside - the boundary is razor-thin here");
         });
     }
 

@@ -151,7 +151,7 @@ public class NewConstructionRequest {
             // Rare (once per construction), builderLog-gated like the line above.
             if (building.needsPower() && atlantis.config.env.Env.builderLog()) {
                 System.err.println("POWER_AT_REQUEST site=" + newConstruction.buildPosition()
-                    + " ourCheck=" + atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon.check(newConstruction.buildPosition())
+                    + " ourCheck=" + atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon.check(newConstruction.buildPosition(), building)
                     + " engineHasPower=" + atlantis.Atlantis.game().hasPower(
                         new bwapi.TilePosition(
                             newConstruction.buildPosition().tx(), newConstruction.buildPosition().ty()),

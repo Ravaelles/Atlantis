@@ -46,7 +46,11 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         if (atlantis.Atlantis.game() == null) return false;
 
         for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
-            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty)) return true;
+            // Tile-point approximation (no footprint at this call site): the
+            // legacy path tests the exact footprint center, so the two agree
+            // everywhere except sub-tile razor boundaries. The verdict layer
+            // degrades a miss to NEEDS_NEW_PYLON, not to a deadlock.
+            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1)) return true;
         }
 
         return false;
@@ -108,7 +112,7 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
 
     /** Would a Pylon at this unit's position power the tile once finished? */
     private static boolean withinPowerRadius(AUnit pylon, int tx, int ty) {
-        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty);
+        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty, 1, 1);
     }
 
     /**
