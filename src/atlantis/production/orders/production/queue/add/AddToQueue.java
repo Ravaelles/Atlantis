@@ -134,7 +134,13 @@ public class AddToQueue {
         productionOrder.setPriority(priority);
 
         if (Queue.get().addNew(index, productionOrder)) {
-//            AConsole.println(A.now() + ": Adding " + type + " to queue");
+            // Queue-birth marker (NEXT #58): the Nexus twin of this line is what
+            // named the expansion re-queue; buildings were born silent, so a
+            // construction that never starts leaves no first trace. Buildings
+            // only - workers flow through direct train orders, not this queue.
+            if (type.isABuilding()) {
+                AConsole.println(A.minSec() + ": " + type.name() + " ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed());
+            }
 
 //            if (type.isCannon()) {
 //                AConsole.printStackTrace(A.minSec() + ": Adding " + type + " to queue at " + position);
