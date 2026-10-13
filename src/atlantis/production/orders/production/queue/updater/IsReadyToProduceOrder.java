@@ -13,7 +13,6 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 
 public class IsReadyToProduceOrder {

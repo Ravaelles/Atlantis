@@ -6,7 +6,6 @@ import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.production.requests.produce.ProduceUnit;
 import atlantis.units.AUnitType;
-import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.TechType;
 import bwapi.UpgradeType;
