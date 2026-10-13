@@ -706,6 +706,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   re-verifies placement physics + full E2E. Owner priority: fully working
   OpenBW, separate model on it.
 
+- **#80 (2026-10-13) - latency-semantics experiment: setLatCom(false) for one game.**
+  Measured: PurpleWave runs `setLatCom(false)` + manual latency math
+  everywhere (`With.latency`); we run the JBWAPI default ON (never set, never
+  printed - now logged at start as LATCOM). LatCom=ON predicts unit state the
+  moment an order is issued (our #59 timing sagas play out in these
+  semantics); OFF reports only applied state. Steamhammer/McRave run ON,
+  Stardust tests run OFF. Protocol: one bounded --short with setLatCom(false)
+  (one line in setBwapiFlags, reverted right after), compare Pylon timing +
+  manager flapping + order-echo demotes. Blast radius covers every timing
+  assumption - the game verdict decides, no blind flip.
+
 
 ### OpenBW headless run (2026-10-08)
 

@@ -1284,3 +1284,13 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   desync = missing/misordered actions, nondeterminism, or initial-state
   mismatch. Cheap-first plan recorded in the item (no-bot repro,
   first-divergent-frame, vendored-vs-upstream diff) before any surgery.
+
+## Session 2026-10-13 (PurpleWave latency comparison + LATCOM line)
+
+- PurpleWave: `setLatCom(false)` at start (`With.scala:131`) + manual
+  latency compensation everywhere; Steamhammer/McRave: `setLatCom(true)`;
+  Stardust tests: false; we: JBWAPI default ON, never set, never printed.
+  JBWAPI auto-sets `setLatCom(!async)`; LatCom predicts unit state on issue
+  (javadoc) - our order-timing sagas live in these semantics. LATCOM line
+  now logs latCom/latencyFrames/remaining at every game start. Filed #80
+  (one bounded setLatCom(false) experiment, reverted after).
