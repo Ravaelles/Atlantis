@@ -360,6 +360,11 @@ public class Env {
         isTesting = enabled;
     }
 
+    /** Test seam (the --short gate is ENV-driven and has no other writer). */
+    public static void setCoreAndDragoonGateForTest(boolean enabled) {
+        coreAndDragoonGate = enabled;
+    }
+
     public static String copyCherryVisDataTo() {
         return copyCherryVisDataTo;
     }
