@@ -101,17 +101,29 @@ public class OccupiedTileIsNeverBuildableTest extends WorldStubForTests {
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 26, 23) // a worker parked where we would build
         ), fakeEnemies(), () -> {
-            // A worker on the tile must NOT read as occupied. It did in the first
-            // version of this guard, which asked about every unit - and that made
-            // every mineral-line position "occupied", so the bot could not place
-            // its first Pylon at all (measured 2026-10-08 on OpenBW:
-            // occupied=true on tiles the engine called walkable, buildable and
-            // empty). Only buildings count; a worker is handled by the engine's
-            // own answer and by the builder stepping aside.
-            assertFalse(
+            // Owner ruling #49: with no builder assigned yet, nothing may be
+            // on the footprint at all - so a lone worker DOES occupy here.
+            // (The old assertion, worker-never-counts, predates the ruling;
+            // the name of this test finally matches what it pins.)
+            assertTrue(
                 BuildingTilesAreOccupied.check(APosition.create(26, 23), AUnitType.Protoss_Pylon),
-                "a worker on the tile is not an existing building - counting it refused every "
-                    + "mineral-line position");
+                "with no builder to exclude, a worker on the tile occupies it");
+        });
+    }
+
+    @Test
+    public void theAssignedBuilderDoesNotOccupyItsOwnSite() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 26, 23);
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            builder
+        ), fakeEnemies(), () -> {
+            // The other half of ruling #49: StarCraft lets a building go up
+            // under its builder, so the assigned builder is excluded - and the
+            // builder stepping aside is what unblocks mineral-line sites.
+            assertFalse(
+                BuildingTilesAreOccupied.check(APosition.create(26, 23), AUnitType.Protoss_Pylon, builder),
+                "the assigned builder is not an obstacle to its own site");
         });
     }
 }
