@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.conditions.*;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
+import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.constructions.position.protoss.*;
 import atlantis.production.constructions.position.terran.TerranForbiddenByStreetGrid;
 import atlantis.production.constructions.position.terran.TerranPositionFinder;
@@ -46,6 +47,19 @@ public class PositionFulfillsAllConditions {
 //            AbstractPositionFinder._CONDITION_THAT_FAILED = "Not buildable";
 //            return false;
 //        }
+
+        // Both planners must agree on power (NEXT #50): the Protoss sweep
+        // has its own gate, but exact-position orders and other paths reach
+        // this shared chain without it - and an unpowered request dies on
+        // the engine 315 times in a row (measured: Gateway [14,51]). The
+        // rule is the engine's own mask (PsiField), not a radius guess.
+        // Power runs before terrain: it is a property of the site (cheap and
+        // global), and the sweep already checks in this order, so both paths
+        // name the same cause.
+        if (We.protoss() && building.needsPower() && !IsPoweredByAPylon.check(position)) {
+            AbstractPositionFinder._STATUS = "Not powered by a Pylon";
+            return failed();
+        }
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();

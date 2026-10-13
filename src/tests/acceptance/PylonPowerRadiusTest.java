@@ -1,12 +1,15 @@
 package tests.acceptance;
 
 import atlantis.map.position.APosition;
+import atlantis.production.constructions.position.AbstractPositionFinder;
+import atlantis.production.constructions.position.PositionFulfillsAllConditions;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -70,6 +73,29 @@ public class PylonPowerRadiusTest extends WorldStubForTests {
             assertTrue(
                     IsPoweredByAPylon.check(APosition.create(14, 50)),
                     "one tile nearer is inside - the boundary is razor-thin here");
+        });
+    }
+
+    /**
+     * The shared chain refuses an unpowered site with a named reason (NEXT
+     * #50): the Protoss sweep has its own gate, but exact-position orders
+     * reach this chain without it. A Pylon itself never needs power.
+     */
+    @Test
+    public void theSharedChainRefusesAnUnpoweredSiteByName() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 16, 46);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 15, 50);
+
+        world(1, fakeOurs(nexus, pylon, probe), fakeEnemies(), () -> {
+            assertFalse(
+                    PositionFulfillsAllConditions.doesPositionFulfillAllConditions(
+                            probe, AUnitType.Protoss_Gateway, APosition.create(14, 51), probe),
+                    "a Gateway outside every Pylon field must not pass the shared chain");
+
+            assertEquals(
+                    "Not powered by a Pylon", AbstractPositionFinder._STATUS,
+                    "the refusal names power, so the next hunt starts at the cause");
         });
     }
 }
