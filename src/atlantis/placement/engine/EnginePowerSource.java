@@ -1,6 +1,7 @@
 package atlantis.placement.engine;
 
 import atlantis.map.position.APosition;
+import atlantis.map.position.PsiField;
 import atlantis.placement.core.PsiGating;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -44,9 +45,11 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         // Pylons" true everywhere, instead of throwing from a cache inside Select.
         if (atlantis.Atlantis.game() == null) return false;
 
-        return Select.ourOfType(AUnitType.Protoss_Pylon)
-                .inRadius(PYLON_RADIUS_TILES, APosition.create(tx, ty))
-                .notEmpty();
+        for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
+            if (PsiField.covers(pylon.tx(), pylon.ty(), tx, ty)) return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -105,13 +108,7 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
 
     /** Would a Pylon at this unit's position power the tile once finished? */
     private static boolean withinPowerRadius(AUnit pylon, int tx, int ty) {
-        // Distance from the tile to the Pylon's footprint, in tiles.
-        int nearestX = clamp(tx, pylon.tx(), pylon.tx() + pylon.type().getTilesWidth() - 1);
-        int nearestY = clamp(ty, pylon.ty(), pylon.ty() + pylon.type().getTilesHeights() - 1);
-
-        int dx = Math.abs(tx - nearestX);
-        int dy = Math.abs(ty - nearestY);
-        return Math.max(dx, dy) <= PYLON_RADIUS_TILES;
+        return PsiField.covers(pylon.tx(), pylon.ty(), tx, ty);
     }
 
     /**
@@ -127,13 +124,5 @@ public final class EnginePowerSource implements PsiGating.PowerSource {
         int total = unit.type().totalTrainTime();
         int remaining = (int) Math.ceil(total * (100 - hpPercent) / 100.0);
         return Math.max(0, remaining);
-    }
-
-    private static int clamp(int value, int min, int max) {
-        if (value < min)
-            return min;
-        if (value > max)
-            return max;
-        return value;
     }
 }

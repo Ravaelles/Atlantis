@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position.conditions.can_build_here;
 
 import atlantis.map.position.APosition;
+import atlantis.map.position.PsiField;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -36,35 +37,18 @@ import atlantis.units.select.Select;
  */
 public class IsPoweredByAPylon {
 
-    /** The engine's Pylon power radius in build tiles, from the Pylon's own tiles. */
-    public static final int PYLON_POWER_RADIUS_TILES = 6;
-
+    /**
+     * Is this tile inside a finished Pylon's power field, by the engine's own
+     * rule ({@link PsiField})? Completed Pylons only - a warping Pylon powers
+     * nothing, and counting it would pass sites the engine refuses.
+     */
     public static boolean check(APosition position) {
         if (position == null) return false;
 
         for (AUnit pylon : Select.ourOfType(AUnitType.Protoss_Pylon).list()) {
-            if (withinPowerRadius(pylon, position)) return true;
+            if (PsiField.covers(pylon.tx(), pylon.ty(), position.tx(), position.ty())) return true;
         }
 
         return false;
-    }
-
-    /**
-     * Distance is measured from the tile to the Pylon's <b>footprint</b> (nearest
-     * tile of it), Chebyshev - same rule as {@code EnginePowerSource}.
-     */
-    private static boolean withinPowerRadius(AUnit pylon, APosition position) {
-        int nearestX = clamp(position.tx(), pylon.tx(), pylon.tx() + pylon.type().getTilesWidth() - 1);
-        int nearestY = clamp(position.ty(), pylon.ty(), pylon.ty() + pylon.type().getTilesHeights() - 1);
-
-        int dx = Math.abs(position.tx() - nearestX);
-        int dy = Math.abs(position.ty() - nearestY);
-        return Math.max(dx, dy) <= PYLON_POWER_RADIUS_TILES;
-    }
-
-    private static int clamp(int value, int min, int max) {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
     }
 }

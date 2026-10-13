@@ -48,9 +48,6 @@ public final class PsiGating {
         boolean canBeCoveredByNewPylon(int tx, int ty);
     }
 
-    /** Tiles a Pylon powers from its own tile (BWAPI's Pylon power radius). */
-    public static final int PYLON_POWER_RADIUS_TILES = 6;
-
     private final PowerSource power;
 
     public PsiGating(PowerSource power) {
