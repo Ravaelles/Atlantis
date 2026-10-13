@@ -20,6 +20,18 @@ public class OnUnitCompleted {
             // exactly once - this fires when construction or training finishes.
             atlantis.game.util.CompletedUnitsHistory.record(unit.type());
 
+            // CherryVis first-seen (Stardust pattern, NEXT #68 follow-up): this
+            // is where a trained/warped unit is first recorded - at completion,
+            // with its OWN position. Recording at creation caught the
+            // producer's position (every late Probe at the Nexus) and the
+            // viewer matched nothing. Dedup in record() keeps this harmless
+            // against the seed/discovery paths.
+            if (unit.isCompleted() && atlantis.cherryvis.ACherryVis.isEnabled()) {
+                atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
+                    atlantis.game.A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
+                );
+            }
+
             OnOurNewUnitCompleted.ourNewUnitCompleted(unit);
         }
     }

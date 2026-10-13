@@ -14,11 +14,15 @@ public class OnUnitCreated {
 
         AUnit unit = Worlds.units().createFrom(u);
 
-        // CherryVis first-seen for our own units (Stardust records at creation,
-        // not at discovery - BWAPI never "discovers" our own units, so the
-        // UNIT_DISCOVERED path misses the whole army). Engine type id, not
-        // AUnitType.id() (NEXT #68).
-        if (unit.isOur() && atlantis.cherryvis.ACherryVis.isEnabled()) {
+        // CherryVis first-seen for our own units, but ONLY when completed
+        // (Stardust records at the incomplete->complete transition, not at
+        // creation - NEXT #68 follow-up): a unit being trained reports its
+        // PRODUCER's position (every late Probe recorded at the Nexus,
+        // (288,1456)), so the viewer - nearest same-type within 25px, no
+        // retry - matches nothing and the unit reads "i???" forever.
+        // Incomplete units are recorded at completion (OnUnitCompleted),
+        // where the position is their own. Engine type id, not AUnitType.id().
+        if (unit.isOur() && unit.isCompleted() && atlantis.cherryvis.ACherryVis.isEnabled()) {
             atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
                 A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
             );
