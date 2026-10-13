@@ -870,3 +870,16 @@ in a game, not just in its test.
 - Protoss re-verify run: Core=1 Assimilator=1 but Dragoon=0 at 318 s (gate
   correctly FAILED - refinery->100 gas->Dragoon chain is longer than the
   ForceExit horizon when the Core lands late). Timing, not a defect.
+
+## Session 2026-10-13 (autonomous, continued): closures #54/#61/#55, second map, #56 measured
+
+- Closes #54 (refresh cancel loop dead: WTF 0 in 10+ runs; 101406 proved
+  cancel->re-request productive, Assimilator built), #61 (stuck workers,
+  root-caused under #63, today's STUCK lines are healthy miners), #55 (map
+  analysis always ran everywhere - single ancient call site d3e9e0d3).
+- `(2)Destination1.1.scx` --short: **SCENARIO PASSED** (`Pylon=5 Gateway=3
+  Dragoon=2 Assimilator=1 Core=1`). Placement generalizes past TauCross.
+- #56 measured via temporary Terran flip (reverted same turn, diff verified
+  empty, Protoss re-verified): symptoms absent, stays open.
+- #71 filed (suspect inverted 700 s gate, needs a 700 s+ Wine game to verify;
+  not patched blind).
