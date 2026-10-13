@@ -261,12 +261,37 @@ public final class BwapiOrderSink implements OrderSink {
         // Per-order unit narrative for CherryVis (NEXT #68): every engine order
         // of every unit in one place. Const-false when off, so a normal game
         // pays nothing; enable DebugFlags.CHERRYVIS_UNIT_ORDERS for a traced run.
+        // Shape (owner ask): "ATTACK@1128" - the engine command and the frame,
+        // no "manager:"/"order:" prefixes and no outcome suffix, so the viewer
+        // shows one uniform per-unit narrative with the manager lines.
         if (atlantis.debug.DebugFlags.CHERRYVIS_UNIT_ORDERS) {
             atlantis.cherryvis.CV.unitLog(
-                "order:" + operation + (result ? " OK" : " REFUSED"), actor
+                engineCommandName(operation) + "@" + atlantis.game.A.now(), actor
             );
         }
 
         return result;
+    }
+
+    /**
+     * Sink-method names to engine-command names for the unit narrative
+     * (owner ask: ATTACK, MOVE, ...). Only the commands the game emits at
+     * volume are mapped; anything else uppercases predictably.
+     */
+    private static String engineCommandName(String operation) {
+        switch (operation) {
+            case "attackUnit": return "ATTACK";
+            case "move": return "MOVE";
+            case "gather": return "GATHER";
+            case "patrol": return "PATROL";
+            case "holdPosition": return "HOLD";
+            case "stop": return "STOP";
+            case "follow": return "FOLLOW";
+            case "repair": return "REPAIR";
+            case "build": return "BUILD";
+            case "train": return "TRAIN";
+            case "rightClick": return "RIGHTCLICK";
+            default: return operation.toUpperCase();
+        }
     }
 }
