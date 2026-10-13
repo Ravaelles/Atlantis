@@ -1239,6 +1239,36 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (Nothing→MoveToMinerals→MiningMinerals→Move→PlaceBuilding), 82
   dash-managers interleaved, unit_ids coverage still 100%. Suite 464/0.
 
+## Session 2026-10-13 (autonomous: FIVE fixes - hover, Nexus, supply, #56, pins)
+
+1. Terran hover FIXED + game-verified: the move target is the tile origin
+   now (the footprint-center target was unreachable by the tile-origin
+   decision metric for 4x3). Terran run: Barracks BUILD_ATTEMPTs 2/2
+   accepted (was 0 forever), Barracks=2, Marine=9. Protoss re-verify PASSED
+   (Gateway=2, Pylon=4, Core+Dragoon gate). Refresh-drift ruled out (0
+   refresh lines; re-site came from fresh request after cancel).
+2. Nexus save-up gate + deterministic tests (`SaveForNexus` below 450 while
+   queued; caught + fixed an order-dependent test along the way -
+   ShouldExpand globals don't belong in unit tests). No bounded game-verify
+   possible (expansion thresholds); Wine will tell.
+3. Supply bands restored to ASupplyManager levels (2/4/5/8/10/14/19, measured
+   against the deleted source) + public threshold tests; Protoss run PASSED
+   with them (PylonAt8 visible, first Pylon @1152 at 8/9). D2 executed and
+   deleted. Capped-with-bank windows persist (reservations/placement next,
+   not order timing).
+4. Closes #56 (deleted): orphan fallback fixed+tested, hover
+   fixed+game-verified, predicted defect 2 refuted (IN_PROGRESS is correct at
+   creation). Remainder filed as #82 (off-site completion, unobserved).
+5. OccupiedTile test aligned to the #49 ruling (worker blocks w/o builder,
+   builder excluded); #77 narrowed to 6. Zealot guard tried and falsified by
+   measurement (claim persists; stub-world proximity selector flaps for
+   static geometry - open harness-vs-production question, do not gate on it).
+   Terran pins = We.terran/Main.ourRace harness question (owner).
+
+   NOTE: another session is active in the tree (`BuildOrderSettings`
+   supply threshold touched while this session changed supply bands -
+   overlap to reconcile before either side claims supply behavior).
+
 ## Session 2026-10-13 (owner overrides: completed-only, Pylon-at-8, #form)
 
 - Counting pipeline EXONERATED by raw-engine dump (28/28 exists+completed,

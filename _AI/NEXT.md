@@ -453,45 +453,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   named the re-queue) - a construction that never starts now leaves a birth
   trace. Still needs the Nexus-queuing game for the actual hunt.**
 
-- **#56 - `TerranNewBuilding` has the same two finish-path defects `ProtossWarping` had,**
-  and they were not touched because they need their own measurement (found 2026-10-11 while
-  fixing #53). Measured 2026-10-13 (temporary Terran race flip, reverted same
-  turn): 258 s game builds `SCV=21 Marine=5 Academy=1 Refinery=1 CommandC=1
-  SupplyD=2 Barracks=1` with zero `No construction for`, zero `CANNOT
-  define`, all attempts accepted - the predicted defects did not trigger
-  (positional miss needs site drift that did not occur). Open until a game
-  shows the symptoms; do not fix blind.
-
-  `TerranNewBuilding.updateNewBuilding` is the Terran twin, and it differs from the fixed
-  Protoss path in exactly two ways, both visible in the source:
-
-  1. **No fallback when the positional lookup misses** - `defineConstruction` returns null and
-     the method simply `return`s, so a Terran building that went up away from its reserved
-     tile leaves its construction in the queue.
-  2. **`IN_PROGRESS`, never `FINISHED`** - and `setStatus(FINISHED)` is the only status that
-     removes a construction, so a Terran construction that produced its building is still
-     counted by `countPendingOfType` for the rest of the game.
-
-  **Why this is a separate item and not a copy of the Protoss fix:** the Terran worker does
-  not walk away when the building starts - it is walked INTO the building (the SCV is consumed
-  by the construction and `ConstructionStatusChanger` reads `builder.buildType()` for the
-  "builder became the building" case) - so the deadlock shape and the correct release point
-  are different, and the Protoss fix's `GatherResources(builder)` would be wrong here. Measure
-  first: a Terran OpenBW run, `BUILDER_LOG=1`, and check whether `No construction for <unit>`
-  and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
-  `CONVENTIONS.md` §3a.
-
-  **Measured 2026-10-13, second Terran game (temporary flip, reverted same
-  turn, Protoss re-verified playing): symptoms PARTIALLY PRESENT,
-  behaviorally.** 157 s: all literal markers absent (`No construction for` 0,
-  `CANNOT define` 0, `engineAccepted=false` 0, one BUILD_ATTEMPT - Depot,
-  accepted). But no Barracks was ever attempted: two SCVs Move-loop at
-  successive sites ([100,111] 88f→358f, [78,116] 73f→343f, `distToBuild=1.4
-  isConstructing=false`), `REQUEST_REFUSED_DUPLICATE Barracks/SupplyD`
-  present, roster ends `CommandC=1 SCV=16 SupplyD=1` (0 Barracks/Marines,
-  ForceExit on hoarded minerals). So the STALL half shows in behavior while
-  neither predicted log-marker fires - next is reading `TerranNewBuilding`
-  against the fixed Protoss path, not re-measuring. Item stays open.
+- **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
+  Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
+  Terran building completing >2.5 tiles from its reservation would stay
+  IN_PROGRESS with its SCV held forever. Never observed in a game (both
+  Terran runs built on-site); needs a game showing it. Do not fix blind.
 
 - **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
   Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
@@ -666,16 +632,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   entries.
 
 
-- **#77 (2026-10-13) - acceptance tier: 7 stale pins (remainder of #73).**
+- **#77 (2026-10-13) - acceptance tier: 6 stale pins (remainder of #73).**
   The 4 FakeUnit NPEs are fixed (null-guard in `AUnit.isTrainingAnyUnit`, the
   same shape as its neighbors; `ProtossDragoonProductionTest` 2/2 and
-  `protoss.ProtossDynamicUnitProductionTest` 3/3 fully green). What remains is
-  judgment, not crashes: 3 numeric combat-eval pins (`CombatEvaluatorTest` -
-  engine data moved on, touching them touches ADR 0006) and 4 boolean
-  behavioral pins (`TerranDynamicUnitsCommanderTest.letsSee`,
-  `TerranInfantryWeaponsTest`, `ZealotSelfDefenseTest`,
-  `OccupiedTileIsNeverBuildableTest` - fix code or update pins, owner's call
-  either way).
+  `protoss.ProtossDynamicUnitProductionTest` 3/3 fully green). OccupiedTile is
+  done (test aligned to the #49 ruling: worker blocks without a builder, the
+  assigned builder is excluded). What remains is judgment, not crashes: 3
+  numeric combat-eval pins (`CombatEvaluatorTest` - engine data moved on,
+  touching them touches ADR 0006), ZealotSelfDefense (a defend-mission guard
+  was tried and falsified by measurement - the claim persists through a
+  flapping stub-world proximity selector, open question), and 2
+  Terran-race-harness pins (`letsSee`, `InfantryWeapons` - both vetoed by
+  `We.terran()` reading hardcoded `Main.ourRace()`, needs a harness strategy
+  decision). Owner's call on all.
 
 
 - **#78 (2026-10-13) - replay-vs-live divergence: OpenBW #27, live is truth.**

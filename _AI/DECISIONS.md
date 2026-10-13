@@ -17,13 +17,6 @@ then delete per `_AI/PLACEMENT-CUTOVER-PLAN.md` (recommended, but needs the
 parity gap closed); (b) delete now and break default runs (not recommended).
 Approval of (a) starts with the parity-gap scope, not the deletion itself.
 
-## D2 - Raise early fallback-supply thresholds (`minFreeSupplyToAct` table)
-
-Early Pylons build fine (5 by supply 49 in every Wine/OpenBW game); the miss
-is late-search, not timing. Raising the table orders earlier at the price of
-early minerals on every game. Not recommended without a game showing an early
-supply stall (none exists). If approved: one number + a Wine-length A/B.
-
 ## D3 - Create constructions at decision time, wait for minerals
 
 Queueing a building at 18 supply without bank reserves nothing (reservations
