@@ -17,14 +17,20 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
     protected int minFreeSupplyToAct() {
         int bonus = A.minerals() >= 350 ? 1 : 0;
 
-        int supplyUsed = A.supplyUsed();
-        if (supplyUsed <= 14) return 0 + bonus;
-        if (supplyUsed <= 28) return 3 + bonus;
-        if (supplyUsed <= 40) return 4 + bonus;
-        if (supplyUsed <= 60) return 6 + bonus;
-        if (supplyUsed <= 90) return 8 + bonus;
-        if (supplyUsed <= 120) return 11 + bonus;
-        if (supplyUsed <= 190) return 14 + bonus;
+        // Restored 2026-10-13 to the old ProtossSupplyCommander bands (owner
+        // ask: Pylons much earlier, like ASupplyManager used to). The lazier
+        // interim table (0/3/4/6/8/11/14) capped games that the old 2/4/5/8/10
+        // /14/19 rode through - measured against its deleted source. Axis and
+        // in-flight caps below are unchanged; only the trigger levels moved.
+        int supplyTotal = A.supplyTotal();
+        if (supplyTotal <= 11) return 2 + bonus;
+        if (supplyTotal <= 20) return 4 + bonus;
+        if (supplyTotal <= 36) return 5 + bonus;
+        if (supplyTotal <= 46) return 8 + bonus;
+        if (supplyTotal <= 70) return 10 + bonus;
+        if (supplyTotal <= 120) return 14 + bonus;
+        if (supplyTotal <= 170) return 14 + bonus;
+        if (supplyTotal <= 200) return 19 + bonus;
         return -1;
     }
 
