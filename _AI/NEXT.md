@@ -448,6 +448,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   <630 s), not a queue bug. Next: legacy-path queue logging, or a V2-path run
   where the markers exist.**
 
+  **Queue-birth markers added 2026-10-13:** `AddToQueue` now logs
+  `<Type> ADDED TO QUEUE` for buildings (the Nexus twin of the line is what
+  named the re-queue) - a construction that never starts now leaves a birth
+  trace. Still needs the Nexus-queuing game for the actual hunt.**
+
 - **#56 - `TerranNewBuilding` has the same two finish-path defects `ProtossWarping` had,**
   and they were not touched because they need their own measurement (found 2026-10-11 while
   fixing #53). Measured 2026-10-13 (temporary Terran race flip, reverted same
@@ -617,17 +622,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   all game. Wire it (free, big combat value, needs a long-game verification
   that research completes) or delete it (dead code). Owner call either way.
 
-- **#73 (2026-10-13) - acceptance tier is red on pre-existing failures (not the fast suite).**
-  11 failures, all reproduced on the pre-session tree (worktree at 683b9678,
-  removed after): 3 stale eval pins in CombatEvaluatorTest (two sunken-colony plus
-  the Marines-vs-Zergling/Zealot direction pin),
-  FakeUnit NPEs (`u` null: Dragoon/DynamicUnit production, Terran commanders),
-  ZealotSelfDefense, OccupiedTile, TerranInfantryWeapons. Fast suite
-  (tests.unit 428/428) and games are green; these fail identically with and
-  without this session's changes. Fix pins vs harden fakes (owner call -
-  combat-eval numbers touch ADR 0006 doctrine).
-
-
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count
   (`GatewayRequeueAfterCancelTest` 2/2, order in `CancelTooLongConstructions:192-194`),
@@ -651,6 +645,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   fourth missing file, or any of the three landing on disk, fails it). What remains
   is owner policy (D5): rename the entries, add the `.txt` files, or delete the
   entries.
+
+
+- **#77 (2026-10-13) - acceptance tier: 7 stale pins (remainder of #73).**
+  The 4 FakeUnit NPEs are fixed (null-guard in `AUnit.isTrainingAnyUnit`, the
+  same shape as its neighbors; `ProtossDragoonProductionTest` 2/2 and
+  `protoss.ProtossDynamicUnitProductionTest` 3/3 fully green). What remains is
+  judgment, not crashes: 3 numeric combat-eval pins (`CombatEvaluatorTest` -
+  engine data moved on, touching them touches ADR 0006) and 4 boolean
+  behavioral pins (`TerranDynamicUnitsCommanderTest.letsSee`,
+  `TerranInfantryWeaponsTest`, `ZealotSelfDefenseTest`,
+  `OccupiedTileIsNeverBuildableTest` - fix code or update pins, owner's call
+  either way).
 
 
 ### OpenBW headless run (2026-10-08)

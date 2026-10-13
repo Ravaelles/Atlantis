@@ -1179,3 +1179,19 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   newest pair listed. Owner: hard-refresh the browser (cached js).
 - New `_AI/CHERRYVIS-DOCKER.md` (setup we use + links + patch pattern),
   indexed in `_AI/README.md`. The missing setup file the owner asked for.
+
+## Session 2026-10-13 (autonomous: #73 split, #58 markers, legend agreement)
+
+- Retires #73, files #77: the 4 NPEs are fixed by a null-guard in
+  `AUnit.isTrainingAnyUnit` (a handle-less unit trains nothing - same shape
+  as the neighboring accessors; `ProtossDragoonProductionTest` 2/2,
+  `protoss.ProtossDynamicUnitProductionTest` 3/3 green, zero NPEs left in the
+  tier). #77 keeps the 7 pins (3 numeric eval + 4 boolean behavioral - code
+  or pins, owner's call). Suite 464/0 after.
+- #58 instrumented, kept open: buildings now log `<Type> ADDED TO QUEUE` at
+  birth (`AddToQueue`), so the next stuck construction leaves a first trace;
+  the hunt still needs its Nexus-queuing game.
+- `CherryVisUpdatesLegendAgreementTest` (#65's actionable half): one shared
+  runtime table feeds `units_updates` and `custom_names` (verified single
+  instance in the writer); the test pins every referenced id resolving in
+  legend order. Viewer-click check stays the owner's.
