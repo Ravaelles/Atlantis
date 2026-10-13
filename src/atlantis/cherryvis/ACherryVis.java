@@ -38,6 +38,7 @@ public class ACherryVis {
             atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.processPending(
                 id -> atlantis.core.world.Worlds.units().entity(id), A.now()
             );
+            atlantis.cherryvis.simple.ACherryVis_OrderWatcher.update();
         }
     }
 
