@@ -172,4 +172,63 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
                     + AutoProduceWorkersCommander.REASON);
         });
     }
+
+    /**
+     * A queued natural Nexus costs 400: without help the pump eats the bank
+     * faster than it grows and the assigned builder waits at a correct site
+     * forever (BuilderWaiting). Same machinery as the Core reservation.
+     */
+    @Test
+    public void nexusQueuedPausesWorkersBelow450() {
+        currentMinerals = 300;
+        currentSupplyUsed = 20;
+        currentSupplyTotal = 40;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            // Direct queue insert, not AddToQueue: base orders go through
+            // ShouldExpand approval there, which is global static state from
+            // whatever test ran before - this test must not depend on it.
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Nexus, 0));
+
+            assertFalse(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "a queued Nexus below 450 must save up, not pump workers");
+            assertEquals(
+                "SaveForNexus", AutoProduceWorkersCommander.REASON,
+                "the refusing gate must name itself");
+        });
+    }
+
+    @Test
+    public void nexusQueuedReleasesAt450() {
+        currentMinerals = 500;
+        currentSupplyUsed = 20;
+        currentSupplyTotal = 40;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            // Same direct insert: no ShouldExpand global-state dependence.
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Nexus, 0));
+
+            assertTrue(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "450 covers Nexus+worker - the stream flows, got: "
+                    + AutoProduceWorkersCommander.REASON);
+        });
+    }
 }

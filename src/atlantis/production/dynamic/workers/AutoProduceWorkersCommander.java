@@ -77,6 +77,16 @@ public class AutoProduceWorkersCommander extends Commander {
                 && !A.hasMinerals(150)
         ) return dont("PylonAt8");
 
+        // Natural Nexus save-up (owner ask 2026-10-13): a queued Nexus costs
+        // 400, and without help the pump eats the bank faster than it grows -
+        // the builder then waits at a correct site forever (BuilderWaiting).
+        // Same machinery as the Core reservation: while a Nexus is queued,
+        // workers wait below 450.
+        if (
+            We.protoss() && CountInQueue.count(AUnitType.Protoss_Nexus) > 0
+                && !A.hasMinerals(450)
+        ) return dont("SaveForNexus");
+
         if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals()) return dont("CriticalStuff");
 
         Decision decision = EarlyGameProduceWorkers.decision();
