@@ -37,7 +37,15 @@ public class RoamAroundEnemyBase extends Manager {
         if (position.position().x >= 3200) return false;
 
         ScoutState.enemyBaseRegion = enemyMain.position().region();
-        if (enemyMain == null) return false;
+
+        // The region is null when the map model has no region for the tile
+        // (uninitialised BWEM, OpenBW's region-less map) - and a null region
+        // NPE'd below in initializeEnemyRegionPolygonPoints, killing this
+        // unit's whole manager chain for the frame (measured on Wine:
+        // RoamAroundEnemyBase.java:67). No region means nowhere to roam, so
+        // decline instead of throwing; the per-factory invokedFor catch is the
+        // backstop, not the plan.
+        if (ScoutState.enemyBaseRegion == null) return false;
 
         if (ScoutState.scoutingAroundBasePoints.empty()) {
             initializeEnemyRegionPolygonPoints();
