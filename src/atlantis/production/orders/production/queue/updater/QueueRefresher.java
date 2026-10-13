@@ -11,7 +11,6 @@ import atlantis.util.Counter;
 public class QueueRefresher {
     private final Queue queue;
     private final Counter<AUnitType> existingCounter;
-//    private boolean noMoreNewReadyOrdersFromNowOn;
 
     public QueueRefresher(Queue queue) {
         this.queue = queue;
@@ -47,14 +46,10 @@ public class QueueRefresher {
     }
 
     private OrderStatus tryChangingStatusToReady(ProductionOrder order) {
-//        if (noMoreNewReadyOrdersFromNowOn) return markAsNotReady(order);
 
         // Ready to produce
         if (IsReadyToProduceOrder.isReady(order)) return markAsReadyToProduce(order);
 
-//        if (
-//            !A.hasMinerals(550) && !IsReadyToProduceOrder.canAffordWithReserved(order)
-//        ) noMoreNewReadyOrdersFromNowOn = true;
 
         return null;
 
@@ -75,23 +70,12 @@ public class QueueRefresher {
     }
 
     private OrderStatus markAsComplete(ProductionOrder order) {
-//        if (order.unitType() != null && order.unitType().isGasBuilding()) {
-//            AConsole.errPrintln("########################### Gas building completed: " + order.construction());
-//        }
 
         order.setStatus(OrderStatus.FINISHED);
-//        order.setUnitType(null);
-//        order.setModifier(null);
-//        order.forceSetPosition(null);
 
         if (Queue.get() != null) Queue.get().clearCache();
 
         return OrderStatus.FINISHED;
 
-//        OrderStatus status = order.status();
-//        order.cancel();
-//
-//
-//        return status;
     }
 }

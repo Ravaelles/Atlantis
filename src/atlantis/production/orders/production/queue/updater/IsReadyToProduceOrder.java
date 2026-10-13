@@ -19,7 +19,6 @@ import atlantis.util.We;
 public class IsReadyToProduceOrder {
     public static boolean isReady(ProductionOrder order) {
         if (order.isStatus(OrderStatus.FINISHED)) {
-//            ErrorLog.printMaxOncePerMinute("Trying to produce completed order: " + order);
             return false;
         }
 
@@ -43,21 +42,6 @@ public class IsReadyToProduceOrder {
             return false;
         }
 
-//        if (order.unitType() == AUnitType.Terran_Machine_Shop) {
-//        if (order.tech() == TechType.Stim_Packs) {
-//        if (order.upgrade() == ResearchU238.upgradeType()) {
-//        AConsole.errPrintln("----------- Order: " + order + " / now: " + A.now());
-//        AConsole.errPrintln(
-//            "supplyRequirementFulfilled: " + order.supplyRequirementFulfilled() + "\r\n"
-//                + "hasEnoughResourcesFor: " + hasEnoughResourcesFor(order) + " / res_min:"
-//                + ReservedResources.minerals() + "\r\n"
-//                + "canAffordWithReserved: " + A.canAffordWithReserved(150, 0) + "\r\n"
-//                + "canAfford bonus: " + A.canAfford(150 + 150, 0) + "\r\n"
-//                + "checkIfHasWhatRequired: " + order.checkIfHasWhatRequired() + "\r\n"
-//                + order.minSupply() + "/" + A.supplyUsed()
-//        );
-//        AConsole.errPrintln("-----------");
-//        }
 
         // Prioritize combat unit production when base is under attack
         if (order.isBuilding() && order.unitType().isBase()) {
@@ -87,11 +71,6 @@ public class IsReadyToProduceOrder {
 
         if (cantAffordAndDidntExpandYet(order)) return false;
 
-//        if (order.isStatus(OrderStatus.NOT_READY) && order.isBuilding() && !order.is(AUnitType.Protoss_Pylon)) {
-//            System.out.println("▓▓▓▓▓▓▓ READY TO PRODUCE = " + order + " at " + A.supplyUsed() + ", mins:" + A.minerals());
-//            System.out.println("▓▓▓▓▓▓▓     supplyReqFulfilled: " + order.supplyRequirementFulfilled(0));
-//            System.err.println("isFarFromMainBaseSoTravelEarly = " + isFarFromMainBaseSoTravelEarly);
-//        }
         return true;
     }
 
@@ -129,16 +108,9 @@ public class IsReadyToProduceOrder {
         if (A.supplyUsed() >= order.minSupply()) return canAffordNow;
         else if (!canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())) return false;
 
-//        System.err.println("      SUP?!? = " + (A.supplyUsed() + 3 >= order.minSupply()));
-//        System.err.println("      type.mineralPrice() = " + type.mineralPrice());
-//        System.err.println("      mineralBonusToHave(type) = " + mineralBonusToHave(type));
-//        System.err.println("      ReservedResources.minerals() = " + ReservedResources.minerals());
 
-//        return A.supplyUsed() + 3 >= order.minSupply()
         return A.supplyUsed() + (A.supplyUsed() >= 19 ? 3 : 1) >= order.minSupply()
-//            && (order.isUnit() && type.isResource())
             && (canAffordNow || applySpecialPriority(type));
-//            && A.canAfford(type.mineralPrice() + 100, type.gasPrice() > 0 ? type.gasPrice() + 50 : 0);
     }
 
     private static boolean applySpecialPriority(AUnitType unitType) {
@@ -161,18 +133,11 @@ public class IsReadyToProduceOrder {
         for (ProductionOrder o : otherEarlierOrders.list()) {
             reservedMinerals += o.reservations().minerals();
             reservedGas += o.reservations().gas();
-//            reservedMinerals += o.reservations().minerals();
-//            reservedGas += o.reservations().gas();
         }
 
-//        if (reservedMinerals > 0)
-//            System.err.println("At supply " + A.supplyUsed() + " reservedMinerals = " + reservedMinerals);
 
         return A.canAffordWithReserved(minerals + reservedMinerals, gas + reservedGas);
 
-//        return A.canAffordWithReserved(
-//            unitType.mineralPrice() + mineralBonusToHave(unitType), unitType.gasPrice()
-//        );
     }
 
     private static int mineralBonusToHave(AUnitType type) {
@@ -187,8 +152,6 @@ public class IsReadyToProduceOrder {
     }
 
     public static boolean canAffordWithReserved(ProductionOrder order) {
-//        int mineralsAvailable = mineralsAvailable(order);
-//        int gasAvailable = gasAvailable(order);
 
         if (true) return false;
 

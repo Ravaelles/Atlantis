@@ -23,9 +23,6 @@ public class ProductionOrderHandler extends Commander {
     @Override
     protected boolean handle() {
         if (isAlreadyConsumed()) {
-//            AConsole.errPrintln("Order " + order + " is already consumed!");
-//            System.err.println("Order " + order + " is already consumed, SET TO COMPLETED!");
-//            order.setStatus(OrderStatus.COMPLETED);
             return false;
         }
 
@@ -36,15 +33,12 @@ public class ProductionOrderHandler extends Commander {
             AUnitType unitType = order.unitType();
 
             if (order.construction() != null) {
-//                ErrorLog.printMaxOncePerMinute("Construction already begun for " + order);
                 return false;
             }
 
             if (unitType.isABuilding()) {
                 if (ProduceBuilding.produceBuilding(unitType, order)) {
-//                    System.err.println("!!!!!!!!!!! BUILD " + order.unitType() + " at " + A.supplyUsed() + " / " + ProduceBuilding._lastConstruction);
                     order.consume();
-//                    order.setStatus(OrderStatus.IN_PROGRESS);
                 }
             }
             else {
@@ -86,14 +80,6 @@ public class ProductionOrderHandler extends Commander {
 
         else if (order.mission() != null) {
             // @ToDo - disabled due to local issues
-//            if (TIMES_MISSION_ENFORCED <= 2) {
-//                Missions.setGlobalMissionTo(order.mission(), "Build Order enforced: " + order.mission());
-//                TIMES_MISSION_ENFORCED++;
-//
-//                order.setStatus(OrderStatus.COMPLETED);
-//                order.consume();
-//                order.cancel();
-//            }
         }
 
         // === Nothing! ============================================
@@ -116,9 +102,6 @@ public class ProductionOrderHandler extends Commander {
             )
         ) return false;
 
-//        if (order.isBuilding()) {
-//            AConsole.errPrintln("Building " + order + " is already consumed! Const = " + order.construction());
-//        }
 
         return true;
     }

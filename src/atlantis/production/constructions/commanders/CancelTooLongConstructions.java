@@ -24,12 +24,6 @@ public class CancelTooLongConstructions {
                 && A.hasMinerals(type.mineralPrice() + 16)
                 && (type.gasPrice() == 0 || A.hasGas(type.gasPrice() + 8))
         ) {
-//            if (neverCancel(type)) {
-//                constr.findPositionForNewBuilding();
-//
-//                ErrorLog.printMaxOncePerMinute("--- Took too long but don't cancel " + type);
-//                return;
-//            }
 
             APosition buildPosition = constr.buildPosition();
 
@@ -43,7 +37,6 @@ public class CancelTooLongConstructions {
             if (tryReplaceWithFreshSite(constr, type, buildPosition)) return;
 
             constr.cancel(type + " took too long (" + tookSeconds(constr) + "s)");
-//            System.err.println(" // " + AGame.now() + " // " + constr.timeOrdered() + " // > " + timeoutSeconds);
             ErrorLog.printMaxOncePerMinute(
                 "Cancel constr of " + type
                     + " (Took too long)"
@@ -55,13 +48,6 @@ public class CancelTooLongConstructions {
         }
     }
 
-//    private static boolean neverCancel(AUnitType type) {
-//        return type.isRoboticsFacility()
-//            || type.isRoboticsSupportBay()
-//            || type.isCyberneticsCore()
-//            || type.isObservatory()
-//            || type.isGasBuilding();
-//    }
 
     /**
      * Sends a fresh construction request for the same building while the stuck
@@ -171,11 +157,7 @@ public class CancelTooLongConstructions {
                 + ((int) (2 * constr.buildPosition().groundDistanceTo(main != null ? main : constr.builder())))
         );
 
-//        if (type.isGasBuilding()) timeoutSeconds += 6;
 
-//        if (!type.isCombatBuilding() && !type.producesLandUnits()) {
-//            timeoutSeconds += 18;
-//        }
 
         return timeoutSeconds;
     }
@@ -227,7 +209,6 @@ public class CancelTooLongConstructions {
                 "### FAILED ### Requesting " + type + " as it got cancelled\n" +
                 "New requested order: " + newOrder
             );
-//            }
 
             if (newOrder == null && type.isProtossImportantTechBuilding()) {
                 newOrder = AddToQueue.withTopPriority(type);
