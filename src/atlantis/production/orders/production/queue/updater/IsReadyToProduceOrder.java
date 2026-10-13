@@ -57,14 +57,14 @@ public class IsReadyToProduceOrder {
             // three indistinguishable silences). Names the refusing term with
             // the numbers, throttled; buildings only, units churn through here
             // every frame by design.
-            if (order.isBuilding()) {
-                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-                    "ORDER_NOT_READY " + order.unitType()
-                        + " supplyOk=" + supplyOk + "(" + A.supplyUsed() + "/" + order.minSupply() + ")"
-                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
-                        + " reserved=" + ReservedResources.minerals() + ")"
-                        + " requirementsOk=" + requirementsOk);
-            }
+//            if (order.isBuilding()) {
+//                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+//                    "ORDER_NOT_READY " + order.unitType() + " @" + A.now()
+//                        + " supplyOk=" + supplyOk + "(sup:" + A.supplyUsed() + "/min:" + order.minSupply() + ")"
+//                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
+//                        + " reserved=" + ReservedResources.minerals() + ")"
+//                        + " requirementsOk=" + requirementsOk);
+//            }
             return false;
         }
 
