@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -42,7 +41,7 @@ public class BotOutputReachesConsoleTest {
         public void botOutputIsStreamedToTheScriptStdout() throws IOException {
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("| tee \"$CLIENT_LOG\""),
+                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\""),
                                 "the bot's output must be tee'd: the log file keeps everything and the"
                                                 + " script's stdout (the IDE console) shows it live");
                 assertTrue(script.contains("LIVE_OUTPUT"),
@@ -55,10 +54,10 @@ public class BotOutputReachesConsoleTest {
                 // the artefact that scripts and diagnosis depend on.
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("tee \"$CLIENT_LOG\""),
-                                "streaming mode must still write the log");
-                assertTrue(script.contains("> \"$CLIENT_LOG\" 2>&1"),
-                                "quiet mode must write the log too");
+                assertTrue(script.contains("TEE_FILES=(\"$CLIENT_LOG\")"),
+                                "both branches tee through one file list starting at the client log");
+                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\" > /dev/null"),
+                                "quiet mode must still write the log files while silencing the console");
         }
 
         @Test
@@ -115,11 +114,27 @@ public class BotOutputReachesConsoleTest {
 
         @Test
         public void noStrayStreamingWhenDisabled() throws IOException {
-                // LIVE_OUTPUT=0 must not leave a dangling pipe: the quiet branch must be
-                // a plain redirect with no tee.
+                // LIVE_OUTPUT=0 must stay quiet on the console: the quiet branch
+                // pipes through tee (so the extra copy still works) but throws
+                // tee's own stdout away.
                 String script = read(WINE_FULL);
-                int quiet = script.indexOf("> \"$CLIENT_LOG\" 2>&1 < /dev/null &");
-                assertFalse(quiet < 0, "the quiet branch must redirect straight to the log");
+                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\" > /dev/null"),
+                                "the quiet branch must silence the console while still writing the log files");
+        }
+
+        @Test
+        public void wineLogCopyIsLiveAndGuarded() throws IOException {
+                // WINE_LOG_COPY (owner ask): the extra copy must be live (tee, not
+                // an end-of-run cp that misses kills), resolved from the bot ENV,
+                // and gated on a non-empty path plus GAME_LAUNCHER=WINE.
+                String script = read(WINE_FULL);
+
+                assertTrue(script.contains("TEE_FILES+=(\"$WINE_LOG_COPY_RESOLVED\")"),
+                                "the resolved copy joins the same live tee, not a later copy");
+                assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),
+                                "the destination resolves once before the client starts");
+                assertTrue(script.contains("grep -q \"^GAME_LAUNCHER=WINE\""),
+                                "an OpenBW ENV must never trigger the copy");
         }
 
         private static String read(Path path) throws IOException {

@@ -8,6 +8,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnit;
+import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
@@ -104,6 +105,33 @@ public class BuilderManager extends Manager {
     // =========================================================
 
     /**
+     * Does a Protoss builder stay assigned while its construction is
+     * IN_PROGRESS?
+     *
+     * <p>
+     * A worker is released to a building that is actually warping - that is
+     * the healthy shape (it walks away, the warp continues without it). But an
+     * IN_PROGRESS with nothing warping at the site is a refused attempt's
+     * order echo, not a warp (measured on Wine: every builder alternating
+     * BuilderManager/GatherResources while standing next to its site, nothing
+     * ever built): releasing the worker there feeds the alternation, because
+     * Gather steals it on every frame it stands still and the build never
+     * resumes. Hold it instead - demote or cancel will resolve the status,
+     * and both need the worker still assigned.
+     * </p>
+     */
+    public static boolean holdInProgressBuilder(boolean stopped, boolean warpingNearby) {
+        if (!stopped) return true;
+        return !warpingNearby;
+    }
+
+    private static boolean isAnyBuildingWarpingAtSite(Construction construction) {
+        if (construction.buildPosition() == null) return false;
+        return Select.ourUnfinished().ofType(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition()).notEmpty();
+    }
+
+    /**
      * True when the assigned builder must be replaced. A stuck builder is the
      * old case; an uncompleted one is the NEXT #63 case: it takes no order at
      * all (canCommand=false), so holding the assignment only delays the build
@@ -139,12 +167,16 @@ public class BuilderManager extends Manager {
                 // TravelToConstruct exists to fix.
                 if (construction.status() == ConstructionOrderStatus.NOT_STARTED) return true;
 
-                if (We.protoss() && !worker.isStopped()) return true;
+                // Pending Protoss buildings allow unit to go away - but only to
+                // a building that is actually warping (see holdInProgressBuilder).
+                // Terran and Zerg need to use the worker until construction is finished.
+                if (!We.protoss()) return true;
 
-                // Pending Protoss buildings allow unit to go away
-                // Terran and Zerg need to use the worker until construction is finished
-                return !We.protoss()
-                    || !ConstructionOrderStatus.IN_PROGRESS.equals(construction.status());
+                if (ConstructionOrderStatus.IN_PROGRESS.equals(construction.status())) {
+                    return holdInProgressBuilder(worker.isStopped(), isAnyBuildingWarpingAtSite(construction));
+                }
+
+                return true;
             }
         }
 
