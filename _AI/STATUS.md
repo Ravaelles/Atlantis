@@ -1212,3 +1212,29 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   zero refs); `ZergRetreating` RESTORED after deletion - zero refs but on the
   owner-eyes-first spared list, which the sweep rule does not overrule.
   Suite green after.
+
+## Session 2026-10-13 (owner's OpenBW run: roster key, dragoons, order watcher)
+
+- Roster "false readings" settled (owner's 331 s run, ForceExit 41/41):
+  Pylon 4/4, Assimilator 1/1, Core 1/1 completed==roster; Gateway 2 completed
+  vs 3 roster - the +1 ordered 5:16, 15 s before exit (warping at count time).
+  Counts read the engine list 1:1 with unfinished INCLUDED (2026-10-12 ruling)
+  - not desync, a reinstall changes nothing. Filed D9 (keep / completed-only
+  / split board-vs-gates). E2E gates read the same line (training passes).
+- Reinstall OpenBW: NO - evidence above, plus Wine/OpenBW gaps are our code
+  paths (regions, attach timing, finder), not engine corruption.
+- Dragoons at "25 gas": premise wrong - a Dragoon costs 125/50, the gate is
+  gas>=50 (`ProduceDragoon:33-34`), then dragoons<=4 produces immediately;
+  "60+" observed = 50-gate + timing. No bug (`AllowProduceDragoon` adds only
+  184+ supply gates).
+- Pylon timing nuance: Pylon-1 queued from frame 0, completed at supply 9 (BO:
+  At 8) - on-time in supply terms; the 400-bank-near-cap matches late Pylons
+  3,4 (ADDED 4:44-4:53, min 191-501). "9/9" in ORDER_NOT_READY is
+  used/minSupply, not used/total. A game-time for the 400-bank moment would
+  settle whether anything was late early.
+- Correction: the log shows Gatewayx2 + Core completed - Assimilator was the
+  only LATE building, not the only non-Pylon one.
+- Order watcher implemented as observer, not manager (a manager would perturb
+  the chain it reports on) + game-verified: 2397 lines, full trails
+  (Nothing→MoveToMinerals→MiningMinerals→Move→PlaceBuilding), 82
+  dash-managers interleaved, unit_ids coverage still 100%. Suite 464/0.

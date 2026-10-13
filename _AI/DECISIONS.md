@@ -59,3 +59,18 @@ named by the owner first.
 ## D8 - Terran deployment target (NEXT #15)
 
 No approved Terran artifact path. Either supply one or verify none is needed.
+
+## D9 - Roster counts unfinished units (owner's "false readings" complaint)
+
+The `###` roster reads the engine unit list 1:1
+(`Select.ourWithUnfinishedOfType` over `playerUs().getUnits()`), unfinished
+INCLUDED by the 2026-10-12 ruling. Measured 2026-10-13 (owner's 331 s run):
+Gateway 2 completed vs 3 roster - the +1 ordered at 5:16, 15 s before the 5:31
+ForceExit (warping at count time); Pylon 4/4, Assimilator 1/1, Core 1/1
+completed==roster in the same run. Not desync (a reinstall changes nothing -
+the list IS the engine list). Side effect: E2E EXPECT_* gates read the same
+line, so 3-training Dragoons pass a Dragoon>=1 gate.
+Options: (a) keep (the replay-visible argument from the ruling); (b)
+completed-only everywhere; (c) keep the board line, add completed-only counts
+for the gates (recommended - gates assert built, the board shows mid-build).
+No code change until approved.
