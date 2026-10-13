@@ -228,7 +228,8 @@ public final class GameStateSnapshot {
                 A.minerals(),
                 Select.ourWorkersMiningMinerals(false).count(),
                 Count.ofTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING),
-                desiredRefineries));
+                desiredRefineries,
+                A.supplyUsed()));
     }
 
     /** The build-order goals for this frame: only rows the game has not produced yet. */

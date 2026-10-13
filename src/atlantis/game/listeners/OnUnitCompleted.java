@@ -29,15 +29,15 @@ public class OnUnitCompleted {
             // (processed per frame from ACherryVis.update).
             if (unit.isCompleted() && atlantis.cherryvis.ACherryVis.isEnabled()) {
                 if (unit.isABuilding()) {
-                    System.err.println("CVIS_FIRSTSEEN via=completed id=" + unit.id()
-                        + " type=" + unit.type().ut().id + " pos=[" + unit.x() + "," + unit.y() + "]");
+//                    System.err.println("CVIS_FIRSTSEEN via=completed id=" + unit.id()
+//                        + " type=" + unit.type().ut().id + " pos=[" + unit.x() + "," + unit.y() + "]");
                     atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
                         atlantis.game.A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
                     );
                     atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.noteEngineIdOf(unit);
                 }
                 else {
-                    System.err.println("CVIS_FIRSTSEEN deferred id=" + unit.id());
+//                    System.err.println("CVIS_FIRSTSEEN deferred id=" + unit.id());
                     atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.defer(unit.id());
                 }
             }

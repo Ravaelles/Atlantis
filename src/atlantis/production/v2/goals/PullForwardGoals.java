@@ -68,7 +68,7 @@ public final class PullForwardGoals {
      */
     public static ProductionGoal supplyGoal(Snapshot state) {
         return DynamicGoals.supplyGoal(new DynamicGoals.GameSnapshot(
-                state.mineralWorkers, 1, 0, state.supplyFree, 0, state.minerals, false));
+                state.mineralWorkers, 1, state.supplyUsed, state.supplyFree, 0, state.minerals, false));
     }
 
     /**
@@ -114,13 +114,20 @@ public final class PullForwardGoals {
         public final int mineralWorkers;
         public final int refineries;
         public final int desiredRefineries;
+        public final int supplyUsed;
 
         public Snapshot(int supplyFree, int minerals, int mineralWorkers, int refineries, int desiredRefineries) {
+            this(supplyFree, minerals, mineralWorkers, refineries, desiredRefineries, 0);
+        }
+
+        public Snapshot(int supplyFree, int minerals, int mineralWorkers, int refineries, int desiredRefineries,
+                int supplyUsed) {
             this.supplyFree = supplyFree;
             this.minerals = minerals;
             this.mineralWorkers = mineralWorkers;
             this.refineries = refineries;
             this.desiredRefineries = desiredRefineries;
+            this.supplyUsed = supplyUsed;
         }
     }
 }

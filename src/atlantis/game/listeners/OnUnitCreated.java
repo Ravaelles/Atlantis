@@ -23,8 +23,8 @@ public class OnUnitCreated {
         // Incomplete units are recorded at completion (OnUnitCompleted),
         // where the position is their own. Engine type id, not AUnitType.id().
         if (unit.isOur() && unit.isCompleted() && atlantis.cherryvis.ACherryVis.isEnabled()) {
-            System.err.println("CVIS_FIRSTSEEN via=created id=" + unit.id()
-                + " type=" + unit.type().ut().id + " pos=[" + unit.x() + "," + unit.y() + "]");
+//            System.err.println("CVIS_FIRSTSEEN via=created id=" + unit.id()
+//                + " type=" + unit.type().ut().id + " pos=[" + unit.x() + "," + unit.y() + "]");
             atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
                 A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
             );

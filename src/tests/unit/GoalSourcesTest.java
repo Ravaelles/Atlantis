@@ -77,6 +77,22 @@ public class GoalSourcesTest {
     }
 
     @Test
+    public void earlySupplyGoalIsOpeningSupplyNotDepots() {
+        // Measured LIVE (V2_GOALS @30 [Pylon:30]): the opening Pylon comes
+        // from the dynamic supply goal, not the build-order one - so the
+        // OPENING_SUPPLY band fix never applied and the start kept sliding.
+        // Same threshold as the build-order rule (12): early supply providers
+        // are the opening, later top-ups are depots.
+        DynamicGoals.GameSnapshot early = new DynamicGoals.GameSnapshot(5, 1, 8, 3, 11, 100, true);
+
+        ProductionGoal earlyGoal = firstOf(DynamicGoals.contribute(early), supplyType());
+
+        assertEquals(
+            ProductionGoal.PRIORITY_OPENING_SUPPLY, earlyGoal.priority(),
+            "the first Pylon must outrank workers or its start slides forever (NEXT #52)");
+    }
+
+    @Test
     public void noSupplyGoalWhenThereIsSlack() {
         DynamicGoals.GameSnapshot plenty =
                 new DynamicGoals.GameSnapshot(10, 1, 20, 20, 40, 500, false);
@@ -179,7 +195,7 @@ public class GoalSourcesTest {
 
         ProductionGoal fromDynamic = firstOf(DynamicGoals.contribute(low), supplyType());
         ProductionGoal fromPullForward = atlantis.production.v2.goals.PullForwardGoals.supplyGoal(
-                new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1));
+                new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1, 29));
 
         assertNotNull(fromDynamic);
         assertEquals(fromDynamic.priority(), fromPullForward.priority(),

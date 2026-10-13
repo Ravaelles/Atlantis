@@ -246,7 +246,9 @@ public final class DynamicGoals {
 
         int priority = state.supplyFree <= 0
                 ? ProductionGoal.PRIORITY_EMERGENCY
-                : ProductionGoal.PRIORITY_DEPOTS;
+                : state.supplyUsed <= BuildOrderGoals.OPENING_SUPPLY_THRESHOLD
+                    ? ProductionGoal.PRIORITY_OPENING_SUPPLY
+                    : ProductionGoal.PRIORITY_DEPOTS;
 
         return new ProductionGoal(UnitProducible.of(supplyProvider), priority, 1, 0, TargetPlacement.anywhere());
     }
