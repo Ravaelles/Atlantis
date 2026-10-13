@@ -653,3 +653,32 @@ of that type near the site) back to NOT_STARTED so travel/issue/cancel/requeue
 resume. Assimilator never logged (0 lines) - gated behind Core in
 `ProtossDynamicBuildingsCommander.topPriority`, so the Core stall is also the
 gas stall. GAS_VARIANT experiment stays until a gas-reaching run.
+
+## Session 2026-10-13 (continued): Core built, gas root-caused, O1 settled
+
+Two bounded --short runs on the fresh jars (BUILDER_LOG=1, exit 0):
+
+- `20261013_100226` (jar with demote): `Pylon=2 Gateway=2 Zealot=5
+  CyberneticsCore=1` - the FIRST Core on OpenBW. DEMOTE fired 0 times: the
+  Core built on its first attempt (@4585, [112,13], #116), so the warp-drop is
+  intermittent and the demote stays a unit-pinned safety net (3/3), not a
+  game-verified fix. Honest delta of the demote commit: none measured yet.
+- Same run, Assimilator: requested 3:12 at [117,4], cancelled 34 s later with
+  ZERO build attempts while every canBuild gate read true (`canBuild000-001`
+  all true, minerals 116+, explored 8/8, power true). New measured root: the
+  builder plateaued at tile-distance 3.7, past the 3.5 gas threshold - a 4x2
+  refinery's center is ~2.2 tiles from its origin tile, so an adjacent worker
+  always reads ~3.6 and never issues (the #59 center-vs-tile shape, gas twin).
+  Fix committed: gas measures to the footprint center
+  (`TravelToConstruct.distanceForBuildOrderIssue`; others keep the tile
+  metric), `GasBuildIssueDistanceTest` 2/2, old source-pin updated, unit
+  405/405. Game verification pending (next run died at Gateway first).
+- `20261013_100525` (jar with both fixes): `Pylon=2`, Gateway=0 - the [14,51]
+  variance. Gateway refused 315x (`engineAccepted=false`, `canBuildHere=true`,
+  `distToBuild=1.3`, idle, `lastCommand=Move`): BUILD_BREAKDOWN settles O1 -
+  `hasPower=false`, `unitsInRect=1 [BUILDER]`, `terrainOnly=ok`,
+  `canBuild000=false`. POWER, not occupancy; the refusal is correct, the site
+  is wrong (legacy finder never checks power - NEXT #50, now with its measured
+  trigger). No Unwalkable-center lines; the stop-then-build is irrelevant here
+  (worker already still). The gas fix is therefore still game-unverified: no
+  run has reached gas since it landed.

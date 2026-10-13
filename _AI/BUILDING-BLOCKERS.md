@@ -27,10 +27,15 @@ the numbers decide which mechanism it is - never the shape alone.
 2. **Poverty is A cause, not THE cause.** Owner observation plus run logs:
    refusals happen with 400-600 minerals banked against a 150 price just as
    often. A broke attempt explains itself; a rich attempt needs sections 3-4.
-3. **The [14,51] site refuses inside the tile rule.** Measured:
-   `noBuilder=false withBuilder=false` with `canBuildHere=true`,
-   `explored=12/12`, `canAfford=true` - a different mechanism than (1), on a
-   different site. The term within the rule (power vs occupancy) is OPEN.
+3. **The [14,51] site refuses on POWER (`hasPower=false`).** Settled 2026-10-13
+   (`20261013_100525_short`, Gateway, 315 refused attempts): `noBuilder=false
+   withBuilder=false`, `canBuild000=false` (even the most permissive sub-flag),
+   `explored=12/12`, `canAfford=true` (minerals=180), `unitsInRect=1 [BUILDER]`
+   (only the assigned builder), `terrainOnly=ok` - and `hasPower=false`. The
+   engine's own power answer is the refusing term; occupancy is exonerated
+   (builder excluded by rule, nothing else on the footprint). Upstream defect:
+   the legacy finder requested a Gateway outside any Pylon field (NEXT #50 -
+   it never checks power), so the refusal is correct and the site is wrong.
 4. **A builder that never settles is never accepted.** Measured:
    `distToBuild=1.3 isMoving=true lastCommand=Move` refused every frame until
    the 35 s cancel. Fix in tree: stop on bare `lastCommand==Move` inside the
@@ -72,10 +77,6 @@ the numbers decide which mechanism it is - never the shape alone.
 
 ## Open (probe named, no patch)
 
-- **O1. The [14,51] tile-rule term: power vs occupancy.** The split fields
-  (`hasPower`, `unitsInRect` with `:BUILDER` marks, `terrainOnly`) are in the
-  `BUILD_BREAKDOWN` line since 2026-10-12 - needs one run that reproduces a
-  `noBuilder=false` site. Everything else about that site is measured.
 - **O2. Why the bank is low when it is low.** Spending race (worker pump burns
   income before the Gateway attempt) vs weak mining. Needs: bank sampled at
   attempt frames across runs (one `WORKER_GATE`-style line already exists;

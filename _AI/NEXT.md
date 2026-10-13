@@ -420,7 +420,10 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   planner and never in the old one.
   Fix: add the power condition to the shared chain (or to `ProtossPositionFinder`)
   so both planners agree, then a test that a Cybernetics Core is refused on a tile
-  no finished pylon covers.
+  no finished pylon covers. Measured trigger 2026-10-13 (`20261013_100525`,
+  Gateway [14,51], 315 refusals): `hasPower=false`, `unitsInRect=1 [BUILDER]`,
+  `canBuild000=false` - the O1 split run settled it as POWER (see
+  `_AI/BUILDING-BLOCKERS.md` Certain 3). The refusal is correct; the site is wrong.
 
 - **#51 - Protoss buildings are allowed 2.8 tiles from minerals, which reads as "on
   top of the mineral line".** Owner's report, same IDE game: the position was
@@ -1029,8 +1032,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   (`ConstructionStatusChanger.demoteStalledInProgress`, 90-frame stillness,
   same 3.5/2.5 radii as the site checks), `StalledInProgressDemoteTest` 3/3,
   unit scope 403/403, arch store unchanged (only the pre-existing structural
-  Manager->SleepUntilFrameGate failure). Game verification pending: a --short
-  run must show DEMOTE + Core built (or cancel + requeue).
+  Manager->SleepUntilFrameGate failure). Game result: Core=1 first time
+  (`20261013_100226`, first-attempt accept - DEMOTE fired 0x, warp-drop is
+  intermittent, demote stays unit-pinned). Gas twin in the same run:
+  Assimilator cancelled 34 s with zero attempts at tile-distance 3.7 vs 3.5
+  threshold - fix: gas measures to footprint center
+  (`distanceForBuildOrderIssue`, `GasBuildIssueDistanceTest` 2/2, unit
+  405/405). Both fixes await a gas-reaching run (`20261013_100525` died at
+  Gateway [14,51] first - power, see #50).
 
 - **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
   Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
