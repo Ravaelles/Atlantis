@@ -1137,3 +1137,29 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Disclosure: the run jar contained the other session's uncommitted V2-goals
   edits; the run used the default legacy path (no PLACEMENT/PRODUCTION_V2),
   where that code is inert. Nothing of theirs staged, touched or claimed.
+
+## Session 2026-10-13 (owner asks: Wine worker stream, cvis log shape, 90-unmatched)
+
+- Wine worker root cause (last-wine.log, 3513 lines, @0-@9720): `CriticalStuff`
+  from frame 0 at 50 minerals (39/39 early gates), first worker ordered only at
+  ~242 minerals (@1110-@1140, 242→208 after the 50 payment). Mechanism: the
+  queue is pre-seeded with the whole build order at init, so a far-future
+  not-started Core read as "save up" for the entire early game; the bank had
+  to touch 250 before the gate short-circuited. Fix: critical items count only
+  when imminent (explicit TOP request, or supply gate met - the PrioritizeCore
+  predicate). The existing `CriticalStuffCoreTest` caught the over-narrow first
+  cut (a TOP request must stay imminent); green after. New
+  `WorkerPumpEarlyGameTest` 3/3: far-future Core doesn't pause, frame-0-shape
+  stream gate opens, Probe 300-frame engine pin (the <=10-frame re-queue is the
+  asked <3%). Suite 461/0, arch advisory with only the known
+  SleepUntilFrameGate failure.
+- Cvis log shape (owner spec): manager lines `-GatherResources@1128` (dash =
+  active manager), engine orders `ATTACK@1128` via a small mapper
+  (attackUnit→ATTACK etc., uppercase fallback); outcome suffix dropped per spec
+  (refusals stay in bot.log BUILD_ATTEMPT). No test pinned the old strings.
+- `cvis_dbg_matching.js` console.logs removed (Stardust repo, separate commit).
+- 90-unmatched analysis (newest trace 19:42, 107 seeds + 52 late units): clean
+  on all fixed axes, so 38+ of the 90 must be frame-1 seeds - the seed batch
+  itself never matched (no-retry matcher), not trace content. Filed #76
+  (direct unit_ids pairs); the per-type console breakdown is gone with the
+  logs, the offline numbers stand in its place.

@@ -653,6 +653,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   entries.
 
 
+- **#76 (2026-10-13) - skip fuzzy unit matching: write `unit_ids` pairs directly.**
+  The newest trace is clean on every fixed axis (engine type ids, no frame-0
+  key, minerals 32px+ apart, deferred late mobiles 73px off the Nexus) yet the
+  viewer reports ~90 unmatched - with only 52 late units, 38+ must be frame-1
+  seeds, which match at dist≈0 unless the seed-frame batch itself never runs
+  (no-retry matcher). The viewer already supports direct pairs
+  (`cvis_dbg_matching.js`: `global_data.unit_ids` skips fuzzy entirely) - our
+  traces just don't write them. Emit our-id↔engine-id pairs at record time;
+  needs the engine id plumbed next to the first-seen write. Design first, no
+  blind patch.
+
+
 ### OpenBW headless run (2026-10-08)
 
 The client attaches and the bot plays - see `_AI/PLAN-OPENBW.md` §9 for the
