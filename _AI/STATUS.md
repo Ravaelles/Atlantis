@@ -1003,3 +1003,16 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (compile-gated, one live near-miss caught and restored).
 - Board: unit 425/425, arch store untouched since the -3, jar fresh,
   6/8 recent --short PASS (2 timing misses, gates honest).
+
+## Session 2026-10-13 (continued): builderless demote + hold verified in game
+
+- Root cause closed for the Wine Builder/Gather alternation: a refused
+  attempt's order echo flips IN_PROGRESS; on Wine setStatus releases the
+  builder on the flip, leaving IN_PROGRESS + no builder + no building, and
+  the old rule then released every stopped worker to Gather. Fix: no-building
+  IN_PROGRESS keeps its worker (only a warping building releases it), and a
+  builderless stall older than 90 f demotes to NOT_STARTED so StatusChanger
+  assigns a new builder. Non-Protoss paths unchanged.
+- Game proof (fresh jar): PASS with Dragoon=4 (best yet), DEMOTE fired on a
+  stalled Pylon, zero took-too-long cancels. The safety net heals before the
+  cancel path is reached.
