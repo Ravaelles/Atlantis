@@ -158,6 +158,20 @@ public class ConstructionStatusChanger extends Commander {
         // stands at the reserved tile. That is exactly what `buildingFinishedAtSite` asks, it
         // is already used for the completion half, and it reads the live unit list rather than
         // engine fields this engine fills differently from StarCraft.
+        //
+        // Demote a stalled IN_PROGRESS back to NOT_STARTED (NEXT #70): the flip
+        // above fires on the order-echo `isConstructing` (true from the Build
+        // order while the worker walks/stands at the site), so a warp the
+        // engine drops server-side still flips - and then nothing recovers it:
+        // BuilderManager drives only NOT_STARTED while isBuilder still claims
+        // the worker, and CancelTooLong requires NOT_STARTED too. Demoting
+        // hands the existing travel/issue/cancel/requeue machinery back a live
+        // construction: a retry if the drop was transient, a cancel + requeue
+        // elsewhere if the site is bad.
+        if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
+            demoteStalledInProgress(construction, builder);
+        }
+
         if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
             boolean engineSaysStarted = builder != null
                 && builder.isConstructing()
@@ -209,6 +223,50 @@ public class ConstructionStatusChanger extends Commander {
 //
 //        return builder;
 //    }
+
+    /**
+     * Frames an IN_PROGRESS builder may stand idle at its site with no building
+     * before the construction is demoted. A healthy Protoss warp frees the
+     * worker within a frame or two of the issue (the worker walks away, the
+     * building warps without it); a Terran builder reports
+     * {@code isConstructing} for the whole build. Only a dropped warp sits out
+     * this long, and the measured one sat out 2400 frames.
+     */
+    private static final int STALLED_IN_PROGRESS_DEMOTE_FRAMES = 90;
+
+    /**
+     * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
+     *
+     * <p>Public as a seam so the rule is assertable without running a game
+     * (NEXT #70). Every exclusion is a healthy shape that must NOT demote: a
+     * constructing or travelling worker, a non-worker builder (Zerg morph), a
+     * worker that walked away from a warping building, a recently arrived
+     * worker, and a site with a building on it.</p>
+     *
+     * @return true when the construction was demoted.
+     */
+    public static boolean demoteStalledInProgress(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
+        if (builder == null || builder.isDead() || !builder.isWorker()) return false;
+        if (builder.isConstructing() || builder.isMoving()) return false;
+        if (construction.buildPosition() == null) return false;
+        if (builder.distTo(construction.buildPosition()) > 3.5) return false;
+        if (!builder.lastPositionChangedMoreThanAgo(STALLED_IN_PROGRESS_DEMOTE_FRAMES)) return false;
+        if (Select.ourWithUnfinishedOfType(construction.buildingType())
+            .inRadius(2.5, construction.buildPosition())
+            .notEmpty()
+        ) return false;
+
+        if (atlantis.config.env.Env.builderLog()) {
+            System.err.println("DEMOTE_STALLED_IN_PROGRESS " + construction.buildingType().name()
+                + " at=" + construction.buildPosition()
+                + " builder=#" + builder.id()
+                + " stoodStillFor=" + builder.lastPositionChangedAgo() + "f");
+        }
+
+        construction.setStatus(ConstructionOrderStatus.NOT_STARTED);
+        return true;
+    }
 
     /**
      * Is a building of this type standing on the construction's tile?

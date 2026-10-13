@@ -618,3 +618,38 @@ minerals banked just as often). New living file `_AI/BUILDING-BLOCKERS.md`
 splits the hunt into Certain (6 items, evidence named), Refuted (7 readings
 with what killed each), Open (O1 [14,51] power-vs-occupancy split run, O2 bank
 sampling, O3 jstack, O4 gas equality). Indexed from `_AI/README.md`.
+
+## Session 2026-10-13: --short E2E - Gateway builds, Core stalls IN_PROGRESS (NEXT #70)
+
+Bounded run `20261013_095545_short-Protoss-vs-Zerg` (fresh jar `bf984111`,
+TIMEOUT_SECONDS=60, BUILDER_LOG=1, exit 0, 31 s wall, ingame 296 s):
+`Pylon=4 Gateway=2 Zealot=10` but `CyberneticsCore=0 Assimilator=0 Dragoon=0`
+- the --short gate (Core + Dragoon) fails on the Core. Gateway construction is
+healthy now (all 7 BUILD_ATTEMPT lines `engineAccepted=true`, zero refusals).
+
+Measured mechanism (bot.log lines 712-1406): Core requested 2:21 at [87,111],
+builder #83 walked there, attempt @4697 accepted with `isConstructing=true`
+(order echo - ALL 7 attempt lines read true on the attempt frame), status
+NOT_STARTED -> IN_PROGRESS. By @4710 `isConstructing=false order=PlayerGuard`
+with our `lastCommand=Build` aging - the engine dropped the Build without our
+code issuing anything, and NO Core unit ever existed (GameSummary counts live
+board incl. unfinished: Core=0). Worker #83 then stood at the site 2400 frames
+(`lastCommandIssuedAgo` -> 2353) with zero re-issue attempts.
+
+Two structural gaps combine (both read in source, not inferred):
+- `BuilderManager.handle()` drives only NOT_STARTED; IN_PROGRESS falls through
+  to submanagers, while `isBuilder()` still claims the worker - held forever.
+- `ConstructionThatLooksBugged` returns unless NOT_STARTED, so
+  `CancelTooLongConstructions` never fires - the premature IN_PROGRESS grants
+  immunity from the safety net that would cancel + requeue.
+The premature flip itself comes from `ConstructionStatusChanger` trusting the
+order-echo `isConstructing` (true from the Build order while walking/at site).
+Why the warp aborted server-side with all client preconditions true is OPEN
+(client accepted, server never started warp) - the fix heals regardless: retry
+if transient, cancel + requeue elsewhere if the site is bad.
+
+Fix (NEXT #70): demote a stalled IN_PROGRESS (idle builder at site, no building
+of that type near the site) back to NOT_STARTED so travel/issue/cancel/requeue
+resume. Assimilator never logged (0 lines) - gated behind Core in
+`ProtossDynamicBuildingsCommander.topPriority`, so the Core stall is also the
+gas stall. GAS_VARIANT experiment stays until a gas-reaching run.
