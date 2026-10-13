@@ -55,23 +55,6 @@ public class Decision {
 
     // =========================================================
 
-//    public boolean currentValue() {
-//        return currentValue;
-//    }
-
-//    public Decision changeTo(Decision newDecision) {
-//        if (newDecision.isIndifferent) {
-////            this.isIndifferent = true;
-//            return Decision.INDIFFERENT;
-//        }
-//
-////        this.currentValue = newDecision.toBoolean();
-//    }
-
-//    public boolean initialValue() {
-//        return initialValue;
-//    }
-
     @Override
     public String toString() {
         String string;
