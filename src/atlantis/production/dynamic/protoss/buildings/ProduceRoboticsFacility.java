@@ -13,12 +13,9 @@ import static atlantis.units.AUnitType.Protoss_Robotics_Facility;
 
 public class ProduceRoboticsFacility {
     public static boolean produce() {
-//        if (true) return false;
 
         if (!shouldBuild()) return false;
 
-//            System.err.println("@ " + A.now() + " - REQUESTED Protoss_Robotics_Facility");
-//        return DynamicCommanderHelpers.buildNow(Protoss_Robotics_Facility, true);
         return AddToQueue.withHighPriority(Protoss_Robotics_Facility) != null;
     }
 
@@ -41,13 +38,9 @@ public class ProduceRoboticsFacility {
         }
 
         if (EnemyInfo.hasHiddenUnits()) {
-//            System.err.println("roboticsFacility because hasHiddenUnits");
             return true;
         }
 
-//        System.err.println("----- buildRoboticsFacility OK" );
-//        System.err.println("EnemyStrategy.get().isRushOrCheese() = " + EnemyStrategy.get().isRushOrCheese());
-//        System.err.println("EnemyStrategy.get().isRush() = " + EnemyStrategy.get().isRush());
 
         return true;
     }

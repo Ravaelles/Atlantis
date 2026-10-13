@@ -25,7 +25,6 @@ public class ProduceCannonAtNatural {
             AddToQueue.withTopPriority(Protoss_Forge);
         }
 
-//        AConsole.errPrintln("$$$$$$$$$$$$$$$$$$$$$$$$$ ProduceCannonAtNatural: Requested Photon Cannon at " + A.minSec() + " / " + bestPosition);
 
         return requestAtBestPosition();
     }
@@ -35,20 +34,11 @@ public class ProduceCannonAtNatural {
     }
 
     private static APosition shouldProduceAt() {
-//        if (A.everyFrameExceptNthFrame(53)) return null;
-//        if (Count.basesWithUnfinished() <= 1) return null;
 
-//        if (Count.inProduction(Protoss_Photon_Cannon) >= 2) return false;
 
-//        if (ProtossSecureBasesCommander.invoke()) return true;
 
-//        AUnit natural = Bases.natural();
-//        System.err.println("--------------- natural = " + natural);
 
-//        APosition naturalChoke = DefineNaturalBase.natural();
         HasPosition naturalChoke = Chokes.natural();
-//        System.err.println("--------------- naturalChoke = " + naturalChoke);
-//        System.err.println("--------------- naturalLocation = " + DefineNaturalBase.natural());
 
         if (naturalChoke == null) return null;
         if (Count.inProductionOrInQueue(type()) >= (A.hasMinerals(1000) ? 6 : 3)) return null;

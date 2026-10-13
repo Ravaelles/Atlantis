@@ -16,14 +16,12 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceTemplarArchives {
     public static boolean produce() {
-//        if (true) return false; // Always disabled
 
         if (!Enemy.zerg()) return false;
         if (Have.a(type())) return false;
 
         if (Enemy.zerg() && A.supplyUsed() < 90 && A.gas() <= 230) return false;
         if (Army.strength() <= 140 && Alpha.get().isMissionAttack()) return false;
-//        if (Count.bases() <= 1) return false;
         if ((Count.ourCombatUnits() <= 15 || Army.strength() <= 140) && !A.canAfford(200, 200)) return false;
 
         // =========================================================
@@ -32,11 +30,6 @@ public class ProduceTemplarArchives {
 
         // =========================================================
 
-//        if (A.supplyUsed() < 165) return false;
-//        if (A.supplyUsed() >= 175) return requestProduce();
-//        if (A.hasGas(330) && Have.a(Protoss_Citadel_of_Adun) && Have.a(Protoss_Observatory)) return requestProduce();
-//
-//        if (A.supplyUsed() >= 165 && (A.hasGas(180) || A.hasMinerals(400)) && A.now % 41 == 0) return requestProduce();
 
         return requestProduce();
     }

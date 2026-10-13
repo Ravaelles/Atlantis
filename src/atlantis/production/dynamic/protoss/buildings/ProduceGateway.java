@@ -60,7 +60,6 @@ public class ProduceGateway {
                 && !Queue.get().readyToProduceOrders().buildings().isEmpty()
         ) return false;
 
-//        AConsole.errPrintln(A.minSec() + " GATEWAY CHECK");
 
         existingGateways = Count.gatewaysWithUnfinished();
 
@@ -77,7 +76,6 @@ public class ProduceGateway {
             if (freeGateways > 0 && minerals <= 180) return false;
         }
         else {
-//            if (minerals >= 220 && freeGateways <= 0 && existingGateways <= 3) return produceGateway() && log("220");
             if (minerals >= 210 && freeGateways <= 1 && existingGateways <= 5) return produceGateway() && log("210");
         }
 
@@ -88,16 +86,9 @@ public class ProduceGateway {
         if (freeGateways > 0 && minerals <= 180 && existingGateways <= 3) return false;
         if (existingGateways > 0 && A.supplyUsed() <= 17 && minerals <= 500) return false;
 
-//        if (
-//            minerals >= 300
-//                && existingGateways <= 3
-//                && !A.hasFreeSupply(1)
-//                && ConstructionRequests.notStartedOfType(Protoss_Gateway).isEmpty()
-//        ) return produceGateway();
 
         if (A.supplyFree() >= 2 || minerals <= 130) {
             if (freeGateways >= 2 && existingGateways >= 4) return false;
-//            if (freeGateways >= 1 && existingGateways >= 3 && !A.hasMinerals(550)) return false;
         }
 
         if (freeGateways <= 1 && existingGateways <= 4 && A.hasMinerals(150)) return produceGateway() && log("150");
@@ -151,7 +142,6 @@ public class ProduceGateway {
                 && freeGateways >= 1
                 && existingGateways >= (2 + 3 * bases)
                 && bases >= 2
-//                && AMath.isInRange(50, ReservedResources.minerals(), 350)
         ) return false;
 
         if (!A.hasMinerals(290) && ConstructionRequests.hasNotStarted(Protoss_Cybernetics_Core)) return false;
@@ -166,22 +156,14 @@ public class ProduceGateway {
         if (freeGateways >= 2) return false;
         if (ReservedResources.minerals() >= 250 && !A.hasMinerals(230)) return false;
 
-//        allGateways = existingGateways + unfinishedGateways;
 
         if (freeGateways >= 2) {
-//            if (tooManyGatewaysForNow()) return false;
-//            if (allGateways <= 5 * Count.bases()) return produceGateway();
-//            return produceGateway();
             return false;
         }
 
-//        if (minerals < 205 && existingGateways >= 3) return false;
         if (existingGateways >= 4 && freeGateways > 0 && !A.hasMinerals(600)) return false;
 
-//        if (unfinishedGateways >= 3 || !Enemy.zerg()) {
-//            if (unfinishedGateways >= 1 && !A.hasMinerals(500)) return false;
         if (unfinishedGateways >= 2 && !A.hasMinerals(550)) return false;
-//        }
 
         if (continuousGatewayProduction()) return produceGateway() && log("Continuous");
 
@@ -269,17 +251,11 @@ public class ProduceGateway {
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
 
         if (order != null) order.setMinSupply(A.supplyUsed());
-//        else {
-//            AConsole.errPrintln(A.minSec() + ", Failed to produce Gateway " + existingGateways + " / " + freeGateways
-//                + " / " + unfinishedGateways + " / min:" + A.minerals() + " / " + QueueLastStatus.status());
-//            return false;
-//        }
 
         return order != null;
     }
 
     private static boolean tooManyGatewaysForNow() {
-//        int enough = Enemy.zerg() ? 5 : 4;
         int enough = Enemy.zerg() ? 5 : 6;
 
         return !A.hasMinerals(450)

@@ -27,38 +27,24 @@ public class ProduceCyberneticsCore {
         if (Count.inProduction(type()) > 0) return false;
         if (Count.inQueue(type(), 3) > 0) return false;
 
-//        int buildAtSupply = buildAtSupply();
         if (needOne()) {
             return addCyberneticsToQueue();
         }
-//        return DynamicCommanderHelpers.buildToHaveOne(buildAtSupply, Protoss_Cybernetics_Core);
 
         return false;
     }
 
     private static boolean addCyberneticsToQueue() {
-//        AConsole.errPrintln("Add ZZZ Cybernetics Core to queue at " + A.minSec());
 
         Orders productionOrders = Queue.get().notFinishedNext30().ofType(type());
         ProductionOrder existing = productionOrders.first();
 
-//        productionOrders.ofType(type()).forEach(ProductionOrder::cancel);
 
-//        ProductionOrder existingOrder = productionOrders.ofType(type()).first();
-////        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
-//        if (existingOrder != null) {
-//            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(type());
-//        }
 
         ProductionOrder order = existing != null ? existing : AddToQueue.withTopPriority(type());
-//        AConsole.errPrintln("addCybernetics ORDER " + order);
         if (order != null) {
             order.setMinSupply(4);
 
-//            if (Count.existingOrInProductionOrInQueue(Protoss_Assimilator) == 0) {
-//                ProductionOrder gasOrder = AddToQueue.withTopPriority(Protoss_Assimilator);
-//                if (gasOrder != null) gasOrder.setMinSupply(A.supplyUsed() + 1);
-//            }
 
             return true;
         }
@@ -94,7 +80,6 @@ public class ProduceCyberneticsCore {
 
         if (EnemyStrategy.get().isGoingHiddenUnits()) return 34;
 
-//        if (EnemyStrategy.get().isRushOrCheese()) return 10;
 
         return Army.strength() >= 120 ? 20 : 30;
     }

@@ -12,7 +12,6 @@ import static atlantis.units.AUnitType.*;
 
 public class ProduceCitadelOfAdun {
     public static boolean produce() {
-//        if (true) return false;
 
         if (A.supplyUsed() <= 70) return false;
         if (Have.a(type())) return false;
@@ -23,10 +22,6 @@ public class ProduceCitadelOfAdun {
             return AddToQueue.toHave(type(), 1, ProductionOrderPriority.HIGH);
         }
 
-//        if (CountInQueue.count(type(), 6) == 0) {
-//            AConsole.errPrintln("ProduceCitadelOfAdun: Requested Citadel of Adun at " + A.s);
-//            return AddToQueue.withHighPriority(type()) != null;
-//        }
 
         return false;
     }

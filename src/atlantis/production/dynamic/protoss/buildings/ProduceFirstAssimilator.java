@@ -26,28 +26,16 @@ public class ProduceFirstAssimilator {
         if (Have.assimilator()) return blocked("AlreadyHaveAssimilator");
         if (CountInQueue.count(type(), 2) > 0) return blocked("AlreadyQueued");
         if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return blocked("ExpansionSupplyGate");
-//        if (!Have.existingOrUnfinished(Protoss_Cybernetics_Core)) return false;
 
         AUnit cc;
         if ((cc = Select.ourWithUnfinished(Protoss_Cybernetics_Core).first()) == null)
             return blocked("NoCyberneticsCore");
-//        System.err.println("cc.getRemainingBuildTimeInSeconds() = " + cc.getRemainingBuildTimeInSeconds());
         if (cc.getRemainingBuildTimeInSeconds() >= 80) return blocked("CyberneticsCoreNotNearCompletion");
 
-//        ProductionOrder existingOrder = Queue.get().notFinishedNext30().ofType(type()).first();
-//        if (existingOrder != null && existingOrder.requestedAgo() >= 30 * 10) {
-//            AConsole.errPrintln("Canceling existing ASSIM order " + existingOrder);
-//            PreventDuplicateOrders.cancelPreviousNonStartedOrdersOf(
-//                type(), "Assim takes long (" + (existingOrder.requestedAgo() / 30) + "s)"
-//            );
-//        }
 
-//        if (!A.hasMinerals(300) && Count.ourUnfinishedOfType(Protoss_Cybernetics_Core) == 0) return;
-//        if (Count.ourWithUnfinished(Protoss_Cybernetics_Core) >= 1) {
         if (cc != null) {
             Queue.get().notStarted().ofType(Protoss_Assimilator).cancelAll("Force Assimilator with CC");
 
-//            RemoveFromQueue.removeBuildingOrdersThatDontHaveConstructionYetSoTheyAreNotStarted(type());
 
             // Was: `AddToQueue... != null && AConsole.errPrintln(...)`, i.e. the
             // print helper's `true` return silently doubled as the method result.
