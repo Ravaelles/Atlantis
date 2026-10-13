@@ -34,6 +34,7 @@ public class OnUnitCompleted {
                     atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
                         atlantis.game.A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
                     );
+                    atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.noteEngineIdOf(unit);
                 }
                 else {
                     System.err.println("CVIS_FIRSTSEEN deferred id=" + unit.id());

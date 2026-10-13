@@ -18,6 +18,16 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
     private static final Map<Integer, List<int[]>> unitsByFrame = new TreeMap<>();
 
     /**
+     * Direct our-id to engine-id pairs (NEXT #76): the viewer fuzzy-matches
+     * first-seen units against the replay by (frame, type, x, y) with no
+     * retry, so a missed seed frame strands dozens of units forever. When
+     * {@code unit_ids} is present the viewer skips fuzzy matching entirely
+     * ({@code cvis_dbg_matching.js}: pairs are trusted directly). Filled next
+     * to every first-seen record from the unit's own engine handle.
+     */
+    private static final Map<Integer, Integer> engineIds = new TreeMap<>();
+
+    /**
      * "10203": [
      * {
      * "id": 246,
@@ -94,6 +104,37 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         seenUnitIds.clear();
         unitsByFrame.clear();
         pendingFirstSeen.clear();
+        engineIds.clear();
+    }
+
+    /**
+     * Remembers the engine id for a traced unit. Null-safe by design: stub
+     * fakes have no engine handle, and a pair is only ever written for units
+     * that were actually recorded.
+     */
+    public static void noteEngineIdOf(AUnit unit) {
+        if (unit == null || unit.u() == null) return;
+        noteEngineId(unit.id(), unit.u().getID());
+    }
+
+    /** Explicit ids for tests (production reads them off the unit). */
+    public static void noteEngineId(int ourId, int engineId) {
+        engineIds.put(ourId, engineId);
+    }
+
+    /**
+     * {@code [[ourId, engineId], ...} in first-note order. The viewer trusts
+     * these pairs directly and skips its fuzzy match.
+     */
+    public static String engineIdsJson() {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<Integer, Integer> entry : engineIds.entrySet()) {
+            if (!first) result.append(",");
+            first = false;
+            result.append("[").append(entry.getKey()).append(",").append(entry.getValue()).append("]");
+        }
+        return result.toString();
     }
 
     /**
@@ -143,6 +184,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
             if (unit == null || unit.isDead() || !unit.isCompleted()) continue;
 
             record(now, unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            noteEngineIdOf(unit);
         }
     }
 
@@ -158,9 +200,11 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
         for (AUnit unit : atlantis.units.select.Select.ourUnitsWithUnfinishedList()) {
             // Engine type id - see onEvent (NEXT #68).
             record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            noteEngineIdOf(unit);
         }
         for (AUnit mineral : atlantis.units.select.Select.mineralsAndGeysers().list()) {
             record(A.now(), mineral.id(), mineral.type().ut().id, mineral.x(), mineral.y());
+            noteEngineIdOf(mineral);
         }
     }
 
@@ -182,6 +226,7 @@ public class ACherryVis_UnitFirstSeen extends AutomaticListener {
             // matches units against the replay by BWAPI type, and anything else
             // matches nothing - every clicked unit then reads "i???" (NEXT #68).
             record(A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y());
+            noteEngineIdOf(unit);
         }
     }
 }

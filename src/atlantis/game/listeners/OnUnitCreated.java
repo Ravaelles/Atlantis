@@ -28,6 +28,7 @@ public class OnUnitCreated {
             atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.record(
                 A.now(), unit.id(), unit.type().ut().id, unit.x(), unit.y()
             );
+            atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen.noteEngineIdOf(unit);
         }
 
         // Our unit

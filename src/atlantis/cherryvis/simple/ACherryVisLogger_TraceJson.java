@@ -44,6 +44,7 @@ public class ACherryVisLogger_TraceJson {
             + "\"types_names\": " + typesToString(strings) + ","
             // + emptyLineMap("units_first_seen") + ","
             + "\"units_first_seen\": {" + ACherryVis_UnitFirstSeen.get() + "},"
+            + "\"unit_ids\": [" + ACherryVis_UnitFirstSeen.engineIdsJson() + "],"
             + "\"units_logs\": {" + ACherryVis_UnitLogs.buildUnitLogs(logger) + "},"
             // + "\"units_logs\": {" + ACherryVis_UnitLogs.build(logger) + "},"
             // + emptyLineMap("units_updates")
