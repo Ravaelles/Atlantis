@@ -36,7 +36,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-The suite is green (332 passing, 2 known-failing, 4 skipped as of 2026-10-08;
+The suite is green (440 passing, 1 skipped, plus 10/11 architecture with the one
+known structural failure, as of 2026-10-13 autonomous session;
 re-run `bash scripts/run-tests.sh` for the current numbers - do not trust a count
 written here). What is open is *quality* of the data behind it, not a red test.
 
