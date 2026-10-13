@@ -960,3 +960,13 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - 163040_short: no timeouts, no REPLACED (nothing stuck - healthy run),
   Core@178s Gas@198s, Dragoon=0 at 285s - timing again, gate correctly
   failed. Re-place awaits a game with a genuinely stuck construction.
+
+## Session 2026-10-13: Wine log auto-copy (owner ask)
+
+- `run-wine-full.sh` copies `out/wine/client.log` to `WINE_LOG_COPY` from the
+  bot ENV on every exit (first step of `cleanup()`). Guards: non-empty path +
+  `GAME_LAUNCHER=WINE` in the same file (Wine-only, never OpenBW); candidates
+  in the bot's own ENV resolution order (a stale scbw ENV shadowing the local
+  one was caught by the standalone test and removed from the list). Live path
+  set in both git-ignored machine ENVs; tracked LOCAL-EXAMPLE documents the
+  key empty. Next Wine game lands at `/sc-ai/E2E OpenBW LOGS/last-wine.log`.
