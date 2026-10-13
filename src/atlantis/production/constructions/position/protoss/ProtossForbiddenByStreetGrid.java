@@ -40,7 +40,7 @@ public class ProtossForbiddenByStreetGrid {
         // the hatch inside forPylon never saw those 887 refusals (measured: "PTX modulo is
         // 0"=151, "PTY modulo is 0"=736 while the hatch was in place).
         boolean supplyBlocked = building.isPylon()
-            && A.supplyFree() <= 5 && A.hasMinerals(150) && buildingsNear(3, position) <= 1;
+            && A.supplyFree() <= 5 && A.hasMinerals(100) && buildingsNear(3, position) <= 1;
         if (supplyBlocked) return false;
 
         if (moduloX == 0) return failed("PTX modulo is 0");
@@ -172,10 +172,10 @@ public class ProtossForbiddenByStreetGrid {
         // not a correctness rule; when supply is actually blocked the game needs the
         // Pylon more than it needs a pretty layout. Same spirit as
         // allowPylonWhenOutOfSupply below, but wider: supplyFree <= 5 covers the
-        // 20/25 case measured above, and 150 minerals is what the Pylon costs plus
-        // a margin - below that the bot cannot build it anyway, so relaxing the grid
+        // 20/25 case measured above, and 100 minerals is the Pylon's price -
+        // below that the bot cannot build it anyway, so relaxing the grid
         // would only move a NOT-AFFORDABLE request to a bad tile.
-        if (A.supplyFree() <= 5 && A.hasMinerals(150) && buildingsNear(3, position) <= 1) return false;
+        if (A.supplyFree() <= 5 && A.hasMinerals(100) && buildingsNear(3, position) <= 1) return false;
 
         if (moduloX != 2) {
             if (A.supplyUsed() >= 15 && !A.hasFreeSupply(1) && A.minerals() >= 300) {
