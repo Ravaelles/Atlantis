@@ -33,7 +33,9 @@ public class ConstructionThatLooksBugged extends Commander {
 
             if (constr.builder() == null || constr.buildPosition() == null) {
                 ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
-                constr.productionOrder().cancel(type + " looks bugged ");
+                if (constr.productionOrder() != null) {
+                    constr.productionOrder().cancel(type + " looks bugged ");
+                }
             }
 
 //            else {
