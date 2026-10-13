@@ -855,16 +855,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Worth checking at the same time whether `buildable:true` should short-circuit the second
   call outright.
 
-- **#55 - the map analysis runs on the IDE path too (`MAP_ANALYSIS areas=38 chokes=54`),
-  which the owner does not expect outside OpenBW.** Reported 2026-10-11: "we normally did
-  not do this, it was not needed". It is not obviously a defect - `AMap.initMapAnalysis()`
-  is unconditional in the pipeline and `verifyMapAnalysisIsUsable()` was added as a
-  diagnosis for OpenBW - but it costs time at startup on every backend and nobody has
-  measured whether that cost is wanted. **Not investigated yet**, and recorded because the
-  owner flagged it as a change in behaviour: either it was always there and went unnoticed
-  (most likely, since the log line is old), or something started calling it. Check with
-  `git log` on `AMap.initMapAnalysis` callers before assuming either.
-
 - **#58 - Expansion is DECIDED but the Nexus is re-queued instead of finished.** (Was
   mis-numbered #54, colliding with the `RefreshConstructionPosition` item; numbers are never
   reused, so the duplicate takes the next free one - CONVENTIONS §7.) Owner's log
