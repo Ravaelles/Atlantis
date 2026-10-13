@@ -599,3 +599,38 @@ run with zero churning stalls whose managers read `DoNothing` on the uncompleted
 minerals). Trap to keep: an order-issuing manager must never set its "I am doing
 X" flag before the engine accepts the order - the flag becomes the evidence that
 blocks the re-try.
+
+## Power refusals that were not about power (resolved 2026-10-13, NEXT #50/#59/#70)
+
+Symptom, identical every time: a construction exists, its builder walks to
+the site, the engine refuses for the life of the game (`took too long`,
+cancel). Three different mechanisms wore this one shape, in order:
+
+1. **No power rule at all.** The legacy finder never checked it (the new
+   planner did), so unpowered tiles were requested and correctly refused.
+   Fixed by gating both paths - but on a guessed rule.
+2. **The guessed rule was wrong.** "6 tiles Chebyshev from the footprint"
+   allowed 6 vertically where the engine allows under 5 (Gateway [14,51]
+   with a Pylon at [16,46] passed ours, died on the engine's 315 times) and
+   cut 8 horizontally down to 6. Read `/sc-ai/OpenBW/openbw/bwgame.h`
+   (`is_in_psionic_matrix_range` + `psi_field_mask`): |dx|<256px by
+   |dy|<160px plus an 8x5 tapered mask.
+3. **The mask applied to the wrong point.** The client enforces power at the
+   footprint CENTER (`bwapi/Game: canBuildHere -> hasPower(lt, type)`), so an
+   origin-based mask repeats the old mistake one tile over (Gateway [14,50]:
+   origin inside, center 176px outside, refused). The pylon anchor is its
+   tile origin. Proven by a probe run that printed our answer next to the
+   engine's at decision time (`POWER_AT_REQUEST`): a [112,20]/[114,16] split
+   decided it.
+
+Withdrawn along the way: fog/visibility (explored 12/12 on refused
+footprints), regions (all reachability true), occupancy (footprint empty),
+poverty (bank 150+), builder movement (idle at 1.0 tiles). Every one of them
+was true-and-irrelevant; only the bisection плюс the engine source named the
+term.
+
+Traps to keep: a tile rule must be read from the enforcer (server mask for
+placement validity, client center-rule at issue time - they can disagree at
+razor boundaries, and the finder must follow the stricter observable one);
+a refusal that looks identical from the score line is never one defect (this
+file's whole reason to exist).
