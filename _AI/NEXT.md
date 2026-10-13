@@ -918,7 +918,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 
 - **#56 - `TerranNewBuilding` has the same two finish-path defects `ProtossWarping` had,**
   and they were not touched because they need their own measurement (found 2026-10-11 while
-  fixing #53).
+  fixing #53). Measured 2026-10-13 (temporary Terran race flip, reverted same
+  turn): 258 s game builds `SCV=21 Marine=5 Academy=1 Refinery=1 CommandC=1
+  SupplyD=2 Barracks=1` with zero `No construction for`, zero `CANNOT
+  define`, all attempts accepted - the predicted defects did not trigger
+  (positional miss needs site drift that did not occur). Open until a game
+  shows the symptoms; do not fix blind.
 
   `TerranNewBuilding.updateNewBuilding` is the Terran twin, and it differs from the fixed
   Protoss path in exactly two ways, both visible in the source:
