@@ -88,7 +88,6 @@ T0=$(date +%s)
 since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
-  copy_wine_log
   say "Cleaning up"
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -x Chaoslauncher.exe 2>/dev/null
@@ -96,18 +95,20 @@ cleanup() {
   wineserver -k 2>/dev/null
 }
 
-# After every Wine game (clean exit or kill), leave the client log where the
-# owner looks for it. The destination comes from WINE_LOG_COPY in the bot's
-# ENV file (machine-local, git-ignored); empty or missing means no copy.
-# Wine-script only (local, non-OpenBW by construction) plus a GAME_LAUNCHER
-# guard in the same file, so an OpenBW ENV can never trigger it.
-copy_wine_log() {
+# Where else the client log goes, live. WINE_LOG_COPY in the bot's ENV file
+# (machine-local, git-ignored): when non-empty AND the same file says
+# GAME_LAUNCHER=WINE, tee writes every bot line there as it arrives - so the
+# copy exists mid-game, after a crash and after an IDE kill, not only on a
+# clean exit (an end-of-run cp was tried first and missed all three - the
+# owner's IDE run left no file behind it). Prints the path or nothing.
+# Wine-script only (local, non-OpenBW by construction) plus the launcher
+# guard, so an OpenBW ENV can never trigger it.
+resolve_wine_log_copy() {
   local env_file=""
   local candidate
   # Same order the bot itself resolves ENV in (Env.java): the first file that
   # exists is the one the game played with, so its GAME_LAUNCHER and
-  # WINE_LOG_COPY are authoritative. No scbw path here - that belongs to a
-  # different runner which never reads it.
+  # WINE_LOG_COPY are authoritative.
   for candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
     if [ -f "$candidate" ]; then env_file="$candidate"; break; fi
   done
@@ -117,13 +118,8 @@ copy_wine_log() {
   local dest
   dest=$(grep "^WINE_LOG_COPY=" "$env_file" | tail -1 | cut -d= -f2-)
   [ -z "$dest" ] && return 0
-
   mkdir -p "$(dirname "$dest")" 2>/dev/null
-  if cp -f "$CLIENT_LOG" "$dest" 2>/dev/null; then
-    say "Wine log copied to $dest"
-  else
-    say "  WARNING: could not copy Wine log to $dest"
-  fi
+  printf '%s' "$dest"
 }
 
 # The jar is what actually plays, and nothing rebuilt it: the IDE launches this
@@ -232,10 +228,19 @@ say "  Windows path: $WIN_JAR"
 # fixes.
 LIVE_OUTPUT="${LIVE_OUTPUT:-1}"
 
+# Resolve the live copy destination once, before the client starts (see
+# resolve_wine_log_copy): empty in every case that must stay quiet.
+WINE_LOG_COPY_RESOLVED="$(resolve_wine_log_copy)"
+TEE_FILES=("$CLIENT_LOG")
+if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
+  TEE_FILES+=("$WINE_LOG_COPY_RESOLVED")
+  say "  Live log copy: $WINE_LOG_COPY_RESOLVED"
+fi
+
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
-    2>&1 < /dev/null | tee "$CLIENT_LOG" &
+    2>&1 < /dev/null | tee "${TEE_FILES[@]}" &
   # tee is the foreground of that pipeline; killing it later also closes the
   # bot's stdout. CLIENT_PID stays the pipeline's PID, which is what the
   # liveness checks below need.
@@ -243,7 +248,7 @@ if [ "$LIVE_OUTPUT" = "1" ]; then
 else
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
-    > "$CLIENT_LOG" 2>&1 < /dev/null &
+    2>&1 < /dev/null | tee "${TEE_FILES[@]}" > /dev/null &
   CLIENT_PID=$!
 fi
 say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"
