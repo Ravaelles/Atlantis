@@ -6,7 +6,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
-import atlantis.util.AConsole;
 import atlantis.util.We;
 
 import java.util.ArrayList;
@@ -21,19 +20,10 @@ public class ConstructionRequests {
 
     /**
      * The single door for new constructions (NEXT #57): every creation path
-     * goes through here, so the duplicate question has one place to ask. The
-     * caller chain is printed under BUILDER_LOG to name which path created
-     * what - a duplicate created through a path that bypasses the guard looks
-     * identical from the score line.
+     * goes through here, so the duplicate question has one place to ask.
      */
     public static void addConstruction(Construction construction) {
         constructions.add(construction);
-
-        if (atlantis.config.env.Env.builderLog()) {
-            System.err.println("ADD_CONSTRUCTION " + construction.buildingType().name()
-                + " at=" + construction.buildPosition());
-            AConsole.printStackTrace("Created by");
-        }
     }
 
     /**
