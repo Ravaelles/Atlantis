@@ -145,6 +145,19 @@ public class NewConstructionRequest {
                     + " at=" + newConstruction.buildPosition()
                     + " totalOfType=" + ConstructionRequests.countAllOfType(building));
             }
+            // Power inputs at decision time (a site the engine later refuses on
+            // power passed every check we have - so log what the checks saw:
+            // our rule, the engine's answer, and the pylon list it ran on.
+            // Rare (once per construction), builderLog-gated like the line above.
+            if (building.needsPower() && atlantis.config.env.Env.builderLog()) {
+                System.err.println("POWER_AT_REQUEST site=" + newConstruction.buildPosition()
+                    + " ourCheck=" + atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon.check(newConstruction.buildPosition())
+                    + " engineHasPower=" + atlantis.Atlantis.game().hasPower(
+                        new bwapi.TilePosition(
+                            newConstruction.buildPosition().tx(), newConstruction.buildPosition().ty()),
+                        building.ut())
+                    + " pylons=" + atlantis.units.select.Select.ourOfType(atlantis.units.AUnitType.Protoss_Pylon).list());
+            }
         }
 
 //            AConsole.printStackTrace("AFTER ADDED");
