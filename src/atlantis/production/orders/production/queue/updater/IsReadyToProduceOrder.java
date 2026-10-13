@@ -65,11 +65,23 @@ public class IsReadyToProduceOrder {
         }
 
         boolean isFarFromMainBaseSoTravelEarly = !isFarFromMainBaseSoTravelEarly(order);
-        if (
-            (!isSupplyRequirementFulfilled(order, isFarFromMainBaseSoTravelEarly))
-                || (!hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly))
-                || (!order.checkIfHasWhatRequired())
-        ) {
+        boolean supplyOk = isSupplyRequirementFulfilled(order, isFarFromMainBaseSoTravelEarly);
+        boolean resourcesOk = hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly);
+        boolean requirementsOk = order.checkIfHasWhatRequired();
+        if (!supplyOk || !resourcesOk || !requirementsOk) {
+            // Diagnostic, not a behavior change (a Nexus order sat in the queue
+            // from 6:19 to game end with no REQUEST, no refusal and no cancel -
+            // three indistinguishable silences). Names the refusing term with
+            // the numbers, throttled; buildings only, units churn through here
+            // every frame by design.
+            if (order.isBuilding()) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "ORDER_NOT_READY " + order.unitType()
+                        + " supplyOk=" + supplyOk + "(" + A.supplyUsed() + "/" + order.minSupply() + ")"
+                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
+                        + " reserved=" + ReservedResources.minerals() + ")"
+                        + " requirementsOk=" + requirementsOk);
+            }
             return false;
         }
 
