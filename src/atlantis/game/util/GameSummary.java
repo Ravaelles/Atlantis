@@ -73,7 +73,15 @@ public class GameSummary {
      * </p>
      */
     /**
-     * What stands on the board, as `Type=alive` - only the types present right now.
+     * What stands on the board, as `Type=completed` - only completed units,
+     * only the types present right now.
+     *
+     * <p>
+     * <b>Completed only (owner's ruling 2026-10-13, supersedes the 2026-10-12
+     * unfinished-included rule):</b> a Gateway ordered 15 s before exit read
+     * as a built Gateway, and E2E gates read this line - training must not
+     * pass a built-gate.
+     * </p>
      *
      * <p>
      * <b>The live board is the only source (owner's ruling, 2026-10-12): "no history for
@@ -91,12 +99,6 @@ public class GameSummary {
      * <b>The order is the engine's own unit-list order</b> - deterministic per game, close
      * enough to build progression, and it needs no extra bookkeeping. (The previous order
      * came from UnitComplete events, which OpenBW distorts - see above.)
-     * </p>
-     *
-     * <p>
-     * Unfinished units are INCLUDED: a building still warping is on the board and the
-     * player sees it in the replay - hiding it would make the line disagree with the
-     * replay for the most interesting case, a game that ends mid-build.
      * </p>
      */
     private static String buildingsLine() {
@@ -125,12 +127,15 @@ public class GameSummary {
         }
         types.sort(Comparator.comparingInt(firstSeenOrder::get));
 
-        for (AUnitType type : types) {
-            int alive = Select.ourWithUnfinishedOfType(type).count();
+        Map<AUnitType, Integer> completed = new HashMap<>();
+        for (AUnit unit : Select.our().list()) {
+            completed.merge(unit.type(), 1, Integer::sum);
+        }
 
+        for (AUnitType type : types) {
             // `AUnitType.name()` already strips the race prefix, which is why this report can
             // be written once rather than per race.
-            line.append(type.name()).append("=").append(alive).append(" ");
+            line.append(type.name()).append("=").append(completed.getOrDefault(type, 0)).append(" ");
         }
 
         // Kept from the old line so a run that produced nothing still says so explicitly
