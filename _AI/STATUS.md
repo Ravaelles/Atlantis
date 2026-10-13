@@ -883,3 +883,21 @@ in a game, not just in its test.
   empty, Protoss re-verified): symptoms absent, stays open.
 - #71 filed (suspect inverted 700 s gate, needs a 700 s+ Wine game to verify;
   not patched blind).
+
+## Session 2026-10-13 (autonomous checkpoint): green board, jar fresh
+
+- Full suite: unit 440/440, arch 10/11 (only the pre-existing structural
+  Manager->SleepUntilFrameGate, advisory), store unchanged all session.
+  Deployed jar rebuilt fresh from the cleaned tree.
+- Session closes: #50 (psi mask + shared-chain gate, game-verified), #54
+  (refresh loop dead), #55 (map analysis always ran), #61 (stuck workers),
+  #62 (exact refinery tile, Assimilator=1), #70 (demote game-verified,
+  gas center-distance). Filed: #71 (suspect 700 s gate, needs Wine).
+- Left open, all owner/design-side: #59 Wine half, #69 (no hang reproduced
+  in 12+ runs, all exit 0), #65/#68 (viewer checks), #34 (UMS map), #8/#36/
+  #40 (design), #51/#39 (constants), #45 (V2 parity), #15 (Terran deploy),
+  #56 (symptoms absent), #57 (no leak symptoms), #58 (Wine expansion),
+  #60 (thresholds), stages 3/5/6/8-13.
+- Refusals logged for the record: legacy position-path deletion (live path,
+  breaks the bot without cutover), blind fixes for #71/#56/unexplained
+  single-run anomalies, per-commit full-game gates.

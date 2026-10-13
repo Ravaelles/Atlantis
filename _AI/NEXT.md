@@ -672,10 +672,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   logged with `log("...")`), or is the request made and rejected as a duplicate
   (`alreadyExists`, #57)?
 
-  **Stability note 2026-10-13 (autonomous): five of the last six --short runs
-  PASS (4 vs Zerg, 1 vs Terran re-run), all with Core+Dragoons+gas; the single
-  failure was the pre-center-rule Terran power case ([15,51]) that the mask
-  work has since explained and re-passed. The OpenBW half of this variance
+  **Stability note 2026-10-13 (autonomous): five of the last seven --short runs
+  PASS across two maps and two matchups, all with Core+Dragoons+gas when they
+  pass; the two failures are understood (pre-center-rule Terran power case,
+  since re-passed; one timing miss where gas flowed too late for the 318 s
+  horizon and the gate correctly failed). The OpenBW half of this variance
   item is stable; what remains is the Wine half (owner runs) and the
   threshold-boundary question for builders parked at exactly the issue
   distance (needs a BUILDER_LOG Wine game).**
