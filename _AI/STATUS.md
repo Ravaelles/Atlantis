@@ -901,3 +901,17 @@ in a game, not just in its test.
 - Refusals logged for the record: legacy position-path deletion (live path,
   breaks the bot without cutover), blind fixes for #71/#56/unexplained
   single-run anomalies, per-commit full-game gates.
+
+## Session 2026-10-13 (autonomous, continued): deletion gate lesson + 10 dead classes
+
+- Near-miss: `PositionsAroundMainBase` passed a zero-reference grep because the
+  `grep -v` self-exclusion also excluded `BuildablePositionsAroundMainBase`
+  (its filename ends with the class name). Caught by compilation, restored
+  before commit. Rule going forward: compilation green is the deletion gate,
+  grep is only the candidate finder. (CONVENTIONS section 3a: cheap check
+  before the claim - the compile was the check that worked.)
+- Deleted after green compiles: OldTerranForbiddenByStreetGrid,
+  ForbiddenByStreetGridForBarracks, ProtossForbiddenForProducerBuildings,
+  OldCrucialRepairsNearby, DynamicTech, NonReinforcedBases, all three race
+  SupplyCommanders (superseded by the fallback-supply path),
+  ProtossLimitExistingConstructions. Suite 414/414 throughout.
