@@ -1195,3 +1195,20 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   runtime table feeds `units_updates` and `custom_names` (verified single
   instance in the writer); the test pins every referenced id resolving in
   legend order. Viewer-click check stays the owner's.
+
+## Session 2026-10-13 (autonomous: #56 Terran symptoms, #69 watchdog, combat sweep)
+
+- #56 measured, kept open: second Terran game (temporary flip, reverted +
+  Protoss re-verified playing same turn) shows the stall behaviorally - two
+  SCVs Move-loop at successive Barracks sites, zero attempts, 0 Barracks,
+  minerals hoarded - with all literal markers absent. Neither predicted defect
+  confirmed as written; next is reading `TerranNewBuilding` vs the fixed
+  Protoss path, not a third measurement run.
+- #69 instrumented, kept open: background jstack catcher in
+  `run-openbw-e2e.sh` (log stalled 30 s + java alive → one `jstack -l` dump
+  to the run dir, then stands down; skipped if jstack missing; `bash -n`
+  clean). Still needs its hang.
+- Combat sweep: deleted `combat/eval/Evaluate.java` (@Deprecated, all-private,
+  zero refs); `ZergRetreating` RESTORED after deletion - zero refs but on the
+  owner-eyes-first spared list, which the sweep rule does not overrule.
+  Suite green after.

@@ -481,6 +481,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   and a growing `countPendingOfType` appear. Tracked rather than fixed blind, per
   `CONVENTIONS.md` §3a.
 
+  **Measured 2026-10-13, second Terran game (temporary flip, reverted same
+  turn, Protoss re-verified playing): symptoms PARTIALLY PRESENT,
+  behaviorally.** 157 s: all literal markers absent (`No construction for` 0,
+  `CANNOT define` 0, `engineAccepted=false` 0, one BUILD_ATTEMPT - Depot,
+  accepted). But no Barracks was ever attempted: two SCVs Move-loop at
+  successive sites ([100,111] 88f→358f, [78,116] 73f→343f, `distToBuild=1.4
+  isConstructing=false`), `REQUEST_REFUSED_DUPLICATE Barracks/SupplyD`
+  present, roster ends `CommandC=1 SCV=16 SupplyD=1` (0 Barracks/Marines,
+  ForceExit on hoarded minerals). So the STALL half shows in behavior while
+  neither predicted log-marker fires - next is reading `TerranNewBuilding`
+  against the fixed Protoss path, not re-measuring. Item stays open.
+
 - **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
   Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
   written, then no "Killing"/"Exit" prints, one more silent ForceExit (latch),
@@ -490,6 +502,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   hooks skipped) on the self-exit path, so a hung teardown fails in ~30 s instead
   of burning the cap. Skipped for `END_GAME_VIA_ENGINE` and in tests. Still open:
   catch one hanging run with `jstack` and name the frame.
+
+  **Instrumented 2026-10-13:** `run-openbw-e2e.sh` runs a background catcher -
+  while the bot runs, every 10 s it checks log growth; java alive + log stalled
+  30 s → one `jstack -l` dump to `$RUN_DIR/jstack-hang.txt`, then it stands
+  down (killed after `wait`). Skipped when jstack is missing, silent unless it
+  fires, `bash -n` clean. No live verification possible without a hang (12+
+  runs all exit 0) - the next hanging run now names its own frame.**
 
 - **#68 (2026-10-12) - per-unit data never attaches ("i???" on click). ROOT CAUSE
   FOUND, fix in.** The viewer fuzzy-matches cvis units against replay units by
