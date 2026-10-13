@@ -729,3 +729,20 @@ warp never moves). `CherryVisDeferredFirstSeenTest` 2/2, unit 405/405.
 Verified in game `20261013_104050_short --cvis` (15 deferred + 3 via):
 late units now spread around the base, none shares the Nexus position.
 Viewer check (owner opens the trace) still pending.
+
+## Session 2026-10-13 (continued): unit logs flow, scout NPE guarded (owner asks)
+
+- CherryVis unit logs (owner: matching works, panel empty): the only producer
+  (manager mirror in `setManagerUsed`) sat behind const-false
+  `CHERRYVIS_UNIT_ORDERS`, so traces left `units_logs={}`. Every manager change
+  now logs unconditionally (`CV.unitLog` is itself a no-op unless enabled).
+  Verified `20261013_105915_short --cvis`: 22 units with logs
+  (`manager:GatherResources` -> `manager:BuilderManager` -> back, with
+  frames). Viewer re-check is the owner's.
+- Wine NPE (`RoamAroundEnemyBase.java:67`): `enemyBaseRegion` null when the map
+  model has no region for the tile; guarded to `return false` (the old null
+  check tested `enemyMain`, already non-null). The per-factory `invokedFor`
+  catch stays the backstop: a throwing manager returns null and the chain moves
+  on next frame, so one bad scout never kills the game. Trivial guard, no test.
+- Owner's E2E `20261013_104858_adhoc` (411 s): `Pylon=6 Dragoon=6
+  Assimilator=1`, zero `AN ERROR HAS OCCURRED` - the NPE is Wine-only so far.
