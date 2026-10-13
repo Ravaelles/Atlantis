@@ -1734,7 +1734,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public boolean isTrainingAnyUnit() {
-        return u.isTraining();
+        // Null-guarded like the neighboring accessors: a unit with no engine
+        // handle (a test fake, a half-created unit) is training nothing -
+        // and four acceptance tests died here on FakeUnits (NEXT #73).
+        return u != null && u.isTraining();
     }
 
     public boolean isBeingConstructed() {
