@@ -10,6 +10,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
@@ -59,7 +60,7 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
     @Test
     public void earlyStreamGateOpensWithFreeSupplyAndBank() {
         currentMinerals = 100;
-        currentSupplyUsed = 8;
+        currentSupplyUsed = 7;
         currentSupplyTotal = 17;
 
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
@@ -93,5 +94,82 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
         assertEquals(
             300, AUnitType.Protoss_Probe.totalTrainTime(),
             "the <=10-frame re-queue is ~3% of a 300-frame Probe");
+    }
+
+    /**
+     * BO "At 8 Pylon" means BUILD it at 8 (owner ruling 2026-10-13): with no
+     * Pylon at all, workers built below 150 starve the Pylon - measured as
+     * bank-400-while-blocked.
+     */
+    @Test
+    public void pylonAt8BlocksWorkersWhenPoorAndPylonless() {
+        currentMinerals = 100;
+        currentSupplyUsed = 8;
+        currentSupplyTotal = 17;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            assertFalse(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "at supply 8 with no Pylon and 100 minerals the bank is saved"
+                    + " for the Pylon, not spent on workers");
+            assertEquals(
+                "PylonAt8", AutoProduceWorkersCommander.REASON,
+                "the refusing gate must name itself");
+        });
+    }
+
+    @Test
+    public void pylonAt8ReleasesAt150() {
+        currentMinerals = 150;
+        currentSupplyUsed = 8;
+        currentSupplyTotal = 17;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            assertTrue(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "150 covers Pylon+worker - the stream flows, got: "
+                    + AutoProduceWorkersCommander.REASON);
+        });
+    }
+
+    @Test
+    public void pylonAt8ReleasesWhenPylonWarping() {
+        currentMinerals = 100;
+        currentSupplyUsed = 8;
+        currentSupplyTotal = 17;
+
+        FakeUnit warpingPylon = fake(AUnitType.Protoss_Pylon, 24, 24).setCompleted(false);
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            warpingPylon,
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            assertTrue(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "a started Pylon (even warping) releases the stream, got: "
+                    + AutoProduceWorkersCommander.REASON);
+        });
     }
 }

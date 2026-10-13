@@ -66,6 +66,17 @@ public class AutoProduceWorkersCommander extends Commander {
         int workers = Count.workers();
         if (workers >= 80) return dont("MaxedWorkers");
 
+        // BO "At 8 Pylon" means BUILD it at 8 supply, not queue it eventually
+        // (owner ruling 2026-10-13): with no Pylon at all, every worker built
+        // below Pylon+worker money (150) pushes the Pylon further out -
+        // measured as bank-400-while-blocked. Released by a started Pylon
+        // (even warping) or by the 150 bank.
+        if (
+            We.protoss() && A.supplyUsed() >= 8
+                && Count.ofTypeWithUnfinished(Protoss_Pylon) == 0
+                && !A.hasMinerals(150)
+        ) return dont("PylonAt8");
+
         if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals()) return dont("CriticalStuff");
 
         Decision decision = EarlyGameProduceWorkers.decision();
