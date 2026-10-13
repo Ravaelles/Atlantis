@@ -931,3 +931,18 @@ in a game, not just in its test.
 - Live legacy position path kept (refusal logged); only dead code goes.
 
 Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from this batch, rest from earlier removals; ratchet holds, this batch +0/-3).
+
+## Session 2026-10-13 (autonomous, continued): queue-silence hunt, standby
+
+- Nexus order vanishes between ADDED and REQUEST with no log trace (two
+  --long runs). Refresh evaluates other orders (448 ORDER_NOT_READY lines),
+  so the Nexus order never reaches isReady - status/ignore path, not a gate.
+  New throttled QUEUE_BASE probe prints base-order status in refresh; needs
+  a game that queues a Nexus (this run never decided one: 3 gateways).
+- 161240_long: Core@190s + Gas@198s, Dragoon=0 at 286s - timing again (100
+  gas + 50s build exceed the horizon), gate correctly failed. Plus late
+  supply cap 33/33 (Pylon search stalls late game - same family as #59).
+- Board: unit 414/414 (select-package) / 440+ full, arch store untouched,
+  tree clean, jar fresh. Nothing further advances without owner-side
+  evidence (Wine BUILDER_LOG game, jstack hang, viewer checks, 700 s+ game)
+  - standing by for the Wine files.
