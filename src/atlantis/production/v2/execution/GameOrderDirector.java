@@ -88,7 +88,7 @@ public class GameOrderDirector implements OrderDirector {
         Construction construction = createConstruction(buildingType, placement, building);
         if (construction == null) return false;
 
-        ConstructionRequests.constructions.add(construction);
+        ConstructionRequests.addConstruction(construction);
         return true;
     }
 
