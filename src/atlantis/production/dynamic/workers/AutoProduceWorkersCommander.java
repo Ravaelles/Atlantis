@@ -82,8 +82,10 @@ public class AutoProduceWorkersCommander extends Commander {
         // D3 priority waiting (generalizes SaveForNexus, which this
         // replaces: with a HIGH Nexus waiter the numbers are identical -
         // worker 50 + Nexus 400 = 450): a higher waiter pauses the pump
-        // unless the bank covers worker + waiter.
-        if (PriorityWaiters.blocksSpending(50, 0, ProductionOrderPriority.STANDARD)) {
+        // unless the bank covers worker + waiter. Only convertible (READY
+        // or IN_PROGRESS) waiters count - a NOT_READY tech row must not
+        // strangle the opening (owner 2026-10-14: continuous probe stream).
+        if (PriorityWaiters.blocksWorkerSpending(50, 0)) {
             return dont("HigherPriorityWaits");
         }
 

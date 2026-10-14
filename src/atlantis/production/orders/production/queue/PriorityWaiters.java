@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue;
 
 import atlantis.game.A;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -41,6 +42,52 @@ public class PriorityWaiters {
      */
     public static int gasAbove(ProductionOrderPriority level) {
         return totalAbove(level, false);
+    }
+
+    /**
+     * Worker-pump variant (owner 2026-10-14: the opening needs a continuous
+     * probe stream): only READY or actively-converting HIGH+ waiters pause
+     * workers. A NOT_READY tech row (Core at 4 supply) cannot convert yet,
+     * so there is nothing to save for - measured: Core+Assimilator waiters
+     * held workers at 4 until a 350 bank from frame 30. Army pumps keep the
+     * status-blind variant (saving for tech is strategy, D5).
+     */
+    public static boolean blocksWorkerSpending(int myMinerals, int myGas) {
+        int waitMinerals = mineralsAboveReady(ProductionOrderPriority.STANDARD);
+        int waitGas = gasAboveReady(ProductionOrderPriority.STANDARD);
+        if (waitMinerals == 0 && waitGas == 0) return false;
+        return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
+    }
+
+    public static int mineralsAboveReady(ProductionOrderPriority level) {
+        return totalAboveReady(level, true);
+    }
+
+    public static int gasAboveReady(ProductionOrderPriority level) {
+        return totalAboveReady(level, false);
+    }
+
+    private static int totalAboveReady(ProductionOrderPriority level, boolean minerals) {
+        if (Queue.get() == null) return 0;
+        int total = 0;
+        for (ProductionOrder order : Queue.get().notFinished().list()) {
+            if (order.shouldIgnore()) continue;
+            if (!isWaiter(order)) continue;
+            if (level.isAtLeast(order.priority())) continue;
+            // Bases pause workers from the queued moment (saving up TO 400
+            // takes minutes - the D3/SaveForNexus doctrine, pinned by
+            // nexusQueuedPausesWorkersBelow450). Tech pauses only when
+            // convertible, or the opening strangles on rows that cannot
+            // convert yet (owner 2026-10-14).
+            if (!isBase(order) && !order.isStatus(OrderStatus.READY_TO_PRODUCE)
+                && !order.isStatus(OrderStatus.IN_PROGRESS)) continue;
+            total += minerals ? order.mineralPrice() : order.gasPrice();
+        }
+        return total;
+    }
+
+    private static boolean isBase(ProductionOrder order) {
+        return order.unitType() != null && order.unitType().isBase();
     }
 
     /**

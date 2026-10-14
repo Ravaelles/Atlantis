@@ -832,6 +832,20 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   not overdue) could not tell walking from stolen. `isOverdue` now
   excludes builders back on minerals/gas while affordable; walking ones
   still shield (`StolenBuilderOverdueTest`, red pre-fix). Suite 524/524.
+- **Built rows must leave next-orders (owner 2026-10-14):** a row whose
+  builder is dead (or missing) tracks nothing - `isConstructionActive`
+  now returns false there, so the standing building satisfies it by
+  existence. A warping Nexus-2 with a living builder still waits (reserve
+  kept, no #58 triple). `linkedDeadBuilderCompletesByExistence` pins it
+  (red pre-fix, Nexus guard green both). Suite 527/527.
+- **Continuous early probe stream (owner 2026-10-14, critically):** the
+  worker pump waited for NOT_READY tech rows from frame 30 (Core+Assim
+  300 -> 350 bank with 4 probes). Only READY/converting HIGH+ waiters
+  pause workers now; bases still pause from queued (saving TO 400 takes
+  minutes - `nexusQueuedPausesWorkersBelow450` holds). Army pumps
+  unchanged (saving for tech is strategy). Rewrote
+  `coreQueuedPausesWorkersLikeNexus` into notReady-flows/ready-pauses
+  (old expectation was the strangler). Suite 527/527.
 - **Dragoon=0 + Nexus=1 in 344 s (2026-10-14, game 183050_adhoc): tempo,
   not gates.** Cascade: Core ~228 s (waiter span) -> Assimilator ordered
   4:04 -> first gas @279 s (peak 232) -> Dragoons earliest ~5:30; min-6

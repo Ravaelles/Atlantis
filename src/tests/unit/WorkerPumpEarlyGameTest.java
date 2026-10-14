@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
@@ -87,9 +88,11 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void coreQueuedPausesWorkersLikeNexus() {
-        // Same doctrine as the Nexus gate, via the central tech-HIGH default:
-        // a queued Cybernetics Core outranks the pump until the bank covers both.
+    public void notReadyCoreDoesNotPauseWorkers() {
+        // Owner 2026-10-14: the opening needs a continuous probe stream. A
+        // Core that cannot convert yet (supply-locked here) is nothing to
+        // save for - measured: Core+Assimilator waiters held workers at 4
+        // until a 350 bank from frame 30. Only a READY waiter pauses.
         currentMinerals = 100;
         currentSupplyUsed = 7;
         currentSupplyTotal = 17;
@@ -106,14 +109,51 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
         world(5, fakeOurs(ours), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 30));
+            ProductionOrder core = new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 30);
+            Queue.get().addNew(0, core);
+            Queue.get().clearCache();
+            core.setStatus(OrderStatus.NOT_READY);
+
+            assertTrue(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "a supply-locked Core must not pause the worker pump, got: "
+                    + AutoProduceWorkersCommander.REASON);
+        });
+    }
+
+    @Test
+    public void readyCoreStillPausesWorkersLikeNexus() {
+        // Same doctrine as the Nexus gate, via the central tech-HIGH default:
+        // a convertible Core outranks the pump until the bank covers both.
+        currentMinerals = 100;
+        currentSupplyUsed = 7;
+        currentSupplyTotal = 17;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] ours = {
+            nexus,
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22),
+        };
+
+        world(5, fakeOurs(ours), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            ProductionOrder core = new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 30);
+            Queue.get().addNew(0, core);
+            Queue.get().clearCache();
+            core.setStatus(OrderStatus.READY_TO_PRODUCE);
 
             assertFalse(
                 AutoProduceWorkersCommander.shouldProduceWorkers(),
-                "a queued Core below 250 must save up, not pump workers");
+                "a convertible Core below 250 must save up, not pump workers");
             assertEquals(
                 "HigherPriorityWaits", AutoProduceWorkersCommander.REASON,
                 "the refusing gate must name itself");
+
+            core.setStatus(OrderStatus.NOT_READY);
         });
     }
 
