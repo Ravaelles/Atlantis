@@ -1393,6 +1393,19 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (1953 physical, corner base), never retried, bank grows into the hoard
   tripwire at 4:11. #81 territory (corner attribution + retry cadence).
 
+## Session 2026-10-14 (owner asks: Nexus corner drive, Pylon retry, Nexus-before-1000)
+
+- Center-target + footprint thresholds (owner call): workers walk to the
+  footprint CENTER again (corner drive was the origin-target from the hover
+  fix), decision reads distTo(center) with threshold max(1.4,
+  center-offset) - Pylon ~1.41, Gateway/Barracks 2.5, Nexus 2.83, gas 3.5
+  and Bunker 8 unchanged. Metric and target agree by construction, so the
+  hover cannot return through this split.
+- Verified BOTH races: Protoss PASS (Core+Dragoon=2, 10/10 accepted, no
+  Move-loop); Terran Barracks 2/2 accepted and BUILT (Marine=9) - hover
+  stays fixed under center geometry. Protoss re-verified PASS after revert.
+  Suite 485/0 (incl. rewritten center pins).
+
 ## Session 2026-10-14 (demote-hold fix + overlap live, 2-Dragoon PASS)
 
 - Demote misfire fixed: the standstill clock counted the pre-attempt saving
@@ -1430,3 +1443,23 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   still needs a BUILDER_LOG=1 run to resolve (builder? placement? attempt?) -
   owner runs without the flag. Expansion pipeline now tested; thresholds
   stay D5.
+
+## Session 2026-10-14 (owner asks: corner drive, Pylon retry, Nexus-before-1000)
+
+- Center-target + footprint thresholds DONE (owner call) + game-verified
+  both races (Protoss PASS 10/10 accepted; Terran Barracks 2/2 built, hover
+  stays fixed). Corner drive was the origin-target from the hover fix.
+- Pylon retry: NO CODE NEEDED - failed searches already re-run at producer
+  cadence (READY orders every frame via ProductionOrdersCommander:53-56;
+  readiness re-evaluated every 19/71f), exceeding the asked 5 s. The Wine-41
+  gap was never-requested, not never-retried - and its telemetry
+  (ORDER_NOT_READY) was commented out at HEAD, now restored behind
+  BUILDER_LOG (was: silent queue). Next log names the gate.
+- ENV-source startup line: the Wine bot played on silent defaults (no
+  builder logging despite the flag file) - CWD-relative resolution misses on
+  Wine. One unconditional line now logs source + builderLog every game.
+- Nexus-before-1000 verdict: pre-1000 absence IS the criteria (natural gates
+  fail at 2 gates/23 workers/348s/combat; LimitedBases needs 777) - no
+  criteria change per owner, so nothing to fix there. Post-5:48 flapping
+  (READY⇄IN_PROGRESS, bank 927+) without issue needs builder/order data -
+  blocked until the ENV-fixed run lands.
