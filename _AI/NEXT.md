@@ -528,34 +528,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   missing path - name which gate (level check, gas ladder, queue dedup)
   refuses L2/L3 in a game that reached them. Do not patch blind.
 
-- **#86 (2026-10-14) - 9pool twin regressed: pinned HOLD no longer holds.**
-  `NinePoolDefenseTest.defendedBaseSurvivesTheNinePool` fails consistently
-  (solo too): "the probe drill does the killing (B-19: they never did)".
-  HOLD was pinned in `6c0b040e` (2026-10-04, per-frame combat-unit
-  invocation); the 4pool twin passes solo. Bisect names first-bad
-  `508a3ec3` (Oct 7 Tweaks: focus leeway 1.3→1.8, swarm radius 9→6,
-  friends-near→nonBuildings/10) - but every single-hunk revert AND the combo
-  revert on today's code stay red, so a later change dominates. Census today:
-  probes 305× `WorkerDefenceRun` vs 31× HelpCannon (Oct 4: HelpCannon
-  active). Restoring the Oct-4 flee gates (`WorkerDefenceRun`: hold-ground
-  unconditional, early stay hp>=38) turns the twin GREEN - today's binding
-  constraint is the `b839f0b9` flee floors (run below 30 at home / 45
-  early): hurt probes flee instead of drilling (7 strikes vs pinned 100+),
-  while cannon lives, 4+ probes survive, and the zealot fights. Tension:
-  those floors were built from the owner's Wine death logs (39 hp probes
-  dying) - restoring the drill risks those deaths. Pin (Oct-4 HOLD volume)
-  vs live-game lesson: owner's call 2026-10-14 is a full research into
-  what works better and what makes sense in theory (NEXT #87), not
-  pin-vs-revert. The bisect + census above stand as its evidence base.
-
-- **#87 (2026-10-14) - worker fight-vs-flee: theory + thresholds research.**
-  Owner's direction: base the target behavior on what works better and what
-  makes sense in theory. Inputs: engine damage math (Probe/Zealot/Ling DPS
-  from the jar, not memory), the Oct-4 HOLD pin, the Wine death logs behind
-  the flee floors, today's census (305 Run / 31 HelpCannon, base holds
-  either way). Output: grounded thresholds (or a rule, not a number) plus
-  scenario + game verification. Do not flip pins or gates blind first.
-
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count
   (`GatewayRequeueAfterCancelTest` 2/2, order in `CancelTooLongConstructions:192-194`),

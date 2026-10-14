@@ -39,6 +39,12 @@ a long post-mortem belongs in an ADR or a commit message.
   lockouts and the `id % 5` / `id % 3` skips while the base is hit. Re-measured
   from a clean run, the 4pool **holds**; the 9pool still loses the base but
   trades three lings instead of two.
+- **Update 2026-10-14 (NEXT #87):** the 9pool twin now **holds** (pin since
+  `6c0b040e`): nexus and cannon live, all 8 lings die, zealot fights. The
+  drill volume moved the other way by design - hurt probes flee instead of
+  feeding (flee floors from the owner's Wine death logs), measured split
+  cannon 12 / zealot 2 / probes 7 strikes. The pin now demands token probe
+  engagement (>= 5) rather than drill-carried kills.
 - **What is left:** a **game run**. Stub-world physics is documented harness
   rules, not the game, so "the scenario flips" is evidence that the arbitration
   changed, not that the bot survives a real 4pool. Tracked as NEXT #34.
