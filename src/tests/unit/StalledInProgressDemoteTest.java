@@ -185,4 +185,26 @@ public class StalledInProgressDemoteTest extends AbstractTestWithWorld {
         construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
         return construction;
     }
+
+    @Test
+    public void recentAttemptHoldsFire() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(130, units(nexus, probe), new FakeUnit[0], () -> {
+            if (A.now() != 120) return;
+
+            // Same stalled shape that demotes (idle builder at site, no
+            // building) - except the build order went out 0 frames ago.
+            Construction construction = stalledCoreAt(probe, 12, 10);
+            construction.setLastBuildAttemptNow();
+
+            assertFalse(
+                ConstructionStatusChanger.demoteStalledInProgress(construction, probe),
+                "attempted this frame: the warp may still be settling"
+                    + " server-side - demoting on the pre-attempt standstill"
+                    + " clock kills fresh warps (measured: demote 7f after an"
+                    + " accepted attempt)");
+        });
+    }
 }

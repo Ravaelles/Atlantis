@@ -215,7 +215,20 @@ public class ConstructionStatusChanger extends Commander {
      * {@code isConstructing} for the whole build. Only a dropped warp sits out
      * this long, and the measured one sat out 2400 frames.
      */
+    /**
+     * Frames after an engine build attempt during which a stall demote is
+     * suppressed. A healthy warp shows its building within about a minute of
+     * the accept; a dead one still demotes after this window.
+     */
     private static final int STALLED_IN_PROGRESS_DEMOTE_FRAMES = 90;
+
+    /**
+     * Frames after an engine build attempt during which demote holds fire even
+     * for a standstill. Covers accept-to-entity latency with margin; the
+     * measured misfire demoted 7 frames after an accepted attempt on a 258f
+     * pre-attempt standstill clock.
+     */
+    private static final int DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES = 150;
 
     /**
      * Demote a dead IN_PROGRESS construction back to NOT_STARTED.
@@ -224,7 +237,8 @@ public class ConstructionStatusChanger extends Commander {
      * (NEXT #70). Every exclusion is a healthy shape that must NOT demote: a
      * constructing or travelling worker, a non-worker builder (Zerg morph), a
      * worker that walked away from a warping building, a recently arrived
-     * worker, a young IN_PROGRESS, and a site with a building on it.</p>
+     * worker, a young IN_PROGRESS, a recent build attempt, and a site with a
+     * building on it.</p>
      *
      * @return true when the construction was demoted.
      */
@@ -232,6 +246,7 @@ public class ConstructionStatusChanger extends Commander {
         if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
         if (construction.buildPosition() == null) return false;
         if (buildingNearSite(construction)) return false;
+        if (construction.lastBuildAttemptAgo() < DEMOTE_HOLD_AFTER_ATTEMPT_FRAMES) return false;
 
         // No builder at all (measured on Wine: setStatus(IN_PROGRESS) releases
         // the Protoss builder the moment the status flips - correct for a real

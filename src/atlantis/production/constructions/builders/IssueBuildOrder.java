@@ -112,6 +112,7 @@ public class IssueBuildOrder extends HasUnit {
                     }
 
                     boolean buildResult = unit.build(buildingType, buildTilePosition, construction);
+                    construction.setLastBuildAttemptNow();
                     BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
                     if (atlantis.debug.DebugFlags.CHERRYVIS_BUILDER_ACTIONS) {
                         atlantis.cherryvis.CV.unitLog(
@@ -199,6 +200,7 @@ public class IssueBuildOrder extends HasUnit {
                     }
 
                     buildResult = unit.build(buildingType, buildTilePosition, construction);
+                    construction.setLastBuildAttemptNow();
                     BuilderDiagnostics.logBuildAttempt(unit, construction, buildTilePosition, buildResult);
                     if (buildResult) {
                         return true;

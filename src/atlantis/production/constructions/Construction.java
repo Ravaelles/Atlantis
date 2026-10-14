@@ -26,6 +26,14 @@ public class Construction implements Comparable<Construction> {
     private final int ID = _firstFreeId++;
     private final int timeOrdered;
     private int timeBecameInProgress;
+    /**
+     * Frame of the last engine build attempt for this construction. The
+     * demote rule must not punish the pre-attempt wait: a worker that stood
+     * 250 frames saving up and then issued will otherwise demote a few frames
+     * later on the same standstill clock (measured: demote 7f after an
+     * accepted attempt).
+     */
+    private int lastBuildAttemptFrame = -999999;
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
@@ -300,6 +308,14 @@ public class Construction implements Comparable<Construction> {
 
     public int startedAgo() {
         return A.ago(timeBecameInProgress);
+    }
+
+    public void setLastBuildAttemptNow() {
+        lastBuildAttemptFrame = AGame.now();
+    }
+
+    public int lastBuildAttemptAgo() {
+        return A.ago(lastBuildAttemptFrame);
     }
 
     public boolean hasStarted() {
