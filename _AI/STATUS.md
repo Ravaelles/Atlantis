@@ -1392,3 +1392,21 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Revealed next layer (not this turn): 3rd Pylon placement-fails 3:02
   (1953 physical, corner base), never retried, bank grows into the hoard
   tripwire at 4:11. #81 territory (corner attribution + retry cadence).
+
+## Session 2026-10-14 (demote-hold fix + overlap live, 2-Dragoon PASS)
+
+- Demote misfire fixed: the standstill clock counted the pre-attempt saving
+  wait, demoting 7f after an accepted attempt (103230 Pylon-3). Exemption:
+  constructions attempted <150f ago hold (timestamp stamped at both
+  `unit.build()` sites; `logBuildAttempt` untouched - it is builderLog-gated
+  and must not carry behavior). Test: recent-attempt holds, old/default
+  still demotes. Suite 482/0.
+- Verified in game (`20261014_103638`, PASS Core+Dragoon=2): 8/8 attempts
+  accepted, 0 demotes, 0 placement failures, 0 took-too-long. Bank-wait
+  standstills (250f+ at 0.0 dist, canAfford=false) now read as correct
+  saving, not stuckness. Overlap armed but untriggered (requests stayed
+  sequential); no spam.
+- Watch item (not a fix): `Exit was requested manually` ended that game at
+  220 s (Escape path). In headless no one presses keys - suspect a stale
+  key-relay file a la #66 (purge exists at launcher starts). If it recurs
+  with short wall time, the purge path needs re-reading.
