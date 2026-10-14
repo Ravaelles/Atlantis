@@ -53,7 +53,24 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
     @Override
     public boolean applies() {
-        if (isResearched) return false;
+        // Read first: early exits below leave the field stale otherwise.
+        dragoons = Count.dragoonsWithUnfinished();
+        boolean result = appliesInner();
+        // NEXT #72: stub fires, live never does - this throttled vector
+        // names the refusing gate (prime suspect: a stuck isUpgrading flag
+        // from an upgrade that never completes on OpenBW). Pure reads only.
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "SINGULARITY_CHECK result=" + result
+                + " staticRes=" + isResearched
+                + " beingRes=" + isBeingResearched()
+                + " engineRes=" + ATech.isResearched(what())
+                + " critGas=" + ProtossCriticalStuffInQueue.hasEnoughGas()
+                + " dragoons=" + dragoons
+                + " min=" + A.minerals() + " gas=" + A.gas());
+        return result;
+    }
+
+    public boolean appliesInner() {
         if (isBeingResearched()) return false;
 
         if (ATech.isResearched(what())) {

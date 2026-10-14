@@ -562,6 +562,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   game says whether the decision fires live (downstream/engine hunt) or
   not (stub/live divergence hunt).
 
+  **2026-10-14, vector decides (game 182156):** `beingRes=false` throughout
+  (stuck-upgrade hypothesis DEAD), `engineRes=false`, `critGas=true` - the
+  decision is CORRECTLY idle: `dragoons=1` all late game (needs 2+ via the
+  gas-180 rule, or hydras). No divergence, no stuck flag - research waits
+  for a second living Dragoon. Refusal-vector wrapper committed (zero
+  behavior, `appliesInner` extraction).
+
 - **#85 (2026-10-14) - upgrades never pass level 1.** Owner report:
   multi-level upgrades (weapons/armor) are researched once at most, never to
   levels 2-3. The per-type researchers DO carry level logic
@@ -701,6 +708,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   every exit from earmarked except IN_PROGRESS buildings (builder en
   route, money about to warp); FINISHED-unit forget preserved
   (`ReservationsReleaseWhenNotReadyTest`, red pre-fix). Suite 526/526.
+
+  **2026-10-14, verified live (game 182156, 399 s):** reserved=0 in 941
+  samples (pool drains, was stuck 300) - the leak is closed. Roster
+  Nexus=2 Assimilator=1 Gateway=1 Dragoon=1 (verdict reads finished
+  units: Gateway<3, Dragoon<5, Assimilator<2, Nexus<3 all fail). A second
+  Assimilator was walking to the natural ([86,118], @5760+) when the
+  tripwire fired. Combined single-game proof still open.
 
   **2026-10-14, brake design corrected before coding:** the pump ALREADY
   respects reservations at `ProduceZealot:100`
