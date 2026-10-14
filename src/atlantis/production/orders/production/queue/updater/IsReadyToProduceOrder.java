@@ -76,7 +76,8 @@ public class IsReadyToProduceOrder {
             if (order.isBuilding()) {
                 atlantis.util.log.ErrorLog.printMaxOncePerMinute(
                     "ORDER_WAITING " + order.unitType() + " @" + A.now()
-                        + " min=" + A.minerals() + " gas=" + A.gas());
+                        + " min=" + A.minerals() + " gas=" + A.gas()
+                        + " for=" + PriorityWaiters.describeAbove(order.priority(), order));
             }
             return false;
         }

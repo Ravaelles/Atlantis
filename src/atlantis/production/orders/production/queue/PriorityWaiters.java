@@ -9,6 +9,10 @@ import atlantis.production.orders.production.queue.order.ProductionOrderPriority
  * unfinished building, upgrade, or tech order with strictly higher priority
  * waits, lower spending pauses unless the bank covers both.
  *
+ * <p>Unfinished means in queue, whatever its status: the rule keys on work
+ * existing, not on whether the engine already deducted its price. A warping
+ * Pylon still counts while it stands unfinished.</p>
+ *
  * <p>The failure this heals: a queued Nexus flapped READY⇄IN_PROGRESS while
  * the bank sawtoothed 24-558 against the 400 price with zero requests (game
  * 20261014_121406) - the workers-only save-up gate did not stop the army
@@ -89,5 +93,22 @@ public class PriorityWaiters {
 
     private static boolean isWaiter(ProductionOrder order) {
         return order.isBuilding() || order.upgrade() != null || order.tech() != null;
+    }
+
+    /**
+     * One-line waiter identities for the ORDER_WAITING diagnostic: type,
+     * priority and price each, so a waiting game names what it waits for.
+     */
+    public static String describeAbove(ProductionOrderPriority level, ProductionOrder except) {
+        if (Queue.get() == null) return "-";
+        StringBuilder out = new StringBuilder();
+        for (ProductionOrder order : Queue.get().notFinished().list()) {
+            if (order == except || order.shouldIgnore() || !isWaiter(order)) continue;
+            if (level.isAtLeast(order.priority())) continue;
+            if (out.length() > 0) out.append("+");
+            out.append(order.whatToString()).append("(").append(order.priority())
+                .append(",").append(order.mineralPrice()).append("/").append(order.gasPrice()).append(")");
+        }
+        return out.toString();
     }
 }
