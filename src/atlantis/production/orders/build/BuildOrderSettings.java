@@ -27,7 +27,7 @@ public class BuildOrderSettings {
     }
 
     public static int autoSupplyManagerWhenSupplyExceeds() {
-        return settingAsInt(AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS, 25);
+        return settingAsInt(AUTO_SUPPLY_MANAGER_WHEN_SUPPLY_EXCEEDS, 23);
     }
 
     public static int scoutIsNthWorker() {
