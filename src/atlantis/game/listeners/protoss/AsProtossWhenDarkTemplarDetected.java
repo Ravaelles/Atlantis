@@ -17,8 +17,8 @@ public class AsProtossWhenDarkTemplarDetected {
             }
 
             if (Have.notEvenPlanned(AUnitType.Protoss_Forge)) {
-                ErrorLog.printMaxOncePerMinute("@@@@@@@@@@ DT detected - adding Forge to queue with top priority");
-                AddToQueue.withTopPriority(AUnitType.Protoss_Forge);
+                ErrorLog.printMaxOncePerMinute("@@@@@@@@@@ DT detected - adding Forge to queue with highest priority");
+                AddToQueue.withHighestPriority(AUnitType.Protoss_Forge);
             }
         }
     }

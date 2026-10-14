@@ -3,7 +3,9 @@ package atlantis.production.orders.production.queue.order;
 public enum ProductionOrderPriority implements Comparable<ProductionOrderPriority> {
     STANDARD(12),
     HIGH(23),
-    TOP(34);
+    TOP(34),
+    HIGHEST(45),
+    MAX(56);
 
     // =========================================================
 

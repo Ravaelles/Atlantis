@@ -35,6 +35,20 @@ public class AddToQueue {
         return addToQueue(type, position, IndexForNewOrder.indexForPriority(priority), priority);
     }
 
+    /**
+     * Immediate detection-necessity (hidden enemy units): outranks even HIGH
+     * tech. Reserved for Forge/Cannon/Observatory responses, never routine.
+     */
+    public static ProductionOrder withHighestPriority(AUnitType type) {
+        return withHighestPriority(type, null);
+    }
+
+    public static ProductionOrder withHighestPriority(AUnitType type, HasPosition position) {
+        ProductionOrderPriority priority = ProductionOrderPriority.HIGHEST;
+
+        return addToQueue(type, position, IndexForNewOrder.indexForPriority(priority), priority);
+    }
+
     public static ProductionOrder withPriority(AUnitType type, ProductionOrderPriority priority) {
         return addToQueue(type, null, IndexForNewOrder.indexForPriority(priority), priority);
     }

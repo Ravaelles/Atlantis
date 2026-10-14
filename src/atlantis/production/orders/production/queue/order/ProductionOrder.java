@@ -117,6 +117,13 @@ public class ProductionOrder implements Comparable<ProductionOrder> {
         this.upgrade = upgrade;
         this.mission = mission;
 
+        // Owner's priority doctrine: tech buildings queue HIGH by default so
+        // routine spending cannot bury them (152437: a STANDARD Core waited a
+        // whole game behind TOP Pylons). Explicit priorities still win.
+        if (type != null && type.isHighPriorityTechBuilding()) {
+            this.priority = ProductionOrderPriority.HIGH;
+        }
+
 //        if (unitOrBuilding != null && unitOrBuilding.isBunker()) {
 //            System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 //            AConsole.printStackTrace("BUNKER ORDER CREATED at " + position);

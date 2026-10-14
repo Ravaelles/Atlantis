@@ -22,14 +22,14 @@ public class ProduceCannonAtMain {
         if ((bestPosition = shouldProduceAt()) == null) return false;
 
         if (!Have.notEvenPlanned(Protoss_Forge)) {
-            AddToQueue.withTopPriority(Protoss_Forge);
+            AddToQueue.withHighestPriority(Protoss_Forge);
         }
 
         return requestAtBestPosition();
     }
 
     private static boolean requestAtBestPosition() {
-        return AddToQueue.withTopPriority(type(), bestPosition) != null;
+        return AddToQueue.withHighestPriority(type(), bestPosition) != null;
     }
 
     private static APosition shouldProduceAt() {

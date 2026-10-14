@@ -3,6 +3,7 @@ package atlantis.production.orders.production.queue;
 import atlantis.game.A;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.units.AUnitType;
 
 /**
  * Priority arbitration for spenders (owner's direction, D3): when an
@@ -92,7 +93,14 @@ public class PriorityWaiters {
     }
 
     private static boolean isWaiter(ProductionOrder order) {
-        return order.isBuilding() || order.upgrade() != null || order.tech() != null;
+        if (!order.isBuilding() && order.upgrade() == null && order.tech() == null) return false;
+        // Supply providers never block: their urgency (caps) is routine, not
+        // strategic - a TOP Pylon pipeline held a Cybernetics Core unbuilt
+        // for a whole game (152437). Owner's may-outrank set for tech is
+        // detection-necessity only.
+        AUnitType type = order.unitType();
+        if (type != null && (type.isPylon() || type.isSupplyDepot() || type.isOverlord())) return false;
+        return true;
     }
 
     /**

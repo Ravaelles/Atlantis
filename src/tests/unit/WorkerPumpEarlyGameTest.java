@@ -76,13 +76,44 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
         world(5, fakeOurs(ours), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
 
-            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 30));
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 30));
 
             assertTrue(
                 AutoProduceWorkersCommander.shouldProduceWorkers(),
                 "4 probes, 100 minerals, free supply, nothing actionable queued -"
                     + " the early worker stream must not be gated, got: "
                     + AutoProduceWorkersCommander.REASON);
+        });
+    }
+
+    @Test
+    public void coreQueuedPausesWorkersLikeNexus() {
+        // Same doctrine as the Nexus gate, via the central tech-HIGH default:
+        // a queued Cybernetics Core outranks the pump until the bank covers both.
+        currentMinerals = 100;
+        currentSupplyUsed = 7;
+        currentSupplyTotal = 17;
+
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] ours = {
+            nexus,
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21),
+            fake(AUnitType.Protoss_Probe, 21, 22),
+            fake(AUnitType.Protoss_Probe, 22, 22),
+        };
+
+        world(5, fakeOurs(ours), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 30));
+
+            assertFalse(
+                AutoProduceWorkersCommander.shouldProduceWorkers(),
+                "a queued Core below 250 must save up, not pump workers");
+            assertEquals(
+                "HigherPriorityWaits", AutoProduceWorkersCommander.REASON,
+                "the refusing gate must name itself");
         });
     }
 

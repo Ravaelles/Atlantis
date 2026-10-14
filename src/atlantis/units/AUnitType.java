@@ -1754,6 +1754,15 @@ public class AUnitType implements Comparable<Object> {
         return isCyberneticsCore() || isRoboticsFacility() || isObservatory() || isForge() || isFleetBeacon();
     }
 
+    /**
+     * Tech that must never be buried under routine spending (owner's priority
+     * doctrine): important tech buildings plus gas. Applied as the default
+     * order priority at creation - explicit priorities still win.
+     */
+    public boolean isHighPriorityTechBuilding() {
+        return isProtossImportantTechBuilding() || isAssimilator();
+    }
+
     public double dpsGround() {
         return (double) cache.get(
             "dpsGround",
