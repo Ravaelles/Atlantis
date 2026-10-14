@@ -113,8 +113,11 @@ itself, #5, is design work and out of that order's scope).
   pins (previously unreachable). Selector reads `Main.ourRace()` (We-truth),
   deviating from the ADR's MY_RACE line - documented on the port. DRY_RUN
   log exists (4772 lines, zero V2 errors); first divergence datum: V2 wants
-  Forge ×1712 frames, legacy never queues it. Full parity + V2 LIVE runs
-  pending a quiet machine.
+  Forge ×1712 frames, legacy never queues it. Pilot-code DRY_RUN long game
+  (20261014_160155, exit 0): zero V2 errors/exceptions, legacy roster
+  healthy (Core+Assimilator+Dragoons) - the pilot disturbs nothing. Forge
+  divergence persists under the pilot (V2 ×2500+ lines) - tracked parity
+  gap, not a regression. V2 LIVE runs still pending.
 
 ## Stage H — god-class split
 
@@ -385,7 +388,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   (152437 froze a Core 310 s behind TOP Pylons); detection-necessity alone
   outranks tech. Convergence holds - paused spenders let the bank grow to
   the waiter. Stargate-class extensions follow the same one-line pattern
-  when measured. Game proof pending (Core/Assimilator flow in a long game).
+  when measured.
+  Game proof 20261014_160101 (long, exit 0, zero errors): Core=1,
+  Assimilator=1 built; waiters named live - CyberneticsC(HIGH,200/0) ×172,
+  Assimilator(HIGH,100/0) ×6 (central tech-HIGH default working);
+  Pylon(TOP) pressure no longer freezes tech (carve-out). Nexus expansion
+  itself still needs an undisturbed long game (thresholds, D5).
 
 - **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
   Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
