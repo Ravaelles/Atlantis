@@ -688,6 +688,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   #81: that item is an OpenBW corner-search refusal, this one has no
   placement reading at all yet.
 
+  **Wine first-Pylon root-caused 2026-10-14 (`out/wine/client.log` 968
+  lines, killed at 103 s, 9/9 + ~400 bank):** PREPARING picked [113,15]
+  at 0:27 and the builder was adopted; walking 10 tiles he was cancelled
+  for age at 52 s (`took too long`, timeout prices distance but not a
+  slow walk) - yet the engine ACCEPTED his order 5 s later
+  (`BUILD_ATTEMPT engineAccepted=true`). Two fixes: cancel-too-long
+  skips an alive, moving builder (progress, not stall; fleeing reads
+  moving too - accepted gap), and the post-cancel rescue bypasses the
+  dedup wall (`forceRescueOrder` - `### FAILED ### null` while rows
+  stood and zero Pylons stood). `WalkingBuilderNotStalledTest` 2/2.
+  Suite 536/536. Wine re-run pending (owner).
+
   **Second instance 2026-10-14 (early game, `out/wine/client.log` 692 lines,
   map `sscai/(3)TauCross.scx`):** first Pylon (build-order row min-supply 8)
   READY from ~100 s, still unbuilt at 9/9 + ~400 bank when the log ends at

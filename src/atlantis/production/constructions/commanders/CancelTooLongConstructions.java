@@ -27,6 +27,16 @@ public class CancelTooLongConstructions {
             return;
         }
 
+        // A builder on foot is progress, not a stall (Wine: #5 walked 48 s
+        // to a 10-tile site, got cancelled for age, yet the engine accepted
+        // his order 5 s later). The timeout prices distance but not a slow
+        // walk; an alive, moving builder converges. Fleeing reads moving
+        // too - accepted gap, death still cancels.
+        atlantis.units.AUnit assigned = constr.builder();
+        if (assigned != null && assigned.isAlive() && assigned.isMoving()) {
+            return;
+        }
+
         if (
             tookTooLong(constr)
                 && A.canAfford(type)
@@ -206,6 +216,15 @@ public class CancelTooLongConstructions {
 
             newOrder = AddToQueue.withHighPriority(type);
 
+            // A rescue is not new demand: the dedup wall refused it while
+            // the game had no Pylon at all (Wine: queued rows present,
+            // newOrder null, no veto). Force it in directly - flood is still
+            // capped because the rescue row counts as triggerable for the
+            // next veto.
+            if (newOrder == null) {
+                newOrder = forceRescueOrder(type);
+            }
+
             ErrorLog.printMaxOncePerMinute(
                 "### FAILED ### Requesting " + type + " as it got cancelled\n" +
                 "New requested order: " + newOrder
@@ -260,5 +279,18 @@ public class CancelTooLongConstructions {
         return (type.isGateway() || type.isPylon())
             ? 2
             : 1;
+    }
+
+    /**
+     * Post-cancel rescue bypassing PreventDuplicateOrders: the dedup wall
+     * fires over queued rows while the game has zero such buildings, which
+     * is exactly when the rescue must go through (Wine first Pylon).
+     * Public as a test seam.
+     */
+    public static ProductionOrder forceRescueOrder(AUnitType type) {
+        ProductionOrder rescue = new ProductionOrder(type, atlantis.game.A.supplyUsed());
+        rescue.setPriority(atlantis.production.orders.production.queue.order.ProductionOrderPriority.HIGH);
+        atlantis.production.orders.production.queue.Queue.get().addNew(0, rescue);
+        return rescue;
     }
 }
