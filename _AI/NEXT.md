@@ -532,9 +532,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `NinePoolDefenseTest.defendedBaseSurvivesTheNinePool` fails consistently
   (solo too): "the probe drill does the killing (B-19: they never did)".
   HOLD was pinned in `6c0b040e` (2026-10-04, per-frame combat-unit
-  invocation); the 4pool twin passes solo. Bisect 2026-10-04→today
-  combat/micro changes for the culprit. Pre-existing: fails identically
-  with the D3 pump gates stashed, so not theirs.
+  invocation); the 4pool twin passes solo. Bisect names first-bad
+  `508a3ec3` (Oct 7 Tweaks: focus leeway 1.3→1.8, swarm radius 9→6,
+  friends-near→nonBuildings/10) - but every single-hunk revert AND the combo
+  revert on today's code stay red, so a later change dominates. Census today:
+  probes 305× `WorkerDefenceRun` vs 31× HelpCannon (Oct 4: HelpCannon
+  active). Restoring the Oct-4 flee gates (`WorkerDefenceRun`: hold-ground
+  unconditional, early stay hp>=38) turns the twin GREEN - today's binding
+  constraint is the `b839f0b9` flee floors (run below 30 at home / 45
+  early): hurt probes flee instead of drilling (7 strikes vs pinned 100+),
+  while cannon lives, 4+ probes survive, and the zealot fights. Tension:
+  those floors were built from the owner's Wine death logs (39 hp probes
+  dying) - restoring the drill risks those deaths. Pin (Oct-4 HOLD volume)
+  vs live-game lesson needs an owner call.
 
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count
