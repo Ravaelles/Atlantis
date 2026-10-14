@@ -359,6 +359,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   ENV-source startup line (now unconditional) unblocks; the birth markers
   above plus a `BUILDER_LOG=1` game name the next measurement.**
 
+  **Double order ROOT-CAUSED and fixed 2026-10-14 (`ExpansionNoSecondBaseWhileOnePendingTest`,
+  mutation-proven: 2 queued pre-fix, 1 after):** `AddToQueue.maxAtATime`
+  counts `nextOrders()`, which skips IN_PROGRESS (`OrdersFilters.next`
+  filters it out) - so with the first Nexus IN_PROGRESS the cap read 0 < 1
+  and the producer added a sibling (game 20261014_121406: ADDED 6:36 +
+  6:45, first IN_PROGRESS throughout, zero cancels). `ProtossExpandNow`
+  now refuses while any unfinished base order exists (units keep the old
+  counting - a training unit plus a queued next one is normal; Terran's
+  twin call carries a same-shape-unmeasured note, not a fix). Still open:
+  why neither order converts - the bank sawtooths 24-558 against the 400
+  price with zero `REQUEST_ACCEPTED` (army pump is NOT gated by the
+  workers-only `SaveForNexus`), which is arbitration (NEXT #45), not queue.
+
 - **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
   Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
   Terran building completing >2.5 tiles from its reservation would stay

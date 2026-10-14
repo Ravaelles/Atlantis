@@ -68,6 +68,10 @@ public class TerranExpansionCommander extends Commander {
 //
 //        // TERRAN and PROTOSS
 //        else {
+        // NOTE: maxAtATime counts nextOrders(), which skips IN_PROGRESS - the
+        // Protoss twin of this call re-added a sibling Nexus 9 s after the
+        // first (NEXT #58, fixed in ProtossExpandNow). Same shape here,
+        // unmeasured on Terran - do not fix blind.
         ProductionOrder productionOrder = AddToQueue.maxAtATime(AtlantisRaceConfig.BASE, 1);
 
         if (productionOrder != null && Count.bases() <= 1) productionOrder.setModifier("NATURAL");
