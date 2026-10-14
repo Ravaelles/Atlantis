@@ -73,7 +73,7 @@ public class GatewayRequeueAfterCancelTest {
             "private static boolean constructionCancelledRequestAgainBecauseItsImportant");
 
         int cancel = body.indexOf("CancelNotStarted.cancel(type, \"Taking too long, re-try\")");
-        int guard = body.indexOf("CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)");
+        int guard = body.indexOf("shouldVetoRequeue(type)");
 
         assertTrue(cancel > 0, "the re-try cancel must still be there");
         assertTrue(guard > 0, "the not-started guard must still be there");
@@ -81,8 +81,12 @@ public class GatewayRequeueAfterCancelTest {
             "the guard asks 'do we already have the maximum not-started ones?' - so it must run"
                 + " AFTER the cancel that frees the slot, not before. With the old order a plan"
                 + " holding two not-started Gateways vetoed its own replacement and the requeue"
-                + " never ran (measured: '### FAILED ### Requesting' = 0 and 'Taking too long,"
-                + " re-try' = 0 in a full game; after the fix, 2 and 2).");
+                + " never ran (measured in a full game).");
+
+        String veto = methodBody(source, "private static boolean shouldVetoRequeue");
+        assertTrue(veto.contains("countTriggerableNotStarted(type)"),
+            "the guard counts only triggerable rows - untriggerable ones vetoed"
+                + " the rescue rebuild and deadlocked 9/9 (game 201239)");
     }
 
     private static String methodBody(String source, String signature) {

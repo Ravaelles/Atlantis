@@ -893,6 +893,11 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   tripwire. Fixed: cancel path skips PREPARING; the refresh sweep also
   nulls links to listed-nowhere constructions. 6/6 green (cancel-guard
   red pre-fix). Suite 533/533.
+- **Requeue veto counts only triggerable rows (same game):** rows at
+  13/20/27 can never convert at frozen 9/9 supply, so they must not veto
+  the rescue rebuild (`RequeueVetoCountsTriggerableTest`: old count 4 vs
+  triggerable 1; structural guard test updated, cancel-before-count
+  intent preserved). Suite 534/534.
 - **Worker re-queue at 15 frames left (owner 2026-10-14):** `queueWorker`
   threshold 10 -> 15 (`NEXT_WORKER_WHEN_TRAINING_REMAINS`, pinned with
   the 300-frame engine number). The stub always direct-trains, so the

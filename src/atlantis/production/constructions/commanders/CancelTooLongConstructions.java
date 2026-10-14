@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.cancelling.CancelNotStarted;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
@@ -199,15 +200,7 @@ public class CancelTooLongConstructions {
             // what the earlier code was reaching for three lines too late.
             CancelNotStarted.cancel(type, "Taking too long, re-try");
 
-            if (CountInQueue.countNotStarted(type) >= maxAllowedAtOnce(type)) {
-                // Diagnostic, not a behavior change (owner's Wine game: a Nexus
-                // cancelled after 130s was never re-requested, and the log could
-                // not say whether the producer was gated out or the request was
-                // refused). Names the veto with its counts.
-                ErrorLog.printMaxOncePerMinute(
-                    "REQUEUE_VETO " + type.name()
-                        + " notStartedInQueue=" + CountInQueue.countNotStarted(type)
-                        + " maxAllowedAtOnce=" + maxAllowedAtOnce(type));
+            if (shouldVetoRequeue(type)) {
                 return false;
             }
 
@@ -229,6 +222,38 @@ public class CancelTooLongConstructions {
         }
 
         return newOrder != null;
+    }
+
+    private static boolean shouldVetoRequeue(AUnitType type) {
+        int triggerable = countTriggerableNotStarted(type);
+        if (triggerable >= maxAllowedAtOnce(type)) {
+            // Diagnostic (owner's Wine game: a Nexus cancelled after 130s
+            // was never re-requested, and the log could not say whether the
+            // producer was gated out or the request was refused). Names the
+            // veto with its counts.
+            ErrorLog.printMaxOncePerMinute(
+                "REQUEUE_VETO " + type.name()
+                    + " notStartedInQueue=" + CountInQueue.countNotStarted(type)
+                    + " triggerable=" + triggerable
+                    + " maxAllowedAtOnce=" + maxAllowedAtOnce(type));
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Only rows that could convert now count toward the requeue cap (game
+     * 201239: four Pylon rows at 9/9 supply vetoed the one rebuild that
+     * could unblock it - rows at 13/20/27 can never trigger while supply
+     * is frozen, so counting them deadlocks). Public as a test seam.
+     */
+    public static int countTriggerableNotStarted(AUnitType type) {
+        if (Queue.get() == null) return 0;
+        int total = 0;
+        for (ProductionOrder order : Queue.get().notStarted().ofType(type).list()) {
+            if (order.minSupply() <= atlantis.game.A.supplyUsed()) total++;
+        }
+        return total;
     }
 
     private static int maxAllowedAtOnce(AUnitType type) {
