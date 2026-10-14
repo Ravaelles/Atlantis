@@ -126,6 +126,18 @@ public class RequestBuildingNearTest extends WorldStubForTests {
 
             assertNull(farAway, "no pylon that far from the main before 40 supply");
             assertNotNull(RequestBuildingNear.lastError, "and the reason is reported");
+
+            // The refusal above must be NAMED by the rule that fired, not
+            // merged under a stale label (NEXT #81: unnamed kills inflated
+            // "Can't physically build here" by hundreds in a live game).
+            FakeUnit anyProbe = fake(AUnitType.Protoss_Probe, 7, 47);
+            assertTrue(
+                atlantis.production.constructions.position.protoss.PylonTooFarFromBaseEarly.isTooFar(
+                    anyProbe, AUnitType.Protoss_Pylon, APosition.create(16, 14)),
+                "32.8 tiles at 4 supply is the rule's own case");
+            assertEquals(
+                "Pylon too far from main, too early", AbstractPositionFinder._STATUS,
+                "the killer names itself");
         });
     }
 

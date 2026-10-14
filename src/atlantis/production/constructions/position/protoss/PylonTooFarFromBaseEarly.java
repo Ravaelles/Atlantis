@@ -3,6 +3,7 @@ package atlantis.production.constructions.position.protoss;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.position.APosition;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -30,6 +31,14 @@ public class PylonTooFarFromBaseEarly {
         if (A.supplyTotal() >= 40) return false;
         if (Strategy.get().isExpansion()) return false;
 
-        return Select.mainOrAnyUnit().groundDist(position) > 22;
+        // Named, not silent: this rule kills whole search rings around far
+        // bases, and an unnamed kill merges the previous candidate's _STATUS -
+        // which is how a doctrine refusal once inflated "Can't physically
+        // build here" by hundreds (NEXT #81). Same boolean as before.
+        if (Select.mainOrAnyUnit().groundDist(position) > 22) {
+            AbstractPositionFinder._STATUS = "Pylon too far from main, too early";
+            return true;
+        }
+        return false;
     }
 }
