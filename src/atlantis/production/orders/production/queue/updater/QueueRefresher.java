@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.combat.missions.from_build_order.EnforceBuildOrderMissionsCommander;
+import atlantis.production.constructions.PrepareConstructionSite;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -32,7 +33,11 @@ public class QueueRefresher {
             }
 
             updateOrderStatus(order);
+
+            PrepareConstructionSite.prepareIfDue(order);
         }
+
+        PrepareConstructionSite.dropOrphanedPreparing();
 
         (new EnforceBuildOrderMissionsCommander()).invokedCommander();
     }

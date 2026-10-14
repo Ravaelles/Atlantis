@@ -19,6 +19,12 @@ public class ProductionOrderHandler extends Commander {
         this.order = order;
     }
 
+    private static boolean isPreparing(ProductionOrder order) {
+        return order.construction() != null
+            && order.construction().status()
+                == atlantis.production.constructions.ConstructionOrderStatus.PREPARING;
+    }
+
     @Override
     protected boolean handle() {
         if (isAlreadyConsumed()) {
@@ -31,7 +37,11 @@ public class ProductionOrderHandler extends Commander {
         if (order.unitType() != null) {
             AUnitType unitType = order.unitType();
 
-            if (order.construction() != null) {
+            // A PREPARING construction is a reserved site, not work in
+            // progress - the order still goes through ProduceBuilding,
+            // which adopts the site instead of searching anew (owner
+            // 2026-10-14).
+            if (order.construction() != null && !isPreparing(order)) {
                 return false;
             }
 

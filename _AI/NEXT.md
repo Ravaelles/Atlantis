@@ -875,3 +875,16 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.
+- **#90 (2026-10-14) - PREPARING sites, picked one supply early (owner).**
+  New `ConstructionOrderStatus.PREPARING`: site picked (Pylon-8 at supply
+  7), no builder, no issue; `ProduceBuilding` adopts it (builder +
+  NOT_STARTED) once ready instead of searching anew. Overdue/builders/
+  status-changer ignore it; completion falls back to existence; orphans
+  swept with the refresh. v1: ordinary buildings (bases/gas stay old
+  path), one site in flight per type, hook in `QueueRefresher`.
+  `PreparingConstructionSiteTest` 4/4 (hook-stash: 3 red).
+  Game proof pending (PREPARING lines + earlier first-Pylon conversion).
+- **Worker re-queue at 15 frames left (owner 2026-10-14):** `queueWorker`
+  threshold 10 -> 15 (`NEXT_WORKER_WHEN_TRAINING_REMAINS`, pinned with
+  the 300-frame engine number). The stub always direct-trains, so the
+  path itself is game-proven only - watch early probe cadence.

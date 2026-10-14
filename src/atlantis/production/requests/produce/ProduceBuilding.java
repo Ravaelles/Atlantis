@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -25,11 +26,35 @@ public class ProduceBuilding {
             return ProduceAddon.produceAddon(type);
         }
         else {
+            // A PREPARING construction already holds a picked site: adopt it
+            // (or keep waiting for a free builder) instead of searching anew.
+            if (order.construction() != null
+                && order.construction().status() == ConstructionOrderStatus.PREPARING) {
+                return adoptPreparedSite(order);
+            }
+
             validatePosition(order, type);
 
             _lastConstruction = NewConstructionRequest.requestConstructionOf(order);
             return _lastConstruction != null;
         }
+    }
+
+    /**
+     * Owner 2026-10-14: a PREPARING construction already holds a picked
+     * site - assign a builder and start instead of searching anew. No
+     * builder free yet: stay PREPARING, retry next frames.
+     */
+    private static boolean adoptPreparedSite(ProductionOrder order) {
+        Construction prepared = order.construction();
+        if (prepared == null || prepared.status() != ConstructionOrderStatus.PREPARING) return false;
+
+        prepared.assignOptimalBuilder();
+        if (prepared.builder() == null) return false;
+
+        prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);
+        _lastConstruction = prepared;
+        return true;
     }
 
     private static void validatePosition(ProductionOrder order, AUnitType type) {
