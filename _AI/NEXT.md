@@ -643,3 +643,27 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   waits for the next flagged Wine log. Do not patch blind and do not assume
   #81: that item is an OpenBW corner-search refusal, this one has no
   placement reading at all yet.
+
+## Currently broken (2026-10-14, game 20261014_162906_adhoc, 335 s, exit 0)
+
+Roster: `CyberneticsC=1 Probe=22 Pylon=5 Zealot=4 Dragoon=1 Assimilator=1
+Nexus=1 Gateway=1`. Tech chain EXISTS (Core+Assimilator built, waiters named
+live: `CyberneticsC(HIGH,200/0)`, `Assimilator(HIGH,100/0)`), but the game
+is thin and hoards (603 minerals at the tripwire end). What does not work:
+
+- **Gas never accumulates: 0 in all 177 bank samples.** Exactly one Dragoon
+  proves gas flowed transiently, then stopped - no sustained mining all game.
+  Undecided between late Assimilator completion (too little time left to
+  matter) and gas miners never sticking (assigned, then pulled). No
+  gas-worker evidence lines exist in this build. Needs a run with gas-miner
+  visibility, not a blind fix.
+- **One Gateway all game** (a single `Gateway ADDED TO QUEUE` line):
+  army throughput caps at one facility while the bank hoards. Why the second
+  Gateway never queues was not investigated here.
+- **Late spending stall:** 603 bank, free supply, idle Gateway, zero
+  production-refusal lines for units in this build - the pump's reasons are
+  silent when they decline. Nothing names which gate held the last 60 s.
+- **Second Nexus absent** (thresholds, D5 - expected, not a defect here).
+- Aside (healthy): scout terminals fire in game
+  (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
+  telemetry only.
