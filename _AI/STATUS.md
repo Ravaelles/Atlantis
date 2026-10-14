@@ -1338,3 +1338,27 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Filed #81: late Pylon search refuses the corner neighborhood (1953x
   physical + grid modulo); Pylon-1 in the same run was poverty-held
   (40-88 min, all reachability/power true) - consistent with PylonAt8.
+
+## Session 2026-10-14 (autonomous: #52 closed LIVE, #57 triple, flap verdict)
+
+- Closes #52 (deleted): V2 LIVE run `20261014_084500` - V2_GOALS Pylon:15
+  @30-540, dispatched @548 (builder committed, accepted attempt), committed
+  window stable 5 frames (@@548-552 pinned). Pre-commit [pre] slide +
+  post-commit replan stamps are display-of-uncommitted artifacts; the
+  re-dispatch churn (8 OKs, 1 engine attempt) is noted to #45/M6, not this
+  item. Exit 124 with Gateway never issued under LIVE = V2 parity, not the
+  slide. The fix itself landed earlier (0c7ddc11 + pinning test); this turn
+  closed the watch with the missing game half.
+- #57 watch datum, not a verdict: `REQUEST_ACCEPTED Pylon [11,51]` x3 at
+  4:45/4:47/4:50 in `20261013_233256`, `totalOfType=1` every time (counter
+  blind to siblings), zero cancel/refusal/replace/demote for the tile. The
+  duplicate shape without the builder/bank proof - the item's add-site stack
+  trace still names the path. Do not patch blind.
+- Zealot flap verdict: stub-world `enemiesNear().inRadius(3)` flips
+  true/false for STATIC geometry on both units (383 probe lines) - per-unit
+  caches are instance fields, so ownership narrows to stub-side
+  membership/proximity evaluation, exact mechanism open. Production
+  membership is event-driven (no such churn source); still, no production
+  code gates on proximity for this - the tried guard is reverted, zero
+  behavior delta. #77 keeps the item with this note.
+- Suite 476/0; tree holds only the foreign BuildOrderSettings line (untouched).

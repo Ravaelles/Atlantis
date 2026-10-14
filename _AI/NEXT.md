@@ -253,101 +253,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   gap rather than a flat radius. `minDistToGeyser` is the parallel value (5.1 for
   Pylon/Gateway/Cannon, 4.1 otherwise) and should be re-checked in the same pass.
 
-- **#52 - Production V2: a planned building's `startFrame` slides forward every frame,
-  so the item is never dispatched. Split out of #48 (2026-10-10), which fixed the
-  duplicate/re-dispatch half.**
-
-  Measured under `PRODUCTION_V2=LIVE PLACEMENT=catalogue`: the plan is correct (one
-  Pylon, no duplicate), the game ends itself (exit 0), every worker order is issued -
-  and the building never is, because its window keeps moving:
-
-  ```
-  @@937 plan=2 [Probe@940-1240 by#70 Pylon@1129-1579 ] issued: OK Probe@940 (trained)
-  @@938 plan=2 [Probe@940-1240 by#70 Pylon@1130-1580 ] issued: OK Probe@940 (trained)
-  @@940 plan=2 [Probe@940-1240 by#70 Pylon@1132-1582 ] issued: OK Probe@940 (trained)
-  @@941 plan=2 [Probe@941-1241 by#70 Pylon@1125-1575 ] issued: OK Probe@941 (trained)
-  ```
-
-  `startFrame` moves +1 per frame while the frame under it also advances, so the item is
-  due "16 frames from now" forever. This is the same relative-frame slide
-  `_AI/STATUS.md` recorded ("planned Pylon start moved 449, 450, 451, 452"), and it is an
-  **arbitration** problem: the Probe (50 minerals, higher priority, `PRIORITY_WORKERS`)
-  is scheduled first every pass and keeps the bank below the Pylon's 100, so the
-  Pylon's earliest-affordable frame is always just out of reach.
-
-  **Why this is now the top V2 blocker:** with #48's duplicate defect fixed, this is what
-  stands between V2 LIVE and a built Pylon - and it is also why the stage-4 command-path
-  question is currently moot under V2 (nothing is ever dispatched to be refused).
-
-  **Mechanism now MEASURED and confirmed in the production code (2026-10-10).** It is an
-  ordering problem, and it reproduces deterministically without a game
-  (`tests.unit.TimelineSlideTest`, 5 cases, mutation-checked):
-
-  - `DynamicGoals:221` gives the worker goal **`PRIORITY_WORKERS = 20`**;
-  - `BuildOrderGoals:91` gives a build-order Pylon line **`PRIORITY_DEPOTS = 30`**;
-  - the scheduler sorts by priority, so the Probe is planned FIRST every pass, and
-    `ResourceTimeline.allocate` deducts its 50 minerals from the chosen frame **and the
-    whole tail** (deliberately - reserved money is gone for the rest of the plan);
-  - `findEarliestAffordableFrame` requires the cost covered across that tail, so the
-    Pylon's earliest affordable frame moves later with each pass. Rebuilt from scratch
-    every frame, it moves every frame: the slide.
-
-  **The measurement that had to be made first, and it corrected the framing:** the slide
-  needs **income**. With a flat bank the expensive item is not "late", it is unplannable
-  (`-1`) - a different defect. The first draft of the test used a flat bank and proved
-  nothing; the corrected one gives each pass the same bank *plus mining income*, so the
-  pass-to-pass movement is the scheduler's doing and not the fixture's. Both cases are
-  pinned now so a future fix is not aimed at the wrong one.
-
-  **Not patched, deliberately.** `_AI/STATUS.md` records two attempts that were already
-  reverted (subtracting `ExistingItems.availableFrom` suppressed worker production;
-  raising only the dynamic supply goal did not address a build-order Pylon). The
-  mechanism above suggests why both failed: neither changes the **priority relationship**
-  between the worker goal and the build-order Pylon, which is what decides the order of
-  allocation. A fix has to answer "who gets the reserves first when both are wanted",
-  which is a policy decision and is the owner's call - not a timeline tweak.
-
-  **FIXED and verified in a live run (2026-10-10).** The owner's ruling: the default
-  opening is "Pylon at supply 8", so a build-order supply provider at low supply is the
-  precondition for everything and is planned before the workers.
-
-  - New band `ProductionGoal.PRIORITY_OPENING_SUPPLY` (15, ahead of
-    `PRIORITY_WORKERS` = 20). It is deliberately narrow: only a **supply provider whose
-    row gate is at or below `OPENING_SUPPLY_THRESHOLD` (12)** gets it. Checked against
-    `bwapi-data/AI/build_orders/Protoss/*.txt`: the first Pylon is at supply **8** in every
-    file, the second at **15-16** - so 12 covers the real opening and excludes the first
-    top-up. (A threshold of 16 was tried first; the test caught that it silently promoted
-    the supply-16 depot too, which is exactly what the rule must not do.)
-  - `BuildOrderGoals.priorityFor(row, line, supplyUsed)` decides from **what the row is**
-    (a supply provider, at a gate that means "opening") rather than from its line number
-    alone. The old `priorityForLine` gave "line < 4" a depot band, so the same Pylon on
-    line 5 landed in a lower band - a rule nobody chose. Line order survives only as the
-    fallback for everything else.
-
-  **Live evidence:** `@@914 plan=2 [Pylon@914-1364 Probe@...] issued: OK Pylon@914
-  (builder committed)` - the Pylon now **leaves the plan as a dispatched order**, and its
-  start is stable at 914 across frames 915-920 instead of sliding +1 per frame. 2087
-  `issued: OK Pylon` lines in the run, against 7 for the Probe.
-
-  **What is left is NOT #52** - it is the stage-4 library refusal, now reached for the
-  first time: `unit=#72 Probe @[120,14] construction=Pylon status=NOT_STARTED
-  pos=[120,14]` - the builder is standing exactly on the site and the construction stays
-  `NOT_STARTED` because `Unit.build(...)` returns false (the region-based `hasPath` inside
-  the library's `canBuild`, `_AI/PLAN-STAGE4-COMMAND-PATH.md`). So `Pylons=0` in the end
-  state is stage 4, not a priority or scheduling problem.
-
-  **Three defects have now been peeled off this one symptom, in order:** the duplicate
-  goal/dispatch (#48, fixed), the sliding start frame (#52, fixed above), and the library's
-  command refusal (stage 4, open). None of them was the one the previous note suspected.
-
-  **REGRESSION WATCH 2026-10-13 (autonomous LIVE run, `20261013_184412`): the
-  slide is BACK under V2 LIVE - `Pylon@557` @2, `@777` @360, `@979` @660
-  (never dispatched, only the Probe trains, exit 124 on the cap). The
-  PRIORITY_OPENING_SUPPLY band did not hold: either the Pylon is misclassified
-  or the band does not decide allocation order as assumed. #48's half stays
-  fixed (465 plans, zero duplicate buildings). Next: print the goal's band in
-  the plan line, then re-read the scheduler's sort-vs-allocate order.**
-
 - **#57 (2026-10-11) - the duplicate-construction leak is the single root cause behind
   both symptoms the owner reported (Gateway churn AND minerals above 600).**
 
@@ -375,6 +280,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   the same one used to REJECT, or the gap between them is invisible until a game trips it.
   Worth checking at the same time whether `buildable:true` should short-circuit the second
   call outright.
+
+  **2026-10-14 watch datum (`20261013_233256`, not a verdict):** `REQUEST_ACCEPTED
+  Pylon [11,51]` x3 at 4:45/4:47/4:50, `totalOfType=1` every time, zero
+  `Cancel construction: Pylon`, zero `REQUEST_REFUSED_DUPLICATE`, zero
+  REPLACED/DEMOTE for the tile. Three same-tile requests with no cancel, no
+  refusal, and a counter blind to siblings (tot1 x3) - the duplicate shape
+  without the builder/bank proof. The add-site stack trace prescribed below
+  still names the path; do not patch the guard blind.
 
 - **#58 - Expansion is DECIDED but the Nexus is re-queued instead of finished.** (Was
   mis-numbered #54, colliding with the `RefreshConstructionPosition` item; numbers are never
