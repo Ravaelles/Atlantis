@@ -719,7 +719,16 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
 - **Late spending stall:** 603 bank, free supply, idle Gateway, zero
   production-refusal lines for units in this build - the pump's reasons are
   silent when they decline. Nothing names which gate held the last 60 s.
-- **Second Nexus absent** (thresholds, D5 - expected, not a defect here).
+- **Second Nexus absent - decision FIXED, game proof pending (2026-10-14):**
+  vs Zerg the old gates needed 11+ units (`DelayNaturalVsZerg`) and 550+
+  bank / 90+ strength before the affordable rule was even reachable - a
+  5-unit game never got there. New `SafeAfford` rule first in
+  `forSecondBase`: 400+ bank + 4+ combat units + one base + nothing in
+  production + no pressure at natural/choke/base (observed, not proxies).
+  Rush safety: a rush never coexists with a 400 bank, pressure blocks.
+  `ExpandSecondBaseWhenSafeTest` pins it (red pre-fix). Suite 518/518.
+  Still needs the long game: decision -> HIGH order -> pump yields (D3) ->
+  400 held -> REQUEST_ACCEPTED -> builder walk.
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.

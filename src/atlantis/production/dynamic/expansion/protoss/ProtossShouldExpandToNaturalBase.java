@@ -15,6 +15,7 @@ import atlantis.production.dynamic.protoss.prioritize.PrioritizeGatewaysVsProtos
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.units.select.Select;
@@ -23,6 +24,20 @@ public class ProtossShouldExpandToNaturalBase extends ProtossShouldExpand {
     protected static boolean forSecondBase() {
         int seconds = A.seconds();
         int armyStrength = Army.strength();
+
+        // Fast second base when affordable and unpressured (2-Nexus goal):
+        // the caution gates below price blind risk by unit counts; with the
+        // bank covering the Nexus, an army standing, and no enemy at the
+        // natural, the choke, or the base, the base goes now. Rush safety
+        // stays on observed pressure, not proxies: a rush never coexists
+        // with a 400 bank (minerals gate), and pressure blocks below.
+        if (
+            bases <= 1 && basesInProduction == 0 && A.hasMinerals(400)
+                && Count.ourCombatUnits() >= 4
+                && !dontExpandWhenNaturalOverwhelmed()
+                && !mainChokeOverwhelmed()
+                && !BaseUnderAttack.check()
+        ) return yes("SafeAfford");
 
         if (delayNaturalVsProtoss()) return no("DelayNaturalVsProtoss");
 
