@@ -40,14 +40,14 @@ public class ScoutCommander extends Commander {
                 if (unit != null && unit.isAlive()) {
                     Manager acted = ScoutState.scoutUnitManager.create(unit).invokeFrom(this);
                     if (acted == null) {
-                        // Fall-through hole: every manager in the scout chain
-                        // declined at once, so the scout would stand idle
-                        // forever. Name it for release; manageScoutsAssigned()
-                        // frees it next frame, never mid-loop while the list
-                        // is being iterated here.
-                        ScoutState.scoutToRelease = unit;
-                        unit.setTooltipTactical("Scout done, releasing");
-                        ErrorLog.printMaxOncePerMinute("Scout released: chain found nothing to do");
+                        // Telemetry only, never a release: scouting is
+                        // continuous by design (owner) - the chain ends in
+                        // baseless-base visits and the enemy-base approach,
+                        // so a null here means genuinely nothing applies
+                        // this frame. If this line never prints, coverage
+                        // is complete.
+                        ErrorLog.printMaxOncePerMinute("Scout idle: chain found nothing to do");
+                        unit.setTooltipTactical("Scout idle");
                     }
                 }
             }
@@ -83,7 +83,6 @@ public class ScoutCommander extends Commander {
     private void manageScoutsAssigned() {
         removeDeadScouts();
         removeOverlordsAsScouts();
-        releasePendingScout();
 //        removeExcessiveScouts();
 
         // Build order defines which worker should be a scout
@@ -108,22 +107,6 @@ public class ScoutCommander extends Commander {
     private int scoutsNeeded() {
         return 1;
 //        return A.supplyUsed() >= 70 ? 2 : 1;
-    }
-
-    /**
-     * Frees a scout the chain named for release next frame. Public so the
-     * rule is unit-testable without running a game frame.
-     *
-     * @return true when a pending scout was actually freed.
-     */
-    public static boolean releasePendingScout() {
-        AUnit toRelease = ScoutState.scoutToRelease;
-        if (toRelease == null) return false;
-
-        ScoutState.scoutToRelease = null;
-        boolean removed = ScoutState.scouts.remove(toRelease);
-        toRelease.setScout(false);
-        return removed;
     }
 
     private static boolean assignScout() {

@@ -63,22 +63,14 @@ public class ScoutState {
     public static int roamLastProgressFrame = 0;
 
     /**
-     * A scout whose chain found nothing left to do is released by name here
-     * and freed by {@code manageScoutsAssigned()} next frame (never mid-loop:
-     * the scout list is being iterated there).
-     */
-    public static AUnit scoutToRelease = null;
-
-    /**
-     * Per-game reset for the roam/release state added with the scout repair.
+     * Per-game reset for the roam state added with the scout repair.
      * Called from the game root alongside the other per-game resets, so a
-     * stale roam target or a pending release never leaks into the next game
-     * in the same JVM. The scouts list itself stays with its existing
-     * lifecycle (dead scouts are removed per frame).
+     * stale roam target never leaks into the next game in the same JVM. The
+     * scouts list itself stays with its existing lifecycle (dead scouts are
+     * removed per frame).
      */
     public static void reset() {
         roamLastDistToPoint = -1;
         roamLastProgressFrame = 0;
-        scoutToRelease = null;
     }
 }
