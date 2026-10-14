@@ -3,6 +3,7 @@ package atlantis.production.v2.engine;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.production.v2.ProductionGoal;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ProducerFacilityRegistry;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -18,7 +19,6 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
-import atlantis.util.We;
 
 import java.util.List;
 
@@ -69,8 +69,15 @@ public final class GameStateSnapshot {
 
     private final int frame;
     private final int horizon;
+    private final ProductionRacePolicy racePolicy;
 
+    /** Ambient race (tests, legacy callers): same source the old selectors read. */
     public GameStateSnapshot() {
+        this(ProductionRacePolicy.ambient());
+    }
+
+    public GameStateSnapshot(ProductionRacePolicy racePolicy) {
+        this.racePolicy = racePolicy;
         this.frame = A.now();
         this.horizon = Count.workers() < 20 && Count.bases() < 2 ? HORIZON_EARLY : HORIZON_LATE;
     }
@@ -168,7 +175,7 @@ public final class GameStateSnapshot {
         // every frame (see DynamicGoals.supplyGoal).
         snapshot.supplyProvidersComing = supplyProvidersComing();
 
-        return DynamicGoals.contribute(snapshot);
+        return DynamicGoals.contribute(snapshot, racePolicy);
     }
 
     /** Photon Cannons already standing at the main base. */
@@ -180,11 +187,8 @@ public final class GameStateSnapshot {
                 .inRadius(20, main).count();
     }
 
-    private static AUnitType armyType() {
-        if (We.protoss()) return AUnitType.Protoss_Zealot;
-        if (We.terran()) return AUnitType.Terran_Marine;
-        if (We.zerg()) return AUnitType.Zerg_Zergling;
-        return AtlantisRaceConfig.WORKER;
+    private AUnitType armyType() {
+        return racePolicy.armyUnitType();
     }
 
     /**
@@ -193,23 +197,20 @@ public final class GameStateSnapshot {
      * A Pylon adds supply only at completion, so this is the count that says "we
      * have enough supply coming".
      */
-    private static int supplyProvidersComing() {
+    private int supplyProvidersComing() {
         AUnitType provider = supplyProviderType();
         if (provider == null) return 0;
 
         return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
     }
 
-    private static AUnitType supplyProviderType() {
-        if (We.protoss()) return AUnitType.Protoss_Pylon;
-        if (We.terran()) return AUnitType.Terran_Supply_Depot;
-        if (We.zerg()) return AUnitType.Zerg_Overlord;
-        return null;
+    private AUnitType supplyProviderType() {
+        return racePolicy.supplyProviderType();
     }
 
     /** The worker type for this race, for the "workers we have or will have" count. */
-    private static AUnitType workerType() {
-        return AtlantisRaceConfig.WORKER;
+    private AUnitType workerType() {
+        return racePolicy.workerType();
     }
 
     /**
@@ -229,7 +230,8 @@ public final class GameStateSnapshot {
                 Select.ourWorkersMiningMinerals(false).count(),
                 Count.ofTypeWithUnfinished(AtlantisRaceConfig.GAS_BUILDING),
                 desiredRefineries,
-                A.supplyUsed()));
+                A.supplyUsed()),
+            racePolicy);
     }
 
     /** The build-order goals for this frame: only rows the game has not produced yet. */

@@ -1,7 +1,9 @@
 package atlantis.production.v2.goals;
 
-import atlantis.config.AtlantisRaceConfig;
+import atlantis.production.v2.UnitProducible;
+import atlantis.units.AUnitType;
 import atlantis.production.v2.ProductionGoal;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnitType;
@@ -154,13 +156,13 @@ public final class DynamicGoals {
      * All dynamic goals for this frame, priority-ordered by the caller's sort.
      * Empty when the snapshot cannot support any of them.
      */
-    public static List<ProductionGoal> contribute(GameSnapshot state) {
+    public static List<ProductionGoal> contribute(GameSnapshot state, ProductionRacePolicy race) {
         List<ProductionGoal> goals = new ArrayList<>();
 
-        addWorkerGoal(goals, state);
-        addSupplyGoal(goals, state);
-        addArmyGoal(goals, state);
-        addExpansionGoal(goals, state);
+        addWorkerGoal(goals, state, race);
+        addSupplyGoal(goals, state, race);
+        addArmyGoal(goals, state, race);
+        addExpansionGoal(goals, state, race);
         addFortificationGoals(goals, state);
 
         return goals;
@@ -206,8 +208,8 @@ public final class DynamicGoals {
      * about "is there money for anything more important" - and that question is
      * now answered once, by the timeline, for every goal at the same time.
      */
-    private static void addWorkerGoal(List<ProductionGoal> goals, GameSnapshot state) {
-        AUnitType worker = workerType();
+    private static void addWorkerGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
+        AUnitType worker = race.workerType();
         if (worker == null)
             return;
 
@@ -229,8 +231,8 @@ public final class DynamicGoals {
      * runs low. It is emitted as an emergency only at the edge (so it never
      * outranks real defence early), otherwise it is a normal-priority goal.
      */
-    public static ProductionGoal supplyGoal(GameSnapshot state) {
-        AUnitType supplyProvider = supplyProviderType();
+    public static ProductionGoal supplyGoal(GameSnapshot state, ProductionRacePolicy race) {
+        AUnitType supplyProvider = race.supplyProviderType();
         if (supplyProvider == null)
             return null;
 
@@ -256,8 +258,8 @@ public final class DynamicGoals {
     /** Free supply below which a provider is wanted at all. */
     public static final int SUPPLY_WORRY_LEVEL = 4;
 
-    private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state) {
-        ProductionGoal goal = supplyGoal(state);
+    private static void addSupplyGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
+        ProductionGoal goal = supplyGoal(state, race);
         if (goal != null) goals.add(goal);
     }
 
@@ -267,8 +269,8 @@ public final class DynamicGoals {
      * strategic layer raises it through its own goals, and this generator exists
      * so the bot is never caught with an empty army while tech is researched.
      */
-    private static void addArmyGoal(List<ProductionGoal> goals, GameSnapshot state) {
-        AUnitType army = armyType();
+    private static void addArmyGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
+        AUnitType army = race.armyUnitType();
         if (army == null)
             return;
 
@@ -297,8 +299,8 @@ public final class DynamicGoals {
      * commander decided that by issuing the order first and letting the queue
      * sort it out.
      */
-    private static void addExpansionGoal(List<ProductionGoal> goals, GameSnapshot state) {
-        AUnitType base = baseType();
+    private static void addExpansionGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
+        AUnitType base = race.baseType();
         if (base == null)
             return;
 
@@ -321,43 +323,4 @@ public final class DynamicGoals {
                 TargetPlacement.anywhere()));
     }
 
-    private static AUnitType workerType() {
-        if (We.protoss())
-            return AUnitType.Protoss_Probe;
-        if (We.terran())
-            return AUnitType.Terran_SCV;
-        if (We.zerg())
-            return AUnitType.Zerg_Drone;
-        return AtlantisRaceConfig.WORKER;
-    }
-
-    private static AUnitType armyType() {
-        if (We.protoss())
-            return AUnitType.Protoss_Zealot;
-        if (We.terran())
-            return AUnitType.Terran_Marine;
-        if (We.zerg())
-            return AUnitType.Zerg_Zergling;
-        return null;
-    }
-
-    private static AUnitType baseType() {
-        if (We.protoss())
-            return AUnitType.Protoss_Nexus;
-        if (We.terran())
-            return AUnitType.Terran_Command_Center;
-        if (We.zerg())
-            return AUnitType.Zerg_Hatchery;
-        return null;
-    }
-
-    private static AUnitType supplyProviderType() {
-        if (We.protoss())
-            return AUnitType.Protoss_Pylon;
-        if (We.terran())
-            return AUnitType.Terran_Supply_Depot;
-        if (We.zerg())
-            return AUnitType.Zerg_Overlord;
-        return null;
-    }
 }

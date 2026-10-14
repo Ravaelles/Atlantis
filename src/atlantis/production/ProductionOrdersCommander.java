@@ -10,6 +10,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceOrdersFromQueue;
 import atlantis.production.v2.engine.ProductionEngine;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
@@ -17,8 +18,11 @@ public class ProductionOrdersCommander extends Commander {
     /**
      * production-v2 state (M4): created once, kept across frames so the plan of
      * the previous frame can be logged and compared. It owns no unit state.
+     * The race policy is read exactly once, here, from the same source the
+     * migrated branches read - never re-resolved per frame.
      */
-    private static final ProductionEngine V2_ENGINE = new ProductionEngine();
+    private final ProductionEngine v2Engine =
+        new ProductionEngine(ProductionRacePolicy.ambient());
 
     @Override
     public boolean applies() {
@@ -40,12 +44,12 @@ public class ProductionOrdersCommander extends Commander {
     @Override
     protected boolean handle() {
         if (atlantis.config.env.Env.productionV2().isLive()) {
-            V2_ENGINE.updateFrame();
+            v2Engine.updateFrame();
             return false;
         }
 
         if (atlantis.config.env.Env.productionV2().isDryRun()) {
-            V2_ENGINE.updateFrame();
+            v2Engine.updateFrame();
         }
 
         if (A.everyNthGameFrame(GamePhase.isEarlyGame() ? 19 : 71)) Queue.get().refresh();

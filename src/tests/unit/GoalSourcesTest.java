@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.UnitProducible;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -31,11 +32,44 @@ public class GoalSourcesTest {
 
     // ---- dynamic goals -----------------------------------------------------
 
+    // ---- cross-race identities (NEXT #8 pilot) ------------------------------
+
+    @Test
+    public void otherRacesNameTheirOwnIdentities() {
+        // Previously unreachable: the old selectors read the ambient race, so
+        // only Protoss identities could ever be pinned. Same snapshots as the
+        // Protoss cases above, other policies.
+        DynamicGoals.GameSnapshot state =
+            new DynamicGoals.GameSnapshot(10, 1, 30, 3, 33, 500, false, 0, 1);
+
+        List<ProductionGoal> terran =
+            DynamicGoals.contribute(state, ProductionRacePolicy.forRace("Terran"));
+        assertTrue(contains(terran, UnitProducible.of(AUnitType.Terran_SCV).id()));
+        assertTrue(contains(terran, UnitProducible.of(AUnitType.Terran_Supply_Depot).id()));
+        assertTrue(contains(terran, UnitProducible.of(AUnitType.Terran_Marine).id()));
+
+        DynamicGoals.GameSnapshot grown =
+            new DynamicGoals.GameSnapshot(26, 1, 30, 3, 33, 500, false, 0, 1);
+
+        assertTrue(contains(
+            DynamicGoals.contribute(grown, ProductionRacePolicy.forRace("Terran")),
+            UnitProducible.of(AUnitType.Terran_Command_Center).id()));
+
+        List<ProductionGoal> zerg =
+            DynamicGoals.contribute(state, ProductionRacePolicy.forRace("Zerg"));
+        assertTrue(contains(zerg, UnitProducible.of(AUnitType.Zerg_Drone).id()));
+        assertTrue(contains(zerg, UnitProducible.of(AUnitType.Zerg_Overlord).id()));
+        assertTrue(contains(zerg, UnitProducible.of(AUnitType.Zerg_Zergling).id()));
+        assertTrue(contains(
+            DynamicGoals.contribute(grown, ProductionRacePolicy.forRace("Zerg")),
+            UnitProducible.of(AUnitType.Zerg_Hatchery).id()));
+    }
+
     @Test
     public void workersAreRequestedUntilBasesAreSaturated() {
         DynamicGoals.GameSnapshot unsaturated = new DynamicGoals.GameSnapshot(8, 1, 10, 6, 16, 200, true);
 
-        List<ProductionGoal> goals = DynamicGoals.contribute(unsaturated);
+        List<ProductionGoal> goals = DynamicGoals.contribute(unsaturated, ProductionRacePolicy.forRace("Protoss"));
 
         assertTrue(contains(goals, workerType()), "an unsaturated base asks for a worker");
     }
@@ -47,9 +81,9 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot saturated = new DynamicGoals.GameSnapshot(25, 1, 50, 20, 70, 1000, false);
         DynamicGoals.GameSnapshot capped = new DynamicGoals.GameSnapshot(80, 4, 160, 40, 200, 1000, false);
 
-        assertFalse(contains(DynamicGoals.contribute(saturated), workerType()),
+        assertFalse(contains(DynamicGoals.contribute(saturated, ProductionRacePolicy.forRace("Protoss")), workerType()),
                 "a saturated single base stops asking");
-        assertFalse(contains(DynamicGoals.contribute(capped), workerType()),
+        assertFalse(contains(DynamicGoals.contribute(capped, ProductionRacePolicy.forRace("Protoss")), workerType()),
                 "the absolute cap stops even a four-base economy");
     }
 
@@ -58,8 +92,8 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot oneBaseEnough = new DynamicGoals.GameSnapshot(26, 1, 52, 20, 72, 500, false);
         DynamicGoals.GameSnapshot twoBasesNotEnough = new DynamicGoals.GameSnapshot(26, 2, 52, 20, 72, 500, false);
 
-        assertFalse(contains(DynamicGoals.contribute(oneBaseEnough), workerType()));
-        assertTrue(contains(DynamicGoals.contribute(twoBasesNotEnough), workerType()),
+        assertFalse(contains(DynamicGoals.contribute(oneBaseEnough, ProductionRacePolicy.forRace("Protoss")), workerType()));
+        assertTrue(contains(DynamicGoals.contribute(twoBasesNotEnough, ProductionRacePolicy.forRace("Protoss")), workerType()),
                 "the second base raises the worker target");
     }
 
@@ -68,8 +102,8 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot normal = new DynamicGoals.GameSnapshot(10, 1, 30, 3, 33, 500, false);
         DynamicGoals.GameSnapshot emergency = new DynamicGoals.GameSnapshot(10, 1, 32, 0, 32, 500, false);
 
-        ProductionGoal normalGoal = firstOf(DynamicGoals.contribute(normal), supplyType());
-        ProductionGoal emergencyGoal = firstOf(DynamicGoals.contribute(emergency), supplyType());
+        ProductionGoal normalGoal = firstOf(DynamicGoals.contribute(normal, ProductionRacePolicy.forRace("Protoss")), supplyType());
+        ProductionGoal emergencyGoal = firstOf(DynamicGoals.contribute(emergency, ProductionRacePolicy.forRace("Protoss")), supplyType());
 
         assertEquals(ProductionGoal.PRIORITY_DEPOTS, normalGoal.priority());
         assertEquals(ProductionGoal.PRIORITY_EMERGENCY, emergencyGoal.priority(),
@@ -85,7 +119,7 @@ public class GoalSourcesTest {
         // are the opening, later top-ups are depots.
         DynamicGoals.GameSnapshot early = new DynamicGoals.GameSnapshot(5, 1, 8, 3, 11, 100, true);
 
-        ProductionGoal earlyGoal = firstOf(DynamicGoals.contribute(early), supplyType());
+        ProductionGoal earlyGoal = firstOf(DynamicGoals.contribute(early, ProductionRacePolicy.forRace("Protoss")), supplyType());
 
         assertEquals(
             ProductionGoal.PRIORITY_OPENING_SUPPLY, earlyGoal.priority(),
@@ -97,7 +131,7 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot plenty =
                 new DynamicGoals.GameSnapshot(10, 1, 20, 20, 40, 500, false);
 
-        assertFalse(contains(DynamicGoals.contribute(plenty), supplyType()));
+        assertFalse(contains(DynamicGoals.contribute(plenty, ProductionRacePolicy.forRace("Protoss")), supplyType()));
     }
 
     @Test
@@ -105,7 +139,7 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot tooEarly =
                 new DynamicGoals.GameSnapshot(4, 1, 6, 6, 12, 100, true);
 
-        assertFalse(contains(DynamicGoals.contribute(tooEarly), armyType()),
+        assertFalse(contains(DynamicGoals.contribute(tooEarly, ProductionRacePolicy.forRace("Protoss")), armyType()),
                 "an army at 6 supply would starve the opening");
     }
 
@@ -116,8 +150,8 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot large =
                 new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false);
 
-        int smallCount = firstOf(DynamicGoals.contribute(small), armyType()).count();
-        int largeCount = firstOf(DynamicGoals.contribute(large), armyType()).count();
+        int smallCount = firstOf(DynamicGoals.contribute(small, ProductionRacePolicy.forRace("Protoss")), armyType()).count();
+        int largeCount = firstOf(DynamicGoals.contribute(large, ProductionRacePolicy.forRace("Protoss")), armyType()).count();
 
         assertTrue(largeCount > smallCount,
                 "a bigger economy asks for a bigger baseline army: "
@@ -131,9 +165,9 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot saturated =
                 new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false);
 
-        assertFalse(contains(DynamicGoals.contribute(notSaturated), baseType()),
+        assertFalse(contains(DynamicGoals.contribute(notSaturated, ProductionRacePolicy.forRace("Protoss")), baseType()),
                 "an unsaturated base does not ask for another one");
-        assertTrue(contains(DynamicGoals.contribute(saturated), baseType()),
+        assertTrue(contains(DynamicGoals.contribute(saturated, ProductionRacePolicy.forRace("Protoss")), baseType()),
                 "a saturated base does ask");
     }
 
@@ -142,7 +176,7 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot fourBases =
                 new DynamicGoals.GameSnapshot(100, 4, 180, 20, 200, 2000, false);
 
-        assertFalse(contains(DynamicGoals.contribute(fourBases), baseType()),
+        assertFalse(contains(DynamicGoals.contribute(fourBases, ProductionRacePolicy.forRace("Protoss")), baseType()),
                 "four bases is the cap of this generator");
     }
 
@@ -150,7 +184,7 @@ public class GoalSourcesTest {
     public void supplyEmergencyOutranksWorkersWhenBothCompete() {
         DynamicGoals.GameSnapshot aboutToBlock = new DynamicGoals.GameSnapshot(5, 1, 15, 0, 15, 500, true);
 
-        List<ProductionGoal> goals = DynamicGoals.contribute(aboutToBlock);
+        List<ProductionGoal> goals = DynamicGoals.contribute(aboutToBlock, ProductionRacePolicy.forRace("Protoss"));
         Collections.sort(goals);
 
         assertEquals(supplyType(), goals.get(0).item().id(),
@@ -166,9 +200,9 @@ public class GoalSourcesTest {
                 new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false, 0, 2);
         DynamicGoals.GameSnapshot missing = new DynamicGoals.GameSnapshot(25, 1, 45, 10, 55, 600, false, 0, 1);
 
-        assertFalse(contains(DynamicGoals.contribute(buildingNow), baseType()),
+        assertFalse(contains(DynamicGoals.contribute(buildingNow, ProductionRacePolicy.forRace("Protoss")), baseType()),
                 "a base under construction satisfies the expansion goal");
-        assertTrue(contains(DynamicGoals.contribute(missing), baseType()));
+        assertTrue(contains(DynamicGoals.contribute(missing, ProductionRacePolicy.forRace("Protoss")), baseType()));
     }
 
     @Test
@@ -180,10 +214,10 @@ public class GoalSourcesTest {
         DynamicGoals.GameSnapshot fullArmy =
                 new DynamicGoals.GameSnapshot(40, 2, 80, 20, 100, 500, false, 10, 2);
 
-        assertEquals(10, firstOf(DynamicGoals.contribute(noArmy), armyType()).count());
-        assertEquals(5, firstOf(DynamicGoals.contribute(halfArmy), armyType()).count(),
+        assertEquals(10, firstOf(DynamicGoals.contribute(noArmy, ProductionRacePolicy.forRace("Protoss")), armyType()).count());
+        assertEquals(5, firstOf(DynamicGoals.contribute(halfArmy, ProductionRacePolicy.forRace("Protoss")), armyType()).count(),
                 "existing units count towards the baseline");
-        assertFalse(contains(DynamicGoals.contribute(fullArmy), armyType()),
+        assertFalse(contains(DynamicGoals.contribute(fullArmy, ProductionRacePolicy.forRace("Protoss")), armyType()),
                 "a satisfied army goal asks for nothing");
     }
 
@@ -193,16 +227,18 @@ public class GoalSourcesTest {
         // scheduler honours two goals as two buildings. One module owns the rule.
         DynamicGoals.GameSnapshot low = new DynamicGoals.GameSnapshot(10, 1, 29, 1, 30, 500, false);
 
-        ProductionGoal fromDynamic = firstOf(DynamicGoals.contribute(low), supplyType());
+        ProductionGoal fromDynamic = firstOf(DynamicGoals.contribute(low, ProductionRacePolicy.forRace("Protoss")), supplyType());
         ProductionGoal fromPullForward = atlantis.production.v2.goals.PullForwardGoals.supplyGoal(
-                new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1, 29));
+                new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 1, 1, 29),
+                ProductionRacePolicy.forRace("Protoss"));
 
         assertNotNull(fromDynamic);
         assertEquals(fromDynamic.priority(), fromPullForward.priority(),
                 "the pull-forward rule defers to the same one implementation");
         assertFalse(contains(atlantis.production.v2.goals.PullForwardGoals.contribute(
                         new atlantis.production.v2.ResourceTimeline(0, 500, 500, 0, 1, 30),
-                        new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 0, 1)),
+                        new atlantis.production.v2.goals.PullForwardGoals.Snapshot(1, 500, 10, 0, 1),
+                        ProductionRacePolicy.forRace("Protoss")),
                 supplyType()),
                 "and does not declare a second Pylon of its own");
     }

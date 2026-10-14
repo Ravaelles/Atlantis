@@ -1,12 +1,12 @@
 package atlantis.production.v2.goals;
 
 import atlantis.production.v2.ProductionGoal;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnitType;
-import atlantis.util.We;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,10 +53,11 @@ public final class PullForwardGoals {
     private PullForwardGoals() {
     }
 
-    public static List<ProductionGoal> contribute(ResourceTimeline timeline, Snapshot state) {
+    public static List<ProductionGoal> contribute(
+            ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
         List<ProductionGoal> goals = new ArrayList<>();
 
-        addGasIfMineralRich(goals, timeline, state);
+        addGasIfMineralRich(goals, timeline, state, race);
 
         return goals;
     }
@@ -66,9 +67,9 @@ public final class PullForwardGoals {
      * same Pylon is never declared twice in one frame - the scheduler would
      * honour two goals as two buildings.
      */
-    public static ProductionGoal supplyGoal(Snapshot state) {
+    public static ProductionGoal supplyGoal(Snapshot state, ProductionRacePolicy race) {
         return DynamicGoals.supplyGoal(new DynamicGoals.GameSnapshot(
-                state.mineralWorkers, 1, state.supplyUsed, state.supplyFree, 0, state.minerals, false));
+                state.mineralWorkers, 1, state.supplyUsed, state.supplyFree, 0, state.minerals, false), race);
     }
 
     /**
@@ -76,8 +77,8 @@ public final class PullForwardGoals {
      * that cannot spend its minerals on anything but workers.
      */
     private static void addGasIfMineralRich(
-            List<ProductionGoal> goals, ResourceTimeline timeline, Snapshot state) {
-        AUnitType refinery = gasBuilding();
+            List<ProductionGoal> goals, ResourceTimeline timeline, Snapshot state, ProductionRacePolicy race) {
+        AUnitType refinery = race.gasBuildingType();
         if (refinery == null)
             return;
         if (state.refineries >= state.desiredRefineries)
@@ -97,15 +98,7 @@ public final class PullForwardGoals {
     /** A mineral bank this large is not going to be spent on units alone. */
     private static final int RICH_MINERALS = 450;
 
-    private static AUnitType gasBuilding() {
-        if (We.protoss())
-            return AUnitType.Protoss_Assimilator;
-        if (We.terran())
-            return AUnitType.Terran_Refinery;
-        if (We.zerg())
-            return AUnitType.Zerg_Extractor;
-        return null;
-    }
+
 
     /** The few numbers these rules read, so they stay testable without a game. */
     public static final class Snapshot {

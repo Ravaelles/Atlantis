@@ -40,4 +40,16 @@ public interface ProductionRacePolicy {
         if ("Zerg".equalsIgnoreCase(race)) return ZergProductionRacePolicy.INSTANCE;
         throw new IllegalArgumentException("Unknown race for production policy: " + race);
     }
+
+    /**
+     * Ambient race for no-arg constructors and legacy callers: the same
+     * {@code We.*()} truth the migrated branches read (not
+     * {@code AtlantisRaceConfig.MY_RACE}, which may be null before launch).
+     */
+    static ProductionRacePolicy ambient() {
+        if (atlantis.util.We.protoss()) return ProtossProductionRacePolicy.INSTANCE;
+        if (atlantis.util.We.terran()) return TerranProductionRacePolicy.INSTANCE;
+        if (atlantis.util.We.zerg()) return ZergProductionRacePolicy.INSTANCE;
+        throw new IllegalArgumentException("No production race policy for ambient race");
+    }
 }

@@ -6,6 +6,7 @@ import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionItem;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ProductionPlan;
 import atlantis.production.v2.ProductionScheduler;
 import atlantis.production.v2.ResourceTimeline;
@@ -88,12 +89,24 @@ public final class ProductionEngine {
 
     private ProductionPlan lastPlan = new ProductionPlan();
 
+    /** Race identities for goal generation, injected once (NEXT #8). */
+    private final ProductionRacePolicy racePolicy;
+
+    /** Ambient race (tests, legacy callers). */
+    public ProductionEngine() {
+        this(ProductionRacePolicy.ambient());
+    }
+
+    public ProductionEngine(ProductionRacePolicy racePolicy) {
+        this.racePolicy = racePolicy;
+    }
+
     /**
      * Runs one frame of the engine. Returns the plan it computed, which is also
      * what the dry-run log reports.
      */
     public ProductionPlan updateFrame() {
-        GameStateSnapshot state = new GameStateSnapshot();
+        GameStateSnapshot state = new GameStateSnapshot(racePolicy);
 
         ResourceTimeline timeline = state.buildTimeline();
         List<ProductionGoal> goals = collectGoals(state, timeline);

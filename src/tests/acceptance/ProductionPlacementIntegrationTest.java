@@ -2,6 +2,7 @@ package tests.acceptance;
 
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.TargetPlacement;
+import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class ProductionPlacementIntegrationTest {
 
     private static List<ProductionGoal> cannonGoals(DynamicGoals.GameSnapshot state) {
         List<ProductionGoal> cannons = new ArrayList<>();
-        for (ProductionGoal goal : DynamicGoals.contribute(state)) {
+        for (ProductionGoal goal : DynamicGoals.contribute(state, ProductionRacePolicy.forRace("Protoss"))) {
             if (goal.item().id().equals(AUnitType.Protoss_Photon_Cannon.name())) {
                 cannons.add(goal);
             }
