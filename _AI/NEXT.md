@@ -898,6 +898,12 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   the rescue rebuild (`RequeueVetoCountsTriggerableTest`: old count 4 vs
   triggerable 1; structural guard test updated, cancel-before-count
   intent preserved). Suite 534/534.
+- **Deadlock broken live (2026-10-14, game 202326_long, bot-cap 110 s):**
+  first Pylon cancelled at 54 s -> `### FAILED ### Requesting Pylon`
+  FIRED (was vetoed) -> game flows: supply 65/89, 27 workers, Dragoons
+  0->1->2->4 compounding (gas 94->234), Zealots to 10. PREPARING picks
+  sites early throughout (8/13/20 rows). First-Pylon exact frame still
+  unattributed; Pylon IN_PROGRESS seen @8640.
 - **Worker re-queue at 15 frames left (owner 2026-10-14):** `queueWorker`
   threshold 10 -> 15 (`NEXT_WORKER_WHEN_TRAINING_REMAINS`, pinned with
   the 300-frame engine number). The stub always direct-trains, so the
