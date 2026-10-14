@@ -702,6 +702,12 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   unlinked order completes when more completed buildings of its type stand
   than same-type rows already finished (fungible rows keep count - two
   Gateway rows + one standing Gateway finish exactly one). Suite 517/517.
+  **Extended 2026-10-14 (game 174710: Assimilator waiters survive the
+  unlinked fix):** that order is LINKED with a null unit (queue-built 4:04,
+  engine blind) - the fallback now also covers linked-but-orphaned
+  constructions, gated on NO active work (a warping Nexus-2 keeps waiting
+  against its standing main, else the reserve drops early and #58 re-queues
+  a third). 4/4 green, orphan case red pre-fix, Nexus-2 guard green both.
   Game proof pending (Gateway-2 must leave WAITING in the next game).
   Aside: Core's waiter
   clears in the last 5 lines (Assimilator-only) - unexplained, recorded.
@@ -711,6 +717,13 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   no Assimilator ADDED/FINISHED/construction lines at all (legacy path,
   known marker gap) - miners top up at the very end with no time to matter.
   The steal branch still needs a gas-healthy mid game, not a guess.
+- **Assimilator duplicate (#58 shape) - guarded 2026-10-14 (game 174710:**
+  Assimilator+Assimilator waiters for one geyser): the dynamic add only
+  checks the next-2 cap, so a progressing (IN_PROGRESS-skipped) build-order
+  row is invisible and a second is added (4:04). Progressing/ready rows now
+  block the dynamic add; stuck notStarted rows are still replaced by it
+  (`FirstAssimilatorNoDuplicateTest`, red pre-fix). With the completion
+  fallback the surviving row clears once the refinery stands.
 - **Gas: formula cleared, assignment needs game telemetry:** the demand side
   is pinned (`GasMinersAssignedTest`: 22 workers demand 3); engine data
   exonerated (player gas synced, refinery is a container). Added one

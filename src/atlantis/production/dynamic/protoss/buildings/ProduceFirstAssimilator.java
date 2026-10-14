@@ -25,6 +25,13 @@ public class ProduceFirstAssimilator {
         reason = "Eligible";
         if (Have.assimilator()) return blocked("AlreadyHaveAssimilator");
         if (CountInQueue.count(type(), 2) > 0) return blocked("AlreadyQueued");
+        // NEXT #58 shape: the cap above only sees the next 2 orders, so a
+        // progressing build-order row is invisible and this adds a second
+        // (game 174710: Assimilator+Assimilator waiters for one geyser). A
+        // stuck notStarted row is still replaced below - only progressing
+        // ones block here.
+        if (!Queue.get().inProgressOrders().ofType(type()).isEmpty()) return blocked("AssimilatorInProgress");
+        if (!Queue.get().readyToProduceOrders().ofType(type()).isEmpty()) return blocked("AssimilatorReady");
         if (Strategy.get().isExpansion() && A.supplyUsed() <= 44) return blocked("ExpansionSupplyGate");
 
         AUnit cc;
