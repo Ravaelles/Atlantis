@@ -6,6 +6,8 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.updater.QueueRefresher;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -76,8 +78,7 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void sameTypeRowsFinishExactlyOncePerStandingBuilding() {
-        world(5, fakeOurs(
+    public void sameTypeRowsFinishExactlyOncePerStandingBuilding() {        world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Gateway, 24, 20)
         ), fakeEnemies(), () -> {
@@ -96,6 +97,59 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             assertFalse(
                 second.isStatus(OrderStatus.FINISHED),
                 "the second row still wants a second Gateway built");
+        });
+    }
+
+    @Test
+    public void linkedFinishedConstructionWithNoUnitCompletesByExistence() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Assimilator, 24, 20)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            // Game 174710: queue-built Assimilator whose unit the engine
+            // never reports (OpenBW buildUnit is always null) - the warp
+            // finished, the building stands and mines.
+            ProductionOrder assimilator = new ProductionOrder(AUnitType.Protoss_Assimilator, 0);
+            Construction done = new Construction(AUnitType.Protoss_Assimilator);
+            done.setStatus(ConstructionOrderStatus.FINISHED);
+            assimilator.setConstruction(done);
+            Queue.get().addNew(0, assimilator);
+
+            new QueueRefresher(Queue.get()).refresh();
+
+            assertTrue(
+                assimilator.isStatus(OrderStatus.FINISHED),
+                "orphaned Assimilator order must finish against its standing building");
+        });
+    }
+
+    @Test
+    public void linkedActiveConstructionWaitsDespiteStandingSameType() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            // A warping Nexus-2 tracks a SPECIFIC future building: it must
+            // not complete against its standing main, or the reserve drops
+            // early and the expansion guard re-queues a third Nexus (#58).
+            ProductionOrder natural = new ProductionOrder(AUnitType.Protoss_Nexus, 0);
+            Construction warping = new Construction(AUnitType.Protoss_Nexus);
+            warping.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            natural.setConstruction(warping);
+            Queue.get().addNew(0, natural);
+
+            new QueueRefresher(Queue.get()).refresh();
+
+            assertFalse(
+                natural.isStatus(OrderStatus.FINISHED),
+                "an actively warping Nexus-2 must survive its standing main");
         });
     }
 }

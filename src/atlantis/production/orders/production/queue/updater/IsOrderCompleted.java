@@ -1,6 +1,8 @@
 package atlantis.production.orders.production.queue.updater;
 
 import atlantis.information.tech.ATech;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -20,8 +22,15 @@ public class IsOrderCompleted {
         // Units keep the old path (their training completes through
         // producers, untouched here).
         if (order.unitType() != null && order.unitType().isABuilding()) {
-            if (order.construction() == null) return completedWithoutConstruction(order);
-            if (order.construction().buildingUnit() == null) return false;
+            if (order.construction() == null) return completedByExistence(order);
+            // Linked but the engine reports no building unit (OpenBW: buildUnit
+            // is always null): only fall back when no work is active, else a
+            // warping Nexus-2 would complete against its standing main.
+            if (order.construction().buildingUnit() == null) {
+                return isConstructionActive(order.construction())
+                    ? false
+                    : completedByExistence(order);
+            }
 
             return order.construction().buildingUnit().isCompleted();
         }
@@ -58,13 +67,28 @@ public class IsOrderCompleted {
     }
 
     /**
-     * A building order with no linked Construction (game 172954: build-order
-     * rows built by the legacy path, which never links one) is done when its
-     * building stands completed. Same-type rows are fungible but counted:
-     * more standing buildings than already-finished rows finishes this one,
-     * so two Gateway rows with one standing Gateway finish exactly one.
+     * Work is active while the construction runs (started, warping) or a
+     * living builder is assigned to a not-started one (walking to the site).
+     * Anything else (finished warp, dead or no builder) is orphaned: the
+     * order tracks no specific future building, so existence decides.
      */
-    private static boolean completedWithoutConstruction(ProductionOrder order) {
+    private static boolean isConstructionActive(Construction construction) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) {
+            return construction.status() != ConstructionOrderStatus.FINISHED;
+        }
+        return construction.builder() != null && construction.builder().isAlive();
+    }
+
+    /**
+     * A building order with no linked Construction - or a linked one with no
+     * work active (game 172954: build-order rows built by the legacy path,
+     * which never links one; game 174710: linked Assimilator whose unit the
+     * engine never reports) - is done when its building stands completed.
+     * Same-type rows are fungible but counted: more standing buildings than
+     * already-finished rows finishes this one, so two Gateway rows with one
+     * standing Gateway finish exactly one.
+     */
+    private static boolean completedByExistence(ProductionOrder order) {
         return completedOfType(order.unitType()) > finishedOrdersOfType(order.unitType());
     }
 
