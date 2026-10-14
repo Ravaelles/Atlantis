@@ -25,6 +25,13 @@ one-line change. Needs a Wine-length A/B by construction. Alternative kept:
 the Core reservation (committed) achieves the economic effect through
 existing machinery.
 
+Evidence it is the same shape as NEXT #58's open half (2026-10-14,
+game 20261014_121406): a queued Nexus flaps READY⇄IN_PROGRESS while the bank
+sawtooths 24-558 against the 400 price with zero requests - the workers-only
+`SaveForNexus` gate does not stop the army pump, and nothing reserves 400
+for the issue frame. Any reserve-timing redesign must cover army spending,
+not just workers, or it repeats this game.
+
 ## D4 - Singularity Charge researcher: wire or delete (NEXT #72)
 
 `ATechManager.researchDynamically` is the only dynamic upgrade path and has
