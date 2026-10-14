@@ -624,6 +624,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   doctrine and leash-relax. NoSupply down to 21 polls (17/17, 25/25, 33/33,
   41/41, reserved>bank = earmarked money, not starvation).
 
+- **#88 (2026-10-14) - Core never re-requested after cancel (game 152437).**
+  One CyberneticsC construction ([112,13], builder stolen to minerals) cancelled
+  "took too long" at 34s - then zero Core lines (ADDED/NOT_READY/QUEUE_BASE)
+  for 200+ s while the bank swung 100-440. No REPLACED/DEMOTE fired. The
+  producer fires in a replicated stub state (`CoreRequeueAfterCancelTest`:
+  commander applies + produce() true at 48 supply / 300 bank / 10 Zealots),
+  so the live silence is commander-level gating (`MineralsOrQueueSize`:
+  min<220 with 5+ not-started orders?) or a silent `AddToQueue` refusal -
+  indistinguishable without per-frame Core data (BUILDER_LOG was off).
+  Needs a BUILDER_LOG=1 game catching a Core cancel. Do not patch blind:
+  the stub contract holds, the live path is unmeasured.
+
 - **#84 (2026-10-14) - Wine late-game Pylon ordered but unbuilt, unattributed.**
   Owner's Wine game: Pylon conversion ordered at 5:01, still unbuilt 38 s
   later while the bank hoarded. Needs a `BUILDER_LOG=1` game to attribute
