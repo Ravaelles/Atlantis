@@ -129,8 +129,11 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
 
     @Test
     public void linkedActiveConstructionWaitsDespiteStandingSameType() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 21, 21);
+
         world(5, fakeOurs(
-            fake(AUnitType.Protoss_Nexus, 20, 20)
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            builder
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
             Queue.get().allOrders().list().clear();
@@ -139,9 +142,11 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             // A warping Nexus-2 tracks a SPECIFIC future building: it must
             // not complete against its standing main, or the reserve drops
             // early and the expansion guard re-queues a third Nexus (#58).
+            // The builder ref stays post-warp (Protoss miners return), alive.
             ProductionOrder natural = new ProductionOrder(AUnitType.Protoss_Nexus, 0);
             Construction warping = new Construction(AUnitType.Protoss_Nexus);
             warping.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            warping.setBuilder(builder);
             natural.setConstruction(warping);
             Queue.get().addNew(0, natural);
 
@@ -150,6 +155,36 @@ public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
             assertFalse(
                 natural.isStatus(OrderStatus.FINISHED),
                 "an actively warping Nexus-2 must survive its standing main");
+        });
+    }
+
+    @Test
+    public void linkedDeadBuilderCompletesByExistence() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Gateway, 24, 20)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            // Owner 2026-10-14: a built Gateway still shows as in production
+            // at 24 supply. A row whose builder is dead tracks nothing - the
+            // standing building satisfies it and it must leave next-orders.
+            ProductionOrder row = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+            Construction stale = new Construction(AUnitType.Protoss_Gateway);
+            stale.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            FakeUnit corpse = fake(AUnitType.Protoss_Probe, 21, 21);
+            corpse.setHp(0);
+            stale.setBuilder(corpse);
+            row.setConstruction(stale);
+            Queue.get().addNew(0, row);
+
+            new QueueRefresher(Queue.get()).refresh();
+
+            assertTrue(
+                row.isStatus(OrderStatus.FINISHED),
+                "IN_PROGRESS row with a dead builder must finish against its standing building");
         });
     }
 }

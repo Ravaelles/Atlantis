@@ -73,10 +73,13 @@ public class IsOrderCompleted {
      * order tracks no specific future building, so existence decides.
      */
     private static boolean isConstructionActive(Construction construction) {
-        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) {
-            return construction.status() != ConstructionOrderStatus.FINISHED;
-        }
-        return construction.builder() != null && construction.builder().isAlive();
+        if (construction.status() == ConstructionOrderStatus.FINISHED) return false;
+        // Nobody works on it: dead, missing, or never-assigned builder. A
+        // finished building elsewhere then satisfies the row by existence,
+        // so built rows leave the next-orders list (owner 2026-10-14).
+        if (construction.builder() == null || !construction.builder().isAlive()) return false;
+        // Living builder, any non-finished status: walking, issuing, warping.
+        return true;
     }
 
     /**
