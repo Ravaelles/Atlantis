@@ -732,6 +732,16 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
 - **Late spending stall:** 603 bank, free supply, idle Gateway, zero
   production-refusal lines for units in this build - the pump's reasons are
   silent when they decline. Nothing names which gate held the last 60 s.
+- **STANDARD-vs-STANDARD arbitration (2026-10-14, game 180053):** Gateway-2
+  (ADDED 3:44) never builds with zero overdue-cancels - correctly waiting,
+  not stuck: effective bank sits under 150 (samples 266-396 against
+  reserved=300) while the Zealot pump trains on a flat `minerals >= 275`
+  ignoring reservations. One-time buildings lose the every-frame race
+  against the 100-mineral pump. Same family as #45 (scheduler), not a gate
+  to flip blind (B-22: the opposite failure killed all unit production).
+  Game proofs so far: Nexus=2 (175707, 180053), Dragoons=3 (175329),
+  Gateway=2 (175329) - each in a different game; combined single-game
+  proof still open.
 - **Second Nexus absent - decision FIXED, game proof pending (2026-10-14):**
   vs Zerg the old gates needed 11+ units (`DelayNaturalVsZerg`) and 550+
   bank / 90+ strength before the affordable rule was even reachable - a
