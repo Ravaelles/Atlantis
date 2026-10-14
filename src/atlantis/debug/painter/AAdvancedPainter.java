@@ -1671,24 +1671,24 @@ public class AAdvancedPainter extends APainter {
 
         // Sunken
         if (We.zerg()) {
-            paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken", Zerg_Sunken_Colony);
+//            paintBuildingPosition((new ZergSunkenColony()).nextPosition(), "Next Sunken", Zerg_Sunken_Colony);
         }
         else if (We.protoss()) {
-            paintBuildingPosition(PylonPosition.nextPosition(), "Next PYLON", Protoss_Pylon);
-            if (A.supplyTotal() >= 17) {
-                paintBuildingPosition(GatewayPosition.nextPosition(), "Next GATEWAY", Protoss_Gateway);
-            }
+//            paintBuildingPosition(PylonPosition.nextPosition(), "Next PYLON", Protoss_Pylon);
+//            if (A.supplyTotal() >= 17) {
+//                paintBuildingPosition(GatewayPosition.nextPosition(), "Next GATEWAY", Protoss_Gateway);
+//            }
         }
         else if (We.terran()) {
 //            HasPosition nextDepot = (new TerranSupplyDepot()).nextPosition();
 //            System.err.println("nextDepot = " + nextDepot);
 //            if (nextDepot != null) System.err.println(nextDepot.distTo(Select.mainOrAnyBuilding()));
 
-            paintBuildingPosition(TerranSupplyDepot.nextPosition(), "Next DEPOT", Terran_Supply_Depot);
-            paintBuildingPosition(BarracksPosition.nextPosition(), "Next BARRACKS", Terran_Barracks);
+//            paintBuildingPosition(TerranSupplyDepot.nextPosition(), "Next DEPOT", Terran_Supply_Depot);
+//            paintBuildingPosition(BarracksPosition.nextPosition(), "Next BARRACKS", Terran_Barracks);
 //            paintBuildingPosition((new TerranBunker()).nextPosition(), "Next Bunker");
 //            paintBuildingPosition((new NewBunkerPositionFinder(null)).find(), "Next Bunker");
-            paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE", Terran_Command_Center);
+//            paintBuildingPosition(NextBasePosition.nextBasePosition(), "Next BASE", Terran_Command_Center);
         }
 
         // Next defensive building position
