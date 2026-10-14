@@ -69,8 +69,7 @@ public class OnGameStarted {
 
         handleCheckIfUmsMap();
 
-        System.out.println("### enemyName   = " + AGame.enemyName());
-        System.out.println("### mapFileName = " + Atlantis.game().mapFileName());
+        System.out.println("### Map: " + Atlantis.game().mapFileName() + ", enemy: " + AGame.enemyName());
 
         // Atlantis can modify ChaosLauncher's config files treating AtlantisRaceConfig as the source-of-truth
         AtlantisConfigChanger.modifyRacesInConfigFileIfNeeded();

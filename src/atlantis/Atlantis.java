@@ -98,7 +98,7 @@ public class Atlantis implements BWEventListener {
         // prints, the BWAPI client is attached and the bot is actually playing.
         // The Wine launcher kills SC+Chaos when it does NOT appear in time
         // (see WineClientSupervisor), so silence has a loud consequence.
-        AConsole.println("HELLO_ATLANTIS - BWAPI attached, Atlantis is playing!");
+        AConsole.println("HELLO_ATLANTIS - BWAPI ok, Atlantis starts playing!");
 
         // Force the game out of StarCraft's pause. Without this a fresh game
         // sits paused until a human presses a key (owner report, twice:
@@ -152,19 +152,19 @@ public class Atlantis implements BWEventListener {
         // One line per game: the latency semantics every timing assumption in
         // the bot stands on (NEXT #80). PurpleWave runs setLatCom(false) and
         // compensates manually; we run the JBWAPI default and never printed it.
-        AConsole.println(
-            "LATCOM latCom=" + game.isLatComEnabled()
-                + " latencyFrames=" + game.getLatencyFrames()
-                + " remainingLatencyFrames=" + game.getRemainingLatencyFrames()
-        );
+//        AConsole.println(
+//            "LATCOM latCom=" + game.isLatComEnabled()
+//                + " latencyFrames=" + game.getLatencyFrames()
+//                + " remainingLatencyFrames=" + game.getRemainingLatencyFrames()
+//        );
 
         // One line per game: which ENV file the flags came from. A missing
         // file means silent defaults (measured: a Wine game played builder
         // logging off because the CWD-relative resolution missed).
-        AConsole.println(
-            "ENV source=" + atlantis.config.env.Env.envSource()
-                + " builderLog=" + atlantis.config.env.Env.builderLog()
-        );
+//        AConsole.println(
+//            "ENV source=" + atlantis.config.env.Env.envSource()
+//                + " builderLog=" + atlantis.config.env.Env.builderLog()
+//        );
     }
 
     /**

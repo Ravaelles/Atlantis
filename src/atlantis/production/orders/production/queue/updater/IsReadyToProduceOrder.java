@@ -84,7 +84,7 @@ public class IsReadyToProduceOrder {
         // the bank does not cover both - lower spending pauses (self
         // excluded, so a HIGH waiter itself is never blocked here).
         if (PriorityWaiters.blocksSpending(order, order.mineralPrice(), order.gasPrice())) {
-            if (order.isBuilding()) {
+            if (order.isBuilding() && (order.is(AUnitType.Protoss_Nexus) || order.is(AUnitType.Protoss_Photon_Cannon))) {
                 atlantis.util.log.ErrorLog.printMaxOncePerMinute(
                     "ORDER_WAITING " + order.unitType() + " @" + A.now()
                         + " min=" + A.minerals() + " gas=" + A.gas()
