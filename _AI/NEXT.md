@@ -602,15 +602,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   PylonAt8.)
 
 
-- **#83 (2026-10-14) - reservations starve the in-flight Pylon (Wine).**
-  17-cap and 25-cap in last-wine.log: the Pylon waits on minerals 4-92 while
-  200-300 sits reserved for Gateway/Cyber/Assimilator (orders readied first
-  hold the bank; the Pylon needs 100 free on top of that). Caps 41/41 and up
-  are pure timing with sufficient bank. Fix direction: supply orders outrank
-  discretionary reservations when free supply is low - queue-arbitration
-  redesign, not a one-line change. Do not touch blind.
-
-
 ### OpenBW headless run (2026-10-08)
 
 The client attaches and the bot plays - see `_AI/PLAN-OPENBW.md` §9 for the

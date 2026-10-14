@@ -1355,12 +1355,6 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
 - Suite 476/0; tree holds only the foreign BuildOrderSettings line (untouched).
 
 ## Session 2026-10-14 (Wine supply blocks: timing fix verified)
-
-- Wine autopsy (`last-wine.log`, 6:37, stopped 49/49): every cap is order
-  timing vs ~600f warp (P5 @40/41 <240f before cap, P6 @47/49 +80f after) -
-  travel, placement (0 failures, all accepts true) and gating innocent; the
-  17/25 caps are amplified by reservation starvation (200-300 held for
-  Gateway/Cyber/Assimilator while the Pylon waits on 4-92) - filed #83.
 - Fix: fallback bands +one warp headroom (8/10/12/16/16/22, opening bands
   unchanged); Stardust comparison done (their `shiftForSupply` pulls Pylon
   completion before predicted block frames over a horizon - our legacy path
@@ -1371,3 +1365,20 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   hits (max bank 248+300 reserved); Can't-find-place 0, took-too-long 0,
   DEMOTE 3 all healed. 41/41 + 33/33 with bank remain (next: #83
   reservations, #81 placement).
+
+## Session 2026-10-14 (full Pylon solution: burn-calm verified, #83 refuted)
+
+- Spending autopsy rewrote the story: the 25-cap bank crashes (92->8,
+  88->4) are the Pylon's OWN attempts (@4791/@4974, accepted) - each spends
+  ~100, the warp drops server-side, demote, retry spends again. Workers stop
+  (31/31 NoSupply), no units/upgrades/Forge lines anywhere. 41-cap: zero
+  spends, monotonic 172->348 (pure warp wait). So #83-as-arbitration was the
+  wrong direction (near-main orders bypass resource checks anyway) - deleted
+  with this refutation.
+- Fix: warp-window pump calm (IN_PROGRESS + no building + bank<250 pauses
+  workers; linked warps and rich banks unaffected) + 3 tests. Verified:
+  suite 479/0; --long 251 s: bank monotonic 28->584 through both caps, ZERO
+  Pylon attempts inside NoSupply episodes, no sawtooth. Burn cycles gone.
+- Revealed next layer (not this turn): 3rd Pylon placement-fails 3:02
+  (1953 physical, corner base), never retried, bank grows into the hoard
+  tripwire at 4:11. #81 territory (corner attribution + retry cadence).
