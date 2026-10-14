@@ -18,19 +18,23 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
         int bonus = A.minerals() >= 350 ? 1 : 0;
 
         // Restored 2026-10-13 to the old ProtossSupplyCommander bands (owner
-        // ask: Pylons much earlier, like ASupplyManager used to). The lazier
-        // interim table (0/3/4/6/8/11/14) capped games that the old 2/4/5/8/10
-        // /14/19 rode through - measured against its deleted source. Axis and
-        // in-flight caps below are unchanged; only the trigger levels moved.
+        // ask: Pylons much earlier, like ASupplyManager used to). Widened
+        // 2026-10-14 by one warp of headroom (owner ask: anticipate 8-10
+        // ahead from supply 30): measured on Wine that a Pylon ordered <240f
+        // before the cap still blocks 11-37s WITH bank, because warp alone is
+        // ~600f. The trigger is the order moment, but the need is the
+        // completion moment - so mid/late bands carry ~2-4 extra free supply
+        // (≈ one warp of worker output). Opening bands unchanged (BO/PylonAt8
+        // own the start); in-flight caps below are unchanged.
         int supplyTotal = A.supplyTotal();
         if (supplyTotal <= 11) return 2 + bonus;
         if (supplyTotal <= 20) return 4 + bonus;
-        if (supplyTotal <= 36) return 5 + bonus;
-        if (supplyTotal <= 46) return 8 + bonus;
-        if (supplyTotal <= 70) return 10 + bonus;
-        if (supplyTotal <= 120) return 14 + bonus;
-        if (supplyTotal <= 170) return 14 + bonus;
-        if (supplyTotal <= 200) return 19 + bonus;
+        if (supplyTotal <= 36) return 8 + bonus;
+        if (supplyTotal <= 46) return 10 + bonus;
+        if (supplyTotal <= 70) return 12 + bonus;
+        if (supplyTotal <= 120) return 16 + bonus;
+        if (supplyTotal <= 170) return 16 + bonus;
+        if (supplyTotal <= 200) return 22 + bonus;
         return -1;
     }
 

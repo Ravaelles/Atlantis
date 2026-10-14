@@ -30,7 +30,7 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
 
     @Test
     public void holdsPylonWhenPlentyFree() {
-        initSupply(30, 40);
+        initSupply(28, 40);
 
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
@@ -40,13 +40,13 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
 
             assertFalse(
                 new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
-                "10 free at 30/40 is plenty - ordering now would be spam");
+                "12 free at 28/40 is plenty - ordering now would be spam");
         });
     }
 
     @Test
-    public void ordersPylonWhenFreeSupplyFallsToEight() {
-        initSupply(38, 40);
+    public void ordersPylonNineAheadInMidGame() {
+        initSupply(31, 40);
 
         world(20, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
@@ -57,8 +57,8 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
 
             assertTrue(
                 new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
-                "2 free at 38/40 in the 46-band (trigger 8): the Pylon must go"
-                    + " out BEFORE the cap, not at it");
+                "9 free at 31/40 in the 46-band (trigger 10): one warp of"
+                    + " headroom - waiting for the cap wastes a warp");
         });
     }
 }
