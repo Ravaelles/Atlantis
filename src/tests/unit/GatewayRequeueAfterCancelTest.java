@@ -52,17 +52,14 @@ public class GatewayRequeueAfterCancelTest {
         String source = new String(Files.readAllBytes(Paths.get(TRAVEL)), StandardCharsets.UTF_8);
 
         assertTrue(source.contains("double distanceToConstruction = distanceForBuildOrderIssue(unit, construction, type);"),
-            "the travel threshold must compare a PLAIN distance to the TILE. Two measured mistakes"
-                + " kept 'shouldMoveToConstruct' true while the worker stood on its site:"
-                + " (1) positionToBuildCenter(), offset by the building's tile dimensions (~1.8"
-                + " tiles for a 4x3 Gateway), and (2) groundDist, which goes through JBWEB -"
-                + " documented unusable on OpenBW in _AI/POSITION-FINDER.md - and measured 1.8"
-                + " against distTo's 1.3 on the same worker and tile. Either one exceeds the"
-                + " 1.4-tile threshold forever, so moveToConstruct claimed every frame and"
-                + " IssueBuildOrder - the only path to unit.build - was never reached."
-                + " The helper keeps that rule for standard buildings; its ONE exception is gas,"
-                + " which measures to the footprint center (NEXT #70 - a 4x2 refinery's origin"
-                + " is ~2.2 tiles from its center, so tile distance never crosses 3.5)."
+            "the travel threshold must compare the distance the worker walks -"
+                + " since the owner call the metric is the footprint center for"
+                + " every type (it used to be the tile, with gas as the only"
+                + " center exception), and the threshold below is footprint-sized"
+                + " so a 4-wide walk target always counts on arrival. The two"
+                + " historical mistakes this guards against: groundDist through"
+                + " JBWEB (unusable on OpenBW), and a fixed 1.4 line against a"
+                + " center ~2.5 tiles from its origin."
                 + " Behavioural pins: GasBuildIssueDistanceTest.");
     }
 

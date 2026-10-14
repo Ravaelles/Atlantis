@@ -23,10 +23,10 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * refinery's ORIGIN tile, and a 4x2 refinery's center sits ~2.2 tiles from its
  * origin. An adjacent worker always reads ~3.6 and never issues.</p>
  *
- * <p>The fix measures gas against the footprint center (what the worker walks
- * to) instead of the origin tile. Other types keep the tile metric: for a 2x2
- * Pylon the center sits exactly on the 1.4 boundary, so re-metricing it would
- * churn a working path.</p>
+ * <p>The fix measures every type against the footprint center (what the worker
+ * walks to) with a footprint-sized threshold, instead of the origin tile.
+ * The gas case below is the original; the second case pins the general rule
+ * for a 4x3 (owner call after the #56 hover: metric and target must agree).</p>
  */
 public class GasBuildIssueDistanceTest {
 
@@ -52,16 +52,21 @@ public class GasBuildIssueDistanceTest {
     }
 
     @Test
-    public void nonGasBuildingsKeepTheTileMetric() {
+    public void wideBuildingsMeasureToTheCenterToo() {
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 120, 6);
         Construction gateway = new Construction(AUnitType.Protoss_Gateway);
         gateway.setPositionToBuild(SITE);
 
+        double used = TravelToConstruct.distanceForBuildOrderIssue(
+            probe, gateway, AUnitType.Protoss_Gateway);
+
         assertEquals(
-            probe.distTo(SITE),
-            TravelToConstruct.distanceForBuildOrderIssue(probe, gateway, AUnitType.Protoss_Gateway),
-            0.001,
-            "non-gas types still measure to the tile - the Pylon/Gateway path is untouched"
-        );
+            probe.distTo(gateway.positionToBuildCenter()), used, 0.001,
+            "every type measures to the footprint center now - the worker"
+                + " walks there, so the decision must read the same geometry");
+        assertTrue(
+            used < probe.distTo(SITE),
+            "for a 4x3 the center is much nearer than the origin from here -"
+                + " the old tile metric parked wide footprints past the line");
     }
 }

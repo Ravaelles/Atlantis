@@ -41,34 +41,17 @@ public class TravelToConstruct extends HasUnit {
 
         double minDistanceToIssueBuildOrder = minDistanceToIssueBuildOrder(type);
 
-        // THE distance is a PLAIN distance to the TILE the worker must stand on. Two mistakes
-        // were measured here (NEXT.md #59), and both kept `shouldMoveToConstruct` true while the
-        // worker was already standing on its site, so `moveToConstruct` ran every frame,
-        // `IssueBuildOrder` - the only path that calls `unit.build` - was never reached, and the
-        // construction was cancelled at 35-43s as "took too long / buildable:true":
-        //
-        //  1. the CENTRE of the building instead of its tile. `positionToBuildCenter()` is
-        //     offset by the building's tile dimensions, so for a 4x3 Gateway the centre is
-        //     ~1.8 tiles from the tile it belongs to - and 1.8 > the 1.4 threshold, forever.
-        //  2. `groundDist` instead of `distTo`. `groundDistanceTo` goes through JBWEB
-        //     (`PositionUtil`), which `_AI/POSITION-FINDER.md` point 3 already records as
-        //     unusable on OpenBW. Measured side by side on the same worker and tile:
-        //     `distTo=1.3` but `groundDist=1.8` - the JBWEB-mediated number is inflated, and it
-        //     was the one being compared against a 1.4-tile threshold.
-        //
-        // `distTo` is a plain geometric distance and is the metric the threshold was written
-        // for. The worker at `distTo=1.3` is within reach; at 1.8 it was told to keep walking to
-        // the tile it was already on.
-        //
-        // Gas buildings measure to the footprint CENTER, not the tile origin (NEXT #70):
-        // a refinery is 4x2, so its center sits ~2.2 tiles from its origin tile and a
-        // worker adjacent to the geyser reads ~3.6 from the origin - past the 3.5 gas
-        // threshold forever ("took too long (34s)", measured 20261013_100226: worker
-        // plateaued at 3.7 with every canBuild gate true, zero attempts). The engine
-        // answers reachability itself (`canBuild` was true there); our heuristic must
-        // not veto what the engine allows. Other types keep the tile metric - for a
-        // 2x2 Pylon the center sits exactly ON the 1.4 boundary and re-metricing it
-        // would churn a working path.
+        // THE distance is measured to the footprint CENTER - the point the
+        // worker below walks to. Decision and feet must read the same
+        // geometry: a target the metric never reaches walks forever (Terran
+        // Barracks stall, NEXT #56: walking to the 4x3 center while measuring
+        // to its origin tile kept ~2.5 > 1.4 forever, so the SCV re-moved
+        // every 13th frame at distToSite=1.4 with zero attempts). The older
+        // tile-origin metric had the twin defect in reverse (NEXT #59: the
+        // center can never be within a 1.4-tile threshold) - both are fixed
+        // together by measuring to the walk target with a footprint-sized
+        // threshold below. The engine walks the worker the last ~70px itself
+        // and seats the builder, so issuing from the threshold edge is safe.
         double distanceToConstruction = distanceForBuildOrderIssue(unit, construction, type);
 
         MoveUnitsFromConstructionPlace.move(unit, construction, unit.groundDist(buildPositionCenter));
@@ -162,14 +145,14 @@ public class TravelToConstruct extends HasUnit {
     }
 
     /**
-     * The distance the issue-threshold is compared against. Plain tile distance
-     * for most buildings; footprint-center distance for gas (NEXT #70 - a 4x2
-     * refinery's center is ~2.2 tiles from its origin, so tile distance reads
-     * ~3.6 for an adjacent worker and never crosses the 3.5 gas threshold).
+     * The distance the issue-threshold is compared against: the footprint
+     * center for every type (NEXT #70 established it for gas; the owner call
+     * extends it after the #56 hover). The worker walks to the center, so a
+     * tile-origin metric parks 4-wide footprints past any fixed line.
      * Package-visible as a seam so the metric choice is assertable.
      */
     public static double distanceForBuildOrderIssue(AUnit unit, Construction construction, AUnitType type) {
-        if (type.isGasBuilding() && construction.positionToBuildCenter() != null) {
+        if (construction.positionToBuildCenter() != null) {
             return unit.distTo(construction.positionToBuildCenter());
         }
         return unit.distTo(construction.buildPosition());
@@ -180,6 +163,16 @@ public class TravelToConstruct extends HasUnit {
 
         if (buildingType.isBunker()) minDistanceToIssueBuildOrder = 8;
         else if (buildingType.isGasBuilding()) minDistanceToIssueBuildOrder = 3.5;
+        else {
+            // The threshold must cover the walk target: a 4x3 center sits
+            // ~2.5 tiles from its own origin, so a flat 1.4 would re-create
+            // the #56 hover with the metric and target now agreeing. Small
+            // footprints keep 1.4 (Pylon 2x2: ~1.41 - the working path).
+            double halfWidth = buildingType.getTilesWidth() / 2.0;
+            double halfHeight = buildingType.getTilesHeights() / 2.0;
+            minDistanceToIssueBuildOrder = Math.max(
+                1.4, Math.sqrt(halfWidth * halfWidth + halfHeight * halfHeight));
+        }
 
         return minDistanceToIssueBuildOrder;
     }
@@ -219,15 +212,14 @@ public class TravelToConstruct extends HasUnit {
                 buildCenter = construction.positionToBuildCenter();
             }
 
-            // Move to the TILE ORIGIN, not the footprint center: the issue
-            // decision above measures distTo(buildPosition), and a target the
-            // metric never reaches walks forever (Terran Barracks stall, #56:
-            // a 4x3 center sits ~2 tiles from its origin, past the 1.4 line,
-            // so the SCV re-moved every 13th frame at distToSite=1.4 with zero
-            // attempts). Arrival at the origin IS arrival by the decision's
-            // own metric; the engine seats the builder itself from there.
+            // Walk to the footprint CENTER (owner call: the builder visibly
+            // belongs at the middle of the site, not its top-left corner).
+            // Consistent with the decision above by construction: both read
+            // distTo(center), and the threshold is footprint-sized, so arrival
+            // always counts - the hover needed a metric the target could never
+            // reach, and that combination is gone.
             if (unit.move(
-                construction.buildPosition(),
+                buildCenter,
                 Actions.MOVE_BUILD,
                 "Build " + buildingType.name() + A.digit(dist),
                 true
