@@ -697,9 +697,13 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   build-order rows (`Zealot into Goon.txt:28,30`) - legacy built the
   structures without linking a Construction, and `IsOrderCompleted:23`
   answers false forever on `construction()==null`. Same non-convergence
-  shape as #71 pre-fix. Named next fix (not done blind): complete a
-  building order by standing completed building when unlinked (multi
-  same-type rows need the existingCounter care). Aside: Core's waiter
+  shape as #71 pre-fix. **Fixed 2026-10-14
+  (`UnlinkedBuildingOrderCompletionTest` 2/2, both red pre-fix):** an
+  unlinked order completes when more completed buildings of its type stand
+  than same-type rows already finished (fungible rows keep count - two
+  Gateway rows + one standing Gateway finish exactly one). Suite 517/517.
+  Game proof pending (Gateway-2 must leave WAITING in the next game).
+  Aside: Core's waiter
   clears in the last 5 lines (Assimilator-only) - unexplained, recorded.
 - **Gas: assignment confirmed, accumulation still absent (same game):**
   `GasWorker assigned` x3 at ~271 s, yet gas=0 in all 177 bank samples with

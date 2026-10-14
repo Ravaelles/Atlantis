@@ -20,7 +20,7 @@ public class IsOrderCompleted {
         // Units keep the old path (their training completes through
         // producers, untouched here).
         if (order.unitType() != null && order.unitType().isABuilding()) {
-            if (order.construction() == null) return false;
+            if (order.construction() == null) return completedWithoutConstruction(order);
             if (order.construction().buildingUnit() == null) return false;
 
             return order.construction().buildingUnit().isCompleted();
@@ -55,6 +55,30 @@ public class IsOrderCompleted {
 
 //        ErrorLog.printMaxOncePerMinute("@@@@@@@@@@@ Unknown order type: " + order);
         return false;
+    }
+
+    /**
+     * A building order with no linked Construction (game 172954: build-order
+     * rows built by the legacy path, which never links one) is done when its
+     * building stands completed. Same-type rows are fungible but counted:
+     * more standing buildings than already-finished rows finishes this one,
+     * so two Gateway rows with one standing Gateway finish exactly one.
+     */
+    private static boolean completedWithoutConstruction(ProductionOrder order) {
+        return completedOfType(order.unitType()) > finishedOrdersOfType(order.unitType());
+    }
+
+    private static int completedOfType(AUnitType type) {
+        return Select.ourOfType(type).onlyCompleted().count();
+    }
+
+    private static int finishedOrdersOfType(AUnitType type) {
+        if (Queue.get() == null) return 0;
+        int total = 0;
+        for (ProductionOrder finished : Queue.get().finishedOrders().list()) {
+            if (type.equals(finished.unitType())) total++;
+        }
+        return total;
     }
 
     private static boolean checkIfWeHaveLessUnitsThanExpected(ProductionOrder order, Counter<AUnitType> expectedCounter) {
