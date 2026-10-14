@@ -66,7 +66,7 @@ it is not yet in force.
    `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`).
 3. **Close the parity gap that LIVE still has** before any deletion: tech,
    race-specific army composition and strategic Play contributions are
-   simplified in V2 (`_AI/STATUS.md` "what is still open"). Deleting the legacy
+   simplified in V2 (NEXT #45 step 2). Deleting the legacy
    dynamic commanders before that removes capability, not debt.
 4. **Then the deletion order** from `NEXT.md` #45: dynamic commanders, then
    `Queue/**` and `ProductionOrder`, `Construction/**` last (V2 delegates builder

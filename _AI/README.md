@@ -14,7 +14,7 @@ AI assistant.
 | I want to… | Read |
 |---|---|
 | know **what to work on next** | `NEXT.md` (open backlog; the top item, next priority and current plan are named at the top of the file) |
-| **finish Production V2** | `STATUS.md`, then `redesign/01_PRODUCTION.md` |
+| **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
 | work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #49, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md`, `BUILDING-BLOCKERS.md` (certain vs refuted vs open, per site) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
@@ -37,8 +37,8 @@ AI assistant.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
   withdrawn readings, traps), moved out of `NEXT.md` so the backlog stays readable.
   Read it when a symptom looks familiar and the git log is not enough.
-- **`STATUS.md`** - Production V2 status (the old `__01_PRODUCTION_TODO.md` was
-  folded into it and deleted, 2026-10-08).
+- **`STATUS.md`** - started-but-unfinished work that must survive a context
+  change (slim by design since 2026-10-14; history before that is in git).
 - **`BUGS.md`** - things that are wrong *today*, each with how it was measured.
   Not a TODO list; a fixed defect is **deleted**, so absence is not proof it never
   existed (the git log is the archive).
@@ -46,9 +46,8 @@ AI assistant.
 - **`PLACEMENT-CUTOVER-PLAN.md`** - the cut-over plan behind NEXT #47/#49; it
   changes with the blocker, so re-read it rather than trusting a quotation.
 
-`STATUS.md` keeps its session entries oldest-first: the **bottom** of the file is
-where the latest session's findings are, so read it from the end when you want the
-current state rather than the history (its milestone table at the top is the map).
+`STATUS.md` is slim on purpose: one section per started-but-unfinished
+piece of work. Session narratives live in git history, not in the file.
 
 ## Reference documents (change rarely)
 

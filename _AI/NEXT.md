@@ -11,7 +11,7 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
    `TIMEOUT_SECONDS=120` wall-clock and `INGAME_TIME=20` game minutes, both set
    once at the top of `scripts/run-openbw-e2e.sh` (done, commit `d90a4ea2`).
    Every future run mode gets the same pair.
-2. **Finish Production V2** - `_AI/STATUS.md` and `_AI/redesign/01_PRODUCTION.md`.
+2. **Finish Production V2** - `_AI/NEXT.md` #45 and `_AI/redesign/01_PRODUCTION.md`.
 3. **Placement** - the rewrite landed (`_AI/redesign/03_PLACEMENT.md`); the
    cut-over and the rest of Protoss are what remain.
 4. **OpenBW tests** - `_AI/IDEA-E2E-TESTS.md` §3.5 has the ordered steps.
@@ -366,6 +366,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   named the re-queue) - a construction that never starts now leaves a birth
   trace. Still needs the Nexus-queuing game for the actual hunt.**
 
+  **2026-10-14 Wine game:** order flapping `READY⇄IN_PROGRESS` after 5:48
+  with bank 927+ and no build issue - needs builder/order data, which the
+  ENV-source startup line (now unconditional) unblocks; the birth markers
+  above plus a `BUILDER_LOG=1` game name the next measurement.**
+
 - **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
   Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
   Terran building completing >2.5 tiles from its reservation would stay
@@ -497,7 +502,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   2. delete the **dynamic commanders** (`production/dynamic/**`,
      `production/requests/DynamicBuildingCommander`, `RemoveExcessiveOrders`)
      only after v2 covers their behaviour (tech, race-specific army - still
-     open, see `_AI/STATUS.md` "what is still open");
+     open);
   3. delete `Queue/**`, `ProductionOrder`, `PreventDuplicateOrders`,
      `ReservedResources`/`OrderReservations` last, when (2) is done and
      `Construction` no longer needs a `ProductionOrder` back-reference;
@@ -610,6 +615,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   so no TRUE-split data yet - the corner-stall game still decides between
   doctrine and leash-relax. NoSupply down to 21 polls (17/17, 25/25, 33/33,
   41/41, reserved>bank = earmarked money, not starvation).
+
+- **#84 (2026-10-14) - Wine late-game Pylon ordered but unbuilt, unattributed.**
+  Owner's Wine game: Pylon conversion ordered at 5:01, still unbuilt 38 s
+  later while the bank hoarded. Needs a `BUILDER_LOG=1` game to attribute
+  (builder? placement? no attempt?) - owner runs without the flag, so this
+  waits for the next flagged Wine log. Do not patch blind and do not assume
+  #81: that item is an OpenBW corner-search refusal, this one has no
+  placement reading at all yet.
 
 
 ### OpenBW headless run (2026-10-08)
