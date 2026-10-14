@@ -1,5 +1,10 @@
 # Stage 4: get the build command past the library's broken reachability check
 
+> **Resolved 2026-10-11 by option B done properly** (see "RESOLVED" section
+> below): JBWAPI `Game.hasPath` answers from terrain when regions are absent,
+> shipped as `lib/jbwapi-2.2.0-atlantis.jar`, and Pylons build. The "plan, not
+> started" status underneath is stale - the step it describes is finished.
+
 Status 2026-10-10: **plan, not started.** Stage 3 of `_AI/PLAN-REGION-DETECTION.md` is
 done; this is the step it deliberately stops short of, and the only one that can make a
 Pylon appear.

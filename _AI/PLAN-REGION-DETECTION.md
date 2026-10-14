@@ -1,5 +1,10 @@
 # Plan: our own reachability, so OpenBW placement stops depending on engine regions
 
+> **Done 2026-10-11:** stages 1-3 shipped (`ReachableTiles` port with the
+> terrain fallback, all callers routed) and stage 4 resolved in
+> `_AI/PLAN-STAGE4-COMMAND-PATH.md` (library patch). The "not started" status
+> underneath is stale. Kept as the design record.
+
 Status 2026-10-10: **plan, not started.** Written because the last blocker of the
 first Pylon is now fully identified and it is not ours to fix in application code.
 

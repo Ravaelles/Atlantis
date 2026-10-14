@@ -1,5 +1,12 @@
 # Placement cut-over plan (option B for NEXT #47)
 
+> **Superseded 2026-10-14:** the gate this plan waited on (NEXT #48) closed,
+> and the Pylon got built through the *legacy* chain after the JBWAPI
+> `hasPath` source patch - so option A was withdrawn as a bug fix
+> (`_AI/PLAN-STAGE4-COMMAND-PATH.md`, "RESOLVED 2026-10-11"). What remains of
+> the cut-over idea (V2 as the default, deleting the legacy tree) lives in
+> NEXT #45's deletion ordering, not here. Kept as the investigation record.
+
 Status 2026-10-09: **plan, not started.** `NEXT.md` #47 mentions this file; the
 detail lives here so #47 stays a list.
 
