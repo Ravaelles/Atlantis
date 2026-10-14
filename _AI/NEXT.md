@@ -544,7 +544,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   while cannon lives, 4+ probes survive, and the zealot fights. Tension:
   those floors were built from the owner's Wine death logs (39 hp probes
   dying) - restoring the drill risks those deaths. Pin (Oct-4 HOLD volume)
-  vs live-game lesson needs an owner call.
+  vs live-game lesson: owner's call 2026-10-14 is a full research into
+  what works better and what makes sense in theory (NEXT #87), not
+  pin-vs-revert. The bisect + census above stand as its evidence base.
+
+- **#87 (2026-10-14) - worker fight-vs-flee: theory + thresholds research.**
+  Owner's direction: base the target behavior on what works better and what
+  makes sense in theory. Inputs: engine damage math (Probe/Zealot/Ling DPS
+  from the jar, not memory), the Oct-4 HOLD pin, the Wine death logs behind
+  the flee floors, today's census (305 Run / 31 HelpCannon, base holds
+  either way). Output: grounded thresholds (or a rule, not a number) plus
+  scenario + game verification. Do not flip pins or gates blind first.
 
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count

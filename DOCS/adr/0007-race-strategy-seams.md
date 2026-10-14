@@ -1,5 +1,5 @@
 # ADR 0007 — Race strategy seams belong to their bounded contexts
-- **Status:** Proposed (design for NEXT #7; owner acceptance is required before implementation).
+- **Status:** Accepted 2026-10-14 by the owner; NEXT #8 pilot may proceed.
 - **Date:** 2026-10-09
 - **Context:** Atlantis has 241 files branching on race. The target is a modular monolith with six bounded contexts and dependencies inward (`DOCS/ARCHITECTURE-CONTEXT-MAP.md`, ADR 0001). Race is an orthogonal strategy dimension, not a seventh context. The code already has one successful local precedent: `RacePlacementStrategy` in `atlantis.placement.core`, with Protoss/Terran/Zerg implementations. Production V2 still branches on `We.protoss/terran/zerg` in goal generation and snapshot assembly. Its engine is currently a static singleton in `ProductionOrdersCommander`; the legacy `DynamicBuildingsCommander` selects race-specific commanders at the production composition boundary.
 - **Problem:** moving race `if` statements into one global `RaceStrategy` would make a new God object and couple unrelated policies (placement, production, scouting, combat). Copying the existing 241 branches into per-race classes would preserve the branching with extra indirection. Race-specific behavior should be owned by the context whose policy differs.

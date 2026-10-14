@@ -11,6 +11,8 @@ commit (§6).
 
 ## D1 - Delete the legacy position path (`APositionFinder` and friends)
 
+Approved 2026-10-14: full cutover (V2 default + delete legacy), executing stepwise; entry closes with the deletion.
+
 22 files use it and default runs play on it. Deleting without the catalogue
 cutover breaks the bot. Options: (a) cut over to `PLACEMENT=catalogue` first,
 then delete per `_AI/PLACEMENT-CUTOVER-PLAN.md` (recommended, but needs the
@@ -23,10 +25,6 @@ Strategy tuning, not defects (`--long` games confirm: 7 Dragoons at 429 s
 with no expansion - gates, not bugs). Same for cannon producers (#39) and
 the three missing build orders (#46: rename entries, add files, or delete).
 
-## D6 - Production race-strategy seam (NEXT #8)
-
-ADR 0007 is Proposed. Implementing its instance-injection seam needs owner
-acceptance of the ADR first.
 
 ## D7 - `BaseUnderAttack` cache vs seam (NEXT #36) and construction-recovery
 branch (NEXT #40)
