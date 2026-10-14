@@ -105,6 +105,17 @@ itself, #5, is design work and out of that order's scope).
   (candidate: production), measuring that the branching-site count drops
   without behaviour change.
 
+  **Pilot implemented 2026-10-14 (ADR 0007 accepted; game proof pending):**
+  `ProductionRacePolicy` port + 3 immutable impls; goal/snapshot selectors
+  migrated (8 sites → single `ambient()` selector + kept fortification gate;
+  21 We.* lines → 5); engine owns policy, commander resolves once (instance
+  field); GoalSourcesTest unchanged-green (equivalence) + per-race identity
+  pins (previously unreachable). Selector reads `Main.ourRace()` (We-truth),
+  deviating from the ADR's MY_RACE line - documented on the port. DRY_RUN
+  log exists (4772 lines, zero V2 errors); first divergence datum: V2 wants
+  Forge ×1712 frames, legacy never queues it. Full parity + V2 LIVE runs
+  pending a quiet machine.
+
 ## Stage H — god-class split
 
 - **#9** Split `A` (163 public static methods) into cohesive collaborators.
@@ -365,8 +376,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `PriorityWaiters` totals unfinished HIGH+ waiter prices; Nexus queues HIGH;
   worker pump, Dragoon/Zealot producers (first line, exact prices) and the
   `IsReadyToProduceOrder` term yield unless the bank covers both. Rich bank
-  passes. Supply (TOP) never blocked. Rush-defense twins hold parity (4pool
-  green; 9pool red pre-existing, unrelated - see new regression item).
+  passes. Rush-defense twins hold parity (4pool green; 9pool pin updated
+  to the measured split in #86/#87).
+
+  **Doctrine refinement (owner, same item):** STANDARD < HIGH (tech incl.
+  Core/Assimilator, default at creation) < HIGHEST (detection: Forge/Cannon)
+  < MAX (reserved for retry escalation). Supply providers never block
+  (152437 froze a Core 310 s behind TOP Pylons); detection-necessity alone
+  outranks tech. Convergence holds - paused spenders let the bank grow to
+  the waiter. Stargate-class extensions follow the same one-line pattern
+  when measured. Game proof pending (Core/Assimilator flow in a long game).
 
 - **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
   Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
