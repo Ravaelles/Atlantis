@@ -601,6 +601,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   the same run shows poverty-held 40-88 min, not placement - consistent with
   PylonAt8.)
 
+  **Attribution update 2026-10-14:** part of the 1953 was certainly mislabeled
+  doctrine kills - `PylonTooFarFromBaseEarly` never set `_STATUS`, so its
+  victims merged whatever stale label the previous tile died on. Fixed
+  (zero behavior change): the rule now reports `Pylon too far from main, too
+  early`, pinned in `RequestBuildingNearTest`. Long game `20261014_101806`
+  (368 s): placement healthy 6/6 Pylons, ZERO FIND_FAILED/Can't-find-place,
+  so no TRUE-split data yet - the corner-stall game still decides between
+  doctrine and leash-relax. NoSupply down to 21 polls (17/17, 25/25, 33/33,
+  41/41, reserved>bank = earmarked money, not starvation).
+
 
 ### OpenBW headless run (2026-10-08)
 

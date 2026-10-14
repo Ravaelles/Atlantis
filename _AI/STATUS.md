@@ -1354,6 +1354,16 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   behavior delta. #77 keeps the item with this note.
 - Suite 476/0; tree holds only the foreign BuildOrderSettings line (untouched).
 
+## Session 2026-10-14 (autonomous: #81 visibility + healthy long game)
+
+- #81 attribution fixed (zero behavior): `PylonTooFarFromBaseEarly` names its
+  kills now - part of the 1953 "physical" was mislabeled doctrine victims.
+  Pinned in `RequestBuildingNearTest` (6/6); suite 479/0.
+- Long game 368 s: placement 6/6, no failed searches, so no TRUE-split data -
+  #81 stays open for the corner-stall game. NoSupply 21 polls total (down
+  from 38+; reserved>bank = earmarked, not starved). DEMOTE 1 (CyberneticsC,
+  healed). E2E FAIL on long-tier content (2<3 gateways etc.), not on error.
+
 ## Session 2026-10-14 (Wine supply blocks: timing fix verified)
 - Fix: fallback bands +one warp headroom (8/10/12/16/16/22, opening bands
   unchanged); Stardust comparison done (their `shiftForSupply` pulls Pylon
