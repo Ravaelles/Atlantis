@@ -31,7 +31,7 @@ existing machinery.
 zero callers - Dragoons fight without range all game. Wire (free combat
 value, needs a long-game proof research completes) or delete (dead code).
 
-## D5 - Worker-gate, mineral-distance and expansion-timing thresholds (NEXT #60, #51, #58-timing)
+## D5 - Worker-gate, mineral-distance and expansion-timing thresholds (NEXT #60, #58-timing)
 
 Strategy tuning, not defects (`--long` games confirm: 7 Dragoons at 429 s
 with no expansion - gates, not bugs). Same for cannon producers (#39) and

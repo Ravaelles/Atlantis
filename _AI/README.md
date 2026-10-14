@@ -15,7 +15,7 @@ AI assistant.
 |---|---|
 | know **what to work on next** | `NEXT.md` (open backlog; the top item, next priority and current plan are named at the top of the file) |
 | **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #49, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md`, `BUILDING-BLOCKERS.md` (certain vs refuted vs open, per site) |
+| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md`, `BUILDING-BLOCKERS.md` (certain vs refuted vs open, per site) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |

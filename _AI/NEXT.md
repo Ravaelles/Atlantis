@@ -36,8 +36,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-The suite is green (440 passing, 1 skipped, plus 10/11 architecture with the one
-known structural failure, as of 2026-10-13 autonomous session;
+The suite is green (494 passing, 1 skipped, plus 10/11 architecture with the one
+known structural failure, as of 2026-10-14 session;
 re-run `bash scripts/run-tests.sh` for the current numbers - do not trust a count
 written here). What is open is *quality* of the data behind it, not a red test.
 
@@ -45,8 +45,8 @@ written here). What is open is *quality* of the data behind it, not a red test.
   `tests.e2e` (`FourPoolDefenseTest` 6 lings, `NinePoolDefenseTest` 8 lings) with
 their baselines pinned; what is missing is a **real opponent**: OpenBW hosts one
 client, so a second bot cannot attach, and a scripted rusher needs a UMS map
-that does not exist here. The scbw tier has real verdicts in `_AI/e2e/` and is
-owner-run. Resume when a scripted UMS map is supplied or the opponent runner is
+that does not exist here. No verdict table is kept in `_AI/e2e/` today
+(the last one was deleted by the owner in `e657b83f`); the tier is owner-run. Resume when a scripted UMS map is supplied or the opponent runner is
 agreed. Detail: `_AI/IDEA-E2E-TESTS.md` §3.4-§3.5.
 
 ## Stage E — read model (remaining)
@@ -240,18 +240,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `out/openbw/bot.log`, `out/openbw/server.log`.
 
 ## Production v2 and the OpenBW E2E engine (2026-10-08)
-
-- **#51 - Protoss buildings are allowed 2.8 tiles from minerals, which reads as "on
-  top of the mineral line".** Owner's report, same IDE game: the position was
-  otherwise fine but sat about two tiles from the minerals. The number is
-  `TooCloseToMineralsOrGeyser.minDistToMineral`: for Protoss it returns **2.8** by
-  default, and only rises with supply (5.2 at `supplyTotal >= 40` under some
-  conditions, 6 at `>= 60`). A building 2.8 tiles from a mineral patch crowds the
-  mining workers' path.
-  Decision needed (owner's call, it is a gameplay constant): raise the Protoss
-  default, e.g. to ~3.5-4, or key it off the building's own footprint plus a worker
-  gap rather than a flat radius. `minDistToGeyser` is the parallel value (5.1 for
-  Pylon/Gateway/Cannon, 4.1 otherwise) and should be re-checked in the same pass.
 
 - **#57 (2026-10-11) - the duplicate-construction leak is the single root cause behind
   both symptoms the owner reported (Gateway churn AND minerals above 600).**
@@ -481,11 +469,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   - E2E: `--cvis` flag in `run-openbw-e2e.sh` (ENV `GENERATE_CHERRYVIS_REPLAY`),
     artifacts collected into the run dir and next to the `.rep` as `.rep.cvis/`,
     missing trace fails a clean run; `--self-test-cvis` covers the checks.
-  Next: decide per-unit logs shape (files like Stardust vs inline), then pin
-  `units_updates`+`custom_names` agreement with the same no-frontend string test.
+  Update: per-unit logs stay inline (legacy single-file shape) and the
+  `units_updates`+`custom_names` agreement is pinned (`CherryVisUpdatesLegendAgreementTest`);
+  what remains is the owner opening a real trace in the viewer.
 
 - **#45** Production v2: **`Construction/**` cannot be deleted yet, only `Queue/**`
-  is a candidate.** Measured dependency count: **149 production files** reference
+  is a candidate.** Measured dependency count: **124 production files** reference
+  (recounted 2026-10-14, same pattern; was 149 on 2026-10-08)
   `Queue.get()`, `CurrentQueue`, `CountInQueue`, `AddToQueue` or
   `QueueInitializer` ("who uses this" grep, 2026-10-08). They are the whole
   `production/dynamic/**` tree (`DynamicProductionCommander`,
@@ -513,7 +503,7 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   a bot that cannot research or build race-specific units.
 
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
-  `IsReadyToProduceOrder:172` blocks every order when the bank is ABOVE 550
+  `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
   `!`, but it fires only where no bounded run reaches, so no blind one-char
   fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
@@ -623,40 +613,3 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   waits for the next flagged Wine log. Do not patch blind and do not assume
   #81: that item is an OpenBW corner-search refusal, this one has no
   placement reading at all yet.
-
-
-### OpenBW headless run (2026-10-08)
-
-The client attaches and the bot plays - see `_AI/PLAN-OPENBW.md` §9 for the
-command, the log and the one setting that made it work
-(`BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON`).
-
-Three silent startup defects had to be fixed to get the bot playing; each looked
-like "the bot mines and does nothing", with no error:
-
-1. **Startup order**: `ProtossStrategies.initialize()` renames strategies to their
-   build-order file names, but `StrategyChooser` picked one BEFORE that, so the
-   chosen strategy looked for `PROTOSS_Zealot_into_Goon.txt`. Fixed by
-   initialising the strategies first. Test: `StrategyBuildOrderTest`.
-2. **`BWAPI_DATA_PATH` was never set for the OpenBW bot directory** (the Wine bot
-   directory carries one in its `bwapi-data/AI/ENV`; ours did not). The E2E script
-   now writes it explicitly.
-3. **`AFile.loadFile` ate the last character of any value ending in the delimiter**
-   (`.../bwapi-data/` arrived as `.../bwapi-data`). Test: `AFileLoadFileTest`.
-   `AtlantisRaceConfig.validate()` also called `System.exit(-1)` at game start when
-   the race was unknown; it now reports and skips.
-
-**Placement is the remaining blocker** for a real game: see #46 and
-`_AI/POSITION-FINDER.md`.
-
-**Superseded, and to be solved by a rewrite (2026-10-08):** the owner's decision
-is that this subsystem is deleted and written from scratch, so the findings from
-one more session of debugging it live on OpenBW are recorded in
-**`_AI/POSITION-FINDER.md`** instead of as patches. That file has the measured
-facts (the engine calls the refused tiles valid and empty; the refusal came from
-our own occupancy predicate, which disagreed with the engine; JBWEB is unusable
-on OpenBW in two independent ways; the standard finder was never even reached)
-and the traps the rewrite must avoid. Read it before touching any of this.
-
-
-

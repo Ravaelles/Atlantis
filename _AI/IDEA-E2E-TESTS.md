@@ -72,10 +72,11 @@ What that requires, all of it verified:
 ### 2.2 The scbw tier has run, and produced real verdicts
 
 `scripts/run-e2e.sh --parse-only` reads `~/.scbw/games/GAME_*/result.json`
-(read-only, CONVENTIONS §8) into `_AI/e2e/<date>.md`. One real table exists
-(`_AI/e2e/scbw-2026-10-04_165556.md`), and it is a signal with teeth: nine games,
-Atlantis as Protoss vs Steamhammer and Marine Hell, **two of them crashed**
-(`is_crashed` plus a traceback in the bot log), the rest decided or timed out.
+(read-only, CONVENTIONS §8) into `_AI/e2e/<date>.md`. One real table existed
+(`_AI/e2e/scbw-2026-10-04_165556.md`, deleted by the owner in `e657b83f`;
+nine games, Atlantis as Protoss vs Steamhammer and Marine Hell, **two of them
+crashed** (`is_crashed` plus a traceback in the bot log), the rest decided or
+timed out) - no table is kept in the repo today.
 
 This tier is slow and needs the licensed game in a container, so it is
 owner-run. It is kept because it is the only place real StarCraft physics and a
