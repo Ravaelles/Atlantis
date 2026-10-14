@@ -932,4 +932,10 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   (READY; IN_PROGRESS money is sunk); pumps keep the status-blind
   variant (army saving is strategy). `FirstPylonConvertsAtEightTest`
   pins the whole pipeline (READY + conversion + builder, red pre-fix).
-  Suite 537/537. Wine re-run pending (owner).
+  Suite 537/537.
+- **Verified live 2026-10-14 (game 211152_long, bot-cap):** PREPARING
+  Pylon at 0:28, builder on site at frame 1020 (42 s), standing Pylon
+  later powering checks; supply-9 at 53 s; Dragoons 3->5 compounding,
+  Nexus decisions firing (ManyWorkers + SafeAfford). First Pylon ~1.5
+  min vs Wine never-at-130s. Final proof = your Wine re-run with the
+  current jar.
