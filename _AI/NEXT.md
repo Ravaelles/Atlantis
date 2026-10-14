@@ -688,6 +688,19 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   #81: that item is an OpenBW corner-search refusal, this one has no
   placement reading at all yet.
 
+  **Second instance 2026-10-14 (early game, `out/wine/client.log` 692 lines,
+  map `sscai/(3)TauCross.scx`):** first Pylon (build-order row min-supply 8)
+  READY from ~100 s, still unbuilt at 9/9 + ~400 bank when the log ends at
+  130 s. Ruled out from the flag-off log: worker stall (supply walked
+  4->9, all four rows are build-order min-supplies 8/13/20/27, not a
+  minSupply bug), placement refusal (zero `Can't find place`), null builder
+  (zero `Builder is null`), any cancel (zero). Remaining, all silent
+  without the flag: builder walking far (slow, benign), IN_PROGRESS +
+  stuck builder, stale `order.construction()` link skipping the handler,
+  consumed-flag stall, silent TrimQueue eat. Every one of them prints
+  under `BUILDER_LOG=1` (REQUEST_ACCEPTED/REFUSED, BUILDER_STATE,
+  CONSTRUCTION_ADD). Still no blind patch.
+
 - **#89 (2026-10-14) - unit pumps out-spend queued STANDARD buildings.**
   Game 180053: Gateway-2 (ADDED 3:44) never builds with zero
   overdue-cancels - effective bank sits under 150 (samples 266-396 against
