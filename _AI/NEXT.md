@@ -858,6 +858,13 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   (BUILDER_LOG off). End-cause unattributed too (no banner, p1_win, clean
   onEnd). Needs: earlier gas (Assimilator order ~3:00) + a BUILDER_LOG
   window over the Nexus READY stall + a game past ~7:30.
+- **Owner directives verified live (2026-10-14, game 191124_long, 532 s):**
+  Probe=26 (stream flows, supply-9 pace doubled vs Wine: 53 s vs 119 s),
+  ORDER_WAITING 2 lines total all game (was 177-291 - built rows leave,
+  queue drains), Nexus=2 Assimilator=2 Dragoon=2. Pendulum swung: bank
+  1000+, Gateway ADDED x8 / constructions x14 for 6 standing (rich-bank
+  spam, needs discipline), Pylon=3 underbuilt. Combined 3+2 proof still
+  open; Dragoon throughput next (capacity now exists).
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.
