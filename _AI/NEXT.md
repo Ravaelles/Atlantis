@@ -755,6 +755,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Dragoon was throughput + short game (pump trains proven there too);
   longer games compound. Combined 3+2 in one finished game still open
   (this one was killed, no roster).
+- **FULL --long GATE PASSED 2026-10-14 (game 210002_long, 912 s, exit 0):**
+  Nexus=6 Probe=81 Pylon=11 Gateway=4 CyberneticsC=5 Zealot=5 Dragoon=7
+  Forge=1 (first Forge ever). Combined proof exceeded (7 + 6).
+  Discipline next, measured: Nexus ADDED 12 (~6 converting, expansion
+  loop healthy); Core ADDED 20 for 5 standing (2x churn per Core -
+  duplicate-leak territory, #57); Forge 1/1.
   **#57 side datum (same games):** every Gateway add in 4 games comes
   through the single legacy path (`NewConstructionRequest` via
   `ProduceBuilding`, zero `GameOrderDirector` - V2 DRY_RUN builds nothing);
