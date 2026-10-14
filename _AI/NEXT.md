@@ -819,6 +819,18 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   not overdue) could not tell walking from stolen. `isOverdue` now
   excludes builders back on minerals/gas while affordable; walking ones
   still shield (`StolenBuilderOverdueTest`, red pre-fix). Suite 524/524.
+- **Dragoon=0 + Nexus=1 in 344 s (2026-10-14, game 183050_adhoc): tempo,
+  not gates.** Cascade: Core ~228 s (waiter span) -> Assimilator ordered
+  4:04 -> first gas @279 s (peak 232) -> Dragoons earliest ~5:30; min-6
+  Zealot forcing ate the bank to Zealot=5 (4 trains, all NotEnoughZealots)
+  and the game ended at 344 s just as gas arrived. Nexus ordered 5:12 +
+  5:15 (two real orders - Nexus logs TWICE per add, resolved in
+  `AddToQueue:146+162`; second despite the #58 guard, trim-eat suspect),
+  READY with 472-536 bank but never accepted in 29 s; zero placement
+  errors, zero builder-null, zero cancels - conversion unattributed
+  (BUILDER_LOG off). End-cause unattributed too (no banner, p1_win, clean
+  onEnd). Needs: earlier gas (Assimilator order ~3:00) + a BUILDER_LOG
+  window over the Nexus READY stall + a game past ~7:30.
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.
