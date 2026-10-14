@@ -8,12 +8,20 @@ different problem than it was, and each one cost a research cycle.
 and every run self-terminates (CONVENTIONS §17). This file is the reference for
 the traps, not a task list.
 
+**Update 2026-10-14:** attach is long solved, the region-based `hasPath`
+refusal is patched in our shipped jar (see "Practical options" - resolved),
+and placement builds. The sections below are kept as the trap record; where a
+record went stale it says so in place. The one property this engine will never
+give us is replay fidelity - see "Replays desync from the live game" at the end.
+
 ## The five packaging rules (`build-bot-jar.sh` asserts all of them)
 
 A jar that cannot attach is a build failure, and the failure is silent - it
 surfaces as "the bot never joins the game", so the assertions exist.
 
-1. **junixsocket 1.0.x cannot run on Java 9+.** JBWAPI-Rav bundles the old fork
+1. **junixsocket 1.0.x cannot run on Java 9+.** Both stocked jars (`jbwapi-2.2.0.jar`
+    and the patched `jbwapi-2.2.0-atlantis.jar`; the removed local fork `JBWAPI-Rav.jar`
+    before them) bundle the old fork
    (`no.fiken.oss.junixsocket`), whose `AFUNIXSocket` calls
    `java.net.Socket.setCreated()` - removed after Java 8. On Java 17 it throws
    `IllegalStateException: Cannot find method "setCreated"`, JBWAPI swallows it,
@@ -145,19 +153,17 @@ attach":
   one has `getAreas()` and `getPath()` but **no `getChokePoints()`** - chokes are
   read per `Area` (`area.getChokePoints()`). A compile error naming a method that
   `javap` shows on the jar is almost always this shadowing, not a missing library.
-- **The remaining OpenBW blocker is not map knowledge.** A bounded run ends with
-  `Can't find place for \`Pylon\`, At 8 Pylon (READY_TO_PRODUCE)(#1)`,
-  `(reason: Can't physically build here)`, `(Max search distance was: 36) near
-  null`, then `ForceExitLocallyAfterRealSeconds`. So the placement search runs, the
-  map is fine, and the refusal is inside the placement conditions - `near null`
-  says `order.aroundPosition()` was never set. Start there, and note that the
-  message has changed shape over time, so grep for `Can't find place` rather than
-  an exact older wording.
+- **Map check, not map hunt.** The placement saga below is resolved history:
+  the search finds tiles and the command path builds since the 2026-10-11
+  library patch (`hasPath` terrain fallback). What remains of this section is
+  the guard: if a run ever prints `MAP_ANALYSIS areas=0`, the model - not the
+  placement - is the suspect.
 
 ## `canBuildHere` is implemented in the JAVA CLIENT, not the server (measured 2026-10-10)
 
-This is the mechanism behind the Pylon refusal, traced by disassembling the jar we
-actually play with (`lib/JBWAPI-Rav.jar`, `javap -p -c bwapi/Game.class`). The
+This is the mechanism behind the Pylon refusal, traced 2026-10-10 by disassembling the then-vendored `lib/JBWAPI-Rav.jar`
+(`javap -p -c bwapi/Game.class`; the shipped jar is now
+`lib/jbwapi-2.2.0-atlantis.jar`, same client-side mechanism). The
 result corrects two of our own comments.
 
 - **`bwapi.Game.canBuildHere(TilePosition, UnitType, Unit)` is a Java method in
@@ -305,13 +311,14 @@ is assigned, `BuilderManager` handles it for ~1800 frames, and then
   affordability is wrong: `distToBuild=0.0`, `buildable=true`, `canAfford=true`.
 - **`isConstructing` stays `false` and `lastCommand` stays `Move`**, so
   `orderSink().build(...)` is **returning false** - the engine refuses the command at
-  the point of issue. This is the `ErRoR:b` line `_AI/STATUS.md` recorded as
-  "cause unknown"; the trace above is the missing context (it was previously seen
+  the point of issue. This is the `ErRoR:b` line recorded as "cause unknown" during the NEXT #47
+  era (`_AI/CASE-STUDIES.md` #47; `_AI/STATUS.md` itself was deleted 2026-10-14); the trace above is the missing context (it was previously seen
   without `distToBuild=0.0` and `isConstructing=false` side by side).
 - **Second, independent finding on the way there: `canAfford=false` for hundreds of
   frames** (`@969 … canAfford=false distToBuild=6.6`). The worker sits on
   `GATHER_MINERALS` while the Pylon is unaffordable, because continuous Probe
-  production keeps minerals under 100 - the livelock `_AI/STATUS.md` describes. It is
+  production keeps minerals under 100 - the livelock `_AI/CASE-STUDIES.md` describes
+  under #53 (its `STATUS.md` telling is in git history). It is
   real, but it is **not** why the final attempt fails: by `@1321` the bot *can* afford
   the Pylon and still cannot build it.
 
@@ -429,7 +436,16 @@ and our diagnostics never printed.
   one is inside the vendored jar's own `canBuild` chain, i.e. **not ours to fix in Java
   code we control**, except by not passing a builder or by patching the jar.
 
-**Practical options (owner's call, none taken yet):**
+**RESOLVED 2026-10-11: option 2, as a source patch.** `Game.hasPath` answers
+from terrain when the region graph is absent (`regions.length == 0`) - shipped
+as `lib/jbwapi-2.2.0-atlantis.jar`, rebuild documented in `build-bot-jar.sh`;
+Pylons build since (3/3 `engineAccepted=true` in the proving run). Option 1
+(catalogue cut-over) was withdrawn as a bug fix and kept as cleanup (NEXT
+#45); option 3 (C++ harness patch) was withdrawn - the refusal was always
+inside the JVM, never in `libBWAPIClient.a`
+(`_AI/PLAN-STAGE4-COMMAND-PATH.md`). The original option list:
+
+**Superseded option list (owner's call at the time, none taken yet):**
 1. **Do not let the command path see a builder** - the `TestAIModule` shape works on this
    engine precisely because it omits it. In practice that means calling
    `canBuildHere(tile, type)` ourselves and issuing the build through a path that does
@@ -468,7 +484,12 @@ cannot. The lesson for us is the same one `MapTiles.hasPathBetween` already enco
 
 #### What the newer library changes (measured): nothing about this
 
-`jbwapi-2.2.0.jar` was inspected for exactly this question:
+`jbwapi-2.2.0.jar` was inspected for exactly this question, then adopted
+2026-10-10 (stock: `UnitType.class` byte-identical) and patched for `hasPath`
+(`-atlantis` jar). So "swapping the library does not fix placement" below is
+stale as a verdict - the swap alone did not, the swap plus the terrain fallback
+did. The junixsocket note stands (both jars bundle 1.0.x; the 2.10.1 override
+stays). Original inspection:
 
 - `Unit.canBuild(...)` **still calls `Unit.hasPath`** (`javap` of `bwapi/Unit.class`,
   offset 268), i.e. the same region-based refusal as the vendored jar. **Swapping the
@@ -558,7 +579,8 @@ and inside `canBuildHere`, the `true` reaches exactly one extra term
   Forge/Gateway case, and the Terran unexplored allowance). The generic path that
   accepted the Pylon tile **never required `isExplored`**, which is why the finder was
   happy and the command was not.
-- **This is the missing half of the earlier `ErRoR:b` observation** in `_AI/STATUS.md`
+- **This is the missing half of the earlier `ErRoR:b` observation** from the NEXT #47
+  era (`_AI/CASE-STUDIES.md` #47)
   ("`Unit.build(Pylon, tile)` returned false even though … the origin tile is
   buildable including buildings"): `ErRoR:b` only reports `isBuildableIncludeBuildings`,
   which is a *different* predicate. A tile can be `buildInc=true` and `explored=false`,
@@ -794,6 +816,10 @@ The run did not commit anything, so the tree is clean apart from the `_AI/` edit
   stuck `Gateway NOT_STARTED` frames 3534 -> 86, `CANNOT define construction` -> 0, and build
   attempts reaching the engine 0 accepted -> 3/3 `engineAccepted=true` with
   `getOrder=PlaceBuilding`.
+- **RESOLVED (game-verified 2026-10-11):** status advances on `isConstructing`
+  plus `FINISHED`-on-warp with positional-miss adoption (`ProtossWarping`;
+  `OrphanedConstructionTest` 2/2) - the proving run built `Pylon=2 Gateway=1`
+  with `CANNOT define construction` at 0.
 - **Parsing trap, cost me a wrong reading mid-session:** the run summary line is
   `### Protoss: Nexus=1 Probe=13 Pylon=2 Gateway=1 ###`, **not** `Pylons=N Gateways=N`. A grep
   for `Pylons=` / `SUCCESS FOR` returns zero on a run that built two Pylons, which reads as
@@ -809,8 +835,30 @@ The run did not commit anything, so the tree is clean apart from the `_AI/` edit
   refused and `lastCommand` stays `NO_COMMAND` from frame 30. Same shape as the four
   above - a shared-memory field StarCraft fills and OpenBW does not fill the way
   BWAPI expects, at least not at attach time.
-- **Our-side fix, no harness change:** never assign or order an uncompleted unit -
+- **RESOLVED (NEXT #63, game-verified 2026-10-12):** never assign or order an uncompleted unit -
   `GatherResources`/`IdleWorker` decline it, `FreeWorkers` offers `onlyCompleted()`,
   `BuilderManager` replaces it. The residual early-minerals window is waited out
   with `DoNothing`, not churned through (a churning worker re-marks Gather every
   2nd frame and poisons our own gathering flag, locking the re-try path).
+
+## Replays desync from the live game (upstream; only a major OpenBW fix avoids it)
+
+- OpenBW replays re-simulate the game from the recorded action history, so a
+  dropped or misordered action desyncs the replay early while the live game
+  played correctly (upstream OpenBW issue #27, "openbw creates desynced
+  replay", as recorded in NEXT #78: open since 2019 with a second Linux
+  confirmation; our engine is the vendored `3rdparty/openbw` plus the local
+  late-attach patch, with no upstream fix to pull).
+- Measured (NEXT #78): the bot log is correct - a 28/28 exists+completed
+  raw-engine dump reads 1:1 with the roster - against a replay of the same
+  game that desyncs shortly in. Pairing mixup is excluded (owner cleared
+  REPLAYS, single file, timestamps match).
+- Doctrine: the live log, roster, and trace are truth; replays are
+  position-viewing only, never unit-existence truth. The viewer fuzzy-matches
+  live-true traces against desynced replays, so residual "unmatched" on
+  `--save-replay` pairs is expected; direct `unit_ids` pairs bypass matching
+  for per-unit panels (NEXT #76).
+- Only engine surgery on the replay writer changes this (NEXT #79 holds the
+  cheap-first plan: no-bot repro, first-divergent-frame, vendored-vs-upstream
+  diff). Reinstalling OpenBW or re-verifying our placement physics changes
+  nothing - do not spend a session on either for a replay mismatch.
