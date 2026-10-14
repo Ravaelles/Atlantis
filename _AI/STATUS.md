@@ -1463,3 +1463,19 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   criteria change per owner, so nothing to fix there. Post-5:48 flapping
   (READY⇄IN_PROGRESS, bank 927+) without issue needs builder/order data -
   blocked until the ENV-fixed run lands.
+
+## Session 2026-10-14 (owner asks: order IN_PROGRESS truth + scout rewrite analysis)
+
+- Order statuses fixed: NO code path ever marked a building order FINISHED
+  (`IsOrderCompleted` answered tech/upgrades only) - every building order
+  sat IN_PROGRESS forever, clogging counts and the production log the owner
+  reads. Fix: building order FINISHED iff its linked building stands
+  completed (units untouched). `BuildingOrderCompletionTest` 2/2 (built
+  completes; warping does not). Suite 487/0.
+- Verified in game (PASS Core+Dragoon=2): 11/11 attempts accepted, one
+  self-healed DEMOTE, zero stuck-IN_PROGRESS churn, no mass re-requests.
+- Scout verdict: REPAIR, not rewrite (analysis vs PurpleWave in STATUS -
+  same assigner+priority shape; the hang is a fall-through hole: all
+  managers decline at once, no terminal fallback, no abandonment/handoff).
+  Patch points named (roam timeout-advance, terminal fallback+release,
+  x>=3200 guard); awaiting owner decision before touching.
