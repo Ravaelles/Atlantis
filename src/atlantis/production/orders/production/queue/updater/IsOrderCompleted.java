@@ -9,6 +9,23 @@ import atlantis.util.Counter;
 
 public class IsOrderCompleted {
     protected static boolean isCompleted(ProductionOrder order, Counter<AUnitType> existingCounter) {
+        // === Building
+
+        // A building order is done when its building stands completed - not
+        // when the warp starts (Protoss construction flips FINISHED at warp
+        // start, long before the building is up) and not never (the old
+        // shape: this method answered for tech/upgrades only, so every
+        // building order sat IN_PROGRESS forever, clogging counts and the
+        // production log with buildings that finished minutes ago).
+        // Units keep the old path (their training completes through
+        // producers, untouched here).
+        if (order.unitType() != null && order.unitType().isABuilding()) {
+            if (order.construction() == null) return false;
+            if (order.construction().buildingUnit() == null) return false;
+
+            return order.construction().buildingUnit().isCompleted();
+        }
+
         // === Unit
 
         // For units this will happen in OnOurUnitCompleted
