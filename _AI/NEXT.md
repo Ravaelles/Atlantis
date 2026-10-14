@@ -742,6 +742,13 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   `ExpandSecondBaseWhenSafeTest` pins it (red pre-fix). Suite 518/518.
   Still needs the long game: decision -> HIGH order -> pump yields (D3) ->
   400 held -> REQUEST_ACCEPTED -> builder walk.
+- **Hoarding tripwire cut a healthy game (2026-10-14, game 175329):**
+  `ForceExitLocallyInOpenBW` ends the run at 600+ minerals, but a Nexus-2
+  reserve legitimately sits at 400-600 while warping - the game died at
+  385 s with Nexus-2 accepted at 5:51. Saving is not hoarding: an
+  unfinished HIGH+ waiter now suppresses the exit
+  (`HoardingTripwireRespectsSavingTest` 2/2, saving case red pre-fix);
+  with nothing waiting, 600+ unspent still exits. Suite 523/523.
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.

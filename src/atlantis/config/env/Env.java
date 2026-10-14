@@ -370,6 +370,11 @@ public class Env {
         coreAndDragoonGate = enabled;
     }
 
+    /** Test seam (the backend is ENV-driven and has no other writer). */
+    public static void setOpenBWForTest(boolean enabled) {
+        openBW = enabled;
+    }
+
     public static boolean shouldModifyBwapiIni() {
         return modifyBwapiIni;
     }

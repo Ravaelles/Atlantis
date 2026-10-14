@@ -6,6 +6,8 @@ import atlantis.config.env.Env;
 import atlantis.debug.profiler.RealTime;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.production.orders.production.queue.PriorityWaiters;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
@@ -42,7 +44,15 @@ public class ForceExitLocallyInOpenBW extends Commander {
     public boolean applies() {
         if (!Env.isOpenBW()) return false;
 
-        return A.minerals() >= 600;
+        if (A.minerals() < 600) return false;
+
+        // Saving is not hoarding: an unfinished HIGH+ waiter (expansion,
+        // tech) holds earmarked minerals - ending here cuts every Nexus-2
+        // warp, whose reserve legitimately sits at 400-600 (game 175329).
+        // With nothing waiting, 600+ unspent is still the broken hoard.
+        if (PriorityWaiters.mineralsAbove(ProductionOrderPriority.STANDARD) > 0) return false;
+
+        return true;
     }
 
     protected boolean handle() {
