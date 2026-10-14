@@ -61,4 +61,63 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
                     + " headroom - waiting for the cap wastes a warp");
         });
     }
+
+    @Test
+    public void secondPylonOverlapsFirstWhilePoor() {
+        // Pipeline doctrine (owner): the next Pylon goes out BEFORE the
+        // previous completes. With one unfinished Pylon and low bank the old
+        // cap (1 below 150) serialized everything into cap gaps.
+        currentMinerals = 50;
+        initSupply(38, 40);
+
+        world(20, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 19) return;
+
+            atlantis.production.constructions.Construction first =
+                new atlantis.production.constructions.Construction(AUnitType.Protoss_Pylon);
+            first.setStatus(atlantis.production.constructions.ConstructionOrderStatus.NOT_STARTED);
+            atlantis.production.constructions.ConstructionRequests.constructions.add(first);
+
+            try {
+                assertTrue(
+                    new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
+                    "one Pylon unfinished + low bank must still allow the"
+                        + " second (overlap), or supply sits at cap mid-warp");
+            } finally {
+                atlantis.production.constructions.ConstructionRequests.constructions.clear();
+            }
+        });
+    }
+
+    @Test
+    public void thirdPylonWaitsItsTurn() {
+        currentMinerals = 50;
+        initSupply(38, 40);
+
+        world(20, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 19) return;
+
+            for (int i = 0; i < 2; i++) {
+                atlantis.production.constructions.Construction c =
+                    new atlantis.production.constructions.Construction(AUnitType.Protoss_Pylon);
+                c.setStatus(atlantis.production.constructions.ConstructionOrderStatus.NOT_STARTED);
+                atlantis.production.constructions.ConstructionRequests.constructions.add(c);
+            }
+
+            try {
+                assertFalse(
+                    new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
+                    "two unfinished + poor bank: the pipeline holds at two,"
+                        + " no spam");
+            } finally {
+                atlantis.production.constructions.ConstructionRequests.constructions.clear();
+            }
+        });
+    }
 }
