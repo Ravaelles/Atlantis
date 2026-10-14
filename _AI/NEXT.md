@@ -681,6 +681,30 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   #81: that item is an OpenBW corner-search refusal, this one has no
   placement reading at all yet.
 
+- **#89 (2026-10-14) - unit pumps out-spend queued STANDARD buildings.**
+  Game 180053: Gateway-2 (ADDED 3:44) never builds with zero
+  overdue-cancels - effective bank sits under 150 (samples 266-396 against
+  reserved=300) while the Zealot pump trains on a flat `minerals >= 275`
+  ignoring reservations. The D3 first lines (worker 50, Zealot 100,
+  Dragoon 125) yield only to HIGH+ waiters; one-time STANDARD buildings
+  lose the every-frame race against the 100-mineral pump. Fix direction:
+  unit spenders (pumps and unit orders) also wait for same-level
+  buildings/upgrades/tech; buildings keep waiting only above their level.
+  One-time waiters converge, continuous pumps resume (B-22 mirror watched:
+  unbuildable STANDARD rows would halt the pump - narrow then, measured).
+
+  **2026-10-14, brake design corrected before coding:** the pump ALREADY
+  respects reservations at `ProduceZealot:100`
+  (`bank >= reserved+100`) - the leak is the early plenty-rules above it
+  (`NotEnoughZealots`, `EarlyGameZealots`, `NoAssimilator`) firing first.
+  Added throttled `ZEALOT_TRAIN reason=` / `DRAGOON_TRAIN` lines at both
+  choke points (zero behavior): the next game names which rules fire in
+  the starvation window, then the brake moves precisely.
+  **#57 side datum (same games):** every Gateway add in 4 games comes
+  through the single legacy path (`NewConstructionRequest` via
+  `ProduceBuilding`, zero `GameOrderDirector` - V2 DRY_RUN builds nothing);
+  the 233256 triple-accept shape did not reproduce - still needs its game.
+
 ## Currently broken (2026-10-14, game 20261014_162906_adhoc, 335 s, exit 0)
 
 Roster: `CyberneticsC=1 Probe=22 Pylon=5 Zealot=4 Dragoon=1 Assimilator=1

@@ -158,6 +158,13 @@ public class ProduceDragoon {
         AUnit freeGateway = GatewayClosestToEnemy.get();
         if (freeGateway == null) return false;
 
+        // NEXT #89: same silence as the Zealot pump (no reason param here,
+        // so bank and counts - timing against the starvation window is what
+        // designs the brake). Zero behavior change.
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "DRAGOON_TRAIN min=" + A.minerals() + " gas=" + A.gas()
+                + " dragoons=" + Count.dragoons());
+
         boolean result = freeGateway.train(
             type(), ForcedDirectProductionOrder.create(type())
         );

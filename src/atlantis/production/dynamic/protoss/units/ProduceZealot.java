@@ -187,6 +187,14 @@ public class ProduceZealot {
         AUnit gateway = GatewayClosestToEnemy.get();
         if (gateway == null) return false;
 
+        // NEXT #89: the pump is silent while a queued STANDARD building
+        // starves (game 180053) - this throttled line names which rule
+        // trains in the starvation window. Zero behavior change.
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "ZEALOT_TRAIN " + reason + " min=" + A.minerals() + " gas=" + A.gas()
+                + " zealots=" + Count.zealots());
+
+
         // A busy Gateway is the engine's ArrayIndexOutOfBoundsException, not a
         // failure it returns: `train` walks the training queue and steps past
         // the end when the queue is in the wrong state. "OrderSink.train failed"
