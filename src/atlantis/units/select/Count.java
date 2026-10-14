@@ -153,7 +153,16 @@ public class Count {
                 + Select.countOurOfType(AUnitType.Zerg_Spore_Colony);
         }
         else if (type.isPrimaryBase()) {
-            return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
+            // Zerg primaries morph (Hatchery->Lair->Hive), so all three count;
+            // Protoss and Terran primaries never change type - and counting
+            // them as zero (the old fall-through) told every base counter the
+            // bot has no base at all (measured: 2 finished Nexuses read as 0,
+            // so the third-base logic was unreachable and expansion died
+            // after the natural).
+            if (type.equals(AUnitType.Zerg_Hatchery)) {
+                return Select.ourOfType(AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair, AUnitType.Zerg_Hive).count();
+            }
+            return Select.countOurOfType(type);
         }
         else if (type.isBase() && !type.isPrimaryBase()) {
             return Select.countOurOfType(type);

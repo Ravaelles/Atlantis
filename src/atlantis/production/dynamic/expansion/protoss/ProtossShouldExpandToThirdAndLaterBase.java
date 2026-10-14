@@ -125,7 +125,7 @@ public class ProtossShouldExpandToThirdAndLaterBase extends ProtossShouldExpand 
     }
 
     private static boolean genericThirdLotsOfMinerals() {
-        if (A.minerals() >= 650) {
+        if (A.minerals() >= 650 && basesInProduction > 0) {
             return (double) (A.minerals() / (400 * basesInProduction)) >= 1.2;
         }
         return false;
