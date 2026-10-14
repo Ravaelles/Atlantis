@@ -749,6 +749,12 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   unfinished HIGH+ waiter now suppresses the exit
   (`HoardingTripwireRespectsSavingTest` 2/2, saving case red pre-fix);
   with nothing waiting, 600+ unspent still exits. Suite 523/523.
+- **Stolen builder stalls construction forever (2026-10-14, game 175707):**
+  Gateway-2's builder (#117) mined 4000+ frames while its site sat
+  NOT_STARTED - no cancel, no finish. The #58 shield (living builder =
+  not overdue) could not tell walking from stolen. `isOverdue` now
+  excludes builders back on minerals/gas while affordable; walking ones
+  still shield (`StolenBuilderOverdueTest`, red pre-fix). Suite 524/524.
 - Aside (healthy): scout terminals fire in game
   (`ScoutEnemyBasesWithoutBase` ×5); `Scout idle` ×3, rare null-chain,
   telemetry only.

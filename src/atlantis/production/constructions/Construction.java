@@ -374,7 +374,11 @@ public class Construction implements Comparable<Construction> {
         // A builder is on its way, or already here and about to start: give it the time.
         // Without this a long walk across the map is indistinguishable from a stall, and the
         // reaction to a stall is to cancel everything that has not started.
-        if (builder != null && builder.isAlive()) {
+        // A builder stolen back to mining is NOT working on it (game 175707:
+        // #117 gathered 4000+ frames while its Gateway sat NOT_STARTED with
+        // no cancel and no finish). Walking/fighting builders still shield.
+        if (builder != null && builder.isAlive()
+            && !builder.isGatheringMinerals() && !builder.isGatheringGas()) {
             return false;
         }
 
