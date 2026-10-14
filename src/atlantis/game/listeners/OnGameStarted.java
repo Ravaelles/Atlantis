@@ -54,6 +54,7 @@ public class OnGameStarted {
         // later one and the real end-of-game cleanup never runs (NEXT #49).
         atlantis.units.workers.defence.proxy.TrackEnemyEarlyScoutCommander.clear();
         atlantis.game.listeners.OnGameEnd.reset();
+        atlantis.map.scout.ScoutState.reset();
 
         // What we built is per-game, like everything else here: as a plain static it would
         // leak one game's completion history into the next in the same JVM.

@@ -1479,3 +1479,20 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   managers decline at once, no terminal fallback, no abandonment/handoff).
   Patch points named (roam timeout-advance, terminal fallback+release,
   x>=3200 guard); awaiting owner decision before touching.
+
+## Session 2026-10-14 (owner asks: finish the scout repair)
+
+- Implemented the three named patch points (owner approved the repair):
+  roam timeout-advance (`RoamAroundEnemyBase`: progress tracking via
+  `roamLastDistToPoint`/`roamLastProgressFrame`, forced polygon advance
+  after 300 frames without progress - the old code advanced only on
+  arrival within 1.8, so a blocked point returned the same target and
+  `move()` suppressed the re-issue), terminal fallback+release
+  (`ScoutCommander`: a null chain result names `scoutToRelease`, freed
+  next frame by `releasePendingScout()`, never mid-loop), x>=3200 guard
+  removed (was already out of the tree in the started work, kept out).
+  Plus `ScoutState.reset()` wired in `OnGameStarted` next to the other
+  per-game resets. Tests: `ScoutRoamStuckTest` 4/4, `ScoutReleaseTest`
+  3/3 (incl. reset). Suite 494/494, arch 6/7 with only the known
+  pre-existing `Manager->SleepUntilFrameGate` failure, store unchanged.
+  Game verification pending (needs a scout-hang game, owner-side).

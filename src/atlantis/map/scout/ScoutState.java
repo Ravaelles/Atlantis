@@ -50,4 +50,35 @@ public class ScoutState {
     public static HasPosition nextPositionToScout = null;
     public static HasPosition nextPositionToScout2 = null;
     public static ARegion enemyBaseRegion = null;
+
+    /**
+     * Roam timeout (NEXT #78 follow-up): last distance to the current roam
+     * point and when progress was last seen. The polygon index used to advance
+     * only on arrival (within 1.8) - a scout that can never get there (blocked
+     * point, chased loop) returned the same target every frame, and
+     * {@code move()} suppresses re-issues to an unchanged target, so it stood
+     * still holding a move order. -1 = no point tracked (re-armed on advance).
+     */
+    public static double roamLastDistToPoint = -1;
+    public static int roamLastProgressFrame = 0;
+
+    /**
+     * A scout whose chain found nothing left to do is released by name here
+     * and freed by {@code manageScoutsAssigned()} next frame (never mid-loop:
+     * the scout list is being iterated there).
+     */
+    public static AUnit scoutToRelease = null;
+
+    /**
+     * Per-game reset for the roam/release state added with the scout repair.
+     * Called from the game root alongside the other per-game resets, so a
+     * stale roam target or a pending release never leaks into the next game
+     * in the same JVM. The scouts list itself stays with its existing
+     * lifecycle (dead scouts are removed per frame).
+     */
+    public static void reset() {
+        roamLastDistToPoint = -1;
+        roamLastProgressFrame = 0;
+        scoutToRelease = null;
+    }
 }
