@@ -736,6 +736,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Added throttled `ZEALOT_TRAIN reason=` / `DRAGOON_TRAIN` lines at both
   choke points (zero behavior): the next game names which rules fire in
   the starvation window, then the brake moves precisely.
+- **3+ Dragoons PROVEN LIVE (2026-10-14, game 192653_long, 581 s, killed
+  by bot-cap mid-late-game):** `DRAGOON_TRAIN dragoons=7` (`Count.dragoons`
+  = completed only) with Nexus IN_PROGRESS (3rd), supply 94/106, Photon
+  Cannon dedup refusing correctly (`existing=1`). The 191650 single
+  Dragoon was throughput + short game (pump trains proven there too);
+  longer games compound. Combined 3+2 in one finished game still open
+  (this one was killed, no roster).
   **#57 side datum (same games):** every Gateway add in 4 games comes
   through the single legacy path (`NewConstructionRequest` via
   `ProduceBuilding`, zero `GameOrderDirector` - V2 DRY_RUN builds nothing);
