@@ -1410,3 +1410,23 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   220 s (Escape path). In headless no one presses keys - suspect a stale
   key-relay file a la #66 (purge exists at launcher starts). If it recurs
   with short wall time, the purge path needs re-reading.
+
+## Session 2026-10-14 (owner ask: 2nd + 3rd Nexus tests, bank hoard)
+
+- `Count.existing()` for primary bases counted ONLY Zerg Hatchery/Lair/Hive -
+  Protoss Nexus and Terran CC always read 0. Measured: 2 finished Nexuses
+  read as 0 existing, so `bases` never exceeded 1 and the third-base logic
+  was unreachable - this is the "2nd yes, then stuck" shape. Fixed (Zerg
+  morph branch kept, others count normally); 4 base-count call sites
+  reviewed, all assume true counts. Suite 485/0, no other test moved.
+- Div0 guard in `genericThirdLotsOfMinerals` (min/(400x0) with nothing in
+  production threw, caught upstream as silent no-expand). Behavior for n=0
+  unchanged (still no), minus the exception.
+- `SecondAndThirdNexusTest` 3/3 (2x runs): LimitedBases decision, approved
+  order queued, third-base decision. Caught two harness traps along the way
+  (Terran-race default breaks BASE counting; pre-seeded queue reservations
+  need a reset for affordability paths) - documented in the tests.
+- Bank-hoard mechanism status: Pylon conversion (5:01 order unbuilt in 38 s)
+  still needs a BUILDER_LOG=1 run to resolve (builder? placement? attempt?) -
+  owner runs without the flag. Expansion pipeline now tested; thresholds
+  stay D5.
