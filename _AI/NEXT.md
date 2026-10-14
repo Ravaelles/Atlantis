@@ -214,17 +214,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   exist), or delete the dead classes, or leave it and own the consequence in a comment at
   the call site. `BUGS.md` B-19 carries the measurements - four games, zero cannons - and
   the chain that leads there.
-- **#40** `ConstructionThatLooksBugged.handleConstructionThatLooksBugged()` has an
-  unreachable branch: the method returns unless `status() == NOT_STARTED`, and the inner
-  guard is `if (constr.status() != NOT_STARTED) constr.assignOptimalBuilder();`, so the
-  assignment never runs. The effect is that a planned construction with no builder is
-  *cancelled* ("Weird case, ... has no builder. Cancel.") rather than given one.
-  Builders are assigned at creation (`NewConstructionRequest` /
-  `DefineConstructionForNewUnit`), which is why it is invisible - and why it is recorded
-  rather than changed. Worth a test that says which of the two behaviours is intended
-  before anyone touches it: a construction whose builder is assigned a frame later would
-  be cancelled by the safety net.
-
 - **#15 PARTIAL — deployed Protoss jar freshness.** Rebuilt
   `/sc-ai/BOTS/AtlantisP/AI/Atlantis.jar` with the canonical builder; freshness
   fingerprint matches the source tree (`94e518…`) and bytecode major is 52
@@ -543,14 +532,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   blind.
 
 - **#75 (2026-10-13) - three Protoss strategies name build orders that do not exist (remainder of #46).**
-  `3 Gate`, `12 Nexus`, `Carrier Push` - choosing one starts a game with no build
-  order at all (the bot mines and does nothing, no error). The init-order half is
-  verified and #46's line is deleted: `ProtossStrategies.initialize()` runs before
-  `StrategyChooser` (`OnGameStarted.java:115` before `:118`), and
-  `StrategyBuildOrderTest` 5/5 pins the missing set as exactly these three (any
-  fourth missing file, or any of the three landing on disk, fails it). What remains
-  is owner policy (D5): rename the entries, add the `.txt` files, or delete the
-  entries.
+  `3 Gate`, `12 Nexus`, `Carrier Push` have no `.txt` files; the silent part is
+  fixed since `f45c4100` (missing file throws `BuildOrderFileNotFoundException`
+  with path and strategy instead of mining mute). The init-order half is
+  verified: `ProtossStrategies.initialize()` runs before `StrategyChooser`
+  (`OnGameStarted.java:115` before `:118`), and `StrategyBuildOrderTest` 5/5
+  pins the missing set as exactly these three (any fourth missing file, or any
+  of the three landing on disk, fails it). What remains is owner policy (D5):
+  rename the entries, add the `.txt` files, or delete the entries - none of
+  them is auto-picked today (hardcoded per-matchup choices), so this waits
+  without burning games.
 
 
 - **#77 (2026-10-13) - acceptance tier: 6 stale pins (remainder of #73).**

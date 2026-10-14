@@ -13,6 +13,11 @@ import java.io.IOException;
  * "A journey of a thousand miles begins with a single step." - Lao Tse
  */
 public class Main {
+    /**
+     * The race we play. Protoss-only for now (D8): no approved Terran
+     * deployment target exists, so only the Protoss path is exercised -
+     * revisit when Terran gets one.
+     */
     public static String ourRace() {
 //        return "Terran";
         return "Protoss";

@@ -90,9 +90,12 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //            ProduceGateway.produce();
 //        }
 
+        // Cannons are deliberately NOT ordered here (D5): base fortification
+        // belongs to ProtossSecureBasesCommander, hidden-unit response to
+        // ProtossResponseEnemyHiddenUnits -> ProduceCannonAtNaturalOrMain.
+        // The commented ProduceCannon.* calls (dead since 2024, class gone
+        // from the tree) were deleted rather than re-enabled.
         if (
-//                || ProduceCannon.produce()
-//                || ProduceCannonAtNatural.produce()
                 ProduceShieldBatteryAtNatural.produce()
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())

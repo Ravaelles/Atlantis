@@ -26,13 +26,8 @@ with no expansion - gates, not bugs). Same for cannon producers (#39) and
 the three missing build orders (#46: rename entries, add files, or delete).
 
 
-## D7 - `BaseUnderAttack` cache vs seam (NEXT #36) and construction-recovery
-branch (NEXT #40)
-
-Both need a design/intent decision before any code: a static cache violates
-CONVENTIONS §5, and #40's unreachable branch needs the intended behavior
-named by the owner first.
-
 ## D8 - Terran deployment target (NEXT #15)
 
-No approved Terran artifact path. Either supply one or verify none is needed.
+No approved Terran artifact path. Deferred 2026-10-14: Protoss-only for now
+(noted at `Main.ourRace()`); revisit when Terran play is wanted. Either
+supply a target then or verify none is needed.

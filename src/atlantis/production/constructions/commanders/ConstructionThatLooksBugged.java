@@ -27,9 +27,10 @@ public class ConstructionThatLooksBugged extends Commander {
         AUnitType buildingType = constr.buildingType();
         AUnitType type = buildingType;
         if (constr.builder() == null || constr.builder().isDead()) {
-            if (constr.status() != ConstructionOrderStatus.NOT_STARTED) {
-                constr.assignOptimalBuilder();
-            }
+            // Intended (D5): a planned construction with no builder is
+            // cancelled, not adopted - builders are assigned at creation, so
+            // a builderless order means its reservation died with it. Pinned
+            // by BuilderlessConstructionTest.
 
             if (constr.builder() == null || constr.buildPosition() == null) {
                 ErrorLog.printMaxOncePerMinute("Weird case, " + type + " has no builder. Cancel.");
