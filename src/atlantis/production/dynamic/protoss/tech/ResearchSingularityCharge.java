@@ -113,6 +113,17 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     }
 
     @Override
+    protected boolean handle() {
+        // NEXT #72: the decision fires in stub but no game ever researched -
+        // this throttled line says whether it fires live (downstream hunt)
+        // or not (stub/live divergence hunt). Zero behavior change.
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "SINGULARITY_APPLIES dragoons=" + dragoons
+                + " min=" + A.minerals() + " gas=" + A.gas());
+        return super.handle();
+    }
+
+    @Override
     protected void setEnqueued(boolean isEnqueued) {
         this.isEnqueued = isEnqueued;
     }

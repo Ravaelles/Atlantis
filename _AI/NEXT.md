@@ -555,6 +555,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   saves gas via the D3 mechanism instead of out-spending it. Still open:
   long-game proof that research completes (gas 150/150 held to issue).
 
+  **2026-10-14, decision exonerated in stub:** 2 Dragoons + 250 gas + Core
+  fires (`SingularityChargeFiresWhenGasHealthyTest` green) - yet zero
+  research lines in three gas-healthy games (274-296). Added one throttled
+  `SINGULARITY_APPLIES` line at the action point (zero behavior): the next
+  game says whether the decision fires live (downstream/engine hunt) or
+  not (stub/live divergence hunt).
+
 - **#85 (2026-10-14) - upgrades never pass level 1.** Owner report:
   multi-level upgrades (weapons/armor) are researched once at most, never to
   levels 2-3. The per-type researchers DO carry level logic
