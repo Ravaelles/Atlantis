@@ -47,6 +47,7 @@ public class ScoutCommander extends Commander {
                         // is being iterated here.
                         ScoutState.scoutToRelease = unit;
                         unit.setTooltipTactical("Scout done, releasing");
+                        ErrorLog.printMaxOncePerMinute("Scout released: chain found nothing to do");
                     }
                 }
             }

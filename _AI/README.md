@@ -37,17 +37,12 @@ AI assistant.
 - **`CASE-STUDIES.md`** - the long narratives of resolved defects (mechanism,
   withdrawn readings, traps), moved out of `NEXT.md` so the backlog stays readable.
   Read it when a symptom looks familiar and the git log is not enough.
-- **`STATUS.md`** - started-but-unfinished work that must survive a context
-  change (slim by design since 2026-10-14; history before that is in git).
 - **`BUGS.md`** - things that are wrong *today*, each with how it was measured.
   Not a TODO list; a fixed defect is **deleted**, so absence is not proof it never
   existed (the git log is the archive).
 - **`NOTES.md`** - operational learnings that do not fit anywhere else.
 - **`PLACEMENT-CUTOVER-PLAN.md`** - the cut-over plan behind NEXT #47/#49; it
   changes with the blocker, so re-read it rather than trusting a quotation.
-
-`STATUS.md` is slim on purpose: one section per started-but-unfinished
-piece of work. Session narratives live in git history, not in the file.
 
 ## Reference documents (change rarely)
 
