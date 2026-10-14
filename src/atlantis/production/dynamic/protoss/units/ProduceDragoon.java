@@ -10,6 +10,8 @@ import atlantis.information.generic.Army;
 import atlantis.production.dynamic.protoss.decisions.AllowProduceDragoon;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
+import atlantis.production.orders.production.queue.PriorityWaiters;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -30,6 +32,10 @@ public class ProduceDragoon {
     public static String reason = "-";
 
     public static boolean dragoon() {
+        // D3 priority waiting, first so later plenty-rules cannot bypass it:
+        // a higher waiter (queued Nexus, Singularity) pauses Dragoons unless
+        // the bank covers Dragoon + waiter.
+        if (PriorityWaiters.blocksSpending(125, 50, ProductionOrderPriority.STANDARD)) return no("HigherPriorityWaits");
         if (!A.hasGas(50)) return no("Gas");
         if (!A.hasMinerals(125)) return no("Minerals");
         if (noProperBuildings()) return no("NoGatewaysOrCore");

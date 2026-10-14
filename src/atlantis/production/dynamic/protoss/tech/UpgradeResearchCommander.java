@@ -3,6 +3,7 @@ package atlantis.production.dynamic.protoss.tech;
 import atlantis.architecture.Commander;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -15,10 +16,19 @@ public abstract class UpgradeResearchCommander extends Commander {
     protected abstract void setEnqueued(boolean isEnqueued);
     protected abstract boolean isEnqueued();
 
+    /**
+     * Queue priority of the research order (D3): STANDARD unless a researcher
+     * overrides - Singularity Charge waits above it, so the army pump saves
+     * gas instead of out-spending it.
+     */
+    protected ProductionOrderPriority orderPriority() {
+        return ProductionOrderPriority.STANDARD;
+    }
+
     @Override
     protected boolean handle() {
         if (CountInQueue.count(what(), 2) == 0) {
-            if (AddToQueue.upgrade(what())) setEnqueued(true);
+            if (AddToQueue.upgrade(what(), orderPriority())) setEnqueued(true);
         }
 
         if (ResearchNow.research(what())) {

@@ -8,6 +8,7 @@ import atlantis.information.generic.ArmyStrength;
 import atlantis.information.generic.Army;
 import atlantis.information.tech.ATech;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
@@ -28,6 +29,16 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
     public static UpgradeType upgrade() {
         return Singularity_Charge;
+    }
+
+    /**
+     * D3/D4: Singularity waits above standard spending, so the Dragoon pump
+     * saves the 150 gas instead of out-spending it (the starvation behind
+     * "Dragoons fight without range all game").
+     */
+    @Override
+    protected ProductionOrderPriority orderPriority() {
+        return ProductionOrderPriority.HIGH;
     }
 
     @Override

@@ -8,6 +8,8 @@ import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.PriorityWaiters;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
@@ -77,15 +79,13 @@ public class AutoProduceWorkersCommander extends Commander {
                 && !A.hasMinerals(150)
         ) return dont("PylonAt8");
 
-        // Natural Nexus save-up (owner ask 2026-10-13): a queued Nexus costs
-        // 400, and without help the pump eats the bank faster than it grows -
-        // the builder then waits at a correct site forever (BuilderWaiting).
-        // Same machinery as the Core reservation: while a Nexus is queued,
-        // workers wait below 450.
-        if (
-            We.protoss() && CountInQueue.count(AUnitType.Protoss_Nexus) > 0
-                && !A.hasMinerals(450)
-        ) return dont("SaveForNexus");
+        // D3 priority waiting (generalizes SaveForNexus, which this
+        // replaces: with a HIGH Nexus waiter the numbers are identical -
+        // worker 50 + Nexus 400 = 450): a higher waiter pauses the pump
+        // unless the bank covers worker + waiter.
+        if (PriorityWaiters.blocksSpending(50, 0, ProductionOrderPriority.STANDARD)) {
+            return dont("HigherPriorityWaits");
+        }
 
         if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals()) return dont("CriticalStuff");
 

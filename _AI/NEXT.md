@@ -372,6 +372,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   price with zero `REQUEST_ACCEPTED` (army pump is NOT gated by the
   workers-only `SaveForNexus`), which is arbitration (NEXT #45), not queue.
 
+  **Priority mechanism implemented 2026-10-14 (D3, game proof pending):**
+  `PriorityWaiters` totals unfinished HIGH+ waiter prices; Nexus queues HIGH;
+  worker pump, Dragoon/Zealot producers (first line, exact prices) and the
+  `IsReadyToProduceOrder` term yield unless the bank covers both. Rich bank
+  passes. Supply (TOP) never blocked. Rush-defense twins hold parity (4pool
+  green; 9pool red pre-existing, unrelated - see new regression item).
+
 - **#82 (2026-10-13) - off-site Terran completion may leak (unobserved).**
   Found while fixing #56: `buildingFinishedAtSite` fires by site radius, so a
   Terran building completing >2.5 tiles from its reservation would stay
@@ -505,11 +512,29 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
   flip with that log as evidence.
 
-- **#72 (2026-10-13) - `ATechManager.researchDynamically` has no callers: Singularity
-  Charge is never researched.** The only dynamic upgrade path (Core, supply-gated,
-  affordability-checked) is referenced nowhere - Dragoons fight without range
-  all game. Wire it (free, big combat value, needs a long-game verification
-  that research completes) or delete it (dead code). Owner call either way.
+- **#72 (2026-10-13) - Singularity Charge: existing path kept, HIGH waiter wired.**
+  Owner's direction 2026-10-14 (and correction: +2 range, not +1):
+  `ATechManager.researchDynamically` stays unused - the live path is
+  `ResearchSingularityCharge` (rich gating, wired in
+  `ProtossDynamicTechResearch`). The dead method is deleted (zero callers,
+  suite green). The research order now queues HIGH, so the Dragoon pump
+  saves gas via the D3 mechanism instead of out-spending it. Still open:
+  long-game proof that research completes (gas 150/150 held to issue).
+
+- **#85 (2026-10-14) - upgrades never pass level 1.** Owner report:
+  multi-level upgrades (weapons/armor) are researched once at most, never to
+  levels 2-3. The per-type researchers DO carry level logic
+  (`ResearchProtossGroundWeapons.getCurrentUpgradeLevel`), so this is not a
+  missing path - name which gate (level check, gas ladder, queue dedup)
+  refuses L2/L3 in a game that reached them. Do not patch blind.
+
+- **#86 (2026-10-14) - 9pool twin regressed: pinned HOLD no longer holds.**
+  `NinePoolDefenseTest.defendedBaseSurvivesTheNinePool` fails consistently
+  (solo too): "the probe drill does the killing (B-19: they never did)".
+  HOLD was pinned in `6c0b040e` (2026-10-04, per-frame combat-unit
+  invocation); the 4pool twin passes solo. Bisect 2026-10-04→today
+  combat/micro changes for the culprit. Pre-existing: fails identically
+  with the D3 pump gates stashed, so not theirs.
 
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count

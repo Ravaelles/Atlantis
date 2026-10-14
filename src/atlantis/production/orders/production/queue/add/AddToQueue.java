@@ -90,6 +90,10 @@ public class AddToQueue {
     }
 
     public static boolean upgrade(UpgradeType upgrade) {
+        return upgrade(upgrade, ProductionOrderPriority.STANDARD);
+    }
+
+    public static boolean upgrade(UpgradeType upgrade, ProductionOrderPriority priority) {
         if (CountInQueue.count(upgrade, 20) > 0) return false;
 
 //        if (Count.inQueueOrUnfinished(upgrade, MAX) > 0) return false;
@@ -102,7 +106,9 @@ public class AddToQueue {
             return false;
         }
 
-        Queue.get().addNew(0, new ProductionOrder(upgrade, A.supplyUsed() - 2));
+        ProductionOrder order = new ProductionOrder(upgrade, A.supplyUsed() - 2);
+        order.setPriority(priority);
+        Queue.get().addNew(0, order);
         return true;
     }
 

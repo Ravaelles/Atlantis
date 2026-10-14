@@ -13,6 +13,8 @@ import atlantis.production.dynamic.protoss.decisions.AllowProduceZealot;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeProtossBuildingsOverCombatUnits;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.orders.production.queue.PriorityWaiters;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ForcedDirectProductionOrder;
@@ -38,6 +40,8 @@ public class ProduceZealot {
     public static String reason = "-";
 
     public static boolean zealot() {
+        // D3 priority waiting, first so later plenty-rules cannot bypass it.
+        if (PriorityWaiters.blocksSpending(100, 0, ProductionOrderPriority.STANDARD)) return no("HigherPriorityWaits");
         if (!A.hasMinerals(100)) return no("Minerals");
 
         freeGateways = Count.freeGateways();

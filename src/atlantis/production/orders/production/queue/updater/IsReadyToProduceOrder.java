@@ -4,6 +4,7 @@ import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnitBreachedBase;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.constructions.Construction;
+import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -67,6 +68,18 @@ public class IsReadyToProduceOrder {
         }
 
         if (cantAffordAndDidntExpandYet(order)) return false;
+
+        // D3 priority waiting: a strictly-higher unfinished order waits and
+        // the bank does not cover both - lower spending pauses (self
+        // excluded, so a HIGH waiter itself is never blocked here).
+        if (PriorityWaiters.blocksSpending(order, order.mineralPrice(), order.gasPrice())) {
+            if (order.isBuilding()) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "ORDER_WAITING " + order.unitType() + " @" + A.now()
+                        + " min=" + A.minerals() + " gas=" + A.gas());
+            }
+            return false;
+        }
 
         return true;
     }

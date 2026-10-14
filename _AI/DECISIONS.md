@@ -17,27 +17,6 @@ then delete per `_AI/PLACEMENT-CUTOVER-PLAN.md` (recommended, but needs the
 parity gap closed); (b) delete now and break default runs (not recommended).
 Approval of (a) starts with the parity-gap scope, not the deletion itself.
 
-## D3 - Create constructions at decision time, wait for minerals
-
-Queueing a building at 18 supply without bank reserves nothing (reservations
-attach at READY), so early creation needs a reserve-timing redesign, not a
-one-line change. Needs a Wine-length A/B by construction. Alternative kept:
-the Core reservation (committed) achieves the economic effect through
-existing machinery.
-
-Evidence it is the same shape as NEXT #58's open half (2026-10-14,
-game 20261014_121406): a queued Nexus flaps READY⇄IN_PROGRESS while the bank
-sawtooths 24-558 against the 400 price with zero requests - the workers-only
-`SaveForNexus` gate does not stop the army pump, and nothing reserves 400
-for the issue frame. Any reserve-timing redesign must cover army spending,
-not just workers, or it repeats this game.
-
-## D4 - Singularity Charge researcher: wire or delete (NEXT #72)
-
-`ATechManager.researchDynamically` is the only dynamic upgrade path and has
-zero callers - Dragoons fight without range all game. Wire (free combat
-value, needs a long-game proof research completes) or delete (dead code).
-
 ## D5 - Worker-gate, mineral-distance and expansion-timing thresholds (NEXT #60, #58-timing)
 
 Strategy tuning, not defects (`--long` games confirm: 7 Dragoons at 429 s
@@ -59,18 +38,3 @@ named by the owner first.
 ## D8 - Terran deployment target (NEXT #15)
 
 No approved Terran artifact path. Either supply one or verify none is needed.
-
-## D9 - Engine-path early JVM exit (NEXT #69 follow-up)
-
-Three jstack catches agree on the hang frame: after `leaveGame`, main and the
-JBWAPI client thread are gone and only JNativeHook's non-daemon hook thread
-holds the JVM until the outer timeout; all three runs flushed valid `.rep`
-files. So engine-path lingering is load-bearing today - the runner `wait`s on
-the bot process for artifact collection and assertions (`PLAN-OPENBW.md` even
-documents the exit-124 shape for recording runs).
-Options: (a) unregister the hook at game end and rework the runner to wait on
-the host/match instead of the bot (runs end when the match ends instead of
-burning the full cap; needs a replay-flush safety experiment first - a bot
-that exits right after `leaveGame` must not truncate the launcher's flush);
-(b) keep lingering (recording runs burn the full cap; zero risk). The
-non-engine `leaveGame` paths stay backstop-guarded either way.

@@ -4,6 +4,7 @@ import atlantis.config.AtlantisRaceConfig;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.select.Count;
 
 public class ProtossExpandNow {
@@ -19,7 +20,9 @@ public class ProtossExpandNow {
                 >= ProtossExpansionCommander.maxBasesAtATime()
         ) return;
 
-        ProductionOrder productionOrder = AddToQueue.maxAtATime(AtlantisRaceConfig.BASE, ProtossExpansionCommander.maxBasesAtATime());
+        ProductionOrder productionOrder = AddToQueue.maxAtATime(
+            AtlantisRaceConfig.BASE, ProtossExpansionCommander.maxBasesAtATime(),
+            ProductionOrderPriority.HIGH);
 
         if (productionOrder != null && Count.bases() <= 1) {
             productionOrder.setModifier("NATURAL");

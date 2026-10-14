@@ -4,6 +4,7 @@ import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueu
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
@@ -196,13 +197,16 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
             // Direct queue insert, not AddToQueue: base orders go through
             // ShouldExpand approval there, which is global static state from
             // whatever test ran before - this test must not depend on it.
-            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Nexus, 0));
+            // HIGH priority, as the expansion producer queues it (D3).
+            ProductionOrder nexusOrder = new ProductionOrder(AUnitType.Protoss_Nexus, 0);
+            nexusOrder.setPriority(ProductionOrderPriority.HIGH);
+            Queue.get().addNew(0, nexusOrder);
 
             assertFalse(
                 AutoProduceWorkersCommander.shouldProduceWorkers(),
                 "a queued Nexus below 450 must save up, not pump workers");
             assertEquals(
-                "SaveForNexus", AutoProduceWorkersCommander.REASON,
+                "HigherPriorityWaits", AutoProduceWorkersCommander.REASON,
                 "the refusing gate must name itself");
         });
     }

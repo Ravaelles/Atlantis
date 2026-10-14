@@ -50,12 +50,38 @@ public class PriorityWaiters {
         return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
     }
 
+    /**
+     * Same, but the given order never blocks itself: a HIGH waiter evaluates
+     * its own readiness against strictly-higher waiters only. Identity
+     * comparison - same instance, not same type.
+     */
+    public static boolean blocksSpending(ProductionOrder order, int myMinerals, int myGas) {
+        int waitMinerals = totalAboveExcept(order, true);
+        int waitGas = totalAboveExcept(order, false);
+        if (waitMinerals == 0 && waitGas == 0) return false;
+        return !A.hasMinerals(myMinerals + waitMinerals) || !A.hasGas(myGas + waitGas);
+    }
+
     private static int totalAbove(ProductionOrderPriority level, boolean minerals) {
+        if (Queue.get() == null) return 0;
         int total = 0;
         for (ProductionOrder order : Queue.get().notFinished().list()) {
             if (order.shouldIgnore()) continue;
             if (!isWaiter(order)) continue;
             if (level.isAtLeast(order.priority())) continue;
+            total += minerals ? order.mineralPrice() : order.gasPrice();
+        }
+        return total;
+    }
+
+    private static int totalAboveExcept(ProductionOrder except, boolean minerals) {
+        if (Queue.get() == null) return 0;
+        int total = 0;
+        for (ProductionOrder order : Queue.get().notFinished().list()) {
+            if (order == except) continue;
+            if (order.shouldIgnore()) continue;
+            if (!isWaiter(order)) continue;
+            if (except.priority().isAtLeast(order.priority())) continue;
             total += minerals ? order.mineralPrice() : order.gasPrice();
         }
         return total;
