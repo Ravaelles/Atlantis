@@ -157,6 +157,14 @@ public class Atlantis implements BWEventListener {
                 + " latencyFrames=" + game.getLatencyFrames()
                 + " remainingLatencyFrames=" + game.getRemainingLatencyFrames()
         );
+
+        // One line per game: which ENV file the flags came from. A missing
+        // file means silent defaults (measured: a Wine game played builder
+        // logging off because the CWD-relative resolution missed).
+        AConsole.println(
+            "ENV source=" + atlantis.config.env.Env.envSource()
+                + " builderLog=" + atlantis.config.env.Env.builderLog()
+        );
     }
 
     /**

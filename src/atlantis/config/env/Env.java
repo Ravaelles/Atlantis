@@ -213,6 +213,15 @@ public class Env {
         return "ENV";
     }
 
+    /**
+     * Which ENV file the bot actually plays with (or {@code ENV} fallback
+     * when none exists - then every flag silently runs its default, which is
+     * how a Wine game once played a whole match with builder logging off).
+     */
+    public static String envSource() {
+        return envFilePath();
+    }
+
     // =========================================================
 
     private static boolean mainArgsContains(String value, String[] mainArgs) {

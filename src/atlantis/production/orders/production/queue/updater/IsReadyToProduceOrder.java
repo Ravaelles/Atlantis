@@ -52,19 +52,17 @@ public class IsReadyToProduceOrder {
         boolean resourcesOk = hasEnoughResourcesFor(order, isFarFromMainBaseSoTravelEarly);
         boolean requirementsOk = order.checkIfHasWhatRequired();
         if (!supplyOk || !resourcesOk || !requirementsOk) {
-            // Diagnostic, not a behavior change (a Nexus order sat in the queue
-            // from 6:19 to game end with no REQUEST, no refusal and no cancel -
-            // three indistinguishable silences). Names the refusing term with
-            // the numbers, throttled; buildings only, units churn through here
-            // every frame by design.
-//            if (order.isBuilding()) {
-//                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-//                    "ORDER_NOT_READY " + order.unitType() + " @" + A.now()
-//                        + " supplyOk=" + supplyOk + "(sup:" + A.supplyUsed() + "/min:" + order.minSupply() + ")"
-//                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
-//                        + " reserved=" + ReservedResources.minerals() + ")"
-//                        + " requirementsOk=" + requirementsOk);
-//            }
+            // Refusing term with numbers, buildings only (units churn through
+            // here every frame by design). Unconditional: a silent queue is
+            // undiagnosable (NEXT #58), and the throttle bounds the volume.
+            if (order.isBuilding()) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "ORDER_NOT_READY " + order.unitType() + " @" + A.now()
+                        + " supplyOk=" + supplyOk + "(sup:" + A.supplyUsed() + "/min:" + order.minSupply() + ")"
+                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
+                        + " reserved=" + ReservedResources.minerals() + ")"
+                        + " requirementsOk=" + requirementsOk);
+            }
             return false;
         }
 
