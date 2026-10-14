@@ -280,6 +280,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   without the builder/bank proof. The add-site stack trace prescribed below
   still names the path; do not patch the guard blind.
 
+  **2026-10-14, door instrumented:** `addConstruction` (the single door: legacy
+  `NewConstructionRequest:144` with `alreadyExists` re-find-then-cancel,
+  V2 `GameOrderDirector:91` with its own exact-tile dedup) prints the caller
+  chain per add behind `BUILDER_LOG=1` (`CONSTRUCTION_ADD` + type). Zero
+  behavior change (log lines get no pinning test, CONVENTIONS §10). Next: a
+  `BUILDER_LOG=1` game showing the duplicate shape - the trace names legacy
+  vs V2 path per add.
+
 - **#58 - Expansion is DECIDED but the Nexus is re-queued instead of finished.** (Was
   mis-numbered #54, colliding with the `RefreshConstructionPosition` item; numbers are never
   reused, so the duplicate takes the next free one - CONVENTIONS §7.) Owner's log
@@ -679,11 +687,26 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   matter) and gas miners never sticking (assigned, then pulled). No
   gas-worker evidence lines exist in this build. Needs a run with gas-miner
   visibility, not a blind fix.
-- **One Gateway all game - FIXED in stub, game proof pending:** the producer
-  refused at 400 bank via two early flat lines (free Gateway + bank <=360/550)
-  shadowing the later produce rules, and `produceGateway()` floored at 500.
-  Early lines deleted, floor 500->300 (`SecondGatewayQueuedTest` pins
-  Gateway-2 at 400 bank). Unchanged: count throttle, rich-bank rules.
+- **One Gateway all game - producer FIXED and firing in game, order stuck
+  behind phantom waiters (game 20261014_172954_long, 324 s, exit 0):**
+  `Gateway ADDED TO QUEUE` at 3:44, min=356 - the old code refused there
+  (free Gateway + bank <=360), so the 500->300 floor + deleted early lines
+  fire live. But the order then waits 177x (`SecondGatewayQueuedTest` still
+  green): `for=CyberneticsC(HIGH,200/0)+Assimilator(HIGH,100/0)` while BOTH
+  buildings stand (roster Core=1 Assimilator=1). The waiters are the
+  build-order rows (`Zealot into Goon.txt:28,30`) - legacy built the
+  structures without linking a Construction, and `IsOrderCompleted:23`
+  answers false forever on `construction()==null`. Same non-convergence
+  shape as #71 pre-fix. Named next fix (not done blind): complete a
+  building order by standing completed building when unlinked (multi
+  same-type rows need the existingCounter care). Aside: Core's waiter
+  clears in the last 5 lines (Assimilator-only) - unexplained, recorded.
+- **Gas: assignment confirmed, accumulation still absent (same game):**
+  `GasWorker assigned` x3 at ~271 s, yet gas=0 in all 177 bank samples with
+  Dragoon=1 (transient mining, then dry). Late-Assimilator branch gains:
+  no Assimilator ADDED/FINISHED/construction lines at all (legacy path,
+  known marker gap) - miners top up at the very end with no time to matter.
+  The steal branch still needs a gas-healthy mid game, not a guess.
 - **Gas: formula cleared, assignment needs game telemetry:** the demand side
   is pinned (`GasMinersAssignedTest`: 22 workers demand 3); engine data
   exonerated (player gas synced, refinery is a container). Added one

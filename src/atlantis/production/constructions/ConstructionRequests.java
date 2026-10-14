@@ -23,6 +23,14 @@ public class ConstructionRequests {
      * goes through here, so the duplicate question has one place to ask.
      */
     public static void addConstruction(Construction construction) {
+        // NEXT #57: every add names its caller chain - legacy
+        // (NewConstructionRequest) and V2 (GameOrderDirector) carry
+        // different dedup rules, and the 233256 datum (3 same-tile accepts,
+        // totalOfType=1, no cancel/refusal) needs the path, not a guard
+        // patch. Behind BUILDER_LOG like the ACCEPTED/REFUSED lines.
+        if (atlantis.config.env.Env.builderLog()) {
+            atlantis.util.AConsole.printStackTrace("CONSTRUCTION_ADD " + construction.buildingType());
+        }
         constructions.add(construction);
     }
 
