@@ -18,8 +18,12 @@ public class OrderStatusWasChanged {
         if (status.isReady()) order.makeSureResourcesAreReserved();
         else if (status.isInProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
         else if (status.isFinished() && order.isUnit() && Queue.get() != null) {
+            order.releasedReservedResources();
             Queue.get().markAsProducedAndForget(order.unitType());
         }
+        // NEXT #89: IN_PROGRESS buildings keep holding (builder en route,
+        // money about to warp); every other exit from earmarked releases.
+        else if (!status.isInProgress()) order.releasedReservedResources();
 
         if (status.isInProgress()) {
             removeSameTechFromQueue(order, status);

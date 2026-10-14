@@ -693,6 +693,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   One-time waiters converge, continuous pumps resume (B-22 mirror watched:
   unbuildable STANDARD rows would halt the pump - narrow then, measured).
 
+  **2026-10-14, root cause one level deeper (no pump brake needed):**
+  reservations attach on READY but are never released leaving it - every
+  READY/NOT_READY flap (bank sawtooth vs reserved pool) inflates
+  requirements permanently (game 180053: reserved=300 stuck, effective
+  bank under 150, zero cancels). `OrderStatusWasChanged` now releases on
+  every exit from earmarked except IN_PROGRESS buildings (builder en
+  route, money about to warp); FINISHED-unit forget preserved
+  (`ReservationsReleaseWhenNotReadyTest`, red pre-fix). Suite 526/526.
+
   **2026-10-14, brake design corrected before coding:** the pump ALREADY
   respects reservations at `ProduceZealot:100`
   (`bank >= reserved+100`) - the leak is the early plenty-rules above it
