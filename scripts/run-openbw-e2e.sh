@@ -704,14 +704,20 @@ BOT_EXIT=0
 # a UMS map and could place nothing on the real one).
 timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
 BOT_PID=$!
-# Hang catcher (NEXT #69): the one hanging run died between the trace write
+# Hang catcher (NEXT #69): a run whose teardown hung died between the trace write
 # and System.exit with no frame to name. While the bot runs, a background poll
 # watches log growth: if the java child is alive but the log has not grown for
 # 30 s, its stacks are dumped once to the run dir - then the watcher gets out
 # of the way (the 15 s backstop / the outer timeout still end the run).
-# Silent unless it fires; skipped entirely when jstack is missing.
+# Silent unless it fires; skipped entirely when jstack is missing, and on
+# END_GAME_VIA_ENGINE runs: after leaveGame the bot is supposed to linger (the
+# JNativeHook hook thread holds the JVM) while the launcher flushes the replay,
+# so the log stalls by design - three such runs each dumped a false-positive
+# jstack (main+client gone, only the hook thread alive, .rep flushed fine).
 HANG_WATCHER_PID=""
-if command -v jstack >/dev/null 2>&1; then
+ENGINE_PATH_END=0
+grep -q '^END_GAME_VIA_ENGINE=true$' "$BOT_RUN_DIR/ENV" 2>/dev/null && ENGINE_PATH_END=1
+if command -v jstack >/dev/null 2>&1 && [ "$ENGINE_PATH_END" -eq 0 ]; then
   (
     i=0
     while [ "$i" -lt 9 ]; do

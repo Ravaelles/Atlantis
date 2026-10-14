@@ -52,3 +52,18 @@ named by the owner first.
 ## D8 - Terran deployment target (NEXT #15)
 
 No approved Terran artifact path. Either supply one or verify none is needed.
+
+## D9 - Engine-path early JVM exit (NEXT #69 follow-up)
+
+Three jstack catches agree on the hang frame: after `leaveGame`, main and the
+JBWAPI client thread are gone and only JNativeHook's non-daemon hook thread
+holds the JVM until the outer timeout; all three runs flushed valid `.rep`
+files. So engine-path lingering is load-bearing today - the runner `wait`s on
+the bot process for artifact collection and assertions (`PLAN-OPENBW.md` even
+documents the exit-124 shape for recording runs).
+Options: (a) unregister the hook at game end and rework the runner to wait on
+the host/match instead of the bot (runs end when the match ends instead of
+burning the full cap; needs a replay-flush safety experiment first - a bot
+that exits right after `leaveGame` must not truncate the launcher's flush);
+(b) keep lingering (recording runs burn the full cap; zero risk). The
+non-engine `leaveGame` paths stay backstop-guarded either way.

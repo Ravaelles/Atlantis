@@ -365,23 +365,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   IN_PROGRESS with its SCV held forever. Never observed in a game (both
   Terran runs built on-site); needs a game showing it. Do not fix blind.
 
-- **#69 (2026-10-12) - exit path hangs after the trace write (9 s game, 110 s run).**
-  Owner's adhoc log: ForceExit at real 9 s, GameSummary printed, trace files
-  written, then no "Killing"/"Exit" prints, one more silent ForceExit (latch),
-  frames stopped, timeout killed the JVM at 110 s. Location unproven - candidates
-  are `SaveGameResultsToFile` and the kill branch, all silent/fast by inspection.
-  Mitigated, not diagnosed: `OnGameEnd` arms a 20 s daemon backstop (`halt(1)`,
-  hooks skipped) on the self-exit path, so a hung teardown fails in ~30 s instead
-  of burning the cap. Skipped for `END_GAME_VIA_ENGINE` and in tests. Still open:
-  catch one hanging run with `jstack` and name the frame.
-
-  **Instrumented 2026-10-13:** `run-openbw-e2e.sh` runs a background catcher -
-  while the bot runs, every 10 s it checks log growth; java alive + log stalled
-  30 s → one `jstack -l` dump to `$RUN_DIR/jstack-hang.txt`, then it stands
-  down (killed after `wait`). Skipped when jstack is missing, silent unless it
-  fires, `bash -n` clean. No live verification possible without a hang (12+
-  runs all exit 0) - the next hanging run now names its own frame.**
-
 - **#68 (2026-10-12) - per-unit data never attaches ("i???" on click). ROOT CAUSE
   FOUND, fix in.** The viewer fuzzy-matches cvis units against replay units by
   (frame, type, x, y); our `units_first_seen[].type` carried `AUnitType.id()`
