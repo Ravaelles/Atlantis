@@ -1340,15 +1340,6 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   (40-88 min, all reachability/power true) - consistent with PylonAt8.
 
 ## Session 2026-10-14 (autonomous: #52 closed LIVE, #57 triple, flap verdict)
-
-- Closes #52 (deleted): V2 LIVE run `20261014_084500` - V2_GOALS Pylon:15
-  @30-540, dispatched @548 (builder committed, accepted attempt), committed
-  window stable 5 frames (@@548-552 pinned). Pre-commit [pre] slide +
-  post-commit replan stamps are display-of-uncommitted artifacts; the
-  re-dispatch churn (8 OKs, 1 engine attempt) is noted to #45/M6, not this
-  item. Exit 124 with Gateway never issued under LIVE = V2 parity, not the
-  slide. The fix itself landed earlier (0c7ddc11 + pinning test); this turn
-  closed the watch with the missing game half.
 - #57 watch datum, not a verdict: `REQUEST_ACCEPTED Pylon [11,51]` x3 at
   4:45/4:47/4:50 in `20261013_233256`, `totalOfType=1` every time (counter
   blind to siblings), zero cancel/refusal/replace/demote for the tile. The
@@ -1362,3 +1353,21 @@ Store note: core-rule file now holds 255 entries (267 on 2026-10-04; -3 from thi
   code gates on proximity for this - the tried guard is reverted, zero
   behavior delta. #77 keeps the item with this note.
 - Suite 476/0; tree holds only the foreign BuildOrderSettings line (untouched).
+
+## Session 2026-10-14 (Wine supply blocks: timing fix verified)
+
+- Wine autopsy (`last-wine.log`, 6:37, stopped 49/49): every cap is order
+  timing vs ~600f warp (P5 @40/41 <240f before cap, P6 @47/49 +80f after) -
+  travel, placement (0 failures, all accepts true) and gating innocent; the
+  17/25 caps are amplified by reservation starvation (200-300 held for
+  Gateway/Cyber/Assimilator while the Pylon waits on 4-92) - filed #83.
+- Fix: fallback bands +one warp headroom (8/10/12/16/16/22, opening bands
+  unchanged); Stardust comparison done (their `shiftForSupply` pulls Pylon
+  completion before predicted block frames over a horizon - our legacy path
+  has no timeline, so this is reactive-with-headroom; full prediction
+  belongs to V2 parity, #45).
+- Verified: suite 476/0; --short PASS with Core+Dragoon=2; non-BO Pylons
+  ordered at 14/17, 19/25, 26/33 (3-7 free) instead of at-cap; NoSupply 3
+  hits (max bank 248+300 reserved); Can't-find-place 0, took-too-long 0,
+  DEMOTE 3 all healed. 41/41 + 33/33 with bank remain (next: #83
+  reservations, #81 placement).
