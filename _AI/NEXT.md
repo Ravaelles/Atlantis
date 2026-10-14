@@ -528,6 +528,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   fix: verify in a 700 s+ game (owner Wine) that production halts rich, then
   flip with that log as evidence.
 
+  **2026-10-14, flipped with a stub inversion pin (`LateOneBaseReadinessTest`
+  2/2, both red pre-fix):** rich+late+one-base blocked the Probe pre-fix and
+  poor+late+one-base flowed - the exact inversion. The negation converges
+  (poor blocks saving for the expansion, rich releases); the old shape was a
+  livelock (rich blocks, bank grows, never releases). Added the named
+  `ORDER_SAVING_FOR_EXPANSION` line (buildings only) - the silent gate is the
+  signature the live proof looks for. Live proof still pending: game
+  20261014_172954 reached 324 s (trigger unreached, zero ORDER_SAVING) -
+  needs a 700 s+ game.
+
 - **#72 (2026-10-13) - Singularity Charge: existing path kept, HIGH waiter wired.**
   Owner's direction 2026-10-14 (and correction: +2 range, not +1):
   `ATechManager.researchDynamically` stays unused - the live path is

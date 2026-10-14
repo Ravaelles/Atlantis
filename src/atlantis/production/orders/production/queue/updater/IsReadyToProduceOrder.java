@@ -67,7 +67,18 @@ public class IsReadyToProduceOrder {
             return false;
         }
 
-        if (cantAffordAndDidntExpandYet(order)) return false;
+        if (cantAffordAndDidntExpandYet(order)) {
+            // Named, buildings only (units churn here by design): a silent
+            // queue is undiagnosable, and this is the signature the NEXT #71
+            // game proof looks for.
+            if (order.isBuilding()) {
+                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                    "ORDER_SAVING_FOR_EXPANSION " + order.unitType() + " @" + A.now()
+                        + " (min=" + A.minerals() + " s=" + A.seconds()
+                        + " bases=" + Count.basesWithUnfinished() + ")");
+            }
+            return false;
+        }
 
         // D3 priority waiting: a strictly-higher unfinished order waits and
         // the bank does not cover both - lower spending pauses (self
@@ -158,7 +169,10 @@ public class IsReadyToProduceOrder {
     }
 
     private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {
-        return A.hasMinerals(550)
+        // NEXT #71: the name is the spec - block when the base CANT AFFORD,
+        // saving for the expansion. Unnegated this halted every order while
+        // RICH, and a rich bank only grows, so it never released (livelock).
+        return !A.hasMinerals(550)
             && (A.seconds() >= 700 && Count.basesWithUnfinished() <= 1);
     }
 
