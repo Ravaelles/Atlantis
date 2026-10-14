@@ -65,6 +65,9 @@ public class PrepareConstructionSite {
     /**
      * Drop PREPARING sites whose order is gone or finished, so a cancelled
      * row cannot pin a tile forever. Runs with the refresh, same cadence.
+     * Also clears dangling links: an order pointing at a construction that
+     * is no longer listed (cancelled elsewhere) would otherwise skip both
+     * the preparer (linked) and the handler (stale) forever.
      */
     public static void dropOrphanedPreparing() {
         for (Construction construction : ConstructionRequests.all()) {
@@ -72,6 +75,17 @@ public class PrepareConstructionSite {
             ProductionOrder order = construction.productionOrder();
             if (order == null || order.isStatus(OrderStatus.FINISHED)) {
                 ConstructionRequests.removeOrder(construction);
+            }
+        }
+
+        atlantis.production.orders.production.queue.Queue queue =
+            atlantis.production.orders.production.queue.Queue.get();
+        if (queue == null) return;
+
+        for (ProductionOrder order : queue.notFinished().list()) {
+            Construction linked = order.construction();
+            if (linked != null && !ConstructionRequests.constructions.contains(linked)) {
+                order.setConstruction(null);
             }
         }
     }

@@ -884,6 +884,15 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   path), one site in flight per type, hook in `QueueRefresher`.
   `PreparingConstructionSiteTest` 4/4 (hook-stash: 3 red).
   Game proof pending (PREPARING lines + earlier first-Pylon conversion).
+
+  **2026-10-14, first game killed it in 87 s (game 200018, 1209 s, zero
+  buildings):** the cancel-too-long path has no PREPARING guard, so it
+  cancelled the 48 s old site; the requeue vetoed on 4 untriggerable rows
+  (`REQUEUE_VETO notStartedInQueue=4 maxAllowedAtOnce=2`) and the dangling
+  order link blocked both re-prepare and handler - 9/9 deadlock to the
+  tripwire. Fixed: cancel path skips PREPARING; the refresh sweep also
+  nulls links to listed-nowhere constructions. 6/6 green (cancel-guard
+  red pre-fix). Suite 533/533.
 - **Worker re-queue at 15 frames left (owner 2026-10-14):** `queueWorker`
   threshold 10 -> 15 (`NEXT_WORKER_WHEN_TRAINING_REMAINS`, pinned with
   the 300-frame engine number). The stub always direct-trains, so the

@@ -18,6 +18,14 @@ public class CancelTooLongConstructions {
     public static void cancelCauseTakingTooLongIfNeeded(
         Construction constr, AUnitType type, AUnitType buildingType
     ) {
+        // PREPARING waits by design (site picked early, no builder yet) -
+        // cancelling it for age destroys the reservation and, with the
+        // requeue vetoed by untriggerable rows, deadlocks the game (9/9
+        // with no Pylon order left, measured game 200018).
+        if (constr.status() == atlantis.production.constructions.ConstructionOrderStatus.PREPARING) {
+            return;
+        }
+
         if (
             tookTooLong(constr)
                 && A.canAfford(type)

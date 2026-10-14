@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.constructions.PrepareConstructionSite;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -187,6 +187,73 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
                         "control: builderless NOT_STARTED of the same age is overdue");
                 }
             }
+        });
+    }
+
+    @Test
+    public void cancelTooLongSkipsPreparing() {
+        currentMinerals = 600;
+        currentSupplyUsed = 20;
+        currentSupplyTotal = 40;
+
+        world(700, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() == 5) {
+                ConstructionRequests.constructions.clear();
+                Construction preparing = new Construction(AUnitType.Protoss_Pylon);
+                preparing.setStatus(ConstructionOrderStatus.PREPARING);
+                ConstructionRequests.addConstruction(preparing);
+            }
+            // Game 200018: the cancel-too-long path killed a 48 s old
+            // PREPARING site and the vetoed requeue deadlocked 9/9. A site
+            // that was never worked on cannot take too long.
+            if (atlantis.game.A.now() != 690) return;
+
+            Construction preparing = ConstructionRequests.all().stream()
+                .filter(c -> c.status() == ConstructionOrderStatus.PREPARING)
+                .findFirst().orElse(null);
+            assertNotNull(preparing, "sanity: the PREPARING site is still listed");
+            atlantis.production.constructions.commanders.CancelTooLongConstructions
+                .cancelCauseTakingTooLongIfNeeded(
+                    preparing, AUnitType.Protoss_Pylon, AUnitType.Protoss_Pylon);
+
+            assertTrue(
+                ConstructionRequests.constructions.contains(preparing),
+                "cancel-too-long must never fire on a PREPARING site");
+        });
+    }
+
+    @Test
+    public void danglingOrderLinksAreCleared() {
+        currentMinerals = 100;
+        currentSupplyUsed = 7;
+        currentSupplyTotal = 17;
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            // An order linked to a construction that is no longer listed
+            // (cancelled elsewhere without unlinking) skips both the
+            // preparer (linked) and the handler (stale) forever.
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            Queue.get().addNew(0, order);
+            Construction ghost = new Construction(AUnitType.Protoss_Pylon);
+            order.setConstruction(ghost);
+            Queue.get().clearCache();
+
+            PrepareConstructionSite.dropOrphanedPreparing();
+
+            assertNull(
+                order.construction(),
+                "dangling link must clear so the order can prepare/convert again");
         });
     }
 }
