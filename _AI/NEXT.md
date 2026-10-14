@@ -544,6 +544,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   missing path - name which gate (level check, gas ladder, queue dedup)
   refuses L2/L3 in a game that reached them. Do not patch blind.
 
+  **2026-10-14, narrowed by stub replication (`ProtossUpgradesLevelGatingTest`
+  2/2, mutation-proven):** weapons L2 DOES re-fire when rich (800/400 - the
+  level logic works, not the blocker); armor was chained behind weapons L3
+  (`!Weapons.isResearched()`, bulk commit, no reason recorded - vanilla and
+  the Terran researchers carry no such cross requirement) - relaxed to
+  weapons L1, keeping the "weapons first" intent. Still open: flat rich
+  gates (290/500/550 min) sit ~2x above L2/L3 engine costs (jar: weapons
+  150/150 then 200/200, armor 175/175 then 250/250), so the middle bank band
+  refuses, and live games sit at gas 0 anyway (Currently broken) - needs a
+  gas-healthy game for the L2/L3 completion proof. Rich gates untouched
+  (D5-adjacent tuning).
+
 - **#74 (2026-10-13) - Wine builder variance + issue-distance threshold boundary (remainder of #59).**
   #59's fixed halves are verified and its line is deleted: requeue cancel-before-count
   (`GatewayRequeueAfterCancelTest` 2/2, order in `CancelTooLongConstructions:192-194`),

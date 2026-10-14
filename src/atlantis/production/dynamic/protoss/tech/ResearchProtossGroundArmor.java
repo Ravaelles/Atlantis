@@ -11,6 +11,7 @@ import atlantis.game.player.Enemy;
 import bwapi.UpgradeType;
 
 import static bwapi.UpgradeType.Protoss_Ground_Armor;
+import static bwapi.UpgradeType.Protoss_Ground_Weapons;
 
 public class ResearchProtossGroundArmor extends Commander {
     private static UpgradeType what() {
@@ -20,7 +21,11 @@ public class ResearchProtossGroundArmor extends Commander {
     @Override
     public boolean applies() {
         if (!Have.forge()) return false;
-        if (!ResearchProtossGroundWeapons.isResearched()) return false;
+        // Weapons first, but level 1 is enough: requiring full L3 (via
+        // Weapons.isResearched()) held armor until the end of the tech path
+        // (NEXT #85). Vanilla has no such cross requirement, and Terran
+        // researchers carry none either.
+        if (ATech.getUpgradeLevel(Protoss_Ground_Weapons) < 1) return false;
         if (Count.ourCombatUnits() <= 10) return false;
         if (ATech.isResearched(what())) return false;
         if (!A.hasMinerals(650) && !A.hasGas(400) && Count.basesWithUnfinished() <= 1) return false;
