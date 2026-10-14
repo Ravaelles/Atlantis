@@ -31,6 +31,13 @@ public class AutoProduceWorkersCommander extends Commander {
     public static String REASON = "";
 
     /**
+     * Queue the next worker while the current one still trains (owner
+     * 2026-10-14: 15 of ~300 Probe frames, so production never gaps).
+     * Pinned by WorkerPumpEarlyGameTest.
+     */
+    public static final int NEXT_WORKER_WHEN_TRAINING_REMAINS = 15;
+
+    /**
      * Selects the least worker-saturated base to build a worker.
      *
      * @return
@@ -204,7 +211,11 @@ public class AutoProduceWorkersCommander extends Commander {
 
 //        System.err.println("base.remainingTrainTime() = " + base.remainingTrainTime());
 
-        if (base.remainingTrainTime() <= 10) {
+        // Owner 2026-10-14: queue the next worker when the current one has
+        // 15 frames left (was 10), so the production never gaps. The engine
+        // holds at most a few queued units; 15 of 300 frames (~5%) is queue
+        // depth, not banked money.
+        if (base.remainingTrainTime() <= NEXT_WORKER_WHEN_TRAINING_REMAINS) {
 //                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
 //            System.err.println("base.hasNothingInQueue() = " + base.hasNothingInQueue());
 //            System.err.println("base.trainForced(AtlantisRaceConfig.WORKER) = " + base.trainForced(AtlantisRaceConfig.WORKER));
