@@ -40,9 +40,6 @@ public class ProduceGateway {
 
         if (freeGateways <= 0 && minerals >= 220 && existingGateways <= 3) return produceGateway() && log("220");
 
-        if (freeGateways >= 1 && minerals <= 360) return false;
-        if (freeGateways >= 1 && A.supplyFree() >= 2 && minerals <= 550) return false;
-
         if (minerals <= (50 + 150 * Count.inProduction(Protoss_Gateway))) return false;
 
         if (Strategy.get().isGoingHiddenUnits() && minerals <= 334) {
@@ -245,7 +242,10 @@ public class ProduceGateway {
     }
 
     private static boolean produceGateway() {
-        if (freeGateways > 0 && !A.hasMinerals(500)) return false;
+        // Second Gateway from 300 bank (was 500): with one Gateway idle and
+        // the bank hoarding (game 162906: 1 Gateway, 300-440 bank, army
+        // stalled), infrastructure must double before riches. D5 thresholds.
+        if (freeGateways > 0 && !A.hasMinerals(300)) return false;
         if (CountInQueue.countNotFinished(type()) >= (1 + A.minerals() / 330)) return false;
 
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);

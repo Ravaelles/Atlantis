@@ -657,9 +657,16 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   matter) and gas miners never sticking (assigned, then pulled). No
   gas-worker evidence lines exist in this build. Needs a run with gas-miner
   visibility, not a blind fix.
-- **One Gateway all game** (a single `Gateway ADDED TO QUEUE` line):
-  army throughput caps at one facility while the bank hoards. Why the second
-  Gateway never queues was not investigated here.
+- **One Gateway all game - FIXED in stub, game proof pending:** the producer
+  refused at 400 bank via two early flat lines (free Gateway + bank <=360/550)
+  shadowing the later produce rules, and `produceGateway()` floored at 500.
+  Early lines deleted, floor 500->300 (`SecondGatewayQueuedTest` pins
+  Gateway-2 at 400 bank). Unchanged: count throttle, rich-bank rules.
+- **Gas: formula cleared, assignment needs game telemetry:** the demand side
+  is pinned (`GasMinersAssignedTest`: 22 workers demand 3); engine data
+  exonerated (player gas synced, refinery is a container). Added one
+  throttled `GasWorker assigned` line - the next game says assign-vs-steal.
+  Harness fields probed, not memory.
 - **Late spending stall:** 603 bank, free supply, idle Gateway, zero
   production-refusal lines for units in this build - the pump's reasons are
   silent when they decline. Nothing names which gate held the last 60 s.

@@ -85,6 +85,8 @@ public class NumberOfGasWorkersCommander extends Commander {
 
         worker.gather(gasBuilding);
         worker.setTooltipTactical("Gas");
+        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+            "GasWorker assigned " + worker.typeWithUnitId() + " to " + gasBuilding.type());
     }
 
     private static AUnit getWorkerForGasBuilding(AUnit gasBuilding) {
