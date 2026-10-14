@@ -926,3 +926,10 @@ is thin and hoards (603 minerals at the tripwire end). What does not work:
   threshold 10 -> 15 (`NEXT_WORKER_WHEN_TRAINING_REMAINS`, pinned with
   the 300-frame engine number). The stub always direct-trains, so the
   path itself is game-proven only - watch early probe cadence.
+- **First Pylon converts at 8 (owner 2026-10-14, Wine):** unconvertible
+  HIGH rows (Core/Assim, NOT_READY for minutes) blocked every building
+  order until ~350 bank. `IsReady` waiters are convertible-only now
+  (READY; IN_PROGRESS money is sunk); pumps keep the status-blind
+  variant (army saving is strategy). `FirstPylonConvertsAtEightTest`
+  pins the whole pipeline (READY + conversion + builder, red pre-fix).
+  Suite 537/537. Wine re-run pending (owner).

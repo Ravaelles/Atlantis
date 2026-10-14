@@ -134,6 +134,12 @@ public class PriorityWaiters {
             if (order.shouldIgnore()) continue;
             if (!isWaiter(order)) continue;
             if (except.priority().isAtLeast(order.priority())) continue;
+            // Owner 2026-10-14 (Wine first Pylon): only convertible (READY)
+            // waiters block - a NOT_READY tech row cannot convert yet, so
+            // there is nothing to save for; IN_PROGRESS money is already
+            // spent (sunk), waiting for it is pure loss. Pumps keep the
+            // status-blind variant (army saving is strategy, D5).
+            if (!order.isStatus(OrderStatus.READY_TO_PRODUCE)) continue;
             total += minerals ? order.mineralPrice() : order.gasPrice();
         }
         return total;
