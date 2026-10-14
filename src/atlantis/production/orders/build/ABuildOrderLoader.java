@@ -28,6 +28,17 @@ public class ABuildOrderLoader {
 
         String filePath = buildOrdersDir() + strategy.race() + "/" + strategy.name() + ".txt";
 
+        if (!strategy.isPlayable()) {
+            // Detection vocabulary, not a playable opening: enemy recognition
+            // maps observations onto these entries, but we have no build order
+            // for them. Refuse loudly at the seam instead of mining mute.
+            throw new BuildOrderFileNotFoundException(
+                "### Strategy is not playable by us (detection only):\n"
+                    + strategy,
+                filePath
+            );
+        }
+
         File f = new File(filePath);
         if (!f.exists()) {
             // A missing build order is fatal for this bot and this layer owns

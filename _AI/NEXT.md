@@ -531,19 +531,6 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   the 1.4-tile issue distance. No bounded OpenBW run reaches either; do not patch
   blind.
 
-- **#75 (2026-10-13) - three Protoss strategies name build orders that do not exist (remainder of #46).**
-  `3 Gate`, `12 Nexus`, `Carrier Push` have no `.txt` files; the silent part is
-  fixed since `f45c4100` (missing file throws `BuildOrderFileNotFoundException`
-  with path and strategy instead of mining mute). The init-order half is
-  verified: `ProtossStrategies.initialize()` runs before `StrategyChooser`
-  (`OnGameStarted.java:115` before `:118`), and `StrategyBuildOrderTest` 5/5
-  pins the missing set as exactly these three (any fourth missing file, or any
-  of the three landing on disk, fails it). What remains is owner policy (D5):
-  rename the entries, add the `.txt` files, or delete the entries - none of
-  them is auto-picked today (hardcoded per-matchup choices), so this waits
-  without burning games.
-
-
 - **#77 (2026-10-13) - acceptance tier: 6 stale pins (remainder of #73).**
   The 4 FakeUnit NPEs are fixed (null-guard in `AUnit.isTrainingAnyUnit`, the
   same shape as its neighbors; `ProtossDragoonProductionTest` 2/2 and

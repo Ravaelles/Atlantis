@@ -130,11 +130,11 @@ public class ProtossStrategies extends AStrategy {
 
         // === Cheese ========================================
 
-        PROTOSS_3_Gate.setName("3 Gate").setGoingRush().setGoingCheese();
+        PROTOSS_3_Gate.setName("3 Gate").setGoingRush().setGoingCheese().setUnplayable();
 
         // === Expansion =====================================
 
-        PROTOSS_12_Nexus.setName("12 Nexus").setGoingExpansion();
+        PROTOSS_12_Nexus.setName("12 Nexus").setGoingExpansion().setUnplayable();
         PROTOSS_Forge_FE_vZ.setName("Forge FE vZ").setGoingExpansion();
         PROTOSS_Forge_FE_vP.setName("Forge FE vP").setGoingExpansion();
 
@@ -147,7 +147,7 @@ public class ProtossStrategies extends AStrategy {
 
         PROTOSS_2_Gate_DT.setName("2 Gate DT").setGoingTech().setGoingHiddenUnits();
 
-        PROTOSS_Carrier_Push.setName("Carrier Push").setGoingTech().setGoingAirUnitsLate();
+        PROTOSS_Carrier_Push.setName("Carrier Push").setGoingTech().setGoingAirUnitsLate().setUnplayable();
 
         PROTOSS_Fast_DT.setName("Fast DT").setGoingTech().setGoingRush();
     }

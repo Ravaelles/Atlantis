@@ -107,6 +107,36 @@ public class StrategyBuildOrderTest {
     }
 
     @Test
+    public void filelessStrategiesAreDetectionOnly() {
+        // Owner's call: the three fileless entries stay as enemy-recognition
+        // vocabulary (detectStrategy() returns them) but we must refuse to
+        // play them loudly instead of mining mute.
+        ProtossStrategies.initialize();
+
+        for (AStrategy strategy : ProtossStrategies.allProtossStrategies()) {
+            if (strategy.name() == null) continue;
+            boolean hasFile = new File(ORDERS_DIR + "Protoss/" + strategy.name() + ".txt").isFile();
+            assertEquals(hasFile, strategy.isPlayable(),
+                    "fileless <=> unplayable must hold both ways: " + strategy.name());
+        }
+    }
+
+    @Test
+    public void unplayableStrategyRefusedLoudly() {
+        ProtossStrategies.initialize();
+
+        AStrategy threeGate = ProtossStrategies.PROTOSS_3_Gate;
+        assertNotNull(threeGate.name());
+        try {
+            ABuildOrderLoader.getBuildOrderForStrategy(threeGate);
+            assertTrue(false, "a fileless strategy must not load silently");
+        } catch (atlantis.production.orders.build.BuildOrderFileNotFoundException expected) {
+            assertTrue(expected.getMessage().contains("not playable"),
+                    "the refusal must say unplayable, not missing-file: " + expected.getMessage());
+        }
+    }
+
+    @Test
     public void theLoaderResolvesTheShippedOrdersDirectory() {
         // Guards the other half of the OpenBW failure: the path itself. The
         // loader walks a candidate list; if the repo's own tree stopped being

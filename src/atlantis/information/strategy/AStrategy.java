@@ -85,6 +85,24 @@ public class AStrategy {
         return this;
     }
 
+    /**
+     * Whether WE may play this strategy. Entries without a build-order file
+     * stay playable=false: they remain first-class detection vocabulary
+     * (enemy recognition maps observations onto these same objects), but our
+     * own use refuses them loudly instead of mining mute. See
+     * {@code ABuildOrderLoader}.
+     */
+    private boolean playable = true;
+
+    public boolean isPlayable() {
+        return playable;
+    }
+
+    public AStrategy setUnplayable() {
+        this.playable = false;
+        return this;
+    }
+
     public String getUrl() {
         return url;
     }

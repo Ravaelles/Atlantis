@@ -19,11 +19,12 @@ then delete per `_AI/PLACEMENT-CUTOVER-PLAN.md` (recommended, but needs the
 parity gap closed); (b) delete now and break default runs (not recommended).
 Approval of (a) starts with the parity-gap scope, not the deletion itself.
 
-## D5 - Worker-gate, mineral-distance and expansion-timing thresholds (NEXT #60, #58-timing)
+## D5 - Worker-gate and expansion-timing thresholds
 
 Strategy tuning, not defects (`--long` games confirm: 7 Dragoons at 429 s
-with no expansion - gates, not bugs). Same for cannon producers (#39) and
-the three missing build orders (#46: rename entries, add files, or delete).
+with no expansion - gates, not bugs). The cannon-producer question (#39)
+and the fileless build-order entries (#75) are resolved; thresholds stay
+owner-tunable.
 
 
 ## D8 - Terran deployment target (NEXT #15)
