@@ -555,6 +555,11 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `BoardEmergencyDriverTest` 2/2 full-path (pre-fix pauses via
   `PylonAt8`, new reason wins). Suite 546/546.
 
+  **Driver live 2026-10-15 (game 111441, bot-cap):** BOARD lines flow,
+  `BoardEmergency` never fires (no hidden enemies - driver correctly
+  dormant), economy healthy throughout (workers 8->22 across lines).
+  No behavior change observed, as designed.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
