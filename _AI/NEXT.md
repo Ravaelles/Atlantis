@@ -586,6 +586,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   BOARD_FED line will be its positive proof; stub logic + no-harm games
   (healthy scaling to 35 workers / 122 supply) stand.
 
+  **Domain split 2026-10-15 (owner, CONVENTIONS §21):** generic
+  machinery (`decisions.board`: Goal (now with `emergency()`),
+  BoardState, GoalBoard) imports zero project types; Protoss opening
+  vocabulary (`decisions.board.goals`: 8 single classes +
+  `ProtossOpening` factory + ladder) owns all game meaning. Emergency
+  break reads the property, not a rank threshold. All 12 board tests
+  green unchanged - neutrality proven, not claimed.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a

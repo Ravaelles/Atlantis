@@ -394,3 +394,20 @@ same hours are not spent twice.
 - A prose file rots because nobody owns its cleanup; a commit is timestamped
   evidence and a NEXT item has a number a commit can close. That is the whole
   difference.
+
+## 21. Domain knowledge lives in domain packages, never in generic machinery (owner's ruling, 2026-10-15)
+
+- Game meaning (what to want, when, in what order, at what price) lives in
+  domain packages (`atlantis.decisions.board.goals`, race strategies) and
+  never in generic algorithm packages (`atlantis.decisions.board`: ranking,
+  snapshots, interfaces). Tuning strategy is a domain diff; changing the
+  algorithm never names a game concept.
+- Dependency direction is one-way, inward to generic: domain imports the
+  machinery, the machinery imports nothing project-specific. A generic
+  package importing a domain type is a boundary violation, same class as
+  CONVENTIONS §5.
+- Measurable check: `grep -rn '^import atlantis' <generic-package>` must
+  show only `java.*` (plus its own package). The day it shows a domain
+  import, split or revert before committing.
+- New rule, not retroactive cleanup: existing violations elsewhere are
+  tracked by ArchUnit (§5), not rewritten to satisfy this section.
