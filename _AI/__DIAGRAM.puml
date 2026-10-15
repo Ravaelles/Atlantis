@@ -1,0 +1,110 @@
+@startuml
+' Atlantis goal-approach layer diagram (see _AI/00-GOAL-APPROACH.md).
+' Top-down: dependencies point inward/down. <<legacy>> shrinks,
+' <<new>> grows, leaves never rewrite. Verified against the tree 2026-10-15.
+
+skinparam packageStyle rectangle
+skinparam defaultTextAlignment center
+
+package "Engine (truth)" {
+  [BWAPI / OpenBW / Wine] as Engine
+}
+
+package "Leaves: keep, never rewrite" {
+  [units.AUnit\nunits.AUnitType] as Units
+  [units.BwapiOrderSink] as OrderSink
+  [map.AMap\nmap.MapTiles] as MapModel
+  [cherryvis.*] as CherryVis
+}
+
+package "Application / frame" {
+  [Atlantis.onFrame] as OnFrame
+  [AtlantisGameCommander\nFramePipeline] as Pipeline
+  [production.ProductionCommander] as ProdCommander
+}
+
+package "Goal board (generic machinery)" {
+  [decisions.board.GoalBoard] as Board
+  [decisions.board.Goal\n+ emergency()] as GoalIface
+  [decisions.board.BoardState] as BoardState
+}
+
+package "Domain vocabularies (grow as siblings)" {
+  [decisions.goals.protoss.ProtossOpening\n+ GoalRanks ladder] as ProtossGoals
+  [decisions.goals.protoss.SupplyPylonGoal\nWorkersGoal, GatewayGoal,\nCore/Assimilator/Army/\nExpansion/DetectionGoal] as ProtossGoalList
+}
+
+package "Consumers (thin, one direction each)" {
+  [production.GoalBoardAdvisor\n(BOARD log)] as Advisor
+  [production.GoalBoardDriver\n(emergency preempt)] as Driver
+  [production.GoalBoardFeeder\n(BOARD_FED rows)] as Feeder
+}
+
+package "Legacy production (shrinks) <<legacy>>" {
+  [production.dynamic.AutoProduceWorkersCommander\nProtossDynamicUnitProductionCommander\nSupplyCommander] as Pumps
+  [production.orders.Queue\nProductionOrder] as Queue
+}
+
+package "Execution (stays)" {
+  [production.ProductionOrdersCommander] as OrdersCommander
+  [production.constructions.ConstructionRequests\nConstruction + PREPARING] as Constructions
+  [production.constructions.ConstructionsCommander\nBuilderManager] as Builders
+}
+
+package "Combat (sibling, untouched)" {
+  [combat.CombatCommander\nmissions / squads] as Combat
+  [combat.micro.*] as Micro
+}
+
+package "V2 reference (cutover target)" {
+  [production.v2.ProductionEngine\nBuildOrderGoals / DynamicGoals] as V2
+}
+
+package "Info / select (reads)" {
+  [units.select.Select/Count/Have\ninformation.enemy.EnemyInfo\nunits.BaseUnderAttack] as Reads
+}
+
+' --- data + dependency flow ---
+Engine -down-> Units : publishes state
+Engine -down-> MapModel : terrain
+Units -down-> Reads : unit sets
+OnFrame --> Pipeline : tick
+Pipeline --> ProdCommander : production slice
+Pipeline --> Combat : combat slice
+ProdCommander --> OrdersCommander : queue first
+ProdCommander --> Feeder : after refresh
+Feeder --> Queue : ensure missing rows
+OrdersCommander --> Queue : refresh + issue
+Queue --> Constructions : ProduceBuilding
+Constructions --> Builders : assign + drive
+Builders --> OrderSink : build/train
+ProtossGoals ..> GoalIface : implements
+Board --> GoalIface : ranks
+Advisor ..> Board : snapshot + rank (read-only)
+Driver ..> Board : emergency top (read-only)
+Feeder ..> Board : active set (read-only)
+Pumps ..> Reads : gates
+Combat ..> Reads : senses
+Combat ..> BoardState : reads (no orders back)
+V2 ..> Reads : DRY_RUN compare
+CherryVis ..> Units : traces
+
+note right of Board
+  Pure: ranks stub states,
+  zero engine imports.
+  Wallet serves top-down;
+  skipped goals wait.
+end note
+
+note right of ProtossGoals
+  Game meaning only.
+  Terran/Zerg/midgame
+  arrive as siblings.
+end note
+
+note bottom of Pumps
+  Strangler: absorbed
+  file by file, then
+  deleted same cycle.
+end note
+@enduml
