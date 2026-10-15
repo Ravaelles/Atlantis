@@ -231,29 +231,36 @@ LIVE_OUTPUT="${LIVE_OUTPUT:-1}"
 # Resolve the live copy destination once, before the client starts (see
 # resolve_wine_log_copy): empty in every case that must stay quiet.
 WINE_LOG_COPY_RESOLVED="$(resolve_wine_log_copy)"
-TEE_FILES=("$CLIENT_LOG")
-if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
-  TEE_FILES+=("$WINE_LOG_COPY_RESOLVED")
-  say "  Live log copy: $WINE_LOG_COPY_RESOLVED"
-fi
 
 # The client inherits this cwd, so the bot's cwd-relative files
 # (bwapi-data/write/...) land here. Captured now: the script cd's into
 # GAME_ROOT further down, so pwd at teardown would lie.
 CLIENT_CWD="$(pwd)"
 
+TEE_OUT=("$CLIENT_LOG")
+TEE_ERR=("$LOG_DIR/debug.log")
+if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
+  TEE_OUT+=("$WINE_LOG_COPY_RESOLVED")
+  TEE_ERR+=("$WINE_LOG_COPY_RESOLVED")
+  say "  Live log copy: $WINE_LOG_COPY_RESOLVED (both streams)"
+fi
+
+# Streams stay split on purpose: client.log is the game log (HELLO,
+# GameSummary, build orders), debug.log the diagnostics (worker gates,
+# stuck workers, refusals, stack traces). The console still shows both
+# merged, exactly as before.
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
-    2>&1 < /dev/null | tee "${TEE_FILES[@]}" &
-  # tee is the foreground of that pipeline; killing it later also closes the
-  # bot's stdout. CLIENT_PID stays the pipeline's PID, which is what the
-  # liveness checks below need.
+    > >(tee "${TEE_OUT[@]}") 2> >(tee "${TEE_ERR[@]}" >&2) < /dev/null &
+  # CLIENT_PID is now wine itself, not tee (better liveness: it dies when
+  # the game ends, while tee may linger flushing). Tees inherit the
+  # redirection, so no output is lost when the client exits first.
   CLIENT_PID=$!
 else
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
-    2>&1 < /dev/null | tee "${TEE_FILES[@]}" > /dev/null &
+    > >(tee "${TEE_OUT[@]}" > /dev/null) 2> >(tee "${TEE_ERR[@]}" > /dev/null) < /dev/null &
   CLIENT_PID=$!
 fi
 say "  Client PID $CLIENT_PID, log: $CLIENT_LOG"

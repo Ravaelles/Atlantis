@@ -568,6 +568,7 @@ rm -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl"
 
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/bot.log"
+DEBUG_LOG="$RUN_DIR/debug.log"
 mkdir -p "$(dirname "$SERVER_LOG")"
 
 # The run's identity, written next to the log so a later reader does not have to guess
@@ -707,8 +708,13 @@ BOT_EXIT=0
 # the bot analyses are the same one. Without it the bot's own default was used
 # while the harness hosted something else (measured 2026-10-08: the bot analysed
 # a UMS map and could place nothing on the real one).
-timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>&1 &
+timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>"$DEBUG_LOG" &
 BOT_PID=$!
+# Streams stay split on purpose: stdout is the game log (HELLO, GameSummary,
+# build orders, placements), stderr the diagnostics (worker gates, stuck
+# workers, refusal breakdowns, stack traces). Merging them back is how the
+# main log drowned in thousands of diagnostic lines; EVENTS.jsonl carries
+# the queryable twin of the hot families.
 # Hang catcher (NEXT #69): a run whose teardown hung died between the trace write
 # and System.exit with no frame to name. While the bot runs, a background poll
 # watches log growth: if the java child is alive but the log has not grown for
@@ -762,6 +768,7 @@ say "bot log:    $BOT_LOG"
 # is exactly when the file is wanted.
 cp -f "$BOT_LOG" "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
 cp -f "$SERVER_LOG" "$E2E_LOGS_DIR/last-server.log" 2>/dev/null || true
+cp -f "$DEBUG_LOG" "$E2E_LOGS_DIR/last-debug.log" 2>/dev/null || true
 
 # Buildings ledger collection (always on): the bot rewrites
 # bwapi-data/write/BUILDINGS.json on every warp, so an interrupted run
@@ -896,7 +903,7 @@ if grep -q 'ForceExitWhenOpeningProven' "$BOT_LOG" 2>/dev/null; then
   GATE_MARK="success gate reached (Core + Dragoon)"
 fi
 
-if ! bash "$ATLANTIS_DIR/scripts/assert-openbw-scenario.sh" "$BOT_LOG"; then
+if ! bash "$ATLANTIS_DIR/scripts/assert-openbw-scenario.sh" "$BOT_LOG" "$DEBUG_LOG"; then
   say "SCENARIO FAILED (see $BOT_LOG)"
   print_result_block "FAIL" "${GATE_MARK:-success gate NOT reached} - an expected structure/unit is missing (see reasons above)"
   exit 1

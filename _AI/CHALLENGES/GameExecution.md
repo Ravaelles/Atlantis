@@ -70,7 +70,11 @@ exist in this workspace and mixing them is the whole story below.
 
 ## 6. Where OpenBW run artefacts land
 
-- `Atlantis/out/openbw/server.log` - the OpenBW host side.
-- `Atlantis/out/openbw/bot.log` - the Atlantis client side.
+- `E2E_LOGS/<run>/server.log` - the OpenBW host side.
+- `E2E_LOGS/<run>/bot.log` - the game log (stdout: HELLO, GameSummary,
+  build orders, placements).
+- `E2E_LOGS/<run>/debug.log` - diagnostics (stderr: worker gates, stuck
+  workers, refusal breakdowns, stack traces). Split since 2026-10-15:
+  the merged file drowned the game log in thousands of diagnostic lines.
 - Not `out/wine/*` - those belong to the Wine runs and must not be mixed in
   when diagnosing a headless run.

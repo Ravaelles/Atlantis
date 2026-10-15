@@ -16,7 +16,11 @@
 # Pylons. A report that cannot read its own log is worse than no report; the patterns are
 # pinned by `LauncherBuildsTheJarTest` so the next format change fails loudly.
 set -euo pipefail
-BOT_LOG="${1:?usage: assert-openbw-scenario.sh <bot-log>}"
+BOT_LOG="${1:?usage: assert-openbw-scenario.sh <bot-log> [debug-log]}"
+# Placement refusals print to stderr (ErrorLog), so since the stream split
+# they live in debug.log, not bot.log. Default keeps old single-arg calls
+# working (a missing debug file simply never matches).
+DEBUG_LOG="${2:-/dev/null}"
 
 log_number() {
   local pattern="$1"
@@ -82,7 +86,9 @@ check_min "${EXPECT_MIN_KILLED:-}" "$KILLED" "kills"
 check_max "${EXPECT_MAX_KILLED:-}" "$KILLED" "kills"
 check_min "${EXPECT_MIN_RESOURCE_BALANCE:-}" "$RESOURCE_BALANCE" "resource balance"
 
-if [ "${EXPECT_NO_PLACEMENT_FAILURES:-0}" = "1" ] && grep -q "Can't find place for" "$BOT_LOG"; then
+if [ "${EXPECT_NO_PLACEMENT_FAILURES:-0}" = "1" ] \
+  && { grep -q "Can't find place for" "$BOT_LOG" 2>/dev/null \
+    || grep -q "Can't find place for" "$DEBUG_LOG" 2>/dev/null; }; then
   REASONS+=("placement refusal found in the log ('Can't find place for')")
   FAILED=1
 fi
