@@ -20,12 +20,13 @@
 
 @ - Name - Modifier
 8 - Pylon
-9 - Gateway
 10 - Gateway
-11 - Zealot
-12 - Zealot
-13 - Pylon
-18 - Cybernetics Core
-20 - Pylon
-22 - Assimilator
+12 - Gateway
+13 - Zealot
+15 - Pylon
+17 - Zealot
+18 - Zealot
+21 - Pylon
+22 - Cybernetics Core
+23 - Assimilator
 27 - Pylon
