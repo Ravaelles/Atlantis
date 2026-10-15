@@ -702,9 +702,10 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
 - **#78 (2026-10-13) - replay-vs-live divergence: OpenBW #27, live is truth.**
   Counting exonerated by raw dump (28/28 exists+completed, 1:1). The pairing
   mixup is DEAD (owner cleared REPLAYS, single file, timestamps match) - and
-  the replacement suspect is confirmed REAL: OpenBW issue #27 ("openbw
-  creates desynced replay", open since 2019, confirmed by a second user on
-  Linux) - bot log correct, generated replays desync shortly into the game.
+  the replacement suspect is verified upstream 2026-10-15 (issue #27 open
+  since Mar 2019, bmnielsen, seconded Aug 2021 Steamhammer-on-Linux,
+  unassigned, no fix): bot log correct, generated replays desync shortly
+  into the game.
   Standing consequences: (1) roster/E2E gates read LIVE truth - valid;
   (2) replays are position-viewing only, never unit-existence truth;
   (3) viewer fuzzy-matching compares live-true traces against desynced
