@@ -73,6 +73,7 @@ public class OnGameEnd {
         if (Env.isBenchmark()) BenchmarkMode.onGameEnd(won);
 
         SaveGameResultsToFile.createAndSave(won);
+        atlantis.util.log.EventLog.flush();
         if (!Env.isLocal()) AConsole.println("Game ended at: " + A.getCurrentTimeAsString());
 
         _executed = true;

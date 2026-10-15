@@ -12,6 +12,8 @@ import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.SoonInQueue;
@@ -59,6 +61,14 @@ public class AutoProduceWorkersCommander extends Commander {
                     + " minerals=" + A.minerals()
                     + " reserved=" + ReservedResources.minerals()
                     + " supply=" + A.supplyUsed() + "/" + A.supplyTotal());
+                EventLog.key(LogKey.WORKER_GATE)
+                    .param("reason", REASON)
+                    .param("workers", Count.workers())
+                    .param("minerals", A.minerals())
+                    .param("reserved", ReservedResources.minerals())
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("supplyTotal", A.supplyTotal())
+                    .log(A.now(), A.minSec());
             }
             return false;
         }

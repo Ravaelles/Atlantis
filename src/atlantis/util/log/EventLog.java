@@ -1,0 +1,137 @@
+package atlantis.util.log;
+
+import atlantis.util.AFile;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Structured diagnostic events, buffered and written as JSON lines.
+ *
+ * <p>One row per event: {@code {"frame":F,"time":"m:ss","key":"WORKER_GATE",
+ * "reason":"CantAfford",...}}. Keys are {@link LogKey} families, parameters
+ * carry the variance - so a thousand refusals that differ in two numbers are
+ * a filter, not a grep. The console lines stay byte-identical next to these
+ * calls; this file is the queryable twin, not a replacement.</p>
+ *
+ * <p>Engine-free on purpose: frame and time arrive as primitives (this
+ * package may not import the game layer), so rendering pins in unit tests.
+ * Flush is periodic, not end-only: an interrupted game never reaches
+ * {@code OnGameEnd}, and that is exactly when the rows are wanted. Buffer
+ * clears on delivery, so memory stays bounded by the flush interval.</p>
+ */
+public class EventLog {
+
+    public static final String OUTPUT_PATH = "bwapi-data/write/EVENTS.jsonl";
+
+    /** ~30 game-seconds between flushes: fresh enough to survive a kill. */
+    public static final int FLUSH_EVERY_FRAMES = 720;
+
+    private static final List<Row> buffer = new ArrayList<>();
+    private static int lastFrame = -1;
+    private static int lastFlushFrame = -1;
+
+    private EventLog() {
+    }
+
+    public static Builder key(LogKey key) {
+        return new Builder(key);
+    }
+
+    /** Frame and time come from the caller: this package cannot read the clock. */
+    public static final class Builder {
+        private final LogKey key;
+        private final LinkedHashMap<String, Object> params = new LinkedHashMap<>();
+
+        private Builder(LogKey key) {
+            this.key = key;
+        }
+
+        public Builder param(String name, String value) {
+            params.put(name, value == null ? "-" : value);
+            return this;
+        }
+
+        public Builder param(String name, int value) {
+            params.put(name, value);
+            return this;
+        }
+
+        public Builder param(String name, boolean value) {
+            params.put(name, value);
+            return this;
+        }
+
+        public void log(int frame, String time) {
+            EventLog.append(key, frame, time, params);
+        }
+    }
+
+    private static void append(LogKey key, int frame, String time, LinkedHashMap<String, Object> params) {
+        if (frame < lastFrame) {
+            buffer.clear();
+            lastFlushFrame = -1;
+        }
+        lastFrame = frame;
+        buffer.add(new Row(key, frame, time, new LinkedHashMap<>(params)));
+        if (flushDue(frame, lastFlushFrame)) flush();
+    }
+
+    public static boolean flushDue(int frame, int lastFlush) {
+        return frame - lastFlush >= FLUSH_EVERY_FRAMES;
+    }
+
+    public static void flush() {
+        flushTo(OUTPUT_PATH);
+    }
+
+    public static void flushTo(String path) {
+        if (buffer.isEmpty()) return;
+        AFile.appendToFile(path, toJsonLines());
+        buffer.clear();
+        lastFlushFrame = lastFrame;
+    }
+
+    public static String toJsonLines() {
+        StringBuilder out = new StringBuilder();
+        for (Row row : buffer) {
+            out.append("{\"frame\":").append(row.frame)
+                .append(",\"time\":\"").append(escape(row.time)).append("\"")
+                .append(",\"key\":\"").append(row.key.name()).append("\"");
+            for (Map.Entry<String, Object> param : row.params.entrySet()) {
+                out.append(",\"").append(escape(param.getKey())).append("\":");
+                Object value = param.getValue();
+                if (value instanceof String) out.append("\"").append(escape((String) value)).append("\"");
+                else out.append(value);
+            }
+            out.append("}\n");
+        }
+        return out.toString();
+    }
+
+    public static void clearForTests() {
+        buffer.clear();
+        lastFrame = -1;
+        lastFlushFrame = -1;
+    }
+
+    private static String escape(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private static final class Row {
+        private final LogKey key;
+        private final int frame;
+        private final String time;
+        private final LinkedHashMap<String, Object> params;
+
+        private Row(LogKey key, int frame, String time, LinkedHashMap<String, Object> params) {
+            this.key = key;
+            this.frame = frame;
+            this.time = time;
+            this.params = params;
+        }
+    }
+}

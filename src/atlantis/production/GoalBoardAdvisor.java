@@ -12,6 +12,8 @@ import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.We;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.Collections;
 import java.util.List;
@@ -57,6 +59,14 @@ public class GoalBoardAdvisor extends Commander {
                 + " min=" + state.minerals
                 + " sup=" + state.supplyUsed + "/" + state.supplyTotal
                 + " workers=" + state.workerCount);
+        EventLog.key(LogKey.BOARD)
+            .param("top", top == null ? "-" : top.id())
+            .param("active", active.toString())
+            .param("minerals", state.minerals)
+            .param("supplyUsed", state.supplyUsed)
+            .param("supplyTotal", state.supplyTotal)
+            .param("workers", state.workerCount)
+            .log(A.now(), A.minSec());
 
         return false;
     }

@@ -5,6 +5,8 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class WorkerHandlerCommander extends Commander {
     @Override
@@ -127,5 +129,20 @@ public class WorkerHandlerCommander extends Commander {
             + " distToMineral=" + (mineral == null ? "none" : A.digit(worker.distTo(mineral)))
             + " mineralsNear=" + Select.all().minerals().countInRadius(8, worker)
             + " bases=" + Select.ourBases().count() + engineAnswers);
+        EventLog.key(LogKey.STUCK_WORKER)
+            .param("unit", worker.id())
+            .param("type", worker.type().name())
+            .param("tx", worker.tx())
+            .param("ty", worker.ty())
+            .param("stoodStillForF", worker.lastPositionChangedAgo())
+            .param("manager", worker.manager() == null ? "-" : worker.manager().getClass().getSimpleName())
+            .param("lastCommand", worker.lastCommandName())
+            .param("lastCommandIssuedAgo", worker.lastCommandIssuedAgo())
+            .param("action", worker.action().name())
+            .param("idle", worker.isIdle())
+            .param("stopped", worker.isStopped())
+            .param("gathering", worker.isGatheringResources())
+            .param("builder", worker.isBuilder())
+            .log(A.now(), A.minSec());
     }
 }
