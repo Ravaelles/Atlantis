@@ -55,7 +55,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 572 passing, 1 skipped (+3 `CoreOutranksPylonsTest`);
+Suite green 2026-10-15: 573 passing, 1 skipped (+1 `GameSummaryShutdownTest`);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -253,6 +253,9 @@ twins green (1/1 each, re-verified today). Re-run
   cancels, Gateways on time at 9/10): clean baseline, nothing to fix.
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
   8:28-8:51 game-time (`20261015_132452`).
+- Shutdown-hook summary proven `20261015_181553`: a wall-killed short
+  run now ends with `### Stopped (no game end reached) after 302
+  seconds. ###` + roster instead of mid-frame silence.
 - Wine first Pylon still unbuilt in both instances (see #84); the
   convertible-waiters fix plus walking-builder shield are in the jar,
   final proof is the owner's re-run.
