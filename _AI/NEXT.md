@@ -155,7 +155,11 @@ twins green (1/1 each, re-verified today). Re-run
   `NewConstructionRequest` (`produceBuilding:38`, not adoption), 6 via
   refresher, V2 path absent; BO row #3 warped twice (3:36 sup23, 4:12
   sup27); refresh-path cancel + re-request of dynamic Gateway #143 at
-  `[94,111]`.
+  `[94,111]`. Fourth datum, `20261015_170339` (guarded jar): 41 accepts
+  `[15,51]` over 4:52-6:24 plus 79 `[17,54]`, totalOfType pinned at 1,
+  zero cancels, sparse adoptions, all warps complete - the adopted-order
+  re-request is closed in-tree (stub: 110 pileup to exactly 1) but the
+  live loop uses another path (open; caller chains unavailable).
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
@@ -238,6 +242,11 @@ twins green (1/1 each, re-verified today). Re-run
   dynamic Gateway #143 cancelled by refresh at `[94,111]` and
   re-requested; no Core cancel (Core warped 2:36, #88 still needs its
   game); Forge warped 6:56.
+- Long `20261015_170339` (guarded jar, 9:30, 49 warps, 1 Assimilator
+  refusal + 1 refresh Gateway cancel): Gateway adoptions sparse against
+  120 same-tile accepts - the adopted-order path is closed, the live
+  loop is not (see #57). Quiet `20261015_165943` (7:22, 42 rows, no
+  cancels, Gateways on time at 9/10): clean baseline, nothing to fix.
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
   8:28-8:51 game-time (`20261015_132452`).
 - Wine first Pylon still unbuilt in both instances (see #84); the
