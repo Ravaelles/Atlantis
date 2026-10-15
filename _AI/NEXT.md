@@ -140,11 +140,6 @@ known structural failure); rush-defense twins green. Re-run
 
 ## Review leftovers
 
-- **#15** Deployed Protoss jar freshness is verified (canonical builder,
-  bytecode 52). Terran has no approved artifact path (opponent cache is
-  scbw-owned) - supply a target or verify none is needed; item stays
-  open until then.
-
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
 - **#57** Duplicate-construction leak: single-door `addConstruction`
