@@ -634,3 +634,49 @@ placement validity, client center-rule at issue time - they can disagree at
 razor boundaries, and the finder must follow the stricter observable one);
 a refusal that looks identical from the score line is never one defect (this
 file's whole reason to exist).
+
+---
+
+- **Expansion re-queued instead of finished (NEXT #58, closed 2026-10-15).**
+  Symptom: one Nexus ordered, then ordered again every few seconds, almost
+  nothing ever finished. Mechanism, in layers: (1) `isOverdue` fired on a
+  builder still WALKING - status advances when the worker starts building,
+  not when dispatched, so a 26-tile Nexus walk read exactly like a worker
+  that gave up; the reaction (`Last resort - cancelling ALL not started`)
+  flushed the whole plan on one slow walk. Fixed: an assigned, living
+  builder means not overdue. (2) Refined twice: a builder back on minerals
+  while affordable is stolen, not working (gathering exclusion); a dead or
+  missing builder tracks nothing (existence fallback). A warping Nexus-2
+  with a living builder still waits - the reserve must survive, else the
+  expansion guard re-queues a third. (3) Double order: `maxAtATime` counted
+  `nextOrders()`, which skips IN_PROGRESS, so a second Nexus queued 9 s
+  after the first; `ProtossExpandNow` refuses while any unfinished base
+  order exists. (4) Arbitration: Nexus queues HIGH, pumps yield unless the
+  bank covers both (PriorityWaiters); supply providers never block tech.
+  Proven: mutation-proven double-order test, `Last resort` 0 on the same
+  1209 s run, Nexus=2 in four-plus games.
+
+  Traps: an ACCEPT predicate must be the same one used to REJECT, or the
+  gap stays invisible until a game trips it; a silent queue refusal and a
+  gated-out producer read identically from the log - instrument before
+  attributing.
+
+- **CherryVis per-unit panels never attach (NEXT #65/#68, code fixed
+  2026-10-12; owner-side viewer check still open).** Symptom: every click
+  resolved to `i???`. Mechanism: the viewer fuzzy-matches trace units
+  against replay units by (frame, type, x, y), but our
+  `units_first_seen[].type` carried `AUnitType.id()` (auto-assigned from
+  1000 - a Probe read `1210`) while everything else speaks BWAPI ids
+  (Probe 64). Zero matched. Fixed: record `ut().id` at all three write
+  sites (discovery, creation hook, seed). Second half: frame-0 seeds never
+  match (replays show no visible units on frame 0; Stardust bumps 0->1
+  for the same reason) - `record()` clamps to 1. Matcher mechanics, read
+  from `openbw/ui/unit_matcher.cpp`, not guessed: nearest same-type
+  within 25px, ambiguity guards, one-to-one, NO retry of a missed frame;
+  dense mineral lines and same-spot warps are fragile by construction;
+  a WASM throw mid-run freezes later units only.
+
+  Traps: an id from the wrong numbering scheme matches nothing, loudly
+  nowhere; when `???` persists on a fresh trace, the browser's
+  `[BW<->CP Matching] Unable to match N units` line names the failing
+  axis (type/position/frame).
