@@ -104,8 +104,12 @@ twins green (1/1 each, re-verified today). Re-run
 
 - **#8** Seam + one end-to-end subsystem migrated as proof (ADR 0007
   accepted; pilot: `ProductionRacePolicy` + 3 impls, V2 DRY_RUN zero
-  errors). Still pending: V2 LIVE runs; Forge divergence is a tracked
-  parity gap, not a regression.
+  errors). First LIVE probe `20261015_171504` (short): attaches, plays,
+  builds opening (2 Pylons, Gateway, 3 Zealots, Forge, Assimilator), no
+  crash, no exceptions. Two watches: V2 rows carry minSupply 0 (no BO
+  expectation reaches the ledger - the deferred timeline scheduler);
+  Pylon #1 warped at sup5 (pull-forward or waste - undecided, needs a
+  side-by-side). Forge divergence still tracked, not regressed.
 
 ## Stage H — god-class split
 
