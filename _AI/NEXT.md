@@ -89,7 +89,8 @@ known structural failure); rush-defense twins green. Re-run
 
 ## Stage F — cache purge
 
-- Six unexplained TTLs above one frame (30, 31, 53, 73, 91, 293) remain;
+- Five unexplained TTLs above one frame (30, 31, 53, 73, 293) remain
+  (91 went with the deleted `firstBuilding` entry);
   `Select.main()` (90 call sites) is cached 2.4 s. Inventory:
   `DOCS/SELECT-CACHES.md`; neutral cleanups done per
   `_AI/work-orders/WO-F-neutral-cache-cleanup.md`.
