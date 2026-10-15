@@ -28,6 +28,13 @@ public class ProduceBuilding {
             return ProduceAddon.produceAddon(type);
         }
         else {
+            // Owner 2026-10-15: never start more than one supply early -
+            // assigning the builder is the economic cost (the probe stops
+            // mining), so a row due at 28 waits even when everything else
+            // is ready. Site picking (PREPARING, two early, no builder)
+            // is unaffected.
+            if (A.supplyUsed() < order.minSupply() - 1) return false;
+
             // A PREPARING construction already holds a picked site: adopt it
             // (or keep waiting for a free builder) instead of searching anew.
             if (order.construction() != null

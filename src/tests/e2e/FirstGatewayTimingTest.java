@@ -54,6 +54,7 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
     private boolean teleported = false;
     private Integer issuedSupply = null;
     private Integer issuedBank = null;
+    private Integer assignedSupply = null;
 
     @Override
     protected FakeUnit[] generateOur() {
@@ -212,5 +213,59 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
             }
         }
         return false;
+    }
+
+    @Test
+    public void dynamicRowDueAt28NeverStartsAt12() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 12);
+        FakeUnit probe1 = fake(AUnitType.Protoss_Probe, 8.3);
+        FakeUnit probe2 = fake(AUnitType.Protoss_Probe, 9.1);
+
+        world(400, units(nexus, pylon, probe1, probe2), new FakeUnit[0], () -> {
+            int frame = A.now();
+
+            if (frame == 1) {
+                currentSupplyUsed = 12;
+                currentSupplyTotal = 41;
+                currentMinerals = 500;
+                Queue.get().allOrders().list().clear();
+                Queue.get().clearCache();
+                ConstructionRequests.constructions.clear();
+                Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 28));
+                return;
+            }
+
+            currentSupplyUsed = frame <= 200 ? 12 : 27;
+            currentMinerals = 500;
+
+            Queue.get().refresh();
+
+            ProductionOrder row = Queue.get().allOrders().list().stream()
+                .filter(o -> o.isUnitOrBuilding()
+                    && AUnitType.Protoss_Gateway.equals(o.unitType()))
+                .findFirst().orElse(null);
+            if (row == null) return;
+
+            // Direct call, not only-when-READY: the gate under test must
+            // refuse no matter which path tries early (the live row #143
+            // started at supply 12 for minSupply 28 through this door).
+            ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, row);
+
+            for (Construction c : ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway)) {
+                if (c.builder() != null) {
+                    if (assignedSupply == null) {
+                        assignedSupply = A.supplyUsed();
+                        new WorkerManager((AUnit) c.builder()).forceHandle();
+                    }
+                }
+            }
+        });
+
+        assertNotNull(assignedSupply, "the row due at 28 must eventually start (at 27)");
+        assertTrue(
+            assignedSupply >= 27,
+            "builder assigned at supply " + assignedSupply + " for a row due at 28"
+                + " - never more than one supply early");
     }
 }
