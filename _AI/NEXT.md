@@ -167,7 +167,9 @@ twins green (1/1 each, re-verified today). Re-run
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
-  (20261014_172954 reached only 324 s).
+  (20261014_172954 reached only 324 s; `20261015_185046` reached 575 s
+  in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
+  game or more wall).
 - **#72** Singularity Charge fires in stub (2 Dragoons + 250 gas), idle
   live for lack of a second living Dragoon (not a divergence, not a
   stuck flag - measured). Needs a gas-healthy long game proving research
@@ -246,11 +248,19 @@ twins green (1/1 each, re-verified today). Re-run
   dynamic Gateway #143 cancelled by refresh at `[94,111]` and
   re-requested; no Core cancel (Core warped 2:36, #88 still needs its
   game); Forge warped 6:56.
+- Long `20261015_185046` (141 s wall, 575 s game, 0 kills, rich
+  economy: Nexus=2 Probe=31 Pylon=13 Gateway=5 Zealot=15 Core Dragoon=6
+  Forge; shutdown-hook summary worked): `SINGULARITY_APPLIES` firing,
+  completion unproven (#72); 2 Pylon refresh-cancels, no Core cancel
+  (#88), no `ORDER_SAVING` (#71); hang-watcher fired once on
+  busy-compute (57 s CPU, not deadlock).
 - Long `20261015_170339` (guarded jar, 9:30, 49 warps, 1 Assimilator
   refusal + 1 refresh Gateway cancel): Gateway adoptions sparse against
   120 same-tile accepts - the adopted-order path is closed, the live
   loop is not (see #57). Quiet `20261015_165943` (7:22, 42 rows, no
   cancels, Gateways on time at 9/10): clean baseline, nothing to fix.
+  Per-add attribution without stacks since `CONSTRUCTION_REQUESTED`
+  rows (`20261015_185504`: all 4 via `ProduceBuilding.produceBuilding`).
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
   8:28-8:51 game-time (`20261015_132452`).
 - Shutdown-hook summary proven `20261015_181553`: a wall-killed short
