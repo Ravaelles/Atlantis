@@ -13,12 +13,17 @@ import java.util.List;
  * (owner ruling 1A/3A): the legacy files stay readable for reference,
  * nothing is lifted.
  */
-public final class OpeningGoals {
+/**
+ * Protoss opening vocabulary (domain language): one class per goal, this
+ * file only assembles the ladder in play order. Game meaning lives here;
+ * the ranking machinery in the parent package never names a game concept.
+ */
+public final class ProtossOpening {
 
-    private OpeningGoals() {
+    private ProtossOpening() {
     }
 
-    public static List<Goal> all() {
+    public static List<Goal> goals() {
         List<Goal> goals = new ArrayList<Goal>();
         goals.add(new SupplyPylonGoal());
         goals.add(new DetectionGoal());

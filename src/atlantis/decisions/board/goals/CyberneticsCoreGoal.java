@@ -2,7 +2,6 @@ package atlantis.decisions.board.goals;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
-import atlantis.decisions.board.GoalRanks;
 
 /** Tech unlock for Dragoons, needs a Gateway first. */
 public final class CyberneticsCoreGoal implements Goal {

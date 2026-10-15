@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
-import atlantis.decisions.board.GoalRanks;
+import atlantis.decisions.board.goals.ProtossOpening;
 import atlantis.units.AUnitType;
 
 import java.util.Collections;
@@ -21,8 +21,8 @@ public final class GoalBoardDriver {
     }
 
     public static boolean pauseWorkers(BoardState state) {
-        Goal top = GoalBoard.top(state, GoalBoard.openingGoals(), Collections.<String>emptySet());
-        if (top == null || top.rank() > GoalRanks.EMERGENCY_BREAK) {
+        Goal top = GoalBoard.top(state, ProtossOpening.goals(), Collections.<String>emptySet());
+        if (top == null || !top.emergency()) {
             return false;
         }
         int priceMinerals = mineralPrice(top.id());

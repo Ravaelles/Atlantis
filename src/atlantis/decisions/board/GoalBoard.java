@@ -1,7 +1,5 @@
 package atlantis.decisions.board;
 
-import atlantis.decisions.board.goals.OpeningGoals;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,11 +19,6 @@ import java.util.Set;
 public final class GoalBoard {
 
     private GoalBoard() {
-    }
-
-    /** Phase-1 opening vocabulary, ladder order. */
-    public static List<Goal> openingGoals() {
-        return OpeningGoals.all();
     }
 
     /** Active goals, ladder order. */
@@ -48,7 +41,7 @@ public final class GoalBoard {
     /**
      * The goal to serve first. An in-flight goal (started, unfinished)
      * keeps its place - the anti-flap commitment our cancel history paid
-     * for - unless an emergency-ranked goal is active, which always wins.
+     * for - unless an emergency goal is active, which always wins.
      * Null when nothing is active.
      */
     public static Goal top(BoardState state, Collection<Goal> goals, Set<String> inFlight) {
@@ -56,8 +49,10 @@ public final class GoalBoard {
         if (ranked.isEmpty()) {
             return null;
         }
-        if (ranked.get(0).rank() <= GoalRanks.EMERGENCY_BREAK) {
-            return ranked.get(0);
+        for (Goal goal : ranked) {
+            if (goal.emergency()) {
+                return goal;
+            }
         }
         if (inFlight != null) {
             for (Goal goal : ranked) {

@@ -2,7 +2,6 @@ package atlantis.decisions.board.goals;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
-import atlantis.decisions.board.GoalRanks;
 
 /** Blocked supply: nothing trains without it. */
 public final class SupplyPylonGoal implements Goal {

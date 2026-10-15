@@ -1,10 +1,11 @@
-package atlantis.decisions.board;
+package atlantis.decisions.board.goals;
 
 /**
- * Fixed ladder positions, lower runs first. One diff retunes the strategy:
- * no threshold is buried in a producer anymore. Initial values mirror the
- * live doctrine (supply block first, emergency preemption, economy before
- * tech, expansion last); games move them, tests pin them.
+ * Domain ladder (ubiquitous language): strategy tuning in one diff, owned
+ * by the domain package. The generic machinery sorts ints and never reads
+ * this file's meaning - that direction is the whole point (CONVENTIONS
+ * §21). Initial values mirror the live doctrine; games move them, tests
+ * pin them.
  */
 public final class GoalRanks {
 
@@ -14,13 +15,7 @@ public final class GoalRanks {
     /** Supply blocked: nothing trains without it. */
     public static final int SUPPLY = 10;
 
-    /**
-     * Emergency ceiling: any active goal at or above this rank breaks the
-     * in-flight commitment (a cloaked wraith does not wait for a calm plan).
-     */
-    public static final int EMERGENCY_BREAK = 20;
-
-    /** Unseen enemy with no answer in place. */
+    /** Unseen enemy with no answer in place (also an emergency). */
     public static final int DETECTION = 20;
 
     /** Continuous economy. */

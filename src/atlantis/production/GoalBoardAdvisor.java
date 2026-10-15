@@ -5,6 +5,7 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
+import atlantis.decisions.board.goals.ProtossOpening;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.BaseUnderAttack;
@@ -41,8 +42,8 @@ public class GoalBoardAdvisor extends Commander {
     @Override
     protected boolean handle() {
         BoardState state = snapshot();
-        List<Goal> ranked = GoalBoard.ranked(state, GoalBoard.openingGoals());
-        Goal top = GoalBoard.top(state, GoalBoard.openingGoals(), Collections.<String>emptySet());
+        List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
+        Goal top = GoalBoard.top(state, ProtossOpening.goals(), Collections.<String>emptySet());
 
         StringBuilder active = new StringBuilder();
         for (Goal goal : ranked) {

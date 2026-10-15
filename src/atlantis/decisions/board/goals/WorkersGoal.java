@@ -2,7 +2,6 @@ package atlantis.decisions.board.goals;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
-import atlantis.decisions.board.GoalRanks;
 
 /** Continuous economy until saturation. */
 public final class WorkersGoal implements Goal {

@@ -16,8 +16,19 @@ public interface Goal {
     boolean active(BoardState state);
 
     /**
-     * Fixed ladder position, lower runs first. Constants live in
-     * {@link GoalRanks} so tuning is one diff.
+     * Fixed ladder position, lower runs first. Constants live in the domain
+     * ladder ({@code goals.GoalRanks}) - tuning strategy is domain knowledge,
+     * the sort itself is generic machinery that never names a game concept.
      */
     int rank();
+
+    /**
+     * Emergency goals break the in-flight commitment - a cloaked wraith
+     * does not wait for a calm plan. Which goals are emergencies is domain
+     * knowledge (only DetectionGoal says true); the break mechanics is
+     * generic.
+     */
+    default boolean emergency() {
+        return false;
+    }
 }

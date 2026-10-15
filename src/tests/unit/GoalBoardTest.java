@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
+import atlantis.decisions.board.goals.ProtossOpening;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -36,12 +37,12 @@ public class GoalBoardTest {
             .workers(6).bases(1).gateways(1).army(2)
             .build();
 
-        assertEquals("supply-pylon", GoalBoard.top(state, GoalBoard.openingGoals(), null).id());
+        assertEquals("supply-pylon", GoalBoard.top(state, ProtossOpening.goals(), null).id());
     }
 
     @Test
     public void earlyEconomyTopsWorkers() {
-        assertEquals("workers", GoalBoard.top(base(), GoalBoard.openingGoals(), null).id());
+        assertEquals("workers", GoalBoard.top(base(), ProtossOpening.goals(), null).id());
     }
 
     @Test
@@ -52,7 +53,7 @@ public class GoalBoardTest {
             .hiddenUnits(true)
             .build();
 
-        assertEquals("detection", GoalBoard.top(state, GoalBoard.openingGoals(), null).id());
+        assertEquals("detection", GoalBoard.top(state, ProtossOpening.goals(), null).id());
     }
 
     @Test
@@ -64,7 +65,7 @@ public class GoalBoardTest {
             .seconds(300)
             .build();
 
-        List<Goal> ranked = GoalBoard.ranked(state, GoalBoard.openingGoals());
+        List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
         StringBuilder ids = new StringBuilder();
         for (Goal goal : ranked) {
             if (ids.length() > 0) ids.append(",");
@@ -79,7 +80,7 @@ public class GoalBoardTest {
     public void commitmentHoldsInFlightGoal() {
         assertEquals(
             "gateway",
-            GoalBoard.top(base(), GoalBoard.openingGoals(), Collections.singleton("gateway")).id(),
+            GoalBoard.top(base(), ProtossOpening.goals(), Collections.singleton("gateway")).id(),
             "started gateway keeps its place while workers also want work");
     }
 
@@ -93,7 +94,7 @@ public class GoalBoardTest {
 
         assertEquals(
             "detection",
-            GoalBoard.top(state, GoalBoard.openingGoals(), Collections.singleton("workers")).id(),
+            GoalBoard.top(state, ProtossOpening.goals(), Collections.singleton("workers")).id(),
             "a cloaked wraith does not wait for a calm plan");
     }
 
@@ -106,7 +107,7 @@ public class GoalBoardTest {
             .seconds(900)
             .build();
 
-        assertTrue(GoalBoard.ranked(state, GoalBoard.openingGoals()).isEmpty());
-        assertNull(GoalBoard.top(state, GoalBoard.openingGoals(), null));
+        assertTrue(GoalBoard.ranked(state, ProtossOpening.goals()).isEmpty());
+        assertNull(GoalBoard.top(state, ProtossOpening.goals(), null));
     }
 }
