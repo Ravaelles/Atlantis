@@ -563,6 +563,8 @@ fi
 # The buildings ledger is rewritten by the bot on every warp; without
 # clearing, a run that warps nothing would collect the previous run's rows.
 rm -f "$BOT_ROOT/bwapi-data/write/BUILDINGS.json"
+# Same for the structured event log (appended, never rewritten).
+rm -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl"
 
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/bot.log"
@@ -770,6 +772,14 @@ if [ -f "$BOT_ROOT/bwapi-data/write/BUILDINGS.json" ]; then
   say "buildings ledger collected: $RUN_DIR/BUILDINGS.json"
 else
   say "buildings ledger missing: $BOT_ROOT/bwapi-data/write/BUILDINGS.json was never written"
+fi
+
+# Structured event log (same shape: appended by the bot, flushed ~30 s).
+if [ -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" ]; then
+  cp -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" "$RUN_DIR/EVENTS.jsonl" 2>/dev/null || true
+  say "event log collected: $RUN_DIR/EVENTS.jsonl (query: scripts/query-events.py --file $RUN_DIR/EVENTS.jsonl)"
+else
+  say "event log missing: $BOT_ROOT/bwapi-data/write/EVENTS.jsonl was never written"
 fi
 
 # A one-line header so the copy explains itself: a reader who finds

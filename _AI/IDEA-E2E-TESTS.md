@@ -296,6 +296,10 @@ first enemy tech seen; crash-free (process exit code, zero exceptions in
 `bot.log`); replay + log artefacts next to every verdict. Per-building
 warp rows with actual vs build-order supply: `BUILDINGS.json` (ledger in
 `atlantis.game.util`, collected next to the logs by both runners).
+High-volume diagnostics (worker gates, stuck workers, board opinions)
+additionally land as JSON lines in `EVENTS.jsonl` (`atlantis.util.log`,
+one row per event under a `LogKey`, queried with
+`scripts/query-events.py`) - the console lines stay as the human tail.
 
 Artefact convention follows Stardust: `<Suite>_<Test>_<timestamp>_<PASS|FAIL>`,
 retention "last 10 replays per suite", older deleted by the runner script. The

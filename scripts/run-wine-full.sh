@@ -423,4 +423,10 @@ if [ -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" ]; then
 else
   say "buildings ledger missing: $CLIENT_CWD/bwapi-data/write/BUILDINGS.json was never written"
 fi
+if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
+  cp -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" "$LOG_DIR/EVENTS.jsonl" 2>/dev/null || true
+  say "event log collected: $LOG_DIR/EVENTS.jsonl"
+else
+  say "event log missing: $CLIENT_CWD/bwapi-data/write/EVENTS.jsonl was never written"
+fi
 exit 0
