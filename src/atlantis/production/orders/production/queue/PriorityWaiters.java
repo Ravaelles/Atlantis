@@ -23,7 +23,10 @@ import atlantis.units.AUnitType;
  *
  * <p>Convergence, not deadlock: while spenders pause, income is unspent, so
  * the bank grows monotonically toward the waiter - indefinite waiting is
- * allowed by design. Supply providers are TOP and never blocked by HIGH.</p>
+ * allowed by design. Supply providers are TOP and never blocked by HIGH -
+ * with one bounded exception: a waiting Core outranks Pylon spending
+ * ({@link #pylonYieldsToCore}), so a contended bank is not spent on
+ * forward Pylons while the Core waits.</p>
  */
 public class PriorityWaiters {
 
@@ -154,6 +157,39 @@ public class PriorityWaiters {
         AUnitType type = order.unitType();
         if (type != null && (type.isPylon() || type.isSupplyDepot() || type.isOverlord())) return false;
         return true;
+    }
+
+    /**
+     * Owner 2026-10-15: a waiting Core outranks Pylon spending, but only
+     * while all three hold - base supply exists (a 9/9 game with no Pylon
+     * would die: no supply means no Core either), the bank is contended
+     * (rich buys both, no arbitration needed), and no supply block looms
+     * (a blocked base must Pylon now). Every stuck state self-releases:
+     * income pushes the bank past 284, or tightening supply drops free
+     * below 2. Outside these the old behavior stands.
+     */
+    public static boolean coreOutranksPylons() {
+        if (A.supplyTotal() < 17) return false;
+        if (A.minerals() > 284) return false;
+        if (A.supplyFree() < 2) return false;
+        return true;
+    }
+
+    /**
+     * A Pylon order must wait while an unstarted Core order exists and
+     * {@link #coreOutranksPylons()} holds. Started (warping) Cores never
+     * block: the money is spent, waiting for it is pure loss.
+     */
+    public static boolean pylonYieldsToCore() {
+        if (!coreOutranksPylons()) return false;
+        if (Queue.get() == null) return false;
+        for (ProductionOrder order : Queue.get().notFinished()
+            .ofType(AUnitType.Protoss_Cybernetics_Core).list()) {
+            if (order.shouldIgnore()) continue;
+            if (order.construction() == null) return true;
+            if (order.construction().buildingUnit() == null) return true;
+        }
+        return false;
     }
 
     /**

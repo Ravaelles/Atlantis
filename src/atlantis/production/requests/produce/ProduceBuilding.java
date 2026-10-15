@@ -4,8 +4,10 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
+import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
@@ -34,6 +36,12 @@ public class ProduceBuilding {
             // is ready. Site picking (PREPARING, two early, no builder)
             // is unaffected.
             if (A.supplyUsed() < order.minSupply() - 1) return false;
+
+            // Owner 2026-10-15: a waiting Core outranks Pylon spending
+            // while contended (bounded, self-releasing - see
+            // PriorityWaiters.pylonYieldsToCore). The 100 minerals stay
+            // saved for the Core instead of going into a forward Pylon.
+            if (type.isPylon() && PriorityWaiters.pylonYieldsToCore()) return false;
 
             // A PREPARING construction already holds a picked site: adopt it
             // (or keep waiting for a free builder) instead of searching anew.

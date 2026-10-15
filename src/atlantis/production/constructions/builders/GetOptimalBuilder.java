@@ -3,12 +3,19 @@ package atlantis.production.constructions.builders;
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class GetOptimalBuilder {
     public static AUnit forPosition(Construction construction, ProductionOrder order) {
@@ -46,9 +53,24 @@ public class GetOptimalBuilder {
         if (A.hasMinerals(600)) return null;
         if (Select.ourWorkers().inRadius(12, positionToBuild).count() >= 4) return null;
 
-        return Select.ourWorkers()
+        Selection candidates = Select.ourWorkers()
             .builders()
-            .inRadius(13, positionToBuild)
-            .nearestTo(positionToBuild);
+            .inRadius(13, positionToBuild);
+        if (PriorityWaiters.coreOutranksPylons()) {
+            // Owner 2026-10-15: a builder working a live Core is not spare
+            // capacity while the Core outranks Pylons - take a free miner
+            // instead (the fallthrough below), never the Core's probe.
+            candidates = candidates.exclude(coreBuilders());
+        }
+        return candidates.nearestTo(positionToBuild);
+    }
+
+    private static Set<AUnit> coreBuilders() {
+        Set<AUnit> builders = new HashSet<>();
+        for (Construction construction : ConstructionRequests.notFinishedOfType(
+            AUnitType.Protoss_Cybernetics_Core)) {
+            if (construction.builder() != null) builders.add(construction.builder());
+        }
+        return builders;
     }
 }

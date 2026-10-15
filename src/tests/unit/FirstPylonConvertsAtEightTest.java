@@ -23,8 +23,10 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Owner 2026-10-14 (Wine): the first Pylon must convert at supply 8 with
  * ~100 bank - not sit PREPARING until 350. The whole pipeline in one test:
  * build-order Pylon row (min 8) plus far-future Core/Assimilator HIGH rows
- * (min 18/22, unconvertible), supply 8, bank 150. Unconvertible HIGH
- * waiters must not block a READY Pylon.
+ * (min 18/22, unconvertible), supply 8/9, bank 150. Unconvertible HIGH
+ * waiters must not block a READY Pylon. Supply is 8/9 (pre-Pylon, no
+ * standing Pylon), which is also below the Core-outranks-Pylons floor -
+ * the first Pylon is never subject to that rule by construction.
  */
 public class FirstPylonConvertsAtEightTest extends AbstractTestWithWorld {
 
@@ -47,7 +49,7 @@ public class FirstPylonConvertsAtEightTest extends AbstractTestWithWorld {
     public void pylonConvertsAtEightDespiteFutureTechRows() {
         currentMinerals = 150;
         currentSupplyUsed = 8;
-        currentSupplyTotal = 17;
+        currentSupplyTotal = 9;
 
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
