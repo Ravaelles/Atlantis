@@ -64,9 +64,13 @@ public class WorkerHandlerCommander extends Commander {
      * </p>
      *
      * <p>
-     * Behind {@code BUILDER_LOG=1} and once per second, so a normal run is silent and the line
-     * is cheap. 10 frames is the owner's threshold: a gathering worker changes position far more
-     * often than that, so a 10-frame standstill is anomalous rather than a pause.
+     * JSON-only since 2026-10-15 (owner: no red spam in the game log):
+     * the row lands in {@code EVENTS.jsonl} under {@code STUCK_WORKER},
+     * no console line. Behind {@code BUILDER_LOG=1} and once per second,
+     * so a normal run is silent and the row is cheap. 10 frames is the
+     * owner's threshold: a gathering worker changes position far more
+     * often than that, so a 10-frame standstill is anomalous rather
+     * than a pause.
      * </p>
      */
     private static void reportStuckWorker(AUnit worker) {
@@ -74,61 +78,6 @@ public class WorkerHandlerCommander extends Commander {
         if (!A.everyNthGameFrame(30)) return;
         if (worker.lastPositionChangedAgo() < 10) return;
 
-        AUnit mineral = Select.all().minerals().nearestTo(worker);
-
-        // NEXT #63: on a stuck worker separate OUR flag (action) from the ENGINE's
-        // answer. A worker with NO_COMMAND that keeps re-issuing Gather every 2nd
-        // frame (throttle) while the engine refuses needs canGather/canRightClick
-        // to name the refusing term; a worker with an accepted Gather standing on
-        // the patch (distToMineral=0.0) is mining, not stuck - the 10-frame
-        // standstill threshold false-positives on miners pausing on the patch.
-        String engineAnswers = "";
-        try {
-            boolean canGather = mineral != null && worker.u() != null && mineral.u() != null
-                && worker.u().canGather(mineral.u());
-            boolean canRightClick = mineral != null && worker.u() != null && mineral.u() != null
-                && worker.u().canRightClick(mineral.u());
-            // NEXT #63: worker-side vs target-side. Both-false gather+rightClick
-            // fits two different faults: our worker not commandable (exists,
-            // completed, canCommand) or its ASSIGNED target unknown to the
-            // client (!exists / not completed) - print both sides, and the
-            // assigned target id (it need not be the nearest mineral sampled).
-            AUnit assigned = worker.target();
-            String targetSide;
-            if (assigned == null || assigned.u() == null) {
-                targetSide = "assignedTarget=none";
-            } else {
-                targetSide = "assignedTarget=#" + assigned.id() + ":" + assigned.type().name()
-                    + " exists=" + assigned.u().exists()
-                    + " completed=" + assigned.u().isCompleted()
-                    + " visible=" + assigned.u().isVisible();
-            }
-            String workerSide = worker.u() == null ? "workerU=null"
-                : "workerExists=" + worker.u().exists()
-                + " workerCompleted=" + worker.u().isCompleted()
-                + " workerCanCommand=" + worker.u().canCommand();
-            engineAnswers = " canGather=" + canGather + " canRightClick=" + canRightClick
-                + " order=" + (worker.u() == null ? "no-u" : worker.u().getOrder())
-                + " tileWalkable=" + atlantis.map.MapTiles.isWalkable(worker)
-                + " " + workerSide + " " + targetSide;
-        } catch (Throwable t) {
-            engineAnswers = " engineProbeThrew=" + t.getClass().getSimpleName();
-        }
-
-        System.err.println("STUCK_WORKER @" + A.now()
-            + " unit=#" + worker.id() + " " + worker.type().name() + " @[" + worker.tx() + "," + worker.ty() + "]"
-            + " stoodStillFor=" + worker.lastPositionChangedAgo() + "f"
-            + " manager=" + (worker.manager() == null ? "null" : worker.manager().getClass().getSimpleName())
-            + " lastCommand=" + worker.lastCommandName()
-            + " lastCommandIssuedAgo=" + worker.lastCommandIssuedAgo()
-            + " action=" + worker.action().name()
-            + " isIdle=" + worker.isIdle()
-            + " isStopped=" + worker.isStopped()
-            + " isGathering=" + worker.isGatheringResources()
-            + " isBuilder=" + worker.isBuilder()
-            + " distToMineral=" + (mineral == null ? "none" : A.digit(worker.distTo(mineral)))
-            + " mineralsNear=" + Select.all().minerals().countInRadius(8, worker)
-            + " bases=" + Select.ourBases().count() + engineAnswers);
         EventLog.key(LogKey.STUCK_WORKER)
             .param("unit", worker.id())
             .param("type", worker.type().name())

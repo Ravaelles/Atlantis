@@ -53,12 +53,8 @@ public class GoalBoardAdvisor extends Commander {
             active.append(goal.id());
         }
 
-        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-            "BOARD top=" + (top == null ? "-" : top.id())
-                + " active=[" + active + "]"
-                + " min=" + state.minerals
-                + " sup=" + state.supplyUsed + "/" + state.supplyTotal
-                + " workers=" + state.workerCount);
+        // JSON-only since 2026-10-15 (owner: no red spam in the game
+        // log): the opinion lands in EVENTS.jsonl under BOARD.
         EventLog.key(LogKey.BOARD)
             .param("top", top == null ? "-" : top.id())
             .param("active", active.toString())
