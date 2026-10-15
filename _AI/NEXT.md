@@ -560,6 +560,15 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   dormant), economy healthy throughout (workers 8->22 across lines).
   No behavior change observed, as designed.
 
+  **Feeder (board -> queue, owner order 2A):** `GoalBoardFeeder.ensure`
+  queues one order per active unowned goal (supply-pylon TOP, gateway
+  STANDARD, core/assimilator HIGH), silent when covered; workers, army,
+  expansion and detection stay with their owners (pump, strategy, site
+  approval, response system). Queue rows don't spend, so feeding is safe
+  by construction. `GoalBoardFeederTest` 3/3 (dedup interplay measured:
+  Gateway needs a standing Pylon - `EnforcePylonFirst`). Suite 549/549,
+  twins green, arch store unchanged.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a

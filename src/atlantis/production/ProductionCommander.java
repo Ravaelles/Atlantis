@@ -35,6 +35,7 @@ public class ProductionCommander extends Commander {
 
         return new CommanderFactory[]{
             ProductionOrdersCommander::new,
+            GoalBoardFeederCommander::new,
             SupplyCommander::new,
             ConstructionsCommander::new,
             DynamicProductionCommander::new,
