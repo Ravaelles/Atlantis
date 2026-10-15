@@ -76,4 +76,22 @@ public class DecisionTest extends AbstractTestWithUnits {
 
 //        System.err.println("decision = " + decision);
     }
+
+    @Test
+    public void reasonsDoNotLeakBetweenCallSites() {
+        Decision first = Decision.FALSE("first");
+        Decision second = Decision.FALSE("second");
+
+        assertTrue("first".equals(first.reason()));
+        assertTrue("second".equals(second.reason()));
+        assertTrue(Decision.FALSE.reason() == null || "".equals(Decision.FALSE.reason()),
+            "the shared singleton must stay reason-free, got: " + Decision.FALSE.reason());
+    }
+
+    @Test
+    public void toStringReadsStateNotIdentity() {
+        assertTrue(Decision.TRUE("x").toString().contains("TRUE"));
+        assertTrue(Decision.FALSE("y").toString().contains("FALSE"));
+        assertTrue(Decision.INDIFFERENT.toString().contains("INDIFFERENT"));
+    }
 }

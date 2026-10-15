@@ -33,14 +33,23 @@ public class Decision {
         return b ? TRUE : FALSE;
     }
 
+    /**
+     * Fresh instance every call: the old form mutated the shared singletons,
+     * so two call sites' reasons overwrote each other (last writer wins,
+     * silent cross-talk). No caller compares identity (verified), so sharing
+     * bought nothing.
+     */
     public static Decision FALSE(String reason) {
-        Decision decision = FALSE;
+        Decision decision = new Decision(false);
         decision.reason = reason;
         return decision;
     }
 
+    /**
+     * Fresh instance every call, see {@link #FALSE(String)}.
+     */
     public static Decision TRUE(String reason) {
-        Decision decision = TRUE;
+        Decision decision = new Decision(true);
         decision.reason = reason;
         return decision;
     }
@@ -57,25 +66,15 @@ public class Decision {
 
     @Override
     public String toString() {
+        // State-based, never identity-based: TRUE and ALLOWED (resp. FALSE
+        // and FORBIDDEN) behave identically, so they print identically.
+        // Printing them apart was the alias confusion.
         String string;
-
-        if (this.equals(TRUE)) {
-            string = "TRUE";
-        }
-        else if (this.equals(ALLOWED)) {
-            string = "ALLOWED";
-        }
-        else if (this.equals(INDIFFERENT)) {
+        if (isIndifferent) {
             string = "INDIFFERENT";
         }
-        else if (this.equals(FORBIDDEN)) {
-            string = "FORBIDDEN";
-        }
-        else if (this.equals(FALSE)) {
-            string = "FALSE";
-        }
         else {
-            string = "UNKNOWN";
+            string = currentValue ? "TRUE" : "FALSE";
         }
 
         return "Decision:" + string;

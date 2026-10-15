@@ -560,6 +560,17 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   dormant), economy healthy throughout (workers 8->22 across lines).
   No behavior change observed, as designed.
 
+  **Decision defused 2026-10-15 (no removal):** `TRUE/FALSE(reason)`
+  mutated shared singletons (reason cross-talk) and `toString` told
+  identical behaviors apart by identity; `toBoolean` asserts off in
+  production. Fresh instances + state-based `toString` now, zero caller
+  changes (no identity comparisons anywhere - verified). Full removal
+  stays a bad trade today: INDIFFERENT chains 31 files of working
+  override logic; the board absorbs sites one by one instead (54->0,
+  then the class dies). `DecisionTest` pins isolation (red pre-fix).
+  Suite 553/553 (one flaky-order failure on first run, green solo and
+  on re-run, unrelated file).
+
   **Single-class goals + opening pipeline tests (owner 2026-10-15):**
   `OpeningGoals` prototype split into one class per goal (SRP, factory
   stays) - `GoalBoardTest` 7/7 unchanged proves neutrality.
