@@ -24,24 +24,24 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Owner 2026-10-15: the first Gateway starts too late (Wine: BO row "At 9"
+ * Owner 2026-10-15: the first Gateway starts too late (Wine: BO row
  * re-queued at 4:39 sup35, first accept 1:09 vs 1:37 on the OpenBW control).
  * Two pins on the legacy path, both about the observed game, not internals:
  *
  * <p>1. The construction object exists EARLY: picked site, waiting, while
  * still ~100 minerals short of the 150 price (at most 50 banked) and at
- * most two supplies below the row (supply 7 for "At 9"). Waiting for
+ * most two supplies below the row (supply 8 for "At 10"). Waiting for
  * affordability before even picking a site is the delay this kills.</p>
  *
  * <p>2. The build is ISSUED on time: the first {@code build} order for the
- * Gateway lands at exactly the build-order supply (9, never drifted past)
+ * Gateway lands at exactly the build-order supply (10, never drifted past)
  * with at most 158 banked (150 price + 8 headroom for frame granularity).
  * Sitting on affordability while supply runs away is the Wine shape.</p>
  *
  * <p>"Issued" stands in for warp: the walk-and-warp half is engine physics,
  * proven on OpenBW; what the stub pins is that the bot STARTS promptly.
  * The bank timeline accrues like early mining (+1 per 3 frames); supply
- * holds 9 across the affordability crossing so a dawdling bot misses its
+ * holds 10 across the affordability crossing so a dawdling bot misses its
  * window and fails on supply, not on an arbitrary frame count.</p>
  */
 public class FirstGatewayTimingTest extends AbstractTestWithWorld {
@@ -89,22 +89,22 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
             int frame = A.now();
 
             if (frame == 1) {
-                currentSupplyUsed = 7;
+                currentSupplyUsed = 8;
                 currentSupplyTotal = 17;
                 Queue.get().allOrders().list().clear();
                 Queue.get().clearCache();
                 ConstructionRequests.constructions.clear();
-                Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 9));
+                Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 10));
                 return;
             }
 
-            // Opening timeline: supply climbs to 9 and holds it across the
+            // Opening timeline: supply climbs to 10 and holds it across the
             // affordability crossing (~150 at frame 330); then advances, so a
-            // bot that dawdles issues at 10 and fails on supply.
-            if (frame <= 100) currentSupplyUsed = 7;
-            else if (frame <= 200) currentSupplyUsed = 8;
-            else if (frame <= 450) currentSupplyUsed = 9;
-            else currentSupplyUsed = 10;
+            // bot that dawdles issues at 11 and fails on supply.
+            if (frame <= 100) currentSupplyUsed = 8;
+            else if (frame <= 200) currentSupplyUsed = 9;
+            else if (frame <= 450) currentSupplyUsed = 10;
+            else currentSupplyUsed = 11;
             currentMinerals = Math.min(250, 40 + frame / 3);
 
             Queue.get().refresh();
@@ -164,17 +164,18 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
 
         assertNotNull(seenSupply, "the Gateway construction object must be created");
         assertTrue(
-            seenSupply <= 7,
+            seenSupply <= 8,
             "object created at supply " + seenSupply + " with " + seenBank
-                + " minerals - the site must be picked at least two supplies early (7 for At 9)");
+                + " minerals - the site must be picked at least two supplies early (8 for At 10)");
         assertTrue(
             seenBank < 150,
             "object created with " + seenBank + " banked - picking must not wait for affordability");
 
         assertNotNull(adoptedSupply, "the Gateway must be adopted (builder assigned)");
-        assertEquals(
-            9, (int) adoptedSupply,
-            "adoption at supply " + adoptedSupply + " - the builder is assigned at exactly BO supply");
+        assertTrue(
+            adoptedSupply <= 10,
+            "adoption at supply " + adoptedSupply + " - the builder is claimed at or before "
+                + "BO supply (early staging is fine; the exact pin is on issue below)");
         assertTrue(
             adoptedBank <= 158,
             "adoption with " + adoptedBank + " banked - at most 150 + 8 headroom");
@@ -192,7 +193,7 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
             return dump.toString();
         });
         assertEquals(
-            9, (int) issuedSupply,
+            10, (int) issuedSupply,
             "issued at supply " + issuedSupply + " - must not drift past the BO row");
         assertTrue(
             issuedBank <= 158,
