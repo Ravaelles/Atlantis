@@ -139,10 +139,6 @@ known structural failure); rush-defense twins green. Re-run
 
 ## Review leftovers
 
-- **#36** `BaseUnderAttack` needs a seam (cached `check()` or injectable
-  answer - cheapest honest first). Not urgent, behaviour is fine. If a
-  third "is pressure real" class appears next to it and
-  `ExpansionUnderPressure`, extract shared threat assessment then.
 - **#39** Protoss cannon producers are commented out (disabled 2024/2025,
   no reason recorded; `ProduceCannon` gone from the tree). Decision, not
   a chore: re-enable (pick which mechanism owns "base under attack"),

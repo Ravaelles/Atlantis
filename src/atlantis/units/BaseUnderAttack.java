@@ -1,5 +1,6 @@
 package atlantis.units;
 
+import atlantis.game.A;
 import atlantis.units.select.Select;
 
 /**
@@ -36,13 +37,35 @@ public class BaseUnderAttack {
     /** Attackers this close to a base count as an attack on the base. */
     private static final double ATTACK_RADIUS = 8;
 
+    private static int cachedFrame = -1;
+    private static boolean cachedValue = false;
+    private static Boolean forcedAnswer = null;
+
     /**
      * Enemy combat units are attacking right next to one of our bases.
+     *
+     * <p>Cached per frame: the answer cannot change within one frame, and the
+     * worker hot path asks twice per worker per frame.</p>
      */
     public static boolean check() {
+        if (forcedAnswer != null) return forcedAnswer;
+        if (cachedFrame == A.now()) return cachedValue;
         AUnit base = Select.mainOrAnyBuilding();
-        return base != null
+        cachedValue = base != null
             && base.enemiesNear().combatUnits().inRadius(ATTACK_RADIUS, base).notEmpty();
+        cachedFrame = A.now();
+        return cachedValue;
+    }
+
+    /** Test-only override; null restores the live answer. */
+    public static void setForcedAnswerForTests(Boolean answer) {
+        forcedAnswer = answer;
+    }
+
+    /** Clears the per-frame cache and any test override. */
+    public static void clearForTests() {
+        cachedFrame = -1;
+        forcedAnswer = null;
     }
 
     /**
