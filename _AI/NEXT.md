@@ -58,7 +58,9 @@ The index of which document answers which question is `_AI/README.md`.
 ## Test health
 
 Suite green 2026-10-15: 575 passing, 1 skipped (+2
-`UnworkedConstructionSurvivesNearbyBuildingTest`);
+`UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
+1/1, `PylonSearchBreakdownTest` 2/2 selected); `PylonSearchBreakdownTest`
+2/2 in the acceptance tier (selected run);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -167,7 +169,17 @@ twins green (1/1 each, re-verified today). Re-run
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
   doctrine vs leash-relax (owner call, same class as the zero-supply
-  yield).
+  yield). Game happened (`last-wine.log`, corner [119,10], 46 fails,
+  Pylons still landed, supply unblocked to 33): ranked refusals are
+  physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 -
+  leash never bound (doctrine wins on evidence, 99.5% tile rules).
+  Suspects: 11x7 street grid (~30%, aesthetics not engine law, escapes
+  only at free 0 / free<=5-banked-isolated - the 25/25 pain sat at
+  free 6-7 just outside); physical footprint (~70%, mostly true
+  negatives). Instruments: refusal-breakdown accessor +
+  `PylonSearchBreakdownTest` (attribution plumbing) +
+  `StreetGridDoctrineTest` (grid + both hatches + free-6 shut). The
+  doctrine change itself stays owner call.
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
