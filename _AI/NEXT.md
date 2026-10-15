@@ -8,9 +8,9 @@ for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
 ## Current owner priorities (2026-10-09)
 
 1. **OpenBW simulations must be fast and self-terminating** - CONVENTIONS §17:
-   `TIMEOUT_SECONDS=120` wall-clock and `INGAME_TIME=20` game minutes, both set
-   once at the top of `scripts/run-openbw-e2e.sh` (done, commit `d90a4ea2`).
-   Every future run mode gets the same pair.
+   `TIMEOUT_SECONDS=150` wall-clock and `INGAME_TIME=20` game minutes, both set
+   once at the top of `scripts/run-openbw-e2e.sh` (raised 120 -> 150 by the
+   owner 2026-10-15, commit `da9940db`). Every future run mode gets the same pair.
 2. **Finish Production V2** - `_AI/NEXT.md` #45 and `_AI/redesign/01_PRODUCTION.md`.
 3. **Placement** - the rewrite landed (`_AI/redesign/03_PLACEMENT.md`); the
    cut-over and the rest of Protoss are what remain.
@@ -109,10 +109,12 @@ twins green (1/1 each, re-verified today). Re-run
   accepted; pilot: `ProductionRacePolicy` + 3 impls, V2 DRY_RUN zero
   errors). First LIVE probe `20261015_171504` (short): attaches, plays,
   builds opening (2 Pylons, Gateway, 3 Zealots, Forge, Assimilator), no
-  crash, no exceptions. Two watches: V2 rows carry minSupply 0 (no BO
-  expectation reaches the ledger - the deferred timeline scheduler);
-  Pylon #1 warped at sup5 (pull-forward or waste - undecided, needs a
-  side-by-side). Forge divergence still tracked, not regressed.
+  crash, no exceptions. First LIVE victory `20261015_193721` (long,
+  755 s, 5/0 kills, +500): full game to natural end on V2, 8 warps, all
+  rows minSupply 0 (no BO expectation reaches the ledger - the deferred
+  timeline scheduler). Two watches: Pylon #1 warped at sup5 twice now
+  (pull-forward or waste - undecided, needs a side-by-side); Forge
+  divergence still tracked, not regressed.
 
 ## Stage H — god-class split
 

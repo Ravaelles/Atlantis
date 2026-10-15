@@ -21,8 +21,9 @@ a long post-mortem belongs in an ADR or a commit message.
   reads as "safe".
 - **Still open:** whether the thresholds are right for an unbounded ratio. Not a
   test change and not a threshold tweak - it needs a decision (ADR 0006) and a
-  scenario sweep over the real evaluator. Guard audit tracked as NEXT #41; the
-  evidence tables are frozen in `DOCS/adr/0006-combat-eval-scale.md`.
+  scenario sweep over the real evaluator. The guard audit itself closed with
+  NEXT #41 (`164c377f`: quiet reading named, defend-mission chase guarded);
+  the evidence tables are frozen in `DOCS/adr/0006-combat-eval-scale.md`.
 - **Documented in code:** the javadoc now states what the number is, what it is
   not, and the three distortions by name. The misleading half of this entry is
   closed; only the threshold question remains.
@@ -81,9 +82,9 @@ a long post-mortem belongs in an ADR or a commit message.
 > on warp, and a fallback that adopts the oldest waiting construction of the same type on a
 > positional miss. Measured: the same bounded run went from `Pylons=0/5 gateways=0` to
 > `Pylon=2 Gateway=1`, and `CANNOT define construction` from a 1799-frame wall to 0. Test:
-> `OrphanedConstructionTest` (2). `TerranNewBuilding` has the same two defects and is tracked
-> as `NEXT.md` #56, not fixed blind (the Terran worker is consumed by the construction rather
-> than released).
+> `OrphanedConstructionTest` (2). `TerranNewBuilding` had the same two
+> suspected defects; NEXT #56 measured them absent in a Terran game and
+> closed (`37816f95`).
 
 ## How to add an entry
 
