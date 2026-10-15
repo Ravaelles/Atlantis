@@ -36,12 +36,12 @@ public class BuildingLedger {
      *                       was created at), null when no order is linked.
      */
     public static void record(int unitId, String type, int frame, String time,
-                              int supplyUsed, int supplyTotal,
+                              int supplyUsed, int supplyTotal, int minerals,
                               Integer expectedSupply, String order) {
         if (frame < lastFrame) rows.clear();
         lastFrame = frame;
         if (rows.containsKey(unitId)) return;
-        rows.put(unitId, new Row(type, frame, time, supplyUsed, supplyTotal, expectedSupply, order));
+        rows.put(unitId, new Row(type, frame, time, supplyUsed, supplyTotal, minerals, expectedSupply, order));
     }
 
     public static void flush() {
@@ -59,6 +59,7 @@ public class BuildingLedger {
                 .append(",\"time\":\"").append(quote(row.time)).append("\"")
                 .append(",\"supplyUsed\":").append(row.supplyUsed)
                 .append(",\"supplyTotal\":").append(row.supplyTotal)
+                .append(",\"minerals\":").append(row.minerals)
                 .append(",\"expectedSupply\":").append(row.expectedSupply == null ? "null" : row.expectedSupply)
                 .append(",\"order\":").append(row.order == null ? "null" : "\"" + quote(row.order) + "\"")
                 .append("}");
@@ -81,16 +82,18 @@ public class BuildingLedger {
         private final String time;
         private final int supplyUsed;
         private final int supplyTotal;
+        private final int minerals;
         private final Integer expectedSupply;
         private final String order;
 
-        private Row(String type, int frame, String time, int supplyUsed, int supplyTotal,
+        private Row(String type, int frame, String time, int supplyUsed, int supplyTotal, int minerals,
                     Integer expectedSupply, String order) {
             this.type = type;
             this.frame = frame;
             this.time = time;
             this.supplyUsed = supplyUsed;
             this.supplyTotal = supplyTotal;
+            this.minerals = minerals;
             this.expectedSupply = expectedSupply;
             this.order = order;
         }

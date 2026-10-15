@@ -19,7 +19,7 @@ public class WarpedBuildingRecorder {
         ProductionOrder order = unit.productionOrder();
         BuildingLedger.record(
             unit.id(), unit.type().name(), A.now(), A.minSec(),
-            A.supplyUsed(), A.supplyTotal(),
+            A.supplyUsed(), A.supplyTotal(), A.minerals(),
             order == null ? null : order.minSupply(),
             order == null ? null : order.toString()
         );
