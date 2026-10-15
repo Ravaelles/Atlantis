@@ -6,6 +6,8 @@ import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
+import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.GoalBoardDriver;
 import atlantis.production.orders.build.BuildOrderSettings;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.PriorityWaiters;
@@ -70,6 +72,13 @@ public class AutoProduceWorkersCommander extends Commander {
     public static boolean shouldProduceWorkers() {
         if (A.supplyFree() == 0 && A.supplyUsed() >= 11) return dont("NoSupply");
         if (!A.hasMinerals(50)) return dont("CantAfford");
+
+        // Goal-board driver (NEXT #91): emergency preemption only. Engine
+        // facts stay first, legacy strategy gates stay after.
+        if (GoalBoardDriver.pauseWorkers(GoalBoardAdvisor.snapshot())) {
+            return dont("BoardEmergency");
+        }
+
         if (prioritizeRush()) return dont("RushPriority");
 
         int workers = Count.workers();

@@ -547,6 +547,14 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   `expansion`, then `workers` again re-saturating new bases. Zero
   behavior change; divergence lines are the worker-driver data.
 
+  **Driver v1 live 2026-10-15 (owner order 2A): emergency preemption
+  only.** Analysis showed a top-only driver would also kill Nexus saving
+  (rank 80 by design), so `GoalBoardDriver.pauseWorkers` fires solely on
+  emergency-ranked tops with bank short of both. Hooked after engine
+  facts in `shouldProduceWorkers` (`BoardEmergency` reason).
+  `BoardEmergencyDriverTest` 2/2 full-path (pre-fix pauses via
+  `PylonAt8`, new reason wins). Suite 546/546.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
