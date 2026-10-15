@@ -25,16 +25,7 @@ public final class GoalBoard {
 
     /** Phase-1 opening vocabulary, ladder order. */
     public static List<Goal> openingGoals() {
-        List<Goal> goals = new ArrayList<Goal>();
-        goals.add(OpeningGoals.supplyPylon());
-        goals.add(OpeningGoals.detection());
-        goals.add(OpeningGoals.workers());
-        goals.add(OpeningGoals.gateway());
-        goals.add(OpeningGoals.core());
-        goals.add(OpeningGoals.assimilator());
-        goals.add(OpeningGoals.army());
-        goals.add(OpeningGoals.expansion());
-        return goals;
+        return OpeningGoals.all();
     }
 
     /** Active goals, ladder order. */
