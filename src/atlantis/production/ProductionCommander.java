@@ -42,7 +42,10 @@ public class ProductionCommander extends Commander {
             ForceExitWhenOpeningProven::new,
             // The >=700-mineral tripwire: no-op unless we are on OpenBW.
             ForceExitLocallyInOpenBW::new,
+            // Goal-board advisor (NEXT #91): read-only opinion log, last so
+            // it observes the frame after legacy production decided.
 //            RemoveExcessiveOrders.class,
+            GoalBoardAdvisor::new,
         };
     }
 

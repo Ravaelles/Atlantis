@@ -541,6 +541,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   measured starvation was a priority inversion, never timing). Ratchet
   from today: no new arbitration gate in legacy producers, ever.
 
+  **Advisor live 2026-10-15 (game 110748):** `GoalBoardAdvisor` (last in
+  the legacy commander list, read-only) logs top+active every ~60 s:
+  supply-blocked -> `supply-pylon`, economy -> `workers`, late game ->
+  `expansion`, then `workers` again re-saturating new bases. Zero
+  behavior change; divergence lines are the worker-driver data.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
