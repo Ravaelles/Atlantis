@@ -569,6 +569,13 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   Gateway needs a standing Pylon - `EnforcePylonFirst`). Suite 549/549,
   twins green, arch store unchanged.
 
+  **Feeder live 2x silent by design (games 112418, 112749):** build-order
+  rows exist from frame 0, so in-flight never empties for the four
+  covered types - the feeder is a rescue net (fires after cancels, like
+  the 200018 deadlock would have), not a routine orderer. First
+  BOARD_FED line will be its positive proof; stub logic + no-harm games
+  (healthy scaling to 35 workers / 122 supply) stand.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
