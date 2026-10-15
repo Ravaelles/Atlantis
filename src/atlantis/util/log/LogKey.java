@@ -9,6 +9,8 @@ package atlantis.util.log;
 public enum LogKey {
     /** A worker was assigned to a prepared site: adoption, with the state. */
     BUILDING_STARTED,
+    /** A fresh construction request was accepted: who asked, for which order. */
+    CONSTRUCTION_REQUESTED,
     /** The goal board's opinion snapshot next to legacy's actions. */
     BOARD,
     /** A queued order refused to go READY, with the refusing term. */

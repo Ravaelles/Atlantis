@@ -18,6 +18,8 @@ import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import bwapi.TilePosition;
 
 public class NewConstructionRequest {
@@ -142,6 +144,16 @@ public class NewConstructionRequest {
         else {
             // Add to list of pending orders
             ConstructionRequests.addConstruction(newConstruction);
+            EventLog.key(LogKey.CONSTRUCTION_REQUESTED)
+                .param("type", building.name())
+                .param("tile", newConstruction.buildPosition() == null ? "-"
+                    : "[" + newConstruction.buildPosition().tx() + ","
+                    + newConstruction.buildPosition().ty() + "]")
+                .param("order", order == null ? "-" : order.toString())
+                .param("caller", requestingCaller())
+                .param("supplyUsed", A.supplyUsed())
+                .param("minerals", A.minerals())
+                .log(A.now(), A.minSec());
             if (atlantis.config.env.Env.builderLog()) {
                 System.err.println("REQUEST_ACCEPTED at " + A.minSec() + ": " + building
                     + " at=" + newConstruction.buildPosition()
@@ -173,6 +185,24 @@ public class NewConstructionRequest {
 //        System.err.println(building + " OK! " + newConstruction.status());
 
         return newConstruction;
+    }
+
+    /**
+     * Who asked for this request: the first stack frame outside the
+     * construction plumbing. One class+method, not a trace - enough to
+     * split legacy re-requests from V2/expiry paths per add (NEXT #57)
+     * without the 15-line stacks the single-door used to print.
+     */
+    private static String requestingCaller() {
+        for (StackTraceElement frame : Thread.currentThread().getStackTrace()) {
+            String cls = frame.getClassName();
+            if (cls.startsWith("java.lang.Thread")
+                || cls.contains("NewConstructionRequest")
+                || cls.contains("ConstructionRequests")) continue;
+            String simple = cls.substring(cls.lastIndexOf('.') + 1);
+            return simple + "." + frame.getMethodName();
+        }
+        return "-";
     }
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
