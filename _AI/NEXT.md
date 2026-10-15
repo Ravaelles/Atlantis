@@ -139,11 +139,6 @@ known structural failure); rush-defense twins green. Re-run
 
 ## Review leftovers
 
-- **#39** Protoss cannon producers are commented out (disabled 2024/2025,
-  no reason recorded; `ProduceCannon` gone from the tree). Decision, not
-  a chore: re-enable (pick which mechanism owns "base under attack"),
-  delete the dead refs, or document leaving them. Four games, zero
-  cannons (BUGS.md B-19).
 - **#15** Deployed Protoss jar freshness is verified (canonical builder,
   bytecode 52). Terran has no approved artifact path (opponent cache is
   scbw-owned) - supply a target or verify none is needed; item stays

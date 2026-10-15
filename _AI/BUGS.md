@@ -69,19 +69,6 @@ a long post-mortem belongs in an ADR or a commit message.
   plans to use it, it is probably a dead idea. Checked against the plans and
   found nowhere. **Decision, not a chore** - tracked as NEXT #38.
 
-## B-39 — the Protoss cannon producers are commented out
-
-- **Where:** the buildings commander has `// || ProduceCannon.produce()` and
-  `// || ProduceCannonAtNatural.produce()`, disabled 2024-10-02 and 2025-01-09
-  with no recorded reason; `ProduceCannon` no longer exists in the tree.
-- **Measured:** four games, zero cannons (`_AI/e2e/`).
-- **Two live cannon paths remain:** `ProtossSecureBasesCommander` (needs
-  `Have.forge()` + two bases) and
-  `ProtossResponseEnemyHiddenUnits -> ProduceCannonAtNaturalOrMain`.
-- **Decision, not a chore:** re-enable (and pick which mechanism owns "the base
-  is being attacked"), delete the dead references, or leave them and own the
-  consequence in a comment at the call site. Tracked as NEXT #39.
-
 ## B-41 — a construction whose building was warped was never finished, holding its worker
 
 > **FIXED 2026-10-11 (`NEXT.md` #53).** `ProtossWarping.updateNewBuildingJustWarped` marked
