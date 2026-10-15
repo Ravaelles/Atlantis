@@ -77,7 +77,7 @@ public class ForceExitWhenOpeningProven extends Commander {
     @Override
     protected boolean handle() {
         AConsole.errPrintln("####################################################");
-        AConsole.errPrintln("### ForceExitWhenOpeningProven: Core + Dragoon #####");
+        AConsole.println("### ForceExitWhenOpeningProven: Core + Dragoon #####");
         AConsole.errPrintln("####################################################");
 
         AGame.sendMessage("ForceExitWhenOpeningProven");

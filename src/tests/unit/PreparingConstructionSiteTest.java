@@ -25,10 +25,11 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * Owner 2026-10-14: pick the site one supply before the order unlocks
- * (Pylon at 8 is picked at 7). A PREPARING construction holds the reserved
- * site with no builder and no issue; ProduceBuilding adopts it once ready.
- * While poor the site sits marked without costing a worker.
+ * Owner 2026-10-14, extended 2026-10-15: pick the site two supplies before
+ * the order unlocks (Pylon at 8 is picked at 6, Gateway at 9 at 7), while
+ * still ~100 minerals short of the price. A PREPARING construction holds
+ * the reserved site with no builder and no issue; ProduceBuilding adopts
+ * it once ready. While poor the site sits marked without costing a worker.
  */
 public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
 
@@ -254,6 +255,41 @@ public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
             assertNull(
                 order.construction(),
                 "dangling link must clear so the order can prepare/convert again");
+        });
+    }
+
+    @Test
+    public void gatewaySitePickedTwoSuppliesEarlyWhilePoor() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            currentMinerals = 40;
+            currentSupplyTotal = 17;
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 9));
+
+            currentSupplyUsed = 6;
+            new QueueRefresher(Queue.get()).refresh();
+            assertTrue(
+                ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).isEmpty(),
+                "at 6 for At 9 nothing is picked yet - two supplies early, not three");
+
+            currentSupplyUsed = 7;
+            Queue.get().clearCache();
+            new QueueRefresher(Queue.get()).refresh();
+            assertEquals(
+                1, ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).size(),
+                "at 7 for At 9 the site must be picked while still ~100 short of the price");
+            Construction prepared =
+                ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).get(0);
+            assertEquals(ConstructionOrderStatus.PREPARING, prepared.status());
+            assertNotNull(prepared.buildPosition(), "site must be marked");
+            assertNull(prepared.builder(), "no builder assigned while preparing");
         });
     }
 }

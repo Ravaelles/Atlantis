@@ -29,7 +29,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The fix is a {@code tee}: the log file keeps everything (scripts and greps
  * read it) and the same lines are streamed to the script's stdout, which
  * {@code UnixChaosGameLauncher} shows live through
- * {@code ProcessBuilder.inheritIO()}.
+ * {@code ProcessBuilder.inheritIO()}. Since the stream split there are two
+ * tees - game lines and diagnostics travel in separate files but still share
+ * the live console.
  * </p>
  */
 public class BotOutputReachesConsoleTest {
@@ -41,9 +43,11 @@ public class BotOutputReachesConsoleTest {
         public void botOutputIsStreamedToTheScriptStdout() throws IOException {
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\""),
-                                "the bot's output must be tee'd: the log file keeps everything and the"
+                assertTrue(script.contains("tee \"${TEE_OUT[@]}\""),
+                                "the bot's game output must be tee'd: the log file keeps everything and the"
                                                 + " script's stdout (the IDE console) shows it live");
+                assertTrue(script.contains("tee \"${TEE_ERR[@]}\""),
+                                "diagnostics travel on a second live tee into their own file");
                 assertTrue(script.contains("LIVE_OUTPUT"),
                                 "streaming must have an off switch for a quiet console");
         }
@@ -54,9 +58,11 @@ public class BotOutputReachesConsoleTest {
                 // the artefact that scripts and diagnosis depend on.
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("TEE_FILES=(\"$CLIENT_LOG\")"),
-                                "both branches tee through one file list starting at the client log");
-                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\" > /dev/null"),
+                assertTrue(script.contains("TEE_OUT=(\"$CLIENT_LOG\")"),
+                                "both branches tee game output starting at the client log");
+                assertTrue(script.contains("TEE_ERR=(\"$LOG_DIR/debug.log\")"),
+                                "diagnostics start at their own file in both branches");
+                assertTrue(script.contains("> /dev/null"),
                                 "quiet mode must still write the log files while silencing the console");
         }
 
@@ -118,7 +124,7 @@ public class BotOutputReachesConsoleTest {
                 // pipes through tee (so the extra copy still works) but throws
                 // tee's own stdout away.
                 String script = read(WINE_FULL);
-                assertTrue(script.contains("| tee \"${TEE_FILES[@]}\" > /dev/null"),
+                assertTrue(script.contains("> /dev/null"),
                                 "the quiet branch must silence the console while still writing the log files");
         }
 
@@ -129,8 +135,9 @@ public class BotOutputReachesConsoleTest {
                 // and gated on a non-empty path plus GAME_LAUNCHER=WINE.
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("TEE_FILES+=(\"$WINE_LOG_COPY_RESOLVED\")"),
-                                "the resolved copy joins the same live tee, not a later copy");
+                assertTrue(script.contains("TEE_OUT+=(\"$WINE_LOG_COPY_RESOLVED\")")
+                                && script.contains("TEE_ERR+=(\"$WINE_LOG_COPY_RESOLVED\")"),
+                                "the resolved copy joins both live tees, not a later copy");
                 assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),
                                 "the destination resolves once before the client starts");
                 assertTrue(script.contains("grep -q \"^GAME_LAUNCHER=WINE\""),

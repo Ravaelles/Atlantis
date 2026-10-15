@@ -12,6 +12,8 @@ import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.AConsole;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class ProduceBuilding {
     public static Construction _lastConstruction = null;
@@ -54,6 +56,16 @@ public class ProduceBuilding {
 
         prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);
         _lastConstruction = prepared;
+        EventLog.key(LogKey.BUILDING_STARTED)
+            .param("type", prepared.buildingType().name())
+            .param("tile", prepared.buildPosition() == null ? "-"
+                : "[" + prepared.buildPosition().tx() + "," + prepared.buildPosition().ty() + "]")
+            .param("builder", prepared.builder().id())
+            .param("supplyUsed", A.supplyUsed())
+            .param("supplyTotal", A.supplyTotal())
+            .param("minerals", A.minerals())
+            .param("expectedSupply", order.minSupply())
+            .log(A.now(), A.minSec());
         return true;
     }
 

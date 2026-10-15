@@ -18,12 +18,31 @@ public class WarpedBuildingRecorder {
         if (unit == null || !unit.isABuilding()) return;
 
         ProductionOrder order = unit.productionOrder();
-        BuildingLedger.record(
+        BuildingLedger.recordBuilding(
             unit.id(), unit.type().name(), A.now(), A.minSec(),
             A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
             ReservedResources.minerals(), ReservedResources.gas(),
             order == null ? null : order.minSupply(),
             order == null ? null : order.toString()
+        );
+        BuildingLedger.flush();
+    }
+
+    /**
+     * A combat unit the build order asked for. Orderless spawns (no demand
+     * shown: starting units, Scarabs) stay out; workers never reach here.
+     */
+    public static void recordUnit(AUnit unit) {
+        if (unit == null || unit.isABuilding() || !unit.isCombatUnit()) return;
+
+        ProductionOrder order = unit.productionOrder();
+        if (order == null) return;
+
+        BuildingLedger.recordUnit(
+            unit.id(), unit.type().name(), A.now(), A.minSec(),
+            A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
+            ReservedResources.minerals(), ReservedResources.gas(),
+            order.minSupply(), order.toString()
         );
         BuildingLedger.flush();
     }

@@ -7,12 +7,14 @@ package atlantis.util.log;
  * filtering one key.
  */
 public enum LogKey {
-    /** A queued order refused to go READY, with the refusing term. */
-    ORDER_NOT_READY,
-    /** The worker pump refused, with the refusing gate. */
-    WORKER_GATE,
-    /** A worker stood still past the anomaly threshold, with its state. */
-    STUCK_WORKER,
+    /** A worker was assigned to a prepared site: adoption, with the state. */
+    BUILDING_STARTED,
     /** The goal board's opinion snapshot next to legacy's actions. */
     BOARD,
+    /** A queued order refused to go READY, with the refusing term. */
+    ORDER_NOT_READY,
+    /** A worker stood still past the anomaly threshold, with its state. */
+    STUCK_WORKER,
+    /** The worker pump refused, with the refusing gate. */
+    WORKER_GATE,
 }

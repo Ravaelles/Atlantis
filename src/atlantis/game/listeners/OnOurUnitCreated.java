@@ -82,6 +82,7 @@ public class OnOurUnitCreated {
         // lands on the row. Flush-through: an interrupted game never
         // reaches OnGameEnd.
         WarpedBuildingRecorder.record(unit);
+        WarpedBuildingRecorder.recordUnit(unit);
 
         if (unit.isABuilding()) {
             if (unit.isBase()) OurClosestBaseToEnemy.clearCache();
