@@ -56,8 +56,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 553 passing, 1 skipped; architecture 10/11 (the one
-known structural failure); rush-defense twins green. Re-run
+Suite green 2026-10-15: 556 passing, 1 skipped (+3 `BaseUnderAttackTest`);
+architecture 10/11 (the one known structural failure); rush-defense
+twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
 *quality* of the data behind it, not a red test.
 
@@ -208,10 +209,18 @@ known structural failure); rush-defense twins green. Re-run
 
 ## Current game state (2026-10-15)
 
-- Full `--long` gate passed (210002, 912 s, exit 0): Nexus=6 Dragoon=7
-  Forge=1 (first ever). Gas flows (270+); Singularity correctly idle
-  at one Dragoon; Dragoon count is throughput + game length, not a
-  refusal. Next discipline watch: Core churn (see #57).
+- Last recorded `--long` pass: 210002, 912 s, exit 0 (Nexus=6 Dragoon=7
+  Forge=1, first ever; gas 270+; Singularity correctly idle at one
+  Dragoon). Log not retained.
+- Today: short FAILs its gate (4:40 game-time in 30 s wall, dragoons=0
+  vs 1 expected); long FAILs its gate twice (8:51 with dragoons=6
+  zealots=12; corner spawn [119,10] with 42x `Can't find place` -
+  #81 reproduces). The 13:24 runs had 0 placement failures.
+- Feeder: `BOARD_FED` 0 in all retained logs;
+  `ORDER_SAVING_FOR_EXPANSION` 0 everywhere (string present in
+  `IsReadyToProduceOrder:76`, never fires). Raw counts, no diagnosis.
+- Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
+  8:28-8:51 game-time (`20261015_132452`).
 - Wine first Pylon still unbuilt in both instances (see #84); the
   convertible-waiters fix plus walking-builder shield are in the jar,
   final proof is the owner's re-run.
