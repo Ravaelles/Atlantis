@@ -30,6 +30,7 @@ public class ScoutEnemyThird extends Manager {
 
         // =========================================================
 
+        if (EnemyUnits.combatUnits() <= 1) return false;
         if (unit.distTo(enemyThird) <= 5) return false;
         if (A.s % 30 <= 15) return false;
         if (A.secondsAgo(lastSeenAtFrame) <= 24) return false;
