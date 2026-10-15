@@ -529,6 +529,18 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   **Do not** delete from the bottom of this list upward: step 3 before step 2 is
   a bot that cannot research or build race-specific units.
 
+- **#91 (2026-10-15) - GoalBoard: ranked arbitration without OpenBW.**
+  Owner direction 1A/2A/3A: pure priority board (`atlantis.decisions.board`,
+  zero engine imports) replacing scattered vetoes. v1: `BoardState`
+  snapshot + 8 phase-1 goals (supply, detection, workers, gateway, core,
+  assimilator, army, expansion) on a fixed ladder + in-flight commitment
+  with emergency break. Ranking proves in milliseconds
+  (`GoalBoardTest` 7/7); wallet/commitment execution and the worker-pump
+  driver come next, then Pylon (2A order). Relation to #45: the board is
+  the Strategist half without the timeline scheduler (deferred - every
+  measured starvation was a priority inversion, never timing). Ratchet
+  from today: no new arbitration gate in legacy producers, ever.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a
