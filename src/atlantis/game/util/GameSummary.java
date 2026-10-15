@@ -17,7 +17,34 @@ import java.util.List;
 import java.util.Map;
 
 public class GameSummary {
+    private static boolean printed = false;
+
+    /**
+     * Last resort final message: the JVM is going down without a game end
+     * (wall-timeout SIGTERM, owner kill) and {@code OnGameEnd} never ran,
+     * so no summary would exist at all. Prints the same ### stat lines
+     * with a "Stopped" header instead of a verdict - a timeout is not a
+     * defeat. Never throws: a hook that throws poisons shutdown.
+     */
+    public static void printOnShutdown() {
+        if (printed) return;
+        printed = true;
+        try {
+            if (Atlantis.game() == null) return;
+            int totalS = AGame.timeSeconds();
+            int resourceBalance = AGame.killsLossesResourceBalance();
+            AConsole.println(
+                "\n### Stopped (no game end reached) after " + totalS + " seconds. ###"
+                    + "\n### Units killed/lost:    " + Atlantis.KILLED + "/" + Atlantis.LOST + " ###\n" +
+                    "### Resource killed/lost: " + (resourceBalance > 0 ? "+" + resourceBalance : resourceBalance) +
+                    " ###\n" +
+                    buildingsLine());
+        } catch (Throwable ignored) {
+        }
+    }
+
     public static void print(boolean winner) {
+        printed = true;
         String result = "#####################################\n";
         result += "############ " + (winner ? "VICTORY!" : "Defeat...") + " ###############\n";
         result += "############ Lost: " + Atlantis.LOST + " ################\n";

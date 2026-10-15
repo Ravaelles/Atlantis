@@ -59,7 +59,7 @@ public class PrepareConstructionSite {
         prepared.setPositionToBuild(site);
         prepared.setStatus(ConstructionOrderStatus.PREPARING);
         ConstructionRequests.addConstruction(prepared);
-        AConsole.println(
+        AConsole.errPrintln(
             A.minSec() + ": PREPARING " + type.name()
                 + " at [" + site.tx() + "," + site.ty() + "] for supply " + order.minSupply());
     }

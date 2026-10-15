@@ -4,6 +4,7 @@ import atlantis.Atlantis;
 import atlantis.config.ActiveMap;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.GameLauncherFactory;
+import atlantis.game.util.GameSummary;
 
 import java.io.IOException;
 
@@ -45,6 +46,15 @@ public class Main {
         // =============================================================
 
         Atlantis atlantis = Atlantis.getInstance(); // Create Atlantis object, it is a wrapper around JBWAPI
+        // Final message on the way down: wall-timeout SIGTERM (and any
+        // owner kill that is not -9) skips OnGameEnd, so without this the
+        // log ends mid-frame with no summary. SIGKILL cannot be caught.
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GameSummary.printOnShutdown();
+            }
+        }));
         atlantis.run(); // Start the bot
     }
 
