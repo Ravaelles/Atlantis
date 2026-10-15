@@ -47,7 +47,7 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 #       # opening gate + CherryVis trace (see --cvis below)
 #   bash scripts/run-openbw-e2e.sh --self-test-cvis   # test cvis artifact checks, no game
 #
-# Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=120 wall-clock,
+# Hard limits (top of the file, CONVENTIONS §17): TIMEOUT_SECONDS=150 wall-clock,
 # INGAME_TIME=20 game minutes. Both are refused when widened, never silently
 # extended; the outer command must also cap the whole run at TIMEOUT_SECONDS.
 #
@@ -239,10 +239,10 @@ fail() { echo "[openbw-e2e] ERROR: $*" >&2; exit 2; }
 #   TIMEOUT_SECONDS  wall-clock cap for the whole simulation.
 #   INGAME_TIME      in-game seconds after which the bot ends the game itself
 #                    (20 real minutes of game time).
-TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-120}"
+TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-150}"
 INGAME_TIME="${INGAME_TIME:-$((60 * 20))}"
-if [ "$TIMEOUT_SECONDS" -gt 120 ]; then
-  fail "TIMEOUT_SECONDS=$TIMEOUT_SECONDS exceeds the OpenBW 120-second simulation cap (CONVENTIONS §17)"
+if [ "$TIMEOUT_SECONDS" -gt 150 ]; then
+  fail "TIMEOUT_SECONDS=$TIMEOUT_SECONDS exceeds the OpenBW 150-second simulation cap (CONVENTIONS §17)"
 fi
 if [ "$TIMEOUT_SECONDS" -le 0 ]; then
   fail "TIMEOUT_SECONDS must be positive, got $TIMEOUT_SECONDS"
@@ -443,7 +443,7 @@ FORCE_GG_FOR_ENEMY=false
 # looped on "No server proc ID" until the script SIGTERM'd it, so a played game
 # still reported failure). ForceExitLocallyAfterRealSeconds calls
 # Atlantis.onEnd -> System.exit(0), which is the only exit that leaves the host
-# alive to be torn down cleanly. TIMEOUT_SECONDS (120, see the top of this file)
+# alive to be torn down cleanly. TIMEOUT_SECONDS (150, see the top of this file)
 # is the wall-clock limit; INGAME_TIME is the in-game limit.
 FORCE_END_GAME_AFTER_REAL_SECONDS=$TIMEOUT_SECONDS
 FORCE_END_GAME_AFTER_INGAME_SECONDS=$INGAME_TIME

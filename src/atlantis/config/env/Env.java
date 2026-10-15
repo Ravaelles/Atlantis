@@ -149,7 +149,7 @@ public class Env {
             case "FORCE_END_GAME_AFTER_REAL_SECONDS":
                 // Cap enforced again here, so a hand-edited ENV cannot widen the
                 // wall-clock limit past the OpenBW simulation cap (CONVENTIONS §17).
-                ForceExitLocallyAfterSomeTime.realSecondsLimit = Math.min(toInt(value), 120);
+                ForceExitLocallyAfterSomeTime.realSecondsLimit = Math.min(toInt(value), 150);
                 return true;
             case "FORCE_END_GAME_AFTER_INGAME_SECONDS":
                 ForceExitLocallyAfterSomeTime.inGameSecondsLimit = toInt(value);

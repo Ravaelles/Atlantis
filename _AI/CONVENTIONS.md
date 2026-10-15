@@ -348,16 +348,18 @@ same hours are not spent twice.
   before changing (detail: `_AI/CHALLENGES/OpenBW.md` packaging rules). Keep
   the `lib/` override and the build assertions: one jar attaches on both.
 
-## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09)
+## 17. OpenBW simulation hard limit (owner's ruling, 2026-10-09; raised to
+150 s by the owner 2026-10-15 so capped runs reach further before the kill)
 
-- Same 120 s as §13, applied to the simulation: **`TIMEOUT_SECONDS=120`**
-  wall-clock plus a self-ending game at **20 game minutes**
-  (`INGAME_TIME=60*20`, `FORCE_END_GAME_AFTER_INGAME_SECONDS`) - whichever
-  hits first ends the run; the bot exits itself so the host outlives the client.
-- Wrap the runner in an outer `timeout 120` (setup included; build the jar as
+- **`TIMEOUT_SECONDS=150`** wall-clock plus a self-ending game at **20 game
+  minutes** (`INGAME_TIME=60*20`, `FORCE_END_GAME_AFTER_INGAME_SECONDS`) -
+  whichever hits first ends the run; the bot exits itself so the host
+  outlives the client. (General command budget in §13 stays 120 s; this
+  section alone was widened, on purpose, for simulation wall time.)
+- Wrap the runner in an outer `timeout 150` (setup included; build the jar as
   its own command first). A timed-out run is **inconclusive**, never a verdict.
 - The script refuses a widened `TIMEOUT_SECONDS`; `Env` re-caps
-  `FORCE_END_GAME_AFTER_REAL_SECONDS` at 120. Run only through
+  `FORCE_END_GAME_AFTER_REAL_SECONDS` at 150. Run only through
   `scripts/run-openbw-e2e.sh` (§15); §14 still applies.
 
 ## 18. Unit-behaviour debugging: inspect manager history first (owner's ruling, 2026-10-09)
