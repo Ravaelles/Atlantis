@@ -138,6 +138,8 @@ public class BotOutputReachesConsoleTest {
                 assertTrue(script.contains("TEE_OUT+=(\"$WINE_LOG_COPY_RESOLVED\")")
                                 && script.contains("TEE_ERR+=(\"$WINE_LOG_COPY_RESOLVED\")"),
                                 "the resolved copy joins both live tees, not a later copy");
+                assertTrue(script.contains("WINE_DEBUG_COPY=\"${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log\""),
+                                "a -DEBUG twin of the live copy carries the diagnostics stream only");
                 assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),
                                 "the destination resolves once before the client starts");
                 assertTrue(script.contains("grep -q \"^GAME_LAUNCHER=WINE\""),

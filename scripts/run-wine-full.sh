@@ -239,10 +239,19 @@ CLIENT_CWD="$(pwd)"
 
 TEE_OUT=("$CLIENT_LOG")
 TEE_ERR=("$LOG_DIR/debug.log")
+WINE_DEBUG_COPY=""
 if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
+  case "$WINE_LOG_COPY_RESOLVED" in
+    *.log) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log" ;;
+    *) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED}-DEBUG.log" ;;
+  esac
   TEE_OUT+=("$WINE_LOG_COPY_RESOLVED")
   TEE_ERR+=("$WINE_LOG_COPY_RESOLVED")
   say "  Live log copy: $WINE_LOG_COPY_RESOLVED (both streams)"
+fi
+if [ -n "$WINE_DEBUG_COPY" ]; then
+  TEE_ERR+=("$WINE_DEBUG_COPY")
+  say "  Live debug copy: $WINE_DEBUG_COPY (diagnostics stream only)"
 fi
 
 # Streams stay split on purpose: client.log is the game log (HELLO,

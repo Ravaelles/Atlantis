@@ -172,6 +172,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             searchRadius++;
         }
 
+        if (reasons != null) {
+            lastRefusals = new java.util.HashMap<>(reasons);
+        }
+        else {
+            lastRefusals = new java.util.HashMap<>();
+        }
         if (reasons != null && !reasons.isEmpty()) {
             System.err.println("PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
                 + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
@@ -226,4 +232,16 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     }
 
     private static APosition lastFound;
+
+    /**
+     * Per-rule refusal counts of the last Pylon search (a copy - mutating it
+     * changes nothing). Empty when the last search was not a Pylon sweep or
+     * refused nothing. Test seam for the corner-base doctrine work (NEXT
+     * #81): it names which rule refuses which tiles without a game.
+     */
+    public static java.util.Map<String, Integer> lastRefusalBreakdown() {
+        return new java.util.HashMap<>(lastRefusals);
+    }
+
+    private static java.util.Map<String, Integer> lastRefusals = new java.util.HashMap<>();
 }
