@@ -136,8 +136,10 @@ public class NewConstructionRequest {
             // producer was gated out, or the request was made and rejected. NEXT.md #59 could
             // not be diagnosed without this line; it fires only under BUILDER_LOG=1.
             if (atlantis.config.env.Env.builderLog()) {
-                System.err.println("REQUEST_REFUSED_DUPLICATE " + building
-                    + " existing=" + ConstructionRequests.countAllOfType(building));
+                EventLog.key(LogKey.REQUEST_REFUSED_DUPLICATE)
+                    .param("type", building.name())
+                    .param("existing", ConstructionRequests.countAllOfType(building))
+                    .log(A.now(), A.minSec());
             }
             return null;
         }
@@ -153,24 +155,22 @@ public class NewConstructionRequest {
                 .param("caller", requestingCaller())
                 .param("supplyUsed", A.supplyUsed())
                 .param("minerals", A.minerals())
+                .param("totalOfType", ConstructionRequests.countAllOfType(building))
                 .log(A.now(), A.minSec());
-            if (atlantis.config.env.Env.builderLog()) {
-                System.err.println("REQUEST_ACCEPTED at " + A.minSec() + ": " + building
-                    + " at=" + newConstruction.buildPosition()
-                    + " totalOfType=" + ConstructionRequests.countAllOfType(building));
-            }
             // Power inputs at decision time (a site the engine later refuses on
-            // power passed every check we have - so log what the checks saw:
+            // power passed every check we have - so record what the checks saw:
             // our rule, the engine's answer, and the pylon list it ran on.
             // Rare (once per construction), builderLog-gated like the line above.
             if (building.needsPower() && atlantis.config.env.Env.builderLog()) {
-                System.err.println("POWER_AT_REQUEST site=" + newConstruction.buildPosition()
-                    + " ourCheck=" + IsPoweredByAPylon.check(newConstruction.buildPosition(), building)
-                    + " engineHasPower=" + atlantis.Atlantis.game().hasPower(
+                EventLog.key(LogKey.POWER_AT_REQUEST)
+                    .param("site", String.valueOf(newConstruction.buildPosition()))
+                    .param("ourCheck", IsPoweredByAPylon.check(newConstruction.buildPosition(), building))
+                    .param("engineHasPower", atlantis.Atlantis.game().hasPower(
                         new TilePosition(
                             newConstruction.buildPosition().tx(), newConstruction.buildPosition().ty()),
-                        building.ut())
-                    + " pylons=" + Select.ourOfType(AUnitType.Protoss_Pylon).list());
+                        building.ut()))
+                    .param("pylons", String.valueOf(Select.ourOfType(AUnitType.Protoss_Pylon).list()))
+                    .log(A.now(), A.minSec());
             }
         }
 

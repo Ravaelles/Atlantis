@@ -5,6 +5,8 @@ import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.units.AUnit;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import bwapi.TilePosition;
 
 /**
@@ -51,29 +53,28 @@ public class BuilderDiagnostics {
         if (unit == null || unit.u() == null) return;
 
         APosition at = construction.buildPosition();
-        System.err.println("BUILD_ATTEMPT @" + A.now()
-            + " unit=#" + unit.id() + " " + unit.type().name()
-            + " building=" + construction.buildingType().name()
-            + " tile=[" + tile.getX() + "," + tile.getY() + "]"
-            + " engineAccepted=" + result
-            + " || canBuildHere=" + (at == null ? "no-position" : at.isBuildableIncludeBuildings())
-            + " explored=" + exploredFootprint(construction)
-            + " canAfford=" + A.canAfford(
-                construction.buildingType().mineralPrice(), construction.buildingType().gasPrice())
-            + " distToBuild=" + (at == null ? "-" : A.digit(unit.distTo(at)))
-            + " isConstructing=" + unit.isConstructing()
-            + " isMoving=" + unit.isMoving()
-            + " action=" + unit.action().name()
-            + " lastCommand=" + unit.lastCommandName()
-            // The preconditions the ENGINE's own canIssueCommand checks before it looks
-            // at the building type at all (bwapi/Unit.class: canCommand() is the first
-            // gate in canIssueCommand). If build() still returns false with all of these
-            // true, the refusal is in the type-specific branch, not the generic one.
-            + " canCommand=" + unit.u().canCommand()
-            + " isPowered=" + unit.u().isPowered()
-            + " isLockedDown=" + unit.u().isLockedDown()
-            + " getOrder=" + unit.u().getOrder()
-            + " isCompleted=" + unit.isCompleted());
+        EventLog.key(LogKey.BUILD_ATTEMPT)
+            .param("unit", unit.id())
+            .param("type", unit.type().name())
+            .param("building", construction.buildingType().name())
+            .param("tx", tile.getX())
+            .param("ty", tile.getY())
+            .param("engineAccepted", result)
+            .param("canBuildHere", at == null ? "-" : String.valueOf(at.isBuildableIncludeBuildings()))
+            .param("explored", exploredFootprint(construction))
+            .param("canAfford", A.canAfford(
+                construction.buildingType().mineralPrice(), construction.buildingType().gasPrice()))
+            .param("distToBuild", at == null ? "-" : A.digit(unit.distTo(at)))
+            .param("constructing", unit.isConstructing())
+            .param("moving", unit.isMoving())
+            .param("action", unit.action().name())
+            .param("lastCommand", unit.lastCommandName())
+            .param("canCommand", unit.u().canCommand())
+            .param("powered", unit.u().isPowered())
+            .param("lockedDown", unit.u().isLockedDown())
+            .param("order", String.valueOf(unit.u().getOrder()))
+            .param("completed", unit.isCompleted())
+            .log(A.now(), A.minSec());
     }
 
     /**

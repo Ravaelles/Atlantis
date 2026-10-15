@@ -15,6 +15,16 @@ public enum LogKey {
     BOARD,
     /** A queued order refused to go READY, with the refusing term. */
     ORDER_NOT_READY,
+    /** Per-second builder snapshot while it owns a construction. */
+    BUILDER_STATE,
+    /** The issue path was reached (gates inside decide). */
+    ISSUE_BUILD_REACHED,
+    /** A build order attempt with the engine preconditions. */
+    BUILD_ATTEMPT,
+    /** A request refused as duplicate, with the standing count. */
+    REQUEST_REFUSED_DUPLICATE,
+    /** Power inputs at decision time for power-needing buildings. */
+    POWER_AT_REQUEST,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */

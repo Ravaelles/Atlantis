@@ -13,6 +13,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.HasUnit;
 import atlantis.units.actions.Actions;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import bwapi.TilePosition;
 
 public class IssueBuildOrder extends HasUnit {
@@ -28,12 +30,15 @@ public class IssueBuildOrder extends HasUnit {
         // or it ran and the gates inside refused. The Gateway soak could not be told apart
         // without it. Under BUILDER_LOG=1 only.
         if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
-            System.err.println("ISSUE_BUILD_REACHED " + buildingType.name()
-                + " unit=#" + unit.id() + " action=" + unit.action().name()
-                + " lastActionAgo=" + unit.lastActionAgo(unit.action())
-                + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
-                + " isConstructing=" + unit.isConstructing()
-                + " isMoving=" + unit.isMoving());
+            EventLog.key(LogKey.ISSUE_BUILD_REACHED)
+                .param("type", buildingType.name())
+                .param("unit", unit.id())
+                .param("action", unit.action().name())
+                .param("lastActionAgo", unit.lastActionAgo(unit.action()))
+                .param("lastCommandIssuedAgo", unit.lastCommandIssuedAgo())
+                .param("constructing", unit.isConstructing())
+                .param("moving", unit.isMoving())
+                .log(A.now(), A.minSec());
         }
 
         AUnit builder = construction.builder();

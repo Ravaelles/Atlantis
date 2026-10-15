@@ -15,6 +15,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class IsReadyToProduceOrder {
     public static boolean isReady(ProductionOrder order) {
@@ -56,13 +58,17 @@ public class IsReadyToProduceOrder {
             // Refusing term with numbers, buildings only (units churn through
             // here every frame by design). Unconditional: a silent queue is
             // undiagnosable (NEXT #58), and the throttle bounds the volume.
-            if (order.isBuilding()) {
-                atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-                    "ORDER_NOT_READY " + order.unitType() + " @" + A.now()
-                        + " supplyOk=" + supplyOk + "(sup:" + A.supplyUsed() + "/min:" + order.minSupply() + ")"
-                        + " resourcesOk=" + resourcesOk + "(min=" + A.minerals()
-                        + " reserved=" + ReservedResources.minerals() + ")"
-                        + " requirementsOk=" + requirementsOk);
+            if (order.isBuilding() && A.hasMinerals(order.mineralPrice() - 32)) {
+                EventLog.key(LogKey.ORDER_NOT_READY)
+                    .param("type", order.unitType().name())
+                    .param("supplyOk", supplyOk)
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("supplyExpected", order.minSupply())
+                    .param("resourcesOk", resourcesOk)
+                    .param("minerals", A.minerals())
+                    .param("reserved", ReservedResources.minerals())
+                    .param("requirementsOk", requirementsOk)
+                    .log(A.now(), A.minSec());
             }
             return false;
         }

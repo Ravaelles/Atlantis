@@ -11,6 +11,8 @@ import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class BuilderManager extends Manager {
     public BuilderManager(AUnit unit) {
@@ -47,25 +49,30 @@ public class BuilderManager extends Manager {
             // the engine says the worker is constructing. Kept behind the env flag so a normal
             // run is silent.
             if (atlantis.config.env.Env.builderLog() && A.everyNthGameFrame(30)) {
-                System.err.println("BUILDER_STATE @" + A.now()
-                    + " unit=#" + unit.id() + " " + unit.type().name() + " @[" + unit.tx() + "," + unit.ty() + "]"
-                    + " construction=" + construction.buildingType().name()
-                    + " status=" + construction.status()
-                    + " site=[" + (construction.buildPosition() == null ? "null"
-                        : construction.buildPosition().tx() + "," + construction.buildPosition().ty()) + "]"
-                    + " distToSite=" + (construction.buildPosition() == null ? "-"
+                EventLog.key(LogKey.BUILDER_STATE)
+                    .param("unit", unit.id())
+                    .param("type", unit.type().name())
+                    .param("tx", unit.tx())
+                    .param("ty", unit.ty())
+                    .param("construction", construction.buildingType().name())
+                    .param("status", construction.status().name())
+                    .param("site", construction.buildPosition() == null ? "-"
+                        : construction.buildPosition().tx() + "," + construction.buildPosition().ty())
+                    .param("distToSite", construction.buildPosition() == null ? "-"
                         : A.digit(unit.distTo(construction.buildPosition())))
-                    + " groundDistToSite=" + (construction.buildPosition() == null ? "-"
+                    .param("groundDistToSite", construction.buildPosition() == null ? "-"
                         : A.digit(unit.groundDist(construction.buildPosition())))
-                    + " action=" + unit.action().name()
-                    + " lastActionAgo=" + unit.lastActionAgo(unit.action())
-                    + " lastCommand=" + unit.lastCommandName()
-                    + " lastCommandIssuedAgo=" + unit.lastCommandIssuedAgo()
-                    + " isConstructing=" + unit.isConstructing()
-                    + " isMoving=" + unit.isMoving()
-                    + " canAfford=" + A.canAfford(construction.buildingType().mineralPrice(),
-                        construction.buildingType().gasPrice())
-                    + " manager=" + unit.manager());
+                    .param("action", unit.action().name())
+                    .param("lastActionAgo", unit.lastActionAgo(unit.action()))
+                    .param("lastCommand", unit.lastCommandName())
+                    .param("lastCommandIssuedAgo", unit.lastCommandIssuedAgo())
+                    .param("constructing", unit.isConstructing())
+                    .param("moving", unit.isMoving())
+                    .param("canAfford", A.canAfford(construction.buildingType().mineralPrice(),
+                        construction.buildingType().gasPrice()))
+                    .param("manager", unit.manager() == null ? "-"
+                        : unit.manager().getClass().getSimpleName())
+                    .log(A.now(), A.minSec());
             }
             if (atlantis.config.env.Env.isLocal() && A.now() % (30 * 60) == 0) {
                 ErrorLog.printMaxOncePerMinute("Builder diagnostic: unit=" + unit + " construction="

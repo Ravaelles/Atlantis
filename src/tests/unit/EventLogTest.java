@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,6 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * per event, key first, parameters in call order, numbers unquoted.
  */
 public class EventLogTest {
+
+    // Both ends: refusal paths anywhere in the suite record rows into the
+    // shared buffer (that is the twin working), so this class starts clean
+    // no matter which test ran before it in the JVM.
+    @BeforeEach
+    public void clearBefore() {
+        EventLog.clearForTests();
+    }
 
     @AfterEach
     public void clearLog() {
