@@ -57,10 +57,10 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 575 passing, 1 skipped (+2
+Suite green 2026-10-15: 584 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
-1/1, `PylonSearchBreakdownTest` 2/2 selected); `PylonSearchBreakdownTest`
-2/2 in the acceptance tier (selected run);
+1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
+`PylonSearchBreakdownTest` 2/2 selected run);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -76,8 +76,8 @@ twins green (1/1 each, re-verified today). Re-run
   CONVENTIONS §21). Ranking proves in milliseconds (`GoalBoardTest` 7/7).
   Consumers, all live: advisor (BOARD opinion log), emergency-only worker
   driver (`BoardEmergency`), feeder (missing rows for supply/gateway/
-  core/assimilator; workers/army/expansion/detection stay with their
-  owners). No new arbitration gate in legacy producers, ever (ratchet).
+  core/assimilator plus sustained army rows when the pumps go silent -
+  workers/expansion/detection stay with their owners). No new arbitration gate in legacy producers, ever (ratchet).
   Next: per-gate legacy deletions, one game of proof each (feeder proof
   observed `20261015_143903`: `BOARD_FED supply-pylon min=61 sup=39/41`).
   Relation to #45: the board is the Strategist half without the timeline scheduler
