@@ -237,6 +237,11 @@ if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
   say "  Live log copy: $WINE_LOG_COPY_RESOLVED"
 fi
 
+# The client inherits this cwd, so the bot's cwd-relative files
+# (bwapi-data/write/...) land here. Captured now: the script cd's into
+# GAME_ROOT further down, so pwd at teardown would lie.
+CLIENT_CWD="$(pwd)"
+
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
     wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
@@ -408,4 +413,14 @@ while kill -0 "$CLIENT_PID" 2>/dev/null; do
 done
 say "Client JVM exit, killing SC & ChaosLauncher."
 cleanup
+# Buildings ledger: the bot rewrites bwapi-data/write/BUILDINGS.json on
+# every warp (cwd-relative, like the build orders the game played with),
+# so an interrupted game still leaves its rows. Copy next to the client
+# log; a miss is said out loud, never silent.
+if [ -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" ]; then
+  cp -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" "$LOG_DIR/BUILDINGS.json" 2>/dev/null || true
+  say "buildings ledger collected: $LOG_DIR/BUILDINGS.json"
+else
+  say "buildings ledger missing: $CLIENT_CWD/bwapi-data/write/BUILDINGS.json was never written"
+fi
 exit 0

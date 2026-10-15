@@ -560,6 +560,9 @@ ln -sfn "$RUN_DIR" "$E2E_LOGS_DIR/latest"
 if [ "${CVIS:-0}" = "1" ]; then
   rm -rf "$BOT_ROOT/bwapi-data/write/cherryvis_dir.rep.cvis"
 fi
+# The buildings ledger is rewritten by the bot on every warp; without
+# clearing, a run that warps nothing would collect the previous run's rows.
+rm -f "$BOT_ROOT/bwapi-data/write/BUILDINGS.json"
 
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/bot.log"
@@ -757,6 +760,17 @@ say "bot log:    $BOT_LOG"
 # is exactly when the file is wanted.
 cp -f "$BOT_LOG" "$E2E_LOGS_DIR/last-bot.log" 2>/dev/null || true
 cp -f "$SERVER_LOG" "$E2E_LOGS_DIR/last-server.log" 2>/dev/null || true
+
+# Buildings ledger collection (always on): the bot rewrites
+# bwapi-data/write/BUILDINGS.json on every warp, so an interrupted run
+# still leaves its rows. Copy next to the logs; a missing file means the
+# bot never warped a building (or died before the first one).
+if [ -f "$BOT_ROOT/bwapi-data/write/BUILDINGS.json" ]; then
+  cp -f "$BOT_ROOT/bwapi-data/write/BUILDINGS.json" "$RUN_DIR/BUILDINGS.json" 2>/dev/null || true
+  say "buildings ledger collected: $RUN_DIR/BUILDINGS.json"
+else
+  say "buildings ledger missing: $BOT_ROOT/bwapi-data/write/BUILDINGS.json was never written"
+fi
 
 # A one-line header so the copy explains itself: a reader who finds
 # last-bot.log days later needs to know which run it was and when it played.
