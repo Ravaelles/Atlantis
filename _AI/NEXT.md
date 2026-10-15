@@ -149,7 +149,14 @@ twins green (1/1 each, re-verified today). Re-run
   dedup) paths distinguished per add. Needs a game showing the
   duplicate shape (20261013_233256 watch datum: 3 same-tile accepts,
   tot1 x3, no cancel/refusal). Second watch datum: Core ADDED 20 for
-  5 standing (2x churn per Core).
+  5 standing (2x churn per Core). Third datum, `20261015_150026`
+  (`BUILDER_LOG=1`): 121 same-tile Gateway accepts `[96,111]` over
+  1:55-3:16 with totalOfType pinned at 1 (each previous silently
+  replaced, no cancel line); 138/144 adds via legacy
+  `NewConstructionRequest` (`produceBuilding:38`, not adoption), 6 via
+  refresher, V2 path absent; BO row #3 warped twice (3:36 sup23, 4:12
+  sup27); refresh-path cancel + re-request of dynamic Gateway #143 at
+  `[94,111]`.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
@@ -157,7 +164,9 @@ twins green (1/1 each, re-verified today). Re-run
 - **#72** Singularity Charge fires in stub (2 Dragoons + 250 gas), idle
   live for lack of a second living Dragoon (not a divergence, not a
   stuck flag - measured). Needs a gas-healthy long game proving research
-  completes (150/150 held to issue).
+  completes (150/150 held to issue). Live precondition since seen:
+  `SINGULARITY_APPLIES` firing with 2 Dragoons and gas 180-196
+  (`20261015_150026`) - completion still unproven, run ended 8:43.
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -225,7 +234,13 @@ twins green (1/1 each, re-verified today). Re-run
   #81 reproduces). The 13:24 runs had 0 placement failures.
 - Feeder: `BOARD_FED` 0 in all retained logs;
   `ORDER_SAVING_FOR_EXPANSION` 0 everywhere (string present in
-  `IsReadyToProduceOrder:76`, never fires). Raw counts, no diagnosis.
+  `IsReadyToProduceOrder:76`, never fires - `20261015_150026` long run
+  included). Raw counts, no diagnosis.
+- Long `20261015_150026` (8:43 game-time, 0 placement failures, 20
+  ledger rows): Gateway BO #3 warped twice (3:36 sup23, 4:12 sup27);
+  dynamic Gateway #143 cancelled by refresh at `[94,111]` and
+  re-requested; no Core cancel (Core warped 2:36, #88 still needs its
+  game); Forge warped 6:56.
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
   8:28-8:51 game-time (`20261015_132452`).
 - Wine first Pylon still unbuilt in both instances (see #84); the
