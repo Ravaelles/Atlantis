@@ -48,6 +48,8 @@ public class OnUnitMorph {
 //            ProductionQueueRebuilder.rebuildProductionQueueToExcludeProducedOrders();
             Queue.get().refresh();
 
+            WarpedBuildingRecorder.record(unit);
+
             // Add to combat squad if it's military unit
             if (unit.isRealUnit()) {
                 SquadTransfersCommander.removeUnitFromSquads(unit);

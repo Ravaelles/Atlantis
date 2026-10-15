@@ -1,0 +1,98 @@
+package atlantis.game.util;
+
+import atlantis.util.AFile;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * One row per own building the moment it appears in the game (warp/morph/
+ * completion), with the supply then standing against the supply the build
+ * order row (or the dynamic order) asked for.
+ *
+ * <p>Written through on every record, not once at game end: an interrupted
+ * game never reaches {@code OnGameEnd}, and that is exactly when this file
+ * is wanted. The file is a plain JSON array, rewritten whole - buildings
+ * are dozens per game, so the cost is noise.</p>
+ *
+ * <p>Engine-free on purpose: every value arrives as a primitive, so this
+ * pins in milliseconds and no {@code atlantis.*} import can ever rot a
+ * boundary rule. The only seam to the engine is the thin call in
+ * {@code OnOurUnitCreated}, after the order fallback ran.</p>
+ */
+public class BuildingLedger {
+
+    public static final String OUTPUT_PATH = "bwapi-data/write/BUILDINGS.json";
+
+    private static final Map<Integer, Row> rows = new LinkedHashMap<>();
+    private static int lastFrame = -1;
+
+    private BuildingLedger() {
+    }
+
+    /**
+     * @param expectedSupply the order's {@code minSupply} ("At 8" of the
+     *                       build-order row, or the supply the dynamic order
+     *                       was created at), null when no order is linked.
+     */
+    public static void record(int unitId, String type, int frame, String time,
+                              int supplyUsed, int supplyTotal,
+                              Integer expectedSupply, String order) {
+        if (frame < lastFrame) rows.clear();
+        lastFrame = frame;
+        if (rows.containsKey(unitId)) return;
+        rows.put(unitId, new Row(type, frame, time, supplyUsed, supplyTotal, expectedSupply, order));
+    }
+
+    public static void flush() {
+        AFile.saveToFile(OUTPUT_PATH, toJson(), true);
+    }
+
+    public static String toJson() {
+        StringBuilder out = new StringBuilder("[\n");
+        boolean first = true;
+        for (Row row : rows.values()) {
+            if (!first) out.append(",\n");
+            first = false;
+            out.append("  {\"type\":\"").append(quote(row.type)).append("\"")
+                .append(",\"frame\":").append(row.frame)
+                .append(",\"time\":\"").append(quote(row.time)).append("\"")
+                .append(",\"supplyUsed\":").append(row.supplyUsed)
+                .append(",\"supplyTotal\":").append(row.supplyTotal)
+                .append(",\"expectedSupply\":").append(row.expectedSupply == null ? "null" : row.expectedSupply)
+                .append(",\"order\":").append(row.order == null ? "null" : "\"" + quote(row.order) + "\"")
+                .append("}");
+        }
+        return out.append(first ? "]" : "\n]").append("\n").toString();
+    }
+
+    public static void clearForTests() {
+        rows.clear();
+        lastFrame = -1;
+    }
+
+    private static String quote(String value) {
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private static final class Row {
+        private final String type;
+        private final int frame;
+        private final String time;
+        private final int supplyUsed;
+        private final int supplyTotal;
+        private final Integer expectedSupply;
+        private final String order;
+
+        private Row(String type, int frame, String time, int supplyUsed, int supplyTotal,
+                    Integer expectedSupply, String order) {
+            this.type = type;
+            this.frame = frame;
+            this.time = time;
+            this.supplyUsed = supplyUsed;
+            this.supplyTotal = supplyTotal;
+            this.expectedSupply = expectedSupply;
+            this.order = order;
+        }
+    }
+}
