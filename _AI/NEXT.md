@@ -56,8 +56,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 569 passing, 1 skipped (+3 `ReadyToProduceTimingTest`,
-+1 gateway boundary, `BotOutputReachesConsoleTest` re-pinned to the split);
+Suite green 2026-10-15: 572 passing, 1 skipped (+3 `CoreOutranksPylonsTest`);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -196,16 +195,6 @@ twins green (1/1 each, re-verified today). Re-run
   ledger (warp time + supply vs order expectation, both runner paths).
   Needs a Wine game with the ledger - the late/missing Gateway row names
   the layer. No blind patch.
-- **#93** Core loses its site/builder to a Pylon (owner report, no log
-  yet): builder issued at ~150, build never started, builder left; a
-  Pylon overwrote the Core site; Core rebuilt much later. Measured
-  code facts: refusal keeps builder + reserves + retries (no release);
-  Pylon never blocks Core in `PriorityWaiters`; builder CAN be stolen
-  via `GetOptimalBuilder.useAnotherProtossBuilderInstead` / overdue
-  reassign. Absolute "Pylons never outrank Core" refused (supply-block
-  death at 9/9: no Pylon means no supply means no Core). Needs the
-  specific game log naming which path took the builder/site. No blind
-  patch.
 
 ## Needs owner or upstream (blocked here)
 
