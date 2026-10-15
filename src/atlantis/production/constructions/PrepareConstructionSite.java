@@ -9,18 +9,19 @@ import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 
 /**
- * Owner 2026-10-14: pick the site one supply before the order unlocks, so
- * the building is aimed before it is affordable. A PREPARING construction
- * holds the reserved site with no builder and no issue; ProduceBuilding
- * adopts it (builder + NOT_STARTED) once the order is ready instead of
- * searching anew. While poor or supply-gated the site sits marked without
- * costing a worker - and a placement that can never work shows up here,
- * at pick time, instead of deep in the builder loop.
+ * Owner 2026-10-14, extended 2026-10-15: pick the site two supplies before
+ * the order unlocks, so the building is aimed while still ~100 minerals
+ * short of its price. A PREPARING construction holds the reserved site with
+ * no builder and no issue; ProduceBuilding adopts it (builder + NOT_STARTED)
+ * once the order is ready instead of searching anew. While poor or
+ * supply-gated the site sits marked without costing a worker - and a
+ * placement that can never work shows up here, at pick time, instead of
+ * deep in the builder loop.
  *
  * <p>v1 scope: ordinary buildings only. Bases (special natural logic) and
  * gas buildings (fixed geyser tile, nothing to pick) stay on the old path.
  * One site in flight per type; staleness is bounded because picking happens
- * at most ~1 supply ahead, and RefreshConstructionPosition keeps running.
+ * at most ~2 supplies ahead, and RefreshConstructionPosition keeps running.
  */
 public class PrepareConstructionSite {
 
@@ -31,9 +32,10 @@ public class PrepareConstructionSite {
         AUnitType type = order.unitType();
         if (type == null || type.isBase() || type.isGasBuilding()) return;
 
-        // One supply earlier (owner spec): Pylon at 8 is picked at 7. Past
-        // that the site may sit reserved while poor or supply-gated.
-        if (A.supplyUsed() < order.minSupply() - 1) return;
+        // Two supplies earlier (owner spec): Pylon at 8 is picked at 6,
+        // Gateway at 9 at 7. Past that the site may sit reserved while
+        // poor or supply-gated.
+        if (A.supplyUsed() < order.minSupply() - 2) return;
 
         // One site in flight per type - the second Gateway row prepares once
         // the first leaves the unfinished list.

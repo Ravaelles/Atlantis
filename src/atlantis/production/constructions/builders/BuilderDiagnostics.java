@@ -48,6 +48,7 @@ public class BuilderDiagnostics {
      */
     public static void logBuildAttempt(AUnit unit, Construction construction, TilePosition tile, boolean result) {
         if (!Env.builderLog()) return;
+        if (unit == null || unit.u() == null) return;
 
         APosition at = construction.buildPosition();
         System.err.println("BUILD_ATTEMPT @" + A.now()
