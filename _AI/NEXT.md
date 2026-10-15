@@ -36,22 +36,21 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Next steps (ordered - this section survives context compression)
 
-1. **Feeder positive proof:** first `BOARD_FED` line in any game log
-   (feeder is proven in stub; a cancel-shaped game will fire it).
-2. **Pylon closure:** Wine re-run with the current jar (convertible
+1. **Pylon closure:** Wine re-run with the current jar (convertible
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
-3. **Per-gate legacy deletions**, one game of proof each (ratchet):
+2. **Per-gate legacy deletions**, one game of proof each (ratchet):
    next candidate from BOARD divergence lines, never batch rewrites.
-4. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
+   (Feeder proof observed `20261015_143903`, so deletions are unblocked.)
+3. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
    Wine): Core-cancel retry (#88), 700 s+ rich run (#71), research
    completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
-5. **Second goal vocabulary** (Terran or midgame): triggers the
+4. **Second goal vocabulary** (Terran or midgame): triggers the
    `goals/` split by vocabulary - until then no new packages.
-6. **Decision absorption:** board takes over decision sites one by one
+5. **Decision absorption:** board takes over decision sites one by one
    (51 files importing Decision, 49 in prod, measured 2026-10-15, counting
    down, no new ones per §21); the class dies at zero, not before.
-7. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
+6. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
    stages E–J below.
 
 ## Test health
@@ -74,9 +73,9 @@ twins green (1/1 each, re-verified today). Re-run
   driver (`BoardEmergency`), feeder (missing rows for supply/gateway/
   core/assimilator; workers/army/expansion/detection stay with their
   owners). No new arbitration gate in legacy producers, ever (ratchet).
-  Next: first `BOARD_FED` line as the feeder's positive proof; then
-  per-gate legacy deletions, one game of proof each. Relation to #45:
-  the board is the Strategist half without the timeline scheduler
+  Next: per-gate legacy deletions, one game of proof each (feeder proof
+  observed `20261015_143903`: `BOARD_FED supply-pylon min=61 sup=39/41`).
+  Relation to #45: the board is the Strategist half without the timeline scheduler
   (deferred - every measured starvation was a priority inversion).
 
 ## Stage E — read model (remaining)
@@ -220,9 +219,6 @@ twins green (1/1 each, re-verified today). Re-run
   v2 covers tech + race army; `Queue/**` + order types last; never
   bottom-up (a bot that can't research is worse than debt).
   `Construction/**` stays by design (v2 delegates builders to it).
-- **#90** PREPARING sites (picked one supply early, adopted on ready;
-  cancel-immune, orphans swept). Needs adoption attribution in game.
-
 ## Current game state (2026-10-15)
 
 - Last recorded `--long` pass: 210002, 912 s, exit 0 (Nexus=6 Dragoon=7
@@ -232,7 +228,8 @@ twins green (1/1 each, re-verified today). Re-run
   vs 1 expected); long FAILs its gate twice (8:51 with dragoons=6
   zealots=12; corner spawn [119,10] with 42x `Can't find place` -
   #81 reproduces). The 13:24 runs had 0 placement failures.
-- Feeder: `BOARD_FED` 0 in all retained logs;
+- Feeder: first `BOARD_FED` observed `20261015_143903` (supply-pylon at
+  a 39/41 block); 0 in all other retained logs.
   `ORDER_SAVING_FOR_EXPANSION` 0 everywhere (string present in
   `IsReadyToProduceOrder:76`, never fires - `20261015_150026` long run
   included). Raw counts, no diagnosis.
