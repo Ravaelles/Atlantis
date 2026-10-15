@@ -89,9 +89,9 @@ public class ProduceBuilding {
                 : "[" + prepared.buildPosition().tx() + "," + prepared.buildPosition().ty() + "]")
             .param("builder", prepared.builder().id())
             .param("supplyUsed", A.supplyUsed())
+            .param("expectedSupply", order.minSupply())
             .param("supplyTotal", A.supplyTotal())
             .param("minerals", A.minerals())
-            .param("expectedSupply", order.minSupply())
             .log(A.now(), A.minSec());
         return true;
     }
