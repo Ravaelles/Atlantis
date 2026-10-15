@@ -49,8 +49,8 @@ The index of which document answers which question is `_AI/README.md`.
 5. **Second goal vocabulary** (Terran or midgame): triggers the
    `goals/` split by vocabulary - until then no new packages.
 6. **Decision absorption:** board takes over decision sites one by one
-   (54 usages and counting down, no new ones per §21); the class dies
-   at zero, not before.
+   (51 files importing Decision, 49 in prod, measured 2026-10-15, counting
+   down, no new ones per §21); the class dies at zero, not before.
 7. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
    stages E–J below.
 

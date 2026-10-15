@@ -419,8 +419,8 @@ same hours are not spent twice.
 - No new `Decision` usages (owner's ruling, 2026-10-15): new decision
   logic goes through the goal board, not through `TRUE/FALSE/INDIFFERENT`
   chains. Not because the trio is evil - the singletons are defused -
-  but because every new usage feeds the system being strangled (54 and
-  counting, tracked to zero before the class dies). `toBoolean` still
+  but because every new usage feeds the system being strangled (51 files,
+  49 in prod, measured 2026-10-15, tracked to zero before the class dies). `toBoolean` still
   asserts off in production, so old call sites keep their
   `notIndifferent()` discipline until absorbed.
 - New rule, not retroactive cleanup: existing violations elsewhere are
