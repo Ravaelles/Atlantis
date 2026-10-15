@@ -2,6 +2,7 @@ package atlantis.game.listeners;
 
 import atlantis.game.A;
 import atlantis.game.util.BuildingLedger;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 
@@ -19,7 +20,8 @@ public class WarpedBuildingRecorder {
         ProductionOrder order = unit.productionOrder();
         BuildingLedger.record(
             unit.id(), unit.type().name(), A.now(), A.minSec(),
-            A.supplyUsed(), A.supplyTotal(), A.minerals(),
+            A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
+            ReservedResources.minerals(), ReservedResources.gas(),
             order == null ? null : order.minSupply(),
             order == null ? null : order.toString()
         );
