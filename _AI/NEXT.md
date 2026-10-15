@@ -56,7 +56,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 560 passing, 1 skipped (+4 `BuildingLedgerTest`);
+Suite green 2026-10-15: 564 passing, 1 skipped (+4 `EventLogTest`);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
