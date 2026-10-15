@@ -149,31 +149,6 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
-- **#57** Duplicate-construction leak: single-door `addConstruction`
-  prints the caller chain behind `BUILDER_LOG=1`. Legacy
-  (`NewConstructionRequest`, re-find-then-cancel) vs V2 (exact-tile
-  dedup) paths distinguished per add. Needs a game showing the
-  duplicate shape (20261013_233256 watch datum: 3 same-tile accepts,
-  tot1 x3, no cancel/refusal). Second watch datum: Core ADDED 20 for
-  5 standing (2x churn per Core). Third datum, `20261015_150026`
-  (`BUILDER_LOG=1`): 121 same-tile Gateway accepts `[96,111]` over
-  1:55-3:16 with totalOfType pinned at 1 (each previous silently
-  replaced, no cancel line); 138/144 adds via legacy
-  `NewConstructionRequest` (`produceBuilding:38`, not adoption), 6 via
-  refresher, V2 path absent; BO row #3 warped twice (3:36 sup23, 4:12
-  sup27); refresh-path cancel + re-request of dynamic Gateway #143 at
-  `[94,111]`. Fourth datum, `20261015_170339` (guarded jar): 41 accepts
-  `[15,51]` over 4:52-6:24 plus 79 `[17,54]`, totalOfType pinned at 1,
-  zero cancels, sparse adoptions, all warps complete - the adopted-order
-  re-request is closed in-tree (stub: 110 pileup to exactly 1) but the
-  live loop uses another path (open; caller chains unavailable).
-  Root found after: the proximity finish removed every fresh accept
-  because an earlier same-type building stood within 2.5 tiles
-  (totalOfType pinned, silence, eventual warp all fit) - unworked
-  adoptions (builder assigned, never attempted) are now exempt;
-  attempted/started work keeps the old finish (#53 untouched).
-  Residual: requeued rows for standing buildings now build adjacent
-  instead of instant-finishing (demand layer owns correctness).
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
@@ -271,6 +246,9 @@ twins green (1/1 each, re-verified today). Re-run
   cancels, Gateways on time at 9/10): clean baseline, nothing to fix.
   Per-add attribution without stacks since `CONSTRUCTION_REQUESTED`
   rows (`20261015_185504`: all 4 via `ProduceBuilding.produceBuilding`).
+- Long `20261015_191932` (141 s wall, 539 s game, rich economy, 44
+  warps, shutdown summary worked): same-tile accepts max 6-in-2-s
+  bursts converging to warps (was 41-121 sustained) - closes #57.
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
   8:28-8:51 game-time (`20261015_132452`).
 - Shutdown-hook summary proven `20261015_181553`: a wall-killed short
