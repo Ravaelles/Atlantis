@@ -34,6 +34,26 @@ The index of which document answers which question is `_AI/README.md`.
 - An item is only closed when it is **verified by execution** (build, test
   run, or game run), not when the code merely compiles.
 
+## Next steps (ordered - this section survives context compression)
+
+1. **Feeder positive proof:** first `BOARD_FED` line in any game log
+   (feeder is proven in stub; a cancel-shaped game will fire it).
+2. **Pylon closure:** Wine re-run with the current jar (convertible
+   waiters + walking-builder shield are in it) for the first-Pylon
+   proof (#84); corner-stall game for doctrine-vs-leash (#81).
+3. **Per-gate legacy deletions**, one game of proof each (ratchet):
+   next candidate from BOARD divergence lines, never batch rewrites.
+4. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
+   Wine): Core-cancel retry (#88), 700 s+ rich run (#71), research
+   completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
+5. **Second goal vocabulary** (Terran or midgame): triggers the
+   `goals/` split by vocabulary - until then no new packages.
+6. **Decision absorption:** board takes over decision sites one by one
+   (54 usages and counting down, no new ones per §21); the class dies
+   at zero, not before.
+7. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
+   stages E–J below.
+
 ## Test health
 
 Suite green 2026-10-15: 553 passing, 1 skipped; architecture 10/11 (the one
