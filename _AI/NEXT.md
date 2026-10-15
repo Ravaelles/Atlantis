@@ -40,8 +40,10 @@ The index of which document answers which question is `_AI/README.md`.
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
 2. **Per-gate legacy deletions**, one game of proof each (ratchet):
-   next candidate from BOARD divergence lines, never batch rewrites.
-   (Feeder proof observed `20261015_143903`, so deletions are unblocked.)
+   no candidate yet - feeder fired once ever (`143903`), legacy still
+   does ~everything, and board-invisible production (Forge, cannons)
+   is capability, not duplication. Deletions wait for routine feeder
+   coverage, never batch rewrites.
 3. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
    Wine): Core-cancel retry (#88), 700 s+ rich run (#71), research
    completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
@@ -55,7 +57,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 573 passing, 1 skipped (+1 `GameSummaryShutdownTest`);
+Suite green 2026-10-15: 575 passing, 1 skipped (+2
+`UnworkedConstructionSurvivesNearbyBuildingTest`);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -164,6 +167,13 @@ twins green (1/1 each, re-verified today). Re-run
   zero cancels, sparse adoptions, all warps complete - the adopted-order
   re-request is closed in-tree (stub: 110 pileup to exactly 1) but the
   live loop uses another path (open; caller chains unavailable).
+  Root found after: the proximity finish removed every fresh accept
+  because an earlier same-type building stood within 2.5 tiles
+  (totalOfType pinned, silence, eventual warp all fit) - unworked
+  adoptions (builder assigned, never attempted) are now exempt;
+  attempted/started work keeps the old finish (#53 untouched).
+  Residual: requeued rows for standing buildings now build adjacent
+  instead of instant-finishing (demand layer owns correctness).
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
