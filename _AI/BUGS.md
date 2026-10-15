@@ -85,18 +85,6 @@ a long post-mortem belongs in an ADR or a commit message.
 > as `NEXT.md` #56, not fixed blind (the Terran worker is consumed by the construction rather
 > than released).
 
-## B-40 — `ConstructionThatLooksBugged` has an unreachable branch
-
-- **Where:** `ConstructionThatLooksBugged.handleConstructionThatLooksBugged()` -
-  it returns unless `status() == NOT_STARTED`, then the inner guard is
-  `if (constr.status() != NOT_STARTED) constr.assignOptimalBuilder();`, so the
-  assignment never runs.
-- **Consequence:** a planned construction with no builder is **cancelled**
-  ("Weird case, ... has no builder. Cancel.") rather than given one. Builders are
-  assigned at creation, which is why it is invisible.
-- **Needs a decision** on which behaviour is intended before anyone touches it;
-  the exact case is NEXT #40.
-
 ## How to add an entry
 
 `## B-<n> - <one-line symptom>`, then: **Where**, **Measured** (with the
