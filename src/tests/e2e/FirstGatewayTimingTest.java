@@ -123,18 +123,12 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
                 }
             }
 
-            boolean workedExists = ConstructionRequests
-                .notFinishedOfType(AUnitType.Protoss_Gateway).stream()
-                .anyMatch(c -> c.status() != ConstructionOrderStatus.PREPARING);
-            if (gateway.isStatus(OrderStatus.READY_TO_PRODUCE) && !workedExists) {
-                // First adoption only: the commander re-runs produceBuilding
-                // every frame while READY, and without a warp (stub never
-                // warps) each call adds another construction - the #57
-                // duplicate leak, not this test's subject. A waiting PREPARING
-                // site still goes through adoption; an adopted one is left
-                // alone. Real games bound the pileup by warping promptly;
-                // here adoption-once keeps the measurement on timing instead
-                // of drowning it.
+            if (gateway.isStatus(OrderStatus.READY_TO_PRODUCE)) {
+                // The production guard (NEXT #57) makes re-requests while
+                // adopted-alive a no-op, so this drives the real path: the
+                // first call adopts, later calls wait. (An earlier revision
+                // kept adoption-once in the driver because the stub never
+                // warps and each call added another construction.)
                 ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway);
             }
 
@@ -203,6 +197,10 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
         assertTrue(
             issuedBank <= 158,
             "issued with " + issuedBank + " banked - at most 150 + 8 headroom");
+        assertEquals(
+            1, ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).size(),
+            "exactly one Gateway construction - re-requests while adopted-alive"
+                + " are a no-op (NEXT #57), never duplicates");
     }
 
     private boolean buildIssued() {

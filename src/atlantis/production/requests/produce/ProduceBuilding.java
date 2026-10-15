@@ -37,6 +37,18 @@ public class ProduceBuilding {
             // is unaffected.
             if (A.supplyUsed() < order.minSupply() - 1) return false;
 
+            // NEXT #57: an adopted construction with a living builder needs
+            // no new request - the builder is dispatched or walking, and
+            // re-requesting every frame piled same-tile duplicates (121
+            // accepts in one game, totalOfType pinned at 1). Wait for warp,
+            // cancel, or builder death instead. Builderless adoptions still
+            // fall through to a fresh request below (status quo).
+            Construction live = order.construction();
+            if (live != null
+                && (live.status() == ConstructionOrderStatus.NOT_STARTED
+                    || live.status() == ConstructionOrderStatus.IN_PROGRESS)
+                && live.builder() != null && !live.builder().isDead()) return false;
+
             // Owner 2026-10-15: a waiting Core outranks Pylon spending
             // while contended (bounded, self-releasing - see
             // PriorityWaiters.pylonYieldsToCore). The 100 minerals stay
