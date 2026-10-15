@@ -103,7 +103,18 @@ public class ConstructionStatusChanger extends Commander {
         // legacy path uses - that is the null field again. The question asked instead is the
         // one the game answers: is a finished building of this type sitting on the reserved
         // tile?
+        //
+        // NEXT #57: not for unworked adoptions. A freshly accepted construction
+        // whose builder never issued is still owed - finishing it off because
+        // an earlier building stands within 2.5 tiles drops demand the queue
+        // believes is covered, and the per-frame re-request that follows is
+        // the same-tile accept loop. Attempted or started work keeps the
+        // proximity finish; builderless rows keep it too (no work pending).
+        boolean unworkedAdoption = construction.status() == ConstructionOrderStatus.NOT_STARTED
+            && construction.builder() != null && !construction.builder().isDead()
+            && construction.buildWasNeverAttempted();
         if (construction.status() != ConstructionOrderStatus.FINISHED
+            && !unworkedAdoption
             && buildingFinishedAtSite(construction)) {
             construction.setStatus(ConstructionOrderStatus.FINISHED);
             ConstructionRequests.removeOrder(construction);

@@ -318,6 +318,15 @@ public class Construction implements Comparable<Construction> {
         return A.ago(lastBuildAttemptFrame);
     }
 
+    /**
+     * No build order was ever issued for this site (attempts stamp the
+     * frame; the sentinel predates any game frame). Used to tell owed
+     * work apart from worked work (NEXT #57 vs #53).
+     */
+    public boolean buildWasNeverAttempted() {
+        return lastBuildAttemptFrame < 0;
+    }
+
     public boolean hasStarted() {
         return !status().equals(ConstructionOrderStatus.NOT_STARTED) || buildingUnit() != null;
     }
