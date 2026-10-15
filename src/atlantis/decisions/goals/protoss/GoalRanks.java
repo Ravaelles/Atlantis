@@ -33,6 +33,9 @@ public final class GoalRanks {
     /** Opening fighting force. */
     public static final int ARMY = 70;
 
+    /** Sustained combat-unit flow past the opening (both postures share the seat). */
+    public static final int SUSTAINED_ARMY = 75;
+
     /** Second base, last in the opening. */
     public static final int EXPANSION = 80;
 }

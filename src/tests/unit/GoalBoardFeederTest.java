@@ -134,4 +134,71 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             assertEquals(0, others, "workers/army/expansion/detection stay with their owners");
         });
     }
+
+    @Test
+    public void stalledGatewaysFeedOneZealotRow() {
+        BoardState state = BoardState.builder()
+            .minerals(200).gas(0).supply(14, 25)
+            .workers(12).bases(1).gateways(1).gatewaysTraining(0).army(8)
+            .seconds(400)
+            .build();
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Gateway, 22, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            String fed = GoalBoardFeeder.ensure(state);
+
+            assertTrue(fed.contains("sustained-zealot"), "fed ids name the goal, got: " + fed);
+            int zealots = 0;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Zealot)) {
+                    zealots++;
+                    assertEquals(ProductionOrderPriority.STANDARD, order.priority());
+                }
+            }
+            assertEquals(1, zealots, "one stalled Gateway yields exactly one STANDARD Zealot row");
+        });
+    }
+
+    @Test
+    public void pumpRowSilencesSustainedFeed() {
+        BoardState state = BoardState.builder()
+            .minerals(200).gas(120).supply(20, 33)
+            .workers(14).bases(1).gateways(2).gatewaysTraining(0).army(8)
+            .core(true)
+            .seconds(500)
+            .build();
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Gateway, 22, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Dragoon, 20));
+            Queue.get().clearCache();
+
+            String fed = GoalBoardFeeder.ensure(state);
+
+            int dragoons = 0;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Dragoon)) {
+                    dragoons++;
+                }
+            }
+            assertEquals(1, dragoons, "the pump's own row stands alone - no feeder duplicate");
+            assertTrue(
+                !fed.contains("sustained-dragoon"),
+                "an acting pump always wins over the posture default");
+        });
+    }
 }

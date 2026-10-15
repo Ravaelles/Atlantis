@@ -72,8 +72,9 @@ public class GoalBoardTest {
             ids.append(goal.id());
         }
         assertEquals(
-            "workers,gateway,assimilator,army,expansion", ids.toString(),
-            "supply satisfied, core standing, no threats: economy, capacity, gas, army, base");
+            "workers,gateway,assimilator,army,sustained-dragoon,expansion", ids.toString(),
+            "supply satisfied, core standing, no threats: economy, capacity, gas, army, "
+                + "sustained flow, base");
     }
 
     @Test
@@ -102,7 +103,7 @@ public class GoalBoardTest {
     public void nothingActiveTopsNull() {
         BoardState state = BoardState.builder()
             .minerals(2000).gas(1000).supply(100, 200)
-            .workers(70).bases(3).gateways(5).army(30)
+            .workers(70).bases(3).gateways(5).gatewaysTraining(5).army(30)
             .core(true).assimilator(true).forge(true).cannons(2).observers(1)
             .seconds(900)
             .build();

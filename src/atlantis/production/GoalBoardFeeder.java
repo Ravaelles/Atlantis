@@ -20,10 +20,15 @@ import java.util.List;
  * "wanted but never ordered" gap.
  *
  * <p>Covered goals (buildings with no good single owner): supply-pylon,
- * gateway, core, assimilator. NOT covered, with reasons: workers (the pump
- * trains directly - a Probe row would double-produce), army (Zealot vs
- * Dragoon choice is strategy, pumps own it), expansion (site approval
- * lives in ProtossExpandNow), detection (response system owns it).</p>
+ * gateway, core, assimilator. Army flow rows (Zealot/Dragoon) are covered
+ * too, with one deliberate difference from the rest: the TYPE is the
+ * strategy (posture picks it in the domain goal), the feeder only ensures
+ * a row exists when the pumps are silent. A pump that acts always wins
+ * (its row counts as in-flight), so finer matchup choices (Zealots into
+ * mass lings) stay with the pumps untouched. NOT covered, with reasons:
+ * workers (the pump trains directly - a Probe row would double-produce),
+ * expansion (site approval lives in ProtossExpandNow), detection
+ * (response system owns it).</p>
  */
 public final class GoalBoardFeeder {
 
@@ -70,6 +75,8 @@ public final class GoalBoardFeeder {
         if ("gateway".equals(goalId)) return AUnitType.Protoss_Gateway;
         if ("core".equals(goalId)) return AUnitType.Protoss_Cybernetics_Core;
         if ("assimilator".equals(goalId)) return AUnitType.Protoss_Assimilator;
+        if ("sustained-zealot".equals(goalId)) return AUnitType.Protoss_Zealot;
+        if ("sustained-dragoon".equals(goalId)) return AUnitType.Protoss_Dragoon;
         return null;
     }
 

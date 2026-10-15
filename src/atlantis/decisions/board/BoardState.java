@@ -15,6 +15,7 @@ public final class BoardState {
     public final int workerCount;
     public final int baseCount;
     public final int gatewayCount;
+    public final int gatewaysTraining;
     public final int combatUnits;
     public final boolean hasCyberneticsCore;
     public final boolean hasAssimilator;
@@ -33,6 +34,7 @@ public final class BoardState {
         this.workerCount = builder.workerCount;
         this.baseCount = builder.baseCount;
         this.gatewayCount = builder.gatewayCount;
+        this.gatewaysTraining = builder.gatewaysTraining;
         this.combatUnits = builder.combatUnits;
         this.hasCyberneticsCore = builder.hasCyberneticsCore;
         this.hasAssimilator = builder.hasAssimilator;
@@ -64,6 +66,7 @@ public final class BoardState {
         private int workerCount;
         private int baseCount = 1;
         private int gatewayCount;
+        private int gatewaysTraining;
         private int combatUnits;
         private boolean hasCyberneticsCore;
         private boolean hasAssimilator;
@@ -102,6 +105,11 @@ public final class BoardState {
 
         public Builder gateways(int gatewayCount) {
             this.gatewayCount = gatewayCount;
+            return this;
+        }
+
+        public Builder gatewaysTraining(int gatewaysTraining) {
+            this.gatewaysTraining = gatewaysTraining;
             return this;
         }
 

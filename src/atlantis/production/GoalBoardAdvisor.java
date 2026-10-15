@@ -80,6 +80,7 @@ public class GoalBoardAdvisor extends Commander {
             .workers(Count.workers())
             .bases(Count.bases())
             .gateways(Count.gateways())
+            .gatewaysTraining(Math.max(0, Count.gateways() - Count.freeGateways()))
             .army(Count.ourCombatUnits())
             .core(Have.cyberneticsCore())
             .assimilator(Have.assimilator())
