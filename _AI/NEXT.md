@@ -57,7 +57,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 584 passing, 1 skipped (+2
+Suite green 2026-10-15: 585 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `PylonSearchBreakdownTest` 2/2 selected run);
