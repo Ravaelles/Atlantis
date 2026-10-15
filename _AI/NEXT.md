@@ -560,6 +560,16 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   dormant), economy healthy throughout (workers 8->22 across lines).
   No behavior change observed, as designed.
 
+  **Single-class goals + opening pipeline tests (owner 2026-10-15):**
+  `OpeningGoals` prototype split into one class per goal (SRP, factory
+  stays) - `GoalBoardTest` 7/7 unchanged proves neutrality.
+  `GatewayConvertsAtTenTest` pins Gateway@10 end-to-end (red pre-fix
+  with the waiter fix reverted, both it and the Pylon twin).
+  `FirstZealotTrainsTest` pins first-Zealot issue through the real
+  commander (global fallback sink - per-gateway sinks stay empty by
+  design; TRAIN is cleared per test, it leaks across the suite).
+  Suite 551/551.
+
   **Feeder (board -> queue, owner order 2A):** `GoalBoardFeeder.ensure`
   queues one order per active unowned goal (supply-pylon TOP, gateway
   STANDARD, core/assimilator HIGH), silent when covered; workers, army,
