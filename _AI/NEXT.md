@@ -56,7 +56,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-15: 556 passing, 1 skipped (+3 `BaseUnderAttackTest`);
+Suite green 2026-10-15: 560 passing, 1 skipped (+4 `BuildingLedgerTest`);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -179,6 +179,13 @@ twins green (1/1 each, re-verified today). Re-run
   Needs a gas-healthy game proving L2/L3.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). Needs a game showing it. No blind fix.
+- **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
+  4:39 sup35, accepted 4:40+ six times same tile; first Gateway accepted
+  1:09). OpenBW control (`20261015_141835`) warps both Gateways on time
+  (1:14 sup9, 1:37 sup10). Instrumented, not patched: `BUILDINGS.json`
+  ledger (warp time + supply vs order expectation, both runner paths).
+  Needs a Wine game with the ledger - the late/missing Gateway row names
+  the layer. No blind patch.
 
 ## Needs owner or upstream (blocked here)
 

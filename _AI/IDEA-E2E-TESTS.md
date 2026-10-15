@@ -293,7 +293,9 @@ Win/loss; units killed and lost per side; survival frames vs frame limit;
 workers lost by frame N; static defence completed by frame N; first Pylon and
 first Gateway placed by frame N (the mega-test's core); scout arrival frame;
 first enemy tech seen; crash-free (process exit code, zero exceptions in
-`bot.log`); replay + log artefacts next to every verdict.
+`bot.log`); replay + log artefacts next to every verdict. Per-building
+warp rows with actual vs build-order supply: `BUILDINGS.json` (ledger in
+`atlantis.game.util`, collected next to the logs by both runners).
 
 Artefact convention follows Stardust: `<Suite>_<Test>_<timestamp>_<PASS|FAIL>`,
 retention "last 10 replays per suite", older deleted by the runner script. The
