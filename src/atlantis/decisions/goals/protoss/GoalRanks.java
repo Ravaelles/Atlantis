@@ -1,4 +1,4 @@
-package atlantis.decisions.board.goals;
+package atlantis.decisions.goals.protoss;
 
 /**
  * Domain ladder (ubiquitous language): strategy tuning in one diff, owned

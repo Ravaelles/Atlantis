@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
-import atlantis.decisions.board.goals.ProtossOpening;
+import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;

@@ -594,6 +594,12 @@ Reviews: `_AI/REVIEW.md` (top-down, §16 stages), `_AI/REVIEW-GLM.md`
   break reads the property, not a rank threshold. All 12 board tests
   green unchanged - neutrality proven, not claimed.
 
+  **Siblings, not children (owner 2026-10-15, §21 extended):** the
+  vocabulary moved to `decisions.goals.protoss`, next to `board` -
+  a growing domain child would dwarf and conceptually own the mechanism
+  (DDD: separate models, shared-kernel contract = Goal+BoardState).
+  Terran/Zerg/midgame vocabularies go to siblings, never under `board/`.
+
 - **#71 (2026-10-13) - `cantAffordAndDidntExpandYet` reads inverted, unpatched.**
   `IsReadyToProduceOrder:146` blocks every order when the bank is ABOVE 550
   late (700 s+) on one base - the name says "cant afford". Probably missing a

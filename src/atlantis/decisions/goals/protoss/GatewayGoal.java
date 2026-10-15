@@ -1,4 +1,4 @@
-package atlantis.decisions.board.goals;
+package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;

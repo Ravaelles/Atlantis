@@ -3,7 +3,7 @@ package atlantis.production;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
-import atlantis.decisions.board.goals.ProtossOpening;
+import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.units.AUnitType;
 
 import java.util.Collections;

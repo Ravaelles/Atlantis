@@ -3,7 +3,7 @@ package tests.unit;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
-import atlantis.decisions.board.goals.ProtossOpening;
+import atlantis.decisions.goals.protoss.ProtossOpening;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

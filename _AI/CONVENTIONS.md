@@ -409,5 +409,12 @@ same hours are not spent twice.
 - Measurable check: `grep -rn '^import atlantis' <generic-package>` must
   show only `java.*` (plus its own package). The day it shows a domain
   import, split or revert before committing.
+- Sibling, not child (owner's ruling, 2026-10-15): domain vocabularies
+  grow without bound (Protoss opening today, Terran/Zerg/midgame
+  tomorrow) while the machinery stays fixed - so they are sibling
+  packages (`decisions.goals.protoss` next to `decisions.board`), never
+  a child of the mechanism. A child package reads as "owned by", and
+  the mechanism owns nothing; the contract between them (Goal,
+  BoardState) is the shared kernel, everything else splits.
 - New rule, not retroactive cleanup: existing violations elsewhere are
   tracked by ArchUnit (§5), not rewritten to satisfy this section.

@@ -5,7 +5,7 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
-import atlantis.decisions.board.goals.ProtossOpening;
+import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
 import atlantis.units.BaseUnderAttack;
