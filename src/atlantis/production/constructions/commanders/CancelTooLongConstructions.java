@@ -210,6 +210,15 @@ public class CancelTooLongConstructions {
             // what the earlier code was reaching for three lines too late.
             CancelNotStarted.cancel(type, "Taking too long, re-try");
 
+            // Covered tech needs no rescue (measured: three standing Cores
+            // after stale duplicates kept dying overdue - each death
+            // re-ordered while a sibling stood or warped). The truly lost
+            // case still requeues below; a dropped warp is re-ordered by
+            // the pump itself within frames. Builder stays freed either way.
+            if (techAlreadyCovered(type)) {
+                return false;
+            }
+
             if (shouldVetoRequeue(type)) {
                 return false;
             }
@@ -241,6 +250,16 @@ public class CancelTooLongConstructions {
         }
 
         return newOrder != null;
+    }
+
+    /**
+     * A singleton-tech building already standing or warping covers the
+     * demand - re-ordering it builds a duplicate. Multi-want types
+     * (Pylon, Gateway, army) never take this exit. Public as a test seam.
+     */
+    public static boolean techAlreadyCovered(AUnitType type) {
+        if (!type.isProtossImportantTechBuilding()) return false;
+        return Select.countOurOfTypeWithUnfinished(type) > 0;
     }
 
     private static boolean shouldVetoRequeue(AUnitType type) {

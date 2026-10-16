@@ -76,8 +76,8 @@ Suite green 2026-10-16: 597 passing, 1 skipped (+2
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
 enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
-`EarlyConstantWorkerFlowTest` 3/3; selected runs:
-`PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
+`EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3;
+selected runs: `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3);
 architecture 10/11 (the one known structural failure); rush-defense
@@ -262,6 +262,11 @@ twins green (1/1 each, re-verified today). Re-run
   WTF 1x in the whole game (vs 7-in-10s), the 22x `At 60 Gateway*`
   rows are a working pipeline (3 warps 7:34/7:47/9:21, totalOfType
   pinned at 2), no same-tile spin, 0 real exceptions.
+- Long `20261016_162455` (46 s wall, defeat 7:30, THREE standing
+  Cores): duplicate-tech pathology live - stale overdue deaths
+  re-ordered while siblings stood/warped. Fixed: covered tech skips
+  the overdue requeue (`TechCoveredSkipsRequeueTest` 3/3); truly lost
+  tech still requeues, pump covers dropped warps.
 - Long `20261016_152205` (PvP tilt, 18 s wall, 336 game-s): short
   mirror, no #72 data. `SINGULARITY_CHECK` twin live from frame 61
   (all-false early, as designed). Scout idle x3, early residual.
