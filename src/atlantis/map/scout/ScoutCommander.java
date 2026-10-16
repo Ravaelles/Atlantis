@@ -48,6 +48,18 @@ public class ScoutCommander extends Commander {
                         // is complete.
                         ErrorLog.printMaxOncePerMinute("Scout idle: chain found nothing to do");
                         unit.setTooltipTactical("Scout idle");
+
+                        // An idle scout next to enemies that can attack it
+                        // is not watching - it is stuck (measured: idle
+                        // minutes among drones while every manager
+                        // declines, including avoid). Retreat; the chain
+                        // resumes when the danger passes. Safe idleness
+                        // (no enemies near) stays exactly as it was.
+                        if (unit.enemiesThatCanAttackMe(9).notEmpty()) {
+                            unit.moveAwayFrom(
+                                unit.enemiesThatCanAttackMe(9).center(),
+                                12, Actions.MOVE_SCOUT, "ScoutRetreat");
+                        }
                     }
                 }
             }
@@ -149,8 +161,7 @@ public class ScoutCommander extends Commander {
         }
     }
 
-    private void removeDeadScouts() {
-        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
+    private void removeDeadScouts() {        for (Iterator<AUnit> iterator = ScoutState.scouts.iterator(); iterator.hasNext(); ) {
             AUnit scout = iterator.next();
             if (scout.hp() <= 0) {
                 scout.setScout(false);
