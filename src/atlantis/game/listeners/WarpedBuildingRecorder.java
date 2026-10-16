@@ -18,8 +18,9 @@ public class WarpedBuildingRecorder {
         if (unit == null || !unit.isABuilding()) return;
 
         ProductionOrder order = unit.productionOrder();
+        bwapi.TilePosition tile = unit.tilePosition();
         BuildingLedger.recordBuilding(
-            unit.id(), unit.type().name(), A.now(), A.minSec(),
+            unit.id(), unit.type().name(), tile.getX(), tile.getY(), A.now(), A.minSec(),
             A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
             ReservedResources.minerals(), ReservedResources.gas(),
             order == null ? null : order.minSupply(),
@@ -38,8 +39,9 @@ public class WarpedBuildingRecorder {
         ProductionOrder order = unit.productionOrder();
         if (order == null) return;
 
+        bwapi.TilePosition tile = unit.tilePosition();
         BuildingLedger.recordUnit(
-            unit.id(), unit.type().name(), A.now(), A.minSec(),
+            unit.id(), unit.type().name(), tile.getX(), tile.getY(), A.now(), A.minSec(),
             A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
             ReservedResources.minerals(), ReservedResources.gas(),
             order.minSupply(), order.toString()

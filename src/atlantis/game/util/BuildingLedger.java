@@ -38,11 +38,11 @@ public class BuildingLedger {
      *                       build-order row, or the supply the dynamic order
      *                       was created at), null when no order is linked.
      */
-    public static void recordBuilding(int unitId, String type, int frame, String time,
+    public static void recordBuilding(int unitId, String type, int tx, int ty, int frame, String time,
                                       int supplyUsed, int supplyTotal, int minerals, int gas,
                                       int reservedMinerals, int reservedGas,
                                       Integer expectedSupply, String order) {
-        record("building", unitId, type, frame, time, supplyUsed, supplyTotal, minerals, gas,
+        record("building", unitId, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
             reservedMinerals, reservedGas, expectedSupply, order);
     }
 
@@ -51,22 +51,22 @@ public class BuildingLedger {
      * columns as buildings, so demand and delivery read from one list.
      * Workers never land here; orderless spawns neither (no demand shown).
      */
-    public static void recordUnit(int unitId, String type, int frame, String time,
+    public static void recordUnit(int unitId, String type, int tx, int ty, int frame, String time,
                                   int supplyUsed, int supplyTotal, int minerals, int gas,
                                   int reservedMinerals, int reservedGas,
                                   Integer expectedSupply, String order) {
-        record("unit", unitId, type, frame, time, supplyUsed, supplyTotal, minerals, gas,
+        record("unit", unitId, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
             reservedMinerals, reservedGas, expectedSupply, order);
     }
 
-    private static void record(String kind, int unitId, String type, int frame, String time,
+    private static void record(String kind, int unitId, String type, int tx, int ty, int frame, String time,
                                int supplyUsed, int supplyTotal, int minerals, int gas,
                                int reservedMinerals, int reservedGas,
                                Integer expectedSupply, String order) {
         if (frame < lastFrame) rows.clear();
         lastFrame = frame;
         if (rows.containsKey(unitId)) return;
-        rows.put(unitId, new Row(kind, type, frame, time, supplyUsed, supplyTotal, minerals, gas,
+        rows.put(unitId, new Row(kind, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
             reservedMinerals, reservedGas, expectedSupply, order));
     }
 
@@ -82,6 +82,7 @@ public class BuildingLedger {
             first = false;
             out.append("  {\"kind\":\"").append(row.kind).append("\"")
                 .append(",\"type\":\"").append(quote(row.type)).append("\"")
+                .append(",\"tile\":[").append(row.tx).append(",").append(row.ty).append("]")
                 .append(",\"frame\":").append(row.frame)
                 .append(",\"time\":\"").append(quote(row.time)).append("\"")
                 .append(",\"supplyUsed\":").append(row.supplyUsed)
@@ -109,6 +110,8 @@ public class BuildingLedger {
     private static final class Row {
         private final String kind;
         private final String type;
+        private final int tx;
+        private final int ty;
         private final int frame;
         private final String time;
         private final int supplyUsed;
@@ -120,11 +123,13 @@ public class BuildingLedger {
         private final Integer expectedSupply;
         private final String order;
 
-        private Row(String kind, String type, int frame, String time, int supplyUsed, int supplyTotal, int minerals,
+        private Row(String kind, String type, int tx, int ty, int frame, String time, int supplyUsed, int supplyTotal, int minerals,
                     int gas, int reservedMinerals, int reservedGas,
                     Integer expectedSupply, String order) {
             this.kind = kind;
             this.type = type;
+            this.tx = tx;
+            this.ty = ty;
             this.frame = frame;
             this.time = time;
             this.supplyUsed = supplyUsed;
