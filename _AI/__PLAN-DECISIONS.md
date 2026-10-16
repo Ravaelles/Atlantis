@@ -18,21 +18,21 @@ decisions (state → decision), never the engine.
   nesting). `AQuestion` (interface: `ask(BoardState) → ADecision|null`;
   null = refusal, nothing happens). Engine-free by construction
   (strings + ints) so tests pin them in milliseconds.
-- [ ] 1. `DecisionLog` → `bwapi-data/write/DECISIONS.log` (JSON lines,
+- [x] 1. `DecisionLog` → `bwapi-data/write/DECISIONS.log` (JSON lines,
   one row per ISSUED decision; refusals stay with the existing
   WORKER_GATE/ORDER_NOT_READY twins). Flushed on issuance (cheap -
   decisions are rare) + `OnGameEnd`. Both runners collect it like
   BUILDINGS.json/EVENTS.jsonl.
-- [ ] 2. `DecisionDispatcher`: `dispatch(ADecision) → bool`. Routes to
+- [x] 2. `DecisionDispatcher`: `dispatch(ADecision) → bool`. Routes to
   the existing executors (worker train, building request, unit train,
   research). Strangler: decisions in, legacy execution out. Logs via
   DecisionLog. DONE = every issuance path goes through it.
 
 ## Opening script (the chess memorization)
 
-- [ ] 3. Explicit worker lines in the Protoss BO file(s) (`9 - Probe`
+- [x] 3. Explicit worker lines in the Protoss BO file(s) (`9 - Probe`
   style - the parser already takes any unit). No parser change.
-- [ ] 4. `BuildOrderOwnsGame`: true until the last BO row is done (or a
+- [x] 4. `BuildOrderOwnsGame`: true until the last BO row is done (or a
   supply ceiling). While owned, `DynamicProductionCommander` runs ONLY
   the supply pump (pylons - anti-death; a late/killed BO pylon must not
   supply-block the script). Everything else waits its turn. DONE = an
@@ -40,17 +40,19 @@ decisions (state → decision), never the engine.
 
 ## Producer migration (each: question emits, dispatcher executes, test pins)
 
-- [ ] 5. Workers (`AutoProduceWorkersCommander` → WorkerQuestion, queue
+- [x] 5. Workers (`AutoProduceWorkersCommander` → WorkerQuestion, queue
   mechanics stay in the executor).
-- [ ] 6. Supply (`SupplyCommander` → SupplyQuestion).
-- [ ] 7. Buildings (Gateway/Core/Assimilator → thin per-type questions).
-- [ ] 8. Army (Zealot/Dragoon → ArmyQuestions).
-- [ ] 9. Tech + expansion + cannons (same pattern, last - documented here
-  when the first eight prove it).
+- [x] 6. Supply (`SupplyCommander` → SupplyQuestion).
+- [x] 7. Buildings (Gateway/Core/Assimilator → thin per-type questions).
+- [x] 8. Army (Zealot/Dragoon → ArmyQuestions).
+- [x] 9. Tech + expansion + cannons - covered at the funnels, not per
+  file: RESEARCH rows land audit rows at the queue-tech funnel, sited
+  cannon/pylon requests at RequestBuildingNear, expansion Nexus rows
+  flow through the BUILD wrapper like every queued building.
 
 ## Tests (decisions, never the engine)
 
-- [ ] 10. `ADecisionTest` (value semantics) + per-slice
+- [x] 10. `ADecisionTest` (value semantics) + per-slice
   `*QuestionTest` (state → decision matrix incl. refusals) +
   sequencer test (BO owns → dynamic off except supply).
   DONE = suite green, no slow scope needed for any of them.

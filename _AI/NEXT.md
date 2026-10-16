@@ -73,7 +73,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-17: 606 passing, 1 skipped (combat cutover:
+Suite green 2026-10-18: 615 passing, 1 skipped (decision-board migration:
 `src/atlantis/combat/` → `src-old/`, `atlantis.battle` extracted,
 15 combat-behavior tests deleted incl. the rush twins, kept tests
 repointed; `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
@@ -92,7 +92,9 @@ enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
 `ReservationWaitsForMinSupplyTest` 2/2,
 `ThirdGatewayBlockedWhileTwoOutstandingTest` 1/1,
 `WarpedOrderIsNotResitedTest` 2/2,
-`StargateEnemyRaceBoardTest` 2/2);
+`StargateEnemyRaceBoardTest` 2/2,
+`ADecisionTest` 3/3, `DecisionDispatcherTest` 3/3,
+`ProducerQuestionsTest` 4/4, `BuildOrderOwnsGameTest` 5/5);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
