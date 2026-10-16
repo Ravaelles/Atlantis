@@ -40,25 +40,27 @@ public class ScoutCommander extends Commander {
                 if (unit != null && unit.isAlive()) {
                     Manager acted = ScoutState.scoutUnitManager.create(unit).invokeFrom(this);
                     if (acted == null) {
-                        // Telemetry only, never a release: scouting is
-                        // continuous by design (owner) - the chain ends in
-                        // baseless-base visits and the enemy-base approach,
-                        // so a null here means genuinely nothing applies
-                        // this frame. If this line never prints, coverage
-                        // is complete.
-                        ErrorLog.printMaxOncePerMinute("Scout idle: chain found nothing to do");
-                        unit.setTooltipTactical("Scout idle");
-
                         // An idle scout next to enemies that can attack it
                         // is not watching - it is stuck (measured: idle
                         // minutes among drones while every manager
                         // declines, including avoid). Retreat; the chain
-                        // resumes when the danger passes. Safe idleness
-                        // (no enemies near) stays exactly as it was.
+                        // resumes when the danger passes.
+                        boolean retreating = false;
                         if (unit.enemiesThatCanAttackMe(9).notEmpty()) {
-                            unit.moveAwayFrom(
+                            retreating = unit.moveAwayFrom(
                                 unit.enemiesThatCanAttackMe(9).center(),
                                 12, Actions.MOVE_SCOUT, "ScoutRetreat");
+                        }
+
+                        // Telemetry only, never a release: prints solely for
+                        // a scout that stays put with no anchor anywhere -
+                        // the terminal manager owns every defined location,
+                        // so this now means map data is absent, not that
+                        // coverage lapsed. A retreating scout is acting,
+                        // not idle, and stays silent.
+                        if (!retreating) {
+                            ErrorLog.printMaxOncePerMinute("Scout idle: chain found nothing to do");
+                            unit.setTooltipTactical("Scout idle");
                         }
                     }
                 }
