@@ -261,6 +261,12 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_172341` (6 s wall, defeat 3:05, Gateway=2 Zealot=1):
+  LVL verification - zero HIGH/CRITICAL rows (nothing severe; the
+  opening played clean and lost a fight), `--min-level` filters
+  correctly, bot.log 0 diagnostics. Opening timings match the
+  control to the second (Pylon 0:54, Gateway 1:19 sup9) - enforcement
+  does not starve the opening.
 - Long `20261016_164913` (141 s wall, 579 s game, monster: Nexus=2
   Probe=46 Stargate+Corsair, single Core): no ORDER_SAVING, scout
   idle x7 (busy game), benign choke markers only. `UPGRADE_COMPLETED`
