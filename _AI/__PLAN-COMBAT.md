@@ -23,24 +23,25 @@ combat commits land after it unless trivially separable.
 
 ## Steps (in order, one logical change per commit)
 
-1. **Move** `src/atlantis/combat/` → `src-old/atlantis/combat/` (`git mv`,
-   history preserved). Tree goes red - expected, fixed in step 2. DONE =
-   `git status` shows renames only, nothing edited.
-2. **Rewire the entry.** New thin package `atlantis.battle` (name TBD at
-   implementation): `BattleCommander` owns every army unit each frame.
-   `FramePipeline` + `CommanderFactory` point at it. All other combat
-   imports at the 103 call sites are cut (delete the per-unit manager
-   invocations, mission hooks, worker-defence links - no stubs left
-   behind). Terran `repair/` + `chokeblockers/` + worker-defence stay,
-   minus their combat refs. DONE = `grep -rn "atlantis.combat" src/`
-   empty.
-3. **Tests.** Delete combat-micro unit tests. Rush e2e twins
-   (FourPool/NinePool, B-19 pins) are disabled with a pointer to this
-   file - the bot will lose fights until the cluster learns them, and a
-   red twin would only restate that. DONE = fast suite green.
-4. **Architecture.** Suite green + `run-architecture-tests.sh`; the store
-   SHRINKS (review the diff - only genuine removals, never additions).
-   DONE = store diff reviewed, suite numbers in the commit message.
+- [x] 1. **Move** — DONE 2026-10-17 (`f846d086`): `src/atlantis/combat/`
+  (536 files) lives in `src-old/atlantis/combat/` (+ protoss micro
+  under `src-old/atlantis/protoss/`); support machinery extracted to
+  `atlantis.battle` instead of deleted (avoid, eval, targeting,
+  advance-focus, generic, running, retreating, detectors, siting,
+  Squad/Mission/Missions/Alpha thins). Sequencing went green-first
+  (entry before move), not red-first.
+2. **Rewire the entry** — DONE 2026-10-17 (same commit):
+   `FramePipeline` drives `BattleCommander`; AUnit + 100 call sites cut
+   off squads/missions/managers (Sparta never, DEFEND holds, tanks don't
+   unsiege, idle doesn't auto-attack, BO mission rows unenacted, Terran
+   building micro out). DONE = `grep -rn "atlantis.combat" src/`
+   empty (verified).
+3. **Tests** — DONE 2026-10-17 (`aa7df798`): 15 files deleted
+   (incl. the rush twins - B-19 goes dark), kept-behavior tests
+   repointed to battle. DONE = suite 606/0, 1 skipped.
+4. **Architecture** — DONE 2026-10-17: store shrinks by 127 entries
+   (pure removals, reviewed); the 1 failing rule is pre-existing.
+   DONE = numbers in the commit message.
 5. **Cluster behavior.** Single cluster gathers army units; defend posts
    it at the main, attack sends it at the enemy base; evaluator says
    fight or flee; flee latches ≥10 s before re-evaluation. DONE = an

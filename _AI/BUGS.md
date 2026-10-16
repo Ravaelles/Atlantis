@@ -49,6 +49,10 @@ a long post-mortem belongs in an ADR or a commit message.
 - **What is left:** a **game run**. Stub-world physics is documented harness
   rules, not the game, so "the scenario flips" is evidence that the arbitration
   changed, not that the bot survives a real 4pool. Tracked as NEXT #34.
+- **Update 2026-10-17 (combat cutover):** the twins are deleted with the
+  manager chains they drove (`__PLAN-COMBAT.md` step 3) - rush coverage is
+  dark until the cluster learns to fight. The pins above describe the
+  deleted arbitration, kept in git history.
 
 ## B-25 — the bot jar ships four serialisation libraries for unreachable code
 
