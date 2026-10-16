@@ -148,8 +148,6 @@ twins green (1/1 each, re-verified today). Re-run
   moving classes (`javac -d` leaves stale `.class` files behind).
   Detail: `_AI/work-orders/WO-13-mechanical-archunit-sweep.md`.
 
-## Review leftovers
-
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
