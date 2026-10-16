@@ -1,6 +1,9 @@
 package atlantis.production.dynamic.protoss.tech;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
+import atlantis.information.tech.ATech;
+import atlantis.information.tech.UpgradeCompletionTracker;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
@@ -27,6 +30,9 @@ public abstract class UpgradeResearchCommander extends Commander {
 
     @Override
     protected boolean handle() {
+        UpgradeCompletionTracker.note(
+            what(), ATech.getUpgradeLevel(what()), A.now(), A.minSec());
+
         if (CountInQueue.count(what(), 2) == 0) {
             if (AddToQueue.upgrade(what(), orderPriority())) setEnqueued(true);
         }
