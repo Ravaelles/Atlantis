@@ -439,6 +439,19 @@ if [ -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" ]; then
 else
   say "buildings ledger missing: $CLIENT_CWD/bwapi-data/write/BUILDINGS.json was never written"
 fi
+# Owner 2026-10-16: the ledger rows belong at the tail of the debug copy
+# too (last-wine-DEBUG.log), so one file carries diagnostics plus what
+# actually warped, in order. Append-only, clearly delimited; a miss here
+# is silent because the block above already said it out loud.
+if [ -n "${WINE_DEBUG_COPY:-}" ] && [ -f "$WINE_DEBUG_COPY" ] \
+  && [ -f "$LOG_DIR/BUILDINGS.json" ]; then
+  {
+    echo ""
+    echo "===== BUILDINGS.json (ledger at game end) ====="
+    cat "$LOG_DIR/BUILDINGS.json"
+  } >> "$WINE_DEBUG_COPY" 2>/dev/null || true
+  say "ledger appended to debug copy"
+fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
   cp -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" "$LOG_DIR/EVENTS.jsonl" 2>/dev/null || true
   say "event log collected: $LOG_DIR/EVENTS.jsonl"
