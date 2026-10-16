@@ -221,7 +221,10 @@ twins green (1/1 each, re-verified today). Re-run
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
-  side of D5. Untouched. Needs a gas-healthy game proving L2/L3.
+  side of D5. Untouched. `TECH_CHECK` twin live (`170009`: 430 rows);
+  the refusing gate named in the open: weapons wants 700 bank or 3
+  bases (peak 517 here, 671 in `165345` - just under). Needs a
+  700-bank game proving L2/L3.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). Needs a game showing it. No blind fix.
 - **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
