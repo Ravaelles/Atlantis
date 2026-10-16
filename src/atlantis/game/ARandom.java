@@ -7,7 +7,7 @@ import java.util.Random;
 
 /**
  * Random-number helpers sharing the single game-wide {@link A#random} stream,
- * extracted from the {@code A} god utility (REVIEW §4, Stage H).
+ * extracted from the {@code A} god utility(Stage H).
  *
  * <p>Staying in {@code atlantis.game} on purpose: the stream is global mutable
  * state that {@code randWithSeed} re-seeds, so moving the helpers elsewhere

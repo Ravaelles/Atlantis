@@ -1,7 +1,7 @@
 # ArchUnit frozen baseline — do not delete, do not `.gitignore`
 
 These files are the **frozen baseline** of `ArchitectureBoundaryTest`
-(Stage B, `_AI/REVIEW.md` §16). They list the boundary violations that exist
+(Stage B). They list the boundary violations that exist
 **today** and that we have agreed to pay down over time.
 
 - ArchUnit's `FreezingArchRule` stores one file per rule, named by a UUID

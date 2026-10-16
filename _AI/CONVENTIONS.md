@@ -87,8 +87,7 @@ finding. "Continue" means keep working, not keep reporting.
 ## 5. Architecture direction (agreed, normative)
 
 - Target: a **modular monolith with a hexagonal core**. Details in
-  `DOCS/ARCHITECTURE-CONTEXT-MAP.md`; execution plan in `_AI/REVIEW.md` §16;
-  open items in `_AI/NEXT.md`.
+  `DOCS/ARCHITECTURE-CONTEXT-MAP.md`; open items in `_AI/NEXT.md`.
 - **Dependencies point inward only**: `adapters → application → contexts →
   core`. The core never depends on contexts or adapters; contexts use only the
   **Published API** of other contexts.
@@ -110,7 +109,7 @@ finding. "Continue" means keep working, not keep reporting.
 - **VSA is not the system architecture** (only per-unit behavior packs).
   **DDD is strategic only** (bounded contexts + ubiquitous language), not
   tactical (no aggregates/repositories).
-- Large changes follow `_AI/REVIEW.md` §16 incrementally and keep the bot
+- Large changes proceed incrementally per `_AI/NEXT.md` and keep the bot
   playable. Every change is also checked against `DOCS/SOLID-CHECKLIST.md`.
 
 ## 6. Commit after every completed work cycle (mandatory)
@@ -124,8 +123,8 @@ finding. "Continue" means keep working, not keep reporting.
 
 ## 7. TODO tracking in `_AI/NEXT.md` (mandatory)
 
-- `_AI/NEXT.md` is the single source of truth for open work; `_AI/REVIEW.md`
-  keeps the stage narrative, `_AI/NOTES.md` the operational learnings.
+- `_AI/NEXT.md` is the single source of truth for open work; `_AI/NOTES.md`
+  keeps operational learnings.
 - Every item has a **stable number**, never reused or renumbered, so old
   commits and answers stay interpretable.
 - A finished item's line is **deleted** (no "done" section - git history is the

@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 /**
- * Stage B — Boundary Ratchet (see DOCS/ARCHITECTURE-CONTEXT-MAP.md and
- * _AI/REVIEW.md §16 Stage B).
+ * Stage B — Boundary Ratchet (see DOCS/ARCHITECTURE-CONTEXT-MAP.md).
  *
  * <p>These tests encode the agreed dependency directions. Today's violations are
  * <b>frozen</b> in the ArchUnit store, so this suite fails only on <b>new</b>

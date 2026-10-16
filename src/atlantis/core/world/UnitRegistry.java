@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Stage E (see _AI/REVIEW.md §16): owns unit identity.
+ * Stage E: owns unit identity.
  *
  * <p>Moved out of {@code AUnit} (former static {@code instances} map) so that
  * lifecycle has exactly one home. Instantiable and engine-free by itself —

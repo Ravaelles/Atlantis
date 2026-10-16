@@ -1,7 +1,6 @@
 # Operational notes
 
-Hard-won operational facts that do not belong anywhere else. Architecture lives in
-`_AI/REVIEW.md` §16 and `DOCS/`.
+Hard-won operational facts that do not belong anywhere else. Architecture lives in `DOCS/`.
 
 ## Test runner hygiene
 

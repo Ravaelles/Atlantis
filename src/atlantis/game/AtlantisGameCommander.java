@@ -30,7 +30,7 @@ import atlantis.units.workers.WorkerCommander;
  *
  * <p>The ordered list of top-level steps now lives in
  * {@link atlantis.application.FramePipeline} — one explicit source of truth
- * (Stage C, _AI/REVIEW.md §16).</p>
+ * (Stage C).</p>
  */
 public class AtlantisGameCommander extends Commander {
 

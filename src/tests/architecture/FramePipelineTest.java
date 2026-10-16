@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Stage C (see _AI/REVIEW.md §16): pins the top-level frame pipeline order.
+ * Stage C: pins the top-level frame pipeline order.
  *
  * <p>Order matters: it is the execution order of every game frame. If this test
  * fails, the order was changed — make sure that is intentional and reviewed.</p>
@@ -50,7 +50,7 @@ public class FramePipelineTest {
 
         assertEquals(EXPECTED_ORDER, actual,
             "Top-level frame pipeline order changed. This changes bot behaviour; "
-                + "update intentionally and review (REVIEW §16 Stage C).");
+                + "update intentionally and review (Stage C).");
     }
 
     @Test

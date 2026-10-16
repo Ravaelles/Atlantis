@@ -4,7 +4,7 @@ import javax.swing.JOptionPane;
 
 /**
  * Modal popups, extracted from the {@code A} god utility so that the game
- * logic stops carrying a GUI dependency (REVIEW §4, Stage H).
+ * logic stops carrying a GUI dependency(Stage H).
  *
  * <p>Only the reporting popups survive: the colour/panel/frame helpers that
  * used to live in {@code A} had zero callers (superseded by

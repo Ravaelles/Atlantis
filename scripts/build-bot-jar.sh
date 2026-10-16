@@ -12,7 +12,7 @@
 # path still works exactly as before.
 #
 # Why this script exists instead of hand-rolled zip commands (each invariant
-# below broke a game run in the past, see _AI/REVIEW.md Stage C notes):
+# below broke a game run in the past):
 #   1. Every source must be compiled (a stale file list once skipped new
 #      classes, shipping a franken-jar) -> the source list is regenerated with
 #      find on every run, minus the one file that cannot compile to Java 8.

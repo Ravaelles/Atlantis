@@ -6,7 +6,7 @@ import java.util.Collections;
 
 /**
  * Pure numeric helpers (ranges, scaling, simple statistics), extracted from
- * the {@code A} god utility (REVIEW §4, Stage H).
+ * the {@code A} god utility(Stage H).
  *
  * <p>No state, no game dependency: every method is a total function of its
  * arguments, which is what makes it testable without a running bot.</p>

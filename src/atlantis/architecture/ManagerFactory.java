@@ -3,7 +3,7 @@ package atlantis.architecture;
 import atlantis.units.AUnit;
 
 /**
- * Stage C (see _AI/REVIEW.md §16): explicit construction of Manager children.
+ * Stage C: explicit construction of Manager children.
  *
  * <p>A {@code ManagerFactory} is a plain constructor reference
  * (e.g. {@code WorkerManager::new}). It replaces the former

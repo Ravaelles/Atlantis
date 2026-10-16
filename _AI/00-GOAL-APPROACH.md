@@ -54,4 +54,4 @@ log) - never "maybe everything".
   minerals - different currency, different layer).
 - No timeline simulation until a measured case needs time-shifting; every
   measured starvation so far was a priority inversion, never timing.
-- No tactical DDD (aggregates/repositories) - strategic only, per REVIEW.
+- No tactical DDD (aggregates/repositories) - strategic only, per CONVENTIONS §21.

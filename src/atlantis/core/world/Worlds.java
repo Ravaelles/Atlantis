@@ -1,7 +1,7 @@
 package atlantis.core.world;
 
 /**
- * Stage E (see _AI/REVIEW.md §16): transitional holder of the shared
+ * Stage E: transitional holder of the shared
  * production registry.
  *
  * <p>Unit identity still needs one process-wide home until the frame pipeline

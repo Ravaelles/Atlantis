@@ -1,9 +1,8 @@
 # TODO — Atlantis (open issues)
 
-Living backlog for the architecture migration defined in `_AI/REVIEW.md` §16
-and for defects found along the way. This file is the single source of truth
-for "what is left"; `_AI/REVIEW.md` keeps the *stage* narrative and
-`_AI/NOTES.md` keeps operational learnings.
+Living backlog for the architecture migration (stages A–D done, E–J open
+below) and for defects found along the way. This file is the single source
+of truth for "what is left"; `_AI/NOTES.md` keeps operational learnings.
 
 ## Current owner priorities (2026-10-09)
 

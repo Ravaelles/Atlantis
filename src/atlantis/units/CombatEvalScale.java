@@ -7,7 +7,7 @@ package atlantis.units;
  * <p>This lives in {@code atlantis.units} rather than next to the evaluator in
  * {@code atlantis.combat.eval} for a boundary reason: {@code AUnit.eval()} has to
  * apply the our-side hedge below, and {@code atlantis.units} may not depend on
- * {@code atlantis.combat} (REVIEW §16 Stage E). The evaluator depends on units all
+ * {@code atlantis.combat}(Stage E). The evaluator depends on units all
  * day; the other way round is the frozen edge. A pure-arithmetic helper on both
  * sides of that boundary belongs on the side that is allowed to be reached.</p>
  *

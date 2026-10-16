@@ -5,7 +5,7 @@ package atlantis.util;
  *
  * <p>This exists because "what time is it?" is the one question
  * {@code atlantis.util} kept asking {@code atlantis.game} - and the kernel is not
- * allowed to look upward (REVIEW §13, the rule the ArchUnit store tracks). Seven
+ * allowed to look upward (the rule the ArchUnit store tracks). Seven
  * call sites did it: {@code Cache}'s TTL, {@code Log}'s expiry, {@code ErrorLog}'s
  * once-a-minute throttle, {@code ConsoleLog}'s frame prefix, {@code TimeMoment}'s
  * "ago", and the log kernel's own throttle.</p>

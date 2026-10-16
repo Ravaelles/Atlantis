@@ -19,7 +19,7 @@ import atlantis.units.special.SpecialCommander;
 import atlantis.units.workers.WorkerCommander;
 
 /**
- * Stage C (see _AI/REVIEW.md §16): the single, explicit, ordered source of truth
+ * Stage C: the single, explicit, ordered source of truth
  * for the top-level per-frame commands.
  *
  * <p>Previously the order lived only inside

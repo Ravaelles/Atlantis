@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Stage E (see _AI/REVIEW.md §16): owns unit identity and the current
+ * Stage E: owns unit identity and the current
  * per-frame {@link UnitSnapshot} projections.
  *
  * <p>A {@code World} is built explicitly — there is no global instance.

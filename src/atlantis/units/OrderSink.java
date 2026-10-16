@@ -7,7 +7,7 @@ import bwapi.UnitType;
 import bwapi.UpgradeType;
 
 /**
- * Stage D (see _AI/REVIEW.md §16): the single door through which all engine
+ * Stage D: the single door through which all engine
  * orders pass.
  *
  * <p>Every {@code train/move/attack/...} call in production code must go

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Deferred defect #1 (see _AI/REVIEW.md §17): {@code getIfValid} used to
+ * Deferred defect #1: {@code getIfValid} used to
  * return stale-invalid units instead of recomputing them.
  */
 public class CacheGetIfValidTest {

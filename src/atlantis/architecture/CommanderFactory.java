@@ -1,7 +1,7 @@
 package atlantis.architecture;
 
 /**
- * Stage C (see _AI/REVIEW.md §16): explicit construction of Commander children.
+ * Stage C: explicit construction of Commander children.
  *
  * <p>A {@code CommanderFactory} is a plain constructor reference
  * (e.g. {@code CombatCommander::new}). It replaces the former

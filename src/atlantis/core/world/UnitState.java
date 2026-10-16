@@ -10,7 +10,7 @@ import bwapi.TechType;
 import java.io.Serializable;
 
 /**
- * Stage E (see _AI/REVIEW.md §16): accumulated derived per-unit state,
+ * Stage E: accumulated derived per-unit state,
  * progressively migrated out of {@code AUnit}'s {@code public _last*} fields.
  *
  * <p>Plain data holder with an explicit API — no behaviour, no engine calls.

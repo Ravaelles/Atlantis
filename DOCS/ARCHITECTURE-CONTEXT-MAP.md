@@ -1,7 +1,6 @@
 # Atlantis — Architecture Context Map (Stage A)
 
-> Status: **normative direction** for all future work. Companion to
-> `_AI/REVIEW.md` §16 (canonical plan) and enforced by
+> Status: **normative direction** for all future work, enforced by
 > `src/tests/architecture/ArchitectureBoundaryTest.java` (Stage B).
 > This document defines the *target* boundaries. It does **not** require moving
 > code yet (that is Stage I); until then the mapping below is how existing
@@ -12,8 +11,7 @@
 ## 1. Purpose
 
 Atlantis currently groups code by **subject**, not by **dependency direction**.
-The measured result (`_AI/REVIEW.md` §13) is that every major package is in a
-cycle with several others and there is no stable core. This document fixes the
+Measured: every major package is in a cycle with several others and there is no stable core. This document fixes the
 boundaries so that dependency direction can be enforced mechanically.
 
 The architecture is a **modular monolith with a hexagonal core**:
@@ -62,7 +60,7 @@ yet; they are the target of Stages C–H.)
 ### core
 `AUnit`, `AUnitType`, `Units`, `APosition`, `HasPosition`, `PositionUtil`,
 `Decision`, `Vector`.
-*(Target: `UnitSnapshot`, `UnitState`, `World` — see REVIEW §16 Stage E.)*
+*(Target: `UnitSnapshot`, `UnitState`, `World` — Stage E.)*
 **Forbidden:** any context package, `bwapi`, `atlantis.game` globals.
 
 ### Economy

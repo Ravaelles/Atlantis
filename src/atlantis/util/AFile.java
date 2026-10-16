@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 /**
  * File and directory access, extracted from {@code atlantis.game.A} so that the
- * god utility stops owning a second reason to change (REVIEW §4, Stage H).
+ * god utility stops owning a second reason to change(Stage H).
  *
  * <p>Lives in {@code atlantis.util} so that it can serve the logging and
  * reporting classes in {@code atlantis.util.log} without making the shared

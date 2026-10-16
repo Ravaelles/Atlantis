@@ -96,7 +96,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private Manager manager;
 
     /**
-     * Stage D (see _AI/REVIEW.md §16): the door through which this unit's
+     * Stage D: the door through which this unit's
      * orders reach the engine. Live game uses {@link BwapiOrderSink}; tests
      * plug in a recording fake via {@link #setOrderSink(OrderSink)}.
      * This per-instance seam dies in Stage E, when the World injects the sink.
@@ -104,7 +104,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     private OrderSink orderSink = BwapiOrderSink.instance();
 
     /**
-     * Stage E (see _AI/REVIEW.md §16): accumulated derived per-unit state,
+     * Stage E: accumulated derived per-unit state,
      * migrated out of the former {@code public _last*} fields. The only
      * mutable per-unit state holder besides the engine binding itself.
      */

@@ -8,7 +8,7 @@ import bwapi.UnitType;
 import bwapi.UpgradeType;
 
 /**
- * Stage D (see _AI/REVIEW.md §16): {@link OrderSink}wired to the live engine.
+ * Stage D: {@link OrderSink}wired to the live engine.
  *
  * <p>This is the only production class allowed to invoke order methods on a
  * raw {@code bwapi.Unit}. Every method guards the engine call: an engine

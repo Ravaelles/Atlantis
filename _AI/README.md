@@ -21,7 +21,7 @@ AI assistant.
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
 | know a **rule I must follow** | `CONVENTIONS.md` (normative; §13 = the 120 s limit — read §3a before continuing a long investigation) |
 | understand a **resolved defect's cause** | `CASE-STUDIES.md`, then `CHALLENGES/` for the system-level traps |
-| understand **why the architecture is like this** | `REVIEW.md` §16, then `redesign/` and `DOCS/adr/` |
+| understand **why the architecture is like this** | `redesign/STARDUST_VS_ATLANTIS.md`, then `DOCS/adr/` |
 | check **known defects** | `BUGS.md` (things still wrong today, not a history) |
 
 ---
@@ -48,8 +48,6 @@ AI assistant.
 
 - **`CONVENTIONS.md`** - normative rules. Numbered sections; other files cite
   them as "CONVENTIONS §N".
-- **`REVIEW.md`** - the architecture assessment and the stage plan (§16). Long;
-  read §16 for the plan, the rest as background.
 - **`POSITION-FINDER.md`** - short: why the old finder was rewritten, and the
   traps the rewrite had to avoid.
 - **`LOCAL-STARCRAFT.md`** - Wine/StarCraft setup and what OpenBW does and does not

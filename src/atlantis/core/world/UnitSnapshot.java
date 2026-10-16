@@ -4,7 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 
 /**
- * Stage E (see _AI/REVIEW.md §16): immutable per-frame projection of one unit.
+ * Stage E: immutable per-frame projection of one unit.
  *
  * <p>A snapshot carries <b>data only</b>: no behaviour, no engine references,
  * no mutability. Systems read snapshots; they never mutate units through them.

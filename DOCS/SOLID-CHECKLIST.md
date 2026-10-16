@@ -1,7 +1,7 @@
 # SOLID checklist (normative)
 
-Companion to `DOCS/ARCHITECTURE-CONTEXT-MAP.md` (where things go) and
-`_AI/REVIEW.md` §16 (in which order). This file answers a different question:
+Companion to `DOCS/ARCHITECTURE-CONTEXT-MAP.md` (where things go).
+This file answers a different question:
 **what must be true of a change before it may be committed.**
 
 The principles are not quoted from textbooks. Each rule below is tied to a

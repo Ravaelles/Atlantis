@@ -12,4 +12,4 @@
     `MapPort`, `ClockPort`, `LogPort`) — not a port per `bwapi` call.
   - Contexts communicate only through Published APIs.
   - Migration is incremental (strangler); the bot stays playable at every commit.
-  - See `DOCS/ARCHITECTURE-CONTEXT-MAP.md` and `_AI/REVIEW.md` §16.
+  - See `DOCS/ARCHITECTURE-CONTEXT-MAP.md`.
