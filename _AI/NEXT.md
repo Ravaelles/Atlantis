@@ -62,6 +62,10 @@ The index of which document answers which question is `_AI/README.md`.
    completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
 5. **Second goal vocabulary** (Terran or midgame): triggers the
    `goals/` split by vocabulary - until then no new packages.
+   Assessed 2026-10-16, no clean midgame slice: tech goals preempt
+   #45 ordering, fortification is planner-owned (two sources of truth),
+   observers already have a pump - vocabulary grows on owner
+   direction, not on availability.
 6. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
    stages E–J below.
 
@@ -244,6 +248,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_131201` (61 s wall, defeat 7:17, Nexus=2 Pylon=8
+  Gateway=3 Dragoon=2, 0 exceptions): CLOSED #88 (Core cancel 33 s at
+  [16,44] -> requeue veto -> re-request [2,34] -> warp 3:02, roster
+  CyberneticsC=1). Twins flowing (`SINGULARITY_APPLIES` x1, gas never
+  held for completion).
 - Long `20261016_130037` (141 s wall, 570 s game, rich: Probe=37
   Dragoon=11 Nexus=2, cap-inconclusive): lottery blank - no Core cancel
   (#88), no `ORDER_SAVING` (#71), `SINGULARITY_APPLIES` x3 firing at
