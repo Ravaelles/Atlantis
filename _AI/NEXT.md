@@ -181,7 +181,9 @@ twins green (1/1 each, re-verified today). Re-run
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
-  stub inversion pin 2/2. Needs a 700 s+ game; the named
+  stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
+  1 base, bank under 550 - reachable per the 912 s `210002` run).
+  Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
   (20261014_172954 reached only 324 s; `20261015_185046` reached 575 s
   in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
