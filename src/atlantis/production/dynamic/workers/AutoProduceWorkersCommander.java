@@ -253,16 +253,22 @@ public class AutoProduceWorkersCommander extends Commander {
             // instrumented too - a silent train hides whether the base was
             // free (immediate start) or busy (engine append), and what the
             // engine answered. Once per worker at most, so always logged.
-            EventLog.key(LogKey.TRAIN_ATTEMPT)
-                .param("path", "direct")
-                .param("supplyUsed", A.supplyUsed())
-                .param("supplyTotal", A.supplyTotal())
-                .param("minerals", A.minerals())
-                .param("free", base.isFree())
-                .param("remaining", base.remainingTrainTime())
-                .param("queued", base.trainingQueue().size())
-                .param("result", started)
-                .log(A.now(), A.minSec());
+            // Direct rows are once per worker at most when flowing, but a
+            // supply block retries every frame - sample failures like the
+            // queue path so one block does not write hundreds of rows
+            // (measured 2026-10-17: 250 identical 9/9 rows in one game).
+            if (started || A.everyNthGameFrame(30)) {
+                EventLog.key(LogKey.TRAIN_ATTEMPT)
+                    .param("path", "direct")
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("supplyTotal", A.supplyTotal())
+                    .param("minerals", A.minerals())
+                    .param("free", base.isFree())
+                    .param("remaining", base.remainingTrainTime())
+                    .param("queued", base.trainingQueue().size())
+                    .param("result", started)
+                    .log(A.now(), A.minSec());
+            }
             if (started) return true;
         }
 
@@ -311,8 +317,23 @@ public class AutoProduceWorkersCommander extends Commander {
         if (base == null || !base.isAlive() || !base.isCompleted()) return false;
         if (base.isFree() && base.trainingQueue().isEmpty()) return true;
         return shouldQueueAnotherWorker(
-            base.remainingTrainTime(),
-            base.trainingQueue().contains(AtlantisRaceConfig.WORKER));
+            base.remainingTrainTime(), workerWaitersBehindCurrent(base) > 0);
+    }
+
+    /**
+     * Workers waiting behind the running one. The engine queue includes the
+     * unit in production, so a training base always shows at least one -
+     * and the old {@code contains} check read that as "already queued" on
+     * every busy base, which is exactly why the queue never fired in games
+     * (measured 2026-10-17: 282 TRAIN_ATTEMPT rows, zero with a busy base).
+     */
+    private static int workerWaitersBehindCurrent(AUnit base) {
+        int workers = 0;
+        for (AUnitType unitType : base.trainingQueue()) {
+            if (unitType.equals(AtlantisRaceConfig.WORKER)) workers++;
+        }
+        if (base.remainingTrainTime() > 0) workers--;
+        return Math.max(0, workers);
     }
 
     /**
