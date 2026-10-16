@@ -58,8 +58,8 @@ The index of which document answers which question is `_AI/README.md`.
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
    Owner-run; autonomous work above does not wait on it.
 4. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
-   Wine): Core-cancel retry (#88), 700 s+ rich run (#71), research
-   completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
+   Wine): 700 s+ rich run (#71), L2/L3 (#85), builder-variance
+   leftovers (#74).
 5. **Second goal vocabulary** (Terran or midgame): triggers the
    `goals/` split by vocabulary - until then no new packages.
    Assessed 2026-10-16, no clean midgame slice: tech goals preempt
@@ -191,12 +191,6 @@ twins green (1/1 each, re-verified today). Re-run
   (20261014_172954 reached only 324 s; `20261015_185046` reached 575 s
   in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
   game or more wall).
-- **#72** Singularity Charge fires in stub (2 Dragoons + 250 gas), idle
-  live for lack of a second living Dragoon (not a divergence, not a
-  stuck flag - measured). Needs a gas-healthy long game proving research
-  completes (150/150 held to issue). Live precondition since seen:
-  `SINGULARITY_APPLIES` firing with 2 Dragoons and gas 180-196
-  (`20261015_150026`) - completion still unproven, run ended 8:43.
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -263,6 +257,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_163658` (140 s wall, 605 s game, rich: Nexus=2
+  Probe=33 Stargate=1, single Core): CLOSED #72 - `SINGULARITY_CHECK`
+  shows research in progress 5:22-6:55, engine-researched from 7:07
+  (static flag follows, 48 rows), no stuck flag. Scout idle x1.
+  ORDER_SAVING x0.
 - Long `20261016_163357` (FIRST PvT, 15 s wall, defeat 5:13,
   Probe=22 Zealot=3 Dragoon=1): Terran rushed us dead early - no
   baseline exists for this matchup (rush twins are Zerg-scripted),
