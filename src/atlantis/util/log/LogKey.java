@@ -43,6 +43,8 @@ public enum LogKey {
     CONSTRUCTION_CANCEL,
     /** The finder returned no tile for a ready order. */
     PLACEMENT_FAILED,
+    /** A tech decision vector (refusing gate included), any researcher. */
+    TECH_CHECK,
     /** An upgrade level the game never had before (L1/L2/L3 proof). */
     UPGRADE_COMPLETED,
     /** A worker stood still past the anomaly threshold, with its state. */

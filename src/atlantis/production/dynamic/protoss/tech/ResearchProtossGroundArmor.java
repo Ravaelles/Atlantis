@@ -20,6 +20,22 @@ public class ResearchProtossGroundArmor extends Commander {
 
     @Override
     public boolean applies() {
+        boolean result = appliesInner();
+        // NEXT #85: L1+ never proved live - this vector names the refusing
+        // gate the way SINGULARITY_CHECK did for #72. Pure reads only.
+        atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.TECH_CHECK)
+            .param("upgrade", what().name())
+            .param("result", result)
+            .param("beingRes", UpgradeResearchCommander.isBeingResearched(what()))
+            .param("engineLevel", ATech.getUpgradeLevel(what()))
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .param("combat", Count.ourCombatUnits())
+            .log(A.now(), A.minSec());
+        return result;
+    }
+
+    private boolean appliesInner() {
         if (!Have.forge()) return false;
         // Weapons first, but level 1 is enough: requiring full L3 (via
         // Weapons.isResearched()) held armor until the end of the tech path

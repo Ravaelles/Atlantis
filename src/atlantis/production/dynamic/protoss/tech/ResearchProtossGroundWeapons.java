@@ -21,6 +21,22 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
 
     @Override
     public boolean applies() {
+        boolean result = appliesInner();
+        // NEXT #85: L1+ never proved live - this vector names the refusing
+        // gate the way SINGULARITY_CHECK did for #72. Pure reads only.
+        atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.TECH_CHECK)
+            .param("upgrade", what().name())
+            .param("result", result)
+            .param("beingRes", isBeingResearched(what()))
+            .param("engineLevel", ATech.getUpgradeLevel(what()))
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .param("combat", Count.ourCombatUnits())
+            .log(A.now(), A.minSec());
+        return result;
+    }
+
+    private boolean appliesInner() {
         if (!Have.forge()) return false;
         if (isResearched()) return false;
         if (Count.ourCombatUnits() <= 10) return false;
