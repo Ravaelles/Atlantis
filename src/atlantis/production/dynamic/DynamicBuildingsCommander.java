@@ -16,6 +16,12 @@ import atlantis.util.We;
 public class DynamicBuildingsCommander extends Commander {
     @Override
     public boolean applies() {
+        // Owner 2026-10-18 (__PLAN-DECISIONS): while the memorized opening
+        // owns the game, no dynamic building may jump the script's rows
+        // (measured: third Gateway site at supply 12). Workers and supply
+        // keep flowing - buildings don't consume supply, so gating them
+        // cannot stall the script.
+        if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
         return true;
     }
 

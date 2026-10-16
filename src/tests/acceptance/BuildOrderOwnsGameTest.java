@@ -129,9 +129,19 @@ public class BuildOrderOwnsGameTest extends WorldStubForTests {
             currentSupplyTotal = 9;
             seedBuildOrderRow(AUnitType.Protoss_Pylon, 8);
 
-            assertFalse(
+            // Owner 2026-10-18, corrected: buildings don't consume supply,
+            // so gating the worker pump deadlocks the script (measured: 4/9
+            // at 3:34, nothing ever trained). Workers flow to push supply
+            // into the rows; dynamic buildings, army and tech stand down.
+            assertTrue(
                 new atlantis.production.dynamic.DynamicProductionCommander().applies(),
-                "owned opening: the dynamic commander does not run at all");
+                "the parent runs - workers must flow into the script");
+            assertFalse(
+                new atlantis.production.dynamic.DynamicBuildingsCommander().applies(),
+                "owned opening: no dynamic building jumps the rows");
+            assertFalse(
+                new atlantis.production.dynamic.DynamicUnitAndTechProducerCommander().applies(),
+                "owned opening: no dynamic army or tech jumps the rows");
         });
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");

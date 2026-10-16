@@ -13,6 +13,15 @@ import atlantis.util.We;
 
 public class DynamicUnitAndTechProducerCommander extends Commander implements HasReason {
     @Override
+    public boolean applies() {
+        // Owner 2026-10-18 (__PLAN-DECISIONS): same opening-ownership as
+        // dynamic buildings - no dynamic army or tech may jump the script's
+        // rows. Workers and supply flow outside this commander.
+        if (atlantis.production.orders.build.BuildOrderOwnsGame.owns()) return false;
+        return true;
+    }
+
+    @Override
     protected CommanderFactory[] subcommanders() {
         CommanderFactory[] raceSpecific = null;
 
