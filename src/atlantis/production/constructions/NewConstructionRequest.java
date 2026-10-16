@@ -14,6 +14,8 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.requirements.Requirements;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
@@ -207,6 +209,11 @@ public class NewConstructionRequest {
 
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
         ErrorLog.printMaxOncePerMinute(A.minSec() + ": Can't find place for `" + building + "`, " + order);
+        EventLog.key(LogKey.PLACEMENT_FAILED)
+            .param("type", building.name())
+            .param("order", order == null ? "-" : order.toString())
+            .param("reason", AbstractPositionFinder._STATUS == null ? "-" : AbstractPositionFinder._STATUS)
+            .log(A.now(), A.minSec());
 //                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
         if (AbstractPositionFinder._STATUS != null) {
             ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");

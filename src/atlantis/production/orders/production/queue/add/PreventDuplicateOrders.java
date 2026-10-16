@@ -13,6 +13,8 @@ import atlantis.units.select.Count;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import bwapi.TechType;
 import bwapi.UpgradeType;
 
@@ -163,9 +165,13 @@ public class PreventDuplicateOrders {
     private static boolean forProtossEnforceHavingAPylonFirst(AUnitType type) {
         if (We.protoss() && type.isABuilding() && (!type.isPylon() && !type.isBase()) && Count.pylonsWithUnfinished() == 0) {
             if (A.seconds() < 200) {
-                System.out.println("PREVENT " + type + " from being built. Enforce Pylon first.");
+                System.err.println("PREVENT " + type + " from being built. Enforce Pylon first.");
                 AConsole.printStackTrace("Duplicate first Pylon - something went very wrong");
             }
+            EventLog.key(LogKey.REQUEST_REFUSED_DUPLICATE)
+                .param("type", type.name())
+                .param("reason", "EnforcePylonFirst")
+                .log(A.now(), A.minSec());
             return true;
         }
 

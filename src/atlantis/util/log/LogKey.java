@@ -33,6 +33,14 @@ public enum LogKey {
     DRAGOON_TRAIN,
     /** A refresh attempt outcome (refreshed, or cancelled + re-requested). */
     POSITION_REFRESH,
+    /** Full canBuild-term decomposition of a stalled builder's refusal. */
+    BUILD_BREAKDOWN,
+    /** A picked early site (type, tile, supply row). */
+    CONSTRUCTION_PREPARING,
+    /** A construction cancelled (type, reason, tile). */
+    CONSTRUCTION_CANCEL,
+    /** The finder returned no tile for a ready order. */
+    PLACEMENT_FAILED,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */

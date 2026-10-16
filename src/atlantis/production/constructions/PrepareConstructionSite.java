@@ -7,6 +7,8 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 /**
  * Owner 2026-10-14, extended 2026-10-15: pick the site two supplies before
@@ -62,6 +64,12 @@ public class PrepareConstructionSite {
         AConsole.errPrintln(
             A.minSec() + ": PREPARING " + type.name()
                 + " at [" + site.tx() + "," + site.ty() + "] for supply " + order.minSupply());
+        EventLog.key(LogKey.CONSTRUCTION_PREPARING)
+            .param("type", type.name())
+            .param("tx", site.tx())
+            .param("ty", site.ty())
+            .param("supply", order.minSupply())
+            .log(A.now(), A.minSec());
     }
 
     /**

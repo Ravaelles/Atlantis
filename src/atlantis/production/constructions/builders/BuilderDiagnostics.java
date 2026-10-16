@@ -108,8 +108,7 @@ public class BuilderDiagnostics {
             + " unit=#" + unit.id()
             + " building=" + construction.buildingType().name()
             + " tile=[" + tile.getX() + "," + tile.getY() + "]"
-            + " stoodStillFor=" + unit.lastPositionChangedAgo() + "f"
-            + " || worker: canCommand=" + builder.canCommand()
+            + " stoodStillFor=" + unit.lastPositionChangedAgo() + "f"            + " || worker: canCommand=" + builder.canCommand()
             + " isCompleted=" + builder.isCompleted()
             + " isLockedDown=" + builder.isLockedDown()
             + " isConstructing=" + builder.isConstructing()
@@ -139,6 +138,44 @@ public class BuilderDiagnostics {
             + " unitsInRect=" + unitsInFootprint(builder, type, tile)
             + " terrainOnly=" + terrainFootprint(construction)
         );
+
+        EventLog.key(LogKey.BUILD_BREAKDOWN)
+            .param("unit", unit.id())
+            .param("building", construction.buildingType().name())
+            .param("tx", tile.getX())
+            .param("ty", tile.getY())
+            .param("stoodStill", unit.lastPositionChangedAgo())
+            .param("canCommand", builder.canCommand())
+            .param("completed", builder.isCompleted())
+            .param("lockedDown", builder.isLockedDown())
+            .param("constructing", builder.isConstructing())
+            .param("moving", builder.isMoving())
+            .param("interruptible", builder.isInterruptible())
+            .param("order", String.valueOf(builder.getOrder()))
+            .param("lastCommand", unit.lastCommandName())
+            .param("lastCommandIssuedAgo", unit.lastCommandIssuedAgo())
+            .param("distToBuild", A.digit(unit.distTo(at)))
+            .param("unitHasPath", builder.hasPath(siteCenter))
+            .param("gameHasPath", atlantis.Atlantis.game().hasPath(builder.getPosition(), siteCenter))
+            .param("ourPort", atlantis.map.ReachableTiles.between(unit, at))
+            .param("noBuilder", atlantis.Atlantis.game().canBuildHere(tile, type))
+            .param("withBuilder", atlantis.Atlantis.game().canBuildHere(tile, type, builder))
+            .param("withBuilderExplored", atlantis.Atlantis.game().canBuildHere(tile, type, builder, true))
+            .param("canBuild", builder.canBuild(type, tile))
+            .param("canBuild000", builder.canBuild(type, tile, false, false, false))
+            .param("canBuild100", builder.canBuild(type, tile, true, false, false))
+            .param("canBuild010", builder.canBuild(type, tile, false, true, false))
+            .param("canBuild001", builder.canBuild(type, tile, false, false, true))
+            .param("explored", exploredFootprint(construction))
+            .param("canAfford", A.canAfford(
+                construction.buildingType().mineralPrice(), construction.buildingType().gasPrice()))
+            .param("minerals", A.minerals())
+            .param("supplyUsed", A.supplyUsed())
+            .param("supplyTotal", A.supplyTotal())
+            .param("hasPower", atlantis.Atlantis.game().hasPower(tile, type))
+            .param("unitsInRect", unitsInFootprint(builder, type, tile))
+            .param("terrainOnly", terrainFootprint(construction))
+            .log(A.now(), A.minSec());
     }
 
     /**

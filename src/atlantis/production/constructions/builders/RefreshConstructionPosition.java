@@ -12,6 +12,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
 import atlantis.util.AConsole;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class RefreshConstructionPosition {
 
@@ -164,6 +166,11 @@ public class RefreshConstructionPosition {
             AbstractPositionFinder.clearCache();
 
             buildPosition = refreshIfNeeded(construction);
+
+            EventLog.key(LogKey.POSITION_REFRESH)
+                .param("type", buildingType.name())
+                .param("result", "refreshed")
+                .log(A.now(), A.minSec());
         }
 
         if (shouldRefreshConstructionPosition(construction)) {
@@ -178,6 +185,13 @@ public class RefreshConstructionPosition {
                 newOrder = AddToQueue.withTopPriority(buildingType, prevPosition);
                 System.err.println("Re-re-requesting: " + newOrder);
             }
+
+            EventLog.key(LogKey.POSITION_REFRESH)
+                .param("type", buildingType.name())
+                .param("result", "cancelled-re-requested")
+                .param("prevTile", prevPosition == null ? "-" : prevPosition.toString())
+                .param("newOrder", newOrder == null ? "-" : newOrder.toString())
+                .log(A.now(), A.minSec());
         }
 
         return buildPosition;

@@ -7,7 +7,9 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
 import atlantis.util.log.Log;
+import atlantis.util.log.LogKey;
 
 public class CancelConstruction {
     private static Log cancelLog = new Log(100, 30 * 300);
@@ -22,6 +24,11 @@ public class CancelConstruction {
                 + " / at:" + at
                 + (at != null ? " / buildable:" + at.isBuildableIncludeBuildings() : "")
             );
+            EventLog.key(LogKey.CONSTRUCTION_CANCEL)
+                .param("type", type.name())
+                .param("reason", reason)
+                .param("tile", at == null ? "-" : at.toString())
+                .log(A.now(), A.minSec());
 
 //            AAdvancedPainter.paintRectangle(at, (int) (32 * type.widthInTiles()), (int) (32 * type.heightInTiles()), Color.Green);
 //            PauseAndCenter.on(at, true);
