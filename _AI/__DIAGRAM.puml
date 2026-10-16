@@ -85,7 +85,10 @@ Driver ..> Board : emergency top (read-only)
 Feeder ..> Board : active set (read-only)
 Pumps ..> Reads : gates
 Combat ..> Reads : senses
-Combat ..> BoardState : reads (no orders back)
+' BoardState reads from combat: unwired as of 2026-10-16. Combat senses
+' what it needs directly (strength, threats, bases); forcing a board
+' read with no genuine question would be shoehorning. Wire on a measured
+' need, not on the diagram.
 V2 ..> Reads : DRY_RUN compare
 CherryVis ..> Units : traces
 

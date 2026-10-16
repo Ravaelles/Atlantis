@@ -71,11 +71,12 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 591 passing, 1 skipped (+2
+Suite green 2026-10-16: 594 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
-enforcement rows; selected runs: `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
+enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2; selected runs:
+`PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
@@ -96,7 +97,10 @@ twins green (1/1 each, re-verified today). Re-run
   core/assimilator plus sustained army rows when the pumps go silent -
   workers/expansion/detection stay with their owners). Wallet done:
   price classes on the goals, funded subset, feeder gated on funding,
-  enforcement at the single construction door (fail-open). No new
+  enforcement at the single construction door (fail-open). Commitment
+  wired: `top` finally gets the live in-flight set (queue rows +
+  constructions via one goal-type map), driver and advisor pass it -
+  started work keeps its place. No new
   arbitration gate in legacy producers, ever (ratchet).
   Next: per-gate legacy deletions, one game of proof each (feeder proof
   observed `20261015_143903`: `BOARD_FED supply-pylon min=61 sup=39/41`).
@@ -252,6 +256,20 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Wine (owner live game): 600-mineral stall diagnosed - a Core
+  construction survived its own warped building on its exact tiles
+  (builder held 369f, `canBuild000=false`), shielded by the
+  unworked-adoption exemption; same order re-requested ~12x pre-warp
+  (transient occupancy cancelling). Fixed: exact-tiles finish above
+  all exemptions (`StaleDuplicateFinishesOnItsTilesTest` 2/2). The
+  early Pylon wait (bank 90) was healthy just-in-time, not the disease.
+  Diagnostics moved to keyed JSON twins, all on stderr; the one stdout
+  polluter (`PREVENT ... Enforce Pylon first`) moved too.
+- Long `20261016_132523` (93 s wall, 471 s game, rich: Pylon=9
+  Zealot=13 Dragoon=7 Gateway=5): 7 BOARD rows, stable tops
+  (supply-pylon x1, gateway/army/expansion x2 each - commitment
+  holding, no flap), `BOARD_FED` sustained-dragoon x2, 0 real
+  exceptions (3 choke-path trace markers, pre-existing).
 - LIVE `20261016_131407` (9 s wall, 247 game-s, roster Pylon=2
   Gateway=1 Zealot=3 Forge=1, 0 exceptions): INCONCLUSIVE, not evidence
   - the bot exited at 4:07 for no logged reason with no enemy spawned

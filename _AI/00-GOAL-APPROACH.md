@@ -32,7 +32,7 @@ log) - never "maybe everything".
 | Consumers (thin) | `GoalBoardAdvisor` (log), `GoalBoardDriver` (preempt), `GoalBoardFeeder` (queue missing rows) | board -> legacy translation, one direction each | stub + twins + games |
 | Legacy production (shrinks) | `production/dynamic/**`, `SupplyCommander`, pumps | executes until absorbed, then deleted same cycle | games, twins |
 | Execution (stays) | `ConstructionsCommander`, builders, placement, `Queue` | builders, sites, engine refusals | BUILDER_LOG games |
-| Combat (sibling, untouched) | `combat/**` (commander, missions, squads, micro) | army postures + per-unit micro; reads board state, takes no orders from it | scenarios |
+| Combat (sibling, untouched) | `combat/**` (commander, missions, squads, micro) | army postures + per-unit micro; senses game state directly, takes no orders from the board | scenarios |
 | V2 reference | `production/v2/**` | cutover target (DRY_RUN today); board is its Strategist half, timeline scheduler deferred | DRY_RUN logs |
 
 ## Growth rules
