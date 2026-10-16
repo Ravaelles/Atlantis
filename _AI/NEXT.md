@@ -256,6 +256,12 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_133939` (42 s wall, defeat 6:56, Nexus=2 Pylon=7
+  Gateway=3 Dragoon=2): twin verification run - `CONSTRUCTION_PREPARING`
+  x24, `CONSTRUCTION_CANCEL` x4, `PLACEMENT_FAILED` x1 (Gateway,
+  unpowered), all queryable; `BUILD_BREAKDOWN` x0 (nothing stalled),
+  bot.log 0 diagnostics, 0 real exceptions. D2 fix regresses nothing
+  (Core warped, no same-tile stall).
 - Wine (owner live game): 600-mineral stall diagnosed - a Core
   construction survived its own warped building on its exact tiles
   (builder held 369f, `canBuild000=false`), shielded by the
