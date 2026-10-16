@@ -2,7 +2,7 @@ package atlantis.production.requests;
 
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
-import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
+import atlantis.battle.siting.NewBunkerPositionFinder;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.requests.protoss.ProtossPhotonCannonAntiLand;
 import atlantis.production.requests.zerg.ZergSunkenColony;

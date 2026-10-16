@@ -1,0 +1,305 @@
+package atlantis.battle.running;
+
+import atlantis.battle.running.fallback.RunAttackFallback;
+import atlantis.battle.running.show_back.RunShowingBackToEnemy;
+import atlantis.game.A;
+import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.map.region.ARegion;
+import atlantis.units.AUnit;
+import atlantis.units.actions.Action;
+import atlantis.units.actions.Actions;
+import atlantis.units.select.Selection;
+import atlantis.util.AConsole;
+import atlantis.util.log.ErrorLog;
+import bwapi.Color;
+
+public class ARunningManager {
+//    public static int STOP_RUNNING_IF_STOPPED_MORE_THAN_AGO = 8;
+//    public static int STOP_RUNNING_IF_STARTED_RUNNING_MORE_THAN_AGO = 6;
+
+    protected final AUnit unit;
+    protected HasPosition runTo = null;
+    protected AUnit runningFromUnit = null;
+    protected HasPosition runningFromPosition = null;
+    protected boolean allowedToNotifyNearUnitsToMakeSpace;
+    protected String _lastRunMode = "_none_";
+
+    protected final RunShowingBackToEnemy showBackToEnemy = new RunShowingBackToEnemy(this);
+    //    protected final RunTowardsNonStandard runTowardsNonStandard = new RunTowardsNonStandard(this);
+    protected final RunToPositionFinder runPositionFinder = new RunToPositionFinder(this);
+
+    // =========================================================
+
+    public ARunningManager(AUnit unit) {
+        this.unit = unit;
+    }
+
+    // =========================================================
+
+    public boolean runFromAndNotifyOthersToMove(HasPosition runFrom, String tooltip) {
+        if (runFrom(runFrom, 1, Actions.RUN_ENEMY, true)) {
+            unit.setTooltip(tooltip);
+            return true;
+        }
+        return false;
+    }
+
+    //    public boolean runFrom(Object unitOrPosition, double dist) {
+    public boolean runFrom(HasPosition runFrom, double dist, Action action, boolean allowedToNotifyNearUnitsToMakeSpace) {
+        if (unit.lastStartedRunningLessThanAgo(4) && unit.distToTargetPosition() >= 3) return true;
+
+//        _lastRunMode = "Undefined";
+
+        if (runFrom instanceof AUnit) {
+            runningFromUnit = (AUnit) runFrom;
+            runningFromPosition = runFrom;
+        }
+        else {
+            runningFromUnit = null;
+            runningFromPosition = runFrom;
+        }
+
+        this.allowedToNotifyNearUnitsToMakeSpace = allowedToNotifyNearUnitsToMakeSpace;
+        if (!verifyRunFromPosition(runFrom)) {
+            return false;
+        }
+
+        // === Define run to position ==============================
+
+        runFrom = adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(runFrom);
+        runTo = runPositionFinder.findBestPositionToRun(runFrom, dist, action);
+//        System.out.println("runTo = " + runTo);
+
+        // === Actual run order ====================================
+
+        if (validateAndRun(action, 0.2, false)) return makeUnitRun(action);
+
+        if (A.isUms() && !unit.isObserver()) {
+//            System.err.println(
+//                "=== RUN ERROR ================= run:"
+//                    + (runTo != null ? runTo.toStringPixels() : "-")
+//                    + " / unit:" + unit.position().toStringPixels()
+//                    + " / dist:" + (runTo != null ? runTo.distToDigit(unit) : "-")
+//                    + " / walkable:" + (runTo != null && runTo.isWalkable() ? "Y" : "N")
+//                    + " / method:" + method
+//            );
+//            CameraCommander.centerCameraOn(unit);
+            unit.paintCircleFilled(8, Color.Red);
+//            PauseAndCenter.on(unit);
+        }
+
+        if (validateAndRun(action, 0.2, true)) return makeUnitRun(action);
+
+//        System.err.println("Unit position = " + unit.position() + " // " + unit);
+//        System.err.println("runTo = " + runTo);
+//        if (runTo != null) System.err.println("runTo walk: " + runTo.isWalkable() + " / runToDist: " + A.digit(unit.distTo(runTo)));
+//        System.err.println("Our count = " + Select.ourWithUnfinished().exclude(unit).inRadius(unit.size(), unit).count());
+//        System.err.println("Neutral count = " + Select.neutral().inRadius(unit.size(), unit).count());
+
+        return actWhenCantRun();
+    }
+
+    private boolean validateAndRun(Action action, double minDist, boolean prioritizeMoving) {
+        if (
+            runTo != null
+                && runTo.isWalkable()
+                && unit.distTo(runTo.position()) >= 0.05
+                && ((prioritizeMoving && unit.isMoving()) || unit.distTo(runTo.position()) >= minDist)
+        ) {
+            double dist = unit.distTo(runTo);
+            unit.setTooltip("RunToDist(" + String.format("%.1f", dist) + ")", false);
+            return true;
+        }
+
+//        System.err.println("FAAAAIL    runTo.isWalkable() = " + runTo.isWalkable());
+//        System.err.println("unit.distTo(runTo.position()) = " + unit.distTo(runTo.position()));
+
+        return false;
+    }
+
+    private boolean actWhenCantRun() {
+        unit.addLog("CantRun");
+        if (A.isUms()) {
+//            ErrorLog.printMaxOncePerMinute("CantRun " + unit.typeWithUnitId());
+            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("CantRun " + unit.nameWithId());
+        }
+
+        if (!unit.isMissionSparta() && unit.moveToMain(Actions.RUN_ENEMY)) {
+            unit.setTooltip("CantRun-GoToMain");
+            return true;
+        }
+
+        // BATTLE CUTOVER: the fight-back branch (attack managers) is gone
+        // with the deleted scope - a unit that cannot run falls through
+        // to the region-center fallback below instead of attacking.
+
+        ARegion region = unit.position().region();
+        if (region != null) {
+            APosition center = region.center();
+            if (center != null) {
+                if (unit.move(center, Actions.RUN_ENEMY, "CantRun-GoToRegionCenter", false)) {
+                    return true;
+                }
+            }
+        }
+
+        AUnit friend = unit.friendsNear().groundUnits().mostDistantTo(unit);
+        if (friend != null && unit.move(friend, Actions.RUN_ENEMY, "CantRun-GoToFriend", false)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean verifyRunFromPosition(HasPosition runAwayFrom) {
+        if (runAwayFrom == null || runAwayFrom.position() == null) {
+//            System.err.println("Null runAwayFrom in verifyRunFromPosition: " + runAwayFrom);
+//            stopRunning();
+//            throw new RuntimeException("Null unit to run from");
+            return false;
+        }
+
+        return true;
+    }
+
+    private HasPosition adjustRunFromPositionSlightlyToSeparateFromNearbyFriends(HasPosition runAwayFrom) {
+        Selection friendsVeryNear = unit.friendsNear().inRadius(1.4, unit);
+        if (friendsVeryNear.size() == 1) {
+            return runAwayFrom.translatePercentTowards(20, friendsVeryNear.first());
+        }
+
+        return runAwayFrom;
+    }
+
+    // =========================================================
+
+//    public boolean isReasonablePositionToRun(AUnit unit, APosition position) {
+//        return IsReasonablePositionToRunTo.isPossibleAndReasonablePosition(
+//            unit, position, runningFromPosition, true, null, null
+//        );
+//    }
+
+    private boolean makeUnitRun(Action action) {
+        if (unit == null) {
+            ErrorLog.printMaxOncePerMinute("Unit is null in makeUnitRun");
+            return false;
+        }
+
+        if (runTo == null) {
+            stopRunning();
+            ErrorLog.printMaxOncePerMinute("RunTo should not be null!");
+            unit.setTooltip("Fuck!", false);
+            return true;
+        }
+
+        // === Valid run position ==============================
+
+        if (unit.move(runTo, action, null, false)) {
+            // Update last time run order was issued
+            if (unit.unitState().getLastStartedRunning() <= unit.unitState().getLastStoppedRunning()) unit.unitState().setLastStartedRunning(A.now());
+
+            // Make all other units very close to it run as well
+            if (allowedToNotifyNearUnitsToMakeSpace) {
+                (new NotifyNearUnitsToMakeSpaceToRun(unit)).notifyNearUnits(this.runningFromPosition());
+            }
+
+            return true;
+        }
+
+//        System.err.println("Failed with unit.moveRun call " + runTo);
+//        if (action != null) {
+//            System.err.println("WLK:" + runTo.isWalkable());
+//            System.err.println("DST:" + runTo.distTo(unit));
+//        }
+        return false;
+    }
+
+    // === Getters ========================================
+
+    public HasPosition runToPosition() {
+        return runTo;
+    }
+
+    public boolean isRunning() {
+        if (runTo == null || !unit.isMoving() || !unit().action().isRunning()) {
+            runTo = null;
+            return false;
+        }
+
+        if (runTo != null && unit.distTo(runTo) >= 0.04) {
+            return true;
+//            if (unit.lastStartedRunningAgo(3)) {
+//                return true;
+//            } else {
+//                stopRunning();
+//                return false;
+//            }
+        }
+
+//        stopRunning();
+        return unit.isMoving()
+            && unit.distTo(unit.targetPosition()) >= 0.04;
+//        return false;
+    }
+
+    public void stopRunning() {
+        runTo = null;
+        runningFromPosition = null;
+        runningFromUnit = null;
+
+        if (!unit.isRunning()) {
+            return;
+        }
+
+        if (unit.isRunning()) {
+//            System.err.println(unit.action());
+//            System.err.println(unit.lastCommandName());
+//            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Hmm");
+
+            unit.unitState().setLastStoppedRunning(A.now());
+//            System.out.println("Stopped running at " + A.now());
+//            AConsole.printStackTrace("StoppedRunning at " + A.now());
+
+//            if (unit.isMoving() && unit.lastCommandIssuedAgo() >= 5) unit.stop("AStopRunning");
+        }
+
+//        AConsole.printStackTrace("StoppedRunning");
+    }
+
+    public AUnit unit() {
+        return unit;
+    }
+
+    public HasPosition runTo() {
+        return runTo;
+    }
+
+    public AUnit runningFromUnit() {
+        return runningFromUnit;
+    }
+
+    public HasPosition runningFromPosition() {
+        return runningFromPosition;
+    }
+
+//    public HasPosition setRunFromUnit(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
+//
+//    public HasPosition setRunFrom(HasPosition runFrom) {
+//        this.runFrom = runFrom;
+//        return runFrom;
+//    }
+
+    public HasPosition setRunTo(HasPosition runTo) {
+        this.runTo = runTo;
+        unit.unitState().setLastRunningPositionChange(A.now());
+        return runTo;
+    }
+
+    public String lastRunMode() {
+        return _lastRunMode;
+    }
+}

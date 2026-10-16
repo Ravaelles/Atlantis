@@ -2,7 +2,7 @@ package atlantis.production.constructions.builders;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;

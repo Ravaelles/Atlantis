@@ -1,6 +1,5 @@
 package atlantis.information.strategy.response.zerg;
 
-import atlantis.combat.missions.MissionChanger;
 
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyInfo;
@@ -42,13 +41,13 @@ public class AsZergUnitDiscoveredResponse {
         if (GamePhase.isEarlyGame() && !Strategy.get().isRushOrCheese()) {
             if (enemyUnit.isZergling()) {
                 if (EnemyUnits.count(AUnitType.Zerg_Zergling) >= 6) {
-                    MissionChanger.forceMissionSpartaOrDefend("LotsOfZerglingsZ");
+                    // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
                 }
             }
 
             else if (enemyUnit.isZealot()) {
                 if (Count.ourCombatUnits() <= 4) {
-                    MissionChanger.forceMissionSpartaOrDefend("CautionWithZealot");
+                    // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
                 }
             }
 
@@ -71,7 +70,7 @@ public class AsZergUnitDiscoveredResponse {
             EnemyUnits.has(AUnitType.Protoss_Dragoon)
                 && (ArmyStrength.ourArmyRelativeStrength() < 120 || Count.medics() <= 1)
         ) {
-            MissionChanger.forceMissionSpartaOrDefend("Foe dragoons & not enough power");
+            // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
             return true;
         }
 

@@ -1,8 +1,7 @@
 package atlantis.game.listeners;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.transfers.SquadTransfersCommander;
+import atlantis.battle.Missions;
 import atlantis.config.env.Env;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
@@ -20,7 +19,7 @@ public class OnOurUnitDestroyed {
 
         RepairAssignments.removeRepairer(unit);
         OurWorkerWasKilled.onWorkedKilled(unit);
-        SquadTransfersCommander.removeUnitFromSquads(unit);
+        if (unit.squad() != null) unit.squad().removeUnit(unit);
 
         Queue.get().refresh();
 

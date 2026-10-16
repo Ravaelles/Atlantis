@@ -1,9 +1,8 @@
 package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.micro.attack.enemies.AttackNearbyEnemies;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.advance.focus.AFocusPoint;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -41,7 +40,8 @@ public class FixActions {
                 return false;
             }
 
-            if ((new AttackNearbyEnemies(unit)).invokedFrom(parent)) return true;
+            // BATTLE CUTOVER: idle auto-attack (deleted attack managers)
+            // is gone - idlers hold instead of engaging.
         }
 
         return false;

@@ -1,7 +1,7 @@
 package atlantis.units;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.Squad;
+import atlantis.battle.Squad;
 import atlantis.game.AGame;
 
 public class UnitStateManager extends Manager {

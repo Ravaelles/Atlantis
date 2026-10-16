@@ -23,7 +23,6 @@ public class ChokeBlockerManager extends Manager {
             ChokeBlockerRunAsProtoss::new,
             ChokeBlockerRepairOther::new,
             ChokeBlockerMoveAway::new,
-            ChokeBlockerFight::new,
             ChokeBlockerMoveToBlock::new,
         };
     }

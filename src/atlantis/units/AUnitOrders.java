@@ -1,7 +1,6 @@
 package atlantis.units;
 
-import atlantis.combat.micro.terran.tank.unsieging.ShouldUnsiegeToMove;
-import atlantis.combat.squad.Squad;
+import atlantis.battle.Squad;
 import atlantis.debug.DebugFlags;
 import atlantis.game.A;
 import atlantis.information.tech.ATech;
@@ -258,11 +257,7 @@ public interface AUnitOrders {
 //            || (unit.isStopped() && unit.lastPositionChangedAgo() >= 12);
 
         if (executeOrder) {
-            if (We.terran() && unit.isSieged() && ShouldUnsiegeToMove.shouldUnsiege(unit)) {
-                unit.unsiege();
-                unit.lastCommandIssuedNow(UnitCommandType.Unsiege);
-                return true;
-            }
+            // BATTLE CUTOVER: sieged tanks no longer unsiege to move (deleted micro).
 
             if (unit.isGroundUnit() && !target.isWalkable()) {
                 if (!(target instanceof FoggedUnit) || !((FoggedUnit) target).isAir()) {

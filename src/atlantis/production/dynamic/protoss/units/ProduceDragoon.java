@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss.units;
 
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Missions;
+import atlantis.battle.Alpha;
 import atlantis.game.A;
 import atlantis.information.decisions.Decisions;
 import atlantis.information.enemy.EnemyInfo;

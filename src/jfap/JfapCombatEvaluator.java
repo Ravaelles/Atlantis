@@ -1,7 +1,7 @@
 package jfap;
 
 import atlantis.Atlantis;
-import atlantis.combat.eval.AtlantisJfap;
+import atlantis.battle.eval.AtlantisJfap;
 import atlantis.debug.tweaker.Param;
 import atlantis.game.A;
 import atlantis.units.AUnit;

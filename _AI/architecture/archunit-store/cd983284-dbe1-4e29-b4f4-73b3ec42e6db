@@ -2,7 +2,6 @@ Constructor <atlantis.architecture.BaseCommander.<init>()> calls method <atlanti
 Constructor <atlantis.architecture.BaseManager.<init>(atlantis.units.AUnit)> calls method <atlantis.units.AUnit.squad()> in (BaseManager.java:25)
 Constructor <atlantis.architecture.BaseManager.<init>(atlantis.units.AUnit)> has parameter of type <atlantis.units.AUnit> in (BaseManager.java:0)
 Constructor <atlantis.architecture.Manager.<init>(atlantis.units.AUnit)> has parameter of type <atlantis.units.AUnit> in (Manager.java:0)
-Field <atlantis.architecture.BaseManager.squad> has type <atlantis.combat.squad.Squad> in (BaseManager.java:0)
 Field <atlantis.architecture.BaseManager.unit> has type <atlantis.units.AUnit> in (BaseManager.java:0)
 Method <atlantis.architecture.BaseCommander.initChildren([Latlantis.architecture.CommanderFactory;)> calls method <atlantis.game.AGame.exit()> in (BaseCommander.java:37)
 Method <atlantis.architecture.BaseCommander.initChildren([Latlantis.architecture.CommanderFactory;)> calls method <atlantis.game.AGame.exit()> in (BaseCommander.java:43)

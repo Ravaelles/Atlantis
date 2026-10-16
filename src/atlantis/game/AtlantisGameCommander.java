@@ -3,8 +3,8 @@ package atlantis.game;
 import atlantis.application.FramePipeline;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
-import atlantis.combat.CombatCommander;
-import atlantis.combat.squad.positioning.scout.ScoutUnitManagers;
+import atlantis.battle.BattleCommander;
+import atlantis.battle.scout.ScoutUnitManagers;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
@@ -57,7 +57,7 @@ public class AtlantisGameCommander extends Commander {
             SpecialActionsCommander::new,
             ScoutCommander::new,
             WorkerCommander::new,
-            CombatCommander::new,
+            BattleCommander::new,
             ProductionCommander::new,
             BuildingsCommander::new,
             ConstructionsCommander::new,

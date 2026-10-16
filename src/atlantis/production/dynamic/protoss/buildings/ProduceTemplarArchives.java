@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.protoss.buildings;
 
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Alpha;
 import atlantis.game.A;
 import atlantis.information.generic.Army;
 import atlantis.information.strategy.Strategy;

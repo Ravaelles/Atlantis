@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.MissionChanger;
+
 import atlantis.config.AtlantisConfig;
 import atlantis.config.MapSpecificCommander;
 
@@ -213,7 +213,7 @@ public class AGame {
             AGame.umsMode = true;
             AConsole.println("### UMS mode enabled! ###");
 
-            MissionChanger.forceMissionAttack("UmsAlwaysAttack");
+            atlantis.battle.Missions.forceGlobalMissionAttack("UmsAlwaysAttack");
         }
     }
 

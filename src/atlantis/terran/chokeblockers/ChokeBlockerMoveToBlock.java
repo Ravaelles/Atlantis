@@ -1,7 +1,6 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -29,15 +28,8 @@ public class ChokeBlockerMoveToBlock extends Manager {
     }
 
     private boolean unitsTryingToGetBackWithWrongSideOfChoke() {
-        for (AUnit friend : unit.friendsNear().groundUnits().ranged().inRadius(7, unit).list()) {
-            if (friend.isMoving() && friend.isActiveManager(OnWrongSideOfFocusPoint.class)) {
-                if (unit.moveToMain(Actions.MOVE_FORMATION)) {
-                    unit.setTooltip("HelpUnblock");
-                    return true;
-                }
-            }
-        }
-
+        // BATTLE CUTOVER: the wrong-side signal (a deleted manager class)
+        // is gone - help-unblock waits for the focus logic to return.
         return false;
     }
 

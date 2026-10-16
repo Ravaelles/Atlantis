@@ -1,7 +1,7 @@
 package atlantis.protoss.observer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Alpha;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;

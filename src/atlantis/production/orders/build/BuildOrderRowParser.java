@@ -1,8 +1,7 @@
 package atlantis.production.orders.build;
 
-import atlantis.combat.missions.from_build_order.DynamicMissionsFromBuildOrder;
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
+import atlantis.battle.Mission;
+import atlantis.battle.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -268,7 +267,7 @@ public class BuildOrderRowParser {
         System.out.println("MissionCommand at supply = " + supply);
         System.out.println("MissionCommand mission = " + mission);
 
-        DynamicMissionsFromBuildOrder.addDynamicMission(mission, supply);
+        // BATTLE CUTOVER: BO mission rows are parsed but not enacted - DEFEND holds until step 5.
     }
 
     /**

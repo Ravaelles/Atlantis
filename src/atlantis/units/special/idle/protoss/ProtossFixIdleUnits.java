@@ -2,7 +2,7 @@ package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.combat.generic.DoNothing;
+import atlantis.battle.generic.DoNothing;
 import atlantis.units.AUnit;
 import atlantis.util.We;
 

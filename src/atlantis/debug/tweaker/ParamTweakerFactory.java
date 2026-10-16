@@ -1,6 +1,6 @@
 package atlantis.debug.tweaker;
 
-import atlantis.combat.micro.avoid.margin.SafetyMarginAgainstMelee;
+import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.util.AConsole;

@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.terran.turrets.offensive;
 
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Missions;
+import atlantis.battle.Squad;
+import atlantis.battle.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.production.dynamic.terran.turrets.TurretsForNonMain;
 import atlantis.units.select.Have;

@@ -1,6 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.missions.MissionChanger;
 import atlantis.game.A;
 import atlantis.game.neutral.NeutralUnits;
 import atlantis.information.enemy.EnemyUnitsUpdater;

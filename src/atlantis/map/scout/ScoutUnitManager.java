@@ -9,9 +9,9 @@ import atlantis.units.AUnit;
  * needs to survive contact.
  *
  * <p>The interface lives here, in the Scouting context, and the implementation
- * lives in Combat ({@code atlantis.combat.squad.positioning.scout}). That split
+ * lives in Combat ({@code atlantis.battle.scout}). That split
  * is the point: the boundary test forbids {@code atlantis.map.scout..} from
- * depending on {@code atlantis.combat..}, and a scouting commander that wires
+ * depending on {@code atlantis.battle..}, and a scouting commander that wires
  * combat classes itself is exactly that dependency. Scouting decides <em>which
  * scout needs what</em>; Combat decides <em>how it behaves</em>.</p>
  *

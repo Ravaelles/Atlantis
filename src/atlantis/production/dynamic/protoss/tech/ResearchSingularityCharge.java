@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.protoss.tech;
 
-import atlantis.combat.missions.Missions;
+import atlantis.battle.Missions;
 import atlantis.decisions.Decision;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;

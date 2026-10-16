@@ -8,7 +8,7 @@ import atlantis.information.generic.Army;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.protoss.corsair.TransitionToCorsairs;
+import atlantis.battle.TransitionToCorsairs;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;

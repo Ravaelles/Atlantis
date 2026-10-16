@@ -1,9 +1,7 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.OnWrongSideOfFocusPoint;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
-import atlantis.combat.squad.squad_scout.SquadScoutProceed;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
@@ -47,11 +45,12 @@ public class ChokeBlockerMoveAway extends Manager {
     }
 
     private boolean needToMoveForCombatUnits() {
+        // BATTLE CUTOVER: the manager filter (deleted classes) is gone -
+        // any nearby combat unit in a special action still yields space.
         return unit.friendsNear()
             .combatUnits()
             .exclude(unit)
             .notSpecialAction()
-            .havingActiveManager(OnWrongSideOfFocusPoint.class, SquadScoutProceed.class)
             .notEmpty();
     }
 

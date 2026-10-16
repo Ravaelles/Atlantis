@@ -1,12 +1,12 @@
 package atlantis.information.strategy.response;
 
-import atlantis.combat.micro.terran.bunker.TerranBunker;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.siting.TerranBunker;
+import atlantis.battle.Alpha;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
 import atlantis.production.dynamic.terran.turrets.TerranMissileTurret;
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
+import atlantis.battle.Mission;
+import atlantis.battle.Missions;
 
 import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
@@ -59,7 +59,7 @@ public abstract class RaceStrategyResponse {
 
         // === Expansion ===================================
 
-        if (enemyStrategy.isExpansion() && Alpha.count() >= 4 && GamePhase.isEarlyGame() && Mission.get().isMissionDefendOrSparta()) {
+        if (enemyStrategy.isExpansion() && Alpha.count() >= 4 && GamePhase.isEarlyGame() && Missions.globalMission().isMissionDefendOrSparta()) {
             if (!Enemy.zerg() || Army.strengthWithoutCB() >= 140) {
                 Missions.forceGlobalMissionAttack("Enemy is expanding, engage him");
             }

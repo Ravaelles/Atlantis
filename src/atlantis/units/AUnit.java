@@ -3,22 +3,20 @@ package atlantis.units;
 import atlantis.architecture.Manager;
 import atlantis.util.AConsole;
 import atlantis.util.cache.ValidityCheck;
-import atlantis.combat.eval.estimate.Estimate;
+import atlantis.battle.eval.estimate.Estimate;
 import atlantis.core.world.UnitState;
 import atlantis.core.world.Worlds;
-import atlantis.combat.generic.DoNothing;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.eval.AtlantisJfap;
-import atlantis.combat.micro.avoid.margin.UnitRange;
-import atlantis.combat.micro.terran.infantry.medic.TerranMedic;
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.eval.tweaks.ProtossJfapTweaksConsiderChokesEtc;
-import atlantis.combat.running.ARunningManager;
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.positioning.protoss.formations.ProtossMoon;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.generic.DoNothing;
+import atlantis.battle.advance.focus.AFocusPoint;
+import atlantis.battle.eval.AtlantisJfap;
+import atlantis.battle.avoid.margin.UnitRange;
+import atlantis.battle.Mission;
+import atlantis.battle.Missions;
+import atlantis.battle.Squad;
+import atlantis.battle.Alpha;
+import atlantis.battle.eval.tweaks.ProtossJfapTweaksConsiderChokesEtc;
+import atlantis.battle.running.ARunningManager;
+
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.env.Env;
 import atlantis.game.A;
@@ -1026,10 +1024,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * Returns battle squad object for military units or null for non military-units (or buildings).
      */
     public Squad squad() {
-        if (squad == null && Env.isTesting() && isOur() && isCombatUnit() && isGroundUnit()) {
-            return Alpha.get();
-        }
-
         return squad;
     }
 
@@ -2226,7 +2220,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public int squadSize() {
         if (squad() == null) {
-            if (Env.isTesting()) return Alpha.count();
+            if (Env.isTesting()) return Count.ourCombatUnits();
 
             if (!isWorker()) {
                 ErrorLog.printMaxOncePerMinute("Squad null for " + nameWithId());
@@ -2238,8 +2232,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public HasPosition squadCenter() {
         if (!hasSquad()) {
-            if (Env.isTesting()) return Select.our().nonBuildings().first();
-            return Alpha.alphaCenter();
+            return Select.mainOrAnyBuilding();
         }
 
         return squad().center();
@@ -2247,8 +2240,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
     public AUnit squadCenterUnit() {
         if (!hasSquad()) {
-            if (Env.isTesting()) return Select.our().nonBuildings().first();
-            return (AUnit) Alpha.alphaCenter();
+            return Select.mainOrAnyBuilding();
         }
 
         return (AUnit) squad().center();
@@ -2292,11 +2284,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
      * Current mission object for this unit's squad.
      */
     public Mission mission() {
+        // BATTLE CUTOVER: squad assignment is deleted - every unit reads
+        // its squad's mission, defaulting to the global DEFEND until
+        // BattleCommander owns missions (step 5).
         if (squad == null) {
-            if (isCombatUnit() && !isABuilding()) {
-//                if (!A.isUms()) System.err.println("Empty unit squad for: " + this);
-                (new NewUnitsToSquadsAssigner(this)).possibleCombatUnitCreated();
-            }
             return Missions.DEFEND;
         }
         else if (squad.mission() == null) {
@@ -3033,7 +3024,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
             6,
             () -> (
                 friendsInRadius(2).ofType(AUnitType.Terran_Medic).havingTargeted(this).notEmpty()
-                    || TerranMedic.isAnyCloseMedicAssignedTo(this)
             )
         );
     }
@@ -3138,8 +3128,10 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public boolean isMissionSparta() {
-        if (mission() == null) return false;
-        return mission().equals(Missions.SPARTA);
+        // BATTLE CUTOVER: the Sparta mission is deleted with the mission
+        // arbitration - nothing is ever Sparta until BattleCommander owns
+        // missions again (step 5).
+        return false;
     }
 
     public boolean isMissionDefend() {
@@ -3692,12 +3684,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
 
         AUnit main = Select.mainOrAnyBuilding();
 
-        if (main == null) {
-            HasPosition alphaCenter = Alpha.alphaCenter();
-            if (alphaCenter == null || distTo(alphaCenter) <= 3) return null;
-
-            return alphaCenter;
-        }
+        if (main == null) return null;
 
         if (Count.basesWithUnfinished() <= 1) {
             AChoke choke = Chokes.mainChoke();
@@ -4257,7 +4244,7 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     public boolean isFormingFormation() {
         if (!We.protoss()) return false;
 
-        return isActiveManager(ProtossMoon.class) || lastActionLessThanAgo(5, Actions.MOVE_FORMATION);
+        return lastActionLessThanAgo(5, Actions.MOVE_FORMATION);
     }
 
     public AUnit forceLastTarget(AUnit target) {

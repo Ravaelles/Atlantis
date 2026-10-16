@@ -1,7 +1,7 @@
 package atlantis.production.constructions.builders;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.AvoidSingleEnemy;
+import atlantis.battle.avoid.AvoidSingleEnemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

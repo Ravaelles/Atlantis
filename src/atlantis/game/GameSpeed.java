@@ -1,7 +1,7 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Alpha;
 import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;
@@ -75,8 +75,7 @@ public class GameSpeed {
 //                        && Select.enemyCombatUnits().atLeast(2)
 //                        && Select.enemyCombatUnits().atLeast(2)
                 && EnemyInfo.hasDiscoveredEnemyBase()
-                && Alpha.get().squadScout() != null
-                && Alpha.get().squadScout().isWounded()
+                // BATTLE CUTOVER: scout-wound slowdown (deleted squads) - base discovery alone slows once.
 //                        && Missions.isGlobalMissionContain()
         ) {
             oneTimeSlowdownUsed = true;

@@ -1,7 +1,7 @@
 package atlantis.units.fix;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.advance.focus.AFocusPoint;
+import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

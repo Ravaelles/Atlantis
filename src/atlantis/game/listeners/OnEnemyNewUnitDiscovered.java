@@ -1,6 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.missions.MissionChanger;
 import atlantis.game.A;
 import atlantis.game.listeners.protoss.AsProtossWhenDarkTemplarDetected;
 import atlantis.information.enemy.EnemyUnitsUpdater;
@@ -13,7 +12,7 @@ public class OnEnemyNewUnitDiscovered {
     public static void update(AUnit unit) {
         EnemyUnitsUpdater.weDiscoveredEnemyUnit(unit);
 
-        if (A.seconds() <= 600) MissionChanger.forceEvaluateGlobalMission();
+        // BATTLE CUTOVER: global mission evaluation is deleted - DEFEND holds until step 5.
 
         actIfWeAreMuchWeaker();
 

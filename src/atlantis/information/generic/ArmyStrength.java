@@ -1,6 +1,6 @@
 package atlantis.information.generic;
 
-import atlantis.combat.retreating.RetreatManager;
+import atlantis.battle.retreating.RetreatManager;
 import atlantis.util.cache.Cache;
 
 public class ArmyStrength {

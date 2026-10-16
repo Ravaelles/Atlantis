@@ -1,7 +1,7 @@
 package atlantis.units.special;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.squad.Squad;
+import atlantis.battle.Squad;
 import atlantis.units.AUnit;
 import atlantis.util.AConsole;
 

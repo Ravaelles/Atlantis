@@ -1,6 +1,6 @@
 package atlantis.units.actions.move;
 
-import atlantis.combat.running.IsReasonablePositionToRunTo;
+import atlantis.battle.running.IsReasonablePositionToRunTo;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

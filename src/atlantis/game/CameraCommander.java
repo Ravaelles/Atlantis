@@ -2,8 +2,8 @@ package atlantis.game;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Squad;
+import atlantis.battle.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

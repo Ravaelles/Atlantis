@@ -2,10 +2,9 @@ package atlantis.units.workers;
 
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
-import atlantis.combat.micro.avoid.buildings.protoss.ProtossCombatBuildingClose;
-import atlantis.combat.micro.avoid.special.protoss.ProtossAvoidCriticalUnits;
-import atlantis.combat.micro.avoid.special.AvoidSpellsAndMines;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.avoid.special.protoss.ProtossAvoidCriticalUnits;
+import atlantis.battle.avoid.special.AvoidSpellsAndMines;
 import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.terran.repair.DynamicRepairsNearby;
 import atlantis.terran.repair.RepairAssignments;
@@ -36,7 +35,9 @@ public class WorkerManager extends Manager {
 
             AvoidSpellsAndMines::new,
             ProtossAvoidCriticalUnits::new,
-            ProtossCombatBuildingClose::new,
+            // BATTLE CUTOVER: combat-building close-avoid (deleted with the
+            // eval-backed Alpha helpers) returns with targeting - generic
+            // avoids above still steer workers clear.
 
             WorkerDefenceManager::new,
             WorkerAvoidManager::new,

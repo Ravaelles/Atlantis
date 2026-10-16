@@ -1,6 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.advance.focus_choke.CurrentFocusChoke;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
@@ -540,11 +539,7 @@ public class OnEveryFrameHelper {
     private static void pathToEnemyBase() {
         paintPathToEnemyBase(PathToEnemyBase.chokesLeadingToEnemyBase());
 
-        AChoke focusChoke = CurrentFocusChoke.get();
-        if (focusChoke != null) {
-            AAdvancedPainter.paintCircleFilled(focusChoke.center(), 13, Color.Cyan);
-
-        }
+        // BATTLE CUTOVER: the focus-choke paint (deleted focus logic) is gone.
     }
 
     private static void paintPathToEnemyBase(ArrayList<AChoke> chokes) {

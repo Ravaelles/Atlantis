@@ -1,7 +1,7 @@
 package atlantis.units.special.idle.protoss;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.units.AUnit;
 
 public class FixIdleUnitsPostAvoid extends Manager {

@@ -1,8 +1,8 @@
 package atlantis.game.listeners;
 
 import atlantis.Atlantis;
-import atlantis.combat.missions.Missions;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Missions;
+import atlantis.battle.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;

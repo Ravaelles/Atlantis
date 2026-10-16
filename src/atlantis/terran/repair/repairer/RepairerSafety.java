@@ -1,7 +1,7 @@
 package atlantis.terran.repair.repairer;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.terran.repair.RepairAssignments;
 import atlantis.units.AUnit;
 import atlantis.game.player.Enemy;

@@ -1,6 +1,6 @@
 package atlantis.production.orders.production.queue.order;
 
-import atlantis.combat.missions.Mission;
+import atlantis.battle.Mission;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.position.HasPosition;

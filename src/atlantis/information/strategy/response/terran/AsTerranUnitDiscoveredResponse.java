@@ -1,6 +1,5 @@
 package atlantis.information.strategy.response.terran;
 
-import atlantis.combat.missions.MissionChanger;
 
 import atlantis.information.enemy.EnemyFlags;
 import atlantis.information.enemy.EnemyUnits;
@@ -79,7 +78,7 @@ public class AsTerranUnitDiscoveredResponse {
             EnemyUnits.has(AUnitType.Protoss_Dragoon)
                 && (ArmyStrength.ourArmyRelativeStrength() <= 130 || Count.medics() <= 1)
         ) {
-            MissionChanger.forceMissionSpartaOrDefend("Enemy dragoons & not enough power");
+            // BATTLE CUTOVER: mission forcing is deleted - the predicate alone decides.
             return true;
         }
 

@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.expansion.secure.terran;
 
-import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
+import atlantis.battle.siting.NewBunkerPositionFinder;
 import atlantis.map.position.APosition;
 import atlantis.units.select.Count;
 

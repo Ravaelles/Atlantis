@@ -1,6 +1,6 @@
 package atlantis.information.enemy;
 
-import atlantis.combat.missions.Missions;
+import atlantis.battle.Missions;
 import atlantis.units.AUnit;
 
 public class EnemyUnitBreachedBase {

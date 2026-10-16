@@ -1,6 +1,6 @@
 package atlantis.units.workers.defence.fight;
 
-import atlantis.combat.micro.avoid.protoss.ProtossAvoidEnemies;
+import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.units.AUnit;

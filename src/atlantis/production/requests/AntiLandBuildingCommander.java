@@ -1,6 +1,6 @@
 package atlantis.production.requests;
 
-import atlantis.combat.micro.terran.bunker.TerranBunker;
+import atlantis.battle.siting.TerranBunker;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;

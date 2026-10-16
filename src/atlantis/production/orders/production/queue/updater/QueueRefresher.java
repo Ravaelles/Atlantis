@@ -1,6 +1,5 @@
 package atlantis.production.orders.production.queue.updater;
 
-import atlantis.combat.missions.from_build_order.EnforceBuildOrderMissionsCommander;
 import atlantis.production.constructions.PrepareConstructionSite;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
@@ -39,7 +38,7 @@ public class QueueRefresher {
 
         PrepareConstructionSite.dropOrphanedPreparing();
 
-        (new EnforceBuildOrderMissionsCommander()).invokedCommander();
+        // BATTLE CUTOVER: BO mission enforcement is deleted - DEFEND holds until step 5.
     }
 
     private OrderStatus updateOrderStatus(ProductionOrder order) {

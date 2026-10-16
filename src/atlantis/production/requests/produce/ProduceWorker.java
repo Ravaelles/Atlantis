@@ -7,7 +7,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 
-import static atlantis.combat.micro.terran.lifted.RebaseToNewMineralPatches.isBaseMinedOut;
+import static atlantis.battle.siting.RebaseToNewMineralPatches.isBaseMinedOut;
 
 public class ProduceWorker {
     public static boolean produceWorker() {

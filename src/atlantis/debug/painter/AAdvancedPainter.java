@@ -2,17 +2,14 @@ package atlantis.debug.painter;
 
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.combat.missions.MissionChanger;
-import atlantis.combat.missions.attack.focus.EnemyExistingExpansion;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
-import atlantis.combat.advance.focus.AFocusPoint;
-import atlantis.combat.missions.Mission;
-import atlantis.combat.missions.Missions;
+import atlantis.battle.advance.focus.AFocusPoint;
+import atlantis.battle.Mission;
+import atlantis.battle.Missions;
 
-import atlantis.combat.squad.AllSquads;
-import atlantis.combat.squad.Squad;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Squad;
+import atlantis.battle.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
@@ -447,7 +444,6 @@ public class AAdvancedPainter extends APainter {
             color = Color.Orange;
         }
         paintSideMessage("Alpha mission: " + Alpha.get().mission().name(), color);
-        paintSideMessage("Reason: " + MissionChanger.reason, Grey);
 
 
         String shouldExpand = ShouldExpand.shouldExpand() ? "YES" : "NO";
@@ -1465,23 +1461,22 @@ public class AAdvancedPainter extends APainter {
     private static void paintSquadsInfo(int x, int y) {
         y += 26;
 
-        if (Alpha.get().isNotEmpty()) {
+        // BATTLE CUTOVER: one squad (Alpha) until the cluster owns more.
+        if (!Alpha.get().isEmpty()) {
             paintMessage("Squads: ", Color.White, x, y, true);
-            for (Squad squad : AllSquads.all()) {
-                if (squad.size() == 0) {
-                    continue;
-                }
-                paintMessage(
-                    squad.name() + ": " + squad.size() + "/" + squad.mission().name().substring(0, 3),
-                    squad.isEmpty() ? Color.Red : Color.White,
-                    x, y += 12, true
-                );
-            }
+            Squad squad = Alpha.get();
+            paintMessage(
+                squad.name() + ": " + squad.size() + "/" + squad.mission().name().substring(0, 3),
+                squad.isEmpty() ? Color.Red : Color.White,
+                x, y += 12, true
+            );
         }
     }
 
     private static void paintSquads() {
-        for (Squad squad : AllSquads.all()) {
+        // BATTLE CUTOVER: one squad (Alpha) until the cluster owns more.
+        {
+            Squad squad = Alpha.get();
             AUnit centerUnit = squad.leader();
             if (centerUnit != null) {
                 int maxDist = (int) squad.radius();
@@ -1664,8 +1659,6 @@ public class AAdvancedPainter extends APainter {
         // Enemy THIRD
         paintBase(EnemyThirdBase.position(), "Enemy THIRD location", Color.Orange, 0);
 
-        // Enemy EXPANSION
-        paintBase(EnemyExistingExpansion.get(), "Enemy EXPANSION", Color.Orange, 0);
 
         // =========================================================
 

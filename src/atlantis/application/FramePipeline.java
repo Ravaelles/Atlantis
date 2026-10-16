@@ -1,7 +1,7 @@
 package atlantis.application;
 
 import atlantis.architecture.Commander;
-import atlantis.combat.CombatCommander;
+import atlantis.battle.BattleCommander;
 import atlantis.config.MapSpecificCommander;
 import atlantis.debug.DebugCommander;
 import atlantis.debug.painter.PainterCommander;
@@ -52,7 +52,7 @@ public final class FramePipeline {
             SpecialActionsCommander.class,
             ScoutCommander.class,
             WorkerCommander.class,
-            CombatCommander.class,
+            BattleCommander.class,
             ProductionCommander.class,
             BuildingsCommander.class,
             ConstructionsCommander.class,

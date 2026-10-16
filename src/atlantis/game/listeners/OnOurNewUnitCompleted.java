@@ -1,7 +1,6 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.squads.alpha.Alpha;
+import atlantis.battle.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.CameraCommander;
 import atlantis.production.constructions.Construction;
@@ -23,7 +22,8 @@ public class OnOurNewUnitCompleted {
         Select.clearCache();
         Queue.get().refresh();
 
-        boolean assigned = (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
+        // BATTLE CUTOVER: squad assignment is deleted - nothing assigns.
+        boolean assigned = false;
 
         if (assigned) {
 //            System.out.println("Unit " + unit + " assigned to squad");

@@ -1,7 +1,6 @@
 package atlantis.units.workers.defence.fight;
 
 import atlantis.architecture.Manager;
-import atlantis.combat.micro.attack.ProcessAttackUnit;
 import atlantis.game.A;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -69,7 +68,9 @@ public class WorkerDefenceHelpCannon extends Manager {
         AUnit enemy = enemiesNearCannon.canBeAttackedBy(unit, 99).nearestTo(unit);
         if (enemy == null) return null;
 
-        if ((new ProcessAttackUnit(unit)).processAttackOtherUnit(enemy)) {
+        // BATTLE CUTOVER: cannon-help attack goes direct (deleted attack
+        // managers) instead of through the process-attack chain.
+        if (unit.attackUnit(enemy)) {
             return usedManager(this);
         }
 

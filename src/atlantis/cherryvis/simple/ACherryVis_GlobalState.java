@@ -1,6 +1,6 @@
 package atlantis.cherryvis.simple;
 
-import atlantis.combat.missions.Mission;
+import atlantis.battle.Mission;
 import atlantis.game.A;
 
 import java.util.ArrayList;

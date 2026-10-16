@@ -1,6 +1,6 @@
 package atlantis.units;
 
-import atlantis.combat.squad.Squad;
+import atlantis.battle.Squad;
 import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.map.position.APosition;

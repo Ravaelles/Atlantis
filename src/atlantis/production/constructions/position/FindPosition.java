@@ -1,6 +1,6 @@
 package atlantis.production.constructions.position;
 
-import atlantis.combat.micro.zerg.ZergCreepColony;
+import atlantis.battle.zerg.ZergCreepColony;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -10,7 +10,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.base.FindPositionForBase;
 import atlantis.production.constructions.position.protoss.FindPositionForCannon;
 import atlantis.production.constructions.position.terran.SupplyDepotPositionFinder;
-import atlantis.combat.micro.terran.bunker.position.NewBunkerPositionFinder;
+import atlantis.battle.siting.NewBunkerPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

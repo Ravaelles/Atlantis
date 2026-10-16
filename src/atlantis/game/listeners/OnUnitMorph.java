@@ -1,7 +1,5 @@
 package atlantis.game.listeners;
 
-import atlantis.combat.squad.NewUnitsToSquadsAssigner;
-import atlantis.combat.squad.transfers.SquadTransfersCommander;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
@@ -50,10 +48,10 @@ public class OnUnitMorph {
 
             WarpedBuildingRecorder.record(unit);
 
-            // Add to combat squad if it's military unit
-            if (unit.isRealUnit()) {
-                SquadTransfersCommander.removeUnitFromSquads(unit);
-                (new NewUnitsToSquadsAssigner(unit)).possibleCombatUnitCreated();
+            // BATTLE CUTOVER: squad assignment is deleted - a morphed
+            // unit keeps no squad.
+            if (unit.isRealUnit() && unit.squad() != null) {
+                unit.squad().removeUnit(unit);
             }
         }
 
