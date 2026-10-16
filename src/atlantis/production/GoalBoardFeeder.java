@@ -45,6 +45,7 @@ public final class GoalBoardFeeder {
     public static String ensure(BoardState state) {
         List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
         Set<String> funded = fundedIds(state, ranked);
+        publishFunding(ranked, funded);
         StringBuilder fed = new StringBuilder();
         for (Goal goal : ranked) {
             if (!funded.contains(goal.id())) {
@@ -121,5 +122,46 @@ public final class GoalBoardFeeder {
                     + " min=" + state.minerals
                     + " sup=" + state.supplyUsed + "/" + state.supplyTotal);
         }
+    }
+
+    private static Set<String> lastActiveIds = new HashSet<String>();
+    private static Set<String> lastFundedIds = new HashSet<String>();
+    private static int lastFundedFrame = -1;
+
+    private static void publishFunding(List<Goal> ranked, Set<String> funded) {
+        lastActiveIds = new HashSet<String>();
+        for (Goal goal : ranked) lastActiveIds.add(goal.id());
+        lastFundedIds = funded;
+        lastFundedFrame = atlantis.game.A.now();
+    }
+
+    /**
+     * The execution door reads this (NEXT #93): a fresh builder claim for a
+     * board-owned type proceeds only when its goal is funded - or when the
+     * board does not want it at all (legacy owns inactive demand, like a
+     * third Gateway past the goal, and everything without a goal). Stale
+     * funding (older than the feeder cadence) fails open: refusing on last
+     * frame's bank would be worse than allowing.
+     *
+     * <p>Public as the wallet seam: the single construction door lives in
+     * another package and reads funding here.</p>
+     */
+    public static boolean adoptionAllowed(AUnitType type) {
+        String goal = goalFor(type);
+        if (goal == null) return true;
+        if (atlantis.game.A.now() - lastFundedFrame > 30) return true;
+        if (!lastActiveIds.contains(goal)) return true;
+        return lastFundedIds.contains(goal);
+    }
+
+    private static String goalFor(AUnitType type) {
+        if (type == null) return null;
+        if (type.equals(AUnitType.Protoss_Pylon)) return "supply-pylon";
+        if (type.equals(AUnitType.Protoss_Gateway)) return "gateway";
+        if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return "core";
+        if (type.equals(AUnitType.Protoss_Assimilator)) return "assimilator";
+        if (type.equals(AUnitType.Protoss_Zealot)) return "sustained-zealot";
+        if (type.equals(AUnitType.Protoss_Dragoon)) return "sustained-dragoon";
+        return null;
     }
 }

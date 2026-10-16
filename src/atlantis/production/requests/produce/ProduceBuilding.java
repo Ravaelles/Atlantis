@@ -7,6 +7,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
+import atlantis.production.GoalBoardFeeder;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
@@ -48,6 +49,13 @@ public class ProduceBuilding {
                 && (live.status() == ConstructionOrderStatus.NOT_STARTED
                     || live.status() == ConstructionOrderStatus.IN_PROGRESS)
                 && live.builder() != null && !live.builder().isDead()) return false;
+
+            // Wallet enforcement (NEXT #93): a fresh builder claim for a
+            // board-owned type needs funding - otherwise the worker is held
+            // for a building the bank cannot cover yet (the #53 shape:
+            // held workers do not mine). Active-but-unfunded waits a frame;
+            // inactive demand, goalless types and stale funding stay open.
+            if (!GoalBoardFeeder.adoptionAllowed(type)) return false;
 
             // Owner 2026-10-15: a waiting Core outranks Pylon spending
             // while contended (bounded, self-releasing - see

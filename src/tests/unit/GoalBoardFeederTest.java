@@ -2,9 +2,11 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.production.GoalBoardFeeder;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -202,6 +205,91 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             assertTrue(
                 !fed.contains("sustained-dragoon"),
                 "an acting pump always wins over the posture default");
+        });
+    }
+
+    /**
+     * Wallet enforcement at the single construction door (NEXT #93): a
+     * fresh builder claim for a board-owned type needs funding. Supply
+     * blocked at 24/25 with 120 bank: the Pylon rescue funds (top), the
+     * Gateway does not fit the remainder - so its adoption waits instead
+     * of holding a worker for a building the bank cannot cover yet.
+     * Inactive demand, goalless types and stale funding stay open.
+     */
+    @Test
+    public void unfundedActiveGatewayRefusesAdoption() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            currentMinerals = 120;
+            currentGas = 0;
+            currentSupplyUsed = 24;
+            currentSupplyTotal = 25;
+
+            BoardState state = BoardState.builder()
+                .minerals(120).gas(0).supply(24, 25)
+                .workers(30).bases(1).gateways(0).army(8)
+                .seconds(400)
+                .build();
+            GoalBoardFeeder.ensure(state);
+
+            ProductionOrder gateway = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+            assertFalse(
+                ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway),
+                "gateway wanted but unfunded - the builder keeps mining");
+            assertTrue(
+                ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway).isEmpty(),
+                "no claim, no construction");
+        });
+    }
+
+    @Test
+    public void fundedStaleAndGoallessAdoptionsProceed() {
+        world(60, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            fake(AUnitType.Protoss_Probe, 22, 21)
+        ), fakeEnemies(), () -> {
+            int now = atlantis.game.A.now();
+            currentMinerals = 120;
+            currentGas = 0;
+            currentSupplyUsed = 24;
+            currentSupplyTotal = 25;
+
+            if (now == 3) {
+                Queue.get().allOrders().list().clear();
+                Queue.get().clearCache();
+                ConstructionRequests.constructions.clear();
+                BoardState state = BoardState.builder()
+                    .minerals(120).gas(0).supply(24, 25)
+                    .workers(30).bases(1).gateways(0).army(8)
+                    .seconds(400)
+                    .build();
+                GoalBoardFeeder.ensure(state);
+            }
+
+            if (now == 40) {
+                // Funding published at frame 3 is stale past the 30-frame
+                // cadence: fail open, the claim proceeds.
+                ProductionOrder gateway = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
+                assertTrue(
+                    ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway),
+                    "stale funding fails open");
+
+                // Forge has no board goal: legacy owns it outright.
+                ConstructionRequests.constructions.clear();
+                ProductionOrder forge = new ProductionOrder(AUnitType.Protoss_Forge, 10);
+                assertTrue(
+                    ProduceBuilding.produceBuilding(AUnitType.Protoss_Forge, forge),
+                    "goalless types never touch the wallet");
+            }
         });
     }
 }
