@@ -3,6 +3,7 @@ package atlantis.production.constructions.builders;
 import atlantis.game.A;
 import atlantis.game.player.Enemy;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
@@ -11,6 +12,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
+import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
@@ -191,11 +193,18 @@ public class RefreshConstructionPosition {
             APosition prevPosition = construction.buildPosition();
             construction.cancel(buildingType + " position still not good after refresh");
 
-            ProductionOrder newOrder = AddToQueue.withHighPriority(buildingType, prevPosition);
+            // A completed building on the site kills the tile forever -
+            // re-requesting it spins (measured: 10x same-tile churn on a
+            // Pylon-covered Core site). Re-pick elsewhere instead;
+            // unfinished overlap keeps the tile (the warp settles it and
+            // B-41 adopts on position).
+            HasPosition nextPosition = completedBuildingOverlaps(prevPosition, buildingType)
+                ? null : prevPosition;
+            ProductionOrder newOrder = AddToQueue.withHighPriority(buildingType, nextPosition);
             System.err.println("This got re-requested: " + newOrder);
 
             if (newOrder == null) {
-                newOrder = AddToQueue.withTopPriority(buildingType, prevPosition);
+                newOrder = AddToQueue.withTopPriority(buildingType, nextPosition);
                 System.err.println("Re-re-requesting: " + newOrder);
             }
 
@@ -208,6 +217,34 @@ public class RefreshConstructionPosition {
         }
 
         return buildPosition;
+    }
+
+    /**
+     * Overlap twin of the status changer's exact-tiles finish: a completed
+     * building anywhere on the reserved footprint (not just the same
+     * origin) kills the tile, so the re-request must move on instead of
+     * re-pinning it. Unfinished overlap returns false - the warp settles
+     * it.
+     */
+    private static boolean completedBuildingOverlaps(APosition site, AUnitType type) {
+        if (site == null) return false;
+
+        int left = site.tx();
+        int top = site.ty();
+        int right = left + type.getTilesWidth();
+        int bottom = top + type.getTilesHeights();
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            if (!unit.isABuilding() || !unit.isCompleted()) continue;
+
+            int unitRight = unit.tx() + unit.type().getTilesWidth();
+            int unitBottom = unit.ty() + unit.type().getTilesHeights();
+            if (unit.tx() < right && left < unitRight && unit.ty() < bottom && top < unitBottom) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean shouldRefreshConstructionPosition(Construction construction) {

@@ -121,6 +121,17 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             assertFalse(
                 ConstructionRequests.constructions.contains(doomed),
                 "a standing building on the site is hopeless - the old path stands");
+
+            ProductionOrder reRequested = null;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null
+                    && order.unitType().equals(AUnitType.Protoss_Pylon)) {
+                    reRequested = order;
+                }
+            }
+            assertTrue(
+                reRequested != null && reRequested.aroundPosition() == null,
+                "the re-request re-picks elsewhere - same dead tile spun 10x");
         });
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");
