@@ -82,7 +82,8 @@ enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
 `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3,
-`SupplyNineWorkerMandateTest` 2/2, `PlacementFailureNamesDominantRuleTest` 2/2);
+`SupplyNineWorkerMandateTest` 2/2, `PlacementFailureNamesDominantRuleTest` 2/2,
+`NoPreparingWhileWarpingTest` 2/2, `WorkerCoreVetoBoardTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
