@@ -9,7 +9,7 @@ import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 
 /**
- * Ultimate fallback: there is always something to watch. When every other
+ * Second-to-last resort: there is almost always something to watch. When every other
  * scout manager declines and at most two scouts died so far, hover near the
  * known enemy main instead of standing idle - danger handling stays with the
  * avoid managers above, which act first every frame.

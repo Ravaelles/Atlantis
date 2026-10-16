@@ -14,6 +14,7 @@ import atlantis.map.scout.ScoutSeparateFromCloseWorkers;
 import atlantis.map.scout.ScoutTryFindingEnemy;
 import atlantis.map.scout.ScoutUnexploredBasesNearEnemy;
 import atlantis.map.scout.ScoutEnemyBasesWithoutBase;
+import atlantis.map.scout.ScoutFallbackEnemyBases;
 import atlantis.map.scout.ScoutUnitManager;
 import atlantis.map.scout.enemy.ScoutApproachEnemyBase;
 import atlantis.map.scout.enemy.ScoutNearEnemyBase;
@@ -72,6 +73,7 @@ public class ScoutUnitManagers implements ScoutUnitManager {
                 ScoutFreeBases::new,
 
                 ScoutApproachEnemyBase::new,
+                ScoutFallbackEnemyBases::new,
             };
         }
 
