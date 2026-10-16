@@ -19,8 +19,13 @@
 // === Build order for Atlantis =======================================
 
 @ - Name - Modifier
+5 - Probe
+6 - Probe
+7 - Probe
 8 - Pylon
+9 - Probe
 10 - Gateway
+11 - Probe
 12 - Gateway
 13 - Zealot
 15 - Pylon
