@@ -257,6 +257,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_153026` (141 s wall, 593 s game, rich: Nexus=2
+  Pylon=14 Gateway=6 Zealot=14, single Core): re-request fix proof -
+  WTF 1x in the whole game (vs 7-in-10s), the 22x `At 60 Gateway*`
+  rows are a working pipeline (3 warps 7:34/7:47/9:21, totalOfType
+  pinned at 2), no same-tile spin, 0 real exceptions.
 - Long `20261016_152205` (PvP tilt, 18 s wall, 336 game-s): short
   mirror, no #72 data. `SINGULARITY_CHECK` twin live from frame 61
   (all-false early, as designed). Scout idle x3, early residual.
