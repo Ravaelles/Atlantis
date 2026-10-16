@@ -244,10 +244,27 @@ public class AutoProduceWorkersCommander extends Commander {
             ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
         )) return true;
 
-        if (base != null && base.train(
-            AtlantisRaceConfig.WORKER,
-            ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
-        )) return true;
+        if (base != null) {
+            boolean started = base.train(
+                AtlantisRaceConfig.WORKER,
+                ForcedDirectProductionOrder.create(AtlantisRaceConfig.WORKER)
+            );
+            // Owner 2026-10-17: the queue hunt needs the direct path
+            // instrumented too - a silent train hides whether the base was
+            // free (immediate start) or busy (engine append), and what the
+            // engine answered. Once per worker at most, so always logged.
+            EventLog.key(LogKey.TRAIN_ATTEMPT)
+                .param("path", "direct")
+                .param("supplyUsed", A.supplyUsed())
+                .param("supplyTotal", A.supplyTotal())
+                .param("minerals", A.minerals())
+                .param("free", base.isFree())
+                .param("remaining", base.remainingTrainTime())
+                .param("queued", base.trainingQueue().size())
+                .param("result", started)
+                .log(A.now(), A.minSec());
+            if (started) return true;
+        }
 
 //        if (CountInQueue.count(AtlantisRaceConfig.WORKER) > 0) return false;
 
@@ -272,6 +289,7 @@ public class AutoProduceWorkersCommander extends Commander {
         // proves whether the engine queues while blocked.
         if (queued || A.everyNthGameFrame(30)) {
             EventLog.key(LogKey.TRAIN_ATTEMPT)
+                .param("path", "queue")
                 .param("supplyUsed", A.supplyUsed())
                 .param("supplyTotal", A.supplyTotal())
                 .param("remaining", base.remainingTrainTime())
