@@ -13,6 +13,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.range.OurDragoonRange;
 import atlantis.units.select.Count;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 import bwapi.UpgradeType;
@@ -133,11 +135,13 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     @Override
     protected boolean handle() {
         // NEXT #72: the decision fires in stub but no game ever researched -
-        // this throttled line says whether it fires live (downstream hunt)
-        // or not (stub/live divergence hunt). Zero behavior change.
-        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-            "SINGULARITY_APPLIES dragoons=" + dragoons
-                + " min=" + A.minerals() + " gas=" + A.gas());
+        // this row says whether it fires live (downstream hunt) or not
+        // (stub/live divergence hunt). Zero behavior change.
+        EventLog.key(LogKey.SINGULARITY_APPLIES)
+            .param("dragoons", dragoons)
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .log(A.now(), A.minSec());
         return super.handle();
     }
 

@@ -25,6 +25,14 @@ public enum LogKey {
     REQUEST_REFUSED_DUPLICATE,
     /** Power inputs at decision time for power-needing buildings. */
     POWER_AT_REQUEST,
+    /** Gas tile fix path (geyser found, snapped, or missing). */
+    GAS_FIX,
+    /** Singularity Charge decision inputs. */
+    SINGULARITY_APPLIES,
+    /** Dragoon pump decision inputs. */
+    DRAGOON_TRAIN,
+    /** A refresh attempt outcome (refreshed, or cancelled + re-requested). */
+    POSITION_REFRESH,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */

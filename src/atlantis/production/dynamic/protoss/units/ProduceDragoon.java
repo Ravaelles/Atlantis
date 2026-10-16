@@ -17,6 +17,8 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import atlantis.game.player.Enemy;
 import atlantis.units.select.Select;
 
@@ -161,9 +163,11 @@ public class ProduceDragoon {
         // NEXT #89: same silence as the Zealot pump (no reason param here,
         // so bank and counts - timing against the starvation window is what
         // designs the brake). Zero behavior change.
-        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-            "DRAGOON_TRAIN min=" + A.minerals() + " gas=" + A.gas()
-                + " dragoons=" + Count.dragoons());
+        EventLog.key(LogKey.DRAGOON_TRAIN)
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .param("dragoons", Count.dragoons())
+            .log(A.now(), A.minSec());
 
         boolean result = freeGateway.train(
             type(), ForcedDirectProductionOrder.create(type())

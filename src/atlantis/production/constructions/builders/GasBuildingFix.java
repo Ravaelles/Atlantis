@@ -9,6 +9,8 @@ import atlantis.units.HasUnit;
 import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class GasBuildingFix extends HasUnit {
     public GasBuildingFix(AUnit unit) {
@@ -29,17 +31,10 @@ public class GasBuildingFix extends HasUnit {
             return null;
         }
 
-        // TEMPORARY measurement (Assimilator "took too long (39s) / buildable:false" on
-        // OpenBW after the TooCloseToGeyser exemption landed): print the whole fix path -
-        // which geyser, which tile came in, what the fix loop returned. Remove after the
-        // cause is named.
-        if (building.isGasBuilding()) {
-            AUnit geyserNear = Select.geysers().inRadius(6, position).nearestTo(position);
-            System.err.println("GAS_FIX in=" + position
-                + " geysersIn6=" + Select.geysers().inRadius(6, position).count()
-                + " nearest=" + (geyserNear == null ? "none" : geyserNear.position() + " d="
-                    + A.digit(geyserNear.distTo(position))));
-        }
+        // The fix path is measured as one structured row, not console
+        // lines: which tile came in, geyser proximity, what came out.
+        // (The temporary GAS_FIX prints named the 3:44 Assimilator loop;
+        // the twin below carries the same numbers.)
 
         // Fix geyser position problem: snap to the geyser's OWN tile (see
         // GasBuildingPositionFinder - the engine only accepts exactly it).
@@ -72,7 +67,10 @@ public class GasBuildingFix extends HasUnit {
             AConsole.errPrintln("Gas building FIX got position too far from geyser");
             geyser = Select.geysers().inRadius(10, position).nearestTo(position);
 
-            if (geyser == null || geyser.tilePosition() == null) return null;
+            if (geyser == null || geyser.tilePosition() == null) {
+                logFix(position, building, "no-geyser");
+                return null;
+            }
 
             position = APosition.create(geyser.tilePosition());
         }
@@ -80,10 +78,9 @@ public class GasBuildingFix extends HasUnit {
         // =========================================================
 
         if (CanPhysicallyBuildHere.check(unit, building, position)) {
-            if (building.isGasBuilding()) System.err.println("GAS_FIX out(ok)=" + position);
+            logFix(position, building, "ok");
             return position;
         }
-        if (building.isGasBuilding()) System.err.println("GAS_FIX in-position NOT buildable, entering loop at " + position);
 
         // === Loop ================================================
 
@@ -96,6 +93,7 @@ public class GasBuildingFix extends HasUnit {
                     if (CanPhysicallyBuildHere.check(
                         unit, building, position.translateByTiles(dx, dy))
                     ) {
+                        logFix(position, building, "shifted");
                         return position.translateByTiles(dx, dy);
                     }
                 }
@@ -104,6 +102,19 @@ public class GasBuildingFix extends HasUnit {
             radius++;
         }
 
+        logFix(position, building, "unshifted");
         return position;
+    }
+
+    private void logFix(APosition position, AUnitType building, String result) {
+        if (!building.isGasBuilding()) return;
+        AUnit geyserNear = Select.geysers().inRadius(6, position).nearestTo(position);
+        EventLog.key(LogKey.GAS_FIX)
+            .param("pos", position.toString())
+            .param("geysersIn6", Select.geysers().inRadius(6, position).count())
+            .param("nearest", geyserNear == null ? "none" : geyserNear.position().toString())
+            .param("nearestDist", geyserNear == null ? "-" : A.digit(geyserNear.distTo(position)))
+            .param("result", result)
+            .log(A.now(), A.minSec());
     }
 }
