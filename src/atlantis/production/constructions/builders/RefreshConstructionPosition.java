@@ -189,7 +189,7 @@ public class RefreshConstructionPosition {
                 return buildPosition;
             }
 
-            System.err.println(A.minSec() + " WTF?!? Cancel and request again.");
+            System.err.println(A.minSec() + " [LVL=HIGH] WTF?!? Cancel and request again.");
             APosition prevPosition = construction.buildPosition();
             construction.cancel(buildingType + " position still not good after refresh");
 
@@ -201,11 +201,11 @@ public class RefreshConstructionPosition {
             HasPosition nextPosition = completedBuildingOverlaps(prevPosition, buildingType)
                 ? null : prevPosition;
             ProductionOrder newOrder = AddToQueue.withHighPriority(buildingType, nextPosition);
-            System.err.println("This got re-requested: " + newOrder);
+            System.err.println("[LVL=HIGH] This got re-requested: " + newOrder);
 
             if (newOrder == null) {
                 newOrder = AddToQueue.withTopPriority(buildingType, nextPosition);
-                System.err.println("Re-re-requesting: " + newOrder);
+                System.err.println("[LVL=HIGH] Re-re-requesting: " + newOrder);
             }
 
             // Same demand, same timing: a tail-derived minSupply parks the

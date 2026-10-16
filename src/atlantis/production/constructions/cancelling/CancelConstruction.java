@@ -19,7 +19,7 @@ public class CancelConstruction {
 
         if (!reason.contains("already being constructed")) {
             APosition at = construction.buildPosition();
-            ErrorLog.printMaxOncePerMinute("Cancel construction: " + type.name()
+            ErrorLog.printMaxOncePerMinute("[LVL=HIGH] Cancel construction: " + type.name()
                 + " / " + reason
                 + " / at:" + at
                 + (at != null ? " / buildable:" + at.isBuildableIncludeBuildings() : "")

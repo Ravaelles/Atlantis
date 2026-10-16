@@ -50,5 +50,29 @@ public enum LogKey {
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */
-    WORKER_GATE,
+    WORKER_GATE;
+
+    private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
+        LogKey.REQUEST_REFUSED_DUPLICATE,
+        LogKey.CONSTRUCTION_CANCEL
+    );
+
+    private static final java.util.Set<LogKey> CRITICAL = java.util.EnumSet.of(
+        LogKey.BUILD_BREAKDOWN,
+        LogKey.PLACEMENT_FAILED
+    );
+
+    /**
+     * Severity policy, centralized: most families are NORMAL chatter,
+     * HIGH is friction worth filtering (churn loops, refusals, cancels),
+     * CRITICAL is game-breaking (a wanted building got nothing, a builder
+     * stuck past the standstill threshold). New keys pick explicitly by
+     * editing the sets above - the compiler cannot, so
+     * {@code LogKeySeverityTest} pins the intended set.
+     */
+    public LogLevel level() {
+        if (CRITICAL.contains(this)) return LogLevel.CRITICAL;
+        if (HIGH.contains(this)) return LogLevel.HIGH;
+        return LogLevel.NORMAL;
+    }
 }

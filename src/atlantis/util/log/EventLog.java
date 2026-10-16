@@ -48,7 +48,6 @@ public class EventLog {
         private Builder(LogKey key) {
             this.key = key;
         }
-
         public Builder param(String name, String value) {
             params.put(name, value == null ? "-" : value);
             return this;
@@ -75,7 +74,7 @@ public class EventLog {
             lastFlushFrame = -1;
         }
         lastFrame = frame;
-        buffer.add(new Row(key, frame, time, new LinkedHashMap<>(params)));
+        buffer.add(new Row(key, frame, time, key.level(), new LinkedHashMap<>(params)));
         if (flushDue(frame, lastFlushFrame)) flush();
     }
 
@@ -100,6 +99,9 @@ public class EventLog {
             out.append("{\"frame\":").append(row.frame)
                 .append(",\"time\":\"").append(escape(row.time)).append("\"")
                 .append(",\"key\":\"").append(row.key.name()).append("\"");
+            if (row.level != LogLevel.NORMAL) {
+                out.append(",\"lvl\":\"").append(row.level.name()).append("\"");
+            }
             for (Map.Entry<String, Object> param : row.params.entrySet()) {
                 out.append(",\"").append(escape(param.getKey())).append("\":");
                 Object value = param.getValue();
@@ -125,12 +127,14 @@ public class EventLog {
         private final LogKey key;
         private final int frame;
         private final String time;
+        private final LogLevel level;
         private final LinkedHashMap<String, Object> params;
 
-        private Row(LogKey key, int frame, String time, LinkedHashMap<String, Object> params) {
+        private Row(LogKey key, int frame, String time, LogLevel level, LinkedHashMap<String, Object> params) {
             this.key = key;
             this.frame = frame;
             this.time = time;
+            this.level = level;
             this.params = params;
         }
     }

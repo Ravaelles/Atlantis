@@ -216,7 +216,7 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         // re-enter this method, so printing earlier fires once per pass with
         // identical counts and also fires when a later pass rescues the tile.
         if (reasons != null && !reasons.isEmpty() && !relaxedBoundaryMargin) {
-            System.err.println("PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
+            System.err.println("[LVL=CRITICAL] PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
                 + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
                 + " reasons=" + reasons);
         }

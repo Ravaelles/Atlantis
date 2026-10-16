@@ -93,6 +93,19 @@ if [ "${EXPECT_NO_PLACEMENT_FAILURES:-0}" = "1" ] \
   FAILED=1
 fi
 
+# Severity gate (opt-in): fail on any CRITICAL event row. The console twin
+# of the same families is throttled and human-shaped; this reads the
+# machine truth - a run that built everything but sat on a stuck builder
+# for a minute still fails here.
+if [ "${EXPECT_NO_CRITICAL:-0}" = "1" ]; then
+  EVENTS_FILE="$(dirname "$BOT_LOG")/EVENTS.jsonl"
+  if [ -f "$EVENTS_FILE" ] \
+    && grep -q '"lvl":"CRITICAL"' "$EVENTS_FILE" 2>/dev/null; then
+    REASONS+=("CRITICAL event row in $(basename "$EVENTS_FILE")")
+    FAILED=1
+  fi
+fi
+
 # === The result block =====================================================
 # One machine-readable line first (what a script or a CI job greps), then the roster
 # and the reason for a failure in words (what a human reads). The roster is printed on

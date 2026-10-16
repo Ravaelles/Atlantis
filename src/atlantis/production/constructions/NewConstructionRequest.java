@@ -7,6 +7,8 @@ import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
+import atlantis.production.constructions.position.PositionFulfillsAllConditions;
+import atlantis.production.constructions.position.protoss.ProtossPositionFinder;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.Queue;
@@ -51,6 +53,8 @@ public class NewConstructionRequest {
         if (!building.isABuilding()) {
             throw new RuntimeException("Requested construction of not building!!! Type: " + building);
         }
+
+        PositionFulfillsAllConditions.clearRefusalBreakdown();
 
 //        if (ConstructionRequests.constructions.size() >= 15) {
 //            ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Too many constructions, can't add more: " + building);
@@ -207,12 +211,47 @@ public class NewConstructionRequest {
         return "-";
     }
 
+    private static String dominantRefusal(AUnitType building) {
+        java.util.Map<String, Integer> breakdown = building.isPylon()
+            ? ProtossPositionFinder.lastRefusalBreakdown()
+            : PositionFulfillsAllConditions.lastRefusalBreakdown();
+        return dominantRefusal(breakdown,
+            AbstractPositionFinder._STATUS == null ? "-" : AbstractPositionFinder._STATUS);
+    }
+
+    /**
+     * The sweep ends wherever the rings end, so the final status names an
+     * edge tile while the bulk died elsewhere. Public as a seam: the
+     * choice itself pins without a game.
+     */
+    public static String dominantRefusal(java.util.Map<String, Integer> breakdown, String fallback) {
+        String best = null;
+        int bestCount = 0;
+        int total = 0;
+        for (java.util.Map.Entry<String, Integer> entry : breakdown.entrySet()) {
+            total += entry.getValue();
+            if (entry.getValue() > bestCount) {
+                bestCount = entry.getValue();
+                best = entry.getKey();
+            }
+        }
+        if (best == null) {
+            return fallback == null ? "-" : fallback;
+        }
+        return best + " x" + bestCount + " (of " + total + ")";
+    }
+
     private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
-        ErrorLog.printMaxOncePerMinute(A.minSec() + ": Can't find place for `" + building + "`, " + order);
+        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
+        // Dominant refusal, not the last one: the sweep ends wherever the
+        // rings end, so the final _STATUS names an edge tile, not the rule
+        // that killed the search (measured: 8x Gateway "Not powered" while
+        // the bulk was elsewhere).
+        String dominant = dominantRefusal(building);
         EventLog.key(LogKey.PLACEMENT_FAILED)
             .param("type", building.name())
             .param("order", order == null ? "-" : order.toString())
-            .param("reason", AbstractPositionFinder._STATUS == null ? "-" : AbstractPositionFinder._STATUS)
+            .param("reason", dominant == null ? "-" : dominant)
             .log(A.now(), A.minSec());
 //                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
         if (AbstractPositionFinder._STATUS != null) {

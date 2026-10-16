@@ -6,7 +6,7 @@ Keys are LogKey families; parameters carry the variance.
 
 Usage:
   scripts/query-events.py [--file PATH] [--key KEY ...] [--since F] [--until F]
-                          [--count] [--cols a,b,c]
+                          [--count] [--cols a,b,c] [--min-level HIGH|CRITICAL]
 
 Defaults to the newest E2E_LOGS/*/EVENTS.jsonl. --count prints rows per key.
 """
@@ -41,6 +41,8 @@ def main():
     arg.add_argument('--until', default=None, type=int)
     arg.add_argument('--cols', default=None)
     arg.add_argument('--count', action='store_true')
+    arg.add_argument('--min-level', default=None,
+                     help='only rows at or above this severity (rows without lvl count as NORMAL)')
     ns = arg.parse_args()
 
     path = newest(ns.file)
@@ -55,6 +57,11 @@ def main():
             except ValueError:
                 continue
 
+    if ns.min_level:
+        order = {'NORMAL': 0, 'HIGH': 1, 'CRITICAL': 2}
+        threshold = order.get(ns.min_level.upper(), 0)
+        rows = [r for r in rows
+                if order.get(str(r.get('lvl', 'NORMAL')).upper(), 0) >= threshold]
     if ns.key:
         wanted = set(ns.key)
         rows = [r for r in rows if r.get('key') in wanted]
