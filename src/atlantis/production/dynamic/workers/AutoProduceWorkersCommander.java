@@ -107,7 +107,7 @@ public class AutoProduceWorkersCommander extends Commander {
         // unless the bank covers worker + waiter. Only convertible (READY
         // or IN_PROGRESS) waiters count - a NOT_READY tech row must not
         // strangle the opening (owner 2026-10-14: continuous probe stream).
-        if (PriorityWaiters.blocksWorkerSpending(50, 0)) {
+        if (PriorityWaiters.blocksWorkerSpending(50, 0) && !earlyConstantWorkerFlow()) {
             return dont("HigherPriorityWaits");
         }
 
@@ -183,8 +183,23 @@ public class AutoProduceWorkersCommander extends Commander {
         return isAutoProduceWorkersActive(workers) || dont("Limit");
     }
 
-    private static boolean prioritizeRush() {
-        if (!Strategy.get().isRushOrCheese()) return false;
+    /**
+     * Owner 2026-10-16: automatic early worker flow. At SupplyTotal 10-20
+     * a shortfall of at most 24 minerals does not stop the pump, even with
+     * something else queued (measured: Gateway+Core waiters strangled
+     * workers to a 400 bank while the Gateway itself never started). The
+     * worker pays itself back; the 24 band only forgives the waiter gap,
+     * never affordability itself (that gate stands above).
+     */
+    private static boolean earlyConstantWorkerFlow() {
+        if (A.supplyTotal() < 10 || A.supplyTotal() > 20) return false;
+        int shortfall = 50
+            + PriorityWaiters.mineralsAboveReady(ProductionOrderPriority.STANDARD)
+            - A.minerals();
+        return shortfall <= 24;
+    }
+
+    private static boolean prioritizeRush() {        if (!Strategy.get().isRushOrCheese()) return false;
 
         return A.s <= 60 * 6 && !A.hasMinerals(92) && (
             (!We.terran() || Have.barracks())
