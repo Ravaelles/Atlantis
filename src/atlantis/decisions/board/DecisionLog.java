@@ -1,0 +1,80 @@
+package atlantis.decisions.board;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * One JSON row per ISSUED decision, flushed to
+ * {@code bwapi-data/write/DECISIONS.log}. Engine-free (the rows arrive as
+ * strings) and project-import-free (plain {@code java.io}), so this pins
+ * in milliseconds and can never rot a boundary rule.
+ *
+ * <p>Refusals are deliberately absent: a refused question is silent by
+ * contract, and the refusing gates already report through the
+ * WORKER_GATE / ORDER_NOT_READY twins. This file answers "what did the
+ * bot do and why", not "what did it consider".</p>
+ */
+public class DecisionLog {
+
+    public static final String OUTPUT_PATH = "bwapi-data/write/DECISIONS.log";
+
+    private static final List<String> rows = new ArrayList<>();
+    private static int lastFrame = -1;
+
+    private DecisionLog() {
+    }
+
+    public static void record(ADecision decision) {
+        if (decision == null) return;
+        if (decision.frame() < lastFrame) rows.clear();
+        lastFrame = decision.frame();
+        rows.add(toJson(decision));
+        flush();
+    }
+
+    public static void flush() {
+        if (rows.isEmpty()) return;
+        try {
+            FileWriter writer = new FileWriter(OUTPUT_PATH, true);
+            for (String row : rows) {
+                writer.write(row + "\n");
+            }
+            writer.close();
+        } catch (IOException ignored) {
+        }
+        rows.clear();
+    }
+
+    static String toJson(ADecision decision) {
+        StringBuilder out = new StringBuilder("{");
+        out.append("\"frame\":").append(decision.frame());
+        out.append(",\"kind\":\"").append(decision.kind().name()).append("\"");
+        out.append(",\"subject\":\"").append(quote(decision.subject())).append("\"");
+        out.append(",\"reason\":\"").append(quote(decision.reason())).append("\"");
+        out.append(",\"source\":\"").append(decision.source().name()).append("\"");
+        out.append(",\"supply\":[").append(decision.supplyUsed())
+            .append(",").append(decision.supplyTotal()).append("]");
+        out.append(",\"bank\":[").append(decision.minerals())
+            .append(",").append(decision.gas()).append("]");
+        out.append(",\"children\":[");
+        boolean first = true;
+        for (ADecision child : decision.children()) {
+            if (!first) out.append(",");
+            first = false;
+            out.append(toJson(child));
+        }
+        return out.append("]}").toString();
+    }
+
+    public static void clearForTests() {
+        rows.clear();
+        lastFrame = -1;
+    }
+
+    private static String quote(String value) {
+        if (value == null) return "";
+        return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+}
