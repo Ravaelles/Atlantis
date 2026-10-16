@@ -71,14 +71,15 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 612 passing, 1 skipped (+2
+Suite green 2026-10-16: 615 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
 enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
 `EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3,
 `UpgradeCompletionTrackerTest` 3/3, `LogKeySeverityTest` 3/3,
-`PumpDecisionMatrixTest` 7/7, `ScoutTerminalAnchorTest` 2/2; selected runs:
+`PumpDecisionMatrixTest` 7/7, `ScoutTerminalAnchorTest` 2/2,
+`WorkerQueueDecisionTest` 3/3; selected runs:
 `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3,
