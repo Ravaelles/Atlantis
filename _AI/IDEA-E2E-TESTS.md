@@ -1,9 +1,10 @@
 # E2E tests on a real engine
 
-Status: **the OpenBW loop works and is bounded; the bot does not yet produce.**
-Audited 2026-10-09: the runner attaches, self-terminates on both limits
-(CONVENTIONS §17) and can assert scenario facts; a real run places no Pylon, so
-nothing is produced and every survival scenario fails for that reason.
+Status: **the OpenBW loop works and is bounded; the bot produces
+(Pylons, Gateways, Core in rosters since 2026-10-13).** Audited 2026-10-09:
+the runner attaches, self-terminates on both limits (CONVENTIONS §17) and
+can assert scenario facts; the placement blockers that failed every
+survival scenario then are closed (see §3.5).
 
 The old stage numbering is gone; this file uses §-sections. Where another
 file says "Stage 1" (the scbw tier), "Stage 3" (the OpenBW runner) or "Stage 5"
