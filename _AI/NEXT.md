@@ -146,6 +146,9 @@ twins green (1/1 each, re-verified today). Re-run
   out - no DRAGOON/SINGULARITY/BOARD rows, 24k V2 lines): V2 runs the
   whole loop, but thin (10 warps/20 min vs legacy ~40/9) - the parity
   gap is live-measured, default stays off, deletions stay ordered.
+  Parity numbers (`131515` LIVE vs `151714` legacy): 2.4 vs 5.8
+  warps/min; V2 built no Core (hence no Dragoons), no Nexus, and two
+  Forges - tech coverage is the gap, exactly per the ordering.
 
 ## Stage H — god-class split
 
@@ -221,8 +224,9 @@ twins green (1/1 each, re-verified today). Re-run
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
-  gates (~2x above L2/L3 engine costs) untouched (D5-adjacent tuning).
-  Needs a gas-healthy game proving L2/L3.
+  gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
+  rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
+  side of D5. Untouched. Needs a gas-healthy game proving L2/L3.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). Needs a game showing it. No blind fix.
 - **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
@@ -259,6 +263,10 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_163357` (FIRST PvT, 15 s wall, defeat 5:13,
+  Probe=22 Zealot=3 Dragoon=1): Terran rushed us dead early - no
+  baseline exists for this matchup (rush twins are Zerg-scripted),
+  one game is not a defect per §3a, recorded as the datum to beat.
 - Long `20261016_153026` (141 s wall, 593 s game, rich: Nexus=2
   Pylon=14 Gateway=6 Zealot=14, single Core): re-request fix proof -
   WTF 1x in the whole game (vs 7-in-10s), the 22x `At 60 Gateway*`
