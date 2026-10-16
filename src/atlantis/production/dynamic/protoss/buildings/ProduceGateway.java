@@ -246,7 +246,14 @@ public class ProduceGateway {
         // the bank hoarding (game 162906: 1 Gateway, 300-440 bank, army
         // stalled), infrastructure must double before riches. D5 thresholds.
         if (freeGateways > 0 && !A.hasMinerals(300)) return false;
-        if (CountInQueue.countNotFinished(type()) >= (1 + A.minerals() / 330)) return false;
+        // Owner 2026-10-16: outstanding means queue AND dispatched sites AND
+        // warping buildings. Queue-only counting re-opened the cap once both
+        // BO rows dispatched (queue empty, two Gateways coming) and a rich
+        // bank ordered a third at supply 12. Pinned by
+        // ThirdGatewayBlockedWhileTwoOutstandingTest.
+        int outstanding = CountInQueue.countNotFinished(type())
+            + ConstructionRequests.countNotFinishedOfType(type());
+        if (outstanding >= (1 + A.minerals() / 330)) return false;
 
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
 
