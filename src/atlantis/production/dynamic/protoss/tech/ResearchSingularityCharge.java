@@ -62,14 +62,16 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         // NEXT #72: stub fires, live never does - this throttled vector
         // names the refusing gate (prime suspect: a stuck isUpgrading flag
         // from an upgrade that never completes on OpenBW). Pure reads only.
-//        atlantis.util.log.ErrorLog.printMaxOncePerMinute(
-//            "SINGULARITY_CHECK result=" + result
-//                + " staticRes=" + isResearched
-//                + " beingRes=" + isBeingResearched()
-//                + " engineRes=" + ATech.isResearched(what())
-//                + " critGas=" + ProtossCriticalStuffInQueue.hasEnoughGas()
-//                + " dragoons=" + dragoons
-//                + " min=" + A.minerals() + " gas=" + A.gas());
+        EventLog.key(LogKey.SINGULARITY_CHECK)
+            .param("result", result)
+            .param("staticRes", isResearched)
+            .param("beingRes", isBeingResearched(upgrade()))
+            .param("engineRes", ATech.isResearched(what()))
+            .param("critGas", ProtossCriticalStuffInQueue.hasEnoughGas())
+            .param("dragoons", dragoons)
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .log(A.now(), A.minSec());
         return result;
     }
 

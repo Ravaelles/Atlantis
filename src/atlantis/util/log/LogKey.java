@@ -29,6 +29,8 @@ public enum LogKey {
     GAS_FIX,
     /** Singularity Charge decision inputs. */
     SINGULARITY_APPLIES,
+    /** Singularity Charge decision vector (refusing gate included). */
+    SINGULARITY_CHECK,
     /** Dragoon pump decision inputs. */
     DRAGOON_TRAIN,
     /** A refresh attempt outcome (refreshed, or cancelled + re-requested). */
