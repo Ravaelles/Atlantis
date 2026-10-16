@@ -136,7 +136,11 @@ twins green (1/1 each, re-verified today). Re-run
   rows minSupply 0 (no BO expectation reaches the ledger - the deferred
   timeline scheduler). Two watches: Pylon #1 warped at sup5 twice now
   (pull-forward or waste - undecided, needs a side-by-side); Forge
-  divergence still tracked, not regressed.
+  divergence still tracked, not regressed. LIVE retry `20261016_131515`
+  (133 s wall, full 1209 game-s, 0 exceptions, legacy pumps provably
+  out - no DRAGOON/SINGULARITY/BOARD rows, 24k V2 lines): V2 runs the
+  whole loop, but thin (10 warps/20 min vs legacy ~40/9) - the parity
+  gap is live-measured, default stays off, deletions stay ordered.
 
 ## Stage H — god-class split
 
