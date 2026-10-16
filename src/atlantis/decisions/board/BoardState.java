@@ -18,6 +18,7 @@ public final class BoardState {
     public final int gatewaysTraining;
     public final int combatUnits;
     public final boolean hasCyberneticsCore;
+    public final boolean coreAwaitingSupply;
     public final boolean hasAssimilator;
     public final boolean hasForge;
     public final int cannonCount;
@@ -37,6 +38,7 @@ public final class BoardState {
         this.gatewaysTraining = builder.gatewaysTraining;
         this.combatUnits = builder.combatUnits;
         this.hasCyberneticsCore = builder.hasCyberneticsCore;
+        this.coreAwaitingSupply = builder.coreAwaitingSupply;
         this.hasAssimilator = builder.hasAssimilator;
         this.hasForge = builder.hasForge;
         this.cannonCount = builder.cannonCount;
@@ -69,6 +71,7 @@ public final class BoardState {
         private int gatewaysTraining;
         private int combatUnits;
         private boolean hasCyberneticsCore;
+        private boolean coreAwaitingSupply;
         private boolean hasAssimilator;
         private boolean hasForge;
         private int cannonCount;
@@ -120,6 +123,11 @@ public final class BoardState {
 
         public Builder core(boolean hasCyberneticsCore) {
             this.hasCyberneticsCore = hasCyberneticsCore;
+            return this;
+        }
+
+        public Builder coreAwaitingSupply(boolean coreAwaitingSupply) {
+            this.coreAwaitingSupply = coreAwaitingSupply;
             return this;
         }
 

@@ -2,7 +2,7 @@ package atlantis.production.dynamic.workers;
 
 import atlantis.architecture.Commander;
 import atlantis.config.AtlantisRaceConfig;
-import atlantis.decisions.Decision;
+import atlantis.decisions.board.BoardState;
 import atlantis.game.A;
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
@@ -80,7 +80,8 @@ public class AutoProduceWorkersCommander extends Commander {
 
         // Goal-board driver (NEXT #91): emergency preemption only. Engine
         // facts stay first, legacy strategy gates stay after.
-        if (GoalBoardDriver.pauseWorkers(GoalBoardAdvisor.snapshot())) {
+        BoardState board = GoalBoardAdvisor.snapshot();
+        if (GoalBoardDriver.pauseWorkers(board)) {
             return dont("BoardEmergency");
         }
 
@@ -112,8 +113,13 @@ public class AutoProduceWorkersCommander extends Commander {
 
         if (!A.hasMinerals(250) && !ProtossCriticalStuffInQueue.hasEnoughMinerals()) return dont("CriticalStuff");
 
-        Decision decision = EarlyGameProduceWorkers.decision();
-        if (decision.notIndifferent() && decision.isFalse()) return dont(decision.reason());
+        // Board absorption (NEXT #93 track): the worker Core-veto's posture
+        // inputs arrive on the board snapshot now. The trio is gone with
+        // EarlyGameProduceWorkers - TRUE and INDIFFERENT both proceeded, so
+        // only the FALSE branch survives, verbatim, reason string included.
+        if (We.protoss() && board.coreAwaitingSupply && A.minerals() <= 209) {
+            return dont("PrioritizeCore");
+        }
 
         if (
             A.supplyUsed() <= 40 && workers >= 25 && (

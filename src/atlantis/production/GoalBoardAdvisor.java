@@ -8,6 +8,10 @@ import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyInfo;
+import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnitType;
 import atlantis.units.BaseUnderAttack;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
@@ -83,6 +87,7 @@ public class GoalBoardAdvisor extends Commander {
             .gatewaysTraining(Math.max(0, Count.gateways() - Count.freeGateways()))
             .army(Count.ourCombatUnits())
             .core(Have.cyberneticsCore())
+            .coreAwaitingSupply(coreAwaitingSupply())
             .assimilator(Have.assimilator())
             .forge(Have.forge())
             .cannons(Count.cannons())
@@ -91,5 +96,18 @@ public class GoalBoardAdvisor extends Commander {
             .underAttack(BaseUnderAttack.check())
             .seconds(A.seconds())
             .build();
+    }
+
+    /**
+     * The worker Core-veto posture (NEXT #93 absorption track): a Core
+     * construction is requested but unstarted while its order is already
+     * supply-unlocked. Verbatim the old trio's only load-bearing branch.
+     */
+    private static boolean coreAwaitingSupply() {
+        if (ConstructionRequests.countNotStartedOfType(AUnitType.Protoss_Cybernetics_Core) == 0) {
+            return false;
+        }
+        ProductionOrder order = Queue.get().notFinished().ofType(AUnitType.Protoss_Cybernetics_Core).first();
+        return order != null && order.supplyRequirementFulfilled(0);
     }
 }
