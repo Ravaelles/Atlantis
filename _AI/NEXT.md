@@ -43,13 +43,19 @@ The index of which document answers which question is `_AI/README.md`.
    skipped goals wait a frame. Feeder feeds funded goals only. Turns the
    board from advisor into driver; unblocks everything below.
 2. **Per-gate legacy deletions**, one game of proof each (ratchet):
-   no candidate yet - feeder fired once ever (`143903`), legacy still
-   does ~everything, and board-invisible production (Forge, cannons)
-   is capability, not duplication. Deletions wait for routine feeder
+   no candidate yet - feeder coverage measured across retained runs:
+   sustained-army rows fire routinely (zealot x2, dragoon x4 runs),
+   supply/gateway/core/assimilator ZERO in retained logs (lone
+   supply-pylon `143903` rotated out). The pumps do ~everything, the
+   feeder fills silence - wrong direction for deletion; buildings are
+   all-legacy. Board-invisible production (Forge, cannons) is
+   capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
 3. **Decision absorption:** board takes over decision sites one by one
-   (51 files importing Decision, measured 2026-10-16, counting down, no
-   new ones per §21); the class dies at zero, not before. Two tracks:
+   (47 files with the exact singular import, measured 2026-10-16 -
+   earlier counts used a loose pattern that also matched the plural
+   helper; counting down, no new ones per §21); the class dies at zero,
+   not before. Two tracks:
    production sites route through board state (first slice: the worker
    Core-veto, `WorkerCoreVetoBoardTest` 2/2), combat-micro sites die with
    the manager-tree migration (stages E/H), never through the board
@@ -68,11 +74,11 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 589 passing, 1 skipped (+2
+Suite green 2026-10-16: 591 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
-`ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3; selected runs:
-`PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
+`ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
+enforcement rows; selected runs: `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
@@ -109,6 +115,14 @@ twins green (1/1 each, re-verified today). Re-run
   `20261016_125503_long`: first-ever sustained feed (`BOARD_FED
   sustained-dragoon`, bank 278) through the wallet with Dragoon warps
   after, 21-row rich mix, 0 exceptions (defeat at 5:40 is military).
+  Second slice: funding enforcement at the single construction door
+  (fresh claims for board-owned types need funding; inactive demand,
+  goalless types and stale funding stay open, fail-open). Live
+  `20261016_130614_long` (460 s, 35 warps, rich mix): `BOARD_FED
+  sustained-dragoon`, no adoption anomalies (2 placement misses + 1
+  Core stall = normal friction, same order as the control run). The
+  run's one NPE maps to the parallel session's dirty focus-point
+  line, absent from all other logs - not this change.
 
 ## Stage E — read model (remaining)
 
@@ -258,6 +272,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_130037` (141 s wall, 570 s game, rich: Probe=37
+  Dragoon=11 Nexus=2, cap-inconclusive): lottery blank - no Core cancel
+  (#88), no `ORDER_SAVING` (#71), `SINGULARITY_APPLIES` x3 firing at
+  2 Dragoons + gas 180-204 but bank never holding 150/150 (#72
+  unproven); twins flowing (`GAS_FIX` x5, `DRAGOON_TRAIN` x13).
 - Owner long `20261016_104914` (corner spawn [119,10], Nexus=2 Pylon=9
   Gateway=4 Dragoon=6, cap-inconclusive): 7x scout-idle (now terminal
   fallback to unexplored natural/third/fourth), 12x `PYLON_FIND_FAILED`
