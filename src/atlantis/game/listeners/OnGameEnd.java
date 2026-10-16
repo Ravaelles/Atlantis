@@ -30,6 +30,21 @@ public class OnGameEnd {
     }
 
     /**
+     * Shutdown-hook entry (SIGTERM, Escape-kill, wall timeout): the game is
+     * over but {@code onEnd} never arrived, so run the end cleanup with a
+     * defeat. The latch makes this a no-op after a clean end, and a missing
+     * game (supervisor JVM exiting) returns before touching anything.
+     */
+    public static void onShutdownHook() {
+        try {
+            if (_executed) return;
+            if (atlantis.Atlantis.game() == null) return;
+            execute(false);
+        } catch (Throwable ignored) {
+        }
+    }
+
+    /**
      * True once the end-of-game cleanup for the current game has run. Exposed so
      * the reset/symmetry contract can be asserted without entering the
      * {@code System.exit} exit path (NEXT #49).
@@ -64,15 +79,10 @@ public class OnGameEnd {
             return;
         }
 
-        if (!Env.isTesting()) GameSummary.print(won);
-        if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);
-        if (ACherryVis.isEnabled()) ACherryVis.finish();
-
-//        CodeProfiler.printSummary();
-
-        if (Env.isBenchmark()) BenchmarkMode.onGameEnd(won);
-
-        SaveGameResultsToFile.createAndSave(won);
+        // Diagnostics first: on a dying game (Escape-kill, dead host) the
+        // summary below may throw midway, and the ledger tail must land
+        // regardless. Both writes are delimited, stream order was never
+        // contractual across stdout/stderr.
         atlantis.util.log.EventLog.flush();
 
         // Owner 2026-10-16: the warp ledger belongs at the tail of the debug
@@ -82,6 +92,16 @@ public class OnGameEnd {
         System.err.println("");
         System.err.println("===== BUILDINGS.json (ledger at game end) =====");
         System.err.print(atlantis.game.util.BuildingLedger.toJson());
+
+        if (!Env.isTesting()) GameSummary.print(won);
+        if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);
+        if (ACherryVis.isEnabled()) ACherryVis.finish();
+
+//        CodeProfiler.printSummary();
+
+        if (Env.isBenchmark()) BenchmarkMode.onGameEnd(won);
+
+        SaveGameResultsToFile.createAndSave(won);
         if (!Env.isLocal()) AConsole.println("Game ended at: " + A.getCurrentTimeAsString());
 
         _executed = true;

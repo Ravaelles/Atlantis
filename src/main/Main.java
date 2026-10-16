@@ -5,6 +5,7 @@ import atlantis.config.ActiveMap;
 import atlantis.config.env.Env;
 import atlantis.config.launcher.GameLauncherFactory;
 import atlantis.game.util.GameSummary;
+import atlantis.game.listeners.OnGameEnd;
 
 import java.io.IOException;
 
@@ -49,10 +50,14 @@ public class Main {
         // Final message on the way down: wall-timeout SIGTERM (and any
         // owner kill that is not -9) skips OnGameEnd, so without this the
         // log ends mid-frame with no summary. SIGKILL cannot be caught.
+        // Owner 2026-10-16: an Escape kill must also run OnGameEnd (as a
+        // defeat) - the supervisor now TERMs the bot first, and this hook
+        // lands the cleanup; the latch keeps clean ends single.
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
                 GameSummary.printOnShutdown();
+                OnGameEnd.onShutdownHook();
             }
         }));
         atlantis.run(); // Start the bot

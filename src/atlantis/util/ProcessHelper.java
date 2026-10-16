@@ -258,6 +258,15 @@ public class ProcessHelper {
      * the Atlantis jar.
      */
     public static void killWineClientJvm() {
+        // Owner 2026-10-16: TERM first - the bot's shutdown hook runs
+        // OnGameEnd(false) on it, so an Escape kill lands the summary and
+        // the ledger tail instead of dying mid-frame. -9 cannot be caught,
+        // so it stays only as the fallback for a hung JVM.
+        executeInCommandLine("pkill -f 'java.exe.*Atlantis.jar'");
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException ignored) {
+        }
         executeInCommandLine("pkill -9 -f 'java.exe.*Atlantis.jar'");
     }
 

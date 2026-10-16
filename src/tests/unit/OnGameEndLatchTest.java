@@ -65,4 +65,15 @@ public class OnGameEndLatchTest {
         assertTrue(OnGameEnd.hasExecuted());
         assertTrue(OnGameEnd.hasExecuted(), "reading the latch must not change it");
     }
+
+    @Test
+    public void shutdownHookWithoutAGameIsASilentNoOp() {
+        // The hook is registered in every JVM (bot and supervisor alike): on
+        // a game-less JVM it must return before touching the latch or the
+        // exit path - never a stack trace on IDE close, never a stray latch.
+        OnGameEnd.onShutdownHook();
+
+        assertFalse(OnGameEnd.hasExecuted(),
+            "no game ran, so the hook must not mark the cleanup done");
+    }
 }
