@@ -273,6 +273,10 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Short `20261016_220831` (4 s wall, post-cutover boot proof): HELLO,
+  Pylon=1 Gateway=2 Probe=12, 0 exceptions - production, placement and
+  economy play with no combat/ linked. Scenario gate fails on army
+  (no behavior yet, expected per __PLAN-COMBAT step 5).
 - Long `20261016_195924` (43 s wall, defeat, Probe=25 Zealot=8 in 402
   game-s): WORKER-QUEUE PROOF - 16 TRAIN_ATTEMPT rows on busy bases
   (free=False, remaining 60→21), all result True; 9/9 blocks correctly
