@@ -257,6 +257,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_164340` (140 s wall, 563 s game, rich: Nexus=2
+  Probe=38 PhotonC=3, single Core): tech-fix proof - ONE Core warp
+  (3:11, original row #9, no re-request ever needed), WTF x0 in the
+  whole game, ORDER_SAVING x0, 0 exceptions. The disease the two
+  fixes address simply did not occur.
 - Long `20261016_163658` (140 s wall, 605 s game, rich: Nexus=2
   Probe=33 Stargate=1, single Core): CLOSED #72 - `SINGULARITY_CHECK`
   shows research in progress 5:22-6:55, engine-researched from 7:07
