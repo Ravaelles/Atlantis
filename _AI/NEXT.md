@@ -202,9 +202,6 @@ twins green (1/1 each, re-verified today). Re-run
   + 400 bank at log end). Worker stall, placement refusal, null
   builder and cancels all ruled out from flag-off logs. Needs a
   `BUILDER_LOG=1` Wine game (builder? site? no attempt?).
-- **#88** Core never re-requested after a cancel (152437): stub
-  contract holds (`CoreRequeueAfterCancelTest`), live path unmeasured.
-  Needs a `BUILDER_LOG=1` game catching a Core cancel. No blind patch.
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
