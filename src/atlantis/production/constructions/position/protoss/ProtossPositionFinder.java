@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
+import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -83,9 +84,11 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
     public static APosition findStandardPositionFor(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
         _STATUS = "None";
 
-        // TEMPORARY diagnostic (owner's report: the third Pylon is never built): count why
-        // each candidate tile was refused, print once when the whole search fails. Remove
-        // after the cause is named.
+        // Refusal attribution (corner-base doctrine work, NEXT #81): count why
+        // each candidate tile was refused. The counts stay behind in
+        // lastRefusalBreakdown() for every Pylon sweep; the console line
+        // below fires only on true total failure (all passes incl. the last
+        // resort found nothing), never when a later pass rescues the tile.
         java.util.Map<String, Integer> reasons = building.isPylon() ? new java.util.HashMap<>() : null;
         java.util.Map<String, Integer> finalStatus = reasons;
 
@@ -178,11 +181,6 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         else {
             lastRefusals = new java.util.HashMap<>();
         }
-        if (reasons != null && !reasons.isEmpty()) {
-            System.err.println("PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
-                + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
-                + " reasons=" + reasons);
-        }
 
         // Pylon-only fallback (measured on TauCross: a corner Nexus at [119,10] with a
         // 7-tile edge margin leaves ZERO candidates that also survive the street grid -
@@ -198,6 +196,64 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
             if (findWithRelaxedBoundaryMargin(builder, building, nearTo, maxDistance)) {
                 return lastFoundPosition();
             }
+
+            // Last resort (owner 2026-10-16: a search that finds NOTHING must not
+            // happen): the first tile in ring order the engine itself will take,
+            // doctrine ignored. Street grid, spacing and margins are aesthetics;
+            // a supply block is not. This is not a doctrine change - doctrine
+            // still decides whenever it finds anything; this only removes the
+            // total-failure outcome. Runs once, outermost frame only (same
+            // re-entry guard as the pass above; the scan below never recurses).
+            APosition emergency = firstEngineBuildableTile(builder, building, nearTo, maxDistance);
+            if (emergency != null) {
+                _STATUS = "Last resort (engine-buildable only)";
+                lastFound = emergency;
+                return emergency;
+            }
+        }
+
+        // Terminal failure only, outermost frame: the fallback passes above
+        // re-enter this method, so printing earlier fires once per pass with
+        // identical counts and also fires when a later pass rescues the tile.
+        if (reasons != null && !reasons.isEmpty() && !relaxedBoundaryMargin) {
+            System.err.println("PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
+                + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
+                + " reasons=" + reasons);
+        }
+
+        return null;
+    }
+
+    /**
+     * Ring-order scan answering only the engine-truth question
+     * ({@code CanPhysicallyBuildHere}): footprint free modulo the builder,
+     * tiles buildable. No grid, no spacing, no margins.
+     */
+    private static APosition firstEngineBuildableTile(
+        AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance
+    ) {
+        int xMapMax = AMap.getMapWidthInTiles() - 1;
+        int yMapMax = AMap.getMapHeightInTiles() - 1;
+
+        int searchRadius = 0;
+        while (searchRadius < maxDistance) {
+            int xMin = Math.max(0, nearTo.tx() - searchRadius);
+            int xMax = Math.min(xMapMax, nearTo.tx() + searchRadius);
+            int yMin = Math.max(0, nearTo.ty() - searchRadius);
+            int yMax = Math.min(yMapMax, nearTo.ty() + searchRadius);
+
+            for (int tileX = xMin; tileX <= xMax; tileX++) {
+                for (int tileY = yMin; tileY <= yMax; tileY++) {
+                    if (tileX == xMin || tileY == yMin || tileX == xMax || tileY == yMax) {
+                        APosition candidate = APosition.create(tileX, tileY);
+                        if (CanPhysicallyBuildHere.check(builder, building, candidate)) {
+                            return candidate;
+                        }
+                    }
+                }
+            }
+
+            searchRadius++;
         }
 
         return null;
