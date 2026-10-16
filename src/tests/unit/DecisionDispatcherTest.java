@@ -22,7 +22,7 @@ public class DecisionDispatcherTest {
     @AfterEach
     public void clean() {
         DecisionLog.clearForTests();
-        DecisionDispatcher.register(decision -> false);
+        atlantis.production.ProductionDecisionExecutor.register();
         executed = false;
     }
 
