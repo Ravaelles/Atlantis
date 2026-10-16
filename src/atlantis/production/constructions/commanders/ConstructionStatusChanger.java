@@ -110,12 +110,7 @@ public class ConstructionStatusChanger extends Commander {
         // believes is covered, and the per-frame re-request that follows is
         // the same-tile accept loop. Attempted or started work keeps the
         // proximity finish; builderless rows keep it too (no work pending).
-        boolean unworkedAdoption = construction.status() == ConstructionOrderStatus.NOT_STARTED
-            && construction.builder() != null && !construction.builder().isDead()
-            && construction.buildWasNeverAttempted();
-        if (construction.status() != ConstructionOrderStatus.FINISHED
-            && !unworkedAdoption
-            && buildingFinishedAtSite(construction)) {
+        if (shouldProximityFinish(construction)) {
             construction.setStatus(ConstructionOrderStatus.FINISHED);
             ConstructionRequests.removeOrder(construction);
         }
@@ -317,6 +312,34 @@ public class ConstructionStatusChanger extends Commander {
      * reserved origin, which is why it is not an exact tile comparison.
      * </p>
      */
+    /**
+     * Public as a seam: tests pin the finish-vs-churn contract here (a
+     * waiting PREPARING site next to a sibling building is owed demand,
+     * not a duplicate) rather than through a game.
+     */
+    public static boolean shouldProximityFinish(Construction construction) {
+        if (construction.status() == ConstructionOrderStatus.FINISHED) return false;
+        if (unworkedAdoption(construction)) return false;
+        return buildingFinishedAtSite(construction);
+    }
+
+    private static boolean unworkedAdoption(Construction construction) {
+        // A picked-but-unproducible site holds no worker (nothing to free -
+        // the deadlock this finish cures cannot occur) and its order is not
+        // producible yet (nothing is owed downstream). A same-type building
+        // nearby is then the normal street-grid shape - a sibling on the
+        // next slot - not proof this demand is covered (measured: Gateway
+        // PREPARING re-picked 6x in 8s next to its finished sibling). Only
+        // builderless sites are exempt: a builder held on one stays visible
+        // to the old path. An occupied site itself still fails loudly at
+        // adoption/issue time instead of spinning here.
+        if (construction.status() == ConstructionOrderStatus.PREPARING
+            && construction.builder() == null) return true;
+        return construction.status() == ConstructionOrderStatus.NOT_STARTED
+            && construction.builder() != null && !construction.builder().isDead()
+            && construction.buildWasNeverAttempted();
+    }
+
     private static boolean buildingFinishedAtSite(Construction construction) {
         if (construction.buildPosition() == null) return false;
 
