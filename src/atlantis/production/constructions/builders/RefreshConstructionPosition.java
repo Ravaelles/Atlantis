@@ -174,6 +174,19 @@ public class RefreshConstructionPosition {
         }
 
         if (shouldRefreshConstructionPosition(construction)) {
+            // Transient traffic is not a dead site (Wine: a miner walking
+            // over the Core site cancelled it 7x in 10s - #126 to #132 -
+            // minting a duplicate 200-mineral reservation per cancel until
+            // the bank froze at 600 with the building affordable). Only a
+            // standing building makes refresh hopeless: units move, so the
+            // builder issues when the tile is free. Null sites keep the old
+            // path (fresh placement heals); true stalls still die by overdue.
+            if (construction.buildPosition() != null
+                && !BuildingTilesAreOccupied.checkBuildingsOnly(
+                    construction.buildPosition(), buildingType)) {
+                return buildPosition;
+            }
+
             System.err.println(A.minSec() + " WTF?!? Cancel and request again.");
             APosition prevPosition = construction.buildPosition();
             construction.cancel(buildingType + " position still not good after refresh");
