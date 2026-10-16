@@ -50,7 +50,9 @@ public enum LogKey {
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */
-    WORKER_GATE;
+    WORKER_GATE,
+    /** A Nexus train/queue attempt (supply, remaining, engine answer). */
+    TRAIN_ATTEMPT;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,

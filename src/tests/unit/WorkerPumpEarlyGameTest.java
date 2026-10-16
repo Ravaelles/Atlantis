@@ -158,18 +158,20 @@ public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void probeBuildTimeMakesTheRequeueThresholdTheLastThreePercent() {
-        // queueWorker() re-queues the next worker at remainingTrainTime <= 15.
-        // That is the owner's asked "queue next while 15 frames remain" - 5%
-        // of the previous production time, engine queue depth, not banked
-        // money. Pin both numbers so a data change fails loudly instead of
-        // silently moving the threshold.
+    public void probeBuildTimeMakesTheRequeueThresholdTheLastFifth() {
+        // queueWorker() re-queues the next worker at remainingTrainTime <= 60.
+        // That is the owner's asked "queue next while 60 frames remain" - 20%
+        // of the production time, engine queue depth, not banked money.
+        // Raised 15 -> 60 on 2026-10-16: at 9/9 with a queued Pylon the
+        // first worker waited for the full train cycle; queueing early
+        // overlaps the worker with the supply wait. Pin both numbers so
+        // a data change fails loudly instead of silently moving it.
         assertEquals(
             300, AUnitType.Protoss_Probe.totalTrainTime(),
-            "the <=15-frame re-queue is ~5% of a 300-frame Probe");
+            "the <=60-frame re-queue is ~20% of a 300-frame Probe");
         assertEquals(
-            15, AutoProduceWorkersCommander.NEXT_WORKER_WHEN_TRAINING_REMAINS,
-            "re-queue while 15 frames remain (owner 2026-10-14)");
+            60, AutoProduceWorkersCommander.NEXT_WORKER_WHEN_TRAINING_REMAINS,
+            "re-queue while 60 frames remain (owner 2026-10-16)");
     }
 
     /**

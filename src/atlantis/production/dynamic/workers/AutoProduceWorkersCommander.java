@@ -39,7 +39,7 @@ public class AutoProduceWorkersCommander extends Commander {
      * 2026-10-14: 15 of ~300 Probe frames, so production never gaps).
      * Pinned by WorkerPumpEarlyGameTest.
      */
-    public static final int NEXT_WORKER_WHEN_TRAINING_REMAINS = 15;
+    public static final int NEXT_WORKER_WHEN_TRAINING_REMAINS = 60;
 
     /**
      * Selects the least worker-saturated base to build a worker.
@@ -263,17 +263,29 @@ public class AutoProduceWorkersCommander extends Commander {
 
 //        System.err.println("base.remainingTrainTime() = " + base.remainingTrainTime());
 
-        // Owner 2026-10-14: queue the next worker when the current one has
-        // 15 frames left (was 10), so the production never gaps. The engine
-        // holds at most a few queued units; 15 of 300 frames (~5%) is queue
+        // Owner 2026-10-16: queue the next worker when the current one has
+        // 60 frames left (was 15), so the production never gaps. The engine
+        // holds at most a few queued units; 60 of 300 frames (~20%) is queue
         // depth, not banked money.
         if (base.remainingTrainTime() <= NEXT_WORKER_WHEN_TRAINING_REMAINS) {
 //                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
 //            System.err.println("base.hasNothingInQueue() = " + base.hasNothingInQueue());
 //            System.err.println("base.trainForced(AtlantisRaceConfig.WORKER) = " + base.trainForced(AtlantisRaceConfig.WORKER));
-            if (base.hasNothingInQueue() && base.trainForced(AtlantisRaceConfig.WORKER)) {
-//                System.err.println("Queueing worker at " + A.supplyUsed() + ", min:" + A.minerals());
-                return true;
+            if (base.hasNothingInQueue()) {
+                boolean queued = base.trainForced(AtlantisRaceConfig.WORKER);
+                // Success always lands (a queued worker is the point);
+                // failures sample - a supply block would spam one row
+                // per frame otherwise, and one per 30 frames still
+                // proves whether the engine queues while blocked.
+                if (queued || A.everyNthGameFrame(30)) {
+                    EventLog.key(LogKey.TRAIN_ATTEMPT)
+                        .param("supplyUsed", A.supplyUsed())
+                        .param("supplyTotal", A.supplyTotal())
+                        .param("remaining", base.remainingTrainTime())
+                        .param("result", queued)
+                        .log(A.now(), A.minSec());
+                }
+                if (queued) return true;
             }
         }
 
