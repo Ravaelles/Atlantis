@@ -248,6 +248,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- LIVE `20261016_131407` (9 s wall, 247 game-s, roster Pylon=2
+  Gateway=1 Zealot=3 Forge=1, 0 exceptions): INCONCLUSIVE, not evidence
+  - the bot exited at 4:07 for no logged reason with no enemy spawned
+  (`enemy: ` empty). Retry in flight; if it repeats, the early-exit
+  path (not V2) is the hunt.
 - Long `20261016_131201` (61 s wall, defeat 7:17, Nexus=2 Pylon=8
   Gateway=3 Dragoon=2, 0 exceptions): CLOSED #88 (Core cancel 33 s at
   [16,44] -> requeue veto -> re-request [2,34] -> warp 3:02, roster
