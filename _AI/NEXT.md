@@ -56,11 +56,12 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 586 passing, 1 skipped (+2
+Suite green 2026-10-16: 588 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `PylonSearchBreakdownTest` 2/2 selected run, `GasRefreshKeepsDecidedSiteTest`
-1/1, `PreparingSiteSurvivesSiblingTest` 1/1);
+1/1, `PreparingSiteSurvivesSiblingTest` 1/1, `ScoutFallbackEnemyBasesTest`
+2/2, `PylonLastResortTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -177,7 +178,10 @@ twins green (1/1 each, re-verified today). Re-run
   negatives). Instruments: refusal-breakdown accessor +
   `PylonSearchBreakdownTest` (attribution plumbing) +
   `StreetGridDoctrineTest` (grid + both hatches + free-6 shut). The
-  doctrine change itself stays owner call.
+  doctrine change itself stays owner call. Total failure since removed by a
+  last-resort ladder (strict, relaxed margins, first engine-buildable tile
+  in ring order): doctrine untouched, `PYLON_FIND_FAILED` prints only when
+  all passes fail (`PylonLastResortTest` 2/2, RED then GREEN).
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
@@ -228,6 +232,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Owner long `20261016_104914` (corner spawn [119,10], Nexus=2 Pylon=9
+  Gateway=4 Dragoon=6, cap-inconclusive): 7x scout-idle (now terminal
+  fallback to unexplored natural/third/fourth), 12x `PYLON_FIND_FAILED`
+  + 3x `Can't find place` at supply 21-27 (now last-resort ladder;
+  later Pylons landed anyway once the natural opened ground).
 - Last recorded `--long` pass: 210002, 912 s, exit 0 (Nexus=6 Dragoon=7
   Forge=1, first ever; gas 270+; Singularity correctly idle at one
   Dragoon). Log not retained.
