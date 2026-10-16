@@ -101,7 +101,20 @@ public class GoalBoardAdvisor extends Commander {
             .hiddenUnits(EnemyInfo.goesOrHasHiddenUnits())
             .underAttack(BaseUnderAttack.check())
             .seconds(A.seconds())
+            .enemyRace(enemyRaceName())
             .build();
+    }
+
+    /**
+     * Enemy-race posture (NEXT #93 absorption track): the matchup branch of
+     * every producer reads this instead of asking {@code Enemy} mid-chain.
+     * First consumer: the Stargate Terran veto.
+     */
+    private static String enemyRaceName() {
+        if (atlantis.game.player.Enemy.terran()) return "Terran";
+        if (atlantis.game.player.Enemy.zerg()) return "Zerg";
+        if (atlantis.game.player.Enemy.protoss()) return "Protoss";
+        return "Unknown";
     }
 
     /**

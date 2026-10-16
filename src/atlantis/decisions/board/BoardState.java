@@ -26,6 +26,7 @@ public final class BoardState {
     public final boolean enemyHasHiddenUnits;
     public final boolean baseUnderAttack;
     public final int secondsElapsed;
+    public final String enemyRace;
 
     private BoardState(Builder builder) {
         this.minerals = builder.minerals;
@@ -46,6 +47,7 @@ public final class BoardState {
         this.enemyHasHiddenUnits = builder.enemyHasHiddenUnits;
         this.baseUnderAttack = builder.baseUnderAttack;
         this.secondsElapsed = builder.secondsElapsed;
+        this.enemyRace = builder.enemyRace;
     }
 
     public int supplyFree() {
@@ -79,6 +81,7 @@ public final class BoardState {
         private boolean enemyHasHiddenUnits;
         private boolean baseUnderAttack;
         private int secondsElapsed;
+        private String enemyRace = "Unknown";
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
@@ -163,6 +166,11 @@ public final class BoardState {
 
         public Builder seconds(int secondsElapsed) {
             this.secondsElapsed = secondsElapsed;
+            return this;
+        }
+
+        public Builder enemyRace(String enemyRace) {
+            this.enemyRace = enemyRace;
             return this;
         }
 

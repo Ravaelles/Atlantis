@@ -1,9 +1,11 @@
 package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.decisions.Decision;
+import atlantis.decisions.board.BoardState;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.Army;
+import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.protoss.corsair.TransitionToCorsairs;
@@ -19,9 +21,11 @@ public class ProduceStargate {
         if (Count.ofTypeWithUnfinished(Protoss_Stargate) > 0) return false;
         if (ConstructionRequests.isBeingBuilt(Protoss_Stargate)) return false;
 
+        BoardState board = GoalBoardAdvisor.snapshot();
+
         Decision decision = A.whenEnemyProtossTerranZerg(
             ProduceStargate::produceAgainstProtoss,
-            ProduceStargate::produceAgainstTerran,
+            () -> produceAgainstTerran(board),
             ProduceStargate::produceAgainstZerg
         );
 
@@ -34,8 +38,11 @@ public class ProduceStargate {
         AddToQueue.withStandardPriority(Protoss_Stargate);
     }
 
-    private static Decision produceAgainstTerran() {
-        if (!Enemy.terran()) return Decision.INDIFFERENT;
+    // NEXT #93 absorption track: the Terran branch reads the board's enemy
+    // race instead of asking Enemy mid-chain. Protoss/Zerg branches keep
+    // their Decision shape until their own slices land.
+    private static Decision produceAgainstTerran(BoardState board) {
+        if (!"Terran".equals(board.enemyRace)) return Decision.INDIFFERENT;
 
         return Decision.FORBIDDEN;
     }
