@@ -2,6 +2,7 @@ package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
+import atlantis.units.AUnitType;
 
 /** Opening fighting force. */
 public final class OpeningArmyGoal implements Goal {
@@ -21,5 +22,16 @@ public final class OpeningArmyGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.ARMY;
+    }
+
+    /** the opening force. */
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Zealot.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Zealot.gasPrice();
     }
 }

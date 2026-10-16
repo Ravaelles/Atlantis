@@ -137,8 +137,11 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
     @Test
     public void stalledGatewaysFeedOneZealotRow() {
+        // Bank 300 covers the higher-ranked wants first (workers 50,
+        // gateway 150): the wallet funds top-down, so the posture row
+        // needs the remainder to still cover a Zealot.
         BoardState state = BoardState.builder()
-            .minerals(200).gas(0).supply(14, 25)
+            .minerals(300).gas(0).supply(14, 25)
             .workers(12).bases(1).gateways(1).gatewaysTraining(0).army(8)
             .seconds(400)
             .build();

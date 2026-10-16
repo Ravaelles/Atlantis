@@ -3,21 +3,25 @@ package atlantis.production;
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
+import atlantis.decisions.board.GoalBoardWallet;
 import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
+import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Goal-board feeder (NEXT #91): board → queue direction. For active goals
- * nobody owns, ensure exactly one order/construction is in flight - then
- * stop. Queue rows don't spend (readiness, builders and the engine still
- * decide), so feeding is safe by construction; it only closes the
- * "wanted but never ordered" gap.
+ * Goal-board feeder (NEXT #91, wallet-gated since #93): board → queue
+ * direction. For FUNDED active goals nobody owns, ensure exactly one
+ * order/construction is in flight - then stop. Queue rows don't spend
+ * (readiness, builders and the engine still decide), so feeding is safe
+ * by construction; it only closes the "wanted but never ordered" gap.
  *
  * <p>Covered goals (buildings with no good single owner): supply-pylon,
  * gateway, core, assimilator. Army flow rows (Zealot/Dragoon) are covered
@@ -40,8 +44,12 @@ public final class GoalBoardFeeder {
      */
     public static String ensure(BoardState state) {
         List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
+        Set<String> funded = fundedIds(state, ranked);
         StringBuilder fed = new StringBuilder();
         for (Goal goal : ranked) {
+            if (!funded.contains(goal.id())) {
+                continue;
+            }
             AUnitType type = orderType(goal.id());
             if (type == null) {
                 continue;
@@ -58,6 +66,22 @@ public final class GoalBoardFeeder {
             }
         }
         return fed.toString();
+    }
+
+    /**
+     * The wallet pass: only funded goals get rows. The bank is the free
+     * bank (snapshot minerals minus live reservations); the top goal and
+     * emergencies always fund, the rest fit-or-wait. Rows stay spend-free,
+     * so an unfunded goal loses a queue row for a frame, never a building.
+     */
+    private static Set<String> fundedIds(BoardState state, List<Goal> ranked) {
+        int minerals = Math.max(0, state.minerals - ReservedResources.minerals());
+        int gas = Math.max(0, state.gas - ReservedResources.gas());
+        Set<String> funded = new HashSet<String>();
+        for (Goal goal : GoalBoardWallet.funded(state, ranked, minerals, gas)) {
+            funded.add(goal.id());
+        }
+        return funded;
     }
 
     private static boolean inFlight(AUnitType type) {

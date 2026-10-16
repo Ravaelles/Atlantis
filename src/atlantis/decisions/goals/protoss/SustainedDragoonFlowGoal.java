@@ -2,6 +2,7 @@ package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
+import atlantis.units.AUnitType;
 
 /**
  * Sustained Dragoon flow past the opening: Gateway capacity stands idle
@@ -32,5 +33,15 @@ public final class SustainedDragoonFlowGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.SUSTAINED_ARMY;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Dragoon.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Dragoon.gasPrice();
     }
 }

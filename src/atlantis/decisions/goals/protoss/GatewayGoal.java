@@ -2,6 +2,7 @@ package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
+import atlantis.units.AUnitType;
 
 /** Production capacity for the opening. */
 public final class GatewayGoal implements Goal {
@@ -21,5 +22,15 @@ public final class GatewayGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.GATEWAY;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Gateway.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Gateway.gasPrice();
     }
 }

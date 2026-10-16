@@ -2,6 +2,7 @@ package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
+import atlantis.units.AUnitType;
 
 /**
  * Sustained Zealot flow past the opening: Gateway capacity stands idle
@@ -36,5 +37,15 @@ public final class SustainedZealotFlowGoal implements Goal {
 
     static boolean dragoonPosture(BoardState state) {
         return state.hasCyberneticsCore && state.gas >= 50;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Zealot.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Zealot.gasPrice();
     }
 }

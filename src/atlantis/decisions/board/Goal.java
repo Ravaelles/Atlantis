@@ -23,6 +23,16 @@ public interface Goal {
     int rank();
 
     /**
+     * Price class of one unit of this goal's answer, read from engine data
+     * (never transcribed). The wallet commits it top-down from the virtual
+     * bank; goals the feeder never serves still declare it honestly.
+     */
+    int priceMinerals();
+
+    /** Gas half of {@link #priceMinerals()}. */
+    int priceGas();
+
+    /**
      * Emergency goals break the in-flight commitment - a cloaked wraith
      * does not wait for a calm plan. Which goals are emergencies is domain
      * knowledge (only DetectionGoal says true); the break mechanics is

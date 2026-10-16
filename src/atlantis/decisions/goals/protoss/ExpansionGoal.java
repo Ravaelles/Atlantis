@@ -2,6 +2,7 @@ package atlantis.decisions.goals.protoss;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
+import atlantis.units.AUnitType;
 
 /**
  * Second base once the economy can carry it and nothing presses.
@@ -26,5 +27,15 @@ public final class ExpansionGoal implements Goal {
     @Override
     public int rank() {
         return GoalRanks.EXPANSION;
+    }
+
+    @Override
+    public int priceMinerals() {
+        return AUnitType.Protoss_Nexus.mineralPrice();
+    }
+
+    @Override
+    public int priceGas() {
+        return AUnitType.Protoss_Nexus.gasPrice();
     }
 }
