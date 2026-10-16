@@ -30,7 +30,11 @@ public class RefreshConstructionPosition {
         return construction.buildPosition();
     }
 
-    protected static boolean finalRefreshBeforeIssuingOrderFailed(
+    /**
+     * Public as a seam: tests pin the refresh-vs-cancel contract here
+     * (a decided gas site must survive the pass) rather than through a game.
+     */
+    public static boolean finalRefreshBeforeIssuingOrderFailed(
         AUnit unit, Construction construction, AUnitType type, APosition buildPosition, AUnit builder
     ) {
         if (A.canAfford(type)) {
@@ -143,6 +147,16 @@ public class RefreshConstructionPosition {
     private static APosition handleRefreshingPositionIfNeeded(
         Construction construction, AUnitType buildingType, APosition buildPosition
     ) {
+        // A decided gas site is exact (its geyser's tile): refresh is a no-op
+        // for it by doNotRefreshPosition, so a cancel + same-tile re-request
+        // after it can never heal - with the geyser present it rebuilds the
+        // identical site (churn), with it consumed (warped) the re-request
+        // finds no geyser and dies on null (measured 3:44 Assimilator loop).
+        // Null sites keep the old path: fresh placement there can help.
+        if (doNotRefreshPosition(construction) && construction.buildPosition() != null) {
+            return buildPosition;
+        }
+
         if (shouldRefreshConstructionPosition(construction)) {
             AbstractPositionFinder.clearCache();
 
