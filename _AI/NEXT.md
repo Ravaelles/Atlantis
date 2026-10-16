@@ -71,11 +71,12 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 594 passing, 1 skipped (+2
+Suite green 2026-10-16: 597 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
-enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2; selected runs:
+enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
+`EarlyConstantWorkerFlowTest` 3/3; selected runs:
 `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3);
@@ -256,6 +257,11 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_145027` (44 s wall, 423 s game, Probe=26 Gateway=4
+  Dragoon=4): worker-flow proof - `WORKER_GATE` x0 in the whole game,
+  Gateway #2 warped 1:19 sup9 at bank 30 (no 390 shape), 0 real
+  exceptions. Probe warps leave no ledger rows (direct train orders),
+  so continuity reads from the roster slope + zero refusals.
 - Long `20261016_133939` (42 s wall, defeat 6:56, Nexus=2 Pylon=7
   Gateway=3 Dragoon=2): twin verification run - `CONSTRUCTION_PREPARING`
   x24, `CONSTRUCTION_CANCEL` x4, `PLACEMENT_FAILED` x1 (Gateway,
