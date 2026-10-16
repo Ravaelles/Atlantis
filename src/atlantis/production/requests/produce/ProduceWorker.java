@@ -21,14 +21,22 @@ public class ProduceWorker {
     }
 
     private static AUnit baseToProduceWorker() {
-        for (AUnit base : Select.ourBases().reverse().free().notLifted().list()) {
+        // Owner 2026-10-16: the old `.free()` filter excluded every training
+        // base, so a busy Nexus never received a train order and the queue
+        // path behind it was unreachable too. Prefer a free, empty base for
+        // an immediate train; else fall back to a base that can take a
+        // queued worker behind the running one (at most one waits).
+        AUnit queueable = null;
+        for (AUnit base : Select.ourBases().reverse().notLifted().list()) {
             if (!isSafeToProduceWorkerAt(base)) continue;
             if (isBaseMinedOut(base)) continue;
-
-            return base;
+            if (base.isFree() && base.trainingQueue().isEmpty()) return base;
+            if (queueable == null && AutoProduceWorkersCommander.canQueueWorkerAt(base)) {
+                queueable = base;
+            }
         }
 
-        return null;
+        return queueable;
     }
 
     protected static boolean isSafeToProduceWorkerAt(AUnit base) {

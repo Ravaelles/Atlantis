@@ -36,7 +36,7 @@ public class AutoProduceWorkersCommander extends Commander {
 
     /**
      * Queue the next worker while the current one still trains (owner
-     * 2026-10-14: 15 of ~300 Probe frames, so production never gaps).
+     * 2026-10-16: 60 of ~300 Probe frames, so production never gaps).
      * Pinned by WorkerPumpEarlyGameTest.
      */
     public static final int NEXT_WORKER_WHEN_TRAINING_REMAINS = 60;
@@ -257,39 +257,53 @@ public class AutoProduceWorkersCommander extends Commander {
     }
 
     private static boolean queueWorker() {
+        // Owner 2026-10-16: the old `isFree` gate made this dead code in
+        // live games - a Nexus training a worker is never idle, so the one
+        // case this exists for (append behind a running worker) never
+        // fired. Queueability reads the engine state instead: a worker
+        // in flight with little left and nobody queued behind it.
         AUnit base = Select.main();
-        if (base == null) return false;
-        if (!base.isFree()) return false;
+        if (!canQueueWorkerAt(base)) return false;
 
-//        System.err.println("base.remainingTrainTime() = " + base.remainingTrainTime());
-
-        // Owner 2026-10-16: queue the next worker when the current one has
-        // 60 frames left (was 15), so the production never gaps. The engine
-        // holds at most a few queued units; 60 of 300 frames (~20%) is queue
-        // depth, not banked money.
-        if (base.remainingTrainTime() <= NEXT_WORKER_WHEN_TRAINING_REMAINS) {
-//                ProductionOrder order = AddToQueue.maxAtATime(AtlantisRaceConfig.WORKER, 1);
-//            System.err.println("base.hasNothingInQueue() = " + base.hasNothingInQueue());
-//            System.err.println("base.trainForced(AtlantisRaceConfig.WORKER) = " + base.trainForced(AtlantisRaceConfig.WORKER));
-            if (base.hasNothingInQueue()) {
-                boolean queued = base.trainForced(AtlantisRaceConfig.WORKER);
-                // Success always lands (a queued worker is the point);
-                // failures sample - a supply block would spam one row
-                // per frame otherwise, and one per 30 frames still
-                // proves whether the engine queues while blocked.
-                if (queued || A.everyNthGameFrame(30)) {
-                    EventLog.key(LogKey.TRAIN_ATTEMPT)
-                        .param("supplyUsed", A.supplyUsed())
-                        .param("supplyTotal", A.supplyTotal())
-                        .param("remaining", base.remainingTrainTime())
-                        .param("result", queued)
-                        .log(A.now(), A.minSec());
-                }
-                if (queued) return true;
-            }
+        boolean queued = base.trainForced(AtlantisRaceConfig.WORKER);
+        // Success always lands (a queued worker is the point);
+        // failures sample - a supply block would spam one row
+        // per frame otherwise, and one per 30 frames still
+        // proves whether the engine queues while blocked.
+        if (queued || A.everyNthGameFrame(30)) {
+            EventLog.key(LogKey.TRAIN_ATTEMPT)
+                .param("supplyUsed", A.supplyUsed())
+                .param("supplyTotal", A.supplyTotal())
+                .param("remaining", base.remainingTrainTime())
+                .param("result", queued)
+                .log(A.now(), A.minSec());
         }
+        if (queued) return true;
 
         return false;
+    }
+
+    /**
+     * Owner 2026-10-16: a base accepts another worker when it is free and
+     * empty (immediate train) or when a worker is in flight with little
+     * left and nobody queued behind it (engine append). Anything else -
+     * a worker already queued, or a fresh train cycle - means hands off.
+     */
+    public static boolean canQueueWorkerAt(AUnit base) {
+        if (base == null || !base.isAlive() || !base.isCompleted()) return false;
+        if (base.isFree() && base.trainingQueue().isEmpty()) return true;
+        return shouldQueueAnotherWorker(
+            base.remainingTrainTime(),
+            base.trainingQueue().contains(AtlantisRaceConfig.WORKER));
+    }
+
+    /**
+     * Pure half of the queue decision (engine-free, pinned): at most one
+     * worker waits behind the running one, and only in the closing window.
+     */
+    public static boolean shouldQueueAnotherWorker(int remainingTrainFrames, boolean workerAlreadyQueued) {
+        if (workerAlreadyQueued) return false;
+        return remainingTrainFrames >= 0 && remainingTrainFrames <= NEXT_WORKER_WHEN_TRAINING_REMAINS;
     }
 
     private static boolean hasEnoughMineralsToConsiderProducingWorker() {
