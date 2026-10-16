@@ -78,7 +78,7 @@ Suite green 2026-10-16: 594 passing, 1 skipped (+2
 enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2; selected runs:
 `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
-`FirstPylonTravelsEarlyTest` 2/2);
+`FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
@@ -267,7 +267,12 @@ twins green (1/1 each, re-verified today). Re-run
   (builder held 369f, `canBuild000=false`), shielded by the
   unworked-adoption exemption; same order re-requested ~12x pre-warp
   (transient occupancy cancelling). Fixed: exact-tiles finish above
-  all exemptions (`StaleDuplicateFinishesOnItsTilesTest` 2/2). The
+  all exemptions (`StaleDuplicateFinishesOnItsTilesTest` 2/2). A second
+  loop in the same game was sharper: a miner crossing the Core site
+  cancelled it 7x in 10s (#126-#132, bank 230-308 vs 200 price),
+  each minting a duplicate reservation until the bank froze near 600.
+  Fixed: refresh cancels only on standing buildings
+  (`RefreshCancelNeedsBuildingTest` 3/3, RED then GREEN). The
   early Pylon wait (bank 90) was healthy just-in-time, not the disease.
   Diagnostics moved to keyed JSON twins, all on stderr; the one stdout
   polluter (`PREVENT ... Enforce Pylon first`) moved too.
