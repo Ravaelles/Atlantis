@@ -82,7 +82,7 @@ public class DanceAwayAsZealot extends Manager {
         if (!Enemy.zerg()) return false;
 
         if (unit.cooldown() >= 12) return true;
-        if (unit.cooldown() >= 4 && unit.hp() <= 40) return true;
+        if (unit.cooldown() >= 6 && unit.hp() <= 70) return true;
 
         if (unit.shields() >= 2 && unit.meleeEnemiesNearCount(1.5) <= 1) return false;
 

@@ -94,6 +94,7 @@ public class BuilderDiagnostics {
         if (unit == null || unit.u() == null) return;
         if (construction.buildPosition() == null) return;
         if (!unit.lastPositionChangedMoreThanAgo(60)) return;
+        if (!A.hasMinerals(construction.buildingType().mineralPrice())) return;
 
         APosition at = construction.buildPosition();
         TilePosition tile = new TilePosition(at.tx(), at.ty());

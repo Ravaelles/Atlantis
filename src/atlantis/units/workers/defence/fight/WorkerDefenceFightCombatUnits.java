@@ -39,7 +39,7 @@ public class WorkerDefenceFightCombatUnits extends Manager {
 
     @Override
     public boolean applies() {
-        if (unit.hp() <= 20) return false;
+        if (unit.hp() <= (Enemy.zerg() ? 15 : 20)) return false;
         if (!unit.enemiesNear().combatUnits().notEmpty()) return false;
         if (unit.distToMain() >= 8) return false;
         if (unit.lastStartedRunningLessThanAgo(30 * 5)) return false;

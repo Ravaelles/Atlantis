@@ -222,7 +222,7 @@ public class MissionAttackFocusPoint extends MissionFocusPoint {
         if (choke != null) {
 //            System.err.println("FocusChoke = " + choke + " / strength:" + Army.strength());
             return new AFocusPoint(
-                choke.translateTilesTowards(Select.mainOrAnyBuilding(), 4),
+                choke.translateTilesTowards(Select.mainOrAnyBuilding(), 8),
 //                choke,
                 main,
                 "MiddleFocusChoke"
