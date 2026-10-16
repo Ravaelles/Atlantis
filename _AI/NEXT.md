@@ -48,11 +48,12 @@ The index of which document answers which question is `_AI/README.md`.
    is capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
 3. **Decision absorption:** board takes over decision sites one by one
-   (53 files importing Decision, measured 2026-10-16, counting down, no
+   (51 files importing Decision, measured 2026-10-16, counting down, no
    new ones per §21); the class dies at zero, not before. Two tracks:
    production sites route through board state (first slice: the worker
-   Core-veto), combat-micro sites die with the manager-tree migration
-   (stages E/H), never through the board (no per-unit micro on it).
+   Core-veto, `WorkerCoreVetoBoardTest` 2/2), combat-micro sites die with
+   the manager-tree migration (stages E/H), never through the board
+   (no per-unit micro on it).
 4. **Pylon closure:** Wine re-run with the current jar (convertible
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
@@ -67,11 +68,11 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 586 passing, 1 skipped (+2
+Suite green 2026-10-16: 589 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
-`ScoutFallbackEnemyBasesTest` 2/2; selected runs: `PylonSearchBreakdownTest`
-2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
+`ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3; selected runs:
+`PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
@@ -104,7 +105,10 @@ twins green (1/1 each, re-verified today). Re-run
   Feeder feeds funded goals only - rows stay spend-free, readiness and
   builders still decide. First slice: funded subset + feeder gating,
   game-proven against starvation (the supply-block rescue must fund
-  first). Never a legacy arbitration gate (ratchet).
+  first). Never a legacy arbitration gate (ratchet). Live
+  `20261016_125503_long`: first-ever sustained feed (`BOARD_FED
+  sustained-dragoon`, bank 278) through the wallet with Dragoon warps
+  after, 21-row rich mix, 0 exceptions (defeat at 5:40 is military).
 
 ## Stage E — read model (remaining)
 
