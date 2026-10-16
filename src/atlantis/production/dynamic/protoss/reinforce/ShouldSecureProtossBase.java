@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
@@ -49,7 +50,8 @@ public class ShouldSecureProtossBase {
     }
 
     private int existingCannonsNearby() {
-        return Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, base);
+        return Count.existingOrPlannedBuildingsNear(Protoss_Photon_Cannon, 12, base)
+            + ConstructionRequests.countPreparingOfTypeInRadius(Protoss_Photon_Cannon, 12, base);
     }
 
     private static boolean notEnoughCannons(int cannonsNearby) {

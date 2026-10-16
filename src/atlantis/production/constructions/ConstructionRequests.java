@@ -139,6 +139,27 @@ public class ConstructionRequests {
             + countNotStartedOfType(type);
     }
 
+    /**
+     * Sites picked early (PREPARING, no builder yet) are planned coverage
+     * too: demand logic that ignores them re-fires every cycle while the
+     * site waits poor or supply-gated (measured shape: cannon rows
+     * re-added faster than builders arrive). Kept separate from the
+     * NOT_STARTED counters on purpose - adoption/replacement paths must
+     * still see waiting sites as unstarted work, not omit them.
+     */
+    public static int countPreparingOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
+        int total = 0;
+        for (Construction construction : constructions) {
+            if (construction.status() == ConstructionOrderStatus.PREPARING
+                && construction.buildingType().equals(type)
+                && construction.positionToBuildCenter() != null
+                && position.distTo(construction.positionToBuildCenter()) <= radius) {
+                total++;
+            }
+        }
+        return total;
+    }
+
     public static int countNotFinishedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         return Select.ourUnfinished().ofType(type).inRadius(radius, position).count()
             + countNotStartedOfTypeInRadius(type, radius, position);
