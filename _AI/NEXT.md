@@ -56,12 +56,12 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 588 passing, 1 skipped (+2
+Suite green 2026-10-16: 586 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
-`PylonSearchBreakdownTest` 2/2 selected run, `GasRefreshKeepsDecidedSiteTest`
-1/1, `PreparingSiteSurvivesSiblingTest` 1/1, `ScoutFallbackEnemyBasesTest`
-2/2, `PylonLastResortTest` 2/2);
+`ScoutFallbackEnemyBasesTest` 2/2; selected runs: `PylonSearchBreakdownTest`
+2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
+1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
