@@ -271,6 +271,16 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_195924` (43 s wall, defeat, Probe=25 Zealot=8 in 402
+  game-s): WORKER-QUEUE PROOF - 16 TRAIN_ATTEMPT rows on busy bases
+  (free=False, remaining 60→21), all result True; 9/9 blocks correctly
+  refuse. Caveat, labelled hypothesis: queue depth never read above 1
+  and the bank stood static across consecutive True trains, so the
+  append itself is unproven on OpenBW (possible engine-fidelity gap,
+  same class as regionCount/buildUnit - real-BWAPI semantics allow the
+  append, JBWAPI checks pass). Wine twin decides; twin volume sane
+  (36 rows vs 282 after 1/30 sampling).
+
 - Long `20261016_173718` (139 s wall, 558 s game, rich: Nexus=2
   Probe=30 Dragoon=11): mandate-rule proof - Pylon 0:54 sup9,
   Gateway #1 1:26 sup10 at bank 2 (at-supply, no stockpile),
