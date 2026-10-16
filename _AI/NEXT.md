@@ -71,12 +71,13 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-16: 597 passing, 1 skipped (+2
+Suite green 2026-10-16: 600 passing, 1 skipped (+2
 `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
 1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
 `ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
 enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
-`EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3;
+`EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3,
+`UpgradeCompletionTrackerTest` 3/3;
 selected runs: `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3);
@@ -257,6 +258,10 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_164913` (141 s wall, 579 s game, monster: Nexus=2
+  Probe=46 Stargate+Corsair, single Core): no ORDER_SAVING, scout
+  idle x7 (busy game), benign choke markers only. `UPGRADE_COMPLETED`
+  twin committed, verification running.
 - Long `20261016_164340` (140 s wall, 563 s game, rich: Nexus=2
   Probe=38 PhotonC=3, single Core): tech-fix proof - ONE Core warp
   (3:11, original row #9, no re-request ever needed), WTF x0 in the
