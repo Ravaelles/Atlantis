@@ -1,7 +1,13 @@
 package atlantis.production.requests.produce;
 
+import atlantis.decisions.board.ADecision;
+import atlantis.decisions.board.DecisionDispatcher;
+import atlantis.decisions.goals.protoss.BuildingQuestion;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
+import atlantis.production.GoalBoardAdvisor;
+import atlantis.production.constructions.Construction;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
@@ -19,6 +25,12 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
 public class ProduceBuilding {
+    // See ProduceWorker: the executor registers on first wrapper load,
+    // game root or test alike.
+    static {
+        atlantis.production.ProductionDecisionExecutor.register();
+    }
+
     public static Construction _lastConstruction = null;
 
     /**
@@ -36,7 +48,30 @@ public class ProduceBuilding {
         return false;
     }
 
+    /**
+     * Every building request walks through the single door: the question
+     * answers want, the call site names the act (BO line vs dynamic rule),
+     * the dispatcher logs and executes. Gates underneath are untouched -
+     * Phase A (__PLAN-DECISIONS).
+     */
     public static boolean produceBuilding(AUnitType type, ProductionOrder order) {
+        ADecision want = new BuildingQuestion().ask(GoalBoardAdvisor.snapshot());
+        if (want == null) return false;
+
+        return DecisionDispatcher.issue(want.refine(
+            type.name(),
+            order == null ? "build-want" : order.toString(),
+            order != null && !order.isDynamic()
+                ? ADecision.Source.BUILD_ORDER : ADecision.Source.DYNAMIC,
+            order));
+    }
+
+    /**
+     * The legacy building issuance (supply, adoption, wallet and priority
+     * gates included) - now reachable only through the domain executor,
+     * never directly. Phase A.
+     */
+    public static boolean requestBuilding(AUnitType type, ProductionOrder order) {
         assert type.isABuilding();
 
         if (type.isZerg()) {

@@ -77,6 +77,19 @@ public class ProductionOrderHandler extends Commander {
         else if (order.tech() != null) {
             TechType tech = order.tech();
             if (ATechRequests.researchTech(tech)) {
+                // Phase A (__PLAN-DECISIONS): research lands here, so the
+                // audit row lands here too.
+                atlantis.decisions.board.DecisionLog.record(
+                    atlantis.decisions.board.ADecision.decide(
+                        atlantis.decisions.board.ADecision.Kind.RESEARCH, tech.name(),
+                        order.toString(),
+                        order.isDynamic()
+                            ? atlantis.decisions.board.ADecision.Source.DYNAMIC
+                            : atlantis.decisions.board.ADecision.Source.BUILD_ORDER)
+                        .frame(atlantis.game.A.now())
+                        .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
+                        .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
+                        .build());
                 order.setStatus(OrderStatus.IN_PROGRESS);
                 order.consume();
 

@@ -103,6 +103,10 @@ public class OnGameStarted {
         // One time map analysis for every map
         AMap.initMapAnalysis();
 
+        // Single decision door: every issued production decision executes
+        // through the domain executor from here on (__PLAN-DECISIONS).
+        atlantis.production.ProductionDecisionExecutor.register();
+
         // Remember enemy race - could be broken for UMS maps
         EnemyRace.enemyRace();
 

@@ -91,6 +91,19 @@ public class RequestBuildingNear {
 
 //        System.err.println("RequestBuilding OK - " + type + " at " + exact);
 
+        // Phase A (__PLAN-DECISIONS): sited requests (cannons, forward
+        // pylons) bypass the queue door - they land here, so the audit row
+        // lands here too, with the picked tile in the reason.
+        atlantis.decisions.board.DecisionLog.record(
+            atlantis.decisions.board.ADecision.decide(
+                atlantis.decisions.board.ADecision.Kind.BUILD, type.name(),
+                "sited:[" + exact.tx() + "," + exact.ty() + "]",
+                atlantis.decisions.board.ADecision.Source.DYNAMIC)
+                .frame(atlantis.game.A.now())
+                .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
+                .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
+                .build());
+
         lastError = null;
         return order;
     }

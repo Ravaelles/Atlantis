@@ -45,6 +45,13 @@ public final class ADecision {
     private final int gas;
     private final List<ADecision> children;
 
+    /**
+     * Engine-side payload (a base, an order, ...). Never logged, never
+     * tested: it exists so the domain executor can act without
+     * re-resolving what the caller already holds. Null in tests.
+     */
+    private final Object payload;
+
     private ADecision(Builder builder) {
         this.kind = builder.kind;
         this.subject = builder.subject;
@@ -55,6 +62,7 @@ public final class ADecision {
         this.supplyTotal = builder.supplyTotal;
         this.minerals = builder.minerals;
         this.gas = builder.gas;
+        this.payload = builder.payload;
         this.children = Collections.unmodifiableList(new ArrayList<>(builder.children));
     }
 
@@ -98,11 +106,30 @@ public final class ADecision {
         return children;
     }
 
+    public Object payload() {
+        return payload;
+    }
+
     public ADecision withChild(ADecision child) {
         Builder builder = new Builder(kind, subject, reason, source)
             .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
+        builder.payload = payload;
         builder.children.addAll(children);
         builder.children.add(child);
+        return builder.build();
+    }
+
+    /**
+     * The wrapper's precision pass: a question answers generically
+     * ("a worker is wanted"), the call site names the concrete act
+     * (which type, which order, BO or dynamic) without touching the
+     * audited state snapshot. Returns a new decision either way.
+     */
+    public ADecision refine(String subject, String reason, Source source, Object payload) {
+        Builder builder = new Builder(kind, subject, reason, source)
+            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
+        builder.payload = payload;
+        builder.children.addAll(children);
         return builder.build();
     }
 
@@ -120,6 +147,7 @@ public final class ADecision {
         private int supplyTotal;
         private int minerals;
         private int gas;
+        private Object payload;
         private final List<ADecision> children = new ArrayList<>();
 
         public Builder(Kind kind, String subject, String reason, Source source) {
@@ -143,6 +171,11 @@ public final class ADecision {
         public Builder bank(int minerals, int gas) {
             this.minerals = minerals;
             this.gas = gas;
+            return this;
+        }
+
+        public Builder payload(Object payload) {
+            this.payload = payload;
             return this;
         }
 
