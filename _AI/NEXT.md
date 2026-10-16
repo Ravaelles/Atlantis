@@ -272,7 +272,11 @@ twins green (1/1 each, re-verified today). Re-run
   cancelled it 7x in 10s (#126-#132, bank 230-308 vs 200 price),
   each minting a duplicate reservation until the bank froze near 600.
   Fixed: refresh cancels only on standing buildings
-  (`RefreshCancelNeedsBuildingTest` 3/3, RED then GREEN). The
+  (`RefreshCancelNeedsBuildingTest` 3/3, RED then GREEN). Live
+  `20261016_135515_long` (590 s, rich: Nexus=2 Pylon=14 Gateway=6
+  Zealot=19): 2 legitimate cancels in the whole game (vs 7-in-10s),
+  no order requested 5+ times, `BUILD_BREAKDOWN` x0, `POSITION_REFRESH`
+  twins flowing. The
   early Pylon wait (bank 90) was healthy just-in-time, not the disease.
   Diagnostics moved to keyed JSON twins, all on stderr; the one stdout
   polluter (`PREVENT ... Enforce Pylon first`) moved too.
