@@ -36,8 +36,7 @@ public class ADecisionTest {
     }
 
     @Test
-    public void childrenComposeWithoutMutation() {
-        ADecision site = ADecision.decide(
+    public void childrenComposeWithoutMutation() {        ADecision site = ADecision.decide(
             ADecision.Kind.BUILD, "Pylon@[16,46]", "site-picked", ADecision.Source.BUILD_ORDER)
             .frame(100).supply(8, 9).bank(100, 0)
             .build();
@@ -52,5 +51,25 @@ public class ADecisionTest {
         assertEquals(0, building.children().size(), "the parent is immutable");
         assertEquals(1, composed.children().size());
         assertEquals("Pylon@[16,46]", composed.children().get(0).subject());
+    }
+
+    @Test
+    public void refineAndStampKeepAudit() {
+        ADecision generic = ADecision.decide(
+            ADecision.Kind.BUILD, "building", "build-want", ADecision.Source.DYNAMIC)
+            .frame(0).supply(12, 17).bank(200, 0)
+            .build();
+
+        ADecision precise = generic
+            .refine("Gateway", "At 12 Gateway (#3)", ADecision.Source.BUILD_ORDER, null)
+            .atFrame(2500);
+
+        assertEquals("Gateway", precise.subject());
+        assertEquals("At 12 Gateway (#3)", precise.reason());
+        assertEquals(ADecision.Source.BUILD_ORDER, precise.source());
+        assertEquals(2500, precise.frame());
+        assertEquals(12, precise.supplyUsed(), "snapshot survives refinement");
+        assertEquals(200, precise.minerals(), "bank survives refinement");
+        assertEquals(0, generic.frame(), "the generic is immutable");
     }
 }

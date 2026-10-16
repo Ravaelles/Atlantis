@@ -1,6 +1,7 @@
 package atlantis.production.orders.production.queue.order;
 
 import atlantis.architecture.Commander;
+import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;
 import atlantis.production.orders.production.queue.add.PreventDuplicateOrders;
 import atlantis.production.requests.produce.ProduceBuilding;
@@ -86,7 +87,7 @@ public class ProductionOrderHandler extends Commander {
                         order.isDynamic()
                             ? atlantis.decisions.board.ADecision.Source.DYNAMIC
                             : atlantis.decisions.board.ADecision.Source.BUILD_ORDER)
-                        .frame(atlantis.game.A.now())
+                        .frame(A.now())
                         .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
                         .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
                         .build());

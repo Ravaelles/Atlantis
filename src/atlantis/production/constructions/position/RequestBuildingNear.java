@@ -99,7 +99,7 @@ public class RequestBuildingNear {
                 atlantis.decisions.board.ADecision.Kind.BUILD, type.name(),
                 "sited:[" + exact.tx() + "," + exact.ty() + "]",
                 atlantis.decisions.board.ADecision.Source.DYNAMIC)
-                .frame(atlantis.game.A.now())
+                .frame(A.now())
                 .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
                 .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
                 .build());

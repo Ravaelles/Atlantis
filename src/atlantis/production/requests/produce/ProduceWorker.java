@@ -1,5 +1,6 @@
 package atlantis.production.requests.produce;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.decisions.board.ADecision;
@@ -51,7 +52,7 @@ public class ProduceWorker {
             order == null ? "pump-flow" : order.toString(),
             order != null && !order.isDynamic()
                 ? ADecision.Source.BUILD_ORDER : ADecision.Source.DYNAMIC,
-            base));
+            base).atFrame(A.now()));
     }
 
     private static AUnit baseToProduceWorker() {

@@ -45,7 +45,7 @@ public class ProduceUnit {
             order == null ? "army-flow" : order.toString(),
             order != null && !order.isDynamic()
                 ? ADecision.Source.BUILD_ORDER : ADecision.Source.DYNAMIC,
-            order));
+            order).atFrame(A.now()));
     }
 
     /**

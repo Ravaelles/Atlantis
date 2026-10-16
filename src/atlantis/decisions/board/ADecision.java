@@ -106,6 +106,18 @@ public final class ADecision {
         return children;
     }
 
+    /**
+     * Copy stamped with the issue frame. Questions answer against
+     * snapshots (frame unknown there); the door stamps the clock.
+     */
+    public ADecision atFrame(int frame) {
+        Builder builder = new Builder(kind, subject, reason, source)
+            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
+        builder.payload = payload;
+        builder.children.addAll(children);
+        return builder.build();
+    }
+
     public Object payload() {
         return payload;
     }

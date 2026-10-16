@@ -63,7 +63,7 @@ public class ProduceBuilding {
             order == null ? "build-want" : order.toString(),
             order != null && !order.isDynamic()
                 ? ADecision.Source.BUILD_ORDER : ADecision.Source.DYNAMIC,
-            order));
+            order).atFrame(A.now()));
     }
 
     /**

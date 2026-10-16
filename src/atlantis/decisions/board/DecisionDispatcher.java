@@ -31,7 +31,11 @@ public class DecisionDispatcher {
     /** Issue an already-made decision through the single door. */
     public static boolean issue(ADecision decision) {
         if (decision == null) return false;
-        DecisionLog.record(decision);
-        return executor.execute(decision);
+        // Logged only when the act lands: DECISIONS.log answers "what did
+        // the bot do and why", not "what did it consider" - refused attempts
+        // stay with the WORKER_GATE / ORDER_NOT_READY twins.
+        boolean done = executor.execute(decision);
+        if (done) DecisionLog.record(decision);
+        return done;
     }
 }
