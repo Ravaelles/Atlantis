@@ -1,0 +1,153 @@
+package atlantis.decisions.board;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * One issued production act: what, why, from where, on what state.
+ *
+ * <p>Immutable value, engine-free by construction (strings and ints only):
+ * a decision can be built from a stub state and pinned in milliseconds,
+ * which is the whole point - the engine never enters the test. Producers
+ * ({@link AQuestion}) emit these; exactly one dispatcher executes them
+ * and logs them to DECISIONS.log. HTN nesting arrives through
+ * {@link #children}: a decision decomposes into smaller decisions
+ * (site, builder, order) without changing type.</p>
+ */
+public final class ADecision {
+
+    /** What kind of act this is. Never a game type - the vocabulary stays fixed. */
+    public enum Kind {
+        TRAIN_WORKER,
+        TRAIN_ARMY,
+        BUILD,
+        RESEARCH,
+        EXPAND
+    }
+
+    /** Where the decision came from. */
+    public enum Source {
+        /** A memorized build-order line, executed verbatim. */
+        BUILD_ORDER,
+        /** A dynamic pump answering a live question. */
+        DYNAMIC
+    }
+
+    private final Kind kind;
+    private final String subject;
+    private final String reason;
+    private final Source source;
+    private final int frame;
+    private final int supplyUsed;
+    private final int supplyTotal;
+    private final int minerals;
+    private final int gas;
+    private final List<ADecision> children;
+
+    private ADecision(Builder builder) {
+        this.kind = builder.kind;
+        this.subject = builder.subject;
+        this.reason = builder.reason;
+        this.source = builder.source;
+        this.frame = builder.frame;
+        this.supplyUsed = builder.supplyUsed;
+        this.supplyTotal = builder.supplyTotal;
+        this.minerals = builder.minerals;
+        this.gas = builder.gas;
+        this.children = Collections.unmodifiableList(new ArrayList<>(builder.children));
+    }
+
+    public Kind kind() {
+        return kind;
+    }
+
+    public String subject() {
+        return subject;
+    }
+
+    public String reason() {
+        return reason;
+    }
+
+    public Source source() {
+        return source;
+    }
+
+    public int frame() {
+        return frame;
+    }
+
+    public int supplyUsed() {
+        return supplyUsed;
+    }
+
+    public int supplyTotal() {
+        return supplyTotal;
+    }
+
+    public int minerals() {
+        return minerals;
+    }
+
+    public int gas() {
+        return gas;
+    }
+
+    public List<ADecision> children() {
+        return children;
+    }
+
+    public ADecision withChild(ADecision child) {
+        Builder builder = new Builder(kind, subject, reason, source)
+            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
+        builder.children.addAll(children);
+        builder.children.add(child);
+        return builder.build();
+    }
+
+    public static Builder decide(Kind kind, String subject, String reason, Source source) {
+        return new Builder(kind, subject, reason, source);
+    }
+
+    public static final class Builder {
+        private final Kind kind;
+        private final String subject;
+        private final String reason;
+        private final Source source;
+        private int frame;
+        private int supplyUsed;
+        private int supplyTotal;
+        private int minerals;
+        private int gas;
+        private final List<ADecision> children = new ArrayList<>();
+
+        public Builder(Kind kind, String subject, String reason, Source source) {
+            this.kind = kind;
+            this.subject = subject;
+            this.reason = reason;
+            this.source = source;
+        }
+
+        public Builder frame(int frame) {
+            this.frame = frame;
+            return this;
+        }
+
+        public Builder supply(int used, int total) {
+            this.supplyUsed = used;
+            this.supplyTotal = total;
+            return this;
+        }
+
+        public Builder bank(int minerals, int gas) {
+            this.minerals = minerals;
+            this.gas = gas;
+            return this;
+        }
+
+        public ADecision build() {
+            return new ADecision(this);
+        }
+    }
+}

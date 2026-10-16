@@ -1,0 +1,56 @@
+package tests.unit;
+
+import atlantis.decisions.board.ADecision;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * __PLAN-DECISIONS step 0: decisions are engine-free values - what, why,
+ * from where, on what state, with HTN children. Pinned here so the shape
+ * cannot drift silently under the producers.
+ */
+public class ADecisionTest {
+
+    private ADecision worker() {
+        return ADecision.decide(
+            ADecision.Kind.TRAIN_WORKER, "Probe", "BO-line-2", ADecision.Source.BUILD_ORDER)
+            .frame(100).supply(9, 9).bank(60, 0)
+            .build();
+    }
+
+    @Test
+    public void carriesWhatWhyAndState() {
+        ADecision decision = worker();
+
+        assertEquals(ADecision.Kind.TRAIN_WORKER, decision.kind());
+        assertEquals("Probe", decision.subject());
+        assertEquals("BO-line-2", decision.reason());
+        assertEquals(ADecision.Source.BUILD_ORDER, decision.source());
+        assertEquals(100, decision.frame());
+        assertEquals(9, decision.supplyUsed());
+        assertEquals(9, decision.supplyTotal());
+        assertEquals(60, decision.minerals());
+        assertTrue(decision.children().isEmpty(), "a leaf has no children");
+    }
+
+    @Test
+    public void childrenComposeWithoutMutation() {
+        ADecision site = ADecision.decide(
+            ADecision.Kind.BUILD, "Pylon@[16,46]", "site-picked", ADecision.Source.BUILD_ORDER)
+            .frame(100).supply(8, 9).bank(100, 0)
+            .build();
+
+        ADecision building = ADecision.decide(
+            ADecision.Kind.BUILD, "Pylon", "BO-line-1", ADecision.Source.BUILD_ORDER)
+            .frame(100).supply(8, 9).bank(100, 0)
+            .build();
+
+        ADecision composed = building.withChild(site);
+
+        assertEquals(0, building.children().size(), "the parent is immutable");
+        assertEquals(1, composed.children().size());
+        assertEquals("Pylon@[16,46]", composed.children().get(0).subject());
+    }
+}
