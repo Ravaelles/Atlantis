@@ -101,10 +101,12 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
 
     @Test
     public void standingBuildingStillCancels() {
+        FakeUnit mason = fake(AUnitType.Protoss_Probe, SX, SY);
+
         world(30, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 7, 44),
             fake(AUnitType.Protoss_Pylon, SX, SY),
-            fake(AUnitType.Protoss_Probe, 80, 118)
+            mason
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 23 || fired) return;
             fired = true;
@@ -113,10 +115,16 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             APosition site = APosition.create(SX, SY);
             Construction doomed = new Construction(AUnitType.Protoss_Pylon);
             doomed.setPositionToBuild(site);
+            ProductionOrder replaced = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            doomed.setProductionOrder(replaced);
+            // A committed builder pins the site: refresh must not move it
+            // away from the standing Pylon (that would dodge the cancel
+            // this pins down).
+            doomed.setBuilder(mason);
             ConstructionRequests.addConstruction(doomed);
 
             RefreshConstructionPosition.finalRefreshBeforeIssuingOrderFailed(
-                null, doomed, AUnitType.Protoss_Pylon, site, null);
+                mason, doomed, AUnitType.Protoss_Pylon, site, mason);
 
             assertFalse(
                 ConstructionRequests.constructions.contains(doomed),
@@ -132,6 +140,10 @@ public class RefreshCancelNeedsBuildingTest extends WorldStubForTests {
             assertTrue(
                 reRequested != null && reRequested.aroundPosition() == null,
                 "the re-request re-picks elsewhere - same dead tile spun 10x");
+            assertTrue(
+                reRequested.minSupply() == 8,
+                "same demand, same timing - a tail-derived minSupply parks "
+                    + "replacements above supply until they mature as duplicates");
         });
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");

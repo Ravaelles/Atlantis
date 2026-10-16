@@ -208,6 +208,15 @@ public class RefreshConstructionPosition {
                 System.err.println("Re-re-requesting: " + newOrder);
             }
 
+            // Same demand, same timing: a tail-derived minSupply parks the
+            // replacement rows above the current supply (measured: "At 28"
+            // re-requests maturing into duplicate Cores), while the pump
+            // resets its own rows on the next pass anyway.
+            ProductionOrder replaced = construction.productionOrder();
+            if (newOrder != null && replaced != null) {
+                newOrder.setMinSupply(replaced.minSupply());
+            }
+
             EventLog.key(LogKey.POSITION_REFRESH)
                 .param("type", buildingType.name())
                 .param("result", "cancelled-re-requested")
