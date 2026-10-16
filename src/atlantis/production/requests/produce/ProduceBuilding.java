@@ -21,6 +21,21 @@ import atlantis.util.log.LogKey;
 public class ProduceBuilding {
     public static Construction _lastConstruction = null;
 
+    /**
+     * True when an unfinished building of this type is already warping for
+     * exactly this order - the order's site became a building, and no
+     * second site may follow it. Sibling rows link different order
+     * instances, so they never match here.
+     */
+    public static boolean orderHasWarpingBuilding(ProductionOrder order, AUnitType type) {
+        if (order == null) return false;
+        for (atlantis.units.AUnit unit : atlantis.units.select.Select.ourUnfinished()
+            .ofType(type).list()) {
+            if (order.equals(unit.productionOrder())) return true;
+        }
+        return false;
+    }
+
     public static boolean produceBuilding(AUnitType type, ProductionOrder order) {
         assert type.isABuilding();
 
@@ -50,6 +65,16 @@ public class ProduceBuilding {
                 && (live.status() == ConstructionOrderStatus.NOT_STARTED
                     || live.status() == ConstructionOrderStatus.IN_PROGRESS)
                 && live.builder() != null && !live.builder().isDead()) return false;
+
+            // Owner 2026-10-16: the order's building already warps - wait
+            // for completion, do not site a second one. Warp-finish
+            // releases the builder, so the guard above reads "builderless"
+            // and re-requests the same order onto a fresh site (measured:
+            // row #2 warped [16,48] at 1:20, re-requested [18,44] at
+            // 1:48+1:52, two builders churned on it to game end). The link
+            // is the order instance itself, so a sibling row of the same
+            // type still proceeds - only this order's own warp blocks it.
+            if (orderHasWarpingBuilding(order, type)) return false;
 
             // Wallet enforcement (NEXT #93): a fresh builder claim for a
             // board-owned type needs funding - otherwise the worker is held
