@@ -788,6 +788,12 @@ if [ -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" ]; then
 else
   say "event log missing: $BOT_ROOT/bwapi-data/write/EVENTS.jsonl was never written"
 fi
+if [ -f "$BOT_ROOT/bwapi-data/write/DECISIONS.log" ]; then
+  cp -f "$BOT_ROOT/bwapi-data/write/DECISIONS.log" "$RUN_DIR/DECISIONS.log" 2>/dev/null || true
+  say "decisions log collected: $RUN_DIR/DECISIONS.log"
+else
+  say "decisions log missing: $BOT_ROOT/bwapi-data/write/DECISIONS.log was never written"
+fi
 
 # A one-line header so the copy explains itself: a reader who finds
 # last-bot.log days later needs to know which run it was and when it played.

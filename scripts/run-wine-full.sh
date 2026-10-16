@@ -460,4 +460,10 @@ if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
 else
   say "event log missing: $CLIENT_CWD/bwapi-data/write/EVENTS.jsonl was never written"
 fi
+if [ -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" ]; then
+  cp -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" "$LOG_DIR/DECISIONS.log" 2>/dev/null || true
+  say "decisions log collected: $LOG_DIR/DECISIONS.log"
+else
+  say "decisions log missing: $CLIENT_CWD/bwapi-data/write/DECISIONS.log was never written"
+fi
 exit 0
