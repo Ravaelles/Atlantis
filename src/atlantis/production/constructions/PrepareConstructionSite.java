@@ -6,6 +6,7 @@ import atlantis.production.constructions.position.DefineExactPositionForNewConst
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
@@ -42,6 +43,12 @@ public class PrepareConstructionSite {
         // One site in flight per type - the second Gateway row prepares once
         // the first leaves the unfinished list.
         if (!ConstructionRequests.notFinishedOfType(type).isEmpty()) return;
+
+        // Owner 2026-10-16: no PREPARING while one already warps. A site
+        // picked minutes early for a building that is coming anyway only
+        // churns (re-picks, refresh fights); the row waits as a plain
+        // queued order and prepares once the warping one completes. MANDATORY.
+        if (Count.ourUnfinishedOfType(type) > 0) return;
 
         Construction prepared = new Construction(type);
         prepared.setProductionOrder(order);

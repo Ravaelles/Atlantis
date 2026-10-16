@@ -73,6 +73,7 @@ public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
     private void decide(int supplyUsed, int supplyTotal, int minerals, FakeUnit[] ours,
             List<ProductionOrder> rows) {
         lastReason = null;
+        AutoProduceWorkersCommander.REASON = "-";
         currentMinerals = minerals;
         currentGas = 100;
         currentSupplyUsed = supplyUsed;
