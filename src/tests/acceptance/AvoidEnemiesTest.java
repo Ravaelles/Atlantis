@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.micro.avoid.EnemyUnitsToAvoid;
+import atlantis.battle.avoid.EnemyUnitsToAvoid;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitsUpdater;

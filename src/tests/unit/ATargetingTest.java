@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.targeting.generic.ATargeting;
+import atlantis.battle.targeting.generic.ATargeting;
 import atlantis.debug.DebugFlags;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;

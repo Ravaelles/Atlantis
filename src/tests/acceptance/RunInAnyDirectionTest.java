@@ -1,7 +1,7 @@
 package tests.acceptance;
 
-import atlantis.combat.running.RunToPositionFinder;
-import atlantis.combat.running.any_direction.RunInAnyDirection;
+import atlantis.battle.running.RunToPositionFinder;
+import atlantis.battle.running.any_direction.RunInAnyDirection;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.units.AUnitType;

@@ -48,18 +48,20 @@ public class LauncherBuildsTheJarTest {
 
     @Test
     public void workerCompletionCallbackClassesArePresentInProductionSources() throws IOException {
-        // Atlantis.onUnitComplete invokes this chain asynchronously from the
-        // JBWAPI client thread. A missing target is therefore a runtime
-        // NoClassDefFoundError in a callback, not a compile failure.
+        // BATTLE CUTOVER: the onUnitComplete squad-assignment chain is
+        // deleted by design (units keep no squad until BattleCommander owns
+        // the cluster). This pins the deletion: the callback targets must
+        // be gone from production sources, and the completion listener must
+        // say so instead of assigning.
         Path assignUnit = Paths.get("src/atlantis/combat/squad/AssignUnitToSquad.java");
         Path assigner = Paths.get("src/atlantis/combat/squad/NewUnitsToSquadsAssigner.java");
 
-        assertTrue(Files.isRegularFile(assignUnit), "the unit-completion callback target must remain in production sources");
-        assertTrue(Files.isRegularFile(assigner), "the callback caller must remain in production sources");
+        assertTrue(Files.notExists(assignUnit), "squad assignment is deleted - no callback target may remain");
+        assertTrue(Files.notExists(assigner), "squad assignment is deleted - no callback caller may remain");
 
-        String source = read(assigner);
-        assertTrue(source.contains("AssignUnitToSquad"),
-                "the completion callback depends on AssignUnitToSquad; the jar must ship both classes");
+        String listener = read(Paths.get("src/atlantis/game/listeners/OnOurNewUnitCompleted.java"));
+        assertTrue(listener.contains("squad assignment is deleted"),
+                "the completion listener must name the cutover, not assign silently");
     }
 
     @Test

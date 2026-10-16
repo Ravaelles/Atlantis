@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.combat.targeting.generic.ATargeting;
+import atlantis.battle.targeting.generic.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;

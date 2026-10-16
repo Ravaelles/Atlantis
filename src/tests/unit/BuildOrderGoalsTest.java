@@ -241,7 +241,7 @@ public class BuildOrderGoalsTest {
         bunker.setModifier("@MAIN");
         legacy.add(bunker);
         legacy.add(new atlantis.production.orders.production.queue.order.ProductionOrder(
-                atlantis.combat.missions.Missions.ATTACK, 18));
+                atlantis.battle.Missions.ATTACK, 18));
 
         List<BuildOrderRow> rows = BuildOrderRow.fromLegacy(legacy);
 

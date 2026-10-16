@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.targeting.generic.ATargeting;
+import atlantis.battle.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;

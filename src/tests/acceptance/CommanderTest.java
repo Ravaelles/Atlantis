@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.CombatCommander;
+import atlantis.battle.BattleCommander;
 import atlantis.production.dynamic.DynamicUnitAndTechProducerCommander;
 import org.junit.jupiter.api.Test;
 import tests.unit.UnitTest;
@@ -13,8 +13,8 @@ public class CommanderTest extends WorldStubForTests {
         boolean status = false;
 
         try {
-            CombatCommander.class.getDeclaredConstructor();
-            CombatCommander.class.getDeclaredConstructor().newInstance();
+            BattleCommander.class.getDeclaredConstructor();
+            BattleCommander.class.getDeclaredConstructor().newInstance();
 
             DynamicUnitAndTechProducerCommander.class.getDeclaredConstructor();
             DynamicUnitAndTechProducerCommander.class.getDeclaredConstructor().newInstance();

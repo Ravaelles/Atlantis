@@ -1,6 +1,6 @@
 package tests.acceptance;
 
-import atlantis.combat.eval.AtlantisJfap;
+import atlantis.battle.eval.AtlantisJfap;
 import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
