@@ -4,6 +4,46 @@
 > Sources: `/sc-ai/Stardust/src/General/**`, `/sc-ai/Stardust/src/Units/**`;
 > Atlantis: `src/atlantis/combat/**`.
 
+## 0. Phase 0: cluster-first simplification (owner direction 2026-10-17)
+
+Status: **design recorded, not started.** Production and building (Track 1)
+take precedence until the opening is fixed - this phase starts the moment
+they are. Nothing below deletes code yet.
+
+When combat work starts, it starts with **deletion, not with an incremental
+port**: the per-unit manager chains (`combat/micro/**`, the 37-manager
+sequences, static squads, `Decision`) are removed first, and what replaces
+them is deliberately primitive:
+
+- **One combat cluster.** Army units stick together and move together.
+  No per-unit decisions, no ordering-as-semantics, no competing behaviors
+  for the same movement command in the same frame.
+- **One gate: the Combat Evaluator.** It answers a single question -
+  fight or retreat. Win → attack, lose → withdraw. The evaluator is the
+  only decision point; everything below it executes.
+- **Kiting as parameters, not as modules.** Dragoon dancing (and every
+  future micro shape) lives inside the Attack tactic as a small numeric
+  vector (`holdDistance`, `shieldBonus`, `cooldownOnly`, `reengage`,
+  `spread`, `focusWounded`). Conflicting behaviors are never two modules -
+  they are one parameter or one switch in one place, so nothing can fight
+  itself. The evaluator (when to engage) and the tactic (how to move
+  inside the engagement) are tuned separately and never interfere.
+
+Deliberately deferred (designed, not scheduled): the micro-scenario
+battery (mirror, kiting, swarm, retreat-timing scenarios with a frozen
+baseline table) and the parameter search loop (random search over the
+vector, joint tuning only, ablation discipline). Tuning without the
+battery is guessing, so the battery comes first when this phase starts.
+
+Relation to the rest of the document: §1–§8 below remain the long-term
+target (dynamic spatial clusters, simulation gating, formations,
+profile executors). Phase 0 is the floor under them - the simplest
+behavior that plays real games - and every later stage must preserve
+its property: one decision point per frame, parameters instead of
+competing modules. The deterministic-decision work (questions,
+decisions with reasons, the decisions log) serves production first;
+combat adopts it when Phase 0 starts.
+
 ## Current State Diagnosis (Atlantis)
 
 ### Topology
