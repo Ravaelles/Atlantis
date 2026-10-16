@@ -264,7 +264,10 @@ twins green (1/1 each, re-verified today). Re-run
   warps, shutdown summary worked): same-tile accepts max 6-in-2-s
   bursts converging to warps (was 41-121 sustained) - closes #57.
 - Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
-  8:28-8:51 game-time (`20261015_132452`).
+  8:28-8:51 game-time (`20261015_132452`). Candidate mechanism fixed:
+  fortification demand ignored PREPARING sites and re-fired rows faster
+  than builders arrived (now counted); rows predate the ledger so the
+  shape itself stays unconfirmed.
 - Shutdown-hook summary proven `20261015_181553`: a wall-killed short
   run now ends with `### Stopped (no game end reached) after 302
   seconds. ###` + roster instead of mid-frame silence.
