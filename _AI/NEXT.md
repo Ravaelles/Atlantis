@@ -36,10 +36,9 @@ The index of which document answers which question is `_AI/README.md`.
 ## Next steps (ordered - this section survives context compression)
 
 1. **Per-gate legacy deletions**, one game of proof each (ratchet):
-   no candidate yet - feeder coverage measured across retained runs:
-   sustained-army rows fire routinely (zealot x2, dragoon x4 runs),
-   supply/gateway/core/assimilator ZERO in retained logs (lone
-   supply-pylon `143903` rotated out). The pumps do ~everything, the
+   no candidate yet - feeder coverage re-measured 2026-10-16 across
+   retained runs: 29 sustained-dragoon + 2 sustained-zealot rows, ZERO
+   supply/gateway/core/assimilator. The pumps do ~everything, the
    feeder fills silence - wrong direction for deletion; buildings are
    all-legacy. Board-invisible production (Forge, cannons) is
    capability, not duplication. Deletions wait for routine feeder
@@ -50,7 +49,10 @@ The index of which document answers which question is `_AI/README.md`.
    helper; counting down, no new ones per §21); the class dies at zero,
    not before. Two tracks:
    production sites route through board state (first slice: the worker
-   Core-veto, `WorkerCoreVetoBoardTest` 2/2), combat-micro sites die with
+   Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
+   board names the enemy race, Stargate Terran veto reads it,
+   `StargateEnemyRaceBoardTest` 2/2 - import count stands at 47 until
+   the Protoss/Zerg branches land), combat-micro sites die with
    the manager-tree migration (stages E/H), never through the board
    (no per-unit micro on it).
 3. **Pylon closure:** Wine re-run with the current jar (convertible
@@ -79,7 +81,7 @@ enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
 `EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3,
 `UpgradeCompletionTrackerTest` 3/3, `LogKeySeverityTest` 3/3,
 `PumpDecisionMatrixTest` 7/7, `ScoutTerminalAnchorTest` 2/2,
-`WorkerQueueDecisionTest` 3/3; selected runs:
+`WorkerQueueDecisionTest` 3/3, `OnGameEndLatchTest` 4/4; selected runs:
 `PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
 1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
 `FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3,
@@ -87,7 +89,8 @@ enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
 `NoPreparingWhileWarpingTest` 2/2, `WorkerCoreVetoBoardTest` 2/2,
 `ReservationWaitsForMinSupplyTest` 2/2,
 `ThirdGatewayBlockedWhileTwoOutstandingTest` 1/1,
-`WarpedOrderIsNotResitedTest` 2/2);
+`WarpedOrderIsNotResitedTest` 2/2,
+`StargateEnemyRaceBoardTest` 2/2);
 architecture 10/11 (the one known structural failure); rush-defense
 twins green (1/1 each, re-verified today). Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
