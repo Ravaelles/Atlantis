@@ -12,6 +12,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,12 +78,22 @@ public final class GoalBoardFeeder {
      *
      * <p>Package-visible: the advisor reads the same funded set for the
      * BOARD line, so games show what the wallet did.</p>
+     *
+     * <p>Servable goals only (ones with a feeder row): wants without a row
+     * (workers, detection, army posture, expansion) are owned elsewhere,
+     * and funding them here would only block the servable ones below
+     * (measured: workers-50 always funded first, pushing the Gateway to
+     * a 200 bank). Rank and opinion still see every goal.</p>
      */
     static Set<String> fundedIds(BoardState state, List<Goal> ranked) {
         int minerals = Math.max(0, state.minerals - ReservedResources.minerals());
         int gas = Math.max(0, state.gas - ReservedResources.gas());
+        List<Goal> servable = new ArrayList<Goal>();
+        for (Goal goal : ranked) {
+            if (orderType(goal.id()) != null) servable.add(goal);
+        }
         Set<String> funded = new HashSet<String>();
-        for (Goal goal : GoalBoardWallet.funded(state, ranked, minerals, gas)) {
+        for (Goal goal : GoalBoardWallet.funded(state, servable, minerals, gas)) {
             funded.add(goal.id());
         }
         return funded;
