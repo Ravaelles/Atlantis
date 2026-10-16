@@ -257,6 +257,15 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_152205` (PvP tilt, 18 s wall, 336 game-s): short
+  mirror, no #72 data. `SINGULARITY_CHECK` twin live from frame 61
+  (all-false early, as designed). Scout idle x3, early residual.
+- Long `20261016_151714` (141 s wall, 628 s game, rich: Probe=37
+  Dragoon=13 Nexus=2, cap-inconclusive): lottery blank - no Core
+  cancel (#88 went to `131201` instead), no `ORDER_SAVING` (#71),
+  `SINGULARITY_APPLIES` x8 climbing to 348/372 then silence with no
+  completion marker anywhere (#72: completion unobservable, hence
+  the CHECK twin).
 - Long `20261016_145027` (44 s wall, 423 s game, Probe=26 Gateway=4
   Dragoon=4): worker-flow proof - `WORKER_GATE` x0 in the whole game,
   Gateway #2 warped 1:19 sup9 at bank 30 (no 390 shape), 0 real
