@@ -7,6 +7,7 @@ import atlantis.units.AUnitType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import tests.unit.AbstractTestWithUnits;
 
 /**
  * NEXT #89: reservations attach when an order turns READY but never release
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * reserved=300 stuck while Gateway-2 (150) waited with an effective bank
  * under 150 and zero overdue-cancels. A not-ready order holds no money.
  */
-public class ReservationsReleaseWhenNotReadyTest {
+public class ReservationsReleaseWhenNotReadyTest extends AbstractTestWithUnits {
 
     @Test
     public void notReadyReleasesReservation() {

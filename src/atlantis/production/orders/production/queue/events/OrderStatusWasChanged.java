@@ -15,7 +15,16 @@ public class OrderStatusWasChanged {
 ////            AConsole.printStackTrace(A.now() + " Protoss_Pylon CHANGED STATUS TO: " + status + " / " + order);
 //        }
 
-        if (status.isReady()) order.makeSureResourcesAreReserved();
+        if (status.isReady()) {
+            // Owner 2026-10-16: earmark only at/after the row's supply -
+            // a Gateway row reserving 150 at supply 9 starved the worker
+            // pump to a 200 bank while the Gateway itself waited. Below
+            // minSupply the row waits unreserved; spending checks add back
+            // own reservations, so issuance at minSupply works unchanged.
+            if (atlantis.game.A.supplyUsed() >= order.minSupply()) {
+                order.makeSureResourcesAreReserved();
+            }
+        }
         else if (status.isInProgress() && order.isUnit()) order.makeSureResourcesAreReserved();
         else if (status.isFinished() && order.isUnit() && Queue.get() != null) {
             order.releasedReservedResources();
