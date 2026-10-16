@@ -262,6 +262,10 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261016_173718` (139 s wall, 558 s game, rich: Nexus=2
+  Probe=30 Dragoon=11): mandate-rule proof - Pylon 0:54 sup9,
+  Gateway #1 1:26 sup10 at bank 2 (at-supply, no stockpile),
+  `WORKER_GATE` x0 all game, benign choke markers only.
 - Long `20261016_172341` (6 s wall, defeat 3:05, Gateway=2 Zealot=1):
   LVL verification - zero HIGH/CRITICAL rows (nothing severe; the
   opening played clean and lost a fight), `--min-level` filters
