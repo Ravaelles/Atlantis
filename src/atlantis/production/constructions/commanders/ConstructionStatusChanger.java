@@ -319,6 +319,13 @@ public class ConstructionStatusChanger extends Commander {
      */
     public static boolean shouldProximityFinish(Construction construction) {
         if (construction.status() == ConstructionOrderStatus.FINISHED) return false;
+        // Dead site, not a waiting one: the same finished building on the
+        // exact same tiles means this demand is already standing (measured
+        // Wine: own warped Core on its tiles, canBuild000=false, builder
+        // held 369f, bank 600). This fires above the exemptions below on
+        // purpose - they exist for sites that may still build, and this
+        // one cannot be built twice.
+        if (finishedBuildingOnSameTiles(construction)) return true;
         if (unworkedAdoption(construction)) return false;
         return buildingFinishedAtSite(construction);
     }
@@ -338,6 +345,33 @@ public class ConstructionStatusChanger extends Commander {
         return construction.status() == ConstructionOrderStatus.NOT_STARTED
             && construction.builder() != null && !construction.builder().isDead()
             && construction.buildWasNeverAttempted();
+    }
+
+    /**
+     * The stale-duplicate killer (Wine: a Core construction survived its
+     * own warped building standing on its exact tiles - builder held
+     * 369f, canBuild000=false, bank 600): the same finished building type
+     * on the exact same tiles means this demand is already standing in
+     * the game, so the construction finishes regardless of the
+     * exemptions below, which exist for sites that may still build.
+     *
+     * <p>Exact tiles, not nearness and not mere overlap: same type means
+     * same footprint, so origin equality is tile equality. A sibling
+     * grazing the footprint stays exempt (its demand is live), and an
+     * unfinished (warping) overlap waits conservatively - a dropped warp
+     * must not silently eat demand.</p>
+     */
+    private static boolean finishedBuildingOnSameTiles(Construction construction) {
+        APosition site = construction.buildPosition();
+        if (site == null) return false;
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            if (!unit.isABuilding() || !unit.isCompleted()) continue;
+            if (!construction.buildingType().equals(unit.type())) continue;
+            if (unit.tx() == site.tx() && unit.ty() == site.ty()) return true;
+        }
+        return false;
     }
 
     private static boolean buildingFinishedAtSite(Construction construction) {
