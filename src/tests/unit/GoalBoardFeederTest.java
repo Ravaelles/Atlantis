@@ -292,4 +292,35 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
             }
         });
     }
+
+    /**
+     * Commitment wiring: board-owned demand with a live queue row or
+     * construction counts as in flight, so `GoalBoard.top` keeps started
+     * work instead of flapping. Empty world: nothing is.
+     */
+    @Test
+    public void inFlightIdsMirrorLiveDemand() {
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+            ConstructionRequests.constructions.clear();
+
+            assertTrue(
+                GoalBoardFeeder.inFlightIds().isEmpty(),
+                "empty queue and no constructions: nothing in flight");
+
+            Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 10));
+            Queue.get().clearCache();
+            assertTrue(
+                GoalBoardFeeder.inFlightIds().contains("gateway"),
+                "a live Gateway row is the gateway goal in flight");
+            assertFalse(
+                GoalBoardFeeder.inFlightIds().contains("core"),
+                "nothing Core-ish is going on");
+        });
+    }
 }

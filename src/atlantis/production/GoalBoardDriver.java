@@ -6,8 +6,6 @@ import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.units.AUnitType;
 
-import java.util.Collections;
-
 /**
  * Goal-board driver, first consumer (NEXT #91, owner order 2A): emergency
  * preemption only. When the board top is an emergency-ranked goal, pumps
@@ -21,7 +19,7 @@ public final class GoalBoardDriver {
     }
 
     public static boolean pauseWorkers(BoardState state) {
-        Goal top = GoalBoard.top(state, ProtossOpening.goals(), Collections.<String>emptySet());
+        Goal top = GoalBoard.top(state, ProtossOpening.goals(), GoalBoardFeeder.inFlightIds());
         if (top == null || !top.emergency()) {
             return false;
         }

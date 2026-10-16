@@ -74,8 +74,11 @@ public final class GoalBoardFeeder {
      * bank (snapshot minerals minus live reservations); the top goal and
      * emergencies always fund, the rest fit-or-wait. Rows stay spend-free,
      * so an unfunded goal loses a queue row for a frame, never a building.
+     *
+     * <p>Package-visible: the advisor reads the same funded set for the
+     * BOARD line, so games show what the wallet did.</p>
      */
-    private static Set<String> fundedIds(BoardState state, List<Goal> ranked) {
+    static Set<String> fundedIds(BoardState state, List<Goal> ranked) {
         int minerals = Math.max(0, state.minerals - ReservedResources.minerals());
         int gas = Math.max(0, state.gas - ReservedResources.gas());
         Set<String> funded = new HashSet<String>();
@@ -95,14 +98,26 @@ public final class GoalBoardFeeder {
         return !ConstructionRequests.notFinishedOfType(type).isEmpty();
     }
 
+    /**
+     * The single board-to-type dictionary both directions read: the
+     * feeder (which row a goal needs), the funding door (which goal a
+     * row serves) and the commitment set below. One map, never three
+     * if-chains to keep in sync.
+     */
+    private static final java.util.Map<String, AUnitType> GOAL_TYPES =
+        new java.util.LinkedHashMap<String, AUnitType>();
+
+    static {
+        GOAL_TYPES.put("supply-pylon", AUnitType.Protoss_Pylon);
+        GOAL_TYPES.put("gateway", AUnitType.Protoss_Gateway);
+        GOAL_TYPES.put("core", AUnitType.Protoss_Cybernetics_Core);
+        GOAL_TYPES.put("assimilator", AUnitType.Protoss_Assimilator);
+        GOAL_TYPES.put("sustained-zealot", AUnitType.Protoss_Zealot);
+        GOAL_TYPES.put("sustained-dragoon", AUnitType.Protoss_Dragoon);
+    }
+
     private static AUnitType orderType(String goalId) {
-        if ("supply-pylon".equals(goalId)) return AUnitType.Protoss_Pylon;
-        if ("gateway".equals(goalId)) return AUnitType.Protoss_Gateway;
-        if ("core".equals(goalId)) return AUnitType.Protoss_Cybernetics_Core;
-        if ("assimilator".equals(goalId)) return AUnitType.Protoss_Assimilator;
-        if ("sustained-zealot".equals(goalId)) return AUnitType.Protoss_Zealot;
-        if ("sustained-dragoon".equals(goalId)) return AUnitType.Protoss_Dragoon;
-        return null;
+        return GOAL_TYPES.get(goalId);
     }
 
     private static ProductionOrder addFor(String goalId, AUnitType type) {
@@ -127,6 +142,22 @@ public final class GoalBoardFeeder {
     private static Set<String> lastActiveIds = new HashSet<String>();
     private static Set<String> lastFundedIds = new HashSet<String>();
     private static int lastFundedFrame = -1;
+
+    /**
+     * Board-owned goals with work already in flight (a queue row or a
+     * live construction of their type). The commitment reader
+     * ({@code GoalBoard.top}) takes these so started work keeps its
+     * place instead of flapping between frames.
+     *
+     * <p>Public as a seam: driver, advisor and tests read it.</p>
+     */
+    public static Set<String> inFlightIds() {
+        Set<String> inFlight = new HashSet<String>();
+        for (String goal : GOAL_TYPES.keySet()) {
+            if (inFlight(GOAL_TYPES.get(goal))) inFlight.add(goal);
+        }
+        return inFlight;
+    }
 
     private static void publishFunding(List<Goal> ranked, Set<String> funded) {
         lastActiveIds = new HashSet<String>();
@@ -156,12 +187,9 @@ public final class GoalBoardFeeder {
 
     private static String goalFor(AUnitType type) {
         if (type == null) return null;
-        if (type.equals(AUnitType.Protoss_Pylon)) return "supply-pylon";
-        if (type.equals(AUnitType.Protoss_Gateway)) return "gateway";
-        if (type.equals(AUnitType.Protoss_Cybernetics_Core)) return "core";
-        if (type.equals(AUnitType.Protoss_Assimilator)) return "assimilator";
-        if (type.equals(AUnitType.Protoss_Zealot)) return "sustained-zealot";
-        if (type.equals(AUnitType.Protoss_Dragoon)) return "sustained-dragoon";
+        for (java.util.Map.Entry<String, AUnitType> entry : GOAL_TYPES.entrySet()) {
+            if (type.equals(entry.getValue())) return entry.getKey();
+        }
         return null;
     }
 }

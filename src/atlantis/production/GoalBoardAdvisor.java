@@ -19,7 +19,6 @@ import atlantis.util.We;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,7 +48,7 @@ public class GoalBoardAdvisor extends Commander {
     protected boolean handle() {
         BoardState state = snapshot();
         List<Goal> ranked = GoalBoard.ranked(state, ProtossOpening.goals());
-        Goal top = GoalBoard.top(state, ProtossOpening.goals(), Collections.<String>emptySet());
+        Goal top = GoalBoard.top(state, ProtossOpening.goals(), GoalBoardFeeder.inFlightIds());
 
         StringBuilder active = new StringBuilder();
         for (Goal goal : ranked) {
@@ -58,10 +57,17 @@ public class GoalBoardAdvisor extends Commander {
         }
 
         // JSON-only since 2026-10-15 (owner: no red spam in the game
-        // log): the opinion lands in EVENTS.jsonl under BOARD.
+        // log): the opinion lands in EVENTS.jsonl under BOARD. Funded
+        // rides along since the wallet: which wants the bank covers.
+        StringBuilder funded = new StringBuilder();
+        for (String id : GoalBoardFeeder.fundedIds(state, ranked)) {
+            if (funded.length() > 0) funded.append(",");
+            funded.append(id);
+        }
         EventLog.key(LogKey.BOARD)
             .param("top", top == null ? "-" : top.id())
             .param("active", active.toString())
+            .param("funded", funded.toString())
             .param("minerals", state.minerals)
             .param("supplyUsed", state.supplyUsed)
             .param("supplyTotal", state.supplyTotal)
