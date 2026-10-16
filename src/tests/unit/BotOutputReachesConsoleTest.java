@@ -133,11 +133,15 @@ public class BotOutputReachesConsoleTest {
                 // WINE_LOG_COPY (owner ask): the extra copy must be live (tee, not
                 // an end-of-run cp that misses kills), resolved from the bot ENV,
                 // and gated on a non-empty path plus GAME_LAUNCHER=WINE.
+                // Owner 2026-10-16: streams split - the main copy is the GAME
+                // log (stdout tee only), the -DEBUG twin the diagnostics
+                // (stderr tee only). Merging both into both made the two
+                // files identical.
                 String script = read(WINE_FULL);
 
                 assertTrue(script.contains("TEE_OUT+=(\"$WINE_LOG_COPY_RESOLVED\")")
-                                && script.contains("TEE_ERR+=(\"$WINE_LOG_COPY_RESOLVED\")"),
-                                "the resolved copy joins both live tees, not a later copy");
+                                && !script.contains("TEE_ERR+=(\"$WINE_LOG_COPY_RESOLVED\")"),
+                                "the main copy joins the stdout tee only - stderr goes to the -DEBUG twin");
                 assertTrue(script.contains("WINE_DEBUG_COPY=\"${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log\""),
                                 "a -DEBUG twin of the live copy carries the diagnostics stream only");
                 assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),

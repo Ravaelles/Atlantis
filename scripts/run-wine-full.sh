@@ -245,9 +245,11 @@ if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
     *.log) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log" ;;
     *) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED}-DEBUG.log" ;;
   esac
+  # Owner 2026-10-16: the main copy is the GAME log (stdout only), the
+  # -DEBUG copy the diagnostics (stderr only). Merging both streams into
+  # both files made last-wine.log identical to last-wine-DEBUG.log.
   TEE_OUT+=("$WINE_LOG_COPY_RESOLVED")
-  TEE_ERR+=("$WINE_LOG_COPY_RESOLVED")
-  say "  Live log copy: $WINE_LOG_COPY_RESOLVED (both streams)"
+  say "  Live log copy: $WINE_LOG_COPY_RESOLVED (game log only)"
 fi
 if [ -n "$WINE_DEBUG_COPY" ]; then
   TEE_ERR+=("$WINE_DEBUG_COPY")
@@ -438,6 +440,19 @@ if [ -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" ]; then
   say "buildings ledger collected: $LOG_DIR/BUILDINGS.json"
 else
   say "buildings ledger missing: $CLIENT_CWD/bwapi-data/write/BUILDINGS.json was never written"
+fi
+# Owner 2026-10-16: the warp ledger also belongs at the tail of the debug
+# copy. A clean game end already prints it (OnGameEnd, stderr) - the
+# marker guard keeps this append for killed games only, never duplicating.
+if [ -n "${WINE_DEBUG_COPY:-}" ] && [ -f "$WINE_DEBUG_COPY" ] \
+  && [ -f "$LOG_DIR/BUILDINGS.json" ] \
+  && ! grep -q "ledger at game end" "$WINE_DEBUG_COPY" 2>/dev/null; then
+  {
+    echo ""
+    echo "===== BUILDINGS.json (ledger at game end) ====="
+    cat "$LOG_DIR/BUILDINGS.json"
+  } >> "$WINE_DEBUG_COPY" 2>/dev/null || true
+  say "ledger appended to debug copy (killed game, no OnGameEnd tail)"
 fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
   cp -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" "$LOG_DIR/EVENTS.jsonl" 2>/dev/null || true
