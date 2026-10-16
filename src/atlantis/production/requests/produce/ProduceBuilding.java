@@ -31,12 +31,13 @@ public class ProduceBuilding {
             return ProduceAddon.produceAddon(type);
         }
         else {
-            // Owner 2026-10-15: never start more than one supply early -
-            // assigning the builder is the economic cost (the probe stops
-            // mining), so a row due at 28 waits even when everything else
-            // is ready. Site picking (PREPARING, two early, no builder)
-            // is unaffected.
-            if (A.supplyUsed() < order.minSupply() - 1) return false;
+            // Owner 2026-10-16: no building starts below its supply on a
+            // poor bank - revokes the old one-early rule (early claims
+            // held builders while the worker pump starved). Below
+            // minSupply only price+50 builds. Site picking (PREPARING,
+            // two early, no builder) is unaffected.
+            if (A.supplyUsed() < order.minSupply()
+                && !A.canAfford(type.mineralPrice() + 50, type.gasPrice())) return false;
 
             // NEXT #57: an adopted construction with a living builder needs
             // no new request - the builder is dispatched or walking, and

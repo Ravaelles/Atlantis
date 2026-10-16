@@ -107,7 +107,9 @@ public class AutoProduceWorkersCommander extends Commander {
         // unless the bank covers worker + waiter. Only convertible (READY
         // or IN_PROGRESS) waiters count - a NOT_READY tech row must not
         // strangle the opening (owner 2026-10-14: continuous probe stream).
-        if (PriorityWaiters.blocksWorkerSpending(50, 0) && !earlyConstantWorkerFlow()) {
+        if (PriorityWaiters.blocksWorkerSpending(50, 0)
+            && !earlyConstantWorkerFlow()
+            && !supplyNineWorkerMandate()) {
             return dont("HigherPriorityWaits");
         }
 
@@ -197,6 +199,21 @@ public class AutoProduceWorkersCommander extends Commander {
             + PriorityWaiters.mineralsAboveReady(ProductionOrderPriority.STANDARD)
             - A.minerals();
         return shortfall <= 24;
+    }
+
+    /**
+     * Owner 2026-10-16: at supply 9 with a standing Pylon and a Gateway
+     * row due at 10, the worker is mandatory unless supply-blocked (the
+     * NoSupply gate above already answered that). Bypasses only the
+     * waiter gate - later gates (CriticalStuff and friends) still apply.
+     */
+    private static boolean supplyNineWorkerMandate() {
+        if (A.supplyUsed() != 9) return false;
+        if (Count.ofTypeWithUnfinished(Protoss_Pylon) == 0) return false;
+        for (ProductionOrder order : Queue.get().notFinished().ofType(AUnitType.Protoss_Gateway).list()) {
+            if (order.minSupply() <= 10) return true;
+        }
+        return false;
     }
 
     private static boolean prioritizeRush() {        if (!Strategy.get().isRushOrCheese()) return false;

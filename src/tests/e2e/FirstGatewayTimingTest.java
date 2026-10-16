@@ -215,56 +215,69 @@ public class FirstGatewayTimingTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void dynamicRowDueAt28NeverStartsAt12() {
+    public void poorEarlyRowWaitsRichEarlyRowBuilds() {
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
         FakeUnit pylon = fake(AUnitType.Protoss_Pylon, 12);
         FakeUnit probe1 = fake(AUnitType.Protoss_Probe, 8.3);
         FakeUnit probe2 = fake(AUnitType.Protoss_Probe, 9.1);
 
-        world(400, units(nexus, pylon, probe1, probe2), new FakeUnit[0], () -> {
-            int frame = A.now();
+        // Owner 2026-10-16 revokes the old one-early rule: below minSupply
+        // only price+50 builds. Poor waits (even at the same supply the old
+        // test watched), rich builds.
+        for (int bank : new int[]{100, 500}) {
+            assignedSupply = null;
+            final int minerals = bank;
+            world(400, units(nexus, pylon, probe1, probe2), new FakeUnit[0], () -> {
+                int frame = A.now();
 
-            if (frame == 1) {
-                currentSupplyUsed = 12;
-                currentSupplyTotal = 41;
-                currentMinerals = 500;
-                Queue.get().allOrders().list().clear();
-                Queue.get().clearCache();
-                ConstructionRequests.constructions.clear();
-                Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 28));
-                return;
-            }
+                if (frame == 1) {
+                    currentSupplyUsed = 12;
+                    currentSupplyTotal = 41;
+                    currentMinerals = minerals;
+                    Queue.get().allOrders().list().clear();
+                    Queue.get().clearCache();
+                    ConstructionRequests.constructions.clear();
+                    Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Gateway, 28));
+                    return;
+                }
 
-            currentSupplyUsed = frame <= 200 ? 12 : 27;
-            currentMinerals = 500;
+                currentSupplyUsed = frame <= 200 ? 12 : 27;
+                currentMinerals = minerals;
 
-            Queue.get().refresh();
+                Queue.get().refresh();
 
-            ProductionOrder row = Queue.get().allOrders().list().stream()
-                .filter(o -> o.isUnitOrBuilding()
-                    && AUnitType.Protoss_Gateway.equals(o.unitType()))
-                .findFirst().orElse(null);
-            if (row == null) return;
+                ProductionOrder row = Queue.get().allOrders().list().stream()
+                    .filter(o -> o.isUnitOrBuilding()
+                        && AUnitType.Protoss_Gateway.equals(o.unitType()))
+                    .findFirst().orElse(null);
+                if (row == null) return;
 
-            // Direct call, not only-when-READY: the gate under test must
-            // refuse no matter which path tries early (the live row #143
-            // started at supply 12 for minSupply 28 through this door).
-            ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, row);
+                // Direct call, not only-when-READY: the gate under test must
+                // refuse no matter which path tries early (the live row #143
+                // started at supply 12 for minSupply 28 through this door).
+                ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, row);
 
-            for (Construction c : ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway)) {
-                if (c.builder() != null) {
-                    if (assignedSupply == null) {
-                        assignedSupply = A.supplyUsed();
-                        new WorkerManager((AUnit) c.builder()).forceHandle();
+                for (Construction c : ConstructionRequests.notFinishedOfType(AUnitType.Protoss_Gateway)) {
+                    if (c.builder() != null) {
+                        if (assignedSupply == null) {
+                            assignedSupply = A.supplyUsed();
+                            new WorkerManager((AUnit) c.builder()).forceHandle();
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        assertNotNull(assignedSupply, "the row due at 28 must eventually start (at 27)");
-        assertTrue(
-            assignedSupply >= 27,
-            "builder assigned at supply " + assignedSupply + " for a row due at 28"
-                + " - never more than one supply early");
+            if (bank < 200) {
+                assertTrue(
+                    assignedSupply == null,
+                    "poor early row (bank " + bank + "): no builder claimed below minSupply");
+            }
+            else {
+                assertNotNull(assignedSupply, "rich early row must start");
+                assertTrue(
+                    assignedSupply <= 12,
+                    "rich early row builds at once, supply " + assignedSupply);
+            }
+        }
     }
 }
