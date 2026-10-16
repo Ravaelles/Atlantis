@@ -35,23 +35,34 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Next steps (ordered - this section survives context compression)
 
-1. **Pylon closure:** Wine re-run with the current jar (convertible
-   waiters + walking-builder shield are in it) for the first-Pylon
-   proof (#84); corner-stall game for doctrine-vs-leash (#81).
+1. **Wallet (#93):** serve the ranked ladder top-down with reservations.
+   Today the board advises (advisor log, feeder rows) but legacy spends
+   (readiness, `PriorityWaiters`): `GoalBoard.ranked` has three readers
+   and no wallet. Walk the ranked list committing each goal's price class
+   from the virtual bank; always fund the top goal and emergencies;
+   skipped goals wait a frame. Feeder feeds funded goals only. Turns the
+   board from advisor into driver; unblocks everything below.
 2. **Per-gate legacy deletions**, one game of proof each (ratchet):
    no candidate yet - feeder fired once ever (`143903`), legacy still
    does ~everything, and board-invisible production (Forge, cannons)
    is capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
-3. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
+3. **Decision absorption:** board takes over decision sites one by one
+   (53 files importing Decision, measured 2026-10-16, counting down, no
+   new ones per §21); the class dies at zero, not before. Two tracks:
+   production sites route through board state (first slice: the worker
+   Core-veto), combat-micro sites die with the manager-tree migration
+   (stages E/H), never through the board (no per-unit micro on it).
+4. **Pylon closure:** Wine re-run with the current jar (convertible
+   waiters + walking-builder shield are in it) for the first-Pylon
+   proof (#84); corner-stall game for doctrine-vs-leash (#81).
+   Owner-run; autonomous work above does not wait on it.
+5. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
    Wine): Core-cancel retry (#88), 700 s+ rich run (#71), research
    completion (#72), L2/L3 (#85), builder-variance leftovers (#74).
-4. **Second goal vocabulary** (Terran or midgame): triggers the
+6. **Second goal vocabulary** (Terran or midgame): triggers the
    `goals/` split by vocabulary - until then no new packages.
-5. **Decision absorption:** board takes over decision sites one by one
-   (51 files importing Decision, 49 in prod, measured 2026-10-15, counting
-   down, no new ones per §21); the class dies at zero, not before.
-6. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
+7. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
    stages E–J below.
 
 ## Test health
@@ -84,6 +95,16 @@ twins green (1/1 each, re-verified today). Re-run
   observed `20261015_143903`: `BOARD_FED supply-pylon min=61 sup=39/41`).
   Relation to #45: the board is the Strategist half without the timeline scheduler
   (deferred - every measured starvation was a priority inversion).
+
+- **#93 - Wallet: serve the ranked ladder top-down.** Shape per
+  `00-GOAL-APPROACH.md` (wallet, not winner): a generic serving pass
+  over `GoalBoard.ranked` committing each goal's price class from the
+  virtual bank (prices are engine data, owned by the domain goals);
+  the top goal and emergencies always fund, skipped goals wait a frame.
+  Feeder feeds funded goals only - rows stay spend-free, readiness and
+  builders still decide. First slice: funded subset + feeder gating,
+  game-proven against starvation (the supply-block rescue must fund
+  first). Never a legacy arbitration gate (ratchet).
 
 ## Stage E — read model (remaining)
 
