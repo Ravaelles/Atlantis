@@ -41,6 +41,21 @@ public final class UnitIndex {
         return filtered;
     }
 
+    /** Frozen completed units of these types, in list order. */
+    public List<AUnit> completedOfType(AUnitType... types) {
+        List<AUnit> filtered = new ArrayList<>();
+        for (AUnit unit : units) {
+            if (!unit.isCompleted()) continue;
+            for (AUnitType type : types) {
+                if (unit.is(type)) {
+                    filtered.add(unit);
+                    break;
+                }
+            }
+        }
+        return filtered;
+    }
+
     /** The frozen list itself (defensive copy: callers must not move the frame). */
     public List<AUnit> all() {
         return new ArrayList<>(units);

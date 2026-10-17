@@ -835,12 +835,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our Marines, Firebats, Ghosts and Medics.
      */
     public static Selection ourTerranInfantry() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourTerranInfantry",
-            0,
-            () -> our().ofType(AUnitType.Terran_Marine, AUnitType.Terran_Medic, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
-        );
+        return new Selection(frameIndex().completedOfType(
+            AUnitType.Terran_Marine, AUnitType.Terran_Medic, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost
+        ), "ourTerranInfantry");
     }
 
     /**

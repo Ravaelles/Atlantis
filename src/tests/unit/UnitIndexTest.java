@@ -46,8 +46,22 @@ public class UnitIndexTest {
     }
 
     @Test
-    public void allReturnsACopy() {
-        UnitIndex index = new UnitIndex(units());
+    public void completedFilterSkipsUnfinished() {
+        tests.fakes.FakeUnit probe = fake(AUnitType.Protoss_Probe);
+        probe.setCompleted(false);
+        List<AUnit> live = new ArrayList<>();
+        live.add(probe);
+        live.add(fake(AUnitType.Protoss_Zealot));
+
+        UnitIndex index = new UnitIndex(live);
+
+        assertEquals(1, index.ofType(AUnitType.Protoss_Probe).size());
+        assertEquals(0, index.completedOfType(AUnitType.Protoss_Probe).size());
+        assertEquals(1, index.completedOfType(AUnitType.Protoss_Zealot).size());
+    }
+
+    @Test
+    public void allReturnsACopy() {        UnitIndex index = new UnitIndex(units());
 
         assertEquals(3, index.all().size());
         index.all().clear();
