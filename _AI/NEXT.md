@@ -331,6 +331,20 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
+- **#148** Forge demand decided 20x, never executed, zero diagnostics
+  (OpenBW `200123`, 944 s, 1 base): dynamic Forge BUILD wants from frame
+  ~8900 (banks often >= 150, supply >= min) with no ORDER_NOT_READY, no
+  CONSTRUCTION_* twin, no `Can't find place`, no BUILD_BREAKDOWN, no
+  ledger/roster trace - while 4 Gateways built through the identical
+  machinery. Withdrawn with evidence: wallet gate (no `forge` in
+  `GOAL_TYPES`, so `adoptionAllowed` always true), duplicate-cancel
+  (needs a same-type construction, none ever existed), position/builder
+  failure (both print, both absent), requirements (Forge needs nothing
+  unmet). Open: which silent `requestBuilding` exit (or executor skip)
+  ate them - unrecoverable from this log (`BUILDER_LOG` off, and
+  `BUILD_BREAKDOWN` only covers post-construction standstill, never
+  pre-construction guards). Probe: twin the silent exits, then a Forge
+  game. No blind patch.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
