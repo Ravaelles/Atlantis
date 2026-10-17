@@ -192,14 +192,20 @@ twins green (1/1 each, re-verified today). Re-run
   `AtlantisJfap.isValidUnit:71` (borderline). The rest was triaged out
   (same object, worse GC) or dies with lifecycle.
 
-## Stage F — cache purge (started 2026-10-19: UnitIndex + first migration, dead keys deleted)
+## Stage F — cache purge (Select query caches gone 2026-10-19, see below)
 
-
-
-- Five unexplained TTLs above one frame (30, 31, 53, 73, 293) remain
-  (91 went with the deleted `firstBuilding` entry);
-  `Select.main()` (90 call sites) is cached 2.4 s. Inventory:
-  `DOCS/SELECT-CACHES.md`; neutral cleanups done per
+- `core.world.UnitIndex` answers from frozen per-frame lists (ours/all/
+  enemy/neutral side sources); every `Select` query key migrated with
+  identical predicates (incl. alive/completed subtleties, TreeSet order,
+  De Morgan on the 3-flag enemy filter); `clearCache` resets frames.
+  The five unexplained TTLs (30, 31, 53, 73, 293) are deleted with them;
+  `Select.java` holds zero live cache reads (only the derived-selection
+  cache via `cloneByRemovingIf` remains - a different concept).
+  Acceptance failure set byte-identical to the clean-tree baseline twice
+  (one real catch on the way: side-membership is list membership, never
+  a predicate - sideless test doubles leaked across sides).
+- `Select.main()` (90 call sites) now answers fresh per frame. Inventory:
+  `DOCS/SELECT-CACHES.md` (frozen 2026-10-03, historical); neutral cleanups done per
   `_AI/work-orders/WO-F-neutral-cache-cleanup.md`.
 - **#5** Per-frame query service in `core.world` with explicit per-frame
   invalidation. One cache at a time, fewest readers first.
