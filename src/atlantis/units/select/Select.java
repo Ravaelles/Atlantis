@@ -40,6 +40,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     private static int allUnitsIndexFrame = -1;
     private static UnitIndex oursIndex;
     private static int oursIndexFrame = -1;
+    private static UnitIndex enemyIndex;
+    private static int enemyIndexFrame = -1;
+    private static UnitIndex neutralIndex;
+    private static int neutralIndexFrame = -1;
 
     private static UnitIndex allUnitsIndex() {
         if (allUnitsIndexFrame != AGame.now()) {
@@ -55,6 +59,22 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             oursIndexFrame = AGame.now();
         }
         return oursIndex;
+    }
+
+    private static UnitIndex enemyIndex() {
+        if (enemyIndexFrame != AGame.now()) {
+            enemyIndex = new UnitIndex(enemyUnits());
+            enemyIndexFrame = AGame.now();
+        }
+        return enemyIndex;
+    }
+
+    private static UnitIndex neutralIndex() {
+        if (neutralIndexFrame != AGame.now()) {
+            neutralIndex = new UnitIndex(neutralUnits());
+            neutralIndexFrame = AGame.now();
+        }
+        return neutralIndex;
     }
 
 
@@ -75,6 +95,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         cacheObject.clear();
         allUnitsIndexFrame = -1;
         oursIndexFrame = -1;
+        enemyIndexFrame = -1;
+        neutralIndexFrame = -1;
     }
 
     public static Cache cache() {
@@ -98,29 +120,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Selection enemy() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemy",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : enemyUnits()) {
-                    if (unit.isAlive()) {
-                        data.add(unit);
-                    }
-//                    else {
-//                        if (!Env.isTesting() && !Env.isStarEngine()) {
-//                            ErrorLog.printMaxOncePerMinute(
-//                                "Enemy unit found but not alive = " + unit + " / hp=" + unit.hp() + " / u=" + unit.u()
-//                            );
-//                        }
-//                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(enemyIndex().matching(
+            AUnit::isAlive
+        ), "enemy");
     }
 
     /**
@@ -551,8 +553,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Selection enemyRealUnitsWithBuildings() {
-        return new Selection(allUnitsIndex().matching(
-            unit -> unit.isEnemy() && (unit.isABuilding() || unit.isRealUnit())
+        return new Selection(enemyIndex().matching(
+            unit -> unit.isABuilding() || unit.isRealUnit()
         ), "enemyRealUnitsWithBuildings");
     }
 
@@ -588,12 +590,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * parameterized type is AUnit
      */
     public static Selection neutral() {
-        String cachePath;
-        return cache.get(
-            cachePath = "neutral",
-            0,
-            () -> new Selection(neutralUnits(), cachePath)
-        );
+        return new Selection(neutralIndex().all(), "neutral");
     }
 
     /**
