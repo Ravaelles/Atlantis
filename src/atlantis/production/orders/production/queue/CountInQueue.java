@@ -77,6 +77,34 @@ public class CountInQueue {
     }
 
     /**
+     * Owner 2026-10-17: same count, blind to one order - for request-time
+     * dedup. A re-request for an order that already has a live site or a
+     * warping building must not count its own traces (measured: Core #32
+     * requested one frame after #9 warped, #9's site already removed from
+     * the list while its building warps - every creation-time cap saw
+     * zero). Counts what OTHER orders have coming.
+     */
+    public static int outstandingExcluding(
+        atlantis.production.orders.production.queue.order.ProductionOrder self,
+        AUnitType type
+    ) {
+        int total = 0;
+        for (atlantis.production.orders.production.queue.order.ProductionOrder row
+            : Queue.get().notFinished().ofType(type).list()) {
+            if (row != self && row.construction() == null) total++;
+        }
+        for (atlantis.units.AUnit unit
+            : atlantis.units.select.Select.ourUnfinished().ofType(type).list()) {
+            if (unit.productionOrder() != self) total++;
+        }
+        for (atlantis.production.constructions.Construction site
+            : atlantis.production.constructions.ConstructionRequests.notFinishedOfType(type)) {
+            if (site.productionOrder() != self) total++;
+        }
+        return total;
+    }
+
+    /**
      * Owner 2026-10-18: queue rows still waiting for dispatch (no linked
      * construction). Dispatched rows live in the constructions list - and
      * counting both double-counts one building (measured shape behind the
