@@ -355,6 +355,20 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
+- **#150** Opening Gateway statuses lie (owner report 2026-10-17, two
+  halves open): (a) GW#1 stuck PREPARING - candidates: funding gate
+  above the PREPARING adoption (`BUILD_REFUSED ... funding` names it -
+  needs the owner's WINE_DEBUG lines) or no free builder at supply
+  ~10; (b) GW#2 stuck NOT_STARTED after warping at a re-sited tile -
+  candidates: wrong-sibling adoption when two same-type constructions
+  are unfinished, or a missed creation event (needs `CANNOT define
+  construction` / `No construction within reach` lines or reserved vs
+  warp tile comparison from the owner's log). LANDED for the overlap
+  half: `OverlapsOurUnfinishedBuilding` refuses warping-building sites
+  in the spiral (210732/214926 picked [94,111] on warping [92,111];
+  engine refused at issue, cancel re-requested twice = 3 Gateways for
+  a 2-Gateway opening; proof 220122: disjoint sites, zero
+  PLACEMENT_FAILED). No blind patch on the open halves.
 - **#149** Causeless early exit, third occurrence: `131407` (V2 LIVE,
   4:07), `210732` (legacy, 5:08) and `213248` (legacy rich, 9:50) all
   end clean with no force/leave/GG line, all enemyless, all healthy at
