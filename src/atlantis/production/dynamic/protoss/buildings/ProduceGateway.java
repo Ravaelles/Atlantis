@@ -250,7 +250,7 @@ public class ProduceGateway {
         // once (queue rows without a site, warping units, all unfinished
         // constructions incl. PREPARING) - the old queue+notStarted sum
         // double-counted dispatches and missed picked-early sites.
-        if (Count.outstandingOfType(type()) >= (1 + A.minerals() / 330)) return false;
+        if (CountInQueue.outstandingOfType(type()) >= (1 + A.minerals() / 330)) return false;
 
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
 
