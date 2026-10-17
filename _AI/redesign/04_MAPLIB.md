@@ -71,15 +71,20 @@ own code, BWEB ideas with attribution, MIT-clean.
   memory). First consumer: fortification policy (counts become spots).
   Status 2026-10-18: model (`DefenseSpots`) + `CoverageCannonRanker`
   wired in the catalogue, unit-pinned (coverage beats nearness).
-  Live proof PARTIAL: long catalogue run `20261017_120347` (819 game-s,
-  full tech incl. Forge/Robotics/Stargate/Observatory, E2E OK) warped
-  its cannon through the sited path, which bypasses the adapter - zero
-  cannon twin rows, ranker unexercised. Forcing it via V2 LIVE failed
-  differently (147 s wall for 254 game-s, thin play, killed by the cap).
-  The gap is architectural, not numerical: `RequestBuildingNear`
-  searches with legacy `FindPosition` directly, so sited demand never
-  reaches the catalogue. Next slice: route it through the funnel, then
-  re-run long. Short-tier safety proven meanwhile (E2E OK, 6 s).
+  Live proof DONE 2026-10-18, in two runs. First `20261017_120347`
+  (819 game-s, E2E OK) showed the funnel gap (sited demand bypassed the
+  adapter, zero cannon twin rows); routing `RequestBuildingNear` through
+  the funnel closed it. Then `20261017_122002` (E2E OK, 897 game-s,
+  Nexus=5 Gateway=9 Dragoon=13, full tech + Shuttle): cannon answers
+  carry `coversChoke:true` live on both paths (funnel `[107,42]`, sited
+  `[113,73]` with `coversAnchor:true` too), PhotonC=3 warped, zero
+  cannon stalls. The power hole found on the way (a covering tile held
+  its builder 122 s on dark ground in `121659`) is closed by the
+  adapter's `unpowered` decline (263 such declines here, tiles
+  re-answered when lit). Remaining fails are known classes (late
+  Gateway spam, Assimilator Reset, one early Pylon builder variance) -
+  no new placement failure in ~900 game-s. V2 LIVE + catalogue stays
+  out (147 s wall for 254 game-s, thin, cap-killed) - unrelated track.
 - **M3 — drop spots / islands.** Area-graph analysis over BWEM areas:
   enemy-base areas with no ground path from our army area (islands,
   backdoors) ranked by flight distance. Query:
