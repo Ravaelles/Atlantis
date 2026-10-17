@@ -35,6 +35,7 @@ public final class BoardState {
     public final int enemyMutalisks;
     public final boolean enemyCarrierTech;
     public final boolean spartaMission;
+    public final int wallPiecesAtNatural;
 
     private BoardState(Builder builder) {
         this.minerals = builder.minerals;
@@ -64,6 +65,7 @@ public final class BoardState {
         this.enemyMutalisks = builder.enemyMutalisks;
         this.enemyCarrierTech = builder.enemyCarrierTech;
         this.spartaMission = builder.spartaMission;
+        this.wallPiecesAtNatural = builder.wallPiecesAtNatural;
     }
 
     public int supplyFree() {
@@ -106,6 +108,7 @@ public final class BoardState {
         private int enemyMutalisks;
         private boolean enemyCarrierTech;
         private boolean spartaMission;
+        private int wallPiecesAtNatural;
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
@@ -223,6 +226,16 @@ public final class BoardState {
 
         public Builder sparta(boolean spartaMission) {
             this.spartaMission = spartaMission;
+            return this;
+        }
+
+        /**
+         * Wall pieces (Pylon/Gateway/Cannon, standing or unfinished) near
+         * the natural choke. 99 when no natural choke exists - a wall
+         * nobody can serve is noise, not a want.
+         */
+        public Builder wallPieces(int wallPiecesAtNatural) {
+            this.wallPiecesAtNatural = wallPiecesAtNatural;
             return this;
         }
 

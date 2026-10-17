@@ -111,7 +111,23 @@ public class GoalBoardAdvisor extends Commander {
                 atlantis.information.enemy.EnemyUnits.mutas(),
                 enemyCarrierTech())
             .sparta(atlantis.battle.Missions.isGlobalMissionSparta())
+            .wallPieces(wallPiecesAtNatural())
             .build();
+    }
+
+    /**
+     * Wall pieces (Pylon/Gateway/Cannon, standing or unfinished) near the
+     * natural choke center. 99 when no natural choke exists (the goal reads
+     * it as satisfied). Radius covers anchors plus one footprint - pieces
+     * belong to the wall by proximity, exactness is the planner's job.
+     */
+    private static int wallPiecesAtNatural() {
+        atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.natural();
+        if (choke == null || choke.center() == null) return 99;
+        atlantis.map.position.APosition center = choke.center();
+        return Count.ourWithUnfinished(AUnitType.Protoss_Pylon, 12, center)
+            + Count.ourWithUnfinished(AUnitType.Protoss_Gateway, 12, center)
+            + Count.ourWithUnfinished(AUnitType.Protoss_Photon_Cannon, 12, center);
     }
 
     /**

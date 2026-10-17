@@ -77,8 +77,37 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void coveredGoalIsSilent() {
+    public void demandGateSeams() {
         world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            GoalBoardFeeder.ensure(blockedState());
+
+            assertTrue(GoalBoardFeeder.boardFresh(), "a ranking just ran");
+            assertTrue(GoalBoardFeeder.wantedGoal("supply-pylon"), "blocked supply is wanted");
+            assertFalse(GoalBoardFeeder.wantedGoal("wall-in"),
+                "no Zerg, no core, no wall pieces counted - the wall stays quiet");
+
+            BoardState wallState = BoardState.builder()
+                .minerals(400).supply(30, 40)
+                .workers(20).bases(2).gateways(2).army(6)
+                .enemyRace("Zerg").core(true).wallPieces(0)
+                .seconds(400)
+                .build();
+            GoalBoardFeeder.ensure(wallState);
+
+            assertTrue(GoalBoardFeeder.wantedGoal("wall-in"), "Zerg + core + bare choke is wanted");
+            assertFalse(GoalBoardFeeder.wantedGoal("no-such-goal"), "unknown ids are never wanted");
+        });
+    }
+
+    @Test
+    public void coveredGoalIsSilent() {        world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21)
         ), fakeEnemies(), () -> {

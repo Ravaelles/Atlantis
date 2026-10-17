@@ -30,6 +30,9 @@ public final class GoalRanks {
     /** Gas income, Core-first. */
     public static final int ASSIMILATOR = 60;
 
+    /** Wall-in at the natural: post-core rush-window defense. */
+    public static final int WALL_IN = 65;
+
     /** Opening fighting force. */
     public static final int ARMY = 70;
 

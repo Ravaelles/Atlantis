@@ -36,6 +36,11 @@ public class ProduceNaturalWallIn {
 
     public static boolean produce() {
         if (!We.protoss()) return false;
+        // The board owns the WHEN (WallInGoal): fresh rankings decide, stale
+        // ones fall back to the legacy trigger below. Opening ownership stays
+        // an execution guard either way - rows are cheap, builders are not.
+        if (atlantis.production.GoalBoardFeeder.boardFresh()
+            && !atlantis.production.GoalBoardFeeder.wantedGoal("wall-in")) return false;
         if (BuildOrderOwnsGame.owns()) return false;
         if (!Enemy.zerg()) return false;
         if (!Have.cyberneticsCore()) return false;

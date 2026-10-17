@@ -203,4 +203,21 @@ public final class GoalBoardFeeder {
         }
         return null;
     }
+
+    /**
+     * The board owns the WHEN for demand the feeder cannot serve with rows
+     * (exact-tile wall pieces, detection answers): true when the last
+     * ranking (fresh) wanted this goal id. Stale rankings fail open -
+     * legacy triggers decide, exactly like {@code adoptionAllowed}.
+     * Public as the demand-gate seam.
+     */
+    public static boolean wantedGoal(String id) {
+        if (!boardFresh()) return true;
+        return lastActiveIds.contains(id);
+    }
+
+    /** A ranking younger than the feeder cadence owns decisions; older, legacy triggers do. */
+    public static boolean boardFresh() {
+        return atlantis.game.A.now() - lastFundedFrame <= 30;
+    }
 }
