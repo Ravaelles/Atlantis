@@ -890,16 +890,25 @@ public class AAdvancedPainter extends APainter {
     public static void paintConstructionPlaces() {
         Color color = Color.Grey;
         for (Construction order : ConstructionRequests.all()) {
-            if (order.status() == ConstructionOrderStatus.NOT_STARTED) {
-//            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
-                APosition positionToBuild = order.buildPosition();
-                AUnitType buildingType = order.buildingType();
-                if (positionToBuild == null || buildingType == null) {
-                    continue;
-                }
-
-                paintConstructionPlace(positionToBuild, buildingType, null, color);
+            // PREPARING sites are painted too (orange): a reserved site with
+            // no builder yet is otherwise invisible on the map - the sidebar
+            // lists it, but the owner watches tiles (NEXT #150: Pylon
+            // PREPARING 33 s with no map object at all).
+            Color tileColor = color;
+            if (order.status() == ConstructionOrderStatus.PREPARING) {
+                tileColor = Color.Orange;
             }
+            else if (order.status() != ConstructionOrderStatus.NOT_STARTED) {
+                continue;
+            }
+//            if (order.getStatus() != ConstructionOrderStatus.CONSTRUCTION_FINISHED) {
+            APosition positionToBuild = order.buildPosition();
+            AUnitType buildingType = order.buildingType();
+            if (positionToBuild == null || buildingType == null) {
+                continue;
+            }
+
+            paintConstructionPlace(positionToBuild, buildingType, null, tileColor);
         }
     }
 
