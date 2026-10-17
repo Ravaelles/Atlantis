@@ -1,7 +1,6 @@
 package atlantis.game;
 
 import atlantis.Atlantis;
-import atlantis.decisions.Decision;
 import atlantis.map.position.HasPosition;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.units.AUnit;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.*;
 import atlantis.util.GameClock;
 
-import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 /**
@@ -426,18 +424,6 @@ public class A {
         if (Enemy.protoss()) return ifEnemyProtoss;
         if (Enemy.terran()) return ifEnemyTerran;
         return ifEnemyZerg;
-    }
-
-    public static Decision whenEnemyProtossTerranZerg(
-        Callable ifEnemyProtoss, Callable ifEnemyTerran, Callable ifEnemyZerg
-    ) {
-        try {
-            if (Enemy.protoss()) return (Decision) ifEnemyProtoss.call();
-            if (Enemy.terran()) return (Decision) ifEnemyTerran.call();
-            return (Decision) ifEnemyZerg.call();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public static String minSec() {
