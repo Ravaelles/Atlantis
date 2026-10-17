@@ -170,8 +170,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-17 (`rm -rf out` first): unit 692/692 green, 0
-skipped (was 683 - nine tests added since). Architecture advisory
+Re-measured 2026-10-17 (`rm -rf out` first): unit 695/695 green, 0
+skipped (was 683 - twelve tests added since, incl. SupplyGoalTest 3/3). Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
 (both carry live behavior, Stage E/H territory, never grow the
