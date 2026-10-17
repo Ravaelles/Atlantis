@@ -1,7 +1,8 @@
 package atlantis.production.dynamic.protoss.reinforce;
 
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
+import atlantis.decisions.goals.protoss.CannonGoal;
+import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.ProtossSecureBasesCommander;
 import atlantis.units.AUnit;
@@ -28,25 +29,10 @@ public class ShouldSecureProtossBase {
     }
 
     private static int expectedCannons() {
-        int minSupplyForSecondCannon = Enemy.terran() ? 100 : 85;
-        int minerals = A.minerals();
-
-        int total = (A.supplyTotal() >= minSupplyForSecondCannon ? 2 : 1)
-            + (minerals >= 540 ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 130 ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 180 ? 1 : 0)
-            + (Enemy.zerg() && A.supplyTotal() >= 190 ? 1 : 0)
-            + mutasBonus()
-            + (minerals >= 640 ? 1 : 0)
-            + (minerals >= 800 ? 1 : 0);
-
-        if (Enemy.protoss()) total = Math.min(total, 5 + (minerals >= 700 ? 1 : 0));
-        if (Enemy.terran()) total = Math.min(total, 2);
-        if (Enemy.zerg()) total = Math.min(total, 6);
-
-        if (Enemy.zerg() && (A.supplyUsed() <= 150 && A.minerals() <= 550)) total = Math.min(3, total);
-
-        return total;
+        // The number lives on the board (CannonGoal): same matrix, pinned in
+        // stub tests, read here through a fresh snapshot. Per-base placement
+        // below is untouched - the board names the total, never the site.
+        return CannonGoal.wanted(GoalBoardAdvisor.snapshot());
     }
 
     private int existingCannonsNearby() {
@@ -62,15 +48,6 @@ public class ShouldSecureProtossBase {
 //        );
 
         return cannonsNearby < expectedCannons;
-    }
-
-    private static int mutasBonus() {
-        if (!Enemy.zerg()) return 0;
-
-        int mutas = EnemyUnits.mutas();
-        if (mutas == 0) return 0;
-
-        return 1 + (mutas / 4) + (A.minerals() / 500);
     }
 
     private boolean skipReinforcingMainBase(AUnit base) {

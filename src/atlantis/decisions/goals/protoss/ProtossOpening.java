@@ -32,6 +32,7 @@ public final class ProtossOpening {
         goals.add(new CyberneticsCoreGoal());
         goals.add(new AssimilatorGoal());
         goals.add(new WallInGoal());
+        goals.add(new CannonGoal());
         goals.add(new OpeningArmyGoal());
         goals.add(new SustainedZealotFlowGoal());
         goals.add(new SustainedDragoonFlowGoal());

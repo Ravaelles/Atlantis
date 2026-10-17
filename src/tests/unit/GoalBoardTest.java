@@ -72,9 +72,9 @@ public class GoalBoardTest {
             ids.append(goal.id());
         }
         assertEquals(
-            "workers,gateway,assimilator,army,sustained-dragoon,expansion", ids.toString(),
-            "supply satisfied, core standing, no threats: economy, capacity, gas, army, "
-                + "sustained flow, base");
+            "workers,gateway,assimilator,cannon,army,sustained-dragoon,expansion", ids.toString(),
+            "supply satisfied, core standing, no threats: economy, capacity, gas, "
+                + "static defense, army, sustained flow, base");
     }
 
     @Test
@@ -104,10 +104,12 @@ public class GoalBoardTest {
         BoardState state = BoardState.builder()
             .minerals(2000).gas(1000).supply(100, 200)
             .workers(70).bases(3).gateways(5).gatewaysTraining(5).army(30)
-            .core(true).assimilator(true).forge(true).cannons(2).observers(1)
+            .core(true).assimilator(true).forge(true).cannons(6).observers(1)
             .seconds(900)
             .build();
 
+        // 6 cannons: the cannon goal wants 5 here per its matrix (2 base +
+        // 3 mineral tiers, no matchup rows on Unknown), so it stays quiet.
         assertTrue(GoalBoard.ranked(state, ProtossOpening.goals()).isEmpty());
         assertNull(GoalBoard.top(state, ProtossOpening.goals(), null));
     }

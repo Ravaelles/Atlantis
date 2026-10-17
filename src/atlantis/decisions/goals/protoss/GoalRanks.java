@@ -33,6 +33,9 @@ public final class GoalRanks {
     /** Wall-in at the natural: post-core rush-window defense. */
     public static final int WALL_IN = 65;
 
+    /** Static defense count (teeth for the wall, answer to air). */
+    public static final int CANNON = 66;
+
     /** Opening fighting force. */
     public static final int ARMY = 70;
 
