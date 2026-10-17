@@ -25,6 +25,8 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the exit. Game 20261017_143207: bank 604 at 37/49 with free supply is
  * saving/friction too - the deadlock signature is hoard PLUS blocked
  * supply, so free supply stays silent even with nothing waiting.
+ * Game 20261017_143626: bank 604 at 40/41 with a Pylon warping is
+ * waiting for supply, not deadlock - a coming provider suppresses too.
  */
 public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
 
@@ -96,8 +98,31 @@ public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void bankWithFreeSupplyStaysSilent() {
+    public void warpingProviderSuppressesTheExit() {
         currentMinerals = 650;
+        currentSupplyUsed = 40;
+        currentSupplyTotal = 41;
+        Env.setOpenBWForTest(true);
+
+        FakeUnit warping = fake(AUnitType.Protoss_Pylon, 24, 24);
+        warping.setCompleted(false);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21),
+            warping
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            assertFalse(
+                new ForceExitLocallyInOpenBW().applies(),
+                "650 bank at 40/41 with a Pylon warping is waiting for supply, not deadlock (game 20261017_143626)");
+        });
+    }
+
+    @Test
+    public void bankWithFreeSupplyStaysSilent() {        currentMinerals = 650;
         currentSupplyUsed = 30;
         currentSupplyTotal = 50;
         Env.setOpenBWForTest(true);

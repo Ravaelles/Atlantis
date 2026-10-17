@@ -8,6 +8,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
+import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 
@@ -58,7 +60,24 @@ public class ForceExitLocallyInOpenBW extends Commander {
         // mid-game (measured 2026-10-19: exit at 37/49 with 604 banked).
         if (A.supplyFree() > 4) return false;
 
+        // A provider on its way means the hoard may be waiting for supply,
+        // not deadlocked - ending there killed a healthy V2 buildup at
+        // 40/41 with 604 banked while a Pylon warped (hp 451, game
+        // 20261017_143626). Deadlock is hoard + blocked supply + nothing
+        // coming.
+        if (supplyProvidersComing() > 0) return false;
+
         return true;
+    }
+
+    private static int supplyProvidersComing() {
+        return comingOf(AUnitType.Protoss_Pylon)
+            + comingOf(AUnitType.Terran_Supply_Depot)
+            + comingOf(AUnitType.Zerg_Overlord);
+    }
+
+    private static int comingOf(AUnitType provider) {
+        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
     }
 
     protected boolean handle() {
