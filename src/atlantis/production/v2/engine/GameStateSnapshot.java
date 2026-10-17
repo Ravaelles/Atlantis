@@ -196,20 +196,32 @@ public final class GameStateSnapshot {
      * Throttled: suppression is a state, not an event.
      */
     private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
-        if (snapshot.supplyFree > DynamicGoals.SUPPLY_WORRY_LEVEL) return;
-        if (snapshot.supplyProvidersComing <= 0) return;
         if (!A.everyNthGameFrame(300)) return;
         AUnitType provider = racePolicy.supplyProviderType();
         if (provider == null) return;
-        for (AUnit unit : Select.ourOfTypeWithUnfinished(provider).list()) {
-            if (unit.isCompleted()) continue;
+        // Always sample: coming==0 with no Pylon goal means the bug is in
+        // the goal/scheduler, not in suppression. Per-unit rows below name
+        // the blockers when suppressed - read from the RAW list, the same
+        // source the coming count uses (alive-filtered views hide corpses).
+        atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
+            .param("type", provider.name())
+            .param("result", "sample")
+            .param("free", snapshot.supplyFree)
+            .param("coming", snapshot.supplyProvidersComing)
+            .log(AGame.now(), A.minSec());
+        if (snapshot.supplyFree > DynamicGoals.SUPPLY_WORRY_LEVEL) return;
+        if (snapshot.supplyProvidersComing <= 0) return;
+        for (AUnit unit : atlantis.units.select.BaseSelect.ourUnitsWithUnfinishedList()) {
+            if (unit == null || !unit.is(provider)) continue;
             atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
                 .param("type", provider.name())
+                .param("result", "blocker")
                 .param("id", unit.id())
                 .param("tx", unit.tx())
                 .param("ty", unit.ty())
                 .param("hp", unit.hp())
-                .param("supplyFree", snapshot.supplyFree)
+                .param("completed", unit.isCompleted())
+                .param("alive", unit.isAlive())
                 .log(AGame.now(), A.minSec());
         }
     }
