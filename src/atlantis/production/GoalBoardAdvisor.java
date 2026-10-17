@@ -112,6 +112,10 @@ public class GoalBoardAdvisor extends Commander {
                 enemyCarrierTech())
             .sparta(atlantis.battle.Missions.isGlobalMissionSparta())
             .wallPieces(wallPiecesAtNatural())
+            .armyStrengthWithoutCB(atlantis.information.generic.Army.strengthWithoutCB())
+            .enemyHasRanged(atlantis.information.enemy.EnemyInfo.hasRanged())
+            .enemyGoingHidden(atlantis.information.strategy.Strategy.get().isGoingHiddenUnits())
+            .gatewaysUnfinished(Count.gatewaysWithUnfinished())
             .build();
     }
 

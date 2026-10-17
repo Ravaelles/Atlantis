@@ -36,6 +36,10 @@ public final class BoardState {
     public final boolean enemyCarrierTech;
     public final boolean spartaMission;
     public final int wallPiecesAtNatural;
+    public final int armyStrengthWithoutCB;
+    public final boolean enemyHasRanged;
+    public final boolean enemyGoingHidden;
+    public final int gatewaysUnfinished;
 
     private BoardState(Builder builder) {
         this.minerals = builder.minerals;
@@ -66,6 +70,10 @@ public final class BoardState {
         this.enemyCarrierTech = builder.enemyCarrierTech;
         this.spartaMission = builder.spartaMission;
         this.wallPiecesAtNatural = builder.wallPiecesAtNatural;
+        this.armyStrengthWithoutCB = builder.armyStrengthWithoutCB;
+        this.enemyHasRanged = builder.enemyHasRanged;
+        this.enemyGoingHidden = builder.enemyGoingHidden;
+        this.gatewaysUnfinished = builder.gatewaysUnfinished;
     }
 
     public int supplyFree() {
@@ -109,6 +117,10 @@ public final class BoardState {
         private boolean enemyCarrierTech;
         private boolean spartaMission;
         private int wallPiecesAtNatural;
+        private int armyStrengthWithoutCB;
+        private boolean enemyHasRanged;
+        private boolean enemyGoingHidden;
+        private int gatewaysUnfinished;
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
@@ -236,6 +248,30 @@ public final class BoardState {
          */
         public Builder wallPieces(int wallPiecesAtNatural) {
             this.wallPiecesAtNatural = wallPiecesAtNatural;
+            return this;
+        }
+
+        /** Army strength without static defense: rush math, not siege math. */
+        public Builder armyStrengthWithoutCB(int armyStrengthWithoutCB) {
+            this.armyStrengthWithoutCB = armyStrengthWithoutCB;
+            return this;
+        }
+
+        /** Enemy has ranged units (DT prediction: ranged mirrors need no Forge first). */
+        public Builder enemyHasRanged(boolean enemyHasRanged) {
+            this.enemyHasRanged = enemyHasRanged;
+            return this;
+        }
+
+        /** Strategy reads the enemy going hidden units (DT prediction). */
+        public Builder enemyGoingHidden(boolean enemyGoingHidden) {
+            this.enemyGoingHidden = enemyGoingHidden;
+            return this;
+        }
+
+        /** Gateways still warping (Forge timing waits for production first). */
+        public Builder gatewaysUnfinished(int gatewaysUnfinished) {
+            this.gatewaysUnfinished = gatewaysUnfinished;
             return this;
         }
 
