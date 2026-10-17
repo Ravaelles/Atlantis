@@ -270,6 +270,62 @@ public class GoalSourcesTest {
         assertFalse(contains(goals, armyType()));
     }
 
+    // ---- tech ----------------------------------------------------------------
+
+    private static DynamicGoals.GameSnapshot techState(int dragoons, int gas, int supply, int strength,
+        int minerals, boolean researched) {
+        return new DynamicGoals.GameSnapshot(
+            20, 1, supply, 3, supply + 3, minerals, false, 4, 1,
+            0, false, false, 0,
+            gas, true, dragoons, 1, researched, strength);
+    }
+
+    private static String singularityId() {
+        return atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge).id();
+    }
+
+    @Test
+    public void fourDragoonsWantSingularity() {
+        assertTrue(contains(
+            DynamicGoals.contribute(techState(4, 0, 40, 100, 200, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+    }
+
+    @Test
+    public void noDragoonsWantNothing() {
+        // Legacy row: a banked 180 gas researches with zero Dragoons standing.
+        assertTrue(contains(
+            DynamicGoals.contribute(techState(0, 200, 60, 200, 400, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+        assertFalse(contains(
+            DynamicGoals.contribute(techState(0, 100, 60, 200, 400, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+    }
+
+    @Test
+    public void researchedSingularityStaysSilent() {
+        assertFalse(contains(
+            DynamicGoals.contribute(techState(8, 200, 60, 200, 400, true), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+    }
+
+    @Test
+    public void richGasBankFundsEarlyResearch() {
+        assertTrue(contains(
+            DynamicGoals.contribute(techState(2, 200, 40, 100, 200, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+    }
+
+    @Test
+    public void twoDragoonsNeedSupplyStrengthAndBank() {
+        assertTrue(contains(
+            DynamicGoals.contribute(techState(2, 50, 40, 130, 250, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+        assertFalse(contains(
+            DynamicGoals.contribute(techState(2, 50, 30, 130, 250, false), ProductionRacePolicy.forRace("Protoss")),
+            singularityId()));
+    }
+
     // ---- helpers -----------------------------------------------------------
 
     private static boolean contains(List<ProductionGoal> goals, String typeId) {

@@ -191,6 +191,7 @@ public final class DynamicGoals {
         addWorkerGoal(goals, state, race);
         addSupplyGoal(goals, state, race);
         addArmyGoal(goals, state, race);
+        addTechGoal(goals, state);
         addExpansionGoal(goals, state, race);
         addFortificationGoals(goals, state);
 
@@ -320,6 +321,33 @@ public final class DynamicGoals {
                 UnitProducible.of(army),
                 ProductionGoal.PRIORITY_MAINARMYBASE,
                 missing,
+                0,
+                TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Tech: Singularity Charge once Dragoons exist. Mirrors the legacy
+     * trigger minus readiness (bank policy and in-flight dedup stay
+     * execution-side: the wallet skips what the bank cannot cover, the
+     * director refuses duplicate research). The Core itself is not named
+     * here - the scheduler inserts it as a prerequisite from engine data.
+     * Dragoons-gated, so other races stay silent without a race check.
+     */
+    private static void addTechGoal(List<ProductionGoal> goals, GameSnapshot state) {
+        if (state.singularity)
+            return;
+
+        boolean want = state.dragoons >= 4
+            || (state.gas >= 80 && (state.gas >= 180 || state.dragoons >= 6))
+            || (state.dragoons >= 2 && state.supplyUsed >= 38
+                && state.armyStrength >= 120 && state.minerals >= 240);
+        if (!want)
+            return;
+
+        goals.add(new ProductionGoal(
+                atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge),
+                ProductionGoal.PRIORITY_NORMAL,
+                1,
                 0,
                 TargetPlacement.anywhere()));
     }
