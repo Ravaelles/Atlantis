@@ -381,7 +381,11 @@ twins green (1/1 each, re-verified today). Re-run
   (BaseRoles pure + wired) [x] M2 defense spots live (coverage ranker
   both paths, unpowered guard, 897 s proof) [x] M3 drop spots/islands
   (area graph pure) [x] M4 anchors model (tile row + door pure)
-  [ ] M4 wall-in goal + game proof [ ] M5 module extraction. JBWEB fork
+  [ ] M4 wall-in goal + game proof [ ] M5 module extraction (assessed
+  2026-10-17: 7 files, engine-import-free except own map types +
+  `AUnitType`; single engine-coupled adapter (`EngineGroundLink`) already
+  isolated behind `GroundLink` - physical extraction is build/repo
+  mechanics gated on owner timing). JBWEB fork
   (separate repo, walls/JPS only) plugs in at M4 if own anchors prove
   weak. Unblocks nothing above; nothing
   above blocks M0.
