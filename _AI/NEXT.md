@@ -254,8 +254,28 @@ twins green (1/1 each, re-verified today). Re-run
   ledger (warp time + supply vs order expectation, both runner paths).
   Needs a Wine game with the ledger - the late/missing Gateway row names
   the layer. No blind patch.
+- **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
+  enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
+  0/0, scouts find nothing in 18 min). Plumbing verified correct;
+  failure is deeper (slot never reaches occupied/computer_game).
+  Blocks all fighting proof (cluster FIGHT/FLEE, kiting, rush twins).
+  Paths, cheapest last: owner-authored UMS map with a computer-slot
+  enemy (no editor on machine); C++ host slot debugging (shared
+  platform, owner call); Wine games with real opponents (works today).
+  Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
+
+- **#95** Reserved-250 ghost, unresolved watch (2026-10-17): a deadlocked
+  game showed global reserved=250 at supply 4 with bank 74 and nothing
+  READY - no author found (READY/IN_PROGRESS paths audited, equality is
+  value-based, feeder silent). Healthy games since show a clean
+  trajectory (0 early, single-row earmarks late). If it reappears, the
+  `reserved` column plus DECISIONS.log name it; until then no blind fix.
+- **#96** Wine verification batch, owner-run: painter warping labels
+  (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
+  E2E_LAST_* stable files, Missions/BO-mission unenaction sanity.
+  Jar 12.1 MB already carries it all.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -

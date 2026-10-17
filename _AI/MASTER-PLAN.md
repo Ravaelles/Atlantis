@@ -5,6 +5,27 @@ exit criteria; detail lives in the linked documents, day-to-day truth in
 `_AI/NEXT.md`. Order is by dependency, not by appeal: a phase starts
 when the one above no longer blocks it.
 
+## Status 2026-10-18 (which path are we on?)
+
+Both: the phases below are the spine, and owner batches cut across
+them (combat cutover landed during Phase 1/2, decisions migration
+spans 1-2, log/painter work rides along). That is intended - batches
+are vertical slices that each leave the tree green, phases are the
+long direction. When in doubt, `NEXT.md` "Next steps" orders the next
+week, this file orders the next quarter.
+
+- Phase 0: DONE (foundations stand).
+- Phase 1: IN PROGRESS, exit criteria substantially met (script-clean
+  opening 080114, zero churn/duplicate/refusal rows, 720-row attributed
+  log) - remaining: reserved-250 ghost watch (#95), Wine verification
+  batch (#96).
+- Phase 2: IN PROGRESS (production Decision-free, absorption at 20
+  files; per-gate deletions still without candidate).
+- Phase 3: STRUCTURE DONE, behavior partial (cluster moves, fights
+  blocked on enemy spawn - #94).
+- Phases 4-7: not started (Phase 4 power pull-forward landed early as
+  part of an owner batch).
+
 ## Phase 0 — Foundations (done, recorded here so nobody re-plans it)
 
 OpenBW headless loop with hard bounds (CONVENTIONS §17); fast suite +
