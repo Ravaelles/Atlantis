@@ -46,8 +46,10 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     @AfterEach
     public void clean() {
         ConstructionRequests.constructions.clear();
-        Queue.get().allOrders().list().clear();
-        Queue.get().clearCache();
+        if (Queue.get() != null) {
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+        }
         EventLog.clearForTests();
     }
 
@@ -94,6 +96,27 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
     private static CataloguePlacementPlanner blocklessPlanner(int w, int h) {
         return new CataloguePlacementPlanner(new TileAvailabilityGrid(new Flat(w, h)), null, null, false);
+    }
+
+    /** A planner with a scripted answer: the seam for decline routing without map physics. */
+    private static final class ScriptedPlanner implements atlantis.production.v2.PlacementPlanner {
+        private final atlantis.production.v2.PlacementReservation answer;
+
+        ScriptedPlanner(atlantis.production.v2.PlacementReservation answer) {
+            this.answer = answer;
+        }
+
+        @Override
+        public void startPass() {
+        }
+
+        @Override
+        public atlantis.production.v2.PlacementReservation reservePlacement(
+            atlantis.production.v2.Producible building,
+            atlantis.production.v2.TargetPlacement constraint, int targetFrame
+        ) {
+            return answer;
+        }
     }
 
     private static Construction constructionFor(AUnitType type, ProductionOrder order, APosition near) {
@@ -151,27 +174,32 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
 
     @Test
     public void anExactTileIsHonoured() {
+        // No map physics here: the translation (order exact tile -> catalogue
+        // exact constraint) is pinned directly below, and the answered path is
+        // proven by the game run. What this pins is the gate: even a
+        // catalogue YES is refused when the builder-time checks say no, so a
+        // tile the issuer would reject never leaves the adapter.
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
-            fake(AUnitType.Protoss_Probe, 21, 21)
+            probe
         ), fakeEnemies(), () -> {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, APosition.create(25, 25), 10);
             order.markAsUsingExactPosition();
             Construction construction = constructionFor(AUnitType.Protoss_Gateway, order, null);
+            ScriptedPlanner yes = new ScriptedPlanner(
+                atlantis.production.v2.PlacementReservation.success(25, 25, 0));
 
-            APosition site = CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Gateway, construction);
+            APosition site = CatalogueSiteAdapter.siteFor(yes, probe, AUnitType.Protoss_Gateway, construction);
 
-            assertNotNull(site, "a free exact tile on a flat map must be answered");
-            assertEquals(25, site.tx());
-            assertEquals(25, site.ty());
+            assertNull(site, "the stub map refuses the tile - the adapter must decline, never override the gate");
             assertTrue(EventLog.toJsonLines().contains(
-                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Gateway\",\"result\":\"answered\",\"tx\":25,\"ty\":25"),
-                "the answered tile lands in the twin, so a game log names the path");
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Gateway\",\"result\":\"declined\",\"reason\":\"legacy-refused\""));
         });
     }
 
     @Test
-    public void aNeighbourhoodIsAnswered() {
+    public void withoutABuilderTheLegacySearchPicksOne() {
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Probe, 21, 21)
@@ -179,31 +207,72 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
             Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
 
-            APosition site = CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Pylon, construction);
-
-            assertNotNull(site, "a Pylon near (20,20) on a flat map must be answered");
+            assertNull(
+                CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Pylon, construction),
+                "validation needs a builder to check against - decline and let FindPosition define one");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-builder\""));
         });
     }
 
     @Test
+    public void aNeighbourhoodIsTranslated() {
+        // Pure translation, no physics: the order's neighbourhood hint must
+        // reach the catalogue as a neighbourhood constraint. The answered
+        // path itself is proven by the game run (slice 1e commit).
+        ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+        Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
+
+        atlantis.production.v2.TargetPlacement constraint =
+            CatalogueSiteAdapter.constraintFor(order, construction);
+
+        assertEquals(atlantis.production.v2.TargetPlacement.Mode.NEIGHBOURHOOD, constraint.mode());
+        assertEquals(20, constraint.tileX());
+        assertEquals(20, constraint.tileY());
+    }
+
+    @Test
+    public void anExactOrderIsTranslated() {
+        ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, APosition.create(25, 25), 10);
+        order.markAsUsingExactPosition();
+        Construction construction = constructionFor(AUnitType.Protoss_Gateway, order, null);
+
+        atlantis.production.v2.TargetPlacement constraint =
+            CatalogueSiteAdapter.constraintFor(order, construction);
+
+        assertEquals(atlantis.production.v2.TargetPlacement.Mode.EXACT_TILE, constraint.mode());
+        assertEquals(25, constraint.exactTileX());
+        assertEquals(25, constraint.exactTileY());
+    }
+
+    @Test
+    public void noHintMeansAnywhere() {
+        ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+        Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, null);
+
+        atlantis.production.v2.TargetPlacement constraint =
+            CatalogueSiteAdapter.constraintFor(order, construction);
+
+        assertEquals(atlantis.production.v2.TargetPlacement.Mode.ANYWHERE, constraint.mode());
+    }
+
+    @Test
     public void aCatalogueFailureIsDeclined() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
-            fake(AUnitType.Protoss_Probe, 21, 21)
+            probe
         ), fakeEnemies(), () -> {
-            CataloguePlacementPlanner planner = blocklessPlanner(40, 40);
-            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Gateway, APosition.create(25, 25), 10);
-            order.markAsUsingExactPosition();
+            ProductionOrder order = new ProductionOrder(AUnitType.Protoss_Pylon, 8);
+            Construction construction = constructionFor(AUnitType.Protoss_Pylon, order, APosition.create(20, 20));
+            ScriptedPlanner failing = new ScriptedPlanner(
+                atlantis.production.v2.PlacementReservation.failure());
 
-            // First building claims the tile on the shared grid; the adapter's
-            // own startPass keeps the grid (test seam) while clearing the pass,
-            // so the same exact tile is refused the second time.
-            CatalogueSiteAdapter.siteFor(
-                planner, null, AUnitType.Protoss_Gateway, constructionFor(AUnitType.Protoss_Gateway, order, null));
-            APosition retry = CatalogueSiteAdapter.siteFor(
-                planner, null, AUnitType.Protoss_Gateway, constructionFor(AUnitType.Protoss_Gateway, order, null));
+            APosition site = CatalogueSiteAdapter.siteFor(failing, probe, AUnitType.Protoss_Pylon, construction);
 
-            assertNull(retry, "a refused catalogue answer must decline to the legacy search, never invent a tile");
+            assertNull(site, "a refused catalogue answer must decline to the legacy search, never invent a tile");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-tile\""));
         });
     }
 

@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -71,8 +72,9 @@ public final class CatalogueSiteAdapter {
 
     private static synchronized PlacementPlanner plannerForFrame(int frame) {
         if (sharedPlanner == null || sharedPlannerFrame != frame) {
+            // The constructor already builds the grid + catalogue, so no
+            // startPass here (it would build everything twice per frame).
             sharedPlanner = new CataloguePlacementPlanner();
-            sharedPlanner.startPass();
             sharedPlannerFrame = frame;
             sharedPlannerRebuilds++;
         }
@@ -102,7 +104,7 @@ public final class CatalogueSiteAdapter {
         long start = System.nanoTime();
         PlacementPlanner planner = plannerForFrame(AGame.now());
         adapterNanosTotal += System.nanoTime() - start;
-        return answerWithTwin(siteForInner(planner, building, construction), building);
+        return answerWithTwin(siteForInner(planner, builder, building, construction), building);
     }
 
     /**
@@ -111,7 +113,7 @@ public final class CatalogueSiteAdapter {
      */
     public static APosition siteFor(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
         planner.startPass();
-        return answerWithTwin(siteForInner(planner, building, construction), building);
+        return answerWithTwin(siteForInner(planner, builder, building, construction), building);
     }
 
     private static APosition answerWithTwin(APosition site, AUnitType building) {
@@ -126,7 +128,7 @@ public final class CatalogueSiteAdapter {
         return site;
     }
 
-    private static APosition siteForInner(PlacementPlanner planner, AUnitType building, Construction construction) {
+    private static APosition siteForInner(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
         if (construction == null || building == null) return null;
         if (building.isGasBuilding() || building.isBase()) {
             decline(building, "dedicated-finder");
@@ -144,6 +146,17 @@ public final class CatalogueSiteAdapter {
             return null;
         }
 
+        // The catalogue proposes, the legacy validator disposes: a tile the
+        // builder-time checks refuse would start a builder, fail refresh and
+        // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
+        // the control for the same opening). Decline instead and let the
+        // legacy search answer; subsuming these checks is a later slice with
+        // its own A/B proof.
+        if (builder == null || !builder.isAlive()) {
+            decline(building, "no-builder");
+            return null;
+        }
+
         long start = System.nanoTime();
         PlacementReservation reservation = planner.reservePlacement(
             UnitProducible.of(building), constraintFor(order, construction), AGame.now()
@@ -155,7 +168,13 @@ public final class CatalogueSiteAdapter {
             decline(building, "no-tile");
             return null;
         }
-        return APosition.create(reservation.tileX(), reservation.tileY());
+
+        APosition site = APosition.create(reservation.tileX(), reservation.tileY());
+        if (!CanPhysicallyBuildHere.check(builder, building, site)) {
+            decline(building, "legacy-refused");
+            return null;
+        }
+        return site;
     }
 
     private static void decline(AUnitType building, String reason) {
@@ -169,9 +188,10 @@ public final class CatalogueSiteAdapter {
     /**
      * The order's request as a catalogue constraint: an exact tile stays
      * exact (the planner re-validates it), a neighbourhood hint stays a
-     * neighbourhood, and no hint means anywhere.
+     * neighbourhood, and no hint means anywhere. Public as a seam: the
+     * translation is pinned directly, without map physics.
      */
-    static TargetPlacement constraintFor(ProductionOrder order, Construction construction) {
+    public static TargetPlacement constraintFor(ProductionOrder order, Construction construction) {
         if (order.isUsingExactPosition() && order.aroundPosition() != null) {
             APosition exact = APosition.create(order.aroundPosition());
             return TargetPlacement.exactTile(exact.tx(), exact.ty());
