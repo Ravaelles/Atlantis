@@ -65,7 +65,9 @@ public class GameOrderDirector implements OrderDirector {
         // promises true only "when a command was actually issued", and every
         // "trained" row the dispatcher logs inflates the order count the
         // next diagnosis reads (measured: 20 V2 train rows for +7 net
-        // Probes, most of them this hit).
+        // Probes, most of them this hit). The facility stays marked used:
+        // a second same-frame item must still wait instead of appending
+        // behind the queue head.
         if (producer.isTraining(unitType)) {
             markUsed(producer);
             return false;
@@ -106,8 +108,14 @@ public class GameOrderDirector implements OrderDirector {
         if (item instanceof TechProducible) {
             TechType tech = ((TechProducible) item).tech();
             // Only our own job counts as success: an unrelated active research
-            // must not make this goal look satisfied.
-            if (facility.isResearching()) return tech.equals(facility.whatIsResearching());
+            // must not make this goal look satisfied. A hit issues no command,
+            // so it reports false like the train twin - "researched" rows
+            // must measure accepts, not dispatches. The facility stays marked
+            // used: nothing else may take its frame either.
+            if (facility.isResearching()) {
+                markUsed(facility);
+                return false;
+            }
             if (!facility.research(tech)) return false;
             markUsed(facility);
             return true;
@@ -115,7 +123,10 @@ public class GameOrderDirector implements OrderDirector {
 
         if (item instanceof UpgradeProducible) {
             UpgradeType upgrade = ((UpgradeProducible) item).upgrade();
-            if (facility.isUpgrading()) return upgrade.equals(facility.whatIsUpgrading());
+            if (facility.isUpgrading()) {
+                markUsed(facility);
+                return false;
+            }
             if (!facility.upgrade(upgrade)) return false;
             markUsed(facility);
             return true;
