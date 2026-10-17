@@ -294,6 +294,11 @@ public class Env {
         return productionV2;
     }
 
+    /** Test seam (the mode is ENV-driven and has no other writer). */
+    public static void setProductionV2ForTest(ProductionV2Mode mode) {
+        productionV2 = mode == null ? ProductionV2Mode.OFF : mode;
+    }
+
     /**
      * True when {@code PLACEMENT=CATALOGUE} selected the rewritten placement
      * planner. False (the default) keeps the legacy {@code APositionFinder}, so a

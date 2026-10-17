@@ -16,6 +16,13 @@ public class Queue extends AbstractQueue {
     // =========================================================
 
     public void refresh() {
+        // Single policy in LIVE: the v2 engine is the only producer, so the
+        // legacy queue must not mature rows, prepare sites or twin readiness
+        // on unit events (measured: orphan PREPARING with builders,
+        // ORDER_NOT_READY rows and leaked reservations in LIVE games).
+        // DRY_RUN is unaffected (legacy plays there).
+        if (atlantis.config.env.Env.productionV2().isLive()) return;
+
         clearCache();
         (new QueueRefresher(this)).refresh();
         clearCache();
