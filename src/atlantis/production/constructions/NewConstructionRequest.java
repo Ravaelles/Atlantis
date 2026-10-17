@@ -5,6 +5,8 @@ import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.dynamic.protoss.reinforce.BuildPylonFirst;
+import atlantis.units.select.Select;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.constructions.position.PositionFulfillsAllConditions;
@@ -241,8 +243,20 @@ public class NewConstructionRequest {
         return best + " x" + bestCount + " (of " + total + ")";
     }
 
-    private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {
-        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
+    /**
+     * Pull-forward predicate (Phase 4): a power-dominant failure for a
+     * power-needing building with an order behind it means "build the
+     * pylon first". Pure except reading nothing - dominant string, type
+     * flag and order presence decide. Physical failures, pylon orders
+     * themselves and missing orders all answer false.
+     */
+    public static boolean shouldPullPylon(AUnitType building, String dominant, ProductionOrder order) {
+        if (dominant == null || building == null || order == null) return false;
+        if (!building.needsPower()) return false;
+        return dominant.contains("power");
+    }
+
+    private static boolean invalidNullPositionSoQuit(AUnitType building, ProductionOrder order, Construction newConstruction) {        ErrorLog.printMaxOncePerMinute("[LVL=CRITICAL] " + A.minSec() + ": Can't find place for `" + building + "`, " + order);
         // Dominant refusal, not the last one: the sweep ends wherever the
         // rings end, so the final _STATUS names an edge tile, not the rule
         // that killed the search (measured: 8x Gateway "Not powered" while
@@ -253,6 +267,22 @@ public class NewConstructionRequest {
             .param("order", order == null ? "-" : order.toString())
             .param("reason", dominant == null ? "-" : dominant)
             .log(A.now(), A.minSec());
+
+        // Owner 2026-10-17 (Phase 4): power verdict pulls a Pylon instead
+        // of churning. The legacy finder never checks power, so an
+        // unpowered area fails every gateway row forever (measured: 12/13
+        // placement failures in a 20-min game). A pylon near the searched
+        // area, at most one coming (needsPylon reads 5.3 tiles around it),
+        // and the row retries on later frames. Physical failures are left
+        // alone - no pylon fixes a full map.
+        if (shouldPullPylon(building, dominant, order)) {
+            HasPosition near = order.aroundPosition() != null
+                ? order.aroundPosition()
+                : Select.mainOrAnyBuilding();
+            if (near != null && BuildPylonFirst.needsPylon(near)) {
+                BuildPylonFirst.requestNear(near);
+            }
+        }
 //                AConsole.printStackTrace("Can't find place for `" + building + "`, " + order);
         if (AbstractPositionFinder._STATUS != null) {
             ErrorLog.printMaxOncePerMinute("(reason: " + AbstractPositionFinder._STATUS + ")");
