@@ -21,8 +21,6 @@ public class ForceExitLocallyAfterSomeTime extends Commander {
         if (!Env.isLocal()) return false;
         if (A.now() % 300 != 0) return false;
 
-        if (A.supplyUsed() <= 5 && A.minerals() >= 1000) return true;
-
         if (realSecondsLimit > 0 && RealTime.gameLengthInRealSeconds() >= realSecondsLimit) {
             AConsole.errPrintln(
                 "### realSecondsLimit = " + RealTime.gameLengthInRealSeconds() + "/" + realSecondsLimit
