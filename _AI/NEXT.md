@@ -386,8 +386,12 @@ twins green (1/1 each, re-verified today). Re-run
   game showed global reserved=250 at supply 4 with bank 74 and nothing
   READY - no author found (READY/IN_PROGRESS paths audited, equality is
   value-based, feeder silent). Healthy games since show a clean
-  trajectory (0 early, single-row earmarks late). If it reappears, the
-  `reserved` column plus DECISIONS.log name it; until then no blind fix.
+  trajectory (0 early, single-row earmarks late). Absent again in the
+  743 s OpenBW game and the 2026-10-17 Wine game (the 250s there are
+  per-row earmarks in flowing rich games: Dragoon row at 70/107 bank
+  1256, Gateway ORDER_NOT_READY at 27/25 - live demand, not deadlock).
+  If it reappears, the `reserved` column plus DECISIONS.log name it;
+  until then no blind fix.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
