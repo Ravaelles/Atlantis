@@ -110,4 +110,54 @@ public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld 
 
         assertTrue(fired, "the frame was reached - else this test proves nothing");
     }
+
+    @Test
+    public void adjacentNonOverlappingSiteSurvives() {
+        world(5, units(
+            fake(AUnitType.Protoss_Nexus, 7, 44),
+            fake(AUnitType.Protoss_Pylon, 118, 16),
+            fake(AUnitType.Protoss_Probe, 90, 110)
+        ), new FakeUnit[0], () -> {
+            if (A.now() != 3 || fired) return;
+            fired = true;
+
+            // Measured (OpenBW): a fresh [119,18] Pylon construction next to
+            // the warped [118,16] one was proximity-finished and silently
+            // removed (centers 2.2 apart, footprints disjoint), then
+            // re-requested on the same tile 5x in a minute - totalOfType
+            // pinned at 1, no cancel twin anywhere. Adjacent is packed,
+            // not covered.
+            Construction fresh = new Construction(AUnitType.Protoss_Pylon);
+            fresh.setPositionToBuild(APosition.create(119, 18));
+            fresh.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            assertFalse(
+                ConstructionStatusChanger.shouldProximityFinish(fresh),
+                "adjacent non-overlapping site is live demand, not a duplicate");
+        });
+
+        assertTrue(fired, "the frame was reached - else this test proves nothing");
+    }
+
+    @Test
+    public void overlappingSiteStillFinishes() {
+        world(5, units(
+            fake(AUnitType.Protoss_Nexus, 7, 44),
+            fake(AUnitType.Protoss_Pylon, 118, 16),
+            fake(AUnitType.Protoss_Probe, 90, 110)
+        ), new FakeUnit[0], () -> {
+            if (A.now() != 3 || fired) return;
+            fired = true;
+
+            // [118,17] shares the y=17 row with the warped [118,16]
+            // footprint: an engine-shifted twin, still covered.
+            Construction shifted = new Construction(AUnitType.Protoss_Pylon);
+            shifted.setPositionToBuild(APosition.create(118, 17));
+            shifted.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            assertTrue(
+                ConstructionStatusChanger.shouldProximityFinish(shifted),
+                "overlapping footprints mean the demand already stands");
+        });
+
+        assertTrue(fired, "the frame was reached - else this test proves nothing");
+    }
 }

@@ -14,6 +14,8 @@ import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -112,6 +114,16 @@ public class ConstructionStatusChanger extends Commander {
         // proximity finish; builderless rows keep it too (no work pending).
         if (shouldProximityFinish(construction)) {
             construction.setStatus(ConstructionOrderStatus.FINISHED);
+            // Named, not silent: this removal used to leave no twin, so a
+            // re-request loop (same tile, totalOfType pinned at 1) read as
+            // "constructions never advance past PREPARING" with no author.
+            EventLog.key(LogKey.CONSTRUCTION_CANCEL)
+                .param("type", construction.buildingType().name())
+                .param("reason", "proximity finish: standing " + construction.buildingType().name()
+                    + " covers " + construction.buildPosition())
+                .param("tile", construction.buildPosition() == null ? "-"
+                    : construction.buildPosition().toString())
+                .log(A.now(), A.minSec());
             ConstructionRequests.removeOrder(construction);
         }
 
@@ -377,11 +389,26 @@ public class ConstructionStatusChanger extends Commander {
     private static boolean buildingFinishedAtSite(Construction construction) {
         if (construction.buildPosition() == null) return false;
 
-        AUnit finished = Select.ourOfTypeWithUnfinished(construction.buildingType())
-            .inRadius(2.5, construction.buildPosition())
-            .nearestTo(construction.buildPosition());
-
-        return finished != null && finished.isCompleted();
+        // Footprint overlap, not nearness: a finished sibling on the next
+        // slot (measured: Pylon [119,18] next to warped [118,16], centers
+        // 2.2 apart, footprints disjoint) is live packed-base demand, not
+        // coverage - finishing it silently re-requested the same tile 5x
+        // in a minute (totalOfType pinned at 1, no cancel twin anywhere).
+        // The engine-shift tolerance this radius was for is exactly
+        // overlap (a shifted warp still covers part of the ordered
+        // footprint), so nothing real is lost.
+        APosition site = construction.buildPosition();
+        int w = construction.buildingType().getTilesWidth();
+        int h = construction.buildingType().getTilesHeights();
+        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
+            if (unit == null || !unit.isCompleted()) continue;
+            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
+                site.tx(), site.ty(), w, h,
+                unit.tx(), unit.ty(),
+                unit.type().getTilesWidth(), unit.type().getTilesHeights()
+            )) return true;
+        }
+        return false;
     }
 
     /**
