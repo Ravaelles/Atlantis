@@ -76,6 +76,31 @@ public class EventLogTest {
     }
 
     @Test
+    public void firstFlushTruncatesStaleFileSecondAppends() throws Exception {
+        File tmp = File.createTempFile("events-stale", ".jsonl");
+        tmp.deleteOnExit();
+        java.nio.file.Files.write(
+            tmp.toPath(), "STALE ROW FROM A PREVIOUS GAME\n".getBytes("UTF-8"));
+
+        EventLog.key(LogKey.WORKER_GATE).param("reason", "NoSupply").log(30, "0:01");
+        EventLog.flushTo(tmp.getAbsolutePath());
+
+        String afterFirst = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+        assertEquals(
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"reason\":\"NoSupply\"}\n",
+            afterFirst);
+
+        EventLog.key(LogKey.BOARD).param("top", "workers").log(60, "0:02");
+        EventLog.flushTo(tmp.getAbsolutePath());
+
+        String afterSecond = new String(java.nio.file.Files.readAllBytes(tmp.toPath()), "UTF-8");
+        assertTrue(afterSecond.startsWith(
+            "{\"frame\":30,\"time\":\"0:01\",\"key\":\"WORKER_GATE\",\"reason\":\"NoSupply\"}\n"));
+        assertTrue(afterSecond.contains("\"key\":\"BOARD\""));
+        assertFalse(afterSecond.contains("STALE ROW"));
+    }
+
+    @Test
     public void frameGoingBackwardsStartsNewGame() {
         EventLog.key(LogKey.WORKER_GATE).param("reason", "NoSupply").log(600, "0:25");
         EventLog.key(LogKey.WORKER_GATE).param("reason", "CantAfford").log(5, "0:00");

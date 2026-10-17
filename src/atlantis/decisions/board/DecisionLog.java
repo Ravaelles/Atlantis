@@ -23,6 +23,14 @@ public class DecisionLog {
     private static final List<String> rows = new ArrayList<>();
     private static int lastFrame = -1;
 
+    /**
+     * Set on the first flush of this JVM run: the file is append-only by
+     * transport, but each run owns its file, so the first flush truncates
+     * and only later flushes append (NEXT #150 - same fix as EventLog).
+     * Statics reset per process; tests reset via {@link #clearForTests}.
+     */
+    private static boolean firstFlushDone = false;
+
     private DecisionLog() {
     }
 
@@ -50,6 +58,10 @@ public class DecisionLog {
     public static void flush() {
         if (rows.isEmpty()) return;
         try {
+            if (!firstFlushDone) {
+                new java.io.File(OUTPUT_PATH).delete();
+                firstFlushDone = true;
+            }
             FileWriter writer = new FileWriter(OUTPUT_PATH, true);
             for (String row : rows) {
                 writer.write(row + "\n");
@@ -84,6 +96,7 @@ public class DecisionLog {
     public static void clearForTests() {
         rows.clear();
         lastFrame = -1;
+        firstFlushDone = false;
     }
 
     private static String quote(String value) {

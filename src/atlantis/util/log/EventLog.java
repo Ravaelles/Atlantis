@@ -3,9 +3,11 @@ package atlantis.util.log;
 import atlantis.util.AFile;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Structured diagnostic events, buffered and written as JSON lines.
@@ -32,6 +34,16 @@ public class EventLog {
     private static final List<Row> buffer = new ArrayList<>();
     private static int lastFrame = -1;
     private static int lastFlushFrame = -1;
+
+    /**
+     * Paths already truncated by this JVM run. The files are append-only
+     * by transport, but each run owns its file: the first flush of a JVM
+     * run truncates, later flushes append. Statics reset per process, so
+     * one game can never inherit another game's rows no matter which
+     * launcher started it (NEXT #150: 7 MB EVENTS.jsonl spanning 6 Wine
+     * games made per-game attribution impossible).
+     */
+    private static final Set<String> truncatedPaths = new HashSet<>();
 
     private EventLog() {
     }
@@ -88,6 +100,10 @@ public class EventLog {
 
     public static void flushTo(String path) {
         if (buffer.isEmpty()) return;
+        if (!truncatedPaths.contains(path)) {
+            AFile.removeFile(path);
+            truncatedPaths.add(path);
+        }
         AFile.appendToFile(path, toJsonLines());
         buffer.clear();
         lastFlushFrame = lastFrame;
@@ -117,6 +133,7 @@ public class EventLog {
         buffer.clear();
         lastFrame = -1;
         lastFlushFrame = -1;
+        truncatedPaths.clear();
     }
 
     private static String escape(String value) {
