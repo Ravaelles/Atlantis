@@ -109,6 +109,49 @@ We converge on D with selected loans from the rest.
   instead of At-10 + At-12), keep the file format, change completion
   semantics + one test. Fingerprint-selected openings stay a later item.
 
+## Squads and groups: Stardust vs PurpleWave (owner question 2026-10-17)
+
+Stardust (`src/General/Squad.cpp`, `UnitCluster/`, read live): squad per
+PURPOSE (AttackBase/DefendBase/WorkerDefense/Corsair...), inside it
+SPATIAL auto-clusters (vanguard-based; add/combine/remove 480/480/600,
+radius-adjusted; arc-formation combine rule). Specialists (detectors,
+arbiters) held at squad level OUTSIDE clusters. Per-cluster
+Activity/SubActivity from sim consensus; cluster-level target pairing;
+Ball/Arc formations. Membership bottom-up and continuous.
+
+PurpleWave (`src/Tactic/Squads/`, read live): squad per JOB as a class
+(SquadAttack with MODES chosen from battlefield state: YOLO/RazeBase/
+vs-proxies/unseen-tiles; DefendBase; RazeProxies; DT-catch; backstab;
+blocker-clearing...), each with a vicinity anchor + lazily ranked
+targets + formations + qualityCounter (utility for assignment disputes)
++ unitsNow/unitsNext double buffers + LockUnits. Membership top-down:
+Tactician assigns by candidateValue. Micro via Agency agents.
+
+- Membership: spatial auto-cluster (Stardust) vs utility auction
+  (PurpleWave). For ONE cluster the auctioneer is pure overhead -
+  spatial wins for Phase 0; utility matters only with 2+ squads
+  fighting over one unit.
+- Decision: sim consensus per cluster vs mode machine per squad.
+  Same job (fight/flee/regroup); modes are cheaper, sim is safer.
+  Phase 0 takes the gate shape, earns sim later like everything else.
+- Targeting: optimal pairing per cluster vs ranked lists + matchup
+  tables. Ranked lists are simpler and already our twin's shape;
+  tables wait for stable profiles (see ML verdict).
+- Specialists out: BOTH hold them outside the group. Unanimous -
+  detectors/observers never belong to a combat cluster.
+- Formations: both explicit. Ours implicit so far - a gap, not a decision.
+
+Verdict: Phase 0 stays Stardust-simplified (one spatial cluster +
+evaluator gate). Steal from PurpleWave at step 5, in order: (1) purpose
+squads ONLY with measured need (a job class per behavior difference,
+never per unit type); (2) mode predicates inside the attack squad
+(chooseMode shape fits our evaluator states); (3) vicinity anchor +
+ranked targets (our focus point + targeting twin); (4) unitsNow/unitsNext
+double buffering (frame-consistency, nearly free); (5) LockUnits idea
+for builder reservation disputes; (6) qualityCounter only when two
+squads dispute one unit. SKIP Tactician auctioneer (overhead for one
+cluster) and the ~15-class squad explosion (sprawl in another costume).
+
 ## Atlantis hybrid (what we actually build)
 
 - Opening: memorized script (UAlbertaBot opening book + PurpleWave
