@@ -434,6 +434,14 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
+- Long `20261017_173138` (140 s wall, 743 game-s, rich: Nexus=3 Probe=52
+  Pylon=14 Gateway=11 Dragoon=11 Forge + 4 cannons): proximity-fix proof -
+  same-tile Pylon re-requests no longer pile up silently (the [119,18]
+  loop of the short game is gone; remaining re-requests land on
+  `CONSTRUCTION_CANCEL ... proximity finish` twins instead of vanishing).
+  No `Scout idle` in 12+ minutes (roam fallback live).
+  Exit 143 (wall cap, not a bot crash) - game still healthy at the cut.
+
 - Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
   Phase-3 movement proof - DEFEND→ATTACK at 8 army, anchors main →
   natural → enemy corner [9,45], group holds there; CLUSTER twin
