@@ -43,6 +43,11 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     public static final int PRIORITY_WORKERS = 20;
     public static final int PRIORITY_DEPOTS = 30;
     public static final int PRIORITY_BASEDEFENSE = 40;
+    /**
+     * Gas income claims before army spending: without it Dragoons and tech
+     * price in gas they will never mine.
+     */
+    public static final int PRIORITY_GAS = 55;
     public static final int PRIORITY_MAINARMYBASE = 60;
     public static final int PRIORITY_NORMAL = 80;
     public static final int PRIORITY_MAINARMY = 90;

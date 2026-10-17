@@ -192,6 +192,7 @@ public final class DynamicGoals {
         addSupplyGoal(goals, state, race);
         addArmyGoal(goals, state, race);
         addTechGoal(goals, state);
+        addGasGoal(goals, state, race);
         addExpansionGoal(goals, state, race);
         addFortificationGoals(goals, state);
 
@@ -347,6 +348,39 @@ public final class DynamicGoals {
         goals.add(new ProductionGoal(
                 atlantis.production.v2.UpgradeProducible.of(bwapi.UpgradeType.Singularity_Charge),
                 ProductionGoal.PRIORITY_NORMAL,
+                1,
+                0,
+                TargetPlacement.anywhere()));
+    }
+
+    /**
+     * Gas: the next refinery once two bases mine and the bank shapes like
+     * the legacy commander's (supply, mineral-vs-gas, army and core gates).
+     * The queue-cost clause is deliberately not mirrored: the scheduler's
+     * in-flight dedup already refuses a second refinery while one is coming.
+     * Placement is exact-geyser (the planner's gas branch), never a search.
+     */
+    private static void addGasGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
+        AUnitType gas = race.gasBuildingType();
+        if (gas == null)
+            return;
+
+        if (state.supplyUsed < 40)
+            return;
+        if (state.bases < 2)
+            return;
+        if (!(state.gas < state.minerals && state.minerals >= 105))
+            return;
+        if (!(state.gas <= 150 || state.armySize >= 12))
+            return;
+        if (!(state.bases > state.gasBuildings))
+            return;
+        if (!(state.minerals >= 400 || state.hasCore))
+            return;
+
+        goals.add(new ProductionGoal(
+                UnitProducible.of(gas),
+                ProductionGoal.PRIORITY_GAS,
                 1,
                 0,
                 TargetPlacement.anywhere()));

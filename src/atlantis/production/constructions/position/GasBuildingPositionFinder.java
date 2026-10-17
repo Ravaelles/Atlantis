@@ -18,7 +18,7 @@ public class GasBuildingPositionFinder {
      * Returns build position for next Refinery/Assimilator/Extractor. It will be chosen for the oldest base
      * that doesn't have gas extracting building.
      */
-    protected static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
+    public static APosition findPositionForGasBuilding(AUnitType building, HasPosition nearTo) {
         return cache.get(
             CacheKey.create("findPositionForGasBuilding", building, nearTo),
             157,

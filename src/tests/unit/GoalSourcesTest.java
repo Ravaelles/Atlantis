@@ -326,6 +326,53 @@ public class GoalSourcesTest {
             singularityId()));
     }
 
+    // ---- gas -----------------------------------------------------------------
+
+    private static DynamicGoals.GameSnapshot gasState(int supply, int bases, int gas, int minerals,
+        int army, int gasBuildings, boolean core) {
+        return new DynamicGoals.GameSnapshot(
+            30, bases, supply, 5, supply + 5, minerals, false, army, bases,
+            0, false, false, 0,
+            gas, core, 0, gasBuildings, false, army * 10);
+    }
+
+    private static String gasId() {
+        return UnitProducible.of(AUnitType.Protoss_Assimilator).id();
+    }
+
+    @Test
+    public void richTwoBasePoorGasWantsRefinery() {
+        assertTrue(contains(
+            DynamicGoals.contribute(gasState(60, 2, 50, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+    }
+
+    @Test
+    public void earlySingleBaseOrRichGasWantsNothing() {
+        assertFalse(contains(
+            DynamicGoals.contribute(gasState(30, 2, 50, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+        assertFalse(contains(
+            DynamicGoals.contribute(gasState(60, 1, 50, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+        assertFalse(contains(
+            DynamicGoals.contribute(gasState(60, 2, 500, 400, 12, 0, true), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+    }
+
+    @Test
+    public void secondGasWaitsForCoreOrBank() {
+        assertFalse(contains(
+            DynamicGoals.contribute(gasState(60, 2, 50, 300, 12, 1, false), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+        assertTrue(contains(
+            DynamicGoals.contribute(gasState(60, 2, 50, 400, 12, 1, false), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+        assertTrue(contains(
+            DynamicGoals.contribute(gasState(60, 2, 50, 300, 12, 1, true), ProductionRacePolicy.forRace("Protoss")),
+            gasId()));
+    }
+
     // ---- helpers -----------------------------------------------------------
 
     private static boolean contains(List<ProductionGoal> goals, String typeId) {

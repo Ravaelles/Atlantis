@@ -106,6 +106,18 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         if (builder == null)
             return PlacementReservation.failure();
 
+        // Gas buildings take no search: a refinery stands on its geyser's
+        // exact tile (the oldest base without one), so the ring sweep below
+        // would only invent broken tiles. Same finder the legacy pipeline
+        // uses, behind this seam.
+        if (unitType.isGasBuilding()) {
+            APosition gas = atlantis.production.constructions.position.GasBuildingPositionFinder
+                .findPositionForGasBuilding(unitType, resolveNear(constraint));
+            if (gas == null)
+                return PlacementReservation.failure();
+            return PlacementReservation.success(gas.tx(), gas.ty(), targetFrame);
+        }
+
         // One candidate from the legacy finder, which already excludes buildings
         // on the map and honours the constraint.
         //
