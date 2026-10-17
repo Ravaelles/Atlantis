@@ -1058,7 +1058,20 @@ public class AAdvancedPainter extends APainter {
 //        for (AUnit unit : Select.ourBuildingsWithUnfinished().listUnits()) {
         for (Construction order : ConstructionRequests.all()) {
             AUnit building = order.buildingUnit();
-            if (building == null || building.isCompleted()) {
+
+            // Owner 2026-10-18: sites without a building yet get a tile
+            // label too - a PREPARING Pylon with no warp is otherwise
+            // invisible in Painting Mode.
+            if (building == null) {
+                if (order.buildPosition() != null) {
+                    paintTextCentered(order.buildPosition(),
+                        order.buildingType().name() + " [" + order.status() + "]",
+                        Color.White);
+                }
+                continue;
+            }
+
+            if (building.isCompleted()) {
                 continue;
             }
 
@@ -1113,8 +1126,15 @@ public class AAdvancedPainter extends APainter {
 
             // =========================================================
 
-            // Display name of unit
-            String name = (building.buildType() != null ? building.buildType().name() : "-BUG_NULL");
+            // Display name of unit. Owner 2026-10-18: the building's OWN
+            // type plus its order supply and status - buildType() (what it
+            // produces) is null on a warping building, which printed
+            // -BUG_NULL exactly when the label mattered most.
+            String name = building.type().name();
+            if (order.productionOrder() != null) {
+                name += " @" + order.productionOrder().minSupply();
+            }
+            name += " [" + order.status() + "]";
 
             // Paint building name
             paintTextCentered(new APosition(building.position().getX(), building.position().getY() - 7),
