@@ -13,7 +13,6 @@ import atlantis.map.region.Regions;
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;
 import atlantis.util.cache.Cache;
-import jbweb.JBWEB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,8 +127,6 @@ public class Chokes {
             "nearestChoke:" + flag + ";ex" + (position.x() / 48) + ",ey:" + (position.y() / 48),
             -1,
             () -> {
-//                AChoke naturalFromJbweb = AChoke.from(JBWEB.getNaturalChoke());
-//                if (naturalFromJbweb != null) return naturalFromJbweb;
 
                 double nearestDist = 99999;
                 AChoke nearest = null;

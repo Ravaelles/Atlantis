@@ -8,7 +8,7 @@ import atlantis.units.select.Select;
  *
  * <p>
  * This answers that question from the <b>live unit list</b> - not from the
- * engine's tile query and not from JBWEB's {@code usedGrid}. Both of those have
+ * engine's tile query and not from a cached grid. Both of those have
  * been wrong for this question:
  * </p>
  * <ul>
@@ -16,22 +16,17 @@ import atlantis.units.select.Select;
  * tiles on OpenBW (documented in {@code MapTiles.canBuildHere}), which made
  * the finder re-find a tile and cancel the construction in a loop
  * ("position still not good after refresh / buildable:false");</li>
- * <li>JBWEB's {@code usedGrid} was only filled at game start, because Atlantis
- * never called {@code JBWEB.onUnitDiscover}/{@code onUnitDestroy} (only
- * {@code onStart}). Every building raised afterwards was missing from it, so
- * {@code JBWEB.isPlaceable} called an <b>occupied</b> tile free: the finder
- * placed new pylons and gateways on top of existing structures, the builder
- * arrived, could not build, and the construction was cancelled
- * ("took too long (45s) / buildable:false", measured 2026-10-08).</li>
+ * <li>a cached occupancy grid goes stale by construction (measured
+ * 2026-10-08: frame-0 snapshot, every later building missing, new pylons
+ * placed on top of existing structures, "took too long (45s) /
+ * buildable:false"). The old port's grid died with the port (M0 diet,
+ * 04_MAPLIB).</li>
  * </ul>
  *
  * <p>
- * The unit lifecycle is now wired into JBWEB's grid (see
- * {@code Atlantis.keepJbwebGridCurrentOnCreate}), which fixes the grid itself.
- * This class is the second, independent guard: it asks the world the question
- * directly, so a tile with a unit on it can never be called placeable even if
- * the
- * grid is stale again some day.
+ * This class asks the world the question directly, so a tile with a unit on
+ * it can never be called placeable even if a grid somewhere goes stale again
+ * some day.
  * </p>
  */
 public class BuildingTilesAreOccupied {

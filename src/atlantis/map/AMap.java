@@ -53,18 +53,6 @@ public class AMap {
             bwem.initialize();
             bwem.getMap().assignStartingLocationsToSuitableBases();
             verifyMapAnalysisIsUsable();
-
-            // Init JBWEB - needed for calculating ground distance
-            try {
-                InitJBWEB.init();
-    //            InitBWEB.init();
-            } catch (Exception e) {
-                AConsole.errPrintln(
-                    "JBWEB exception: " + e.getMessage() + " "
-                    + "but dont worry. We will continue."
-                );
-                if (!A.isUms()) e.printStackTrace();
-            }
         } catch (Exception e) {
             handleBwemFailure(e);
         }
