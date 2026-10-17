@@ -1,5 +1,6 @@
 package tests.unit;
 
+import atlantis.map.analysis.WallKit;
 import atlantis.map.analysis.WallPieces;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -28,7 +29,7 @@ public class WallPiecesTest {
     @Test
     public void narrowChokeTakesPylonPlusGateway() {
         List<WallPieces.Piece> pieces = WallPieces.plan(
-            row(10, 20, 8), APosition.create(13, 20), APosition.create(10, 30), 7, 2);
+            row(10, 20, 8), APosition.create(13, 20), APosition.create(10, 30), 7, 2, WallKit.PROTOSS);
 
         assertEquals(2, pieces.size());
         assertEquals(AUnitType.Protoss_Pylon, pieces.get(0).type());
@@ -41,7 +42,7 @@ public class WallPiecesTest {
     @Test
     public void widerChokeSpendsACannon() {
         List<WallPieces.Piece> pieces = WallPieces.plan(
-            row(10, 20, 10), APosition.create(14, 20), APosition.create(10, 30), 9, 2);
+            row(10, 20, 10), APosition.create(14, 20), APosition.create(10, 30), 9, 2, WallKit.PROTOSS);
 
         assertEquals(3, pieces.size());
         assertEquals(AUnitType.Protoss_Photon_Cannon, pieces.get(2).type());
@@ -50,7 +51,7 @@ public class WallPiecesTest {
     @Test
     public void tooWideChokeRefuses() {
         List<WallPieces.Piece> pieces = WallPieces.plan(
-            row(10, 20, 12), APosition.create(15, 20), APosition.create(10, 30), 11, 1);
+            row(10, 20, 12), APosition.create(15, 20), APosition.create(10, 30), 11, 1, WallKit.PROTOSS);
 
         assertEquals(0, pieces.size());
     }
@@ -62,16 +63,34 @@ public class WallPiecesTest {
         java.util.Collections.reverse(slots);
 
         List<WallPieces.Piece> pieces = WallPieces.plan(
-            slots, APosition.create(13, 20), APosition.create(10, 30), 7, 2);
+            slots, APosition.create(13, 20), APosition.create(10, 30), 7, 2, WallKit.PROTOSS);
 
         assertEquals(10, pieces.get(0).tile().tx());
     }
 
     @Test
+    public void kitDecidesWidths() {
+        // Same choke, narrower plug piece: a 7-wide choke now needs a gun.
+        WallKit narrow = new WallKit(
+            AUnitType.Protoss_Pylon, 2,
+            AUnitType.Protoss_Gateway, 2,
+            AUnitType.Protoss_Photon_Cannon, 2);
+
+        assertEquals(0, WallPieces.gunsNeeded(7, WallKit.PROTOSS));
+        assertEquals(1, WallPieces.gunsNeeded(7, narrow));
+
+        List<WallPieces.Piece> pieces = WallPieces.plan(
+            row(10, 20, 8), APosition.create(13, 20), APosition.create(10, 30), 7, 2, narrow);
+
+        assertEquals(3, pieces.size());
+        assertEquals(AUnitType.Protoss_Photon_Cannon, pieces.get(2).type());
+    }
+
+    @Test
     public void cannonsNeededMath() {
-        assertEquals(0, WallPieces.cannonsNeeded(7));
-        assertEquals(0, WallPieces.cannonsNeeded(6));
-        assertEquals(1, WallPieces.cannonsNeeded(9));
-        assertEquals(2, WallPieces.cannonsNeeded(11));
+        assertEquals(0, WallPieces.gunsNeeded(7, WallKit.PROTOSS));
+        assertEquals(0, WallPieces.gunsNeeded(6, WallKit.PROTOSS));
+        assertEquals(1, WallPieces.gunsNeeded(9, WallKit.PROTOSS));
+        assertEquals(2, WallPieces.gunsNeeded(11, WallKit.PROTOSS));
     }
 }

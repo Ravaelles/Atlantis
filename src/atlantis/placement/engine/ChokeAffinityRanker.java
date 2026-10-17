@@ -36,16 +36,11 @@ public final class ChokeAffinityRanker implements BuildLocationCatalogue.Locatio
 
     @Override
     public int compare(BuildLocation a, BuildLocation b) {
-        int availability = Integer.compare(normalise(a.framesUntilAvailable()),
-                normalise(b.framesUntilAvailable()));
+        int availability = AvailabilityFirst.compare(a, b);
         if (availability != 0)
             return availability;
 
         return Integer.compare(chokeDistance(a), chokeDistance(b));
-    }
-
-    private static int normalise(int framesUntilAvailable) {
-        return framesUntilAvailable < 0 ? Integer.MAX_VALUE : framesUntilAvailable;
     }
 
     private int chokeDistance(BuildLocation location) {

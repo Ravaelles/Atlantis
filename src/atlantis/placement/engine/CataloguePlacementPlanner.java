@@ -6,6 +6,7 @@ import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.core.BuildLocationCatalogue;
+import atlantis.placement.core.CoverageVerdict;
 import atlantis.placement.core.BuildLocationRanker;
 import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
@@ -344,9 +345,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             PlacementReservation reservation =
                 PlacementReservation.success(candidate.tileX(), candidate.tileY(), targetFrame);
-            if (ranker instanceof CoverageCannonRanker) {
-                boolean[] coverage = ((CoverageCannonRanker) ranker).coverageOf(candidate);
-                reservation = reservation.withCoverage(coverage[0], coverage[1]);
+            CoverageVerdict coverage = ranker.coverageOf(candidate);
+            if (coverage != null) {
+                reservation = reservation.withCoverage(coverage.choke(), coverage.anchor());
             }
             return reservation;
         }
@@ -509,6 +510,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
 
             return new CoverageCannonRanker(choke.firstPoint(), choke.lastPoint(), anchor, rangeTiles);
         } catch (Exception e) {
+            atlantis.util.log.ErrorLog.printMaxOncePerMinute(
+                "CoverageCannonRanker resolution failed, distance ranker keeps the tile: " + e);
             return null;
         }
     }

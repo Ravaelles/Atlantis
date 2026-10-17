@@ -19,11 +19,13 @@ import atlantis.units.AUnitType;
  */
 public final class WallInGoal implements Goal {
 
+    public static final String ID = "wall-in";
+
     public static final int WANTED_PIECES = 3;
 
     @Override
     public String id() {
-        return "wall-in";
+        return ID;
     }
 
     @Override

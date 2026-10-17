@@ -67,6 +67,11 @@ public final class DefenseSpots {
     private DefenseSpots() {
     }
 
+    /** Center of a footprint in pixels: the point coverage is measured from. */
+    public static APosition tileCenter(int tx, int ty, int footW, int footH) {
+        return APosition.createFromPixels(tx * 32 + footW * 16, ty * 32 + footH * 16);
+    }
+
     /**
      * Every free footprint within {@code scanRadiusTiles} of the choke
      * center, ranked: covering the choke line first, then covering the
@@ -88,7 +93,7 @@ public final class DefenseSpots {
         for (int tx = 0; tx + footW <= grid.width(); tx++) {
             for (int ty = 0; ty + footH <= grid.height(); ty++) {
                 if (!footprintFree(tx, ty, footW, footH, grid)) continue;
-                APosition middle = APosition.createFromPixels(tx * 32 + footW * 16, ty * 32 + footH * 16);
+                APosition middle = tileCenter(tx, ty, footW, footH);
                 if (middle.getX() < 0 || middle.getY() < 0) continue;
                 double distToCenter = Math.hypot(
                     middle.getX() - center.getX(), middle.getY() - center.getY());

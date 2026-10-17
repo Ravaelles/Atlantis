@@ -1,8 +1,8 @@
 package atlantis.map.base;
 
 import atlantis.map.AMap;
-import atlantis.map.ReachableTiles;
 import atlantis.map.analysis.BaseRoles;
+import atlantis.map.analysis.EngineGroundLink;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.select.Select;
@@ -61,17 +61,7 @@ public class AllBaseLocations {
             List<BaseRoles.AssignedBase> assigned = BaseRoles.assign(
                 nodes,
                 ourStart == null ? null : ourStart.position(),
-                new BaseRoles.GroundLink() {
-                    @Override
-                    public boolean connected(BaseRoles.BaseNode a, BaseRoles.BaseNode b) {
-                        return ReachableTiles.between(a.position(), b.position());
-                    }
-
-                    @Override
-                    public double groundDistance(BaseRoles.BaseNode a, BaseRoles.BaseNode b) {
-                        return a.position().groundDistanceTo(b.position());
-                    }
-                });
+                new EngineGroundLink());
             for (int i = 0; i < locations.size() && i < assigned.size(); i++) {
                 locations.get(i).setRole(assigned.get(i).role());
             }

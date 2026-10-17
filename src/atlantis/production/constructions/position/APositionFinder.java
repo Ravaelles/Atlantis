@@ -40,13 +40,12 @@ public class APositionFinder {
 
         if (Env.isTesting()) return APosition.create(ARandom.rand(1, 99), ARandom.rand(13, 99));
 
-        // Phase 4 slice 1: the catalogue answers first when selected; a
-        // decline (null) falls back to the legacy search below, so a refused
-        // catalogue answer can never do worse than today. Default off.
-        if (Env.placementCatalogue()) {
-            APosition site = CatalogueSiteAdapter.siteFor(builder, building, construction);
-            if (site != null) return site;
-        }
+        // The catalogue answers first when selected (the flag lives inside
+        // the adapter, both entries); a decline (null) falls back to the
+        // legacy search below, so a refused catalogue answer can never do
+        // worse than today. Default off.
+        APosition site = CatalogueSiteAdapter.siteFor(builder, building, construction);
+        if (site != null) return site;
 
         HasPosition near = construction.nearTo();
         double maxDistance = construction.maxDistance() >= 0 ? construction.maxDistance() : 35;

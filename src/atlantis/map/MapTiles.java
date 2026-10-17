@@ -179,11 +179,6 @@ public class MapTiles {
      * Every tile the building would cover must be walkable and buildable, per the
      * engine's own tile queries. Answered from the engine tile grid; the
      * building's top-left sits at {@code at}.
-     */
-    /**
-     * Every tile the building would cover must be walkable and buildable, per the
-     * engine's own tile queries. Answered from the engine tile grid; the
-     * building's top-left sits at {@code at}.
      *
      * <p>
      * {@code isBuildableIncludeBuildings()} is the engine's occupancy-aware answer,

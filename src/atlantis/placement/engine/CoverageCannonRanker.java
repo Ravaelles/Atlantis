@@ -1,5 +1,6 @@
 package atlantis.placement.engine;
 
+import atlantis.placement.core.CoverageVerdict;
 import atlantis.map.analysis.DefenseSpots;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
@@ -34,8 +35,7 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
 
     @Override
     public int compare(BuildLocation a, BuildLocation b) {
-        int availability = Integer.compare(normalise(a.framesUntilAvailable()),
-                normalise(b.framesUntilAvailable()));
+        int availability = AvailabilityFirst.compare(a, b);
         if (availability != 0)
             return availability;
 
@@ -50,21 +50,18 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
         return Double.compare(distToChoke(a), distToChoke(b));
     }
 
-    private static int normalise(int framesUntilAvailable) {
-        return framesUntilAvailable < 0 ? Integer.MAX_VALUE : framesUntilAvailable;
-    }
-
     private boolean coversChoke(BuildLocation location) {
         return distToChoke(location) <= rangePx;
     }
 
     /**
-     * The verdict for one tile, for the twin: {covers choke, covers anchor}.
-     * Same predicates as the compare, exposed so a game log can attribute
-     * what the ranking decided.
+     * The verdict for one tile, for the twin: same predicates as the
+     * compare, exposed so a game log can attribute what the ranking
+     * decided.
      */
-    public boolean[] coverageOf(BuildLocation location) {
-        return new boolean[] { coversChoke(location), coversAnchor(location) };
+    @Override
+    public CoverageVerdict coverageOf(BuildLocation location) {
+        return new CoverageVerdict(coversChoke(location), coversAnchor(location));
     }
 
     private double distToChoke(BuildLocation location) {
@@ -78,8 +75,7 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
     }
 
     private static APosition centerOf(BuildLocation location) {
-        return APosition.createFromPixels(
-            location.tileX() * 32 + location.tileWidth() * 16,
-            location.tileY() * 32 + location.tileHeight() * 16);
+        return DefenseSpots.tileCenter(
+            location.tileX(), location.tileY(), location.tileWidth(), location.tileHeight());
     }
 }

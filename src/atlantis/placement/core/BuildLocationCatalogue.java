@@ -233,5 +233,15 @@ public final class BuildLocationCatalogue {
      * Ordering hook; the planner installs the real one, tests a deterministic fake.
      */
     public interface LocationScorer extends Comparator<BuildLocation> {
+
+        /**
+         * The verdict for one tile, for the twin. Null means this ranking
+         * decides no coverage (distance-only rankers) - the planner twins
+         * flags only when a verdict exists, so future rankers plug verdicts
+         * in without touching the planner (OCP).
+         */
+        default CoverageVerdict coverageOf(BuildLocation location) {
+            return null;
+        }
     }
 }

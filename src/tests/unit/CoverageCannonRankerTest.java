@@ -42,11 +42,11 @@ public class CoverageCannonRankerTest {
         APosition endB = APosition.createFromPixels(320, 320);
         CoverageCannonRanker ranker = new CoverageCannonRanker(endA, endB, null, 2);
 
-        boolean[] covering = ranker.coverageOf(at(5, 11));
-        boolean[] distant = ranker.coverageOf(at(5, 14));
+        atlantis.placement.core.CoverageVerdict covering = ranker.coverageOf(at(5, 11));
+        atlantis.placement.core.CoverageVerdict distant = ranker.coverageOf(at(5, 14));
 
-        assertTrue(covering[0], "the twin must see what the ranking decided");
-        assertTrue(!distant[0]);
+        assertTrue(covering.choke(), "the twin must see what the ranking decided");
+        assertTrue(!distant.choke());
     }
 
     @Test

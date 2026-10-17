@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,24 +48,25 @@ public final class WallPieces {
 
     /**
      * @param slots anchor tiles in segment order (either direction; oriented
-     * inside so the Pylon sits base-side)
+     * inside so the power piece sits base-side)
      * @param door the tile our units pass; never takes a piece, may be null
      * @param baseSide our base behind the choke; orients the row
      * @param chokeWidthTiles choke width in tiles ({@code AChoke.width()})
-     * @param cannonsWanted cannons the wall may spend (charter: 1-2)
+     * @param cannonsWanted guns the wall may spend (charter: 1-2)
+     * @param kit the race's wall vocabulary (Protoss wall-in today)
      * @return piece orders, or empty when the choke is too wide to plug
      */
     public static List<Piece> plan(
         List<APosition> slots, APosition door, APosition baseSide,
-        double chokeWidthTiles, int cannonsWanted
+        double chokeWidthTiles, int cannonsWanted, WallKit kit
     ) {
         List<Piece> pieces = new ArrayList<>();
-        if (slots == null || slots.isEmpty()) return pieces;
+        if (slots == null || slots.isEmpty() || kit == null) return pieces;
 
         List<APosition> row = new ArrayList<>(slots);
         if (baseSide != null && !row.isEmpty()
             && row.get(row.size() - 1).distTo(baseSide) < row.get(0).distTo(baseSide)) {
-            java.util.Collections.reverse(row);
+            Collections.reverse(row);
         }
 
         List<APosition> open = new ArrayList<>();
@@ -73,26 +75,26 @@ public final class WallPieces {
             open.add(slot);
         }
 
-        int cannonsNeeded = cannonsNeeded(chokeWidthTiles);
-        if (cannonsNeeded > cannonsWanted) return new ArrayList<Piece>();
-        if (open.size() < 2 + cannonsNeeded) return new ArrayList<Piece>();
+        int gunsNeeded = gunsNeeded(chokeWidthTiles, kit);
+        if (gunsNeeded > cannonsWanted) return new ArrayList<Piece>();
+        if (open.size() < 2 + gunsNeeded) return new ArrayList<Piece>();
 
-        pieces.add(new Piece(AUnitType.Protoss_Pylon, open.get(0)));
-        pieces.add(new Piece(AUnitType.Protoss_Gateway, open.get(1)));
-        for (int i = 0; i < cannonsNeeded; i++) {
-            pieces.add(new Piece(AUnitType.Protoss_Photon_Cannon, open.get(2 + i)));
+        pieces.add(new Piece(kit.powerPiece(), open.get(0)));
+        pieces.add(new Piece(kit.plugPiece(), open.get(1)));
+        for (int i = 0; i < gunsNeeded; i++) {
+            pieces.add(new Piece(kit.gunPiece(), open.get(2 + i)));
         }
         return pieces;
     }
 
     /**
-     * Plug width covers the choke minus the door tile: Pylon 2 + Gateway 4,
-     * each cannon 2. Zero or negative need means Pylon + Gateway suffice.
+     * Plug width covers the choke minus the door tile. Zero or negative need
+     * means power + plug suffice.
      */
-    public static int cannonsNeeded(double chokeWidthTiles) {
+    public static int gunsNeeded(double chokeWidthTiles, WallKit kit) {
         double plug = chokeWidthTiles - 1;
-        double have = 2 + 4;
+        double have = kit.powerWidth() + kit.plugWidth();
         if (plug <= have) return 0;
-        return (int) Math.ceil((plug - have) / 2);
+        return (int) Math.ceil((plug - have) / kit.gunWidth());
     }
 }
