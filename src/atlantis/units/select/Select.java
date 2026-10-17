@@ -24,9 +24,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 
     //    protected static SelectUnitsCache cache = new SelectUnitsCache();
     protected static Cache<Selection> cache = new Cache<>();
-    protected static Cache<Object> cacheObject = new Cache<>();
     protected static Cache<Integer> cacheInt = new Cache<>();
-    protected static Cache<AUnit> cacheUnit = new Cache<>();
 
     /**
      * The frame-frozen unit lists every migrated select reads (Stage F):
@@ -91,8 +89,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         cache.clear();
         cacheList.clear();
         cacheInt.clear();
-        cacheUnit.clear();
-        cacheObject.clear();
         allUnitsIndexFrame = -1;
         oursIndexFrame = -1;
         enemyIndexFrame = -1;
@@ -468,7 +464,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static void printCache() {
         System.out.println("--- Unit selection cache ---");
         cache.print(null, true);
-        cacheUnit.print(null, true);
         cacheInt.print(null, true);
     }
 
