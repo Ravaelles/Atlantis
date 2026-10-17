@@ -60,10 +60,15 @@ public class GameOrderDirector implements OrderDirector {
         if (commandsThisFrame.getOrDefault(producer.id(), 0) > 0) return false;
 
         // The plan is recomputed every frame and the unit is still in the build
-        // queue on the next one: the same order must not be queued twice.
+        // queue on the next one: the same order must not be queued twice. A
+        // dedup hit issues no command, so it reports false - the interface
+        // promises true only "when a command was actually issued", and every
+        // "trained" row the dispatcher logs inflates the order count the
+        // next diagnosis reads (measured: 20 V2 train rows for +7 net
+        // Probes, most of them this hit).
         if (producer.isTraining(unitType)) {
             markUsed(producer);
-            return true;
+            return false;
         }
 
         if (!producer.trainForced(unitType)) return false;

@@ -51,6 +51,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean busy = false;
     public boolean cloaked = false;
     public boolean completed = true;
+    private List<AUnitType> stubTrainingQueue = null;
     public int cooldown = 0;
     public boolean detected = true;
     public int energy = 0;
@@ -488,6 +489,17 @@ public class FakeUnit extends AUnit implements Serializable {
     public FakeUnit setCompleted(boolean completed) {
         this.completed = completed;
         return this;
+    }
+
+    public FakeUnit setTrainingQueue(List<AUnitType> queue) {
+        this.stubTrainingQueue = queue == null ? null : new ArrayList<>(queue);
+        return this;
+    }
+
+    @Override
+    public List<AUnitType> trainingQueue() {
+        if (stubTrainingQueue != null) return new ArrayList<>(stubTrainingQueue);
+        return super.trainingQueue();
     }
 
     public FakeUnit setEnergy(int energy) {
