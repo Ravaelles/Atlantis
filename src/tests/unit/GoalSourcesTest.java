@@ -243,6 +243,33 @@ public class GoalSourcesTest {
                 "and does not declare a second Pylon of its own");
     }
 
+    // ---- army advancement ------------------------------------------------
+
+    private static DynamicGoals.GameSnapshot armyState(boolean hasCore) {
+        return new DynamicGoals.GameSnapshot(
+            20, 1, 30, 3, 33, 500, false, 0, 1,
+            0, false, false, 0,
+            0, hasCore, 0, 0, false, 0);
+    }
+
+    @Test
+    public void preCoreArmyIsZealots() {
+        List<ProductionGoal> goals =
+            DynamicGoals.contribute(armyState(false), ProductionRacePolicy.forRace("Protoss"));
+
+        assertTrue(contains(goals, armyType()));
+        assertFalse(contains(goals, UnitProducible.of(AUnitType.Protoss_Dragoon).id()));
+    }
+
+    @Test
+    public void postCoreArmyIsDragoons() {
+        List<ProductionGoal> goals =
+            DynamicGoals.contribute(armyState(true), ProductionRacePolicy.forRace("Protoss"));
+
+        assertTrue(contains(goals, UnitProducible.of(AUnitType.Protoss_Dragoon).id()));
+        assertFalse(contains(goals, armyType()));
+    }
+
     // ---- helpers -----------------------------------------------------------
 
     private static boolean contains(List<ProductionGoal> goals, String typeId) {

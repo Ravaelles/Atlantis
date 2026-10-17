@@ -22,6 +22,17 @@ public interface ProductionRacePolicy {
 
     AUnitType armyUnitType();
 
+    /**
+     * Advanced army unit once unlocked (Protoss: Dragoons after the Core;
+     * default is the baseline - Terran/Zerg keep one unit until their
+     * policies name equivalents). The goal layer picks this when the
+     * snapshot says the unlock stands; prerequisites (the building itself)
+     * are inserted by the scheduler, never by the goals.
+     */
+    default AUnitType armyUnitTypeAdvanced() {
+        return armyUnitType();
+    }
+
     AUnitType baseType();
 
     AUnitType supplyProviderType();

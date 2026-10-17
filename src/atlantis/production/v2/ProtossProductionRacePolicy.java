@@ -21,6 +21,11 @@ public final class ProtossProductionRacePolicy implements ProductionRacePolicy {
     }
 
     @Override
+    public AUnitType armyUnitTypeAdvanced() {
+        return AUnitType.Protoss_Dragoon;
+    }
+
+    @Override
     public AUnitType baseType() {
         return AUnitType.Protoss_Nexus;
     }

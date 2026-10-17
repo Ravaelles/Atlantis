@@ -299,13 +299,16 @@ public final class DynamicGoals {
      * so the bot is never caught with an empty army while tech is researched.
      */
     private static void addArmyGoal(List<ProductionGoal> goals, GameSnapshot state, ProductionRacePolicy race) {
-        AUnitType army = race.armyUnitType();
-        if (army == null)
-            return;
-
         // Below this the economy cannot support an army at all; the worker and
         // supply goals must win first.
         if (state.supplyUsed < 12)
+            return;
+
+        // Advancement: once the unlock stands the advanced unit replaces the
+        // baseline (Protoss: Dragoons after the Core, whose building the
+        // scheduler inserts as a prerequisite). Before that, Zealots.
+        AUnitType army = state.hasCore ? race.armyUnitTypeAdvanced() : race.armyUnitType();
+        if (army == null)
             return;
 
         int targetArmy = Math.max(1, state.workers / 4);
