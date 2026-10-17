@@ -58,6 +58,15 @@ public final class CoverageCannonRanker implements BuildLocationCatalogue.Locati
         return distToChoke(location) <= rangePx;
     }
 
+    /**
+     * The verdict for one tile, for the twin: {covers choke, covers anchor}.
+     * Same predicates as the compare, exposed so a game log can attribute
+     * what the ranking decided.
+     */
+    public boolean[] coverageOf(BuildLocation location) {
+        return new boolean[] { coversChoke(location), coversAnchor(location) };
+    }
+
     private double distToChoke(BuildLocation location) {
         return DefenseSpots.distPointToSegmentPx(centerOf(location), endA, endB);
     }

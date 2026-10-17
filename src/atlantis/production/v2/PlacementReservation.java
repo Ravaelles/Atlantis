@@ -13,13 +13,23 @@ public final class PlacementReservation {
     private final int readyFrame;
     /** Frame the builder was actually committed on; -1 while still uncommitted. */
     private final int committedAtFrame;
+    /** Weapon coverage of the tile, set only by coverage-ranked answers; null when unknown. */
+    private final Boolean coversChoke;
+    private final Boolean coversAnchor;
 
     private PlacementReservation(boolean successful, int tileX, int tileY, int readyFrame, int committedAtFrame) {
+        this(successful, tileX, tileY, readyFrame, committedAtFrame, null, null);
+    }
+
+    private PlacementReservation(boolean successful, int tileX, int tileY, int readyFrame, int committedAtFrame,
+        Boolean coversChoke, Boolean coversAnchor) {
         this.successful = successful;
         this.tileX = tileX;
         this.tileY = tileY;
         this.readyFrame = readyFrame;
         this.committedAtFrame = committedAtFrame;
+        this.coversChoke = coversChoke;
+        this.coversAnchor = coversAnchor;
     }
 
     public static PlacementReservation success(int tileX, int tileY, int readyFrame) {
@@ -28,7 +38,21 @@ public final class PlacementReservation {
 
     /** A reservation the dispatcher has acted on: the builder is walking or building. */
     public PlacementReservation committedAt(int frame) {
-        return new PlacementReservation(successful, tileX, tileY, readyFrame, frame);
+        return new PlacementReservation(successful, tileX, tileY, readyFrame, frame, coversChoke, coversAnchor);
+    }
+
+    /** Coverage verdict from a coverage-ranked answer; unknown (null) otherwise. */
+    public PlacementReservation withCoverage(boolean coversChoke, boolean coversAnchor) {
+        return new PlacementReservation(successful, tileX, tileY, readyFrame, committedAtFrame,
+            coversChoke, coversAnchor);
+    }
+
+    public Boolean coversChoke() {
+        return coversChoke;
+    }
+
+    public Boolean coversAnchor() {
+        return coversAnchor;
     }
 
     public static PlacementReservation failure() {

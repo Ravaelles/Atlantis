@@ -139,15 +139,16 @@ public final class CatalogueSiteAdapter {
             return null;
         }
         planner.startPass();
-        APosition site = propose(planner, builder, building, constraintForSited(nearTo), "sited");
-        if (site == null) {
+        PlacementReservation reservation = propose(planner, builder, building, constraintForSited(nearTo), "sited");
+        if (reservation == null) {
             return null;
         }
+        APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!withinRange(site, nearTo, maxDistance)) {
             decline(building, "too-far", "sited");
             return null;
         }
-        return answerWithTwin(site, building, "sited");
+        return answerWithTwin(site, building, "sited", reservation);
     }
 
     /** Declines needing no order: nulls, dedicated finders, wrong race. True means declined. */
@@ -186,14 +187,22 @@ public final class CatalogueSiteAdapter {
     }
 
     private static APosition answerWithTwin(APosition site, AUnitType building, String via) {
+        return answerWithTwin(site, building, via, null);
+    }
+
+    private static APosition answerWithTwin(APosition site, AUnitType building, String via, PlacementReservation reservation) {
         if (site != null) {
-            EventLog.key(LogKey.CATALOGUE_SITE)
+            EventLog.Builder row = EventLog.key(LogKey.CATALOGUE_SITE)
                 .param("type", building.name())
                 .param("result", "answered")
                 .param("tx", site.tx())
                 .param("ty", site.ty())
-                .param("via", via)
-                .log(AGame.now(), A.minSec());
+                .param("via", via);
+            if (reservation != null && reservation.coversChoke() != null) {
+                row.param("coversChoke", reservation.coversChoke());
+                row.param("coversAnchor", reservation.coversAnchor());
+            }
+            row.log(AGame.now(), A.minSec());
         }
         return site;
     }
@@ -216,14 +225,17 @@ public final class CatalogueSiteAdapter {
             return null;
         }
 
-        return propose(planner, builder, building, constraintFor(order, construction), "funnel");
+        PlacementReservation reservation = propose(planner, builder, building, constraintFor(order, construction), "funnel");
+        if (reservation == null) return null;
+        return answerWithTwin(
+            APosition.create(reservation.tileX(), reservation.tileY()), building, "funnel", reservation);
     }
 
     /**
      * The shared core: builder check, catalogue proposal, legacy validation.
-     * Returns the validated tile or null (decline already twinned).
+     * Returns the validated reservation or null (decline already twinned).
      */
-    private static APosition propose(PlacementPlanner planner, AUnit builder, AUnitType building, TargetPlacement constraint, String via) {
+    private static PlacementReservation propose(PlacementPlanner planner, AUnit builder, AUnitType building, TargetPlacement constraint, String via) {
         // The catalogue proposes, the legacy validator disposes: a tile the
         // builder-time checks refuse would start a builder, fail refresh and
         // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
@@ -252,7 +264,7 @@ public final class CatalogueSiteAdapter {
             decline(building, "legacy-refused", via);
             return null;
         }
-        return site;
+        return reservation;
     }
 
     private static void decline(AUnitType building, String reason, String via) {

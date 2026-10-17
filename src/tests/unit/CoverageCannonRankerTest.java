@@ -37,8 +37,20 @@ public class CoverageCannonRankerTest {
     }
 
     @Test
-    public void availabilityStillOrdersFirst() {
+    public void coverageVerdictIsExposedForTheTwin() {
         APosition endA = APosition.createFromPixels(0, 320);
+        APosition endB = APosition.createFromPixels(320, 320);
+        CoverageCannonRanker ranker = new CoverageCannonRanker(endA, endB, null, 2);
+
+        boolean[] covering = ranker.coverageOf(at(5, 11));
+        boolean[] distant = ranker.coverageOf(at(5, 14));
+
+        assertTrue(covering[0], "the twin must see what the ranking decided");
+        assertTrue(!distant[0]);
+    }
+
+    @Test
+    public void availabilityStillOrdersFirst() {        APosition endA = APosition.createFromPixels(0, 320);
         APosition endB = APosition.createFromPixels(320, 320);
         CoverageCannonRanker ranker = new CoverageCannonRanker(endA, endB, null, 7);
 

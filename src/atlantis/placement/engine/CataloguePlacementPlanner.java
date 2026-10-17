@@ -320,7 +320,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             catalogue.candidates(unitType.getTilesWidth(), unitType.getTilesHeights(), null)
         );
 
-        java.util.Collections.sort(candidates, rankerFor(unitType, centre));
+        BuildLocationCatalogue.LocationScorer ranker = rankerFor(unitType, centre);
+        java.util.Collections.sort(candidates, ranker);
 
         for (BuildLocation candidate : candidates) {
             String tile = candidate.tileX() + ":" + candidate.tileY();
@@ -341,7 +342,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             grid.markUsed(candidate.tileX(), candidate.tileY(),
                     candidate.tileWidth(), candidate.tileHeight());
 
-            return PlacementReservation.success(candidate.tileX(), candidate.tileY(), targetFrame);
+            PlacementReservation reservation =
+                PlacementReservation.success(candidate.tileX(), candidate.tileY(), targetFrame);
+            if (ranker instanceof CoverageCannonRanker) {
+                boolean[] coverage = ((CoverageCannonRanker) ranker).coverageOf(candidate);
+                reservation = reservation.withCoverage(coverage[0], coverage[1]);
+            }
+            return reservation;
         }
 
         return PlacementReservation.failure();
