@@ -14,7 +14,6 @@ public class InitJBWEB {
     public static void init() {
 //        try {
         JBWEB.onStart(Atlantis.game(), AMap.bwem);
-        Blocks.findBlocks();
         Stations.findStations();
 
 //        Wall wall = Walls.createTWall();

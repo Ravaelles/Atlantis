@@ -362,7 +362,6 @@ public class JBWEB {
         }
 
         Walls.draw();
-        Blocks.draw();
         Stations.draw();
     }
 
@@ -767,35 +766,6 @@ public class JBWEB {
     /// Returns the closest buildable BWAPI::TilePosition for any type of structure.
     /// <param name="type"> The BWAPI::UnitType of the structure you want to build.
     /// <param name="tile"> The BWAPI::TilePosition you want to build closest to.
-    public static TilePosition getBuildPosition(UnitType type, TilePosition searchCenter) {
-        double distBest = Double.MAX_VALUE;
-        TilePosition tileBest = TilePosition.Invalid;
-
-        // Search through each block to find the closest block and valid position
-        for (Block block : Blocks.getBlocks()) {
-            List<TilePosition> placements;
-
-            if (type.tileWidth() == 4) {
-                placements = block.getLargeTiles();
-            }
-            else if (type.tileWidth() == 3) {
-                placements = block.getMediumTiles();
-            }
-            else {
-                placements = block.getSmallTiles();
-            }
-
-            for (TilePosition tile : placements) {
-                double dist = tile.getDistance(searchCenter);
-                if (dist < distBest && isPlaceable(type, tile)) {
-                    distBest = dist;
-                    tileBest = tile;
-                }
-            }
-        }
-        return tileBest;
-    }
-
     /// Returns the closest buildable BWAPI::TilePosition for a defensive structure.
     /// <param name="type"> The BWAPI::UnitType of the structure you want to build.
     /// <param name="tile"> The BWAPI::TilePosition you want to build closest to.
