@@ -279,6 +279,12 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261017_085719` (full 1209 game-s, macro: Nexus=7 Probe=86
+  Pylon=23 Gateway=21, single Core): request-time rule proof - exactly
+  ONE CyberneticsC (dynamic, 11:02@117) in a 20-minute game; no second
+  site ever picked behind a coming Core. Creation caps + request rule
+  compose.
+
 - Long `20261017_084517` (127 s wall, 979 game-s, rich: Nexus=5 Probe=56
   Pylon=23 Gateway=7 Dragoon=14, single Core): absorption proof -
   opening script-clean (Pylon 0:50@8, Gateway 1:27@10, Gateway 1:48@12),
