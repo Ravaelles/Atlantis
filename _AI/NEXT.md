@@ -281,7 +281,9 @@ twins green (1/1 each, re-verified today). Re-run
   `SelectionMembership`, each with a pin test, zero call-site changes):
   cross-context readers stay put until their dependencies are fixed -
   moving them re-spells frozen violations instead of removing them
-  (measured, see NOTES.md arch mechanics).
+  (measured, see NOTES.md arch mechanics). Remainder is core iteration
+  machinery (`units()`, `limit`, `nearestTo`, sorting, `estimate`) plus
+  multi-statement logic needing designed splits, not verbatim moves.
 - **#11** Split `AUnit` (~623 methods): order-emission surface first
   (`AUnitOrders` half-owns it), then per-frame orchestration, then
   per-condition logic.
