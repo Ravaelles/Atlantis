@@ -129,16 +129,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all game units including minerals, geysers and enemy units.
      */
     public static Selection all() {
-        String cachePath;
-        return cache.get(
-            cachePath = "all",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>(allUnits());
-
-                return new Selection(data, "all");
-            }
-        );
+        return new Selection(allUnitsIndex().all(), "all");
     }
 
     // =====================================================================
@@ -155,22 +146,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourBasesWithUnfinished() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourBasesWithUnfinished",
-            1,
-            () -> {
-//                if (We.zerg()) {
-                return ourWithUnfinished().ofType(
-                    AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
-                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
-                );
-//                }
-//                else {
-//                    System.err.println("AtlantisRaceConfig.BASE = " + AtlantisRaceConfig.BASE);
-//                    return ourWithUnfinishedOfType(AtlantisRaceConfig.BASE);
-//                }
-            }
+        return ourWithUnfinished().ofType(
+            AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+            AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
         );
     }
 
@@ -191,22 +169,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * @see EnemyUnits::visibleAndFogged()
      */
     public static Selection enemyCombatUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyCombatUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : enemyUnits()) {
-                    if (!unit.isWorker() && (unit.isRealUnit() || unit.isCombatBuilding())) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(enemyIndex().matching(
+            unit -> !unit.isWorker() && (unit.isRealUnit() || unit.isCombatBuilding())
+        ), "enemyCombatUnits");
     }
 
     /**
@@ -214,22 +179,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      */
 //    public static Selection enemies(AUnitType... type) {
     public static Selection enemies(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemies:" + type.id(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : enemyUnits()) {
-                    if (unit.is(type)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(enemyIndex().matching(
+            unit -> unit.is(type)
+        ), "enemies:" + type.id());
     }
 
     /**
@@ -242,22 +194,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourOfTypeWithUnfinished(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourOfTypeWithUnfinished:" + type.id(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourWithUnfinished().list()) {
-                    if (unit.isCompleted() && unit.is(type)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && unit.is(type)
+        ), "ourOfTypeWithUnfinished:" + type.id());
     }
 
     public static Selection ourOfType(AUnitType... types) {
@@ -335,41 +274,22 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static int countOurUnfinishedOfType(AUnitType type) {
-        return cacheInt.get(
-            "countOurUnfinishedOfType:" + type.name(),
-            0,
-            () -> {
-                int total = 0;
+        int total = 0;
 
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (!unit.isCompleted() && unit.is(type)) total++;
-                }
+        for (AUnit unit : oursIndex().all()) {
+            if (!unit.isCompleted() && unit.is(type)) total++;
+        }
 
-                return total;
-            }
-        );
+        return total;
     }
 
     /**
      * Selects our units of given type(s).
      */
     public static Selection ourWithUnfinished(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourOfTypeWithUnfinished:" + type.name(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.is(type)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.is(type)
+        ), "ourOfTypeWithUnfinished:" + type.name());
     }
 
     /**
@@ -391,22 +311,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourWithUnfinishedOfType(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourWithUnfinishedOfType:" + type.id(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.is(type)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.is(type)
+        ), "ourWithUnfinishedOfType:" + type.id());
     }
 
     /**
@@ -433,44 +340,18 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our unfinished units.
      */
     public static Selection ourUnfinished() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourUnfinished",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (!unit.isCompleted()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> !unit.isCompleted()
+        ), "ourUnfinished");
     }
 
     /**
      * Selects our units, not buildings, not spider mines, not larvae.
      */
     public static Selection ourRealUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourRealUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.isRealUnit()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && unit.isRealUnit()
+        ), "ourRealUnits");
     }
 
     /**
@@ -486,13 +367,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Selection enemyRealUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyRealUnits",
-            0,
-            () -> enemyRealUnits(true, true, false)
-        );
-//        return enemyRealUnits(true, true, false);
+        return enemyRealUnits(true, true, false);
     }
 
     /**
@@ -510,25 +385,13 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     public static Selection enemyRealUnits(
         boolean includeGroundUnits, boolean includeAirUnits, boolean includeBuildings
     ) {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyRealUnits" + (includeGroundUnits ? "T" : "F") + (includeAirUnits ? "T" : "F") + (includeBuildings ? "T" : "F"),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>(enemyUnits());
-                data.removeIf(
-                    u -> (
-//                        !u.isCompleted()
-                        (!u.isABuilding() && !u.isRealUnit())
-                            || (!includeBuildings && u.isABuilding())
-                            || (!includeGroundUnits && u.isGroundUnit())
-                            || (!includeAirUnits && u.isAir())
-                    )
-                );
-
-                return new Selection(data, cachePath);
-            }
-        );
+        String key = "enemyRealUnits" + (includeGroundUnits ? "T" : "F") + (includeAirUnits ? "T" : "F") + (includeBuildings ? "T" : "F");
+        return new Selection(enemyIndex().matching(
+            unit -> (unit.isABuilding() || unit.isRealUnit())
+                && (includeBuildings || !unit.isABuilding())
+                && (includeGroundUnits || !unit.isGroundUnit())
+                && (includeAirUnits || !unit.isAir())
+        ), key);
     }
 
     /**
@@ -636,42 +499,22 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static AUnit mainOrAnyBuilding() {
-        return cacheUnit.getIfValid(
-            "mainOrAnyBuilding",
-            73,
-            () -> {
-                AUnit main = Select.main();
+        AUnit main = Select.main();
+        if (main != null) return main;
 
-                if (main != null) return main;
-
-                return Select.ourBuildings().first();
-            }
-        );
+        return Select.ourBuildings().first();
     }
 
     public static AUnit mainOrAnyUnit() {
-        return cacheUnit.getIfValid(
-            "mainOrAnyUnit",
-            293,
-            () -> {
-                AUnit main = Select.mainOrAnyBuilding();
+        AUnit main = Select.mainOrAnyBuilding();
+        if (main != null) return main;
 
-                if (main != null) return main;
-
-                return Select.ourRealUnits().first();
-            }
-        );
+        return Select.ourRealUnits().first();
     }
 
     public static APosition mainOrAnyBuildingPosition() {
-        return (APosition) cacheObject.getIfValid(
-            "mainOrAnyBuildingPosition",
-            73,
-            () -> {
-                AUnit building = mainOrAnyBuilding();
-                return building != null ? building.position() : null;
-            }
-        );
+        AUnit building = mainOrAnyBuilding();
+        return building != null ? building.position() : null;
     }
 
     public static boolean haveMain() {
@@ -682,25 +525,17 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Returns second (natural) base <b>or if we have only one base</b>, it returns the only base we have.
      */
     public static AUnit naturalOrMain() {
-        String cachePath;
+        List<? extends AUnit> bases = Select.ourBases().notLifted().list();
 
-        return cacheUnit.get(
-            cachePath = "naturalOrMain",
-            0,
-            () -> {
-                List<? extends AUnit> bases = Select.ourBases().notLifted().list();
-
-                if (bases.size() >= 2) {
-                    return bases.get(1);
-                }
-                else if (bases.size() == 1) {
-                    return bases.get(0);
-                }
-                else {
-                    return null;
-                }
-            }
-        );
+        if (bases.size() >= 2) {
+            return bases.get(1);
+        }
+        else if (bases.size() == 1) {
+            return bases.get(0);
+        }
+        else {
+            return null;
+        }
     }
 
 
@@ -708,12 +543,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all our tanks, both sieged and unsieged.
      */
     public static Selection ourTanks() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourTanks",
-            0,
-            () -> our().tanks()
-        );
+        return our().tanks();
     }
 
     /**
@@ -729,37 +559,23 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our Zerg Larvas.
      */
     public static Selection ourLarva() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourLarva",
-            0,
-            () -> {
-                Selection selectedUnits = ourWithUnfinished();
-                selectedUnits.list().removeIf(unit -> !unit.is(AUnitType.Zerg_Larva));
-                return selectedUnits;
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isAlive() && unit.is(AUnitType.Zerg_Larva)
+        ), "ourLarva");
     }
 
     /**
      * Selects all our buildings including those unfinished.
      */
     public static Selection ourBuildingsWithUnfinished() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourBuildingsWithUnfinished",
-            0,
-            () -> {
-                Selection selectedUnits = Select.ourWithUnfinished();
-                selectedUnits.list().removeIf(unit -> !unit.type().isABuilding() && !unit.type().isAddon());
-                return selectedUnits;
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isAlive() && (unit.type().isABuilding() || unit.type().isAddon())
+        ), "ourBuildingsWithUnfinished");
     }
 
     public static Selection ourUnfinishedBuildings() {
         return new Selection(oursIndex().matching(
-            unit -> !unit.isCompleted()
+            unit -> unit.isAlive() && !unit.isCompleted()
                 && (unit.type().isABuilding() || unit.type().isAddon())
         ), "ourUnfinishedBuildings");
     }
@@ -827,10 +643,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourFree(AUnitType type) {
-        return cache.get(
-            "ourFree:" + type.id(),
-            0,
-            () -> Select.ourOfType(type).free()
-        );
+        return Select.ourOfType(type).free();
     }
 }
