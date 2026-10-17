@@ -298,7 +298,9 @@ twins green (1/1 each, re-verified today). Re-run
   (`AGame` vs `EconomyContext`) belongs with Stage G/I - do not start
   it here. (Wall-clock extraction tried and reverted 2026-10-09: trivial
   split, unreliable edit path, zero behaviour change.)
-- **#10** Split `Selection` (235 public methods) along internal seams,
+- **#10** Split `Selection` (226 public surface methods, measured
+  2026-10-17: 166 one-line delegates into 3 seams, 60 remaining) along
+  internal seams, with a test pinning selection semantics before/after.
   with a test pinning selection semantics before/after. Four slices landed
   (radius family → `SelectionRadius`, membership filters →
   `SelectionMembership`, ordering → `SelectionSorting` in two parts:
