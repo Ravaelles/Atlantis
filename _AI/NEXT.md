@@ -359,7 +359,16 @@ twins green (1/1 each, re-verified today). Re-run
   twin (landed 2026-10-17) names it from the next clean game on; then
   a Forge game. V2 runs bypass the twinned door (delegates builders
   past it - `BUILD_REFUSED` 0 in `202456`), so the naming game is a
-  legacy run. No blind patch.
+  legacy run. First fire in `210732`: 1087 named refusals, all correct
+  (poverty, caps, working core-priority) - but no Forge demand in that
+  game either, so the Forge naming still waits. No blind patch.
+- **#149** Causeless early exit, second occurrence: `131407` (V2 LIVE,
+  4:07) and `210732` (legacy, 5:08) both end clean with no force/leave/
+  GG/latch line, both enemyless, both healthy at the cut (roster still
+  growing). Self-terminate paths audited (OnGameEnd only runs at the
+  end, time limits far above, launcher exits post-loop) - none explains
+  a 5-minute self-end. Probe: an exit-reason twin at the terminate
+  paths, then a game. No blind patch.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -529,6 +538,19 @@ twins green (1/1 each, re-verified today). Re-run
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
+
+- Long `20261017_210732` (46 s wall, 308 game-s, legacy: Nexus=1 Probe=24
+  Zealot=4 Pylon=6 Gateway=2 Dragoon=1 Assimilator=1 Core=1): FIRST CLEAN
+  `E2E_DECISIONS` (11 rows, maxframe matches the game - the pre-run rm
+  fix verified). `BUILD_REFUSED` fired 1087x, all named-correct: Pylon
+  poverty 204, pylon-cap 155, core-priority 682 (the Core landed - the
+  priority rule works, documented live); Gateway poverty 46. Core BO#9
+  waited 14 NOT_READY then warped. Gateway [49,107] engine-refused x2 +
+  null-position x5 (loud, not a silent pile-up). Game ended 5:08 by
+  unnamed cause (no force/leave/GG line; exit-path jstack fired post-game
+  per the O3 pattern) - second occurrence of the `131407` shape, filed
+  as #149. TECH_CHECK 126x all false (no Forge - #85 still pending).
+  0/0 kills (#94).
 
 - Long V2 LIVE `20261017_202456` (139 s wall, 1055 game-s, Protoss:
   Zealot=7 Probe=25 Forge=1 Pylon=6 Core=1 Assimilator=1 Nexus=1
