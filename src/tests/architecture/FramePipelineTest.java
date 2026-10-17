@@ -29,7 +29,7 @@ public class FramePipelineTest {
         "SpecialActionsCommander",
         "ScoutCommander",
         "WorkerCommander",
-        "CombatCommander",
+        "BattleCommander",
         "ProductionCommander",
         "BuildingsCommander",
         "ConstructionsCommander",

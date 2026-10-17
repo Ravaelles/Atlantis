@@ -1,5 +1,6 @@
 package atlantis.map.base;
 
+import atlantis.map.analysis.BaseRoles;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
@@ -10,6 +11,7 @@ import bwem.Base;
 public class ABaseLocation implements HasPosition, Comparable<ABaseLocation> {
     private Base base = null;
     private APosition position = null;
+    private BaseRoles.Role role = BaseRoles.Role.EXPANSION;
 
     public static ABaseLocation create(Base base) {
         ABaseLocation baseLocation = new ABaseLocation();
@@ -87,15 +89,33 @@ public class ABaseLocation implements HasPosition, Comparable<ABaseLocation> {
 
     // =========================================================
 
-//    public boolean isIsland() {
-//        return base.isIsland();
-//    }
-//
-//    public boolean isMineralOnly() {
-//        return base.isMineralOnly();
-//    }
+    public BaseRoles.Role role() {
+        return role;
+    }
+
+    public void setRole(BaseRoles.Role role) {
+        if (role != null) this.role = role;
+    }
+
+    public boolean isIsland() {
+        return role == BaseRoles.Role.ISLAND;
+    }
+
+    public boolean isMineralOnly() {
+        return role == BaseRoles.Role.MINERAL_ONLY;
+    }
 
     public boolean isStartLocation() {
         return base != null && base.isStartingLocation();
+    }
+
+    /** Mineral patches at this base; 0 when the location carries no base. */
+    public int minerals() {
+        return base == null ? 0 : base.getMinerals().size();
+    }
+
+    /** Geysers at this base; 0 when the location carries no base. */
+    public int gas() {
+        return base == null ? 0 : base.getGeysers().size();
     }
 }
