@@ -64,14 +64,33 @@ public final class CatalogueSiteAdapter {
      */
     private static CataloguePlacementPlanner sharedPlanner;
     private static int sharedPlannerFrame = -1;
+    private static int sharedPlannerRebuilds = 0;
+    private static long adapterNanosTotal = 0;
+    private static int adapterCalls = 0;
+    private static int lastPerfSample = -1;
 
     private static synchronized PlacementPlanner plannerForFrame(int frame) {
         if (sharedPlanner == null || sharedPlannerFrame != frame) {
             sharedPlanner = new CataloguePlacementPlanner();
             sharedPlanner.startPass();
             sharedPlannerFrame = frame;
+            sharedPlannerRebuilds++;
         }
         return sharedPlanner;
+    }
+
+    private static void samplePerf(int frame) {
+        int bucket = frame / 720;
+        if (bucket == lastPerfSample) return;
+        lastPerfSample = bucket;
+        if (adapterCalls == 0) return;
+        EventLog.key(LogKey.CATALOGUE_SITE)
+            .param("type", "-")
+            .param("result", "perf")
+            .param("calls", adapterCalls)
+            .param("avgMicros", (int) (adapterNanosTotal / 1000 / adapterCalls))
+            .param("rebuilds", sharedPlannerRebuilds)
+            .log(frame, A.minSec());
     }
 
     /**
@@ -80,7 +99,10 @@ public final class CatalogueSiteAdapter {
      * Uses the frame's shared planner (one grid+catalogue rebuild per frame).
      */
     public static APosition siteFor(AUnit builder, AUnitType building, Construction construction) {
-        return answerWithTwin(siteForInner(plannerForFrame(AGame.now()), building, construction), building);
+        long start = System.nanoTime();
+        PlacementPlanner planner = plannerForFrame(AGame.now());
+        adapterNanosTotal += System.nanoTime() - start;
+        return answerWithTwin(siteForInner(planner, building, construction), building);
     }
 
     /**
@@ -122,9 +144,13 @@ public final class CatalogueSiteAdapter {
             return null;
         }
 
+        long start = System.nanoTime();
         PlacementReservation reservation = planner.reservePlacement(
             UnitProducible.of(building), constraintFor(order, construction), AGame.now()
         );
+        adapterNanosTotal += System.nanoTime() - start;
+        adapterCalls++;
+        samplePerf(AGame.now());
         if (reservation == null || !reservation.isSuccessful()) {
             decline(building, "no-tile");
             return null;
