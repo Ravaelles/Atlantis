@@ -498,7 +498,12 @@ twins green (1/1 each, re-verified today). Re-run
   direction: snapshot fields + Dragoon advancement + Singularity want +
   gas want with exact-geyser siting, all stub-pinned; one DRY_RUN short
   run shows V2 planning Dragoons/Assimilators behavior-neutrally).
-  Singularity live fire + V2 gas order still pending longer games.
+  Singularity live fire still pending longer games; V2 gas order fired
+  live in `202456`. Race-army gap named 2026-10-17: the advancement is a
+  floor fill, so a standing Zealot army at/above workers/4 freezes the
+  Dragoon transition forever (`202456`: Core from 4:35, 7 Zealots, zero
+  Dragoons - demand-side, pinned in `V2DragoonAdvancementTest` 3/3);
+  whether the floor should convert is an owner call.
 - **#144–#147** Rewrite order, clean-room (owner direction 2026-10-17:
   Queue, site-finding, APositionFinder and SupplyCommander each properly
   planned and built anew, then the old path moves to src-old/). Safe
