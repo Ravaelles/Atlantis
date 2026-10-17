@@ -1,5 +1,7 @@
 package atlantis.placement.engine;
 
+import atlantis.map.choke.AChoke;
+import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.BuildLocation;
@@ -18,6 +20,7 @@ import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.UnitStats;
 import atlantis.units.select.Select;
 
 import java.util.ArrayList;
@@ -473,6 +476,8 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // one is policy and lives in S5). Expressed as a scorer, not as its own
         // class, so the catalogue and the seam do not change for it.
         if (unitType.isCannon()) {
+            BuildLocationCatalogue.LocationScorer coverage = coverageRankerFor(unitType, centre);
+            if (coverage != null) return coverage;
             return new ChokeAffinityRanker(neighbourhoods);
         }
 
@@ -481,6 +486,24 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             false,
             BuildLocationRanker.isTechBuilding(unitType)
         );
+    }
+
+    /** Coverage scoring needs the choke segment; anything unresolvable keeps the distance ranker. */
+    private BuildLocationCatalogue.LocationScorer coverageRankerFor(AUnitType unitType, final APosition centre) {
+        try {
+            if (centre == null) return null;
+            AChoke choke = Chokes.nearestChoke(centre);
+            if (choke == null || choke.firstPoint() == null || choke.lastPoint() == null) return null;
+
+            NeighbourhoodRegistry.Neighbourhood area = neighbourhoods.forTile(centre.tx(), centre.ty());
+            APosition anchor = area == null ? null : APosition.create(area.originX(), area.originY());
+            int rangeTiles = UnitStats.weaponRangeInTiles(unitType.groundWeapon());
+            if (rangeTiles <= 0) return null;
+
+            return new CoverageCannonRanker(choke.firstPoint(), choke.lastPoint(), anchor, rangeTiles);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /** Ordering: closer to the requested neighbourhood first. */

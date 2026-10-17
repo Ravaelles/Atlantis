@@ -122,7 +122,8 @@ public final class DefenseSpots {
         return true;
     }
 
-    static double distPointToSegmentPx(APosition p, APosition a, APosition b) {
+    /** Distance from a point to a segment, pixels. Public as a seam: rankers score coverage with it. */
+    public static double distPointToSegmentPx(APosition p, APosition a, APosition b) {
         double ax = a.getX();
         double ay = a.getY();
         double bx = b.getX();
