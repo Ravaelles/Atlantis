@@ -77,7 +77,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-18: 615 passing, 1 skipped (decision-board migration:
+Suite green 2026-10-18: 628 passing, 1 skipped (owner batch:
+PREPARING sites reserved+stable, painter warping labels, important-only
+DECISIONS, role-named logs; plus earlier combat cutover:
 `src/atlantis/combat/` → `src-old/`, `atlantis.battle` extracted,
 15 combat-behavior tests deleted incl. the rush twins, kept tests
 repointed; `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
