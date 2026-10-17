@@ -370,7 +370,14 @@ twins green (1/1 each, re-verified today). Re-run
   past it - `BUILD_REFUSED` 0 in `202456`), so the naming game is a
   legacy run. First fire in `210732`: 1087 named refusals, all correct
   (poverty, caps, working core-priority) - but no Forge demand in that
-  game either, so the Forge naming still waits. No blind patch.
+  game either, so the Forge naming still waits. Correction 2026-10-17:
+  the trigger itself verified coherent on clean games - `200123`
+  (supplyUsed peak 42) and `210732` (peak 33) never reach the
+  `buildAt` minimum 46, so `ForgeGoal.wanted` is correctly silent in
+  both; the original 20-row signal was accumulation across richer
+  games (one of them, `173138`, built its Forge). What remains is
+  closing the loop on a Forge-demanding game, not a standing defect.
+  No blind patch.
 - **#149** Causeless early exit, second occurrence: `131407` (V2 LIVE,
   4:07) and `210732` (legacy, 5:08) both end clean with no force/leave/
   GG/latch line, both enemyless, both healthy at the cut (roster still
@@ -420,7 +427,10 @@ twins green (1/1 each, re-verified today). Re-run
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
   side of D5. Untouched. `TECH_CHECK` twin live (`170009`: 430 rows);
   the refusing gate named in the open: weapons wants 700 bank or 3
-  bases (peak 517 here, 671 in `165345` - just under). 743 s run hit
+  bases (peak 517 here, 671 in `165345` - just under). Chain check
+  2026-10-17: both clean games never reach the Forge trigger at all
+  (supplyUsed peaks 42/33 < `buildAt` minimum 46), so research never
+  starts for coherent reasons, not a stuck gate. 743 s run hit
   bank 900-1300 from 10:58 and research STARTED at 11:16
   (beingRes through 11:39) but the wall clock ended the game before
   completion - still needs a longer window after research starts,
