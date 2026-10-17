@@ -352,39 +352,15 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
-- **#148** Forge demand decided 20x, never executed, zero diagnostics.
-  Correction 2026-10-17: the 20 BUILD rows are NOT from one game - 19
-  predate retention (present in the first retained run) and +1 landed in
-  `173138`; per-run attribution was impossible because `DECISIONS.log`
-  was never cleared between runs (append-only `FileWriter`, and the
-  runner deleted `EVENTS.jsonl`/`BUILDINGS.json` pre-run but not it -
-  fixed same change: `rm -f .../DECISIONS.log` next to the other two).
-  Every retained `E2E_DECISIONS` carries foreign rows (e.g. 200/200
-  supply in a 65-total game). What stands: demand with affordable banks
-  and met supply, zero execution traces anywhere, Gateways built through
-  identical machinery in the same span; wallet, duplicate-cancel,
-  position, builder and requirements exonerated with evidence. Open:
-  which silent `requestBuilding` exit ate them - the `BUILD_REFUSED`
-  twin (landed 2026-10-17) names it from the next clean game on; then
-  a Forge game. V2 runs bypass the twinned door (delegates builders
-  past it - `BUILD_REFUSED` 0 in `202456`), so the naming game is a
-  legacy run. First fire in `210732`: 1087 named refusals, all correct
-  (poverty, caps, working core-priority) - but no Forge demand in that
-  game either, so the Forge naming still waits. Correction 2026-10-17:
-  the trigger itself verified coherent on clean games - `200123`
-  (supplyUsed peak 42) and `210732` (peak 33) never reach the
-  `buildAt` minimum 46, so `ForgeGoal.wanted` is correctly silent in
-  both; the original 20-row signal was accumulation across richer
-  games (one of them, `173138`, built its Forge). What remains is
-  closing the loop on a Forge-demanding game, not a standing defect.
+- **#149** Causeless early exit, third occurrence: `131407` (V2 LIVE,
+  4:07), `210732` (legacy, 5:08) and `213248` (legacy rich, 9:50) all
+  end clean with no force/leave/GG line, all enemyless, all healthy at
+  the cut (roster still growing). Self-terminate paths audited (OnGameEnd
+  only runs at the end, ForceExit prints absent, time limits far above,
+  launcher exits post-loop) - none explains a self-end. Probe LANDED
+  (`GAME_END` twin: `213248` closed with won=false, frame, supply,
+  bank) - cause still unnamed; next: host-side check (owner call).
   No blind patch.
-- **#149** Causeless early exit, second occurrence: `131407` (V2 LIVE,
-  4:07) and `210732` (legacy, 5:08) both end clean with no force/leave/
-  GG/latch line, both enemyless, both healthy at the cut (roster still
-  growing). Self-terminate paths audited (OnGameEnd only runs at the
-  end, time limits far above, launcher exits post-loop) - none explains
-  a 5-minute self-end. Probe: an exit-reason twin at the terminate
-  paths, then a game. No blind patch.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -430,7 +406,10 @@ twins green (1/1 each, re-verified today). Re-run
   bases (peak 517 here, 671 in `165345` - just under). Chain check
   2026-10-17: both clean games never reach the Forge trigger at all
   (supplyUsed peaks 42/33 < `buildAt` minimum 46), so research never
-  starts for coherent reasons, not a stuck gate. 743 s run hit
+  starts for coherent reasons, not a stuck gate. `213248`: Forge built
+  8:29 but post-Forge bank maxed at 641 < 700 (2 bases) - still
+  correctly silent; pending a post-Forge 700-bank or 3rd-base window.
+  743 s run hit
   bank 900-1300 from 10:58 and research STARTED at 11:16
   (beingRes through 11:39) but the wall clock ended the game before
   completion - still needs a longer window after research starts,
@@ -557,6 +536,19 @@ twins green (1/1 each, re-verified today). Re-run
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
+
+- Long `20261017_213248` (79 s wall, 590 game-s, legacy rich: Nexus=2
+  Probe=34 Pylon=9 Gateway=9 Zealot=10 Dragoon=10 Assimilator=2 Core=1
+  Forge=1): Forge full-twin loop live - BUILD #123 at 8:29
+  (supply 58, bank 483) → PREPARING [116,19] → BUILDING_STARTED →
+  ledger warp 8:34 → roster Forge=1, zero silent steps. `GAME_END`
+  first fire (won=false, 14058, 78/90, bank 453/308). Game ended 9:50
+  unnamed (no force/leave/GG; #149 pattern, now WITH state).
+  Post-Forge bank max 641 < 700 → research correctly silent (#85
+  still pending a post-Forge 700-bank/3rd-base window). `BUILD_REFUSED`
+  2740x (Gateway warping-link 762 new live, Pylon cap 1021,
+  core-priority 796). `E2E_DECISIONS` clean (339 rows, maxframe ==
+  game). 0/0 kills (#94).
 
 - Long `20261017_210732` (46 s wall, 308 game-s, legacy: Nexus=1 Probe=24
   Zealot=4 Pylon=6 Gateway=2 Dragoon=1 Assimilator=1 Core=1): FIRST CLEAN
