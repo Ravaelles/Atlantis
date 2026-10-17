@@ -87,10 +87,15 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
 
         dragoons = Count.dragoonsWithUnfinished();
 
+        // NEXT #93 absorption track: the trio reads posture off the board.
+        // Same numbers, new home - the plain gates below keep the field.
+        atlantis.decisions.board.BoardState board =
+            atlantis.production.GoalBoardAdvisor.snapshot();
+
         Decision decision;
-        if ((decision = forForgeExpand()).notIndifferent()) return decision.toBoolean();
-        if ((decision = againstProtoss()).notIndifferent()) return decision.toBoolean();
-        if ((decision = againstZerg()).notIndifferent()) return decision.toBoolean();
+        if ((decision = forForgeExpand(board)).notIndifferent()) return decision.toBoolean();
+        if ((decision = againstProtoss(board)).notIndifferent()) return decision.toBoolean();
+        if ((decision = againstZerg(board)).notIndifferent()) return decision.toBoolean();
 
 //        if (dragoons >= 2) return true;
 
@@ -102,30 +107,30 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         return false;
     }
 
-    private Decision againstZerg() {
-        if (!Enemy.zerg()) return Decision.INDIFFERENT;
+    private Decision againstZerg(atlantis.decisions.board.BoardState board) {
+        if (!"Zerg".equals(board.enemyRace)) return Decision.INDIFFERENT;
 
-        if (dragoons <= 1) return Decision.FALSE;
+        if (board.dragoonsUnfinished <= 1) return Decision.FALSE;
 
-        if (dragoons >= 3 || EnemyUnits.hydras() > 0) return Decision.TRUE;
+        if (board.dragoonsUnfinished >= 3 || board.enemyHydras > 0) return Decision.TRUE;
 
         return Decision.INDIFFERENT;
     }
 
-    private Decision forForgeExpand() {
-        if (Count.cannons() >= 2 && Count.dragoonsWithUnfinished() > 0) {
+    private Decision forForgeExpand(atlantis.decisions.board.BoardState board) {
+        if (board.cannonCount >= 2 && board.dragoonsUnfinished > 0) {
             return Decision.TRUE;
         }
 
         return Decision.INDIFFERENT;
     }
 
-    private Decision againstProtoss() {
-        int minDragoons = Missions.isGlobalMissionSparta() ? 2 : 3;
+    private Decision againstProtoss(atlantis.decisions.board.BoardState board) {
+        int minDragoons = board.spartaMission ? 2 : 3;
 
-        if (Enemy.protoss()) {
-            if (dragoons <= minDragoons) return Decision.INDIFFERENT;
-            if (dragoons >= minDragoons + 2) return Decision.TRUE;
+        if ("Protoss".equals(board.enemyRace)) {
+            if (board.dragoonsUnfinished <= minDragoons) return Decision.INDIFFERENT;
+            if (board.dragoonsUnfinished >= minDragoons + 2) return Decision.TRUE;
         }
 
         return Decision.INDIFFERENT;

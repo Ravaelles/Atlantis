@@ -102,6 +102,15 @@ public class GoalBoardAdvisor extends Commander {
             .underAttack(BaseUnderAttack.check())
             .seconds(A.seconds())
             .enemyRace(enemyRaceName())
+            .dragoons(Count.dragoons())
+            .dragoonsUnfinished(Count.dragoonsWithUnfinished())
+            .armyStrength(atlantis.information.generic.Army.strength())
+            .enemyUnits(
+                atlantis.information.enemy.EnemyUnits.hydras(),
+                atlantis.information.enemy.EnemyUnits.lurkers(),
+                atlantis.information.enemy.EnemyUnits.mutas(),
+                enemyCarrierTech())
+            .sparta(atlantis.battle.Missions.isGlobalMissionSparta())
             .build();
     }
 
@@ -115,6 +124,18 @@ public class GoalBoardAdvisor extends Commander {
         if (atlantis.game.player.Enemy.zerg()) return "Zerg";
         if (atlantis.game.player.Enemy.protoss()) return "Protoss";
         return "Unknown";
+    }
+
+    /**
+     * Carrier pressure the Stargate branch answers to: discovered carriers
+     * or a Fleet Beacon going up. Collapsed here so consumers read one
+     * posture bit, never two unit queries.
+     */
+    private static boolean enemyCarrierTech() {
+        atlantis.units.select.Selection enemies =
+            atlantis.information.enemy.EnemyUnits.discovered();
+        return enemies.carriers().notEmpty()
+            || enemies.ofType(AUnitType.Protoss_Fleet_Beacon).notEmpty();
     }
 
     /**

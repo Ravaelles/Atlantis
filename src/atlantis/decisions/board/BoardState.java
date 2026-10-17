@@ -27,6 +27,14 @@ public final class BoardState {
     public final boolean baseUnderAttack;
     public final int secondsElapsed;
     public final String enemyRace;
+    public final int dragoonCount;
+    public final int dragoonsUnfinished;
+    public final int armyStrength;
+    public final int enemyHydras;
+    public final int enemyLurkers;
+    public final int enemyMutalisks;
+    public final boolean enemyCarrierTech;
+    public final boolean spartaMission;
 
     private BoardState(Builder builder) {
         this.minerals = builder.minerals;
@@ -48,6 +56,14 @@ public final class BoardState {
         this.baseUnderAttack = builder.baseUnderAttack;
         this.secondsElapsed = builder.secondsElapsed;
         this.enemyRace = builder.enemyRace;
+        this.dragoonCount = builder.dragoonCount;
+        this.dragoonsUnfinished = builder.dragoonsUnfinished;
+        this.armyStrength = builder.armyStrength;
+        this.enemyHydras = builder.enemyHydras;
+        this.enemyLurkers = builder.enemyLurkers;
+        this.enemyMutalisks = builder.enemyMutalisks;
+        this.enemyCarrierTech = builder.enemyCarrierTech;
+        this.spartaMission = builder.spartaMission;
     }
 
     public int supplyFree() {
@@ -82,6 +98,14 @@ public final class BoardState {
         private boolean baseUnderAttack;
         private int secondsElapsed;
         private String enemyRace = "Unknown";
+        private int dragoonCount;
+        private int dragoonsUnfinished;
+        private int armyStrength;
+        private int enemyHydras;
+        private int enemyLurkers;
+        private int enemyMutalisks;
+        private boolean enemyCarrierTech;
+        private boolean spartaMission;
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
@@ -171,6 +195,34 @@ public final class BoardState {
 
         public Builder enemyRace(String enemyRace) {
             this.enemyRace = enemyRace;
+            return this;
+        }
+
+        public Builder dragoons(int dragoonCount) {
+            this.dragoonCount = dragoonCount;
+            return this;
+        }
+
+        public Builder dragoonsUnfinished(int dragoonsUnfinished) {
+            this.dragoonsUnfinished = dragoonsUnfinished;
+            return this;
+        }
+
+        public Builder armyStrength(int armyStrength) {
+            this.armyStrength = armyStrength;
+            return this;
+        }
+
+        public Builder enemyUnits(int hydras, int lurkers, int mutalisks, boolean carrierTech) {
+            this.enemyHydras = hydras;
+            this.enemyLurkers = lurkers;
+            this.enemyMutalisks = mutalisks;
+            this.enemyCarrierTech = carrierTech;
+            return this;
+        }
+
+        public Builder sparta(boolean spartaMission) {
+            this.spartaMission = spartaMission;
             return this;
         }
 

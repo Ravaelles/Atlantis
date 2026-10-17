@@ -67,21 +67,6 @@ public class Count {
         return inProduction(type) + inQueue(type);
     }
 
-    /**
-     * Owner 2026-10-18: every unfinished building of a type, counted once.
-     * Undispatched queue rows (no linked construction) + warping units +
-     * all unfinished constructions (PREPARING included - the old
-     * notStarted-only counts were blind to picked-early sites). Terran
-     * over-counts by the construction phase (unfinished unit + live
-     * construction overlap); Protoss is exact, and the direction is safe
-     * (a delayed structure, never a duplicate).
-     */
-    public static int outstandingOfType(AUnitType type) {
-        return CountInQueue.countNotFinishedWithoutConstruction(type)
-            + Select.ourUnfinished().ofType(type).count()
-            + ConstructionRequests.notFinishedOfType(type).size();
-    }
-
     public static int inQueue(AUnitType type) {
         return CountInQueue.count(type);
     }

@@ -8,7 +8,6 @@ import atlantis.information.generic.Army;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.add.AddToQueue;
-import atlantis.battle.TransitionToCorsairs;
 import atlantis.units.select.Count;
 import atlantis.units.select.Selection;
 import atlantis.game.player.Enemy;
@@ -24,9 +23,9 @@ public class ProduceStargate {
         BoardState board = GoalBoardAdvisor.snapshot();
 
         Decision decision = A.whenEnemyProtossTerranZerg(
-            ProduceStargate::produceAgainstProtoss,
+            () -> produceAgainstProtoss(board),
             () -> produceAgainstTerran(board),
-            ProduceStargate::produceAgainstZerg
+            () -> produceAgainstZerg(board)
         );
 
         if (decision.isTrue()) produceStargate();
@@ -47,20 +46,33 @@ public class ProduceStargate {
         return Decision.FORBIDDEN;
     }
 
-    private static Decision produceAgainstProtoss() {
-        if (!Enemy.protoss()) return Decision.INDIFFERENT;
-        if (Count.dragoons() <= 12) return Decision.FORBIDDEN;
+    // NEXT #93 absorption track: the Protoss branch reads dragoons and
+    // carrier pressure off the board. Same numbers, new home.
+    private static Decision produceAgainstProtoss(BoardState board) {
+        if (!"Protoss".equals(board.enemyRace)) return Decision.INDIFFERENT;
+        if (board.dragoonCount <= 12) return Decision.FORBIDDEN;
 
-        Selection enemies = EnemyUnits.discovered();
-
-        return Decision.fromBoolean(
-            enemies.carriers().notEmpty() || enemies.ofType(Protoss_Fleet_Beacon).notEmpty()
-        );
+        return Decision.fromBoolean(board.enemyCarrierTech);
     }
 
-    private static Decision produceAgainstZerg() {
-        if (!Enemy.zerg()) return Decision.INDIFFERENT;
+    // NEXT #93 absorption track: the Zerg branch absorbs the whole
+    // TransitionToCorsairs ladder, read off the board. Same numbers, new
+    // home - the battle class stays only while something else calls it.
+    private static Decision produceAgainstZerg(BoardState board) {
+        if (!"Zerg".equals(board.enemyRace)) return Decision.INDIFFERENT;
 
-        return TransitionToCorsairs.decision();
+        if (board.dragoonCount <= 1) return Decision.FORBIDDEN;
+        if (board.armyStrength <= 115 && board.combatUnits <= 5 && board.cannonCount <= 1) {
+            return Decision.FORBIDDEN;
+        }
+        if (board.supplyUsed <= 40 && board.enemyHydras >= 10) return Decision.FORBIDDEN;
+        if (board.supplyUsed <= 40) return Decision.FORBIDDEN;
+
+        if (board.supplyUsed >= 70) return Decision.ALLOWED;
+        if (board.supplyUsed >= 90 && board.armyStrength >= 95 && board.enemyLurkers <= 2) {
+            return Decision.ALLOWED;
+        }
+
+        return Decision.fromBoolean(board.enemyMutalisks > 0);
     }
 }

@@ -60,6 +60,23 @@ public class CountInQueue {
     }
 
     /**
+     * Owner 2026-10-18: every unfinished building of a type, counted once.
+     * Undispatched queue rows (no linked construction) + warping units +
+     * all unfinished constructions (PREPARING included - the old
+     * notStarted-only counts were blind to picked-early sites). Lives here
+     * (not in select.Count) because core must not depend on production
+     * (coreMustNotDependOnOtherContexts). Terran over-counts by the
+     * construction phase (unfinished unit + live construction overlap);
+     * Protoss is exact, and the direction is safe (a delayed structure,
+     * never a duplicate).
+     */
+    public static int outstandingOfType(AUnitType type) {
+        return countNotFinishedWithoutConstruction(type)
+            + atlantis.units.select.Select.ourUnfinished().ofType(type).count()
+            + atlantis.production.constructions.ConstructionRequests.notFinishedOfType(type).size();
+    }
+
+    /**
      * Owner 2026-10-18: queue rows still waiting for dispatch (no linked
      * construction). Dispatched rows live in the constructions list - and
      * counting both double-counts one building (measured shape behind the
