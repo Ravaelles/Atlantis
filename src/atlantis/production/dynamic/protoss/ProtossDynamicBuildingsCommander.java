@@ -114,7 +114,6 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
 //                    || ProduceTemplarArchives.produce()
                     || ProduceStargate.produce()
                     || ProduceArbiterTribunal.produce()
-                    || ProduceShieldBattery.produce()
             ) return gatewaysEarly;
         }
 

@@ -103,7 +103,16 @@ The index of which document answers which question is `_AI/README.md`.
    only on battle/micro/A/interrupt/terran-info tracks (combat cluster,
    stages E/H), combat-micro sites die with
    the manager-tree migration (stages E/H), never through the board
-   (no per-unit micro on it).
+   (no per-unit micro on it). Fast-loop slices 2026-10-18, no game runs
+   per owner direction (demand matrices pin in stub states instead):
+   wall-in WHEN on the board (`WallInGoalTest` 5/5 + feeder seams,
+   emitter obeys funding fail-open); cannon COUNT matrix moved
+   (`CannonGoalTest` 7/7, legacy matrix deleted, ladder pins updated);
+   Forge timing moved (`ForgeGoalTest` 8/8, 4 new state fields).
+   REFUSED for now, recorded not dropped: robotics/observer demand
+   (nested pressure + rush-strategy semantics) and the gateway threshold
+   thicket (first-match chain) migrate only with a game proof each -
+   mirroring them blind risks real regressions no stub test can catch.
 3. **Pylon closure:** Wine re-run with the current jar (convertible
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
