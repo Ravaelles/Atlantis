@@ -275,6 +275,16 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261017_080114` (58 s wall, FULL 1209 game-s, rich: Nexus=7
+  Probe=56 Pylon=27 Gateway=9 Dragoon=24, cap-inconclusive): Phase-1
+  proof - opening script-clean (Pylon 0:51@8, Gateway 1:25@10, Gateway
+  1:53@12, Zealots, Core 3:02@23, ONE of each), exactly ONE
+  CyberneticsC in 20 min (no duplicate Core/Tech - the outstanding cap
+  holds live), reserved trajectory healthy (0 early, single-row 150
+  late - the 0:07 250-ghost never reappeared with flow restored),
+  DECISIONS.log 720 rows (26 BUILD + 9 ARMY from BUILD_ORDER, rest
+  dynamic with reasons).
+
 - Short `20261016_220831` (4 s wall, post-cutover boot proof): HELLO,
   Pylon=1 Gateway=2 Probe=12, 0 exceptions - production, placement and
   economy play with no combat/ linked. Scenario gate fails on army
