@@ -44,7 +44,7 @@ The index of which document answers which question is `_AI/README.md`.
    capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
 2. **Decision absorption:** board takes over decision sites one by one
-   (22 files with the exact singular import, measured 2026-10-17 -
+   (20 files with the exact singular import, measured 2026-10-17 -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
    absorbed; counting down, no new ones per §21); the class dies at zero,
    not before. Two tracks:
@@ -54,9 +54,9 @@ The index of which document answers which question is `_AI/README.md`.
    `StargateEnemyRaceBoardTest` 2/2; slices 3-5 2026-10-17: Stargate
    Protoss/Zerg branches + the Singularity trio read dragoons, army,
    hydras/lurkers/mutas, carrier-tech and sparta off the board,
-   `AbsorbedBranchesBoardTest` 3/3 - the two production files keep the
-   Decision TYPE as return shape until the class dies globally, all
-   READS go through the snapshot), combat-micro sites die with
+   `AbsorbedBranchesBoardTest` 3/3 - production holds ZERO Decision imports - the type survives
+   only on battle/micro/A/interrupt/terran-info tracks (combat cluster,
+   stages E/H), combat-micro sites die with
    the manager-tree migration (stages E/H), never through the board
    (no per-unit micro on it).
 3. **Pylon closure:** Wine re-run with the current jar (convertible
