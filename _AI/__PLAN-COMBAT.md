@@ -42,10 +42,16 @@ combat commits land after it unless trivially separable.
 4. **Architecture** — DONE 2026-10-17: store shrinks by 127 entries
    (pure removals, reviewed); the 1 failing rule is pre-existing.
    DONE = numbers in the commit message.
-5. **Cluster behavior.** Single cluster gathers army units; defend posts
-   it at the main, attack sends it at the enemy base; evaluator says
-   fight or flee; flee latches ≥10 s before re-evaluation. DONE = an
-   OpenBW game shows one cohesive group moving between the two anchors.
+5. **Cluster behavior** — CODE DONE 2026-10-17, movement PROVEN,
+   fighting BLOCKED (no enemy spawns): single cluster gathers army
+   units; DEFEND posts at main, ATTACK marches on enemy base /
+   unexplored starts; evaluator gate (1.0) with 240-frame retreat latch;
+   per-unit attack-in-range else move; CLUSTER twin every 31f. Proven
+   091624: 55-unit group, DEFEND→ATTACK, anchors main → natural →
+   enemy corner. Fighting needs a game WITH an enemy - the host
+   spawned none in 4 consecutive games (`enemy: ` empty, environmental,
+   bot-independent). DONE = anchors proof (met) + fighting proof
+   (retry when spawn works).
 6. **Jar.** Rebuild both bot jars (Wine + OpenBW paths) so the next games
    play the cutover. DONE = jars verified to lack `atlantis/combat/`
    classes and contain `atlantis/battle/`.

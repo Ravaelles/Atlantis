@@ -279,6 +279,13 @@ twins green (1/1 each, re-verified today). Re-run
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
 
+- Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
+  Phase-3 movement proof - DEFEND→ATTACK at 8 army, anchors main →
+  natural → enemy corner [9,45], group holds there; CLUSTER twin
+  (posture/tactic/size/anchor) verified flowing. Fighting unproven:
+  host spawned no enemy in 4 straight games (environmental).
+  Unexplored-start fallback landed (else ATTACK sat home 18 min).
+
 - Long `20261017_085719` (full 1209 game-s, macro: Nexus=7 Probe=86
   Pylon=23 Gateway=21, single Core): request-time rule proof - exactly
   ONE CyberneticsC (dynamic, 11:02@117) in a 20-minute game; no second
