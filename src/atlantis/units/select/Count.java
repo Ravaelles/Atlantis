@@ -198,9 +198,6 @@ public class Count {
         return ConstructionRequests.countNotStartedOfTypeInRadius(type, radius, position);
     }
 
-//    private static int countExistingOrPlanned(AUnitType type) {
-//        return Select.ourOfType(type).count() + ProductionQueue.countInQueue(type, 6);
-//    }
 
     public static int ourWithUnfinished(AUnitType type, double radius, HasPosition near) {
         return Select.ourWithUnfinishedOfType(type).inRadius(radius, near).count();

@@ -21,17 +21,6 @@ public class Strategy {
         return ourStrategy;
     }
 
-//    private static AStrategy initWithGeneric() {
-//        if (We.isProtoss()) {
-//            return ProtossStrategies.PROTOSS_2_Gate_Range_Expand;
-//        }
-//        if (We.isTerran()) {
-//            return TerranStrategies.TERRAN_Three_Factory_Vultures;
-//        }
-//        else {
-//            return ZergStrategies.ZERG_9_Pool;
-//        }
-//    }
 
     /**
      * Use this strategy and build order.

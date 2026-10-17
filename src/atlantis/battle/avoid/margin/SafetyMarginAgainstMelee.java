@@ -159,13 +159,6 @@ public class SafetyMarginAgainstMelee extends SafetyMargin {
 
     // =========================================================
 
-    private double enemyMeleeUnitsNearBonus(AUnit defender) {
-        if (defender.meleeEnemiesNearCount() >= 2) {
-            return 1.8;
-        }
-
-        return 0;
-    }
 
     private double baseAgainstMelee(AUnit attacker) {
         double base = 0.7;

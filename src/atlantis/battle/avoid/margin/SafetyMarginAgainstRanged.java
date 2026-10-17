@@ -145,15 +145,6 @@ public class SafetyMarginAgainstRanged extends SafetyMargin {
             + (defender.lastUnderAttackMoreThanAgo(30 * 100) ? -1.5 : 0);
     }
 
-//    private double extraMarginAgainstCombatBuilding(AUnit attacker) {
-//        if (defender.isVulture()) {
-//            return 6.4;
-//        } else if (defender.is(AUnitType.Terran_Wraith)) {
-//            return 7.3;
-//        }
-//
-//        return (defender.isAir() ? 5.8 : 1.1);
-//    }
 
     private double lurkerBonus(AUnit attacker) {
         if (attacker.is(AUnitType.Zerg_Lurker) && attacker.effUndetected()) {

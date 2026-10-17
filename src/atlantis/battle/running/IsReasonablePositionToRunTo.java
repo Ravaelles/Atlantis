@@ -85,10 +85,6 @@ public class IsReasonablePositionToRunTo {
         return (pointToEnemy - safetyMargin) < pointToUs;
     }
 
-    private static boolean dontAvoidMinerals(AUnit unit) {
-        return false;
-//        return unit.isNotLarge() && !unit.isWorker();
-    }
 
     private static boolean isWalkableAndFree(HasPosition position, AUnit unit) {
         boolean positionWalkable = position.isWalkable() && noBuildingsNorUnitsOn(position);

@@ -41,27 +41,7 @@ public class DoRepairsNearby extends Manager {
         return false;
     }
 
-//    private boolean ifShouldRepairNowThenRepair(AUnit target) {
-//        if (target.isWorker() && target.friendsNear().buildings().inRadius(10, target).empty()) return false;
-//
-//        if (target.isTank() && target.distTo(unit) < target.woundPercent() / 15) {
-//            return repairIfNtTooManyRepairersAlready(target, "SaveTank");
-//        }
-//
-//        if (target.isMissileTurret() && target.distTo(unit) < 10) {
-//            return repairIfNtTooManyRepairersAlready(target, "PrayForTurret");
-//        }
-//
-//        if (target.isBunker() && target.distTo(unit) < 10) {
-//            return repairIfNtTooManyRepairersAlready(target, "SaveBunker");
-//        }
-//
-//        if (target.distTo(unit) < 1.4) {
-//            return repairIfNtTooManyRepairersAlready(target, "HelpHim");
-//        }
-//
-//        return false;
-//    }
+
 
     private boolean repairIfNtTooManyRepairersAlready(AUnit target, String tooltip) {
         if (RepairAssignments.countRepairersForUnit(target) < 6) {

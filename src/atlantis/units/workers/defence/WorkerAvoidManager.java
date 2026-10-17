@@ -54,16 +54,5 @@ public class WorkerAvoidManager extends Manager {
 
         return unit.gather(mineral);
     }
-
-//    private Manager moveAwayFromEnemy() {
-//        AUnit enemy = unit.enemiesNear().combatUnits().nearestTo(unit);
-////        if (unit.moveAwayFrom(enemy, 3, Actions.RUN_ENEMY, "AvoidHarass")) return usedManager(this);
-//        if (unit.runningManager().runFrom(enemy, 4, Actions.RUN_ENEMY, false)) {
-//            unit.setTooltip("AvoidHarass");
-//            return usedManager(this);
-//        }
-//
-//        return null;
-//    }
 }
 

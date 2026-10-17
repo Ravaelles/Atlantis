@@ -1321,13 +1321,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return isIdle();
     }
 
-    private boolean ensnared() {
-        return u.isEnsnared();
-    }
-
-    private boolean plagued() {
-        return u.isPlagued();
-    }
 
     /**
      * RETURNS TRUE IF UNIT IS VISIBLE ON MAP (NOT THAT UNIT IS NOT CLOAKED!).
@@ -2477,13 +2470,6 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         return type().isAirUnitAntiAir();
     }
 
-//    private Mission squadMission() {
-//        if (squad() == null) {
-//            return null;
-//        }
-//
-//        return squad.mission();
-//    }
 
     public boolean isNotAttackableByRangedDueToSpell() {
         return isUnderDarkSwarm();
