@@ -318,8 +318,10 @@ twins green (1/1 each, re-verified today). Re-run
 ## Stage J — fortress
 
 - **#13** Zero-violation baseline, then flip the frozen store to hard
-  rules. The 255 + 24 are structural (unit-centric Commander/Manager
-  framework → Stages E/H), not a sweep; the information rule triages to
+  rules. The 146 + 23 are structural (unit-centric Commander/Manager
+  framework → Stages E/H), not a sweep (re-measured 2026-10-17, was
+  recorded 255 + 24 - the combat cutover deletions shrank the core
+  rule); the information rule triages to
   live strategy-response logic (Stage G seams, not line deletions).
   Traps, paid for: a change must remove violations from one rule, not
   move them into another; `rm -rf out` before architecture runs after
