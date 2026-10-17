@@ -61,7 +61,6 @@ Method <atlantis.units.buildings.SupplyCommander.requestAdditionalSupply()> call
 Method <atlantis.units.buildings.SupplyCommander.requestAdditionalSupply()> gets field <atlantis.production.orders.production.queue.order.OrderStatus.READY_TO_PRODUCE> in (SupplyCommander.java:216)
 Method <atlantis.units.buildings.SupplyCommander.requestedConstructionsOfSupply()> calls method <atlantis.production.constructions.ConstructionRequests.countNotFinishedOfType(atlantis.units.AUnitType)> in (SupplyCommander.java:269)
 Method <atlantis.units.buildings.SupplyCommander.requestedConstructionsOfSupply()> calls method <atlantis.production.orders.production.queue.CountInQueue.countInProgress(atlantis.units.AUnitType)> in (SupplyCommander.java:270)
-Method <atlantis.units.fix.DoPreventFreezesLogic.goToNearestEnemy(atlantis.units.AUnit)> calls method <atlantis.information.enemy.EnemyUnits.discovered()> in (DoPreventFreezesLogic.java:125)
 Method <atlantis.units.select.Count.enemyCombatUnits()> calls method <atlantis.information.enemy.EnemyUnits.discovered()> in (Count.java:474)
 Method <atlantis.units.select.Count.inProduction(atlantis.units.AUnitType)> calls method <atlantis.production.constructions.ConstructionRequests.countNotStartedOfType(atlantis.units.AUnitType)> in (Count.java:119)
 Method <atlantis.units.select.Count.inProduction(atlantis.units.AUnitType)> calls method <atlantis.production.constructions.ConstructionRequests.countNotStartedOfType(atlantis.units.AUnitType)> in (Count.java:120)
