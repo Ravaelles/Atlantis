@@ -37,6 +37,14 @@ public class Construction implements Comparable<Construction> {
     private AUnitType buildingType;
     private AUnit buildingUnit;
     private AUnit builder;
+    /**
+     * Owner 2026-10-18: the worker picked at PREPARING time. Inert marker
+     * only - nothing claims on it (BuilderManager reads {@link #builder}),
+     * so the worker keeps mining until adoption. Adoption prefers this
+     * worker when still free and alive, else searches optimally. It names
+     * the intent early without holding anyone.
+     */
+    private AUnit reservedBuilder;
     private APosition positionToBuild;
     private HasPosition near;
     private double maxDistance;
@@ -226,6 +234,15 @@ public class Construction implements Comparable<Construction> {
 
     public Construction setBuilder(AUnit builder) {
         this.builder = builder;
+        return this;
+    }
+
+    public AUnit reservedBuilder() {
+        return reservedBuilder;
+    }
+
+    public Construction setReservedBuilder(AUnit reservedBuilder) {
+        this.reservedBuilder = reservedBuilder;
         return this;
     }
 

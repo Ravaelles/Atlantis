@@ -18,6 +18,7 @@ import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.constructions.position.FindPosition;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.AConsole;
@@ -158,7 +159,17 @@ public class ProduceBuilding {
         Construction prepared = order.construction();
         if (prepared == null || prepared.status() != ConstructionOrderStatus.PREPARING) return false;
 
-        prepared.assignOptimalBuilder();
+        // Owner 2026-10-18: prefer the worker reserved at pick time - it
+        // was free then, and skipping the search keeps adoption instant.
+        // Fall back to the optimal search when it died, got claimed, or
+        // was never reserved.
+        AUnit reserved = prepared.reservedBuilder();
+        if (reserved != null && reserved.isAlive() && !reserved.isBuilder()) {
+            prepared.setBuilder(reserved);
+        }
+        else {
+            prepared.assignOptimalBuilder();
+        }
         if (prepared.builder() == null) return false;
 
         prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);

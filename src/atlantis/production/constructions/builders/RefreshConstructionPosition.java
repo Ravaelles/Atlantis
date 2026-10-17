@@ -5,6 +5,7 @@ import atlantis.game.player.Enemy;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -25,6 +26,14 @@ public class RefreshConstructionPosition {
         if (
             buildingType.isGasBuilding() || (buildingType.isBase() && !Enemy.terran() && !Enemy.zerg())
         ) return construction.buildPosition();
+
+        // Owner 2026-10-18: a picked-early site stays put. Refresh exists
+        // for a traveling builder whose target went bad - with no builder
+        // dispatched yet there is nothing to save, only churn to make.
+        // Adoption re-validates at issue time anyway.
+        if (construction.status() == ConstructionOrderStatus.PREPARING) {
+            return construction.buildPosition();
+        }
 
         if (shouldRefreshConstructionPosition(construction)) {
             RefreshConstructionPosition.refreshPosition(construction);

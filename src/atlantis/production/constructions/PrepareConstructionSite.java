@@ -5,6 +5,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.DefineExactPositionForNewConstruction;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.AConsole;
@@ -67,6 +68,22 @@ public class PrepareConstructionSite {
 
         prepared.setPositionToBuild(site);
         prepared.setStatus(ConstructionOrderStatus.PREPARING);
+
+        // Owner 2026-10-18: a picked site must never overlap a sibling's
+        // site (measured: Gateway [95,111] on top of warping [92,111]).
+        // Overlap unlinks and retries later - same as a failed search.
+        if (overlapsUnfinishedSite(site, type)) {
+            order.setConstruction(null);
+            return;
+        }
+
+        // Owner 2026-10-18: link any (nearest free, not random - the
+        // search is free and determinism pins in tests) worker at pick
+        // time. Inert: BuilderManager claims on builder(), never on this,
+        // so the worker keeps mining until adoption prefers it.
+        AUnit reserved = atlantis.units.workers.FreeWorkers.get().nearestTo(site);
+        if (reserved != null) prepared.setReservedBuilder(reserved);
+
         ConstructionRequests.addConstruction(prepared);
         AConsole.errPrintln(
             A.minSec() + ": PREPARING " + type.name()
@@ -76,7 +93,38 @@ public class PrepareConstructionSite {
             .param("tx", site.tx())
             .param("ty", site.ty())
             .param("supply", order.minSupply())
+            .param("reserved", reserved == null ? "-" : "#" + reserved.id())
             .log(A.now(), A.minSec());
+    }
+
+    /**
+     * Pure footprint intersection: two sites sharing a tile are the same
+     * claim (touching edges are legal - packed bases rely on them). Pinned
+     * - the [95,111]/[92,111] shared column must fail here instead of
+     * reaching the engine.
+     */
+    public static boolean footprintsOverlap(
+        int ax, int ay, int aw, int ah, int bx, int by, int bw, int bh
+    ) {
+        return ax < bx + bw && bx < ax + aw
+            && ay < by + bh && by < ay + ah;
+    }
+
+    private static boolean overlapsUnfinishedSite(APosition site, AUnitType type) {
+        int w = type.getTilesWidth();
+        int h = type.getTilesHeights();
+        for (Construction other : ConstructionRequests.notFinished()) {
+            APosition otherSite = other.buildPosition();
+            if (otherSite == null) continue;
+            AUnitType otherType = other.buildingType();
+            if (otherType == null) continue;
+            if (footprintsOverlap(
+                site.tx(), site.ty(), w, h,
+                otherSite.tx(), otherSite.ty(),
+                otherType.getTilesWidth(), otherType.getTilesHeights()
+            )) return true;
+        }
+        return false;
     }
 
     /**
