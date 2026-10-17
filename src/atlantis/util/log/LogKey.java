@@ -37,6 +37,8 @@ public enum LogKey {
     POSITION_REFRESH,
     /** Full canBuild-term decomposition of a stalled builder's refusal. */
     BUILD_BREAKDOWN,
+    /** A ready building order refused before siting, with the refusing guard. */
+    BUILD_REFUSED,
     /** A picked early site (type, tile, supply row). */
     CONSTRUCTION_PREPARING,
     /** A construction cancelled (type, reason, tile). */
@@ -62,6 +64,7 @@ public enum LogKey {
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,
+        LogKey.BUILD_REFUSED,
         LogKey.CONSTRUCTION_CANCEL
     );
 

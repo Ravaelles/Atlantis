@@ -35,6 +35,22 @@ public class ProduceBuilding {
     public static Construction _lastConstruction = null;
 
     /**
+     * Names the refusing guard when a ready building order dies before
+     * siting (NEXT #148: 20 Forge wants vanished with zero diagnostics
+     * because every exit below was silent). Pure twin, no behavior.
+     */
+    private static boolean refuse(AUnitType type, ProductionOrder order, String guard) {
+        EventLog.key(LogKey.BUILD_REFUSED)
+            .param("type", type == null ? "-" : type.name())
+            .param("guard", guard)
+            .param("order", order == null ? "-" : order.toString())
+            .param("supplyUsed", A.supplyUsed())
+            .param("minerals", A.minerals())
+            .log(A.now(), A.minSec());
+        return false;
+    }
+
+    /**
      * Single-door concurrency cap for Pylons (Wine game: three concurrent
      * Pylon warps out of one supply block at 25 - BO#8, its dynamic mirror
      * and BO#11, each firing alone correctly and tripling together). At
@@ -101,7 +117,7 @@ public class ProduceBuilding {
             // minSupply only price+50 builds. Site picking (PREPARING,
             // two early, no builder) is unaffected.
             if (A.supplyUsed() < order.minSupply()
-                && !A.canAfford(type.mineralPrice() + 50, type.gasPrice())) return false;
+                && !A.canAfford(type.mineralPrice() + 50, type.gasPrice())) return refuse(type, order, "below-min-supply-and-poor");
 
             // NEXT #57: an adopted construction with a living builder needs
             // no new request - the builder is dispatched or walking, and
@@ -113,7 +129,7 @@ public class ProduceBuilding {
             if (live != null
                 && (live.status() == ConstructionOrderStatus.NOT_STARTED
                     || live.status() == ConstructionOrderStatus.IN_PROGRESS)
-                && live.builder() != null && !live.builder().isDead()) return false;
+                && live.builder() != null && !live.builder().isDead()) return refuse(type, order, "live-construction");
 
             // Owner 2026-10-17: single-instance structures (Core) refuse
             // while ANY is coming for another order - a sited sibling or
@@ -124,7 +140,7 @@ public class ProduceBuilding {
             // a genuine loss still proceeds.
             if (type.equals(AUnitType.Protoss_Cybernetics_Core)
                 && atlantis.production.constructions.OutstandingBuildings
-                    .excluding(order, type) >= 1) return false;
+                    .excluding(order, type) >= 1) return refuse(type, order, "core-single-instance");
 
             // Owner 2026-10-17: one supply block, one Pylon at a time (two
             // in flight max) - BO rows, the fallback and the supply
@@ -132,7 +148,7 @@ public class ProduceBuilding {
             // (measured: warps at 3:31/3:35/3:45 from BO#8 + mirror + BO#11
             // at 25/25). The cap counts warping + not-started, so a row
             // whose need is already being built waits instead of re-siting.
-            if (type.isPylon() && tooManyPylonsInFlight()) return false;
+            if (type.isPylon() && tooManyPylonsInFlight()) return refuse(type, order, "pylon-cap");
 
             // Owner 2026-10-16: the order's building already warps - wait
             // for completion, do not site a second one. Warp-finish
@@ -142,20 +158,20 @@ public class ProduceBuilding {
             // 1:48+1:52, two builders churned on it to game end). The link
             // is the order instance itself, so a sibling row of the same
             // type still proceeds - only this order's own warp blocks it.
-            if (orderHasWarpingBuilding(order, type)) return false;
+            if (orderHasWarpingBuilding(order, type)) return refuse(type, order, "warping-link");
 
             // Wallet enforcement (NEXT #93): a fresh builder claim for a
             // board-owned type needs funding - otherwise the worker is held
             // for a building the bank cannot cover yet (the #53 shape:
             // held workers do not mine). Active-but-unfunded waits a frame;
             // inactive demand, goalless types and stale funding stay open.
-            if (!GoalBoardFeeder.adoptionAllowed(type)) return false;
+            if (!GoalBoardFeeder.adoptionAllowed(type)) return refuse(type, order, "funding");
 
             // Owner 2026-10-15: a waiting Core outranks Pylon spending
             // while contended (bounded, self-releasing - see
             // PriorityWaiters.pylonYieldsToCore). The 100 minerals stay
             // saved for the Core instead of going into a forward Pylon.
-            if (type.isPylon() && PriorityWaiters.pylonYieldsToCore()) return false;
+            if (type.isPylon() && PriorityWaiters.pylonYieldsToCore()) return refuse(type, order, "core-priority");
 
             // A PREPARING construction already holds a picked site: adopt it
             // (or keep waiting for a free builder) instead of searching anew.
