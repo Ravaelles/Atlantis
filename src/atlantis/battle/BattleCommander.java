@@ -115,6 +115,14 @@ public class BattleCommander extends Commander {
         if (base != null) return base.position();
         HasPosition main = EnemyUnits.enemyMainBase();
         if (main != null) return main;
+        // Unknown enemy: march on the nearest unexplored start location
+        // (UAlbertaBot's "explore until we find a target"). Sitting home
+        // on ATTACK played 18 minutes to 0/0 - measured 2026-10-17.
+        AUnit ownMain = Select.mainOrAnyBuilding();
+        HasPosition unexplored = ownMain != null
+            ? atlantis.map.base.BaseLocations.nearestUnexploredStartingLocation(ownMain.position())
+            : null;
+        if (unexplored != null) return unexplored;
         return Select.mainOrAnyBuilding();
     }
 }
