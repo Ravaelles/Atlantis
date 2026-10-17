@@ -21,7 +21,10 @@ reading green.
   Exit: an opening with zero builder churn, zero duplicate sites, worker
   stream unbroken, every row attributable. Substantially met (script-clean
   opening 080114, 720-row attributed log) — remaining: #95 (reserved-250
-  watch), #96 (Wine verification batch).
+  watch), #96 (Wine verification batch). 2026-10-17: same-tile re-request
+  loop closed (proximity finish by footprint overlap + CONSTRUCTION_CANCEL
+  twin; 5x-in-a-minute [119,18] pile-up gone, verified in 743 s OpenBW game),
+  scout roam fallback landed (no idle in 12+ min).
 - [ ] **Phase 2 — Decision board completion.** Per-gate legacy deletions
   with one game of proof each (ratchet, never batch rewrites); absorption
   slice by slice until the old trio dies at zero. Exit: one issuer, one
@@ -382,6 +385,12 @@ twins green (1/1 each, re-verified today). Re-run
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
   Jar 12.1 MB already carries it all.
+  Open tuning question for the batch: Pylon prepared at 15 warps ~2:24,
+  past the 17/17 block - adoption+travel+warp (~25 s) outruns the 15→17
+  window (~25 s), so any churn lands past the block (churn itself fixed
+  2026-10-17; lever if still late is `IsReadyToProduceOrder` pull-forward
+  amounts, currently +1 below 19 / +3 above - earlier pylons trade tech
+  minerals for block time).
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
