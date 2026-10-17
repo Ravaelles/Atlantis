@@ -19,6 +19,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.game.player.Enemy;
+import atlantis.information.tech.ATech;
+import atlantis.units.select.Have;
+import atlantis.util.We;
 
 import java.util.List;
 
@@ -163,8 +166,13 @@ public final class GameStateSnapshot {
                 cannonsAtMain(),
                 Enemy.zerg(),
                 Enemy.protoss(),
-                Count.ofType(AUnitType.Zerg_Mutalisk)
-        );
+                Count.ofType(AUnitType.Zerg_Mutalisk),
+                A.gas(),
+                We.protoss() && Have.cyberneticsCore(),
+                We.protoss() ? Count.dragoons() : 0,
+                Count.ofType(racePolicy.gasBuildingType()),
+                We.protoss() && ATech.isResearched(bwapi.UpgradeType.Singularity_Charge),
+                atlantis.information.generic.Army.strength());
 
         // Anchor the fortification goals to the main base. -1 (no base yet) leaves
         // them off, which is right: there is nothing to fortify before a Nexus.

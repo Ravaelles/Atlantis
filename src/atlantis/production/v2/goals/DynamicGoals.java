@@ -50,8 +50,25 @@ public final class DynamicGoals {
         public final int supplyFree;
         public final int supplyTotal;
         public final int minerals;
+        /** Gas bank: Dragoons, tech and the second gas all read it. */
+        public final int gas;
         public final int armySize;
         public final boolean inEarlyGame;
+
+        /**
+         * Advanced army unlocked (Protoss: Cybernetics Core standing; zeros
+         * for other races until their policies fill equivalents). Gates the
+         * Zealot-to-Dragoon advancement and the Singularity want.
+         */
+        public final boolean hasCore;
+        /** Dragoons standing (Protoss; 0 elsewhere). Sizes the tech want. */
+        public final int dragoons;
+        /** Gas buildings standing (Protoss: Assimilators; 0 elsewhere). */
+        public final int gasBuildings;
+        /** Singularity Charge researched (Protoss; false elsewhere). */
+        public final boolean singularity;
+        /** Army strength for tech/economy gates. */
+        public final int armyStrength;
 
         /** Cannon count already standing at the main base. */
         public final int cannonsAtMain;
@@ -91,21 +108,24 @@ public final class DynamicGoals {
         public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
                 int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks) {
-            this.workers = workers;
-            this.bases = bases;
-            this.basesExisting = basesExisting;
-            this.supplyUsed = supplyUsed;
-            this.supplyFree = supplyFree;
-            this.supplyTotal = supplyTotal;
-            this.minerals = minerals;
-            this.armySize = armySize;
-            this.inEarlyGame = inEarlyGame;
-            this.cannonsAtMain = cannonsAtMain;
-            this.enemyIsZerg = enemyIsZerg;
-            this.enemyIsProtoss = enemyIsProtoss;
-            this.enemyMutalisks = enemyMutalisks;
-            this.mainBaseTileX = -1;
-            this.mainBaseTileY = -1;
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                0, false, 0, 0, false, 0);
+        }
+
+        /**
+         * The full snapshot plus tech/army inputs. The 13-argument form fills
+         * zeros: a test that only cares about workers or supply keeps saying
+         * exactly that, and tech goals stay silent on it.
+         */
+        public GameSnapshot(int workers, int bases, int supplyUsed, int supplyFree,
+                int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
+                int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
+                int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
+                int armyStrength) {
+            this(workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame, armySize,
+                basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength, -1, -1);
         }
 
         /**
@@ -118,6 +138,7 @@ public final class DynamicGoals {
             return new GameSnapshot(
                 workers, bases, supplyUsed, supplyFree, supplyTotal, minerals, inEarlyGame,
                 armySize, basesExisting, cannonsAtMain, enemyIsZerg, enemyIsProtoss, enemyMutalisks,
+                gas, hasCore, dragoons, gasBuildings, singularity, armyStrength,
                 tileX, tileY
             );
         }
@@ -126,6 +147,8 @@ public final class DynamicGoals {
                 int workers, int bases, int supplyUsed, int supplyFree,
                 int supplyTotal, int minerals, boolean inEarlyGame, int armySize, int basesExisting,
                 int cannonsAtMain, boolean enemyIsZerg, boolean enemyIsProtoss, int enemyMutalisks,
+                int gas, boolean hasCore, int dragoons, int gasBuildings, boolean singularity,
+                int armyStrength,
                 int mainBaseTileX, int mainBaseTileY) {
             this.workers = workers;
             this.bases = bases;
@@ -134,7 +157,13 @@ public final class DynamicGoals {
             this.supplyFree = supplyFree;
             this.supplyTotal = supplyTotal;
             this.minerals = minerals;
+            this.gas = gas;
             this.armySize = armySize;
+            this.hasCore = hasCore;
+            this.dragoons = dragoons;
+            this.gasBuildings = gasBuildings;
+            this.singularity = singularity;
+            this.armyStrength = armyStrength;
             this.inEarlyGame = inEarlyGame;
             this.cannonsAtMain = cannonsAtMain;
             this.enemyIsZerg = enemyIsZerg;
