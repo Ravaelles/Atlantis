@@ -29,20 +29,32 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     protected static Cache<AUnit> cacheUnit = new Cache<>();
 
     /**
-     * The frame-frozen unit list every migrated select reads (Stage F):
-     * rebuilt once per frame from the live list, so one invalidation rule
-     * replaces per-key TTLs. Keys migrate here one at a time, fewest
-     * readers first; unmigrated keys keep their old caches below.
+     * The frame-frozen unit lists every migrated select reads (Stage F):
+     * rebuilt once per frame from the same live sources, so one
+     * invalidation rule replaces per-key TTLs. Ours and all-units stay
+     * separate sources: ours-membership is list membership, never a
+     * predicate (sideless test doubles must not leak across sides).
+     * Unmigrated keys keep their old caches below.
      */
-    private static UnitIndex frameIndex;
-    private static int frameIndexFrame = -1;
+    private static UnitIndex allUnitsIndex;
+    private static int allUnitsIndexFrame = -1;
+    private static UnitIndex oursIndex;
+    private static int oursIndexFrame = -1;
 
-    private static UnitIndex frameIndex() {
-        if (frameIndexFrame != AGame.now()) {
-            frameIndex = new UnitIndex(allUnits());
-            frameIndexFrame = AGame.now();
+    private static UnitIndex allUnitsIndex() {
+        if (allUnitsIndexFrame != AGame.now()) {
+            allUnitsIndex = new UnitIndex(allUnits());
+            allUnitsIndexFrame = AGame.now();
         }
-        return frameIndex;
+        return allUnitsIndex;
+    }
+
+    private static UnitIndex oursIndex() {
+        if (oursIndexFrame != AGame.now()) {
+            oursIndex = new UnitIndex(ourUnitsWithUnfinishedList());
+            oursIndexFrame = AGame.now();
+        }
+        return oursIndex;
     }
 
 
@@ -61,6 +73,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         cacheInt.clear();
         cacheUnit.clear();
         cacheObject.clear();
+        allUnitsIndexFrame = -1;
+        oursIndexFrame = -1;
     }
 
     public static Cache cache() {
@@ -75,22 +89,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our finished and existing units (units AND buildings).
      */
     public static Selection our() {
-        String cachePath;
-        return cache.get(
-            cachePath = "our",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted()
+        ), "our");
     }
 
     /**
@@ -258,22 +259,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our units of given type.
      */
     public static Selection ourOfType(AUnitType type) {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourOfType:" + type.id(),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.is(type)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && unit.is(type)
+        ), "ourOfType:" + type.id());
     }
 
     public static Selection ourOfTypeWithUnfinished(AUnitType type) {
@@ -296,22 +284,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourOfType(AUnitType... types) {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourOfType:" + AUnitType.arrayToIds(types),
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.is(types)) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && unit.is(types)
+        ), "ourOfType:" + AUnitType.arrayToIds(types));
     }
 
     /**
@@ -554,8 +529,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our unfinished units.
      */
     public static Selection ourUnfinishedRealUnits() {
-        return new Selection(frameIndex().matching(
-            unit -> unit.isOur() && !unit.isCompleted() && unit.isRealUnit()
+        return new Selection(oursIndex().matching(
+            unit -> !unit.isCompleted() && unit.isRealUnit()
         ), "ourUnfinishedRealUnits");
     }
 
@@ -576,7 +551,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Selection enemyRealUnitsWithBuildings() {
-        return new Selection(frameIndex().matching(
+        return new Selection(allUnitsIndex().matching(
             unit -> unit.isEnemy() && (unit.isABuilding() || unit.isRealUnit())
         ), "enemyRealUnitsWithBuildings");
     }
@@ -667,7 +642,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection geysersAndGasBuildings() {
-        return new Selection(frameIndex().ofType(
+        return new Selection(allUnitsIndex().ofType(
             AUnitType.Resource_Vespene_Geyser,
             AUnitType.Protoss_Assimilator,
             AUnitType.Terran_Refinery,
@@ -819,7 +794,7 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our Marines, Firebats, Ghosts and Medics.
      */
     public static Selection ourTerranInfantry() {
-        return new Selection(frameIndex().completedOfType(
+        return new Selection(oursIndex().completedOfType(
             AUnitType.Terran_Marine, AUnitType.Terran_Medic, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost
         ), "ourTerranInfantry");
     }
@@ -857,8 +832,8 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourUnfinishedBuildings() {
-        return new Selection(frameIndex().matching(
-            unit -> unit.isOur() && !unit.isCompleted()
+        return new Selection(oursIndex().matching(
+            unit -> !unit.isCompleted()
                 && (unit.type().isABuilding() || unit.type().isAddon())
         ), "ourUnfinishedBuildings");
     }

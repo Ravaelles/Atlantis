@@ -176,16 +176,18 @@ public class SelectTest extends WorldStubForTests {
 //            Select.cache().print("hmmm", true);
         assertEquals(0, Select.cache().size());
 
+        // Stage F: roots answer from the frame-frozen index, so no legacy
+        // key is written for them. Derived selections still key off the
+        // parent path.
         Select.our();
 
-        assertEquals(1, Select.cache().size());
-        assertEquals("[our]", Select.cache().rawCacheData().keySet().toString());
+        assertEquals(0, Select.cache().size());
 
         Select.our().melee();
 //            Select.cache().printKeys();
 
-        assertEquals(2, Select.cache().size());
-        assertEquals("[our, our:melee]", Select.cache().rawCacheData().keySet().toString());
+        assertEquals(1, Select.cache().size());
+        assertEquals("[our:melee]", Select.cache().rawCacheData().keySet().toString());
         });
     }
 
