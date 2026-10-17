@@ -86,10 +86,12 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
 
         // Refusal attribution (corner-base doctrine work, NEXT #81): count why
         // each candidate tile was refused. The counts stay behind in
-        // lastRefusalBreakdown() for every Pylon sweep; the console line
+        // lastRefusalBreakdown() for every sweep; the console line
         // below fires only on true total failure (all passes incl. the last
         // resort found nothing), never when a later pass rescues the tile.
-        java.util.Map<String, Integer> reasons = building.isPylon() ? new java.util.HashMap<>() : null;
+        // Counted for every building, not just Pylons: the V2 planner twins
+        // the dominant term of any failing search from this map.
+        java.util.Map<String, Integer> reasons = new java.util.HashMap<>();
         java.util.Map<String, Integer> finalStatus = reasons;
 
         // =========================================================
@@ -215,7 +217,9 @@ public class ProtossPositionFinder extends AbstractPositionFinder {
         // Terminal failure only, outermost frame: the fallback passes above
         // re-enter this method, so printing earlier fires once per pass with
         // identical counts and also fires when a later pass rescues the tile.
-        if (reasons != null && !reasons.isEmpty() && !relaxedBoundaryMargin) {
+        // Pylons only: other buildings twin their breakdown through the V2
+        // planner instead; sharing this line would mislabel them.
+        if (building.isPylon() && reasons != null && !reasons.isEmpty() && !relaxedBoundaryMargin) {
             System.err.println("[LVL=CRITICAL] PYLON_FIND_FAILED near=" + nearTo + " maxDist=" + maxDistance
                 + " supply=" + A.supplyUsed() + "/" + A.supplyTotal()
                 + " reasons=" + reasons);

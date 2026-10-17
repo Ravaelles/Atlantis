@@ -118,8 +118,15 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
 
     /** Most refused term of the last search, or the last status when the sweep never ran (cache hit). */
     private static String topRefusal() {
+        // The race finder counts every refused tile per term (power included);
+        // the shared chain only sees tiles that pass power. Read the race map
+        // first. Either map can hold another building's sweep on a cache hit -
+        // the twin fires once per type, almost always on a real sweep.
         java.util.Map<String, Integer> breakdown =
-            atlantis.production.constructions.position.PositionFulfillsAllConditions.lastRefusalBreakdown();
+            atlantis.production.constructions.position.protoss.ProtossPositionFinder.lastRefusalBreakdown();
+        if (breakdown.isEmpty()) {
+            breakdown = atlantis.production.constructions.position.PositionFulfillsAllConditions.lastRefusalBreakdown();
+        }
         String top = null;
         int topCount = 0;
         int total = 0;
