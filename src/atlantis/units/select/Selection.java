@@ -81,94 +81,48 @@ public class Selection extends BaseSelection {
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>otherUnit</b>.
      */
     public Selection inRadius(double maxDist, AUnit unit) {
-        return Select.cache.get(
-            addToCachePath("inRadiusA:" + maxDist + ":" + unit.idWithHash()),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> !u.hasPosition() || u.distTo(unit) > maxDist),
-                "inRadiusA:" + maxDist + ":" + unit.idWithHash()
-            )
-        );
+        return SelectionRadius.inRadius(this, maxDist, unit);
     }
+
 
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
     public Selection inRadius(double maxDist, HasPosition position) {
-        return Select.cache.get(
-            addToCachePath("inRadiusB:" + maxDist + ":" + position),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> u.distTo(position) > maxDist),
-                "inRadiusB:" + maxDist + ":" + position
-            )
-        );
+        return SelectionRadius.inRadius(this, maxDist, position);
     }
+
 
     public Selection inGroundRadius(double maxDist, AUnit unit) {
-        return Select.cache.get(
-            addToCachePath("inGroundRadius:" + maxDist + ":" + unit.idWithHash()),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> u.groundDist(unit) > maxDist),
-                "inGroundRadius:" + maxDist + ":" + unit.idWithHash()
-            )
-        );
+        return SelectionRadius.inGroundRadius(this, maxDist, unit);
     }
+
 
     public Selection notInRadius(double minDist, HasPosition position) {
-        return Select.cache.get(
-            addToCachePath("notInRadius:" + minDist + ":" + position),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> u.distTo(position) < minDist),
-                "notInRadius:" + minDist + ":" + position
-            )
-        );
+        return SelectionRadius.notInRadius(this, minDist, position);
     }
 
+
     public Selection inRadius(double maxDist, Selection selectionOfUnits) {
-        return Select.cache.get(
-            addToCachePath(CacheKey.create("inRadiusSelection", maxDist, selectionOfUnits)),
-            1,
-            () -> cloneByRemovingIf(
-                (u -> selectionOfUnits.nearestTo(u).distTo(u) > maxDist),
-                "inRadius:" + maxDist + ":" + CacheKey.create(selectionOfUnits)
-            )
-        );
+        return SelectionRadius.inRadius(this, maxDist, selectionOfUnits);
     }
+
 
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
     public int countInRadius(double maxDist, HasPosition unitOrPosition) {
-        return Select.cacheInt.get(
-            addToCachePath("countInRadius:" + maxDist + ":" + unitOrPosition),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> u.distTo(unitOrPosition) > maxDist),
-                maxDist + ":" + unitOrPosition
-            ).count()
-        );
+        return SelectionRadius.countInRadius(this, maxDist, unitOrPosition);
     }
+
 
     /**
      * Returns all units that are closer than <b>maxDist</b> tiles from given <b>position</b>.
      */
     public Selection maxGroundDist(double maxDist, AUnit unit) {
-        if (unit.isAir()) {
-            return this;
-        }
-
-        return Select.cache.get(
-            addToCachePath("maxGroundDist:" + maxDist + ":" + unit.idWithHash()),
-            0,
-            () -> cloneByRemovingIf(
-                (u -> u.groundDist(unit) > maxDist),
-                ":" + unit.idWithHash()
-            )
-        );
+        return SelectionRadius.maxGroundDist(this, maxDist, unit);
     }
+
 
     /**
      * Returns whether the type in unit matches one in the haystack
