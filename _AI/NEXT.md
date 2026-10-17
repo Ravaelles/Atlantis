@@ -311,6 +311,20 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs owner or upstream (blocked here)
 
+- **#97** Own map-analysis library (owner direction 2026-10-18, full
+  charter: `_AI/redesign/04_MAPLIB.md` - this line is only the pointer).
+  Big separate project by design: pure map answers (model, defense spots,
+  drop spots, wall anchors + natural wall-in with Pylon/Gateway/cannons),
+  placement/execution stay in Atlantis; starts as `map.analysis`, extracts
+  to a module when stable. Checklist: [ ] M0 diet (delete dead
+  `bweb/`+`Result`/painters, 3 fallbacks own) [ ] M1 immutable model +
+  golden maps [ ] M2 defense spots + fortification consumer [ ] M3 drop
+  spots/islands [ ] M4 wall anchors + natural wall-in game proof
+  [ ] M5 module extraction. JBWEB fork (separate repo, walls/JPS only)
+  plugs in at M4 if own anchors prove weak. Unblocks nothing above; nothing
+  above blocks M0.
+
+
 - **#95** Reserved-250 ghost, unresolved watch (2026-10-17): a deadlocked
   game showed global reserved=250 at supply 4 with bank 74 and nothing
   READY - no author found (READY/IN_PROGRESS paths audited, equality is
