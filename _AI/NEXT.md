@@ -126,7 +126,9 @@ The index of which document answers which question is `_AI/README.md`.
    still only fires sustained-army rows, never a per-gate row; no deletion
    candidate, direction unchanged.
 2. **Decision absorption:** board takes over decision sites one by one
-   (8 files with the exact singular import, measured 2026-10-17 -
+   (8 files with the exact singular import, measured 2026-10-17,
+   re-verified 2026-10-17: still 8 on the same excluded tracks,
+   production holds ZERO -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
    absorbed, 14 more with the targeting + battle src-old sweeps;
    counting down, no new ones per §21); the class dies at zero,
