@@ -339,6 +339,8 @@ twins green (1/1 each, re-verified today). Re-run
   in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
   game or more wall). Absent in all retained runs incl. the 743 s one
   (3 bases there - the predicate correctly stays silent, it wants 1).
+  `200123` is the first 1-base 700 s+ run (944 s, Nexus=1): ORDER_SAVING
+  still 0, bank peak 8883 (predicate wants < 550) - correctly silent.
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -374,7 +376,9 @@ twins green (1/1 each, re-verified today). Re-run
   bank 900-1300 from 10:58 and research STARTED at 11:16
   (beingRes through 11:39) but the wall clock ended the game before
   completion - still needs a longer window after research starts,
-  not just a 700-bank moment.
+  not just a 700-bank moment. `200123` (944 s, bank peak 8883, NO
+  Forge): TECH_CHECK 602 rows all false, UPGRADE_COMPLETED none -
+  without a Forge the gate is correctly silent at any bank.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). Needs a game showing it. No blind fix.
 - **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
@@ -491,6 +495,13 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
+- Long `20261017_200123` (138 s wall, 944 game-s, 1 base: Nexus=1 Probe=22
+  Pylon=7 Gateway=4 Dragoon=3 Zealot=6, single Core, NO Forge): exit 143
+  is the wall cap (game healthy at the cut). 23 ledger warps (4 Dragoons
+  warped, 3 standing). TECH_CHECK 602 rows all false with bank peak 8883
+  (no Forge - the gate is correctly silent at any bank); ORDER_SAVING 0
+  (1 base but bank >> 550 - correctly silent); scout idle 0, proximity
+  twins flowing. 0/0 kills (enemy never spawns, #94).
 - Long `20261017_173138` (140 s wall, 743 game-s, rich: Nexus=3 Probe=52
   Pylon=14 Gateway=11 Dragoon=11 Forge + 4 cannons): proximity-fix proof -
   same-tile Pylon re-requests no longer pile up silently (the [119,18]
