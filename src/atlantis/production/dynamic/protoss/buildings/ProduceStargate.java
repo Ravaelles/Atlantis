@@ -1,6 +1,5 @@
 package atlantis.production.dynamic.protoss.buildings;
 
-import atlantis.decisions.Decision;
 import atlantis.decisions.board.BoardState;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
@@ -22,13 +21,15 @@ public class ProduceStargate {
 
         BoardState board = GoalBoardAdvisor.snapshot();
 
-        Decision decision = A.whenEnemyProtossTerranZerg(
-            () -> produceAgainstProtoss(board),
-            () -> produceAgainstTerran(board),
-            () -> produceAgainstZerg(board)
-        );
+        // NEXT #93 absorption track, final: branches answer Boolean on the
+        // board (null = indifferent, try nothing further - exactly one race
+        // branch applies). No Decision type left in this file.
+        Boolean want;
+        if ("Protoss".equals(board.enemyRace)) want = produceAgainstProtoss(board);
+        else if ("Terran".equals(board.enemyRace)) want = produceAgainstTerran(board);
+        else want = produceAgainstZerg(board);
 
-        if (decision.isTrue()) produceStargate();
+        if (want != null && want) produceStargate();
 
         return false;
     }
@@ -37,42 +38,39 @@ public class ProduceStargate {
         AddToQueue.withStandardPriority(Protoss_Stargate);
     }
 
-    // NEXT #93 absorption track: the Terran branch reads the board's enemy
-    // race instead of asking Enemy mid-chain. Protoss/Zerg branches keep
-    // their Decision shape until their own slices land.
-    private static Decision produceAgainstTerran(BoardState board) {
-        if (!"Terran".equals(board.enemyRace)) return Decision.INDIFFERENT;
+    private static Boolean produceAgainstTerran(BoardState board) {
+        if (!"Terran".equals(board.enemyRace)) return null;
 
-        return Decision.FORBIDDEN;
+        return false;
     }
 
     // NEXT #93 absorption track: the Protoss branch reads dragoons and
     // carrier pressure off the board. Same numbers, new home.
-    private static Decision produceAgainstProtoss(BoardState board) {
-        if (!"Protoss".equals(board.enemyRace)) return Decision.INDIFFERENT;
-        if (board.dragoonCount <= 12) return Decision.FORBIDDEN;
+    private static Boolean produceAgainstProtoss(BoardState board) {
+        if (!"Protoss".equals(board.enemyRace)) return null;
+        if (board.dragoonCount <= 12) return false;
 
-        return Decision.fromBoolean(board.enemyCarrierTech);
+        return board.enemyCarrierTech;
     }
 
     // NEXT #93 absorption track: the Zerg branch absorbs the whole
     // TransitionToCorsairs ladder, read off the board. Same numbers, new
     // home - the battle class stays only while something else calls it.
-    private static Decision produceAgainstZerg(BoardState board) {
-        if (!"Zerg".equals(board.enemyRace)) return Decision.INDIFFERENT;
+    private static Boolean produceAgainstZerg(BoardState board) {
+        if (!"Zerg".equals(board.enemyRace)) return null;
 
-        if (board.dragoonCount <= 1) return Decision.FORBIDDEN;
+        if (board.dragoonCount <= 1) return false;
         if (board.armyStrength <= 115 && board.combatUnits <= 5 && board.cannonCount <= 1) {
-            return Decision.FORBIDDEN;
+            return false;
         }
-        if (board.supplyUsed <= 40 && board.enemyHydras >= 10) return Decision.FORBIDDEN;
-        if (board.supplyUsed <= 40) return Decision.FORBIDDEN;
+        if (board.supplyUsed <= 40 && board.enemyHydras >= 10) return false;
+        if (board.supplyUsed <= 40) return false;
 
-        if (board.supplyUsed >= 70) return Decision.ALLOWED;
+        if (board.supplyUsed >= 70) return true;
         if (board.supplyUsed >= 90 && board.armyStrength >= 95 && board.enemyLurkers <= 2) {
-            return Decision.ALLOWED;
+            return true;
         }
 
-        return Decision.fromBoolean(board.enemyMutalisks > 0);
+        return board.enemyMutalisks > 0;
     }
 }
