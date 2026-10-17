@@ -61,24 +61,46 @@ attempt does not repeat the search.
    the launcher a "second AI" concept. CONVENTIONS treats `StardustDevEnvironment/`
    as shared: this is a decision for the owner, not a quiet change.
 
-## Decision needed from the owner
+## Decision needed from the owner (updated 2026-10-17)
 
 **Measured outcomes so far:**
 
-- option 1 (engine AI as opponent) **works today** - a normal game, the AI builds
-  and grows; it is not stationary, but our economy runs as long as we avoid it;
-- option 2 (`enemy_count=0`) **does not work** - JBWAPI crashes at `Game.init`
-  (`ArrayIndexOutOfBoundsException: Index -1`) on a game with no opponent, so
-  "play alone" is not available through this client either;
+- option 1 (engine AI as opponent) **does not spawn on the launcher
+  path either** - 6+ consecutive games across two maps (TauCross,
+  Python) and two enemy races show `enemy: ` empty, 0/0 kills, scouts
+  finding nothing in 18 min. The auto-menu plumbing is CORRECT
+  (env names match `LoadConfigString("auto_menu",...)`, defaults sane),
+  so the failure is deeper: OpenBW spawns starting units only for
+  `controller_occupied` / `controller_computer_game` slots
+  (`bwgame.h` starting-units loop), and the launcher flow never gets
+  the enemy slot there. Needs C++ host debugging (shared platform).
+- **No spawn API exists anywhere**: checked JBWAPI `Game.java`,
+  OpenBW `bwgame.h` (only internal `create_unit`), the bot tree.
+  "Creating" enemy units from Java is impossible by construction.
+- option 3 (UMS map with pre-placed units) is now the ONLY working
+  path that does not touch the shared platform - but no map editor
+  exists on this machine, and hand-authoring CHK/MPQ is its own
+  project. No `.scm`/editor found (checked Wine tree, repo, disk).
+- option 4 (second client) unchanged: impossible, one-client harness.
+- What "previously" means could not be established: no spawn
+  mechanism, UMS map, or editor exists anywhere reachable. If the
+  owner remembers Wine games with grown Zerg bases, those came from
+  real opponents, not from spawning - and Wine-vs-real-opponent
+  remains the only fighting proof available TODAY.
 - option 3 (a UMS map with the stationary Hydralisks and their trigger) is the
   design as stated, and needs a map authored once - **no code from us** beyond
   hosting UMS, which the runner already supports (`game_type=USE_MAP_SETTINGS`);
 - option 4 (teach the harness to host a second client) is a change to the shared
   platform and needs the owner's agreement.
+- option 5 (NEW: debug why the launcher flow leaves the enemy slot
+  unoccupied): the single remaining unknown. Everything up to the slot
+  setup checks out; the answer lives in C++ host debugging, not in our
+  tree. If it turns out small (slot flag, branch order), enemy AI games
+  come back for free - no map, no editor, no platform change.
 
 So the practical shape of "StationaryEnemyCpu" here is **a map, not a bot**: a
-UMS scenario with the 20 Hydralisks placed and a trigger that wakes them within 30
-of our units. That is also the cheapest thing that matches the intent exactly.
+UMS scenario with the base and units placed and triggers as designed.
+That is also the cheapest thing that matches the intent exactly.
 
 Until the owner picks, the Java side stays unbuilt **on purpose** - a
 `StationaryEnemyCpu` class in our repo would be dead code on this harness, and
