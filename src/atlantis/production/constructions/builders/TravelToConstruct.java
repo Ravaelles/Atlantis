@@ -188,11 +188,6 @@ public class TravelToConstruct extends HasUnit {
         return A.supplyTotal() <= 11 && buildingType.isGateway();
     }
 
-    private static boolean builderHasNotMovedInAWhile(Construction construction) {
-        return construction.builder().lastPositionChangedMoreThanAgo(90)
-            && construction.builder().distTo(construction.buildPosition()) <= 5;
-    }
-
     private boolean moveToConstruct(Construction construction, AUnitType buildingType, double dist) {
         if (!unit.isMoving() || A.everyNthGameFrame(13)) {
             RefreshConstructionPosition.refreshIfNeeded(construction);

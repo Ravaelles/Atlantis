@@ -215,16 +215,6 @@ public class ProtossForbiddenByStreetGrid {
         return true;
     }
 
-//    private static int buildingLeftTx(AUnitType building, APosition position) {
-//        return position.tx() - building.dimensionLeftPx() / 32;
-//    }
-//
-//    private static int buildingRightTx(AUnitType building, APosition position) {
-//        int addonBonus = building.addonWidthInPx();
-//
-//        return (int) (position.tx() + (building.dimensionRightPx() + addonBonus) / 32);
-//    }
-
     private static boolean ignore(AUnitType building) {
         if (building.isBase() || building.isAssimilator()) return true;
         if (A.supplyTotal() <= 15) {

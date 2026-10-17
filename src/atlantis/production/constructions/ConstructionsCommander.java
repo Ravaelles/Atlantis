@@ -23,27 +23,6 @@ public class ConstructionsCommander extends Commander {
         };
     }
 
-//    private boolean isItSafeToAssignNewBuilderTo(Construction construction) {
-//        if (construction.buildingType().isBunker()) return true;
-//
-//        HasPosition position = construction.buildingUnit() != null
-//            ? construction.buildingUnit() : construction.buildPosition();
-//
-//        if (position == null) {
-//            System.err.println("Null position in isItSafeToAssignNewBuilderTo");
-//            System.err.println(construction);
-//            return false;
-//        }
-//
-//        if (
-//            EnemyUnits.discovered().combatUnits().inRadius(8, position).empty()
-//                || (construction.buildingType().isCombatBuilding() && Select.our().inRadius(7, position).atLeast(2))
-//                || A.hasMinerals(700)
-//        ) return true;
-//
-//        return false;
-//    }
-
     public static ArrayList<AUnit> builders() {
         ArrayList<AUnit> units = new ArrayList<>();
 

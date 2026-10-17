@@ -73,21 +73,6 @@ public class TerranForbiddenByStreetGrid {
             || building.isBunker();
     }
 
-    private static boolean fail(String reason) {
-        AbstractPositionFinder._STATUS = reason;
-        return true;
-    }
-
-    private static int buildingLeftTx(AUnitType building, APosition position) {
-        return position.tx() - building.dimensionLeftPixels() / 32;
-    }
-
-    private static int buildingRightTx(AUnitType building, APosition position) {
-        int addonBonus = building.addonWidthInPx();
-
-        return (int) (position.tx() + (building.dimensionRightPixels() + addonBonus) / 32);
-    }
-
     private static boolean failed(String reason) {
         AbstractPositionFinder._STATUS = reason;
         return true;

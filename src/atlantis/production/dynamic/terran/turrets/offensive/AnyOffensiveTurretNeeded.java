@@ -34,19 +34,6 @@ public class AnyOffensiveTurretNeeded {
             && unit.friendsNear().havingAntiAirWeapon().count() > airEnemies.count();
     }
 
-    private void haveTurretNear(HasPosition position) {
-        if (alreadyHaveTurretNear(position)) return;
-
-//        System.err.println("enqueue turret");
-//
-//        CurrentProductionQueue.print("PRE");
-
-        AddToQueue.withHighPriority(Terran_Missile_Turret, position.position());
-
-//        CurrentProductionQueue.print(null);
-//        ConstructionRequests.requestConstructionOf(Terran_Missile_Turret, position.position());
-    }
-
     private boolean alreadyHaveTurretNear(HasPosition position) {
         return Count.ourWithUnfinished(Terran_Missile_Turret, 7, position) > 0;
     }

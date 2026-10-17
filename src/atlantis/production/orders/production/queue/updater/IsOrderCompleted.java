@@ -138,13 +138,4 @@ public class IsOrderCompleted {
     private static int existingCompletedUnitsCount(AUnitType type) {
         return Select.countOurOfTypeWithUnfinished(type);
     }
-//
-//    private static int existingOrInProgressUnitsCount(AUnitType type) {
-//        int weHaveThisManyUnits = Count.existingOrInProduction(type);
-//        if (type.isBuilding()) {
-//            weHaveThisManyUnits += ConstructionRequests.countNotStartedOfType(type);
-//        }
-////        System.err.println("weHaveThisManyUnits = " + weHaveThisManyUnits + " / " + type);
-//        return weHaveThisManyUnits;
-//    }
 }

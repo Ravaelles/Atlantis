@@ -68,10 +68,6 @@ public class QueueRefresher {
         return order.setStatus(OrderStatus.READY_TO_PRODUCE);
     }
 
-    private OrderStatus markAsNotReady(ProductionOrder order) {
-        return order.setStatus(OrderStatus.NOT_READY);
-    }
-
     private OrderStatus markAsComplete(ProductionOrder order) {
 
         order.setStatus(OrderStatus.FINISHED);

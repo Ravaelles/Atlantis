@@ -168,12 +168,6 @@ public class IsReadyToProduceOrder {
 
     }
 
-    private static int mineralBonusToHave(AUnitType type) {
-        if (type.isABuilding()) return -48;
-
-        return 34;
-    }
-
     private static boolean cantAffordAndDidntExpandYet(ProductionOrder order) {
         // NEXT #71: the name is the spec - block when the base CANT AFFORD,
         // saving for the expansion. Unnegated this halted every order while
