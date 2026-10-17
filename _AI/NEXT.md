@@ -180,10 +180,10 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-17 (`rm -rf out` first): unit 706/706 green, 0
-skipped (was 683 - twenty-three tests added since, incl. SupplyGoalTest
-3/3, SelectionSortingTest 10/10 and BuildRefusedTwinTest 1/1).
-Architecture advisory
+Re-measured 2026-10-17 (`rm -rf out` first): unit 709/709 green, 0
+skipped (was 683 - twenty-six tests added since, incl. SupplyGoalTest
+3/3, SelectionSortingTest 10/10, BuildRefusedTwinTest 1/1 and
+V2DragoonAdvancementTest 3/3). Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
 (both carry live behavior, Stage E/H territory, never grow the
