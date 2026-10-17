@@ -316,12 +316,14 @@ twins green (1/1 each, re-verified today). Re-run
   Big separate project by design: pure map answers (model, defense spots,
   drop spots, wall anchors + natural wall-in with Pylon/Gateway/cannons),
   placement/execution stay in Atlantis; starts as `map.analysis`, extracts
-  to a module when stable. Checklist: [ ] M0 diet (delete dead
-  `bweb/`+`Result`/painters, 3 fallbacks own) [ ] M1 immutable model +
-  golden maps [ ] M2 defense spots + fortification consumer [ ] M3 drop
-  spots/islands [ ] M4 wall anchors + natural wall-in game proof
-  [ ] M5 module extraction. JBWEB fork (separate repo, walls/JPS only)
-  plugs in at M4 if own anchors prove weak. Unblocks nothing above; nothing
+  to a module when stable. Checklist: [x] M0 diet (dead ports deleted,
+  3 fallbacks own, whole jbweb tree gone) [x] M1 immutable model
+  (BaseRoles pure + wired) [x] M2 defense spots live (coverage ranker
+  both paths, unpowered guard, 897 s proof) [x] M3 drop spots/islands
+  (area graph pure) [x] M4 anchors model (tile row + door pure)
+  [ ] M4 wall-in goal + game proof [ ] M5 module extraction. JBWEB fork
+  (separate repo, walls/JPS only) plugs in at M4 if own anchors prove
+  weak. Unblocks nothing above; nothing
   above blocks M0.
 
 
