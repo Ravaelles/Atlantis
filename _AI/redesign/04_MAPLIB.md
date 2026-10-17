@@ -69,8 +69,17 @@ own code, BWEB ideas with attribution, MIT-clean.
   cannons/tanks covering the choke line + the mineral line behind it,
   from choke geometry + engine weapon ranges (CONVENTIONS §9, never
   memory). First consumer: fortification policy (counts become spots).
-  Proof: golden spots on TauCross + a game where cannons warp on spots,
-  not on legacy tiles.
+  Status 2026-10-18: model (`DefenseSpots`) + `CoverageCannonRanker`
+  wired in the catalogue, unit-pinned (coverage beats nearness).
+  Live proof PARTIAL: long catalogue run `20261017_120347` (819 game-s,
+  full tech incl. Forge/Robotics/Stargate/Observatory, E2E OK) warped
+  its cannon through the sited path, which bypasses the adapter - zero
+  cannon twin rows, ranker unexercised. Forcing it via V2 LIVE failed
+  differently (147 s wall for 254 game-s, thin play, killed by the cap).
+  The gap is architectural, not numerical: `RequestBuildingNear`
+  searches with legacy `FindPosition` directly, so sited demand never
+  reaches the catalogue. Next slice: route it through the funnel, then
+  re-run long. Short-tier safety proven meanwhile (E2E OK, 6 s).
 - **M3 — drop spots / islands.** Area-graph analysis over BWEM areas:
   enemy-base areas with no ground path from our army area (islands,
   backdoors) ranked by flight distance. Query:
