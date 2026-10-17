@@ -30,6 +30,7 @@ public class LogKeySeverityTest {
     @Test
     public void theRestIsChatter() {
         assertEquals(LogLevel.NORMAL, LogKey.BOARD.level());
+        assertEquals(LogLevel.NORMAL, LogKey.GAME_END.level());
         assertEquals(LogLevel.NORMAL, LogKey.WORKER_GATE.level());
         assertEquals(LogLevel.NORMAL, LogKey.GAS_FIX.level());
         assertEquals(LogLevel.NORMAL, LogKey.POSITION_REFRESH.level());

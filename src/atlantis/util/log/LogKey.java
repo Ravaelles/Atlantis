@@ -37,6 +37,10 @@ public enum LogKey {
     POSITION_REFRESH,
     /** Full canBuild-term decomposition of a stalled builder's refusal. */
     BUILD_BREAKDOWN,
+    /** Who ended the game and with what state (NEXT #149: two causeless
+      early exits - won flag, frame, supply, bank - so the next one
+      arrives attributable). */
+    GAME_END,
     /** A ready building order refused before siting, with the refusing guard. */
     BUILD_REFUSED,
     /** A picked early site (type, tile, supply row). */

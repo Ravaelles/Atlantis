@@ -7,6 +7,8 @@ import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.util.GameSummary;
 import atlantis.util.AConsole;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import benchmark.BenchmarkMode;
 import atlantis.cherryvis.ACherryVis;
 
@@ -83,6 +85,18 @@ public class OnGameEnd {
         // summary below may throw midway, and the ledger tail must land
         // regardless. Both writes are delimited, stream order was never
         // contractual across stdout/stderr.
+        //
+        // The GAME_END twin lands before the flush for the same reason:
+        // a causeless early exit (NEXT #149) must arrive with its state
+        // attached even if everything below it throws.
+        EventLog.key(LogKey.GAME_END)
+            .param("won", won)
+            .param("frame", A.now())
+            .param("supplyUsed", AGame.supplyUsed())
+            .param("supplyTotal", AGame.supplyTotal())
+            .param("minerals", A.minerals())
+            .param("gas", A.gas())
+            .log(A.now(), A.minSec());
         atlantis.util.log.EventLog.flush();
         atlantis.game.util.BuildingLedger.printTailToStderr();
 
