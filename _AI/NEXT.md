@@ -369,6 +369,11 @@ twins green (1/1 each, re-verified today). Re-run
   v2 covers tech + race army; `Queue/**` + order types last; never
   bottom-up (a bot that can't research is worse than debt).
   `Construction/**` stays by design (v2 delegates builders to it).
+  Tech/army/gas coverage landed 2026-10-18 without a game (owner
+  direction: snapshot fields + Dragoon advancement + Singularity want +
+  gas want with exact-geyser siting, all stub-pinned; one DRY_RUN short
+  run shows V2 planning Dragoons/Assimilators behavior-neutrally).
+  Singularity live fire + V2 gas order still pending longer games.
 ## Current game state (updated 2026-10-18)
 
 - Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
