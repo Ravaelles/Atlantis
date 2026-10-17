@@ -73,6 +73,11 @@ reading green.
   exact geyser); Core+Forge live (tech gap closed); Singularity still
   not live; parity 0.63 vs 0.83 buildings/min (legacy `200123`) -
   thin, drivers now no-Dragoons + no-Nexus-2, not missing tech.
+  `210732`-era follow-up: Singularity FIRED live on V2 (`202456`,
+  researched 5:16) - the pending half is only the Nexus issue timing,
+  not research. Nexus demand fires (pinned `V2ExpansionDemandTest`
+  4/4: 25-per-base threshold, in-flight and 4-base guards); `202456`
+  committed the builder at 17:29, too late to warp - timing open.
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
@@ -509,8 +514,8 @@ twins green (1/1 each, re-verified today). Re-run
   direction: snapshot fields + Dragoon advancement + Singularity want +
   gas want with exact-geyser siting, all stub-pinned; one DRY_RUN short
   run shows V2 planning Dragoons/Assimilators behavior-neutrally).
-  Singularity live fire still pending longer games; V2 gas order fired
-  live in `202456`. Race-army gap named 2026-10-17: the advancement is a
+  Singularity live fire LANDED on V2 (`202456`, researched 5:16);
+  V2 gas order fired too (Assimilator 4:08). Race-army gap named 2026-10-17: the advancement is a
   floor fill, so a standing Zealot army at/above workers/4 freezes the
   Dragoon transition forever (`202456`: Core from 4:35, 7 Zealots, zero
   Dragoons - demand-side, pinned in `V2DragoonAdvancementTest` 3/3);
