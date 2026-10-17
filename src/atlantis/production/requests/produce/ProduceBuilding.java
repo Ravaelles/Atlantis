@@ -13,6 +13,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
+import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.production.GoalBoardFeeder;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.constructions.position.FindPosition;
@@ -196,6 +197,34 @@ public class ProduceBuilding {
         Construction prepared = order.construction();
         if (prepared == null || prepared.status() != ConstructionOrderStatus.PREPARING) return false;
 
+        // Owner 2026-10-17 (NEXT #150): a site picked early can be stale by
+        // adoption time - a sibling may have started warping onto it after
+        // the pick (measured Wine: GW#3 [112,12] picked the frame GW#2
+        // warped at [112,10], shared tile row; the pick-time guards are
+        // blind to a same-frame warp). Re-pick instead of adopting a site
+        // the engine will refuse at issue time.
+        if (OverlapsOurUnfinishedBuilding.check(prepared.buildPosition(), prepared.buildingType())) {
+            APosition fresh = prepared.findPositionForNewBuilding();
+            if (fresh == null || OverlapsOurUnfinishedBuilding.check(fresh, prepared.buildingType())) {
+                EventLog.key(LogKey.BUILD_REFUSED)
+                    .param("type", prepared.buildingType().name())
+                    .param("guard", "adopt-site-blocked")
+                    .param("order", order.toString())
+                    .param("supplyUsed", A.supplyUsed())
+                    .param("minerals", A.minerals())
+                    .log(A.now(), A.minSec());
+                return false;
+            }
+            APosition prev = prepared.buildPosition();
+            prepared.setPositionToBuild(fresh);
+            EventLog.key(LogKey.POSITION_REFRESH)
+                .param("type", prepared.buildingType().name())
+                .param("result", "adopt-resited")
+                .param("prevTile", prev == null ? "-" : prev.toString())
+                .param("tile", fresh.toString())
+                .log(A.now(), A.minSec());
+        }
+
         // Owner 2026-10-18: prefer the worker reserved at pick time - it
         // was free then, and skipping the search keeps adoption instant.
         // Fall back to the optimal search when it died, got claimed, or
@@ -207,7 +236,16 @@ public class ProduceBuilding {
         else {
             prepared.assignOptimalBuilder();
         }
-        if (prepared.builder() == null) return false;
+        if (prepared.builder() == null) {
+            EventLog.key(LogKey.BUILD_REFUSED)
+                .param("type", prepared.buildingType().name())
+                .param("guard", "adopt-no-free-builder")
+                .param("order", order.toString())
+                .param("supplyUsed", A.supplyUsed())
+                .param("minerals", A.minerals())
+                .log(A.now(), A.minSec());
+            return false;
+        }
 
         prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);
         _lastConstruction = prepared;

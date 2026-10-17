@@ -117,12 +117,18 @@ public class ConstructionStatusChanger extends Commander {
             // Named, not silent: this removal used to leave no twin, so a
             // re-request loop (same tile, totalOfType pinned at 1) read as
             // "constructions never advance past PREPARING" with no author.
+            // The covering tile names WHICH standing building the site was
+            // finished against (NEXT #150: 147 Gateway finishes against an
+            // unidentified coverer) - the type+tile alone cannot tell a
+            // same-tile duplicate from a footprint graze or a misread
+            // warping unit.
             EventLog.key(LogKey.CONSTRUCTION_CANCEL)
                 .param("type", construction.buildingType().name())
                 .param("reason", "proximity finish: standing " + construction.buildingType().name()
                     + " covers " + construction.buildPosition())
                 .param("tile", construction.buildPosition() == null ? "-"
                     : construction.buildPosition().toString())
+                .param("covering", coveringBuildingTile(construction))
                 .log(A.now(), A.minSec());
             ConstructionRequests.removeOrder(construction);
         }
@@ -174,13 +180,7 @@ public class ConstructionStatusChanger extends Commander {
         }
 
         if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
-            boolean engineSaysStarted = builder != null
-                && builder.isConstructing()
-                && builderAtConstructionSite(builder, construction);
-
-            if (engineSaysStarted || buildingFinishedAtSite(construction)) {
-                construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
-            }
+            advanceToInProgressIfStarted(construction, builder);
         }
 
         // Building doesn't exist yet, means builder is travelling to the construction place
@@ -224,6 +224,31 @@ public class ConstructionStatusChanger extends Commander {
 //
 //        return builder;
 //    }
+
+    /**
+     * Advance a NOT_STARTED construction whose builder has started (or
+     * whose building already stands on the tile) to IN_PROGRESS.
+     *
+     * <p>Public as a seam: the status advance is assertable without running
+     * a game (NEXT #150 - a Gateway that stays NOT_STARTED forever while
+     * its builder works is exactly this transition not firing), the same
+     * way {@link #demoteStalledInProgress} pins the way back.</p>
+     *
+     * @return true when the status advanced.
+     */
+    public static boolean advanceToInProgressIfStarted(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return false;
+
+        boolean engineSaysStarted = builder != null
+            && builder.isConstructing()
+            && builderAtConstructionSite(builder, construction);
+
+        if (engineSaysStarted || buildingFinishedAtSite(construction)) {
+            construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Frames an IN_PROGRESS builder may stand idle at its site with no building
@@ -386,8 +411,40 @@ public class ConstructionStatusChanger extends Commander {
         return false;
     }
 
-    private static boolean buildingFinishedAtSite(Construction construction) {
-        if (construction.buildPosition() == null) return false;
+    /**
+     * Names the covering building for the proximity-finish twin: the same
+     * two loops as the finish predicates, in the same order, but returning
+     * the tile instead of a boolean. Read-only, same sources, so it cannot
+     * disagree with the decision it annotates.
+     */
+    private static String coveringBuildingTile(Construction construction) {
+        APosition site = construction.buildPosition();
+        if (site == null) return "-";
+
+        for (AUnit unit : Select.all().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            if (!unit.isABuilding() || !unit.isCompleted()) continue;
+            if (!construction.buildingType().equals(unit.type())) continue;
+            if (unit.tx() == site.tx() && unit.ty() == site.ty()) {
+                return "[" + unit.tx() + "," + unit.ty() + "]";
+            }
+        }
+
+        int w = construction.buildingType().getTilesWidth();
+        int h = construction.buildingType().getTilesHeights();
+        for (AUnit unit : Select.ourOfTypeWithUnfinished(construction.buildingType()).list()) {
+            if (unit == null || !unit.isCompleted()) continue;
+            if (atlantis.production.constructions.PrepareConstructionSite.footprintsOverlap(
+                site.tx(), site.ty(), w, h,
+                unit.tx(), unit.ty(),
+                unit.type().getTilesWidth(), unit.type().getTilesHeights()
+            )) return "[" + unit.tx() + "," + unit.ty() + "]";
+        }
+
+        return "-";
+    }
+
+    private static boolean buildingFinishedAtSite(Construction construction) {        if (construction.buildPosition() == null) return false;
 
         // Footprint overlap, not nearness: a finished sibling on the next
         // slot (measured: Pylon [119,18] next to warped [118,16], centers

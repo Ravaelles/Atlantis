@@ -51,6 +51,7 @@ public class FakeUnit extends AUnit implements Serializable {
     public boolean busy = false;
     public boolean cloaked = false;
     public boolean completed = true;
+    public boolean constructing = false;
     private List<AUnitType> stubTrainingQueue = null;
     public int cooldown = 0;
     public boolean detected = true;
@@ -252,7 +253,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     public boolean isConstructing() {
-        return false;
+        return constructing;
     }
 
     @Override
@@ -488,6 +489,11 @@ public class FakeUnit extends AUnit implements Serializable {
 
     public FakeUnit setCompleted(boolean completed) {
         this.completed = completed;
+        return this;
+    }
+
+    public FakeUnit setConstructing(boolean constructing) {
+        this.constructing = constructing;
         return this;
     }
 
