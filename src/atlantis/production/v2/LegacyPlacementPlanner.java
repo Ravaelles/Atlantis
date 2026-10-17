@@ -116,6 +116,26 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
             .log(AGame.now(), A.minSec());
     }
 
+    /** Most refused term of the last search, or the last status when the sweep never ran (cache hit). */
+    private static String topRefusal() {
+        java.util.Map<String, Integer> breakdown =
+            atlantis.production.constructions.position.PositionFulfillsAllConditions.lastRefusalBreakdown();
+        String top = null;
+        int topCount = 0;
+        int total = 0;
+        for (java.util.Map.Entry<String, Integer> entry : breakdown.entrySet()) {
+            total += entry.getValue();
+        }
+        for (java.util.Map.Entry<String, Integer> entry : breakdown.entrySet()) {
+            if (entry.getValue() > topCount) {
+                topCount = entry.getValue();
+                top = entry.getKey() + " x" + entry.getValue() + "/" + total;
+            }
+        }
+        if (top == null) return AbstractPositionFinder._STATUS;
+        return top;
+    }
+
     @Override
     public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame) {
         AUnitType unitType = resolveUnitType(building);
@@ -151,9 +171,14 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         // candidates the finder never validated, which is worse than the single
         // validated tile we get today.
         HasPosition near = resolveNear(constraint);
+        // Authoritative refusal attribution: the shared chain counts every
+        // refused tile per term; cleared here so the breakdown belongs to
+        // this search (a cached null skips the sweep and falls back to the
+        // last status below).
+        atlantis.production.constructions.position.PositionFulfillsAllConditions.clearRefusalBreakdown();
         APosition position = APositionFinder.findStandardPosition(builder, unitType, near, 12);
         if (position == null) {
-            twinRefusal(unitType, AbstractPositionFinder._STATUS);
+            twinRefusal(unitType, topRefusal());
             return PlacementReservation.failure();
         }
 
