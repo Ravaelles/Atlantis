@@ -58,4 +58,20 @@ public class CountInQueue {
     public static int countNotFinished(AUnitType type) {
         return Queue.get().notFinished().ofType(type).size();
     }
+
+    /**
+     * Owner 2026-10-18: queue rows still waiting for dispatch (no linked
+     * construction). Dispatched rows live in the constructions list - and
+     * counting both double-counts one building (measured shape behind the
+     * supply-12 third Gateway and the double Core). Pair with
+     * constructions + warping units, never with the raw queue count.
+     */
+    public static int countNotFinishedWithoutConstruction(AUnitType type) {
+        int total = 0;
+        for (atlantis.production.orders.production.queue.order.ProductionOrder row
+            : Queue.get().notFinished().ofType(type).list()) {
+            if (row.construction() == null) total++;
+        }
+        return total;
+    }
 }

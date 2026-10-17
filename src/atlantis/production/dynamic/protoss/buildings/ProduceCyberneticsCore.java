@@ -26,6 +26,10 @@ public class ProduceCyberneticsCore {
         if (Have.cyberneticsCore()) return false;
         if (Count.inProduction(type()) > 0) return false;
         if (Count.inQueue(type(), 3) > 0) return false;
+        // Owner 2026-10-18: one Core per game, never two coming. The guards
+        // above are blind to picked-early PREPARING sites (measured: dynamic
+        // Core warped 16 s after the BO Core), so count everything once.
+        if (Count.outstandingOfType(type()) >= 1) return false;
 
         if (needOne()) {
             return addCyberneticsToQueue();
