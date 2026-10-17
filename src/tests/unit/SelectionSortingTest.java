@@ -115,4 +115,63 @@ public class SelectionSortingTest extends WorldStubForTests {
             assertSame(hurt, Select.our().sortByWound().first());
         });
     }
+
+    @Test
+    public void nearestToReturnsClosestAndNulls() {
+        FakeUnit a = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(1, fakeOurs(a, b), fakeEnemies(), () -> {
+            assertSame(a, Select.our().nearestTo(APosition.create(10, 10)));
+            assertSame(null, Select.our().nearestTo(null));
+            assertSame(null, Select.our().ofType(AUnitType.Protoss_Carrier).nearestTo(APosition.create(10, 10)));
+        });
+    }
+
+    @Test
+    public void groundNearestAndFarthestDisagree() {
+        FakeUnit a = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Probe, 12, 10);
+        FakeUnit c = fake(AUnitType.Protoss_Zealot, 20, 20);
+
+        world(1, fakeOurs(a, b, c), fakeEnemies(), () -> {
+            assertSame(a, Select.our().groundNearestTo(APosition.create(10, 10)));
+            assertSame(c, Select.our().groundFarthestTo(APosition.create(10, 10)));
+            assertSame(c, Select.our().mostDistantTo(APosition.create(10, 10)));
+        });
+    }
+
+    @Test
+    public void nearestToOrNullRespectsMaxLength() {
+        FakeUnit a = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(1, fakeOurs(a, b), fakeEnemies(), () -> {
+            assertSame(a, Select.our().nearestToOrNull(APosition.create(10, 10), 0.5));
+            assertSame(null, Select.our().nearestToOrNull(APosition.create(50, 50), 0.5));
+        });
+    }
+
+    @Test
+    public void mostWoundedPrefersWoundedOtherwiseNearest() {
+        FakeUnit healthyNear = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit healthyFar = fake(AUnitType.Protoss_Probe, 12, 10);
+        FakeUnit hurt = fake(AUnitType.Terran_Marine, 20, 20).setHp(10);
+
+        world(1, fakeOurs(healthyNear, healthyFar, hurt), fakeEnemies(), () -> {
+            assertSame(hurt, Select.our().mostWounded());
+            assertSame(hurt, Select.our().mostWoundedOrNearest(APosition.create(10, 10)));
+            assertSame(hurt, Select.our().lowestHealth());
+        });
+    }
+
+    @Test
+    public void unwoundedFallsBackToNearest() {
+        FakeUnit h1 = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit h2 = fake(AUnitType.Protoss_Probe, 12, 10);
+
+        world(1, fakeOurs(h1, h2), fakeEnemies(), () -> {
+            assertSame(h2, Select.our().mostWoundedOrNearest(APosition.create(12, 10)));
+        });
+    }
 }

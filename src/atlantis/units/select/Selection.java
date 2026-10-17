@@ -846,12 +846,7 @@ public class Selection extends BaseSelection {
      * Returns closest unit to given <b>position</b> from all units in the current selection.
      */
     public AUnit nearestTo(HasPosition position) {
-        if (data.isEmpty() || position == null) return null;
-        if (data.size() == 1) return data.get(0);
-
-        sortDataByDistanceTo(position, true);
-
-        return data.isEmpty() ? null : data.get(0);
+        return SelectionSorting.nearestTo(this, position);
     }
 
     public double distToNearest(HasPosition position) {
@@ -862,23 +857,11 @@ public class Selection extends BaseSelection {
     }
 
     public AUnit groundNearestTo(HasPosition position) {
-        if (data.isEmpty() || position == null) return null;
-
-        if (data.size() == 1) return data.get(0);
-
-        sortDataByGroundDistanceTo(position, true);
-
-        return data.isEmpty() ? null : data.get(0);
+        return SelectionSorting.groundNearestTo(this, position);
     }
 
     public AUnit groundFarthestTo(HasPosition position) {
-        if (data.isEmpty() || position == null) return null;
-
-        if (data.size() == 1) return data.get(0);
-
-        sortDataByGroundDistanceTo(position, false);
-
-        return data.isEmpty() ? null : data.get(0);
+        return SelectionSorting.groundFarthestTo(this, position);
     }
 
     public double nearestToDist(HasPosition position) {
@@ -899,16 +882,7 @@ public class Selection extends BaseSelection {
     }
 
     public AUnit mostDistantTo(HasPosition position) {
-        if (data.isEmpty() || position == null) {
-            return null;
-        }
-        if (data.size() == 1) {
-            return data.get(0);
-        }
-
-        sortDataByDistanceTo(position, false);
-
-        return data.isEmpty() ? null : (AUnit) data.get(0);
+        return SelectionSorting.mostDistantTo(this, position);
     }
 
     public AUnit mostDistantToBase() {
@@ -927,62 +901,15 @@ public class Selection extends BaseSelection {
      * From all units currently in selection, returns closest unit to given <b>position</b>.
      */
     public AUnit nearestToOrNull(HasPosition position, double maxLength) {
-        if (data.isEmpty() || position == null) {
-            return null;
-        }
-
-//        Position position;
-//        if (positionOrUnit instanceof APosition) {
-//            position = (APosition) positionOrUnit;
-//        } else if (positionOrUnit instanceof Position) {
-//            position = (Position) positionOrUnit;
-//        } else {
-//            position = ((AUnit) positionOrUnit).getPosition();
-//        }
-
-        sortDataByDistanceTo(position, true);
-        AUnit nearestUnit = (AUnit) data.get(0);
-
-        if (nearestUnit != null && nearestUnit.distTo(position) < maxLength) {
-            return nearestUnit;
-        }
-        else {
-            return null;
-        }
+        return SelectionSorting.nearestToOrNull(this, position, maxLength);
     }
 
     public AUnit mostWounded() {
-        if (data.isEmpty()) {
-            return null;
-        }
-
-//        sortByHealth();
-        sortByWound();
-
-//        print("Most wounded: " + data.get(0).type());
-
-        return data.get(0);
+        return SelectionSorting.mostWounded(this);
     }
 
     public AUnit mostWoundedOrNearest(HasPosition nearestTo) {
-        if (data.isEmpty()) {
-            return null;
-        }
-
-//        sortByHealth();
-        sortByWound();
-        AUnit first = data.get(0);
-
-        if (first.isWounded()) {
-//            AUnit least = data.get(1);
-//            System.out.println("Most wounded: " + first.typeWithUnitId() + " (" + first.hp() + ")");
-//            if (least != null) System.out.println("Least wounded: " + least.typeWithUnitId() + " (" + least.hp() + ")");
-            return first;
-        }
-
-//        System.err.println("Nope, return nearest = " + nearestTo(nearestTo));
-
-        return nearestTo(nearestTo);
+        return SelectionSorting.mostWoundedOrNearest(this, nearestTo);
     }
 
     // =========================================================
@@ -1031,18 +958,7 @@ public class Selection extends BaseSelection {
     // === High-level of abstraction ===========================
 
     public AUnit lowestHealth() {
-        int lowestHealth = 99999;
-        AUnit lowestHealthUnit = null;
-
-        for (Iterator it = data.iterator(); it.hasNext(); ) {
-            AUnit unit = (AUnit) it.next();
-            if (unit.hp() < lowestHealth) {
-                lowestHealth = unit.hp();
-                lowestHealthUnit = unit;
-            }
-        }
-
-        return lowestHealthUnit;
+        return SelectionSorting.lowestHealth(this);
     }
 
     public boolean areAllBusy() {

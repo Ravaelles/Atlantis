@@ -294,15 +294,16 @@ twins green (1/1 each, re-verified today). Re-run
   it here. (Wall-clock extraction tried and reverted 2026-10-09: trivial
   split, unreliable edit path, zero behaviour change.)
 - **#10** Split `Selection` (235 public methods) along internal seams,
-  with a test pinning selection semantics before/after. Three slices landed
+  with a test pinning selection semantics before/after. Four slices landed
   (radius family → `SelectionRadius`, membership filters →
-  `SelectionMembership`, ordering family → `SelectionSorting`, each with a
-  pin test, zero call-site changes): cross-context readers stay put until
-  their dependencies are fixed - moving them re-spells frozen violations
-  instead of removing them (measured, see NOTES.md arch mechanics;
-  slice 3 verified: same 2 pre-existing failures, store diff empty).
-  Remainder is core iteration machinery (`units()`, `limit`, `nearestTo`,
-  finders, `estimate`) plus multi-statement logic needing designed splits,
+  `SelectionMembership`, ordering → `SelectionSorting` in two parts:
+  sorts then nearest-finders, each with a pin test, zero call-site
+  changes): cross-context readers stay put until their dependencies are
+  fixed - moving them re-spells frozen violations instead of removing
+  them (measured, see NOTES.md arch mechanics; slices 3-4 verified:
+  same 2 pre-existing failures, store diff empty). Remainder is
+  accessors (`units()`, `first/last/random`, `size/count/isEmpty`),
+  thin dispatchers and multi-statement logic needing designed splits,
   not verbatim moves.
 - **#11** Split `AUnit` (577 public methods, measured 2026-10-17): the
   order-emission surface needs no verbatim slice - `AUnit` holds zero
