@@ -114,16 +114,20 @@ The index of which document answers which question is `_AI/README.md`.
 1. **Per-gate legacy deletions**, one game of proof each (ratchet):
    no candidate yet - feeder coverage re-measured 2026-10-16 across
    retained runs: 29 sustained-dragoon + 2 sustained-zealot rows, ZERO
-   supply/gateway/core/assimilator. The pumps do ~everything, the
+   supply/gateway/core/assimilator. Re-measured 2026-10-17 incl. the
+   743 s long run: board tops (supply-pylon x2, core, workers, sustained-
+   dragoon, wall-in) but ZERO BOARD_FED - the pumps do ~everything, the
    feeder fills silence - wrong direction for deletion; buildings are
    all-legacy. Board-invisible production (Forge, cannons) is
    capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
 2. **Decision absorption:** board takes over decision sites one by one
-   (20 files with the exact singular import, measured 2026-10-17 -
+   (8 files with the exact singular import, measured 2026-10-17 -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
-   absorbed; counting down, no new ones per §21); the class dies at zero,
-   not before. Two tracks:
+   absorbed, 14 more with the targeting + battle src-old sweeps;
+   counting down, no new ones per §21); the class dies at zero,
+   not before. All 8 survivors sit on excluded tracks (battle/micro,
+   interrupt, terran-info) - production holds ZERO imports. Two tracks:
    production sites route through board state (first slice: the worker
    Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
    board names the enemy race, Stargate Terran veto reads it,
@@ -148,6 +152,10 @@ The index of which document answers which question is `_AI/README.md`.
    waiters + walking-builder shield are in it) for the first-Pylon
    proof (#84); corner-stall game for doctrine-vs-leash (#81).
    Owner-run; autonomous work above does not wait on it.
+   OpenBW control (not the proof itself): first Pylon warps in every
+   retained run, 0:24-0:26 on adhoc tiers, 0:50-0:53 on short/long
+   (BO expects supply 8) - the order-to-warp pipeline is healthy;
+   Wine's failure is builder-side, per #84's diagnosis.
 4. **Game-proof backlog** (all need a quiet run, OpenBW or flagged
    Wine): 700 s+ rich run (#71), L2/L3 (#85), builder-variance
    leftovers (#74).
