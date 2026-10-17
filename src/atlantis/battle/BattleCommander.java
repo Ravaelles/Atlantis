@@ -47,6 +47,17 @@ public class BattleCommander extends Commander {
         HasPosition anchor = posture == ClusterMission.Posture.ATTACK
             ? attackAnchor() : defendAnchor();
 
+        // Throttled state line: the only per-game proof of what the
+        // cluster does (posture, tactic, size, anchor). JSON-only, stderr.
+        if (A.everyNthGameFrame(31)) {
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.CLUSTER)
+                .param("cluster", Alpha.get().size())
+                .param("posture", posture.name())
+                .param("tactic", tactic.name())
+                .param("anchor", anchor == null ? "-" : anchor.toString())
+                .log(A.now(), A.minSec());
+        }
+
         for (AUnit unit : Alpha.get().selection().list()) {
             order(unit, tactic, anchor);
         }

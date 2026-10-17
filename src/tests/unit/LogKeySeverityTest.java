@@ -36,5 +36,6 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.NORMAL, LogKey.SINGULARITY_APPLIES.level());
         assertEquals(LogLevel.NORMAL, LogKey.DRAGOON_TRAIN.level());
         assertEquals(LogLevel.NORMAL, LogKey.TRAIN_ATTEMPT.level());
+        assertEquals(LogLevel.NORMAL, LogKey.CLUSTER.level());
     }
 }

@@ -51,6 +51,8 @@ public enum LogKey {
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */
     WORKER_GATE,
+    /** Cluster posture/tactic/size/anchor, throttled. */
+    CLUSTER,
     /** A Nexus train/queue attempt (supply, remaining, engine answer). */
     TRAIN_ATTEMPT;
 
