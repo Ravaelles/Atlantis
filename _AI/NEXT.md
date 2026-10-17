@@ -38,6 +38,22 @@ reading green.
 - [ ] **Phase 5 — Production V2 LIVE + architecture migration.** V2 default
   behind the #45 deletion ordering; stages E–J below (after Phases 1–2).
   Exit: V2 LIVE by default with parity numbers, ArchUnit store at zero.
+  Diagnosed 2026-10-19 (no fix yet, mechanisms named with run ids):
+  full 1209 s LIVE games play fast but thin (10 warps: Pylon=2 Gateway=1
+  vs legacy ~40/9). (a) Core unplaceable: planner refusal twin proves
+  power (`Not powered by a Pylon x517/517`, `20261017_135655`) - V2
+  pylons land wherever, powered space fills, tech starves; legacy
+  avoided this with pylon scoring (unwired `PylonPlacementScore`) and
+  pull-forward. (b) Legacy queue machinery fires on unit events inside
+  LIVE (PREPARING orphans with builders, ORDER_NOT_READY rows, 200-300
+  leaked reservations via status-flip reserve/release imbalance) -
+  cutover comment says single policy; the gate is one `isLive` check in
+  `Queue.refresh`. (c) Supply-goal suppression by unfinished-forever
+  providers (`supplyProvidersComing` never clears a stuck warp).
+  (d) Worker trains: 20 V2 train orders, +7 net probes in 12 min -
+  mechanism open (scheduler facility/timeline starvation suspected).
+  Next slices in this order: single-policy gate, supply-suppression
+  guard, power-smart siting, worker-train diagnosis.
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
