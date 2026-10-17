@@ -85,7 +85,9 @@ one before touching game/process code; every failure in them looked like a
 different problem than it was.
 
 `OpenBW.md`, `GameExecution.md`, `BuildAndLogging.md`, `StationaryEnemy.md`,
-`Wine.md`, `ChaosLauncher.md`, `Bwapi.md`, `Keyboard.md`.
+`Wine.md`, `ChaosLauncher.md`, `Bwapi.md`, `Keyboard.md`, `Architecture.md`
+(reference bots: UAlbertaBot / CherryPi / Stardust / PurpleWave - what to
+steal, what to skip, and why).
 
 ## Other directories
 
