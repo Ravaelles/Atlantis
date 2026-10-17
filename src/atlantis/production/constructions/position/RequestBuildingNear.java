@@ -113,6 +113,13 @@ public class RequestBuildingNear {
     private APosition findExactPosition() {
         AUnit builder = FreeWorkers.get().nearestTo(near);
 
+        // Sited demand reaches the catalogue first (same flag, same
+        // null-means-legacy contract as the queue funnel): coverage-ranked
+        // tiles for cannons, block layouts for the rest. The validations,
+        // queueing and construction below stay exactly as they were.
+        APosition site = CatalogueSiteAdapter.siteForSited(builder, type, near, maxDistance);
+        if (site != null) return site;
+
         APosition position = FindPosition.findForBuilding(
             builder,
             type,

@@ -257,8 +257,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
     }
 
     @Test
-    public void aCatalogueFailureIsDeclined() {
-        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+    public void aCatalogueFailureIsDeclined() {        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
             probe
@@ -273,6 +272,47 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             assertNull(site, "a refused catalogue answer must decline to the legacy search, never invent a tile");
             assertTrue(EventLog.toJsonLines().contains(
                 "\"key\":\"CATALOGUE_SITE\",\"type\":\"Pylon\",\"result\":\"declined\",\"reason\":\"no-tile\""));
+        });
+    }
+
+    @Test
+    public void sitedSearchStaysLegacyWhenFlagIsOff() {
+        atlantis.config.env.Env.setPlacementCatalogueForTest(false);
+
+        assertNull(CatalogueSiteAdapter.siteForSited(
+            null, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12),
+            "flag off means the sited path never touches the catalogue - FindPosition answers as before");
+    }
+
+    @Test
+    public void rangeDisciplineIsPureMath() {
+        APosition site = APosition.create(20, 20);
+        APosition near = APosition.create(22, 20);
+
+        assertTrue(CatalogueSiteAdapter.withinRange(site, near, 12));
+        assertTrue(CatalogueSiteAdapter.withinRange(site, near, 2));
+        assertTrue(!CatalogueSiteAdapter.withinRange(site, near, 1));
+        assertTrue(CatalogueSiteAdapter.withinRange(site, null, 1));
+        assertTrue(CatalogueSiteAdapter.withinRange(site, near, -1));
+        assertTrue(CatalogueSiteAdapter.withinRange(null, near, 1));
+    }
+
+    @Test
+    public void sitedFailureDeclinesToLegacy() {
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            probe
+        ), fakeEnemies(), () -> {
+            ScriptedPlanner failing = new ScriptedPlanner(
+                atlantis.production.v2.PlacementReservation.failure());
+
+            APosition site = CatalogueSiteAdapter.siteForSited(
+                failing, probe, AUnitType.Protoss_Photon_Cannon, APosition.create(20, 20), 12);
+
+            assertNull(site, "a refused sited answer declines - the legacy search below answers as before");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"PhotonC\",\"result\":\"declined\",\"reason\":\"no-tile\",\"via\":\"sited\""));
         });
     }
 

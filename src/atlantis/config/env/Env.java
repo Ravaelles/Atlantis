@@ -303,6 +303,11 @@ public class Env {
         return placementCatalogue;
     }
 
+    /** Test seam (the flag is ENV-driven and has no other writer). */
+    public static void setPlacementCatalogueForTest(boolean enabled) {
+        placementCatalogue = enabled;
+    }
+
     /**
      * True when {@code BUILDER_LOG=1} is set in ENV: print each builder's active
      * manager, last command and target every frame. Off by default; it is a

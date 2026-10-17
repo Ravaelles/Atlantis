@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position;
 
+import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
@@ -104,7 +105,7 @@ public final class CatalogueSiteAdapter {
         long start = System.nanoTime();
         PlacementPlanner planner = plannerForFrame(AGame.now());
         adapterNanosTotal += System.nanoTime() - start;
-        return answerWithTwin(siteForInner(planner, builder, building, construction), building);
+        return answerWithTwin(siteForInner(planner, builder, building, construction), building, "funnel");
     }
 
     /**
@@ -113,16 +114,85 @@ public final class CatalogueSiteAdapter {
      */
     public static APosition siteFor(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
         planner.startPass();
-        return answerWithTwin(siteForInner(planner, builder, building, construction), building);
+        return answerWithTwin(siteForInner(planner, builder, building, construction), building, "funnel");
     }
 
-    private static APosition answerWithTwin(APosition site, AUnitType building) {
+    /**
+     * Sited requests ({@code RequestBuildingNear}: cannons, forward pylons)
+     * search with no order and no construction yet, straight at legacy
+     * {@code FindPosition} - bypassing every catalogue consumer, including
+     * the coverage ranker. This is their funnel entry: same propose +
+     * validate + range discipline, same null-means-legacy contract, selected
+     * by the same flag. The caller keeps its validations, queueing and
+     * construction afterwards, unchanged.
+     */
+    public static APosition siteForSited(AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
+        if (!Env.placementCatalogue()) return null;
+        return siteForSited(plannerForFrame(AGame.now()), builder, building, nearTo, maxDistance);
+    }
+
+    /**
+     * Same, with the planner injected: the seam the tests use.
+     */
+    public static APosition siteForSited(PlacementPlanner planner, AUnit builder, AUnitType building, HasPosition nearTo, double maxDistance) {
+        if (constructionFreeDeclined(builder, building)) {
+            return null;
+        }
+        planner.startPass();
+        APosition site = propose(planner, builder, building, constraintForSited(nearTo), "sited");
+        if (site == null) {
+            return null;
+        }
+        if (!withinRange(site, nearTo, maxDistance)) {
+            decline(building, "too-far", "sited");
+            return null;
+        }
+        return answerWithTwin(site, building, "sited");
+    }
+
+    /** Declines needing no order: nulls, dedicated finders, wrong race. True means declined. */
+    private static boolean constructionFreeDeclined(AUnit builder, AUnitType building) {
+        if (building == null) return true;
+        if (building.isGasBuilding() || building.isBase()) {
+            decline(building, "dedicated-finder", "sited");
+            return true;
+        }
+        if (!We.protoss()) {
+            decline(building, "non-protoss", "sited");
+            return true;
+        }
+        if (builder == null || !builder.isAlive()) {
+            decline(building, "no-builder", "sited");
+            return true;
+        }
+        return false;
+    }
+
+    private static TargetPlacement constraintForSited(HasPosition nearTo) {
+        if (nearTo == null) return TargetPlacement.anywhere();
+        APosition centre = APosition.create(nearTo);
+        return TargetPlacement.inNeighbourhood(centre.tx(), centre.ty());
+    }
+
+    /**
+     * The legacy ring search stays within maxDistance of near; a catalogue
+     * answer beyond it would queue an exact order somewhere the caller never
+     * asked for. Decline instead (negative means unbounded, as in legacy).
+     * Public as a seam: pure range math, pinned directly.
+     */
+    public static boolean withinRange(APosition site, HasPosition nearTo, double maxDistance) {
+        if (site == null || nearTo == null || maxDistance < 0) return true;
+        return site.distTo(nearTo) <= maxDistance;
+    }
+
+    private static APosition answerWithTwin(APosition site, AUnitType building, String via) {
         if (site != null) {
             EventLog.key(LogKey.CATALOGUE_SITE)
                 .param("type", building.name())
                 .param("result", "answered")
                 .param("tx", site.tx())
                 .param("ty", site.ty())
+                .param("via", via)
                 .log(AGame.now(), A.minSec());
         }
         return site;
@@ -131,21 +201,29 @@ public final class CatalogueSiteAdapter {
     private static APosition siteForInner(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
         if (construction == null || building == null) return null;
         if (building.isGasBuilding() || building.isBase()) {
-            decline(building, "dedicated-finder");
+            decline(building, "dedicated-finder", "funnel");
             return null;
         }
 
         ProductionOrder order = construction.productionOrder();
         if (order == null) {
-            decline(building, "no-order");
+            decline(building, "no-order", "funnel");
             return null;
         }
 
         if (!We.protoss()) {
-            decline(building, "non-protoss");
+            decline(building, "non-protoss", "funnel");
             return null;
         }
 
+        return propose(planner, builder, building, constraintFor(order, construction), "funnel");
+    }
+
+    /**
+     * The shared core: builder check, catalogue proposal, legacy validation.
+     * Returns the validated tile or null (decline already twinned).
+     */
+    private static APosition propose(PlacementPlanner planner, AUnit builder, AUnitType building, TargetPlacement constraint, String via) {
         // The catalogue proposes, the legacy validator disposes: a tile the
         // builder-time checks refuse would start a builder, fail refresh and
         // re-request in a loop (measured 2026-10-18: 236 requests vs 15 on
@@ -153,35 +231,36 @@ public final class CatalogueSiteAdapter {
         // legacy search answer; subsuming these checks is a later slice with
         // its own A/B proof.
         if (builder == null || !builder.isAlive()) {
-            decline(building, "no-builder");
+            decline(building, "no-builder", via);
             return null;
         }
 
         long start = System.nanoTime();
         PlacementReservation reservation = planner.reservePlacement(
-            UnitProducible.of(building), constraintFor(order, construction), AGame.now()
+            UnitProducible.of(building), constraint, AGame.now()
         );
         adapterNanosTotal += System.nanoTime() - start;
         adapterCalls++;
         samplePerf(AGame.now());
         if (reservation == null || !reservation.isSuccessful()) {
-            decline(building, "no-tile");
+            decline(building, "no-tile", via);
             return null;
         }
 
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
-            decline(building, "legacy-refused");
+            decline(building, "legacy-refused", via);
             return null;
         }
         return site;
     }
 
-    private static void decline(AUnitType building, String reason) {
+    private static void decline(AUnitType building, String reason, String via) {
         EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", building == null ? "-" : building.name())
             .param("result", "declined")
             .param("reason", reason)
+            .param("via", via)
             .log(AGame.now(), A.minSec());
     }
 
