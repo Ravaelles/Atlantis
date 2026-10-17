@@ -120,7 +120,11 @@ The index of which document answers which question is `_AI/README.md`.
    feeder fills silence - wrong direction for deletion; buildings are
    all-legacy. Board-invisible production (Forge, cannons) is
    capability, not duplication. Deletions wait for routine feeder
-   coverage, never batch rewrites.
+   coverage, never batch rewrites. Re-measured 2026-10-17 across all 12
+   retained runs: 9 BOARD_FED rows total (8 sustained-dragoon + 1
+   sustained-zealot), ZERO supply/gateway/core/assimilator - the feeder
+   still only fires sustained-army rows, never a per-gate row; no deletion
+   candidate, direction unchanged.
 2. **Decision absorption:** board takes over decision sites one by one
    (8 files with the exact singular import, measured 2026-10-17 -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
