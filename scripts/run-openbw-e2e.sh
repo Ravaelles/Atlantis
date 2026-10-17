@@ -571,6 +571,7 @@ rm -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl"
 # truncated - without clearing, every run collects all previous games:
 # measured 2026-10-17, E2E_DECISIONS rows past the game's last frame with
 # supply totals the game never reached, e.g. 200/200 in a 65-total game).
+rm -f "$BOT_ROOT/bwapi-data/write/DECISIONS.log"
 
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/E2E_LOG"
