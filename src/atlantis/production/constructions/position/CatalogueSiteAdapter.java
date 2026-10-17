@@ -8,6 +8,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
+import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -262,6 +263,16 @@ public final class CatalogueSiteAdapter {
         APosition site = APosition.create(reservation.tileX(), reservation.tileY());
         if (!CanPhysicallyBuildHere.check(builder, building, site)) {
             decline(building, "legacy-refused", via);
+            return null;
+        }
+        // Power is not part of the physical check above, and the catalogue's
+        // availability answer can go stale (a tile "powered" by a pylon that
+        // never warped): measured 2026-10-18, a covering cannon tile held its
+        // builder 122 s on unpowered ground, then cancelled. A dark tile is
+        // declined now and re-answered when a pylon lands - just in time,
+        // like the legacy chain, which refuses unpowered tiles at search.
+        if (building.needsPower() && !IsPoweredByAPylon.check(site, building)) {
+            decline(building, "unpowered", via);
             return null;
         }
         return reservation;
