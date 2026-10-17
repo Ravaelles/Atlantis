@@ -44,15 +44,19 @@ The index of which document answers which question is `_AI/README.md`.
    capability, not duplication. Deletions wait for routine feeder
    coverage, never batch rewrites.
 2. **Decision absorption:** board takes over decision sites one by one
-   (47 files with the exact singular import, measured 2026-10-16 -
-   earlier counts used a loose pattern that also matched the plural
-   helper; counting down, no new ones per §21); the class dies at zero,
+   (22 files with the exact singular import, measured 2026-10-17 -
+   was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
+   absorbed; counting down, no new ones per §21); the class dies at zero,
    not before. Two tracks:
    production sites route through board state (first slice: the worker
    Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
    board names the enemy race, Stargate Terran veto reads it,
-   `StargateEnemyRaceBoardTest` 2/2 - import count stands at 47 until
-   the Protoss/Zerg branches land), combat-micro sites die with
+   `StargateEnemyRaceBoardTest` 2/2; slices 3-5 2026-10-17: Stargate
+   Protoss/Zerg branches + the Singularity trio read dragoons, army,
+   hydras/lurkers/mutas, carrier-tech and sparta off the board,
+   `AbsorbedBranchesBoardTest` 3/3 - the two production files keep the
+   Decision TYPE as return shape until the class dies globally, all
+   READS go through the snapshot), combat-micro sites die with
    the manager-tree migration (stages E/H), never through the board
    (no per-unit micro on it).
 3. **Pylon closure:** Wine re-run with the current jar (convertible
@@ -274,6 +278,12 @@ twins green (1/1 each, re-verified today). Re-run
   bottom-up (a bot that can't research is worse than debt).
   `Construction/**` stays by design (v2 delegates builders to it).
 ## Current game state (2026-10-15)
+
+- Long `20261017_084517` (127 s wall, 979 game-s, rich: Nexus=5 Probe=56
+  Pylon=23 Gateway=7 Dragoon=14, single Core): absorption proof -
+  opening script-clean (Pylon 0:50@8, Gateway 1:27@10, Gateway 1:48@12),
+  2 Stargates warped (absorbed branches fire), SINGULARITY_CHECK x318 +
+  APPLIES x4 flowing, BUILD_BREAKDOWN x0. Same numbers, new home.
 
 - Long `20261017_080114` (58 s wall, FULL 1209 game-s, rich: Nexus=7
   Probe=56 Pylon=27 Gateway=9 Dragoon=24, cap-inconclusive): Phase-1
