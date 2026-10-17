@@ -111,11 +111,8 @@ public final class ADecision {
      * snapshots (frame unknown there); the door stamps the clock.
      */
     public ADecision atFrame(int frame) {
-        Builder builder = new Builder(kind, subject, reason, source)
-            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
-        builder.payload = payload;
-        builder.children.addAll(children);
-        return builder.build();
+        return new ADecision(kind, subject, reason, source,
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, children);
     }
 
     public Object payload() {
@@ -123,12 +120,10 @@ public final class ADecision {
     }
 
     public ADecision withChild(ADecision child) {
-        Builder builder = new Builder(kind, subject, reason, source)
-            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
-        builder.payload = payload;
-        builder.children.addAll(children);
-        builder.children.add(child);
-        return builder.build();
+        List<ADecision> grown = new ArrayList<>(children);
+        grown.add(child);
+        return new ADecision(kind, subject, reason, source,
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, grown);
     }
 
     /**
@@ -138,11 +133,24 @@ public final class ADecision {
      * audited state snapshot. Returns a new decision either way.
      */
     public ADecision refine(String subject, String reason, Source source, Object payload) {
-        Builder builder = new Builder(kind, subject, reason, source)
-            .frame(frame).supply(supplyUsed, supplyTotal).bank(minerals, gas);
-        builder.payload = payload;
-        builder.children.addAll(children);
-        return builder.build();
+        return new ADecision(kind, subject, reason, source,
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, children);
+    }
+
+    private ADecision(Kind kind, String subject, String reason, Source source,
+                      int frame, int supplyUsed, int supplyTotal,
+                      int minerals, int gas, Object payload, List<ADecision> children) {
+        this.kind = kind;
+        this.subject = subject;
+        this.reason = reason;
+        this.source = source;
+        this.frame = frame;
+        this.supplyUsed = supplyUsed;
+        this.supplyTotal = supplyTotal;
+        this.minerals = minerals;
+        this.gas = gas;
+        this.children = Collections.unmodifiableList(new ArrayList<>(children));
+        this.payload = payload;
     }
 
     public static Builder decide(Kind kind, String subject, String reason, Source source) {
