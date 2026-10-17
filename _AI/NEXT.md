@@ -154,8 +154,8 @@ The index of which document answers which question is `_AI/README.md`.
    #45 ordering, fortification is planner-owned (two sources of truth),
    observers already have a pump - vocabulary grows on owner
    direction, not on availability.
-6. Unchanged long-term ordering: #45 deletion order, #8 V2 LIVE runs,
-   stages E–J below.
+6. Unchanged long-term ordering: #45 deletion order, rewrite order
+   #144-#147, #8 V2 LIVE runs, stages E–J below.
 
 ## Test health
 
@@ -410,6 +410,28 @@ twins green (1/1 each, re-verified today). Re-run
   gas want with exact-geyser siting, all stub-pinned; one DRY_RUN short
   run shows V2 planning Dragoons/Assimilators behavior-neutrally).
   Singularity live fire + V2 gas order still pending longer games.
+- **#144–#147** Rewrite order, clean-room (owner direction 2026-10-17:
+  Queue, site-finding, APositionFinder and SupplyCommander each properly
+  planned and built anew, then the old path moves to src-old/). Safe
+  sequence, never bottom-up (#45): each lands specced, stub-pinned,
+  default-flipped with a game proof, and only then the legacy files move.
+  - **#144** SupplyCommander (+ fallback bands) → the board supply goal
+    owns all supply demand (DynamicGoals.supplyGoal + SUPPLY_BLOCKED twin
+    already name the need; the feeder already feeds supply-pylon rows).
+    Exit: one author, supply pumps silent, `SupplyCommander/**` +
+    fallback in src-old/.
+  - **#145** Site-finding chain (`NewConstructionRequest` + `FindPosition`/
+    `DefineExactPositionForNewConstruction`, the "ConstructionFinder") →
+    catalogue-only sited demand through the adapter funnel
+    (03_PLACEMENT.md; exact tile honored verbatim, power + refusal twins).
+    Exit: every construction sited by the catalogue, the chain in src-old/.
+  - **#146** `APositionFinder` legacy path → deleted after the catalogue
+    default + parity (D1 pointer; ~25 files still route through it).
+    Exit: zero `Can't find place` across retained runs, legacy path gone.
+  - **#147** `Queue/**` + order types → stateless demand/schedule
+    (01_PRODUCTION.md scheduler + dispatcher; single policy already
+    gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
+    default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
 - Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
