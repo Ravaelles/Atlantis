@@ -61,6 +61,27 @@ attempt does not repeat the search.
    the launcher a "second AI" concept. CONVENTIONS treats `StardustDevEnvironment/`
    as shared: this is a decision for the owner, not a quiet change.
 
+## UMS findings (owner session 2026-10-17, measured)
+
+- No spawn console exists in OpenBW (engine sources: only internal
+  `create_unit` for spells/morphs). "Dynamic creation" is not a thing
+  on this path.
+- UMS hosting WORKS (first time proven): `BWAPI_CONFIG_AUTO_MENU__
+  GAME_TYPE=USE_MAP_SETTINGS` reaches the host, the bot owns pre-placed
+  units (8 Dragoons + Observer on 8Drag; 12 Marines + Depot on
+  marines_v_zerglings; Zerg army on trainzvreaver).
+- But every map dies differently: human-slot maps (8Drag,
+  marines_v_zerglings) end at frame 0 (single participant - enemy
+  slots unfillable, same root cause as melee); trigger maps
+  (trainzvreaver) run but log `unknown trigger condition 15`
+  (OpenBW gaps); PvZ_micro.scm is mpq-unreadable by OpenBW.
+- Conclusion: a working fight needs a UMS map with a COMPUTER-slot
+  enemy or fully supported triggers. No map in
+  `/sc-ai/starcraft/maps/ums/` qualifies today (all are human-vs-human
+  micro maps). Authoring one (Hatchery + 4 Drones + 4 Lings at the
+  enemy start, computer force) is the remaining path - no editor on
+  this machine.
+
 ## Decision needed from the owner (updated 2026-10-17)
 
 **Measured outcomes so far:**
