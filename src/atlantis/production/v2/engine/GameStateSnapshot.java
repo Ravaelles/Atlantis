@@ -2,6 +2,7 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ProducerFacilityRegistry;
@@ -182,8 +183,35 @@ public final class GameStateSnapshot {
         // Supply providers already on the way, so the supply goal is not re-emitted
         // every frame (see DynamicGoals.supplyGoal).
         snapshot.supplyProvidersComing = supplyProvidersComing();
+        twinSuppressedSupply(snapshot);
 
         return DynamicGoals.contribute(snapshot, racePolicy);
+    }
+
+    /**
+     * Names the providers a tight supply goal is waiting on: id, tile, hp and
+     * whether the engine still calls them uncompleted. A provider coming for
+     * minutes (cancelled warp, phantom entry) suppresses the supply goal
+     * forever with zero rows anywhere - this is the row that names it.
+     * Throttled: suppression is a state, not an event.
+     */
+    private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
+        if (snapshot.supplyFree > DynamicGoals.SUPPLY_WORRY_LEVEL) return;
+        if (snapshot.supplyProvidersComing <= 0) return;
+        if (!A.everyNthGameFrame(300)) return;
+        AUnitType provider = racePolicy.supplyProviderType();
+        if (provider == null) return;
+        for (AUnit unit : Select.ourOfTypeWithUnfinished(provider).list()) {
+            if (unit.isCompleted()) continue;
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
+                .param("type", provider.name())
+                .param("id", unit.id())
+                .param("tx", unit.tx())
+                .param("ty", unit.ty())
+                .param("hp", unit.hp())
+                .param("supplyFree", snapshot.supplyFree)
+                .log(AGame.now(), A.minSec());
+        }
     }
 
     /** Photon Cannons already standing at the main base. */

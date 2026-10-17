@@ -56,7 +56,9 @@ public enum LogKey {
     /** A Nexus train/queue attempt (supply, remaining, engine answer). */
     TRAIN_ATTEMPT,
     /** A catalogue answer for a legacy site search: answered tile or decline reason. */
-    CATALOGUE_SITE;
+    CATALOGUE_SITE,
+    /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
+    SUPPLY_BLOCKED;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,

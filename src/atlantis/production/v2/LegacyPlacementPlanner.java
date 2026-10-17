@@ -109,8 +109,13 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
     private void twinRefusal(AUnitType unitType, String reason) {
         String key = unitType.name() + ":" + reason;
         if (!reportedRefusals.add(key)) return;
-        EventLog.key(LogKey.PLACEMENT_FAILED)
+        // CATALOGUE_SITE, not PLACEMENT_FAILED: a speculative probe with no
+        // pylons yet (Forge at frame 2) is an expected refusal, not a defect,
+        // and PLACEMENT_FAILED trips scenario gates. Same row shape as the
+        // adapter so one key filters the whole site search.
+        EventLog.key(LogKey.CATALOGUE_SITE)
             .param("type", unitType.name())
+            .param("result", "declined")
             .param("reason", reason)
             .param("via", "v2-legacy")
             .log(AGame.now(), A.minSec());
