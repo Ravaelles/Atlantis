@@ -276,7 +276,12 @@ twins green (1/1 each, re-verified today). Re-run
   it here. (Wall-clock extraction tried and reverted 2026-10-09: trivial
   split, unreliable edit path, zero behaviour change.)
 - **#10** Split `Selection` (235 public methods) along internal seams,
-  with a test pinning selection semantics before/after.
+  with a test pinning selection semantics before/after. Two slices landed
+  (radius family → `SelectionRadius`, membership filters →
+  `SelectionMembership`, each with a pin test, zero call-site changes):
+  cross-context readers stay put until their dependencies are fixed -
+  moving them re-spells frozen violations instead of removing them
+  (measured, see NOTES.md arch mechanics).
 - **#11** Split `AUnit` (~623 methods): order-emission surface first
   (`AUnitOrders` half-owns it), then per-frame orchestration, then
   per-condition logic.

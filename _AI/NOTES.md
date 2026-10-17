@@ -57,6 +57,13 @@ Hard-won operational facts that do not belong anywhere else. Architecture lives 
 - **Line numbers do not affect store matching** - origin-class to target-class
   does. Editing a method body or shifting lines is free; changing *which class a
   call targets* creates a new entry.
+- **Moving code re-spells its frozen violations** (measured 2026-10-17:
+  relocating Selection filters to a same-package helper deleted 3 frozen
+  entries and re-reported the same 3 violations under the new class name -
+  same failing tests, worse coverage). Keep methods that read across a
+  frozen boundary in place until the dependency itself is fixed; move
+  only what adds zero new edges (verified by empty store diff *and* an
+  unchanged violation count, not just green tests).
 - Prefer deleting a dependency over re-freezing it: moving a class to the right
   package can delete baseline entries for real, where a rename just moves them.
 
