@@ -116,7 +116,7 @@ public final class ProductionDispatcher {
                 return new DispatchResult(item, false, "no placement reservation");
             }
             boolean ok = director.buildAt(item.item(), placement);
-            return new DispatchResult(item, ok, ok ? "builder committed" : "builder unavailable");
+            return new DispatchResult(item, ok, ok ? "builder committed" : "no placement");
         }
 
         String producerTypeId = item.item().producerTypeId();

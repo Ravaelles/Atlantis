@@ -1,14 +1,19 @@
 package atlantis.production.v2;
 
+import atlantis.game.A;
+import atlantis.game.AGame;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.position.APositionFinder;
+import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -96,6 +101,21 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         passBuilder = null;
     }
 
+    /** Refusal reasons already twinned this game: a planner that fails every
+     * frame must say so once, not 22,000 times (measured: Core refused from
+     * frame 4587 to game end with zero rows anywhere). */
+    private final Set<String> reportedRefusals = new HashSet<>();
+
+    private void twinRefusal(AUnitType unitType, String reason) {
+        String key = unitType.name() + ":" + reason;
+        if (!reportedRefusals.add(key)) return;
+        EventLog.key(LogKey.PLACEMENT_FAILED)
+            .param("type", unitType.name())
+            .param("reason", reason)
+            .param("via", "v2-legacy")
+            .log(AGame.now(), A.minSec());
+    }
+
     @Override
     public PlacementReservation reservePlacement(Producible building, TargetPlacement constraint, int targetFrame) {
         AUnitType unitType = resolveUnitType(building);
@@ -103,8 +123,10 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
             return PlacementReservation.failure();
 
         AUnit builder = builderForThisPass();
-        if (builder == null)
+        if (builder == null) {
+            twinRefusal(unitType, "no-builder");
             return PlacementReservation.failure();
+        }
 
         // Gas buildings take no search: a refinery stands on its geyser's
         // exact tile (the oldest base without one), so the ring sweep below
@@ -130,8 +152,10 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         // validated tile we get today.
         HasPosition near = resolveNear(constraint);
         APosition position = APositionFinder.findStandardPosition(builder, unitType, near, 12);
-        if (position == null)
+        if (position == null) {
+            twinRefusal(unitType, AbstractPositionFinder._STATUS);
             return PlacementReservation.failure();
+        }
 
         List<APosition> candidates = new ArrayList<>();
         candidates.add(position);
