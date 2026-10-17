@@ -35,6 +35,19 @@ public class ProduceBuilding {
     public static Construction _lastConstruction = null;
 
     /**
+     * Single-door concurrency cap for Pylons (Wine game: three concurrent
+     * Pylon warps out of one supply block at 25 - BO#8, its dynamic mirror
+     * and BO#11, each firing alone correctly and tripling together). At
+     * most two unfinished Pylons (warping + not-started): the
+     * pipeline-overlap doctrine number, enforced for every author here
+     * instead of per path. A row whose need is already being built waits
+     * as a plain queued order and fires when a warp completes.
+     */
+    public static boolean tooManyPylonsInFlight() {
+        return ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon) >= 2;
+    }
+
+    /**
      * True when an unfinished building of this type is already warping for
      * exactly this order - the order's site became a building, and no
      * second site may follow it. Sibling rows link different order
@@ -112,6 +125,14 @@ public class ProduceBuilding {
             if (type.equals(AUnitType.Protoss_Cybernetics_Core)
                 && atlantis.production.constructions.OutstandingBuildings
                     .excluding(order, type) >= 1) return false;
+
+            // Owner 2026-10-17: one supply block, one Pylon at a time (two
+            // in flight max) - BO rows, the fallback and the supply
+            // commander each fire alone correctly and triple together
+            // (measured: warps at 3:31/3:35/3:45 from BO#8 + mirror + BO#11
+            // at 25/25). The cap counts warping + not-started, so a row
+            // whose need is already being built waits instead of re-siting.
+            if (type.isPylon() && tooManyPylonsInFlight()) return false;
 
             // Owner 2026-10-16: the order's building already warps - wait
             // for completion, do not site a second one. Warp-finish
