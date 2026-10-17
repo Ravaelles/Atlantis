@@ -12,6 +12,7 @@ import atlantis.production.dynamic.expansion.protoss.ProtossShouldExpand;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeCyberneticsOverZealotsAndGateways;
 import atlantis.production.dynamic.protoss.prioritize.PrioritizeGatewaysVsProtoss;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -250,7 +251,7 @@ public class ProduceGateway {
         // once (queue rows without a site, warping units, all unfinished
         // constructions incl. PREPARING) - the old queue+notStarted sum
         // double-counted dispatches and missed picked-early sites.
-        if (CountInQueue.outstandingOfType(type()) >= (1 + A.minerals() / 330)) return false;
+        if (OutstandingBuildings.ofType(type()) >= (1 + A.minerals() / 330)) return false;
 
         ProductionOrder order = AddToQueue.withStandardPriority(Protoss_Gateway);
 

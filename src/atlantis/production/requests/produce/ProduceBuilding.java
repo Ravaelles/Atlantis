@@ -109,8 +109,8 @@ public class ProduceBuilding {
             // list). Own traces excluded, so a same-order re-request after
             // a genuine loss still proceeds.
             if (type.equals(AUnitType.Protoss_Cybernetics_Core)
-                && atlantis.production.orders.production.queue.CountInQueue
-                    .outstandingExcluding(order, type) >= 1) return false;
+                && atlantis.production.constructions.OutstandingBuildings
+                    .excluding(order, type) >= 1) return false;
 
             // Owner 2026-10-16: the order's building already warps - wait
             // for completion, do not site a second one. Warp-finish

@@ -9,6 +9,7 @@ import atlantis.information.decisions.protoss.dragoon.ProduceDragoonInsteadZealo
 import atlantis.information.strategy.Strategy;
 import atlantis.production.dynamic.protoss.units.ProduceZealot;
 import atlantis.production.orders.production.queue.CountInQueue;
+import atlantis.production.constructions.OutstandingBuildings;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.Orders;
@@ -30,7 +31,7 @@ public class ProduceCyberneticsCore {
         // Owner 2026-10-18: one Core per game, never two coming. The guards
         // above are blind to picked-early PREPARING sites (measured: dynamic
         // Core warped 16 s after the BO Core), so count everything once.
-        if (CountInQueue.outstandingOfType(type()) >= 1) return false;
+        if (OutstandingBuildings.ofType(type()) >= 1) return false;
 
         if (needOne()) {
             return addCyberneticsToQueue();
