@@ -13,12 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Pins the V2 expansion demand (NEXT #45 race-army/economy coverage):
- * a second Nexus is wanted once workers hit 25 per standing base.
- * OpenBW `202456` (V2 LIVE) shows demand is not the gap - the goal
- * fired while the bank held 8000+, yet the builder committed only at
- * 17:29, too late to warp. Demand side locked here; issue timing stays
- * open (needs a longer game, not a different threshold).
+ * Pins the V2 expansion demand (NEXT #150 input): once workers hit 25
+ * per standing base, a Nexus goal is wanted - unless a base is already
+ * under construction or four stand. Demand side only: OpenBW `202456`
+ * plans the Nexus every frame from 16:06, but the site resolves to our
+ * own base tile and the proximity finish cancels it 16k times, so no
+ * Nexus-2 ever warps (execution gap, not demand).
  *
  * <p>Pure snapshots, no game, no behavior change.</p>
  */
@@ -30,7 +30,7 @@ public class V2ExpansionDemandTest {
         return new DynamicGoals.GameSnapshot(
             workers, bases, 30, 10, 40, 500, false, 7, basesExisting,
             0, false, false, 0,
-            200, true, 0, 1, false, 0);
+            200, true, 4, 1, false, 0);
     }
 
     private static boolean wantsNexus(DynamicGoals.GameSnapshot snapshot) {
