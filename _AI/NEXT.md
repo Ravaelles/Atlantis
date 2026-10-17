@@ -380,7 +380,7 @@ twins green (1/1 each, re-verified today). Re-run
   `reserved` column plus DECISIONS.log name it; until then no blind fix.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
-  E2E_LAST_* stable files, Missions/BO-mission unenaction sanity.
+  E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
   Jar 12.1 MB already carries it all.
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real

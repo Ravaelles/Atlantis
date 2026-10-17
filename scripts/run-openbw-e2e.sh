@@ -54,8 +54,10 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 # Wall-clock reporting (owner's request, 2026-10-11): the run prints
 #   bot started playing at HH:MM:SS
 #   bot finished playing at HH:MM:SS, took Ns
-# and copies the finished log to a stable path, $E2E_LOGS_DIR/E2E_LAST_LOG
-# (plus last-server.log), so "the last run" is one path that does not change.
+# and copies the finished logs to stable paths, $E2E_LOGS_DIR/E2E_LOG,
+# E2E_DEBUG and E2E_DECISIONS, so "the last run" is one path triple that
+# does not change. No last-server.log: the per-run server.log stays in its
+# run directory, nobody reads a stable server copy.
 # The copy is a snapshot with a one-line header, not a symlink: a symlink changes
 # target under a reader who opened it mid-run.
 #
@@ -761,15 +763,13 @@ say "bot log:    $BOT_LOG"
 # success gate was not reached before the tripwire fired - not that the runner broke.
 # Look for that line before concluding a short game was a crash.
 
-# === The last run, at a stable path (owner's request, 2026-10-11) ==========
+# === The last run, at stable paths (owner's request, 2026-10-11) ==========
 # A copy, not a symlink: the run directory is timestamped and a symlink would
 # change target under a reader who opened it mid-run, while a copy is a snapshot
 # of one specific run. Written after every run, including a failed one - a crash
-# is exactly when the file is wanted.
-cp -f "$BOT_LOG" "$E2E_LOGS_DIR/E2E_LAST_LOG" 2>/dev/null || true
-cp -f "$SERVER_LOG" "$E2E_LOGS_DIR/last-server.log" 2>/dev/null || true
-cp -f "$DEBUG_LOG" "$E2E_LOGS_DIR/E2E_LAST_DEBUG" 2>/dev/null || true
-cp -f "$RUN_DIR/E2E_DECISIONS" "$E2E_LOGS_DIR/E2E_LAST_DECISIONS" 2>/dev/null || true
+# is exactly when the file is wanted. NOTE: this runs after the collection
+# below - E2E_DECISIONS only exists once collected; copying before collection
+# silently copied nothing, which is how the stable decisions file went missing.
 
 # Buildings ledger collection (always on): the bot rewrites
 # bwapi-data/write/BUILDINGS.json on every warp, so an interrupted run
@@ -796,14 +796,19 @@ else
   say "decisions log missing: $BOT_ROOT/bwapi-data/write/DECISIONS.log was never written"
 fi
 
+# Stable "last run" copies (after collection, never before - see note above).
+cp -f "$BOT_LOG" "$E2E_LOGS_DIR/E2E_LOG" 2>/dev/null || true
+cp -f "$DEBUG_LOG" "$E2E_LOGS_DIR/E2E_DEBUG" 2>/dev/null || true
+cp -f "$RUN_DIR/E2E_DECISIONS" "$E2E_LOGS_DIR/E2E_DECISIONS" 2>/dev/null || true
+
 # A one-line header so the copy explains itself: a reader who finds
-# E2E_LAST_LOG days later needs to know which run it was and when it played.
+# E2E_LOG days later needs to know which run it was and when it played.
 {
   echo "# last E2E run: $RUN_TIER | $MAP | $RACE vs $ENEMY_RACE | started $BOT_STARTED_AT, finished $BOT_FINISHED_AT, took ${BOT_TOOK_SECONDS}s, exit $BOT_EXIT"
   echo "# full run: $RUN_DIR"
   echo "#"
-  cat "$E2E_LOGS_DIR/E2E_LAST_LOG" 2>/dev/null || true
-} > "$E2E_LOGS_DIR/E2E_LAST_LOG.tmp" 2>/dev/null && mv -f "$E2E_LOGS_DIR/E2E_LAST_LOG.tmp" "$E2E_LOGS_DIR/E2E_LAST_LOG" 2>/dev/null || true
+  cat "$E2E_LOGS_DIR/E2E_LOG" 2>/dev/null || true
+} > "$E2E_LOGS_DIR/E2E_LOG.tmp" 2>/dev/null && mv -f "$E2E_LOGS_DIR/E2E_LOG.tmp" "$E2E_LOGS_DIR/E2E_LOG" 2>/dev/null || true
 
 # === CherryVis trace collection (only with --cvis) ==========================
 # The bot writes bwapi-data/write/cherryvis_dir.rep.cvis/ next to where it ran
@@ -860,7 +865,7 @@ print_result_block() {
   echo "  map  : $MAP"
   echo "  time : started $BOT_STARTED_AT, finished $BOT_FINISHED_AT, took ${BOT_TOOK_SECONDS}s"
   echo "  log  : $BOT_LOG"
-  echo "  last : $E2E_LOGS_DIR/E2E_LAST_LOG"
+  echo "  last : $E2E_LOGS_DIR/E2E_LOG"
   echo "============================================================"
 }
 

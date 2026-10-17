@@ -109,4 +109,4 @@ placement over a replay mismatch.
 `JBWAPI-Rav.jar` removed for stock 2.2.0; run artefacts live in
 `/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS/` as `E2E_LOG` (game),
 `E2E_DEBUG` (diagnostics), `E2E_DECISIONS` (audit) plus the stable
-`E2E_LAST_*` triple; replays in `/sc-ai/REPLAYS/`.
+`E2E_*` triple of the latest run; replays in `/sc-ai/REPLAYS/`.

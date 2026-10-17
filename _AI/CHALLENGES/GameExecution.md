@@ -77,8 +77,8 @@ exist in this workspace and mixing them is the whole story below.
   workers, refusal breakdowns, stack traces). Split since 2026-10-15:
   the merged file drowned the game log in thousands of diagnostic lines.
 - `E2E_LOGS/<run>/E2E_DECISIONS` - the audited production decisions.
-- `E2E_LOGS/E2E_LAST_LOG`, `E2E_LAST_DEBUG`, `E2E_LAST_DECISIONS` - stable
-  copies of the latest run's triple.
+- `E2E_LOGS/E2E_LOG`, `E2E_DEBUG`, `E2E_DECISIONS` - stable
+  copies of the latest run's triple (Wine has its own triple, below).
 - Not `out/wine/*` - those hold the Wine triple (`WINE_LOG`, `WINE_DEBUG`,
   `WINE_DECISIONS`) and must not be mixed in when diagnosing a headless run.
 
