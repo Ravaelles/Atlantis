@@ -7,8 +7,10 @@ import atlantis.map.base.define.DefineNaturalBase;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
-import atlantis.production.constructions.position.RequestBuildingNear;
+import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.orders.build.BuildOrderOwnsGame;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.select.Count;
 import atlantis.units.select.Have;
 import atlantis.util.We;
@@ -53,11 +55,26 @@ public class ProduceNaturalWallIn {
         boolean ordered = false;
         for (WallPieces.Piece piece : pieces) {
             if (Count.existingOrPlannedBuildingsNear(piece.type(), 6, piece.tile()) > 0) continue;
-            if (RequestBuildingNear.constructionOf(piece.type())
-                .near(piece.tile()).maxDistance(5).request() != null) {
-                ordered = true;
-            }
+            if (requestExact(piece)) ordered = true;
         }
         return ordered;
+    }
+
+    /**
+     * The piece tile is already decided ({@code WallPieces}); searching
+     * again would only move it. Queue it exact - a free tile is honored
+     * verbatim, an occupied one falls back to a fresh search downstream
+     * ({@code DefineExactPositionForNewConstruction}), same as any exact
+     * order. Flows through the funnel (adapter EXACT constraint +
+     * validation + power + twin), so the tile stays attributable.
+     */
+    private static boolean requestExact(WallPieces.Piece piece) {
+        if (!piece.tile().isBuildableIncludeBuildings()) return false;
+        ProductionOrder order = AddToQueue.withTopPriority(piece.type(), piece.tile());
+        if (order == null) return false;
+        order.setAroundPosition(piece.tile());
+        order.markAsUsingExactPosition();
+        order.setMinSupply(0);
+        return NewConstructionRequest.requestConstructionOf(piece.type(), piece.tile(), order) != null;
     }
 }
