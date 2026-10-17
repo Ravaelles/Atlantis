@@ -237,6 +237,14 @@ WINE_LOG_COPY_RESOLVED="$(resolve_wine_log_copy)"
 # GAME_ROOT further down, so pwd at teardown would lie.
 CLIENT_CWD="$(pwd)"
 
+# Fresh diagnostics per game: the bot appends to these files and never
+# truncates them, so without clearing every run collects all previous
+# games (measured 2026-10-17: 7 MB EVENTS.jsonl spanning 6 games,
+# per-run attribution impossible). Same fix as run-openbw-e2e.sh.
+rm -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" \
+    "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" \
+    "$CLIENT_CWD/bwapi-data/write/DECISIONS.log"
+
 TEE_OUT=("$CLIENT_LOG")
 TEE_ERR=("$LOG_DIR/WINE_DEBUG")
 WINE_LIVE_LOG=""
