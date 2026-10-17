@@ -215,6 +215,14 @@ public class AbstractTestWithUnits extends UnitTest {
 
         QueueInitializer.initializeProductionQueue();
         Queue.get().clearCache();
+
+        // Sites prepared under the previous strategy's rows are orphans the
+        // moment the queue is rebuilt: setUp runs the chooser (Protoss rows,
+        // prepared immediately at high supply) and then forces the test
+        // strategy (Terran rows), so without this every world after the
+        // first inherits a foreign CyberneticsC site and
+        // CoreRequeueAfterCancelTest fails solo while passing in suite.
+        ConstructionRequests.constructions.clear();
     }
 
     @AfterEach
