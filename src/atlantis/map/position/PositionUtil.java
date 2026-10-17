@@ -1,5 +1,8 @@
 package atlantis.map.position;
 
+import atlantis.Atlantis;
+import atlantis.map.AMap;
+import atlantis.map.GroundDistance;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.choke.AChoke;
 import atlantis.map.region.ARegionBoundary;
@@ -10,7 +13,6 @@ import atlantis.util.AConsole;
 import atlantis.util.log.ErrorLog;
 import bwapi.Position;
 import bwapi.Unit;
-import jbweb.JBWEB;
 
 public class PositionUtil {
 
@@ -214,7 +216,11 @@ public class PositionUtil {
 //        return BWTA.getGroundDistance(new TilePosition(from.p()), new TilePosition(to.p())) / 32.0;
 //        return JBWEB.getGroundDistance(from, to) / 32.0;
         try {
-            return JBWEB.getGroundDistance(from, to) / 32.0;
+            // No area graph, no ground distance: without BWEM the only honest
+            // answer is Euclidean (the old code reached the same fallback
+            // because the static hub game was null there).
+            if (Atlantis.game() == null || AMap.bwem() == null) return PositionUtil.distanceTo(from, to);
+            return GroundDistance.between(Atlantis.game(), AMap.bwem(), from, to) / 32.0;
         } catch (Exception e) {
 //            System.err.println("from = " + from);
 //            System.err.println("to = " + to);
