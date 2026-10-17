@@ -357,7 +357,8 @@ twins green (1/1 each, re-verified today). Re-run
 - **#150** Opening Gateway statuses lie (owner report 2026-10-17, Wine
   game 22:07, single base [112,10]): (a) Pylon PREPARING 0:14 with no
   object shown, adopted 0:47 - correct but invisible (map markers skip
-  PREPARING; sidebar lists it); (b) GW#2 At-10 funding-blocked 1749-1830
+  PREPARING; sidebar lists it); painted orange since 7c458cca, visual
+  proof pending owner; (b) GW#2 At-10 funding-blocked 1749-1830
   (`BUILD_REFUSED ... funding` names it live - twin works on Wine),
   requested 1831, IN_PROGRESS by ~1980 - slow on real-time clock, not
   stuck; (c) GW#3 site [112,12] picked the frame GW#2 warped at
@@ -365,9 +366,9 @@ twins green (1/1 each, re-verified today). Re-run
   guards, which see the warping unit only after it lists. LANDED:
   `OverlapsOurUnfinishedBuilding` in the spiral (210732/214926);
   adopt-time revalidation re-sites stale picks instead of adopting
-  them (1 live resite in 220122, adopt path game-proven in 230839:
-  resite [112,11]->[112,17] then clean warp, zero placement
-  failures); `BUILD_REFUSED`
+  them (live proof 220122 AND Wine 23:20: resite [94,111]->[86,110],
+  clean warp, no duplicate - the owner's exact case, fixed live);
+  `BUILD_REFUSED`
   adopt-site-blocked/adopt-no-free-builder names the silent adopt
   exits; CONSTRUCTION_CANCEL proximity twin names the covering
   building (unmasks silent self-finish loops); advance seam pinned
@@ -380,19 +381,25 @@ twins green (1/1 each, re-verified today). Re-run
   can accumulate games anymore - scripts keep their pre-run rm as
   belt-and-braces. Wine logs were unusable for
   all of this (7 MB EVENTS.jsonl spanning 6 games) - fixed by clearing
-  the write dir pre-game like OpenBW. Still open, needs the owner's
-  next game on the current jar: wrong-sibling adoption when two same
-  type warp at once (needs `CANNOT define construction` lines), and
-  the same-frame pick race end-to-end. No blind patch.
-- **#149** Causeless early exit, third occurrence: `131407` (V2 LIVE,
-  4:07), `210732` (legacy, 5:08) and `213248` (legacy rich, 9:50) all
-  end clean with no force/leave/GG line, all enemyless, all healthy at
-  the cut (roster still growing). Self-terminate paths audited (OnGameEnd
-  only runs at the end, ForceExit prints absent, time limits far above,
-  launcher exits post-loop) - none explains a self-end. Probe LANDED
-  (`GAME_END` twin: `213248` closed with won=false, frame, supply,
-  bank) - cause still unnamed; next: host-side check (owner call).
-  No blind patch.
+  the write dir pre-game like OpenBW. Still open, needs a game where
+  two same-type warps overlap: wrong-sibling adoption
+  (`CANNOT define construction` lines) is the last unproven branch;
+  everything else on this item has a live twin or a live resite. No
+  blind patch.
+- **#149** Causeless early exit, 4 occurrences, 1 explained:
+  `234004` (V2, 5:43) is the hoard tripwire firing by design
+  (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
+  named in E2E_DEBUG, `GAME_END` twin attached the state). Still open:
+  `131407` (V2 LIVE, 4:07), `210732` (legacy, 5:08) and `213248`
+  (legacy rich, 9:50) end clean with no force/leave/GG/tripwire line,
+  all enemyless, all healthy at the cut (roster still growing).
+  Self-terminate paths audited one by one and exonerated (OnGameEnd
+  only runs at the end, ForceExit/time prints absent, time limits far
+  above, launcher exits post-loop, server log silent, tail frames show
+  healthy mid-game activity). Remaining suspect is host-side (engine
+  ends an enemyless match) - needs C++ host debugging (owner call,
+  shared platform). GAME_END twin stays as the witness for the next
+  one. No blind patch.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
