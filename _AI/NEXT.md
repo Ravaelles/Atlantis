@@ -303,9 +303,11 @@ twins green (1/1 each, re-verified today). Re-run
   Remainder is core iteration machinery (`units()`, `limit`, `nearestTo`,
   finders, `estimate`) plus multi-statement logic needing designed splits,
   not verbatim moves.
-- **#11** Split `AUnit` (~623 methods): order-emission surface first
-  (`AUnitOrders` half-owns it), then per-frame orchestration, then
-  per-condition logic.
+- **#11** Split `AUnit` (577 public methods, measured 2026-10-17): the
+  order-emission surface needs no verbatim slice - `AUnit` holds zero
+  direct engine-order calls (all 17 `u().` uses are pure reads; emission
+  flows through the 45 `AUnitOrders` defaults into the `OrderSink` seam),
+  so the split starts at per-frame orchestration, then per-condition logic.
 
 ## Stage I — physical migration
 
