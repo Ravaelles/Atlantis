@@ -3,7 +3,6 @@ package atlantis.battle;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
-import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -45,7 +44,7 @@ public class BattleCommander extends Commander {
 
         FightOrFlight.Tactic tactic = tactic();
         HasPosition anchor = posture == ClusterMission.Posture.ATTACK
-            ? attackAnchor() : defendAnchor();
+            ? ClusterAnchor.attackAnchor() : ClusterAnchor.defendAnchor();
 
         // Throttled state line: the only per-game proof of what the
         // cluster does (posture, tactic, size, anchor). JSON-only, stderr.
@@ -83,7 +82,7 @@ public class BattleCommander extends Commander {
         if (unit == null || !unit.isAlive()) return;
 
         if (tactic == FightOrFlight.Tactic.FLEE) {
-            HasPosition home = defendAnchor();
+            HasPosition home = ClusterAnchor.defendAnchor();
             if (home != null) unit.move(home, Actions.RUN_ENEMY, "ClusterFlee");
             return;
         }
@@ -104,25 +103,5 @@ public class BattleCommander extends Commander {
                 Alpha.get().addUnit(unit);
             }
         }
-    }
-
-    private HasPosition defendAnchor() {
-        return Select.mainOrAnyBuilding();
-    }
-
-    private HasPosition attackAnchor() {
-        AUnit base = EnemyUnits.enemyBase();
-        if (base != null) return base.position();
-        HasPosition main = EnemyUnits.enemyMainBase();
-        if (main != null) return main;
-        // Unknown enemy: march on the nearest unexplored start location
-        // (UAlbertaBot's "explore until we find a target"). Sitting home
-        // on ATTACK played 18 minutes to 0/0 - measured 2026-10-17.
-        AUnit ownMain = Select.mainOrAnyBuilding();
-        HasPosition unexplored = ownMain != null
-            ? atlantis.map.base.BaseLocations.nearestUnexploredStartingLocation(ownMain.position())
-            : null;
-        if (unexplored != null) return unexplored;
-        return Select.mainOrAnyBuilding();
     }
 }
