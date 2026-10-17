@@ -498,8 +498,9 @@ twins green (1/1 each, re-verified today). Re-run
 
 - Long `20261017_200123` (138 s wall, 944 game-s, 1 base: Nexus=1 Probe=22
   Pylon=7 Gateway=4 Dragoon=3 Zealot=6, single Core, NO Forge): exit 143
-  is the wall cap (game healthy at the cut). 23 ledger warps (4 Dragoons
-  warped, 3 standing). TECH_CHECK 602 rows all false with bank peak 8883
+  is the wall cap (game healthy at the cut). 23 ledger rows (unit rows
+  log train issues, not completions - the 4th Dragoon was still
+  training at the cut, hence 3 standing). TECH_CHECK 602 rows all false with bank peak 8883
   (no Forge - the gate is correctly silent at any bank); ORDER_SAVING 0
   (1 base but bank >> 550 - correctly silent); scout idle 0, proximity
   twins flowing. 0/0 kills (enemy never spawns, #94).
