@@ -5,7 +5,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
+import atlantis.production.orders.production.queue.CountInQueue;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ public class OutstandingBuildingsCountTest extends WorldStubForTests {
             Queue.get().clearCache();
 
             assertEquals(
-                2, Count.outstandingOfType(AUnitType.Protoss_Gateway),
+                2, CountInQueue.outstandingOfType(AUnitType.Protoss_Gateway),
                 "one queued row + one warping building");
         });
 
@@ -91,7 +91,7 @@ public class OutstandingBuildingsCountTest extends WorldStubForTests {
             Queue.get().clearCache();
 
             assertEquals(
-                1, Count.outstandingOfType(AUnitType.Protoss_Gateway),
+                1, CountInQueue.outstandingOfType(AUnitType.Protoss_Gateway),
                 "a dispatched row lives in constructions - counting both double-counts");
         });
 
@@ -116,7 +116,7 @@ public class OutstandingBuildingsCountTest extends WorldStubForTests {
                 new Construction(AUnitType.Protoss_Gateway));
 
             assertEquals(
-                1, Count.outstandingOfType(AUnitType.Protoss_Gateway),
+                1, CountInQueue.outstandingOfType(AUnitType.Protoss_Gateway),
                 "a picked-early site is outstanding even with no builder");
         });
 
