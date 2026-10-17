@@ -188,10 +188,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-17 (`rm -rf out` first): unit 713/713 green, 0
-skipped (was 683 - thirty tests added since, incl. SupplyGoalTest
-3/3, SelectionSortingTest 10/10, BuildRefusedTwinTest 1/1,
-V2DragoonAdvancementTest 3/3 and V2ExpansionDemandTest 4/4).
+Re-measured 2026-10-17 (`rm -rf out` first): unit 721/721 green, 0
+skipped (was 713 - incl. ConstructionStatusAdvanceTest 4/4).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -355,20 +353,27 @@ twins green (1/1 each, re-verified today). Re-run
 
 ## Needs a game (quiet OpenBW run or flagged Wine run)
 
-- **#150** Opening Gateway statuses lie (owner report 2026-10-17, two
-  halves open): (a) GW#1 stuck PREPARING - candidates: funding gate
-  above the PREPARING adoption (`BUILD_REFUSED ... funding` names it -
-  needs the owner's WINE_DEBUG lines) or no free builder at supply
-  ~10; (b) GW#2 stuck NOT_STARTED after warping at a re-sited tile -
-  candidates: wrong-sibling adoption when two same-type constructions
-  are unfinished, or a missed creation event (needs `CANNOT define
-  construction` / `No construction within reach` lines or reserved vs
-  warp tile comparison from the owner's log). LANDED for the overlap
-  half: `OverlapsOurUnfinishedBuilding` refuses warping-building sites
-  in the spiral (210732/214926 picked [94,111] on warping [92,111];
-  engine refused at issue, cancel re-requested twice = 3 Gateways for
-  a 2-Gateway opening; proof 220122: disjoint sites, zero
-  PLACEMENT_FAILED). No blind patch on the open halves.
+- **#150** Opening Gateway statuses lie (owner report 2026-10-17, Wine
+  game 22:07, single base [112,10]): (a) Pylon PREPARING 0:14 with no
+  object shown, adopted 0:47 - correct but invisible (map markers skip
+  PREPARING; sidebar lists it); (b) GW#2 At-10 funding-blocked 1749-1830
+  (`BUILD_REFUSED ... funding` names it live - twin works on Wine),
+  requested 1831, IN_PROGRESS by ~1980 - slow on real-time clock, not
+  stuck; (c) GW#3 site [112,12] picked the frame GW#2 warped at
+  [112,10] (shared row) - same-frame race invisible to pick-time
+  guards, which see the warping unit only after it lists. LANDED:
+  `OverlapsOurUnfinishedBuilding` in the spiral (210732/214926);
+  adopt-time revalidation re-sites stale picks instead of adopting
+  them (1 live resite in 220122); `BUILD_REFUSED`
+  adopt-site-blocked/adopt-no-free-builder names the silent adopt
+  exits; CONSTRUCTION_CANCEL proximity twin names the covering
+  building (unmasks silent self-finish loops); advance seam pinned
+  (`ConstructionStatusAdvanceTest` 4/4). Wine logs were unusable for
+  all of this (7 MB EVENTS.jsonl spanning 6 games) - fixed by clearing
+  the write dir pre-game like OpenBW. Still open, needs the owner's
+  next game on the current jar: wrong-sibling adoption when two same
+  type warp at once (needs `CANNOT define construction` lines), and
+  the same-frame pick race end-to-end. No blind patch.
 - **#149** Causeless early exit, third occurrence: `131407` (V2 LIVE,
   4:07), `210732` (legacy, 5:08) and `213248` (legacy rich, 9:50) all
   end clean with no force/leave/GG line, all enemyless, all healthy at
