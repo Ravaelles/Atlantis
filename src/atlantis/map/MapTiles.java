@@ -6,7 +6,6 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.BuildingTilesAreOccupied;
-import jbweb.JBWEB;
 
 /**
  * What the map knows about a single tile: is it walkable, has it been explored,
@@ -146,10 +145,10 @@ public class MapTiles {
         // on OpenBW it does not (no regions), and the answer is then computed from
         // terrain instead.
         //
-        // This replaces an engine-then-JBWEB fallback that could not work here: JBWEB is
-        // a JNI library whose natives do not exist on Linux, so `JBWEB.isWalkable` was a
-        // dead last resort that silently answered for nothing (see
-        // _AI/POSITION-FINDER.md point 3 and _AI/LOCAL-STARCRAFT.md 187-189).
+        // This replaces an engine-then-port fallback that could not work here: the
+        // old port answered walkability from a frozen start-of-game grid, a dead
+        // last resort that silently answered for nothing (see
+        // _AI/POSITION-FINDER.md point 3).
         return ReachableTiles.between(from, to);
     }
 
@@ -159,32 +158,12 @@ public class MapTiles {
         // OpenBW's `Game.canBuildHere` is unreliable headless: it rejects tiles the
         // map data says are fine, which stopped the bot from placing its first
         // Pylon (measured 2026-10-08 on (3)TauCross1.1: "Can't find place for
-        // Pylon", reason "Can't physically build here", while JBWeb's own tile grid
+        // Pylon", reason "Can't physically build here", while the tile grid
         // says the spot is placeable). Fall back to the map-derived answer, and only
         // when the source is the engine: the harness has its own rules and no map to
         // consult, so it keeps deciding for itself.
         if (!source().spawnsFromMapData()) return false;
 
-        // JBWEB.isPlaceable reads its own usedGrid, which is only as current as the
-        // unit lifecycle keeps it, so it can call an occupied tile free. The live
-        // building list is the independent guard for THAT path.
-        boolean jbwebUsable = JBWEB.isInitialized()
-            && JBWEB.isPlaceable(building.ut(), at.toTilePosition());
-
-        // The builder is passed in: the footprint may contain the unit that will build it
-        // and nothing else (NEXT.md #49). Leaving it out here called a tile "occupied"
-        // when the only thing on it was the builder that had walked there to build -
-        // a placement the game allows, refused by us.
-        if (jbwebUsable && !BuildingTilesAreOccupied.check(at, building, builder)) return true;
-
-        // JBWEB refused, or is not available at all (the OpenBW case: JBWEB is a JNI
-        // library whose natives do not exist on Linux, so InitJBWEB.init() fails and
-        // AMap catches it and continues - _AI/LOCAL-STARCRAFT.md 187-189). Without
-        // this branch every placement on OpenBW had no way left to say "yes": the
-        // engine's composite canBuildHere (unreliable, see above) and the occupancy
-        // guard (which can only say "not occupied"). That is why the bot could not
-        // place its first Pylon.
-        //
         // So answer from the ENGINE at tile level: for a building to stand at `at`,
         // every tile it covers must be walkable and buildable-including-buildings.
         // That last part is the occupancy answer, from the engine itself - which is
@@ -198,12 +177,12 @@ public class MapTiles {
 
     /**
      * Every tile the building would cover must be walkable and buildable, per the
-     * engine's own tile queries. Used when JBWEB is unavailable (OpenBW); the
+     * engine's own tile queries. Answered from the engine tile grid; the
      * building's top-left sits at {@code at}.
      */
     /**
      * Every tile the building would cover must be walkable and buildable, per the
-     * engine's own tile queries. Used when JBWEB cannot answer (OpenBW); the
+     * engine's own tile queries. Answered from the engine tile grid; the
      * building's top-left sits at {@code at}.
      *
      * <p>
