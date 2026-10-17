@@ -80,6 +80,15 @@ public class ScoutState {
     public static int baselessTrackedSince = 0;
 
     /**
+     * Terminal-roam rotation (idle-scout repair): index into the enemy
+     * start locations, advanced on every roam pick. Early game (enemy
+     * never discovered) the scout cycles 1st/2nd/3rd enemy base in fixed
+     * order instead of standing idle; the increment is monotonic per game
+     * and cleared here with the rest of the scout state.
+     */
+    public static int terminalRoamIndex = 0;
+
+    /**
      * Per-game reset for the roam state added with the scout repair.
      * Called from the game root alongside the other per-game resets, so a
      * stale roam target never leaks into the next game in the same JVM. The
@@ -92,5 +101,6 @@ public class ScoutState {
         baselessVisited.clear();
         baselessTrackedKey = null;
         baselessTrackedSince = 0;
+        terminalRoamIndex = 0;
     }
 }
