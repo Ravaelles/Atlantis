@@ -152,6 +152,39 @@ for builder reservation disputes; (6) qualityCounter only when two
 squads dispute one unit. SKIP Tactician auctioneer (overhead for one
 cluster) and the ~15-class squad explosion (sprawl in another costume).
 
+## ML-tunability: which shape learns better (owner question 2026-10-17)
+
+What parameter search (random/ES over micromanager values, scored on
+repeated micro scenarios) needs: small decoupled vectors, fast
+deterministic episodes, clean credit assignment, no hidden coupling.
+
+- PurpleWave is tunable BY DESIGN: blackboard knobs are typed scalars
+  (gasWorkerFloor/Ceiling, aggressionRatio...), assignment runs on
+  utility WEIGHTS (standard bandit/ES target), ModalGameplan already
+  samples sequences by weight (wTech/wGate), matchup data sits in
+  TABLES not code. Strategy selection is literally already a sampling
+  problem. This is the better substrate - by a mile.
+- Stardust is robust but UNLEARNABLE in the large: cluster behavior
+  emerges from sim + geometry (nothing to tune = nothing to learn);
+  the 480/480/600 thresholds are substrate (retuning them moves
+  everything downstream - non-stationary evaluation); learnable parts
+  are only the small locals (formation distances, dance numbers, sim
+  hysteresis length).
+- PurpleWave's weakness is credit assignment: modes and knobs interact
+  (gas floor vs ceiling vs ratio), so joint effects need joint tuning.
+  Stardust's one-tactic-per-cluster rule gives cleaner attribution.
+- Neither bot attributes outcomes to decisions (no log) - ML debugging
+  without it is hell. Our DECISIONS.log + twins are the measurement
+  harness ES needs (reward per scenario + which decision fired).
+
+Verdict for our battle package: PurpleWave knob STYLE (typed scalar
+params, utility weights, tables-as-data) mounted on Stardust execution
+discipline (one tactic active at a time). Concretely: role parameter
+structs with current profile values as defaults, loaded from DATA not
+code; joint search within a tactic (<=8 dims, random first, ES on
+plateaus); separate loops per tactic (evaluator timing vs in-fight
+micro); global knobs only for strategy scalars, never for micro.
+
 ## Atlantis hybrid (what we actually build)
 
 - Opening: memorized script (UAlbertaBot opening book + PurpleWave
