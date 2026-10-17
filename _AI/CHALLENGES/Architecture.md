@@ -85,6 +85,30 @@ We converge on D with selected loans from the rest.
   blackboard), fingerprint strategy selection (later item, needs games),
   matchup tables (convert DancePolicy numbers when profiles stabilize).
 
+## Build orders: three formats (owner question 2026-10-17)
+
+- PurpleWave gameplans (`src/Gameplans/Protoss/PvP/PvPOpening.scala`,
+  inspected live): imperative code, not rows. `get(N, Unit)` = want N
+  TOTAL (cumulative), `get(Unit)` = want one, `pump(Unit)` = continuous.
+  Essentials run BESIDE the script every frame (`doWorkers`,
+  `RequireEssentials`, `doAutosupply`). Reactive swaps between sequences
+  by scouting (ModalGameplan + fingerprints). Every build carries VOD
+  timestamps as provenance. Workers are NEVER script rows.
+- Stardust: NO sequences at all. Openings are continuous goal functions
+  of state (`desiredZealots = max(4, enemyZealots)`, `required = desired
+  - have`) fed to the timeline. Nothing to copy as a sequence.
+- Ours: `At N - Unit` threshold rows (fire once at supply N). Weaknesses
+  measured: never re-fire (dead probe = hole forever); gateway pairs need
+  two rows (the duplicate-row class); numbers assume pump workers fill
+  the gaps (proven by the 4/9-at-3:34 deadlock when the pump stopped).
+- Verdict: take PurpleWave's FORMAT (cumulative `have N` goals +
+  continuous worker pump beside the script + VOD/game-ID provenance per
+  build), Stardust's ARITHMETIC (`required = desired - have`) for the
+  dynamic half. Concrete next slice (not this turn): reinterpret BO rows
+  as cumulative goals (refire when count drops; one "have 2 Gateway" row
+  instead of At-10 + At-12), keep the file format, change completion
+  semantics + one test. Fingerprint-selected openings stay a later item.
+
 ## Atlantis hybrid (what we actually build)
 
 - Opening: memorized script (UAlbertaBot opening book + PurpleWave
