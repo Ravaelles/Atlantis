@@ -420,7 +420,10 @@ twins green (1/1 each, re-verified today). Re-run
   per-row earmarks in flowing rich games: Dragoon row at 70/107 bank
   1256, Gateway ORDER_NOT_READY at 27/25 - live demand, not deadlock).
   If it reappears, the `reserved` column plus DECISIONS.log name it;
-  until then no blind fix.
+  until then no blind fix. Re-checked 2026-10-17 across all 12 retained
+  runs: 5 per-row earmarks >= 250, all at supply 30+ in flowing games
+  (lowest: Pylon 300 at sup 30/33 bank 10 mid-game) - the supply-4 /
+  bank-74 deadlock shape absent again.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
