@@ -22,7 +22,9 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Game 175329: the hoarding tripwire (600+ minerals) ended a healthy game
  * at 385 s with Nexus-2 warping - its 400 reserve legitimately sits inside
  * 400-600. Saving is not hoarding: an unfinished HIGH+ waiter suppresses
- * the exit; with nothing waiting, 600+ unspent is still the broken hoard.
+ * the exit. Game 20261017_143207: bank 604 at 37/49 with free supply is
+ * saving/friction too - the deadlock signature is hoard PLUS blocked
+ * supply, so free supply stays silent even with nothing waiting.
  */
 public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
 
@@ -49,7 +51,7 @@ public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
     @Test
     public void savingForNexusSuppressesTheExit() {
         currentMinerals = 650;
-        currentSupplyUsed = 30;
+        currentSupplyUsed = 48;
         currentSupplyTotal = 50;
         Env.setOpenBWForTest(true);
 
@@ -75,7 +77,7 @@ public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
     @Test
     public void hoardingWithNothingWaitingStillExits() {
         currentMinerals = 650;
-        currentSupplyUsed = 30;
+        currentSupplyUsed = 48;
         currentSupplyTotal = 50;
         Env.setOpenBWForTest(true);
 
@@ -89,7 +91,28 @@ public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
 
             assertTrue(
                 new ForceExitLocallyInOpenBW().applies(),
-                "650 bank with nothing waiting is still the broken hoard");
+                "650 bank, blocked supply, nothing waiting is still the broken hoard");
+        });
+    }
+
+    @Test
+    public void bankWithFreeSupplyStaysSilent() {
+        currentMinerals = 650;
+        currentSupplyUsed = 30;
+        currentSupplyTotal = 50;
+        Env.setOpenBWForTest(true);
+
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            assertFalse(
+                new ForceExitLocallyInOpenBW().applies(),
+                "650 bank with 20 free supply is saving/friction, not deadlock (game 20261017_143207)");
         });
     }
 }

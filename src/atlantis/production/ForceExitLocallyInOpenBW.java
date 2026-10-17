@@ -52,6 +52,12 @@ public class ForceExitLocallyInOpenBW extends Commander {
         // With nothing waiting, 600+ unspent is still the broken hoard.
         if (PriorityWaiters.mineralsAbove(ProductionOrderPriority.STANDARD) > 0) return false;
 
+        // The deadlock this catches is supply-blocked hoarding (bank high,
+        // nothing trainable). Bank high with free supply is saving or
+        // friction, not deadlock - ending there killed healthy V2 buildups
+        // mid-game (measured 2026-10-19: exit at 37/49 with 604 banked).
+        if (A.supplyFree() > 4) return false;
+
         return true;
     }
 
