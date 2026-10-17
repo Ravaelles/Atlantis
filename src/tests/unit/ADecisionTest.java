@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * __PLAN-DECISIONS step 0: decisions are engine-free values - what, why,
@@ -71,5 +72,21 @@ public class ADecisionTest {
         assertEquals(12, precise.supplyUsed(), "snapshot survives refinement");
         assertEquals(200, precise.minerals(), "bank survives refinement");
         assertEquals(0, generic.frame(), "the generic is immutable");
+    }
+
+    @Test
+    public void onlyImportantDecisionsReachTheFile() {
+        assertTrue(atlantis.decisions.board.DecisionLog.wouldLog(ADecision.decide(
+            ADecision.Kind.BUILD, "Pylon", "At 8 Pylon (#1)",
+            ADecision.Source.BUILD_ORDER).build()));
+        assertTrue(atlantis.decisions.board.DecisionLog.wouldLog(ADecision.decide(
+            ADecision.Kind.RESEARCH, "Singularity Charge", "At 0 Singularity*",
+            ADecision.Source.DYNAMIC).build()));
+        assertFalse(atlantis.decisions.board.DecisionLog.wouldLog(ADecision.decide(
+            ADecision.Kind.TRAIN_WORKER, "Probe", "pump-flow",
+            ADecision.Source.DYNAMIC).build()));
+        assertFalse(atlantis.decisions.board.DecisionLog.wouldLog(ADecision.decide(
+            ADecision.Kind.TRAIN_ARMY, "Zealot", "army-flow",
+            ADecision.Source.DYNAMIC).build()));
     }
 }

@@ -28,10 +28,23 @@ public class DecisionLog {
 
     public static void record(ADecision decision) {
         if (decision == null) return;
+        if (!wouldLog(decision)) return;
         if (decision.frame() < lastFrame) rows.clear();
         lastFrame = decision.frame();
         rows.add(toJson(decision));
         flush();
+    }
+
+    /**
+     * Owner 2026-10-18: importance lives in code, not in post-filtering.
+     * Buildings (and research/expansions) with their reasons are the
+     * signal - a hundred worker trains per game are noise, and their
+     * debugging already lives in the TRAIN_ATTEMPT twin. So only
+     * non-train decisions reach the file.
+     */
+    public static boolean wouldLog(ADecision decision) {
+        return decision.kind() != ADecision.Kind.TRAIN_WORKER
+            && decision.kind() != ADecision.Kind.TRAIN_ARMY;
     }
 
     public static void flush() {
