@@ -3,7 +3,6 @@ package atlantis.map.choke;
 import atlantis.map.position.APosition;
 import atlantis.map.region.ARegion;
 import atlantis.units.select.Select;
-import jbweb.JBWEB;
 
 import java.util.List;
 
@@ -18,14 +17,7 @@ public class DefineMainChoke {
     }
 
     private static AChoke defineFromJbwebOrCustomSolution() {
-        AChoke mainChoke = mainChokeFromJbweb();
-        if (mainChoke != null) return mainChoke;
-
         return MainChokeCustom.get();
-    }
-
-    private static AChoke mainChokeFromJbweb() {
-        return AChoke.from(JBWEB.getMainChoke());
     }
 
     private static AChoke defineFromMainBaseRegion() {
