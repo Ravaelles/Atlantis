@@ -8,6 +8,8 @@ import atlantis.map.region.ARegionBoundary;
 import atlantis.units.AUnit;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ScoutState {
     /**
@@ -63,6 +65,21 @@ public class ScoutState {
     public static int roamLastProgressFrame = 0;
 
     /**
+     * Baseless-visit memory (ScoutEnemyBasesWithoutBase repair, Wine game:
+     * the scout re-issued Move to the same base location for 100+ frames -
+     * the stateless nearest-pick rotates only by arrival, and a site the
+     * scout can stand next to without ever reaching (dist stuck above 3)
+     * never counts as arrived). Tile keys the scout has stood on or given
+     * up on; the pick skips them, so coverage terminates instead of
+     * oscillating A-&gt;B-&gt;A. Per-game, cleared in {@link #reset()} with
+     * the roam state. Single scout assumed - same as the roam tracker
+     * above (the build order fields exactly one).
+     */
+    public static final Set<String> baselessVisited = new HashSet<>();
+    public static String baselessTrackedKey = null;
+    public static int baselessTrackedSince = 0;
+
+    /**
      * Per-game reset for the roam state added with the scout repair.
      * Called from the game root alongside the other per-game resets, so a
      * stale roam target never leaks into the next game in the same JVM. The
@@ -72,5 +89,8 @@ public class ScoutState {
     public static void reset() {
         roamLastDistToPoint = -1;
         roamLastProgressFrame = 0;
+        baselessVisited.clear();
+        baselessTrackedKey = null;
+        baselessTrackedSince = 0;
     }
 }
