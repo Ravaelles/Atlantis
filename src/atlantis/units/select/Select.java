@@ -1,6 +1,8 @@
 package atlantis.units.select;
 
 import atlantis.map.position.APosition;
+import atlantis.core.world.UnitIndex;
+import atlantis.game.AGame;
 import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
@@ -25,6 +27,23 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     protected static Cache<Object> cacheObject = new Cache<>();
     protected static Cache<Integer> cacheInt = new Cache<>();
     protected static Cache<AUnit> cacheUnit = new Cache<>();
+
+    /**
+     * The frame-frozen unit list every migrated select reads (Stage F):
+     * rebuilt once per frame from the live list, so one invalidation rule
+     * replaces per-key TTLs. Keys migrate here one at a time, fewest
+     * readers first; unmigrated keys keep their old caches below.
+     */
+    private static UnitIndex frameIndex;
+    private static int frameIndexFrame = -1;
+
+    private static UnitIndex frameIndex() {
+        if (frameIndexFrame != AGame.now()) {
+            frameIndex = new UnitIndex(allUnits());
+            frameIndexFrame = AGame.now();
+        }
+        return frameIndex;
+    }
 
 
     // =====================================================================
@@ -664,17 +683,12 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection geysersAndGasBuildings() {
-        String cachePath;
-        return cache.get(
-            cachePath = "geysersAndGasBuildings",
-            31,
-            () -> all().ofType(
-                AUnitType.Resource_Vespene_Geyser,
-                AUnitType.Protoss_Assimilator,
-                AUnitType.Terran_Refinery,
-                AUnitType.Zerg_Extractor
-            )
-        );
+        return new Selection(frameIndex().ofType(
+            AUnitType.Resource_Vespene_Geyser,
+            AUnitType.Protoss_Assimilator,
+            AUnitType.Terran_Refinery,
+            AUnitType.Zerg_Extractor
+        ), "geysersAndGasBuildings");
     }
 
     /**
@@ -830,18 +844,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     /**
-     * Selects all of our Marines, Firebats, Ghosts.
-     */
-    public static Selection ourTerranInfantryWithoutMedics() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourTerranInfantryWithoutMedics",
-            0,
-            () -> our().ofType(AUnitType.Terran_Marine, AUnitType.Terran_Firebat, AUnitType.Terran_Ghost)
-        );
-    }
-
-    /**
      * Selects all of our Zerg Larvas.
      */
     public static Selection ourLarva() {
@@ -897,15 +899,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
             cachePath = "ourBuildings",
             0,
             () -> our().buildings()
-        );
-    }
-
-    public static Selection enemyBuildings() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyBuildings",
-            0,
-            () -> enemy().buildings()
         );
     }
 

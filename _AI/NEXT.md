@@ -192,7 +192,9 @@ twins green (1/1 each, re-verified today). Re-run
   `AtlantisJfap.isValidUnit:71` (borderline). The rest was triaged out
   (same object, worse GC) or dies with lifecycle.
 
-## Stage F — cache purge
+## Stage F — cache purge (started 2026-10-19: UnitIndex + first migration, dead keys deleted)
+
+
 
 - Five unexplained TTLs above one frame (30, 31, 53, 73, 293) remain
   (91 went with the deleted `firstBuilding` entry);
