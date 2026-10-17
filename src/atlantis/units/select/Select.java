@@ -148,21 +148,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our bases.
      */
     public static Selection ourBases() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourBases",
-            0,
-            () -> {
-//                if (We.zerg()) {
-                return ourOfType(
-                    AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
-                    AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
-                );
-//                }
-//                else {
-//                    return ourOfType(AtlantisRaceConfig.BASE);
-//                }
-            }
+        return ourOfType(
+            AUnitType.Zerg_Hatchery, AUnitType.Zerg_Lair,
+            AUnitType.Zerg_Hive, AUnitType.Protoss_Nexus, AUnitType.Terran_Command_Center
         );
     }
 
@@ -190,22 +178,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe).
      */
     public static Selection ourWorkers() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourWorkers",
-            0,
-            () -> {
-//                SortedSet<AUnit> data = new ArrayList<>();
-                TreeSet<AUnit> data = new TreeSet<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isWorker()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
+        return new Selection(
+            new TreeSet<>(oursIndex().matching(AUnit::isWorker)),
+            "ourWorkers"
         );
     }
 
@@ -401,47 +376,18 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all of our finished combat units (no buildings, workers, spider mines etc).
      */
     public static Selection ourCombatUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourCombatUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isCompleted() && unit.isCombatUnit() && !unit.isABuilding()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && unit.isCombatUnit() && !unit.isABuilding()
+        ), "ourCombatUnits");
     }
 
     /**
      * Selects all of our units (units, buildings, but no spider mines etc), <b>even those unfinished</b>.
      */
     public static Selection ourWithUnfinished() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourWithUnfinished",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (unit.isAlive()) {
-                        data.add(unit);
-                    }
-//                    else {
-//                        System.err.println(unit + " not alive");
-//                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(oursIndex().matching(
+            AUnit::isAlive
+        ), "ourWithUnfinished");
     }
 
     public static Selection ourWithUnfinishedOfType(AUnitType type) {
@@ -597,45 +543,31 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all (accessible) minerals on the map.
      */
     public static Selection minerals() {
-        String cachePath;
-        return cache.get(
-            cachePath = "minerals",
-            30,
-            () -> neutral().ofType(
-                AUnitType.Resource_Mineral_Field,
-                AUnitType.Resource_Mineral_Field_Type_2,
-                AUnitType.Resource_Mineral_Field_Type_3
-            )
-        );
+        return new Selection(neutralIndex().ofType(
+            AUnitType.Resource_Mineral_Field,
+            AUnitType.Resource_Mineral_Field_Type_2,
+            AUnitType.Resource_Mineral_Field_Type_3
+        ), "minerals");
     }
 
     /**
      * Selects all (accessible) minerals on the map.
      */
     public static Selection mineralsAndGeysers() {
-        String cachePath;
-        return cache.get(
-            cachePath = "mineralsAndGeysers",
-            30,
-            () -> neutral().ofType(
-                AUnitType.Resource_Vespene_Geyser,
-                AUnitType.Resource_Mineral_Field,
-                AUnitType.Resource_Mineral_Field_Type_2,
-                AUnitType.Resource_Mineral_Field_Type_3
-            )
-        );
+        return new Selection(neutralIndex().ofType(
+            AUnitType.Resource_Vespene_Geyser,
+            AUnitType.Resource_Mineral_Field,
+            AUnitType.Resource_Mineral_Field_Type_2,
+            AUnitType.Resource_Mineral_Field_Type_3
+        ), "mineralsAndGeysers");
     }
 
     /**
      * Selects all geysers on the map.
      */
     public static Selection geysers() {
-        String cachePath;
-        return cache.get(
-            cachePath = "geysers",
-            53,
-            () -> neutral().ofType(AUnitType.Resource_Vespene_Geyser)
-        );
+        return new Selection(
+            neutralIndex().ofType(AUnitType.Resource_Vespene_Geyser), "geysers");
     }
 
     public static Selection geysersAndGasBuildings() {
@@ -696,14 +628,11 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     private static AUnit mainFromCache() {
-        return cacheUnit.getIfValid(
-            "main",
-            73,
-            () -> {
-                List<AUnit> bases = ourBases().list();
-                return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
-            }
-        );
+        // Was a 73-frame TTL cache; the frame index answers the same question
+        // fresh every frame (a dead main answered for a minute was the stale
+        // direction, never the fresh one).
+        List<AUnit> bases = ourBases().list();
+        return bases.isEmpty() ? Select.ourBuildings().first() : (bases.get(0).isAlive() ? bases.get(0) : null);
     }
 
     public static AUnit mainOrAnyBuilding() {
@@ -839,12 +768,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all our finished buildings.
      */
     public static Selection ourBuildings() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourBuildings",
-            0,
-            () -> our().buildings()
-        );
+        return new Selection(oursIndex().matching(
+            unit -> unit.isCompleted() && (unit.type().isABuilding() || unit.type().isAddon())
+        ), "ourBuildings");
     }
 
     /**
