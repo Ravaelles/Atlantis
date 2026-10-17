@@ -285,7 +285,10 @@ twins green (1/1 each, re-verified today). Re-run
   755 s, 5/0 kills, +500): full game to natural end on V2, 8 warps, all
   rows minSupply 0 (no BO expectation reaches the ledger - the deferred
   timeline scheduler). Two watches: Pylon #1 warped at sup5 twice now
-  (pull-forward or waste - undecided, needs a side-by-side); Forge
+  (pull-forward or waste - undecided, needs a side-by-side); third V2
+  datum `202456`: sup5/0:26/bank4 vs legacy `210732` sup8/0:52/bank46
+  the same week - V2 consistently ~26 s earlier on an empty bank,
+  still undecided. Forge
   divergence still tracked, not regressed. LIVE retry `20261016_131515`
   (133 s wall, full 1209 game-s, 0 exceptions, legacy pumps provably
   out - no DRAGOON/SINGULARITY/BOARD rows, 24k V2 lines): V2 runs the
