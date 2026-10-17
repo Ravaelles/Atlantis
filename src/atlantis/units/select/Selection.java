@@ -1156,80 +1156,15 @@ public class Selection extends BaseSelection {
     }
 
     public List<AUnit> sortDataByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
-//        if (position == null) {
-//            return null;
-//        }
-
-        if (data.size() != 1) {
-            Collections.sort(data, new Comparator<HasPosition>() {
-                @Override
-                public int compare(HasPosition p1, HasPosition p2) {
-                    if (!(p1 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p1);
-                    }
-                    if (!(p2 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p2);
-                    }
-
-                    double distance1 = p1.groundDist(position);
-                    double distance2 = p2.groundDist(position);
-
-                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
-                }
-            });
-        }
-
-        return data;
+        return SelectionSorting.sortDataByGroundDistanceTo(this, position, nearestFirst);
     }
 
     public List<AUnit> sortDataByDistanceTo(final HasPosition position, final boolean nearestFirst) {
-        if (position == null) {
-            return data;
-        }
-
-        if (data.size() != 1) {
-            Collections.sort(data, new Comparator<HasPosition>() {
-                @Override
-                public int compare(HasPosition p1, HasPosition p2) {
-                    if (!(p1 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p1);
-                    }
-                    if (!(p2 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p2);
-                    }
-
-                    double distance1 = p1.distTo(position);
-                    double distance2 = p2.distTo(position);
-
-                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
-                }
-            });
-        }
-
-        return data;
+        return SelectionSorting.sortDataByDistanceTo(this, position, nearestFirst);
     }
 
     public List<AUnit> sortDataByDistanceTo(final AUnit unit, final boolean nearestFirst) {
-        if (data.size() != 1) {
-            Collections.sort(data, new Comparator<AUnit>() {
-                @Override
-                public int compare(AUnit p1, AUnit p2) {
-                    if (!(p1 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p1);
-                    }
-                    if (!(p2 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p2);
-                    }
-
-                    double distance1 = unit.distTo(p1);
-                    double distance2 = unit.distTo(p2);
-
-                    return nearestFirst ? Double.compare(distance1, distance2) : Double.compare(distance2, distance1);
-                }
-            });
-        }
-
-        return data;
+        return SelectionSorting.sortDataByDistanceTo(this, unit, nearestFirst);
     }
 
 //    public Selection limit(int n) {
@@ -1267,56 +1202,15 @@ public class Selection extends BaseSelection {
 //    }
 
     public Selection sortByNearestTo(final AUnit unit) {
-        if (data.isEmpty()) {
-            return new Selection(new ArrayList<>(), "");
-        }
-
-        if (data.size() >= 2) {
-            data.sort(new Comparator<AUnit>() {
-                @Override
-                public int compare(AUnit p1, AUnit p2) {
-                    if (unit == null) return 1;
-
-                    if (!(p1 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p1);
-                    }
-                    if (!(p2 instanceof HasPosition)) {
-                        throw new RuntimeException("Invalid comparison: " + p2);
-                    }
-
-                    double distance1 = unit.distTo(p1);
-                    double distance2 = unit.distTo(p2);
-
-                    return Double.compare(distance1, distance2);
-                }
-            });
-        }
-
-        return this;
+        return SelectionSorting.sortByNearestTo(this, unit);
     }
 
     public Selection sortByHealth() {
-        if (data.isEmpty()) {
-            return new Selection(new ArrayList<>(), "");
-        }
-
-        if (data.size() != 1) {
-            data.sort(Comparator.comparingDouble(AUnit::hpPercent));
-        }
-
-        return this;
+        return SelectionSorting.sortByHealth(this);
     }
 
     public Selection sortByWound() {
-        if (data.isEmpty()) {
-            return new Selection(new ArrayList<>(), "");
-        }
-
-        if (data.size() != 1) {
-            data.sort(Comparator.comparingDouble(AUnit::woundOrder));
-        }
-
-        return this;
+        return SelectionSorting.sortByWound(this);
     }
 
 //    public Selection sortByIdAsc() {
