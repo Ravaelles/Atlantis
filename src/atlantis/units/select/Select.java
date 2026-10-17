@@ -554,22 +554,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects our unfinished units.
      */
     public static Selection ourUnfinishedRealUnits() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourUnfinishedRealUnits",
-            0,
-            () -> {
-                List<AUnit> data = new ArrayList<>();
-
-                for (AUnit unit : ourUnitsWithUnfinishedList()) {
-                    if (!unit.isCompleted() && unit.isRealUnit()) {
-                        data.add(unit);
-                    }
-                }
-
-                return new Selection(data, cachePath);
-            }
-        );
+        return new Selection(frameIndex().matching(
+            unit -> unit.isOur() && !unit.isCompleted() && unit.isRealUnit()
+        ), "ourUnfinishedRealUnits");
     }
 
     /**
@@ -589,12 +576,9 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
      * Selects all visible enemy units. Since they're visible, the parameterized type is AUnit
      */
     public static Selection enemyRealUnitsWithBuildings() {
-        String cachePath;
-        return cache.get(
-            cachePath = "enemyRealUnitsWithBuildings",
-            0,
-            () -> enemyRealUnits(true, true, true)
-        );
+        return new Selection(frameIndex().matching(
+            unit -> unit.isEnemy() && (unit.isABuilding() || unit.isRealUnit())
+        ), "enemyRealUnitsWithBuildings");
     }
 
     /**
@@ -873,18 +857,10 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
     }
 
     public static Selection ourUnfinishedBuildings() {
-        String cachePath;
-        return cache.get(
-            cachePath = "ourUnfinishedBuildings",
-            0,
-            () -> {
-                Selection selectedUnits = Select.ourWithUnfinished();
-                selectedUnits.list().removeIf(
-                    unit -> (!unit.type().isABuilding() && !unit.type().isAddon()) || unit.isCompleted()
-                );
-                return selectedUnits;
-            }
-        );
+        return new Selection(frameIndex().matching(
+            unit -> unit.isOur() && !unit.isCompleted()
+                && (unit.type().isABuilding() || unit.type().isAddon())
+        ), "ourUnfinishedBuildings");
     }
 
     /**

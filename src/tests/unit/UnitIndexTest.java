@@ -61,6 +61,15 @@ public class UnitIndexTest {
     }
 
     @Test
+    public void matchingFiltersByPredicate() {
+        UnitIndex index = new UnitIndex(units());
+
+        assertEquals(1, index.matching(unit -> unit.is(AUnitType.Protoss_Dragoon)).size());
+        assertEquals(3, index.matching(unit -> unit.isCompleted()).size());
+        assertEquals(0, index.matching(unit -> false).size());
+    }
+
+    @Test
     public void allReturnsACopy() {        UnitIndex index = new UnitIndex(units());
 
         assertEquals(3, index.all().size());

@@ -42,8 +42,7 @@ public final class UnitIndex {
     }
 
     /** Frozen completed units of these types, in list order. */
-    public List<AUnit> completedOfType(AUnitType... types) {
-        List<AUnit> filtered = new ArrayList<>();
+    public List<AUnit> completedOfType(AUnitType... types) {        List<AUnit> filtered = new ArrayList<>();
         for (AUnit unit : units) {
             if (!unit.isCompleted()) continue;
             for (AUnitType type : types) {
@@ -52,6 +51,15 @@ public final class UnitIndex {
                     break;
                 }
             }
+        }
+        return filtered;
+    }
+
+    /** Frozen units passing this filter, in list order: one generic pass for every future predicate. */
+    public List<AUnit> matching(java.util.function.Predicate<AUnit> filter) {
+        List<AUnit> filtered = new ArrayList<>();
+        for (AUnit unit : units) {
+            if (filter.test(unit)) filtered.add(unit);
         }
         return filtered;
     }
