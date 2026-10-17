@@ -151,7 +151,7 @@ local connections by default (it is a window into the filesystem).
 ### Scenario assertions (optional)
 
 The script can also check *what happened*, by reading the facts `GameSummary`
-already prints into `bot.log`. With none of these set the script only reports the
+already prints into `E2E_LOG`. With none of these set the script only reports the
 verdict, exactly as before:
 
 | env | fails when |

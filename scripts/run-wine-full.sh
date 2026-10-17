@@ -27,7 +27,7 @@
 #   the bot was the IDE process. This script streams the bot's output to its own
 #   stdout, which the IDE shows live (UnixChaosGameLauncher uses inheritIO()), so
 #   A.println / System.out.println / System.err.println appear in the IntelliJ
-#   console AND in out/wine/client.log.
+#   console AND in out/wine/WINE_LOG.
 #
 #   LIVE_OUTPUT=0   quiet console, log file only
 #   BUILD=0         play the jar already on disk instead of rebuilding it
@@ -77,7 +77,7 @@ MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
 
 JAR="$JAR_OUT"
 mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
-CLIENT_LOG="$LOG_DIR/client.log"
+CLIENT_LOG="$LOG_DIR/WINE_LOG"
 
 say() { echo "[wine-full] $*"; }
 
@@ -215,7 +215,7 @@ say "  Windows path: $WIN_JAR"
 # The bot is a SEPARATE process (a Windows JVM under Wine), so its stdout is
 # not the IDE's console - on Windows it was, because the bot WAS the IDE
 # process. Without help, every print the owner adds lands only in
-# out/wine/client.log, 16k lines deep, and looks like "the code never runs"
+# out/wine/WINE_LOG, 16k lines deep, and looks like "the code never runs"
 # (measured 2026-10-07: the prints were all there, 13k of them).
 #
 # So the bot's output is TEE'd: the log file still gets everything (scripts and
@@ -238,26 +238,31 @@ WINE_LOG_COPY_RESOLVED="$(resolve_wine_log_copy)"
 CLIENT_CWD="$(pwd)"
 
 TEE_OUT=("$CLIENT_LOG")
-TEE_ERR=("$LOG_DIR/debug.log")
-WINE_DEBUG_COPY=""
+TEE_ERR=("$LOG_DIR/WINE_DEBUG")
+WINE_LIVE_LOG=""
+WINE_LIVE_DEBUG=""
+WINE_LIVE_DECISIONS=""
 if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
-  case "$WINE_LOG_COPY_RESOLVED" in
-    *.log) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log" ;;
-    *) WINE_DEBUG_COPY="${WINE_LOG_COPY_RESOLVED}-DEBUG.log" ;;
-  esac
+  # Owner 2026-10-18: fixed role names, no extensions. The ENV value
+  # anchors the directory; basenames are fixed so all three streams
+  # always land together (the old last-wine*.log pair is retired).
+  WINE_LIVE_DIR="$(dirname "$WINE_LOG_COPY_RESOLVED")"
+  WINE_LIVE_LOG="$WINE_LIVE_DIR/WINE_LOG"
+  WINE_LIVE_DEBUG="$WINE_LIVE_DIR/WINE_DEBUG"
+  WINE_LIVE_DECISIONS="$WINE_LIVE_DIR/WINE_DECISIONS"
   # Owner 2026-10-16: the main copy is the GAME log (stdout only), the
   # -DEBUG copy the diagnostics (stderr only). Merging both streams into
   # both files made last-wine.log identical to last-wine-DEBUG.log.
-  TEE_OUT+=("$WINE_LOG_COPY_RESOLVED")
-  say "  Live log copy: $WINE_LOG_COPY_RESOLVED (game log only)"
+  TEE_OUT+=("$WINE_LIVE_LOG")
+  say "  Live log copy: $WINE_LIVE_LOG (game log only)"
 fi
-if [ -n "$WINE_DEBUG_COPY" ]; then
-  TEE_ERR+=("$WINE_DEBUG_COPY")
-  say "  Live debug copy: $WINE_DEBUG_COPY (diagnostics stream only)"
+if [ -n "$WINE_LIVE_DEBUG" ]; then
+  TEE_ERR+=("$WINE_LIVE_DEBUG")
+  say "  Live debug copy: $WINE_LIVE_DEBUG (diagnostics stream only)"
 fi
 
-# Streams stay split on purpose: client.log is the game log (HELLO,
-# GameSummary, build orders), debug.log the diagnostics (worker gates,
+# Streams stay split on purpose: WINE_LOG is the game log (HELLO,
+# GameSummary, build orders), WINE_DEBUG the diagnostics (worker gates,
 # stuck workers, refusals, stack traces). The console still shows both
 # merged, exactly as before.
 if [ "$LIVE_OUTPUT" = "1" ]; then
@@ -444,14 +449,14 @@ fi
 # Owner 2026-10-16: the warp ledger also belongs at the tail of the debug
 # copy. A clean game end already prints it (OnGameEnd, stderr) - the
 # marker guard keeps this append for killed games only, never duplicating.
-if [ -n "${WINE_DEBUG_COPY:-}" ] && [ -f "$WINE_DEBUG_COPY" ] \
+if [ -n "${WINE_LIVE_DEBUG:-}" ] && [ -f "$WINE_LIVE_DEBUG" ] \
   && [ -f "$LOG_DIR/BUILDINGS.json" ] \
-  && ! grep -q "ledger at game end" "$WINE_DEBUG_COPY" 2>/dev/null; then
+  && ! grep -q "ledger at game end" "$WINE_LIVE_DEBUG" 2>/dev/null; then
   {
     echo ""
     echo "===== BUILDINGS.json (ledger at game end) ====="
     cat "$LOG_DIR/BUILDINGS.json"
-  } >> "$WINE_DEBUG_COPY" 2>/dev/null || true
+  } >> "$WINE_LIVE_DEBUG" 2>/dev/null || true
   say "ledger appended to debug copy (killed game, no OnGameEnd tail)"
 fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
@@ -461,8 +466,12 @@ else
   say "event log missing: $CLIENT_CWD/bwapi-data/write/EVENTS.jsonl was never written"
 fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" ]; then
-  cp -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" "$LOG_DIR/DECISIONS.log" 2>/dev/null || true
-  say "decisions log collected: $LOG_DIR/DECISIONS.log"
+  cp -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" "$LOG_DIR/WINE_DECISIONS" 2>/dev/null || true
+  say "decisions log collected: $LOG_DIR/WINE_DECISIONS"
+  if [ -n "${WINE_LIVE_DECISIONS:-}" ]; then
+    cp -f "$LOG_DIR/WINE_DECISIONS" "$WINE_LIVE_DECISIONS" 2>/dev/null || true
+    say "decisions live copy: $WINE_LIVE_DECISIONS"
+  fi
 else
   say "decisions log missing: $CLIENT_CWD/bwapi-data/write/DECISIONS.log was never written"
 fi

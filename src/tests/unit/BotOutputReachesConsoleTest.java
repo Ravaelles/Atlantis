@@ -60,7 +60,7 @@ public class BotOutputReachesConsoleTest {
 
                 assertTrue(script.contains("TEE_OUT=(\"$CLIENT_LOG\")"),
                                 "both branches tee game output starting at the client log");
-                assertTrue(script.contains("TEE_ERR=(\"$LOG_DIR/debug.log\")"),
+                assertTrue(script.contains("TEE_ERR=(\"$LOG_DIR/WINE_DEBUG\")"),
                                 "diagnostics start at their own file in both branches");
                 assertTrue(script.contains("> /dev/null"),
                                 "quiet mode must still write the log files while silencing the console");
@@ -133,17 +133,18 @@ public class BotOutputReachesConsoleTest {
                 // WINE_LOG_COPY (owner ask): the extra copy must be live (tee, not
                 // an end-of-run cp that misses kills), resolved from the bot ENV,
                 // and gated on a non-empty path plus GAME_LAUNCHER=WINE.
-                // Owner 2026-10-16: streams split - the main copy is the GAME
-                // log (stdout tee only), the -DEBUG twin the diagnostics
-                // (stderr tee only). Merging both into both made the two
-                // files identical.
+                // Owner 2026-10-18: fixed role names (WINE_LOG game log
+                // only, WINE_DEBUG diagnostics only, WINE_DECISIONS audit)
+                // in one directory - the old last-wine*.log pair retired.
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("TEE_OUT+=(\"$WINE_LOG_COPY_RESOLVED\")")
-                                && !script.contains("TEE_ERR+=(\"$WINE_LOG_COPY_RESOLVED\")"),
-                                "the main copy joins the stdout tee only - stderr goes to the -DEBUG twin");
-                assertTrue(script.contains("WINE_DEBUG_COPY=\"${WINE_LOG_COPY_RESOLVED%.log}-DEBUG.log\""),
-                                "a -DEBUG twin of the live copy carries the diagnostics stream only");
+                assertTrue(script.contains("TEE_OUT+=(\"$WINE_LIVE_LOG\")")
+                                && !script.contains("TEE_ERR+=(\"$WINE_LIVE_LOG\")"),
+                                "the live game log joins the stdout tee only");
+                assertTrue(script.contains("WINE_LIVE_DEBUG=\"$WINE_LIVE_DIR/WINE_DEBUG\""),
+                                "a WINE_DEBUG twin of the live dir carries diagnostics only");
+                assertTrue(script.contains("WINE_LIVE_DECISIONS=\"$WINE_LIVE_DIR/WINE_DECISIONS\""),
+                                "a WINE_DECISIONS sidecar completes the triple");
                 assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),
                                 "the destination resolves once before the client starts");
                 assertTrue(script.contains("grep -q \"^GAME_LAUNCHER=WINE\""),

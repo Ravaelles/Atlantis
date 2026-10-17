@@ -241,7 +241,7 @@ public class OpenBWLauncherTest {
 
     private OpenBWRunner runnerWithBotLog(String content) throws IOException {
         File dir = tempDir();
-        File log = new File(dir, "bot.log");
+        File log = new File(dir, "E2E_LOG");
         try (Writer out = new FileWriter(log)) {
             out.write(content);
         }
@@ -310,7 +310,7 @@ public class OpenBWLauncherTest {
     public void logPathsFollowTheConfiguredDirectory() {
         OpenBWRunner runner = new OpenBWRunner(OpenBWConfig.builder().logDir("out/openbw").build());
 
-        assertEquals("out/openbw/bot.log", runner.botLogPath());
+        assertEquals("out/openbw/E2E_LOG", runner.botLogPath());
         assertEquals("out/openbw/server.log", runner.serverLogPath());
     }
 

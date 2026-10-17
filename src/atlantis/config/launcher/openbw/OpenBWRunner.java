@@ -117,7 +117,7 @@ public final class OpenBWRunner {
     }
 
     public String botLogPath() {
-        return config.logDir() + "/bot.log";
+        return config.logDir() + "/E2E_LOG";
     }
 
     public String serverLogPath() {

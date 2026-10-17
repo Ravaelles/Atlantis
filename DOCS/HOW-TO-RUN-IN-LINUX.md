@@ -46,11 +46,11 @@ reach the game.
 2. The script **rebuilds the jar from `src/`**, starts the client under Wine,
    then starts StarCraft via ChaosLauncher, and waits for `HELLO_WORLD`.
 3. The bot's output is streamed into the **IntelliJ console** live (and still
-   written to `out/wine/client.log`).
+   written to `out/wine/WINE_LOG`).
 
 `A.println(...)` and `System.out.println(...)` both reach the console — they go
 through the same `LogPort` seam. If a print seems missing, `grep -c` it in
-`out/wine/client.log` before touching code.
+`out/wine/WINE_LOG` before touching code.
 
 ### Switches (environment variables)
 
@@ -143,7 +143,7 @@ and runs `Java8BytecodeTest`, which fails loudly if any loaded class is not Java
 
 Run this before reading any game logic:
 
-1. `grep -c "<the print>" out/wine/client.log` — is it there at all?
+1. `grep -c "<the print>" out/wine/WINE_LOG` — is it there at all?
 2. `ls -la "$JAR_OUT"` vs `stat -c %y src/<file you changed>` — is the played
    jar newer than the sources?
 3. Is the IntelliJ artifact still enabled? It should not be.

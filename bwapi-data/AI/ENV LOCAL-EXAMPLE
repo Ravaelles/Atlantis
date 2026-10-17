@@ -5,7 +5,9 @@ FORCE_GG_FOR_ENEMY=true
 FORCE_END_GAME_AFTER_REAL_SECONDS=1200
 GENERATE_CHERRYVIS_REPLAY=true
 MODIFY_BWAPI_INI=true
-# After every local Wine game, copy the client log here when non-empty.
+# After every local Wine game, the WINE_LOG / WINE_DEBUG / WINE_DECISIONS
+# triple lands in this directory when non-empty (fixed basenames, no
+# extensions - the value anchors the directory, not the file).
 # Wine runs only (the runner checks GAME_LAUNCHER=WINE in the same file).
 WINE_LOG_COPY=
 # Game backend: CHAOS (default, Windows + ChaosLauncher + live StarCraft)
