@@ -102,7 +102,11 @@ placement over a replay mismatch.
 
 ## 6. Stale pointers (history, not tasks)
 
-`_AI/STATUS.md` deleted 2026-10-14 (§20); NEXT #47/#48/#49/#53 closed,
-narratives in `_AI/CASE-STUDIES.md`; `JBWAPI-Rav.jar` removed for stock
-2.2.0; run artefacts live in `/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS/`,
-replays in `/sc-ai/REPLAYS/`.
+`_AI/STATUS.md` deleted 2026-10-14 (§20); `__PLAN-DECISIONS.md` deleted
+2026-10-18 (all boxes landed, absorption continues as NEXT item 2);
+`_AI/MASTER-PLAN.md` folded into `NEXT.md` phases (same change); NEXT
+#47/#48/#49/#53 closed, narratives in `_AI/CASE-STUDIES.md`;
+`JBWAPI-Rav.jar` removed for stock 2.2.0; run artefacts live in
+`/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS/` as `E2E_LOG` (game),
+`E2E_DEBUG` (diagnostics), `E2E_DECISIONS` (audit) plus the stable
+`E2E_LAST_*` triple; replays in `/sc-ai/REPLAYS/`.

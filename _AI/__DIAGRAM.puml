@@ -51,9 +51,9 @@ package "Execution (stays)" {
   [production.constructions.ConstructionsCommander\nBuilderManager] as Builders
 }
 
-package "Combat (sibling, untouched)" {
-  [combat.CombatCommander\nmissions / squads] as Combat
-  [combat.micro.*] as Micro
+package "Combat (sibling, cluster Phase 0)" {
+  [battle.BattleCommander\none cluster + evaluator gate] as Combat
+  [battle.micro profiles\n(parameterized later)] as Micro
 }
 
 package "V2 reference (cutover target)" {

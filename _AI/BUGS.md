@@ -31,28 +31,14 @@ a long post-mortem belongs in an ADR or a commit message.
 ## B-19 — workers flee a packed rush they should help kill
 
 - **Where:** `WorkerDefenceManager` ordering + the 300-frame run/fight lockout.
-- **Measured** (`FourPoolDefenseTest`, Protoss base vs 6 lings, 900 frames): the
-  cannon fights and dies ~150, the zealot ~250, both trading two lings; the four
-  probes never engage and the nexus falls ~880.
-- **Fixed in the stub world (2026-10-03):** `WorkerDefenceHelpCannon.applies()`
-  AND-ed an "ignore" predicate positively (so it never fired during the melee
-  rush it exists for); `BaseUnderAttack` now suppresses Run and lifts the
-  lockouts and the `id % 5` / `id % 3` skips while the base is hit. Re-measured
-  from a clean run, the 4pool **holds**; the 9pool still loses the base but
-  trades three lings instead of two.
-- **Update 2026-10-14 (NEXT #87):** the 9pool twin now **holds** (pin since
-  `6c0b040e`): nexus and cannon live, all 8 lings die, zealot fights. The
-  drill volume moved the other way by design - hurt probes flee instead of
-  feeding (flee floors from the owner's Wine death logs), measured split
-  cannon 12 / zealot 2 / probes 7 strikes. The pin now demands token probe
-  engagement (>= 5) rather than drill-carried kills.
-- **What is left:** a **game run**. Stub-world physics is documented harness
-  rules, not the game, so "the scenario flips" is evidence that the arbitration
-  changed, not that the bot survives a real 4pool. Tracked as NEXT #34.
-- **Update 2026-10-17 (combat cutover):** the twins are deleted with the
-  manager chains they drove (`__PLAN-COMBAT.md` step 3) - rush coverage is
-  dark until the cluster learns to fight. The pins above describe the
-  deleted arbitration, kept in git history.
+- **Status 2026-10-18:** the arbitration this entry pinned is GONE - the
+  manager chains were deleted with the combat cutover (`__PLAN-COMBAT.md`
+  step 3) and the 4pool/9pool twins with them, so rush coverage is dark
+  until the cluster learns to fight (NEXT #94). The full measurement
+  history (4pool holds since the fix, 9pool holds since `6c0b040e`,
+  drill-volume split cannon 12 / zealot 2 / probes 7) is kept in git
+  history and `_AI/CASE-STUDIES.md`. What is left is a **game run**:
+  stub-world physics is harness rules, not the game (NEXT #34).
 
 ## B-25 — the bot jar ships four serialisation libraries for unreachable code
 
@@ -76,19 +62,14 @@ a long post-mortem belongs in an ADR or a commit message.
 
 ## B-41 — a construction whose building was warped was never finished, holding its worker
 
-> **FIXED 2026-10-11 (`NEXT.md` #53).** `ProtossWarping.updateNewBuildingJustWarped` marked
-> the construction `IN_PROGRESS`, never `FINISHED` - and `FINISHED` is the only status that
-> removes it from `ConstructionRequests` - so it survived for the rest of the game, with
-> `countPendingOfType` counting a standing building and `BuilderManager.isBuilder` refusing
-> its worker. A building that appeared away from its reserved tile (site moved by
-> `RefreshConstructionPosition`, or a snapped footprint) matched no construction at all and
-> leaked the same way, because the lookup is positional (2.5 tiles). Both fixed: `FINISHED`
-> on warp, and a fallback that adopts the oldest waiting construction of the same type on a
-> positional miss. Measured: the same bounded run went from `Pylons=0/5 gateways=0` to
-> `Pylon=2 Gateway=1`, and `CANNOT define construction` from a 1799-frame wall to 0. Test:
-> `OrphanedConstructionTest` (2). `TerranNewBuilding` had the same two
-> suspected defects; NEXT #56 measured them absent in a Terran game and
-> closed (`37816f95`).
+> **FIXED 2026-10-11 (`NEXT.md` #53).** `ProtossWarping.updateNewBuildingJustWarped`
+> marked the construction `IN_PROGRESS`, never `FINISHED`, and a building warped
+> away from its reserved tile matched nothing (positional lookup, 2.5 tiles) -
+> so constructions survived the game and held their workers. Fixed: `FINISHED`
+> on warp + oldest-same-type adoption on positional miss. Measured: bounded run
+> `Pylons=0/5 gateways=0` → `Pylon=2 Gateway=1`, `CANNOT define construction`
+> 1799-frame wall → 0. Test: `OrphanedConstructionTest` (2). Full mechanism in
+> `_AI/CASE-STUDIES.md` (#53); the original report lives in git history.
 
 ## How to add an entry
 

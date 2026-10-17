@@ -4,7 +4,52 @@ Living backlog for the architecture migration (stages A–D done, E–J open
 below) and for defects found along the way. This file is the single source
 of truth for "what is left"; `_AI/NOTES.md` keeps operational learnings.
 
-## Current owner priorities (2026-10-09)
+## Phases (the quarter) — checklist
+
+Merged here 2026-10-18 from `_AI/MASTER-PLAN.md` (deleted, same change):
+one task file — phases order the quarter, "Next steps" below orders the
+week. A phase is done only when its exit holds **in a game**, never on
+reading green.
+
+- [x] **Phase 0 — Foundations.** Headless OpenBW loop bounded (§17), fast
+  suite + frozen ArchUnit store, Java 1.8 everywhere, twin diagnostics
+  (`EVENTS.jsonl`, `BUILDINGS.json`) + query tooling. Exit was: a game
+  attaches, plays bounded, leaves queryable logs. Met.
+- [ ] **Phase 1 — Production correctness (top priority).** The memorized
+  opening plays itself (BO ownership, worker flow, reservations that never
+  starve the pump); every issuance lands in `DECISIONS.log` with its reason.
+  Exit: an opening with zero builder churn, zero duplicate sites, worker
+  stream unbroken, every row attributable. Substantially met (script-clean
+  opening 080114, 720-row attributed log) — remaining: #95 (reserved-250
+  watch), #96 (Wine verification batch).
+- [ ] **Phase 2 — Decision board completion.** Per-gate legacy deletions
+  with one game of proof each (ratchet, never batch rewrites); absorption
+  slice by slice until the old trio dies at zero. Exit: one issuer, one
+  log, no silent authors. Tasks: Next steps 1–2, goal-board track (#91).
+- [ ] **Phase 3 — Combat cluster (structure done, behavior pending).** One
+  cohesive cluster between mission anchors, evaluator fight/flee with a 10
+  s retreat latch, role executors with parameterized kiting. Exit: an
+  OpenBW game shows one group moving between anchors and winning an even
+  fight it should win. Tasks: `__PLAN-COMBAT.md` step 5, blocked on #94.
+- [ ] **Phase 4 — Placement cutover completion.** Catalogue planner
+  default, legacy finder deleted per `PLACEMENT-CUTOVER-PLAN.md` +
+  `redesign/03_PLACEMENT.md` (starts after Phase 1). Exit: zero `Can't
+  find place` across retained runs, legacy path gone.
+- [ ] **Phase 5 — Production V2 LIVE + architecture migration.** V2 default
+  behind the #45 deletion ordering; stages E–J below (after Phases 1–2).
+  Exit: V2 LIVE by default with parity numbers, ArchUnit store at zero.
+- [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
+  frozen baseline; parameter search over role vectors; fingerprint-driven
+  strategy selection. Exit: a tuning loop that improves a frozen scenario
+  table, unattended. (After Phase 3 + decision log.)
+- [ ] **Phase 7 — Expansion.** Second goal vocabulary (owner-directed),
+  sweeps vs real bots, OpenBW-vs-live parity. Nothing starts early.
+
+Non-rules: never batch rewrites; never gate commits on full games; never
+trade a measurement for an explanation (§3a). Deletions wait for per-gate
+game proof, not for courage. A phase's exit is verified by execution.
+
+## Current owner priorities (standing since 2026-10-09, confirmed 2026-10-18)
 
 1. **OpenBW simulations must be fast and self-terminating** - CONVENTIONS §17:
    `TIMEOUT_SECONDS=150` wall-clock and `INGAME_TIME=20` game minutes, both set
@@ -216,7 +261,7 @@ twins green (1/1 each, re-verified today). Re-run
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
   doctrine vs leash-relax (owner call, same class as the zero-supply
-  yield). Game happened (`last-wine.log`, corner [119,10], 46 fails,
+  yield). Game happened (`WINE_LOG`, corner [119,10], 46 fails,
   Pylons still landed, supply unblocked to 33): ranked refusals are
   physical 91k, PTY-modulo 33k, PTX-modulo 7k, boundaries ~274 -
   leash never bound (doctrine wins on evidence, 99.5% tile rules).
@@ -299,7 +344,7 @@ twins green (1/1 each, re-verified today). Re-run
   v2 covers tech + race army; `Queue/**` + order types last; never
   bottom-up (a bot that can't research is worse than debt).
   `Construction/**` stays by design (v2 delegates builders to it).
-## Current game state (2026-10-15)
+## Current game state (updated 2026-10-18)
 
 - Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
   Phase-3 movement proof - DEFEND→ATTACK at 8 army, anchors main →
@@ -351,7 +396,7 @@ twins green (1/1 each, re-verified today). Re-run
 - Long `20261016_172341` (6 s wall, defeat 3:05, Gateway=2 Zealot=1):
   LVL verification - zero HIGH/CRITICAL rows (nothing severe; the
   opening played clean and lost a fight), `--min-level` filters
-  correctly, bot.log 0 diagnostics. Opening timings match the
+  correctly, E2E_LOG 0 diagnostics. Opening timings match the
   control to the second (Pylon 0:54, Gateway 1:19 sup9) - enforcement
   does not starve the opening.
 - Long `20261016_164913` (141 s wall, 579 s game, monster: Nexus=2
@@ -400,7 +445,7 @@ twins green (1/1 each, re-verified today). Re-run
   Gateway=3 Dragoon=2): twin verification run - `CONSTRUCTION_PREPARING`
   x24, `CONSTRUCTION_CANCEL` x4, `PLACEMENT_FAILED` x1 (Gateway,
   unpowered), all queryable; `BUILD_BREAKDOWN` x0 (nothing stalled),
-  bot.log 0 diagnostics, 0 real exceptions. D2 fix regresses nothing
+  E2E_LOG 0 diagnostics, 0 real exceptions. D2 fix regresses nothing
   (Core warped, no same-tile stall).
 - Wine (owner live game): 600-mineral stall diagnosed - a Core
   construction survived its own warped building on its exact tiles

@@ -2,6 +2,11 @@
 
 > DELETE THIS FILE WHEN DONE (executed and deleted, like DECISIONS entries -
 > CONVENTIONS §20: no rotting prose). Git history is the archive.
+>
+> Status 2026-10-18: steps 1-4+6 stand (re-verified: `src/atlantis/combat/`
+> is an empty husk, removed from disk; no live `atlantis.combat` imports —
+> only comments and ArchUnit package lists). Step 5 fighting proof still
+> blocked on NEXT #94. This file stays until step 5 lands.
 
 ## Goal
 

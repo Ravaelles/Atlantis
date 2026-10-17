@@ -71,10 +71,21 @@ exist in this workspace and mixing them is the whole story below.
 ## 6. Where OpenBW run artefacts land
 
 - `E2E_LOGS/<run>/server.log` - the OpenBW host side.
-- `E2E_LOGS/<run>/bot.log` - the game log (stdout: HELLO, GameSummary,
+- `E2E_LOGS/<run>/E2E_LOG` - the game log (stdout: HELLO, GameSummary,
   build orders, placements).
-- `E2E_LOGS/<run>/debug.log` - diagnostics (stderr: worker gates, stuck
+- `E2E_LOGS/<run>/E2E_DEBUG` - diagnostics (stderr: worker gates, stuck
   workers, refusal breakdowns, stack traces). Split since 2026-10-15:
   the merged file drowned the game log in thousands of diagnostic lines.
-- Not `out/wine/*` - those belong to the Wine runs and must not be mixed in
-  when diagnosing a headless run.
+- `E2E_LOGS/<run>/E2E_DECISIONS` - the audited production decisions.
+- `E2E_LOGS/E2E_LAST_LOG`, `E2E_LAST_DEBUG`, `E2E_LAST_DECISIONS` - stable
+  copies of the latest run's triple.
+- Not `out/wine/*` - those hold the Wine triple (`WINE_LOG`, `WINE_DEBUG`,
+  `WINE_DECISIONS`) and must not be mixed in when diagnosing a headless run.
+
+## 7. Never source a runner script
+
+- `bash -n` and `read` inspect; `source script.sh` (even with `--help`)
+  EXECUTES it. Measured 2026-10-18: sourcing `run-wine-full.sh` to test
+  log-name derivation launched a real Wine game (had to be killed by
+  hand). To exercise a shell function, copy it into a throwaway snippet,
+  never source the runner.

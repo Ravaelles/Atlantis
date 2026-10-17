@@ -1,7 +1,11 @@
 # Building blockers — what stops a construction, per site and per mechanism
 
-Status 2026-10-12: living document for the Gateway/Pylon/Assimilator refusal
-hunt (NEXT #59, #62). Three sections with different burdens of proof:
+Status 2026-10-18: living document for the Gateway/Pylon/Assimilator refusal
+hunt (NEXT #59, #62). Since 2026-10-12 two mitigations landed on top of
+these findings (both in-tree, doctrine unchanged): a last-resort Pylon
+ladder (strict → relaxed margins → first engine-buildable tile; `PYLON_FIND_FAILED`
+only when all passes fail) and power pull-forward for unpowered catalogue
+sites. The Certain/Refuted/Open sections below still stand as written.
 
 - **Certain** - measured in a game log or in source, with the evidence named.
   Act on these.

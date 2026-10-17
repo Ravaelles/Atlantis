@@ -1,10 +1,13 @@
 # E2E tests on a real engine
 
-Status: **the OpenBW loop works and is bounded; the bot produces
-(Pylons, Gateways, Core in rosters since 2026-10-13).** Audited 2026-10-09:
-the runner attaches, self-terminates on both limits (CONVENTIONS §17) and
-can assert scenario facts; the placement blockers that failed every
-survival scenario then are closed (see §3.5).
+Status 2026-10-18: **the OpenBW loop works and is bounded (150 s wall, 20
+game minutes); the bot produces** (Pylons, Gateways, Core in rosters since
+2026-10-13; script-clean openings since 2026-10-17). Placement builds since
+the 2026-10-11 library patch. **Current blocker for any scenario with an
+opponent: none spawns** (NEXT #94) — melee games arrive enemyless, so
+kill-trade assertions cannot pass and the survival scenario waits on the
+same item. What runs green today: opening/macro scenarios against no
+effective opposition (buildings, expansion, crash-free, frames advanced).
 
 The old stage numbering is gone; this file uses §-sections. Where another
 file says "Stage 1" (the scbw tier), "Stage 3" (the OpenBW runner) or "Stage 5"
@@ -206,14 +209,16 @@ Each step is small and ends with something a command proves.
    numbers), not placement.
 4. **Port the 7-minute survival scenario** with a near-even trade:
    `EXPECT_MIN_INGAME_SECONDS=420`, `EXPECT_MIN_KILLED=12`,
-   `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`. This is the
-   owner's ask and the assertions are ready; it currently fails on the Pylon.
+   `EXPECT_MAX_KILLED=40`, `EXPECT_MIN_RESOURCE_BALANCE=-200`. Blocked on
+   NEXT #94: melee games spawn no enemy, so kill-trade assertions cannot
+   pass however clean the opening plays. Unblocks the day the enemy
+   spawns — the assertions are ready.
 5. **Only then** the sweeps, replay playback and the OpenBW-vs-scbw parity game.
 
-**The blocker (measured 2026-10-09):** the bot never places a Pylon on TauCross,
-so it produces nothing, kills nothing, and the survival scenario cannot pass.
-That is placement, not the runner; the runner is now bounded (CONVENTIONS §17),
-fast (~5 s wall clock for 7 game minutes), and asserts.
+**The blocker (2026-10-18):** the enemy never spawns (NEXT #94), so no
+scenario with kill-trade assertions can pass. Placement is closed as a
+blocker (library patch + last-resort ladder); the runner is bounded
+(CONVENTIONS §17) and asserts.
 
 What NOT to do first: no new opponent work, no determinism sweeps, and no more
 placement refactoring until a Pylon actually lands in a run.

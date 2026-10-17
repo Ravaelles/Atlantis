@@ -82,7 +82,7 @@ attempt does not repeat the search.
   enemy start, computer force) is the remaining path - no editor on
   this machine.
 
-## Decision needed from the owner (updated 2026-10-17)
+## Decision needed from the owner (updated 2026-10-17, tracked as NEXT #94)
 
 **Measured outcomes so far:**
 

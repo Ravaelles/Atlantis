@@ -13,8 +13,8 @@ AI assistant.
 
 | I want to… | Read |
 |---|---|
-| know **what to work on next** | `NEXT.md` (open backlog; the top item, next priority and current plan are named at the top of the file) |
-| see the **whole road** | `MASTER-PLAN.md` (big phases in priority order, with exit criteria) |
+| know **what to work on next** | `NEXT.md` (open backlog: phase checklist for the quarter, ordered next steps for the week; the top item, next priority and current plan are named at the top of the file) |
+| see the **whole road** | `NEXT.md` "Phases (the quarter)" (big phases in priority order, with exit criteria; detail in the linked documents) |
 | **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
 | work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md`, `BUILDING-BLOCKERS.md` (certain vs refuted vs open, per site) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |

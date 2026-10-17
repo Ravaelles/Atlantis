@@ -1,32 +1,32 @@
 # OpenBW: how to run it, and what it is for
 
-Status 2026-10-09: **the client attaches and the bot plays**, and every run is
+Status 2026-10-18: **the client attaches and the bot plays**, and every run is
 bounded by two hard limits (CONVENTIONS §17). One command owns the whole
 lifecycle:
 
 ```bash
-TIMEOUT_SECONDS=120 INGAME_TIME=$((60*20)) \
-  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+TIMEOUT_SECONDS=150 INGAME_TIME=$((60*20)) \
+  timeout 150 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
 Limits, set once at the top of the script and refused when widened:
 
 | knob | default | meaning |
 |---|---|---|
-| `TIMEOUT_SECONDS` | `120` | wall-clock cap for the whole simulation |
+| `TIMEOUT_SECONDS` | `150` | wall-clock cap for the whole simulation |
 | `INGAME_TIME` | `60*20` (20 game minutes) | the bot ends the game itself at this in-game time |
 
 Other optional env: `PLACEMENT=catalogue`, `PRODUCTION_V2=LIVE`,
 `ENEMY_COUNT=0|1`, `BUILDER_LOG=1`. All of them (including both limits) are written
-into the bot's ENV by the script. `TIMEOUT_SECONDS > 120` is an error, by design; a
+into the bot's ENV by the script. `TIMEOUT_SECONDS > 150` is an error, by design; a
 longer run needs the owner's explicit permission for that specific command
 (CONVENTIONS §13).
 
 ### `--save-replay` - record the game to `/sc-ai/REPLAYS` (added 2026-10-10)
 
 ```bash
-TIMEOUT_SECONDS=120 INGAME_TIME=120 \
-  timeout 120 bash scripts/run-openbw-e2e.sh --save-replay "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+TIMEOUT_SECONDS=150 INGAME_TIME=120 \
+  timeout 150 bash scripts/run-openbw-e2e.sh --save-replay "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ls -lat /sc-ai/REPLAYS/ | head
 ```
 
@@ -57,8 +57,8 @@ shape CONVENTIONS §17 relies on.
 
 ### `BUILDER_LOG=1` - per-frame builder trace (added 2026-10-10)
 ```bash
-BUILDER_LOG=1 TIMEOUT_SECONDS=120 INGAME_TIME=120 \
-  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+BUILDER_LOG=1 TIMEOUT_SECONDS=150 INGAME_TIME=120 \
+  timeout 150 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
 Prints one `BUILDER @<frame> …` line per frame for every worker that owns a
@@ -79,7 +79,7 @@ minerals.
 ### `--cvis` - CherryVis trace for the run (added 2026-10-12)
 
 ```bash
-timeout 120 bash scripts/run-openbw-e2e.sh --short --cvis "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+timeout 150 bash scripts/run-openbw-e2e.sh --short --cvis "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
 Sets `GENERATE_CHERRYVIS_REPLAY=true` in the bot's ENV. The bot writes
@@ -166,11 +166,11 @@ verdict, exactly as before:
 Example - survive the opening for 7 game minutes with a near-even trade:
 
 ```bash
-TIMEOUT_SECONDS=120 INGAME_TIME=$((60*7)) \
+TIMEOUT_SECONDS=150 INGAME_TIME=$((60*7)) \
   EXPECT_MIN_INGAME_SECONDS=420 EXPECT_MIN_KILLED=12 EXPECT_MAX_KILLED=40 \
   EXPECT_MIN_PYLONS=1 EXPECT_MIN_GATEWAYS=1 EXPECT_NO_PLACEMENT_FAILURES=1 \
   EXPECT_MIN_RESOURCE_BALANCE=-200 \
-  timeout 120 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
+  timeout 150 bash scripts/run-openbw-e2e.sh "maps/cog/(3)TauCross1.1.scx" Protoss Zerg
 ```
 
 The script prints `verdict: ingame=..s killed=.. resourceBalance=..` and exits
@@ -214,8 +214,8 @@ Three settings make that true, all already in the script and in `OpenBWHost`:
    `FORCE_END_GAME_AFTER_INGAME_SECONDS` (game clock, 20 minutes) both call
    `ForceExitLocallyAfterRealSeconds`, which ends the game while the host is still
    alive. If the host dies first the client is orphaned and the run reports failure
-   after playing (measured 2026-10-08). `Env` re-caps the wall-clock value at 120,
-   so a hand-edited ENV cannot widen it.
+   after playing (measured 2026-10-08). The script refuses
+   `TIMEOUT_SECONDS > 150`, so a widened wall-clock value cannot slip in.
 3. **`BWAPI_DATA_PATH` + `AI/build_orders` resolve from the directory the jar runs
    in**, or the bot plays with no production and says nothing.
 

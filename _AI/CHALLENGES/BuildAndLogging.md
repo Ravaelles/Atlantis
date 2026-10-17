@@ -41,7 +41,7 @@ about game logic. Read this before concluding that "the code does not run".
   `UnixChaosGameLauncher` uses `ProcessBuilder.inheritIO()`. `LIVE_OUTPUT=0`
   silences the console but still writes the log.
 - **Rule:** when a print "does not work", `grep -c` it in
-  `out/wine/client.log` BEFORE changing any code. The console is a tail, not the
+  `out/wine/WINE_LOG` BEFORE changing any code. The console is a tail, not the
   whole file.
 
 ## Two sources of truth for the race disabled a whole race's code
@@ -104,7 +104,7 @@ about game logic. Read this before concluding that "the code does not run".
 
 ## Checklist before concluding "the code does not run"
 
-1. `grep -c "<the print>" out/wine/client.log` - is it there at all?
+1. `grep -c "<the print>" out/wine/WINE_LOG` - is it there at all?
 2. `ls -la <JAR_OUT>` vs `stat -c %y <the source you changed>` - is the played
    jar newer than the sources?
 3. Is the IDE artifact still enabled (build-on-make)? It should not be.

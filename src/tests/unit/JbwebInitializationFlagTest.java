@@ -15,7 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * exist
  * on Linux - where {@code InitJBWEB.init()} throws and {@code AMap} catches it
  * and
- * continues ({@code _AI/LOCAL-STARCRAFT.md} 187-189). With the old
+ * continues ({@code _AI/POSITION-FINDER.md} point 3: no JNI in the placement
+ * path). With the old
  * {@code return game != null}, OpenBW therefore reported a usable JBWEB with
  * half-built (or empty) grids, {@code MapTiles.canBuildHere} took the
  * {@code JBWEB.isPlaceable} path, and every valid tile was refused:

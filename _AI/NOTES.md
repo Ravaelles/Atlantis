@@ -2,14 +2,6 @@
 
 Hard-won operational facts that do not belong anywhere else. Architecture lives in `DOCS/`.
 
-## Never source a runner script
-
-- `bash -n` and `read` inspect; `source script.sh` (even with `--help`)
-  EXECUTES it. Measured 2026-10-18: sourcing `run-wine-full.sh` to test
-  log-name derivation launched a real Wine game vs Fenris Brood (had to
-  be killed by hand). To exercise a shell function, copy it into a
-  throwaway snippet, never source the runner.
-
 ## Test runner hygiene
 - `scripts/run-tests.sh` does **not** clean `out/` before compiling, so a deleted
   or renamed class keeps running as a stale `.class` file and corrupts counts (and

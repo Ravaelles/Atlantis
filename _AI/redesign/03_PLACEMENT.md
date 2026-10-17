@@ -1,6 +1,17 @@
 # Track 3: Building Placement — Reverse Engineering Stardust's Algorithm
 
-## NOT FINISHED (read this first — exact list, 2026-10-08)
+## STATUS 2026-10-18 (read this first — what moved since the list below)
+
+- The legacy path still builds through `APositionFinder` by default
+  (item 1 stands); the JBWAPI `hasPath` source patch builds Pylons
+  through it, so placement is not the blocker it was.
+- Landed on top, doctrine unchanged: a last-resort Pylon ladder (strict
+  → relaxed margins → first engine-buildable tile) and power
+  pull-forward for unpowered catalogue sites (NEXT #81, Phase 4 partial).
+- Terran/Zerg stubs, wall-gap measurement, coarse Pylon pull-forward,
+  unplaced expansion/fortification policy, Chebyshev `distanceToExit`,
+  simplified scan order and missing start-block variants (items 2–8)
+  all stand as written.
 
 Everything below this block is the design. **Protoss placement is implemented and
 acceptance-tested (28 tests); these are the gaps that remain.**

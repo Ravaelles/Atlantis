@@ -6,14 +6,17 @@
 
 ## 0. Phase 0: cluster-first simplification (owner direction 2026-10-17)
 
-Status: **design recorded, not started.** Production and building (Track 1)
-take precedence until the opening is fixed - this phase starts the moment
-they are. Nothing below deletes code yet.
-
-When combat work starts, it starts with **deletion, not with an incremental
-port**: the per-unit manager chains (`combat/micro/**`, the 37-manager
-sequences, static squads, `Decision`) are removed first, and what replaces
-them is deliberately primitive:
+Status 2026-10-18: **structure done, movement proven, fighting blocked.**
+The deletion landed (`src/atlantis/combat/` → `src-old/`, support
+machinery extracted to `atlantis.battle`, entry rewired to
+`BattleCommander`, 15 behavior tests deleted, ArchUnit store shrunk by 127
+pure removals — `__PLAN-COMBAT.md` steps 1-4+6): one combat cluster that
+sticks and moves together, mission following (DEFEND = main, ATTACK =
+enemy base / unexplored starts), the Combat Evaluator as the single
+fight/retreat gate with a 240-frame retreat latch, per-unit
+attack-in-range else move, CLUSTER twin every 31f. Proven 091624: 55-unit
+group, DEFEND→ATTACK, anchors main → natural → enemy corner. Fighting
+proof waits on a game WITH an enemy (NEXT #94). What landed, concretely:
 
 - **One combat cluster.** Army units stick together and move together.
   No per-unit decisions, no ordering-as-semantics, no competing behaviors
@@ -40,11 +43,10 @@ target (dynamic spatial clusters, simulation gating, formations,
 profile executors). Phase 0 is the floor under them - the simplest
 behavior that plays real games - and every later stage must preserve
 its property: one decision point per frame, parameters instead of
-competing modules. The deterministic-decision work (questions,
-decisions with reasons, the decisions log) serves production first;
-combat adopts it when Phase 0 starts.
+competing modules. Production-side audited decisions (`DECISIONS.log`)
+landed first; combat adopts the same shape when the fighting proof does.
 
-## Current State Diagnosis (Atlantis)
+## Current State Diagnosis (Atlantis as of 2026-10-17 — the deleted shape, kept as the reference §1–§8 ports FROM)
 
 ### Topology
 
