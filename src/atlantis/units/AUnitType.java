@@ -346,7 +346,26 @@ public class AUnitType implements Comparable<Object> {
 
         // If not found and ends with "s", try removing the "s"
         if (unitName.trim().endsWith("s")) {
-            return getByName(unitName.substring(0, unitName.trim().length() - 1));
+            AUnitType plural = getByName(unitName.substring(0, unitName.trim().length() - 1));
+            if (plural != null) return plural;
+        }
+
+        // Last resort: the short display form (name()) abbreviates multi-word
+        // types ("Cybernetics Core" -> "CyberneticsC"), which the field loop
+        // above never matches. Producer ids travel in that form, so without
+        // this every research facility fails to resolve (measured: V2
+        // research never dispatched - "CyberneticsC" answered null). Exact
+        // field matches still win; this only runs when they missed.
+        for (Field field : AUnitType.class.getFields()) {
+            if (!AUnitType.class.isAssignableFrom(field.getType())) continue;
+            try {
+                AUnitType candidate = (AUnitType) field.get(null);
+                if (candidate != null && candidate.name().equalsIgnoreCase(unitName)) return candidate;
+            } catch (Exception e) {
+                if (!disableErrorReporting) {
+                    System.err.println("error trying short-name AUnitType for: '" + unitName + "'\n" + e.getMessage());
+                }
+            }
         }
 
         return null;
