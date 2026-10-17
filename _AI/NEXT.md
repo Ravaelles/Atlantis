@@ -69,6 +69,10 @@ reading green.
   (`FacilityNameRoundTripTest`, fallback in `getByName`).
   Next slices in this order: power-smart siting, longer-game proof
   (Singularity live fire, V2 gas order, parity), then the default flip.
+  `202456` (V2 LIVE, 1055 s): gas order FIRED (Assimilator 4:08@27,
+  exact geyser); Core+Forge live (tech gap closed); Singularity still
+  not live; parity 0.63 vs 0.83 buildings/min (legacy `200123`) -
+  thin, drivers now no-Dragoons + no-Nexus-2, not missing tech.
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
@@ -350,7 +354,9 @@ twins green (1/1 each, re-verified today). Re-run
   position, builder and requirements exonerated with evidence. Open:
   which silent `requestBuilding` exit ate them - the `BUILD_REFUSED`
   twin (landed 2026-10-17) names it from the next clean game on; then
-  a Forge game. No blind patch.
+  a Forge game. V2 runs bypass the twinned door (delegates builders
+  past it - `BUILD_REFUSED` 0 in `202456`), so the naming game is a
+  legacy run. No blind patch.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -516,6 +522,18 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
+- Long V2 LIVE `20261017_202456` (139 s wall, 1055 game-s, Protoss:
+  Zealot=7 Probe=25 Forge=1 Pylon=6 Core=1 Assimilator=1 Nexus=1
+  Gateway=2): exit 143 is the wall cap. 18 warps (11 buildings + 7
+  Zealots, zero Dragoons). Tech coverage closed vs `131515`: Forge
+  2:59@15, Assimilator 4:08@27 on the exact geyser tile (V2 gas order
+  live fire), Core 4:35@31 - the frame-2 `Not powered x523/523`
+  decline resolved once Pylons lit space. No Dragoon transition and no
+  second Nexus in 17.6 min - remaining thinness drivers. Legacy pumps
+  provably out (1 GAS_FIX, no DRAGOON/BOARD/SINGULARITY rows);
+  `BUILD_REFUSED` 0 (V2 delegates builders past the twinned legacy
+  door). NOTE: this run's `E2E_DECISIONS` is stale pre-fix accumulation
+  (identical 12223 rows) - read V2 from EVENTS/ledger/roster only.
 - Long `20261017_200123` (138 s wall, 944 game-s, 1 base: Nexus=1 Probe=22
   Pylon=7 Gateway=4 Dragoon=3 Zealot=6, single Core, NO Forge): exit 143
   is the wall cap (game healthy at the cut). 23 ledger rows (unit rows
