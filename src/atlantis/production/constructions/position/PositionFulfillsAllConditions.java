@@ -63,6 +63,10 @@ public class PositionFulfillsAllConditions {
 
         if (!CanPhysicallyBuildHere.check(builder, building, position)) return failed();
         if (OtherConstructionTooClose.isOtherConstructionTooClose(builder, building, position)) return failed();
+        if (OverlapsOurUnfinishedBuilding.check(position, building)) {
+            AbstractPositionFinder._STATUS = "Overlaps our unfinished building";
+            return failed();
+        }
         if (EnemiesTooClose.check(builder, building, position)) return failed();
 
         if (We.protoss()) {
