@@ -1,5 +1,6 @@
 package atlantis.production.constructions.position;
 
+import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -13,6 +14,8 @@ import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.util.We;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 /**
  * Phase 4 slice 1: answers the legacy site search from the catalogue planner.
@@ -61,20 +64,53 @@ public final class CatalogueSiteAdapter {
      * synthetic grid instead of the live map.
      */
     public static APosition siteFor(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
+        APosition site = siteForInner(planner, building, construction);
+        if (site != null) {
+            EventLog.key(LogKey.CATALOGUE_SITE)
+                .param("type", building.name())
+                .param("result", "answered")
+                .param("tx", site.tx())
+                .param("ty", site.ty())
+                .log(AGame.now(), A.minSec());
+        }
+        return site;
+    }
+
+    private static APosition siteForInner(PlacementPlanner planner, AUnitType building, Construction construction) {
         if (construction == null || building == null) return null;
-        if (building.isGasBuilding() || building.isBase()) return null;
+        if (building.isGasBuilding() || building.isBase()) {
+            decline(building, "dedicated-finder");
+            return null;
+        }
 
         ProductionOrder order = construction.productionOrder();
-        if (order == null) return null;
+        if (order == null) {
+            decline(building, "no-order");
+            return null;
+        }
 
-        if (!We.protoss()) return null;
+        if (!We.protoss()) {
+            decline(building, "non-protoss");
+            return null;
+        }
 
         planner.startPass();
         PlacementReservation reservation = planner.reservePlacement(
             UnitProducible.of(building), constraintFor(order, construction), AGame.now()
         );
-        if (reservation == null || !reservation.isSuccessful()) return null;
+        if (reservation == null || !reservation.isSuccessful()) {
+            decline(building, "no-tile");
+            return null;
+        }
         return APosition.create(reservation.tileX(), reservation.tileY());
+    }
+
+    private static void decline(AUnitType building, String reason) {
+        EventLog.key(LogKey.CATALOGUE_SITE)
+            .param("type", building == null ? "-" : building.name())
+            .param("result", "declined")
+            .param("reason", reason)
+            .log(AGame.now(), A.minSec());
     }
 
     /**

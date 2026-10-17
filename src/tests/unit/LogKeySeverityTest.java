@@ -37,5 +37,6 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.NORMAL, LogKey.DRAGOON_TRAIN.level());
         assertEquals(LogLevel.NORMAL, LogKey.TRAIN_ATTEMPT.level());
         assertEquals(LogLevel.NORMAL, LogKey.CLUSTER.level());
+        assertEquals(LogLevel.NORMAL, LogKey.CATALOGUE_SITE.level());
     }
 }

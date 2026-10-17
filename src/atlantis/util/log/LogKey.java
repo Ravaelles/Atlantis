@@ -54,7 +54,9 @@ public enum LogKey {
     /** Cluster posture/tactic/size/anchor, throttled. */
     CLUSTER,
     /** A Nexus train/queue attempt (supply, remaining, engine answer). */
-    TRAIN_ATTEMPT;
+    TRAIN_ATTEMPT,
+    /** A catalogue answer for a legacy site search: answered tile or decline reason. */
+    CATALOGUE_SITE;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,

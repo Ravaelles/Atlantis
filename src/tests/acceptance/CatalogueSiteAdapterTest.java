@@ -10,6 +10,7 @@ import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
@@ -46,6 +48,7 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
         ConstructionRequests.constructions.clear();
         Queue.get().allOrders().list().clear();
         Queue.get().clearCache();
+        EventLog.clearForTests();
     }
 
     /** Flat, fully buildable map. */
@@ -112,6 +115,9 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             assertNull(
                 CatalogueSiteAdapter.siteFor(blocklessPlanner(40, 40), null, AUnitType.Protoss_Assimilator, construction),
                 "a refinery builds only on its geyser's exact tile - the catalogue must decline");
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Assimilator\",\"result\":\"declined\",\"reason\":\"dedicated-finder\""),
+                "the decline lands in the twin with its reason, so a game log names the path");
         });
     }
 
@@ -158,6 +164,9 @@ public class CatalogueSiteAdapterTest extends WorldStubForTests {
             assertNotNull(site, "a free exact tile on a flat map must be answered");
             assertEquals(25, site.tx());
             assertEquals(25, site.ty());
+            assertTrue(EventLog.toJsonLines().contains(
+                "\"key\":\"CATALOGUE_SITE\",\"type\":\"Gateway\",\"result\":\"answered\",\"tx\":25,\"ty\":25"),
+                "the answered tile lands in the twin, so a game log names the path");
         });
     }
 
