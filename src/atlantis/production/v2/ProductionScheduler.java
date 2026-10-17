@@ -120,14 +120,19 @@ public final class ProductionScheduler {
 
     /**
      * How many more of {@code goal}'s item are actually wanted, after subtracting
-     * what exists and what is already on its way.
+     * what is already on its way.
      *
      * <p>
      * A continuous goal ({@code count == -1}) wants one per free producer, so it is
      * never satisfied by a count - it is answered by the producer it will be given.
-     * A counted goal wants {@code count}, satisfied by the per-type count the game
-     * reports ({@code availableFrom} covers finished, under construction and
-     * requested).
+     * A counted goal wants {@code count}, satisfied by in-flight work of the same
+     * type. STANDING buildings never satisfy: one Pylon on the map must not
+     * suppress every future Pylon (measured 2026-10-19: V2 LIVE never built
+     * past the first of any building - supply death at 25/25, expansions
+     * never taken). One-shot rows (build order) terminate by progress, and
+     * in-flight duplicates are still refused - so the 2026-10-08
+     * re-plan-forever pathology (a fresh item every frame at a sliding
+     * frame, never built) stays fixed while recurring demand flows.
      * </p>
      */
     private String buildingGoalKey(Producible item, TargetPlacement placement) {
@@ -155,7 +160,7 @@ public final class ProductionScheduler {
         // at 557, then 746, then 974, and never built (measured 2026-10-08 on
         // OpenBW). One order per building is a property of the SCHEDULER, not a rule
         // every goal has to remember.
-        return existingItems.availableFrom(item) >= 0 ? 0 : goal.count();
+        return existingItems.inFlightFrom(item) >= 0 ? 0 : goal.count();
     }
 
     /**

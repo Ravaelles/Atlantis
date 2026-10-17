@@ -28,6 +28,21 @@ public interface ExistingItems {
     /** Absolute frame the item is available from, or {@link #MISSING}. */
     int availableFrom(Producible item);
 
+    /**
+     * Absolute frame an in-flight item arrives from, or {@link #MISSING}.
+     * In-flight means under construction or requested-not-started - never
+     * standing. The scheduler dedups against this (a second order for work
+     * already coming), while prerequisites read {@link #availableFrom} (a
+     * standing Core satisfies Dragoons). One standing building must not
+     * suppress every future need of its type (measured 2026-10-19: V2 LIVE
+     * never built past the first of any building - supply death at 25/25).
+     * Default is {@code availableFrom} itself; adapters with a real
+     * completed/uncompleted distinction override.
+     */
+    default int inFlightFrom(Producible item) {
+        return availableFrom(item);
+    }
+
     /** Nothing exists: the answer for a hand-built scheduler (and for tests). */
     ExistingItems NONE = new ExistingItems() {
         @Override

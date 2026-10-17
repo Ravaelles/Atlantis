@@ -120,6 +120,7 @@ public class ProductionSchedulerTest {
 
     private static final class FakeExisting implements ExistingItems {
         final Map<String, Integer> available = new HashMap<>();
+        final Map<String, Integer> inFlight = new HashMap<>();
 
         FakeExisting ready(Producible item) {
             available.put(item.id(), 0);
@@ -131,10 +132,29 @@ public class ProductionSchedulerTest {
             return this;
         }
 
+        FakeExisting inFlightAt(Producible item, int frame) {
+            inFlight.put(item.id(), frame);
+            return this;
+        }
+
+        FakeExisting nothingInFlight(Producible item) {
+            inFlight.put(item.id(), null);
+            return this;
+        }
+
         @Override
         public int availableFrom(Producible item) {
             Integer frame = available.get(item.id());
             return frame == null ? MISSING : frame;
+        }
+
+        @Override
+        public int inFlightFrom(Producible item) {
+            if (inFlight.containsKey(item.id())) {
+                Integer frame = inFlight.get(item.id());
+                return frame == null ? MISSING : frame;
+            }
+            return availableFrom(item);
         }
     }
 
@@ -189,6 +209,39 @@ public class ProductionSchedulerTest {
                 "the placement planner should reserve only the Pylon and Gateway, not the duplicate Pylon");
         assertTrue(plan.firstOf(gateway).startFrame() >= plan.firstOf(pylon).completionFrame(),
                 "Gateway must remain gated by the first Pylon completing");
+    }
+
+    @Test
+    public void standingBuildingDoesNotSuppressTheNextOne() {
+        FakeProducible pylon = building("Pylon", 100, 0, 450, new ArrayList<>(), "Probe");
+        FakePlanner planner = new FakePlanner();
+        ProductionGoal anotherPylon = new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 1, 0,
+                TargetPlacement.anywhere());
+        FakeExisting standing = new FakeExisting().ready(pylon).nothingInFlight(pylon);
+
+        ProductionPlan plan = scheduler(new FakeRegistry(), planner, standing).schedule(
+                Collections.singletonList(anotherPylon),
+                new ResourceTimeline(0, 2000, 500, 0, 8, 16));
+
+        assertEquals(1, countOf(plan, "Pylon"),
+                "one standing Pylon must not suppress every future Pylon (supply death at 25/25): " + plan);
+    }
+
+    @Test
+    public void inFlightBuildingSuppressesItsDuplicate() {
+        FakeProducible pylon = building("Pylon", 100, 0, 450, new ArrayList<>(), "Probe");
+        FakePlanner planner = new FakePlanner();
+        ProductionGoal anotherPylon = new ProductionGoal(pylon, ProductionGoal.PRIORITY_DEPOTS, 1, 0,
+                TargetPlacement.anywhere());
+        FakeExisting warping = new FakeExisting().nothingInFlight(pylon);
+        warping.inFlightAt(pylon, 300);
+
+        ProductionPlan plan = scheduler(new FakeRegistry(), planner, warping).schedule(
+                Collections.singletonList(anotherPylon),
+                new ResourceTimeline(0, 2000, 500, 0, 8, 16));
+
+        assertEquals(0, countOf(plan, "Pylon"),
+                "a warping Pylon still suppresses its duplicate: " + plan);
     }
 
     @Test

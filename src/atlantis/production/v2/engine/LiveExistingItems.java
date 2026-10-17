@@ -53,4 +53,21 @@ public final class LiveExistingItems implements ExistingItems {
         }
         return best;
     }
+
+    @Override
+    public int inFlightFrom(Producible item) {
+        if (!(item instanceof UnitProducible)) return availableFrom(item);
+        AUnitType type = ((UnitProducible) item).type();
+        int best = MISSING;
+        for (AUnit unit : Select.ourWithUnfinished().ofType(type).list()) {
+            if (unit.isCompleted()) continue;
+            int frame = now + Math.max(0, unit.getRemainingBuildTime());
+            if (best < 0 || frame < best)
+                best = frame;
+        }
+        if (best < 0 && type.isABuilding() && ConstructionRequests.countNotStartedOfType(type) > 0) {
+            best = now + type.totalTrainTime();
+        }
+        return best;
+    }
 }
