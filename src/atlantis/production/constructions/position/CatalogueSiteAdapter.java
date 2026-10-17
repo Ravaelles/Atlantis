@@ -52,11 +52,35 @@ public final class CatalogueSiteAdapter {
     }
 
     /**
+     * One planner per game frame, shared by every site search in that frame.
+     * A fresh planner rebuilds the whole-map grid + catalogue at
+     * construction, which made capped runs unfinishable (measured
+     * 2026-10-18: 35 s wall for 208 game-s with catalogue vs 6 s for 306
+     * game-s legacy on the same opening). The frame's first search pays the
+     * rebuild via {@code startPass()}; later searches reuse the pass - which
+     * additionally keeps two constructions off one tile, the same pass
+     * semantics the v2 scheduler relies on. Same static-state shape as the
+     * {@code APositionFinder} cache next door; single-threaded game loop.
+     */
+    private static CataloguePlacementPlanner sharedPlanner;
+    private static int sharedPlannerFrame = -1;
+
+    private static synchronized PlacementPlanner plannerForFrame(int frame) {
+        if (sharedPlanner == null || sharedPlannerFrame != frame) {
+            sharedPlanner = new CataloguePlacementPlanner();
+            sharedPlanner.startPass();
+            sharedPlannerFrame = frame;
+        }
+        return sharedPlanner;
+    }
+
+    /**
      * A catalogue tile for this construction, or null when the catalogue
      * declines (out of scope, or no tile) and the legacy search must answer.
+     * Uses the frame's shared planner (one grid+catalogue rebuild per frame).
      */
     public static APosition siteFor(AUnit builder, AUnitType building, Construction construction) {
-        return siteFor(new CataloguePlacementPlanner(), builder, building, construction);
+        return answerWithTwin(siteForInner(plannerForFrame(AGame.now()), building, construction), building);
     }
 
     /**
@@ -64,7 +88,11 @@ public final class CatalogueSiteAdapter {
      * synthetic grid instead of the live map.
      */
     public static APosition siteFor(PlacementPlanner planner, AUnit builder, AUnitType building, Construction construction) {
-        APosition site = siteForInner(planner, building, construction);
+        planner.startPass();
+        return answerWithTwin(siteForInner(planner, building, construction), building);
+    }
+
+    private static APosition answerWithTwin(APosition site, AUnitType building) {
         if (site != null) {
             EventLog.key(LogKey.CATALOGUE_SITE)
                 .param("type", building.name())
@@ -94,7 +122,6 @@ public final class CatalogueSiteAdapter {
             return null;
         }
 
-        planner.startPass();
         PlacementReservation reservation = planner.reservePlacement(
             UnitProducible.of(building), constraintFor(order, construction), AGame.now()
         );
