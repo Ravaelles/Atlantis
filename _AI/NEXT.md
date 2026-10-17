@@ -242,9 +242,10 @@ twins green (1/1 each, re-verified today). Re-run
 
 - **#3** Migrate production readers of `FoggedUnit` to `UnitSnapshot` once
   the World registry owns lifecycle (a delegation switch has no value
-  until then): `ProcessAttackUnit:56`, `BuilderAvoidEnemies:27`,
-  `DeadMan:25`, `AFocusPoint:111`, `DoAvoidEnemies:30`,
-  `AtlantisJfap.isValidUnit:71` (borderline). The rest was triaged out
+  until then): `BuilderAvoidEnemies:27`, `DeadMan:25`,
+  `AFocusPoint:111`, `DoAvoidEnemies:30`,
+  `AtlantisJfap.isValidUnit:71` (borderline). `ProcessAttackUnit:56`
+  died with the combat cutover (now `src-old/`). The rest was triaged out
   (same object, worse GC) or dies with lifecycle.
 
 ## Stage F — cache purge (Select query caches gone 2026-10-19, see below)
