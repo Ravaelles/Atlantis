@@ -74,10 +74,13 @@ reading green.
   not live; parity 0.63 vs 0.83 buildings/min (legacy `200123`) -
   thin, drivers now no-Dragoons + no-Nexus-2, not missing tech.
   `210732`-era follow-up: Singularity FIRED live on V2 (`202456`,
-  researched 5:16) - the pending half is only the Nexus issue timing,
-  not research. Nexus demand fires (pinned `V2ExpansionDemandTest`
-  4/4: 25-per-base threshold, in-flight and 4-base guards); `202456`
-  committed the builder at 17:29, too late to warp - timing open.
+  researched 5:16). Nexus demand fires (pinned `V2ExpansionDemandTest`
+  4/4); `202456` never warped it for a measured reason, not timing:
+  the site resolves to our own base tile [9,47] and the proximity
+  finish cancels it 16k times (frames 8317-24620) - V2 has no expansion
+  siting (03_PLACEMENT.md C14, open), the generic door keeps offering
+  the main-base footprint. Filed as #150 (backoff vs real siting is
+  the design call).
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
