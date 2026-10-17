@@ -106,6 +106,43 @@ if [ "${EXPECT_NO_CRITICAL:-0}" = "1" ]; then
   fi
 fi
 
+# Opening status gate (opt-in, NEXT #150): the first Pylon and the first
+# Gateway must leave PREPARING - i.e. a BUILDING_STARTED twin fired for
+# each (adopt assigned a builder) and the ledger shows both warped. A
+# run can end with the right roster while every early construction sat
+# stuck (the status never advanced); roster assertions alone cannot see
+# that. Twins live next to BOT_LOG by construction (same run dir).
+if [ "${EXPECT_OPENING_STATUS:-0}" = "1" ]; then
+  EVENTS_FILE="$(dirname "$BOT_LOG")/EVENTS.jsonl"
+  LEDGER_FILE="$(dirname "$BOT_LOG")/BUILDINGS.json"
+  if [ ! -f "$EVENTS_FILE" ]; then
+    REASONS+=("opening status: no EVENTS.jsonl next to the bot log")
+    FAILED=1
+  else
+    if ! grep '"key":"BUILDING_STARTED"' "$EVENTS_FILE" 2>/dev/null | grep -q '"type":"Pylon"'; then
+      REASONS+=("opening status: no BUILDING_STARTED for the first Pylon (stuck in PREPARING?)")
+      FAILED=1
+    fi
+    if ! grep '"key":"BUILDING_STARTED"' "$EVENTS_FILE" 2>/dev/null | grep -q '"type":"Gateway"'; then
+      REASONS+=("opening status: no BUILDING_STARTED for a Gateway (stuck in PREPARING?)")
+      FAILED=1
+    fi
+  fi
+  if [ ! -f "$LEDGER_FILE" ]; then
+    REASONS+=("opening status: no BUILDINGS.json next to the bot log")
+    FAILED=1
+  else
+    if ! grep -q '"type":"Pylon"' "$LEDGER_FILE" 2>/dev/null; then
+      REASONS+=("opening status: ledger shows no warped Pylon")
+      FAILED=1
+    fi
+    if ! grep -q '"type":"Gateway"' "$LEDGER_FILE" 2>/dev/null; then
+      REASONS+=("opening status: ledger shows no warped Gateway")
+      FAILED=1
+    fi
+  fi
+fi
+
 # === The result block =====================================================
 # One machine-readable line first (what a script or a CI job greps), then the roster
 # and the reason for a failure in words (what a human reads). The roster is printed on

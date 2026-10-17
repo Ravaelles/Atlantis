@@ -73,6 +73,9 @@ E2E_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/E2E_LOGS"
 #   EXPECT_MIN_NEXUS=<n>            fail if fewer Protoss Nexus exist at end
 #   EXPECT_MIN_RESOURCE_BALANCE=<n> fail if Resource killed/lost < n
 #   EXPECT_NO_PLACEMENT_FAILURES=1  fail if "Can't find place" is logged
+#   EXPECT_OPENING_STATUS=1       fail if the opening Pylon/Gateway never
+#                                 left PREPARING (no BUILDING_STARTED twin)
+#                                 or never warped (absent from the ledger)
 # When none is set the script only reports the verdict, as before.
 #
 # Two named build tiers, because "does the bot build" has two honest questions:
@@ -283,6 +286,34 @@ if [ "$ASSERTION_SELF_TEST" -eq 1 ]; then
   fi
   rm -f "$SELF_LOG"
   say "scenario assertion self-test OK (valid fixture passes; broken fixture fails)"
+
+  # Opening status gate fixtures: a sibling EVENTS.jsonl + BUILDINGS.json next
+  # to the bot log, in the twin and ledger formats the bot really writes.
+  SELF_DIR="$(mktemp -d)"
+  printf '%s\n' '### Total time: 190 seconds. ###' \
+    '### Protoss: Nexus=1 Probe=9 Pylon=2 Gateway=2 ###' > "$SELF_DIR/E2E_LOG"
+  printf '%s\n' \
+    '{"frame":1142,"time":"0:47","key":"BUILDING_STARTED","type":"Pylon","tile":"[113,15]"}' \
+    '{"frame":1831,"time":"1:32","key":"BUILDING_STARTED","type":"Gateway","tile":"[112,10]"}' \
+    > "$SELF_DIR/EVENTS.jsonl"
+  printf '%s\n' '[{"type":"Pylon","tile":[113,15]},{"type":"Gateway","tile":[112,10]}]' \
+    > "$SELF_DIR/BUILDINGS.json"
+  if ! EXPECT_OPENING_STATUS=1 bash scripts/assert-openbw-scenario.sh "$SELF_DIR/E2E_LOG"; then
+    rm -rf "$SELF_DIR"
+    fail "opening-status self-test: the VALID fixture (started + warped) must pass"
+  fi
+  # Broken: PREPARING happened but nothing was ever adopted (no STARTED twin)
+  # and no Gateway ever warped - exactly the stuck-opening shape.
+  printf '%s\n' \
+    '{"frame":352,"time":"0:14","key":"CONSTRUCTION_PREPARING","type":"Pylon"}' \
+    > "$SELF_DIR/EVENTS.jsonl"
+  printf '%s\n' '[{"type":"Pylon","tile":[113,15]}]' > "$SELF_DIR/BUILDINGS.json"
+  if EXPECT_OPENING_STATUS=1 bash scripts/assert-openbw-scenario.sh "$SELF_DIR/E2E_LOG"; then
+    rm -rf "$SELF_DIR"
+    fail "opening-status self-test missed the stuck-PREPARING fixture"
+  fi
+  rm -rf "$SELF_DIR"
+  say "opening-status self-test OK (started+warped passes; stuck-PREPARING fails)"
   exit 0
 fi
 
@@ -909,7 +940,7 @@ fi
 export EXPECT_MIN_INGAME_SECONDS EXPECT_MIN_KILLED EXPECT_MAX_KILLED \
   EXPECT_MIN_PYLONS EXPECT_MIN_GATEWAYS EXPECT_MIN_ZEALOTS EXPECT_MIN_DRAGOONS \
   EXPECT_MIN_ASSIMILATORS EXPECT_MIN_NEXUS EXPECT_MIN_CORES EXPECT_MIN_RESOURCE_BALANCE \
-  EXPECT_NO_PLACEMENT_FAILURES 2>/dev/null || true
+  EXPECT_NO_PLACEMENT_FAILURES EXPECT_OPENING_STATUS 2>/dev/null || true
 
 # The gate the bot stops on (when armed) is reported separately from the assertions: a run
 # can reach the gate and still be missing something the shell expects, and saying which is
