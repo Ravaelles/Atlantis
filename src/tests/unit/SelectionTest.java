@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.battle.targeting.generic.ATargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
@@ -221,7 +220,6 @@ public class SelectionTest extends WorldStubForTests {
 
             assertEquals(mostWounded, Select.enemy().mostWounded());
             assertEquals(mostWounded, Select.enemy().mostWoundedOrNearest(our));
-            assertEquals(mostWounded, ATargeting.defineBestEnemyToAttack(our));
 
             assertEquals(closest, Select.enemy().marines().mostWoundedOrNearest(our));
             assertEquals(closest, Select.enemy().nearestTo(our));

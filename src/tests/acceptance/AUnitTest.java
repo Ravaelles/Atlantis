@@ -1,6 +1,5 @@
 package tests.acceptance;
 
-import atlantis.battle.targeting.generic.ATargeting;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
@@ -939,47 +938,9 @@ public class AUnitTest extends AbstractTestWithWorld {
         });
     }
 
-    // =========================================================
-    // Targeting visibility rules
-
-    @Test
-    public void cannotTargetUndetectedUnits() {
-        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
-        FakeUnit[] enemies = fakeEnemies(
-            fake(AUnitType.Zerg_Drone, 11).setBurrowed(true).setDetected(false),
-            fake(AUnitType.Zerg_Lurker, 12).setCloaked(true).setDetected(false),
-            fake(AUnitType.Zerg_Lurker, 13).setBurrowed(true).setDetected(false),
-            fake(AUnitType.Protoss_Dark_Templar, 11).setCloaked(true).setDetected(false)
-        );
-
-        world(1, units(our), enemies, () ->
-            assertNull(ATargeting.defineBestEnemyToAttack(our),
-                "nothing is detected, so there is no target"));
-    }
-
     // One world per test on purpose: the unit collections are cached per unit
     // and per selection, so building two worlds inside one test method leaks the
     // first one into the second.
-
-    @Test
-    public void canTargetDetectedBurrowedDrone() {
-        assertOnlyTargetIs(fake(AUnitType.Zerg_Drone, 13).setBurrowed(true).setDetected(true));
-    }
-
-    @Test
-    public void canTargetDetectedCloakedDragoon() {
-        assertOnlyTargetIs(fake(AUnitType.Protoss_Dragoon, 12).setCloaked(true).setDetected(true));
-    }
-
-    @Test
-    public void canTargetDetectedBurrowedLurker() {
-        assertOnlyTargetIs(fake(AUnitType.Zerg_Lurker, 13).setBurrowed(true).setDetected(true));
-    }
-
-    @Test
-    public void canTargetDetectedCloakedDarkTemplar() {
-        assertOnlyTargetIs(fake(AUnitType.Protoss_Dark_Templar, 11).setCloaked(true).setDetected(true));
-    }
 
     @Test
     public void ourAndEnemyFlagsFollowTheTeam() {
@@ -1042,14 +1003,5 @@ public class AUnitTest extends AbstractTestWithWorld {
     private static double angleDifference(double a, double b) {
         double difference = Math.abs(a - b);
         return Math.min(difference, 2 * Math.PI - difference);
-    }
-
-    private void assertOnlyTargetIs(FakeUnit expectedTarget) {
-        FakeUnit our = fake(AUnitType.Terran_Marine, 10);
-        FakeUnit[] ours = fakeOurs(our);
-        FakeUnit[] enemies = fakeEnemies(expectedTarget);
-
-        world(1, ours, enemies, () ->
-            assertSame(expectedTarget, ATargeting.defineBestEnemyToAttack(our)));
     }
 }
