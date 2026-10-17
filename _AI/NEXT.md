@@ -170,7 +170,7 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Suite green 2026-10-18: 628 passing, 1 skipped (owner batch:
+Suite green 2026-10-18: 683 passing, 0 skipped (owner batch:
 PREPARING sites reserved+stable, painter warping labels, important-only
 DECISIONS, role-named logs; plus earlier combat cutover:
 `src/atlantis/combat/` → `src-old/`, `atlantis.battle` extracted,
@@ -246,11 +246,6 @@ twins green (1/1 each, re-verified today). Re-run
 - `Select.main()` (90 call sites) now answers fresh per frame. Inventory:
   `DOCS/SELECT-CACHES.md` (frozen 2026-10-03, historical); neutral cleanups done per
   `_AI/work-orders/WO-F-neutral-cache-cleanup.md`.
-- **#5** Per-frame query service in `core.world` with explicit per-frame
-  invalidation. One cache at a time, fewest readers first.
-- **#6** Delete migrated static caches from `Select` (no shims, rewire
-  call sites in-commit); re-freeze the ArchUnit store only for genuine
-  removals.
 
 ## Stage G — race strategies
 
@@ -312,7 +307,8 @@ twins green (1/1 each, re-verified today). Re-run
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
   (20261014_172954 reached only 324 s; `20261015_185046` reached 575 s
   in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
-  game or more wall).
+  game or more wall). Absent in all retained runs incl. the 743 s one
+  (3 bases there - the predicate correctly stays silent, it wants 1).
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -344,8 +340,11 @@ twins green (1/1 each, re-verified today). Re-run
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
   side of D5. Untouched. `TECH_CHECK` twin live (`170009`: 430 rows);
   the refusing gate named in the open: weapons wants 700 bank or 3
-  bases (peak 517 here, 671 in `165345` - just under). Needs a
-  700-bank game proving L2/L3.
+  bases (peak 517 here, 671 in `165345` - just under). 743 s run hit
+  bank 900-1300 from 10:58 and research STARTED at 11:16
+  (beingRes through 11:39) but the wall clock ended the game before
+  completion - still needs a longer window after research starts,
+  not just a 700-bank moment.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). Needs a game showing it. No blind fix.
 - **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
