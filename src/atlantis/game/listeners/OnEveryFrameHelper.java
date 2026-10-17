@@ -41,8 +41,6 @@ import atlantis.util.AConsole;
 import atlantis.util.Vector;
 import bwapi.Bullet;
 import bwapi.Color;
-import jbweb.Block;
-import jbweb.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -524,17 +522,7 @@ public class OnEveryFrameHelper {
 
     }
 
-    private static void paintJbwebBlocks() {
 
-        for (Block block : Blocks.getAllBlocks()) {
-            AAdvancedPainter.paintRectangle(
-                APosition.create(block.getTilePosition().toPosition()),
-                block.width() * 32,
-                block.height() * 32,
-                Color.Grey
-            );
-        }
-    }
 
     private static void pathToEnemyBase() {
         paintPathToEnemyBase(PathToEnemyBase.chokesLeadingToEnemyBase());
