@@ -100,6 +100,7 @@ public class ProtossDynamicBuildingsCommander extends DynamicCommanderHelpers {
                 || ProduceForge.produce()
                 || (gatewaysEarly && ProduceGateway.produce())
                 || ProducePylonNearEveryBase.produce()
+                || ProduceNaturalWallIn.produce()
                 || ProduceTemplarArchives.produce()
                 || ProduceCitadelOfAdun.produce()
         ) return gatewaysEarly;
