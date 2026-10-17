@@ -84,14 +84,7 @@ public class OnGameEnd {
         // regardless. Both writes are delimited, stream order was never
         // contractual across stdout/stderr.
         atlantis.util.log.EventLog.flush();
-
-        // Owner 2026-10-16: the warp ledger belongs at the tail of the debug
-        // stream too, so one file carries diagnostics plus what warped, when
-        // and where. Java-side (not the runner script) so IDE runs land it
-        // as well - stderr is the debug stream on every launch path.
-        System.err.println("");
-        System.err.println("===== BUILDINGS.json (ledger at game end) =====");
-        System.err.print(atlantis.game.util.BuildingLedger.toJson());
+        atlantis.game.util.BuildingLedger.printTailToStderr();
 
         if (!Env.isTesting()) GameSummary.print(won);
         if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);

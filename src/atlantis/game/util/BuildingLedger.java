@@ -74,6 +74,19 @@ public class BuildingLedger {
         AFile.saveToFile(OUTPUT_PATH, toJson(), true);
     }
 
+    /**
+     * The warp ledger belongs at the tail of the debug stream too, so one
+     * file carries diagnostics plus what warped, when and where. Java-side
+     * (not the runner script) so IDE runs land it as well - stderr is the
+     * debug stream on every launch path. A leaf reporting its own rows;
+     * OnGameEnd only decides the moment.
+     */
+    public static void printTailToStderr() {
+        System.err.println("");
+        System.err.println("===== BUILDINGS.json (ledger at game end) =====");
+        System.err.print(toJson());
+    }
+
     public static String toJson() {
         StringBuilder out = new StringBuilder("[\n");
         boolean first = true;

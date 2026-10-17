@@ -56,6 +56,7 @@ public class OnGameStarted {
         atlantis.game.listeners.OnGameEnd.reset();
         atlantis.map.scout.ScoutState.reset();
         atlantis.battle.BattleCommander.reset();
+        atlantis.battle.Missions.reset();
 
         // What we built is per-game, like everything else here: as a plain static it would
         // leak one game's completion history into the next in the same JVM.
