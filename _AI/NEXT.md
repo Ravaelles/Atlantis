@@ -188,8 +188,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-17 (`rm -rf out` first): unit 721/721 green, 0
-skipped (was 713 - incl. ConstructionStatusAdvanceTest 4/4).
+Re-measured 2026-10-17 (`rm -rf out` first): unit 724/724 green, 0
+skipped (was 721 - incl. DecisionLogTest 2/2, EventLog truncation pin
+and WarpingBuildingBlocksOverlapTest 4/4).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -364,11 +365,20 @@ twins green (1/1 each, re-verified today). Re-run
   guards, which see the warping unit only after it lists. LANDED:
   `OverlapsOurUnfinishedBuilding` in the spiral (210732/214926);
   adopt-time revalidation re-sites stale picks instead of adopting
-  them (1 live resite in 220122); `BUILD_REFUSED`
+  them (1 live resite in 220122, adopt path game-proven in 230839:
+  resite [112,11]->[112,17] then clean warp, zero placement
+  failures); `BUILD_REFUSED`
   adopt-site-blocked/adopt-no-free-builder names the silent adopt
   exits; CONSTRUCTION_CANCEL proximity twin names the covering
   building (unmasks silent self-finish loops); advance seam pinned
-  (`ConstructionStatusAdvanceTest` 4/4). Wine logs were unusable for
+  (`ConstructionStatusAdvanceTest` 4/4); E2E opening-status gate
+  (`EXPECT_OPENING_STATUS=1`: Pylon/Gateway BUILDING_STARTED + ledger
+  warps; self-test RED/GREEN on fixtures, live proof pending a clean
+  short game - the 30 s cap keeps killing shorts inconclusively).
+  Writer-level fix landed: EventLog/DecisionLog truncate on first
+  flush per JVM (pinned, incl. simulated restart), so no launcher
+  can accumulate games anymore - scripts keep their pre-run rm as
+  belt-and-braces. Wine logs were unusable for
   all of this (7 MB EVENTS.jsonl spanning 6 games) - fixed by clearing
   the write dir pre-game like OpenBW. Still open, needs the owner's
   next game on the current jar: wrong-sibling adoption when two same
