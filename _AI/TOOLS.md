@@ -13,9 +13,10 @@ open ideas wait for a game or a need, then get built or dropped.
   enemy spawn. Verdict so far: ours yes, enemy no (NEXT #94) - Wine
   stays the duel vehicle.
 - `scripts/run-wine-ums.sh "<map.scm>" [fast=1]` - Wine on any map with
-  an explicit speed flag. Answers: did the speed flag reach the game
-  (greps the log), honest fps (frames/wall). Default fast: speed 0,
-  frameskip 500, GUI off.
+  an explicit speed flag. Verifies no leftover game survived (a stale
+  StarCraft makes the new game attach to the old map - measured: an
+  8v8 request played the previous 1v1) and reports honest fps.
+  Default fast: speed 0, frameskip 500, GUI off.
 - `scripts/run-wine-batch.sh "<map>" N OUTDIR [KEY=VALUE ...]` -
   overnight tuning loop. Each game randomizes the registered ParamTweaker
   coefficients in-JVM (or takes explicit values), then collects
