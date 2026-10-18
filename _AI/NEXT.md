@@ -685,6 +685,14 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
 
+- OpenBW `TauCross` (`194718`, PRODUCTION_V2=LIVE with the PurpleWave
+  rule, 21905f/15 min): 5 Pylons, Dragoons 4 (floor not frozen this
+  game), suppression engages live (blocker-construction twins,
+  coming=2 stops demand once two travel). Residual pairs come from a
+  per-frame mint-cancel stream on covered V2-sited tiles (28 fresh
+  Pylon plans in 300f, 51 proximity cancels) - doomed sites die
+  same-frame so no coming-count sees them (WO-146 siting +
+  WO-147 in-flight). Unstarted pile-up: zero instances.
 - OpenBW `TauCross` (`191444`, PRODUCTION_V2=LIVE, 23026f/16 min,
   wall-cap 143): tech on time (Forge 1:50, Core 4:12, gas 3:54),
   6 Pylons with no supply block and 97 SUPPLY_BLOCKED samples - but

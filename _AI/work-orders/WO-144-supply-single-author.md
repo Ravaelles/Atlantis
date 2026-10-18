@@ -89,7 +89,16 @@ supply pumps silent.
    Nexus cancel/re-request cycles on the refresh timer (Nexus=2
    never, C14), 0 Dragoons (floor freeze), Pylon pairs 89f/72f apart
    unattributable (minSupply-0 rows, no DECISIONS in the V2 path).
-   C14 + Dragoons + V2 audit first.
+   C14 + Dragoons + V2 audit first. Second attempt 2026-10-19
+   (`194718` V2 LIVE with the PurpleWave rule + lag cover, 21905f):
+   pairs persist through a different mechanism - a per-frame
+   mint-cancel stream on covered tiles (28 fresh Pylon plans in
+   300 frames, 51 proximity cancels on [9,47]-class tiles): doomed
+   constructions die same-frame so no coming-count can see them.
+   Suppression itself engages (blocker-construction twins fire,
+   coming=2 stops the stream once two travel). Root causes left:
+   V2 siting blindness (WO-146) + cross-frame builder commits
+   (WO-147 in-flight). The unstarted pile-up class is closed.
 4. **Move to `src-old/`**: `SupplyCommander`, `ProduceFallbackSupplyWhenSupplyLow`,
    `ProduceFallbackPylonWhenSupplyLow`, `ProduceFallbackDepotWhenSupplyLow`.
    Same cycle, suite green, ArchUnit store shrinks or holds.
