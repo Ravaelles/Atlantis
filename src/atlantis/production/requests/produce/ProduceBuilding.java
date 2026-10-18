@@ -97,6 +97,30 @@ public class ProduceBuilding {
     }
 
     /**
+     * PurpleWave rule (owner 2026-10-19): one unstarted Pylon at a time.
+     * A NOT_STARTED or STARTING Pylon construction for another order (or
+     * an orderless one) means supply is already on the way with no unit
+     * to show for it yet - the engine has nothing arriving for hundreds
+     * of frames, but the builder is committed. Ordering a second Pylon
+     * behind it is the 30/48-toward-38/65 slide. Own traces are
+     * excluded (this order replacing its own lost construction must
+     * proceed); PREPARING picks are excluded (someone's aimed future -
+     * blocking on them could park an earlier need behind a later row).
+     * Package-visible as a seam: the overlap and status questions pin
+     * around it, this one pins here.
+     */
+    public static boolean anotherUnstartedPylonExists(ProductionOrder order) {
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (construction == null || !construction.buildingType().isPylon()) continue;
+            if (construction.status() != ConstructionOrderStatus.NOT_STARTED
+                && construction.status() != ConstructionOrderStatus.STARTING) continue;
+            if (order != null && order.equals(construction.productionOrder())) continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Every building request walks through the single door: the question
      * answers want, the call site names the act (BO line vs dynamic rule),
      * the dispatcher logs and executes. Gates underneath are untouched -
@@ -196,6 +220,19 @@ public class ProduceBuilding {
             // at 25/25). The cap counts warping + not-started, so a row
             // whose need is already being built waits instead of re-siting.
             if (type.isPylon() && tooManyPylonsInFlight()) return refuse(type, order, "pylon-cap");
+
+            // Owner 2026-10-19 (PurpleWave rule): one unstarted Pylon at a
+            // time. A NOT_STARTED or STARTING Pylon construction for
+            // ANOTHER order means supply is already on the way with no
+            // unit to show for it yet - ordering a second one behind the
+            // walking builder is how 30/48 slides toward 38/65. The new
+            // row waits as a plain queued order instead. Own traces are
+            // excluded, so this order replacing its own lost construction
+            // still proceeds; PREPARING picks are someone's aimed future
+            // (blocking on them could park an earlier need behind a later
+            // row into a real block). Stuck sites unblock by themselves:
+            // overdue cancels clear them and the count drops.
+            if (type.isPylon() && anotherUnstartedPylonExists(order)) return refuse(type, order, "unstarted-pylon");
 
             // Owner 2026-10-16: the order's building already warps - wait
             // for completion, do not site a second one. Warp-finish

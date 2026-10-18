@@ -224,6 +224,23 @@ public final class GameStateSnapshot {
                 .param("alive", unit.isAlive())
                 .log(AGame.now(), A.minSec());
         }
+        // Constructions without a unit yet suppress the same way (see
+        // supplyProvidersComing): without a named row a coming>0 sample
+        // with no blocker units reads as a phantom entry. Same throttle
+        // as the samples above - suppression is a state, not an event.
+        for (Construction construction :
+            atlantis.production.constructions.ConstructionRequests.constructions) {
+            if (construction == null || !provider.equals(construction.buildingType())) continue;
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
+                .param("type", provider.name())
+                .param("result", "blocker-construction")
+                .param("cid", construction.id())
+                .param("status", String.valueOf(construction.status()))
+                .param("tile", construction.buildPosition() == null ? "-"
+                    : "[" + construction.buildPosition().tx() + ","
+                    + construction.buildPosition().ty() + "]")
+                .log(AGame.now(), A.minSec());
+        }
     }
 
     /** Photon Cannons already standing at the main base. */
@@ -244,12 +261,36 @@ public final class GameStateSnapshot {
      * finished - existing plus in production plus in queue, minus what is done.
      * A Pylon adds supply only at completion, so this is the count that says "we
      * have enough supply coming".
+     *
+     * <p>Units alone are not enough: a NOT_STARTED or STARTING construction
+     * has no unit yet (builder finding the site, or walking to it), so a
+     * unit-only count reads zero and the goal re-fires every frame until
+     * the first warp - the scheduler then issues a second Pylon behind
+     * the walking builder (measured V2 LIVE: Pylon@4234 + Pylon@4341 107f
+     * apart into the same block). Constructions without a finished unit
+     * count here; overdue cancels clear the stuck ones, so a genuinely
+     * dead site unblocks by itself instead of suppressing forever.
+     * PREPARING picks stay out (someone's aimed future, not live demand).</p>
      */
     private int supplyProvidersComing() {
         AUnitType provider = supplyProviderType();
         if (provider == null) return 0;
 
-        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider));
+        return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider)
+            + unstartedProvidersComing(provider));
+    }
+
+    /**
+     * Package-visible as a seam: unstarted providers count as coming
+     * (PurpleWave rule, owner 2026-10-19). NOT_STARTED and STARTING have
+     * no unit yet, so the unit-only count reads zero while a builder is
+     * already committed - the goal re-fires and the scheduler issues a
+     * second provider behind the walking builder. PREPARING picks stay
+     * out (aimed future, not live demand); IN_PROGRESS is unit-covered.
+     */
+    public static int unstartedProvidersComing(AUnitType provider) {
+        if (provider == null) return 0;
+        return ConstructionRequests.countNotStartedOfType(provider);
     }
 
     private AUnitType supplyProviderType() {
