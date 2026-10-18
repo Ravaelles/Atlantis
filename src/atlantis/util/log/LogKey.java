@@ -53,6 +53,8 @@ public enum LogKey {
     TECH_CHECK,
     /** An upgrade level the game never had before (L1/L2/L3 proof). */
     UPGRADE_COMPLETED,
+    /** A warp matched no reservation; oldest-waiting fallback adopted it, with candidates. */
+    ADOPTED_CONSTRUCTION,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */

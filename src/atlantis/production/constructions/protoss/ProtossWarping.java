@@ -1,5 +1,6 @@
 package atlantis.production.constructions.protoss;
 
+import atlantis.game.A;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
@@ -9,6 +10,8 @@ import atlantis.units.AUnitType;
 import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 
 public class ProtossWarping {
 
@@ -47,7 +50,18 @@ public class ProtossWarping {
             // 3534 frames of a Probe whose Gateway went up away from its reservation).
             // Adopt the oldest waiting one; `defineConstruction` still gets first refusal,
             // so the normal, position-matching case is untouched.
+            int waiting = ConstructionRequests.notFinishedOfType(newBuilding.type()).size();
             construction = oldestWaitingConstructionOf(newBuilding.type());
+            if (construction != null) {
+                EventLog.key(LogKey.ADOPTED_CONSTRUCTION)
+                    .param("type", newBuilding.type().name())
+                    .param("warpTile", "[" + newBuilding.position().tx() + "," + newBuilding.position().ty() + "]")
+                    .param("adopted", construction.id())
+                    .param("adoptedTile", construction.buildPosition() == null ? "-"
+                        : "[" + construction.buildPosition().tx() + "," + construction.buildPosition().ty() + "]")
+                    .param("candidates", waiting)
+                    .log(A.now(), A.minSec());
+            }
         }
 
         if (construction == null) {

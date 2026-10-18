@@ -6,6 +6,7 @@ import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.terran.TerranNewBuilding;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,7 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
     @AfterEach
     public void cleanConstructions() {
         ConstructionRequests.constructions.clear();
+        EventLog.clearForTests();
     }
 
     @Test
@@ -92,8 +94,7 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void aBarracksOnItsReservationIsAdoptedTheSameWay() {
-        FakeUnit commandCenter = fake(AUnitType.Terran_Command_Center, 10);
+    public void aBarracksOnItsReservationIsAdoptedTheSameWay() {        FakeUnit commandCenter = fake(AUnitType.Terran_Command_Center, 10);
         FakeUnit scv = fake(AUnitType.Terran_SCV, 11);
 
         world(30, units(commandCenter, scv), new FakeUnit[0], () -> {
@@ -120,6 +121,53 @@ public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
             assertSame(
                     scv, construction.builder(),
                     "the live builder stays attached");
+        });
+    }
+
+    @Test
+    public void fallbackAdoptionNamesWarpTileAdoptedTileAndCandidates() {
+        FakeUnit commandCenter = fake(AUnitType.Terran_Command_Center, 10);
+        FakeUnit scv = fake(AUnitType.Terran_SCV, 11);
+
+        world(30, units(commandCenter, scv), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 10)
+                return;
+
+            EventLog.clearForTests();
+            Construction older = new Construction(AUnitType.Terran_Barracks);
+            older.setBuilder(scv);
+            older.setPositionToBuild(APosition.create(10, 10));
+            older.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            ConstructionRequests.constructions.add(older);
+
+            Construction newer = new Construction(AUnitType.Terran_Barracks);
+            newer.setPositionToBuild(APosition.create(50, 50));
+            newer.setStatus(ConstructionOrderStatus.NOT_STARTED);
+            ConstructionRequests.constructions.add(newer);
+
+            // 28+ tiles from both reservations: the positional lookup
+            // (2.5 radius) cannot reach, so only the fallback can adopt.
+            FakeUnit builtFar = fake(AUnitType.Terran_Barracks, 70, 70);
+            TerranNewBuilding.linkBuildingToConstruction(builtFar);
+
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"key\":\"ADOPTED_CONSTRUCTION\""),
+                    "the Terran fallback adopts through the same twin, got: " + rows);
+            assertTrue(rows.contains("[70,70]"),
+                    "the twin must name the warp tile, got: " + rows);
+            assertTrue(rows.contains("[10,10]"),
+                    "the twin must name the adopted site, got: " + rows);
+            assertTrue(rows.contains("\"candidates\":2"),
+                    "the twin must name how many constructions lost, got: " + rows);
+            assertEquals(
+                    ConstructionOrderStatus.IN_PROGRESS, older.status(),
+                    "a Terran building that just appeared has just STARTED");
+            assertSame(
+                    scv, older.builder(),
+                    "the live SCV stays attached");
+            assertTrue(
+                    ConstructionRequests.constructions.contains(newer),
+                    "the losing sibling stays tracked");
         });
     }
 }
