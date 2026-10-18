@@ -66,7 +66,13 @@ public enum LogKey {
     /** A catalogue answer for a legacy site search: answered tile or decline reason. */
     CATALOGUE_SITE,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
-    SUPPLY_BLOCKED;
+    SUPPLY_BLOCKED,
+    /** Free supply above 14 (edge-triggered): overstock, with bank and pylons coming. */
+    SUPPLY_OVERSTOCK,
+    /** 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two. */
+    PYLON_FLOOD,
+    /** Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why. */
+    BANK_HOARD;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,
@@ -76,7 +82,10 @@ public enum LogKey {
 
     private static final java.util.Set<LogKey> CRITICAL = java.util.EnumSet.of(
         LogKey.BUILD_BREAKDOWN,
-        LogKey.PLACEMENT_FAILED
+        LogKey.PLACEMENT_FAILED,
+        LogKey.SUPPLY_OVERSTOCK,
+        LogKey.PYLON_FLOOD,
+        LogKey.BANK_HOARD
     );
 
     /**

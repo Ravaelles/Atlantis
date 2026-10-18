@@ -21,6 +21,13 @@ public class LogKeySeverityTest {
     }
 
     @Test
+    public void economyDiseaseIsCritical() {
+        assertEquals(LogLevel.CRITICAL, LogKey.SUPPLY_OVERSTOCK.level());
+        assertEquals(LogLevel.CRITICAL, LogKey.PYLON_FLOOD.level());
+        assertEquals(LogLevel.CRITICAL, LogKey.BANK_HOARD.level());
+    }
+
+    @Test
     public void highIsFriction() {
         assertEquals(LogLevel.HIGH, LogKey.REQUEST_REFUSED_DUPLICATE.level());
         assertEquals(LogLevel.HIGH, LogKey.BUILD_REFUSED.level());
