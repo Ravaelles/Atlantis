@@ -27,76 +27,20 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
         `SCENARIO PASSED` with no expectations); this is pinned by
         `LauncherBuildsTheJarTest` and fast suite 346/346. A real non-zero process-exit
         integration run is still unverified.
-     2. **A Pylon is placed in a real run.** NO, and the cause is measured
-     2026-10-09 - but **not** what the first reading suggested. The engine is
-     telling the truth: on the probed tiles `engBuild=true` and only the occupancy
-     variant `engBuildInc=false` for the one tile (7,44) that is genuinely
-     occupied. So `MapTiles.isBuildable` needs no fallback, and the earlier
-     "engine lies" note in this item was wrong.
-
-     Verified from the engine jar: a Pylon is **2x2** (Gateway is 4x3).
-     `CanPhysicallyBuildHere` correctly requires each footprint tile to be
-     buildable-including-buildings; the sampled candidate included occupied tile
-     (7,44). The owner confirms a manual SC run builds Pylon and Gateway; this is
-     owner evidence for the legacy path, not an OpenBW verdict. The next bounded
-     OpenBW run must decide whether the legacy-path failure persists; do not
-     patch `APositionFinder` without a fresh reproducer.
-
-     **Fresh LIVE OpenBW evidence (2026-10-09):** the selected catalogue tile's
-     `Unit.build(Pylon, tile)` returned false; the 2x2 footprint's four tiles were
-     individually buildable in both the map grid and `Game.isBuildable(..., true)`,
-     no other unit overlapped the footprint, and minerals were sufficient. Yet
-     `Game.canBuildHere(tile, Pylon, builder)` was false. This is a fresh command
-     rejection, but its cause is still unknown; do not add a map fallback or alter
-     `APositionFinder` based on the map-only values.
-
-     **Cause now MEASURED (2026-10-10, three live runs + two temporary probes; probes
-     removed, fast suite 372/372).** The full numbers are in `_AI/CHALLENGES/OpenBW.md`
-     ("The real cause, measured: the search area is the base itself"). In short:
-
-     - The engine is not at fault. A probe of the search square found **2422
-       buildable tiles** around `nearTo` with the nearest at distance 0.
-     - **The first-Pylon `nearTo` is the base coordinate, 7 tiles from the left map
-       edge** (`nearTo=[7,43]` on TauCross), and a Pylon at `supplyUsed <= 30`
-       reserves exactly a **7-tile** boundary margin. So the search starts in a
-       corner of its own base and its first rings are consumed by
-       `Too close to left map boundary` (944 log lines), `Too close to main base`,
-       and the base/mineral occupancy tiles. The open ground exists but sits behind
-       those rings. **This is the blocker: a `nearTo`/margin-geometry problem, not
-       terrain, not fog, not regions.**
-     - Two earlier readings in my own notes were wrong and are withdrawn:
-       invisibility (`checkExplored=false` by default; the probe found 1149
-       *invisible* tiles answering `buildInc=true`) and "the search area is
-       unbuildable terrain" (an artefact of a diagnostics bug - see below).
-     - **Our own failure print lied about coordinates**: `PositionFulfillsAllConditions`
-       set `_currentTX = position.ty()` as well as `_currentTY`, so every logged
-       `(x,y)` read `x == y`. Fixed; the fields are print-only, so no behaviour changed.
-       Any analysis based on that print before 2026-10-10 is invalid.
-
-     **PLACEMENT NOW SUCCEEDS - two roots fixed, one new blocker exposed (2026-10-10).**
-     Measured, live run: the log now prints **`SUCCESS FOR Pylon at 113,15`** and the
-     placement failures went to **zero** (`Can't find place` was 2208+; `Region mismatch`
-     549 -> 0). Nothing was patched blind - both fixes came from probes.
-
-     **Root 1 - the search origin was the Nexus (fixed).**
-     `PylonPosition.nearToPositionForFirstPylon()` computed
-     `geyser.translateTilesTowards(mineralsCenter, 50)`, which on TauCross landed
-     **36 tiles outside the map** (`raw=[-36,88]`); `ensureWithinBounds()` then returned
-     **null**, the `if (centerOfResources != null)` guard skipped the step meant to move
-     the origin off the base, and `nearTo` became the Nexus itself
-     (`distBase = 0.84`). The method was rewritten to the stated intent: the base moved
-     `FIRST_PYLON_TILES_FROM_BASE` (7) tiles **towards the resource line when that has
-     room**, otherwise **away from the nearest edge** (a corner base points its mineral
-     line at the edge its own 7-tile Pylon margin guards).
-
-     **Root 2 - `Region mismatch` fired on every candidate (fixed).**
-     `IsProbablyInAnotherRegion` used bare `position.hasPathTo(...)` = `Game.hasPath`,
-     which on OpenBW is region-based and answers **false for every pair** (the server
-     publishes no regions). A probe showed **all 549 rejections** were
-     `directHasPathTo=false / MapTilesHasPathBetween=true` with the candidate 1-3 tiles
-     from `nearTo`. It now uses `MapTiles.hasPathBetween`, which already carried the
-     engine-then-map fallback `MapTiles` needed for exactly this reason and which this
-     condition never used.
+     2. **A Pylon is placed in a real run.** NO at first, and the cause chain
+     ran through three wrong readings, each killed by a probe (transcripts in
+     git): "the engine lies" (wrong: `engBuild=true`, only genuinely occupied
+     tile (7,44) refuses); invisibility (wrong: 1149 invisible tiles answer
+     `buildInc=true`); "unbuildable search area" (artefact of a diagnostics
+     bug - plus our own failure print logged `x == y`, fixed, print-only).
+     Measured roots: the first-Pylon `nearTo` was the base coordinate itself
+     (a `translateTilesTowards(mineralsCenter, 50)` landed 36 tiles off-map,
+     `ensureWithinBounds` nulled, guard skipped - rewritten to push 7 tiles
+     off the base), and `Region mismatch` fired on every candidate
+     (`Game.hasPath` is region-based, always false on OpenBW - routed through
+     `MapTiles.hasPathBetween`). Result: `SUCCESS FOR Pylon at 113,15`,
+     failures 2208+ to 0. Engine jar ground truth used throughout: Pylon 2x2,
+     Gateway 4x3.
 
      **NEW BLOCKER (open, and it is #48's territory): the builder never starts.**
      With placement working, the log shows the construction is created and assigned -
@@ -197,40 +141,7 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
     When the search runs for the first time no builder is assigned yet, so then
     nothing may be on the footprint at all.
 
-    **Why this is not a one-line fix:** the two existing answers are each wrong in a
-    different direction, so neither can be adjusted into the correct one.
-    - `isBuildableIncludeBuildings` counts **all** units, so it also refuses a tile
-      occupied only by our own builder - a placement the game allows.
-    - `BuildingTilesAreOccupied.check` counts **buildings only**, so it accepts a
-      tile with a mining worker on it - a placement the game refuses.
-    `_AI/POSITION-FINDER.md` point 2 explains why the guard was narrowed to
-    buildings (a worker or a patch two tiles over "overlapped" a Pylon's footprint),
-    and that narrowing traded a false negative for a false positive instead of
-    encoding the real rule. The contract to change is `BuildingTilesAreOccupied.check
-    (position, buildingType)` -> it needs to know the builder (excludable) and to
-    count units, not only buildings; 6 call sites.
-
-    **Second half, and it is why a strict rule alone is not enough:** a mineral line
-    is saturated with workers and a Pylon is 2x2, so "no unit may be here" refuses
-    the whole area. The answer is to **ask the blocking workers to move** -
-    `MoveUnitsFromConstructionPlace` already tries (`moveAwayFrom(buildPosition, 2)`
-    at `TravelToConstruct:51`), but it (a) only runs while the builder is still
-    travelling (`distanceToConstruction >= 3.8` returns early, i.e. not when the
-    builder is already at the site) and (b) shoves every nearby unit with no notion of
-    "except the builder". Extending that to run at the site and to exclude the builder
-    is the other half of this item.
-
-    **Test to write with the fix:** a footprint with the assigned builder on it is
-    placeable; the same footprint with a *mining* worker on it is not, until the
-    worker is sent away. The existing test to reconcile is
-    `OccupiedTileIsNeverBuildableTest.aUnitStandingOnTheTileOccupiesIt`: its NAME says
-    a standing unit occupies the tile, but its BODY asserts the opposite for a worker
-    (``"a worker on the tile is not an existing building - counting it refused every
-    mineral-line position"``), reasoning that a worker "is handled by the engine's
-    own answer and by the builder stepping aside". This measurement shows that
-    reasoning is not true today: the engine refuses, and nothing steps aside. Name and
-    body have to be reconciled with the rule above.
-
+    Both halves landed via #49 (builder-exempt occupancy + `PlacementSearchMatchesCommandTest`); the full rule discussion lives in `_AI/CHALLENGES/Bwapi.md` (`bi=0`).
 
 ---
 
@@ -252,84 +163,24 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   Found 2026-10-11 by the owner asking why no Gateways were built (`pylons=5 gateways=0`,
   ingame=1209 s).
 
-  **It is not a Gateway bug and not a build-order bug.** The build order does list them
-  (`8 - Pylon`, `9 - Gateway`, `10 - Gateway`), and in a shorter run they ARE built -
-  measured: `### Protoss buildings: Pylons=2 Gateways=2 ###` with
-  `construction=Gateway isConstructing=true lastCommand=Build action=BUILD`. The long run
-  differs in one respect:
-
-  ```
-  issued: OK Probe  = 0        <- the bot never trains another worker
-  canAfford=false 2587 vs true 195
-  construction=Gateway status=NOT_STARTED  canAfford=false  action=GATHER_MINERALS
-  ```
-
-  **CORRECTED 2026-10-11 (measurement replaced the first reading). The worker gate is a
-  symptom, not the cause.** A probe on `AutoProduceWorkersCommander.dont(...)` printed the
-  refusing gate and the state every second:
-
-  ```
-  WORKER_GATE @24 reason=CantAfford workers=5 minerals=0 reserved=0 supply=5/9
-  ... identical for 180+ frames
-  ```
-
-  `minerals=0` with 5 workers means the workers are not MINING, and the manager census says
-  why:
-
-  ```
-  manager=BuilderManager  2631     <- the workers are 'building'
-  manager=GatherResources    3     <- and almost never mining
-  ```
-
-  **So the real defect is a cyclic deadlock, not a mineral threshold:** constructions wait
-  for
-  minerals (`canAfford=false`), `BuilderManager` holds every worker at those sites, the
-  workers therefore do not mine, no minerals arrive, and the constructions keep waiting.
-  `CantAfford` on the worker goal is the next link in the chain, not its start - a first
-  reading of this item blamed the `hasMinerals(250)` gate below, and that gate is real but
-  secondary: with workers not mining, no threshold would have been reached either.
-
-  **CORRECTED AGAIN 2026-10-11, and this time it is the real cause - `buildUnit()` is
-  null on OpenBW, so a construction that HAS started is never marked started.**
-
-  The probe that settled it (`BUILDER_LOG=1`):
-
-  ```
-  unit=#123 Probe @[13,58] construction=Pylon status=NOT_STARTED at=[13,58]
-  distToBuild=0.3 buildable=true canAfford=true action=BUILD
-  isConstructing=TRUE lastCommand=Build
-  ```
-
-  Everything is fine - the Probe is ON the site, the tile is buildable, the minerals are
-  there, the order was issued, **and the engine reports the unit as constructing**. Yet our
-  `Construction` still says `NOT_STARTED`, so `BuilderManager` keeps the worker assigned to
-  it, and the worker does not return to mining. That is the deadlock: not a mineral
-  threshold and not a worker gate, but a status that never advances.
-
-  **Why it never advances, traced through the layers:**
-
-  - `ConstructionStatusChanger` advances `NOT_STARTED -> IN_PROGRESS` from
-    `builder.buildUnit() != null` (the Zerg metamorphosis branch at line 143 is a
-    different, correctly `We.zerg()`-gated path);
-  - `Unit.getBuildUnit()` reads `unitData.getBuildUnit()` - a shared-memory field;
-  - the harness fills it at `UnitUpdate.cpp:333`:
-    `self->buildUnit = o.currentBuildUnit() ? server.getUnitID(getUnitFromBWUnit(o.currentBuildUnit())) : -1`;
-  - OpenBW **does** set `u->current_build_unit` (`bwgame.h:8203`), so the field exists -
-    what fails is the conversion: `getUnitFromBWUnit(...)` yields a unit the BWAPI id table
-    does not know, `getUnitID` returns -1, and the client reads `null`.
-
-  **This is the fourth instance of one pattern in this engine**: a shared-memory field that
-  StarCraft fills and OpenBW does not fill the way BWAPI expects.
-  `regionCount = 0` broke pathing, `isOccupied` broke the occupancy grid, `hasPath` broke
-  placement, and now `buildUnit` breaks construction status. The first three each cost a
-  session; recognising the shape is the point of writing it down.
-
-  **The good news, and the reason to fix it in Atlantis rather than in the library:**
-  `isConstructing` IS published correctly (`UnitUpdate.cpp:359` computes it in the client)
-  and reads `true` at the moment above. Atlantis does not need `buildUnit` to know that a
-  construction started - it can use the field that works, or the plain fact that the
-  builder is standing on the reserved tile with the building absent. That is a change on
-  our side of the seam and does not require another fork.
+  Three wrong readings in order, each killed by a probe (transcripts in git):
+  worker `hasMinerals(250)` gate (real but secondary - unfunded workers earn
+  nothing either way); worker gate as cause (`WORKER_GATE CantAfford`, 180
+  identical frames - a symptom: `minerals=0` with 5 workers means nobody
+  mines, and the census read `BuilderManager 2631` vs `GatherResources 3`);
+  cyclic deadlock as cause (constructions wait for minerals while holding
+  every worker - true but not the root).
+  The root, settled by `BUILDER_LOG=1`: a Probe ON its site, tile buildable,
+  minerals present, order issued, engine reporting `isConstructing=TRUE` -
+  while our `Construction` stays `NOT_STARTED`, so the worker never returns.
+  Layer trace: `ConstructionStatusChanger` advances on `builder.buildUnit()`,
+  which reads shared-memory `unitData.getBuildUnit()`; OpenBW sets
+  `u->current_build_unit` (`bwgame.h:8203`) but the id-table conversion
+  (`UnitUpdate.cpp:333`) yields -1, so the client reads `null`.
+  Fourth instance of one engine pattern (after `regionCount = 0`,
+  `isOccupied`, `hasPath`): a field StarCraft fills and OpenBW does not
+  fill the way BWAPI expects. Fix on our side of the seam (`isConstructing`
+  IS published correctly, `UnitUpdate.cpp:359`), no library fork.
 
   ### Three fixes landed, and the last probe showed the real shape
 
@@ -377,19 +228,10 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   **Fix 4 is the one that made the bot build both types reliably:** `Pylons=2 Gateways=2`,
   `Gateway status=IN_PROGRESS` 1344 frames, exit 0.
 
-  ### The last thing, and it is NOT in the status logic
-
-  Fix 3's probe printed the whole picture:
-
-  ```
-  FINISH_WHY Pylon site=[16,46] status=NOT_STARTED ourOfTypeWithUnfinished=0 within12=
-  FINISH_WHY_ALL ourBuildings=3 ourOfType(Pylon)=1 all=27 ourUnits=14
-  ```
-
-  **`ourOfType(Pylon) = 1` and `ourOfTypeWithUnfinished=0` in the same breath** - a Pylon
-  exists, and the construction waiting at `[16,46]` has no Pylon within 12 tiles of its
-  site. So the construction's recorded site is not where its building was put, the finder
-  keeps re-offering the same tile, and the worker stays claimed by a site that will never
+  The finish half was NOT status logic: `ourOfType(Pylon) = 1` with
+  `ourOfTypeWithUnfinished=0` in the same breath - a Pylon stands, and
+  the construction waiting at `[16,46]` has no Pylon within 12 tiles.
+  The construction's recorded site is not where its building was put,
   have a building. **`FINISHED` stays 0 for that reason alone.**
 
   ### CLOSED 2026-10-11: the finish path was the missing half - `ProtossWarping`
@@ -442,72 +284,19 @@ a changelog - `git log` is - and it is not a backlog - that is `NEXT.md`.
   gate is still worth re-examining - a base short of minerals refuses to buy the thing that
   would earn it more.
 
-  **Superseded, kept as the record of the hunt (the duplicate-construction theory):**
-
-  That is the same disagreement the owner's log shows from the other side:
-
-  ```
-  FOUND PLACE FOR Gateway at 118,37
-  FOUND PLACE FOR Pylon at 101,30
-  FOUND PLACE FOR Gateway at 118,37     <- same tile again
-  FOUND PLACE FOR Pylon at 101,30
-  ```
-
-  The finder keeps returning the same tile, so the tile is not the problem - but the
-  construction that ends up recorded is not the one the builder went to.
-
-  **`RefreshConstructionPosition.refreshPosition` was ruled OUT as the cause** by a probe:
-  it does move the site (`REFRESH_MOVE Gateway from=[16,48] to=[17,41]`, seven tiles of
-  drift), but that is now guarded - it refuses to move a site the builder is already moving
-  to or standing on - and the `ourOfTypeWithUnfinished=0` measurement above comes from AFTER
-  that guard.
-
-  **MEASURED AND IDENTIFIED: there are TWO constructions for one building.**
-
-  `Construction.setPositionToBuild` was instrumented to print every site assignment with its
-  caller chain. It printed **nothing** - no code ever moves a construction's site after
-  creation, so "the site was mutated" is ruled out. The status census then showed what is
-  actually there:
-
-  ```
-  construction=Gateway status=IN_PROGRESS at=[94,111]  1460   <- being built
-  construction=Gateway status=NOT_STARTED at=[98,111]  1410   <- a SECOND one, 4 tiles away
-  construction=Pylon   status=IN_PROGRESS at=[79,114]   498
-  construction=Pylon   status=IN_PROGRESS at=[90,112]   535
-  construction=Pylon   status=NOT_STARTED at=[79,114]   122   <- duplicates here too
-  construction=Pylon   status=NOT_STARTED at=[90,112]   372
-  ```
-
-  Two constructions of the same type, alive at the same time, four tiles apart. One is
-  being built; the other waits forever for a building that is already going up elsewhere,
-  holding its worker while it waits. **That is the deadlock, and it is the same thing the
-  owner saw in the IDE** - `FOUND PLACE FOR Gateway at 118,37` alternating with
-  `Pylon at 101,30`: two entries for one intent, each re-finding its own tile.
-
-  **Why `alreadyExists` does not catch it:** `ConstructionRequests.alreadyExists` requires
-  `sameAs(...)` AND `positionToBuildCenter().distTo(...) <= 6` - the two Gateways are 4
-  tiles apart, so that part passes - but it is consulted on the path that creates a new
-  construction (`NewConstructionRequest.requestConstructionOf`), and the second one is
-  evidently created through a path that does not reach that check, or reached it before the
-  first was registered. **The next measurement is the creation side**, not the site side:
-  instrument `ConstructionRequests.constructions.add` with the caller chain and the
-  building type, and the two creation paths will be named.
-
-  **Note the severity:** this affects every building, not just the opening. A duplicated
-  construction is a permanently employed worker and one permanently unsatisfiable task, so
-  the base loses a miner for the rest of the game each time it happens.
-
-  **The builder-ownership rule from `NEXT.md` #48 made this reachable.** That change gave
-  `BuilderManager` first priority in `WorkerManager` and made it hold an assigned builder
-  even when it cannot issue an order that frame - correct for "do not steal the builder",
-  but it did not bound how many workers can be claimed at once, so a construction whose
-  status never advances claims a worker forever.
-
-  **What it should do instead (owner's call, it is a strategy question):** a worker held at
-  a site that cannot start should return to mining until the site is affordable. The
-  existing `ShouldNotTravelToConstructYet` is exactly that idea for the *travel* half
-  (it refuses to set off when the building is not yet affordable) - the gap is the worker
-  that has already arrived, or that is claimed before the check runs.
+  Ruled out along the way: the finder re-offering one tile (tile is fine,
+  the recorded construction is not the one the builder went to);
+  `RefreshConstructionPosition` mutating the site (guarded since; the
+  mismatch reproduces after the guard). Measured: TWO constructions for
+  one building (IN_PROGRESS at `[94,111]` + NOT_STARTED twin 4 tiles
+  away; same for Pylons) - one builds, the other waits forever holding
+  its worker. `alreadyExists` misses it: same-type + within 6 tiles
+  passes, but the second order takes a path that never reaches the
+  check (creation side, not site side). Severity: every building, one
+  miner lost per duplication. Reachable since #48 gave BuilderManager
+  first priority with no claim bound. Open strategy half (owner call):
+  a worker held at an unstartable site should return to mining
+  (`ShouldNotTravelToConstructYet` covers only the travel half).
 
   **Superseded detail, kept because the gate is still worth fixing:**
 
