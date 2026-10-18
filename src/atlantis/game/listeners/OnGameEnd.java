@@ -98,12 +98,12 @@ public class OnGameEnd {
             .param("minerals", A.minerals())
             .param("gas", A.gas())
             .log(A.now(), A.minSec());
+        if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);
         EventLog.flush();
 
         if (!Env.isLocal()) BuildingLedger.printTailToStderr();
 
         if (!Env.isTesting()) GameSummary.print(won);
-        if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);
         if (ACherryVis.isEnabled()) ACherryVis.finish();
 
 //        CodeProfiler.printSummary();
