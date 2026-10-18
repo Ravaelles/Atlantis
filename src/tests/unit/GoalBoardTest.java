@@ -102,7 +102,7 @@ public class GoalBoardTest {
     @Test
     public void nothingActiveTopsNull() {
         BoardState state = BoardState.builder()
-            .minerals(2000).gas(1000).supply(100, 200)
+            .minerals(700).gas(1000).supply(100, 200)
             .workers(70).bases(3).gateways(5).gatewaysTraining(5).army(30)
             .core(true).assimilator(true).forge(true).cannons(6).observers(1)
             .seconds(900)
