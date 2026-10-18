@@ -67,6 +67,17 @@ public class PositionFulfillsAllConditions {
             AbstractPositionFinder._STATUS = "Overlaps our unfinished building";
             return failed();
         }
+        // The proximity finish removes a site a standing same-type
+        // building covers the same frame it is requested (measured
+        // OpenBW oid 72: 38 requests for covered [116,19], 38
+        // same-frame cancels) - so the search must not offer it.
+        // Mirror of buildingFinishedAtSite's overlap half: any site
+        // rejected here is doomed downstream, never a live packed
+        // sibling (overlap, not nearness - touching edges stay legal).
+        if (OverlapsOurStandingBuilding.check(position, building)) {
+            AbstractPositionFinder._STATUS = "Overlaps our standing building";
+            return failed();
+        }
         if (EnemiesTooClose.check(builder, building, position)) return failed();
 
         if (We.protoss()) {
