@@ -138,14 +138,14 @@ public class BattleCommander extends Commander {
             // animating unit gets no new order at all this frame.
             if (unit.isAttackFrame() || unit.isStartingAttack()) return;
 
-            // A cooling-down Dragoon with ANY enemy on top of it backs off
-            // instead of trading at point blank (owner 2026-10-19, Wine
-            // 1Drag_v_1Zeal: the Dragoon stood still under a Zealot with
-            // DoNothing and died - no kite existed at all). The threat is
-            // the nearest enemy inside the envelope, not necessarily the
-            // focused target: focus fire must not pin a Dragoon that is
-            // being shredded. Shooting resumes once the weapon is ready,
-            // which closes the range again.
+            // A Dragoon steps back only when the enemy is inside its
+            // safety margin - otherwise it stands and lets the standing
+            // attack order fire the instant the cooldown hits zero
+            // (PurpleWave BeDragoonVsSlowlot: margin over threats inside
+            // 5 tiles, never a flat distance + cooldown gate; the threat
+            // is the nearest enemy inside the envelope, not necessarily
+            // the focused target: focus fire must not pin a Dragoon that
+            // is being shredded).
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
                 .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
             if (threat != null && shouldKite(unit, threat)) {
@@ -159,6 +159,13 @@ public class BattleCommander extends Commander {
                 }
                 KiteTwin.nowhereToStep(unit, threat);
             }
+            // Order discipline, not order spam: a new attack order issues
+            // only when the engine holds a different target (first
+            // acquisition, lost order while moving, target switch).
+            // Otherwise nothing issues this frame - the standing order
+            // fires on its own the moment the weapon is ready (PurpleWave
+            // Commander.attack: order on new/overdue target, else sleep).
+            if (target.equals(unit.target())) return;
             unit.attackUnit(target);
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;
@@ -188,23 +195,50 @@ public class BattleCommander extends Commander {
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
     /**
-     * A Dragoon with an enemy inside {@link #KITE_ENEMY_TILES} tiles backs
-     * off while its weapon cools down instead of trading at point blank
-     * (owner 2026-10-19: enemy closer than 3.5 tiles + cooldown at least
-     * 10 frames). Dragoon-only: Zealots want contact, and other races
-     * are out of scope. Public as a seam: the rule pins in a stub state.
+     * A Dragoon steps back only while the closest threat sits inside its
+     * safety margin (PurpleWave BeDragoonVsSlowlot, engine numbers from
+     * the vendored jar: Dragoon range 4 tiles, cooldown 30, Zealot
+     * range ~0 tiles, 16 damage per pass). Margin is the tiles the
+     * threat still must close before it can hit us, minus half a tile
+     * when the threat is coming for exactly this unit. A healthy
+     * Dragoon holds to about one tile and keeps shooting through the
+     * cooldown; a dying one demands up to four. Dragoon-only: Zealots
+     * want contact, other races are out of scope. Public as a seam:
+     * the rule pins in a stub state.
      */
-    public static boolean shouldKite(AUnit unit, AUnit target) {
-        if (unit == null || target == null || !unit.isDragoon()) return false;
-        if (unit.distTo(target) >= KITE_ENEMY_TILES) return false;
-        return unit.cooldown() >= KITE_COOLDOWN_FRAMES;
+    public static boolean shouldKite(AUnit unit, AUnit threat) {
+        if (unit == null || threat == null || !unit.isDragoon()) return false;
+        if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
+        return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
 
-    /** An enemy closer than this makes a cooling Dragoon step back. */
-    private static final double KITE_ENEMY_TILES = 3.5;
+    /**
+     * Tiles the threat still must close before it can hit us, minus
+     * half a tile when its order target is exactly this unit (the
+     * cheap half of PurpleWave's commitment read: targeted plus
+     * facing-dot; facing has no cheap API here, so it stays open).
+     * Distances are center-based tiles, not edge pixels - about half
+     * a tile more permissive than the original, Wine decides.
+     */
+    private static double kiteMargin(AUnit unit, AUnit threat) {
+        double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
+        AUnit hunted = threat.orderTarget();
+        if (hunted != null && hunted.id() == unit.id()) margin -= 0.5;
+        return margin;
+    }
 
-    /** Weapon cooldown from which backing off beats standing fire. */
-    private static final int KITE_COOLDOWN_FRAMES = 10;
+    /**
+     * Tiles of margin a Dragoon demands before it yields ground:
+     * about one while healthy, up to four while dying (PurpleWave:
+     * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
+     */
+    private static double kiteMarginRequired(AUnit unit) {
+        double hitsLeft = (unit.hp() + unit.shields()) / 16.0;
+        return Math.max(1.0, 4.0 - 0.25 * hitsLeft);
+    }
+
+    /** Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)). */
+    private static final double KITE_ENEMY_TILES = 5.0;
 
     /** How far the kiting step carries (tiles). */
     private static final double KITE_STEP_TILES = 2.0;

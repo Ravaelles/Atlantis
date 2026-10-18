@@ -14,12 +14,12 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * A cooling-down Dragoon with the enemy on top of it backs off instead
- * of trading at point blank (owner 2026-10-19, Wine 1Drag_v_1Zeal:
- * the Dragoon stood still under a Zealot with DoNothing and died -
- * no kite existed at all). Enemy closer than 3.5 tiles + cooldown at
- * least 10 frames = step back; shooting resumes once the weapon is
- * ready. Dragoon-only: Zealots want contact.
+ * A Dragoon steps back only while the threat sits inside its safety
+ * margin (PurpleWave BeDragoonVsSlowlot, owner 2026-10-19, Wine
+ * 1Drag_v_1Zeal). A healthy Dragoon holds to about one tile and keeps
+ * shooting through the cooldown; a hurt one yields from farther out.
+ * Attack orders issue once per target (no re-spam), mid-animation
+ * units get no orders at all. Dragoon-only: Zealots want contact.
  */
 public class DragoonKiteTest extends AbstractTestWithWorld {
 
@@ -39,13 +39,41 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void coolingDragoonBacksOffFromCloseZealot() {
+    public void healthyDragoonHoldsFireAtTwoTiles() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(BattleCommander.shouldKite(dragoon, zealot));
+            assertFalse(BattleCommander.shouldKite(dragoon, zealot),
+                "healthy Dragoon holds to ~1 tile and shoots through the cooldown - "
+                + "the Zealot may come much closer than 3.5 tiles");
+        });
+    }
+
+    @Test
+    public void gluedDragoonStepsBack() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
+        dragoon.cooldown = 15;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            assertTrue(BattleCommander.shouldKite(dragoon, zealot),
+                "dist ~0 is inside any margin - step back");
+        });
+    }
+
+    @Test
+    public void hurtDragoonYieldsFromFartherOut() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            assertTrue(BattleCommander.shouldKite(dragoon, zealot),
+                "a dying Dragoon demands ~4 tiles of margin, not ~1");
         });
     }
 
@@ -69,7 +97,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             assertFalse(BattleCommander.shouldKite(dragoon, zealot),
-                "6 tiles away is approach territory, not the 3.5-tile envelope");
+                "6 tiles away is approach territory, not the 5-tile threat envelope");
         });
     }
 
@@ -103,6 +131,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
+        // Hurt so the margin rule fires at 2 tiles (a healthy Dragoon
+        // would rightly hold and shoot here).
+        dragoon.hp = 20;
+        dragoon.shields = 0;
 
         // No Nexus: defendAnchor() is null, so FLEE has nowhere to go.
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
@@ -115,7 +147,36 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                     + ordersOf(dragoon));
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
-                "a cooling Dragoon steps back instead of trading: " + ordersOf(dragoon));
+                "a Dragoon inside its margin steps back instead of trading: "
+                    + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void coolingDragoonHoldsItsOrderInsteadOfRespamming() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+
+        // Healthy at 2 tiles: margin holds, so the Dragoon stands and
+        // shoots instead of stepping back. Two acts, one order: the
+        // standing attack order fires on its own when the weapon is
+        // ready (PurpleWave: order on new target, else sleep).
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            int attacks = 0;
+            for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
+                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacks++;
+            }
+            assertTrue(attacks == 1,
+                "one acquisition, one order - no per-frame re-spam: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "margin holds: stand and shoot, do not step back: " + ordersOf(dragoon));
         });
     }
 
@@ -180,6 +241,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 25;
+        // Hurt so the margin rule fires at 2 tiles (a healthy Dragoon
+        // would rightly hold and shoot here, no step needed).
+        dragoon.hp = 20;
+        dragoon.shields = 0;
         // Mineral wall directly behind the Dragoon: the straight step
         // lands next to minerals and is refused, the lateral ones are
         // free. Old code stood still (then fought point blank); the
