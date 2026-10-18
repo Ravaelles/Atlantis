@@ -417,7 +417,10 @@ twins green (1/1 each, re-verified today). Re-run
   Self-terminate paths audited one by one and exonerated (OnGameEnd
   only runs at the end, ForceExit/time prints absent, time limits far
   above, launcher exits post-loop, server log silent, tail frames show
-  healthy mid-game activity). Remaining suspect is host-side (engine
+  healthy mid-game activity). 4th occurrence 2026-10-18 (`144516`:
+  43 s wall, 438 game-s, healthy 56/73 bank 631/366, Forge@9210,
+  enemyless, GAME_END state attached, zero force/leave/GG/tripwire
+  lines - same shape). Remaining suspect is host-side (engine
   ends an enemyless match) - needs C++ host debugging (owner call,
   shared platform). GAME_END twin stays as the witness for the next
   one. No blind patch.
@@ -463,8 +466,13 @@ twins green (1/1 each, re-verified today). Re-run
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner
   side of D5. Untouched. `TECH_CHECK` twin live (`170009`: 430 rows);
   the refusing gate named in the open: weapons wants 700 bank or 3
-  bases (peak 517 here, 671 in `165345` - just under). Chain check
-  2026-10-17: both clean games never reach the Forge trigger at all
+  bases (peak 517 here, 671 in `165345` - just under). 2026-10-18: the
+  Python window (Forge 3:58, bank 784, TECH_CHECK false at 772/306)
+  is refused one gate earlier - `combat-10` (8 combat units; the bank
+  clause never evaluates). Named live from now on: the TECH_CHECK twin
+  carries `refusedBy` (Weapons + Armor, pinned in
+  `ProtossUpgradesLevelGatingTest` 4/4). Tuning, still owner side of D5.
+  Chain check 2026-10-17: both clean games never reach the Forge trigger at all
   (supplyUsed peaks 42/33 < `buildAt` minimum 46), so research never
   starts for coherent reasons, not a stuck gate. `213248`: Forge built
   8:29 but post-Forge bank maxed at 641 < 700 (2 bases) - still

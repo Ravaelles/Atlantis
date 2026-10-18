@@ -20,12 +20,14 @@ public class ResearchProtossGroundArmor extends Commander {
 
     @Override
     public boolean applies() {
-        boolean result = appliesInner();
+        String refusedBy = refusedBy();
+        boolean result = refusedBy == null;
         // NEXT #85: L1+ never proved live - this vector names the refusing
         // gate the way SINGULARITY_CHECK did for #72. Pure reads only.
         atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.TECH_CHECK)
             .param("upgrade", what().name())
             .param("result", result)
+            .param("refusedBy", refusedBy == null ? "none" : refusedBy)
             .param("beingRes", UpgradeResearchCommander.isBeingResearched(what()))
             .param("engineLevel", ATech.getUpgradeLevel(what()))
             .param("minerals", A.minerals())
@@ -35,27 +37,32 @@ public class ResearchProtossGroundArmor extends Commander {
         return result;
     }
 
-    private boolean appliesInner() {
-        if (!Have.forge()) return false;
+    /**
+     * First failing gate, or null when research may fire. Same order and
+     * same conditions as the old boolean chain - only the answer shape
+     * changed, from silent-false to a named refusal.
+     */
+    private String refusedBy() {
+        if (!Have.forge()) return "no-forge";
         // Weapons first, but level 1 is enough: requiring full L3 (via
         // Weapons.isResearched()) held armor until the end of the tech path
         // (NEXT #85). Vanilla has no such cross requirement, and Terran
         // researchers carry none either.
-        if (ATech.getUpgradeLevel(Protoss_Ground_Weapons) < 1) return false;
-        if (Count.ourCombatUnits() <= 10) return false;
-        if (ATech.isResearched(what())) return false;
-        if (!A.hasMinerals(650) && !A.hasGas(400) && Count.basesWithUnfinished() <= 1) return false;
-        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
-        if (CountInQueue.count(what(), 10) > 0) return false;
-        if (TooWeakToTech.check()) return false;
+        if (ATech.getUpgradeLevel(Protoss_Ground_Weapons) < 1) return "weapons-l1";
+        if (Count.ourCombatUnits() <= 10) return "combat-10";
+        if (ATech.isResearched(what())) return "researched";
+        if (!A.hasMinerals(650) && !A.hasGas(400) && Count.basesWithUnfinished() <= 1) return "bank-650-gas-400-or-2nd";
+        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return "recent-order";
+        if (CountInQueue.count(what(), 10) > 0) return "already-queued";
+        if (TooWeakToTech.check()) return "too-weak";
 
         if (A.hasGas(270 + (Enemy.protoss() ? 100 : 0)) && A.hasMinerals(550)) {
-            if (!A.canAfford(500, 200) && Count.ourCombatUnits() <= 17) return false;
+            if (!A.canAfford(500, 200) && Count.ourCombatUnits() <= 17) return "cant-afford-17";
 
-            return true;
+            return null;
         }
 
-        return false;
+        return "poor";
     }
 
     public static boolean isResearched() {

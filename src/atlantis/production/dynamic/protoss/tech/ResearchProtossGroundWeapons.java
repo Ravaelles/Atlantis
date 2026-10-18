@@ -21,12 +21,18 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
 
     @Override
     public boolean applies() {
-        boolean result = appliesInner();
+        String refusedBy = refusedBy();
+        boolean result = refusedBy == null;
         // NEXT #85: L1+ never proved live - this vector names the refusing
         // gate the way SINGULARITY_CHECK did for #72. Pure reads only.
+        // `refusedBy` names the first failing gate (`none` when firing),
+        // so the next post-Forge rich game says which term holds research
+        // back instead of repeating the Python shape (bank 772, combat 8,
+        // twin silent on why).
         atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.TECH_CHECK)
             .param("upgrade", what().name())
             .param("result", result)
+            .param("refusedBy", refusedBy == null ? "none" : refusedBy)
             .param("beingRes", isBeingResearched(what()))
             .param("engineLevel", ATech.getUpgradeLevel(what()))
             .param("minerals", A.minerals())
@@ -36,22 +42,27 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
         return result;
     }
 
-    private boolean appliesInner() {
-        if (!Have.forge()) return false;
-        if (isResearched()) return false;
-        if (Count.ourCombatUnits() <= 10) return false;
-        if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return false;
-        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return false;
-        if (CountInQueue.count(what(), 4) > 0) return false;
-        if (TooWeakToTech.check()) return false;
+    /**
+     * First failing gate, or null when research may fire. Same order and
+     * same conditions as the old boolean chain - only the answer shape
+     * changed, from silent-false to a named refusal.
+     */
+    private String refusedBy() {
+        if (!Have.forge()) return "no-forge";
+        if (isResearched()) return "researched";
+        if (Count.ourCombatUnits() <= 10) return "combat-10";
+        if (!A.hasMinerals(700) && Count.basesWithUnfinished() <= 2) return "bank-700-or-3rd";
+        if (Queue.get().history().lastHappenedLessThanSecondsAgo(what().name(), 30)) return "recent-order";
+        if (CountInQueue.count(what(), 4) > 0) return "already-queued";
+        if (TooWeakToTech.check()) return "too-weak";
 
         if (A.hasGas(150 + (Enemy.zerg() ? 80 : 0)) && A.hasMinerals(290)) {
-            if (!A.canAfford(500, 200) && Count.ourCombatUnits() <= 17) return false;
+            if (!A.canAfford(500, 200) && Count.ourCombatUnits() <= 17) return "cant-afford-17";
 
-            return true;
+            return null;
         }
 
-        return false;
+        return "poor";
     }
 
     @Override
