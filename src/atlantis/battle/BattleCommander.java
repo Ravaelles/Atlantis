@@ -7,6 +7,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
+import atlantis.units.actions.move.MoveAway;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
@@ -158,7 +159,7 @@ public class BattleCommander extends Commander {
                 // Dragoon fights instead of waiting to die (Wine
                 // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
                 // then trading at point blank).
-                if (unit.moveAwayFrom(threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
+                if (MoveAway.fromBest(unit, threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
                     KiteTwin.steppedAside(unit, threat);
                     return;
                 }
@@ -236,32 +237,8 @@ public class BattleCommander extends Commander {
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || !unit.isDragoon()) return false;
-        if (unit.distTo(threat) >= KITE_ENEMY_TILES) {
-            kitingLatch.remove(unit.id());
-            return false;
-        }
-        double required = kiteMarginRequired(unit);
-        if (kitingLatch.getOrDefault(unit.id(), false)) {
-            if (kiteMargin(unit, threat) > required + KITE_LATCH_RELEASE_TILES) {
-                kitingLatch.remove(unit.id());
-                return false;
-            }
-            return true;
-        }
-        if (kiteMargin(unit, threat) < required) {
-            kitingLatch.put(unit.id(), true);
-            return true;
-        }
-        return false;
-    }
-
-    /** A latched step-back holds until the margin recovers this far past required. */
-    private static final double KITE_LATCH_RELEASE_TILES = 1.0;
-
-    private static final java.util.Map<Integer, Boolean> kitingLatch = new java.util.HashMap<>();
-
-    public static void clearForTests() {
-        kitingLatch.clear();
+        if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
+        return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
 
     /**

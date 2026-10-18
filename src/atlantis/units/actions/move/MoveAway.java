@@ -18,14 +18,67 @@ public class MoveAway {
         // common path cannot change under this refactor.
         if (tryStep(unit, from, moveDistance, action, tooltip, from)) return true;
 
-        // A wall directly behind must not mean standing still (measured
-        // Wine 1Drag_v_1Zeal: 106 stuck-no-step rows in a row, then
-        // death): fan out laterally, never toward the threat. Each
-        // candidate runs the same validation below, so a blocked
-        // direction only costs a check. Rotating the threat point (not
-        // the destination) keeps every candidate inside tryStep's
-        // contract. A glued unit (dist ~0) has no defined away-direction;
-        // the compass starts from an arbitrary axis.
+        for (HasPosition aim : lateralAims(unit, from)) {
+            if (tryStep(unit, aim, moveDistance, action, tooltip, from)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Kiting escape choice (PurpleWave MicroPathing direction): evaluate
+     * the straight step and every lateral, issue the one opening the
+     * most distance to the threat. First-success walks straight into
+     * corners - the step validates fine while sliding along a wall,
+     * then the next frames glue at dist 0 with the threat mid-swing
+     * (Wine 1Drag_v_1Zeal: all damage came from one corner trap).
+     * Same candidates, same validation, different pick - other
+     * callers keep first-success via {@link #from}.
+     */
+    public static boolean fromBest(AUnit unit, HasPosition from, double moveDistance, Action action, String tooltip) {
+        if (from == null || moveDistance < 0.01) return false;
+
+        APosition best = null;
+        double bestDist = -1;
+        for (HasPosition aim : allAims(unit, from)) {
+            APosition dest = destinationFor(unit, aim, moveDistance, from);
+            if (dest == null) continue;
+            double dist = dest.distTo(from);
+            if (dist > bestDist) {
+                bestDist = dist;
+                best = dest;
+            }
+        }
+        if (best == null) return false;
+
+        // A zero-length step is not a step: issuing it would look
+        // like movement while standing glued in place.
+        if (unit.distTo(best) < 0.1) return false;
+
+        if (unit.move(best, action, "Move away" + unit.distToDigit(from), false)) {
+            return true;
+        }
+        else {
+            return true;
+        }
+    }
+
+    private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {
+        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
+        aims.add(from);
+        aims.addAll(lateralAims(unit, from));
+        return aims;
+    }
+
+    /**
+     * A wall directly behind must not mean standing still (measured
+     * Wine 1Drag_v_1Zeal: 106 stuck-no-step rows in a row, then
+     * death): fan out laterally, never toward the threat.
+     * Rotating the threat point (not the destination) keeps every
+     * candidate inside tryStep's contract. A glued unit (dist ~0) has
+     * no defined away-direction; the compass starts from an arbitrary
+     * axis.
+     */
+    private static java.util.List<HasPosition> lateralAims(AUnit unit, HasPosition from) {
         double dx = from.x() - unit.x();
         double dy = from.y() - unit.y();
         if (dx * dx + dy * dy < 0.01) {
@@ -36,15 +89,15 @@ public class MoveAway {
              0.7071, 0.7071, 0.7071, -0.7071,
              0.0, 1.0, 0.0, -1.0,
              -0.7071, 0.7071, -0.7071, -0.7071 };
+        java.util.List<HasPosition> aims = new java.util.ArrayList<>();
         for (int i = 0; i < rotations.length; i += 2) {
             double rx = dx * rotations[i] - dy * rotations[i + 1];
             double ry = dx * rotations[i + 1] + dy * rotations[i];
-            APosition rotatedThreat = new APosition(
+            aims.add(new APosition(
                 (int) (unit.x() + rx), (int) (unit.y() + ry)
-            ).makeValidGroundPosition();
-            if (tryStep(unit, rotatedThreat, moveDistance, action, tooltip, from)) return true;
+            ).makeValidGroundPosition());
         }
-        return false;
+        return aims;
     }
 
     /**
@@ -54,6 +107,23 @@ public class MoveAway {
      * always runs against the real threat, never the probe point.
      */
     private static boolean tryStep(AUnit unit, HasPosition aim, double moveDistance, Action action, String tooltip, HasPosition threat) {
+        APosition newPosition = destinationFor(unit, aim, moveDistance, threat);
+        if (newPosition == null) return false;
+
+        if (unit.move(newPosition, action, "Move away" + unit.distToDigit(threat), false)) {
+            return true;
+        }
+        else {
+            return true;
+        }
+    }
+
+    /**
+     * Validate-only half of a step candidate: geometry plus the shared
+     * walkability and reasonableness gates, no order issued. Null means
+     * this direction is not a step.
+     */
+    private static APosition destinationFor(AUnit unit, HasPosition aim, double moveDistance, HasPosition threat) {
         int dx = aim.x() - unit.x();
         int dy = aim.y() - unit.y();
         double vectorLength = Math.sqrt(dx * dx + dy * dy);
@@ -72,7 +142,7 @@ public class MoveAway {
 
         if (newPosition == null) {
             ErrorLog.printErrorOnce("Cannot moveAwayFrom " + aim + " for " + unit.name());
-            return false;
+            return null;
         }
 
         if (unit.isGroundUnit() && !newPosition.isWalkable()) {
@@ -81,57 +151,19 @@ public class MoveAway {
                     "MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")"
                 );
             }
-            return false;
+            return null;
         }
 
         double distTo = unit.distTo(newPosition);
         boolean positionOk = IsReasonablePositionToRunTo.check(unit, newPosition, threat);
-//        boolean positionOk = (
-//            (distTo >= (0.9 * moveDistance)) || (distTo <= 3 * moveDistance)
-//        ) && !newPosition.isCloseToMapBounds(1);
-//            boolean positionOk = (moveDistance <= 2 && distTo >= 0.02)
-//                || (distTo >= 1.9 && distTo > 3 * moveDistance && !unit.isWorker());
 
-        if (
-//            unit.runningManager().isReasonablePositionToRun(unit, newPosition)
-            positionOk
-        ) {
-//            if (from instanceof AUnit && Select.enemy().bunkers().countInRadius(0.5, from) > 0) {
-//                AConsole.printStackTrace("Why running from bunker?");
-//            }
+        if (!positionOk) return null;
 
-//                if (moveDistance < 2.5) return unit.moveAwayFrom(from, 2.5, action, tooltip);
-//                return unit.moveAwayFrom(from, 2.5, action, tooltip);
+        // A zero-length step is not a step: issuing it would look
+        // like movement while standing glued in place.
+        if (unit.distTo(newPosition) < 0.1) return null;
 
-//                ErrorLog.printMaxOncePerMinute(
-//                    unit.typeWithUnitId() + "::moveAwayFrom: distTo: " + distTo
-//                        + " / " + "moveDistance: " + moveDistance
-//                );
-//                return false;
-
-            // A zero-length step is not a step: issuing it would look
-            // like movement while standing glued in place.
-            if (unit.distTo(newPosition) < 0.1) return false;
-
-            if (unit.move(newPosition, action, "Move away" + unit.distToDigit(threat), false)) {
-                return true;
-            }
-            else {
-//                if (A.isUms() && !unit.isABuilding() && !unit.isAir()) {
-//                    System.err.println(
-//                        "MoveAway failed, dist: " + distTo + " / prefered:" + moveDistance + " / " + unit
-//                    );
-//                }
-                return true;
-            }
-        }
-//        else {
-//            System.err.println(
-//                "MoveAway: not ok " + unit.distTo(newPosition) + " / " + newPosition.isWalkable() + " / " + unit
-//            );
-//        }
-
-        return false;
+        return newPosition;
     }
 
 //        this.setTooltip("CantMoveAway", false);

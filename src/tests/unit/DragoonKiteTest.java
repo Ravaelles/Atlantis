@@ -90,37 +90,6 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void stepBackLatchesUntilMarginRecovers() {
-        // Healthy: required 1.19, release past 2.19. A fresh look at
-        // dist 1.5 holds - but a unit that just stepped from glue keeps
-        // stepping until it truly opens distance (no threshold
-        // oscillation, no standing one swing too close).
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit glued = fake(AUnitType.Protoss_Zealot, 30, 20);
-        FakeUnit near = fake(AUnitType.Protoss_Zealot, 31.5, 20);
-        FakeUnit far = fake(AUnitType.Protoss_Zealot, 33, 20);
-        dragoon.cooldown = 15;
-        atlantis.battle.BattleCommander.clearForTests();
-
-        try {
-            world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon),
-                fakeEnemies(glued, near, far), () -> {
-                    assertTrue(BattleCommander.shouldKite(dragoon, glued),
-                        "dist ~0 breaks the margin - latch on");
-                    assertTrue(BattleCommander.shouldKite(dragoon, near),
-                        "latched: dist 1.5 would hold fresh, keep stepping");
-                    assertFalse(BattleCommander.shouldKite(dragoon, far),
-                        "margin recovered past release - stand and shoot");
-                    assertFalse(BattleCommander.shouldKite(dragoon, near),
-                        "latch released: fresh rule holds at 1.5");
-                });
-        }
-        finally {
-            atlantis.battle.BattleCommander.clearForTests();
-        }
-    }
-
-    @Test
     public void facingZealotTriggersEarlierYield() {
         // Total 132: margin required 1.94 tiles. At dist 2 the base
         // margin (2.0) holds - unless the Zealot faces us (-0.5),
@@ -201,6 +170,31 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             if (record.actorId == unitId && record.operation.equals(operation)) return true;
         }
         return false;
+    }
+
+    @Test
+    public void kiteStepOpensTheMostDistance() {
+        // Open field, hurt Dragoon, Zealot east: the straight step
+        // back opens 4 tiles, laterals ~2.8 - fromBest issues the
+        // straight one (PurpleWave: retreat where it is safest, not
+        // first-validated into a corner). Positions are pixels (x32).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "margin broken - step: " + ordersOf(dragoon));
+            assertTrue(dragoon.targetPosition.x() < 920,
+                "straight back west opens the most distance, laterals stay ~960: "
+                    + dragoon.targetPosition);
+        });
     }
 
     @Test
@@ -343,6 +337,9 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
                 "no standing trade while a step exists: " + ordersOf(dragoon));
+            assertTrue(dragoon.targetPosition.x() > 940,
+                "straight back runs into the mineral wall - sidestep east instead: "
+                    + dragoon.targetPosition);
         }
         finally {
             neutralInWorld = null;
