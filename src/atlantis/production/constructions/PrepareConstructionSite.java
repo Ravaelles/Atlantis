@@ -90,6 +90,8 @@ public class PrepareConstructionSite {
                 + " at [" + site.tx() + "," + site.ty() + "] for supply " + order.minSupply());
         EventLog.key(LogKey.CONSTRUCTION_PREPARING)
             .param("type", type.name())
+            .param("cid", prepared.id())
+            .param("oid", order.id())
             .param("tx", site.tx())
             .param("ty", site.ty())
             .param("supply", order.minSupply())

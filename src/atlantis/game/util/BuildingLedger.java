@@ -37,13 +37,17 @@ public class BuildingLedger {
      * @param expectedSupply the order's {@code minSupply} ("At 8" of the
      *                       build-order row, or the supply the dynamic order
      *                       was created at), null when no order is linked.
+     * @param constructionId the construction this building finished, null
+     *                       when the warp matched nothing (the chain twin).
+     * @param orderId the linked order's id, null when orderless.
      */
     public static void recordBuilding(int unitId, String type, int tx, int ty, int frame, String time,
                                       int supplyUsed, int supplyTotal, int minerals, int gas,
                                       int reservedMinerals, int reservedGas,
-                                      Integer expectedSupply, String order) {
+                                      Integer expectedSupply, String order,
+                                      Integer constructionId, Integer orderId) {
         record("building", unitId, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
-            reservedMinerals, reservedGas, expectedSupply, order);
+            reservedMinerals, reservedGas, expectedSupply, order, constructionId, orderId);
     }
 
     /**
@@ -54,20 +58,22 @@ public class BuildingLedger {
     public static void recordUnit(int unitId, String type, int tx, int ty, int frame, String time,
                                   int supplyUsed, int supplyTotal, int minerals, int gas,
                                   int reservedMinerals, int reservedGas,
-                                  Integer expectedSupply, String order) {
+                                  Integer expectedSupply, String order,
+                                  Integer constructionId, Integer orderId) {
         record("unit", unitId, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
-            reservedMinerals, reservedGas, expectedSupply, order);
+            reservedMinerals, reservedGas, expectedSupply, order, constructionId, orderId);
     }
 
     private static void record(String kind, int unitId, String type, int tx, int ty, int frame, String time,
                                int supplyUsed, int supplyTotal, int minerals, int gas,
                                int reservedMinerals, int reservedGas,
-                               Integer expectedSupply, String order) {
+                               Integer expectedSupply, String order,
+                               Integer constructionId, Integer orderId) {
         if (frame < lastFrame) rows.clear();
         lastFrame = frame;
         if (rows.containsKey(unitId)) return;
         rows.put(unitId, new Row(kind, type, tx, ty, frame, time, supplyUsed, supplyTotal, minerals, gas,
-            reservedMinerals, reservedGas, expectedSupply, order));
+            reservedMinerals, reservedGas, expectedSupply, order, constructionId, orderId));
     }
 
     public static void flush() {
@@ -106,6 +112,8 @@ public class BuildingLedger {
                 .append(",\"reservedGas\":").append(row.reservedGas)
                 .append(",\"expectedSupply\":").append(row.expectedSupply == null ? "null" : row.expectedSupply)
                 .append(",\"order\":").append(row.order == null ? "null" : "\"" + quote(row.order) + "\"")
+                .append(",\"construction\":").append(row.constructionId == null ? "null" : row.constructionId)
+                .append(",\"orderId\":").append(row.orderId == null ? "null" : row.orderId)
                 .append("}");
         }
         return out.append(first ? "]" : "\n]").append("\n").toString();
@@ -135,10 +143,12 @@ public class BuildingLedger {
         private final int reservedGas;
         private final Integer expectedSupply;
         private final String order;
+        private final Integer constructionId;
+        private final Integer orderId;
 
         private Row(String kind, String type, int tx, int ty, int frame, String time, int supplyUsed, int supplyTotal, int minerals,
                     int gas, int reservedMinerals, int reservedGas,
-                    Integer expectedSupply, String order) {
+                    Integer expectedSupply, String order, Integer constructionId, Integer orderId) {
             this.kind = kind;
             this.type = type;
             this.tx = tx;
@@ -153,6 +163,8 @@ public class BuildingLedger {
             this.reservedGas = reservedGas;
             this.expectedSupply = expectedSupply;
             this.order = order;
+            this.constructionId = constructionId;
+            this.orderId = orderId;
         }
     }
 }

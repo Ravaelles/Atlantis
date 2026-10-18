@@ -124,6 +124,8 @@ public class ConstructionStatusChanger extends Commander {
             // warping unit.
             EventLog.key(LogKey.CONSTRUCTION_CANCEL)
                 .param("type", construction.buildingType().name())
+                .param("cid", construction.id())
+                .param("oid", construction.productionOrder() == null ? null : construction.productionOrder().id())
                 .param("reason", "proximity finish: standing " + construction.buildingType().name()
                     + " covers " + construction.buildPosition())
                 .param("tile", construction.buildPosition() == null ? "-"

@@ -40,6 +40,7 @@ public class TerranNewBuilding {
                     .param("type", newBuilding.type().name())
                     .param("warpTile", "[" + newBuilding.position().tx() + "," + newBuilding.position().ty() + "]")
                     .param("adopted", construction.id())
+                    .param("oid", construction.productionOrder() == null ? null : construction.productionOrder().id())
                     .param("adoptedTile", construction.buildPosition() == null ? "-"
                         : "[" + construction.buildPosition().tx() + "," + construction.buildPosition().ty() + "]")
                     .param("candidates", waiting)

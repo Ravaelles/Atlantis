@@ -153,6 +153,8 @@ public class NewConstructionRequest {
             ConstructionRequests.addConstruction(newConstruction);
             EventLog.key(LogKey.CONSTRUCTION_REQUESTED)
                 .param("type", building.name())
+                .param("cid", newConstruction.id())
+                .param("oid", order == null ? null : order.id())
                 .param("tile", newConstruction.buildPosition() == null ? "-"
                     : "[" + newConstruction.buildPosition().tx() + ","
                     + newConstruction.buildPosition().ty() + "]")

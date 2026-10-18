@@ -20,20 +20,22 @@ public class BuildingLedgerTest {
     @Test
     public void twoRowsRenderAsJsonArray() {
         BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
-            8, "At 8 Pylon READY_TO_PRODUCE(#1)");
+            8, "At 8 Pylon READY_TO_PRODUCE(#1)", 7, 1);
         BuildingLedger.recordUnit(23, "Zealot", 20, 20, 6750, "4:40", 35, 41, 155, 80, 300, 0,
-            12, "At 12 Zealot (#4)");
+            12, "At 12 Zealot (#4)", null, 4);
 
         assertEquals(
             "[\n"
                 + "  {\"kind\":\"building\",\"type\":\"Pylon\",\"tile\":[16,46],\"frame\":640,\"time\":\"0:26\","
                 + "\"supplyUsed\":8,\"supplyTotal\":9,\"minerals\":100,\"gas\":0,"
                 + "\"reservedMinerals\":0,\"reservedGas\":0,"
-                + "\"expectedSupply\":8,\"order\":\"At 8 Pylon READY_TO_PRODUCE(#1)\"},\n"
+                + "\"expectedSupply\":8,\"order\":\"At 8 Pylon READY_TO_PRODUCE(#1)\","
+                + "\"construction\":7,\"orderId\":1},\n"
                 + "  {\"kind\":\"unit\",\"type\":\"Zealot\",\"tile\":[20,20],\"frame\":6750,\"time\":\"4:40\","
                 + "\"supplyUsed\":35,\"supplyTotal\":41,\"minerals\":155,\"gas\":80,"
                 + "\"reservedMinerals\":300,\"reservedGas\":0,"
-                + "\"expectedSupply\":12,\"order\":\"At 12 Zealot (#4)\"}\n"
+                + "\"expectedSupply\":12,\"order\":\"At 12 Zealot (#4)\","
+                + "\"construction\":null,\"orderId\":4}\n"
                 + "]\n",
             BuildingLedger.toJson()
         );
@@ -42,9 +44,9 @@ public class BuildingLedgerTest {
     @Test
     public void sameUnitRecordedOnceFirstWins() {
         BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
-            8, "At 8 Pylon (#1)");
+            8, "At 8 Pylon (#1)", 7, 1);
         BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 660, "0:27", 8, 9, 104, 0, 0, 0,
-            8, "At 8 Pylon (#1)");
+            8, "At 8 Pylon (#1)", 7, 1);
 
         assertEquals(1, countRows());
     }
@@ -52,9 +54,9 @@ public class BuildingLedgerTest {
     @Test
     public void frameGoingBackwardsStartsNewGame() {
         BuildingLedger.recordBuilding(11, "Pylon", 16, 46, 640, "0:26", 8, 9, 100, 0, 0, 0,
-            8, "At 8 Pylon (#1)");
+            8, "At 8 Pylon (#1)", 7, 1);
         BuildingLedger.recordBuilding(12, "Gateway", 17, 41, 5, "0:00", 5, 9, 50, 0, 0, 0,
-            9, "At 9 Gateway (#2)");
+            9, "At 9 Gateway (#2)", 8, 2);
 
         assertEquals(1, countRows());
         assertEquals(
@@ -62,7 +64,8 @@ public class BuildingLedgerTest {
                 + "  {\"kind\":\"building\",\"type\":\"Gateway\",\"tile\":[17,41],\"frame\":5,\"time\":\"0:00\","
                 + "\"supplyUsed\":5,\"supplyTotal\":9,\"minerals\":50,\"gas\":0,"
                 + "\"reservedMinerals\":0,\"reservedGas\":0,"
-                + "\"expectedSupply\":9,\"order\":\"At 9 Gateway (#2)\"}\n"
+                + "\"expectedSupply\":9,\"order\":\"At 9 Gateway (#2)\","
+                + "\"construction\":8,\"orderId\":2}\n"
                 + "]\n",
             BuildingLedger.toJson()
         );

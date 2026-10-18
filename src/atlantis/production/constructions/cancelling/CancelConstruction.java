@@ -26,6 +26,8 @@ public class CancelConstruction {
             );
             EventLog.key(LogKey.CONSTRUCTION_CANCEL)
                 .param("type", type.name())
+                .param("cid", construction.id())
+                .param("oid", construction.productionOrder() == null ? null : construction.productionOrder().id())
                 .param("reason", reason)
                 .param("tile", at == null ? "-" : at.toString())
                 .log(A.now(), A.minSec());

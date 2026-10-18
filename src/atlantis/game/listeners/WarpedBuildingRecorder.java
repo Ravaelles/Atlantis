@@ -18,13 +18,16 @@ public class WarpedBuildingRecorder {
         if (unit == null || !unit.isABuilding()) return;
 
         ProductionOrder order = unit.productionOrder();
+        atlantis.production.constructions.Construction construction = unit.construction();
         bwapi.TilePosition tile = unit.tilePosition();
         BuildingLedger.recordBuilding(
             unit.id(), unit.type().name(), tile.getX(), tile.getY(), A.now(), A.minSec(),
             A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
             ReservedResources.minerals(), ReservedResources.gas(),
             order == null ? null : order.minSupply(),
-            order == null ? null : order.toString()
+            order == null ? null : order.toString(),
+            construction == null ? null : construction.id(),
+            order == null ? null : order.id()
         );
         BuildingLedger.flush();
     }
@@ -44,7 +47,7 @@ public class WarpedBuildingRecorder {
             unit.id(), unit.type().name(), tile.getX(), tile.getY(), A.now(), A.minSec(),
             A.supplyUsed(), A.supplyTotal(), A.minerals(), A.gas(),
             ReservedResources.minerals(), ReservedResources.gas(),
-            order.minSupply(), order.toString()
+            order.minSupply(), order.toString(), null, order.id()
         );
         BuildingLedger.flush();
     }

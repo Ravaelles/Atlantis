@@ -70,6 +70,16 @@ public class EventLog {
             return this;
         }
 
+        /**
+         * Nullable ids (construction, order): present as a number, absent
+         * as JSON null - the chain twin that joins REQUESTED / PREPARING /
+         * STARTED / CANCEL / ledger rows by cid+oid.
+         */
+        public Builder param(String name, Integer value) {
+            params.put(name, value);
+            return this;
+        }
+
         public Builder param(String name, boolean value) {
             params.put(name, value);
             return this;

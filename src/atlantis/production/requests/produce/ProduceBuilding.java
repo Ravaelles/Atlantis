@@ -249,6 +249,8 @@ public class ProduceBuilding {
         _lastConstruction = prepared;
         EventLog.key(LogKey.BUILDING_STARTED)
             .param("type", prepared.buildingType().name())
+            .param("cid", prepared.id())
+            .param("oid", order == null ? null : order.id())
             .param("tile", prepared.buildPosition() == null ? "-"
                 : "[" + prepared.buildPosition().tx() + "," + prepared.buildPosition().ty() + "]")
             .param("builder", prepared.builder().id())
