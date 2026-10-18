@@ -99,6 +99,13 @@ supply pumps silent.
    coming=2 stops the stream once two travel). Root causes left:
    V2 siting blindness (WO-146) + cross-frame builder commits
    (WO-147 in-flight). The unstarted pile-up class is closed.
+   Third attempt 2026-10-19 (`203655` V2 LIVE with rule+lag+>60,
+   21933f/15 min): Dragoons 8 (first 5:25) - the ASAP rule fires
+   live; one 150f pair left, named by CLOSE_WARPS with both tiles.
+   Open: whether the remaining pair is a BO-row re-fire
+   (BuildOrderGoals dedups per frame but has no coming-suppression),
+   pipeline-legal warping overlap, or a hole - the goal-source twin
+   decides.
 4. **Move to `src-old/`**: `SupplyCommander`, `ProduceFallbackSupplyWhenSupplyLow`,
    `ProduceFallbackPylonWhenSupplyLow`, `ProduceFallbackDepotWhenSupplyLow`.
    Same cycle, suite green, ArchUnit store shrinks or holds.

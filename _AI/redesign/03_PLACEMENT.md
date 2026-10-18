@@ -110,8 +110,10 @@ Three ideas are load-bearing:
 - For every tile: if `!Map::isWalkable || !BWAPI::isBuildable` → mark `1` and mark its 8
   neighbours with `|= 2` (so a block cannot sit flush against impassable/unbuildable terrain;
   a one-tile margin is always enforced).
-- For every base on the map: force the Nexus footprint (5×4) to `1` (unbuildable) and its
-  border ring to `2`, so no block ever overlaps a resource depot.
+- For every base on the map: force the Nexus footprint (4x3, engine
+  tile size - verified against the vendored BWAPI jar, not memory) to
+  `1` (unbuildable) and its border ring to `2`, so no block ever
+  overlaps a resource depot.
 - For every geyser whose tile is at/right of the base tile: mark a 3×2 region between the
   geyser and the Nexus as unbuildable (`1`) to avoid blocking gas collection paths.
 

@@ -660,7 +660,11 @@ twins green (1/1 each, re-verified today). Re-run
   floor fill, so a standing Zealot army at/above workers/4 freezes the
   Dragoon transition forever (`202456`: Core from 4:35, 7 Zealots, zero
   Dragoons - demand-side, pinned in `V2DragoonAdvancementTest` 3/3);
-  whether the floor should convert is an owner call.
+  RULED 2026-10-19 (owner): Dragoons ASAP whenever the Core stands
+  and 50 gas is banked regardless of Zealots; Zealots without gas are
+  a 275-mineral dump, pre-Core opening Zealots ungated. LANDED in
+  `DynamicGoals.addArmyGoal` + tests, live proof `203655` (8 Dragoons,
+  first 5:25, was 0 pre-rule).
 - **#144–#147** Rewrite order, clean-room (owner direction 2026-10-17:
   Queue, site-finding, APositionFinder and SupplyCommander each properly
   planned and built anew, then the old path moves to src-old/). Safe
@@ -685,6 +689,12 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
 
+- OpenBW `TauCross` (`203655`, PRODUCTION_V2=LIVE with rule+lag+>60,
+  21933f/15 min): Dragoons 8, first warps 5:25 - the ASAP rule fires
+  live (was 0 in the pre-rule LIVE game). Pylons 7 with one 150f
+  pair, both tiles named by CLOSE_WARPS; twin + blocker-construction
+  rows fire as designed. CANCEL 691 still dominated by the Nexus loop
+  (C14 untouched).
 - OpenBW `TauCross` (`194718`, PRODUCTION_V2=LIVE with the PurpleWave
   rule, 21905f/15 min): 5 Pylons, Dragoons 4 (floor not frozen this
   game), suppression engages live (blocker-construction twins,
