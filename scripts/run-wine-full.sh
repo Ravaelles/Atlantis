@@ -385,10 +385,46 @@ else
   say "  Setting race to $CLIENT_RACE (from the client's Main.ourRace())"
 fi
 
+# Fast Wine, enforced every launch (owner 2026-10-19): the bot reads
+# WINE_FAST in GameSpeed.init() (speed 0, frameskip 500, GUI off, no
+# slowdowns), so an unattended run never renders or waits. Re-asserted
+# here rather than trusted: a slow game must be impossible, not just
+# unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
+# OpenBW ENV (same guard as the live-log copy).
+for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
+  if [ -f "$_env_candidate" ] && grep -q "^GAME_LAUNCHER=WINE" "$_env_candidate"; then
+    if grep -q "^WINE_FAST=" "$_env_candidate"; then
+      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=1|" "$_env_candidate"
+    else
+      printf '\nWINE_FAST=1\n' >> "$_env_candidate"
+    fi
+    say "  WINE_FAST=1 enforced in $_env_candidate"
+    break
+  fi
+done
+
+# Mute the game (owner 2026-10-19): unattended runs need no sound, and a
+# missing audio device must not become a hang. Disabling the backends is
+# a run-level mute - StarCraft continues silently (sound options exist
+# in-game for watched runs; this only affects script launches).
+export WINEDLLOVERRIDES="${WINEDLLOVERRIDES:-}winealsa.drv=d;winecoreaudio.drv=d;winepulse.drv=d"
+
 cd "$GAME_ROOT"
-setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-  wine chaoslauncher/Chaoslauncher.exe \
-  > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
+# Contained window (owner 2026-10-19): WINE_VIRTUAL_DESKTOP=WxH (e.g.
+# 1280x1024) runs the game inside a Wine desktop window - no fullscreen
+# grab, no resolution switch, no focus theft. Empty = current behavior;
+# the desktop wrapper is proven per-run, not defaulted, until a game
+# proves ChaosLauncher injection works through it.
+if [ -n "${WINE_VIRTUAL_DESKTOP:-}" ]; then
+  say "  Virtual desktop $WINE_VIRTUAL_DESKTOP (contained window)"
+  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+    wine explorer /desktop=atlantis,"$WINE_VIRTUAL_DESKTOP" chaoslauncher/Chaoslauncher.exe \
+    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
+else
+  setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
+    wine chaoslauncher/Chaoslauncher.exe \
+    > "$LOG_DIR/chaoslauncher.log" 2>&1 < /dev/null &
+fi
 
 # Poll for StarCraft instead of a fixed 40 s sleep: the game usually comes up
 # within seconds of ChaosLauncher starting, and the old constant wait made

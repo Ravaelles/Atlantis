@@ -53,6 +53,20 @@ public class GameSpeed {
             return;
         }
 
+        if (Env.wineFast()) {
+            // Unattended Wine speed: key "9" values (0, 500) + key "0" UI
+            // toggle, applied programmatically at game start instead of by
+            // keyboard (owner 2026-10-19). changeDisableUI records the
+            // config flag too, so setBwapiFlags-style readers agree.
+            gameSpeed = FASTEST_SPEED;
+            frameSkip = 500;
+            Atlantis.game().setLocalSpeed(FASTEST_SPEED);
+            Atlantis.game().setFrameSkip(500);
+            AGame.changeDisableUI(true);
+            System.out.println("WINE_FAST: speed 0, frameskip 500, GUI off - no slowdowns");
+            return;
+        }
+
         GameSpeed.disallowToDynamicallySlowdownGameOnFirstFighting();
         Atlantis.game().setLocalSpeed(FASTEST_SPEED);
         Atlantis.game().setFrameSkip(NORMAL_FRAME_SKIP);
@@ -60,6 +74,10 @@ public class GameSpeed {
 
     public static void checkIfNeedToSlowDown() {
 //        if (true) { return; }
+
+        // WINE_FAST runs never slow down for watching: the one-time
+        // slowdown would re-enable the GUI and drop the frame skip.
+        if (Env.wineFast()) return;
 
         if (!oneTimeSlowdownUsed && AGame.now() <= 1) {
             Atlantis.game().setGUI(frameSkip <= 30);

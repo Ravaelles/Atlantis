@@ -55,6 +55,14 @@ public class Env {
     private static boolean builderLog = false;
 
     /**
+     * WINE_FAST=1 hurries a Wine game beyond playable: speed 0, frame skip
+     * 500, GUI off, no dynamic slowdown (owner 2026-10-19: unattended runs
+     * should never render or slow down for watching). Enforced by
+     * run-wine-full.sh on every launch; GameSpeed reads it in init().
+     */
+    private static boolean wineFast = false;
+
+    /**
      * CORE_AND_DRAGOON_GATE=true ends the game as soon as the opening is proven.
      *
      * <p>
@@ -171,6 +179,10 @@ public class Env {
                 return true;
             case "BUILDER_LOG":
                 builderLog = "1".equals(value == null ? "" : value.trim())
+                    || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
+                return true;
+            case "WINE_FAST":
+                wineFast = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
             case "CORE_AND_DRAGOON_GATE":
@@ -311,6 +323,19 @@ public class Env {
     /** Test seam (the flag is ENV-driven and has no other writer). */
     public static void setPlacementCatalogueForTest(boolean enabled) {
         placementCatalogue = enabled;
+    }
+
+    /** Test seam (the flag is ENV-driven and has no other writer). */
+    public static void setWineFastForTest(boolean enabled) {
+        wineFast = enabled;
+    }
+
+    /**
+     * True when {@code WINE_FAST=1} is set in ENV: unattended Wine runs
+     * skip rendering and slowdowns (speed 0, frameskip 500, GUI off).
+     */
+    public static boolean wineFast() {
+        return wineFast;
     }
 
     /**

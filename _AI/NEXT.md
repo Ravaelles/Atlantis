@@ -472,7 +472,10 @@ twins green (1/1 each, re-verified today). Re-run
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
   builder and cancels all ruled out from flag-off logs. Needs a
-  `BUILDER_LOG=1` Wine game (builder? site? no attempt?).
+  `BUILDER_LOG=1` Wine game (builder? site? no attempt?). First datum
+  2026-10-19 (TauCross, BUILDER_LOG=1): Pylon#1 reserved worker #5 at
+  pick 0:13, STARTED 0:46, warped [16,46] 0:58 - pipeline healthy on
+  this game; the two named instances were other games.
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -512,7 +515,10 @@ twins green (1/1 each, re-verified today). Re-run
   (1:14 sup9, 1:37 sup10). Instrumented, not patched: `BUILDINGS.json`
   ledger (warp time + supply vs order expectation, both runner paths).
   Needs a Wine game with the ledger - the late/missing Gateway row names
-  the layer. No blind patch.
+  the layer. First datum 2026-10-19 (TauCross): Gateways #2/#3 on time
+  (1:24@10, 1:51@12); instead a triple dynamic ordering at 49 (#60/#64/
+  #61 within 162 frames) - same duplicate class as supply, not lateness.
+  No blind patch.
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
   0/0, scouts find nothing in 18 min). Plumbing verified correct;
@@ -629,6 +635,18 @@ twins green (1/1 each, re-verified today). Re-run
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
+
+- Wine `TauCross` (910 s, vs real Zerg Grendel Brood, 21/51 kills -4175:
+  Nexus=2 Probe=36 Dragoon=2 Pylon=9 Gateway=5 RoboticsF=1, 53 ledger
+  rows, BUILDER_LOG=1, feasibly the first game on the cid/oid twins +
+  supply cap + engage fix): ENGAGEMENT PROVEN - 21 army kills with zero
+  static defense (FIGHT 283 + FLEE 300 CLUSTER rows, latch both ways;
+  winning proof still pending, -4175). Supply cap partial: per-author
+  triggers hold, but same-need duplicates persist (Pylon #50/#51,
+  #67/#68, #101/#102; gateway triple at 49) - mid-game peak free 26
+  (WO-144). Pylon#1 healthy (builder#5 at pick 0:13 → STARTED 0:46 →
+  warp 0:58, #84 datum). Gateways #2/#3 on time 1:24/1:51 (#92 pattern
+  not reproduced). Bank peak 689, 2 bases, ORDER_SAVING 0.
 
 - Long `20261018_143050` (155 s wall, 657 game-s, legacy rich on the
   FE-gated tree: Nexus=2 Probe=52 Pylon=13 Gateway=6 Dragoon=18 Forge=1
