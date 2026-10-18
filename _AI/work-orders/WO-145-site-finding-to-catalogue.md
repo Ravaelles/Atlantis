@@ -47,7 +47,12 @@ construction sited by the catalogue, the chain in src-old/.
 1. **Parity A/B, flag off vs on** (long OpenBW runs, same map): zero
    `Can't find place` delta, no new placement-failure class, builder
    travel sane, CATALOGUE_SITE declines all named. The flip waits on
-   this, not on courage.
+   this, not on courage. First datum 2026-10-18 (`154220` short,
+   TauCross, PLACEMENT=catalogue): 0 `Can't find place`, 7 STARTED
+   warps; catalogue answers Pylons routinely (48 answered), Gateway/Core
+   decline `no-builder` to the legacy fallback (propose needs a live
+   builder). Parity direction holds; the arm that owns Gateway siting
+   is still legacy.
 2. **Default flip** (`PLACEMENT=catalogue` default): one long run,
    same bars. Roll back on any new failure class - the flag (not a
    revert commit) is the lever, then a forward fix.
