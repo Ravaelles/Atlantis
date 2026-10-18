@@ -107,54 +107,19 @@ option of asserting on a simulated fight, not coverage.
 Four things. The first is the real blocker; the rest are smaller but each one
 makes a run report the wrong thing.
 
-### 3.1 Placement on OpenBW (the blocker - the rewrite has landed, not yet cut over)
+### 3.1 Placement on OpenBW (was the blocker - closed)
 
-**STATUS 2026-10-08 (late): the rewritten planner WORKS on OpenBW.** With
-`PLACEMENT=catalogue PRODUCTION_V2=LIVE` the bot placed a Pylon - `Can't find
-place for Pylon` dropped from every run to **zero**, which is the blocker this
-section was about. The rewrite solved it.
-
-Two things surfaced from that first live run, and they are the new blockers:
-
-**A. The `PLACEMENT` flag was silently ignored (fixed).** `ProductionEngine` read
-`System.getenv("PLACEMENT")`, but ENV is a FILE parsed by `Env`, which never
-populates the process environment - so the flag was written and never seen, and
-the legacy planner silently stayed in charge. `PLACEMENT` is now an `Env` flag
-like `PRODUCTION_V2`. **This is the trap to remember: an ENV key only works if
-`Env.applyKeyAndValueToFlag` has a case for it.**
-
-**B. A building is ordered over and over (open).** The first live run issued the
-same Pylon **2883 times**, on a tile that crept one step per frame
-(`Pylon@1125`, `@1129`, `@1130`, ...). Two causes, both in Production V2 rather
-than in placement:
-
-- the plan is rebuilt from scratch every frame and does **not** know that the
-  previous frame's order was accepted by the engine, so the demand never goes
-  away (the supply goal keeps asking);
-- `CataloguePlacementPlanner.carriedOver` was added to make a repeated request
-  return the tile an already-ordered construction owns, but no `Construction` is
-  ever registered on this path (`builder committed` repeats at a new tile every
-  frame, so the builder never actually starts), so `carriedOver` finds nothing.
-
-**Next step:** make the dispatcher's builder path actually register the
-construction (or have the scheduler treat a dispatched-but-unstarted item as
-satisfied next frame), then re-run. The placement half is done; this is the
-Production V2 cutover half that M6 was always going to expose.
-
-### 3.1a What the rewrite does not cover yet
-
-Listed once, in `_AI/redesign/03_PLACEMENT.md` (its "NOT FINISHED" section at the
-very top) - not repeated here, so there is one place to keep current. The parts
-that matter for E2E: Terran/Zerg placement are stubs, and the wall does not measure
-its gap.
+The rewritten planner places Pylons on OpenBW (`Can't find place` zero);
+the dispatch loop behind it closed as NEXT #48. Gaps live in one place:
+`_AI/redesign/03_PLACEMENT.md` ("NOT FINISHED" at the top - Terran/Zerg
+stubs, wall gap unmeasured). Trap kept: an ENV key only works if
+`Env.applyKeyAndValueToFlag` has a case for it (the `PLACEMENT` flag was
+once read from `System.getenv` and silently ignored).
 
 ### 3.2 `JBWEB` does not exist on OpenBW
 
-`JBWEB` is a JNI library; its natives are not on Linux, `InitJBWEB.init()` fails
-and `AMap` catches it and continues. So ground-distance and the placement grid
-that production reads on the Wine path are simply absent on OpenBW, and any
-predicate that consults them answers nonsense there. Whatever the rewrite does,
-it must not depend on a library that cannot load on the engine the tests run on.
+JNI natives absent on Linux; the placement path must never depend on it
+(`_AI/redesign/04_MAPLIB.md` tracks the own-code replacements).
 
 ### 3.3 The first assertion layer exists (2026-10-09)
 
@@ -252,13 +217,9 @@ which was mostly about getting a client to attach - that is done.
 
 ### Step A - finish the OpenBW run as a *reliable* tool
 
-Two smaller items, both measured, both ours:
-
-- the first Pylon placement (3.1) - blocked on the `PositionFinder` rewrite;
-- assertions on top of the run (3.3): a scenario file, an expected-outcome
-  check, and a deliberately broken bot that must fail it.
-
-**Done when:** a scenario runs green on OpenBW and a broken bot fails it.
+Done (placement + assertion layer + broken-build proof, all measured) -
+what remains of the mega-test is step 4 in §3.5 (survival numbers), not
+placement.
 
 ### Step B - the mega-test (the goal of this document)
 
