@@ -106,18 +106,28 @@ public class ProduceBuilding {
      * excluded (this order replacing its own lost construction must
      * proceed); PREPARING picks are excluded (someone's aimed future -
      * blocking on them could park an earlier need behind a later row).
-     * Package-visible as a seam: the overlap and status questions pin
-     * around it, this one pins here.
+     * Stuck sites unblock by themselves: overdue cancels clear them
+     * and the count drops.
+     *
+     * <p>Above 60 supply two may fly at once (owner 2026-10-19: production
+     * outruns warp completion there, holding to one starves the pump) -
+     * the second unstarted is allowed, the third is not. Package-visible
+     * count as a seam: the status question pins here.</p>
      */
     public static boolean anotherUnstartedPylonExists(ProductionOrder order) {
+        return countUnstartedPylonsForOtherOrders(order) >= (A.supplyTotal() > 60 ? 2 : 1);
+    }
+
+    public static int countUnstartedPylonsForOtherOrders(ProductionOrder order) {
+        int total = 0;
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction == null || !construction.buildingType().isPylon()) continue;
             if (construction.status() != ConstructionOrderStatus.NOT_STARTED
                 && construction.status() != ConstructionOrderStatus.STARTING) continue;
             if (order != null && order.equals(construction.productionOrder())) continue;
-            return true;
+            total++;
         }
-        return false;
+        return total;
     }
 
     /**

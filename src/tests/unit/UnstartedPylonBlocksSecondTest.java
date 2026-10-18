@@ -132,4 +132,31 @@ public class UnstartedPylonBlocksSecondTest extends WorldStubForTests {
                 "no duplicate construction for one supply need");
         });
     }
+
+    @Test
+    public void aboveSixtyTwoUnstartedAllowedThirdRefused() {
+        currentMinerals = 500;
+        currentSupplyUsed = 64;
+        currentSupplyTotal = 68;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
+
+        world(5, fakeOurs(nexus, builder), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            ProductionOrder first = pylonOrderLinkedTo(ConstructionOrderStatus.STARTING);
+            first.construction().setBuilder(builder);
+
+            assertFalse(
+                ProduceBuilding.anotherUnstartedPylonExists(new ProductionOrder(AUnitType.Protoss_Pylon, 62)),
+                "past 60 supply the second concurrent Pylon is allowed");
+
+            ProductionOrder second = pylonOrderLinkedTo(ConstructionOrderStatus.STARTING);
+            second.construction().setBuilder(builder);
+
+            assertTrue(
+                ProduceBuilding.anotherUnstartedPylonExists(new ProductionOrder(AUnitType.Protoss_Pylon, 62)),
+                "past 60 supply the third concurrent Pylon still waits");
+        });
+    }
 }
