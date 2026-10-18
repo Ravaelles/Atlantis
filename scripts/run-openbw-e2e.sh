@@ -685,7 +685,7 @@ fi
 # on why an empty "${ARR[@]}" breaks `env`).
 GAME_TYPE_ENV="BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS"
 case "$MAP" in
-  ums/*) say "UMS map: game_type=USE_MAP_SETTINGS (scenario owns the setup)" ;;
+  *ums/*) say "UMS map: game_type=USE_MAP_SETTINGS (scenario owns the setup)" ;;
   *) GAME_TYPE_ENV="" ;;
 esac
 
