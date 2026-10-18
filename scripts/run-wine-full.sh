@@ -218,6 +218,9 @@ fi
 # here rather than trusted: a slow game must be impossible, not just
 # unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
 # OpenBW ENV (same guard as the live-log copy).
+# Overridable per run like the horizon below: WINE_FAST=0 keeps a
+# watchable game (normal speed, GUI on). WINE_FAST=1 is the default.
+WINE_FAST="${WINE_FAST:-1}"
 # Debug-run horizon, not a hard limit (owner 2026-10-19): stop spending
 # game time once defects had room to show (they show by supply 25-30) -
 # shorter games, ~3x smaller logs. Overridable per run, 0 disables.
@@ -232,11 +235,11 @@ for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
     ENV_BACKUP_FILE="$(mktemp /tmp/opencode/atlantis-env.XXXXXX 2>/dev/null || mktemp /tmp/atlantis-env.XXXXXX)"
     cp -f "$_env_candidate" "$ENV_BACKUP_FILE"
     if grep -q "^WINE_FAST=" "$_env_candidate"; then
-      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=1|" "$_env_candidate"
+      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=$WINE_FAST|" "$_env_candidate"
     else
-      printf '\nWINE_FAST=1\n' >> "$_env_candidate"
+      printf '\nWINE_FAST=%s\n' "$WINE_FAST" >> "$_env_candidate"
     fi
-    say "  WINE_FAST=1 enforced in $_env_candidate"
+    say "  WINE_FAST=$WINE_FAST enforced in $_env_candidate (0 keeps a watchable game)"
     if grep -q "^FORCE_END_AT_SUPPLY=" "$_env_candidate"; then
       sed -i -E "s|^FORCE_END_AT_SUPPLY=.*|FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY|" "$_env_candidate"
     else
