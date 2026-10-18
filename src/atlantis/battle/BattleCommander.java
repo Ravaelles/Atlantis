@@ -3,6 +3,7 @@ package atlantis.battle;
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
@@ -163,6 +164,22 @@ public class BattleCommander extends Commander {
                 }
                 KiteTwin.nowhereToStep(unit, threat);
             }
+            // Re-engage glide (PurpleWave BeDragoonVsSlowlot: margin
+            // recovered and no threat hunting us while the weapon cools -
+            // close to the max-range firing position now, so the shot
+            // fires the instant the cooldown hits zero instead of
+            // donating the approach standing still). Only outside our
+            // own range: inside it the standing order already does
+            // the job.
+            if (threat != null && unit.cooldown() > 0 && !isHuntedBy(unit, threat)) {
+                double standOff = unit.groundWeaponRange() - 0.5;
+                if (unit.distTo(target) > standOff + 0.5) {
+                    APosition fireAt = target.position()
+                        .translateTilesTowards(unit, unit.distTo(target) - standOff);
+                    if (unit.distTo(fireAt) > 0.5
+                        && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) return;
+                }
+            }
             // Order discipline, not order spam: a new attack order issues
             // only when the engine holds a different target (first
             // acquisition, lost order while moving, target switch).
@@ -258,10 +275,19 @@ public class BattleCommander extends Commander {
      */
     private static double kiteMargin(AUnit unit, AUnit threat) {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
-        AUnit hunted = threat.orderTarget();
-        if (hunted != null && hunted.id() == unit.id()) margin -= 0.5;
+        if (isHuntedBy(unit, threat)) margin -= 0.5;
         if (unit.isOtherFacingThisUnit(threat)) margin -= 0.5;
         return margin;
+    }
+
+    /**
+     * The threat's order target is exactly this unit (PurpleWave's
+     * presumptive-target read: the threat is coming for us, not
+     * passing by).
+     */
+    private static boolean isHuntedBy(AUnit unit, AUnit threat) {
+        AUnit hunted = threat.orderTarget();
+        return hunted != null && hunted.id() == unit.id();
     }
 
     /**

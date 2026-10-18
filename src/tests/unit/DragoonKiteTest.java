@@ -167,6 +167,30 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void coolingDragoonGlidesToFiringPosition() {
+        // Dist 4.5, cooldown 20, healthy, unhunted: margin holds, but
+        // standing still would donate the whole approach to the chaser.
+        // Instead glide to the max-range firing position (3.5 tiles),
+        // so the shot fires the instant the weapon is ready (PurpleWave
+        // BeDragoonVsSlowlot: advance while safe and cooling).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34.5, 20);
+        dragoon.cooldown = 20;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "glide to the firing position while cooling: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "no standing trade from out of range: " + ordersOf(dragoon));
+        });
+    }
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
