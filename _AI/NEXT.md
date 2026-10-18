@@ -243,8 +243,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (both live, both on battle tracks - they die with the manager-tree
   migration, stages E/H, never through a delegation switch).
   `BuilderAvoidEnemies`, `DeadMan`, `AFocusPoint`, `ProcessAttackUnit`
-  are gone from `src/` (combat cutover, now `src-old/`). No production
-  readers remain (verified 2026-10-19).
+  are gone from `src/` (combat cutover, now `src-old/`). Re-verified
+  2026-10-19: two live readers beyond the item's list, both out of
+  scope for a delegation switch - `BuilderAvoidEnemies.defineEnemy`
+  falls back to `FoggedUnit` when no enemy is visible (builder micro,
+  dies with the manager tree), and `OffensiveTurrets:41` is a commented
+  reference, not a reader. No switch; the item still waits on E/H.
 
 ## Stage F — cache purge (Select query caches gone 2026-10-19, see below)
 

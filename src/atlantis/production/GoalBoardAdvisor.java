@@ -89,6 +89,8 @@ public class GoalBoardAdvisor extends Commander {
             .supply(A.supplyUsed(), A.supplyTotal())
             .workers(Count.workers())
             .bases(Count.bases())
+            .basesUnfinished(Count.inProductionOrInQueue(atlantis.config.AtlantisRaceConfig.BASE))
+            .basesPlanned(Count.basesWithPlanned())
             .gateways(Count.gateways())
             .gatewaysTraining(Math.max(0, Count.gateways() - Count.freeGateways()))
             .army(Count.ourCombatUnits())

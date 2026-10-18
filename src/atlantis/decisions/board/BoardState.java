@@ -29,6 +29,8 @@ public final class BoardState {
     public final String enemyRace;
     public final int dragoonCount;
     public final int dragoonsUnfinished;
+    public final int basesUnfinished;
+    public final int basesPlanned;
     public final int armyStrength;
     public final int enemyHydras;
     public final int enemyLurkers;
@@ -64,6 +66,8 @@ public final class BoardState {
         this.enemyRace = builder.enemyRace;
         this.dragoonCount = builder.dragoonCount;
         this.dragoonsUnfinished = builder.dragoonsUnfinished;
+        this.basesUnfinished = builder.basesUnfinished;
+        this.basesPlanned = builder.basesPlanned;
         this.armyStrength = builder.armyStrength;
         this.enemyHydras = builder.enemyHydras;
         this.enemyLurkers = builder.enemyLurkers;
@@ -112,6 +116,8 @@ public final class BoardState {
         private String enemyRace = "Unknown";
         private int dragoonCount;
         private int dragoonsUnfinished;
+        private int basesUnfinished;
+        private int basesPlanned;
         private int armyStrength;
         private int enemyHydras;
         private int enemyLurkers;
@@ -223,6 +229,14 @@ public final class BoardState {
 
         public Builder dragoonsUnfinished(int dragoonsUnfinished) {
             this.dragoonsUnfinished = dragoonsUnfinished;
+            return this;
+        }
+        public Builder basesUnfinished(int basesUnfinished) {
+            this.basesUnfinished = basesUnfinished;
+            return this;
+        }
+        public Builder basesPlanned(int basesPlanned) {
+            this.basesPlanned = basesPlanned;
             return this;
         }
 
