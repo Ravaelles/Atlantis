@@ -205,9 +205,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-18 (`rm -rf out` first): unit 728/728 green, 0
-skipped (was 724 - incl. WallInGoalTest FE pin + AdoptedConstructionTwin
-overlap case + GoalBoardFeederTest FE seam).
+Re-measured 2026-10-18 (`rm -rf out` first): unit 731/731 green, 0
+skipped (was 728 - the overlap pin and the TECH_CHECK refusedBy twins
+landed after that count; counts rot, re-measure before quoting).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
