@@ -117,6 +117,20 @@ public class BattleCommander extends Commander {
             target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
         }
         if (target != null) {
+            // A cooling-down Dragoon with ANY enemy on top of it backs off
+            // instead of trading at point blank (owner 2026-10-19, Wine
+            // 1Drag_v_1Zeal: the Dragoon stood still under a Zealot with
+            // DoNothing and died - no kite existed at all). The threat is
+            // the nearest enemy inside the envelope, not necessarily the
+            // focused target: focus fire must not pin a Dragoon that is
+            // being shredded. Shooting resumes once the weapon is ready,
+            // which closes the range again.
+            AUnit threat = atlantis.battle.targeting.ASquadTargeting
+                .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
+            if (threat != null && shouldKite(unit, threat)) {
+                unit.moveAwayFrom(threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite");
+                return;
+            }
             unit.attackUnit(target);
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;
@@ -144,6 +158,28 @@ public class BattleCommander extends Commander {
 
     /** Tiles behind the leader before a unit turns back to rejoin. */
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
+
+    /**
+     * A Dragoon with an enemy inside {@link #KITE_ENEMY_TILES} tiles backs
+     * off while its weapon cools down instead of trading at point blank
+     * (owner 2026-10-19: enemy closer than 3.5 tiles + cooldown at least
+     * 10 frames). Dragoon-only: Zealots want contact, and other races
+     * are out of scope. Public as a seam: the rule pins in a stub state.
+     */
+    public static boolean shouldKite(AUnit unit, AUnit target) {
+        if (unit == null || target == null || !unit.isDragoon()) return false;
+        if (unit.distTo(target) >= KITE_ENEMY_TILES) return false;
+        return unit.cooldown() >= KITE_COOLDOWN_FRAMES;
+    }
+
+    /** An enemy closer than this makes a cooling Dragoon step back. */
+    private static final double KITE_ENEMY_TILES = 3.5;
+
+    /** Weapon cooldown from which backing off beats standing fire. */
+    private static final int KITE_COOLDOWN_FRAMES = 10;
+
+    /** How far the kiting step carries (tiles). */
+    private static final double KITE_STEP_TILES = 2.0;
 
     private void gatherCluster() {
         Selection army = Select.ourCombatUnits();
