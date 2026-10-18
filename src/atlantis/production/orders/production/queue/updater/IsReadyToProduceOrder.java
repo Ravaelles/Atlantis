@@ -58,7 +58,15 @@ public class IsReadyToProduceOrder {
             // Refusing term with numbers, buildings only (units churn through
             // here every frame by design). Unconditional: a silent queue is
             // undiagnosable (NEXT #58), and the throttle bounds the volume.
-            if (order.isBuilding() && A.hasMinerals(order.mineralPrice() - 32)) {
+            // Workerless games skip the twin, not the refusal: with zero
+            // workers no builder exists, so every building row would name
+            // the same structural state every refresh (measured: 1v1 UMS
+            // map twins ORDER_NOT_READY for Pylons that can never build).
+            // Completions still flow (ProtossWarping marks FINISHED on warp,
+            // queue completion is supply-independent), so only the twin
+            // is gated, never the decision.
+            if (order.isBuilding() && atlantis.units.select.Count.workers() > 0
+                && A.hasMinerals(order.mineralPrice() - 32)) {
                 EventLog.key(LogKey.ORDER_NOT_READY)
                     .param("type", order.unitType().name())
                     .param("supplyOk", supplyOk)
