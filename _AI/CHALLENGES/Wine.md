@@ -34,3 +34,36 @@
   resets HiDPI scaling on exit. Never do it on the user's desktop.
 - `Runtime.exec(String)` word-splits: shell builtins (`eval`) in the string
   are executed as programs. Pass a vector: `{sh, -c, script}`.
+
+## Fast unattended Wine (owner 2026-10-19)
+
+- `WINE_FAST=1` (bot ENV): speed 0, frameskip 500, GUI off, no dynamic
+  slowdown - the key-9/key-0 shape applied at game start instead of by
+  keypress. `FORCE_END_AT_SUPPLY=50` ends the game once our supply
+  passes 50 (debug horizon, not a hard limit - longer runs on request).
+- Both live in the shared machine-local `bwapi-data/AI/ENV`, so
+  `run-wine-full.sh` borrows the file per run (backup → enforce →
+  restore on exit, trap included): test flags must never leak into
+  watched IDE games. Verify after a model-run game: `grep` the ENV
+  for `WINE_FAST` / `FORCE_END_AT_SUPPLY` - any hit means the restore
+  failed.
+- The twin proof that it works: `WINE_FAST: speed 0, frameskip 500,
+  GUI off` in the game log (owner-confirmed visibly faster on the
+  desktop).
+- The bot JVM under Wine cannot run Unix commands: a bare
+  `executeInCommandLine("pkill ...")` / `("wineserver -k")` fails with
+  `CreateProcess error=2` on every game exit. Route Wine-side kills
+  through `{sh, -c, ...}` (Wine forwards those to the host) and keep
+  them silent - nothing left to kill is the normal case.
+- `WINEDLLOVERRIDES="winealsa.drv=d;winecoreaudio.drv=d;winepulse.drv=d"`
+  mutes a game with no audio device to initialize; without it a missing
+  device can hang startup. Script-scoped only (`export` in
+  `run-wine-full.sh`) - IDE runs are untouched.
+- Never edit `run-wine-full.sh` while it runs: bash parses the file as it
+  executes, so an edit lands mid-parse, the teardown dies on a syntax
+  error, and the game plus its logs need manual cleanup (measured
+  2026-10-19: leftover StarCraft killed by hand, logs collected from
+  `bwapi-data/write/` by hand).
+- After any model-run Wine game, verify no StarCraft/ChaosLauncher
+  survived it (`pgrep -x StarCraft.exe`, `pgrep -f "[C]haoslauncher"` -
+  the brackets keep pgrep from matching its own command line).

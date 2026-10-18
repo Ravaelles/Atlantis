@@ -81,6 +81,13 @@ attempt does not repeat the search.
   micro maps). Authoring one (Hatchery + 4 Drones + 4 Lings at the
   enemy start, computer force) is the remaining path - no editor on
   this machine.
+- 2026-10-19: the OpenBW runner selects `USE_MAP_SETTINGS` itself for
+  `ums/` maps (no manual env needed). Two more data points:
+  `ZealDrag_v_Lings` runs the full 1209 s but the bot gets a melee
+  start (Nexus + 5 probes, no pre-placed army) and no enemy spawns -
+  no fight, 0/0. `8Drag_v_8Drag` ends at frame 0 (human slots) and
+  trips the exit-path backstop (exit code 1, correctly failed by the
+  runner's non-zero-exit gate).
 
 ## Decision needed from the owner (updated 2026-10-17, tracked as NEXT #94)
 

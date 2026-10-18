@@ -11,7 +11,7 @@ exist in this workspace and mixing them is the whole story below.
 | bot dir | `bots/AtlantisP/AI` | `bots/AtlantisOpenBW/AI` |
 | `ENV` | `GAME_LAUNCHER=WINE` | `GAME_LAUNCHER=OPENBW` |
 | engine | real StarCraft 1.16.1 under Wine + ChaosLauncher | headless `BWAPILauncher` (OpenBW) |
-| who runs it | **the owner only** | models may run it |
+| who runs it | owner-run, plus model runs with the owner's explicit per-case go-ahead (2026-10-19: Wine games for debugging + proving fixes) | models may run it |
 
 ## 1. "OpenBW" runs kept opening a real StarCraft game (three times)
 
@@ -89,3 +89,19 @@ exist in this workspace and mixing them is the whole story below.
   log-name derivation launched a real Wine game (had to be killed by
   hand). To exercise a shell function, copy it into a throwaway snippet,
   never source the runner.
+
+## 8. Model-run Wine checklist (owner go-ahead required, 2026-10-19)
+
+- Always pass an explicit melee map (`"(3)TauCross.scx"`): the script
+  default is a UMS micro scenario (`1a2a3a Micro 2.scx`) that builds
+  nothing and teaches nothing (measured: 226 s, idle base).
+- The script enforces test flags per run and restores the shared ENV
+  afterwards - verify with `grep WINE_FAST|FORCE_END_AT_SUPPLY
+  bwapi-data/AI/ENV` (any hit = restore failed, IDE games affected).
+- After the run: `pgrep -x StarCraft.exe` must be empty and the
+  `out/wine/` triple (WINE_LOG/_DEBUG/_DECISIONS) collected; a missing
+  triple with a live game means the teardown died mid-script (it parses
+  itself as it runs - never edit it mid-run, see Wine.md).
+- `out/wine/` is wiped by the next run and by `rm -rf out`: copy logs
+  worth keeping to `/tmp/opencode/` (or the live-copy dir) before any
+  build/test command.

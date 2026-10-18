@@ -463,6 +463,8 @@ twins green (1/1 each, re-verified today). Re-run
   (3 bases there - the predicate correctly stays silent, it wants 1).
   `200123` is the first 1-base 700 s+ run (944 s, Nexus=1): ORDER_SAVING
   still 0, bank peak 8883 (predicate wants < 550) - correctly silent.
+  Lottery 2026-10-19 (`154329`: 428 s, Nexus=1): still short of 700 s,
+  never a saving shape.
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -663,18 +665,31 @@ twins green (1/1 each, re-verified today). Re-run
     (01_PRODUCTION.md scheduler + dispatcher; single policy already
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
-## Current game state (updated 2026-10-18)
+## Current game state (updated 2026-10-19)
 
 - Wine `TauCross` SHORT (exit at supply 51 via `ForceExitAtSupply`,
+  clean end, ~6 min game-s: 26 ledger rows, BUILDER_LOG=1, full new
+  code incl. STARTING + power-not-funded): peak free 26. Per-author
+  triggers hold (every Pylon ordered at free <= 6), but same-need
+  duplicates land together anyway: BO#8 + dynamic #26 same frame
+  (At 21), dynamic #67 + #68 130 frames apart (both At 23), each pair
+  warping into one supply block. The queue-door spam cap (refuse above
+  12 free) is the backstop, not the cure - single author (WO-144) is.
+  STARTING twinned live (66 rows, builder travelling to site).
+  power-not-funded never fired (Pylon#1 up before gateways needed
+  builders). 1 kill, no real fight yet - engage/cluster await contact.
+
+- Wine `TauCross` SHORT, first run (exit at supply 51 via `ForceExitAtSupply`,
   clean end, 364 game-s: Nexus=1 Probe=25 Gateway=3 Dragoon=4 Zealot=7
   Pylon=6 CyberneticsC=1 Assimilator=1, 24 ledger rows, BUILDER_LOG=1):
-  supply-cap doctrine HOLDS live - peak free 14 all game (was 27),
+  supply-cap doctrine HELD that game - peak free 14 all game (was 27),
   4 BO + 2 single dynamic Pylons, zero same-need duplicates,
   SUPPLY_BLOCKED 0 (no starvation). Same-builder adoption live
   (Pylon#1: reserved #22 at pick 0:13, builder 22 at start 0:46).
-  Gateways #2/#3 on time (1:20/1:42), one dynamic #24. 0/0 kills -
-  no enemy contact by supply 51, so engage/cluster still await a
-  fight (stub-pinned, Wine-proven when they touch).
+  Gateways #2/#3 on time (1:20/1:42), one dynamic #24. 0/0 kills.
+  Variance vs the second run above is the finding: the cap bounds the
+  trigger, not the outcome - same-frame pairs and lag stacking decide
+  the peak, which is why the door is a backstop and WO-144 the cure.
 
 - Wine `TauCross` (910 s, vs real Zerg Grendel Brood, 21/51 kills -4175:
   Nexus=2 Probe=36 Dragoon=2 Pylon=9 Gateway=5 RoboticsF=1, 53 ledger
