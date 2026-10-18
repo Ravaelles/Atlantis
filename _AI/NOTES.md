@@ -9,6 +9,12 @@ Hard-won operational facts that do not belong anywhere else. Architecture lives 
   Measured 2026-10-08: a deleted `Block8x8` class kept failing a test that no
   longer had a source.
 - JUnit class execution order is not source order; a new test class can shift it.
+- `scripts/run-full-tests.sh` takes NO `--select-package` (only
+  `--skip-scenarios`): an extra flag is appended to EVERY scope's launcher
+  invocation, so JUnit runs the union and every scope reports the same mixed
+  failures. Measured 2026-10-19: 17 "failing" acceptance tests with a mixed
+  flag vs 748/0 green through `scripts/run-acceptance-tests.sh --allow-slow`.
+  Per-scope scripts are the only way to run one scope.
 
 ## Scenario E2E probes are actuators, not sensors
 
