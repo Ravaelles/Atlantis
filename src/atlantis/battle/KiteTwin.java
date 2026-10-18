@@ -38,6 +38,10 @@ public class KiteTwin {
             .param("unit", dragoon.id())
             .param("dist", (int) (dragoon.distTo(threat) * 10))
             .param("cooldown", dragoon.cooldown())
+            .param("ux", dragoon.x() / 32)
+            .param("uy", dragoon.y() / 32)
+            .param("tx", threat.x() / 32)
+            .param("ty", threat.y() / 32)
             .param("result", result)
             .log(A.now(), A.minSec());
     }

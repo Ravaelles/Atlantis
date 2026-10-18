@@ -59,6 +59,7 @@ public class HitTwinTest extends WorldStubForTests {
             assertTrue(rows.contains("\"lost\":8"), "got: " + rows);
             assertTrue(rows.contains("\"cooldown\":15"), "got: " + rows);
             assertTrue(rows.contains("\"moving\":"), "got: " + rows);
+            assertTrue(rows.contains("\"tx\":"), "threat position rides along: " + rows);
         });
     }
 

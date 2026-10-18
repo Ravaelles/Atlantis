@@ -31,6 +31,10 @@ public class HitTwin {
             .param("dist", (int) (unit.distTo(enemy) * 10))
             .param("cooldown", unit.cooldown())
             .param("moving", unit.isMoving())
+            .param("ux", unit.x() / 32)
+            .param("uy", unit.y() / 32)
+            .param("tx", enemy.x() / 32)
+            .param("ty", enemy.y() / 32)
             .param("result", "hit")
             .log(A.now(), A.minSec());
     }

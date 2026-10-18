@@ -65,6 +65,7 @@ public class KiteTwinTest extends WorldStubForTests {
             assertTrue(rows.contains("\"key\":\"KITE\""), "got: " + rows);
             assertTrue(rows.contains("\"result\":\"stepped-aside\""), "got: " + rows);
             assertTrue(rows.contains("\"cooldown\":15"), "got: " + rows);
+            assertTrue(rows.contains("\"ux\":"), "positions ride along: " + rows);
         });
     }
 
