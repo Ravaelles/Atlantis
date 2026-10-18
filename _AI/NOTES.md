@@ -97,3 +97,23 @@ wrong road, and this is why the note exists:
 - If an independent source is ever needed, `3rdparty/openbw/openbw/data_loading.h`
   documents the exact layout of both files - the parser is easy, the archive is
   the whole problem.
+
+## Tracing one construction's life from logs (chain twins, 2026-10-19)
+
+Every row on a construction's life carries `cid` (construction id) and
+`oid` (order id, null when orderless): `CONSTRUCTION_REQUESTED`
+(demand + site + caller), `CONSTRUCTION_PREPARING` (site + reserved
+worker), `BUILDING_STARTED` (builder at adoption), `CONSTRUCTION_CANCEL`
+(reason + coverer), `ADOPTED_CONSTRUCTION` (warp tile + candidates),
+`BUILDINGS.json` ledger rows (`construction` + `orderId`).
+
+- One order's whole life, no tile guessing:
+  `scripts/query-events.py --where oid=25` (or `--where cid=12`);
+  narrow with `--cols frame,time,key,type,tile,reason`.
+- Orphan hunt: a REQUESTED cid with no STARTED/ledger row and no CANCEL
+  is a stuck construction; a CANCEL without a later REQUESTED of the
+  same oid is dropped demand. Both read off one query, no game needed.
+- The same shape pins stub tests outside OpenBW
+  (`ConstructionChainTwinTest`, `AdoptedConstructionTwinTest`,
+  `BuildingLedgerTest`): the twins are the contract, the log is one
+  implementation of it.
