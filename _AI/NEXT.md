@@ -205,9 +205,11 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-19 (`rm -rf out` first): unit 763/763 green, 0
-skipped (was 759 - spam-door + stuck-twin pins landed after that
-count; counts rot, re-measure before quoting).
+Re-measured 2026-10-19 (`rm -rf out` first): unit 783/783 green, 0
+skipped (was 763 - live-guard, demand-context, standing-cover, adopt
+and sited-door pins landed after that count; acceptance 17 reds are
+byte-identical on the pre-change baseline worktree, zero regressions;
+counts rot, re-measure before quoting).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -669,6 +671,16 @@ twins green (1/1 each, re-verified today). Re-run
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
+
+- OpenBW `TauCross` (9149f, 6.4 game-min, engine VICTORY at Killed:1 -
+  environmental end, rich datum): 14 BUILD rows, every order exactly
+  one row, each naming its cause (`prev=cid:PREPARING path=adopt` vs
+  `prev=link-null path=new` + oid join key). Zero same-tile storms,
+  4 REQUESTED vs 2 benign orphan-drop cancels, roster Nexus=1
+  Probe=26 Pylon=7 Gateway=3 Dragoon=2. The DECISIONS readability bar
+  holds: one demand, one row. New doors live-dormant this game
+  (standing-cover 0 fires, live-construction 0 fires), no regression
+  in the refusal profile.
 
 - OpenBW `TauCross` LONG (16575f, 11.5 game-min, wall-cap exit 143 -
   inconclusive as verdict, rich as data): roster Nexus=2 Probe=44
