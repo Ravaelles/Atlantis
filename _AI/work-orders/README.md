@@ -34,3 +34,5 @@ and stop where it says to stop.
   `DOCS/adr/0006-combat-eval-scale.md`).
 - `WO-F-neutral-cache-cleanup.md` — the two behaviour-neutral cache cleanups
   that need no game run (NEXT.md Stage F intro, not #5 itself).
+- `WO-144-supply-single-author.md` — spec + landing order for the board
+  supply goal owning all supply demand (NEXT.md #144).
