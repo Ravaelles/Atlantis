@@ -153,7 +153,9 @@ The index of which document answers which question is `_AI/README.md`.
    retained runs: 30 BOARD_FED rows (sustained-dragoon + sustained-zealot
    in 2 runs + ONE supply-pylon min=60 sup=39/41 in 214926, a real block
    rescue), still ZERO gateway/core/assimilator - one per-gate row ever
-   is not routine coverage; no deletion candidate.
+   is not routine coverage; no deletion candidate. Re-measured 2026-10-19
+   across the 3 fresh runs: 0 BOARD_FED everywhere, 83 BUILD rows all
+   legacy/demand-direct - the feeder still fires nothing; no candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (8 files with the exact singular import, measured 2026-10-17,
    re-verified 2026-10-17 and 2026-10-18: still 8 on the same excluded tracks,
@@ -162,7 +164,8 @@ The index of which document answers which question is `_AI/README.md`.
    absorbed, 14 more with the targeting + battle src-old sweeps;
    counting down, no new ones per §21); the class dies at zero,
    not before. All 8 survivors sit on excluded tracks (battle/micro,
-   interrupt, terran-info) - production holds ZERO imports. Two tracks:
+   interrupt, terran-info) - production holds ZERO imports (re-verified
+   by grep 2026-10-19). Two tracks:
    production sites route through board state (first slice: the worker
    Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
    board names the enemy race, Stargate Terran veto reads it,
@@ -275,11 +278,12 @@ twins green (1/1 each, re-verified today). Re-run
 
 - **#3** Migrate production readers of `FoggedUnit` to `UnitSnapshot` once
   the World registry owns lifecycle (a delegation switch has no value
-  until then): `BuilderAvoidEnemies:27`, `DeadMan:64`,
-  `AFocusPoint:111`, `DoAvoidEnemies:30`,
-  `AtlantisJfap.isValidUnit:72` (borderline). `ProcessAttackUnit:56`
-  died with the combat cutover (now `src-old/`). The rest was triaged out
-  (same object, worse GC) or dies with lifecycle.
+  until then): `DoAvoidEnemies:30`, `AtlantisJfap.isValidUnit:72`
+  (both live, both on battle tracks - they die with the manager-tree
+  migration, stages E/H, never through a delegation switch).
+  `BuilderAvoidEnemies`, `DeadMan`, `AFocusPoint`, `ProcessAttackUnit`
+  are gone from `src/` (combat cutover, now `src-old/`). No production
+  readers remain (verified 2026-10-19).
 
 ## Stage F — cache purge (Select query caches gone 2026-10-19, see below)
 
@@ -365,7 +369,10 @@ twins green (1/1 each, re-verified today). Re-run
   framework → Stages E/H), not a sweep (re-measured 2026-10-17, was
   recorded 255 + 24 - the combat cutover deletions shrank the core
   rule); the information rule triages to
-  live strategy-response logic (Stage G seams, not line deletions).
+  live strategy-response logic (Stage G seams, not line deletions -
+  all 42 entries verified structural 2026-10-19, Terran/Zerg responses
+  and Strategy.setTo framework edges, nothing mechanical left);
+  the util mechanical rule stands at zero (store empty).
   Traps, paid for: a change must remove violations from one rule, not
   move them into another; `rm -rf out` before architecture runs after
   moving classes (`javac -d` leaves stale `.class` files behind).
@@ -417,7 +424,8 @@ twins green (1/1 each, re-verified today). Re-run
   measured branch - no blind patch. FE scoping landed the same day
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
-  PREPARING (a). No blind patch.
+  PREPARING (a). Live overlap game still unplayed; the resite seam
+  fires live (adopt-resited 1x in each of two long runs). No blind patch.
 - **#151** Dynamic demand re-requests a proximity-covered tile forever
   (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
   REQUESTED then proximity-cancelled the same frame, ~20 constructions
@@ -528,6 +536,9 @@ twins green (1/1 each, re-verified today). Re-run
   not just a 700-bank moment. `200123` (944 s, bank peak 8883, NO
   Forge): TECH_CHECK 602 rows all false, UPGRADE_COMPLETED none -
   without a Forge the gate is correctly silent at any bank.
+  2026-10-19 (`185237`): refusedBy names the gates live (no-forge 204,
+  bank-700-or-3rd 93, weapons-l1 108) - the twin works, tuning stays
+  owner-side (D5).
 - **#82** Terran off-site completion may leak (unobserved, both Terran
   runs built on-site). 2026-10-18 datum (`143800`, Terran vs Zerg, 212
   game-s): the bot plays Terran with the Protoss build order (`Zealot
@@ -544,7 +555,9 @@ twins green (1/1 each, re-verified today). Re-run
   the layer. First datum 2026-10-19 (TauCross): Gateways #2/#3 on time
   (1:24@10, 1:51@12); instead a triple dynamic ordering at 49 (#60/#64/
   #61 within 162 frames) - same duplicate class as supply, not lateness.
-  No blind patch.
+  Re-verified 2026-10-19: #2/#3 on time 1:27-1:28/1:49-2:00 in all
+  three fresh OpenBW runs, dynamic Gateways on schedule - OpenBW
+  control clean, Wine proof still owner-side. No blind patch.
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
   0/0, scouts find nothing in 18 min). Plumbing verified correct;
@@ -672,6 +685,19 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
 
+- OpenBW `TauCross` (`185357`, PLACEMENT=catalogue, 9614f, ended
+  environmentally like the clean run above): catalogue answered 6
+  (2 Pylon + 4 Gateway), declined 29 named (no-builder 20,
+  dedicated-finder 2, legacy-refused 7), 6 REQUESTED vs 1 CANCEL,
+  25 warps; 1 residual Can't-find-place (Gateway #86 At 44, known
+  late-dynamic class, NEW class: none). WO-145 parity direction
+  holds; flip waits on Gateway-arm coverage.
+- OpenBW `TauCross` (`185237` DRY_RUN short): V2 plans the opening
+  provider 16x at stable (112,8) while legacy warps [113,15] -
+  demand parity in the window, tile a few tiles off (known siting
+  gap). Late: V2 wants ZERO Pylons past frame 5000 while legacy
+  warps 3 - suppression against in-flight providers or a demand
+  miss; the LIVE run (WO-144 step 3) decides.
 - OpenBW `TauCross` (9149f, 6.4 game-min, engine VICTORY at Killed:1 -
   environmental end, rich datum): 14 BUILD rows, every order exactly
   one row, each naming its cause (`prev=cid:PREPARING path=adopt` vs

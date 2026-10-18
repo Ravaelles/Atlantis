@@ -52,7 +52,14 @@ construction sited by the catalogue, the chain in src-old/.
    warps; catalogue answers Pylons routinely (48 answered), Gateway/Core
    decline `no-builder` to the legacy fallback (propose needs a live
    builder). Parity direction holds; the arm that owns Gateway siting
-   is still legacy.
+   is still legacy. Second datum 2026-10-19 (`185357` long,
+   PLACEMENT=catalogue vs two legacy-default longs same map):
+   catalogue answered 6 (2 Pylon + 4 Gateway), declined 29 named
+   (no-builder 20, dedicated-finder 2, legacy-refused 7), 6 REQUESTED
+   vs 1 CANCEL, 25 warps, healthy roster; 1 residual Can't-find-place
+   (Gateway #86 At 44, known late-dynamic class, no new class).
+   Flip still waits on Gateway-arm coverage per stop rules, not on
+   courage.
 2. **Default flip** (`PLACEMENT=catalogue` default): one long run,
    same bars. Roll back on any new failure class - the flag (not a
    revert commit) is the lever, then a forward fix.

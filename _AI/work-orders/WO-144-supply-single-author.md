@@ -73,6 +73,13 @@ supply pumps silent.
    re-planned per frame by design), tile wobbles once (112,8)->(113,15)
    then stable - and legacy warped exactly [113,15] at 1247. Demand
    parity holds; tile stabilizes in 1 frame. Log diff in the commit.
+   Second datum 2026-10-19 (`185237` DRY_RUN short, same map): opening
+   window 900-1500 holds the same shape (V2 Pylon 16x at stable
+   (112,8), legacy warps [113,15] at 1247 - demand parity, tile a few
+   tiles off, the known siting gap). Late divergence noted, two
+   readings: V2 plans ZERO Pylons after frame 5000 while legacy warps
+   3 (#11/#36/#37) - correct suppression against in-flight legacy
+   providers, or a demand miss; the LIVE run (step 3) decides.
 3. **LIVE flip, one game proof** (long OpenBW run): no supply block at
    17/17 or 25/25, no duplicate Pylon warps, SUPPLY_BLOCKED samples
    flowing, feeder supply-pylon row only as rescue. Then and only then:
