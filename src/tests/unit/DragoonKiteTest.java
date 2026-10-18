@@ -160,6 +160,47 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void gluedReadyDragoonShootsInsteadOfStepping() {
+        // Glued at dist 0.3 with a ready weapon: a step cannot outrun
+        // the swing already in progress, and stepping every frame means
+        // zero shots until death (Wine 1Drag_v_1Zeal: 190 frames glued,
+        // 17 hits, no shot). Shoot - the ready shot is free damage.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30.3, 20);
+        dragoon.cooldown = 0;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "glued + ready: trade, do not step in place: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "no futile step from glue with a ready weapon: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void gluedCoolingDragoonKeepsStepping() {
+        // Same glue, weapon cooling: the step is the only thing that
+        // can open distance, so it still issues.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30.3, 20);
+        dragoon.cooldown = 20;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "glued + cooling: keep stepping: " + ordersOf(dragoon));
+        });
+    }
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }

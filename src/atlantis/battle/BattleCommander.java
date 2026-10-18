@@ -159,11 +159,18 @@ public class BattleCommander extends Commander {
                 // Dragoon fights instead of waiting to die (Wine
                 // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
                 // then trading at point blank).
-                if (MoveAway.fromBest(unit, threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
+                // Glued with a ready weapon, a step is worse than useless:
+                // it cannot outrun the swing already in progress, and
+                // stepping every frame means zero shots until death (Wine
+                // 1Drag_v_1Zeal: 190 frames glued at dist 0, cd 0, 17 hits,
+                // no shot fired). Shoot instead - the ready shot is free
+                // damage and the only DPS that can end the corner.
+                boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
+                if (!glued && MoveAway.fromBest(unit, threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
                     KiteTwin.steppedAside(unit, threat);
                     return;
                 }
-                KiteTwin.nowhereToStep(unit, threat);
+                if (!glued) KiteTwin.nowhereToStep(unit, threat);
             }
             // Re-engage glide (PurpleWave BeDragoonVsSlowlot: margin
             // recovered and no threat hunting us while the weapon cools -
@@ -279,6 +286,9 @@ public class BattleCommander extends Commander {
 
     /** Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)). */
     private static final double KITE_ENEMY_TILES = 5.0;
+
+    /** At or under this threat distance the duel is glue: bodies overlap, no step opens. */
+    private static final double KITE_GLUE_TILES = 0.5;
 
     /** How far the kiting step carries (tiles). */
     private static final double KITE_STEP_TILES = 2.0;
