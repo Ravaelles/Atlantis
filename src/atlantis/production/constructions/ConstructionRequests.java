@@ -51,7 +51,7 @@ public class ConstructionRequests {
     public static int countNotStartedOfType(AUnitType type) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
+            if (isNotStarted(construction.status())
                 && construction.buildingType().equals(type)) {
                 total++;
             }
@@ -91,7 +91,7 @@ public class ConstructionRequests {
     public static Construction getNotStartedOfType(AUnitType type) {
         for (Construction construction : constructions) {
             if (
-                construction.status() == ConstructionOrderStatus.NOT_STARTED
+                isNotStarted(construction.status())
                     && construction.buildingType().equals(type)
             ) {
                 return construction;
@@ -117,7 +117,7 @@ public class ConstructionRequests {
     public static int countNotStartedOfTypeInRadius(AUnitType type, double radius, HasPosition position) {
         int total = 0;
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
+            if (isNotStarted(construction.status())
                 && construction.buildingType().equals(type)
                 && construction.positionToBuildCenter() != null
                 && position.distTo(construction.positionToBuildCenter()) <= radius) {
@@ -222,7 +222,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notStartedOfType(AUnitType type) {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
+            if (isNotStarted(construction.status())
                 && (type == null || construction.buildingType().equals(type))) {
                 notStarted.add(construction);
             }
@@ -244,7 +244,7 @@ public class ConstructionRequests {
     public static ArrayList<Construction> notStarted() {
         ArrayList<Construction> notStarted = new ArrayList<>();
         for (Construction construction : constructions) {
-            if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
+            if (isNotStarted(construction.status())) {
                 notStarted.add(construction);
             }
         }
@@ -373,5 +373,16 @@ public class ConstructionRequests {
 
     public static boolean isBeingBuilt(AUnitType type) {
         return !notFinishedOfType(type).isEmpty();
+    }
+
+    /**
+     * "Not yet constructing": no builder yet (NOT_STARTED) or builder
+     * travelling (STARTING). Both count wherever demand is counted, so a
+     * travelling builder is never mistaken for no demand - the sets match
+     * the pre-STARTING ones exactly.
+     */
+    private static boolean isNotStarted(ConstructionOrderStatus status) {
+        return status == ConstructionOrderStatus.NOT_STARTED
+            || status == ConstructionOrderStatus.STARTING;
     }
 }

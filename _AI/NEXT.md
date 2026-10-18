@@ -205,9 +205,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-18 (`rm -rf out` first): unit 743/743 green, 0
-skipped (was 731 - orphan-drop, engage, gather, horizon and refusedBy
-pins landed after that count; counts rot, re-measure before quoting).
+Re-measured 2026-10-18 (`rm -rf out` first): unit 759/759 green, 0
+skipped (was 743 - vanguard + travelling-status pins landed after that
+count; counts rot, re-measure before quoting).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here

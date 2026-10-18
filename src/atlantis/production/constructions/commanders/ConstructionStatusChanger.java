@@ -177,11 +177,22 @@ public class ConstructionStatusChanger extends Commander {
         // hands the existing travel/issue/cancel/requeue machinery back a live
         // construction: a retry if the drop was transient, a cancel + requeue
         // elsewhere if the site is bad.
+        // STARTING: a NOT_STARTED construction with a live assigned builder
+        // that has not started constructing is travelling, not waiting.
+        // Named here (owner 2026-10-19), in one place: producers keep
+        // writing NOT_STARTED, the changer refines it the next frame.
+        // Runs after the proximity finish above (which exempts
+        // builder-held NOT_STARTED rows) and before the advance below
+        // (which takes both). A constructing builder or a standing
+        // building is the advancer's case, not this one.
+        refineToStartingIfTravelling(construction, builder);
+
         if (construction.status() == ConstructionOrderStatus.IN_PROGRESS) {
             demoteStalledInProgress(construction, builder);
         }
 
-        if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)) {
+        if (construction.status().equals(ConstructionOrderStatus.NOT_STARTED)
+            || construction.status().equals(ConstructionOrderStatus.STARTING)) {
             advanceToInProgressIfStarted(construction, builder);
         }
 
@@ -197,9 +208,15 @@ public class ConstructionStatusChanger extends Commander {
 
         // === Not started =========================================
 
-        if ((builder == null || builder.isDead()) && !construction.hasStarted()) {
+        // A dead or missing builder on a STARTING construction re-arms it:
+        // hasStarted() is true for STARTING (travelling counts as started),
+        // so without the explicit clause a builder that dies en route would
+        // hold the site forever. The status stays STARTING when a new
+        // builder is found (still travelling), and only demote paths clear.
+        if ((builder == null || builder.isDead())
+            && (!construction.hasStarted()
+                || construction.status() == ConstructionOrderStatus.STARTING)) {
             builder = construction.assignOptimalBuilder();
-//            System.err.println("Builder was NULL for " + building + " / now = " + builder);
         }
 //        builder = assignBuilderToConstructionIfNeeded(construction);
 
@@ -228,6 +245,22 @@ public class ConstructionStatusChanger extends Commander {
 //    }
 
     /**
+     * Refine a NOT_STARTED construction with a live assigned builder that
+     * has not started constructing into STARTING (travelling). The seam
+     * mirrors advance/demote: the rule pins without running a game.
+     *
+     * @return true when the construction refined to STARTING.
+     */
+    public static boolean refineToStartingIfTravelling(Construction construction, AUnit builder) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return false;
+        if (construction.buildPosition() == null) return false;
+        if (builder == null || builder.isDead() || builder.isConstructing()) return false;
+        if (buildingFinishedAtSite(construction)) return false;
+        construction.setStatus(ConstructionOrderStatus.STARTING);
+        return true;
+    }
+
+    /**
      * Advance a NOT_STARTED construction whose builder has started (or
      * whose building already stands on the tile) to IN_PROGRESS.
      *
@@ -239,7 +272,8 @@ public class ConstructionStatusChanger extends Commander {
      * @return true when the status advanced.
      */
     public static boolean advanceToInProgressIfStarted(Construction construction, AUnit builder) {
-        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return false;
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED
+            && construction.status() != ConstructionOrderStatus.STARTING) return false;
 
         boolean engineSaysStarted = builder != null
             && builder.isConstructing()

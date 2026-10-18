@@ -81,7 +81,8 @@ public class BuilderManager extends Manager {
             }
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
-            if (construction.status() == ConstructionOrderStatus.NOT_STARTED) {
+            if (construction.status() == ConstructionOrderStatus.NOT_STARTED
+                || construction.status() == ConstructionOrderStatus.STARTING) {
                 AUnit builder = construction.builder();
                 if (builder != null && shouldReplaceBuilder(builder) && A.now() % 96 == 0) {
                     construction.assignOptimalBuilder();

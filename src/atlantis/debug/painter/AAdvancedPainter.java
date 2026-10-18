@@ -841,6 +841,9 @@ public class AAdvancedPainter extends APainter {
                     case NOT_STARTED:
                         color = Color.Red;
                         break;
+                    case STARTING:
+                        color = Color.Yellow;
+                        break;
                     case IN_PROGRESS:
                         color = Color.Blue;
                         break;
