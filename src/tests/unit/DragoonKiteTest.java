@@ -174,4 +174,37 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
                 "weapon almost ready: shoot, do not step back: " + ordersOf(dragoon));
         });
     }
+
+    @Test
+    public void walledInDragoonSidestepsInsteadOfIdling() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 25;
+        // Mineral wall directly behind the Dragoon: the straight step
+        // lands next to minerals and is refused, the lateral ones are
+        // free. Old code stood still (then fought point blank); the
+        // compass must find the sidestep.
+        neutralInWorld = new FakeUnit[] {
+            fake(AUnitType.Resource_Mineral_Field, 26, 20).setNeutral()
+        };
+        atlantis.util.log.EventLog.clearForTests();
+
+        try {
+            world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                atlantis.battle.BattleCommander.act(
+                    dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            });
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "a wall behind must not mean standing still - sidestep: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "no standing trade while a step exists: " + ordersOf(dragoon));
+        }
+        finally {
+            neutralInWorld = null;
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
 }

@@ -689,6 +689,13 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
 
+- Wine `1Drag_v_1Zeal.scm` (UMS micro, owner 2026-10-19): FLEE with
+  null anchor fell through to fight (was: DoNothing death); kite rule
+  (3.5 tiles + cooldown>=10, Dragoon-only) + no-interrupt-during-attack
+  + lateral compass steps + KITE twin landed. Game 2: 1/0 win. Game 3:
+  loss, twin shows 9 steps vs 106 stuck (arena walls; dist-0 glue
+  sometimes escapable). Remaining: wall-aware pathing (PurpleWave
+  MicroPathing direction) + unstuck tracking.
 - OpenBW `TauCross` (`203655`, PRODUCTION_V2=LIVE with rule+lag+>60,
   21933f/15 min): Dragoons 8, first warps 5:25 - the ASAP rule fires
   live (was 0 in the pre-rule LIVE game). Pylons 7 with one 150f
