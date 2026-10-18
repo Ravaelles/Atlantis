@@ -81,6 +81,9 @@ reading green.
   siting (03_PLACEMENT.md C14, open), the generic door keeps offering
   the main-base footprint. Filed as #150 (backoff vs real siting is
   the design call).
+  Short datum 2026-10-18 (`103411`, V2 LIVE, 20 s bot-cap, gate
+  unreached - inconclusive per §17, but the shape matches (b) above:
+  481 CONSTRUCTION_CANCEL + 31 SUPPLY_BLOCKED in 629 rows, 0 warps).
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
@@ -136,10 +139,14 @@ The index of which document answers which question is `_AI/README.md`.
    retained runs: 9 BOARD_FED rows total (8 sustained-dragoon + 1
    sustained-zealot), ZERO supply/gateway/core/assimilator - the feeder
    still only fires sustained-army rows, never a per-gate row; no deletion
-   candidate, direction unchanged.
+   candidate, direction unchanged. Re-measured 2026-10-18 across 26
+   retained runs: 30 BOARD_FED rows (sustained-dragoon + sustained-zealot
+   in 2 runs + ONE supply-pylon min=60 sup=39/41 in 214926, a real block
+   rescue), still ZERO gateway/core/assimilator - one per-gate row ever
+   is not routine coverage; no deletion candidate.
 2. **Decision absorption:** board takes over decision sites one by one
    (8 files with the exact singular import, measured 2026-10-17,
-   re-verified 2026-10-17: still 8 on the same excluded tracks,
+   re-verified 2026-10-17 and 2026-10-18: still 8 on the same excluded tracks,
    production holds ZERO -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
    absorbed, 14 more with the targeting + battle src-old sweeps;
@@ -508,7 +515,9 @@ twins green (1/1 each, re-verified today). Re-run
   until then no blind fix. Re-checked 2026-10-17 across all 12 retained
   runs: 5 per-row earmarks >= 250, all at supply 30+ in flowing games
   (lowest: Pylon 300 at sup 30/33 bank 10 mid-game) - the supply-4 /
-  bank-74 deadlock shape absent again.
+  bank-74 deadlock shape absent again. Re-checked 2026-10-18: earmarks
+  >= 250 in 13 runs, all at supply 22+ in flowing games (lowest: 300 at
+  sup 22) - the deadlock shape absent again.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
