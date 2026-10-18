@@ -48,9 +48,13 @@ if [ -f "$LOG" ]; then
     echo "[wine-ums] throughput: $(( FRAMES / SECONDS_WALL )) frames/s wall ($FRAMES frames in ${SECONDS_WALL}s)"
   fi
   if [ "$FAST" = "1" ]; then
-    grep -q "WINE_FAST: speed 0" "$LOG" \
-      && echo "[wine-ums] speed flag confirmed in game log (frameskip 500)" \
-      || echo "[wine-ums] WARNING: WINE_FAST line missing from game log - flag did not reach the game"
+    if grep -q "WINE_FAST: speed 0" "$LOG"; then
+      echo "[wine-ums] speed flag confirmed in game log (frameskip 500)"
+    elif grep -q "PARAM_TWEAKER: speed 0" "$LOG"; then
+      echo "[wine-ums] tweaker speed confirmed in game log (frameskip 500)"
+    else
+      echo "[wine-ums] WARNING: speed lines missing from game log - flags did not reach the game"
+    fi
   fi
 fi
 exit "$EXIT"

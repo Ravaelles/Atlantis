@@ -20,6 +20,12 @@
 
 set -u
 
+ATLANTIS_DIR="/sc-ai/Atlantis"
+ENV_FILE="$ATLANTIS_DIR/bwapi-data/AI/ENV"
+ENV_BACKUP="$(mktemp /tmp/opencode/wine-batch-env.XXXXXX 2>/dev/null || mktemp /tmp/wine-batch-env.XXXXXX)"
+cp -f "$ENV_FILE" "$ENV_BACKUP"
+trap 'cat "$ENV_BACKUP" > "$ENV_FILE" 2>/dev/null; rm -f "$ENV_BACKUP"; echo "[wine-batch] shared ENV restored"' EXIT INT TERM
+
 MAP="${1:-}"
 N="${2:-}"
 OUTDIR="${3:-}"
