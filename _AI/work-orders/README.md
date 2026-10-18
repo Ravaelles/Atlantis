@@ -36,3 +36,5 @@ and stop where it says to stop.
   that need no game run (NEXT.md Stage F intro, not #5 itself).
 - `WO-144-supply-single-author.md` — spec + landing order for the board
   supply goal owning all supply demand (NEXT.md #144).
+- `WO-145-site-finding-to-catalogue.md` — spec + landing order for
+  catalogue-only siting through the adapter funnel (NEXT.md #145).
