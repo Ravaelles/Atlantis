@@ -677,6 +677,18 @@ if [ "$SAVE_REPLAY" -eq 1 ]; then
   say "recording replay to: $REPLAY_FILE (bot will end the game via the engine)"
 fi
 
+# UMS maps carry their own scenario (pre-placed units, triggers): the auto-menu
+# must NOT run its melee setup on them. `ums/` in the path selects
+# USE_MAP_SETTINGS, exactly like the Wine runner does for ums/ maps (owner
+# ask 2026-10-19: micro-battery games like ZealDrag_v_Lings run here, not
+# on Wine). Plain array (never quoted empty - see the SAVE_REPLAY note above
+# on why an empty "${ARR[@]}" breaks `env`).
+GAME_TYPE_ENV="BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS"
+case "$MAP" in
+  ums/*) say "UMS map: game_type=USE_MAP_SETTINGS (scenario owns the setup)" ;;
+  *) GAME_TYPE_ENV="" ;;
+esac
+
 if [ "$SAVE_REPLAY" -eq 1 ]; then
   # Two separate invocations rather than one with a possibly-empty array: quoting
   # "${REPLAY_ENV[@]}" on an EMPTY array passes a single empty argument to `env`,
@@ -684,12 +696,14 @@ if [ "$SAVE_REPLAY" -eq 1 ]; then
   # would break the default run.
   setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
     BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
+    ${GAME_TYPE_ENV:+$GAME_TYPE_ENV} \
     "${REPLAY_ENV[@]}" \
     timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
     >"$SERVER_LOG" 2>&1 </dev/null &
 else
   setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
     BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
+    ${GAME_TYPE_ENV:+$GAME_TYPE_ENV} \
     timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" "$RACE" "$ENEMY_RACE" \
     >"$SERVER_LOG" 2>&1 </dev/null &
 fi

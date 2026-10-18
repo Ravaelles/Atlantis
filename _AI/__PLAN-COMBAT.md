@@ -58,7 +58,9 @@ combat commits land after it unless trivially separable.
    091624: 55-unit group, DEFEND→ATTACK, anchors main → natural →
    enemy corner. Fighting needs a game WITH an enemy - the host
    spawned none in 4 consecutive games (`enemy: ` empty, environmental,
-   bot-independent). DONE = anchors proof (met) + fighting proof
+   bot-independent). 2026-10-19: the gate reads the vanguard (nearest
+   unit to an enemy inside 15 tiles) instead of the leader, so the area
+   where the fight is decides - stub-pinned, Wine proof pending. DONE = anchors proof (met) + fighting proof
    (retry when spawn works).
 6. **Jar.** Rebuild both bot jars (Wine + OpenBW paths) so the next games
    play the cutover. DONE = jars verified to lack `atlantis/combat/`

@@ -595,7 +595,12 @@ twins green (1/1 each, re-verified today). Re-run
 
 - **#34** Stub twins hold (4pool/9pool baselines pinned); a real
   opponent needs a scripted UMS map (one client per OpenBW host) -
-  owner-supplied, tier stays owner-run.
+  owner-supplied, tier stays owner-run. Probed 2026-10-19 with
+  `USE_MAP_SETTINGS` in the runner: `ZealDrag_v_Lings` runs the full
+  1209 s but hands us a melee start (Nexus+probes, no army) and spawns
+  no enemy (0/0) - no fight to assert; `8Drag_v_8Drag` ends at frame 0
+  (human slots) with the exit-path backstop firing. Neither map yields
+  a battle; the tier still waits on an owner-authored computer-slot map.
 - **#65 / #68** CherryVis code fixes are in (types, legend, seed,
   writer path, `--cvis` plumbing); what remains is the owner opening a
   real trace in the viewer (plus the `[BW<->CP Matching]` console line

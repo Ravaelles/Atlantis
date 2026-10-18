@@ -66,7 +66,8 @@ public class BattleCommander extends Commander {
 
     private FightOrFlight.Tactic tactic() {
         AUnit leader = Alpha.get().leader();
-        double eval = leader != null ? leader.eval() : 0;
+        AUnit assessor = vanguardAssessor(leader);
+        double eval = assessor != null ? assessor.eval() : 0;
 
         FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
         if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
@@ -76,6 +77,29 @@ public class BattleCommander extends Commander {
             fleeStartedAt = -1;
         }
         return tactic;
+    }
+
+    /**
+     * Who the gate listens to: the unit closest to an enemy within 15
+     * tiles, else the leader. A leader at the back reads a different fight
+     * than the vanguard taking contact (owner 2026-10-19: one cluster, one
+     * area assessment - the gate answers for where the fight is, not for
+     * where the leader stands). Public as a seam, pinned without a game.
+     */
+    public static AUnit vanguardAssessor(AUnit leader) {
+        AUnit best = leader;
+        double bestDist = Double.MAX_VALUE;
+        for (AUnit unit : Alpha.get().selection().list()) {
+            if (unit == null || !unit.isAlive()) continue;
+            AUnit foe = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 15);
+            if (foe == null) continue;
+            double dist = unit.distTo(foe);
+            if (dist < bestDist) {
+                best = unit;
+                bestDist = dist;
+            }
+        }
+        return best;
     }
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
