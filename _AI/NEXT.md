@@ -477,7 +477,12 @@ twins green (1/1 each, re-verified today). Re-run
   Forge): TECH_CHECK 602 rows all false, UPGRADE_COMPLETED none -
   without a Forge the gate is correctly silent at any bank.
 - **#82** Terran off-site completion may leak (unobserved, both Terran
-  runs built on-site). Needs a game showing it. No blind fix.
+  runs built on-site). 2026-10-18 datum (`143800`, Terran vs Zerg, 212
+  game-s): the bot plays Terran with the Protoss build order (`Zealot
+  into Goon`) and builds nothing at all (CommandC=1 SCV=4, idle) - D8
+  Protoss-only, so the leak is unobservable until Terran play exists.
+  The adhoc tier also has no Terran expectations (Protoss gates fail
+  it trivially). Needs a game showing it. No blind fix.
 - **#92** Second Gateway ~3 min late on Wine (BO `At 10` #3 → re-queued
   4:39 sup35, accepted 4:40+ six times same tile; first Gateway accepted
   1:09). OpenBW control (`20261015_141835`) warps both Gateways on time
