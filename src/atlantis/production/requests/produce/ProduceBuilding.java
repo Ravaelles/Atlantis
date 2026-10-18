@@ -19,8 +19,10 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.zerg.ProduceZergUnit;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Count;
 import atlantis.units.workers.FreeWorkers;
 import atlantis.util.AConsole;
+import atlantis.util.We;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
@@ -172,6 +174,14 @@ public class ProduceBuilding {
             // saved for the Core instead of going into a forward Pylon.
             if (type.isPylon() && PriorityWaiters.pylonYieldsToCore()) return refuse(type, order, "core-priority");
 
+            // Owner 2026-10-19 (Wine: the At-22 Gateway's builder started
+            // while its At-21 Pylon was still PREPARING, then the bank sat
+            // below 100 for the Pylon while the Gateway held a worker on
+            // unpowered ground): a power-needing building with no standing
+            // Pylon waits until the bank covers the Pylon plus itself -
+            // never send the worker before the power is paid for.
+            if (powerProviderNotFunded(type)) return refuse(type, order, "power-not-funded");
+
             // A PREPARING construction already holds a picked site: adopt it
             // (or keep waiting for a free builder) instead of searching anew.
             if (order.construction() != null
@@ -184,6 +194,21 @@ public class ProduceBuilding {
             _lastConstruction = NewConstructionRequest.requestConstructionOf(order);
             return _lastConstruction != null;
         }
+    }
+
+    /**
+     * Power before workers: sending a builder for a power-needing building
+     * while no Pylon stands spends its price and then holds the worker on
+     * unpowered ground while the bank refills for the Pylon. Wait until
+     * the bank covers both (Pylon price + own price). Pylons themselves
+     * never need power (their needsPower is false, so no first-Pylon
+     * deadlock); warping counts as not built, per the owner's rule.
+     */
+    private static boolean powerProviderNotFunded(AUnitType type) {
+        if (!We.protoss() || !type.needsPower()) return false;
+        if (Count.ofType(AUnitType.Protoss_Pylon) > 0) return false;
+        return !A.hasMinerals(
+            AUnitType.Protoss_Pylon.mineralPrice() + type.mineralPrice());
     }
 
     /**
@@ -221,6 +246,20 @@ public class ProduceBuilding {
                 .param("prevTile", prev == null ? "-" : prev.toString())
                 .param("tile", fresh.toString())
                 .log(A.now(), A.minSec());
+        }
+
+        // Owner 2026-10-19: re-check at send time, not just at pick time -
+        // the bank may have dropped below Pylon+self price while the site
+        // waited for a free builder. Same guard as the request door.
+        if (powerProviderNotFunded(prepared.buildingType())) {
+            EventLog.key(LogKey.BUILD_REFUSED)
+                .param("type", prepared.buildingType().name())
+                .param("guard", "power-not-funded")
+                .param("order", order.toString())
+                .param("supplyUsed", A.supplyUsed())
+                .param("minerals", A.minerals())
+                .log(A.now(), A.minSec());
+            return false;
         }
 
         // Owner 2026-10-18: prefer the worker reserved at pick time - it

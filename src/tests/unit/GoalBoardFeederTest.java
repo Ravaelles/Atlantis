@@ -284,6 +284,7 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     public void fundedStaleAndGoallessAdoptionsProceed() {
         world(60, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Pylon, 22, 20),
             fake(AUnitType.Protoss_Probe, 21, 21),
             fake(AUnitType.Protoss_Probe, 22, 21)
         ), fakeEnemies(), () -> {
@@ -307,7 +308,9 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
             if (now == 40) {
                 // Funding published at frame 3 is stale past the 30-frame
-                // cadence: fail open, the claim proceeds.
+                // cadence: fail open, the claim proceeds. The Pylon in the
+                // fixture keeps the power-not-funded door open - the point
+                // here is the stale wallet, not power.
                 ProductionOrder gateway = new ProductionOrder(AUnitType.Protoss_Gateway, 10);
                 assertTrue(
                     ProduceBuilding.produceBuilding(AUnitType.Protoss_Gateway, gateway),

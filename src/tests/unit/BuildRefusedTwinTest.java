@@ -67,4 +67,51 @@ public class BuildRefusedTwinTest extends AbstractTestWithWorld {
                 "the refusal names its guard, got: " + rows);
         });
     }
+
+    /**
+     * Owner 2026-10-19 (Wine: the At-22 Gateway's builder started while
+     * its At-21 Pylon was still PREPARING, then the bank sat below 100
+     * for the Pylon): a power-needing building with no standing Pylon
+     * waits for Pylon price + own price (Forge: 100 + 150).
+     */
+    @Test
+    public void powerHungryBuildingWaitsForPylonBank() {
+        currentMinerals = 200;
+        currentSupplyUsed = 22;
+        currentSupplyTotal = 25;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            EventLog.clearForTests();
+            assertFalse(
+                ProduceBuilding.requestBuilding(
+                    AUnitType.Protoss_Forge, new ProductionOrder(AUnitType.Protoss_Forge, 22)),
+                "no Pylon standing and bank below 250 builds nothing");
+            String rows = EventLog.toJsonLines();
+            assertTrue(
+                rows.contains("BUILD_REFUSED") && rows.contains("power-not-funded"),
+                "the refusal names its guard, got: " + rows);
+        });
+    }
+
+    @Test
+    public void fundedPylonBankPassesThePowerGate() {
+        currentMinerals = 300;
+        currentSupplyUsed = 22;
+        currentSupplyTotal = 25;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            EventLog.clearForTests();
+            ProduceBuilding.requestBuilding(
+                AUnitType.Protoss_Forge, new ProductionOrder(AUnitType.Protoss_Forge, 22));
+            assertFalse(
+                EventLog.toJsonLines().contains("power-not-funded"),
+                "bank 300 covers Pylon + Forge - the power gate stays open");
+        });
+    }
 }
