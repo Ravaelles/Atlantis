@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
+import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -61,6 +62,70 @@ public class ComingSupplyCountsConstructionsTest extends WorldStubForTests {
                 0, GameStateSnapshot.unstartedProvidersComing(AUnitType.Protoss_Pylon));
             assertEquals(
                 0, GameStateSnapshot.unstartedProvidersComing(null));
+        });
+    }
+
+    @Test
+    public void inProgressWithoutLinkedBuildingCountsAsComing() {        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
+
+        world(1, fakeOurs(builder), fakeEnemies(), () -> {
+            // The warp was accepted but the unit has not registered yet:
+            // neither the unit term nor the unstarted term sees it.
+            Construction warping = new Construction(AUnitType.Protoss_Pylon);
+            warping.setPositionToBuild(APosition.create(92, 113));
+            warping.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            warping.setBuilder(builder);
+            ConstructionRequests.constructions.add(warping);
+            assertEquals(
+                1, GameStateSnapshot.unmaterializedInProgressComing(AUnitType.Protoss_Pylon));
+
+            // Once the building links, the unit term covers it - no double count.
+            warping.setBuildingUnit(fake(AUnitType.Protoss_Pylon, 92, 113));
+            assertEquals(
+                0, GameStateSnapshot.unmaterializedInProgressComing(AUnitType.Protoss_Pylon));
+            assertEquals(
+                0, GameStateSnapshot.unmaterializedInProgressComing(null));
+        });
+    }
+
+    @Test
+    public void compositionCountsUnitsAndConstructionsOnce() {        FakeUnit warping = fake(AUnitType.Protoss_Pylon, 92, 113);
+        warping.setCompleted(false);
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 30, 20),
+            warping
+        ), fakeEnemies(), () -> {
+            // One warping unit, no constructions: the unit term alone.
+            assertEquals(1, GameStateSnapshot.supplyProvidersComing(AUnitType.Protoss_Pylon));
+
+            // The same warp linked to its construction: still 1, never 2.
+            Construction linked = new Construction(AUnitType.Protoss_Pylon);
+            linked.setPositionToBuild(APosition.create(92, 113));
+            linked.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            linked.setBuildingUnit(warping);
+            ConstructionRequests.constructions.add(linked);
+            assertEquals(1, GameStateSnapshot.supplyProvidersComing(AUnitType.Protoss_Pylon));
+
+            // Plus one travelling with no unit: 2 providers coming.
+            addConstruction(AUnitType.Protoss_Pylon, ConstructionOrderStatus.STARTING, 96, 113);
+            assertEquals(2, GameStateSnapshot.supplyProvidersComing(AUnitType.Protoss_Pylon));
+        });
+    }
+
+    @Test
+    public void unlinkedWarpingCountsInTheSum() {
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 30, 20)
+        ), fakeEnemies(), () -> {
+            // No units at all, one IN_PROGRESS with no linked building:
+            // the lag window the unit term and the unstarted term both miss.
+            // Without the lag term in the sum this reads 0 and the goal
+            // re-fires behind the warping Pylon.
+            addConstruction(AUnitType.Protoss_Pylon, ConstructionOrderStatus.IN_PROGRESS, 92, 113);
+            assertEquals(1, GameStateSnapshot.supplyProvidersComing(AUnitType.Protoss_Pylon));
         });
     }
 }

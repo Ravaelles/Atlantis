@@ -7,6 +7,7 @@ import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ProducerFacilityRegistry;
 import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.v2.CommittedWork;
 import atlantis.production.v2.EconomyModel;
@@ -274,10 +275,19 @@ public final class GameStateSnapshot {
      */
     private int supplyProvidersComing() {
         AUnitType provider = supplyProviderType();
+        return supplyProvidersComing(provider);
+    }
+
+    /**
+     * Package-visible as a seam: the whole coming count in one
+     * testable place, so no term can silently drop out of the sum.
+     */
+    public static int supplyProvidersComing(AUnitType provider) {
         if (provider == null) return 0;
 
         return Math.max(0, Count.ofTypeWithUnfinished(provider) - Count.ofType(provider)
-            + unstartedProvidersComing(provider));
+            + unstartedProvidersComing(provider)
+            + unmaterializedInProgressComing(provider));
     }
 
     /**
@@ -286,11 +296,36 @@ public final class GameStateSnapshot {
      * no unit yet, so the unit-only count reads zero while a builder is
      * already committed - the goal re-fires and the scheduler issues a
      * second provider behind the walking builder. PREPARING picks stay
-     * out (aimed future, not live demand); IN_PROGRESS is unit-covered.
+     * out (aimed future, not live demand); IN_PROGRESS with a linked
+     * building is unit-covered (see unmaterializedInProgressComing for
+     * the registration lag).
      */
     public static int unstartedProvidersComing(AUnitType provider) {
         if (provider == null) return 0;
         return ConstructionRequests.countNotStartedOfType(provider);
+    }
+
+    /**
+     * The registration-lag half of the same rule: IN_PROGRESS whose
+     * building has not linked yet. The advance fires on the order echo
+     * while the server-side warp registers a few frames later on OpenBW -
+     * in that window the unit term sees nothing (no unit) and the
+     * unstarted term sees nothing (already IN_PROGRESS), so the goal
+     * re-fires (measured V2 LIVE: Pylon@5991 while the @5734-stream
+     * survivor had no unit yet, 78f-apart warps). Once the building
+     * links, the unit term covers it - never double-counted. Dropped
+     * warps demote to NOT_STARTED and move to the unstarted term.
+     */
+    public static int unmaterializedInProgressComing(AUnitType provider) {
+        if (provider == null) return 0;
+        int total = 0;
+        for (Construction construction : ConstructionRequests.constructions) {
+            if (construction == null || !provider.equals(construction.buildingType())) continue;
+            if (construction.status() != ConstructionOrderStatus.IN_PROGRESS) continue;
+            if (construction.buildingUnit() != null) continue;
+            total++;
+        }
+        return total;
     }
 
     private AUnitType supplyProviderType() {
