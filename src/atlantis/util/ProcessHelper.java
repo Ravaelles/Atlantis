@@ -78,7 +78,7 @@ public class ProcessHelper {
         // wineserver must die too: it holds the whole Wine session (and after
         // an Escape the owner wants nothing left). The sleep below gives X a
         // moment to tear the windows down before anything starts again.
-        executeInCommandLine("wineserver -k");
+        executeOnHostQuietly("wineserver -k");
         try {
             Thread.sleep(500);
         } catch (InterruptedException ignored) {
@@ -99,8 +99,8 @@ public class ProcessHelper {
         // against comm only, which truncates to 15 characters too, so
         // "pkill -9 Chaoslauncher" is the working form for that process.
         try {
-            executeInCommandLine("pkill -9 -x StarCraft.exe");
-            executeInCommandLine("pkill -9 Chaoslauncher");
+            executeOnHostQuietly("pkill -9 -x StarCraft.exe");
+            executeOnHostQuietly("pkill -9 Chaoslauncher");
         }
         catch (Exception ex) {}
     }
@@ -114,7 +114,7 @@ public class ProcessHelper {
         if (!Env.isWine()) return;
 
         killWineProcesses();
-        executeInCommandLine("wineserver -k");
+        executeOnHostQuietly("wineserver -k");
     }
 
     /**
@@ -324,6 +324,21 @@ public class ProcessHelper {
                 Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
             } catch (Exception ignored) {
             }
+        }
+    }
+
+    /**
+     * Best-effort host kill, silent always. Runs through {@code sh -c} so it
+     * works from the bot JVM under Wine too (Wine forwards unknown
+     * executables to the host) - a bare {@code executeInCommandLine} with a
+     * Unix command fails there with "Cannot run program" spam on every game
+     * exit (owner 2026-10-19). Failure is the normal case (nothing left to
+     * kill), so even the message is skipped, not just the stack trace.
+     */
+    private static void executeOnHostQuietly(String command) {
+        try {
+            Runtime.getRuntime().exec(new String[]{"sh", "-c", command});
+        } catch (Exception ignored) {
         }
     }
 

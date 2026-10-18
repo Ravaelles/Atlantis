@@ -5,6 +5,7 @@ import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.board.GoalBoardWallet;
 import atlantis.decisions.goals.protoss.ProtossOpening;
+import atlantis.game.A;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
@@ -147,6 +148,12 @@ public final class GoalBoardFeeder {
                 "BOARD_FED " + fed
                     + " min=" + state.minerals
                     + " sup=" + state.supplyUsed + "/" + state.supplyTotal);
+            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.BOARD_FED)
+                .param("fed", fed)
+                .param("minerals", state.minerals)
+                .param("supplyUsed", state.supplyUsed)
+                .param("supplyTotal", state.supplyTotal)
+                .log(A.now(), A.minSec());
         }
     }
 

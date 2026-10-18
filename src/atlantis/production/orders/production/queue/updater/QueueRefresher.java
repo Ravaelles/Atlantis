@@ -29,6 +29,13 @@ public class QueueRefresher {
                         + " status=" + order.status()
                         + " min=" + atlantis.game.A.minerals()
                         + " supply=" + atlantis.game.A.supplyUsed() + "/" + atlantis.game.A.supplyTotal());
+                atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.QUEUE_BASE)
+                    .param("type", order.unitType().name())
+                    .param("status", order.status() == null ? "-" : order.status().name())
+                    .param("minerals", atlantis.game.A.minerals())
+                    .param("supplyUsed", atlantis.game.A.supplyUsed())
+                    .param("supplyTotal", atlantis.game.A.supplyTotal())
+                    .log(atlantis.game.A.now(), atlantis.game.A.minSec());
             }
 
             updateOrderStatus(order);

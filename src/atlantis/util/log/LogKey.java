@@ -67,6 +67,10 @@ public enum LogKey {
     CATALOGUE_SITE,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
+    /** A base order the refresh sees (throttled): type, status, bank, supply. */
+    QUEUE_BASE,
+    /** The feeder's filled gap (throttled): which goal got its missing row. */
+    BOARD_FED,
     /** Free supply above 14 (edge-triggered): overstock, with bank and pylons coming. */
     SUPPLY_OVERSTOCK,
     /** 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two. */
