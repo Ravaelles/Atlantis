@@ -195,9 +195,9 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-17 (`rm -rf out` first): unit 724/724 green, 0
-skipped (was 721 - incl. DecisionLogTest 2/2, EventLog truncation pin
-and WarpingBuildingBlocksOverlapTest 4/4).
+Re-measured 2026-10-18 (`rm -rf out` first): unit 728/728 green, 0
+skipped (was 724 - incl. WallInGoalTest FE pin + AdoptedConstructionTwin
+overlap case + GoalBoardFeederTest FE seam).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -381,18 +381,22 @@ twins green (1/1 each, re-verified today). Re-run
   building (unmasks silent self-finish loops); advance seam pinned
   (`ConstructionStatusAdvanceTest` 4/4); E2E opening-status gate
   (`EXPECT_OPENING_STATUS=1`: Pylon/Gateway BUILDING_STARTED + ledger
-  warps; self-test RED/GREEN on fixtures, live proof pending a clean
-  short game - the 30 s cap keeps killing shorts inconclusively).
+  warps; self-test RED/GREEN on fixtures; live proof LANDED 2026-10-18
+  (`104922` short, 19 s wall: Pylon STARTED 0:47@8, Gateway 1:20@10 +
+  resite 1:42@12, 18 ledger rows, SCENARIO PASSED with the gate
+  exported - the 30 s cap finally let one through).
   Writer-level fix landed: EventLog/DecisionLog truncate on first
   flush per JVM (pinned, incl. simulated restart), so no launcher
   can accumulate games anymore - scripts keep their pre-run rm as
   belt-and-braces. Wine logs were unusable for
   all of this (7 MB EVENTS.jsonl spanning 6 games) - fixed by clearing
-  the write dir pre-game like OpenBW. Still open, needs a game where
-  two same-type warps overlap: wrong-sibling adoption
-  (`CANNOT define construction` lines) is the last unproven branch;
-  everything else on this item has a live twin or a live resite. No
-  blind patch.
+  the write dir pre-game like OpenBW. Wrong-sibling adoption stub-pinned
+  2026-10-18 (overlap test: positional, then fallback candidates=1, then
+  CANNOT exit - `AdoptedConstructionTwinTest` 3/3, RED then GREEN); the
+  live overlap game is still unplayed. FE scoping landed the same day
+  (wall-in only on Forge Expand; live `104922` on non-FE shows zero
+  wall-in BOARD/wall rows). Remainder: owner visual proof of orange
+  PREPARING (a). No blind patch.
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
