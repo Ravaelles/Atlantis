@@ -101,196 +101,41 @@ Three ideas are load-bearing:
 
 ---
 
-## 2. Full Algorithm — Step-by-Step
+## 2-3. Stardust algorithm and Producer consumption (reference, not our code)
 
-### Phase 0 — Initialization (once per game / per map state reset)
+Source of truth (read it there, not here): `/sc-ai/Stardust/src/Builder/BuildingPlacement.{h,cpp}`,
+`Builder/Block.{h,cpp}`, `Builder/Blocks/**`, `Builder/ForgeGatewayWall.h`,
+consumed by `Producer/Producer.cpp` (`reserveBuildPositions`, `choosePylonBuildLocation`).
 
-**Step 0.1 `initializeTileAvailability()`**
-- Allocate `tileAvailability[mapWidth * mapHeight]` (array of `unsigned int`).
-- For every tile: if `!Map::isWalkable || !BWAPI::isBuildable` → mark `1` and mark its 8
-  neighbours with `|= 2` (so a block cannot sit flush against impassable/unbuildable terrain;
-  a one-tile margin is always enforced).
-- For every base on the map: force the Nexus footprint (4x3, engine
-  tile size - verified against the vendored BWAPI jar, not memory) to
-  `1` (unbuildable) and its border ring to `2`, so no block ever
-  overlaps a resource depot.
-- For every geyser whose tile is at/right of the base tile: mark a 3×2 region between the
-  geyser and the Nexus as unbuildable (`1`) to avoid blocking gas collection paths.
+Phases, one line each (full step-by-step in git history):
 
-**Step 0.2 `updateNeighbourhoods()`**
-- Build the three `Neighbourhood` area sets:
-  - `MainBase` — `Map::getMyMainAreas()` plus map-specific overrides.
-  - `AllMyBases` — main areas + every owned non-island base with a depot.
-  - `HiddenBase` — hidden base area + nearby areas connected within 640 px (in case the base
-    area itself offers no build locations).
-- For each area record `areaOrigins[area]` (mineral line center) and `areaExits[area]` (main
-  choke center, or the area origin for hidden base).
+- **0. Init:** per-tile availability bitmap (`1`=unbuildable, `2`=adjacent,
+  base/geyser protection); neighbourhood sets (Main/AllMyBases/HiddenBase)
+  with origins and exits.
+- **1. Start block:** prioritized template list per base (`StartNormalLeft`
+  first); registers power pylon + first cannon; warns and degrades on miss.
+- **2. Base static defense:** choke-end analysis per base; main-base cannon
+  order (mineral line, start block, rest by score).
+- **3. Block stamping:** 24 templates largest-first, outward from map center
+  in four quadrants; `tryCreate`/`place`/`placeLocations`/`removeUsed`.
+- **4. Main-choke cannon:** closest powered `small` 3-8 tiles from choke,
+  else whole-main scan; feeds DT-detection Pylon priority.
+- **5. Catalogue:** `[neighbourhood][tileWidth]` lists with `poweredAfter`,
+  `builderFrames`, `framesUntilPowered`, `distanceToExit` (large buildings
+  near the main exit inverted); sorted by `BuildLocationCmp`.
+- **6. Ranking (strict order):** start-block power pylon, DT choke pylon,
+  geyser, earliest `framesUntilPowered`, no-exit-before-exit (medium),
+  unconverted first, distance score (tech/rush-mode: away from exit).
+- **7. Maintenance:** `buildAwayFromExit` flip, hidden base, per-frame
+  `updateFramesUntilPowered`; invalidation on queue/cancel/create/destroy/
+  choke events; `updateAvailableGeysers`.
+- **Producer:** Pylon pick scores newly-powered medium/large slots (keep
+  >=2/>=2, early-exit on 0); Psi buildings take powered-at-startFrame or
+  pull the earliest committed Pylon earlier (`shiftOne`) or queue new
+  (beats best by 250f builder-travel buffer); Stargate tie-breaks on
+  `builderFrames`; `reserveBuildPositions` tentative-then-commit so no
+  tile double-books.
 
-### Phase 1 — Start Block (the anchor layout)
-
-**Step 1.1 `findStartBlock(base)`**
-- Try a prioritized list of start-block templates in order:
-  `StartNormalLeft → StartNormalRight → StartCompactLeft → StartCompactRight →
-   StartCompactLeftHorizontal → StartCompactRightVertical → StartBottomLeftHorizontal →
-   StartTopLeftHorizontal → StartBottomHorizontal → StartAboveAndBelowLeft`.
-- A template is accepted only if `tryCreate(naturalExpansionTile, tileAvailability)` succeeds —
-  i.e. the whole layout fits with no conflicting tiles.
-- On success: register the block (`startBlock` for main, `baseToStartBlock[base]` otherwise),
-  pick a defensive cannon from its `small` locations (first one that isn't the power pylon),
-  and call `addBaseStaticDefense` (this also determines `workerDefenseCannons` — see Phase 3).
-- If no template fits → log a warning and continue (degraded but non-fatal).
-
-The start block provides approximately: 2 gateways, 2–4 tech buildings, 3–4 cannons.
-
-### Phase 2 — Base Static Defense
-
-**Step 2.1 `findBaseStaticDefenses()`** (per base, main handled via start block in Step 1.1)
-- `initializeBaseDefenseAnalysis(base)` computes both choke ends, and candidate tiles that:
-  are buildable, are close enough to the mineral line, and provide coverage between the choke
-  and the mineral line.
-- Candidate tiles are scored, the best ones become `workerDefenseCannons`.
-
-For the main base, positions from the start block are **re-scored and re-ordered**:
-- Score vs mineral line: `dist(mineralLine) * 4 + dist(geyser)`.
-- Plus, whenever a main choke exists: `(dist(choke, pos) − dist(choke, mineralLine)) * 2`.
-- Separately, find the cannon that best defends the start block (closest to power pylon, with
-  a choke-distance correction).
-- Final order: (1) best mineral-line defender, (2) best start-block defender, (3) rest by score.
-
-### Phase 3 — Full-Map Block Stamping
-
-**Step 3.1 `findBlocks()`**
-- Try a fixed, prioritized list of 24 rectangular templates (largest first):
-  `Block18x6, Block16x8, Block17x6, Block14x6, Block12x8, Block16x5, Block18x3, Block13x6,
-   Block10x6, Block8x8, Block14x3, Block12x5, Block10x3, Block8x5, Block4x8, Block6x3,
-   Block4x5, Block8x2, Block5x4, Block5x2, Block4x4, Block4x2, Block2x4, Block2x2`.
-- For each template, scan **outward from the map center in four quadrants** (top-left,
-  top-right, bottom-left, bottom-right), i.e. the scan terminates at the map midpoint in each
-  direction — natively biasing stamps toward the map interior rather than corners.
-- At each candidate origin call `blockType->tryCreate(tile, tileAvailability)`; on success the
-  block reserves its tiles via `Block::place`.
-
-**Step 3.2 `Block::place()` — what "fits" means**
-- The four corners of the block plus every tile inside must pass `checkTile`.
-- `checkTile` rejects when: out of map bounds; `tileAvailability > 0` (already blocked/used);
-  or the tile is on a disallowed map edge (top/left/right per `allowTopEdge/allowLeftEdge/
-  allowRightEdge/allowCorner` overrides the template may set).
-- On success, mark the block's interior tiles `|= 4` ("used") and its surrounding border ring
-  `|= 8` ("border"), so the next template cannot butt directly against it.
-
-**Step 3.3 `Block::placeLocations()` + `Block::removeUsed()`**
-- `placeLocations()` (template-specific) fills the block's `small` (2×2), `medium` (3×2),
-  `large` (4×3) location lists from the raw rectangle geometry, skipping the power-pylon tile.
-- `removeUsed()` prunes any location whose footprint overlaps non-walkable terrain (e.g. a
-  location that happens to land partly on the block's own reserved/unbuildable tile).
-
-### Phase 4 — Main-Choke Cannon Placement (Protoss-specific defense)
-
-**Step 4.1 `findMainChokeCannonPlacement()`**
-- Select main-base blocks; find the closest `small` location that is powered by a block pylon
-  and lies between 3 and 8 tiles (`96..256 px`) from the main choke center.
-- If none is found, scan the whole main base for a tile that:
-  is inside the main, is in detection range of the choke center, is powered by some block, and
-  is bordered by unbuildable/reserved tiles on at most one side (leaving a walkable escape).
-- Record the chosen block/tile as `chokeCannonBlock` / `chokeCannonPlacement`, used later for
-  DT-detection Pylon priority (see Phase 6 scoring).
-
-### Phase 5 — Catalogue Construction
-
-**Step 5.1 `updateAvailableBuildLocations()`**
-- Gather pending Pylons (`Builder::pendingBuildingsOfType(Pylon)`).
-- For each block:
-  - Compute `poweredAfter(tile, kind, pendingPylons)`: `0` if already powered; otherwise the
-    earliest completion frame among pending pylons that `UnitUtil::Powers` that tile; `-1` if
-    no pylon can ever power it. Separate medium (3×2) and large (4×3) locations into
-    `powered` and `unpowered` buckets by this value.
-  - Skip the block entirely if `small` is empty and both powered buckets are empty (full block).
-  - For each `Neighbourhood` the block's center area belongs to, emit `BuildLocation` records
-    into `result[neighbourhood][tileWidth]`:
-    - Pylons → slot `[2]`; each pylon carries `powersMedium`/`powersLarge` lists (the concrete
-      medium/large locations it would unlock, each annotated with builder frames and
-      `distanceToExit`).
-    - Powered medium → slot `[3]` (`isTech = true`).
-    - Powered large → slot `[4]`.
-- `BuildLocation` fields: `location`, `builderFrames` (approx. worker travel), `framesUntilPowered`,
-  `distanceToExit`, `isTech`, `powersMedium`, `powersLarge`.
-- Sort each of the 9 lists (`neighbourhood × width`) with `BuildLocationCmp`.
-
-**Step 5.2 `distanceToExit(neighbourhood, exit, tile, type)`**
-- Ground distance (Dragoon pathing, nearest-BWEM-area option) from tile center to exit.
-- Main-base large buildings within 320 px of the exit get their distance **inverted**:
-  `dist = 320 + (320 − dist)`. Rationale: keep the choke clear for defense; a large building
-  near the main exit is *penalized*, not rewarded.
-
-### Phase 6 — Ranking: `BuildLocationCmp` (the placement preference order)
-
-Applied as a strict lexicographic ordering for every requested (building type, neighbourhood):
-
-1. **Start-block power pylon** always first.
-2. **DT-detection choke pylon** next, but only if enemy is Protoss AND `!buildAwayFromExit`.
-3. **Main geyser/refinery location** next.
-4. **Earliest `framesUntilPowered`** — prefer already-powered locations.
-5. **`hasExit == false` before `hasExit == true` for medium locations** — leaves exit-capable
-   slots free for buildings that need one (e.g. Robotics Facility).
-6. **Original (non-`converted`) locations before converted ones.**
-7. **Distance score**, weighted:
-   - `(builderFrames * 2 − distanceToExit)` when `isTech || buildAwayFromExit` (tech buildings
-     and rush-mode builds prefer being *further* from the choke),
-   - `(builderFrames * 2 + distanceToExit)` otherwise (normal buildings prefer being *closer*
-     to the exit, i.e. toward the map).
-
-### Phase 7 — Per-Frame Maintenance
-
-**Step 7.1 `update()` per frame**
-- Recompute `buildAwayFromExit = isEnemyRushing() || !Units::enemyAtBase(main).empty()`; if it
-  flipped, set `updateRequired = true`.
-- Discover hidden base once; if found, `updateRequired = true`.
-- If `updateRequired`: re-run `updateNeighbourhoods()` + `updateAvailableBuildLocations()`.
-- Else: run only `updateFramesUntilPowered()` — recompute each location's `framesUntilPowered`
-  from current pending pylons and re-sort affected lists.
-- Always: `updateAvailableGeysers()` (owned bases with a completed/near-complete depot, geyser
-  not yet refined and not already pending here).
-
-**Step 7.2 Event hooks that invalidate the catalogue**
-- `onBuildingQueued` → for every block `tilesReserved(tile, size)` → `updateRequired`.
-- `onBuildingCancelled` → `tilesFreed` (re-places prior locations, re-applies permanent
-  reservations) → `updateRequired`.
-- `onUnitCreate(building)` → `tilesUsed`; creation of a depot (ours) also invalidates.
-- `onUnitDestroy(building)` → `tilesFreed`; destruction of our depot also invalidates.
-- `onMainChokeChanged` → `findMainChokeCannonPlacement()` + `updateRequired`.
-
----
-
-## 3. How the Producer Consumes the Catalogue
-
-Placement is not decided by the catalogue alone — the Producer (`handleGoal`/`reserveBuildPositions`)
-applies the economic/time dimension on top:
-
-1. **Pylon request** → `choosePylonBuildLocation(pylon, tentative, requiredWidth)`:
-   - Iterate `buildLocations[neighbourhood][2]` (Pylons) in ranked order.
-   - Hard filter: with `requiredWidth == 3` require `powersMedium` non-empty; with `== 4`
-     require `powersLarge` non-empty.
-   - Score each candidate by *how many still-missing* medium/large slots it powers, aiming to
-     keep ≥2 medium and ≥2 large powered at all times; take the best (early-exit on score 0).
-   - If no candidate satisfies the hard requirement, fall back to the first ranked Pylon.
-   - `tentative == false` commits: assign `buildLocation` and erase it from the list.
-
-2. **Psi-requiring building request** → look at `buildLocations[neighbourhood][tileWidth]`:
-   - Walk the ranked list; skip locations that `hasExit == true` *only* when the requested
-     type is a Robotics Facility (it needs the exit).
-   - If the top location is already powered at/ before the item's `startFrame`: take it.
-     Special case — a Stargate will look ahead while `framesUntilPowered` is equal, choosing a
-     location with lower `builderFrames`.
-   - If not yet powered: find the earliest committed Pylon still lacking a tile and try to
-     **pull it earlier** in time (`shiftOne`), bounded by when minerals allow; use that pylon's
-     completion as availability, else queue a **new** Pylon (only if it can beat the current
-     best by the 250-frame builder-travel buffer).
-
-3. **`reserveBuildPositions(items, commit)`** runs once tentatively (`commit=false`, to compute
-   the earliest possible schedule for prerequisites) and once for real (`commit=true`), which
-   erases consumed locations from `buildLocations` so the same tile is never double-booked.
-
----
 
 ## 4. Port Plan for Atlantis (Java 1.8) — Clean Rewrite, No Legacy Reuse
 
