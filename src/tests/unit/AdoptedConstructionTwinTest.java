@@ -21,17 +21,16 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * The oldest-waiting fallback adoption must name itself: when a warp lands
+ * The nearest-waiting fallback adoption must name itself: when a warp lands
  * outside every reservation's 2.5-tile radius, the fallback adopts the
- * oldest unfinished construction of the type - and until the twin below,
- * nothing recorded WHICH construction got adopted or how many candidates
- * lost. Mis-adoption (right building, wrong construction) is invisible
- * without it (NEXT #150, still open).
+ * nearest unfinished construction of the type (owner 2026-10-19) - and
+ * until the twin below, mis-adoption (right building, wrong construction)
+ * was invisible.
  *
- * <p>The test pins the twin and the no-leak outcome, not which sibling the
- * rule prefers: two unfinished constructions, warp far from both, the
- * oldest must be finished and its twin row must name the warp tile, the
- * adopted tile and the candidate count.</p>
+ * <p>The test pins the twin and the no-leak outcome: two unfinished
+ * constructions, warp far from both, the nearest must be finished and
+ * its twin row must name the warp tile, the adopted tile and the
+ * candidate count.</p>
  */
 public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
 
@@ -84,6 +83,8 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
 
             // 28+ tiles from both reservations: the positional lookup
             // (2.5 radius) cannot reach, so only the fallback can adopt.
+            // The warp at (70,70) belongs to the nearer site: the fallback
+            // adopts the nearest, not the oldest (owner 2026-10-19).
             FakeUnit warpedFar = fake(AUnitType.Protoss_Gateway, 70, 70);
             ProtossWarping.updateNewBuildingJustWarped(warpedFar);
 
@@ -92,16 +93,16 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
                     "the fallback adoption must be named, got: " + rows);
             assertTrue(rows.contains("[70,70]"),
                     "the twin must name the warp tile, got: " + rows);
-            assertTrue(rows.contains("[10,10]"),
+            assertTrue(rows.contains("[50,50]"),
                     "the twin must name the adopted site, got: " + rows);
             assertTrue(rows.contains("\"candidates\":2"),
                     "the twin must name how many constructions lost, got: " + rows);
             assertFalse(
-                    ConstructionRequests.constructions.contains(older),
+                    ConstructionRequests.constructions.contains(newer),
                     "the adopted construction is finished and removed, not leaked");
             assertTrue(
-                    ConstructionRequests.constructions.contains(newer),
-                    "the losing sibling stays tracked");
+                    ConstructionRequests.constructions.contains(older),
+                    "the farther sibling stays tracked");
         });
     }
 

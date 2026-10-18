@@ -48,10 +48,10 @@ public class ProtossWarping {
             // that one - and leaving it in the queue means its assigned worker is held
             // forever at a site that will never have a building (NEXT.md #53, measured:
             // 3534 frames of a Probe whose Gateway went up away from its reservation).
-            // Adopt the oldest waiting one; `defineConstruction` still gets first refusal,
-            // so the normal, position-matching case is untouched.
+            // Adopt the nearest waiting one (owner 2026-10-19); `defineConstruction`
+            // still gets first refusal, so the normal, position-matching case is untouched.
             int waiting = ConstructionRequests.notFinishedOfType(newBuilding.type()).size();
-            construction = oldestWaitingConstructionOf(newBuilding.type());
+            construction = nearestWaitingConstructionOf(newBuilding.type(), newBuilding);
             if (construction != null) {
                 EventLog.key(LogKey.ADOPTED_CONSTRUCTION)
                     .param("type", newBuilding.type().name())
@@ -104,19 +104,31 @@ public class ProtossWarping {
      *
      * <p>
      * Only used when the positional lookup fails, i.e. the finished building is outside the
-     * 2.5-tile radius of every reservation. The oldest unfinished one is the best available
-     * answer: the construction list is ordered by creation, so the one that has waited
-     * longest is the one whose assigned worker has been claimed longest - which is exactly
-     * the worker this adoption exists to release.
+     * 2.5-tile radius of every reservation. The nearest unfinished one is the best available
+     * answer: builders act locally, so an offset warp most likely belongs to the closest
+     * site - attributing it to a far stale row instead re-fires demand that already stands
+     * (the duplicate-pylon class). Constructions without a site sort last; if none has a
+     * site the oldest is kept as the tiebreak, so a candidate always exists when the list
+     * is non-empty.
      * </p>
      */
-    private static Construction oldestWaitingConstructionOf(AUnitType type) {
-        Construction oldest = null;
+    private static Construction nearestWaitingConstructionOf(AUnitType type, AUnit warped) {
+        Construction nearest = null;
+        Construction oldestSiteless = null;
+        double best = Double.MAX_VALUE;
 
         for (Construction construction : ConstructionRequests.notFinishedOfType(type)) {
-            if (oldest == null || construction.id() < oldest.id()) oldest = construction;
+            if (oldestSiteless == null || construction.id() < oldestSiteless.id()) {
+                if (construction.buildPosition() == null) oldestSiteless = construction;
+            }
+            if (construction.buildPosition() == null) continue;
+            double dist = construction.buildPosition().distTo(warped);
+            if (dist < best) {
+                best = dist;
+                nearest = construction;
+            }
         }
 
-        return oldest;
+        return nearest != null ? nearest : oldestSiteless;
     }
 }
