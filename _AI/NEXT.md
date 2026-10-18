@@ -416,6 +416,19 @@ twins green (1/1 each, re-verified today). Re-run
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). No blind patch.
+- **#151** Dynamic demand re-requests a proximity-covered tile forever
+  (Wine TauCross, oid=118 "At 32 Gateway*": 255 chain rows 4:24-4:50 -
+  REQUESTED then proximity-cancelled the same frame, ~20 constructions
+  on tile [105,110], several STARTED with a builder then killed the
+  same frame because standing Gateway [103,112] grazes the footprint
+  2x1 tiles). The demand row lives (standing count < wanted), the site
+  is truly unbuildable (engine would refuse the overlapped tiles), but
+  the finder keeps returning it and the refresh loop churns builders.
+  Candidates (design, no patch yet): re-site memory per (order, tile)
+  after K proximity finishes; count a covering standing building as
+  satisfying that demand unit; validate exact demand against cover at
+  request time. Proof: a game where the loop is gone and the demand
+  lands elsewhere or stands down.
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
@@ -589,7 +602,12 @@ twins green (1/1 each, re-verified today). Re-run
   if `???` persists).
 - **#77** Acceptance tier: 6 stale pins, all judgment calls (3 combat-
   eval numbers vs ADR 0006, ZealotSelfDefense open question, 2 Terran
-  harness pins vs hardcoded race) - owner's call.
+  harness pins vs hardcoded race) - owner's call. Re-measured 2026-10-19:
+  unit 743/743, acceptance 748/0, scenarios 9/9 green; the only reds
+  anywhere are the 2 known pre-existing ArchUnit edges. The 6 pins no
+  longer exist as red tests (cutover deletions absorbed them); what
+  remains is the judgment part (ADR numbers, open question, Terran
+  harness), still owner-side.
 - **#78 / #79** Replay desync is verified upstream (OpenBW #27, 2019,
   second Linux confirmation 2021, open/unassigned). Live log is truth,
   replays are position-viewing only. Engine surgery out of scope;
