@@ -334,9 +334,15 @@ fi
 # GameSummary, build orders), WINE_DEBUG the diagnostics (worker gates,
 # stuck workers, refusals, stack traces). The console still shows both
 # merged, exactly as before.
+# The bot must analyse the map the game actually hosts: without --map it
+# falls back to its hard-coded default while the game plays something else
+# (measured: an 8v8 request played with 1Drag analysis). Same contract as
+# the OpenBW path: --map= wins over Main's choices; bare names resolve
+# under maps/ums and maps/sscai first.
+CLIENT_MAP_ARG="--map=${RESOLVED_MAP:-$MAP}"
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" \
     > >(tee "${TEE_OUT[@]}") 2> >(tee "${TEE_ERR[@]}" >&2) < /dev/null &
   # CLIENT_PID is now wine itself, not tee (better liveness: it dies when
   # the game ends, while tee may linger flushing). Tees inherit the
@@ -344,7 +350,7 @@ if [ "$LIVE_OUTPUT" = "1" ]; then
   CLIENT_PID=$!
 else
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" \
     > >(tee "${TEE_OUT[@]}" > /dev/null) 2> >(tee "${TEE_ERR[@]}" > /dev/null) < /dev/null &
   CLIENT_PID=$!
 fi
