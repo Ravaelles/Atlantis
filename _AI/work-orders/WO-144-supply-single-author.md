@@ -67,7 +67,11 @@ supply pumps silent.
    coming-suppression at free 0, contribute end to end). No production change.
 2. **DRY_RUN parity on supply rows** (short OpenBW run): with legacy
    executing, V2 DRY_RUN must plan the same provider count ±0 within
-   the opening window. Log diff in the commit.
+   the opening window. Evidence 2026-10-18 (`105055` DRY_RUN short):
+   V2 `would issue` the opening Pylon 6x frames 1131-1136 (one demand,
+   re-planned per frame by design), tile wobbles once (112,8)->(113,15)
+   then stable - and legacy warped exactly [113,15] at 1247. Demand
+   parity holds; tile stabilizes in 1 frame. Log diff in the commit.
 3. **LIVE flip, one game proof** (long OpenBW run): no supply block at
    17/17 or 25/25, no duplicate Pylon warps, SUPPLY_BLOCKED samples
    flowing, feeder supply-pylon row only as rescue. Then and only then:
