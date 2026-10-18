@@ -617,6 +617,19 @@ twins green (1/1 each, re-verified today). Re-run
   Adhoc gate missed on Nexus>=3 only (expansion timing, not a defect).
   `ORDER_SAVING` 0 (2 bases - correctly silent, #71 wants 1).
 
+- Long `20261018_144015` (155 s wall, 677 game-s, legacy rich on
+  Python 1.3, first non-TauCross long: Nexus=2 Probe=51 Pylon=13
+  Gateway=6 Dragoon=13 Zealot=2 Forge=1 Stargate=1 + Corsair,
+  RoboticsF, PhotonC, 65 ledger rows): map-independence holds, FE
+  gate holds (wall-in 0/10 BOARD). Forge 3:58@63, post-Forge bank 784
+  at 4:42 - the #85 window EXISTS here: Singularity researched 7:53
+  (started 6:06, engineRes+staticRes true; UPGRADE_COMPLETED twin
+  never fired - twin gap, not engine). Weapons TECH_CHECK still false
+  at 772/306 bank (refusing gate unnamed in the twin - the open half
+  of #85). 2 `Can't find place` (Gateway #87/#88 8:27, unpowered
+  dynamic rows - known class, #146). GAME_END present, cap exit (#149
+  no occurrence). `ORDER_SAVING` 0 on 2 bases (#71 wants 1).
+
 - Long `20261017_213248` (79 s wall, 590 game-s, legacy rich: Nexus=2
   Probe=34 Pylon=9 Gateway=9 Zealot=10 Dragoon=10 Assimilator=2 Core=1
   Forge=1): Forge full-twin loop live - BUILD #123 at 8:29
