@@ -136,7 +136,10 @@ public class BattleCommander extends Commander {
             // animation cancels the damage (PurpleWave AttackDelay) - the
             // shot that just started must be allowed to land, so an
             // animating unit gets no new order at all this frame.
-            if (unit.isAttackFrame() || unit.isStartingAttack()) return;
+            if (unit.isAttackFrame() || unit.isStartingAttack()) {
+                ShotTwin.holding(unit, target);
+                return;
+            }
 
             // A Dragoon steps back only when the enemy is inside its
             // safety margin - otherwise it stands and lets the standing
@@ -148,6 +151,7 @@ public class BattleCommander extends Commander {
             // is being shredded).
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
                 .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
+            HitTwin.sample(unit, threat != null ? threat : target);
             if (threat != null && shouldKite(unit, threat)) {
                 // A failed step must never mean standing idle: a cornered
                 // Dragoon fights instead of waiting to die (Wine
@@ -166,6 +170,7 @@ public class BattleCommander extends Commander {
             // fires on its own the moment the weapon is ready (PurpleWave
             // Commander.attack: order on new/overdue target, else sleep).
             if (target.equals(unit.target())) return;
+            ShotTwin.fired(unit, target);
             unit.attackUnit(target);
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;

@@ -67,6 +67,10 @@ public enum LogKey {
     CATALOGUE_SITE,
     /** A kiting step or a kite with nowhere to go (dist x10, cooldown, result). */
     KITE,
+    /** Damage taken while fighting (lost HP+shields, dist x10, cooldown, moving). */
+    HIT,
+    /** Attack order issued or animation hold (dist x10, cooldown, result). */
+    SHOT,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
     /** A base order the refresh sees (throttled): type, status, bank, supply. */
