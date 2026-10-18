@@ -10,26 +10,21 @@ import atlantis.util.log.LogKey;
  * 2026-10-19, Wine 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
  * then trading at point blank - without rows the stop is guesswork).
  * The decision itself stays in {@link BattleCommander#shouldKite}; this
- * only records what happened, throttled so a long kite does not flood
- * the debug stream (one row per unit per 30 frames, stuck steps always).
+ * only records what happened. Every step rows: throttling would hide
+ * exactly the timing a hit attribution needs (which step preceded the
+ * swing), and even a brawl's worth of rows is nothing to the twin
+ * stream. Stuck steps always rowed.
  */
 public class KiteTwin {
-
-    private static final java.util.Map<Integer, Integer> lastStepFrameByUnit = new java.util.HashMap<>();
 
     private KiteTwin() {
     }
 
     public static void steppedAside(AUnit dragoon, AUnit threat) {
-        int now = A.now();
-        Integer last = lastStepFrameByUnit.get(dragoon.id());
-        if (last != null && now - last < 30) return;
-        lastStepFrameByUnit.put(dragoon.id(), now);
         row(dragoon, threat, "stepped-aside");
     }
 
     public static void nowhereToStep(AUnit dragoon, AUnit threat) {
-        lastStepFrameByUnit.remove(dragoon.id());
         row(dragoon, threat, "stuck-no-step");
     }
 
@@ -47,6 +42,7 @@ public class KiteTwin {
     }
 
     public static void clearForTests() {
-        lastStepFrameByUnit.clear();
+        // No state left to clear (steps row unthrottled since the hit
+        // attribution needed exact timing); kept so call sites stay stable.
     }
 }

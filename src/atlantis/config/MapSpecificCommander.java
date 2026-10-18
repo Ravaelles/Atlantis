@@ -23,6 +23,13 @@ public class MapSpecificCommander extends Commander {
     protected boolean handle() {
         if (!Env.isLocal() || Env.isBenchmark() || Env.isParamTweaker()) return false;
 
+        // Scripted Wine runs lock max speed + frameskip (WINE_FAST=1):
+        // every per-map watchable slowdown below would undo it on frame
+        // 1 (owner: 1Drag_v_1Zeal played slow with full GUI because this
+        // forced NORMAL_SPEED + frameskip 0 over the script's flags).
+        // Watched runs (WINE_FAST=0, IDE) keep the per-map behavior.
+        if (Env.wineFast()) return false;
+
         // =========================================================
         // Marines & Medics v. Zealots
 

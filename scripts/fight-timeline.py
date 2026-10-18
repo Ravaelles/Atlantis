@@ -31,6 +31,14 @@ def main(path):
     if not shots:
         print("no shots - the unit never fired (see HIT/KITE for why)")
         return
+    # What the unit did right before each hit: the latest KITE/SHOT row
+    # strictly before it (list order breaks same-frame ties).
+    decisions = [r for r in rows if r.get("key") in ("KITE", "SHOT")]
+    def prev_of(hit):
+        cands = [r for r in decisions if r["frame"] < hit["frame"]]
+        if not cands:
+            return None
+        return cands[-1]
     bounds = [s["frame"] for s in shots] + [rows[-1]["frame"] + 1]
     for i, s in enumerate(shots):
         lo, hi = bounds[i], bounds[i + 1]
@@ -44,7 +52,17 @@ def main(path):
         holds = [r for r in cyc if r.get("key") == "SHOT"
                  and r.get("result") == "holding-shot"]
         step_d = ",".join(str(r["dist"] / 10) for r in steps[:6])
-        hit_d = ",".join("%s@%s" % (r["dist"] / 10, r["cooldown"]) for r in hits)
+        hit_ctx = []
+        for h in hits:
+            p = prev_of(h)
+            if p is None:
+                hit_ctx.append("nothing before")
+            else:
+                hit_ctx.append("%s f%d dist=%.1f cd=%s" % (
+                    p.get("result"), p["frame"], p["dist"] / 10,
+                    p.get("cooldown")))
+        hit_d = "; ".join("%s@%s (was: %s)" % (r["dist"] / 10, r["cooldown"], c)
+                          for r, c in zip(hits, hit_ctx))
         flag = ""
         if hits and not steps and not stuck:
             flag = "  <-- STOOD through the whole cycle taking hits"

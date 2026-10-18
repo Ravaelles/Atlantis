@@ -70,7 +70,7 @@ public class KiteTwinTest extends WorldStubForTests {
     }
 
     @Test
-    public void stepsThrottleButStuckStepsAlwaysLand() {
+    public void everyStepRowsSoHitsAttributeExactly() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
@@ -81,13 +81,8 @@ public class KiteTwinTest extends WorldStubForTests {
             KiteTwin.steppedAside(dragoon, zealot);
         });
 
-        assertEqualsThrottled();
-    }
-
-    private static void assertEqualsThrottled() {
         int steps = countRows(EventLog.toJsonLines(), "\"result\":\"stepped-aside\"");
-        // now=3 logs, now=10 throttled (7 frames later), now=320 logs again.
-        assertTrue(steps == 2, "expected 2 throttled rows, got: " + steps);
+        assertTrue(steps == 3, "no throttle - every step must row for hit timing: " + steps);
     }
 
     @Test
