@@ -83,6 +83,13 @@ supply pumps silent.
 3. **LIVE flip, one game proof** (long OpenBW run): no supply block at
    17/17 or 25/25, no duplicate Pylon warps, SUPPLY_BLOCKED samples
    flowing, feeder supply-pylon row only as rescue. Then and only then:
+   First attempt 2026-10-19 (`191444` V2 LIVE, 23026f/16 min): no
+   blocks (free healthy throughout, 97 SUPPLY_BLOCKED samples), tech
+   on time (Forge 1:50, Core 4:12, gas 3:54) - but step NOT met: 609
+   Nexus cancel/re-request cycles on the refresh timer (Nexus=2
+   never, C14), 0 Dragoons (floor freeze), Pylon pairs 89f/72f apart
+   unattributable (minSupply-0 rows, no DECISIONS in the V2 path).
+   C14 + Dragoons + V2 audit first.
 4. **Move to `src-old/`**: `SupplyCommander`, `ProduceFallbackSupplyWhenSupplyLow`,
    `ProduceFallbackPylonWhenSupplyLow`, `ProduceFallbackDepotWhenSupplyLow`.
    Same cycle, suite green, ArchUnit store shrinks or holds.

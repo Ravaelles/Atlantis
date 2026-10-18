@@ -685,6 +685,14 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
 
+- OpenBW `TauCross` (`191444`, PRODUCTION_V2=LIVE, 23026f/16 min,
+  wall-cap 143): tech on time (Forge 1:50, Core 4:12, gas 3:54),
+  6 Pylons with no supply block and 97 SUPPLY_BLOCKED samples - but
+  the migration is NOT ready: 609 Nexus cancel/re-request cycles
+  (expansion siting C14, Nexus=2 never), 0 Dragoons (floor freeze),
+  Pylon pairs 89f/72f apart unattributable, no E2E_DECISIONS in the
+  V2 path, 18 warps vs ~40 legacy. Blockers, in order: C14,
+  Dragoons, V2 audit, attribution, parity (#45 ordering stands).
 - OpenBW `TauCross` (`185357`, PLACEMENT=catalogue, 9614f, ended
   environmentally like the clean run above): catalogue answered 6
   (2 Pylon + 4 Gateway), declined 29 named (no-builder 20,
