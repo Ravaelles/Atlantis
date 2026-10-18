@@ -246,10 +246,14 @@ public class GoalSourcesTest {
     // ---- army advancement ------------------------------------------------
 
     private static DynamicGoals.GameSnapshot armyState(boolean hasCore) {
+        return armyStateGas(hasCore, 0);
+    }
+
+    private static DynamicGoals.GameSnapshot armyStateGas(boolean hasCore, int gas) {
         return new DynamicGoals.GameSnapshot(
             20, 1, 30, 3, 33, 500, false, 0, 1,
             0, false, false, 0,
-            0, hasCore, 0, 0, false, 0);
+            gas, hasCore, 0, 0, false, 0);
     }
 
     @Test
@@ -262,12 +266,21 @@ public class GoalSourcesTest {
     }
 
     @Test
-    public void postCoreArmyIsDragoons() {
+    public void postCoreArmyIsDragoonsWhenGasBanked() {
         List<ProductionGoal> goals =
-            DynamicGoals.contribute(armyState(true), ProductionRacePolicy.forRace("Protoss"));
+            DynamicGoals.contribute(armyStateGas(true, 100), ProductionRacePolicy.forRace("Protoss"));
 
         assertTrue(contains(goals, UnitProducible.of(AUnitType.Protoss_Dragoon).id()));
         assertFalse(contains(goals, armyType()));
+    }
+
+    @Test
+    public void postCoreWithoutGasIsZealotDumpOnlyWhenRich() {
+        List<ProductionGoal> goals =
+            DynamicGoals.contribute(armyState(true), ProductionRacePolicy.forRace("Protoss"));
+
+        assertTrue(contains(goals, armyType()));
+        assertFalse(contains(goals, UnitProducible.of(AUnitType.Protoss_Dragoon).id()));
     }
 
     // ---- tech ----------------------------------------------------------------

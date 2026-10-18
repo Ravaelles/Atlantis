@@ -272,7 +272,10 @@ public final class DynamicGoals {
         // finishes, so without this the goal is emitted every frame until then and
         // the scheduler orders a Pylon per frame (the "2800 ordered Pylons" run).
         // The same shape as the worker goal's workers-with-unfinished count.
-        if (state.supplyProvidersComing > 0)
+        // Above 60 total supply two providers may fly at once (owner
+        // 2026-10-19: production outruns warp completion there) - the second
+        // coming is allowed, the third is not.
+        if (state.supplyProvidersComing > (state.supplyTotal > 60 ? 1 : 0))
             return null;
 
         int priority = state.supplyFree <= 0
@@ -304,15 +307,31 @@ public final class DynamicGoals {
         if (state.supplyUsed < 12)
             return;
 
-        // Advancement: once the unlock stands the advanced unit replaces the
-        // baseline (Protoss: Dragoons after the Core, whose building the
-        // scheduler inserts as a prerequisite). Before that, Zealots.
-        AUnitType army = state.hasCore ? race.armyUnitTypeAdvanced() : race.armyUnitType();
+        // Owner 2026-10-19: Dragoons ASAP. The moment the Core stands and
+        // 50 gas is banked the advanced unit is wanted regardless of how
+        // many Zealots stand - the old floor counted every army unit
+        // against the transition and froze it forever behind a Zealot
+        // army. Without gas for Dragoons, Zealots are a 275-mineral dump,
+        // not a trickle - and pre-Core the opening Zealots flow ungated
+        // (no mineral gate before the Core exists to save for).
+        boolean wantGoons = state.hasCore && state.gas >= 50;
+        AUnitType army;
+        int have;
+        if (wantGoons) {
+            army = race.armyUnitTypeAdvanced();
+            have = state.dragoons;
+        }
+        else {
+            if (state.hasCore && state.minerals < 275)
+                return;
+            army = race.armyUnitType();
+            have = state.armySize;
+        }
         if (army == null)
             return;
 
         int targetArmy = Math.max(1, state.workers / 4);
-        int missing = targetArmy - state.armySize;
+        int missing = targetArmy - have;
         if (missing <= 0)
             return;
 

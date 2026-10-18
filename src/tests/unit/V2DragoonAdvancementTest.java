@@ -15,14 +15,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Pins the V2 army-advancement arithmetic (NEXT #45 race-army coverage):
- * after the Core the advanced unit replaces the baseline - but only as a
- * floor fill. A standing Zealot army at/above the floor freezes the
- * advancement forever (OpenBW `202456`: Core from 4:35, 7 Zealots, zero
- * Dragoons in 17.6 min - demand-side, not execution).
+ * Dragoons ASAP once the Core stands and 50 gas is banked - Zealots never
+ * satisfy Dragoon demand (owner 2026-10-19, ending the 202456 freeze).
  *
- * <p>Pure snapshots, no game. Whether the floor should convert an
- * existing army is an owner call - this test documents what the
- * arithmetic does today, it does not bless it.</p>
+ * <p>Pure snapshots, no game. Legacy keeps its own thicket (it produces
+ * Dragoons in games); this test pins the V2 demand side only.</p>
  */
 public class V2DragoonAdvancementTest {
 
@@ -30,10 +27,15 @@ public class V2DragoonAdvancementTest {
     private static final String ZEALOT = UnitProducible.of(AUnitType.Protoss_Zealot).id();
 
     private static DynamicGoals.GameSnapshot state(int armySize, boolean hasCore) {
+        return stateGasMinerals(armySize, hasCore, 200, 500);
+    }
+
+    private static DynamicGoals.GameSnapshot stateGasMinerals(
+        int armySize, boolean hasCore, int gas, int minerals) {
         return new DynamicGoals.GameSnapshot(
-            25, 1, 30, 10, 40, 500, false, armySize, 1,
+            25, 1, 30, 10, 40, minerals, false, armySize, 1,
             0, false, false, 0,
-            200, hasCore, 0, 1, false, 0);
+            gas, hasCore, 0, 1, false, 0);
     }
 
     private static boolean contains(List<ProductionGoal> goals, String id) {
@@ -55,12 +57,34 @@ public class V2DragoonAdvancementTest {
     }
 
     @Test
-    public void zealotArmyAtFloorFreezesAdvancement() {
+    public void dragoonsWantedDespiteStandingZealotsWhenGasBanked() {
+        // Owner 2026-10-19: the old floor counted every army unit against
+        // the transition and froze it forever (202456: 7 Zealots, 0
+        // Dragoons in 17.6 min). Gas banked means Dragoons are wanted
+        // regardless of the standing Zealots - Zealots never satisfy
+        // Dragoon demand.
         List<ProductionGoal> goals =
             DynamicGoals.contribute(state(7, true), ProductionRacePolicy.forRace("Protoss"));
 
-        assertFalse(contains(goals, DRAGOON),
-            "7 standing Zealots cover the floor of 6 - no Dragoon is ever wanted (202456 freeze)");
+        assertTrue(contains(goals, DRAGOON), "gas banked past the Core: Dragoons, not more Zealots");
+        assertFalse(contains(goals, ZEALOT), "the baseline does not double-fill behind the advancement");
+        ProductionGoal dragoon = goals.stream()
+            .filter(goal -> goal.item().id().equals(DRAGOON))
+            .findFirst().orElseThrow(AssertionError::new);
+        assertEquals(6, dragoon.count(), "floor is workers/4 = 25/4 counted against Dragoons, not Zealots");
+    }
+
+    @Test
+    public void noGasMeansZealotDumpOnlyWhenRich() {
+        List<ProductionGoal> rich =
+            DynamicGoals.contribute(stateGasMinerals(0, true, 0, 500), ProductionRacePolicy.forRace("Protoss"));
+        assertTrue(contains(rich, ZEALOT), "no gas for Dragoons but 275+ minerals: Zealots as the dump");
+        assertFalse(contains(rich, DRAGOON), "no gas, no Dragoons");
+
+        List<ProductionGoal> poor =
+            DynamicGoals.contribute(stateGasMinerals(0, true, 0, 200), ProductionRacePolicy.forRace("Protoss"));
+        assertFalse(contains(poor, ZEALOT), "below 275 minerals post-Core the bank is saved for Dragoons");
+        assertFalse(contains(poor, DRAGOON), "no gas, no Dragoons");
     }
 
     @Test

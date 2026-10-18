@@ -74,4 +74,38 @@ public class SupplyGoalTest {
             goals.stream().anyMatch(goal -> goal.item().id().equals(workerId)),
             "suppression silences the supply row only - the worker row still fires");
     }
+
+    @Test
+    public void aboveSixtyTwoProvidersMayFlyAtOnce() {
+        // Owner 2026-10-19: past 60 supply production outruns warp
+        // completion - holding to one unstarted provider starves the
+        // pump, so the second coming is allowed and only the third
+        // is refused.
+        DynamicGoals.GameSnapshot oneComing =
+            new DynamicGoals.GameSnapshot(10, 1, 64, 4, 68, 500, false);
+        oneComing.supplyProvidersComing = 1;
+
+        assertNotNull(
+            DynamicGoals.supplyGoal(oneComing, ProductionRacePolicy.forRace("Protoss")),
+            "one provider coming past 60 still wants its pair");
+
+        DynamicGoals.GameSnapshot twoComing =
+            new DynamicGoals.GameSnapshot(10, 1, 64, 4, 68, 500, false);
+        twoComing.supplyProvidersComing = 2;
+
+        assertNull(
+            DynamicGoals.supplyGoal(twoComing, ProductionRacePolicy.forRace("Protoss")),
+            "two providers coming past 60 is enough - the third waits");
+    }
+
+    @Test
+    public void atSixtyOrBelowOneProviderBlocks() {
+        DynamicGoals.GameSnapshot oneComing =
+            new DynamicGoals.GameSnapshot(10, 1, 30, 4, 34, 500, false);
+        oneComing.supplyProvidersComing = 1;
+
+        assertNull(
+            DynamicGoals.supplyGoal(oneComing, ProductionRacePolicy.forRace("Protoss")),
+            "at 60 or below a single coming provider covers the need");
+    }
 }
