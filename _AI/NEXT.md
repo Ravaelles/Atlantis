@@ -419,7 +419,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs);
   (b) macro-game kite proof (OpenBW spawns no enemies; needs a Wine
   macro game, owner-run): 1v1 proof does not cover focus fire,
-  traffic, or the retreat latch; (c) the overnight tuner
+  traffic, or the retreat latch (8v8 caveat, measured: human-slot
+  UMS maps like `8Drag_v_8Drag` spawn nobody on Wine either - 8 own
+  Dragoons idle, 0/0 - the same unfillable-slot class as #94; only
+  maps whose enemy actually spawns fight - so far only the 1v1 Zealot
+  does); (c) the overnight tuner
   (`scripts/run-wine-batch.sh`, ParamTweaker randomizes 12 kite
   coefficients in-JVM, CSV scoreboard: W/L, seconds, killed, lost,
   hits, shots, values) decides the numbers - see `_AI/TOOLS.md`.
