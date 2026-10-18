@@ -124,4 +124,52 @@ public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
                     "a positional hit is the normal path - the fallback twin must stay silent");
         });
     }
+
+    @Test
+    public void overlappingWarpsAdoptInTurnThenHitTheCannotBranch() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 10);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 11);
+
+        world(30, units(nexus, probe), new FakeUnit[0], () -> {
+            if (atlantis.game.A.now() != 10)
+                return;
+
+            EventLog.clearForTests();
+            Construction older = waitingAt(AUnitType.Protoss_Gateway, 10, 10);
+            Construction newer = waitingAt(AUnitType.Protoss_Gateway, 50, 50);
+
+            // First warp lands on the older reservation: positional hit,
+            // no fallback twin, older finished and removed.
+            ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 10, 10));
+            assertFalse(
+                    ConstructionRequests.constructions.contains(older),
+                    "the positionally matched construction is finished, not leaked");
+            assertFalse(EventLog.toJsonLines().contains("ADOPTED_CONSTRUCTION"),
+                    "a positional hit must not fire the fallback twin");
+
+            // Second warp on the SAME tile: the older construction is gone
+            // and the newer one is 40 tiles away, so only the fallback can
+            // adopt - naming the single remaining candidate.
+            EventLog.clearForTests();
+            ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 10, 10));
+            String rows = EventLog.toJsonLines();
+            assertTrue(rows.contains("\"key\":\"ADOPTED_CONSTRUCTION\""),
+                    "the overlapping warp must be named, got: " + rows);
+            assertTrue(rows.contains("\"candidates\":1"),
+                    "one construction lost, got: " + rows);
+            assertFalse(
+                    ConstructionRequests.constructions.contains(newer),
+                    "the fallback finishes the adopted construction");
+
+            // Third warp with nothing left: the CANNOT branch exits
+            // without adopting anything and without throwing.
+            EventLog.clearForTests();
+            ProtossWarping.updateNewBuildingJustWarped(fake(AUnitType.Protoss_Gateway, 70, 70));
+            assertTrue(
+                    ConstructionRequests.constructions.isEmpty(),
+                    "no construction may be invented for a building nobody ordered");
+            assertFalse(EventLog.toJsonLines().contains("ADOPTED_CONSTRUCTION"),
+                    "with no candidates the twin must stay silent");
+        });
+    }
 }
