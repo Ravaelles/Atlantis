@@ -84,6 +84,16 @@ reading green.
   Short datum 2026-10-18 (`103411`, V2 LIVE, 20 s bot-cap, gate
   unreached - inconclusive per §17, but the shape matches (b) above:
   481 CONSTRUCTION_CANCEL + 31 SUPPLY_BLOCKED in 629 rows, 0 warps).
+  Long datum 2026-10-18 (`143419`, V2 LIVE, 155 s wall, 1062 game-s:
+  Probe=25 Zealot=7 Pylon=6 Gateway=2 Core=1 Forge=2 Assimilator=1
+  Nexus=1, zero Dragoons): 19 warps, ALL within the first 5.6 min
+  (last warp frame 8072, 3.39 warps/min), then 12 min of silence.
+  The silence is one Nexus order spinning: 17114 proximity-finish
+  cancels at [117,12] (standing Nexus covers it) - the C14 shape from
+  `202456` reproduces, worse (16k -> 17k). Dragoon=0 with 7 Zealots
+  is the floor freeze live again; 2 Forges is duplicate tech on the
+  V2 path; supply ends 18 free / 0 coming (no block - demand, not
+  supply, is thin).
 - [ ] **Phase 6 — Measurement and learning.** Micro-scenario battery with a
   frozen baseline; parameter search over role vectors; fingerprint-driven
   strategy selection. Exit: a tuning loop that improves a frozen scenario
