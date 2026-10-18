@@ -12,6 +12,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
+import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.production.GoalBoardFeeder;
 import atlantis.production.orders.production.queue.PriorityWaiters;
 import atlantis.production.constructions.position.FindPosition;
@@ -270,8 +271,13 @@ public class ProduceBuilding {
         // the pick (measured Wine: GW#3 [112,12] picked the frame GW#2
         // warped at [112,10], shared tile row; the pick-time guards are
         // blind to a same-frame warp). Re-pick instead of adopting a site
-        // the engine will refuse at issue time.
-        if (OverlapsOurUnfinishedBuilding.check(prepared.buildPosition(), prepared.buildingType())) {
+        // the engine will refuse at issue time. The same holds for a
+        // sibling that FINISHED onto it since the pick (measured: Pylon
+        // adopts on [119,12] cancelled same-frame against a standing
+        // Pylon) - a covered site is never adopted, only re-sited.
+        if (OverlapsOurUnfinishedBuilding.check(prepared.buildPosition(), prepared.buildingType())
+            || OverlapsOurStandingBuilding.check(
+                prepared.buildPosition(), prepared.buildingType())) {
             APosition fresh = prepared.findPositionForNewBuilding();
             if (fresh == null || OverlapsOurUnfinishedBuilding.check(fresh, prepared.buildingType())) {
                 EventLog.key(LogKey.BUILD_REFUSED)

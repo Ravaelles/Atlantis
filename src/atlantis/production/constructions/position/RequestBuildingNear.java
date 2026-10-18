@@ -79,6 +79,16 @@ public class RequestBuildingNear {
         if (!exact.isBuildableIncludeBuildings())
             return error("RequestBuildingNear - Not buildable position for " + type);
 
+        // The sited door bypasses the spiral checklist, so it must ask
+        // the same overlap questions itself: a tile an unfinished or a
+        // standing same-type building covers dies downstream (refresh
+        // cancel / proximity finish) and the caller re-fires blindly
+        // (measured OpenBW: sited PhotonC [115,15] 21x). Refuse here,
+        // like the tooManyNear guard above - no order, no construction,
+        // no BUILD row for a doomed site.
+        if (isSiteBlockedByKnownBuilding(exact, type))
+            return error("RequestBuildingNear - Site overlaps a known building for " + type);
+
         ProductionOrder order = AddToQueue.withTopPriority(type, exact);
         if (order == null) return error("RequestBuildingNear - Failed to add " + type + " at " + exact);
         order.setAroundPosition(exact);
@@ -93,7 +103,8 @@ public class RequestBuildingNear {
 
         // Phase A (__PLAN-DECISIONS): sited requests (cannons, forward
         // pylons) bypass the queue door - they land here, so the audit row
-        // lands here too, with the picked tile in the reason.
+        // lands here too, with the picked tile in the reason and the order
+        // id as the join key (same oid groups one demand's retries).
         atlantis.decisions.board.DecisionLog.record(
             atlantis.decisions.board.ADecision.decide(
                 atlantis.decisions.board.ADecision.Kind.BUILD, type.name(),
@@ -102,6 +113,7 @@ public class RequestBuildingNear {
                 .frame(A.now())
                 .supply(atlantis.game.A.supplyUsed(), atlantis.game.A.supplyTotal())
                 .bank(atlantis.game.A.minerals(), atlantis.game.A.gas())
+                .orderId(order.id())
                 .build());
 
         lastError = null;
@@ -154,5 +166,21 @@ public class RequestBuildingNear {
     private ProductionOrder error(String error) {
         lastError = error;
         return null;
+    }
+
+    /**
+     * The sited door bypasses the spiral checklist
+     * ({@code PositionFulfillsAllConditions}), so it asks the two overlap
+     * questions itself. A tile an unfinished or a standing same-type
+     * building covers dies downstream and the caller re-fires blindly -
+     * refuse it here, like the tooManyNear guard above. Public as a seam:
+     * the pick itself needs a game, the overlap question pins in
+     * milliseconds.
+     */
+    public static boolean isSiteBlockedByKnownBuilding(APosition site, AUnitType type) {
+        return atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding
+            .check(site, type)
+            || atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding
+                .check(site, type);
     }
 }
