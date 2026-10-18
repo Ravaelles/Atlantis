@@ -74,6 +74,17 @@ public class PreventDuplicateOrders {
     private static boolean preventSpamPylons(AUnitType type, HasPosition position) {
         if (!type.isPylon()) return false;
 
+        // Owner 2026-10-19 (Wine 38/65 = 27 free): free supply never above
+        // 12-14, a Pylon lands +8. This is the single door every author
+        // walks through (BO rows, fallback + SupplyCommander mirrors,
+        // feeder, requeues), so per-author triggers below it cannot pile up
+        // past the cap. Resurrects the commented-out DontSpamPylons rule
+        // below in live form (that one read free >= 13).
+        if (A.supplyFree() > 12) {
+            QueueLastStatus.updateStatusFailed("DontSpamPylons:" + A.supplyFree(), type.toString());
+            return true;
+        }
+
         if (A.supplyTotal() >= 30) {
             int inQueue = Math.max(
                 ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon),
