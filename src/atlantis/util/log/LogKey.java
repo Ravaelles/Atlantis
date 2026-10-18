@@ -75,13 +75,18 @@ public enum LogKey {
     SUPPLY_OVERSTOCK,
     /** 3+ Pylons unfinished at once (edge-triggered): pipeline overlap allows two. */
     PYLON_FLOOD,
+    /** Same-type warps landing within 240 frames (owner 2026-10-19: Pylons
+      land 10-15 s apart; closer is a duplicate signal, not proof -
+      pipeline overlap also lands close). */
+    CLOSE_WARPS,
     /** Bank above 800 (edge-triggered): hoard, with free/reserved/not-ready/worker-gate why. */
     BANK_HOARD;
 
     private static final java.util.Set<LogKey> HIGH = java.util.EnumSet.of(
         LogKey.REQUEST_REFUSED_DUPLICATE,
         LogKey.BUILD_REFUSED,
-        LogKey.CONSTRUCTION_CANCEL
+        LogKey.CONSTRUCTION_CANCEL,
+        LogKey.CLOSE_WARPS
     );
 
     private static final java.util.Set<LogKey> CRITICAL = java.util.EnumSet.of(

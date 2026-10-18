@@ -32,6 +32,7 @@ public class LogKeySeverityTest {
         assertEquals(LogLevel.HIGH, LogKey.REQUEST_REFUSED_DUPLICATE.level());
         assertEquals(LogLevel.HIGH, LogKey.BUILD_REFUSED.level());
         assertEquals(LogLevel.HIGH, LogKey.CONSTRUCTION_CANCEL.level());
+        assertEquals(LogLevel.HIGH, LogKey.CLOSE_WARPS.level());
     }
 
     @Test
