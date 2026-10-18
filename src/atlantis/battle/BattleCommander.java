@@ -154,26 +154,35 @@ public class BattleCommander extends Commander {
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
                 .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
             HitTwin.sample(unit, threat != null ? threat : target);
+            int now = A.now();
+            Integer lastStep = lastStepFrame.get(unit.id());
             if (threat != null && shouldKite(unit, threat)) {
-                int now = A.now();
-                APosition lastPos = lastStepPos.get(unit.id());
-                Integer lastStep = lastStepFrame.get(unit.id());
-                if (lastStep != null && lastPos != null && now - lastStep >= 48
-                    && unit.distTo(lastPos) < 0.5) {
-                    // Frozen: steps issue but the unit never moves - the
-                    // order queue is wedged (the engine-side stuck both
-                    // reference bots unstick: PurpleWave Unstick issues
-                    // STOP past 24 failing frames, Stardust resets past
-                    // 48 motionless ones; the web confirms it as a vanilla
-                    // engine bug: attack-then-move in quick succession).
-                    // STOP clears the queue; sleep this frame so it lands,
-                    // watch cleared so the next step starts a fresh queue.
+                // Frozen: steps keep issuing but the unit never moves -
+                // the order queue is wedged (the vanilla engine bug both
+                // reference bots unstick: PurpleWave Unstick issues STOP
+                // past 24 failing frames, Stardust resets past 48
+                // motionless ones). STOP clears the queue; sleep this
+                // frame so it lands, then the next step starts a fresh
+                // queue. Trips only while steps keep issuing (lastStep
+                // fresh) with no motion for 48 frames - a unit that
+                // simply stood still answers false on the movement check
+                // after it walks.
+                Integer lastMoved = lastMovedFrame.get(unit.id());
+                APosition lastMovedAt = lastMovedPos.get(unit.id());
+                boolean trying = lastStep != null && now - lastStep < 48;
+                boolean motionless = lastMoved != null && lastMovedAt != null
+                    && now - lastMoved >= 48 && unit.distTo(lastMovedAt) < 0.5;
+                if (trying && motionless) {
                     KiteTwin.frozenReset(unit, threat);
                     unit.stop("ClusterUnstick");
-                    lastStepPos.remove(unit.id());
                     lastStepFrame.remove(unit.id());
-                    lastStepDest.remove(unit.id());
+                    lastMovedFrame.remove(unit.id());
+                    lastMovedPos.remove(unit.id());
                     return;
+                }
+                if (lastMovedAt == null || unit.distTo(lastMovedAt) >= 0.5) {
+                    lastMovedFrame.put(unit.id(), now);
+                    lastMovedPos.put(unit.id(), unit.position());
                 }
                 // A failed step must never mean standing idle: a cornered
                 // Dragoon fights instead of waiting to die (Wine
@@ -186,19 +195,16 @@ public class BattleCommander extends Commander {
                 // no shot fired). Shoot instead - the ready shot is free
                 // damage and the only DPS that can end the corner.
                 boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
-                APosition dest = glued ? null : MoveAway.bestDestination(unit, threat, KITE_STEP_TILES);
-                APosition lastDest = lastStepDest.get(unit.id());
-                if (dest != null && (lastDest == null || dest.distTo(lastDest) > KITE_MIN_STEP_GAIN_TILES)) {
-                    if (unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
+                if (!glued && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
+                    APosition dest = MoveAway.bestDestination(unit, threat, KITE_STEP_TILES);
+                    if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
                         KiteTwin.steppedAside(unit, threat);
-                        lastStepDest.put(unit.id(), dest);
-                        lastStepPos.put(unit.id(), unit.position());
                         lastStepFrame.put(unit.id(), now);
                         lastRepositionFrame.put(unit.id(), now);
                         return;
                     }
+                    KiteTwin.nowhereToStep(unit, threat);
                 }
-                if (dest == null && !glued) KiteTwin.nowhereToStep(unit, threat);
             }
             // Re-engage glide (PurpleWave BeDragoonVsSlowlot: margin
             // recovered and no threat hunting us while the weapon cools -
@@ -212,14 +218,11 @@ public class BattleCommander extends Commander {
                 if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES) {
                     APosition fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
-                    APosition lastDest = lastStepDest.get(unit.id());
                     if (unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
-                        && (lastDest == null || fireAt.distTo(lastDest) > KITE_MIN_STEP_GAIN_TILES)
+                        && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
-                        lastStepDest.put(unit.id(), fireAt);
-                        lastStepPos.put(unit.id(), unit.position());
-                        lastStepFrame.put(unit.id(), A.now());
-                        lastRepositionFrame.put(unit.id(), A.now());
+                        lastStepFrame.put(unit.id(), now);
+                        lastRepositionFrame.put(unit.id(), now);
                         return;
                     }
                 }
@@ -387,16 +390,19 @@ public class BattleCommander extends Commander {
     /** A reposition keeps riding this long before the attack re-arms (frames). */
     public static int KITE_RIDE_FRAMES = 30;
 
+    /** A step or glide re-issues at most this often (frames, Stardust latency+6 cadence). */
+    public static int KITE_RESTEPS_EVERY_FRAMES = 10;
+
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
-    private static final java.util.Map<Integer, APosition> lastStepDest = new java.util.HashMap<>();
-    private static final java.util.Map<Integer, APosition> lastStepPos = new java.util.HashMap<>();
     private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, Integer> lastMovedFrame = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, APosition> lastMovedPos = new java.util.HashMap<>();
 
     public static void clearForTests() {
         lastRepositionFrame.clear();
-        lastStepDest.clear();
-        lastStepPos.clear();
         lastStepFrame.clear();
+        lastMovedFrame.clear();
+        lastMovedPos.clear();
     }
 
     private void gatherCluster() {
