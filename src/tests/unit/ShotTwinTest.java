@@ -97,7 +97,7 @@ public class ShotTwinTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void firedThrottlesButHoldHasItsOwnClock() {
+    public void firedAlwaysRowsButHoldThrottles() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
 
@@ -107,10 +107,11 @@ public class ShotTwinTest extends AbstractTestWithWorld {
             ShotTwin.fired(dragoon, zealot);
             ShotTwin.fired(dragoon, zealot);
             ShotTwin.holding(dragoon, zealot);
+            ShotTwin.holding(dragoon, zealot);
 
             String rows = EventLog.toJsonLines();
-            assertTrue(countRows(rows, "\"result\":\"shot-fired\"") == 1, "got: " + rows);
-            assertTrue(rows.contains("\"result\":\"holding-shot\""), "got: " + rows);
+            assertTrue(countRows(rows, "\"result\":\"shot-fired\"") == 2, "got: " + rows);
+            assertTrue(countRows(rows, "\"result\":\"holding-shot\"") == 1, "got: " + rows);
         });
     }
 

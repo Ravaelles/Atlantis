@@ -48,6 +48,9 @@ def main(path):
                    if r.get("key") == "SHOT" and r.get("result") == "shot-fired")
     holds = sum(1 for r in rows
                 if r.get("key") == "SHOT" and r.get("result") == "holding-shot")
+    fight_frames = [r["frame"] for r in rows if r.get("key") in ("HIT", "KITE")
+                    or (r.get("key") == "SHOT")]
+    kill_frame = max(fight_frames) if fight_frames else 0
     if shots:
         g = gaps(shots)
         med = sorted(g)[len(g) // 2] if g else 0
