@@ -36,9 +36,10 @@ supply pumps silent.
 
 ## The five behavior deltas (each needs its own game proof)
 
-1. **Foresight bands vs flat 4.** Legacy orders at free <= 8-22 by total
-   (a warp is ~600f; ordering at 4 still blocks 11-37 s WITH bank,
-   measured on Wine). The board goal fires at free <= 4. Parity needs
+1. **Foresight bands vs flat 4.** Legacy bands were free <= 8-22 by
+   total; CAPPED 2026-10-19 (owner order, Wine 38/65): every band
+   triggers at 6 or below, free never above 12-14. The board goal
+   fires at free <= 4. Parity needs
    the scheduler to start the provider early enough that it COMPLETES
    before the block - `ResourceTimeline` arithmetic, stub-pinned first,
    then a game showing no block at 17/17 and 25/25.

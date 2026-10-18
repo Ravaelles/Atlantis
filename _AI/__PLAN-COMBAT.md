@@ -51,7 +51,10 @@ combat commits land after it unless trivially separable.
    fighting BLOCKED (no enemy spawns): single cluster gathers army
    units; DEFEND posts at main, ATTACK marches on enemy base /
    unexplored starts; evaluator gate (1.0) with 240-frame retreat latch;
-   per-unit attack-in-range else move; CLUSTER twin every 31f. Proven
+   per-unit attack-in-range else move (2026-10-19: the move branch was
+   the ONLY branch - setLastTarget had zero callers; nearest-enemy
+   engagement inside 9 tiles wired + remembered,
+   NearestEngageableEnemyTest 3/3); CLUSTER twin every 31f. Proven
    091624: 55-unit group, DEFEND→ATTACK, anchors main → natural →
    enemy corner. Fighting needs a game WITH an enemy - the host
    spawned none in 4 consecutive games (`enemy: ` empty, environmental,
