@@ -26,6 +26,18 @@ Wine, `-Dos.name=Windows 10`), starts the game, watches `WINE_LOG` for
 (`Chaoslauncher.exe` is 17 chars, past the 15-char `pkill -x` comm limit —
 see `_AI/CHALLENGES/Wine.md`).
 
+**Fast unattended mode (owner 2026-10-19, the default):** every launch
+enforces `WINE_FAST=1` in the bot ENV (speed 0, frameskip 500, GUI off,
+no slowdowns - the key-9/key-0 shape, no keypresses) and mutes the Wine
+audio backends. The debug-run horizon `FORCE_END_AT_SUPPLY` defaults to
+50 (game ends once our supply hits it - defects show by supply 25-30,
+longer runs only when a hunt needs them; 0 disables). Never edit a
+running `run-wine-full.sh`: bash parses it as it executes, so an edit
+mid-run kills the teardown with a syntax error (measured 2026-10-19 -
+the game played on, the logs were collected by hand). Contained window
+via `WINE_VIRTUAL_DESKTOP=WxH` (opt-in until injection through it is
+proven).
+
 **Why it cannot be started from the IDE the way Windows was:** the bot JVM
 must be a Windows process (under Wine with the Windows JRE) or its JBWAPI
 never sees the BWAPI server's shared memory. IntelliJ runs the Linux JVM
