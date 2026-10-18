@@ -90,6 +90,37 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void stepBackLatchesUntilMarginRecovers() {
+        // Healthy: required 1.19, release past 2.19. A fresh look at
+        // dist 1.5 holds - but a unit that just stepped from glue keeps
+        // stepping until it truly opens distance (no threshold
+        // oscillation, no standing one swing too close).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit glued = fake(AUnitType.Protoss_Zealot, 30, 20);
+        FakeUnit near = fake(AUnitType.Protoss_Zealot, 31.5, 20);
+        FakeUnit far = fake(AUnitType.Protoss_Zealot, 33, 20);
+        dragoon.cooldown = 15;
+        atlantis.battle.BattleCommander.clearForTests();
+
+        try {
+            world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon),
+                fakeEnemies(glued, near, far), () -> {
+                    assertTrue(BattleCommander.shouldKite(dragoon, glued),
+                        "dist ~0 breaks the margin - latch on");
+                    assertTrue(BattleCommander.shouldKite(dragoon, near),
+                        "latched: dist 1.5 would hold fresh, keep stepping");
+                    assertFalse(BattleCommander.shouldKite(dragoon, far),
+                        "margin recovered past release - stand and shoot");
+                    assertFalse(BattleCommander.shouldKite(dragoon, near),
+                        "latch released: fresh rule holds at 1.5");
+                });
+        }
+        finally {
+            atlantis.battle.BattleCommander.clearForTests();
+        }
+    }
+
+    @Test
     public void facingZealotTriggersEarlierYield() {
         // Total 132: margin required 1.94 tiles. At dist 2 the base
         // margin (2.0) holds - unless the Zealot faces us (-0.5),

@@ -205,16 +205,46 @@ public class BattleCommander extends Commander {
      * the vendored jar: Dragoon range 4 tiles, cooldown 30, Zealot
      * range ~0 tiles, 16 damage per pass). Margin is the tiles the
      * threat still must close before it can hit us, minus half a tile
-     * when the threat is coming for exactly this unit. A healthy
+     * when the threat is coming for exactly this unit and minus half
+     * a tile when it faces us. A healthy
      * Dragoon holds to about one tile and keeps shooting through the
-     * cooldown; a dying one demands up to four. Dragoon-only: Zealots
+     * cooldown; a dying one demands up to four. Once the margin
+     * breaks, the step-back latches until it recovers a full tile
+     * past required: without the latch the unit oscillates around
+     * the threshold, standing one swing too close every cycle (Wine
+     * 1Drag_v_1Zeal: all 8 hits landed at dist 0.4-1.3 right after a
+     * step). Dragoon-only: Zealots
      * want contact, other races are out of scope. Public as a seam:
      * the rule pins in a stub state.
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || !unit.isDragoon()) return false;
-        if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
-        return kiteMargin(unit, threat) < kiteMarginRequired(unit);
+        if (unit.distTo(threat) >= KITE_ENEMY_TILES) {
+            kitingLatch.remove(unit.id());
+            return false;
+        }
+        double required = kiteMarginRequired(unit);
+        if (kitingLatch.getOrDefault(unit.id(), false)) {
+            if (kiteMargin(unit, threat) > required + KITE_LATCH_RELEASE_TILES) {
+                kitingLatch.remove(unit.id());
+                return false;
+            }
+            return true;
+        }
+        if (kiteMargin(unit, threat) < required) {
+            kitingLatch.put(unit.id(), true);
+            return true;
+        }
+        return false;
+    }
+
+    /** A latched step-back holds until the margin recovers this far past required. */
+    private static final double KITE_LATCH_RELEASE_TILES = 1.0;
+
+    private static final java.util.Map<Integer, Boolean> kitingLatch = new java.util.HashMap<>();
+
+    public static void clearForTests() {
+        kitingLatch.clear();
     }
 
     /**
