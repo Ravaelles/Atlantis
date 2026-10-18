@@ -58,7 +58,7 @@ public class BattleCommander extends Commander {
         }
 
         for (AUnit unit : Alpha.get().selection().list()) {
-            order(unit, tactic, anchor);
+            order(unit, tactic, anchor, Alpha.get().leader());
         }
 
         return false;
@@ -78,12 +78,13 @@ public class BattleCommander extends Commander {
         return tactic;
     }
 
-    private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor) {
+    private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (unit == null || !unit.isAlive()) return;
 
         if (tactic == FightOrFlight.Tactic.FLEE) {
             HasPosition home = ClusterAnchor.defendAnchor();
-            if (home != null) unit.move(home, Actions.RUN_ENEMY, "ClusterFlee");
+            HasPosition point = gatherPointFor(unit, leader, home);
+            if (point != null) unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
             return;
         }
 
@@ -96,8 +97,29 @@ public class BattleCommander extends Commander {
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;
         }
-        if (anchor != null) unit.move(anchor, Actions.MOVE_ENGAGE, "ClusterMove");
+
+        // No enemy in reach: bunch on the leader so the cluster advances
+        // (or retreats) as one instead of a line (owner 2026-10-19: march
+        // and retreat both strung out). The leader sets the pace; stragglers
+        // catch up instead of everyone racing the anchor.
+        HasPosition point = gatherPointFor(unit, leader, anchor);
+        if (point != null) unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove");
     }
+
+    /**
+     * Where this unit moves when there is no enemy to engage: the leader
+     * when straggling behind it, else the mission anchor. Public as a seam:
+     * the bunching rule pins in a stub state without running the frame.
+     */
+    public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor) {
+        if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
+            return leader;
+        }
+        return anchor;
+    }
+
+    /** Tiles behind the leader before a unit turns back to rejoin. */
+    private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
     private void gatherCluster() {
         Selection army = Select.ourCombatUnits();
