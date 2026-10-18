@@ -108,8 +108,13 @@ public class BattleCommander extends Commander {
         if (tactic == FightOrFlight.Tactic.FLEE) {
             HasPosition home = ClusterAnchor.defendAnchor();
             HasPosition point = gatherPointFor(unit, leader, home);
-            if (point != null) unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
-            return;
+            if (point != null) {
+                unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
+                return;
+            }
+            // Nowhere to run to (baseless map, null anchor): standing
+            // still with DoNothing until death is never the answer -
+            // fall through and fight in place instead (kite included).
         }
 
         AUnit target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
