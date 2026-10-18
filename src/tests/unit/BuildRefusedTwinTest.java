@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
@@ -44,6 +45,7 @@ public class BuildRefusedTwinTest extends AbstractTestWithWorld {
     public void clean() {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
+        ProduceBuilding.clearRefusedThrottleForTests();
     }
 
     @Test
@@ -113,5 +115,43 @@ public class BuildRefusedTwinTest extends AbstractTestWithWorld {
                 EventLog.toJsonLines().contains("power-not-funded"),
                 "bank 300 covers Pylon + Forge - the power gate stays open");
         });
+    }
+
+    @Test
+    public void refusalsThrottlePerOrder() {
+        currentMinerals = 0;
+        currentSupplyUsed = 10;
+        currentSupplyTotal = 18;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+
+        world(310, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            int now = atlantis.game.A.now();
+            if (now != 3 && now != 10 && now != 303) return;
+
+            if (now == 3) {
+                refusedOrder = new ProductionOrder(AUnitType.Protoss_Forge, 52);
+            }
+            ProduceBuilding.requestBuilding(AUnitType.Protoss_Forge, refusedOrder);
+        });
+
+        int rows = countOccurrences(EventLog.toJsonLines(), "below-min-supply-and-poor");
+        assertEquals(
+            2, rows,
+            "one stuck demand names itself once per 300 frames, not once per evaluation - got: "
+                + EventLog.toJsonLines());
+    }
+
+    private static ProductionOrder refusedOrder;
+
+    private static int countOccurrences(String text, String needle) {
+        int count = 0;
+        int from = 0;
+        while (true) {
+            int at = text.indexOf(needle, from);
+            if (at < 0) return count;
+            count++;
+            from = at + needle.length();
+        }
     }
 }

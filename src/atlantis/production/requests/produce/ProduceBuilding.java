@@ -40,16 +40,33 @@ public class ProduceBuilding {
      * Names the refusing guard when a ready building order dies before
      * siting (NEXT #148: 20 Forge wants vanished with zero diagnostics
      * because every exit below was silent). Pure twin, no behavior.
+     *
+     * <p>Throttled per (guard, order): a demand stuck refused for minutes
+     * names itself once per 300 frames, not once per evaluation (measured:
+     * 2187 identical rows for one order in a game). First occurrence
+     * always logs, so pins and hunts keep their witness.</p>
      */
+    private static final java.util.Map<String, Integer> lastRefusedAt = new java.util.HashMap<>();
+
     private static boolean refuse(AUnitType type, ProductionOrder order, String guard) {
-        EventLog.key(LogKey.BUILD_REFUSED)
-            .param("type", type == null ? "-" : type.name())
-            .param("guard", guard)
-            .param("order", order == null ? "-" : order.toString())
-            .param("supplyUsed", A.supplyUsed())
-            .param("minerals", A.minerals())
-            .log(A.now(), A.minSec());
+        String key = guard + ":" + (order == null ? "-" : order.id());
+        Integer last = lastRefusedAt.get(key);
+        int now = A.now();
+        if (last == null || now - last >= 300) {
+            lastRefusedAt.put(key, now);
+            EventLog.key(LogKey.BUILD_REFUSED)
+                .param("type", type == null ? "-" : type.name())
+                .param("guard", guard)
+                .param("order", order == null ? "-" : order.toString())
+                .param("supplyUsed", A.supplyUsed())
+                .param("minerals", A.minerals())
+                .log(A.now(), A.minSec());
+        }
         return false;
+    }
+
+    public static void clearRefusedThrottleForTests() {
+        lastRefusedAt.clear();
     }
 
     /**
@@ -106,6 +123,10 @@ public class ProduceBuilding {
      * excluded (this order replacing its own lost construction must
      * proceed); PREPARING picks are excluded (someone's aimed future -
      * blocking on them could park an earlier need behind a later row).
+     * An IN_PROGRESS Pylon with no linked building yet counts too: the
+     * advance fired on the order echo while the server-side warp has not
+     * registered, so no unit exists to count (measured: 65f-apart warp
+     * pair behind one travelling builder).
      * Stuck sites unblock by themselves: overdue cancels clear them
      * and the count drops.
      *
@@ -123,11 +144,24 @@ public class ProduceBuilding {
         for (Construction construction : ConstructionRequests.constructions) {
             if (construction == null || !construction.buildingType().isPylon()) continue;
             if (construction.status() != ConstructionOrderStatus.NOT_STARTED
-                && construction.status() != ConstructionOrderStatus.STARTING) continue;
+                && construction.status() != ConstructionOrderStatus.STARTING
+                && !isEchoWithoutUnit(construction)) continue;
             if (order != null && order.equals(construction.productionOrder())) continue;
             total++;
         }
         return total;
+    }
+
+    /**
+     * An IN_PROGRESS Pylon with no linked building yet: the advance fired
+     * on the order echo while the server-side warp has not registered -
+     * no unit exists, so neither the warping-unit check nor the
+     * not-started set sees it. Same rule as the V2 lag term: an
+     * unconfirmed warp-in-progress still blocks the next Pylon.
+     */
+    static boolean isEchoWithoutUnit(Construction construction) {
+        return construction.status() == ConstructionOrderStatus.IN_PROGRESS
+            && construction.buildingUnit() == null;
     }
 
     /**

@@ -159,4 +159,48 @@ public class UnstartedPylonBlocksSecondTest extends WorldStubForTests {
                 "past 60 supply the third concurrent Pylon still waits");
         });
     }
+
+    @Test
+    public void echoInProgressWithoutUnitBlocks() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
+
+        world(1, fakeOurs(builder), fakeEnemies(), () -> {
+            // IN_PROGRESS on the order echo, server-side warp not yet
+            // registered: no unit exists, so neither the warping-unit
+            // check nor the not-started set sees it (measured: 65f-apart
+            // warp pair behind one travelling builder).
+            ProductionOrder other = new ProductionOrder(AUnitType.Protoss_Pylon, 25);
+            Construction echoing = new Construction(AUnitType.Protoss_Pylon);
+            echoing.setPositionToBuild(APosition.create(112, 7));
+            echoing.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            echoing.setBuilder(builder);
+            echoing.setProductionOrder(other);
+            ConstructionRequests.constructions.add(echoing);
+
+            assertTrue(
+                ProduceBuilding.anotherUnstartedPylonExists(new ProductionOrder(AUnitType.Protoss_Pylon, 27)));
+        });
+    }
+
+    @Test
+    public void linkedWarpingBuildingDoesNotBlock() {
+        FakeUnit builder = fake(AUnitType.Protoss_Probe, 30, 20);
+        FakeUnit warping = fake(AUnitType.Protoss_Pylon, 18, 46);
+
+        world(1, fakeOurs(builder, warping), fakeEnemies(), () -> {
+            // The unit registered: the pipeline may keep one more going,
+            // capped by pylon-cap, not by this guard.
+            ProductionOrder other = new ProductionOrder(AUnitType.Protoss_Pylon, 25);
+            Construction working = new Construction(AUnitType.Protoss_Pylon);
+            working.setPositionToBuild(APosition.create(112, 7));
+            working.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            working.setBuilder(builder);
+            working.setBuildingUnit(warping);
+            working.setProductionOrder(other);
+            ConstructionRequests.constructions.add(working);
+
+            assertFalse(
+                ProduceBuilding.anotherUnstartedPylonExists(new ProductionOrder(AUnitType.Protoss_Pylon, 27)));
+        });
+    }
 }

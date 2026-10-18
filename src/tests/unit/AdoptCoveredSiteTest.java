@@ -47,6 +47,7 @@ public class AdoptCoveredSiteTest extends WorldStubForTests {
     public void clean() {
         ConstructionRequests.constructions.clear();
         EventLog.clearForTests();
+        ProduceBuilding.clearRefusedThrottleForTests();
     }
 
     @Test
