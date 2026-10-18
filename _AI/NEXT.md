@@ -423,7 +423,13 @@ twins green (1/1 each, re-verified today). Re-run
   lines - same shape). Remaining suspect is host-side (engine
   ends an enemyless match) - needs C++ host debugging (owner call,
   shared platform). GAME_END twin stays as the witness for the next
-  one. No blind patch.
+  one. No blind patch. Contrast datum 2026-10-18 (`144920`: host died
+  visibly at 846f/35s - client printed `failed, disconnecting` + `No
+  server proc ID`, hang-watcher jstacked, runner ended at 72s). The four
+  #149 runs show NONE of those lines: when the host dies the client
+  says so, so their silent ends are not a host crash of this shape -
+  the game ended while both sides looked alive, and only C++ host
+  debugging can say why.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
