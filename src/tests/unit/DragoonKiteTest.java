@@ -236,9 +236,99 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         }
     }
 
-    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
-        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    @Test
+    public void shortStepIsNoStepSoDragoonFights() {
+        // A 0.2-tile "step" opens 0.2 < 0.3 gain: not a step, so no
+        // move issues and the Dragoon fights instead of stepping in
+        // place (Wine 1Drag_v_1Zeal f310-329: 20 stepped rows, zero
+        // pixels moved). Direct fromBest pin, no geometry games.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            assertTrue(
+                atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 0.2) == null,
+                "a 0.2-tile hop is not a step");
+            assertTrue(
+                atlantis.units.actions.move.MoveAway.bestDestination(dragoon, zealot, 2.0) != null,
+                "a 2-tile step opens real distance");
+        });
     }
+
+    @Test
+    public void noRealStepMeansFightNotIdle() {
+        // Every compass point mineral-covered: fromBest finds nothing,
+        // so the Dragoon attacks instead of standing still.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+        neutralInWorld = new FakeUnit[] {
+            fake(AUnitType.Resource_Mineral_Field, 29, 20).setNeutral()
+        };
+        atlantis.util.log.EventLog.clearForTests();
+
+        try {
+            world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                atlantis.battle.BattleCommander.act(
+                    dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            });
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "no step anywhere: fight in place: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "no futile moves: " + ordersOf(dragoon));
+        }
+        finally {
+            neutralInWorld = null;
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    @Test
+    public void frozenDragoonStopsToResetTheQueue() {
+        // Steps issue but the unit never moves (order queue wedged -
+        // the vanilla engine bug both reference bots unstick: PurpleWave
+        // Unstick STOPs past 24 failing frames, Stardust resets past 48
+        // motionless ones). After 48 motionless frames the Dragoon
+        // issues STOP and names it, instead of stepping in place
+        // forever. UNIT_SPEED_MODIFIER 0 pins the body; orders still
+        // flow.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+        atlantis.battle.BattleCommander.clearForTests();
+        atlantis.util.log.EventLog.clearForTests();
+        double oldModifier = tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME;
+        tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME = 0;
+
+        try {
+            world(70, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                atlantis.battle.BattleCommander.act(
+                    dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            });
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "stop"),
+                "48 motionless frames with steps issued: STOP to reset the queue: "
+                    + ordersOf(dragoon));
+            assertTrue(
+                atlantis.util.log.EventLog.toJsonLines().contains("\"frozen-reset\""),
+                "the reset names itself");
+        }
+        finally {
+            tests.acceptance.FakeOnFrameEnd.UNIT_SPEED_MODIFIER_PER_FRAME = oldModifier;
+            atlantis.battle.BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+
 
     private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
                                     int unitId, String operation) {
@@ -383,43 +473,8 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
-    @Test
-    public void walledInDragoonSidestepsInsteadOfIdling() {
-        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
-        dragoon.cooldown = 25;
-        // Hurt so the margin rule fires at 2 tiles (a healthy Dragoon
-        // would rightly hold and shoot here, no step needed).
-        dragoon.hp = 20;
-        dragoon.shields = 0;
-        // Mineral wall directly behind the Dragoon: the straight step
-        // lands next to minerals and is refused, the lateral ones are
-        // free. Old code stood still (then fought point blank); the
-        // compass must find the sidestep.
-        neutralInWorld = new FakeUnit[] {
-            fake(AUnitType.Resource_Mineral_Field, 26, 20).setNeutral()
-        };
-        atlantis.util.log.EventLog.clearForTests();
-
-        try {
-            world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-                atlantis.battle.BattleCommander.act(
-                    dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
-            });
-
-            assertTrue(
-                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
-                "a wall behind must not mean standing still - sidestep: " + ordersOf(dragoon));
-            assertFalse(
-                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
-                "no standing trade while a step exists: " + ordersOf(dragoon));
-            assertTrue(dragoon.targetPosition.x() > 940,
-                "straight back runs into the mineral wall - sidestep east instead: "
-                    + dragoon.targetPosition);
-        }
-        finally {
-            neutralInWorld = null;
-            atlantis.util.log.EventLog.clearForTests();
-        }
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
+
 }

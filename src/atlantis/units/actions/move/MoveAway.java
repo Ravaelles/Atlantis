@@ -34,32 +34,42 @@ public class MoveAway {
      * Same candidates, same validation, different pick - other
      * callers keep first-success via {@link #from}.
      */
-    public static boolean fromBest(AUnit unit, HasPosition from, double moveDistance, Action action, String tooltip) {
-        if (from == null || moveDistance < 0.01) return false;
+    /**
+     * Kiting escape choice (PurpleWave MicroPathing direction): evaluate
+     * the straight step and every lateral, issue the one opening the
+     * most distance to the threat (same candidates, same validation).
+     * Other callers keep first-success via {@link #from}. Two guards
+     * make a row honest, both learned live (Wine 1Drag_v_1Zeal f310-329:
+     * 20 "stepped-aside" rows, zero pixels moved, 2 passes eaten):
+     * a refused order is not a step (try the next candidate instead
+     * of reporting success), and a step must step (the best candidate
+     * has to open at least KITE_MIN_STEP_GAIN_TILES beyond the current
+     * distance, else there is no step and the caller fights).
+     */
+    /**
+     * Validate-only half of the escape choice: every aim through the
+     * shared gates, the one opening the most distance wins. Null means
+     * no direction steps (all blocked, all micro-hops, or nothing
+     * opens past the gain floor) - the caller fights instead.
+     */
+    public static APosition bestDestination(AUnit unit, HasPosition from, double moveDistance) {
+        if (from == null || moveDistance < 0.01) return null;
 
-        APosition best = null;
-        double bestDist = -1;
+        java.util.List<APosition> valid = new java.util.ArrayList<>();
         for (HasPosition aim : allAims(unit, from)) {
             APosition dest = destinationFor(unit, aim, moveDistance, from);
-            if (dest == null) continue;
-            double dist = dest.distTo(from);
-            if (dist > bestDist) {
-                bestDist = dist;
-                best = dest;
+            if (dest != null) valid.add(dest);
+        }
+        valid.sort((a, b) -> Double.compare(b.distTo(from), a.distTo(from)));
+
+        double now = unit.distTo(from);
+        for (APosition dest : valid) {
+            if (dest.distTo(from) - now < atlantis.battle.BattleCommander.KITE_MIN_STEP_GAIN_TILES) {
+                return null;
             }
+            return dest;
         }
-        if (best == null) return false;
-
-        // A zero-length step is not a step: issuing it would look
-        // like movement while standing glued in place.
-        if (unit.distTo(best) < 0.1) return false;
-
-        if (unit.move(best, action, "Move away" + unit.distToDigit(from), false)) {
-            return true;
-        }
-        else {
-            return true;
-        }
+        return null;
     }
 
     private static java.util.List<HasPosition> allAims(AUnit unit, HasPosition from) {

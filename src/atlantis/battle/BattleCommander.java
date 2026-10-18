@@ -155,6 +155,26 @@ public class BattleCommander extends Commander {
                 .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
             HitTwin.sample(unit, threat != null ? threat : target);
             if (threat != null && shouldKite(unit, threat)) {
+                int now = A.now();
+                APosition lastPos = lastStepPos.get(unit.id());
+                Integer lastStep = lastStepFrame.get(unit.id());
+                if (lastStep != null && lastPos != null && now - lastStep >= 48
+                    && unit.distTo(lastPos) < 0.5) {
+                    // Frozen: steps issue but the unit never moves - the
+                    // order queue is wedged (the engine-side stuck both
+                    // reference bots unstick: PurpleWave Unstick issues
+                    // STOP past 24 failing frames, Stardust resets past
+                    // 48 motionless ones; the web confirms it as a vanilla
+                    // engine bug: attack-then-move in quick succession).
+                    // STOP clears the queue; sleep this frame so it lands,
+                    // watch cleared so the next step starts a fresh queue.
+                    KiteTwin.frozenReset(unit, threat);
+                    unit.stop("ClusterUnstick");
+                    lastStepPos.remove(unit.id());
+                    lastStepFrame.remove(unit.id());
+                    lastStepDest.remove(unit.id());
+                    return;
+                }
                 // A failed step must never mean standing idle: a cornered
                 // Dragoon fights instead of waiting to die (Wine
                 // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
@@ -166,12 +186,19 @@ public class BattleCommander extends Commander {
                 // no shot fired). Shoot instead - the ready shot is free
                 // damage and the only DPS that can end the corner.
                 boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
-                if (!glued && MoveAway.fromBest(unit, threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
-                    KiteTwin.steppedAside(unit, threat);
-                    lastRepositionFrame.put(unit.id(), A.now());
-                    return;
+                APosition dest = glued ? null : MoveAway.bestDestination(unit, threat, KITE_STEP_TILES);
+                APosition lastDest = lastStepDest.get(unit.id());
+                if (dest != null && (lastDest == null || dest.distTo(lastDest) > KITE_MIN_STEP_GAIN_TILES)) {
+                    if (unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
+                        KiteTwin.steppedAside(unit, threat);
+                        lastStepDest.put(unit.id(), dest);
+                        lastStepPos.put(unit.id(), unit.position());
+                        lastStepFrame.put(unit.id(), now);
+                        lastRepositionFrame.put(unit.id(), now);
+                        return;
+                    }
                 }
-                if (!glued) KiteTwin.nowhereToStep(unit, threat);
+                if (dest == null && !glued) KiteTwin.nowhereToStep(unit, threat);
             }
             // Re-engage glide (PurpleWave BeDragoonVsSlowlot: margin
             // recovered and no threat hunting us while the weapon cools -
@@ -185,8 +212,13 @@ public class BattleCommander extends Commander {
                 if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES) {
                     APosition fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
+                    APosition lastDest = lastStepDest.get(unit.id());
                     if (unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
+                        && (lastDest == null || fireAt.distTo(lastDest) > KITE_MIN_STEP_GAIN_TILES)
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
+                        lastStepDest.put(unit.id(), fireAt);
+                        lastStepPos.put(unit.id(), unit.position());
+                        lastStepFrame.put(unit.id(), A.now());
                         lastRepositionFrame.put(unit.id(), A.now());
                         return;
                     }
@@ -325,6 +357,9 @@ public class BattleCommander extends Commander {
     /** How far the kiting step carries (tiles). */
     public static double KITE_STEP_TILES = 2.0;
 
+    /** A step candidate has to open at least this much beyond the current distance (tiles). Anti-jitter only: above a body radius, below any real sidestep. */
+    public static double KITE_MIN_STEP_GAIN_TILES = 0.3;
+
     /** Threat committed to exactly this unit shrinks the margin by this much (tiles). */
     public static double KITE_HUNTED_TILES = 0.5;
 
@@ -353,9 +388,15 @@ public class BattleCommander extends Commander {
     public static int KITE_RIDE_FRAMES = 30;
 
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, APosition> lastStepDest = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, APosition> lastStepPos = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
 
     public static void clearForTests() {
         lastRepositionFrame.clear();
+        lastStepDest.clear();
+        lastStepPos.clear();
+        lastStepFrame.clear();
     }
 
     private void gatherCluster() {

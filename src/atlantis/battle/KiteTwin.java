@@ -28,6 +28,10 @@ public class KiteTwin {
         row(dragoon, threat, "stuck-no-step");
     }
 
+    public static void frozenReset(AUnit dragoon, AUnit threat) {
+        row(dragoon, threat, "frozen-reset");
+    }
+
     private static void row(AUnit dragoon, AUnit threat, String result) {
         EventLog.key(LogKey.KITE)
             .param("unit", dragoon.id())
