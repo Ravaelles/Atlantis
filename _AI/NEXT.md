@@ -403,7 +403,16 @@ twins green (1/1 each, re-verified today). Re-run
   the write dir pre-game like OpenBW. Wrong-sibling adoption stub-pinned
   2026-10-18 (overlap test: positional, then fallback candidates=1, then
   CANNOT exit - `AdoptedConstructionTwinTest` 3/3, RED then GREEN); the
-  live overlap game is still unplayed. FE scoping landed the same day
+  live overlap game is still unplayed. Chain twins carry cid/oid since
+  2026-10-19 (REQUESTED/PREPARING/STARTED/CANCEL/ledger/ADOPTED +
+  orphan-drop + query `--where cid=`), and the first live run with them
+  (`150006` short) caught a cross-order same-tile double-PREPARING:
+  dynamic Pylon cid=63 and BO Pylon cid=64, same tile [79,107] 3 frames
+  apart; 64 STARTED and warped, 63 left zero further rows through frame
+  7527 (orphan vs silent drop - the new drop twin decides on the next
+  run). Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
+  should have refused the second pick; why it did not is the next
+  measured branch - no blind patch. FE scoping landed the same day
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
   wall-in BOARD/wall rows). Remainder: owner visual proof of orange
   PREPARING (a). No blind patch.
