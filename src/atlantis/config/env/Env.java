@@ -233,7 +233,8 @@ public class Env {
                 // Overnight tuning loop (owner): the game randomizes the
                 // registered coefficients at start and appends W/L, frames,
                 // kills, losses, hits taken and the values to CSV.
-                paramTweaker = trueFalse(value);
+                paramTweaker = "1".equals(value == null ? "" : value.trim())
+                    || trueFalse(value);
                 return true;
             default:
                 // Wine game-window geometry, tweakable without recompiling.

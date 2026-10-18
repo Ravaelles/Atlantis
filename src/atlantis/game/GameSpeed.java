@@ -50,6 +50,7 @@ public class GameSpeed {
         if (Env.isParamTweaker()) {
             Atlantis.game().setLocalSpeed(0);
             Atlantis.game().setFrameSkip(500);
+            System.out.println("PARAM_TWEAKER: speed 0, frameskip 500 (unattended tuning)");
             return;
         }
 

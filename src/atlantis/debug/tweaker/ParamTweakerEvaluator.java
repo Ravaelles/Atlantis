@@ -29,6 +29,7 @@ public class ParamTweakerEvaluator {
         if (Env.isFirstRun()) {
             AFile.removeFile(file);
         }
+        AFile.createDirectory(file);
 
         AFile.writeToFileWithHeader(file, resultString(winner), fileHeader());
     }
