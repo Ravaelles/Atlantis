@@ -407,19 +407,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
   two doors stay open. Proof: a covered-tile game where the loop is
   gone (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
-- **#152** Dragoon kiting: won 1v1 live (Wine 1Drag_v_1Zeal, owner
-  2026-10-19) but the twin trail shows the loop is shallow: 14
-  stepped-aside vs 3 stuck in the winning game (9 vs 106 before the
-  compass fix), and corners still convert steps into standing trades.
-  Open, in order: (a) HIT twin (HP drop + range + cooldown + moving
-  at the damage frame - answers "why did this hit land"; owner ask),
-  SHOT twin (attack started - answers "did we stop shooting", i.e.
-  whether the animation guard ever latches); (b) wall-aware steps
-  (PurpleWave `MicroPathing.getThreatAwarePath` direction, see
-  `_AI/CHALLENGES/MicroKiting.md` for file refs) + unstuck tracking
-  (`tryingMove` + timeout, same source); (c) macro-game kite proof
-  (OpenBW spawns no enemies; needs a Wine macro game, owner-run):
-  1v1 proof does not cover focus fire, traffic, or the retreat latch.
+- **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
+  owner 2026-10-19; now the overnight tuning duel). Landed since:
+  HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
+  (shot-fired vs holding-shot) + per-cycle fight-timeline + per-game
+  digest with invariant flags (HITS_TAKEN <= 2, shot cadence vs 30f);
+  margin rule with targeted+facing terms; no-reissue + ride discipline;
+  fromBest escape choice; glue-shoot; frozen-STOP reset; no-respam step
+  cadence (10f, Stardust latency+6); micro-step gain gate. Open: (a)
+  wall-aware steps (PurpleWave `MicroPathing.getThreatAwarePath`
+  direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs);
+  (b) macro-game kite proof (OpenBW spawns no enemies; needs a Wine
+  macro game, owner-run): 1v1 proof does not cover focus fire,
+  traffic, or the retreat latch; (c) the overnight tuner
+  (`scripts/run-wine-batch.sh`, ParamTweaker randomizes 12 kite
+  coefficients in-JVM, CSV scoreboard: W/L, seconds, killed, lost,
+  hits, shots, values) decides the numbers - see `_AI/TOOLS.md`.
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
   - needs a goal-source twin on V2 Pylon emission.
