@@ -99,7 +99,7 @@ cleanup() {
     say "  bot ENV restored (test flags removed)"
   fi
   pkill -9 -x StarCraft.exe 2>/dev/null
-  pkill -9 -x Chaoslauncher.exe 2>/dev/null
+  pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
 }
@@ -173,8 +173,17 @@ say "Killing leftovers"
 # The one thing that MUST go is a leftover StarCraft/ChaosLauncher, because a
 # second instance breaks the BWAPI injection.
 pkill -9 -x StarCraft.exe 2>/dev/null
-pkill -9 -x Chaoslauncher.exe 2>/dev/null
-pkill -9 -x ChaosLauncher.exe 2>/dev/null
+# Never -x on Chaoslauncher.exe: the 17-char name exceeds the 15-char
+# comm limit, so -x never matches and a leftover launcher makes every
+# new game silently attach to the old map instead (measured:
+# an 8v8 request played the previous 1v1). The bracket keeps pgrep
+# from matching this shell's own command line (GameExecution.md #2).
+pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
+sleep 1
+if pgrep -x StarCraft.exe >/dev/null 2>&1 || pgrep -f "[C]haoslauncher.exe" >/dev/null 2>&1; then
+  say "FATAL: a leftover game survived the kill - refusing to attach to a stale map."
+  exit 1
+fi
 
 # A leftover BWAPILauncher holds the game table for the OpenBW path; harmless
 # here but cheap to check, and it is never wanted during a Wine game.
