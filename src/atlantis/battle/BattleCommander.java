@@ -193,9 +193,14 @@ public class BattleCommander extends Commander {
                 // stepping every frame means zero shots until death (Wine
                 // 1Drag_v_1Zeal: 190 frames glued at dist 0, cd 0, 17 hits,
                 // no shot fired). Shoot instead - the ready shot is free
-                // damage and the only DPS that can end the corner.
+                // damage and the only DPS that can end the corner. Same
+                // when the threat's swing is already in flight anywhere:
+                // a step cannot dodge damage that is locked in, but our
+                // ready shot still lands (symmetric animation discipline).
+                boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
                 boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
-                if (!glued && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
+                boolean tradeShot = unit.cooldown() == 0 && (glued || swingIncoming);
+                if (!tradeShot && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
                     APosition dest = MoveAway.bestDestination(unit, threat, KITE_STEP_TILES);
                     if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
                         KiteTwin.steppedAside(unit, threat);

@@ -473,6 +473,33 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void midSwingThreatGetsTradedWithInsteadOfDodged() {
+        // The Zealot's swing is already in flight (attack order +
+        // attack frame): a step cannot dodge locked-in damage, but our
+        // ready shot still lands. Trade instead of stepping (symmetric
+        // animation discipline - the same reason we never interrupt
+        // our own shot).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 0;
+        zealot.attackUnit(dragoon);
+        zealot.attackFrame = true;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "swing in flight: take the trade, do not step: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "a step now only cancels our own shot: " + ordersOf(dragoon));
+        });
+    }
+
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }
