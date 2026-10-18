@@ -90,6 +90,28 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void facingZealotTriggersEarlierYield() {
+        // Total 132: margin required 1.94 tiles. At dist 2 the base
+        // margin (2.0) holds - unless the Zealot faces us (-0.5),
+        // which is PurpleWave's commitment read (targeted + facing-dot):
+        // the Dragoon yields as the Zealot commits to the swing.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit away = fake(AUnitType.Protoss_Zealot, 32, 20);
+        FakeUnit toward = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 52;
+        away.setAngle(0);
+        toward.setAngle(Math.PI);
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(away, toward), () -> {
+            assertFalse(BattleCommander.shouldKite(dragoon, away),
+                "Zealot facing away is not committing - hold and shoot");
+            assertTrue(BattleCommander.shouldKite(dragoon, toward),
+                "Zealot facing us commits to the swing - yield half a tile early");
+        });
+    }
+
+    @Test
     public void distantEnemyIsApproachedNotKited() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 36, 20);

@@ -219,9 +219,10 @@ public class BattleCommander extends Commander {
 
     /**
      * Tiles the threat still must close before it can hit us, minus
-     * half a tile when its order target is exactly this unit (the
-     * cheap half of PurpleWave's commitment read: targeted plus
-     * facing-dot; facing has no cheap API here, so it stays open).
+     * half a tile when its order target is exactly this unit and minus
+     * half a tile when it faces us (the cheap binary form of
+     * PurpleWave's commitment read: targeted plus facing-dot; ours
+     * fires within a 1.1 rad window instead of scaling continuously).
      * Distances are center-based tiles, not edge pixels - about half
      * a tile more permissive than the original, Wine decides.
      */
@@ -229,6 +230,7 @@ public class BattleCommander extends Commander {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
         AUnit hunted = threat.orderTarget();
         if (hunted != null && hunted.id() == unit.id()) margin -= 0.5;
+        if (unit.isOtherFacingThisUnit(threat)) margin -= 0.5;
         return margin;
     }
 
