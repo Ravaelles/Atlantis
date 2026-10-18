@@ -69,6 +69,7 @@ while [ "$i" -lt "$N" ]; do
   GDIR="$OUTDIR/game-$i"
   mkdir -p "$GDIR"
   cp -f out/wine/EVENTS.jsonl "$GDIR/EVENTS.jsonl" 2>/dev/null || true
+  cp -f out/wine/WINE_LOG "$GDIR/WINE_LOG" 2>/dev/null || true
   GCSV="$(ls -t param_tweaker/*.csv 2>/dev/null | head -1)"
   if [ -n "${GCSV:-}" ]; then
     cp -f "$GCSV" "$GDIR/tweaker.csv"

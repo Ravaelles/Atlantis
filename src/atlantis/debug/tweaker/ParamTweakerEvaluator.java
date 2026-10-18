@@ -29,7 +29,8 @@ public class ParamTweakerEvaluator {
         if (Env.isFirstRun()) {
             AFile.removeFile(file);
         }
-        AFile.createDirectory(file);
+        java.io.File parent = new java.io.File(file).getParentFile();
+        if (parent != null) parent.mkdirs();
 
         AFile.writeToFileWithHeader(file, resultString(winner), fileHeader());
     }
