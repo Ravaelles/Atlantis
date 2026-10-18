@@ -61,21 +61,32 @@ while [ "$i" -lt "$N" ]; do
     printf '\nPARAM_TWEAKER=1\n' >> bwapi-data/AI/ENV
   fi
 
+  # Collect per-game artifacts before the next run wipes them.
+  # Staleness guard: a failed start leaves the previous game's files
+  # behind - only accept a run whose EVENTS is newer than the run
+  # itself and carries a GAME_END (measured: game-26 copied game-25).
+  GDIR="$OUTDIR/game-$i"
+  mkdir -p "$GDIR"
+  touch "$GDIR/.started"
   if ! bash scripts/run-wine-ums.sh "$MAP" 1 > "$OUTDIR/game-$i.log" 2>&1; then
     echo "[wine-batch] game $i: runner failed (see game-$i.log), continuing"
   fi
-
-  # Collect per-game artifacts before the next run wipes them.
-  GDIR="$OUTDIR/game-$i"
-  mkdir -p "$GDIR"
   cp -f out/wine/EVENTS.jsonl "$GDIR/EVENTS.jsonl" 2>/dev/null || true
   cp -f out/wine/WINE_LOG "$GDIR/WINE_LOG" 2>/dev/null || true
-  GCSV="$(ls -t param_tweaker/*.csv 2>/dev/null | head -1)"
-  if [ -n "${GCSV:-}" ]; then
-    cp -f "$GCSV" "$GDIR/tweaker.csv"
-    tail -1 "$GCSV" | awk -F';' -v g="$i" '{print g","$2","$3","$4","$5","$6","$7","$8}' >> "$CSV" 2>/dev/null || true
+  if [ ! "$GDIR/EVENTS.jsonl" -nt "$GDIR/.started" ] \
+    || ! grep -q '"key":"GAME_END"' "$GDIR/EVENTS.jsonl" 2>/dev/null; then
+    echo "[wine-batch] game $i: INVALID (no fresh game end), skipped" | tee -a "$OUTDIR/batch.log"
+    rm -f "$GDIR/EVENTS.jsonl" "$GDIR/tweaker.csv"
+  else
+    GCSV="$(ls -t param_tweaker/*.csv 2>/dev/null | head -1)"
+    if [ -n "${GCSV:-}" ]; then
+      cp -f "$GCSV" "$GDIR/tweaker.csv"
+      tail -1 "$GCSV" | awk -F';' -v g="$i" '{print g","$2","$3","$4","$5","$6","$7","$8}' >> "$CSV" 2>/dev/null || true
+    fi
   fi
-  python3 scripts/summarize-fight.py "$GDIR/EVENTS.jsonl" > "$GDIR/digest.txt" 2>&1 || true
+  if [ -f "$GDIR/EVENTS.jsonl" ]; then
+    python3 scripts/summarize-fight.py "$GDIR/EVENTS.jsonl" > "$GDIR/digest.txt" 2>&1 || true
+  fi
   HITS="$(grep -oE "hits taken: [0-9]+" "$GDIR/digest.txt" 2>/dev/null | grep -oE "[0-9]+" | head -1)"
   FRAMES="$(grep -oE "game end: frame=[0-9]+" "$GDIR/digest.txt" 2>/dev/null | grep -oE "[0-9]+" | head -1)"
   echo "[wine-batch] game $i: frames=${FRAMES:-?} hits=${HITS:-?} (see $GDIR)"

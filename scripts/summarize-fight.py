@@ -59,7 +59,7 @@ def main(path):
         print("shots: %d fired, %d holds; median gap %s frames (weapon: %d); "
               "fire dist min/avg %.1f/%.1f tiles; kill time ~%d frames" % (
                   len(shots), holds, med, SHOT_COOLDOWN,
-                  min(dists), sum(dists) / len(dists), shots[-1] - shots[0]))
+                  min(dists), sum(dists) / len(dists), kill_frame - shots[0]))
 
     hits = [r for r in rows if r.get("key") == "HIT"]
     if hits:
