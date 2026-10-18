@@ -137,29 +137,16 @@ The index of which document answers which question is `_AI/README.md`.
 ## Next steps (ordered - this section survives context compression)
 
 1. **Per-gate legacy deletions**, one game of proof each (ratchet):
-   no candidate yet - feeder coverage re-measured 2026-10-16 across
-   retained runs: 29 sustained-dragoon + 2 sustained-zealot rows, ZERO
-   supply/gateway/core/assimilator. Re-measured 2026-10-17 incl. the
-   743 s long run: board tops (supply-pylon x2, core, workers, sustained-
-   dragoon, wall-in) but ZERO BOARD_FED - the pumps do ~everything, the
-   feeder fills silence - wrong direction for deletion; buildings are
-   all-legacy. Board-invisible production (Forge, cannons) is
-   capability, not duplication. Deletions wait for routine feeder
-   coverage, never batch rewrites. Re-measured 2026-10-17 across all 12
-   retained runs: 9 BOARD_FED rows total (8 sustained-dragoon + 1
-   sustained-zealot), ZERO supply/gateway/core/assimilator - the feeder
-   still only fires sustained-army rows, never a per-gate row; no deletion
-   candidate, direction unchanged. Re-measured 2026-10-18 across 26
-   retained runs: 30 BOARD_FED rows (sustained-dragoon + sustained-zealot
-   in 2 runs + ONE supply-pylon min=60 sup=39/41 in 214926, a real block
-   rescue), still ZERO gateway/core/assimilator - one per-gate row ever
-   is not routine coverage; no deletion candidate. Re-measured 2026-10-19
-   across the 3 fresh runs: 0 BOARD_FED everywhere, 83 BUILD rows all
-   legacy/demand-direct - the feeder still fires nothing; no candidate.
+   no candidate yet (history in git: 10-16 zero per-gate rows, 10-17
+   nine sustained-army rows, 10-18 one supply-pylon rescue in 214926 -
+   never routine). Re-measured 2026-10-19 across the 3 fresh runs:
+   0 BOARD_FED everywhere, 83 BUILD rows all legacy/demand-direct -
+   the feeder still fires nothing; no candidate. Deletions wait for
+   routine feeder coverage, never batch rewrites; board-invisible
+   production (Forge, cannons) is capability, not duplication.
 2. **Decision absorption:** board takes over decision sites one by one
-   (8 files with the exact singular import, measured 2026-10-17,
-   re-verified 2026-10-17 and 2026-10-18: still 8 on the same excluded tracks,
-   production holds ZERO -
+   (8 files with the exact singular import, re-verified 2026-10-19:
+   still 8 on the same excluded tracks, production holds ZERO -
    was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
    absorbed, 14 more with the targeting + battle src-old sweeps;
    counting down, no new ones per §21); the class dies at zero,
@@ -221,33 +208,7 @@ store): `architectureMustNotDependOnFeatures` via
 `Manager.invokeFromParent` → `SleepUntilFrameGate.mustSleep` (sleep
 gate, #67) and `coreMustNotDependOnOtherContexts` via
 `SpecialCommander.subcommanders` → `ForceExitWhenInvalidState`
-(added 2026-10-17). Store diff empty after both runs.
-Suite green 2026-10-18: 683 passing, 0 skipped (owner batch:
-PREPARING sites reserved+stable, painter warping labels, important-only
-DECISIONS, role-named logs; plus earlier combat cutover:
-`src/atlantis/combat/` → `src-old/`, `atlantis.battle` extracted,
-15 combat-behavior tests deleted incl. the rush twins, kept tests
-repointed; `UnworkedConstructionSurvivesNearbyBuildingTest`, `StreetGridDoctrineTest`
-1/1, `SustainedFlowGoalTest` 6/6, +2 feeder army rows, ladder re-pinned,
-`ScoutFallbackEnemyBasesTest` 2/2, `GoalBoardWalletTest` 3/3, +2 feeder
-enforcement rows, `StaleDuplicateFinishesOnItsTilesTest` 2/2,
-`EarlyConstantWorkerFlowTest` 3/3, `TechCoveredSkipsRequeueTest` 3/3,
-`UpgradeCompletionTrackerTest` 3/3, `LogKeySeverityTest` 3/3,
-`PumpDecisionMatrixTest` 7/7, `ScoutTerminalAnchorTest` 2/2,
-`WorkerQueueDecisionTest` 3/3, `OnGameEndLatchTest` 4/4; selected runs:
-`PylonSearchBreakdownTest` 2/2, `GasRefreshKeepsDecidedSiteTest` 1/1, `PreparingSiteSurvivesSiblingTest`
-1/1, `PylonLastResortTest` 2/2, `FirstPylonTimingTest` 1/1,
-`FirstPylonTravelsEarlyTest` 2/2, `RefreshCancelNeedsBuildingTest` 3/3,
-`SupplyNineWorkerMandateTest` 2/2, `PlacementFailureNamesDominantRuleTest` 2/2,
-`NoPreparingWhileWarpingTest` 2/2, `WorkerCoreVetoBoardTest` 2/2,
-`ReservationWaitsForMinSupplyTest` 2/2,
-`ThirdGatewayBlockedWhileTwoOutstandingTest` 1/1,
-`WarpedOrderIsNotResitedTest` 2/2,
-`StargateEnemyRaceBoardTest` 2/2,
-`ADecisionTest` 3/3, `DecisionDispatcherTest` 3/3,
-`ProducerQuestionsTest` 4/4, `BuildOrderOwnsGameTest` 5/5);
-architecture 10/11 (the one known structural failure); rush-defense
-twins green (1/1 each, re-verified today). Re-run
+(added 2026-10-17). Store diff empty after both runs. Re-run
 `bash scripts/run-tests.sh` - counts written here rot. What is open is
 *quality* of the data behind it, not a red test.
 
@@ -872,32 +833,12 @@ twins green (1/1 each, re-verified today). Re-run
   (no Forge - the gate is correctly silent at any bank); ORDER_SAVING 0
   (1 base but bank >> 550 - correctly silent); scout idle 0, proximity
   twins flowing. 0/0 kills (enemy never spawns, #94).
-- Long `20261017_173138` (140 s wall, 743 game-s, rich: Nexus=3 Probe=52
-  Pylon=14 Gateway=11 Dragoon=11 Forge + 4 cannons): proximity-fix proof -
-  same-tile Pylon re-requests no longer pile up silently (the [119,18]
-  loop of the short game is gone; remaining re-requests land on
-  `CONSTRUCTION_CANCEL ... proximity finish` twins instead of vanishing).
-  No `Scout idle` in 12+ minutes (roam fallback live).
-  Exit 143 (wall cap, not a bot crash) - game still healthy at the cut.
-
 - Long `20261017_091624` (883 s, 55-unit cluster, no enemy spawned):
   Phase-3 movement proof - DEFEND→ATTACK at 8 army, anchors main →
   natural → enemy corner [9,45], group holds there; CLUSTER twin
   (posture/tactic/size/anchor) verified flowing. Fighting unproven:
   host spawned no enemy in 4 straight games (environmental).
   Unexplored-start fallback landed (else ATTACK sat home 18 min).
-
-- Long `20261017_085719` (full 1209 game-s, macro: Nexus=7 Probe=86
-  Pylon=23 Gateway=21, single Core): request-time rule proof - exactly
-  ONE CyberneticsC (dynamic, 11:02@117) in a 20-minute game; no second
-  site ever picked behind a coming Core. Creation caps + request rule
-  compose.
-
-- Long `20261017_084517` (127 s wall, 979 game-s, rich: Nexus=5 Probe=56
-  Pylon=23 Gateway=7 Dragoon=14, single Core): absorption proof -
-  opening script-clean (Pylon 0:50@8, Gateway 1:27@10, Gateway 1:48@12),
-  2 Stargates warped (absorbed branches fire), SINGULARITY_CHECK x318 +
-  APPLIES x4 flowing, BUILD_BREAKDOWN x0. Same numbers, new home.
 
 - Long `20261017_080114` (58 s wall, FULL 1209 game-s, rich: Nexus=7
   Probe=56 Pylon=27 Gateway=9 Dragoon=24, cap-inconclusive): Phase-1
@@ -909,169 +850,35 @@ twins green (1/1 each, re-verified today). Re-run
   DECISIONS.log 720 rows (26 BUILD + 9 ARMY from BUILD_ORDER, rest
   dynamic with reasons).
 
-- Short `20261016_220831` (4 s wall, post-cutover boot proof): HELLO,
-  Pylon=1 Gateway=2 Probe=12, 0 exceptions - production, placement and
-  economy play with no combat/ linked. Scenario gate fails on army
-  (no behavior yet, expected per __PLAN-COMBAT step 5).
-- Long `20261016_195924` (43 s wall, defeat, Probe=25 Zealot=8 in 402
-  game-s): WORKER-QUEUE PROOF - 16 TRAIN_ATTEMPT rows on busy bases
-  (free=False, remaining 60→21), all result True; 9/9 blocks correctly
-  refuse. Caveat, labelled hypothesis: queue depth never read above 1
-  and the bank stood static across consecutive True trains, so the
-  append itself is unproven on OpenBW (possible engine-fidelity gap,
-  same class as regionCount/buildUnit - real-BWAPI semantics allow the
-  append, JBWAPI checks pass). Wine twin decides; twin volume sane
-  (36 rows vs 282 after 1/30 sampling).
-
-- Long `20261016_173718` (139 s wall, 558 s game, rich: Nexus=2
-  Probe=30 Dragoon=11): mandate-rule proof - Pylon 0:54 sup9,
-  Gateway #1 1:26 sup10 at bank 2 (at-supply, no stockpile),
-  `WORKER_GATE` x0 all game, benign choke markers only.
-- Long `20261016_172341` (6 s wall, defeat 3:05, Gateway=2 Zealot=1):
-  LVL verification - zero HIGH/CRITICAL rows (nothing severe; the
-  opening played clean and lost a fight), `--min-level` filters
-  correctly, E2E_LOG 0 diagnostics. Opening timings match the
-  control to the second (Pylon 0:54, Gateway 1:19 sup9) - enforcement
-  does not starve the opening.
-- Long `20261016_164913` (141 s wall, 579 s game, monster: Nexus=2
-  Probe=46 Stargate+Corsair, single Core): no ORDER_SAVING, scout
-  idle x7 (busy game), benign choke markers only. `UPGRADE_COMPLETED`
-  twin committed, verification running.
-- Long `20261016_164340` (140 s wall, 563 s game, rich: Nexus=2
-  Probe=38 PhotonC=3, single Core): tech-fix proof - ONE Core warp
-  (3:11, original row #9, no re-request ever needed), WTF x0 in the
-  whole game, ORDER_SAVING x0, 0 exceptions. The disease the two
-  fixes address simply did not occur.
-- Long `20261016_163658` (140 s wall, 605 s game, rich: Nexus=2
-  Probe=33 Stargate=1, single Core): CLOSED #72 - `SINGULARITY_CHECK`
-  shows research in progress 5:22-6:55, engine-researched from 7:07
-  (static flag follows, 48 rows), no stuck flag. Scout idle x1.
-  ORDER_SAVING x0.
 - Long `20261016_163357` (FIRST PvT, 15 s wall, defeat 5:13,
   Probe=22 Zealot=3 Dragoon=1): Terran rushed us dead early - no
   baseline exists for this matchup (rush twins are Zerg-scripted),
   one game is not a defect per §3a, recorded as the datum to beat.
-- Long `20261016_153026` (141 s wall, 593 s game, rich: Nexus=2
-  Pylon=14 Gateway=6 Zealot=14, single Core): re-request fix proof -
-  WTF 1x in the whole game (vs 7-in-10s), the 22x `At 60 Gateway*`
-  rows are a working pipeline (3 warps 7:34/7:47/9:21, totalOfType
-  pinned at 2), no same-tile spin, 0 real exceptions.
-- Long `20261016_162455` (46 s wall, defeat 7:30, THREE standing
-  Cores): duplicate-tech pathology live - stale overdue deaths
-  re-ordered while siblings stood/warped. Fixed: covered tech skips
-  the overdue requeue (`TechCoveredSkipsRequeueTest` 3/3); truly lost
-  tech still requeues, pump covers dropped warps.
-- Long `20261016_152205` (PvP tilt, 18 s wall, 336 game-s): short
-  mirror, no #72 data. `SINGULARITY_CHECK` twin live from frame 61
-  (all-false early, as designed). Scout idle x3, early residual.
 - Long `20261016_151714` (141 s wall, 628 s game, rich: Probe=37
   Dragoon=13 Nexus=2, cap-inconclusive): lottery blank - no Core
   cancel (#88 went to `131201` instead), no `ORDER_SAVING` (#71),
   `SINGULARITY_APPLIES` x8 climbing to 348/372 then silence with no
   completion marker anywhere (#72: completion unobservable, hence
   the CHECK twin).
-- Long `20261016_145027` (44 s wall, 423 s game, Probe=26 Gateway=4
-  Dragoon=4): worker-flow proof - `WORKER_GATE` x0 in the whole game,
-  Gateway #2 warped 1:19 sup9 at bank 30 (no 390 shape), 0 real
-  exceptions. Probe warps leave no ledger rows (direct train orders),
-  so continuity reads from the roster slope + zero refusals.
-- Long `20261016_133939` (42 s wall, defeat 6:56, Nexus=2 Pylon=7
-  Gateway=3 Dragoon=2): twin verification run - `CONSTRUCTION_PREPARING`
-  x24, `CONSTRUCTION_CANCEL` x4, `PLACEMENT_FAILED` x1 (Gateway,
-  unpowered), all queryable; `BUILD_BREAKDOWN` x0 (nothing stalled),
-  E2E_LOG 0 diagnostics, 0 real exceptions. D2 fix regresses nothing
-  (Core warped, no same-tile stall).
-- Wine (owner live game): 600-mineral stall diagnosed - a Core
-  construction survived its own warped building on its exact tiles
-  (builder held 369f, `canBuild000=false`), shielded by the
-  unworked-adoption exemption; same order re-requested ~12x pre-warp
-  (transient occupancy cancelling). Fixed: exact-tiles finish above
-  all exemptions (`StaleDuplicateFinishesOnItsTilesTest` 2/2). A second
-  loop in the same game was sharper: a miner crossing the Core site
-  cancelled it 7x in 10s (#126-#132, bank 230-308 vs 200 price),
-  each minting a duplicate reservation until the bank froze near 600.
-  Fixed: refresh cancels only on standing buildings
-  (`RefreshCancelNeedsBuildingTest` 3/3, RED then GREEN). Live
-  `20261016_135515_long` (590 s, rich: Nexus=2 Pylon=14 Gateway=6
-  Zealot=19): 2 legitimate cancels in the whole game (vs 7-in-10s),
-  no order requested 5+ times, `BUILD_BREAKDOWN` x0, `POSITION_REFRESH`
-  twins flowing. The
-  early Pylon wait (bank 90) was healthy just-in-time, not the disease.
-  Diagnostics moved to keyed JSON twins, all on stderr; the one stdout
-  polluter (`PREVENT ... Enforce Pylon first`) moved too.
-- Long `20261016_132523` (93 s wall, 471 s game, rich: Pylon=9
-  Zealot=13 Dragoon=7 Gateway=5): 7 BOARD rows, stable tops
-  (supply-pylon x1, gateway/army/expansion x2 each - commitment
-  holding, no flap), `BOARD_FED` sustained-dragoon x2, 0 real
-  exceptions (3 choke-path trace markers, pre-existing).
 - LIVE `20261016_131407` (9 s wall, 247 game-s, roster Pylon=2
   Gateway=1 Zealot=3 Forge=1, 0 exceptions): INCONCLUSIVE, not evidence
   - the bot exited at 4:07 for no logged reason with no enemy spawned
   (`enemy: ` empty). Retry in flight; if it repeats, the early-exit
   path (not V2) is the hunt.
-- Long `20261016_131201` (61 s wall, defeat 7:17, Nexus=2 Pylon=8
-  Gateway=3 Dragoon=2, 0 exceptions): CLOSED #88 (Core cancel 33 s at
-  [16,44] -> requeue veto -> re-request [2,34] -> warp 3:02, roster
-  CyberneticsC=1). Twins flowing (`SINGULARITY_APPLIES` x1, gas never
-  held for completion).
-- Long `20261016_130037` (141 s wall, 570 s game, rich: Probe=37
-  Dragoon=11 Nexus=2, cap-inconclusive): lottery blank - no Core cancel
-  (#88), no `ORDER_SAVING` (#71), `SINGULARITY_APPLIES` x3 firing at
-  2 Dragoons + gas 180-204 but bank never holding 150/150 (#72
-  unproven); twins flowing (`GAS_FIX` x5, `DRAGOON_TRAIN` x13).
-- Owner long `20261016_104914` (corner spawn [119,10], Nexus=2 Pylon=9
-  Gateway=4 Dragoon=6, cap-inconclusive): 7x scout-idle (now terminal
-  fallback to unexplored natural/third/fourth), 12x `PYLON_FIND_FAILED`
-  + 3x `Can't find place` at supply 21-27 (now last-resort ladder;
-  later Pylons landed anyway once the natural opened ground).
 - Last recorded `--long` pass: 210002, 912 s, exit 0 (Nexus=6 Dragoon=7
   Forge=1, first ever; gas 270+; Singularity correctly idle at one
   Dragoon). Log not retained.
-- Today: short FAILs its gate (4:40 game-time in 30 s wall, dragoons=0
-  vs 1 expected); long FAILs its gate twice (8:51 with dragoons=6
-  zealots=12; corner spawn [119,10] with 42x `Can't find place` -
-  #81 reproduces). The 13:24 runs had 0 placement failures.
 - Feeder: first `BOARD_FED` observed `20261015_143903` (supply-pylon at
   a 39/41 block); 0 in all other retained logs.
   `ORDER_SAVING_FOR_EXPANSION` 0 everywhere (string present in
   `IsReadyToProduceOrder:76`, never fires - `20261015_150026` long run
   included). Raw counts, no diagnosis.
-- Long `20261015_150026` (8:43 game-time, 0 placement failures, 20
-  ledger rows): Gateway BO #3 warped twice (3:36 sup23, 4:12 sup27);
-  dynamic Gateway #143 cancelled by refresh at `[94,111]` and
-  re-requested; no Core cancel (Core warped 2:36, #88 still needs its
-  game); Forge warped 6:56.
 - Long `20261015_185046` (141 s wall, 575 s game, 0 kills, rich
   economy: Nexus=2 Probe=31 Pylon=13 Gateway=5 Zealot=15 Core Dragoon=6
   Forge; shutdown-hook summary worked): `SINGULARITY_APPLIES` firing,
   completion unproven (#72); 2 Pylon refresh-cancels, no Core cancel
   (#88), no `ORDER_SAVING` (#71); hang-watcher fired once on
   busy-compute (57 s CPU, not deadlock).
-- Long `20261015_170339` (guarded jar, 9:30, 49 warps, 1 Assimilator
-  refusal + 1 refresh Gateway cancel): Gateway adoptions sparse against
-  120 same-tile accepts - the adopted-order path is closed, the live
-  loop is not (see #57). Quiet `20261015_165943` (7:22, 42 rows, no
-  cancels, Gateways on time at 9/10): clean baseline, nothing to fix.
-  Per-add attribution without stacks since `CONSTRUCTION_REQUESTED`
-  rows (`20261015_185504`: all 4 via `ProduceBuilding.produceBuilding`).
-- Long `20261015_191932` (141 s wall, 539 s game, rich economy, 44
-  warps, shutdown summary worked): same-tile accepts max 6-in-2-s
-  bursts converging to warps (was 41-121 sustained) - closes #57.
-- Watch datum (unattributed): `PhotonC ADDED TO QUEUE` x15 between
-  8:28-8:51 game-time (`20261015_132452`). Candidate mechanism fixed:
-  fortification demand ignored PREPARING sites and re-fired rows faster
-  than builders arrived (now counted); rows predate the ledger so the
-  shape itself stays unconfirmed.
-- Shutdown-hook summary proven `20261015_181553`: a wall-killed short
-  run now ends with `### Stopped (no game end reached) after 302
-  seconds. ###` + roster instead of mid-frame silence.
-- Long `20261016_104113` (140 s wall, cap-inconclusive, Gateway=3 Core=1
-  Assimilator=1 Zealot=5): first game on the event twins - `GAS_FIX`
-  ok-row for [86,118] at 3:55, old strings 0 in both logs, Assimilator
-  warped with no cancel cascade, 0 exceptions. The two `WTF` lines are
-  Gateway (non-gas path, re-queued by design). `DRAGOON_TRAIN` /
-  `SINGULARITY_APPLIES` unfired (no Dragoons) - code-verified, live fire
-  pending a Dragoon game.
 - Wine first Pylon still unbuilt in both instances (see #84); the
   convertible-waiters fix plus walking-builder shield are in the jar,
   final proof is the owner's re-run.
