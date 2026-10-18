@@ -37,62 +37,62 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker.addParam(new Param(
                 "KiteEnemyTiles",
                 () -> BattleCommander.KITE_ENEMY_TILES,
-                () -> BattleCommander.KITE_ENEMY_TILES = ARandom.rand(40, 60) / 10.0
+                () -> { applyOrRandomize("KiteEnemyTiles", 40, 60, 10.0, v -> BattleCommander.KITE_ENEMY_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteGlueTiles",
                 () -> BattleCommander.KITE_GLUE_TILES,
-                () -> BattleCommander.KITE_GLUE_TILES = ARandom.rand(3, 8) / 10.0
+                () -> { applyOrRandomize("KiteGlueTiles", 3, 8, 10.0, v -> BattleCommander.KITE_GLUE_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteStepTiles",
                 () -> BattleCommander.KITE_STEP_TILES,
-                () -> BattleCommander.KITE_STEP_TILES = ARandom.rand(15, 30) / 10.0
+                () -> { applyOrRandomize("KiteStepTiles", 15, 30, 10.0, v -> BattleCommander.KITE_STEP_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteHuntedTiles",
                 () -> BattleCommander.KITE_HUNTED_TILES,
-                () -> BattleCommander.KITE_HUNTED_TILES = ARandom.rand(0, 10) / 10.0
+                () -> { applyOrRandomize("KiteHuntedTiles", 0, 10, 10.0, v -> BattleCommander.KITE_HUNTED_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteFacedTiles",
                 () -> BattleCommander.KITE_FACED_TILES,
-                () -> BattleCommander.KITE_FACED_TILES = ARandom.rand(0, 10) / 10.0
+                () -> { applyOrRandomize("KiteFacedTiles", 0, 10, 10.0, v -> BattleCommander.KITE_FACED_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginBaseTiles",
                 () -> BattleCommander.KITE_MARGIN_BASE_TILES,
-                () -> BattleCommander.KITE_MARGIN_BASE_TILES = ARandom.rand(5, 15) / 10.0
+                () -> { applyOrRandomize("KiteMarginBaseTiles", 5, 15, 10.0, v -> BattleCommander.KITE_MARGIN_BASE_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginDyingTiles",
                 () -> BattleCommander.KITE_MARGIN_DYING_TILES,
-                () -> BattleCommander.KITE_MARGIN_DYING_TILES = ARandom.rand(30, 50) / 10.0
+                () -> { applyOrRandomize("KiteMarginDyingTiles", 30, 50, 10.0, v -> BattleCommander.KITE_MARGIN_DYING_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginPerHitTiles",
                 () -> BattleCommander.KITE_MARGIN_PER_HIT_TILES,
-                () -> BattleCommander.KITE_MARGIN_PER_HIT_TILES = ARandom.rand(15, 35) / 100.0
+                () -> { applyOrRandomize("KiteMarginPerHitTiles", 15, 35, 100.0, v -> BattleCommander.KITE_MARGIN_PER_HIT_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteZealotPassDamage",
                 () -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE,
-                () -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE = ARandom.rand(140, 180) / 10.0
+                () -> { applyOrRandomize("KiteZealotPassDamage", 140, 180, 10.0, v -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteStandoffInsetTiles",
                 () -> BattleCommander.KITE_STANDOFF_INSET_TILES,
-                () -> BattleCommander.KITE_STANDOFF_INSET_TILES = ARandom.rand(0, 10) / 10.0
+                () -> { applyOrRandomize("KiteStandoffInsetTiles", 0, 10, 10.0, v -> BattleCommander.KITE_STANDOFF_INSET_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteGlideDeadbandTiles",
                 () -> BattleCommander.KITE_GLIDE_DEADBAND_TILES,
-                () -> BattleCommander.KITE_GLIDE_DEADBAND_TILES = ARandom.rand(2, 8) / 10.0
+                () -> { applyOrRandomize("KiteGlideDeadbandTiles", 2, 8, 10.0, v -> BattleCommander.KITE_GLIDE_DEADBAND_TILES = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteRideFrames",
                 () -> BattleCommander.KITE_RIDE_FRAMES,
-                () -> BattleCommander.KITE_RIDE_FRAMES = ARandom.rand(20, 40)
+                () -> { applyOrRandomizeInt("KiteRideFrames", 20, 40, v -> BattleCommander.KITE_RIDE_FRAMES = v); return null; }
         ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
@@ -135,4 +135,35 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker.initParamValues();
     }
 
+    private static void applyOrRandomize(String name, int min, int max, double div, java.util.function.DoubleConsumer setter) {
+        String raw = atlantis.config.env.Env.rawEnv(name);
+        double value;
+        if (raw != null) {
+            double parsed;
+            try { parsed = Double.parseDouble(raw.trim()); }
+            catch (NumberFormatException e) { parsed = ARandom.rand(min, max) / div; }
+            value = parsed;
+        }
+        else {
+            value = ARandom.rand(min, max) / div;
+        }
+        setter.accept(value);
+        AConsole.println("ParamTweaker " + name + " = " + value + (raw != null ? " (ENV)" : " (random)"));
+    }
+
+    private static void applyOrRandomizeInt(String name, int min, int max, java.util.function.IntConsumer setter) {
+        String raw = atlantis.config.env.Env.rawEnv(name);
+        int value;
+        if (raw != null) {
+            int parsed;
+            try { parsed = Integer.parseInt(raw.trim()); }
+            catch (NumberFormatException e) { parsed = ARandom.rand(min, max); }
+            value = parsed;
+        }
+        else {
+            value = ARandom.rand(min, max);
+        }
+        setter.accept(value);
+        AConsole.println("ParamTweaker " + name + " = " + value + (raw != null ? " (ENV)" : " (random)"));
+    }
 }

@@ -100,6 +100,24 @@ public class EventLog {
         if (flushDue(frame, lastFlushFrame)) flush();
     }
 
+    /** How many buffered rows carry this key (tuning scoreboard reads hits off the twins). */
+    public static int countByKey(LogKey key) {
+        int count = 0;
+        for (Row row : buffer) {
+            if (row.key == key) count++;
+        }
+        return count;
+    }
+
+    /** How many buffered rows carry this key with a param equal to the given value. */
+    public static int countByKeyParam(LogKey key, String param, Object value) {
+        int count = 0;
+        for (Row row : buffer) {
+            if (row.key == key && value.equals(row.params.get(param))) count++;
+        }
+        return count;
+    }
+
     public static boolean flushDue(int frame, int lastFlush) {
         return frame - lastFlush >= FLUSH_EVERY_FRAMES;
     }

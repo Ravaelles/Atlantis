@@ -35,6 +35,18 @@ public class Env {
     private static ProductionV2Mode productionV2 = ProductionV2Mode.OFF;
 
     /**
+     * Raw ENV lines by upper-cased key, kept so parameterized subsystems
+     * (tuner coefficients) can read explicit values without one static
+     * field per knob in this class. Direction-safe: readers live in
+     * domain/debug code that already depends on config, never the reverse.
+     */
+    private static final java.util.Map<String, String> rawEnv = new java.util.HashMap<>();
+
+    /** Raw ENV value for key (upper-cased), or null when absent. */
+    public static String rawEnv(String key) {
+        return key == null ? null : rawEnv.get(key.toUpperCase());
+    }
+    /**
      * PLACEMENT=CATALOGUE selects the rewritten planner; false keeps legacy.
      */
     private static boolean placementCatalogue = false;
@@ -144,6 +156,7 @@ public class Env {
     }
 
     private static boolean applyKeyAndValueToFlag(String key, String value) {
+        rawEnv.put(key, value);
         switch (key) {
             case "BWAPI_DATA_PATH":
                 AtlantisIgniter.setBwapiDataPath(value);
@@ -215,6 +228,12 @@ public class Env {
                 openBW = launcher.equalsIgnoreCase("OPENBW");
                 wine = launcher.equalsIgnoreCase("WINE");
                 wineClient = launcher.equalsIgnoreCase("WINECLIENT");
+                return true;
+            case "PARAM_TWEAKER":
+                // Overnight tuning loop (owner): the game randomizes the
+                // registered coefficients at start and appends W/L, frames,
+                // kills, losses, hits taken and the values to CSV.
+                paramTweaker = trueFalse(value);
                 return true;
             default:
                 // Wine game-window geometry, tweakable without recompiling.

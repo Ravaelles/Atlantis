@@ -5,6 +5,8 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 
 import atlantis.util.AFile;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +40,8 @@ public class ParamTweakerEvaluator {
                 "Seconds",
                 "Killed",
                 "Lost",
+                "HitsTaken",
+                "ShotsFired",
                 "Score"
         };
         return Stream.concat(Arrays.stream(base), Arrays.stream(paramNames())).toArray(String[]::new);
@@ -68,12 +72,22 @@ public class ParamTweakerEvaluator {
         return string.toString();
     }
 
+    private static int hitsTaken() {
+        return EventLog.countByKey(LogKey.HIT);
+    }
+
+    private static int shotsFired() {
+        return EventLog.countByKeyParam(LogKey.SHOT, "result", "shot-fired");
+    }
+
     private static String resultString(boolean winner) {
         return timeString() + DELIMITER
                 + (winner ? "W" : "L") + DELIMITER
                 + A.seconds() + DELIMITER
                 + Atlantis.KILLED + DELIMITER
                 + Atlantis.LOST + DELIMITER
+                + hitsTaken() + DELIMITER
+                + shotsFired() + DELIMITER
                 + score(winner) + DELIMITER
                 + paramsString();
     }
