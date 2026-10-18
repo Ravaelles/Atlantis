@@ -150,6 +150,14 @@ public class MoveAway {
             }
         }
 
+        // A clamped micro-step is not a step (Wine 1Drag_v_1Zeal:
+        // steps issued every frame while the unit stood still for
+        // 11 frames at a time - bounds-clamped and wall-slid aims
+        // validate a few pixels away and the order executes to
+        // nowhere). Demand at least half the requested distance or
+        // there is no step and the caller fights instead.
+        if (unit.distTo(newPosition) < moveDistance / 2) return null;
+
         if (newPosition == null) {
             ErrorLog.printErrorOnce("Cannot moveAwayFrom " + aim + " for " + unit.name());
             return null;
