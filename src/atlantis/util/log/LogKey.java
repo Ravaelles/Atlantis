@@ -65,6 +65,8 @@ public enum LogKey {
     TRAIN_ATTEMPT,
     /** A catalogue answer for a legacy site search: answered tile or decline reason. */
     CATALOGUE_SITE,
+    /** A kiting step or a kite with nowhere to go (dist x10, cooldown, result). */
+    KITE,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
     /** A base order the refresh sees (throttled): type, status, bank, supply. */

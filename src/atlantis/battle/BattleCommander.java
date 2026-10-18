@@ -133,8 +133,15 @@ public class BattleCommander extends Commander {
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
                 .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
             if (threat != null && shouldKite(unit, threat)) {
-                unit.moveAwayFrom(threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite");
-                return;
+                // A failed step must never mean standing idle: a cornered
+                // Dragoon fights instead of waiting to die (Wine
+                // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
+                // then trading at point blank).
+                if (unit.moveAwayFrom(threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
+                    KiteTwin.steppedAside(unit, threat);
+                    return;
+                }
+                KiteTwin.nowhereToStep(unit, threat);
             }
             unit.attackUnit(target);
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
