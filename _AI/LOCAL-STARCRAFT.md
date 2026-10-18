@@ -38,6 +38,27 @@ the game played on, the logs were collected by hand). Contained window
 via `WINE_VIRTUAL_DESKTOP=WxH` (opt-in until injection through it is
 proven).
 
+**Who may run Wine games (standing rule, owner 2026-10-18):**
+CONVENTIONS §14 still gates this - no Wine/StarCraft launch unless the
+owner asks for exactly that. Standing clarification: Wine games are
+worth running for now, but kept to the minimum - only when a hunt or a
+fix proof needs the real engine/opponent (OpenBW spawns none, NEXT
+#94), or on the owner's explicit "you may run Wine now". Procedure and
+post-run checks: `_AI/CHALLENGES/GameExecution.md` §8.
+
+**Exit at supply 50 is the default because the opening is where the
+defects live (owner 2026-10-18):** the standing war is excessive
+Pylons - duplicate same-need orders land together and the game slides
+from e.g. 30/48 toward 38/65: free supply ballooning while the bank
+hoards, with no own losses to explain it (i.e. not a post-battle
+rebuild). That shape IS the wrong state, and it is visible by supply
+25-30 - so the vast majority of Wine games end at Supply Used = 50 via
+`FORCE_END_AT_SUPPLY`. It catches practically every defect under work
+(supply duplicates/blocks, power gating, siting, builder stalls) at a
+fraction of the run cost. Longer games only when the hunt needs them
+(late tech, #71/#85 windows, real fights). Duplicate-class detail:
+NEXT #144 / `work-orders/WO-144-supply-single-author.md`.
+
 **Why it cannot be started from the IDE the way Windows was:** the bot JVM
 must be a Windows process (under Wine with the Windows JRE) or its JBWAPI
 never sees the BWAPI server's shared memory. IntelliJ runs the Linux JVM
