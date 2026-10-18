@@ -12,9 +12,11 @@ import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * Fallback Pylons go out EARLY, not at the cap (owner ask: much earlier,
- * like the old ASupplyManager's 2/4/5/8/10/14/19 bands - the interim table
- * capped games the old one rode through).
+ * Fallback Pylons go out just before the cap, never for a hoard (owner
+ * order 2026-10-19, Wine 38/65 = 27 free: free supply never above
+ * 12-14, a Pylon lands +8, so every band triggers at 6 or below).
+ * This reverts the 2026-10-14 anticipation - a fast pump can now
+ * outrun the warp and block, which the SUPPLY_BLOCKED twin names live.
  */
 public class FallbackSupplyThresholdTest extends WorldStubForTests {
 
@@ -45,7 +47,7 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
     }
 
     @Test
-    public void ordersPylonNineAheadInMidGame() {
+    public void holdsPylonAtNineFree() {
         initSupply(31, 40);
 
         world(20, fakeOurs(
@@ -55,10 +57,28 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
             // shouldProduce acts only on its own frame (every 19th).
             if (atlantis.game.A.now() != 19) return;
 
+            assertFalse(
+                new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
+                "9 free at 31/40 is above the 6 trigger (owner cap 2026-10-19:"
+                    + " free supply never above 12-14, a Pylon lands +8) -"
+                    + " the old 9-ahead anticipation is reverted");
+        });
+    }
+
+    @Test
+    public void ordersPylonAtSixFree() {
+        initSupply(34, 40);
+
+        world(20, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 19) return;
+
             assertTrue(
                 new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
-                "9 free at 31/40 in the 46-band (trigger 10): one warp of"
-                    + " headroom - waiting for the cap wastes a warp");
+                "6 free at 34/40 hits the trigger - one warp of headroom"
+                    + " before the cap");
         });
     }
 

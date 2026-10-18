@@ -96,14 +96,15 @@ public class SupplyCommander extends Commander {
                 }
             }
             else if (supplyTotal <= 46) {
-                if (supplyFree <= 8 && noSuppliesBeingBuilt || (supplyFree <= 1 && A.hasMinerals(350))) {
+                if (supplyFree <= 6 && noSuppliesBeingBuilt || (supplyFree <= 0 && A.hasMinerals(350))) {
                     requestAdditionalSupply();
                 }
             }
             else if (supplyTotal <= 75) {
+                // CAPPED 2026-10-19 (owner order, free never above 12-14).
                 if (
-                    (supplyFree <= 10 && suppliesBeingBuilt <= (A.hasMinerals(400) ? 2 : 1))
-                        || (supplyFree <= 7 && suppliesBeingBuilt <= (1 + A.minerals() / 250))
+                    (supplyFree <= 6 && suppliesBeingBuilt <= (A.hasMinerals(400) ? 2 : 1))
+                        || (supplyFree <= 6 && suppliesBeingBuilt <= (1 + A.minerals() / 250))
                         || (supplyFree <= 4 && suppliesBeingBuilt <= (1 + A.minerals() / 200))
                 ) {
                     requestAdditionalSupply();
@@ -115,6 +116,7 @@ public class SupplyCommander extends Commander {
 //                    return;
 //                }
 
+                // CAPPED 2026-10-19 (owner order, free never above 12-14).
                 if (supplyFree <= 4 && suppliesBeingBuilt <= 2) {
                     requestAdditionalSupply();
                     return noSuppliesBeingBuilt;
@@ -125,23 +127,23 @@ public class SupplyCommander extends Commander {
                     return noSuppliesBeingBuilt;
                 }
 
-                if (supplyFree <= 12 && suppliesBeingBuilt <= 0) {
+                if (supplyFree <= 6 && suppliesBeingBuilt <= 0) {
                     requestAdditionalSupply();
                     return noSuppliesBeingBuilt;
                 }
 
                 if (supplyTotal <= 120) {
-                    if (suppliesBeingBuilt <= 1 && supplyFree <= (12 / Math.max(1, suppliesBeingBuilt))) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= (6 / Math.max(1, suppliesBeingBuilt))) {
                         requestAdditionalSupply();
                     }
                 }
                 else if (supplyTotal <= 170) {
-                    if (suppliesBeingBuilt <= 1 && supplyFree <= 12 || suppliesBeingBuilt <= (A.minerals() / 300)) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 6 || suppliesBeingBuilt <= (A.minerals() / 300)) {
                         requestAdditionalSupply();
                     }
                 }
                 else if (supplyTotal <= 200) {
-                    if (suppliesBeingBuilt <= 1 && supplyFree <= 19) {
+                    if (suppliesBeingBuilt <= 1 && supplyFree <= 6) {
                         requestAdditionalSupply();
                     }
                 }
@@ -155,9 +157,11 @@ public class SupplyCommander extends Commander {
     }
 
     private boolean tooFewSupplyLeftAsForGateways() {
+        // CAPPED 2026-10-19 with the fallback bands (owner order, free never
+        // above 12-14): gateway foresight thresholds at 6 (a Pylon lands +8).
         return We.protoss()
             && A.supplyTotal() >= 30
-            && !A.hasFreeSupply((A.hasMinerals(120) ? 1 : 0) + 2 * Count.gateways());
+            && !A.hasFreeSupply(Math.min(6, (A.hasMinerals(120) ? 1 : 0) + 2 * Count.gateways()));
     }
 
     private boolean isSupplyVeryLow() {

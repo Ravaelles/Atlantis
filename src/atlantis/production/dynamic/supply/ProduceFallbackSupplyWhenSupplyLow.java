@@ -27,15 +27,23 @@ public abstract class ProduceFallbackSupplyWhenSupplyLow {
         // (≈ one warp of worker output). Opening bands unchanged (BO/PylonAt8
         // own the start); in-flight caps below are unchanged.
         int supplyTotal = A.supplyTotal();
-        if (supplyTotal <= 11) return 2 + bonus;
-        if (supplyTotal <= 20) return 4 + bonus;
-        if (supplyTotal <= 36) return 8 + bonus;
-        if (supplyTotal <= 46) return 10 + bonus;
-        if (supplyTotal <= 70) return 12 + bonus;
-        if (supplyTotal <= 120) return 16 + bonus;
-        if (supplyTotal <= 170) return 16 + bonus;
-        if (supplyTotal <= 200) return 22 + bonus;
-        return -1;
+        // CAPPED 2026-10-19 (owner order, Wine 38/65 = 27 free): free supply
+        // never exceeds 12-14, so every band triggers at 6 or below (a Pylon
+        // lands +8). Reverts the 2026-10-14 anticipation; a fast pump can now
+        // outrun the 600f warp and block - the accepted tradeoff, named live
+        // by the SUPPLY_BLOCKED twin. Cross-author duplicates are NOT fixed
+        // here (WO-144 single author is the real fix, still open).
+        int band;
+        if (supplyTotal <= 11) band = 2 + bonus;
+        else if (supplyTotal <= 20) band = 4 + bonus;
+        else if (supplyTotal <= 36) band = 8 + bonus;
+        else if (supplyTotal <= 46) band = 10 + bonus;
+        else if (supplyTotal <= 70) band = 12 + bonus;
+        else if (supplyTotal <= 120) band = 16 + bonus;
+        else if (supplyTotal <= 170) band = 16 + bonus;
+        else if (supplyTotal <= 200) band = 22 + bonus;
+        else band = -1;
+        return band < 0 ? -1 : Math.min(6, band);
     }
 
     protected boolean produceOne() {
