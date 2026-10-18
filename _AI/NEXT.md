@@ -205,8 +205,8 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-18 (`rm -rf out` first): unit 759/759 green, 0
-skipped (was 743 - vanguard + travelling-status pins landed after that
+Re-measured 2026-10-19 (`rm -rf out` first): unit 763/763 green, 0
+skipped (was 759 - spam-door + stuck-twin pins landed after that
 count; counts rot, re-measure before quoting).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
