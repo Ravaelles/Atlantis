@@ -40,6 +40,7 @@ public final class BoardState {
     public final boolean enemyHasRanged;
     public final boolean enemyGoingHidden;
     public final int gatewaysUnfinished;
+    public final boolean ourForgeExpand;
 
     private BoardState(Builder builder) {
         this.minerals = builder.minerals;
@@ -74,6 +75,7 @@ public final class BoardState {
         this.enemyHasRanged = builder.enemyHasRanged;
         this.enemyGoingHidden = builder.enemyGoingHidden;
         this.gatewaysUnfinished = builder.gatewaysUnfinished;
+        this.ourForgeExpand = builder.ourForgeExpand;
     }
 
     public int supplyFree() {
@@ -121,6 +123,7 @@ public final class BoardState {
         private boolean enemyHasRanged;
         private boolean enemyGoingHidden;
         private int gatewaysUnfinished;
+        private boolean ourForgeExpand;
 
         public Builder minerals(int minerals) {
             this.minerals = minerals;
@@ -272,6 +275,18 @@ public final class BoardState {
         /** Gateways still warping (Forge timing waits for production first). */
         public Builder gatewaysUnfinished(int gatewaysUnfinished) {
             this.gatewaysUnfinished = gatewaysUnfinished;
+            return this;
+        }
+
+        /**
+         * Our opening is Forge Expand (owner 2026-10-18: the natural
+         * wall-in only makes sense on FE - everywhere else it parks a
+         * builder on an unpowered anchor and strangles the pump, measured
+         * on Wine at [49,107]). Defaults to false; the adapter reads it
+         * off the chosen strategy.
+         */
+        public Builder forgeExpand(boolean ourForgeExpand) {
+            this.ourForgeExpand = ourForgeExpand;
             return this;
         }
 

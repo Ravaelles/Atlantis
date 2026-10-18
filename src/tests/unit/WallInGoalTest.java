@@ -18,10 +18,15 @@ public class WallInGoalTest {
     private final WallInGoal goal = new WallInGoal();
 
     private BoardState state(String race, boolean core, int pieces) {
+        return state(race, core, pieces, true);
+    }
+
+    private BoardState state(String race, boolean core, int pieces, boolean forgeExpand) {
         return BoardState.builder()
             .minerals(400).supply(30, 40)
             .workers(20).bases(2).gateways(2).army(6)
             .enemyRace(race).core(core).wallPieces(pieces)
+            .forgeExpand(forgeExpand)
             .seconds(400)
             .build();
     }
@@ -42,6 +47,13 @@ public class WallInGoalTest {
     @Test
     public void quietWithoutCore() {
         assertFalse(goal.active(state("Zerg", false, 0)));
+    }
+
+    @Test
+    public void quietWhenNotForgeExpand() {
+        assertFalse(goal.active(state("Zerg", true, 0, false)),
+            "owner 2026-10-18: the natural wall-in only makes sense on FE - "
+                + "on any other opening the goal stays quiet");
     }
 
     @Test

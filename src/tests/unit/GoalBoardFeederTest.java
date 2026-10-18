@@ -97,11 +97,12 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
                 .minerals(400).supply(30, 40)
                 .workers(20).bases(2).gateways(2).army(6)
                 .enemyRace("Zerg").core(true).wallPieces(0)
+                .forgeExpand(true)
                 .seconds(400)
                 .build();
             GoalBoardFeeder.ensure(wallState);
 
-            assertTrue(GoalBoardFeeder.wantedGoal("wall-in"), "Zerg + core + bare choke is wanted");
+            assertTrue(GoalBoardFeeder.wantedGoal("wall-in"), "Zerg + core + FE + bare choke is wanted");
             assertFalse(GoalBoardFeeder.wantedGoal("no-such-goal"), "unknown ids are never wanted");
         });
     }

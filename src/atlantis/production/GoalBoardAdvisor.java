@@ -116,7 +116,19 @@ public class GoalBoardAdvisor extends Commander {
             .enemyHasRanged(atlantis.information.enemy.EnemyInfo.hasRanged())
             .enemyGoingHidden(atlantis.information.strategy.Strategy.get().isGoingHiddenUnits())
             .gatewaysUnfinished(Count.gatewaysWithUnfinished())
+            .forgeExpand(isForgeExpand())
             .build();
+    }
+
+    /**
+     * Our opening is Forge Expand (owner 2026-10-18: the natural wall-in
+     * only makes sense on FE). Null-safe: the snapshot must survive a
+     * half-initialised game, same as {@code Strategy.current()}.
+     */
+    private static boolean isForgeExpand() {
+        atlantis.information.strategy.AStrategy strategy =
+            atlantis.information.strategy.Strategy.current();
+        return strategy != null && strategy.nameContains("Forge FE");
     }
 
     /**

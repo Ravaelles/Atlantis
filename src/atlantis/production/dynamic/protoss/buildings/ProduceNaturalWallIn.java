@@ -2,6 +2,7 @@ package atlantis.production.dynamic.protoss.buildings;
 
 import atlantis.decisions.goals.protoss.WallInGoal;
 import atlantis.game.player.Enemy;
+import atlantis.information.strategy.Strategy;
 import atlantis.map.analysis.WallAnchors;
 import atlantis.map.analysis.WallKit;
 import atlantis.map.analysis.WallPieces;
@@ -42,8 +43,22 @@ public class ProduceNaturalWallIn {
     /** A piece standing or coming this near its tile counts as placed. */
     private static final double PIECE_RADIUS = 6;
 
+    /**
+     * Null-safe FE read: the emitter runs before the strategy is chosen
+     * on the first frames, and must stay quiet then, not throw.
+     */
+    private static boolean isForgeExpand() {
+        atlantis.information.strategy.AStrategy strategy = Strategy.current();
+        return strategy != null && strategy.nameContains("Forge FE");
+    }
+
     public static boolean produce() {
         if (!We.protoss()) return false;
+        // Owner 2026-10-18: FE openings only. The board goal carries the
+        // same condition, but its stale-board fallback (boardFresh false)
+        // would still fire on non-FE - so the emitter gates explicitly
+        // too, and never relies on ranking freshness for this.
+        if (!isForgeExpand()) return false;
         // The board owns the WHEN (WallInGoal): fresh rankings decide, stale
         // ones fall back to the legacy trigger below. Opening ownership stays
         // an execution guard either way - rows are cheap, builders are not.
