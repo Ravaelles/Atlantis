@@ -421,14 +421,17 @@ twins green (1/1 each, re-verified today). Re-run
   REQUESTED then proximity-cancelled the same frame, ~20 constructions
   on tile [105,110], several STARTED with a builder then killed the
   same frame because standing Gateway [103,112] grazes the footprint
-  2x1 tiles). The demand row lives (standing count < wanted), the site
-  is truly unbuildable (engine would refuse the overlapped tiles), but
-  the finder keeps returning it and the refresh loop churns builders.
-  Candidates (design, no patch yet): re-site memory per (order, tile)
-  after K proximity finishes; count a covering standing building as
-  satisfying that demand unit; validate exact demand against cover at
-  request time. Proof: a game where the loop is gone and the demand
-  lands elsewhere or stands down.
+  2x1 tiles). Second instance, fully attributed (Wine, decidable now
+  that BUILD rows carry oid+context): oid 72 "At 30 Gateway*" 39 BUILD
+  rows + oid 78 "At 37 Gateway*" 35 rows, every one a fresh cid on
+  [116,19] cancelled same-frame against standing Gateway [114,18];
+  both eventually warped elsewhere ([116,23] 5:07, [123,26] 5:38).
+  Landed 2026-10-18: spiral checklist refuses standing-covered sites
+  (mirror of the finish overlap half, stub-pinned 5/5); PREPARING
+  adopts still walk into cover (Pylon #11: 2 adopts on [119,12]) and
+  the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
+  two doors stay open. Proof: a covered-tile game where the loop is
+  gone (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
@@ -666,6 +669,16 @@ twins green (1/1 each, re-verified today). Re-run
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-19)
+
+- OpenBW `TauCross` LONG (16575f, 11.5 game-min, wall-cap exit 143 -
+  inconclusive as verdict, rich as data): roster Nexus=2 Probe=44
+  Pylon=15 Gateway=7 Dragoon=10 Forge=1 PhotonC=1 RoboticsF=1. 57
+  BUILD rows, every legacy-path order exactly one row (new oid+context
+  suffix live: adopts name their cid, re-requests name link-null).
+  No same-tile REQUESTED+CANCEL storm; new standing-cover refusal 0
+  fires (spiral offered no covered tile). live-construction refusals 0
+  (guard dormant, no regression). Open doors, named: sited PhotonC
+  21x at [115,15], two PREPARING Pylon adopts into cover (#151).
 
 - Wine `TauCross` SHORT (exit at supply 51 via `ForceExitAtSupply`,
   clean end, ~6 min game-s: 26 ledger rows, BUILDER_LOG=1, full new
