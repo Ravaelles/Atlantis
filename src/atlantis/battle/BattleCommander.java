@@ -198,8 +198,14 @@ public class BattleCommander extends Commander {
             // whole cooldown while the threat closes for free - the
             // stutter that bled every cycle (all 6 hits of the glue
             // game landed while alternating move with attack-stop).
-            // Only a ready weapon or a finished move re-arms the attack.
-            if (unit.cooldown() > 0 && unit.isMoving()
+            // Only a ready weapon re-arms the attack. Deliberately NOT
+            // gated on isMoving: one acceleration frame still reports
+            // idle velocity, and that single gap re-armed the attack
+            // every second frame (Wine 1Drag_v_1Zeal: 28 steps in 63
+            // frames, dist shrinking 1.9->1.3 while "retreating").
+            // The kite branch above still preempts for new threats, and
+            // a finished glide re-arms via the attack check below.
+            if (unit.cooldown() > 0
                 && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < KITE_RIDE_FRAMES) return;
             // Order discipline, not order spam: a new attack order issues
             // only when the engine holds a different target (first
