@@ -44,6 +44,15 @@ public final class ADecision {
     private final int minerals;
     private final int gas;
     private final List<ADecision> children;
+    /**
+     * The demand-side order behind this act, when there is one (a queued
+     * production row, a sited request). Null for orderless acts. Logged
+     * as {@code oid} so every DECISIONS row joins its EVENTS chain
+     * (REQUESTED/PREPARING/STARTED/CANCEL/ledger all carry cid+oid) -
+     * without it repeats for one order read as one row each and the
+     * cycle behind them is guesswork.
+     */
+    private final Integer orderId;
 
     /**
      * Engine-side payload (a base, an order, ...). Never logged, never
@@ -63,6 +72,7 @@ public final class ADecision {
         this.minerals = builder.minerals;
         this.gas = builder.gas;
         this.payload = builder.payload;
+        this.orderId = builder.orderId;
         this.children = Collections.unmodifiableList(new ArrayList<>(builder.children));
     }
 
@@ -106,13 +116,17 @@ public final class ADecision {
         return children;
     }
 
+    public Integer orderId() {
+        return orderId;
+    }
+
     /**
      * Copy stamped with the issue frame. Questions answer against
      * snapshots (frame unknown there); the door stamps the clock.
      */
     public ADecision atFrame(int frame) {
         return new ADecision(kind, subject, reason, source,
-            frame, supplyUsed, supplyTotal, minerals, gas, payload, children);
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, children, orderId);
     }
 
     public Object payload() {
@@ -123,7 +137,12 @@ public final class ADecision {
         List<ADecision> grown = new ArrayList<>(children);
         grown.add(child);
         return new ADecision(kind, subject, reason, source,
-            frame, supplyUsed, supplyTotal, minerals, gas, payload, grown);
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, grown, orderId);
+    }
+
+    public ADecision withOrderId(Integer orderId) {
+        return new ADecision(kind, subject, reason, source,
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, children, orderId);
     }
 
     /**
@@ -134,12 +153,13 @@ public final class ADecision {
      */
     public ADecision refine(String subject, String reason, Source source, Object payload) {
         return new ADecision(kind, subject, reason, source,
-            frame, supplyUsed, supplyTotal, minerals, gas, payload, children);
+            frame, supplyUsed, supplyTotal, minerals, gas, payload, children, orderId);
     }
 
     private ADecision(Kind kind, String subject, String reason, Source source,
                       int frame, int supplyUsed, int supplyTotal,
-                      int minerals, int gas, Object payload, List<ADecision> children) {
+                      int minerals, int gas, Object payload, List<ADecision> children,
+                      Integer orderId) {
         this.kind = kind;
         this.subject = subject;
         this.reason = reason;
@@ -151,6 +171,7 @@ public final class ADecision {
         this.gas = gas;
         this.children = Collections.unmodifiableList(new ArrayList<>(children));
         this.payload = payload;
+        this.orderId = orderId;
     }
 
     public static Builder decide(Kind kind, String subject, String reason, Source source) {
@@ -168,6 +189,7 @@ public final class ADecision {
         private int minerals;
         private int gas;
         private Object payload;
+        private Integer orderId;
         private final List<ADecision> children = new ArrayList<>();
 
         public Builder(Kind kind, String subject, String reason, Source source) {
@@ -196,6 +218,11 @@ public final class ADecision {
 
         public Builder payload(Object payload) {
             this.payload = payload;
+            return this;
+        }
+
+        public Builder orderId(Integer orderId) {
+            this.orderId = orderId;
             return this;
         }
 

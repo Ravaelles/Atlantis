@@ -83,6 +83,7 @@ public class DecisionLog {
             .append(",").append(decision.supplyTotal()).append("]");
         out.append(",\"bank\":[").append(decision.minerals())
             .append(",").append(decision.gas()).append("]");
+        out.append(",\"oid\":").append(decision.orderId() == null ? "null" : decision.orderId());
         out.append(",\"children\":[");
         boolean first = true;
         for (ADecision child : decision.children()) {

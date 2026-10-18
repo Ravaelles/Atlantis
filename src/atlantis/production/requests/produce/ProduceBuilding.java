@@ -107,10 +107,40 @@ public class ProduceBuilding {
 
         return DecisionDispatcher.issue(want.refine(
             type.name(),
-            order == null ? "build-want" : order.toString(),
+            demandReason(order),
             order != null && !order.isDynamic()
                 ? ADecision.Source.BUILD_ORDER : ADecision.Source.DYNAMIC,
-            order).atFrame(A.now()));
+            order).withOrderId(order == null ? null : order.id()).atFrame(A.now()));
+    }
+
+    /**
+     * Why this order fires now, in the row itself: the order line plus the
+     * demand-side state behind it - free supply, unfinished buildings of
+     * this type, the order's previous link (cid:STATUS or link-null when a
+     * cancel/unlink dropped it) and whether this issues a fresh site or
+     * adopts the prepared one. A repeat row for one order then names its
+     * own cause (e.g. a re-request after an unlink) instead of reading as
+     * an identical twin of the first row. Pure over primitives so the
+     * shape pins without a game.
+     */
+    static String demandReason(ProductionOrder order) {
+        String line = order == null ? "build-want" : order.toString();
+        int free = A.supplyFree();
+        int unfinished = order == null || order.unitType() == null
+            ? 0 : ConstructionRequests.countNotFinishedOfType(order.unitType());
+        String prev = "link-null";
+        String path = "new";
+        if (order != null && order.construction() != null) {
+            prev = "cid" + order.construction().id() + ":" + order.construction().status();
+            if (order.construction().status() == ConstructionOrderStatus.PREPARING) path = "adopt";
+        }
+        return demandContext(line, free, unfinished, prev, path);
+    }
+
+    public static String demandContext(String line, int freeSupply, int unfinishedOfType,
+                                       String prevLink, String path) {
+        return line + " [free=" + freeSupply + " unfinished=" + unfinishedOfType
+            + " prev=" + prevLink + " path=" + path + "]";
     }
 
     /**
