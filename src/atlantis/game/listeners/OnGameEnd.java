@@ -5,6 +5,7 @@ import atlantis.config.env.Env;
 import atlantis.debug.tweaker.ParamTweakerEvaluator;
 import atlantis.game.A;
 import atlantis.game.AGame;
+import atlantis.game.util.BuildingLedger;
 import atlantis.game.util.GameSummary;
 import atlantis.util.AConsole;
 import atlantis.util.log.EventLog;
@@ -97,8 +98,9 @@ public class OnGameEnd {
             .param("minerals", A.minerals())
             .param("gas", A.gas())
             .log(A.now(), A.minSec());
-        atlantis.util.log.EventLog.flush();
-        atlantis.game.util.BuildingLedger.printTailToStderr();
+        EventLog.flush();
+
+        if (!Env.isLocal()) BuildingLedger.printTailToStderr();
 
         if (!Env.isTesting()) GameSummary.print(won);
         if (Env.isParamTweaker()) ParamTweakerEvaluator.updateOnEnd(won);
