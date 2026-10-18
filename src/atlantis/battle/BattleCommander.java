@@ -104,7 +104,17 @@ public class BattleCommander extends Commander {
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (unit == null || !unit.isAlive()) return;
+        act(unit, tactic, anchor, leader);
+    }
 
+    /**
+     * One unit's act for the frame, extracted so the composition pins
+     * without a game: FLEE with nowhere to go falls through to the
+     * fight logic (no DoNothing deaths on baseless maps), a cooling
+     * Dragoon with a close threat steps back, a mid-animation unit is
+     * never interrupted, otherwise it attacks or regroups.
+     */
+    public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (tactic == FightOrFlight.Tactic.FLEE) {
             HasPosition home = ClusterAnchor.defendAnchor();
             HasPosition point = gatherPointFor(unit, leader, home);
@@ -122,6 +132,12 @@ public class BattleCommander extends Commander {
             target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
         }
         if (target != null) {
+            // Never interrupt our own shot: a move order during the attack
+            // animation cancels the damage (PurpleWave AttackDelay) - the
+            // shot that just started must be allowed to land, so an
+            // animating unit gets no new order at all this frame.
+            if (unit.isAttackFrame() || unit.isStartingAttack()) return;
+
             // A cooling-down Dragoon with ANY enemy on top of it backs off
             // instead of trading at point blank (owner 2026-10-19, Wine
             // 1Drag_v_1Zeal: the Dragoon stood still under a Zealot with

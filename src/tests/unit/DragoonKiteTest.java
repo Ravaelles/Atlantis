@@ -85,4 +85,93 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertFalse(BattleCommander.shouldKite(zealot, null));
         });
     }
+
+    private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
+        return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
+    }
+
+    private static boolean hasOrder(java.util.List<tests.fakes.FakeOrderSink.Record> orders,
+                                    int unitId, String operation) {
+        for (tests.fakes.FakeOrderSink.Record record : orders) {
+            if (record.actorId == unitId && record.operation.equals(operation)) return true;
+        }
+        return false;
+    }
+
+    @Test
+    public void fleeingWithoutAnchorKitesInsteadOfIdling() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+
+        // No Nexus: defendAnchor() is null, so FLEE has nowhere to go.
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FLEE, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "nowhere to run to must still move (kite), never DoNothing: "
+                    + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "a cooling Dragoon steps back instead of trading: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void fleeingWithAnchorRunsThere() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 15;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FLEE, null, null);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "a real anchor still means run: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void midAnimationShotIsNeverInterrupted() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 25;
+
+        // Baseless world, FLEE tactic, close cooling threat.
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            // A shot already in flight: attack first (sets lastCommand
+            // exactly like the real order path does), arm the animation
+            // flag, then forget the setup order and ask for the next act.
+            dragoon.attackUnit(zealot);
+            dragoon.attackFrame = true;
+            ((tests.fakes.FakeOrderSink) dragoon.orderSink()).clear();
+            if (!dragoon.isAttackFrame()) return;
+
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FLEE, null, dragoon);
+
+            assertTrue(ordersOf(dragoon).isEmpty(),
+                "mid-animation: hold the shot, issue nothing");
+        });
+    }
+
+    @Test
+    public void readyDragoonAttacksInsteadOfKiting() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        dragoon.cooldown = 5;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "weapon almost ready: shoot, do not step back: " + ordersOf(dragoon));
+        });
+    }
 }
