@@ -141,6 +141,20 @@ public class PrepareConstructionSite {
             if (construction.status() != ConstructionOrderStatus.PREPARING) continue;
             ProductionOrder order = construction.productionOrder();
             if (order == null || order.isStatus(OrderStatus.FINISHED)) {
+                // Named, not silent: a PREPARING site vanishing with no row
+                // reads as "the pick never happened" (measured on OpenBW:
+                // a dynamic Pylon prepared at [79,107] left one PREPARING
+                // row and nothing else, while its tile got built by a
+                // sibling order). The chain needs the drop to attribute it.
+                EventLog.key(LogKey.CONSTRUCTION_CANCEL)
+                    .param("type", construction.buildingType() == null ? "-"
+                        : construction.buildingType().name())
+                    .param("cid", construction.id())
+                    .param("oid", order == null ? null : order.id())
+                    .param("reason", order == null ? "orphan-drop: order gone" : "orphan-drop: order finished")
+                    .param("tile", construction.buildPosition() == null ? "-"
+                        : construction.buildPosition().toString())
+                    .log(A.now(), A.minSec());
                 ConstructionRequests.removeOrder(construction);
             }
         }
