@@ -636,6 +636,17 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
+- Wine `TauCross` SHORT (exit at supply 51 via `ForceExitAtSupply`,
+  clean end, 364 game-s: Nexus=1 Probe=25 Gateway=3 Dragoon=4 Zealot=7
+  Pylon=6 CyberneticsC=1 Assimilator=1, 24 ledger rows, BUILDER_LOG=1):
+  supply-cap doctrine HOLDS live - peak free 14 all game (was 27),
+  4 BO + 2 single dynamic Pylons, zero same-need duplicates,
+  SUPPLY_BLOCKED 0 (no starvation). Same-builder adoption live
+  (Pylon#1: reserved #22 at pick 0:13, builder 22 at start 0:46).
+  Gateways #2/#3 on time (1:20/1:42), one dynamic #24. 0/0 kills -
+  no enemy contact by supply 51, so engage/cluster still await a
+  fight (stub-pinned, Wine-proven when they touch).
+
 - Wine `TauCross` (910 s, vs real Zerg Grendel Brood, 21/51 kills -4175:
   Nexus=2 Probe=36 Dragoon=2 Pylon=9 Gateway=5 RoboticsF=1, 53 ledger
   rows, BUILDER_LOG=1, feasibly the first game on the cid/oid twins +
