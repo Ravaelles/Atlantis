@@ -87,7 +87,13 @@ attempt does not repeat the search.
   start (Nexus + 5 probes, no pre-placed army) and no enemy spawns -
   no fight, 0/0. `8Drag_v_8Drag` ends at frame 0 (human slots) and
   trips the exit-path backstop (exit code 1, correctly failed by the
-  runner's non-zero-exit gate).
+  runner's non-zero-exit gate). Third datum same day:
+  `maps/ums/rav/protoss/1Drag_v_1Zeal.scm` (the `maps/` prefix is
+  required - bare `ums/...` fails with "Map not found") runs 302
+  game-s but hands the bot a melee start (Nexus + 4 probes, no
+  pre-placed Dragoon, `Dragoon` 0 in log) and spawns no enemy
+  (`enemy: ` empty, 0/0) - the 1v1 micro proof cannot live on
+  OpenBW; Wine stays the vehicle.
 
 ## Decision needed from the owner (updated 2026-10-17, tracked as NEXT #94)
 
