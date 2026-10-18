@@ -89,11 +89,25 @@ since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
   say "Cleaning up"
+  # Restore the bot ENV the run borrowed: WINE_FAST / FORCE_END_AT_SUPPLY
+  # are enforced per-run below and must not leak into watched IDE games
+  # (owner 2026-10-19: test-only flags stay test-only). The backup is taken
+  # next to the enforce block; an absent backup means nothing was changed.
+  if [ -n "${ENV_BACKUP_FILE:-}" ] && [ -f "$ENV_BACKUP_FILE" ]; then
+    cat "$ENV_BACKUP_FILE" > "$ENV_BACKUP_TARGET" 2>/dev/null || true
+    rm -f "$ENV_BACKUP_FILE"
+    say "  bot ENV restored (test flags removed)"
+  fi
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -x Chaoslauncher.exe 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
 }
+
+# Belt and braces: the paths below call cleanup() explicitly, but a signal
+# or an early exit must not leave test flags in the shared ENV file either.
+# cleanup() is idempotent (pkill no-ops, the backup is consumed on restore).
+trap cleanup EXIT
 
 # Where else the client log goes, live. WINE_LOG_COPY in the bot's ENV file
 # (machine-local, git-ignored): when non-empty AND the same file says
@@ -197,6 +211,41 @@ if [ "${BUILD:-1}" = "1" ]; then
 fi
 
 [ -f "$JAR" ] || { say "Bot jar missing at $JAR"; exit 1; }
+
+# Fast Wine, enforced every launch (owner 2026-10-19): the bot reads
+# WINE_FAST in GameSpeed.init() (speed 0, frameskip 500, GUI off, no
+# slowdowns), so an unattended run never renders or waits. Re-asserted
+# here rather than trusted: a slow game must be impossible, not just
+# unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
+# OpenBW ENV (same guard as the live-log copy).
+# Debug-run horizon, not a hard limit (owner 2026-10-19): stop spending
+# game time once defects had room to show (they show by supply 25-30) -
+# shorter games, ~3x smaller logs. Overridable per run, 0 disables.
+FORCE_END_AT_SUPPLY="${FORCE_END_AT_SUPPLY:-50}"
+
+for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
+  if [ -f "$_env_candidate" ] && grep -q "^GAME_LAUNCHER=WINE" "$_env_candidate"; then
+    # Borrow, do not keep: snapshot the shared file so cleanup() can put
+    # it back verbatim (IDE games read the same file and must never see
+    # test flags).
+    ENV_BACKUP_TARGET="$_env_candidate"
+    ENV_BACKUP_FILE="$(mktemp /tmp/opencode/atlantis-env.XXXXXX 2>/dev/null || mktemp /tmp/atlantis-env.XXXXXX)"
+    cp -f "$_env_candidate" "$ENV_BACKUP_FILE"
+    if grep -q "^WINE_FAST=" "$_env_candidate"; then
+      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=1|" "$_env_candidate"
+    else
+      printf '\nWINE_FAST=1\n' >> "$_env_candidate"
+    fi
+    say "  WINE_FAST=1 enforced in $_env_candidate"
+    if grep -q "^FORCE_END_AT_SUPPLY=" "$_env_candidate"; then
+      sed -i -E "s|^FORCE_END_AT_SUPPLY=.*|FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY|" "$_env_candidate"
+    else
+      printf '\nFORCE_END_AT_SUPPLY=%s\n' "$FORCE_END_AT_SUPPLY" >> "$_env_candidate"
+    fi
+    say "  FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY enforced in $_env_candidate (0 disables)"
+    break
+  fi
+done
 
 # The jar path must reach the Wine JVM as a WINDOWS path. Deriving it from
 # $JAR instead of hardcoding it is the whole point: a hardcoded
@@ -385,34 +434,6 @@ else
   say "  Setting race to $CLIENT_RACE (from the client's Main.ourRace())"
 fi
 
-# Fast Wine, enforced every launch (owner 2026-10-19): the bot reads
-# WINE_FAST in GameSpeed.init() (speed 0, frameskip 500, GUI off, no
-# slowdowns), so an unattended run never renders or waits. Re-asserted
-# here rather than trusted: a slow game must be impossible, not just
-# unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
-# OpenBW ENV (same guard as the live-log copy).
-# Debug-run horizon, not a hard limit (owner 2026-10-19): stop spending
-# game time once defects had room to show (they show by supply 25-30) -
-# shorter games, ~3x smaller logs. Overridable per run, 0 disables.
-FORCE_END_AT_SUPPLY="${FORCE_END_AT_SUPPLY:-50}"
-
-for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
-  if [ -f "$_env_candidate" ] && grep -q "^GAME_LAUNCHER=WINE" "$_env_candidate"; then
-    if grep -q "^WINE_FAST=" "$_env_candidate"; then
-      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=1|" "$_env_candidate"
-    else
-      printf '\nWINE_FAST=1\n' >> "$_env_candidate"
-    fi
-    say "  WINE_FAST=1 enforced in $_env_candidate"
-    if grep -q "^FORCE_END_AT_SUPPLY=" "$_env_candidate"; then
-      sed -i -E "s|^FORCE_END_AT_SUPPLY=.*|FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY|" "$_env_candidate"
-    else
-      printf '\nFORCE_END_AT_SUPPLY=%s\n' "$FORCE_END_AT_SUPPLY" >> "$_env_candidate"
-    fi
-    say "  FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY enforced in $_env_candidate (0 disables)"
-    break
-  fi
-done
 
 # Mute the game (owner 2026-10-19): unattended runs need no sound, and a
 # missing audio device must not become a hang. Disabling the backends is
