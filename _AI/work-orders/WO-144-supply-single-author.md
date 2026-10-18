@@ -63,7 +63,8 @@ supply pumps silent.
 
 1. **Demand matrix, stub-pinned** (no game): supply-goal WHEN over
    (free, coming, total, bank) x (BO owns / board owns). New test next
-   to `SupplyGoalTest`, RED then GREEN. No production change.
+   to `SupplyGoalTest` (LANDED 2026-10-18: 3/3 pins WORRY 4/5,
+   coming-suppression at free 0, contribute end to end). No production change.
 2. **DRY_RUN parity on supply rows** (short OpenBW run): with legacy
    executing, V2 DRY_RUN must plan the same provider count ±0 within
    the opening window. Log diff in the commit.
