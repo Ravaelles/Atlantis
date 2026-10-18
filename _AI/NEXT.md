@@ -589,6 +589,16 @@ twins green (1/1 each, re-verified today). Re-run
     default with parity numbers, queue in src-old/.
 ## Current game state (updated 2026-10-18)
 
+- Long `20261018_143050` (155 s wall, 657 game-s, legacy rich on the
+  FE-gated tree: Nexus=2 Probe=52 Pylon=13 Gateway=6 Dragoon=18 Forge=1
+  PhotonC=5, 67 ledger rows): first long game after the wall-in FE
+  gate - healthy, no regression. wall-in in 0/10 BOARD rows, zero
+  `At 0 Gateway` wall orders (gate holds for 11 game-minutes, not just
+  the short tier). Forge warped 4:48@63, post-Forge bank max 559 < 700
+  so research correctly silent (#85 still pending its window).
+  Adhoc gate missed on Nexus>=3 only (expansion timing, not a defect).
+  `ORDER_SAVING` 0 (2 bases - correctly silent, #71 wants 1).
+
 - Long `20261017_213248` (79 s wall, 590 game-s, legacy rich: Nexus=2
   Probe=34 Pylon=9 Gateway=9 Zealot=10 Dragoon=10 Assimilator=2 Core=1
   Forge=1): Forge full-twin loop live - BUILD #123 at 8:29
