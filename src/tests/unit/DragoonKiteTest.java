@@ -201,6 +201,41 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void coolingDragoonLetsItsStepRide() {
+        // Dist 0.9, cooldown 15: frame 1 steps (margin broken),
+        // frame 2 the margin has recovered (stub Dragoon totals above
+        // 186 effective HP, so healthy required is 1.0) but the unit is
+        // still gliding - no countermanding attack order issues, the
+        // reposition rides (PurpleWave sleep after move). Without this
+        // the unit alternates move with attack-stop every frame and the
+        // threat closes for free while it stands cooling.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30.9, 20);
+        dragoon.cooldown = 15;
+        atlantis.battle.BattleCommander.clearForTests();
+
+        try {
+            world(2, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                atlantis.battle.BattleCommander.act(
+                    dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            });
+
+            int moves = 0;
+            int attacks = 0;
+            for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
+                if (record.actorId == dragoon.id() && record.operation.equals("move")) moves++;
+                if (record.actorId == dragoon.id() && record.operation.equals("attackUnit")) attacks++;
+            }
+            assertTrue(moves == 1 && attacks == 0,
+                "one step, then ride it - no attack-stop the next frame: "
+                    + ordersOf(dragoon));
+        }
+        finally {
+            atlantis.battle.BattleCommander.clearForTests();
+        }
+    }
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }

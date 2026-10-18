@@ -168,6 +168,7 @@ public class BattleCommander extends Commander {
                 boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
                 if (!glued && MoveAway.fromBest(unit, threat, KITE_STEP_TILES, Actions.MOVE_AVOID, "ClusterKite")) {
                     KiteTwin.steppedAside(unit, threat);
+                    lastRepositionFrame.put(unit.id(), A.now());
                     return;
                 }
                 if (!glued) KiteTwin.nowhereToStep(unit, threat);
@@ -180,14 +181,26 @@ public class BattleCommander extends Commander {
             // own range: inside it the standing order already does
             // the job.
             if (threat != null && unit.cooldown() > 0 && !isHuntedBy(unit, threat)) {
-                double standOff = unit.groundWeaponRange() - 0.5;
-                if (unit.distTo(target) > standOff + 0.5) {
+                double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
+                if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES) {
                     APosition fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
-                    if (unit.distTo(fireAt) > 0.5
-                        && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) return;
+                    if (unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
+                        && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
+                        lastRepositionFrame.put(unit.id(), A.now());
+                        return;
+                    }
                 }
             }
+            // Let the reposition ride (PurpleWave sleep after move):
+            // a fresh attack order here would cancel the step or glide
+            // issued a frame ago and pin the unit standing through the
+            // whole cooldown while the threat closes for free - the
+            // stutter that bled every cycle (all 6 hits of the glue
+            // game landed while alternating move with attack-stop).
+            // Only a ready weapon or a finished move re-arms the attack.
+            if (unit.cooldown() > 0 && unit.isMoving()
+                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < KITE_RIDE_FRAMES) return;
             // Order discipline, not order spam: a new attack order issues
             // only when the engine holds a different target (first
             // acquisition, lost order while moving, target switch).
@@ -206,7 +219,9 @@ public class BattleCommander extends Commander {
         // and retreat both strung out). The leader sets the pace; stragglers
         // catch up instead of everyone racing the anchor.
         HasPosition point = gatherPointFor(unit, leader, anchor);
-        if (point != null) unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove");
+        if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
+            lastRepositionFrame.put(unit.id(), A.now());
+        }
     }
 
     /**
@@ -259,8 +274,8 @@ public class BattleCommander extends Commander {
      */
     private static double kiteMargin(AUnit unit, AUnit threat) {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
-        if (isHuntedBy(unit, threat)) margin -= 0.5;
-        if (unit.isOtherFacingThisUnit(threat)) margin -= 0.5;
+        if (isHuntedBy(unit, threat)) margin -= KITE_HUNTED_TILES;
+        if (unit.isOtherFacingThisUnit(threat)) margin -= KITE_FACED_TILES;
         return margin;
     }
 
@@ -280,18 +295,62 @@ public class BattleCommander extends Commander {
      * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
      */
     private static double kiteMarginRequired(AUnit unit) {
-        double hitsLeft = (unit.hp() + unit.shields()) / 16.0;
-        return Math.max(1.0, 4.0 - 0.25 * hitsLeft);
+        double hitsLeft = (unit.hp() + unit.shields()) / KITE_ZEALOT_PASS_DAMAGE;
+        return Math.max(KITE_MARGIN_BASE_TILES,
+            KITE_MARGIN_DYING_TILES - KITE_MARGIN_PER_HIT_TILES * hitsLeft);
     }
 
+    /**
+     * Kiting coefficients, public and mutable on purpose (owner: the
+     * ParamTweaker randomizes them in-JVM and scores games to CSV, so
+     * tuning needs no rebuild and no external file). Defaults are the
+     * engine-faithful values (PurpleWave margins, jar ranges); the
+     * tuner only explores around them. Long term these become a typed
+     * profile struct (see `_AI/CHALLENGES/MicroKiting.md`); scattering
+     * mutable statics is the deliberate short-term shape, not the
+     * architecture.
+     */
     /** Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)). */
-    private static final double KITE_ENEMY_TILES = 5.0;
+    public static double KITE_ENEMY_TILES = 5.0;
 
     /** At or under this threat distance the duel is glue: bodies overlap, no step opens. */
-    private static final double KITE_GLUE_TILES = 0.5;
+    public static double KITE_GLUE_TILES = 0.5;
 
     /** How far the kiting step carries (tiles). */
-    private static final double KITE_STEP_TILES = 2.0;
+    public static double KITE_STEP_TILES = 2.0;
+
+    /** Threat committed to exactly this unit shrinks the margin by this much (tiles). */
+    public static double KITE_HUNTED_TILES = 0.5;
+
+    /** Threat facing this unit shrinks the margin by this much (tiles). */
+    public static double KITE_FACED_TILES = 0.5;
+
+    /** Margin a full-health Dragoon demands before yielding (tiles). */
+    public static double KITE_MARGIN_BASE_TILES = 1.0;
+
+    /** Margin a dying Dragoon demands before yielding (tiles). */
+    public static double KITE_MARGIN_DYING_TILES = 4.0;
+
+    /** Each survived Zealot pass lowers the demanded margin by this much (tiles). */
+    public static double KITE_MARGIN_PER_HIT_TILES = 0.25;
+
+    /** One Zealot pass deals this much damage (2x8 swings; jar reports 8x1). */
+    public static double KITE_ZEALOT_PASS_DAMAGE = 16.0;
+
+    /** Firing point sits this far inside our max range (tiles). */
+    public static double KITE_STANDOFF_INSET_TILES = 0.5;
+
+    /** Glide deadband around the firing point (tiles). */
+    public static double KITE_GLIDE_DEADBAND_TILES = 0.5;
+
+    /** A reposition keeps riding this long before the attack re-arms (frames). */
+    public static int KITE_RIDE_FRAMES = 30;
+
+    private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
+
+    public static void clearForTests() {
+        lastRepositionFrame.clear();
+    }
 
     private void gatherCluster() {
         Selection army = Select.ourCombatUnits();

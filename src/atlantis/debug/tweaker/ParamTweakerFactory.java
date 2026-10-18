@@ -1,5 +1,6 @@
 package atlantis.debug.tweaker;
 
+import atlantis.battle.BattleCommander;
 import atlantis.battle.avoid.margin.SafetyMarginAgainstMelee;
 import atlantis.game.A;
 import atlantis.game.ARandom;
@@ -30,6 +31,68 @@ public class ParamTweakerFactory extends ParamTweaker {
                 "SafetyMeleeInfantryWoundNoMedic",
                 () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC,
                 () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = ARandom.rand(70, 85)
+        ));
+        // Kiting duel (owner: 1Drag_v_1Zeal on Wine): ranges explore
+        // around the engine-faithful defaults, never blind.
+        tweaker.addParam(new Param(
+                "KiteEnemyTiles",
+                () -> BattleCommander.KITE_ENEMY_TILES,
+                () -> BattleCommander.KITE_ENEMY_TILES = ARandom.rand(40, 60) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteGlueTiles",
+                () -> BattleCommander.KITE_GLUE_TILES,
+                () -> BattleCommander.KITE_GLUE_TILES = ARandom.rand(3, 8) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteStepTiles",
+                () -> BattleCommander.KITE_STEP_TILES,
+                () -> BattleCommander.KITE_STEP_TILES = ARandom.rand(15, 30) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteHuntedTiles",
+                () -> BattleCommander.KITE_HUNTED_TILES,
+                () -> BattleCommander.KITE_HUNTED_TILES = ARandom.rand(0, 10) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteFacedTiles",
+                () -> BattleCommander.KITE_FACED_TILES,
+                () -> BattleCommander.KITE_FACED_TILES = ARandom.rand(0, 10) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteMarginBaseTiles",
+                () -> BattleCommander.KITE_MARGIN_BASE_TILES,
+                () -> BattleCommander.KITE_MARGIN_BASE_TILES = ARandom.rand(5, 15) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteMarginDyingTiles",
+                () -> BattleCommander.KITE_MARGIN_DYING_TILES,
+                () -> BattleCommander.KITE_MARGIN_DYING_TILES = ARandom.rand(30, 50) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteMarginPerHitTiles",
+                () -> BattleCommander.KITE_MARGIN_PER_HIT_TILES,
+                () -> BattleCommander.KITE_MARGIN_PER_HIT_TILES = ARandom.rand(15, 35) / 100.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteZealotPassDamage",
+                () -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE,
+                () -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE = ARandom.rand(140, 180) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteStandoffInsetTiles",
+                () -> BattleCommander.KITE_STANDOFF_INSET_TILES,
+                () -> BattleCommander.KITE_STANDOFF_INSET_TILES = ARandom.rand(0, 10) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteGlideDeadbandTiles",
+                () -> BattleCommander.KITE_GLIDE_DEADBAND_TILES,
+                () -> BattleCommander.KITE_GLIDE_DEADBAND_TILES = ARandom.rand(2, 8) / 10.0
+        ));
+        tweaker.addParam(new Param(
+                "KiteRideFrames",
+                () -> BattleCommander.KITE_RIDE_FRAMES,
+                () -> BattleCommander.KITE_RIDE_FRAMES = ARandom.rand(20, 40)
         ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
