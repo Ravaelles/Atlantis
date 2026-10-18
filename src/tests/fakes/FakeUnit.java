@@ -258,11 +258,17 @@ public class FakeUnit extends AUnit implements Serializable {
 
     @Override
     public boolean isGatheringMinerals() {
+        // A stub worker ordered to gather reads as gathering: the engine
+        // half (u.isGatheringMinerals) does not exist in the harness, so
+        // the action is the only signal. Matches production, where the
+        // GatherResources manager sets GATHER_MINERALS on issue.
+        if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_MINERALS)) return true;
         return false;
     }
 
     @Override
     public boolean isGatheringGas() {
+        if (action() != null && action().equals(atlantis.units.actions.Actions.GATHER_GAS)) return true;
         return false;
     }
 

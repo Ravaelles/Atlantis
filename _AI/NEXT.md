@@ -492,6 +492,12 @@ twins green (1/1 each, re-verified today). Re-run
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
+  Instance observed 2026-10-19 (TauCross Wine, BUILDER_LOG=1): a Pylon#1
+  builder pathing-stalled at map edge [3,47] for ~90 frames (MOVE order
+  re-issued, distToSite frozen, BUILD_BREAKDOWN x2) and self-recovered -
+  the Pylon warped on schedule. Transient stall, twin worked as
+  designed, no code change (would be blind). The reservation→starter
+  link reads cleanly off the new cid/oid chain on the next flagged run.
 - **#85** Armor unchained from weapons-L3 to L1 (stub pin); flat rich
   gates (~2x above L2/L3 engine costs) read coherent (Forge → weapons,
   rich checks, anti-spam, TooWeakToTech) - tuning, not defect, owner

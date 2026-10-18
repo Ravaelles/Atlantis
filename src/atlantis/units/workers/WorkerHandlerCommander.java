@@ -68,15 +68,27 @@ public class WorkerHandlerCommander extends Commander {
      * the row lands in {@code EVENTS.jsonl} under {@code STUCK_WORKER},
      * no console line. Behind {@code BUILDER_LOG=1} and once per second,
      * so a normal run is silent and the row is cheap. 10 frames is the
-     * owner's threshold: a gathering worker changes position far more
-     * often than that, so a 10-frame standstill is anomalous rather
-     * than a pause.
+     * owner's threshold; steady-state gathering is exempt (a miner holds
+     * position while it works - measured 1637 false rows in one Wine
+     * game), so a row means NOT gathering while standing still.
      * </p>
      */
-    private static void reportStuckWorker(AUnit worker) {
+    /**
+     * Test seam: the exemption rule (steady gathering is work, not stuck)
+     * pins without running the frame loop.
+     */
+    public static void reportStuckWorker(AUnit worker) {
         if (!Env.builderLog()) return;
         if (!A.everyNthGameFrame(30)) return;
         if (worker.lastPositionChangedAgo() < 10) return;
+
+        // A worker that IS gathering stands still as its job: miners hold
+        // position while the engine transfers resources (measured on Wine:
+        // 1637 of 2088 STUCK_WORKER rows named healthy GatherResources
+        // miners, drowning the real stalls). Only a worker that is NOT
+        // gathering while standing still is stuck - en-route movers,
+        // idle workers and unclaimed ones still report below.
+        if (worker.isGatheringResources()) return;
 
         EventLog.key(LogKey.STUCK_WORKER)
             .param("unit", worker.id())
