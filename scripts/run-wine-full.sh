@@ -391,6 +391,11 @@ fi
 # here rather than trusted: a slow game must be impossible, not just
 # unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
 # OpenBW ENV (same guard as the live-log copy).
+# Debug-run horizon, not a hard limit (owner 2026-10-19): stop spending
+# game time once defects had room to show (they show by supply 25-30) -
+# shorter games, ~3x smaller logs. Overridable per run, 0 disables.
+FORCE_END_AT_SUPPLY="${FORCE_END_AT_SUPPLY:-50}"
+
 for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
   if [ -f "$_env_candidate" ] && grep -q "^GAME_LAUNCHER=WINE" "$_env_candidate"; then
     if grep -q "^WINE_FAST=" "$_env_candidate"; then
@@ -399,6 +404,12 @@ for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
       printf '\nWINE_FAST=1\n' >> "$_env_candidate"
     fi
     say "  WINE_FAST=1 enforced in $_env_candidate"
+    if grep -q "^FORCE_END_AT_SUPPLY=" "$_env_candidate"; then
+      sed -i -E "s|^FORCE_END_AT_SUPPLY=.*|FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY|" "$_env_candidate"
+    else
+      printf '\nFORCE_END_AT_SUPPLY=%s\n' "$FORCE_END_AT_SUPPLY" >> "$_env_candidate"
+    fi
+    say "  FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY enforced in $_env_candidate (0 disables)"
     break
   fi
 done

@@ -185,6 +185,12 @@ public class Env {
                 wineFast = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
+            case "FORCE_END_AT_SUPPLY":
+                // Debug-run horizon, not a hard limit (owner 2026-10-19):
+                // stop spending game time once defects had room to show
+                // (they show by supply 25-30); 0 or absent disables it.
+                forceEndAtSupply = toInt(value == null ? "" : value.trim());
+                return true;
             case "CORE_AND_DRAGOON_GATE":
                 // --short tier of the OpenBW E2E: end the game as soon as the opening is
                 // PROVEN (a finished Cybernetics Core and at least one Dragoon), instead of
@@ -330,12 +336,27 @@ public class Env {
         wineFast = enabled;
     }
 
+    private static int forceEndAtSupply = 0;
+
+    /** Test seam (the flag is ENV-driven and has no other writer). */
+    public static void setForceEndAtSupplyForTest(int supply) {
+        forceEndAtSupply = supply;
+    }
+
     /**
      * True when {@code WINE_FAST=1} is set in ENV: unattended Wine runs
      * skip rendering and slowdowns (speed 0, frameskip 500, GUI off).
      */
     public static boolean wineFast() {
         return wineFast;
+    }
+
+    /**
+     * Debug-run horizon: end the game once our supply reaches this level.
+     * 0 or absent disables it (normal games, OpenBW tiers with own gates).
+     */
+    public static int forceEndAtSupply() {
+        return forceEndAtSupply;
     }
 
     /**

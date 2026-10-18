@@ -41,6 +41,8 @@ public class ProductionCommander extends Commander {
             DynamicProductionCommander::new,
             // The --short E2E gate: no-op unless CORE_AND_DRAGOON_GATE=true in ENV.
             ForceExitWhenOpeningProven::new,
+            // The debug-run horizon: no-op unless FORCE_END_AT_SUPPLY>0 in ENV.
+            ForceExitAtSupply::new,
             // The >=700-mineral tripwire: no-op unless we are on OpenBW.
             ForceExitLocallyInOpenBW::new,
             // Goal-board advisor (NEXT #91): read-only opinion log, last so
