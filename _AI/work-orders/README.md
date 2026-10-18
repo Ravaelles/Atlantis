@@ -38,3 +38,6 @@ and stop where it says to stop.
   supply goal owning all supply demand (NEXT.md #144).
 - `WO-145-site-finding-to-catalogue.md` — spec + landing order for
   catalogue-only siting through the adapter funnel (NEXT.md #145).
+- `WO-146-delete-apositionfinder.md` — inventory + checklist of the 23
+  files routing through `APositionFinder`, incl. the V2 planner critical
+  path (NEXT.md #146).
