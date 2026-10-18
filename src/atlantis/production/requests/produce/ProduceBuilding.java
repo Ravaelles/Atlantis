@@ -65,6 +65,22 @@ public class ProduceBuilding {
     }
 
     /**
+     * The order's own construction with a live builder is live demand -
+     * the builder is dispatched or walking, and no second site may follow
+     * it. Pure over the link: the status changer owns the statuses,
+     * the door only reads them.
+     */
+    public static boolean hasLiveConstruction(ProductionOrder order) {
+        if (order == null) return false;
+        Construction live = order.construction();
+        if (live == null) return false;
+        if (live.status() != ConstructionOrderStatus.NOT_STARTED
+            && live.status() != ConstructionOrderStatus.STARTING
+            && live.status() != ConstructionOrderStatus.IN_PROGRESS) return false;
+        return live.builder() != null && !live.builder().isDead();
+    }
+
+    /**
      * True when an unfinished building of this type is already warping for
      * exactly this order - the order's site became a building, and no
      * second site may follow it. Sibling rows link different order
@@ -125,12 +141,11 @@ public class ProduceBuilding {
             // re-requesting every frame piled same-tile duplicates (121
             // accepts in one game, totalOfType pinned at 1). Wait for warp,
             // cancel, or builder death instead. Builderless adoptions still
-            // fall through to a fresh request below (status quo).
-            Construction live = order.construction();
-            if (live != null
-                && (live.status() == ConstructionOrderStatus.NOT_STARTED
-                    || live.status() == ConstructionOrderStatus.IN_PROGRESS)
-                && live.builder() != null && !live.builder().isDead()) return refuse(type, order, "live-construction");
+            // fall through to a fresh request below (status quo). STARTING
+            // is the travelling half of the same pair (owner 2026-10-19):
+            // unnamed here it minted a second site behind the walking
+            // builder (Wine oid-72 storm: every BUILD row a fresh cid).
+            if (hasLiveConstruction(order)) return refuse(type, order, "live-construction");
 
             // Owner 2026-10-17: single-instance structures (Core) refuse
             // while ANY is coming for another order - a sited sibling or
