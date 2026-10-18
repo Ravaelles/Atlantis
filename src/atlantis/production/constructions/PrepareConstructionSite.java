@@ -36,10 +36,6 @@ public class PrepareConstructionSite {
         AUnitType type = order.unitType();
         if (type == null || type.isBase() || type.isGasBuilding()) return;
 
-        // No workers, no site: a PREPARING reservation claims a builder
-        // that does not exist (owner: BUILD attempts with zero workers).
-        if (Count.workers() == 0) return;
-
         // Two supplies earlier (owner spec): Pylon at 8 is picked at 6,
         // Gateway at 9 at 7. Past that the site may sit reserved while
         // poor or supply-gated.

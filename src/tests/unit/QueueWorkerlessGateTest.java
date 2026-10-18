@@ -1,6 +1,5 @@
 package tests.unit;
 
-import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -17,11 +16,13 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * Without a single worker nothing can be built, so the queue refresh is
- * a no-op (owner: WINE_DECISIONS showed BUILD attempts with zero workers,
- * and listener-driven refreshes twinned ORDER_NOT_READY for Pylon rows
- * that can never build). Training needs no worker either, but with zero
- * workers no producer issues anything, so nothing is lost.
+ * Without a single worker every building row is structurally unbuildable,
+ * so the readiness twin stays silent (owner: WINE_DECISIONS showed BUILD
+ * attempts with zero workers; listener-driven refreshes twinned
+ * ORDER_NOT_READY for rows that can never build). Only the twin is gated,
+ * never the decision: completions still flow (ProtossWarping marks
+ * FINISHED on warp, queue completion is supply-independent), and a
+ * prepared site still waits for a builder (PreparingConstructionSiteTest).
  */
 public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
@@ -37,7 +38,6 @@ public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
     @AfterEach
     public void cleanAll() {
-        ConstructionRequests.constructions.clear();
         Queue.get().allOrders().list().clear();
         Queue.get().clearCache();
         EventLog.clearForTests();
@@ -56,10 +56,8 @@ public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
             assertFalse(
                 EventLog.toJsonLines().contains("\"key\":\"ORDER_NOT_READY\""),
-                "zero workers: no readiness churn, no twin rows");
-            assertTrue(
-                ConstructionRequests.constructions.isEmpty(),
-                "zero workers: nothing sited");
+                "zero workers: refuse silently, no twin rows for rows that"
+                + " can never build");
         });
     }
 }
