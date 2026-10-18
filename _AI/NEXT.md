@@ -442,6 +442,22 @@ twins green (1/1 each, re-verified today). Re-run
   the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
   two doors stay open. Proof: a covered-tile game where the loop is
   gone (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
+- **#152** Dragoon kiting: won 1v1 live (Wine 1Drag_v_1Zeal, owner
+  2026-10-19) but the twin trail shows the loop is shallow: 14
+  stepped-aside vs 3 stuck in the winning game (9 vs 106 before the
+  compass fix), and corners still convert steps into standing trades.
+  Open, in order: (a) HIT twin (HP drop + range + cooldown + moving
+  at the damage frame - answers "why did this hit land"; owner ask),
+  SHOT twin (attack started - answers "did we stop shooting", i.e.
+  whether the animation guard ever latches); (b) wall-aware steps
+  (PurpleWave `MicroPathing.getThreatAwarePath` direction, see
+  `_AI/CHALLENGES/MicroKiting.md` for file refs) + unstuck tracking
+  (`tryingMove` + timeout, same source); (c) macro-game kite proof
+  (OpenBW spawns no enemies; needs a Wine macro game, owner-run):
+  1v1 proof does not cover focus fire, traffic, or the retreat latch.
+  Related open question (WO-144): which goal re-fires V2 Pylon pairs
+  (BO row without coming-suppression vs pipeline overlap vs door hole)
+  - needs a goal-source twin on V2 Pylon emission.
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
@@ -692,10 +708,10 @@ twins green (1/1 each, re-verified today). Re-run
 - Wine `1Drag_v_1Zeal.scm` (UMS micro, owner 2026-10-19): FLEE with
   null anchor fell through to fight (was: DoNothing death); kite rule
   (3.5 tiles + cooldown>=10, Dragoon-only) + no-interrupt-during-attack
-  + lateral compass steps + KITE twin landed. Game 2: 1/0 win. Game 3:
-  loss, twin shows 9 steps vs 106 stuck (arena walls; dist-0 glue
-  sometimes escapable). Remaining: wall-aware pathing (PurpleWave
-  MicroPathing direction) + unstuck tracking.
+  + lateral compass steps + KITE twin landed. Final proof game: 1/0
+  WIN, 14 stepped-aside vs 3 stuck (was 9 vs 106 pre-compass).
+  Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
+  (#152).
 - OpenBW `TauCross` (`203655`, PRODUCTION_V2=LIVE with rule+lag+>60,
   21933f/15 min): Dragoons 8, first warps 5:25 - the ASAP rule fires
   live (was 0 in the pre-rule LIVE game). Pylons 7 with one 150f
