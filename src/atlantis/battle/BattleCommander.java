@@ -88,8 +88,12 @@ public class BattleCommander extends Commander {
         }
 
         AUnit target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
+        if (target == null) {
+            target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
+        }
         if (target != null) {
             unit.attackUnit(target);
+            if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;
         }
         if (anchor != null) unit.move(anchor, Actions.MOVE_ENGAGE, "ClusterMove");
