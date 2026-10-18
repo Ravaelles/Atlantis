@@ -500,6 +500,30 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
 
+    @Test
+    public void readyDragoonGlidesInsteadOfAttackChasing() {
+        // Out of range with a ready weapon: an attack order would chase
+        // and get cancelled by the next kite step before firing (Wine
+        // 8Drag_v_8Drag: cd stuck at 0, 156 orders, zero shots landed).
+        // Glide to the firing position with a move; the attack issues
+        // on arrival, when the target is actually in range.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34.5, 20);
+        dragoon.cooldown = 0;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "out of range: glide in with a move: " + ordersOf(dragoon));
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "no attack order that a step would cancel: " + ordersOf(dragoon));
+        });
+    }
+
     private static java.util.List<tests.fakes.FakeOrderSink.Record> ordersOf(FakeUnit unit) {
         return ((tests.fakes.FakeOrderSink) unit.orderSink()).orders();
     }

@@ -211,26 +211,26 @@ public class BattleCommander extends Commander {
                     KiteTwin.nowhereToStep(unit, threat);
                 }
             }
-            // Re-engage glide (PurpleWave BeDragoonVsSlowlot: margin
-            // recovered and no threat hunting us while the weapon cools -
-            // close to the max-range firing position now, so the shot
-            // fires the instant the cooldown hits zero instead of
-            // donating the approach standing still). Only outside our
-            // own range: inside it the standing order already does
-            // the job.
-            if (threat != null && unit.cooldown() > 0 && !isHuntedBy(unit, threat)) {
-                double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
-                if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES) {
+            // Out of range: close to the max-range firing position with
+            // moves only. An attack order here doubles as the chase and
+            // gets cancelled by the next kite step before firing (Wine
+            // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
+            // 156 attack orders, zero shots landed). The attack issues on
+            // arrival, when the target is actually in range.
+            double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
+            if (unit.distTo(target) > unit.groundWeaponRange()) {
+                if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES
+                    && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
                     APosition fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
                     if (unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
-                        && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
                         lastStepFrame.put(unit.id(), now);
                         lastRepositionFrame.put(unit.id(), now);
                         return;
                     }
                 }
+                return;
             }
             // Let the reposition ride (PurpleWave sleep after move):
             // a fresh attack order here would cancel the step or glide
@@ -292,16 +292,11 @@ public class BattleCommander extends Commander {
      * range ~0 tiles, 16 damage per pass). Margin is the tiles the
      * threat still must close before it can hit us, minus half a tile
      * when the threat is coming for exactly this unit and minus half
-     * a tile when it faces us. A healthy
-     * Dragoon holds to about one tile and keeps shooting through the
-     * cooldown; a dying one demands up to four. Once the margin
-     * breaks, the step-back latches until it recovers a full tile
-     * past required: without the latch the unit oscillates around
-     * the threshold, standing one swing too close every cycle (Wine
-     * 1Drag_v_1Zeal: all 8 hits landed at dist 0.4-1.3 right after a
-     * step). Dragoon-only: Zealots
-     * want contact, other races are out of scope. Public as a seam:
-     * the rule pins in a stub state.
+     * a tile when it faces us. A healthy Dragoon holds to about one
+     * tile and keeps shooting through the cooldown; a dying one
+     * demands up to four. Dragoon-only: Zealots want contact, other
+     * races are out of scope. Public as a seam: the rule pins in a
+     * stub state.
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
         if (unit == null || threat == null || !unit.isDragoon()) return false;
