@@ -41,3 +41,5 @@ and stop where it says to stop.
 - `WO-146-delete-apositionfinder.md` — inventory + checklist of the 23
   files routing through `APositionFinder`, incl. the V2 planner critical
   path (NEXT.md #146).
+- `WO-147-queue-to-stateless.md` — spec + reader inventory (92 files)
+  and landing order for queue/order-types deletion (NEXT.md #147).
