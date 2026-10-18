@@ -5,8 +5,6 @@ import atlantis.units.AUnitType;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.TargetPlacement;
-import atlantis.production.v2.UnitProducible;
-import atlantis.units.AUnitType;
 import atlantis.util.We;
 
 import java.util.ArrayList;

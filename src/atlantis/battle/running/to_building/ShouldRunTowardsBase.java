@@ -1,8 +1,7 @@
 package atlantis.battle.running.to_building;
 
 import atlantis.units.select.Count;
-import atlantis.game.A;
-import atlantis.information.enemy.EnemyInfo;
+import atlantis.units.select.Select;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.strategy.Strategy;
 import atlantis.map.choke.Chokes;
@@ -10,8 +9,8 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Action;
 import atlantis.units.actions.Actions;
-import atlantis.units.select.Count;
-import atlantis.units.select.Select;
+import atlantis.game.A;
+import atlantis.information.enemy.EnemyInfo;
 import atlantis.game.player.Enemy;
 import atlantis.util.We;
 

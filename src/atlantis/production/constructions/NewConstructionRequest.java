@@ -20,12 +20,9 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
-import atlantis.units.select.Select;
 import atlantis.util.AConsole;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
-import atlantis.util.log.EventLog;
-import atlantis.util.log.LogKey;
 import bwapi.TilePosition;
 
 public class NewConstructionRequest {

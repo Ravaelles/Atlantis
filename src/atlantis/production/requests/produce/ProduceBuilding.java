@@ -8,8 +8,6 @@ import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.production.GoalBoardAdvisor;
 import atlantis.production.constructions.Construction;
-import atlantis.map.position.HasPosition;
-import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.constructions.NewConstructionRequest;
