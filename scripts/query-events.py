@@ -7,8 +7,13 @@ Keys are LogKey families; parameters carry the variance.
 Usage:
   scripts/query-events.py [--file PATH] [--key KEY ...] [--since F] [--until F]
                           [--count] [--cols a,b,c] [--min-level HIGH|CRITICAL]
+                          [--where k=v ...]
 
 Defaults to the newest E2E_LOGS/*/EVENTS.jsonl. --count prints rows per key.
+--where filters on exact param equality (repeatable): the construction
+chain query is `--where cid=12` (or `--where oid=25`), which joins the
+REQUESTED / PREPARING / STARTED / CANCEL / ADOPTED rows of one order
+without guessing by tile.
 """
 import argparse
 import glob
@@ -43,6 +48,8 @@ def main():
     arg.add_argument('--count', action='store_true')
     arg.add_argument('--min-level', default=None,
                      help='only rows at or above this severity (rows without lvl count as NORMAL)')
+    arg.add_argument('--where', action='append', default=[],
+                     help='exact param filter k=v, repeatable (e.g. --where cid=12)')
     ns = arg.parse_args()
 
     path = newest(ns.file)
@@ -71,6 +78,11 @@ def main():
     if ns.until is not None:
         rows = [r for r in rows if frame_of(r.get('frame')) is not None
                 and frame_of(r.get('frame')) <= ns.until]
+    for cond in ns.where:
+        if '=' not in cond:
+            continue
+        key, _, want = cond.partition('=')
+        rows = [r for r in rows if str(r.get(key.strip(), '')) == want.strip()]
 
     if ns.count:
         totals = {}
