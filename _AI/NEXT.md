@@ -498,6 +498,9 @@ twins green (1/1 each, re-verified today). Re-run
   Paths, cheapest last: owner-authored UMS map with a computer-slot
   enemy (no editor on machine); C++ host slot debugging (shared
   platform, owner call); Wine games with real opponents (works today).
+  2026-10-18: Protoss enemy also spawns nothing (`143846` PvP, 361
+  game-s, `enemy: ` empty, 0/0 - 7th enemyless game across 3 enemy
+  races). Race-independent; host-side only.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
