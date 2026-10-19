@@ -461,34 +461,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   says so, so their silent ends are not a host crash of this shape -
   the game ended while both sides looked alive, and only C++ host
   debugging can say why.
-- **#153** Transient main-thread busy-spin in the selection cache
-  (2nd occurrence with evidence; 1st was `185046`, 57 s CPU, no
-  jstack): `105921` long tripped the hang-watcher at 11:00:03 - main
-  RUNNABLE 37 s CPU in 40 s inside `Cache.isCacheStillValid:148`
-  (`TreeMap.getEntry`) under `SelectionMembership.ofType:991`
-  (`cloneByRemovingIf`/`removeIf`) <- `Select.ourBasesWithUnfinished`
-  <- `AUnit.distToBase` <- `BaseUnderAttack.workerShouldHoldGround`
-  <- `WorkerDefenceRun.applies` (per-worker, per-frame path). Then
-  recovered: game advanced to 16546f/11:34, exit 143 wall-cap,
-  GAME_END present. Not a deadlock and not #149 (no silent end).
-  Not a leak proof either - one snapshot, no map-size series. Next:
-  read `Cache`/`SelectionMembership` for the hot path (which map,
-  does it grow per frame, is the predicate cache-missing every
-  call); repro, if needed, is another long OpenBW run, not a new
-  game shape. No blind patch - cache surgery without the shape
-  risks perf regressions everywhere.
-  Read 2026-10-19: the steady-state path is volume-innocent (per
-  worker per frame: one distToBase -> two small selection queries;
-  even 50 workers x 150 units is ms-scale, not 37 s) - so the
-  snapshot shape points at transient corruption cleared by
-  clear() or a burst caller not yet found, not at per-frame cost.
-  Next stays the size-series probe (does a cache map grow
-  unbounded across frames).
-  Repro 2026-10-19: two consecutive long runs trip the watcher at the
-  same ~40 s mark with the same family (`110411`: main RUNNABLE
-  37 s CPU in 40 s in `TreeMap.containsKey/getEntry` via `Cache.get`
-  <- `AUnit.is`; game still advanced to 16063f/11:14). Not a fluke;
-  code read is next, still no patch without the shape.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
