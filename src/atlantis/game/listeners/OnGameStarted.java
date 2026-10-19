@@ -58,6 +58,18 @@ public class OnGameStarted {
         atlantis.battle.BattleCommander.reset();
         atlantis.battle.Missions.reset();
 
+        // Per-game state with test-shared seams: a new game is a fresh
+        // world, so unit-id-keyed deltas, throttle windows and audit rows
+        // from the previous one must not leak in (same-JVM multi-game and
+        // twin tests read them). Each seam is behavior-neutral on a fresh
+        // game - it only drops stale entries.
+        atlantis.production.orders.production.queue.add.AddToQueue.clearForTests();
+        atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
+        atlantis.battle.HitTwin.clearForTests();
+        atlantis.battle.ShotTwin.clearForTests();
+        atlantis.game.listeners.WarpedBuildingRecorder.clearForTests();
+        atlantis.game.util.BuildOrderAudit.clearForTests();
+
         // What we built is per-game, like everything else here: as a plain static it would
         // leak one game's completion history into the next in the same JVM.
         atlantis.game.util.CompletedUnitsHistory.reset();
