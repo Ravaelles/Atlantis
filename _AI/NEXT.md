@@ -416,7 +416,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   fromBest escape choice; glue-shoot; frozen-STOP reset; no-respam step
   cadence (10f, Stardust latency+6); micro-step gain gate. Open: (a)
   wall-aware steps (PurpleWave `MicroPathing.getThreatAwarePath`
-  direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs);
+  direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs -
+  deferred for now, production first, owner 2026-10-19);
   (b) macro-game kite proof (OpenBW spawns no enemies; needs a Wine
   macro game, owner-run): 1v1 proof does not cover focus fire,
   traffic, or the retreat latch (8v8 caveat, measured: human-slot

@@ -123,3 +123,15 @@ worker), `BUILDING_STARTED` (builder at adoption), `CONSTRUCTION_CANCEL`
   (`ConstructionChainTwinTest`, `AdoptedConstructionTwinTest`,
   `BuildingLedgerTest`): the twins are the contract, the log is one
   implementation of it.
+
+## Production entry funnel (2026-10-19, WINE_DEBUG WUT stack)
+
+`Queue.get().refresh()` is the single funnel the whole legacy
+production runs through: the game-start build-order load
+(`QueueInitializer`) AND every unit listener (created/destroyed/morphed).
+On a workerless baseless map all of it is waste (site search with the
+WUT stack + dirty-hack fallbacks for demand that can never build), so
+refresh no-ops there (`QueueWorkerlessGateTest`). A base that merely
+lost its workers keeps the adopt-and-wait path (pinned separately).
+If production ever runs where it should not, read the refresh callers
+first - there are exactly two kinds (init + listeners).
