@@ -1,10 +1,13 @@
 # Formations: how Stardust keeps the cluster together (read 2026-10-20)
 
-> **STATUS: DEFERRED (owner 2026-10-20).** Design complete, implementation
-> NOT started - starts on the owner's call. Natural slot: migration
-> Phase 3 (combat cluster behavior, after the Phase 0 entry gate holds:
-> average battles won). Until then this file is the memory; the 1v1
-> kite rules stay frozen and no formation code lands.
+> **STATUS: Phase A IMPLEMENTED (owner 2026-10-20, same prompt).**
+> `atlantis.battle.formation`: `FormationSlots` (Moon crescent, no
+> shrink/path), `SharedEscape` (leader direction per 10f), `FocusFire`
+> (weakest in reach of most guns, sticky-first order) - all wired into
+> `BattleCommander.act`, all gated so duels and pairs stay frozen
+> (suite 987/987, acceptance byte-identical to baseline).
+> Game proof (1v1 regression gate, ZealDrag acceptance) stays
+> owner-run. Phases B/C still wait on M4 map anchors + sim wiring.
 
 Owner question: why does Stardust's army move as one body while ours
 scatters into 1v1s that die surrounded? Answer from the source, not
