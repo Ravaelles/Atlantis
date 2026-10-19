@@ -154,3 +154,31 @@ rather than a bug fix. Recorded, not changed; tracked as NEXT #41.
 measurement (reading, hasReading, decision) per row. Nothing in the audit so far says a
 threshold is wrong - it says which ones cannot see the difference between "strong" and
 "nothing to fight".
+
+## Evidence (measured 2026-10-19, WO-B1 sweep)
+
+Scratch probe (`tests.unit.EvalSweepProbeTest`, deleted after measuring),
+one stub world per row, positions in tiles along x. Columns: our eval,
+their eval, product, our absolute, their absolute.
+
+| scenario | ourEval | theirEval | product | ourAbs | theirAbs |
+|---|---|---|---|---|---|
+| mirror Marine 10 vs Marine 11 | 0.7000 | 1.0000 | 0.7000 | -88 | -88 |
+| 4 ours (10,11,11.5,12) vs Hydra 13.3, read at 11.5 | 7.0915 | 0.1353 | 0.9594 | -46 | -340 |
+| 3 ours (11.5,11.6,12) vs Hydras 13.2,13.3 | 3.0694 | 0.2968 | 0.9110 | -111 | -374 |
+| 3 Marines + Medic (11.5-12) vs Hydra 13.3 | 20.9513 | 0.0500 | 1.0476 | -16 | -340 |
+| 4 ours vs Sunken 13 (in range), read at 11.5 | 0.3996 | 1.0208 | 0.4079 | -98 | -96 |
+| 1 ours (10) vs Sunken 23.5 (far) | 0.4210 | 1.0010 | 0.4214 | -1 | -1 |
+| Wraith 90 vs 2 Dragoons 92,93 | 0.01 (floor) | 46.0951 | 0.4610 | -507 | -11 |
+| Wraith 90 vs 2 fogged Cannons 92,93 | 0.01 (floor) | 47.5030 | 0.4750 | -760 | -16 |
+| same, our race Protoss | 0.01 (floor) | 47.5030 | 0.4750 | -760 | -16 |
+| solo Marine 10 vs nobody | 9873.7 | - | - | -1 | - |
+
+Anomalies (recorded, nothing changed): mirror product is 0.70, not ~1 -
+the our-side hedge applies to our reading only, so same-fight reciprocity
+holds for the raw ratio, not the hedged one. Buildings evaluate
+non-reciprocally (Sunken near 0.41, far 0.42 with absolute -1.0: a number
+without a reading, and not the quiet value). The two Wraith rows sit on
+the 0.01 floor in both races - no sign flip anywhere, the floor dominates
+the old B-2 shape. The Medic row vs its 4-Marine control (7.09 -> 20.95)
+is the largest single-unit swing in the table.
