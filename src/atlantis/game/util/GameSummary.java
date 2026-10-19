@@ -30,6 +30,13 @@ public class GameSummary {
         if (printed) return;
         printed = true;
         try {
+            // Twins buffer up to 720 frames between flushes; a kill without
+            // a game end used to drop the whole tail (measured 2026-10-19:
+            // FE run `112337` decided at frame 2120 with zero twin rows
+            // after 1558 - the rows sat in the buffer when SIGTERM landed).
+            // The hook runs on SIGTERM, so flush here: a capped run keeps
+            // the frames that explain why it was capped.
+            atlantis.util.log.EventLog.flush();
             if (Atlantis.game() == null) return;
             int totalS = AGame.timeSeconds();
             int resourceBalance = AGame.killsLossesResourceBalance();

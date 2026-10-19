@@ -414,13 +414,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
   two doors stay open. 2026-10-19: the prepare-side unlink is twinned
   (`prepare-site-overlap`, stub-pinned `PrepareOverlapTwinTest` - FE
-  run `112337` burned 40 construction ids for 1 logged PREPARING
-  with zero Can't-find-place rows, the silent branch is the only
-  consistent source); the twin decides the next occurrence. Adopt
-  side re-sites since the resite seam (same [119,12] case cited
-  in code), proof pending like the rest. Proof: a covered-tile game
-  where the loop is gone (long OpenBW 16575f: new refusal 0 fires,
-  no same-tile storm).
+  run `112337` burned 40 construction ids for 1 flushed PREPARING;
+  the missing rows fit the 720-frame flush buffer lost on the kill
+  as well as silent unlinks, so the twin (not the datum) decides
+  the next occurrence. Adopt side re-sites since the resite seam
+  (same [119,12] case cited in code), proof pending like the rest.
+  Proof: a covered-tile game where the loop is gone (long OpenBW
+  16575f: new refusal 0 fires, no same-tile storm).
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -700,15 +700,21 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
   (#152).
 - OpenBW `TauCross` (`112337` long, FE strategy forced as a reverted
-  probe - `Forge FE vZ` vs Zerg, 138 s wall, exit 143 wall-cap): the FE
-  opening jams at the 2nd building, wall-in unreached. Pylon #1 warped
-  1:07@8 [50,106]; Forge (oid=2, minSupply 11) decided once at 4:11
-  (`prev=cid41:PREPARING path=adopt`) then zero rows - no STARTED,
-  no CANCEL, no warp; construction ids burned 1->41 for 1 logged
-  PREPARING with zero Can't-find-place rows (the silent
-  prepare-unlink loop, now twinned as `prepare-site-overlap`).
-  Partial M4 evidence at best (no pressure possible on OpenBW, #94);
-  the opening jam itself is the next branch, not the wall.
+  probe - `Forge FE vZ` vs Zerg, 138 s wall, exit 143 wall-cap):
+  the run ended by CLIENT DISCONNECT (~1:28 game time:
+  `Reconnecting...`, then `Stopped (no game end reached) after 95
+  seconds`), not by a proven opening jam. Pylon #1 warped 1:07@8
+  [50,106]; Forge (oid=2, minSupply 11) decided once at 1:28
+  (`prev=cid41:PREPARING path=adopt`, frame 2120) with zero twin
+  rows after - but the twin stream itself stops at frame 1558:
+  EventLog buffers 720 frames between flushes and the kill dropped
+  the tail (shutdown hook now flushes, so the next capped run keeps
+  it). Construction ids burned 1->41 for 1 flushed PREPARING -
+  the burn is real (in-memory counter) but the missing rows are
+  buffer loss, not proof of silent unlinks; the `prepare-site-overlap`
+  twin stands as instrumentation (stub-pinned), undecided live.
+  Forge fate unknown; wall-in unreached. The disconnect shape matches
+  the known host-death class (contrast #149), not a new item.
 - OpenBW `TauCross` (`105921` long, legacy default, 16546f/11:34,
   exit 143 wall-cap - inconclusive as verdict, rich as data): Pylon
   0:52@8 (control holds for #84), Gateway 1:24/1:53, Core 3:02,
