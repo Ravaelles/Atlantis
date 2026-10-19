@@ -110,7 +110,11 @@ T0=$(date +%s)
 since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
-  say "Cleaning up"
+  # No "Cleaning up" echo and no bash "Killed <job>" notice (owner:
+  # local games stay quiet): disown first so the shell forgets the
+  # background jobs, then kill them by name. The kills stay - without
+  # them a dead game leaves Wine processes behind.
+  disown -a 2>/dev/null
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
