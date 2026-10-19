@@ -1,6 +1,5 @@
 package atlantis.battle.avoid.dont.protoss;
 
-import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
 

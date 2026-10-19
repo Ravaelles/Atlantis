@@ -150,14 +150,15 @@ The index of which document answers which question is `_AI/README.md`.
    routine feeder coverage, never batch rewrites; board-invisible
    production (Forge, cannons) is capability, not duplication.
 2. **Decision absorption:** board takes over decision sites one by one
-   (8 files with the exact singular import, re-verified 2026-10-19:
-   still 8 on the same excluded tracks, production holds ZERO -
-   was 47: 24 died with the combat cutover, 1 orphan (TransitionToCorsairs)
-   absorbed, 14 more with the targeting + battle src-old sweeps;
-   counting down, no new ones per §21); the class dies at zero,
-   not before. All 8 survivors sit on excluded tracks (battle/micro,
-   interrupt, terran-info) - production holds ZERO imports (re-verified
-   by grep 2026-10-19). Two tracks:
+   (7 files with the exact singular import, re-verified 2026-10-20:
+   DTDontAvoid's import was dead (only commented-out references) and is
+   deleted - the rest still 7 on the same excluded tracks, production
+   holds ZERO - was 47: 24 died with the combat cutover, 1 orphan
+   (TransitionToCorsairs) absorbed, 14 more with the targeting + battle
+   src-old sweeps; counting down, no new ones per §21); the class dies
+   at zero, not before. All 7 survivors sit on excluded tracks
+   (battle/micro, interrupt, terran-info) - production holds ZERO imports
+   (re-verified by grep 2026-10-20). Two tracks:
    production sites route through board state (first slice: the worker
    Core-veto, `WorkerCoreVetoBoardTest` 2/2; second slice 2026-10-16:
    board names the enemy race, Stargate Terran veto reads it,
