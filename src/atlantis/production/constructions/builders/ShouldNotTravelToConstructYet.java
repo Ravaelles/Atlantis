@@ -173,6 +173,16 @@ public class ShouldNotTravelToConstructYet {
         return new int[]{minerals, gas};
     }
 
+    /**
+     * Test seam for the queue-position-ordered earlier-demand model
+     * (NEXT #156): what the travel forecast believes earlier rows still
+     * need. Orderless self counts everything (no position, hold rather
+     * than overspend); queued self counts only the rows ahead of it.
+     */
+    public static int[] earlierUnpaidForTests(ProductionOrder self) {
+        return earlierUnpaid(self);
+    }
+
     private static int mineralMargin(AUnitType building, double distance) {
         return (distance <= 15 ? 16 : 32)
             + (building.isCyberneticsCore() ? 8 : 0);
