@@ -437,7 +437,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   digest with invariant flags (HITS_TAKEN <= 2, shot cadence vs 30f);
   margin rule with targeted+facing terms; no-reissue + ride discipline;
   fromBest escape choice; glue-shoot; frozen-STOP reset; no-respam step
-  cadence (10f, Stardust latency+6); micro-step gain gate. Open: (a)
+  cadence (10f, Stardust latency+6); micro-step gain gate; Stardust
+  desired-distance hold (no fixed 2.0-tile shove past the firing point -
+  pinned, sensitivity-verified vs old behavior). Open: (a)
   wall-aware steps (PurpleWave `MicroPathing.getThreatAwarePath`
   direction, see `_AI/CHALLENGES/MicroKiting.md` for file refs -
   deferred for now, production first, owner 2026-10-19);

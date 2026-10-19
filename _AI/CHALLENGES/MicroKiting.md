@@ -74,3 +74,102 @@ discipline (we issue every frame), stuck detection + unsticking
 - Macro-game kiting is UNPROVEN (OpenBW spawns no enemies; Wine
   macro games are owner-run). The 1v1 proof does not cover kiting
   inside a 20-unit brawl (focus fire, traffic, retreat latch).
+
+## Stardust reference (Dragoon micro bible, read 2026-10-20)
+
+Why: owner asked how Stardust and PurpleWave manage cooldowns instead
+of hardcoding "dist > 2.7 and cd <= 7 → attack". Answer: neither uses
+a flat distance gate. Both compute a CONTINUOUS desired position from
+(cooldown, distance, ranges, speeds) every frame, and the attack
+decision is latency-relative, not second-based. This file is the
+durable record; the in-code port is `BattleCommander.desiredKiteDistance`.
+
+Primary source: `/sc-ai/Stardust/src/Units/MyUnit/MyDragoon.cpp`
+(307 lines, whole file relevant). Secondary: `MyUnit.cpp`
+(`MyUnitImpl::attackUnit`, `isReady`), PurpleWave
+`src/Micro/Agency/Commander.scala` (`attack`: new/overdue-or-sleep),
+`src/Micro/Agency/AttackDelay.scala` (DragoonGndAttkInit iscript).
+
+### Cooldown management (Stardust: never act on a shot in flight)
+
+- `DRAGOON_ATTACK_FRAMES = 6`: after an attack starts, the unit is
+  NOT ready for new orders for 6 frames + remaining latency
+  (`isReady()` false). Our equivalent: the animation guard
+  (`isAttackFrame`/`isStartingAttack`), same window class.
+- `nextAttackPredictedAt`: if the standing attack order is expected to
+  fire within remaining latency, leave the unit alone - even target
+  switches are refused unless the old target is gone/invalid/too far
+  at the predicted frame. Our equivalent: new/overdue-target
+  discipline + ride-after-reposition. Theirs is predictive (frames),
+  ours is reactive (order state).
+- One order per frame max (`issuedOrderThisFrame` + DUPLICATE log);
+  move orders deduped (same target within 3px, not within
+  latency+3 frames, never re-issue while already moving).
+  Ours: re-issue at most every 10 frames (KITE_RESTEPS_EVERY_FRAMES).
+- Unstick: moving + no progress past
+  `potentiallyStuckSince + latency + 10` → STOP + hold. Ours: 48
+  motionless frames → STOP reset. Same shape, ours slower.
+
+### Attack decision (when to shoot vs reposition)
+
+- Stardust Dragoon: attack iff `cooldown <= latency + 2` (≈ 4-5f,
+  not 7). Otherwise reposition. Melee exception: none needed - the
+  positioning rule below already keeps the unit close vs short range.
+- Stardust base (`MyUnitImpl::attackUnit`): dist > 320px (10 tiles)
+  or target invisible → plain move toward target (approach, NO attack
+  order - the order itself would make the engine chase on arrival;
+  ours does the same via the glide: move to firing point, attack
+  issues on arrival). Predicted in-range (EDGE-to-edge at the
+  latency horizon) or target stationary → attack, with a force-resend
+  when coming into range. Else intercept course.
+- PurpleWave: `useAttackCommand = readyForAttackOrder ||
+  inRangeToAttack || framesToGetInRange <= latency + max(cooldown,
+  agencyAverage)`; the order issues ONLY on new target or when
+  overdue (`cooldown==0` and no attack started for 2x cooldown),
+  else `sleep`. Ours matches this exactly (new/overdue discipline +
+  ride), including the arrival-time-vs-cooldown sync.
+
+### The desired-distance formula (the answer to hardcoded 2.7/7)
+
+Stardust `MyDragoon::attackUnit`, per frame, all in pixels
+(D = Dragoon range 128, T = target range, C = cooldown,
+L = latency frames, S = top speed 5.0 px/f):
+
+- Target fleeing (`current < predicted` dist): desired = min(D - 48,
+  T + 16) - do NOT kite out of range, keep pressure.
+- Ranging a bunker: specialised stop/go (skip - not our matchup).
+- We outrange (`D >= T`): `desired = min(D, D + (Cd - (predicted - D))/2)`
+  where `Cd = (C - L - 2) * S`. I.e. max range, reduced by half the
+  gap between "how far the target still is outside range" and "how
+  far we walk before the weapon is ready". If `T <= D - 64`
+  (melee-ish, Zealot qualifies: 15 <= 64): `desired -= 32`.
+- Else (outranged): desired = D.
+
+Worked 1v1 (Dragoon vs Zealot, tiles; ours are center-based, Stardust
+edge-based - offset ~0.5 tile, the tuner absorbs it):
+dist 3.0, cd 5, healthy: Cd = max(0,(5-4-2))*0.156 = 0 →
+desired = min(4, 4 + (0 - (3-4))/2) = 4 → melee -1 → **3.0 = hold,
+no step**. This IS the owner's "don't retreat at 2.7+/cd<=7",
+derived, not hardcoded.
+dist 3.5, cd 15, hurt (required margin 3.69): fixed 2.0 step would
+land at ~5.5, OUT of range. Formula: Cd = (15-6)*0.156 = 1.4 →
+desired = min(4, 4 + (1.4 + 0.5)/2) = 4 → -1 = **3.0: hold and
+shoot** (dist 3.5 is already past it). Old code retreated here;
+new code holds. That is the whole "ucieka za daleko" fix.
+dist 1.5, cd 25: Cd = 2.97 → desired = min(4, 4 + (2.97+2.5)/2)
+= 4 → -1 = 3.0: step back exactly 1.5, not a blind 2.0.
+
+### What we adopt, what we skip (2026-10-20 port)
+
+Adopted: continuous desired distance replacing the fixed 2.0-tile
+step (capped at KITE_STEP_TILES, gated by the 0.5-tile step-gain
+floor); melee-closer term (-1 tile when outranging by 2+);
+latency-relative framing (KITE_LATENCY_FRAMES = 4, consistent with
+the existing resteps = latency+6 cadence). Kept untouched: margin
+gate (when to kite at all), trade-shot, animation guard,
+frozen-STOP, ride, glide approach, attack-only-on-new/overdue-target.
+Skipped (open, needs threat-velocity tracking): the fleeing-target
+branch ("do not kite out of range"); predicted positions (we use
+current dist, re-evaluated every 10f); threat-aware pathing (still
+straight-line + compass); per-unit iscript tables (generic
+6-frame/10-frame windows instead).

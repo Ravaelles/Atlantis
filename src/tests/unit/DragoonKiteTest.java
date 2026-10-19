@@ -346,10 +346,11 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
     @Test
     public void kiteStepOpensTheMostDistance() {
-        // Open field, hurt Dragoon, Zealot east: the straight step
-        // back opens 4 tiles, laterals ~2.8 - fromBest issues the
-        // straight one (PurpleWave: retreat where it is safest, not
-        // first-validated into a corner). Positions are pixels (x32).
+        // Open field, hurt Dragoon, Zealot east: the straight step back
+        // opens the most distance, laterals stay closer - fromBest issues
+        // the straight one (PurpleWave: retreat where it is safest, not
+        // first-validated into a corner). The step *length* is the Stardust
+        // hold point, not a fixed 2-tile shove - positions are pixels (x32).
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
@@ -363,8 +364,10 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "margin broken - step: " + ordersOf(dragoon));
-            assertTrue(dragoon.targetPosition.x() < 920,
-                "straight back west opens the most distance, laterals stay ~960: "
+            assertTrue(
+                dragoon.targetPosition.x() < 940
+                    && Math.abs(dragoon.targetPosition.y() - 640) <= 4,
+                "straight back west, on axis - not a diagonal lateral: "
                     + dragoon.targetPosition);
         });
     }

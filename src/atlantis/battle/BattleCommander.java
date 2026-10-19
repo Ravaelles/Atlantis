@@ -159,6 +159,28 @@ public class BattleCommander extends Commander {
     }
 
     /**
+     * Stardust's desired-distance rule (MyDragoon::attackUnit), in tiles:
+     * max range, reduced by half the gap between "how far the target
+     * still is outside range" and "how far we walk before the weapon is
+     * ready". A melee-ranged threat pulls the hold a tile inside max
+     * range instead of kiting to its edge. Public as a seam: the formula
+     * pins without running the frame (see
+     * `_AI/CHALLENGES/MicroKiting.md`, Stardust reference).
+     */
+    public static double desiredKiteDistance(AUnit unit, AUnit threat) {
+        double myRange = unit.groundWeaponRange();
+        double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
+        double dist = unit.distTo(threat);
+        double tilesPerFrame = unit.maxSpeed() / 32.0;
+        double cooldownDistance = Math.max(0.0, unit.cooldown() - KITE_LATENCY_FRAMES - 2) * tilesPerFrame;
+        double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
+        if (targetRange <= myRange - KITE_MELEE_EDGE_TILES) {
+            desired -= KITE_MELEE_CLOSER_TILES;
+        }
+        return Math.max(0.0, desired);
+    }
+
+    /**
      * True when the cluster sits on the main base (under 2 tiles): FLEE
      * is not an option there. Public as a seam, pinned without a game.
      */
@@ -320,7 +342,18 @@ public class BattleCommander extends Commander {
                 boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
                 boolean tradeShot = unit.cooldown() == 0 && (glued || swingIncoming);
                 if (!tradeShot && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
-                    APosition dest = MoveAway.bestDestination(unit, threat, KITE_STEP_TILES);
+                    // Stardust desired distance: step exactly the gap to the
+                    // hold point (capped at one full step), never a blind
+                    // shove past the firing position - stepping 2.0 tiles
+                    // from dist 3.5 lands at ~5.5, OUT of a 4.0 range, and
+                    // the glide then donates the walk back. That overshoot
+                    // is the measured "ucieka za daleko" shape; holding at
+                    // the formula's point keeps shooting instead.
+                    double stepLen = Math.min(KITE_STEP_TILES,
+                        Math.max(0.0, desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+                    APosition dest = stepLen > 0
+                        ? MoveAway.bestDestination(unit, threat, stepLen)
+                        : null;
                     if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
                         KiteTwin.steppedAside(unit, threat);
                         lastStepFrame.put(unit.id(), now);
@@ -593,6 +626,19 @@ public class BattleCommander extends Commander {
 
     /** Glide deadband around the firing point (tiles). */
     public static double KITE_GLIDE_DEADBAND_TILES = 0.5;
+
+    /** Melee-closer term: hold this many tiles inside max range when the
+     * threat is outranged by 2+ tiles (Stardust: -32px vs much-shorter
+     * range - a Dragoon kiting a Zealot to max edge donates the fight). */
+    public static double KITE_MELEE_CLOSER_TILES = 1.0;
+
+    /** Range edge for the term above (Stardust: targetRange <= myRange - 64px). */
+    public static double KITE_MELEE_EDGE_TILES = 2.0;
+
+    /** Latency frames assumed for cooldown-relative decisions. Stardust
+     * reads the engine's remaining latency; 4 here keeps the existing
+     * resteps = latency + 6 cadence arithmetic intact. */
+    public static int KITE_LATENCY_FRAMES = 4;
 
     /** A reposition keeps riding this long before the attack re-arms (frames). */
     public static int KITE_RIDE_FRAMES = 30;
