@@ -45,6 +45,10 @@ public class ShouldNotTravelToConstructYet {
     /**
      * Arrival slack (frames): the money may land this late past the boots
      * and the walk still goes now. Covers estimate error, not strategy.
+     * PurpleWave answers the same uncertainty with a x1.2-1.35 travel
+     * multiplier plus a 24-48f hysteresis (builderTravelFrames); on our
+     * scope (near-base walks, straight-line estimate) 24 frames play the
+     * same role, so there is one knob, not two.
      */
     public static int FORECAST_ARRIVAL_SLACK_FRAMES = 24;
 

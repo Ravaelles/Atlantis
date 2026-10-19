@@ -25,6 +25,11 @@ public class TravelToConstruct extends HasUnit {
         AUnitType type = construction.buildingType();
         AUnit builder = construction.builder();
 
+        // A builderless construction is the retry path's business (it
+        // unlinks and re-queues): traveling nowhere with no one must not
+        // throw here. Previously a null builder NPE'd in the transit
+        // check below.
+        if (builder == null) return false;
 
         if (unit == null) {
             throw new RuntimeException("unit empty");
