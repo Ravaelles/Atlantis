@@ -187,6 +187,28 @@ public class BattleCommander extends Commander {
     }
 
     /**
+     * Keep shooting the committed target while it is alive, hittable and
+     * inside weapon range plus a short chase allowance - never re-pick
+     * every frame just because another enemy stepped marginally nearer.
+     * Per-frame re-picking restarts the attack animation faster than it
+     * completes (Wine ZealDrag: 519 acquisitions for 19 kills), the same
+     * churn both reference bots refuse: Stardust only allows the switch
+     * when the old target is gone/invalid/too far at the predicted frame
+     * (MyDragoon::isReady), PurpleWave issues only on a new or overdue
+     * target (Commander.attack). Sits between the squad pick (shared
+     * focus in small fights stays untouched) and the nearest re-pick
+     * (still the answer when commitment ends). Public as a seam.
+     */
+    public static AUnit stickyCurrentTarget(AUnit unit) {
+        if (unit == null) return null;
+        AUnit current = unit.target();
+        if (current == null || !current.isAlive()) return null;
+        if (!unit.hasWeaponToAttackThisUnit(current)) return null;
+        if (unit.distTo(current) > unit.groundWeaponRange() + KITE_STICKY_CHASE_TILES) return null;
+        return current;
+    }
+
+    /**
      * True when the cluster sits on the main base (under 2 tiles): FLEE
      * is not an option there. Public as a seam, pinned without a game.
      */
@@ -274,6 +296,9 @@ public class BattleCommander extends Commander {
         }
 
         AUnit target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
+        if (target == null) {
+            target = stickyCurrentTarget(unit);
+        }
         if (target == null) {
             target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
         }
@@ -649,6 +674,12 @@ public class BattleCommander extends Commander {
     /** Wounded edge inset: hold this far inside max range (tiles) instead
      * of the full melee-closer (owner: shoot from near max range). */
     public static double KITE_WOUNDED_EDGE_INSET_TILES = 0.4;
+
+    /** Committed target sticks while inside weapon range plus this chase
+     * allowance (tiles): re-picking every frame restarts the attack
+     * animation faster than it completes (Stardust isReady refusal,
+     * PurpleWave new/overdue discipline). */
+    public static double KITE_STICKY_CHASE_TILES = 1.0;
 
     /** Latency frames assumed for cooldown-relative decisions. Stardust
      * reads the engine's remaining latency; 4 here keeps the existing

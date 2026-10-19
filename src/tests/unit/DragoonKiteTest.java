@@ -427,6 +427,47 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void coolingDragoonKeepsItsTargetWhenAnotherComesNearer() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealotA = fake(AUnitType.Protoss_Zealot, 32, 20);
+        FakeUnit zealotB = fake(AUnitType.Protoss_Zealot, 34, 20);
+        dragoon.cooldown = 15;
+
+        // First acquisition takes the nearer A. When B steps nearer, a
+        // healthy committed Dragoon keeps shooting A while A lives and
+        // stays in range (Stardust isReady refusal, PurpleWave
+        // new/overdue discipline) - per-frame re-picking restarts the
+        // attack animation faster than it completes (Wine ZealDrag:
+        // 519 acquisitions for 19 kills). Only A's death re-arms the pick.
+        world(1, fakeOurs(dragoon), fakeEnemies(zealotA, zealotB), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            assertTrue(attackOrders(dragoon) == 1, "acquires A: " + ordersOf(dragoon));
+
+            zealotB.position = atlantis.map.position.APosition.createFromPixels(31 * 32, 20 * 32);
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            assertTrue(attackOrders(dragoon) == 1,
+                "B nearer but A alive and in range - no switch, no re-order: " + ordersOf(dragoon));
+
+            zealotA.hp = 0;
+            dragoon.cooldown = 0;
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+            assertTrue(attackOrders(dragoon) == 2,
+                "A dead - the pick re-arms onto B: " + ordersOf(dragoon));
+        });
+    }
+
+    private static int attackOrders(FakeUnit unit) {
+        int attacks = 0;
+        for (tests.fakes.FakeOrderSink.Record record : ordersOf(unit)) {
+            if (record.actorId == unit.id() && record.operation.equals("attackUnit")) attacks++;
+        }
+        return attacks;
+    }
+
+    @Test
     public void fleeingWithAnchorRunsThere() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
