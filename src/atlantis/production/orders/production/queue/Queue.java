@@ -23,6 +23,16 @@ public class Queue extends AbstractQueue {
         // DRY_RUN is unaffected (legacy plays there).
         if (atlantis.config.env.Env.productionV2().isLive()) return;
 
+        // No workers and no base, no production: on a workerless UMS map
+        // the game-start BO load plus every unit event ran the full legacy
+        // chain (QueueInitializer -> refresh -> prepareIfDue -> the
+        // APositionFinder site search with its WUT stack and dirty-hack
+        // fallbacks) for demand that can never build. The twin stays
+        // silent for the same reason (IsReadyToProduceOrder). Gated on
+        // baselessness too, so a base that lost its workers keeps the
+        // adopt-and-wait path (PreparingConstructionSiteTest pins it).
+        if (atlantis.units.select.Count.workers() == 0 && !atlantis.units.select.Have.base()) return;
+
         clearCache();
         (new QueueRefresher(this)).refresh();
         clearCache();

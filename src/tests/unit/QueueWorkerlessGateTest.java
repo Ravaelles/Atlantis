@@ -16,13 +16,14 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * Without a single worker every building row is structurally unbuildable,
- * so the readiness twin stays silent (owner: WINE_DECISIONS showed BUILD
- * attempts with zero workers; listener-driven refreshes twinned
- * ORDER_NOT_READY for rows that can never build). Only the twin is gated,
- * never the decision: completions still flow (ProtossWarping marks
- * FINISHED on warp, queue completion is supply-independent), and a
- * prepared site still waits for a builder (PreparingConstructionSiteTest).
+ * Without a single worker on a baseless map every building row is
+ * structurally unbuildable, so the refresh is a no-op and the readiness
+ * twin stays silent (owner: WINE_DECISIONS showed BUILD attempts with
+ * zero workers; the WINE_DEBUG WUT stack showed the game-start BO load
+ * plus every unit event running the legacy APositionFinder chain for
+ * demand that can never build). Gated on baselessness too: a base that
+ * merely lost its workers keeps the adopt-and-wait path
+ * (PreparingConstructionSiteTest pins it).
  */
 public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
@@ -45,9 +46,12 @@ public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
     @Test
     public void workerlessRefreshIsSilent() {
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
-
-        world(5, fakeOurs(nexus), fakeEnemies(), () -> {
+        // Baseless UMS micro map: no workers, no Nexus. The game-start
+        // BO load plus every unit event used to run the full legacy
+        // chain here (WINE_DEBUG WUT stack via APositionFinder) for
+        // demand that can never build. A base that merely lost its
+        // workers keeps the adopt-and-wait path (pinned separately).
+        world(5, fakeOurs(), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 3) return;
             Queue.get().addNew(0, new ProductionOrder(AUnitType.Protoss_Pylon, 0));
             EventLog.clearForTests();
