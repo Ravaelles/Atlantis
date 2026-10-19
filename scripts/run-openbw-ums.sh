@@ -16,8 +16,11 @@
 # is the bot's exit code. Compare scripts/run-openbw-e2e.sh (the assertion
 # tier) and scripts/run-wine-full.sh (the owner's Wine vehicle).
 #
-# Hard limits (CONVENTIONS §17): 150 s wall-clock, 20 game minutes. Fixed,
-# not overridable - a longer run needs the owner's explicit permission.
+# Hard limits: 30 s wall-clock (owner 2026-10-19: micro duels run at full
+# engine speed, so a healthy duel ends in seconds - the cap only kills
+# hangs; the 150 s CONVENTIONS §17 cap stays for the macro e2e tier),
+# 20 game minutes self-end. Fixed, not overridable - a longer run needs
+# the owner's explicit permission.
 
 set -u
 
@@ -32,7 +35,7 @@ BOT_ROOT="$(dirname "$BOT_RUN_DIR")"
 JAR="/sc-ai/BOTS/AtlantisOpenBW/AI/Atlantis.jar"
 UMS_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/UMS_LOGS"
 
-TIMEOUT_SECONDS=150
+TIMEOUT_SECONDS=30
 INGAME_TIME=$((60 * 20))
 HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
 BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 10 ))
