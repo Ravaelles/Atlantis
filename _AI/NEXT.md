@@ -141,7 +141,10 @@ The index of which document answers which question is `_AI/README.md`.
    nine sustained-army rows, 10-18 one supply-pylon rescue in 214926 -
    never routine). Re-measured 2026-10-19 across the 3 fresh runs:
    0 BOARD_FED everywhere, 83 BUILD rows all legacy/demand-direct -
-   the feeder still fires nothing; no candidate. Deletions wait for
+   the feeder still fires nothing; no candidate. 4th run same day
+   (`105921` long, 16546f/11:34, exit 143 wall-cap): BOARD_FED 1
+   (sustained-dragoon 5:16, pumps already training since 4:12, zero
+   BOARD-authored DECISIONS) - rescue, not routine; no candidate. Deletions wait for
    routine feeder coverage, never batch rewrites; board-invisible
    production (Forge, cannons) is capability, not duplication.
 2. **Decision absorption:** board takes over decision sites one by one
@@ -454,6 +457,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   says so, so their silent ends are not a host crash of this shape -
   the game ended while both sides looked alive, and only C++ host
   debugging can say why.
+- **#153** Transient main-thread busy-spin in the selection cache
+  (2nd occurrence with evidence; 1st was `185046`, 57 s CPU, no
+  jstack): `105921` long tripped the hang-watcher at 11:00:03 - main
+  RUNNABLE 37 s CPU in 40 s inside `Cache.isCacheStillValid:148`
+  (`TreeMap.getEntry`) under `SelectionMembership.ofType:991`
+  (`cloneByRemovingIf`/`removeIf`) <- `Select.ourBasesWithUnfinished`
+  <- `AUnit.distToBase` <- `BaseUnderAttack.workerShouldHoldGround`
+  <- `WorkerDefenceRun.applies` (per-worker, per-frame path). Then
+  recovered: game advanced to 16546f/11:34, exit 143 wall-cap,
+  GAME_END present. Not a deadlock and not #149 (no silent end).
+  Not a leak proof either - one snapshot, no map-size series. Next:
+  read `Cache`/`SelectionMembership` for the hot path (which map,
+  does it grow per frame, is the predicate cache-missing every
+  call); repro, if needed, is another long OpenBW run, not a new
+  game shape. No blind patch - cache surgery without the shape
+  risks perf regressions everywhere.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -685,6 +704,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   WIN, 14 stepped-aside vs 3 stuck (was 9 vs 106 pre-compass).
   Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
   (#152).
+- OpenBW `TauCross` (`105921` long, legacy default, 16546f/11:34,
+  exit 143 wall-cap - inconclusive as verdict, rich as data): Pylon
+  0:52@8 (control holds for #84), Gateway 1:24/1:53, Core 3:02,
+  Dragoons 12 from 4:12, Nexus=2, RoboticsF 11:28; BOARD_FED 1
+  (sustained-dragoon 5:16, rescue not routine); #71 correctly silent
+  (2 bases, ORDER_SAVING 0, end bank 288); hang-watcher jstacked a
+  40 s main-thread spin in Cache/Selection at 11:00:03, recovered
+  (#153).
 - OpenBW `TauCross` (`203655`, PRODUCTION_V2=LIVE with rule+lag+>60,
   21933f/15 min): Dragoons 8, first warps 5:25 - the ASAP rule fires
   live (was 0 in the pre-rule LIVE game). Pylons 7 with one 150f
