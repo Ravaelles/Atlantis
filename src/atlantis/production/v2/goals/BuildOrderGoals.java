@@ -71,6 +71,7 @@ public final class BuildOrderGoals {
                     TargetPlacement.namedArea(row.positionModifier())));
         }
 
+        goals.replaceAll(goal -> goal.withSource("build-order"));
         return goals;
     }
 

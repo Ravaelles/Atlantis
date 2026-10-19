@@ -178,6 +178,14 @@ public final class ProductionEngine {
         goals.addAll(state.pullForwardGoals(timeline));
         Collections.sort(goals);
 
+        // WO-144 open question: a duplicate Pylon pair reads as BO-row
+        // re-fire, pipeline overlap, or a door hole - the plan-time source
+        // column decides. Providers only; everything else would be noise.
+        atlantis.production.v2.goals.V2GoalSourceTwin.emit(
+            state.frame(),
+            goals,
+            atlantis.production.v2.UnitProducible.of(racePolicy.supplyProviderType()).id());
+
         return goals;
     }
 

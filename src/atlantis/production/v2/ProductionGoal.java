@@ -67,6 +67,15 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
     private final int producerLimit;
 
     /**
+     * Which generator declared this goal ("build-order", "dynamic",
+     * "pull-forward", "unknown"). The scheduler treats two Pylon goals as
+     * two buildings, so when a duplicate pair lands the twin answers which
+     * list re-fired (WO-144 open question). Set by the emitting list, never
+     * by hand - direct constructions stay "unknown".
+     */
+    private final String source;
+
+    /**
      * @param count            how many MORE to produce (goal sources subtract what
      *                         exists), or {@link #COUNT_CONTINUOUS}
      * @param targetStartFrame absolute frame; nothing of this goal starts earlier
@@ -83,6 +92,27 @@ public final class ProductionGoal implements Comparable<ProductionGoal> {
         this.targetStartFrame = Math.max(0, targetStartFrame);
         this.placement = placement != null ? placement : TargetPlacement.anywhere();
         this.producerLimit = Math.max(1, producerLimit);
+        this.source = "unknown";
+    }
+
+    private ProductionGoal(ProductionGoal other, String source) {
+        this.item = other.item;
+        this.priority = other.priority;
+        this.count = other.count;
+        this.targetStartFrame = other.targetStartFrame;
+        this.placement = other.placement;
+        this.producerLimit = other.producerLimit;
+        this.source = source;
+    }
+
+    /** Same goal, attributed to its emitting list. Lists tag, never hand-edit. */
+    public ProductionGoal withSource(String source) {
+        return new ProductionGoal(this, source);
+    }
+
+    /** Which generator declared this goal - "unknown" for direct constructions. */
+    public String source() {
+        return source;
     }
 
     /** How many distinct facilities this goal may occupy. */

@@ -55,6 +55,10 @@ public enum LogKey {
     UPGRADE_COMPLETED,
     /** A warp matched no reservation; oldest-waiting fallback adopted it, with candidates. */
     ADOPTED_CONSTRUCTION,
+    /** A V2 supply-provider goal reached the scheduler, with the emitting
+      list (WO-144 open question: which goal re-fires a duplicate Pylon
+      pair - build-order re-fire, pipeline overlap, or a door hole). */
+    V2_GOAL_SOURCE,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */

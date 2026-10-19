@@ -194,6 +194,7 @@ public final class DynamicGoals {
         addExpansionGoal(goals, state, race);
         addFortificationGoals(goals, state);
 
+        goals.replaceAll(goal -> goal.withSource("dynamic"));
         return goals;
     }
 

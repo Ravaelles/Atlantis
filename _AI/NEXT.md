@@ -448,7 +448,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   hits, shots, values) decides the numbers - see `_AI/TOOLS.md`.
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
-  - needs a goal-source twin on V2 Pylon emission.
+  - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
+  collectGoals, lists tag at creation, pinned V2GoalSourceTest 5/5):
+  the next live pair reads its authors off the source column.
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
