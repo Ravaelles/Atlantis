@@ -72,14 +72,21 @@ public class ProduceBuilding {
     /**
      * Single-door concurrency cap for Pylons (Wine game: three concurrent
      * Pylon warps out of one supply block at 25 - BO#8, its dynamic mirror
-     * and BO#11, each firing alone correctly and tripling together). At
-     * most two unfinished Pylons (warping + not-started): the
-     * pipeline-overlap doctrine number, enforced for every author here
-     * instead of per path. A row whose need is already being built waits
-     * as a plain queued order and fires when a warp completes.
+     * and BO#11, each firing alone correctly and tripling together). Below
+     * 40 supply used at most one Pylon may be unfinished: a second order
+     * waits for the warp (owner: 10+ free supply above 25 from overlapping
+     * BO + dynamic Pylons; the goal is never more than 8 free supply
+     * there, which in practice means one Pylon at a time). At 40+ the
+     * pipeline pair stays: overlapping builds is how late-game supply
+     * keeps up. The cap counts warping + not-started, so a row whose need
+     * is already being built waits instead of re-siting. Stuck sites do
+     * not deadlock this: overdue constructions are cancelled elsewhere
+     * and the next row proceeds after the cancel.
      */
     public static boolean tooManyPylonsInFlight() {
-        return ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon) >= 2;
+        int inFlight = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Pylon);
+        if (atlantis.game.A.supplyUsed() < 40) return inFlight >= 1;
+        return inFlight >= 2;
     }
 
     /**

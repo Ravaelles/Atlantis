@@ -18,16 +18,16 @@ import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
 
 /**
- * One supply block, one Pylon at a time (two in flight max): BO rows, the
- * fallback and the supply commander each fire alone correctly and tripled
- * together in a Wine game (three Pylon warps at 3:31/3:35/3:45 out of the
- * 25/25 block, from BO#8 + its dynamic mirror + BO#11). The cap lives at
- * the single door every author passes, counting warping + not-started.
+ * Below 40 supply used, one Pylon in flight at a time (owner: 10+ free
+ * supply above 25 from overlapping BO + dynamic Pylons; the goal is
+ * never more than 8 free there). At 40+ the pipeline pair stays.
+ * The cap lives at the single door every author passes, counting
+ * warping + not-started.
  *
  * <p>
- * Boundary: one unfinished Pylon still lets the next row through (the
- * pipeline-overlap doctrine), two hold it as a plain queued order until a
- * warp completes.
+ * Boundary: below 40, one unfinished Pylon already holds the next row
+ * as a plain queued order until a warp completes; at 40+ one unfinished
+ * Pylon is the pipeline, two hold it.
  * </p>
  */
 public class PylonConcurrencyCapTest extends AbstractTestWithWorld {
@@ -75,6 +75,9 @@ public class PylonConcurrencyCapTest extends AbstractTestWithWorld {
 
     @Test
     public void secondConcurrentPylonAllowed() {
+        currentMinerals = 500;
+        currentSupplyUsed = 41;
+        currentSupplyTotal = 41;
         FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
         FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
         world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
@@ -83,7 +86,29 @@ public class PylonConcurrencyCapTest extends AbstractTestWithWorld {
             ConstructionRequests.constructions.add(new Construction(AUnitType.Protoss_Pylon));
             assertFalse(
                 ProduceBuilding.tooManyPylonsInFlight(),
-                "one unfinished Pylon is the pipeline, not a pile-up");
+                "at 40+ one unfinished Pylon is the pipeline, not a pile-up");
+        });
+    }
+
+    @Test
+    public void secondConcurrentPylonBlockedBelowForty() {
+        currentMinerals = 500;
+        currentSupplyUsed = 25;
+        currentSupplyTotal = 25;
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit probe = fake(AUnitType.Protoss_Probe, 21, 21);
+        world(5, fakeOurs(nexus, probe), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            ConstructionRequests.constructions.add(new Construction(AUnitType.Protoss_Pylon));
+            assertTrue(
+                ProduceBuilding.tooManyPylonsInFlight(),
+                "below 40 one unfinished Pylon already covers the need");
+
+            assertFalse(
+                ProduceBuilding.requestBuilding(
+                    AUnitType.Protoss_Pylon, new ProductionOrder(AUnitType.Protoss_Pylon, 27)),
+                "below 40 a second Pylon waits for the warp instead of stockpiling free supply");
         });
     }
 }
