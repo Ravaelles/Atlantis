@@ -92,3 +92,63 @@ the line breaks, wins only when zealots accidentally hold long enough.
 4. **Full path integration**: threat-aware escape paths once the map
    library owns reachability (M4/M5) - the advanced fleeing mechanism
    specced in `redesign/02_COMBAT.md`, not before.
+
+## Third solution: owner's Protoss Moon (src-old, read 2026-10-20)
+
+Location: `src-old/atlantis/combat/squad/positioning/formations/moon/`
+(6 files, 667 lines) + actuator
+`src-old/.../positioning/protoss/formations/ProtossMoon.java`
+(per-unit `move(slot, MOVE_FORMATION)`).
+
+- **Shape**: crescent around the ENEMY (`MoonCenter` = nearest enemy
+  combat unit, re-anchored past 1.4 tiles; units' midpoint nudged 33%
+  toward the region center so the arc avoids walls). Arc span from
+  unit widths + separation (arc length = r·θ), slots assigned per
+  unit (cached 4-6f), crowded units take the nearest free slot,
+  invalid slots fall back to the leader. Pure geometry - no map lib,
+  no pathfinding, works on any map.
+- **Radius**: leader's distance to the enemy, adjusted per unit -
+  melee +2.5 (wider arc), leader -0.4 (tighter), weak eval +1/eval,
+  recent-formation bonus +2/+3, capped 11/12/13.8, refused under 3.3.
+  **Overtime shortening**: the arc closes 0.012/frame (capped -10,
+  slower when strong) - commitment over time, fights never stall at
+  max range forever.
+- **Separation**: 20/(10+n) clamped, min = dragoon width + matchup +
+  army/100 (tighter when weak).
+- **Gate** (`ProtossMoonFormationApplies`, 262 lines): the formation
+  applies when NOT fighting - no enemies in shoot range, no recent
+  shots/under-attack/cooldowns, no choking/DTs, eval/strength-gated
+  per matchup (PvP/PvZ branches), UMS forced at init. It is an
+  APPROACH shape: contact hands off to micro. Clean separation of
+  concerns - formation walks there, micro fights there.
+- Weaknesses: straight-line walks to slots (walls!), no cohesion on
+  the move (slots are static points), no unstick beyond
+  leader-fallback, no AoE awareness, 262 lines of matchup
+  special-casing (PvP/PvZ only, brittle), no focus fire.
+
+## Best of each (owner asked for all three)
+
+- **Stardust wins movement**: nav-grid waypoints + collision boid +
+  fallbacks mean a unit NEVER stands still for lack of geometry;
+  cohesion scaled by army size; vanguard-anchored regroup; unstick
+  discipline (never re-issue into a wedge); decisions by sim, not
+  thresholds. Weakest at: no pre-computed slots (shape is emergent),
+  per-unit micro with no cross-unit fire sync.
+- **PurpleWave wins structure**: per-class slots (ranged back, melee
+  front - the actual front/back line), styles per situation with
+  cadences, threat-aware escape paths, DPS-aware volley decision.
+  Weakest at: heavy machinery (zones/edges/profiles, needs map
+  analysis first).
+- **Moon wins cheap arrival**: crescent geometry with zero map
+  dependency, overtime shrink (commitment), region-nudged center
+  (fewer wall pins), approach-only gating (micro takes over in
+  contact), UMS init forcing. Weakest at: straight walks, no
+  cohesion, no unstick, brittle matchup gate.
+
+Steal in this order: Moon's crescent + shrink + region nudge for
+ARRIVAL (cheapest body-keeping, proven in-house, no map lib) →
+Stardust's cohesion/separation boids + unstick + fallbacks for
+MOVEMENT → PurpleWave's class slots + threat-aware escape for
+ESCAPE/FOCUS. That sequence is exactly the adoption order above:
+Moon covers arrival, Stardust covers movement, PurpleWave covers
+escape - and the 1v1 kite rules stay frozen through all of it.
