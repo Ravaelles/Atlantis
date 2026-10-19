@@ -40,7 +40,7 @@ public class ASquadTargeting {
 //        return unit.isRanged() ? 3 : 5;
     }
 
-    private static boolean isValidTarget(AUnit unit, AUnit enemy) {
+    public static boolean isValidTarget(AUnit unit, AUnit enemy) {
         if (enemy == null) return false;
         if (enemy.isABuilding() && !enemy.isCombatBuilding()) return false;
         if (enemy.isZergling()) return false;

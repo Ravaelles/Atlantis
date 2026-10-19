@@ -2,6 +2,9 @@ package atlantis.battle;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
+import atlantis.battle.formation.FocusFire;
+import atlantis.battle.formation.FormationSlots;
+import atlantis.battle.formation.SharedEscape;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -43,6 +46,8 @@ public class BattleCommander extends Commander {
     public static void reset() {
         fleeStartedAt = -1;
         tuning = CombatTuning.defaults();
+        FormationSlots.clearForTests();
+        SharedEscape.clearForTests();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();
@@ -280,9 +285,20 @@ public class BattleCommander extends Commander {
             // (PurpleWave AttackDelay) - the fight path below holds it the
             // same way.
             if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
-                HasPosition home = Select.main() != null
-                    ? breachRallyPoint()
-                    : regroupRallyPoint(unit);
+                HasPosition home;
+                if (Select.main() != null) {
+                    home = breachRallyPoint();
+                }
+                else {
+                    // Formation Phase A: one shared escape direction per
+                    // cluster (leader, ~10f cadence) instead of per-unit
+                    // compass picks that break the line. Null falls back
+                    // to the per-unit sampling, unchanged.
+                    home = SharedEscape.rallyFor(
+                        unit, leader, Alpha.get().selection(),
+                        tuning().getRegroupRallyTiles(), tuning().getRegroupThreatTiles());
+                    if (home == null) home = regroupRallyPoint(unit);
+                }
                 HasPosition point = gatherPointFor(unit, leader, home);
                 if (point != null && unit.distTo(point) >= 0.2) {
                     unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
@@ -309,9 +325,17 @@ public class BattleCommander extends Commander {
             }
         }
 
-        AUnit target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
+        // Sticky first: a committed unit finishes its own target (never
+        // re-pick every frame - the restart costs the shot). Uncommitted
+        // units join the shared focus target (weakest in reach of the
+        // most guns); the squad target and the nearest enemy stay as
+        // fallbacks, in that order.
+        AUnit target = stickyCurrentTarget(unit);
         if (target == null) {
-            target = stickyCurrentTarget(unit);
+            target = FocusFire.sharedTarget(unit, 9);
+        }
+        if (target == null) {
+            target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
         }
         if (target == null) {
             target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
@@ -474,14 +498,32 @@ public class BattleCommander extends Commander {
             return;
         }
 
-        // No enemy in reach: bunch on the leader so the cluster advances
-        // (or retreats) as one instead of a line (owner 2026-10-19: march
-        // and retreat both strung out). The leader sets the pace; stragglers
-        // catch up instead of everyone racing the anchor.
-        HasPosition point = gatherPointFor(unit, leader, anchor);
+        // No enemy in reach: take a formation slot when the cluster
+        // forms up (3+ combat units, known pivot), else bunch on the
+        // leader so the cluster advances (or retreats) as one instead
+        // of a line (owner 2026-10-19: march and retreat both strung
+        // out). The leader sets the pace; stragglers catch up instead
+        // of everyone racing the anchor.
+        HasPosition point = formationSlotFor(unit, leader, anchor);
+        if (point == null) point = gatherPointFor(unit, leader, anchor);
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
             lastRepositionFrame.put(unit.id(), A.now());
         }
+    }
+
+    /**
+     * Formation slot for a unit with no enemy in reach (Phase A): the
+     * crescent around the leader's nearest enemy. Null when the
+     * formation does not apply (too few units, no pivot, pivot in
+     * contact, no walkable slot) - the caller bunches on the leader.
+     */
+    private static HasPosition formationSlotFor(AUnit unit, AUnit leader, HasPosition anchor) {
+        if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
+        if (leader == null || !leader.isAlive()) return null;
+        AUnit pivot = atlantis.battle.targeting.ASquadTargeting
+            .nearestEngageableEnemy(leader, 30);
+        if (pivot == null) return null;
+        return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
     }
 
     /**
@@ -662,6 +704,8 @@ public class BattleCommander extends Commander {
 
     public static void clearForTests() {
         tuning = CombatTuning.defaults();
+        FormationSlots.clearForTests();
+        SharedEscape.clearForTests();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();
