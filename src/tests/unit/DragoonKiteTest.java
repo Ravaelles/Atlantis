@@ -504,6 +504,126 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void lowHpDragoonStandsForAnImminentShot() {
+        // Below 45 health the Dragoon holds fire unless the shot is safe -
+        // with 3 frames to go it stands and shoots instead of stepping and
+        // delaying the one shot that still matters (owner; Stardust attacks
+        // instead of stepping when cooldown <= latency + 2).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 62, 20);
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+        dragoon.cooldown = 3;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "imminent shot lands - no step: " + ordersOf(dragoon));
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "stands and shoots: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void lowHpDragoonKitesInsteadOfStandingThroughCooldown() {
+        // Same duel with a long cooldown left: holding fire means stepping,
+        // never standing through it.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 62, 20);
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+        dragoon.cooldown = 10;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "holding fire at dist 2 with cd 10 steps back: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void lowHpDragoonShootsFromSafeDistance() {
+        // 3.5 tiles of room: the shot is safe, hold and shoot.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 63.5, 20);
+        dragoon.hp = 20;
+        dragoon.shields = 0;
+        dragoon.cooldown = 10;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "3.5 tiles is room enough - hold: " + ordersOf(dragoon));
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "shoots from safe distance: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void surroundedDragoonStandsAndShoots() {
+        // Three melee enemies on top: escape is impossible, so a nearly
+        // ready weapon stands and shoots instead of donating the retreat.
+        // (West stays open here, so standing is a choice, not a wall.)
+        // Health is set explicitly: hp() already includes shields, so the
+        // default full bar reads 260 and the margin gate sits exactly on
+        // its boundary; 100+0 pins hitsLeft 6.25, where the margin WOULD
+        // kite and only the stand rule holds.
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit lingA = fake(AUnitType.Protoss_Zealot, 61, 20);
+        FakeUnit lingB = fake(AUnitType.Protoss_Zealot, 61, 21);
+        FakeUnit lingC = fake(AUnitType.Protoss_Zealot, 61, 19);
+        dragoon.hp = 100;
+        dragoon.shields = 0;
+        dragoon.cooldown = 4;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB, lingC), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "surrounded - no escape to kite into: " + ordersOf(dragoon));
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "stands and shoots: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void surroundedDragoonWithLongCooldownStillKites() {
+        // Same surround but 10 frames to go: no imminent shot, so the
+        // margin kite still tries west into the open (the stand right
+        // needs cd <= 6).
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit lingA = fake(AUnitType.Protoss_Zealot, 61, 20);
+        FakeUnit lingB = fake(AUnitType.Protoss_Zealot, 61, 21);
+        FakeUnit lingC = fake(AUnitType.Protoss_Zealot, 61, 19);
+        dragoon.hp = 100;
+        dragoon.shields = 0;
+        dragoon.cooldown = 10;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB, lingC), () -> {
+            atlantis.battle.BattleCommander.act(
+                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "nothing imminent - the kite still tries west: " + ordersOf(dragoon));
+        });
+    }
+
     private static int attackOrders(FakeUnit unit) {
         int attacks = 0;
         for (tests.fakes.FakeOrderSink.Record record : ordersOf(unit)) {

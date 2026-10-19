@@ -187,6 +187,13 @@ without Dragoons behind (the cd>=7 exception changes nothing;
 pinned in DragoonKiteTest so reviving it stays conscious). The
 ZealDrag surround does not come from dancing Zealots - they trade
 contact unconditionally.
+Wound ladder (owner 2026-10-20): wounded holds the max-range edge
+(6 or fewer survived passes); CRITICAL holds fire below 45 total
+health unless the enemy stands at 3.2+ tiles or the shot lands
+within 5 frames (Stardust's attack-instead-of-step window); a
+surrounded Dragoon (3+ melee within 3 tiles) stands and shoots when
+the shot lands within 6 frames or the nearest enemy keeps 3.1+
+tiles - escape is impossible, retreat is donated damage.
 Skipped (open, needs threat-velocity tracking): the fleeing-target
 branch ("do not kite out of range"); predicted positions (we use
 current dist, re-evaluated every 10f); threat-aware pathing (still

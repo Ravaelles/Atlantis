@@ -109,6 +109,36 @@ public class ParamTweakerFactory extends ParamTweaker {
                 () -> BattleCommander.KITE_STICKY_CHASE_TILES,
                 () -> { applyOrRandomize("KiteStickyChaseTiles", 5, 15, 10.0, v -> BattleCommander.KITE_STICKY_CHASE_TILES = v); return null; }
         ));
+        tweaker.addParam(new Param(
+                "DragoonLowHp",
+                () -> BattleCommander.DRAGOON_LOW_HP,
+                () -> { applyOrRandomizeInt("DragoonLowHp", 30, 60, v -> BattleCommander.DRAGOON_LOW_HP = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonLowHpHoldTiles",
+                () -> BattleCommander.DRAGOON_LOW_HP_HOLD_TILES,
+                () -> { applyOrRandomize("DragoonLowHpHoldTiles", 20, 40, 10.0, v -> BattleCommander.DRAGOON_LOW_HP_HOLD_TILES = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonLowHpFireCooldown",
+                () -> BattleCommander.DRAGOON_LOW_HP_FIRE_COOLDOWN,
+                () -> { applyOrRandomizeInt("DragoonLowHpFireCooldown", 3, 8, v -> BattleCommander.DRAGOON_LOW_HP_FIRE_COOLDOWN = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonSurroundedMeleeCount",
+                () -> BattleCommander.DRAGOON_SURROUNDED_MELEE_COUNT,
+                () -> { applyOrRandomizeInt("DragoonSurroundedMeleeCount", 2, 4, v -> BattleCommander.DRAGOON_SURROUNDED_MELEE_COUNT = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonSurroundedStandCooldown",
+                () -> BattleCommander.DRAGOON_SURROUNDED_STAND_COOLDOWN,
+                () -> { applyOrRandomizeInt("DragoonSurroundedStandCooldown", 4, 8, v -> BattleCommander.DRAGOON_SURROUNDED_STAND_COOLDOWN = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonSurroundedStandDistTiles",
+                () -> BattleCommander.DRAGOON_SURROUNDED_STAND_DIST_TILES,
+                () -> { applyOrRandomize("DragoonSurroundedStandDistTiles", 20, 40, 10.0, v -> BattleCommander.DRAGOON_SURROUNDED_STAND_DIST_TILES = v); return null; }
+        ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,

@@ -571,6 +571,29 @@ public class BattleCommander extends Commander {
         // Zealots trade contact, except on a spent weapon: with 7+ frames
         // of cooldown left a step back costs no DPS (owner direction).
         if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
+        if (unit.isDragoon()) {
+            // Surrounded: three or more melee enemies on top of the Dragoon
+            // means escape is impossible - stand and shoot instead of
+            // donating the retreat (owner). Either the shot is almost
+            // ready or the nearest enemy is far enough to trade with.
+            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= DRAGOON_SURROUNDED_MELEE_COUNT
+                && (unit.cooldown() <= DRAGOON_SURROUNDED_STAND_COOLDOWN
+|| unit.distTo(threat) >= DRAGOON_SURROUNDED_STAND_DIST_TILES)) return false;
+            // Low-HP Dragoon holds fire unless the shot is safe: at least
+            // 3.2 tiles of room or an imminent weapon (owner, converging
+            // with Stardust: cooldown <= latency + 2 attacks instead of
+            // stepping). Below half health the threatened step would only
+            // delay the one shot that still matters.
+            if (unit.hp() + unit.shields() < DRAGOON_LOW_HP
+                && unit.cooldown() <= DRAGOON_LOW_HP_FIRE_COOLDOWN) return false;
+            // ...otherwise it yields ground early: holding fire means
+            // stepping, never standing through the cooldown. Robust to
+            // margin tuning - the margin gate alone already kites here at
+            // default constants, this keeps it true whatever they become.
+            if (unit.hp() + unit.shields() < DRAGOON_LOW_HP
+                && unit.distTo(threat) < DRAGOON_LOW_HP_HOLD_TILES
+                && unit.cooldown() > DRAGOON_LOW_HP_FIRE_COOLDOWN) return true;
+        }
         if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
@@ -680,6 +703,26 @@ public class BattleCommander extends Commander {
      * animation faster than it completes (Stardust isReady refusal,
      * PurpleWave new/overdue discipline). */
     public static double KITE_STICKY_CHASE_TILES = 1.0;
+
+    /** Below this health (hp + shields) a Dragoon holds fire unless the
+     * shot is safe (owner: nearly dead Dragoons donate contact). */
+    public static int DRAGOON_LOW_HP = 45;
+
+    /** Hold-fire Dragoon shoots only at this distance or more (tiles). */
+    public static double DRAGOON_LOW_HP_HOLD_TILES = 3.2;
+
+    /** ...or when the weapon fires within this many frames. */
+    public static int DRAGOON_LOW_HP_FIRE_COOLDOWN = 5;
+
+    /** Melee enemies inside 3 tiles that pin a Dragoon in place (owner:
+     * escape is impossible, stand and shoot instead of donating it). */
+    public static int DRAGOON_SURROUNDED_MELEE_COUNT = 3;
+
+    /** ...stand when the shot lands within this many frames. */
+    public static int DRAGOON_SURROUNDED_STAND_COOLDOWN = 6;
+
+    /** ...or when the nearest enemy is at least this far (tiles). */
+    public static double DRAGOON_SURROUNDED_STAND_DIST_TILES = 3.1;
 
     /** Latency frames assumed for cooldown-relative decisions. Stardust
      * reads the engine's remaining latency; 4 here keeps the existing
