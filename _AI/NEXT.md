@@ -305,15 +305,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 - **#10** Split `Selection` (226 public surface methods, measured
   2026-10-17: 166 one-line delegates into 3 seams, 60 remaining) along
   internal seams, with a test pinning selection semantics before/after.
-  with a test pinning selection semantics before/after. Four slices landed
-  (radius family → `SelectionRadius`, membership filters →
+  with a test pinning selection semantics before/after. Five slices
+  landed (radius family → `SelectionRadius`, membership filters →
   `SelectionMembership`, ordering → `SelectionSorting` in two parts:
-  sorts then nearest-finders, each with a pin test, zero call-site
+  sorts then nearest-finders, then element accessors → `SelectionAccessors`:
+  first/last/random(+seed), each with a pin test, zero call-site
   changes): cross-context readers stay put until their dependencies are
   fixed - moving them re-spells frozen violations instead of removing
-  them (measured, see NOTES.md arch mechanics; slices 3-4 verified:
+  them (measured, see NOTES.md arch mechanics; slices verified:
   same 2 pre-existing failures, store diff empty). Remainder is
-  accessors (`units()`, `first/last/random`, `size/count/isEmpty`),
+  container views (`units()`, `list()`, `size/count/isEmpty`),
   thin dispatchers and multi-statement logic needing designed splits,
   not verbatim moves.
 - **#11** Split `AUnit` (577 public methods, measured 2026-10-17): the

@@ -930,33 +930,29 @@ public class Selection extends BaseSelection {
      * Returns first unit that matches previous conditions or null.
      */
     public AUnit first() {
-        return data.isEmpty() ? null : (AUnit) data.get(0);
+        return SelectionAccessors.first(this);
     }
 
     public AUnit second() {
-        return data.size() < 2 ? null : (AUnit) data.get(1);
+        return SelectionAccessors.second(this);
     }
 
     public AUnit randomWithSeed(int seed) {
-        if (data.isEmpty()) return null;
-        if (data.size() == 1) return data.get(0);
-
-        Random rand = new Random(seed);
-        return data.get(rand.nextInt(data.size()));
+        return SelectionAccessors.randomWithSeed(this, seed);
     }
 
     /**
      * Returns first unit that matches previous conditions or null if no units match conditions.
      */
     public AUnit last() {
-        return data.isEmpty() ? null : (AUnit) data.get(data.size() - 1);
+        return SelectionAccessors.last(this);
     }
 
     /**
      * Returns random unit that matches previous conditions or null if no units matched all conditions.
      */
     public AUnit random() {
-        return (AUnit) ARandom.getRandomElement(data);
+        return SelectionAccessors.random(this);
     }
 
     // === High-level of abstraction ===========================
