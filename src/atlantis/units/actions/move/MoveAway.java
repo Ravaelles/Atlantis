@@ -164,11 +164,10 @@ public class MoveAway {
         }
 
         if (unit.isGroundUnit() && !newPosition.isWalkable()) {
-            if (!unit.isWorker()) {
-                ErrorLog.printErrorOnce(
-                    "MoveAway returned unwalkable " + newPosition + ", return false (" + unit.name() + ")"
-                );
-            }
+            // Owner 2026-10-20: unwalkable steps are the normal case in a
+            // brawl (walls, clumps), not a defect - the KITE twin's
+            // stuck-no-step row already names them per unit, so no log
+            // line here (it fired once per game and taught nothing).
             return null;
         }
 
