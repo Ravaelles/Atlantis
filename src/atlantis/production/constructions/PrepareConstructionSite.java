@@ -146,7 +146,10 @@ public class PrepareConstructionSite {
      */
     public static void dropOrphanedPreparing() {
         for (Construction construction : ConstructionRequests.all()) {
-            if (construction.status() != ConstructionOrderStatus.PREPARING) continue;
+            if (construction.status() != ConstructionOrderStatus.PREPARING) {
+                dropBuilderlessNotStarted(construction);
+                continue;
+            }
             ProductionOrder order = construction.productionOrder();
             if (order == null || order.isStatus(OrderStatus.FINISHED)) {
                 // Named, not silent: a PREPARING site vanishing with no row
@@ -177,5 +180,40 @@ public class PrepareConstructionSite {
                 order.setConstruction(null);
             }
         }
+    }
+
+    /**
+     * The silent-death half of the fresh-request path (measured Wine
+     * 7th_rav: Gateway At-10 requested a site at 1:08, the order was
+     * consumed on the request, and the NOT_STARTED construction then
+     * sat builderless with no advance path - the handler skips linked
+     * non-PREPARING rows, refresh skips consumed ones, no twin fires).
+     * A NOT_STARTED site with no live builder and a live order can never
+     * advance on its own, so it re-enters the normal path visibly
+     * (unlink + pristine row + named twin) instead of rotting: a
+     * transient loss (dead builder) heals next refresh, a persistent one
+     * reads as a retry loop, not silence. Orderless rows are not ours
+     * to retry (V2 owns those); finished rows take the orphan-drop
+     * above, never a retry.
+     */
+    private static void dropBuilderlessNotStarted(Construction construction) {
+        if (construction.status() != ConstructionOrderStatus.NOT_STARTED) return;
+        AUnit builder = construction.builder();
+        if (builder != null && builder.isAlive()) return;
+        ProductionOrder order = construction.productionOrder();
+        if (order == null || order.isStatus(OrderStatus.FINISHED)) return;
+
+        EventLog.key(LogKey.CONSTRUCTION_CANCEL)
+            .param("type", construction.buildingType() == null ? "-"
+                : construction.buildingType().name())
+            .param("cid", construction.id())
+            .param("oid", order.id())
+            .param("reason", builder == null ? "builderless-retry" : "builder-dead-retry")
+            .param("tile", construction.buildPosition() == null ? "-"
+                : construction.buildPosition().toString())
+            .log(A.now(), A.minSec());
+        ConstructionRequests.removeOrder(construction);
+        order.setConstruction(null);
+        order.resetRuntimeState();
     }
 }
