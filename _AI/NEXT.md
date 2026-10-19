@@ -703,6 +703,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   WIN, 14 stepped-aside vs 3 stuck (was 9 vs 106 pre-compass).
   Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
   (#152).
+- OpenBW `TauCross` (`113933` long, FE forced reverted probe #2,
+  12493f/8:44, exit 143 wall-cap - inconclusive as verdict, rich as
+  data): FE OPENS (Forge 1:25, Core, 45 warps, Dragoons 10) - the
+  `112337` "jam at Forge" was the disconnect, not the logic. BOARD
+  top `wall-in` once (5:14); sited exact pieces after: PhotonC
+  [19,19]/[18,22] (6:08/6:47), Pylon [12,46] (8:11, wall power),
+  PhotonC [14,43] (8:42); NO At-0 Gateway plug warped. Geometry
+  unverified (no anchor-vs-warp twin), survival unprovable on
+  OpenBW (#94). Twin stream intact to the cap (253 rows past the
+  last 720-frame interval - shutdown flush verified live).
+  prepare-site-overlap 0 (no overlap case). Watcher quiet (no
+  false-positive jstack - the EVENTS watch verified live).
 - OpenBW `TauCross` (`112337` long, FE strategy forced as a reverted
   probe - `Forge FE vZ` vs Zerg, 138 s wall, exit 143 wall-cap):
   the run ended by CLIENT DISCONNECT (~1:28 game time:
