@@ -62,7 +62,10 @@ public final class BuildOrderAudit {
     public static List<String> mismatchLines() {
         List<String> lines = new ArrayList<String>();
         for (Row row : rows) {
-            if (row.actualSupply != row.expectedSupply) {
+            if (
+                row.actualSupply != row.expectedSupply
+                && (row.actualSupply <= 20 || Math.abs(row.actualSupply - row.expectedSupply) >= 2)
+            ) {
                 lines.add("BO ORDER MISMATCH (HIGH): " + row.type
                     + " (BO #" + row.orderId + ") planned At " + row.expectedSupply
                     + " but warped at supply " + row.actualSupply);

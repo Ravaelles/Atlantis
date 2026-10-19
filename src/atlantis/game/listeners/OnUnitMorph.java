@@ -34,8 +34,6 @@ public class OnUnitMorph {
 
         // Our unit
         if (unit.isOur()) {
-            AConsole.errPrintln("@@@@@@@@@ " + unit.type() + " at " + A.now() + "/" + A.minSec());
-
             updateGasBuildingSpecialCaseWhereGeyserMorphsIntoAGasBuilding(unit);
             ProtossWarping.updateNewBuildingJustWarped(unit);
             updateConstructionStatus(unit);

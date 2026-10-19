@@ -126,33 +126,6 @@ cleanup() {
 # cleanup() is idempotent (pkill no-ops, the backup is consumed on restore).
 trap cleanup EXIT
 
-# Where else the client log goes, live. WINE_LOG_COPY in the bot's ENV file
-# (machine-local, git-ignored): when non-empty AND the same file says
-# GAME_LAUNCHER=WINE, tee writes every bot line there as it arrives - so the
-# copy exists mid-game, after a crash and after an IDE kill, not only on a
-# clean exit (an end-of-run cp was tried first and missed all three - the
-# owner's IDE run left no file behind it). Prints the path or nothing.
-# Wine-script only (local, non-OpenBW by construction) plus the launcher
-# guard, so an OpenBW ENV can never trigger it.
-resolve_wine_log_copy() {
-  local env_file=""
-  local candidate
-  # Same order the bot itself resolves ENV in (Env.java): the first file that
-  # exists is the one the game played with, so its GAME_LAUNCHER and
-  # WINE_LOG_COPY are authoritative.
-  for candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
-    if [ -f "$candidate" ]; then env_file="$candidate"; break; fi
-  done
-  [ -z "$env_file" ] && return 0
-  grep -q "^GAME_LAUNCHER=WINE" "$env_file" || return 0
-
-  local dest
-  dest=$(grep "^WINE_LOG_COPY=" "$env_file" | tail -1 | cut -d= -f2-)
-  [ -z "$dest" ] && return 0
-  mkdir -p "$(dirname "$dest")" 2>/dev/null
-  printf '%s' "$dest"
-}
-
 # The jar is what actually plays, and nothing rebuilt it: the IDE launches this
 # script, the script starts the jar, so a stale jar means the owner tests code
 # that is hours old while the sources say otherwise (measured 2026-10-07: the
@@ -274,10 +247,6 @@ say "  Windows path: $WIN_JAR"
 # fixes.
 LIVE_OUTPUT="${LIVE_OUTPUT:-1}"
 
-# Resolve the live copy destination once, before the client starts (see
-# resolve_wine_log_copy): empty in every case that must stay quiet.
-WINE_LOG_COPY_RESOLVED="$(resolve_wine_log_copy)"
-
 # The client inherits this cwd, so the bot's cwd-relative files
 # (bwapi-data/write/...) land here. Captured now: the script cd's into
 # GAME_ROOT further down, so pwd at teardown would lie.
@@ -293,27 +262,8 @@ rm -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" \
 
 TEE_OUT=("$CLIENT_LOG")
 TEE_ERR=("$LOG_DIR/WINE_DEBUG")
-WINE_LIVE_LOG=""
-WINE_LIVE_DEBUG=""
-WINE_LIVE_DECISIONS=""
-if [ -n "$WINE_LOG_COPY_RESOLVED" ]; then
-  # Owner 2026-10-18: fixed role names, no extensions. The ENV value
-  # anchors the directory; basenames are fixed so all three streams
-  # always land together (the old last-wine*.log pair is retired).
-  WINE_LIVE_DIR="$(dirname "$WINE_LOG_COPY_RESOLVED")"
-  WINE_LIVE_LOG="$WINE_LIVE_DIR/WINE_LOG"
-  WINE_LIVE_DEBUG="$WINE_LIVE_DIR/WINE_DEBUG"
-  WINE_LIVE_DECISIONS="$WINE_LIVE_DIR/WINE_DECISIONS"
-  # Owner 2026-10-16: the main copy is the GAME log (stdout only), the
-  # -DEBUG copy the diagnostics (stderr only). Merging both streams into
-  # both files made last-wine.log identical to last-wine-DEBUG.log.
-  TEE_OUT+=("$WINE_LIVE_LOG")
-  say "  Live log copy: $WINE_LIVE_LOG (game log only)"
-fi
-if [ -n "$WINE_LIVE_DEBUG" ]; then
-  TEE_ERR+=("$WINE_LIVE_DEBUG")
-  say "  Live debug copy: $WINE_LIVE_DEBUG (diagnostics stream only)"
-fi
+# out/wine/ is the only destination - the old per-ENV live copy
+# (WINE_LOG_COPY with fixed role names) is retired.
 
 # Streams stay split on purpose: WINE_LOG is the game log (HELLO,
 # GameSummary, build orders), WINE_DEBUG the diagnostics (worker gates,
@@ -526,17 +476,17 @@ else
   say "buildings ledger missing: $CLIENT_CWD/bwapi-data/write/BUILDINGS.json was never written"
 fi
 # Owner 2026-10-16: the warp ledger also belongs at the tail of the debug
-# copy. A clean game end already prints it (OnGameEnd, stderr) - the
+# log. A clean game end already prints it (OnGameEnd, stderr) - the
 # marker guard keeps this append for killed games only, never duplicating.
-if [ -n "${WINE_LIVE_DEBUG:-}" ] && [ -f "$WINE_LIVE_DEBUG" ] \
+if [ -f "$LOG_DIR/WINE_DEBUG" ] \
   && [ -f "$LOG_DIR/BUILDINGS.json" ] \
-  && ! grep -q "ledger at game end" "$WINE_LIVE_DEBUG" 2>/dev/null; then
+  && ! grep -q "ledger at game end" "$LOG_DIR/WINE_DEBUG" 2>/dev/null; then
   {
     echo ""
     echo "===== BUILDINGS.json (ledger at game end) ====="
     cat "$LOG_DIR/BUILDINGS.json"
-  } >> "$WINE_LIVE_DEBUG" 2>/dev/null || true
-  say "ledger appended to debug copy (killed game, no OnGameEnd tail)"
+  } >> "$LOG_DIR/WINE_DEBUG" 2>/dev/null || true
+  say "ledger appended to debug log (killed game, no OnGameEnd tail)"
 fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" ]; then
   cp -f "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" "$LOG_DIR/EVENTS.jsonl" 2>/dev/null || true
@@ -547,10 +497,6 @@ fi
 if [ -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" ]; then
   cp -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" "$LOG_DIR/WINE_DECISIONS" 2>/dev/null || true
   say "decisions log collected: $LOG_DIR/WINE_DECISIONS"
-  if [ -n "${WINE_LIVE_DECISIONS:-}" ]; then
-    cp -f "$LOG_DIR/WINE_DECISIONS" "$WINE_LIVE_DECISIONS" 2>/dev/null || true
-    say "decisions live copy: $WINE_LIVE_DECISIONS"
-  fi
 else
   say "decisions log missing: $CLIENT_CWD/bwapi-data/write/DECISIONS.log was never written"
 fi
