@@ -1,32 +1,73 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.CombatTuning;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * The kite coefficients' documented defaults are engine-faithful
- * (PurpleWave margins, jar ranges). The tuner mutates these in-JVM,
- * so an accidental default drift must fail loudly here instead of
- * silently shifting every proof game.
+ * (PurpleWave margins, jar ranges). The tuner installs derived snapshots
+ * in-JVM, so an accidental default drift must fail loudly here instead of
+ * silently shifting every proof game. Defaults pin against a fresh
+ * instance - never against the shared holder, which a previous test may
+ * have replaced.
  */
 public class TweakerDefaultsTest {
 
     @Test
     public void kiteDefaultsAreEngineFaithful() {
-        assertEquals(5.0, BattleCommander.KITE_ENEMY_TILES);
-        assertEquals(0.5, BattleCommander.KITE_GLUE_TILES);
-        assertEquals(2.0, BattleCommander.KITE_STEP_TILES);
-        assertEquals(0.5, BattleCommander.KITE_HUNTED_TILES);
-        assertEquals(0.5, BattleCommander.KITE_FACED_TILES);
-        assertEquals(1.0, BattleCommander.KITE_MARGIN_BASE_TILES);
-        assertEquals(4.0, BattleCommander.KITE_MARGIN_DYING_TILES);
-        assertEquals(0.25, BattleCommander.KITE_MARGIN_PER_HIT_TILES);
-        assertEquals(16.0, BattleCommander.KITE_ZEALOT_PASS_DAMAGE);
-        assertEquals(0.5, BattleCommander.KITE_STANDOFF_INSET_TILES);
-        assertEquals(0.5, BattleCommander.KITE_GLIDE_DEADBAND_TILES);
-        assertEquals(30, BattleCommander.KITE_RIDE_FRAMES);
-        assertEquals(0.3, BattleCommander.KITE_MIN_STEP_GAIN_TILES);
+        CombatTuning defaults = CombatTuning.defaults();
+
+        assertEquals(5.0, defaults.getKiteEnemyTiles());
+        assertEquals(0.5, defaults.getKiteGlueTiles());
+        assertEquals(2.0, defaults.getKiteStepTiles());
+        assertEquals(0.5, defaults.getKiteHuntedTiles());
+        assertEquals(0.5, defaults.getKiteFacedTiles());
+        assertEquals(1.0, defaults.getKiteMarginBaseTiles());
+        assertEquals(4.0, defaults.getKiteMarginDyingTiles());
+        assertEquals(0.25, defaults.getKiteMarginPerHitTiles());
+        assertEquals(16.0, defaults.getKiteZealotPassDamage());
+        assertEquals(0.5, defaults.getKiteStandoffInsetTiles());
+        assertEquals(0.5, defaults.getKiteGlideDeadbandTiles());
+        assertEquals(30, defaults.getKiteRideFrames());
+        assertEquals(0.3, defaults.getKiteMinStepGainTiles());
+    }
+
+    @Test
+    public void holderStartsAtDefaultsAndResetRestoresThem() {
+        BattleCommander.clearForTests();
+
+        assertEquals(5.0, BattleCommander.tuning().getKiteEnemyTiles());
+
+        BattleCommander.installTuning(BattleCommander.tuning().withKiteEnemyTiles(4.2));
+        assertEquals(4.2, BattleCommander.tuning().getKiteEnemyTiles());
+
+        BattleCommander.reset();
+        assertEquals(5.0, BattleCommander.tuning().getKiteEnemyTiles(),
+                "per-game reset restores defaults before the tuner installs its snapshot");
+    }
+
+    @Test
+    public void snapshotsAreImmutableCopies() {
+        CombatTuning base = CombatTuning.defaults();
+        CombatTuning derived = base.withKiteStepTiles(2.5);
+
+        assertEquals(2.0, base.getKiteStepTiles(), "deriving must not mutate the source");
+        assertEquals(2.5, derived.getKiteStepTiles());
+        assertEquals(base.getKiteEnemyTiles(), derived.getKiteEnemyTiles(),
+                "a derived snapshot carries every untouched value along");
+    }
+
+    @Test
+    public void installIgnoresNull() {
+        BattleCommander.clearForTests();
+        CombatTuning before = BattleCommander.tuning();
+
+        BattleCommander.installTuning(null);
+
+        assertSame(before, BattleCommander.tuning(), "a null install must not clear the holder");
     }
 }

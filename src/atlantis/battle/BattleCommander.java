@@ -21,9 +21,28 @@ public class BattleCommander extends Commander {
 
     private static int fleeStartedAt = -1;
 
+    /**
+     * The live combat coefficients (NEXT #158): one immutable snapshot,
+     * replaced per game by the tuner, reset to defaults with the game.
+     * Domain code reads but never owns it; the values and their
+     * rationale live in {@link CombatTuning}.
+     */
+    private static volatile CombatTuning tuning = CombatTuning.defaults();
+
+    /** The current combat coefficients; the tuner replaces these per game. */
+    public static CombatTuning tuning() {
+        return tuning;
+    }
+
+    /** Installs a derived snapshot - the tuner's only write path. */
+    public static void installTuning(CombatTuning next) {
+        if (next != null) tuning = next;
+    }
+
     /** Per-game reset next to the other static resets in OnGameStarted. */
     public static void reset() {
         fleeStartedAt = -1;
+        tuning = CombatTuning.defaults();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();
@@ -109,15 +128,6 @@ public class BattleCommander extends Commander {
         return tactic;
     }
 
-    /** UMS opening stand-ground window: no retreat for the first 15 seconds. */
-    public static int UMS_NO_RETREAT_FRAMES = 15 * 24;
-
-    /** Threat radius the regroup rally reads: the fight the vanguard answers. */
-    public static double REGROUP_THREAT_TILES = 15.0;
-
-    /** Regroup rally distance from the threat: clear of ground range, close enough to re-engage. */
-    public static double REGROUP_RALLY_TILES = 6.0;
-
     /**
      * The UMS opening stand-ground (owner): on custom maps there is no
      * base to run to, so a retreat in the first 15 seconds is never the
@@ -125,7 +135,7 @@ public class BattleCommander extends Commander {
      * in a stub state without running the frame.
      */
     public static boolean earlyUmsStandGround() {
-        return atlantis.game.A.isUms() && atlantis.game.A.now() < UMS_NO_RETREAT_FRAMES;
+        return atlantis.game.A.isUms() && atlantis.game.A.now() < tuning().getUmsNoRetreatFrames();
     }
 
     /**
@@ -138,9 +148,9 @@ public class BattleCommander extends Commander {
     public static HasPosition regroupRallyPoint(AUnit unit) {
         if (unit == null || !unit.isAlive()) return null;
         AUnit threat = atlantis.battle.targeting.ASquadTargeting
-            .nearestEngageableEnemy(unit, REGROUP_THREAT_TILES);
+            .nearestEngageableEnemy(unit, tuning().getRegroupThreatTiles());
         if (threat == null) return null;
-        return MoveAway.bestDestination(unit, threat, REGROUP_RALLY_TILES);
+        return MoveAway.bestDestination(unit, threat, tuning().getRegroupRallyTiles());
     }
 
     /**
@@ -179,12 +189,12 @@ public class BattleCommander extends Commander {
         double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
         double dist = unit.distTo(threat);
         double tilesPerFrame = unit.maxSpeed() / 32.0;
-        double cooldownDistance = Math.max(0.0, unit.cooldown() - KITE_LATENCY_FRAMES - 2) * tilesPerFrame;
+        double cooldownDistance = Math.max(0.0, unit.cooldown() - tuning().getKiteLatencyFrames() - 2) * tilesPerFrame;
         double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
-        if (targetRange <= myRange - KITE_MELEE_EDGE_TILES) {
-            double hitsLeft = (unit.hp() + unit.shields()) / KITE_ZEALOT_PASS_DAMAGE;
-            double closer = hitsLeft <= KITE_WOUNDED_HITS_LEFT
-                ? KITE_WOUNDED_EDGE_INSET_TILES : KITE_MELEE_CLOSER_TILES;
+        if (targetRange <= myRange - tuning().getKiteMeleeEdgeTiles()) {
+            double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
+            double closer = hitsLeft <= tuning().getKiteWoundedHitsLeft()
+                ? tuning().getKiteWoundedEdgeInsetTiles() : tuning().getKiteMeleeCloserTiles();
             desired -= closer;
         }
         return Math.max(0.0, desired);
@@ -208,7 +218,7 @@ public class BattleCommander extends Commander {
         AUnit current = unit.target();
         if (current == null || !current.isAlive()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
-        if (unit.distTo(current) > unit.groundWeaponRange() + KITE_STICKY_CHASE_TILES) return null;
+        if (unit.distTo(current) > unit.groundWeaponRange() + tuning().getKiteStickyChaseTiles()) return null;
         return current;
     }
 
@@ -291,7 +301,7 @@ public class BattleCommander extends Commander {
         // Mid-swing it waits one frame like every other move here: cancelling
         // the shot to flee is the same bug as cancelling it to kite.
         if (breachForcesFight() && !unit.isAttackFrame() && !unit.isStartingAttack()
-            && unit.hp() <= BREACH_RETREAT_HP && unit.cooldown() >= BREACH_RETREAT_COOLDOWN) {
+            && unit.hp() <= tuning().getBreachRetreatHp() && unit.cooldown() >= tuning().getBreachRetreatCooldown()) {
             HasPosition rally = breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
                 unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
@@ -328,7 +338,7 @@ public class BattleCommander extends Commander {
             // the focused target: focus fire must not pin a Dragoon that
             // is being shredded).
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
-                .nearestEngageableEnemy(unit, KITE_ENEMY_TILES);
+                .nearestEngageableEnemy(unit, tuning().getKiteEnemyTiles());
             HitTwin.sample(unit, threat != null ? threat : target);
             int now = A.now();
             Integer lastStep = lastStepFrame.get(unit.id());
@@ -374,9 +384,9 @@ public class BattleCommander extends Commander {
                 // a step cannot dodge damage that is locked in, but our
                 // ready shot still lands (symmetric animation discipline).
                 boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
-                boolean glued = unit.distTo(threat) < KITE_GLUE_TILES && unit.cooldown() == 0;
+                boolean glued = unit.distTo(threat) < tuning().getKiteGlueTiles() && unit.cooldown() == 0;
                 boolean tradeShot = unit.cooldown() == 0 && (glued || swingIncoming);
-                if (!tradeShot && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
+                if (!tradeShot && (lastStep == null || now - lastStep >= tuning().getKiteRestepsEveryFrames())) {
                     // Stardust desired distance: step exactly the gap to the
                     // hold point (capped at one full step), never a blind
                     // shove past the firing position - stepping 2.0 tiles
@@ -384,7 +394,7 @@ public class BattleCommander extends Commander {
                     // the glide then donates the walk back. That overshoot
                     // is the measured "ucieka za daleko" shape; holding at
                     // the formula's point keeps shooting instead.
-                    double stepLen = Math.min(KITE_STEP_TILES,
+                    double stepLen = Math.min(tuning().getKiteStepTiles(),
                         Math.max(0.0, desiredKiteDistance(unit, threat) - unit.distTo(threat)));
                     APosition dest = stepLen > 0
                         ? MoveAway.bestDestination(unit, threat, stepLen)
@@ -412,15 +422,15 @@ public class BattleCommander extends Commander {
             // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
             // 156 attack orders, zero shots landed). The attack issues on
             // arrival, when the target is actually in range.
-            double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
+            double standOff = unit.groundWeaponRange() - tuning().getKiteStandoffInsetTiles();
             if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
                 APosition fireAt = null;
-                if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES
-                    && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
+                if (unit.distTo(target) > standOff + tuning().getKiteGlideDeadbandTiles()
+                    && (lastStep == null || now - lastStep >= tuning().getKiteRestepsEveryFrames())) {
                     fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
                     if (fireAt != null
-                        && unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
+                        && unit.distTo(fireAt) > tuning().getKiteGlideDeadbandTiles()
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
                         lastStepFrame.put(unit.id(), now);
                         lastRepositionFrame.put(unit.id(), now);
@@ -450,7 +460,7 @@ public class BattleCommander extends Commander {
             // The kite branch above still preempts for new threats, and
             // a finished glide re-arms via the attack check below.
             if (unit.cooldown() > 0
-                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < KITE_RIDE_FRAMES) return;
+                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < tuning().getKiteRideFrames()) return;
             // Order discipline, not order spam: a new attack order issues
             // only when the engine holds a different target (first
             // acquisition, lost order while moving, target switch).
@@ -538,7 +548,7 @@ public class BattleCommander extends Commander {
                 atlantis.map.choke.Chokes.mainChoke();
             if (choke == null || choke.center() == null) return ClusterAnchor.defendAnchor();
             APosition point = main.position()
-                .translateTilesTowards(BREACH_RALLY_TILES, choke.center());
+                .translateTilesTowards(tuning().getBreachRallyTiles(), choke.center());
             if (point == null) return ClusterAnchor.defendAnchor();
             return point;
         }
@@ -576,29 +586,29 @@ public class BattleCommander extends Commander {
         // of cooldown left a step back costs no DPS (owner direction).
         if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
         if (unit.isDragoon()) {
-            boolean lowHp = unit.hp() + unit.shields() < DRAGOON_LOW_HP;
+            boolean lowHp = unit.hp() + unit.shields() < tuning().getDragoonLowHp();
             // Surrounded: three or more melee enemies on top of the Dragoon
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost
             // ready or the nearest enemy is far enough to trade with.
-            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= DRAGOON_SURROUNDED_MELEE_COUNT
-                && (unit.cooldown() <= DRAGOON_SURROUNDED_STAND_COOLDOWN
-                    || unit.distTo(threat) >= DRAGOON_SURROUNDED_STAND_DIST_TILES)) return false;
+            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= tuning().getDragoonSurroundedMeleeCount()
+                && (unit.cooldown() <= tuning().getDragoonSurroundedStandCooldown()
+                    || unit.distTo(threat) >= tuning().getDragoonSurroundedStandDistTiles())) return false;
             // Low-HP Dragoon holds fire unless the shot is safe: at least
             // 3.2 tiles of room or an imminent weapon (owner, converging
             // with Stardust: cooldown <= latency + 2 attacks instead of
             // stepping). Below half health the threatened step would only
             // delay the one shot that still matters.
-            if (lowHp && unit.cooldown() <= DRAGOON_LOW_HP_FIRE_COOLDOWN) return false;
+            if (lowHp && unit.cooldown() <= tuning().getDragoonLowHpFireCooldown()) return false;
             // ...otherwise it yields ground early: holding fire means
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
             // default constants, this keeps it true whatever they become.
             if (lowHp
-                && unit.distTo(threat) < DRAGOON_LOW_HP_HOLD_TILES
-                && unit.cooldown() > DRAGOON_LOW_HP_FIRE_COOLDOWN) return true;
+                && unit.distTo(threat) < tuning().getDragoonLowHpHoldTiles()
+                && unit.cooldown() > tuning().getDragoonLowHpFireCooldown()) return true;
         }
-        if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
+        if (unit.distTo(threat) >= tuning().getKiteEnemyTiles()) return false;
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
 
@@ -613,8 +623,8 @@ public class BattleCommander extends Commander {
      */
     private static double kiteMargin(AUnit unit, AUnit threat) {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
-        if (isHuntedBy(unit, threat)) margin -= KITE_HUNTED_TILES;
-        if (unit.isOtherFacingThisUnit(threat)) margin -= KITE_FACED_TILES;
+        if (isHuntedBy(unit, threat)) margin -= tuning().getKiteHuntedTiles();
+        if (unit.isOtherFacingThisUnit(threat)) margin -= tuning().getKiteFacedTiles();
         return margin;
     }
 
@@ -634,119 +644,16 @@ public class BattleCommander extends Commander {
      * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
      */
     private static double kiteMarginRequired(AUnit unit) {
-        double hitsLeft = (unit.hp() + unit.shields()) / KITE_ZEALOT_PASS_DAMAGE;
-        return Math.max(KITE_MARGIN_BASE_TILES,
-            KITE_MARGIN_DYING_TILES - KITE_MARGIN_PER_HIT_TILES * hitsLeft);
+        double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
+        return Math.max(tuning().getKiteMarginBaseTiles(),
+            tuning().getKiteMarginDyingTiles() - tuning().getKiteMarginPerHitTiles() * hitsLeft);
     }
 
     /**
-     * Kiting coefficients, public and mutable on purpose (owner: the
-     * ParamTweaker randomizes them in-JVM and scores games to CSV, so
-     * tuning needs no rebuild and no external file). Defaults are the
-     * engine-faithful values (PurpleWave margins, jar ranges); the
-     * tuner only explores around them. Long term these become a typed
-     * profile struct (see `_AI/CHALLENGES/MicroKiting.md`); scattering
-     * mutable statics is the deliberate short-term shape, not the
-     * architecture.
+     * Kiting rules. The coefficients used to live here as public mutable
+     * statics; they moved to {@link CombatTuning} (NEXT #158) and are read
+     * through {@link #tuning()} below.
      */
-    /** Enemies inside this range count as kiting threats (PurpleWave threatsInPixels(160)). */
-    public static double KITE_ENEMY_TILES = 5.0;
-
-    /** At or under this threat distance the duel is glue: bodies overlap, no step opens. */
-    public static double KITE_GLUE_TILES = 0.5;
-
-    /** How far the kiting step carries (tiles). */
-    public static double KITE_STEP_TILES = 2.0;
-
-    /** A step candidate has to open at least this much beyond the current distance (tiles). Anti-jitter only: above a body radius, below any real sidestep. */
-    public static double KITE_MIN_STEP_GAIN_TILES = 0.3;
-
-    /** Threat committed to exactly this unit shrinks the margin by this much (tiles). */
-    public static double KITE_HUNTED_TILES = 0.5;
-
-    /** Threat facing this unit shrinks the margin by this much (tiles). */
-    public static double KITE_FACED_TILES = 0.5;
-
-    /** Margin a full-health Dragoon demands before yielding (tiles). */
-    public static double KITE_MARGIN_BASE_TILES = 1.0;
-
-    /** Margin a dying Dragoon demands before yielding (tiles). */
-    public static double KITE_MARGIN_DYING_TILES = 4.0;
-
-    /** Each survived Zealot pass lowers the demanded margin by this much (tiles). */
-    public static double KITE_MARGIN_PER_HIT_TILES = 0.25;
-
-    /** One Zealot pass deals this much damage (2x8 swings; jar reports 8x1). */
-    public static double KITE_ZEALOT_PASS_DAMAGE = 16.0;
-
-    /** Firing point sits this far inside our max range (tiles). */
-    public static double KITE_STANDOFF_INSET_TILES = 0.5;
-
-    /** Glide deadband around the firing point (tiles). */
-    public static double KITE_GLIDE_DEADBAND_TILES = 0.5;
-
-    /** Melee-closer term: hold this many tiles inside max range when the
-     * threat is outranged by 2+ tiles (Stardust: -32px vs much-shorter
-     * range - a Dragoon kiting a Zealot to max edge donates the fight). */
-    public static double KITE_MELEE_CLOSER_TILES = 1.0;
-
-    /** Range edge for the term above (Stardust: targetRange <= myRange - 64px). */
-    public static double KITE_MELEE_EDGE_TILES = 2.0;
-
-    /** At or under this many survived Zealot passes (~half health) the
-     * Dragoon counts as wounded: it skips the melee-closer and holds
-     * the max-range edge, retreating longer instead of closing. */
-    public static double KITE_WOUNDED_HITS_LEFT = 6.0;
-
-    /** Wounded edge inset: hold this far inside max range (tiles) instead
-     * of the full melee-closer (owner: shoot from near max range). */
-    public static double KITE_WOUNDED_EDGE_INSET_TILES = 0.4;
-
-    /** Committed target sticks while inside weapon range plus this chase
-     * allowance (tiles): re-picking every frame restarts the attack
-     * animation faster than it completes (Stardust isReady refusal,
-     * PurpleWave new/overdue discipline). */
-    public static double KITE_STICKY_CHASE_TILES = 1.0;
-
-    /** Below this health (hp + shields) a Dragoon holds fire unless the
-     * shot is safe (owner: nearly dead Dragoons donate contact). */
-    public static int DRAGOON_LOW_HP = 45;
-
-    /** Hold-fire Dragoon shoots only at this distance or more (tiles). */
-    public static double DRAGOON_LOW_HP_HOLD_TILES = 3.2;
-
-    /** ...or when the weapon fires within this many frames. */
-    public static int DRAGOON_LOW_HP_FIRE_COOLDOWN = 5;
-
-    /** Melee enemies inside 3 tiles that pin a Dragoon in place (owner:
-     * escape is impossible, stand and shoot instead of donating it). */
-    public static int DRAGOON_SURROUNDED_MELEE_COUNT = 3;
-
-    /** ...stand when the shot lands within this many frames. */
-    public static int DRAGOON_SURROUNDED_STAND_COOLDOWN = 6;
-
-    /** ...or when the nearest enemy is at least this far (tiles). */
-    public static double DRAGOON_SURROUNDED_STAND_DIST_TILES = 3.1;
-
-    /** Latency frames assumed for cooldown-relative decisions. Stardust
-     * reads the engine's remaining latency; 4 here keeps the existing
-     * resteps = latency + 6 cadence arithmetic intact. */
-    public static int KITE_LATENCY_FRAMES = 4;
-
-    /** A reposition keeps riding this long before the attack re-arms (frames). */
-    public static int KITE_RIDE_FRAMES = 30;
-
-    /** A step or glide re-issues at most this often (frames, Stardust latency+6 cadence). */
-    public static int KITE_RESTEPS_EVERY_FRAMES = 10;
-
-    /** Breach retreat hatch (owner): at or under this hp a unit may leave a breached base. */
-    public static int BREACH_RETREAT_HP = 40;
-
-    /** ... and only with at least this much cooldown left (no shot to give). */
-    public static int BREACH_RETREAT_COOLDOWN = 5;
-
-    /** Rally stands this far from the main toward the main choke (tiles). */
-    public static double BREACH_RALLY_TILES = 3;
 
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
     private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
@@ -754,6 +661,7 @@ public class BattleCommander extends Commander {
     private static final java.util.Map<Integer, APosition> lastMovedPos = new java.util.HashMap<>();
 
     public static void clearForTests() {
+        tuning = CombatTuning.defaults();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();

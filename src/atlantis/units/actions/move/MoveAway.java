@@ -43,7 +43,7 @@ public class MoveAway {
      * 20 "stepped-aside" rows, zero pixels moved, 2 passes eaten):
      * a refused order is not a step (try the next candidate instead
      * of reporting success), and a step must step (the best candidate
-     * has to open at least KITE_MIN_STEP_GAIN_TILES beyond the current
+     * has to open at least the min-step-gain beyond the current
      * distance, else there is no step and the caller fights).
      */
     /**
@@ -64,7 +64,7 @@ public class MoveAway {
 
         double now = unit.distTo(from);
         for (APosition dest : valid) {
-            if (dest.distTo(from) - now < atlantis.battle.BattleCommander.KITE_MIN_STEP_GAIN_TILES) {
+            if (dest.distTo(from) - now < atlantis.battle.BattleCommander.tuning().getKiteMinStepGainTiles()) {
                 return null;
             }
             return dest;

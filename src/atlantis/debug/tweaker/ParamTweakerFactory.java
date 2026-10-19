@@ -36,108 +36,108 @@ public class ParamTweakerFactory extends ParamTweaker {
         // around the engine-faithful defaults, never blind.
         tweaker.addParam(new Param(
                 "KiteEnemyTiles",
-                () -> BattleCommander.KITE_ENEMY_TILES,
-                () -> { applyOrRandomize("KiteEnemyTiles", 40, 60, 10.0, v -> BattleCommander.KITE_ENEMY_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteEnemyTiles(),
+                () -> { applyOrRandomize("KiteEnemyTiles", 40, 60, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteEnemyTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteGlueTiles",
-                () -> BattleCommander.KITE_GLUE_TILES,
-                () -> { applyOrRandomize("KiteGlueTiles", 3, 8, 10.0, v -> BattleCommander.KITE_GLUE_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteGlueTiles(),
+                () -> { applyOrRandomize("KiteGlueTiles", 3, 8, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteGlueTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteStepTiles",
-                () -> BattleCommander.KITE_STEP_TILES,
-                () -> { applyOrRandomize("KiteStepTiles", 15, 30, 10.0, v -> BattleCommander.KITE_STEP_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteStepTiles(),
+                () -> { applyOrRandomize("KiteStepTiles", 15, 30, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteStepTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteHuntedTiles",
-                () -> BattleCommander.KITE_HUNTED_TILES,
-                () -> { applyOrRandomize("KiteHuntedTiles", 0, 10, 10.0, v -> BattleCommander.KITE_HUNTED_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteHuntedTiles(),
+                () -> { applyOrRandomize("KiteHuntedTiles", 0, 10, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteHuntedTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteFacedTiles",
-                () -> BattleCommander.KITE_FACED_TILES,
-                () -> { applyOrRandomize("KiteFacedTiles", 0, 10, 10.0, v -> BattleCommander.KITE_FACED_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteFacedTiles(),
+                () -> { applyOrRandomize("KiteFacedTiles", 0, 10, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteFacedTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginBaseTiles",
-                () -> BattleCommander.KITE_MARGIN_BASE_TILES,
-                () -> { applyOrRandomize("KiteMarginBaseTiles", 5, 15, 10.0, v -> BattleCommander.KITE_MARGIN_BASE_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteMarginBaseTiles(),
+                () -> { applyOrRandomize("KiteMarginBaseTiles", 5, 15, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteMarginBaseTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginDyingTiles",
-                () -> BattleCommander.KITE_MARGIN_DYING_TILES,
-                () -> { applyOrRandomize("KiteMarginDyingTiles", 30, 50, 10.0, v -> BattleCommander.KITE_MARGIN_DYING_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteMarginDyingTiles(),
+                () -> { applyOrRandomize("KiteMarginDyingTiles", 30, 50, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteMarginDyingTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteMarginPerHitTiles",
-                () -> BattleCommander.KITE_MARGIN_PER_HIT_TILES,
-                () -> { applyOrRandomize("KiteMarginPerHitTiles", 15, 35, 100.0, v -> BattleCommander.KITE_MARGIN_PER_HIT_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteMarginPerHitTiles(),
+                () -> { applyOrRandomize("KiteMarginPerHitTiles", 15, 35, 100.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteMarginPerHitTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteZealotPassDamage",
-                () -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE,
-                () -> { applyOrRandomize("KiteZealotPassDamage", 140, 180, 10.0, v -> BattleCommander.KITE_ZEALOT_PASS_DAMAGE = v); return null; }
+                () -> BattleCommander.tuning().getKiteZealotPassDamage(),
+                () -> { applyOrRandomize("KiteZealotPassDamage", 140, 180, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteZealotPassDamage(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteStandoffInsetTiles",
-                () -> BattleCommander.KITE_STANDOFF_INSET_TILES,
-                () -> { applyOrRandomize("KiteStandoffInsetTiles", 0, 10, 10.0, v -> BattleCommander.KITE_STANDOFF_INSET_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteStandoffInsetTiles(),
+                () -> { applyOrRandomize("KiteStandoffInsetTiles", 0, 10, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteStandoffInsetTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteGlideDeadbandTiles",
-                () -> BattleCommander.KITE_GLIDE_DEADBAND_TILES,
-                () -> { applyOrRandomize("KiteGlideDeadbandTiles", 2, 8, 10.0, v -> BattleCommander.KITE_GLIDE_DEADBAND_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteGlideDeadbandTiles(),
+                () -> { applyOrRandomize("KiteGlideDeadbandTiles", 2, 8, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteGlideDeadbandTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteRideFrames",
-                () -> BattleCommander.KITE_RIDE_FRAMES,
-                () -> { applyOrRandomizeInt("KiteRideFrames", 20, 40, v -> BattleCommander.KITE_RIDE_FRAMES = v); return null; }
+                () -> BattleCommander.tuning().getKiteRideFrames(),
+                () -> { applyOrRandomizeInt("KiteRideFrames", 20, 40, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteRideFrames(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteWoundedHitsLeft",
-                () -> BattleCommander.KITE_WOUNDED_HITS_LEFT,
-                () -> { applyOrRandomize("KiteWoundedHitsLeft", 40, 80, 10.0, v -> BattleCommander.KITE_WOUNDED_HITS_LEFT = v); return null; }
+                () -> BattleCommander.tuning().getKiteWoundedHitsLeft(),
+                () -> { applyOrRandomize("KiteWoundedHitsLeft", 40, 80, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteWoundedHitsLeft(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteWoundedEdgeInsetTiles",
-                () -> BattleCommander.KITE_WOUNDED_EDGE_INSET_TILES,
-                () -> { applyOrRandomize("KiteWoundedEdgeInsetTiles", 2, 8, 10.0, v -> BattleCommander.KITE_WOUNDED_EDGE_INSET_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteWoundedEdgeInsetTiles(),
+                () -> { applyOrRandomize("KiteWoundedEdgeInsetTiles", 2, 8, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteWoundedEdgeInsetTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "KiteStickyChaseTiles",
-                () -> BattleCommander.KITE_STICKY_CHASE_TILES,
-                () -> { applyOrRandomize("KiteStickyChaseTiles", 5, 15, 10.0, v -> BattleCommander.KITE_STICKY_CHASE_TILES = v); return null; }
+                () -> BattleCommander.tuning().getKiteStickyChaseTiles(),
+                () -> { applyOrRandomize("KiteStickyChaseTiles", 5, 15, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withKiteStickyChaseTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonLowHp",
-                () -> BattleCommander.DRAGOON_LOW_HP,
-                () -> { applyOrRandomizeInt("DragoonLowHp", 30, 60, v -> BattleCommander.DRAGOON_LOW_HP = v); return null; }
+                () -> BattleCommander.tuning().getDragoonLowHp(),
+                () -> { applyOrRandomizeInt("DragoonLowHp", 30, 60, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonLowHp(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonLowHpHoldTiles",
-                () -> BattleCommander.DRAGOON_LOW_HP_HOLD_TILES,
-                () -> { applyOrRandomize("DragoonLowHpHoldTiles", 20, 40, 10.0, v -> BattleCommander.DRAGOON_LOW_HP_HOLD_TILES = v); return null; }
+                () -> BattleCommander.tuning().getDragoonLowHpHoldTiles(),
+                () -> { applyOrRandomize("DragoonLowHpHoldTiles", 20, 40, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonLowHpHoldTiles(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonLowHpFireCooldown",
-                () -> BattleCommander.DRAGOON_LOW_HP_FIRE_COOLDOWN,
-                () -> { applyOrRandomizeInt("DragoonLowHpFireCooldown", 3, 8, v -> BattleCommander.DRAGOON_LOW_HP_FIRE_COOLDOWN = v); return null; }
+                () -> BattleCommander.tuning().getDragoonLowHpFireCooldown(),
+                () -> { applyOrRandomizeInt("DragoonLowHpFireCooldown", 3, 8, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonLowHpFireCooldown(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonSurroundedMeleeCount",
-                () -> BattleCommander.DRAGOON_SURROUNDED_MELEE_COUNT,
-                () -> { applyOrRandomizeInt("DragoonSurroundedMeleeCount", 2, 4, v -> BattleCommander.DRAGOON_SURROUNDED_MELEE_COUNT = v); return null; }
+                () -> BattleCommander.tuning().getDragoonSurroundedMeleeCount(),
+                () -> { applyOrRandomizeInt("DragoonSurroundedMeleeCount", 2, 4, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonSurroundedMeleeCount(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonSurroundedStandCooldown",
-                () -> BattleCommander.DRAGOON_SURROUNDED_STAND_COOLDOWN,
-                () -> { applyOrRandomizeInt("DragoonSurroundedStandCooldown", 4, 8, v -> BattleCommander.DRAGOON_SURROUNDED_STAND_COOLDOWN = v); return null; }
+                () -> BattleCommander.tuning().getDragoonSurroundedStandCooldown(),
+                () -> { applyOrRandomizeInt("DragoonSurroundedStandCooldown", 4, 8, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonSurroundedStandCooldown(v))); return null; }
         ));
         tweaker.addParam(new Param(
                 "DragoonSurroundedStandDistTiles",
-                () -> BattleCommander.DRAGOON_SURROUNDED_STAND_DIST_TILES,
-                () -> { applyOrRandomize("DragoonSurroundedStandDistTiles", 20, 40, 10.0, v -> BattleCommander.DRAGOON_SURROUNDED_STAND_DIST_TILES = v); return null; }
+                () -> BattleCommander.tuning().getDragoonSurroundedStandDistTiles(),
+                () -> { applyOrRandomize("DragoonSurroundedStandDistTiles", 20, 40, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonSurroundedStandDistTiles(v))); return null; }
         ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
