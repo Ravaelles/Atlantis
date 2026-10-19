@@ -77,6 +77,37 @@ public class GoalBoardFeederTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void healthySupplyFeedsNoPylon() {
+        currentSupplyUsed = 25;
+        currentSupplyTotal = 33;
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+            Queue.get().allOrders().list().clear();
+            Queue.get().clearCache();
+
+            BoardState ample = BoardState.builder()
+                .minerals(500).supply(25, 33)
+                .workers(10).bases(2).gateways(2).army(4)
+                .seconds(400)
+                .build();
+            String fed = GoalBoardFeeder.ensure(ample);
+
+            assertFalse(fed.contains("supply-pylon"),
+                "free 8 at 25/33 is no block - the game-2 #30 shape must not feed: " + fed);
+            boolean pylonRow = false;
+            for (ProductionOrder order : Queue.get().allOrders().list()) {
+                if (order.unitType() != null && order.unitType().equals(AUnitType.Protoss_Pylon)) {
+                    pylonRow = true;
+                }
+            }
+            assertFalse(pylonRow, "healthy supply feeds no Pylon row");
+        });
+    }
+
+    @Test
     public void demandGateSeams() {
         world(5, fakeOurs(
             fake(AUnitType.Protoss_Nexus, 20, 20),

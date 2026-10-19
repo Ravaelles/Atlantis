@@ -11,6 +11,12 @@ public class ProduceFallbackPylonWhenSupplyLow extends ProduceFallbackSupplyWhen
     @Override
     public boolean shouldProduce() {
 //        if (A.supplyTotal() >= 15) return false;
+        // Overriding criterion first (owner): one Pylon at a time, free
+        // supply within the band for the current game stage. Skips all
+        // band math when no provider is needed.
+        if (!NeedDynamicSupply.forCurrentRace().needsSupply(
+            A.supplyUsed(), A.supplyTotal(),
+            ConstructionRequests.countNotFinishedOfType(type()))) return false;
         if (A.supplyFree() > minFreeSupplyToAct()) return false;
         if (A.supplyUsed() < 8) return false;
         if (A.everyFrameExceptNthFrame(19)) return false;

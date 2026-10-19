@@ -83,10 +83,10 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
     }
 
     @Test
-    public void secondPylonOverlapsFirstWhilePoor() {
-        // Pipeline doctrine (owner): the next Pylon goes out BEFORE the
-        // previous completes. With one unfinished Pylon and low bank the old
-        // cap (1 below 150) serialized everything into cap gaps.
+    public void secondPylonWaitsBelowForty() {
+        // One at a time below 40 (owner): an unfinished Pylon already
+        // covers the block - reverts the overlap doctrine, which
+        // stockpiled 10+ free supply above 25 (UMS 7th_rav).
         currentMinerals = 50;
         initSupply(38, 40);
 
@@ -102,10 +102,9 @@ public class FallbackSupplyThresholdTest extends WorldStubForTests {
             atlantis.production.constructions.ConstructionRequests.constructions.add(first);
 
             try {
-                assertTrue(
+                assertFalse(
                     new ProduceFallbackPylonWhenSupplyLow().shouldProduce(),
-                    "one Pylon unfinished + low bank must still allow the"
-                        + " second (overlap), or supply sits at cap mid-warp");
+                    "below 40 one unfinished Pylon is the whole pipeline - the second waits");
             } finally {
                 atlantis.production.constructions.ConstructionRequests.constructions.clear();
             }

@@ -33,6 +33,17 @@ public class SupplyCommander extends Commander {
 
     @Override
     protected boolean handle() {
+        // Overriding criterion (owner): the dynamic-supply question is
+        // answered once, up front, for every path below - an unfinished
+        // provider already covers the block, and free supply above the
+        // band means the cap is not near. Skips all band math when the
+        // answer is no.
+        if (!atlantis.production.dynamic.supply.NeedDynamicSupply.forCurrentRace().needsSupply(
+            A.supplyUsed(), A.supplyTotal(),
+            ConstructionRequests.countNotFinishedOfType(AtlantisRaceConfig.SUPPLY))) {
+            return false;
+        }
+
         supplyTotal = AGame.supplyTotal();
         supplyFree = AGame.supplyFree();
 

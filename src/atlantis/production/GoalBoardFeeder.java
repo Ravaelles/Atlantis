@@ -7,6 +7,7 @@ import atlantis.decisions.board.GoalBoardWallet;
 import atlantis.decisions.goals.protoss.ProtossOpening;
 import atlantis.game.A;
 import atlantis.production.constructions.ConstructionRequests;
+import atlantis.production.dynamic.supply.NeedDynamicSupply;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.add.AddToQueue;
@@ -55,6 +56,16 @@ public final class GoalBoardFeeder {
             }
             AUnitType type = orderType(goal.id());
             if (type == null) {
+                continue;
+            }
+            // The feeder funds by ladder, not by need: without this veto a
+            // funded-but-unneeded Pylon row lands on top of a healthy
+            // supply (measured: dynamic #30 ordered at 25/33, free 8).
+            // inFlight below covers rows already out; this covers need.
+            if ("supply-pylon".equals(goal.id())
+                && !NeedDynamicSupply.forCurrentRace().needsSupply(
+                    A.supplyUsed(), A.supplyTotal(),
+                    ConstructionRequests.countNotFinishedOfType(type))) {
                 continue;
             }
             if (inFlight(type)) {
