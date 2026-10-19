@@ -92,8 +92,29 @@ attempt does not repeat the search.
   required - bare `ums/...` fails with "Map not found") runs 302
   game-s but hands the bot a melee start (Nexus + 4 probes, no
   pre-placed Dragoon, `Dragoon` 0 in log) and spawns no enemy
-  (`enemy: ` empty, 0/0) - the 1v1 micro proof cannot live on
-  OpenBW; Wine stays the vehicle.
+  (`enemy: ` empty, 0/0) - that run predates the runner forcing
+  `USE_MAP_SETTINGS` (melee-mode signature, see below); Wine stays
+  the vehicle for the 1v1.
+- 2026-10-19 re-run with the current runner (flag forced): `### UMS
+  mode enabled! ###` in the bot log, NO melee start at all (no
+  Nexus, no probes, no units for our slot - bot idles to the wall
+  kill, no EVENTS.jsonl), `enemy: ` empty, and the server prints
+  `Error: unknown trigger condition 4`. Verdict: the mode flag works
+  end to end (code chain: runner exports
+  `BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS` →
+  `AutoMenuManager.cpp:139,235` `setGameType(USE_MAP_SETTINGS)` →
+  `GameImpl.cpp:907` `setGameTypeUseMapSettings()` →
+  `BWData.cpp:446` non-melee keeps `setup_info` at 0/0/0 →
+  `bwgame.h:21806` `use_map_settings=true` → THG2/UNIT pre-placed
+  units created, no `create_starting_units`, TRIG chunk read).
+  1Drag fails map-specifically: it needs trigger condition 4
+  (`Accumulate`), which OpenBW does not implement (supported: 2
+  command, 3 bring, 12 elapsed time, 14 opponents, 22 always;
+  `bwgame.h:18879-18902`), so its scripted setup never fires.
+  UMS-on-OpenBW verdict is therefore per-map, not blanket:
+  pre-placed units DO reach the bot when the map has them as units
+  (8Drag datum above); trigger-built setups need engine trigger
+  coverage that does not exist. No re-runs of 1Drag on OpenBW.
 
 ## Decision needed from the owner (updated 2026-10-17, tracked as NEXT #94)
 
