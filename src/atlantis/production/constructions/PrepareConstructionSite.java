@@ -73,6 +73,14 @@ public class PrepareConstructionSite {
         // site (measured: Gateway [95,111] on top of warping [92,111]).
         // Overlap unlinks and retries later - same as a failed search.
         if (overlapsUnfinishedSite(site, type)) {
+            EventLog.key(LogKey.BUILD_REFUSED)
+                .param("type", type.name())
+                .param("guard", "prepare-site-overlap")
+                .param("order", order.toString())
+                .param("tile", "[" + site.tx() + "," + site.ty() + "]")
+                .param("supplyUsed", A.supplyUsed())
+                .param("minerals", A.minerals())
+                .log(A.now(), A.minSec());
             order.setConstruction(null);
             return;
         }
