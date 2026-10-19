@@ -103,7 +103,7 @@ public class Main {
 
 //        if (true) return "sscai/(2)HeartbreakRidge.scx";
 //        if (true) return "sscai/(2)Destination.scx";
-        if (true) return "sscai/(3)TauCross.scx";
+//        if (true) return "sscai/(3)TauCross.scx";
 //        if (true) return "sscai/(4)Roadrunner.scx";
 
         // =========================================================
@@ -162,7 +162,7 @@ public class Main {
     // === Maps for testing as PROTOSS =============================================
 
     public static String mapAsProtoss() {
-//        if (!"Protoss".equals(ourRace())) return null;
+        if (!"Protoss".equals(ourRace())) return null;
 
         // -------------------- vs Terran ------------------------
 //        if (true) return "ums/rav/protoss/Drag_v_M&M.scx"; // Goons vs M&M + Bunker
@@ -301,7 +301,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/16Drag_v_16Drag.scm";
 
 //        if (true) return "ums/rav/protoss/Drag_v_Marines.scm";
-        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
+//        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░

@@ -196,11 +196,4 @@ public final class WineWindowConfig {
         script.append(",$(( (SH-").append(height).append(")/2 ))-1,-1");
         return new String[]{"sh", "-c", script.toString()};
     }
-
-    public static String describe() {
-        if (x == UNSET || y == UNSET) {
-            return "wine window " + width + "x" + height + " (centered)";
-        }
-        return "wine window " + width + "x" + height + " at (" + x + "," + y + ")";
-    }
 }

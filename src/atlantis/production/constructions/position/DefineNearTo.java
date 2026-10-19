@@ -15,6 +15,8 @@ import atlantis.util.log.ErrorLog;
 
 public class DefineNearTo {
     public static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
+        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("WUT");
+
         if (We.terran()) {
             nearTo = forTerran(building, nearTo);
         }

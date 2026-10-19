@@ -120,7 +120,7 @@ public class BattleCommander extends Commander {
         if (tactic == FightOrFlight.Tactic.FLEE) {
             HasPosition home = ClusterAnchor.defendAnchor();
             HasPosition point = gatherPointFor(unit, leader, home);
-            if (point != null) {
+            if (point != null && unit.distTo(point) >= 0.2) {
                 unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
                 return;
             }

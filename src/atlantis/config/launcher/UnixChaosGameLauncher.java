@@ -74,7 +74,6 @@ public class UnixChaosGameLauncher implements GameLauncher {
         System.out.println("===============================================");
         System.out.println("[Atlantis] Backend: Wine + StarCraft + ChaosLauncher (Linux).");
         System.out.println("[Atlantis] Map: " + ActiveMap.name());
-        System.out.println("[Atlantis] Game window: " + WineWindowConfig.describe());
         System.out.println("===============================================");
 
         warnIfMapMissing(ActiveMap.name());
