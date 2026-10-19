@@ -2,7 +2,7 @@
 # Play one StarCraft map under Wine.
 #
 # Usage:
-#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [--env=FILE]
+#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [--env=FILE] [--hidden]
 #
 #   map   : bare map file name (resolved under the game's maps/ tree,
 #           e.g. "1Drag_v_1Zeal.scm") or a maps/-relative path.
@@ -11,6 +11,8 @@
 #           (speed 0, frameskip 1000, GUI off). Relative paths resolve
 #           against the repo root. Without it the bot reads the shared
 #           ENV (your watched-game settings, untouched by this script).
+#   --hidden : run the whole session under Xvfb :99 - nothing ever
+#           maps on the desktop (no window, no resolution switch).
 #
 # Thin wrapper over scripts/run-wine-full.sh (the tested core: jar
 # rebuild, teardown). Exists so a Wine launch is one obvious command
@@ -30,14 +32,20 @@ set -u
 
 MAP=""
 ENV_ARG=""
+HIDDEN_ARG=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_ARG="$arg" ;;
+    --hidden) HIDDEN_ARG="--hidden" ;;
     *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-ums] ignoring extra arg: $arg" >&2; } ;;
   esac
 done
-[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [--env=FILE]" >&2; exit 1; }
+[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [--env=FILE] [--hidden]" >&2; exit 1; }
 
+if [ -n "$HIDDEN_ARG" ]; then
+  echo "[wine-ums] hidden Wine desktop (Xvfb :99, invisible)"
+  export HIDDEN=1
+fi
 if [ -n "$ENV_ARG" ]; then
   echo "[wine-ums] map=$MAP env=$ENV_ARG"
 else

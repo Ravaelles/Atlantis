@@ -38,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class BotOutputReachesConsoleTest {
 
         private static final Path WINE_FULL = Paths.get("scripts/run-wine-full.sh");
+        private static final Path WINE_UMS = Paths.get("scripts/run-wine-ums.sh");
         private static final Path LAUNCHER = Paths.get("src/atlantis/config/launcher/UnixChaosGameLauncher.java");
 
         @Test
@@ -65,6 +66,25 @@ public class BotOutputReachesConsoleTest {
                                 "diagnostics start at their own file in both branches");
                 assertTrue(script.contains("> /dev/null"),
                                 "quiet mode must still write the log files while silencing the console");
+        }
+
+        @Test
+        public void hiddenWineDesktopStaysOptIn() throws IOException {
+                // Owner: hidden runs exist only for model-launched games
+                // (batch/--hidden). Local games stay on the desktop.
+                String script = read(WINE_FULL);
+                String ums = read(WINE_UMS);
+
+                assertTrue(script.contains("\"${HIDDEN:-0}\""),
+                                "hidden mode must be opt-in, never the default");
+                assertTrue(script.contains("Xvfb :99"),
+                                "hidden mode runs its own X server");
+                assertTrue(script.contains("export DISPLAY=:99"),
+                                "hidden mode points the whole session at it");
+                assertTrue(script.contains("kill \"$XVFB_PID\""),
+                                "the hidden server dies with the session");
+                assertTrue(ums.contains("--hidden"),
+                                "single UMS games opt in with --hidden");
         }
 
         @Test

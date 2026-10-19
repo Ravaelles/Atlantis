@@ -2,7 +2,7 @@
 # Overnight kite tuning loop on the real duel (Wine 1Drag_v_1Zeal).
 #
 # Usage:
-#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...] [--env=FILE]
+#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...] [--env=FILE] [--visible]
 #
 # Runs N Wine games. Each game gets a private env file (OUTDIR/game-N/env:
 # a copy of --env=FILE, default bwapi-data/AI/ENV-WINE-FAST, plus
@@ -16,6 +16,10 @@
 # result only, header + one row) - the dated files stay the archive.
 # The per-game copy below reads that fixed name (freshness-checked),
 # never a newest-pick of the archive.
+#
+# Hidden by default (Xvfb :99, nothing on the desktop): the batch is the
+# model's unattended vehicle - watched games use run-wine-full.sh / the
+# IDE, which stay visible. --visible runs a batch on the desktop.
 #
 # Examples:
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 30 /tmp/opencode/tune1
@@ -32,10 +36,13 @@ MAP=""
 N=""
 OUTDIR=""
 ENV_BASE="bwapi-data/AI/ENV-WINE-FAST"
+HIDDEN_FLAG="--hidden"
 EXTRA=""
 for arg in "$@"; do
   case "$arg" in
     --env=*) ENV_BASE="${arg#--env=}" ;;
+    --hidden) HIDDEN_FLAG="--hidden" ;;
+    --visible) HIDDEN_FLAG="" ;;
     *=*) EXTRA="$EXTRA $arg" ;;
     *)
       if [ -z "$MAP" ]; then MAP="$arg";
@@ -82,7 +89,8 @@ while [ "$i" -lt "$N" ]; do
   # behind - only accept a run whose EVENTS is newer than the run
   # itself and carries a GAME_END (measured: game-26 copied game-25).
   touch "$GDIR/.started"
-  if ! bash scripts/run-wine-ums.sh "$MAP" --env="$GAME_ENV" > "$OUTDIR/game-$i.log" 2>&1; then
+  # shellcheck disable=SC2086
+  if ! bash scripts/run-wine-ums.sh "$MAP" --env="$GAME_ENV" $HIDDEN_FLAG > "$OUTDIR/game-$i.log" 2>&1; then
     echo "[wine-batch] game $i: runner failed (see game-$i.log), continuing"
   fi
   cp -f out/wine/EVENTS.jsonl "$GDIR/EVENTS.jsonl" 2>/dev/null || true

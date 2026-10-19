@@ -101,6 +101,28 @@ JAR="$JAR_OUT"
 mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
 CLIENT_LOG="$LOG_DIR/WINE_LOG"
 
+# Hidden Wine desktop (owner: unattended runs must not take over the
+# desktop). HIDDEN=1 starts Xvfb on :99 and points the whole session
+# (client, game, ChaosLauncher) at it - nothing ever maps on :0, no
+# resolution switch, no window to minimize. The supervisor key relay
+# is display-independent (file-based), so nothing else changes.
+XVFB_DISPLAY=":99"
+XVFB_PID=""
+if [ "${HIDDEN:-0}" = "1" ]; then
+  if [ -e /tmp/.X11-unix/X99 ] && ! pgrep -f "[X]vfb :99" >/dev/null; then
+    rm -f /tmp/.X11-unix/X99 /tmp/.X99-lock
+  fi
+  say "  Hidden Wine desktop on :99 (Xvfb, invisible)"
+  setsid Xvfb :99 -screen 0 1280x1024x24 >"$LOG_DIR/xvfb.log" 2>&1 < /dev/null &
+  XVFB_PID=$!
+  for _ in $(seq 1 100); do
+    [ -e /tmp/.X11-unix/X99 ] && break
+    sleep 0.1
+  done
+  [ -e /tmp/.X11-unix/X99 ] || { echo "[wine-full] Xvfb :99 did not come up" >&2; exit 1; }
+  export DISPLAY=:99
+fi
+
 say() { echo "[wine-full] $*"; }
 
 # Wall-clock markers. The owner asked why a start takes so long, and guessing is
@@ -119,6 +141,7 @@ cleanup() {
   pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
   wineserver -k 2>/dev/null
+  if [ -n "$XVFB_PID" ]; then kill "$XVFB_PID" 2>/dev/null || true; fi
 }
 
 # Belt and braces: the paths below call cleanup() explicitly, but a signal
