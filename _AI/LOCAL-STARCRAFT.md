@@ -26,14 +26,18 @@ Wine, `-Dos.name=Windows 10`), starts the game, watches `WINE_LOG` for
 (`Chaoslauncher.exe` is 17 chars, past the 15-char `pkill -x` comm limit —
 see `_AI/CHALLENGES/Wine.md`).
 
-**Fast unattended mode (owner 2026-10-19, the default):** every launch
-enforces `WINE_FAST=1` in the bot ENV (speed 0, frameskip 500, GUI off,
-no slowdowns - the key-9/key-0 shape, no keypresses) and mutes the Wine
-audio backends. Both knobs are env-overridable per run:
-`WINE_FAST=0` keeps a watchable game (normal speed, GUI on),
-`FORCE_END_AT_SUPPLY=0` disables the horizon (default 50 - game ends
-once our supply hits it; defects show by supply 25-30, longer runs
-only when a hunt needs them). Never edit a
+**Fast unattended mode (owner 2026-10-19; explicit env files since
+2026-10-19, never shared-ENV edits):** pass `--env=` with a file
+carrying `WINE_SUPER_FAST_MODE=1` (speed 0, frameskip 1000, GUI off,
+no slowdowns - the key-9/key-0 shape, no keypresses) plus the usual
+debug horizon (`FORCE_END_AT_SUPPLY=50` - game ends once our supply
+hits it; defects show by supply 25-30, longer runs only when a hunt
+needs them). Ready-made: `--env=bwapi-data/AI/ENV-WINE-FAST`.
+Without `--env` the game runs watchable (normal speed, GUI on).
+Scripts never write to shared ENV files (owner: per-run flags leaked
+into watched IDE games, so the borrow-and-restore mechanism is gone).
+The Wine audio backends stay muted per run (missing device hangs
+startup). Never edit a
 running `run-wine-full.sh`: bash parses it as it executes, so an edit
 mid-run kills the teardown with a syntax error (measured 2026-10-19 -
 the game played on, the logs were collected by hand). Contained window

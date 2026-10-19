@@ -2,14 +2,16 @@
 # Overnight kite tuning loop on the real duel (Wine 1Drag_v_1Zeal).
 #
 # Usage:
-#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...]
+#   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" N OUTDIR [KEY=VALUE ...] [--env=FILE]
 #
-# Runs N Wine games. Each game randomizes the registered coefficients
-# in-JVM (ParamTweakerFactory) unless overridden by KEY=VALUE pairs
-# (applied verbatim via ENV, reproducible validation runs). After each
-# game the per-game CSV (W/L, seconds, killed, lost, hits taken,
-# shots fired, score, param values) and EVENTS.jsonl land in OUTDIR,
-# plus a batch.csv summary line.
+# Runs N Wine games. Each game gets a private env file (OUTDIR/game-N/env:
+# a copy of --env=FILE, default bwapi-data/AI/ENV-WINE-FAST, plus
+# PARAM_TWEAKER=1 and any KEY=VALUE overrides), passed to the bot with
+# --env=. The shared ENV is never touched. Each game randomizes the
+# registered coefficients in-JVM (ParamTweakerFactory) unless overridden
+# (reproducible validation runs). After each game the per-game CSV
+# (W/L, seconds, killed, lost, hits taken, shots fired, score, param
+# values) and EVENTS.jsonl land in OUTDIR, plus a batch.csv summary line.
 #
 # Examples:
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 30 /tmp/opencode/tune1
@@ -21,16 +23,25 @@
 set -u
 
 ATLANTIS_DIR="/sc-ai/Atlantis"
-ENV_FILE="$ATLANTIS_DIR/bwapi-data/AI/ENV"
-ENV_BACKUP="$(mktemp /tmp/opencode/wine-batch-env.XXXXXX 2>/dev/null || mktemp /tmp/wine-batch-env.XXXXXX)"
-cp -f "$ENV_FILE" "$ENV_BACKUP"
-trap 'cat "$ENV_BACKUP" > "$ENV_FILE" 2>/dev/null; rm -f "$ENV_BACKUP"; echo "[wine-batch] shared ENV restored"' EXIT INT TERM
 
-MAP="${1:-}"
-N="${2:-}"
-OUTDIR="${3:-}"
-shift 3 2>/dev/null || { echo "usage: run-wine-batch.sh \"<map.scm>\" N OUTDIR [KEY=VALUE ...]" >&2; exit 1; }
-[ -n "$MAP" ] && [ "$N" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] || { echo "usage: run-wine-batch.sh \"<map.scm>\" N OUTDIR [KEY=VALUE ...]" >&2; exit 1; }
+MAP=""
+N=""
+OUTDIR=""
+ENV_BASE="bwapi-data/AI/ENV-WINE-FAST"
+EXTRA=""
+for arg in "$@"; do
+  case "$arg" in
+    --env=*) ENV_BASE="${arg#--env=}" ;;
+    *=*) EXTRA="$EXTRA $arg" ;;
+    *)
+      if [ -z "$MAP" ]; then MAP="$arg";
+      elif [ -z "$N" ]; then N="$arg";
+      elif [ -z "$OUTDIR" ]; then OUTDIR="$arg";
+      else echo "[wine-batch] ignoring extra arg: $arg" >&2; fi ;;
+  esac
+done
+[ -n "$MAP" ] && [ "$N" -gt 0 2>/dev/null ] && [ -n "$OUTDIR" ] || { echo "usage: run-wine-batch.sh \"<map.scm>\" N OUTDIR [KEY=VALUE ...] [--env=FILE]" >&2; exit 1; }
+[ -f "$ENV_BASE" ] || { echo "[wine-batch] no such base env: $ENV_BASE" >&2; exit 1; }
 
 mkdir -p "$OUTDIR"
 CSV="$OUTDIR/batch.csv"
@@ -43,32 +54,31 @@ i=0
 while [ "$i" -lt "$N" ]; do
   i=$(( i + 1 ))
   echo "[wine-batch] game $i/$N ($MAP)"
-  # Per-game ENV overlay: PARAM_TWEAKER=1 plus any explicit overrides.
-  # run-wine-full.sh borrows and restores the shared ENV; values set here
-  # are the run's, and the loop rewrites them every game.
-  for kv in "$@"; do
+  # Per-game env file: base + tweaker flag + explicit overrides. The
+  # shared ENV is never touched (owner: scripts must not leak per-run
+  # flags into watched games) - the bot reads this file via --env=.
+  # shellcheck disable=SC2086
+  GDIR="$OUTDIR/game-$i"
+  mkdir -p "$GDIR"
+  GAME_ENV="$GDIR/env"
+  cp -f "$ENV_BASE" "$GAME_ENV"
+  printf '\nPARAM_TWEAKER=1\n' >> "$GAME_ENV"
+  for kv in $EXTRA; do
     key="${kv%%=*}"
     val="${kv#*=}"
-    if grep -q "^${key}=" bwapi-data/AI/ENV 2>/dev/null; then
-      sed -i -E "s|^${key}=.*|${key}=${val}|" bwapi-data/AI/ENV
+    if grep -q "^${key}=" "$GAME_ENV" 2>/dev/null; then
+      sed -i -E "s|^${key}=.*|${key}=${val}|" "$GAME_ENV"
     else
-      printf '\n%s=%s\n' "$key" "$val" >> bwapi-data/AI/ENV
+      printf '%s=%s\n' "$key" "$val" >> "$GAME_ENV"
     fi
   done
-  if grep -q "^PARAM_TWEAKER=" bwapi-data/AI/ENV 2>/dev/null; then
-    sed -i -E "s|^PARAM_TWEAKER=.*|PARAM_TWEAKER=1|" bwapi-data/AI/ENV
-  else
-    printf '\nPARAM_TWEAKER=1\n' >> bwapi-data/AI/ENV
-  fi
 
   # Collect per-game artifacts before the next run wipes them.
   # Staleness guard: a failed start leaves the previous game's files
   # behind - only accept a run whose EVENTS is newer than the run
   # itself and carries a GAME_END (measured: game-26 copied game-25).
-  GDIR="$OUTDIR/game-$i"
-  mkdir -p "$GDIR"
   touch "$GDIR/.started"
-  if ! bash scripts/run-wine-ums.sh "$MAP" 1 > "$OUTDIR/game-$i.log" 2>&1; then
+  if ! bash scripts/run-wine-ums.sh "$MAP" --env="$GAME_ENV" > "$OUTDIR/game-$i.log" 2>&1; then
     echo "[wine-batch] game $i: runner failed (see game-$i.log), continuing"
   fi
   cp -f out/wine/EVENTS.jsonl "$GDIR/EVENTS.jsonl" 2>/dev/null || true

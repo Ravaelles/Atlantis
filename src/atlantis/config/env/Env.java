@@ -40,6 +40,14 @@ public class Env {
      * field per knob in this class. Direction-safe: readers live in
      * domain/debug code that already depends on config, never the reverse.
      */
+    /**
+     * Explicit env file from the command line ({@code --env=path}), e.g.
+     * a script-owned file with test flags. When set, the bot reads it
+     * instead of the working directory's shared ENV - scripts must never
+     * edit the shared file to smuggle in per-run flags.
+     */
+    private static String envFileOverride = null;
+
     private static final java.util.Map<String, String> rawEnv = new java.util.HashMap<>();
 
     /** Raw ENV value for key (upper-cased), or null when absent. */
@@ -67,12 +75,13 @@ public class Env {
     private static boolean builderLog = false;
 
     /**
-     * WINE_FAST=1 hurries a Wine game beyond playable: speed 0, frame skip
-     * 500, GUI off, no dynamic slowdown (owner 2026-10-19: unattended runs
-     * should never render or slow down for watching). Enforced by
-     * run-wine-full.sh on every launch; GameSpeed reads it in init().
+     * WINE_SUPER_FAST_MODE=1 hurries a Wine game beyond playable: speed 0,
+     * frame skip 1000, GUI off, no dynamic slowdown (owner direction:
+     * unattended runs never render or slow down for watching). Set only
+     * through an explicit env file (scripts pass --env=); scripts never
+     * write it into shared ENV files. GameSpeed reads it in init().
      */
-    private static boolean wineFast = false;
+    private static boolean wineSuperFast = false;
 
     /**
      * CORE_AND_DRAGOON_GATE=true ends the game as soon as the opening is proven.
@@ -111,6 +120,12 @@ public class Env {
 
     public static void readEnvFile(String[] mainArgs) {
         isBenchmark = BenchmarkMode.detectBenchmarkMode(mainArgs);
+
+        for (String arg : mainArgs) {
+            if (arg.startsWith("--env=") && arg.length() > 6) {
+                envFileOverride = arg.substring(6);
+            }
+        }
 
         if (!AFile.fileExists(envFilePath())) {
             AGame.exit(
@@ -194,8 +209,8 @@ public class Env {
                 builderLog = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
-            case "WINE_FAST":
-                wineFast = "1".equals(value == null ? "" : value.trim())
+            case "WINE_SUPER_FAST_MODE":
+                wineSuperFast = "1".equals(value == null ? "" : value.trim())
                     || "TRUE".equalsIgnoreCase(value == null ? "" : value.trim());
                 return true;
             case "FORCE_END_AT_SUPPLY":
@@ -244,6 +259,7 @@ public class Env {
     }
 
     private static String envFilePath() {
+        if (envFileOverride != null) return envFileOverride;
 //        if (AFile.currentPath().contains("D:\\")) {
         if (AFile.fileExists("bwapi-data/AI/ENV")) return "bwapi-data/AI/ENV";
         if (AFile.fileExists("../bwapi-data/AI/ENV")) return "../bwapi-data/AI/ENV";
@@ -352,8 +368,8 @@ public class Env {
     }
 
     /** Test seam (the flag is ENV-driven and has no other writer). */
-    public static void setWineFastForTest(boolean enabled) {
-        wineFast = enabled;
+    public static void setWineSuperFastForTest(boolean enabled) {
+        wineSuperFast = enabled;
     }
 
     private static int forceEndAtSupply = 0;
@@ -364,11 +380,12 @@ public class Env {
     }
 
     /**
-     * True when {@code WINE_FAST=1} is set in ENV: unattended Wine runs
-     * skip rendering and slowdowns (speed 0, frameskip 500, GUI off).
+     * True when {@code WINE_SUPER_FAST_MODE=1} is set in ENV: unattended
+     * Wine runs skip rendering and slowdowns (speed 0, frameskip 1000,
+     * GUI off).
      */
-    public static boolean wineFast() {
-        return wineFast;
+    public static boolean isWineSuperFast() {
+        return wineSuperFast;
     }
 
     /**

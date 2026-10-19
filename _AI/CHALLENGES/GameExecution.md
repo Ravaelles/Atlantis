@@ -95,9 +95,9 @@ exist in this workspace and mixing them is the whole story below.
 - Always pass an explicit melee map (`"(3)TauCross.scx"`): the script
   default is a UMS micro scenario (`1a2a3a Micro 2.scx`) that builds
   nothing and teaches nothing (measured: 226 s, idle base).
-- The script enforces test flags per run and restores the shared ENV
-  afterwards - verify with `grep WINE_FAST|FORCE_END_AT_SUPPLY
-  bwapi-data/AI/ENV` (any hit = restore failed, IDE games affected).
+- The script takes test flags only via `--env=FILE` and never touches
+  the shared ENV - `grep SUPER_FAST bwapi-data/AI/ENV` must be empty
+  (any hit = a script edited the shared file, IDE games affected).
 - After the run: `pgrep -x StarCraft.exe` must be empty and the
   `out/wine/` triple (WINE_LOG/_DEBUG/_DECISIONS) collected; a missing
   triple with a live game means the teardown died mid-script (it parses

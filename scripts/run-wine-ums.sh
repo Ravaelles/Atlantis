@@ -1,18 +1,22 @@
 #!/bin/bash
-# Play one StarCraft map under Wine, headless-fast by default.
+# Play one StarCraft map under Wine.
 #
 # Usage:
-#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [fast]
+#   bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" [--env=FILE]
 #
-#   map  : bare map file name (resolved under the game's maps/ tree,
-#          e.g. "1Drag_v_1Zeal.scm") or a maps/-relative path.
-#   fast : 1 (default) = unattended: speed 0, frameskip 500, GUI off.
-#          0 = watchable game (normal speed, GUI on).
+#   map   : bare map file name (resolved under the game's maps/ tree,
+#           e.g. "1Drag_v_1Zeal.scm") or a maps/-relative path.
+#   --env : explicit env file for the bot, e.g.
+#           --env=bwapi-data/AI/ENV-WINE-FAST for unattended speed
+#           (speed 0, frameskip 1000, GUI off). Relative paths resolve
+#           against the repo root. Without it the bot reads the shared
+#           ENV (your watched-game settings, untouched by this script).
 #
 # Thin wrapper over scripts/run-wine-full.sh (the tested core: jar
-# rebuild, ENV borrow-and-restore, teardown). Exists so a Wine launch
-# is one obvious command with an explicit speed flag, mirroring
-# scripts/run-openbw-ums.sh (map + debug). Owner-run only
+# rebuild, teardown). Exists so a Wine launch is one obvious command
+# with an explicit env file, mirroring scripts/run-openbw-ums.sh
+# (map + debug). This script NEVER writes to any ENV file (owner:
+# per-run flags must not leak into watched games). Owner-run only
 # (CONVENTIONS §14); models run it only with the owner's per-case
 # go-ahead.
 #
@@ -24,19 +28,27 @@
 
 set -u
 
-MAP="${1:-}"
-FAST="${2:-1}"
-[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [fast=1]" >&2; exit 1; }
-[ "$FAST" = "0" ] || [ "$FAST" = "1" ] || { echo "fast must be 0 or 1, got: $FAST" >&2; exit 1; }
+MAP=""
+ENV_ARG=""
+for arg in "$@"; do
+  case "$arg" in
+    --env=*) ENV_ARG="$arg" ;;
+    *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-ums] ignoring extra arg: $arg" >&2; } ;;
+  esac
+done
+[ -n "$MAP" ] || { echo "usage: run-wine-ums.sh \"<map.scm>\" [--env=FILE]" >&2; exit 1; }
 
-export WINE_FAST="$FAST"
-if [ "$FAST" = "1" ]; then
-  echo "[wine-ums] map=$MAP speed: FAST (0, frameskip 500, GUI off)"
+if [ -n "$ENV_ARG" ]; then
+  echo "[wine-ums] map=$MAP env=$ENV_ARG"
 else
-  echo "[wine-ums] map=$MAP speed: WATCHABLE (normal speed, GUI on)"
+  echo "[wine-ums] map=$MAP env=(shared, untouched)"
 fi
 
-bash "$(dirname "$0")/run-wine-full.sh" "$MAP"
+if [ -n "$ENV_ARG" ]; then
+  bash "$(dirname "$0")/run-wine-full.sh" "$MAP" "$ENV_ARG"
+else
+  bash "$(dirname "$0")/run-wine-full.sh" "$MAP"
+fi
 EXIT=$?
 
 # Honest throughput from the game summary (frames / wall seconds).
@@ -47,14 +59,10 @@ if [ -f "$LOG" ]; then
   if [ -n "$FRAMES" ] && [ -n "$SECONDS_WALL" ] && [ "$SECONDS_WALL" -gt 0 ]; then
     echo "[wine-ums] throughput: $(( FRAMES / SECONDS_WALL )) frames/s wall ($FRAMES frames in ${SECONDS_WALL}s)"
   fi
-  if [ "$FAST" = "1" ]; then
-    if grep -q "WINE_FAST: speed 0" "$LOG"; then
-      echo "[wine-ums] speed flag confirmed in game log (frameskip 500)"
-    elif grep -q "PARAM_TWEAKER: speed 0" "$LOG"; then
-      echo "[wine-ums] tweaker speed confirmed in game log (frameskip 500)"
-    else
-      echo "[wine-ums] WARNING: speed lines missing from game log - flags did not reach the game"
-    fi
+  if grep -q "WINE_SUPER_FAST_MODE: speed 0" "$LOG"; then
+    echo "[wine-ums] super-fast mode confirmed in game log (frameskip 1000)"
+  elif grep -q "PARAM_TWEAKER: speed 0" "$LOG"; then
+    echo "[wine-ums] tweaker speed confirmed in game log (frameskip 500)"
   fi
 fi
 exit "$EXIT"

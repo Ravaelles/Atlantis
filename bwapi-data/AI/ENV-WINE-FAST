@@ -1,0 +1,34 @@
+# Atlantis on Linux. Two backends, chosen by GAME_LAUNCHER below.
+#
+#   GAME_LAUNCHER=OPENBW  headless OpenBW server (fast, no window)
+#                         server: StardustDevEnvironment/scripts/run-openbw-server.sh
+#                         client: java -jar Atlantis.jar
+#   GAME_LAUNCHER=WINE    real StarCraft 1.16.1 + BWAPI 4.4.0 + ChaosLauncher
+#                         under Wine, vs the native Blizzard AI. This is the
+#                         Linux twin of the Windows F5 workflow: starting the
+#                         bot brings the game up itself, in its own Wine
+#                         virtual desktop (so it never touches your real
+#                         desktop resolution or HiDPI scaling).
+
+LOCAL=true
+GAME_LAUNCHER=WINE
+BWAPI_DATA_PATH=/home/rav/.wine/drive_c/sc/bwapi-data/
+CHAOS_LAUNCHER_PATH=
+FORCE_GG_FOR_ENEMY=true
+FORCE_END_GAME_AFTER_REAL_SECONDS=750
+
+
+# Unattended speed (owner): the bot reads this in GameSpeed.init() -
+# speed 0, frameskip 1000, GUI off, no dynamic slowdown. This file is
+# script-owned: pass it with --env= to run-wine-ums.sh / run-wine-batch.sh.
+# It is never written into shared ENV files (those are watched games).
+
+STARCRAFT_DIR=/sc-ai/starcraft
+BWAPI_DIST_DIR=/sc-ai/BWAPI
+MODIFY_BWAPI_INI=true
+# After every local Wine game, copy the client log here when non-empty.
+WINE_LOG_COPY=/sc-ai/E2E OpenBW LOGS/last-wine.log
+
+FORCE_END_AT_SUPPLY=50
+
+WINE_SUPER_FAST_MODE=1

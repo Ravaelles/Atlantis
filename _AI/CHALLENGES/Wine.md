@@ -35,21 +35,18 @@
 - `Runtime.exec(String)` word-splits: shell builtins (`eval`) in the string
   are executed as programs. Pass a vector: `{sh, -c, script}`.
 
-## Fast unattended Wine (owner 2026-10-19)
+## Fast unattended Wine (owner 2026-10-19; explicit env files since 2026-10-19)
 
-- `WINE_FAST=1` (bot ENV): speed 0, frameskip 500, GUI off, no dynamic
-  slowdown - the key-9/key-0 shape applied at game start instead of by
-  keypress. `FORCE_END_AT_SUPPLY=50` ends the game once our supply
-  passes 50 (debug horizon, not a hard limit - longer runs on request).
-- Both live in the shared machine-local `bwapi-data/AI/ENV`, so
-  `run-wine-full.sh` borrows the file per run (backup → enforce →
-  restore on exit, trap included): test flags must never leak into
-  watched IDE games. Verify after a model-run game: `grep` the ENV
-  for `WINE_FAST` / `FORCE_END_AT_SUPPLY` - any hit means the restore
-  failed.
-- The twin proof that it works: `WINE_FAST: speed 0, frameskip 500,
-  GUI off` in the game log (owner-confirmed visibly faster on the
-  desktop).
+- `bwapi-data/AI/ENV-WINE-FAST`, passed as `--env=`: speed 0,
+  frameskip 1000, GUI off, no dynamic slowdown - the key-9/key-0 shape
+  applied at game start instead of by keypress. `FORCE_END_AT_SUPPLY=50`
+  ends the game once our supply passes 50 (debug horizon, not a hard
+  limit - longer runs on request). Nothing is ever written to the
+  shared machine-local `bwapi-data/AI/ENV` (owner: per-run flags leaked
+  into watched IDE games, so borrow-and-restore is deleted).
+- The twin proof that it works: `WINE_SUPER_FAST_MODE: speed 0,
+  frameskip 1000, GUI off` in the game log (owner-confirmed visibly
+  faster on the desktop).
 - The bot JVM under Wine cannot run Unix commands: a bare
   `executeInCommandLine("pkill ...")` / `("wineserver -k")` fails with
   `CreateProcess error=2` on every game exit. Route Wine-side kills

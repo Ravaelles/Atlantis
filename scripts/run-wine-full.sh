@@ -72,8 +72,30 @@ LOG_DIR="$ATLANTIS_DIR/out/wine"
 
 # =============================================================================
 
-MAP="${1:-1a2a 3a Micro 2.scx}"
+MAP=""
+ENV_FILE_ARG=""
+for arg in "$@"; do
+  case "$arg" in
+    --env=*) ENV_FILE_ARG="${arg#--env=}" ;;
+    *) [ -z "$MAP" ] && MAP="$arg" || { echo "[wine-full] ignoring extra arg: $arg" >&2; } ;;
+  esac
+done
+[ -z "$MAP" ] && MAP="1a2a 3a Micro 2.scx"
 MAP="${MAP//1a2a 3a/1a2a3a}"   # tolerate the extra space from tab completion
+# Explicit per-run env file (owner: scripts never edit shared ENV files).
+# Relative paths resolve against the repo root, so --env=ENV-WINE-FAST means
+# bwapi-data/AI/ENV-WINE-FAST.
+if [ -n "$ENV_FILE_ARG" ]; then
+  case "$ENV_FILE_ARG" in
+    /*) ENV_FILE_ABS="$ENV_FILE_ARG" ;;
+    *) ENV_FILE_ABS="$ATLANTIS_DIR/$ENV_FILE_ARG" ;;
+  esac
+  [ -f "$ENV_FILE_ABS" ] || { echo "[wine-full] no such env file: $ENV_FILE_ABS" >&2; exit 1; }
+  CLIENT_ENV_ARG="--env=$ENV_FILE_ABS"
+  say "  env file: $ENV_FILE_ABS (the bot reads this INSTEAD of the shared ENV)"
+else
+  CLIENT_ENV_ARG=""
+fi
 
 JAR="$JAR_OUT"
 mkdir -p "$(dirname "$JAR")" "$LOG_DIR"
@@ -89,15 +111,6 @@ since() { echo "[wine-full]   +$(( $(date +%s) - T0 ))s  $1"; }
 
 cleanup() {
   say "Cleaning up"
-  # Restore the bot ENV the run borrowed: WINE_FAST / FORCE_END_AT_SUPPLY
-  # are enforced per-run below and must not leak into watched IDE games
-  # (owner 2026-10-19: test-only flags stay test-only). The backup is taken
-  # next to the enforce block; an absent backup means nothing was changed.
-  if [ -n "${ENV_BACKUP_FILE:-}" ] && [ -f "$ENV_BACKUP_FILE" ]; then
-    cat "$ENV_BACKUP_FILE" > "$ENV_BACKUP_TARGET" 2>/dev/null || true
-    rm -f "$ENV_BACKUP_FILE"
-    say "  bot ENV restored (test flags removed)"
-  fi
   pkill -9 -x StarCraft.exe 2>/dev/null
   pkill -9 -f "[C]haoslauncher.exe" 2>/dev/null
   pkill -9 -f java.exe 2>/dev/null
@@ -221,43 +234,11 @@ fi
 
 [ -f "$JAR" ] || { say "Bot jar missing at $JAR"; exit 1; }
 
-# Fast Wine, enforced every launch (owner 2026-10-19): the bot reads
-# WINE_FAST in GameSpeed.init() (speed 0, frameskip 500, GUI off, no
-# slowdowns), so an unattended run never renders or waits. Re-asserted
-# here rather than trusted: a slow game must be impossible, not just
-# unconfigured. Only in files that say GAME_LAUNCHER=WINE, never in an
-# OpenBW ENV (same guard as the live-log copy).
-# Overridable per run like the horizon below: WINE_FAST=0 keeps a
-# watchable game (normal speed, GUI on). WINE_FAST=1 is the default.
-WINE_FAST="${WINE_FAST:-1}"
-# Debug-run horizon, not a hard limit (owner 2026-10-19): stop spending
-# game time once defects had room to show (they show by supply 25-30) -
-# shorter games, ~3x smaller logs. Overridable per run, 0 disables.
-FORCE_END_AT_SUPPLY="${FORCE_END_AT_SUPPLY:-50}"
+# Speed and horizons come ONLY from an explicit --env= file (or the
+# shared ENV the bot reads by default). This script never writes test
+# flags into any ENV file (owner: per-run flags must not leak into
+# watched IDE games) - pass --env=ENV-WINE-FAST for unattended speed.
 
-for _env_candidate in "bwapi-data/AI/ENV" "bots/AtlantisP/AI/ENV" "ENV"; do
-  if [ -f "$_env_candidate" ] && grep -q "^GAME_LAUNCHER=WINE" "$_env_candidate"; then
-    # Borrow, do not keep: snapshot the shared file so cleanup() can put
-    # it back verbatim (IDE games read the same file and must never see
-    # test flags).
-    ENV_BACKUP_TARGET="$_env_candidate"
-    ENV_BACKUP_FILE="$(mktemp /tmp/opencode/atlantis-env.XXXXXX 2>/dev/null || mktemp /tmp/atlantis-env.XXXXXX)"
-    cp -f "$_env_candidate" "$ENV_BACKUP_FILE"
-    if grep -q "^WINE_FAST=" "$_env_candidate"; then
-      sed -i -E "s|^WINE_FAST=.*|WINE_FAST=$WINE_FAST|" "$_env_candidate"
-    else
-      printf '\nWINE_FAST=%s\n' "$WINE_FAST" >> "$_env_candidate"
-    fi
-    say "  WINE_FAST=$WINE_FAST enforced in $_env_candidate (0 keeps a watchable game)"
-    if grep -q "^FORCE_END_AT_SUPPLY=" "$_env_candidate"; then
-      sed -i -E "s|^FORCE_END_AT_SUPPLY=.*|FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY|" "$_env_candidate"
-    else
-      printf '\nFORCE_END_AT_SUPPLY=%s\n' "$FORCE_END_AT_SUPPLY" >> "$_env_candidate"
-    fi
-    say "  FORCE_END_AT_SUPPLY=$FORCE_END_AT_SUPPLY enforced in $_env_candidate (0 disables)"
-    break
-  fi
-done
 
 # The jar path must reach the Wine JVM as a WINDOWS path. Deriving it from
 # $JAR instead of hardcoding it is the whole point: a hardcoded
@@ -342,7 +323,7 @@ fi
 CLIENT_MAP_ARG="--map=${RESOLVED_MAP:-$MAP}"
 if [ "$LIVE_OUTPUT" = "1" ]; then
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" $CLIENT_ENV_ARG \
     > >(tee "${TEE_OUT[@]}") 2> >(tee "${TEE_ERR[@]}" >&2) < /dev/null &
   # CLIENT_PID is now wine itself, not tee (better liveness: it dies when
   # the game ends, while tee may linger flushing). Tees inherit the
@@ -350,7 +331,7 @@ if [ "$LIVE_OUTPUT" = "1" ]; then
   CLIENT_PID=$!
 else
   setsid env WINEDEBUG=-all DISPLAY="${DISPLAY:-:0}" \
-    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" \
+    wine "$JAVA_EXE" "-Dos.name=Windows 10" -jar "$WIN_JAR" "$CLIENT_MAP_ARG" $CLIENT_ENV_ARG \
     > >(tee "${TEE_OUT[@]}" > /dev/null) 2> >(tee "${TEE_ERR[@]}" > /dev/null) < /dev/null &
   CLIENT_PID=$!
 fi
