@@ -211,7 +211,12 @@ standing-cover, adopt, sited-door, forecast, rally and twin pins
 landed since; acceptance 17 reds byte-identical between the
 pre-session baseline worktree (6ae7ec1f) and the current tree -
 verified by worktree diff this session, zero regressions from it;
-counts rot, re-measure before quoting).
+counts rot, re-measure before quoting). 2026-10-20: unit 994/994
+(BuildGate registry + order test, EarlierReserve divergence pin,
+SelectionViews slices 7-8, AUnitHealth slice 1, CombatTuning move +
+holder tests, Core gate oldest-wins fix; acceptance still 17 reds
+byte-identical to the 2026-10-19 baseline worktree each time -
+re-verified by worktree diff three times this session).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -319,7 +324,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   first/last/random(+seed), each with a pin test, zero call-site
   changes; sixth slice 2026-10-20 (container views → `SelectionViews`:
   list/units/count/size/isEmpty-family, `SelectionViewsTest` 3/3,
-  sensitivity-verified): cross-context readers stay put until their dependencies are
+  sensitivity-verified); seventh slice the same day (list-mutation
+  family: add x3, exclude x3, reverse, removeDuplicates, limit,
+  countOfType, +4 tests); eighth slice (aggregates totalHp/totalHits/
+  averageShields, +1 test): cross-context readers stay put until their dependencies are
   fixed - moving them re-spells frozen violations instead of removing
   them (measured, see NOTES.md arch mechanics; slices verified:
   same 2 pre-existing failures, store diff empty). Remainder is
@@ -334,7 +342,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `handle` in `AUnit` - the invoke chain is `architecture.Manager` /
   `Commander`, the unit only carries the `manager` field + history for
   the #18 inspection). What remains in `AUnit` is state + predicates:
-  the split starts at per-condition logic, if at all.
+  the split starts at per-condition logic, if at all. First slice
+  2026-10-20: the hp/wound predicate family
+  (`AUnitHealth`: isFullyHealthy, hpPercent x2, woundHp,
+  woundPercent, woundPercentMin/Max, isWounded, `AUnitHealthTest`
+  3/3) moved verbatim with one-line delegates, zero call-site
+  changes - the Selection-slice recipe.
 
 ## Stage I — physical migration
 
@@ -610,6 +623,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-18: Protoss enemy also spawns nothing (`143846` PvP, 361
   game-s, `enemy: ` empty, 0/0 - 7th enemyless game across 3 enemy
   races). Race-independent; host-side only.
+  2026-10-20: host regression, worse than #94 - the REBUILT engine
+  (harness binary 21:36 10-19) hosts NO game at all: server stalls
+  mid map-unit creation (~66-76 created lines, game table row never
+  published, 1% CPU nanosleep wait), client loops on "Game table
+  mapping not found", melee and UMS alike (UMS hang 21:37 10-19 +
+  fresh TauCross melee the same shape). The smoke run (TestAIModule
+  attached at frame 1) still completes 109 units - the stall is in
+  the server-script hosting path, same launcher. All retained
+  successful runs predate the rebuild. Engine C++ is owner
+  territory - game proofs move to Wine until the host works again.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
@@ -656,10 +679,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   shape absent everywhere. Standing caveat: the ORDER_NOT_READY twin
   only fires above price-32 bank, so a sub-floor deadlock would leave
   no twin rows at all - the sweep instruments the visible band only.
+  Re-checked 2026-10-20 across 12 retained logs (earmarks >= 250 in
+  3 runs, all frame 4500+ mid/late game, banks 144-658 - the
+  supply-4/bank-74 deadlock shape absent again).
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
   Jar 12.1 MB already carries it all.
+  2026-10-20: file-outputs half verified on a real Wine game
+  (WINE_LOG/_DEBUG/_DECISIONS triple + BUILDINGS.json all collected,
+  non-empty); painter labels stay a visual owner check. Batch itself
+  still owner-run.
   Open tuning question for the batch: Pylon prepared at 15 warps ~2:24,
   past the 17/17 block - adoption+travel+warp (~25 s) outruns the 15→17
   window (~25 s), so any churn lands past the block (churn itself fixed
@@ -745,6 +775,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   makes it one. Slices per gate with a game proof each (a gate
   reordered wrongly re-trips an earlier refusal); feeds naturally
   into #147 (the stateless scheduler consumes gates, not ifs).
+  Registry LANDED 2026-10-20 (`BuildGate` + `BuildGates`, 11 gates,
+  `BuildGateOrderTest` pins the sequence, zero behavior change).
+  First per-gate proof FAILED live the same day and forced a fix:
+  core-single-instance deadlocked BO #9 vs dynamic #24 for 8
+  game-minutes (siteless rows counted as "coming") - now only
+  genuinely coming work blocks, oldest READY waiter proceeds
+  (`CoreSingleInstanceGateTest` 3/3); Wine re-prove GREEN the same
+  day (short flagged game: Core STARTED once, warped 2:58@23, ZERO
+  core-single-instance refusals all game vs 70+ before).
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
@@ -862,6 +901,21 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   holds: one demand, one row. New doors live-dormant this game
   (standing-cover 0 fires, live-construction 0 fires), no regression
   in the refusal profile.
+
+- Wine `TauCross` LONG (2026-10-20, 10.8 game-min, 7/29 loss to Garm
+  Brood, formation Phase A live in the jar): FIGHT 301 / FLEE 82,
+  KITE 140 + HIT 409 + SHOT 7871 flowing - the cluster fought, no
+  freeze, no crash. Loss driver is production, not combat: Forge
+  6:58 (late, no-forge 230 TECH_CHECKs), NO Core all game at bank
+  3750 (the single-instance mutual lock, fixed same day - see the
+  #155 note below), zero Dragoons, Nexus#3 10:28. Pylon#1 healthy
+  (0:47@8, #84 datum); Gateways #2/#3 on time 1:26/1:51 (#92 datum,
+  no Wine lateness this game); ORDER_SAVING 0 (2-3 bases, #71 wants
+  a 1-base 700 s shape - 649 s reached, just short). WINE_LOG /
+  WINE_DEBUG / WINE_DECISIONS triple + BUILDINGS.json collected
+  (#96 file-outputs half verified; painter labels stay visual).
+  Open question: SUPPLY_BLOCKED twin silent through the 90/90
+  blocks (twin gap?).
 
 - OpenBW `TauCross` LONG (16575f, 11.5 game-min, wall-cap exit 143 -
   inconclusive as verdict, rich as data): roster Nexus=2 Probe=44
