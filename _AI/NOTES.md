@@ -15,6 +15,12 @@ Hard-won operational facts that do not belong anywhere else. Architecture lives 
   failures. Measured 2026-10-19: 17 "failing" acceptance tests with a mixed
   flag vs 748/0 green through `scripts/run-acceptance-tests.sh --allow-slow`.
   Per-scope scripts are the only way to run one scope.
+- Flag position matters: `run-acceptance-tests.sh --allow-slow` (bare flag,
+  no selector) silently runs the UNIT scope - the script only defaults to
+  `tests.acceptance` when called with zero args, and `run-tests.sh` strips
+  `--allow-slow` before selecting. Measured 2026-10-19: bare-flag run
+  reported 848/848 (unit), masking 17 acceptance reds. Always pass an
+  explicit `--select-package` with any flag.
 - Every test's `setUp` re-reads the machine-local `bwapi-data/AI/ENV`
   (`AbstractTestWithUnits` → `Env.readEnvFile`, which never resets
   flags), so the suite result depends on the owner's local file.
