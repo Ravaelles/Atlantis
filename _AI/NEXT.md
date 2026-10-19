@@ -473,6 +473,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   call); repro, if needed, is another long OpenBW run, not a new
   game shape. No blind patch - cache surgery without the shape
   risks perf regressions everywhere.
+  Repro 2026-10-19: two consecutive long runs trip the watcher at the
+  same ~40 s mark with the same family (`110411`: main RUNNABLE
+  37 s CPU in 40 s in `TreeMap.containsKey/getEntry` via `Cache.get`
+  <- `AUnit.is`; game still advanced to 16063f/11:14). Not a fluke;
+  code read is next, still no patch without the shape.
 - **#71** Readiness gate flipped (was blocking rich, name said poor):
   stub inversion pin 2/2. Predicate verified sound (fires at 700 s,
   1 base, bank under 550 - reachable per the 912 s `210002` run).
@@ -711,7 +716,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (sustained-dragoon 5:16, rescue not routine); #71 correctly silent
   (2 bases, ORDER_SAVING 0, end bank 288); hang-watcher jstacked a
   40 s main-thread spin in Cache/Selection at 11:00:03, recovered
-  (#153).
+  (#153). Retry `110411` same day: same shape (16063f/11:14,
+  exit 143 wall-cap, Nexus=2, ORDER_SAVING 0, Pylon 0:52@8,
+  BOARD_FED 1, watcher again same signature) - #71 stays lottery
+  (the bot expands on its own; no forced 1-base shape, no more
+  retries until the shape is forced or luck lands).
 - OpenBW `TauCross` (`203655`, PRODUCTION_V2=LIVE with rule+lag+>60,
   21933f/15 min): Dragoons 8, first warps 5:25 - the ASAP rule fires
   live (was 0 in the pre-rule LIVE game). Pylons 7 with one 150f
