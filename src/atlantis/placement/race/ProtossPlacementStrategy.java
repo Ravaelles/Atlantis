@@ -1,11 +1,10 @@
 package atlantis.placement.race;
 
-import atlantis.map.position.APosition;
 import atlantis.placement.blocks.BlockTemplates;
 import atlantis.placement.core.BuildBlock;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.RacePlacementStrategy;
-import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.placement.core.SupportRequest;
 import atlantis.units.AUnitType;
 
 import java.util.ArrayList;
@@ -74,16 +73,11 @@ public final class ProtossPlacementStrategy implements RacePlacementStrategy {
 
     /**
      * Protoss support is a Pylon: the one building that makes a good-but-unpowered
-     * spot usable. It goes through the ordinary production queue, so the production
-     * engine places and builds it like any other goal.
+     * spot usable. Answered as data - the caller forwards it to production,
+     * so the production engine places and builds it like any other goal.
      */
     @Override
-    public void requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
-        try {
-            AddToQueue.withHighPriority(AUnitType.Protoss_Pylon, APosition.create(tx, ty));
-        } catch (Throwable t) {
-            // A build without the legacy queue (a unit test, a future v2-only build):
-            // the next placement pass re-decides anyway.
-        }
+    public SupportRequest requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
+        return new SupportRequest(AUnitType.Protoss_Pylon, tx, ty);
     }
 }

@@ -1,5 +1,10 @@
 package atlantis.production.v2;
 
+import atlantis.placement.core.SupportRequest;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Reserves a spot for a planned building (M3 seam). The real implementation
  * delegates to the existing position finder; tests install a fake.
@@ -35,5 +40,16 @@ public interface PlacementPlanner {
      * {@link #startPass()} is what clears them.
      */
     default void endPass() {
+    }
+
+    /**
+     * Race support declared during this pass (unpowered tiles answered
+     * with a support request instead of a reservation). Drained - the call
+     * clears what it returns, so each request is forwarded exactly once.
+     * The default answers nothing; the composition root that ran the pass
+     * forwards what it gets to production.
+     */
+    default List<SupportRequest> drainSupportRequests() {
+        return Collections.emptyList();
     }
 }

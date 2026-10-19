@@ -12,6 +12,7 @@ import atlantis.placement.core.NeighbourhoodRegistry;
 import atlantis.placement.core.PsiGating;
 import atlantis.placement.core.RacePlacementStrategy;
 import atlantis.placement.core.StartBlockFinder;
+import atlantis.placement.core.SupportRequest;
 import atlantis.placement.core.TileAvailabilityGrid;
 import atlantis.production.v2.LegacyPlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -98,6 +99,15 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
      * {@link TileAvailabilityGrid#markUsed} and disappears with it.
      */
     private final Set<String> reservedThisPass = new HashSet<>();
+    private final List<SupportRequest> supportThisPass = new ArrayList<>();
+
+    /** Support declared by this pass; drained by the composition root, cleared by startPass. */
+    @Override
+    public List<SupportRequest> drainSupportRequests() {
+        List<SupportRequest> drained = new ArrayList<>(supportThisPass);
+        supportThisPass.clear();
+        return drained;
+    }
 
     /** The worker this pass measures travel from; chosen once, reset by startPass. */
     private AUnit passBuilder;
@@ -246,7 +256,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
     @Override
     public void startPass() {
         reservedThisPass.clear();
+        supportThisPass.clear();
         passBuilder = null;
+
+        // A caller-supplied grid is reused as-is across passes (terrain is
+        // null, so there is nothing to rebuild from): drop the reservation
+        // marks the previous pass left, or the second pass finds a map the
+        // first one already consumed. Terrain marks stay untouched.
 
         // The plan is recomputed every frame, so the pass starts from a clean map:
         // a tile a building took in the previous pass is free again, and a proxy that
@@ -261,6 +277,9 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         // overlap a tile a building already took (PlacementPlannerTest).
         if (terrain != null) {
             this.grid = new TileAvailabilityGrid(terrain);
+        }
+        else if (grid != null) {
+            grid.clearUsed();
         }
         this.catalogue = buildCatalogue();
     }
@@ -337,9 +356,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
             if (availability == RacePlacementStrategy.AvailabilityVerdict.REFUSE) continue;
 
             if (availability == RacePlacementStrategy.AvailabilityVerdict.NEEDS_SUPPORT) {
-                // Race-specific support (e.g. a Pylon) is requested by the strategy;
-                // the generic planner does not know the support unit's identity.
-                strategy.requestAvailabilitySupport(candidate.tileX(), candidate.tileY(), unitType.name());
+                // Race-specific support (e.g. a Pylon) is declared by the strategy;
+                // the composition root that ran this pass forwards it to
+                // production - the generic planner never learns the support
+                // unit's identity, and geometry never writes the queue.
+                SupportRequest support =
+                    strategy.requestAvailabilitySupport(candidate.tileX(), candidate.tileY(), unitType.name());
+                if (support != null) supportThisPass.add(support);
                 return PlacementReservation.failure();
             }
 

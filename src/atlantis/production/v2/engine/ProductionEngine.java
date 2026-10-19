@@ -4,6 +4,9 @@ import atlantis.config.env.Env;
 import atlantis.game.A;
 import atlantis.production.orders.build.CurrentBuildOrder;
 import atlantis.production.v2.PlacementPlanner;
+import atlantis.placement.core.SupportRequest;
+import atlantis.production.orders.production.queue.add.AddToQueue;
+import atlantis.map.position.APosition;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.ProductionItem;
 import atlantis.production.v2.ProductionRacePolicy;
@@ -140,8 +143,21 @@ public final class ProductionEngine {
         if (dryRun) {
             dryRunDirector.logSummary(state.frame(), plan.size());
             V2DispatchTwin.emit(state.frame(), issued);
+            for (SupportRequest support : placementPlanner.drainSupportRequests()) {
+                dryRunDirector.orders().add(
+                    "support " + support.unitType() + " at tile(" + support.tileX() + "," + support.tileY() + ")");
+            }
         } else {
             logFrame(state.frame(), plan, issued);
+            // Bridge, not a layer break: the catalogue declares support, the
+            // engine (the only v2 class that knows the game exists) forwards
+            // it to the legacy queue, where V2 already reads coming providers
+            // from - so no cross-author duplicate. Dies with the queue (#147).
+            for (SupportRequest support : placementPlanner.drainSupportRequests()) {
+                AddToQueue.withHighPriority(
+                    support.unitType(),
+                    APosition.create(support.tileX(), support.tileY()));
+            }
         }
         dryRunDirector.clear();
 

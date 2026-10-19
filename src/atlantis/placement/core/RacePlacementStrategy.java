@@ -66,13 +66,16 @@ public interface RacePlacementStrategy {
     }
 
     /**
-     * Requests this race's support for a candidate whose verdict was
-     * {@link AvailabilityVerdict#NEEDS_SUPPORT}: Protoss asks for a Pylon, a race
-     * that can never create support simply does nothing. The planner never needs to
-     * know which building that is.
+     * Names this race's support for a candidate whose verdict was
+     * {@link AvailabilityVerdict#NEEDS_SUPPORT}: Protoss answers a Pylon,
+     * a race that can never create support answers null. A declaration,
+     * never an act - the caller that asked for the placement forwards it
+     * to production (or drops it); the generic planner never learns the
+     * support unit's identity, and geometry never writes the queue.
      */
-    default void requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
+    default SupportRequest requestAvailabilitySupport(int tx, int ty, String buildableTypeId) {
         // Default: a race with no support channel has nothing to request.
+        return null;
     }
 
     /**

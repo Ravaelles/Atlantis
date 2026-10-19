@@ -8,6 +8,7 @@ import atlantis.placement.engine.CataloguePlacementPlanner;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.position.conditions.can_build_here.CanPhysicallyBuildHere;
 import atlantis.production.constructions.position.conditions.can_build_here.IsPoweredByAPylon;
+import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.PlacementPlanner;
 import atlantis.production.v2.PlacementReservation;
@@ -171,6 +172,11 @@ public final class CatalogueSiteAdapter {
         PlacementReservation reservation = SiteTwin.timed(() -> planner.reservePlacement(
             UnitProducible.of(building), constraint, AGame.now()
         ));
+        for (atlantis.placement.core.SupportRequest support : planner.drainSupportRequests()) {
+            AddToQueue.withHighPriority(
+                support.unitType(),
+                APosition.create(support.tileX(), support.tileY()));
+        }
         if (reservation == null || !reservation.isSuccessful()) {
             SiteTwin.declined(building, "no-tile", via);
             return null;

@@ -145,6 +145,20 @@ public final class TileAvailabilityGrid {
     }
 
     /**
+     * Drops every reservation mark while keeping the terrain ones: the plan
+     * is recomputed every frame, so a pass starts from a clean map even
+     * when the grid object itself is reused (a caller-supplied grid is
+     * never rebuilt, so without this the second pass finds a map already
+     * consumed by the first one - measured: empty catalogue on every
+     * pass after the first).
+     */
+    public void clearUsed() {
+        for (int i = 0; i < flags.length; i++) {
+            flags[i] &= ~USED;
+        }
+    }
+
+    /**
      * Can a {@code w x h} building start at this tile? Every covered tile must be
      * free of every flag - the same "the whole footprint fits" rule as
      * Stardust's {@code checkTile}.
