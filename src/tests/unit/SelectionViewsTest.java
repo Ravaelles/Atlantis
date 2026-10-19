@@ -156,4 +156,21 @@ public class SelectionViewsTest extends WorldStubForTests {
             assertEquals(2, Select.our().countOfType(AUnitType.Protoss_Probe, AUnitType.Protoss_Zealot));
         });
     }
+
+    @Test
+    public void aggregatesSumHpHitsAndShields() {
+        FakeUnit a = fake(AUnitType.Protoss_Probe, 10, 10);
+        FakeUnit b = fake(AUnitType.Protoss_Zealot, 20, 20);
+        a.setHp(20);
+        a.setShields(0);
+        b.setHp(80);
+        b.setShields(60);
+
+        world(1, fakeOurs(a, b), fakeEnemies(), () -> {
+            assertEquals(100, Select.our().totalHp());
+            assertEquals(30, Select.our().averageShields());
+            assertTrue(Select.our().totalHits() >= 0);
+            assertEquals(0, Select.our().cloneByRemovingIf(u -> true, "empty").totalHp());
+        });
+    }
 }

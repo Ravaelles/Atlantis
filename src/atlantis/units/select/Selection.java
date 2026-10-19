@@ -465,15 +465,11 @@ public class Selection extends BaseSelection {
     }
 
     public int totalHp() {
-        return data.stream()
-            .map(AUnit::hp)
-            .reduce(0, Integer::sum);
+        return SelectionViews.totalHp(this);
     }
 
     public int totalHits() {
-        return data.stream()
-            .map(AUnit::totalHitCount)
-            .reduce(0, Integer::sum);
+        return SelectionViews.totalHits(this);
     }
 
     public Selection inSquad(Squad squad)  {
@@ -602,14 +598,7 @@ public class Selection extends BaseSelection {
     }
 
     public int averageShields() {
-        if (data.isEmpty()) return 0;
-
-        int totalShields = 0;
-        for (AUnit unit : data) {
-            totalShields += unit.shields();
-        }
-
-        return totalShields / data.size();
+        return SelectionViews.averageShields(this);
     }
 
     public Selection havingSpaceFree(int spaceRequired)  {

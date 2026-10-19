@@ -136,4 +136,27 @@ final class SelectionViews {
 
         return total;
     }
+
+    static int totalHp(Selection selection) {
+        return selection.data.stream()
+            .map(AUnit::hp)
+            .reduce(0, Integer::sum);
+    }
+
+    static int totalHits(Selection selection) {
+        return selection.data.stream()
+            .map(AUnit::totalHitCount)
+            .reduce(0, Integer::sum);
+    }
+
+    static int averageShields(Selection selection) {
+        if (selection.data.isEmpty()) return 0;
+
+        int totalShields = 0;
+        for (AUnit unit : selection.data) {
+            totalShields += unit.shields();
+        }
+
+        return totalShields / selection.data.size();
+    }
 }
