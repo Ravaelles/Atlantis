@@ -124,13 +124,19 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
-    public void zealotsNeverKite() {
+    public void zealotsKiteOnlyOnSpentWeapon() {
+        // Owner direction (was: never kite): a Zealot with 7+ frames of
+        // cooldown left steps back instead of standing through it - the
+        // shot is gone either way, distance is free. Fresh weapon holds
+        // contact as before.
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
-        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 32, 20);
-        zealot.cooldown = 15;
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 30.5, 20);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot), fakeEnemies(foe), () -> {
-            assertFalse(BattleCommander.shouldKite(zealot, foe), "Zealots want contact");
+            zealot.cooldown = 6;
+            assertFalse(BattleCommander.shouldKite(zealot, foe), "fresh weapon holds contact");
+            zealot.cooldown = 7;
+            assertTrue(BattleCommander.shouldKite(zealot, foe), "spent weapon steps back");
             assertFalse(BattleCommander.shouldKite(null, foe));
             assertFalse(BattleCommander.shouldKite(zealot, null));
         });

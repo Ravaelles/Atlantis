@@ -71,6 +71,15 @@ public class BattleCommander extends Commander {
         AUnit assessor = vanguardAssessor(leader);
         double eval = assessor != null ? assessor.eval() : 0;
 
+        // Home ground holds: under two tiles from the main base the
+        // cluster stands instead of fleeing (owner: retreating into the
+        // mineral line donates the base). Individual kiting inside act()
+        // still applies - this gates only the cluster tactic.
+        if (clusterHoldsHomeGround()) {
+            fleeStartedAt = -1;
+            return FightOrFlight.Tactic.FIGHT;
+        }
+
         FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
         if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
             fleeStartedAt = A.now();
@@ -79,6 +88,18 @@ public class BattleCommander extends Commander {
             fleeStartedAt = -1;
         }
         return tactic;
+    }
+
+    /**
+     * True when the cluster sits on the main base (under 2 tiles): FLEE
+     * is not an option there. Public as a seam, pinned without a game.
+     */
+    public static boolean clusterHoldsHomeGround() {
+        AUnit main = Select.main();
+        if (main == null) return false;
+        HasPosition center = Alpha.get().center();
+        if (center == null) return false;
+        return center.distTo(main) < 2;
     }
 
     /**
@@ -352,7 +373,10 @@ public class BattleCommander extends Commander {
      * stub state.
      */
     public static boolean shouldKite(AUnit unit, AUnit threat) {
-        if (unit == null || threat == null || !unit.isDragoon()) return false;
+        if (unit == null || threat == null) return false;
+        // Zealots trade contact, except on a spent weapon: with 7+ frames
+        // of cooldown left a step back costs no DPS (owner direction).
+        if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
         if (unit.distTo(threat) >= KITE_ENEMY_TILES) return false;
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
