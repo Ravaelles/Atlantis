@@ -143,6 +143,12 @@ public final class GoalBoardFeeder {
         return GOAL_TYPES.get(goalId);
     }
 
+    /** Test seam: funding statics leak across test worlds without it. */
+    public static void clearForTests() {
+        lastFundedIds.clear();
+        lastFundedFrame = -1;
+    }
+
     private static ProductionOrder addFor(String goalId, AUnitType type) {
         if ("supply-pylon".equals(goalId)) return AddToQueue.withTopPriority(type);
         if ("core".equals(goalId)) return AddToQueue.withHighPriority(type);
