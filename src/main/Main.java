@@ -117,7 +117,7 @@ public class Main {
          * vs AI Protoss player - ♥‿♥ - My two favorite maps for testing,
          * features ugly Reaver+Archon spawn in the main at around 85 supply that is hard to stop
          */
-        if (true) return "ums/rav/7th_rav.scx";  // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/7th_rav.scx";  // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefence.scx";
 //        if (true) return "ums/rav/protoss/ChokeSpartaDefenceB.scx";
 //        if (true) return "ums/exp_skilltest.scx"; // Terran v. AI Protoss player
@@ -183,7 +183,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/BulletTest.scm";
 //        if (true) return "ums/rav/protoss/BulletTest2.scm";
 
-        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/1Drag_v_1Zeal.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/1Drag_v_4Zeal.scm";
 //        if (true) return "ums/rav/protoss/1Drag_v_1ZealZoo.scm";
 //        if (true) return "ums/rav/protoss/1DragWounded_v_1Zeal.scm";
@@ -304,7 +304,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm"; // ░░░░░░░░░░░░░░░░░
-//        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
+        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra2.scm";
 
         return null;
