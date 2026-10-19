@@ -271,7 +271,7 @@ scbw tier's tables live in `_AI/e2e/` and are governed by its own README.
 - `DOCS/HOW-TESTS-WORK.md` - the Stardust runner, read before touching
   `StardustDevEnvironment/`.
 - `_AI/PLAN-OPENBW.md`, `_AI/CHALLENGES/OpenBW.md` - how the attach was solved.
-- `_AI/POSITION-FINDER.md` - why placement fails, and the plan to rewrite it.
+- `_AI/CHALLENGES/PositionFinder.md` - why placement fails, and the plan to rewrite it.
 
 ---
 
@@ -293,6 +293,6 @@ scbw tier's tables live in `_AI/e2e/` and are governed by its own README.
 - No new engine of our own, and no repairing `StarEngine`'s combat sim to "be
   more like the game" - that road ends where it started. Replace, do not repair.
 - No patching `PositionFinder` further: it is scheduled for deletion and rewrite
-  (`_AI/POSITION-FINDER.md`). Adding to it makes the rewrite bigger and the
+  (`_AI/CHALLENGES/PositionFinder.md`). Adding to it makes the rewrite bigger and the
   diagnosis muddier.
 - No model-run Wine/StarCraft: OpenBW is the E2E engine (CONVENTIONS §14).

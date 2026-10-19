@@ -49,7 +49,7 @@ the dispatch loop, not the placement search.
 
 The option-A shortcut (a fallback inside `isBuildable`) was investigated and
 abandoned: it is not a fallback problem, and patching the legacy finder is
-explicitly out of bounds (`_AI/POSITION-FINDER.md`, `redesign/03_PLACEMENT.md`
+explicitly out of bounds (`_AI/CHALLENGES/PositionFinder.md`, `redesign/03_PLACEMENT.md`
 §4.6).
 
 ## What option B is

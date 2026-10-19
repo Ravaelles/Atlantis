@@ -161,6 +161,7 @@ verdict, exactly as before:
 | `EXPECT_MAX_KILLED` | we killed more units (e.g. the rush should be survivable, not farmed) |
 | `EXPECT_MIN_PYLONS` | fewer Protoss Pylons exist at game end (completed or unfinished) |
 | `EXPECT_MIN_GATEWAYS` | fewer Protoss Gateways exist at game end (completed or unfinished) |
+| `EXPECT_NO_PLACEMENT_FAILURES` | a `Can't find place` line appears in the log |
 | `EXPECT_MIN_RESOURCE_BALANCE` | `Resource killed/lost` is below this (use `-200` for "roughly even") |
 
 Example - survive the opening for 7 game minutes with a near-even trade:
@@ -236,6 +237,11 @@ own verification and occasional parity checks.
 
 So a scripted or passive enemy has to be a **UMS map** with its own trigger, not a
 bot. `auto_menu.enemy_race` (the default) gives a normal growing AI opponent.
+Host UMS maps with `scripts/run-openbw-ums.sh` (it selects
+`USE_MAP_SETTINGS` itself for `ums/` paths - no manual env needed);
+what actually works on that path and what does not is tracked in
+`_AI/CHALLENGES/StationaryEnemy.md` (hosting works, human-slot maps
+end at frame 0, unsupported trigger conditions log errors).
 
 ## Hand-run recipe (owner's path)
 

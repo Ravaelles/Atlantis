@@ -79,7 +79,7 @@
   occupied only by the builder that is about to build there - which the game allows.
   Our `BuildingTilesAreOccupied.check` counts **buildings only**, so it happily
   accepts a tile with a mining worker on it - which the game does not allow.
-  `POSITION-FINDER.md` point 2 records why the guard was narrowed (a worker or a
+  `PositionFinder.md` point 2 records why the guard was narrowed (a worker or a
   patch two tiles over "overlapped" a Pylon's footprint), and that narrowing traded
   one false negative for one false positive instead of encoding the real rule
   ("the builder may be there; nobody else may").

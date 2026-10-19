@@ -16,7 +16,7 @@ AI assistant.
 | know **what to work on next** | `NEXT.md` (open backlog: phase checklist for the quarter, ordered next steps for the week; the top item, next priority and current plan are named at the top of the file) |
 | see the **whole road** | `NEXT.md` "Phases (the quarter)" (big phases in priority order, with exit criteria; detail in the linked documents) |
 | **finish Production V2** | `NEXT.md` #45, then `redesign/01_PRODUCTION.md` |
-| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `POSITION-FINDER.md`, `BUILDING-BLOCKERS.md` (certain vs refuted vs open, per site) |
+| work on **placement** | `PLAN-STAGE4-COMMAND-PATH.md` (what to do next - the build command is refused inside the library), `PLAN-REGION-DETECTION.md` (own reachability; stages 1-3 done), `NEXT.md` #81, `PLACEMENT-CUTOVER-PLAN.md`, `redesign/03_PLACEMENT.md`, `CHALLENGES/PositionFinder.md`, `CHALLENGES/BuildingBlockers.md` (certain vs refuted vs open, per site) |
 | run or fix an **OpenBW game** | `PLAN-OPENBW.md` (limits + assertions), `CHALLENGES/OpenBW.md` (history) |
 | work on **E2E testing** | `IDEA-E2E-TESTS.md` (§3.5 = the next steps) |
 | run the bot on **Linux / Wine / IDE** | `LOCAL-STARCRAFT.md`, `CHALLENGES/GameExecution.md`, `CHALLENGES/BuildAndLogging.md` |
@@ -49,7 +49,10 @@ AI assistant.
 
 - **`CONVENTIONS.md`** - normative rules. Numbered sections; other files cite
   them as "CONVENTIONS §N".
-- **`POSITION-FINDER.md`** - short: why the old finder was rewritten, and the
+- **`00-GOAL-APPROACH.md`** - the approved board-first shape (the loop,
+  the layers, the growth rules and non-goals); normative detail lives
+  in CONVENTIONS §5 (architecture) and §21 (domain vs machinery).
+- **`CHALLENGES/PositionFinder.md`** - short: why the old finder was rewritten, and the
   traps the rewrite had to avoid.
 - **`LOCAL-STARCRAFT.md`** - Wine/StarCraft setup and what OpenBW does and does not
   provide (e.g. the JBWEB JNI gap).
