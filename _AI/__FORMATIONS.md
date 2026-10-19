@@ -211,6 +211,37 @@ the phase order is dependency order, not scope cutting.
 6. Shared target re-picked only when dead/out of range (sticky);
    style changes only on sim consensus (hysteresis).
 
+### What PurpleWave does when the arc does not fit (owner asked 2026-10-20)
+
+The slot tracer (`FormationStandard.arcSlots`, alternating
+left/right from center, row by row outward) never emits a bad
+pixel - each candidate is tested and only surviving pixels become
+slots:
+
+- walkable + wrong altitude / under enemy fire
+  (`enemyRangeGround > margin`) / occupancy-grid taken → skip,
+  keep tracing;
+- unwalkable + different zone → HALT that direction (the arc does
+  not cross into bad terrain), keep tracing the other side;
+- unwalkable + same zone → skip, keep tracing;
+- 10k evaluations → stop (safety valve, broken maps).
+
+Occupancy is pre-blocked on a grid: mineral lines, reserved tiles,
+push traffic (Shove+), scarab paths. Every anchor snaps to walkable
+(`walkableTile`/`walkablePixel`); air units just follow the ground
+exemplar. Whole-arc failure has a named fallback: Guard that cannot
+fill its slots assumes the choke is breached, backs up one choke
+and rebuilds there. A unit with no slot (`Formation.apply` = None)
+falls back to non-formation behavior instead of standing still.
+
+Mapped to our Moon problem (unwalkable slots, stepping into walls):
+validate the DESTINATION (Moon does this) AND the direction
+(Moon does not - straight `move(slot)` walks into walls); sample
+candidates like the tracer (walkable + low-threat + free, halt the
+direction that leaves terrain); keep a fallback chain (try next
+slot → regroup point → trade, never null); retreat one choke and
+rebuild when nothing fits. Steps 1-2 of the adoption order.
+
 ### Phases (dependency order)
 
 - **A (now, no map lib)**: Moon crescent slots + shared escape
