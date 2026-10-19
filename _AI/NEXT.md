@@ -458,6 +458,20 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
   collectGoals, lists tag at creation, pinned V2GoalSourceTest 5/5):
   the next live pair reads its authors off the source column.
+- **#154** Per-unit attack readiness (owner 2026-10-20, Stardust over
+  PurpleWave for single-unit micro): attack iff `cooldown <=
+  latency(unit) + 2`, where latency is strictly per-unit (reaction +
+  remaining engine frames) - never a flat number, and never the
+  PurpleWave-copied `UnitAttackWaitFrames.effectiveStopFrames` table
+  (per-type constants, currently half-dead: `unitAlreadyStartedAttackAnimation`
+  returns false unconditionally with its body commented out (one live
+  caller, `ProtossContinueAttack:108`), `waitedLongEnoughForStartedAttack`
+  and `AUnit.attackWaitFrames` have zero callers - audit will likely end
+  in deletion, not rewiring). Interim `KITE_LATENCY_FRAMES = 4` in the
+  desired-distance rule is the placeholder to replace once the per-unit
+  source exists. Stub-pin the rule, then prove shot cadence on the Wine
+  1v1 duel (SHOT twin already carries fired-vs-holding). Details:
+  `_AI/CHALLENGES/MicroKiting.md` ("Stardust reference").
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design
   (`ForceExitLocallyInOpenBW`: bank 606, supply 40/41, nothing coming -
