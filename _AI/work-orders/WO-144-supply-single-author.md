@@ -66,6 +66,9 @@ supply pumps silent.
    (free, coming, total, bank) x (BO owns / board owns). New test next
    to `SupplyGoalTest` (LANDED 2026-10-18: 3/3 pins WORRY 4/5,
    coming-suppression at free 0, contribute end to end). No production change.
+   Fallback side pinned 2026-10-19 (`FallbackBandsParityTest` 5/5: capped
+   bands 2/4/6/6/6/6 poor, +1 rich below the cap, -1 past 200; divergence
+   window exactly free 5-6 where legacy fires and the board stands down).
 2. **DRY_RUN parity on supply rows** (short OpenBW run): with legacy
    executing, V2 DRY_RUN must plan the same provider count ±0 within
    the opening window. Evidence 2026-10-18 (`105055` DRY_RUN short):
