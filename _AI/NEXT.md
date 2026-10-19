@@ -731,6 +731,36 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
     (01_PRODUCTION.md scheduler + dispatcher; single policy already
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
     default with parity numbers, queue in src-old/.
+- **#155** `ProduceBuilding` gates as a registry, not a 10-`if` chain
+  (SOLID review 2026-10-19, agreed, file deleted after consolidation):
+  every `if (...) refuse(...)` in `requestBuilding()` becomes a named
+  `BuildGate` in explicit order (live-construction, pylon-cap,
+  pylon-overstock, unstarted-pylon, earlier-reserve, core-priority,
+  power-not-funded, funding), each pinned in isolation. The order is
+  semantic today and nowhere written as a contract - the registry
+  makes it one. Slices per gate with a game proof each (a gate
+  reordered wrongly re-trips an earlier refusal); feeds naturally
+  into #147 (the stateless scheduler consumes gates, not ifs).
+- **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
+  models of "already reserved" exist (`ProduceBuilding`
+  earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
+  `GoalBoardWallet`/`ReservedResources`) with different sorting and
+  exclusions - every duplicate-Pylon race reads a different sum.
+  Unify behind one ordered reserve ("already paid = has building
+  unit") with twin-pinned duplicate rows as the proof; WO-145/147
+  territory, never a blind merge.
+- **#157** Semantic `ConstructionOrderStatus` queries (SOLID review,
+  agreed): new statuses force edits in ~6 reader classes each. Add
+  enum-level answers first (`isWaiting`, `countsAsDemand`,
+  `isTerminal` - additive, stub-pinned, zero behavior change), then
+  migrate readers one by one with a game proof each (construction
+  is the most Wine-proven area; no batch migration).
+- **#158** `CombatTuning` record instead of public mutable statics
+  (SOLID review, agreed): ~30 `public static` knob fields are
+  writable by anyone with no range checks; the tuner already carries
+  ranges in `applyOrRandomize`. Move the values into an injected
+  record the tuner mutates (no behavior change, suite + one tuner
+  batch as proof), domain classes read but never own it.
 ## Current game state (updated 2026-10-19)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro, owner 2026-10-19): FLEE with
