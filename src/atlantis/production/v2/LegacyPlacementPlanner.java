@@ -195,6 +195,18 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
             return PlacementReservation.failure();
         }
 
+        // Power-smart Pylon siting (Phase 5(a)): the legacy finder answers
+        // one validated tile, but a Pylon belongs where it unlocks the most
+        // unpowered room. Validated ring alternatives around it are scored
+        // and the best wins - every candidate went through the same full
+        // find chain, so nothing here is invented, only ranked. Other
+        // buildings keep the first tile; with fewer than two distinct
+        // candidates there is nothing to choose between.
+        if (unitType.isPylon()) {
+            APosition powered = bestPoweredSite(builder, unitType, position);
+            if (powered != null) position = powered;
+        }
+
         List<APosition> candidates = new ArrayList<>();
         candidates.add(position);
         int chosen = candidateResolver.choose(candidates, building);
@@ -211,6 +223,68 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
         return reservation;
     }
 
+    /**
+     * Ring alternatives around the finder's first answer, each validated by
+     * the same full chain, ranked by unlocked unpowered room. Frame cost is
+     * one sweep per offset plus tile reads in a 7-tile box - no pathing;
+     * V2 runs this only while its Pylon row is unbuilt, same cadence as
+     * the single sweep it replaces. Watch the frame budget on the next
+     * V2 LIVE run; the fallback is the first tile (delete the call).
+     */
+    private static final int[][] POWER_RING = {{4, 0}, {-4, 0}, {0, 4}, {0, -4}};
+
+    private APosition bestPoweredSite(AUnit builder, AUnitType unitType, APosition first) {
+        List<APosition> validated = new ArrayList<>();
+        validated.add(first);
+        for (int[] step : POWER_RING) {
+            APosition alt = APositionFinder.findStandardPosition(
+                builder, unitType, first.translateByTiles(step[0], step[1]), 12);
+            if (alt == null || sameTile(alt, first) || containsTile(validated, alt)) continue;
+            String tile = alt.tx() + ":" + alt.ty();
+            if (reservedTilesThisPass.contains(tile)) continue;
+            validated.add(alt);
+        }
+        if (validated.size() < 2) return first;
+
+        List<PylonPlacementScore.Tile> buildable = new ArrayList<>();
+        List<PylonPlacementScore.Tile> powered = new ArrayList<>();
+        List<AUnit> pylons = Select.ourOfType(AUnitType.Protoss_Pylon).list();
+        for (int dx = -PylonPlacementScore.POWER_RADIUS_TILES;
+             dx <= PylonPlacementScore.POWER_RADIUS_TILES; dx++) {
+            for (int dy = -PylonPlacementScore.POWER_RADIUS_TILES;
+                 dy <= PylonPlacementScore.POWER_RADIUS_TILES; dy++) {
+                APosition tile = first.translateByTiles(dx, dy);
+                if (!tile.isBuildableIncludeBuildings()) continue;
+                PylonPlacementScore.Tile scored =
+                    new PylonPlacementScore.Tile(tile.tx(), tile.ty());
+                buildable.add(scored);
+                if (isPoweredBy(tile, pylons)) powered.add(scored);
+            }
+        }
+
+        APosition best = PylonPowerSiting.best(validated, buildable, powered);
+        return best != null ? best : first;
+    }
+
+    private static boolean sameTile(APosition a, APosition b) {
+        return a.tx() == b.tx() && a.ty() == b.ty();
+    }
+
+    private static boolean containsTile(List<APosition> tiles, APosition tile) {
+        for (APosition existing : tiles) {
+            if (existing != null && sameTile(existing, tile)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isPoweredBy(APosition tile, List<AUnit> pylons) {
+        for (AUnit pylon : pylons) {
+            if (pylon == null || !pylon.isAlive()) continue;
+            if (Math.abs(pylon.tx() - tile.tx()) <= PylonPlacementScore.POWER_RADIUS_TILES
+                && Math.abs(pylon.ty() - tile.ty()) <= PylonPlacementScore.POWER_RADIUS_TILES) return true;
+        }
+        return false;
+    }
     /**
      * Reservation carried over from the previous pass for this item, already
      * marked as committed, or null when the item is new or was never started.

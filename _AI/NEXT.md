@@ -48,9 +48,11 @@ reading green.
   power (`Not powered by a Pylon x517/517`, `20261017_135655`) - V2
   pylons land wherever, powered space fills, tech starves; legacy
   avoided this with pylon scoring (unwired `PylonPlacementScore`) and
-  pull-forward. OPEN - wiring needs a multi-candidate finder (the legacy
-  one returns a single tile; inventing candidates is worse - see the NOTE
-  in `LegacyPlacementPlanner`). (b) Legacy queue machinery fires on unit events inside
+  pull-forward. LANDED stub-pinned: `LegacyPlacementPlanner` re-queries
+  validated ring tiles around the first answer and picks max
+  `PylonPlacementScore` (`PylonPowerSiting` + `PylonPowerSitingTest` 4/4
+  + planner wiring test; no invented candidates, ties keep the finder).
+  Game proof (parity runs showing powered tech ground) still pending. (b) Legacy queue machinery fires on unit events inside
   LIVE (PREPARING orphans with builders, ORDER_NOT_READY rows, 200-300
   leaked reservations via status-flip reserve/release imbalance) -
   LANDED: single-policy gate (`Queue.refresh` no-ops in LIVE,
