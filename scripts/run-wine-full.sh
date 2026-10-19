@@ -262,8 +262,7 @@ rm -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" \
 
 TEE_OUT=("$CLIENT_LOG")
 TEE_ERR=("$LOG_DIR/WINE_DEBUG")
-# out/wine/ is the only destination - the old per-ENV live copy
-# (WINE_LOG_COPY with fixed role names) is retired.
+# out/wine/ is the only destination - the old per-ENV live copy is retired.
 
 # Streams stay split on purpose: WINE_LOG is the game log (HELLO,
 # GameSummary, build orders), WINE_DEBUG the diagnostics (worker gates,

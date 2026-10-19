@@ -27,7 +27,6 @@ STARCRAFT_DIR=/sc-ai/starcraft
 BWAPI_DIST_DIR=/sc-ai/BWAPI
 MODIFY_BWAPI_INI=true
 # After every local Wine game, copy the client log here when non-empty.
-WINE_LOG_COPY=/sc-ai/E2E OpenBW LOGS/last-wine.log
 
 FORCE_END_AT_SUPPLY=50
 

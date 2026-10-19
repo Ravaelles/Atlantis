@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -121,7 +122,7 @@ public class BotOutputReachesConsoleTest {
         @Test
         public void noStrayStreamingWhenDisabled() throws IOException {
                 // LIVE_OUTPUT=0 must stay quiet on the console: the quiet branch
-                // pipes through tee (so the extra copy still works) but throws
+                // pipes through tee (so the log files still land) but throws
                 // tee's own stdout away.
                 String script = read(WINE_FULL);
                 assertTrue(script.contains("> /dev/null"),
@@ -129,26 +130,20 @@ public class BotOutputReachesConsoleTest {
         }
 
         @Test
-        public void wineLogCopyIsLiveAndGuarded() throws IOException {
-                // WINE_LOG_COPY (owner ask): the extra copy must be live (tee, not
-                // an end-of-run cp that misses kills), resolved from the bot ENV,
-                // and gated on a non-empty path plus GAME_LAUNCHER=WINE.
-                // Owner 2026-10-18: fixed role names (WINE_LOG game log
-                // only, WINE_DEBUG diagnostics only, WINE_DECISIONS audit)
-                // in one directory - the old last-wine*.log pair retired.
+        public void wineLogCopyStaysRetired() throws IOException {
+                // WINE_LOG_COPY retired (owner): out/wine/ is the only
+                // destination now (WINE_LOG game log, WINE_DEBUG
+                // diagnostics, WINE_DECISIONS audit). The per-ENV live
+                // copy with its resolver and tee plumbing is gone - this
+                // pins the absence so it is not quietly re-added.
                 String script = read(WINE_FULL);
 
-                assertTrue(script.contains("TEE_OUT+=(\"$WINE_LIVE_LOG\")")
-                                && !script.contains("TEE_ERR+=(\"$WINE_LIVE_LOG\")"),
-                                "the live game log joins the stdout tee only");
-                assertTrue(script.contains("WINE_LIVE_DEBUG=\"$WINE_LIVE_DIR/WINE_DEBUG\""),
-                                "a WINE_DEBUG twin of the live dir carries diagnostics only");
-                assertTrue(script.contains("WINE_LIVE_DECISIONS=\"$WINE_LIVE_DIR/WINE_DECISIONS\""),
-                                "a WINE_DECISIONS sidecar completes the triple");
-                assertTrue(script.contains("WINE_LOG_COPY_RESOLVED=\"$(resolve_wine_log_copy)\""),
-                                "the destination resolves once before the client starts");
-                assertTrue(script.contains("grep -q \"^GAME_LAUNCHER=WINE\""),
-                                "an OpenBW ENV must never trigger the copy");
+                assertFalse(script.contains("WINE_LOG_COPY"),
+                                "no per-ENV live copy mechanism in the runner");
+                assertFalse(script.contains("resolve_wine_log_copy"),
+                                "no live-copy resolver in the runner");
+                assertFalse(script.contains("WINE_LIVE_"),
+                                "no live-copy destinations in the runner");
         }
 
         private static String read(Path path) throws IOException {

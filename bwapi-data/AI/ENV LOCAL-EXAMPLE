@@ -9,7 +9,6 @@ MODIFY_BWAPI_INI=true
 # triple lands in this directory when non-empty (fixed basenames, no
 # extensions - the value anchors the directory, not the file).
 # Wine runs only (the runner checks GAME_LAUNCHER=WINE in the same file).
-WINE_LOG_COPY=
 # Game backend: CHAOS (default, Windows + ChaosLauncher + live StarCraft)
 # or OPENBW (Linux + external BWAPILauncher server, see ENV OPENBW-EXAMPLE).
 # Any value other than OPENBW (including empty/missing) keeps Chaos behavior.
