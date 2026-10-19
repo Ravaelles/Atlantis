@@ -34,6 +34,20 @@ debug horizon (`FORCE_END_AT_SUPPLY=50` - game ends once our supply
 hits it; defects show by supply 25-30, longer runs only when a hunt
 needs them). Ready-made: `--env=bwapi-data/AI/ENV-WINE-FAST`.
 Without `--env` the game runs watchable (normal speed, GUI on).
+Copy-paste (shared `bwapi-data/AI/ENV` stays untouched - the script
+never writes to it; verify with `grep SUPER_FAST bwapi-data/AI/ENV`,
+which must stay empty):
+
+```
+bash scripts/run-wine-ums.sh "1Drag_v_1Zeal.scm" --env=bwapi-data/AI/ENV-WINE-FAST
+bash scripts/run-wine-full.sh "(3)TauCross.scx" --env=bwapi-data/AI/ENV-WINE-FAST
+```
+
+First line: UMS micro duel (bot owns pre-placed units, no base).
+Second line: melee opening (bot plays the build order from a base).
+Logs land in `out/wine/` (`WINE_LOG` game, `WINE_DEBUG` diagnostics,
+`WINE_DECISONS` decisions triple) - copy them to `/tmp/opencode/`
+before the next run or `rm -rf out`, both wipe the directory.
 Scripts never write to shared ENV files (owner: per-run flags leaked
 into watched IDE games, so the borrow-and-restore mechanism is gone).
 The Wine audio backends stay muted per run (missing device hangs
