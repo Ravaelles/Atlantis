@@ -30,7 +30,6 @@ public class GetOptimalBuilder {
 
 //        boolean allowRepairers = true;
 
-//        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).nearestTo(positionToBuild);
         // Owner: always the free pool, never a hand-rolled fallback chain.
         // forPosition answers null when no worker is truly free - every
         // caller already owns that case (adopt-no-free-builder twin, fresh

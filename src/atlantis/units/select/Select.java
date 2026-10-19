@@ -3,7 +3,6 @@ package atlantis.units.select;
 import atlantis.map.position.APosition;
 import atlantis.core.world.UnitIndex;
 import atlantis.game.AGame;
-import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.Units;
@@ -596,24 +595,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         return null;
     }
 
-    /**
-     * Selects our workers that are free to construct building or repair a unit. That means they mustn't
-     * repait any other unit or construct other building.
-     */
-    public static Selection ourWorkersFreeToBuildOrRepair(boolean allowRepairers) {
-        Selection selectedUnits = Select.ourWorkers();
-        selectedUnits.list().removeIf(unit ->
-                unit.isConstructing()
-                    || BuilderManager.isBuilder(unit)
-                    || unit.isScout()
-                    || unit.isGatheringGas()
-                    || unit.isSpecialAction()
-                    || (!allowRepairers && (unit.isRepairing()))
-//                || (!allowRepairers && (unit.isRepairing() || unit.isRepairerOfAnyKind()))
-        );
-
-        return selectedUnits;
-    }
 
     /**
      * Selects our workers (that is of type Terran SCV or Zerg Drone or Protoss Probe) that are either
