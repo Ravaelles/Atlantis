@@ -12,6 +12,9 @@
 # (reproducible validation runs). After each game the per-game CSV
 # (W/L, seconds, killed, lost, hits taken, shots fired, score, param
 # values) and EVENTS.jsonl land in OUTDIR, plus a batch.csv summary line.
+# The bot also overwrites param_tweaker/__tweaker.csv every game (last
+# result only, header + one row) - the dated files stay the archive.
+# The GCSV pick below excludes it so a fixed name never shadows them.
 #
 # Examples:
 #   bash scripts/run-wine-batch.sh "1Drag_v_1Zeal.scm" 30 /tmp/opencode/tune1
@@ -88,7 +91,7 @@ while [ "$i" -lt "$N" ]; do
     echo "[wine-batch] game $i: INVALID (no fresh game end), skipped" | tee -a "$OUTDIR/batch.log"
     rm -f "$GDIR/EVENTS.jsonl" "$GDIR/tweaker.csv"
   else
-    GCSV="$(ls -t param_tweaker/*.csv 2>/dev/null | head -1)"
+    GCSV="$(ls -t param_tweaker/*.csv 2>/dev/null | grep -v '__tweaker\.csv' || true | head -1)"
     if [ -n "${GCSV:-}" ]; then
       cp -f "$GCSV" "$GDIR/tweaker.csv"
       tail -1 "$GCSV" | awk -F';' -v g="$i" '{print g","$2","$3","$4","$5","$6","$7","$8}' >> "$CSV" 2>/dev/null || true

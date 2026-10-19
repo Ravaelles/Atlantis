@@ -17,6 +17,10 @@ public class ParamTweakerEvaluator {
 
     private static final String DELIMITER = ";";
 
+    /** Fixed-name copy of the last simulation's row only (overwritten
+     * every game, never appended) - the dated files stay the archive. */
+    private static final String LAST_FILE = "param_tweaker/__tweaker.csv";
+
     public static void updateOnEnd(boolean winner) {
         saveScoreToFile(winner);
     }
@@ -32,7 +36,14 @@ public class ParamTweakerEvaluator {
         java.io.File parent = new java.io.File(file).getParentFile();
         if (parent != null) parent.mkdirs();
 
-        AFile.writeToFileWithHeader(file, resultString(winner), fileHeader());
+        String row = resultString(winner);
+        AFile.writeToFileWithHeader(file, row, fileHeader());
+
+        // Fixed-name copy of the last simulation only (owner: always
+        // know the latest result without dating files). Overwritten
+        // every game, never appended.
+        AFile.removeFile(LAST_FILE);
+        AFile.writeToFileWithHeader(LAST_FILE, row, fileHeader());
     }
 
     private static String[] fileHeader() {
