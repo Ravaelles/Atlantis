@@ -179,6 +179,14 @@ cooldown, coherence comes from not blocking friends out of range).
 "Healthy steps toward the enemy to draw fire" deliberately NOT
 adopted: no reference bot does it, enemy targeting is not steerable
 from our side - the wounded-back ordering is the whole mechanism.
+Withdrawn 2026-10-20: a Zealot front-line rule (no kite on cd>=7
+with Dragoons behind) - falsified before commit, no game spent.
+Range-0 units compute desired distance 0, so the kite step length is
+identically 0 past point blank: Zealots never kite-step, with or
+without Dragoons behind (the cd>=7 exception changes nothing;
+pinned in DragoonKiteTest so reviving it stays conscious). The
+ZealDrag surround does not come from dancing Zealots - they trade
+contact unconditionally.
 Skipped (open, needs threat-velocity tracking): the fleeing-target
 branch ("do not kite out of range"); predicted positions (we use
 current dist, re-evaluated every 10f); threat-aware pathing (still

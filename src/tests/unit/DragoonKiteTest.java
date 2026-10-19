@@ -459,6 +459,51 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         });
     }
 
+    @Test
+    public void zealotTradesContactInsteadOfStepping() {
+        // Range-0 units compute desired distance 0, so the kite step
+        // length is always 0 past point blank: a Zealot trades contact
+        // with or without Dragoons behind it (the cd>=7 exception never
+        // produces a step - pinned so reviving it stays conscious).
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 60, 20);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 62, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 61, 20);
+        zealot.cooldown = 10;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot, dragoon), fakeEnemies(foe), () -> {
+            atlantis.battle.BattleCommander.act(
+                zealot, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, zealot);
+
+            assertFalse(
+                hasOrder(ordersOf(zealot), zealot.id(), "move"),
+                "contact, not steps - with Dragoons behind: " + ordersOf(zealot));
+            assertTrue(
+                hasOrder(ordersOf(zealot), zealot.id(), "attackUnit"),
+                "line trades contact instead: " + ordersOf(zealot));
+        });
+    }
+
+    @Test
+    public void lonelyZealotAlsoTradesContact() {
+        // Same Zealot, no Dragoons behind: still contact, still no step
+        // (see above - the cooldown step cannot issue for range-0).
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 60, 20);
+        FakeUnit foe = fake(AUnitType.Protoss_Zealot, 61, 20);
+        zealot.cooldown = 10;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot), fakeEnemies(foe), () -> {
+            atlantis.battle.BattleCommander.act(
+                zealot, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, zealot);
+
+            assertFalse(
+                hasOrder(ordersOf(zealot), zealot.id(), "move"),
+                "contact, not steps - lonely either: " + ordersOf(zealot));
+            assertTrue(
+                hasOrder(ordersOf(zealot), zealot.id(), "attackUnit"),
+                "lonely Zealot still trades: " + ordersOf(zealot));
+        });
+    }
+
     private static int attackOrders(FakeUnit unit) {
         int attacks = 0;
         for (tests.fakes.FakeOrderSink.Record record : ordersOf(unit)) {
