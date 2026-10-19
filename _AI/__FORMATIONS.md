@@ -1,5 +1,11 @@
 # Formations: how Stardust keeps the cluster together (read 2026-10-20)
 
+> **STATUS: DEFERRED (owner 2026-10-20).** Design complete, implementation
+> NOT started - starts on the owner's call. Natural slot: migration
+> Phase 3 (combat cluster behavior, after the Phase 0 entry gate holds:
+> average battles won). Until then this file is the memory; the 1v1
+> kite rules stay frozen and no formation code lands.
+
 Owner question: why does Stardust's army move as one body while ours
 scatters into 1v1s that die surrounded? Answer from the source, not
 from memory. Primary: `/sc-ai/Stardust/src/General/UnitCluster/`
@@ -241,6 +247,44 @@ candidates like the tracer (walkable + low-threat + free, halt the
 direction that leaves terrain); keep a fallback chain (try next
 slot → regroup point → trade, never null); retreat one choke and
 rebuild when nothing fits. Steps 1-2 of the adoption order.
+
+### Q&A distilled (owner asked 2026-10-20, answered from the code)
+
+- **"Stardust has no slots (emergent shape)"** means no unit owns a
+  place. Every frame each unit sums local vectors (waypoint + away
+  from friends + away from walls) and walks the sum. The ball you see
+  is nowhere drawn - it emerges like a flock (no bird has a seat, yet
+  the flock holds). Consequence: nothing guarantees the shape. Ten
+  dragoons retreating through a gap squeeze, string out, two stick
+  to a wall - and nobody is "out of position", because positions do
+  not exist. The only global rule is weak: Arc pulls units 128+ px
+  behind the vanguard back to it. Contrast PurpleWave/Moon: a unit
+  off its computed pixel walks back to it.
+- **Cohesion is NOT spacing.** Separation = gaps between units (don't
+  stack; Moon has this via slot spacing). Cohesion = group integrity:
+  don't split in two, don't leave stragglers, arrive together
+  (Stardust: pull toward center, weaker in big armies; PurpleWave:
+  vanguard + march cadences that wait for the tail). Moon has
+  separation without march cohesion: fast units arrive first and
+  fight alone while slow ones walk, nobody waits for anybody (the
+  gate even requires friends within 3 tiles to apply at all - a lone
+  unit simply does something else).
+- **Moon "marches straight"** means `ProtossMoon.handle` issues
+  `move(slot)` in a straight line: only the DESTINATION is
+  validated (walkable + same-or-close region, else leader position),
+  never the path. Wall between unit and slot = walk into the wall.
+
+### Prerequisites checklist (what must exist before each phase)
+
+- Phase A needs: leader selection (exists: Alpha/leader), per-class
+  reach (exists: dragoon/zealot filters), compass stepping (exists:
+  `MoveAway`), walkability probe (exists, stub-pinned), KITE twin
+  (exists: stuck/stepped rows = the acceptance instrument).
+- Phase B needs: M4 map anchors (choke records, region graph) -
+  NOT started, see `redesign/04_MAPLIB.md`.
+- Phase C needs: combat sim usable per-battle (FAP exists, cluster
+  wiring does not) + the acceptance battery (ZealDrag losses +
+  1v1 hits band).
 
 ### Phases (dependency order)
 
