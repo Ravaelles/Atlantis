@@ -5,6 +5,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
+import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -87,6 +88,30 @@ public class PylonConcurrencyCapTest extends AbstractTestWithWorld {
             assertFalse(
                 ProduceBuilding.tooManyPylonsInFlight(),
                 "at 40+ one unfinished Pylon is the pipeline, not a pile-up");
+        });
+    }
+
+    @Test
+    public void overstockedFreeSupplyHoldsPylonBelowForty() {
+        // BO rows bypass the dynamic demand veto, so the door enforces
+        // the same ceiling for every author: At-29 fired at 25/33 into
+        // 12 free (UMS 7th_rav). Below 40, free above 8 waits.
+        currentMinerals = 300;
+        currentSupplyUsed = 29;
+        currentSupplyTotal = 41;
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            assertFalse(
+                ProduceBuilding.requestBuilding(
+                    AUnitType.Protoss_Pylon, new ProductionOrder(AUnitType.Protoss_Pylon, 29)),
+                "12 free below 40 is overstock - the row waits");
+            assertTrue(
+                EventLog.toJsonLines().contains("pylon-overstock"),
+                "the overstock names itself: " + EventLog.toJsonLines());
         });
     }
 

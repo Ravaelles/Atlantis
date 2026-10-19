@@ -190,6 +190,32 @@ public class ProduceBuilding {
     }
 
     /**
+     * Bank already spoken for by earlier-queued unfinished buildings:
+     * the sum of their prices (own construction and orderless ones
+     * excluded - the first has no earlier demand, the second no
+     * sequence to compare). Pure over the live list, pinned in stub.
+     */
+    public static int earlierUnfinishedMinerals(ProductionOrder order) {
+        return earlierUnfinishedCost(order, true);
+    }
+
+    public static int earlierUnfinishedGas(ProductionOrder order) {
+        return earlierUnfinishedCost(order, false);
+    }
+
+    private static int earlierUnfinishedCost(ProductionOrder order, boolean minerals) {
+        int sum = 0;
+        for (Construction other : ConstructionRequests.notFinished()) {
+            ProductionOrder otherOrder = other.productionOrder();
+            if (otherOrder == null || otherOrder == order) continue;
+            if (otherOrder.id() >= order.id()) continue;
+            if (other.buildingType() == null) continue;
+            sum += minerals ? other.buildingType().mineralPrice() : other.buildingType().gasPrice();
+        }
+        return sum;
+    }
+
+    /**
      * Why this order fires now, in the row itself: the order line plus the
      * demand-side state behind it - free supply, unfinished buildings of
      * this type, the order's previous link (cid:STATUS or link-null when a
@@ -272,6 +298,14 @@ public class ProduceBuilding {
             // whose need is already being built waits instead of re-siting.
             if (type.isPylon() && tooManyPylonsInFlight()) return refuse(type, order, "pylon-cap");
 
+            // Owner: below 40 supply never more than 8 free - any Pylon
+            // row (BO included: At-29 fired at 25/33 into 12 free) that
+            // would push free past that waits. Above 40 the old 12-cap
+            // in the queue door still applies.
+            if (type.isPylon() && A.supplyUsed() < 40 && A.supplyFree() > 8) {
+                return refuse(type, order, "pylon-overstock");
+            }
+
             // Owner 2026-10-19 (PurpleWave rule): one unstarted Pylon at a
             // time. A NOT_STARTED or STARTING Pylon construction for
             // ANOTHER order means supply is already on the way with no
@@ -294,6 +328,23 @@ public class ProduceBuilding {
             // is the order instance itself, so a sibling row of the same
             // type still proceeds - only this order's own warp blocks it.
             if (orderHasWarpingBuilding(order, type)) return refuse(type, order, "warping-link");
+
+            // Earlier demand is reserved first (owner): a building may not
+            // spend what an earlier-queued unfinished building still needs.
+            // Earlier = smaller queue order id (own construction excluded,
+            // orderless ones skipped - no sequence to compare). Check comes
+            // before the wallet so a later row never eats an earlier row's
+            // reserve, even when the bank looks affordable in isolation.
+            // Only when the bank already covers this building alone: below
+            // its own price the old aim-while-poor path decides (a walking
+            // builder is free, the reserve question is moot).
+            if (order != null
+                && A.canAfford(type.mineralPrice(), type.gasPrice())
+                && !A.canAfford(
+                    type.mineralPrice() + earlierUnfinishedMinerals(order),
+                    type.gasPrice() + earlierUnfinishedGas(order))) {
+                return refuse(type, order, "earlier-reserve");
+            }
 
             // Wallet enforcement (NEXT #93): a fresh builder claim for a
             // board-owned type needs funding - otherwise the worker is held
