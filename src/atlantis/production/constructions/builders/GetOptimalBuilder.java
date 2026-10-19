@@ -25,20 +25,18 @@ public class GetOptimalBuilder {
             ErrorLog.printMaxOncePerMinute("No position to build, so can't find builder ("
                 + (order == null ? "-" : order.unitType()) + ")");
 
-            return Select.ourWorkersFreeToBuildOrRepair(false).random();
+            return FreeWorkers.get().random();
         }
 
 //        boolean allowRepairers = true;
 
 //        return Select.ourWorkersFreeToBuildOrRepair(allowRepairers).nearestTo(positionToBuild);
-        AUnit nearest = defineWorker(positionToBuild);
-
-        if (nearest != null) return nearest;
-
-        return Select.ourWorkers()
-            .notSpecialAction()
-            .notStuck()
-            .nearestTo(positionToBuild);
+        // Owner: always the free pool, never a hand-rolled fallback chain.
+        // forPosition answers null when no worker is truly free - every
+        // caller already owns that case (adopt-no-free-builder twin, fresh
+        // request refusal with retry) - instead of burning a scout or
+        // double-linking a builder that then starves one of its sites.
+        return defineWorker(positionToBuild);
     }
 
     private static AUnit defineWorker(HasPosition positionToBuild) {

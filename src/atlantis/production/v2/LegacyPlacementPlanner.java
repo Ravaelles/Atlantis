@@ -12,6 +12,7 @@ import atlantis.production.constructions.position.AbstractPositionFinder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 
@@ -230,7 +231,8 @@ public class LegacyPlacementPlanner implements PlacementPlanner {
 
     private AUnit builderForThisPass() {
         if (passBuilder == null || !passBuilder.isAlive()) {
-            passBuilder = Select.ourWorkers().first();
+            // Owner: always the free pool, never a hand-rolled chain.
+            passBuilder = FreeWorkers.get().first();
         }
         return passBuilder;
     }

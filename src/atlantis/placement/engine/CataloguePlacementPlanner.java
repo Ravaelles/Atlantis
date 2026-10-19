@@ -23,6 +23,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.UnitStats;
 import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -273,10 +274,13 @@ public final class CataloguePlacementPlanner implements PlacementPlanner {
         if (passBuilder == null || !passBuilder.isAlive()) {
             if (!gameContext.inGame()) return null;
 
+            // Owner: always the free pool, never a hand-rolled chain -
+            // a pass builder with a real job starves that job for the
+            // whole pass while every frame agrees on travel time.
             AUnit anchor = nearestBaseUnit();
             passBuilder = anchor != null
-                ? Select.ourWorkers().nearestTo(anchor)
-                : Select.ourWorkers().first();
+                ? FreeWorkers.get().nearestTo(anchor)
+                : FreeWorkers.get().first();
         }
         return passBuilder;
     }

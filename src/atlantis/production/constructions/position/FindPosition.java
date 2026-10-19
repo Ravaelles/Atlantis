@@ -126,10 +126,11 @@ public class FindPosition {
     }
 
     private static AUnit defineBuilder() {
-        AUnit builder = FreeWorkers.get().first();
-        if (builder != null) return builder;
-
-        return Select.ourWorkers().first();
+        // Owner: always the free pool. No raw fallback: when no worker
+        // is truly free the siting fails visibly and retries, instead of
+        // burning a scout or double-linking a builder (the missing-Gateway
+        // shape: a hijacked pick never builds and never names itself).
+        return FreeWorkers.get().first();
     }
 
     private static boolean ignorePositionNotFoundException(AUnitType building, APosition standardPosition) {

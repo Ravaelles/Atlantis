@@ -717,6 +717,10 @@ public class Selection extends BaseSelection {
         return SelectionMembership.notConstructing(this);
     }
 
+    public Selection notBuilder()  {
+        return SelectionMembership.notBuilder(this);
+    }
+
     public Selection free()  {
         return SelectionMembership.free(this);
     }

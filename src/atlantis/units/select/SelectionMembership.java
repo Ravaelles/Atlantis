@@ -162,6 +162,21 @@ final class SelectionMembership {
         );
         }
 
+    /**
+     * Selects workers that are not assigned to any construction. Narrower
+     * than notConstructing: a builder is an assignment, not a moment -
+     * a Protoss probe walking to its site constructs nothing yet and a
+     * Terran SCV constructs while assigned, so "currently constructing"
+     * and "has a building to raise" are different questions with
+     * different consequences (a scout picked as builder never builds;
+     * a builder picked as scout never scouts).
+     */
+    static Selection notBuilder(Selection selection)  {
+        return selection.cloneByRemovingIf(
+            (unit -> unit.isBuilder()), "notBuilder"
+        );
+        }
+
     static Selection reavers(Selection selection)  {
         return selection.cloneByRemovingIf(
             (unit -> !unit.isReaver()), "reavers"

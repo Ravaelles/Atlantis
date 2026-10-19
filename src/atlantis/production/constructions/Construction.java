@@ -10,7 +10,7 @@ import atlantis.production.constructions.position.APositionFinder;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Select;
+import atlantis.units.workers.FreeWorkers;
 import atlantis.units.workers.gather.GatherResources;
 import atlantis.util.AConsole;
 import atlantis.util.cache.Cache;
@@ -88,11 +88,18 @@ public class Construction implements Comparable<Construction> {
      * and we're cool, bro.
      */
     protected void assignRandomBuilderForNow() {
+        // Never a scout, never another row's builder, never a repairer or
+        // a choke blocker: "random for the time being" draws only from
+        // workers truly free of serious duties (owner: always
+        // FreeWorkers.get(), never a hand-rolled filter chain - units can
+        // hold many jobs at once and every chain risks forgetting one).
+        // A double-linked builder starves one of its sites the same way
+        // a scouted-off builder never builds.
         if (near != null) {
-            builder = Select.ourWorkers().nearestTo(near);
+            builder = FreeWorkers.get().nearestTo(near);
         }
         else {
-            builder = Select.ourWorkers().first();
+            builder = FreeWorkers.get().first();
         }
 //        if (near != null) {
 //            builder = FreeWorkers.get().nearestTo(near);
@@ -121,7 +128,7 @@ public class Construction implements Comparable<Construction> {
         AUnit oldBuilder = builder;
 
         if (oldBuilder != null && oldBuilder.isAlive() && !oldBuilder.isStuck()
-            && supplyMetFor(productionOrder)) {
+            && !oldBuilder.isScout() && supplyMetFor(productionOrder)) {
             return oldBuilder;
         }
 
