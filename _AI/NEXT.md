@@ -313,7 +313,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `SelectionMembership`, ordering → `SelectionSorting` in two parts:
   sorts then nearest-finders, then element accessors → `SelectionAccessors`:
   first/last/random(+seed), each with a pin test, zero call-site
-  changes): cross-context readers stay put until their dependencies are
+  changes; sixth slice 2026-10-20 (container views → `SelectionViews`:
+  list/units/count/size/isEmpty-family, `SelectionViewsTest` 3/3,
+  sensitivity-verified): cross-context readers stay put until their dependencies are
   fixed - moving them re-spells frozen violations instead of removing
   them (measured, see NOTES.md arch mechanics; slices verified:
   same 2 pre-existing failures, store diff empty). Remainder is

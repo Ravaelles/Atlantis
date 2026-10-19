@@ -923,7 +923,7 @@ public class Selection extends BaseSelection {
      * Returns <b>true</b> if current selection contains at least one unit.
      */
     public boolean anyExists() {
-        return !data.isEmpty();
+        return SelectionViews.anyExists(this);
     }
 
     /**
@@ -1019,7 +1019,7 @@ public class Selection extends BaseSelection {
      * Selects result as an iterable collection (list).
      */
     public List<AUnit> list() {
-        return data;
+        return SelectionViews.list(this);
     }
 
     /**
@@ -1027,48 +1027,48 @@ public class Selection extends BaseSelection {
      * units.
      */
     public Units units() {
-        return new Units(this.data);
+        return SelectionViews.units(this);
     }
 
     /**
      * Returns number of units matching all previous conditions.
      */
     public int count() {
-        return data.size();
+        return SelectionViews.count(this);
     }
 
     public boolean atLeast(double min) {
-        return data.size() >= min;
+        return SelectionViews.atLeast(this, min);
     }
 
     public boolean atMost(double max) {
-        return data.size() <= max;
+        return SelectionViews.atMost(this, max);
     }
 
     /**
      * Returns true if there are no units that fullfilled all previous conditions.
      */
     public boolean isEmpty() {
-        return data.size() == 0;
+        return SelectionViews.isEmpty(this);
     }
 
     public boolean empty() {
-        return data.size() == 0;
+        return SelectionViews.empty(this);
     }
 
     public boolean isNotEmpty() {
-        return data.size() > 0;
+        return SelectionViews.isNotEmpty(this);
     }
 
     public boolean notEmpty() {
-        return data.size() > 0;
+        return SelectionViews.notEmpty(this);
     }
 
     /**
      * Returns number of units matching all previous conditions.
      */
     public int size() {
-        return data.size();
+        return SelectionViews.size(this);
     }
 
     public List<AUnit> sortDataByGroundDistanceTo(final HasPosition position, final boolean nearestFirst) {
