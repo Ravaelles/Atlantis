@@ -281,6 +281,20 @@ public class AbstractTestWithUnits extends UnitTest {
 
         ReservedResources.reset();
 
+        // Refusal twins are throttled per guard+order id for game-log volume;
+        // order ids restart small in every test, so without this the first
+        // test to refuse a guard silences the same refusal in every later
+        // test (measured: a suite-only funding refusal with no twin row).
+        // Clearing changes no boolean, only the logging.
+        atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
+
+        // Board funding statics (active/funded/fresh) are refreshed by any
+        // world loop that runs the feeder; a fresh active-but-unfunded goal
+        // from an earlier test closes the funding veto for dynamic rows in
+        // the next one (measured: suite-only funding refusals at banks that
+        // pass in isolation). Fail-open by default, every test.
+        atlantis.production.GoalBoardFeeder.clearForTests();
+
         game = null;
         Atlantis.getInstance().setGame(null);
     }

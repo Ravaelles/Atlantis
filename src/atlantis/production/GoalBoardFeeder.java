@@ -145,6 +145,7 @@ public final class GoalBoardFeeder {
 
     /** Test seam: funding statics leak across test worlds without it. */
     public static void clearForTests() {
+        lastActiveIds.clear();
         lastFundedIds.clear();
         lastFundedFrame = -1;
     }
