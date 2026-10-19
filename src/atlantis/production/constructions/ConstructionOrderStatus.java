@@ -40,5 +40,43 @@ public enum ConstructionOrderStatus {
      * Terminal, removed from the list on entry. The twin names the path
      * (warp, proximity finish, cancel) - no tombstone lingers.
      */
-    FINISHED
+    FINISHED;
+
+    /**
+     * True for the aimed-future state: site picked, no builder, nothing
+     * issued, waiting by design. The overdue and cancel paths skip it
+     * ({@code Construction.isOverdue}, {@code CancelTooLongConstructions})
+     * - a waiting site is planned coverage, never live demand and never
+     * stuck.
+     */
+    public boolean isWaiting() {
+        return this == PREPARING;
+    }
+
+    /**
+     * True for demand with no unit yet: accepted but builderless
+     * (NOT_STARTED) or builder travelling (STARTING). Both count wherever
+     * demand is counted, so a travelling builder is never mistaken for no
+     * demand - this mirrors the {@code isNotStarted} family in
+     * {@code ConstructionRequests}.
+     *
+     * <p>PREPARING is excluded on purpose: someone's aimed future -
+     * blocking on it parks an earlier need behind a later row
+     * ({@code ProduceBuilding} pylon rule). IN_PROGRESS without a linked
+     * building is a door-level addition there
+     * ({@code ProduceBuilding.isEchoWithoutUnit}), not folded in here:
+     * an in-progress build with a unit is arriving supply, not demand.
+     */
+    public boolean countsAsDemand() {
+        return this == NOT_STARTED || this == STARTING;
+    }
+
+    /**
+     * True for the removed-on-entry end state. The only terminal value:
+     * lingering CANCELLED/DESTROYED tombstones were considered and
+     * rejected - every reader would need an exclusion filter.
+     */
+    public boolean isTerminal() {
+        return this == FINISHED;
+    }
 }
