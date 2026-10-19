@@ -554,35 +554,35 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
     }
 
     public boolean isFullyHealthy() {
-        return hp() >= maxHp();
+        return AUnitHealth.isFullyHealthy(this);
     }
 
     public int hpPercent() {
-        return 100 * hp() / maxHp();
+        return AUnitHealth.hpPercent(this);
     }
 
     public boolean hpPercent(int minPercent) {
-        return hpPercent() >= minPercent;
+        return AUnitHealth.hpPercent(this, minPercent);
     }
 
     public int woundHp() {
-        return maxHp() - hp();
+        return AUnitHealth.woundHp(this);
     }
 
     public double woundPercent() {
-        return 100 - 100.0 * hp() / maxHp();
+        return AUnitHealth.woundPercent(this);
     }
 
     public boolean woundPercentMin(int minWoundPercent) {
-        return woundPercent() >= minWoundPercent;
+        return AUnitHealth.woundPercentMin(this, minWoundPercent);
     }
 
     public boolean woundPercentMax(int maxWoundPercent) {
-        return woundPercent() <= maxWoundPercent;
+        return AUnitHealth.woundPercentMax(this, maxWoundPercent);
     }
 
     public boolean isWounded() {
-        return hp() < maxHp() || shields() < maxShields();
+        return AUnitHealth.isWounded(this);
     }
 
     public boolean isExists() {
