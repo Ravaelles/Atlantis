@@ -1,10 +1,8 @@
 package atlantis.information.strategy.response;
 
-import atlantis.battle.siting.TerranBunker;
 import atlantis.battle.Alpha;
 import atlantis.game.player.Enemy;
 import atlantis.information.generic.Army;
-import atlantis.production.dynamic.terran.turrets.TerranMissileTurret;
 import atlantis.battle.Mission;
 import atlantis.battle.Missions;
 
@@ -12,13 +10,8 @@ import atlantis.information.strategy.AStrategy;
 import atlantis.information.strategy.EnemyStrategy;
 import atlantis.information.strategy.GamePhase;
 import atlantis.map.scout.ScoutCommander;
-import atlantis.production.requests.AntiAirBuildingCommander;
-import atlantis.production.requests.AntiLandBuildingCommander;
-import atlantis.production.requests.zerg.ZergSporeColony;
-import atlantis.production.requests.zerg.ZergSunkenColony;
 import atlantis.units.AUnit;
 import atlantis.units.select.Count;
-import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public abstract class RaceStrategyResponse {
@@ -112,25 +105,4 @@ public abstract class RaceStrategyResponse {
 
     // =========================================================
 
-    private AntiLandBuildingCommander antiLandManager() {
-        if (We.zerg()) {
-            return ZergSunkenColony.get();
-        }
-        else if (We.terran()) {
-            return TerranBunker.get();
-        }
-
-        return AntiLandBuildingCommander.get();
-    }
-
-    private AntiAirBuildingCommander antiAirManager() {
-        if (We.zerg()) {
-            return ZergSporeColony.get();
-        }
-        else if (We.terran()) {
-            return TerranMissileTurret.get();
-        }
-
-        return AntiAirBuildingCommander.get();
-    }
 }
