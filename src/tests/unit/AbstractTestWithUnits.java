@@ -295,6 +295,11 @@ public class AbstractTestWithUnits extends UnitTest {
         // pass in isolation). Fail-open by default, every test.
         atlantis.production.GoalBoardFeeder.clearForTests();
 
+        // Base-queue throttle is wall-clock state: a Nexus queued by an
+        // earlier test would silence the next test's expansion for 5
+        // game-seconds. Reset with everything else, every test.
+        atlantis.production.orders.production.queue.add.AddToQueue.clearForTests();
+
         // Upgrade-completion levels are observed across frames; a level seen
         // by an earlier test would swallow the first rise of the next one.
         atlantis.information.tech.UpgradeCompletionTracker.clearForTests();

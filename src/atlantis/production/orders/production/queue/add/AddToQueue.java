@@ -2,6 +2,7 @@ package atlantis.production.orders.production.queue.add;
 
 import atlantis.game.A;
 import atlantis.map.position.HasPosition;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
 import atlantis.production.orders.production.queue.*;
 import atlantis.production.orders.production.queue.order.Orders;
@@ -19,6 +20,20 @@ import bwapi.UpgradeType;
 
 public class AddToQueue {
     public static final int MAX = 999;
+
+    /**
+     * Bases queue at most once per 5 seconds (120 frames): expansion demand
+     * re-fires every frame while poor, so without this the same Nexus is
+     * requested dozens of times a minute. Test seam below resets it.
+     */
+    public static final int NEXUS_QUEUE_COOLDOWN_FRAMES = 120;
+
+    private static int lastNexusQueueFrame = -100000;
+
+    /** Test seam: the throttle is wall-clock state, never game state. */
+    public static void clearForTests() {
+        lastNexusQueueFrame = -100000;
+    }
 
     public static ProductionOrder withTopPriority(AUnitType type) {
         return withTopPriority(type, null);
@@ -148,6 +163,13 @@ public class AddToQueue {
                 ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("Cancel base when expansion not needed: " + ShouldExpand.reason);
                 return null;
             }
+            // Owner: queue bases at most once per 5 seconds, and only when
+            // the bank covers in-flight bases plus the next one (400 each
+            // + 380). Twin symptom: two ADDED rows in the same minute.
+            if (A.now() - lastNexusQueueFrame < NEXUS_QUEUE_COOLDOWN_FRAMES) return null;
+            int unfinishedBases = ConstructionRequests.countNotFinishedOfType(AUnitType.Protoss_Nexus);
+            if (!A.hasMinerals(unfinishedBases * 400 + 380)) return null;
+            lastNexusQueueFrame = A.now();
         }
 
         ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
