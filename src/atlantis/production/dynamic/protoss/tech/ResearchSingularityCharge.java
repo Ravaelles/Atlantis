@@ -53,10 +53,10 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
     }
 
     @Override
-    public boolean applies() {
+    public boolean appliesInner() {
         // Read first: early exits below leave the field stale otherwise.
         dragoons = Count.dragoonsWithUnfinished();
-        boolean result = appliesInner();
+        boolean result = decide();
 
         // NEXT #72: stub fires, live never does - this throttled vector
         // names the refusing gate (prime suspect: a stuck isUpgrading flag
@@ -74,7 +74,7 @@ public class ResearchSingularityCharge extends UpgradeResearchCommander {
         return result;
     }
 
-    public boolean appliesInner() {
+    private boolean decide() {
         if (isBeingResearched()) return false;
 
         if (ATech.isResearched(what())) {

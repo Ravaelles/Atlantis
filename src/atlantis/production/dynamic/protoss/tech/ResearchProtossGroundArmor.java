@@ -20,6 +20,14 @@ public class ResearchProtossGroundArmor extends Commander {
 
     @Override
     public boolean applies() {
+        // Same observation as the UpgradeResearchCommander base (B-42):
+        // applies() runs every visited frame, handle() only on a fire -
+        // a completed upgrade refuses here, so handle() would never see
+        // the rise. These two researchers predate the base and keep their
+        // own handle(); only the observation is shared.
+        atlantis.information.tech.UpgradeCompletionTracker.note(
+            what(), atlantis.information.tech.ATech.getUpgradeLevel(what()),
+            atlantis.game.A.now(), atlantis.game.A.minSec());
         String refusedBy = refusedBy();
         boolean result = refusedBy == null;
         // NEXT #85: L1+ never proved live - this vector names the refusing

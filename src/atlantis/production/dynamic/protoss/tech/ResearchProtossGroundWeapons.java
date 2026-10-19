@@ -20,7 +20,7 @@ public class ResearchProtossGroundWeapons extends UpgradeResearchCommander {
     }
 
     @Override
-    public boolean applies() {
+    public boolean appliesInner() {
         String refusedBy = refusedBy();
         boolean result = refusedBy == null;
         // NEXT #85: L1+ never proved live - this vector names the refusing

@@ -295,6 +295,10 @@ public class AbstractTestWithUnits extends UnitTest {
         // pass in isolation). Fail-open by default, every test.
         atlantis.production.GoalBoardFeeder.clearForTests();
 
+        // Upgrade-completion levels are observed across frames; a level seen
+        // by an earlier test would swallow the first rise of the next one.
+        atlantis.information.tech.UpgradeCompletionTracker.clearForTests();
+
         game = null;
         Atlantis.getInstance().setGame(null);
     }

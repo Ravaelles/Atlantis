@@ -28,11 +28,25 @@ public abstract class UpgradeResearchCommander extends Commander {
         return ProductionOrderPriority.STANDARD;
     }
 
+    /**
+     * Completion observation lives here, never behind the decision gate:
+     * applies() runs every visited frame while handle() only runs on a
+     * fire, so an upgrade that completes (the gate then refuses with
+     * "researched") would never be seen from handle() - measured B-42:
+     * Singularity researched live with zero UPGRADE_COMPLETED rows.
+     * Final so no researcher can silently drop the observation again.
+     */
     @Override
-    protected boolean handle() {
+    public final boolean applies() {
         UpgradeCompletionTracker.note(
             what(), ATech.getUpgradeLevel(what()), A.now(), A.minSec());
+        return appliesInner();
+    }
 
+    protected abstract boolean appliesInner();
+
+    @Override
+    protected boolean handle() {
         if (CountInQueue.count(what(), 2) == 0) {
             if (AddToQueue.upgrade(what(), orderPriority())) setEnqueued(true);
         }

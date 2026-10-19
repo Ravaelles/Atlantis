@@ -851,7 +851,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   gate holds (wall-in 0/10 BOARD). Forge 3:58@63, post-Forge bank 784
   at 4:42 - the #85 window EXISTS here: Singularity researched 7:53
   (started 6:06, engineRes+staticRes true; UPGRADE_COMPLETED twin
-  never fired - twin gap, not engine). Weapons TECH_CHECK still false
+  never fired - twin gap, not engine - WIRED 2026-10-19: the
+  observation sat in handle() behind the gate, a researched upgrade
+  refuses so handle() never saw the rise; note() now runs in the base
+  applies() (Armor wired in its own, Storm is a tech and stays out),
+  pinned by UpgradeCompletedBehindGateTest 1/1, single-level and
+  max-level rises both fire). Weapons TECH_CHECK still false
   at 772/306 bank (refusing gate unnamed in the twin - the open half
   of #85). 2 `Can't find place` (Gateway #87/#88 8:27, unpowered
   dynamic rows - known class, #146). GAME_END present, cap exit (#149

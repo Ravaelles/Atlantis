@@ -20,7 +20,7 @@ public class ResearchLegEnhancements extends UpgradeResearchCommander {
     }
 
     @Override
-    public boolean applies() {
+    public boolean appliesInner() {
         if (!Have.citadel()) return false;
         if (ATech.isResearched(what())) return false;
         if (A.supplyUsed() <= 90 || Count.zealots() <= 4) return false;

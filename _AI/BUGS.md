@@ -71,23 +71,6 @@ a long post-mortem belongs in an ADR or a commit message.
 > 1799-frame wall → 0. Test: `OrphanedConstructionTest` (2). Full mechanism in
 > `_AI/CASE-STUDIES.md` (#53); the original report lives in git history.
 
-## B-42 — UPGRADE_COMPLETED twin never fires while research completes
-
-- **Where:** the upgrade-completion twin (producer of `UPGRADE_COMPLETED`
-  rows) vs `SINGULARITY_CHECK` (`staticRes`/`engineRes` flags).
-- **Measured 2026-10-18** (`20261018_144015` long, Python: Forge 3:58,
-  bank 784, Singularity started 6:06): `SINGULARITY_CHECK` reads
-  `beingRes` 41x 6:06→7:48, then `staticRes=true engineRes=true` at
-  7:53 - the engine researched it - while `UPGRADE_COMPLETED` is 0 rows
-  in the whole game. The CHECK twin proves completion; the completion
-  twin missed it.
-- **Consequence:** any gate reading "research done" off
-  `UPGRADE_COMPLETED` (or a test asserting it fires) waits forever on a
-  completed upgrade. Readers of `SINGULARITY_CHECK.engineRes` are unaffected.
-- **How to settle it:** find the producer's firing condition, pin the
-  6:06→7:53 shape in a stub or a short game (research completes), then
-  delete this entry per the file rule.
-
 ## How to add an entry
 
 `## B-<n> - <one-line symptom>`, then: **Where**, **Measured** (with the
