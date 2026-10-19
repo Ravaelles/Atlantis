@@ -251,18 +251,27 @@ public class BattleCommander extends Commander {
             // arrival, when the target is actually in range.
             double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
             if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
+                APosition fireAt = null;
                 if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES
                     && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
-                    APosition fireAt = target.position()
+                    fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
-                    if (unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
+                    if (fireAt != null
+                        && unit.distTo(fireAt) > KITE_GLIDE_DEADBAND_TILES
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
                         lastStepFrame.put(unit.id(), now);
                         lastRepositionFrame.put(unit.id(), now);
                         return;
                     }
                 }
-                return;
+                // No glide point computable (map edge exhausted the spiral -
+                // measured: error spam + idle Dragoon): fall through to the
+                // attack order below, which the engine chases on its own.
+                // Standing idle where standing still is dying is never the
+                // answer (same class as the melee and baseless fall-throughs
+                // above). A computable point that only fails the deadband
+                // or the move still waits here instead of spamming attack.
+                if (fireAt != null) return;
             }
             // Let the reposition ride (PurpleWave sleep after move):
             // a fresh attack order here would cancel the step or glide
