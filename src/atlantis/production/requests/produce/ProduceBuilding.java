@@ -204,6 +204,7 @@ public class ProduceBuilding {
     }
 
     private static int earlierUnfinishedCost(ProductionOrder order, boolean minerals) {
+        if (order == null) return 0;
         int sum = 0;
         for (Construction other : ConstructionRequests.notFinished()) {
             ProductionOrder otherOrder = other.productionOrder();
@@ -351,7 +352,21 @@ public class ProduceBuilding {
             // for a building the bank cannot cover yet (the #53 shape:
             // held workers do not mine). Active-but-unfunded waits a frame;
             // inactive demand, goalless types and stale funding stay open.
-            if (!GoalBoardFeeder.adoptionAllowed(type)) return refuse(type, order, "funding");
+            // Queue order outranks wallet funding (owner): a READY
+            // build-order row that covers its own price plus earlier
+            // unfinished demand is issued even when the wallet funds
+            // something else (measured UMS 7th_rav: BO Core #5 PREPARING
+            // from 2:00, bank 250-370, unfunded behind a dynamic Gateway
+            // while the queue order sat). Dynamic demand still needs
+            // funding; affordability (own + earlier reserve) is checked
+            // first, so the #53 shape cannot return through this door.
+            boolean queueOrdered = order != null && !order.isDynamic();
+            boolean affordable = A.canAfford(
+                type.mineralPrice() + earlierUnfinishedMinerals(order),
+                type.gasPrice() + earlierUnfinishedGas(order));
+            if (!GoalBoardFeeder.adoptionAllowed(type) && !(queueOrdered && affordable)) {
+                return refuse(type, order, "funding");
+            }
 
             // Owner 2026-10-15: a waiting Core outranks Pylon spending
             // while contended (bounded, self-releasing - see
