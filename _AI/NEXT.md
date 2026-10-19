@@ -417,10 +417,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   run `112337` burned 40 construction ids for 1 flushed PREPARING;
   the missing rows fit the 720-frame flush buffer lost on the kill
   as well as silent unlinks, so the twin (not the datum) decides
-  the next occurrence. Adopt side re-sites since the resite seam
-  (same [119,12] case cited in code), proof pending like the rest.
-  Proof: a covered-tile game where the loop is gone (long OpenBW
-  16575f: new refusal 0 fires, no same-tile storm).
+  the next occurrence. No merge of the two overlap checks: read
+  2026-10-19, they cover disjoint worlds by construction (spiral
+  reads live units - warping buildings whose reservation is gone;
+  pick-time reads reservations - PREPARING with no unit yet),
+  sharing only the footprint math. Adopt side re-sites since the
+  resite seam (same [119,12] case cited in code), proof pending
+  like the rest. Proof: a covered-tile game where the loop is gone
+  (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
