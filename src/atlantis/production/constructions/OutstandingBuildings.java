@@ -1,9 +1,6 @@
 package atlantis.production.constructions;
 
 import atlantis.production.orders.production.queue.CountInQueue;
-import atlantis.production.orders.production.queue.Queue;
-import atlantis.production.orders.production.queue.order.ProductionOrder;
-import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 
@@ -28,27 +25,5 @@ public class OutstandingBuildings {
         return CountInQueue.countNotFinishedWithoutConstruction(type)
             + Select.ourUnfinished().ofType(type).count()
             + ConstructionRequests.notFinishedOfType(type).size();
-    }
-
-    /**
-     * Same count, blind to one order - for request-time dedup. A
-     * re-request for an order that already has a live site or a warping
-     * building must not count its own traces (measured: Core #32
-     * requested one frame after #9 warped, #9's site already gone from
-     * the list while its building warps). Counts what OTHER orders have
-     * coming.
-     */
-    public static int excluding(ProductionOrder self, AUnitType type) {
-        int total = 0;
-        for (ProductionOrder row : Queue.get().notFinished().ofType(type).list()) {
-            if (row != self && row.construction() == null) total++;
-        }
-        for (AUnit unit : Select.ourUnfinished().ofType(type).list()) {
-            if (unit.productionOrder() != self) total++;
-        }
-        for (Construction site : ConstructionRequests.notFinishedOfType(type)) {
-            if (site.productionOrder() != self) total++;
-        }
-        return total;
     }
 }

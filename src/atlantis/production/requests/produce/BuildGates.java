@@ -2,10 +2,14 @@ package atlantis.production.requests.produce;
 
 import atlantis.game.A;
 import atlantis.production.GoalBoardFeeder;
-import atlantis.production.constructions.OutstandingBuildings;
+import atlantis.production.constructions.Construction;
+import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.orders.production.queue.PriorityWaiters;
+import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import atlantis.units.select.Select;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,15 +89,23 @@ public final class BuildGates {
     // finish-removal vs re-request race (measured: #32 requested
     // one frame after #9 warped, #9's site already gone from the
     // list). Own traces excluded, so a same-order re-request after
-    // a genuine loss still proceeds.
+    // a genuine loss still proceeds. Two siteless rows never block
+    // each other symmetrically: the oldest ready waiter proceeds
+    // (measured Wine TauCross 2026-10-20: BO #9's started-then-cancelled
+    // site and dynamic #24's siteless row refused each other for 8
+    // game-minutes at bank 3000+ - a mutual lock, not single-instance
+    // protection). A younger ready row still waits behind an older
+    // ready one; a poor older row never parks a ready younger one
+    // (readiness mirrors the min-supply gate).
     private static class CoreSingleInstanceGate implements BuildGate {
         public String name() {
             return "core-single-instance";
         }
 
         public String check(AUnitType type, ProductionOrder order) {
-            if (type.equals(AUnitType.Protoss_Cybernetics_Core)
-                && OutstandingBuildings.excluding(order, type) >= 1) return name();
+            if (!type.equals(AUnitType.Protoss_Cybernetics_Core)) return null;
+            if (comingForAnotherOrder(order, type) >= 1) return name();
+            if (olderReadyWaiterExists(order, type)) return name();
             return null;
         }
     }
@@ -253,5 +265,39 @@ public final class BuildGates {
             if (ProduceBuilding.powerProviderNotFunded(type)) return name();
             return null;
         }
+    }
+
+    /**
+     * What other orders genuinely have coming: sited unfinished sites
+     * and warping buildings. Siteless queue rows are NOT coming - they
+     * wait (see below).
+     */
+    private static int comingForAnotherOrder(ProductionOrder order, AUnitType type) {
+        int total = 0;
+        for (AUnit unit : Select.ourUnfinished().ofType(type).list()) {
+            if (unit.productionOrder() != order) total++;
+        }
+        for (Construction site : ConstructionRequests.notFinishedOfType(type)) {
+            if (site.productionOrder() != order) total++;
+        }
+        return total;
+    }
+
+    /**
+     * A younger siteless row waits only behind an OLDER siteless row
+     * that could fire now (readiness mirrors the min-supply gate, so a
+     * poor older row never parks a ready younger one). Two siteless
+     * rows with no seniority between them proceed in id order - never
+     * a symmetric lock.
+     */
+    private static boolean olderReadyWaiterExists(ProductionOrder order, AUnitType type) {
+        for (ProductionOrder row : Queue.get().notFinished().ofType(type).list()) {
+            if (row.construction() != null) continue;
+            if (order != null && row == order) continue;
+            if (order == null) return true;
+            if (row.id() < order.id()
+                && new BelowMinSupplyGate().check(type, row) == null) return true;
+        }
+        return false;
     }
 }
