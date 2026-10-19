@@ -1,6 +1,8 @@
 package atlantis.production.orders.production.queue.add;
 
 import atlantis.game.A;
+import atlantis.game.event.Event;
+import atlantis.game.event.Events;
 import atlantis.map.position.HasPosition;
 import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.expansion.decision.ShouldExpand;
@@ -172,7 +174,14 @@ public class AddToQueue {
             lastNexusQueueFrame = A.now();
         }
 
-        ProductionOrder productionOrder = new ProductionOrder(type, position, defineMinSupplyForNewOrder(type));
+        ProductionOrder productionOrder = new ProductionOrder(
+            type,
+            position,
+            // Owner: dynamic Dragoon rows never wait on supply - a minSupply-gated
+            // row behind dead units blocks workers and everything behind it while
+            // supply can never grow back to the gate (measured deadlock). BO
+            // carries no Dragoons, so every queued Dragoon is dynamic demand.
+            type.isDragoon() ? 0 : defineMinSupplyForNewOrder(type));
         productionOrder.setPriority(priority);
 
         if (Queue.get().addNew(index, productionOrder)) {
@@ -182,6 +191,15 @@ public class AddToQueue {
             // only - workers flow through direct train orders, not this queue.
             if (type.isABuilding()) {
                 AConsole.errPrintln(A.minSec() + ": " + type.name() + " ADDED TO QUEUE, min=" + A.minerals() + "/ sup=" + A.supplyUsed());
+            }
+
+            // Owner: a dynamic Dragoon row fires an event so the same frame
+            // can start its production in the nearest-to-enemy Gateway
+            // instead of waiting for the next queue pass behind starving
+            // rows (decoupling, not a layer call - the listener owns the
+            // train). Synchronous dispatch: handled before this returns.
+            if (type.isDragoon()) {
+                Events.dispatch(Event.DYNAMIC_UNIT_QUEUED, productionOrder);
             }
 
 //            if (type.isCannon()) {
