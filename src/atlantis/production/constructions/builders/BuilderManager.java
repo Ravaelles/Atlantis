@@ -74,11 +74,11 @@ public class BuilderManager extends Manager {
                         : unit.manager().getClass().getSimpleName())
                     .log(A.now(), A.minSec());
             }
-            if (atlantis.config.env.Env.isLocal() && A.now() % (30 * 60) == 0) {
-                ErrorLog.printMaxOncePerMinute("Builder diagnostic: unit=" + unit + " construction="
-                    + construction.buildingType() + " status=" + construction.status()
-                    + " pos=" + construction.buildPosition() + " managerHistory=" + unit.managerLogs());
-            }
+//            if (atlantis.config.env.Env.isLocal() && A.now() % (30 * 60) == 0) {
+//                ErrorLog.printMaxOncePerMinute("Builder diagnostic: unit=" + unit + " construction="
+//                    + construction.buildingType() + " status=" + construction.status()
+//                    + " pos=" + construction.buildPosition() + " managerHistory=" + unit.managerLogs());
+//            }
 
             // Construction HASN'T STARTED YET, we're probably not even at the required place
             if (construction.status() == ConstructionOrderStatus.NOT_STARTED
