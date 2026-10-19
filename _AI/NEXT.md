@@ -3,6 +3,10 @@
 Living backlog for the architecture migration (stages A–D done, E–J open
 below) and for defects found along the way. This file is the single source
 of truth for "what is left"; `_AI/NOTES.md` keeps operational learnings.
+The direction everything here converges to lives in
+`_AI/00-GOAL-APPROACH.md` (board-first loop, layers, growth rules);
+the execution order for the current quarter in `_AI/__MIGRATION.md`
+(combat-first, then legacy deletion).
 
 ## Phases (the quarter) — checklist
 

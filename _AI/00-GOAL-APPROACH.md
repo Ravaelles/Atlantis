@@ -33,7 +33,7 @@ log) - never "maybe everything".
 | Legacy production (shrinks) | `production/dynamic/**`, `SupplyCommander`, pumps | executes until absorbed, then deleted same cycle | games, twins |
 | Execution (stays) | `ConstructionsCommander`, builders, placement, `Queue` | builders, sites, engine refusals | BUILDER_LOG games |
 | Combat (sibling, cluster Phase 0) | `battle.*` (BattleCommander, one cluster, evaluator gate, CLUSTER twin; legacy `combat/**` deleted to `src-old/`, see `__PLAN-COMBAT.md`) | one group moves between anchors, fights or retreats on one gate; senses game state directly, takes no orders from the board | OpenBW games with an enemy (blocked: NEXT #94) |
-| V2 reference | `production/v2/**` | cutover target (DRY_RUN today); board is its Strategist half, timeline scheduler deferred | DRY_RUN logs |
+| V2 reference | `production/v2/**` | cutover target (DRY_RUN proven, LIVE games played since 2026-10-15: full openings, Singularity live fire, gas order, Dragoon flow; default stays OFF pending parity per NEXT #45; board is its Strategist half, timeline scheduler deferred) | DRY_RUN + LIVE logs |
 
 ## Growth rules
 
