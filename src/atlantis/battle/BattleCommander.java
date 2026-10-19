@@ -133,6 +133,9 @@ public class BattleCommander extends Commander {
         if (target == null) {
             target = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 9);
         }
+        if (target == null) {
+            target = breachedBaseTarget(unit);
+        }
         if (target != null) {
             // Never interrupt our own shot: a move order during the attack
             // animation cancels the damage (PurpleWave AttackDelay) - the
@@ -212,13 +215,21 @@ public class BattleCommander extends Commander {
                 }
             }
             // Out of range: close to the max-range firing position with
-            // moves only. An attack order here doubles as the chase and
+            // moves only. A melee unit has no firing position to hold -
+            // with integer tile ranges its glide destination lands exactly
+            // on the deadband at every distance (measured: Zealot range 0
+            // in tiles per the engine pins, overshoot always 0.5), so the
+            // glide below would never issue and the unit could never close.
+            // Melee skips it and falls through to the attack order, which
+            // the engine chases on its own; the new/overdue discipline
+            // still prevents order spam.
+            // An attack order here doubles as the chase and
             // gets cancelled by the next kite step before firing (Wine
             // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
             // 156 attack orders, zero shots landed). The attack issues on
             // arrival, when the target is actually in range.
             double standOff = unit.groundWeaponRange() - KITE_STANDOFF_INSET_TILES;
-            if (unit.distTo(target) > unit.groundWeaponRange()) {
+            if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
                 if (unit.distTo(target) > standOff + KITE_GLIDE_DEADBAND_TILES
                     && (lastStep == null || now - lastStep >= KITE_RESTEPS_EVERY_FRAMES)) {
                     APosition fireAt = target.position()
@@ -268,6 +279,48 @@ public class BattleCommander extends Commander {
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
             lastRepositionFrame.put(unit.id(), A.now());
         }
+    }
+
+    /**
+     * Who a unit with no enemy in reach attacks when the base is breached:
+     * without this a DEFEND cluster whose 9-tile reach misses the raiders
+     * chewing our workers just bunches on the anchor while the base dies.
+     * Public as a seam: the rule pins in a stub state without a game.
+     *
+     * <p>
+     * // @ToDo: replace with a proper approach - threat-aware target
+     * assignment owned by the cluster (which enemy, which responders,
+     * what the rest holds), instead of this per-unit fallback. Ad-hoc
+     * so DEFEND units answer base attacks at all. Race-condition note:
+     * cluster/base/enemy positions are read across frames, so the anchor
+     * can move under us between the 30-tile check and the attack order;
+     * acceptable for a fallback, the proper approach must own the
+     * assignment instead of racing it. Candidate bounding (today: any
+     * armed enemy, which can still be a far scout when the breach is
+     * elsewhere) belongs to the same rewrite.
+     * </p>
+     */
+    public static AUnit breachedBaseTarget(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return null;
+        AUnit breached = atlantis.information.enemy.EnemyUnitBreachedBase.get();
+        if (breached == null || !breached.isAlive()) return null;
+
+        atlantis.units.select.Selection enemies =
+            atlantis.units.select.Select.enemy().combatUnits().havingWeapon();
+        if (enemies.isEmpty()) return breached;
+
+        AUnit base = atlantis.units.select.Select.ourBases().nearestTo(unit);
+        AUnit foe;
+        if (base != null && unit.distTo(base) <= 30) {
+            foe = enemies.nearestTo(unit);
+        }
+        else {
+            AUnit main = atlantis.units.select.Select.ourBases()
+                .nearestTo(atlantis.information.generic.InitialMainPosition.initialMainPosition());
+            foe = main == null ? breached : enemies.nearestTo(main);
+        }
+        if (foe == null) return breached;
+        return unit.hasWeaponToAttackThisUnit(foe) ? foe : null;
     }
 
     /**
