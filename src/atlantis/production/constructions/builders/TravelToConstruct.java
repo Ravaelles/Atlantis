@@ -78,8 +78,10 @@ public class TravelToConstruct extends HasUnit {
         AUnitType type = construction.buildingType();
 
 
-        if (ShouldNotTravelToConstructYet.check(type, distance)) {
-            construction.builder().setTooltipTactical("Wait to build " + type.name() + "(" + A.digit(distance) + ")");
+        if (ShouldNotTravelToConstructYet.check(construction, construction.builder(), distance)) {
+            if (construction.builder() != null) {
+                construction.builder().setTooltipTactical("Wait to build " + type.name() + "(" + A.digit(distance) + ")");
+            }
             return false;
         }
 
