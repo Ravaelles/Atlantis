@@ -156,12 +156,17 @@ public class MoveAway {
         // validate a few pixels away and the order executes to
         // nowhere). Demand at least half the requested distance or
         // there is no step and the caller fights instead.
-        if (unit.distTo(newPosition) < moveDistance / 2) return null;
-
+        // Demand at least half the requested distance or there is no
+        // step and the caller fights instead. The null guard sits before
+        // first use (it is defensive-dead today - makeValidGroundPosition
+        // clamps rather than returning null - but a null here would NPE
+        // the distTo below, so the order is the contract).
         if (newPosition == null) {
             ErrorLog.printErrorOnce("Cannot moveAwayFrom " + aim + " for " + unit.name());
             return null;
         }
+
+        if (unit.distTo(newPosition) < moveDistance / 2) return null;
 
         if (unit.isGroundUnit() && !newPosition.isWalkable()) {
             // Owner 2026-10-20: unwalkable steps are the normal case in a

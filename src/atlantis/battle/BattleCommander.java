@@ -24,6 +24,10 @@ public class BattleCommander extends Commander {
     /** Per-game reset next to the other static resets in OnGameStarted. */
     public static void reset() {
         fleeStartedAt = -1;
+        lastRepositionFrame.clear();
+        lastStepFrame.clear();
+        lastMovedFrame.clear();
+        lastMovedPos.clear();
     }
 
     @Override
@@ -572,25 +576,25 @@ public class BattleCommander extends Commander {
         // of cooldown left a step back costs no DPS (owner direction).
         if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
         if (unit.isDragoon()) {
+            boolean lowHp = unit.hp() + unit.shields() < DRAGOON_LOW_HP;
             // Surrounded: three or more melee enemies on top of the Dragoon
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost
             // ready or the nearest enemy is far enough to trade with.
             if (unit.enemiesNear().melee().inRadius(3, unit).size() >= DRAGOON_SURROUNDED_MELEE_COUNT
                 && (unit.cooldown() <= DRAGOON_SURROUNDED_STAND_COOLDOWN
-|| unit.distTo(threat) >= DRAGOON_SURROUNDED_STAND_DIST_TILES)) return false;
+                    || unit.distTo(threat) >= DRAGOON_SURROUNDED_STAND_DIST_TILES)) return false;
             // Low-HP Dragoon holds fire unless the shot is safe: at least
             // 3.2 tiles of room or an imminent weapon (owner, converging
             // with Stardust: cooldown <= latency + 2 attacks instead of
             // stepping). Below half health the threatened step would only
             // delay the one shot that still matters.
-            if (unit.hp() + unit.shields() < DRAGOON_LOW_HP
-                && unit.cooldown() <= DRAGOON_LOW_HP_FIRE_COOLDOWN) return false;
+            if (lowHp && unit.cooldown() <= DRAGOON_LOW_HP_FIRE_COOLDOWN) return false;
             // ...otherwise it yields ground early: holding fire means
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
             // default constants, this keeps it true whatever they become.
-            if (unit.hp() + unit.shields() < DRAGOON_LOW_HP
+            if (lowHp
                 && unit.distTo(threat) < DRAGOON_LOW_HP_HOLD_TILES
                 && unit.cooldown() > DRAGOON_LOW_HP_FIRE_COOLDOWN) return true;
         }
