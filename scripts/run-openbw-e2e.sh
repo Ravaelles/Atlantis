@@ -607,6 +607,14 @@ rm -f "$BOT_ROOT/bwapi-data/write/DECISIONS.log"
 SERVER_LOG="$RUN_DIR/server.log"
 BOT_LOG="$RUN_DIR/E2E_LOG"
 DEBUG_LOG="$RUN_DIR/E2E_DEBUG"
+# Liveness signal for the hang catcher below: the structured twin stream
+# the bot flushes every 720 frames while it frames. The game log is the
+# wrong file to watch - it stays quiet for minutes on a healthy run
+# (measured 2026-10-19: three false-positive dumps ~40 s in), while a
+# truly hung bot stops flushing within one interval. Missing file means
+# the bot has not flushed its first interval yet (map analysis) - skip,
+# do not dump.
+WATCH_FILE="$BOT_ROOT/bwapi-data/write/EVENTS.jsonl"
 mkdir -p "$(dirname "$SERVER_LOG")"
 
 # The run's identity, written next to the log so a later reader does not have to guess
@@ -769,9 +777,13 @@ BOT_PID=$!
 # the queryable twin of the hot families.
 # Hang catcher (NEXT #69): a run whose teardown hung died between the trace write
 # and System.exit with no frame to name. While the bot runs, a background poll
-# watches log growth: if the java child is alive but the log has not grown for
-# 30 s, its stacks are dumped once to the run dir - then the watcher gets out
+# watches twin-stream growth ($WATCH_FILE, flushed every 720 frames while the
+# bot frames): if the java child is alive but nothing flushed for 30 s, its
+# stacks are dumped once to the run dir - then the watcher gets out
 # of the way (the 15 s backstop / the outer timeout still end the run).
+# The game log is deliberately NOT the signal: it stays quiet for minutes on
+# healthy runs (three false-positive dumps 2026-10-19). A missing watch file
+# means the first flush has not happened yet (map analysis) - skip, do not dump.
 # Silent unless it fires; skipped entirely when jstack is missing, and on
 # END_GAME_VIA_ENGINE runs: after leaveGame the bot is supposed to linger (the
 # JNativeHook hook thread holds the JVM) while the launcher flushes the replay,
@@ -788,7 +800,8 @@ if command -v jstack >/dev/null 2>&1 && [ "$ENGINE_PATH_END" -eq 0 ]; then
       i=$(( i + 1 ))
       BOT_JAVA_PID="$(pgrep -P "$BOT_PID" 2>/dev/null | head -1)"
       if [ -n "$BOT_JAVA_PID" ] && kill -0 "$BOT_JAVA_PID" 2>/dev/null \
-        && [ $(( $(date +%s) - $(stat -c %Y "$BOT_LOG" 2>/dev/null || echo 0) )) -gt 30 ]; then
+        && [ -f "$WATCH_FILE" ] \
+        && [ $(( $(date +%s) - $(stat -c %Y "$WATCH_FILE" 2>/dev/null || echo 0) )) -gt 30 ]; then
         jstack -l "$BOT_JAVA_PID" > "$RUN_DIR/jstack-hang.txt" 2>&1 || true
         break
       fi
