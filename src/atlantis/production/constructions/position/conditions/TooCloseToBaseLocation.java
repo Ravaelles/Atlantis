@@ -1,6 +1,7 @@
 package atlantis.production.constructions.position.conditions;
 
 import atlantis.config.AtlantisRaceConfig;
+import atlantis.game.A;
 import atlantis.map.base.ABaseLocation;
 import atlantis.map.base.BaseLocations;
 import atlantis.map.position.APosition;
@@ -40,6 +41,17 @@ public class TooCloseToBaseLocation {
     }
 
     private static boolean forNonBaseBuilding(APosition position, AUnitType building) {
+        // Owner: the first Pylon, Gateway and Cybernetics Core adjoin the
+        // Nexus - the builder walks as little as possible, so early mining
+        // is not donated to a layout. Below 20 supply the too-close ring
+        // steps aside (footprint overlap and the other checks still hold -
+        // adjoining is legal, overlapping is not). Past it, the spacing
+        // doctrine owns the layout again.
+        if (A.supplyUsed() <= 20
+            && (building.isPylon() || building.isGateway() || building.isCyberneticsCore())) {
+            return false;
+        }
+
         double minDist = 6;
 
         if (We.protoss()) {

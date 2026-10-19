@@ -107,7 +107,7 @@ public class PylonPosition {
         // recreates the whole original failure one level deeper. Measured 2026-10-10 in
         // the stub world: mineralsCenter = the Nexus, origin = the Nexus, dist = 0.0.
         if (towards != null && base.distTo(towards) > 1) {
-            APosition towardsResources = base.translateTilesTowards(FIRST_PYLON_TILES_FROM_BASE, towards);
+            APosition towardsResources = base.translateTilesTowards(firstPylonReach(), towards);
             if (isWellInsideMap(towardsResources)) {
                 return towardsResources.makeBuildableFarFromBounds(5);
             }
@@ -116,7 +116,7 @@ public class PylonPosition {
         // Resources are absent or point into an edge: step away from the closest edge
         // instead, which is the direction with room by construction.
         APosition awayFromEdge = base.translateTilesTowards(
-            FIRST_PYLON_TILES_FROM_BASE, awayFromNearestEdge(base)
+            firstPylonReach(), awayFromNearestEdge(base)
         );
         if (!isWellInsideMap(awayFromEdge)) {
             return fallback();
@@ -159,6 +159,16 @@ public class PylonPosition {
      * skipped; kept as a named constant so the number is visible where it is decided.
      */
     public static final double FIRST_PYLON_TILES_FROM_BASE = 7;
+
+    /**
+     * Opening reach (owner): the first Pylon adjoins the Nexus - at or under
+     * 20 supply the builder walks as little as possible, so the search starts
+     * two tiles out instead of seven. Past that the layout doctrine owns the
+     * origin again.
+     */
+    private static double firstPylonReach() {
+        return A.supplyUsed() <= 20 ? 2 : FIRST_PYLON_TILES_FROM_BASE;
+    }
 
     public static APosition nearToPositionForSecondPylon() {
 //        return initialNearTo;

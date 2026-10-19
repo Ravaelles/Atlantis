@@ -97,7 +97,10 @@ public class PositionConditionsPart2Test extends WorldStubForTests {
                 main = fake(NEXUS, 20, 20),
                 fake(AUnitType.Protoss_Probe, 21, 21)), fakeEnemies(), () -> {
                     // FakeBaseLocations has a base location at (7, 44), for Protoss it shifts by
-                    // (2, 1) -> (9, 45)
+                    // (2, 1) -> (9, 45). Supply past the opening window: the
+                    // early-game adjoin exemption (<= 20) does not apply here.
+                    currentSupplyUsed = 30;
+                    currentSupplyTotal = 32;
                     APosition atBaseLoc = APosition.create(9, 45);
                     assertTrue(
                             TooCloseToBaseLocation.TooCloseAndOverlapsBaseLocation(GATEWAY, atBaseLoc),
