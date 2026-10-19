@@ -412,8 +412,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (mirror of the finish overlap half, stub-pinned 5/5); PREPARING
   adopts still walk into cover (Pylon #11: 2 adopts on [119,12]) and
   the sited path re-requests uncovered (PhotonC [115,15] 21x) - those
-  two doors stay open. Proof: a covered-tile game where the loop is
-  gone (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
+  two doors stay open. 2026-10-19: the prepare-side unlink is twinned
+  (`prepare-site-overlap`, stub-pinned `PrepareOverlapTwinTest` - FE
+  run `112337` burned 40 construction ids for 1 logged PREPARING
+  with zero Can't-find-place rows, the silent branch is the only
+  consistent source); the twin decides the next occurrence. Adopt
+  side re-sites since the resite seam (same [119,12] case cited
+  in code), proof pending like the rest. Proof: a covered-tile game
+  where the loop is gone (long OpenBW 16575f: new refusal 0 fires,
+  no same-tile storm).
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -692,6 +699,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   WIN, 14 stepped-aside vs 3 stuck (was 9 vs 106 pre-compass).
   Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
   (#152).
+- OpenBW `TauCross` (`112337` long, FE strategy forced as a reverted
+  probe - `Forge FE vZ` vs Zerg, 138 s wall, exit 143 wall-cap): the FE
+  opening jams at the 2nd building, wall-in unreached. Pylon #1 warped
+  1:07@8 [50,106]; Forge (oid=2, minSupply 11) decided once at 4:11
+  (`prev=cid41:PREPARING path=adopt`) then zero rows - no STARTED,
+  no CANCEL, no warp; construction ids burned 1->41 for 1 logged
+  PREPARING with zero Can't-find-place rows (the silent
+  prepare-unlink loop, now twinned as `prepare-site-overlap`).
+  Partial M4 evidence at best (no pressure possible on OpenBW, #94);
+  the opening jam itself is the next branch, not the wall.
 - OpenBW `TauCross` (`105921` long, legacy default, 16546f/11:34,
   exit 143 wall-cap - inconclusive as verdict, rich as data): Pylon
   0:52@8 (control holds for #84), Gateway 1:24/1:53, Core 3:02,
