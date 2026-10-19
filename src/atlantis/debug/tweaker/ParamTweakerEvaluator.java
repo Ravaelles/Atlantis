@@ -36,7 +36,16 @@ public class ParamTweakerEvaluator {
         java.io.File parent = new java.io.File(file).getParentFile();
         if (parent != null) parent.mkdirs();
 
-        String row = resultString(winner);
+        // Whole-game totals come from the flushed file, never the buffer:
+        // the periodic 720-frame flush clears the buffer, so buffer counts
+        // at game end are only the post-flush remnant (measured: 7 counted
+        // vs 33 filed SHOT rows). Flush first so the remnant lands too.
+        EventLog.flush();
+        int[] totals = totalsFromFile();
+        int hits = totals != null ? totals[0] : EventLog.countByKey(LogKey.HIT);
+        int shots = totals != null ? totals[1] : EventLog.countByKeyParam(LogKey.SHOT, "result", "shot-fired");
+
+        String row = resultString(winner, hits, shots);
         AFile.writeToFileWithHeader(file, row, fileHeader());
 
         // Fixed-name copy of the last simulation only (owner: always
@@ -85,22 +94,35 @@ public class ParamTweakerEvaluator {
         return string.toString();
     }
 
-    private static int hitsTaken() {
-        return EventLog.countByKey(LogKey.HIT);
+    /**
+     * Whole-game HIT / fired-SHOT totals read back from the flushed
+     * EVENTS file (null when the file is absent, e.g. unit tests - the
+     * caller falls back to buffer counts). Substring match, not JSON:
+     * prod ships no JSON parser and the lines are machine-written by
+     * {@code EventLog.toJsonLines} - the quoted key/result tokens only
+     * occur in their own fields.
+     */
+    private static int[] totalsFromFile() {
+        java.io.File events = new java.io.File(EventLog.OUTPUT_PATH);
+        if (!events.exists()) return null;
+        java.util.ArrayList<String> lines = AFile.readTextFileToList(EventLog.OUTPUT_PATH);
+        int hits = 0;
+        int shots = 0;
+        for (String line : lines) {
+            if (line.contains("\"key\":\"HIT\"")) hits++;
+            else if (line.contains("\"key\":\"SHOT\"") && line.contains("\"result\":\"shot-fired\"")) shots++;
+        }
+        return new int[] { hits, shots };
     }
 
-    private static int shotsFired() {
-        return EventLog.countByKeyParam(LogKey.SHOT, "result", "shot-fired");
-    }
-
-    private static String resultString(boolean winner) {
+    private static String resultString(boolean winner, int hits, int shots) {
         return timeString() + DELIMITER
                 + (winner ? "W" : "L") + DELIMITER
                 + A.seconds() + DELIMITER
                 + Atlantis.KILLED + DELIMITER
                 + Atlantis.LOST + DELIMITER
-                + hitsTaken() + DELIMITER
-                + shotsFired() + DELIMITER
+                + hits + DELIMITER
+                + shots + DELIMITER
                 + score(winner) + DELIMITER
                 + paramsString();
     }

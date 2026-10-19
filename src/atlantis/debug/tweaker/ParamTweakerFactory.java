@@ -25,12 +25,12 @@ public class ParamTweakerFactory extends ParamTweaker {
         tweaker.addParam(new Param(
                 "SafetyMeleeInfantryBaseNoMedic",
                 () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC,
-                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC = ARandom.rand(220, 250) / 100.0
+                () -> { applyOrRandomize("SafetyMeleeInfantryBaseNoMedic", 220, 250, 100.0, v -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC = v); return null; }
         ));
         tweaker.addParam(new Param(
                 "SafetyMeleeInfantryWoundNoMedic",
                 () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC,
-                () -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = ARandom.rand(70, 85)
+                () -> { applyOrRandomizeInt("SafetyMeleeInfantryWoundNoMedic", 70, 85, v -> SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = v); return null; }
         ));
         // Kiting duel (owner: 1Drag_v_1Zeal on Wine): ranges explore
         // around the engine-faithful defaults, never blind.

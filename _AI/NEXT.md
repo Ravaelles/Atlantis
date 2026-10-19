@@ -456,6 +456,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (`scripts/run-wine-batch.sh`, ParamTweaker randomizes 12 kite
   coefficients in-JVM, CSV scoreboard: W/L, seconds, killed, lost,
   hits, shots, values) decides the numbers - see `_AI/TOOLS.md`.
+  2026-10-20: all CSV hits/shots/score columns before this date are
+  remnant-corrupted (evaluator counted the post-720f-flush buffer, not
+  the game - measured 7 vs 33 filed SHOT rows; now flushes and counts
+  the file, batch copies the fixed-name row deterministically).
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
