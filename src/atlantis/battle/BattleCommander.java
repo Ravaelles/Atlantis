@@ -55,6 +55,7 @@ public class BattleCommander extends Commander {
                 .param("cluster", Alpha.get().size())
                 .param("posture", posture.name())
                 .param("tactic", tactic.name())
+                .param("breached", breachForcesFight())
                 .param("anchor", anchor == null ? "-" : anchor.toString())
                 .log(A.now(), A.minSec());
         }
@@ -70,6 +71,17 @@ public class BattleCommander extends Commander {
         AUnit leader = Alpha.get().leader();
         AUnit assessor = vanguardAssessor(leader);
         double eval = assessor != null ? assessor.eval() : 0;
+
+        // Breach rule (owner): raiders in the base mean fight - always. Two
+        // workers chewing probes is not an evaluation the cluster can walk
+        // away from, however lopsided the numbers read (the evaluator is
+        // not even asked). The latch resets with it: a retreat ordered
+        // before the breach does not drag the cluster home. The only
+        // retreat on a breach is per-unit, below in act().
+        if (breachForcesFight()) {
+            fleeStartedAt = -1;
+            return FightOrFlight.Tactic.FIGHT;
+        }
 
         // Home ground holds: under two tiles from the main base the
         // cluster stands instead of fleeing (owner: retreating into the
@@ -88,6 +100,25 @@ public class BattleCommander extends Commander {
             fleeStartedAt = -1;
         }
         return tactic;
+    }
+
+    /**
+     * The breach half of the tactic gate: raiders in the base force FIGHT
+     * before any evaluation runs. Workers included, deliberately wider
+     * than {@code EnemyUnitBreachedBase} (measured: both its paths filter
+     * on combat units, so two worker-raiders chewing the base read as no
+     * breach - exactly the flee this rule exists to forbid). Radius 8 is
+     * the detector's own close-to-base radius; the shared detector stays
+     * untouched (its other readers must not start firing on scouts).
+     * Public as a seam: the rule pins in a stub state without running
+     * the frame.
+     */
+    public static boolean breachForcesFight() {
+        if (atlantis.information.enemy.EnemyUnitBreachedBase.someone()) return true;
+        AUnit main = Select.main();
+        if (main == null) return false;
+        AUnit foe = main.enemiesNear().nearestTo(main);
+        return foe != null && foe.distTo(main) <= 8;
     }
 
     /**
@@ -139,7 +170,7 @@ public class BattleCommander extends Commander {
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (tactic == FightOrFlight.Tactic.FLEE) {
-            HasPosition home = ClusterAnchor.defendAnchor();
+            HasPosition home = breachRallyPoint();
             HasPosition point = gatherPointFor(unit, leader, home);
             if (point != null && unit.distTo(point) >= 0.2) {
                 unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
@@ -148,6 +179,19 @@ public class BattleCommander extends Commander {
             // Nowhere to run to (baseless map, null anchor): standing
             // still with DoNothing until death is never the answer -
             // fall through and fight in place instead (kite included).
+        }
+
+        // The only retreat allowed on a breached base (owner): a unit this
+        // close to death with no shot ready may leave - everything else
+        // fights. Per-unit, never the cluster: tactic() above already
+        // committed the cluster to FIGHT, this is the individual hatch.
+        if (breachForcesFight()
+            && unit.hp() <= BREACH_RETREAT_HP && unit.cooldown() >= BREACH_RETREAT_COOLDOWN) {
+            HasPosition rally = breachRallyPoint();
+            if (rally != null && unit.distTo(rally) >= 0.2) {
+                unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
+                return;
+            }
         }
 
         AUnit target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
@@ -358,6 +402,32 @@ public class BattleCommander extends Commander {
      * when straggling behind it, else the mission anchor. Public as a seam:
      * the bunching rule pins in a stub state without running the frame.
      */
+    /**
+     * Where a withdrawing unit rallies (owner): three tiles from the main
+     * toward the main choke - a forward defensive spot, not the mineral
+     * line (retreating into the miners donates the base, and the old
+     * MissionDefendFocusPoint played exactly this role). Null-safe: no
+     * main, no choke, or an unhostable point falls back to the defend
+     * anchor, and a null anchor falls through to fighting in place.
+     * Public as a seam: the rally pins in a stub state without a game.
+     */
+    public static HasPosition breachRallyPoint() {
+        AUnit main = Select.main();
+        if (main == null || main.position() == null) return ClusterAnchor.defendAnchor();
+        try {
+            atlantis.map.choke.AChoke choke =
+                atlantis.map.choke.Chokes.mainChoke();
+            if (choke == null || choke.center() == null) return ClusterAnchor.defendAnchor();
+            APosition point = main.position()
+                .translateTilesTowards(BREACH_RALLY_TILES, choke.center());
+            if (point == null) return ClusterAnchor.defendAnchor();
+            return point;
+        }
+        catch (RuntimeException ignored) {
+            return ClusterAnchor.defendAnchor();
+        }
+    }
+
     public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor) {
         if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
             return leader;
@@ -478,6 +548,15 @@ public class BattleCommander extends Commander {
 
     /** A step or glide re-issues at most this often (frames, Stardust latency+6 cadence). */
     public static int KITE_RESTEPS_EVERY_FRAMES = 10;
+
+    /** Breach retreat hatch (owner): at or under this hp a unit may leave a breached base. */
+    public static int BREACH_RETREAT_HP = 40;
+
+    /** ... and only with at least this much cooldown left (no shot to give). */
+    public static int BREACH_RETREAT_COOLDOWN = 5;
+
+    /** Rally stands this far from the main toward the main choke (tiles). */
+    public static double BREACH_RALLY_TILES = 3;
 
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
     private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
