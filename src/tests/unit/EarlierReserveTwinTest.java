@@ -52,6 +52,35 @@ public class EarlierReserveTwinTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void warpingEarlierHoldsNoReserve() {
+        currentMinerals = 250;
+        currentSupplyUsed = 16;
+        currentSupplyTotal = 17;
+        world(5, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            fake(AUnitType.Protoss_Probe, 21, 21)
+        ), fakeEnemies(), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            // An earlier building already warping paid for itself when it
+            // warped - the bank holds no reserve for it anymore (measured
+            // UMS 7th_rav: Pylon waiting on a warping Core at bank 288).
+            ProductionOrder first = new ProductionOrder(AUnitType.Protoss_Pylon, 16);
+            ProductionOrder second = new ProductionOrder(AUnitType.Protoss_Cybernetics_Core, 16);
+            Construction warping = new Construction(AUnitType.Protoss_Pylon);
+            warping.setPositionToBuild(APosition.create(100, 100));
+            warping.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+            warping.setBuildingUnit(fake(AUnitType.Protoss_Pylon, 100, 100));
+            warping.setProductionOrder(first);
+            ConstructionRequests.constructions.add(warping);
+
+            assertEquals(
+                0, ProduceBuilding.earlierUnfinishedMinerals(second),
+                "a warping building paid on warp, nothing is reserved for it");
+        });
+    }
+
+    @Test
     public void laterPylonWaitsForEarlierGatewaysReserve() {
         currentMinerals = 150;
         currentSupplyUsed = 10;

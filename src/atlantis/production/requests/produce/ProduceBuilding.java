@@ -191,9 +191,13 @@ public class ProduceBuilding {
 
     /**
      * Bank already spoken for by earlier-queued unfinished buildings:
-     * the sum of their prices (own construction and orderless ones
-     * excluded - the first has no earlier demand, the second no
-     * sequence to compare). Pure over the live list, pinned in stub.
+     * the sum of their still-unpaid prices. A warping building has
+     * already paid (its minerals left the bank at warp start), so it
+     * holds no reserve - counting it would serialize every later
+     * building behind a full warp-in (measured UMS 7th_rav: Pylon
+     * waiting on a warping Core at bank 288). Own construction and
+     * orderless ones excluded (no sequence to compare). Pure over the
+     * live list, pinned in stub.
      */
     public static int earlierUnfinishedMinerals(ProductionOrder order) {
         return earlierUnfinishedCost(order, true);
@@ -201,6 +205,11 @@ public class ProduceBuilding {
 
     public static int earlierUnfinishedGas(ProductionOrder order) {
         return earlierUnfinishedCost(order, false);
+    }
+
+    private static boolean isAlreadyPaidFor(Construction construction) {
+        AUnit building = construction.buildingUnit();
+        return building != null && building.isAlive();
     }
 
     private static int earlierUnfinishedCost(ProductionOrder order, boolean minerals) {
@@ -211,6 +220,7 @@ public class ProduceBuilding {
             if (otherOrder == null || otherOrder == order) continue;
             if (otherOrder.id() >= order.id()) continue;
             if (other.buildingType() == null) continue;
+            if (isAlreadyPaidFor(other)) continue;
             sum += minerals ? other.buildingType().mineralPrice() : other.buildingType().gasPrice();
         }
         return sum;
