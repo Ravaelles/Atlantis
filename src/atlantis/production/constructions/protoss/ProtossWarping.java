@@ -70,13 +70,18 @@ public class ProtossWarping {
             return;
         }
 
-        // FINISHED, not IN_PROGRESS, and the difference is the whole defect: this method runs
-        // from `OnOurUnitCreated` for a building that now EXISTS, so its construction is done.
-        // `IN_PROGRESS` leaves it in `ConstructionRequests` - `notFinishedOfType` still counts
-        // it, `ConstructionStatusChanger` keeps iterating it, and (before the builder was
-        // released) its worker was held for the rest of the game. `FINISHED` is the one status
-        // that removes it, and `setStatus` already performs that removal.
-        construction.setStatus(ConstructionOrderStatus.FINISHED);
+        // A warping (uncompleted) building keeps its construction listed
+        // as IN_PROGRESS: the painters iterate the list, so the warp stays
+        // visible until it completes (owner: warping buildings kept
+        // vanishing from painting). Completion finishes it - see
+        // OnOurNewUnitCompleted - so IN_PROGRESS can no longer leak: only
+        // completed buildings leave the list, never warping ones.
+        if (newBuilding.isCompleted()) {
+            construction.setStatus(ConstructionOrderStatus.FINISHED);
+        }
+        else {
+            construction.setStatus(ConstructionOrderStatus.IN_PROGRESS);
+        }
         construction.setBuildingUnit(newBuilding);
 
         // Construction
