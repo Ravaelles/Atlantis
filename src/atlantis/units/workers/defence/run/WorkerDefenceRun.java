@@ -181,14 +181,27 @@ public class WorkerDefenceRun extends Manager {
      * Ties are broken by id so the decision is stable frame to frame - a helper
      * that flickers between victims helps neither.
      */
+    /**
+     * Who may answer a victim's call: not the victim itself, healthy enough
+     * to trade, not mid-construction - and never an assigned builder
+     * (owner: a builder has a building to raise; drafting it is the same
+     * hijack as scouting or repairing with it). Public as a seam: the
+     * rule pins without running the frame.
+     */
+    public static boolean isEligibleHelper(AUnit candidate, AUnit victim) {
+        if (candidate.equals(victim)) return false;
+        if (candidate.hp() < HELPER_MIN_HP) return false;
+        if (candidate.isConstructing()) return false;
+        if (candidate.isBuilder()) return false;
+        return true;
+    }
+
     private boolean isTheChosenHelper(AUnit victim) {
         AUnit chosen = null;
         double bestDistance = Double.MAX_VALUE;
 
         for (AUnit candidate : Select.ourWorkers().inRadius(HELP_RADIUS, victim).list()) {
-            if (candidate.equals(victim)) continue;
-            if (candidate.hp() < HELPER_MIN_HP) continue;
-            if (candidate.isConstructing()) continue;
+            if (!isEligibleHelper(candidate, victim)) continue;
 
             double distance = candidate.distTo(victim);
             if (distance < bestDistance) {

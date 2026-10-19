@@ -71,13 +71,14 @@ merge bridge, not a second machine). Both pairs are charter-owned
 (#97 maplib, #144-147 migration). The only action is the standing rule:
 no new reader may import the legacy side (ArchUnit + #147 grep gate).
 
-## R6 (open question for the owner - not changed)
+## R6 (decided by owner, implemented)
 
-`WorkerDefenceRun.isTheChosenHelper` skips `isConstructing` but not
-assigned builders: a linked waiter near a victim gets drafted into
-defence, which is the builder-hijack shape in reverse. Defence may
-legitimately outrank building (base under attack), so this is a
-priority call, not a bug fix - it needs a game, not a guess. Left as is.
+`WorkerDefenceRun` no longer drafts builders: `isTheChosenHelper`
+skipped only `isConstructing`, so a linked-but-waiting probe near a
+victim was drafted - the builder hijack in reverse. New
+`isEligibleHelper` seam (not the victim, healthy, idle, unassigned),
+pinned by `WorkerDefenceSparesBuildersTest`. A genuinely overrun base
+still has every other worker; the builder keeps its site.
 
 ## R7 (deliberate, not a violation)
 
