@@ -8,15 +8,12 @@ import atlantis.map.position.HasPosition;
 import atlantis.map.region.MainRegion;
 import atlantis.production.constructions.position.protoss.ProtossDefineNearTo;
 import atlantis.units.AUnitType;
-import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.util.We;
 import atlantis.util.log.ErrorLog;
 
 public class DefineNearTo {
     public static HasPosition defineNearTo(AUnitType building, HasPosition nearTo) {
-        ErrorLog.printMaxOncePerMinutePlusPrintStackTrace("WUT");
-
         if (We.terran()) {
             nearTo = forTerran(building, nearTo);
         }
@@ -57,27 +54,4 @@ public class DefineNearTo {
         if (nearTo == null && ARandom.chance(50)) nearTo = Select.ourBuildings().last();
         return nearTo;
     }
-
-//    public static HasPosition defineNearTo(HasPosition nearTo) {
-//        if (nearTo == null) {
-//            if (We.zerg()) {
-//                nearTo = Select.main().position();
-//            }
-//            else {
-//                if (Count.bases() >= 3) {
-//                    nearTo = Select.ourBases().random();
-//                }
-//                else {
-//                    nearTo = Select.main().position();
-//                }
-//            }
-//        }
-//
-//        if (nearTo == null) nearTo = Select.ourBuildings().first().position();
-//
-//        // If all of our bases have been destroyed, build somewhere near our first unit alive
-//        if (nearTo == null) nearTo = Select.our().first().position();
-//
-//        return nearTo;
-//    }
 }
