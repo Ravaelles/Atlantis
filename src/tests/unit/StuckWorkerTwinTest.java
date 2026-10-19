@@ -6,6 +6,7 @@ import atlantis.units.workers.WorkerHandlerCommander;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -43,6 +44,18 @@ public class StuckWorkerTwinTest extends AbstractTestWithWorld {
     @AfterEach
     public void clean() {
         EventLog.clearForTests();
+        atlantis.config.env.Env.setBuilderLogForTest(false);
+    }
+
+    /**
+     * The twin is ENV-gated (BUILDER_LOG); without the seam the suite
+     * reads the machine-local file - green with the flag on, red with
+     * it commented out (measured 2026-10-19: commenting it per owner
+     * request flipped idleWorkerStillReports red on a clean tree).
+     */
+    @BeforeEach
+    public void enableTwin() {
+        atlantis.config.env.Env.setBuilderLogForTest(true);
     }
 
     @Test

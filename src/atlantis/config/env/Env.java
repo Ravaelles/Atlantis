@@ -405,6 +405,11 @@ public class Env {
         return builderLog;
     }
 
+    /** Test seam (the flag is ENV-driven and has no other writer). */
+    public static void setBuilderLogForTest(boolean enabled) {
+        builderLog = enabled;
+    }
+
     /**
      * True when {@code CORE_AND_DRAGOON_GATE=true}: end the game as soon as the opening is
      * proven (a finished Cybernetics Core and at least one Dragoon). The {@code --short} tier
