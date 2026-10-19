@@ -15,6 +15,14 @@ Hard-won operational facts that do not belong anywhere else. Architecture lives 
   failures. Measured 2026-10-19: 17 "failing" acceptance tests with a mixed
   flag vs 748/0 green through `scripts/run-acceptance-tests.sh --allow-slow`.
   Per-scope scripts are the only way to run one scope.
+- Every test's `setUp` re-reads the machine-local `bwapi-data/AI/ENV`
+  (`AbstractTestWithUnits` → `Env.readEnvFile`, which never resets
+  flags), so the suite result depends on the owner's local file.
+  Measured 2026-10-19: commenting out `BUILDER_LOG=1` (owner request)
+  flipped `StuckWorkerTwinTest.idleWorkerStillReports` red on a clean
+  tree (the twin is ENV-gated; the miner twin passed vacuously).
+  Pattern: ENV-gated behavior gets a `setXForTest` seam plus set/reset
+  in the test (`StuckWorkerTwinTest`), never a dependency on the file.
 
 ## Scenario E2E probes are actuators, not sensors
 

@@ -338,8 +338,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   recorded 255 + 24 - the combat cutover deletions shrank the core
   rule); the information rule triages to
   live strategy-response logic (Stage G seams, not line deletions -
-  all 42 entries verified structural 2026-10-19, Terran/Zerg responses
-  and Strategy.setTo framework edges, nothing mechanical left);
+  35 entries after 7 dead-code deletions 2026-10-19
+  (RaceStrategyResponse anti-air/anti-land managers: dispatch
+  commented out since 75d7650f, zero callers, zero test refs - the
+  same-day "all 42 verified structural" reading was wrong on those
+  7); rest are live Terran/Zerg responses and Strategy.setTo
+  framework edges);
   the util mechanical rule stands at zero (store empty).
   Traps, paid for: a change must remove violations from one rule, not
   move them into another; `rm -rf out` before architecture runs after
@@ -473,6 +477,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   call); repro, if needed, is another long OpenBW run, not a new
   game shape. No blind patch - cache surgery without the shape
   risks perf regressions everywhere.
+  Read 2026-10-19: the steady-state path is volume-innocent (per
+  worker per frame: one distToBase -> two small selection queries;
+  even 50 workers x 150 units is ms-scale, not 37 s) - so the
+  snapshot shape points at transient corruption cleared by
+  clear() or a burst caller not yet found, not at per-frame cost.
+  Next stays the size-series probe (does a cache map grow
+  unbounded across frames).
   Repro 2026-10-19: two consecutive long runs trip the watcher at the
   same ~40 s mark with the same family (`110411`: main RUNNABLE
   37 s CPU in 40 s in `TreeMap.containsKey/getEntry` via `Cache.get`
