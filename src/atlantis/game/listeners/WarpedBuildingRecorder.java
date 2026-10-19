@@ -31,6 +31,7 @@ public class WarpedBuildingRecorder {
         if (unit == null || !unit.isABuilding()) return;
 
         noteCloseWarp(unit);
+        noteAnchorWarp(unit);
         ProductionOrder order = unit.productionOrder();
         atlantis.production.constructions.Construction construction = unit.construction();
         bwapi.TilePosition tile = unit.tilePosition();
@@ -76,6 +77,51 @@ public class WarpedBuildingRecorder {
 
     public static void clearForTests() {
         lastWarpByType.clear();
+    }
+
+    /**
+     * Wall geometry witness (#97 M4): wall-piece types report their warp
+     * tile against the natural anchor row and the exact planned tile.
+     * Null-safe throughout - no natural choke, no anchors, no order, or
+     * no tile each degrade to a sentinel, never to an exception, because
+     * warps arrive from listener paths that must not throw.
+     */
+    private static void noteAnchorWarp(AUnit unit) {
+        atlantis.units.AUnitType type = unit.type();
+        if (type == null
+            || (!type.equals(atlantis.units.AUnitType.Protoss_Pylon)
+                && !type.equals(atlantis.units.AUnitType.Protoss_Gateway)
+                && !type.equals(atlantis.units.AUnitType.Protoss_Photon_Cannon))) return;
+
+        java.util.List<atlantis.map.position.APosition> slots = null;
+        try {
+            atlantis.map.choke.AChoke choke = atlantis.map.choke.Chokes.natural();
+            if (choke != null && choke.firstPoint() != null && choke.lastPoint() != null) {
+                slots = atlantis.map.analysis.WallAnchors.slots(
+                    choke.firstPoint(), choke.lastPoint()).slots();
+            }
+        }
+        catch (RuntimeException ignored) {
+            slots = null;
+        }
+
+        ProductionOrder order = unit.productionOrder();
+        atlantis.map.position.HasPosition planned =
+            order != null && order.isUsingExactPosition() ? order.aroundPosition() : null;
+        atlantis.map.position.APosition warpTile = null;
+        try {
+            bwapi.TilePosition tile = unit.tilePosition();
+            if (tile != null) warpTile = atlantis.map.position.APosition.create(tile.getX(), tile.getY());
+        }
+        catch (RuntimeException ignored) {
+            warpTile = null;
+        }
+
+        atlantis.map.analysis.WallAnchorWarpTwin.emit(
+            type.name(), warpTile,
+            planned == null ? null : planned.position(),
+            order != null && order.isUsingExactPosition(),
+            slots, A.now(), A.minSec());
     }
 
     /**

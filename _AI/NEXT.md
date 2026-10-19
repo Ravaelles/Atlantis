@@ -712,7 +712,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   top `wall-in` once (5:14); sited exact pieces after: PhotonC
   [19,19]/[18,22] (6:08/6:47), Pylon [12,46] (8:11, wall power),
   PhotonC [14,43] (8:42); NO At-0 Gateway plug warped. Geometry
-  unverified (no anchor-vs-warp twin), survival unprovable on
+  twin LANDED (WALL_ANCHOR_WARP: warp tile vs anchor row + exact
+  planned tile, pinned WallAnchorWarpTwinTest 5/5) - read on the next
+  FE game; survival unprovable on
   OpenBW (#94). Twin stream intact to the cap (253 rows past the
   last 720-frame interval - shutdown flush verified live).
   prepare-site-overlap 0 (no overlap case). Watcher quiet (no

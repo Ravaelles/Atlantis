@@ -59,6 +59,11 @@ public enum LogKey {
       list (WO-144 open question: which goal re-fires a duplicate Pylon
       pair - build-order re-fire, pipeline overlap, or a door hole). */
     V2_GOAL_SOURCE,
+    /** A wall-piece type warped: tile vs the natural anchor row and vs the
+      exact planned tile (#97 M4 geometry gap - did the piece land where
+      the wall planner put it). anchorDist -1 means the map offered no
+      anchor row, not missing data. */
+    WALL_ANCHOR_WARP,
     /** A V2 plan item dispatched (or due but refused), with the director's
       reason - the V2 half of the decision audit; legacy answers in
       DECISIONS.log. Re-offers repeat while pending (idempotent builds), so
