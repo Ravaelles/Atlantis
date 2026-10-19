@@ -301,6 +301,51 @@ All three hold for behavior profiles. If any breaks, that is the signal to move 
 7. **Phase-Out**: Deprecate legacy manager chains (`combat/micro/**`), static squads, and `Decision`.
 8. **Unit Micro Port**: Port unit-specific micro routines into profile behaviors.
 
+## Next slice: advanced escape (fleeing) mechanism (owner 2026-10-20)
+
+Measured shape (Wine ZealDrag, 3-15 hydras + 16 lings vs 7 zealots +
+ 10 dragoons): the army dies cornered, `stuck-no-step` 92-1500% vs
+ stepped-aside, `frozen-reset` up to 25x a game. Straight-line steps
+ die on walls; per-unit compass picks break the line (everyone retreats
+ a different way, lings run through the gaps); unwalkable returns null
+ and the twin is the only trace (the `MoveAway returned unwalkable`
+ log line is retired as noise - unavoidable, not a defect).
+
+ Reference (read, not recalled):
+
+ - Stardust unstick (`MyDragoon::unstick`, `MyUnitImpl::unstick`): a
+   move order with no progress past attack-frames + latency + 10 stops
+   the unit and holds it briefly, then starts a fresh order. Never
+   re-issues into the same wedge. Ours: 48 motionless frames → STOP
+   reset (same shape, slower - tune toward latency + 10 once the
+   escape path stops donating frames).
+ - PurpleWave retreat (`BeDragoonVsSlowlot.retreat`): waypoint ALONG a
+   threat-aware tile path (`getThreatAwarePath`: repulsors + threat
+   cost + occupancy cost, threat maximum 0, 7-15 tiles toward safety),
+   plain move if pathing fails, force variant if that fails too.
+   Three-deep fallback, never a bare null.
+ - Stardust flee (`Tactics/Flee.cpp`): move to the main, period (the
+   arc fallback is disabled as unsafe). The escape DESTINATION is
+   always known (main, regroup point, choke) - only the route varies.
+
+ Design (progressive, each step game-proven before the next):
+
+ 1. **Shared escape direction** (no map data): leader picks one
+    threat-gradient direction per ~10 frames; followers step relative
+    to it. (`__FORMATIONS.md` step 1.)
+ 2. **Three-deep fallback per step**: lateral compass (exists) →
+    threat-aware sampled step (threat + walkability score, PurpleWave
+    profile without the grid) → regroup rally away from the enemy
+    (exists) → cornered trade (exists, never idle).
+ 3. **Full path integration** only with map-library reachability
+    (M4/M5): escape along a real path, never a straight shove.
+
+ Stop rule: no step in this slice touches the kite hold/fire rules -
+ those are proven on the 1v1 and stay frozen while escape is rebuilt
+ around them. The 1v1 duel is the regression gate (wins + hits stay
+ in band); the ZealDrag wipe is the acceptance (losses down, dragoons
+ alive past frame 300).
+
 ## Success Metrics & Validation
 
 - **Determinism**: Identical inputs yield identical cluster decisions.
