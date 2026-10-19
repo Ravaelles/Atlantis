@@ -41,18 +41,15 @@ public class Selection extends BaseSelection {
      * Returns whether the type in unit matches one in the haystack
      */
     public Selection add(Selection otherSelection) {
-        return cloneByAdding(otherSelection.data, null);
+        return SelectionViews.add(this, otherSelection);
     }
 
     public Selection add(Collection<? extends AUnit> otherUnits) {
-        return cloneByAdding(otherUnits, null);
+        return SelectionViews.add(this, otherUnits);
     }
 
     public Selection add(AUnit addUnit) {
-        ArrayList<AUnit> list = new ArrayList<>();
-        list.add(addUnit);
-
-        return cloneByAdding(list, null);
+        return SelectionViews.add(this, addUnit);
     }
 
 //    public Selection withEnemyFoggedUnits() {
@@ -115,33 +112,11 @@ public class Selection extends BaseSelection {
      * Selects only units of given type(s).
      */
     public int countOfType(AUnitType... types) {
-        int total = 0;
-        for (AUnit unit : data) {
-            boolean typeMatches = false;
-            for (AUnitType type : types) {
-                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && type.equals(unit.buildType()))) {
-                    typeMatches = true;
-                    break;
-                }
-            }
-            if (typeMatches) {
-                total++;
-            }
-        }
-
-        return total;
+        return SelectionViews.countOfType(this, types);
     }
 
     public Selection limit(int limit) {
-        if (data.isEmpty()) return this;
-
-        List<AUnit> newData = new ArrayList<>();
-        int max = Math.min(limit, data.size());
-        for (int i = 0; i < max; i++) {
-            newData.add(data.get(i));
-        }
-
-        return new Selection(newData, null);
+        return SelectionViews.limit(this, limit);
     }
 
     public Selection visibleOnMap()  {
@@ -976,29 +951,22 @@ public class Selection extends BaseSelection {
      * @return all units except for the given one
      */
     public Selection exclude(AUnit unitToExclude) {
-        if (unitToExclude == null) return new Selection(new ArrayList<>(data), null);
-
-        List<AUnit> newData = new ArrayList<>(data);
-        newData.remove(unitToExclude);
-        return new Selection(newData, "exclude:" + unitToExclude.id());
+        return SelectionViews.exclude(this, unitToExclude);
     }
 
     public Selection exclude(Collection unitsToExclude) {
-        List<AUnit> newData = new ArrayList<>(data);
-        newData.removeAll(unitsToExclude);
-        return new Selection(newData, null);
+        return SelectionViews.exclude(this, unitsToExclude);
     }
 
     public Selection exclude(Selection otherSelection) {
-        return exclude(otherSelection.list());
+        return SelectionViews.exclude(this, otherSelection);
     }
 
     /**
      * Reverse the order in which units are returned.
      */
     public Selection reverse() {
-        Collections.reverse(data);
-        return this;
+        return SelectionViews.reverse(this);
     }
 
     @Override
@@ -1144,8 +1112,7 @@ public class Selection extends BaseSelection {
     }
 
     public Selection removeDuplicates() {
-        List<AUnit> newData = data.stream().distinct().collect(Collectors.toList());
-        return new Selection(newData, currentCachePath + ":removeDuplicates");
+        return SelectionViews.removeDuplicates(this);
     }
 
     public Selection print() {

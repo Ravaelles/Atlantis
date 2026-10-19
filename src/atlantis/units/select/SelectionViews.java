@@ -1,9 +1,14 @@
 package atlantis.units.select;
 
 import atlantis.units.AUnit;
+import atlantis.units.AUnitType;
 import atlantis.units.Units;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Container views, extracted from {@link Selection} (NEXT #10, slice 6):
@@ -58,5 +63,77 @@ final class SelectionViews {
 
     static boolean atMost(Selection selection, double max) {
         return selection.data.size() <= max;
+    }
+
+    static Selection add(Selection selection, Selection otherSelection) {
+        return selection.cloneByAdding(otherSelection.data, null);
+    }
+
+    static Selection add(Selection selection, Collection<? extends AUnit> otherUnits) {
+        return selection.cloneByAdding(otherUnits, null);
+    }
+
+    static Selection add(Selection selection, AUnit addUnit) {
+        ArrayList<AUnit> list = new ArrayList<>();
+        list.add(addUnit);
+        return selection.cloneByAdding(list, null);
+    }
+
+    static Selection exclude(Selection selection, AUnit unitToExclude) {
+        if (unitToExclude == null) return new Selection(new ArrayList<>(selection.data), null);
+
+        List<AUnit> newData = new ArrayList<>(selection.data);
+        newData.remove(unitToExclude);
+        return new Selection(newData, "exclude:" + unitToExclude.id());
+    }
+
+    static Selection exclude(Selection selection, Collection unitsToExclude) {
+        List<AUnit> newData = new ArrayList<>(selection.data);
+        newData.removeAll(unitsToExclude);
+        return new Selection(newData, null);
+    }
+
+    static Selection exclude(Selection selection, Selection otherSelection) {
+        return exclude(selection, otherSelection.list());
+    }
+
+    static Selection reverse(Selection selection) {
+        Collections.reverse(selection.data);
+        return selection;
+    }
+
+    static Selection removeDuplicates(Selection selection) {
+        List<AUnit> newData = selection.data.stream().distinct().collect(Collectors.toList());
+        return new Selection(newData, selection.currentCachePath + ":removeDuplicates");
+    }
+
+    static Selection limit(Selection selection, int limit) {
+        if (selection.data.isEmpty()) return selection;
+
+        List<AUnit> newData = new ArrayList<>();
+        int max = Math.min(limit, selection.data.size());
+        for (int i = 0; i < max; i++) {
+            newData.add(selection.data.get(i));
+        }
+
+        return new Selection(newData, null);
+    }
+
+    static int countOfType(Selection selection, AUnitType... types) {
+        int total = 0;
+        for (AUnit unit : selection.data) {
+            boolean typeMatches = false;
+            for (AUnitType type : types) {
+                if (unit.is(type) || (unit.is(AUnitType.Zerg_Egg) && type.equals(unit.buildType()))) {
+                    typeMatches = true;
+                    break;
+                }
+            }
+            if (typeMatches) {
+                total++;
+            }
+        }
+
+        return total;
     }
 }
