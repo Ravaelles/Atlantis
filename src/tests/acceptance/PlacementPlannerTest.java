@@ -70,6 +70,55 @@ public class PlacementPlannerTest {
         }
     }
 
+    /** Flat map with one blocked rectangle - the honest "map full" shape. */
+    private static final class FlatBlocked implements TileAvailabilityGrid.TerrainSource {
+        private final int w;
+        private final int h;
+        private final int bx;
+        private final int by;
+        private final int bw;
+        private final int bh;
+
+        FlatBlocked(int w, int h, int bx, int by, int bw, int bh) {
+            this.w = w;
+            this.h = h;
+            this.bx = bx;
+            this.by = by;
+            this.bw = bw;
+            this.bh = bh;
+        }
+
+        @Override
+        public int mapWidth() {
+            return w;
+        }
+
+        @Override
+        public int mapHeight() {
+            return h;
+        }
+
+        @Override
+        public boolean isBuildable(int tx, int ty) {
+            return !(tx >= bx && tx < bx + bw && ty >= by && ty < by + bh);
+        }
+
+        @Override
+        public boolean isWalkable(int tx, int ty) {
+            return true;
+        }
+
+        @Override
+        public boolean isResource(int tx, int ty) {
+            return false;
+        }
+
+        @Override
+        public boolean isDepotOrigin(int tx, int ty) {
+            return false;
+        }
+    }
+
     private static CataloguePlacementPlanner planner(int w, int h) {
         return new CataloguePlacementPlanner(new TileAvailabilityGrid(new Flat(w, h)));
     }
@@ -170,7 +219,7 @@ public class PlacementPlannerTest {
 
     @Test
     public void aBuildingTooLargeForTheFreeSpaceIsRefused() {
-        // A map just wide enough for a 4x3 footprint, then blocked so nothing fits.
+        // A map just wide enough for a 4x3 footprint: one Nexus fits.
         TileAvailabilityGrid grid = new TileAvailabilityGrid(new Flat(4, 3));
         CataloguePlacementPlanner planner = new CataloguePlacementPlanner(grid, null, null, false);
         planner.startPass();
@@ -178,10 +227,17 @@ public class PlacementPlannerTest {
         PlacementReservation first = planner.reservePlacement(
                 UnitProducible.of(AUnitType.Protoss_Nexus), TargetPlacement.anywhere(), 0);
         assertTrue(first.isSuccessful(), "the only 4x3 spot on a 4x3 map is free");
+        assertEquals(0, first.tileX());
+        assertEquals(0, first.tileY());
 
-        // Every tile is now used, so a second Nexus cannot fit anywhere.
-        planner.startPass();
-        PlacementReservation second = planner.reservePlacement(
+        // The spot is taken (a building stands there): per-pass reservations
+        // clear on startPass by design, so a taken tile must read as taken
+        // from the terrain itself, not from a previous pass's marks.
+        TileAvailabilityGrid full = new TileAvailabilityGrid(
+            new FlatBlocked(4, 3, first.tileX(), first.tileY(), 4, 3));
+        CataloguePlacementPlanner crowded = new CataloguePlacementPlanner(full, null, null, false);
+        crowded.startPass();
+        PlacementReservation second = crowded.reservePlacement(
                 UnitProducible.of(AUnitType.Protoss_Nexus), TargetPlacement.anywhere(), 0);
         assertFalse(second.isSuccessful(),
                 "with the map full, a 4x3 building must be refused rather than overlap");
