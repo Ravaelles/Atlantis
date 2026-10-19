@@ -36,7 +36,8 @@ public class BattleCommander extends Commander {
         gatherCluster();
         if (Alpha.get().isEmpty()) return false;
 
-        ClusterMission.Posture posture = ClusterMission.decide(Count.ourCombatUnits());
+        ClusterMission.Posture posture = ClusterMission.postureFor(
+            Count.ourCombatUnits(), breachForcesFight());
         if (posture == ClusterMission.Posture.ATTACK) {
             Missions.forceGlobalMissionAttack("cluster-attack");
         }
@@ -78,7 +79,9 @@ public class BattleCommander extends Commander {
         // not even asked). The latch resets with it: a retreat ordered
         // before the breach does not drag the cluster home. The only
         // retreat on a breach is per-unit, below in act().
-        if (breachForcesFight()) {
+        // Same for a UMS opening: with no base anywhere, an early retreat
+        // just feeds - stand the first 15 seconds and let the fight happen.
+        if (breachForcesFight() || earlyUmsStandGround()) {
             fleeStartedAt = -1;
             return FightOrFlight.Tactic.FIGHT;
         }
@@ -100,6 +103,40 @@ public class BattleCommander extends Commander {
             fleeStartedAt = -1;
         }
         return tactic;
+    }
+
+    /** UMS opening stand-ground window: no retreat for the first 15 seconds. */
+    public static int UMS_NO_RETREAT_FRAMES = 15 * 24;
+
+    /** Threat radius the regroup rally reads: the fight the vanguard answers. */
+    public static double REGROUP_THREAT_TILES = 15.0;
+
+    /** Regroup rally distance from the threat: clear of ground range, close enough to re-engage. */
+    public static double REGROUP_RALLY_TILES = 6.0;
+
+    /**
+     * The UMS opening stand-ground (owner): on custom maps there is no
+     * base to run to, so a retreat in the first 15 seconds is never the
+     * answer - the unit would just feed. Public as a seam: the rule pins
+     * in a stub state without running the frame.
+     */
+    public static boolean earlyUmsStandGround() {
+        return atlantis.game.A.isUms() && atlantis.game.A.now() < UMS_NO_RETREAT_FRAMES;
+    }
+
+    /**
+     * Where a baseless retreat rallies (owner): a point away from the
+     * nearest threat to regroup at, never the enemy base the mission
+     * anchor would march it to. Null when nothing presses (then the
+     * caller fights in place) or when no direction steps - same
+     * fall-through contract as the kite escape. Public as a seam.
+     */
+    public static HasPosition regroupRallyPoint(AUnit unit) {
+        if (unit == null || !unit.isAlive()) return null;
+        AUnit threat = atlantis.battle.targeting.ASquadTargeting
+            .nearestEngageableEnemy(unit, REGROUP_THREAT_TILES);
+        if (threat == null) return null;
+        return MoveAway.bestDestination(unit, threat, REGROUP_RALLY_TILES);
     }
 
     /**
@@ -170,11 +207,23 @@ public class BattleCommander extends Commander {
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (tactic == FightOrFlight.Tactic.FLEE) {
-            HasPosition home = breachRallyPoint();
-            HasPosition point = gatherPointFor(unit, leader, home);
-            if (point != null && unit.distTo(point) >= 0.2) {
-                unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
-                return;
+            // Baseless maps (UMS micro duels) have no home to run to: the
+            // mission anchor there is the ENEMY base, so following it
+            // marches the retreat straight into the enemy. Regroup away
+            // from the threat instead; with nowhere to step, fall through
+            // and fight in place. Based maps keep the choke-side rally.
+            // Mid-swing the rally waits: a move order now cancels the shot
+            // (PurpleWave AttackDelay) - the fight path below holds it the
+            // same way.
+            if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
+                HasPosition home = Select.main() != null
+                    ? breachRallyPoint()
+                    : regroupRallyPoint(unit);
+                HasPosition point = gatherPointFor(unit, leader, home);
+                if (point != null && unit.distTo(point) >= 0.2) {
+                    unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
+                    return;
+                }
             }
             // Nowhere to run to (baseless map, null anchor): standing
             // still with DoNothing until death is never the answer -
@@ -185,7 +234,9 @@ public class BattleCommander extends Commander {
         // close to death with no shot ready may leave - everything else
         // fights. Per-unit, never the cluster: tactic() above already
         // committed the cluster to FIGHT, this is the individual hatch.
-        if (breachForcesFight()
+        // Mid-swing it waits one frame like every other move here: cancelling
+        // the shot to flee is the same bug as cancelling it to kite.
+        if (breachForcesFight() && !unit.isAttackFrame() && !unit.isStartingAttack()
             && unit.hp() <= BREACH_RETREAT_HP && unit.cooldown() >= BREACH_RETREAT_COOLDOWN) {
             HasPosition rally = breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {

@@ -19,6 +19,17 @@ public class ClusterMission {
         return combatUnits >= ATTACK_ARMY_SIZE ? Posture.ATTACK : Posture.DEFEND;
     }
 
+    /**
+     * Posture with the breach override (owner): while raiders are in the
+     * base the cluster holds home even when it is big enough to march -
+     * marching out abandons the workers to the push. Pure: the breach
+     * reading happens at the call site. Public as a seam.
+     */
+    public static Posture postureFor(int combatUnits, boolean breached) {
+        if (breached) return Posture.DEFEND;
+        return decide(combatUnits);
+    }
+
     public static Mission toMission(Posture posture) {
         return posture == Posture.ATTACK ? Missions.ATTACK : Missions.DEFEND;
     }

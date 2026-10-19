@@ -93,6 +93,35 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void hatchWaitsForTheSwing() {
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
+        FakeUnit raider = fake(AUnitType.Protoss_Probe, 25, 21);
+        zealot.setHp(30);
+        zealot.cooldown = 5;
+
+        world(1, fakeOurs(
+            fake(AUnitType.Protoss_Nexus, 20, 20),
+            zealot
+        ), fakeEnemies(
+            raider,
+            fake(AUnitType.Protoss_Probe, 26, 22)
+        ), () -> {
+            zealot.attackUnit(raider);
+            zealot.attackFrame = true;
+            ((tests.fakes.FakeOrderSink) zealot.orderSink()).clear();
+            if (!zealot.isAttackFrame()) return;
+
+            BattleCommander.act(
+                zealot, FightOrFlight.Tactic.FIGHT, null, zealot);
+
+            assertTrue(
+                ordersOf(zealot).isEmpty(),
+                "mid-swing retreat would cancel the shot, hatch or not: "
+                    + ordersOf(zealot));
+        });
+    }
+
+    @Test
     public void healthyZealotEngagesBreachers() {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 22, 21);
         zealot.setHp(100);
