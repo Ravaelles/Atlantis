@@ -200,10 +200,12 @@ The index of which document answers which question is `_AI/README.md`.
 
 ## Test health
 
-Re-measured 2026-10-19 (`rm -rf out` first): unit 783/783 green, 0
-skipped (was 763 - live-guard, demand-context, standing-cover, adopt
-and sited-door pins landed after that count; acceptance 17 reds are
-byte-identical on the pre-change baseline worktree, zero regressions;
+Re-measured 2026-10-19 (`rm -rf out` first): unit 894/894 green, 0
+skipped (was 763, then 783 - live-guard, demand-context,
+standing-cover, adopt, sited-door, forecast, rally and twin pins
+landed since; acceptance 17 reds byte-identical between the
+pre-session baseline worktree (6ae7ec1f) and the current tree -
+verified by worktree diff this session, zero regressions from it;
 counts rot, re-measure before quoting).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
@@ -619,7 +621,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (lowest: Pylon 300 at sup 30/33 bank 10 mid-game) - the supply-4 /
   bank-74 deadlock shape absent again. Re-checked 2026-10-18: earmarks
   >= 250 in 13 runs, all at supply 22+ in flowing games (lowest: 300 at
-  sup 22) - the deadlock shape absent again.
+  sup 22) - the deadlock shape absent again. Re-checked 2026-10-19
+  across 25 retained EVENTS.jsonl (24 files + the live game log):
+  earmarks >= 250 in 3 runs only, all at supply 20+ with BUILDING_STARTED
+  flowing (ums-core min sup 20, ums2 min sup 20, live log one frame-3
+  BO-load row at sup 10/bank 250) - the supply<=10/bank<150 deadlock
+  shape absent everywhere. Standing caveat: the ORDER_NOT_READY twin
+  only fires above price-32 bank, so a sub-floor deadlock would leave
+  no twin rows at all - the sweep instruments the visible band only.
 - **#96** Wine verification batch, owner-run: painter warping labels
   (`Gateway @12 [NOT_STARTED]`), WINE_LOG/_DEBUG/_DECISIONS triple,
   E2E_LOG/_DEBUG/_DECISIONS stable files, Missions/BO-mission unenaction sanity.
