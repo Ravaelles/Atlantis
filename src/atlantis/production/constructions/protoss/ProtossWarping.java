@@ -84,6 +84,8 @@ public class ProtossWarping {
         }
         construction.setBuildingUnit(newBuilding);
 
+        atlantis.game.util.BuildOrderAudit.recordWarp(newBuilding, construction.productionOrder());
+
         // Construction
         newBuilding.setConstruction(construction);
 

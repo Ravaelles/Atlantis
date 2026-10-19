@@ -46,6 +46,7 @@ public class GameSummary {
                     "### Resource killed/lost: " + (resourceBalance > 0 ? "+" + resourceBalance : resourceBalance) +
                     " ###\n" +
                     buildingsLine());
+            BuildOrderAudit.printAudit();
         } catch (Throwable ignored) {
         }
     }
@@ -84,6 +85,7 @@ public class GameSummary {
             UnitsArchive.paintKilledUnits();
         }
         UnitsArchive.paintKillLossResources();
+        BuildOrderAudit.printAudit();
     }
 
     /**
