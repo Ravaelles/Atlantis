@@ -152,3 +152,72 @@ MOVEMENT → PurpleWave's class slots + threat-aware escape for
 ESCAPE/FOCUS. That sequence is exactly the adoption order above:
 Moon covers arrival, Stardust covers movement, PurpleWave covers
 escape - and the 1v1 kite rules stay frozen through all of it.
+
+## Target architecture: PurpleWave-class synthesis (owner decision 2026-10-20)
+
+Owner: no half-measures - the target is the best of all three, with
+PurpleWave as the skeleton (only it answers "where each unit stands
+in every situation"), Stardust movement underneath it, Moon geometry
+inside it. Honest costing: the full system needs map reachability
+(zones/edges - migration M4/M5), so the architecture lands phased;
+the phase order is dependency order, not scope cutting.
+
+### Components (all inside the Combat context)
+
+- **BattleDetector** (PurpleWave MatchupGraph / Stardust 480/480/600):
+  proximity clustering assigns every combat unit to exactly one
+  battle per frame. No unit micro-manages itself outside a battle.
+- **SimGate** (Stardust combat sim + stability buffering): per battle
+  WIN/LOSE/TRADE verdict with hysteresis (no flip-flop under N
+  frames of consensus). The verdict picks the style, never a unit.
+- **Formation** (PurpleWave FormationStandard skeleton):
+  style ∈ {March, Engage, Disengage, Guard}; face = threat
+  (Engage/Disengage) or goal; apex = vanguard centroid (closest 50%
+  toward face); slots per class on a Moon crescent around the
+  pivot (melee arc inside, ranged arc at weapon range, span from
+  unit widths, overtime shrink for commitment); separation widened
+  vs AoE. Zone/edge geometry plugs in at M4 - until then apex/face
+  from centroid + threat pixel + known chokes.
+- **Mover** (Stardust Ball boids): goal = path waypoint (straight
+  line until M4, grid path after) + collision (away from
+  unwalkable) + cohesion (toward center, scaled down with army
+  size, skipped across narrow chokes) + separation. Fallbacks:
+  waypoint → direct move. Never null, never idle.
+- **Micro handoff** (Moon gate, current kite frozen): units with a
+  target in range fight per-unit (kite margin, sticky target,
+  wound/low-HP/surround rules - proven on the 1v1, untouched);
+  units without a target take formation slots. Formation walks,
+  micro fights - never both at once.
+- **Escape** (PurpleWave retreat): sim says LOSE → shared escape
+  direction (leader, ~10f cadence) + threat-aware sampled steps
+  (threat + walkability score) → regroup rally → re-form. Three-deep
+  fallback per step, cornered trades (never idle).
+- **Focus** (the missing multiplier): shared target = weakest in
+  range of the most guns, sticky until dead; uncommitted units join
+  it, committed units finish theirs (sticky-first ordering).
+
+### Per-frame algorithm
+
+1. Cluster units into battles (proximity); orphans rally to the
+   nearest cluster, never fight alone.
+2. Sim-gate each battle → style (winning/tradable = Engage,
+   losing = Disengage, travelling = March, holding = Guard).
+3. Compute face/apex/slots (Moon crescent per class, shrink with
+   fight time, widen vs AoE).
+4. Units with a target in range → per-unit micro (frozen rules).
+   Units without → move to slot (boids + fallbacks).
+5. Sim says LOSE and no winning trade → shared escape direction,
+   threat-aware steps, regroup, re-form.
+6. Shared target re-picked only when dead/out of range (sticky);
+   style changes only on sim consensus (hysteresis).
+
+### Phases (dependency order)
+
+- **A (now, no map lib)**: Moon crescent slots + shared escape
+  direction + sticky/focus-first ordering. Kills the scatter with
+  pure geometry.
+- **B (needs M4 anchors)**: zone/edge-aware slots, choke holds
+  (Arc at chokes), threat-aware escape paths.
+- **C**: full styles + sim-gated transitions. The 1v1 duel stays
+  the regression gate throughout; ZealDrag losses are the
+  acceptance metric.
