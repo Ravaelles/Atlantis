@@ -764,9 +764,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   6 Pylons with no supply block and 97 SUPPLY_BLOCKED samples - but
   the migration is NOT ready: 609 Nexus cancel/re-request cycles
   (expansion siting C14, Nexus=2 never), 0 Dragoons (floor freeze),
-  Pylon pairs 89f/72f apart unattributable, no E2E_DECISIONS in the
-  V2 path, 18 warps vs ~40 legacy. Blockers, in order: C14,
-  Dragoons, V2 audit, attribution, parity (#45 ordering stands).
+  Pylon pairs 89f/72f apart (now attributable: V2_GOAL_SOURCE
+  names the emitting list per provider goal, V2_DISPATCH rows every
+  issued/refused plan item - both LANDED stub-pinned, read on the next
+  live run), 18 warps vs ~40 legacy. Blockers, in order: C14,
+  Dragoons, parity (#45 ordering stands).
 - OpenBW `TauCross` (`185357`, PLACEMENT=catalogue, 9614f, ended
   environmentally like the clean run above): catalogue answered 6
   (2 Pylon + 4 Gateway), declined 29 named (no-builder 20,

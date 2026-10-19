@@ -17,6 +17,7 @@ import atlantis.production.v2.execution.GameOrderDirector;
 import atlantis.production.v2.execution.OrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
 import atlantis.production.v2.goals.BuildOrderRow;
+import atlantis.production.v2.execution.V2DispatchTwin;
 import atlantis.util.log.ErrorLog;
 
 import java.util.ArrayList;
@@ -138,6 +139,7 @@ public final class ProductionEngine {
 
         if (dryRun) {
             dryRunDirector.logSummary(state.frame(), plan.size());
+            V2DispatchTwin.emit(state.frame(), issued);
         } else {
             logFrame(state.frame(), plan, issued);
         }
@@ -149,6 +151,8 @@ public final class ProductionEngine {
     /** One line per frame with work in it: the plan, and what actually left. */
     private void logFrame(int frame, ProductionPlan plan, List<DispatchResult> issued) {
         if (issued.isEmpty()) return;
+
+        V2DispatchTwin.emit(frame, issued);
 
         StringBuilder log = new StringBuilder("PRODUCTION_V2 @@" + frame + " plan=" + plan.size() + " [");
         for (ProductionItem item : plan.items()) log.append(item).append(' ');

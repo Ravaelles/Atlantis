@@ -59,6 +59,11 @@ public enum LogKey {
       list (WO-144 open question: which goal re-fires a duplicate Pylon
       pair - build-order re-fire, pipeline overlap, or a door hole). */
     V2_GOAL_SOURCE,
+    /** A V2 plan item dispatched (or due but refused), with the director's
+      reason - the V2 half of the decision audit; legacy answers in
+      DECISIONS.log. Re-offers repeat while pending (idempotent builds), so
+      a long pending reads as many rows with the same tile. */
+    V2_DISPATCH,
     /** A worker stood still past the anomaly threshold, with its state. */
     STUCK_WORKER,
     /** The worker pump refused, with the refusing gate. */
