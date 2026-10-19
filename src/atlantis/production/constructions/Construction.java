@@ -105,10 +105,25 @@ public class Construction implements Comparable<Construction> {
     /**
      * Assigns optimal builder for this building. Worker closest to this place.
      *
+     * <p>Owner: a dispatched builder with supply met travels and waits -
+     * never recalled for minerals (measured: a Core warping first turned
+     * the walking Pylon builder back to minerals, the Assimilator jumped
+     * the queue, the Pylon landed last). A live, unstuck builder on a
+     * supply-met row is kept, full stop - the walk overlaps earning
+     * instead of queuing behind it, so delaying the building for a
+     * pseudo-optimization is not an option. Below-min-supply early prep
+     * stays fluid (reselection is its point), and a wedged builder is
+     * still replaceable (stuck, not a bank dip).
+     *
      * @return AUnit for convenience it returns
      */
     public AUnit assignOptimalBuilder() {
         AUnit oldBuilder = builder;
+
+        if (oldBuilder != null && oldBuilder.isAlive() && !oldBuilder.isStuck()
+            && supplyMetFor(productionOrder)) {
+            return oldBuilder;
+        }
 
         AUnit optimalBuilder = GetOptimalBuilder.forPosition(this, productionOrder);
 
@@ -122,6 +137,14 @@ public class Construction implements Comparable<Construction> {
         else ErrorLog.printMaxOncePerMinute("No optimal builder for " + buildingType);
 
         return builder;
+    }
+
+    /**
+     * The owner's line for the builder race: supply met means the row is
+     * due, and a due row's walking builder is never a savings account.
+     */
+    private static boolean supplyMetFor(ProductionOrder order) {
+        return order != null && A.supplyUsed() >= order.minSupply();
     }
 
     /**

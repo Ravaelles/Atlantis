@@ -22,7 +22,8 @@ public class GetOptimalBuilder {
         HasPosition positionToBuild = construction.buildPosition();
 
         if (positionToBuild == null) {
-            ErrorLog.printMaxOncePerMinute("No position to build, so can't find builder (" + order.unitType() + ")");
+            ErrorLog.printMaxOncePerMinute("No position to build, so can't find builder ("
+                + (order == null ? "-" : order.unitType()) + ")");
 
             return Select.ourWorkersFreeToBuildOrRepair(false).random();
         }
