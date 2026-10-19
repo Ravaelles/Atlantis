@@ -94,6 +94,16 @@ public class ParamTweakerFactory extends ParamTweaker {
                 () -> BattleCommander.KITE_RIDE_FRAMES,
                 () -> { applyOrRandomizeInt("KiteRideFrames", 20, 40, v -> BattleCommander.KITE_RIDE_FRAMES = v); return null; }
         ));
+        tweaker.addParam(new Param(
+                "KiteWoundedHitsLeft",
+                () -> BattleCommander.KITE_WOUNDED_HITS_LEFT,
+                () -> { applyOrRandomize("KiteWoundedHitsLeft", 40, 80, 10.0, v -> BattleCommander.KITE_WOUNDED_HITS_LEFT = v); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "KiteWoundedEdgeInsetTiles",
+                () -> BattleCommander.KITE_WOUNDED_EDGE_INSET_TILES,
+                () -> { applyOrRandomize("KiteWoundedEdgeInsetTiles", 2, 8, 10.0, v -> BattleCommander.KITE_WOUNDED_EDGE_INSET_TILES = v); return null; }
+        ));
 //        tweaker.addParam(new Param(
 //                "SafetyMeleeInfantryBaseIfMedic",
 //                () -> SafetyMarginAgainstMelee.INFANTRY_BASE_IF_MEDIC,

@@ -22,8 +22,13 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * no fixed retreat step - the hold point is max range, reduced by half
  * the gap between "how far the target still is outside range" and "how
  * far we walk before the weapon is ready", one tile closer against
- * melee-ranged threats. A Dragoon at firing distance with a nearly-ready
- * weapon holds and shoots instead of stepping out of its own range.
+ * melee-ranged threats for HEALTHY Dragoons. A WOUNDED Dragoon (at or
+ * under ~half health in survived Zealot passes) skips the closer and
+ * holds the max-range edge instead, retreating longer (PurpleWave
+ * hitsLeft shape; owner 1v1 criterion: taken hits stay low because the
+ * bleeding unit stops donating contact). A Dragoon at firing distance
+ * with a nearly-ready weapon holds and shoots instead of stepping out
+ * of its own range.
  */
 public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
 
@@ -91,9 +96,10 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            // margin 3.5 < required ~3.7: the old fixed 2.0 step would retreat
-            // to ~5.5 (out of a 4.0 range); the formula holds at 3.0 instead.
-            assertEquals(3.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            // hp 20 + shields 0 = 1.25 survived passes: WOUNDED, so the
+            // hold is the max-range edge (4 - 0.4 = 3.6), not the healthy
+            // 3.0. Gap 0.1 stays under the step-gain floor: hold + shoot.
+            assertEquals(3.6, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
                 dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
@@ -117,9 +123,10 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            // dist 1.5 deep inside: desired 3.0, so the step opens ~1.5,
-            // not a blind full-length shove.
-            assertEquals(3.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            // dist 1.5 deep inside, WOUNDED (1.25 passes): desired 3.6, so
+            // the step opens ~2.1 (capped at one full step) - longer than
+            // the healthy 3.0 hold, exactly the wounded-retreats-longer shape.
+            assertEquals(3.6, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
                 dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
@@ -127,6 +134,41 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "steps back toward the hold point: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
+    public void woundedHoldsEdgeWhileHealthyCloses() {
+        FakeUnit healthy = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit wounded = fake(AUnitType.Protoss_Dragoon, 60, 22);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 63.5, 21);
+        healthy.cooldown = 15;
+        wounded.cooldown = 15;
+        wounded.hp = 20;
+        wounded.shields = 0;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), healthy, wounded), fakeEnemies(zealot), () -> {
+            // Same fight, same cooldown: full health (11.25 passes) holds
+            // 3.0 with the melee-closer, the bleeding unit (1.25 passes)
+            // holds the 3.6 edge - the back line stays back without any
+            // cross-unit synchronization.
+            assertEquals(3.0, BattleCommander.desiredKiteDistance(healthy, zealot), 0.01);
+            assertEquals(3.6, BattleCommander.desiredKiteDistance(wounded, zealot), 0.01);
+        });
+    }
+
+    @Test
+    public void justAboveHalfHealthStillCloses() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 60, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 63.5, 20);
+        dragoon.cooldown = 15;
+        dragoon.hp = 100;
+        dragoon.shields = 0;
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            // 100 / 16 = 6.25 passes: just above the 6.0 wound line,
+            // still the healthy 3.0 close.
+            assertEquals(3.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
         });
     }
 

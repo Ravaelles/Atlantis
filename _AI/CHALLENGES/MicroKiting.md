@@ -168,6 +168,17 @@ latency-relative framing (KITE_LATENCY_FRAMES = 4, consistent with
 the existing resteps = latency+6 cadence). Kept untouched: margin
 gate (when to kite at all), trade-shot, animation guard,
 frozen-STOP, ride, glide approach, attack-only-on-new/overdue-target.
+Wounded hold (owner 2026-10-20, PurpleWave hitsLeft shape applied to
+the hold point): at or under KITE_WOUNDED_HITS_LEFT survived Zealot
+passes (~half health) the Dragoon skips the melee-closer and holds
+the max-range edge minus KITE_WOUNDED_EDGE_INSET_TILES (0.4) - the
+bleeding unit stops donating contact and retreats longer (bigger gap
+to the same cap), no cross-unit synchronization anywhere (neither
+Stardust nor PurpleWave syncs fire; simultaneity is emergent same-
+cooldown, coherence comes from not blocking friends out of range).
+"Healthy steps toward the enemy to draw fire" deliberately NOT
+adopted: no reference bot does it, enemy targeting is not steerable
+from our side - the wounded-back ordering is the whole mechanism.
 Skipped (open, needs threat-velocity tracking): the fleeing-target
 branch ("do not kite out of range"); predicted positions (we use
 current dist, re-evaluated every 10f); threat-aware pathing (still

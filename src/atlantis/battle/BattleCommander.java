@@ -162,9 +162,12 @@ public class BattleCommander extends Commander {
      * Stardust's desired-distance rule (MyDragoon::attackUnit), in tiles:
      * max range, reduced by half the gap between "how far the target
      * still is outside range" and "how far we walk before the weapon is
-     * ready". A melee-ranged threat pulls the hold a tile inside max
-     * range instead of kiting to its edge. Public as a seam: the formula
-     * pins without running the frame (see
+     * ready". A healthy Dragoon holds a tile inside max range against
+     * melee-ranged threats (Stardust: -32px vs much-shorter range -
+     * kiting to max edge donates the fight); a WOUNDED one skips the
+     * closer and holds the max-range edge instead (PurpleWave hitsLeft
+     * shape: the fewer passes it survives, the farther it stays).
+     * Public as a seam: the formula pins without running the frame (see
      * `_AI/CHALLENGES/MicroKiting.md`, Stardust reference).
      */
     public static double desiredKiteDistance(AUnit unit, AUnit threat) {
@@ -175,7 +178,10 @@ public class BattleCommander extends Commander {
         double cooldownDistance = Math.max(0.0, unit.cooldown() - KITE_LATENCY_FRAMES - 2) * tilesPerFrame;
         double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
         if (targetRange <= myRange - KITE_MELEE_EDGE_TILES) {
-            desired -= KITE_MELEE_CLOSER_TILES;
+            double hitsLeft = (unit.hp() + unit.shields()) / KITE_ZEALOT_PASS_DAMAGE;
+            double closer = hitsLeft <= KITE_WOUNDED_HITS_LEFT
+                ? KITE_WOUNDED_EDGE_INSET_TILES : KITE_MELEE_CLOSER_TILES;
+            desired -= closer;
         }
         return Math.max(0.0, desired);
     }
@@ -634,6 +640,15 @@ public class BattleCommander extends Commander {
 
     /** Range edge for the term above (Stardust: targetRange <= myRange - 64px). */
     public static double KITE_MELEE_EDGE_TILES = 2.0;
+
+    /** At or under this many survived Zealot passes (~half health) the
+     * Dragoon counts as wounded: it skips the melee-closer and holds
+     * the max-range edge, retreating longer instead of closing. */
+    public static double KITE_WOUNDED_HITS_LEFT = 6.0;
+
+    /** Wounded edge inset: hold this far inside max range (tiles) instead
+     * of the full melee-closer (owner: shoot from near max range). */
+    public static double KITE_WOUNDED_EDGE_INSET_TILES = 0.4;
 
     /** Latency frames assumed for cooldown-relative decisions. Stardust
      * reads the engine's remaining latency; 4 here keeps the existing
