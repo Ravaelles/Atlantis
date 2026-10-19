@@ -70,8 +70,10 @@ public class ProducerQuestionsTest {
     @Test
     public void buildingWantsBank() {
         assertNotNull(new BuildingQuestion().ask(state(400, 12, 17, 10)));
-        assertNull(new BuildingQuestion().ask(state(50, 12, 17, 10)),
-            "nothing costs under 100");
+        assertNotNull(new BuildingQuestion().ask(state(50, 12, 17, 10)),
+            "50 is the headroom floor: the builder walks while the last minerals are mined");
+        assertNull(new BuildingQuestion().ask(state(40, 12, 17, 10)),
+            "nothing starts under the headroom floor");
         assertNull(new BuildingQuestion().ask(null));
     }
 }

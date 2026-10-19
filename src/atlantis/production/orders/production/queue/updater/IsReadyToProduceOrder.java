@@ -131,6 +131,16 @@ public class IsReadyToProduceOrder {
         return order.aroundPosition().distTo(main) >= 17;
     }
 
+    /**
+     * Builder headroom in minerals (owner: the golden middle between a
+     * builder idling 30 s on site and starting ~15 s late): readiness
+     * fires once the bank is this close to the price, so the builder
+     * walks while the last minerals are mined instead of queuing behind
+     * them. Only below, the aim-while-poor path and the twin are
+     * untouched; only above, early dispatch is already affordable.
+     */
+    private static final int EARLY_DISPATCH_HEADROOM_MINERALS = 50;
+
     private static boolean hasEnoughResourcesFor(ProductionOrder order, boolean isFarFromMainBaseSoTravelEarly) {
         AUnitType type = order.unitType();
 
@@ -140,8 +150,12 @@ public class IsReadyToProduceOrder {
         if (type.isForge() && A.supplyUsed() == 9) return true;
 
         boolean canAffordNow = A.canAffordWithReserved(Math.min(220, type.mineralPrice()), type.gasPrice());
+        boolean canAffordSoon = type.isABuilding() && A.supplyUsed() >= order.minSupply()
+            && A.canAffordWithReserved(
+                Math.max(0, Math.min(220, type.mineralPrice()) - EARLY_DISPATCH_HEADROOM_MINERALS),
+                type.gasPrice());
 
-        if (A.supplyUsed() >= order.minSupply()) return canAffordNow;
+        if (A.supplyUsed() >= order.minSupply()) return canAffordNow || canAffordSoon;
         else if (!canAffordWithReserved(order, type.mineralPrice(), type.gasPrice())) return false;
 
 
