@@ -898,13 +898,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
 - **#159** Pinch retreat proof on `Drag_v_LingsUpg` (owner 2026-10-20:
   hurt Dragoons surrounded by 2+ melee inside 2 tiles retreat
   instead of standing into the pocket; `DragoonPinch*` knobs in the
-  tuner). A/B started 2026-10-20: WITH pinch 18/9 lost, first death
-  frame 97, 197 stepped-aside vs 5 stuck, 282 hits taken; WITHOUT
-  19/10, first death frame 163, 164 vs 11 stuck, 301 hits. Direction
-  right (more yielding, less glue, fewer hits) but N=1 each and the
-  spawn decides first blood on instant-contact maps - no verdict.
-  Proper proof needs the spread-start scenario (StarEdit, armies
-  apart so kiting decides) + bigger N; `scripts/kill-leftovers.sh`
+  tuner). A/B 2026-10-20 (N=1 each, instant contact): WITH 18/9
+  lost / first death f97 / 197 vs 5 stepped:stuck; WITHOUT 19/10 /
+  first death f163 / 164 vs 11. A/B 2026-10-21 (N=5+5, same map,
+  fresh jar): randomized-params WITH lost 7,8,7 / hits 275,253,238
+  vs WITHOUT 4,3,4 / 198,165,194; fixed-defaults WITH lost 3,5 /
+  186,216 vs WITHOUT 1,3 / 158,179. Two effects, same direction
+  twice: (1) fixed defaults beat randomized in BOTH arms (WITH
+  7.3->4.0, WITHOUT 3.7->2.0 avg lost) - the uniform ranges hold
+  bad regions, defaults are strong (feeds step 4 freeze-then-expand);
+  (2) pinch OFF loses ~half (WITH avg 6.0 vs WITHOUT 3.2 over 10
+  games, kills 24.8 vs 21.8) - yielding to faster lings on contact
+  breaks the line and gets units run down; standing trades better.
+  Decision: default stays ON (owner's rule; 1v1 never triggers it,
+  spread shapes untested - flipping on one map shape is blind for
+  the rest). Next: gate pinch behind standoff (only yield with room
+  to kite into) with spread-map proof. `scripts/kill-leftovers.sh`
   before every game, one box one game (cross-attach measured).
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
@@ -943,11 +952,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the pocket; tuner mutates all CombatTuning knobs incl. pinch;
   default unknown-matchup BO is Zealot into Goon (was Forge FE).
   Latest duel: 1/0 WIN in 499 frames, 34 stepped-aside vs 9 stuck,
-  shot cadence median 33. Pinch A/B on `Drag_v_LingsUpg`: WITH
-  18/9 lost / first death f97 / 197 vs 5 stepped:stuck; WITHOUT
-  19/10 / first death f163 / 164 vs 11 - direction right, N=1 each,
-  spawn decides first blood, no verdict (needs spread-start map +
-  bigger N, NEXT #159). Tuner batch: 10/10 wins (NEXT #152).
+  shot cadence median 33. Pinch A/B on `Drag_v_LingsUpg` (N=5+5,
+  2026-10-21): pinch OFF loses ~half (avg 3.2 vs 6.0 over 10 games;
+  fixed-defaults arms 2.0 vs 4.0) - yielding to faster lings on
+  contact breaks the line; standing trades better. Default stays ON
+  (1v1 never triggers it, spread shapes untested); next is a
+  standoff gate with spread-map proof (NEXT #159). Tuner batch:
+  10/10 wins (NEXT #152).
 - OpenBW UMS (`M&M_v_ZealDrag`): PASS 5/2 KILLED/LOST on the rebuilt
   engine - the working OpenBW proof vehicle. `1Drag_v_1Zeal` seats
   the bot in a unit-less human slot (verified slot-pick code);
