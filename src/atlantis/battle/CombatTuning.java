@@ -41,6 +41,9 @@ public final class CombatTuning {
     private int dragoonSurroundedMeleeCount = 3;
     private int dragoonSurroundedStandCooldown = 6;
     private double dragoonSurroundedStandDistTiles = 3.1;
+    private int dragoonPinchHp = 80;
+    private int dragoonPinchMeleeCount = 2;
+    private double dragoonPinchMeleeTiles = 2.0;
     private int kiteRideFrames = 30;
     private int kiteRestepsEveryFrames = 10;
     private int breachRetreatHp = 40;
@@ -77,6 +80,9 @@ public final class CombatTuning {
         dragoonSurroundedMeleeCount = other.dragoonSurroundedMeleeCount;
         dragoonSurroundedStandCooldown = other.dragoonSurroundedStandCooldown;
         dragoonSurroundedStandDistTiles = other.dragoonSurroundedStandDistTiles;
+        dragoonPinchHp = other.dragoonPinchHp;
+        dragoonPinchMeleeCount = other.dragoonPinchMeleeCount;
+        dragoonPinchMeleeTiles = other.dragoonPinchMeleeTiles;
         kiteRideFrames = other.kiteRideFrames;
         kiteRestepsEveryFrames = other.kiteRestepsEveryFrames;
         breachRetreatHp = other.breachRetreatHp;
@@ -204,6 +210,21 @@ public final class CombatTuning {
     /** Surrounded Dragoon stands when the nearest enemy is at least this far (tiles). */
     public double getDragoonSurroundedStandDistTiles() {
         return dragoonSurroundedStandDistTiles;
+    }
+
+    /** Pinched Dragoon retreats below this health (hp + shields). */
+    public int getDragoonPinchHp() {
+        return dragoonPinchHp;
+    }
+
+    /** Pinch retreat needs this many melee enemies inside the pinch radius. */
+    public int getDragoonPinchMeleeCount() {
+        return dragoonPinchMeleeCount;
+    }
+
+    /** Pinch radius: melee enemies this close (tiles) close the pocket. */
+    public double getDragoonPinchMeleeTiles() {
+        return dragoonPinchMeleeTiles;
     }
 
     /** A reposition keeps riding this long before the attack re-arms (frames). */
@@ -383,6 +404,24 @@ public final class CombatTuning {
     public CombatTuning withDragoonSurroundedStandDistTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonSurroundedStandDistTiles = value;
+        return copy;
+    }
+
+    public CombatTuning withDragoonPinchHp(int value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.dragoonPinchHp = value;
+        return copy;
+    }
+
+    public CombatTuning withDragoonPinchMeleeCount(int value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.dragoonPinchMeleeCount = value;
+        return copy;
+    }
+
+    public CombatTuning withDragoonPinchMeleeTiles(double value) {
+        CombatTuning copy = new CombatTuning(this);
+        copy.dragoonPinchMeleeTiles = value;
         return copy;
     }
 

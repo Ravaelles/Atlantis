@@ -634,6 +634,17 @@ public class BattleCommander extends Commander {
         if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
         if (unit.isDragoon()) {
             boolean lowHp = unit.hp() + unit.shields() < tuning().getDragoonLowHp();
+            // Pinch retreat (owner): two or more melee enemies inside 2
+            // tiles on a hurt Dragoon (hp + shields < 80) means the pocket
+            // is closing - yield ground instead of standing into it.
+            // Overrides the surrounded-stand below: standing trades only
+            // when escape already failed, never while steps still open.
+            // A step that finds nothing still falls through to the
+            // glue/corner trading below, so a fully pinched Dragoon
+            // shoots instead of idling.
+            if (unit.hp() + unit.shields() < tuning().getDragoonPinchHp()
+                && unit.enemiesNear().melee().inRadius(tuning().getDragoonPinchMeleeTiles(), unit).size()
+                    >= tuning().getDragoonPinchMeleeCount()) return true;
             // Surrounded: three or more melee enemies on top of the Dragoon
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost

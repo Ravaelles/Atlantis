@@ -34,6 +34,9 @@ public class TweakerDefaultsTest {
         assertEquals(0.5, defaults.getKiteGlideDeadbandTiles());
         assertEquals(30, defaults.getKiteRideFrames());
         assertEquals(0.3, defaults.getKiteMinStepGainTiles());
+        assertEquals(80, defaults.getDragoonPinchHp());
+        assertEquals(2, defaults.getDragoonPinchMeleeCount());
+        assertEquals(2.0, defaults.getDragoonPinchMeleeTiles());
     }
 
     @Test

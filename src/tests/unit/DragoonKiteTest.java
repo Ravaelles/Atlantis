@@ -52,6 +52,38 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void pinchedHurtDragoonRetreatsInsteadOfStanding() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.setHp(70);
+        dragoon.setShields(0);
+        dragoon.cooldown = 3;
+        FakeUnit lingA = fake(AUnitType.Zerg_Zergling, 31, 20);
+        FakeUnit lingB = fake(AUnitType.Zerg_Zergling, 29, 20);
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB), () -> {
+            assertTrue(BattleCommander.shouldKite(dragoon, lingA),
+                "hp 70 with two melee inside 2 tiles: the pocket is closing, "
+                + "yield ground instead of standing into it - even with the shot ready");
+        });
+    }
+
+    @Test
+    public void loneHarasserDoesNotTriggerPinch() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        dragoon.setHp(70);
+        dragoon.setShields(0);
+        dragoon.cooldown = 3;
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 31, 20);
+        FakeUnit far = fake(AUnitType.Zerg_Zergling, 60, 20);
+
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(ling, far), () -> {
+            assertFalse(BattleCommander.shouldKite(dragoon, far),
+                "one melee inside 2 tiles is harassment, not a pinch - "
+                + "the far threat reads through the normal margin");
+        });
+    }
+
+    @Test
     public void gluedDragoonStepsBack() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 30, 20);
