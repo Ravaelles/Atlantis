@@ -11,6 +11,11 @@
 # `bash scripts/build-bot-jar.sh` and nobody has to remember the path. Passing a
 # path still works exactly as before.
 #
+# The script skips the build when the target jar already matches the working
+# tree (source fingerprint plus build-inputs tag carried in the jar) - so
+# repeated launches pay javac only after a real change. BUILD_FORCE=1 forces
+# a rebuild regardless.
+#
 # Why this script exists instead of hand-rolled zip commands (each invariant
 # below broke a game run in the past):
 #   1. Every source must be compiled (a stale file list once skipped new
@@ -169,6 +174,29 @@ find src -name "*.java" \
 SOURCE_FINGERPRINT="$(while read -r f; do printf '%s ' "$f"; md5sum "$f" | cut -d' ' -f1; done < "$WORK/sources.txt" | md5sum | cut -d' ' -f1)"
 echo "[build-bot-jar] source fingerprint: $SOURCE_FINGERPRINT"
 
+# Skip the build when the existing jar already matches: javac over ~1400
+# sources dominates launch time, and an unchanged tree rebuilds a
+# byte-different but behavior-identical jar. The skip is exact, not a
+# timestamp heuristic: sources (path + content) plus the build inputs that
+# change the payload (fat/thin mode, the BWAPI jar choice, every runtime and
+# override lib by name+size+mtime). Jars built before the inputs tag existed
+# rebuild exactly once, then skip. BUILD_FORCE=1 forces a rebuild.
+BUILD_INPUTS="$(printf 'mode=%s\nbwapi=%s\n' "$MODE" "$BWAPI_JAR"; ls -l --full-iso "${RUNTIME_LIBS[@]}" "${OVERRIDE_LIBS[@]}" 2>/dev/null || true)"
+BUILD_INPUTS_SIG="$(printf '%s' "$BUILD_INPUTS" | md5sum | cut -d' ' -f1)"
+if [ "${BUILD_FORCE:-0}" != "1" ] && [ -f "$OUT_JAR" ]; then
+    TAGGED_FP="$(unzip -p "$OUT_JAR" ATLANTIS_SOURCE_FINGERPRINT 2>/dev/null | tr -d '[:space:]' || true)"
+    TAGGED_IN="$(unzip -p "$OUT_JAR" ATLANTIS_BUILD_INPUTS 2>/dev/null | tr -d '[:space:]' || true)"
+    if [ -n "$TAGGED_FP" ] && [ "$TAGGED_FP" = "$SOURCE_FINGERPRINT" ] \
+        && [ -n "$TAGGED_IN" ] && [ "$TAGGED_IN" = "$BUILD_INPUTS_SIG" ]; then
+        echo "[build-bot-jar] fresh: $OUT_JAR already matches the working tree ($SOURCE_FINGERPRINT) - skipping build (BUILD_FORCE=1 to force)"
+        exit 0
+    fi
+    if [ -z "$TAGGED_IN" ]; then
+        echo "[build-bot-jar] $OUT_JAR predates the inputs tag - rebuilding once, then it skips"
+    fi
+fi
+export ATLANTIS_BUILD_INPUTS="$BUILD_INPUTS_SIG"
+
 CP="$(find lib -path '*lib-unused*' -prune -o -name '*.jar' -print | tr '\n' ':')"
 mkdir -p "$WORK/classes"
 # Fail loudly instead of shipping a franken-jar.
@@ -285,6 +313,12 @@ with zipfile.ZipFile(out_jar, 'w', zipfile.ZIP_DEFLATED) as zout:
     #   unzip -p <jar> ATLANTIS_SOURCE_FINGERPRINT
     # scripts/check-jar-freshness.sh compares it against the working tree.
     zout.writestr('ATLANTIS_SOURCE_FINGERPRINT', fingerprint + '\n')
+    # The build inputs behind the payload (mode, BWAPI choice, lib versions):
+    # scripts/build-bot-jar.sh skips the rebuild when both tags match, so an
+    # unchanged tree launches without paying javac again. Old jars lack this
+    # entry and rebuild exactly once. Read from the environment, never from
+    # argv - it is metadata, not payload.
+    zout.writestr('ATLANTIS_BUILD_INPUTS', os.environ.get('ATLANTIS_BUILD_INPUTS', '') + '\n')
     entries = dict(ours)
     if mode == 'fat':
         # the BWAPI jar whole (bwapi/, bwem/, JNA, natives), but without overwriting
