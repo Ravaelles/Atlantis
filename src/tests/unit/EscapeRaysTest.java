@@ -47,4 +47,11 @@ public class EscapeRaysTest {
 
         for (double c : clear) assertEquals(0.0, c, 0.001);
     }
+
+    @Test
+    public void largeUnitsNeedWideCorridors() {
+        assertTrue(EscapeRays.passable(1, false), "small slips through one tile");
+        assertTrue(EscapeRays.passable(1, true) == false, "large wedges in one tile");
+        assertTrue(EscapeRays.passable(2, true), "large turns in two tiles");
+    }
 }

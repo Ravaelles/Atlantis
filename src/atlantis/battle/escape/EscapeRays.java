@@ -23,6 +23,19 @@ public final class EscapeRays {
         { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 },
     };
 
+    /** Corridor a large unit (Dragoon body 31px) still turns in. */
+    public static final int WIDE_CORRIDOR_TILES = 2;
+
+    /**
+     * Whether a ray of this clearance fits the unit: small and medium
+     * slip through single tiles, large units need a two-tile corridor
+     * (their body plus turn room - measured: Dragoons die in gaps
+     * Zealots walk through).
+     */
+    public static boolean passable(double clearTiles, boolean needsWide) {
+        return clearTiles >= (needsWide ? WIDE_CORRIDOR_TILES : 1);
+    }
+
     /**
      * Walkable tiles per direction, capped at maxTiles. A ray blocked
      * immediately reads 0; open ground reads maxTiles on all eight.
