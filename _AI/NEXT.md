@@ -1029,6 +1029,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   verbatim restore: the old mover/canvas/demo stay in history
   (their jobs live in current harness); the missing combat half +
   arena + accel/brake/turn are new, test-scope only.
+- **#162** Formation coordination on the sim (make-way + cover, the
+  wounded-first-rank case). Contract: a withdrawing wounded unit
+  (pinch-yielding Dragoon - exact pinch semantics reused, no new
+  knobs) publishes its escape ray; a healthy unit blocking that
+  corridor steps laterally one step and resumes (gated: 3+ army
+  units so duels stay frozen, urgent only - escaper within 1.5
+  tiles); a healthy unit with no immediate threat (2-tile envelope,
+  not the kite envelope - deliberately) covers the pursuer instead
+  of its nearest (fills the uncommitted gap after FocusFire;
+  pursue-validity is NOT focus-validity: lings are covered, focus
+  would never pick them). LANDED 2026-10-20 (`CoverWithdraw` + 2
+  act() insertions, 5 sim tests: corridor selection + duel gate,
+  pass-through with the trigger firing live, cover selection over
+  a nearer ling, live cover fight; suite 1017/1017 fast, strict
+  arch 5/7 unchanged, game jar builds clean). Twins ride the live
+  UMS proof, not this slice.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

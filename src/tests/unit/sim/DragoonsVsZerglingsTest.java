@@ -2,6 +2,7 @@ package tests.unit.sim;
 
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
 import java.util.List;
@@ -99,6 +100,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 "dragoon must gain ground from the pocket, fled only " + fledPx + "px");
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
                 "kite must issue move steps, not hold-and-shoot: " + ordersOf(dragoon));
+            assertTrue(world.shotsFired() > 0,
+                "a kite that never shoots is just running - trade while yielding");
         }
         finally {
             world.close();
@@ -151,6 +154,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     "threat gone because it died - the fight must have happened");
             }
             else {
+                assertTrue(world.shotsFired() > 0,
+                    "withdrawing without shooting is just running - trade while yielding");
                 assertTrue(centroidX(dragoons) < startCentroidX - TILE,
                     "with live lings pressing, the group must yield ground west");
             }
@@ -202,6 +207,179 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     }
 
     // =========================================================
+    // T4a-b + T5a-b: formation coordination (NEXT #162). Wounded
+    // first rank withdraws, the line helps: make-way opens the
+    // corridor, cover takes the pursuer instead of the nearest.
+    // =========================================================
+
+    @Test
+    public void makeWayStepClearsBlockedCorridor() {
+        FakeUnit escaper = woundedDragoon(34, 20, 30);
+        FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 36, 20);
+        pursuer.setEnemy();
+        FakeUnit helper = fake(AUnitType.Protoss_Dragoon, 32.7, 20);
+        FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[] { escaper, helper, third },
+            new FakeUnit[] { pursuer }, arena);
+        try {
+            atlantis.battle.BattleCommander.clearForTests();
+
+            atlantis.map.position.APosition step =
+                atlantis.battle.formation.CoverWithdraw.makeWayStep(helper);
+            assertTrue(step != null,
+                "helper stands on the escape ray: it must step aside");
+            assertTrue(Math.abs(step.y() - helper.position.y()) > 1,
+                "the step is lateral (off the ray), not along it");
+
+            assertTrue(atlantis.battle.formation.CoverWithdraw.makeWayStep(third) == null,
+                "far from the corridor: no step, fight on unchanged");
+        }
+        finally {
+            world.close();
+            atlantis.battle.BattleCommander.clearForTests();
+        }
+    }
+
+    @Test
+    public void makeWayStepStaysOutOfDuels() {
+        FakeUnit escaper = woundedDragoon(34, 20, 30);
+        FakeUnit helper = fake(AUnitType.Protoss_Dragoon, 32.7, 20);
+        FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 36, 20);
+        pursuer.setEnemy();
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[] { escaper, helper },
+            new FakeUnit[] { pursuer }, arena);
+        try {
+            atlantis.battle.BattleCommander.clearForTests();
+            assertTrue(atlantis.battle.formation.CoverWithdraw.makeWayStep(helper) == null,
+                "two units is a duel: frozen per-unit behavior, no sharing");
+        }
+        finally {
+            world.close();
+            atlantis.battle.BattleCommander.clearForTests();
+        }
+    }
+
+    @Test
+    public void woundedPassesThroughItsOwnLine() {
+        FakeUnit wounded = woundedDragoon(34, 20, 30);
+        FakeUnit holderA = fake(AUnitType.Protoss_Dragoon, 33, 20);
+        FakeUnit holderB = fake(AUnitType.Protoss_Dragoon, 33, 21);
+        FakeUnit[] ours = new FakeUnit[] { wounded, holderA, holderB };
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][] { { 36, 19 }, { 36, 21 }, { 37, 20 },
+                { 37, 19 }, { 35, 22 }, { 35, 18 } }) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(ours, lings.toArray(new FakeUnit[0]), arena);
+        final boolean[] sawMakeWay = new boolean[] { false };
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 300; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : ours) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, wounded, holderA, holderB);
+                    if (atlantis.battle.formation.CoverWithdraw.makeWayStep(holderA) != null
+                        || atlantis.battle.formation.CoverWithdraw.makeWayStep(holderB) != null) {
+                        sawMakeWay[0] = true;
+                    }
+                });
+                if (wounded.hp <= 0) break;
+            }
+
+            assertTrue(wounded.hp > 0, "the withdrawing dragoon must live");
+            assertTrue(wounded.position.x() < 32 * TILE,
+                "it passes west through its own line, not wedged on it");
+            assertTrue(sawMakeWay[0],
+                "the corridor trigger fired live: a holder stood on the escape ray");
+        }
+        finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    @Test
+    public void coverTakesPursuerInsteadOfNearest() {
+        FakeUnit wounded = woundedDragoon(32, 20, 30);
+        FakeUnit healthy = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
+        FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 33, 20);
+        pursuer.setEnemy();
+        FakeUnit distractor = fake(AUnitType.Zerg_Zergling, 27.5, 20);
+        distractor.setEnemy();
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[] { wounded, healthy, third },
+            new FakeUnit[] { pursuer, distractor }, arena);
+        try {
+            BattleCommander.clearForTests();
+
+            AUnit picked = atlantis.battle.formation.CoverWithdraw.coverTarget(healthy);
+            assertTrue(picked == pursuer,
+                "cover names the pursuer chewing the wounded, not the nearer ling");
+        }
+        finally {
+            world.close();
+            BattleCommander.clearForTests();
+        }
+    }
+
+    @Test
+    public void healthyCoversPursuerInLiveFight() {
+        FakeUnit wounded = woundedDragoon(32, 20, 30);
+        FakeUnit healthy = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
+        FakeUnit[] ours = new FakeUnit[] { wounded, healthy, third };
+        FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 33, 20);
+        pursuer.setEnemy();
+        FakeUnit distractor = fake(AUnitType.Zerg_Zergling, 27.5, 20);
+        distractor.setEnemy();
+        FakeUnit[] foes = new FakeUnit[] { pursuer, distractor };
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(ours, foes, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 250; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : ours) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(java.util.Arrays.asList(pursuer), wounded);
+                    scriptLings(java.util.Arrays.asList(distractor), healthy);
+                });
+                if (wounded.hp <= 0) break;
+            }
+
+            assertTrue(wounded.hp > 0, "covered withdrawal keeps the wounded alive");
+            assertTrue(hasOrder(ordersOf(healthy), healthy.id(), "attackUnit"),
+                "healthy issues attack orders, not idle watching");
+        }
+        finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
     // Helpers.
     // =========================================================
 
@@ -231,7 +409,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 ling.lastCommand = "Stop";
                 continue;
             }
-            if (best <= ling.weaponRangeAgainst(nearest) * 32.0) {
+            if (best <= ling.weaponRangeAgainst(nearest)) {
                 ling.lastCommand = "AttackUnit";
                 ling.target = nearest;
                 ling.targetPosition = nearest.position;

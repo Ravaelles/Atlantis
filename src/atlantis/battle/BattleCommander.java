@@ -23,6 +23,7 @@ import atlantis.battle.cluster.Alpha;
 
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
+import atlantis.battle.formation.CoverWithdraw;
 import atlantis.battle.formation.FocusFire;
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.formation.SharedEscape;
@@ -182,6 +183,9 @@ public class BattleCommander extends Commander {
             target = FocusFire.sharedTarget(unit, 9);
         }
         if (target == null) {
+            target = CoverWithdraw.coverTarget(unit);
+        }
+        if (target == null) {
             target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
         }
         if (target == null) {
@@ -214,6 +218,20 @@ public class BattleCommander extends Commander {
             FightTrace.sample(unit, threat != null ? threat : target);
             int now = A.now();
             Integer lastStep = lastStepFrame.get(unit.id());
+            // Corridor clearing (#162): a healthy unit standing in a
+            // withdrawing ally's escape ray steps laterally and resumes
+            // next frame. Urgent-only (escaper within 1.5 tiles), gated
+            // to 3+ army units so duels stay frozen, cadence-kept like
+            // every step (reposition rides, re-issues at most every
+            // 10f). No twin this slice - twins ride the live UMS proof.
+            APosition aside = CoverWithdraw.makeWayStep(unit);
+            if (aside != null
+                && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
+                && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
+                lastStepFrame.put(unit.id(), now);
+                lastRepositionFrame.put(unit.id(), now);
+                return;
+            }
             if (threat != null && Kite.shouldKite(unit, threat)) {
                 // Frozen: steps keep issuing but the unit never moves -
                 // the order queue is wedged (the vanilla engine bug both

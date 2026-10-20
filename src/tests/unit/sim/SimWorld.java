@@ -172,8 +172,7 @@ public class SimWorld {
             return toward(unit, unit.targetPosition.x(), unit.targetPosition.y(), topSpeed(unit));
         }
         if ("AttackUnit".equals(order) && unit.target != null && unit.target.isAlive()) {
-            double rangePx = unit.weaponRangeAgainst(unit.target) * 32.0;
-            if (unit.distTo(unit.target) <= rangePx) return null;
+            if (unit.distTo(unit.target) <= unit.weaponRangeAgainst(unit.target)) return null;
             return toward(unit, unit.target.position.x(), unit.target.position.y(), topSpeed(unit));
         }
         if ("AttackUnit".equals(order) && unit.targetPosition != null) {
