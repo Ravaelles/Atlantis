@@ -1149,6 +1149,26 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   7th_rav proof, per-gate proofs); (f) commit permission for
   `docs/` + other-model scripts (until then: review only).
   Optional `IDEAS.md` only if the ideas list outgrows NEXT.
+- **#169** Kite off while cooling vs melee (owner 2026-10-20, Wine 1v1:
+  WIN but 10 hits taken, target <2): while the weapon cools, step off
+  every melee threat to `range - 0.4` tiles, unless the threat shows its
+  back (flees - then chase, never yield ground to a runner). Only when
+  no shot is lost by stepping (cooldown would idle anyway). First
+  suspected gap: desired distance vs the ride/step cadence - measure in
+  the sim (1v1 dragoon vs zealot, hits taken), then Wine proof.
+- **#170** Choke-point battle doctrine + SquadScout (owner 2026-10-20,
+  highest priority): never push a narrow choke into a nearby enemy
+  without crushing superiority; on defense wait as long as possible;
+  stand ~10 tiles off the choke center (unseen, in range to collapse)
+  so the enemy commits into the funnel and dies retreating. SquadScout:
+  detach one unit as bait - outside the formation - to pull the enemy
+  into the funnel while the line stands formed (works on open ground
+  too: formed line shoots first). Architecture: `BattleStrategy`
+  decider (one class: WHICH approach, from the detected setup) +
+  one class per approach (concrete decisions, no shared knobs);
+  strategies plug per detected setup (choke near? outnumbered?
+  duel?). First slice: the decider + standoff/hold-vs-push choice;
+  bait and collapse ride later slices, each with sim + game proof.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

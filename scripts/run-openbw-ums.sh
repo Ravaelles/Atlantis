@@ -40,6 +40,10 @@ TIMEOUT_SECONDS=30
 INGAME_TIME=$((60 * 20))
 HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
 BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 10 ))
+# -k on both timeouts: without kill-escalation a TERM-ignoring JVM (or a
+# wedged launcher child) hangs `wait` forever and the only verdict is the
+# outer 180 s timeout blaming the engine (measured 2026-10-20: --game on
+# 1Drag hit the outer cap while every inner cap is 30 s or less).
 
 say() { echo "[openbw-ums] $*"; }
 fail() { echo "[openbw-ums] FATAL: $*" >&2; exit 1; }
@@ -165,7 +169,7 @@ fi
 say "hosting UMS game: map=$MAP (USE_MAP_SETTINGS, scenario owns the setup)"
 setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
   BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS \
-  timeout "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" Protoss Zerg \
+  timeout -k 5 "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" Protoss Zerg \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!
 
@@ -202,7 +206,7 @@ SECONDS=0
 say "starting bot (GAME_LAUNCHER=OPENBW)"
 cd "$BOT_ROOT"
 BOT_EXIT=0
-timeout "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>"$DEBUG_LOG" &
+timeout -k 5 "$BOT_KILL_SECONDS" java -jar "$BOT_RUN_DIR/Atlantis.jar" "--map=$MAP" >"$BOT_LOG" 2>"$DEBUG_LOG" &
 BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 say "bot finished, took ${SECONDS}s, exit code: $BOT_EXIT"
