@@ -56,6 +56,23 @@ public final class CombatTuning {
     private CombatTuning() {
     }
 
+    private static volatile CombatTuning current = CombatTuning.defaults();
+
+    /** The live snapshot; the tuner replaces it per game. */
+    public static CombatTuning current() {
+        return current;
+    }
+
+    /** Installs a derived snapshot - the tuner's only write path. */
+    public static void install(CombatTuning next) {
+        if (next != null) current = next;
+    }
+
+    /** Per-game reset next to the other static resets. */
+    public static void resetToDefaults() {
+        current = CombatTuning.defaults();
+    }
+
     private CombatTuning(CombatTuning other) {
         kiteEnemyTiles = other.kiteEnemyTiles;
         kiteGlueTiles = other.kiteGlueTiles;

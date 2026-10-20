@@ -43,13 +43,13 @@ public class TweakerDefaultsTest {
     public void holderStartsAtDefaultsAndResetRestoresThem() {
         BattleCommander.clearForTests();
 
-        assertEquals(5.0, BattleCommander.tuning().getKiteEnemyTiles());
+        assertEquals(5.0, CombatTuning.current().getKiteEnemyTiles());
 
-        BattleCommander.installTuning(BattleCommander.tuning().withKiteEnemyTiles(4.2));
-        assertEquals(4.2, BattleCommander.tuning().getKiteEnemyTiles());
+        CombatTuning.install(CombatTuning.current().withKiteEnemyTiles(4.2));
+        assertEquals(4.2, CombatTuning.current().getKiteEnemyTiles());
 
         BattleCommander.reset();
-        assertEquals(5.0, BattleCommander.tuning().getKiteEnemyTiles(),
+        assertEquals(5.0, CombatTuning.current().getKiteEnemyTiles(),
                 "per-game reset restores defaults before the tuner installs its snapshot");
     }
 
@@ -67,10 +67,10 @@ public class TweakerDefaultsTest {
     @Test
     public void installIgnoresNull() {
         BattleCommander.clearForTests();
-        CombatTuning before = BattleCommander.tuning();
+        CombatTuning before = CombatTuning.current();
 
-        BattleCommander.installTuning(null);
+        CombatTuning.install(null);
 
-        assertSame(before, BattleCommander.tuning(), "a null install must not clear the holder");
+        assertSame(before, CombatTuning.current(), "a null install must not clear the holder");
     }
 }

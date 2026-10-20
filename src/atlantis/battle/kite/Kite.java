@@ -37,10 +37,10 @@ public final class Kite {
         double tilesPerFrame = unit.maxSpeed() / 32.0;
         double cooldownDistance = Math.max(0.0, unit.cooldown() - attackLatencyFrames() - 2) * tilesPerFrame;
         double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
-        if (targetRange <= myRange - BattleCommander.tuning().getKiteMeleeEdgeTiles()) {
-            double hitsLeft = (unit.hp() + unit.shields()) / BattleCommander.tuning().getKiteZealotPassDamage();
-            double closer = hitsLeft <= BattleCommander.tuning().getKiteWoundedHitsLeft()
-                ? BattleCommander.tuning().getKiteWoundedEdgeInsetTiles() : BattleCommander.tuning().getKiteMeleeCloserTiles();
+        if (targetRange <= myRange - CombatTuning.current().getKiteMeleeEdgeTiles()) {
+            double hitsLeft = (unit.hp() + unit.shields()) / CombatTuning.current().getKiteZealotPassDamage();
+            double closer = hitsLeft <= CombatTuning.current().getKiteWoundedHitsLeft()
+                ? CombatTuning.current().getKiteWoundedEdgeInsetTiles() : CombatTuning.current().getKiteMeleeCloserTiles();
             desired -= closer;
         }
         return Math.max(0.0, desired);
@@ -64,7 +64,7 @@ public final class Kite {
         // of cooldown left a step back costs no DPS (owner direction).
         if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
         if (unit.isDragoon()) {
-            boolean lowHp = unit.hp() + unit.shields() < BattleCommander.tuning().getDragoonLowHp();
+            boolean lowHp = unit.hp() + unit.shields() < CombatTuning.current().getDragoonLowHp();
             // Pinch retreat (owner): two or more melee enemies inside 2
             // tiles on a hurt Dragoon (hp + shields < 80) means the pocket
             // is closing - yield ground instead of standing into it.
@@ -73,31 +73,31 @@ public final class Kite {
             // A step that finds nothing still falls through to the
             // glue/corner trading below, so a fully pinched Dragoon
             // shoots instead of idling.
-            if (unit.hp() + unit.shields() < BattleCommander.tuning().getDragoonPinchHp()
-                && unit.enemiesNear().melee().inRadius(BattleCommander.tuning().getDragoonPinchMeleeTiles(), unit).size()
-                    >= BattleCommander.tuning().getDragoonPinchMeleeCount()) return true;
+            if (unit.hp() + unit.shields() < CombatTuning.current().getDragoonPinchHp()
+                && unit.enemiesNear().melee().inRadius(CombatTuning.current().getDragoonPinchMeleeTiles(), unit).size()
+                    >= CombatTuning.current().getDragoonPinchMeleeCount()) return true;
             // Surrounded: three or more melee enemies on top of the Dragoon
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost
             // ready or the nearest enemy is far enough to trade with.
-            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= BattleCommander.tuning().getDragoonSurroundedMeleeCount()
-                && (unit.cooldown() <= BattleCommander.tuning().getDragoonSurroundedStandCooldown()
-                    || unit.distTo(threat) >= BattleCommander.tuning().getDragoonSurroundedStandDistTiles())) return false;
+            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= CombatTuning.current().getDragoonSurroundedMeleeCount()
+                && (unit.cooldown() <= CombatTuning.current().getDragoonSurroundedStandCooldown()
+                    || unit.distTo(threat) >= CombatTuning.current().getDragoonSurroundedStandDistTiles())) return false;
             // Low-HP Dragoon holds fire unless the shot is safe: at least
             // 3.2 tiles of room or an imminent weapon (owner, converging
             // with Stardust: cooldown <= latency + 2 attacks instead of
             // stepping). Below half health the threatened step would only
             // delay the one shot that still matters.
-            if (lowHp && unit.cooldown() <= BattleCommander.tuning().getDragoonLowHpFireCooldown()) return false;
+            if (lowHp && unit.cooldown() <= CombatTuning.current().getDragoonLowHpFireCooldown()) return false;
             // ...otherwise it yields ground early: holding fire means
             // stepping, never standing through the cooldown. Robust to
             // margin tuning - the margin gate alone already kites here at
             // default constants, this keeps it true whatever they become.
             if (lowHp
-                && unit.distTo(threat) < BattleCommander.tuning().getDragoonLowHpHoldTiles()
-                && unit.cooldown() > BattleCommander.tuning().getDragoonLowHpFireCooldown()) return true;
+                && unit.distTo(threat) < CombatTuning.current().getDragoonLowHpHoldTiles()
+                && unit.cooldown() > CombatTuning.current().getDragoonLowHpFireCooldown()) return true;
         }
-        if (unit.distTo(threat) >= BattleCommander.tuning().getKiteEnemyTiles()) return false;
+        if (unit.distTo(threat) >= CombatTuning.current().getKiteEnemyTiles()) return false;
         return kiteMargin(unit, threat) < kiteMarginRequired(unit);
     }
     /**
@@ -111,8 +111,8 @@ public final class Kite {
      */
     private static double kiteMargin(AUnit unit, AUnit threat) {
         double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
-        if (isHuntedBy(unit, threat)) margin -= BattleCommander.tuning().getKiteHuntedTiles();
-        if (unit.isOtherFacingThisUnit(threat)) margin -= BattleCommander.tuning().getKiteFacedTiles();
+        if (isHuntedBy(unit, threat)) margin -= CombatTuning.current().getKiteHuntedTiles();
+        if (unit.isOtherFacingThisUnit(threat)) margin -= CombatTuning.current().getKiteFacedTiles();
         return margin;
     }
     /**
@@ -135,8 +135,8 @@ public final class Kite {
     }
 
     private static double kiteMarginRequired(AUnit unit) {
-        double hitsLeft = (unit.hp() + unit.shields()) / BattleCommander.tuning().getKiteZealotPassDamage();
-        return Math.max(BattleCommander.tuning().getKiteMarginBaseTiles(),
-            BattleCommander.tuning().getKiteMarginDyingTiles() - BattleCommander.tuning().getKiteMarginPerHitTiles() * hitsLeft);
+        double hitsLeft = (unit.hp() + unit.shields()) / CombatTuning.current().getKiteZealotPassDamage();
+        return Math.max(CombatTuning.current().getKiteMarginBaseTiles(),
+            CombatTuning.current().getKiteMarginDyingTiles() - CombatTuning.current().getKiteMarginPerHitTiles() * hitsLeft);
     }
 }

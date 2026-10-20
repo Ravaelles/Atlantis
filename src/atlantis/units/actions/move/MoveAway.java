@@ -1,5 +1,7 @@
 package atlantis.units.actions.move;
 
+import atlantis.battle.kite.CombatTuning;
+
 import atlantis.battle.running.IsReasonablePositionToRunTo;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
@@ -64,7 +66,7 @@ public class MoveAway {
 
         double now = unit.distTo(from);
         for (APosition dest : valid) {
-            if (dest.distTo(from) - now < atlantis.battle.BattleCommander.tuning().getKiteMinStepGainTiles()) {
+            if (dest.distTo(from) - now < CombatTuning.current().getKiteMinStepGainTiles()) {
                 return null;
             }
             return dest;

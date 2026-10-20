@@ -44,28 +44,10 @@ public class BattleCommander extends Commander {
 
     private static int fleeStartedAt = -1;
 
-    /**
-     * The live combat coefficients (NEXT #158): one immutable snapshot,
-     * replaced per game by the tuner, reset to defaults with the game.
-     * Domain code reads but never owns it; the values and their
-     * rationale live in {@link CombatTuning}.
-     */
-    private static volatile CombatTuning tuning = CombatTuning.defaults();
-
-    /** The current combat coefficients; the tuner replaces these per game. */
-    public static CombatTuning tuning() {
-        return tuning;
-    }
-
-    /** Installs a derived snapshot - the tuner's only write path. */
-    public static void installTuning(CombatTuning next) {
-        if (next != null) tuning = next;
-    }
-
     /** Per-game reset next to the other static resets in OnGameStarted. */
     public static void reset() {
         fleeStartedAt = -1;
-        tuning = CombatTuning.defaults();
+        CombatTuning.resetToDefaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
@@ -161,7 +143,7 @@ public class BattleCommander extends Commander {
      * in a stub state without running the frame.
      */
     public static boolean earlyUmsStandGround() {
-        return atlantis.game.A.isUms() && atlantis.game.A.now() < tuning().getUmsNoRetreatFrames();
+        return atlantis.game.A.isUms() && atlantis.game.A.now() < CombatTuning.current().getUmsNoRetreatFrames();
     }
 
     /**
@@ -174,9 +156,9 @@ public class BattleCommander extends Commander {
     public static HasPosition regroupRallyPoint(AUnit unit) {
         if (unit == null || !unit.isAlive()) return null;
         AUnit threat = atlantis.battle.targeting.ASquadTargeting
-            .nearestEngageableEnemy(unit, tuning().getRegroupThreatTiles());
+            .nearestEngageableEnemy(unit, CombatTuning.current().getRegroupThreatTiles());
         if (threat == null) return null;
-        return MoveAway.bestDestination(unit, threat, tuning().getRegroupRallyTiles());
+        return MoveAway.bestDestination(unit, threat, CombatTuning.current().getRegroupRallyTiles());
     }
 
     /**
@@ -217,7 +199,7 @@ public class BattleCommander extends Commander {
         AUnit current = unit.target();
         if (current == null || !current.isAlive()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
-        if (unit.distTo(current) > unit.groundWeaponRange() + tuning().getKiteStickyChaseTiles()) return null;
+        if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
         return current;
     }
 
@@ -294,7 +276,7 @@ public class BattleCommander extends Commander {
                     // to the per-unit sampling, unchanged.
                     home = SharedEscape.rallyFor(
                         unit, leader, Alpha.get().selection(),
-                        tuning().getRegroupRallyTiles(), tuning().getRegroupThreatTiles());
+                        CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
                     if (home == null) home = regroupRallyPoint(unit);
                 }
                 HasPosition point = gatherPointFor(unit, leader, home);
@@ -315,7 +297,7 @@ public class BattleCommander extends Commander {
         // Mid-swing it waits one frame like every other move here: cancelling
         // the shot to flee is the same bug as cancelling it to kite.
         if (breachForcesFight() && !unit.isAttackFrame() && !unit.isStartingAttack()
-            && unit.hp() <= tuning().getBreachRetreatHp() && unit.cooldown() >= tuning().getBreachRetreatCooldown()) {
+            && unit.hp() <= CombatTuning.current().getBreachRetreatHp() && unit.cooldown() >= CombatTuning.current().getBreachRetreatCooldown()) {
             HasPosition rally = breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
                 unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
@@ -360,7 +342,7 @@ public class BattleCommander extends Commander {
             // the focused target: focus fire must not pin a Dragoon that
             // is being shredded).
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
-                .nearestEngageableEnemy(unit, tuning().getKiteEnemyTiles());
+                .nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
             HitTwin.sample(unit, threat != null ? threat : target);
             FightTrace.sample(unit, threat != null ? threat : target);
             int now = A.now();
@@ -407,9 +389,9 @@ public class BattleCommander extends Commander {
                 // a step cannot dodge damage that is locked in, but our
                 // ready shot still lands (symmetric animation discipline).
                 boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
-                boolean glued = unit.distTo(threat) < tuning().getKiteGlueTiles() && unit.cooldown() == 0;
+                boolean glued = unit.distTo(threat) < CombatTuning.current().getKiteGlueTiles() && unit.cooldown() == 0;
                 boolean tradeShot = unit.cooldown() == 0 && (glued || swingIncoming);
-                if (!tradeShot && (lastStep == null || now - lastStep >= tuning().getKiteRestepsEveryFrames())) {
+                if (!tradeShot && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
                     // Stardust desired distance: step exactly the gap to the
                     // hold point (capped at one full step), never a blind
                     // shove past the firing position - stepping 2.0 tiles
@@ -417,7 +399,7 @@ public class BattleCommander extends Commander {
                     // the glide then donates the walk back. That overshoot
                     // is the measured "ucieka za daleko" shape; holding at
                     // the formula's point keeps shooting instead.
-                    double stepLen = Math.min(tuning().getKiteStepTiles(),
+                    double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
                         Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
                     APosition dest = stepLen > 0
                         ? MoveAway.bestDestination(unit, threat, stepLen)
@@ -445,15 +427,15 @@ public class BattleCommander extends Commander {
             // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
             // 156 attack orders, zero shots landed). The attack issues on
             // arrival, when the target is actually in range.
-            double standOff = unit.groundWeaponRange() - tuning().getKiteStandoffInsetTiles();
+            double standOff = unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
             if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
                 APosition fireAt = null;
-                if (unit.distTo(target) > standOff + tuning().getKiteGlideDeadbandTiles()
-                    && (lastStep == null || now - lastStep >= tuning().getKiteRestepsEveryFrames())) {
+                if (unit.distTo(target) > standOff + CombatTuning.current().getKiteGlideDeadbandTiles()
+                    && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
                     fireAt = target.position()
                         .translateTilesTowards(unit, unit.distTo(target) - standOff);
                     if (fireAt != null
-                        && unit.distTo(fireAt) > tuning().getKiteGlideDeadbandTiles()
+                        && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
                         && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
                         lastStepFrame.put(unit.id(), now);
                         lastRepositionFrame.put(unit.id(), now);
@@ -483,7 +465,7 @@ public class BattleCommander extends Commander {
             // The kite branch above still preempts for new threats, and
             // a finished glide re-arms via the attack check below.
             if (unit.cooldown() > 0
-                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < tuning().getKiteRideFrames()) return;
+                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < CombatTuning.current().getKiteRideFrames()) return;
             // Order discipline, not order spam: a new attack order issues
             // only when the engine holds a different target (first
             // acquisition, lost order while moving, target switch).
@@ -589,7 +571,7 @@ public class BattleCommander extends Commander {
                 atlantis.map.choke.Chokes.mainChoke();
             if (choke == null || choke.center() == null) return ClusterAnchor.defendAnchor();
             APosition point = main.position()
-                .translateTilesTowards(tuning().getBreachRallyTiles(), choke.center());
+                .translateTilesTowards(CombatTuning.current().getBreachRallyTiles(), choke.center());
             if (point == null) return ClusterAnchor.defendAnchor();
             return point;
         }
@@ -619,8 +601,7 @@ public class BattleCommander extends Commander {
 
     /**
      * Kiting rules. The coefficients used to live here as public mutable
-     * statics; they moved to {@link CombatTuning} (NEXT #158) and are read
-     * through {@link #tuning()} below.
+     * statics; they moved to {@link CombatTuning} (NEXT #158).
      */
 
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
@@ -629,7 +610,7 @@ public class BattleCommander extends Commander {
     private static final java.util.Map<Integer, APosition> lastMovedPos = new java.util.HashMap<>();
 
     public static void clearForTests() {
-        tuning = CombatTuning.defaults();
+        CombatTuning.resetToDefaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
