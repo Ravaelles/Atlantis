@@ -161,4 +161,13 @@ public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
             }
         });
     }
+
+    @Test
+    public void stubWorldReportsFallbackLatency() {
+        world(FRAME, fakeOurs(worldUnits()), fakeEnemies(new FakeUnit[0]), () -> {
+            assertEquals(3, SleepUntilFrameGate.latencyFrames(),
+                "no engine in the stub world - the documented fallback of 3 applies, "
+                    + "and the kite math (NEXT #154) depends on exactly this value here");
+        });
+    }
 }

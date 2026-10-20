@@ -14,6 +14,7 @@ import atlantis.units.actions.move.MoveAway;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import atlantis.units.special.SleepUntilFrameGate;
 
 /**
  * Owns every army unit each frame. Phase 0 of __PLAN-COMBAT step 5: one
@@ -194,7 +195,7 @@ public class BattleCommander extends Commander {
         double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
         double dist = unit.distTo(threat);
         double tilesPerFrame = unit.maxSpeed() / 32.0;
-        double cooldownDistance = Math.max(0.0, unit.cooldown() - tuning().getKiteLatencyFrames() - 2) * tilesPerFrame;
+        double cooldownDistance = Math.max(0.0, unit.cooldown() - attackLatencyFrames() - 2) * tilesPerFrame;
         double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
         if (targetRange <= myRange - tuning().getKiteMeleeEdgeTiles()) {
             double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
@@ -685,6 +686,16 @@ public class BattleCommander extends Commander {
      * about one while healthy, up to four while dying (PurpleWave:
      * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
      */
+    /**
+     * Per-unit attack latency (NEXT #154): the engine's remaining command
+     * latency, read live per decision - never a flat constant. The +2 at
+     * the call site is the Stardust margin (issue frame + publish frame,
+     * measured in {@code SleepUntilFrameGate}).
+     */
+    private static int attackLatencyFrames() {
+        return SleepUntilFrameGate.latencyFrames();
+    }
+
     private static double kiteMarginRequired(AUnit unit) {
         double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
         return Math.max(tuning().getKiteMarginBaseTiles(),

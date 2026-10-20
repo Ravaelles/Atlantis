@@ -41,7 +41,6 @@ public final class CombatTuning {
     private int dragoonSurroundedMeleeCount = 3;
     private int dragoonSurroundedStandCooldown = 6;
     private double dragoonSurroundedStandDistTiles = 3.1;
-    private int kiteLatencyFrames = 4;
     private int kiteRideFrames = 30;
     private int kiteRestepsEveryFrames = 10;
     private int breachRetreatHp = 40;
@@ -78,7 +77,6 @@ public final class CombatTuning {
         dragoonSurroundedMeleeCount = other.dragoonSurroundedMeleeCount;
         dragoonSurroundedStandCooldown = other.dragoonSurroundedStandCooldown;
         dragoonSurroundedStandDistTiles = other.dragoonSurroundedStandDistTiles;
-        kiteLatencyFrames = other.kiteLatencyFrames;
         kiteRideFrames = other.kiteRideFrames;
         kiteRestepsEveryFrames = other.kiteRestepsEveryFrames;
         breachRetreatHp = other.breachRetreatHp;
@@ -208,10 +206,7 @@ public final class CombatTuning {
         return dragoonSurroundedStandDistTiles;
     }
 
-    /** Latency frames assumed for cooldown-relative decisions (Stardust reads engine latency). */
-    public int getKiteLatencyFrames() {
-        return kiteLatencyFrames;
-    }
+    /** A reposition keeps riding this long before the attack re-arms (frames). */
 
     /** A reposition keeps riding this long before the attack re-arms (frames). */
     public int getKiteRideFrames() {
@@ -388,12 +383,6 @@ public final class CombatTuning {
     public CombatTuning withDragoonSurroundedStandDistTiles(double value) {
         CombatTuning copy = new CombatTuning(this);
         copy.dragoonSurroundedStandDistTiles = value;
-        return copy;
-    }
-
-    public CombatTuning withKiteLatencyFrames(int value) {
-        CombatTuning copy = new CombatTuning(this);
-        copy.kiteLatencyFrames = value;
         return copy;
     }
 

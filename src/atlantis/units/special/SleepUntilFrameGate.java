@@ -72,8 +72,11 @@ public class SleepUntilFrameGate {
      * The engine's remaining command latency. Falls back to a safe constant when
      * the
      * engine does not answer (the stub world and some tests have no Game).
+     * Public: cooldown-relative decisions (Stardust attack readiness:
+     * fire iff cooldown <= latency + 2) read the live value per unit,
+     * never a flat constant (NEXT #154).
      */
-    private static int latencyFrames() {
+    public static int latencyFrames() {
         try {
             int latency = atlantis.Atlantis.game().getRemainingLatencyFrames();
             // The stub world and some engine states answer 0; a 0-frame hold would let the
