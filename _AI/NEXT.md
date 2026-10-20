@@ -1091,6 +1091,64 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   shots; (b) 10k UNIT_DIED rows for ~30 marines - twin re-fires
   per dead unit per frame? Both are data-quality questions with
   twin evidence in hand, no live re-probe needed to start.
+  2026-10-20: (b) ROOT-CAUSED + FIXED and committed - `FightTrace.died`
+  re-fires per dead unit per frame (live: 2 marines -> 6841 rows),
+  fixed with a `reportedDeaths` set (one row per unit id) + reset in
+  `clearForTests` (wired to `BattleCommander.reset` / OnGameStarted
+  path); dist guard clamps garbage dead-unit positions (measured
+  671088639 on M&M) to -1; `FightTraceTest.deathRowsOncePerUnit`
+  pins it. (a) stays open: needs SHOT/HIT twin read on the next
+  live UMS fight, no blind patch.
+- **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
+  logic/changes, other model gets independent file-scoped tasks).
+  Single source of truth: `/sc-ai/OpenBW/openbw` clean fork
+  @`801e238` (`feature/support-ums-maps`) is the canonical engine;
+  the harness copy `StardustDevEnvironment/3rdparty/openbw` is a build
+  artifact, never edited directly (install flow via
+  `scripts/build-openbw.sh --install` with backups, never blind rsync
+  or plain `cp`). Atlantis owns bot logic + sim + twins; engine C++
+  changes land only via the install flow + `tests/run.sh` green.
+  Baselines 2026-10-20: host smoke `test-openbw-host.sh` PASS
+  (BYTE_2_OK + MATCH_TICKING + MatchStart=YES + 12/12); engine
+  `tests/run.sh --default-maps` ALL PASSED with
+  `UMS_TEST_DATA_DIR=/tmp/scdata` (MPQ symlinks fix case-sensitive
+  names); fast suite 1018/0 + sim 13/13 + strict arch 5/7 (2 known
+  pre-existing edges). Duel vehicles: Wine stays the 1v1 proof
+  (1Drag WIN 1/0); OpenBW `1Drag_v_1Zeal` is INCONCLUSIVE (0/0 kills,
+  enemy slot empty, own dragoon takes hits then ends full HP);
+  `M&M_v_ZealDrag` is the working OpenBW vehicle (slot 1: 14 visible
+  + revealers, marines die to Zealot#277, verdict cut by timeout).
+  Constraints carry over: Java 1.8 (`--release 8`); 120 s command
+  budget, OpenBW sim cap 150 s wall; one game per box; Wine only on
+  explicit per-case approval; never `git push`; behavior changes
+  need game proof; fast suite green before commit; never touch or
+  commit `src/main/Main.java` (owner-modified).
+- **#166** Other-model task file (independent, test-gated, file-scoped;
+  hand over only on their done-signal, then re-verify host smoke +
+  engine tests before taking over): A3.3 revealers filter (decide +
+  pin), B2 reconnect test (pin intended fail), E3 slots extraction
+  (leaf function out of `BWData.cpp`), A3.1 map-failure survey
+  (which maps `error()` on rescue-passive/unknown-flag), B3 real-CHK
+  fixture (copy small real `scenario.chk`, flip one field), C1/C3
+  script split (host-start vs bot-run, single SHM cleanup), plus Wine
+  A1.4b spec (2 slots, Victory for player 1 at frame N -> what happens
+  to player 2; do NOT change propagation before it; gate any change on
+  `use_map_settings`). No verbatim StarEngine restore (revert
+  `b60a7029` stands - new test-scope sim instead).
+- **#167** Pinch verdict + gate proposal (feeds #159): sim A/B shows
+  WITH vs WITHOUT identical on spread AND contact; Wine N=5+5
+  slightly favored WITHOUT. Recommendation is gate pinch OFF behind
+  a standoff check (only yield with room to kite into), but default
+  stays ON until the owner calls it - never flip blind. Strict
+  hold-fire variant is subsumed in the same call.
+- **#168** Owner calls still pending (no work starts without them):
+  (a) pinch default gate OFF vs keep ON; (b) overnight tuner batch +
+  map; (c) V2 LIVE default flip per #45 ordering; (d) Wine A1.4b
+  measurement approval (map + script ready first); (e) long
+  macro/quiet-box games for #71 / #81 / #155 backlog (700 s+ shape,
+  7th_rav proof, per-gate proofs); (f) commit permission for
+  `docs/` + other-model scripts (until then: review only).
+  Optional `IDEAS.md` only if the ideas list outgrows NEXT.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
