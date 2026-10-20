@@ -504,7 +504,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10/10 WINS ~20 s each, hits 6-19 (avg 11.4), tuner randomizes per
   game through the CombatTuning record (incl. the 3 new pinch
   params); the overnight batch stays a standing vehicle for the
-  real sweep.
+  real sweep. 2026-10-20 UMS duel on the fixed anchor rule
+  (baseless ATTACK marches from the army center): WIN 1/0 in 499
+  frames, 34 stepped-aside vs 9 stuck, cadence 33 - the idle-dragoon
+  shape is gone.
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
@@ -589,14 +592,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the four +-4 diagonal tiles must be walkable; poor supply bypasses;
   wired right after TooCloseToOtherPylons, pinned 4/4) - game proof
   on 7th_rav still pending (no quiet box yet).
-  2026-10-20 (owner, map is `ums/rav/7th_rav.scx`): a Pylon warped at
-  the region edge lights no usable ground - when SupplyFree >= 2,
-  require the four diagonal tiles (+4/+4, -4/-4, +4/-4, -4/+4) around
-  the site to be walkable (center-ish, at minimum not on the edge).
-  Drafted as `PylonNeedsRoomAround` + chain slot but reverted untested
-  (box busy with parallel OpenBW work) - implement with a stub pin
-  (edge tile refused, open field passes, low supply bypasses) and a
-  7th_rav proof game.
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
@@ -686,6 +681,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   PASS 5/2 on the rebuilt engine) + the bot-side 0/0/0 verdict
   for vacuous games. Engine C++ stays owner territory, but nothing
   here needs it.
+  2026-10-20, second reading: the slot story is unnecessary. The
+  12:59 UMS log shows our Dragoon=1 and zero buildings warped -
+  the bot HAD its unit and stood still a whole game (Forge FE head,
+  no scouts, no engage, Defeat by map timer). The anchor had no
+  reference without a base (null), so the no-target branch had
+  nowhere to march. Fixed the same day: baseless ATTACK anchors on
+  the army's own center toward the nearest unexplored start
+  (`ClusterAnchor`, pinned stub-side); proved live on Wine
+  (`1Drag_v_1Zeal`, WIN 1/0 in 499 frames, 34 stepped-aside vs 9
+  stuck, cadence 33). Default unknown-matchup BO flipped to
+  Zealot into Goon the same day (Forge FE armed an economy opener
+  on a duel map).
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
@@ -866,11 +873,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `isTerminal` - additive, stub-pinned, zero behavior change), then
   migrate readers one by one with a game proof each (construction
   is the most Wine-proven area; no batch migration). LANDED
-  2026-10-20: all six PREPARING readers (skip/cancel guards,
-  builderless-site filter, adopt path + guard) read isWaiting()
-  instead of re-spelling the disjunction - same predicate, zero
-  behavior change, suite green (`ConstructionOrderStatusTest`,
-  `CoreSingleInstanceGateTest` carry the semantics).
+  2026-10-20: all nine PREPARING readers (skip/cancel/overdue
+  guards, builderless-site filter, twin path label, adopt path +
+  guard) read isWaiting() instead of re-spelling the disjunction -
+  same predicate, zero behavior change, suite green
+  (`ConstructionOrderStatusTest`, `CoreSingleInstanceGateTest`
+  carry the semantics).
 - **#159** Pinch retreat proof on `Drag_v_LingsUpg` (owner 2026-10-20:
   hurt Dragoons surrounded by 2+ melee inside 2 tiles retreat
   instead of standing into the pocket; `DragoonPinch*` knobs in the
