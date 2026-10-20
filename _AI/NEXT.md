@@ -930,8 +930,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   bounded top-N store ranked by the objective, radius mutation
   clamped to per-param bounds, `?`-safe file round-trip, garbage
   lines skipped; wiring into the batch init rides the intensive
-  session with its own batch proof, never blind). Steps 3-5 open
-  (K-of-N bar, freeze-then-expand, archive).
+  session with its own batch proof, never blind). 2026-10-21:
+  step 3 LANDED (`TunerPromotion` + `TunerPromotionTest` 4/4:
+  K-of-N replicate bar, short records never promote; suite
+  1007/1007 + arch unchanged). Steps 4-5 open
+  (freeze-then-expand, archive).
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
