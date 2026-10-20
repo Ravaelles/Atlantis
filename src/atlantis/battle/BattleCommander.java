@@ -14,6 +14,7 @@ import atlantis.battle.cluster.Missions;
 
 import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.ClusterMission;
+import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.ClusterTactic;
 
 import atlantis.battle.cluster.ClusterAnchor;
@@ -65,7 +66,7 @@ public class BattleCommander extends Commander {
 
     @Override
     protected boolean handle() {
-        gatherCluster();
+        Alpha.gather();
         if (Alpha.get().isEmpty()) return false;
 
         ClusterMission.Posture posture = ClusterMission.postureFor(
@@ -101,24 +102,6 @@ public class BattleCommander extends Commander {
     }
 
 
-
-    /**
-     * Where a baseless retreat rallies (owner): a point away from the
-     * nearest threat to regroup at, never the enemy base the mission
-     * anchor would march it to. Null when nothing presses (then the
-     * caller fights in place) or when no direction steps - same
-     * fall-through contract as the kite escape. Public as a seam.
-     */
-    public static HasPosition regroupRallyPoint(AUnit unit) {
-        if (unit == null || !unit.isAlive()) return null;
-        AUnit threat = atlantis.battle.targeting.ASquadTargeting
-            .nearestEngageableEnemy(unit, CombatTuning.current().getRegroupThreatTiles());
-        if (threat == null) return null;
-        return MoveAway.bestDestination(unit, threat, CombatTuning.current().getRegroupRallyTiles());
-    }
-
-
-
     /**
      * Keep shooting the committed target while it is alive, hittable and
      * inside weapon range plus a short chase allowance - never re-pick
@@ -140,7 +123,6 @@ public class BattleCommander extends Commander {
         if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
         return current;
     }
-
 
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
@@ -182,9 +164,9 @@ public class BattleCommander extends Commander {
                     home = SharedEscape.rallyFor(
                         unit, leader, Alpha.get().selection(),
                         CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
-                    if (home == null) home = regroupRallyPoint(unit);
+                    if (home == null) home = ClusterRally.regroupRallyPoint(unit);
                 }
-                HasPosition point = gatherPointFor(unit, leader, home);
+                HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
                 if (point != null && unit.distTo(point) >= 0.2) {
                     unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
                     return;
@@ -390,58 +372,13 @@ public class BattleCommander extends Commander {
         // of a line (owner 2026-10-19: march and retreat both strung
         // out). The leader sets the pace; stragglers catch up instead
         // of everyone racing the anchor.
-        HasPosition point = formationSlotFor(unit, leader, anchor);
-        if (point == null) point = gatherPointFor(unit, leader, anchor);
+        HasPosition point = ClusterRally.formationSlotFor(unit, leader, anchor);
+        if (point == null) point = ClusterRally.gatherPointFor(unit, leader, anchor);
         if (point != null && unit.move(point, Actions.MOVE_ENGAGE, "ClusterMove")) {
             lastRepositionFrame.put(unit.id(), A.now());
         }
     }
 
-    /**
-     * Formation slot for a unit with no enemy in reach (Phase A): the
-     * crescent around the leader's nearest enemy. Null when the
-     * formation does not apply (too few units, no pivot, pivot in
-     * contact, no walkable slot) - the caller bunches on the leader.
-     */
-    private static HasPosition formationSlotFor(AUnit unit, AUnit leader, HasPosition anchor) {
-        if (Alpha.get().size() < FormationSlots.MIN_CLUSTER_SIZE) return null;
-        if (leader == null || !leader.isAlive()) return null;
-        AUnit pivot = atlantis.battle.targeting.ASquadTargeting
-            .nearestEngageableEnemy(leader, 30);
-        if (pivot == null) return null;
-        return FormationSlots.slotFor(unit, Alpha.get().selection(), pivot);
-    }
-
-
-    /**
-     * Where this unit moves when there is no enemy to engage: the leader
-     * when straggling behind it, else the mission anchor. Public as a seam:
-     * the bunching rule pins in a stub state without running the frame.
-     */
-
-    public static HasPosition gatherPointFor(AUnit unit, AUnit leader, HasPosition anchor) {
-        if (leader != null && unit != leader && unit.distTo(leader) > CLUSTER_GATHER_RADIUS_TILES) {
-            return leader;
-        }
-        return anchor;
-    }
-
-    /** Tiles behind the leader before a unit turns back to rejoin. */
-    private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
-
-
-
-
-    /**
-     * Tiles of margin a Dragoon demands before it yields ground:
-     * about one while healthy, up to four while dying (PurpleWave:
-     * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
-     */
-
-    /**
-     * Kiting rules. The coefficients used to live here as public mutable
-     * statics; they moved to {@link CombatTuning} (NEXT #158).
-     */
 
     private static final java.util.Map<Integer, Integer> lastRepositionFrame = new java.util.HashMap<>();
     private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
@@ -459,13 +396,4 @@ public class BattleCommander extends Commander {
         lastMovedPos.clear();
     }
 
-    private void gatherCluster() {
-        Selection army = Select.ourCombatUnits();
-        if (army == null) return;
-        for (AUnit unit : army.list()) {
-            if (unit != null && unit.isAlive() && unit.squad() == null) {
-                Alpha.get().addUnit(unit);
-            }
-        }
-    }
 }

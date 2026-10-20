@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterRally;
 import atlantis.battle.cluster.ClusterTactic;
 import atlantis.battle.cluster.ClusterMission;
 import atlantis.battle.cluster.FightOrFlight;
@@ -100,7 +101,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 33, 20);
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
-            HasPosition rally = BattleCommander.regroupRallyPoint(dragoon);
+            HasPosition rally = ClusterRally.regroupRallyPoint(dragoon);
 
             assertNotNull(rally, "open ground offers an escape direction");
             assertTrue(
@@ -117,7 +118,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(dragoon), fakeEnemies(far), () -> {
             assertTrue(
-                BattleCommander.regroupRallyPoint(dragoon) == null,
+                ClusterRally.regroupRallyPoint(dragoon) == null,
                 "nothing pressing: hold and fight in place");
         });
     }

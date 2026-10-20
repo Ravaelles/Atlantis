@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterRally;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
@@ -50,7 +51,7 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(leader,
-                BattleCommander.gatherPointFor(straggler, leader, anchor),
+                ClusterRally.gatherPointFor(straggler, leader, anchor),
                 "10 tiles behind: turn back to the leader, not the anchor");
         });
     }
@@ -68,10 +69,10 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(anchor,
-                BattleCommander.gatherPointFor(leader, leader, anchor),
+                ClusterRally.gatherPointFor(leader, leader, anchor),
                 "the leader sets the pace to the anchor");
             assertSame(anchor,
-                BattleCommander.gatherPointFor(close, leader, anchor),
+                ClusterRally.gatherPointFor(close, leader, anchor),
                 "inside 2 tiles: keep marching, no jitter");
         });
     }
@@ -88,7 +89,7 @@ public class ClusterGatherPointTest extends AbstractTestWithWorld {
             if (atlantis.game.A.now() != 3) return;
 
             assertSame(anchor,
-                BattleCommander.gatherPointFor(lone, null, anchor),
+                ClusterRally.gatherPointFor(lone, null, anchor),
                 "no leader: the anchor is the only answer");
         });
     }

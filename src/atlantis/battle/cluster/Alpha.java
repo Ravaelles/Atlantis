@@ -20,6 +20,21 @@ public class Alpha {
         return ALPHA;
     }
 
+    /**
+     * Roster fill: every squadless combat unit joins the cluster. Runs
+     * once per frame from the fight composition before anything reads
+     * the roster.
+     */
+    public static void gather() {
+        atlantis.units.select.Selection army = Select.ourCombatUnits();
+        if (army == null) return;
+        for (AUnit unit : army.list()) {
+            if (unit != null && unit.isAlive() && unit.squad() == null) {
+                ALPHA.addUnit(unit);
+            }
+        }
+    }
+
     public static int count() {
         return ALPHA.size();
     }
