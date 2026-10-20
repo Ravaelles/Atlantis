@@ -1021,6 +1021,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   flees, wounded dragoons withdraw and survive, obstacle course
   without permanent wedges; then the formation coordination proof
   rides on it (#162).
+  2026-10-20: LANDED the vehicle (`tests.unit.sim`: `SimWorld` tick
+  driver + `SimArena` obstacles + `DragoonsVsZerglingsTest` 4/4:
+  T0 engine-data pins, T1 surrounded flees+survives, T2 group
+  withdraws-or-wipes with zero left behind, T3 mover through a gap;
+  suite 1012/1012 fast, arch strict unchanged). Deliberately NOT a
+  verbatim restore: the old mover/canvas/demo stay in history
+  (their jobs live in current harness); the missing combat half +
+  arena + accel/brake/turn are new, test-scope only.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

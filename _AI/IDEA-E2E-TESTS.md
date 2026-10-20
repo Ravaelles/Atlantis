@@ -292,6 +292,9 @@ scbw tier's tables live in `_AI/e2e/` and are governed by its own README.
   (opponent versions drift, maps drift).
 - No new engine of our own, and no repairing `StarEngine`'s combat sim to "be
   more like the game" - that road ends where it started. Replace, do not repair.
+  (Overruled in scope 2026-10-20, NEXT #161: a TEST-ONLY behavior sim with
+  real engine data and documented model seams, no fidelity chase, jar payload
+  check intact - a fast vehicle, not a second game.)
 - No patching `PositionFinder` further: it is scheduled for deletion and rewrite
   (`_AI/CHALLENGES/PositionFinder.md`). Adding to it makes the rewrite bigger and the
   diagnosis muddier.
