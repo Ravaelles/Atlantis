@@ -6,6 +6,7 @@ import atlantis.production.v2.execution.DispatchResult;
 import atlantis.production.v2.execution.V2DispatchTwin;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>No world, no engine: the twin is pure over dispatch results.</p>
  */
+@Tag("infra")
 public class V2DispatchTwinTest {
 
     private static final class FakeProducible implements Producible {

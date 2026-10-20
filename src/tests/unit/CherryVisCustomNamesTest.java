@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.cherryvis.simple.ACherryVisLogger_TraceJson;
 import atlantis.cherryvis.simple.ACherryVis_Strings;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * mislabeled every manager in the viewer, and managers past the hardcoded
  * table had no name at all. No CherryVis frontend is needed to prove it.</p>
  */
+@Tag("infra")
 public class CherryVisCustomNamesTest {
 
     @Test

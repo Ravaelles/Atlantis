@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.updater.QueueRefresher;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -31,6 +32,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the reserved site with no builder and no issue; ProduceBuilding adopts
  * it once ready. While poor the site sits marked without costing a worker.
  */
+@Tag("production")
 public class PreparingConstructionSiteTest extends AbstractTestWithWorld {
 
     @Override

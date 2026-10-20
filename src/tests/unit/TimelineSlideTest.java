@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * this class of bug can be proven without launching StarCraft.
  * </p>
  */
+@Tag("infra")
 public class TimelineSlideTest {
 
     private static final ResourceCost PROBE = ResourceCost.of(50, 0, 1);

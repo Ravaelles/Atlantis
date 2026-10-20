@@ -9,6 +9,7 @@ import atlantis.map.region.ARegion;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -29,6 +30,7 @@ import static tests.fakes.FakePositionFinder.installAsSource;
  * as error spam plus an idle Dragoon) must not hold the unit still.
  * The attack order below fires instead; the engine chases on its own.
  */
+@Tag("combat")
 public class MapEdgeGlideTest extends AbstractTestWithWorld {
 
     @Override

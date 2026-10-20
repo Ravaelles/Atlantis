@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * out with a position of their own; the same frame in the trace and in the
  * replay means distance zero, so the delay cannot hurt matching.</p>
  */
+@Tag("infra")
 public class CherryVisDeferredFirstSeenTest {
 
     @AfterEach

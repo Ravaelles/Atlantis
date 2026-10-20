@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutFallbackEnemyBases;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeMapTiles;
 
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * game). All explored means coverage is complete, and only then may the
  * chain stay silent.
  */
+@Tag("map")
 public class ScoutFallbackEnemyBasesTest {
 
     private static final APosition NATURAL = APosition.create(100, 20);

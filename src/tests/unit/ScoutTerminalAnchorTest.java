@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutTerminalAnchor;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * (natural, third, fourth, main) once the unexplored-first managers
  * decline - only absent map data may still silence the chain.
  */
+@Tag("map")
 public class ScoutTerminalAnchorTest {
 
     private static final APosition NATURAL = APosition.create(100, 20);

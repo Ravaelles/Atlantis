@@ -48,7 +48,11 @@ if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
     --select-class tests.e2e.OpeningDoesNotHoardMineralsTest
     --select-class tests.e2e.WorkerDefenceTest
     --select-class tests.e2e.WorkerSwarmTest
+    --exclude-tag full-tier
   )
+  # NOTE: --exclude-tag applies only to this default set. An explicit
+  # selector (--select-class/--select-package on the command line) runs
+  # exactly what was asked, full-tier tags included.
 fi
 
 if [ "$ALLOW_SLOW" -eq 0 ]; then

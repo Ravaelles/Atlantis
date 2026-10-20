@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -41,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * is the ORDER of the two statements, which is the entire defect.
  * </p>
  */
+@Tag("production")
 public class GatewayRequeueAfterCancelTest {
 
     private static final String TRAVEL =

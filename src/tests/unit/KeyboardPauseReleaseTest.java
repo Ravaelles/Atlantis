@@ -7,6 +7,7 @@ import atlantis.game.GameSpeed;
 import atlantis.keyboard.AKeyboard;
 import bwapi.Game;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * its pause loop forever - a game that looks paused from the start until a
  * human presses "2" (owner report, IDE/Wine run).</p>
  */
+@Tag("infra")
 public class KeyboardPauseReleaseTest {
 
     @AfterEach

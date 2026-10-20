@@ -4,6 +4,7 @@ import atlantis.units.select.CacheKey;
 import atlantis.util.AConsole;
 import atlantis.util.GameClock;
 import atlantis.util.log.LogPort;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * throttle cannot suppress the error on account of an earlier test in the same JVM
  * having triggered it. Both are restored afterwards.</p>
  */
+@Tag("infra")
 public class CacheKeyTest {
 
     @Test

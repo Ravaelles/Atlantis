@@ -10,6 +10,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -32,6 +33,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * its twin row must name the warp tile, the adopted tile and the
  * candidate count.</p>
  */
+@Tag("production")
 public class AdoptedConstructionTwinTest extends AbstractTestWithWorld {
 
     @Override

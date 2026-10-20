@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * `USE_MAP_SETTINGS` for every map. That hardcoded value was the bug.
  * </p>
  */
+@Tag("infra")
 public class WineMapGameTypeTest {
 
     private static final Path WINE_GAME = Paths.get("scripts/run-wine-game.sh");

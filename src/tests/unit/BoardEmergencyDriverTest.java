@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -20,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * both - everything else keeps legacy brakes (a top-only driver would
  * also kill Nexus saving, which lives at rank 80 by design).
  */
+@Tag("infra")
 public class BoardEmergencyDriverTest extends AbstractTestWithWorld {
 
     @Override

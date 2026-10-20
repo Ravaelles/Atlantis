@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.dynamic.supply.ProduceFallbackPylonWhenSupplyLow;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -18,6 +19,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * This reverts the 2026-10-14 anticipation - a fast pump can now
  * outrun the warp and block, which the SUPPLY_BLOCKED twin names live.
  */
+@Tag("production")
 public class FallbackSupplyThresholdTest extends WorldStubForTests {
 
     @Override

@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.placement.core.BuildLocation;
 import atlantis.placement.engine.CoverageCannonRanker;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * farther tile that can - the exact inversion the distance ranker got wrong
  * on wide chokes.
  */
+@Tag("production")
 public class CoverageCannonRankerTest {
 
     private static BuildLocation at(int tx, int ty) {

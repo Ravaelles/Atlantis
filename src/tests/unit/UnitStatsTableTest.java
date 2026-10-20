@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.units.AUnitType;
 import atlantis.units.UnitStats;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.UnitStatsTable;
 
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * states what the engine answers and why it is wrong. An empty table is the
  * healthy state.</p>
  */
+@Tag("infra")
 public class UnitStatsTableTest extends AbstractTestWithUnits {
 
     /**

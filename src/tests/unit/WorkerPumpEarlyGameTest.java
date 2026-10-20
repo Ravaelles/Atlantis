@@ -7,6 +7,7 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * supply gate met) - same predicate as the PrioritizeCore rule.
  * </p>
  */
+@Tag("production")
 public class WorkerPumpEarlyGameTest extends AbstractTestWithWorld {
 
     @Override

@@ -5,6 +5,7 @@ import atlantis.information.strategy.protoss.ProtossStrategies;
 import atlantis.production.orders.build.ABuildOrderLoader;
 import atlantis.production.orders.build.ABuildOrder;
 import atlantis.util.AFile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * looks for is not the file we ship".
  * </p>
  */
+@Tag("production")
 public class StrategyBuildOrderTest {
 
     /**

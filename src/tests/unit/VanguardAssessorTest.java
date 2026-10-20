@@ -5,6 +5,7 @@ import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.ClusterTactic;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * The unit closest to an enemy within 15 tiles assesses; with no enemy
  * in the area the leader assesses (eval 9874, march on).
  */
+@Tag("combat")
 public class VanguardAssessorTest extends AbstractTestWithWorld {
 
     @Override

@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.goals.protoss.WallInGoal;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * pieces at the natural choke. Pure state matrix, milliseconds - this is
  * the test shape that replaces long games for demand logic.
  */
+@Tag("production")
 public class WallInGoalTest {
 
     private final WallInGoal goal = new WallInGoal();

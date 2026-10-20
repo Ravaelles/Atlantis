@@ -15,6 +15,7 @@ import atlantis.production.v2.goals.V2GoalSourceTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>Pure snapshots and numbers, no game: tagging is data, the twin is
  * one EventLog call over it.</p>
  */
+@Tag("production")
 public class V2GoalSourceTest {
 
     private static final String PYLON = UnitProducible.of(AUnitType.Protoss_Pylon).id();

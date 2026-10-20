@@ -9,6 +9,7 @@ import atlantis.util.We;
 import bwapi.Race;
 import main.Main;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * unit types ({@code BASE}, {@code WORKER}, ...).
  * </p>
  */
+@Tag("infra")
 public class RaceWiringTest {
 
     @AfterEach

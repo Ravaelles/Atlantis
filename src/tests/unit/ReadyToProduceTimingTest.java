@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.updater.IsReadyToProduceOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -33,6 +34,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * work never needs an end-to-end run for the decision half. The
  * mineral-at-issue half stays in the E2E tier.</p>
  */
+@Tag("production")
 public class ReadyToProduceTimingTest extends AbstractTestWithWorld {
 
     @Override

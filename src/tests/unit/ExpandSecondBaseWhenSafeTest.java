@@ -4,6 +4,7 @@ import atlantis.production.dynamic.expansion.protoss.ProtossShouldExpand;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the base/choke/natural blocks through BaseUnderAttack and the choke
  * reads.
  */
+@Tag("production")
 public class ExpandSecondBaseWhenSafeTest extends AbstractTestWithWorld {
 
     @Override

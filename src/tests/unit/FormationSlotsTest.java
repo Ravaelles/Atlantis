@@ -8,6 +8,7 @@ import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * unit on the leader's circle around the pivot, deterministic within
  * a frame. Pairs and duels never form up - the 1v1 rules own them.
  */
+@Tag("combat")
 public class FormationSlotsTest extends AbstractTestWithWorld {
 
     @Override

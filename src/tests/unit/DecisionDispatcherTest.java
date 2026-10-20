@@ -6,6 +6,7 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.DecisionDispatcher;
 import atlantis.decisions.board.DecisionLog;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * __PLAN-DECISIONS steps 1-2: one door for every issuance - refusals pass
  * silently, affirmatives land in the log and reach exactly one executor.
  */
+@Tag("infra")
 public class DecisionDispatcherTest {
 
     private boolean executed = false;

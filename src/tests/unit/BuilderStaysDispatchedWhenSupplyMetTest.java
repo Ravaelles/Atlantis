@@ -12,6 +12,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
@@ -39,6 +40,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * triggers with no gather order; below-min-supply rows (and orderless
  * ones) stay fluid.</p>
  */
+@Tag("production")
 public class BuilderStaysDispatchedWhenSupplyMetTest extends AbstractTestWithWorld {
 
     @Override

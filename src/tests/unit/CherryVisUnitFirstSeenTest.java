@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * function of (frame, id, type, x, y) records, so the test pins the exact JSON
  * string the viewer parses.</p>
  */
+@Tag("infra")
 public class CherryVisUnitFirstSeenTest {
 
     @Test

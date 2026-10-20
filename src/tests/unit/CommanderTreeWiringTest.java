@@ -11,6 +11,7 @@ import atlantis.util.We;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -42,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * smallest check that would have caught it.
  * </p>
  */
+@Tag("infra")
 public class CommanderTreeWiringTest {
 
     private Race raceBefore;

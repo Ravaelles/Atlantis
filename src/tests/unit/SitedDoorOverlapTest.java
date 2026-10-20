@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.RequestBuildingNear;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * OpenBW: sited PhotonC [115,15] 21x. The door refuses it instead:
  * no order, no construction, no BUILD row for a doomed site.
  */
+@Tag("placement")
 public class SitedDoorOverlapTest extends WorldStubForTests {
 
     @Test

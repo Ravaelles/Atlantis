@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.cherryvis.simple.ACherryVis_UnitFirstSeen;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * <p>No CherryVis frontend is needed: the section is a pure function of noted
  * pairs, so the test pins the exact JSON the viewer parses.</p>
  */
+@Tag("infra")
 public class CherryVisUnitIdsTest {
 
     @Test

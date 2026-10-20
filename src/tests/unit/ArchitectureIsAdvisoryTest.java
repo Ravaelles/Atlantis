@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * changing back.
  * </p>
  */
+@Tag("infra")
 public class ArchitectureIsAdvisoryTest {
 
     private static final String FAST = "scripts/run-tests.sh";

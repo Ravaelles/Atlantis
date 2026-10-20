@@ -5,6 +5,7 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.goals.protoss.ArmyQuestion;
 import atlantis.decisions.goals.protoss.BuildingQuestion;
 import atlantis.decisions.goals.protoss.WorkerQuestion;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * executors; these outer envelopes only ever refuse what the legacy
  * path would refuse too (unaffordable, blocked, capped).
  */
+@Tag("production")
 public class ProducerQuestionsTest {
 
     private BoardState state(int minerals, int used, int total, int workers) {

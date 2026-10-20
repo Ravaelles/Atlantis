@@ -5,6 +5,7 @@ import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.board.GoalBoardWallet;
 import atlantis.decisions.goals.protoss.ProtossOpening;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * them, skipped goals wait a frame. Pure like the ranking - bank arrives
  * as primitives, prices arrive on the goals.
  */
+@Tag("production")
 public class GoalBoardWalletTest {
 
     private static List<String> ids(List<Goal> goals) {

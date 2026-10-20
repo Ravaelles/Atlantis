@@ -5,6 +5,7 @@ import atlantis.battle.cluster.ClusterRally;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * takes the anchor. Public seam on BattleCommander, pinned without
  * running the frame.
  */
+@Tag("combat")
 public class ClusterGatherPointTest extends AbstractTestWithWorld {
 
     @Override

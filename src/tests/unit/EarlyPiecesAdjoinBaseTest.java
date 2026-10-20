@@ -5,6 +5,7 @@ import atlantis.production.constructions.position.conditions.TooCloseToBaseLocat
 import atlantis.production.constructions.position.protoss.PylonPosition;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the spacing doctrine owns the layout again. The first-Pylon search
  * origin moves with it: two tiles out while young, seven once placed.
  */
+@Tag("map")
 public class EarlyPiecesAdjoinBaseTest extends AbstractTestWithWorld {
 
     @Override

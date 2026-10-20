@@ -7,6 +7,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.v2.engine.GameStateSnapshot;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * block). PREPARING picks stay out (aimed future); IN_PROGRESS is
  * unit-covered.
  */
+@Tag("production")
 public class ComingSupplyCountsConstructionsTest extends WorldStubForTests {
 
     @AfterEach

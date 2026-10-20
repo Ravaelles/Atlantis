@@ -6,6 +6,7 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -22,6 +23,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * checks, so it added a second at 4:04. A progressing row blocks the
  * dynamic add (a stuck notStarted one is still replaced by it).
  */
+@Tag("production")
 public class FirstAssimilatorNoDuplicateTest extends AbstractTestWithWorld {
 
     @Override

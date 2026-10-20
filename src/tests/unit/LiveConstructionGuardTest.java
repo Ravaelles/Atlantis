@@ -9,6 +9,7 @@ import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * class behind the Wine 39x-Gateway DECISIONS storm (oid 72: every
  * BUILD row paired with a fresh cid, same tile, same-frame CANCEL).
  */
+@Tag("production")
 public class LiveConstructionGuardTest extends WorldStubForTests {
 
     @Override

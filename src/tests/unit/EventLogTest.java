@@ -4,6 +4,7 @@ import atlantis.util.log.EventLog;
 import atlantis.util.log.LogKey;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The structured event log pins its JSON-lines rendering exactly: one row
  * per event, key first, parameters in call order, numbers unquoted.
  */
+@Tag("infra")
 public class EventLogTest {
 
     // Both ends: refusal paths anywhere in the suite record rows into the

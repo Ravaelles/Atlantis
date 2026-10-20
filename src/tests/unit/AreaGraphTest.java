@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.analysis.AreaGraph;
 import atlantis.map.position.APosition;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * area graph - no BWEM, no game. A line of three areas plus one island pins
  * BFS reachability, backdoor ranking and the worthless-area exclusion.
  */
+@Tag("map")
 public class AreaGraphTest {
 
     private static AreaGraph graph() {

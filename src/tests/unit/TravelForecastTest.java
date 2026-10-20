@@ -11,6 +11,7 @@ import atlantis.units.actions.Actions;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -29,6 +30,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * than the boots - the walk overlaps earning and any wait happens AT the
  * site. Scope: supply 50 and under, 240-frame horizon; above, legacy.
  */
+@Tag("infra")
 public class TravelForecastTest extends AbstractTestWithWorld {
 
     private FakeUnit builder;

@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * NEXT #8 pilot: the five type identities per race (ADR 0007), pinned before
  * any selector is swapped to the port.
  */
+@Tag("production")
 public class ProductionRacePolicyTest {
 
     @Test

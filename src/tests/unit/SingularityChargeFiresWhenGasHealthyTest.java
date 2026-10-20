@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.dynamic.protoss.tech.ResearchSingularityCharge;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -17,6 +18,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Core standing, 2-3 Dragoons). Replicates that state: with 2 Dragoons and
  * 250 gas the researcher must fire (gas 80+180 rule).
  */
+@Tag("production")
 public class SingularityChargeFiresWhenGasHealthyTest extends AbstractTestWithWorld {
 
     @Override

@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * {@code BattleCommander.breachedBaseTarget}): the proper fix is
  * threat-aware assignment owned by the cluster.
  */
+@Tag("combat")
 public class DefendAnswersBreachTest extends AbstractTestWithWorld {
 
     @Override

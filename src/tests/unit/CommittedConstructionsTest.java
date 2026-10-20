@@ -11,6 +11,7 @@ import atlantis.production.v2.engine.CommittedConstructions;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * queue is the only global it reads, and this test owns it).
  * </p>
  */
+@Tag("production")
 public class CommittedConstructionsTest {
 
     private static final AUnitType GATEWAY = AUnitType.Protoss_Gateway;

@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.Atlantis;
 import bwapi.Game;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
  * actual contract rather than a proxy for it.
  * </p>
  */
+@Tag("infra")
 public class GameUnpauseTest {
 
     @Test

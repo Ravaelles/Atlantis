@@ -4,6 +4,7 @@ import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * last target. Engagement only - focus exclusions (lings, workers,
  * ranged mirrors) stay in the squad-target path, untouched.
  */
+@Tag("infra")
 public class NearestEngageableEnemyTest extends AbstractTestWithWorld {
 
     @Override

@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * free supply above 14, 3+ Pylons in production, bank above 800 with the
  * why-breakdown). Edge-triggered: one row per episode, never per frame.
  */
+@Tag("production")
 public class ProductionHealthWatcherTest extends AbstractTestWithWorld {
 
     @Override

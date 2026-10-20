@@ -5,6 +5,7 @@ import atlantis.config.launcher.openbw.OpenBWHost;
 import atlantis.config.launcher.openbw.OpenBWRunResult;
 import atlantis.config.launcher.openbw.OpenBWRunner;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -34,6 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * milliseconds rather than inferred from a five-minute game run.
  * </p>
  */
+@Tag("infra")
+@Tag("full-tier")
 public class OpenBWLauncherTest {
 
     @AfterEach

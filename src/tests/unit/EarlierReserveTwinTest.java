@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Pylon may take a builder. The earlier construction exists as an object
  * from pick time, so the door can price it instead of guessing.
  */
+@Tag("production")
 public class EarlierReserveTwinTest extends AbstractTestWithWorld {
 
     @Override

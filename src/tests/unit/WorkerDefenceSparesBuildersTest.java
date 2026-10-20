@@ -7,6 +7,7 @@ import atlantis.units.workers.defence.run.WorkerDefenceRun;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * as scouting or repairing with it. An assigned-but-waiting Protoss
  * probe counts: builder is an assignment, not a moment.
  */
+@Tag("production")
 public class WorkerDefenceSparesBuildersTest extends AbstractTestWithWorld {
 
     @Override

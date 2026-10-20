@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.util.log.LogKey;
 import atlantis.util.log.LogLevel;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * NORMAL chatter. Pinned so a new key lands in a set deliberately,
  * not by falling through the default.
  */
+@Tag("infra")
 public class LogKeySeverityTest {
 
     @Test

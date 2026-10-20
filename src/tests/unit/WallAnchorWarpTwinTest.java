@@ -5,6 +5,7 @@ import atlantis.map.analysis.WallAnchors;
 import atlantis.map.position.APosition;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * anchor row and to the exact planned tile. Pure points, no world: the
  * recorder resolves the choke row, this pins the math and the row shape.
  */
+@Tag("placement")
 public class WallAnchorWarpTwinTest {
 
     private static List<APosition> row() {

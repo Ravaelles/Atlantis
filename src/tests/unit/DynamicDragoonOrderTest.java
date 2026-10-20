@@ -9,6 +9,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -28,6 +29,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * minSupply-gated row behind dead units blocked workers and everything
  * behind it while supply could never grow back to the gate.
  */
+@Tag("production")
 public class DynamicDragoonOrderTest extends AbstractTestWithWorld {
 
     @Override

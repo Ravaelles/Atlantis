@@ -7,6 +7,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * drowned the real stalls). Steady-state gathering is exempt; idle,
  * walking-in-place and unclaimed workers still report.
  */
+@Tag("production")
 public class StuckWorkerTwinTest extends AbstractTestWithWorld {
 
     @Override

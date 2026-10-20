@@ -15,6 +15,7 @@ import atlantis.production.v2.ProductionScheduler;
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.TargetPlacement;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * is therefore about the algorithm, not about a game.
  * </p>
  */
+@Tag("production")
 public class ProductionSchedulerTest {
 
     // ---- fakes -------------------------------------------------------------

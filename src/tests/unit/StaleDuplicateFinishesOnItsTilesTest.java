@@ -8,6 +8,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * (same type means same footprint) split the two: a grazing sibling stays
  * exempt, an unfinished (warping) twin waits conservatively.</p>
  */
+@Tag("placement")
 public class StaleDuplicateFinishesOnItsTilesTest extends AbstractTestWithWorld {
 
     private boolean fired = false;

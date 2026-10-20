@@ -3,10 +3,12 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.production.orders.production.queue.add.History;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("infra")
 public class HistoryTest extends AbstractTestWithUnits {
     @Test
     public void testLastHappenedAgo() {

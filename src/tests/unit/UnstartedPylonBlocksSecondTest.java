@@ -9,6 +9,7 @@ import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -28,6 +29,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * toward 38/65 slide. Own traces are excluded (replacement proceeds);
  * PREPARING picks are excluded (aimed future, never a block cause).
  */
+@Tag("production")
 public class UnstartedPylonBlocksSecondTest extends WorldStubForTests {
 
     @Override

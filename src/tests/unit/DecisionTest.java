@@ -1,11 +1,13 @@
 package tests.unit;
 
 import atlantis.decisions.Decision;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tag("infra")
 public class DecisionTest extends AbstractTestWithUnits {
     @Test
     public void decisionAllowedLogic() {

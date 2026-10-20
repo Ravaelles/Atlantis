@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -63,6 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * must not read an action that a move refreshes.
  * </p>
  */
+@Tag("production")
 public class BuildOrderStarvedByMoveDebounceTest {
 
     private static final String ISSUE = "src/atlantis/production/constructions/builders/IssueBuildOrder.java";

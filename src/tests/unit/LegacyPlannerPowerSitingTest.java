@@ -10,6 +10,7 @@ import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * contract, not the choice: a reservation comes back, the support channel
  * stays silent, repeated passes stay stable.
  */
+@Tag("placement")
 public class LegacyPlannerPowerSitingTest extends AbstractTestWithWorld {
 
     @Override

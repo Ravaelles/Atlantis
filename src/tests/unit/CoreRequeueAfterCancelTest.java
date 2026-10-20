@@ -4,6 +4,7 @@ import atlantis.production.dynamic.protoss.ProtossDynamicBuildingsCommander;
 import atlantis.production.dynamic.protoss.buildings.ProduceCyberneticsCore;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.fakes.FakeUnitHelper.merge;
  * producer never said yes. Replicates that late-game state: 48 supply,
  * 300 bank, 10 Zealots, 2 Gateways, 5 Pylons, no Core, Zerg enemy.
  */
+@Tag("production")
 public class CoreRequeueAfterCancelTest extends AbstractTestWithWorld {
 
     @Override

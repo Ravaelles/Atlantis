@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.goals.protoss.CannonGoal;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * row from the legacy producer, so tuning verifies in milliseconds.
  * Each wanted() case mirrors one legacy branch (tiers, bonus, caps).
  */
+@Tag("production")
 public class CannonGoalTest {
 
     private final CannonGoal goal = new CannonGoal();

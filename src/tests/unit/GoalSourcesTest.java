@@ -5,6 +5,7 @@ import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * below therefore only ever call it with numbers and read the goals back.
  * </p>
  */
+@Tag("production")
 public class GoalSourcesTest {
 
     // ---- dynamic goals -----------------------------------------------------

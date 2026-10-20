@@ -8,6 +8,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.attacked_by.Bullets;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeBullet;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the most guns; dead men (in-flight damage already lethal) never win.
  * Single-enemy situations answer that one enemy, so duels cannot change.
  */
+@Tag("combat")
 public class FocusFireTest extends AbstractTestWithWorld {
 
     @Override

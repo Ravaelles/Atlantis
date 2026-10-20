@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.cluster.ClusterMission;
 import atlantis.battle.cluster.FightOrFlight;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * (evaluator fight/flee with a retreat latch). Both clock-free and
  * engine-free - the commander only passes frames in.
  */
+@Tag("combat")
 public class ClusterBehaviorTest {
 
     @Test

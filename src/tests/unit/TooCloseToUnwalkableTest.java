@@ -6,6 +6,7 @@ import atlantis.production.constructions.position.conditions.TooCloseToUnwalkabl
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.TileMapSource;
 
@@ -39,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * ({@code position.isWalkable(4)}).</li>
  * </ul>
  */
+@Tag("map")
 public class TooCloseToUnwalkableTest {
 
     private static final AUnitType GATEWAY = AUnitType.Protoss_Gateway;

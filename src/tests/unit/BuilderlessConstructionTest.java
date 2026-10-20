@@ -9,6 +9,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * and this test will fail loudly if anyone flips it either way.
  * </p>
  */
+@Tag("production")
 public class BuilderlessConstructionTest extends AbstractTestWithWorld {
 
     @Override

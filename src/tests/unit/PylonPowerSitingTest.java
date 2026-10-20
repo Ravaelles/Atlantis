@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.production.v2.PylonPowerSiting;
 import atlantis.production.v2.PylonPlacementScore.Tile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * unpowered room - never an unvalidated one (inventing candidates the
  * finder never checked is worse than the first validated tile).
  */
+@Tag("production")
 public class PylonPowerSitingTest {
 
     private static APosition at(int x, int y) {

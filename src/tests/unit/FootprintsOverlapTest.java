@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.production.constructions.PrepareConstructionSite;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * column x=95 on 4x3 footprints). Touching edges stay legal - packed
  * bases rely on adjacency.
  */
+@Tag("infra")
 public class FootprintsOverlapTest {
 
     @Test

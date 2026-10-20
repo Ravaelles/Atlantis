@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.goals.protoss.ExpansionGoal;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Third and later bases stay silent (their thicket migrates only
  * with a game proof each).
  */
+@Tag("production")
 public class ExpansionGoalTest {
 
     private BoardState state(

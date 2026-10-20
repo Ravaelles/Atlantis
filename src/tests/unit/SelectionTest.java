@@ -6,6 +6,7 @@ import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
 import atlantis.util.AConsole;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -13,6 +14,7 @@ import tests.unit.helpers.ClearAllCaches;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("infra")
 public class SelectionTest extends WorldStubForTests {
     @Test
     public void chainingSubsequentCallsWorksAsExpected() {

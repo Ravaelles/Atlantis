@@ -5,6 +5,7 @@ import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * with cooldown &gt;= 5 walks to the choke-side rally, everything else
  * engages.
  */
+@Tag("combat")
 public class BreachMeansFightTest extends AbstractTestWithWorld {
 
     @Override

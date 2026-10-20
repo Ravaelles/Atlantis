@@ -9,6 +9,7 @@ import bwapi.Game;
 import bwapi.Player;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.when;
  * satisfied without a seam because {@code Main.ourRace()} returns "Protoss".
  * </p>
  */
+@Tag("production")
 public class ProtossTooCloseToMapBoundariesTest {
 
     /** Tiles per build tile in this engine: 32. Anything else here is the bug. */

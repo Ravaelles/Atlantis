@@ -8,6 +8,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -35,6 +36,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * the old path too. An actually occupied site fails loudly at
  * adoption/issue time instead of spinning here.</p>
  */
+@Tag("placement")
 public class PreparingSiteSurvivesSiblingTest extends AbstractTestWithWorld {
 
     private boolean fired = false;

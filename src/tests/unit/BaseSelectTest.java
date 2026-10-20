@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.units.select.BaseSelect;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -9,6 +10,7 @@ import tests.acceptance.WorldStubForTests;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+@Tag("map")
 public class BaseSelectTest extends WorldStubForTests {
     @Test
     public void ourUnits() {

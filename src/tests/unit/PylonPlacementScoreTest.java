@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.v2.PylonPlacementScore;
 import atlantis.production.v2.PylonPlacementScore.Tile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * BWAPI. That split is what makes the rule provable here.
  * </p>
  */
+@Tag("production")
 public class PylonPlacementScoreTest {
 
         @Test

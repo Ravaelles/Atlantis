@@ -4,6 +4,7 @@ import atlantis.decisions.board.BoardState;
 import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.goals.protoss.ProtossOpening;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * in OpenBW games. Each case is one game situation and its expected board
  * top - the exact questions full games used to cost us.
  */
+@Tag("production")
 public class GoalBoardTest {
 
     private static BoardState base() {

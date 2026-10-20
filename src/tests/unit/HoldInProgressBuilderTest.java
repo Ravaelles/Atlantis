@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.production.constructions.builders.BuilderManager;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * actually warping at the site releases the worker now.
  * </p>
  */
+@Tag("production")
 public class HoldInProgressBuilderTest {
 
     @Test

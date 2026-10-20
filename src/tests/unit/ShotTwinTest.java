@@ -8,6 +8,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * order never issued. Both throttle to one row per unit per 30
  * frames on separate clocks.
  */
+@Tag("combat")
 public class ShotTwinTest extends AbstractTestWithWorld {
 
     @Override

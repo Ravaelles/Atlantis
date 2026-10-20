@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.units.AUnitHealth;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -17,6 +18,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * and through the extracted class. Written against the delegates, so
  * the extraction keeps every assertion green by construction.
  */
+@Tag("infra")
 public class AUnitHealthTest {
 
     @Test

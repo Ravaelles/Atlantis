@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.placement.core.WalkabilityGrid;
 import atlantis.placement.engine.RegionReachability;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * build on the tile it was standing on.
  * </p>
  */
+@Tag("placement")
 public class RegionReachabilityTest {
 
     private static WalkabilityGrid openMap(int size) {

@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.placement.engine.EngineReachabilityProbe;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * silently take the wrong branch.
  * </p>
  */
+@Tag("placement")
 public class EngineReachabilityProbeTest {
 
     private static final int TILE_X = 40;

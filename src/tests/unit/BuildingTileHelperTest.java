@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.BuildingTileHelper;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code APosition}.
  * </p>
  */
+@Tag("production")
 public class BuildingTileHelperTest {
 
     private static final int PX_PER_TILE = 32;

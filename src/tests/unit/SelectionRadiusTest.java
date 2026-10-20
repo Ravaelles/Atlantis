@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * <p>Written against the current implementation; the extraction that
  * follows must keep every assertion green without touching them.</p>
  */
+@Tag("infra")
 public class SelectionRadiusTest extends WorldStubForTests {
 
     @Test

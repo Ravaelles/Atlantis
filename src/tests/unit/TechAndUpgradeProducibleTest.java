@@ -7,6 +7,7 @@ import atlantis.production.v2.UpgradeProducible;
 import atlantis.units.AUnitType;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * is that the adapter reads the right field, not what the field currently says.
  * </p>
  */
+@Tag("production")
 public class TechAndUpgradeProducibleTest {
 
     @Test

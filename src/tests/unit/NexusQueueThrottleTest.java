@@ -9,6 +9,7 @@ import atlantis.production.dynamic.expansion.protoss.ProtossExpandNow;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * "Nexus ADDED TO QUEUE" rows in the same minute while the bank cannot
  * support overlapping Warps.
  */
+@Tag("production")
 public class NexusQueueThrottleTest extends AbstractTestWithWorld {
 
     @Override

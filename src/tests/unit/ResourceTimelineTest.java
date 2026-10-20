@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * "reservation is visible to later frames" semantics of allocate().
  * </p>
  */
+@Tag("infra")
 public class ResourceTimelineTest {
 
     private static final ResourceCost DRAGOON = ResourceCost.of(125, 50, 2);

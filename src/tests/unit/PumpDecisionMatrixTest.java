@@ -8,6 +8,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrderPriority
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -35,6 +36,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the stub does not build), MineralsMargin (needs 20 Zerg-facing
  * workers).</p>
  */
+@Tag("production")
 public class PumpDecisionMatrixTest extends AbstractTestWithWorld {
 
     private String lastReason = null;

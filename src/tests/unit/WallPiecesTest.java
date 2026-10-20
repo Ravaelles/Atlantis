@@ -4,6 +4,7 @@ import atlantis.map.analysis.WallKit;
 import atlantis.map.analysis.WallPieces;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * door; a 9-wide needs one cannon; an 11-wide with one cannon allowed
  * refuses (cannons-as-spots instead, never a gappy wall).
  */
+@Tag("placement")
 public class WallPiecesTest {
 
     private static List<APosition> row(int x0, int y, int n) {

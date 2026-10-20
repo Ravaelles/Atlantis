@@ -4,6 +4,7 @@ import atlantis.config.env.Env;
 import atlantis.production.ForceExitWhenOpeningProven;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -19,6 +20,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * refinery, no Core) proved an opening that never happened. A warping Dragoon
  * is not proof either: the next event could be a cancel.
  */
+@Tag("production")
 public class OpeningProvenGateTest extends AbstractTestWithWorld {
 
     @Override

@@ -9,6 +9,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * mid-build and unblock duplicate requests - the Protoss shape, wrong here.
  * </p>
  */
+@Tag("production")
 public class TerranOrphanedConstructionTest extends AbstractTestWithWorld {
 
     @Override

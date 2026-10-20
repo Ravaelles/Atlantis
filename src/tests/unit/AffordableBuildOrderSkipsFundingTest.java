@@ -13,6 +13,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -31,6 +32,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * sat). Dynamic demand still needs funding; poverty protection below
  * the own price is untouched (aim-while-poor still decides there).
  */
+@Tag("production")
 public class AffordableBuildOrderSkipsFundingTest extends AbstractTestWithWorld {
 
     @Override

@@ -5,6 +5,7 @@ import atlantis.production.ForceExitAtSupply;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -22,6 +23,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * {@code applies()} is pinned here - {@code handle()} ends the game and
  * is proven by a run, never by a stub.
  */
+@Tag("production")
 public class ForceExitAtSupplyTest extends AbstractTestWithWorld {
 
     @Override

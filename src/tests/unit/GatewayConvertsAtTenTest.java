@@ -8,6 +8,7 @@ import atlantis.production.orders.production.queue.updater.QueueRefresher;
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * rows, supply 10, healthy bank. Unconvertible HIGH waiters must not
  * block it either.
  */
+@Tag("production")
 public class GatewayConvertsAtTenTest extends AbstractTestWithWorld {
 
     @Override

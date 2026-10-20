@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.game.util.BuildingLedger;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * The buildings ledger pins its JSON exactly: one row per warped building
  * with actual vs build-order supply. Engine-free by construction.
  */
+@Tag("production")
 public class BuildingLedgerTest {
 
     @AfterEach

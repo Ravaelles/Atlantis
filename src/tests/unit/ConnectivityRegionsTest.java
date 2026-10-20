@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.placement.core.ConnectivityRegions;
 import atlantis.placement.core.WalkabilityGrid;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * gap, an island, a diagonal) are assertions rather than game runs.
  * </p>
  */
+@Tag("map")
 public class ConnectivityRegionsTest {
 
     /**

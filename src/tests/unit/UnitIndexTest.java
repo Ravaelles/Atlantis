@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.core.world.UnitIndex;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * Pure filtering over explicit units - the frame invalidation lives in
  * the single holder, not here.
  */
+@Tag("infra")
 public class UnitIndexTest {
 
     private static List<AUnit> units() {

@@ -11,6 +11,7 @@ import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
@@ -34,6 +35,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * to. And while raiders are in the base, posture holds DEFEND even with
  * an army big enough to march - marching out abandons the workers.
  */
+@Tag("combat")
 public class UmsRetreatRulesTest extends AbstractTestWithWorld {
 
     @Override

@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.units.CombatEvalScale;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static atlantis.units.CombatEvalScale.FLOOR;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * means: nothing that goes in comes out negative, everything else comes out
  * untouched.</p>
  */
+@Tag("combat")
 public class CombatEvalScaleTest {
 
     @Test

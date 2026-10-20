@@ -5,6 +5,7 @@ import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * <p>Pure snapshots, no game, no behavior change.</p>
  */
+@Tag("production")
 public class V2ExpansionDemandTest {
 
     private static final String NEXUS = UnitProducible.of(AUnitType.Protoss_Nexus).id();

@@ -7,6 +7,7 @@ import atlantis.game.AtlantisGameCommander;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * game-side try/catch in {@code OnEveryFrame} hides it as a stack trace.
  * </p>
  */
+@Tag("production")
 public class TopLevelCommanderConstructionTest {
 
     private Race raceBefore;

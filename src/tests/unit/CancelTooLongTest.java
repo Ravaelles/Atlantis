@@ -8,6 +8,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.CancelTooLongConstructions;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -66,6 +67,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * merely not affordable yet, is NOT overdue.
  * </p>
  */
+@Tag("infra")
 public class CancelTooLongTest extends AbstractTestWithWorld {
 
     private Construction construction;

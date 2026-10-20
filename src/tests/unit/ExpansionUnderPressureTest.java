@@ -4,6 +4,7 @@ import atlantis.information.enemy.EnemyUnitsUpdater;
 import atlantis.map.position.APosition;
 import atlantis.production.dynamic.expansion.decision.ExpansionUnderPressure;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>One world per test: the stub-world rules in _AI/NOTES.md forbid sharing
  * measured runs.</p>
  */
+@Tag("infra")
 public class ExpansionUnderPressureTest extends AbstractTestWithWorld {
 
     @Test

@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.analysis.WallAnchors;
 import atlantis.map.position.APosition;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * pins contiguity, order and the door; a point choke pins the degenerate
  * case.
  */
+@Tag("placement")
 public class WallAnchorsTest {
 
     @Test

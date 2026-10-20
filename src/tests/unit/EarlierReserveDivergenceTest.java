@@ -12,6 +12,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -34,6 +35,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * The third model (running ledger + caps) is not fixture-comparable and
  * stays out of this pin by design.</p>
  */
+@Tag("production")
 public class EarlierReserveDivergenceTest extends AbstractTestWithWorld {
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;

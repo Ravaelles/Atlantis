@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.position.PsiField;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * +64/+48px) against finished Pylons.
  * </p>
  */
+@Tag("placement")
 public class PsiFieldTest {
 
     private static final AUnitType GATEWAY = AUnitType.Protoss_Gateway;

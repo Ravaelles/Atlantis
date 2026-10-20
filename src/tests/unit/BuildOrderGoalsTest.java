@@ -10,6 +10,7 @@ import atlantis.production.v2.goals.BuildOrderGoals;
 import atlantis.production.v2.goals.BuildOrderProgress;
 import atlantis.production.v2.goals.BuildOrderRow;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * item and is emitted only while fewer than N exist (completed, queued or
  * pending), and only once its supply gate is open.
  */
+@Tag("production")
 public class BuildOrderGoalsTest {
 
     private static final Producible PYLON = UnitProducible.of(AUnitType.Protoss_Pylon);

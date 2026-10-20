@@ -6,6 +6,7 @@ import atlantis.production.orders.production.queue.CountInQueue;
 import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -37,6 +38,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * there; here each half is deterministic on its own.
  * </p>
  */
+@Tag("production")
 public class SecondAndThirdNexusTest extends AbstractTestWithWorld {
 
     @Override

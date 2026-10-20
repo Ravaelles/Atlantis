@@ -10,6 +10,7 @@ import atlantis.production.v2.UpgradeProducible;
 import atlantis.production.v2.execution.DispatchResult;
 import atlantis.production.v2.execution.OrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * there was any building to build.
  * </p>
  */
+@Tag("production")
 public class ProductionDispatcherTest {
 
     private static final int LATENCY = 10;

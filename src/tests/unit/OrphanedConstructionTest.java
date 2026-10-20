@@ -8,6 +8,7 @@ import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -65,6 +66,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * test states the rule the fix has to satisfy and holds it to it.
  * </p>
  */
+@Tag("production")
 public class OrphanedConstructionTest extends AbstractTestWithWorld {
 
     @Override

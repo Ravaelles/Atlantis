@@ -6,6 +6,7 @@ import atlantis.battle.BattleCommander;
 import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
@@ -33,6 +34,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * with a nearly-ready weapon holds and shoots instead of stepping out
  * of its own range.
  */
+@Tag("combat")
 public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
 
     @Override

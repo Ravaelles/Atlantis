@@ -4,6 +4,7 @@ import atlantis.cherryvis.simple.ACherryVisLogger_TraceJson;
 import atlantis.cherryvis.simple.ACherryVisUnitLogger;
 import atlantis.cherryvis.simple.ACherryVis_Strings;
 import atlantis.cherryvis.simple.ACherryVis_UnitLogs;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.TreeMap;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * runtime assignment order, not alphabetical, which is exactly the shape the
  * old hardcoded legend got wrong.</p>
  */
+@Tag("infra")
 public class CherryVisUpdatesLegendAgreementTest {
 
     @Test

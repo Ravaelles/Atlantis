@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -34,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * selector that does), so a busy building is not even chosen.</li>
  * </ol>
  */
+@Tag("production")
 public class TrainOrderGuardTest {
 
         private static final Path SINK = Paths.get("src/atlantis/units/BwapiOrderSink.java");

@@ -8,6 +8,7 @@ import bwapi.Race;
 import bwapi.UpgradeType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeResearch;
@@ -34,6 +35,7 @@ import static tests.fakes.FakeUnitHelper.merge;
  * exactly once. The two reads sit 35 frames apart to outlast the ATech
  * 31-frame cache, the way the live 6:06-to-7:53 window does.</p>
  */
+@Tag("production")
 public class UpgradeCompletedBehindGateTest extends AbstractTestWithWorld {
 
     @Override

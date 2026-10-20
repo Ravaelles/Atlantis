@@ -12,6 +12,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -31,6 +32,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the spiral, which refuses covered tiles since the finder cure - or
  * refuses loudly when no tile is left.
  */
+@Tag("placement")
 public class AdoptCoveredSiteTest extends WorldStubForTests {
 
     @Override

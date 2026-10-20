@@ -8,6 +8,7 @@ import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -33,6 +34,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * believes is covered. Attempted (or started) work keeps the old
  * behavior; only never-attempted, builder-assigned, NOT_STARTED waits.</p>
  */
+@Tag("production")
 public class UnworkedConstructionSurvivesNearbyBuildingTest extends AbstractTestWithWorld {
 
     @Override

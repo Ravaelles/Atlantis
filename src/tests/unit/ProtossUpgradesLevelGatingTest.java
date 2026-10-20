@@ -6,6 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
 import bwapi.UpgradeType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeResearch;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the armor researcher must fire for L1 (vanilla has no weapons-armor
  * cross requirement; Terran researchers have none either).
  */
+@Tag("production")
 public class ProtossUpgradesLevelGatingTest extends AbstractTestWithWorld {
 
     @Override

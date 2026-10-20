@@ -8,6 +8,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.orders.production.queue.order.ProductionOrderPriority;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -25,6 +26,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * on foot is progress, not a stall. And the post-cancel rescue died in the
  * dedup wall while the game had zero Pylons (### FAILED ### null).
  */
+@Tag("production")
 public class WalkingBuilderNotStalledTest extends AbstractTestWithWorld {
 
     @Override

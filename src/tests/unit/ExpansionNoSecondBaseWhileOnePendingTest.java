@@ -6,6 +6,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -29,6 +30,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * expansion reason is set explicitly - an unset reason refuses every Nexus
  * before any counting happens.</p>
  */
+@Tag("production")
 public class ExpansionNoSecondBaseWhileOnePendingTest extends AbstractTestWithWorld {
 
     @Override

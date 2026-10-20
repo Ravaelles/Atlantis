@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * them deadlocks the one rebuild that could unblock supply. Only rows
  * that could convert now count.
  */
+@Tag("production")
 public class RequeueVetoCountsTriggerableTest extends AbstractTestWithWorld {
 
     @Override

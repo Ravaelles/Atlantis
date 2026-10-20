@@ -4,6 +4,7 @@ import atlantis.decisions.board.ADecision;
 import atlantis.decisions.board.DecisionLog;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * around it, so it proves the production path (record -> flush -> file)
  * instead of a seam.</p>
  */
+@Tag("infra")
 public class DecisionLogTest {
 
     private byte[] backup;

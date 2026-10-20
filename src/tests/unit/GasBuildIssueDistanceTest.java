@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.builders.TravelToConstruct;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -28,6 +29,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * The gas case below is the original; the second case pins the general rule
  * for a 4x3 (owner call after the #56 hover: metric and target must agree).</p>
  */
+@Tag("production")
 public class GasBuildIssueDistanceTest {
 
     private static final APosition SITE = APosition.create(117, 4);

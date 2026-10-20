@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.analysis.DefenseSpots;
 import atlantis.map.position.APosition;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * game, no BWEM. A straight horizontal choke with a flat grid pins the
  * ranking; a single free footprint pins the exact tile.
  */
+@Tag("infra")
 public class DefenseSpotsTest {
 
     private static DefenseSpots.TileGrid flat(final int w, final int h) {

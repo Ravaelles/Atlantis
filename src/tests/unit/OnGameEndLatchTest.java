@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.game.listeners.OnGameEnd;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * seam instead, which is exactly the part that was wrong.
  * </p>
  */
+@Tag("infra")
 public class OnGameEndLatchTest {
 
     @BeforeEach

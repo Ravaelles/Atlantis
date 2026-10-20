@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.information.tech.UpgradeCompletionTracker;
 import bwapi.UpgradeType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * way #72 needed its twin): exactly one row per level increase, silence
  * otherwise, upgrades tracked independently.
  */
+@Tag("production")
 public class UpgradeCompletionTrackerTest {
 
     @AfterEach

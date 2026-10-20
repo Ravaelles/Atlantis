@@ -11,6 +11,7 @@ import atlantis.production.v2.ProductionScheduler;
 import atlantis.production.v2.ResourceCost;
 import atlantis.production.v2.ResourceTimeline;
 import atlantis.production.v2.TargetPlacement;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * to hand out a tile it already handed out in the same pass.
  * </p>
  */
+@Tag("placement")
 public class PlacementPassTest {
 
     private static final class FakeProducible implements Producible {

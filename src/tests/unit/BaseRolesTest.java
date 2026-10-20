@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.map.analysis.BaseRoles;
 import atlantis.map.position.APosition;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * old port ({@code Stations.findStations}) so the wiring slice can swap
  * implementations without re-deciding anything.
  */
+@Tag("map")
 public class BaseRolesTest {
 
     private static BaseRoles.BaseNode node(int tx, int ty, boolean start, int minerals, int gas) {

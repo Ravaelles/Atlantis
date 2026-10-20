@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.constructions.builders.BuilderManager;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -18,6 +19,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * "stuck" (stuck detection needs unfulfilled move orders, and none can be
  * issued), so it held until CancelTooLong killed the construction.</p>
  */
+@Tag("production")
 public class BuilderManagerShouldReplaceTest {
 
     @Test

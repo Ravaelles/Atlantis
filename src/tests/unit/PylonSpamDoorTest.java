@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.add.AddToQueue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -20,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Wine 38/65 = 27 free: every author walks through this one door, so
  * per-author triggers below it cannot pile past the cap).
  */
+@Tag("production")
 public class PylonSpamDoorTest extends AbstractTestWithWorld {
 
     @Override

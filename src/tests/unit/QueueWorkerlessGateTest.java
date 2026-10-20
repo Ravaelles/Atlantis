@@ -5,6 +5,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -25,6 +26,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * merely lost its workers keeps the adopt-and-wait path
  * (PreparingConstructionSiteTest pins it).
  */
+@Tag("production")
 public class QueueWorkerlessGateTest extends AbstractTestWithWorld {
 
     @Override

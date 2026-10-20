@@ -5,6 +5,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import atlantis.units.special.SleepUntilFrameGate;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * an order issued at frame F holds the unit through F+4 and releases it on F+5.
  * </p>
  */
+@Tag("production")
 public class SleepUntilFrameGateTest extends AbstractTestWithWorld {
 
     private static final int FRAME = 8;

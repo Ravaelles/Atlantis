@@ -10,6 +10,7 @@ import atlantis.production.constructions.Construction;
 import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -31,6 +32,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * <p>Same-type rows are fungible but counted: two Gateway rows with one
  * standing Gateway finish exactly one.</p>
  */
+@Tag("production")
 public class UnlinkedBuildingOrderCompletionTest extends AbstractTestWithWorld {
 
     @Override

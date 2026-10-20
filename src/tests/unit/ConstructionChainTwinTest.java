@@ -12,6 +12,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -34,6 +35,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * same two params by construction - their live proof is a game log,
  * not a stub (siting needs the map).</p>
  */
+@Tag("production")
 public class ConstructionChainTwinTest extends AbstractTestWithWorld {
 
     @Override

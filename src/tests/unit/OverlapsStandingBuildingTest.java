@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.conditions.OverlapsOurStandingBuilding;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -20,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * frame (measured OpenBW: oid 72, 38 requests for covered [116,19],
  * 38 same-frame cancels, one BUILD row per cycle).
  */
+@Tag("production")
 public class OverlapsStandingBuildingTest extends WorldStubForTests {
 
     @Test

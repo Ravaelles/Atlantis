@@ -6,6 +6,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * distance to the nearest enemy, deaths always land. Throttled to one
  * sample per 30 frames so an 8v8 game stays near ~500 rows.
  */
+@Tag("combat")
 public class FightTraceTest extends WorldStubForTests {
 
     @Override

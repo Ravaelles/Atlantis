@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.BattleCommander;
 import atlantis.battle.kite.CombatTuning;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * instance - never against the shared holder, which a previous test may
  * have replaced.
  */
+@Tag("combat")
 public class TweakerDefaultsTest {
 
     @Test

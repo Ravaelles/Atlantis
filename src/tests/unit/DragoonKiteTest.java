@@ -6,6 +6,7 @@ import atlantis.battle.BattleCommander;
 import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Attack orders issue once per target (no re-spam), mid-animation
  * units get no orders at all. Dragoon-only: Zealots want contact.
  */
+@Tag("combat")
 public class DragoonKiteTest extends AbstractTestWithWorld {
 
     @Override

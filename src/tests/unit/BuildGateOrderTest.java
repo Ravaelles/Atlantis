@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.requests.produce.BuildGate;
 import atlantis.production.requests.produce.BuildGates;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * (e.g. {@code LiveConstructionGuardTest}); this test pins that no gate
  * is lost, duplicated, or reordered.
  */
+@Tag("production")
 public class BuildGateOrderTest {
 
     private static final List<String> EXPECTED_ORDER = Arrays.asList(

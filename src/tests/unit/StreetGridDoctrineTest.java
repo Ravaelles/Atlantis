@@ -6,6 +6,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -25,6 +26,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * first instead of in a Wine game: grid holds normally, both hatches
  * open, and the free-6 boundary stays shut.
  */
+@Tag("infra")
 public class StreetGridDoctrineTest extends AbstractTestWithWorld {
 
     @Override

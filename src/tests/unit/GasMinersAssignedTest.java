@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -21,6 +22,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * no engine resource fields); game-side telemetry (assignment lines) names
  * the rest.</p>
  */
+@Tag("production")
 public class GasMinersAssignedTest extends AbstractTestWithWorld {
 
     @Override

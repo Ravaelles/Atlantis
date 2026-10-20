@@ -11,6 +11,7 @@ import atlantis.units.workers.FreeWorkers;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Builder is an assignment, not a moment: linked-but-waiting Protoss
  * probes count as builders even though they construct nothing yet.
  */
+@Tag("production")
 public class BuilderPickSkipsScoutsTest extends AbstractTestWithWorld {
 
     @Override

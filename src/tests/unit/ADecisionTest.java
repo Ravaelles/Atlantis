@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.decisions.board.ADecision;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * from where, on what state, with HTN children. Pinned here so the shape
  * cannot drift silently under the producers.
  */
+@Tag("infra")
 public class ADecisionTest {
 
     private ADecision worker() {

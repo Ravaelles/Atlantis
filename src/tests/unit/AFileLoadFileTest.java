@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.util.AFile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * and the bot played a whole game with no build order.
  * </p>
  */
+@Tag("infra")
 public class AFileLoadFileTest {
 
     private static File writeTemp(String name, String content) throws Exception {

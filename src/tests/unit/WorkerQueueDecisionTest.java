@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.production.dynamic.workers.AutoProduceWorkersCommander;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The engine half (reading remaining/queue off the base) is 3 lines
  * verified live via the TRAIN_ATTEMPT twin; this pins the pure decision.
  */
+@Tag("production")
 public class WorkerQueueDecisionTest {
 
     @Test

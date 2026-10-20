@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.production.constructions.ConstructionOrderStatus;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static atlantis.production.constructions.ConstructionOrderStatus.FINISHED;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * call sites (the {@code isNotStarted} family, the overdue/cancel skips,
  * the pylon door).
  */
+@Tag("production")
 public class ConstructionOrderStatusTest {
 
     @Test

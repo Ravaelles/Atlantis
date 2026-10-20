@@ -13,6 +13,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -32,6 +33,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * skips consumed ones, no twin fires). A NOT_STARTED site with no
  * live builder and a live order re-enters the normal path visibly.
  */
+@Tag("production")
 public class BuilderlessNotStartedRetriesTest extends AbstractTestWithWorld {
 
     @Override

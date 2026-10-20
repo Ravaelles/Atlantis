@@ -7,6 +7,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the travel half had no status). The changer refines it to STARTING;
  * producers keep writing NOT_STARTED, so no producer changes.
  */
+@Tag("production")
 public class TravelingBuilderRefinesToStartingTest extends WorldStubForTests {
 
     @AfterEach

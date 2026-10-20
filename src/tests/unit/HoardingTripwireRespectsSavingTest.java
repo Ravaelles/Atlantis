@@ -8,6 +8,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrderPriority
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -28,6 +29,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Game 20261017_143626: bank 604 at 40/41 with a Pylon warping is
  * waiting for supply, not deadlock - a coming provider suppresses too.
  */
+@Tag("production")
 public class HoardingTripwireRespectsSavingTest extends AbstractTestWithWorld {
 
     @Override

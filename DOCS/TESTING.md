@@ -299,3 +299,27 @@ already registered", a helper leaks again — see `_AI/NOTES.md`.
 
 Being able to run the suite headlessly is what lets every later stage be
 verified instead of guessed. Keep it working.
+
+## Test tiers and tags (owner's ruling, 2026-10-20)
+
+The fast loop (`scripts/run-tests.sh`) must stay cheap. Measured
+2026-10-20, wall-clock: compile 4.4 s, `tests.unit` 7.7 s
+(combat 0.7 s, production 2.6 s, placement/map 0.5 s, misc 2.4 s),
+architecture ~1 s, e2e smoke classes 0.5 s after moving the 2.2 s
+`QuickEconomySmokeTest` to the full tier. Total ~12-13 s.
+
+Every unit test carries a JUnit `@Tag` area (`production`,
+`combat`, `placement`, `map`, `infra` - by subject, not fixtures)
+plus `@Tag("full-tier")` when it belongs to the full tier only.
+`run-tests.sh` excludes `full-tier` in its default set only; an
+explicit selector runs exactly what was asked, tags included.
+The full tier (`scripts/run-full-tests.sh`) runs everything and runs
+at the end of every finished feature, not per edit.
+
+A test earns `full-tier` when it is slow (roughly, alone over ~0.3 s)
+AND its area is settled. Actively migrated areas stay in the fast
+loop no matter the cost: production/placement/map are mid-migration
+(#144-#147), so the only full-tier test today is
+`OpenBWLauncherTest` (fake hosting seams, 1.0 s). When a migration
+lands, move its area's slowest tests out. Targeted runs use the area
+tags, e.g. `--select-package tests.unit -t combat`.

@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.protoss.ProtossForbiddenByStreetGrid;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * aside, and only for Pylons at zero free supply.
  * </p>
  */
+@Tag("production")
 public class GridYieldsWhenSupplyBlockedTest extends WorldStubForTests {
 
     @Override

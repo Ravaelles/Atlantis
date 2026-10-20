@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.dynamic.protoss.buildings.ProduceGateway;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -17,6 +18,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * 400 bank, Core standing, supply 35, Zerg enemy. The second Gateway must
  * be requested - no silent refusal.
  */
+@Tag("production")
 public class SecondGatewayQueuedTest extends AbstractTestWithWorld {
 
     @Override

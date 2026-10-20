@@ -6,6 +6,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * healthy warps. Pipeline overlap also lands close, so this is a
  * signal, not a verdict.
  */
+@Tag("infra")
 public class CloseWarpsTwinTest extends WorldStubForTests {
 
     @Override

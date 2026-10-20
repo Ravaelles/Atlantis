@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.cherryvis.simple.ACherryVisUnitLogger;
 import atlantis.cherryvis.simple.ACherryVis_UnitLogs;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -14,6 +15,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * had no per-unit narrative. Like the other CherryVis sections, the shape is
  * pinned as an exact string with no frontend running.
  */
+@Tag("infra")
 public class CherryVisUnitLogsTest {
 
     @Test

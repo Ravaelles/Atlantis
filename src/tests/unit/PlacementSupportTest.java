@@ -11,6 +11,7 @@ import atlantis.production.v2.PlacementReservation;
 import atlantis.production.v2.TargetPlacement;
 import atlantis.production.v2.UnitProducible;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * No queue write happens below the composition root - the old
  * catch-Throwable around a direct AddToQueue is gone with the write.
  */
+@Tag("placement")
 public class PlacementSupportTest {
 
     private static final class FlatTerrain implements TileAvailabilityGrid.TerrainSource {

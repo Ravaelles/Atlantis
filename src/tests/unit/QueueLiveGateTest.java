@@ -7,6 +7,7 @@ import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -22,6 +23,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * builder and the leaked reservations measured in LIVE games came from
  * exactly this path firing on unit events.
  */
+@Tag("production")
 public class QueueLiveGateTest extends AbstractTestWithWorld {
 
     @Override

@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.game.util.GameSummary;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
  * poisons shutdown. Live proof (summary present after a wall kill) comes
  * from OpenBW runs, not from here: no stub can kill a JVM.
  */
+@Tag("infra")
 public class GameSummaryShutdownTest {
 
     @Test

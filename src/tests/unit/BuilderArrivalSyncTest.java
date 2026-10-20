@@ -12,6 +12,7 @@ import atlantis.units.actions.Actions;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeOrderSink;
@@ -39,6 +40,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * bank sat idle. Asserted on outcomes (orders, positions, bank), not
  * on internals.</p>
  */
+@Tag("production")
 public class BuilderArrivalSyncTest extends AbstractTestWithWorld {
 
     // (geometry inline: 20-tile walk, ~144f at 4px/f)

@@ -11,6 +11,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -30,6 +31,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * [price-50, price+8): the golden middle between a 30-frame idle
  * builder and a ~15 s late start.
  */
+@Tag("production")
 public class EarlyBuilderDispatchTest extends AbstractTestWithWorld {
 
     @Override

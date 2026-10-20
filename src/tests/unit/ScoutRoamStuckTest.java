@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.map.scout.enemy.RoamAroundEnemyBase;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -11,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * scout that can never reach its point returned the same target every frame
  * and stood still. The timeout below forces an advance instead.
  */
+@Tag("map")
 public class ScoutRoamStuckTest {
 
     @Test

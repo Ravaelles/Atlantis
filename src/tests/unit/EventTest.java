@@ -3,10 +3,12 @@ package tests.unit;
 import atlantis.game.event.AutomaticListener;
 import atlantis.game.event.Event;
 import atlantis.game.event.Events;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Tag("infra")
 public class EventTest extends AbstractTestWithUnits {
     public static String state = "-";
 

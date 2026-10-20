@@ -5,6 +5,7 @@ import atlantis.decisions.board.DecisionLog;
 import atlantis.production.requests.produce.ProduceBuilding;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * to tell a re-request after an unlink from a first request - the 40th
  * row must name its cause.
  */
+@Tag("production")
 public class DecisionDemandContextTest {
 
     private byte[] backup;

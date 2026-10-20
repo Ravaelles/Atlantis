@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * here) plus a real freshness check on the artifact itself when it exists.
  * </p>
  */
+@Tag("production")
 public class LauncherBuildsTheJarTest {
 
     private static final Path WINE_FULL = Paths.get("scripts/run-wine-full.sh");

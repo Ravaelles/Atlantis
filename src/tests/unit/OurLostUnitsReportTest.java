@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.information.enemy.UnitsArchive;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * report asks it.
  * </p>
  */
+@Tag("infra")
 public class OurLostUnitsReportTest extends tests.acceptance.WorldStubForTests {
 
     private static final AUnitType ZEALOT = AUnitType.Protoss_Zealot;

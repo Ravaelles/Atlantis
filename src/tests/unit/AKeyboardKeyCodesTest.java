@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.keyboard.AKeyboard;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * fail here loudly.
  * </p>
  */
+@Tag("infra")
 public class AKeyboardKeyCodesTest {
 
     // ---- constants copied from NativeKeyEvent (jnativehook-2.2.1.jar) ----

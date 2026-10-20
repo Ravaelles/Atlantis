@@ -13,6 +13,7 @@ import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -37,6 +38,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * too - each release valve (rich, blocked, pre-Pylon supply) restores the
  * old behavior, so no stuck state can deadlock on this rule.</p>
  */
+@Tag("production")
 public class CoreOutranksPylonsTest extends AbstractTestWithWorld {
 
     @Override

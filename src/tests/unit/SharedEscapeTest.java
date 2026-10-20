@@ -7,6 +7,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * threat. Duels and pairs keep the per-unit sampling - sharing answers
  * null for them.
  */
+@Tag("combat")
 public class SharedEscapeTest extends AbstractTestWithWorld {
 
     @Override

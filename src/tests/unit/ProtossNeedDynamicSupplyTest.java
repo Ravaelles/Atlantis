@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.production.dynamic.supply.ProtossNeedDynamicSupply;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * overlapping BO + dynamic Pylons; one Pylon at a time keeps the
  * headroom tight). Pure thresholds, no world needed.
  */
+@Tag("production")
 public class ProtossNeedDynamicSupplyTest {
 
     private final ProtossNeedDynamicSupply need = new ProtossNeedDynamicSupply();

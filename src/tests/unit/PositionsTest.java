@@ -4,10 +4,12 @@ import atlantis.map.choke.AChoke;
 import atlantis.map.position.APosition;
 import atlantis.map.position.Positions;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("placement")
 public class PositionsTest extends AbstractTestWithUnits {
     @Test
     public void average() {

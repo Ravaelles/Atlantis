@@ -6,6 +6,7 @@ import atlantis.battle.cluster.ClusterTactic;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -22,6 +23,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Individual kiting inside act() is untouched - only the cluster
  * tactic is gated.
  */
+@Tag("combat")
 public class ClusterHoldsHomeGroundTest extends AbstractTestWithWorld {
 
     @Override

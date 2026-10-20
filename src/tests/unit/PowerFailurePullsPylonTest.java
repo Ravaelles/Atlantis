@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.constructions.NewConstructionRequest;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * side effect (one pylon near the area, proximity-guarded) runs only on
  * true. Physical failures never pull: no pylon fixes a full map.
  */
+@Tag("production")
 public class PowerFailurePullsPylonTest {
 
     private ProductionOrder order() {

@@ -426,3 +426,17 @@ same hours are not spent twice.
   `notIndifferent()` discipline until absorbed.
 - New rule, not retroactive cleanup: existing violations elsewhere are
   tracked by ArchUnit (§5), not rewritten to satisfy this section.
+
+## 22. Test tiers: tag every test, run the smallest subset (owner's ruling, 2026-10-20)
+
+- Every unit test carries a JUnit `@Tag` area (`production`,
+  `combat`, `placement`, `map`, `infra` - by subject, not fixtures)
+  plus `@Tag("full-tier")` when it belongs to the full tier only.
+  New tests default to the fast loop; moving one out needs the
+  slow-and-settled justification written down (area settled AND the
+  test alone costs ~0.3 s or more).
+- `scripts/run-tests.sh` runs the fast subset (unit minus
+  `full-tier`, advisory architecture, cheap e2e smokes); the full
+  tier (`scripts/run-full-tests.sh`) runs everything, and runs at
+  the end of every finished feature, not per edit. Detail and the
+  area map live in `DOCS/TESTING.md`.

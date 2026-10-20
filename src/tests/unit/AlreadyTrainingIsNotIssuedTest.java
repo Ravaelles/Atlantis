@@ -8,6 +8,7 @@ import atlantis.production.v2.execution.GameOrderDirector;
 import atlantis.production.v2.execution.ProductionDispatcher;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -34,6 +35,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * not engine accepts, and the worker gap read bigger than it is.
  * </p>
  */
+@Tag("production")
 public class AlreadyTrainingIsNotIssuedTest extends AbstractTestWithWorld {
 
     @Override

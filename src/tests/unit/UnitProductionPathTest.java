@@ -12,6 +12,7 @@ import atlantis.util.We;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the chain asserting each parent's gate is open for the live configuration.
  * </p>
  */
+@Tag("production")
 public class UnitProductionPathTest {
 
     private Race raceBefore;

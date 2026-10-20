@@ -9,6 +9,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrderPriority
 import atlantis.production.requests.produce.ProduceBuilding;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Workers/army/expansion/detection stay out (pump, strategy, site
  * approval and response system own them).
  */
+@Tag("production")
 public class GoalBoardFeederTest extends AbstractTestWithWorld {
 
     @Override

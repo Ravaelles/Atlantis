@@ -11,6 +11,7 @@ import atlantis.units.AUnitType;
 import bwapi.Race;
 import bwapi.TechType;
 import bwapi.UpgradeType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -36,6 +37,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * would read inflated rows.
  * </p>
  */
+@Tag("production")
 public class AlreadyResearchingIsNotIssuedTest extends AbstractTestWithWorld {
 
     @Override

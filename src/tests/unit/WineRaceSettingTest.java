@@ -1,5 +1,6 @@
 package tests.unit;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * inspected by eye.
  * </p>
  */
+@Tag("infra")
 public class WineRaceSettingTest {
 
     private static final Path SCRIPT = Paths.get("scripts/run-wine-full.sh");

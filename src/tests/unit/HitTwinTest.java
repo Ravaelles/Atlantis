@@ -6,6 +6,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -22,6 +23,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * attributable instead of guesswork. Sampling every frame, rows
  * only when health went missing.
  */
+@Tag("combat")
 public class HitTwinTest extends WorldStubForTests {
 
     @Override

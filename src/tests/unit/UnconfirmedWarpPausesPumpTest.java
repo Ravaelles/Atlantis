@@ -7,6 +7,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.dynamic.protoss.prioritize.ProtossCriticalStuffInQueue;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * pausing the pump there protects the recovery bank. Linked warps and rich
  * banks are unaffected by design.
  */
+@Tag("production")
 public class UnconfirmedWarpPausesPumpTest extends AbstractTestWithWorld {
 
     @Override

@@ -9,6 +9,7 @@ import atlantis.production.constructions.protoss.ProtossWarping;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -26,6 +27,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * and Gateways jumped the queue). Dynamic warps carry no planned
  * supply and stay out.
  */
+@Tag("production")
 public class BuildOrderAuditTest extends AbstractTestWithWorld {
 
     @Override

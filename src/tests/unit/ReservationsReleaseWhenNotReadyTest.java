@@ -4,6 +4,7 @@ import atlantis.production.orders.production.queue.ReservedResources;
 import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,6 +17,7 @@ import tests.unit.AbstractTestWithUnits;
  * reserved=300 stuck while Gateway-2 (150) waited with an effective bank
  * under 150 and zero overdue-cancels. A not-ready order holds no money.
  */
+@Tag("infra")
 public class ReservationsReleaseWhenNotReadyTest extends AbstractTestWithUnits {
 
     @Test

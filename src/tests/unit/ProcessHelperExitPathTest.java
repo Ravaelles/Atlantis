@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.util.ProcessHelper;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -38,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * {@code java.io.IOException} header or a {@code \tat } frame.
  * </p>
  */
+@Tag("map")
 public class ProcessHelperExitPathTest {
 
     private String stderrOf(Runnable body) {

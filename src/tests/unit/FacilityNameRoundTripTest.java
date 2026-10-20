@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * class as the one documented in {@code CompletedUnitsHistory}.
  * </p>
  */
+@Tag("production")
 public class FacilityNameRoundTripTest {
 
     @Test

@@ -7,6 +7,7 @@ import atlantis.production.constructions.ConstructionRequests;
 import atlantis.production.constructions.commanders.ConstructionStatusChanger;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -29,6 +30,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the test drives it through the same static seam the frame loop uses,
  * with a constructing builder at the site, a walking one, and none.</p>
  */
+@Tag("production")
 public class ConstructionStatusAdvanceTest extends WorldStubForTests {
 
     @AfterEach

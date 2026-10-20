@@ -11,6 +11,7 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import atlantis.util.AConsole;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
 
 import static atlantis.units.AUnitType.*;
 
+@Tag("production")
 public class TravelToConstructTest extends WorldStubForTests {
     @Override
     public Race initRace() {

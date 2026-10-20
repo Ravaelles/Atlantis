@@ -8,6 +8,7 @@ import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -35,6 +36,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * there by design (2026-10-19 cap), and the single author must cover
  * it, not re-discover it.</p>
  */
+@Tag("infra")
 public class FallbackBandsParityTest extends AbstractTestWithWorld {
 
     private static final class Exposed extends ProduceFallbackPylonWhenSupplyLow {

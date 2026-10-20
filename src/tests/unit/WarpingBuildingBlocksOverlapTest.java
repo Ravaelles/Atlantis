@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.map.position.APosition;
 import atlantis.production.constructions.position.conditions.OverlapsOurUnfinishedBuilding;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * (that false positive died 2026-10-08) - only our own unfinished
  * buildings do.</p>
  */
+@Tag("production")
 public class WarpingBuildingBlocksOverlapTest extends WorldStubForTests {
 
     @Test

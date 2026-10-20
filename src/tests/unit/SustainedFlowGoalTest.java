@@ -5,6 +5,7 @@ import atlantis.decisions.board.Goal;
 import atlantis.decisions.board.GoalBoard;
 import atlantis.decisions.goals.protoss.GoalRanks;
 import atlantis.decisions.goals.protoss.ProtossOpening;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Dragoons. Producing, gateless, blocked or pre-Gateway states want
  * neither - the opening army goal and the legacy pumps own those.
  */
+@Tag("production")
 public class SustainedFlowGoalTest {
 
     private BoardState stalledNoCore() {

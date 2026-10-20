@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.production.dynamic.protoss.units.ProduceDragoon;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -23,6 +24,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * half: the instant the price IS there, the order goes out on the first call.
  * </p>
  */
+@Tag("production")
 public class DragoonProductionAsapTest extends AbstractTestWithWorld {
 
     @Override

@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.map.scout.ScoutState;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * The roam progress tracking must not leak between games in one JVM.
  */
+@Tag("map")
 public class ScoutStateResetTest {
 
     @Test

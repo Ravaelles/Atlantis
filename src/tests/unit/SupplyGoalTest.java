@@ -5,6 +5,7 @@ import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * over all supply demand.
  * </p>
  */
+@Tag("production")
 public class SupplyGoalTest {
 
     @Test

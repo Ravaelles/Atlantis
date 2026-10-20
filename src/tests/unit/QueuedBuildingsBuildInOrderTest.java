@@ -17,6 +17,7 @@ import atlantis.util.log.EventLog;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -51,6 +52,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * the engine would answer, like {@code OrphanedConstructionTest} does
  * for one building.</p>
  */
+@Tag("production")
 public class QueuedBuildingsBuildInOrderTest extends AbstractTestWithWorld {
 
     @Override

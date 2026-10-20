@@ -4,6 +4,7 @@ import atlantis.map.position.APosition;
 import atlantis.map.scout.ScoutState;
 import atlantis.map.scout.ScoutTerminalAnchor;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the manager wiring (anchors first, roam only when undefined) is covered
  * by ScoutTerminalAnchorTest + the chain.
  */
+@Tag("map")
 public class ScoutTerminalRoamTest {
 
     private static final APosition FIRST = APosition.create(10, 10);

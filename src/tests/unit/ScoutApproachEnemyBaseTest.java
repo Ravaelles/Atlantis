@@ -4,6 +4,7 @@ import atlantis.map.scout.ScoutState;
 import atlantis.map.scout.enemy.ScoutApproachEnemyBase;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -15,6 +16,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * most two scouts died. Beyond that the scout stays with the rest of the
  * chain instead of feeding kills.
  */
+@Tag("map")
 public class ScoutApproachEnemyBaseTest {
 
     @AfterEach

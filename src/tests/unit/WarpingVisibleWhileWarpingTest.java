@@ -9,6 +9,7 @@ import atlantis.production.orders.production.queue.order.OrderStatus;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * to the pre-#53 shape): the unit-completed event removes exactly the
  * construction the warp linked.
  */
+@Tag("infra")
 public class WarpingVisibleWhileWarpingTest extends AbstractTestWithWorld {
 
     @Override

@@ -9,6 +9,7 @@ import atlantis.production.constructions.commanders.CancelTooLongConstructions;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeMapTiles;
@@ -32,6 +33,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * replaces the old one, anything else keeps it.
  * </p>
  */
+@Tag("production")
 public class ReplaceStuckConstructionTest extends AbstractTestWithWorld {
 
     @Override

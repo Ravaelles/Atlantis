@@ -6,6 +6,7 @@ import atlantis.units.AUnitType;
 import atlantis.units.special.SleepUntilFrameGate;
 import atlantis.units.workers.IdleWorker;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
@@ -24,6 +25,7 @@ import static tests.unit.AbstractTestWithUnits.fake;
  * withdrawn. The in-flight order belongs to whoever issued it, so the gate
  * leaves the owner alone.</p>
  */
+@Tag("production")
 public class SleepGateOwnershipTest {
 
     @AfterEach

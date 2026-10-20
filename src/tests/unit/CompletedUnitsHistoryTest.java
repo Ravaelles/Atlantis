@@ -4,6 +4,7 @@ import atlantis.game.util.CompletedUnitsHistory;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * own progression rather than a hand-written list.
  * </p>
  */
+@Tag("infra")
 public class CompletedUnitsHistoryTest extends AbstractTestWithUnits {
 
     private static final AUnitType PYLON = AUnitType.Protoss_Pylon;

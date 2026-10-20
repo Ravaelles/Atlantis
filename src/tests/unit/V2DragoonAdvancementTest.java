@@ -5,6 +5,7 @@ import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.UnitProducible;
 import atlantis.production.v2.goals.DynamicGoals;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>Pure snapshots, no game. Legacy keeps its own thicket (it produces
  * Dragoons in games); this test pins the V2 demand side only.</p>
  */
+@Tag("production")
 public class V2DragoonAdvancementTest {
 
     private static final String DRAGOON = UnitProducible.of(AUnitType.Protoss_Dragoon).id();

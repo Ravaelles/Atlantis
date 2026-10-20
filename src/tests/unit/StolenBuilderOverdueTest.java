@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.constructions.Construction;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -20,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * a stolen one stalls it forever. A builder back on minerals/gas while the
  * building is affordable is not working on it; a walking one still shields.
  */
+@Tag("production")
 public class StolenBuilderOverdueTest extends AbstractTestWithWorld {
 
     private Construction stolen;

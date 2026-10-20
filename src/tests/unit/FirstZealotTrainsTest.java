@@ -3,6 +3,7 @@ package tests.unit;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.units.AUnitType;
 import bwapi.Race;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
@@ -20,6 +21,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * If this ever goes red, unit production itself is broken, whatever the
  * bank says.
  */
+@Tag("production")
 public class FirstZealotTrainsTest extends AbstractTestWithWorld {
 
     @Override

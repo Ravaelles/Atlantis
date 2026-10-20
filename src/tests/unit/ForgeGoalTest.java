@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.decisions.board.BoardState;
 import atlantis.decisions.goals.protoss.ForgeGoal;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Forge timing lives on the board: DT prediction plus matchup supply
  * table, each legacy branch mirrored below. Stub states, milliseconds.
  */
+@Tag("production")
 public class ForgeGoalTest {
 
     private BoardState state(

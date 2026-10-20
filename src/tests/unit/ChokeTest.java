@@ -3,12 +3,14 @@ package tests.unit;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tests.fakes.FakeChoke;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Tag("map")
 public class ChokeTest extends AbstractTestWithUnits {
     @Test
     public void distToChokes() {
