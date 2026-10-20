@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Baseless ATTACK must explore instead of idling (owner: on UMS duel
@@ -27,6 +28,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * Dragoon standing still a whole game). With no main the army's own
  * center is the reference for the nearest unexplored start.
  */
+@Tag("combat")
 public class BaselessAttackExploresTest extends AbstractTestWithWorld {
 
     @Override

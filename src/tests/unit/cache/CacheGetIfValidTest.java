@@ -10,11 +10,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Deferred defect #1: {@code getIfValid} used to
  * return stale-invalid units instead of recomputing them.
  */
+@Tag("infra")
 public class CacheGetIfValidTest {
 
     @Test

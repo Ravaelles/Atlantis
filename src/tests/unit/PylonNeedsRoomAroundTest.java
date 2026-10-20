@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
 import static tests.unit.AbstractTestWithUnits.fakeOurs;
+import org.junit.jupiter.api.Tag;
 
 /**
  * A Pylon warps power, not just a building (owner 2026-10-20, UMS 7th_rav:
@@ -25,6 +26,7 @@ import static tests.unit.AbstractTestWithUnits.fakeOurs;
  * With 2+ supply free the four diagonal tiles around the site must be
  * walkable; poor supply keeps the old accept-anything behaviour.
  */
+@Tag("placement")
 public class PylonNeedsRoomAroundTest extends WorldStubForTests {
 
     private static Set<String> blocked = new HashSet<>();

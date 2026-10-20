@@ -9,11 +9,13 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Stage D: every engine order issued through {@code AUnitOrders} wrappers
  * must reach the unit's {@code OrderSink}.
  */
+@Tag("infra")
 public class OrderSinkTest extends WorldStubForTests {
 
     @Test

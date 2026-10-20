@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Tag;
 
 /**
  * {@link Cache#get(String, int, atlantis.util.Callback)} hands a cached value out as
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  * renaming the hook to an interface cannot quietly drop the copy: nothing else in the
  * suite asserts it.</p>
  */
+@Tag("infra")
 public class CacheCopyHookTest extends WorldStubForTests {
 
     @Test

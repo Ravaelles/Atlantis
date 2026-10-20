@@ -1206,7 +1206,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `MoveAway.bestDestination`), second: `ARunningManager`.
 - **#184** Migrate isTerminal readers (NEXT #157 follow-up): FINISHED checks
   to isTerminal(). First batch + unit tests + macro no-regression game.
-  instead of removing it.
+- **#187** Tag the untagged unit tests (test-tier compliance, CONVENTIONS §22):
+  area tags only (no tier changes), 8 files. Verified by the suite.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

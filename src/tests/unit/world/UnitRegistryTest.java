@@ -9,10 +9,12 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Stage E: unit identity lives in an explicit registry, not in statics.
  */
+@Tag("infra")
 public class UnitRegistryTest {
 
     @Test

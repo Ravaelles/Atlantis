@@ -10,10 +10,12 @@ import tests.fakes.FakeUnit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Stage E: the read model is constructible and queryable with no engine.
  */
+@Tag("infra")
 public class WorldTest {
 
     @Test

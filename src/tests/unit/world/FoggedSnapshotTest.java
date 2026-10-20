@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Tag;
 
 /**
  * Stage E: fogged units expose their last-known state as a snapshot.
@@ -15,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * delegation, and world-based tests leak static mocks across test classes
  * (see _AI/NOTES.md), which makes suite results order-dependent.</p>
  */
+@Tag("infra")
 public class FoggedSnapshotTest {
 
     @Test
