@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterTactic;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import org.junit.jupiter.api.AfterEach;
@@ -50,11 +51,11 @@ public class ClusterHoldsHomeGroundTest extends AbstractTestWithWorld {
         ), fakeEnemies(), () -> {
             Alpha.get().addUnit(zealot);
 
-            assertTrue(BattleCommander.clusterHoldsHomeGround(),
+            assertTrue(ClusterTactic.holdsHomeGround(),
                 "cluster ~1.4 tiles from the main base holds: " + Alpha.get().center());
 
             Alpha.get().removeUnit(zealot);
-            assertFalse(BattleCommander.clusterHoldsHomeGround(),
+            assertFalse(ClusterTactic.holdsHomeGround(),
                 "no cluster, no gate");
         });
     }
@@ -69,7 +70,7 @@ public class ClusterHoldsHomeGroundTest extends AbstractTestWithWorld {
         ), fakeEnemies(), () -> {
             Alpha.get().addUnit(zealot);
 
-            assertFalse(BattleCommander.clusterHoldsHomeGround(),
+            assertFalse(ClusterTactic.holdsHomeGround(),
                 "20 tiles out the gate stays open: " + Alpha.get().center());
 
             Alpha.get().removeUnit(zealot);

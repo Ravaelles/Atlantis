@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterTactic;
 import atlantis.battle.cluster.ClusterMission;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.game.AGame;
@@ -61,7 +62,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Zealot, 33, 20)
         ), () -> {
                 assertTrue(
-                BattleCommander.earlyUmsStandGround(),
+                ClusterTactic.earlyUmsStandGround(),
                 "UMS frame 1: stand and fight, there is nowhere to run to");
         });
     }
@@ -74,7 +75,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Zealot, 33, 20)
         ), () -> {
             assertFalse(
-                BattleCommander.earlyUmsStandGround(),
+                ClusterTactic.earlyUmsStandGround(),
                 "ladder games keep the evaluator in charge");
         });
     }
@@ -88,7 +89,7 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
         ), fakeEnemies(), () -> {
             if (atlantis.game.A.now() != 399) return;
             assertFalse(
-                BattleCommander.earlyUmsStandGround(),
+                ClusterTactic.earlyUmsStandGround(),
                 "at 16.6 s the UMS leash comes off: " + atlantis.game.A.now());
         });
     }

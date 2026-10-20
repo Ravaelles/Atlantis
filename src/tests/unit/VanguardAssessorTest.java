@@ -2,6 +2,7 @@ package tests.unit;
 
 import atlantis.battle.cluster.Alpha;
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterTactic;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(vanguard,
-                    BattleCommander.vanguardAssessor(leader),
+                    ClusterTactic.assessVanguard(leader),
                     "the vanguard 2 tiles from the enemy assesses, not the leader 22 away");
             } finally {
                 Alpha.get().removeUnit(leader);
@@ -78,7 +79,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(leader,
-                    BattleCommander.vanguardAssessor(leader),
+                    ClusterTactic.assessVanguard(leader),
                     "20 tiles to the enemy is march territory for the whole cluster");
             } finally {
                 Alpha.get().removeUnit(leader);
@@ -101,7 +102,7 @@ public class VanguardAssessorTest extends AbstractTestWithWorld {
             Alpha.get().addUnit(vanguard);
             try {
                 assertSame(vanguard,
-                    BattleCommander.vanguardAssessor(null),
+                    ClusterTactic.assessVanguard(null),
                     "contact assesses even with no leader");
             } finally {
                 Alpha.get().removeUnit(vanguard);

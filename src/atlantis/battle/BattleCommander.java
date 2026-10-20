@@ -13,6 +13,7 @@ import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.cluster.Missions;
 
 import atlantis.battle.cluster.ClusterMission;
+import atlantis.battle.cluster.ClusterTactic;
 
 import atlantis.battle.cluster.ClusterAnchor;
 
@@ -42,11 +43,10 @@ import atlantis.units.select.Selection;
  */
 public class BattleCommander extends Commander {
 
-    private static int fleeStartedAt = -1;
 
     /** Per-game reset next to the other static resets in OnGameStarted. */
     public static void reset() {
-        fleeStartedAt = -1;
+        ClusterTactic.reset();
         CombatTuning.resetToDefaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
@@ -76,7 +76,7 @@ public class BattleCommander extends Commander {
             Missions.forceGlobalMissionDefend("cluster-defend");
         }
 
-        FightOrFlight.Tactic tactic = tactic();
+        FightOrFlight.Tactic tactic = ClusterTactic.decide();
         HasPosition anchor = posture == ClusterMission.Posture.ATTACK
             ? ClusterAnchor.attackAnchor() : ClusterAnchor.defendAnchor();
 
@@ -99,52 +99,7 @@ public class BattleCommander extends Commander {
         return false;
     }
 
-    private FightOrFlight.Tactic tactic() {
-        AUnit leader = Alpha.get().leader();
-        AUnit assessor = vanguardAssessor(leader);
-        double eval = assessor != null ? assessor.eval() : 0;
 
-        // Breach rule (owner): raiders in the base mean fight - always. Two
-        // workers chewing probes is not an evaluation the cluster can walk
-        // away from, however lopsided the numbers read (the evaluator is
-        // not even asked). The latch resets with it: a retreat ordered
-        // before the breach does not drag the cluster home. The only
-        // retreat on a breach is per-unit, below in act().
-        // Same for a UMS opening: with no base anywhere, an early retreat
-        // just feeds - stand the first 15 seconds and let the fight happen.
-        if (breachForcesFight() || earlyUmsStandGround()) {
-            fleeStartedAt = -1;
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        // Home ground holds: under two tiles from the main base the
-        // cluster stands instead of fleeing (owner: retreating into the
-        // mineral line donates the base). Individual kiting inside act()
-        // still applies - this gates only the cluster tactic.
-        if (clusterHoldsHomeGround()) {
-            fleeStartedAt = -1;
-            return FightOrFlight.Tactic.FIGHT;
-        }
-
-        FightOrFlight.Tactic tactic = FightOrFlight.decide(eval, A.now(), fleeStartedAt);
-        if (tactic == FightOrFlight.Tactic.FLEE && fleeStartedAt < 0) {
-            fleeStartedAt = A.now();
-        }
-        if (tactic == FightOrFlight.Tactic.FIGHT) {
-            fleeStartedAt = -1;
-        }
-        return tactic;
-    }
-
-    /**
-     * The UMS opening stand-ground (owner): on custom maps there is no
-     * base to run to, so a retreat in the first 15 seconds is never the
-     * answer - the unit would just feed. Public as a seam: the rule pins
-     * in a stub state without running the frame.
-     */
-    public static boolean earlyUmsStandGround() {
-        return atlantis.game.A.isUms() && atlantis.game.A.now() < CombatTuning.current().getUmsNoRetreatFrames();
-    }
 
     /**
      * Where a baseless retreat rallies (owner): a point away from the
@@ -203,40 +158,7 @@ public class BattleCommander extends Commander {
         return current;
     }
 
-    /**
-     * True when the cluster sits on the main base (under 2 tiles): FLEE
-     * is not an option there. Public as a seam, pinned without a game.
-     */
-    public static boolean clusterHoldsHomeGround() {
-        AUnit main = Select.main();
-        if (main == null) return false;
-        HasPosition center = Alpha.get().center();
-        if (center == null) return false;
-        return center.distTo(main) < 2;
-    }
 
-    /**
-     * Who the gate listens to: the unit closest to an enemy within 15
-     * tiles, else the leader. A leader at the back reads a different fight
-     * than the vanguard taking contact (owner 2026-10-19: one cluster, one
-     * area assessment - the gate answers for where the fight is, not for
-     * where the leader stands). Public as a seam, pinned without a game.
-     */
-    public static AUnit vanguardAssessor(AUnit leader) {
-        AUnit best = leader;
-        double bestDist = Double.MAX_VALUE;
-        for (AUnit unit : Alpha.get().selection().list()) {
-            if (unit == null || !unit.isAlive()) continue;
-            AUnit foe = atlantis.battle.targeting.ASquadTargeting.nearestEngageableEnemy(unit, 15);
-            if (foe == null) continue;
-            double dist = unit.distTo(foe);
-            if (dist < bestDist) {
-                best = unit;
-                bestDist = dist;
-            }
-        }
-        return best;
-    }
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (unit == null || !unit.isAlive()) return;
