@@ -26,10 +26,15 @@ public class ClusterAnchor {
         // Unknown enemy: march on the nearest unexplored start location
         // (UAlbertaBot's "explore until we find a target"). Sitting home
         // on ATTACK played 18 minutes to 0/0 - measured 2026-10-17.
-        AUnit ownMain = Select.mainOrAnyBuilding();
-        HasPosition unexplored = ownMain != null
-            ? BaseLocations.nearestUnexploredStartingLocation(ownMain.position())
-            : null;
+        // Baseless (lost base, UMS duel maps): there is no main to march
+        // from, so reference the army itself - otherwise the anchor is
+        // null and the cluster stands still where it stands (measured
+        // Wine 1Drag_v_1Zeal: one dragoon idle a whole game).
+        HasPosition from = Select.mainOrAnyBuilding();
+        if (from == null) from = Alpha.get().center();
+        HasPosition unexplored = from == null
+            ? null
+            : BaseLocations.nearestUnexploredStartingLocation(from);
         if (unexplored != null) return unexplored;
         return Select.mainOrAnyBuilding();
     }
