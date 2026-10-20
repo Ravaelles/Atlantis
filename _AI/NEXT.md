@@ -559,7 +559,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   shared platform). GAME_END twin stays as the witness for the next
   one. No blind patch. 2026-10-20: no occurrence in 4 live games
   this turn (2 Wine macro + 2 Wine UMS duels - all ended by kill
-  or VICTORY with tails, none silent). Contrast datum 2026-10-18 (`144920`: host died
+  or VICTORY with tails, none silent). 2026-10-20 probe `162410`
+  (OpenBW 1v1): killed at 20 s by BOT_KILL_SECONDS with full tail
+  (Connected, no Connection successful, thread dump) - a NAMED end,
+  explicitly not the silent shape. Contrast datum 2026-10-18 (`144920`: host died
   visibly at 846f/35s - client printed `failed, disconnecting` + `No
   server proc ID`, hang-watcher jstacked, runner ended at 72s). The four
   #149 runs show NONE of those lines: when the host dies the client
@@ -619,9 +622,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   pick 0:13, STARTED 0:46, warped [16,46] 0:58 - pipeline healthy on
   this game; the two named instances were other games. Second datum
   2026-10-21 (TauCross vs Zerg, BUILDER_LOG=1, 9.7 game-min Defeat):
-  55 reservation/assignment lines flow; one BUILD_BREAKDOWN captured
-  (Gateway [123,26], worker stood still 74f, never warped - open
-  analysis item, candidate #84-third-instance or #151 cover).
+  55 reservation/assignment lines flow; BUILD_BREAKDOWN on Gateway
+  [123,26] (worker frozen 74f at dist 17.2, probe #197 in footprint,
+  canBuild=false all variants) then self-recovered, walked in, and
+  the Gateway WARPED 8:06 (ledger) - stall-with-recovery, second
+  instance of the 10-19 [3,47] class, NOT a third #84 stall (builder
+  moved and delivered). Correction trail: EVENTS carries no STARTED
+  row for cid=96 (STARTED-twin gap on the builder path - warp proven
+  by ledger, twin silent), and cid=98/oid=67 CANCELs "Null position"
+  at 8:07 with zero REQUESTED rows anywhere (terminal without
+  origin - request-twin gap on some re-request door; next: read the
+  removal/mint paths for the untwinned exit, no blind patch).
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -675,7 +686,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   #61 within 162 frames) - same duplicate class as supply, not lateness.
   Re-verified 2026-10-19: #2/#3 on time 1:27-1:28/1:49-2:00 in all
   three fresh OpenBW runs, dynamic Gateways on schedule - OpenBW
-  control clean, Wine proof still owner-side. No blind patch.
+  control clean, Wine proof still owner-side. 2026-10-21 Wine macro
+  datum (TauCross, ledger): Gateways 1:27/1:53/4:11/6:01 + dynamic
+  7:51 [105,16] and 8:06 [123,26], all warped - lateness pattern
+  not reproduced. No blind patch.
 - **#94** Enemy never spawns on OpenBW (host auto-menu path): 6+
   enemyless games across TauCross/Python, Zerg/Terran (`enemy: ` empty,
   0/0, scouts find nothing in 18 min). Plumbing verified correct;
