@@ -379,10 +379,10 @@ public class ConstructionRequests {
      * "Not yet constructing": no builder yet (NOT_STARTED) or builder
      * travelling (STARTING). Both count wherever demand is counted, so a
      * travelling builder is never mistaken for no demand - the sets match
-     * the pre-STARTING ones exactly.
+     * the pre-STARTING ones exactly. Answered by the status itself now
+     * (NEXT #157); this stays as the family name the counters read.
      */
     private static boolean isNotStarted(ConstructionOrderStatus status) {
-        return status == ConstructionOrderStatus.NOT_STARTED
-            || status == ConstructionOrderStatus.STARTING;
+        return status.countsAsDemand();
     }
 }
