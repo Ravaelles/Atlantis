@@ -162,7 +162,22 @@ BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 say "bot finished, took ${SECONDS}s, exit code: $BOT_EXIT"
 
-# --- Collect ---
+# --- Scenario-load check: the map must create units for a fight ---
+# A duel needs both sides: zero creations is an aborted load, one is a
+# half-loaded map (measured: old engine 0, half-load 1, healthy duel 2).
+# Server-side creations are the load-phase evidence, independent of what
+# the bot did or logged. A short game that ends by win/loss still created
+# both armies, so this only fires on broken scenarios, never on results.
+SPAWNED_UNITS="$(grep -a "has been created" "$SERVER_LOG" 2>/dev/null | grep -av "^A Resource_" | wc -l)"
+SPAWNED_UNITS="$(echo "$SPAWNED_UNITS" | tr -d ' ')"
+if [ -z "$SPAWNED_UNITS" ]; then SPAWNED_UNITS=0; fi
+echo "units_spawned=$SPAWNED_UNITS" >> "$RUN_DIR/run.txt"
+if [ "$SPAWNED_UNITS" -lt 2 ]; then
+  say "run dir: $RUN_DIR"
+  echo "FAIL: scenario did not load both sides (server created $SPAWNED_UNITS non-resource units, need both armies; log: $RUN_DIR/server.log)"
+  exit 1
+fi
+say "scenario loaded: $SPAWNED_UNITS non-resource units created"
 [ -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" ] \
   && cp -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" "$RUN_DIR/EVENTS.jsonl" \
   && say "event log: $RUN_DIR/EVENTS.jsonl" \
