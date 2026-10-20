@@ -272,6 +272,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/5Drag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_Lings.scm"; // Lots of space
 //        if (true) return "ums/rav/protoss/Drag_v_LingsUpg.scm"; // ░░░░░░░░░░░░░░░░░
+        if (true) return "ums/rav/protoss/Drag_v_LingsUpg2.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/Drag_v_Lings2.scm"; // Much less space
 //        if (true) return "ums/rav/protoss/DragFew_v_Sunkens.scm"; // Few Dragoons attacking sunkens
 //        if (true) return "ums/rav/protoss/Drag_v_Sunkens.scm"; // Dragoons attacking sunkens with lings
@@ -304,7 +305,7 @@ public class Main {
 //        if (true) return "ums/rav/protoss/ZealDrag_v_Lings.scm";
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsUpg.scm";
 //        if (true) return "ums/rav/protoss/Drag_v_HydraUpg.scm"; // ░░░░░░░░░░░░░░░░░
-        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
+//        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra.scm"; // ░░░░░░░░░░░░░░░░░
 //        if (true) return "ums/rav/protoss/ZealDrag_v_LingsHydra2.scm";
 
         return null;

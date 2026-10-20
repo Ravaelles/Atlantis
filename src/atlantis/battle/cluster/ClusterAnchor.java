@@ -21,8 +21,10 @@ public class ClusterAnchor {
     public static HasPosition attackAnchor() {
         AUnit base = EnemyUnits.enemyBase();
         if (base != null) return base.position();
+
         HasPosition main = EnemyUnits.enemyMainBase();
         if (main != null) return main;
+
         // Unknown enemy: march on the nearest unexplored start location
         // (UAlbertaBot's "explore until we find a target"). Sitting home
         // on ATTACK played 18 minutes to 0/0 - measured 2026-10-17.
@@ -32,10 +34,12 @@ public class ClusterAnchor {
         // Wine 1Drag_v_1Zeal: one dragoon idle a whole game).
         HasPosition from = Select.mainOrAnyBuilding();
         if (from == null) from = Alpha.get().center();
+
         HasPosition unexplored = from == null
             ? null
             : BaseLocations.nearestUnexploredStartingLocation(from);
         if (unexplored != null) return unexplored;
+
         return Select.mainOrAnyBuilding();
     }
 }

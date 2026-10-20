@@ -48,7 +48,6 @@ import atlantis.units.select.Selection;
  */
 public class BattleCommander extends Commander {
 
-
     /** Per-game reset next to the other static resets in OnGameStarted. */
     public static void reset() {
         ClusterTactic.reset();
