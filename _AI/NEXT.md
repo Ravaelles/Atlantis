@@ -722,9 +722,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `ClientConnectionPosix.waitForServerData:90`
   (`while (read() != 2)`) <- `Client.connect:181` <- `reconnect:66`.
   Killed at 20 s by BOT_KILL_SECONDS, 0/0/0. So the stall IS the
-  connect-time handshake read; whether the server's byte 2 goes out
-  on this path is answered by their handshake tool (fake client:
-  wait for 2, reply 1, measure). What IS
+  connect-time handshake read; the server's byte 2 never goes out
+  (their handshake probe: NO_BYTE_2 after 12 s on a live server,
+  negative controls pass) because `GameImpl::update()` - the only
+  path to `server.update()` -> `callOnFrame()` -> byte 2 - is dead
+  code in the OpenBW build (no StarCraft.exe hook; `BWData.cpp`
+  drives `next_frame()` directly). Our client-side dump is
+  consistent (blocked read, nothing to receive). Next, theirs:
+  pump `Server::update()` per frame in `BWData.cpp`, re-probe for
+  BYTE_2_OK; we re-run the 1v1 probe end-to-end on their signal.
+  Detail: `docs/openbw-run-regression.md` §45-55 (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
   that failure mode is now fixed regardless of slots (baseless
