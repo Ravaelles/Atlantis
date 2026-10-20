@@ -742,10 +742,21 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   path to `server.update()` -> `callOnFrame()` -> byte 2 - is dead
   code in the OpenBW build (no StarCraft.exe hook; `BWData.cpp`
   drives `next_frame()` directly). Our client-side dump is
-  consistent (blocked read, nothing to receive). Next, theirs:
-  pump `Server::update()` per frame in `BWData.cpp`, re-probe for
-  BYTE_2_OK; we re-run the 1v1 probe end-to-end on their signal.
-  Detail: `docs/openbw-run-regression.md` §45-55 (theirs). What IS
+  consistent (blocked read, nothing to receive). 2026-10-20 their
+  pump landed (server log: `handshake sent from update()`):
+  HANDSHAKE CLOSED - 2/2 probes print `Connection successful`
+  (1v1 `170529`, M&M `170755`/`171136`, fresh jar both sides).
+  Binding NPE fixed with it (units array field-init + no-wipe
+  guard, JBWAPI-Atlantis `8cc9ef2`; early-init attempt withdrawn
+  same day - player table is empty pre-tick, AIOOBE measured).
+  New measured layer, engine-side: the match never ticks on UMS -
+  zero frame lines in server.log, no MatchStart, bot loop never
+  entered (no HELLO/BUILD ORDER, kill at 20 s with tail), although
+  slots hold real armies (M&M: 30 + 14 visible). Client cannot fix
+  a non-ticking match (players/forces publish on tick). Precise
+  ask: extend their handshake probe past BYTE_2_OK to frames +
+  MatchStart arrival; the pump must tick the match, not just the
+  handshake. Detail: `docs/openbw-run-regression.md` (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
   that failure mode is now fixed regardless of slots (baseless
@@ -1022,8 +1033,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10-19). 2026-10-20 probe names the stall: main blocked in
   `waitForServerData:90` read <- `Client.connect:181` (dump in run
   `162410`; server PUBLISHED, client "Connected", never
-  "Connection successful"). Wine stays the duel vehicle; OpenBW hosting is flaky
-  run to run (12:59 played 1209 frames, 13:13 never published).
+  "Connection successful"). 2026-10-20 handshake fixed both sides
+  (their pump + our units guard: 2/2 `Connection successful`);
+  the match itself never ticks on UMS (no frames, no MatchStart -
+  engine-side). Wine stays the duel vehicle until the match ticks.
 - OpenBW `TauCross` (`113933` long, FE forced reverted probe #2,
   12493f/8:44, exit 143 wall-cap - inconclusive as verdict, rich as
   data): FE OPENS (Forge 1:25, Core, 45 warps, Dragoons 10) - the
