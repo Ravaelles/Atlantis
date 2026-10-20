@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
-import atlantis.battle.FightOrFlight;
+import atlantis.battle.cluster.FightOrFlight;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
 import atlantis.map.position.PositionFinder;

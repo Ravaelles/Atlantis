@@ -1,8 +1,8 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
-import atlantis.battle.ClusterMission;
-import atlantis.battle.FightOrFlight;
+import atlantis.battle.cluster.ClusterMission;
+import atlantis.battle.cluster.FightOrFlight;
 import atlantis.game.AGame;
 import org.mockito.Mockito;
 import atlantis.map.position.HasPosition;

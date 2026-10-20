@@ -1,7 +1,7 @@
 package atlantis.production.orders.build;
 
-import atlantis.battle.Mission;
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Mission;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.production.orders.production.queue.order.ProductionOrder;

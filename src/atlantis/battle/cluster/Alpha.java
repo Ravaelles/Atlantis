@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 import atlantis.units.AUnit;
 import atlantis.units.select.Select;

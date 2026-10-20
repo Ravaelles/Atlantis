@@ -1,6 +1,6 @@
 package atlantis.architecture;
 
-import atlantis.battle.Squad;
+import atlantis.battle.cluster.Squad;
 import atlantis.architecture.ManagerFactory;
 import atlantis.game.A;
 import atlantis.units.AUnit;

@@ -1,5 +1,7 @@
 package atlantis.production;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.decisions.board.BoardState;
@@ -112,7 +114,7 @@ public class GoalBoardAdvisor extends Commander {
                 atlantis.information.enemy.EnemyUnits.lurkers(),
                 atlantis.information.enemy.EnemyUnits.mutas(),
                 enemyCarrierTech())
-            .sparta(atlantis.battle.Missions.isGlobalMissionSparta())
+            .sparta(atlantis.battle.cluster.Missions.isGlobalMissionSparta())
             .wallPieces(wallPiecesAtNatural())
             .armyStrengthWithoutCB(atlantis.information.generic.Army.strengthWithoutCB())
             .enemyHasRanged(atlantis.information.enemy.EnemyInfo.hasRanged())

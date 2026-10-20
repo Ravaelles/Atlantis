@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 /**
  * Where the one cluster belongs: home while small, at the enemy once it

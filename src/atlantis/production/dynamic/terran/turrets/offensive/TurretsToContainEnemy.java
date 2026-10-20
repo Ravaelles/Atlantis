@@ -1,8 +1,8 @@
 package atlantis.production.dynamic.terran.turrets.offensive;
 
 import atlantis.architecture.Commander;
-import atlantis.battle.Missions;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Alpha;
 import atlantis.game.A;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;

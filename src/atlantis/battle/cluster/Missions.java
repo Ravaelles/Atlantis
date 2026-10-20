@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 /**
  * The global mission value. Phase 0 of the combat cutover

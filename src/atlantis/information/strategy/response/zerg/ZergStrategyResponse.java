@@ -1,6 +1,6 @@
 package atlantis.information.strategy.response.zerg;
 
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 
 import atlantis.information.generic.ArmyStrength;
 import atlantis.information.strategy.AStrategy;

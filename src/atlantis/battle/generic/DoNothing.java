@@ -1,5 +1,7 @@
 package atlantis.battle.generic;
 
+import atlantis.battle.cluster.Mission;
+
 import atlantis.architecture.Manager;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;

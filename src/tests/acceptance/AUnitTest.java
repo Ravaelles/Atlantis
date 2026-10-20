@@ -1,5 +1,7 @@
 package tests.acceptance;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.units.AUnitType;

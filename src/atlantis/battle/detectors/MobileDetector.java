@@ -6,7 +6,7 @@ import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;
 import atlantis.battle.detectors.DetectHiddenEnemyClosestToBase;
 import atlantis.battle.detectors.FollowArmy;
 import atlantis.battle.detectors.SpreadOutDetectors;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.terran.repair.managers.UnitBeingReparedManager;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;

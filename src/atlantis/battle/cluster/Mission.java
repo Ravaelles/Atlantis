@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.advance.focus.AFocusPoint;

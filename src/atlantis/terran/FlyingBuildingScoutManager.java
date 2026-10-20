@@ -1,8 +1,8 @@
 package atlantis.terran;
 
 import atlantis.architecture.Manager;
-import atlantis.battle.Missions;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Alpha;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.debug.painter.APainter;
 import atlantis.map.position.APosition;

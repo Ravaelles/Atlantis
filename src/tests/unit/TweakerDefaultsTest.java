@@ -1,7 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
-import atlantis.battle.CombatTuning;
+import atlantis.battle.kite.CombatTuning;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

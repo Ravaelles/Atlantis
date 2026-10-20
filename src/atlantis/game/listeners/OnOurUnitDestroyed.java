@@ -1,7 +1,9 @@
 package atlantis.game.listeners;
 
+import atlantis.battle.twins.FightTrace;
+
 import atlantis.Atlantis;
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 import atlantis.config.env.Env;
 import atlantis.debug.OurWorkerWasKilled;
 import atlantis.game.A;
@@ -16,7 +18,7 @@ import atlantis.units.AUnit;
 public class OnOurUnitDestroyed {
     public static void update(AUnit unit) {
         printOurDeadUnit(unit);
-        atlantis.battle.FightTrace.died(unit);
+        atlantis.battle.twins.FightTrace.died(unit);
 
         RepairAssignments.removeRepairer(unit);
         OurWorkerWasKilled.onWorkedKilled(unit);

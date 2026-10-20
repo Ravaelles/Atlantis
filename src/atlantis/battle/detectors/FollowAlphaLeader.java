@@ -2,7 +2,7 @@ package atlantis.battle.detectors;
 
 import atlantis.architecture.Manager;
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.debug.painter.AAdvancedPainter;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;

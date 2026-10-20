@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.base.BaseLocations;

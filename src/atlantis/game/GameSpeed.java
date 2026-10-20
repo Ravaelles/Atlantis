@@ -1,7 +1,9 @@
 package atlantis.game;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.Atlantis;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.config.MapSpecificCommander;
 import atlantis.config.env.Env;
 import atlantis.information.enemy.EnemyInfo;

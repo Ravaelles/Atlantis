@@ -1,6 +1,6 @@
 package atlantis.information.strategy.response.terran;
 
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.game.player.Enemy;

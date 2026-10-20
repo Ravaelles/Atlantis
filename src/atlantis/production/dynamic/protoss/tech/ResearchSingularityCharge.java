@@ -1,6 +1,6 @@
 package atlantis.production.dynamic.protoss.tech;
 
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;

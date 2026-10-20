@@ -1,5 +1,7 @@
 package tests.unit;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.production.v2.Producible;
 import atlantis.production.v2.ProductionGoal;
 import atlantis.production.v2.TargetPlacement;
@@ -241,7 +243,7 @@ public class BuildOrderGoalsTest {
         bunker.setModifier("@MAIN");
         legacy.add(bunker);
         legacy.add(new atlantis.production.orders.production.queue.order.ProductionOrder(
-                atlantis.battle.Missions.ATTACK, 18));
+                atlantis.battle.cluster.Missions.ATTACK, 18));
 
         List<BuildOrderRow> rows = BuildOrderRow.fromLegacy(legacy);
 

@@ -1,6 +1,6 @@
 package atlantis.battle.eval.tweaks;
 
-import atlantis.battle.Squad;
+import atlantis.battle.cluster.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.CombatEvalScale;

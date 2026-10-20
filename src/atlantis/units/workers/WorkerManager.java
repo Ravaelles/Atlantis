@@ -1,5 +1,7 @@
 package atlantis.units.workers;
 
+import atlantis.battle.cluster.Alpha;
+
 import atlantis.architecture.Manager;
 import atlantis.architecture.ManagerFactory;
 import atlantis.battle.avoid.protoss.ProtossAvoidEnemies;

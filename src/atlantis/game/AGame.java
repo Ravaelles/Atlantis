@@ -1,5 +1,7 @@
 package atlantis.game;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.Atlantis;
 
 import atlantis.config.AtlantisConfig;
@@ -213,7 +215,7 @@ public class AGame {
             AGame.umsMode = true;
             AConsole.println("### UMS mode enabled! ###");
 
-            atlantis.battle.Missions.forceGlobalMissionAttack("UmsAlwaysAttack");
+            atlantis.battle.cluster.Missions.forceGlobalMissionAttack("UmsAlwaysAttack");
         }
     }
 

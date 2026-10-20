@@ -1,5 +1,7 @@
 package atlantis.production.orders.production.queue.order;
 
+import atlantis.battle.cluster.Mission;
+
 import atlantis.architecture.Commander;
 import atlantis.game.A;
 import atlantis.information.tech.ATechRequests;

@@ -1,5 +1,7 @@
 package tests.unit;
 
+import atlantis.battle.cluster.FightOrFlight;
+
 import atlantis.battle.BattleCommander;
 import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
@@ -103,7 +105,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertFalse(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
@@ -130,7 +132,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(
                 hasOrder(ordersOf(dragoon), dragoon.id(), "move"),

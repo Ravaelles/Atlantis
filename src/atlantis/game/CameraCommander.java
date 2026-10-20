@@ -1,9 +1,11 @@
 package atlantis.game;
 
+import atlantis.battle.cluster.Missions;
+
 import atlantis.Atlantis;
 import atlantis.architecture.Commander;
-import atlantis.battle.Squad;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Squad;
+import atlantis.battle.cluster.Alpha;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

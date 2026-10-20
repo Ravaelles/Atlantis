@@ -1,7 +1,7 @@
 package tests.fakes;
 
-import atlantis.battle.Mission;
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Mission;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.game.ARandom;
 import atlantis.game.player.APlayer;

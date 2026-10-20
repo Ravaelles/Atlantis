@@ -1,8 +1,12 @@
 package atlantis.game.listeners;
 
+import atlantis.battle.twins.ShotTwin;
+
+import atlantis.battle.twins.HitTwin;
+
 import atlantis.Atlantis;
-import atlantis.battle.Missions;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Alpha;
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.config.AtlantisConfigChanger;
 import atlantis.config.env.Env;
@@ -56,7 +60,7 @@ public class OnGameStarted {
         atlantis.game.listeners.OnGameEnd.reset();
         atlantis.map.scout.ScoutState.reset();
         atlantis.battle.BattleCommander.reset();
-        atlantis.battle.Missions.reset();
+        atlantis.battle.cluster.Missions.reset();
 
         // Per-game state with test-shared seams: a new game is a fresh
         // world, so unit-id-keyed deltas, throttle windows and audit rows
@@ -65,8 +69,8 @@ public class OnGameStarted {
         // game - it only drops stale entries.
         atlantis.production.orders.production.queue.add.AddToQueue.clearForTests();
         atlantis.production.requests.produce.ProduceBuilding.clearRefusedThrottleForTests();
-        atlantis.battle.HitTwin.clearForTests();
-        atlantis.battle.ShotTwin.clearForTests();
+        atlantis.battle.twins.HitTwin.clearForTests();
+        atlantis.battle.twins.ShotTwin.clearForTests();
         atlantis.game.listeners.WarpedBuildingRecorder.clearForTests();
         atlantis.game.util.BuildOrderAudit.clearForTests();
 

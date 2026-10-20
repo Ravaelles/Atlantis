@@ -1,7 +1,7 @@
 package tests.unit;
 
-import atlantis.battle.ClusterMission;
-import atlantis.battle.FightOrFlight;
+import atlantis.battle.cluster.ClusterMission;
+import atlantis.battle.cluster.FightOrFlight;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

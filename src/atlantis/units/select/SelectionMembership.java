@@ -1,6 +1,6 @@
 package atlantis.units.select;
 
-import atlantis.battle.Squad;
+import atlantis.battle.cluster.Squad;
 import atlantis.game.A;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.map.bullets.DeadMan;

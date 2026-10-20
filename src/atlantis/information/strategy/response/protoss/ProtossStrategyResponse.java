@@ -1,6 +1,6 @@
 package atlantis.information.strategy.response.protoss;
 
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.player.Enemy;
 import atlantis.information.enemy.EnemyUnits;
 import atlantis.information.generic.ArmyStrength;

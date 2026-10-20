@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.BattleCommander;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;

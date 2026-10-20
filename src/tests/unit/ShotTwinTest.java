@@ -1,6 +1,8 @@
 package tests.unit;
 
-import atlantis.battle.ShotTwin;
+import atlantis.battle.cluster.FightOrFlight;
+
+import atlantis.battle.twins.ShotTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;
@@ -63,7 +65,7 @@ public class ShotTwinTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
             atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             boolean attacked = false;
             for (tests.fakes.FakeOrderSink.Record record : ordersOf(dragoon)) {
@@ -88,7 +90,7 @@ public class ShotTwinTest extends AbstractTestWithWorld {
             if (!dragoon.isAttackFrame()) return;
 
             atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertTrue(ordersOf(dragoon).isEmpty(), "hold the shot, issue nothing");
             assertTrue(EventLog.toJsonLines().contains("\"result\":\"holding-shot\""),

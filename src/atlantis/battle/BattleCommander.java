@@ -1,5 +1,23 @@
 package atlantis.battle;
 
+import atlantis.battle.twins.ShotTwin;
+
+import atlantis.battle.twins.HitTwin;
+
+import atlantis.battle.twins.FightTrace;
+
+import atlantis.battle.kite.CombatTuning;
+
+import atlantis.battle.cluster.FightOrFlight;
+
+import atlantis.battle.cluster.Missions;
+
+import atlantis.battle.cluster.ClusterMission;
+
+import atlantis.battle.cluster.ClusterAnchor;
+
+import atlantis.battle.cluster.Alpha;
+
 import atlantis.architecture.Commander;
 import atlantis.architecture.CommanderFactory;
 import atlantis.battle.formation.FocusFire;

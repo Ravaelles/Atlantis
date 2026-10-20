@@ -1,5 +1,7 @@
 package atlantis.production.v2.goals;
 
+import atlantis.battle.cluster.Mission;
+
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.v2.Producible;
 import atlantis.production.v2.TechProducible;

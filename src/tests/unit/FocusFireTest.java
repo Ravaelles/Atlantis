@@ -1,5 +1,7 @@
 package tests.unit;
 
+import atlantis.battle.cluster.FightOrFlight;
+
 import atlantis.battle.formation.FocusFire;
 import atlantis.map.bullets.DeadMan;
 import atlantis.units.AUnit;
@@ -129,7 +131,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
             dragoon
         ), fakeEnemies(strong, weak), () -> {
             atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(weak, dragoon.target(),
                     "no current target, no squad: the weaker zealot draws the fire, "
@@ -153,7 +155,7 @@ public class FocusFireTest extends AbstractTestWithWorld {
             ((tests.fakes.FakeOrderSink) dragoon.orderSink()).clear();
 
             atlantis.battle.BattleCommander.act(
-                dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
+                dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 
             assertEquals(strong, dragoon.target(),
                     "sticky first: the committed target survives a weaker distraction");

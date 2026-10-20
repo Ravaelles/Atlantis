@@ -1,7 +1,7 @@
 package atlantis.production.dynamic.protoss;
 
 import atlantis.architecture.Commander;
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Missions;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyInfo;

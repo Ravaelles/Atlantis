@@ -1,6 +1,6 @@
 package tests.unit;
 
-import atlantis.battle.HitTwin;
+import atlantis.battle.twins.HitTwin;
 import atlantis.units.AUnitType;
 import atlantis.util.log.EventLog;
 import bwapi.Race;

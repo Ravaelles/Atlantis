@@ -1,6 +1,6 @@
 package atlantis.terran.chokeblockers;
 
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.map.choke.AChoke;
 import atlantis.map.choke.Chokes;
 import atlantis.map.position.APosition;

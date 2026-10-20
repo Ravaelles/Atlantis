@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.cluster;
 
 /**
  * One gate for the whole cluster: fight or flee. The evaluation itself

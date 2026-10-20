@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.kite;
 
 /**
  * Immutable snapshot of the combat coefficients (NEXT #158).

@@ -10,10 +10,10 @@ import atlantis.battle.generic.DoNothing;
 import atlantis.battle.advance.focus.AFocusPoint;
 import atlantis.battle.eval.AtlantisJfap;
 import atlantis.battle.avoid.margin.UnitRange;
-import atlantis.battle.Mission;
-import atlantis.battle.Missions;
-import atlantis.battle.Squad;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Mission;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Squad;
+import atlantis.battle.cluster.Alpha;
 import atlantis.battle.eval.tweaks.ProtossJfapTweaksConsiderChokesEtc;
 import atlantis.battle.running.ARunningManager;
 

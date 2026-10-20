@@ -1,4 +1,4 @@
-package atlantis.battle;
+package atlantis.battle.twins;
 
 import atlantis.game.A;
 import atlantis.units.AUnit;

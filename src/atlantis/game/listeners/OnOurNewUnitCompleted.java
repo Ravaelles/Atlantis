@@ -1,6 +1,6 @@
 package atlantis.game.listeners;
 
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Alpha;
 import atlantis.config.env.Env;
 import atlantis.game.CameraCommander;
 import atlantis.production.constructions.Construction;

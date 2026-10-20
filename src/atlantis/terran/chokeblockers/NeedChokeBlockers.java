@@ -1,8 +1,8 @@
 package atlantis.terran.chokeblockers;
 
 import atlantis.Atlantis;
-import atlantis.battle.Missions;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Missions;
+import atlantis.battle.cluster.Alpha;
 import atlantis.game.A;
 import atlantis.game.AGame;
 import atlantis.information.enemy.EnemyUnitBreachedBase;

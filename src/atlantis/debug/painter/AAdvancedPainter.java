@@ -5,11 +5,11 @@ import atlantis.architecture.Commander;
 import atlantis.config.env.Env;
 import atlantis.debug.profiler.CodeProfiler;
 import atlantis.battle.advance.focus.AFocusPoint;
-import atlantis.battle.Mission;
-import atlantis.battle.Missions;
+import atlantis.battle.cluster.Mission;
+import atlantis.battle.cluster.Missions;
 
-import atlantis.battle.Squad;
-import atlantis.battle.Alpha;
+import atlantis.battle.cluster.Squad;
+import atlantis.battle.cluster.Alpha;
 import atlantis.debug.profiler.LongFrames;
 import atlantis.game.A;
 import atlantis.game.AGame;
