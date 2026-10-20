@@ -69,6 +69,11 @@ JAVA_EXE="$WINE_ROOT/drive_c/Java/bin/java.exe"
 # This repository.
 ATLANTIS_DIR="${ATLANTIS_DIR:-/sc-ai/Atlantis}"
 LOG_DIR="$ATLANTIS_DIR/out/wine"
+# Per-run archive: out/wine/ is the live copy every tool reads, but it is
+# overwritten by the next game - analysis after the fact needs the run's
+# own directory (measured 2026-10-20: a short game overwrote the long
+# game's EVENTS before the overlap twins were read). Never cleaned here.
+WINE_RUNS_DIR="$ATLANTIS_DIR/out/wine_runs"
 
 # =============================================================================
 
@@ -522,4 +527,18 @@ if [ -f "$CLIENT_CWD/bwapi-data/write/DECISIONS.log" ]; then
 else
   say "decisions log missing: $CLIENT_CWD/bwapi-data/write/DECISIONS.log was never written"
 fi
+# Per-run archive (MAP is final here): the live copy above stays where the
+# tooling reads it; the run's own directory keeps the evidence past the
+# next game. Missing files are skipped, never fatal.
+{
+  RUN_STAMP="$(date +%Y%m%d_%H%M%S)"
+  MAP_SLUG="$(basename "${MAP:-game}" | tr -c 'A-Za-z0-9._-' '_')"
+  RUN_DIR="$WINE_RUNS_DIR/${RUN_STAMP}_${MAP_SLUG}"
+  mkdir -p "$RUN_DIR" || exit 0
+  for f in WINE_LOG WINE_DEBUG WINE_DECISIONS EVENTS.jsonl BUILDINGS.json chaoslauncher.log xvfb.log; do
+    [ -f "$LOG_DIR/$f" ] && cp -f "$LOG_DIR/$f" "$RUN_DIR/$f" 2>/dev/null || true
+  done
+  ln -sfn "$RUN_DIR" "$WINE_RUNS_DIR/latest"
+  say "run archived: $RUN_DIR"
+} || true
 exit 0
