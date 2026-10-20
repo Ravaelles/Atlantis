@@ -11,6 +11,7 @@ import java.util.Map;
 import org.mockito.Mockito;
 import tests.acceptance.AbstractTestWithWorld;
 import tests.fakes.FakeUnit;
+import tests.unit.helpers.ClearAllCaches;
 
 /**
  * A fast, fully controlled fight stepper for behavior scenarios (NEXT #161).
@@ -69,6 +70,8 @@ public class SimWorld {
 
     private int frame = 0;
     private int shotsFired = 0;
+    private int ourShotsFired = 0;
+    private int enemyShotsFired = 0;
 
     public SimWorld(FakeUnit[] ours, FakeUnit[] enemies, SimArena arena) {
         this.ours = ours;
@@ -80,6 +83,13 @@ public class SimWorld {
                 new double[] { (double) unit.position.x(), (double) unit.position.y() });
             stuckFrames.put(unit.id(), 0);
         }
+        // Static TTL caches assume monotonically increasing frames for the
+        // whole JVM run. Every scenario restarts the frame counter, so a
+        // previous run's cached-until entries would read as valid in the
+        // new run (measured: the whole second run went blind - AliveEnemies
+        // served the dead first run, zero enemies seen). Drop query caches
+        // per scenario, not per tick: frames are monotonic inside one run.
+        ClearAllCaches.clearQueries();
         installSelection();
     }
 
@@ -172,7 +182,7 @@ public class SimWorld {
             return toward(unit, unit.targetPosition.x(), unit.targetPosition.y(), topSpeed(unit));
         }
         if ("AttackUnit".equals(order) && unit.target != null && unit.target.isAlive()) {
-            if (unit.distTo(unit.target) <= unit.weaponRangeAgainst(unit.target)) return null;
+            if (unit.distTo(unit.target) <= reachTiles(unit, unit.target)) return null;
             return toward(unit, unit.target.position.x(), unit.target.position.y(), topSpeed(unit));
         }
         if ("AttackUnit".equals(order) && unit.targetPosition != null) {
@@ -265,9 +275,13 @@ public class SimWorld {
                 attackStartedAt.remove(unit.id());
                 continue;
             }
-            // Ranges are tiles in game code, positions/distances pixels.
-            double rangePx = unit.weaponRangeAgainst(target) * 32.0;
-            if (unit.distTo(target) > rangePx) {
+            // Tiles everywhere, like all game code: distTo returns tiles
+            // and weaponRangeAgainst answers tiles. The target's body
+            // radius is added (edge-to-edge, not center-to-center):
+            // melee ranges truncate to int tiles (ling Claws 15px -> 0),
+            // so without the radius term melee could never connect at
+            // all (measured: 0 ling hits in every run before this).
+            if (unit.distTo(target) > reachTiles(unit, target)) {
                 continue;
             }
             if (unit.cooldown > 0) continue;
@@ -295,6 +309,28 @@ public class SimWorld {
         target.hp -= rest;
         attacker.cooldown = attacker.cooldownAbsolute();
         shotsFired++;
+        if (attacker.isOur()) ourShotsFired++;
+        else enemyShotsFired++;
+    }
+
+    /**
+     * Engagement reach in tiles: weapon range plus the target's body
+     * radius (edge-to-edge). Dimensions come from the engine binding,
+     * so no hand table rots here. Single source for the sim and the
+     * scripted opponents in scenario tests.
+     */
+    public static double reachTiles(FakeUnit attacker, FakeUnit target) {
+        double weapon = attacker.weaponRangeAgainst(target);
+        double radius = 0;
+        try {
+            int l = target.type().dimensionLeftPixels();
+            int r = target.type().dimensionRightPixels();
+            int u = target.type().dimensionUpPixels();
+            int d = target.type().dimensionDownPixels();
+            radius = Math.max(Math.max(l, r), Math.max(u, d)) / 32.0;
+        } catch (Exception ignored) {
+        }
+        return Math.max(0, weapon) + radius;
     }
 
     private boolean isAlive(FakeUnit unit) {

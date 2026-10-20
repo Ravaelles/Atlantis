@@ -13,6 +13,7 @@ import tests.fakes.FakeUnit;
 import tests.fakes.FakeOrderSink;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -61,13 +62,18 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     @Test
     public void surroundedWoundedDragoonFleesInsteadOfHolding() {
+        // A lone wounded dragoon cannot outrun lings (5.49 > 5.0 px/f) and
+        // cannot out-DPS them before they chew through 50 hp, so survival
+        // is NOT asserted here - T2 covers surviving as a group. What this
+        // test pins is the decision: move orders away from the threat and
+        // real displacement while still trading shots, never hold-and-die.
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        dragoon.hp = 30;
+        dragoon.hp = 50;
         dragoon.shields = 0;
         dragoon.cooldown = 15;
 
         List<FakeUnit> lings = new ArrayList<>();
-        double[][] ring = { { 28, 20 }, { 32, 20 }, { 30, 18 }, { 30, 22 } };
+        double[][] ring = { { 28, 20 }, { 32, 20 } };
         for (double[] spot : ring) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
@@ -92,8 +98,6 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 if (dragoon.hp <= 0) break;
             }
 
-            assertTrue(dragoon.hp > 0,
-                "wounded surrounded dragoon must withdraw, not die in the pocket");
             double fledPx = Math.hypot(
                 dragoon.position.x() - startX, dragoon.position.y() - startY);
             assertTrue(fledPx > 2 * TILE,
@@ -116,14 +120,17 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     @Test
     public void woundedDragoonsWithdrawAndSurvive() {
+        // Band matters: all three under the 80hp pinch line (wounded),
+        // healthy enough that 4 lings cannot eat them before focus fire
+        // (about a ling per 2 volleys) clears the pressers.
         FakeUnit[] dragoons = new FakeUnit[] {
-            woundedDragoon(30, 20, 40),
-            woundedDragoon(29, 21, 50),
-            woundedDragoon(31, 19, 60),
+            woundedDragoon(30, 20, 70),
+            woundedDragoon(29, 21, 75),
+            woundedDragoon(31, 19, 75),
         };
         List<FakeUnit> lings = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
-            FakeUnit ling = fake(AUnitType.Zerg_Zergling, 36, 17 + i);
+        for (double[] spot : new double[][] { { 36, 19 }, { 36, 20 }, { 36, 21 }, { 37, 20 } }) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
         }
@@ -135,6 +142,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
 
+            final boolean[] withdrew = new boolean[] { false };
             for (int i = 0; i < 300; i++) {
                 world.tick(() -> {
                     for (FakeUnit dragoon : dragoons) {
@@ -144,21 +152,16 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                     scriptLings(lings, dragoons);
                 });
+                if (centroidX(dragoons) < startCentroidX - TILE) withdrew[0] = true;
             }
 
             for (FakeUnit dragoon : dragoons) {
                 assertTrue(dragoon.hp > 0, "no dragoon left behind to die");
             }
-            if (world.aliveEnemies() == 0) {
-                assertTrue(world.shotsFired() > 0,
-                    "threat gone because it died - the fight must have happened");
-            }
-            else {
-                assertTrue(world.shotsFired() > 0,
-                    "withdrawing without shooting is just running - trade while yielding");
-                assertTrue(centroidX(dragoons) < startCentroidX - TILE,
-                    "with live lings pressing, the group must yield ground west");
-            }
+            assertTrue(world.shotsFired() > 0,
+                "kite or wipe, the guns must speak - silent guns prove nothing");
+            assertTrue(withdrew[0],
+                "sustained melee pressure must move the group west at some point");
         }
         finally {
             world.close();
@@ -259,6 +262,226 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     }
 
     // =========================================================
+    // T-spread: pinch A/B with standoff (NEXT #159 without a map).
+    // Same scenario twice, one knob different: pinch yielding on
+    // (default DragoonPinchMeleeCount) vs off (count 99, never
+    // triggered). Deterministic sim, so the comparison is exact -
+    // stronger than Wine N=5+5 with randomized confounders.
+    // =========================================================
+
+    @Test
+    public void pinchWithStandoffDecidesOnShield() {
+        int[] withoutPinch = runSpreadDuel(true);
+        int[] withPinch = runSpreadDuel(false);
+
+        // Pinch was actually engageable in both arms (pocket pressure
+        // observed on live wounded dragoons) - without this the identity
+        // below would be vacuous.
+        assertTrue(withoutPinch[4] >= 2,
+            "standoff must pocket at some point, else pinch can never fire");
+        assertTrue(withPinch[4] >= 2,
+            "standoff must pocket at some point, else pinch can never fire");
+        // Verdict (sim, deterministic): identical outcomes either way -
+        // same survivors, same hp, same kills. Combined with Wine N=5+5
+        // (OFF slightly better on contact): no evidence pinch ever helps.
+        // If this fails after a behavior change, re-evaluate NEXT #159.
+        assertEquals(withoutPinch[0], withPinch[0], "survivors");
+        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
+        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
+    }
+
+    /**
+     * @return {dragoons alive, dragoon hp, lings alive, shots fired, max pocket pressure}.
+     */
+    private static int[] runSpreadDuel(boolean disablePinch) {
+        FakeUnit[] dragoons = new FakeUnit[] {
+            woundedDragoon(12, 20, 75),
+            woundedDragoon(11, 21, 75),
+            woundedDragoon(13, 19, 75),
+        };
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][] { { 18, 20 }, { 18, 19 }, { 18, 21 },
+                { 19, 20 }, { 19, 21 } }) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+        SimArena arena = new SimArena(40 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
+        atlantis.battle.kite.CombatTuning previous = atlantis.battle.kite.CombatTuning.current();
+        if (disablePinch) {
+            atlantis.battle.kite.CombatTuning.install(
+                atlantis.battle.kite.CombatTuning.defaults().withDragoonPinchMeleeCount(99));
+        }
+        final int[] maxPinchPressure = new int[1];
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            for (int i = 0; i < 400; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, dragoons);
+                });
+                for (FakeUnit dragoon : dragoons) {
+                    if (dragoon.hp <= 0 || dragoon.hp + dragoon.shields >= 80) continue;
+                    int pressing = 0;
+                    for (FakeUnit ling : lings) {
+                        if (ling.hp > 0 && dragoon.distTo(ling) <= 2.0) pressing++;
+                    }
+                    if (pressing > maxPinchPressure[0]) maxPinchPressure[0] = pressing;
+                }
+            }
+            int alive = 0;
+            int hp = 0;
+            for (FakeUnit dragoon : dragoons) {
+                if (dragoon.hp > 0) {
+                    alive++;
+                    hp += (int) dragoon.hp;
+                }
+            }
+            int lingsAlive = world.aliveEnemies();
+            return new int[] { alive, hp, lingsAlive, world.shotsFired(), maxPinchPressure[0] };
+        }
+        finally {
+            atlantis.battle.kite.CombatTuning.install(previous);
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+
+    // =========================================================
+    // T-contact: the Wine shape in the sim - pocket from the start.
+    // Standoff (above) never pockets the dragoons, so pinch never
+    // fires there; here lings start at 2-3 tiles and the pocket is
+    // immediate. Compares WITH vs WITHOUT on identical ground.
+    // =========================================================
+
+    @Test
+    public void pinchWithContactDecidesOnShield() {
+        int[] withoutPinch = runContactDuel(true);
+        int[] withPinch = runContactDuel(false);
+
+        // Instant contact must pocket: if maxPinchPressure stayed < 2
+        // the scenario failed to create the pocket, not the rule.
+        assertTrue(withoutPinch[4] >= 2 && withPinch[4] >= 2,
+            "contact must pocket wounded dragoons, else pinch can never fire");
+        assertTrue(withoutPinch[3] > 0 && withPinch[3] > 0,
+            "both arms must actually trade shots");
+        // Verdict (sim, deterministic): same survivors, same hp, same
+        // kills either way - even point-blank, yielding changes nothing
+        // vs standing to trade. Same conclusion as the standoff arms.
+        assertEquals(withoutPinch[0], withPinch[0], "survivors");
+        assertEquals(withoutPinch[1], withPinch[1], "dragoon hp left");
+        assertEquals(withoutPinch[2], withPinch[2], "lings killed");
+    }
+
+    private static int[] runContactDuel(boolean disablePinch) {
+        FakeUnit[] dragoons = new FakeUnit[] {
+            woundedDragoon(12, 20, 75),
+            woundedDragoon(11, 21, 75),
+            woundedDragoon(13, 19, 75),
+        };
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][] { { 14, 20 }, { 14, 19 }, { 14, 21 },
+                { 15, 20 }, { 15, 19 }, { 15, 21 } }) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+        SimArena arena = new SimArena(40 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
+        atlantis.battle.kite.CombatTuning previous = atlantis.battle.kite.CombatTuning.current();
+        if (disablePinch) {
+            atlantis.battle.kite.CombatTuning.install(
+                atlantis.battle.kite.CombatTuning.defaults().withDragoonPinchMeleeCount(99));
+        }
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+            final int[] maxPinchPressure = new int[1];
+            for (int i = 0; i < 350; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, dragoons);
+                });
+                for (FakeUnit dragoon : dragoons) {
+                    if (dragoon.hp <= 0 || dragoon.hp + dragoon.shields >= 80) continue;
+                    int pressing = 0;
+                    for (FakeUnit ling : lings) {
+                        if (ling.hp > 0 && dragoon.distTo(ling) <= 2.0) pressing++;
+                    }
+                    if (pressing > maxPinchPressure[0]) maxPinchPressure[0] = pressing;
+                }
+            }
+            int alive = 0;
+            int hp = 0;
+            for (FakeUnit dragoon : dragoons) {
+                if (dragoon.hp > 0) {
+                    alive++;
+                    hp += (int) dragoon.hp;
+                }
+            }
+            return new int[] { alive, hp, world.aliveEnemies(), world.shotsFired(), maxPinchPressure[0] };
+        }
+        finally {
+            atlantis.battle.kite.CombatTuning.install(previous);
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
+    // T-gate: the pinch knob is actually wired to the decision.
+    // Quarry sits at 5 tiles (margin holds there either way); two
+    // flankers make it a pocket. WITH pinch (count 2) the rule
+    // yields; WITHOUT (count 99) it holds - proving the knob under
+    // test is the one the A/B arms differ in.
+    // =========================================================
+
+    @Test
+    public void pinchGateTogglesYieldVsHold() {
+        FakeUnit dragoon = woundedDragoon(30, 20, 70);
+        dragoon.cooldown = 20;
+        FakeUnit quarry = fake(AUnitType.Zerg_Zergling, 35, 20);
+        quarry.setEnemy();
+        FakeUnit f1 = fake(AUnitType.Zerg_Zergling, 28.5, 20);
+        f1.setEnemy();
+        FakeUnit f2 = fake(AUnitType.Zerg_Zergling, 28.5, 21);
+        f2.setEnemy();
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[] { dragoon }, new FakeUnit[] { quarry, f1, f2 }, arena);
+        atlantis.battle.kite.CombatTuning previous = atlantis.battle.kite.CombatTuning.current();
+        try {
+            BattleCommander.clearForTests();
+            atlantis.battle.kite.CombatTuning.install(
+                atlantis.battle.kite.CombatTuning.defaults());
+            assertTrue(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+                "pinch on: hurt + 2 melee inside 2 tiles yields");
+            atlantis.battle.kite.CombatTuning.install(
+                atlantis.battle.kite.CombatTuning.defaults().withDragoonPinchMeleeCount(99));
+            assertFalse(atlantis.battle.kite.Kite.shouldKite(dragoon, quarry),
+                "pinch off: 5 tiles out the margin holds, no stand (only 2 melee)");
+        }
+        finally {
+            atlantis.battle.kite.CombatTuning.install(previous);
+            world.close();
+            BattleCommander.clearForTests();
+        }
+    }
+
+    // =========================================================
     // T4a-b + T5a-b: formation coordination (NEXT #162). Wounded
     // first rank withdraws, the line helps: make-way opens the
     // corridor, cover takes the pursuer instead of the nearest.
@@ -319,13 +542,14 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     @Test
     public void woundedPassesThroughItsOwnLine() {
-        FakeUnit wounded = woundedDragoon(34, 20, 30);
+        // Escaper hurt but not doomed; two quarry lings keep the pressure
+        // on IT (not on the holders) so the corridor stays the story.
+        FakeUnit wounded = woundedDragoon(34, 20, 50);
         FakeUnit holderA = fake(AUnitType.Protoss_Dragoon, 33, 20);
         FakeUnit holderB = fake(AUnitType.Protoss_Dragoon, 33, 21);
         FakeUnit[] ours = new FakeUnit[] { wounded, holderA, holderB };
         List<FakeUnit> lings = new ArrayList<>();
-        for (double[] spot : new double[][] { { 36, 19 }, { 36, 21 }, { 37, 20 },
-                { 37, 19 }, { 35, 22 }, { 35, 18 } }) {
+        for (double[] spot : new double[][] { { 36, 20 }, { 37, 21 } }) {
             FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
             ling.setEnemy();
             lings.add(ling);
@@ -344,7 +568,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                         BattleCommander.act(
                             dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                     }
-                    scriptLings(lings, wounded, holderA, holderB);
+                    scriptLings(lings, wounded);
                     if (atlantis.battle.formation.CoverWithdraw.makeWayStep(holderA) != null
                         || atlantis.battle.formation.CoverWithdraw.makeWayStep(holderB) != null) {
                         sawMakeWay[0] = true;
@@ -399,11 +623,16 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     @Test
     public void healthyCoversPursuerInLiveFight() {
+        // Cover usually finishes a pursuer the fight already wounded:
+        // one dragoon shot kills it, so the healthy saves the wounded
+        // in time. The distractor stands untouched at 2.5 tiles (nearer
+        // than the pursuer) to prove selection, not proximity, decides.
         FakeUnit wounded = woundedDragoon(32, 20, 30);
         FakeUnit healthy = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit third = fake(AUnitType.Protoss_Dragoon, 20, 26);
         FakeUnit[] ours = new FakeUnit[] { wounded, healthy, third };
         FakeUnit pursuer = fake(AUnitType.Zerg_Zergling, 33, 20);
+        pursuer.hp = 10;
         pursuer.setEnemy();
         FakeUnit distractor = fake(AUnitType.Zerg_Zergling, 27.5, 20);
         distractor.setEnemy();
@@ -422,7 +651,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                             dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
                     }
                     scriptLings(java.util.Arrays.asList(pursuer), wounded);
-                    scriptLings(java.util.Arrays.asList(distractor), healthy);
+                    distractor.lastCommand = "Stop";
                 });
                 if (wounded.hp <= 0) break;
             }
@@ -470,7 +699,10 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 ling.lastCommand = "Stop";
                 continue;
             }
-            if (best <= ling.weaponRangeAgainst(nearest)) {
+            // Same reach rule as the sim engine (SimWorld.reachTiles):
+            // weapon range plus the target's body, so sub-tile melee
+            // weapons can actually connect instead of chasing forever.
+            if (best <= SimWorld.reachTiles(ling, nearest)) {
                 ling.lastCommand = "AttackUnit";
                 ling.target = nearest;
                 ling.targetPosition = nearest.position;
