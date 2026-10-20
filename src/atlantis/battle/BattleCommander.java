@@ -119,45 +119,69 @@ public class BattleCommander extends Commander {
      * never interrupted, otherwise it attacks or regroups.
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
-        if (tactic == FightOrFlight.Tactic.FLEE) {
-            // Owner: ClusterFlee is banned on baseless UMS maps - with no
-            // base anywhere a retreat (shared direction or per-unit) only
-            // donates the duel, so the unit falls through and fights.
-            boolean noFleeOnBaselessUms = A.isUms() && Count.bases() == 0;
-            // Baseless maps (UMS micro duels) have no home to run to: the
-            // mission anchor there is the ENEMY base, so following it
-            // marches the retreat straight into the enemy. Regroup away
-            // from the threat instead; with nowhere to step, fall through
-            // and fight in place. Based maps keep the choke-side rally.
-            // Mid-swing the rally waits: a move order now cancels the shot
-            // (PurpleWave AttackDelay) - the fight path below holds it the
-            // same way.
-            if (!noFleeOnBaselessUms && !unit.isAttackFrame() && !unit.isStartingAttack()) {
-                HasPosition home;
-                if (Select.main() != null) {
-                    home = ClusterBreach.breachRallyPoint();
-                }
-                else {
-                    // Formation Phase A: one shared escape direction per
-                    // cluster (leader, ~10f cadence) instead of per-unit
-                    // compass picks that break the line. Null falls back
-                    // to the per-unit sampling, unchanged.
-                    home = SharedEscape.rallyFor(
-                        unit, leader, Alpha.get().selection(),
-                        CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
-                    if (home == null) home = ClusterRally.regroupRallyPoint(unit);
-                }
-                HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
-                if (point != null && unit.distTo(point) >= 0.2) {
-                    unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
-                    return;
-                }
-            }
-            // Nowhere to run to (baseless map, null anchor): standing
-            // still with DoNothing until death is never the answer -
-            // fall through and fight in place instead (kite included).
+        if (retreatFromLostFight(unit, tactic, anchor, leader)) return;
+        if (leaveBreachedBase(unit)) return;
+        AUnit target = acquireTarget(unit);
+        if (target != null) {
+            fightTarget(unit, target);
+            return;
         }
+        if (huntLastContact(unit)) return;
+        holdFormation(unit, anchor, leader);
+    }
 
+    // =========================================================
+    // act() decomposition: one reason to change per method, so the
+    // frame reads as a sentence. Pure extraction - the order and the
+    // conditions below are byte-identical to the inlined version.
+    // =========================================================
+
+    /** FLEE orders a retreat, or false when the unit falls through to fight. */
+    private static boolean retreatFromLostFight(
+        AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader
+    ) {
+        if (tactic != FightOrFlight.Tactic.FLEE) return false;
+        // Owner: ClusterFlee is banned on baseless UMS maps - with no
+        // base anywhere a retreat (shared direction or per-unit) only
+        // donates the duel, so the unit falls through and fights.
+        boolean noFleeOnBaselessUms = A.isUms() && Count.bases() == 0;
+        // Baseless maps (UMS micro duels) have no home to run to: the
+        // mission anchor there is the ENEMY base, so following it
+        // marches the retreat straight into the enemy. Regroup away
+        // from the threat instead; with nowhere to step, fall through
+        // and fight in place. Based maps keep the choke-side rally.
+        // Mid-swing the rally waits: a move order now cancels the shot
+        // (PurpleWave AttackDelay) - the fight path below holds it the
+        // same way.
+        if (!noFleeOnBaselessUms && !unit.isAttackFrame() && !unit.isStartingAttack()) {
+            HasPosition home;
+            if (Select.main() != null) {
+                home = ClusterBreach.breachRallyPoint();
+            }
+            else {
+                // Formation Phase A: one shared escape direction per
+                // cluster (leader, ~10f cadence) instead of per-unit
+                // compass picks that break the line. Null falls back
+                // to the per-unit sampling, unchanged.
+                home = SharedEscape.rallyFor(
+                    unit, leader, Alpha.get().selection(),
+                    CombatTuning.current().getRegroupRallyTiles(), CombatTuning.current().getRegroupThreatTiles());
+                if (home == null) home = ClusterRally.regroupRallyPoint(unit);
+            }
+            HasPosition point = ClusterRally.gatherPointFor(unit, leader, home);
+            if (point != null && unit.distTo(point) >= 0.2) {
+                unit.move(point, Actions.RUN_ENEMY, "ClusterFlee");
+                return true;
+            }
+        }
+        // Nowhere to run to (baseless map, null anchor): standing
+        // still with DoNothing until death is never the answer -
+        // fall through and fight in place instead (kite included).
+        return false;
+    }
+
+    /** The single retreat hatch on a breached base, or false to keep fighting. */
+    private static boolean leaveBreachedBase(AUnit unit) {
         // The only retreat allowed on a breached base (owner): a unit this
         // close to death with no shot ready may leave - everything else
         // fights. Per-unit, never the cluster: tactic() above already
@@ -173,10 +197,14 @@ public class BattleCommander extends Commander {
             HasPosition rally = ClusterBreach.breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
                 unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
-                return;
+                return true;
             }
         }
+        return false;
+    }
 
+    /** The target chain, stickiest first: committed, shared, covering, squad, nearest, breach. */
+    private static AUnit acquireTarget(AUnit unit) {
         // Sticky first: a committed unit finishes its own target (never
         // re-pick every frame - the restart costs the shot). Uncommitted
         // units join the shared focus target (weakest in reach of the
@@ -202,179 +230,226 @@ public class BattleCommander extends Commander {
         if (target == null) {
             target = ClusterBreach.breachedBaseTarget(unit);
         }
-        if (target != null) {
-            // Never interrupt our own shot: a move order during the attack
-            // animation cancels the damage (PurpleWave AttackDelay) - the
-            // shot that just started must be allowed to land, so an
-            // animating unit gets no new order at all this frame.
-            if (unit.isAttackFrame() || unit.isStartingAttack()) {
-                ShotTwin.holding(unit, target);
-                return;
-            }
+        return target;
+    }
 
-            // A Dragoon steps back only when the enemy is inside its
-            // safety margin - otherwise it stands and lets the standing
-            // attack order fire the instant the cooldown hits zero
-            // (PurpleWave BeDragoonVsSlowlot: margin over threats inside
-            // 5 tiles, never a flat distance + cooldown gate; the threat
-            // is the nearest enemy inside the envelope, not necessarily
-            // the focused target: focus fire must not pin a Dragoon that
-            // is being shredded).
-            AUnit threat = atlantis.battle.targeting.ASquadTargeting
-                .nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
-            HitTwin.sample(unit, threat != null ? threat : target);
-            FightTrace.sample(unit, threat != null ? threat : target);
-            int now = A.now();
-            Integer lastStep = lastStepFrame.get(unit.id());
-            // Corridor clearing (#162): a healthy unit standing in a
-            // withdrawing ally's escape ray steps laterally and resumes
-            // next frame. Urgent-only (escaper within 1.5 tiles), gated
-            // to 3+ army units so duels stay frozen, cadence-kept like
-            // every step (reposition rides, re-issues at most every
-            // 10f). No twin this slice - twins ride the live UMS proof.
-            APosition aside = null;
-            CoverWithdraw.Step makeWay = CoverWithdraw.makeWayStep(unit);
-            if (makeWay != null) aside = makeWay.dest;
-            if (aside != null
-                && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
-                && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
-                FormationTwin.madeWay(unit, makeWay.escaper, aside);
+    /** One engaged frame: swing discipline, corridor, kite, re-engage, re-arm. */
+    private static void fightTarget(AUnit unit, AUnit target) {
+        if (holdSwing(unit, target)) return;
+        // A Dragoon steps back only when the enemy is inside its
+        // safety margin - otherwise it stands and lets the standing
+        // attack order fire the instant the cooldown hits zero
+        // (PurpleWave BeDragoonVsSlowlot: margin over threats inside
+        // 5 tiles, never a flat distance + cooldown gate; the threat
+        // is the nearest enemy inside the envelope, not necessarily
+        // the focused target: focus fire must not pin a Dragoon that
+        // is being shredded).
+        AUnit threat = atlantis.battle.targeting.ASquadTargeting
+            .nearestEngageableEnemy(unit, CombatTuning.current().getKiteEnemyTiles());
+        HitTwin.sample(unit, threat != null ? threat : target);
+        FightTrace.sample(unit, threat != null ? threat : target);
+        int now = A.now();
+        Integer lastStep = lastStepFrame.get(unit.id());
+        if (makeWay(unit, now, lastStep)) return;
+        if (kiteThreat(unit, threat, now, lastStep)) return;
+        if (reengage(unit, target, now, lastStep)) return;
+        rearmAttack(unit, target);
+    }
+
+    /** Mid-swing the unit holds: a move now would cancel the damage. */
+    private static boolean holdSwing(AUnit unit, AUnit target) {
+        // Never interrupt our own shot: a move order during the attack
+        // animation cancels the damage (PurpleWave AttackDelay) - the
+        // shot that just started must be allowed to land, so an
+        // animating unit gets no new order at all this frame.
+        if (unit.isAttackFrame() || unit.isStartingAttack()) {
+            ShotTwin.holding(unit, target);
+            return true;
+        }
+        return false;
+    }
+
+    /** Corridor clearing (#162): step out of a withdrawing ally's escape ray. */
+    private static boolean makeWay(AUnit unit, int now, Integer lastStep) {
+        // Urgent-only (escaper within 1.5 tiles), gated to 3+ army units
+        // so duels stay frozen, cadence-kept like every step (reposition
+        // rides, re-issues at most every 10f). No twin this slice -
+        // twins ride the live UMS proof.
+        APosition aside = null;
+        CoverWithdraw.Step makeWay = CoverWithdraw.makeWayStep(unit);
+        if (makeWay != null) aside = makeWay.dest;
+        if (aside != null
+            && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
+            && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
+            FormationTwin.madeWay(unit, makeWay.escaper, aside);
+            lastStepFrame.put(unit.id(), now);
+            lastRepositionFrame.put(unit.id(), now);
+            return true;
+        }
+        return false;
+    }
+
+    /** Kite the threat when the margin rule says so, or false to close in. */
+    private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep) {
+        if (threat == null || !Kite.shouldKite(unit, threat)) return false;
+        if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
+        if (tradeShot(unit, threat)) return false;
+        if (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames()) {
+            // Stardust desired distance: step exactly the gap to the
+            // hold point (capped at one full step), never a blind
+            // shove past the firing position - stepping 2.0 tiles
+            // from dist 3.5 lands at ~5.5, OUT of a 4.0 range, and
+            // the glide then donates the walk back. That overshoot
+            // is the measured "ucieka za daleko" shape; holding at
+            // the formula's point keeps shooting instead.
+            double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
+                Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+            APosition dest = stepLen > 0
+                ? MoveAway.bestDestination(unit, threat, stepLen)
+                : null;
+            if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
+                KiteTwin.steppedAside(unit, threat);
                 lastStepFrame.put(unit.id(), now);
                 lastRepositionFrame.put(unit.id(), now);
-                return;
+                return true;
             }
-            if (threat != null && Kite.shouldKite(unit, threat)) {
-                // Frozen: steps keep issuing but the unit never moves -
-                // the order queue is wedged (the vanilla engine bug both
-                // reference bots unstick: PurpleWave Unstick issues STOP
-                // past 24 failing frames, Stardust resets past 48
-                // motionless ones). STOP clears the queue; sleep this
-                // frame so it lands, then the next step starts a fresh
-                // queue. Trips only while steps keep issuing (lastStep
-                // fresh) with no motion for 48 frames - a unit that
-                // simply stood still answers false on the movement check
-                // after it walks.
-                Integer lastMoved = lastMovedFrame.get(unit.id());
-                APosition lastMovedAt = lastMovedPos.get(unit.id());
-                boolean trying = lastStep != null && now - lastStep < 48;
-                boolean motionless = lastMoved != null && lastMovedAt != null
-                    && now - lastMoved >= 48 && unit.distTo(lastMovedAt) < 0.5;
-                if (trying && motionless) {
-                    KiteTwin.frozenReset(unit, threat);
-                    unit.stop("ClusterUnstick");
-                    lastStepFrame.remove(unit.id());
-                    lastMovedFrame.remove(unit.id());
-                    lastMovedPos.remove(unit.id());
-                    return;
-                }
-                if (lastMovedAt == null || unit.distTo(lastMovedAt) >= 0.5) {
-                    lastMovedFrame.put(unit.id(), now);
-                    lastMovedPos.put(unit.id(), unit.position());
-                }
-                // A failed step must never mean standing idle: a cornered
-                // Dragoon fights instead of waiting to die (Wine
-                // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
-                // then trading at point blank).
-                // Glued with a ready weapon, a step is worse than useless:
-                // it cannot outrun the swing already in progress, and
-                // stepping every frame means zero shots until death (Wine
-                // 1Drag_v_1Zeal: 190 frames glued at dist 0, cd 0, 17 hits,
-                // no shot fired). Shoot instead - the ready shot is free
-                // damage and the only DPS that can end the corner. Same
-                // when the threat's swing is already in flight anywhere:
-                // a step cannot dodge damage that is locked in, but our
-                // ready shot still lands (symmetric animation discipline).
-                boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
-                boolean glued = unit.distTo(threat) < CombatTuning.current().getKiteGlueTiles() && unit.cooldown() == 0;
-                boolean tradeShot = unit.cooldown() == 0 && (glued || swingIncoming);
-                if (!tradeShot && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
-                    // Stardust desired distance: step exactly the gap to the
-                    // hold point (capped at one full step), never a blind
-                    // shove past the firing position - stepping 2.0 tiles
-                    // from dist 3.5 lands at ~5.5, OUT of a 4.0 range, and
-                    // the glide then donates the walk back. That overshoot
-                    // is the measured "ucieka za daleko" shape; holding at
-                    // the formula's point keeps shooting instead.
-                    double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(),
-                        Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
-                    APosition dest = stepLen > 0
-                        ? MoveAway.bestDestination(unit, threat, stepLen)
-                        : null;
-                    if (dest != null && unit.move(dest, Actions.MOVE_AVOID, "ClusterKite")) {
-                        KiteTwin.steppedAside(unit, threat);
-                        lastStepFrame.put(unit.id(), now);
-                        lastRepositionFrame.put(unit.id(), now);
-                        return;
-                    }
-                    KiteTwin.nowhereToStep(unit, threat);
-                }
-            }
-            // Out of range: close to the max-range firing position with
-            // moves only. A melee unit has no firing position to hold -
-            // with integer tile ranges its glide destination lands exactly
-            // on the deadband at every distance (measured: Zealot range 0
-            // in tiles per the engine pins, overshoot always 0.5), so the
-            // glide below would never issue and the unit could never close.
-            // Melee skips it and falls through to the attack order, which
-            // the engine chases on its own; the new/overdue discipline
-            // still prevents order spam.
-            // An attack order here doubles as the chase and
-            // gets cancelled by the next kite step before firing (Wine
-            // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
-            // 156 attack orders, zero shots landed). The attack issues on
-            // arrival, when the target is actually in range.
-            double standOff = unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
-            if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
-                APosition fireAt = null;
-                if (unit.distTo(target) > standOff + CombatTuning.current().getKiteGlideDeadbandTiles()
-                    && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
-                    fireAt = target.position()
-                        .translateTilesTowards(unit, unit.distTo(target) - standOff);
-                    if (fireAt != null
-                        && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
-                        && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
-                        lastStepFrame.put(unit.id(), now);
-                        lastRepositionFrame.put(unit.id(), now);
-                        return;
-                    }
-                }
-                // No glide point computable (map edge exhausted the spiral -
-                // measured: error spam + idle Dragoon): fall through to the
-                // attack order below, which the engine chases on its own.
-                // Standing idle where standing still is dying is never the
-                // answer (same class as the melee and baseless fall-throughs
-                // above). A computable point that only fails the deadband
-                // or the move still waits here instead of spamming attack.
-                if (fireAt != null) return;
-            }
-            // Let the reposition ride (PurpleWave sleep after move):
-            // a fresh attack order here would cancel the step or glide
-            // issued a frame ago and pin the unit standing through the
-            // whole cooldown while the threat closes for free - the
-            // stutter that bled every cycle (all 6 hits of the glue
-            // game landed while alternating move with attack-stop).
-            // Only a ready weapon re-arms the attack. Deliberately NOT
-            // gated on isMoving: one acceleration frame still reports
-            // idle velocity, and that single gap re-armed the attack
-            // every second frame (Wine 1Drag_v_1Zeal: 28 steps in 63
-            // frames, dist shrinking 1.9->1.3 while "retreating").
-            // The kite branch above still preempts for new threats, and
-            // a finished glide re-arms via the attack check below.
-            if (unit.cooldown() > 0
-                && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < CombatTuning.current().getKiteRideFrames()) return;
-            // Order discipline, not order spam: a new attack order issues
-            // only when the engine holds a different target (first
-            // acquisition, lost order while moving, target switch).
-            // Otherwise nothing issues this frame - the standing order
-            // fires on its own the moment the weapon is ready (PurpleWave
-            // Commander.attack: order on new/overdue target, else sleep).
-            if (target.equals(unit.target())) return;
-            ShotTwin.fired(unit, target);
-            unit.attackUnit(target);
-            if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
-            return;
+            KiteTwin.nowhereToStep(unit, threat);
         }
+        return false;
+    }
 
+    /**
+     * A wedged order queue looks like kiting but never moves: STOP it
+     * once, sleep a frame, and the next step starts a fresh queue.
+     */
+    private static boolean unstickFrozenQueue(AUnit unit, AUnit threat, int now, Integer lastStep) {
+        // Frozen: steps keep issuing but the unit never moves -
+        // the order queue is wedged (the vanilla engine bug both
+        // reference bots unstick: PurpleWave Unstick issues STOP
+        // past 24 failing frames, Stardust resets past 48
+        // motionless ones). STOP clears the queue; sleep this
+        // frame so it lands, then the next step starts a fresh
+        // queue. Trips only while steps keep issuing (lastStep
+        // fresh) with no motion for 48 frames - a unit that
+        // simply stood still answers false on the movement check
+        // after it walks.
+        Integer lastMoved = lastMovedFrame.get(unit.id());
+        APosition lastMovedAt = lastMovedPos.get(unit.id());
+        boolean trying = lastStep != null && now - lastStep < 48;
+        boolean motionless = lastMoved != null && lastMovedAt != null
+            && now - lastMoved >= 48 && unit.distTo(lastMovedAt) < 0.5;
+        if (trying && motionless) {
+            KiteTwin.frozenReset(unit, threat);
+            unit.stop("ClusterUnstick");
+            lastStepFrame.remove(unit.id());
+            lastMovedFrame.remove(unit.id());
+            lastMovedPos.remove(unit.id());
+            return true;
+        }
+        if (lastMovedAt == null || unit.distTo(lastMovedAt) >= 0.5) {
+            lastMovedFrame.put(unit.id(), now);
+            lastMovedPos.put(unit.id(), unit.position());
+        }
+        return false;
+    }
+
+    /**
+     * Glued with a ready weapon, or the threat's swing already in
+     * flight: the ready shot is free damage, stepping can only donate
+     * it. Answers whether the caller should skip the step, not issue.
+     */
+    private static boolean tradeShot(AUnit unit, AUnit threat) {
+        // A failed step must never mean standing idle: a cornered
+        // Dragoon fights instead of waiting to die (Wine
+        // 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
+        // then trading at point blank).
+        // Glued with a ready weapon, a step is worse than useless:
+        // it cannot outrun the swing already in progress, and
+        // stepping every frame means zero shots until death (Wine
+        // 1Drag_v_1Zeal: 190 frames glued at dist 0, cd 0, 17 hits,
+        // no shot fired). Shoot instead - the ready shot is free
+        // damage and the only DPS that can end the corner. Same
+        // when the threat's swing is already in flight anywhere:
+        // a step cannot dodge damage that is locked in, but our
+        // ready shot still lands (symmetric animation discipline).
+        boolean swingIncoming = threat.isAttackFrame() || threat.isStartingAttack();
+        boolean glued = unit.distTo(threat) < CombatTuning.current().getKiteGlueTiles() && unit.cooldown() == 0;
+        return unit.cooldown() == 0 && (glued || swingIncoming);
+    }
+
+    /** Out of range: glide to the max-range firing position with moves only. */
+    private static boolean reengage(AUnit unit, AUnit target, int now, Integer lastStep) {
+        // A melee unit has no firing position to hold -
+        // with integer tile ranges its glide destination lands exactly
+        // on the deadband at every distance (measured: Zealot range 0
+        // in tiles per the engine pins, overshoot always 0.5), so the
+        // glide below would never issue and the unit could never close.
+        // Melee skips it and falls through to the attack order, which
+        // the engine chases on its own; the new/overdue discipline
+        // still prevents order spam.
+        // An attack order here doubles as the chase and
+        // gets cancelled by the next kite step before firing (Wine
+        // 8Drag_v_8Drag: cd stuck at 0 alternating chase with steps,
+        // 156 attack orders, zero shots landed). The attack issues on
+        // arrival, when the target is actually in range.
+        double standOff = unit.groundWeaponRange() - CombatTuning.current().getKiteStandoffInsetTiles();
+        if (unit.groundWeaponRange() > 1 && unit.distTo(target) > unit.groundWeaponRange()) {
+            APosition fireAt = null;
+            if (unit.distTo(target) > standOff + CombatTuning.current().getKiteGlideDeadbandTiles()
+                && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())) {
+                fireAt = target.position()
+                    .translateTilesTowards(unit, unit.distTo(target) - standOff);
+                if (fireAt != null
+                    && unit.distTo(fireAt) > CombatTuning.current().getKiteGlideDeadbandTiles()
+                    && unit.move(fireAt, Actions.MOVE_ENGAGE, "ClusterReengage")) {
+                    lastStepFrame.put(unit.id(), now);
+                    lastRepositionFrame.put(unit.id(), now);
+                    return true;
+                }
+            }
+            // No glide point computable (map edge exhausted the spiral -
+            // measured: error spam + idle Dragoon): fall through to the
+            // attack order below, which the engine chases on its own.
+            // Standing idle where standing still is dying is never the
+            // answer (same class as the melee and baseless fall-throughs
+            // above). A computable point that only fails the deadband
+            // or the move still waits here instead of spamming attack.
+            if (fireAt != null) return true;
+        }
+        return false;
+    }
+
+    /** Re-arm the attack on a ready weapon only; a riding step is never cancelled. */
+    private static void rearmAttack(AUnit unit, AUnit target) {
+        // Let the reposition ride (PurpleWave sleep after move):
+        // a fresh attack order here would cancel the step or glide
+        // issued a frame ago and pin the unit standing through the
+        // whole cooldown while the threat closes for free - the
+        // stutter that bled every cycle (all 6 hits of the glue
+        // game landed while alternating move with attack-stop).
+        // Only a ready weapon re-arms the attack. Deliberately NOT
+        // gated on isMoving: one acceleration frame still reports
+        // idle velocity, and that single gap re-armed the attack
+        // every second frame (Wine 1Drag_v_1Zeal: 28 steps in 63
+        // frames, dist shrinking 1.9->1.3 while "retreating").
+        // The kite branch above still preempts for new threats, and
+        // a finished glide re-arms via the attack check below.
+        if (unit.cooldown() > 0
+            && A.now() - lastRepositionFrame.getOrDefault(unit.id(), -1000) < CombatTuning.current().getKiteRideFrames()) return;
+        // Order discipline, not order spam: a new attack order issues
+        // only when the engine holds a different target (first
+        // acquisition, lost order while moving, target switch).
+        // Otherwise nothing issues this frame - the standing order
+        // fires on its own the moment the weapon is ready (PurpleWave
+        // Commander.attack: order on new/overdue target, else sleep).
+        if (target.equals(unit.target())) return;
+        ShotTwin.fired(unit, target);
+        unit.attackUnit(target);
+        if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
+    }
+
+    /** Lost contact on a baseless map: march the last known point, or false to hold. */
+    private static boolean huntLastContact(AUnit unit) {
         // No enemy in reach: on baseless maps, hunt the last known
         // contact instead of sitting (1Drag_v_1Zeal: brief contact, then
         // 9 min idle 60 tiles apart - neither side re-acquires). The squad
@@ -390,11 +465,15 @@ public class BattleCommander extends Commander {
             if (last != null && last.position() != null && unit.distTo(last) > 9) {
                 if (unit.move(last.position(), Actions.MOVE_ENGAGE, "ClusterHunt")) {
                     lastRepositionFrame.put(unit.id(), A.now());
-                    return;
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
+    /** Nothing to fight: bunch on the leader through the formation slot. */
+    private static void holdFormation(AUnit unit, HasPosition anchor, AUnit leader) {
         // No enemy in reach: take a formation slot when the cluster
         // forms up (3+ combat units, known pivot), else bunch on the
         // leader so the cluster advances (or retreats) as one instead
