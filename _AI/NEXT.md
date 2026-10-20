@@ -1169,6 +1169,21 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   strategies plug per detected setup (choke near? outnumbered?
   duel?). First slice: the decider + standoff/hold-vs-push choice;
   bait and collapse ride later slices, each with sim + game proof.
+- **#171** High-ground choke scoring (owner 2026-10-20, formation
+  follow-up): for every choke, score BOTH sides as defensive spots -
+  height delta first. A wide choke with a step is not "pointless": the
+  low side cannot see up while the high side sees down (vision
+  asymmetry), and shooting uphill misses (engine behavior - pin the
+  exact factor against OpenBW before tuning it, never hardcode a
+  remembered percent). Score = height advantage + funnel width +
+  standoff room; cache per choke per side at map load (static data,
+  map-analysis owned; compute once, read everywhere). Use: once the
+  enemy base is known, pick the best defensive position on the path
+  our base -> enemy base, go there and wait (feeds
+  `ChokeStandoff.holdPoint`: prefer the high side, fall back to the
+  10-tile rule on flat). Proof: pure unit tests on synthetic choke
+  geometry (high side outscores low; stepped-wide beats narrow-flat),
+  then a live game where the line demonstrably holds the high side.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
