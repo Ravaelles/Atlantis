@@ -1,11 +1,13 @@
 package tests.unit;
 
 import atlantis.battle.escape.EscapeRays;
+import atlantis.battle.escape.PinchRoom;
 import atlantis.map.position.APosition;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -53,5 +55,23 @@ public class EscapeRaysTest {
         assertTrue(EscapeRays.passable(1, false), "small slips through one tile");
         assertTrue(EscapeRays.passable(1, true) == false, "large wedges in one tile");
         assertTrue(EscapeRays.passable(2, true), "large turns in two tiles");
+    }
+
+    @Test
+    public void openGroundHasRoom() {
+        assertTrue(PinchRoom.hasRoom(APosition.create(30, 20), (x, y) -> true),
+            "open ground always has somewhere to kite into");
+    }
+
+    @Test
+    public void boxedPocketHasNoRoom() {
+        assertFalse(PinchRoom.hasRoom(APosition.create(30, 20), (x, y) -> false),
+            "walls everywhere: hold and trade, don't walk into the corner");
+    }
+
+    @Test
+    public void unknownWalkabilityKeepsOldBehavior() {
+        assertTrue(PinchRoom.hasRoom(APosition.create(30, 20), null),
+            "fail-open: the gate only blocks what it can see blocked");
     }
 }

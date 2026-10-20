@@ -75,7 +75,14 @@ public final class Kite {
             // shoots instead of idling.
             if (unit.hp() + unit.shields() < CombatTuning.current().getDragoonPinchHp()
                 && unit.enemiesNear().melee().inRadius(CombatTuning.current().getDragoonPinchMeleeTiles(), unit).size()
-                    >= CombatTuning.current().getDragoonPinchMeleeCount()) return true;
+                    >= CombatTuning.current().getDragoonPinchMeleeCount()
+                && atlantis.battle.escape.PinchRoom.hasRoom(unit.position(), (x, y) -> {
+                    try {
+                        return atlantis.map.position.APosition.create(x, y).isWalkable();
+                    } catch (Exception | Error ignored) {
+                        return true;
+                    }
+                })) return true;
             // Surrounded: three or more melee enemies on top of the Dragoon
             // means escape is impossible - stand and shoot instead of
             // donating the retreat (owner). Either the shot is almost
