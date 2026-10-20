@@ -450,6 +450,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   resite seam (same [119,12] case cited in code), proof pending
   like the rest. Proof: a covered-tile game where the loop is gone
   (long OpenBW 16575f: new refusal 0 fires, no same-tile storm).
+  2026-10-20: two short Wine games too quiet for new instances
+  (supply-50 exits, no construction twins past the opening) -
+  still awaiting the covered-tile game.
 - **#152** Dragoon kiting: won 1v1 live repeatedly (Wine 1Drag_v_1Zeal,
   owner 2026-10-19; now the overnight tuning duel). Landed since:
   HIT twin (lost/dist/cooldown/moving/positions per hit) + SHOT twin
@@ -477,6 +480,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   remnant-corrupted (evaluator counted the post-720f-flush buffer, not
   the game - measured 7 vs 33 filed SHOT rows; now flushes and counts
   the file, batch copies the fixed-name row deterministically).
+  Mechanism re-verified the same day (two Wine 1v1 duels produce
+  countable flushed logs: 46/32 SHOT rows from file, VICTORY + own
+  14-hits counter in the log); the overnight batch itself stays a
+  standing vehicle.
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
@@ -491,9 +498,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   returns false unconditionally with its body commented out (one live
   caller, `ProtossContinueAttack:108`), `waitedLongEnoughForStartedAttack`
   and `AUnit.attackWaitFrames` have zero callers - audit will likely end
-  in deletion, not rewiring). Interim `KITE_LATENCY_FRAMES = 4` in the
-  desired-distance rule is the placeholder to replace once the per-unit
-  source exists. Stub-pin the rule, then prove shot cadence on the Wine
+  in deletion, not rewiring). 2026-10-20: interim constant GONE -
+  the rule reads the live engine latency per decision
+  (`SleepUntilFrameGate.latencyFrames`, fallback 3 gameless; +2
+  Stardust margin at the call site as before); Wine proof the same
+  day: two 1v1 duels, WIN 1/0 both, shot cadence median 33 frames
+  (~30f cooldown + latency, intact), movement 37:18 and 31:3
+  stepped-aside vs stuck-no-step, bot's own counter 14 hits duel 1.
+  Stub-pin the rule, then prove shot cadence on the Wine
   1v1 duel (SHOT twin already carries fired-vs-holding). Details:
   `_AI/CHALLENGES/MicroKiting.md` ("Stardust reference").
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
@@ -512,7 +524,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   lines - same shape). Remaining suspect is host-side (engine
   ends an enemyless match) - needs C++ host debugging (owner call,
   shared platform). GAME_END twin stays as the witness for the next
-  one. No blind patch. Contrast datum 2026-10-18 (`144920`: host died
+  one. No blind patch. 2026-10-20: no occurrence in 4 live games
+  this turn (2 Wine macro + 2 Wine UMS duels - all ended by kill
+  or VICTORY with tails, none silent). Contrast datum 2026-10-18 (`144920`: host died
   visibly at 846f/35s - client printed `failed, disconnecting` + `No
   server proc ID`, hang-watcher jstacked, runner ended at 72s). The four
   #149 runs show NONE of those lines: when the host dies the client
