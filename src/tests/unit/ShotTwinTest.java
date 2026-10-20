@@ -65,7 +65,9 @@ public class ShotTwinTest extends AbstractTestWithWorld {
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
         dragoon.cooldown = 15;
 
-        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+        // Based on purpose: this pins SHOT attribution, not kiting -
+        // baseless duels step off while cooling (NEXT #169).
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
 

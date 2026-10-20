@@ -6,6 +6,8 @@ import atlantis.battle.formation.FormationTwin;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.battle.kite.Kite;
 import atlantis.battle.kite.KiteTwin;
+import atlantis.battle.strategy.BattleStrategy;
+import atlantis.battle.strategy.DuelKite;
 import atlantis.battle.targeting.ASquadTargeting;
 import atlantis.battle.twins.FightTrace;
 import atlantis.battle.twins.HitTwin;
@@ -54,7 +56,7 @@ public final class FightTarget {
         lastContactPos.clear();
     }
 
-    public static void fight(AUnit unit, AUnit target) {
+    public static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
         // Snapshot the contact point while it is visible: once sight is
         // lost the enemy position reads null, so the hunt has nothing to
         // march to (1Drag_v_1Zeal sat 9 min for exactly this - the squad
@@ -76,7 +78,7 @@ public final class FightTarget {
         int now = A.now();
         Integer lastStep = lastStepFrame.get(unit.id());
         if (makeWay(unit, now, lastStep)) return;
-        if (kiteThreat(unit, threat, now, lastStep)) return;
+        if (kiteThreat(unit, threat, now, lastStep, strategy)) return;
         if (reengage(unit, target, now, lastStep)) return;
         rearmAttack(unit, target);
     }
@@ -115,8 +117,24 @@ public final class FightTarget {
     }
 
     /** Kite the threat when the margin rule says so, or false to close in. */
-    private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep) {
-        if (threat == null || !Kite.shouldKite(unit, threat)) return false;
+    private static boolean kiteThreat(AUnit unit, AUnit threat, int now, Integer lastStep, BattleStrategy strategy) {
+        if (threat == null) return false;
+        if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
+        boolean marginKite = Kite.shouldKite(unit, threat);
+        if (!marginKite && strategy == BattleStrategy.DUEL_KITE && DuelKite.shouldYield(unit, threat)
+            && DuelKite.yieldNow(now, lastStep)) {
+            // Duel standoff (NEXT #169): the margin above holds fire while
+            // cooling, but the duel is lost by standing - yield to hold
+            // distance first, argue about the margin after.
+            APosition yield = DuelKite.yieldStep(unit, threat);
+            if (yield != null && unit.move(yield, Actions.MOVE_AVOID, "ClusterDuelYield")) {
+                KiteTwin.steppedAside(unit, threat);
+                lastStepFrame.put(unit.id(), now);
+                lastRepositionFrame.put(unit.id(), now);
+                return true;
+            }
+        }
+        if (!marginKite) return false;
         if (unstickFrozenQueue(unit, threat, now, lastStep)) return true;
         if (tradeShot(unit, threat)) return false;
         if (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames()) {

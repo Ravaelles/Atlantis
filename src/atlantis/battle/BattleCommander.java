@@ -7,6 +7,10 @@ import atlantis.battle.kite.CombatTuning;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.battle.cluster.LeaveBreachedBase;
 import atlantis.battle.retreating.RetreatFromLostFight;
+import atlantis.battle.strategy.BattleStrategies;
+import atlantis.battle.strategy.BattleStrategy;
+import atlantis.battle.strategy.ChokeStandoff;
+import atlantis.battle.strategy.SquadScout;
 import atlantis.battle.targeting.AcquireTarget;
 
 import atlantis.battle.cluster.Missions;
@@ -108,13 +112,14 @@ public class BattleCommander extends Commander {
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (RetreatFromLostFight.retreat(unit, tactic, anchor, leader)) return;
         if (LeaveBreachedBase.leave(unit)) return;
+        BattleStrategy strategy = BattleStrategies.pick(unit, anchor);
         AUnit target = AcquireTarget.acquire(unit);
         if (target != null) {
-            FightTarget.fight(unit, target);
+            FightTarget.fight(unit, target, strategy);
             return;
         }
         if (huntLastContact(unit)) return;
-        holdFormation(unit, anchor, leader);
+        holdFormation(unit, anchor, leader, strategy);
     }
 
     /** Lost contact on a baseless map: march the last engaged point, or false to hold. */
@@ -141,7 +146,24 @@ public class BattleCommander extends Commander {
     }
 
     /** Nothing to fight: bunch on the leader through the formation slot. */
-    private static void holdFormation(AUnit unit, HasPosition anchor, AUnit leader) {
+    private static void holdFormation(AUnit unit, HasPosition anchor, AUnit leader, BattleStrategy strategy) {
+        // Choke doctrine (NEXT #170): the decider owns the approach, this
+        // only executes it - bait pulls into the funnel, the line holds
+        // the standoff, everyone else bunches on the leader as before.
+        if (strategy == BattleStrategy.SCOUT_BAIT) {
+            APosition bait = SquadScout.baitPointFor(unit);
+            if (bait != null && unit.move(bait, Actions.MOVE_ENGAGE, "ClusterBait")) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
+        else if (strategy == BattleStrategy.CHOKE_HOLD) {
+            APosition hold = ChokeStandoff.holdPointFor(unit);
+            if (hold != null && unit.move(hold, Actions.MOVE_ENGAGE, "ClusterStandoff")) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
         // No enemy in reach: take a formation slot when the cluster
         // forms up (3+ combat units, known pivot), else bunch on the
         // leader so the cluster advances (or retreats) as one instead

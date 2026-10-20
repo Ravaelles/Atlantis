@@ -445,7 +445,9 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         // shoots instead of stepping back. Two acts, one order: the
         // standing attack order fires on its own when the weapon is
         // ready (PurpleWave: order on new target, else sleep).
-        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+        // Based on purpose: order discipline, not kiting - baseless
+        // duels step off while cooling (NEXT #169).
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             atlantis.battle.BattleCommander.act(
@@ -476,7 +478,9 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         // new/overdue discipline) - per-frame re-picking restarts the
         // attack animation faster than it completes (Wine ZealDrag:
         // 519 acquisitions for 19 kills). Only A's death re-arms the pick.
-        world(1, fakeOurs(dragoon), fakeEnemies(zealotA, zealotB), () -> {
+        // Based on purpose: target stickiness, not kiting - baseless duels
+        // step off while cooling (NEXT #169).
+        world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealotA, zealotB), () -> {
             atlantis.battle.BattleCommander.act(
                 dragoon, atlantis.battle.cluster.FightOrFlight.Tactic.FIGHT, null, dragoon);
             assertTrue(attackOrders(dragoon) == 1, "acquires A: " + ordersOf(dragoon));

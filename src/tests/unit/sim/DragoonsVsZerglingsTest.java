@@ -781,6 +781,64 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    // =========================================================
+    // T-duel: 1v1 dragoon vs chasing zealot (NEXT #169: Wine takes 10
+    // hits in a WIN, target under 2). The zealot chases like the map AI:
+    // attack-move at the dragoon, no perfect prediction. The dragoon
+    // must win while the DuelKite standoff keeps the hits down.
+    // =========================================================
+
+    @Test
+    public void duelVsChasingZealot() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 6, 6);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 13, 6);
+        zealot.setEnemy();
+
+        SimArena arena = new SimArena(20 * TILE, 12 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { zealot }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 600; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptChaser(zealot, dragoon);
+                });
+                if (zealot.hp <= 0) break;
+            }
+            assertTrue(zealot.hp <= 0, "the dragoon wins the duel");
+            int taken = (180 - (int) dragoon.hp) + (80 - dragoon.shields);
+            assertTrue(taken <= 80, "standoff keeps the hits down, taken=" + taken
+                + " (measured 40 on the DuelKite rule; the live Wine target is <2 hits, NEXT #169)");
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    /** Map-AI-like chaser: face the quarry, move into range, trade. */
+    private static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
+        if (foe.hp <= 0 || dragoon.hp <= 0) {
+            foe.lastCommand = "Stop";
+            return;
+        }
+        foe.setAngle(Math.atan2(
+            dragoon.position.y() - foe.position.y(), dragoon.position.x() - foe.position.x()));
+        if (foe.distTo(dragoon) <= SimWorld.reachTiles(foe, dragoon)) {
+            foe.lastCommand = "AttackUnit";
+            foe.target = dragoon;
+            foe.targetPosition = dragoon.position;
+        }
+        else {
+            foe.lastCommand = "Move";
+            foe.target = dragoon;
+            foe.targetPosition = dragoon.position;
+        }
+    }
+
     private static FakeUnit woundedDragoon(double tx, double ty, int hp) {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, tx, ty);
         dragoon.hp = hp;
