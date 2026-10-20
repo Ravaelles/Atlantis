@@ -473,6 +473,10 @@ public class Env {
         openBW = enabled;
     }
 
+    public static void setLocalForTest(boolean local) {
+        isLocal = local;
+    }
+
     public static boolean shouldModifyBwapiIni() {
         return modifyBwapiIni;
     }

@@ -779,8 +779,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (JBWAPI-Atlantis: units field-init, lazy init on first event
   with retry + no-wipe guard; Atlantis: idempotent onStart +
   first-frame bootstrap) - none of it can conjure a match start.
-  The ONLY remaining need is engine-side: emit MatchStart (which
-  publishes players) once per game.
+  2026-10-21 CORRECTION and closure: with the ticking match,
+  MatchStart DOES arrive (HELLO printed), players DO publish, init
+  succeeds - run `183729` played to 3:00 game time with an 82k-row
+  fight (CLUSTER/FIGHT flowing, 17 hits taken, marines trading
+  and dying). The frame-2 Defeat was OURS, not the engine's:
+  `ForceExitWhenInvalidState` misfired on supply 0/0 + bank 10000
+  (absent supply data read as no army) - fixed the same day
+  (unpublished supply never trips; pinned
+  `ForceExitNeedsPublishedSupplyTest` 2/2; their
+  GameEvents.cpp:150 theory falsified by our own ForceExit
+  banner + GAME_END twin at frame 2). What the unblocked game
+  surfaced (NEXT #163): 69k shot-orders vs 17 hits (order spam
+  or twin counting?) and 10k UNIT_DIED rows for ~30 marines
+  (twin re-fires per dead unit per frame?) - data-quality
+  follow-ups, not verdicts. Verdict quality (W/L) still needs
+  longer than the 30 s UMS cap.
   Detail: `docs/openbw-run-regression.md` (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
@@ -1071,6 +1085,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   MAKE_WAY live, T2b pins the wipe branch deterministically;
   suite 1018/0 fast, strict arch 5/7 unchanged, game jar builds
   clean). Live UMS proof waits on the ticking match (#94).
+- **#163** UMS fight follow-ups (from the unblocked `183729` game):
+  (a) 69k `shot-fired` vs 17 `hit` - order spam (re-issue without
+  the new/overdue discipline on UMS?) or twin counting orders as
+  shots; (b) 10k UNIT_DIED rows for ~30 marines - twin re-fires
+  per dead unit per frame? Both are data-quality questions with
+  twin evidence in hand, no live re-probe needed to start.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
@@ -1104,7 +1124,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   "Connection successful"). 2026-10-20 handshake fixed both sides
   (their pump + our units guard: 2/2 `Connection successful`);
   the match itself never ticks on UMS (no frames, no MatchStart -
-  engine-side). Wine stays the duel vehicle until the match ticks.
+  engine-side). 2026-10-21: SUPERSEDED - with the ticking match the
+  whole chain works (run `183729`: HELLO, 3:00 fight, 82k rows).
+  Wine stays the duel vehicle until the UMS verdict quality
+  (W/L past the 30 s cap) lands.
 - OpenBW `TauCross` (`113933` long, FE forced reverted probe #2,
   12493f/8:44, exit 143 wall-cap - inconclusive as verdict, rich as
   data): FE OPENS (Forge 1:25, Core, 45 warps, Dragoons 10) - the
