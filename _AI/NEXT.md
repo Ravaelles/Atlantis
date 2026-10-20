@@ -658,16 +658,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-18: Protoss enemy also spawns nothing (`143846` PvP, 361
   game-s, `enemy: ` empty, 0/0 - 7th enemyless game across 3 enemy
   races). Race-independent; host-side only.
-  2026-10-20: host regression, worse than #94 - the REBUILT engine
-  (harness binary 21:36 10-19) hosts NO game at all: server stalls
-  mid map-unit creation (~66-76 created lines, game table row never
-  published, 1% CPU nanosleep wait), client loops on "Game table
-  mapping not found", melee and UMS alike (UMS hang 21:37 10-19 +
-  fresh TauCross melee the same shape). The smoke run (TestAIModule
-  attached at frame 1) still completes 109 units - the stall is in
-  the server-script hosting path, same launcher. All retained
-  successful runs predate the rebuild. Engine C++ is owner
-  territory - game proofs move to Wine until the host works again.
+  2026-10-20: WITHDRAWN as a regression (see below) - what looked
+  like a hung host (server log cut mid-line, no HELLO, 1% CPU) was
+  an empty slot, not a stuck engine: the game runs, the bot attaches,
+  but 1Drag_v_1Zeal seats it in a unit-less EitherPreferHuman slot
+  (verified in AutoMenuManager.cpp: first EitherPreferHuman slot
+  wins; ENEMY_RACE overwrites the other Either slots). The
+  "mid-line cut" is stdio buffering on the kill, the 1% CPU is an
+  idle wait. The creation lines in old logs come only from
+  TestAIModule (TestModule.cpp:37), which the server path never
+  loads - so grepping server.log for spawns proves nothing either
+  way. A scenario-load check on that signal was added and removed
+  the same day (would false-FAIL every healthy game). Correct
+  vehicle: maps whose bot slot holds units (`M&M_v_ZealDrag`:
+  PASS 5/2 on the rebuilt engine) + the bot-side 0/0/0 verdict
+  for vacuous games. Engine C++ stays owner territory, but nothing
+  here needs it.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
