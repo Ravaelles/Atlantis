@@ -585,6 +585,14 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   last-resort ladder (strict, relaxed margins, first engine-buildable tile
   in ring order): doctrine untouched, `PYLON_FIND_FAILED` prints only when
   all passes fail (`PylonLastResortTest` 2/2, RED then GREEN).
+  2026-10-20 (owner, map is `ums/rav/7th_rav.scx`): a Pylon warped at
+  the region edge lights no usable ground - when SupplyFree >= 2,
+  require the four diagonal tiles (+4/+4, -4/-4, +4/-4, -4/+4) around
+  the site to be walkable (center-ish, at minimum not on the edge).
+  Drafted as `PylonNeedsRoomAround` + chain slot but reverted untested
+  (box busy with parallel OpenBW work) - implement with a stub pin
+  (edge tile refused, open field passes, low supply bypasses) and a
+  7th_rav proof game.
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
