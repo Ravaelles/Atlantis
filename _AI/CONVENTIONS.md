@@ -112,11 +112,16 @@ finding. "Continue" means keep working, not keep reporting.
 - Large changes proceed incrementally per `_AI/NEXT.md` and keep the bot
   playable. Every change is also checked against `DOCS/SOLID-CHECKLIST.md`.
 
-## 6. Commit after every completed work cycle (mandatory)
+## 6. Commit after every completed work cycle (mandatory, owner's ruling 2026-10-21: batch sensibly)
 
 - After each **completed cycle of work**, commit before starting the next one.
-- One logical change per commit; no unrelated changes mixed in.
-- Concise English message explaining the **why**, not just the what.
+- One **coherent unit of work** per commit, not one file or one
+  micro-step: batch small commits with a sensible continuity into one
+  bigger commit (including doc-only updates that describe the work -
+  no doc-only commit chains). Pedantic cleanliness is not the goal
+  (solo project); the message is: it must explain, to a future self,
+  **what was done and why** - that documentary value is the whole
+  point of committing. Never mix genuinely unrelated work.
 - The ArchUnit baseline in `_AI/architecture/archunit-store/` is versioned on
   purpose (see its `README.md`): not a build artifact, never `.gitignore` it.
 - Never `git push` unless the user explicitly asks.
