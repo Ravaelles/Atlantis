@@ -108,6 +108,7 @@ public class BattleCommander extends Commander {
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (unit == null || !unit.isAlive()) return;
+
         act(unit, tactic, anchor, leader);
     }
 
@@ -164,8 +165,12 @@ public class BattleCommander extends Commander {
         // committed the cluster to FIGHT, this is the individual hatch.
         // Mid-swing it waits one frame like every other move here: cancelling
         // the shot to flee is the same bug as cancelling it to kite.
-        if (ClusterBreach.breachForcesFight() && !unit.isAttackFrame() && !unit.isStartingAttack()
-            && unit.hp() <= CombatTuning.current().getBreachRetreatHp() && unit.cooldown() >= CombatTuning.current().getBreachRetreatCooldown()) {
+        if (
+            ClusterBreach.breachForcesFight()
+                && !unit.isAttackFrame() && !unit.isStartingAttack()
+                && unit.hp() <= CombatTuning.current().getBreachRetreatHp()
+                && unit.cooldown() >= CombatTuning.current().getBreachRetreatCooldown()
+        ) {
             HasPosition rally = ClusterBreach.breachRallyPoint();
             if (rally != null && unit.distTo(rally) >= 0.2) {
                 unit.move(rally, Actions.RUN_ENEMY, "ClusterBreachRetreat");
