@@ -425,7 +425,7 @@ public class Construction implements Comparable<Construction> {
     public boolean isOverdue() {
         if (hasStarted()) return false;
         // PREPARING waits by design (site picked early, no builder yet).
-        if (status == ConstructionOrderStatus.PREPARING) return false;
+        if (status.isWaiting()) return false;
         if (buildingType != null && buildingType.isBase()) return false;
         if (!A.canAfford(buildingType)) return false;
 

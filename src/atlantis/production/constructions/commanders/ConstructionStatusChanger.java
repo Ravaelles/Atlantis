@@ -413,7 +413,7 @@ public class ConstructionStatusChanger extends Commander {
         // builderless sites are exempt: a builder held on one stays visible
         // to the old path. An occupied site itself still fails loudly at
         // adoption/issue time instead of spinning here.
-        if (construction.status() == ConstructionOrderStatus.PREPARING
+        if (construction.status().isWaiting()
             && construction.builder() == null) return true;
         return construction.status() == ConstructionOrderStatus.NOT_STARTED
             && construction.builder() != null && !construction.builder().isDead()

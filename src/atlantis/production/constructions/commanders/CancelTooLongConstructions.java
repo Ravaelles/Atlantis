@@ -23,7 +23,7 @@ public class CancelTooLongConstructions {
         // cancelling it for age destroys the reservation and, with the
         // requeue vetoed by untriggerable rows, deadlocks the game (9/9
         // with no Pylon order left, measured game 200018).
-        if (constr.status() == atlantis.production.constructions.ConstructionOrderStatus.PREPARING) {
+        if (constr.status().isWaiting()) {
             return;
         }
 
