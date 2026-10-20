@@ -176,4 +176,22 @@ cp -f "$DEBUG_LOG" "$UMS_LOGS_DIR/UMS_DEBUG" 2>/dev/null || true
 say "run dir: $RUN_DIR"
 say "bot log tail:"
 tail -15 "$BOT_LOG" | sed 's/^/    /'
+
+# --- Verdict line: killed / lost / times hit, one line for the tuner ---
+# Kills come from the bot's own end-of-game summary; hits taken are the
+# HIT twin rows in the flushed event log (one row per landed hit on us).
+# Missing values (bot died before the summary, no flush) read as "?"/0,
+# never as zero kills - an inconclusive run must not look clean.
+KILLED="?"
+LOST="?"
+SUMMARY_LINE="$(grep -a -m1 '### Units killed/lost:' "$BOT_LOG" 2>/dev/null || true)"
+if [ -n "$SUMMARY_LINE" ]; then
+  KILLED="$(echo "$SUMMARY_LINE" | sed -E 's|.*killed/lost: *([0-9]+)/.*|\1|')"
+  LOST="$(echo "$SUMMARY_LINE" | sed -E 's|.*killed/lost: *[0-9]+/([0-9]+).*|\1|')"
+fi
+TIMES_HIT=0
+[ -f "$RUN_DIR/EVENTS.jsonl" ] \
+  && TIMES_HIT="$(grep -a -c '"key":"HIT"' "$RUN_DIR/EVENTS.jsonl" 2>/dev/null || echo 0)"
+say "KILLED:$KILLED, LOST:$LOST, TIMES_HIT:$TIMES_HIT"
+echo "killed=$KILLED lost=$LOST times_hit=$TIMES_HIT" >> "$RUN_DIR/run.txt"
 exit "$BOT_EXIT"
