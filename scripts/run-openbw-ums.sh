@@ -75,6 +75,12 @@ trap cleanup EXIT INT TERM
 for mpq in StarDat.mpq BrooDat.mpq Patch_rt.mpq; do
   [ -f "$GAME_DIR/$mpq" ] || fail "missing $mpq in $GAME_DIR (harness not built?)"
 done
+# Fail fast on a bad map instead of burning every downstream timeout and
+# blaming the engine: a typo here used to read as "server hung" 180 s later.
+case "$MAP" in
+  /*) [ -f "$MAP" ] || fail "map not found: $MAP" ;;
+  *)  [ -f "$GAME_DIR/$MAP" ] || fail "map not found: $GAME_DIR/$MAP (pass a path under $GAME_DIR, e.g. maps/ums/rav/protoss/1Drag_v_1Zeal.scm)" ;;
+esac
 # -x matches the process NAME exactly. -f matches the whole command line, which
 # also matched the shell running this script (its argv contains the pattern),
 # producing a false "ChaosLauncher is running" fatal before any game started.
@@ -88,15 +94,16 @@ if pgrep -f '^([^ ]*/)?(StarCraft|ChaosLauncher|Chaoslauncher)\.exe( |$)' >/dev/
   fail "StarCraft/ChaosLauncher is running - kill it and retry."
 fi
 
-# The jar must match the working tree: a play on stale code debugs a bug
-# that is already fixed (owner's report, 2026-10-08).
-if ! bash "$ATLANTIS_DIR/scripts/check-jar-freshness.sh" "$JAR" --quiet; then
-  say "bot jar is stale - rebuilding from current sources."
-  timeout 120 bash "$ATLANTIS_DIR/scripts/build-bot-jar.sh" "$JAR" \
-    || fail "rebuild failed"
-  bash "$ATLANTIS_DIR/scripts/check-jar-freshness.sh" "$JAR" --quiet \
-    || fail "rebuild did not produce a matching jar"
-fi
+# The jar must match the working tree AND its build inputs (libs included):
+# build-bot-jar.sh skips the build itself when the target jar is already
+# fresh, so every caller gets the fast path without re-implementing the
+# check here (a src-only check here once shipped a stale binding: the lib
+# changed, the sources did not, and the game played the old jar).
+# A play on a stale jar debugs a bug that is already fixed (2026-10-08).
+timeout 120 bash "$ATLANTIS_DIR/scripts/build-bot-jar.sh" "$JAR" \
+  || fail "bot jar build failed"
+bash "$ATLANTIS_DIR/scripts/check-jar-freshness.sh" "$JAR" --quiet \
+  || fail "rebuild did not produce a matching jar"
 
 # --- Bot directory (GAME_LAUNCHER=OPENBW, never the Wine folder) ---
 mkdir -p "$BOT_RUN_DIR"
@@ -199,6 +206,14 @@ if [ "$HOSTED" -ne 1 ]; then
   fail "no live game registry within 30 s"
 fi
 say "hosted: $("$SCRIPT_DIR/bwapi-publish.sh" | tail -1)"
+# The registry says "live" while the map itself may have failed to load
+# (wrong mode, unreadable scenario): a published game with zero created
+# units plays an empty map to every timeout downstream. Name it here.
+if ! grep -q "has been created" "$SERVER_LOG" 2>/dev/null; then
+  say "server published but created zero units - map $MAP did not load (wrong mode or unreadable scenario?); server log tail:"
+  tail -20 "$SERVER_LOG" | sed 's/^/    /'
+  fail "empty map load, not a hung server"
+fi
 
 # --- Client (cwd = bot root: build orders resolve from AI/build_orders/) ---
 rm -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" "$BOT_ROOT/bwapi-data/write/BUILDINGS.json" "$BOT_ROOT/bwapi-data/write/DECISIONS.log"

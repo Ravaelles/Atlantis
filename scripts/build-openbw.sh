@@ -411,7 +411,10 @@ if [ -n "$GAME_MAP" ]; then
   summary="KILLED:$killed LOST:$lost TIMES_HIT:$hits"
 
   if [ "$game_rc" -eq 124 ]; then
-    echo "FAIL: game timed out after ${GAME_TIMEOUT}s (server hung; log: $game_log)"
+    echo "FAIL: game timed out after ${GAME_TIMEOUT}s (inner runner caps at ~35 s, so this is a hang outside them - stuck wait or ignored TERM; log: $game_log)"
+    echo "--- game log tail ---"
+    tail -25 "$game_log" 2>/dev/null || true
+    echo "--- newest run dir: ${run_dir:-none} ---"
     exit 1
   fi
   if [ "$frames" -le 100 ]; then

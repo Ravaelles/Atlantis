@@ -181,7 +181,7 @@ echo "[build-bot-jar] source fingerprint: $SOURCE_FINGERPRINT"
 # change the payload (fat/thin mode, the BWAPI jar choice, every runtime and
 # override lib by name+size+mtime). Jars built before the inputs tag existed
 # rebuild exactly once, then skip. BUILD_FORCE=1 forces a rebuild.
-BUILD_INPUTS="$(printf 'mode=%s\nbwapi=%s\n' "$MODE" "$BWAPI_JAR"; ls -l --full-iso "${RUNTIME_LIBS[@]}" "${OVERRIDE_LIBS[@]}" 2>/dev/null || true)"
+BUILD_INPUTS="$(printf 'mode=%s\nbwapi=%s\n' "$MODE" "$BWAPI_JAR"; stat -c '%n %s %Y' "${RUNTIME_LIBS[@]}" "${OVERRIDE_LIBS[@]}" 2>/dev/null || ls -l "${RUNTIME_LIBS[@]}" "${OVERRIDE_LIBS[@]}" 2>/dev/null || true)"
 BUILD_INPUTS_SIG="$(printf '%s' "$BUILD_INPUTS" | md5sum | cut -d' ' -f1)"
 if [ "${BUILD_FORCE:-0}" != "1" ] && [ -f "$OUT_JAR" ]; then
     TAGGED_FP="$(unzip -p "$OUT_JAR" ATLANTIS_SOURCE_FINGERPRINT 2>/dev/null | tr -d '[:space:]' || true)"
