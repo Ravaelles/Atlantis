@@ -161,6 +161,27 @@ public class UmsRetreatRulesTest extends AbstractTestWithWorld {
     }
 
     @Test
+    public void baselessUmsNeverFlees() {
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 33, 20);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            BattleCommander.act(
+                dragoon, FightOrFlight.Tactic.FLEE, null, dragoon);
+
+            assertFalse(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "no base on a UMS map: ClusterFlee would donate the duel: "
+                    + ordersOf(dragoon));
+            assertTrue(
+                hasOrder(ordersOf(dragoon), dragoon.id(), "attackUnit"),
+                "no retreat means the fight, not a standstill: " + ordersOf(dragoon));
+        });
+    }
+
+    @Test
     public void breachHoldsDefendPostureAtAnyArmySize() {
         assertEquals(
             ClusterMission.Posture.DEFEND,

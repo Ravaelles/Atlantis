@@ -277,6 +277,10 @@ public class BattleCommander extends Commander {
      */
     public static void act(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (tactic == FightOrFlight.Tactic.FLEE) {
+            // Owner: ClusterFlee is banned on baseless UMS maps - with no
+            // base anywhere a retreat (shared direction or per-unit) only
+            // donates the duel, so the unit falls through and fights.
+            boolean noFleeOnBaselessUms = A.isUms() && Count.bases() == 0;
             // Baseless maps (UMS micro duels) have no home to run to: the
             // mission anchor there is the ENEMY base, so following it
             // marches the retreat straight into the enemy. Regroup away
@@ -285,7 +289,7 @@ public class BattleCommander extends Commander {
             // Mid-swing the rally waits: a move order now cancels the shot
             // (PurpleWave AttackDelay) - the fight path below holds it the
             // same way.
-            if (!unit.isAttackFrame() && !unit.isStartingAttack()) {
+            if (!noFleeOnBaselessUms && !unit.isAttackFrame() && !unit.isStartingAttack()) {
                 HasPosition home;
                 if (Select.main() != null) {
                     home = breachRallyPoint();
