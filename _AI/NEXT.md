@@ -45,6 +45,16 @@ reading green.
 - [ ] **Phase 5 — Production V2 LIVE + architecture migration.** V2 default
   behind the #45 deletion ordering; stages E–J below (after Phases 1–2).
   Exit: V2 LIVE by default with parity numbers, ArchUnit store at zero.
+  2026-10-20: FIRST V2 LIVE GAME ON WINE (11.8 game-min vs Garm
+  Brood, WON 37/15 +300 - archived under out/wine_runs/): Pylon
+  0:32, Gateway 1:27, Forge 1:54, Assimilator 3:22, Core 4:03,
+  Dragoon 14, Zealot 5, Gateways 3, Pylons 6 - tech/army flow
+  SUPERIOR to same-day legacy (Forge 6:58, NO Core, 0 Dragoons,
+  lost 7/29). 701 V2_DISPATCH + 2735 V2_GOAL_SOURCE fire. Gaps:
+  no Nexus#2 (C14 expansion siting, V2 has none), Pylon demand
+  dual-authored live (build-order 1633 + dynamic 1102 rows -
+  WO-144 single-author still open). N=1 per side, different Zerg
+  play - direction stark, parity unproven.
   Diagnosed 2026-10-19 (mechanisms named with run ids; fast-loop slices
   landed after, each stub-pinned, no games per owner direction):
   full 1209 s LIVE games play fast but thin (10 warps: Pylon=2 Gateway=1
@@ -661,7 +671,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (BaseRoles pure + wired) [x] M2 defense spots live (coverage ranker
   both paths, unpowered guard, 897 s proof) [x] M3 drop spots/islands
   (area graph pure) [x] M4 anchors model (tile row + door pure)
-  [ ] M4 wall-in goal + game proof [ ] M5 module extraction (assessed
+  [ ] M4 wall-in goal + game proof (2026-10-20: siting proof LANDED on
+  a forced-FE short Wine game - Forge 1:45, Pylon warped ON the anchor
+  [50,106] 0:56, PhotonC sited at anchor+36px 2:38; supply-50 exit cut
+  the game before Nexus#2 + cannon warp, so hold-proof needs a LONG
+  FE game - queued) [ ] M5 module extraction (assessed
   2026-10-17: 7 files, engine-import-free except own map types +
   `AUnitType`; single engine-coupled adapter (`EngineGroundLink`) already
   isolated behind `GroundLink` - physical extraction is build/repo
@@ -766,7 +780,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
     owns all supply demand (DynamicGoals.supplyGoal + SUPPLY_BLOCKED twin
     already name the need; the feeder already feeds supply-pylon rows).
     Exit: one author, supply pumps silent, `SupplyCommander/**` +
-    fallback in src-old/.
+    fallback in src-old/. 2026-10-20: dual authorship confirmed live
+    (V2 Wine game: Pylon goals build-order 1633 + dynamic 1102 rows) -
+    the pumps are NOT silent, the feeder does NOT cover routinely;
+    no candidate, same as step 1.
   - **#145** Site-finding chain (`NewConstructionRequest` + `FindPosition`/
     `DefineExactPositionForNewConstruction`, the "ConstructionFinder") →
     catalogue-only sited demand through the adapter funnel
@@ -775,6 +792,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   - **#146** `APositionFinder` legacy path → deleted after the catalogue
     default + parity (D1 pointer; ~25 files still route through it).
     Exit: zero `Can't find place` across retained runs, legacy path gone.
+    2026-10-20: 33 PLACEMENT_FAILED in one Wine macro game - nowhere
+    near zero, no deletion.
   - **#147** `Queue/**` + order types → stateless demand/schedule
     (01_PRODUCTION.md scheduler + dispatcher; single policy already
     gated). LAST: a bot that can't queue can't play. Exit: V2 LIVE by
@@ -899,7 +918,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   dedicated-finder 2, legacy-refused 7), 6 REQUESTED vs 1 CANCEL,
   25 warps; 1 residual Can't-find-place (Gateway #86 At 44, known
   late-dynamic class, NEW class: none). WO-145 parity direction
-  holds; flip waits on Gateway-arm coverage.
+  holds; flip waits on Gateway-arm coverage. 2026-10-20: adapter
+  verified wired in both funnels (sited via RequestBuildingNear:132,
+  queue via APositionFinder:47, same decline→legacy contract);
+  Gateway-arm parity still needs a SiteTwin-read game.
 - OpenBW `TauCross` (`185237` DRY_RUN short): V2 plans the opening
   provider 16x at stable (112,8) while legacy warps [113,15] -
   demand parity in the window, tile a few tiles off (known siting
