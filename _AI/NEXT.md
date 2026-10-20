@@ -599,8 +599,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   all passes fail (`PylonLastResortTest` 2/2, RED then GREEN).
   Implemented 2026-10-20 (`PylonNeedsRoomAround`: with SupplyFree>=2
   the four +-4 diagonal tiles must be walkable; poor supply bypasses;
-  wired right after TooCloseToOtherPylons, pinned 4/4) - game proof
-  on 7th_rav still pending (no quiet box yet).
+  wired right after TooCloseToOtherPylons, pinned 4/4) - proof
+  2026-10-21 on 7th_rav (Wine, hidden, fresh jar with the rule +
+  anchor fix + pinch in it): 6/6 Pylons warped, first 0:50, zero
+  supply blocks, zero room-around refusals fired, opening healthy
+  (Gateway 1:20, Core 2:23, Dragoon 3:26). The map never offered a
+  true corner-stall shape (mid-base tiles [112,29]/[108,25]/[118,34]),
+  so this is a no-harm proof, not a firing proof - the firing path
+  still rests on the 4/4 stub pin until a real corner shape appears.
+  No misfire observed; the rule stays.
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
@@ -918,8 +925,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   2026-10-21: step 1 LANDED (`TunerObjective` + `TunerObjectiveTest`
   7/7: win, then hits asc, then seconds asc, `?` sorts last,
   batch.csv parser, deterministic tie-break; pure tooling, game
-  loop untouched, suite 998/998 + arch unchanged). Steps 2-5 open
-  (hall of fame, K-of-N bar, freeze-then-expand, archive).
+  loop untouched, suite 998/998 + arch unchanged). 2026-10-21:
+  step 2 LANDED (`TunerHallOfFame` + `TunerHallOfFameTest` 5/5:
+  bounded top-N store ranked by the objective, radius mutation
+  clamped to per-param bounds, `?`-safe file round-trip, garbage
+  lines skipped; wiring into the batch init rides the intensive
+  session with its own batch proof, never blind). Steps 3-5 open
+  (K-of-N bar, freeze-then-expand, archive).
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
