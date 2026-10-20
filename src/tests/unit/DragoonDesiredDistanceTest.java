@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             // dist 3.0, cd 0: cooldownDistance 0 -> desired 4 - 1 = 3.0 (melee-closer).
-            assertEquals(3.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            assertEquals(3.0, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
         });
     }
 
@@ -67,7 +68,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             // dist 6.0, cd 5: cooldownDistance 0 -> desired min(4, 4 + (0-2)/2) = 3 - 1 = 2.0.
-            assertEquals(2.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            assertEquals(2.0, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
         });
     }
 
@@ -80,7 +81,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(foe), () -> {
             // dist 2.0, cd 30: cooldownDistance 3.75 -> desired min(4, 4 + (3.75+2)/2) = 4,
             // no melee term (4 !<= 4 - 2).
-            assertEquals(4.0, BattleCommander.desiredKiteDistance(dragoon, foe), 0.01);
+            assertEquals(4.0, Kite.desiredKiteDistance(dragoon, foe), 0.01);
         });
     }
 
@@ -99,7 +100,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             // hp 20 + shields 0 = 1.25 survived passes: WOUNDED, so the
             // hold is the max-range edge (4 - 0.4 = 3.6), not the healthy
             // 3.0. Gap 0.1 stays under the step-gain floor: hold + shoot.
-            assertEquals(3.6, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
                 dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
@@ -126,7 +127,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             // dist 1.5 deep inside, WOUNDED (1.25 passes): desired 3.6, so
             // the step opens ~2.1 (capped at one full step) - longer than
             // the healthy 3.0 hold, exactly the wounded-retreats-longer shape.
-            assertEquals(3.6, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            assertEquals(3.6, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
 
             BattleCommander.act(
                 dragoon, atlantis.battle.FightOrFlight.Tactic.FIGHT, null, dragoon);
@@ -152,8 +153,8 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
             // 3.0 with the melee-closer, the bleeding unit (1.25 passes)
             // holds the 3.6 edge - the back line stays back without any
             // cross-unit synchronization.
-            assertEquals(3.0, BattleCommander.desiredKiteDistance(healthy, zealot), 0.01);
-            assertEquals(3.6, BattleCommander.desiredKiteDistance(wounded, zealot), 0.01);
+            assertEquals(3.0, Kite.desiredKiteDistance(healthy, zealot), 0.01);
+            assertEquals(3.6, Kite.desiredKiteDistance(wounded, zealot), 0.01);
         });
     }
 
@@ -168,7 +169,7 @@ public class DragoonDesiredDistanceTest extends AbstractTestWithWorld {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             // 100 / 16 = 6.25 passes: just above the 6.0 wound line,
             // still the healthy 3.0 close.
-            assertEquals(3.0, BattleCommander.desiredKiteDistance(dragoon, zealot), 0.01);
+            assertEquals(3.0, Kite.desiredKiteDistance(dragoon, zealot), 0.01);
         });
     }
 

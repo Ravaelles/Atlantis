@@ -5,6 +5,7 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.battle.formation.FocusFire;
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.formation.SharedEscape;
+import atlantis.battle.kite.Kite;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
@@ -14,7 +15,6 @@ import atlantis.units.actions.move.MoveAway;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 import atlantis.units.select.Selection;
-import atlantis.units.special.SleepUntilFrameGate;
 
 /**
  * Owns every army unit each frame. Phase 0 of __PLAN-COMBAT step 5: one
@@ -179,33 +179,6 @@ public class BattleCommander extends Commander {
         return foe != null && foe.distTo(main) <= 8;
     }
 
-    /**
-     * Stardust's desired-distance rule (MyDragoon::attackUnit), in tiles:
-     * max range, reduced by half the gap between "how far the target
-     * still is outside range" and "how far we walk before the weapon is
-     * ready". A healthy Dragoon holds a tile inside max range against
-     * melee-ranged threats (Stardust: -32px vs much-shorter range -
-     * kiting to max edge donates the fight); a WOUNDED one skips the
-     * closer and holds the max-range edge instead (PurpleWave hitsLeft
-     * shape: the fewer passes it survives, the farther it stays).
-     * Public as a seam: the formula pins without running the frame (see
-     * `_AI/CHALLENGES/MicroKiting.md`, Stardust reference).
-     */
-    public static double desiredKiteDistance(AUnit unit, AUnit threat) {
-        double myRange = unit.groundWeaponRange();
-        double targetRange = unit.enemyWeaponRangeAgainstThisUnit(threat);
-        double dist = unit.distTo(threat);
-        double tilesPerFrame = unit.maxSpeed() / 32.0;
-        double cooldownDistance = Math.max(0.0, unit.cooldown() - attackLatencyFrames() - 2) * tilesPerFrame;
-        double desired = Math.min(myRange, myRange + (cooldownDistance - (dist - myRange)) / 2.0);
-        if (targetRange <= myRange - tuning().getKiteMeleeEdgeTiles()) {
-            double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
-            double closer = hitsLeft <= tuning().getKiteWoundedHitsLeft()
-                ? tuning().getKiteWoundedEdgeInsetTiles() : tuning().getKiteMeleeCloserTiles();
-            desired -= closer;
-        }
-        return Math.max(0.0, desired);
-    }
 
     /**
      * Keep shooting the committed target while it is alive, hittable and
@@ -373,7 +346,7 @@ public class BattleCommander extends Commander {
             FightTrace.sample(unit, threat != null ? threat : target);
             int now = A.now();
             Integer lastStep = lastStepFrame.get(unit.id());
-            if (threat != null && shouldKite(unit, threat)) {
+            if (threat != null && Kite.shouldKite(unit, threat)) {
                 // Frozen: steps keep issuing but the unit never moves -
                 // the order queue is wedged (the vanilla engine bug both
                 // reference bots unstick: PurpleWave Unstick issues STOP
@@ -426,7 +399,7 @@ public class BattleCommander extends Commander {
                     // is the measured "ucieka za daleko" shape; holding at
                     // the formula's point keeps shooting instead.
                     double stepLen = Math.min(tuning().getKiteStepTiles(),
-                        Math.max(0.0, desiredKiteDistance(unit, threat) - unit.distTo(threat)));
+                        Math.max(0.0, Kite.desiredKiteDistance(unit, threat) - unit.distTo(threat)));
                     APosition dest = stepLen > 0
                         ? MoveAway.bestDestination(unit, threat, stepLen)
                         : null;
@@ -616,108 +589,14 @@ public class BattleCommander extends Commander {
     /** Tiles behind the leader before a unit turns back to rejoin. */
     private static final double CLUSTER_GATHER_RADIUS_TILES = 2;
 
-    /**
-     * A Dragoon steps back only while the closest threat sits inside its
-     * safety margin (PurpleWave BeDragoonVsSlowlot, engine numbers from
-     * the vendored jar: Dragoon range 4 tiles, cooldown 30, Zealot
-     * range ~0 tiles, 16 damage per pass). Margin is the tiles the
-     * threat still must close before it can hit us, minus half a tile
-     * when the threat is coming for exactly this unit and minus half
-     * a tile when it faces us. A healthy Dragoon holds to about one
-     * tile and keeps shooting through the cooldown; a dying one
-     * demands up to four. Dragoon-only: Zealots want contact, other
-     * races are out of scope. Public as a seam: the rule pins in a
-     * stub state.
-     */
-    public static boolean shouldKite(AUnit unit, AUnit threat) {
-        if (unit == null || threat == null) return false;
-        // Zealots trade contact, except on a spent weapon: with 7+ frames
-        // of cooldown left a step back costs no DPS (owner direction).
-        if (!unit.isDragoon() && !(unit.isZealot() && unit.cooldown() >= 7)) return false;
-        if (unit.isDragoon()) {
-            boolean lowHp = unit.hp() + unit.shields() < tuning().getDragoonLowHp();
-            // Pinch retreat (owner): two or more melee enemies inside 2
-            // tiles on a hurt Dragoon (hp + shields < 80) means the pocket
-            // is closing - yield ground instead of standing into it.
-            // Overrides the surrounded-stand below: standing trades only
-            // when escape already failed, never while steps still open.
-            // A step that finds nothing still falls through to the
-            // glue/corner trading below, so a fully pinched Dragoon
-            // shoots instead of idling.
-            if (unit.hp() + unit.shields() < tuning().getDragoonPinchHp()
-                && unit.enemiesNear().melee().inRadius(tuning().getDragoonPinchMeleeTiles(), unit).size()
-                    >= tuning().getDragoonPinchMeleeCount()) return true;
-            // Surrounded: three or more melee enemies on top of the Dragoon
-            // means escape is impossible - stand and shoot instead of
-            // donating the retreat (owner). Either the shot is almost
-            // ready or the nearest enemy is far enough to trade with.
-            if (unit.enemiesNear().melee().inRadius(3, unit).size() >= tuning().getDragoonSurroundedMeleeCount()
-                && (unit.cooldown() <= tuning().getDragoonSurroundedStandCooldown()
-                    || unit.distTo(threat) >= tuning().getDragoonSurroundedStandDistTiles())) return false;
-            // Low-HP Dragoon holds fire unless the shot is safe: at least
-            // 3.2 tiles of room or an imminent weapon (owner, converging
-            // with Stardust: cooldown <= latency + 2 attacks instead of
-            // stepping). Below half health the threatened step would only
-            // delay the one shot that still matters.
-            if (lowHp && unit.cooldown() <= tuning().getDragoonLowHpFireCooldown()) return false;
-            // ...otherwise it yields ground early: holding fire means
-            // stepping, never standing through the cooldown. Robust to
-            // margin tuning - the margin gate alone already kites here at
-            // default constants, this keeps it true whatever they become.
-            if (lowHp
-                && unit.distTo(threat) < tuning().getDragoonLowHpHoldTiles()
-                && unit.cooldown() > tuning().getDragoonLowHpFireCooldown()) return true;
-        }
-        if (unit.distTo(threat) >= tuning().getKiteEnemyTiles()) return false;
-        return kiteMargin(unit, threat) < kiteMarginRequired(unit);
-    }
 
-    /**
-     * Tiles the threat still must close before it can hit us, minus
-     * half a tile when its order target is exactly this unit and minus
-     * half a tile when it faces us (the cheap binary form of
-     * PurpleWave's commitment read: targeted plus facing-dot; ours
-     * fires within a 1.1 rad window instead of scaling continuously).
-     * Distances are center-based tiles, not edge pixels - about half
-     * a tile more permissive than the original, Wine decides.
-     */
-    private static double kiteMargin(AUnit unit, AUnit threat) {
-        double margin = unit.distTo(threat) - unit.enemyWeaponRangeAgainstThisUnit(threat);
-        if (isHuntedBy(unit, threat)) margin -= tuning().getKiteHuntedTiles();
-        if (unit.isOtherFacingThisUnit(threat)) margin -= tuning().getKiteFacedTiles();
-        return margin;
-    }
 
-    /**
-     * The threat's order target is exactly this unit (PurpleWave's
-     * presumptive-target read: the threat is coming for us, not
-     * passing by).
-     */
-    private static boolean isHuntedBy(AUnit unit, AUnit threat) {
-        AUnit hunted = threat.orderTarget();
-        return hunted != null && hunted.id() == unit.id();
-    }
 
     /**
      * Tiles of margin a Dragoon demands before it yields ground:
      * about one while healthy, up to four while dying (PurpleWave:
      * max(32, 128 - 8 * hitsLeft) pixels, Zealot pass = 16 damage).
      */
-    /**
-     * Per-unit attack latency (NEXT #154): the engine's remaining command
-     * latency, read live per decision - never a flat constant. The +2 at
-     * the call site is the Stardust margin (issue frame + publish frame,
-     * measured in {@code SleepUntilFrameGate}).
-     */
-    private static int attackLatencyFrames() {
-        return SleepUntilFrameGate.latencyFrames();
-    }
-
-    private static double kiteMarginRequired(AUnit unit) {
-        double hitsLeft = (unit.hp() + unit.shields()) / tuning().getKiteZealotPassDamage();
-        return Math.max(tuning().getKiteMarginBaseTiles(),
-            tuning().getKiteMarginDyingTiles() - tuning().getKiteMarginPerHitTiles() * hitsLeft);
-    }
 
     /**
      * Kiting rules. The coefficients used to live here as public mutable

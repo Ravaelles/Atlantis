@@ -9,7 +9,7 @@ import atlantis.util.log.LogKey;
  * Names every kiting step and every step that had nowhere to go (owner
  * 2026-10-19, Wine 1Drag_v_1Zeal follow-up: kite-move-kite, then a stop,
  * then trading at point blank - without rows the stop is guesswork).
- * The decision itself stays in {@link BattleCommander#shouldKite}; this
+ * The decision itself stays in {@link atlantis.battle.kite.Kite#shouldKite}; this
  * only records what happened. Every step rows: throttling would hide
  * exactly the timing a hit attribution needs (which step preceded the
  * swing), and even a brawl's worth of rows is nothing to the twin

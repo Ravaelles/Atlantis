@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.kite.Kite;
 import atlantis.units.AUnitType;
 import bwapi.Race;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 15;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertFalse(BattleCommander.shouldKite(dragoon, zealot),
+            assertFalse(Kite.shouldKite(dragoon, zealot),
                 "healthy Dragoon holds to ~1 tile and shoots through the cooldown - "
                 + "the Zealot may come much closer than 3.5 tiles");
         });
@@ -61,7 +62,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit lingB = fake(AUnitType.Zerg_Zergling, 29, 20);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(lingA, lingB), () -> {
-            assertTrue(BattleCommander.shouldKite(dragoon, lingA),
+            assertTrue(Kite.shouldKite(dragoon, lingA),
                 "hp 70 with two melee inside 2 tiles: the pocket is closing, "
                 + "yield ground instead of standing into it - even with the shot ready");
         });
@@ -77,7 +78,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         FakeUnit far = fake(AUnitType.Zerg_Zergling, 60, 20);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(ling, far), () -> {
-            assertFalse(BattleCommander.shouldKite(dragoon, far),
+            assertFalse(Kite.shouldKite(dragoon, far),
                 "one melee inside 2 tiles is harassment, not a pinch - "
                 + "the far threat reads through the normal margin");
         });
@@ -90,7 +91,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 15;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(BattleCommander.shouldKite(dragoon, zealot),
+            assertTrue(Kite.shouldKite(dragoon, zealot),
                 "dist ~0 is inside any margin - step back");
         });
     }
@@ -104,7 +105,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.shields = 0;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertTrue(BattleCommander.shouldKite(dragoon, zealot),
+            assertTrue(Kite.shouldKite(dragoon, zealot),
                 "a dying Dragoon demands ~4 tiles of margin, not ~1");
         });
     }
@@ -116,7 +117,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 5;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertFalse(BattleCommander.shouldKite(dragoon, zealot),
+            assertFalse(Kite.shouldKite(dragoon, zealot),
                 "weapon almost ready: stand and fire instead of stepping back");
         });
     }
@@ -136,9 +137,9 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         toward.setAngle(Math.PI);
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(away, toward), () -> {
-            assertFalse(BattleCommander.shouldKite(dragoon, away),
+            assertFalse(Kite.shouldKite(dragoon, away),
                 "Zealot facing away is not committing - hold and shoot");
-            assertTrue(BattleCommander.shouldKite(dragoon, toward),
+            assertTrue(Kite.shouldKite(dragoon, toward),
                 "Zealot facing us commits to the swing - yield half a tile early");
         });
     }
@@ -150,7 +151,7 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
         dragoon.cooldown = 20;
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
-            assertFalse(BattleCommander.shouldKite(dragoon, zealot),
+            assertFalse(Kite.shouldKite(dragoon, zealot),
                 "6 tiles away is approach territory, not the 5-tile threat envelope");
         });
     }
@@ -166,11 +167,11 @@ public class DragoonKiteTest extends AbstractTestWithWorld {
 
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), zealot), fakeEnemies(foe), () -> {
             zealot.cooldown = 6;
-            assertFalse(BattleCommander.shouldKite(zealot, foe), "fresh weapon holds contact");
+            assertFalse(Kite.shouldKite(zealot, foe), "fresh weapon holds contact");
             zealot.cooldown = 7;
-            assertTrue(BattleCommander.shouldKite(zealot, foe), "spent weapon steps back");
-            assertFalse(BattleCommander.shouldKite(null, foe));
-            assertFalse(BattleCommander.shouldKite(zealot, null));
+            assertTrue(Kite.shouldKite(zealot, foe), "spent weapon steps back");
+            assertFalse(Kite.shouldKite(null, foe));
+            assertFalse(Kite.shouldKite(zealot, null));
         });
     }
 
