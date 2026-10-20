@@ -15,6 +15,8 @@ import tests.fakes.FakeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
 import static tests.unit.AbstractTestWithUnits.fakeEnemies;
@@ -140,6 +142,36 @@ public class DuelKiteTest extends WorldStubForTests {
         world(1, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
             assertTrue(BattleStrategies.pick(dragoon, null) == BattleStrategy.CHOKE_HOLD,
                 "based 1v1 at a contested choke without superiority: hold the standoff, don't push");
+        });
+    }
+
+    @Test
+    public void yieldStepPicksScoredDestination() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
+        ling.setEnemy();
+        dragoon.cooldown = 20;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(ling), () -> {
+            APosition dest = DuelKite.yieldStep(dragoon, ling,
+                (x, y) -> true, java.util.Collections.emptyList(), java.util.Collections.emptyList());
+            assertNotNull(dest, "open field always steps somewhere");
+            assertTrue(dest.distTo(ling) > dragoon.distTo(ling),
+                "the step opens ground, not closes it: " + dest);
+        });
+    }
+
+    @Test
+    public void yieldStepIsNullWhenBoxed() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
+        ling.setEnemy();
+        dragoon.cooldown = 20;
+
+        world(1, fakeOurs(dragoon), fakeEnemies(ling), () -> {
+            APosition dest = atlantis.battle.escape.EscapeDestination.pick(dragoon, ling, 2,
+                (x, y) -> false, java.util.Collections.emptyList(), java.util.Collections.emptyList());
+            assertNull(dest, "no walkable step: the caller falls back, not into a wall");
         });
     }
 

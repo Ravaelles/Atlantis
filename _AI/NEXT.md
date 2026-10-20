@@ -1204,8 +1204,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   corner scoring; enemy-20 avoidance; size-aware clearance; tuner
   wiring. First consumer: `DuelKite.yieldStep` (replaces
   `MoveAway.bestDestination`), second: `ARunningManager`.
-- **#180** EscapeDestination.pick wired into DuelKite.yieldStep (escape slice 8 of #172): scored 8-dir step first, MoveAway fallback when nothing scores. Live blockers/enemies gathered guarded. Sim test.
-## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
   from the army center (was: idle to the wall kill); pinch retreat

@@ -1,11 +1,19 @@
 package atlantis.battle.strategy;
 
+import atlantis.battle.escape.EscapeDestination;
+import atlantis.battle.escape.EscapeRays;
 import atlantis.battle.kite.CombatTuning;
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
 import atlantis.units.actions.move.MoveAway;
+import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
 import atlantis.units.special.SleepUntilFrameGate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Duel kiting (NEXT #169): while the weapon cools, step off every melee
@@ -51,13 +59,54 @@ public final class DuelKite {
         return unit.groundWeaponRange() - STANDOFF_BELOW_RANGE_TILES;
     }
 
-    /** Step exactly the gap to the hold point, capped at one full step; null when already there. */
+    /** Step toward the hold point: escape-scored first, MoveAway when nothing scores. */
     public static APosition yieldStep(AUnit unit, AUnit threat) {
+        return yieldStep(unit, threat,
+            (x, y) -> {
+                try {
+                    return APosition.create(x, y).isWalkable();
+                } catch (Exception ignored) {
+                    return false;
+                }
+            },
+            nearbyBlockers(unit), nearbyEnemies(unit));
+    }
+
+    /** Same decision with caller-supplied context: the unit-testable seam. */
+    public static APosition yieldStep(
+        AUnit unit, AUnit threat, EscapeRays.Walkability walk,
+        List<? extends HasPosition> blockers, List<? extends AUnit> foes
+    ) {
         double gap = holdDistance(unit) - unit.distTo(threat);
         if (gap <= 0) return null;
         double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
         if (stepLen <= 0) return null;
+        int step = Math.max(1, (int) Math.round(stepLen));
+        APosition dest = EscapeDestination.pick(unit, threat, step, walk, blockers, foes);
+        if (dest != null) return dest;
         return MoveAway.bestDestination(unit, threat, stepLen);
+    }
+
+    private static List<HasPosition> nearbyBlockers(AUnit unit) {
+        List<HasPosition> blockers = new ArrayList<>();
+        try {
+            Selection minerals = Select.mineralsAndGeysers();
+            if (minerals != null) blockers.addAll(minerals.inRadius(12, unit).list());
+            Selection buildings = Select.ourBuildings();
+            if (buildings != null) blockers.addAll(buildings.inRadius(12, unit).list());
+        } catch (Exception ignored) {
+        }
+        return blockers;
+    }
+
+    private static List<AUnit> nearbyEnemies(AUnit unit) {
+        try {
+            Selection enemies = unit.enemiesNear();
+            if (enemies == null) return new ArrayList<>();
+            return new ArrayList<>(enemies.combatUnits().list());
+        } catch (Exception ignored) {
+            return new ArrayList<>();
+        }
     }
 
     /** Shared cadence with every other step: re-issues at most every 10 frames, rides between. */
