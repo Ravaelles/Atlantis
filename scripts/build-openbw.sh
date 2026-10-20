@@ -113,6 +113,7 @@ set -euo pipefail
 
 # --- Locations -------------------------------------------------------------
 ATLANTIS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HARNESS_DIR="${HARNESS_DIR:-/sc-ai/StardustDevEnvironment}"
 SOURCE_DIR="${SOURCE_DIR:-/sc-ai/OpenBW/openbw}"
 
@@ -403,13 +404,10 @@ if [ -n "$GAME_MAP" ]; then
     echo "FAIL: game run produced no new log directory under $bot_logs (script log: $game_log)"
     exit 1
   fi
-  frames="$(grep -o 'Total time: [0-9]*' "$run_dir/UMS_LOG" | tail -1 | grep -o '[0-9]*' || true)"
-  frames="${frames:-0}"
-  # Atlantis prints its own summary: "### Units killed/lost:    5/1 ###".
-  killed="$(sed -nE 's/.*Units killed\/lost:[[:space:]]*([0-9?]+)\/([0-9?]+).*/\1/p' "$run_dir/UMS_LOG" | tail -1)"
-  lost="$(sed -nE 's/.*Units killed\/lost:[[:space:]]*([0-9?]+)\/([0-9?]+).*/\2/p' "$run_dir/UMS_LOG" | tail -1)"
-  hits="$(grep -c '\bHIT\b' "$run_dir/EVENTS.jsonl" 2>/dev/null || true)"
-  killed="${killed:-?}"; lost="${lost:-?}"; hits="${hits:-0}"
+  # Parsing lives in one place (scripts/parse-run.sh) so future tools do not
+  # grow a second, drifting copy.
+  parsed="$("$SCRIPT_DIR/parse-run.sh" --fields "$run_dir")"
+  IFS=$'\t' read -r killed lost hits frames <<<"$parsed"
   summary="KILLED:$killed LOST:$lost TIMES_HIT:$hits"
 
   if [ "$game_rc" -eq 124 ]; then

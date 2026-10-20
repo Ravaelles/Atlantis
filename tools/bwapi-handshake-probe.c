@@ -122,11 +122,31 @@ static int recv_byte(int fd, int timeout_ms, unsigned char* out, long long* wait
  * below (revision/version) keep a mismatch from being silently reported. */
 #define GAMEDATA_FRAME_COUNT_OFF 3446096
 #define GAMEDATA_IS_IN_GAME_OFF 10586548
+/* Event queue and player table (same offsetof source):
+ *   eventCount @ 10586620, events @ 10586624, sizeof(Event)=40 (type,v1,v2 + pad)
+ *   players @ 192, startLocation in PlayerData is what the client needs for
+ *   MatchStart (an empty player table is why the client cannot bootstrap). */
+#define GAMEDATA_EVENT_COUNT_OFF 10586620
+#define GAMEDATA_EVENTS_OFF 10586624
+#define EVENT_SIZE 40
+#define MAX_EVENTS 100
+#define EVENT_MATCH_START 0
+#define GAMEDATA_PLAYERS_OFF 192
+#define PLAYER_DATA_SIZE 5788   /* sizeof(PlayerData), measured with offsetof */
+#define PLAYER_DATA_START_LOCATION_OFF 68  /* PlayerData::startLocationX */
 
-struct game_state_view { int frame_count; int is_in_game; int ok; };
+struct game_state_view {
+	int frame_count;
+	int is_in_game;
+	int ok;
+	int match_start_seen;
+	int event_count;
+	int players_with_start;   /* players[0..7] with a start location */
+	int self_slot;
+};
 
 static struct game_state_view read_game_state(int pid) {
-	struct game_state_view v = {0, 0, 0};
+	struct game_state_view v; memset(&v, 0, sizeof v);
 	char path[96];
 	snprintf(path, sizeof path, "/dev/shm/bwapi_shared_memory_%d", pid);
 	int fd = open(path, O_RDONLY);
@@ -137,6 +157,24 @@ static struct game_state_view read_game_state(int pid) {
 		if (pread(fd, &v.frame_count, sizeof v.frame_count, GAMEDATA_FRAME_COUNT_OFF) == sizeof v.frame_count &&
 		    pread(fd, &v.is_in_game, 1, GAMEDATA_IS_IN_GAME_OFF) == 1) {
 			v.ok = 1;
+			if (pread(fd, &v.event_count, sizeof v.event_count, GAMEDATA_EVENT_COUNT_OFF) == sizeof v.event_count) {
+				if (v.event_count > MAX_EVENTS) v.event_count = MAX_EVENTS;
+				for (int i = 0; i < v.event_count; ++i) {
+					int type = 0;
+					if (pread(fd, &type, sizeof type, (off_t)GAMEDATA_EVENTS_OFF + (off_t)i * EVENT_SIZE) == sizeof type
+					    && type == EVENT_MATCH_START) {
+						v.match_start_seen = 1;
+					}
+				}
+			}
+			if (pread(fd, &v.self_slot, sizeof v.self_slot, 10586608) == sizeof v.self_slot) {
+				for (int p = 0; p < 12; ++p) {
+					/* PlayerData::startLocation is a TilePosition {int x,y} */
+					int x = -1;
+					off_t off = (off_t)GAMEDATA_PLAYERS_OFF + (off_t)p * PLAYER_DATA_SIZE + PLAYER_DATA_START_LOCATION_OFF;
+					if (pread(fd, &x, sizeof x, off) == sizeof x && x >= 0) ++v.players_with_start;
+				}
+			}
 		}
 	}
 	close(fd);
@@ -185,8 +223,6 @@ int main(int argc, char** argv) {
 	addr.sun_family = AF_UNIX;
 	strncpy(addr.sun_path, path, sizeof addr.sun_path - 1);
 
-	struct game_state_view before = read_game_state(pid);
-
 	long long t0 = now_ms();
 	if (connect(fd, (struct sockaddr*)&addr, sizeof addr) != 0) {
 		fprintf(stderr, "probe: connect(%s) failed: %s\n", path, strerror(errno));
@@ -194,6 +230,10 @@ int main(int argc, char** argv) {
 		return 2;
 	}
 	printf("probe: connected to %s in %lld ms\n", path, now_ms() - t0);
+	/* The per-game segment is created by the server when it accepts the socket,
+	 * so state can only be read after connect() - reading before it always
+	 * reported "unreadable" even for a perfectly healthy server. */
+	struct game_state_view before = read_game_state(pid);
 
 	unsigned char code = 0;
 	long long waited = 0;
@@ -248,14 +288,19 @@ int main(int argc, char** argv) {
 		printf("probe: frameCount %d -> %d, isInGame %d -> %d\n",
 		       before.ok ? before.frame_count : -1, after.frame_count,
 		       before.ok ? before.is_in_game : -1, after.is_in_game);
+		printf("probe: MatchStart in event queue: %s (eventCount=%d)\n",
+		       after.match_start_seen ? "YES" : "NO", after.event_count);
+		printf("probe: players with start location: %d/12 (self slot=%d)\n",
+		       after.players_with_start, after.self_slot);
 	}
 	printf("VERDICT: BYTE_2_OK - the server does send the go-ahead; a client that does not "
 	       "see it is racing accept/connect on the socket side.%s\n",
 	       cycles ? " The game is advancing frames." : " The game stopped advancing after attach.");
 	if (after.ok) {
 		int advanced = after.frame_count > (before.ok ? before.frame_count : 0);
-		printf("VERDICT: MATCH_%s - frameCount=%d isInGame=%d\n",
-		       advanced || cycles ? "TICKING" : "NOT_TICKING", after.frame_count, after.is_in_game);
+		printf("VERDICT: MATCH_%s - frameCount=%d isInGame=%d MatchStart=%s players=%d/12\n",
+		       advanced || cycles ? "TICKING" : "NOT_TICKING", after.frame_count, after.is_in_game,
+		       after.match_start_seen ? "YES" : "NO", after.players_with_start);
 		if (!advanced && !cycles) return 4;   /* handshake fine, match dead */
 	}
 
