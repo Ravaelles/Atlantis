@@ -73,7 +73,9 @@ public class BattleCommander extends Commander {
         if (Alpha.get().isEmpty()) return false;
 
         ClusterMission.Posture posture = ClusterMission.postureFor(
-            Count.ourCombatUnits(), ClusterBreach.breachForcesFight());
+            Count.ourCombatUnits(), ClusterBreach.breachForcesFight()
+        );
+
         if (posture == ClusterMission.Posture.ATTACK) {
             Missions.forceGlobalMissionAttack("cluster-attack");
         }
@@ -103,9 +105,6 @@ public class BattleCommander extends Commander {
 
         return false;
     }
-
-
-
 
     private void order(AUnit unit, FightOrFlight.Tactic tactic, HasPosition anchor, AUnit leader) {
         if (unit == null || !unit.isAlive()) return;
@@ -370,6 +369,26 @@ public class BattleCommander extends Commander {
             unit.attackUnit(target);
             if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
             return;
+        }
+
+        // No enemy in reach: on baseless maps, hunt the last known
+        // contact instead of sitting (1Drag_v_1Zeal: brief contact, then
+        // 9 min idle 60 tiles apart - neither side re-acquires). The squad
+        // remembers the last target; its position is the last contact
+        // point. No UMS check on purpose: the gate is contact memory
+        // (lastTarget exists only after a real fight) plus baselessness,
+        // so melee frame 0 and based maps can never reach here. Gated
+        // beyond the 9-tile squad envelope: inside it the fight logic
+        // above already decided (focus refusals included - never
+        // overruled from here).
+        if (Count.bases() == 0 && unit.squad() != null) {
+            AUnit last = unit.squad().targeting().lastTargetIfAlive();
+            if (last != null && last.position() != null && unit.distTo(last) > 9) {
+                if (unit.move(last.position(), Actions.MOVE_ENGAGE, "ClusterHunt")) {
+                    lastRepositionFrame.put(unit.id(), A.now());
+                    return;
+                }
+            }
         }
 
         // No enemy in reach: take a formation slot when the cluster

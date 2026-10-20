@@ -2,6 +2,7 @@ package tests.unit.sim;
 
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
+import atlantis.battle.cluster.Squad;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
@@ -672,6 +673,84 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     // =========================================================
     // Helpers.
     // =========================================================
+
+    // =========================================================
+    // T-hunt: lost contact hunts the last known point (1Drag_v_1Zeal:
+    // brief contact at 0:12, then 9 min idle 60 tiles apart - neither
+    // side re-acquires). Gated to baseless maps + beyond the 9-tile
+    // squad envelope, so focus refusals inside it are never overruled
+    // and based maps keep their formation behavior (negative control).
+    // No UMS check on purpose: the gate is contact memory (lastTarget
+    // exists only after a real fight) plus baselessness.
+    // =========================================================
+
+    @Test
+    public void lostContactHuntsLastKnownPosition() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 50, 20);
+        ling.setEnemy();
+        Squad squad = new Squad("hunt");
+        dragoon.forceSetSquad(squad);
+        squad.targeting().setLastTarget(ling);
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            double startDist = dragoon.distTo(ling);
+            assertTrue(startDist > 9, "setup: contact lost beyond the squad envelope, was " + startDist);
+            for (int i = 0; i < 200; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(dragoon.distTo(ling) < startDist - 2,
+                "dragoon must close on the last contact, not sit: " + startDist + " -> " + dragoon.distTo(ling));
+            assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"), "hunt issues moves");
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    @Test
+    public void noHuntOnBasedMaps() {
+        // Negative control: same lost contact, but a base exists - the
+        // formation fallback holds, no cross-map hunting in macro games.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 25, 15);
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 50, 20);
+        ling.setEnemy();
+        Squad squad = new Squad("hold");
+        dragoon.forceSetSquad(squad);
+        squad.targeting().setLastTarget(ling);
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { nexus, dragoon }, new FakeUnit[] { ling }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            double startDist = dragoon.distTo(ling);
+            for (int i = 0; i < 200; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(dragoon.distTo(ling) > startDist - 2,
+                "based maps keep the formation fallback, no cross-map hunting: "
+                    + startDist + " -> " + dragoon.distTo(ling));
+        }
+        finally {
+            world.close();
+        }
+    }
 
     private static FakeUnit woundedDragoon(double tx, double ty, int hp) {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, tx, ty);
