@@ -715,7 +715,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   now prints all three numbers, so nobody hunts "lost" units again.
   What REMAINS open is the client stall past Connected (server
   publishes deterministically) - next: DEBUG the OpenBWRunner attach
-  path for the blocking call. What IS
+  path for the blocking call. 2026-10-20 probe (`162410`, fresh jar,
+  1Drag_v_1Zeal): server PUBLISHED 1 live game, client printed
+  "Connected" (UMS_LOG line 16) and never "Connection successful";
+  a thread dump names the block: main in native socket read <-
+  `ClientConnectionPosix.waitForServerData:90`
+  (`while (read() != 2)`) <- `Client.connect:181` <- `reconnect:66`.
+  Killed at 20 s by BOT_KILL_SECONDS, 0/0/0. So the stall IS the
+  connect-time handshake read; whether the server's byte 2 goes out
+  on this path is answered by their handshake tool (fake client:
+  wait for 2, reply 1, measure). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
   that failure mode is now fixed regardless of slots (baseless
@@ -989,7 +998,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the bot in a unit-less human slot (verified slot-pick code);
   whether the enemy Zealot even spawns there is unproven either way
   (mixed evidence: bot got a preplaced Dragoon on 12:59, nothing on
-  10-19). Wine stays the duel vehicle; OpenBW hosting is flaky
+  10-19). 2026-10-20 probe names the stall: main blocked in
+  `waitForServerData:90` read <- `Client.connect:181` (dump in run
+  `162410`; server PUBLISHED, client "Connected", never
+  "Connection successful"). Wine stays the duel vehicle; OpenBW hosting is flaky
   run to run (12:59 played 1209 frames, 13:13 never published).
 - OpenBW `TauCross` (`113933` long, FE forced reverted probe #2,
   12493f/8:44, exit 143 wall-cap - inconclusive as verdict, rich as
