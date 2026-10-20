@@ -585,6 +585,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   last-resort ladder (strict, relaxed margins, first engine-buildable tile
   in ring order): doctrine untouched, `PYLON_FIND_FAILED` prints only when
   all passes fail (`PylonLastResortTest` 2/2, RED then GREEN).
+  Implemented 2026-10-20 (`PylonNeedsRoomAround`: with SupplyFree>=2
+  the four +-4 diagonal tiles must be walkable; poor supply bypasses;
+  wired right after TooCloseToOtherPylons, pinned 4/4) - game proof
+  on 7th_rav still pending (no quiet box yet).
   2026-10-20 (owner, map is `ums/rav/7th_rav.scx`): a Pylon warped at
   the region edge lights no usable ground - when SupplyFree >= 2,
   require the four diagonal tiles (+4/+4, -4/-4, +4/-4, -4/+4) around
@@ -861,13 +865,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   enum-level answers first (`isWaiting`, `countsAsDemand`,
   `isTerminal` - additive, stub-pinned, zero behavior change), then
   migrate readers one by one with a game proof each (construction
-  is the most Wine-proven area; no batch migration).
-- **#158** `CombatTuning` record instead of public mutable statics
-  (SOLID review, agreed): ~30 `public static` knob fields are
-  writable by anyone with no range checks; the tuner already carries
-  ranges in `applyOrRandomize`. Move the values into an injected
-  record the tuner mutates (no behavior change, suite + one tuner
-  batch as proof), domain classes read but never own it.
+  is the most Wine-proven area; no batch migration). LANDED
+  2026-10-20: all six PREPARING readers (skip/cancel guards,
+  builderless-site filter, adopt path + guard) read isWaiting()
+  instead of re-spelling the disjunction - same predicate, zero
+  behavior change, suite green (`ConstructionOrderStatusTest`,
+  `CoreSingleInstanceGateTest` carry the semantics).
 - **#159** Pinch retreat proof on `Drag_v_LingsUpg` (owner 2026-10-20:
   hurt Dragoons surrounded by 2+ melee inside 2 tiles retreat
   instead of standing into the pocket; `DragoonPinch*` knobs in the
@@ -991,7 +994,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   no Wine lateness this game); ORDER_SAVING 0 (2-3 bases, #71 wants
   a 1-base 700 s shape - 649 s reached, just short; FE long game
   the same day reached 707 s but with 3 bases + bank 3750, so
-  correctly silent again - the shape, not the duration, is missing). WINE_LOG /
+  correctly silent again - the shape, not the duration, is missing;
+  legacy long attempt the same day died on attach ("No server proc
+  ID", IDE build running 30+ min on the box - killed as
+  inconclusive, never a verdict). WINE_LOG /
   WINE_DEBUG / WINE_DECISIONS triple + BUILDINGS.json collected
   (#96 file-outputs half verified; painter labels stay visual).
   Open question: SUPPLY_BLOCKED twin silent through the 90/90
