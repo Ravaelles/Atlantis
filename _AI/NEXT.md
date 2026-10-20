@@ -1085,19 +1085,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   MAKE_WAY live, T2b pins the wipe branch deterministically;
   suite 1018/0 fast, strict arch 5/7 unchanged, game jar builds
   clean). Live UMS proof waits on the ticking match (#94).
-- **#163** UMS fight follow-ups (from the unblocked `183729` game):
-  (a) 69k `shot-fired` vs 17 `hit` - order spam (re-issue without
-  the new/overdue discipline on UMS?) or twin counting orders as
-  shots; (b) 10k UNIT_DIED rows for ~30 marines - twin re-fires
-  per dead unit per frame? Both are data-quality questions with
-  twin evidence in hand, no live re-probe needed to start.
-  2026-10-20: (b) ROOT-CAUSED + FIXED and committed - `FightTrace.died`
-  re-fires per dead unit per frame (live: 2 marines -> 6841 rows),
-  fixed with a `reportedDeaths` set (one row per unit id) + reset in
-  `clearForTests` (wired to `BattleCommander.reset` / OnGameStarted
-  path); dist guard clamps garbage dead-unit positions (measured
-  671088639 on M&M) to -1; `FightTraceTest.deathRowsOncePerUnit`
-  pins it. (a) stays open: needs SHOT/HIT twin read on the next
   live UMS fight, no blind patch.
 - **#164** OpenBW takeover scope (owner 2026-10-20: this model leads
   logic/changes, other model gets independent file-scoped tasks).
