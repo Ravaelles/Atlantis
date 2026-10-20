@@ -160,9 +160,17 @@ The index of which document answers which question is `_AI/README.md`.
    the feeder still fires nothing; no candidate. 4th run same day
    (`105921` long, 16546f/11:34, exit 143 wall-cap): BOARD_FED 1
    (sustained-dragoon 5:16, pumps already training since 4:12, zero
-   BOARD-authored DECISIONS) - rescue, not routine; no candidate. Deletions wait for
-   routine feeder coverage, never batch rewrites; board-invisible
-   production (Forge, cannons) is capability, not duplication.
+   BOARD-authored DECISIONS) - rescue, not routine; no candidate. 5th
+   run 2026-10-20 (Wine FE short): BOARD_FED 3x on 3 different
+   demands - gateway 2:45, assimilator 4:53, supply-pylon 5:38 -
+   every one built within 600 frames (ORDER_NOT_READY clears,
+   CONSTRUCTION_REQUESTED +13f, BUILDING_STARTED +113f); pumps
+   silent on all three. First routine-shaped evidence: nominates
+   the legacy demand producers behind those rows for per-gate
+   deletion (proof game after the cut still required). Deletions
+   wait for routine feeder coverage, never batch rewrites;
+   board-invisible production (Forge, cannons) is capability,
+   not duplication.
 2. **Decision absorption:** board takes over decision sites one by one
    (7 files with the exact singular import, re-verified 2026-10-20:
    DTDontAvoid's import was dead (only commented-out references) and is
@@ -822,6 +830,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (`CoreSingleInstanceGateTest` 3/3); Wine re-prove GREEN the same
   day (short flagged game: Core STARTED once, warped 2:58@23, ZERO
   core-single-instance refusals all game vs 70+ before).
+  Gate evidence from live games (all named, firing as designed):
+  earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
+  + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
+  across two more games. Next gate proofs ride the next macro game.
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,
