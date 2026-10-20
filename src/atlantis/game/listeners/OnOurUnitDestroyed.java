@@ -16,6 +16,7 @@ import atlantis.units.AUnit;
 public class OnOurUnitDestroyed {
     public static void update(AUnit unit) {
         printOurDeadUnit(unit);
+        atlantis.battle.FightTrace.died(unit);
 
         RepairAssignments.removeRepairer(unit);
         OurWorkerWasKilled.onWorkedKilled(unit);

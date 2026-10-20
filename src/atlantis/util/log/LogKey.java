@@ -85,6 +85,10 @@ public enum LogKey {
     HIT,
     /** Attack order issued or animation hold (dist x10, cooldown, result). */
     SHOT,
+    /** Per-unit fight trace, throttled (hp, shields, dist x10 to nearest enemy). */
+    UNIT_TRACE,
+    /** Our unit died (type, frame, dist x10 to nearest enemy at death). */
+    UNIT_DIED,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
     /** A base order the refresh sees (throttled): type, status, bank, supply. */

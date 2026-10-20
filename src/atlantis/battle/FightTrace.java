@@ -1,0 +1,86 @@
+package atlantis.battle;
+
+import atlantis.game.A;
+import atlantis.units.AUnit;
+import atlantis.units.select.Select;
+import atlantis.units.select.Selection;
+import atlantis.util.log.EventLog;
+import atlantis.util.log.LogKey;
+
+/**
+ * Per-unit fight trace (owner 2026-10-20): who stood where, at what
+ * health and how far from the nearest enemy, and when each unit died.
+ * Formation fights are won by shape and cooperation, not by single-unit
+ * heroics - so the file carries per-unit distance/health/death-frame
+ * rows a digest script (`scripts/fight-units.py`) turns into a table:
+ * who died when, at what health, how far from the enemy. Sampled, not
+ * pushed: combat units report every TRACE_EVERY_FRAMES while acting;
+ * deaths always land, unthrottled.
+ */
+public final class FightTrace {
+
+    /** One sample per cooldown cycle keeps 8v8 games near ~500 rows. */
+    public static final int TRACE_EVERY_FRAMES = 30;
+
+    private static final java.util.Map<Integer, Integer> lastSampleFrame = new java.util.HashMap<>();
+
+    private FightTrace() {
+    }
+
+    public static void sample(AUnit unit, AUnit threat) {
+        if (unit == null || !unit.isAlive() || !unit.isCombatUnit()) return;
+        int now = A.now();
+        Integer last = lastSampleFrame.get(unit.id());
+        if (last != null && now - last < TRACE_EVERY_FRAMES) return;
+        lastSampleFrame.put(unit.id(), now);
+        EventLog.key(LogKey.UNIT_TRACE)
+            .param("unit", unit.id())
+            .param("type", unit.type().name())
+            .param("hp", unit.hp())
+            .param("shields", unit.shields())
+            .param("dist", threat == null ? -1 : (int) (unit.distTo(threat) * 10))
+            .param("ux", unit.x() / 32)
+            .param("uy", unit.y() / 32)
+            .log(now, A.minSec());
+    }
+
+    public static void died(AUnit unit) {
+        if (unit == null) return;
+        AUnit nearest = nearestEnemy(unit);
+        EventLog.key(LogKey.UNIT_DIED)
+            .param("unit", unit.id())
+            .param("type", unit.type().name())
+            .param("dist", nearest == null ? -1 : (int) (unit.distTo(nearest) * 10))
+            .param("ux", unit.x() / 32)
+            .param("uy", unit.y() / 32)
+            .log(A.now(), A.minSec());
+    }
+
+    public static void clearForTests() {
+        lastSampleFrame.clear();
+    }
+
+    // =========================================================
+
+    private static AUnit nearestEnemy(AUnit unit) {
+        Selection enemies;
+        try {
+            enemies = Select.enemy();
+        }
+        catch (RuntimeException ignored) {
+            return null;
+        }
+        if (enemies == null) return null;
+        AUnit best = null;
+        double bestDist = Double.MAX_VALUE;
+        for (AUnit enemy : enemies.list()) {
+            if (enemy == null || !enemy.isAlive()) continue;
+            double dist = unit.distTo(enemy);
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = enemy;
+            }
+        }
+        return best;
+    }
+}

@@ -49,6 +49,7 @@ public class BattleCommander extends Commander {
         tuning = CombatTuning.defaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
+        FightTrace.clearForTests();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();
@@ -369,6 +370,7 @@ public class BattleCommander extends Commander {
             AUnit threat = atlantis.battle.targeting.ASquadTargeting
                 .nearestEngageableEnemy(unit, tuning().getKiteEnemyTiles());
             HitTwin.sample(unit, threat != null ? threat : target);
+            FightTrace.sample(unit, threat != null ? threat : target);
             int now = A.now();
             Integer lastStep = lastStepFrame.get(unit.id());
             if (threat != null && shouldKite(unit, threat)) {
@@ -732,6 +734,7 @@ public class BattleCommander extends Commander {
         tuning = CombatTuning.defaults();
         FormationSlots.clearForTests();
         SharedEscape.clearForTests();
+        FightTrace.clearForTests();
         lastRepositionFrame.clear();
         lastStepFrame.clear();
         lastMovedFrame.clear();

@@ -130,6 +130,21 @@ public class ParamTweakerFactory extends ParamTweaker {
                 () -> { applyOrRandomizeInt("DragoonSurroundedMeleeCount", 2, 4, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonSurroundedMeleeCount(v))); return null; }
         ));
         tweaker.addParam(new Param(
+                "DragoonPinchHp",
+                () -> BattleCommander.tuning().getDragoonPinchHp(),
+                () -> { applyOrRandomizeInt("DragoonPinchHp", 60, 100, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonPinchHp(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonPinchMeleeCount",
+                () -> BattleCommander.tuning().getDragoonPinchMeleeCount(),
+                () -> { applyOrRandomizeInt("DragoonPinchMeleeCount", 1, 3, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonPinchMeleeCount(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
+                "DragoonPinchMeleeTiles",
+                () -> BattleCommander.tuning().getDragoonPinchMeleeTiles(),
+                () -> { applyOrRandomize("DragoonPinchMeleeTiles", 15, 25, 10.0, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonPinchMeleeTiles(v))); return null; }
+        ));
+        tweaker.addParam(new Param(
                 "DragoonSurroundedStandCooldown",
                 () -> BattleCommander.tuning().getDragoonSurroundedStandCooldown(),
                 () -> { applyOrRandomizeInt("DragoonSurroundedStandCooldown", 4, 8, v -> BattleCommander.installTuning(BattleCommander.tuning().withDragoonSurroundedStandCooldown(v))); return null; }
