@@ -120,4 +120,12 @@ exist in this workspace and mixing them is the whole story below.
 - **Fix:** exactly one Wine game at a time per box. Before launching,
   check for a live one (`pgrep -f run-wine`; a `latest` symlink newer
   than your start means someone else is playing). Coordinate with the
-  owner/other models - never assume the box is yours.
+  owner/other models - never assume the box is yours. OpenBW runs
+  count too: one game total, regardless of backend.
+- **OpenBW host flakiness (measured 2026-10-20):** the same UMS map
+  on the same engine binary hosted a 1209-frame game at 12:59 and
+  published nothing at 13:13 (client timeout after 21 s, no HELLO).
+  A FAIL from `build-openbw.sh --game` is environmental until the
+  host publishes deterministically - it says nothing about the
+  scenario or the bot. Prefer the per-run `latest` symlink over
+  `ls -t` newest-dir detection when attributing logs.
