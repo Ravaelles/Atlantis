@@ -104,4 +104,20 @@ exist in this workspace and mixing them is the whole story below.
   itself as it runs - never edit it mid-run, see Wine.md).
 - `out/wine/` is wiped by the next run and by `rm -rf out`: copy logs
   worth keeping to `/tmp/opencode/` (or the live-copy dir) before any
-  build/test command.
+  build/test command. Since 2026-10-20 `run-wine-full.sh` also archives
+  every game to `out/wine_runs/<stamp>_<map>/` + `latest` symlink.
+
+## 9. Two Wine games on one box cross-attach and mutually kill
+
+- **Symptom (measured 2026-10-20):** our TauCross run archived a WINE_LOG
+  with deaths at 11:39/12:00 game time and Dragoon #173 moving, but only
+  32 EVENTS rows at frames 0-3. The client had attached to ANOTHER,
+  already-running game (same box, same display) instead of its own fresh
+  host - game-time clocks and unit ids belonged to someone else's match.
+- **Cause:** ChaosLauncher + the shared-memory/socket namespaces do not
+  isolate concurrent games; both runners also `pkill` game processes at
+  start/teardown, so parallel runs kill each other.
+- **Fix:** exactly one Wine game at a time per box. Before launching,
+  check for a live one (`pgrep -f run-wine`; a `latest` symlink newer
+  than your start means someone else is playing). Coordinate with the
+  owner/other models - never assume the box is yours.
