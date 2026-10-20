@@ -81,6 +81,12 @@ public class Atlantis implements BWEventListener {
     @Override
     public void onStart() {
 
+        // Idempotent: USE_MAP_SETTINGS UMS never sends MatchStart, so the
+        // first onFrame bootstraps through here instead (see onFrame).
+        // Normal path calls once; a second call would rebuild the commander
+        // and re-fire OnGameStarted.
+        if (game != null) return;
+
         // Initialize game object - JBWAPI's representation of game and its state.
         setGame(bwClient.getGame());
 
@@ -172,6 +178,14 @@ public class Atlantis implements BWEventListener {
      */
     @Override
     public void onFrame() {
+        // USE_MAP_SETTINGS UMS runs frames without ever sending MatchStart,
+        // which is the only caller of onStart() above. Without this the bot
+        // stays half-born forever (null game, no commander, no HELLO) while
+        // frames flow. First frame bootstraps through the guarded onStart().
+        if (game == null) {
+            onStart();
+        }
+
         // Wine (and any windowed run) can pause StarCraft when the window loses
         // focus, which happens right after startup while the desktop is being
         // arranged. Keep unpausing through the first seconds so the game cannot

@@ -771,6 +771,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (units guard held, next layer confirmed), kill at 20 s. Melee
   played 1209+ frames Oct 19 on this vehicle, so the tick died
   with the pump change - regression pointer, not a new unknown.
+  2026-10-21: their pump ticks frames (313 delivered, 312 answered
+  on M&M; slots hold 30+14 visible). Remaining gap, precisely
+  bounded: no MatchStart, ever, and the player table is empty
+  (`getPlayerCount()==0` -> AIOOBE inside `init()`, measured twice).
+  Client side is now maximally robust and committed
+  (JBWAPI-Atlantis: units field-init, lazy init on first event
+  with retry + no-wipe guard; Atlantis: idempotent onStart +
+  first-frame bootstrap) - none of it can conjure a match start.
+  The ONLY remaining need is engine-side: emit MatchStart (which
+  publishes players) once per game.
   Detail: `docs/openbw-run-regression.md` (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
