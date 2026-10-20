@@ -1003,6 +1003,24 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   bounds; suite 1008/1008 + arch unchanged). Step 5 (archive)
   rides the intensive session: per-game dirs + batch.csv already
   persist, the missing piece is only the batch-level manifest.
+- **#161** Fast behavior sim for micro/formation (owner 2026-10-20:
+  restore the *capability* lost with StarEngine, not necessarily the
+  code verbatim). Need: fully controlled fights (counts, map,
+  obstacles) that UMS cannot give today (byte-2 dead until the
+  server pump lands; no obstacle map authored) and Wine only gives
+  on owner call. Ground rules, non-negotiable: test scope only
+  (jar payload check keeps it out of the game jar), real engine
+  data where the binding has it (probe 2026-10-20: Dragoon
+  topSpeed 5.0 / cooldown 30 / range 128px; Zergling 5.49 / 8 /
+  15px; Zealot 4.0 / 22 / 15px - `maxSpeed()`/`cooldownAbsolute()`
+  already read these live), sim-local constants only where the
+  binding has nothing (attack-animation splits are PurpleWave
+  model params, documented as such), assertions on behavior +
+  coarse outcomes (fled? withdrew? survived? made way?), never
+  exact HP as engine truth. First scenarios: surrounded dragoon
+  flees, wounded dragoons withdraw and survive, obstacle course
+  without permanent wedges; then the formation coordination proof
+  rides on it (#162).
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
