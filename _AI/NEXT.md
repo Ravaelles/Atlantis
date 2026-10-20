@@ -1184,6 +1184,39 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   10-tile rule on flat). Proof: pure unit tests on synthetic choke
   geometry (high side outscores low; stepped-wide beats narrow-flat),
   then a live game where the line demonstrably holds the high side.
+- **#172** Region-aware escape destinations (owner 2026-10-20, PurpleWave
+  match review: losing won games to corner traps, Dragoons most of all).
+  Small units slip through, large ones (Dragoon) die on a failed escape -
+  and two early Dragoons decided a game. Stardust read, no copy: boids
+  (separation + target weights, marked TODO-tune upstream) + walkable
+  rays (furthest walkable >= minDist along a vector) + collision vectors
+  + NoGoAreas + unstick-via-STOP; cluster flee is retreat-to-main (arc
+  disabled as unsafe). There is NO region-aware destination scoring
+  there - this is our own work. Ours today: `MoveAway` (straight +
+  lateral aims, best-distance pick with min-gain floor) + margin kite,
+  no region/size/peninsula awareness. Architecture (`battle.escape`,
+  one reason per class): (1) `RegionShape` probe - min width/height of
+  the current region + 8-direction walkable-boundary rays from the unit
+  (Stardust-style ray march, per unit size: large units need wider
+  clearance sooner), plus region-center pull (edges raise corner risk);
+  peninsulas score as traps whatever the raw width. (2) Candidates: 8
+  dirs x distances with the 8-tile escape minimum as the want (not a
+  promise - the nearest obstacle decides), each validated walkable to
+  the end. (3) Scoring, PurpleWave-detailed: corner/peninsula penalty,
+  minerals/geysers/buildings on path or dest, ALL known enemies within
+  20 tiles of the dest (not just the nearest - the pocket is made of
+  the second Zealot), size factor (large = earlier caution, wider
+  berth). (4) Objective: minimize hits taken AND time-to-win: shoot
+  every cooldown (fleeing forever is losing slowly - the DuelKite
+  standoff stays the engage half, this is the disengage half).
+  (5) Tuning: `EscapeTuning` record with per-map overrides, optimized
+  by the batch tuner (NEXT #160 objective: win, then hits, then
+  seconds). Slices, each sim-proven (arena edges stand in for region
+  borders; obstacle flavors extend the sim) then live-proven: probe +
+  min-dim caution; 8-dir walkable candidates; static-obstacle +
+  corner scoring; enemy-20 avoidance; size-aware clearance; tuner
+  wiring. First consumer: `DuelKite.yieldStep` (replaces
+  `MoveAway.bestDestination`), second: `ARunningManager`.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
