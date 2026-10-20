@@ -5,14 +5,18 @@
 # this script compiles every source file and runs JUnit via the standalone
 # console launcher.
 #
-# Speed policy (owner's ruling 2026-10-06): this script is the model-facing
-# inner loop and must finish well under 40 s total. Measured per scope:
-#   compile            ~8 s
-#   tests.unit          2 s
-#   tests.architecture  1 s
-#   tests.acceptance   12 s   <- slow, owner-only (run-full-tests.sh)
-#   tests.e2e          64 s   <- slow, owner-only (run-full-tests.sh)
-# So the default is unit + architecture (~11 s). The slow scopes are refused
+# Speed policy (owner's ruling 2026-10-06, re-measured 2026-10-20):
+# this script is the model-facing inner loop and must finish well under
+# 40 s total. Measured (wall): compile 4.4 s, tests.unit 7.7 s
+# (combat 0.7 s, production 2.6 s, placement/map 0.5 s, misc 2.4 s),
+# tests.architecture ~1 s, e2e smokes 0.5 s. Total ~13-14 s.
+# The 2.2 s QuickEconomySmokeTest (1 test) lives in the full tier only;
+# the other 5 smoke classes cost 0.5 s together and stay as the
+# one-of-each-kind tripwires. The unit scope is NOT split into
+# stable/churn tiers: production/placement/map are mid-migration
+# (#144-#147) and the split would unplug proof from the files being
+# rewritten - revisit when they settle; the combat half costs 0.7 s,
+# so keeping it is free. The slow scopes (acceptance, full e2e) are refused
 # here on purpose: they belong to scripts/run-full-tests.sh, which the owner
 # runs manually. Pass --allow-slow to override (e.g. for a one-off debug).
 #
@@ -39,7 +43,6 @@ if [ ${#JUNIT_ARGS[@]} -eq 0 ]; then
   JUNIT_ARGS=(
     --select-package tests.unit
     --select-package tests.architecture
-    --select-class tests.e2e.QuickEconomySmokeTest
     --select-class tests.e2e.ProductionEngineSmokeTest
     --select-class tests.e2e.WorkerProductionTest
     --select-class tests.e2e.OpeningDoesNotHoardMineralsTest
