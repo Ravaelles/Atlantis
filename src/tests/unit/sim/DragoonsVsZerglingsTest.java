@@ -2,7 +2,7 @@ package tests.unit.sim;
 
 import atlantis.battle.BattleCommander;
 import atlantis.battle.cluster.FightOrFlight;
-import atlantis.battle.cluster.Squad;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import java.util.ArrayList;
@@ -687,11 +687,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     @Test
     public void lostContactHuntsLastKnownPosition() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 50, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
         ling.setEnemy();
-        Squad squad = new Squad("hunt");
-        dragoon.forceSetSquad(squad);
-        squad.targeting().setLastTarget(ling);
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
@@ -699,8 +696,27 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
 
-            double startDist = dragoon.distTo(ling);
-            assertTrue(startDist > 9, "setup: contact lost beyond the squad envelope, was " + startDist);
+            // Phase 1: visible fight - the commander snapshots the contact
+            // point while it is still visible (no manual memory setup: this
+            // is the whole point, the snapshot must form on its own).
+            for (int i = 0; i < 5; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(ling.hp > 0, "setup: the quarry must survive phase 1");
+
+            // Phase 2: separated after contact (the live 1Drag shape) and
+            // contact lost beyond the squad envelope.
+            world.teleport(dragoon, APosition.create(15, 20));
+            world.teleport(ling, APosition.create(55, 20));
+            dragoon.lastCommand = "Stop";
+            dragoon.target = null;
+            dragoon.targetPosition = null;
+            ordersOf(dragoon).clear();
+            assertTrue(dragoon.distTo(ling) > 9, "setup: contact truly lost");
             for (int i = 0; i < 200; i++) {
                 world.tick(() -> {
                     if (dragoon.hp > 0) {
@@ -708,8 +724,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(dragoon.distTo(ling) < startDist - 2,
-                "dragoon must close on the last contact, not sit: " + startDist + " -> " + dragoon.distTo(ling));
+            assertTrue(dragoon.distTo(APosition.create(32, 20)) < 1.5 * TILE,
+                "dragoon must march the last engaged point, not sit: " + dragoon.position);
             assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"), "hunt issues moves");
         }
         finally {
@@ -719,15 +735,14 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
 
     @Test
     public void noHuntOnBasedMaps() {
-        // Negative control: same lost contact, but a base exists - the
-        // formation fallback holds, no cross-map hunting in macro games.
-        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 25, 15);
+        // Negative control: same lost contact, but a base exists FAR from
+        // the fight (outside the 8-tile breach radius - this is about the
+        // baseless gate, not base defense). The formation fallback holds,
+        // no cross-map hunting in macro games.
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 5, 5);
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
-        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 50, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
         ling.setEnemy();
-        Squad squad = new Squad("hold");
-        dragoon.forceSetSquad(squad);
-        squad.targeting().setLastTarget(ling);
 
         SimArena arena = new SimArena(60 * TILE, 40 * TILE);
         SimWorld world = new SimWorld(new FakeUnit[] { nexus, dragoon }, new FakeUnit[] { ling }, arena);
@@ -735,7 +750,21 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             BattleCommander.clearForTests();
             atlantis.util.log.EventLog.clearForTests();
 
-            double startDist = dragoon.distTo(ling);
+            for (int i = 0; i < 5; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            world.teleport(dragoon, APosition.create(15, 20));
+            world.teleport(ling, APosition.create(55, 20));
+            dragoon.lastCommand = "Stop";
+            dragoon.target = null;
+            dragoon.targetPosition = null;
+            ordersOf(dragoon).clear();
+            double anchorX = dragoon.position.x();
+            double anchorY = dragoon.position.y();
             for (int i = 0; i < 200; i++) {
                 world.tick(() -> {
                     if (dragoon.hp > 0) {
@@ -743,9 +772,9 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                     }
                 });
             }
-            assertTrue(dragoon.distTo(ling) > startDist - 2,
-                "based maps keep the formation fallback, no cross-map hunting: "
-                    + startDist + " -> " + dragoon.distTo(ling));
+            assertTrue(
+                Math.hypot(dragoon.position.x() - anchorX, dragoon.position.y() - anchorY) < TILE,
+                "based maps keep the formation fallback, no cross-map hunting");
         }
         finally {
             world.close();

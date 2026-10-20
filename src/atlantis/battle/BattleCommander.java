@@ -59,6 +59,7 @@ public class BattleCommander extends Commander {
         lastStepFrame.clear();
         lastMovedFrame.clear();
         lastMovedPos.clear();
+        lastContactPos.clear();
     }
 
     @Override
@@ -235,6 +236,11 @@ public class BattleCommander extends Commander {
 
     /** One engaged frame: swing discipline, corridor, kite, re-engage, re-arm. */
     private static void fightTarget(AUnit unit, AUnit target) {
+        // Snapshot the contact point while it is visible: once sight is
+        // lost the enemy position reads null, so the hunt below would
+        // have nothing to march to (1Drag_v_1Zeal sat 9 min for exactly
+        // this - memory existed in the squad, its position did not).
+        if (target.position() != null) lastContactPos.put(unit.id(), target.position());
         if (holdSwing(unit, target)) return;
         // A Dragoon steps back only when the enemy is inside its
         // safety margin - otherwise it stands and lets the standing
@@ -448,22 +454,21 @@ public class BattleCommander extends Commander {
         if (unit.squad() != null) unit.squad().targeting().setLastTarget(target);
     }
 
-    /** Lost contact on a baseless map: march the last known point, or false to hold. */
+    /** Lost contact on a baseless map: march the last engaged point, or false to hold. */
     private static boolean huntLastContact(AUnit unit) {
-        // No enemy in reach: on baseless maps, hunt the last known
-        // contact instead of sitting (1Drag_v_1Zeal: brief contact, then
-        // 9 min idle 60 tiles apart - neither side re-acquires). The squad
-        // remembers the last target; its position is the last contact
-        // point. No UMS check on purpose: the gate is contact memory
-        // (lastTarget exists only after a real fight) plus baselessness,
-        // so melee frame 0 and based maps can never reach here. Gated
-        // beyond the 9-tile squad envelope: inside it the fight logic
-        // above already decided (focus refusals included - never
-        // overruled from here).
-        if (Count.bases() == 0 && unit.squad() != null) {
-            AUnit last = unit.squad().targeting().lastTargetIfAlive();
-            if (last != null && last.position() != null && unit.distTo(last) > 9) {
-                if (unit.move(last.position(), Actions.MOVE_ENGAGE, "ClusterHunt")) {
+        // No enemy in reach: on baseless maps, hunt the last engaged
+        // point instead of sitting (1Drag_v_1Zeal: brief contact, then
+        // 9 min idle 60 tiles apart - neither side re-acquires). The point
+        // is snapshotted while visible, so a vanished enemy still leaves
+        // an address. No UMS check on purpose: the gate is contact memory
+        // plus baselessness, so melee frame 0 and based maps can never
+        // reach here. Gated beyond the 9-tile squad envelope: inside it
+        // the fight logic above already decided (focus refusals included
+        // - never overruled from here).
+        if (Count.bases() == 0) {
+            APosition last = lastContactPos.get(unit.id());
+            if (last != null && unit.distTo(last) > 9) {
+                if (unit.move(last, Actions.MOVE_ENGAGE, "ClusterHunt")) {
                     lastRepositionFrame.put(unit.id(), A.now());
                     return true;
                 }
@@ -492,6 +497,7 @@ public class BattleCommander extends Commander {
     private static final java.util.Map<Integer, Integer> lastStepFrame = new java.util.HashMap<>();
     private static final java.util.Map<Integer, Integer> lastMovedFrame = new java.util.HashMap<>();
     private static final java.util.Map<Integer, APosition> lastMovedPos = new java.util.HashMap<>();
+    private static final java.util.Map<Integer, APosition> lastContactPos = new java.util.HashMap<>();
 
     public static void clearForTests() {
         CombatTuning.resetToDefaults();
@@ -502,6 +508,7 @@ public class BattleCommander extends Commander {
         lastStepFrame.clear();
         lastMovedFrame.clear();
         lastMovedPos.clear();
+        lastContactPos.clear();
     }
 
 }

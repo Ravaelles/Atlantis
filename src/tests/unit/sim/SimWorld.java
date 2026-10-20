@@ -1,6 +1,7 @@
 package tests.unit.sim;
 
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.BaseSelect;
@@ -139,6 +140,18 @@ public class SimWorld {
         for (FakeUnit unit : all()) {
             if (unit.cooldown > 0) unit.cooldown--;
         }
+    }
+
+    /**
+     * Teleports a unit (scenario use only): the sim owns positions, so a
+     * bare write to {@code unit.position} is overwritten by the next step.
+     * Updates both the published position and the precise accumulator,
+     * and stops residual motion.
+     */
+    public void teleport(FakeUnit unit, APosition dest) {
+        unit.position = dest;
+        precise.put(unit.id(), new double[] { (double) dest.x(), (double) dest.y() });
+        velocity.put(unit.id(), new double[] { 0.0, 0.0 });
     }
 
     private List<FakeUnit> all() {
