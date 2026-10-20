@@ -37,6 +37,7 @@ public final class FightTarget {
     private static final Map<Integer, APosition> lastMovedPos = new HashMap<>();
     private static final Map<Integer, Integer> lastRepositionFrame = new HashMap<>();
     private static final Map<Integer, APosition> lastContactPos = new HashMap<>();
+    private static final Map<Integer, Integer> lastGhostFrame = new HashMap<>();
 
     /** Another step rode on this unit this frame - the re-arm must not cancel it. */
     public static void markRepositioned(AUnit unit) {
@@ -54,6 +55,7 @@ public final class FightTarget {
         lastMovedPos.clear();
         lastRepositionFrame.clear();
         lastContactPos.clear();
+        lastGhostFrame.clear();
     }
 
     public static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
@@ -62,6 +64,20 @@ public final class FightTarget {
         // march to (1Drag_v_1Zeal sat 9 min for exactly this - the squad
         // remembered the target, its position did not).
         if (target.position() != null) lastContactPos.put(unit.id(), target.position());
+        if (!target.isVisibleUnitOnMap()) {
+            // Fighting an invisible target: the order cannot land (measured
+            // 1Drag_v_1Zeal: 9 min of shot-fired with zero damage while
+            // both duelists lived). Name it instead of silently spinning.
+            Integer lastGhost = lastGhostFrame.get(unit.id());
+            if (lastGhost == null || A.now() - lastGhost >= 150) {
+                lastGhostFrame.put(unit.id(), A.now());
+                atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.GHOST_TARGET)
+                    .param("unit", unit.id())
+                    .param("target", target.id())
+                    .param("dist", (int) (unit.distTo(target) * 10))
+                    .log(A.now(), A.minSec());
+            }
+        }
         if (holdSwing(unit, target)) return;
         // A Dragoon steps back only when the enemy is inside its
         // safety margin - otherwise it stands and lets the standing

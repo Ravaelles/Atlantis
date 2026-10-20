@@ -93,6 +93,8 @@ public enum LogKey {
     UNIT_TRACE,
     /** Our unit died (type, frame, dist x10 to nearest enemy at death). */
     UNIT_DIED,
+    /** Engaging a target that is not visible (unit, target, dist x10): the order cannot land. */
+    GHOST_TARGET,
     /** A supply provider wanted but suppressed by coming (unfinished) ones: who blocks. */
     SUPPLY_BLOCKED,
     /** A base order the refresh sees (throttled): type, status, bank, supply. */
