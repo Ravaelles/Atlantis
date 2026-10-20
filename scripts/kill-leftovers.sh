@@ -28,7 +28,11 @@ find_pids() {
   if [ "${#name}" -le 15 ]; then
     pgrep -x "$name" 2>/dev/null
   else
-    pgrep -f "/$name([[:space:]]|$)" 2>/dev/null
+    # Anchor to argv[0]: an unanchored "/name" also matches the shell whose
+    # command line merely mentions the path (measured: calling shell + process).
+    # -i: Wine is inconsistent about the case of the exe name in argv[0]
+    # ("ChaosLauncher.exe" vs "chaoslauncher.exe"), both occur in the wild.
+    pgrep -if "^([^ ]*/)?${name//./\\.}( |$)" 2>/dev/null
   fi
 }
 kill_one() {
@@ -56,11 +60,23 @@ else
   echo "[kill-leftovers] transport cleared"
 fi
 
-if pgrep -x "StarCraft.exe" >/dev/null 2>&1 \
-  || pgrep -f "/ChaosLauncher.exe([[:space:]]|$)" >/dev/null 2>&1 \
-  || pgrep -f "/Chaoslauncher.exe([[:space:]]|$)" >/dev/null 2>&1 \
-  || pgrep -x "BWAPILauncher" >/dev/null 2>&1; then
-  echo "[kill-leftovers] STILL RUNNING (see above) - refuse to call the box quiet" >&2
+# Same matcher as find_pids(), not a second hand-written copy: the old
+# verification used an unanchored -f pattern, which matched THIS shell (its
+# command line contains the filename) and reported "STILL RUNNING" even after a
+# successful kill. One matcher, one source of truth.
+remaining=""
+for name in BWAPILauncher StarCraft.exe ChaosLauncher.exe Chaoslauncher.exe; do
+  pids="$(find_pids "$name" | tr '\n' ' ')"
+  [ -n "${pids// /}" ] && remaining="$remaining$name($pids) "
+done
+if [ -n "$remaining" ]; then
+  if [ "$DRY_RUN" = "--dry-run" ]; then
+    # Nothing was killed, so processes are expected to remain; reporting
+    # STILL RUNNING here would be a false alarm.
+    echo "[kill-leftovers] dry run: $remaining would be killed"
+    exit 0
+  fi
+  echo "[kill-leftovers] STILL RUNNING: $remaining- refuse to call the box quiet" >&2
   exit 1
 fi
 echo "[kill-leftovers] box quiet"

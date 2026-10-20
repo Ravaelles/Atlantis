@@ -77,9 +77,10 @@ done
 # Note the comm truncation trap (see kill-leftovers.sh): "ChaosLauncher.exe"
 # is 17 chars, the kernel keeps 15, so -x can never match it - anchor -f on
 # the exe path instead, both capitalizations (Wine reports either).
-if pgrep -x StarCraft.exe >/dev/null 2>&1 \
-  || pgrep -f '/ChaosLauncher.exe([[:space:]]|$)' >/dev/null 2>&1 \
-  || pgrep -f '/Chaoslauncher.exe([[:space:]]|$)' >/dev/null 2>&1; then
+# Patterns are anchored to argv[0] (^...). An unanchored "/(name)" also matched
+# this script's own `bash -c` line, whose text contains the path - measured
+# 2026-10-20: the old pattern returned the calling shell plus the real process.
+if pgrep -f '^([^ ]*/)?(StarCraft|ChaosLauncher|Chaoslauncher)\.exe( |$)' >/dev/null 2>&1; then
   fail "StarCraft/ChaosLauncher is running - kill it and retry."
 fi
 
