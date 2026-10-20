@@ -892,6 +892,22 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Proper proof needs the spread-start scenario (StarEdit, armies
   apart so kiting decides) + bigger N; `scripts/kill-leftovers.sh`
   before every game, one box one game (cross-attach measured).
+- **#160** Automated tuner winner selection (owner 2026-10-21:
+  selection is eyeballed today, make it the best long-term loop).
+  Steps, in order, each a game-proven slice: (1) write the objective
+  down in code - win first, then hits-taken asc, then seconds asc,
+  with a per-map par row, instead of eyeballing batch.csv;
+  (2) elitist hall of fame: keep top-N param vectors across
+  batches, mutate around them with a shrinking radius instead of
+  uniform random in fixed bounds; (3) statistical bar: a vector
+  must win K-of-N replicates before promotion (duels are noisy -
+  measured 97 vs 163 first-blood frames on identical code);
+  (4) freeze-then-expand: hold proven params fixed while exploring
+  the rest, so one bad dimension never sinks good ones;
+  (5) archive every batch (params + digest + verdict) for later
+  meta-analysis. Runs overnight/weekend on owner call (box-exclusive),
+  never in the fast loop. Micro-only for now (#152); macro needs
+  its own objective later, out of scope until micro converges.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
