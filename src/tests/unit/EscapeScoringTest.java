@@ -46,4 +46,43 @@ public class EscapeScoringTest {
         assertEquals(0.0, EscapeScoring.staticPenalty(null, Collections.emptyList(), 3), 0.001);
         assertEquals(0.0, EscapeScoring.staticPenalty(APosition.create(30, 20), null, 3), 0.001);
     }
+
+    @Test
+    public void openFieldHasNoCornerPenalty() {
+        double[] open = { 12, 12, 12, 12, 12, 12, 12, 12 };
+
+        assertEquals(0.0, EscapeScoring.cornerPenalty(open), 0.001);
+    }
+
+    @Test
+    public void pocketScoresWorst() {
+        double[] pocket = { 1, 1, 1, 1, 1, 1, 1, 1 };
+        double[] corridor = { 12, 1, 12, 1, 12, 1, 12, 1 };
+
+        assertTrue(EscapeScoring.cornerPenalty(pocket) > EscapeScoring.cornerPenalty(corridor),
+            "no way out beats a corridor: " + EscapeScoring.cornerPenalty(pocket)
+                + " vs " + EscapeScoring.cornerPenalty(corridor));
+        assertTrue(EscapeScoring.cornerPenalty(corridor) > 0, "walls on 4 sides still cost");
+    }
+
+    @Test
+    public void loneFarEnemyIsIgnored() {
+        double pressure = EscapeScoring.enemyPressure(
+            APosition.create(30, 20),
+            Collections.singletonList(APosition.create(60, 60)),
+            EscapeScoring.ENEMY_RADIUS_TILES);
+
+        assertEquals(0.0, pressure, 0.001);
+    }
+
+    @Test
+    public void secondMeleeCounts() {
+        APosition dest = APosition.create(30, 20);
+        double one = EscapeScoring.enemyPressure(
+            dest, Collections.singletonList(APosition.create(35, 20)), 20);
+        double two = EscapeScoring.enemyPressure(
+            dest, Arrays.asList(APosition.create(35, 20), APosition.create(36, 20)), 20);
+
+        assertTrue(two > one, "the second Zealot matters: " + two + " vs " + one);
+    }
 }
