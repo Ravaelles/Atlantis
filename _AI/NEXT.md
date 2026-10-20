@@ -915,6 +915,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   meta-analysis. Runs overnight/weekend on owner call (box-exclusive),
   never in the fast loop. Micro-only for now (#152); macro needs
   its own objective later, out of scope until micro converges.
+  2026-10-21: step 1 LANDED (`TunerObjective` + `TunerObjectiveTest`
+  7/7: win, then hits asc, then seconds asc, `?` sorts last,
+  batch.csv parser, deterministic tie-break; pure tooling, game
+  loop untouched, suite 998/998 + arch unchanged). Steps 2-5 open
+  (hall of fame, K-of-N bar, freeze-then-expand, archive).
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
