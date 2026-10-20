@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * Elitist hall of fame for the tuner batch (NEXT #160, step 2).
@@ -90,8 +91,24 @@ public final class TunerHallOfFame {
      */
     public static Map<String, Double> mutateAround(
             Entry champion, Map<String, double[]> bounds, double radius, Random random) {
+        return mutateAroundUnfrozen(champion, bounds, Collections.<String>emptySet(), radius, random);
+    }
+
+    /**
+     * Freeze-then-expand (NEXT #160, step 4): proven params ride at
+     * champion values while the rest explore. Frozen names missing
+     * from the vector are ignored - shrinking the frozen set never
+     * breaks an old archive line.
+     */
+    public static Map<String, Double> mutateAroundUnfrozen(
+            Entry champion, Map<String, double[]> bounds, Set<String> frozen,
+            double radius, Random random) {
         LinkedHashMap<String, Double> mutated = new LinkedHashMap<>();
         for (Map.Entry<String, Double> param : champion.vector().entrySet()) {
+            if (frozen != null && frozen.contains(param.getKey())) {
+                mutated.put(param.getKey(), param.getValue());
+                continue;
+            }
             double[] bound = bounds.get(param.getKey());
             if (bound == null || radius <= 0) {
                 mutated.put(param.getKey(), param.getValue());

@@ -6,6 +6,7 @@ import atlantis.debug.tweaker.TunerObjective.Row;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -78,6 +79,24 @@ public class TunerHallOfFameTest {
 
         assertEquals(2.0, mutated.get("KiteStepTiles"));
         assertEquals(80.0, mutated.get("DragoonPinchHp"));
+    }
+
+    @Test
+    public void frozenParamsRideAtChampionValuesWhileRestExplore() {
+        TunerHallOfFame hall = new TunerHallOfFame(3);
+        hall.offer(new Row("g1", true, 6, 60), vector(2.0, 80.0));
+
+        Map<String, double[]> bounds = new HashMap<>();
+        bounds.put("KiteStepTiles", new double[] { 1.5, 3.0 });
+        bounds.put("DragoonPinchHp", new double[] { 60.0, 100.0 });
+
+        java.util.Set<String> frozen = new java.util.HashSet<>(Arrays.asList("KiteStepTiles"));
+        Map<String, Double> mutated = TunerHallOfFame.mutateAroundUnfrozen(
+            hall.champion().get(), bounds, frozen, 0.5, new Random(7));
+
+        assertEquals(2.0, mutated.get("KiteStepTiles"), "frozen params never move");
+        double pinch = mutated.get("DragoonPinchHp");
+        assertTrue(pinch >= 60.0 && pinch <= 100.0, "unfrozen params explore inside bounds");
     }
 
     @Test

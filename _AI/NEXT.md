@@ -571,6 +571,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   1 base, bank under 550 - reachable per the 912 s `210002` run).
   Needs a 700 s+ game; the named
   `ORDER_SAVING_FOR_EXPANSION` line is the signature to look for
+  (2026-10-21 TauCross: 9.7 game-min but 2 bases from 6:59, ORDER_SAVING
+  0 - long enough, wrong shape; the 1-base lottery continues).
   (20261014_172954 reached only 324 s; `20261015_185046` reached 575 s
   in 141 s wall - heavy economies sim ~4x, so 700 s needs a lighter
   game or more wall). Absent in all retained runs incl. the 743 s one
@@ -615,7 +617,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `BUILDER_LOG=1` Wine game (builder? site? no attempt?). First datum
   2026-10-19 (TauCross, BUILDER_LOG=1): Pylon#1 reserved worker #5 at
   pick 0:13, STARTED 0:46, warped [16,46] 0:58 - pipeline healthy on
-  this game; the two named instances were other games.
+  this game; the two named instances were other games. Second datum
+  2026-10-21 (TauCross vs Zerg, BUILDER_LOG=1, 9.7 game-min Defeat):
+  55 reservation/assignment lines flow; one BUILD_BREAKDOWN captured
+  (Gateway [123,26], worker stood still 74f, never warped - open
+  analysis item, candidate #84-third-instance or #151 cover).
 - **#74** Wine builder variance remainder (requeue/distances/debounce
   halves verified): needs a flagged Wine game for alternating
   Builder/Gather on a site and the exact 1.4-tile parking case.
@@ -942,8 +948,12 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   session with its own batch proof, never blind). 2026-10-21:
   step 3 LANDED (`TunerPromotion` + `TunerPromotionTest` 4/4:
   K-of-N replicate bar, short records never promote; suite
-  1007/1007 + arch unchanged). Steps 4-5 open
-  (freeze-then-expand, archive).
+  1007/1007 + arch unchanged). 2026-10-21: step 4 LANDED
+  (`mutateAroundUnfrozen` + test 6/6 in `TunerHallOfFameTest`:
+  frozen params ride at champion values, rest explore inside
+  bounds; suite 1008/1008 + arch unchanged). Step 5 (archive)
+  rides the intensive session: per-game dirs + batch.csv already
+  persist, the missing piece is only the batch-level manifest.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
@@ -959,6 +969,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (1v1 never triggers it, spread shapes untested); next is a
   standoff gate with spread-map proof (NEXT #159). Tuner batch:
   10/10 wins (NEXT #152).
+- Wine `(3)TauCross` macro vs Zerg (2026-10-21, BUILDER_LOG=1,
+  fresh jar): 9.7 game-min Defeat by Hydras. Opening healthy
+  (Gateway 1:27, 3x by 4:11, Core 3:00, Dragoon 4:06, 8 Pylons,
+  Forge 6:42, FE 6:59, PhotonC 8:45, Robo 8:48); lost 3/23, army
+  wiped ~8:45-9:30. BOARD_FED x2 (sustained rows, pumps unjudged);
+  zero BUILD_REFUSED; one BUILD_BREAKDOWN open (Gateway [123,26],
+  stood still 74f, never warped). #71 shape missed (2 bases).
 - OpenBW UMS (`M&M_v_ZealDrag`): PASS 5/2 KILLED/LOST on the rebuilt
   engine - the working OpenBW proof vehicle. `1Drag_v_1Zeal` seats
   the bot in a unit-less human slot (verified slot-pick code);
