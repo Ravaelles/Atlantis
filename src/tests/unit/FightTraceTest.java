@@ -106,6 +106,7 @@ public class FightTraceTest extends WorldStubForTests {
             String rows = EventLog.toJsonLines();
             assertTrue(rows.contains("\"key\":\"UNIT_DIED\""), "got: " + rows);
             assertTrue(rows.contains("\"dist\":"), "nearest-enemy distance at death: " + rows);
+            assertTrue(rows.contains("\"killer\":"), "suspect id at death: " + rows);
         });
     }
 }

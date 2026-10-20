@@ -31,6 +31,19 @@ open ideas wait for a game or a need, then get built or dropped.
   each one. Answers the owner's core question: was it a wrong DECISION
   (move away, move away... reads as repeated lines) or a wrong
   IMPLEMENTATION (a single broken row).
+- `scripts/fight-units.py` [5/5 - per-unit table for formation fights] EVENTS.jsonl` - id, type, frames alive, death frame or SURVIVED,
+  min/avg hp, avg/last dist to nearest enemy. Answers: who died when,
+  at what health, how far from the enemy.
+- `scripts/summarize-game.py` [5/5 - the whole macro datum in one call] <run_dir>` - verdict, roster with tech times, the units table,
+  refusal gates, tech gates, kite/shot/hit totals, tactic split.
+  Answers everything the post-game analysis needs without hand-greps.
+- `scripts/kill-leftovers.sh` [4/5 - box discipline before every game] - kills stray StarCraft/ChaosLauncher/BWAPILauncher/Atlantis
+  processes and clears shm/socket transport, refuses to report quiet
+  while strays live. Two Wine games on one box cross-attach and
+  mutually kill (measured 2026-10-20).
+- `scripts/run-staredit.sh` [3/5 - scenario editing for UMS proofs] [map]` - StarEdit under Wine from the game root.
+  Needed to re-stage micro scenarios (e.g. spread armies so the
+  formation has time to form).
 
 ## Open ideas (build on need, drop on disproof)
 

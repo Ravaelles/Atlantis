@@ -50,6 +50,7 @@ public final class FightTrace {
         EventLog.key(LogKey.UNIT_DIED)
             .param("unit", unit.id())
             .param("type", unit.type().name())
+            .param("killer", nearest == null ? -1 : nearest.id())
             .param("dist", nearest == null ? -1 : (int) (unit.distTo(nearest) * 10))
             .param("ux", unit.x() / 32)
             .param("uy", unit.y() / 32)
