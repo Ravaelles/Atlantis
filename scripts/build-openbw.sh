@@ -384,18 +384,40 @@ if [ -n "$GAME_MAP" ]; then
   say "game: $MAP_ARG (timeout ${GAME_TIMEOUT}s)"
   game_log="$(mktemp -t openbw-game.XXXXXX)"
   game_rc=0
+  # The run script writes the game's own output to a fresh directory under
+  # $BOT_LOG_DIR/UMS_LOGS; the UMS_LOG inside it is the real bot log. The
+  # script's stdout does NOT contain the game summary, so read the newest
+  # directory created during this run instead.
+  bot_logs="${BOT_LOG_DIR:-/sc-ai/BOTS/AtlantisOpenBW}/UMS_LOGS"
+  # Only real run directories count: UMS_LOGS also holds loose files
+  # (UMS_LOG, UMS_DEBUG for the last run) and a "latest" symlink, and `ls -t`
+  # ranks files above directories, so a plain `head -1` picks the wrong entry.
+  newest_run_dir() {
+    find "$bot_logs" -mindepth 1 -maxdepth 1 -type d ! -name latest \
+      -printf '%T@ %p\n' 2>/dev/null | sort -rn | head -1 | cut -d' ' -f2-
+  }
+  before="$(newest_run_dir || true)"
   timeout "$GAME_TIMEOUT" bash "$RUN_SCRIPT" "$MAP_ARG" >"$game_log" 2>&1 || game_rc=$?
-
-  frames="$(grep -o 'Total time: [0-9]*' "$game_log" | tail -1 | grep -o '[0-9]*' || true)"
+  run_dir="$(newest_run_dir || true)"
+  if [ -z "$run_dir" ] || [ ! -f "$run_dir/UMS_LOG" ] || [ "$run_dir" = "$before" ]; then
+    echo "FAIL: game run produced no new log directory under $bot_logs (script log: $game_log)"
+    exit 1
+  fi
+  frames="$(grep -o 'Total time: [0-9]*' "$run_dir/UMS_LOG" | tail -1 | grep -o '[0-9]*' || true)"
   frames="${frames:-0}"
-  summary="$(grep -o 'KILLED:[^ ]* LOST:[^ ]* TIMES_HIT:[^ ]*' "$game_log" | tail -1 || true)"
+  # Atlantis prints its own summary: "### Units killed/lost:    5/1 ###".
+  killed="$(sed -nE 's/.*Units killed\/lost:[[:space:]]*([0-9?]+)\/([0-9?]+).*/\1/p' "$run_dir/UMS_LOG" | tail -1)"
+  lost="$(sed -nE 's/.*Units killed\/lost:[[:space:]]*([0-9?]+)\/([0-9?]+).*/\2/p' "$run_dir/UMS_LOG" | tail -1)"
+  hits="$(grep -c '\bHIT\b' "$run_dir/EVENTS.jsonl" 2>/dev/null || true)"
+  killed="${killed:-?}"; lost="${lost:-?}"; hits="${hits:-0}"
+  summary="KILLED:$killed LOST:$lost TIMES_HIT:$hits"
 
   if [ "$game_rc" -eq 124 ]; then
     echo "FAIL: game timed out after ${GAME_TIMEOUT}s (server hung; log: $game_log)"
     exit 1
   fi
   if [ "$frames" -le 100 ]; then
-    echo "FAIL: game did not run (frames=$frames; log: $game_log)"
+    echo "FAIL: game did not run (frames=$frames; game log: $run_dir/UMS_LOG)"
     exit 1
   fi
   # Zero combat on a duel map means nothing happened: no units spawned,
@@ -403,14 +425,11 @@ if [ -n "$GAME_MAP" ]; then
   # these counters (even a loss takes hits). Missing numbers (bot died
   # before its summary) stay unknown, never a fail - only an explicit
   # 0/0/0 is the "empty game" verdict.
-  killed="$(echo "$summary" | sed -E 's/.*KILLED:([0-9?]+).*/\1/')"
-  lost="$(echo "$summary" | sed -E 's/.*LOST:([0-9?]+).*/\1/')"
-  hits="$(echo "$summary" | sed -E 's/.*TIMES_HIT:([0-9?]+).*/\1/')"
   if [ "$killed" = "0" ] && [ "$lost" = "0" ] && [ "$hits" = "0" ]; then
-    echo "FAIL: game ran $frames frames but saw no combat (KILLED:0, LOST:0, TIMES_HIT:0) - units never spawned or never met; log: $game_log"
+    echo "FAIL: game ran $frames frames but saw no combat (KILLED:$killed LOST:$lost TIMES_HIT:$hits) - units never spawned or never met; game log: $run_dir/UMS_LOG"
     exit 1
   fi
-  echo "PASS: ${summary:-game finished} (log: $game_log)"
+  echo "PASS: $summary (frames=$frames, game log: $run_dir/UMS_LOG)"
   exit 0
 fi
 

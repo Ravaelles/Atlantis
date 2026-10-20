@@ -707,7 +707,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   way, not refuted. Mixed evidence: the 12:59 UMS log shows our
   Dragoon=1 with zero buildings warped (preplaced unit, bot HAS a
   slot), while the 2026-10-19 run on the same map had no units at
-  all - assignment varies in a way no log explains yet. What IS
+  all - assignment varies in a way no log explains yet.
+  2026-10-21, third reading (other model, engine-side, tests pinned
+  in OpenBW): the 137-vs-14 gap is NOT a missing Zealot - declared
+  = visible + Special_Map_Revealer helpers (slot 1: 14 + 123 = 137;
+  the 123 never enter visible_units by design). The server slot line
+  now prints all three numbers, so nobody hunts "lost" units again.
+  What REMAINS open is the client stall past Connected (server
+  publishes deterministically) - next: DEBUG the OpenBWRunner attach
+  path for the blocking call. What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
   that failure mode is now fixed regardless of slots (baseless

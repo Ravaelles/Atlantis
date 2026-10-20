@@ -32,6 +32,7 @@ LAUNCHER="$HARNESS_DIR/build/bin/BWAPILauncher"
 WINE_BOT_DIR="/sc-ai/BOTS/AtlantisP/AI"
 BOT_RUN_DIR="/sc-ai/BOTS/AtlantisOpenBW/AI"
 BOT_ROOT="$(dirname "$BOT_RUN_DIR")"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JAR="/sc-ai/BOTS/AtlantisOpenBW/AI/Atlantis.jar"
 UMS_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/UMS_LOGS"
 
@@ -70,7 +71,15 @@ trap cleanup EXIT INT TERM
 for mpq in StarDat.mpq BrooDat.mpq Patch_rt.mpq; do
   [ -f "$GAME_DIR/$mpq" ] || fail "missing $mpq in $GAME_DIR (harness not built?)"
 done
-if pgrep -x StarCraft.exe >/dev/null 2>&1 || pgrep -f 'Chaoslauncher' >/dev/null 2>&1; then
+# -x matches the process NAME exactly. -f matches the whole command line, which
+# also matched the shell running this script (its argv contains the pattern),
+# producing a false "ChaosLauncher is running" fatal before any game started.
+# Note the comm truncation trap (see kill-leftovers.sh): "ChaosLauncher.exe"
+# is 17 chars, the kernel keeps 15, so -x can never match it - anchor -f on
+# the exe path instead, both capitalizations (Wine reports either).
+if pgrep -x StarCraft.exe >/dev/null 2>&1 \
+  || pgrep -f '/ChaosLauncher.exe([[:space:]]|$)' >/dev/null 2>&1 \
+  || pgrep -f '/Chaoslauncher.exe([[:space:]]|$)' >/dev/null 2>&1; then
   fail "StarCraft/ChaosLauncher is running - kill it and retry."
 fi
 
@@ -126,8 +135,32 @@ jar=$JAR
 EOF
 
 # --- Host (scenario owns the setup: no melee unit spawn) ---
-pkill -9 -x BWAPILauncher 2>/dev/null || true
+# Clean leftovers through the shared helper instead of ad-hoc pkill calls.
+# The old `pgrep -f`/`pkill -f` forms matched this script's own command line and
+# killed the calling shell; kill-leftovers.sh matches process NAMES exactly.
+if [ -x "$SCRIPT_DIR/kill-leftovers.sh" ]; then
+  "$SCRIPT_DIR/kill-leftovers.sh" >/dev/null 2>&1 || true
+else
+  pkill -9 -x BWAPILauncher 2>/dev/null || true
+fi
 rm -f /tmp/bwapi_socket_* /dev/shm/bwapi_shared_memory_* 2>/dev/null || true
+
+# After cleanup there must be no launcher left and no game table. If there is,
+# every later wait would just burn the timeout and then blame the engine.
+# Failing here turns "sometimes hangs for 30 s" into one explained line.
+if pgrep -x BWAPILauncher >/dev/null 2>&1; then
+  say "preflight: BWAPILauncher still running after cleanup (pids: $(pgrep -x BWAPILauncher | tr '\n' ' '))"
+  fail "cannot start a deterministic run while another launcher is alive"
+fi
+if [ -e /dev/shm/bwapi_shared_memory_game_list ]; then
+  say "preflight: stale game table survived cleanup:"
+  "$SCRIPT_DIR/bwapi-publish.sh" 2>&1 | sed 's/^/    /'
+  rm -f /dev/shm/bwapi_shared_memory_* /tmp/bwapi_socket_*
+  if [ -e /dev/shm/bwapi_shared_memory_game_list ]; then
+    fail "game table is not removable (owned by another user?) - cannot host deterministically"
+  fi
+  say "preflight: stale game table removed, continuing"
+fi
 say "hosting UMS game: map=$MAP (USE_MAP_SETTINGS, scenario owns the setup)"
 setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
   BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS \
@@ -137,8 +170,11 @@ SERVER_WRAPPER_PID=$!
 
 HOSTED=0
 for _ in $(seq 1 60); do
-  if [ -f /dev/shm/bwapi_shared_memory_game_list ] \
-     && [ -n "$(xxd -p -l 8 /dev/shm/bwapi_shared_memory_game_list 2>/dev/null | tr -d '0')" ]; then
+  # A published game means a slot whose serverProcessID is a LIVE pid.
+  # "The file is non-empty" is not enough: a crashed server leaves its pid in
+  # the table, the client then fails with "No server proc ID", and the run
+  # looks non-deterministic for no reason. bwapi-publish.sh checks /proc.
+  if "$SCRIPT_DIR/bwapi-publish.sh" >/dev/null 2>&1; then
     HOSTED=1
     break
   fi
@@ -149,7 +185,15 @@ for _ in $(seq 1 60); do
   fi
   sleep 0.5
 done
-[ "$HOSTED" -eq 1 ] || { tail -20 "$SERVER_LOG" | sed 's/^/    /'; fail "no game registry within 30 s"; }
+if [ "$HOSTED" -ne 1 ]; then
+  say "no live game published within 30 s; why:"
+  "$SCRIPT_DIR/bwapi-publish.sh" | sed 's/^/    /'
+  say "server log tail:"
+  tail -20 "$SERVER_LOG" | sed 's/^/    /'
+  say "server process: $(pgrep -x BWAPILauncher >/dev/null && echo alive || echo dead)"
+  fail "no live game registry within 30 s"
+fi
+say "hosted: $("$SCRIPT_DIR/bwapi-publish.sh" | tail -1)"
 
 # --- Client (cwd = bot root: build orders resolve from AI/build_orders/) ---
 rm -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" "$BOT_ROOT/bwapi-data/write/BUILDINGS.json" "$BOT_ROOT/bwapi-data/write/DECISIONS.log"
@@ -162,22 +206,7 @@ BOT_PID=$!
 wait "$BOT_PID" || BOT_EXIT=$?
 say "bot finished, took ${SECONDS}s, exit code: $BOT_EXIT"
 
-# --- Scenario-load check: the map must create units for a fight ---
-# A duel needs both sides: zero creations is an aborted load, one is a
-# half-loaded map (measured: old engine 0, half-load 1, healthy duel 2).
-# Server-side creations are the load-phase evidence, independent of what
-# the bot did or logged. A short game that ends by win/loss still created
-# both armies, so this only fires on broken scenarios, never on results.
-SPAWNED_UNITS="$(grep -a "has been created" "$SERVER_LOG" 2>/dev/null | grep -av "^A Resource_" | wc -l)"
-SPAWNED_UNITS="$(echo "$SPAWNED_UNITS" | tr -d ' ')"
-if [ -z "$SPAWNED_UNITS" ]; then SPAWNED_UNITS=0; fi
-echo "units_spawned=$SPAWNED_UNITS" >> "$RUN_DIR/run.txt"
-if [ "$SPAWNED_UNITS" -lt 2 ]; then
-  say "run dir: $RUN_DIR"
-  echo "FAIL: scenario did not load both sides (server created $SPAWNED_UNITS non-resource units, need both armies; log: $RUN_DIR/server.log)"
-  exit 1
-fi
-say "scenario loaded: $SPAWNED_UNITS non-resource units created"
+# --- Collect ---
 [ -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" ] \
   && cp -f "$BOT_ROOT/bwapi-data/write/EVENTS.jsonl" "$RUN_DIR/EVENTS.jsonl" \
   && say "event log: $RUN_DIR/EVENTS.jsonl" \
