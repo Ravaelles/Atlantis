@@ -17,16 +17,35 @@ Legend: `[x]` done and verified, `[ ]` open, `[?]` needs a decision.
 - [x] `MRGN`: reset `st.locations` before reading regions.
 - [x] Trigger condition 4 (Switch) tolerated instead of aborting.
 - [x] Trigger action 105 (Run AI script at location) ignored instead of aborting.
-- [ ] **A1.1** Implement condition types used by real maps: 15 (Leader),
-      16 (Deaths), 21 (Accumulate), 23 (Current player death count).
-      Evidence today: `error("unknown trigger condition %d")` on those maps.
-      Test: `tests/ums_map_test.cpp` with a map using them must not abort.
-- [ ] **A1.2** Implement action 105 for real (AI scripts), so map-driven unit
-      behaviour exists. Today a no-op; maps play but units stay passive.
-- [ ] **A1.3** Load the map's own `TRIG` chunk. Today only `triggers/Melee.trg`
-      is loaded (`triggers=6` on every map, measured). Either the UMS boot path
-      is incomplete or `use_map_settings` is false when TRIG is read. This is
-      a big behavioural gap and needs its own investigation.
+- [x] **A1.1** Conditions 15/16/21/23 implemented on a real death table
+      (`unit_deaths`, filled in `kill_unit`, group ids 229-232 honoured).
+      Verified directly: killing a Dragoon gives `deaths 0 -> 1`, `any=1`,
+      `men=1`, `buildings=0`.
+- [ ] **A1.1b** Condition 15 (Leader) semantics are assumed, not checked against
+      a map where the leader decides the outcome. Test before trusting.
+- [x] **A1.2** Switches are real state: condition 4 reads `switches[256]`,
+      action 5 (set switch) implemented. Action 105 still a no-op by design
+      (needs an AIScript interpreter + AIS/ALST chunks) but is now **counted**
+      in `state::skipped_ai_script_actions`, so "scripts ignored" is visible.
+- [ ] **A1.2b** Implement the AIScript interpreter (AIS/ALST chunks). Own
+      project; without it map-driven unit behaviour does not exist.
+- [x] **A1.3** Map triggers are attached to their players again. The gate
+      accepted only `controller_occupied`, but after the UMS remap a map's
+      "Computer" players are `controller_computer_game`, so every trigger was
+      dropped. Measured: 0 -> 5 running triggers per playable slot on
+      `1Drag_v_1Zeal.scm` (66a). The earlier "triggers=6" was Melee.trg on its
+      own; map triggers were simply never attached.
+- [x] **A1.4 investigation** Done (70). Audited: nobody ever wins -> the
+      `winners` propagation block never fires on this map, and the melee
+      detector is not involved. Frame-312 defeat is **map-declared**: trigger 1
+      is `Elapsed time 300 s -> Defeat`, trigger 0 is `Command 18 -> Defeat`.
+      The propagation rule is therefore NOT what ends this map.
+- [ ] **A1.4b** The open half: what vanilla does to other players when one gets
+      an explicit `Victory`. Needs the Wine measurement (2 slots, one Victory
+      trigger). Do not change the rule before that. If changed, gate it on
+      `use_map_settings` so melee stays bit-identical.
+- [x] **A1.5** Triggers with an action list containing nothing executable no
+      longer count as "trigger activity" (guard added; secondary to A1.4).
 
 ### A2. Server / client handshake (harness tree: bwapi/BWAPI/Source/BWAPI)
 
@@ -53,9 +72,15 @@ Legend: `[x]` done and verified, `[ ]` open, `[?]` needs a decision.
 
 - [ ] **A3.1** Maps that `error()` on `fixme rescue passive` / `fixme unknown
       flag` cannot be hosted at all.
-- [ ] **A3.2** MELEE mode on a UMS map aborts at frame 0 (`ComputerAI` not
-      supported). Correct behaviour would be to refuse the wrong mode with a
-      clear message instead of an error mid-load.
+- [x] **A3.2** MELEE on a UMS map: `map_places_units()` detects it, logs
+      `using USE_MAP_SETTINGS instead of MELEE` and switches mode, instead of
+      aborting mid-load with `ComputerAI not supported`.
+- [x] **A3.4** `dyingUnits` emitted `UnitEvade`+`UnitDestroy` every frame a
+      dying unit stayed in the list (`wasAccessible` never cleared). Fixed in
+      `GameUnits.cpp`; live verification pending on the client harness (65c).
+- [ ] **A3.5** `shot-fired` vs `HIT` ratio (69k:17): not a bug - `ShotTwin` logs
+      every attack acquisition on purpose, `HitTwin` only real HP loss. If a
+      cleaner metric is wanted, add a `fired-on-cooldown` row.
 - [ ] **A3.3** `unit_counts` includes `Special_Map_Revealer` units. The slot
       report prints them separately now, but BWAPI's "participating player"
       test still counts them, so a slot with 140 revealers and 0 warriors looks
@@ -70,13 +95,16 @@ Legend: `[x]` done and verified, `[ ]` open, `[?]` needs a decision.
       counts, owners, trigger loading, 300 frames without abort.
 - [x] Keeps count of `unit_counts` minus map revealers (pins the 137-vs-14
       arithmetic).
-- [ ] **B1** Turn the probe into a checked test: a script that starts the
-      launcher, runs `tools/bwapi-handshake-probe`, and fails unless the output
-      contains `BYTE_2_OK` + `MATCH_TICKING` + `MatchStart=YES`. Right now this
-      is a manual step, so a regression in the pump would not be caught.
+- [x] **B1** `scripts/test-openbw-host.sh`: starts the launcher, runs the probe,
+      and requires `BYTE_2_OK` + `MATCH_TICKING` + `MatchStart=YES` +
+      `players=N/12`. Verified both ways: PASS on the fixed engine, 4/4 FAIL
+      (exit 1) with `Server.cpp` reverted to HEAD.
 - [ ] **B2** Add a test for "second client after the first disconnects":
       `close(syncSocket)` leaves the listener closed, so a reconnect is
       expected to fail. Decide whether that is intended, then pin it.
+- [x] **B4** `tests/engine_behaviour_test.cpp` + `tests/run.sh`: seven checks in
+      one run (units, revealers, trigger attachment, switches, deaths, 300
+      frames, ignored AI scripts). Verified to fail on reverted fixes.
 - [ ] **B3** Add a map fixture built from a real map (not synthesised): copying
       a small real `scenario.chk` and flipping one field is far cheaper than
       building a valid CHK from scratch (an earlier attempt died on
@@ -95,9 +123,8 @@ Legend: `[x]` done and verified, `[ ]` open, `[?]` needs a decision.
       `start-host.sh` (starts launcher and waits for a live game) and
       `run-bot.sh` (runs the bot against an already published game), with the
       current script as the thin orchestrator.
-- [ ] **C2** `--game` parsing (`Total time`, `Units killed/lost`, `HIT`) lives
-      inline in `build-openbw.sh`. Move it to a small `parse-run.sh` so both
-      `--game` and future tools use one implementation.
+- [x] **C2** `scripts/parse-run.sh` owns run parsing; `build-openbw.sh --game`
+      calls it. Verified on synthetic + real runs, `?` for unresolved values.
 - [ ] **C3** Stale `/dev/shm` cleanup is duplicated in three scripts
       (`run-openbw-ums.sh`, `build-openbw.sh`, `run-openbw-server.sh`). One
       function in `kill-leftovers.sh` (or a `--shm` flag) would do.
@@ -113,3 +140,22 @@ Legend: `[x]` done and verified, `[ ]` open, `[?]` needs a decision.
 - [ ] **D1** When the client side settles, re-run the full matrix once and
       record it here: `1Drag` (all revealers, no warriors), `M&M_v_ZealDrag`
       (real 1v1), one broken map (A3.1), and a reconnect.
+
+---
+
+## E. Code structure (SRP applied where we touched code)
+
+- [x] **E1** `Server::update()` split into `publishFrameToClient()` (attached:
+      snapshot -> 2/1 exchange -> commands) and `acceptClientWhileIdle()` (idle:
+      process events -> publish state -> accept). Three of our regressions came
+      from these two behaviours being fused in one function; each is now named
+      after its single responsibility. Behaviour unchanged, proven by the probe
+      before/after.
+- [ ] **E2** `Run` the same split on `run-openbw-ums.sh` (see C1) - it still
+      mixes preflight, hosting, waiting, running and parsing.
+- [ ] **E3** `BWData.cpp` is a single ~1800-line translation unit holding map
+      loading, slot reporting, game setup and the frame pump. Extracting
+      `slots` reporting into its own small unit would make the file navigable;
+      low risk because it is a leaf function.
+
+---

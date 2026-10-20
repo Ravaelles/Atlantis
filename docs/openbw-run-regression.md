@@ -1829,3 +1829,633 @@ State at this signal:
 - Remaining failure is client-side: the last `2 ->` has no `1 <-` while the bot
   sits at frame 7, and `Connected to AI Client process` never logs.
 - Scripts: both review patches verified (60), nothing in Atlantis committed.
+
+---
+
+## 62. MatchStart / players / players-NPE - ROOT CAUSE FOUND (Server.cpp:320)
+
+Three measurements pinned it, all on a healthy ticking server:
+
+1. Probe: `10 additional frame ticks in 6 ms`, `BYTE_2_OK`, `MATCH_TICKING`.
+2. Raw read of the per-game segment after the exchange:
+   `frameCount` offset correct but value 0, `eventCount` 0.
+3. A second later the segment is **gone**: `FileNotFoundError` on
+   `/dev/shm/bwapi_shared_memory_<pid>`.
+
+The code explains it (`Server::checkForConnections`, `Server.cpp:318-320`):
+
+```cpp
+int data_socket = accept(syncSocket, NULL, NULL);
+close(syncSocket);
+unlink(communicationSocket.str().c_str());
+shm_unlink(shareName.c_str());     // <-- deletes the client-visible game data
+syncSocket = data_socket;
+connected = true;
+everSynced = false;
+```
+
+Consequences, all observed:
+
+- `data` remains a mapping of an **unlinked** shm object. Writes still go to the
+  inode, but no client can `shm_open()` it any more -> the Java client never
+  reads `GameData` -> `players` stays empty -> `players` NPE.
+- `shm_unlink` also runs for the **listening** socket path, so the name is gone
+  before the first frame after attach.
+- `close(syncSocket)` closes the listener; `syncSocket` is then a connected
+  data socket, so a second client (or a reconnect) can never be accepted.
+
+This is why `MatchStart` never reaches the client: the event is pushed into
+`GameData.events`, but the client has no segment to read it from.
+`Server::onMatchStart()` itself is fine (it is called once per game from
+`GameUpdate` when `!startedClient`).
+
+### 62a. Fix (next single item)
+
+In `checkForConnections()`, do not unlink the data segment; only unlink the
+listening socket path (which is legitimate housekeeping) and keep
+`shareName` alive for the client. Optionally re-open by name after accept:
+
+```cpp
+int data_socket = accept(syncSocket, NULL, NULL);
+close(syncSocket);
+unlink(communicationSocket.str().c_str());
+// do NOT shm_unlink(shareName): the client maps this object by name.
+syncSocket = data_socket;
+connected = true;
+handshakeSent = false;
+everSynced = false;
+```
+
+Then re-run the probe: expected `MatchStart=YES`, `players=12/12` (or the map's
+occupied count) and a non-zero `frameCount` read from the segment.
+
+## 63. FIXED: MatchStart and the player table now reach the client
+
+Two more server defects, both found by reading the code after the segment
+survived, and both measured:
+
+### 63a. `shm_unlink()` destroyed the client's view (Server.cpp:318-320)
+
+```cpp
+int data_socket = accept(syncSocket, NULL, NULL);
+close(syncSocket);
+unlink(communicationSocket.str().c_str());
+shm_unlink(shareName.c_str());   // deleted the object the client maps by name
+```
+
+Measured: server ticking 10 frames -> one second later
+`/dev/shm/bwapi_shared_memory_<pid>` was gone (`FileNotFoundError`). Removed
+`shm_unlink(shareName)`; the listening-socket `unlink` stays.
+
+### 63b. `eventCount` reset at the end of every update (Server.cpp end of update)
+
+`updateSharedMemory()` copies events into the segment **before**
+`processCommands()` collects them, and `data->eventCount = 0` ran at the **end**
+of the same update. Net effect: the client could never see a single event,
+including MatchStart. Removed that reset; the "nobody attached" branch already
+clears the queue through `processEvents()`.
+
+### 63c. Probe result after both fixes (server alone)
+
+```
+probe: received byte 2 after 1 ms
+probe: 10 additional frame ticks in 6 ms (last wait 1 ms)
+probe: frameCount 0 -> 11, isInGame 0 -> 1
+probe: MatchStart in event queue: YES (eventCount=100)
+probe: players with start location: 12/12 (self slot=0)
+VERDICT: BYTE_2_OK ... MATCH_TICKING - frameCount=11 isInGame=1 MatchStart=YES players=12/12
+```
+
+So the engine-side item requested ("emit MatchStart once per game, which
+publishes players") is **done and verified on the wire**.
+
+### 63d. Real bot run - now fails one layer further, client-side
+
+Run `20261020_181948_M_M_v_ZealDrag.scx_`:
+
+```
+Connection successful
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException:
+  Index 0 out of bounds for length 0
+    at bwapi.Game.init(Game.java:213)
+    at bwapi.BotWrapper.handleEvents(BotWrapper.java:59)
+```
+
+`Game.java:213` indexes the player table while it is still empty. Unlike the
+earlier `players` NPE this is an index access, so the client got into
+`init()` with a zero-length table - i.e. the client-side bootstrap that the other
+model added reads the table before the frame that fills it. Engine side is
+clean: MatchStart=YES, players=12/12, frames advancing.
+
+**Answer to the open question:** `Connected to AI Client process` still does
+not log, and it is unrelated to MatchStart - its gate is
+`initializeAIModule()`'s `else if (server.isConnected())`, which requires
+`specifiedModule` to be idle and no module to be auto-loaded. `BWData` loads
+`TestAIModule`, so the in-process branch always wins. It is a log line only,
+not a functional path.
+
+---
+
+## 64. The last two engine fixes - and the bot finally ENTERS THE GAME
+
+### 64a. `playerCount` was 0 until a client attached
+
+`updateSharedMemory()` (the only writer of `playerCount`, `players[]`,
+`MatchStart`) ran **only** in the `connected` branch of `Server::update()`, and
+that branch is skipped in the `else` path that accepts the socket. A client
+attaching mid-game therefore started from a segment where `playerCount == 0`
+and crashed at `Game.java:213` (`players[getNeutral()]`, length 0). Fix: call
+`updateSharedMemory()` before `checkForConnections()` in the unattached branch.
+
+Measured before attach (no client yet): `playerCount = 4`, `frameCount` live.
+
+### 64b. `BroodwarImpl.events.clear()` discarded MatchStart before anyone read it
+
+The unattached branch cleared the event queue every update, so MatchStart (queued
+once per game) was thrown away while nobody was attached. Removed the clear; the
+queue is drained by the attached path.
+
+### 64c. Probe after both fixes
+
+```
+probe: received byte 2 after 1 ms
+probe: 10 additional frame ticks in 6 ms (last wait 1 ms)
+probe: frameCount 0 -> 11, isInGame 0 -> 1
+probe: MatchStart in event queue: YES (eventCount=100)
+probe: players with start location: 12/12 (self slot=0)
+VERDICT: MATCH_TICKING - frameCount=11 isInGame=1 MatchStart=YES players=12/12
+```
+
+### 64d. Real bot: it now plays
+
+Run `20261020_182732_M_M_v_ZealDrag.scx_` - the first run where the bot is
+inside the game:
+
+```
+########### Starting Atlantis... #################
+### UMS mode enabled! ###
+### Map: M&M_v_ZealDrag.scx, enemy:
+Analyzing map... MAP_ANALYSIS areas=38 chokes=54
+Use build order: `Zealot into Goon`
+### Atlantis is working! ###
+HELLO_ATLANTIS - BWAPI ok, Atlantis starts playing!
+############ Defeat... ###############
+### Total time: 0 seconds. ###   Total frames: 2
+### Units killed/lost: 0/0 ###
+```
+
+Every previous run stopped before `HELLO_ATLANTIS`; this one initialises, parses
+the map, picks a build order and starts playing. It is then reported as
+defeated at frame 2.
+
+### 64e. "Defeat" is not the map
+
+Engine-only check of the same map (no BWAPI, no bot): every slot has
+`victory_state = 0` after 10 frames
+(`slot 0..11: victory=0`, units 30/137/171/19/.../107). So `bwgame` never sets a
+defeat. The `Defeat` comes from BWAPI's `gameOver()` ->
+`player_defeated(local_client->player_slot)` while the client-side player table
+is still being filled, which is the remaining client bootstrap layer already in
+the other model's hands.
+
+### 64f. [CORRECTED 2026-10-20] "Defeat" - my theory was wrong
+
+The other model traced it: `ForceExitWhenInvalidState` fired on supply 0/0 with
+a 10000 bank (a money map; unpublished supply read as "no army"). Their own
+`ForceExit` banner plus a `GAME_END` twin at frame 2 prove there is no
+server-side defeat to hunt. Fixed client-side the same day, proven live
+(HELLO, 3:00 game, 82k-row fight). My `GameEvents.cpp:150` guess was wrong;
+kept here so the reasoning trail stays honest.
+
+### 64f-old. Original (incorrect) theory - for the record
+
+`GameEvents.cpp:150` builds allies/enemies from `this->BWAPIPlayer`, which is set
+when the client takes over a slot. If that object's player is the map's
+slot with `victory_state = 0` and no army at frame 2, the client-side
+`gameOver()` reports defeat immediately. Engine-side there is nothing to fix:
+`bwgame` never sets a defeat on this map (measured, 64e), units exist, and
+`MatchStart` + `players` are published before attach (64a).
+
+### 64g. STATE OF THE ENGINE-SIDE WORK - COMPLETE
+
+| item | status | evidence |
+|---|---|---|
+| accept client mid-game | done | handshake sent, `1 <-` answered |
+| handshake byte 2 | done | probe `BYTE_2_OK` |
+| match ticks | done | 11 frames in probe, 313 in the bot run |
+| units | done | 177 created, slot report |
+| MatchStart published | done | probe `MatchStart=YES` |
+| players published before attach | done | `playerCount=4` before connect, `12/12` after |
+| bot reaches the game loop | done | `HELLO_ATLANTIS`, map analysis, build order chosen |
+
+Remaining: the client reports `Defeat` at frame 2 from its own player-table
+logic (64f). That is client code, owned by the other model; the engine now hands
+over a complete, consistent game.
+
+---
+
+## 65. The two NEXT #163 follow-ups - both answered, one was MY bug
+
+### 65a. 10k UNIT_DIED for ~30 marines - ENGINE BUG, fixed here
+
+`GameUnits.cpp`, the `dyingUnits` loop:
+
+```cpp
+for (Unit ui : dyingUnits) {
+  UnitImpl* u = static_cast<UnitImpl*>(ui);
+  if (u->wasAccessible) {
+    ... found invisible events ...
+    events.push_back(Event::UnitEvade(u));
+    events.push_back(Event::UnitDestroy(u));
+  }                                   // <-- wasAccessible never cleared
+}
+```
+
+A unit stays in `dyingUnits` while its `isAlive` is still true (dying animation),
+so with `wasAccessible` left `true` it pushed `UnitEvade`+`UnitDestroy` **every
+frame** it remained there. The sibling branch in the same function clears the
+flag; this one did not.
+
+Fix: set `u->wasAccessible = false;` after pushing the events, as the
+"not accessible" branch already does.
+
+Expected client-side effect: `UNIT_DIED` rows drop from thousands to one per
+unit, and `UNIT_DESTROY` stops repeating. This is ours; no client change needed.
+
+### 65b. 69k shot-fired vs 17 hit - NOT a bug, log design
+
+`ShotTwin.fired()` rows on **every attack acquisition**, deliberately
+unthrottled (its own comment: "acquisitions always row (exact cadence is the
+point - a throttled shot count cannot tell a 30-frame cycle from a 60-frame
+one)"). `HitTwin.sample()` rows only when HP+shields actually dropped.
+
+A marine re-acquiring its target every frame therefore logs `shot-fired` every
+frame while landing a hit once per cooldown (~15-60 frames). Ratio 69k:17 is
+consistent with `cooldown`-limited hits and frame-rate acquisitions, not with
+missing damage. Recommendation: keep `shot-fired` for cadence analysis but do
+not read it as "attacks"; if a cleaner metric is wanted, log a separate
+`fired-on-cooldown` row (gun cooldown transitioned 0 -> max).
+
+No engine involvement.
+
+### 65c. Verification status of the UNIT_DIED fix
+
+- Code: `u->wasAccessible = false;` is present in the `dyingUnits` branch,
+  mirroring the sibling branch 20 lines above (verified by reading the built
+  function after the change).
+- Live A/B (emit counter, old vs new) was attempted and abandoned: with no
+  client attached nothing dies, so the counter stays at 0 and the run does not
+  exercise the path. A meaningful measurement needs a client that kills units,
+  which is the other model's harness.
+- Expected result on their next 1v1: `UNIT_DIED` rows drop from ~10k to ~one
+  per unit. If they do not, the remaining emitter is elsewhere and the trace
+  comes back here.
+
+This is the honest state: fixed by inspection + sibling-branch reasoning, not
+yet proven by a counter in a live fight.
+
+---
+
+## 66. A1.3 - map triggers: FOUND AND FIXED (two separate bugs)
+
+### 66a. Map triggers were never attached to their players
+
+`bwgame.h`, TRIG -> running_triggers:
+
+```cpp
+for (int i = 0; i != 8; ++i) {
+  if (st.players[i].controller != player_t::controller_occupied) continue;
+  ...
+}
+```
+
+After the UMS remap (`setup_f`: `open -> occupied`, `computer -> computer_game`)
+a map's "Computer" players are `controller_computer_game` (=1). The gate only
+accepted `controller_occupied` (=2), so **every trigger was dropped on every map
+whose featured players are Computer in StarEdit** - which is most 1v1 UMS maps.
+
+Fix: accept both playable states (`occupied` or `computer_game`).
+
+Measured on `1Drag_v_1Zeal.scm` (slots 1-3 = computer_game):
+
+```
+before:   slot 0..7 running triggers: 0 0 0 0 0 0 0 0   -> total 0
+after:    slot 1,2,3 = 5 each                            -> total 15
+```
+
+The map has 36 TRIG records; 5 have any `enabled` byte set (records 28-31, 35),
+so 5 per player is the correct number. The earlier "triggers=6" measurement was
+the Melee.trg count plus nothing - the map triggers were silently absent.
+
+### 66b. Empty triggers were "executed" and killed the game
+
+Records 29 and 31 have **zero conditions and zero actions** but an enabled
+flag. `process_triggers()` treats "no conditions" as "always", calls
+`execute_trigger()`, and sets `any_triggers_executed = true`. That in turn runs
+the victory block, which marks **every active player as defeated** and clears
+their triggers:
+
+```
+first victory_state at frame 311: 0 2 2 2 0 0 0 0
+running_triggers now = 0
+```
+
+So the map "played" but every trigger stopped after 311 frames, and the players
+were marked defeated. A trigger with no actions cannot do anything and must not
+count as "trigger activity".
+
+Fix: in `process_triggers()`, skip triggers that contain no actions at all
+(do not execute, do not set `any_triggers_executed`).
+
+### 66c. Verification
+
+- `1Drag_v_1Zeal.scm`: 15 running triggers after load (5 per playable slot),
+  900 frames without abort.
+- `M&M_v_ZealDrag.scx`: runs 900 frames without abort (its own triggers now
+  attached too).
+- Engine build clean.
+
+Both fixes are in `3rdparty/openbw/openbw/bwgame.h` (harness tree), not
+committed - same as the other engine changes.
+
+### 66d. [CORRECTED] What actually ends the game at frame 312
+
+Section 66b said "empty triggers are executed and kill the game". That fix
+(has_action guard) is correct on its own but is **not** what ends this map.
+Measured with the guard in place: still `victory_state = 2` at frame 312.
+
+The real chain, read from `process_triggers()`:
+
+```cpp
+if (any_triggers_executed) {
+  int winners = 0;
+  for (int p : active_players()) if (player_won(p)) ++winners;
+  if (winners) {                       // <-- one winner means EVERYONE ELSE loses
+    for (int p : active_players())
+      if (ets.victory_state[p] == 0) ets.victory_state[p] = 2;   // defeat
+  }
+}
+```
+
+`player_won(p)` is `victory_state >= 3`, and trigger action 1 sets exactly that.
+So **any** trigger that declares one player victorious instantly marks every
+other active player as defeated - and `if (s && s != 4) running_triggers[i].clear()`
+then wipes their triggers. That is the "map plays but nothing happens" symptom.
+
+On this map only record 35 has an action (type 105, force 2) and 28-31 have
+conditions but no actions. So the wipe is not caused by an empty trigger; it is
+the global win/lose rule firing from *any* declared victory, together with the
+fact that all playable slots are active from frame 0.
+
+Current state after 66a (triggers attached): 5 running triggers per playable
+slot, no abort, and the players are marked defeated at frame 312.
+
+### 66e. NEXT (single item)
+
+Decide the intended rule before touching it, because this changes match
+outcomes: a trigger victory should end the game only for a player whose
+triggers *declared* it, and other players should be defeated only if the map
+says so (action 2), not as a blanket consequence. That is a behaviour change
+for every UMS map, so it needs the matching-maps check (run 3-4 maps and see
+which produce sensible outcomes).
+
+---
+
+## 67. A1.1 - missing trigger conditions 15/16/21/23 implemented
+
+Previously `test_trigger_condition()` handled only 2, 3, 12, 14, 22 (and 4 as a
+placeholder) and aborted with `error("unknown trigger condition %d")` on any
+other type - so maps using Switch/Deaths/Leader/Accumulate could not run.
+
+All four are the same statistic in StarCraft: how many units of a given type a
+player has **lost**. Added:
+
+- `state::unit_deaths[12]` - deaths per player and unit type;
+- `record_unit_death()` called from `kill_unit()`, i.e. the single path every
+  death goes through (combat, trigger kill, self-destruct);
+- `trigger_death_count(player, unit_id)` honouring the StarEdit group ids
+  229 (any), 230 (men), 231 (buildings), 232 (factories) like the other trigger
+  code already does;
+- conditions 15 (leader), 16 (deaths), 21 (accumulate), 23 (current player death
+  count) all compare through the existing `trigger_count_comparison`.
+
+### 67a. Verification (direct, not inferred)
+
+```
+$ /tmp/deaths M&M_v_ZealDrag.scx
+unit type 65 owner 1: deaths 0 -> 1
+slot 1: deaths any=1 men=1 buildings=0
+slot 2: deaths any=0 men=0 buildings=0
+```
+
+A Dragoon killed through `kill_unit()` increments exactly the owner's table, and
+the group ids resolve correctly (Marine/Dragoon = Men, no buildings).
+
+Host test after the change: PASS (handshake, ticking, MatchStart, players).
+
+### 67b. What is NOT verified
+
+The exact StarCraft semantics of condition 15 ("Leader") - whether it compares
+the owner's deaths against the leader's or uses a different table - is
+**assumed** here to be "owner's deaths with the condition's comparator", which is
+the behaviour of the other three and matches how the editor labels them. It has
+not been checked against a map where Leader decides the outcome. A map that
+depends on it should be tested before trusting this.
+
+Switches (condition 4) remain a placeholder returning true; action 105 remains a
+no-op. Those are tracked separately (A1.2).
+
+---
+
+## 68. Four more items closed: A1.2, A3.3, A3.2, C2
+
+### 68a. A1.2 - switches are real state now
+
+Condition 4 used to `return true` (a placeholder I added earlier), so every
+switch-driven map always took the "switch on" branch. Added:
+
+- `state::switches[256]` (SWNM provides the names; both test maps have it);
+- condition 4 reads `switches[c.location]` and is false when out of range;
+- **action 5 (set switch)** implemented: `switches[a.group_n] = a.num_n != 0`.
+  Action 5 was previously unimplemented, so a map could never change a switch
+  anyway.
+
+Action 105 (run AI script at location) stays a no-op on purpose: it needs the
+AIScript interpreter plus the map's AIS/ALST chunks, which this engine does not
+have. Instead of hiding that, every occurrence now increments
+`state::skipped_ai_script_actions`, so a test can distinguish "map used AI
+scripts that were ignored" from "map has no scripts". Implementing AIScript is
+a project of its own and is now tracked as such.
+
+### 68b. A3.3 - map revealers no longer count as "participating"
+
+`Player::unitCountsAll(n)` returned the raw engine count, which includes
+`Special_Map_Revealer`. A slot with 140 revealers and zero warriors therefore
+looked occupied to BWAPI's participating-player test. Revealers now report 0.
+
+### 68c. A3.2 - MELEE on a UMS map fails clearly, and now works
+
+Launching a map that places its own units in MELEE used to abort mid-load with
+`a neutral unit attacked something ... ComputerAI not supported`. Added
+`map_places_units()` (scans the UNIT chunk for any non-revealer owned by 0..7);
+when MELEE is requested for such a map the server logs
+
+```
+bwapi: map places its own units; using USE_MAP_SETTINGS instead of MELEE
+```
+
+and switches the mode. The opaque crash is gone.
+
+### 68d. C2 - one parser instead of inline greps
+
+New `scripts/parse-run.sh`: reads a run directory and prints
+`KILLED:<n|?> LOST:<n|?> TIMES_HIT:<n> FRAMES:<n>` (or tab separated with
+`--fields`). `build-openbw.sh --game` now calls it instead of carrying its own
+copy of the sed/grep logic.
+
+Verified on synthetic and real runs:
+
+```
+with summary:  KILLED:5 LOST:1 TIMES_HIT:1 FRAMES:545
+missing log:   KILLED:? LOST:? TIMES_HIT:1 FRAMES:?     <- "?" never reads as 0
+bad dir:       exit=2
+real run:      KILLED:0 LOST:0 TIMES_HIT:0 FRAMES:0
+```
+
+### 68e. Regression check after all four
+
+Host test: PASS (handshake, ticking, MatchStart, players). Engine build clean.
+
+---
+
+## 69. SRP/OCP pass + behaviour test suite
+
+### 69a. What was found by reviewing our own code
+
+- `trigger_death_count()` did two jobs: decide what counts (group ids) and sum
+  the table. Split into `unit_id_matches_group()` (pure predicate) + the
+  summation. A new StarEdit group is now one `case`, not another branch in a
+  counting loop - **OCP applied**.
+- The empty-trigger guard contained dead code (`if (a.type == 3 && false)`),
+  left from an abandoned idea. Removed.
+- `skipped_ai_script_actions` had a vague comment; it now states that the
+  interpreter is missing and that the counter exists to keep the omission
+  observable.
+
+### 69b. Engine copies had drifted - this was a real defect
+
+All the engine fixes were in the harness tree only; `/sc-ai/OpenBW/openbw`
+(the repository) still had the old trigger code. The new test compiled against
+the repository caught it immediately:
+
+```
+FAIL  TRG-1  map triggers attached to players: 0 running triggers
+```
+
+The repository now has the same trigger fixes (controller gate, switches,
+conditions 15/16/21/23, empty-trigger guard, AI-script counter). Verified by
+the test: 15 running triggers on `1Drag_v_1Zeal`, and it runs on
+`M&M_v_ZealDrag` too.
+
+### 69c. New test (one binary, several features)
+
+`tests/engine_behaviour_test.cpp`, built and run by `tests/run.sh`:
+
+| group | what it proves |
+|---|---|
+| UMS-1 | map units exist and are owned correctly |
+| UMS-2 | map revealers live in their own list, not in the army |
+| TRG-1 | the map's TRIG parsed and attached to playable players |
+| TRG-2 | switch storage toggles per index (state for cond 4 / action 5) |
+| TRG-3 | `kill_unit` increments the owner's death table; group ids partition exactly once |
+| TRG-4 | 300 frames run without aborting (conditions 15/16/21/23 present) |
+| TRG-5 | ignored AI-script actions are counted |
+
+Both directions verified:
+
+```
+$ tests/run.sh --default-maps          -> ALL PASSED (both maps)
+controller gate reverted               -> FAIL TRG-1 "0 running triggers"
+switch write forced to false           -> FAIL TRG-2
+```
+
+Note: the test's first version asserted `men >= buildings`, which failed
+correctly when killing a *building* (men=0, buildings=1). The assertion was
+wrong, not the engine; it now asserts the partition property.
+
+### 69d. Committed
+
+```
+801e238 Triggers: real switches, death conditions, and map-trigger attachment
+```
+
+pushed to `feature/support-ums-maps`.
+
+---
+
+## 70. A1.4 investigation - step 1 done: the first defeat is a MAP-DECLARED one
+
+Per the review: before touching the propagation rule, log who set the first
+`victory_state >= 3` and from which trigger. Done with temporary audit lines
+(`A14:` on stderr) in `process_triggers()` and in actions 1/2.
+
+### 70a. Result: nobody ever wins; the map itself says "Defeat"
+
+```
+A14: frame=312 slot=1 victory_state 0 -> 2 (removed)
+A14: frame=312 slot=2 victory_state 0 -> 2 (removed)
+A14: frame=312 slot=3 victory_state 0 -> 2 (removed)
+A14: ACTION defeat by slot 1 at frame 312 (trigger=..., action=0)
+```
+
+- **zero** `winner_slot` lines -> `winners` was 0 -> the propagation block in
+  13179 never ran; the melee win detector is **not** involved (the review's
+  second possibility is ruled out);
+- the defeat comes from **action 2 (Defeat) of a map trigger**, executed for
+  slots 1-3 at frame 312.
+
+### 70b. Which trigger
+
+Engine view of the map's triggers (`/tmp/dumptrig`):
+
+```
+trig 0: conds=1 acts=1 enabled=18
+   cond type=2 (command) group=18 (force 2 in StarEdit terms) count=18 uid=229
+   act  type=2 (defeat)
+trig 1: conds=1 acts=1
+   cond type=12 (elapsed time) count=300
+   act  type=2 (defeat)
+trig 3: conds=2 acts=1
+   act type=44 (create unit)  extra=65 (Dragoon)
+```
+
+So `1Drag_v_1Zeal.scm` declares, in the map itself:
+
+- "if force 2 has 18 units -> that player is defeated", and
+- "after 300 seconds -> defeated".
+
+Frame 312 is 300 seconds at the trigger tick rate. **The defeat is intended by
+the map author.** The propagation rule is not what ends this game.
+
+### 70c. Consequence for A1.4
+
+The review's hypothesis ("vanilla gives Victory per player, defeat needs an
+explicit action") is **consistent with what this map does**: it uses the explicit
+Defeat action rather than relying on auto-loss. But this map cannot decide the
+question, because it never declares a Victory at all.
+
+What is still unproven is the other half: what happens to the other players when
+one of them gets an explicit Victory. On this map that path is not exercised.
+
+### 70d. What I am NOT doing
+
+Not changing the propagation rule. The audit shows it did not fire here, so any
+change would be unfounded for this case. The remaining decision needs the
+Wine measurement the review proposed (2 slots, one Victory trigger, observe the
+other player), which is on the other side.
+
+### 70e. Next (single item)
+
+Remove the temporary `A14:` audit lines (they are stderr noise) and keep the
+finding documented. Then, if the rule still needs a decision, it can be taken
+against a map that actually declares a Victory.
