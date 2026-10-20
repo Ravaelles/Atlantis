@@ -1064,12 +1064,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   not the kite envelope - deliberately) covers the pursuer instead
   of its nearest (fills the uncommitted gap after FocusFire;
   pursue-validity is NOT focus-validity: lings are covered, focus
-  would never pick them). LANDED 2026-10-20 (`CoverWithdraw` + 2
-  act() insertions, 5 sim tests: corridor selection + duel gate,
-  pass-through with the trigger firing live, cover selection over
-  a nearer ling, live cover fight; suite 1017/1017 fast, strict
-  arch 5/7 unchanged, game jar builds clean). Twins ride the live
-  UMS proof, not this slice.
+  would never pick them). LANDED + TWINS 2026-10-20
+  (`CoverWithdraw` selection results + `FormationTwin`
+  MAKE_WAY/COVER rows at the act() call sites + 10/10 sim.
+  T5a pins cover-over-nearer-ling, T5b rows COVER live, T4b rows
+  MAKE_WAY live, T2b pins the wipe branch deterministically;
+  suite 1018/0 fast, strict arch 5/7 unchanged, game jar builds
+  clean). Live UMS proof waits on the ticking match (#94).
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

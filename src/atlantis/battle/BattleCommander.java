@@ -26,6 +26,7 @@ import atlantis.architecture.CommanderFactory;
 import atlantis.battle.formation.CoverWithdraw;
 import atlantis.battle.formation.FocusFire;
 import atlantis.battle.formation.FormationSlots;
+import atlantis.battle.formation.FormationTwin;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.Kite;
 import atlantis.battle.targeting.StickyTarget;
@@ -183,7 +184,11 @@ public class BattleCommander extends Commander {
             target = FocusFire.sharedTarget(unit, 9);
         }
         if (target == null) {
-            target = CoverWithdraw.coverTarget(unit);
+            CoverWithdraw.Cover cover = CoverWithdraw.coverTarget(unit);
+            if (cover != null) {
+                target = cover.pursuer;
+                FormationTwin.covering(unit, cover.pursuer, cover.escaper);
+            }
         }
         if (target == null) {
             target = atlantis.battle.targeting.ASquadTargeting.useSquadTargetIfPossible(unit);
@@ -224,10 +229,13 @@ public class BattleCommander extends Commander {
             // to 3+ army units so duels stay frozen, cadence-kept like
             // every step (reposition rides, re-issues at most every
             // 10f). No twin this slice - twins ride the live UMS proof.
-            APosition aside = CoverWithdraw.makeWayStep(unit);
+            APosition aside = null;
+            CoverWithdraw.Step makeWay = CoverWithdraw.makeWayStep(unit);
+            if (makeWay != null) aside = makeWay.dest;
             if (aside != null
                 && (lastStep == null || now - lastStep >= CombatTuning.current().getKiteRestepsEveryFrames())
                 && unit.move(aside, Actions.MOVE_AVOID, "ClusterMakeWay")) {
+                FormationTwin.madeWay(unit, makeWay.escaper, aside);
                 lastStepFrame.put(unit.id(), now);
                 lastRepositionFrame.put(unit.id(), now);
                 return;

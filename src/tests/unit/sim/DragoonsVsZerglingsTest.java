@@ -207,6 +207,58 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     }
 
     // =========================================================
+    // T2b: the wipe branch, determined (healthy trio vs few lings).
+    // T2 above stays branch-agnostic on purpose: with live lings it
+    // must withdraw, with dead ones it must have shot. Here there is
+    // nowhere to withdraw to - the trio stands and trades.
+    // =========================================================
+
+    @Test
+    public void healthyTrioWipesPressingLings() {
+        FakeUnit[] dragoons = new FakeUnit[] {
+            woundedDragoon(28, 20, 100),
+            woundedDragoon(29, 21, 100),
+            woundedDragoon(29, 19, 100),
+        };
+        for (FakeUnit dragoon : dragoons) dragoon.cooldown = 0;
+        List<FakeUnit> lings = new ArrayList<>();
+        for (double[] spot : new double[][] { { 34, 20 }, { 34, 21 } }) {
+            FakeUnit ling = fake(AUnitType.Zerg_Zergling, spot[0], spot[1]);
+            ling.setEnemy();
+            lings.add(ling);
+        }
+        SimArena arena = new SimArena(70 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(dragoons, lings.toArray(new FakeUnit[0]), arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 300; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp <= 0) continue;
+                        BattleCommander.act(
+                            dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                    scriptLings(lings, dragoons);
+                });
+            }
+
+            assertTrue(world.aliveEnemies() == 0,
+                "two lings pressing a healthy trio die - the wipe branch");
+            for (FakeUnit dragoon : dragoons) {
+                assertTrue(dragoon.hp > 0, "wipe costs no dragoon here");
+            }
+            assertTrue(world.shotsFired() > 0, "a wipe without shots is a contradiction");
+        }
+        finally {
+            world.close();
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+        }
+    }
+
+    // =========================================================
     // T4a-b + T5a-b: formation coordination (NEXT #162). Wounded
     // first rank withdraws, the line helps: make-way opens the
     // corridor, cover takes the pursuer instead of the nearest.
@@ -226,11 +278,13 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         try {
             atlantis.battle.BattleCommander.clearForTests();
 
-            atlantis.map.position.APosition step =
+            atlantis.battle.formation.CoverWithdraw.Step step =
                 atlantis.battle.formation.CoverWithdraw.makeWayStep(helper);
             assertTrue(step != null,
                 "helper stands on the escape ray: it must step aside");
-            assertTrue(Math.abs(step.y() - helper.position.y()) > 1,
+            assertTrue(step.escaper == escaper,
+                "the step names whose ray it clears");
+            assertTrue(Math.abs(step.dest.y() - helper.position.y()) > 1,
                 "the step is lateral (off the ray), not along it");
 
             assertTrue(atlantis.battle.formation.CoverWithdraw.makeWayStep(third) == null,
@@ -304,6 +358,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
                 "it passes west through its own line, not wedged on it");
             assertTrue(sawMakeWay[0],
                 "the corridor trigger fired live: a holder stood on the escape ray");
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"MAKE_WAY\""),
+                "the live step-aside rows itself for the game proof");
         }
         finally {
             world.close();
@@ -328,9 +384,12 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         try {
             BattleCommander.clearForTests();
 
-            AUnit picked = atlantis.battle.formation.CoverWithdraw.coverTarget(healthy);
-            assertTrue(picked == pursuer,
+            atlantis.battle.formation.CoverWithdraw.Cover cover =
+                atlantis.battle.formation.CoverWithdraw.coverTarget(healthy);
+            assertTrue(cover != null && cover.pursuer == pursuer,
                 "cover names the pursuer chewing the wounded, not the nearer ling");
+            assertTrue(cover.escaper == wounded,
+                "cover names on whose behalf it fires");
         }
         finally {
             world.close();
@@ -371,6 +430,8 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
             assertTrue(wounded.hp > 0, "covered withdrawal keeps the wounded alive");
             assertTrue(hasOrder(ordersOf(healthy), healthy.id(), "attackUnit"),
                 "healthy issues attack orders, not idle watching");
+            assertTrue(atlantis.util.log.EventLog.toJsonLines().contains("\"COVER\""),
+                "the live cover decision rows itself for the game proof");
         }
         finally {
             world.close();

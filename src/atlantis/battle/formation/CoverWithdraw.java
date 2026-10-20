@@ -45,9 +45,10 @@ public final class CoverWithdraw {
     /**
      * Lateral step clearing the escaper's corridor, or null (no withdrawing
      * ally, not blocking, duel-scale cluster, no walkable sidestep - the
-     * caller fights on unchanged).
+     * caller fights on unchanged). Carries the escaper and the threat for
+     * the twin at the call site.
      */
-    public static APosition makeWayStep(AUnit helper) {
+    public static Step makeWayStep(AUnit helper) {
         if (helper == null || !helper.isAlive()) return null;
         if (isWithdrawing(helper)) return null;
         Selection cluster = Select.ourCombatUnits();
@@ -58,9 +59,22 @@ public final class CoverWithdraw {
             if (threat == null) continue;
             if (!blocksCorridor(helper, ally, threat)) continue;
             APosition step = lateralStep(helper, ally, threat);
-            if (step != null) return step;
+            if (step != null) return new Step(step, ally, threat);
         }
         return null;
+    }
+
+    /** A corridor-clearing step: where to go and whose ray it clears. */
+    public static final class Step {
+        public final APosition dest;
+        public final AUnit escaper;
+        public final AUnit threat;
+
+        public Step(APosition dest, AUnit escaper, AUnit threat) {
+            this.dest = dest;
+            this.escaper = escaper;
+            this.threat = threat;
+        }
     }
 
     /**
@@ -72,7 +86,7 @@ public final class CoverWithdraw {
      * our weapon range without being our emergency), when nobody
      * withdraws, or when the pursuer is out of our reach/invalid.
      */
-    public static AUnit coverTarget(AUnit healthy) {
+    public static Cover coverTarget(AUnit healthy) {
         if (healthy == null || !healthy.isAlive()) return null;
         Selection cluster = Select.ourCombatUnits();
         if (cluster == null || !FormationSlots.applies(cluster.count())) return null;
@@ -92,9 +106,20 @@ public final class CoverWithdraw {
             if (pursuer.isABuilding() && !pursuer.isCombatBuilding()) continue;
             if (pursuer.isDeadMan()) continue;
             if (healthy.distTo(pursuer) > healthy.groundWeaponRange()) continue;
-            return pursuer;
+            return new Cover(pursuer, ally);
         }
         return null;
+    }
+
+    /** A covering assignment: which pursuer, on whose behalf. */
+    public static final class Cover {
+        public final AUnit pursuer;
+        public final AUnit escaper;
+
+        public Cover(AUnit pursuer, AUnit escaper) {
+            this.pursuer = pursuer;
+            this.escaper = escaper;
+        }
     }
 
     // =========================================================
