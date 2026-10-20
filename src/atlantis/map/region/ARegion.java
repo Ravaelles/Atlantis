@@ -100,6 +100,23 @@ public class ARegion implements HasPosition {
         );
     }
 
+    /**
+     * Bounding-box size in tiles, or null without map data. The box
+     * overestimates winding regions (peninsulas read wide) - the 8-dir
+     * ray probe, not this number, decides real narrowness.
+     */
+    public double[] boundingBoxTiles() {
+        try {
+            if (area == null) return null;
+            int w = area.getBottomRight().x - area.getTopLeft().x;
+            int h = area.getBottomRight().y - area.getTopLeft().y;
+            if (w <= 0 || h <= 0) return null;
+            return new double[] { w, h };
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     public APosition center() {
         if (center == null) {
             if (area != null && area.getTopLeft().x < 2000000) {

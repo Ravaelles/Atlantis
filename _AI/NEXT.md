@@ -1204,6 +1204,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   corner scoring; enemy-20 avoidance; size-aware clearance; tuner
   wiring. First consumer: `DuelKite.yieldStep` (replaces
   `MoveAway.bestDestination`), second: `ARunningManager`.
+- **#174** 8-direction clearance probe (escape slice 2 of #172): walkable
+  ray marching per unit size, first blocked tile stops the ray. Pure
+  function over a walkability predicate, unit tested.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
