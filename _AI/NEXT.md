@@ -842,6 +842,17 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   ranges in `applyOrRandomize`. Move the values into an injected
   record the tuner mutates (no behavior change, suite + one tuner
   batch as proof), domain classes read but never own it.
+- **#159** Pinch retreat proof on `Drag_v_LingsUpg` (owner 2026-10-20:
+  hurt Dragoons surrounded by 2+ melee inside 2 tiles retreat
+  instead of standing into the pocket; `DragoonPinch*` knobs in the
+  tuner). A/B started 2026-10-20: WITH pinch 18/9 lost, first death
+  frame 97, 197 stepped-aside vs 5 stuck, 282 hits taken; WITHOUT
+  19/10, first death frame 163, 164 vs 11 stuck, 301 hits. Direction
+  right (more yielding, less glue, fewer hits) but N=1 each and the
+  spawn decides first blood on instant-contact maps - no verdict.
+  Proper proof needs the spread-start scenario (StarEdit, armies
+  apart so kiting decides) + bigger N; `scripts/kill-leftovers.sh`
+  before every game, one box one game (cross-attach measured).
 ## Current game state (updated 2026-10-19)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro, owner 2026-10-19): FLEE with

@@ -287,6 +287,12 @@ CLIENT_CWD="$(pwd)"
 rm -f "$CLIENT_CWD/bwapi-data/write/BUILDINGS.json" \
     "$CLIENT_CWD/bwapi-data/write/EVENTS.jsonl" \
     "$CLIENT_CWD/bwapi-data/write/DECISIONS.log"
+# The live out/wine/ copies are per-game outputs too, not an archive:
+# a game that warps nothing must report "missing", never the previous
+# game's ledger (measured 2026-10-20: a UMS duel archived the macro
+# game's BUILDINGS.json). The per-run archive below copies what's here.
+rm -f "$LOG_DIR/WINE_LOG" "$LOG_DIR/WINE_DEBUG" "$LOG_DIR/WINE_DECISIONS" \
+    "$LOG_DIR/EVENTS.jsonl" "$LOG_DIR/BUILDINGS.json"
 
 TEE_OUT=("$CLIENT_LOG")
 TEE_ERR=("$LOG_DIR/WINE_DEBUG")
