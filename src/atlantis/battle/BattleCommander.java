@@ -6,6 +6,7 @@ import atlantis.battle.formation.FocusFire;
 import atlantis.battle.formation.FormationSlots;
 import atlantis.battle.formation.SharedEscape;
 import atlantis.battle.kite.Kite;
+import atlantis.battle.kite.KiteTwin;
 import atlantis.game.A;
 import atlantis.map.position.APosition;
 import atlantis.map.position.HasPosition;
