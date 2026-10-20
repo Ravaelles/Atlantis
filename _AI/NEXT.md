@@ -436,7 +436,16 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   dynamic Pylon cid=63 and BO Pylon cid=64, same tile [79,107] 3 frames
   apart; 64 STARTED and warped, 63 left zero further rows through frame
   7527 (orphan vs silent drop - the new drop twin decides on the next
-  run). Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
+  run). 2026-10-20 answer from the retained TauCross macro: NEITHER
+  orphan NOR silent drop - the [123,26] Gateway WARPED 8:06 (ledger
+  over verdict), and the twin gaps are named instead: no STARTED row
+  for warping cid=96 (builder-path gap), and cid=98/oid=67 CANCELs
+  "Null position" with zero REQUESTED rows anywhere. Mechanism for
+  the second: `ProductionOrder.cancel` -> linked-construction cancel
+  -> CANCEL twin, while REQUESTED fires only post-addConstruction
+  with a site - a siteless linked construction terminates without
+  ever originating. Mint site still open (which setConstruction call
+  links the siteless row); read continues, no blind twin. Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
   should have refused the second pick; why it did not is the next
   measured branch - no blind patch. FE scoping landed the same day
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
@@ -756,7 +765,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   a non-ticking match (players/forces publish on tick). Precise
   ask: extend their handshake probe past BYTE_2_OK to frames +
   MatchStart arrival; the pump must tick the match, not just the
-  handshake. Detail: `docs/openbw-run-regression.md` (theirs). What IS
+  handshake. 2026-10-20 melee E2E (`173536` long, fresh jar both
+  sides): same shape on MELEE - PUBLISHED, Connection successful,
+  zero frame lines, no MatchStart, players NPE pre-MatchStart
+  (units guard held, next layer confirmed), kill at 20 s. Melee
+  played 1209+ frames Oct 19 on this vehicle, so the tick died
+  with the pump change - regression pointer, not a new unknown.
+  Detail: `docs/openbw-run-regression.md` (theirs). What IS
   settled: with a unit but no base the bot idled a whole game
   (Forge FE head, no scouts, no engage, Defeat by map timer), and
   that failure mode is now fixed regardless of slots (baseless
