@@ -40,7 +40,7 @@ public final class ClusterTactic {
         // retreat on a breach is per-unit, below in act().
         // Same for a UMS opening: with no base anywhere, an early retreat
         // just feeds - stand the first 15 seconds and let the fight happen.
-        if (BattleCommander.breachForcesFight() || earlyUmsStandGround()) {
+        if (ClusterBreach.breachForcesFight() || earlyUmsStandGround()) {
             fleeStartedAt = -1;
             return FightOrFlight.Tactic.FIGHT;
         }

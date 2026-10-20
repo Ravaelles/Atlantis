@@ -1,6 +1,7 @@
 package tests.unit;
 
 import atlantis.battle.BattleCommander;
+import atlantis.battle.cluster.ClusterBreach;
 import atlantis.battle.cluster.FightOrFlight;
 import atlantis.map.position.HasPosition;
 import atlantis.units.AUnitType;
@@ -47,7 +48,7 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 26, 22)
         ), () -> {
             assertTrue(
-                BattleCommander.breachForcesFight(),
+                ClusterBreach.breachForcesFight(),
                 "two enemy workers at the base force FIGHT before any evaluation");
         });
     }
@@ -61,7 +62,7 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Probe, 60, 21)
         ), () -> {
             assertFalse(
-                BattleCommander.breachForcesFight(),
+                ClusterBreach.breachForcesFight(),
                 "a far scout is not a breach - the evaluator decides");
         });
     }
@@ -152,7 +153,7 @@ public class BreachMeansFightTest extends AbstractTestWithWorld {
             fake(AUnitType.Protoss_Nexus, 20, 20),
             fake(AUnitType.Protoss_Zealot, 22, 21)
         ), fakeEnemies(), () -> {
-            HasPosition rally = BattleCommander.breachRallyPoint();
+            HasPosition rally = ClusterBreach.breachRallyPoint();
             assertNotNull(rally, "baseless or chokeless maps fall back, never null");
         });
     }
