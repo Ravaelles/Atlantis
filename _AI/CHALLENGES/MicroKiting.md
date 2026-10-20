@@ -48,11 +48,10 @@ discipline (we issue every frame), stuck detection + unsticking
 
 - `KITE` (`stepped-aside` throttled 1/30f per unit, `stuck-no-step`
   always): stepped vs stuck ratio decides cornered-vs-open at a glance.
-- Still missing (NEXT #152): HIT twin (HP drop + range + cooldown +
-  moving at the moment of damage - answers "why did this hit land"),
-  SHOT twin (attack started - answers "did we stop shooting", i.e.
-  the animation-guard latch question), goal-source twin for V2 Pylon
-  pairs (which demand re-fired: BO row vs supply goal).
+- `HIT` (LANDED since: lost HP+shields, threat dist, cooldown,
+  moving, positions per hit) and `SHOT` (LANDED since: fired vs
+  holding shot): the per-cycle fight-timeline and per-game digest
+  read off them.
 
 ## Numbers from the proof games (all Wine, same map)
 
@@ -62,12 +61,26 @@ discipline (we issue every frame), stuck detection + unsticking
   escapable) - the fall-back attack trades while cornered.
 - Post compass + animation guard: 1/0 WIN, 14 stepped vs 3 stuck,
   20+ hits landed. Kiting works; corners still cost steps.
+- Post baseless-ATTACK march + pinch retreat (owner 2026-10-20):
+  1/0 WIN in 499 frames, 34 stepped vs 9 stuck, shot cadence median
+  33 (engine latency + cooldown, Stardust-shaped). Pinch A/B on
+  `Drag_v_LingsUpg` (same day): WITH pinch 18/9 lost, first death
+  frame 97, 197 vs 5 stepped:stuck; WITHOUT 19/10, first death 163,
+  164 vs 11. Direction right (more yielding, less glue), N=1 each
+  and first blood is spawn luck - no verdict; needs the spread
+  map + bigger N.
 
 ## Open traps
 
 - FLEE on a baseless map has no anchor: any future tactic must fall
   through to fight when its move target is null (same DoNothing
-  class of bug, one `if` away).
+  class of bug, one `if` away). CLOSED 2026-10-20 two ways: the
+  ClusterFlee ban (no retreat without a base) plus baseless ATTACK
+  marching from the army center - proved WIN 1/0 in 499 frames.
+- OPEN: strict hold-fire while pinched (don't shoot at all with 3+
+  melee inside 2 tiles, vs today's shoot-while-retreating). Owner
+  direction pending - a wrong call here means zero DPS death, so no
+  blind patch; the tuner batch + FightTrace table decide it.
 - `MoveAway` callers assume a step happens; with the compass a
   returned `false` now truly means "no walkable direction" - treat
   it as fight-in-place, never as wait.
@@ -164,7 +177,10 @@ dist 1.5, cd 25: Cd = 2.97 → desired = min(4, 4 + (2.97+2.5)/2)
 Adopted: continuous desired distance replacing the fixed 2.0-tile
 step (capped at KITE_STEP_TILES, gated by the 0.5-tile step-gain
 floor); melee-closer term (-1 tile when outranging by 2+);
-latency-relative framing (KITE_LATENCY_FRAMES = 4, consistent with
+latency-relative framing (reads the live engine latency per
+decision since #154 - the `KITE_LATENCY_FRAMES = 4` interim is
+gone; Wine single-player reports ~2, so the worked examples below,
+which assume latency+2 = 4, still read correctly, consistent with
 the existing resteps = latency+6 cadence). Kept untouched: margin
 gate (when to kite at all), trade-shot, animation guard,
 frozen-STOP, ride, glide approach, attack-only-on-new/overdue-target.
@@ -181,6 +197,13 @@ adopted: no reference bot does it, enemy targeting is not steerable
 from our side - the wounded-back ordering is the whole mechanism.
 Withdrawn 2026-10-20: a Zealot front-line rule (no kite on cd>=7
 with Dragoons behind) - falsified before commit, no game spent.
+Pinch retreat (owner 2026-10-20, separate from the port): 2+ melee
+inside 2 tiles on a sub-80-hp Dragoon yields ground instead of
+standing into the pocket (overrides surrounded-stand, which only
+trades when escape already failed). Knobs live in CombatTuning and
+in the tuner (`DragoonPinch*`); A/B on `Drag_v_LingsUpg` inconclusive
+at N=1 (spawn decides first blood) - needs the spread-start
+scenario + bigger N (NEXT #159).
 Range-0 units compute desired distance 0, so the kite step length is
 identically 0 past point blank: Zealots never kite-step, with or
 without Dragoons behind (the cd>=7 exception changes nothing;

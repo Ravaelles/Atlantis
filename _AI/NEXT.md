@@ -232,9 +232,11 @@ verified by worktree diff this session, zero regressions from it;
 counts rot, re-measure before quoting). 2026-10-20: unit 994/994
 (BuildGate registry + order test, EarlierReserve divergence pin,
 SelectionViews slices 7-8, AUnitHealth slice 1, CombatTuning move +
-holder tests, Core gate oldest-wins fix; acceptance still 17 reds
-byte-identical to the 2026-10-19 baseline worktree each time -
-re-verified by worktree diff three times this session).
+holder tests, Core gate oldest-wins fix, FightTrace + table test,
+PylonNeedsRoomAround 4/4, BaselessAttackExplores 2/2; 2026-10-21:
+unit 991/991 (new tests minus the 16 OpenBWLauncherTest moved to
+the full tier by tag; acceptance still 17 reds byte-identical to
+the baseline every run - re-verified by worktree diff).
 Architecture advisory
 9/11, strict gate 5/7 (was recorded 10/11 - record was stale): two
 rules fire, both pre-existing unfrozen edges, neither fixed here
@@ -681,18 +683,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   PASS 5/2 on the rebuilt engine) + the bot-side 0/0/0 verdict
   for vacuous games. Engine C++ stays owner territory, but nothing
   here needs it.
-  2026-10-20, second reading: the slot story is unnecessary. The
-  12:59 UMS log shows our Dragoon=1 and zero buildings warped -
-  the bot HAD its unit and stood still a whole game (Forge FE head,
-  no scouts, no engage, Defeat by map timer). The anchor had no
-  reference without a base (null), so the no-target branch had
-  nowhere to march. Fixed the same day: baseless ATTACK anchors on
-  the army's own center toward the nearest unexplored start
-  (`ClusterAnchor`, pinned stub-side); proved live on Wine
-  (`1Drag_v_1Zeal`, WIN 1/0 in 499 frames, 34 stepped-aside vs 9
-  stuck, cadence 33). Default unknown-matchup BO flipped to
-  Zealot into Goon the same day (Forge FE armed an economy opener
-  on a duel map).
+  2026-10-20, second reading: the slot story is UNPROVEN either
+  way, not refuted. Mixed evidence: the 12:59 UMS log shows our
+  Dragoon=1 with zero buildings warped (preplaced unit, bot HAS a
+  slot), while the 2026-10-19 run on the same map had no units at
+  all - assignment varies in a way no log explains yet. What IS
+  settled: with a unit but no base the bot idled a whole game
+  (Forge FE head, no scouts, no engage, Defeat by map timer), and
+  that failure mode is now fixed regardless of slots (baseless
+  ATTACK marches from the army center; proved WIN 1/0 in 499
+  frames on Wine, 34 stepped-aside vs 9 stuck, cadence 33).
+  Default unknown-matchup BO flipped to Zealot into Goon the same
+  day (Forge FE armed an economy opener on a duel map).
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
@@ -890,15 +892,26 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Proper proof needs the spread-start scenario (StarEdit, armies
   apart so kiting decides) + bigger N; `scripts/kill-leftovers.sh`
   before every game, one box one game (cross-attach measured).
-## Current game state (updated 2026-10-19)
+## Current game state (updated 2026-10-21)
 
-- Wine `1Drag_v_1Zeal.scm` (UMS micro, owner 2026-10-19): FLEE with
-  null anchor fell through to fight (was: DoNothing death); kite rule
-  (3.5 tiles + cooldown>=10, Dragoon-only) + no-interrupt-during-attack
-  + lateral compass steps + KITE twin landed. Final proof game: 1/0
-  WIN, 14 stepped-aside vs 3 stuck (was 9 vs 106 pre-compass).
-  Remaining: wall-aware pathing + unstuck tracking + HIT/SHOT twins
-  (#152).
+- Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
+  from the army center (was: idle to the wall kill); pinch retreat
+  (<80 hp + 2+ melee in 2 tiles) yields instead of standing into
+  the pocket; tuner mutates all CombatTuning knobs incl. pinch;
+  default unknown-matchup BO is Zealot into Goon (was Forge FE).
+  Latest duel: 1/0 WIN in 499 frames, 34 stepped-aside vs 9 stuck,
+  shot cadence median 33. Pinch A/B on `Drag_v_LingsUpg`: WITH
+  18/9 lost / first death f97 / 197 vs 5 stepped:stuck; WITHOUT
+  19/10 / first death f163 / 164 vs 11 - direction right, N=1 each,
+  spawn decides first blood, no verdict (needs spread-start map +
+  bigger N, NEXT #159). Tuner batch: 10/10 wins (NEXT #152).
+- OpenBW UMS (`M&M_v_ZealDrag`): PASS 5/2 KILLED/LOST on the rebuilt
+  engine - the working OpenBW proof vehicle. `1Drag_v_1Zeal` seats
+  the bot in a unit-less human slot (verified slot-pick code);
+  whether the enemy Zealot even spawns there is unproven either way
+  (mixed evidence: bot got a preplaced Dragoon on 12:59, nothing on
+  10-19). Wine stays the duel vehicle; OpenBW hosting is flaky
+  run to run (12:59 played 1209 frames, 13:13 never published).
 - OpenBW `TauCross` (`113933` long, FE forced reverted probe #2,
   12493f/8:44, exit 143 wall-cap - inconclusive as verdict, rich as
   data): FE OPENS (Forge 1:25, Core, 45 warps, Dragoons 10) - the

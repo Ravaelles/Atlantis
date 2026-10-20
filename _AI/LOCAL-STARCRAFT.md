@@ -152,6 +152,13 @@ values reach `user.reg` only when wineserver flushes.
   and forwards through `out/wine/keys.txt` (KeyRelay). New shortcuts go in
   `AKeyboard.dispatchKeyCode`, the single entry both feed. Detail:
   `_AI/CHALLENGES/Keyboard.md`.
+- **Two games on one box cross-attach and mutually kill** (measured
+  2026-10-20: a client joined another live game and read its units as
+  ours). One game at a time, period (OpenBW counts too). Before any
+  launch: `bash scripts/kill-leftovers.sh` (pkill -x only, never -f -
+  a `-f` pattern matches the calling shell's own command line, so the
+  shell SIGKILLs itself reading as a hang) and check no `latest`
+  symlink is fresher than your start.
 - **Map names need exact paths**: `--map=<name>` in a subfolder never
   starts the game; `ActiveMap.activeMapPath()` resolves bare names under
   `maps/ums` and `maps/sscai` first.

@@ -107,10 +107,20 @@ attempt does not repeat the search.
   `BWData.cpp:446` non-melee keeps `setup_info` at 0/0/0 →
   `bwgame.h:21806` `use_map_settings=true` → THG2/UNIT pre-placed
   units created, no `create_starting_units`, TRIG chunk read).
-  1Drag fails map-specifically: it needs trigger condition 4
-  (`Accumulate`), which OpenBW does not implement (supported: 2
-  command, 3 bring, 12 elapsed time, 14 opponents, 22 always;
-  `bwgame.h:18879-18902`), so its scripted setup never fires.
+  CORRECTION 2026-10-21: the trigger-4 story is wrong - the current
+  engine tolerates condition 4 explicitly (`bwgame.h` switch case:
+  "switches are not simulated; treated as enabled") and the smoke
+  run proves both duel units spawn (109 created: 1 Dragoon + 1 Zealot).
+  The "bot got nothing" runs and the "bot got a dragoon but idled"
+  runs coexist unexplained: slot assignment on UMS varies in ways no
+  log captures yet (verified code only: first EitherPreferHuman slot
+  wins, ENEMY_RACE overwrites the rest, closeSlot only flips the
+  controller flag and deletes nothing). Separately fixed regardless
+  of slots: baseless ATTACK had a null anchor (idle whole game),
+  now marches from the army center - proved WIN 1/0 in 499 frames
+  on Wine. OpenBW-side proof still waits on deterministic hosting
+  plus a quiet box; the slot layout itself was never dumped (needs
+  a CHK parser or an in-game unit census, neither exists yet).
   UMS-on-OpenBW verdict is therefore per-map, not blanket:
   pre-placed units DO reach the bot when the map has them as units
   (8Drag datum above); trigger-built setups need engine trigger
