@@ -71,30 +71,15 @@ def main(run_dir):
     if frames:
         print("frames: %d-%d (%.1f game-min)" % (min(frames), max(frames), (max(frames) - min(frames)) / 1440.0))
 
-    # --- per-unit table ---
-    traces = defaultdict(list)
-    deaths = {}
-    for r in rows:
-        k = r.get("key", "")
-        if k == "UNIT_TRACE":
-            traces[r.get("unit")].append(r)
-        elif k == "UNIT_DIED":
-            deaths[r.get("unit")] = r
-    if traces or deaths:
-        print("id   type              alive  died   min_hp  avg_dist  killer")
-        for uid in sorted(set(list(traces) + list(deaths))):
-            rs = sorted(traces.get(uid, []), key=lambda r: r.get("frame", 0))
-            d = deaths.get(uid, {})
-            hps = [r.get("hp", 0) + r.get("shields", 0) for r in rs]
-            dists = [r.get("dist", -1) / 10.0 for r in rs if r.get("dist", -1) >= 0]
-            typ = (rs[0].get("type", "?") if rs else d.get("type", "?"))
-            print("%-4s %-17s %-6s %-6s %-7s %-9s %s" % (
-                uid, typ,
-                rs[0].get("frame", "?") if rs else "?",
-                d.get("frame", "alive") if uid in deaths else "alive",
-                min(hps) if hps else "?",
-                round(sum(dists) / len(dists), 2) if dists else "?",
-                d.get("killer", "-")))
+    # --- per-unit table (shared with fight-units.py) ---
+    import importlib.util
+    _spec = importlib.util.spec_from_file_location(
+        "fight_units",
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "fight-units.py"))
+    _mod = importlib.util.module_from_spec(_spec)
+    _spec.loader.exec_module(_mod)
+    for line in _mod.unit_table(rows, with_killer=True):
+        print(line)
 
     # --- gates and twins ---
     refused = Counter()

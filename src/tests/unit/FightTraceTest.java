@@ -107,6 +107,7 @@ public class FightTraceTest extends WorldStubForTests {
             assertTrue(rows.contains("\"key\":\"UNIT_DIED\""), "got: " + rows);
             assertTrue(rows.contains("\"dist\":"), "nearest-enemy distance at death: " + rows);
             assertTrue(rows.contains("\"killer\":"), "suspect id at death: " + rows);
+        assertTrue(rows.contains("\"killerType\":"), "suspect type at death: " + rows);
         });
     }
 }

@@ -51,6 +51,7 @@ public final class FightTrace {
             .param("unit", unit.id())
             .param("type", unit.type().name())
             .param("killer", nearest == null ? -1 : nearest.id())
+            .param("killerType", nearest == null ? "-" : nearest.type().name())
             .param("dist", nearest == null ? -1 : (int) (unit.distTo(nearest) * 10))
             .param("ux", unit.x() / 32)
             .param("uy", unit.y() / 32)
