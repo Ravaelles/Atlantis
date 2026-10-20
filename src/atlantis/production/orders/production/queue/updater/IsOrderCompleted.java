@@ -2,7 +2,6 @@ package atlantis.production.orders.production.queue.updater;
 
 import atlantis.information.tech.ATech;
 import atlantis.production.constructions.Construction;
-import atlantis.production.constructions.ConstructionOrderStatus;
 import atlantis.production.orders.production.queue.Queue;
 import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.units.AUnitType;
@@ -73,7 +72,7 @@ public class IsOrderCompleted {
      * order tracks no specific future building, so existence decides.
      */
     private static boolean isConstructionActive(Construction construction) {
-        if (construction.status() == ConstructionOrderStatus.FINISHED) return false;
+        if (construction.status().isTerminal()) return false;
         // Nobody works on it: dead, missing, or never-assigned builder. A
         // finished building elsewhere then satisfies the row by existence,
         // so built rows leave the next-orders list (owner 2026-10-14).

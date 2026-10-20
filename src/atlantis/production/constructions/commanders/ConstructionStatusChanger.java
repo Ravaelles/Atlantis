@@ -391,7 +391,7 @@ public class ConstructionStatusChanger extends Commander {
      * not a duplicate) rather than through a game.
      */
     public static boolean shouldProximityFinish(Construction construction) {
-        if (construction.status() == ConstructionOrderStatus.FINISHED) return false;
+        if (construction.status().isTerminal()) return false;
         // Dead site, not a waiting one: the same finished building on the
         // exact same tiles means this demand is already standing (measured
         // Wine: own warped Core on its tiles, canBuild000=false, builder
