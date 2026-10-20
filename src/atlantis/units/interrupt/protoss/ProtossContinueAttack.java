@@ -4,7 +4,6 @@ import atlantis.architecture.Manager;
 import atlantis.decisions.Decision;
 import atlantis.units.AUnit;
 import atlantis.units.actions.Actions;
-import atlantis.units.interrupt.UnitAttackWaitFrames;
 import atlantis.util.We;
 
 import static atlantis.units.actions.Actions.HOLD_TO_SHOOT;
@@ -105,8 +104,9 @@ public class ProtossContinueAttack extends Manager {
 
         // =========================================================
 
-        if (UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation(unit)) return t("StartedAttackAnimation");
-
+        // UnitAttackWaitFrames.unitAlreadyStartedAttackAnimation deleted
+        // with the table (#154): it returned false unconditionally, so this
+        // branch never fired - the live rule is cooldown <= latency + 2.
         if (unit.isStartingAttack()) return t("IsStartingAttack");
 //        System.out.println(A.now() + " / " + unit.cooldown() + " / AF=" + unit.isAttackFrame());
         if (unit.isAttackFrame()) return t("IsAttackFrame");

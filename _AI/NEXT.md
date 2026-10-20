@@ -531,6 +531,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   day: two 1v1 duels, WIN 1/0 both, shot cadence median 33 frames
   (~30f cooldown + latency, intact), movement 37:18 and 31:3
   stepped-aside vs stuck-no-step, bot's own counter 14 hits duel 1.
+  2026-10-21: audit ended in deletion as predicted - the whole
+  `UnitAttackWaitFrames` table is gone (zero callers for
+  `waitedLongEnoughForStartedAttack` / `AUnit.attackWaitFrames`;
+  the one live caller read a method returning false unconditionally,
+  so its branch never fired - removed with a comment, zero behavior
+  change, suite 991/991 + arch 5/7 unchanged). The live rule stays
+  `cooldown <= latency(unit) + 2`, read per decision.
   Stub-pin the rule, then prove shot cadence on the Wine
   1v1 duel (SHOT twin already carries fired-vs-holding). Details:
   `_AI/CHALLENGES/MicroKiting.md` ("Stardust reference").
