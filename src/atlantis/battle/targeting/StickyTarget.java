@@ -22,12 +22,27 @@ public final class StickyTarget {
     private StickyTarget() {
     }
 
+    private static final java.util.Map<Integer, Integer> lastSeenVisible = new java.util.HashMap<>();
+
+    /** Frames a vanished target is still held (fog flicker, not loss). */
+    public static final int UNSEEN_GRACE_FRAMES = 48;
+
+    public static void clearForTests() {
+        lastSeenVisible.clear();
+    }
+
     public static AUnit currentTarget(AUnit unit) {
         if (unit == null) return null;
         AUnit current = unit.target();
         if (current == null || !current.isAlive()) return null;
         if (!unit.hasWeaponToAttackThisUnit(current)) return null;
         if (unit.distTo(current) > unit.groundWeaponRange() + CombatTuning.current().getKiteStickyChaseTiles()) return null;
+        if (!current.isVisibleUnitOnMap()) {
+            Integer seen = lastSeenVisible.get(current.id());
+            if (seen == null || atlantis.game.A.now() - seen > UNSEEN_GRACE_FRAMES) return null;
+            return current;
+        }
+        lastSeenVisible.put(current.id(), atlantis.game.A.now());
         return current;
     }
 }

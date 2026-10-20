@@ -12,6 +12,7 @@ import atlantis.battle.strategy.BattleStrategy;
 import atlantis.battle.strategy.ChokeStandoff;
 import atlantis.battle.strategy.SquadScout;
 import atlantis.battle.targeting.AcquireTarget;
+import atlantis.battle.targeting.StickyTarget;
 
 import atlantis.battle.cluster.Missions;
 
@@ -184,6 +185,7 @@ public class BattleCommander extends Commander {
         SharedEscape.clearForTests();
         FightTrace.clearForTests();
         FightTarget.clearForTests();
+        StickyTarget.clearForTests();
     }
 
 }

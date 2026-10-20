@@ -839,6 +839,86 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    // =========================================================
+    // T-ghost: an engaged target that goes invisible and stays that way
+    // stops pinning the frame (NEXT #163 follow-up, live 1Drag: 9 min of
+    // shot-fired at an unhittable ghost, zero damage both sides). Grace
+    // covers fog flicker; a stale ghost is dropped, and the hunt takes
+    // over when the last contact is behind the squad envelope.
+    // =========================================================
+
+    @Test
+    public void staleInvisibleTargetIsDroppedForHunt() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit ling = fake(AUnitType.Zerg_Zergling, 32, 20);
+        ling.setEnemy();
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(new FakeUnit[] { dragoon }, new FakeUnit[] { ling }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            // Phase 1: visible fight, snapshot forms.
+            for (int i = 0; i < 5; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(ling.hp > 0, "setup: quarry survives contact");
+
+            // Phase 2: contact lost AND out of sight (fog, not death) - but
+            // still in range, so only visibility decides.
+            world.teleport(dragoon, APosition.create(52, 20));
+            world.teleport(ling, APosition.create(55, 20));
+            ling.isVisibleUnitOnMap = false;
+            dragoon.lastCommand = "Stop";
+            dragoon.targetPosition = null;
+            ordersOf(dragoon).clear();
+            for (int i = 0; i < 10; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == ling,
+                "fog flicker inside the grace window keeps the commitment");
+            for (int i = 0; i < 60; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == null,
+                "a long-unseen target in range still drops (visibility, not distance)");
+            // Phase 3: far away and long unseen - the ghost drops, the hunt takes over.
+            world.teleport(dragoon, APosition.create(15, 20));
+            dragoon.lastCommand = "Stop";
+            dragoon.targetPosition = null;
+            ordersOf(dragoon).clear();
+            for (int i = 0; i < 120; i++) {
+                world.tick(() -> {
+                    if (dragoon.hp > 0) {
+                        BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                    }
+                });
+            }
+            assertTrue(atlantis.battle.targeting.StickyTarget.currentTarget(dragoon) == null,
+                "a stale ghost stops pinning the frame");
+            assertTrue(hasOrder(ordersOf(dragoon), dragoon.id(), "move"),
+                "dropped ghost hands over to the hunt: " + ordersOf(dragoon));
+            assertTrue(dragoon.distTo(APosition.create(32, 20)) < 5 * TILE,
+                "marching the last contact, not shooting a ghost: " + dragoon.position);
+        }
+        finally {
+            world.close();
+        }
+    }
+
     private static FakeUnit woundedDragoon(double tx, double ty, int hp) {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, tx, ty);
         dragoon.hp = hp;

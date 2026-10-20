@@ -60,10 +60,12 @@ public final class FightTarget {
 
     public static void fight(AUnit unit, AUnit target, BattleStrategy strategy) {
         // Snapshot the contact point while it is visible: once sight is
-        // lost the enemy position reads null, so the hunt has nothing to
-        // march to (1Drag_v_1Zeal sat 9 min for exactly this - the squad
-        // remembered the target, its position did not).
-        if (target.position() != null) lastContactPos.put(unit.id(), target.position());
+        // lost the enemy position reads null (or goes stale), so the hunt
+        // has nothing to march to (1Drag_v_1Zeal sat 9 min for exactly
+        // this - the squad remembered the target, its position did not).
+        // Only visible contacts refresh it: an invisible "fight" must not
+        // drag the last-known point onto a ghost.
+        if (target.isVisibleUnitOnMap() && target.position() != null) lastContactPos.put(unit.id(), target.position());
         if (!target.isVisibleUnitOnMap()) {
             // Fighting an invisible target: the order cannot land (measured
             // 1Drag_v_1Zeal: 9 min of shot-fired with zero damage while
