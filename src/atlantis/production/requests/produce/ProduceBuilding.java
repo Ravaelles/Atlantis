@@ -245,7 +245,7 @@ public class ProduceBuilding {
         String path = "new";
         if (order != null && order.construction() != null) {
             prev = "cid" + order.construction().id() + ":" + order.construction().status();
-            if (order.construction().status() == ConstructionOrderStatus.PREPARING) path = "adopt";
+            if (order.construction().status().isWaiting()) path = "adopt";
         }
         return demandContext(line, free, unfinished, prev, path);
     }
@@ -315,7 +315,7 @@ public class ProduceBuilding {
      */
     private static boolean adoptPreparedSite(ProductionOrder order) {
         Construction prepared = order.construction();
-        if (prepared == null || prepared.status() != ConstructionOrderStatus.PREPARING) return false;
+        if (prepared == null || !prepared.status().isWaiting()) return false;
 
         // Owner 2026-10-17 (NEXT #150): a site picked early can be stale by
         // adoption time - a sibling may have started warping onto it after

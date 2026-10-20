@@ -24,8 +24,7 @@ public class ProductionOrderHandler extends Commander {
 
     private static boolean isPreparing(ProductionOrder order) {
         return order.construction() != null
-            && order.construction().status()
-                == atlantis.production.constructions.ConstructionOrderStatus.PREPARING;
+            && order.construction().status().isWaiting();
     }
 
     @Override

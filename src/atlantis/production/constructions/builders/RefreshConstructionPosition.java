@@ -31,7 +31,7 @@ public class RefreshConstructionPosition {
         // for a traveling builder whose target went bad - with no builder
         // dispatched yet there is nothing to save, only churn to make.
         // Adoption re-validates at issue time anyway.
-        if (construction.status() == ConstructionOrderStatus.PREPARING) {
+        if (construction.status().isWaiting()) {
             return construction.buildPosition();
         }
 

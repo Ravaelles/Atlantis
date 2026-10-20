@@ -146,7 +146,7 @@ public class PrepareConstructionSite {
      */
     public static void dropOrphanedPreparing() {
         for (Construction construction : ConstructionRequests.all()) {
-            if (construction.status() != ConstructionOrderStatus.PREPARING) {
+            if (!construction.status().isWaiting()) {
                 dropBuilderlessNotStarted(construction);
                 continue;
             }

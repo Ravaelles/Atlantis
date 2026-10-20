@@ -83,6 +83,7 @@ public class PositionFulfillsAllConditions {
         if (We.protoss()) {
             if (ProtossForbiddenByStreetGrid.isForbiddenByStreetGrid(builder, building, position)) return failed();
             if (TooCloseToOtherPylons.isTooCloseToOtherPylons(builder, building, position)) return failed();
+            if (PylonNeedsRoomAround.isTooTight(builder, building, position)) return failed();
             if (PylonTooFarFromBaseEarly.isTooFar(builder, building, position)) return failed();
             if (ProtossTooCloseToMapBoundaries.isTooClose(building, position)) return failed();
             if (ProtossTooCloseToOtherBuildings.isTooClose(builder, building, position)) return failed();
