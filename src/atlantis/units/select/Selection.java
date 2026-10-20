@@ -567,8 +567,11 @@ public class Selection extends BaseSelection {
 
 
     public Selection repairing() {
+        // Fixed 2026-10-21 (NEXT #186): this removed the repairing units
+        // instead of keeping them - i.e. it was notRepairing under a
+        // different name. Zero callers, so no live behavior changes.
         return cloneByRemovingIf(
-            (unit -> unit.isRepairing() || RepairAssignments.isRepairerOfAnyKind(unit)), "repairing"
+            unit -> !unit.isRepairing() && !RepairAssignments.isRepairerOfAnyKind(unit), "repairing"
         );
     }
 
@@ -818,10 +821,7 @@ public class Selection extends BaseSelection {
     }
 
     public double distToNearest(HasPosition position) {
-        AUnit nearest = nearestTo(position);
-        if (nearest == null) return 9999;
-
-        return nearest.distTo(position);
+        return SelectionSorting.distToNearest(this, position);
     }
 
     public AUnit groundNearestTo(HasPosition position) {
@@ -833,15 +833,11 @@ public class Selection extends BaseSelection {
     }
 
     public double nearestToDist(HasPosition position) {
-        AUnit nearest = nearestTo(position);
-        if (nearest == null) return 9999;
-
-        return nearest.distTo(position);
+        return SelectionSorting.nearestToDist(this, position);
     }
 
     public boolean nearestToDistLess(HasPosition position, double maxDist) {
-        AUnit nearest = nearestTo(position);
-        return nearest != null && nearest.distTo(position) <= maxDist;
+        return SelectionSorting.nearestToDistLess(this, position, maxDist);
     }
 
     public boolean nearestToDistMore(HasPosition position, double maxDist) {

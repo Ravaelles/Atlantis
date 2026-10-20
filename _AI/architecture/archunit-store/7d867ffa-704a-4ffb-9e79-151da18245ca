@@ -84,8 +84,6 @@ Method <atlantis.units.select.Have.existingOrPlannedOrInQueue(atlantis.units.AUn
 Method <atlantis.units.select.Have.existingOrPlannedOrInQueue(atlantis.units.AUnitType, atlantis.map.position.HasPosition, double)> calls method <atlantis.production.orders.production.queue.Queue.haveAmongNextOrders(atlantis.units.AUnitType, int)> in (Have.java:67)
 Method <atlantis.units.select.Have.existingUnfinishedOrPlanned(atlantis.units.AUnitType)> calls method <atlantis.production.constructions.ConstructionRequests.notStartedOfType(atlantis.units.AUnitType)> in (Have.java:27)
 Method <atlantis.units.select.Selection.farFromAntiAirBuildings(double)> calls method <atlantis.information.enemy.EnemyUnits.discovered()> in (Selection.java:1195)
-Method <atlantis.units.select.Selection.notRepairing()> calls method <atlantis.terran.repair.RepairAssignments.isRepairerOfAnyKind(atlantis.units.AUnit)> in (Selection.java:934)
-Method <atlantis.units.select.Selection.repairing()> calls method <atlantis.terran.repair.RepairAssignments.isRepairerOfAnyKind(atlantis.units.AUnit)> in (Selection.java:940)
 Method <atlantis.units.special.SpecialCommander.subcommanders()> references constructor <atlantis.information.decisions.ForceEarlyGGOnlyLocally.<init>()> in (SpecialCommander.java:16)
 Method <atlantis.units.special.SpecialCommander.subcommanders()> references constructor <atlantis.information.decisions.ForceExitLocallyAfterSomeTime.<init>()> in (SpecialCommander.java:16)
 Method <atlantis.units.special.SpecialCommander.subcommanders()> references constructor <atlantis.information.decisions.GG.<init>()> in (SpecialCommander.java:16)
