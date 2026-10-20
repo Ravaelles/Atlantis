@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tests.unit.AbstractTestWithUnits.fake;
@@ -90,6 +91,32 @@ public class FightTraceTest extends WorldStubForTests {
 
             assertFalse(EventLog.toJsonLines().contains("\"key\":\"UNIT_TRACE\""),
                 "gathering probes are noise, not formation");
+        });
+    }
+
+    @Test
+    public void deathRowsOncePerUnit() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 33, 20);
+
+        world(5, fakeOurs(fake(AUnitType.Protoss_Nexus, 20, 20), dragoon), fakeEnemies(zealot), () -> {
+            if (atlantis.game.A.now() != 3) return;
+
+            // The destroy listener can fire repeatedly for one corpse
+            // (live: 2 marines produced 6841 UNIT_DIED rows) - the twin
+            // must stay one row per unit, or the digest reads thousands.
+            FightTrace.died(dragoon);
+            FightTrace.died(dragoon);
+            FightTrace.died(dragoon);
+
+            String rows = EventLog.toJsonLines();
+            int count = 0;
+            int idx = 0;
+            while ((idx = rows.indexOf("\"key\":\"UNIT_DIED\"", idx)) >= 0) {
+                count++;
+                idx += 11;
+            }
+            assertEquals(1, count, "one corpse, one row: " + rows);
         });
     }
 

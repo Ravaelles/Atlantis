@@ -44,15 +44,29 @@ public final class FightTrace {
             .log(now, A.minSec());
     }
 
+    private static final java.util.Set<Integer> reportedDeaths = new java.util.HashSet<>();
+
     public static void died(AUnit unit) {
         if (unit == null) return;
+        // One row per unit per game: the destroy listener can fire repeatedly
+        // for the same corpse (measured live: 2 marines produced 6841 rows),
+        // and the digest script joins on the unit id - duplicates read as
+        // thousands of deaths. Same id set as the per-cycle sampler uses.
+        if (!reportedDeaths.add(unit.id())) return;
         AUnit nearest = nearestEnemy(unit);
+        double dist = nearest == null ? -1 : unit.distTo(nearest) * 10;
+        if (Double.isNaN(dist) || Double.isInfinite(dist) || dist < 0 || dist > 100000) {
+            // Dead-unit positions can be garbage (measured 671088639 on M&M);
+            // unknown beats a number no map could produce. Matches the
+            // no-enemy branch above instead of inventing a new sentinel.
+            dist = -1;
+        }
         EventLog.key(LogKey.UNIT_DIED)
             .param("unit", unit.id())
             .param("type", unit.type().name())
             .param("killer", nearest == null ? -1 : nearest.id())
             .param("killerType", nearest == null ? "-" : nearest.type().name())
-            .param("dist", nearest == null ? -1 : (int) (unit.distTo(nearest) * 10))
+            .param("dist", (int) dist)
             .param("ux", unit.x() / 32)
             .param("uy", unit.y() / 32)
             .log(A.now(), A.minSec());
@@ -60,6 +74,7 @@ public final class FightTrace {
 
     public static void clearForTests() {
         lastSampleFrame.clear();
+        reportedDeaths.clear();
     }
 
     // =========================================================
