@@ -492,8 +492,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the file, batch copies the fixed-name row deterministically).
   Mechanism re-verified the same day (two Wine 1v1 duels produce
   countable flushed logs: 46/32 SHOT rows from file, VICTORY + own
-  14-hits counter in the log); the overnight batch itself stays a
-  standing vehicle.
+  14-hits counter in the log); full 10-game batch 2026-10-20:
+  10/10 WINS ~20 s each, hits 6-19 (avg 11.4), tuner randomizes per
+  game through the CombatTuning record (incl. the 3 new pinch
+  params); the overnight batch stays a standing vehicle for the
+  real sweep.
   Related open question (WO-144): which goal re-fires V2 Pylon pairs
   (BO row without coming-suppression vs pipeline overlap vs door hole)
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
@@ -673,9 +676,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   (area graph pure) [x] M4 anchors model (tile row + door pure)
   [ ] M4 wall-in goal + game proof (2026-10-20: siting proof LANDED on
   a forced-FE short Wine game - Forge 1:45, Pylon warped ON the anchor
-  [50,106] 0:56, PhotonC sited at anchor+36px 2:38; supply-50 exit cut
-  the game before Nexus#2 + cannon warp, so hold-proof needs a LONG
-  FE game - queued) [ ] M5 module extraction (assessed
+  [50,106] 0:56, PhotonC sited at anchor+36px 2:38; LONG FE game the
+  same day (11.7 min, archived): wall pieces warped (Forge 2:07,
+  PhotonC 2:36) but the base fell 9/42 ~12:00 with bank 3750 hoarded
+  - siting proven, HOLD not proven (zealot line wiped 8:30, dragoons
+  10:30; open whether the wall ever had the DPS)) [ ] M5 module extraction (assessed
   2026-10-17: 7 files, engine-import-free except own map types +
   `AUnitType`; single engine-coupled adapter (`EngineGroundLink`) already
   isolated behind `GroundLink` - physical extraction is build/repo
@@ -947,11 +952,27 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   #155 note below), zero Dragoons, Nexus#3 10:28. Pylon#1 healthy
   (0:47@8, #84 datum); Gateways #2/#3 on time 1:26/1:51 (#92 datum,
   no Wine lateness this game); ORDER_SAVING 0 (2-3 bases, #71 wants
-  a 1-base 700 s shape - 649 s reached, just short). WINE_LOG /
+  a 1-base 700 s shape - 649 s reached, just short; FE long game
+  the same day reached 707 s but with 3 bases + bank 3750, so
+  correctly silent again - the shape, not the duration, is missing). WINE_LOG /
   WINE_DEBUG / WINE_DECISIONS triple + BUILDINGS.json collected
   (#96 file-outputs half verified; painter labels stay visual).
   Open question: SUPPLY_BLOCKED twin silent through the 90/90
   blocks (twin gap?).
+
+- Wine `TauCross` LONG FE (2026-10-20, 11.7 game-min, 9/42 loss,
+  FE-forced + reverted right after): Forge 2:07, PhotonC sited at
+  anchor+36px and warped 2:36, Core 4:03 (gate fix holds - ZERO
+  core-single-instance refusals all game), Dragoon 5:59 x14,
+  Nexus#2 only 6:58, RoboticsF 10:45. Singularity researched 10:07
+  (#85: the post-Forge window EXISTS and completes - 64
+  bank-700-or-3rd + 216 weapons-l1 + 152 combat-10 TECH rows).
+  707 s reached but 3 bases + bank 3750 at death, so ORDER_SAVING
+  correctly silent again (#71 still wants the 1-base shape).
+  BUILD_REFUSED guards healthy (earlier-reserve 14, min-supply 2,
+  unstarted-pylon 1 - #155 per-gate evidence). Loss: zealot line
+  wiped ~8:30, dragoons ~10:30, bank hoarded unspent - same thin
+  shape, now WITH tech. Per-run archive works (out/wine_runs/+latest).
 
 - OpenBW `TauCross` LONG (16575f, 11.5 game-min, wall-cap exit 143 -
   inconclusive as verdict, rich as data): roster Nexus=2 Probe=44
