@@ -117,5 +117,33 @@ while [ "$i" -lt "$N" ]; do
   echo "[wine-batch] game $i: frames=${FRAMES:-?} hits=${HITS:-?} (see $GDIR)"
 done
 
+# Batch manifest (NEXT #160 step 5): one file per batch that later
+# meta-analysis reads instead of re-walking per-game dirs. Same line
+# format as atlantis.debug.tweaker.TunerBatchManifest.render, so the
+# Java round-trip pin covers it: game dirs + verdict + param digest +
+# full vector. Mirrors batch.csv (valid games only; invalid ones stay
+# in batch.log). PARAM_DIGEST covers the param portion of the tweaker
+# row only (fields 9+, fixed column order), so equal vectors hash
+# equal across batches.
+MANIFEST="$OUTDIR/manifest.txt"
+JAR_FP="$(md5sum "$HOME/.scbw/bots/AtlantisP/AI/Atlantis.jar" 2>/dev/null | cut -d' ' -f1)"
+[ -z "$JAR_FP" ] && JAR_FP="unknown"
+{
+  echo "map=$MAP"
+  echo "jar=$JAR_FP"
+  echo "games=$(($(wc -l < "$CSV") - 1))"
+  tail -n +2 "$CSV" 2>/dev/null | while IFS=, read -r g result seconds killed lost hits shots score; do
+    TW="$OUTDIR/game-$g/tweaker.csv"
+    [ -f "$TW" ] || continue
+    case "$result" in W) V=WIN;; *) V=LOSS;; esac
+    PARAMS="$(tail -1 "$TW" | cut -d';' -f9-)"
+    [ -z "$PARAMS" ] && continue
+    DIGEST="$(printf '%s' "$PARAMS" | md5sum | cut -d' ' -f1)"
+    VEC="$(paste -d'|' <(head -1 "$TW" | tr ';' '\n' | tail -n +9) <(printf '%s' "$PARAMS" | tr ';' '\n') | awk -F'|' '{printf "%s=%s,", $1, $2}' | sed 's/,$//')"
+    echo "game-$g|$V|$hits|$seconds|$DIGEST|$VEC"
+  done
+} > "$MANIFEST"
+echo "[wine-batch] manifest: $MANIFEST"
+
 echo "[wine-batch] done: $N games, summary in $CSV"
 column -t -s, "$CSV" 2>/dev/null | head -35 || cat "$CSV"
