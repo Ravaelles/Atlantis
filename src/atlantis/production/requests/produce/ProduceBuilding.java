@@ -386,15 +386,32 @@ public class ProduceBuilding {
 
         prepared.setStatus(ConstructionOrderStatus.NOT_STARTED);
         _lastConstruction = prepared;
+        return noteStarted(prepared, prepared.builder(), prepared.buildPosition(), order);
+    }
+
+    /** cids that already have a STARTED row (ids never repeat, no reset needed). */
+    private static final java.util.Set<Integer> startedCids = new java.util.HashSet<>();
+
+    /**
+     * One STARTED row per construction, whoever observes the start: the
+     * adopt path names the site, the warp-observe path names the warp
+     * tile for legacy-minted warps that never adopted (NEXT #84: a
+     * warping Gateway proved by the ledger with zero STARTED rows).
+     * True when this call emitted the row.
+     */
+    public static boolean noteStarted(
+        Construction construction, AUnit builder, HasPosition tile, ProductionOrder order
+    ) {
+        if (construction == null || !startedCids.add(construction.id())) return false;
         EventLog.key(LogKey.BUILDING_STARTED)
-            .param("type", prepared.buildingType().name())
-            .param("cid", prepared.id())
+            .param("type", construction.buildingType().name())
+            .param("cid", construction.id())
             .param("oid", order == null ? null : order.id())
-            .param("tile", prepared.buildPosition() == null ? "-"
-                : "[" + prepared.buildPosition().tx() + "," + prepared.buildPosition().ty() + "]")
-            .param("builder", prepared.builder().id())
+            .param("tile", tile == null ? "-"
+                : "[" + tile.tx() + "," + tile.ty() + "]")
+            .param("builder", builder == null ? null : builder.id())
             .param("supplyUsed", A.supplyUsed())
-            .param("expectedSupply", order.minSupply())
+            .param("expectedSupply", order == null ? null : order.minSupply())
             .param("supplyTotal", A.supplyTotal())
             .param("minerals", A.minerals())
             .log(A.now(), A.minSec());

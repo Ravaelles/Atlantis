@@ -84,6 +84,12 @@ public class ProtossWarping {
         }
         construction.setBuildingUnit(newBuilding);
 
+        // The warp itself is a start the adopt path may never have named
+        // (legacy-minted warps): one STARTED row per construction, with
+        // the warp tile, or nothing when adoption already rowed it.
+        atlantis.production.requests.produce.ProduceBuilding.noteStarted(
+            construction, construction.builder(), newBuilding.position(), construction.productionOrder());
+
         atlantis.game.util.BuildOrderAudit.recordWarp(newBuilding, construction.productionOrder());
 
         // Construction
