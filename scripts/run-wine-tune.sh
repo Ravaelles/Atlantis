@@ -57,10 +57,10 @@ done
   || { echo "usage: run-wine-tune.sh \"<map.scm>\" ROUNDS K OUTDIR [--env=FILE] [--seed=N] [--step=D] [--radius=D] [--engine=wine|openbw|sim] [--headless]" >&2; exit 1; }
 case "$ENGINE" in
   wine) BATCH="scripts/run-wine-batch.sh" ;;
-  openbw|sim)
-    echo "[wine-tune] engine '$ENGINE' is declared but not tunable yet:" >&2
-    echo "[wine-tune] openbw writes no tweaker rows and its duel map does not tick;" >&2
-    echo "[wine-tune] sim has no batch runner yet (defined next slice)." >&2
+  sim) BATCH="scripts/run-sim-batch.sh" ;;
+  openbw)
+    echo "[wine-tune] engine 'openbw' is declared but not tunable yet:" >&2
+    echo "[wine-tune] openbw writes no tweaker rows and its duel map does not tick." >&2
     exit 2 ;;
   *) echo "[wine-tune] unknown engine '$ENGINE' (wine|openbw|sim)" >&2; exit 2 ;;
 esac

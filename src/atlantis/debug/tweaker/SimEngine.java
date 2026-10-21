@@ -2,15 +2,12 @@ package atlantis.debug.tweaker;
 
 /**
  * The in-repo behavior sim (tests.unit.sim): milliseconds per duel,
- * fully deterministic, no game process at all. The natural home for
- * gradient steps - propose, play dozens of vectors, keep the winners -
- * before Wine spends minutes confirming the survivors.
- *
- * <p>Not wired yet: the sim scenarios live in test scope while the loop
- * lives in production tooling, and dragging one across that boundary
- * needs its own slice (a sim batch runner with the same manifest
- * contract). Until then the tune loop refuses {@code sim} with a
- * pointer instead of pretending.
+ * fully deterministic, no game process at all. The batch runner
+ * ({@code scripts/run-sim-batch.sh} + test-scope {@code SimTunerBatch})
+ * plays scripted duels in-JVM and lands the wine-contract artifacts
+ * (tweaker.csv, batch.csv, manifest.txt), so the tune driver consumes
+ * them unchanged. Only the duel scenario map tunes; everything else
+ * fails loudly at the runner.
  */
 public final class SimEngine extends TuningEngine {
 
@@ -41,6 +38,6 @@ public final class SimEngine extends TuningEngine {
 
     @Override
     public boolean supportsTuning() {
-        return false;
+        return true;
     }
 }

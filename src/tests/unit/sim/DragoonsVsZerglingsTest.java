@@ -856,7 +856,7 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
     }
 
     /** Map-AI-like chaser: face the quarry, move into range, trade. */
-    private static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
+    static void scriptChaser(FakeUnit foe, FakeUnit dragoon) {
         if (foe.hp <= 0 || dragoon.hp <= 0) {
             foe.lastCommand = "Stop";
             return;

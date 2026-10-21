@@ -47,11 +47,13 @@ public class TuningEnginesTest {
     }
 
     @Test
-    public void simIsDeclaredNotWired() {
+    public void simIsWired() {
         TuningEngine sim = TuningEngines.fromName("sim").get();
 
         assertTrue(!sim.isLive(), "no game process at all");
-        assertTrue(!sim.supportsTuning(), "batch runner is a defined next slice, not this one");
+        assertTrue(sim.supportsTuning(), "sim batch runner plays duels in-JVM (SimTunerBatch)");
+        assertEquals("scripts/run-sim-batch.sh", sim.batchScript());
         assertEquals("", sim.defaultEnv(), "no env files where there is no game");
+        assertTrue(new java.io.File(sim.batchScript()).exists(), "the runner script exists");
     }
 }

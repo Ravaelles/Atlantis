@@ -230,6 +230,150 @@ public class ParamTweakerFactory extends ParamTweaker {
     }
 
     /**
+     * Deterministic by-value application of one registered param, in game
+     * units (the same units bounds(), the env files and the tuner
+     * fragments use - the factory's int ranges are raw and divided only
+     * on the random path). The sim batch runner's only write path: the
+     * wine batch goes through per-game env files instead. Unknown names
+     * fail loudly - a silent random would tune a different vector than
+     * the manifest records.
+     */
+    public static void apply(String name, double gameUnitsValue) {
+        switch (name) {
+            case "SafetyMeleeInfantryBaseNoMedic":
+                SafetyMarginAgainstMelee.INFANTRY_BASE_IF_NO_MEDIC = gameUnitsValue;
+                return;
+
+            case "SafetyMeleeInfantryWoundNoMedic":
+                SafetyMarginAgainstMelee.INFANTRY_WOUND_MODIFIER_WITHOUT_MEDIC = (int) Math.round(gameUnitsValue);
+                return;
+
+            case "KiteEnemyTiles":
+                CombatTuning.install(CombatTuning.current().withKiteEnemyTiles(gameUnitsValue));
+                return;
+
+            case "KiteGlueTiles":
+                CombatTuning.install(CombatTuning.current().withKiteGlueTiles(gameUnitsValue));
+                return;
+
+            case "KiteStepTiles":
+                CombatTuning.install(CombatTuning.current().withKiteStepTiles(gameUnitsValue));
+                return;
+
+            case "KiteHuntedTiles":
+                CombatTuning.install(CombatTuning.current().withKiteHuntedTiles(gameUnitsValue));
+                return;
+
+            case "KiteFacedTiles":
+                CombatTuning.install(CombatTuning.current().withKiteFacedTiles(gameUnitsValue));
+                return;
+
+            case "KiteMarginBaseTiles":
+                CombatTuning.install(CombatTuning.current().withKiteMarginBaseTiles(gameUnitsValue));
+                return;
+
+            case "KiteMarginDyingTiles":
+                CombatTuning.install(CombatTuning.current().withKiteMarginDyingTiles(gameUnitsValue));
+                return;
+
+            case "KiteMarginPerHitTiles":
+                CombatTuning.install(CombatTuning.current().withKiteMarginPerHitTiles(gameUnitsValue));
+                return;
+
+            case "KiteZealotPassDamage":
+                CombatTuning.install(CombatTuning.current().withKiteZealotPassDamage(gameUnitsValue));
+                return;
+
+            case "KiteStandoffInsetTiles":
+                CombatTuning.install(CombatTuning.current().withKiteStandoffInsetTiles(gameUnitsValue));
+                return;
+
+            case "KiteGlideDeadbandTiles":
+                CombatTuning.install(CombatTuning.current().withKiteGlideDeadbandTiles(gameUnitsValue));
+                return;
+
+            case "KiteRideFrames":
+                CombatTuning.install(CombatTuning.current().withKiteRideFrames((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "KiteWoundedHitsLeft":
+                CombatTuning.install(CombatTuning.current().withKiteWoundedHitsLeft(gameUnitsValue));
+                return;
+
+            case "KiteWoundedEdgeInsetTiles":
+                CombatTuning.install(CombatTuning.current().withKiteWoundedEdgeInsetTiles(gameUnitsValue));
+                return;
+
+            case "KiteStickyChaseTiles":
+                CombatTuning.install(CombatTuning.current().withKiteStickyChaseTiles(gameUnitsValue));
+                return;
+
+            case "DragoonLowHp":
+                CombatTuning.install(CombatTuning.current().withDragoonLowHp((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonLowHpHoldTiles":
+                CombatTuning.install(CombatTuning.current().withDragoonLowHpHoldTiles(gameUnitsValue));
+                return;
+
+            case "DragoonLowHpFireCooldown":
+                CombatTuning.install(CombatTuning.current().withDragoonLowHpFireCooldown((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonSurroundedMeleeCount":
+                CombatTuning.install(CombatTuning.current().withDragoonSurroundedMeleeCount((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonPinchHp":
+                CombatTuning.install(CombatTuning.current().withDragoonPinchHp((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonPinchMeleeCount":
+                CombatTuning.install(CombatTuning.current().withDragoonPinchMeleeCount((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonPinchMeleeTiles":
+                CombatTuning.install(CombatTuning.current().withDragoonPinchMeleeTiles(gameUnitsValue));
+                return;
+
+            case "DragoonSurroundedStandCooldown":
+                CombatTuning.install(CombatTuning.current().withDragoonSurroundedStandCooldown((int) Math.round(gameUnitsValue)));
+                return;
+
+            case "DragoonSurroundedStandDistTiles":
+                CombatTuning.install(CombatTuning.current().withDragoonSurroundedStandDistTiles(gameUnitsValue));
+                return;
+
+            case "EscapeStaticWeight":
+                EscapeTuning.install(EscapeTuning.current().withStaticWeight(gameUnitsValue));
+                return;
+
+            case "EscapeCornerWeight":
+                EscapeTuning.install(EscapeTuning.current().withCornerWeight(gameUnitsValue));
+                return;
+
+            case "EscapePocketExtra":
+                EscapeTuning.install(EscapeTuning.current().withPocketExtra(gameUnitsValue));
+                return;
+
+            case "EscapeEnemyWeight":
+                EscapeTuning.install(EscapeTuning.current().withEnemyWeight(gameUnitsValue));
+                return;
+
+            case "EscapeStaticRadiusTiles":
+                EscapeTuning.install(EscapeTuning.current().withStaticRadiusTiles(gameUnitsValue));
+                return;
+
+            case "EscapeEnemyRadiusTiles":
+                EscapeTuning.install(EscapeTuning.current().withEnemyRadiusTiles(gameUnitsValue));
+                return;
+
+            default:
+                throw new IllegalArgumentException("unregistered tuner param: " + name);
+        }
+    }
+
+    /**
      * The single source of truth for tuner param bounds (NEXT #160, step 6):
      * the same [min, max] the registration lambdas above randomize in
      * (values already divided - these are game units, not raw ints).
