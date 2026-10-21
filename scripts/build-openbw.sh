@@ -386,14 +386,79 @@ if [ -n "$SMOKE_MAP" ]; then
   fi
 fi
 
+# Names the verdict for one finished (or capped) game run. Split out so the
+# branches pin without playing a game: feed it fixture dirs. Prints one
+# verdict line; the exit code is the verdict (0 = the vehicle worked:
+# WIN/LOSS/DRAW, 1 = FAIL: timeout/no-run/empty).
+decide_game_verdict() {
+  local game_rc="$1" game_log="$2" run_dir="$3" summary="$4"
+  local killed="$5" lost="$6" hits="$7" frames="$8"
+  if [ "$game_rc" -eq 124 ]; then
+    # 124 is ambiguous: the outer timeout kills the runner with 124, but the
+    # inner runner also exits with the bot's code, and a bot killed by its own
+    # cap is 124 too (measured 2026-10-21: the "outer cap" hang on 8Drag
+    # was really the bot hanging at "Connection successful" because the match
+    # never started). The inner always prints its KILLED: verdict line on
+    # completion, so its presence means the inner finished and the bot was the
+    # thing that got killed - not that the outer cap fired. That is no longer
+    # an automatic fail: a duel that fights to the cap is an undecided game,
+    # not a broken vehicle - the frames/combat gates below sort never-started
+    # and empty games out, and the verdict names the rest WIN/LOSS/DRAW.
+    if grep -aq 'KILLED:' "$game_log" 2>/dev/null; then
+      echo "note: inner run completed but the bot hit its cap (see verdict below)"
+    else
+      echo "FAIL: game timed out after ${GAME_TIMEOUT}s (inner runner caps at ~35 s, so this is a hang outside them - stuck wait or ignored TERM; log: $game_log)"
+      echo "--- game log tail ---"
+      tail -25 "$game_log" 2>/dev/null || true
+      echo "--- newest run dir: ${run_dir:-none} ---"
+      return 1
+    fi
+  fi
+  case "$frames" in
+    ''|'?'*) echo "FAIL: game produced no game-time reading (bot died before its summary; game log: $run_dir/UMS_LOG)"; return 1 ;;
+  esac
+  if [ "$frames" -le 100 ]; then
+    echo "FAIL: game did not run (frames=$frames; game log: $run_dir/UMS_LOG)"
+    return 1
+  fi
+  # Zero combat on a duel map means nothing happened: no units spawned,
+  # or the armies never met. A real duel always moves at least one of
+  # these counters (even a loss takes hits). Missing numbers (bot died
+  # before its summary) stay unknown, never a fail - only an explicit
+  # 0/0/0 is the "empty game" verdict.
+  if [ "$killed" = "0" ] && [ "$lost" = "0" ] && [ "$hits" = "0" ]; then
+    echo "FAIL: game ran $frames frames but saw no combat (KILLED:$killed LOST:$lost TIMES_HIT:$hits) - units never spawned or never met; game log: $run_dir/UMS_LOG"
+    return 1
+  fi
+  # Contested games get a verdict with a direction. WIN/LOSS need no
+  # comment. DRAW is the intermediate state the binary verdict hides:
+  # completed but undecided with zero losses - not outplayed, so the
+  # shape to investigate is exploration/engagement (or a cap), never
+  # defeat. The bot prints its own banner; the counters split Defeat
+  # into LOSS (fought and lost) and DRAW (undecided).
+  if grep -aq 'VICTORY!' "$run_dir/UMS_LOG" 2>/dev/null; then
+    echo "WIN: $summary (frames=$frames, game log: $run_dir/UMS_LOG)"
+    return 0
+  fi
+  if [ "$lost" != "0" ] && [ "$lost" != "?" ]; then
+    echo "LOSS: $summary (frames=$frames, game log: $run_dir/UMS_LOG)"
+    return 0
+  fi
+  echo "DRAW: $summary (frames=$frames, undecided with no losses - investigate exploration/engagement or the cap, not defeat; game log: $run_dir/UMS_LOG)"
+  return 0
+}
+
 # --- 6. Optional end-to-end game ------------------------------------------
 # Unlike --smoke (launcher only), this drives the real bot: the run script
 # hosts the game, connects Atlantis, plays, and prints KILLED/LOST/TIMES_HIT.
-# The judgement is based on two independent facts, so a half-broken setup
+# The judgement is based on three independent facts, so a half-broken setup
 # cannot look like a pass:
 #   a) the script did not time out (exit 124 means "hung")
 #   b) the bot reported a game time of more than 100 frames, i.e. the server
 #      hosted the map and the client really played (a dead server gives 0).
+#   c) contested games get a direction: WIN (bot banner), LOSS (fought and
+#      lost it), DRAW (completed but undecided with no losses - not
+#      outplayed, investigate engagement, not defeat).
 # Note: there is no "Connected" line in this script's log; do not grep for it.
 if [ -n "$GAME_MAP" ]; then
   RUN_SCRIPT="$ATLANTIS_DIR/scripts/run-openbw-ums.sh"
@@ -432,44 +497,11 @@ if [ -n "$GAME_MAP" ]; then
   IFS=$'\t' read -r killed lost hits frames <<<"$parsed"
   summary="KILLED:$killed LOST:$lost TIMES_HIT:$hits"
 
-  if [ "$game_rc" -eq 124 ]; then
-    # 124 is ambiguous: the outer timeout kills the runner with 124, but the
-    # inner runner also exits with the bot's code, and a bot killed by its own
-    # 20 s cap is 124 too (measured 2026-10-21: the "outer cap" hang on 8Drag
-    # was really the bot hanging at "Connection successful" because the match
-    # never started). The inner always prints its KILLED: verdict line on
-    # completion, so its presence means the inner finished and the bot was the
-    # thing that got killed - not that the outer cap fired.
-    if grep -aq 'KILLED:' "$game_log" 2>/dev/null; then
-      echo "FAIL: inner run completed but the bot was killed by its 20 s cap (match likely never started - see bot log tail; game log: $run_dir/UMS_LOG)"
-      echo "--- game log tail ---"
-      tail -25 "$game_log" 2>/dev/null || true
-      echo "--- bot log tail (${run_dir}/UMS_LOG) ---"
-      tail -15 "$run_dir/UMS_LOG" 2>/dev/null || true
-      exit 1
-    fi
-    echo "FAIL: game timed out after ${GAME_TIMEOUT}s (inner runner caps at ~35 s, so this is a hang outside them - stuck wait or ignored TERM; log: $game_log)"
-    echo "--- game log tail ---"
-    tail -25 "$game_log" 2>/dev/null || true
-    echo "--- newest run dir: ${run_dir:-none} ---"
-    exit 1
-  fi
-  if [ "$frames" -le 100 ]; then
-    echo "FAIL: game did not run (frames=$frames; game log: $run_dir/UMS_LOG)"
-    exit 1
-  fi
-  # Zero combat on a duel map means nothing happened: no units spawned,
-  # or the armies never met. A real duel always moves at least one of
-  # these counters (even a loss takes hits). Missing numbers (bot died
-  # before its summary) stay unknown, never a fail - only an explicit
-  # 0/0/0 is the "empty game" verdict.
-  if [ "$killed" = "0" ] && [ "$lost" = "0" ] && [ "$hits" = "0" ]; then
-    echo "FAIL: game ran $frames frames but saw no combat (KILLED:$killed LOST:$lost TIMES_HIT:$hits) - units never spawned or never met; game log: $run_dir/UMS_LOG"
-    exit 1
-  fi
-  echo "PASS: $summary (frames=$frames, game log: $run_dir/UMS_LOG)"
-  exit 0
+  decide_game_verdict "$game_rc" "$game_log" "$run_dir" "$summary" \
+    "$killed" "$lost" "$hits" "$frames"
+  exit $?
 fi
+
 
 say "OK: the harness now runs the engine from $ENGINE_DIR"
 say "next: bash scripts/run-openbw-e2e.sh ...   (uses $LAUNCHER)"

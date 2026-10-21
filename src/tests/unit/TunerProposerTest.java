@@ -54,7 +54,7 @@ public class TunerProposerTest {
     public void proposalIsCompleteAndBounded() {
         Map<String, Double> proposal = TunerProposer.propose(scenario, hallOfFame(), 0.05, 0.10, 7L);
 
-        assertEquals(26, proposal.size(), "full vector, every param gets a value");
+        assertEquals(32, proposal.size(), "full vector, every param gets a value");
         for (Map.Entry<String, double[]> bound : scenario.paramBounds().entrySet()) {
             double value = proposal.get(bound.getKey());
             assertTrue(value >= bound.getValue()[0] && value <= bound.getValue()[1],

@@ -315,7 +315,13 @@ public class Atlantis implements BWEventListener {
             ProcessHelper.killOpenBWProcesses();
 
             AConsole.println("Exit...");
-            System.exit(0);
+            // halt(), not exit(): shutdown hooks hang here (measured 3x
+            // 2026-10-21: "Exit..." printed, JVM alive until the script's
+            // SIGKILL - the whole 20 s bot cap burned every game). By this
+            // point OnGameEnd already filed the GAME_END twin, flushed the
+            // logs and printed the summary; Main's hook only repeats that
+            // work (or prints a misleading "Stopped" after a clean end).
+            Runtime.getRuntime().halt(0);
             return;
         }
 

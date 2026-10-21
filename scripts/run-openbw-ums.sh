@@ -36,7 +36,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 JAR="/sc-ai/BOTS/AtlantisOpenBW/AI/Atlantis.jar"
 UMS_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/UMS_LOGS"
 
-TIMEOUT_SECONDS=30
+# Smoke and tuning loops override the wall budget from the environment
+# (TIMEOUT_SECONDS=12 for a fast vehicle check); the default stays put
+# so unattended tuning keeps full-length games.
+TIMEOUT_SECONDS="${TIMEOUT_SECONDS:-30}"
 INGAME_TIME=$((60 * 20))
 # ENEMY_COUNT default 7, overridable like in run-openbw-e2e.sh (which defaults
 # to 1 for melee). For UMS the default keeps every joinable slot alive; see the
