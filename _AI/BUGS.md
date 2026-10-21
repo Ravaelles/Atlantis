@@ -71,6 +71,24 @@ a long post-mortem belongs in an ADR or a commit message.
 > 1799-frame wall → 0. Test: `OrphanedConstructionTest` (2). Full mechanism in
 > `_AI/CASE-STUDIES.md` (#53); the original report lives in git history.
 
+## B-42 — bot KILLED counter inflates per-frame on multi-unit UMS maps
+
+- **Where:** `Atlantis.KILLED++` in `OnUnitDestroyed.onEnemyUnitDestroyed`
+  (fires on every BWAPI `onUnitDestroy`, no real-unit filter - the
+  `isRealUnit()` check is commented out).
+- **Measured 2026-10-21** (`bash scripts/build-openbw.sh --game ...`):
+  8Drag_v_8Drag KILLED 7078 / 307 game-s (~23/s), Drag_v_LingsUpg2 KILLED
+  31004 / 195 game-s (~159/s), while the UNIT_DIED twin fired 0-1 times
+  and 1Drag_v_1Zeal in the same session reported a clean 0/0. Shape fits
+  destroy events re-firing per visible enemy per frame, mechanism open.
+- **Consequence:** `--game` verdict unaffected (fails only on explicit
+  0/0/0; TIMES_HIT is event-sourced and sane), but a tuner reading
+  KILLED would conclude massacres. Tuner objective (NEXT #160) uses
+  win/hits/seconds, so nothing downstream consumes it today.
+- **How to settle it:** name the destroy source (log unit IDs in
+  `onEnemyUnitDestroyed` for one 8Drag run: repeat IDs = re-fire,
+  revealer IDs = wrong population), then filter or fix the counter.
+
 ## How to add an entry
 
 `## B-<n> - <one-line symptom>`, then: **Where**, **Measured** (with the

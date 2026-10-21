@@ -38,6 +38,10 @@ UMS_LOGS_DIR="/sc-ai/BOTS/AtlantisOpenBW/UMS_LOGS"
 
 TIMEOUT_SECONDS=30
 INGAME_TIME=$((60 * 20))
+# ENEMY_COUNT default 7, overridable like in run-openbw-e2e.sh (which defaults
+# to 1 for melee). For UMS the default keeps every joinable slot alive; see the
+# hosting comment below for why 1 amputates scenario armies.
+ENEMY_COUNT="${ENEMY_COUNT:-7}"
 HOST_KILL_SECONDS="$TIMEOUT_SECONDS"
 BOT_KILL_SECONDS=$(( TIMEOUT_SECONDS - 10 ))
 # -k on both timeouts: without kill-escalation a TERM-ignoring JVM (or a
@@ -79,7 +83,21 @@ done
 # blaming the engine: a typo here used to read as "server hung" 180 s later.
 case "$MAP" in
   /*) [ -f "$MAP" ] || fail "map not found: $MAP" ;;
-  *)  [ -f "$GAME_DIR/$MAP" ] || fail "map not found: $GAME_DIR/$MAP (pass a path under $GAME_DIR, e.g. maps/ums/rav/protoss/1Drag_v_1Zeal.scm)" ;;
+  *)  # The harness serves maps from a snapshot (build/test/maps) that rots: a
+      # map added to the live tree later is missing here. Self-heal by copying
+      # it from the live tree (same relative path) instead of failing. Mirror
+      # of the fallback in build-openbw.sh (--smoke pre-check); keep in sync.
+      if [ ! -f "$GAME_DIR/$MAP" ]; then
+        LIVE_MAP="/sc-ai/starcraft/maps/${MAP#maps/}"
+        if [ -f "$LIVE_MAP" ]; then
+          say "map missing under $GAME_DIR, copying from live tree: $LIVE_MAP"
+          mkdir -p "$(dirname "$GAME_DIR/$MAP")"
+          cp -p "$LIVE_MAP" "$GAME_DIR/$MAP" \
+            || fail "could not copy $LIVE_MAP into $GAME_DIR"
+        else
+          fail "map not found: $GAME_DIR/$MAP (pass a path under $GAME_DIR, e.g. maps/ums/rav/protoss/1Drag_v_1Zeal.scm)"
+        fi
+      fi ;;
 esac
 # -x matches the process NAME exactly. -f matches the whole command line, which
 # also matched the shell running this script (its argv contains the pattern),
@@ -174,8 +192,15 @@ if [ -e /dev/shm/bwapi_shared_memory_game_list ]; then
   say "preflight: stale game table removed, continuing"
 fi
 say "hosting UMS game: map=$MAP (USE_MAP_SETTINGS, scenario owns the setup)"
+# ENEMY_COUNT=7: the scenario owns the setup. The auto-menu default (1) closes
+# every EitherPreferComputer slot past the first one, deleting scenario armies
+# placed on slots 2+ (measured 2026-10-21: 8Drag_v_8Drag spawned 8 of 16
+# Dragoons and the match never started, the bot hung at "Connection
+# successful"). 7 keeps all seven joinable slots; this script only hosts UMS
+# maps (non-ums/ paths are refused above), so melee hosting is unaffected.
 setsid nohup env BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
   BWAPI_CONFIG_AUTO_MENU__GAME_TYPE=USE_MAP_SETTINGS \
+  BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT="$ENEMY_COUNT" \
   timeout -k 5 "$HOST_KILL_SECONDS" bash "$SERVER_SCRIPT" "$MAP" Protoss Zerg \
   >"$SERVER_LOG" 2>&1 </dev/null &
 SERVER_WRAPPER_PID=$!

@@ -786,6 +786,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   frames on Wine, 34 stepped-aside vs 9 stuck, cadence 33).
   Default unknown-matchup BO flipped to Zealot into Goon the same
   day (Forge FE armed an economy opener on a duel map).
+  2026-10-21 hosting fix (Atlantis scripts, no engine change):
+  `run-openbw-ums.sh` + `--smoke` pass ENEMY_COUNT=7 (was the auto-menu
+  default 1, which closed every EitherPreferComputer slot past the first
+  and deleted scenario armies on slots 2+: 8Drag spawned 8 of 16 Dragoons
+  and the match never started, bot hung at connect). One command now
+  plays all three duel maps: 1Drag PASS 0/0/10 (506f), 8Drag PASS 18
+  hits (307f), LingsUpg2 PASS 66 hits (195f, map self-healed from the
+  live tree into the stale harness snapshot). 8Drag/LingsUpg2 inflate
+  the bot KILLED counter (~7k/~31k - per-frame re-fire class, BUGS
+  B-42); TIMES_HIT stays sane, verdict unaffected. Also fixed: `--game`
+  mistook the bot's own 124 (inner 20 s cap) for the outer 180 s
+  timeout; the inner KILLED: line now disambiguates.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)

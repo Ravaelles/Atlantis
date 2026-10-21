@@ -247,7 +247,25 @@ if [ -n "$SMOKE_MAP" ]; then
       *) SMOKE_MAP="maps/$SMOKE_MAP" ;;
     esac
   fi
-  [ -f "$GAME_DIR/$SMOKE_MAP" ] || fail "smoke map not found: $SMOKE_MAP (looked in $GAME_DIR)"
+  # The harness serves maps from a snapshot (build/test/maps) that rots: a map
+  # added to the live tree later is missing here. Self-heal by copying it from
+  # the live tree (same relative path). Mirror of the fallback in
+  # run-openbw-ums.sh; keep the two in sync.
+  if [ ! -f "$GAME_DIR/$SMOKE_MAP" ]; then
+    case "$SMOKE_MAP" in
+      maps/*)
+        LIVE_SMOKE_MAP="/sc-ai/starcraft/maps/${SMOKE_MAP#maps/}"
+        if [ -f "$LIVE_SMOKE_MAP" ]; then
+          say "map missing under $GAME_DIR, copying from live tree: $LIVE_SMOKE_MAP"
+          mkdir -p "$(dirname "$GAME_DIR/$SMOKE_MAP")"
+          cp -p "$LIVE_SMOKE_MAP" "$GAME_DIR/$SMOKE_MAP" \
+            || fail "could not copy $LIVE_SMOKE_MAP into $GAME_DIR"
+        else
+          fail "smoke map not found: $SMOKE_MAP (looked in $GAME_DIR and $LIVE_SMOKE_MAP)"
+        fi ;;
+      *) fail "smoke map not found: $SMOKE_MAP (looked in $GAME_DIR)" ;;
+    esac
+  fi
 fi
 
 # --- 1. Optional: install engine sources from a source tree ----------------
@@ -332,10 +350,14 @@ if [ -n "$SMOKE_MAP" ]; then
 
   say "smoke run: $SMOKE_MAP for ${SMOKE_SECONDS}s (game_type=${MAP_SMOKE_GAME_TYPE:-USE_MAP_SETTINGS})"
   smoke_log="$(mktemp -t openbw-smoke.XXXXXX)"
+  # ENEMY_COUNT=7: same reason as in run-openbw-ums.sh - the auto-menu default
+  # (1) closes scenario slots past the first and deletes their armies (measured
+  # 8Drag_v_8Drag: 8 of 16 Dragoons). Smoke is USE_MAP_SETTINGS-first.
   ( cd "$GAME_DIR" && env \
       BWAPI_CONFIG_CONFIG__SHARED_MEMORY=ON \
       BWAPI_CONFIG_AUTO_MENU__AUTO_MENU=SINGLE_PLAYER \
       BWAPI_CONFIG_AUTO_MENU__GAME_TYPE="${MAP_SMOKE_GAME_TYPE:-USE_MAP_SETTINGS}" \
+      BWAPI_CONFIG_AUTO_MENU__ENEMY_COUNT=7 \
       BWAPI_CONFIG_AUTO_MENU__MAP="$SMOKE_MAP" \
       BWAPI_CONFIG_AUTO_MENU__RACE="${MAP_SMOKE_RACE:-Protoss}" \
       BWAPI_CONFIG_AUTO_MENU__ENEMY_RACE="${MAP_SMOKE_ENEMY_RACE:-Zerg}" \
@@ -411,6 +433,21 @@ if [ -n "$GAME_MAP" ]; then
   summary="KILLED:$killed LOST:$lost TIMES_HIT:$hits"
 
   if [ "$game_rc" -eq 124 ]; then
+    # 124 is ambiguous: the outer timeout kills the runner with 124, but the
+    # inner runner also exits with the bot's code, and a bot killed by its own
+    # 20 s cap is 124 too (measured 2026-10-21: the "outer cap" hang on 8Drag
+    # was really the bot hanging at "Connection successful" because the match
+    # never started). The inner always prints its KILLED: verdict line on
+    # completion, so its presence means the inner finished and the bot was the
+    # thing that got killed - not that the outer cap fired.
+    if grep -aq 'KILLED:' "$game_log" 2>/dev/null; then
+      echo "FAIL: inner run completed but the bot was killed by its 20 s cap (match likely never started - see bot log tail; game log: $run_dir/UMS_LOG)"
+      echo "--- game log tail ---"
+      tail -25 "$game_log" 2>/dev/null || true
+      echo "--- bot log tail (${run_dir}/UMS_LOG) ---"
+      tail -15 "$run_dir/UMS_LOG" 2>/dev/null || true
+      exit 1
+    fi
     echo "FAIL: game timed out after ${GAME_TIMEOUT}s (inner runner caps at ~35 s, so this is a hang outside them - stuck wait or ignored TERM; log: $game_log)"
     echo "--- game log tail ---"
     tail -25 "$game_log" 2>/dev/null || true
