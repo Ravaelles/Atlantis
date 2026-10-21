@@ -444,8 +444,11 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   the second: `ProductionOrder.cancel` -> linked-construction cancel
   -> CANCEL twin, while REQUESTED fires only post-addConstruction
   with a site - a siteless linked construction terminates without
-  ever originating. Mint site still open (which setConstruction call
-  links the siteless row); read continues, no blind twin. Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
+  ever originating. Mint site ANSWERED 2026-10-21 (comment at the mint,
+  no patch): NewConstructionRequest links bidirectionally (setProductionOrder
+  -> setConstruction) BEFORE siting, while REQUESTED fires only
+  post-addConstruction with a tile - so read the CANCEL reason for these.
+  Pick-time guard (`overlapsUnfinishedSite`, same-file spiral)
   should have refused the second pick; why it did not is the next
   measured branch - no blind patch. FE scoping landed the same day
   (wall-in only on Forge Expand; live `104922` on non-FE shows zero
@@ -942,7 +945,7 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   Gate evidence from live games (all named, firing as designed):
   earlier-reserve 14 + min-supply 2 + unstarted-pylon 2 + funding 3
   + pylon-cap 3 + pylon-overstock 1 (FE short game), Core gate quiet
-  across two more games. Next gate proofs ride the next macro game.
+  across two more games. Next gate proofs ride the next macro game. 2026-10-21 TauCross macro: min-supply 7, core-priority 1, earlier-reserve 6, funding 1, pylon-cap 8, pylon-overstock 7, unstarted-pylon 3 - all previously-proven gates re-fire, no new gate proven.
 - **#156** One `EarlierDemand` reserve (SOLID review, agreed): three
   models of "already reserved" exist (`ProduceBuilding`
   earlierUnfinished*, `ShouldNotTravelToConstructYet.earlierUnpaid`,

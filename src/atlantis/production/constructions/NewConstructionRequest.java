@@ -88,6 +88,12 @@ public class NewConstructionRequest {
 //        }
 
         Construction newConstruction = new Construction(building);
+        // Bidirectional link BEFORE siting (NEXT #150): the order and the
+        // construction know each other from the mint, while the REQUESTED
+        // twin fires only post-addConstruction with a tile. A null-position
+        // quit therefore terminates (CANCEL twin with cid+oid) a row that
+        // never originated in the twins - read the CANCEL reason, not the
+        // missing REQUESTED, for these.
         newConstruction.setProductionOrder(order);
         newConstruction.setNearTo(near);
         newConstruction.setMaxDistance(order != null ? order.maximumDistance() : 66);
