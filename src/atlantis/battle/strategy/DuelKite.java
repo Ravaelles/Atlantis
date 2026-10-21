@@ -77,7 +77,7 @@ public final class DuelKite {
         double stepLen = Math.min(CombatTuning.current().getKiteStepTiles(), gap);
         if (stepLen <= 0) return null;
         int step = Math.max(1, (int) Math.round(stepLen));
-        APosition dest = EscapeDestination.pick(unit, threat, step, walk, blockers, foes);
+        APosition dest = EscapeDestination.pickEscape(unit, threat, step, walk, blockers, foes);
         if (dest != null) return dest;
         return MoveAway.bestDestination(unit, threat, stepLen);
     }

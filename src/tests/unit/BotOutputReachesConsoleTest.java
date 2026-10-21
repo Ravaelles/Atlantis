@@ -75,6 +75,10 @@ public class BotOutputReachesConsoleTest {
                 // Owner 2026-10-21, second ruling the same day: IDE runs must
                 // show the game. Visible is the default everywhere; --headless
                 // is the opt-in for unattended runs (overnight batches etc.).
+                // Owner 2026-10-22 speed directive supersedes the lifecycle
+                // half: Xvfb holds no game state, so it persists across runs
+                // (and starts before the box lock, so it never inherits the
+                // lock fd - measured REFUSED with Xvfb as the sole holder).
                 String script = read(WINE_FULL);
                 String ums = read(WINE_UMS);
 
@@ -86,8 +90,10 @@ public class BotOutputReachesConsoleTest {
                                 "headless mode runs its own X server");
                 assertTrue(script.contains("export DISPLAY=:99"),
                                 "headless mode points the whole session at it");
-                assertTrue(script.contains("kill \"$XVFB_PID\""),
-                                "the hidden server dies with the session");
+                assertTrue(script.contains("reused, not restarted"),
+                                "the hidden server persists across runs instead of paying boot each game");
+                assertFalse(script.contains("kill \"$XVFB_PID\""),
+                                "nothing kills the reused server at teardown anymore");
                 assertTrue(ums.contains("--headless"),
                                 "single UMS games offer headless explicitly");
                 assertTrue(ums.contains("--visible)"),

@@ -1,6 +1,7 @@
 package atlantis.battle.escape;
 
 import atlantis.map.position.APosition;
+import atlantis.map.position.HasPosition;
 
 /**
  * Walkable clearance in 8 compass directions from a point, Stardust-style
@@ -22,6 +23,35 @@ public final class EscapeRays {
         { 1, 0 }, { 1, 1 }, { 0, 1 }, { -1, 1 },
         { -1, 0 }, { -1, -1 }, { 0, -1 }, { 1, -1 },
     };
+
+    /**
+     * Index into {@link #DIRS} closest to the away-vector (from threat
+     * through us): the straight line out. Ties keep the first (E-first)
+     * direction; a zero vector reads as east. Pure geometry, no map.
+     */
+    public static int awayDirIndex(HasPosition from, HasPosition threat) {
+        if (from == null || threat == null) return 0;
+        double dx = from.x() - threat.x();
+        double dy = from.y() - threat.y();
+        if (dx == 0 && dy == 0) return 0;
+        double len = Math.sqrt(dx * dx + dy * dy);
+        double nx = dx / len;
+        double ny = dy / len;
+        // Cosine against unit compass vectors (diagonals normalized -
+        // raw deltas would tie a diagonal with its straight neighbour
+        // on axis-aligned threats). Highest cosine wins, first on ties.
+        int best = 0;
+        double bestDot = Double.NEGATIVE_INFINITY;
+        for (int d = 0; d < DIRS.length; d++) {
+            double dirLen = Math.sqrt(DIRS[d][0] * DIRS[d][0] + DIRS[d][1] * DIRS[d][1]);
+            double dot = (DIRS[d][0] * nx + DIRS[d][1] * ny) / dirLen;
+            if (dot > bestDot) {
+                bestDot = dot;
+                best = d;
+            }
+        }
+        return best;
+    }
 
     /** Corridor a large unit (Dragoon body 31px) still turns in. */
     public static final int WIDE_CORRIDOR_TILES = 2;

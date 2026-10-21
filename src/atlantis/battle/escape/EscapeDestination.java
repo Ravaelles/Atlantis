@@ -50,6 +50,43 @@ public final class EscapeDestination {
         return best;
     }
 
+    /**
+     * Full-length escape step (NEXT #173, owner doctrine): walk straight
+     * out as far as possible - 5 tiles. Only when the straight-5 is
+     * blocked does the horizon shrink: deflect at full length first,
+     * shorten only as the last resort. Shortening first is what re-traps
+     * units (a 1-tile step into a pocket is still a step, so the caller
+     * keeps taking it instead of sliding along the wall).
+     */
+    public static final int LONG_STEP_TILES = 5;
+
+    /**
+     * Detector-first escape pick (NEXT #173): the tactical step when the
+     * ground ahead is open, the full-length deflect when a wall eats the
+     * straight ray, the boxed step (or null) when nothing longer exists.
+     * Open ground answers bit-identically to {@link #pick} with the same
+     * length; only the wall case changes (sidestep instead of shuffle).
+     * Callers keep their null fallback - a true box still fights.
+     */
+    public static APosition pickEscape(
+        AUnit unit, AUnit threat, int stepTiles,
+        EscapeRays.Walkability walk, List<? extends HasPosition> blockers, List<? extends HasPosition> enemies
+    ) {
+        if (unit == null || threat == null || stepTiles <= 0 || walk == null) return null;
+        APosition shortPick = pick(unit, threat, stepTiles, walk, blockers, enemies);
+        int away = EscapeRays.awayDirIndex(unit, threat);
+        double[] clear = EscapeRays.clearance(unit.position(), LONG_STEP_TILES, walk);
+        if (shortPick != null
+            && (stepTiles >= LONG_STEP_TILES || clear[away] >= LONG_STEP_TILES)) {
+            return shortPick;
+        }
+        if (LONG_STEP_TILES != stepTiles) {
+            APosition longPick = pick(unit, threat, LONG_STEP_TILES, walk, blockers, enemies);
+            if (longPick != null) return longPick;
+        }
+        return shortPick;
+    }
+
     /** Every tile on the way must be walkable; wide bodies need one spare past the step. */
     static boolean corridorClear(int ux, int uy, int[] dir, int stepTiles, boolean wide, EscapeRays.Walkability walk) {
         int look = stepTiles + (wide ? 1 : 0);

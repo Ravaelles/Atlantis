@@ -1417,6 +1417,63 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   plus tuner efficacy. Center-pull deliberately not added: the
   corner rays measure edge risk directly at each destination, a
   center prior would bias away from measured data.
+- **#173** Owner escape doctrine: long-vector-first (owner 2026-10-21,
+ 1Drag_v_1Zeal edge-freeze; live Wine datum 2026-10-22: the dragoon
+ flees short and takes 15 hits). Mechanism verified in code: short
+ steps die in validation, not in scoring - `MoveAway.bestDestination`
+ vetoes clamped micro-steps (half-distance gain floor) and
+ `IsReasonablePositionToRunTo` gates (walkable(2), ground-distance,
+ minerals), so every direction returns null at a wall and the caller
+ fights in place; the scored pick never rejects, it returns the
+ least-bad short step (shuffle into the pocket). Staged: (a) NOW:
+ detector-first long escape - away-ray clearance <5 tiles means the
+ straight-5 is blocked, so deflect at full length (the 8-dir long
+ pick yields the sidestep emergently); open ground keeps the tactical
+ short step bit-identical, boxed pockets behave as today. The kite
+ footwork (yield-to-hold) stays short - lengthening applies to the
+ failed escape, never to the standoff. (b) NEXT: explicit
+ angle-stepping if the long pick still traps; the `EscapeCandidates`
+ 4/8/12 rings (no prod callers today) belong to this step. (c) LATER:
+ precomputed peninsula/cul-de-sac map (cornerPenalty is local-only,
+ ~6-tile horizon). (d) LATER: hard-map tuning vs multiple chasers
+ (sim batch + TunerObjective already exist; enemyPressure already
+ counts ALL in radius). Deliberately NOT primary: shorten-and-retry
+ (shortening is what re-traps) and a long leg inside pure
+ `pick()` (walkability is prefix-closed - verified no-fire; the
+ differential lives in the validation clamps and gain floors, not
+ in the scoring). Proof: unit pins + Wine duel (fewer hits than
+ the 15-hit datum, no standstill frames).
+- **#175** Arc retreat toward the squad (owner 2026-10-21, LOW priority,
+ future): a Dragoon costs ~two Zealots, so one dragoon kiting away from
+ one zealot or two lings weakens the army; straight-line fleeing splits
+ the army apart (strategic cost outweighing the micro gain). Idea: while
+ within ~15 tiles of the own squad center, flee along an arc curving back
+ toward the squad instead of straight away - stay in firing range of the
+ pack, keep focus fire on the weakest enemy, kill it faster, win the
+ fight. Uncertain per owner (may not work as imagined) and explicitly
+ NOT urgent; test vehicle is the Dragoons-vs-Zealots map. Prove in sim
+ first (arc policy vs straight policy, N games: win rate, time-to-win,
+ army-split distance), then live. (#174 stays with the tuner slice
+ series; this takes the next free number.)
+- **#176** Death-log issuer attribution (owner 2026-10-21/22, HIGH priority):
+ combat death logs show WHAT but never WHO. Live datum (1Drag Zealot#135):
+ rows of `Attack_Unit/a:ATTACK_UNIT/null` with frame numbers, no hint
+ which class drove the unit into it. Mechanism: `AUnit.commandHistory`
+ (last 10) is written ONLY at the `AUnitOrders` funnel (attack :90,
+ move :306, stop :393) plus `lastCommandIssuedNow`; rows carry
+ op/action/tooltip, never the issuer. `managerLogs` stays empty for
+ army deaths (static battle functions never record; `usedManager`
+ is commented out). Direction: attribute each journal row to the
+ deciding class. Preferred: explicit issuer threaded from call
+ sites (precise, no magic); fallback if the fan-out is too wide:
+ caller-class capture at the funnel (first atlantis.* frame above
+ the funnel classes, bounded depth), cost measured first (orders
+ are tens per frame; a shallow walk is microseconds). Rejected:
+ stack printing at death (too late, the deciding frames are gone),
+ per-order log spam (the journal already caps at 10 for that
+ reason). Done when: a test dragoon driven through two different
+ seams names a different deciding class per row; live: a 1Drag
+ death log names the class behind every order row.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches

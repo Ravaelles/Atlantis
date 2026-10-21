@@ -22,11 +22,15 @@ public final class EscapeScoredStep {
     private EscapeScoredStep() {
     }
 
-    /** Scored destination for a step of this many tiles, or null when nothing scores. */
+    /**
+     * Scored destination for a step of this many tiles, or null when nothing scores.
+     * Detector-first (NEXT #173): open ground behaves exactly like the plain
+     * pick, walls deflect at full length instead of shuffling short.
+     */
     public static APosition pickScored(AUnit unit, AUnit threat, int stepTiles) {
         if (unit == null || threat == null || stepTiles <= 0) return null;
         try {
-            return EscapeDestination.pick(unit, threat, stepTiles, walkability(), blockers(unit), foes(unit));
+            return EscapeDestination.pickEscape(unit, threat, stepTiles, walkability(), blockers(unit), foes(unit));
         } catch (Exception | Error ignored) {
             return null;
         }
