@@ -798,6 +798,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   B-42); TIMES_HIT stays sane, verdict unaffected. Also fixed: `--game`
   mistook the bot's own 124 (inner 20 s cap) for the outer 180 s
   timeout; the inner KILLED: line now disambiguates.
+  Who plays the enemy on each platform (OpenBW: nobody - engine default
+  AI only; Wine: the map's scripts): `_AI/CHALLENGES/UmsDuelOpponents.md`.
   Detail: `_AI/CHALLENGES/StationaryEnemy.md`.
 
 ## Needs owner or upstream (blocked here)
