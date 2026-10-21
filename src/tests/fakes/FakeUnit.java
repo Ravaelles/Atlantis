@@ -437,7 +437,9 @@ public class FakeUnit extends AUnit implements Serializable {
 //        System.err.println("target.targetPosition() = " + target.position());
 //        System.err.println("### End of ATTACK");
         targetPosition = target.position();
-        return orderSink().attackUnit(this, target);
+        boolean issued = orderSink().attackUnit(this, target);
+        if (issued) noteDecision("Attack:" + target.typeWithUnitId());
+        return issued;
     }
 
 //    @Override
@@ -464,7 +466,9 @@ public class FakeUnit extends AUnit implements Serializable {
 
         setAction(unitAction);
         targetPosition = target.position();
-        return orderSink().move(this, target.position().p());
+        boolean issued = orderSink().move(this, target.position().p());
+        if (issued) noteDecision(tooltip != null ? tooltip : unitAction.name());
+        return issued;
     }
 
     // =========================================================

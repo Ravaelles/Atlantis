@@ -61,10 +61,21 @@ public class OnOurUnitDestroyed {
 
         String leader = unit.isLeader() ? " LEADER!!!" : "";
 
+        // Order journal: the last orders issued to this unit, whoever drove
+        // it (Manager chain or the static battle functions, which never
+        // touch managerLogs). This is the "how did it die" list.
+        String orders = unit.commandHistory().toString();
+        if (!unit.commandHistory().isEmpty()) {
+            orders = orders.replace("\n", "\n" + prefix);
+        }
+
         System.out.println(prefix + "_____________________________");
         System.out.println(prefix + A.minSec() + " - Our " + unit.typeWithUnitId() + " DIED [*]" + leader);
         System.out.println(prefix + "Tooltip: " + unit.tooltip());
         System.out.println(prefix + string1);
+        if (!unit.commandHistory().isEmpty()) {
+            System.out.println(prefix + "Orders: " + orders);
+        }
         System.out.println(prefix + "_____________________________");
     }
 }

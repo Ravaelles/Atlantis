@@ -3476,6 +3476,28 @@ public class AUnit implements Comparable<AUnit>, HasPosition, AUnitOrders, Valid
         this.tooltipForManager = message;
     }
 
+    /**
+     * One line in this unit's order journal: what was just issued to the
+     * engine, with the frame it rode on. The funnel is
+     * {@code AUnitOrders} (every move, attack and stop passes there), so
+     * the journal works no matter who drives the unit - a Manager chain
+     * (workers, scouts) or the static battle functions (army), which never
+     * call {@code usedManager} and left {@code managerLogs} empty for every
+     * dead Dragoon. Last 10 kept, consecutive duplicates refresh the frame
+     * instead of appending. Read at death in
+     * {@code OnOurUnitDestroyed}: this is how a corpse tells which orders
+     * killed it.
+     */
+    public void noteDecision(String tag) {
+        if (tag == null || tag.isEmpty()) return;
+        if (commandHistory.lastMessageWas(tag)) {
+            commandHistory.replaceLastWith(tag, A.now());
+        }
+        else {
+            commandHistory.addMessage(tag, A.now());
+        }
+    }
+
     private void addManagerLogMessage(String message) {
         managerLogs.addMessage(message, A.now());
 

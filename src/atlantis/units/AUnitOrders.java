@@ -87,6 +87,8 @@ public interface AUnitOrders {
 
         boolean issued = unit().orderSink().attackUnit(unit(), target);
 
+        if (issued) unit.noteDecision("Attack:" + target.typeWithUnitId());
+
         // Order-latency gate (owner recommendation 2026-10-12): never trust
         // isAttacking() in the first frames after the command - the engine registers the
         // Attack after getRemainingLatencyFrames(). Hold the unit until it lands.
@@ -300,11 +302,12 @@ public interface AUnitOrders {
                 return false;
             }
 
-            return unit().orderSink().move(unit(), target.position().p());
+            boolean issued = unit().orderSink().move(unit(), target.position().p());
+            if (issued) unit.noteDecision(tooltip != null ? tooltip : unitAction.name());
+            return issued;
         }
 
         return true;
-//        return false;
     }
 
     static int commandMinDelayWhenMoving(AUnit unit) {
@@ -386,7 +389,9 @@ public interface AUnitOrders {
 //            AConsole.errPrintln("B unit().lastCommandIssuedAgo() = " + unit().lastCommandIssuedAgo());
 //            AConsole.printStackTrace("Whaaaaaaaaaaaaaaaaaat " + unit());
 //        }
-        return unit().orderSink().stop(unit());
+        boolean stopped = unit().orderSink().stop(unit());
+        if (stopped) unit().noteDecision(tooltip != null ? tooltip : "Stop");
+        return stopped;
     }
 
     /**
