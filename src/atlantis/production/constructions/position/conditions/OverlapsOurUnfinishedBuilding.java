@@ -24,7 +24,13 @@ import atlantis.units.select.Select;
  * mining worker on the footprint is transient (that false positive
  * died 2026-10-10), finished buildings are the engine's answer, enemy
  * buildings never overlap our base sites in practice and stay out to
- * keep this guard narrow.</p>
+ * keep this guard narrow. Standing grazers (a completed building
+ * overlapping the candidate) pass here BY PINNED DESIGN
+ * ({@code WarpingBuildingBlocksOverlapTest.finishedSiblingNextDoorStaysLegal})
+ * and die at proximity-finish instead - the two guards cover disjoint
+ * worlds by construction (NEXT #150 branch, #151 no-merge), so a
+ * same-frame REQUESTED-then-cancel against a standing building is
+ * the finish path working, not this guard missing.</p>
  */
 public class OverlapsOurUnfinishedBuilding {
 
