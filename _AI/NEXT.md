@@ -1029,7 +1029,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   exact HP as engine truth. First scenarios: surrounded dragoon
   flees, wounded dragoons withdraw and survive, obstacle course
   without permanent wedges; then the formation coordination proof
-  rides on it (#162).
+  rides on it (#162). Since: T-duel (1v1 hits pin, #169), T-ghost
+  (stale-target drop), T-collapse (4v1 funnel wipe, #170), T-run
+  (probe outruns chaser via managers, #172), pinch A/B + gate,
+  make-way/cover rows, hunt/no-hunt - 19 tests.
   2026-10-20: LANDED the vehicle (`tests.unit.sim`: `SimWorld` tick
   driver + `SimArena` obstacles + `DragoonsVsZerglingsTest` 4/4:
   T0 engine-data pins, T1 surrounded flees+survives, T2 group
