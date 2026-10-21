@@ -961,6 +961,83 @@ public class DragoonsVsZerglingsTest extends AbstractTestWithUnits {
         }
     }
 
+    // =========================================================
+    // T-collapse: the bait pulled the lings into the funnel and the line
+    // crushes 4v2 (NEXT #170). The line joins the bait at the funnel
+    // mouth instead of standing the standoff, then wipes the pack.
+    // =========================================================
+
+    @Test
+    public void collapseWipesBaitedPack() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit[] dragoons = new FakeUnit[] {
+            fake(AUnitType.Protoss_Dragoon, 27, 29),
+            fake(AUnitType.Protoss_Dragoon, 28, 29),
+            fake(AUnitType.Protoss_Dragoon, 29, 29),
+            fake(AUnitType.Protoss_Dragoon, 30, 29),
+        };
+        FakeUnit lingA = fake(AUnitType.Zerg_Zergling, 28, 10);
+        FakeUnit lingB = fake(AUnitType.Zerg_Zergling, 29, 10);
+        lingA.setEnemy();
+        lingB.setEnemy();
+
+        SimArena arena = new SimArena(60 * TILE, 40 * TILE);
+        SimWorld world = new SimWorld(
+            new FakeUnit[] { nexus, dragoons[0], dragoons[1], dragoons[2], dragoons[3] },
+            new FakeUnit[] { lingA, lingB }, arena);
+        try {
+            BattleCommander.clearForTests();
+            atlantis.util.log.EventLog.clearForTests();
+
+            for (int i = 0; i < 500; i++) {
+                world.tick(() -> {
+                    for (FakeUnit dragoon : dragoons) {
+                        if (dragoon.hp > 0) {
+                            BattleCommander.act(dragoon, FightOrFlight.Tactic.FIGHT, null, dragoon);
+                        }
+                    }
+                    scriptHoldMouth(lingA, dragoons);
+                    scriptHoldMouth(lingB, dragoons);
+                });
+                if (lingA.hp <= 0 && lingB.hp <= 0) break;
+            }
+            assertTrue(lingA.hp <= 0 && lingB.hp <= 0, "the collapsed line wipes the baited pack");
+            int alive = 0;
+            for (FakeUnit dragoon : dragoons) if (dragoon.hp > 0) alive++;
+            assertTrue(alive >= 3, "crushing collapse trades up, alive=" + alive);
+        }
+        finally {
+            world.close();
+        }
+    }
+
+    /** Baited-in defender: holds the mouth, trades only in reach (no chasing out). */
+    private static void scriptHoldMouth(FakeUnit ling, FakeUnit[] dragoons) {
+        if (ling.hp <= 0) {
+            ling.lastCommand = "Stop";
+            return;
+        }
+        FakeUnit nearest = null;
+        double best = Double.MAX_VALUE;
+        for (FakeUnit dragoon : dragoons) {
+            if (dragoon.hp <= 0) continue;
+            double dist = ling.distTo(dragoon);
+            if (dist < best) {
+                best = dist;
+                nearest = dragoon;
+            }
+        }
+        if (nearest != null && best <= SimWorld.reachTiles(ling, nearest)) {
+            ling.lastCommand = "AttackUnit";
+            ling.target = nearest;
+            ling.targetPosition = nearest.position;
+        }
+        else {
+            ling.lastCommand = "Stop";
+            ling.target = null;
+        }
+    }
+
     private static double centroidX(FakeUnit[] dragoons) {
         double sum = 0;
         for (FakeUnit dragoon : dragoons) sum += dragoon.position.x();

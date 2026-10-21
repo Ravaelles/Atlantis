@@ -9,6 +9,7 @@ import atlantis.battle.cluster.LeaveBreachedBase;
 import atlantis.battle.retreating.RetreatFromLostFight;
 import atlantis.battle.strategy.BattleStrategies;
 import atlantis.battle.strategy.BattleStrategy;
+import atlantis.battle.strategy.ChokeCollapse;
 import atlantis.battle.strategy.ChokeStandoff;
 import atlantis.battle.strategy.SquadScout;
 import atlantis.battle.targeting.AcquireTarget;
@@ -151,6 +152,13 @@ public class BattleCommander extends Commander {
         // Choke doctrine (NEXT #170): the decider owns the approach, this
         // only executes it - bait pulls into the funnel, the line holds
         // the standoff, everyone else bunches on the leader as before.
+        if (strategy == BattleStrategy.COLLAPSE) {
+            APosition collapse = ChokeCollapse.collapsePointFor(unit);
+            if (collapse != null && unit.move(collapse, Actions.MOVE_ENGAGE, "ClusterCollapse")) {
+                FightTarget.markRepositioned(unit);
+                return;
+            }
+        }
         if (strategy == BattleStrategy.SCOUT_BAIT) {
             APosition bait = SquadScout.baitPointFor(unit);
             if (bait != null && unit.move(bait, Actions.MOVE_ENGAGE, "ClusterBait")) {

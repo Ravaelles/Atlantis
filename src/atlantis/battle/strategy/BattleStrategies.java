@@ -16,6 +16,7 @@ public final class BattleStrategies {
 
     public static BattleStrategy pick(AUnit unit, HasPosition anchor) {
         if (unit == null) return BattleStrategy.OPEN_FIELD;
+        if (ChokeCollapse.applies(unit, anchor)) return BattleStrategy.COLLAPSE;
         if (SquadScout.applies(unit, anchor)) return BattleStrategy.SCOUT_BAIT;
         if (ChokeStandoff.applies(unit, anchor)) return BattleStrategy.CHOKE_HOLD;
         if (DuelKite.applies(unit)) return BattleStrategy.DUEL_KITE;

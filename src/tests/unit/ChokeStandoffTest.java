@@ -61,16 +61,46 @@ public class ChokeStandoffTest extends WorldStubForTests {
         zealot.setEnemy();
 
         world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
-            // 3 vs 1 at the choke is crushing: no hold, no bait, the line fights.
+            // 3 vs 1 at the choke is crushing: no hold, no lone bait -
+            // the decider sends the whole line to the funnel mouth.
             assertTrue(
                 atlantis.battle.strategy.BattleStrategies.pick(a, null)
-                    == atlantis.battle.strategy.BattleStrategy.OPEN_FIELD,
-                "crushing superiority pushes through instead of holding");
+                    == atlantis.battle.strategy.BattleStrategy.COLLAPSE,
+                "crushing superiority collapses instead of holding");
             BattleCommander.act(a, FightOrFlight.Tactic.FIGHT, null, a);
             assertNotNull(a.targetPosition, "engages instead of idling");
             assertTrue(a.targetPosition.distTo(zealot.position()) < a.distTo(zealot),
                 "closing toward the zealot (out of range, so a move, not a standoff hold): "
                 + a.targetPosition);
+        });
+    }
+
+    @Test
+    public void crushingLineCollapsesOntoTheBait() {
+        FakeUnit nexus = fake(AUnitType.Protoss_Nexus, 20, 20);
+        FakeUnit a = fake(AUnitType.Protoss_Dragoon, 27, 29);
+        FakeUnit b = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit c = fake(AUnitType.Protoss_Dragoon, 29, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 34, 14);
+        zealot.setEnemy();
+
+        world(5, fakeOurs(nexus, a, b, c), fakeEnemies(zealot), () -> {
+            // 3 vs 1 at the contested choke is crushing with contact:
+            // the decider sends the line to the funnel mouth, not the standoff.
+            assertTrue(
+                atlantis.battle.strategy.BattleStrategies.pick(a, null)
+                    == atlantis.battle.strategy.BattleStrategy.COLLAPSE,
+                "crushing + contested: collapse onto the bait");
+            for (AUnit u : new AUnit[] { a, b, c }) {
+                BattleCommander.act((FakeUnit) u, FightOrFlight.Tactic.FIGHT, null, (FakeUnit) u);
+            }
+            APosition choke = ((atlantis.map.position.HasPosition) a).nearestChoke().center();
+            for (AUnit u : new AUnit[] { a, b, c }) {
+                APosition dest = ((FakeUnit) u).targetPosition;
+                assertNotNull(dest, "the whole line joins the bait, nobody holds");
+                assertTrue(dest.distTo(choke) < 5,
+                    "at the funnel mouth, not the 10-tile standoff: " + dest + " vs " + choke);
+            }
         });
     }
 

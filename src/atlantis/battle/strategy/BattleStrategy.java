@@ -13,6 +13,8 @@ public enum BattleStrategy {
     SCOUT_BAIT,
     /** Choke ahead with the enemy near and no crushing superiority: hold, don't push. */
     CHOKE_HOLD,
+    /** Bait pulled the enemy into the funnel and the line crushes: join the bait at the mouth. */
+    COLLAPSE,
     /** Everything else: the standing fight. */
     OPEN_FIELD
 }
