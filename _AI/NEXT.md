@@ -1023,7 +1023,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   BEST/STEP/RADIUS out, map-mismatch warning) and run-wine-tune.sh
   (batch, propose, halve step/radius when the best stops improving).
   Proved live: 2 rounds x 2 duels, best fitness 4.33 -> 2.67
-  (13 -> 8 hits taken). Engines are addressable (TuningEngine +
+  (13 -> 8 hits taken). 30-game run 2026-10-21 (10 rounds x 3, all wins):
+  best 2.93 (8 hits / 22 s, round 8); round means 15-19 hits, spikes to 24 -
+  duel noise dominates the gradient at K=3, so efficacy is unproven
+  (K-of-N + more rounds needed); the loop machinery itself ran clean.
+  Lesson: awk follows LC_NUMERIC - the halve-on-plateau schedule silently
+  emitted commas (step=0,0250), which the driver rejected back to defaults.
+  All schedule math now runs under LC_ALL=C. Engines are addressable (TuningEngine +
   wine/openbw/sim descriptors, --engine flag); only wine tunes today,
   the others fail loudly with their reason (no tweaker rows on
   OpenBW, no sim batch runner yet). Step 6 (gradient loop) LANDED

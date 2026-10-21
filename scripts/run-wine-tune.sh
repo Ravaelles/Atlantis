@@ -105,10 +105,10 @@ while [ "$r" -lt "$ROUNDS" ]; do
   STEP="$(echo "$DRIVER_OUT" | grep -m1 "^STEP=" | cut -d= -f2)"
   RADIUS="$(echo "$DRIVER_OUT" | grep -m1 "^RADIUS=" | cut -d= -f2)"
   if [ -n "$PREV_BEST" ] && [ "$BEST" != "unknown" ] && [ "$PREV_BEST" != "unknown" ]; then
-    WORSE="$(awk -v b="$BEST" -v p="$PREV_BEST" 'BEGIN{print (b >= p) ? 1 : 0}')"
+    WORSE="$(LC_ALL=C awk -v b="$BEST" -v p="$PREV_BEST" 'BEGIN{print (b >= p) ? 1 : 0}')"
     if [ "$WORSE" = "1" ]; then
-      STEP="$(awk -v s="$STEP" 'BEGIN{printf "%.4f", s / 2}')"
-      RADIUS="$(awk -v r="$RADIUS" 'BEGIN{printf "%.4f", r / 2}')"
+      STEP="$(LC_ALL=C awk -v s="$STEP" 'BEGIN{printf "%.4f", s / 2}')"
+      RADIUS="$(LC_ALL=C awk -v r="$RADIUS" 'BEGIN{printf "%.4f", r / 2}')"
       echo "[wine-tune] best did not improve ($PREV_BEST -> $BEST): halving step=$STEP radius=$RADIUS"
     fi
   fi
