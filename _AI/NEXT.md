@@ -1484,6 +1484,10 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  reason). Done when: a test dragoon driven through two different
  seams names a different deciding class per row; live: a 1Drag
  death log names the class behind every order row.
+ 2026-10-22 code LANDED (pinned `DecisionJournalTest` 7/7: direct and
+ funnel paths name the caller class; same-caller duplicates still
+ collapse, different callers split - that IS the point). Live proof
+ rides the next owner-run duel game.
 - **#177** Blind-enemy advance (owner 2026-10-21/22, HIGH priority):
  ZealDrag_v_LingsUpg: the enemy splits, ours stand still with
  ClusterMove + ClusterGhost tags - no visible enemies, only fogged
@@ -1508,6 +1512,18 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  explicit ask; (a)-(c) are the mechanisms that make it move.
  Proof: ZealDrag_v_LingsUpg live (army displaces toward the split
  enemy instead of standing), then ZealDrag_v_Zeal.
+ 2026-10-22 code slices (all stub-pinned + mutation-proofed, fast
+ suite green; live proof of each rides the owner-run UMS games):
+ far march (UMS ignores the 12-tile give-up, melee keeps it),
+ unexplored-region fallback (contact, then fogged memory, then
+ nearest unexplored region; melee keeps the old null), per-second
+ `UNIT_TELEMETRY` with march destination and target id, and contact
+ staleness (personal contact older than 240 frames drops out of the
+ creep and falls through to fogged/unexplored instead of
+ ping-ponging one stale tile; `HuntLastContact` keeps its own
+ baseless re-acquire policy). (d) not built as a separate rule: the
+ address chain above closes on the best-known address every frame
+ with no standstill branch between its links.
 - **#178** Zealot kiting (owner 2026-10-21/22): zealots never yield,
  so vs faster-attacking enemies (zerglings attack faster than
  zealots) they stand through the cooldown and bleed. Rule: after
@@ -1565,6 +1581,15 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
  squad assignment splitting the army, anchor/formation fallback
  holding the far half. Prove on ZealDrag_v_Zeal: no idle half
  while the other half dies (per-part damage + orders in the log).
+ 2026-10-22 code LANDED (UMS-only reinforce to the freshest army
+ contact, 240-frame freshness brake, pinned 5/5 incl. a negative
+ melee control, mutation-proofed; verified from retained logs):
+ ZealDrag_v_Zeal VICTORY 12/5 in 43 s, no idle half; LingsUpg is
+ high-variance - 2 VICTORY (32/3, 32/4, both under 40 s) against 4
+ wall-timeout Defeats (202 s cap, 16/1, 25/3, 29/4, 30/5) in which
+ the army marches but never finishes. The timeout shape (5-9
+ SHOT/100f vs 47-55 in wins, foe=-1 late) is the open end, not the
+ reinforce.
 
 ## Current game state (updated 2026-10-21)
 
