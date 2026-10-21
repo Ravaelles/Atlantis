@@ -211,6 +211,26 @@ public final class GhostAdvance {
         return isVanguard(unit) ? "ClusterScout" : "ClusterGhost";
     }
 
+    /**
+     * No contact memory and no fogged enemies, but the map is not fully
+     * explored (NEXT #177): march at the nearest unexplored region
+     * instead of standing - hidden enemies live where sight never was.
+     * UMS only: melee keeps formation when blind. Null when everything
+     * is explored (cloaked leftovers are a detector problem, not a
+     * marching one) or the region library has no answer.
+     */
+    private static APosition unexploredDestinationFor(AUnit unit) {
+        if (unit == null || !atlantis.game.A.isUms()) return null;
+        try {
+            atlantis.map.region.ARegion region =
+                atlantis.map.region.Regions.getNearestUnexploredRegion(unit.position());
+            if (region == null || region.center() == null) return null;
+            return region.center();
+        } catch (Exception ignored) {
+            return null;
+        }
+    }
+
     /** Exactly one unit walks ahead: the lowest-id combat unit, like the choke bait. */
     public static boolean isVanguard(AUnit unit) {
         if (unit == null) return false;
@@ -249,9 +269,9 @@ public final class GhostAdvance {
                     nearest = foe;
                 }
             }
-            return nearest == null ? null : nearest.position();
+            if (nearest != null) return nearest.position();
         } catch (Exception ignored) {
-            return null;
         }
+        return unexploredDestinationFor(unit);
     }
 }

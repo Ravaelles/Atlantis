@@ -1,6 +1,7 @@
 package atlantis.battle.twins;
 
 import atlantis.game.A;
+import atlantis.map.position.APosition;
 import atlantis.units.AUnit;
 import atlantis.units.AUnitType;
 import atlantis.units.select.Select;
@@ -53,6 +54,16 @@ public final class UnitTelemetry {
         int zealot = distX10(unit, nearestAllyOfType(unit, AUnitType.Protoss_Zealot));
         int foes2 = foesNear(unit, 2.0);
         int target = currentTargetId(unit);
+        int destX = -1;
+        int destY = -1;
+        try {
+            APosition dest = unit.targetPosition();
+            if (dest != null) {
+                destX = dest.position().x() / 32;
+                destY = dest.position().y() / 32;
+            }
+        } catch (Exception ignored) {
+        }
 
         EventLog.key(LogKey.UNIT_TELEMETRY)
             .param("unit", unit.id())
@@ -64,6 +75,8 @@ public final class UnitTelemetry {
             .param("zealot", zealot)
             .param("foes2", foes2)
             .param("tgt", target)
+            .param("dx", destX)
+            .param("dy", destY)
             .param("ux", unit.x() / 32)
             .param("uy", unit.y() / 32)
             .log(now, A.minSec());
@@ -75,7 +88,8 @@ public final class UnitTelemetry {
         }
         trail.addLast("f" + now + " hp" + hp + " sh" + shields
             + " foe" + foe + " dg" + dragoon + " zl" + zealot + " n2:" + foes2
-            + " tgt" + (target < 0 ? "-" : target));
+            + " tgt" + (target < 0 ? "-" : target)
+            + " dst" + (destX < 0 ? "-" : destX + ":" + destY));
         while (trail.size() > TRAIL_LENGTH) trail.removeFirst();
     }
 

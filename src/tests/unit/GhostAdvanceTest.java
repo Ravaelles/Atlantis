@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import tests.acceptance.WorldStubForTests;
 import tests.fakes.FakeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -257,6 +258,80 @@ public class GhostAdvanceTest extends WorldStubForTests {
             assertNull(GhostAdvance.advancePointFor(dragoon, FightOrFlight.Tactic.FIGHT),
                 "melee gives up far ghosts as before");
         });
+    }
+
+    @Test
+    public void umsExploresUnseenMapWhenNobodyRemembersAnything() {
+        // NEXT #177, last resort: no contact, no fogged enemies, but the
+        // map is not fully explored - march at the nearest unexplored
+        // region instead of standing. Melee keeps the old null.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+
+        atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(region);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(APosition.create(50, 30), GhostAdvance.ghostPointFor(dragoon),
+                    "unseen map means explore, not stand");
+            });
+        }
+    }
+
+    @Test
+    public void meleeDoesNotChaseUnexploredMap() {
+        // The UMS-only gate, pinned: melee keeps formation when blind.
+        aGame.when(AGame::isUms).thenReturn(false);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+
+        atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(region);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertNull(GhostAdvance.ghostPointFor(dragoon),
+                    "melee holds formation instead of exploring");
+            });
+        }
+    }
+
+    @Test
+    public void foggedAddressBeatsUnexploredMap() {
+        // Priority order: contact, then fogged memory, then exploration.
+        aGame.when(AGame::isUms).thenReturn(true);
+
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 28, 29);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 29, 29);
+        zealot.setEnemy();
+        zealot.isVisibleUnitOnMap = false;
+
+        atlantis.map.region.ARegion region = org.mockito.Mockito.mock(atlantis.map.region.ARegion.class);
+        org.mockito.Mockito.when(region.center()).thenReturn(APosition.create(50, 30));
+        try (org.mockito.MockedStatic<atlantis.map.region.Regions> regions =
+                org.mockito.Mockito.mockStatic(atlantis.map.region.Regions.class)) {
+            regions.when(() -> atlantis.map.region.Regions.getNearestUnexploredRegion(
+                org.mockito.ArgumentMatchers.any())).thenReturn(region);
+
+            world(3, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+                if (atlantis.game.A.now() != 2) return;
+
+                assertEquals(zealot.position(), GhostAdvance.ghostPointFor(dragoon),
+                    "a remembered enemy beats exploring");
+            });
+        }
     }
 
     @Test
