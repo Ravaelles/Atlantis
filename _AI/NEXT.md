@@ -1204,8 +1204,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   corner scoring; enemy-20 avoidance; size-aware clearance; tuner
   wiring. First consumer: `DuelKite.yieldStep` (replaces
   `MoveAway.bestDestination`), second: `ARunningManager`.
-- **#184** Migrate isTerminal readers (NEXT #157 follow-up): FINISHED checks
-  to isTerminal(). First batch + unit tests + macro no-regression game.
 ## Current game state (updated 2026-10-21)
 
 - Wine `1Drag_v_1Zeal.scm` (UMS micro): baseless ATTACK now marches
