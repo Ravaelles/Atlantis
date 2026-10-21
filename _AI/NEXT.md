@@ -1086,7 +1086,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   guard) read isWaiting() instead of re-spelling the disjunction -
   same predicate, zero behavior change, suite green
   (`ConstructionOrderStatusTest`, `CoreSingleInstanceGateTest`
-  carry the semantics).
+  carry the semantics). 2026-10-21 sweep: no re-spelled disjunctions
+  left in prod (countPreparingOfType, adopt-prepared check, painter
+  orange tile migrated the same day, pinned by existing acceptance +
+  unit coverage); the remaining status() uses are single-state checks
+  or different predicates (hasStarted mixes, buildingUnit==null pairs),
+  not disjunctions - migration complete pending per-reader game proof,
+  which rides normal macros (no dedicated games).
 - **#160** Automated tuner winner selection (owner 2026-10-21:
   selection is eyeballed today, make it the best long-term loop).
   Steps, in order, each a game-proven slice: (1) write the objective
