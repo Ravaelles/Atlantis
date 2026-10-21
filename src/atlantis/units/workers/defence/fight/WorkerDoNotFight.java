@@ -111,7 +111,6 @@ public class WorkerDoNotFight {
 
     private static int minHpForProtoss(AUnit unit) {
         return 35;
-
 //        return unit.meleeEnemiesNearCount(2.6) <= 1 ? 18 : 36;
     }
 

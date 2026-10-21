@@ -263,7 +263,6 @@ public class RunInAnyDirection {
         }
         else if (unit.isDragoon()) {
             return ANY_DIRECTION_RADIUS_DRAGOON;
-
 //            return (int) (ANY_DIRECTION_RADIUS_DRAGOON + (unit.woundPercent() / 22));
 //            return (int) (ANY_DIRECTION_RADIUS_DRAGOON + (unit.woundPercent() / 20));
 //            return unit.nearestEnemyDist() <= 3.4

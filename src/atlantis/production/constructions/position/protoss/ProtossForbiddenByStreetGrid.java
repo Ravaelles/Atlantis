@@ -87,7 +87,6 @@ public class ProtossForbiddenByStreetGrid {
         }
 
         return false;
-
 //            if (position.distTo(Select.mainOrAnyBuilding()) >= 30) return false;
     }
 

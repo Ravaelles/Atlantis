@@ -28,7 +28,6 @@ public class ProtossStrategies extends AStrategy {
 
         else if (Enemy.terran()) {
             return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
-
 //            return ProtossStrategies.PROTOSS_Forge_FE_vP;
 //            return ProtossStrategies.PROTOSS_Zealot_into_Goon;
 //            return ProtossStrategies.PROTOSS_Core_Dragoon;
@@ -36,7 +35,6 @@ public class ProtossStrategies extends AStrategy {
 
         else if (Enemy.zerg()) {
             return ProtossStrategies.PROTOSS_Zealot_into_Goon;
-
 //            return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //            return ProtossStrategies.PROTOSS_4Zealot_Core_vZ;
 //            return ProtossStrategies.PROTOSS_Zealot_Core_Zealot_vZ;
@@ -48,7 +46,6 @@ public class ProtossStrategies extends AStrategy {
         }
 
         return ProtossStrategies.PROTOSS_Zealot_into_Goon;
-
 //        return ProtossStrategies.PROTOSS_Forge_FE_vZ;
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Dragoon;
 //        return ProtossStrategies.PROTOSS_Zealot_Core_Zealot;

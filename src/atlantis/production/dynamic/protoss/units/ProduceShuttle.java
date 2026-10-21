@@ -40,7 +40,6 @@ public class ProduceShuttle {
         }
 
         return false;
-
 //        return buildToHave(AUnitType.Protoss_Shuttle, 1);
     }
 

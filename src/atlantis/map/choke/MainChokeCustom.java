@@ -52,7 +52,6 @@ public class MainChokeCustom {
 
 //                    if (cached_mainBaseChoke == null) {
         return mainRegion.chokes().iterator().next();
-
 //                    }
     }
 }

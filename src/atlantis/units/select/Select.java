@@ -217,7 +217,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         }
 
         return total;
-
 //            }
 //        );
     }
@@ -236,7 +235,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
         }
 
         return total;
-
 //            }
 //        );
     }
@@ -266,7 +264,6 @@ public class Select<T extends AUnit> extends BaseSelect<T> {
 //        }
 
         return total;
-
 //            }
 //        );
     }

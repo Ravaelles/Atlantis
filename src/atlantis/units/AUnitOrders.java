@@ -304,7 +304,6 @@ public interface AUnitOrders {
         }
 
         return true;
-
 //        return false;
     }
 

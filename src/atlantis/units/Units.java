@@ -130,7 +130,6 @@ public class Units {
      */
     public AUnit get(int index) {
         return units.get(index);
-
 //        Set<AUnit> keySet = units.keySet();
 //
 //        int currentIndex = 0;

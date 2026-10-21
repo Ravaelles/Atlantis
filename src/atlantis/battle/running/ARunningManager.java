@@ -227,7 +227,6 @@ public class ARunningManager {
 
         if (runTo != null && unit.distTo(runTo) >= 0.04) {
             return true;
-
 //            if (unit.lastStartedRunningAgo(3)) {
 //                return true;
 //            } else {

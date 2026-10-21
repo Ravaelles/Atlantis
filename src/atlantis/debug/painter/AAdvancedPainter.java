@@ -785,7 +785,6 @@ public class AAdvancedPainter extends APainter {
 
             case IN_PROGRESS:
                 return order.isBuildingAndConstructionStarted() ? Purple : Yellow;
-
 //                return order.con() != null ? Yellow;
             case FINISHED:
                 return Green;

@@ -28,7 +28,6 @@ public class CanAbandonUnitAssignedToRepair {
         int workersNearby = target.friendsNear().workers().inRadius(1.5, target).count();
 
         return enemies.isEmpty() || (workersNearby >= 3 && enemies.count() < workersNearby);
-
 //        return target.enemiesNear().canAttack(target, 14).isEmpty();
     }
 }

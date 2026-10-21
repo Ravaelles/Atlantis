@@ -50,7 +50,6 @@ public class DoAvoidEnemies extends Manager {
         }
 
         return null;
-
 //        else {
 //            return avoid.groupOfUnits(enemies);
 //        }

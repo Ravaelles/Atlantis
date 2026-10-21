@@ -302,7 +302,6 @@ public class AddToQueue {
 
         if (nextOrders.isEmpty()) {
             return currentMin1;
-
 //            return 0;
         }
 

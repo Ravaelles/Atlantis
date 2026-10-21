@@ -60,7 +60,6 @@ public class TerranStrategyResponse extends RaceStrategyResponse {
 
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return 1;
-
 //        return enemyStrategy.isGoingCheese() ? 2 : 1;
     }
 

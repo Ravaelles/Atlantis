@@ -53,7 +53,6 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
         }
 
         return 3;
-
 //        int expected = EnemyStrategy.get().isRushOrCheese() ? 3 : (Enemy.terran() ? 0 : 1);
 //
 //        return expected;
@@ -98,7 +97,6 @@ public class ZergSunkenColony extends AntiLandBuildingCommander {
                 colony.addLog(tooltip);
                 colony.setTooltip(tooltip);
                 return true;
-
 //                    System.err.println("---- Morph " + colony + " into >>> " + type());
             }
         }

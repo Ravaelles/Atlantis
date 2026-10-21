@@ -22,7 +22,6 @@ public class Main {
     public static String ourRace() {
 //        return "Terran";
         return "Protoss";
-
 //        return "Zerg";
     }
 

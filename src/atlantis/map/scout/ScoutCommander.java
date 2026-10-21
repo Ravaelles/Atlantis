@@ -120,7 +120,6 @@ public class ScoutCommander extends Commander {
 
     private int scoutsNeeded() {
         return 1;
-
 //        return A.supplyUsed() >= 70 ? 2 : 1;
     }
 

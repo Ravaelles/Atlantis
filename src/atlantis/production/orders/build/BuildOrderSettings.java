@@ -39,7 +39,6 @@ public class BuildOrderSettings {
     protected static int settingAsInt(String key, int fallbackOrNull) {
         if (!settings().containsKey(key)) {
             return fallbackOrNull;
-
 //            throw new RuntimeException("No setting in build order: " + key);
         }
 
@@ -49,7 +48,6 @@ public class BuildOrderSettings {
     protected static boolean settingAsBoolean(String key, boolean fallbackOrNull) {
         if (!settings().containsKey(key)) {
             return fallbackOrNull;
-
 //            throw new RuntimeException("No setting in build order: " + key);
         }
 

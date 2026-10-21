@@ -425,7 +425,6 @@ public class AUnitType implements Comparable<Object> {
      */
     public String fullName() {
         return ut.toString();
-
 //        return (String) cache.get(
 //                "getName",
 //                -1,
@@ -1669,7 +1668,6 @@ public class AUnitType implements Comparable<Object> {
 
     public boolean isProtoss() {
         return ut.getRace().equals(Race.Protoss);
-
 //        return (boolean) cache.get(
 //            "isProtoss",
 //            -1,

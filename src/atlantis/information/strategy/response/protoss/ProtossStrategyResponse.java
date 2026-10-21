@@ -50,7 +50,6 @@ public class ProtossStrategyResponse extends RaceStrategyResponse {
     @Override
     protected int rushDefenseCombatBuildingsNeeded(AStrategy enemyStrategy) {
         return 2;
-
 //        return enemyStrategy.isGoingCheese() ? 3 : 2;
     }
 

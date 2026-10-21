@@ -50,7 +50,6 @@ public class ProduceFirstAssimilator {
                 return true;
             }
             return blocked("QueueRejected");
-
             //        DynamicCommanderHelpers.buildToHaveOne(A.supplyUsed() - 2, Protoss_Assimilator);
         }
 

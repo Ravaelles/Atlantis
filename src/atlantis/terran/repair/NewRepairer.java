@@ -17,7 +17,6 @@ public class NewRepairer {
 //                    .notConstructing();
 //            }
         return candidates.exclude(unitToRepair).nearestTo(unitToRepair);
-
 //        }
 
 //        // Try to use one of the protectors if he's non occupied
