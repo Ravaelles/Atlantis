@@ -11,6 +11,8 @@ import atlantis.production.orders.production.queue.order.ProductionOrder;
 import atlantis.production.requests.produce.ProduceOrdersFromQueue;
 import atlantis.production.v2.engine.ProductionEngine;
 import atlantis.production.v2.ProductionRacePolicy;
+import atlantis.production.v2.engine.GameStateSnapshot;
+import atlantis.units.AUnitType;
 import atlantis.units.select.Count;
 import atlantis.units.select.Select;
 
@@ -46,6 +48,15 @@ public class ProductionOrdersCommander extends Commander {
         if (atlantis.config.env.Env.productionV2().isLive()) {
             v2Engine.updateFrame();
             return false;
+        }
+
+        // Read-only supply witness for OFF games (NEXT #150 follow-up):
+        // DRY_RUN runs the engine alongside (its twin fires), LIVE is
+        // the twin's own path - only OFF never rows a 90/90 block.
+        if (!atlantis.config.env.Env.productionV2().isEnabled()) {
+            AUnitType provider = SupplyBlockedTwin.legacyProvider();
+            SupplyBlockedTwin.sample(
+                provider, A.supplyFree(), GameStateSnapshot.supplyProvidersComing(provider));
         }
 
         if (atlantis.config.env.Env.productionV2().isDryRun()) {

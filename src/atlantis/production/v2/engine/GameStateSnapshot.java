@@ -2,7 +2,6 @@ package atlantis.production.v2.engine;
 
 import atlantis.config.AtlantisRaceConfig;
 import atlantis.game.A;
-import atlantis.game.AGame;
 import atlantis.production.v2.ProductionRacePolicy;
 import atlantis.production.v2.ProducerFacilityRegistry;
 import atlantis.production.constructions.Construction;
@@ -195,51 +194,8 @@ public final class GameStateSnapshot {
      * Throttled: suppression is a state, not an event.
      */
     private void twinSuppressedSupply(DynamicGoals.GameSnapshot snapshot) {
-        if (!A.everyNthGameFrame(300)) return;
-        AUnitType provider = racePolicy.supplyProviderType();
-        if (provider == null) return;
-        // Always sample: coming==0 with no Pylon goal means the bug is in
-        // the goal/scheduler, not in suppression. Per-unit rows below name
-        // the blockers when suppressed - read from the RAW list, the same
-        // source the coming count uses (alive-filtered views hide corpses).
-        atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
-            .param("type", provider.name())
-            .param("result", "sample")
-            .param("free", snapshot.supplyFree)
-            .param("coming", snapshot.supplyProvidersComing)
-            .log(AGame.now(), A.minSec());
-        if (snapshot.supplyFree > DynamicGoals.SUPPLY_WORRY_LEVEL) return;
-        if (snapshot.supplyProvidersComing <= 0) return;
-        for (AUnit unit : atlantis.units.select.BaseSelect.ourUnitsWithUnfinishedList()) {
-            if (unit == null || !unit.is(provider)) continue;
-            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
-                .param("type", provider.name())
-                .param("result", "blocker")
-                .param("id", unit.id())
-                .param("tx", unit.tx())
-                .param("ty", unit.ty())
-                .param("hp", unit.hp())
-                .param("completed", unit.isCompleted())
-                .param("alive", unit.isAlive())
-                .log(AGame.now(), A.minSec());
-        }
-        // Constructions without a unit yet suppress the same way (see
-        // supplyProvidersComing): without a named row a coming>0 sample
-        // with no blocker units reads as a phantom entry. Same throttle
-        // as the samples above - suppression is a state, not an event.
-        for (Construction construction :
-            atlantis.production.constructions.ConstructionRequests.constructions) {
-            if (construction == null || !provider.equals(construction.buildingType())) continue;
-            atlantis.util.log.EventLog.key(atlantis.util.log.LogKey.SUPPLY_BLOCKED)
-                .param("type", provider.name())
-                .param("result", "blocker-construction")
-                .param("cid", construction.id())
-                .param("status", String.valueOf(construction.status()))
-                .param("tile", construction.buildPosition() == null ? "-"
-                    : "[" + construction.buildPosition().tx() + ","
-                    + construction.buildPosition().ty() + "]")
-                .log(AGame.now(), A.minSec());
-        }
+        atlantis.production.SupplyBlockedTwin.sample(
+            racePolicy.supplyProviderType(), snapshot.supplyFree, snapshot.supplyProvidersComing);
     }
 
     /** Photon Cannons already standing at the main base. */
