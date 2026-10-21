@@ -463,7 +463,13 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   leaves zero further rows (no cancel, no death, no warp): the
   orphan-drop twin does not cover builder-dead warps. Next: extend
   the orphan-drop twin to builder death, proof is cid 331's shape
-  twinning on the next run.
+  twinning on the next run. 2026-10-21 mechanism, no blind patch:
+  the corpse may read alive - ghost UNIT_TRACE rows exist for 30
+  dead ids (e.g. Dragoon 177 dead 14848, traced 16396 at hp 7 with
+  garbage dist 671088639), so any liveness predicate in the fix
+  must first prove it distinguishes the 12:28 corpse (frames
+  17825-28800, builder #126). Until then: twin-only naming, no
+  removal, no retry.
   2026-10-21 Wine macro: 57 DISTINCT Gateway oids each CANCEL "Null
   position" once (siteless mint death, no storm - the untwinned door
   at scale, read the CANCEL reason per the mint answer); Stargate*
