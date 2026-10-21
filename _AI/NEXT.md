@@ -569,7 +569,8 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   `200123` is the first 1-base 700 s+ run (944 s, Nexus=1): ORDER_SAVING
   still 0, bank peak 8883 (predicate wants < 550) - correctly silent.
   Lottery 2026-10-19 (`154329`: 428 s, Nexus=1): still short of 700 s,
-  never a saving shape.
+  never a saving shape. 2026-10-21 TauCross macro: 1 base, 670 s, ORDER_SAVING 0
+  (short of 700 s again - the 1-base lottery continues).
 - **#81** Corner-stall Pylon search (top-right base [119,10]): 1953
   refusals, grid-modulo + doctrine kills (a mislabel fix already
   landed, zero behaviour). Needs the corner-stall game to decide
@@ -598,7 +599,9 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   true corner-stall shape (mid-base tiles [112,29]/[108,25]/[118,34]),
   so this is a no-harm proof, not a firing proof - the firing path
   still rests on the 4/4 stub pin until a real corner shape appears.
-  No misfire observed; the rule stays.
+  No misfire observed; the rule stays. 2026-10-21 TauCross macro: zero
+  room-around refusals, zero PYLON_FIND_FAILED, 9 Pylons warped - second
+  no-harm datum, still no firing shape.
 - **#84** Wine Pylon ordered but unbuilt: late-game instance (5:01 +
   38 s, bank hoarded) and early-game instance (READY from ~100 s, 9/9
   + 400 bank at log end). Worker stall, placement refusal, null
