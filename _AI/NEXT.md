@@ -524,31 +524,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   - goal-source twin LANDED (V2_GOAL_SOURCE on provider goals at
   collectGoals, lists tag at creation, pinned V2GoalSourceTest 5/5):
   the next live pair reads its authors off the source column.
-- **#154** Per-unit attack readiness (owner 2026-10-20, Stardust over
-  PurpleWave for single-unit micro): attack iff `cooldown <=
-  latency(unit) + 2`, where latency is strictly per-unit (reaction +
-  remaining engine frames) - never a flat number, and never the
-  PurpleWave-copied `UnitAttackWaitFrames.effectiveStopFrames` table
-  (per-type constants, currently half-dead: `unitAlreadyStartedAttackAnimation`
-  returns false unconditionally with its body commented out (one live
-  caller, `ProtossContinueAttack:108`), `waitedLongEnoughForStartedAttack`
-  and `AUnit.attackWaitFrames` have zero callers - audit will likely end
-  in deletion, not rewiring). 2026-10-20: interim constant GONE -
-  the rule reads the live engine latency per decision
-  (`SleepUntilFrameGate.latencyFrames`, fallback 3 gameless; +2
-  Stardust margin at the call site as before); Wine proof the same
-  day: two 1v1 duels, WIN 1/0 both, shot cadence median 33 frames
-  (~30f cooldown + latency, intact), movement 37:18 and 31:3
-  stepped-aside vs stuck-no-step, bot's own counter 14 hits duel 1.
-  2026-10-21: audit ended in deletion as predicted - the whole
-  `UnitAttackWaitFrames` table is gone (zero callers for
-  `waitedLongEnoughForStartedAttack` / `AUnit.attackWaitFrames`;
-  the one live caller read a method returning false unconditionally,
-  so its branch never fired - removed with a comment, zero behavior
-  change, suite 991/991 + arch 5/7 unchanged). The live rule stays
-  `cooldown <= latency(unit) + 2`, read per decision.
-  Stub-pin the rule, then prove shot cadence on the Wine
-  1v1 duel (SHOT twin already carries fired-vs-holding). Details:
   `_AI/CHALLENGES/MicroKiting.md` ("Stardust reference").
 - **#149** Causeless early exit, 4 occurrences, 1 explained:
   `234004` (V2, 5:43) is the hoard tripwire firing by design

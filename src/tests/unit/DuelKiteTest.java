@@ -66,6 +66,26 @@ public class DuelKiteTest extends WorldStubForTests {
     }
 
     @Test
+    public void gateEdgeFlipsYield() {
+        FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
+        FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
+        zealot.setEnemy();
+        zealot.setAngle(Math.PI);
+
+        world(1, fakeOurs(dragoon), fakeEnemies(zealot), () -> {
+            // Stub latency fallback is 3, so the gate sits at 5: 6 still
+            // cools (yield), 5 already shoots (hold). The exact edge,
+            // not just the far sides.
+            dragoon.cooldown = 6;
+            assertTrue(DuelKite.shouldYield(dragoon, zealot),
+                "cooldown 6 > latency 3 + 2: the shot cannot fire, yield");
+            dragoon.cooldown = 5;
+            assertFalse(DuelKite.shouldYield(dragoon, zealot),
+                "cooldown 5 within the window: hold and shoot");
+        });
+    }
+
+    @Test
     public void fleeingThreatIsChasedNotYielded() {
         FakeUnit dragoon = fake(AUnitType.Protoss_Dragoon, 30, 20);
         FakeUnit zealot = fake(AUnitType.Protoss_Zealot, 32, 20);
