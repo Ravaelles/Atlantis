@@ -7,6 +7,7 @@ import atlantis.battle.avoid.special.protoss.ProtossAvoidCriticalUnits;
 import atlantis.map.scout.ScoutAvoidCombatBuildings;
 import atlantis.map.scout.ScoutEnemyNaturalIfNotExisting;
 import atlantis.map.scout.ScoutEnemyThird;
+import atlantis.map.scout.ScoutHoldCourse;
 import atlantis.map.scout.ScoutFreeBases;
 import atlantis.map.scout.ScoutPotentialEnemyBases;
 import atlantis.map.scout.ScoutPotentialTerranBases;
@@ -58,6 +59,12 @@ public class ScoutUnitManagers implements ScoutUnitManager {
                 ScoutSeparateFromCloseWorkers::new,
                 ProtossAvoidCriticalUnits::new,
                 ScoutAvoidCombatBuildings::new,
+
+                // Ride the in-flight course before any movement manager
+                // re-evaluates (owner: alternating destinations walked the
+                // early scout between bases and it never saw the enemy).
+                // Avoids above still preempt every frame.
+                ScoutHoldCourse::new,
 
                 ScoutEnemyNaturalIfNotExisting::new,
                 ScoutEnemyThird::new,

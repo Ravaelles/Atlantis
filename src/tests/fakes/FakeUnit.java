@@ -466,6 +466,7 @@ public class FakeUnit extends AUnit implements Serializable {
 
         setAction(unitAction);
         targetPosition = target.position();
+        setLastActionReceivedNow();
         boolean issued = orderSink().move(this, target.position().p());
         if (issued) noteDecision(tooltip != null ? tooltip : unitAction.name());
         return issued;
