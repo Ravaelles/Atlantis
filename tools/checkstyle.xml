@@ -33,6 +33,15 @@
     WhitespaceAfter (1 hit, fixed).
 -->
 <module name="Checker">
+  <!-- Owner file Main.java is fully excluded (never touch, never gate).
+    Withdrawing the UnusedImports sweep that wrongly removed one import
+    here (commit 26f7c2fe4) would otherwise re-flag it every run; the
+    working tree already restores the import, the file stays uncommitted
+    for the owner (NEXT #164). Inline filter, not SuppressionFilter:
+    the CLI does not resolve ${config_loc} (measured 2026-10-21). -->
+  <module name="BeforeExecutionExclusionFileFilter">
+    <property name="fileNamePattern" value="src[/\\]main[/\\]Main\.java$"/>
+  </module>
   <module name="NewlineAtEndOfFile"/>
   <module name="FileTabCharacter"/>
   <module name="RegexpSingleline">
