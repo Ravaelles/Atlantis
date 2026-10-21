@@ -1086,13 +1086,6 @@ gate, #67) and `coreMustNotDependOnOtherContexts` via
   to player 2; do NOT change propagation before it; gate any change on
   `use_map_settings`). No verbatim StarEngine restore (revert
   `b60a7029` stands - new test-scope sim instead).
-- **#167** Pinch verdict + gate proposal (feeds #159): sim A/B shows
-  WITH vs WITHOUT identical on spread AND contact; Wine N=5+5
-  slightly favored WITHOUT. Recommendation is gate pinch OFF behind
-  a standoff check (only yield with room to kite into), but default
-  stays ON until the owner calls it - never flip blind. Strict
-  hold-fire variant is subsumed in the same call.
-- **#168** Owner calls still pending (no work starts without them):
   (a) pinch default gate OFF vs keep ON; (b) overnight tuner batch +
   map; (c) V2 LIVE default flip per #45 ordering; (d) Wine A1.4b
   measurement approval (map + script ready first); (e) long
